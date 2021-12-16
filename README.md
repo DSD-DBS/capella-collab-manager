@@ -9,7 +9,7 @@ This repository includes Dockerfiles to build the following Dockerimages:
 | base |This is the base image that has the most important tools pre-installed.|
 |capella/base|This is the Capella Baseimage. It is a simple Container with Capella and the required dependencies installed. No more.|
 |t4c/client/base|This extends the Capella Baseimage with the T4C Client and the dependencies.|
-|capella/ease<br>t4c/client/ease|This extends the Capella or T4C Client Baseimage with EASE Functionality. You can mount every Python-Script and execute it in a Container environment. |
+|capella/ease<br>t4c/client/ease|This extends the Capella or T4C Client Baseimage with EASE and SWTBot Functionality. You can mount every Python-Script and execute it in a Container environment. |
 |capella/remote <br> t4c/client/remote|The Remoteimage will add a RDP server on top of any other image. This will provide the user the possibility to connect and work inside the Container.|
 
 
