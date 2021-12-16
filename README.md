@@ -13,7 +13,7 @@ This repository includes Dockerfiles to build the following Dockerimages:
 |capella/remote <br> t4c/client/remote|The Remoteimage will add a RDP server on top of any other image. This will provide the user the possibility to connect and work inside the Container.|
 
 
-Important for building the images is to strictly follow the sequence.: 
+Important for building the images is to strictly follow the sequence: 
 - <b>capella/base</b> depends on <b>base</b>
 - <b>t4c/client/base</b> depends on <b>capella/base</b>
 - <b>capella/ease</b> depends on <b>capella/base</b>
@@ -28,7 +28,7 @@ Our Baseimage updates the packages and installs the following packages:
 - `python3-pip`
 - `python3` 
 
-Also, we create a custom user `techuser`. The user will be always used to run the containers and allows to assign a custom UID. This can make sense, if you want to deploy the Containers in K8S Cluster and your company has some security restrictions (e.g. specific UID ranges). 
+Also, we create a custom user `techuser`. The user will be always used to run the containers and allows to assign a custom UID. This can make sense, if you want to deploy the Containers in a K8s Cluster and your company has some security restrictions (e.g. specific UID ranges). 
 
 Feel free to modify this Image to your specific needs. You are able to set Proxies, custom Registry URLs, your timezone, CA Certificates and any other stuff.
 
@@ -42,12 +42,12 @@ docker build -t base -f base/Dockerfile
 ```
 docker build -t base --build-arg=$CUSTOM_IMAGE -f base/Dockerfile
 ```
-Make sure that your `$CUSTOM_IMAGE` is a Linux Image that has the common tools installed and uses `apt` / `apt-get` Package Manager. If this is not the case, the image cannot be used. Our images were tested with the image `buildpack-deps:bullseye`. 
+Make sure that your `$CUSTOM_IMAGE` is a Linux Image that has the common tools installed and uses the `apt` / `apt-get` Package Manager. If this is not the case, the image cannot be used. Our images were tested with the image `buildpack-deps:bullseye`. 
 
 ### 2. Capella Baseimage
 The Capella Baseimage installs the Capella Client and Dropins. 
 Please follow these steps: 
-1) Replace the empty file `capella/capella.zip` with your custom Capella ZIP. The should have the following structure (looking at the root of `capella.zip`): 
+1) Replace the empty file `capella/capella.zip` with your custom Capella ZIP. The `capella.zip` should have the following structure (looking at the root of `capella.zip`): 
     - capella
       - configuration
       - features
@@ -59,7 +59,7 @@ Please follow these steps:
       - (depending on your version, there can be more files)
     - samples
 2) Place your dropins in the folder `capella/dropins`
-3) In some Capellaversions, there are incompatiblities with certain versions of the following libraries: 
+3) In some Capella versions, there are incompatiblities with a certain version of the following libraries: 
     - `libjavascriptcoregtk-4.0-18` in the version `2.32.4`
     - `libwebkit2gtk-4.0-37` in the version `2.32.4`
 
@@ -95,7 +95,6 @@ docker run -d \
     -e BASE_IMAGE=capella \
     -e TYPE=capella \
     -e RMT_PASSWORD=$RMT_PASSWORD \
-    -e T4C_REPOSITORY=$T4C_REPOSITORY \
     capella/remote:$VERSION
 ```
 
@@ -117,7 +116,7 @@ docker run -d \
     -e BASE_IMAGE=t4c/client \
     -e TYPE=t4c \
     -e RMT_PASSWORD=$RMT_PASSWORD \
-    -e T4C_REPOSITORY=$T4C_REPOSITORY \
+    -e T4C_REPOSITORIES=$T4C_REPOSITORIES \
     t4c/client/remote:$VERSION
 ```
 
@@ -125,7 +124,8 @@ Please replace the followings variables:
 - `$TYPE` to `capella` or `t4c/client`. If you only need Capella, use `capella`. If you also need the T4C Extension, please use `t4c/client`.
 - `$RDP_EXTERNAL_PORT` to the external Port for RDP on your host (usually `3389`)
 - `$RMT_PASSWORD` is the password for remote connections (for the login via RDP).
-- `$T4C_REPOSITORY` is the T4C repository that is predefined in the repository selection. 
+- 
+TODO
 
 ### EASE Container
 TODO
