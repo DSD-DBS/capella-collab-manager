@@ -1,4 +1,4 @@
 [submodule "ease/pyease"]
 	path = ease/pyease
 	url = ../pyease.git
-	branch = .
+	branch = master
