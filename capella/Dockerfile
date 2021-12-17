@@ -4,8 +4,23 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install WebKit with GTK
 COPY libs /tmp/libs
-RUN apt-get install -y $(find /tmp/libs -iname "*.deb") && \
-    rm -r /tmp/libs
+RUN if [ "$INJECT_PACKAGES" == "true" ]; then \
+    # Inject old packages manually
+    apt-get install -y $(find /tmp/libs -iname "*.deb") && \
+    rm -r /tmp/libs \
+    else \
+    # Download old packages from the Ubuntu focal registry
+    ## Add source
+    echo "deb http://de.archive.ubuntu.com/ubuntu/ focal main" | install -Dm644 /dev/stdin /etc/apt/sources.list && \
+    ## Import the required keys
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32 && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 871920D1991BC93C && \
+    apt-get update && \
+    ## Install the packages
+    apt-get install -y \
+    libjavascriptcoregtk-4.0-18=2.28.1-1 \
+    libwebkit2gtk-4.0-37=2.28.1-1 \
+    fi
 
 WORKDIR /opt/
 
