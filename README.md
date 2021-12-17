@@ -103,10 +103,24 @@ The T4C Baseimage builds on top of the Capella Baseimage and installs the T4C Cl
    ```
 
 ### 4. Remote Images
-TODO
+The Remote Image allows to extend the Capella Baseimage or T4C Baseimage with an RDP Server. It is a basic Linux Server with Openbox as window manager installed. Feel free to adjust the configurations `remote/rc.xml` and `remote/menu.xml` to your custom Openbox configuration. 
+
+If you like to use your own wallpaper, please replace `remote/wallpaper.png`.
+
+In general, no additional configuration is necessary for the Build of the Remoteimage: 
+
+- Remoteimage using Capella: 
+    ```
+    docker build -t capella/remote -f remote/Dockerfile --build-arg BASE_IMAGE=capella/base
+    ```
+- Remoteimage using T4C Client: 
+    ```
+    docker build -t t4c/client/remote -f remote/Dockerfile --build-arg BASE_IMAGE=t4c/client/base
+    ```
+
 
 ### 5. EASE Images
-Follows in January.
+
 
 ## Run the Images
 
@@ -115,7 +129,6 @@ Follows in January.
 docker run -d \
     -p $RDP_EXTERNAL_PORT:3389 \
     -e BASE_IMAGE=capella \
-    -e TYPE=capella \
     -e RMT_PASSWORD=$RMT_PASSWORD \
     capella/remote:$VERSION
 ```
@@ -136,19 +149,28 @@ Capella should then start automatically.
 docker run -d \
     -p $RDP_EXTERNAL_PORT:3389 \
     -e BASE_IMAGE=t4c/client \
-    -e TYPE=t4c \
     -e T4C_LICENCE_SECRET=XXX \
-    -e RMT_PASSWORD=$RMT_PASSWORD \
+    -e T4C_SERVER_HOST=$T4C_SERVER_HOST \
+    -e T4C_SERVER_PORT=$T4C_SERVER_PORT \
     -e T4C_REPOSITORIES=$T4C_REPOSITORIES \
+    -e RMT_PASSWORD=$RMT_PASSWORD \
     t4c/client/remote:$VERSION
 ```
 
 Please replace the followings variables: 
-- `$TYPE` to `capella` or `t4c/client`. If you only need Capella, use `capella`. If you also need the T4C Extension, please use `t4c/client`.
 - `$RDP_EXTERNAL_PORT` to the external Port for RDP on your host (usually `3389`)
 - `$RMT_PASSWORD` is the password for remote connections (for the login via RDP).
-- 
-TODO
+- `$T4C_LICENCE_SECRET` to your TeamForCapella licence secret.
+- `$T4C_SERVER_HOST` to the IP-Address of you T4C-Server (default: `127.0.0.1`).
+- `$T4C_SERVER_PORT` to the Port of your T4C-Server (default: `2036`).
+
+
+After starting the Container, you should be able to connect to `localhost:$RDP_EXTERNAL_PORT` with your preferred RDP Client. 
+Please use the followings credentials: <br>
+<b>Username</b>: `techuser` <br>
+<b>Password</b>: `$RMT_PASSWORD`
+
+Capella should then start automatically. You should be able to connect to T4C models out of the box. 
 
 ### EASE Container
 Follows in January.
