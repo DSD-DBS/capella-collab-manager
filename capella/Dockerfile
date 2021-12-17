@@ -7,7 +7,7 @@ COPY libs /tmp/libs
 RUN if [ "$INJECT_PACKAGES" == "true" ]; then \
     # Inject old packages manually
     apt-get install -y $(find /tmp/libs -iname "*.deb") && \
-    rm -r /tmp/libs \
+    rm -r /tmp/libs; \
     else \
     # Download old packages from the Ubuntu focal registry
     ## Add source
@@ -19,7 +19,7 @@ RUN if [ "$INJECT_PACKAGES" == "true" ]; then \
     ## Install the packages
     apt-get install -y \
     libjavascriptcoregtk-4.0-18=2.28.1-1 \
-    libwebkit2gtk-4.0-37=2.28.1-1 \
+    libwebkit2gtk-4.0-37=2.28.1-1; \
     fi
 
 WORKDIR /opt/
@@ -29,13 +29,13 @@ COPY ./capella.tar.gz /opt/capella.tar.gz
 RUN if [ -s capella.zip ]; then \
     # Install Capella using zip
     unzip capella.zip -d . && \
-    rm capella.zip \
+    rm capella.zip; \
     # Install Capella using tar.gz
     elif [ -s capella.tar.gz ]; then \ 
-    tar -xf capella.tar.gz \
+    tar -xf capella.tar.gz; \
     else \
-    echo "capella.zip and capella.tar.gz are empty! Please replace the files" \
-    exit 1 \
+    echo "capella.zip and capella.tar.gz are empty! Please replace the files" && \
+    exit 1; \
     fi && \
     rm -rf samples capella.zip capella.tar.gz
 
