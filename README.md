@@ -124,7 +124,23 @@ In general, no additional configuration is necessary for the Build of the Remote
     ```
 
 ### 5. EASE Images
+The EASE Image builds on top of the Capella Baseimage or T4C Baseimage. It extends the Images with Support for Python EASE Scripts. These Python Scripts will run automatically.
 
+If your network is unrestricted, you can run the build with the following command: 
+```
+docker build -t $BASE/ease \
+    --build-arg BASE_IMAGE=$BASE/base \
+    --build-arg BUILD_TYPE=online
+```
+Please replace $BASE with `capella` or `t4c/client`. 
+
+If you network is restricted, please execute the steps described in [Download Eclipse Packages manually](#eclipse_packages). When your extensions are located in `ease/extensions` and the right subfolders, please run: 
+```
+docker build -t $BASE/ease \
+    --build-arg BASE_IMAGE=$BASE/base \
+    --build-arg BUILD_TYPE=offline
+```
+Please replace $BASE with `capella` or `t4c/client`. 
 
 ## Run the Images
 
@@ -167,6 +183,7 @@ Please replace the followings variables:
 - `$T4C_LICENCE_SECRET` to your TeamForCapella licence secret.
 - `$T4C_SERVER_HOST` to the IP-Address of you T4C-Server (default: `127.0.0.1`).
 - `$T4C_SERVER_PORT` to the Port of your T4C-Server (default: `2036`).
+- `T4C_REPOSITORIES` is a comma seperated list of repositories. These repositories show up as default options on connection (e.g. `repo1,repo2`). 
 
 
 After starting the Container, you should be able to connect to `localhost:$RDP_EXTERNAL_PORT` with your preferred RDP Client. 
@@ -177,7 +194,15 @@ Please use the followings credentials: <br>
 Capella should then start automatically. You should be able to connect to T4C models out of the box. 
 
 ### EASE Container
-Follows in January.
+Run the image with this command and provide EASE Python Scripts as a volume. The scripts have to be located in the /opt/scripts directory (inside the container)! Please refer also to: [How does a EASE Python Script look like?](#python_ease).
+
+To run the container, just execute: 
+```
+docker run \
+    -v script.py:/opt/scripts/script.py \
+    $BASE/ease
+```
+where `$BASE` is again `capella` or `t4c/client`.
 
 ## Additional Notes 
 
@@ -216,3 +241,57 @@ Please download all packages and place the files in the folder `capella/libs`:
 (Run `apt download libjpeg8=8c-2ubuntu8`)
 - `libwebkit2gtk-4.0-37_2.28.1-1_amd64.deb` <br>
 (Run `apt download libwebkit2gtk-4.0-37=2.28.1-1`)
+
+### <a id="eclipse_packages"></a>Download Eclipse Packages manually
+If your network is restricted and doesn't have access to the public Eclipse registries, you have to manually download and inject the packages. 
+You have to run the following commands for each of these following urls to download the metadata and artifact for the packages: 
+- https://eclipse.py4j.org/
+- https://download.eclipse.org/ease/integration/nightly/
+- https://download.eclipse.org/technology/swtbot/releases/latest/
+
+```
+capellac -nosplash -verbose
+-application org.eclipse.equinox.p2.artifact.repository.mirrorApplication
+-source <url>
+-destination <destionation_path> (e.g. file:ease/extensions/<extension>)>
+```
+```
+capellac -nosplash -verbose
+-application org.eclipse.equinox.p2.metadata.repository.mirrorApplication
+-source <url>
+-destination <destionation_path> (e.g. file:ease/extensions/<extension>)>
+```
+
+where `<extension>` is `py4j`, `ease` or `swtbot`.
+
+The directories `ease/extensions/<extension>` should now contain the following structure: 
+- `content.jar`
+- `artifacts.jar`
+- `plugins/`
+    - `*.jar` files
+- `features/`
+    - `*.jar` files
+
+### <a id="python_ease"></a>How does a EASE Python Script look like?
+In general, you can try to execute the Py4J in the Eclipse environment for development purposes first. When the script is tested, you can use it in our container.  
+
+Please make sure that the Python-Scripts have the `onStartup`-Comment in the first line. This is required, otherwise the script will not be executed!
+
+```
+# onStartup: 0
+```
+
+An example script using our PyEclipseEase library could look like: 
+```
+# onStartup: 0
+import pyease.ease
+
+if __name__ == "__main__":
+    logger = ease.logger
+    ease.log_to_file(os.environ["EASE_LOG_LOCATION"])
+
+    pyease.ease.open_eclipse_perspective("Capella")
+    logger.info("Hello world!")
+
+    pyease.ease.kill_capella_process(30)
+```
