@@ -24,8 +24,8 @@ RUN if [ "$INJECT_PACKAGES" == "true" ]; then \
 
 WORKDIR /opt/
 
-COPY ./capella/capella.zip /opt/capella.zip
-COPY ./capella/capella.tar.gz /opt/capella.tar.gz
+COPY ./capella.zip /opt/capella.zip
+COPY ./capella.tar.gz /opt/capella.tar.gz
 RUN if [ -s capella.zip ]; then \
     # Install Capella using zip
     unzip capella.zip -d . && \

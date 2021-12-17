@@ -77,8 +77,8 @@ Please follow these steps:
 5) <b>Important:</b> This step is only necessary if there are restrictions on your network. <br>
 
     In some Capella versions, there are incompatiblities with a certain version of the following libraries: 
-        - `libjavascriptcoregtk-4.0-18` in the version `2.32.4`
-        - `libwebkit2gtk-4.0-37` in the version `2.32.4`
+     - `libjavascriptcoregtk-4.0-18` in the version `2.32.4`
+     - `libwebkit2gtk-4.0-37` in the version `2.32.4`
 
     For this reason, we use the version `2.28.1` of the two libraries in our container. There are some companies that restrict access to the latest versions only. In such a case you have to download the followings packages with the command `apt download` manually (outside the company network) and inject them manually into the container. Please refer to [Download older packages manually](#debian_packages). 
 6) Build the Dockerimage. If you have applied Step 5, please use the following command: 
