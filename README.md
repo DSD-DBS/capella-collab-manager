@@ -1,4 +1,4 @@
-# Capella, T4C (Client) and EASE Dockerimages
+# Capella, T4C Client and EASE Dockerimages
 
 ## Introduction
 Please read the <b>complete</b> README file carefully first, as some requirements must be met for the containers to work as desired. <br>
@@ -118,7 +118,7 @@ Please use the followings credentials: <br>
 
 Capella should then start automatically. 
 
-### T4C in a Remotecontainer
+### T4C Client in a Remotecontainer
 ```
 docker run -d \
     -p $RDP_EXTERNAL_PORT:3389 \
