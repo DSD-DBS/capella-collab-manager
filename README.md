@@ -2,7 +2,7 @@
 
 ## Introduction
 Please read the <b>complete</b> README file carefully first, as some requirements must be met for the containers to work as desired. <br>
-The Tool provides Dockerimages using the followings Tools: 
+The repository provides Dockerimages for the followings Tools: 
 - Capella: https://www.eclipse.org/capella/
 - T4C Client: https://www.obeosoft.com/en/team-for-capella <br>
 Right now, we don't provide a Dockerimage for the Server. 
