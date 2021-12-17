@@ -31,7 +31,7 @@ Important for building the images is to strictly follow the sequence:
 
 Please clone this repository and include all submodules: 
 ```
-git clone --recurse-submodules https://github.com/DSD-DBS/pyease.git
+git clone --recurse-submodules https://github.com/DSD-DBS/capella-dockerimages.git
 ```
 
 <b>Make sure that all commands are executed in the root directory of the repository.</b>
