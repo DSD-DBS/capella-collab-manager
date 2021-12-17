@@ -151,7 +151,7 @@ We have explicitly observed the following:
 
 Unfortunately the version `2.28.1` of `libwebkit2gtk-4.0-37` is no longer available in the default Debian `bullyseye-updates` registry, but it is still available in the Ubuntu `focal` repository (https://packages.ubuntu.com/focal/libwebkit2gtk-4.0-37). 
 
-First of all, you have to add the source to your `apt`-sources and add the apt keys. Recommandation: Spawn a Docker Container and execute the steps inside the container. 
+First of all, you have to add the source to your `apt`-sources and add the apt keys. <br>Recommandation: Spawn a Docker Container and execute the steps inside the container. 
 ```
 echo "deb http://de.archive.ubuntu.com/ubuntu/ focal main"
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
