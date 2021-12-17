@@ -61,7 +61,7 @@ Make sure that your `$CUSTOM_IMAGE` is a Linux Image that has the common tools i
 The Capella Baseimage installs the Capella Client and Dropins. 
 Please follow these steps: 
 1) Download the Capella Linux Version as `zip` or `tar.gz` archive. You can get the releases here directly from Eclipse: https://github.com/eclipse/capella/releases
-2) Replace the empty file `capella/capella.zip` with your custom Capella `zip` or `tar.gz`. The `capella.zip` oder `capella/capella.tar.gz` should have the following structure (looking at the root of `capella.zip` / `capella.tar.gz`). It is the default structure of the offical releases: 
+2) Replace the empty file `capella/capella.zip` `capella/capella.tar.gz` with your custom Capella `zip` or `tar.gz`. The `capella.zip` oder `capella/capella.tar.gz` should have the following structure (looking at the root of `capella.zip` / `capella.tar.gz`). It is the default structure of the offical releases: 
     - capella
       - configuration
       - features
