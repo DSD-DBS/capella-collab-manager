@@ -159,7 +159,7 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 871920D1991BC93C
 apt update
 ```
 
-The download all packages and place the files into the folder `capella/libs`:
+Please download all packages and place the files in the folder `capella/libs`:
 - `libicu66_66.1-2ubuntu2_amd64.deb` <br>
 (Run `apt download libicu66=66.1-2ubuntu2`)
 - `libjavascriptcoregtk-4.0-18_2.28.1-1_amd64.deb` <br>
