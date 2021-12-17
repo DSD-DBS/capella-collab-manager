@@ -24,11 +24,20 @@ RUN if [ "$INJECT_PACKAGES" == "true" ]; then \
 
 WORKDIR /opt/
 
-# Install Capella using ZIP
-COPY ./capella.zip /opt/capella.zip
-RUN unzip capella.zip -d . && \
-    rm capella.zip && \
-    rm -r samples
+COPY ./capella/capella.zip /opt/capella.zip
+COPY ./capella/capella.tar.gz /opt/capella.tar.gz
+RUN if [ -s capella.zip ]; then \
+    # Install Capella using zip
+    unzip capella.zip -d . && \
+    rm capella.zip \
+    # Install Capella using tar.gz
+    elif [ -s capella.tar.gz ]; then \ 
+    tar -xf capella.tar.gz \
+    else \
+    echo "capella.zip and capella.tar.gz are empty! Please replace the files" \
+    exit 1 \
+    fi && \
+    rm -rf samples capella.zip capella.tar.gz
 
 # Set Permissions
 RUN chmod +x capella/capella && \
