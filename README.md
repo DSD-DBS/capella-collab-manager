@@ -134,7 +134,7 @@ docker run -d \
     -p $RDP_EXTERNAL_PORT:3389 \
     -e BASE_IMAGE=capella \
     -e RMT_PASSWORD=$RMT_PASSWORD \
-    capella/remote:$VERSION
+    capella/remote
 ```
 
 Please replace the followings variables: 
@@ -158,7 +158,7 @@ docker run -d \
     -e T4C_SERVER_PORT=$T4C_SERVER_PORT \
     -e T4C_REPOSITORIES=$T4C_REPOSITORIES \
     -e RMT_PASSWORD=$RMT_PASSWORD \
-    t4c/client/remote:$VERSION
+    t4c/client/remote
 ```
 
 Please replace the followings variables: 
