@@ -11,7 +11,7 @@ RUN if [ "$INJECT_PACKAGES" == "true" ]; then \
     else \
     # Download old packages from the Ubuntu focal registry
     ## Add source
-    echo "deb http://de.archive.ubuntu.com/ubuntu/ focal main" | install -Dm644 /dev/stdin /etc/apt/sources.list && \
+    echo "deb http://de.archive.ubuntu.com/ubuntu/ focal main" >> /etc/apt/sources.list && \
     ## Import the required keys
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32 && \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 871920D1991BC93C && \

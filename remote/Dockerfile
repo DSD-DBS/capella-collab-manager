@@ -2,19 +2,19 @@ ARG BASE_IMAGE=capella/base
 FROM ${BASE_IMAGE}
 
 # Install RDP (XRDP with XORG)
-RUN apt-get install -y xrdp
-RUN apt-get -y install xserver-xorg-core xorgxrdp
+RUN apt-get install -y \ 
+    xrdp \ 
+    xserver-xorg-core \
+    xorgxrdp \
+    supervisor \
+    openbox \
+    obconf \
+    nitrogen
 
-# Supervisor Installation
-RUN apt-get -y install supervisor
-
-# Install Window Manager
-RUN apt-get -y install openbox obconf
 COPY rc.xml /etc/xdg/openbox/rc.xml
 COPY menu.xml /etc/xdg/openbox/menu.xml
 
-# Install Nitrogen (Desktop background)
-RUN apt-get -y install nitrogen
+# Setup Nitrogen (Desktop background)
 COPY wallpaper.png /tmp/wallpaper.png
 COPY bg-saved.cfg /home/techuser/.config/nitrogen/bg-saved.cfg
 
@@ -29,7 +29,7 @@ RUN chown -R techuser /etc/xrdp/
 RUN mkdir -p /run/xrdp/sockdir && chown techuser /run/xrdp/sockdir
 RUN chown techuser /var/log/xrdp*
 
-WORKDIR /opt
+WORKDIR /home/techuser
 
 COPY setup_workspace.py /opt/setup_workspace.py
 RUN chown techuser /opt

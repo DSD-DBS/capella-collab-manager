@@ -16,8 +16,8 @@ REPOSITORIES_BASE_PATH = pathlib.Path(
         "/opt/capella/configuration",
     )
 )
-ECLIPSE_UI_PREFS_PATH = pathlib.Path(
-    REPOSITORIES_BASE_PATH + ".settings/org.eclipse.ui.ide.prefs"
+ECLIPSE_UI_PREFS_PATH = (
+    REPOSITORIES_BASE_PATH / ".settings" / "org.eclipse.ui.ide.prefs"
 )
 
 
@@ -61,10 +61,13 @@ if __name__ == "__main__":
     # Disable Welcome Screen
     replace_config(ECLIPSE_UI_PREFS_PATH, "showIntro", "false")
 
-    if os.getenv(
-        "BASE_TYPE",
-        "capella",
-    ) == "t4c": 
+    if (
+        os.getenv(
+            "BASE_TYPE",
+            "capella",
+        )
+        == "t4c"
+    ):
         # Set default T4C Server IP address
         replace_config(
             OBEO_COLLAB_CONF,
