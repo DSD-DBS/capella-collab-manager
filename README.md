@@ -47,13 +47,13 @@ Feel free to modify this Image to your specific needs. You are able to set Proxi
 
 To build the Baseimage, please run: 
 ```
-docker build -t base -f base/Dockerfile
+docker build -t base base
 ```
 
 <b>Important:</b>
  If you company has a specific Baseimage with all company configurations, of course, it can also be used: 
 ```
-docker build -t base --build-arg=$CUSTOM_IMAGE -f base/Dockerfile
+docker build -t base --build-arg=$CUSTOM_IMAGE base
 ```
 Make sure that your `$CUSTOM_IMAGE` is a Linux Image that has the common tools installed and uses the `apt` / `apt-get` Package Manager. If this is not the case, the image cannot be used. Our images were tested with the image `buildpack-deps:bullseye`. 
 
@@ -83,12 +83,12 @@ Please follow these steps:
     For this reason, we use the version `2.28.1` of the two libraries in our container. There are some companies that restrict access to the latest versions only. In such a case you have to download the followings packages with the command `apt download` manually (outside the company network) and inject them manually into the container. Please refer to [Download older packages manually](#debian_packages). 
 6) Build the Dockerimage. If you have applied Step 5, please use the following command: 
     ```
-    docker build -t capella/base -f capella/Dockerfile --build-arg INJECT_PACKAGES=true
+    docker build -t capella/base capella --build-arg INJECT_PACKAGES=true
     ```
 
     If you skipped step 5, please execute the following command: 
     ```
-    docker build -t capella/base -f capella/Dockerfile
+    docker build -t capella/base capella
     ```
 
 ### 3. T4C Baseimage
@@ -104,7 +104,7 @@ The T4C Baseimage builds on top of the Capella Baseimage and installs the T4C Cl
    - ...
 2) Build the container: 
    ```
-   docker build -t t4c/client/base -f t4c/Dockerfile
+   docker build -t t4c/client/base t4c
    ```
 
 ### 4. Remote Images
@@ -116,11 +116,11 @@ In general, no additional configuration is necessary for the Build of the Remote
 
 - Remoteimage using Capella: 
     ```
-    docker build -t capella/remote -f remote/Dockerfile --build-arg BASE_IMAGE=capella/base
+    docker build -t capella/remote remote/Dockerfile --build-arg BASE_IMAGE=capella/base
     ```
 - Remoteimage using T4C Client: 
     ```
-    docker build -t t4c/client/remote -f remote/Dockerfile --build-arg BASE_IMAGE=t4c/client/base
+    docker build -t t4c/client/remote remote --build-arg BASE_IMAGE=t4c/client/base
     ```
 
 ### 5. EASE Images
