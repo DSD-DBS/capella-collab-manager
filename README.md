@@ -19,7 +19,6 @@ This repository includes Dockerfiles to build the following Dockerimages:
 |capella/ease<br>t4c/client/ease|This extends the Capella or T4C Client Baseimage with EASE and SWTBot Functionality. You can mount every Python-Script and execute it in a Container environment. |
 |capella/remote <br> t4c/client/remote|The Remoteimage will add a RDP server on top of any other image. This will provide the user the possibility to connect and work inside the Container.|
 
-
 Important for building the images is to strictly follow the sequence: 
 - <b>capella/base</b> depends on <b>base</b>
 - <b>t4c/client/base</b> depends on <b>capella/base</b>
@@ -68,22 +67,19 @@ Please follow these steps:
       - capella.ini
       - (depending on your version, there can be more files)
     - samples
-2) Place your dropins in the folder `capella/dropins`
-3) In some Capella versions, there are incompatiblities with a certain version of the following libraries: 
-    - `libjavascriptcoregtk-4.0-18` in the version `2.32.4`
-    - `libwebkit2gtk-4.0-37` in the version `2.32.4`
+3) Download your dropins (if any)
+4) Place your dropins in the folder `capella/dropins`
+5) <b>Important:</b> This step is only necessary if there are restrictions on your network. <br>
 
-    For this reason, we use the version `2.28.1` of the two libraries in our container. The version is still available in the `apt-get` package manager. Unfortunately, there are some companies that restrict access to the latest versions only. In such a case you have to download the followings packages with the command `apt-get download` manually (outside the company network) and place the files into the folder `capella/libs`:
-    - `libicu66_66.1-2ubuntu2_amd64.deb` <br>
-    (Run `apt-get download libicu66=66.1-2ubuntu2`)
-    - `libjavascriptcoregtk-4.0-18_2.28.1-1_amd64.deb` <br>
-    (Run `apt-get download libjavascriptcoregtk-4.0-18=2.28.1-1`)
-    - `libjpeg-turbo8_2.0.3-0ubuntu1.20.04.1_amd64.deb` <br>
-    (Run `apt-get download libjpeg-turbo8=2.0.3-0ubuntu1.20.04.1`)
-    - `libjpeg8_8c-2ubuntu8_amd64.deb` <br>
-    (Run `apt-get download libjpeg8=8c-2ubuntu8_amd64`)
-    - `libwebkit2gtk-4.0-37_2.28.1-1_amd64.deb` <br>
-    (Run `apt-get download  libwebkit2gtk-4.0-37=2.28.1-1`)
+    In some Capella versions, there are incompatiblities with a certain version of the following libraries: 
+        - `libjavascriptcoregtk-4.0-18` in the version `2.32.4`
+        - `libwebkit2gtk-4.0-37` in the version `2.32.4`
+
+    For this reason, we use the version `2.28.1` of the two libraries in our container. There are some companies that restrict access to the latest versions only. In such a case you have to download the followings packages with the command `apt download` manually (outside the company network) and inject them manually into the container. Please refer to [Download older packages manually](#debian_packages). 
+6) Build the Dockerimage. If you have applied Step 5, please use the following command: 
+   ```
+
+   ```
 
 TODO
 
@@ -139,6 +135,7 @@ TODO
 
 ### EASE Container
 TODO
+
 ## Additional Notes 
 
 ### Dockerfile Guidelines
