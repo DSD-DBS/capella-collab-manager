@@ -1,7 +1,7 @@
 # Capella, T4C Client and EASE Dockerimages
 
 ## Introduction
-Please read the <b>complete</b> README file carefully first, as some requirements must be met for the containers to work as desired. <br>
+Please read the <b>complete</b> README carefully first, as some requirements must be met for the containers to work as desired. <br>
 The repository provides Dockerimages for the followings Tools: 
 - Capella: https://www.eclipse.org/capella/
 - T4C Client: https://www.obeosoft.com/en/team-for-capella <br>
@@ -87,13 +87,26 @@ Please follow these steps:
     ```
 
 ### 3. T4C Baseimage
-TODO
+The T4C Baseimage builds on top of the Capella Baseimage and installs the T4C Client plugins. 
+
+1) Please place the release from T4C inside the `t4c/updateSite` folder. It has to be a `zip`-file and in the root of the `zip`, there should be the following files/folders: 
+   - `binary`
+   - `features`
+   - `plugins`
+   - `artifacts.jar`
+   - `p2.index`
+   - `content.jar`
+   - ...
+2) Build the container: 
+   ```
+   docker build -t t4c/client/base -f t4c/Dockerfile
+   ```
 
 ### 4. Remote Images
 TODO
 
 ### 5. EASE Images
-TODO
+Follows in January.
 
 ## Run the Images
 
@@ -124,6 +137,7 @@ docker run -d \
     -p $RDP_EXTERNAL_PORT:3389 \
     -e BASE_IMAGE=t4c/client \
     -e TYPE=t4c \
+    -e T4C_LICENCE_SECRET=XXX \
     -e RMT_PASSWORD=$RMT_PASSWORD \
     -e T4C_REPOSITORIES=$T4C_REPOSITORIES \
     t4c/client/remote:$VERSION
@@ -137,9 +151,15 @@ Please replace the followings variables:
 TODO
 
 ### EASE Container
-TODO
+Follows in January.
 
 ## Additional Notes 
+
+### Tips
+- You can mount a Capella workspace inside the container by appending the follwing to the `docker run` command: 
+    ```
+    -v /path/to/your/local/volume:/workspace
+    ```
 
 ### Dockerfile Guidelines
 We tried to follow the common recommendations about writing Dockerfiles. 
