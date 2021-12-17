@@ -30,6 +30,8 @@ Important for building the images is to strictly follow the sequence:
 
 ## Build the Images
 
+<b>Make sure that all commands are executed in the root directory of the repository.</b>
+
 ### 1. Base
 Our Baseimage updates the packages and installs the following packages: 
 - `python3-pip`
@@ -136,3 +138,24 @@ TODO
 
 ### EASE Container
 TODO
+## Additional Notes 
+
+### Dockerfile Guidelines
+We tried to follow the common recommendations about writing Dockerfiles. 
+We have explicitly observed the following:
+- We use the package manager interface `apt-get`, because `apt` does not have a stable CLI interface and is not recommended to use in scripts.
+- We tried to reduce the number of layers and to group commands as much as possible. However, in some cases we use caching and in other cases it was not always possible to group everything for reasons of clarity.
+
+### <a id="debian_packages"></a>Download older packages manually
+
+Unfortunately the version `2.28.1` of `libwebkit2gtk-4.0-37` is no longer available in the default Debian `bullyseye-updates` registry, but it is still available in the Ubuntu `focal` repository (https://packages.ubuntu.com/focal/libwebkit2gtk-4.0-37).  and place the files into the folder `capella/libs`:
+    - `libicu66_66.1-2ubuntu2_amd64.deb` <br>
+    (Run `apt download libicu66=66.1-2ubuntu2`)
+    - `libjavascriptcoregtk-4.0-18_2.28.1-1_amd64.deb` <br>
+    (Run `apt download libjavascriptcoregtk-4.0-18=2.28.1-1`)
+    - `libjpeg-turbo8_2.0.3-0ubuntu1_amd64.deb` <br>
+    (Run `apt download libjpeg-turbo8=2.0.3-0ubuntu1`)
+    - `libjpeg8_8c-2ubuntu8_amd64.deb` <br>
+    (Run `apt download libjpeg8=8c-2ubuntu8`)
+    - `libwebkit2gtk-4.0-37_2.28.1-1_amd64.deb` <br>
+    (Run `apt download libwebkit2gtk-4.0-37=2.28.1-1`)
