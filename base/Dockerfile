@@ -1,10 +1,11 @@
-ARG BASE_IMAGE=buildpack-deps:bullseye
+ARG BASE_IMAGE=ubuntu:focal
 FROM $BASE_IMAGE
 RUN apt-get update && \
     apt-get upgrade --yes && \
     apt-get install --yes \
     python3 \
-    python3-pip
+    python3-pip \
+    unzip
 
 # Create techuser with UID
 RUN useradd -l -m -u 1001000000 techuser

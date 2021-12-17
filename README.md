@@ -55,7 +55,7 @@ docker build -t base base
 ```
 docker build -t base --build-arg=$CUSTOM_IMAGE base
 ```
-Make sure that your `$CUSTOM_IMAGE` is a Linux Image that has the common tools installed and uses the `apt` / `apt-get` Package Manager. If this is not the case, the image cannot be used. Our images were tested with the image `buildpack-deps:bullseye`. 
+Make sure that your `$CUSTOM_IMAGE` is a Linux Image that has the common tools installed and uses the `apt` / `apt-get` Package Manager. If this is not the case, the image cannot be used. Our images were tested with the image `ubuntu:focal`. 
 
 ### 2. Capella Baseimage
 The Capella Baseimage installs the Capella Client and Dropins. 
