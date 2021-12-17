@@ -58,3 +58,5 @@ RUN mkdir -p /opt/capella/configuration/.settings; \
     # Set workspace permissions
     chown -R techuser /workspace && \
     chown -R techuser /opt/capella/configuration
+
+ENV BASE_TYPE=capella

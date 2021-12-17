@@ -15,3 +15,4 @@ RUN T4C_ZIP=$(find . -type f -iname "*.zip" | head -n 1 | cut -c 3-); \
 RUN echo '-DOBEO_LICENSE_SERVER_CONFIGURATION=$T4C_LICENCE_SECRET' >> /opt/capella/capella.ini
 
 WORKDIR /opt
+ENV BASE_TYPE=t4c
