@@ -29,6 +29,11 @@ Important for building the images is to strictly follow the sequence:
 
 ## Build the Images
 
+Please clone this repository and include all submodules: 
+```
+git clone --recurse-submodules https://github.com/DSD-DBS/pyease.git
+```
+
 <b>Make sure that all commands are executed in the root directory of the repository.</b>
 
 ### 1. Base
@@ -117,7 +122,6 @@ In general, no additional configuration is necessary for the Build of the Remote
     ```
     docker build -t t4c/client/remote -f remote/Dockerfile --build-arg BASE_IMAGE=t4c/client/base
     ```
-
 
 ### 5. EASE Images
 
