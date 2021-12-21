@@ -5,7 +5,7 @@ RUN apt-get update && \
     apt-get install --yes \
     python3 \
     python3-pip \
-    unzip
+    unzip && rm -rf /var/lib/apt/lists/*
 
 # Create techuser with UID
 RUN useradd -l -m -u 1001000000 techuser
