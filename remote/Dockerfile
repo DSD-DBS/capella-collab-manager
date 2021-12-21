@@ -4,21 +4,21 @@ FROM ${BASE_IMAGE}
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Install RDP (XRDP with XORG)
-RUN apt-get update && apt-get install -y \ 
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \ 
     xrdp \ 
     xserver-xorg-core \
     xorgxrdp \
     supervisor \
     openbox \
     obconf \
-    nitrogen
+    nitrogen && rm -rf /var/lib/apt/lists/*
 
-# COPY rc.xml /etc/xdg/openbox/rc.xml
+COPY rc.xml /etc/xdg/openbox/rc.xml
 COPY menu.xml /etc/xdg/openbox/menu.xml
 
 # Setup Nitrogen (Desktop background)
-# COPY wallpaper.png /tmp/wallpaper.png
-# COPY bg-saved.cfg /home/techuser/.config/nitrogen/bg-saved.cfg
+COPY wallpaper.png /tmp/wallpaper.png
+COPY bg-saved.cfg /home/techuser/.config/nitrogen/bg-saved.cfg
 
 # Copy Supervisor Configuration
 COPY supervisord.conf /etc/supervisord.conf
@@ -28,18 +28,18 @@ RUN sed -i 's/allowed_users=console/allowed_users=anybody/g' /etc/X11/Xwrapper.c
 
 RUN id techuser || useradd -l -m -u 1001000000 techuser && echo "techuser:tmp_passwd" | chpasswd
 
+COPY setup_workspace.py /opt/setup_workspace.py
+
 # Set permissions
-RUN chown -R techuser /etc/xrdp
-RUN mkdir -p /run/xrdp/sockdir && chown -R techuser /run/xrdp
-RUN chown techuser /var/log/xrdp*
+RUN mkdir -p /run/xrdp/sockdir && \
+    chown techuser /opt && \
+    chown -R techuser /etc/xrdp /run/xrdp /var/log/xrdp*
 
 WORKDIR /home/techuser
 
-COPY setup_workspace.py /opt/setup_workspace.py
-RUN chown techuser /opt
-
-COPY startup.sh startup.sh
-RUN chmod +x startup.sh
+COPY startup.sh .startup.sh
+COPY autostart .config/openbox/autostart
+RUN chmod +x .startup.sh .config/openbox/autostart
 
 USER techuser
-ENTRYPOINT [ "/home/techuser/startup.sh" ]
+ENTRYPOINT [ "/home/techuser/.startup.sh" ]
