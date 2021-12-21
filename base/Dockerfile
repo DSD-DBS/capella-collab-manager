@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=ubuntu:focal
+ARG BASE_IMAGE=debian:bullseye
 FROM $BASE_IMAGE
 RUN apt-get update && \
     apt-get upgrade --yes && \
