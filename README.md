@@ -55,7 +55,7 @@ docker build -t base base
 ```
 docker build -t base --build-arg=$CUSTOM_IMAGE base
 ```
-Make sure that your `$CUSTOM_IMAGE` is a Linux Image that has the common tools installed and uses the `apt` / `apt-get` Package Manager. If this is not the case, the image cannot be used. Our images were tested with the image `ubuntu:focal`. 
+Make sure that your `$CUSTOM_IMAGE` is a Linux Image that has the common tools installed and uses the `apt` / `apt-get` Package Manager. If this is not the case, the image cannot be used. Our images were tested with the image `debian:bullseye`. 
 
 ### 2. Capella Baseimage
 The Capella Baseimage installs the Capella Client and Dropins. 
@@ -148,7 +148,6 @@ Please replace $BASE with `capella` or `t4c/client`.
 ```
 docker run -d \
     -p $RDP_EXTERNAL_PORT:3389 \
-    -e BASE_IMAGE=capella \
     -e RMT_PASSWORD=$RMT_PASSWORD \
     capella/remote
 ```
@@ -168,7 +167,6 @@ Capella should then start automatically.
 ```
 docker run -d \
     -p $RDP_EXTERNAL_PORT:3389 \
-    -e BASE_IMAGE=t4c/client \
     -e T4C_LICENCE_SECRET=XXX \
     -e T4C_SERVER_HOST=$T4C_SERVER_HOST \
     -e T4C_SERVER_PORT=$T4C_SERVER_PORT \
