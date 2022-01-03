@@ -66,7 +66,7 @@ docker build -t base --build-arg UID=1001 base
 The Capella Baseimage installs the Capella Client and Dropins. 
 Please follow these steps: 
 1) Download the Capella Linux Version as `zip` or `tar.gz` archive. You can get the releases here directly from Eclipse: https://github.com/eclipse/capella/releases
-2) Replace the empty file `capella/archives/capella.zip` `capella/archives/capella.tar.gz` with your custom Capella `zip` or `tar.gz`. The `capella.zip` or `capella.tar.gz` should have the following structure (looking at the root of `capella.zip` / `capella.tar.gz`). It is the default structure of the offical releases: 
+2) Add `capella/archives/capella.zip` or `capella/archives/capella.tar.gz` with your custom Capella `zip` or `tar.gz`. The `capella.zip` or `capella.tar.gz` should have the following structure (looking at the root of `capella.zip` / `capella.tar.gz`). It is the default structure of the offical releases: 
     - capella
       - configuration
       - features
