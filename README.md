@@ -53,15 +53,20 @@ docker build -t base base
 <b>Important:</b>
  If you company has a specific Baseimage with all company configurations, of course, it can also be used: 
 ```
-docker build -t base --build-arg=$CUSTOM_IMAGE base
+docker build -t base --build-arg BASE_IMAGE=$CUSTOM_IMAGE base
 ```
 Make sure that your `$CUSTOM_IMAGE` is a Linux Image that has the common tools installed and uses the `apt` / `apt-get` Package Manager. If this is not the case, the image cannot be used. Our images were tested with the image `debian:bullseye`. 
+
+If you like to set a custom UID for the techuser, you can run: 
+```
+docker build -t base --build-arg UID=1001 base
+```
 
 ### 2. Capella Baseimage
 The Capella Baseimage installs the Capella Client and Dropins. 
 Please follow these steps: 
 1) Download the Capella Linux Version as `zip` or `tar.gz` archive. You can get the releases here directly from Eclipse: https://github.com/eclipse/capella/releases
-2) Replace the empty file `capella/capella.zip` `capella/capella.tar.gz` with your custom Capella `zip` or `tar.gz`. The `capella.zip` or `capella/capella.tar.gz` should have the following structure (looking at the root of `capella.zip` / `capella.tar.gz`). It is the default structure of the offical releases: 
+2) Add `capella/archives/capella.zip` or `capella/archives/capella.tar.gz` with your custom Capella `zip` or `tar.gz`. The `capella.zip` or `capella.tar.gz` should have the following structure (looking at the root of `capella.zip` / `capella.tar.gz`). It is the default structure of the offical releases: 
     - capella
       - configuration
       - features

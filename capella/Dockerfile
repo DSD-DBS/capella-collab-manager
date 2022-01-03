@@ -32,13 +32,13 @@ RUN if [ "$INJECT_PACKAGES" == "true" ]; then \
     ## Install the packages
     apt-get install -y \
     libjavascriptcoregtk-4.0-18=2.28.1-1 \
-    libwebkit2gtk-4.0-37=2.28.1-1; \
+    libwebkit2gtk-4.0-37=2.28.1-1 && \
+    rm -rf /var/lib/apt/lists/*; \
     fi
 
 WORKDIR /opt/
 
-COPY ./capella.zip /opt/capella.zip
-COPY ./capella.tar.gz /opt/capella.tar.gz
+COPY ./archives/capella.* /opt/
 RUN if [ -s capella.zip ]; then \
     # Install Capella using zip
     unzip capella.zip -d . && \
@@ -47,7 +47,7 @@ RUN if [ -s capella.zip ]; then \
     elif [ -s capella.tar.gz ]; then \ 
     tar -xf capella.tar.gz; \
     else \
-    echo "capella.zip and capella.tar.gz are empty! Please replace the files" && \
+    echo "capella.zip and capella.tar.gz are empty! Please add you custom Capella zip or tar.gz" && \
     exit 1; \
     fi && \
     rm -rf samples capella.zip capella.tar.gz
