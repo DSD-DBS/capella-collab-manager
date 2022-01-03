@@ -26,7 +26,7 @@ OBEO_COLLAB_CONF = pathlib.Path(
 REPOSITORIES_BASE_PATH = pathlib.Path(
     os.getenv(
         "ECLIPSE_CONFIGURATION_PATH",
-        "/opt/capella/configuration",
+        next(pathlib.Path("/home/techuser/.eclipse").rglob("org.eclipse.platform_*")) / "configuration",
     )
 )
 ECLIPSE_UI_PREFS_PATH = (
