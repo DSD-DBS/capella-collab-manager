@@ -55,13 +55,13 @@ docker build -t base base
 ```
 docker build -t base --build-arg=$CUSTOM_IMAGE base
 ```
-Make sure that your `$CUSTOM_IMAGE` is a Linux Image that has the common tools installed and uses the `apt` / `apt-get` Package Manager. If this is not the case, the image cannot be used. Our images were tested with the image `ubuntu:focal`. 
+Make sure that your `$CUSTOM_IMAGE` is a Linux Image that has the common tools installed and uses the `apt` / `apt-get` Package Manager. If this is not the case, the image cannot be used. Our images were tested with the image `debian:bullseye`. 
 
 ### 2. Capella Baseimage
 The Capella Baseimage installs the Capella Client and Dropins. 
 Please follow these steps: 
 1) Download the Capella Linux Version as `zip` or `tar.gz` archive. You can get the releases here directly from Eclipse: https://github.com/eclipse/capella/releases
-2) Replace the empty file `capella/capella.zip` `capella/capella.tar.gz` with your custom Capella `zip` or `tar.gz`. The `capella.zip` oder `capella/capella.tar.gz` should have the following structure (looking at the root of `capella.zip` / `capella.tar.gz`). It is the default structure of the offical releases: 
+2) Replace the empty file `capella/capella.zip` `capella/capella.tar.gz` with your custom Capella `zip` or `tar.gz`. The `capella.zip` or `capella/capella.tar.gz` should have the following structure (looking at the root of `capella.zip` / `capella.tar.gz`). It is the default structure of the offical releases: 
     - capella
       - configuration
       - features
@@ -116,7 +116,7 @@ In general, no additional configuration is necessary for the Build of the Remote
 
 - Remoteimage using Capella: 
     ```
-    docker build -t capella/remote remote/Dockerfile --build-arg BASE_IMAGE=capella/base
+    docker build -t capella/remote remote --build-arg BASE_IMAGE=capella/base
     ```
 - Remoteimage using T4C Client: 
     ```
@@ -148,7 +148,6 @@ Please replace $BASE with `capella` or `t4c/client`.
 ```
 docker run -d \
     -p $RDP_EXTERNAL_PORT:3389 \
-    -e BASE_IMAGE=capella \
     -e RMT_PASSWORD=$RMT_PASSWORD \
     capella/remote
 ```
@@ -168,7 +167,6 @@ Capella should then start automatically.
 ```
 docker run -d \
     -p $RDP_EXTERNAL_PORT:3389 \
-    -e BASE_IMAGE=t4c/client \
     -e T4C_LICENCE_SECRET=XXX \
     -e T4C_SERVER_HOST=$T4C_SERVER_HOST \
     -e T4C_SERVER_PORT=$T4C_SERVER_PORT \
@@ -213,7 +211,7 @@ where `$BASE` is again `capella` or `t4c/client`.
     ```
 
 ### Dockerfile Guidelines
-We tried to follow the common recommendations about writing Dockerfiles. 
+We tried to follow the common recommendations for writing Dockerfiles. 
 We have explicitly observed the following:
 - We use the package manager interface `apt-get`, because `apt` does not have a stable CLI interface and is not recommended to use in scripts.
 - We tried to reduce the number of layers and to group commands as much as possible. However, in some cases we use caching and in other cases it was not always possible to group everything for reasons of clarity.
