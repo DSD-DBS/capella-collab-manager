@@ -53,9 +53,14 @@ docker build -t base base
 <b>Important:</b>
  If you company has a specific Baseimage with all company configurations, of course, it can also be used: 
 ```
-docker build -t base --build-arg=$CUSTOM_IMAGE base
+docker build -t base --build-arg BASE_IMAGE=$CUSTOM_IMAGE base
 ```
 Make sure that your `$CUSTOM_IMAGE` is a Linux Image that has the common tools installed and uses the `apt` / `apt-get` Package Manager. If this is not the case, the image cannot be used. Our images were tested with the image `ubuntu:focal`. 
+
+If you like to set a custom UID for the techuser, you can run: 
+```
+docker build -t base --build-arg UID=1001 base
+```
 
 ### 2. Capella Baseimage
 The Capella Baseimage installs the Capella Client and Dropins. 

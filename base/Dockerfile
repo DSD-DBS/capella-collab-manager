@@ -8,7 +8,8 @@ RUN apt-get update && \
     unzip && rm -rf /var/lib/apt/lists/*
 
 # Create techuser with UID
-RUN useradd -l -m -u 1001000000 techuser
+ARG UID=1001
+RUN useradd -l -m -u $UID techuser
 RUN echo "techuser:tmp_passwd" | chpasswd
 ENV HOME=/home/techuser
 RUN chown techuser /home/techuser
