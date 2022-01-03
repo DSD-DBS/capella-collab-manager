@@ -34,7 +34,7 @@ RUN if [ -s capella.zip ]; then \
     elif [ -s capella.tar.gz ]; then \ 
     tar -xf capella.tar.gz; \
     else \
-    echo "capella.zip and capella.tar.gz are empty! Please replace the files" && \
+    echo "capella.zip and capella.tar.gz are empty! Please add you custom Capella zip or tar.gz" && \
     exit 1; \
     fi && \
     rm -rf samples capella.zip capella.tar.gz
