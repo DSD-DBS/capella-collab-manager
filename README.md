@@ -159,7 +159,7 @@ docker run -d \
 
 Please replace the followings variables: 
 - `$RDP_EXTERNAL_PORT` to the external Port for RDP on your host (usually `3389`)
-- `$RMT_PASSWORD` is the password for remote connections (for the login via RDP).
+- `$RMT_PASSWORD` is the password for remote connections (for the login via RDP). It has to be at least 8 characters long.
 
 After starting the Container, you should be able to connect to `localhost:$RDP_EXTERNAL_PORT` with your preferred RDP Client. 
 Please use the followings credentials: <br>
@@ -195,6 +195,9 @@ Please use the followings credentials: <br>
 <b>Password</b>: `$RMT_PASSWORD`
 
 Capella should then start automatically. You should be able to connect to T4C models out of the box. 
+
+The screen size is set every time the connection is established. Depending on your client, you are also able to set the preferred screen size in the settings. By default, Remmina (RDP client for linux) starts in a tiny window. To fix that, you can easily set "Use client resolution" instead of "Use initial window size" in the Remote Connection Profile.
+We also plan to integrate "dynamic resizing" in the near future. 
 
 ### EASE Container
 Run the image with this command and provide EASE Python Scripts as a volume. The scripts have to be located in the /opt/scripts directory (inside the container)! Please refer also to: [How does a EASE Python Script look like?](#python_ease).
