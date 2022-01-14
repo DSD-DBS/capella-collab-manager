@@ -34,7 +34,7 @@ spec:
             - name: POSTGRES_PASSWORD
               value: {{ .Values.database.guacamole.internal.password }}
           ports:
-            - name: http
+            - name: postgres
               containerPort: 5432
               protocol: TCP
           readinessProbe:

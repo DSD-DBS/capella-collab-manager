@@ -19,7 +19,8 @@ spec:
           image: guacamole/guacd:1.4.0
           imagePullPolicy: {{ .Values.pullPolicy }}
           ports:
-            - containerPort: 4822
+            - name: guacd
+              containerPort: 4822
               protocol: TCP
           readinessProbe:
             tcpSocket:
