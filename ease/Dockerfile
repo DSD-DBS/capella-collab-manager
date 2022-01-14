@@ -16,7 +16,13 @@ ARG BASE_IMAGE=capella/base
 
 FROM $BASE_IMAGE as prebuild
 
-RUN apt install -y openjdk-17-jre xdg-utils xvfb dbus-x11
+RUN apt-get update && \
+    apt-get install -y \ 
+    openjdk-17-jre \
+    xdg-utils \
+    xvfb \
+    dbus-x11 && \
+    rm -rf /var/lib/apt/lists/*
 
 # Use Virtual Display
 ENV DISPLAY :99
@@ -80,7 +86,7 @@ RUN /opt/capella/capella \
 RUN rm -rf /tmp/extensions
 RUN echo "-Dorg.eclipse.swtbot.search.timeout=1000" >> /opt/capella/capella.ini
 
-COPY ease/pyease /tmp/pyease
+COPY pyease /tmp/pyease
 RUN pip install /tmp/pyease
 
 ENV EASE_WORKSPACE /workspace
@@ -96,6 +102,6 @@ RUN chown -R techuser /workspace
 
 WORKDIR /home/techuser
 
-COPY ease/startup.sh /opt/startup.sh
+COPY startup.sh /opt/startup.sh
 RUN chmod +x /opt/startup.sh
 ENTRYPOINT [ "/opt/startup.sh" ]

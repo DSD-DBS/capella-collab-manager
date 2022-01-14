@@ -135,7 +135,8 @@ If your network is unrestricted, you can run the build with the following comman
 ```
 docker build -t $BASE/ease \
     --build-arg BASE_IMAGE=$BASE/base \
-    --build-arg BUILD_TYPE=online
+    --build-arg BUILD_TYPE=online \
+    ease
 ```
 Please replace $BASE with `capella` or `t4c/client`. 
 
@@ -143,7 +144,8 @@ If you network is restricted, please execute the steps described in [Download Ec
 ```
 docker build -t $BASE/ease \
     --build-arg BASE_IMAGE=$BASE/base \
-    --build-arg BUILD_TYPE=offline
+    --build-arg BUILD_TYPE=offline \
+    ease
 ```
 Please replace $BASE with `capella` or `t4c/client`. 
 
