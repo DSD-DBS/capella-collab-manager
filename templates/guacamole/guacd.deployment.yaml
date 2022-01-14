@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-guacamole-guacd
+  labels: 
+    id: {{ .Release.Name }}-deployment-guacamole-guacd
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector: 
+    matchLabels: 
+      id: {{ .Release.Name }}-deployment-guacamole-guacd
+  template:
+    metadata: 
+      labels: 
+        id: {{ .Release.Name }}-deployment-guacamole-guacd
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-guacamole-guacd
+          image: guacamole/guacd:1.4.0
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          ports:
+            - containerPort: 4822
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: 4822
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 4822
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
