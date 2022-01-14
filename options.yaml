@@ -15,10 +15,11 @@ docker:
     backend: /t4c/client/backend
 
     # Docker Image for the Garbage Cleaner
-    garbage-cleaner: /t4c/client/garbage-cleaner
+    garbageCleaner: /t4c/client/garbage-cleaner
 
     workspaces: 
-      # Docker Image for the Persistent Workspace Session
+      # Docker Image for the Persistent Workspace Session      name: http
+
       persistent: /t4c/client/remote
 
       # Docker Image for the ReadOnly Workspace
@@ -90,6 +91,9 @@ backend:
       # OAUTH2 Client Secret
       secret:
 
+  garbageCleaner:
+    cron: "*/10 * * * *"
+
 t4c-server:
   # URL to access the REST APIs of the T4C Server
   url:
@@ -128,8 +132,8 @@ git:
   email:
 
   # Jenkins Git Credentials ID (Git Plugin)
-  credential-id:
+  credentialID:
 
   # Repository URL for Scripts used by the Jenkins Backup Job (dsh-tools)
-  script-repo-url:
+  scriptRepoURL:
 
