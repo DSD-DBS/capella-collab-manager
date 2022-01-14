@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-backend
+  namespace: {{ .Release.Namespace }}
+  labels: 
+    id: {{ .Release.Name }}-configmap-backend
+data:
+  pubkey.pem: |-
+    {{ .Files.Get "config/pubkey.pem" | nindent 4 }}
