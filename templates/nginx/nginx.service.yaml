@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-nginx
+  annotations: 
+    {{- toYaml .Values.loadbalancer.annotations | nindent 4 }}
+  labels: 
+    id: {{ .Release.Name }}-service-nginx
+spec:
+  type: LoadBalancer
+  selector:
+    id: {{ .Release.Name }}-deployment-nginx
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http

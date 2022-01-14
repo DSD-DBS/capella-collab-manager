@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-nginx
+  labels: 
+    id: {{ .Release.Name }}-deployment-nginx
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector: 
+    matchLabels: 
+      id: {{ .Release.Name }}-deployment-nginx
+  template:
+    metadata: 
+      labels: 
+        id: {{ .Release.Name }}-deployment-nginx
+    spec:
+      volumes:
+        - name: {{ .Release.Name }}-nginx
+          configMap:
+            name: {{ .Release.Name }}-nginx
+      containers:
+        - name: {{ .Release.Name }}-nginx
+          image: nginxinc/nginx-unprivileged
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: {{ .Release.Name }}-nginx
+              mountPath: /etc/nginx
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
