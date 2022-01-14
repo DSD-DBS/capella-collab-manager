@@ -2,6 +2,8 @@
 ### KUBERNETES RELATED CONFIGURATION ###
 ########################################
 
+replicaCount: 1
+
 pullPolicy: Always
 
 imagePullSecrets: []
