@@ -1,0 +1,52 @@
+import typing as t
+
+from fastapi import HTTPException, Request
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from jose import jwt
+from t4cclient.config import OAUTH_CLIENT_ID, OAUTH_PUBLIC_KEY
+from t4cclient.core.database import SessionLocal, users
+
+
+class JWTBearer(HTTPBearer):
+    def __init__(self, auto_error: bool = True):
+        super(JWTBearer, self).__init__(auto_error=auto_error)
+
+    async def __call__(self, request: Request):
+        credentials: HTTPAuthorizationCredentials = await super(
+            JWTBearer, self
+        ).__call__(request)
+        if not credentials or credentials.scheme != "Bearer":
+            if self.auto_error:
+                raise HTTPException(
+                    status_code=401,
+                    detail="Not authenticated",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+            else:
+                return None
+        token_decoded = self.validate_token(credentials.credentials)
+        self.initialize_user(token_decoded)
+        return token_decoded
+
+    def validate_token(self, token: str) -> t.Dict[str, t.Any]:
+        try:
+            return jwt.decode(
+                token, OAUTH_PUBLIC_KEY, algorithms=["RS256"], audience=OAUTH_CLIENT_ID
+            )
+        except jwt.ExpiredSignatureError:
+            raise HTTPException(
+                status_code=401,
+                detail={
+                    "err_code": "token_exp",
+                    "reason": "The Signature of the token is expired. Please request a new access token.",
+                },
+            )
+        except (jwt.JWTError, jwt.JWTClaimsError):
+            raise HTTPException(
+                status_code=401,
+                detail="The token verification failed. Please try again with another access token.",
+            )
+
+    def initialize_user(self, token_decoded: t.Dict[str, str]):
+        with SessionLocal() as session:
+            users.find_or_create_user(session, token_decoded["sub"])

@@ -1,0 +1,144 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.40">
+  <actions>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@1.7.2"/>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@1.7.2">
+      <jobProperties/>
+      <triggers/>
+      <parameters/>
+      <options/>
+    </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
+  </actions>
+  <description>&lt;p&gt;A pipeline for backing up __T4C_PROJECT_NAME__ from the repository __T4C_REPO_NAME__.&lt;/p&gt;</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>10</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
+    <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.13">
+      <gitLabConnection>GitLab API</gitLabConnection>
+    </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    <hudson.plugins.jira.JiraProjectProperty plugin="jira@3.1.3"/>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <hudson.triggers.TimerTrigger>
+          <spec>H 03 * * 1-5</spec>
+        </hudson.triggers.TimerTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.85">
+    <script>import java.time.*
+
+pipeline {
+    agent any
+    environment {
+        // T4C
+        def repoName = &quot;__T4C_REPO_NAME__&quot;
+        def projectName = &quot;__T4C_PROJECT_NAME__&quot;
+        def importCommitHistory = true
+        // PROJECT
+        def space = &quot;$env.WORKSPACE&quot;
+        def importer = &quot;$space\\importer-workspace&quot;
+        def database = &quot;$space\\database&quot;
+        def logs = &quot;$space\\logs&quot;
+        def wkp = &quot;$space\\wkp&quot;
+        def lib = &quot;$space\\lib&quot;
+        def rsynch = &quot;$lib\\rsync\\lib&quot;
+        def smcpy = &quot;$lib\\smc\\lib&quot;
+        def eclipse = &quot;$lib\\capella\\eclipse&quot;
+        def aird = &quot;$wkp\\__MODEL_ENTRYPOINT__&quot;
+        def history = &quot;$wkp\\CommitHistory.json&quot;
+        // GIT
+        def branch = &quot;__GIT_BRANCH__&quot;
+        def credentialsId = &quot;__GIT_CREDENTIAL_ID__&quot;
+        def email = &quot;__GIT_EMAIL__&quot;
+        def username = &quot;__GIT_USERNAME__&quot;
+        // BUILD STATUS
+        def bstatus = 0
+    }
+    stages {
+        stage(&quot;Initialization&quot;) {
+            steps {
+                bat &quot;if not exist \&quot;$importer\\\&quot; mkdir \&quot;$importer\&quot;&quot;
+                bat &quot;if not exist \&quot;$logs\\\&quot; mkdir \&quot;$logs\&quot;&quot;
+                bat &quot;if not exist \&quot;$wkp\\\&quot; mkdir \&quot;$wkp\&quot;&quot;
+                bat &quot;if not exist \&quot;$database\\\&quot; mkdir \&quot;$database\&quot;&quot;
+                bat &quot;if not exist \&quot;$lib\\\&quot; mkdir \&quot;$lib\&quot;&quot;
+            }
+        }
+        stage(&quot;Checkout&quot;) {
+            steps {
+                dir(&quot;wkp&quot;) {
+                    git branch: &quot;nightly&quot;, credentialsId: credentialsId, url: &quot;__GIT_MODEL_URL__&quot;
+                }
+                dir(&quot;lib&quot;) {
+                    git branch: &quot;master&quot;, credentialsId: credentialsId, url: &quot;__JENKINS_SCRIPT_REPO_URL__&quot;
+                }
+            }
+        }
+        stage(&quot;T4C Import&quot;) {
+            steps {
+                dir(&quot;${env.TEAMFORCAPELLA_APP_HOME}/tools&quot;) {
+                    bat &quot;call importer.bat &quot; +
+                        &quot;-data \&quot;$importer\&quot; &quot; +
+                        &quot;-outputFolder \&quot;$wkp\&quot; &quot; +
+                        &quot;-logFolder \&quot;$logs\&quot; &quot; +
+                        &quot;-archiveProject false &quot; +
+                        &quot;-overrideExistingProject true &quot; +
+                        &quot;-addTimestampToResultFiles false &quot; +
+                        &quot;-closeserveronfailure false &quot; +
+                        &quot;-checksize -1 &quot; +
+                        &quot;-checksession false &quot; +
+                        &quot;-importCommitHistoryAsJson $importCommitHistory &quot; +
+                        &quot;-projectName $projectName &quot; +
+                        &quot;-repoName $repoName&quot;
+                }
+                dir(&quot;$wkp&quot;) {
+                    bat &quot;del CommitHistory.activitymetadata /s/q&quot;
+                    bat &quot;xcopy \&quot;__MODEL_ENTRYPOINT__\\.project\&quot; . /s/h/e/k/f/c/y&quot;
+                    bat &quot;xcopy \&quot;__MODEL_ENTRYPOINT__\\__MODEL_ENTRYPOINT__.afm\&quot; . /s/h/e/k/f/c/y&quot;
+                    bat &quot;xcopy \&quot;__MODEL_ENTRYPOINT__\\__MODEL_ENTRYPOINT__.aird\&quot; . /s/h/e/k/f/c/y&quot;
+                    bat &quot;xcopy \&quot;__MODEL_ENTRYPOINT__\\__MODEL_ENTRYPOINT__.capella\&quot; . /s/h/e/k/f/c/y&quot;
+                    bat &quot;rd \&quot;$wkp\\__MODEL_ENTRYPOINT__\&quot; /s/q&quot;
+                }
+            }
+        }
+        stage(&quot;GitLab Backup&quot;) {
+            steps {
+                dir(&quot;$wkp&quot;) {
+                    bat &quot;git config  --replace-all user.email $email&quot;
+                    bat &quot;git config  --replace-all user.name $username&quot;
+                    bat &quot;git add .&quot;
+                    bat &quot;git reset -- script.sql&quot;
+                }
+                bat &quot;C:\\python\\venvs\\jupyter\\Scripts\\python.exe \&quot;$smcpy\\smc.py\&quot; &quot; +
+                    &quot;--history \&quot;$history\&quot; &quot; +
+                    &quot;--repo \&quot;$wkp\&quot; &quot; +
+                    &quot;--branch \&quot;$branch\&quot;&quot;
+                dir(&quot;$wkp&quot;) {
+                    withCredentials([usernamePassword(credentialsId: &quot;af231c4f-57af-4b0b-97e7-95498af9c0cf&quot;, usernameVariable: &quot;USER&quot;, passwordVariable: &quot;PASS&quot;)]) {
+                        bat &quot;git push __GIT_URL_WITH_CREDENTIALS_ENV__&quot;
+                    }
+                }
+            }
+        }
+        stage(&quot;T4C Export&quot;) {
+            steps {
+                bat &quot;echo skip&quot;
+            }
+        }
+    }
+}
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
