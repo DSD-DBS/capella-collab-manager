@@ -28,11 +28,13 @@ spec:
           imagePullPolicy: {{ .Values.pullPolicy }}
           env:
             - name: PGDATA
-              value: /var/lib/postgresql/data/guacamole
+              value: /var/lib/postgresql/data
             - name: POSTGRES_DB
               value: guacamole
             - name: POSTGRES_PASSWORD
               value: {{ .Values.database.guacamole.internal.password }}
+            - name: POSTGRES_USER
+              value: guacamole
           ports:
             - name: postgres
               containerPort: 5432
