@@ -1,0 +1,16 @@
+mat-form-field {
+  margin: 10px;
+}
+
+h1 {
+  margin: 20px 0 0 10px;
+}
+
+mat-card {
+  width: fit-content;
+  margin: 10px;
+}
+
+#update-password-button {
+  min-width: 110px;
+}

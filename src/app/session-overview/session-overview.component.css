@@ -1,0 +1,19 @@
+.mat-cell {
+  padding: 8px 10px 8px 10px;
+}
+
+.mat-header-cell {
+  padding: 8px 10px 8px 10px;
+}
+
+table {
+  margin: 20px;
+}
+
+#close-all-sessions {
+  margin-left: 20px;
+}
+
+#licences {
+  margin: 20px 0 0 20px;
+}

@@ -1,0 +1,12 @@
+mat-card {
+  width: fit-content;
+  margin: 10px;
+}
+
+button {
+  margin-top: 10px;
+}
+
+.flexbox {
+  display: flex;
+}

@@ -1,0 +1,13 @@
+<h1 id="title">{{ repository }} Repository Options</h1>
+<div class="flexbox">
+  <app-repository-user-settings [repository]="repository">
+  </app-repository-user-settings>
+  <app-git-model-settings
+    [repository]="repository"
+    [projects]="projects"
+  ></app-git-model-settings>
+  <app-project-settings
+    [repository]="repository"
+    (projectEvent)="setProject($event)"
+  ></app-project-settings>
+</div>

@@ -1,0 +1,17 @@
+#manage-users {
+  min-width: 400px;
+}
+
+.user-selection {
+  height: 40vh;
+}
+
+button {
+  display: block;
+  margin: 5px;
+}
+
+#search {
+  padding-bottom: 0px;
+  width: 400px;
+}

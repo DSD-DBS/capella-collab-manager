@@ -1,0 +1,14 @@
+#mat-card-session-created {
+  margin-top: 40px;
+}
+
+.flexbox {
+  display: flex;
+}
+
+mat-card {
+  margin-top: 10px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}

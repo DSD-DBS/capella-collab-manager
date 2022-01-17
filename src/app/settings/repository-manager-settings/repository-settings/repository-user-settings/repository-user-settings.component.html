@@ -1,0 +1,144 @@
+<mat-card id="manage-users">
+  <h2>Manage Users</h2>
+  <mat-form-field id="search" appearance="outline">
+    <mat-label>Search</mat-label>
+    <input
+      [(ngModel)]="search"
+      autocomplete="off"
+      matInput
+      placeholder="Username"
+    />
+    <mat-icon matSuffix>search</mat-icon> </mat-form-field
+  >.
+  <ngx-simplebar class="user-selection">
+    <mat-selection-list #users [multiple]="false">
+      <div mat-subheader>Managers</div>
+      <mat-list-option
+        *ngFor="let user of getRepositoryUsersByRole('manager')"
+        [value]="user"
+      >
+        <mat-icon mat-list-icon>account_circle</mat-icon>
+        <div mat-line>{{ user.username }}</div>
+        <div mat-line>
+          {{ repoUserService.ADVANCED_ROLES[user.role] }},
+          {{ repoUserService.PERMISSIONS[user.permission] }}
+        </div>
+      </mat-list-option>
+      <div mat-subheader>Users</div>
+      <mat-list-option
+        *ngFor="let user of getRepositoryUsersByRole('user')"
+        [value]="user"
+      >
+        <mat-icon mat-list-icon>account_circle</mat-icon>
+        <div mat-line>{{ user.username }}</div>
+        <div mat-line>
+          {{ repoUserService.ADVANCED_ROLES[user.role] }},
+          {{ repoUserService.PERMISSIONS[user.permission] }}
+        </div>
+      </mat-list-option>
+    </mat-selection-list>
+  </ngx-simplebar>
+
+  <div
+    *ngIf="
+      users.selectedOptions.selected.length &&
+      userService.getUsernameFromLocalStorage() != selectedUser.username
+    "
+  >
+    <button
+      mat-flat-button
+      color="primary"
+      *ngIf="['user', 'manager'].includes(selectedUser.role)"
+      (click)="removeUserFromRepo(selectedUser.username)"
+    >
+      <mat-icon>delete</mat-icon> Remove {{ selectedUser.username }} from
+      {{ repository }}
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      *ngIf="'user' == selectedUser.role"
+      (click)="upgradeUserToRepositoryManager(selectedUser.username)"
+    >
+      <mat-icon>arrow_upward</mat-icon>
+      Upgrade
+      {{ selectedUser.username }} to Repository Manager
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      *ngIf="'manager' == selectedUser.role"
+      (click)="downgradeUserToUserRole(selectedUser.username)"
+    >
+      <mat-icon>arrow_downward</mat-icon>
+      Downgrade
+      {{ selectedUser.username }} to User
+    </button>
+    <div *ngIf="'manager' != selectedUser.role">
+      <button
+        mat-flat-button
+        color="primary"
+        *ngIf="'read' == selectedUser.permission"
+        (click)="setUserPermission(selectedUser.username, 'write')"
+      >
+        <mat-icon>folder_shared</mat-icon>
+        Set permission of User
+        {{ selectedUser.username }} to Read/Write
+      </button>
+      <button
+        mat-flat-button
+        color="primary"
+        *ngIf="'write' == selectedUser.permission"
+        (click)="setUserPermission(selectedUser.username, 'read')"
+      >
+        <mat-icon>folder_open</mat-icon>
+        Set permission of User
+        {{ selectedUser.username }} to Read only
+      </button>
+    </div>
+  </div>
+</mat-card>
+<mat-card>
+  <h2>Add User</h2>
+  <form [formGroup]="addUserToRepoForm">
+    <mat-form-field>
+      <mat-label>Username</mat-label>
+      <input matInput formControlName="username" />
+      <mat-error *ngIf="username.getError('required')"
+        >Please enter a username!</mat-error
+      >
+      <mat-error *ngIf="username.getError('lowerCaseError')"
+        >Usernames can only contain lowercase letters!
+      </mat-error>
+      <mat-error *ngIf="username.getError('userAlreadyInRepositoryError')"
+        >The user is already a member of this repository!
+      </mat-error>
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <mat-label>Role</mat-label>
+      <mat-select formControlName="role">
+        <mat-option
+          *ngFor="let role of repoUserService.ROLES | keyvalue"
+          [value]="role.key"
+          >{{ role.value }}</mat-option
+        >
+      </mat-select>
+      <mat-error>You have to select a Role!</mat-error> </mat-form-field
+    ><br />
+    <mat-form-field *ngIf="addUserToRepoForm.value.role != 'manager'">
+      <mat-label>Permission</mat-label>
+      <mat-select formControlName="permission">
+        <mat-option
+          *ngFor="let permission of repoUserService.PERMISSIONS | keyvalue"
+          [value]="permission.key"
+          >{{ permission.value }}</mat-option
+        >
+      </mat-select>
+      <mat-error>You have to select a Permission!</mat-error>
+    </mat-form-field>
+    <button (click)="addUser()" mat-flat-button color="primary">
+      Add User <mat-icon>keyboard_arrow_right</mat-icon>
+    </button>
+  </form>
+</mat-card>
