@@ -1,0 +1,14 @@
+{{ if eq .Values.type "persistent" }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-<name>
+spec:
+  accessModes:
+    - ReadWriteOnce # Use this when the volume is only mounted to one Pod
+    - ReadWriteMany # Use this when the volume is mounted to multiple Pods
+  resources:
+    requests:
+      storage: XXGi # Size of the EFS Storage
+  storageClassName: efs
+{{ end }}

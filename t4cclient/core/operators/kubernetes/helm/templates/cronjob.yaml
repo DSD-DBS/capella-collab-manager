@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $.Release.Name }}-<name>
+spec:
+  schedule: "{{ $.Values.schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+            # Example ConfigMap
+            - name: {{ .Release.Name }}-<name>
+              configMap:
+                name: {{ .Release.Name }}-<name>
+            # Example Persistent Storage
+            - name: {{ .Release.Name }}-volume
+              persistentVolumeClaim:
+                claimName: {{ .Release.Name }}-volume
+          restartPolicy: "OnFailure"
+          containers: 
+            - name: {{ $.Release.Name }}-<name>
+              image: {{ .Values.image.repository }}/base:latest
+              imagePullPolicy: {{ $.Values.image.pullPolicy }}
+              env:
+                - name: DEMO
+                  value: "TEST"
+              resources: 
+                {{- toYaml $.Values.resources | nindent 16 }}
+              volumeMounts:
+                # Example ConfigMap
+                - name: {{ .Release.Name }}-<name>
+                  mountPath: /path/to/mount
+                # Example Persistent Storage
+                - name: {{ .Release.Name }}-volume
+                  mountPath: /data
+              securityContext:
+                {{- toYaml $.Values.securityContext | nindent 16 }}

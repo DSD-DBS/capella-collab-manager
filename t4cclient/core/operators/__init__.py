@@ -3,11 +3,11 @@ from __future__ import annotations
 from t4cclient.config import OPERATOR_TYPE
 from t4cclient.core.operators.__main__ import Operator
 
-from . import docker, openshift
+from . import docker, kubernetes
 
 OPERATORS = {
     "docker": docker.DockerOperator,
-    # "kubernetes": openshift.KubernetesOperator,
+    "kubernetes": kubernetes.KubernetesOperator,
 }
 try:
     OPERATOR: Operator = OPERATORS[OPERATOR_TYPE]()
