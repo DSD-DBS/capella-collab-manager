@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-backend-env
+  namespace: {{ .Release.Namespace }}
+  labels: 
+    id: {{ .Release.Name }}-configmap-backend-env
+data:
+    OAUTH_TOKEN_ISSUANCE_ENDPOINT: {{ .Values.backend.oauth.tokenIssuanceEndpoint }}
+    OAUTH_AUTHORIZATION_ENDPOINT: {{ .Values.backend.oauth.authorizationEndpoint }}
+    OAUTH_CLIENT_ID: {{ .Values.backend.oauth.client.id }}
+    OAUTH_CLIENT_SECRET: {{ .Values.backend.oauth.client.secret }}
+    OAUTH_REDIRECT_URI: {{ .Values.general.url }}/oauth2/callback
+    DOCKER_PERSISTENT_IMAGE: {{ .Values.docker.images.workspaces.persistent }}
+    DOCKER_READONLY_IMAGE: {{ .Values.docker.images.workspaces.readonly }}
+    GUACAMOLE_BASE_URI: {{ .Values.general.url }}/guacamole
+    GUACAMOLE_USERNAME: {{ .Values.guacamole.username }}
+    GUACAMOLE_PASSWORD: {{ .Values.guacamole.password }}
+    {{ if .Values.database.deploy }}
+    SQL_DATABASE_URL: "postgresql://backend:${{ .Values.database.backend.internal.password }}@{{ .Release.Name }}-guacamole-postgres:5432/backend"
+    {{ else }}
+    SQL_DATABASE_URL: {{ .Values.database.backend.external.uri }}
+    {{ end }}
+    T4C_SERVER_URL: {{ .Values.t4cServer.url }}
+    T4C_SERVER_USERNAME: {{ .Values.t4cServer.username }}
+    T4C_SERVER_PASSWORD: {{ .Values.t4cServer.password }}
+    T4C_SERVER_HOST: {{ .Values.t4cServer.host }}
+    KUBERNETES_API_URL: {{ .Values.kubernetes.apiURL }}
+    KUBERNETES_TOKEN: {{ .Values.kubernetes.token }}
+    KUBERNETES_NAMESPACE: {{ .Values.kubernetes.namespace }}
+    OPERATOR_TYPE: kubernetes
+    JENKINS_USERNAME: {{ .Values.jenkins.username }}
+    JENKINS_PASSWORD: {{ .Values.jenkins.password }}
+    JENKINS_BASE_URL: {{ .Values.jenkins.baseURL }}
+    JENKINS_GIT_USERNAME: {{ .Values.git.username }}
+    JENKINS_GIT_EMAIL: {{ .Values.git.email }}
+    JENKINS_GIT_CREDENTIAL_ID: {{ .Values.git.credentialID }}
+    JENKINS_GIT_SCRIPT_REPO_URL: {{ .Values.git.scriptRepoURL }}
+    GIT_USERNAME: {{ .Values.git.username }}
+    GIT_PASSWORD: {{ .Values.git.password }}

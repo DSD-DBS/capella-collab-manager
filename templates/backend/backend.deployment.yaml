@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-backend
+  labels: 
+    id: {{ .Release.Name }}-deployment-backend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector: 
+    matchLabels: 
+      id: {{ .Release.Name }}-deployment-backend
+  template:
+    metadata: 
+      labels: 
+        id: {{ .Release.Name }}-deployment-backend
+    spec:
+      volumes:
+        - name: {{ .Release.Name }}-backend
+          configMap:
+            name: {{ .Release.Name }}-backend
+      containers:
+        - name: {{ .Release.Name }}-backend
+          image: {{ .Values.docker.backend }}
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          envFrom:
+            - configMapRef: 
+                name: {{ .Release.Name }}-backend-env
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: {{ .Release.Name }}-backend
+              mountPath: /backend/config/pubkey.pem
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
