@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-garbage-cleaner
+spec:
+  schedule: "{{ .Values.backend.garbageCleaner.cron }}"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: "OnFailure"
+          containers: 
+            - name: {{ .Release.Name }}-garbage-cleaner
+              image: {{ .Values.docker.backend }}
+              command: ["python"]
+              args: ["-m", "t4cclient.core.garbage_cleaner"]
+              imagePullPolicy: {{ $.Values.pullPolicy }}
+              envFrom:
+                - configMapRef: 
+                    name: {{ .Release.Name }}-backend-env
+              resources: 
+                {{- toYaml $.Values.resources | nindent 16 }}
+              securityContext:
+                {{- toYaml $.Values.securityContext | nindent 16 }}
