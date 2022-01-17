@@ -61,7 +61,7 @@ database:
       password: 
 
   # Database Configuration for the T4C Manager
-  service: 
+  backend: 
     external:
       ###### IGNORED IF database.deploy == True ######
 
@@ -82,9 +82,9 @@ guacamole:
 backend:
   oauth:
     # Endpoint that issues JWT Tokens
-    token_issuance_endpoint:
+    tokenIssuanceEndpoint:
     # Endpoint that authorizes the User
-    autorization_endpoint:
+    authorizationEndpoint:
     client:
       # OAUTH2 Client ID
       id:
@@ -94,7 +94,7 @@ backend:
   garbageCleaner:
     cron: "*/10 * * * *"
 
-t4c-server:
+t4cServer:
   # URL to access the REST APIs of the T4C Server
   url:
 
@@ -107,7 +107,7 @@ t4c-server:
 
 kubernetes:
   # API URL / Endpoint for Kubernetes CLI commands (used to spawn the Session Deployments / Pods)
-  api-url:
+  apiURL:
 
   # Kubernetes Token for Authentication
   token:
@@ -121,7 +121,7 @@ jenkins:
   password:
 
   # Base URL of the existing Jenkins Instance
-  base-url:
+  baseURL:
 
 git:
   # Git Credentials to fetch the Models from Git for the Read Only Workspaces.
