@@ -10,7 +10,8 @@ RUN T4C_ZIP=$(find . -type f -iname "*.zip" | head -n 1 | cut -c 3-); \
     -application org.eclipse.equinox.p2.director \
     -noSplash \
     -repository jar:file:///opt/updateSite/$T4C_ZIP!/ \
-    -installIU com.thalesgroup.mde.melody.collab.feature.feature.group,com.thalesgroup.mde.melody.collab.maintenance.feature.feature.group,com.thalesgroup.mde.melody.collab.licbranding.feature.feature.group
+    -installIU com.thalesgroup.mde.melody.collab.feature.feature.group,com.thalesgroup.mde.melody.collab.maintenance.feature.feature.group,com.thalesgroup.mde.melody.collab.licbranding.feature.feature.group && \
+    chown -R techuser /opt/capella/configuration
 
 RUN chown techuser /opt/capella/capella.ini && \
     echo '-DOBEO_LICENSE_SERVER_CONFIGURATION=$T4C_LICENCE_SECRET' >> /opt/capella/capella.ini

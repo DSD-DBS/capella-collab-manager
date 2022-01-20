@@ -72,4 +72,6 @@ RUN mkdir -p /opt/capella/configuration/.settings; \
     chown -R techuser /workspace && \
     chown -R techuser /opt/capella/configuration
 
+RUN echo '-Dosgi.configuration.area=file:/opt/capella/configuration' >> /opt/capella/capella.ini
+
 ENV BASE_TYPE=capella
