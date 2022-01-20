@@ -23,12 +23,7 @@ LOGGER = logging.getLogger("prepare_workspace")
 OBEO_COLLAB_CONF = pathlib.Path(
     "/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/fr.obeo.dsl.viewpoint.collab.prefs"
 )
-REPOSITORIES_BASE_PATH = pathlib.Path(
-    os.getenv(
-        "ECLIPSE_CONFIGURATION_PATH",
-        next(pathlib.Path("/home/techuser/.eclipse").rglob("org.eclipse.platform_*")) / "configuration",
-    )
-)
+REPOSITORIES_BASE_PATH = pathlib.Path("/opt/capella/configuration")
 ECLIPSE_UI_PREFS_PATH = (
     REPOSITORIES_BASE_PATH / ".settings" / "org.eclipse.ui.ide.prefs"
 )
