@@ -24,6 +24,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     supervisor \
     openbox \
     obconf \
+    gettext-base \
     nitrogen && rm -rf /var/lib/apt/lists/*
 
 COPY rc.xml /etc/xdg/openbox/rc.xml
