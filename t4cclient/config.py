@@ -67,9 +67,3 @@ JENKINS_GIT_SCRIPT_REPO_URL = get_config("JENKINS_GIT", "SCRIPT_REPO_URL")
 
 GIT_USERNAME = get_config("GIT", "USERNAME")
 GIT_PASSWORD = get_config("GIT", "PASSWORD")
-
-try:
-    OAUTH_PUBLIC_KEY = (config_directory / "pubkey.pem").read_text()
-except FileNotFoundError:
-    LOGGER.warning("No OAUTH2 Public Key found. Defaulting to empty string.")
-    OAUTH_PUBLIC_KEY = ""

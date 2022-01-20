@@ -37,7 +37,10 @@ async def api_get_token(body: TokenRequest):
     auth_data = global_session_data[body.state]
     del global_session_data[body.state]
     token = ad_session.acquire_token_by_auth_code_flow(auth_data, body.dict(), scopes=[])
-    return token
+
+    # *Sigh* This is microsoft again. Instead of the access_token, we should use id_token :/
+    # https://stackoverflow.com/questions/63195081/how-to-validate-a-jwt-from-azuread-in-python
+    return {"access_token": token["id_token"], "refresh_token": token["refresh_token"], "token_type": token["token_type"]}
 
 
 @router.put("/tokens", name="Refresh the access_token")
