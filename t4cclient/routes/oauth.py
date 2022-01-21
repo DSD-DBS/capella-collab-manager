@@ -1,3 +1,4 @@
+from re import A
 import secrets
 import typing as t
 
@@ -49,9 +50,12 @@ async def api_refresh_token(body: RefreshTokenRequest):
     return ad_session.acquire_token_by_refresh_token(body.refresh_token, scopes=[])
 
 
-@router.delete("/tokens", name="Invalidate the token (log out)")
+@router.get("/logout", name="Invalidate the token (log out)")
 async def validate_token(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
-    return jwt_decoded
+    for account in ad_session.get_accounts():
+        if account["username"] == jwt_decoded["preferred_username"]:
+            return ad_session.remove_account(account)
+    return None
 
 
 @router.get("/tokens", name="Validate the token")
