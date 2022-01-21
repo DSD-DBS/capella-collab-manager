@@ -1,0 +1,22 @@
+kind: Ingress
+  name: {{ .Release.Name }}-nginx
+  labels: 
+    id: {{ .Release.Name }}-ingress-nginx
+  annotations: 
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+    - hosts:
+        - {{ .Values.general.host }}
+      secretName: {{ .Release.Name }}-tls-secret
+  rules:
+    - host: {{ .Values.general.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-nginx-clusterip
+                port:
+                  number: 80

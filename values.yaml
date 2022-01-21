@@ -30,9 +30,12 @@ securityContext:
 
 # Loadbalancer config
 loadbalancer:
-  annotations:
-    test: test2
-  type: LoadBalancer
+  metadata: 
+    annotations:
+      test: test2
+
+# Define if the T4C Manager should be deployed using a Kubernetes Service or Ingress
+PublicServiceType: Ingress | Service
 
 # StorageClassName for Persistent Volumes
 storageClassName: 
