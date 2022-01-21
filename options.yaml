@@ -87,6 +87,8 @@ backend:
       id:
       # OAUTH2 Client Secret
       secret:
+    # Add Username claim
+    usernameClaim: sub 
 
   garbageCleaner:
     cron: "*/10 * * * *"

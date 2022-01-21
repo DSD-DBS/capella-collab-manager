@@ -11,6 +11,7 @@ data:
     OAUTH_CLIENT_ID: {{ .Values.backend.oauth.client.id }}
     OAUTH_CLIENT_SECRET: {{ .Values.backend.oauth.client.secret }}
     OAUTH_REDIRECT_URI: {{ .Values.general.url }}/oauth2/callback
+    OAUTH_USERNAME_CLAIM: {{ .Values.backend.usernameClaim }}
     DOCKER_PERSISTENT_IMAGE: {{ .Values.docker.images.workspaces.persistent }}
     DOCKER_READONLY_IMAGE: {{ .Values.docker.images.workspaces.readonly }}
     GUACAMOLE_BASE_URI: {{ .Values.general.url }}/guacamole
