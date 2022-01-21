@@ -67,3 +67,5 @@ JENKINS_GIT_SCRIPT_REPO_URL = get_config("JENKINS_GIT", "SCRIPT_REPO_URL")
 
 GIT_USERNAME = get_config("GIT", "USERNAME")
 GIT_PASSWORD = get_config("GIT", "PASSWORD")
+
+USERNAME_CLAIM = "preferred_username" # For AzureAD, normally "sub"

@@ -9,6 +9,8 @@ from t4cclient.extensions import guacamole
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.guacamole import GuacamoleAuthentication
 
+
+
 router = APIRouter()
 
 
@@ -23,7 +25,7 @@ def create_guacamole_token(
     token=Depends(JWTBearer()),
 ):
     session = sessions.get_session_by_id(db, id)
-    if session.owner_name != token["sub"]:
+    if session.owner_name != token[USERNAME]:
         raise HTTPException(
             status_code=403,
             detail="The owner of the session does not match with your username.",

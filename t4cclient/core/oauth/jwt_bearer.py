@@ -6,7 +6,7 @@ from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt
 from pydantic import BaseModel
-from t4cclient.config import OAUTH_CLIENT_ID, OAUTH_ENDPOINT
+from t4cclient.config import OAUTH_CLIENT_ID, OAUTH_ENDPOINT, USERNAME_CLAIM
 from t4cclient.core.database import SessionLocal, users
 
 
@@ -33,7 +33,7 @@ class JWTBearer(HTTPBearer):
 
     def initialize_user(self, token_decoded: t.Dict[str, str]):
         with SessionLocal() as session:
-            users.find_or_create_user(session, token_decoded["sub"])
+            users.find_or_create_user(session, token_decoded[USERNAME_CLAIM])
 
     def validate_token(self, token: str) -> t.Dict[str, t.Any]:
         key = KeyStore.key_for_token(token)
