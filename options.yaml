@@ -14,9 +14,6 @@ docker:
     # Docker Image for the Backend
     backend: /t4c/client/backend
 
-    # Docker Image for the Garbage Cleaner
-    garbageCleaner: /t4c/client/garbage-cleaner
-
     workspaces: 
       # Docker Image for the Persistent Workspace Session      name: http
 
