@@ -39,6 +39,18 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.localStorageService.getValue('access_token');
   }
+
+  logOut() {
+    console.log("About to log out",)
+    return this.http.get(
+      environment.backend_url + '/auth/oauth/logout',
+    ).toPromise().then(() => {
+      console.log("Done logging out");
+      this.localStorageService.setValue('access_token', '');
+      this.localStorageService.setValue('refresh_token', '');
+      this.localStorageService.setValue('GUAC_AUTH', '');
+    });
+  }
 }
 
 export interface GetRedirectURLResponse {
