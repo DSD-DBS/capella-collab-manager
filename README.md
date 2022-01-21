@@ -20,5 +20,5 @@ ng serve --open
 ## Run it
 
 ```
-docker run t4c/client/frontend
+docker run -p 8000:80 t4c/client/frontend
 ```
