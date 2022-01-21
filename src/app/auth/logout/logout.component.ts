@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { LocalStorageService } from '../local-storage/local-storage.service';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-logout',
@@ -12,14 +12,12 @@ export class LogoutComponent implements OnInit {
   autoLogin = false;
 
   constructor(
-    private localStorageService: LocalStorageService,
+    private authService: AuthService,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.localStorageService.setValue('access_token', '');
-    this.localStorageService.setValue('refresh_token', '');
-    this.localStorageService.setValue('GUAC_AUTH', '');
+    this.authService.logOut();
     this.route.queryParams.subscribe((params) => {
       this.reason = params['reason'];
       if (this.reason === 'session-expired') {
