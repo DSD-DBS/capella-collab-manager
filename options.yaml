@@ -24,7 +24,9 @@ docker:
 
 general: 
   # Base URL on which the service listens
-  url: http://localhost:8080
+  host: localhost
+  port: 8080
+  scheme: http
 
 database: 
   # Define whether the database should also be deployed in the cluster or whether it already exists externally. 
