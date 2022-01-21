@@ -1,33 +1,34 @@
-from fastapi import APIRouter, Depends, Request
-from t4cclient.core.oauth import (
-    jwt_bearer,
-    refresh_token
-)
-from t4cclient.schemas.oauth import RefreshTokenRequest, TokenRequest
-
-router = APIRouter()
-
+import secrets
 import typing as t
 
-from fastapi import Depends, Request
+from cachetools import TTLCache
+from fastapi import APIRouter, Depends
 from msal import ConfidentialClientApplication
+
 from t4cclient.config import (
     OAUTH_CLIENT_ID,
     OAUTH_CLIENT_SECRET,
     OAUTH_ENDPOINT,
 )
+from t4cclient.core.oauth import (
+    jwt_bearer,
+)
+from t4cclient.schemas.oauth import RefreshTokenRequest, TokenRequest
 
 
+router = APIRouter()
 ad_session = ConfidentialClientApplication(OAUTH_CLIENT_ID, client_credential=OAUTH_CLIENT_SECRET, authority=OAUTH_ENDPOINT)
 
 
-# WARN: This might be a security risk:
-global_session_data = {}
+# Make this a cache:
+global_session_data = TTLCache(maxsize=128, ttl=3600)
 
 
 @router.get("/", name="Get redirect URL for OAuth")
 async def get_redirect_url():
-    session_data = ad_session.initiate_auth_code_flow(scopes=[])
+    state = secrets.token_hex(32)
+    assert state not in global_session_data
+    session_data = ad_session.initiate_auth_code_flow(scopes=[], state=state)
     global_session_data[session_data["state"]] = session_data
     return {"auth_url": session_data["auth_uri"], "state": session_data["state"]}
 
@@ -45,7 +46,12 @@ async def api_get_token(body: TokenRequest):
 
 @router.put("/tokens", name="Refresh the access_token")
 async def api_refresh_token(body: RefreshTokenRequest):
-    return refresh_token(body.refresh_token)
+    return ad_session.acquire_token_by_refresh_token(body.refresh_token, scopes=[])
+
+
+@router.delete("/tokens", name="Invalidate the token (log out)")
+async def validate_token(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
+    return jwt_decoded
 
 
 @router.get("/tokens", name="Validate the token")
