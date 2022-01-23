@@ -9,7 +9,7 @@ spec:
   selector:
     id: {{ .Release.Name }}-deployment-guacamole-guacamole
   ports:
-    - port: 80
+    - port: 8080
       targetPort: http
       protocol: TCP
       name: http
