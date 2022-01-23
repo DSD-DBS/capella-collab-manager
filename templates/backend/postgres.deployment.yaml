@@ -19,16 +19,13 @@ spec:
         - name: {{ .Release.Name }}-data
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-volume-backend-postgres
-        - name: {{ .Release.Name }}-initsql
-          configMap:
-            name: {{ .Release.Name }}-configmap-backend-postgres
       containers:
         - name: {{ .Release.Name }}-backend-postgres
           image: postgres:14.1
           imagePullPolicy: {{ .Values.pullPolicy }}
           env:
             - name: PGDATA
-              value: /var/lib/postgresql/data
+              value: /var/lib/postgresql/data/data
             - name: POSTGRES_DB
               value: backend
             - name: POSTGRES_PASSWORD
@@ -59,8 +56,6 @@ spec:
           volumeMounts:
             - name: {{ .Release.Name }}-data
               mountPath: /var/lib/postgresql/data
-            - name: {{ .Release.Name }}-initsql
-              mountPath: /docker-entrypoint-initdb.d
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
 {{ end }}
