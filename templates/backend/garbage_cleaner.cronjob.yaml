@@ -11,7 +11,7 @@ spec:
           restartPolicy: "OnFailure"
           containers: 
             - name: {{ .Release.Name }}-garbage-cleaner
-              image: {{ .Values.docker.backend }}
+              image: {{ .Values.docker.registry }}{{ .Values.docker.images.backend }}
               command: ["python"]
               args: ["-m", "t4cclient.core.garbage_cleaner"]
               imagePullPolicy: {{ $.Values.pullPolicy }}
