@@ -20,7 +20,7 @@ spec:
             name: {{ .Release.Name }}-backend
       containers:
         - name: {{ .Release.Name }}-backend
-          image: {{ .Values.docker.backend }}
+          image: {{ .Values.docker.registry }}{{ .Values.docker.images.backend }}
           imagePullPolicy: {{ .Values.pullPolicy }}
           envFrom:
             - configMapRef: 
