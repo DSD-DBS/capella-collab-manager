@@ -15,8 +15,7 @@ docker:
     backend: /t4c/client/backend
 
     workspaces: 
-      # Docker Image for the Persistent Workspace Session      name: http
-
+      # Docker Image for the Persistent Workspace Session
       persistent: /t4c/client/remote
 
       # Docker Image for the ReadOnly Workspace
