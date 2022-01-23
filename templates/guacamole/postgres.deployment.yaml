@@ -28,7 +28,7 @@ spec:
           imagePullPolicy: {{ .Values.pullPolicy }}
           env:
             - name: PGDATA
-              value: /var/lib/postgresql/data
+              value: /var/lib/postgresql/data/data
             - name: POSTGRES_DB
               value: guacamole
             - name: POSTGRES_PASSWORD
