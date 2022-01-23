@@ -4,5 +4,7 @@
 
 Thanks for using our tools! 
 
+{{ if eq .Values.serviceType "Service" }}
 You can get the URL of the running server with: 
-$ kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" services {{ .Release.Name }}-<service>
+$ kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" services {{ .Release.Name }}-nginx
+{{ end }}
