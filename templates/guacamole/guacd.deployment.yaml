@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: {{ .Release.Name }}-guacamole-guacd
-          image: guacamole/guacd:1.4.0
+          image: guacamole/guacd:latest
           imagePullPolicy: {{ .Values.pullPolicy }}
           ports:
             - name: guacd

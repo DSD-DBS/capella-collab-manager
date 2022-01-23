@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: {{ .Release.Name }}-guacamole-guacamole
-          image: guacamole/guacamole:1.4.0
+          image: guacamole/guacamole:latest
           imagePullPolicy: {{ .Values.pullPolicy }}
           env:
             - name: GUACD_HOSTNAME
