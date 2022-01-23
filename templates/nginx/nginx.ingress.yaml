@@ -1,3 +1,4 @@
+{{ if eq .Values.serviceType "Ingress" }}
 kind: Ingress
   name: {{ .Release.Name }}-nginx
   labels: 
@@ -20,3 +21,4 @@ spec:
                 name: {{ .Release.Name }}-nginx-clusterip
                 port:
                   number: 80
+{{ end }}
