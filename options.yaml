@@ -109,8 +109,8 @@ t4cServer:
     restAPI: localhost:8090/api/v1.0
 
   # Credentials to authenticate against the REST API endpoint (HTTPBasic)
-  username: username
-  password: password
+  username: sampleUser
+  password: samplePassword
 
   # IPv4 Address of the T4C Server
   host: localhost
