@@ -99,7 +99,9 @@ def request_session(
         else:
             repositories = [repo.repository_name for repo in user.repositories]
         session = OPERATOR.start_persistent_session(
-            username=token[USERNAME_CLAIM], password=rdp_password, repositories=repositories
+            username=token[USERNAME_CLAIM],
+            password=rdp_password,
+            repositories=repositories,
         )
 
     elif body.type == WorkspaceType.READONLY:
