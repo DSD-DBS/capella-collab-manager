@@ -119,6 +119,7 @@ t4cServer:
   # IPv4 Address of the T4C Server
   host: localhost
   port: 2036
+  licenceKey: 
 
 kubernetes:
   # API URL / Endpoint for Kubernetes CLI commands (used to spawn the Session Deployments / Pods)
