@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from t4cclient.core import database
+from t4cclient.core.database import __main__ as database
 from t4cclient.routes import router
 
 database.migrate_db()

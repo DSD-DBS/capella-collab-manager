@@ -11,9 +11,9 @@ config_parser.read(config_file_path)
 LOGGER = logging.getLogger(__file__)
 
 
-def get_config(group: str, key: str) -> str:
+def get_config(group: str, key: str, fallback: str = "") -> str:
     config = config_parser.get(
-        group, key, fallback=os.environ.get(f"{group}_{key.upper()}", "")
+        group, key, fallback=os.environ.get(f"{group}_{key.upper()}", fallback)
     )
 
     if not config:
@@ -41,18 +41,21 @@ OAUTH_ENDPOINT = get_config("OAUTH", "authorization_endpoint")
 OAUTH_CLIENT_ID = get_config("OAUTH", "client_id")
 OAUTH_CLIENT_SECRET = get_config("OAUTH", "client_secret")
 OAUTH_REDIRECT_URI = get_config("OAUTH", "redirect_uri")
+USERNAME_CLAIM = get_config("OAUTH", "USERNAME_CLAIM")
 DATABASE_URL = get_config("SQL", "DATABASE_URL")
 
 T4C_SERVER_USERNAME = get_config("T4C_SERVER", "USERNAME")
 T4C_SERVER_PASSWORD = get_config("T4C_SERVER", "PASSWORD")
 T4C_SERVER_HOST = get_config("T4C_SERVER", "HOST")
 T4C_SERVER_PORT = get_config("T4C_SERVER", "PORT")
-T4C_LICENCE = get_config("T4C_SERVER", "HOST")
+T4C_LICENCE = get_config("T4C_SERVER", "LICENCE")
 
 T4C_USAGE_API = get_config("T4C_SERVER", "USAGE_API")
 T4C_REST_API = get_config("T4C_SERVER", "REST_API")
 
-KUBERNETES_API_URL = get_config("KUBERNETES", "API_URL")
+KUBERNETES_API_URL = get_config(
+    "KUBERNETES", "API_URL", "https://kubernetes.default.svc"
+)
 KUBERNETES_TOKEN = get_config("KUBERNETES", "TOKEN")
 KUBERNETES_NAMESPACE = get_config("KUBERNETES", "NAMESPACE")
 
@@ -71,5 +74,3 @@ GIT_USERNAME = get_config("GIT", "USERNAME")
 GIT_PASSWORD = get_config("GIT", "PASSWORD")
 
 INITIAL_ADMIN_USER = get_config("USERS", "INITIAL_ADMIN")
-
-USERNAME_CLAIM = "preferred_username"  # For AzureAD, normally "sub"
