@@ -26,8 +26,8 @@ data:
     T4C_SERVER_REST_API: {{ .Values.t4cServer.apis.restAPI }}
     T4C_SERVER_USERNAME: {{ .Values.t4cServer.username }}
     T4C_SERVER_PASSWORD: {{ .Values.t4cServer.password }}
-    T4C_SERVER_HOST: {{ .Values.t4cServer.host }}
-    T4C_SERVER_PORT: {{ .Values.t4cServer.port }}
+    T4C_SERVER_HOST: "{{ .Values.t4cServer.host }}"
+    T4C_SERVER_PORT: "{{ .Values.t4cServer.port }}"
     KUBERNETES_API_URL: {{ .Values.kubernetes.apiURL }}
     KUBERNETES_TOKEN: {{ .Values.kubernetes.token }}
     KUBERNETES_NAMESPACE: {{ .Values.kubernetes.namespace }}
@@ -41,3 +41,4 @@ data:
     JENKINS_GIT_SCRIPT_REPO_URL: {{ .Values.git.scriptRepoURL }}
     GIT_USERNAME: {{ .Values.git.username }}
     GIT_PASSWORD: {{ .Values.git.password }}
+    USERS_INITIAL_ADMIN: {{ .Values.database.backend.initialAdmin }}

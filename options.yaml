@@ -60,6 +60,10 @@ database:
 
   # Database Configuration for the T4C Manager
   backend: 
+    # Username of an initial admin user 
+    # Is only set if the database is empty!
+    initialAdmin: 
+
     external:
       ###### IGNORED IF database.deploy == True ######
 
