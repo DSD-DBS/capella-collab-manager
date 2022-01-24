@@ -8,15 +8,15 @@ metadata:
 data:
     OAUTH_TOKEN_ISSUANCE_ENDPOINT: {{ .Values.backend.oauth.tokenIssuanceEndpoint }}
     OAUTH_AUTHORIZATION_ENDPOINT: {{ .Values.backend.oauth.authorizationEndpoint }}
-    OAUTH_CLIENT_ID: {{ .Values.backend.oauth.client.id }}
-    OAUTH_CLIENT_SECRET: {{ .Values.backend.oauth.client.secret }}
+    OAUTH_CLIENT_ID: "{{ .Values.backend.oauth.client.id }}"
+    OAUTH_CLIENT_SECRET: "{{ .Values.backend.oauth.client.secret }}"
     OAUTH_REDIRECT_URI: "{{ .Values.general.scheme }}{{ .Values.general.host }}:{{ .Values.general.port }}/oauth2/callback"
     OAUTH_USERNAME_CLAIM: {{ .Values.backend.oauth.usernameClaim }}
     DOCKER_PERSISTENT_IMAGE: {{ .Values.docker.registry }}{{ .Values.docker.images.workspaces.persistent }}
     DOCKER_READONLY_IMAGE: {{ .Values.docker.registry }}{{ .Values.docker.images.workspaces.readonly }}
     GUACAMOLE_BASE_URI: "{{ .Values.general.scheme }}{{ .Values.general.host }}:{{ .Values.general.port }}/guacamole"
-    GUACAMOLE_USERNAME: {{ .Values.guacamole.username }}
-    GUACAMOLE_PASSWORD: {{ .Values.guacamole.password }}
+    GUACAMOLE_USERNAME: "{{ .Values.guacamole.username }}"
+    GUACAMOLE_PASSWORD: "{{ .Values.guacamole.password }}"
     {{ if .Values.database.deploy }}
     SQL_DATABASE_URL: "postgresql://backend:{{ .Values.database.backend.internal.password }}@{{ .Release.Name }}-backend-postgres:5432/backend"
     {{ else }}
