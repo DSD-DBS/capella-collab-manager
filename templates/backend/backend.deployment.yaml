@@ -40,8 +40,5 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          volumeMounts:
-            - name: {{ .Release.Name }}-backend
-              mountPath: /backend/config/pubkey.pem
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}

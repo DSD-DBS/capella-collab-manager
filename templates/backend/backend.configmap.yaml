@@ -6,5 +6,3 @@ metadata:
   labels: 
     id: {{ .Release.Name }}-configmap-backend
 data:
-  pubkey.pem: |-
-    {{ .Files.Get "config/pubkey.pem" | nindent 4 }}
