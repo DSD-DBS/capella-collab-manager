@@ -15,12 +15,12 @@ router = APIRouter()
     "/",
     response_model=t.List[NoticeResponse],
 )
-def get_notices(db: Session = Depends(get_db)):
+def get_notices(db: Session = Depends(get_db), _token=Depends(JWTBearer())):
     return notices.get_all_notices(db)
 
 
 @router.get("/{id}")
-def get_notice_by_id(id: int, db: Session = Depends(get_db)):
+def get_notice_by_id(id: int, db: Session = Depends(get_db), _token=Depends(JWTBearer())):
     return notices.get_notice(db, id)
 
 
