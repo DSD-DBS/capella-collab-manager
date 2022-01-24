@@ -53,3 +53,33 @@ When you'd like to update configuration variables or like to upgrade to a newer 
 ```
 ./commands/upgrade.sh
 ```
+
+
+## Local development
+
+To develop locally, you can use [K3D](https://k3d.io).
+
+Set up a K8s environmena, a registry and a cluster:
+
+```bash
+k3d registry create myregistry.localhost --port 12345    
+k3d cluster create ertms --registry-use k3d-myregistry.localhost:12345 --api-port 0.0.0.0:6550 --no-lb
+```
+
+Build the services and push them to the cluster registry:
+
+```
+docker build -t k3d-myregistry.localhost:12345/t4c/client/backend:latest .
+docker push k3d-myregistry.localhost:12345/t4c/client/backend:latest      
+```
+
+Repeat for `t4c/client/frontend` (and Capella container?).
+
+* Create an admin token to allow the T4C-manager-backend to allow to deploy Capella instances.
+* Fix log-on credentials for Azure AD (client/application id and secret)
+
+Make sure `commands/install.sh` is referring to `options.local.yml`.
+
+```
+k3d cluster edit ertms --add-port "8000:80@loadbalancer"
+```
