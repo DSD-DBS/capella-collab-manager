@@ -111,7 +111,7 @@ class KubernetesOperator(Operator):
             "ports": set([3389]),
             "created_at": deployment.to_dict()["metadata"]["creation_timestamp"],
             "mac": "-",
-            "host": id,
+            "host": service.to_dict()["metadata"]["name"],
         }
 
     def __create_deployment(
