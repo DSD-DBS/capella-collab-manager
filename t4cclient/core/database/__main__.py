@@ -6,7 +6,7 @@ from alembic.migration import MigrationContext
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from t4cclient import config
-from t4cclient.core.database import Base, users
+from t4cclient.core.database import Base, repositories, users
 from t4cclient.schemas.repositories.users import Role
 
 engine = create_engine(config.DATABASE_URL)
@@ -34,8 +34,14 @@ def migrate_db():
         Base.metadata.create_all(bind=engine)
         command.stamp(alembic_cfg, "head")
         initialize_admin_user()
+        initialize_default_repository()
 
 
 def initialize_admin_user():
     with SessionLocal() as db:
         users.create_user(db=db, username=config.INITIAL_ADMIN_USER, role=Role.ADMIN)
+
+
+def initialize_default_repository():
+    with SessionLocal() as db:
+        repositories.create_repository(db=db, name="default")
