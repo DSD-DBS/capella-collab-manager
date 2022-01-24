@@ -14,7 +14,7 @@ data:
     OAUTH_USERNAME_CLAIM: {{ .Values.backend.oauth.usernameClaim }}
     DOCKER_PERSISTENT_IMAGE: {{ .Values.docker.registry }}{{ .Values.docker.images.workspaces.persistent }}
     DOCKER_READONLY_IMAGE: {{ .Values.docker.registry }}{{ .Values.docker.images.workspaces.readonly }}
-    GUACAMOLE_BASE_URI: "{{ .Values.general.scheme }}{{ .Values.general.host }}:{{ .Values.general.port }}/guacamole"
+    GUACAMOLE_BASE_URI: "{{ .Values.general.scheme }}://{{ .Values.general.host }}:{{ .Values.general.port }}/guacamole"
     GUACAMOLE_USERNAME: "{{ .Values.guacamole.username }}"
     GUACAMOLE_PASSWORD: "{{ .Values.guacamole.password }}"
     {{ if .Values.database.deploy }}
