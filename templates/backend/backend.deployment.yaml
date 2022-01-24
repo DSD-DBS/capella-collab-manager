@@ -14,6 +14,7 @@ spec:
       labels: 
         id: {{ .Release.Name }}-deployment-backend
     spec:
+      serviceAccountName: {{ .Release.Name }}-serviceaccount-backend
       volumes:
         - name: {{ .Release.Name }}-backend
           configMap:
