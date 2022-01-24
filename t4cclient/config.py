@@ -43,12 +43,14 @@ OAUTH_CLIENT_SECRET = get_config("OAUTH", "client_secret")
 OAUTH_REDIRECT_URI = get_config("OAUTH", "redirect_uri")
 DATABASE_URL = get_config("SQL", "DATABASE_URL")
 
-T4C_SERVER_URL = get_config("T4C_SERVER", "URL")
 T4C_SERVER_USERNAME = get_config("T4C_SERVER", "USERNAME")
 T4C_SERVER_PASSWORD = get_config("T4C_SERVER", "PASSWORD")
 T4C_SERVER_HOST = get_config("T4C_SERVER", "HOST")
 T4C_SERVER_PORT = get_config("T4C_SERVER", "PORT")
 T4C_LICENCE = get_config("T4C_SERVER", "HOST")
+
+T4C_USAGE_API = get_config("T4C_SERVER", "USAGE_API")
+T4C_REST_API = get_config("T4C_SERVER", "REST_API")
 
 KUBERNETES_API_URL = get_config("KUBERNETES", "API_URL")
 KUBERNETES_TOKEN = get_config("KUBERNETES", "TOKEN")
