@@ -28,8 +28,6 @@ data:
     T4C_SERVER_PASSWORD: {{ .Values.t4cServer.password }}
     T4C_SERVER_HOST: "{{ .Values.t4cServer.host }}"
     T4C_SERVER_PORT: "{{ .Values.t4cServer.port }}"
-    KUBERNETES_API_URL: {{ .Values.kubernetes.apiURL }}
-    KUBERNETES_TOKEN: {{ .Values.kubernetes.token }}
     KUBERNETES_NAMESPACE: {{ .Values.kubernetes.namespace }}
     OPERATOR_TYPE: kubernetes
     JENKINS_USERNAME: {{ .Values.jenkins.username }}
