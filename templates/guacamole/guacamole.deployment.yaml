@@ -39,6 +39,8 @@ spec:
               value: {{ .Values.database.guacamole.external.password }}
             - name: POSTGRES_USER
               value: {{ .Values.database.guacamole.external.username }}
+            - name: POSTGRESQL_SSL_MODE
+              value: require
           {{ end }}
           ports:
             - name: http
