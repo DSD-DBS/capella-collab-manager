@@ -29,7 +29,7 @@ loadbalancer:
       test: test2
 
 # Define if the T4C Manager should be deployed using a Kubernetes Service or Ingress
-serviceType: Service
+serviceType: Ingress
 
 # StorageClassName for Persistent Volumes
 storageClassName: 
