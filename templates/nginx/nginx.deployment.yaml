@@ -4,6 +4,8 @@ metadata:
   name: {{ .Release.Name }}-nginx
   labels: 
     id: {{ .Release.Name }}-deployment-nginx
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/nginx/nginx.configmap.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector: 
