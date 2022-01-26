@@ -4,6 +4,9 @@ metadata:
   name: {{ .Release.Name }}-backend
   labels: 
     id: {{ .Release.Name }}-deployment-backend
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/backend/backend.configmap.yaml") . | sha256sum }}
+    checksum/config_env: {{ include (print $.Template.BasePath "/backend/backend_env.configmap.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector: 

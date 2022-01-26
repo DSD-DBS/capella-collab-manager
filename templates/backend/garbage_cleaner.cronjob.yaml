@@ -2,6 +2,8 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ .Release.Name }}-garbage-cleaner
+  annotations:
+    checksum/config_env: {{ include (print $.Template.BasePath "/backend/backend_env.configmap.yaml") . | sha256sum }}
 spec:
   schedule: "{{ .Values.backend.garbageCleaner.cron }}"
   jobTemplate:
