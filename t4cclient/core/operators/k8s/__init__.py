@@ -143,23 +143,7 @@ class KubernetesOperator(Operator):
                                     "requests": {"cpu": "1", "memory": "1Gi"},
                                 },
                                 "imagePullPolicy": "Always",
-                                "volumeMounts": [
-                                    {
-                                        "name": "azure",
-                                        "mountPath": "/workspace"
-                                    }
-                                ]
                             },
-                        ],
-                        "volumes": [
-                            {
-                                "name": "azure",
-                                "azureFile": {
-                                    "secretName": "azure-workspace-storage-secret",
-                                    "shareName": "workspaces",
-                                    "readOnly": False
-                                }
-                            }
                         ],
                         "restartPolicy": "Always",
                     },
