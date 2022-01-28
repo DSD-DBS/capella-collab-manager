@@ -1,3 +1,4 @@
+import logging
 import random
 import string
 import typing as t
@@ -7,6 +8,8 @@ import kubernetes.client
 import kubernetes.config
 from t4cclient import config
 from t4cclient.core.operators.__main__ import Operator
+
+log = logging.getLogger(__name__)
 
 try:
     kubernetes.config.load_incluster_config()
@@ -93,8 +96,10 @@ class KubernetesOperator(Operator):
         return "".join(random.choices(string.ascii_lowercase, k=25))
 
     def kill_session(self, id: str) -> None:
-        self.__delete_deployment(id)
+        status = self.__delete_deployment(id)
+        log.info(f"Deleted deployment {id}: {status.get('status', status)}")
         self.__delete_service(id)
+        log.info(f"Deleted service {id}: {status.get('status', status)}")
 
     def __export_attrs(
         self,
@@ -177,9 +182,15 @@ class KubernetesOperator(Operator):
         return self.v1_core.read_namespaced_service(id, config.KUBERNETES_NAMESPACE)
 
     def __delete_deployment(self, id: str) -> kubernetes.client.V1Status:
-        return self.v1_apps.delete_namespaced_deployment(
-            id, config.KUBERNETES_NAMESPACE
-        )
+        try:
+            return self.v1_apps.delete_namespaced_deployment(
+                id, config.KUBERNETES_NAMESPACE
+            )
+        except kubernetes.client.exceptions.ApiException as e:
+            return {"status": e.status, "reason": e.reason }
 
     def __delete_service(self, id: str) -> kubernetes.client.V1Status:
-        return self.v1_core.delete_namespaced_service(id, config.KUBERNETES_NAMESPACE)
+        try:
+            return self.v1_core.delete_namespaced_service(id, config.KUBERNETES_NAMESPACE)
+        except kubernetes.client.exceptions.ApiException as e:
+            return {"status": e.status, "reason": e.reason }

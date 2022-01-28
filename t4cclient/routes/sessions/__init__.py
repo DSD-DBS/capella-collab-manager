@@ -173,7 +173,7 @@ def end_session(id: str, db: Session = Depends(get_db), token=Depends(JWTBearer(
             detail="The owner of the repository does not match with your username. You have to be administrator or manager to delete other sessions.",
         )
     sessions.delete_session(db, id)
-    return OPERATOR.kill_session(id)
+    OPERATOR.kill_session(id)
 
 
 router.include_router(
