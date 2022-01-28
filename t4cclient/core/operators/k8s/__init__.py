@@ -55,9 +55,11 @@ class KubernetesOperator(Operator):
         password: str,
         repositories: t.List[str],
     ) -> t.Dict[str, t.Any]:
-        id = self.__generate_id()
-        deployment = self.__create_deployment(
+        id = self._generate_id()
+        self._create_persistent_volume_claim(username)
+        deployment = self._create_deployment(
             config.PERSISTENT_IMAGE,
+            username,
             id,
             {
                 "T4C_LICENCE_SECRET": config.T4C_LICENCE,
@@ -67,15 +69,15 @@ class KubernetesOperator(Operator):
                 "RMT_PASSWORD": password,
             },
         )
-        self.__create_service(id, id)
-        service = self.__get_service(id)
-        return self.__export_attrs(deployment, service)
+        self._create_service(id, id)
+        service = self._get_service(id)
+        return self._export_attrs(deployment, service)
 
     def start_readonly_session(
         self, password: str, git_url: str, git_branch: str
     ) -> t.Dict[str, t.Any]:
-        id = self.__generate_id()
-        deployment = self.__create_deployment(
+        id = self._generate_id()
+        deployment = self._create_deployment(
             config.READONLY_IMAGE,
             id,
             {
@@ -85,23 +87,23 @@ class KubernetesOperator(Operator):
                 "GIT_REPO_BRANCH": git_branch,
             },
         )
-        self.__create_service(id, id)
-        service = self.__get_service(id)
-        return self.__export_attrs(deployment, service)
+        self._create_service(id, id)
+        service = self._get_service(id)
+        return self._export_attrs(deployment, service)
 
     def get_session_state(self, id: str) -> str:
         return "-"
 
-    def __generate_id(self):
+    def _generate_id(self):
         return "".join(random.choices(string.ascii_lowercase, k=25))
 
     def kill_session(self, id: str) -> None:
-        status = self.__delete_deployment(id)
-        log.info(f"Deleted deployment {id}: {status.get('status', status)}")
-        self.__delete_service(id)
-        log.info(f"Deleted service {id}: {status.get('status', status)}")
+        status = self._delete_deployment(id)
+        log.info(f"Deleted deployment {id}: {status and status.status}")
+        self._delete_service(id)
+        log.info(f"Deleted service {id}: {status and status.status}")
 
-    def __export_attrs(
+    def _export_attrs(
         self,
         deployment: kubernetes.client.V1Deployment,
         service: kubernetes.client.V1Service,
@@ -116,8 +118,8 @@ class KubernetesOperator(Operator):
             + config.KUBERNETES_NAMESPACE,
         }
 
-    def __create_deployment(
-        self, image: str, name: str, environment: t.Dict
+    def _create_deployment(
+        self, image: str, username: str, name: str, environment: t.Dict
     ) -> kubernetes.client.V1Deployment:
         body = {
             "kind": "Deployment",
@@ -143,7 +145,21 @@ class KubernetesOperator(Operator):
                                     "requests": {"cpu": "1", "memory": "1Gi"},
                                 },
                                 "imagePullPolicy": "Always",
+                                "volumeMounts": [
+                                    {
+                                        "name": "workspace",
+                                        "mountPath": "/workspace"
+                                    }
+                                ]
                             },
+                        ],
+                        "volumes": [
+                            {
+                                "name": "workspace",
+                                "persistentVolumeClaim:": {
+                                    "claimName": self._get_claim_name(username)
+                                }
+                            }
                         ],
                         "restartPolicy": "Always",
                     },
@@ -154,7 +170,7 @@ class KubernetesOperator(Operator):
             config.KUBERNETES_NAMESPACE, body
         )
 
-    def __create_service(
+    def _create_service(
         self, name: str, deployment_name: str
     ) -> kubernetes.client.V1Service:
         body = {
@@ -166,7 +182,7 @@ class KubernetesOperator(Operator):
             "spec": {
                 "ports": [
                     {
-                        "name": "3389-tcp",
+                        "name": "rdp",
                         "protocol": "TCP",
                         "port": 3389,
                         "targetPort": 3389,
@@ -178,19 +194,43 @@ class KubernetesOperator(Operator):
         }
         return self.v1_core.create_namespaced_service(config.KUBERNETES_NAMESPACE, body)
 
-    def __get_service(self, id: str):
+    def _create_persistent_volume_claim(self, username):
+        body = {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "metadata": {
+                "name": self._get_claim_name(username),
+            },
+            "spec": {
+                "accessModes": [
+                    "ReadWriteMany"
+                ],
+                "storageClassName": "persistent-sessions-csi",
+                "resources": {
+                    "requests": {
+                        "storage": "20Gi"
+                    }
+                }
+            }
+        }
+        return self.v1_core.create_namespaced_persistent_volume_claim(config.KUBERNETES_NAMESPACE, body)
+
+    def _get_claim_name(self, username: str) -> str:
+        return "persistent-session-" + username.replace("@", "-at-").replace(".", "-dot-")
+
+    def _get_service(self, id: str):
         return self.v1_core.read_namespaced_service(id, config.KUBERNETES_NAMESPACE)
 
-    def __delete_deployment(self, id: str) -> kubernetes.client.V1Status:
+    def _delete_deployment(self, id: str) -> kubernetes.client.V1Status:
         try:
             return self.v1_apps.delete_namespaced_deployment(
                 id, config.KUBERNETES_NAMESPACE
             )
         except kubernetes.client.exceptions.ApiException as e:
-            return {"status": e.status, "reason": e.reason }
+            log.exception("Error deleting service")
 
-    def __delete_service(self, id: str) -> kubernetes.client.V1Status:
+    def _delete_service(self, id: str) -> kubernetes.client.V1Status:
         try:
             return self.v1_core.delete_namespaced_service(id, config.KUBERNETES_NAMESPACE)
         except kubernetes.client.exceptions.ApiException as e:
-            return {"status": e.status, "reason": e.reason }
+            log.exception("Error deleting service")
