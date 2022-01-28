@@ -213,8 +213,13 @@ class KubernetesOperator(Operator):
                 }
             }
         }
-        return self.v1_core.create_namespaced_persistent_volume_claim(config.KUBERNETES_NAMESPACE, body)
-
+        try:
+            self.v1_core.create_namespaced_persistent_volume_claim(config.KUBERNETES_NAMESPACE, body)
+        except kubernetes.client.exceptions.ApiException as e:
+            if e.status == 409:
+                return
+            raise
+        
     def _get_claim_name(self, username: str) -> str:
         return "persistent-session-" + username.replace("@", "-at-").replace(".", "-dot-").lower()
 
