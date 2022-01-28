@@ -156,7 +156,7 @@ class KubernetesOperator(Operator):
                         "volumes": [
                             {
                                 "name": "workspace",
-                                "persistentVolumeClaim:": {
+                                "persistentVolumeClaim": {
                                     "claimName": self._get_claim_name(username)
                                 }
                             }
@@ -219,7 +219,7 @@ class KubernetesOperator(Operator):
             if e.status == 409:
                 return
             raise
-        
+
     def _get_claim_name(self, username: str) -> str:
         return "persistent-session-" + username.replace("@", "-at-").replace(".", "-dot-").lower()
 
