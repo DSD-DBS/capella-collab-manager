@@ -216,7 +216,7 @@ class KubernetesOperator(Operator):
         return self.v1_core.create_namespaced_persistent_volume_claim(config.KUBERNETES_NAMESPACE, body)
 
     def _get_claim_name(self, username: str) -> str:
-        return "persistent-session-" + username.replace("@", "-at-").replace(".", "-dot-")
+        return "persistent-session-" + username.replace("@", "-at-").replace(".", "-dot-").lower()
 
     def _get_service(self, id: str):
         return self.v1_core.read_namespaced_service(id, config.KUBERNETES_NAMESPACE)
