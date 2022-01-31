@@ -27,7 +27,7 @@ def get_t4c_status():
         return r.json()["status"]
     except Exception:
         log.exception("Cannot decode T4C status")
-        return {"free": -1, "total": -1}
+        return {"free": -1, "total": -1, "used": [], "errors": []}
 
 
 def fetch_last_seen(mac_addr: str):
