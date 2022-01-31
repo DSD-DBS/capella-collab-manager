@@ -1,10 +1,14 @@
 import typing as t
+import logging
 
 import requests
 from requests.auth import HTTPBasicAuth
 from t4cclient import config
 from t4cclient.core.credential_manager import generate_password
 from t4cclient.core.database import repositories
+
+
+log = logging.getLogger(__name__)
 
 T4C_BACKEND_AUTHENTICATION = HTTPBasicAuth(
     config.T4C_SERVER_USERNAME, config.T4C_SERVER_PASSWORD
@@ -19,7 +23,11 @@ def get_t4c_status():
     if r.status_code != 404 and not r.ok:
         raise requests.HTTPError(r)
 
-    return r.json()["status"]
+    try:
+        return r.json()["status"]
+    except Exception:
+        log.exception("Cannot decode T4C status")
+        return {"free": -1, "total": -1}
 
 
 def fetch_last_seen(mac_addr: str):
