@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-backend
+  labels: 
+    id: {{ .Release.Name }}-deployment-backend
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/backend/backend.configmap.yaml") . | sha256sum }}
+    checksum/config_env: {{ include (print $.Template.BasePath "/backend/backend_env.configmap.yaml") . | sha256sum }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector: 
+    matchLabels: 
+      id: {{ .Release.Name }}-deployment-backend
+  template:
+    metadata: 
+      labels: 
+        id: {{ .Release.Name }}-deployment-backend
+    spec:
+      serviceAccountName: {{ .Release.Name }}-serviceaccount-backend
+      volumes:
+        - name: {{ .Release.Name }}-backend
+          configMap:
+            name: {{ .Release.Name }}-backend
+      containers:
+        - name: {{ .Release.Name }}-backend
+          image: {{ .Values.docker.registry }}{{ .Values.docker.images.backend }}
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          envFrom:
+            - configMapRef: 
+                name: {{ .Release.Name }}-backend-env
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+          readinessProbe: 
+            httpGet:
+              path: /healthcheck
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}

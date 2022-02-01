@@ -1,0 +1,17 @@
+{{ if .Values.database.deploy }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-backend-postgres
+  labels: 
+    id: {{ .Release.Name }}-service-backend-postgres
+spec:
+  type: ClusterIP
+  selector:
+    id: {{ .Release.Name }}-deployment-backend-postgres
+  ports:
+    - port: 5432
+      targetPort: postgres
+      protocol: TCP
+      name: postgres
+{{ end }}

@@ -1,0 +1,18 @@
+{{ if eq .Values.serviceType "Service" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-nginx
+  {{- toYaml .Values.loadbalancer.metadata | nindent 2 }}
+  labels: 
+    id: {{ .Release.Name }}-service-nginx
+spec:
+  type: LoadBalancer
+  selector:
+    id: {{ .Release.Name }}-deployment-nginx
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+{{ end }}
