@@ -3,6 +3,7 @@ import typing as t
 import t4cclient.core.services.repositories as repository_service
 from fastapi import APIRouter, Depends
 from requests import Session
+from t4cclient.config import USERNAME_CLAIM
 from t4cclient.core.database import get_db, repositories
 from t4cclient.core.database import users as database_users
 from t4cclient.core.oauth.database import is_admin, verify_admin, verify_repository_role
@@ -42,7 +43,7 @@ def get_repositories(db: Session = Depends(get_db), token=Depends(JWTBearer())):
             for repo in repositories.get_all_repositories(db)
         ]
 
-    db_user = database_users.get_user(db=db, username=token["sub"])
+    db_user = database_users.get_user(db=db, username=token[USERNAME_CLAIM])
     return [
         GetRepositoryUserResponse(
             repository_name=repo.repository_name,

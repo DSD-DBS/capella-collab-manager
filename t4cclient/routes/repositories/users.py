@@ -4,7 +4,7 @@ import t4cclient.extensions.t4c as t4c_manager
 import t4cclient.schemas.repositories as schema_repositories
 from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError, Session
-from rsa import verify
+from t4cclient.config import USERNAME_CLAIM
 from t4cclient.core.database import get_db, repository_users, users
 from t4cclient.core.oauth.database import (
     check_username_not_admin,
@@ -94,7 +94,7 @@ def patch_repository_user(
             db=db,
         )
         verify_write_permission(repository_name, token, db)
-        if not is_admin(token, db) and token["sub"] != username:
+        if not is_admin(token, db) and token[USERNAME_CLAIM] != username:
             raise HTTPException(
                 status_code=403,
                 detail="The username does not match with your user. You have to be administrator to edit other users.",

@@ -7,6 +7,7 @@ import t4cclient.extensions.t4c as t4c_manager
 import t4cclient.schemas.repositories.users as users_schema
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from t4cclient.config import USERNAME_CLAIM
 from t4cclient.core.credential_manager import generate_password
 from t4cclient.core.database import get_db, sessions, users
 from t4cclient.core.oauth.database import is_admin, verify_repository_role
@@ -35,7 +36,7 @@ def get_current_sessions(db: Session = Depends(get_db), token=Depends(JWTBearer(
     if is_admin(token, db):
         return inject_attrs_in_sessions(sessions.get_all_sessions(db))
 
-    db_user = users.get_user(db=db, username=token["sub"])
+    db_user = users.get_user(db=db, username=token[USERNAME_CLAIM])
     if not any(
         repo_user.role == RepositoryUserRole.MANAGER
         for repo_user in db_user.repositories
@@ -69,7 +70,7 @@ def request_session(
 
     rdp_password = generate_password(length=64)
 
-    owner = token["sub"]
+    owner = token[USERNAME_CLAIM]
 
     guacamole_username = generate_password()
     guacamole_password = generate_password(length=64)
@@ -98,7 +99,9 @@ def request_session(
         else:
             repositories = [repo.repository_name for repo in user.repositories]
         session = OPERATOR.start_persistent_session(
-            username=token["sub"], password=rdp_password, repositories=repositories
+            username=token[USERNAME_CLAIM],
+            password=rdp_password,
+            repositories=repositories,
         )
 
     elif body.type == WorkspaceType.READONLY:
@@ -159,7 +162,7 @@ def request_session(
 @router.delete("/{id}/", status_code=204, responses=AUTHENTICATION_RESPONSES)
 def end_session(id: str, db: Session = Depends(get_db), token=Depends(JWTBearer())):
     s = sessions.get_session_by_id(db, id)
-    if s.owner_name != token["sub"] and verify_repository_role(
+    if s.owner_name != token[USERNAME_CLAIM] and verify_repository_role(
         repository=s.repository,
         token=token,
         db=db,
@@ -170,7 +173,7 @@ def end_session(id: str, db: Session = Depends(get_db), token=Depends(JWTBearer(
             detail="The owner of the repository does not match with your username. You have to be administrator or manager to delete other sessions.",
         )
     sessions.delete_session(db, id)
-    return OPERATOR.kill_session(id)
+    OPERATOR.kill_session(id)
 
 
 router.include_router(

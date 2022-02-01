@@ -1,5 +1,15 @@
-ARG DOCKER_REGISTRY
-FROM $DOCKER_REGISTRY/se-base-image
+FROM buildpack-deps:bullseye
+
+RUN apt-get update && \
+    apt-get upgrade --yes && \
+    apt-get install --yes \
+    ca-certificates \
+    python3 \
+    python3-pip \
+    unzip \
+    libpq-dev \
+    docker.io \
+    kubernetes-client && rm -rf /var/lib/apt/lists/*
 
 RUN pip install fastapi uvicorn
 EXPOSE 80
