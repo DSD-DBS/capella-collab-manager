@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-guacamole-guacamole
+  labels: 
+    id: {{ .Release.Name }}-deployment-guacamole-guacamole
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector: 
+    matchLabels: 
+      id: {{ .Release.Name }}-deployment-guacamole-guacamole
+  template:
+    metadata: 
+      labels: 
+        id: {{ .Release.Name }}-deployment-guacamole-guacamole
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-guacamole-guacamole
+          image: guacamole/guacamole:latest
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          env:
+            - name: GUACD_HOSTNAME
+              value: {{ .Release.Name }}-guacamole-guacd
+          {{ if .Values.database.deploy }}
+            - name: POSTGRES_DATABASE
+              value: "guacamole"
+            - name: POSTGRES_HOSTNAME
+              value: {{ .Release.Name }}-guacamole-postgres
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.database.guacamole.internal.password }}
+            - name: POSTGRES_USER
+              value: guacamole
+          {{ else }}
+            - name: POSTGRES_DATABASE
+              value: {{ .Values.database.guacamole.external.database }}
+            - name: POSTGRES_HOSTNAME
+              value: {{ .Values.database.guacamole.external.hostname }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.database.guacamole.external.password }}
+            - name: POSTGRES_USER
+              value: {{ .Values.database.guacamole.external.username }}
+            - name: POSTGRESQL_SSL_MODE
+              value: require
+          {{ end }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20          
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "2"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}

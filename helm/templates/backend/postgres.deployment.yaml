@@ -1,0 +1,61 @@
+{{ if .Values.database.deploy }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-backend-postgres
+  labels: 
+    id: {{ .Release.Name }}-deployment-backend-postgres
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector: 
+    matchLabels: 
+      id: {{ .Release.Name }}-deployment-backend-postgres
+  template:
+    metadata: 
+      labels: 
+        id: {{ .Release.Name }}-deployment-backend-postgres
+    spec:
+      volumes:
+        - name: {{ .Release.Name }}-data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-volume-backend-postgres
+      containers:
+        - name: {{ .Release.Name }}-backend-postgres
+          image: postgres:14.1
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/data
+            - name: POSTGRES_DB
+              value: backend
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.database.backend.internal.password }}
+            - name: POSTGRES_USER
+              value: backend
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+          readinessProbe:
+            exec:
+              command: ["psql", "-W", "{{ .Values.database.backend.internal.password }}", "-U", "backend", "-d", "backend", "-c", "SELECT 1"]
+            initialDelaySeconds: 15
+            timeoutSeconds: 2
+          livenessProbe:
+            exec:
+              command: ["psql", "-W", "{{ .Values.database.backend.internal.password }}", "-U", "backend", "-d", "backend", "-c", "SELECT 1"]
+            initialDelaySeconds: 45
+            timeoutSeconds: 2
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          volumeMounts:
+            - name: {{ .Release.Name }}-data
+              mountPath: /var/lib/postgresql/data
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+{{ end }}

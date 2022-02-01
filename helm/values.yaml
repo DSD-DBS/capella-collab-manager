@@ -1,0 +1,44 @@
+########################################
+### KUBERNETES RELATED CONFIGURATION ###
+########################################
+
+replicaCount: 1
+
+pullPolicy: Always
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# SecurityContext for Pods
+securityContext:
+
+# Loadbalancer config
+loadbalancer:
+  metadata: 
+    annotations:
+      test: test2
+
+# Define if the T4C Manager should be deployed using a Kubernetes Service or Ingress
+serviceType: Ingress
+
+# StorageClassName for Persistent Volumes
+storageClassName: 
+
+# Default resources
+resources:
+  limits:
+    cpu: "1"
+    memory: 2Gi
+  requests:
+    cpu: "0.25"
+    memory: 1Gi
