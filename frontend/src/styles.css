@@ -1,0 +1,87 @@
+/* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.expansion-panel > .mat-content {
+  justify-content: space-between;
+}
+
+.mat-content > mat-panel-title {
+  flex: 2;
+}
+.mat-content > mat-panel-description {
+  flex: 1;
+}
+
+mat-form-field.mat-form-field-invalid {
+  animation: add-margin-for-mat-error;
+  animation-duration: 0.3s;
+  margin-bottom: 13px;
+}
+
+@keyframes add-margin-for-mat-error {
+  from {
+    margin-bottom: 0;
+  }
+  to {
+    margin-bottom: 13px;
+  }
+}
+
+button.primary {
+  background-color: #df0006;
+  color: white;
+}
+
+button.success {
+  background-color: green;
+  color: white;
+}
+
+mat-card {
+  width: fit-content;
+  margin: 10px;
+}
+
+mat-form-field {
+  margin-right: 10px;
+}
+
+h1 {
+  margin: 10px;
+}
+
+.flexbox {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+button {
+  margin: 5px;
+}
+
+mat-spinner {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mat-icon {
+  vertical-align: middle;
+}
+
+.workspace-toggle * .mat-slide-toggle-bar {
+  background-color: green !important;
+}
+
+.workspace-toggle * .mat-slide-toggle-thumb {
+  background-color: #fafafa !important;
+}

@@ -1,0 +1,14 @@
+<h1>Repository Manager Options</h1>
+<mat-card>
+  <h2>Manage repositories</h2>
+  You are Manager of these repositories. Please select a repository to see all
+  settings. <br />
+  <button
+    *ngFor="let repo of repositoryService.repositories"
+    color="primary"
+    mat-flat-button
+    [routerLink]="'/settings/repositories/' + repo.repository_name"
+  >
+    {{ repo.repository_name }}
+  </button>
+</mat-card>

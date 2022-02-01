@@ -1,0 +1,19 @@
+<div class="no-repository">
+  <mat-card>
+    Unfortunately no repository was found in our system. <br />
+    Please ask an administrator or an repository manager to add you to the
+    required repository.
+    <div *ngIf="userService.user">
+      <br /><br />
+      Please give the administrator or repository manager your username: <br />
+      <button
+        id="username"
+        mat-button
+        [cdkCopyToClipboard]="userService.user.name"
+      >
+        {{ userService.user.name }}
+        &nbsp;<mat-icon>content_copy</mat-icon>
+      </button>
+    </div>
+  </mat-card>
+</div>

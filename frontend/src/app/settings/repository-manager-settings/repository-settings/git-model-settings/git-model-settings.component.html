@@ -1,0 +1,119 @@
+<mat-card>
+  <h2>Assign existing Git Repository</h2>
+  Git Repositories will be used for TVP (Template Validation and Preview) as
+  predefined models. <br />The primary model is also used to load the models for
+  read-only users into the workspace.
+  <mat-card *ngIf="!projects.length">
+    No projects found! To create a Git Repository Connection, you have to create
+    a project first!
+  </mat-card>
+  <form [formGroup]="createGitModel" *ngIf="projects.length">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" />
+      <mat-error>Please enter a name!</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Project</mat-label>
+      <mat-select formControlName="project_id">
+        <mat-option *ngFor="let project of projects" [value]="project.id">
+          {{ project.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error>Please select a project!</mat-error>
+    </mat-form-field>
+    <br />
+    <form formGroupName="model">
+      <mat-form-field id="git-path">
+        <mat-label>Git HTTPS-URL</mat-label>
+        <input
+          matInput
+          formControlName="path"
+          placeholder="https://git.tech.rz.db.de/testrepository.git"
+        />
+        <mat-error *ngIf="gitPath.getError('required')"
+          >Please enter a Git HTTPS URL!</mat-error
+        >
+        <mat-error *ngIf="gitPath.getError('gitURLError')"
+          >The provided Git URL does not match a valid Git HTTPS URL!</mat-error
+        >
+      </mat-form-field>
+      <br />
+      <mat-form-field>
+        <mat-label>Entrypoint</mat-label>
+        <input
+          matInput
+          formControlName="entrypoint"
+          placeholder="path/to/project.aird"
+        />
+        <mat-error *ngIf="entrypoint.getError('required')"
+          >Please enter a entrypoint!</mat-error
+        >
+        <mat-error *ngIf="entrypoint.getError('airdFileIncorrect')"
+          >Your Entrypoint has to end with .aird!</mat-error
+        >
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Revision</mat-label>
+        <input matInput formControlName="revision" placeholder="HEAD" />
+        <mat-error>Please enter a revision!</mat-error></mat-form-field
+      >
+    </form>
+    <br />
+    <mat-checkbox formControlName="create_backup_job"
+      >Create automatic backup job from T4C to Git (runs every night at 3am) </mat-checkbox
+    ><br />
+
+    <button mat-flat-button color="primary" (click)="assignGitModel()">
+      Assign
+    </button>
+  </form>
+</mat-card>
+<mat-card id="handle-models">
+  <h2>Handle Git Models</h2>
+  <div *ngIf="gitModels.length"></div>
+  <mat-accordion>
+    <mat-expansion-panel *ngFor="let model of gitModels">
+      <mat-expansion-panel-header class="expansion-panel">
+        <mat-panel-title> {{ model.name }} </mat-panel-title>
+        <mat-panel-description>
+          <div *ngIf="model.primary">Primary</div>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-form-field id="git-path-view" appearance="fill">
+        <mat-label>Git-URL</mat-label>
+        <input matInput disabled [value]="model.model.path" />
+      </mat-form-field>
+      <br />
+      <mat-form-field appearance="fill" class="show-git-model">
+        <mat-label>Entrypoint</mat-label>
+        <input matInput disabled [value]="model.model.entrypoint" />
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="show-git-model">
+        <mat-label>Revision</mat-label>
+        <input matInput disabled [value]="model.model.revision" />
+      </mat-form-field>
+      <mat-form-field appearance="fill" id="project-id">
+        <mat-label>Project ID</mat-label>
+        <input matInput disabled [value]="model.project_id" /> </mat-form-field
+      ><br />
+      <button mat-flat-button color="primary" (click)="unassignGitModel(model)">
+        Unassign
+      </button>
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="makeItPrimary(model.id)"
+        *ngIf="!model.primary"
+      >
+        Make it primary
+      </button>
+      <hr />
+      <app-jenkins [model]="model" [repository]="repository"></app-jenkins>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <div *ngIf="!gitModels.length">
+    There are no existing git models. Please create a new Git model to allow
+    read-only connections.
+  </div>
+</mat-card>

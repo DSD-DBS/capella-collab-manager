@@ -1,0 +1,12 @@
+<div class="message">
+  <div *ngIf="reason == 'logout'">
+    The Logout was successful. You can login again, if you like.
+  </div>
+  <div *ngIf="reason == 'session-expired'">
+    Your session has expired. Please login again!
+  </div>
+  <div *ngIf="reason == 'unauthorized'">
+    An unknown error during the authorization occurred. Please login again.
+  </div>
+  <app-auth [autoLogin]="autoLogin"></app-auth>
+</div>

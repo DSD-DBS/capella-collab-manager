@@ -1,0 +1,56 @@
+<div *ngIf="session">
+  <div class="title-2">Connect via RDP</div>
+  <mat-card>Temporary not available</mat-card>
+  <!-- 
+  <mat-card class="inner-mat-card">
+    <div class="title">Step 1: How do I connect to the server?</div>
+    The Server is reachable over RDP: <br />
+    <table>
+      <tr>
+        <th>Host:</th>
+        <th>Port:</th>
+      </tr>
+      <tr>
+        <td>
+          <button mat-button cdkCopyToClipboard="localhost">
+            localhost &nbsp;<mat-icon>content_copy</mat-icon>
+          </button>
+        </td>
+        <td>
+          <button mat-button [cdkCopyToClipboard]="session.ports[0]">
+            {{ session.ports[0] }}
+            &nbsp;<mat-icon>content_copy</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+  </mat-card>
+  <mat-card class="inner-mat-card">
+    <div class="title">Step 2: Authentication</div>
+    When you connect to the server, you have to use the following credentials to
+    log in: <br />
+    <table>
+      <tr>
+        <th>Username:</th>
+        <th>Password:</th>
+      </tr>
+      <tr>
+        <td>
+          <button mat-button [cdkCopyToClipboard]="session.rdp_username">
+            {{ session.rdp_username }}
+            &nbsp;<mat-icon>content_copy</mat-icon>
+          </button>
+        </td>
+        <td>
+          <button mat-button [cdkCopyToClipboard]="session.rdp_password">
+            ****** &nbsp;<mat-icon>content_copy</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+  </mat-card>
+  <mat-card class="inner-mat-card">
+    <div class="title">Step 3: Wait for Capella</div>
+    After logging in, Capella starts automatically. This can up to one minute.
+  </mat-card>-->
+</div>
