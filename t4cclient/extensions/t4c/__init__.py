@@ -1,4 +1,5 @@
 import typing as t
+import logging
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -6,7 +7,9 @@ from t4cclient import config
 from t4cclient.core.credential_manager import generate_password
 from t4cclient.core.database import repositories
 
-T4C_BACKEND_BASE = config.T4C_SERVER_URL + "/api/v1.0"
+
+log = logging.getLogger(__name__)
+
 T4C_BACKEND_AUTHENTICATION = HTTPBasicAuth(
     config.T4C_SERVER_USERNAME, config.T4C_SERVER_PASSWORD
 )
@@ -14,13 +17,17 @@ T4C_BACKEND_AUTHENTICATION = HTTPBasicAuth(
 
 def get_t4c_status():
     r = requests.get(
-        config.T4C_SERVER_URL + "/status/json", auth=T4C_BACKEND_AUTHENTICATION
+        config.T4C_USAGE_API + "/status/json", auth=T4C_BACKEND_AUTHENTICATION
     )
     # This API endpoints returns 404 on success -> We have to handle the errors here manually
     if r.status_code != 404 and not r.ok:
         raise requests.HTTPError(r)
 
-    return r.json()["status"]
+    try:
+        return r.json()["status"]
+    except Exception:
+        log.exception("Cannot decode T4C status")
+        return {"free": -1, "total": -1, "used": [], "errors": []}
 
 
 def fetch_last_seen(mac_addr: str):
@@ -41,7 +48,7 @@ def add_user_to_repository(
     repository: str, username: str, password: str = generate_password()
 ):
     r = requests.post(
-        T4C_BACKEND_BASE + "/users",
+        config.T4C_REST_API + "/users",
         params={"repositoryName": repository},
         json={
             "id": username,
@@ -59,7 +66,7 @@ def add_user_to_repository(
 
 def remove_user_from_repository(repository: str, username: str):
     r = requests.delete(
-        T4C_BACKEND_BASE + "/users/" + username,
+        config.T4C_REST_API + "/users/" + username,
         params={"repositoryName": repository},
         auth=T4C_BACKEND_AUTHENTICATION,
     )
@@ -70,7 +77,7 @@ def remove_user_from_repository(repository: str, username: str):
 
 def update_password_of_user(repository: str, username: str, password: str):
     r = requests.put(
-        T4C_BACKEND_BASE + "/users/" + username,
+        config.T4C_REST_API + "/users/" + username,
         params={"repositoryName": repository},
         json={
             "id": username,
@@ -85,7 +92,7 @@ def update_password_of_user(repository: str, username: str, password: str):
 
 def get_repositories() -> t.List[str]:
     r = requests.get(
-        T4C_BACKEND_BASE + "/repositories", auth=T4C_BACKEND_AUTHENTICATION
+        config.T4C_REST_API + "/repositories", auth=T4C_BACKEND_AUTHENTICATION
     )
     r.raise_for_status()
 

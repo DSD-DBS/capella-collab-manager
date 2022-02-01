@@ -19,10 +19,10 @@ def get_all_users(db: Session):
     return db.query(DatabaseUser).all()
 
 
-def create_user(db: Session, username: str):
+def create_user(db: Session, username: str, role: Role = Role.USER):
     user = DatabaseUser(
         name=username,
-        role=Role.USER,
+        role=role,
         repositories=[],
     )
     db.add(user)

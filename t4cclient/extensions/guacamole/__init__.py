@@ -7,12 +7,14 @@ from t4cclient.config import GUACAMOLE_URI
 from t4cclient.core.credential_manager import generate_password
 
 GUACAMOLE_PREFIX = GUACAMOLE_URI + "/api/session/data/postgresql"
+headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
 
 def get_admin_token() -> str:
     r = requests.post(
         GUACAMOLE_URI + "/api/tokens",
         auth=HTTPBasicAuth(config.GUACAMOLE_USERNAME, config.GUACAMOLE_PASSWORD),
+        headers=headers,
     )
     r.raise_for_status()
     return r.json()["authToken"]
@@ -22,6 +24,7 @@ def get_token(username: str, password: str) -> str:
     r = requests.post(
         GUACAMOLE_URI + "/api/tokens",
         auth=HTTPBasicAuth(username, password),
+        headers=headers,
     )
     r.raise_for_status()
     return r.json()
