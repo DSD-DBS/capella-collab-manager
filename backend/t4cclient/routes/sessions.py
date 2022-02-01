@@ -21,12 +21,12 @@ from t4cclient.schemas.repositories import RepositoryUserRole
 from t4cclient.schemas.sessions import (
     AdvancedSessionResponse,
     GetSessionsResponse,
+    GetSessionUsageResponse,
     PostSessionRequest,
     WorkspaceType,
 )
 from t4cclient.sql_models.sessions import DatabaseSession
 
-from . import usage as router_usage
 
 router = APIRouter()
 
@@ -176,10 +176,16 @@ def end_session(id: str, db: Session = Depends(get_db), token=Depends(JWTBearer(
     OPERATOR.kill_session(id)
 
 
-router.include_router(
-    router_usage.router,
-    prefix="/usage",
+@router.get(
+    "/usage",
+    response_model=GetSessionUsageResponse,
+    responses=AUTHENTICATION_RESPONSES,
+    dependencies=[Depends(JWTBearer())],
 )
+def get_session_usage():
+    return t4c_manager.get_t4c_status()
+
+
 router.include_router(
     guacamole_route.router,
     prefix="/{id}/guacamole-tokens",
