@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-backend
-  namespace: {{ .Release.Namespace }}
-  labels: 
-    id: {{ .Release.Name }}-configmap-backend
-data:
