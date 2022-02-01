@@ -8,7 +8,7 @@ Preparation
     pip install "uvicorn[standard]"
     ```
 1) Create a folder config in the root directory of this project.
-1) In the config folder, create a file `config.ini`. For all configuration keys, please check `t4cclient/core/config.py`.
+1) In the config folder, create a file `config.ini`. For all configuration keys, please check `t4cclient/config.py`.
 1) Also, you might place a `pubkey.pem` in the config folder for OAUTH.
 1) Setup a PostgreSQL Database and set the config key `DATABASE_URL` in the format `postgresql://scott:tiger@localhost:5432/mydatabase`
 
