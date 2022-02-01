@@ -1,0 +1,17 @@
+button {
+  margin: 5px;
+}
+
+mat-card {
+  width: fit-content;
+  margin: 10px;
+}
+
+h1 {
+  margin: 10px;
+}
+
+.flexbox {
+  display: flex;
+  flex-direction: row;
+}

@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>Delete Session(s)</h1>
+<div mat-dialog-content>
+  <p>Do you really want delete all of the following sessions?</p>
+  <ul>
+    <li *ngFor="let session of sessions">
+      {{ session.id }} ({{ session.owner }} / {{ session.repository }})
+    </li>
+  </ul>
+  <p>This will force close all sessions and all unsaved work will be lost!</p>
+  <p>Please double-check the connection IDs.</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="this.dialogRef.close()">No</button>
+  <button
+    mat-flat-button
+    [disabled]="deleteButton.disabled"
+    (click)="deleteAllSessions()"
+  >
+    {{ deleteButton.text }}
+  </button>
+</div>

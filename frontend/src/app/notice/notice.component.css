@@ -1,0 +1,47 @@
+mat-card {
+  margin: 10px;
+  width: inherit;
+}
+
+p {
+  margin: 0px;
+  padding: 0px;
+}
+
+h3 {
+  margin: 0px !important;
+}
+
+.url {
+  color: white;
+}
+
+.primary {
+  background-color: #004085;
+  color: white;
+}
+
+.secondary {
+  background-color: #383d41;
+  color: white;
+}
+
+.success {
+  background-color: #155724;
+  color: white;
+}
+
+.danger {
+  background-color: #721c24;
+  color: white;
+}
+
+.warning {
+  background-color: #fff3cd;
+  color: black;
+}
+
+.info {
+  background-color: #d1ecf1;
+  color: black;
+}

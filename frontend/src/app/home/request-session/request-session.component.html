@@ -1,0 +1,98 @@
+If you like to work with T4C, you can request a session here. <br />
+<div class="repository-selection">
+  <form [formGroup]="repositoryFormGroup">
+    <div class="workspace-toggle">
+      <a
+        (click)="persistentWorkspaceHelpIsOpen = !persistentWorkspaceHelpIsOpen"
+        mat-icon-button
+        cdkOverlayOrigin
+        #overlayOriginPersistentWorkspace="cdkOverlayOrigin"
+        class="help-button-workspace"
+        ><mat-icon>help</mat-icon></a
+      >
+      <ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayOrigin]="overlayOriginPersistentWorkspace"
+        [cdkConnectedOverlayOpen]="persistentWorkspaceHelpIsOpen"
+      >
+        <div class="help">
+          Persistent Workspaces will store all the changes you make on models.
+          Additionally, newly created projects will be stored in your personal
+          workspace. <br />
+          <b
+            >If you don't plan on making changes to the models, please use the
+            "Read-only Workspace" option.</b
+          >
+          <br />
+          Please note that you have only access to T4C models if a Repository
+          Manager gave you access and you have set the password for the
+          repository in your settings.
+        </div>
+      </ng-template>
+      Persistent Workspace &nbsp;
+      <mat-slide-toggle formControlName="workspaceSwitch"></mat-slide-toggle>
+      &nbsp; Read-only Workspace
+      <a
+        (click)="cleanWorkspaceHelpIsOpen = !cleanWorkspaceHelpIsOpen"
+        mat-icon-button
+        cdkOverlayOrigin
+        #overlayOriginCleanWorkspace="cdkOverlayOrigin"
+        class="help-button-workspace"
+        ><mat-icon>help</mat-icon></a
+      >
+      <ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayOrigin]="overlayOriginCleanWorkspace"
+        [cdkConnectedOverlayOpen]="cleanWorkspaceHelpIsOpen"
+      >
+        <div class="help">
+          Due to the limitation of licences, we decided to offer a new "Read
+          only" option.<br />
+          <b>Any changes made in this session will NOT be saved.</b>
+          <br />
+          This will give more users the opportunity to work on the models since
+          "Read only" users do not need a license.
+          <br />
+          A model with this option always has the state from last night (3 a.m.)
+        </div>
+      </ng-template>
+    </div>
+    <br />
+    <div class="clean-workspace" *ngIf="workspaceSwitch.value">
+      <mat-form-field appearance="fill">
+        <mat-label>Repository</mat-label>
+        <mat-select
+          formControlName="repository"
+          (selectionChange)="setPermissionsAndWarningsByName($event)"
+        >
+          <mat-option
+            *ngFor="let repository of repositories"
+            [value]="repository.repository_name"
+            >{{ repository.repository_name }}</mat-option
+          >
+        </mat-select>
+        <mat-error>Please select a repository!</mat-error></mat-form-field
+      ><br />
+    </div>
+    <div class="center" *ngFor="let warning of warnings">
+      <app-warning
+        [warning]="warning"
+        [persistent]="!workspaceSwitch.value"
+      ></app-warning>
+    </div>
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="requestSession()"
+      [disabled]="showSpinner || !repositoryFormGroup.valid"
+    >
+      Request Session <mat-icon>keyboard_arrow_right</mat-icon>
+    </button>
+  </form>
+</div>
+
+<mat-spinner *ngIf="showSpinner"></mat-spinner>
+<app-session-created
+  [session]="session"
+  *ngIf="creationSuccessful"
+></app-session-created>

@@ -1,0 +1,23 @@
+<div *ngIf="session">
+  <div class="title-2">Connect directly via Browser (Recommended)</div>
+  <mat-card class="inner-mat-card">
+    <div class="title">Step 1: How do I connect to the server?</div>
+    Please click on this button to connect to the server: <br />
+    <button mat-flat-button color="primary" (click)="redirectToGuacamole()">
+      Connect to Session
+    </button>
+  </mat-card>
+  <mat-card class="inner-mat-card">
+    <div class="title">Step 2: Wait for Capella</div>
+    After opening the session, Capella starts automatically. This can up to one
+    minute.
+  </mat-card>
+  <mat-card class="inner-mat-card">
+    <div class="title">Step 3: T4C Login</div>
+    Please enter "{{ userService.getUsernameFromLocalStorage() }}" as username
+    and your password (If you don't know your password, you can change it in the
+    settings) for Team For Capella. <br />
+    This is a temporary solution and will be handled automatically in the
+    future.
+  </mat-card>
+</div>

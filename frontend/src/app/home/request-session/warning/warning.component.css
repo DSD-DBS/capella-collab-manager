@@ -1,0 +1,15 @@
+.warning {
+  background-color: #fff3cd;
+  color: black;
+}
+
+mat-card {
+  width: fit-content;
+  margin: auto;
+  margin-bottom: 10px;
+}
+
+.danger {
+  background-color: #721c24;
+  color: white;
+}
