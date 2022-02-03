@@ -29,7 +29,12 @@ spec:
               containerPort: 8080
               protocol: TCP
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            limits:
+              cpu: "1"
+              memory: 100Mi
+            requests:
+              cpu: "0.25"
+              memory: 50Mi
           volumeMounts:
             - name: {{ .Release.Name }}-nginx
               mountPath: /etc/nginx
