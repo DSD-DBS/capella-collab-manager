@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from t4cclient.config import OPERATOR_TYPE
-from t4cclient.core.operators.__main__ import Operator
+from t4cclient.core.operators.abc import Operator
 
 from . import docker, k8s
 
