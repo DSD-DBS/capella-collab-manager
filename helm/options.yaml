@@ -38,7 +38,7 @@ database:
       ###### IF database.deploy == True ######
 
       # Admin password of the database
-      password: 
+      password: secret
       storageClassName: 
 
     external: 
@@ -64,13 +64,13 @@ database:
   backend: 
     # Username of an initial admin user 
     # Is only set if the database is empty!
-    initialAdmin: 
+    initialAdmin: me@example.com
 
     internal: 
       ###### IF database.deploy == True ######
 
       # Admin password of the database
-      password: 
+      password: secret
       storageClassName: 
 
     external:
@@ -81,25 +81,29 @@ database:
 
 guacamole:
   # Credentials for the Guacamole Admin User
-  username: 
-  password: 
+  username: guacadmin
+  password: guacadmin
 
 backend:
   oauth:
     # Endpoint that issues JWT Tokens
-    tokenIssuanceEndpoint:
+    tokenIssuanceEndpoint: not tused
     # Endpoint that authorizes the User
-    authorizationEndpoint:
+    authorizationEndpoint: http://localhost/auth-endpoint
     client:
       # OAUTH2 Client ID
-      id:
+      id: tbd
       # OAUTH2 Client Secret
-      secret:
+      secret: tbd
     # Add Username claim
     usernameClaim: sub 
 
   garbageCleaner:
     cron: "*/10 * * * *"
+
+  # Namespace in which the Session Deployments / Pods should be spawned.
+  # IMPORTANT: The namespace has to exist already
+  k8sSessionNamespace: t4c-sessions
 
 t4cServer:
   # URL to access the REST APIs of the T4C Server
@@ -126,23 +130,40 @@ t4cServer:
 
 jenkins:
   # Admin Credentials for Jenkins Instance
-  username:
-  password:
+  username: tbd
+  password: tbd
 
   # Base URL of the existing Jenkins Instance
-  baseURL:
+  baseURL: tbd
 
 git:
   # Git Credentials to fetch the Models from Git for the Read Only Workspaces.
-  username:
-  password:
+  username: tbd
+  password: tbd
 
   # E-Mail for Commits made by the created Backups Jobs
-  email:
+  email: tbd
 
   # Jenkins Git Credentials ID (Git Plugin)
-  credentialID:
+  credentialID: tbd
 
   # Repository URL for Scripts used by the Jenkins Backup Job (dsh-tools)
-  scriptRepoURL:
+  scriptRepoURL: tbd
 
+
+
+########################################
+### KUBERNETES RELATED CONFIGURATION ###
+########################################
+
+# replicaCount: 1
+
+pullPolicy: Always
+
+imagePullSecrets: []
+
+# SecurityContext for Pods
+securityContext:
+
+# Define if the T4C Manager should be deployed using a Kubernetes Service or Ingress
+serviceType: Ingress
