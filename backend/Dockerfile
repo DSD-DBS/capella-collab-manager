@@ -12,10 +12,10 @@ RUN apt-get update && \
     kubernetes-client && rm -rf /var/lib/apt/lists/*
 
 RUN pip install fastapi uvicorn
-EXPOSE 8080
+EXPOSE 80
 COPY . /backend
 
 WORKDIR /backend
 RUN pip install .
 
-CMD ["uvicorn", "t4cclient.__main__:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "t4cclient.__main__:app", "--host", "0.0.0.0", "--port", "80"]
