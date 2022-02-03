@@ -9,5 +9,5 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: {{ .Values.storageClassName }}
+  storageClassName: {{ .Values.database.backend.internal.storageClassName }}
 {{ end }}

@@ -39,6 +39,7 @@ database:
 
       # Admin password of the database
       password: 
+      storageClassName: 
 
     external: 
       ###### IF database.deploy == False ######
@@ -70,6 +71,7 @@ database:
 
       # Admin password of the database
       password: 
+      storageClassName: 
 
     external:
       ###### IF database.deploy == False ######
