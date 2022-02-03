@@ -3,7 +3,7 @@ import shutil
 import typing as t
 
 from t4cclient import config
-from t4cclient.core.operators.__main__ import Operator
+from t4cclient.core.operators.abc import Operator
 
 import docker
 

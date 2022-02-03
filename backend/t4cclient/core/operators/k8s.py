@@ -7,7 +7,7 @@ import kubernetes
 import kubernetes.client
 import kubernetes.config
 from t4cclient import config
-from t4cclient.core.operators.__main__ import Operator
+from t4cclient.core.operators.abc import Operator
 
 log = logging.getLogger(__name__)
 
