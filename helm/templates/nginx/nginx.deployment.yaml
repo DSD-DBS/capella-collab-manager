@@ -7,7 +7,7 @@ metadata:
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/nginx/nginx.configmap.yaml") . | sha256sum }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.replicaCount | default 1 }}
   selector: 
     matchLabels: 
       id: {{ .Release.Name }}-deployment-nginx
