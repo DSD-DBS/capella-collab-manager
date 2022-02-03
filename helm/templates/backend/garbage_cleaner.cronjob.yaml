@@ -21,6 +21,11 @@ spec:
                 - configMapRef: 
                     name: {{ .Release.Name }}-backend-env
               resources: 
-                {{- toYaml $.Values.resources | nindent 16 }}
+                limits:
+                  cpu: "0.5"
+                  memory: 100Mi
+                requests:
+                  cpu: "0.25"
+                  memory: 10Mi
               securityContext:
                 {{- toYaml $.Values.securityContext | nindent 16 }}
