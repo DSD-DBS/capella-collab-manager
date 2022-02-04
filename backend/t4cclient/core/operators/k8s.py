@@ -55,6 +55,8 @@ class KubernetesOperator(Operator):
         password: str,
         repositories: t.List[str],
     ) -> t.Dict[str, t.Any]:
+        log.info("Launching a persistent session for user %s", username)
+
         id = self._generate_id()
         self._create_persistent_volume_claim(username)
         deployment = self._create_deployment(
@@ -98,6 +100,7 @@ class KubernetesOperator(Operator):
         return "".join(random.choices(string.ascii_lowercase, k=25))
 
     def kill_session(self, id: str) -> None:
+        log.info("Terminating session %s", id)
         status = self._delete_deployment(id)
         log.info(f"Deleted deployment {id}: {status and status.status}")
         self._delete_service(id)
