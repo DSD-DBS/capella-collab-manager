@@ -1,4 +1,5 @@
 import itertools
+import logging
 import typing as t
 
 import t4cclient.core.database.repositories as repositories_crud
@@ -29,6 +30,7 @@ from t4cclient.sql_models.sessions import DatabaseSession
 
 
 router = APIRouter()
+log = logging.getLogger(__name__)
 
 
 @router.get("/", response_model=t.List[GetSessionsResponse])
@@ -71,6 +73,8 @@ def request_session(
     rdp_password = generate_password(length=64)
 
     owner = token[USERNAME_CLAIM]
+
+    log.info("Starting session creation for user %s", owner)
 
     guacamole_username = generate_password()
     guacamole_password = generate_password(length=64)
