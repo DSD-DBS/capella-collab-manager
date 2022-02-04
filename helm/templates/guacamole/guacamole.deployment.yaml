@@ -58,10 +58,10 @@ spec:
             periodSeconds: 20          
           resources:
             requests:
-              memory: "400Mi"
+              memory: "1Gi"
               cpu: "500m"
             limits:
-              memory: "1Gi"
+              memory: "2Gi"
               cpu: "2"
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
