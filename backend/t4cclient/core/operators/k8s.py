@@ -49,6 +49,13 @@ class KubernetesOperator(Operator):
         self.v1_core = kubernetes.client.CoreV1Api()
         self.v1_apps = kubernetes.client.AppsV1Api()
 
+    def validate(self) -> str:
+        try:
+            self.v1_core.get_api_resources()
+            return "ok"
+        except:
+            return "cannot connect"
+
     def start_persistent_session(
         self,
         username: str,

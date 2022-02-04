@@ -6,13 +6,14 @@ from sqlalchemy.orm import Session
 from t4cclient.core.database import get_db
 from t4cclient.extensions.guacamole import get_admin_token
 from t4cclient.extensions.t4c import get_t4c_status
+from t4cclient.core.operators import OPERATOR
 
 
 class StatusResponse(BaseModel):
     guacamole: str
     license_server: str
     database: str
-
+    operator: str
 
 router = APIRouter()
 
@@ -25,7 +26,8 @@ def get_status(db: Session = Depends(get_db)):
     return StatusResponse(
         guacamole=validate_guacamole(),
         license_server=validate_license_server(),
-        database=validate_session(db))
+        database=validate_session(db),
+        operator=OPERATOR.validate())
 
 
 def validate_guacamole() -> str:
@@ -50,4 +52,3 @@ def validate_session(session: Session) -> str:
         return "ok"
     except:
         return "no connection"
-
