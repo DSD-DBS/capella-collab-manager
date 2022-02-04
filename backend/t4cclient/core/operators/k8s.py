@@ -73,6 +73,7 @@ class KubernetesOperator(Operator):
         )
         self._create_service(id, id)
         service = self._get_service(id)
+        log.info("Launched a persistent session for user %s with id %s", username, id)
         return self._export_attrs(deployment, service)
 
     def start_readonly_session(
