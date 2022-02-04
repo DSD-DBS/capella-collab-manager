@@ -12,7 +12,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from t4cclient.core.database import __main__ as database
-from t4cclient.routes import router
+from t4cclient.routes import router, status
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -51,4 +52,5 @@ async def healthcheck():
     return {"status": "alive"}
 
 
+app.include_router(status.router, prefix="", tags=["Status"])
 app.include_router(router, prefix="/api/v1")
