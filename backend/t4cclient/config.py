@@ -8,7 +8,7 @@ config_directory = pathlib.Path(__file__).parents[1] / "config"
 config_file_path = config_directory / "config.ini"
 config_parser.read(config_file_path)
 
-LOGGER = logging.getLogger(__file__)
+log = logging.getLogger(__name__)
 
 
 def get_config(group: str, key: str, fallback: str = "") -> str:
@@ -17,7 +17,7 @@ def get_config(group: str, key: str, fallback: str = "") -> str:
     )
 
     if not config:
-        LOGGER.warning(
+        log.warning(
             "Configuration %s of group %s not found. Defaulting to empty string.",
             key,
             group,
