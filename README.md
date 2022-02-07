@@ -20,8 +20,26 @@ We have more exciting features on our roadmap, like integration of templating, p
 
 Here is a short summary of what you would need to run this environment: TODO
 
-## Running locally with docker
+## Running locally with k3d
 
+To run this thing locally you'll need:
+* a Linux machine
+* [Docker](https://docs.docker.com/engine/install/ubuntu/)
+* [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
+* [helm](https://helm.sh/docs/intro/install/)
+* [K3D](https://k3d.io/) - a lightweight k8s cluster simulator
+* `nss-myhostname` to access local container registry - you can get in on Ubuntu via `sudo apt install libnss-myhostname`
+
+When you have all that installed you can simply do the following:
+
+```
+git clone ...; cd capella-collab-manager
+make create-cluster  # this creates cluster and container registry
+make all  # this builds backend and frontend
+make deploy  # deploys the manager app
+kubectl get pods --namespace=t4c-manager  # verifies deployment - you should components with "Running" status
+```
+TODO: it fails at this point, need to find a way to fix it
 TODO
 
 ## Running on a cluster
