@@ -1,5 +1,6 @@
 import secrets
 import typing as t
+from functools import lru_cache
 
 from cachetools import TTLCache
 from fastapi import APIRouter, Depends
@@ -12,12 +13,22 @@ from t4cclient.config import (
 )
 from t4cclient.core.oauth import (
     jwt_bearer,
+    OAuthStub,
 )
 from t4cclient.schemas.oauth import RefreshTokenRequest, TokenRequest
 
 
 router = APIRouter()
-ad_session = ConfidentialClientApplication(OAUTH_CLIENT_ID, client_credential=OAUTH_CLIENT_SECRET, authority=OAUTH_ENDPOINT)
+
+
+if "microsoftonline" in OAUTH_ENDPOINT:
+    @lru_cache()
+    def ad_session():
+        return ConfidentialClientApplication(OAUTH_CLIENT_ID, client_credential=OAUTH_CLIENT_SECRET, authority=OAUTH_ENDPOINT)
+else:
+    @lru_cache()
+    def ad_session():
+        return OAuthStub()
 
 
 # Make this a cache:
@@ -28,7 +39,7 @@ global_session_data = TTLCache(maxsize=128, ttl=3600)
 async def get_redirect_url():
     state = secrets.token_hex(32)
     assert state not in global_session_data
-    session_data = ad_session.initiate_auth_code_flow(scopes=[], state=state)
+    session_data = ad_session().initiate_auth_code_flow(scopes=[], state=state)
     global_session_data[session_data["state"]] = session_data
     return {"auth_url": session_data["auth_uri"], "state": session_data["state"]}
 
@@ -37,7 +48,7 @@ async def get_redirect_url():
 async def api_get_token(body: TokenRequest):
     auth_data = global_session_data[body.state]
     del global_session_data[body.state]
-    token = ad_session.acquire_token_by_auth_code_flow(auth_data, body.dict(), scopes=[])
+    token = ad_session().acquire_token_by_auth_code_flow(auth_data, body.dict(), scopes=[])
 
     # *Sigh* This is microsoft again. Instead of the access_token, we should use id_token :/
     # https://stackoverflow.com/questions/63195081/how-to-validate-a-jwt-from-azuread-in-python
@@ -46,14 +57,14 @@ async def api_get_token(body: TokenRequest):
 
 @router.put("/tokens", name="Refresh the access_token")
 async def api_refresh_token(body: RefreshTokenRequest):
-    return ad_session.acquire_token_by_refresh_token(body.refresh_token, scopes=[])
+    return ad_session().acquire_token_by_refresh_token(body.refresh_token, scopes=[])
 
 
 @router.get("/logout", name="Invalidate the token (log out)")
 async def validate_token(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
-    for account in ad_session.get_accounts():
+    for account in ad_session().get_accounts():
         if account["username"] == jwt_decoded["preferred_username"]:
-            return ad_session.remove_account(account)
+            return ad_session().remove_account(account)
     return None
 
 
