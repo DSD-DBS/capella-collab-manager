@@ -4,6 +4,7 @@ REGISTRY_NAME = myregistry.localhost
 REGISTRY_PORT = 12345
 RELEASE = dev-t4c-manager
 NAMESPACE = t4c-manager
+SESSIONS_NAMESPACE = t4c-sessions
 
 all: backend frontend
 
@@ -18,9 +19,12 @@ frontend:
 #deploy: backend frontend
 deploy:
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
+	# it assumes that default namespace for sessions "t4c-sessions" is already there
+	kubectl create namespace $(SESSIONS_NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
 	helm upgrade --install \
 		--kube-context k3d-$(CLUSTER_NAME) \
-		--namespace $(NAMESPACE) \
+		--create-namespace \
+	        --namespace $(NAMESPACE) \
 		--values helm/options.yaml \
 		--set docker.repository=k3d-$(REGISTRY_NAME):$(REGISTRY_PORT) \
 		$(RELEASE) ./helm
