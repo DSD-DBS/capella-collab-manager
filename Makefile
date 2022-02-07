@@ -25,8 +25,8 @@ deploy:
 		--kube-context k3d-$(CLUSTER_NAME) \
 		--create-namespace \
 	        --namespace $(NAMESPACE) \
-		--values helm/options.yaml \
-		--set docker.repository=k3d-$(REGISTRY_NAME):$(REGISTRY_PORT) \
+		--values helm/values.yaml \
+		--set docker.registry=k3d-$(REGISTRY_NAME):$(REGISTRY_PORT) \
 		$(RELEASE) ./helm
 
 undeploy:
@@ -37,5 +37,8 @@ create-cluster:
 	k3d registry list $(REGISTRY_NAME) 2>&- || k3d registry create $(REGISTRY_NAME) --port $(REGISTRY_PORT)
 	k3d cluster list $(CLUSTER_NAME) 2>&- || k3d cluster create $(CLUSTER_NAME) --registry-use k3d-$(REGISTRY_NAME):$(REGISTRY_PORT)
 	kubectl cluster-info
+
+delete-cluster:
+	k3d cluster list $(CLUSTER_NAME) 2>&- || k3d cluster delete $(CLUSTER_NAME)
 
 .PHONY: backend frontend deploy create-cluster
