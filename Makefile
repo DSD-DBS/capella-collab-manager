@@ -16,15 +16,14 @@ frontend:
 	docker build -t t4c/client/frontend -t $(REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/frontend frontend
 	docker push $(REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/frontend
 
-#deploy: backend frontend
-deploy:
+deploy: backend frontend
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
 	# it assumes that default namespace for sessions "t4c-sessions" is already there
 	kubectl create namespace $(SESSIONS_NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
 	helm upgrade --install \
 		--kube-context k3d-$(CLUSTER_NAME) \
 		--create-namespace \
-	        --namespace $(NAMESPACE) \
+		--namespace $(NAMESPACE) \
 		--values helm/values.yaml \
 		--set docker.registry=k3d-$(REGISTRY_NAME):$(REGISTRY_PORT) \
 		$(RELEASE) ./helm
@@ -35,10 +34,16 @@ undeploy:
 create-cluster:
 	type k3d || { echo "K3D is not installed, install k3d and run 'make create-cluster' again"; exit 1; }
 	k3d registry list $(REGISTRY_NAME) 2>&- || k3d registry create $(REGISTRY_NAME) --port $(REGISTRY_PORT)
-	k3d cluster list $(CLUSTER_NAME) 2>&- || k3d cluster create $(CLUSTER_NAME) --registry-use k3d-$(REGISTRY_NAME):$(REGISTRY_PORT)
+	k3d cluster list $(CLUSTER_NAME) 2>&- || k3d cluster create $(CLUSTER_NAME) \
+		--registry-use k3d-$(REGISTRY_NAME):$(REGISTRY_PORT) \
+		--port "8081:80@loadbalancer"
 	kubectl cluster-info
 
 delete-cluster:
-	k3d cluster list $(CLUSTER_NAME) 2>&- || k3d cluster delete $(CLUSTER_NAME)
+	k3d cluster list $(CLUSTER_NAME) 2>&- && k3d cluster delete $(CLUSTER_NAME)
+
+provision-guacamole:
+	kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
+	kubectl exec -ti --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole
 
 .PHONY: backend frontend deploy create-cluster
