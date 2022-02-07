@@ -1,4 +1,169 @@
+#########################################
+### APPLICATION RELATED CONFIGURATION ###
+#########################################
+
+
+docker:
+  # Registry for Docker Images, will be used as prefix for Docker Images
+  registry: docker.io
+
+  images:
+    # Docker Image for the Frontend
+    frontend: /t4c/client/frontend
+
+    # Docker Image for the Backend
+    backend: /t4c/client/backend
+
+    workspaces: 
+      # Docker Image for the Persistent Workspace Session
+      persistent: /t4c/client/remote
+
+      # Docker Image for the ReadOnly Workspace
+      readonly: /capella/read-only
+
+general: 
+  # Base URL on which the service listens
+  host: localhost
+  port: 8080
+  scheme: http
+
+database: 
+  # Define whether the database should also be deployed
+  # in the cluster or whether it already exists externally. 
+  deploy: True
+
+  # Database Configuration for Guacamole
+  guacamole: 
+    internal: 
+      ###### IF database.deploy == True ######
+
+      # Admin password of the database
+      password: secret
+      storageClassName: local-path
+
+    external: 
+      ###### IF database.deploy == False ######
+
+      # Select type of external database
+      # Possible values: MYSQL | POSTGRES
+      type: POSTGRES
+
+      # Configure the hostname of the external database
+      hostname: 
+
+      # Configure the database name of the external database
+      database: 
+
+      # Configure the username of the external database
+      username: 
+
+      # Configure the password of the external database
+      password: 
+
+  # Database Configuration for the T4C Manager
+  backend: 
+    # Username of an initial admin user 
+    # Is only set if the database is empty!
+    initialAdmin: me@example.com
+
+    internal: 
+      ###### IF database.deploy == True ######
+
+      # Admin password of the database
+      password: secret
+      storageClassName: local-path
+
+    external:
+      ###### IF database.deploy == False ######
+
+      # Provide URI to the datebase in the format: postgresql://user:password@url:port/db_name
+      uri: postgresql://user:password@url:port/db_name
+
+guacamole:
+  # Credentials for the Guacamole Admin User
+  username: guacadmin
+  password: guacadmin
+
+backend:
+  oauth:
+    # Endpoint that issues JWT Tokens
+    tokenIssuanceEndpoint: not tused
+    # Endpoint that authorizes the User
+    authorizationEndpoint: http://localhost/auth-endpoint
+    client:
+      # OAUTH2 Client ID
+      id: tbd
+      # OAUTH2 Client Secret
+      secret: tbd
+    # Add Username claim
+    usernameClaim: sub 
+
+  garbageCleaner:
+    cron: "*/10 * * * *"
+
+  # Namespace in which the Session Deployments / Pods should be spawned.
+  # IMPORTANT: The namespace has to exist already
+  k8sSessionNamespace: t4c-sessions
+
+t4cServer:
+  # URL to access the REST APIs of the T4C Server
+
+  apis:
+    # API Base for usage and status endpoints 
+    # The following endpoints have to be reachable: 
+    # - <base>/usage/json
+    # - <base>/status/json
+    usageStats: localhost:8086
+
+    # REST API Base for REST API including the prefix (CRUD for repositories, projects and users)
+    # All REST endpoints have to reachable. 
+    restAPI: localhost:8090/api/v1.0
+
+  # Credentials to authenticate against the REST API endpoint (HTTPBasic)
+  username: sampleUser
+  password: samplePassword
+
+  # IPv4 Address of the T4C Server
+  host: localhost
+  port: 2036
+  licenseKey: 
+
+jenkins:
+  # Admin Credentials for Jenkins Instance
+  username: tbd
+  password: tbd
+
+  # Base URL of the existing Jenkins Instance
+  baseURL: tbd
+
+git:
+  # Git Credentials to fetch the Models from Git for the Read Only Workspaces.
+  username: tbd
+  password: tbd
+
+  # E-Mail for Commits made by the created Backups Jobs
+  email: tbd
+
+  # Jenkins Git Credentials ID (Git Plugin)
+  credentialID: tbd
+
+  # Repository URL for Scripts used by the Jenkins Backup Job (dsh-tools)
+  scriptRepoURL: tbd
+
+
+
 ########################################
 ### KUBERNETES RELATED CONFIGURATION ###
 ########################################
 
+# replicaCount: 1
+
+pullPolicy: Always
+
+imagePullSecrets: []
+
+# SecurityContext for Pods
+securityContext:
+
+# Define if the T4C Manager should be deployed using a Kubernetes Service or Ingress
+serviceType: Ingress
