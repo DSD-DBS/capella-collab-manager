@@ -24,7 +24,7 @@ docker:
 general: 
   # Base URL on which the service listens
   host: localhost
-  port: 8080
+  port: 80
   scheme: http
 
 database: 
