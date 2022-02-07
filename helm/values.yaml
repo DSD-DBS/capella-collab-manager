@@ -87,9 +87,9 @@ guacamole:
 backend:
   oauth:
     # Endpoint that issues JWT Tokens
-    tokenIssuanceEndpoint: not tused
+    tokenIssuanceEndpoint: http://dev-t4c-manager-oauth2-mock/default/token
     # Endpoint that authorizes the User
-    authorizationEndpoint: http://localhost/auth-endpoint
+    authorizationEndpoint: http://dev-t4c-manager-oauth2-mock/default
     client:
       # OAUTH2 Client ID
       id: tbd
