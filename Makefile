@@ -16,7 +16,13 @@ frontend:
 	docker build -t t4c/client/frontend -t $(REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/frontend frontend
 	docker push $(REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/frontend
 
-deploy: backend frontend
+capella:
+	docker build -t base capella-dockerimages/base
+	docker build -t capella/base capella-dockerimages/capella
+	docker build -t capella/remote -t $(REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
+	docker push $(REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
+
+deploy: backend frontend capella
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
 	# it assumes that default namespace for sessions "t4c-sessions" is already there
 	kubectl create namespace $(SESSIONS_NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
