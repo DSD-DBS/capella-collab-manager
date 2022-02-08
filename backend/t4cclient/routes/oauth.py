@@ -21,14 +21,9 @@ from t4cclient.schemas.oauth import RefreshTokenRequest, TokenRequest
 router = APIRouter()
 
 
-if "microsoftonline" in OAUTH_ENDPOINT:
-    @lru_cache()
-    def ad_session():
-        return ConfidentialClientApplication(OAUTH_CLIENT_ID, client_credential=OAUTH_CLIENT_SECRET, authority=OAUTH_ENDPOINT)
-else:
-    @lru_cache()
-    def ad_session():
-        return OAuthStub()
+@lru_cache()
+def ad_session():
+    return ConfidentialClientApplication(OAUTH_CLIENT_ID, client_credential=OAUTH_CLIENT_SECRET, authority=OAUTH_ENDPOINT)
 
 
 # Make this a cache:

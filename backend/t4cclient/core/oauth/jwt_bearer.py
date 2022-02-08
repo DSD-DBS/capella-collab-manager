@@ -76,6 +76,7 @@ class _KeyStore:
         self.algorithms = algorithms
         self.public_keys = {}
         self.key_refresh_interval = key_refresh_interval
+        self.public_keys_last_refreshed = 0
         self.refresh_keys()
 
     def keys_need_refresh(self) -> bool:
@@ -116,7 +117,7 @@ class _KeyStore:
             if in_retry:
                 raise KeyIDNotFoundError()
             self.refresh_keys()
-            return self.validate_token(token, in_retry=1)
+            return self.key_for_token(token, in_retry=1)
 
 
 def get_jwks_uri_for_azure_ad(authorization_endpoint=OAUTH_ENDPOINT):
