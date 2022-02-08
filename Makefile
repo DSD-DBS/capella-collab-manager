@@ -25,6 +25,7 @@ deploy: backend frontend
 		--create-namespace \
 		--namespace $(NAMESPACE) \
 		--values helm/values.yaml \
+		$$(test -f secrets.yaml && echo "--values secrets.yaml") \
 		--set docker.registry=k3d-$(REGISTRY_NAME):$(REGISTRY_PORT) \
 		$(RELEASE) ./helm
 
@@ -45,5 +46,8 @@ delete-cluster:
 provision-guacamole:
 	kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
 	kubectl exec -ti --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole
+
+provision-backend:
+	echo "insert into repository_user_association values ('amolenaar@xebia.com', 'default', 'WRITE', 'MANAGER');" | kubectl exec -ti --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-backend-postgres --no-headers | cut -f1 -d' ') -- psql -U backend backend
 
 .PHONY: backend frontend deploy create-cluster
