@@ -167,3 +167,6 @@ securityContext:
 
 # Define if the T4C Manager should be deployed using a Kubernetes Service or Ingress
 serviceType: Ingress
+
+# target: local | azure
+target: local

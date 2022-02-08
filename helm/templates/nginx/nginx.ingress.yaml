@@ -5,9 +5,13 @@ metadata:
   name: {{ .Release.Name }}-nginx
   labels: 
     id: {{ .Release.Name }}-ingress-nginx
-  annotations: 
+  annotations:
+    {{ if eq .Values.target "local" }}
+    ingress.kubernetes.io/ssl-redirect: "false"
+    {{ else }}
     kubernetes.io/ingress.class: azure/application-gateway
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    {{ end }}
 spec:
   tls:
     - hosts:
