@@ -1,4 +1,4 @@
 [submodule "ease/pyease"]
-	path = ease/pyease
+	path = capella-dockerimages/ease/pyease
 	url = ../pyease.git
 	branch = master
