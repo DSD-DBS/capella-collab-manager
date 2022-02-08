@@ -6,13 +6,8 @@ metadata:
   labels: 
     id: {{ .Release.Name }}-ingress-nginx
   annotations: 
-    kubernetes.io/ingress.class: azure/application-gateway
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
 spec:
-  tls:
-    - hosts:
-        - {{ .Values.general.host }}
-      secretName: {{ .Release.Name }}-tls-secret
   rules:
     - host: {{ .Values.general.host }}
       http:
