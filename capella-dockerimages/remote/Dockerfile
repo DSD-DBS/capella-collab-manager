@@ -46,7 +46,7 @@ COPY setup_workspace.py /opt/setup_workspace.py
 
 # Set permissions
 RUN mkdir -p /run/xrdp/sockdir && \
-    chown techuser /opt && \
+    chown techuser /opt /opt/capella/capella.ini && \
     chown -R techuser /etc/xrdp /run/xrdp /var/log/xrdp*
 
 WORKDIR /home/techuser
