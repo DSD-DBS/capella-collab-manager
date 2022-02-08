@@ -1,0 +1,8 @@
+# Autostart script for OpenBox
+
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+nitrogen --restore &
+
+# Run capella in a loop:
+( while true; do /opt/capella/capella -data /workspace; sleep 1; done ) &
