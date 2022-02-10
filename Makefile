@@ -5,6 +5,7 @@ REGISTRY_PORT = 12345
 RELEASE = dev-t4c-manager
 NAMESPACE = t4c-manager
 SESSIONS_NAMESPACE = t4c-sessions
+MY_EMAIL := amolenaar@xebia.com
 
 all: backend frontend
 
@@ -33,10 +34,18 @@ deploy: backend frontend capella
 		--values helm/values.yaml \
 		$$(test -f secrets.yaml && echo "--values secrets.yaml") \
 		--set docker.registry=k3d-$(REGISTRY_NAME):$(REGISTRY_PORT) \
+		--set backend.initialAdmin=$(MY_EMAIL) \
+		--wait --timeout 2m \
 		$(RELEASE) ./helm
+	$(MAKE) .provision-guacamole .provision-backend
+
+rollout: backend frontend
+	kubectl rollout restart deployment -n $(NAMESPACE) $(RELEASE)-backend
+	kubectl rollout restart deployment -n $(NAMESPACE) $(RELEASE)-frontend
 
 undeploy:
 	helm uninstall --kube-context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $(RELEASE)
+	rm -f .provision-guacamole .provision-backend
 
 create-cluster:
 	type k3d || { echo "K3D is not installed, install k3d and run 'make create-cluster' again"; exit 1; }
@@ -48,12 +57,15 @@ create-cluster:
 
 delete-cluster:
 	k3d cluster list $(CLUSTER_NAME) 2>&- && k3d cluster delete $(CLUSTER_NAME)
+	rm -f .provision-guacamole .provision-backend
 
-provision-guacamole:
+.provision-guacamole:
 	kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
-	kubectl exec -ti --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole
+	kubectl exec -ti --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole && \
+	touch .provision-guacamole
 
-provision-backend:
-	echo "insert into repository_user_association values ('amolenaar@xebia.com', 'default', 'WRITE', 'MANAGER');" | kubectl exec -ti --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-backend-postgres --no-headers | cut -f1 -d' ') -- psql -U backend backend
+.provision-backend:
+	echo "insert into repository_user_association values ('$(MY_EMAIL)', 'default', 'WRITE', 'MANAGER');" | kubectl exec -ti --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-backend-postgres --no-headers | cut -f1 -d' ') -- psql -U backend backend && \
+	touch .provision-backend
 
-.PHONY: backend frontend deploy create-cluster
+.PHONY: backend frontend capella deploy undeploy create-cluster delete-cluster persistent-volume
