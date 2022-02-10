@@ -1,4 +1,5 @@
-FROM capella/base
+ARG BASE_IMAGE=capella/base
+FROM ${BASE_IMAGE}
 
 # Install T4C
 COPY ./updateSite /opt/updateSite
