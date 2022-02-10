@@ -104,8 +104,8 @@ backend:
   # Namespace in which the Session Deployments / Pods should be spawned.
   # IMPORTANT: The namespace has to exist already
   k8sSessionNamespace: t4c-sessions
-  storageClassName: "local-path"
-
+  storageClassName: local-path
+  storageAccessMode: ReadWriteOnce
 
 t4cServer:
   # URL to access the REST APIs of the T4C Server
