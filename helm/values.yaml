@@ -87,9 +87,9 @@ guacamole:
 backend:
   oauth:
     # Endpoint that issues JWT Tokens
-    tokenIssuanceEndpoint: http://dev-t4c-manager-oauth2-mock/default/token
+    tokenIssuanceEndpoint: tbd
     # Endpoint that authorizes the User
-    authorizationEndpoint: http://dev-t4c-manager-oauth2-mock/default
+    authorizationEndpoint: tbd
     client:
       # OAUTH2 Client ID
       id: tbd
@@ -104,6 +104,8 @@ backend:
   # Namespace in which the Session Deployments / Pods should be spawned.
   # IMPORTANT: The namespace has to exist already
   k8sSessionNamespace: t4c-sessions
+  storageClassName: "local-path"
+
 
 t4cServer:
   # URL to access the REST APIs of the T4C Server

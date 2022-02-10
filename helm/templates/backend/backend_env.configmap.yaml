@@ -31,6 +31,7 @@ data:
     T4C_SERVER_PORT: "{{ .Values.t4cServer.port }}"
     T4C_SERVER_LICENCE: "{{ .Values.t4cServer.licenseKey }}"
     KUBERNETES_NAMESPACE: {{ .Values.backend.k8sSessionNamespace }}
+    KUBERNETES_STORAGE_CLASS_NAME: {{ .Values.backend.storageClassName }}
     OPERATOR_TYPE: kubernetes
     JENKINS_USERNAME: {{ .Values.jenkins.username }}
     JENKINS_PASSWORD: {{ .Values.jenkins.password }}

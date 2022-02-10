@@ -44,9 +44,6 @@ except kubernetes.config.ConfigException:
     )
 
 
-PERSISTENT_VOLUME = False
-
-
 class KubernetesOperator(Operator):
     def __init__(self) -> None:
         self.v1_core = kubernetes.client.CoreV1Api()
@@ -68,8 +65,7 @@ class KubernetesOperator(Operator):
         log.info("Launching a persistent session for user %s", username)
 
         id = self._generate_id()
-        if PERSISTENT_VOLUME:
-            self._create_persistent_volume_claim(username)
+        self._create_persistent_volume_claim(username)
         deployment = self._create_deployment(
             config.PERSISTENT_IMAGE,
             username,
@@ -165,7 +161,7 @@ class KubernetesOperator(Operator):
                                         "name": "workspace",
                                         "mountPath": "/workspace"
                                     }
-                                ] if PERSISTENT_VOLUME else []
+                                ]
                             },
                         ],
                         "volumes": [
@@ -175,7 +171,7 @@ class KubernetesOperator(Operator):
                                     "claimName": self._get_claim_name(username)
                                 }
                             }
-                        ] if PERSISTENT_VOLUME else [],
+                        ],
                         "restartPolicy": "Always",
                     },
                 },
@@ -220,7 +216,7 @@ class KubernetesOperator(Operator):
                 "accessModes": [
                     "ReadWriteMany"
                 ],
-                "storageClassName": "persistent-sessions-csi",
+                "storageClassName": config.KUBERNETES_STORAGE_CLASS_NAME,
                 "resources": {
                     "requests": {
                         "storage": "20Gi"
