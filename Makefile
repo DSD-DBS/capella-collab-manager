@@ -4,8 +4,7 @@ REGISTRY_NAME = myregistry.localhost
 REGISTRY_PORT = 12345
 RELEASE = dev-t4c-manager
 NAMESPACE = t4c-manager
-SESSIONS_NAMESPACE = t4c-sessions
-MY_EMAIL := amolenaar@xebia.com
+MY_EMAIL ?= me@example.com
 
 all: backend frontend
 
@@ -25,8 +24,6 @@ capella:
 
 deploy: backend frontend capella
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
-	# it assumes that default namespace for sessions "t4c-sessions" is already there
-	kubectl create namespace $(SESSIONS_NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
 	helm upgrade --install \
 		--kube-context k3d-$(CLUSTER_NAME) \
 		--create-namespace \
@@ -34,7 +31,7 @@ deploy: backend frontend capella
 		--values helm/values.yaml \
 		$$(test -f secrets.yaml && echo "--values secrets.yaml") \
 		--set docker.registry=k3d-$(REGISTRY_NAME):$(REGISTRY_PORT) \
-		--set backend.initialAdmin=$(MY_EMAIL) \
+		--set database.backend.initialAdmin=$(MY_EMAIL) \
 		--wait --timeout 2m \
 		$(RELEASE) ./helm
 	$(MAKE) .provision-guacamole .provision-backend

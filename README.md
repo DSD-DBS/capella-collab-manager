@@ -35,12 +35,30 @@ When you have all that installed you can simply do the following:
 ```
 git clone ...; cd capella-collab-manager
 make create-cluster  # this creates cluster and container registry
-make all  # this builds backend and frontend
-make deploy  # deploys the manager app
-kubectl get pods --namespace=t4c-manager  # verifies deployment - you should components with "Running" status
+MY_EMAIL=me@mydomain.com make deploy  # build and deploy the manager app
+kubectl get pods --namespace=t4c-manager  # verify your deployment - components should be in "Running" state
 ```
+
 TODO: it fails at this point, need to find a way to fix it
 TODO
+
+### Limitations
+
+* Only works with Azure AD as authentication backend, create a small file `secrets.yaml` in this folder:
+
+  ```yaml
+  backend:
+  oauth:
+    authorizationEndpoint: https://login.microsoftonline.com/<tenant-id>
+    usernameClaim: preferred_username
+    
+    client: 
+      # OAUTH2 Client ID
+      id: <client id, a.k.a. application id>
+      # OAUTH2 Client Secret
+      secret: <secret>
+  ```
+
 
 ## Running on a cluster
 
