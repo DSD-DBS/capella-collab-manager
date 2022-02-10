@@ -59,6 +59,8 @@ TODO
       secret: <secret>
   ```
 
+* When launching a Guacamole container, the local address (when testing on K3D) is wrong.
+  Change the URL to point to port 8081.
 
 ## Running on a cluster
 
