@@ -21,3 +21,11 @@
 #settings {
   margin-right: 20px;
 }
+
+.margin {
+  padding-top: 10px;
+}
+
+.right-aligned {
+  display: flex;
+}

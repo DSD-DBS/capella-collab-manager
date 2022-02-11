@@ -50,7 +50,6 @@ import { RepositoryUserSettingsComponent } from './settings/repository-manager-s
 import { ProjectDeletionDialogComponent } from './settings/repository-manager-settings/repository-settings/project-settings/project-deletion-dialog/project-deletion-dialog.component';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { JenkinsComponent } from './settings/repository-manager-settings/repository-settings/git-model-settings/jenkins/jenkins.component';
-import { FeedbackComponent } from './feedback/feedback.component';
 import { GitModelDeletionDialogComponent } from './settings/repository-manager-settings/repository-settings/git-model-settings/git-model-deletion-dialog/git-model-deletion-dialog.component';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { WarningComponent } from './home/request-session/warning/warning.component';
@@ -87,7 +86,6 @@ import { WhitespaceUrlInterceptor } from './services/encoder/encoder.interceptor
     RepositoryUserSettingsComponent,
     ProjectDeletionDialogComponent,
     JenkinsComponent,
-    FeedbackComponent,
     GitModelDeletionDialogComponent,
     WarningComponent,
   ],
