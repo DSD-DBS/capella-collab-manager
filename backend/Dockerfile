@@ -18,4 +18,4 @@ COPY . /backend
 WORKDIR /backend
 RUN pip install .
 
-CMD ["uvicorn", "t4cclient:app", "--host", "0.0.0.0", "--port", "80", "--forwarded-allow-ips", "*"]
+CMD ["uvicorn", "t4cclient:app", "--host", "0.0.0.0", "--port", "80"]
