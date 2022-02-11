@@ -214,9 +214,9 @@ class KubernetesOperator(Operator):
             },
             "spec": {
                 "accessModes": [
-                    "ReadWriteMany"
+                    config.KUBERNETES_STORAGE_ACCESS_MODE
                 ],
-                "storageClassName": "persistent-sessions-csi",
+                "storageClassName": config.KUBERNETES_STORAGE_CLASS_NAME,
                 "resources": {
                     "requests": {
                         "storage": "20Gi"

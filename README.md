@@ -20,9 +20,47 @@ We have more exciting features on our roadmap, like integration of templating, p
 
 Here is a short summary of what you would need to run this environment: TODO
 
-## Running locally with docker
+## Running locally with k3d
 
+To run this thing locally you'll need:
+* a Linux machine
+* [Docker](https://docs.docker.com/engine/install/ubuntu/)
+* [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
+* [helm](https://helm.sh/docs/intro/install/)
+* [K3D](https://k3d.io/) - a lightweight k8s cluster simulator
+* `nss-myhostname` to access local container registry - you can get in on Ubuntu via `sudo apt install libnss-myhostname`
+
+When you have all that installed you can simply do the following:
+
+```
+git clone ...; cd capella-collab-manager
+make create-cluster  # this creates cluster and container registry
+MY_EMAIL=me@mydomain.com make deploy  # build and deploy the manager app
+kubectl get pods --namespace=t4c-manager  # verify your deployment - components should be in "Running" state
+```
+
+TODO: it fails at this point, need to find a way to fix it
 TODO
+
+### Limitations
+
+* Only works with Azure AD as authentication backend, create a small file `secrets.yaml` in this folder:
+
+  ```yaml
+  backend:
+  oauth:
+    authorizationEndpoint: https://login.microsoftonline.com/<tenant-id>
+    usernameClaim: preferred_username
+    
+    client: 
+      # OAUTH2 Client ID
+      id: <client id, a.k.a. application id>
+      # OAUTH2 Client Secret
+      secret: <secret>
+  ```
+
+* When launching a Guacamole container, the local address (when testing on K3D) is wrong.
+  Change the URL to point to port 8081.
 
 ## Running on a cluster
 
