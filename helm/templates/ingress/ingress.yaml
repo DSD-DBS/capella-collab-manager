@@ -26,7 +26,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ .Release.Name }}-backend
+                name: {{ .Release.Name }}-nginx-clusterip
                 port:
                   number: 80
           - path: /guacamole
