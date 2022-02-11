@@ -40,7 +40,8 @@ def fetch_last_seen(mac_addr: str):
         if list_with_mac:
             return list_with_mac[0]
         return "No T4C Session found"
-    except requests.exceptions.HTTPError:
+    except Exception:
+        log.exception("T4C Server Error")
         return "T4C Server Error"
 
 

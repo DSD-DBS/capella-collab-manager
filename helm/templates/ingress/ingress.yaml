@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+  labels: 
+    id: {{ .Release.Name }}-ingress
+  annotations:
+    {{ if eq .Values.target "local" }}
+    ingress.kubernetes.io/ssl-redirect: "false"
+    {{ else }}
+    kubernetes.io/ingress.class: nginx
+    {{ end }}
+spec:
+  rules:
+    - host: {{ .Values.general.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-frontend
+                port:
+                  number: 80
+          - path: /api/v1
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-backend
+                port:
+                  number: 80
+          - path: /guacamole
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-guacamole-guacamole
+                port:
+                  number: 8080
