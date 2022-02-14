@@ -1,37 +1,40 @@
-<mat-spinner *ngIf="showSpinner"></mat-spinner>
+<div class="wrapper">
+  <h1><b>Active Sessions</b></h1>
 
-<mat-card *ngIf="!sessions.length && !showSpinner">
-  <h2>No active sessions</h2>
-  <br />
-  No active sessions for your user are found in our system. <br />
-  Please navigate to "Request session".
-</mat-card>
+  <mat-spinner *ngIf="showSpinner"></mat-spinner>
 
-<div class="flexbox">
-  <mat-card *ngFor="let session of sessions; let i = index">
-    <h2>Session {{ i + 1 }}</h2>
-    <div *ngIf="session.type == 'persistent'">
-      <b>Persistent Session</b><br />
-    </div>
-    <div *ngIf="session.type == 'readonly'">
-      <b>Read-Only Session</b><br />
-      Repository: {{ session.repository }} <br />
-    </div>
-    State of Container: {{ session.state }} <br />
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="openDeletionDialog([session])"
-    >
-      Stop / Remove Session
-    </button>
+  <mat-card *ngIf="!sessions.length && !showSpinner">
+    <h2>No active sessions</h2>
     <br />
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="openReconnectDialog(session)"
-    >
-      Reconnect
-    </button>
+    No active sessions for your user are found in our system. <br />
   </mat-card>
+
+  <div class="flexbox">
+    <mat-card *ngFor="let session of sessions; let i = index">
+      <h2>Session {{ i + 1 }}</h2>
+      <div *ngIf="session.type == 'persistent'">
+        <b>Persistent Session</b><br />
+      </div>
+      <div *ngIf="session.type == 'readonly'">
+        <b>Read-Only Session</b><br />
+        Repository: {{ session.repository }} <br />
+      </div>
+      State of Container: {{ session.state }} <br />
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="openDeletionDialog([session])"
+      >
+        Stop / Remove Session
+      </button>
+      <br />
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="openReconnectDialog(session)"
+      >
+        Reconnect
+      </button>
+    </mat-card>
+  </div>
 </div>
