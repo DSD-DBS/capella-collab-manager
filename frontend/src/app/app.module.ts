@@ -57,6 +57,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { WhitespaceUrlInterceptor } from './services/encoder/encoder.interceptor';
 import { MatMenuModule } from '@angular/material/menu';
 import { WorkspaceComponent } from './workspace/workspace.component';
+import { FooterComponent } from './footer/footer.component';
+import { TermsConditionsComponent } from './footer/terms-conditions/terms-conditions.component';
 
 @NgModule({
   declarations: [
@@ -91,6 +93,8 @@ import { WorkspaceComponent } from './workspace/workspace.component';
     GitModelDeletionDialogComponent,
     WarningComponent,
     WorkspaceComponent,
+    FooterComponent,
+    TermsConditionsComponent,
   ],
   imports: [
     BrowserModule,

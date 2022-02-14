@@ -1,3 +1,10 @@
 .wrapper {
   margin: 10px;
+  flex: 1;
+}
+
+.overall-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
 }
