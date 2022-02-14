@@ -11,24 +11,7 @@ import { SessionService } from '../services/session/session.service';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
-  repositories: Array<Repository> = [];
-  showSpinner = true;
+  constructor() {}
 
-  constructor(
-    public sessionService: SessionService,
-    private repositoryService: RepositoryService
-  ) {}
-
-  ngOnInit() {
-    this.showSpinner = true;
-    this.repositoryService.getRepositories().subscribe(
-      (res: Array<Repository>) => {
-        this.repositories = res;
-        this.showSpinner = false;
-      },
-      (err) => {
-        this.showSpinner = false;
-      }
-    );
-  }
+  ngOnInit(): void {}
 }
