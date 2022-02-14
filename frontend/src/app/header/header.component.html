@@ -1,11 +1,11 @@
 <div id="toolbar">
+  <div class="flexbox primaryText" id="title">{{ title }}</div>
   <div class="flexbox">
-    <img class="logo" src="../../assets/logo.svg" />
-    <button mat-button routerLink="">Request Session</button>
-    <button mat-button routerLink="active-sessions">Active Sessions</button>
+    <button mat-raised-button color="primary" routerLink="">Workspaces</button>
     <button
+      color="primary"
       id="overview"
-      mat-button
+      mat-raised-button
       *ngIf="
         repositoryService.isManager ||
         userService.user?.role === 'administrator'
@@ -13,14 +13,6 @@
       routerLink="overview"
     >
       Overview
-    </button>
-    <button
-      mat-button
-      routerLink="logout"
-      [queryParams]="{ reason: 'logout' }"
-      *ngIf="localStorageService.getValue('access_token')"
-    >
-      Log out
     </button>
   </div>
   <div class="right-aligned">
@@ -37,9 +29,27 @@
         >
       </span>
     </div>
-    <button id="settings" mat-button routerLink="settings">
-      Settings&nbsp;
-      <mat-icon>settings</mat-icon>
+    <mat-menu #profileMenu="matMenu">
+      <button class="profileMenuButton" mat-menu-item routerLink="settings">
+        Settings <mat-icon>settings</mat-icon>
+      </button>
+      <button
+        class="profileMenuButton"
+        mat-menu-item
+        routerLink="logout"
+        [queryParams]="{ reason: 'logout' }"
+        *ngIf="localStorageService.getValue('access_token')"
+      >
+        Log out <mat-icon>logout</mat-icon>
+      </button>
+    </mat-menu>
+    <button
+      color="primary"
+      id="profile"
+      mat-raised-button
+      [matMenuTriggerFor]="profileMenu"
+    >
+      Profile <mat-icon>account_circle</mat-icon>
     </button>
   </div>
 </div>
