@@ -1,0 +1,21 @@
+.center {
+  margin-top: 50px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  display: inline;
+}
+
+button {
+  margin-top: 10px;
+}
+
+.repository-selection {
+  margin-top: 10px;
+}
+
+mat-spinner {
+  margin-top: 70px;
+  margin-left: auto;
+  margin-right: auto;
+}

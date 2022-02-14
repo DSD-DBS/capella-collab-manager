@@ -7,3 +7,4 @@ capella-dockerimages/capella/dropins
 capella-dockerimages/t4c/updateSite
 .provision-backend
 .provision-guacamole
+values-orig.poc.yaml

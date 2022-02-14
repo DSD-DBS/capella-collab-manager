@@ -1,5 +1,5 @@
-<app-header></app-header>
+<app-header [title]="title"></app-header>
 <app-notice></app-notice>
 <div class="wrapper">
-  <router-outlet></router-outlet>
+  <router-outlet (activate)="updateTitle()"></router-outlet>
 </div>

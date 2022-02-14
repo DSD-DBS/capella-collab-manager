@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { UserService } from './services/user/user.service';
 
 @Component({
@@ -7,9 +8,30 @@ import { UserService } from './services/user/user.service';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  title = 't4cclient';
+  title = 'Capella Collaboration Plattform';
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   ngOnInit(): void {}
+
+  updateTitle(): void {
+    switch (this.router.url) {
+      case '/settings': {
+        this.title = 'Settings';
+        break;
+      }
+      case '/': {
+        this.title = 'Workspaces';
+        break;
+      }
+      case '/overview': {
+        this.title = 'Session Overview';
+        break;
+      }
+      default: {
+        this.title = 'Capella Collaboration Manager';
+      }
+    }
+    console.log(this.title);
+  }
 }
