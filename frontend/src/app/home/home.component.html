@@ -1,11 +1,9 @@
-<div class="center">
-  <h1>Welcome to the T4C Access Manager</h1>
-  <mat-spinner *ngIf="showSpinner"></mat-spinner>
-  <app-no-repository
-    *ngIf="!repositories.length && !showSpinner"
-  ></app-no-repository>
-  <app-request-session
-    *ngIf="repositories.length"
-    [repositories]="repositories"
-  ></app-request-session>
+<mat-card id="welcome-card">
+  <span id="welcome">Welcome to the</span>
+  <h1>Capella Collaboration Manager</h1>
+</mat-card>
+
+<div class="flexbox">
+  <app-workspace></app-workspace>
+  <app-active-sessions></app-active-sessions>
 </div>
