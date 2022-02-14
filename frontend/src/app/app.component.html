@@ -1,5 +1,8 @@
-<app-header [title]="title"></app-header>
-<app-notice></app-notice>
-<div class="wrapper">
-  <router-outlet (activate)="updateTitle()"></router-outlet>
+<div class="overall-wrapper">
+  <app-header [title]="title"></app-header>
+  <app-notice></app-notice>
+  <div class="wrapper">
+    <router-outlet (activate)="updateTitle()"></router-outlet>
+  </div>
+  <app-footer class="footer"></app-footer>
 </div>
