@@ -33,7 +33,8 @@ deploy: backend frontend capella
 		$$(test -f secrets.yaml && echo "--values secrets.yaml") \
 		--set docker.registry=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
 		--set database.backend.initialAdmin=$(MY_EMAIL) \
-		--wait --timeout 2m \
+		--wait --timeout 3m \
+		--debug \
 		$(RELEASE) ./helm
 	$(MAKE) .provision-guacamole .provision-backend
 
