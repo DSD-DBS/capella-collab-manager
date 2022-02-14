@@ -1,6 +1,7 @@
 
 CLUSTER_NAME = mycluster
-REGISTRY_NAME = myregistry.localhost
+LOCAL_REGISTRY_NAME = localhost
+CLUSTER_REGISTRY_NAME = myregistry.localhost
 REGISTRY_PORT = 12345
 RELEASE = dev-t4c-manager
 NAMESPACE = t4c-manager
@@ -9,18 +10,18 @@ MY_EMAIL ?= me@example.com
 all: backend frontend
 
 backend:
-	docker build -t t4c/client/backend -t $(REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/backend backend
-	docker push $(REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/backend
+	docker build -t t4c/client/backend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/backend backend
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/backend
 
 frontend:
-	docker build -t t4c/client/frontend -t $(REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/frontend frontend
-	docker push $(REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/frontend
+	docker build -t t4c/client/frontend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/frontend frontend
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/frontend
 
 capella:
 	docker build -t base capella-dockerimages/base
 	docker build -t capella/base capella-dockerimages/capella
-	docker build -t capella/remote -t $(REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
-	docker push $(REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
+	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
 
 deploy: backend frontend capella
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
@@ -30,7 +31,7 @@ deploy: backend frontend capella
 		--namespace $(NAMESPACE) \
 		--values helm/values.yaml \
 		$$(test -f secrets.yaml && echo "--values secrets.yaml") \
-		--set docker.registry=k3d-$(REGISTRY_NAME):$(REGISTRY_PORT) \
+		--set docker.registry=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
 		--set database.backend.initialAdmin=$(MY_EMAIL) \
 		--wait --timeout 2m \
 		$(RELEASE) ./helm
@@ -46,9 +47,9 @@ undeploy:
 
 create-cluster:
 	type k3d || { echo "K3D is not installed, install k3d and run 'make create-cluster' again"; exit 1; }
-	k3d registry list $(REGISTRY_NAME) 2>&- || k3d registry create $(REGISTRY_NAME) --port $(REGISTRY_PORT)
+	k3d registry list $(CLUSTER_REGISTRY_NAME) 2>&- || k3d registry create $(CLUSTER_REGISTRY_NAME) --port $(REGISTRY_PORT)
 	k3d cluster list $(CLUSTER_NAME) 2>&- || k3d cluster create $(CLUSTER_NAME) \
-		--registry-use k3d-$(REGISTRY_NAME):$(REGISTRY_PORT) \
+		--registry-use k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
 		--port "8081:80@loadbalancer"
 	kubectl cluster-info
 
