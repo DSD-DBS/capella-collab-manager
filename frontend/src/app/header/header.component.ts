@@ -1,4 +1,5 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, Input, OnInit, Renderer2 } from '@angular/core';
+import { Router } from '@angular/router';
 import { LocalStorageService } from '../auth/local-storage/local-storage.service';
 import { AuthService } from '../services/auth/auth.service';
 import { RepositoryService } from '../services/repository/repository.service';
@@ -10,6 +11,9 @@ import { UserService } from '../services/user/user.service';
   styleUrls: ['./header.component.css'],
 })
 export class HeaderComponent implements OnInit {
+  @Input()
+  title = 'Capella Collaboration Plattform';
+
   constructor(
     public localStorageService: LocalStorageService,
     public authService: AuthService,
@@ -18,6 +22,10 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.createGithubButton();
+  }
+
+  createGithubButton(): void {
     let githubButtonScript = document.createElement('script');
     githubButtonScript.type = 'text/javascript';
     githubButtonScript.src = 'https://buttons.github.io/buttons.js';
