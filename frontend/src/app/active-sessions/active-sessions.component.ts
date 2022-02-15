@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
 import { Session } from '../schemes';
-import { SessionService } from '../services/session/session.service';
 import { UserService } from '../services/user/user.service';
 import { ReconnectDialogComponent } from './reconnect-dialog/reconnect-dialog.component';
 
@@ -43,5 +42,32 @@ export class ActiveSessionsComponent implements OnInit {
     this.dialog.open(ReconnectDialogComponent, {
       data: session,
     });
+  }
+
+  beatifyDate(date: string): string {
+    const newDate = new Date(date);
+    const now = new Date();
+    let newDateString = '';
+    if (
+      newDate.getFullYear() == now.getFullYear() &&
+      newDate.getMonth() == now.getMonth() &&
+      newDate.getDate() == now.getDate()
+    ) {
+      newDateString = 'today';
+    } else {
+      newDateString =
+        'on ' +
+        newDate.toLocaleDateString(undefined, {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+        });
+    }
+
+    return (
+      newDateString +
+      ' at ' +
+      newDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    );
   }
 }
