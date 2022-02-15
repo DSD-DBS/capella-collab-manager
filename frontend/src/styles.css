@@ -35,13 +35,17 @@ mat-form-field.mat-form-field-invalid {
   }
 }
 
+:root {
+  --primary-color: #3f51b5;
+}
+
 button.primary {
-  background-color: #3f51b5;
+  background-color: var(--primary-color);
   color: white;
 }
 
 .primaryText {
-  color: #3f51b5;
+  color: var(--primary-color);
 }
 
 button.success {
