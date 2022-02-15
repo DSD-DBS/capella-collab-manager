@@ -1,40 +1,44 @@
 <div class="wrapper">
-  <h1><b>Active Sessions</b></h1>
+  <h1><b>Active Workspaces</b></h1>
 
   <mat-spinner *ngIf="showSpinner"></mat-spinner>
 
   <mat-card *ngIf="!sessions.length && !showSpinner">
     <h2>No active sessions</h2>
     <br />
-    No active sessions for your user are found in our system. <br />
+    <div class="content">
+      No active sessions for your user are found in our system. <br />
+    </div>
   </mat-card>
 
   <div class="flexbox">
     <mat-card *ngFor="let session of sessions; let i = index">
-      <h2>Session {{ i + 1 }}</h2>
-      <div *ngIf="session.type == 'persistent'">
-        <b>Persistent Session</b><br />
+      <div class="header" *ngIf="session.type == 'persistent'">
+        <h2>Persistent workspace session</h2>
       </div>
-      <div *ngIf="session.type == 'readonly'">
-        <b>Read-Only Session</b><br />
-        Repository: {{ session.repository }} <br />
+      <div class="header" *ngIf="session.type == 'readonly'">
+        <h2>{{ session.repository }} (read-only session)</h2>
       </div>
-      State of Container: {{ session.state }} <br />
-      <button
-        mat-flat-button
-        color="primary"
-        (click)="openDeletionDialog([session])"
-      >
-        Terminate
-      </button>
-      <br />
-      <button
-        mat-flat-button
-        color="primary"
-        (click)="openReconnectDialog(session)"
-      >
-        Reconnect
-      </button>
+      <div class="content">
+        <div class="text">
+          The session was created {{ beatifyDate(session.created_at) }}
+          <br />
+        </div>
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="openDeletionDialog([session])"
+        >
+          Terminate
+        </button>
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="openReconnectDialog(session)"
+        >
+          Reconnect
+        </button>
+      </div>
     </mat-card>
   </div>
 </div>

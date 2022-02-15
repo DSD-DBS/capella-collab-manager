@@ -28,7 +28,6 @@ from t4cclient.schemas.sessions import (
 )
 from t4cclient.sql_models.sessions import DatabaseSession
 
-
 router = APIRouter()
 log = logging.getLogger(__name__)
 

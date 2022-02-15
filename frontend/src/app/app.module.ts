@@ -59,6 +59,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { FooterComponent } from './footer/footer.component';
 import { TermsConditionsComponent } from './footer/terms-conditions/terms-conditions.component';
+import { LegalComponent } from './footer/legal/legal.component';
 
 @NgModule({
   declarations: [
@@ -95,6 +96,7 @@ import { TermsConditionsComponent } from './footer/terms-conditions/terms-condit
     WorkspaceComponent,
     FooterComponent,
     TermsConditionsComponent,
+    LegalComponent,
   ],
   imports: [
     BrowserModule,
