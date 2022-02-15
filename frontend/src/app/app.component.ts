@@ -52,7 +52,6 @@ export class AppComponent implements OnInit {
         this.title = 'Capella Collaboration Manager';
       }
     }
-    console.log(this.title);
   }
 
   changedRoute(): void {
