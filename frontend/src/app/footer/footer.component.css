@@ -3,11 +3,11 @@
   margin: auto;
   width: 100%;
   margin-top: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   color: grey;
 }
 
 #tc {
-  color: darkblue;
+  color: var(--primary-color);
   cursor: pointer;
 }
