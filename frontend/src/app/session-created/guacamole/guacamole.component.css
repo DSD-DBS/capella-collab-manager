@@ -24,9 +24,13 @@ table {
   font-size: 1.3em;
   font-weight: bold;
   margin-bottom: 2px;
-  color: #ec0016;
+  color: var(--primary-color);
 }
 
 .inner-mat-card {
   width: 90%;
+}
+a {
+  text-decoration: none;
+  color: var(--primary-color);
 }
