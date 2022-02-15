@@ -1,8 +1,8 @@
 <div class="overall-wrapper">
-  <app-header [title]="title"></app-header>
-  <app-notice></app-notice>
+  <app-header *ngIf="header" [title]="title"></app-header>
+  <app-notice *ngIf="notice"></app-notice>
   <div class="wrapper">
-    <router-outlet (activate)="updateTitle()"></router-outlet>
+    <router-outlet (activate)="changedRoute()"></router-outlet>
   </div>
-  <app-footer class="footer"></app-footer>
+  <app-footer *ngIf="footer" class="footer"></app-footer>
 </div>
