@@ -9,10 +9,30 @@ import { UserService } from './services/user/user.service';
 })
 export class AppComponent implements OnInit {
   title = 'Capella Collaboration Plattform';
+  header = true;
+  footer = true;
+  notice = true;
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {}
+
+  updateComponents(): void {
+    switch (this.router.url.split('?')[0]) {
+      case '/auth':
+      case '/logout': {
+        this.header = false;
+        this.footer = false;
+        this.notice = false;
+        break;
+      }
+      default: {
+        this.header = true;
+        this.footer = true;
+        this.notice = true;
+      }
+    }
+  }
 
   updateTitle(): void {
     switch (this.router.url) {
@@ -33,5 +53,10 @@ export class AppComponent implements OnInit {
       }
     }
     console.log(this.title);
+  }
+
+  changedRoute(): void {
+    this.updateTitle();
+    this.updateComponents();
   }
 }

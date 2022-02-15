@@ -4,7 +4,7 @@ mat-card {
 }
 
 button {
-  margin-top: 10px;
+  margin: 10px 5px 0;
 }
 
 .flexbox {
@@ -16,4 +16,25 @@ button {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
+}
+
+.header {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.content {
+  padding: 0 10px 10px;
+}
+
+.content > .text {
+  text-align: left;
+}
+
+.mat-card {
+  padding: 0 !important;
+}
+
+.mat-card-content {
+  padding: 5px !important;
 }

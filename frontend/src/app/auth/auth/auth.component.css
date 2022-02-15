@@ -12,3 +12,10 @@ button {
 .repository-selection {
   margin-top: 10px;
 }
+
+#description {
+  margin: auto;
+  text-align: left;
+  max-width: 400px;
+  margin-bottom: 20px;
+}

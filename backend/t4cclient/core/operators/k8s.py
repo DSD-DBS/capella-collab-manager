@@ -68,7 +68,6 @@ class KubernetesOperator(Operator):
         self._create_persistent_volume_claim(username)
         deployment = self._create_deployment(
             config.PERSISTENT_IMAGE,
-            username,
             id,
             {
                 "T4C_LICENCE_SECRET": config.T4C_LICENCE,
@@ -77,6 +76,7 @@ class KubernetesOperator(Operator):
                 "T4C_REPOSITORIES": ",".join(repositories),
                 "RMT_PASSWORD": password,
             },
+            self._get_claim_name(username),
         )
         self._create_service(id, id)
         service = self._get_service(id)
@@ -130,8 +130,23 @@ class KubernetesOperator(Operator):
         }
 
     def _create_deployment(
-        self, image: str, username: str, name: str, environment: t.Dict
+        self,
+        image: str,
+        name: str,
+        environment: t.Dict,
+        volume_claim_name: str = None,
     ) -> kubernetes.client.V1Deployment:
+        volume_mount = {}
+        volume = {}
+
+        if volume_claim_name:
+            volume_mount = {"name": "workspace", "mountPath": "/workspace"}
+
+            volume = {
+                "name": "workspace",
+                "persistentVolumeClaim": {"claimName": volume_claim_name},
+            }
+
         body = {
             "kind": "Deployment",
             "apiVersion": "apps/v1",
@@ -156,22 +171,10 @@ class KubernetesOperator(Operator):
                                     "requests": {"cpu": "1", "memory": "1Gi"},
                                 },
                                 "imagePullPolicy": "Always",
-                                "volumeMounts": [
-                                    {
-                                        "name": "workspace",
-                                        "mountPath": "/workspace"
-                                    }
-                                ]
+                                "volumeMounts": [volume_mount],
                             },
                         ],
-                        "volumes": [
-                            {
-                                "name": "workspace",
-                                "persistentVolumeClaim": {
-                                    "claimName": self._get_claim_name(username)
-                                }
-                            }
-                        ],
+                        "volumes": [volume],
                         "restartPolicy": "Always",
                     },
                 },
@@ -213,26 +216,25 @@ class KubernetesOperator(Operator):
                 "name": self._get_claim_name(username),
             },
             "spec": {
-                "accessModes": [
-                    config.KUBERNETES_STORAGE_ACCESS_MODE
-                ],
+                "accessModes": [config.KUBERNETES_STORAGE_ACCESS_MODE],
                 "storageClassName": config.KUBERNETES_STORAGE_CLASS_NAME,
-                "resources": {
-                    "requests": {
-                        "storage": "20Gi"
-                    }
-                }
-            }
+                "resources": {"requests": {"storage": "20Gi"}},
+            },
         }
         try:
-            self.v1_core.create_namespaced_persistent_volume_claim(config.KUBERNETES_NAMESPACE, body)
+            self.v1_core.create_namespaced_persistent_volume_claim(
+                config.KUBERNETES_NAMESPACE, body
+            )
         except kubernetes.client.exceptions.ApiException as e:
             if e.status == 409:
                 return
             raise
 
     def _get_claim_name(self, username: str) -> str:
-        return "persistent-session-" + username.replace("@", "-at-").replace(".", "-dot-").lower()
+        return (
+            "persistent-session-"
+            + username.replace("@", "-at-").replace(".", "-dot-").lower()
+        )
 
     def _get_service(self, id: str):
         return self.v1_core.read_namespaced_service(id, config.KUBERNETES_NAMESPACE)
@@ -247,6 +249,8 @@ class KubernetesOperator(Operator):
 
     def _delete_service(self, id: str) -> kubernetes.client.V1Status:
         try:
-            return self.v1_core.delete_namespaced_service(id, config.KUBERNETES_NAMESPACE)
+            return self.v1_core.delete_namespaced_service(
+                id, config.KUBERNETES_NAMESPACE
+            )
         except kubernetes.client.exceptions.ApiException as e:
             log.exception("Error deleting service")
