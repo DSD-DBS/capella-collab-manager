@@ -1,3 +1,4 @@
+{{- /* 
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -29,3 +30,4 @@ spec:
                   memory: 10Mi
               securityContext:
                 {{- toYaml $.Values.securityContext | nindent 16 }}
+*/}}
