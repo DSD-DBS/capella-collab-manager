@@ -2,7 +2,8 @@
 echo -e "tmp_passwd\n$RMT_PASSWORD\n$RMT_PASSWORD" | passwd
 
 # Load git model
-git clone $GIT_REPO_URL -b $GIT_REPO_BRANCH /home/techuser/model
+git clone $GIT_URL /home/techuser/model
+git checkout $GIT_REVISION
 
 # Prepare Workspace
 echo "Preparing workspace..."

@@ -84,7 +84,7 @@ class KubernetesOperator(Operator):
         return self._export_attrs(deployment, service)
 
     def start_readonly_session(
-        self, password: str, git_url: str, git_branch: str, entrypoint: str
+        self, password: str, git_url: str, git_revision: str, entrypoint: str
     ) -> t.Dict[str, t.Any]:
         id = self._generate_id()
         deployment = self._create_deployment(
@@ -93,8 +93,8 @@ class KubernetesOperator(Operator):
             {
                 "GIT_USERNAME": config.GIT_USERNAME,
                 "GIT_PASSWORD": config.GIT_PASSWORD,
-                "GIT_REPO_URL": git_url,
-                "GIT_REPO_BRANCH": git_branch,
+                "GIT_URL": git_url,
+                "GIT_BRANCH": git_revision,
                 "GIT_ENTRYPOINT": entrypoint,
             },
         )
