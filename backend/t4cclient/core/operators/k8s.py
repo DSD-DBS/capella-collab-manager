@@ -137,16 +137,18 @@ class KubernetesOperator(Operator):
         environment: t.Dict,
         volume_claim_name: str = None,
     ) -> kubernetes.client.V1Deployment:
-        volume_mount = {}
-        volume = {}
+        volume_mount = []
+        volume = []
 
         if volume_claim_name:
-            volume_mount = {"name": "workspace", "mountPath": "/workspace"}
+            volume_mount.append({"name": "workspace", "mountPath": "/workspace"})
 
-            volume = {
-                "name": "workspace",
-                "persistentVolumeClaim": {"claimName": volume_claim_name},
-            }
+            volume.append(
+                {
+                    "name": "workspace",
+                    "persistentVolumeClaim": {"claimName": volume_claim_name},
+                }
+            )
 
         body = {
             "kind": "Deployment",
@@ -172,10 +174,10 @@ class KubernetesOperator(Operator):
                                     "requests": {"cpu": "1", "memory": "1Gi"},
                                 },
                                 "imagePullPolicy": "Always",
-                                "volumeMounts": [volume_mount],
+                                "volumeMounts": volume_mount,
                             },
                         ],
-                        "volumes": [volume],
+                        "volumes": volume,
                         "restartPolicy": "Always",
                     },
                 },
