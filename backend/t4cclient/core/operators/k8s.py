@@ -14,34 +14,37 @@ log = logging.getLogger(__name__)
 try:
     kubernetes.config.load_incluster_config()
 except kubernetes.config.ConfigException:
-    kubernetes.config.load_kube_config_from_dict(
-        {
-            "apiVersion": "v1",
-            "kind": "Config",
-            "clusters": [
-                {
-                    "cluster": {
-                        "insecure-skip-tls-verify": True,
-                        "server": config.KUBERNETES_API_URL,
-                    },
-                    "name": "cluster",
-                }
-            ],
-            "contexts": [
-                {
-                    "context": {"cluster": "cluster", "user": "tokenuser"},
-                    "name": "cluster",
-                }
-            ],
-            "current-context": "cluster",
-            "users": [
-                {
-                    "name": "tokenuser",
-                    "user": {"token": config.KUBERNETES_TOKEN},
-                }
-            ],
-        }
-    )
+    try:
+        kubernetes.config.load_config(context=config.KUBERNETES_CONTEXT)
+    except kubernetes.config.ConfigException:
+        kubernetes.config.load_kube_config_from_dict(
+            {
+                "apiVersion": "v1",
+                "kind": "Config",
+                "clusters": [
+                    {
+                        "cluster": {
+                            "insecure-skip-tls-verify": True,
+                            "server": config.KUBERNETES_API_URL,
+                        },
+                        "name": "cluster",
+                    }
+                ],
+                "contexts": [
+                    {
+                        "context": {"cluster": "cluster", "user": "tokenuser"},
+                        "name": "cluster",
+                    }
+                ],
+                "current-context": "cluster",
+                "users": [
+                    {
+                        "name": "tokenuser",
+                        "user": {"token": config.KUBERNETES_TOKEN},
+                    }
+                ],
+            }
+        )
 
 
 class KubernetesOperator(Operator):
