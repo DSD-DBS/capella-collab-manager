@@ -73,3 +73,14 @@ delete-cluster:
 	touch .provision-backend
 
 .PHONY: backend frontend capella deploy undeploy create-cluster delete-cluster persistent-volume
+
+# Execute with `make -j2 dev`
+dev: dev-frontend dev-backend
+	
+dev-frontend: 
+	$(MAKE) -C frontend dev
+dev-backend: 
+	$(MAKE) -C backend dev
+
+dev-cleanup: 
+	$(MAKE) -C backend cleanup
