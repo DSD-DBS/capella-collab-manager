@@ -23,7 +23,12 @@ capella:
 	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
 
-deploy: backend frontend capella
+ease: 
+	docker build -t capella/ease --build-arg BASE_IMAGE=capella/base --build-arg BUILD_TYPE=online capella-dockerimages/ease
+	docker build -t capella/ease/remote capella-dockerimages/remote
+	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly capella-dockerimages/readonly
+
+deploy: backend frontend capella ease
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
 	helm upgrade --install \
 		--kube-context k3d-$(CLUSTER_NAME) \
