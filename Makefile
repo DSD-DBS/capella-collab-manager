@@ -25,8 +25,8 @@ capella:
 
 ease: 
 	docker build -t capella/ease --build-arg BASE_IMAGE=capella/base --build-arg BUILD_TYPE=online capella-dockerimages/ease
-	docker build -t capella/ease/remote capella-dockerimages/remote
-	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly capella-dockerimages/readonly
+	docker build -t capella/ease/remote --build-arg BASE_IMAGE=capella/ease capella-dockerimages/remote
+	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly --build-arg BASE_IMAGE=capella/ease/remote capella-dockerimages/readonly
 
 deploy: backend frontend capella ease
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
