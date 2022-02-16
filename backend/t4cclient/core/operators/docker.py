@@ -44,7 +44,7 @@ class DockerOperator(Operator):
         )
 
     def start_readonly_session(
-        self, password: str, git_url: str, git_branch: str
+        self, password: str, git_url: str, git_branch: str, entrypoint: str
     ) -> t.Dict[str, t.Any]:
         con = self.client.containers.run(
             image=config.READONLY_IMAGE,
