@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
 import { Session } from '../schemes';
+import { OwnSessionService } from '../services/own-session/own-session.service';
 import { UserService } from '../services/user/user.service';
 import { ReconnectDialogComponent } from './reconnect-dialog/reconnect-dialog.component';
 
@@ -11,10 +12,12 @@ import { ReconnectDialogComponent } from './reconnect-dialog/reconnect-dialog.co
   styleUrls: ['./active-sessions.component.css'],
 })
 export class ActiveSessionsComponent implements OnInit {
-  sessions: Array<Session> = [];
   showSpinner = false;
 
-  constructor(private userService: UserService, private dialog: MatDialog) {}
+  constructor(
+    public ownSessionService: OwnSessionService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.refreshSessions();
@@ -22,8 +25,7 @@ export class ActiveSessionsComponent implements OnInit {
 
   refreshSessions() {
     this.showSpinner = true;
-    this.userService.getOwnActiveSessions().subscribe((res: Array<Session>) => {
-      this.sessions = res;
+    this.ownSessionService.refreshSessions().subscribe(() => {
       this.showSpinner = false;
     });
   }
