@@ -3,7 +3,7 @@
 
   <mat-spinner *ngIf="showSpinner"></mat-spinner>
 
-  <mat-card *ngIf="!sessions.length && !showSpinner">
+  <mat-card *ngIf="!ownSessionService.sessions.length && !showSpinner">
     <h2>No active sessions</h2>
     <div class="content">
       No active sessions for your user are found in our system. <br />
@@ -11,7 +11,7 @@
   </mat-card>
 
   <div class="flexbox">
-    <mat-card *ngFor="let session of sessions; let i = index">
+    <mat-card *ngFor="let session of ownSessionService.sessions; let i = index">
       <div class="header" *ngIf="session.type == 'persistent'">
         <h2>Persistent workspace session</h2>
       </div>
