@@ -4,7 +4,8 @@ import { ActiveSessionsComponent } from './active-sessions/active-sessions.compo
 import { AuthGuardService } from './auth/auth-guard/auth-guard.service';
 import { AuthRedirectComponent } from './auth/auth-redirect/auth-redirect.component';
 import { AuthComponent } from './auth/auth/auth.component';
-import { LogoutComponent } from './auth/logout/logout.component';
+import { LogoutRedirectComponent } from './auth/logout/logout-redirect/logout-redirect.component';
+import { LogoutComponent } from './auth/logout/logout/logout.component';
 import { HomeComponent } from './home/home.component';
 import { SessionOverviewComponent } from './session-overview/session-overview.component';
 import { RepositorySettingsComponent } from './settings/repository-manager-settings/repository-settings/repository-settings.component';
@@ -37,6 +38,10 @@ const routes: Routes = [
     path: 'settings/repositories/:repository',
     component: RepositorySettingsComponent,
     canActivate: [AuthGuardService],
+  },
+  {
+    path: 'logout/redirect',
+    component: LogoutRedirectComponent,
   },
   {
     path: 'logout',
