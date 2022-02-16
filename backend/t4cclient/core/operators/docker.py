@@ -44,7 +44,7 @@ class DockerOperator(Operator):
         )
 
     def start_readonly_session(
-        self, password: str, git_url: str, git_branch: str, entrypoint: str
+        self, password: str, git_url: str, git_revision: str, entrypoint: str
     ) -> t.Dict[str, t.Any]:
         con = self.client.containers.run(
             image=config.READONLY_IMAGE,
@@ -53,8 +53,8 @@ class DockerOperator(Operator):
                 "RMT_PASSWORD": password,
                 "GIT_USERNAME": config.GIT_USERNAME,
                 "GIT_PASSWORD": config.GIT_PASSWORD,
-                "GIT_REPO_URL": git_url,
-                "GIT_REPO_BRANCH": git_branch,
+                "GIT_URL": git_url,
+                "GIT_REVISION": git_revision,
             },
             detach=True,
         )
