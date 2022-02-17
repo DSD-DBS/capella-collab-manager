@@ -19,7 +19,7 @@ docker:
       persistent: /t4c/client/remote
 
       # Docker Image for the ReadOnly Workspace
-      readonly: /capella/read-only
+      readonly: /capella/readonly
 
 general: 
   # Base URL on which the service listens
