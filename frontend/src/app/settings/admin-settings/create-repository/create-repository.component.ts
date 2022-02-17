@@ -9,8 +9,12 @@ import { RepositoryService } from 'src/app/services/repository/repository.servic
 })
 export class CreateRepositoryComponent implements OnInit {
   createRepositoryForm = new FormGroup({
-    title: new FormControl('', Validators.required),
+    name: new FormControl('', Validators.required),
   });
+
+  get name(): FormControl {
+    return this.createRepositoryForm.get('name') as FormControl;
+  }
 
   constructor(private repositoryService: RepositoryService) {}
 
@@ -18,11 +22,9 @@ export class CreateRepositoryComponent implements OnInit {
 
   createRepository(): void {
     if (this.createRepositoryForm.valid) {
-      this.repositoryService
-        .createRepository(this.createRepository.name)
-        .subscribe(() => {
-          this.repositoryService.refreshRepositories();
-        });
+      this.repositoryService.createRepository(this.name.value).subscribe(() => {
+        this.repositoryService.refreshRepositories();
+      });
     }
   }
 }
