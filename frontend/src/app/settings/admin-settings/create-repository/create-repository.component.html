@@ -1,0 +1,12 @@
+<h1>Create Repository</h1>
+
+<form [formGroup]="createRepositoryForm">
+  <mat-form-field appearance="fill">
+    <mat-label>name</mat-label>
+    <input matInput formControlName="name" />
+  </mat-form-field>
+  <br />
+  <button mat-flat-button color="primary" (click)="createRepository()">
+    Create
+  </button>
+</form>

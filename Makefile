@@ -9,6 +9,8 @@ MY_EMAIL ?= me@example.com
 
 all: backend frontend
 
+build: backend frontend capella ease
+
 backend:
 	docker build -t t4c/client/backend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/backend backend
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/backend
@@ -26,9 +28,12 @@ capella:
 ease: 
 	docker build -t capella/ease --build-arg BASE_IMAGE=capella/base --build-arg BUILD_TYPE=online capella-dockerimages/ease
 	docker build -t capella/ease/remote --build-arg BASE_IMAGE=capella/ease capella-dockerimages/remote
-	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly --build-arg BASE_IMAGE=capella/ease/remote capella-dockerimages/readonly
+	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/read-only --build-arg BASE_IMAGE=capella/ease/remote capella-dockerimages/readonly
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/read-only
 
-deploy: backend frontend capella ease
+deploy: backend frontend capella ease helm-deploy
+
+helm-deploy: 
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
 	helm upgrade --install \
 		--kube-context k3d-$(CLUSTER_NAME) \
@@ -38,12 +43,21 @@ deploy: backend frontend capella ease
 		$$(test -f secrets.yaml && echo "--values secrets.yaml") \
 		--set docker.registry=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
 		--set database.backend.initialAdmin=$(MY_EMAIL) \
-		--wait --timeout 3m \
+		--set general.port=8081 \
+		--wait --timeout 4m \
 		--debug \
 		$(RELEASE) ./helm
-	$(MAKE) .provision-guacamole .provision-backend
+	$(MAKE) .rollout .provision-guacamole .provision-backend
+
+clear-backend-db: 
+	kubectl delete deployment -n t4c-manager $(RELEASE)-backend-postgres
+	kubectl delete pvc -n t4c-manager $(RELEASE)-volume-backend-postgres
+	$(MAKE) helm-deploy
 
 rollout: backend frontend
+	$(MAKE) .rollout
+
+.rollout: 
 	kubectl rollout restart deployment -n $(NAMESPACE) $(RELEASE)-backend
 	kubectl rollout restart deployment -n $(NAMESPACE) $(RELEASE)-frontend
 
@@ -84,3 +98,6 @@ dev-backend:
 
 dev-cleanup: 
 	$(MAKE) -C backend cleanup
+
+backend-logs: 
+	kubectl logs -f -n $(NAMESPACE) -l id=$(RELEASE)-deployment-backend

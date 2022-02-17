@@ -61,6 +61,7 @@ import { FooterComponent } from './footer/footer.component';
 import { TermsConditionsComponent } from './footer/terms-conditions/terms-conditions.component';
 import { LegalComponent } from './footer/legal/legal.component';
 import { LogoutRedirectComponent } from './auth/logout/logout-redirect/logout-redirect.component';
+import { CreateRepositoryComponent } from './settings/admin-settings/create-repository/create-repository.component';
 
 @NgModule({
   declarations: [
@@ -99,6 +100,7 @@ import { LogoutRedirectComponent } from './auth/logout/logout-redirect/logout-re
     TermsConditionsComponent,
     LegalComponent,
     LogoutRedirectComponent,
+    CreateRepositoryComponent,
   ],
   imports: [
     BrowserModule,

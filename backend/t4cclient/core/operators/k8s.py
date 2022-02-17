@@ -99,6 +99,7 @@ class KubernetesOperator(Operator):
                 "GIT_URL": git_url,
                 "GIT_BRANCH": git_revision,
                 "GIT_ENTRYPOINT": entrypoint,
+                "RMT_PASSWORD": password,
             },
         )
         self._create_service(id, id)
