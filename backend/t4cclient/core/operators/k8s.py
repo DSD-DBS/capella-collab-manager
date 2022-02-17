@@ -97,7 +97,7 @@ class KubernetesOperator(Operator):
                 "GIT_USERNAME": config.GIT_USERNAME,
                 "GIT_PASSWORD": config.GIT_PASSWORD,
                 "GIT_URL": git_url,
-                "GIT_BRANCH": git_revision,
+                "GIT_REVISION": git_revision,
                 "GIT_ENTRYPOINT": entrypoint,
                 "RMT_PASSWORD": password,
             },
