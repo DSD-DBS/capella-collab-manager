@@ -38,9 +38,10 @@ deploy: backend frontend capella ease
 		$$(test -f secrets.yaml && echo "--values secrets.yaml") \
 		--set docker.registry=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
 		--set database.backend.initialAdmin=$(MY_EMAIL) \
-		--wait --timeout 3m \
+		--wait --timeout 4m \
 		--debug \
 		$(RELEASE) ./helm
+	kubectl rollout restart deployment -n $(NAMESPACE) --context k3d-$(CLUSTER_NAME)
 	$(MAKE) .provision-guacamole .provision-backend
 
 rollout: backend frontend
