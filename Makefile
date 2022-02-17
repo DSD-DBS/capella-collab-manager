@@ -9,6 +9,8 @@ MY_EMAIL ?= me@example.com
 
 all: backend frontend
 
+build: backend frontend capella ease
+
 backend:
 	docker build -t t4c/client/backend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/backend backend
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/backend
@@ -26,7 +28,7 @@ capella:
 ease: 
 	docker build -t capella/ease --build-arg BASE_IMAGE=capella/base --build-arg BUILD_TYPE=online capella-dockerimages/ease
 	docker build -t capella/ease/remote --build-arg BASE_IMAGE=capella/ease capella-dockerimages/remote
-	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly --build-arg BASE_IMAGE=capella/ease/remote capella-dockerimages/readonly
+	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/read-only --build-arg BASE_IMAGE=capella/ease/remote capella-dockerimages/readonly
 
 deploy: backend frontend capella ease helm-deploy
 
@@ -94,3 +96,6 @@ dev-backend:
 
 dev-cleanup: 
 	$(MAKE) -C backend cleanup
+
+backend-logs: 
+	kubectl logs -f -n $(NAMESPACE) -l id=$(RELEASE)-deployment-backend
