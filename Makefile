@@ -28,8 +28,8 @@ capella:
 ease: 
 	docker build -t capella/ease --build-arg BASE_IMAGE=capella/base --build-arg BUILD_TYPE=online capella-dockerimages/ease
 	docker build -t capella/ease/remote --build-arg BASE_IMAGE=capella/ease capella-dockerimages/remote
-	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/read-only --build-arg BASE_IMAGE=capella/ease/remote capella-dockerimages/readonly
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/read-only
+	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly --build-arg BASE_IMAGE=capella/ease/remote capella-dockerimages/readonly
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly
 
 deploy: backend frontend capella ease helm-deploy
 
