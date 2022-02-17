@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Session } from '../schemes';
+import { OwnSessionService } from '../services/own-session/own-session.service';
 import { SessionService } from '../services/session/session.service';
 
 @Component({
@@ -10,7 +11,9 @@ import { SessionService } from '../services/session/session.service';
 export class SessionCreatedComponent implements OnInit {
   @Input()
   session: Session | undefined = undefined;
-  constructor() {}
+  constructor(private ownSessionService: OwnSessionService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.ownSessionService.refreshSessions().subscribe();
+  }
 }

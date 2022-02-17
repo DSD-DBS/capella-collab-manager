@@ -14,34 +14,37 @@ log = logging.getLogger(__name__)
 try:
     kubernetes.config.load_incluster_config()
 except kubernetes.config.ConfigException:
-    kubernetes.config.load_kube_config_from_dict(
-        {
-            "apiVersion": "v1",
-            "kind": "Config",
-            "clusters": [
-                {
-                    "cluster": {
-                        "insecure-skip-tls-verify": True,
-                        "server": config.KUBERNETES_API_URL,
-                    },
-                    "name": "cluster",
-                }
-            ],
-            "contexts": [
-                {
-                    "context": {"cluster": "cluster", "user": "tokenuser"},
-                    "name": "cluster",
-                }
-            ],
-            "current-context": "cluster",
-            "users": [
-                {
-                    "name": "tokenuser",
-                    "user": {"token": config.KUBERNETES_TOKEN},
-                }
-            ],
-        }
-    )
+    try:
+        kubernetes.config.load_config(context=config.KUBERNETES_CONTEXT)
+    except kubernetes.config.ConfigException:
+        kubernetes.config.load_kube_config_from_dict(
+            {
+                "apiVersion": "v1",
+                "kind": "Config",
+                "clusters": [
+                    {
+                        "cluster": {
+                            "insecure-skip-tls-verify": True,
+                            "server": config.KUBERNETES_API_URL,
+                        },
+                        "name": "cluster",
+                    }
+                ],
+                "contexts": [
+                    {
+                        "context": {"cluster": "cluster", "user": "tokenuser"},
+                        "name": "cluster",
+                    }
+                ],
+                "current-context": "cluster",
+                "users": [
+                    {
+                        "name": "tokenuser",
+                        "user": {"token": config.KUBERNETES_TOKEN},
+                    }
+                ],
+            }
+        )
 
 
 class KubernetesOperator(Operator):
@@ -84,7 +87,7 @@ class KubernetesOperator(Operator):
         return self._export_attrs(deployment, service)
 
     def start_readonly_session(
-        self, password: str, git_url: str, git_branch: str
+        self, password: str, git_url: str, git_revision: str, entrypoint: str
     ) -> t.Dict[str, t.Any]:
         id = self._generate_id()
         deployment = self._create_deployment(
@@ -93,8 +96,9 @@ class KubernetesOperator(Operator):
             {
                 "GIT_USERNAME": config.GIT_USERNAME,
                 "GIT_PASSWORD": config.GIT_PASSWORD,
-                "GIT_REPO_URL": git_url,
-                "GIT_REPO_BRANCH": git_branch,
+                "GIT_URL": git_url,
+                "GIT_BRANCH": git_revision,
+                "GIT_ENTRYPOINT": entrypoint,
             },
         )
         self._create_service(id, id)
@@ -136,16 +140,18 @@ class KubernetesOperator(Operator):
         environment: t.Dict,
         volume_claim_name: str = None,
     ) -> kubernetes.client.V1Deployment:
-        volume_mount = {}
-        volume = {}
+        volume_mount = []
+        volume = []
 
         if volume_claim_name:
-            volume_mount = {"name": "workspace", "mountPath": "/workspace"}
+            volume_mount.append({"name": "workspace", "mountPath": "/workspace"})
 
-            volume = {
-                "name": "workspace",
-                "persistentVolumeClaim": {"claimName": volume_claim_name},
-            }
+            volume.append(
+                {
+                    "name": "workspace",
+                    "persistentVolumeClaim": {"claimName": volume_claim_name},
+                }
+            )
 
         body = {
             "kind": "Deployment",
@@ -171,10 +177,10 @@ class KubernetesOperator(Operator):
                                     "requests": {"cpu": "1", "memory": "1Gi"},
                                 },
                                 "imagePullPolicy": "Always",
-                                "volumeMounts": [volume_mount],
+                                "volumeMounts": volume_mount,
                             },
                         ],
-                        "volumes": [volume],
+                        "volumes": volume,
                         "restartPolicy": "Always",
                     },
                 },

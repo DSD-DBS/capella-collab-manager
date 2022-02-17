@@ -22,7 +22,7 @@ export class DeleteSessionDialogComponent implements OnInit {
   ngOnInit(): void {}
   deleteButton = {
     disabled: false,
-    text: 'Delete',
+    text: 'Terminate',
   };
 
   deleteAllSessions() {

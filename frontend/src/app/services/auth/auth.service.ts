@@ -41,15 +41,14 @@ export class AuthService {
   }
 
   logOut() {
-    console.log("About to log out",)
-    return this.http.get(
-      environment.backend_url + '/auth/oauth/logout',
-    ).toPromise().then(() => {
-      console.log("Done logging out");
-      this.localStorageService.setValue('access_token', '');
-      this.localStorageService.setValue('refresh_token', '');
-      this.localStorageService.setValue('GUAC_AUTH', '');
-    });
+    return this.http
+      .get(environment.backend_url + '/auth/oauth/logout')
+      .toPromise()
+      .then(() => {
+        this.localStorageService.setValue('access_token', '');
+        this.localStorageService.setValue('refresh_token', '');
+        this.localStorageService.setValue('GUAC_AUTH', '');
+      });
   }
 }
 

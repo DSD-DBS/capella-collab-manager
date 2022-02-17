@@ -9,7 +9,7 @@
       <options/>
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
-  <description>&lt;p&gt;A pipeline for backing up __T4C_PROJECT_NAME__ from the repository __T4C_REPO_NAME__.&lt;/p&gt;</description>
+  <description>&lt;p&gt;A pipeline to backup __T4C_PROJECT_NAME__ from the repository __T4C_REPO_NAME__.&lt;/p&gt;</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <jenkins.model.BuildDiscarderProperty>
@@ -76,7 +76,7 @@ pipeline {
         stage(&quot;Checkout&quot;) {
             steps {
                 dir(&quot;wkp&quot;) {
-                    git branch: &quot;nightly&quot;, credentialsId: credentialsId, url: &quot;__GIT_MODEL_URL__&quot;
+                    git branch: &quot;__GIT_BRANCH__&quot;, credentialsId: credentialsId, url: &quot;__GIT_MODEL_URL__&quot;
                 }
                 dir(&quot;lib&quot;) {
                     git branch: &quot;master&quot;, credentialsId: credentialsId, url: &quot;__JENKINS_SCRIPT_REPO_URL__&quot;
@@ -102,15 +102,15 @@ pipeline {
                 }
                 dir(&quot;$wkp&quot;) {
                     bat &quot;del CommitHistory.activitymetadata /s/q&quot;
-                    bat &quot;xcopy \&quot;__MODEL_ENTRYPOINT__\\.project\&quot; . /s/h/e/k/f/c/y&quot;
-                    bat &quot;xcopy \&quot;__MODEL_ENTRYPOINT__\\__MODEL_ENTRYPOINT__.afm\&quot; . /s/h/e/k/f/c/y&quot;
-                    bat &quot;xcopy \&quot;__MODEL_ENTRYPOINT__\\__MODEL_ENTRYPOINT__.aird\&quot; . /s/h/e/k/f/c/y&quot;
-                    bat &quot;xcopy \&quot;__MODEL_ENTRYPOINT__\\__MODEL_ENTRYPOINT__.capella\&quot; . /s/h/e/k/f/c/y&quot;
-                    bat &quot;rd \&quot;$wkp\\__MODEL_ENTRYPOINT__\&quot; /s/q&quot;
+                    bat &quot;xcopy \&quot;__T4C_PROJECT_NAME__\\.project\&quot; . /s/h/e/k/f/c/y&quot;
+                    bat &quot;xcopy \&quot;__T4C_PROJECT_NAME__\\__T4C_PROJECT_NAME__.afm\&quot; . /s/h/e/k/f/c/y&quot;
+                    bat &quot;xcopy \&quot;__T4C_PROJECT_NAME__\\__T4C_PROJECT_NAME__.aird\&quot; . /s/h/e/k/f/c/y&quot;
+                    bat &quot;xcopy \&quot;__T4C_PROJECT_NAME__\\__T4C_PROJECT_NAME__.capella\&quot; . /s/h/e/k/f/c/y&quot;
+                    bat &quot;rd \&quot;$wkp\\__T4C_PROJECT_NAME__\&quot; /s/q&quot;
                 }
             }
         }
-        stage(&quot;GitLab Backup&quot;) {
+        stage(&quot;Git Backup&quot;) {
             steps {
                 dir(&quot;$wkp&quot;) {
                     bat &quot;git config  --replace-all user.email $email&quot;
