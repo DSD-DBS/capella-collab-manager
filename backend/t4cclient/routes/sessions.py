@@ -131,7 +131,7 @@ def request_session(
         session = OPERATOR.start_readonly_session(
             password=rdp_password,
             git_url=git_model.path,
-            git_branch=git_model.revision,
+            git_revision=git_model.revision,
             entrypoint=git_model.entrypoint,
         )
 

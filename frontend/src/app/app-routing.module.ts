@@ -8,6 +8,7 @@ import { LogoutRedirectComponent } from './auth/logout/logout-redirect/logout-re
 import { LogoutComponent } from './auth/logout/logout/logout.component';
 import { HomeComponent } from './home/home.component';
 import { SessionOverviewComponent } from './session-overview/session-overview.component';
+import { CreateRepositoryComponent } from './settings/admin-settings/create-repository/create-repository.component';
 import { RepositorySettingsComponent } from './settings/repository-manager-settings/repository-settings/repository-settings.component';
 import { SettingsComponent } from './settings/settings.component';
 
@@ -32,6 +33,11 @@ const routes: Routes = [
   {
     path: 'settings',
     component: SettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/repositories/create',
+    component: CreateRepositoryComponent,
     canActivate: [AuthGuardService],
   },
   {

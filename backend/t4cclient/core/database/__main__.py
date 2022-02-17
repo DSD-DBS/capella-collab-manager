@@ -1,3 +1,4 @@
+import logging
 import pathlib
 
 from alembic import command
@@ -11,6 +12,8 @@ from t4cclient.schemas.repositories.users import Role
 
 engine = create_engine(config.DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+LOGGER = logging.getLogger(__file__)
 
 
 def migrate_db():
@@ -29,19 +32,24 @@ def migrate_db():
     current_rev = context.get_current_revision()
 
     if current_rev:
+        LOGGER.info("Upgrade database to head")
         command.upgrade(alembic_cfg, "head")
     else:
+        LOGGER.info("Empty database detected.")
         Base.metadata.create_all(bind=engine)
+        LOGGER.info("Database structure creation successful")
         command.stamp(alembic_cfg, "head")
         initialize_admin_user()
         initialize_default_repository()
 
 
 def initialize_admin_user():
+    LOGGER.info("Initialized adminuser " + config.INITIAL_ADMIN_USER)
     with SessionLocal() as db:
         users.create_user(db=db, username=config.INITIAL_ADMIN_USER, role=Role.ADMIN)
 
 
 def initialize_default_repository():
+    LOGGER.info("Initialized repository 'default'")
     with SessionLocal() as db:
         repositories.create_repository(db=db, name="default")

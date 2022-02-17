@@ -1,12 +1,11 @@
-import typing as t
 import logging
+import typing as t
 
 import requests
 from requests.auth import HTTPBasicAuth
 from t4cclient import config
 from t4cclient.core.credential_manager import generate_password
 from t4cclient.core.database import repositories
-
 
 log = logging.getLogger(__name__)
 
@@ -98,3 +97,19 @@ def get_repositories() -> t.List[str]:
     r.raise_for_status()
 
     return [repo["name"] for repo in r.json()["repositories"]]
+
+
+def create_repository(name: str) -> None:
+    r = requests.put(
+        config.T4C_REST_API + "/repositories/",
+        json={
+            "repositoryName": name,
+            "authenticationType": "FILE",
+            "authenticationData": {
+                "users": [{"login": "admin", "password": generate_password()}]
+            },
+            "datasourceType": "H2_EMBEDDED",
+        },
+        auth=T4C_BACKEND_AUTHENTICATION,
+    )
+    r.raise_for_status()
