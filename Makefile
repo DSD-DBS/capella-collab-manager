@@ -43,6 +43,7 @@ helm-deploy:
 		$$(test -f secrets.yaml && echo "--values secrets.yaml") \
 		--set docker.registry=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
 		--set database.backend.initialAdmin=$(MY_EMAIL) \
+		--set general.port=8081 \
 		--wait --timeout 4m \
 		--debug \
 		$(RELEASE) ./helm
