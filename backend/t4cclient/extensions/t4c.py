@@ -101,7 +101,7 @@ def get_repositories() -> t.List[str]:
 
 def create_repository(name: str) -> None:
     r = requests.post(
-        config.T4C_REST_API + "/repositories/",
+        config.T4C_REST_API + "/repositories",
         json={
             "repositoryName": name,
             "authenticationType": "FILE",
