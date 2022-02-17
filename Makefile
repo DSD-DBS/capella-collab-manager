@@ -28,7 +28,9 @@ ease:
 	docker build -t capella/ease/remote --build-arg BASE_IMAGE=capella/ease capella-dockerimages/remote
 	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly --build-arg BASE_IMAGE=capella/ease/remote capella-dockerimages/readonly
 
-deploy: backend frontend capella ease
+deploy: backend frontend capella ease helm-deploy
+
+helm-deploy: 
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
 	helm upgrade --install \
 		--kube-context k3d-$(CLUSTER_NAME) \
@@ -41,10 +43,17 @@ deploy: backend frontend capella ease
 		--wait --timeout 4m \
 		--debug \
 		$(RELEASE) ./helm
-	kubectl rollout restart deployment -n $(NAMESPACE) --context k3d-$(CLUSTER_NAME)
-	$(MAKE) .provision-guacamole .provision-backend
+	$(MAKE) .rollout .provision-guacamole .provision-backend
+
+clear-backend-db: 
+	kubectl delete deployment -n t4c-manager $(RELEASE)-backend-postgres
+	kubectl delete pvc -n t4c-manager $(RELEASE)-volume-backend-postgres
+	$(MAKE) helm-deploy
 
 rollout: backend frontend
+	$(MAKE) .rollout
+
+.rollout: 
 	kubectl rollout restart deployment -n $(NAMESPACE) $(RELEASE)-backend
 	kubectl rollout restart deployment -n $(NAMESPACE) $(RELEASE)-frontend
 
