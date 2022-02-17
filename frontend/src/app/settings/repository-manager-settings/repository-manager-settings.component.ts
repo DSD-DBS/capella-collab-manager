@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RepositoryUser } from 'src/app/schemes';
 import { RepositoryService } from 'src/app/services/repository/repository.service';
+import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'app-repository-manager-settings',
@@ -8,7 +9,10 @@ import { RepositoryService } from 'src/app/services/repository/repository.servic
   styleUrls: ['./repository-manager-settings.component.css'],
 })
 export class RepositoryManagerSettingsComponent implements OnInit {
-  constructor(public repositoryService: RepositoryService) {}
+  constructor(
+    public repositoryService: RepositoryService,
+    public userService: UserService
+  ) {}
 
   ngOnInit(): void {
     this.repositoryService.refreshRepositories();

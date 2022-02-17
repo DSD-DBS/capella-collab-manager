@@ -38,6 +38,12 @@ export class RepositoryService {
       this.repositories = res;
     });
   }
+
+  createRepository(name: string): Observable<Repository> {
+    return this.http.post<Repository>(this.BACKEND_URL_PREFIX, {
+      name,
+    });
+  }
 }
 
 export type Warnings = 'LICENCE_LIMIT' | 'NO_GIT_MODEL_DEFINED';
