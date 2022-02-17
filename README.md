@@ -33,7 +33,7 @@ To run this thing locally you'll need:
 When you have all that installed you can simply do the following:
 
 ```
-git clone ...; cd capella-collab-manager
+git clone --recurse-submodules ...; cd capella-collab-manager
 make create-cluster  # this creates cluster and container registry
 MY_EMAIL=me@mydomain.com make deploy  # build and deploy the manager app
 kubectl get pods --namespace=t4c-manager  # verify your deployment - components should be in "Running" state

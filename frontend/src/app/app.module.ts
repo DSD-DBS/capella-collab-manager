@@ -32,7 +32,7 @@ import { MatInputModule } from '@angular/material/input';
 import { RepositorySettingsComponent } from './settings/repository-manager-settings/repository-settings/repository-settings.component';
 import { MatListModule } from '@angular/material/list';
 import { ActiveSessionsComponent } from './active-sessions/active-sessions.component';
-import { LogoutComponent } from './auth/logout/logout.component';
+import { LogoutComponent } from './auth/logout/logout/logout.component';
 import { DeleteSessionDialogComponent } from './delete-session-dialog/delete-session-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { UserSettingsComponent } from './settings/user-settings/user-settings.component';
@@ -60,6 +60,7 @@ import { WorkspaceComponent } from './workspace/workspace.component';
 import { FooterComponent } from './footer/footer.component';
 import { TermsConditionsComponent } from './footer/terms-conditions/terms-conditions.component';
 import { LegalComponent } from './footer/legal/legal.component';
+import { LogoutRedirectComponent } from './auth/logout/logout-redirect/logout-redirect.component';
 
 @NgModule({
   declarations: [
@@ -97,6 +98,7 @@ import { LegalComponent } from './footer/legal/legal.component';
     FooterComponent,
     TermsConditionsComponent,
     LegalComponent,
+    LogoutRedirectComponent,
   ],
   imports: [
     BrowserModule,
