@@ -31,6 +31,34 @@ export class BeautifyService {
         text = 'Running';
         css = 'success';
         break;
+      case 'START_LOAD_MODEL':
+        text = 'Modelloading started';
+        css = 'warning';
+        break;
+      case 'FINISH_LOAD_MODEL':
+        text = 'Modelloading finished';
+        css = 'warning';
+        break;
+      case 'FAILURE_LOAD_MODEL':
+        text = 'Error during loading of the model';
+        css = 'error';
+        break;
+      case 'START_PREPARE_WORKSPACE':
+        text = 'Started workspace preparation';
+        css = 'warning';
+        break;
+      case 'FINISH_PREPARE_WORKSPACE':
+        text = 'Workspace preparation finished';
+        css = 'warning';
+        break;
+      case 'FAILURE_PREPARE_WORKSPACE':
+        text = 'Error during workspace preparation';
+        css = 'error';
+        break;
+      case 'START_SESSION':
+        text = 'Session started';
+        css = 'success';
+        break;
     }
 
     return {
