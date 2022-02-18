@@ -12,7 +12,7 @@ import { lowerCaseValidator } from 'src/app/validators/validators';
 })
 export class AdminUserSettingsComponent implements OnInit {
   createAdministratorFormGroup = new FormGroup({
-    username: new FormControl('', [Validators.required, lowerCaseValidator()]),
+    username: new FormControl('', [Validators.required]),
   });
 
   users: Array<User> = [];
