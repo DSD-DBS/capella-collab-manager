@@ -5,6 +5,7 @@ import typing as t
 
 import kubernetes
 import kubernetes.client
+import kubernetes.client.exceptions
 import kubernetes.config
 from t4cclient import config
 from t4cclient.core.operators.abc import Operator
@@ -97,7 +98,7 @@ class KubernetesOperator(Operator):
                 "GIT_USERNAME": config.GIT_USERNAME,
                 "GIT_PASSWORD": config.GIT_PASSWORD,
                 "GIT_URL": git_url,
-                "GIT_BRANCH": git_revision,
+                "GIT_REVISION": git_revision,
                 "GIT_ENTRYPOINT": entrypoint,
                 "RMT_PASSWORD": password,
             },
@@ -107,7 +108,33 @@ class KubernetesOperator(Operator):
         return self._export_attrs(deployment, service)
 
     def get_session_state(self, id: str) -> str:
-        return "-"
+        try:
+            pods = self.v1_core.list_namespaced_pod(
+                namespace=config.KUBERNETES_NAMESPACE, label_selector="app=" + id
+            ).to_dict()
+            container_state = pods["items"][0]["status"]["container_statuses"][-1][
+                "state"
+            ]
+            phase = pods["items"][0]["status"]["phase"]
+            print(phase)
+            if phase == "Running":
+                return "Running"
+            elif phase == "Pending":
+                return container_state["waiting"]["reason"]
+            else:
+                return ""
+        except kubernetes.client.exceptions.ApiException as e:
+            log.warning("Kubernetes error", exc_info=True)
+            return "error-" + str(e.status)
+
+    def get_session_logs(self, id: str) -> str:
+        pod_name = self.v1_core.list_namespaced_pod(
+            namespace=config.KUBERNETES_NAMESPACE, label_selector="app=" + id
+        ).to_dict()["items"][0]["metadata"]["name"]
+        return self.v1_core.read_namespaced_pod_log(
+            name=pod_name,
+            namespace=config.KUBERNETES_NAMESPACE,
+        )
 
     def _generate_id(self):
         return "".join(random.choices(string.ascii_lowercase, k=25))

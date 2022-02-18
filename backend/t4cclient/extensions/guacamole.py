@@ -89,6 +89,7 @@ def create_connection(
                 "password": rdp_password,
                 "port": rdp_port,
                 "ignore-cert": True,
+                "server-layout": "de-de-qwertz",
             },
             "attributes": {},
         },
