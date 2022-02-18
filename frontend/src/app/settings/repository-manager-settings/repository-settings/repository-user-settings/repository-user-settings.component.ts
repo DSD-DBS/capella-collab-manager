@@ -45,7 +45,6 @@ export class RepositoryUserSettingsComponent implements OnInit {
     {
       username: new FormControl('', [
         Validators.required,
-        lowerCaseValidator(),
         this.userAlreadyInRepositoryValidator(),
       ]),
       role: new FormControl('', Validators.required),
