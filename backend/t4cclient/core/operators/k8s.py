@@ -174,8 +174,8 @@ class KubernetesOperator(Operator):
                                     for key, value in environment.items()
                                 ],
                                 "resources": {
-                                    "limits": {"cpu": "3", "memory": "4Gi"},
-                                    "requests": {"cpu": "2", "memory": "2Gi"},
+                                    "limits": {"cpu": "2", "memory": "2Gi"},
+                                    "requests": {"cpu": "1", "memory": "1Gi"},
                                 },
                                 "imagePullPolicy": "Always",
                                 "volumeMounts": volume_mount,
