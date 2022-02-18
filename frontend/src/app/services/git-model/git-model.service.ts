@@ -37,12 +37,15 @@ export class GitModelService {
     repository_name: string,
     body: CreateGitModel
   ): Observable<GitModel> {
+    const reqBody = JSON.parse(JSON.stringify(body));
+    // Base64 encoding is needed because some application gateways block urls in the requests
+    reqBody.model.path = btoa(reqBody.model.path);
     return this.http.post<GitModel>(
       environment.backend_url +
         '/repositories/' +
         repository_name +
         '/git-models/',
-      body
+      reqBody
     );
   }
 
