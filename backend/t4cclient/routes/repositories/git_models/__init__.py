@@ -1,3 +1,4 @@
+import base64
 import typing as t
 
 from fastapi import APIRouter, Depends
@@ -52,6 +53,7 @@ def assign_model_to_repository(
     verify_repository_role(
         repository_name, allowed_roles=["manager", "administrator"], token=token, db=db
     )
+    body.model.path = base64.b64decode(body.model.path).decode("utf-8")
     db_model = repository_git_models.add_model_to_repository(db, repository_name, body)
     return GetRepositoryGitModel(
         **db_model.__dict__,
@@ -74,7 +76,6 @@ def unassign_model_from_repository(
         repository_name, allowed_roles=["manager", "administrator"], token=token, db=db
     )
     verify_gitmodel_permission(repository_name, model_id, db)
-
     return repository_git_models.delete_model_from_repository(
         db, repository_name, model_id
     )
