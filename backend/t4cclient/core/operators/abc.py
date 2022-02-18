@@ -76,3 +76,19 @@ class Operator(abc.ABC):
         id
             ID of the Session
         """
+
+    @classmethod
+    @abc.abstractmethod
+    def get_session_logs(self, id: str) -> str:
+        """Get session state
+
+        Paramters
+        ---------
+        id
+            ID of the Session
+
+        Returns
+        ------
+        logs
+            Logs of the current session
+        """
