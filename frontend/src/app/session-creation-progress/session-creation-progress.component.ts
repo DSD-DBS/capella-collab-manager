@@ -18,6 +18,8 @@ export class SessionCreationProgressComponent implements OnInit {
   @Input()
   session: Session | undefined = undefined;
 
+  failure = false;
+
   refreshSessionsSubscription: Subscription;
 
   containerReady = false;
@@ -30,9 +32,8 @@ export class SessionCreationProgressComponent implements OnInit {
       .pipe(
         map(() => {
           if (this.session !== undefined) {
-            this.ownSessionService
-              .refreshSessions()
-              .subscribe((res: Array<Session>) => {
+            this.ownSessionService.refreshSessions().subscribe(
+              (res: Array<Session>) => {
                 const session = res.find(
                   (session: Session) => session.id === this.session?.id
                 );
@@ -41,15 +42,60 @@ export class SessionCreationProgressComponent implements OnInit {
                   this.session = JSON.parse(JSON.stringify(session));
                 }
 
-                if (this.session?.state === 'Running') {
+                if (
+                  this.session?.state === 'Running' ||
+                  this.session?.state === 'START_SESSION'
+                ) {
                   this.containerReady = true;
                   this.refreshSessionsSubscription.unsubscribe();
                 }
-              });
+              },
+              (err) => {
+                this.refreshSessionsSubscription.unsubscribe();
+                this.failure = true;
+              }
+            );
           }
         })
       )
       .subscribe();
+  }
+
+  evaluateStep(step: string): string {
+    const splittedState = this.session?.state.split('_');
+    if (splittedState && splittedState.length >= 2) {
+      const type = splittedState[0];
+      const detectedStep = splittedState.slice(1).join('_');
+      const stepOrder = [
+        'INITIAL',
+        'LOAD_MODEL',
+        'PREPARE_WORKSPACE',
+        'SESSION',
+      ];
+      if (stepOrder.indexOf(step) < stepOrder.indexOf(detectedStep)) {
+        return 'success';
+      } else if (step === detectedStep) {
+        switch (type) {
+          case 'START':
+            return 'running';
+          case 'FAILURE':
+            this.refreshSessionsSubscription.unsubscribe();
+            return 'error';
+          case 'FINISH':
+            return 'success';
+          default:
+            return 'error';
+        }
+      } else {
+        return 'pending';
+      }
+    } else {
+      if (step == 'INITIAL') {
+        return 'running';
+      } else {
+        return 'pending';
+      }
+    }
   }
 
   ngOnInit(): void {}
