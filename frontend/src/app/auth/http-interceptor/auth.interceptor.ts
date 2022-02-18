@@ -54,7 +54,7 @@ export class AuthInterceptor implements HttpInterceptor {
           this.snackBar.open(err.error.detail.reason, 'Ok!');
         } else if (err.status !== 404) {
           this.snackBar.open(
-            'An unknown error occurred! Please contact the technical contact via the "Feedback"-Tab!',
+            'An unknown error occurred! If you encounter the problem again, please open an issue on Github!',
             'Ok!'
           );
         }
