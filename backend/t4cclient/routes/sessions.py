@@ -84,6 +84,7 @@ def request_session(
     existing_user_sessions = sessions.get_sessions_for_user(db, owner)
 
     if body.type == WorkspaceType.PERSISTENT:
+        body.repository = ""
         if WorkspaceType.PERSISTENT in [
             session.type for session in existing_user_sessions
         ]:

@@ -62,6 +62,8 @@ import { TermsConditionsComponent } from './footer/terms-conditions/terms-condit
 import { LegalComponent } from './footer/legal/legal.component';
 import { LogoutRedirectComponent } from './auth/logout/logout-redirect/logout-redirect.component';
 import { CreateRepositoryComponent } from './settings/admin-settings/create-repository/create-repository.component';
+import { SessionCreationProgressComponent } from './session-creation-progress/session-creation-progress.component';
+import { SessionProgressIconComponent } from './session-creation-progress/session-progress-icon/session-progress-icon.component';
 
 @NgModule({
   declarations: [
@@ -101,6 +103,8 @@ import { CreateRepositoryComponent } from './settings/admin-settings/create-repo
     LegalComponent,
     LogoutRedirectComponent,
     CreateRepositoryComponent,
+    SessionCreationProgressComponent,
+    SessionProgressIconComponent,
   ],
   imports: [
     BrowserModule,

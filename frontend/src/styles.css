@@ -37,6 +37,9 @@ mat-form-field.mat-form-field-invalid {
 
 :root {
   --primary-color: #3f51b5;
+  --error-color: darkred;
+  --warning-color: darkorange;
+  --success-color: darkgreen;
 }
 
 button.primary {

@@ -91,7 +91,7 @@
 </div>
 
 <mat-spinner *ngIf="showSpinner"></mat-spinner>
-<app-session-created
-  [session]="session"
+<app-session-creation-progress
   *ngIf="creationSuccessful"
-></app-session-created>
+  [session]="session"
+></app-session-creation-progress>
