@@ -1,30 +1,54 @@
-<ul>
-  <li>
-    <mat-card>
-      <span class="circle"
-        ><mat-icon style="color: green">check_circle</mat-icon></span
-      >
-      <span class="description">Allocation of Resources</span>
-    </mat-card>
-  </li>
-  <li>
-    <mat-card>
-      <mat-icon style="color: darkorange">warning</mat-icon>
-      <span class="description">Pulling latest version of the model</span>
-    </mat-card>
-  </li>
-  <li>
-    <mat-card>
-      <span class="circle"><mat-spinner [diameter]="35"></mat-spinner></span>
-      <span class="description">Preparing workspace</span>
-    </mat-card>
-  </li>
-  <li>
-    <mat-card>
-      <span class="circle" style="color: grey"
-        ><mat-icon>access_time</mat-icon></span
-      >
-      <span class="description">Start session</span>
-    </mat-card>
-  </li>
-</ul>
+<mat-card *ngIf="!containerReady">
+  Thanks for requesting a session! Our scheduler will take of the request.
+  <br />
+  Depending on the demand, the creation can take a few minutes. <br />In most of
+  the cases the session should be available within 30 seconds. <br />
+  <b>You will be automatically redirected once the creation is successful!</b>
+</mat-card>
+
+<div *ngIf="session?.type == 'persistent' && !containerReady">
+  The current state of your request is: <br />
+  <mat-card
+    class="session-state"
+    [ngClass]="beautifyService.beatifyState(session?.state).css"
+  >
+    {{ beautifyService.beatifyState(session?.state).text }}
+  </mat-card>
+</div>
+
+<div *ngIf="session?.type == 'readonly' && !containerReady">
+  <ul>
+    <li>
+      <mat-card class="step">
+        <span class="circle"
+          ><mat-icon style="color: green">check_circle</mat-icon></span
+        >
+        <span class="description">Allocation of Resources</span>
+      </mat-card>
+    </li>
+    <li>
+      <mat-card class="step">
+        <mat-icon style="color: darkorange">warning</mat-icon>
+        <span class="description">Pulling latest version of the model</span>
+      </mat-card>
+    </li>
+    <li>
+      <mat-card class="step">
+        <span class="circle"><mat-spinner [diameter]="35"></mat-spinner></span>
+        <span class="description">Preparing workspace</span>
+      </mat-card>
+    </li>
+    <li>
+      <mat-card class="step">
+        <span class="circle" style="color: grey"
+          ><mat-icon>access_time</mat-icon></span
+        >
+        <span class="description">Start session</span>
+      </mat-card>
+    </li>
+  </ul>
+</div>
+<app-session-created
+  [session]="session"
+  *ngIf="containerReady"
+></app-session-created>

@@ -28,15 +28,18 @@ button {
 }
 
 #title {
-  margin: 0 10px;
   font-size: 24px;
   text-align: center;
+}
+
+h2 {
+  margin: 5px 10px;
 }
 
 .header > .type {
   background-color: var(--primary-color);
   color: white;
-  border-radius: 10px 10px 0 0;
+  border-radius: 5px 5px 0 0;
 }
 
 .header > .state {
@@ -44,7 +47,7 @@ button {
   border-radius: 0 0 10px 10px;
 }
 
-.header > .error {
+.error {
   background-color: var(--error-color);
 }
 

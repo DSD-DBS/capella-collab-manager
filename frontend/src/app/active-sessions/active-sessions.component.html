@@ -24,13 +24,17 @@
             {{ session.repository }} (read-only session)
           </h2>
         </div>
-        <div class="state" [ngClass]="beatifyState(session.state).css">
-          <h3>{{ beatifyState(session.state).text }}</h3>
+        <div
+          class="state"
+          [ngClass]="beautifyService.beatifyState(session.state).css"
+        >
+          <h3>{{ beautifyService.beatifyState(session.state).text }}</h3>
         </div>
       </div>
       <div class="content">
         <div class="text">
-          The session was created {{ beatifyDate(session.created_at) }}
+          The session was created
+          {{ beautifyService.beatifyDate(session.created_at) }}
           <br />
         </div>
         <button
