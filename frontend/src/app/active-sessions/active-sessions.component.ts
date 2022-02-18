@@ -72,4 +72,42 @@ export class ActiveSessionsComponent implements OnInit {
       newDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     );
   }
+
+  beatifyState(state: string): SessionState {
+    let text = state;
+    let css = 'warning';
+    switch (state) {
+      case '404':
+        text = 'Error: Session not found';
+        css = 'error';
+        break;
+      case 'pending':
+        text = 'Waiting for resources';
+        css = 'warning';
+        break;
+      case 'ImagePullBackOff':
+      case 'ErrImagePull':
+        text = 'Failed to pull image';
+        css = 'error';
+        break;
+      case 'ContainerCreating':
+        text = 'Creating session';
+        css = 'warning';
+        break;
+      case 'Running':
+        text = 'Running';
+        css = 'success';
+        break;
+    }
+
+    return {
+      text: text,
+      css: css,
+    };
+  }
+}
+
+interface SessionState {
+  text: string;
+  css: string;
 }
