@@ -17,7 +17,7 @@ ul {
   margin: 0;
 }
 
-mat-card {
+.step {
   display: flex;
 
   align-items: center;
@@ -27,4 +27,22 @@ mat-card {
   position: absolute;
   margin-top: 5px;
   margin-left: 60px;
+}
+
+.error {
+  background-color: var(--error-color);
+}
+
+.warning {
+  background-color: var(--warning-color);
+}
+
+.success {
+  background-color: var(--success-color);
+}
+
+.session-state {
+  font-size: 16px;
+  color: white;
+  margin: 10px;
 }
