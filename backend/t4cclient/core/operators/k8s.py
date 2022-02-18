@@ -127,6 +127,15 @@ class KubernetesOperator(Operator):
             log.warning("Kubernetes error", exc_info=True)
             return "error-" + str(e.status)
 
+    def get_session_logs(self, id: str) -> str:
+        pod_name = self.v1_core.list_namespaced_pod(
+            namespace=config.KUBERNETES_NAMESPACE, label_selector="app=" + id
+        ).to_dict()["items"][0]["metadata"]["name"]
+        return self.v1_core.read_namespaced_pod_log(
+            name=pod_name,
+            namespace=config.KUBERNETES_NAMESPACE,
+        )
+
     def _generate_id(self):
         return "".join(random.choices(string.ascii_lowercase, k=25))
 
