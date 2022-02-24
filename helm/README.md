@@ -59,12 +59,7 @@ When you'd like to update configuration variables or like to upgrade to a newer 
 Create a namespaces to deploy the manager and sessions in:
 
 ```
-kubectl create namespace prod-t4c-manager
-kubectl create namespace prod-t4c-sessions
-```
-
-```
-helm upgrade prod-t4c-manager --namespace prod-t4c-manager -f options.prod.yaml -f values.yaml .
+helm upgrade --install --create-namespace prod-t4c-manager --namespace prod-t4c-manager -f options.prod.yaml -f values.yaml .
 ```
 
 ## Local development
