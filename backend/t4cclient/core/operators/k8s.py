@@ -112,20 +112,30 @@ class KubernetesOperator(Operator):
             pods = self.v1_core.list_namespaced_pod(
                 namespace=config.KUBERNETES_NAMESPACE, label_selector="app=" + id
             ).to_dict()
-            container_state = pods["items"][0]["status"]["container_statuses"][-1][
-                "state"
-            ]
+
+            log.debug("Receive k8s pod: %s", pods)
             phase = pods["items"][0]["status"]["phase"]
             print(phase)
             if phase == "Running":
                 return "Running"
             elif phase == "Pending":
-                return container_state["waiting"]["reason"]
+                status = pods["items"][0]["status"]
+
+                conditions = status["conditions"]
+                if conditions:
+                    return conditions[-1]["reason"]
+
+                container_statuses = status["container_statuses"]
+                if container_statuses:
+                    return container_statuses[-1]["state"]["waiting"]["reason"]
             else:
-                return ""
+                return "unknown"
         except kubernetes.client.exceptions.ApiException as e:
             log.warning("Kubernetes error", exc_info=True)
             return "error-" + str(e.status)
+        except Exception as e:
+            log.exception("Error parsing the session state")
+            return "unknown"
 
     def get_session_logs(self, id: str) -> str:
         pod_name = self.v1_core.list_namespaced_pod(
