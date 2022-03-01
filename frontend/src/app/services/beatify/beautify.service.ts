@@ -67,6 +67,10 @@ export class BeautifyService {
         text = 'Unschedulable';
         css = 'error';
         break;
+      case 'NOT_FOUND':
+        text = 'Not found';
+        css = 'error';
+        break;
     }
 
     return {
