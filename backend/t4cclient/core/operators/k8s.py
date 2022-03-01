@@ -7,7 +7,6 @@ import kubernetes
 import kubernetes.client
 import kubernetes.client.exceptions
 import kubernetes.config
-from itsdangerous import exc
 from t4cclient import config
 from t4cclient.core.operators.abc import Operator
 
