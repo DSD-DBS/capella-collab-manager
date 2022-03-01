@@ -48,7 +48,7 @@ def get_t4c_status():
 def fetch_last_seen(mac_addr: str):
     try:
         status = get_t4c_status()
-        if status["errors"]:
+        if status.get("errors", ""):
             return str(status["errors"][0])
         list_with_mac = [
             user["lastSeen"]
