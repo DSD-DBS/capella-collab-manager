@@ -8,3 +8,5 @@
 /.provision-guacamole
 /values*.yaml
 /secrets*.yaml
+/local
+.mypy_cache

@@ -29,13 +29,9 @@ export class SessionOverviewComponent implements OnInit {
     'mac',
     'actions',
   ];
-  sessionsUsage: SessionsUsage | undefined = undefined;
 
   ngOnInit(): void {
     this.refreshSessions();
-    this.sessionService.getSessionsUsage().subscribe((res) => {
-      this.sessionsUsage = res;
-    });
   }
 
   refreshSessions() {
