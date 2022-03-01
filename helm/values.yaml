@@ -115,11 +115,11 @@ t4cServer:
     # The following endpoints have to be reachable: 
     # - <base>/usage/json
     # - <base>/status/json
-    usageStats: localhost:8086
+    usageStats: http://localhost:8086
 
     # REST API Base for REST API including the prefix (CRUD for repositories, projects and users)
     # All REST endpoints have to reachable. 
-    restAPI: localhost:8090/api/v1.0
+    restAPI: http://localhost:8090/api/v1.0
 
   # Credentials to authenticate against the REST API endpoint (HTTPBasic)
   username: sampleUser
