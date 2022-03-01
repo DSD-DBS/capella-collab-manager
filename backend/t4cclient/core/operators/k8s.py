@@ -115,21 +115,20 @@ class KubernetesOperator(Operator):
 
             log.debug("Receive k8s pod: %s", pods)
             phase = pods["items"][0]["status"]["phase"]
-            print(phase)
             if phase == "Running":
                 return "Running"
             elif phase == "Pending":
                 status = pods["items"][0]["status"]
 
                 conditions = status["conditions"]
-                if conditions:
+                if conditions and conditions[-1]["reason"]:
                     return conditions[-1]["reason"]
 
                 container_statuses = status["container_statuses"]
                 if container_statuses:
                     return container_statuses[-1]["state"]["waiting"]["reason"]
-            else:
-                return "unknown"
+
+            return "unknown"
         except kubernetes.client.exceptions.ApiException as e:
             log.warning("Kubernetes error", exc_info=True)
             return "error-" + str(e.status)
