@@ -59,6 +59,10 @@ h2 {
   background-color: var(--success-color);
 }
 
+.primary {
+  background-color: var(--primary-color);
+}
+
 .content {
   padding: 0 10px 10px;
 }
