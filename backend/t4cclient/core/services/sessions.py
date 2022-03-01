@@ -1,3 +1,4 @@
+import logging
 import re
 import typing as t
 
@@ -6,6 +7,8 @@ from t4cclient import config
 from t4cclient.core.operators import OPERATOR
 from t4cclient.schemas.sessions import WorkspaceType
 from t4cclient.sql_models.sessions import DatabaseSession
+
+log = logging.getLogger(__name__)
 
 
 def inject_attrs_in_sessions(
@@ -35,5 +38,5 @@ def _determine_session_state(session: t.Dict[str, t.Any]) -> str:
                     if res:
                         state = res.group(1)
         except:
-            pass
+            log.exception("Could not parse log")
     return state
