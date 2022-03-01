@@ -7,6 +7,7 @@ import kubernetes
 import kubernetes.client
 import kubernetes.client.exceptions
 import kubernetes.config
+from itsdangerous import exc
 from t4cclient import config
 from t4cclient.core.operators.abc import Operator
 
@@ -114,7 +115,10 @@ class KubernetesOperator(Operator):
             ).to_dict()
 
             log.debug("Receive k8s pod: %s", pods)
-            phase = pods["items"][0]["status"]["phase"]
+            try:
+                phase = pods["items"][0]["status"]["phase"]
+            except IndexError:
+                return "NOT_FOUND"
             if phase == "Running":
                 return "Running"
             elif phase == "Pending":
