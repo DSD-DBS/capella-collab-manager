@@ -27,7 +27,11 @@ export class LicencesComponent implements OnInit {
       case 'CONNECTION_ERROR':
         return 'The connection to the license server failed.';
       case 'NO_STATUS':
-        return 'No status is available. This can happend during license server restarts.';
+        return 'No status is available. This can happen during and after license server restarts.';
+      case 'NO_STATUS_JSON':
+        return 'No status in response from license server.';
+      case 'UNKNOWN_ERROR':
+        return 'An unknown error occured when communicating with the license server.';
       case 'DECODE_ERROR':
         return 'License server response could not be decoded.';
       default:

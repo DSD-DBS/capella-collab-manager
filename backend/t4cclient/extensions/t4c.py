@@ -34,21 +34,29 @@ def get_t4c_status():
         return {"free": -1, "total": -1, "used": [], "errors": ["T4C_ERROR"]}
 
     try:
-        return r.json()["status"]
+        status = r.json()["status"]
+
+        if status.get("message", "") == "No last status available.":
+            return {"free": -1, "total": -1, "used": [], "errors": ["NO_STATUS"]}
+
+        if "used" in status:
+            return status
     except KeyError:
         log.exception("No status available")
         log.info("Response from T4C is %s", r.content.decode("ascii"))
-        return {"free": -1, "total": -1, "used": [], "errors": ["NO_STATUS"]}
+        return {"free": -1, "total": -1, "used": [], "errors": ["NO_STATUS_JSON"]}
     except json.JSONDecodeError:
         log.exception("Cannot decode T4C status")
         log.info("Response from T4C is %s", r.content.decode("ascii"))
         return {"free": -1, "total": -1, "used": [], "errors": ["DECODE_ERROR"]}
 
+    return {"free": -1, "total": -1, "used": [], "errors": ["UNKNOWN_ERROR"]}
+
 
 def fetch_last_seen(mac_addr: str):
     try:
         status = get_t4c_status()
-        if status.get("errors", ""):
+        if "errors" in status:
             return str(status["errors"][0])
         list_with_mac = [
             user["lastSeen"]
