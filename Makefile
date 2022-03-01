@@ -58,8 +58,8 @@ rollout: backend frontend
 	$(MAKE) .rollout
 
 .rollout: 
-	kubectl rollout restart deployment -n $(NAMESPACE) $(RELEASE)-backend
-	kubectl rollout restart deployment -n $(NAMESPACE) $(RELEASE)-frontend
+	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-backend
+	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-frontend
 
 undeploy:
 	helm uninstall --kube-context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $(RELEASE)

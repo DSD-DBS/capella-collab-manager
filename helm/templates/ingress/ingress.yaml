@@ -5,7 +5,11 @@ metadata:
   labels: 
     id: {{ .Release.Name }}-nginx
   annotations:
+    {{ if eq .Values.target "local" }}
+    ingress.kubernetes.io/ssl-redirect: "false"
+    {{ else }}
     kubernetes.io/ingress.class: nginx
+    {{ end }}
 spec:
   rules:
     - host: {{ .Values.general.host }}

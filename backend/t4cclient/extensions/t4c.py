@@ -1,3 +1,4 @@
+import json
 import logging
 import typing as t
 
@@ -5,7 +6,6 @@ import requests
 from requests.auth import HTTPBasicAuth
 from t4cclient import config
 from t4cclient.core.credential_manager import generate_password
-from t4cclient.core.database import repositories
 
 log = logging.getLogger(__name__)
 
@@ -15,22 +15,41 @@ T4C_BACKEND_AUTHENTICATION = HTTPBasicAuth(
 
 
 def get_t4c_status():
-    r = requests.get(
-        config.T4C_USAGE_API + "/status/json", auth=T4C_BACKEND_AUTHENTICATION
-    )
+    try:
+        r = requests.get(
+            config.T4C_USAGE_API + "/status/json", auth=T4C_BACKEND_AUTHENTICATION
+        )
+    except requests.exceptions.Timeout:
+        return {"free": -1, "total": -1, "used": [], "errors": ["TIMEOUT"]}
+    except requests.exceptions.ConnectionError:
+        return {"free": -1, "total": -1, "used": [], "errors": ["CONNECTION_ERROR"]}
+
     # This API endpoints returns 404 on success -> We have to handle the errors here manually
     if r.status_code != 404 and not r.ok:
-        raise requests.HTTPError(r)
+        log.error(
+            "Licence server returned status code %s: %s",
+            r.status_code,
+            r.content.decode("ascii"),
+        )
+        return {"free": -1, "total": -1, "used": [], "errors": ["T4C_ERROR"]}
 
     try:
         return r.json()["status"]
-    except Exception:
+    except KeyError:
+        log.exception("No status available")
+        log.info("Response from T4C is %s", r.content.decode("ascii"))
+        return {"free": -1, "total": -1, "used": [], "errors": ["NO_STATUS"]}
+    except json.JSONDecodeError:
         log.exception("Cannot decode T4C status")
-        return {"free": -1, "total": -1, "used": [], "errors": []}
+        log.info("Response from T4C is %s", r.content.decode("ascii"))
+        return {"free": -1, "total": -1, "used": [], "errors": ["DECODE_ERROR"]}
 
 
 def fetch_last_seen(mac_addr: str):
     try:
+        status = get_t4c_status()
+        if status["errors"]:
+            return str(status["errors"][0])
         list_with_mac = [
             user["lastSeen"]
             for user in get_t4c_status()["used"]
@@ -40,8 +59,8 @@ def fetch_last_seen(mac_addr: str):
             return list_with_mac[0]
         return "No T4C Session found"
     except Exception:
-        log.exception("T4C Server Error")
-        return "T4C Server Error"
+        log.exception("Unexpected exception")
+        return "UNKNOWN_ERROR"
 
 
 def add_user_to_repository(

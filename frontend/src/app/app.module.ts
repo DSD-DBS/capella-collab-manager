@@ -64,6 +64,7 @@ import { LogoutRedirectComponent } from './auth/logout/logout-redirect/logout-re
 import { CreateRepositoryComponent } from './settings/admin-settings/create-repository/create-repository.component';
 import { SessionCreationProgressComponent } from './session-creation-progress/session-creation-progress.component';
 import { SessionProgressIconComponent } from './session-creation-progress/session-progress-icon/session-progress-icon.component';
+import { LicencesComponent } from './session-overview/licences/licences.component';
 
 @NgModule({
   declarations: [
@@ -105,6 +106,7 @@ import { SessionProgressIconComponent } from './session-creation-progress/sessio
     CreateRepositoryComponent,
     SessionCreationProgressComponent,
     SessionProgressIconComponent,
+    LicencesComponent,
   ],
   imports: [
     BrowserModule,

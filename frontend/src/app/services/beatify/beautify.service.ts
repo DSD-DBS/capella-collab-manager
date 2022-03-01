@@ -59,6 +59,14 @@ export class BeautifyService {
         text = 'Session started';
         css = 'success';
         break;
+      case 'unknown':
+        text = 'Unknown State';
+        css = 'primary';
+        break;
+      case 'Unschedulable':
+        text = 'Unschedulable';
+        css = 'error';
+        break;
     }
 
     return {

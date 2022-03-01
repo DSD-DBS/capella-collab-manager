@@ -30,4 +30,5 @@ export interface RepositoryUser {
 export interface SessionsUsage {
   free: number;
   total: number;
+  errors: Array<string>;
 }

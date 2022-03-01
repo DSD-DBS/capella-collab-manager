@@ -1,8 +1,4 @@
-<div id="licences" *ngIf="sessionsUsage">
-  Used licences: {{ sessionsUsage.total - sessionsUsage.free }}/{{
-    sessionsUsage.total
-  }}
-</div>
+<app-licences></app-licences>
 <table mat-table [dataSource]="sessions" class="mat-elevation-z8">
   <ng-container matColumnDef="id">
     <th mat-header-cell *matHeaderCellDef>ID</th>
