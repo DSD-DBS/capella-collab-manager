@@ -3,11 +3,9 @@ import logging
 import typing as t
 
 import requests
-from itsdangerous import exc
 from requests.auth import HTTPBasicAuth
 from t4cclient import config
 from t4cclient.core.credential_manager import generate_password
-from t4cclient.core.database import repositories
 
 log = logging.getLogger(__name__)
 
