@@ -17,23 +17,23 @@ T4C_BACKEND_AUTHENTICATION = HTTPBasicAuth(
 
 
 def get_t4c_status():
-    r = requests.get(
-        config.T4C_USAGE_API + "/status/json", auth=T4C_BACKEND_AUTHENTICATION
-    )
-
     try:
-        # This API endpoints returns 404 on success -> We have to handle the errors here manually
-        if r.status_code != 404 and not r.ok:
-            log.error(
-                "Licence server returned status code %s: %s",
-                r.status_code,
-                r.content.decode("ascii"),
-            )
-            return {"free": -1, "total": -1, "used": [], "errors": ["T4C_ERROR"]}
+        r = requests.get(
+            config.T4C_USAGE_API + "/status/json", auth=T4C_BACKEND_AUTHENTICATION
+        )
     except requests.exceptions.Timeout:
         return {"free": -1, "total": -1, "used": [], "errors": ["TIMEOUT"]}
     except requests.exceptions.ConnectionError:
         return {"free": -1, "total": -1, "used": [], "errors": ["CONNECTION_ERROR"]}
+
+    # This API endpoints returns 404 on success -> We have to handle the errors here manually
+    if r.status_code != 404 and not r.ok:
+        log.error(
+            "Licence server returned status code %s: %s",
+            r.status_code,
+            r.content.decode("ascii"),
+        )
+        return {"free": -1, "total": -1, "used": [], "errors": ["T4C_ERROR"]}
 
     try:
         return r.json()["status"]

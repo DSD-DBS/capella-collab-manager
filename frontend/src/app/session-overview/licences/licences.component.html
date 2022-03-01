@@ -1,7 +1,9 @@
 <div id="licences" *ngIf="sessionsUsage">
-  Used licences: {{ sessionsUsage.total - sessionsUsage.free }}/{{
-    sessionsUsage.total
-  }}
+  <div *ngIf="!sessionsUsage.errors.length">
+    Used licences: {{ sessionsUsage.total - sessionsUsage.free }}/{{
+      sessionsUsage.total
+    }}
+  </div>
   <div class="error" *ngFor="let error of sessionsUsage.errors">
     {{ getErrorMessage(error) }}
   </div>
