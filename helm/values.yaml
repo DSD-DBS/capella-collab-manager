@@ -39,7 +39,6 @@ database:
 
       # Admin password of the database
       password: secret
-      storageClassName: local-path
 
     external: 
       ###### IF database.deploy == False ######
@@ -71,7 +70,6 @@ database:
 
       # Admin password of the database
       password: secret
-      storageClassName: local-path
 
     external:
       ###### IF database.deploy == False ######
