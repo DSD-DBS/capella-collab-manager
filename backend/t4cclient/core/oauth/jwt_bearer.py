@@ -1,16 +1,15 @@
 import logging
-import typing as t
 import time
+import typing as t
 
 import requests
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt
 from pydantic import BaseModel
-
+from t4cclient import config
 from t4cclient.config import OAUTH_CLIENT_ID, OAUTH_ENDPOINT, USERNAME_CLAIM
 from t4cclient.core.database import SessionLocal, users
-
 
 log = logging.getLogger(__name__)
 
@@ -43,9 +42,7 @@ class JWTBearer(HTTPBearer):
     def validate_token(self, token: str) -> t.Dict[str, t.Any]:
         key = KeyStore.key_for_token(token)
         try:
-            return jwt.decode(
-                token, key.dict(), audience=OAUTH_CLIENT_ID
-            )
+            return jwt.decode(token, key.dict(), audience=OAUTH_CLIENT_ID)
         except jwt.ExpiredSignatureError:
             raise HTTPException(
                 status_code=401,
@@ -63,8 +60,8 @@ class JWTBearer(HTTPBearer):
 
 # Copied and adapted from https://github.com/marpaia/jwks/blob/master/jwks/jwks.py:
 
-class _KeyStore:
 
+class _KeyStore:
     def __init__(
         self,
         *,
@@ -80,11 +77,13 @@ class _KeyStore:
         self.refresh_keys()
 
     def keys_need_refresh(self) -> bool:
-        return (time.time() - self.public_keys_last_refreshed) > self.key_refresh_interval
+        return (
+            time.time() - self.public_keys_last_refreshed
+        ) > self.key_refresh_interval
 
     def refresh_keys(self) -> None:
         try:
-            resp = requests.get(self.jwks_uri)
+            resp = requests.get(self.jwks_uri, timeout=config.REQUESTS_TIMEOUT)
         except Exception as e:
             log.error("Could not retrieve JWKS data from %s", self.jwks_uri)
             return
@@ -121,10 +120,15 @@ class _KeyStore:
 
 
 def get_jwks_uri_for_azure_ad(authorization_endpoint=OAUTH_ENDPOINT):
-    discoveryEndpoint = f"{authorization_endpoint}/v2.0/.well-known/openid-configuration"
+    discoveryEndpoint = (
+        f"{authorization_endpoint}/v2.0/.well-known/openid-configuration"
+    )
 
-    config = requests.get(discoveryEndpoint).json()
-    return config["jwks_uri"]
+    openid_config = requests.get(
+        discoveryEndpoint,
+        timeout=config.REQUESTS_TIMEOUT,
+    ).json()
+    return openid_config["jwks_uri"]
 
 
 class JSONWebKey(BaseModel):
