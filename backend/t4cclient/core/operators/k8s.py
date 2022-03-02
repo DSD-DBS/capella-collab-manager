@@ -262,8 +262,8 @@ class KubernetesOperator(Operator):
                 "name": self._get_claim_name(username),
             },
             "spec": {
-                "accessModes": ["ReadWriteMany"],
-                "storageClassName": "persistent-sessions-csi",
+                "accessModes": [config.KUBERNETES_STORAGE_ACCESS_MODE],
+                "storageClassName": config.KUBERNETES_STORAGE_CLASS_NAME,
                 "resources": {"requests": {"storage": "20Gi"}},
             },
         }
