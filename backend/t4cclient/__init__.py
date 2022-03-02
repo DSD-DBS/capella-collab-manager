@@ -1,4 +1,5 @@
 import logging
+import os
 import random
 import string
 import time
@@ -8,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 import t4cclient.sql_models
+from t4cclient import config
 from t4cclient.core.database import __main__ as database
 from t4cclient.routes import router, status
 
@@ -25,7 +27,7 @@ class HealthcheckFilter(logging.Filter):
 
 
 logging.getLogger("uvicorn.access").addFilter(HealthcheckFilter())
-
+logging.basicConfig(level=config.LOGGING_LEVEL)
 
 app = FastAPI(title="T4C Client Manager")
 
@@ -36,6 +38,23 @@ app.add_middleware(
     allow_methods=["POST", "GET", "OPTIONS", "DELETE", "PUT", "PATCH"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def log_requests(request, call_next):
+    idem = "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
+    log.debug(f"rid={idem} start request path={request.url.path}")
+    start_time = time.time()
+
+    response = await call_next(request)
+
+    process_time = (time.time() - start_time) * 1000
+    formatted_process_time = "{0:.2f}".format(process_time)
+    log.debug(
+        f"rid={idem} completed_in={formatted_process_time}ms status_code={response.status_code}"
+    )
+
+    return response
 
 
 @app.get("/healthcheck", tags=["Healthcheck"])
