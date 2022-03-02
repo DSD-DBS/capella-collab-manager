@@ -1,5 +1,4 @@
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Session } from '../schemes';
@@ -11,7 +10,7 @@ import { OwnSessionService } from '../services/own-session/own-session.service';
   templateUrl: './session-creation-progress.component.html',
   styleUrls: ['./session-creation-progress.component.css'],
 })
-export class SessionCreationProgressComponent implements OnInit {
+export class SessionCreationProgressComponent implements OnInit, OnDestroy {
   @Input()
   sessionType = '';
 
@@ -99,4 +98,8 @@ export class SessionCreationProgressComponent implements OnInit {
   }
 
   ngOnInit(): void {}
+
+  ngOnDestroy(): void {
+    this.refreshSessionsSubscription.unsubscribe();
+  }
 }
