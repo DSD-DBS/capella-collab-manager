@@ -15,6 +15,7 @@ def get_admin_token() -> str:
         GUACAMOLE_URI + "/api/tokens",
         auth=HTTPBasicAuth(config.GUACAMOLE_USERNAME, config.GUACAMOLE_PASSWORD),
         headers=headers,
+        timeout=config.REQUESTS_TIMEOUT,
     )
     r.raise_for_status()
     return r.json()["authToken"]
@@ -25,6 +26,7 @@ def get_token(username: str, password: str) -> str:
         GUACAMOLE_URI + "/api/tokens",
         auth=HTTPBasicAuth(username, password),
         headers=headers,
+        timeout=config.REQUESTS_TIMEOUT,
     )
     r.raise_for_status()
     return r.json()
@@ -38,6 +40,7 @@ def create_user(
     r = requests.post(
         GUACAMOLE_PREFIX + "/users?token=" + token,
         json={"username": username, "password": password, "attributes": {}},
+        timeout=config.REQUESTS_TIMEOUT,
     )
     r.raise_for_status()
     return r.json()
@@ -53,19 +56,24 @@ def assign_user_to_connection(token: str, username: str, connection_id: str):
                 "value": "READ",
             }
         ],
+        timeout=config.REQUESTS_TIMEOUT,
     )
     r.raise_for_status()
 
 
 def delete_user(token: str, username: str):
-    r = requests.delete(f"{GUACAMOLE_PREFIX}/users/{username}?token={token}")
+    r = requests.delete(
+        f"{GUACAMOLE_PREFIX}/users/{username}?token={token}",
+        timeout=config.REQUESTS_TIMEOUT,
+    )
     r.raise_for_status()
     return r.json()
 
 
 def delete_connection(token: str, connection_name: str):
     r = requests.delete(
-        f"{GUACAMOLE_PREFIX}/connections/{connection_name}?token={token}"
+        f"{GUACAMOLE_PREFIX}/connections/{connection_name}?token={token}",
+        timeout=config.REQUESTS_TIMEOUT,
     )
     r.raise_for_status()
     return r.json()
@@ -93,6 +101,7 @@ def create_connection(
             },
             "attributes": {},
         },
+        timeout=config.REQUESTS_TIMEOUT,
     )
 
     r.raise_for_status()

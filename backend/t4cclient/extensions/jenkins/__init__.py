@@ -43,6 +43,7 @@ def post_pipelines_to_jenkins(filecontent: str, pipeline_name: str):
         headers={
             "Content-Type": "text/xml",
         },
+        timeout=config.REQUESTS_TIMEOUT,
     )
     res.raise_for_status()
 
@@ -63,6 +64,7 @@ def get_pipeline(db: sqlalchemy.orm.Session, pipeline_name: str):
         + pipeline_name
         + "/runs",
         auth=JENKINS_AUTH,
+        timeout=config.REQUESTS_TIMEOUT,
     )
     if res.status_code == 404:
         crud_jenkins.remove_pipeline_by_name(db, pipeline_name)
@@ -97,6 +99,7 @@ def trigger_job_run(pipeline_name: str):
     requests.post(
         config.JENKINS_BASE_URL + "/job/" + pipeline_name + "/build?delay=0sec",
         auth=JENKINS_AUTH,
+        timeout=config.REQUESTS_TIMEOUT,
     ).raise_for_status()
 
 
@@ -104,4 +107,5 @@ def remove_pipeline(pipeline_name: str):
     requests.post(
         config.JENKINS_BASE_URL + "/job/" + pipeline_name + "/doDelete",
         auth=JENKINS_AUTH,
+        timeout=config.REQUESTS_TIMEOUT,
     ).raise_for_status()

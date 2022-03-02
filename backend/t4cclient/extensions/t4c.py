@@ -1,6 +1,7 @@
 import json
 import logging
 import typing as t
+from socket import timeout
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -16,12 +17,17 @@ T4C_BACKEND_AUTHENTICATION = HTTPBasicAuth(
 
 def get_t4c_status():
     try:
+        log.debug("Fetch T4C status")
         r = requests.get(
-            config.T4C_USAGE_API + "/status/json", auth=T4C_BACKEND_AUTHENTICATION
+            config.T4C_USAGE_API + "/status/json",
+            auth=T4C_BACKEND_AUTHENTICATION,
+            timeout=config.REQUESTS_TIMEOUT,
         )
     except requests.exceptions.Timeout:
+        log.info("License server timeout", exc_info=True)
         return {"free": -1, "total": -1, "used": [], "errors": ["TIMEOUT"]}
     except requests.exceptions.ConnectionError:
+        log.info("License server timeout", exc_info=True)
         return {"free": -1, "total": -1, "used": [], "errors": ["CONNECTION_ERROR"]}
 
     # This API endpoints returns 404 on success -> We have to handle the errors here manually
@@ -83,6 +89,7 @@ def add_user_to_repository(
             "password": password,
         },
         auth=T4C_BACKEND_AUTHENTICATION,
+        timeout=config.REQUESTS_TIMEOUT,
     )
 
     # No exception if user does already exist (status_code 400)
@@ -96,6 +103,7 @@ def remove_user_from_repository(repository: str, username: str):
         config.T4C_REST_API + "/users/" + username,
         params={"repositoryName": repository},
         auth=T4C_BACKEND_AUTHENTICATION,
+        timeout=config.REQUESTS_TIMEOUT,
     )
     # No exception if user does not exist (status_code 404)
     if not r.ok and r.status_code != 404:
@@ -112,6 +120,7 @@ def update_password_of_user(repository: str, username: str, password: str):
             "password": password,
         },
         auth=T4C_BACKEND_AUTHENTICATION,
+        timeout=config.REQUESTS_TIMEOUT,
     )
     r.raise_for_status()
     return r.json()
@@ -119,7 +128,9 @@ def update_password_of_user(repository: str, username: str, password: str):
 
 def get_repositories() -> t.List[str]:
     r = requests.get(
-        config.T4C_REST_API + "/repositories", auth=T4C_BACKEND_AUTHENTICATION
+        config.T4C_REST_API + "/repositories",
+        auth=T4C_BACKEND_AUTHENTICATION,
+        timeout=config.REQUESTS_TIMEOUT,
     )
     r.raise_for_status()
 
@@ -138,5 +149,6 @@ def create_repository(name: str) -> None:
             "datasourceType": "H2_EMBEDDED",
         },
         auth=T4C_BACKEND_AUTHENTICATION,
+        timeout=config.REQUESTS_TIMEOUT,
     )
     r.raise_for_status()
