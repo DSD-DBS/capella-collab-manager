@@ -1,8 +1,8 @@
 import logging
-import os
 import random
 import string
 import time
+from importlib import metadata
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,11 +14,15 @@ from t4cclient.core.database import __main__ as database
 from t4cclient.routes import router, status
 
 logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
+
+# Load backup extension routes
+eps = metadata.entry_points()["capellacollab.extensions.backups"]
+for ep in eps:
+    log.info("Import models of extension %s", ep.name)
+    ep.load().models
 
 database.migrate_db()
-
-
-log = logging.getLogger(__name__)
 
 
 class HealthcheckFilter(logging.Filter):
