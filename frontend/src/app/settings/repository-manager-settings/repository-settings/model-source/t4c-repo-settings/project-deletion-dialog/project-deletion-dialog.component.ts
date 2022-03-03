@@ -1,9 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
-  RepositoryProject,
-  RepositoryProjectService,
-} from 'src/app/services/repository-project/repository-project.service';
+  T4CRepoService,
+  T4CRepository,
+} from 'src/app/services/modelsources/t4c-repos/t4c-repo.service';
 
 @Component({
   selector: 'app-project-deletion-dialog',
@@ -12,9 +12,9 @@ import {
 })
 export class ProjectDeletionDialogComponent implements OnInit {
   constructor(
-    private projectService: RepositoryProjectService,
+    private projectService: T4CRepoService,
     public dialogRef: MatDialogRef<ProjectDeletionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public project: RepositoryProject
+    @Inject(MAT_DIALOG_DATA) public project: T4CRepository
   ) {}
 
   ngOnInit(): void {}

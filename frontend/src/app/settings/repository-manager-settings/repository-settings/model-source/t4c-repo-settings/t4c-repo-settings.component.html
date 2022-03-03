@@ -1,5 +1,5 @@
 <mat-card
-  ><h2>Project Settings</h2>
+  ><h2>T4C Repository Settings</h2>
   Adding and deleting projects will not affect the T4C Server! <br />
   This should represent a manually updated list of the current projects in a
   repository. <br />
@@ -15,11 +15,14 @@
       color="primary"
       (click)="createProject(formDirective)"
     >
-      Add Project
+      Add T4C repository
     </button>
   </form>
   <mat-selection-list #projectsList [multiple]="false" class="user-selection">
-    <mat-list-option *ngFor="let project of projects" [value]="project">
+    <mat-list-option
+      *ngFor="let project of projectService.repositories"
+      [value]="project"
+    >
       <mat-icon mat-list-icon>laptop</mat-icon>
       <div mat-line>{{ project.name }}</div>
       <div mat-line>Project ID: {{ project.id }}</div>

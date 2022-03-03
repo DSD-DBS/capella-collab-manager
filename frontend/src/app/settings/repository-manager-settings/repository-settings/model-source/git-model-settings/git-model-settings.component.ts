@@ -11,9 +11,8 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   GitModel,
   GitModelService,
-} from 'src/app/services/git-model/git-model.service';
-import { JenkinsService } from 'src/app/services/jenkins/jenkins.service';
-import { RepositoryProject } from 'src/app/services/repository-project/repository-project.service';
+} from 'src/app/services/modelsources/git-model/git-model.service';
+import { T4CRepoService } from 'src/app/services/modelsources/t4c-repos/t4c-repo.service';
 import { GitModelDeletionDialogComponent } from './git-model-deletion-dialog/git-model-deletion-dialog.component';
 
 @Component({
@@ -36,17 +35,6 @@ export class GitModelSettingsComponent implements OnInit {
     create_backup_job: new FormControl(false),
   });
 
-  _projects: Array<RepositoryProject> = [];
-  @Input()
-  set projects(value: Array<RepositoryProject>) {
-    this._projects = value;
-    this.refreshGitModels();
-  }
-
-  get projects() {
-    return this._projects;
-  }
-
   get model(): FormGroup {
     return this.createGitModel.get('model') as FormGroup;
   }
@@ -62,12 +50,10 @@ export class GitModelSettingsComponent implements OnInit {
   @Input()
   repository = '';
 
-  gitModels: Array<GitModel> = [];
-
   constructor(
-    private gitModelService: GitModelService,
-    private jenkinsService: JenkinsService,
-    private dialog: MatDialog
+    public gitModelService: GitModelService,
+    private dialog: MatDialog,
+    public t4cService: T4CRepoService
   ) {}
 
   ngOnInit(): void {
@@ -77,9 +63,7 @@ export class GitModelSettingsComponent implements OnInit {
   refreshGitModels() {
     this.gitModelService
       .getGitRepositoriesForRepository(this.repository)
-      .subscribe((res) => {
-        this.gitModels = res;
-      });
+      .subscribe();
   }
 
   gitURLValidator(): ValidatorFn {
@@ -109,16 +93,8 @@ export class GitModelSettingsComponent implements OnInit {
           this.repository,
           this.createGitModel.value
         )
-        .subscribe((res) => {
-          if (this.createGitModel.value.create_backup_job) {
-            this.jenkinsService
-              .createJenkinsPipelineForModel(this.repository, res.id)
-              .subscribe(() => {
-                this.refreshGitModels();
-              });
-          } else {
-            this.refreshGitModels();
-          }
+        .subscribe(() => {
+          this.refreshGitModels();
         });
     }
   }

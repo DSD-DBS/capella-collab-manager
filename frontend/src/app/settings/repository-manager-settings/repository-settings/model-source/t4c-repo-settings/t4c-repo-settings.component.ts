@@ -16,18 +16,17 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import {
-  RepositoryProject,
-  RepositoryProjectService,
-} from 'src/app/services/repository-project/repository-project.service';
+  T4CRepoService,
+  T4CRepository,
+} from 'src/app/services/modelsources/t4c-repos/t4c-repo.service';
 import { ProjectDeletionDialogComponent } from './project-deletion-dialog/project-deletion-dialog.component';
 
 @Component({
-  selector: 'app-project-settings',
-  templateUrl: './project-settings.component.html',
-  styleUrls: ['./project-settings.component.css'],
+  selector: 'app-t4c-repo-settings',
+  templateUrl: './t4c-repo-settings.component.html',
+  styleUrls: ['./t4c-repo-settings.component.css'],
 })
-export class ProjectSettingsComponent implements OnInit {
-  projects: Array<RepositoryProject> = [];
+export class T4CRepoSettingsComponent implements OnInit {
   createProjectForm = new FormGroup({
     name: new FormControl('', Validators.required),
   });
@@ -46,12 +45,9 @@ export class ProjectSettingsComponent implements OnInit {
     return this._repository;
   }
 
-  @Output()
-  projectEvent = new EventEmitter<Array<RepositoryProject>>();
-
   projectNonexistenceValidator(): Validators {
     return (control: AbstractControl): ValidationErrors | null => {
-      for (let project of this.projects) {
+      for (let project of this.projectService.repositories) {
         if (project.name == control.value) {
           return { projectExistsError: true };
         }
@@ -61,19 +57,14 @@ export class ProjectSettingsComponent implements OnInit {
   }
 
   constructor(
-    private projectService: RepositoryProjectService,
+    public projectService: T4CRepoService,
     private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {}
 
   refreshProjects(): void {
-    this.projectService
-      .getRepositoryProjects(this.repository)
-      .subscribe((res) => {
-        this.projects = res;
-        this.projectEvent.emit(this.projects);
-      });
+    this.projectService.getRepositoryProjects(this.repository).subscribe();
   }
 
   createProject(formDirective: FormGroupDirective): void {
@@ -91,7 +82,7 @@ export class ProjectSettingsComponent implements OnInit {
     }
   }
 
-  removeProject(project: RepositoryProject): void {
+  removeProject(project: T4CRepository): void {
     const dialogRef = this.dialog.open(ProjectDeletionDialogComponent, {
       data: project,
     });
@@ -103,7 +94,7 @@ export class ProjectSettingsComponent implements OnInit {
     });
   }
 
-  get selectedProject(): RepositoryProject {
+  get selectedProject(): T4CRepository {
     return this.projectsList.selectedOptions.selected[0].value;
   }
 }
