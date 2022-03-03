@@ -1,4 +1,6 @@
+import logging
 import typing as t
+from importlib import metadata
 
 import t4cclient.core.services.repositories as repository_service
 from fastapi import APIRouter, Depends
@@ -21,6 +23,7 @@ from . import git_models as router_git_models
 from . import projects as router_projects
 from . import users as router_users
 
+log = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -107,3 +110,13 @@ router.include_router(
     prefix="/{repository_name}/projects",
     tags=["Repository Projects"],
 )
+
+# Load backup extension routes
+eps = metadata.entry_points()["capellacollab.extensions.backups"]
+for ep in eps:
+    log.info("Add routes of backup extension")
+    router.include_router(
+        ep.load().routes.router,
+        prefix="/{repository_name}/extensions/backups/" + ep.name,
+        tags=[ep.name],
+    )
