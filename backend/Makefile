@@ -1,4 +1,5 @@
 DB_PORT = 5432
+VENV = .venv/bin
 
 database: 
 	docker start capella-collab-postgres || \
@@ -11,7 +12,7 @@ database:
 		postgres
 
 python: 
-	uvicorn t4cclient.__main__:app --reload
+	$(VENV)/uvicorn t4cclient.__main__:app --reload
 
 dev: database python
 	
