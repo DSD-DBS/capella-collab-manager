@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { RepositoryProject } from 'src/app/services/repository-project/repository-project.service';
 
 @Component({
   selector: 'app-repository-settings',
@@ -9,7 +8,6 @@ import { RepositoryProject } from 'src/app/services/repository-project/repositor
 })
 export class RepositorySettingsComponent implements OnInit {
   repository: string = '';
-  projects: Array<RepositoryProject> = [];
 
   constructor(private route: ActivatedRoute) {}
 
@@ -17,9 +15,5 @@ export class RepositorySettingsComponent implements OnInit {
     this.route.params.subscribe((params) => {
       this.repository = params['repository'];
     });
-  }
-
-  setProject(projects: Array<RepositoryProject>): void {
-    this.projects = projects;
   }
 }
