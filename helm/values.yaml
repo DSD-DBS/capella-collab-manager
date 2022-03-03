@@ -14,6 +14,9 @@ docker:
     # Docker Image for the Backend
     backend: /t4c/client/backend
 
+    # Docker Image for EASE
+    ease: /t4c/client/ease
+
     workspaces: 
       # Docker Image for the Persistent Workspace Session
       persistent: /t4c/client/remote
