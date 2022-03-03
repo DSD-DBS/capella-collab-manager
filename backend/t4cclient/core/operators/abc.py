@@ -92,3 +92,20 @@ class Operator(abc.ABC):
         logs
             Logs of the current session
         """
+
+    @classmethod
+    @abc.abstractmethod
+    def create_cronjob(
+        self, image: str, environment: t.Dict[str, str], schedule="* * * * *"
+    ) -> str:
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def delete_cronjob(self, id: str) -> None:
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def get_last_run_of_cronjob(self, id: str) -> str:
+        pass

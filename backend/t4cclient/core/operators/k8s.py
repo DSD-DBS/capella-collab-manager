@@ -149,6 +149,25 @@ class KubernetesOperator(Operator):
             namespace=config.KUBERNETES_NAMESPACE,
         )
 
+    def create_cronjob(
+        self, image: str, environment: t.Dict[str, str], schedule="* * * * *"
+    ) -> str:
+        id = self._generate_id()
+        self._create_cronjob(
+            name=id,
+            image=image,
+            environment=environment,
+            schedule=schedule,
+        )
+        return id
+
+    def delete_cronjob(self, id: str) -> None:
+        self._delete_cronjob(id=id)
+
+    def get_last_run_of_cronjob(self, id: str) -> str:
+        # TODO
+        pass
+
     def _generate_id(self):
         return "".join(random.choices(string.ascii_lowercase, k=25))
 
@@ -231,8 +250,8 @@ class KubernetesOperator(Operator):
             config.KUBERNETES_NAMESPACE, body
         )
 
-    def __create_cronjob(
-        self, name: str, image: str, schedule="* * * * *"
+    def _create_cronjob(
+        self, name: str, image: str, environment: t.Dict[str, str], schedule="* * * * *"
     ) -> kubernetes.client.V1CronJob:
         body = {
             "kind": "CronJob",
@@ -252,6 +271,10 @@ class KubernetesOperator(Operator):
                                     "name": name,
                                     "image": image,
                                     "imagePullPolicy": "Always",
+                                    "env": [
+                                        {"name": key, "value": value}
+                                        for key, value in environment.items()
+                                    ],
                                 }
                             ]
                         }
@@ -324,13 +347,21 @@ class KubernetesOperator(Operator):
             return self.v1_apps.delete_namespaced_deployment(
                 id, config.KUBERNETES_NAMESPACE
             )
-        except kubernetes.client.exceptions.ApiException as e:
-            log.exception("Error deleting service")
+        except kubernetes.client.exceptions.ApiException:
+            log.exception("Error deleting deployment")
+
+    def _delete_cronjob(self, id: str) -> kubernetes.client.V1Status:
+        try:
+            return self.v1_batch.delete_namespaced_cron_job(
+                id, config.KUBERNETES_NAMESPACE
+            )
+        except kubernetes.client.exceptions.ApiException:
+            log.exception("Error deleting cronjob")
 
     def _delete_service(self, id: str) -> kubernetes.client.V1Status:
         try:
             return self.v1_core.delete_namespaced_service(
                 id, config.KUBERNETES_NAMESPACE
             )
-        except kubernetes.client.exceptions.ApiException as e:
+        except kubernetes.client.exceptions.ApiException:
             log.exception("Error deleting service")
