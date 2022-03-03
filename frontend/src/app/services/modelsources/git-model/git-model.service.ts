@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -8,16 +9,23 @@ import { environment } from 'src/environments/environment';
 })
 export class GitModelService {
   constructor(private http: HttpClient) {}
+  models: Array<GitModel> = [];
 
   getGitRepositoriesForRepository(
     repository_name: string
   ): Observable<Array<GitModel>> {
-    return this.http.get<Array<GitModel>>(
-      environment.backend_url +
-        '/repositories/' +
-        repository_name +
-        '/git-models/'
-    );
+    return this.http
+      .get<Array<GitModel>>(
+        environment.backend_url +
+          '/repositories/' +
+          repository_name +
+          '/git-models/'
+      )
+      .pipe(
+        tap((res: Array<GitModel>) => {
+          this.models = res;
+        })
+      );
   }
 
   unassignGitRepositoriesFromRepository(
