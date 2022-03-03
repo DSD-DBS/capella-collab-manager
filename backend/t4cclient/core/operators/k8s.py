@@ -52,6 +52,7 @@ class KubernetesOperator(Operator):
     def __init__(self) -> None:
         self.v1_core = kubernetes.client.CoreV1Api()
         self.v1_apps = kubernetes.client.AppsV1Api()
+        self.v1_batch = kubernetes.client.BatchV1Api()
 
     def validate(self) -> str:
         try:
@@ -228,6 +229,39 @@ class KubernetesOperator(Operator):
         }
         return self.v1_apps.create_namespaced_deployment(
             config.KUBERNETES_NAMESPACE, body
+        )
+
+    def __create_cronjob(
+        self, name: str, image: str, schedule="* * * * *"
+    ) -> kubernetes.client.V1CronJob:
+        body = {
+            "kind": "CronJob",
+            "apiVersion": "batch/v1",
+            "metadata": {
+                "name": name,
+            },
+            "spec": {
+                "schedule": schedule,
+            },
+            "jobTemplate": {
+                "spec": {
+                    "template": {
+                        "spec": {
+                            "containers": [
+                                {
+                                    "name": name,
+                                    "image": image,
+                                    "imagePullPolicy": "Always",
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+        }
+
+        return self.v1_batch.create_namespaced_cron_job(
+            namespace=config.KUBERNETES_NAMESPACE, body=body
         )
 
     def _create_service(
