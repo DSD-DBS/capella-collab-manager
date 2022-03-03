@@ -1,7 +1,7 @@
 import typing as t
 
 import t4cclient.core.database as database
-import t4cclient.core.database.projects as database_projects
+import t4cclient.extensions.modelsources.t4c.crud as database_projects
 import t4cclient.schemas.repositories.projects as schema_projects
 from fastapi import APIRouter, Depends
 from requests import Session

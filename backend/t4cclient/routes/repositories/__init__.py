@@ -10,7 +10,7 @@ from t4cclient.core.database import get_db, repositories
 from t4cclient.core.database import users as database_users
 from t4cclient.core.oauth.database import is_admin, verify_admin, verify_repository_role
 from t4cclient.core.oauth.jwt_bearer import JWTBearer
-from t4cclient.extensions import t4c
+from t4cclient.extensions.modelsources.t4c import connection
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.repositories import (
     GetRepositoryUserResponse,
@@ -19,8 +19,6 @@ from t4cclient.schemas.repositories import (
     RepositoryUserRole,
 )
 
-from . import git_models as router_git_models
-from . import projects as router_projects
 from . import users as router_users
 
 log = logging.getLogger(__name__)
@@ -78,7 +76,7 @@ def create_repository(
     token=Depends(JWTBearer()),
 ):
     verify_admin(token, db)
-    t4c.create_repository(body.name)
+    connection.create_repository(body.name)
     return repositories.create_repository(db, body.name)
 
 
@@ -100,23 +98,23 @@ router.include_router(
     prefix="/{repository_name}/users",
     tags=["Repository Users"],
 )
-router.include_router(
-    router_git_models.router,
-    prefix="/{repository_name}/git-models",
-    tags=["Repository Git Models"],
-)
-router.include_router(
-    router_projects.router,
-    prefix="/{repository_name}/projects",
-    tags=["Repository Projects"],
-)
 
 # Load backup extension routes
 eps = metadata.entry_points()["capellacollab.extensions.backups"]
 for ep in eps:
-    log.info("Add routes of backup extension")
+    log.info("Add routes of backup extension %s", ep.name)
     router.include_router(
         ep.load().routes.router,
-        prefix="/{repository_name}/extensions/backups/" + ep.name,
+        prefix="/{project}/extensions/backups/" + ep.name,
+        tags=[ep.name],
+    )
+
+# Load modelsource extension routes
+eps = metadata.entry_points()["capellacollab.extensions.modelsources"]
+for ep in eps:
+    log.info("Add routes of modelsource %s", ep.name)
+    router.include_router(
+        ep.load().routes.router,
+        prefix="/{project}/extensions/modelsources/" + ep.name,
         tags=[ep.name],
     )

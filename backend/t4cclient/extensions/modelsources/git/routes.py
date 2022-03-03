@@ -1,21 +1,20 @@
 import base64
 import typing as t
 
+import t4cclient.extensions.modelsources.git.models as repository_git_models
 from fastapi import APIRouter, Depends
 from requests import Session
-from t4cclient.core.database import get_db, repository_git_models
+from t4cclient.core.database import get_db
 from t4cclient.core.oauth.database import verify_repository_role
 from t4cclient.core.oauth.database.git_models import verify_gitmodel_permission
 from t4cclient.core.oauth.jwt_bearer import JWTBearer
-from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
-from t4cclient.schemas.repositories.git_models import (
+from t4cclient.extensions.modelsources.git.models import (
     GetRepositoryGitModel,
     PatchRepositoryGitModel,
     RepositoryGitInnerModel,
     RepositoryGitModel,
 )
-
-from . import jenkins as router_jenkins
+from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 
 router = APIRouter()
 
@@ -104,6 +103,3 @@ def patch_model(
             model=RepositoryGitInnerModel(**db_model.__dict__),
         )
     return None
-
-
-router.include_router(router_jenkins.router, prefix="/{model_id}/jenkins")
