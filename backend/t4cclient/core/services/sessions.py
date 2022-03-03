@@ -2,7 +2,7 @@ import logging
 import re
 import typing as t
 
-import t4cclient.extensions.t4c as t4c_manager
+import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 from t4cclient import config
 from t4cclient.core.operators import OPERATOR
 from t4cclient.schemas.sessions import WorkspaceType

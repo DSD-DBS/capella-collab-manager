@@ -1,4 +1,4 @@
-import t4cclient.core.database.repository_git_models as crud_git_models
+import t4cclient.extensions.modelsources.git.crud as crud_git_models
 from fastapi import Depends, HTTPException
 from t4cclient.core.database import get_db
 

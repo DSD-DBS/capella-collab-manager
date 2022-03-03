@@ -3,8 +3,8 @@ import logging
 import typing as t
 
 import t4cclient.core.database.repositories as repositories_crud
-import t4cclient.core.database.repository_git_models as git_models_crud
-import t4cclient.extensions.t4c as t4c_manager
+import t4cclient.extensions.modelsources.git.crud as git_models_crud
+import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories.users as users_schema
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session

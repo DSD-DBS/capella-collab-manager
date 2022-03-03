@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from t4cclient.sql_models.projects import DatabaseProject
+from t4cclient.extensions.modelsources.t4c.models import DatabaseProject
 
 
 def get_project(db: Session, name: str, repo_name: str):

@@ -1,3 +1,6 @@
+import typing as t
+
+from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
@@ -5,7 +8,34 @@ from sqlalchemy.sql.sqltypes import Boolean
 from t4cclient.core.database import Base
 
 
-class DatabaseGitModel(Base):
+class RepositoryGitInnerModel(BaseModel):
+    path: str
+    entrypoint: str
+    revision: str
+
+    class Config:
+        orm_mode = True
+
+
+class RepositoryGitModel(BaseModel):
+    name: str
+    project_id: int
+    model: RepositoryGitInnerModel
+
+    class Config:
+        orm_mode = True
+
+
+class PatchRepositoryGitModel(BaseModel):
+    primary: t.Optional[bool]
+
+
+class GetRepositoryGitModel(RepositoryGitModel):
+    id: int
+    primary: bool
+
+
+class DB_GitModel(Base):
     __tablename__ = "git_models"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String)
@@ -17,11 +47,3 @@ class DatabaseGitModel(Base):
         String, ForeignKey("repositories.name", ondelete="CASCADE")
     )
     repository = relationship("DatabaseRepository", back_populates="git_models")
-    project_id = Column(Integer, ForeignKey("projects.id", ondelete="CASCADE"))
-    project = relationship("DatabaseProject", back_populates="git_models")
-    jenkins_job = relationship(
-        "DatabaseJenkinsPipeline",
-        cascade="all, delete-orphan",
-        back_populates="git_model",
-        passive_deletes=True,
-    )

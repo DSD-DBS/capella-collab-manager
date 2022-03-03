@@ -1,39 +1,34 @@
 from sqlalchemy.orm import Session
-from t4cclient.schemas.repositories.git_models import RepositoryGitModel
-from t4cclient.sql_models.git_models import DatabaseGitModel
+from t4cclient.extensions.modelsources.git.models import DB_GitModel, RepositoryGitModel
 
 
 def get_models_of_repository(db: Session, repository_name: str):
     return (
-        db.query(DatabaseGitModel)
-        .filter(DatabaseGitModel.repository_name == repository_name)
+        db.query(DB_GitModel)
+        .filter(DB_GitModel.repository_name == repository_name)
         .all()
     )
 
 
 def get_primary_model_of_repository(db: Session, repository_name: str):
     return (
-        db.query(DatabaseGitModel)
-        .filter(DatabaseGitModel.repository_name == repository_name)
-        .filter(DatabaseGitModel.primary == True)
+        db.query(DB_GitModel)
+        .filter(DB_GitModel.repository_name == repository_name)
+        .filter(DB_GitModel.primary == True)
         .first()
     )
 
 
-def get_model_by_id(
-    db: Session, repository_name: str, model_id: int
-) -> DatabaseGitModel:
+def get_model_by_id(db: Session, repository_name: str, model_id: int) -> DB_GitModel:
     return (
-        db.query(DatabaseGitModel)
-        .filter(DatabaseGitModel.repository_name == repository_name)
-        .filter(DatabaseGitModel.id == model_id)
+        db.query(DB_GitModel)
+        .filter(DB_GitModel.repository_name == repository_name)
+        .filter(DB_GitModel.id == model_id)
         .first()
     )
 
 
-def make_model_primary(
-    db: Session, repository_name: str, model_id: int
-) -> DatabaseGitModel:
+def make_model_primary(db: Session, repository_name: str, model_id: int) -> DB_GitModel:
     primary_model = get_primary_model_of_repository(db, repository_name)
     if primary_model:
         primary_model.primary = False
@@ -56,7 +51,7 @@ def add_model_to_repository(
     else:
         primary = True
 
-    model = DatabaseGitModel(
+    model = DB_GitModel(
         repository_name=repository_name,
         **model.model.dict(),
         name=model.name,
@@ -70,7 +65,7 @@ def add_model_to_repository(
 
 
 def delete_model_from_repository(db: Session, repository_name: str, model_id: int):
-    db.query(DatabaseGitModel).filter(DatabaseGitModel.id == model_id).filter(
-        DatabaseGitModel.repository_name == repository_name
+    db.query(DB_GitModel).filter(DB_GitModel.id == model_id).filter(
+        DB_GitModel.repository_name == repository_name
     ).delete()
     db.commit()

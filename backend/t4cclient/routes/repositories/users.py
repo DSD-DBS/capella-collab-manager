@@ -1,6 +1,6 @@
 import typing as t
 
-import t4cclient.extensions.t4c as t4c_manager
+import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories as schema_repositories
 from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError, Session

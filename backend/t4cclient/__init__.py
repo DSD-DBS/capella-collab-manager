@@ -16,8 +16,11 @@ from t4cclient.routes import router, status
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
-# Load backup extension routes
-eps = metadata.entry_points()["capellacollab.extensions.backups"]
+# Load extension models
+eps = (
+    metadata.entry_points()["capellacollab.extensions.backups"]
+    + metadata.entry_points()["capellacollab.extensions.modelsources"]
+)
 for ep in eps:
     log.info("Import models of extension %s", ep.name)
     ep.load().models

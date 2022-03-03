@@ -5,10 +5,12 @@ import dateutil.parser
 import fastapi
 import requests
 import sqlalchemy.orm
-import t4cclient.core.database.jenkins as crud_jenkins
-import t4cclient.core.database.repository_git_models as crud_git_models
-import t4cclient.sql_models.git_models as database_git_models
+import t4cclient.extensions.backups.jenkins as crud_jenkins
+import t4cclient.extensions.modelsources.git.crud as crud_git_models
+import t4cclient.extensions.modelsources.git.models as database_git_models
 from t4cclient import config
+
+from . import crud, models, routes
 
 JENKINS_AUTH = (config.JENKINS_USERNAME, config.JENKINS_PASSWORD)
 
