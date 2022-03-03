@@ -1,26 +1,28 @@
 <mat-card>
   <h2>Assign existing Git Repository</h2>
-  Git Repositories will be used for TVP (Template Validation and Preview) as
-  predefined models. <br />The primary model is also used to load the models for
-  read-only users into the workspace.
-  <mat-card *ngIf="!projects.length">
-    No projects found! To create a Git Repository Connection, you have to create
-    a project first!
+  <mat-card *ngIf="!t4cService.repositories.length">
+    No T4C repositories found!<br />
+    To create a Git Repository Connection, you have to create a T4C repository
+    first!<br />
+    (This will be fixed in the next version)
   </mat-card>
-  <form [formGroup]="createGitModel" *ngIf="projects.length">
+  <form [formGroup]="createGitModel" *ngIf="t4cService.repositories.length">
     <mat-form-field>
       <mat-label>Name</mat-label>
       <input matInput formControlName="name" />
       <mat-error>Please enter a name!</mat-error>
     </mat-form-field>
     <mat-form-field>
-      <mat-label>Project</mat-label>
+      <mat-label>T4C Repository</mat-label>
       <mat-select formControlName="project_id">
-        <mat-option *ngFor="let project of projects" [value]="project.id">
+        <mat-option
+          *ngFor="let project of t4cService.repositories"
+          [value]="project.id"
+        >
           {{ project.name }}
         </mat-option>
       </mat-select>
-      <mat-error>Please select a project!</mat-error>
+      <mat-error>Please select a repository!</mat-error>
     </mat-form-field>
     <br />
     <form formGroupName="model">
@@ -60,9 +62,6 @@
       >
     </form>
     <br />
-    <mat-checkbox formControlName="create_backup_job"
-      >Create automatic backup job from T4C to Git (runs every night at 3am) </mat-checkbox
-    ><br />
 
     <button mat-flat-button color="primary" (click)="assignGitModel()">
       Assign
@@ -71,9 +70,9 @@
 </mat-card>
 <mat-card id="handle-models">
   <h2>Handle Git Models</h2>
-  <div *ngIf="gitModels.length"></div>
+  <div *ngIf="gitModelService.models.length"></div>
   <mat-accordion>
-    <mat-expansion-panel *ngFor="let model of gitModels">
+    <mat-expansion-panel *ngFor="let model of gitModelService.models">
       <mat-expansion-panel-header class="expansion-panel">
         <mat-panel-title> {{ model.name }} </mat-panel-title>
         <mat-panel-description>
@@ -108,11 +107,9 @@
       >
         Make it primary
       </button>
-      <hr />
-      <app-jenkins [model]="model" [repository]="repository"></app-jenkins>
     </mat-expansion-panel>
   </mat-accordion>
-  <div *ngIf="!gitModels.length">
+  <div *ngIf="!gitModelService.models.length">
     There are no existing git models. Please create a new Git model to allow
     read-only connections.
   </div>

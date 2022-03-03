@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   GitModel,
   GitModelService,
-} from 'src/app/services/git-model/git-model.service';
+} from 'src/app/services/modelsources/git-model/git-model.service';
 
 @Component({
   selector: 'app-git-model-deletion-dialog',

@@ -8,9 +8,8 @@ describe('GitModelDeletionDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ GitModelDeletionDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [GitModelDeletionDialogComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

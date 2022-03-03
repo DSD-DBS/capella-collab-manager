@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { JenkinsComponent } from './jenkins.component';
+import { ModelSourceComponent } from './model-source.component';
 
-describe('JenkinsComponent', () => {
-  let component: JenkinsComponent;
-  let fixture: ComponentFixture<JenkinsComponent>;
+describe('ModelSourceComponent', () => {
+  let component: ModelSourceComponent;
+  let fixture: ComponentFixture<ModelSourceComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ JenkinsComponent ]
+      declarations: [ ModelSourceComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(JenkinsComponent);
+    fixture = TestBed.createComponent(ModelSourceComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
