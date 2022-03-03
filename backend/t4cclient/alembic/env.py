@@ -1,4 +1,7 @@
+import os
 from logging.config import fileConfig
+
+os.environ["ALEMBIC_CONTEXT"] = "1"
 
 from sqlalchemy import engine_from_config, pool
 from t4cclient.config import DATABASE_URL
