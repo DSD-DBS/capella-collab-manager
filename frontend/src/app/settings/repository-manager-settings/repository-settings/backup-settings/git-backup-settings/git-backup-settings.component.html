@@ -1,0 +1,45 @@
+<div>
+  <div id="description">
+    One-way synchronization: T4C <mat-icon>arrow_right_alt</mat-icon> Git
+  </div>
+  <br />
+  <div>
+    The jobs are executed every night. <br />A job can be triggered manually at
+    any time.
+  </div>
+  <mat-card class="item" *ngFor="let item of backups">
+    <div class="header">
+      Backup from T4C model {{ item.t4cmodel }} to Git model {{ item.gitmodel }}
+    </div>
+    <div
+      class="state"
+      [ngClass]="beautifyService.beatifyState(item.lastrun?.state).css"
+    >
+      {{ beautifyService.beatifyState(item.lastrun?.state).text }}
+      <div class="lastrun">{{ item.lastrun.date }}</div>
+    </div>
+    <div class="flexbox">
+      <div class="state flexbox" id="state-field" *ngIf="item.lastrun">
+        <div class="inner-state"><br /></div>
+      </div>
+
+      <button mat-flat-button (click)="runJob()" color="primary">
+        Run job
+      </button>
+      <button mat-flat-button (click)="removeBackup()" color="primary">
+        Remove Backup
+      </button>
+      <button
+        mat-flat-button
+        (click)="viewLogs(item.lastrun)"
+        color="primary"
+        *ngIf="item.lastrun"
+      >
+        View logs
+      </button>
+    </div>
+  </mat-card>
+  <mat-card class="item" id="add-button" (click)="createNewBackup()">
+    Create a new backup <mat-icon>add</mat-icon>
+  </mat-card>
+</div>
