@@ -13,6 +13,21 @@
   padding: 10px 0;
 }
 
+.error {
+  background-color: var(--error-color);
+  color: white;
+}
+
+.warning {
+  background-color: var(--warning-color);
+  color: white;
+}
+
+.success {
+  background-color: var(--success-color);
+  color: white;
+}
+
 .state {
   text-align: center;
   font-size: 1.25em;
@@ -49,4 +64,10 @@ button {
 #refresh-button {
   float: right;
   margin: -8px -8px;
+}
+
+#loading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

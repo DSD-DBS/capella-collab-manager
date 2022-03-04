@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   EASEBackup,
   EASEBackupJob,
+  EASEBackupService,
 } from 'src/app/services/backups/ease/easebackup.service';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
 import { CreateEASEBackupComponent } from './create-ease-backup/create-ease-backup.component';
@@ -16,35 +17,64 @@ import { ViewLogsDialogComponent } from './view-logs-dialog/view-logs-dialog.com
 export class GitBackupSettingsComponent implements OnInit {
   constructor(
     public beautifyService: BeautifyService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private easeBackupService: EASEBackupService
   ) {}
 
   @Input()
   project: string = '';
 
-  ngOnInit(): void {}
+  loading = false;
+
+  ngOnInit(): void {
+    this.refreshBackups();
+  }
 
   backups: Array<EASEBackup> = [];
 
-  refreshBackups(): void {}
+  refreshBackups(): void {
+    this.loading = true;
+    this.easeBackupService
+      .getBackups(this.project)
+      .subscribe((res: Array<EASEBackup>) => {
+        this.backups = res;
+        this.loading = false;
+      });
+  }
 
   createNewBackup(): void {
     const dialogRef = this.dialog.open(CreateEASEBackupComponent, {
-      data: {},
+      data: { project: this.project },
     });
 
-    dialogRef.afterClosed().subscribe((_) => {
+    dialogRef.afterClosed().subscribe((success) => {
+      if (success) {
+        this.refreshBackups();
+      }
+    });
+  }
+
+  runJob(backup: EASEBackup): void {
+    this.easeBackupService.triggerRun(this.project, backup.id).subscribe(() => {
       this.refreshBackups();
     });
   }
 
-  runJob(): void {}
+  removeBackup(backup: EASEBackup): void {
+    this.easeBackupService
+      .removeBackup(this.project, backup.id)
+      .subscribe(() => {
+        this.refreshBackups();
+      });
+  }
 
-  removeBackup(): void {}
-
-  viewLogs(job: EASEBackupJob): void {
+  viewLogs(backup: EASEBackup): void {
     this.dialog.open(ViewLogsDialogComponent, {
-      data: { jobid: job.id },
+      data: {
+        job_id: backup.lastrun.id,
+        backup_id: backup.id,
+        project: this.project,
+      },
     });
   }
 }

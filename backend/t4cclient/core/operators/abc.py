@@ -1,5 +1,6 @@
 import abc
 import typing as t
+from datetime import datetime
 
 from t4cclient.schemas.sessions import WorkspaceType
 
@@ -107,5 +108,25 @@ class Operator(abc.ABC):
 
     @classmethod
     @abc.abstractmethod
-    def get_last_run_of_cronjob(self, id: str) -> str:
+    def get_cronjob_last_run(self, id: str) -> str:
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def get_cronjob_last_state(self, name: str) -> str:
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def get_cronjob_last_starting_date(self, name: str) -> datetime | None:
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def get_job_logs(self, id: str) -> str:
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def trigger_cronjob(self, name: str) -> None:
         pass

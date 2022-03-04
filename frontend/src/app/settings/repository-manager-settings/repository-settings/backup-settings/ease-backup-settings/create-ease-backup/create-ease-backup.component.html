@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Create a new EASE backup</h1>
 
-<form>
+<form [formGroup]="createGitBackupForm">
   <mat-form-field>
     <mat-label>Select source (t4c model)</mat-label>
     <mat-select formControlName="t4cmodel">
@@ -32,6 +32,6 @@
   *ngIf="!gitModelService.models.length || !t4cRepoService.repositories.length"
 ></div>
 <div mat-dialog-actions>
-  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button [mat-dialog-close]="false">Cancel</button>
   <button mat-button (click)="createGitBackup()" cdkFocusInitial>Create</button>
 </div>

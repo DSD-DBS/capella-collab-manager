@@ -6,7 +6,7 @@ from socket import timeout
 import requests
 from requests.auth import HTTPBasicAuth
 from t4cclient import config
-from t4cclient.core.credential_manager import generate_password
+from t4cclient.core.credentials import generate_password
 
 log = logging.getLogger(__name__)
 

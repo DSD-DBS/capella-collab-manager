@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { EASEBackupService } from 'src/app/services/backups/ease/easebackup.service';
 import { GitModelService } from 'src/app/services/modelsources/git-model/git-model.service';
 import { T4CRepoService } from 'src/app/services/modelsources/t4c-repos/t4c-repo.service';
 
@@ -11,7 +13,10 @@ import { T4CRepoService } from 'src/app/services/modelsources/t4c-repos/t4c-repo
 export class CreateEASEBackupComponent implements OnInit {
   constructor(
     public gitModelService: GitModelService,
-    public t4cRepoService: T4CRepoService
+    public t4cRepoService: T4CRepoService,
+    private easeBackupService: EASEBackupService,
+    private dialogRef: MatDialogRef<CreateEASEBackupComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: CreateEASEBackupData
   ) {}
 
   ngOnInit(): void {}
@@ -21,5 +26,17 @@ export class CreateEASEBackupComponent implements OnInit {
     t4cmodel: new FormControl('', Validators.required),
   });
 
-  createGitBackup() {}
+  createGitBackup() {
+    if (this.createGitBackupForm.valid) {
+      this.easeBackupService
+        .createBackup(this.data.project, this.createGitBackupForm.value)
+        .subscribe(() => {
+          this.dialogRef.close(true);
+        });
+    }
+  }
+}
+
+export interface CreateEASEBackupData {
+  project: string;
 }
