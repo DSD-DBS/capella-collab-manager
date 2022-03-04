@@ -1,5 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import {
+  EASEBackup,
+  EASEBackupJob,
+} from 'src/app/services/backups/ease/easebackup.service';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
 import { CreateEASEBackupComponent } from './create-ease-backup/create-ease-backup.component';
 import { ViewLogsDialogComponent } from './view-logs-dialog/view-logs-dialog.component';
@@ -20,32 +24,17 @@ export class GitBackupSettingsComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  backups: Array<Backup> = [
-    {
-      id: 10,
-      t4cmodel: 'Test',
-      lastrun: {
-        id: 'xy',
-        date: 'today',
-        state: 'Running',
-      },
-      gitmodel: 'xy',
-    },
-    {
-      id: 10,
-      t4cmodel: 'Test',
-      lastrun: {
-        id: 'xyz',
-        date: 'yesterday',
-        state: 'Failed',
-      },
-      gitmodel: 'xy',
-    },
-  ];
+  backups: Array<EASEBackup> = [];
+
+  refreshBackups(): void {}
 
   createNewBackup(): void {
-    this.dialog.open(CreateEASEBackupComponent, {
+    const dialogRef = this.dialog.open(CreateEASEBackupComponent, {
       data: {},
+    });
+
+    dialogRef.afterClosed().subscribe((_) => {
+      this.refreshBackups();
     });
   }
 
@@ -53,22 +42,9 @@ export class GitBackupSettingsComponent implements OnInit {
 
   removeBackup(): void {}
 
-  viewLogs(job: BackupJob): void {
+  viewLogs(job: EASEBackupJob): void {
     this.dialog.open(ViewLogsDialogComponent, {
       data: { jobid: job.id },
     });
   }
-}
-
-export interface BackupJob {
-  id: string;
-  date: string;
-  state: string;
-}
-
-export interface Backup {
-  id: number;
-  t4cmodel: string;
-  gitmodel: string;
-  lastrun: BackupJob;
 }
