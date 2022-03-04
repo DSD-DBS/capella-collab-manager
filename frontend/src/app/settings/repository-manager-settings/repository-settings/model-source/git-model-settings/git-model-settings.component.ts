@@ -3,6 +3,7 @@ import {
   AbstractControl,
   FormControl,
   FormGroup,
+  FormGroupDirective,
   ValidationErrors,
   ValidatorFn,
   Validators,
@@ -23,7 +24,6 @@ import { GitModelDeletionDialogComponent } from './git-model-deletion-dialog/git
 export class GitModelSettingsComponent implements OnInit {
   createGitModel = new FormGroup({
     name: new FormControl('', Validators.required),
-    project_id: new FormControl('', Validators.required),
     model: new FormGroup({
       path: new FormControl('', [Validators.required, this.gitURLValidator()]),
       entrypoint: new FormControl('', [
@@ -86,7 +86,7 @@ export class GitModelSettingsComponent implements OnInit {
     };
   }
 
-  assignGitModel() {
+  assignGitModel(formDirective: FormGroupDirective) {
     if (this.createGitModel.valid) {
       this.gitModelService
         .assignGitRepositoryToRepository(
@@ -94,6 +94,8 @@ export class GitModelSettingsComponent implements OnInit {
           this.createGitModel.value
         )
         .subscribe(() => {
+          formDirective.resetForm();
+          this.createGitModel.reset();
           this.refreshGitModels();
         });
     }

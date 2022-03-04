@@ -79,7 +79,6 @@ export interface GitModel extends CreateGitModel {
 
 export interface CreateGitModel {
   name: string;
-  project_id: number;
   model: {
     path: string;
     entrypoint: string;

@@ -66,16 +66,16 @@ def assign_model_to_repository(
     responses=AUTHENTICATION_RESPONSES,
 )
 def unassign_model_from_repository(
-    repository_name: str,
+    project: str,
     model_id: int,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
     verify_repository_role(
-        repository_name, allowed_roles=["manager", "administrator"], token=token, db=db
+        project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
-    verify_gitmodel_permission(repository_name, model_id, db)
-    return git.crud.delete_model_from_repository(db, repository_name, model_id)
+    verify_gitmodel_permission(project, model_id, db)
+    return git.crud.delete_model_from_repository(db, project, model_id)
 
 
 @router.patch(

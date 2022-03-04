@@ -1,17 +1,15 @@
-<h1 mat-dialog-title>Remove Git Model Assignment</h1>
+<h1 mat-dialog-title>Remove Git model assignment</h1>
 <div mat-dialog-content>
   <p>
-    Do you really want delete the Git Model {{ input.model.name }} with the ID
+    Do you really want delete the Git model {{ input.model.name }} with the ID
     {{ input.model.id }}?
   </p>
   <p>
-    This will remove the Git Connection from T4C to Gitlab. It will not affect
-    the existing repository! All Backup Jobs will be deleted.
+    This will remove the Git model connection. It will not affect the existing
+    Git repository!
   </p>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="this.dialogRef.close(false)">No</button>
-  <button mat-flat-button (click)="unassignGitModel()">
-    Unassign the Git Connection and linked Backup Jobs
-  </button>
+  <button mat-flat-button (click)="unassignGitModel()">Unassign</button>
 </div>

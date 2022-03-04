@@ -1,5 +1,5 @@
 mat-card {
-  width: fit-content;
+  min-width: 500px;
   margin: 10px;
   height: fit-content;
 }

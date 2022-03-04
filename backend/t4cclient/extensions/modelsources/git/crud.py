@@ -55,7 +55,6 @@ def add_model_to_repository(
         repository_name=repository_name,
         **model.model.dict(),
         name=model.name,
-        project_id=model.project_id,
         primary=primary
     )
     db.add(model)
