@@ -24,12 +24,12 @@ router = APIRouter()
     responses=AUTHENTICATION_RESPONSES,
 )
 def get_users_for_repository(
-    repository_name: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
     verify_repository_role(
-        repository_name, allowed_roles=["manager", "administrator"], token=token, db=db
+        project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
-    return repository_users.get_users_of_repository(db, repository_name)
+    return repository_users.get_users_of_repository(db, project)
 
 
 @router.post(
@@ -38,22 +38,22 @@ def get_users_for_repository(
     responses=AUTHENTICATION_RESPONSES,
 )
 def add_user_to_repository(
-    repository_name: str,
+    project: str,
     body: schema_repositories.PostRepositoryUser,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
     verify_repository_role(
-        repository_name, allowed_roles=["manager", "administrator"], token=token, db=db
+        project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
     users.find_or_create_user(db, body.username)
     check_username_not_admin(body.username, db)
     if body.role == schema_repositories.RepositoryUserRole.MANAGER:
         body.permission == schema_repositories.RepositoryUserPermission.WRITE
     if body.permission == schema_repositories.RepositoryUserPermission.WRITE:
-        t4c_manager.add_user_to_repository(repository_name, body.username)
+        t4c_manager.add_user_to_repository(project, body.username)
     return repository_users.add_user_to_repository(
-        db, repository_name, body.role, body.username, body.permission
+        db, project, body.role, body.username, body.permission
     )
 
 
@@ -63,14 +63,14 @@ def add_user_to_repository(
     responses=AUTHENTICATION_RESPONSES,
 )
 def patch_repository_user(
-    repository_name: str,
+    project: str,
     username: str,
     body: schema_repositories.PatchRepositoryUser,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
     verify_repository_role(
-        repository_name,
+        project,
         allowed_roles=["user", "manager", "administrator"],
         token=token,
         db=db,
@@ -78,22 +78,22 @@ def patch_repository_user(
 
     if body.role:
         verify_repository_role(
-            repository_name,
+            project,
             allowed_roles=["manager", "administrator"],
             token=token,
             db=db,
         )
         check_username_not_admin(username, db)
         repository_users.change_role_of_user_in_repository(
-            db, repository_name, body.role, username
+            db, project, body.role, username
         )
     if body.password:
         verify_repository_role(
-            repository_name,
+            project,
             token=token,
             db=db,
         )
-        verify_write_permission(repository_name, token, db)
+        verify_write_permission(project, token, db)
         if not is_admin(token, db) and token[USERNAME_CLAIM] != username:
             raise HTTPException(
                 status_code=403,
@@ -101,14 +101,10 @@ def patch_repository_user(
             )
 
         try:
-            t4c_manager.update_password_of_user(
-                repository_name, username, body.password
-            )
+            t4c_manager.update_password_of_user(project, username, body.password)
         except HTTPError as err:
             if err.response.status_code == 404:
-                t4c_manager.add_user_to_repository(
-                    repository_name, username, body.password
-                )
+                t4c_manager.add_user_to_repository(project, username, body.password)
             else:
                 raise HTTPException(
                     status_code=500,
@@ -117,7 +113,7 @@ def patch_repository_user(
 
     if body.permission:
         verify_repository_role(
-            repository_name,
+            project,
             allowed_roles=["manager", "administrator"],
             token=token,
             db=db,
@@ -125,7 +121,7 @@ def patch_repository_user(
         check_username_not_admin(username, db)
         repo_user = repository_users.get_user_of_repository(
             db,
-            repository_name,
+            project,
             username,
         )
 
@@ -135,7 +131,7 @@ def patch_repository_user(
                 detail="You are not allowed to set the permission of managers!",
             )
         repository_users.change_permission_of_user_in_repository(
-            db, repository_name, body.permission, username
+            db, project, body.permission, username
         )
 
 
@@ -145,14 +141,14 @@ def patch_repository_user(
     responses=AUTHENTICATION_RESPONSES,
 )
 def remove_user_from_repository(
-    repository_name: str,
+    project: str,
     username: str,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
     verify_repository_role(
-        repository_name, allowed_roles=["manager", "administrator"], token=token, db=db
+        project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
     check_username_not_admin(username, db)
-    t4c_manager.remove_user_from_repository(repository_name, username)
-    return repository_users.delete_user_from_repository(db, repository_name, username)
+    t4c_manager.remove_user_from_repository(project, username)
+    return repository_users.delete_user_from_repository(db, project, username)

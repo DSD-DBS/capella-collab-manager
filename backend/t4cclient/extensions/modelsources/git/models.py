@@ -19,7 +19,6 @@ class RepositoryGitInnerModel(BaseModel):
 
 class RepositoryGitModel(BaseModel):
     name: str
-    project_id: int
     model: RepositoryGitInnerModel
 
     class Config:

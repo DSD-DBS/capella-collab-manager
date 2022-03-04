@@ -13,7 +13,7 @@ export class RepositoryService {
       this.getAndSaveManagerRole();
     }
   }
-  BACKEND_URL_PREFIX = environment.backend_url + '/repositories/';
+  BACKEND_URL_PREFIX = environment.backend_url + '/projects/';
   isManager: boolean = false;
   repositories: Array<Repository> = [];
 

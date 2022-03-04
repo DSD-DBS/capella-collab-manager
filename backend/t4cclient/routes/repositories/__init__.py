@@ -59,14 +59,12 @@ def get_repositories(db: Session = Depends(get_db), token=Depends(JWTBearer())):
     ]
 
 
-@router.get(
-    "/{repository_name}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES
-)
+@router.get("/{project}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
 def get_repository_by_name(
-    repository_name: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
-    verify_repository_role(repository_name, token=token, db=db)
-    return repositories.get_repository(db, repository_name)
+    verify_repository_role(project, token=token, db=db)
+    return repositories.get_repository(db, project)
 
 
 @router.post("/", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
@@ -81,21 +79,21 @@ def create_repository(
 
 
 @router.delete(
-    "/{repository_name}",
+    "/{project}",
     tags=["Repositories"],
     status_code=204,
     responses=AUTHENTICATION_RESPONSES,
 )
 def delete_repository(
-    repository_name: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
     verify_admin(token, db)
-    repositories.delete_repository(db, repository_name)
+    repositories.delete_repository(db, project)
 
 
 router.include_router(
     router_users.router,
-    prefix="/{repository_name}/users",
+    prefix="/{project}/users",
     tags=["Repository Users"],
 )
 

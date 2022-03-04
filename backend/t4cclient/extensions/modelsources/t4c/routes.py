@@ -18,14 +18,14 @@ router = APIRouter()
     responses=AUTHENTICATION_RESPONSES,
 )
 def get_projects_for_repository(
-    repository_name: str,
+    project: str,
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
 ):
     verify_repository_role(
-        repository_name, allowed_roles=["manager", "administrator"], token=token, db=db
+        project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
-    db_models = database_projects.get_all_projects(db, repository_name)
+    db_models = database_projects.get_all_projects(db, project)
     return db_models
 
 
@@ -35,15 +35,15 @@ def get_projects_for_repository(
     responses=AUTHENTICATION_RESPONSES,
 )
 def create_project_in_repository(
-    repository_name: str,
+    project: str,
     body: schema_projects.RepositoryProjectBase,
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
 ):
     verify_repository_role(
-        repository_name, allowed_roles=["manager", "administrator"], token=token, db=db
+        project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
-    return database_projects.create_project(db, repository_name, body.name)
+    return database_projects.create_project(db, project, body.name)
 
 
 @router.delete(
@@ -52,7 +52,7 @@ def create_project_in_repository(
     responses=AUTHENTICATION_RESPONSES,
 )
 def delete_project_from_repository(
-    repository_name: str,
+    project: str,
     project_id: int,
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
@@ -61,5 +61,5 @@ def delete_project_from_repository(
     return database_projects.delete_project(
         db,
         id=project_id,
-        repo_name=repository_name,
+        repo_name=project,
     )

@@ -1,8 +1,33 @@
+import typing as t
+
+from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import Boolean
 from t4cclient.core.database import Base
+
+
+class CreateJenkinsJob(BaseModel):
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
+class JenkinsRun(BaseModel):
+    id: int
+    result: str
+    start_time: str
+    logs_url: str
+
+    class Config:
+        orm_mode = True
+
+
+class JenkinsPipeline(CreateJenkinsJob):
+    id: int
+    latest_run: t.Optional[JenkinsRun]
 
 
 class DatabaseJenkinsPipeline(Base):
@@ -13,6 +38,5 @@ class DatabaseJenkinsPipeline(Base):
         Integer, ForeignKey("git_models.id", ondelete="CASCADE"), primary_key=True
     )
     git_model = relationship(
-        "DatabaseGitModel",
-        back_populates="jenkins_job",
+        "DB_GitModel",
     )

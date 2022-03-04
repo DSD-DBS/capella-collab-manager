@@ -15,7 +15,7 @@ from . import crud, models, routes
 JENKINS_AUTH = (config.JENKINS_USERNAME, config.JENKINS_PASSWORD)
 
 
-def load_pipeline_config(git_model: database_git_models.DatabaseGitModel):
+def load_pipeline_config(git_model: database_git_models.DB_GitModel):
     MAP_CONFIG_ENV_TO_CONFIG = {
         "T4C_PROJECT_NAME": git_model.project.name,
         "T4C_REPO_NAME": git_model.repository_name,

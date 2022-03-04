@@ -14,7 +14,7 @@ export class JenkinsService {
     model_id: number
   ): Observable<JenkinsPipeline> {
     return this.http.get<JenkinsPipeline>(
-      `${environment.backend_url}/repositories/${repository}/git-models/${model_id}/jenkins/`
+      `${environment.backend_url}/projects/${repository}/extensions/backups/jenkins`
     );
   }
 
@@ -23,7 +23,7 @@ export class JenkinsService {
     model_id: number
   ): Observable<JenkinsPipeline> {
     return this.http.post<JenkinsPipeline>(
-      `${environment.backend_url}/repositories/${repository}/git-models/${model_id}/jenkins/`,
+      `${environment.backend_url}/projects/${repository}/extensions/backups/jenkins`,
       null
     );
   }
@@ -34,7 +34,7 @@ export class JenkinsService {
     pipeline_name: string
   ): Observable<void> {
     return this.http.post<void>(
-      `${environment.backend_url}/repositories/${repository}/git-models/${model_id}/jenkins/${pipeline_name}/jobs`,
+      `${environment.backend_url}/projects/${repository}/extensions/backups/jenkins/${pipeline_name}/jobs`,
       null
     );
   }
@@ -45,7 +45,7 @@ export class JenkinsService {
     pipeline_name: string
   ): Observable<void> {
     return this.http.delete<void>(
-      `${environment.backend_url}/repositories/${repository}/git-models/${model_id}/jenkins/${pipeline_name}`
+      `${environment.backend_url}/projects/${repository}/extensions/backups/jenkins/${pipeline_name}`
     );
   }
 }
