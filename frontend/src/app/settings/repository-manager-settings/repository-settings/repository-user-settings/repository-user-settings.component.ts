@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -17,7 +11,6 @@ import {
 import { RepositoryUser } from 'src/app/schemes';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { lowerCaseValidator } from 'src/app/validators/validators';
 
 @Component({
   selector: 'app-repository-user-settings',

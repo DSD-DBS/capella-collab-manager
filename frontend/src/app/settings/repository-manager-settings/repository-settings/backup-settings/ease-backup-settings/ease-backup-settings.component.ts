@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
-import { CreateGitBackupComponent } from './create-git-backup/create-git-backup.component';
+import { CreateEASEBackupComponent } from './create-ease-backup/create-ease-backup.component';
 import { ViewLogsDialogComponent } from './view-logs-dialog/view-logs-dialog.component';
 
 @Component({
-  selector: 'app-git-backup-settings',
-  templateUrl: './git-backup-settings.component.html',
-  styleUrls: ['./git-backup-settings.component.css'],
+  selector: 'app-ease-backup-settings',
+  templateUrl: './ease-backup-settings.component.html',
+  styleUrls: ['./ease-backup-settings.component.css'],
 })
 export class GitBackupSettingsComponent implements OnInit {
   constructor(
@@ -44,7 +44,7 @@ export class GitBackupSettingsComponent implements OnInit {
   ];
 
   createNewBackup(): void {
-    this.dialog.open(CreateGitBackupComponent, {
+    this.dialog.open(CreateEASEBackupComponent, {
       data: {},
     });
   }

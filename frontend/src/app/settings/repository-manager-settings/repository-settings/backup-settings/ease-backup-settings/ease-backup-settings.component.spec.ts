@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GitBackupSettingsComponent } from './git-backup-settings.component';
+import { GitBackupSettingsComponent } from './ease-backup-settings.component';
 
 describe('GitBackupSettingsComponent', () => {
   let component: GitBackupSettingsComponent;
@@ -8,9 +8,8 @@ describe('GitBackupSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ GitBackupSettingsComponent ]
-    })
-    .compileComponents();
+      declarations: [GitBackupSettingsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
