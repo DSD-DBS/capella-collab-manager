@@ -65,12 +65,12 @@ import { SessionCreationProgressComponent } from './session-creation-progress/se
 import { SessionProgressIconComponent } from './session-creation-progress/session-progress-icon/session-progress-icon.component';
 import { LicencesComponent } from './session-overview/licences/licences.component';
 import { BackupSettingsComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/backup-settings.component';
-import { GitBackupSettingsComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/git-backup-settings/git-backup-settings.component';
+import { GitBackupSettingsComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/ease-backup-settings/ease-backup-settings.component';
 import { JenkinsBackupSettingsComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/jenkins-backup-settings/jenkins-backup-settings.component';
 import { MatTabsModule } from '@angular/material/tabs';
-import { CreateGitBackupComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/git-backup-settings/create-git-backup/create-git-backup.component';
+import { CreateEASEBackupComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/ease-backup-settings/create-ease-backup/create-ease-backup.component';
 import { ModelSourceComponent } from './settings/repository-manager-settings/repository-settings/model-source/model-source.component';
-import { ViewLogsDialogComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/git-backup-settings/view-logs-dialog/view-logs-dialog.component';
+import { ViewLogsDialogComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/ease-backup-settings/view-logs-dialog/view-logs-dialog.component';
 
 @NgModule({
   declarations: [
@@ -115,7 +115,7 @@ import { ViewLogsDialogComponent } from './settings/repository-manager-settings/
     BackupSettingsComponent,
     GitBackupSettingsComponent,
     JenkinsBackupSettingsComponent,
-    CreateGitBackupComponent,
+    CreateEASEBackupComponent,
     ModelSourceComponent,
     ViewLogsDialogComponent,
   ],

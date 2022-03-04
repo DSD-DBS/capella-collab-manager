@@ -124,7 +124,7 @@
           >{{ role.value }}</mat-option
         >
       </mat-select>
-      <mat-error>You have to select a Role!</mat-error> </mat-form-field
+      <mat-error>You have to select a role!</mat-error> </mat-form-field
     ><br />
     <mat-form-field *ngIf="addUserToRepoForm.value.role != 'manager'">
       <mat-label>Permission</mat-label>
@@ -135,7 +135,7 @@
           >{{ permission.value }}</mat-option
         >
       </mat-select>
-      <mat-error>You have to select a Permission!</mat-error>
+      <mat-error>You have to select a permission!</mat-error>
     </mat-form-field>
     <button
       (click)="addUser(addUserToRepoFormDirective)"
