@@ -3,9 +3,26 @@
     One-way synchronization: T4C <mat-icon>arrow_right_alt</mat-icon> Git
   </div>
   <br />
-  <div>
-    The jobs are executed every night. <br />A job can be triggered manually at
-    any time.
+  <div id="loading">
+    <div>
+      The jobs are executed every night. <br />A job can be triggered manually
+      at any time.
+    </div>
+    <div>
+      <mat-spinner
+        *ngIf="loading"
+        class="spinner"
+        [diameter]="25"
+      ></mat-spinner>
+      <button
+        id="refresh-button"
+        (click)="refreshBackups()"
+        mat-icon-button
+        *ngIf="!loading"
+      >
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
   </div>
   <mat-card class="item" *ngFor="let item of backups">
     <div class="header">
@@ -16,24 +33,27 @@
       [ngClass]="beautifyService.beatifyState(item.lastrun?.state).css"
     >
       {{ beautifyService.beatifyState(item.lastrun?.state).text }}
-      <div class="lastrun">{{ item.lastrun.date }}</div>
+      <div class="lastrun" *ngIf="item.lastrun.date">
+        {{ beautifyService.beatifyDate(item.lastrun.date) }}
+      </div>
+      <div class="lastrun" *ngIf="!item.lastrun.date">Not started yet</div>
     </div>
     <div class="flexbox">
       <div class="state flexbox" id="state-field" *ngIf="item.lastrun">
         <div class="inner-state"><br /></div>
       </div>
 
-      <button mat-flat-button (click)="runJob()" color="primary">
+      <button mat-flat-button (click)="runJob(item)" color="primary">
         Run job
       </button>
-      <button mat-flat-button (click)="removeBackup()" color="primary">
+      <button mat-flat-button (click)="removeBackup(item)" color="primary">
         Remove Backup
       </button>
       <button
         mat-flat-button
-        (click)="viewLogs(item.lastrun)"
+        (click)="viewLogs(item)"
         color="primary"
-        *ngIf="item.lastrun"
+        *ngIf="item.lastrun.id"
       >
         View logs
       </button>

@@ -3,7 +3,9 @@
   <mat-tab-group animationDuration="0" mat-align-tabs="center">
     <mat-tab label="EASE"
       ><div class="content">
-        <app-ease-backup-settings></app-ease-backup-settings>
+        <app-ease-backup-settings
+          [project]="project"
+        ></app-ease-backup-settings>
       </div>
     </mat-tab>
     <mat-tab label="Jenkins">

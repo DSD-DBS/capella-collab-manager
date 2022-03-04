@@ -1,0 +1,9 @@
+.wrapper {
+  min-width: 50vw;
+  min-height: 80vh;
+}
+
+.buttons {
+  display: flex;
+  justify-content: right;
+}

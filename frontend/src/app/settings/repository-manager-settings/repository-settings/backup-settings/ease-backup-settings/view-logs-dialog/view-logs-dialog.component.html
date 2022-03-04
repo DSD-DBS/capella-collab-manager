@@ -1,6 +1,8 @@
-<h1 mat-dialog-title>Logs</h1>
-
-Here you should see the logs for {{ data.jobid }}!
-<div mat-dialog-actions>
+<div class="wrapper">
+  <h1 mat-dialog-title>Logs</h1>
+  <mat-spinner *ngIf="loading"></mat-spinner>
+  <div [innerText]="logs"></div>
+</div>
+<div mat-dialog-actions class="buttons">
   <button mat-button mat-dialog-close cdkFocusInitial>Close</button>
 </div>
