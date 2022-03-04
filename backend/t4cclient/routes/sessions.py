@@ -9,7 +9,7 @@ import t4cclient.schemas.repositories.users as users_schema
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from t4cclient.config import USERNAME_CLAIM
-from t4cclient.core.credential_manager import generate_password
+from t4cclient.core.credentials import generate_password
 from t4cclient.core.database import get_db, sessions, users
 from t4cclient.core.oauth.database import is_admin, verify_repository_role
 from t4cclient.core.oauth.jwt_bearer import JWTBearer
