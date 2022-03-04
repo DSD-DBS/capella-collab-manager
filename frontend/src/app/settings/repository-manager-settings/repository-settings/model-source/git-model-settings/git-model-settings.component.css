@@ -1,7 +1,11 @@
 mat-card {
   min-width: 500px;
-  margin: 10px;
+  margin: 5px;
   height: fit-content;
+}
+
+.content {
+  margin-left: 5px;
 }
 
 mat-form-field {
@@ -27,7 +31,7 @@ button {
 }
 
 #git-path-view {
-  width: 412px;
+  width: 450px;
 }
 
 input:disabled {
@@ -35,9 +39,16 @@ input:disabled {
 }
 
 .show-git-model {
-  width: 160px;
+  width: 143px;
 }
 
 #project-id {
   width: 70px;
+}
+
+#credentials {
+  padding: 5px;
+  border-radius: 5px;
+  background-color: lightgreen;
+  width: fit-content;
 }

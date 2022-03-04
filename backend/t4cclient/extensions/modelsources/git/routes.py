@@ -11,6 +11,7 @@ from t4cclient.extensions.modelsources import git
 from t4cclient.extensions.modelsources.git.models import (
     GetRepositoryGitModel,
     PatchRepositoryGitModel,
+    PostGitModel,
     RepositoryGitInnerModel,
     RepositoryGitModel,
 )
@@ -45,7 +46,7 @@ def get_models_for_repository(
 )
 def assign_model_to_repository(
     project: str,
-    body: RepositoryGitModel,
+    body: PostGitModel,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):

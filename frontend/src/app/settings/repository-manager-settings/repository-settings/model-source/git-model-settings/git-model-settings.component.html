@@ -1,17 +1,17 @@
 <mat-card>
-  <h2>Assign existing Git Repository</h2>
+  <h2 class="content">Assign existing git repository</h2>
   <form
     [formGroup]="createGitModel"
     #createGitModelFormDirective="ngForm"
     *ngIf="t4cService.repositories.length"
   >
-    <mat-form-field>
+    <mat-form-field class="content">
       <mat-label>Name</mat-label>
       <input matInput formControlName="name" />
       <mat-error>Please enter a name!</mat-error>
     </mat-form-field>
     <br />
-    <form formGroupName="model">
+    <form formGroupName="model" class="content">
       <mat-form-field id="git-path">
         <mat-label>Git HTTPS-URL</mat-label>
         <input
@@ -47,9 +47,28 @@
         <mat-error>Please enter a revision!</mat-error></mat-form-field
       >
     </form>
+    <div id="credentials">
+      Credentials are used for pushes to the repository. <br />
+      In private repositories, they are also needed to pull the model.
+      <form formGroupName="credentials">
+        <mat-form-field>
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" placeholder="techuser" />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            formControlName="password"
+            placeholder="**********"
+            type="password"
+          />
+        </mat-form-field>
+      </form>
+    </div>
     <br />
-
     <button
+      class="content"
       mat-flat-button
       color="primary"
       (click)="assignGitModel(createGitModelFormDirective)"
@@ -81,6 +100,13 @@
       <mat-form-field appearance="fill" class="show-git-model">
         <mat-label>Revision</mat-label>
         <input matInput disabled [value]="model.model.revision" />
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="show-git-model">
+        <mat-label *ngIf="model.username">Username</mat-label>
+        <mat-label *ngIf="!model.username"
+          ><mat-icon>no_encryption</mat-icon> No credentials</mat-label
+        >
+        <input matInput disabled [value]="model.username" />
       </mat-form-field>
       <br />
       <button mat-flat-button color="primary" (click)="unassignGitModel(model)">
