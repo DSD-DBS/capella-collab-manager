@@ -1,10 +1,6 @@
 <mat-card>
   <h2 class="content">Assign existing git repository</h2>
-  <form
-    [formGroup]="createGitModel"
-    #createGitModelFormDirective="ngForm"
-    *ngIf="t4cService.repositories.length"
-  >
+  <form [formGroup]="createGitModel" #createGitModelFormDirective="ngForm">
     <mat-form-field class="content">
       <mat-label>Name</mat-label>
       <input matInput formControlName="name" />
