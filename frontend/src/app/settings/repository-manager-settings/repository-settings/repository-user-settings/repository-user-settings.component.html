@@ -1,5 +1,5 @@
 <mat-card id="manage-users">
-  <h2>Manage Users</h2>
+  <h2>Manage users</h2>
   <mat-form-field id="search" appearance="outline">
     <mat-label>Search</mat-label>
     <input
@@ -99,8 +99,8 @@
   </div>
 </mat-card>
 <mat-card>
-  <h2>Add User</h2>
-  <form [formGroup]="addUserToRepoForm">
+  <h2>Add user</h2>
+  <form [formGroup]="addUserToRepoForm" #addUserToRepoFormDirective="ngForm">
     <mat-form-field>
       <mat-label>Username</mat-label>
       <input matInput formControlName="username" />
@@ -137,8 +137,12 @@
       </mat-select>
       <mat-error>You have to select a Permission!</mat-error>
     </mat-form-field>
-    <button (click)="addUser()" mat-flat-button color="primary">
-      Add User <mat-icon>keyboard_arrow_right</mat-icon>
+    <button
+      (click)="addUser(addUserToRepoFormDirective)"
+      mat-flat-button
+      color="primary"
+    >
+      Add user <mat-icon>keyboard_arrow_right</mat-icon>
     </button>
   </form>
 </mat-card>

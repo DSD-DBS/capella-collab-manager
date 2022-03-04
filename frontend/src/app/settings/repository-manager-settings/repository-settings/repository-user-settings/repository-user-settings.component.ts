@@ -9,6 +9,7 @@ import {
   AbstractControl,
   FormControl,
   FormGroup,
+  FormGroupDirective,
   ValidationErrors,
   ValidatorFn,
   Validators,
@@ -98,7 +99,7 @@ export class RepositoryUserSettingsComponent implements OnInit {
     });
   }
 
-  addUser(): void {
+  addUser(formDirective: FormGroupDirective): void {
     if (this.addUserToRepoForm.valid) {
       const formValue = this.addUserToRepoForm.value;
 
@@ -114,6 +115,8 @@ export class RepositoryUserSettingsComponent implements OnInit {
           permission
         )
         .subscribe(() => {
+          formDirective.resetForm();
+          this.addUserToRepoForm.reset();
           this.refreshRepoUsers();
         });
     }
