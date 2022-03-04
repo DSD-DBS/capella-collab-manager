@@ -12,9 +12,3 @@ class DatabaseProject(Base):
         String, ForeignKey("repositories.name", ondelete="CASCADE")
     )
     repository = relationship("DatabaseRepository", back_populates="projects")
-    git_models = relationship(
-        "DatabaseGitModel",
-        cascade="all, delete-orphan",
-        back_populates="project",
-        passive_deletes=True,
-    )

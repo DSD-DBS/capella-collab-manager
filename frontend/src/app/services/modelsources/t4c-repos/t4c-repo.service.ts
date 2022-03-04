@@ -14,7 +14,7 @@ export class T4CRepoService {
   getRepositoryProjects(repository: string): Observable<Array<T4CRepository>> {
     return this.http
       .get<Array<T4CRepository>>(
-        `${environment.backend_url}/repositories/${repository}/projects`
+        `${environment.backend_url}/projects/${repository}/extensions/modelsources/t4c`
       )
       .pipe(
         tap((res: Array<T4CRepository>) => {
@@ -28,7 +28,7 @@ export class T4CRepoService {
     project_name: string
   ): Observable<T4CRepository> {
     return this.http.post<T4CRepository>(
-      `${environment.backend_url}/repositories/${repository}/projects`,
+      `${environment.backend_url}/projects/${repository}/extensions/modelsources/t4c`,
       { name: project_name }
     );
   }
@@ -38,7 +38,7 @@ export class T4CRepoService {
     project_id: number
   ): Observable<T4CRepository> {
     return this.http.delete<T4CRepository>(
-      `${environment.backend_url}/repositories/${repository}/projects/${project_id}`
+      `${environment.backend_url}/projects/${repository}/extensions/modelsources/t4c/${project_id}`
     );
   }
 }

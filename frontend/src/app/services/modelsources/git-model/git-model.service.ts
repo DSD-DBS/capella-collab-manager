@@ -17,9 +17,9 @@ export class GitModelService {
     return this.http
       .get<Array<GitModel>>(
         environment.backend_url +
-          '/repositories/' +
+          '/projects/' +
           repository_name +
-          '/git-models/'
+          '/extensions/modelsources/git'
       )
       .pipe(
         tap((res: Array<GitModel>) => {
@@ -34,9 +34,9 @@ export class GitModelService {
   ): Observable<void> {
     return this.http.delete<void>(
       environment.backend_url +
-        '/repositories/' +
+        '/projects/' +
         repository_name +
-        '/git-models/' +
+        '/extensions/modelsources/git/' +
         model_id
     );
   }
@@ -50,9 +50,9 @@ export class GitModelService {
     reqBody.model.path = btoa(reqBody.model.path);
     return this.http.post<GitModel>(
       environment.backend_url +
-        '/repositories/' +
+        '/projects/' +
         repository_name +
-        '/git-models/',
+        '/extensions/modelsources/git',
       reqBody
     );
   }
@@ -63,9 +63,9 @@ export class GitModelService {
   ): Observable<GitModel> {
     return this.http.patch<GitModel>(
       environment.backend_url +
-        '/repositories/' +
+        '/projects/' +
         repository_name +
-        '/git-models/' +
+        '/extensions/modelsources/git/' +
         model_id,
       { primary: true }
     );

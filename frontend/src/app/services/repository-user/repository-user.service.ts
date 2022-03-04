@@ -10,7 +10,7 @@ import { AuthService } from '../auth/auth.service';
 })
 export class RepositoryUserService {
   constructor(private http: HttpClient) {}
-  BACKEND_URL_PREFIX = environment.backend_url + '/repositories/';
+  BACKEND_URL_PREFIX = environment.backend_url + '/projects/';
 
   PERMISSIONS = { read: 'Read only', write: 'Read/Write' };
   ROLES = { user: 'User', manager: 'Manager' };

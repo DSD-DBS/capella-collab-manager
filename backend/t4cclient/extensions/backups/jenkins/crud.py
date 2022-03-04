@@ -1,4 +1,4 @@
-import t4cclient.sql_models.jenkins as jenkins_schema
+import t4cclient.extensions.backups.jenkins.models as jenkins_schema
 from sqlalchemy.orm import Session
 
 
