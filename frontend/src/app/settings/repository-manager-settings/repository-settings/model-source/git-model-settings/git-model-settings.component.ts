@@ -55,8 +55,7 @@ export class GitModelSettingsComponent implements OnInit {
 
   constructor(
     public gitModelService: GitModelService,
-    private dialog: MatDialog,
-    public t4cService: T4CRepoService
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
