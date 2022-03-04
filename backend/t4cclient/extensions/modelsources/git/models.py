@@ -32,6 +32,16 @@ class PatchRepositoryGitModel(BaseModel):
 class GetRepositoryGitModel(RepositoryGitModel):
     id: int
     primary: bool
+    username: str | None
+
+
+class GitCredentials(BaseModel):
+    username: str | None
+    password: str | None
+
+
+class PostGitModel(RepositoryGitModel):
+    credentials: GitCredentials
 
 
 class DB_GitModel(Base):
@@ -46,3 +56,5 @@ class DB_GitModel(Base):
         String, ForeignKey("repositories.name", ondelete="CASCADE")
     )
     repository = relationship("DatabaseRepository", back_populates="git_models")
+    username = Column(String)
+    password = Column(String)

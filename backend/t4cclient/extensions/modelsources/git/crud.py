@@ -1,8 +1,14 @@
+import typing as t
+
 from sqlalchemy.orm import Session
-from t4cclient.extensions.modelsources.git.models import DB_GitModel, RepositoryGitModel
+from t4cclient.extensions.modelsources.git.models import (
+    DB_GitModel,
+    PostGitModel,
+    RepositoryGitModel,
+)
 
 
-def get_models_of_repository(db: Session, repository_name: str):
+def get_models_of_repository(db: Session, repository_name: str) -> t.List[DB_GitModel]:
     return (
         db.query(DB_GitModel)
         .filter(DB_GitModel.repository_name == repository_name)
@@ -43,9 +49,7 @@ def make_model_primary(db: Session, repository_name: str, model_id: int) -> DB_G
     return new_primary_model
 
 
-def add_model_to_repository(
-    db: Session, repository_name: str, model: RepositoryGitModel
-):
+def add_model_to_repository(db: Session, repository_name: str, model: PostGitModel):
     if len(get_models_of_repository(db, repository_name)):
         primary = False
     else:
@@ -55,7 +59,9 @@ def add_model_to_repository(
         repository_name=repository_name,
         **model.model.dict(),
         name=model.name,
-        primary=primary
+        primary=primary,
+        username=model.credentials.username,
+        password=model.credentials.password
     )
     db.add(model)
     db.commit()

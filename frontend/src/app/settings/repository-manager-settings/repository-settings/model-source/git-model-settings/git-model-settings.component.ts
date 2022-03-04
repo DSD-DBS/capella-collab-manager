@@ -32,7 +32,10 @@ export class GitModelSettingsComponent implements OnInit {
       ]),
       revision: new FormControl('', Validators.required),
     }),
-    create_backup_job: new FormControl(false),
+    credentials: new FormGroup({
+      username: new FormControl(''),
+      password: new FormControl(''),
+    }),
   });
 
   get model(): FormGroup {
