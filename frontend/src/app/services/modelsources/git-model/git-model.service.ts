@@ -72,16 +72,24 @@ export class GitModelService {
   }
 }
 
-export interface GitModel extends CreateGitModel {
+export interface GitModel extends BasicGitModel {
   id: number;
   primary: boolean;
+  username: string;
 }
 
-export interface CreateGitModel {
+export interface BasicGitModel {
   name: string;
   model: {
     path: string;
     entrypoint: string;
     revision: string;
+  };
+}
+
+export interface CreateGitModel extends BasicGitModel {
+  credentials: {
+    username: string;
+    password: string;
   };
 }
