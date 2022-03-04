@@ -1,12 +1,12 @@
 <mat-card
   ><h2>T4C Repository Settings</h2>
-  Adding and deleting projects will not affect the T4C Server! <br />
-  This should represent a manually updated list of the current projects in a
-  repository. <br />
-  For technical reasons, this is currently not possible automatically.
+  Adding and deleting t4c repositories will not affect the T4C Server! <br />
+  This should represent a manually updated list of the current t4c repositories.
+  <br />
+  This will be automated in the next version.
   <form [formGroup]="createProjectForm" #formDirective="ngForm">
     <mat-form-field>
-      <mat-label>Project Name</mat-label>
+      <mat-label>Repository name</mat-label>
       <input matInput formControlName="name" />
       <mat-error>Please enter a name!</mat-error>
     </mat-form-field>

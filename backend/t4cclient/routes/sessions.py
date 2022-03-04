@@ -44,7 +44,7 @@ def get_current_sessions(db: Session = Depends(get_db), token=Depends(JWTBearer(
     ):
         raise HTTPException(
             status_code=403,
-            detail="You have to be repository manager for at least one repository.",
+            detail="You have to be project manager for at least one repository.",
         )
     return inject_attrs_in_sessions(
         list(
@@ -126,7 +126,7 @@ def request_session(
                 status_code=404,
                 detail={
                     "err_code": "git_model_not_found",
-                    "reason": "The Model has no connected Git Model. Please contact a Repository Manager or Admininistrator",
+                    "reason": "The Model has no connected Git Model. Please contact a project manager or admininistrator",
                 },
             )
         session = OPERATOR.start_readonly_session(
