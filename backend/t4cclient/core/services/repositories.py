@@ -1,7 +1,7 @@
 import typing as t
 
-import t4cclient.core.database.repository_git_models as git_model_crud
-import t4cclient.extensions.t4c as t4c_ext
+import t4cclient.extensions.modelsources.git.crud as git_model_crud
+import t4cclient.extensions.modelsources.t4c.connection as t4c_ext
 import t4cclient.schemas.repositories as repository_schema
 import t4cclient.schemas.repositories.users as users_schema
 from sqlalchemy.orm.session import Session

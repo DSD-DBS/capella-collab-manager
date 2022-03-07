@@ -1,0 +1,18 @@
+<mat-card
+  ><h2>Model sources</h2>
+  <mat-tab-group animationDuration="0" mat-align-tabs="center">
+    <mat-tab label="Git"
+      ><div class="content">
+        <app-git-model-settings
+          [repository]="repository"
+        ></app-git-model-settings>
+      </div>
+    </mat-tab>
+    <mat-tab label="T4C">
+      <div class="content">
+        <app-t4c-repo-settings
+          [repository]="repository"
+        ></app-t4c-repo-settings>
+      </div>
+    </mat-tab> </mat-tab-group
+></mat-card>

@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 import logging
 import random
 import string
 import typing as t
+from datetime import datetime
 
 import kubernetes
-import kubernetes.client
 import kubernetes.client.exceptions
+import kubernetes.client.models
 import kubernetes.config
 from t4cclient import config
 from t4cclient.core.operators.abc import Operator
@@ -52,6 +55,7 @@ class KubernetesOperator(Operator):
     def __init__(self) -> None:
         self.v1_core = kubernetes.client.CoreV1Api()
         self.v1_apps = kubernetes.client.AppsV1Api()
+        self.v1_batch = kubernetes.client.BatchV1Api()
 
     def validate(self) -> str:
         try:
@@ -107,10 +111,42 @@ class KubernetesOperator(Operator):
         service = self._get_service(id)
         return self._export_attrs(deployment, service)
 
+    def get_cronjob_last_state(self, name: str) -> str:
+        job = self._get_last_job_of_cronjob(name)
+        if job:
+            return self._get_pod_state(label_selector="job-name=" + job)
+        else:
+            return "pending"
+
+    def get_cronjob_last_starting_date(self, name: str) -> datetime | None:
+        job = self._get_last_job_of_cronjob(name)
+        if job:
+            return self._get_pod_starttime(label_selector="job-name=" + job)
+        else:
+            return None
+
+    def _get_last_job_of_cronjob(self, name: str) -> str | None:
+        jobs = [
+            item
+            for item in self.v1_batch.list_namespaced_job(
+                namespace=config.KUBERNETES_NAMESPACE
+            ).items
+            if item.metadata.owner_references
+            and item.metadata.owner_references[0].name == name
+        ]
+
+        if jobs:
+            return jobs[-1].metadata.name
+        else:
+            return None
+
     def get_session_state(self, id: str) -> str:
+        self._get_pod_state(self, label_selector="app=" + id)
+
+    def _get_pod_state(self, label_selector: str):
         try:
             pods = self.v1_core.list_namespaced_pod(
-                namespace=config.KUBERNETES_NAMESPACE, label_selector="app=" + id
+                namespace=config.KUBERNETES_NAMESPACE, label_selector=label_selector
             ).to_dict()
 
             log.debug("Receive k8s pod: %s", pods)
@@ -139,6 +175,18 @@ class KubernetesOperator(Operator):
             log.exception("Error parsing the session state")
             return "unknown"
 
+    def _get_pod_starttime(self, label_selector: str) -> datetime | None:
+        try:
+            pods = self.v1_core.list_namespaced_pod(
+                namespace=config.KUBERNETES_NAMESPACE, label_selector=label_selector
+            ).to_dict()
+            log.debug("Received k8s pods: %s", pods)
+
+            return pods["items"][0]["status"]["start_time"]
+        except Exception as e:
+            log.exception("Error fetching the starting_time")
+            return None
+
     def get_session_logs(self, id: str) -> str:
         pod_name = self.v1_core.list_namespaced_pod(
             namespace=config.KUBERNETES_NAMESPACE, label_selector="app=" + id
@@ -147,6 +195,90 @@ class KubernetesOperator(Operator):
             name=pod_name,
             namespace=config.KUBERNETES_NAMESPACE,
         )
+
+    def get_job_logs(self, id: str) -> str:
+        try:
+            log = self.v1_core.read_namespaced_pod_log(
+                name=id,
+                namespace=config.KUBERNETES_NAMESPACE,
+            )
+
+            if log:
+                return log
+        except Exception:
+            pass
+
+        return "\n".join(
+            [
+                item.reason + ": " + item.message
+                for item in self.v1_core.list_namespaced_event(
+                    namespace=config.KUBERNETES_NAMESPACE,
+                    field_selector="involvedObject.name=" + id,
+                ).items
+            ]
+        )
+
+    def create_cronjob(
+        self, image: str, environment: t.Dict[str, str], schedule="* * * * *"
+    ) -> str:
+        id = self._generate_id()
+        self._create_cronjob(
+            name=id,
+            image=image,
+            environment=environment,
+            schedule=schedule,
+        )
+        return id
+
+    def trigger_cronjob(self, name: str) -> None:
+        cronjob = self.v1_batch.read_namespaced_cron_job(
+            namespace=config.KUBERNETES_NAMESPACE, name=name
+        )
+        job = kubernetes.client.V1Job(
+            api_version="batch/v1",
+            kind="Job",
+            metadata=kubernetes.client.models.V1ObjectMeta(
+                name=self._generate_id(),
+                # This annotation is added by kubectl, probably best to add it ourselves as well
+                annotations={"cronjob.kubernetes.io/instantiate": "manual"},
+                owner_references=[
+                    {
+                        "apiVersion": "batch/v1",
+                        "blockOwnerDeletion": None,
+                        "controller": None,
+                        "kind": "CronJob",
+                        "name": name,
+                        "uid": cronjob.metadata.uid,
+                    }
+                ],
+            ),
+            spec=cronjob.spec.job_template.spec,
+        )
+        self.v1_batch.create_namespaced_job(
+            namespace=config.KUBERNETES_NAMESPACE, body=job
+        )
+
+    def delete_cronjob(self, id: str) -> None:
+        self._delete_cronjob(id=id)
+
+    def get_cronjob_last_run(self, name: str) -> str | None:
+        job = self._get_last_job_of_cronjob(name)
+        if job:
+            return self._get_pod_id(label_selector="job-name=" + job)
+        else:
+            return None
+
+    def _get_pod_id(self, label_selector: str) -> str:
+        try:
+            pods = self.v1_core.list_namespaced_pod(
+                namespace=config.KUBERNETES_NAMESPACE, label_selector=label_selector
+            ).to_dict()
+            log.debug("Received k8s pods: %s", pods)
+
+            return pods["items"][0]["metadata"]["name"]
+        except Exception as e:
+            log.exception("Error fetching the last run id")
+            return ""
 
     def _generate_id(self):
         return "".join(random.choices(string.ascii_lowercase, k=25))
@@ -230,6 +362,68 @@ class KubernetesOperator(Operator):
             config.KUBERNETES_NAMESPACE, body
         )
 
+    def _create_cronjob(
+        self, name: str, image: str, environment: t.Dict[str, str], schedule="* * * * *"
+    ) -> kubernetes.client.V1CronJob:
+        body = {
+            "kind": "CronJob",
+            "apiVersion": "batch/v1",
+            "metadata": {
+                "name": name,
+            },
+            "spec": {
+                "schedule": schedule,
+                "jobTemplate": {
+                    "spec": {
+                        "template": {
+                            "spec": {
+                                "containers": [
+                                    {
+                                        "name": name,
+                                        "image": image,
+                                        "imagePullPolicy": "Always",
+                                        "env": [
+                                            {"name": key, "value": value}
+                                            for key, value in environment.items()
+                                        ],
+                                        "resources": {
+                                            "limits": {"cpu": "2", "memory": "6Gi"},
+                                            "requests": {
+                                                "cpu": "0.4",
+                                                "memory": "1.6Gi",
+                                            },
+                                        },
+                                        "volumeMounts": [
+                                            {
+                                                "name": config.KUBERNETES_RELEASE_NAME
+                                                + "-script",
+                                                "mountPath": "/opt/scripts",
+                                            }
+                                        ],
+                                    }
+                                ],
+                                "volumes": [
+                                    {
+                                        "name": config.KUBERNETES_RELEASE_NAME
+                                        + "-script",
+                                        "configMap": {
+                                            "name": config.KUBERNETES_RELEASE_NAME
+                                            + "-ease-backup",
+                                        },
+                                    }
+                                ],
+                                "restartPolicy": "Never",
+                            }
+                        }
+                    }
+                },
+            },
+        }
+
+        return self.v1_batch.create_namespaced_cron_job(
+            namespace=config.KUBERNETES_NAMESPACE, body=body
+        )
+
     def _create_service(
         self, name: str, deployment_name: str
     ) -> kubernetes.client.V1Service:
@@ -290,13 +484,21 @@ class KubernetesOperator(Operator):
             return self.v1_apps.delete_namespaced_deployment(
                 id, config.KUBERNETES_NAMESPACE
             )
-        except kubernetes.client.exceptions.ApiException as e:
-            log.exception("Error deleting service")
+        except kubernetes.client.exceptions.ApiException:
+            log.exception("Error deleting deployment")
+
+    def _delete_cronjob(self, id: str) -> kubernetes.client.V1Status:
+        try:
+            return self.v1_batch.delete_namespaced_cron_job(
+                id, config.KUBERNETES_NAMESPACE
+            )
+        except kubernetes.client.exceptions.ApiException:
+            log.exception("Error deleting cronjob")
 
     def _delete_service(self, id: str) -> kubernetes.client.V1Status:
         try:
             return self.v1_core.delete_namespaced_service(
                 id, config.KUBERNETES_NAMESPACE
             )
-        except kubernetes.client.exceptions.ApiException as e:
+        except kubernetes.client.exceptions.ApiException:
             log.exception("Error deleting service")

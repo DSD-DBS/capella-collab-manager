@@ -25,4 +25,4 @@ class DatabaseRepository(Base):
         back_populates="repository",
     )
     projects = relationship("DatabaseProject", back_populates="repository")
-    git_models = relationship("DatabaseGitModel", back_populates="repository")
+    git_models = relationship("DB_GitModel", back_populates="repository")

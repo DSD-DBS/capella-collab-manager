@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import abc
 import typing as t
-
-from t4cclient.schemas.sessions import WorkspaceType
+from datetime import datetime
 
 
 class Operator(abc.ABC):
@@ -92,3 +93,40 @@ class Operator(abc.ABC):
         logs
             Logs of the current session
         """
+
+    @classmethod
+    @abc.abstractmethod
+    def create_cronjob(
+        self, image: str, environment: t.Dict[str, str], schedule="* * * * *"
+    ) -> str:
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def delete_cronjob(self, id: str) -> None:
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def get_cronjob_last_run(self, id: str) -> str:
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def get_cronjob_last_state(self, name: str) -> str:
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def get_cronjob_last_starting_date(self, name: str) -> datetime | None:
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def get_job_logs(self, id: str) -> str:
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def trigger_cronjob(self, name: str) -> None:
+        pass

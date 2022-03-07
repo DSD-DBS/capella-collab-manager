@@ -6,3 +6,4 @@ config/*
 .venv
 *.egg-info
 build
+.venv39
