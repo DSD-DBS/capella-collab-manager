@@ -68,12 +68,13 @@ def create_backup(
             "T4C_REPO_HOST": config.T4C_SERVER_HOST,
             "T4C_REPO_PORT": config.T4C_SERVER_PORT,
             "T4C_REPO_NAME": t4cmodel.name,
+            "T4C_PROJECT_NAME": t4cmodel.name,
             "T4C_USERNAME": username,
             "T4C_PASSWORD": password,
             "GIT_USERNAME": gitmodel.username,
             "GIT_PASSWORD": gitmodel.password,
         },
-        schedule="0 3 * * *"
+        schedule="0 3 * * *",
     )
 
     return helper._inject_last_run(
