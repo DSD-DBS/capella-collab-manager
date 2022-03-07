@@ -376,6 +376,15 @@ class KubernetesOperator(Operator):
                     "spec": {
                         "template": {
                             "spec": {
+                                "volumes": [
+                                    {
+                                        "name": "script",
+                                        "configMap": {
+                                            name: config.KUBERNETES_RELEASE_NAME
+                                            + "-ease-backup",
+                                        },
+                                    }
+                                ],
                                 "containers": [
                                     {
                                         "name": name,
@@ -384,6 +393,12 @@ class KubernetesOperator(Operator):
                                         "env": [
                                             {"name": key, "value": value}
                                             for key, value in environment.items()
+                                        ],
+                                        "volumeMounts": [
+                                            {
+                                                "name": "script",
+                                                "mountPath": "/opt/scripts",
+                                            }
                                         ],
                                     }
                                 ],
