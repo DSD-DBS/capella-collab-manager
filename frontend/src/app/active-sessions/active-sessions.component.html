@@ -26,9 +26,9 @@
         </div>
         <div
           class="state"
-          [ngClass]="beautifyService.beatifyState(session.state).css"
+          [ngClass]="sessionService.beatifyState(session.state).css"
         >
-          <h3>{{ beautifyService.beatifyState(session.state).text }}</h3>
+          <h3>{{ sessionService.beatifyState(session.state).text }}</h3>
         </div>
       </div>
       <div class="content">

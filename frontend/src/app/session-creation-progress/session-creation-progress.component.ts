@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { Session } from '../schemes';
 import { BeautifyService } from '../services/beatify/beautify.service';
 import { OwnSessionService } from '../services/own-session/own-session.service';
+import { SessionService } from '../services/session/session.service';
 
 @Component({
   selector: 'app-session-creation-progress',
@@ -25,7 +26,8 @@ export class SessionCreationProgressComponent implements OnInit, OnDestroy {
 
   constructor(
     private ownSessionService: OwnSessionService,
-    public beautifyService: BeautifyService
+    public beautifyService: BeautifyService,
+    public sessionService: SessionService
   ) {
     this.refreshSessionsSubscription = timer(0, 2000)
       .pipe(

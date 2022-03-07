@@ -6,6 +6,7 @@ import {
   EASEBackupService,
 } from 'src/app/services/backups/ease/easebackup.service';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
+import { SessionService } from 'src/app/services/session/session.service';
 import { CreateEASEBackupComponent } from './create-ease-backup/create-ease-backup.component';
 import { ViewLogsDialogComponent } from './view-logs-dialog/view-logs-dialog.component';
 
@@ -18,7 +19,8 @@ export class GitBackupSettingsComponent implements OnInit {
   constructor(
     public beautifyService: BeautifyService,
     public dialog: MatDialog,
-    private easeBackupService: EASEBackupService
+    private easeBackupService: EASEBackupService,
+    public sessionService: SessionService
   ) {}
 
   @Input()

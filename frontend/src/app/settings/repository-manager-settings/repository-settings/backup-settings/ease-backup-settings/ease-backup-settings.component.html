@@ -30,9 +30,9 @@
     </div>
     <div
       class="state"
-      [ngClass]="beautifyService.beatifyState(item.lastrun?.state).css"
+      [ngClass]="sessionService.beatifyState(item.lastrun?.state).css"
     >
-      {{ beautifyService.beatifyState(item.lastrun?.state).text }}
+      {{ sessionService.beatifyState(item.lastrun?.state).text }}
       <div class="lastrun" *ngIf="item.lastrun.date">
         {{ beautifyService.beatifyDate(item.lastrun.date) }}
       </div>
