@@ -1,7 +1,7 @@
 <div class="wrapper">
   <h1 mat-dialog-title>Logs</h1>
   <mat-spinner *ngIf="loading"></mat-spinner>
-  <div [innerText]="logs"></div>
+  <div class="content" [innerText]="logs"></div>
 </div>
 <div mat-dialog-actions class="buttons">
   <button mat-button mat-dialog-close cdkFocusInitial>Close</button>
