@@ -377,15 +377,6 @@ class KubernetesOperator(Operator):
                     "spec": {
                         "template": {
                             "spec": {
-                                "volumes": [
-                                    {
-                                        "name": "script",
-                                        "configMap": {
-                                            name: config.KUBERNETES_RELEASE_NAME
-                                            + "-ease-backup",
-                                        },
-                                    }
-                                ],
                                 "containers": [
                                     {
                                         "name": name,
@@ -395,12 +386,30 @@ class KubernetesOperator(Operator):
                                             {"name": key, "value": value}
                                             for key, value in environment.items()
                                         ],
+                                        "resources": {
+                                            "limits": {"cpu": "2", "memory": "6Gi"},
+                                            "requests": {
+                                                "cpu": "0.4",
+                                                "memory": "1.6Gi",
+                                            },
+                                        },
                                         "volumeMounts": [
                                             {
-                                                "name": "script",
+                                                "name": config.KUBERNETES_RELEASE_NAME
+                                                + "-script",
                                                 "mountPath": "/opt/scripts",
                                             }
                                         ],
+                                    }
+                                ],
+                                "volumes": [
+                                    {
+                                        "name": config.KUBERNETES_RELEASE_NAME
+                                        + "-script",
+                                        "configMap": {
+                                            "name": config.KUBERNETES_RELEASE_NAME
+                                            + "-ease-backup",
+                                        },
                                     }
                                 ],
                                 "restartPolicy": "Never",
