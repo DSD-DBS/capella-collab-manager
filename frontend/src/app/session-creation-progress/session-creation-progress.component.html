@@ -15,9 +15,9 @@
   The current state of your request is: <br />
   <mat-card
     class="session-state"
-    [ngClass]="beautifyService.beatifyState(session?.state).css"
+    [ngClass]="sessionService.beatifyState(session?.state).css"
   >
-    {{ beautifyService.beatifyState(session?.state).text }}
+    {{ sessionService.beatifyState(session?.state).text }}
   </mat-card>
 </div>
 

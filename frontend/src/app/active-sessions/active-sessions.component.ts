@@ -4,7 +4,7 @@ import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-se
 import { Session } from '../schemes';
 import { BeautifyService } from '../services/beatify/beautify.service';
 import { OwnSessionService } from '../services/own-session/own-session.service';
-import { UserService } from '../services/user/user.service';
+import { SessionService } from '../services/session/session.service';
 import { ReconnectDialogComponent } from './reconnect-dialog/reconnect-dialog.component';
 
 @Component({
@@ -18,6 +18,7 @@ export class ActiveSessionsComponent implements OnInit {
   constructor(
     public ownSessionService: OwnSessionService,
     private dialog: MatDialog,
+    public sessionService: SessionService,
     public beautifyService: BeautifyService
   ) {}
 

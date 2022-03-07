@@ -31,7 +31,7 @@ def _determine_session_state(session: t.Dict[str, t.Any]) -> str:
 
     if session["type"] == WorkspaceType.READONLY:
         try:
-            if state == "Running":
+            if state == "Started" or state == "BackOff":
                 logs = OPERATOR.get_session_logs(session["id"]).splitlines()
                 for line in logs:
                     res = re.search(r"^---(.*?)---$", line)

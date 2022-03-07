@@ -147,32 +147,24 @@ class KubernetesOperator(Operator):
         try:
             pods = self.v1_core.list_namespaced_pod(
                 namespace=config.KUBERNETES_NAMESPACE, label_selector=label_selector
-            ).to_dict()
+            )
 
-            log.debug("Receive k8s pod: %s", pods)
-            try:
-                phase = pods["items"][0]["status"]["phase"]
-            except IndexError:
-                return "NOT_FOUND"
-            if phase == "Running":
-                return "Running"
-            elif phase == "Pending":
-                status = pods["items"][0]["status"]
+            log.debug("Received k8s pods: %s", pods.items[0].metadata.name)
+            log.debug("Fetching k8s events for pod: %s", pods.items[0].metadata.name)
 
-                conditions = status["conditions"]
-                if conditions and conditions[-1]["reason"]:
-                    return conditions[-1]["reason"]
-
-                container_statuses = status["container_statuses"]
-                if container_statuses:
-                    return container_statuses[-1]["state"]["waiting"]["reason"]
-
-            return "unknown"
+            return (
+                self.v1_core.list_namespaced_event(
+                    namespace=config.KUBERNETES_NAMESPACE,
+                    field_selector="involvedObject.name=" + pods.items[0].metadata.name,
+                )
+                .items[-1]
+                .reason
+            )
         except kubernetes.client.exceptions.ApiException as e:
             log.warning("Kubernetes error", exc_info=True)
             return "error-" + str(e.status)
         except Exception as e:
-            log.exception("Error parsing the session state")
+            log.exception("Error getting the session state")
             return "unknown"
 
     def _get_pod_starttime(self, label_selector: str) -> datetime | None:
