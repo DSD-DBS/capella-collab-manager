@@ -1,6 +1,3 @@
-.wrapper {
-}
-
 .buttons {
   display: flex;
   justify-content: right;
@@ -11,4 +8,10 @@
   min-width: 50vw;
   min-height: 50vh;
   max-height: 80vh;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
