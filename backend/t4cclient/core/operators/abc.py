@@ -1,8 +1,8 @@
+from __future__ import annotations
+
 import abc
 import typing as t
 from datetime import datetime
-
-from t4cclient.schemas.sessions import WorkspaceType
 
 
 class Operator(abc.ABC):
