@@ -65,7 +65,7 @@ The following environment variables must be set:
 * ``GIT_REPO_URL``
 * ``GIT_REPO_BRANCH`` (e. g. ``nightly``)
 * ``T4C_REPO_HOST`` (e.g. 10.107.242.175)
-* ``T4C_REPO_PORT_NO`` (e.g. 2036)
+* ``T4C_REPO_PORT`` (e.g. 2036)
 * ``T4C_REPO_NAME``
 * ``T4C_USERNAME``
 * ``T4C_PASSWORD``
@@ -140,7 +140,7 @@ def read_and_log_environment_variables() -> t.Tuple[str, ...]:
     git_repo_url: str = os.getenv("GIT_REPO_URL", "")
     git_repo_branch: str = os.getenv("GIT_REPO_BRANCH", "")
     t4c_repo_host: str = os.getenv("T4C_REPO_HOST", "")
-    t4c_repo_port_no: str = os.getenv("T4C_REPO_PORT_NO", "")
+    t4c_repo_port_no: str = os.getenv("T4C_REPO_PORT", "")
 
     t4c_repo_name: str = os.getenv("T4C_REPO_NAME", "")
     t4c_project_name: str = os.getenv("T4C_PROJECT_NAME", "")
@@ -150,7 +150,7 @@ def read_and_log_environment_variables() -> t.Tuple[str, ...]:
     logger.info(f"\tGIT_REPO_URL         : '{git_repo_url}'")
     logger.info(f"\tGIT_REPO_BRANCH      : '{git_repo_branch}'")
     logger.info(f"\tT4C_REPO_HOST        : '{t4c_repo_host}'")
-    logger.info(f"\tT4C_REPO_PORT_NO     : '{t4c_repo_port_no}'")
+    logger.info(f"\tT4C_REPO_PORT        : '{t4c_repo_port_no}'")
     logger.info(f"\tT4C_REPO_NAME        : '{t4c_repo_name}'")
     logger.info(f"\tT4C_PROJECT_NAME     : '{t4c_project_name}'")
     logger.info(f"\tT4C_USERNAME         : '{t4c_username}'")
