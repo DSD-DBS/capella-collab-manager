@@ -141,7 +141,7 @@ class KubernetesOperator(Operator):
             return None
 
     def get_session_state(self, id: str) -> str:
-        self._get_pod_state(self, label_selector="app=" + id)
+        return self._get_pod_state(label_selector="app=" + id)
 
     def _get_pod_state(self, label_selector: str):
         try:
