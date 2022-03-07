@@ -32,12 +32,12 @@ class PatchRepositoryGitModel(BaseModel):
 class GetRepositoryGitModel(RepositoryGitModel):
     id: int
     primary: bool
-    username: str | None
+    username: t.Union[str, None]
 
 
 class GitCredentials(BaseModel):
-    username: str | None
-    password: str | None
+    username: t.Union[str, None]
+    password: t.Union[str, None]
 
 
 class PostGitModel(RepositoryGitModel):

@@ -1,3 +1,4 @@
+import typing as t
 from datetime import datetime
 
 from pydantic import BaseModel
@@ -14,8 +15,8 @@ class EASEBackupRequest(BaseModel):
 
 
 class EASEBackupJob(BaseModel):
-    id: str | None
-    date: datetime | None
+    id: t.Union[str, None]
+    date: t.Union[datetime, None]
     state: str
 
 

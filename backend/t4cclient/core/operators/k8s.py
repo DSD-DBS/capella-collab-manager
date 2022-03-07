@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 import logging
 import random
 import string
 import typing as t
-from cProfile import label
 from datetime import datetime
 
 import kubernetes
