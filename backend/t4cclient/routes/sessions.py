@@ -3,13 +3,13 @@ import logging
 import typing as t
 
 import t4cclient.core.database.repositories as repositories_crud
-import t4cclient.core.database.repository_git_models as git_models_crud
-import t4cclient.extensions.t4c as t4c_manager
+import t4cclient.extensions.modelsources.git.crud as git_models_crud
+import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories.users as users_schema
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from t4cclient.config import USERNAME_CLAIM
-from t4cclient.core.credential_manager import generate_password
+from t4cclient.core.credentials import generate_password
 from t4cclient.core.database import get_db, sessions, users
 from t4cclient.core.oauth.database import is_admin, verify_repository_role
 from t4cclient.core.oauth.jwt_bearer import JWTBearer
@@ -44,7 +44,7 @@ def get_current_sessions(db: Session = Depends(get_db), token=Depends(JWTBearer(
     ):
         raise HTTPException(
             status_code=403,
-            detail="You have to be repository manager for at least one repository.",
+            detail="You have to be project manager for at least one repository.",
         )
     return inject_attrs_in_sessions(
         list(
@@ -126,7 +126,7 @@ def request_session(
                 status_code=404,
                 detail={
                     "err_code": "git_model_not_found",
-                    "reason": "The Model has no connected Git Model. Please contact a Repository Manager or Admininistrator",
+                    "reason": "The Model has no connected Git Model. Please contact a project manager or admininistrator",
                 },
             )
         session = OPERATOR.start_readonly_session(

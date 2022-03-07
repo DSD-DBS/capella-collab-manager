@@ -36,12 +36,12 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'settings/repositories/create',
+    path: 'settings/projects/create',
     component: CreateRepositoryComponent,
     canActivate: [AuthGuardService],
   },
   {
-    path: 'settings/repositories/:repository',
+    path: 'settings/projects/:repository',
     component: RepositorySettingsComponent,
     canActivate: [AuthGuardService],
   },

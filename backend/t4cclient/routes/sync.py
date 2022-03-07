@@ -1,6 +1,6 @@
 import typing as t
 
-import t4cclient.extensions.t4c as t4c_manager
+import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 from fastapi import APIRouter, Depends
 from requests import Session
 from t4cclient.core.database import get_db, repositories

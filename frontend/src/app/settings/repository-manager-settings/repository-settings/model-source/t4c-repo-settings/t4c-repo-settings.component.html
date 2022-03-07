@@ -1,0 +1,42 @@
+<mat-card
+  ><h2>T4C Repository Settings</h2>
+  Adding and deleting t4c repositories will not affect the T4C Server! <br />
+  This should represent a manually updated list of the current t4c repositories.
+  <br />
+  This will be automated in the next version.
+  <form [formGroup]="createProjectForm" #formDirective="ngForm">
+    <mat-form-field>
+      <mat-label>Repository name</mat-label>
+      <input matInput formControlName="name" />
+      <mat-error>Please enter a name!</mat-error>
+    </mat-form-field>
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="createProject(formDirective)"
+    >
+      Add T4C repository
+    </button>
+  </form>
+  <mat-selection-list #projectsList [multiple]="false" class="user-selection">
+    <mat-list-option
+      *ngFor="let project of projectService.repositories"
+      [value]="project"
+    >
+      <mat-icon mat-list-icon>laptop</mat-icon>
+      <div mat-line>{{ project.name }}</div>
+      <div mat-line>Project ID: {{ project.id }}</div>
+    </mat-list-option>
+  </mat-selection-list>
+
+  <div *ngIf="projectsList.selectedOptions.selected.length">
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="removeProject(selectedProject)"
+    >
+      <mat-icon>delete</mat-icon> Remove {{ selectedProject.name }} from
+      {{ repository }}
+    </button>
+  </div>
+</mat-card>

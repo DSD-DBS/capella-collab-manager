@@ -1,13 +1,13 @@
-<h1>Repository Manager Options</h1>
+<h1>Project manager options</h1>
 <mat-card>
-  <h2>Manage repositories</h2>
-  You are Manager of these repositories. Please select a repository to see all
+  <h2>Manage projects</h2>
+  You are Manager of these projects. Please select a project to see all
   settings. <br />
   <button
     *ngFor="let repo of repositoryService.repositories"
     color="primary"
     mat-flat-button
-    [routerLink]="'/settings/repositories/' + repo.repository_name"
+    [routerLink]="'/settings/projects/' + repo.repository_name"
   >
     {{ repo.repository_name }}
   </button>
@@ -15,7 +15,7 @@
     *ngIf="userService.user?.role === 'administrator'"
     color="primary"
     mat-flat-button
-    [routerLink]="'/settings/repositories/create'"
+    [routerLink]="'/settings/projects/create'"
   >
     <mat-icon>add</mat-icon>
   </button></mat-card

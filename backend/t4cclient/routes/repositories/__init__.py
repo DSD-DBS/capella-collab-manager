@@ -1,4 +1,6 @@
+import logging
 import typing as t
+from importlib import metadata
 
 import t4cclient.core.services.repositories as repository_service
 from fastapi import APIRouter, Depends
@@ -8,7 +10,7 @@ from t4cclient.core.database import get_db, repositories
 from t4cclient.core.database import users as database_users
 from t4cclient.core.oauth.database import is_admin, verify_admin, verify_repository_role
 from t4cclient.core.oauth.jwt_bearer import JWTBearer
-from t4cclient.extensions import t4c
+from t4cclient.extensions.modelsources.t4c import connection
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.repositories import (
     GetRepositoryUserResponse,
@@ -17,10 +19,9 @@ from t4cclient.schemas.repositories import (
     RepositoryUserRole,
 )
 
-from . import git_models as router_git_models
-from . import projects as router_projects
 from . import users as router_users
 
+log = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -58,14 +59,12 @@ def get_repositories(db: Session = Depends(get_db), token=Depends(JWTBearer())):
     ]
 
 
-@router.get(
-    "/{repository_name}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES
-)
+@router.get("/{project}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
 def get_repository_by_name(
-    repository_name: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
-    verify_repository_role(repository_name, token=token, db=db)
-    return repositories.get_repository(db, repository_name)
+    verify_repository_role(project, token=token, db=db)
+    return repositories.get_repository(db, project)
 
 
 @router.post("/", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
@@ -75,35 +74,45 @@ def create_repository(
     token=Depends(JWTBearer()),
 ):
     verify_admin(token, db)
-    t4c.create_repository(body.name)
+    connection.create_repository(body.name)
     return repositories.create_repository(db, body.name)
 
 
 @router.delete(
-    "/{repository_name}",
+    "/{project}",
     tags=["Repositories"],
     status_code=204,
     responses=AUTHENTICATION_RESPONSES,
 )
 def delete_repository(
-    repository_name: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
     verify_admin(token, db)
-    repositories.delete_repository(db, repository_name)
+    repositories.delete_repository(db, project)
 
 
 router.include_router(
     router_users.router,
-    prefix="/{repository_name}/users",
+    prefix="/{project}/users",
     tags=["Repository Users"],
 )
-router.include_router(
-    router_git_models.router,
-    prefix="/{repository_name}/git-models",
-    tags=["Repository Git Models"],
-)
-router.include_router(
-    router_projects.router,
-    prefix="/{repository_name}/projects",
-    tags=["Repository Projects"],
-)
+
+# Load backup extension routes
+eps = metadata.entry_points()["capellacollab.extensions.backups"]
+for ep in eps:
+    log.info("Add routes of backup extension %s", ep.name)
+    router.include_router(
+        ep.load().routes.router,
+        prefix="/{project}/extensions/backups/" + ep.name,
+        tags=[ep.name],
+    )
+
+# Load modelsource extension routes
+eps = metadata.entry_points()["capellacollab.extensions.modelsources"]
+for ep in eps:
+    log.info("Add routes of modelsource %s", ep.name)
+    router.include_router(
+        ep.load().routes.router,
+        prefix="/{project}/extensions/modelsources/" + ep.name,
+        tags=[ep.name],
+    )

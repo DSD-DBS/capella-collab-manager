@@ -1,4 +1,5 @@
 import logging
+import os
 import pathlib
 
 from alembic import command
@@ -17,30 +18,31 @@ LOGGER = logging.getLogger(__file__)
 
 
 def migrate_db():
-    root_dir = pathlib.Path(__file__).parents[2]
+    if os.getenv("ALEMBIC_CONTEXT") != "1":
+        root_dir = pathlib.Path(__file__).parents[2]
 
-    # Get current revision of Database. If no revision is available, initialize the database.
-    alembic_cfg = Config(root_dir / "alembic.ini")
-    alembic_cfg.set_main_option("script_location", str(root_dir / "alembic"))
-    alembic_cfg.set_main_option("sqlalchemy.url", config.DATABASE_URL)
-    alembic_cfg.attributes["configure_logger"] = False
+        # Get current revision of Database. If no revision is available, initialize the database.
+        alembic_cfg = Config(root_dir / "alembic.ini")
+        alembic_cfg.set_main_option("script_location", str(root_dir / "alembic"))
+        alembic_cfg.set_main_option("sqlalchemy.url", config.DATABASE_URL)
+        alembic_cfg.attributes["configure_logger"] = False
 
-    engine = create_engine(config.DATABASE_URL)
-    conn = engine.connect()
+        engine = create_engine(config.DATABASE_URL)
+        conn = engine.connect()
 
-    context = MigrationContext.configure(conn)
-    current_rev = context.get_current_revision()
+        context = MigrationContext.configure(conn)
+        current_rev = context.get_current_revision()
 
-    if current_rev:
-        LOGGER.info("Upgrade database to head")
-        command.upgrade(alembic_cfg, "head")
-    else:
-        LOGGER.info("Empty database detected.")
-        Base.metadata.create_all(bind=engine)
-        LOGGER.info("Database structure creation successful")
-        command.stamp(alembic_cfg, "head")
-        initialize_admin_user()
-        initialize_default_repository()
+        if current_rev:
+            LOGGER.info("Upgrade database to head")
+            command.upgrade(alembic_cfg, "head")
+        else:
+            LOGGER.info("Empty database detected.")
+            Base.metadata.create_all(bind=engine)
+            LOGGER.info("Database structure creation successful")
+            command.stamp(alembic_cfg, "head")
+            initialize_admin_user()
+            initialize_default_repository()
 
 
 def initialize_admin_user():

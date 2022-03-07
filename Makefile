@@ -6,6 +6,7 @@ REGISTRY_PORT = 12345
 RELEASE = dev-t4c-manager
 NAMESPACE = t4c-manager
 MY_EMAIL ?= me@example.com
+EASE_DEBUG_PORT = 3390
 
 all: backend frontend
 
@@ -25,13 +26,31 @@ capella:
 	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
 
-ease: 
+t4c-client: 
+	docker build -t t4c/client/base capella-dockerimages/t4c
+
+readonly: 
 	docker build -t capella/ease --build-arg BASE_IMAGE=capella/base --build-arg BUILD_TYPE=online capella-dockerimages/ease
 	docker build -t capella/ease/remote --build-arg BASE_IMAGE=capella/ease capella-dockerimages/remote
 	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly --build-arg BASE_IMAGE=capella/ease/remote capella-dockerimages/readonly
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly
 
-deploy: backend frontend capella ease helm-deploy
+ease: 
+	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/ease --build-arg BASE_IMAGE=t4c/client/base --build-arg BUILD_TYPE=online capella-dockerimages/ease
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/ease
+
+ease-debug: 
+	docker build -t t4c/client/ease --build-arg BASE_IMAGE=t4c/client/ease --build-arg BUILD_TYPE=online capella-dockerimages/ease
+	docker build -t t4c/client/ease/remote --build-arg BASE_IMAGE=t4c/client/ease capella-dockerimages/remote
+	docker run -d \
+		--name ease-debug \
+		-p $(EASE_DEBUG_PORT):3389 \
+		-v ./local/scripts:/opt/scripts
+		-v ./capella-dockerimages/ease/pyease:/opt/pyease
+		-e PYTHONPATH="/opt/pyease"
+		t4c/client/ease/remote
+
+deploy: backend frontend capella t4c-client readonly ease helm-deploy
 
 helm-deploy: 
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster

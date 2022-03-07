@@ -4,7 +4,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 from t4cclient import config
 from t4cclient.config import GUACAMOLE_URI
-from t4cclient.core.credential_manager import generate_password
+from t4cclient.core.credentials import generate_password
 
 GUACAMOLE_PREFIX = GUACAMOLE_URI + "/api/session/data/postgresql"
 headers = {"Content-Type": "application/x-www-form-urlencoded"}
