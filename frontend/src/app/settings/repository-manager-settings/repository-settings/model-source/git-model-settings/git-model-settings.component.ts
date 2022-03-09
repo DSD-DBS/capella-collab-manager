@@ -70,7 +70,7 @@ export class GitModelSettingsComponent implements OnInit {
 
   gitURLValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const regex = /^https:\/\/\S*\.git$/;
+      const regex = /^https:\/\/\S*\./;
       if (regex.test(control.value) || !control.value) {
         return null;
       }
