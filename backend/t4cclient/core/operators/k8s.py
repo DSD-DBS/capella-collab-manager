@@ -116,7 +116,7 @@ class KubernetesOperator(Operator):
         if job:
             return self._get_pod_state(label_selector="job-name=" + job)
         else:
-            return "pending"
+            return "NoJob"
 
     def get_cronjob_last_starting_date(self, name: str) -> datetime | None:
         job = self._get_last_job_of_cronjob(name)
