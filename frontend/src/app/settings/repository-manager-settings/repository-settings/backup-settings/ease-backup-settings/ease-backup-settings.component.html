@@ -30,13 +30,12 @@
     </div>
     <div
       class="state"
-      [ngClass]="sessionService.beatifyState(item.lastrun?.state).css"
+      [ngClass]="easeBackupService.beatifyState(item.lastrun?.state).css"
     >
-      {{ sessionService.beatifyState(item.lastrun?.state).text }}
+      {{ easeBackupService.beatifyState(item.lastrun?.state).text }}
       <div class="lastrun" *ngIf="item.lastrun.date">
         {{ beautifyService.beatifyDate(item.lastrun.date) }}
       </div>
-      <div class="lastrun" *ngIf="!item.lastrun.date">Not started yet</div>
     </div>
     <div class="flexbox">
       <div class="state flexbox" id="state-field" *ngIf="item.lastrun">

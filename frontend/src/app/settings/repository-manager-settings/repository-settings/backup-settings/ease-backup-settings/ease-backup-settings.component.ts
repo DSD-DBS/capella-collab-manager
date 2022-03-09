@@ -19,8 +19,7 @@ export class GitBackupSettingsComponent implements OnInit {
   constructor(
     public beautifyService: BeautifyService,
     public dialog: MatDialog,
-    private easeBackupService: EASEBackupService,
-    public sessionService: SessionService
+    public easeBackupService: EASEBackupService
   ) {}
 
   @Input()
