@@ -406,7 +406,9 @@ class KubernetesOperator(Operator):
                                 ],
                                 "restartPolicy": "Never",
                             }
-                        }
+                        },
+                        "backoffLimit": 1,
+                        "activeDeadlineSeconds": 600,
                     }
                 },
             },
