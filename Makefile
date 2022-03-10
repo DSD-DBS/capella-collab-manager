@@ -50,7 +50,14 @@ ease-debug:
 		-e PYTHONPATH="/opt/pyease"
 		t4c/client/ease/remote
 
-deploy: backend frontend capella t4c-client readonly ease helm-deploy
+mock: 
+	docker build -t t4c/server/mock -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/server/mock mocks/t4c-server
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/server/mock
+
+	docker build -t t4c/licence/mock -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock mocks/licence-server
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock
+
+deploy: backend frontend capella t4c-client readonly ease mock helm-deploy
 
 helm-deploy: 
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
@@ -63,6 +70,8 @@ helm-deploy:
 		--set docker.registry=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
 		--set database.backend.initialAdmin=$(MY_EMAIL) \
 		--set general.port=8081 \
+		--set t4cServer.apis.usageStats="http://localhost:8081/mock" \
+		--set t4cServer.apis.restAPI="http://localhost:8081/mock/api/v1.0" \
 		--wait --timeout 4m \
 		--debug \
 		$(RELEASE) ./helm
