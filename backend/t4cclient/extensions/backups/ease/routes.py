@@ -57,7 +57,7 @@ def create_backup(
 
     username = "techuser-" + str(uuid.uuid4())
     password = credentials.generate_password()
-    # t4c.connection.add_user_to_repository(project, username, password)
+    t4c.connection.add_user_to_repository(project, username, password)
 
     reference = OPERATOR.create_cronjob(
         image=config.EASE_IMAGE,
@@ -101,7 +101,7 @@ def delete_backup(
 
     backup = crud.get_backup(db, project, id)
     t4cmodel = t4c.crud.get_project_by_id(db=db, id=backup.t4cmodel, repo_name=project)
-    # t4c.connection.remove_user_from_repository(t4cmodel.name, backup.username)
+    t4c.connection.remove_user_from_repository(t4cmodel.name, backup.username)
 
     OPERATOR.delete_cronjob(backup.reference)
 
@@ -113,7 +113,7 @@ def delete_backup(
     response_model=models.EASEBackupResponse,
     responses=AUTHENTICATION_RESPONSES,
 )
-def create_backup(
+def create_job(
     project: str,
     id: int,
     db: Session = Depends(get_db),
@@ -133,7 +133,7 @@ def create_backup(
     response_model=str,
     responses=AUTHENTICATION_RESPONSES,
 )
-def create_backup(
+def get_logs(
     project: str,
     bid: int,
     jid: str,
