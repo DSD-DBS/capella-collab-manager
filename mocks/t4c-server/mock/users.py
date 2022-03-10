@@ -3,7 +3,7 @@ from fastapi import APIRouter
 router = APIRouter()
 
 
-@router.post("/", status_code=404)
+@router.post("/")
 def add_user():
     return {}
 
