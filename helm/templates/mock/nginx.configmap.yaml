@@ -1,0 +1,12 @@
+{{ if eq .Values.target "local" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-mock-nginx
+  namespace: {{ .Release.Namespace }}
+  labels: 
+    id: {{ .Release.Name }}-configmap-mock-nginx
+data:
+  nginx.conf: |- 
+    {{ tpl (.Files.Get "config/nginx-mock.conf") . | nindent 4 }}
+{{ end }}

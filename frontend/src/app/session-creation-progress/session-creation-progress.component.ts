@@ -44,7 +44,7 @@ export class SessionCreationProgressComponent implements OnInit, OnDestroy {
                 }
 
                 if (
-                  this.session?.state === 'Running' ||
+                  this.session?.state === 'Started' ||
                   this.session?.state === 'START_SESSION'
                 ) {
                   this.containerReady = true;

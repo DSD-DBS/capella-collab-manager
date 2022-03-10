@@ -1,0 +1,43 @@
+{{ if eq .Values.target "local" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-licence-server-mock
+  labels: 
+    id: {{ .Release.Name }}-deployment-licence-server-mock
+spec:
+  replicas: {{ .Values.replicaCount | default 1 }}
+  selector: 
+    matchLabels: 
+      id: {{ .Release.Name }}-deployment-licence-server-mock
+  template:
+    metadata: 
+      labels: 
+        id: {{ .Release.Name }}-deployment-licence-server-mock
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-licence-server-mock
+          image: {{ .Values.docker.registry }}/t4c/licence/mock
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+          readinessProbe: 
+            httpGet:
+              path: /healthcheck
+              port: http
+          resources:
+            limits:
+              cpu: "0.1"
+              memory: 200Mi
+            requests:
+              cpu: "0.1"
+              memory: 20Mi
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+{{ end }}
