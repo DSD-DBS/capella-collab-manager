@@ -36,3 +36,12 @@ spec:
                 name: {{ .Release.Name }}-guacamole-guacamole
                 port:
                   number: 8080
+          {{ if eq .Values.target "local" }}
+          - path: /mock
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-mock-clusterip
+                port:
+                  number: 80
+          {{ end }}
