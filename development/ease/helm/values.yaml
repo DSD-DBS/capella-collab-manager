@@ -1,0 +1,21 @@
+git: 
+  url: 
+  branch: 
+  username: 
+  password: 
+
+t4c: 
+  host: 
+  port: 
+  repo: 
+  repos: 
+  project: 
+  username: 
+  password: 
+  licence: 
+
+rdp: 
+  password: 
+
+docker:
+  registry: 
