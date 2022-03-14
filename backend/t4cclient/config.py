@@ -29,6 +29,7 @@ def get_config(group: str, key: str, fallback: str = "") -> str:
 PERSISTENT_IMAGE = get_config("DOCKER", "PERSISTENT_IMAGE")
 READONLY_IMAGE = get_config("DOCKER", "READONLY_IMAGE")
 EASE_IMAGE = get_config("DOCKER", "EASE_IMAGE")
+IMPORTER_IMAGE = get_config("DOCKER", "IMPORTER_IMAGE")
 WORKSPACE_MOUNT_VOLUME = get_config("DOCKER", "WORKSPACE_MOUNT_VOLUME")
 DOCKER_PORT_RANGE = get_config("DOCKER", "PORT_RANGE")
 DOCKER_HOST = get_config("DOCKER", "CONTAINER_HOST")
