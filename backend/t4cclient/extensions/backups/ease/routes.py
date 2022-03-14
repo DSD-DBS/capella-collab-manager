@@ -63,7 +63,7 @@ def create_backup(
     t4c.connection.add_user_to_repository(project, username, password)
 
     reference = OPERATOR.create_cronjob(
-        image=config.EASE_IMAGE,
+        image=config.IMPORTER_IMAGE,
         environment={
             "EASE_LOG_LOCATION": "/proc/1/fd/1",
             "GIT_REPO_URL": gitmodel.path,
