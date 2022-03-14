@@ -1,4 +1,3 @@
-
 CLUSTER_NAME = mycluster
 LOCAL_REGISTRY_NAME = localhost
 CLUSTER_REGISTRY_NAME = myregistry.localhost
@@ -38,17 +37,6 @@ readonly:
 ease: 
 	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/ease --build-arg BASE_IMAGE=t4c/client/base --build-arg BUILD_TYPE=online capella-dockerimages/ease
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/ease
-
-ease-debug: 
-	docker build -t t4c/client/ease --build-arg BASE_IMAGE=t4c/client/ease --build-arg BUILD_TYPE=online capella-dockerimages/ease
-	docker build -t t4c/client/ease/remote --build-arg BASE_IMAGE=t4c/client/ease capella-dockerimages/remote
-	docker run -d \
-		--name ease-debug \
-		-p $(EASE_DEBUG_PORT):3389 \
-		-v ./local/scripts:/opt/scripts
-		-v ./capella-dockerimages/ease/pyease:/opt/pyease
-		-e PYTHONPATH="/opt/pyease"
-		t4c/client/ease/remote
 
 mock: 
 	docker build -t t4c/server/mock -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/server/mock mocks/t4c-server

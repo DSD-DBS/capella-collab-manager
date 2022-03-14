@@ -1,6 +1,8 @@
+import logging
 import typing as t
 import uuid
 
+import requests
 import t4cclient.core.oauth.database as auth
 from fastapi import APIRouter, Depends
 from requests import Session
@@ -15,6 +17,7 @@ from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from . import crud, helper, models
 
 router = APIRouter()
+log = logging.getLogger(__name__)
 
 
 @router.get(
@@ -101,7 +104,10 @@ def delete_backup(
 
     backup = crud.get_backup(db, project, id)
     t4cmodel = t4c.crud.get_project_by_id(db=db, id=backup.t4cmodel, repo_name=project)
-    t4c.connection.remove_user_from_repository(t4cmodel.name, backup.username)
+    try:
+        t4c.connection.remove_user_from_repository(t4cmodel.name, backup.username)
+    except requests.HTTPError:
+        log.warning("Error during the deletion of user %s in t4c", exc_info=True)
 
     OPERATOR.delete_cronjob(backup.reference)
 
