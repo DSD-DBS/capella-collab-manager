@@ -18,9 +18,12 @@ spec:
         - name: {{ .Release.Name }}-ease-script
           configMap:
             name: {{ .Release.Name }}-ease-script
+        - name: {{ .Release.Name }}-pyease
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-pyease
       containers:
         - name: {{ .Release.Name }}-backend
-          image: {{ .Values.docker.registry }}/t4c/client/ease/remote
+          image: {{ .Values.docker.registry }}/t4c/client/ease/remote/debug
           imagePullPolicy: "Always"
           envFrom:
             - configMapRef: 
@@ -32,10 +35,12 @@ spec:
           volumeMounts:
             - name: {{ .Release.Name }}-ease-script
               mountPath: /opt/scripts
+            - name: {{ .Release.Name }}-pyease
+              mountPath: /pyease
           resources:
             limits:
-              cpu: "4"
-              memory: 8Gi
+              cpu: "2"
+              memory: "6Gi"
             requests:
-              cpu: "1"
-              memory: 2Gi
+              cpu: "0.4"
+              memory: "1.6Gi"

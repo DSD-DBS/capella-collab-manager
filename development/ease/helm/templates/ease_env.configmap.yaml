@@ -21,4 +21,6 @@ data:
   T4C_REPOSITORIES: "{{ .Values.t4c.repos }}"
   T4C_SERVER_HOST: "{{ .Values.t4c.host }}"
   T4C_SERVER_PORT: "{{ .Values.t4c.port }}"
-  AUTOSTART_CAPELLA: 0
+  AUTOSTART_CAPELLA: "0"
+  DISPLAY: ":10"
+  DEBUG: "1"
