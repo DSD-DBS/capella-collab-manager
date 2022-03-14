@@ -1,3 +1,4 @@
+import logging
 import pathlib
 import shutil
 import typing as t
@@ -7,10 +8,15 @@ from t4cclient.core.operators.abc import Operator
 
 import docker
 
+log = logging.getLogger(__name__)
+
 
 class DockerOperator(Operator):
     def __init__(self):
         self.client = docker.from_env()
+        log.warning(
+            "The DockerOperator is currently no longer fully supported. It is not recommended to use it."
+        )
 
     def start_persistent_session(
         self,
