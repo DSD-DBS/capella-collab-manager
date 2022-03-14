@@ -17,6 +17,9 @@ docker:
     # Docker Image for EASE
     ease: /t4c/client/ease
 
+    # Docker Image for T4C Backup
+    importer: /t4c/client/importer
+
     workspaces: 
       # Docker Image for the Persistent Workspace Session
       persistent: /t4c/client/remote
