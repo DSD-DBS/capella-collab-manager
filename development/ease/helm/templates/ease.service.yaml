@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-ease
+  labels: 
+    id: {{ .Release.Name }}-service-ease
+spec:
+  type: LoadBalancer
+  selector:
+    id: {{ .Release.Name }}-deployment-ease
+  ports:
+    - port: 3389
+      targetPort: rdp
+      protocol: TCP
+      name: rdp
