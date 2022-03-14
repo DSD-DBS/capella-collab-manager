@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-ease
+  labels: 
+    id: {{ .Release.Name }}-deployment-ease
+spec:
+  replicas: 1
+  selector: 
+    matchLabels: 
+      id: {{ .Release.Name }}-deployment-ease
+  template:
+    metadata: 
+      labels: 
+        id: {{ .Release.Name }}-deployment-ease
+    spec:
+      volumes:
+        - name: {{ .Release.Name }}-ease-script
+          configMap:
+            name: {{ .Release.Name }}-ease-script
+      containers:
+        - name: {{ .Release.Name }}-backend
+          image: {{ .Values.docker.registry }}/t4c/client/ease/remote
+          imagePullPolicy: "Always"
+          envFrom:
+            - configMapRef: 
+                name: {{ .Release.Name }}-ease-env
+          ports:
+            - name: rdp
+              containerPort: 3389
+              protocol: TCP
+          volumeMounts:
+            - name: {{ .Release.Name }}-ease-script
+              mountPath: /opt/scripts
+          resources:
+            limits:
+              cpu: "4"
+              memory: 8Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi

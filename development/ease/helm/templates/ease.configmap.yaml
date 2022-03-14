@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-ease-script
+  namespace: {{ .Release.Namespace }}
+  labels: 
+    id: {{ .Release.Name }}-configmap-ease-script
+data:
+  t4c2git.py: |- 
+    {{ tpl (.Files.Get "config/t4c2git.py") . | nindent 4 }}
