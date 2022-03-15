@@ -385,23 +385,6 @@ class KubernetesOperator(Operator):
                                                 "memory": "1.6Gi",
                                             },
                                         },
-                                        "volumeMounts": [
-                                            {
-                                                "name": config.KUBERNETES_RELEASE_NAME
-                                                + "-script",
-                                                "mountPath": "/opt/scripts",
-                                            }
-                                        ],
-                                    }
-                                ],
-                                "volumes": [
-                                    {
-                                        "name": config.KUBERNETES_RELEASE_NAME
-                                        + "-script",
-                                        "configMap": {
-                                            "name": config.KUBERNETES_RELEASE_NAME
-                                            + "-ease-backup",
-                                        },
                                     }
                                 ],
                                 "restartPolicy": "Never",
