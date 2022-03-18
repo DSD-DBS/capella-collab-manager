@@ -1,4 +1,5 @@
-FROM buildpack-deps:bullseye
+ARG BASE_IMAGE=buildpack-deps:bullseye
+FROM $BASE_IMAGE
 
 RUN apt-get update && \
     apt-get upgrade --yes && \
