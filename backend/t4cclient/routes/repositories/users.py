@@ -5,14 +5,13 @@ import t4cclient.schemas.repositories as schema_repositories
 from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError, Session
 from t4cclient.config import USERNAME_CLAIM
+from t4cclient.core.authentication.database import (check_username_not_admin,
+                                                    is_admin,
+                                                    verify_repository_role,
+                                                    verify_write_permission)
+from t4cclient.core.authentication.helper import get_username
+from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, repository_users, users
-from t4cclient.core.oauth.database import (
-    check_username_not_admin,
-    is_admin,
-    verify_repository_role,
-    verify_write_permission,
-)
-from t4cclient.core.oauth.jwt_bearer import JWTBearer
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 
 router = APIRouter()
@@ -94,7 +93,7 @@ def patch_repository_user(
             db=db,
         )
         verify_write_permission(project, token, db)
-        if not is_admin(token, db) and token[USERNAME_CLAIM] != username:
+        if not is_admin(token, db) and get_username(token) != username:
             raise HTTPException(
                 status_code=403,
                 detail="The username does not match with your user. You have to be administrator to edit other users.",
@@ -151,4 +150,4 @@ def remove_user_from_repository(
     )
     check_username_not_admin(username, db)
     t4c_manager.remove_user_from_repository(project, username)
-    return repository_users.delete_user_from_repository(db, project, username)
+    repository_users.delete_user_from_repository(db, project, username)

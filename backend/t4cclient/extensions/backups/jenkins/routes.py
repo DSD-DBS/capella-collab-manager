@@ -5,11 +5,13 @@ import fastapi
 import t4cclient.extensions.backups.jenkins.models as jenkins_schema
 from fastapi import APIRouter, Depends
 from requests import Session
+from t4cclient.core.authentication.database import verify_repository_role
+from t4cclient.core.authentication.database.git_models import \
+    verify_gitmodel_permission
+from t4cclient.core.authentication.database.jenkins import \
+    verify_jenkins_permission
+from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db
-from t4cclient.core.oauth.database import verify_repository_role
-from t4cclient.core.oauth.database.git_models import verify_gitmodel_permission
-from t4cclient.core.oauth.database.jenkins import verify_jenkins_permission
-from t4cclient.core.oauth.jwt_bearer import JWTBearer
 from t4cclient.extensions.backups import jenkins
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 
@@ -91,7 +93,8 @@ def delete_pipeline(
         db=db,
     )
     jenkins.remove_pipeline(pipeline_name)
-    return jenkins_database.remove_pipeline_by_name(db, pipeline_name)
+    jenkins_database.remove_pipeline_by_name(db, pipeline_name)
+    return None
 
 
 @router.post(
@@ -116,3 +119,4 @@ def create_jenkins_job(
         db=db,
     )
     jenkins.trigger_job_run(pipeline_name)
+    return None

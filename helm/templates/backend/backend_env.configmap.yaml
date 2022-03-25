@@ -35,7 +35,6 @@ data:
     KUBERNETES_NAMESPACE: {{ .Values.backend.k8sSessionNamespace }}
     KUBERNETES_STORAGE_CLASS_NAME: {{ .Values.backend.storageClassName }}
     KUBERNETES_STORAGE_ACCESS_MODE: {{ .Values.backend.storageAccessMode }}
-    KUBERNETES_RELEASE_NAME: {{ .Release.Name }}
     OPERATOR_TYPE: kubernetes
     JENKINS_USERNAME: {{ .Values.jenkins.username }}
     JENKINS_PASSWORD: {{ .Values.jenkins.password }}

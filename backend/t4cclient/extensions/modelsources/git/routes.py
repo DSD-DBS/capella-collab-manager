@@ -3,18 +3,15 @@ import typing as t
 
 from fastapi import APIRouter, Depends
 from requests import Session
+from t4cclient.core.authentication.database import verify_repository_role
+from t4cclient.core.authentication.database.git_models import \
+    verify_gitmodel_permission
+from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db
-from t4cclient.core.oauth.database import verify_repository_role
-from t4cclient.core.oauth.database.git_models import verify_gitmodel_permission
-from t4cclient.core.oauth.jwt_bearer import JWTBearer
 from t4cclient.extensions.modelsources import git
 from t4cclient.extensions.modelsources.git.models import (
-    GetRepositoryGitModel,
-    PatchRepositoryGitModel,
-    PostGitModel,
-    RepositoryGitInnerModel,
-    RepositoryGitModel,
-)
+    GetRepositoryGitModel, PatchRepositoryGitModel, PostGitModel,
+    RepositoryGitInnerModel, RepositoryGitModel)
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 
 router = APIRouter()
@@ -76,7 +73,8 @@ def unassign_model_from_repository(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
     verify_gitmodel_permission(project, model_id, db)
-    return git.crud.delete_model_from_repository(db, project, model_id)
+    git.crud.delete_model_from_repository(db, project, model_id)
+    return None
 
 
 @router.patch(

@@ -15,13 +15,13 @@ export class AuthService {
 
   getRedirectURL(): Observable<GetRedirectURLResponse> {
     return this.http.get<GetRedirectURLResponse>(
-      environment.backend_url + '/auth/oauth'
+      environment.backend_url + '/authentication'
     );
   }
 
   getAccessToken(code: string, state: string): Observable<PostTokenResponse> {
     return this.http.post<PostTokenResponse>(
-      environment.backend_url + '/auth/oauth/tokens',
+      environment.backend_url + '/authentication/tokens',
       {
         code,
         state,
@@ -31,7 +31,7 @@ export class AuthService {
 
   refreshToken(refresh_token: string): Observable<RefreshTokenResponse> {
     return this.http.put<PostTokenResponse>(
-      environment.backend_url + '/auth/oauth/tokens',
+      environment.backend_url + '/authentication/tokens',
       { refresh_token }
     );
   }
@@ -42,7 +42,7 @@ export class AuthService {
 
   logOut() {
     return this.http
-      .get(environment.backend_url + '/auth/oauth/logout')
+      .get(environment.backend_url + '/authentication/logout')
       .toPromise()
       .then(() => {
         this.localStorageService.setValue('access_token', '');
