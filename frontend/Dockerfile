@@ -1,4 +1,5 @@
-FROM node:14 as build
+ARG BASE_IMAGE=node:14
+FROM $BASE_IMAGE as build
 
 COPY ./ /work/
 WORKDIR /work
