@@ -1,9 +1,5 @@
 .vscode
 .venv
-/capella-dockerimages/capella/archives/capella.tar.gz
-/capella-dockerimages/capella/archives/capella.zip
-/capella-dockerimages/capella/dropins
-/capella-dockerimages/t4c/updateSite
 /.provision-backend
 /.provision-guacamole
 /values*.yaml
