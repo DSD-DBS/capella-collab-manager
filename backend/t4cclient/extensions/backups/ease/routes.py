@@ -3,13 +3,13 @@ import typing as t
 import uuid
 
 import requests
-import t4cclient.core.oauth.database as auth
+import t4cclient.core.authentication.database as auth
 from fastapi import APIRouter, Depends
 from requests import Session
 from t4cclient import config, extensions
 from t4cclient.core import credentials
+from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db
-from t4cclient.core.oauth.jwt_bearer import JWTBearer
 from t4cclient.core.operators import OPERATOR
 from t4cclient.extensions.modelsources import git, t4c
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
@@ -112,6 +112,7 @@ def delete_backup(
     OPERATOR.delete_cronjob(backup.reference)
 
     crud.delete_backup(db, project, id)
+    return None
 
 
 @router.post(

@@ -3,9 +3,9 @@ import typing as t
 import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 from fastapi import APIRouter, Depends
 from requests import Session
+from t4cclient.core.authentication import database as database_auth
+from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, repositories
-from t4cclient.core.oauth import database as database_auth
-from t4cclient.core.oauth.jwt_bearer import JWTBearer
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 
 router = APIRouter()

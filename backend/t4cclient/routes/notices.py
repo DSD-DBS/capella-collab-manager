@@ -2,9 +2,9 @@ import typing as t
 
 from fastapi import APIRouter, Depends
 from requests import Session
+from t4cclient.core.authentication.database import verify_admin
+from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, notices
-from t4cclient.core.oauth.database import verify_admin
-from t4cclient.core.oauth.jwt_bearer import JWTBearer
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.notices import CreateNoticeRequest, NoticeResponse
 
@@ -41,4 +41,4 @@ def create_notice(
 )
 def delete_notice(id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())):
     verify_admin(token, db)
-    return notices.delete_notice(db, id)
+    notices.delete_notice(db, id)

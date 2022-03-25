@@ -5,18 +5,11 @@ from functools import lru_cache
 from cachetools import TTLCache
 from fastapi import APIRouter, Depends
 from msal import ConfidentialClientApplication
-
-from t4cclient.config import (
-    OAUTH_CLIENT_ID,
-    OAUTH_CLIENT_SECRET,
-    OAUTH_ENDPOINT,
-)
-from t4cclient.core.oauth import (
-    jwt_bearer,
-    OAuthStub,
-)
-from t4cclient.schemas.oauth import RefreshTokenRequest, TokenRequest
-
+from t4cclient.config import (OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET,
+                              OAUTH_ENDPOINT)
+from t4cclient.core.authentication import jwt_bearer
+from t4cclient.core.authentication.schemas import (RefreshTokenRequest,
+                                                   TokenRequest)
 
 router = APIRouter()
 
@@ -30,7 +23,7 @@ def ad_session():
 global_session_data = TTLCache(maxsize=128, ttl=3600)
 
 
-@router.get("/", name="Get redirect URL for OAuth")
+@router.get("/", name="Get redirect URL for azure authentication")
 async def get_redirect_url():
     state = secrets.token_hex(32)
     assert state not in global_session_data
@@ -55,8 +48,8 @@ async def api_refresh_token(body: RefreshTokenRequest):
     return ad_session().acquire_token_by_refresh_token(body.refresh_token, scopes=[])
 
 
-@router.get("/logout", name="Invalidate the token (log out)")
-async def validate_token(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
+@router.delete("/tokens", name="Invalidate the token (log out)")
+async def logout(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
     for account in ad_session().get_accounts():
         if account["username"] == jwt_decoded["preferred_username"]:
             return ad_session().remove_account(account)
