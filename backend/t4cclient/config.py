@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import logging
 import os
+import pathlib
 import typing as t
 
+import appdirs
 import yaml
 
 log = logging.getLogger(__name__)
@@ -119,3 +121,20 @@ class ConfigList(list):
     __rmul__ = _unsupported
     __iadd__ = _unsupported
     __imul__ = _unsupported
+
+
+config = ConfigDict({})
+
+locations: list[pathlib.Path] = [
+    pathlib.Path(__file__).parents[1] / "config" / "config.yaml",
+    pathlib.Path(appdirs.user_config_dir("capellacollab", "db")) / "config.yaml",
+]
+
+log.debug("Searching for configuration files...")
+for l in locations:
+    log.debug("Looking at location %s", str(l))
+    if l.exists():
+        config = ConfigDict(yaml.safe_load(l.open()))
+        break
+else:
+    log.info("Found no configuration file. Only environment variables will be used.")
