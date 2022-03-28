@@ -1,0 +1,7 @@
+example: 
+  example2: yaml
+  example4: works
+  example3: 
+    - test: 
+        test2: test3
+    - test2
