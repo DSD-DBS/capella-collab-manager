@@ -10,16 +10,17 @@ import kubernetes
 import kubernetes.client.exceptions
 import kubernetes.client.models
 import kubernetes.config
-from t4cclient import config
+from t4cclient.config import config
 from t4cclient.core.operators.abc import Operator
 
 log = logging.getLogger(__name__)
+cfg = config["operators"]["k8s"]
 
 try:
     kubernetes.config.load_incluster_config()
 except kubernetes.config.ConfigException:
     try:
-        kubernetes.config.load_config(context=config.KUBERNETES_CONTEXT)
+        kubernetes.config.load_config(context=cfg["context"])
     except kubernetes.config.ConfigException:
         kubernetes.config.load_kube_config_from_dict(
             {
@@ -29,7 +30,7 @@ except kubernetes.config.ConfigException:
                     {
                         "cluster": {
                             "insecure-skip-tls-verify": True,
-                            "server": config.KUBERNETES_API_URL,
+                            "server": cfg["apiURL"],
                         },
                         "name": "cluster",
                     }
@@ -44,7 +45,7 @@ except kubernetes.config.ConfigException:
                 "users": [
                     {
                         "name": "tokenuser",
-                        "user": {"token": config.KUBERNETES_TOKEN},
+                        "user": {"token": cfg["token"]},
                     }
                 ],
             }
@@ -71,16 +72,17 @@ class KubernetesOperator(Operator):
         repositories: t.List[str],
     ) -> t.Dict[str, t.Any]:
         log.info("Launching a persistent session for user %s", username)
+        t4c_cfg = config["modelsources"]["t4c"]
 
         id = self._generate_id()
         self._create_persistent_volume_claim(username)
         deployment = self._create_deployment(
-            config.PERSISTENT_IMAGE,
+            config["docker"]["images"]["workspaces"]["persistent"],
             id,
             {
-                "T4C_LICENCE_SECRET": config.T4C_LICENCE,
-                "T4C_SERVER_HOST": config.T4C_SERVER_HOST,
-                "T4C_SERVER_PORT": config.T4C_SERVER_PORT,
+                "T4C_LICENCE_SECRET": t4c_cfg["licence"],
+                "T4C_SERVER_HOST": t4c_cfg["host"],
+                "T4C_SERVER_PORT": t4c_cfg["port"],
                 "T4C_REPOSITORIES": ",".join(repositories),
                 "RMT_PASSWORD": password,
             },
@@ -92,15 +94,22 @@ class KubernetesOperator(Operator):
         return self._export_attrs(deployment, service)
 
     def start_readonly_session(
-        self, password: str, git_url: str, git_revision: str, entrypoint: str
+        self,
+        password: str,
+        git_url: str,
+        git_revision: str,
+        entrypoint: str,
+        git_username: str,
+        git_password: str,
     ) -> t.Dict[str, t.Any]:
         id = self._generate_id()
+
         deployment = self._create_deployment(
-            config.READONLY_IMAGE,
+            config["docker"]["images"]["workspaces"]["readonly"],
             id,
             {
-                "GIT_USERNAME": config.GIT_USERNAME,
-                "GIT_PASSWORD": config.GIT_PASSWORD,
+                "GIT_USERNAME": git_username,
+                "GIT_PASSWORD": git_password,
                 "GIT_URL": git_url,
                 "GIT_REVISION": git_revision,
                 "GIT_ENTRYPOINT": entrypoint,
