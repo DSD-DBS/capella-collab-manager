@@ -5,18 +5,21 @@ from functools import lru_cache
 from cachetools import TTLCache
 from fastapi import APIRouter, Depends
 from msal import ConfidentialClientApplication
-from t4cclient.config import (OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET,
-                              OAUTH_ENDPOINT)
+from t4cclient.config import config
 from t4cclient.core.authentication import jwt_bearer
-from t4cclient.core.authentication.schemas import (RefreshTokenRequest,
-                                                   TokenRequest)
+from t4cclient.core.authentication.schemas import RefreshTokenRequest, TokenRequest
 
 router = APIRouter()
+cfg = config["authentication"]["azure"]
 
 
 @lru_cache()
 def ad_session():
-    return ConfidentialClientApplication(OAUTH_CLIENT_ID, client_credential=OAUTH_CLIENT_SECRET, authority=OAUTH_ENDPOINT)
+    return ConfidentialClientApplication(
+        cfg["client"]["id"],
+        client_credential=cfg["client"]["secret"],
+        authority=cfg["connectConfigurationEndpoint"],
+    )
 
 
 # Make this a cache:
@@ -36,11 +39,17 @@ async def get_redirect_url():
 async def api_get_token(body: TokenRequest):
     auth_data = global_session_data[body.state]
     del global_session_data[body.state]
-    token = ad_session().acquire_token_by_auth_code_flow(auth_data, body.dict(), scopes=[])
+    token = ad_session().acquire_token_by_auth_code_flow(
+        auth_data, body.dict(), scopes=[]
+    )
 
     # *Sigh* This is microsoft again. Instead of the access_token, we should use id_token :/
     # https://stackoverflow.com/questions/63195081/how-to-validate-a-jwt-from-azuread-in-python
-    return {"access_token": token["id_token"], "refresh_token": token["refresh_token"], "token_type": token["token_type"]}
+    return {
+        "access_token": token["id_token"],
+        "refresh_token": token["refresh_token"],
+        "token_type": token["token_type"],
+    }
 
 
 @router.put("/tokens", name="Refresh the access_token")
