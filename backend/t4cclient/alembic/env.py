@@ -4,7 +4,7 @@ from logging.config import fileConfig
 os.environ["ALEMBIC_CONTEXT"] = "1"
 
 from sqlalchemy import engine_from_config, pool
-from t4cclient.config import DATABASE_URL
+from t4cclient.config import config as cfg
 
 from alembic import context
 
@@ -14,7 +14,7 @@ config = context.config
 
 # this will overwrite the ini-file sqlalchemy.url path
 # with the path given in the config of the main code
-config.set_main_option("sqlalchemy.url", DATABASE_URL)
+config.set_main_option("sqlalchemy.url", cfg["database"]["url"])
 
 
 # Interpret the config file for Python logging.

@@ -2,7 +2,8 @@ import json
 
 from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
-from t4cclient.config import GUACAMOLE_PUBLIC_URI, USERNAME_CLAIM
+from t4cclient.config import config
+from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, sessions
 from t4cclient.extensions import guacamole
@@ -30,4 +31,7 @@ def create_guacamole_token(
         )
 
     token = guacamole.get_token(session.guacamole_username, session.guacamole_password)
-    return GuacamoleAuthentication(token=json.dumps(token), url=GUACAMOLE_PUBLIC_URI + "/#/")
+    return GuacamoleAuthentication(
+        token=json.dumps(token),
+        url=config["extensions"]["guacamole"]["publicURI"] + "/#/",
+    )

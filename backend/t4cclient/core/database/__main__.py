@@ -7,14 +7,15 @@ from alembic.config import Config
 from alembic.migration import MigrationContext
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from t4cclient import config
+from t4cclient.config import config
 from t4cclient.core.database import Base, repositories, users
 from t4cclient.schemas.repositories.users import Role
 
-engine = create_engine(config.DATABASE_URL)
+DATABASE_URL = config["database"]["url"]
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-LOGGER = logging.getLogger(__file__)
+LOGGER = logging.getLogger(__name__)
 
 
 def migrate_db():
@@ -24,10 +25,10 @@ def migrate_db():
         # Get current revision of Database. If no revision is available, initialize the database.
         alembic_cfg = Config(root_dir / "alembic.ini")
         alembic_cfg.set_main_option("script_location", str(root_dir / "alembic"))
-        alembic_cfg.set_main_option("sqlalchemy.url", config.DATABASE_URL)
+        alembic_cfg.set_main_option("sqlalchemy.url", DATABASE_URL)
         alembic_cfg.attributes["configure_logger"] = False
 
-        engine = create_engine(config.DATABASE_URL)
+        engine = create_engine(DATABASE_URL)
         conn = engine.connect()
 
         context = MigrationContext.configure(conn)
@@ -46,9 +47,9 @@ def migrate_db():
 
 
 def initialize_admin_user():
-    LOGGER.info("Initialized adminuser " + config.INITIAL_ADMIN_USER)
+    LOGGER.info("Initialized adminuser " + config["initial"]["admin"])
     with SessionLocal() as db:
-        users.create_user(db=db, username=config.INITIAL_ADMIN_USER, role=Role.ADMIN)
+        users.create_user(db=db, username=config["initial"]["admin"], role=Role.ADMIN)
 
 
 def initialize_default_repository():

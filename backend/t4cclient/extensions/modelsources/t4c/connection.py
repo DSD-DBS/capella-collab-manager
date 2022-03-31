@@ -5,14 +5,13 @@ from socket import timeout
 
 import requests
 from requests.auth import HTTPBasicAuth
-from t4cclient import config
+from t4cclient.config import config
 from t4cclient.core.credentials import generate_password
 
 log = logging.getLogger(__name__)
+cfg = config["modelsources"]["t4c"]
 
-T4C_BACKEND_AUTHENTICATION = HTTPBasicAuth(
-    config.T4C_SERVER_USERNAME, config.T4C_SERVER_PASSWORD
-)
+T4C_BACKEND_AUTHENTICATION = HTTPBasicAuth(cfg["username"], cfg["password"])
 
 
 def get_t4c_status():
@@ -21,7 +20,7 @@ def get_t4c_status():
         r = requests.get(
             config.T4C_USAGE_API + "/status/json",
             auth=T4C_BACKEND_AUTHENTICATION,
-            timeout=config.REQUESTS_TIMEOUT,
+            timeout=config["requests"]["timeout"],
         )
     except requests.exceptions.Timeout:
         log.info("License server timeout", exc_info=True)
