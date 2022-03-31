@@ -4,4 +4,5 @@ export const environment = {
   privacy: 'https://example.com/privacy',
   imprint: 'https://example.com/imprint',
   authentication: 'AUTHENTICATION_TYPE',
+  usernameAttribute: 'attribute',
 };
