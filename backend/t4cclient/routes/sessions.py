@@ -134,6 +134,8 @@ def request_session(
             git_url=git_model.path,
             git_revision=git_model.revision,
             entrypoint=git_model.entrypoint,
+            git_username=git_model.username,
+            git_password=git_model.password,
         )
 
     guacamole_identifier = guacamole.create_connection(
