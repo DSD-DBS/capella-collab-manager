@@ -4,11 +4,12 @@ import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories as schema_repositories
 from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError, Session
-from t4cclient.config import USERNAME_CLAIM
-from t4cclient.core.authentication.database import (check_username_not_admin,
-                                                    is_admin,
-                                                    verify_repository_role,
-                                                    verify_write_permission)
+from t4cclient.core.authentication.database import (
+    check_username_not_admin,
+    is_admin,
+    verify_repository_role,
+    verify_write_permission,
+)
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, repository_users, users

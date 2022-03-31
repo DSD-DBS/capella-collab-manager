@@ -5,19 +5,23 @@ from importlib import metadata
 import t4cclient.core.services.repositories as repository_service
 from fastapi import APIRouter, Depends
 from requests import Session
-from t4cclient.config import USERNAME_CLAIM
-from t4cclient.core.authentication.database import (is_admin, verify_admin,
-                                                    verify_repository_role)
+from t4cclient.core.authentication.database import (
+    is_admin,
+    verify_admin,
+    verify_repository_role,
+)
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, repositories
 from t4cclient.core.database import users as database_users
 from t4cclient.extensions.modelsources.t4c import connection
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
-from t4cclient.schemas.repositories import (GetRepositoryUserResponse,
-                                            PostRepositoryRequest,
-                                            RepositoryUserPermission,
-                                            RepositoryUserRole)
+from t4cclient.schemas.repositories import (
+    GetRepositoryUserResponse,
+    PostRepositoryRequest,
+    RepositoryUserPermission,
+    RepositoryUserRole,
+)
 
 from . import users as router_users
 

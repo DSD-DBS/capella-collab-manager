@@ -8,9 +8,7 @@ import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories.users as users_schema
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from t4cclient.config import USERNAME_CLAIM
-from t4cclient.core.authentication.database import (is_admin,
-                                                    verify_repository_role)
+from t4cclient.core.authentication.database import is_admin, verify_repository_role
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.credentials import generate_password
@@ -21,10 +19,13 @@ from t4cclient.extensions import guacamole
 from t4cclient.routes import guacamole as guacamole_route
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.repositories import RepositoryUserRole
-from t4cclient.schemas.sessions import (AdvancedSessionResponse,
-                                        GetSessionsResponse,
-                                        GetSessionUsageResponse,
-                                        PostSessionRequest, WorkspaceType)
+from t4cclient.schemas.sessions import (
+    AdvancedSessionResponse,
+    GetSessionsResponse,
+    GetSessionUsageResponse,
+    PostSessionRequest,
+    WorkspaceType,
+)
 from t4cclient.sql_models.sessions import DatabaseSession
 
 router = APIRouter()
