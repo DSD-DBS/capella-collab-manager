@@ -5,7 +5,9 @@
 
 docker:
   # Registry for Docker Images, will be used as prefix for Docker Images
-  registry: docker.io
+  registry: 
+    internal: localhost
+    external: docker.io
 
   images:
     # Docker Image for the Frontend
@@ -89,18 +91,43 @@ guacamole:
   password: guacadmin
 
 backend:
-  oauth:
-    # Endpoint that issues JWT Tokens
-    tokenIssuanceEndpoint: tbd
-    # Endpoint that authorizes the User
-    authorizationEndpoint: tbd
-    client:
-      # OAUTH2 Client ID
-      id: tbd
-      # OAUTH2 Client Secret
-      secret: tbd
-    # Add Username claim
-    usernameClaim: sub 
+  authentication:
+    provider: azure # oauth | azure
+    jwt:
+      usernameClaim: preferred_username
+
+    oauth: 
+      # Only required when using provider oauth
+      endpoints: 
+        # Endpoint that issues JWT Tokens
+        tokenIssuance: tbd
+        # Endpoint that authorizes the User
+        authorization: tbd
+
+      publicKey: |
+        -----BEGIN PUBLIC KEY-----
+        -----END PUBLIC KEY-----
+
+      client: 
+        # OAUTH2 Client ID
+        id: tbd
+        # OAUTH2 Client Secret
+        secret: tbd
+
+      redirectURI: tbd
+
+    azure: 
+      # Only required when using provider oauth
+      authorizationEndpoint: tbd
+      
+      client: 
+        id: tbd
+        secret: tbd
+
+      audience: tbd
+      redirectURI: tbd
+      
+      connectConfigurationEndpoint: tbd
 
   garbageCleaner:
     cron: "*/10 * * * *"

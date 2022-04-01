@@ -62,4 +62,6 @@ spec:
             limits:
               memory: "2Gi"
               cpu: "2"
+          {{ if .Values.cluster.container }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}

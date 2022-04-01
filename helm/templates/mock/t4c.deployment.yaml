@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: {{ .Release.Name }}-t4c-server-mock
-          image: {{ .Values.docker.registry }}/t4c/server/mock
+          image: {{ .Values.docker.registry.internal }}/t4c/server/mock
           ports:
             - name: http
               containerPort: 80
@@ -37,5 +37,7 @@ spec:
             requests:
               cpu: "0.1"
               memory: 20Mi
+          {{ if .Values.cluster.container }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}
 {{ end }}
