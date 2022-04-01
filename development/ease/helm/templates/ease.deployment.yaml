@@ -23,7 +23,7 @@ spec:
             claimName: {{ .Release.Name }}-pyease
       containers:
         - name: {{ .Release.Name }}-backend
-          image: {{ .Values.docker.registry }}/t4c/client/ease/remote/debug
+          image: {{ .Values.docker.registry.internal }}/t4c/client/ease/remote/debug
           envFrom:
             - configMapRef: 
                 name: {{ .Release.Name }}-ease-env
@@ -43,4 +43,6 @@ spec:
             requests:
               cpu: "0.4"
               memory: "1.6Gi"
+          {{ if .Values.cluster.container }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}

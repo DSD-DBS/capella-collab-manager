@@ -21,7 +21,7 @@ spec:
             claimName: {{ .Release.Name }}-volume-backend-postgres
       containers:
         - name: {{ .Release.Name }}-backend-postgres
-          image: postgres:14.1
+          image: {{ .Values.docker.registry.external }}/postgres:14.1
           env:
             - name: PGDATA
               value: /var/lib/postgresql/data/data
@@ -55,5 +55,7 @@ spec:
           volumeMounts:
             - name: {{ .Release.Name }}-data
               mountPath: /var/lib/postgresql/data
+          {{ if .Values.cluster.container }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}
 {{ end }}

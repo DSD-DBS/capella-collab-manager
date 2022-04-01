@@ -14,7 +14,7 @@ spec:
           restartPolicy: "OnFailure"
           containers: 
             - name: {{ .Release.Name }}-garbage-cleaner
-              image: {{ .Values.docker.registry }}{{ .Values.docker.images.backend }}
+              image: {{ .Values.docker.registry.internal }}{{ .Values.docker.images.backend }}
               command: ["python3"]
               args: ["-m", "t4cclient.core.garbage_cleaner"]
               envFrom:
@@ -27,5 +27,7 @@ spec:
                 requests:
                   cpu: "0.25"
                   memory: 10Mi
+              {{ if .Values.cluster.container }}
               {{- toYaml .Values.cluster.containers | nindent 10 }}
+              {{ end }}
 */}}
