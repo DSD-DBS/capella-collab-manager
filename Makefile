@@ -12,12 +12,12 @@ all: backend frontend
 build: backend frontend capella ease
 
 backend:
-	docker build -t t4c/client/backend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/backend backend
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/backend
+	docker build -t t4c/client/backend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/backend backend
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/backend
 
 frontend:
-	docker build -t t4c/client/frontend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/frontend frontend
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/frontend
+	docker build -t t4c/client/frontend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend frontend
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend
 
 capella:
 	docker build -t base capella-dockerimages/base
