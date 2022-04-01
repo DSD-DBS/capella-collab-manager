@@ -6,6 +6,6 @@ WORKDIR /work
 RUN npm install
 RUN npm run build
 
-FROM nginx:latest
+FROM nginxinc/nginx-unprivileged:latest
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /work/dist/t4cclient /usr/share/nginx/html
