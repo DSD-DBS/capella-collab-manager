@@ -6,7 +6,6 @@ metadata:
     id: {{ .Release.Name }}-deployment-backend
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/backend/backend.configmap.yaml") . | sha256sum }}
-    checksum/config_env: {{ include (print $.Template.BasePath "/backend/backend_env.configmap.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
   selector: 
@@ -19,15 +18,12 @@ spec:
     spec:
       serviceAccountName: {{ .Release.Name }}-serviceaccount-backend
       volumes:
-        - name: {{ .Release.Name }}-backend
+        - name: config
           configMap:
             name: {{ .Release.Name }}-backend
       containers:
         - name: {{ .Release.Name }}-backend
-          image: {{ .Values.docker.registry }}{{ .Values.docker.images.backend }}
-          envFrom:
-            - configMapRef: 
-                name: {{ .Release.Name }}-backend-env
+          image: {{ .Values.docker.registry.internal }}{{ .Values.docker.images.backend }}
           ports:
             - name: http
               containerPort: 80
@@ -47,4 +43,10 @@ spec:
             requests:
               cpu: "0.25"
               memory: 20Mi
+          volumeMounts:
+            - name: config
+              mountPath: "/root/.config/capellacollab/config.yaml"
+              readOnly: true
+          {{ if .Values.cluster.container }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}
