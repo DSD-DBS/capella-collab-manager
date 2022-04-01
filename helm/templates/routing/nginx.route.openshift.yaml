@@ -1,0 +1,24 @@
+{{- if eq .Values.cluster.kind "OpenShift" }}
+{{ $frontend := dict "path" "/" "service" "frontend" }}
+{{ $backend := dict "path" "/api/v1" "service" "nginx-clusterip" }}
+{{ $guacamole := dict "path" "/guacamole" "service" "guacamole-guacamole" }}
+{{ $routes := list $frontend $backend $guacamole }}
+{{ range $route := $routes }}
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: {{ $.Release.Name }}-route-{{ get $route "path" }}
+spec:
+  host: "{{ $.Values.cluster.service.fqdn }}"
+  path: {{ get $route "path" }}
+  to:
+    kind: Service
+    name: {{ $.Release.Name }}-{{ get $route "service" }}
+  port:
+    targetPort: 80
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+{{ end }}
+{{ end }}
