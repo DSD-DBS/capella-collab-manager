@@ -7,7 +7,7 @@
 kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
-  name: {{ $.Release.Name }}-route-{{ get $route "path" }}
+  name: {{ $.Release.Name }}-route-{{ get $route "service" }}
 spec:
   host: "{{ $.Values.cluster.service.fqdn }}"
   path: {{ get $route "path" }}
