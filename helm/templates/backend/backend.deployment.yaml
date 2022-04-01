@@ -25,7 +25,6 @@ spec:
       containers:
         - name: {{ .Release.Name }}-backend
           image: {{ .Values.docker.registry }}{{ .Values.docker.images.backend }}
-          imagePullPolicy: {{ .Values.pullPolicy }}
           envFrom:
             - configMapRef: 
                 name: {{ .Release.Name }}-backend-env
@@ -48,5 +47,4 @@ spec:
             requests:
               cpu: "0.25"
               memory: 20Mi
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}

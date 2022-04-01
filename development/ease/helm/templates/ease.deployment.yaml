@@ -24,7 +24,6 @@ spec:
       containers:
         - name: {{ .Release.Name }}-backend
           image: {{ .Values.docker.registry }}/t4c/client/ease/remote/debug
-          imagePullPolicy: "Always"
           envFrom:
             - configMapRef: 
                 name: {{ .Release.Name }}-ease-env
@@ -44,3 +43,4 @@ spec:
             requests:
               cpu: "0.4"
               memory: "1.6Gi"
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
