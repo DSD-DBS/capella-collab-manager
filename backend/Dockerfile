@@ -12,7 +12,6 @@ RUN apt-get update && \
     docker.io \
     kubernetes-client && rm -rf /var/lib/apt/lists/*
 
-RUN pip install fastapi uvicorn
 EXPOSE 80
 COPY . /backend
 
