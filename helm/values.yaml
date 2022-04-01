@@ -11,10 +11,10 @@ docker:
 
   images:
     # Docker Image for the Frontend
-    frontend: /t4c/client/frontend
+    frontend: /capella/collab/frontend
 
     # Docker Image for the Backend
-    backend: /t4c/client/backend
+    backend: /capella/collab/backend
 
     # Docker Image for EASE
     ease: /t4c/client/ease
