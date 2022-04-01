@@ -128,6 +128,7 @@ config = ConfigDict({})
 locations: list[pathlib.Path] = [
     pathlib.Path(__file__).parents[1] / "config" / "config.yaml",
     pathlib.Path(appdirs.user_config_dir("capellacollab", "db")) / "config.yaml",
+    pathlib.Path("/etc/capellacollab/config.yaml"),
 ]
 
 log.debug("Searching for configuration files...")

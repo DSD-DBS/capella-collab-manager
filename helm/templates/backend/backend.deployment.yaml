@@ -45,7 +45,7 @@ spec:
               memory: 20Mi
           volumeMounts:
             - name: config
-              mountPath: "/root/.config/capellacollab/config.yaml"
+              mountPath: /etc/capellacollab
               readOnly: true
           {{ if .Values.cluster.container }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
