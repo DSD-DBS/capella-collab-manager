@@ -22,7 +22,6 @@ spec:
       containers:
         - name: {{ .Release.Name }}-backend-postgres
           image: postgres:14.1
-          imagePullPolicy: {{ .Values.pullPolicy }}
           env:
             - name: PGDATA
               value: /var/lib/postgresql/data/data
@@ -56,6 +55,5 @@ spec:
           volumeMounts:
             - name: {{ .Release.Name }}-data
               mountPath: /var/lib/postgresql/data
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
 {{ end }}

@@ -17,7 +17,6 @@ spec:
               image: {{ .Values.docker.registry }}{{ .Values.docker.images.backend }}
               command: ["python3"]
               args: ["-m", "t4cclient.core.garbage_cleaner"]
-              imagePullPolicy: {{ $.Values.pullPolicy }}
               envFrom:
                 - configMapRef: 
                     name: {{ .Release.Name }}-backend-env
@@ -28,6 +27,5 @@ spec:
                 requests:
                   cpu: "0.25"
                   memory: 10Mi
-              securityContext:
-                {{- toYaml $.Values.securityContext | nindent 16 }}
+              {{- toYaml .Values.cluster.containers | nindent 10 }}
 */}}

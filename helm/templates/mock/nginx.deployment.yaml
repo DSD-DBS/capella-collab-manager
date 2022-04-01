@@ -22,7 +22,6 @@ spec:
       containers:
         - name: {{ .Release.Name }}-mock-nginx
           image: nginxinc/nginx-unprivileged
-          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 8080
@@ -37,6 +36,5 @@ spec:
           volumeMounts:
             - name: {{ .Release.Name }}-mock-nginx
               mountPath: /etc/nginx
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
 {{ end }}

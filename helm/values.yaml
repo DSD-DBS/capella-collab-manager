@@ -162,14 +162,14 @@ git:
 ### KUBERNETES RELATED CONFIGURATION ###
 ########################################
 
-# replicaCount: 1
-
-pullPolicy: Always
-
-imagePullSecrets: []
-
-# SecurityContext for Pods
-securityContext:
-
 # target: local | azure
 target: local
+
+cluster: 
+  kind: Kubernetes # Kubernetes | OpenShift
+
+  containers: 
+    # The following values are appended to each container
+
+  service: 
+    fqdn: capella.example.de

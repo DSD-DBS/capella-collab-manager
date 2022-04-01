@@ -17,7 +17,6 @@ spec:
       containers:
         - name: {{ .Release.Name }}-guacamole-guacamole
           image: guacamole/guacamole:latest
-          imagePullPolicy: {{ .Values.pullPolicy }}
           env:
             - name: GUACD_HOSTNAME
               value: {{ .Release.Name }}-guacamole-guacd
@@ -63,5 +62,4 @@ spec:
             limits:
               memory: "2Gi"
               cpu: "2"
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}

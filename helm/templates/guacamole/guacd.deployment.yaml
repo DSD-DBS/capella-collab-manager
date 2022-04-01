@@ -17,7 +17,6 @@ spec:
       containers:
         - name: {{ .Release.Name }}-guacamole-guacd
           image: guacamole/guacd:latest
-          imagePullPolicy: {{ .Values.pullPolicy }}
           ports:
             - name: guacd
               containerPort: 4822
@@ -39,5 +38,4 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1"
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
