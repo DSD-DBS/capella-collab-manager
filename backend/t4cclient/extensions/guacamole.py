@@ -13,9 +13,9 @@ headers = {"Content-Type": "application/x-www-form-urlencoded"}
 def get_admin_token() -> str:
     r = requests.post(
         cfg["baseURI"] + "/api/tokens",
-        auth=HTTPBasicAuth(config.GUACAMOLE_USERNAME, config.GUACAMOLE_PASSWORD),
+        auth=HTTPBasicAuth(cfg["username"], cfg["password"]),
         headers=headers,
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
     )
     r.raise_for_status()
     return r.json()["authToken"]
@@ -26,7 +26,7 @@ def get_token(username: str, password: str) -> str:
         cfg["baseURI"] + "/api/tokens",
         auth=HTTPBasicAuth(username, password),
         headers=headers,
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
     )
     r.raise_for_status()
     return r.json()
