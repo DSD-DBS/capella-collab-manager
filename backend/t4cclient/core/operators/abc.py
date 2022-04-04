@@ -33,7 +33,13 @@ class Operator(abc.ABC):
     @classmethod
     @abc.abstractmethod
     def start_readonly_session(
-        self, password: str, git_url: str, git_revision: str, entrypoint: str
+        self,
+        password: str,
+        git_url: str,
+        git_revision: str,
+        entrypoint: str,
+        git_username: str,
+        git_password: str,
     ) -> t.Dict[str, t.Any]:
         """Start / Create a session
 
