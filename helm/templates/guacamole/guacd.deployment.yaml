@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: {{ .Release.Name }}-guacamole-guacd
-          image: {{ .Values.docker.guacamole.guacd }}
+          image: {{ .Values.docker.images.guacamole.guacd }}
           ports:
             - name: guacd
               containerPort: 4822
