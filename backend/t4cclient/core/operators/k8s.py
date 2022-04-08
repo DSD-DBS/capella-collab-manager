@@ -347,6 +347,7 @@ class KubernetesOperator(Operator):
                                 },
                                 "imagePullPolicy": "Always",
                                 "volumeMounts": volume_mount,
+                                **cfg["cluster"]["containers"],
                             },
                         ],
                         "volumes": volume,
@@ -388,6 +389,7 @@ class KubernetesOperator(Operator):
                                                 "memory": "1.6Gi",
                                             },
                                         },
+                                        **cfg["cluster"]["containers"],
                                     }
                                 ],
                                 "restartPolicy": "Never",
@@ -463,16 +465,16 @@ class KubernetesOperator(Operator):
         try:
             return self.v1_apps.delete_namespaced_deployment(id, cfg["namespace"])
         except kubernetes.client.exceptions.ApiException:
-            log.exception("Error deleting deployment")
+            log.exception("Error deleting deployment with id: %s", id)
 
     def _delete_cronjob(self, id: str) -> kubernetes.client.V1Status:
         try:
             return self.v1_batch.delete_namespaced_cron_job(id, cfg["namespace"])
         except kubernetes.client.exceptions.ApiException:
-            log.exception("Error deleting cronjob")
+            log.exception("Error deleting cronjob with id: %s", id)
 
     def _delete_service(self, id: str) -> kubernetes.client.V1Status:
         try:
             return self.v1_core.delete_namespaced_service(id, cfg["namespace"])
         except kubernetes.client.exceptions.ApiException:
-            log.exception("Error deleting service")
+            log.exception("Error deleting service with id: %s", id)
