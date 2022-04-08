@@ -12,10 +12,10 @@ RUN apt-get update && \
     docker.io \
     kubernetes-client && rm -rf /var/lib/apt/lists/*
 
-EXPOSE 80
+EXPOSE 8000
 COPY . /backend
 
 WORKDIR /backend
 RUN pip install .
 
-CMD ["uvicorn", "t4cclient.__main__:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "t4cclient.__main__:app", "--host", "0.0.0.0"]

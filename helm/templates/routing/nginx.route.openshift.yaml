@@ -15,7 +15,7 @@ spec:
     kind: Service
     name: {{ $.Release.Name }}-{{ get $route "service" }}
   port:
-    targetPort: 80
+    targetPort: http
   tls:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect

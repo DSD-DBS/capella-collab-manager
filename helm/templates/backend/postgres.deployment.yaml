@@ -10,6 +10,8 @@ spec:
   selector: 
     matchLabels: 
       id: {{ .Release.Name }}-deployment-backend-postgres
+  strategy:
+    type: Recreate
   template:
     metadata: 
       labels: 
