@@ -13,6 +13,9 @@ operators:
     namespace: {{ .Values.backend.k8sSessionNamespace }}
     storageClassName: {{ .Values.backend.storageClassName }}
 
+    cluster:
+      {{- toYaml .Values.cluster.containers | nindent 6 }}
+
 extensions: 
   guacamole: 
     baseURI: "http://{{ .Release.Name }}-guacamole-guacamole:8080/guacamole"

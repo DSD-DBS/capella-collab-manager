@@ -3,12 +3,13 @@ import pathlib
 import shutil
 import typing as t
 
-from t4cclient import config
+from t4cclient.config import config
 from t4cclient.core.operators.abc import Operator
 
 import docker
 
 log = logging.getLogger(__name__)
+cfg = config["operators"]["docker"]
 
 
 class DockerOperator(Operator):
@@ -30,18 +31,19 @@ class DockerOperator(Operator):
             shutil.chown(path_to_workspace, user=1001380000)
 
         con = self.client.containers.run(
-            image=config.PERSISTENT_IMAGE,
+            image=config["docker"]["images"]["workspaces"]["persistent"],
             volumes={
-                f"{config.WORKSPACE_MOUNT_VOLUME}/workspaces/{username}": {
+                cfg["mountVolume"]
+                + f"/workspaces/{username}": {
                     "bind": "/workspace",
                     "mode": "rw",
                 }
             },
-            ports={"3389/tcp": config.DOCKER_PORT_RANGE},
+            ports={"3389/tcp": cfg["portRange"]},
             environment={
                 "RMT_PASSWORD": password,
                 "T4C_REPOSITORIES": ",".join(repositories),
-                "T4C_HOST": config.T4C_SERVER_HOST,
+                "T4C_HOST": cfg["containerHost"],
             },
             detach=True,
         )
@@ -50,17 +52,24 @@ class DockerOperator(Operator):
         )
 
     def start_readonly_session(
-        self, password: str, git_url: str, git_revision: str, entrypoint: str
+        self,
+        password: str,
+        git_url: str,
+        git_revision: str,
+        entrypoint: str,
+        git_username: str,
+        git_password: str,
     ) -> t.Dict[str, t.Any]:
         con = self.client.containers.run(
-            image=config.READONLY_IMAGE,
-            ports={"3389/tcp": config.DOCKER_PORT_RANGE},
+            image=config["docker"]["images"]["workspaces"]["readonly"],
+            ports={"3389/tcp": cfg["portRange"]},
             environment={
-                "RMT_PASSWORD": password,
-                "GIT_USERNAME": config.GIT_USERNAME,
-                "GIT_PASSWORD": config.GIT_PASSWORD,
+                "GIT_USERNAME": git_username,
+                "GIT_PASSWORD": git_password,
                 "GIT_URL": git_url,
                 "GIT_REVISION": git_revision,
+                "GIT_ENTRYPOINT": entrypoint,
+                "RMT_PASSWORD": password,
             },
             detach=True,
         )
@@ -90,5 +99,5 @@ class DockerOperator(Operator):
             ),
             "created_at": container.attrs["Created"],
             "mac": container.attrs["NetworkSettings"]["MacAddress"],
-            "host": config.DOCKER_HOST,
+            "host": cfg["containerHost"],
         }

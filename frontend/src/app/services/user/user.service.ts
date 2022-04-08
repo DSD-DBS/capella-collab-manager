@@ -44,7 +44,7 @@ export class UserService {
   getUsernameFromLocalStorage(): string {
     return JSON.parse(
       atob(this.localStorageService.getValue('access_token').split('.')[1])
-    )[environment.usernameAttribute];
+    )[environment.usernameAttribute].trim();
   }
 
   getOwnActiveSessions(): Observable<Array<Session>> {

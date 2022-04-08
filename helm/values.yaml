@@ -29,6 +29,11 @@ docker:
       # Docker Image for the ReadOnly Workspace
       readonly: /capella/readonly
 
+    guacamole: 
+      # The registry needs to specified here!
+      guacamole: docker.io/guacamole/guacamole
+      guacd: docker.io/guacamole/guacd
+
 general: 
   # Base URL on which the service listens
   host: localhost
