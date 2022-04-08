@@ -4,7 +4,7 @@ CLUSTER_REGISTRY_NAME = myregistry.localhost
 REGISTRY_PORT = 12345
 RELEASE = dev-t4c-manager
 NAMESPACE = t4c-manager
-MY_EMAIL ?= me@example.com
+MY_NAME ?= me@example.com
 EASE_DEBUG_PORT = 3390
 
 all: backend frontend
@@ -56,7 +56,7 @@ helm-deploy:
 		--values helm/values.yaml \
 		$$(test -f secrets.yaml && echo "--values secrets.yaml") \
 		--set docker.registry.internal=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
-		--set database.backend.initialAdmin=$(MY_EMAIL) \
+		--set database.backend.initialAdmin=$(MY_NAME) \
 		--set general.port=8081 \
 		--set t4cServer.apis.usageStats="http://$(RELEASE)-licence-server-mock:80/mock" \
 		--set t4cServer.apis.restAPI="http://$(RELEASE)-t4c-server-mock:80/mock/api/v1.0" \
