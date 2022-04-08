@@ -39,6 +39,9 @@ MY_EMAIL=me@mydomain.com make deploy  # build and deploy the manager app
 kubectl get pods --namespace=t4c-manager  # verify your deployment - components should be in "Running" state
 ```
 
+Important! If you use Windows and the Git Bash to execute the commands, you have to set the environment variable: `MSYS_NO_PATHCONV=1`. 
+Otherwise the commands will break with UNIX paths, because the Git Bash tries to add a Windows path prefix. 
+
 TODO: it fails at this point, need to find a way to fix it
 TODO
 
