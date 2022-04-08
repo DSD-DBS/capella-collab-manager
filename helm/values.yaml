@@ -164,7 +164,7 @@ t4cServer:
   # IPv4 Address of the T4C Server
   host: localhost
   port: 2036
-  licenseKey: 
+  licenseKey: tbd
 
 jenkins:
   # Admin Credentials for Jenkins Instance
@@ -205,3 +205,10 @@ cluster:
 
   service: 
     fqdn: capella.example.de
+
+  proxies: 
+    # You can set or unset proxies here, which are used for the internal communication in the cluster
+    internal: 
+      # Allowed keys: http, https
+      http: ""
+      https: ""
