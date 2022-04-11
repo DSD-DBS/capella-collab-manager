@@ -12,6 +12,7 @@ database:
 		postgres
 
 app: 
+	export REQUESTS_CA_BUNDLE=$$(pwd)/../certs/localhost.crt && \
 	$(VENV)/uvicorn t4cclient.__main__:app --reload
 
 dev: database app
