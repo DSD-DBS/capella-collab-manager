@@ -45,6 +45,7 @@ mock:
 	docker build -t t4c/licence/mock -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock mocks/licence-server
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock
 
+capella-dockerimages: capella t4c-client readonly ease
 deploy: backend frontend capella t4c-client readonly ease mock helm-deploy
 
 helm-deploy: 
