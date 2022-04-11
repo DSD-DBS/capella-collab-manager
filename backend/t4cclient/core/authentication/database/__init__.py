@@ -84,3 +84,16 @@ def check_write_permission(
     if not user:
         return get_user(db=db, username=get_username(token)).role == Role.ADMIN
     return RepositoryUserPermission.WRITE == user.permission
+
+
+def check_username_not_in_repository(
+    repository: str,
+    username: str,
+    db=Depends(get_db),
+):
+    user = repository_users.get_user_of_repository(db, repository, username)
+    if user:
+        raise HTTPException(
+            status_code=409,
+            detail="The user already exists for this repository.",
+        )
