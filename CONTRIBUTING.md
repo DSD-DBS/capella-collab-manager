@@ -83,10 +83,10 @@ Requirements:
 
 Run the following steps:
 1. Navigate to the `frontend` folder
-2. Optional: If you like use your custom favicon, please copy it to `src/favicon.ico`
-3. Optional: If you like use your custom theme, replace the file `src/custom-theme.scss`. 
+2. Optional: If you like to use your custom favicon, please copy it to `src/favicon.ico`
+3. Optional: If you like to use your custom theme, replace the file `src/custom-theme.scss`. 
    You can generate custom themes [here](http://mcg.mbitson.com/)
-4. Copy the file `src/environment.ts` to `environment.dev.ts` and adjust the values.
+4. Copy the file `src/environment.ts` to `src/environment.dev.ts` and adjust the values.
 5. Run the frontend with: 
    ```sh
    make dev
