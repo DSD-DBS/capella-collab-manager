@@ -75,8 +75,8 @@ authentication:
 
 modelsources: 
   t4c: 
-    usageAPI: http://localhost:8086
-    restAPI: http://localhost:8090/api/v1.0
+    usageAPI: http://localhost:8081/mock
+    restAPI: http://localhost:8081/mock/api/v1.0
 
     username: sampleuser
     password: samplepassword
