@@ -23,6 +23,9 @@ Please follow the [RESTful web API design best practises](https://docs.microsoft
 
 We recommend to get started with the [local k8d deployment](README.md).
 
+## Capella Dockerimages
+Please follow the [README of the Capella Dockerimages repository](/../../../capella-dockerimages/blob/main/README.md). 
+
 ## Backend
 
 Requirements:
