@@ -5,7 +5,9 @@ from t4cclient.config import config
 
 cfg = config["authentication"]["oauth"]
 
-auth_session = OAuth2Session(cfg["client"]["id"], redirect_uri=cfg["redirectURI"])
+auth_session = OAuth2Session(
+    cfg["client"]["id"], redirect_uri=cfg["redirectURI"], scope="openid"
+)
 
 
 def get_auth_redirect_url() -> t.Dict[str, str]:
