@@ -25,6 +25,10 @@ We recommend to get started with the [local k8d deployment](README.md).
 
 ## Capella Dockerimages
 Please follow the [README of the Capella Dockerimages repository](/../../../capella-dockerimages/blob/main/README.md). 
+When all files are in the right place, you can execute the following command to build and push the Dockerimages. 
+```
+make capella-dockerimages
+```
 
 ## Backend
 
