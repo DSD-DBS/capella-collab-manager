@@ -1,5 +1,6 @@
 import typing as t
 
+# from backend.t4cclient.core.authentication.database import check_username_exists
 import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories as schema_repositories
 from fastapi import APIRouter, Depends, HTTPException
@@ -9,6 +10,7 @@ from t4cclient.core.authentication.database import (
     is_admin,
     verify_repository_role,
     verify_write_permission,
+    check_username_not_in_repository,
 )
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
@@ -46,6 +48,9 @@ def add_user_to_repository(
     verify_repository_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
+
+    check_username_not_in_repository(project, body.username, db=db)
+
     users.find_or_create_user(db, body.username)
     check_username_not_admin(body.username, db)
     if body.role == schema_repositories.RepositoryUserRole.MANAGER:
