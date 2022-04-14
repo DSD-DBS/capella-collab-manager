@@ -338,7 +338,7 @@ class KubernetesOperator(Operator):
                                 "image": image,
                                 "ports": [{"containerPort": 3389, "protocol": "TCP"}],
                                 "env": [
-                                    {"name": key, "value": value}
+                                    {"name": key, "value": str(value)}
                                     for key, value in environment.items()
                                 ],
                                 "resources": {
@@ -438,7 +438,7 @@ class KubernetesOperator(Operator):
                 "name": self._get_claim_name(username),
             },
             "spec": {
-                "accessModes": ["ReadWriteMany"],
+                "accessModes": [cfg["storageAccessMode"]],
                 "storageClassName": cfg["storageClassName"],
                 "resources": {"requests": {"storage": "20Gi"}},
             },
