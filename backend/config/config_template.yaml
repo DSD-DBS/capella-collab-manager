@@ -26,6 +26,7 @@ operators:
     token:  # Only required when no kubectl context is available
 
     storageClassName: local-path
+    storageAccessMode: ReadWriteOnce
 
     cluster: 
       containers: 

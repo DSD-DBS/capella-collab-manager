@@ -438,7 +438,7 @@ class KubernetesOperator(Operator):
                 "name": self._get_claim_name(username),
             },
             "spec": {
-                "accessModes": ["ReadWriteMany"],
+                "accessModes": [cfg["storageAccessMode"]],
                 "storageClassName": cfg["storageClassName"],
                 "resources": {"requests": {"storage": "20Gi"}},
             },
