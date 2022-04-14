@@ -60,7 +60,7 @@ authentication:
       id: 
       secret: 
 
-    redirectURI: 
+    redirectURI: http://localhost:4200/oauth2/callback
     
 
   azure: 
