@@ -15,7 +15,8 @@ operators:
     storageAccessMode: {{ .Values.backend.storageAccessMode }}
 
     cluster:
-      {{- toYaml .Values.cluster.containers | nindent 6 }}
+      containers: 
+        {{- toYaml .Values.cluster.containers | nindent 8 }}
 
 extensions: 
   guacamole: 
