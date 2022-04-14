@@ -30,6 +30,28 @@ When all files are in the right place, you can execute the following command to 
 make capella-dockerimages
 ```
 
+## OAuth Server
+We use OAuth2 as authentication protocol for our application. Therefore we need an OAuth2 server.
+For local development, we have an OAuth mock that needs to be started first.
+
+1. Navigate to the `mocks/oauth` directory.
+2. The application requires `https` for requests to the the oauth server. 
+   This means that we need a certificate for localhost. We therefore require the files `projectroot/certs/localhost.cert` and `projectroot/certs/localhost.p12`.
+
+   You can easily create them with
+   ```sh
+   make ssl
+   ```
+3. Import the certificate to your local certificate store. 
+   
+   Note for *Linux*-Users: If you run `make dev`, it automatically uses the certificates in the `projectroot/certs` directory.
+   Note for *Windows*-Users: Python doesn't read the certificates from the Windows certmgr. You have to add an environment variable `REQUESTS_CA_BUNDLE` with the path to the `localhost.crt` file.
+4. Run the OAuth2-Mock-Server with: 
+   ```sh
+   make start
+   ```
+5. Verify that the server runs, e.g. by navigating to [Well Known](https://localhost:8080/default/.well-known/openid-configuration)
+
 ## Backend
 
 Requirements:
