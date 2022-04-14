@@ -7,3 +7,4 @@
 /local
 .mypy_cache
 deployments/*
+certs/*

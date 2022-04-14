@@ -47,8 +47,11 @@ authentication:
   oauth: 
     # Only required when using provider oauth
     endpoints: 
+      wellKnown: https://localhost:8080/default/.well-known/openid-configuration
       tokenIssuance: 
       authorization: 
+
+    audience: default
 
     publicKey: |
       
@@ -57,7 +60,7 @@ authentication:
       id: 
       secret: 
 
-    redirectURI: 
+    redirectURI: http://localhost:4200/oauth2/callback
     
 
   azure: 
