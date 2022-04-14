@@ -3,8 +3,8 @@ CERTS_DIR = ../../certs/
 ssl: 
 	openssl req -x509 -out $(CERTS_DIR)localhost.crt -keyout $(CERTS_DIR)localhost.key \
 	-newkey rsa:2048 -nodes -sha256 \
-	-subj '/CN=localhost' -extensions EXT -config <( \
-	printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth");
+	-subj '/CN=localhost' \
+	-addext "subjectAltName = DNS:localhost";
 	openssl pkcs12 -export -in $(CERTS_DIR)localhost.crt -inkey $(CERTS_DIR)localhost.key -out $(CERTS_DIR)localhost.p12 -passout "pass:"
 
 start: 
