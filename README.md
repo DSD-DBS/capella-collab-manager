@@ -46,6 +46,12 @@ Otherwise the commands will break with UNIX paths, because the Git Bash tries to
 
 If something goes wrong, please open an issue on Github.
 
+To clean up the environment, simply run:
+
+```
+make delete-cluster
+```
+
 ## Deployment
 
 ## Running on a cluster
