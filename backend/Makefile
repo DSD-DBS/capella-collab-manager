@@ -11,10 +11,10 @@ database:
 		-e POSTGRES_DB=dev \
 		postgres
 
-python: 
+app: 
 	$(VENV)/uvicorn t4cclient.__main__:app --reload
 
-dev: database python
+dev: database app
 	
 cleanup: 
 	docker stop capella-collab-postgres
