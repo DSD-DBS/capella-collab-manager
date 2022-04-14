@@ -338,7 +338,7 @@ class KubernetesOperator(Operator):
                                 "image": image,
                                 "ports": [{"containerPort": 3389, "protocol": "TCP"}],
                                 "env": [
-                                    {"name": key, "value": value}
+                                    {"name": key, "value": str(value)}
                                     for key, value in environment.items()
                                 ],
                                 "resources": {
