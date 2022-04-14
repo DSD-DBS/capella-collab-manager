@@ -12,6 +12,7 @@ operators:
   k8s:
     namespace: {{ .Values.backend.k8sSessionNamespace }}
     storageClassName: {{ .Values.backend.storageClassName }}
+    storageAccessMode: {{ .Values.backend.storageAccessMode }}
 
     cluster:
       {{- toYaml .Values.cluster.containers | nindent 6 }}
