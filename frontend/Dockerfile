@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=node:14
+ARG BASE_IMAGE=node:17
 FROM $BASE_IMAGE as build
 
 COPY ./ /work/
