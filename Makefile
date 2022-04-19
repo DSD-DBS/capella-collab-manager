@@ -45,10 +45,14 @@ mock:
 	docker build -t t4c/licence/mock -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock mocks/licence-server
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock
 
-deploy: backend frontend capella t4c-client readonly ease mock helm-deploy
+deploy: backend frontend capella mock helm-deploy
+
+# Deploy with full T4C support:
+deploy-t4c: backend frontend capella t4c-client readonly-ease mock helm-deploy
 
 helm-deploy: 
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
+	kubectl create namespace t4c-sessions || true
 	helm upgrade --install \
 		--kube-context k3d-$(CLUSTER_NAME) \
 		--create-namespace \
@@ -64,6 +68,12 @@ helm-deploy:
 		--debug \
 		$(RELEASE) ./helm
 	$(MAKE) .rollout .provision-guacamole .provision-backend
+
+helm-cleanup:
+	helm uninstall \
+		--kube-context k3d-$(CLUSTER_NAME) \
+		--namespace $(NAMESPACE) \
+		$(RELEASE) ./helm
 
 clear-backend-db: 
 	kubectl delete deployment -n t4c-manager $(RELEASE)-backend-postgres
@@ -109,6 +119,7 @@ dev: dev-frontend dev-backend
 	
 dev-frontend: 
 	$(MAKE) -C frontend dev
+
 dev-backend: 
 	$(MAKE) -C backend dev
 
