@@ -9,7 +9,9 @@ EASE_DEBUG_PORT = 3390
 
 all: backend frontend
 
-build: backend frontend capella ease
+build: backend frontend capella
+
+build-all: build ease
 
 backend:
 	docker build -t t4c/client/backend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/backend backend
@@ -75,7 +77,7 @@ helm-cleanup:
 	helm uninstall \
 		--kube-context k3d-$(CLUSTER_NAME) \
 		--namespace $(NAMESPACE) \
-		$(RELEASE) ./helm
+		$(RELEASE)
 
 clear-backend-db: 
 	kubectl delete deployment -n t4c-manager $(RELEASE)-backend-postgres
