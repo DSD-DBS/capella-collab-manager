@@ -57,9 +57,9 @@ If all goes well, you should find Capella-collab-manager running on http://local
 
 If something goes wrong, please open an issue on Github.
 
-### Limitations
+### Integration with Identity and Access Management (IAM)
 
-* Only works with Azure AD as authentication backend, create a small file `secrets.yaml` in this folder:
+* The service works best with Azure AD as authentication backend, create a small file `secrets.yaml` in this folder:
 
   ```yaml
   backend:
@@ -76,6 +76,7 @@ If something goes wrong, please open an issue on Github.
 
 * When launching a Guacamole container, the local address (when testing on K3D) is wrong.
   Change the URL to point to port 8081.
+* Generic OAuth2 should work as well but some tuning might be needed.
 
 ## Running on a cluster
 
@@ -84,7 +85,7 @@ If something goes wrong, please open an issue on Github.
 
 ## TeamForCapella integration
 
-TODO
+For environments where TeamForCapella (commercial product of Obeo) is available it is possible to integrate such service with this management app. The integration requires the TeamForCapella backend to have the REST API feature enabled (in 5.0 it was still experimental). The TeamForCapella client then gets "baked" into the t4c-remote session image, however without the license secret. License secret is injected into container at runtime. Additionally, monitoring of available / consumed licenses is available but reqires the license server to be run with monitoring feature enabled.
 
 # How it works
 
@@ -102,4 +103,4 @@ Sessions are created in a separate namespace.
 
 # Contributing
 
-We'd love to see your bug reports and improvement suggestions! Please give us your feedback.
+We'd love to see your bug reports and improvement suggestions! Please give us your feedback. If you want to share some code - please have a look at CONTRIBUTING.md
