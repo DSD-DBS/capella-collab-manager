@@ -69,12 +69,6 @@ helm-deploy:
 		$(RELEASE) ./helm
 	$(MAKE) .rollout .provision-guacamole .provision-backend
 
-helm-cleanup:
-	helm uninstall \
-		--kube-context k3d-$(CLUSTER_NAME) \
-		--namespace $(NAMESPACE) \
-		$(RELEASE) ./helm
-
 clear-backend-db: 
 	kubectl delete deployment -n t4c-manager $(RELEASE)-backend-postgres
 	kubectl delete pvc -n t4c-manager $(RELEASE)-volume-backend-postgres
