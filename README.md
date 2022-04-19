@@ -53,6 +53,8 @@ kubectl get pods --namespace=t4c-manager  # verify your deployment - components 
 
 Replace `me@domain.com` with your e-mail address. An administrator account will be made for this user.
 
+If all goes well, you should find Capella-collab-manager running on http://localhost:8081/.
+
 If something goes wrong, please open an issue on Github.
 
 ### Limitations
@@ -86,7 +88,17 @@ TODO
 
 # How it works
 
-Here comes a brief intro into architecture of this thing (TODO)
+![Capella Collab Manager architecture](doc/architecture.png)
+
+The Capella Collaboration Manager consists of a couple of components:
+
+* A frontend - what you see in the browser
+* A backend web service - for managing users and sessions
+* [Guacamole](https://guacamole.apache.org/), to expose the sessions via the browser
+* Databases, for state persistence.
+* Optional: A Teams4Capella server
+
+Sessions are created in a separate namespace.
 
 # Contributing
 
