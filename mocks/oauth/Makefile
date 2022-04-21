@@ -1,6 +1,7 @@
 CERTS_DIR = ../../certs/
 
 ssl: 
+	export MSYS_NO_PATHCONV=1; \
 	openssl req -x509 -out $(CERTS_DIR)localhost.crt -keyout $(CERTS_DIR)localhost.key \
 	-newkey rsa:2048 -nodes -sha256 \
 	-subj '/CN=localhost' \
@@ -8,6 +9,7 @@ ssl:
 	openssl pkcs12 -export -in $(CERTS_DIR)localhost.crt -inkey $(CERTS_DIR)localhost.key -out $(CERTS_DIR)localhost.p12 -passout "pass:"
 
 start: 
+	export MSYS_NO_PATHCONV=1; \
 	docker start oauth-mock || \
 	docker run \
 		--name oauth-mock \
