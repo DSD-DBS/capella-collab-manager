@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

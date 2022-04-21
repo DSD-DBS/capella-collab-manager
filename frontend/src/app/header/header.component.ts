@@ -1,3 +1,6 @@
+// Copyright DB Netz AG and the capella-collab-manager contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { Component, Input, OnInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 import { LocalStorageService } from '../auth/local-storage/local-storage.service';

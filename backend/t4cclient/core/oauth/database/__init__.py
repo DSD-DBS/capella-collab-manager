@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 from fastapi import Depends, HTTPException
 from sqlalchemy import true
 from t4cclient.config import USERNAME_CLAIM
