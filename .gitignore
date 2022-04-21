@@ -8,3 +8,7 @@
 .mypy_cache
 deployments/*
 certs/*
+/helm/config/conf.json
+/helm/config/localhost.crt
+/helm/config/localhost.key
+/helm/config/localhost.p12
