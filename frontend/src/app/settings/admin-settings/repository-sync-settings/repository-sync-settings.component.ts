@@ -1,3 +1,6 @@
+// Copyright DB Netz AG and the capella-collab-manager contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { Component, OnInit } from '@angular/core';
 import { RepositoryService } from 'src/app/services/repository/repository.service';
 import { T4CSyncService } from 'src/app/services/t4c-sync/t4-csync.service';

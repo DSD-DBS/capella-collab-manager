@@ -1,3 +1,6 @@
+// Copyright DB Netz AG and the capella-collab-manager contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { Component, OnInit } from '@angular/core';
 import { SessionsUsage } from 'src/app/schemes';
 import { SessionService } from 'src/app/services/session/session.service';

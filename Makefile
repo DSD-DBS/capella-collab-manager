@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 CLUSTER_NAME = mycluster
 LOCAL_REGISTRY_NAME = localhost
 CLUSTER_REGISTRY_NAME = myregistry.localhost

@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 import t4cclient.extensions.backups.jenkins.models as jenkins_schema
 from sqlalchemy.orm import Session
 

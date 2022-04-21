@@ -1,3 +1,6 @@
+// Copyright DB Netz AG and the capella-collab-manager contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
