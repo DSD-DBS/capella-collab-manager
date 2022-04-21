@@ -17,10 +17,12 @@ spec:
       labels: 
         id: {{ .Release.Name }}-deployment-backend-postgres
     spec:
+      {{ if ne .Values.target "local" }}
       volumes:
         - name: {{ .Release.Name }}-data
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-volume-backend-postgres
+      {{ end }}
       containers:
         - name: {{ .Release.Name }}-backend-postgres
           image: {{ .Values.docker.registry.external }}/postgres:14.1
@@ -54,9 +56,11 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1"
+          {{ if ne .Values.target "local" }}
           volumeMounts:
             - name: {{ .Release.Name }}-data
               mountPath: /var/lib/postgresql/data
+          {{ end }}
           {{ if .Values.cluster.container }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
