@@ -36,6 +36,9 @@ authentication:
     endpoints: 
       tokenIssuance: "{{ .Values.backend.authentication.oauth.endpoints.tokenIssuance }}"
       authorization: "{{ .Values.backend.authentication.oauth.endpoints.authorization }}"
+      wellKnown: "{{ .Values.backend.authentication.oauth.endpoints.wellKnown }}"
+
+    audience: "{{ .Values.backend.authentication.oauth.audience }}"
 
     publicKey: |
       {{- .Values.backend.authentication.oauth.publicKey | nindent 6}}
