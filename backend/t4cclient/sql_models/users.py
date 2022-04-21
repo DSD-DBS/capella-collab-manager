@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 from sqlalchemy import Column, Enum, Integer, String
 from sqlalchemy.orm import relationship
 from t4cclient.core.database import Base
