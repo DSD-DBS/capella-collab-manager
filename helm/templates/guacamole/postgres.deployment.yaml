@@ -18,9 +18,11 @@ spec:
         id: {{ .Release.Name }}-deployment-guacamole-postgres
     spec:
       volumes:
+        {{ if ne .Values.target "local" }}
         - name: {{ .Release.Name }}-data
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-volume-guacamole-postgres
+        {{ end }}
         - name: {{ .Release.Name }}-initsql
           configMap:
             name: {{ .Release.Name }}-configmap-guacamole-postgres
@@ -62,8 +64,10 @@ spec:
               memory: "1Gi"
               cpu: "1"
           volumeMounts:
+            {{ if ne .Values.target "local" }}
             - name: {{ .Release.Name }}-data
               mountPath: /var/lib/postgresql/data
+            {{ end }}
             - name: {{ .Release.Name }}-initsql
               mountPath: /docker-entrypoint-initdb.d
           {{ if .Values.cluster.container }}
