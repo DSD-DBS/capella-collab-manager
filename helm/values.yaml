@@ -105,17 +105,18 @@ backend:
   authentication:
     provider: oauth # oauth | azure
     jwt:
-      usernameClaim: sub
+      usernameClaim: sub # azure: preferred_username
 
     oauth: 
       # Only required when using provider oauth
       endpoints: 
         # Endpoint that issues JWT Tokens
-        tokenIssuance: https://localhost:8080/mock/oauth/default/token
+        tokenIssuance: na
         # Endpoint that authorizes the User
-        authorization: https://localhost:8080/mock/oauth/default/authorize
-        # wellKnown Endpoint
-        wellKnown: https://localhost:8081/mock/oauth/default/.well-known/openid-configuration
+        authorization: na
+        # Or, define a wellKnown Endpoint and read token/auth urls from there:
+        wellKnown: https://dev-t4c-manager-oauth-mock:8080/default/.well-known/openid-configuration
+
 
       audience: default
 

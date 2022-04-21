@@ -1,6 +1,8 @@
 CERTS_DIR = ../../certs/
 
-ssl: 
+ssl: $(CERTS_DIR)localhost.p12
+
+$(CERTS_DIR)localhost.p12:
 	export MSYS_NO_PATHCONV=1; \
 	openssl req -x509 -out $(CERTS_DIR)localhost.crt -keyout $(CERTS_DIR)localhost.key \
 	-newkey rsa:2048 -nodes -sha256 \
