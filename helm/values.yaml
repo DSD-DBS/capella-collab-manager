@@ -97,17 +97,21 @@ guacamole:
 
 backend:
   authentication:
-    provider: azure # oauth | azure
+    provider: oauth # oauth | azure
     jwt:
-      usernameClaim: preferred_username
+      usernameClaim: sub
 
     oauth: 
       # Only required when using provider oauth
       endpoints: 
         # Endpoint that issues JWT Tokens
-        tokenIssuance: tbd
+        tokenIssuance: https://localhost:8080/mock/oauth/default/token
         # Endpoint that authorizes the User
-        authorization: tbd
+        authorization: https://localhost:8080/mock/oauth/default/authorize
+        # wellKnown Endpoint
+        wellKnown: https://localhost:8081/mock/oauth/default/.well-known/openid-configuration
+
+      audience: default
 
       publicKey: |
         -----BEGIN PUBLIC KEY-----
@@ -119,7 +123,7 @@ backend:
         # OAUTH2 Client Secret
         secret: tbd
 
-      redirectURI: tbd
+      redirectURI: http://localhost:8081/oauth2/callback
 
     azure: 
       # Only required when using provider oauth
