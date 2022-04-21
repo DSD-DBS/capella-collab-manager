@@ -47,9 +47,15 @@ mock:
 	docker build -t t4c/licence/mock -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock mocks/licence-server
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock
 
+oauth-mock: helm/config/localhost.p12
+	cp mocks/oauth/conf.json helm/config
+
+helm/config/localhost.p12:
+	$(MAKE) -C mocks/oauth CERTS_DIR=../../helm/config/
+	
 capella-dockerimages: capella t4c-client readonly ease
 
-deploy: backend frontend capella mock helm-deploy
+deploy: oauth-mock backend frontend capella mock helm-deploy
 
 # Deploy with full T4C support:
 deploy-t4c: backend frontend capella t4c-client readonly-ease mock helm-deploy
@@ -73,13 +79,7 @@ helm-deploy:
 		$(RELEASE) ./helm
 	$(MAKE) .rollout .provision-guacamole .provision-backend
 
-helm-cleanup:
-	helm uninstall \
-		--kube-context k3d-$(CLUSTER_NAME) \
-		--namespace $(NAMESPACE) \
-		$(RELEASE)
-
-clear-backend-db:
+clear-backend-db: 
 	kubectl delete deployment -n t4c-manager $(RELEASE)-backend-postgres
 	kubectl delete pvc -n t4c-manager $(RELEASE)-volume-backend-postgres
 	$(MAKE) helm-deploy
