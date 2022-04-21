@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 {{ if .Values.database.deploy }}
 apiVersion: apps/v1
 kind: Deployment

@@ -1,0 +1,39 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+repos:
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.1.13
+    hooks:
+      - id: insert-license
+        name: Insert Licence for Python, YAML and Dockerfiles
+        files: '\.py$|\.yaml$|^Dockerfile$|^Makefile$'
+        args:
+          - --license-filepath
+          - license_header.txt
+          - --comment-style
+          - '#'
+      - id: insert-license
+        name: Insert Licence for HTML files
+        files: '\.html$'
+        args:
+          - --license-filepath
+          - license_header.txt
+          - --comment-style
+          - '<!--| ~| -->'
+      - id: insert-license
+        name: Insert Licence for Typescript files
+        files: '\.ts$'
+        args:
+          - --license-filepath
+          - license_header.txt
+          - --comment-style
+          - '//'
+      - id: insert-license
+        name: Insert Licence for CSS files
+        files: '\.css$'
+        args:
+          - --license-filepath
+          - license_header.txt
+          - --comment-style
+          - '/*| *| */'

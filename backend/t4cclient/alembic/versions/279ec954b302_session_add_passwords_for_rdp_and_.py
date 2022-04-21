@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 """session: add passwords for rdp and guacamole
 
 Revision ID: 279ec954b302

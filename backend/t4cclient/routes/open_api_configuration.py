@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 AUTHENTICATION_RESPONSES = {
     401: {
         "description": "Unauthorized",
