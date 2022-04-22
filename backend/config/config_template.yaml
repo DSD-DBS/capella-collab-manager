@@ -34,8 +34,8 @@ operators:
 
 extensions: 
   guacamole: 
-    baseURI: http://localhost:8081/guacamole
-    publicURI: http://localhost:8081/guacamole
+    baseURI: http://localhost:8080/guacamole
+    publicURI: http://localhost:8080/guacamole
     
     username: guacadmin
     password: guacadmin
@@ -81,8 +81,8 @@ authentication:
 
 modelsources: 
   t4c: 
-    usageAPI: http://localhost:8081/mock
-    restAPI: http://localhost:8081/mock/api/v1.0
+    usageAPI: http://localhost:8080/mock
+    restAPI: http://localhost:8080/mock/api/v1.0
 
     username: sampleuser
     password: samplepassword
