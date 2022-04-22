@@ -117,6 +117,9 @@ backend:
         -----BEGIN PUBLIC KEY-----
         -----END PUBLIC KEY-----
 
+      scopes: 
+        - openid
+
       client: 
         # OAUTH2 Client ID
         id: tbd
@@ -209,10 +212,3 @@ cluster:
 
   service: 
     fqdn: capella.example.de
-
-  proxies: 
-    # You can set or unset proxies here, which are used for the internal communication in the cluster
-    internal: 
-      # Allowed keys: http, https
-      http: ""
-      https: ""

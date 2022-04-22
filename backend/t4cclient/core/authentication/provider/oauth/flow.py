@@ -6,8 +6,12 @@ from t4cclient.config import config
 
 cfg = config["authentication"]["oauth"]
 
+
+auth_args = {}
+if cfg["scopes"]:
+    auth_args["scopes"] = cfg["scopes"]
 auth_session = OAuth2Session(
-    cfg["client"]["id"], redirect_uri=cfg["redirectURI"], scope="openid"
+    cfg["client"]["id"], redirect_uri=cfg["redirectURI"], **auth_args
 )
 
 
