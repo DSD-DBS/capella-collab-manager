@@ -117,7 +117,6 @@ backend:
         # Or, define a wellKnown Endpoint and read token/auth urls from there:
         wellKnown: https://dev-t4c-manager-oauth-mock:8080/default/.well-known/openid-configuration
 
-
       audience: default
 
       publicKey: |

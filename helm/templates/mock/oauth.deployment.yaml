@@ -30,10 +30,12 @@ spec:
           #   httpGet:
           #     path: /isalive
           #     port: https
+          #     scheme: HTTPS
           # readinessProbe: 
           #   httpGet:
           #     path: /isalive
           #     port: https
+          #     scheme: HTTPS
           volumeMounts:
             - name: {{ .Release.Name }}-oauth-mock
               mountPath: /opt
