@@ -23,14 +23,13 @@ spec:
         - name: {{ .Release.Name }}-oauth-mock
           image: ghcr.io/navikt/mock-oauth2-server:0.4.4
           ports:
-            - name: https
+            - name: http
               containerPort: 8080
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /isalive
-              port: https
-              scheme: HTTPS
+              port: http
           readinessProbe: 
             tcpSocket:
               port: 8080
@@ -39,7 +38,7 @@ spec:
               mountPath: /opt
           env:
             - name: JSON_CONFIG_PATH
-              value: /opt/conf.json
+              value: /opt/oauth.json
           resources:
             limits:
               cpu: "0.5"

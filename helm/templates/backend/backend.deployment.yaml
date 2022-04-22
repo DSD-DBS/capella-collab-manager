@@ -32,6 +32,8 @@ spec:
           env:
             - name: REQUESTS_CA_BUNDLE
               value: /etc/capellacollab/oauth.crt
+            - name: OAUTHLIB_INSECURE_TRANSPORT
+              value: "1"
           {{ end }}
           livenessProbe:
             httpGet:
