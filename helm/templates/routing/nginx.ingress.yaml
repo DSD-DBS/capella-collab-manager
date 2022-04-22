@@ -39,6 +39,13 @@ spec:
                 port:
                   number: 8080
           {{ if eq .Values.target "local" }}
+          - path: /mock/oauth
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-oauth-mock
+                port:
+                  number: 8080
           - path: /mock
             pathType: Prefix
             backend:

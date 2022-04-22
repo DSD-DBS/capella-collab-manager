@@ -8,3 +8,7 @@ metadata:
 data:
   config.yaml: |
     {{- tpl (.Files.Get "config/backend.yaml") . | nindent 4 }}
+  {{ if eq .Values.target "local" }}
+  oauth.crt: |-
+    {{ .Files.Get "config/oauth.crt" | nindent 4 }}
+  {{ end }}

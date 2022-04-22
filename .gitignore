@@ -9,6 +9,6 @@
 deployments/*
 certs/*
 /helm/config/conf.json
-/helm/config/localhost.crt
-/helm/config/localhost.key
-/helm/config/localhost.p12
+/helm/config/oauth.crt
+/helm/config/oauth.key
+/helm/config/oauth.p12
