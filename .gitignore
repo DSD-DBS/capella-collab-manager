@@ -8,7 +8,3 @@
 .mypy_cache
 deployments/*
 certs/*
-/helm/config/conf.json
-/helm/config/oauth.crt
-/helm/config/oauth.key
-/helm/config/oauth.p12
