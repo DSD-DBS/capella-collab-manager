@@ -9,7 +9,7 @@ cfg = config["authentication"]["oauth"]
 
 auth_args = {}
 if cfg["scopes"]:
-    auth_args["scopes"] = cfg["scopes"]
+    auth_args["scope"] = cfg["scopes"]
 auth_session = OAuth2Session(
     cfg["client"]["id"], redirect_uri=cfg["redirectURI"], **auth_args
 )
