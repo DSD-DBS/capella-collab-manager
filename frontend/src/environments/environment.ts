@@ -5,5 +5,5 @@ export const environment = {
   imprint: 'https://example.com/imprint',
   provider: 'PROVIDER',
   authentication: 'AUTHENTICATION_TYPE',
-  usernameAttribute: 'attribute',
+  usernameAttribute: 'sub',
 };
