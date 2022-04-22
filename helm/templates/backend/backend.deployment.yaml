@@ -28,6 +28,11 @@ spec:
             - name: http
               containerPort: 8000
               protocol: TCP
+          {{ if eq .Values.target "local" }}
+          env:
+            - name: REQUESTS_CA_BUNDLE
+              value: /etc/capellacollab/oauth.crt
+          {{ end }}
           livenessProbe:
             httpGet:
               path: /healthcheck

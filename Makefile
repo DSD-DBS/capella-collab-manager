@@ -47,12 +47,16 @@ mock:
 	docker build -t t4c/licence/mock -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock mocks/licence-server
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock
 
-oauth-mock: helm/config/localhost.p12
+oauth-mock: helm/config/oauth.p12
 	cp mocks/oauth/conf.json helm/config
 
-helm/config/localhost.p12:
-	$(MAKE) -C mocks/oauth CERTS_DIR=../../helm/config/
-	
+helm/config/oauth.p12: Makefile
+	openssl req -x509 -out helm/config/oauth.crt -keyout helm/config/oauth.key \
+		-newkey rsa:2048 -nodes -sha256 \
+		-subj '/CN=$(RELEASE)-oauth-mock' \
+		-addext "subjectAltName = DNS:localhost, DNS:$(RELEASE)-oauth-mock"
+	openssl pkcs12 -export -in helm/config/oauth.crt -inkey helm/config/oauth.key -out helm/config/oauth.p12 -passout "pass:"
+
 capella-dockerimages: capella t4c-client readonly ease
 
 deploy: oauth-mock backend frontend capella mock helm-deploy
