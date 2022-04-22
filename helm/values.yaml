@@ -110,12 +110,11 @@ backend:
     oauth: 
       # Only required when using provider oauth
       endpoints: 
-        # Endpoint that issues JWT Tokens
-        tokenIssuance: na
-        # Endpoint that authorizes the User
-        authorization: na
-        # Or, define a wellKnown Endpoint and read token/auth urls from there:
         wellKnown: http://dev-t4c-manager-oauth-mock:8080/default/.well-known/openid-configuration
+        # Override endpoint that issues JWT Tokens
+        tokenIssuance: ""
+        # Override endpoint that authorizes the User
+        authorization: http://localhost:8080/default/authorize
 
       audience: default
 
