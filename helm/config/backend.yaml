@@ -43,6 +43,9 @@ authentication:
     publicKey: |
       {{- .Values.backend.authentication.oauth.publicKey | nindent 6}}
 
+    scopes: 
+      {{- toYaml .Values.backend.authentication.oauth.scopes | nindent 6}}
+
     client: 
       id: "{{ .Values.backend.authentication.oauth.client.id }}"
       secret: "{{ .Values.backend.authentication.oauth.client.secret }}"
