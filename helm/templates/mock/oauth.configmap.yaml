@@ -12,6 +12,6 @@ data:
 
 binaryData:
   localhost.p12: |- 
-    {{ .Files.Get "config/localhost.p12" | b64enc | nindent 4 }}
+    {{ .Files.Get "config/oauth.p12" | b64enc | nindent 4 }}
  
 {{ end }}
