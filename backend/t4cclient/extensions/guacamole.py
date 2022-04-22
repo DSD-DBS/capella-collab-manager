@@ -8,6 +8,10 @@ from t4cclient.core.credentials import generate_password
 cfg = config["extensions"]["guacamole"]
 GUACAMOLE_PREFIX = cfg["baseURI"] + "/api/session/data/postgresql"
 headers = {"Content-Type": "application/x-www-form-urlencoded"}
+proxies = {
+    "http": None,
+    "https": None,
+}
 
 
 def get_admin_token() -> str:
@@ -16,6 +20,7 @@ def get_admin_token() -> str:
         auth=HTTPBasicAuth(cfg["username"], cfg["password"]),
         headers=headers,
         timeout=config["requests"]["timeout"],
+        proxies=proxies,
     )
     r.raise_for_status()
     return r.json()["authToken"]
@@ -27,6 +32,7 @@ def get_token(username: str, password: str) -> str:
         auth=HTTPBasicAuth(username, password),
         headers=headers,
         timeout=config["requests"]["timeout"],
+        proxies=proxies,
     )
     r.raise_for_status()
     return r.json()
@@ -41,6 +47,7 @@ def create_user(
         GUACAMOLE_PREFIX + "/users?token=" + token,
         json={"username": username, "password": password, "attributes": {}},
         timeout=config["requests"]["timeout"],
+        proxies=proxies,
     )
     r.raise_for_status()
     return r.json()
@@ -57,6 +64,7 @@ def assign_user_to_connection(token: str, username: str, connection_id: str):
             }
         ],
         timeout=config["requests"]["timeout"],
+        proxies=proxies,
     )
     r.raise_for_status()
 
@@ -65,6 +73,7 @@ def delete_user(token: str, username: str):
     r = requests.delete(
         f"{GUACAMOLE_PREFIX}/users/{username}?token={token}",
         timeout=config["requests"]["timeout"],
+        proxies=proxies,
     )
     r.raise_for_status()
     return r.json()
@@ -74,6 +83,7 @@ def delete_connection(token: str, connection_name: str):
     r = requests.delete(
         f"{GUACAMOLE_PREFIX}/connections/{connection_name}?token={token}",
         timeout=config["requests"]["timeout"],
+        proxies=proxies,
     )
     r.raise_for_status()
     return r.json()
@@ -102,6 +112,7 @@ def create_connection(
             "attributes": {},
         },
         timeout=config["requests"]["timeout"],
+        proxies=proxies,
     )
 
     r.raise_for_status()
