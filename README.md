@@ -24,6 +24,7 @@ We have more exciting features on our roadmap, like integration of templates, pl
 ## Running locally with K3D
 
 ### Prerequisites
+
 To deploy the application you'll need:
 * [Docker](https://docs.docker.com/engine/install/ubuntu/)
 * [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
@@ -38,27 +39,25 @@ When you have all that installed you can simply do the following:
 ```
 git clone --recurse-submodules https://github.com/DSD-DBS/capella-collab-manager.git
 cd capella-collab-manager
-make create-cluster  # this creates cluster and container registry
 ```
 
-At this point, have a look at the [frondend README](frontend/README.md) in order to configure the frontend.
-You'll need an `environment.prod.ts` file in the right location.
-
-To build the Capella images you'll need to download Capella (binary!) and copy the archive to `capella-dockerimages/capella/archives`. For instructions, please refer to the [capella-dockerimages' README](capella-dockerimages/README.md).
-
-Once you've configured the frontend and capella images, continue with your deployment:
+Create a local K3D cluster and deploy the application
 
 ```
-MY_EMAIL=me@mydomain.com make deploy  # build and deploy the manager app
-kubectl get pods --namespace=t4c-manager  # verify your deployment - components should be in "Running" state
+make create-cluster
+MY_EMAIL=me@example.com make deploy
 ```
 
-Replace `me@domain.com` with your e-mail address. An administrator account will be made for this user.
+Replace `me@example.com` with your e-mail address. An administrator account will be made for this user.
+
+Verify your deployment - components should be in the "Running" state:
+
+```
+kubectl get pods --namespace=t4c-manager
+```
 
 Important! If you use Windows and the Git Bash to execute the commands, you have to set the environment variable: `MSYS_NO_PATHCONV=1`. 
 Otherwise the commands will break with UNIX paths, because the Git Bash tries to add a Windows path prefix. 
-
-If something goes wrong, please open an issue on Github.
 
 If something goes wrong, please open an issue on Github.
 
@@ -67,6 +66,11 @@ To clean up the environment, simply run:
 ```
 make delete-cluster
 ```
+
+### Starting a session
+
+Once the cluster is installed and all services are running (`kubectl get pods`), you can get started. Follow our
+[Getting started guide](doc/getting_started.md) and be up and running in a few minutes.
 
 ## Deployment
 
