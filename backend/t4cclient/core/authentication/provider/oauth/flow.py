@@ -20,6 +20,7 @@ def get_auth_redirect_url() -> t.Dict[str, str]:
         read_well_known()["authorization_endpoint"],
         grant_type="authorization_code",
     )
+
     return {"auth_url": auth_url, "state": state}
 
 
@@ -52,8 +53,11 @@ def read_well_known() -> dict[str, t.Any]:
 
         authorization_endpoint = resp["authorization_endpoint"]
         token_endpoint = resp["token_endpoint"]
-    else:
+
+    if cfg["endpoints"]["authorization"]:
         authorization_endpoint = cfg["endpoints"]["authorization"]
+
+    if cfg["endpoints"]["tokenIssuance"]:
         token_endpoint = cfg["endpoints"]["tokenIssuance"]
 
     return {
