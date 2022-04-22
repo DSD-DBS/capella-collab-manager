@@ -132,7 +132,7 @@ backend:
         # OAUTH2 Client Secret
         secret: tbd
 
-      redirectURI: http://localhost:8081/oauth2/callback
+      redirectURI: http://localhost:8080/oauth2/callback
 
     azure: 
       # Only required when using provider oauth

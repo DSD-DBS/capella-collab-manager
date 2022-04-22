@@ -1,4 +1,4 @@
-CLUSTER_NAME = mycluster
+CLUSTER_NAME = collab-cluster
 LOCAL_REGISTRY_NAME = localhost
 CLUSTER_REGISTRY_NAME = myregistry.localhost
 REGISTRY_PORT = 12345
@@ -75,7 +75,7 @@ helm-deploy:
 		$$(test -f secrets.yaml && echo "--values secrets.yaml") \
 		--set docker.registry.internal=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
 		--set database.backend.initialAdmin=$(MY_NAME) \
-		--set general.port=8081 \
+		--set general.port=8080 \
 		--set t4cServer.apis.usageStats="http://$(RELEASE)-licence-server-mock:80/mock" \
 		--set t4cServer.apis.restAPI="http://$(RELEASE)-t4c-server-mock:80/mock/api/v1.0" \
 		--wait --timeout 4m \
@@ -104,7 +104,7 @@ create-cluster:
 	k3d registry list $(CLUSTER_REGISTRY_NAME) 2>&- || k3d registry create $(CLUSTER_REGISTRY_NAME) --port $(REGISTRY_PORT)
 	k3d cluster list $(CLUSTER_NAME) 2>&- || k3d cluster create $(CLUSTER_NAME) \
 		--registry-use k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
-		--port "8081:80@loadbalancer"
+		--port "8080:80@loadbalancer"
 	kubectl cluster-info
 
 delete-cluster:
@@ -117,10 +117,10 @@ delete-cluster:
 	touch .provision-guacamole
 
 .provision-backend:
-	echo "insert into repository_user_association values ('$(MY_EMAIL)', 'default', 'WRITE', 'MANAGER');" | kubectl exec -ti --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-backend-postgres --no-headers | cut -f1 -d' ') -- psql -U backend backend && \
+	echo "insert into repository_user_association values ('$(MY_EMAIL)', 'default', 'WRITE', 'MANAGER');" | kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-backend-postgres --no-headers | cut -f1 -d' ') -- psql -U backend backend && \
 	touch .provision-backend
 
-.PHONY: backend frontend capella deploy undeploy create-cluster delete-cluster persistent-volume
+.PHONY: backend frontend capella oauth-mock deploy undeploy create-cluster delete-cluster persistent-volume ns
 
 # Execute with `make -j2 dev`
 dev: dev-frontend dev-backend
@@ -136,3 +136,6 @@ dev-cleanup:
 
 backend-logs: 
 	kubectl logs -f -n $(NAMESPACE) -l id=$(RELEASE)-deployment-backend
+
+ns:
+	kubectl config set-context k3d-$(CLUSTER_NAME) --namespace=$(NAMESPACE)
