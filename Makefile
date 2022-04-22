@@ -21,13 +21,16 @@ frontend:
 	docker build --build-arg CONFIGURATION=local -t t4c/client/frontend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend frontend
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend
 
-capella:
+capella: capella-dockerimages/capella/archives/capella.tar.gz
 	docker build -t base capella-dockerimages/base
 	docker build -t capella/base capella-dockerimages/capella
 	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
 
-t4c-client:
+capella-dockerimages/capella/archives/capella.tar.gz:
+	curl -L --output $@ 'https://ftp.acc.umu.se/mirror/eclipse.org/capella/core/products/releases/5.2.0-R20211130-125709/capella-5.2.0.202111301257-linux-gtk-x86_64.tar.gz'
+	
+t4c-client: 
 	docker build -t t4c/client/base capella-dockerimages/t4c
 
 readonly:
@@ -71,7 +74,7 @@ helm-deploy:
 		--wait --timeout 4m \
 		--debug \
 		$(RELEASE) ./helm
-	$(MAKE) .rollout .provision-guacamole .provision-backend
+	$(MAKE) .provision-guacamole .provision-backend
 
 clear-backend-db: 
 	kubectl delete deployment -n t4c-manager $(RELEASE)-backend-postgres
