@@ -39,7 +39,7 @@ spec:
                 port:
                   number: 8080
           {{ if eq .Values.target "local" }}
-          - path: /mock/oauth
+          - path: /default
             pathType: Prefix
             backend:
               service:
