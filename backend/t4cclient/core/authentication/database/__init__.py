@@ -1,3 +1,4 @@
+import sqlalchemy.orm.session
 from fastapi import Depends, HTTPException
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
@@ -21,11 +22,13 @@ def is_admin(token=Depends(JWTBearer()), db=Depends(get_db)) -> bool:
 
 def verify_repository_role(
     repository: str,
+    token: JWTBearer,
+    db: sqlalchemy.orm.session.Session,
     allowed_roles=["user", "manager", "administrator"],
-    token=Depends(JWTBearer()),
-    db=Depends(get_db),
 ):
-    if not check_repository_role(repository, allowed_roles, token, db):
+    if not check_repository_role(
+        repository=repository, allowed_roles=allowed_roles, token=token, db=db
+    ):
         raise HTTPException(
             status_code=403,
             detail=f"One of the roles '{allowed_roles}' in the repository '{repository}' is required.",
@@ -34,9 +37,9 @@ def verify_repository_role(
 
 def check_repository_role(
     repository: str,
+    token: JWTBearer,
+    db: sqlalchemy.orm.session.Session,
     allowed_roles=["user", "manager", "administrator"],
-    token=Depends(JWTBearer()),
-    db=Depends(get_db),
 ) -> bool:
 
     user = get_user(db=db, username=get_username(token))
@@ -64,8 +67,8 @@ def check_username_not_admin(username: str, db):
 
 def verify_write_permission(
     repository: str,
-    token=Depends(JWTBearer()),
-    db=Depends(get_db),
+    token: JWTBearer,
+    db: sqlalchemy.orm.session.Session,
 ):
     if not check_write_permission(repository, token, db):
         raise HTTPException(
@@ -76,8 +79,8 @@ def verify_write_permission(
 
 def check_write_permission(
     repository: str,
-    token=Depends(JWTBearer()),
-    db=Depends(get_db),
+    token: JWTBearer,
+    db: sqlalchemy.orm.session.Session,
 ) -> bool:
 
     user = repository_users.get_user_of_repository(db, repository, get_username(token))
@@ -89,7 +92,7 @@ def check_write_permission(
 def check_username_not_in_repository(
     repository: str,
     username: str,
-    db=Depends(get_db),
+    db: sqlalchemy.orm.session.Session,
 ):
     user = repository_users.get_user_of_repository(db, repository, username)
     if user:
