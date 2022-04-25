@@ -16,7 +16,7 @@ operators:
 
     cluster:
       containers: 
-        {{- toYaml .Values.cluster.containers | nindent 8 }}
+        {{- toYaml .Values.cluster.namespaces.sessions.containers | nindent 8 }}
 
 extensions: 
   guacamole: 
