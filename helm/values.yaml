@@ -41,20 +41,21 @@ general:
   scheme: http
 
 database: 
-  # Define whether the database should also be deployed
-  # in the cluster or whether it already exists externally. 
-  deploy: True
-
   # Database Configuration for Guacamole
   guacamole: 
+
+    # Define whether the database should also be deployed
+    # in the cluster or whether it already exists externally. 
+    deploy: False
+
     internal: 
-      ###### IF database.deploy == True ######
+      ###### IF database.guacamole.deploy == True ######
 
       # Admin password of the database
       password: secret
 
     external: 
-      ###### IF database.deploy == False ######
+      ###### IF database.guacamole.deploy == False ######
 
       # Select type of external database
       # Possible values: MYSQL | POSTGRES
@@ -74,18 +75,23 @@ database:
 
   # Database Configuration for the T4C Manager
   backend: 
+
+    # Define whether the database should also be deployed
+    # in the cluster or whether it already exists externally. 
+    deploy: False
+    
     # Username of an initial admin user 
     # Is only set if the database is empty!
     initialAdmin: me@example.com
 
     internal: 
-      ###### IF database.deploy == True ######
+      ###### IF database.backend.deploy == True ######
 
       # Admin password of the database
       password: secret
 
     external:
-      ###### IF database.deploy == False ######
+      ###### IF database.backend.deploy == False ######
 
       # Provide URI to the datebase in the format: postgresql://user:password@url:port/db_name
       uri: postgresql://user:password@url:port/db_name

@@ -1,5 +1,5 @@
 
-{{ if .Values.database.deploy }}
+{{ if .Values.database.guacamole.deploy }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
