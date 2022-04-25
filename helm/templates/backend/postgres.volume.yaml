@@ -1,4 +1,4 @@
-{{ if .Values.database.deploy }}
+{{ if .Values.database.backend.deploy }}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:

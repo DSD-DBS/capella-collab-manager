@@ -10,7 +10,7 @@ The following tools have to be installed and have to be present in your `PATH`:
 ## Setup databases
 
 ### Guacamole Database: 
-If you like to run your databases in the k8s cluster, please set `database.deploy: True` in the `options.yaml`. Everything is handled automatically then.
+If you like to run your databases in the k8s cluster, please set `database.guacamole.deploy: True` in the `options.yaml`. Everything is handled automatically then.
 
 Guacamole supports the following database types: 
 

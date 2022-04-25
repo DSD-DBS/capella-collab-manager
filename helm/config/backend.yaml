@@ -96,7 +96,7 @@ backups:
 
 
 database: 
-  {{ if .Values.database.deploy }}
+  {{ if .Values.database.backend.deploy }}
   url: "postgresql://backend:{{ .Values.database.backend.internal.password }}@{{ .Release.Name }}-backend-postgres:5432/backend"
   {{ else }}
   url: "{{ .Values.database.backend.external.uri }}"
