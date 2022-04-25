@@ -12,7 +12,7 @@ from t4cclient.core.database import Base, repositories, users
 from t4cclient.schemas.repositories.users import Role
 
 DATABASE_URL = config["database"]["url"]
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, connect_args={"connect_timeout": 5})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 LOGGER = logging.getLogger(__name__)
@@ -28,7 +28,6 @@ def migrate_db():
         alembic_cfg.set_main_option("sqlalchemy.url", DATABASE_URL)
         alembic_cfg.attributes["configure_logger"] = False
 
-        engine = create_engine(DATABASE_URL)
         conn = engine.connect()
 
         context = MigrationContext.configure(conn)
