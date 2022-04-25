@@ -4,12 +4,10 @@
   <div id="description">
     This service enables co-working on Capella MBSE projects. <br />
     To continue to the service you need an invite from an existing user. <br />
-    The service is currently operated in a proof-of-concept mode and does not
-    allow for production work.
   </div>
   <div id="oauth-login">
     <button mat-flat-button color="primary" (click)="webSSO()">
-      Login via OAuth2
+      Login with {{ authProvider }}
     </button>
     <br />
   </div>

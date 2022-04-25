@@ -6,6 +6,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-auth',
@@ -19,6 +20,8 @@ export class AuthComponent implements OnInit {
       this.webSSO();
     }
   }
+
+  authProvider = environment.authentication;
 
   constructor(private authService: AuthService) {}
 
