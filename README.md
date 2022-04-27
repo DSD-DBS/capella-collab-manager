@@ -2,7 +2,7 @@
 
 A web platform for collaboration on Capella (MBSE) projects
 
-**Copyright 2021 DB Netz AG, licensed under Apache 2.0 License (see full text in LICENSE file)**
+**Copyright 2021, 2022 DB Netz AG, licensed under Apache 2.0 License (see full text in LICENSE file)**
 
 Turn your local Capella experience into a browser-based collaboration platform for model-based projects. Designed to enable co-working across multiple organizations.
 Here are some of the key features:
