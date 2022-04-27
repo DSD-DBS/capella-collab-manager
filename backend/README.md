@@ -2,6 +2,20 @@
 
 Preparation
 ===============
+1) Change into the `backend` directory.
+1) Create a virtual environment:
+    ```
+    python -m venv .venv39
+    ```
+1) Activate it:
+    On Windows via:
+    ```
+    .venv39/Scripts/activate
+    ```
+    On Linux/MacOS:
+    ```
+    source .venv39/bin/activate
+    ```
 1) Install required packages: 
     ```
     pip install .
