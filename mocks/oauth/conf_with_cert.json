@@ -1,7 +1,13 @@
 {
     "interactiveLogin": true,
     "httpServer": {
-        "type": "NettyWrapper"
+        "type": "NettyWrapper", 
+        "ssl" : {
+            "keyPassword" : "",
+            "keystoreFile" : "/opt/localhost.p12",
+            "keystoreType" : "PKCS12",
+            "keystorePassword" : "" 
+        }
     },
     "tokenCallbacks": [
         {
