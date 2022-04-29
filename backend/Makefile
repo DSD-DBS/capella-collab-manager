@@ -1,7 +1,7 @@
 DB_PORT = 5432
-VENV = .venv39/bin
+VENV = .venv39
 
-database: 
+database:
 	docker start capella-collab-postgres || \
 	docker run -d \
 		--name capella-collab-postgres \
@@ -11,13 +11,17 @@ database:
 		-e POSTGRES_DB=dev \
 		postgres
 
-app: 
+app:
 	export MSYS_NO_PATHCONV=1; \
-	export REQUESTS_CA_BUNDLE=$$(pwd)/../certs/localhost.crt; \
-	$(VENV)/uvicorn t4cclient.__main__:app --reload
+	export OAUTHLIB_INSECURE_TRANSPORT=1; \
+	if [ -d "$(VENV)/bin" ]; then \
+		$(VENV)/bin/uvicorn t4cclient.__main__:app --reload; \
+	else \
+		$(VENV)/Scripts/uvicorn t4cclient.__main__:app --reload; \
+	fi
 
 dev: database app
-	
-cleanup: 
+
+cleanup:
 	docker stop capella-collab-postgres
 	docker rm capella-collab-postgres

@@ -27,20 +27,20 @@ capella:
 	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
 
-t4c-client: 
+t4c-client:
 	docker build -t t4c/client/base capella-dockerimages/t4c
 
-readonly: 
+readonly:
 	docker build -t capella/ease --build-arg BASE_IMAGE=capella/base --build-arg BUILD_TYPE=online capella-dockerimages/ease
 	docker build -t capella/ease/remote --build-arg BASE_IMAGE=capella/ease capella-dockerimages/remote
 	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly --build-arg BASE_IMAGE=capella/ease/remote capella-dockerimages/readonly
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly
 
-ease: 
+ease:
 	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/ease --build-arg BASE_IMAGE=t4c/client/base --build-arg BUILD_TYPE=online capella-dockerimages/ease
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/ease
 
-mock: 
+mock:
 	docker build -t t4c/server/mock -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/server/mock mocks/t4c-server
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/server/mock
 
@@ -54,7 +54,7 @@ deploy: backend frontend capella mock helm-deploy
 # Deploy with full T4C support:
 deploy-t4c: backend frontend capella t4c-client readonly-ease mock helm-deploy
 
-helm-deploy: 
+helm-deploy:
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
 	kubectl create namespace t4c-sessions || true
 	helm upgrade --install \
@@ -79,7 +79,7 @@ helm-cleanup:
 		--namespace $(NAMESPACE) \
 		$(RELEASE)
 
-clear-backend-db: 
+clear-backend-db:
 	kubectl delete deployment -n t4c-manager $(RELEASE)-backend-postgres
 	kubectl delete pvc -n t4c-manager $(RELEASE)-volume-backend-postgres
 	$(MAKE) helm-deploy
@@ -87,7 +87,7 @@ clear-backend-db:
 rollout: backend frontend
 	$(MAKE) .rollout
 
-.rollout: 
+.rollout:
 	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-backend
 	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-frontend
 
@@ -108,6 +108,7 @@ delete-cluster:
 	rm -f .provision-guacamole .provision-backend
 
 .provision-guacamole:
+	export MSYS_NO_PATHCONV=1; \
 	kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
 	kubectl exec -ti --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole && \
 	touch .provision-guacamole
@@ -120,15 +121,15 @@ delete-cluster:
 
 # Execute with `make -j2 dev`
 dev: dev-frontend dev-backend
-	
-dev-frontend: 
+
+dev-frontend:
 	$(MAKE) -C frontend dev
 
-dev-backend: 
+dev-backend:
 	$(MAKE) -C backend dev
 
-dev-cleanup: 
+dev-cleanup:
 	$(MAKE) -C backend cleanup
 
-backend-logs: 
+backend-logs:
 	kubectl logs -f -n $(NAMESPACE) -l id=$(RELEASE)-deployment-backend
