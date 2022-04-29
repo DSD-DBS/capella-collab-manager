@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError, Session
 from t4cclient.core.authentication.database import (
     check_username_not_admin,
+    check_username_not_in_repository,
     is_admin,
     verify_repository_role,
     verify_write_permission,
@@ -46,6 +47,9 @@ def add_user_to_repository(
     verify_repository_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
+
+    check_username_not_in_repository(project, body.username, db=db)
+
     users.find_or_create_user(db, body.username)
     check_username_not_admin(body.username, db)
     if body.role == schema_repositories.RepositoryUserRole.MANAGER:
