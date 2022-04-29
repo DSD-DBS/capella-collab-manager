@@ -1,0 +1,1 @@
+Please ask your administrator to delete a new project.

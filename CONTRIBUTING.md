@@ -125,6 +125,30 @@ Run the following steps:
 We additionally recommend that you set up your editor / IDE as follows.
 - Set up the editor to run [prettier](https://prettier.io/) when saving.
 
+## User documentation
+
+Requirements: 
+- `python` + `pip`
+
+Run the following steps: 
+1. Navigate to the `docs` directory of your cloned repository.
+2. We recommend that you develop inside of a virtual environment. To set it up,
+   run the following commands:
+
+   ```sh
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install -U pip setuptools
+   ```
+3. Install MkDocs Material: 
+   ```sh
+   pip install mkdocs-material
+   ```
+4. Serve the docs: 
+   ```
+   mkdocs serve
+   ```
+
 # Code style
 
 ## Backend 
