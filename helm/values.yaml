@@ -46,7 +46,7 @@ database:
 
     # Define whether the database should also be deployed
     # in the cluster or whether it already exists externally. 
-    deploy: False
+    deploy: True
 
     internal: 
       ###### IF database.guacamole.deploy == True ######
@@ -78,7 +78,7 @@ database:
 
     # Define whether the database should also be deployed
     # in the cluster or whether it already exists externally. 
-    deploy: False
+    deploy: True
     
     # Username of an initial admin user 
     # Is only set if the database is empty!
