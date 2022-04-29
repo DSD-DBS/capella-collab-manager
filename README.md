@@ -45,10 +45,10 @@ Create a local K3D cluster and deploy the application
 
 ```
 make create-cluster
-MY_EMAIL=me@example.com make deploy
+MY_NAME=username make deploy
 ```
 
-Replace `me@example.com` with your e-mail address. An administrator account will be made for this user.
+Replace `username` with a username. An administrator account will be made for this user. Make sure you log in with the defined username if you want to test the admin account.
 
 Verify your deployment - components should be in the "Running" state:
 

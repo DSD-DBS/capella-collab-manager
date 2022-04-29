@@ -10,7 +10,7 @@ You will be welcomed by a friendly screen and you can log in. The default setup 
 
 ![Welcome screen](img/collab-step-1.png)
 
-As username, provide the e-mail address you entered when deploying the cluster. If you forgot to set an e-mail address, use `me@example.com`.
+As username, provide the username you entered when deploying the cluster. If you forgot to set an admin username, use `username`.
 
 ![OAuth mock](img/collab-step-2.png)
 
