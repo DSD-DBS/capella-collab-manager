@@ -1,18 +1,25 @@
 # Capella Collaboration Manager
 
-A web platform for collaboration on Capella (MBSE) projects
+A web platform for collaboration on [Capella](https://www.eclipse.org/capella/)
+(MBSE) projects
 
-**Copyright 2021, 2022 DB Netz AG, licensed under Apache 2.0 License (see full text in LICENSE file)**
+**Copyright 2021, 2022 [DB Netz AG](https://fahrweg.dbnetze.com/),
+licensed under Apache 2.0 License (see full text in [LICENSE](./LICENSE) file)**
 
-Turn your local Capella experience into a browser-based collaboration platform for model-based projects. Designed to enable co-working across multiple organizations.
+Turn your local Capella experience into a browser-based collaboration platform for
+model-based projects. Designed to enable co-working across multiple organizations.
 Here are some of the key features:
 
 * Run Capella in a browser
-* Supports both git and TeamForCapella co-working models
-* SSO via OAuth2
-* No need to install or maintain local Capella clients - clients are made on demand in a underlaying Kubernetes cluster
-* Access to projects and models is self-managed by project leads, model owners or delegates
-* Within a project a user could have read or read/write access. Read-only users don't consume licenses in TeamForCapella projects
+* Supports both git and [TeamForCapella](https://www.obeosoft.com/en/team-for-capella)
+  co-working models
+* Single sign on (SSO) via [OAuth2](https://oauth.net/2/)
+* No need to install or maintain local Capella clients - clients are made on demand in
+  an underlaying [Kubernetes](https://kubernetes.io/) cluster
+* Access to projects and models is self-managed by project leads, model owners or
+  delegates
+* Within a project a user could have read or read/ write access. Read-only users don't
+  consume licenses in TeamForCapella projects
 * Integration with git repository management for backup and workflow automation around the models
 
 We have more exciting features on our roadmap, like integration of templates, planning and release management for model-derived artifacts (documents, interface definitions, spreadsheets, etc.)
