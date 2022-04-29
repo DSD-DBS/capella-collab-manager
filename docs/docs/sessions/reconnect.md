@@ -1,0 +1,10 @@
+
+1. Please navigate to your [Active Sessions](/)
+2. Find your session and select `Reconnect`. A new window should pop up.
+3. Please click on `Connect to Session`. 
+4. The session should appear in a new tab and Capella starts automatically. 
+    !!! Warning
+        After reconnecting to your session, your screen may be black. I can take up to a minute until you see Capella again.
+5. Please follow the instructions (depends on the workflow of your project)
+    1. [Git](../flows/git)
+    2. [TeamForCapella](../flows/t4c)
