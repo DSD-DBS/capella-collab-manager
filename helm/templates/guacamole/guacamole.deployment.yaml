@@ -19,12 +19,11 @@ spec:
     spec:
       containers:
         - name: {{ .Release.Name }}-guacamole-guacamole
-          image: guacamole/guacamole:latest
-          imagePullPolicy: {{ .Values.pullPolicy }}
+          image: {{ .Values.docker.images.guacamole.guacamole }}
           env:
             - name: GUACD_HOSTNAME
               value: {{ .Release.Name }}-guacamole-guacd
-          {{ if .Values.database.deploy }}
+          {{ if .Values.database.guacamole.deploy }}
             - name: POSTGRES_DATABASE
               value: "guacamole"
             - name: POSTGRES_HOSTNAME
@@ -66,5 +65,6 @@ spec:
             limits:
               memory: "2Gi"
               cpu: "2"
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{ if .Values.cluster.container }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}

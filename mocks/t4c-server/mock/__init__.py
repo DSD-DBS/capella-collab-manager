@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
-from sys import prefix
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

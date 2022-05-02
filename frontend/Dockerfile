@@ -1,11 +1,13 @@
-ARG BASE_IMAGE=node:14
+ARG BASE_IMAGE=node:17
 FROM $BASE_IMAGE as build
+
+ARG CONFIGURATION=production
 
 COPY ./ /work/
 WORKDIR /work
 RUN npm install
-RUN npm run build
+RUN npm run build -- --configuration=${CONFIGURATION}
 
-FROM nginx:latest
+FROM nginxinc/nginx-unprivileged:latest
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /work/dist/t4cclient /usr/share/nginx/html

@@ -9,7 +9,6 @@ metadata:
     id: {{ .Release.Name }}-deployment-backend
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/backend/backend.configmap.yaml") . | sha256sum }}
-    checksum/config_env: {{ include (print $.Template.BasePath "/backend/backend_env.configmap.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
   selector: 
@@ -22,24 +21,26 @@ spec:
     spec:
       serviceAccountName: {{ .Release.Name }}-serviceaccount-backend
       volumes:
-        - name: {{ .Release.Name }}-backend
+        - name: config
           configMap:
             name: {{ .Release.Name }}-backend
       containers:
         - name: {{ .Release.Name }}-backend
-          image: {{ .Values.docker.registry }}{{ .Values.docker.images.backend }}
-          imagePullPolicy: {{ .Values.pullPolicy }}
-          envFrom:
-            - configMapRef: 
-                name: {{ .Release.Name }}-backend-env
+          image: {{ .Values.docker.registry.internal }}{{ .Values.docker.images.backend }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8000
               protocol: TCP
+          {{ if eq .Values.target "local" }}
+          env:
+            - name: OAUTHLIB_INSECURE_TRANSPORT
+              value: "1"
+          {{ end }}
           livenessProbe:
             httpGet:
               path: /healthcheck
               port: http
+            initialDelaySeconds: 30
           readinessProbe: 
             httpGet:
               path: /healthcheck
@@ -51,5 +52,10 @@ spec:
             requests:
               cpu: "0.25"
               memory: 20Mi
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/capellacollab
+              readOnly: true
+          {{ if .Values.cluster.container }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}

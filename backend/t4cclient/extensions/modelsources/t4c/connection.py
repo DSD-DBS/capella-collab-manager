@@ -8,23 +8,22 @@ from socket import timeout
 
 import requests
 from requests.auth import HTTPBasicAuth
-from t4cclient import config
+from t4cclient.config import config
 from t4cclient.core.credentials import generate_password
 
 log = logging.getLogger(__name__)
+cfg = config["modelsources"]["t4c"]
 
-T4C_BACKEND_AUTHENTICATION = HTTPBasicAuth(
-    config.T4C_SERVER_USERNAME, config.T4C_SERVER_PASSWORD
-)
+T4C_BACKEND_AUTHENTICATION = HTTPBasicAuth(cfg["username"], cfg["password"])
 
 
 def get_t4c_status():
     try:
         log.debug("Fetch T4C status")
         r = requests.get(
-            config.T4C_USAGE_API + "/status/json",
+            config["modelsources"]["t4c"]["usageAPI"] + "/status/json",
             auth=T4C_BACKEND_AUTHENTICATION,
-            timeout=config.REQUESTS_TIMEOUT,
+            timeout=config["requests"]["timeout"],
         )
     except requests.exceptions.Timeout:
         log.info("License server timeout", exc_info=True)
@@ -84,7 +83,7 @@ def add_user_to_repository(
     repository: str, username: str, password: str = generate_password()
 ):
     r = requests.post(
-        config.T4C_REST_API + "/users",
+        config["modelsources"]["t4c"]["restAPI"] + "/users",
         params={"repositoryName": repository},
         json={
             "id": username,
@@ -92,7 +91,7 @@ def add_user_to_repository(
             "password": password,
         },
         auth=T4C_BACKEND_AUTHENTICATION,
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
     )
 
     # No exception if user does already exist (status_code 400)
@@ -103,10 +102,10 @@ def add_user_to_repository(
 
 def remove_user_from_repository(repository: str, username: str):
     r = requests.delete(
-        config.T4C_REST_API + "/users/" + username,
+        config["modelsources"]["t4c"]["restAPI"] + "/users/" + username,
         params={"repositoryName": repository},
         auth=T4C_BACKEND_AUTHENTICATION,
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
     )
     # No exception if user does not exist (status_code 404)
     if not r.ok and r.status_code != 404:
@@ -115,7 +114,7 @@ def remove_user_from_repository(repository: str, username: str):
 
 def update_password_of_user(repository: str, username: str, password: str):
     r = requests.put(
-        config.T4C_REST_API + "/users/" + username,
+        config["modelsources"]["t4c"]["restAPI"] + "/users/" + username,
         params={"repositoryName": repository},
         json={
             "id": username,
@@ -123,7 +122,7 @@ def update_password_of_user(repository: str, username: str, password: str):
             "password": password,
         },
         auth=T4C_BACKEND_AUTHENTICATION,
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
     )
     r.raise_for_status()
     return r.json()
@@ -131,9 +130,9 @@ def update_password_of_user(repository: str, username: str, password: str):
 
 def get_repositories() -> t.List[str]:
     r = requests.get(
-        config.T4C_REST_API + "/repositories",
+        config["modelsources"]["t4c"]["restAPI"] + "/repositories",
         auth=T4C_BACKEND_AUTHENTICATION,
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
     )
     r.raise_for_status()
 
@@ -142,7 +141,7 @@ def get_repositories() -> t.List[str]:
 
 def create_repository(name: str) -> None:
     r = requests.post(
-        config.T4C_REST_API + "/repositories",
+        config["modelsources"]["t4c"]["restAPI"] + "/repositories",
         json={
             "repositoryName": name,
             "authenticationType": "FILE",
@@ -152,6 +151,6 @@ def create_repository(name: str) -> None:
             "datasourceType": "H2_EMBEDDED",
         },
         auth=T4C_BACKEND_AUTHENTICATION,
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
     )
     r.raise_for_status()

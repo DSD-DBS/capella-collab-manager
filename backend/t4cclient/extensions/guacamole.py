@@ -5,20 +5,25 @@ import uuid
 
 import requests
 from requests.auth import HTTPBasicAuth
-from t4cclient import config
-from t4cclient.config import GUACAMOLE_URI
+from t4cclient.config import config
 from t4cclient.core.credentials import generate_password
 
-GUACAMOLE_PREFIX = GUACAMOLE_URI + "/api/session/data/postgresql"
+cfg = config["extensions"]["guacamole"]
+GUACAMOLE_PREFIX = cfg["baseURI"] + "/api/session/data/postgresql"
 headers = {"Content-Type": "application/x-www-form-urlencoded"}
+proxies = {
+    "http": None,
+    "https": None,
+}
 
 
 def get_admin_token() -> str:
     r = requests.post(
-        GUACAMOLE_URI + "/api/tokens",
-        auth=HTTPBasicAuth(config.GUACAMOLE_USERNAME, config.GUACAMOLE_PASSWORD),
+        cfg["baseURI"] + "/api/tokens",
+        auth=HTTPBasicAuth(cfg["username"], cfg["password"]),
         headers=headers,
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
+        proxies=proxies,
     )
     r.raise_for_status()
     return r.json()["authToken"]
@@ -26,10 +31,11 @@ def get_admin_token() -> str:
 
 def get_token(username: str, password: str) -> str:
     r = requests.post(
-        GUACAMOLE_URI + "/api/tokens",
+        cfg["baseURI"] + "/api/tokens",
         auth=HTTPBasicAuth(username, password),
         headers=headers,
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
+        proxies=proxies,
     )
     r.raise_for_status()
     return r.json()
@@ -43,7 +49,8 @@ def create_user(
     r = requests.post(
         GUACAMOLE_PREFIX + "/users?token=" + token,
         json={"username": username, "password": password, "attributes": {}},
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
+        proxies=proxies,
     )
     r.raise_for_status()
     return r.json()
@@ -59,7 +66,8 @@ def assign_user_to_connection(token: str, username: str, connection_id: str):
                 "value": "READ",
             }
         ],
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
+        proxies=proxies,
     )
     r.raise_for_status()
 
@@ -67,7 +75,8 @@ def assign_user_to_connection(token: str, username: str, connection_id: str):
 def delete_user(token: str, username: str):
     r = requests.delete(
         f"{GUACAMOLE_PREFIX}/users/{username}?token={token}",
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
+        proxies=proxies,
     )
     r.raise_for_status()
     return r.json()
@@ -76,7 +85,8 @@ def delete_user(token: str, username: str):
 def delete_connection(token: str, connection_name: str):
     r = requests.delete(
         f"{GUACAMOLE_PREFIX}/connections/{connection_name}?token={token}",
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
+        proxies=proxies,
     )
     r.raise_for_status()
     return r.json()
@@ -104,7 +114,8 @@ def create_connection(
             },
             "attributes": {},
         },
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
+        proxies=proxies,
     )
 
     r.raise_for_status()

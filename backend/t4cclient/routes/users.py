@@ -5,10 +5,10 @@ import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from t4cclient.config import USERNAME_CLAIM
+from t4cclient.core.authentication.database import is_admin, verify_admin
+from t4cclient.core.authentication.helper import get_username
+from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, repository_users, users
-from t4cclient.core.oauth.database import is_admin, verify_admin
-from t4cclient.core.oauth.jwt_bearer import JWTBearer
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from t4cclient.routes.sessions import inject_attrs_in_sessions
 from t4cclient.schemas.repositories.users import (
@@ -31,14 +31,14 @@ def get_users(token=Depends(JWTBearer()), db: Session = Depends(get_db)):
 
 @router.post("/", response_model=GetUserResponse, responses=AUTHENTICATION_RESPONSES)
 def create_user(token=Depends(JWTBearer()), db: Session = Depends(get_db)):
-    return users.create_user(db, token[USERNAME_CLAIM])
+    return users.create_user(db, get_username(token))
 
 
 @router.get(
     "/{username}", response_model=GetUserResponse, responses=AUTHENTICATION_RESPONSES
 )
 def get_user(username: str, db: Session = Depends(get_db), token=Depends(JWTBearer())):
-    if username != token[USERNAME_CLAIM] and not is_admin(token, db):
+    if username != get_username(token) and not is_admin(token, db):
         raise HTTPException(
             status_code=403,
             detail="The username does not match with your username. You have to be administrator to see other users.",
@@ -73,7 +73,7 @@ def update_role_of_user(
 def get_sessions_for_user(
     username: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
-    if username != token[USERNAME_CLAIM] and not is_admin(token, db):
+    if username != get_username(token) and not is_admin(token, db):
         raise HTTPException(
             status_code=403,
             detail="You can only see your own sessions. If you are a manager, please use the /sessions endpoint.",

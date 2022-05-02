@@ -1,8 +1,17 @@
 # Frontend T4C Manager
 
+## Requirements
+
+You need to install
+
+- [Node.js 16.15.0 LTS](https://nodejs.org/en/)
+- [Angular CLI](https://angular.io/cli)
+
 ## Development
 
-Run 
+Change into the `frontend` directory and install all packages via `npm install`.
+
+Run
 ```
 ng serve --open
 ```

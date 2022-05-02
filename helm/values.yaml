@@ -8,14 +8,16 @@
 
 docker:
   # Registry for Docker Images, will be used as prefix for Docker Images
-  registry: docker.io
+  registry: 
+    internal: localhost
+    external: docker.io
 
   images:
     # Docker Image for the Frontend
-    frontend: /t4c/client/frontend
+    frontend: /capella/collab/frontend
 
     # Docker Image for the Backend
-    backend: /t4c/client/backend
+    backend: /capella/collab/backend
 
     # Docker Image for EASE
     ease: /t4c/client/ease
@@ -30,6 +32,11 @@ docker:
       # Docker Image for the ReadOnly Workspace
       readonly: /capella/readonly
 
+    guacamole: 
+      # The registry needs to specified here!
+      guacamole: docker.io/guacamole/guacamole
+      guacd: docker.io/guacamole/guacd
+
 general: 
   # Base URL on which the service listens
   host: localhost
@@ -37,20 +44,21 @@ general:
   scheme: http
 
 database: 
-  # Define whether the database should also be deployed
-  # in the cluster or whether it already exists externally. 
-  deploy: True
-
   # Database Configuration for Guacamole
   guacamole: 
+
+    # Define whether the database should also be deployed
+    # in the cluster or whether it already exists externally. 
+    deploy: True
+
     internal: 
-      ###### IF database.deploy == True ######
+      ###### IF database.guacamole.deploy == True ######
 
       # Admin password of the database
       password: secret
 
     external: 
-      ###### IF database.deploy == False ######
+      ###### IF database.guacamole.deploy == False ######
 
       # Select type of external database
       # Possible values: MYSQL | POSTGRES
@@ -70,18 +78,23 @@ database:
 
   # Database Configuration for the T4C Manager
   backend: 
+
+    # Define whether the database should also be deployed
+    # in the cluster or whether it already exists externally. 
+    deploy: True
+    
     # Username of an initial admin user 
     # Is only set if the database is empty!
-    initialAdmin: me@example.com
+    initialAdmin: admin
 
     internal: 
-      ###### IF database.deploy == True ######
+      ###### IF database.backend.deploy == True ######
 
       # Admin password of the database
       password: secret
 
     external:
-      ###### IF database.deploy == False ######
+      ###### IF database.backend.deploy == False ######
 
       # Provide URI to the datebase in the format: postgresql://user:password@url:port/db_name
       uri: postgresql://user:password@url:port/db_name
@@ -92,18 +105,49 @@ guacamole:
   password: guacadmin
 
 backend:
-  oauth:
-    # Endpoint that issues JWT Tokens
-    tokenIssuanceEndpoint: tbd
-    # Endpoint that authorizes the User
-    authorizationEndpoint: tbd
-    client:
-      # OAUTH2 Client ID
-      id: tbd
-      # OAUTH2 Client Secret
-      secret: tbd
-    # Add Username claim
-    usernameClaim: sub 
+  authentication:
+    provider: oauth # oauth | azure
+    jwt:
+      usernameClaim: sub # azure: preferred_username
+
+    oauth: 
+      # Only required when using provider oauth
+      endpoints: 
+        wellKnown: http://dev-t4c-manager-oauth-mock:8080/default/.well-known/openid-configuration
+        # Override endpoint that issues JWT Tokens
+        tokenIssuance: ""
+        # Override endpoint that authorizes the User
+        authorization: http://localhost:8080/default/authorize
+
+      audience: default
+
+      publicKey: |
+        -----BEGIN PUBLIC KEY-----
+        -----END PUBLIC KEY-----
+
+      scopes: 
+        - openid
+
+      client: 
+        # OAUTH2 Client ID
+        id: tbd
+        # OAUTH2 Client Secret
+        secret: tbd
+
+      redirectURI: http://localhost:8080/oauth2/callback
+
+    azure: 
+      # Only required when using provider oauth
+      authorizationEndpoint: tbd
+      
+      client: 
+        id: tbd
+        secret: tbd
+
+      audience: tbd
+      redirectURI: tbd
+      
+      connectConfigurationEndpoint: tbd
 
   garbageCleaner:
     cron: "*/10 * * * *"
@@ -135,7 +179,7 @@ t4cServer:
   # IPv4 Address of the T4C Server
   host: localhost
   port: 2036
-  licenseKey: 
+  licenseKey: tbd
 
 jenkins:
   # Admin Credentials for Jenkins Instance
@@ -165,14 +209,19 @@ git:
 ### KUBERNETES RELATED CONFIGURATION ###
 ########################################
 
-# replicaCount: 1
-
-pullPolicy: Always
-
-imagePullSecrets: []
-
-# SecurityContext for Pods
-securityContext:
-
 # target: local | azure
 target: local
+
+cluster: 
+  kind: Kubernetes # Kubernetes | OpenShift
+
+  containers: 
+    # The following values are appended to each container
+
+  service: 
+    fqdn: capella.example.de
+
+  namespaces: 
+    sessions: 
+      containers: 
+        # The following values are appended to each container in the sessions namespace

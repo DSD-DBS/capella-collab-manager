@@ -1,6 +1,7 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+{{- if eq .Values.cluster.kind "Kubernetes" }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -40,6 +41,13 @@ spec:
                 port:
                   number: 8080
           {{ if eq .Values.target "local" }}
+          - path: /default
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-oauth-mock
+                port:
+                  number: 8080
           - path: /mock
             pathType: Prefix
             backend:
@@ -48,3 +56,4 @@ spec:
                 port:
                   number: 80
           {{ end }}
+{{ end }}

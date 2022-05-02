@@ -11,11 +11,11 @@ import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories.users as users_schema
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from t4cclient.config import USERNAME_CLAIM
+from t4cclient.core.authentication.database import is_admin, verify_repository_role
+from t4cclient.core.authentication.helper import get_username
+from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.credentials import generate_password
 from t4cclient.core.database import get_db, sessions, users
-from t4cclient.core.oauth.database import is_admin, verify_repository_role
-from t4cclient.core.oauth.jwt_bearer import JWTBearer
 from t4cclient.core.operators import OPERATOR
 from t4cclient.core.services.sessions import inject_attrs_in_sessions
 from t4cclient.extensions import guacamole
@@ -40,7 +40,7 @@ def get_current_sessions(db: Session = Depends(get_db), token=Depends(JWTBearer(
     if is_admin(token, db):
         return inject_attrs_in_sessions(sessions.get_all_sessions(db))
 
-    db_user = users.get_user(db=db, username=token[USERNAME_CLAIM])
+    db_user = users.get_user(db=db, username=get_username(token))
     if not any(
         repo_user.role == RepositoryUserRole.MANAGER
         for repo_user in db_user.repositories
@@ -74,7 +74,7 @@ def request_session(
 
     rdp_password = generate_password(length=64)
 
-    owner = token[USERNAME_CLAIM]
+    owner = get_username(token)
 
     log.info("Starting session creation for user %s", owner)
 
@@ -106,7 +106,7 @@ def request_session(
         else:
             repositories = [repo.repository_name for repo in user.repositories]
         session = OPERATOR.start_persistent_session(
-            username=token[USERNAME_CLAIM],
+            username=get_username(token),
             password=rdp_password,
             repositories=repositories,
         )
@@ -137,6 +137,8 @@ def request_session(
             git_url=git_model.path,
             git_revision=git_model.revision,
             entrypoint=git_model.entrypoint,
+            git_username=git_model.username,
+            git_password=git_model.password,
         )
 
     guacamole_identifier = guacamole.create_connection(
@@ -172,7 +174,7 @@ def request_session(
 @router.delete("/{id}/", status_code=204, responses=AUTHENTICATION_RESPONSES)
 def end_session(id: str, db: Session = Depends(get_db), token=Depends(JWTBearer())):
     s = sessions.get_session_by_id(db, id)
-    if s.owner_name != token[USERNAME_CLAIM] and verify_repository_role(
+    if s.owner_name != get_username(token) and verify_repository_role(
         repository=s.repository,
         token=token,
         db=db,

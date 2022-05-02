@@ -3,16 +3,17 @@
 
 from __future__ import annotations
 
-from t4cclient.config import OPERATOR_TYPE
+from importlib import metadata
+
+from t4cclient.config import config
 from t4cclient.core.operators.abc import Operator
 
-from . import docker, k8s
-
-OPERATORS = {
-    "docker": docker.DockerOperator,
-    "kubernetes": k8s.KubernetesOperator,
-}
 try:
-    OPERATOR: Operator = OPERATORS[OPERATOR_TYPE]()
-except KeyError:
-    raise KeyError("Unsupported operator %s", OPERATOR_TYPE) from None
+    OPERATOR = next(
+        i
+        for i in metadata.entry_points()["capellacollab.operators"]
+        if i.name == config["operators"]["operator"]
+    ).load()()
+
+except StopIteration:
+    raise KeyError(f"Unknown operator " + config["operators"]["operator"]) from None

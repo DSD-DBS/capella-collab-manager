@@ -20,8 +20,7 @@ spec:
     spec:
       containers:
         - name: {{ .Release.Name }}-licence-server-mock
-          image: {{ .Values.docker.registry }}/t4c/licence/mock
-          imagePullPolicy: {{ .Values.pullPolicy }}
+          image: {{ .Values.docker.registry.internal }}/t4c/licence/mock
           ports:
             - name: http
               containerPort: 80
@@ -41,6 +40,7 @@ spec:
             requests:
               cpu: "0.1"
               memory: 20Mi
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{ if .Values.cluster.container }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}
 {{ end }}
