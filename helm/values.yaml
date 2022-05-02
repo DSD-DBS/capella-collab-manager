@@ -82,7 +82,7 @@ database:
     
     # Username of an initial admin user 
     # Is only set if the database is empty!
-    initialAdmin: me@example.com
+    initialAdmin: admin
 
     internal: 
       ###### IF database.backend.deploy == True ######
