@@ -1,7 +1,7 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-{{ if .Values.database.deploy }}
+{{ if .Values.database.guacamole.deploy }}
 apiVersion: v1
 kind: Service
 metadata:

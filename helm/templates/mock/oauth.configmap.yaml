@@ -1,0 +1,13 @@
+{{ if eq .Values.target "local" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-oauth-mock
+  namespace: {{ .Release.Namespace }}
+  labels: 
+    id: {{ .Release.Name }}-configmap-oauth-mock
+data:
+  oauth.json: |-
+    {{ .Files.Get "config/oauth.json" | nindent 4 }}
+ 
+{{ end }}

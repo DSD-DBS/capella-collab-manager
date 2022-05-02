@@ -1,7 +1,7 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-{{ if .Values.database.deploy }}
+{{ if .Values.database.backend.deploy }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,19 +13,22 @@ spec:
   selector: 
     matchLabels: 
       id: {{ .Release.Name }}-deployment-backend-postgres
+  strategy:
+    type: Recreate
   template:
     metadata: 
       labels: 
         id: {{ .Release.Name }}-deployment-backend-postgres
     spec:
+      {{ if ne .Values.target "local" }}
       volumes:
         - name: {{ .Release.Name }}-data
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-volume-backend-postgres
+      {{ end }}
       containers:
         - name: {{ .Release.Name }}-backend-postgres
-          image: postgres:14.1
-          imagePullPolicy: {{ .Values.pullPolicy }}
+          image: {{ .Values.docker.registry.external }}/postgres:14.1
           env:
             - name: PGDATA
               value: /var/lib/postgresql/data/data
@@ -56,9 +59,12 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1"
+          {{ if ne .Values.target "local" }}
           volumeMounts:
             - name: {{ .Release.Name }}-data
               mountPath: /var/lib/postgresql/data
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{ end }}
+          {{ if .Values.cluster.container }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}
 {{ end }}

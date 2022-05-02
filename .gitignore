@@ -6,3 +6,5 @@
 /secrets*.yaml
 /local
 .mypy_cache
+deployments/*
+certs/*

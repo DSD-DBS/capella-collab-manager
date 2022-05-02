@@ -11,11 +11,12 @@ import sqlalchemy.orm
 import t4cclient.extensions.backups.jenkins as crud_jenkins
 import t4cclient.extensions.modelsources.git.crud as crud_git_models
 import t4cclient.extensions.modelsources.git.models as database_git_models
-from t4cclient import config
+from t4cclient.config import config
 
 from . import crud, models, routes
 
-JENKINS_AUTH = (config.JENKINS_USERNAME, config.JENKINS_PASSWORD)
+cfg = config["backups"]["jenkins"]
+JENKINS_AUTH = (cfg["username"], cfg["password"])
 
 
 def load_pipeline_config(git_model: database_git_models.DB_GitModel):
@@ -24,11 +25,11 @@ def load_pipeline_config(git_model: database_git_models.DB_GitModel):
         "T4C_REPO_NAME": git_model.repository_name,
         "MODEL_ENTRYPOINT": git_model.entrypoint,
         "GIT_BRANCH": git_model.revision,
-        "GIT_CREDENTIAL_ID": config.JENKINS_GIT_CREDENTIAL_ID,
-        "GIT_USERNAME": config.JENKINS_GIT_USERNAME,
-        "GIT_EMAIL": config.JENKINS_GIT_EMAIL,
+        "GIT_CREDENTIAL_ID": cfg["git"]["credentialID"],
+        "GIT_USERNAME": git_model.username,
+        "GIT_EMAIL": cfg["git"]["email"],
         "GIT_MODEL_URL": git_model.path,
-        "JENKINS_SCRIPT_REPO_URL": config.JENKINS_GIT_SCRIPT_REPO_URL,
+        "JENKINS_SCRIPT_REPO_URL": cfg["git"]["scriptRepoURL"],
         "GIT_URL_WITH_CREDENTIALS_ENV": git_model.path.replace("//", "//$USER:$PASS@"),
     }
     filecontent = (pathlib.Path(__file__).parent / "config.xml").read_text()
@@ -42,13 +43,13 @@ def load_pipeline_config(git_model: database_git_models.DB_GitModel):
 
 def post_pipelines_to_jenkins(filecontent: str, pipeline_name: str):
     res = requests.post(
-        config.JENKINS_BASE_URL + "/createItem?name=" + pipeline_name,
+        cfg["baseURL"] + "/createItem?name=" + pipeline_name,
         data=filecontent,
         auth=JENKINS_AUTH,
         headers={
             "Content-Type": "text/xml",
         },
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
     )
     res.raise_for_status()
 
@@ -64,12 +65,12 @@ def create_pipeline(
 
 def get_pipeline(db: sqlalchemy.orm.Session, pipeline_name: str):
     res = requests.get(
-        config.JENKINS_BASE_URL
+        cfg["baseURL"]
         + "/blue/rest/organizations/jenkins/pipelines/"
         + pipeline_name
         + "/runs",
         auth=JENKINS_AUTH,
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
     )
     if res.status_code == 404:
         crud_jenkins.remove_pipeline_by_name(db, pipeline_name)
@@ -89,7 +90,7 @@ def get_pipeline(db: sqlalchemy.orm.Session, pipeline_name: str):
                 latest_pipeline["startTime"]
             ).strftime("%Y-%m-%d %H:%M"),
             "result": latest_pipeline["result"],
-            "logs_url": config.JENKINS_BASE_URL
+            "logs_url": cfg["baseURL"]
             + "/job/"
             + pipeline_name
             + "/"
@@ -102,15 +103,15 @@ def get_pipeline(db: sqlalchemy.orm.Session, pipeline_name: str):
 
 def trigger_job_run(pipeline_name: str):
     requests.post(
-        config.JENKINS_BASE_URL + "/job/" + pipeline_name + "/build?delay=0sec",
+        cfg["baseURL"] + "/job/" + pipeline_name + "/build?delay=0sec",
         auth=JENKINS_AUTH,
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
     ).raise_for_status()
 
 
 def remove_pipeline(pipeline_name: str):
     requests.post(
-        config.JENKINS_BASE_URL + "/job/" + pipeline_name + "/doDelete",
+        cfg["baseURL"] + "/job/" + pipeline_name + "/doDelete",
         auth=JENKINS_AUTH,
-        timeout=config.REQUESTS_TIMEOUT,
+        timeout=config["requests"]["timeout"],
     ).raise_for_status()

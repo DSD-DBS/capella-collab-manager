@@ -6,13 +6,13 @@ import typing as t
 import uuid
 
 import requests
-import t4cclient.core.oauth.database as auth
+import t4cclient.core.authentication.database as auth
 from fastapi import APIRouter, Depends
 from requests import Session
-from t4cclient import config, extensions
+from t4cclient.config import config
 from t4cclient.core import credentials
+from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db
-from t4cclient.core.oauth.jwt_bearer import JWTBearer
 from t4cclient.core.operators import OPERATOR
 from t4cclient.extensions.modelsources import git, t4c
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
@@ -66,13 +66,13 @@ def create_backup(
     t4c.connection.add_user_to_repository(project, username, password)
 
     reference = OPERATOR.create_cronjob(
-        image=config.IMPORTER_IMAGE,
+        image=config["docker"]["images"]["backup"],
         environment={
             "EASE_LOG_LOCATION": "/proc/1/fd/1",
             "GIT_REPO_URL": gitmodel.path,
             "GIT_REPO_BRANCH": gitmodel.revision,
-            "T4C_REPO_HOST": config.T4C_SERVER_HOST,
-            "T4C_REPO_PORT": config.T4C_SERVER_PORT,
+            "T4C_REPO_HOST": config["modelsources"]["t4c"]["host"],
+            "T4C_REPO_PORT": config["modelsources"]["t4c"]["port"],
             "T4C_REPO_NAME": project,
             "T4C_PROJECT_NAME": t4cmodel.name,
             "T4C_USERNAME": username,
@@ -115,6 +115,7 @@ def delete_backup(
     OPERATOR.delete_cronjob(backup.reference)
 
     crud.delete_backup(db, project, id)
+    return None
 
 
 @router.post(

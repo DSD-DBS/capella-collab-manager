@@ -8,7 +8,7 @@ from t4cclient.core import database
 from t4cclient.core.database import sessions
 from t4cclient.routes.sessions import inject_attrs_in_sessions
 
-LOGGER = logging.getLogger(__file__)
+LOGGER = logging.getLogger(__name__)
 
 
 @click.command()

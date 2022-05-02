@@ -9,3 +9,5 @@ metadata:
   labels: 
     id: {{ .Release.Name }}-configmap-backend
 data:
+  config.yaml: |
+    {{- tpl (.Files.Get "config/backend.yaml") . | nindent 4 }}

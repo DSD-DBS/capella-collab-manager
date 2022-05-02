@@ -1,7 +1,6 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
-
-{{ if .Values.database.deploy }}
+{{ if .Values.database.guacamole.deploy }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,22 +12,25 @@ spec:
   selector: 
     matchLabels: 
       id: {{ .Release.Name }}-deployment-guacamole-postgres
+  strategy:
+    type: Recreate
   template:
     metadata: 
       labels: 
         id: {{ .Release.Name }}-deployment-guacamole-postgres
     spec:
       volumes:
+        {{ if ne .Values.target "local" }}
         - name: {{ .Release.Name }}-data
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-volume-guacamole-postgres
+        {{ end }}
         - name: {{ .Release.Name }}-initsql
           configMap:
             name: {{ .Release.Name }}-configmap-guacamole-postgres
       containers:
         - name: {{ .Release.Name }}-guacamole-postgres
-          image: postgres:14.1
-          imagePullPolicy: {{ .Values.pullPolicy }}
+          image: {{ .Values.docker.registry.external }}/postgres:14.1
           env:
             - name: PGDATA
               value: /var/lib/postgresql/data/data
@@ -64,10 +66,13 @@ spec:
               memory: "1Gi"
               cpu: "1"
           volumeMounts:
+            {{ if ne .Values.target "local" }}
             - name: {{ .Release.Name }}-data
               mountPath: /var/lib/postgresql/data
+            {{ end }}
             - name: {{ .Release.Name }}-initsql
               mountPath: /docker-entrypoint-initdb.d
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{ if .Values.cluster.container }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}
 {{ end }}

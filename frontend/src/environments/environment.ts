@@ -6,4 +6,7 @@ export const environment = {
   backend_url: '/api/v1',
   privacy: 'https://example.com/privacy',
   imprint: 'https://example.com/imprint',
+  provider: 'PROVIDER',
+  authentication: 'OAuth mock',
+  usernameAttribute: 'sub',
 };

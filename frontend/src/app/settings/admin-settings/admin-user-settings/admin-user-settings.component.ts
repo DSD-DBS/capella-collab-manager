@@ -75,7 +75,8 @@ export class AdminUserSettingsComponent implements OnInit {
 
   getUsersByRole(role: 'administrator' | 'user'): Array<User> {
     return this.users.filter(
-      (u) => u.role == role && u.name.includes(this.search.toLowerCase())
+      (u) => u.role == role
+      && u.name.toLowerCase().includes(this.search.toLowerCase())
     );
   }
 }

@@ -13,16 +13,17 @@ import kubernetes
 import kubernetes.client.exceptions
 import kubernetes.client.models
 import kubernetes.config
-from t4cclient import config
+from t4cclient.config import config
 from t4cclient.core.operators.abc import Operator
 
 log = logging.getLogger(__name__)
+cfg = config["operators"]["k8s"]
 
 try:
     kubernetes.config.load_incluster_config()
 except kubernetes.config.ConfigException:
     try:
-        kubernetes.config.load_config(context=config.KUBERNETES_CONTEXT)
+        kubernetes.config.load_config(context=cfg["context"])
     except kubernetes.config.ConfigException:
         kubernetes.config.load_kube_config_from_dict(
             {
@@ -32,7 +33,7 @@ except kubernetes.config.ConfigException:
                     {
                         "cluster": {
                             "insecure-skip-tls-verify": True,
-                            "server": config.KUBERNETES_API_URL,
+                            "server": cfg["apiURL"],
                         },
                         "name": "cluster",
                     }
@@ -47,7 +48,7 @@ except kubernetes.config.ConfigException:
                 "users": [
                     {
                         "name": "tokenuser",
-                        "user": {"token": config.KUBERNETES_TOKEN},
+                        "user": {"token": cfg["token"]},
                     }
                 ],
             }
@@ -74,16 +75,17 @@ class KubernetesOperator(Operator):
         repositories: t.List[str],
     ) -> t.Dict[str, t.Any]:
         log.info("Launching a persistent session for user %s", username)
+        t4c_cfg = config["modelsources"]["t4c"]
 
         id = self._generate_id()
         self._create_persistent_volume_claim(username)
         deployment = self._create_deployment(
-            config.PERSISTENT_IMAGE,
+            config["docker"]["images"]["workspaces"]["persistent"],
             id,
             {
-                "T4C_LICENCE_SECRET": config.T4C_LICENCE,
-                "T4C_SERVER_HOST": config.T4C_SERVER_HOST,
-                "T4C_SERVER_PORT": config.T4C_SERVER_PORT,
+                "T4C_LICENCE_SECRET": t4c_cfg["licence"],
+                "T4C_SERVER_HOST": t4c_cfg["host"],
+                "T4C_SERVER_PORT": t4c_cfg["port"],
                 "T4C_REPOSITORIES": ",".join(repositories),
                 "RMT_PASSWORD": password,
             },
@@ -95,15 +97,22 @@ class KubernetesOperator(Operator):
         return self._export_attrs(deployment, service)
 
     def start_readonly_session(
-        self, password: str, git_url: str, git_revision: str, entrypoint: str
+        self,
+        password: str,
+        git_url: str,
+        git_revision: str,
+        entrypoint: str,
+        git_username: str,
+        git_password: str,
     ) -> t.Dict[str, t.Any]:
         id = self._generate_id()
+
         deployment = self._create_deployment(
-            config.READONLY_IMAGE,
+            config["docker"]["images"]["workspaces"]["readonly"],
             id,
             {
-                "GIT_USERNAME": config.GIT_USERNAME,
-                "GIT_PASSWORD": config.GIT_PASSWORD,
+                "GIT_USERNAME": git_username,
+                "GIT_PASSWORD": git_password,
                 "GIT_URL": git_url,
                 "GIT_REVISION": git_revision,
                 "GIT_ENTRYPOINT": entrypoint,
@@ -132,7 +141,7 @@ class KubernetesOperator(Operator):
         jobs = [
             item
             for item in self.v1_batch.list_namespaced_job(
-                namespace=config.KUBERNETES_NAMESPACE
+                namespace=cfg["namespace"]
             ).items
             if item.metadata.owner_references
             and item.metadata.owner_references[0].name == name
@@ -149,7 +158,7 @@ class KubernetesOperator(Operator):
     def _get_pod_state(self, label_selector: str):
         try:
             pods = self.v1_core.list_namespaced_pod(
-                namespace=config.KUBERNETES_NAMESPACE, label_selector=label_selector
+                namespace=cfg["namespace"], label_selector=label_selector
             )
 
             log.debug("Received k8s pods: %s", pods.items[0].metadata.name)
@@ -157,7 +166,7 @@ class KubernetesOperator(Operator):
 
             return (
                 self.v1_core.list_namespaced_event(
-                    namespace=config.KUBERNETES_NAMESPACE,
+                    namespace=cfg["namespace"],
                     field_selector="involvedObject.name=" + pods.items[0].metadata.name,
                 )
                 .items[-1]
@@ -173,7 +182,7 @@ class KubernetesOperator(Operator):
     def _get_pod_starttime(self, label_selector: str) -> datetime | None:
         try:
             pods = self.v1_core.list_namespaced_pod(
-                namespace=config.KUBERNETES_NAMESPACE, label_selector=label_selector
+                namespace=cfg["namespace"], label_selector=label_selector
             ).to_dict()
             log.debug("Received k8s pods: %s", pods)
 
@@ -184,18 +193,18 @@ class KubernetesOperator(Operator):
 
     def get_session_logs(self, id: str) -> str:
         pod_name = self.v1_core.list_namespaced_pod(
-            namespace=config.KUBERNETES_NAMESPACE, label_selector="app=" + id
+            namespace=cfg["namespace"], label_selector="app=" + id
         ).to_dict()["items"][0]["metadata"]["name"]
         return self.v1_core.read_namespaced_pod_log(
             name=pod_name,
-            namespace=config.KUBERNETES_NAMESPACE,
+            namespace=cfg["namespace"],
         )
 
     def get_job_logs(self, id: str) -> str:
         try:
             log = self.v1_core.read_namespaced_pod_log(
                 name=id,
-                namespace=config.KUBERNETES_NAMESPACE,
+                namespace=cfg["namespace"],
             )
 
             if log:
@@ -207,7 +216,7 @@ class KubernetesOperator(Operator):
             [
                 item.reason + ": " + item.message
                 for item in self.v1_core.list_namespaced_event(
-                    namespace=config.KUBERNETES_NAMESPACE,
+                    namespace=cfg["namespace"],
                     field_selector="involvedObject.name=" + id,
                 ).items
             ]
@@ -227,7 +236,7 @@ class KubernetesOperator(Operator):
 
     def trigger_cronjob(self, name: str) -> None:
         cronjob = self.v1_batch.read_namespaced_cron_job(
-            namespace=config.KUBERNETES_NAMESPACE, name=name
+            namespace=cfg["namespace"], name=name
         )
         job = kubernetes.client.V1Job(
             api_version="batch/v1",
@@ -249,9 +258,7 @@ class KubernetesOperator(Operator):
             ),
             spec=cronjob.spec.job_template.spec,
         )
-        self.v1_batch.create_namespaced_job(
-            namespace=config.KUBERNETES_NAMESPACE, body=job
-        )
+        self.v1_batch.create_namespaced_job(namespace=cfg["namespace"], body=job)
 
     def delete_cronjob(self, id: str) -> None:
         self._delete_cronjob(id=id)
@@ -266,7 +273,7 @@ class KubernetesOperator(Operator):
     def _get_pod_id(self, label_selector: str) -> str:
         try:
             pods = self.v1_core.list_namespaced_pod(
-                namespace=config.KUBERNETES_NAMESPACE, label_selector=label_selector
+                namespace=cfg["namespace"], label_selector=label_selector
             ).to_dict()
             log.debug("Received k8s pods: %s", pods)
 
@@ -295,9 +302,7 @@ class KubernetesOperator(Operator):
             "ports": set([3389]),
             "created_at": deployment.to_dict()["metadata"]["creation_timestamp"],
             "mac": "-",
-            "host": service.to_dict()["metadata"]["name"]
-            + "."
-            + config.KUBERNETES_NAMESPACE,
+            "host": service.to_dict()["metadata"]["name"] + "." + cfg["namespace"],
         }
 
     def _create_deployment(
@@ -336,7 +341,7 @@ class KubernetesOperator(Operator):
                                 "image": image,
                                 "ports": [{"containerPort": 3389, "protocol": "TCP"}],
                                 "env": [
-                                    {"name": key, "value": value}
+                                    {"name": key, "value": str(value)}
                                     for key, value in environment.items()
                                 ],
                                 "resources": {
@@ -345,6 +350,7 @@ class KubernetesOperator(Operator):
                                 },
                                 "imagePullPolicy": "Always",
                                 "volumeMounts": volume_mount,
+                                **cfg["cluster"]["containers"],
                             },
                         ],
                         "volumes": volume,
@@ -353,9 +359,7 @@ class KubernetesOperator(Operator):
                 },
             },
         }
-        return self.v1_apps.create_namespaced_deployment(
-            config.KUBERNETES_NAMESPACE, body
-        )
+        return self.v1_apps.create_namespaced_deployment(cfg["namespace"], body)
 
     def _create_cronjob(
         self, name: str, image: str, environment: t.Dict[str, str], schedule="* * * * *"
@@ -388,6 +392,7 @@ class KubernetesOperator(Operator):
                                                 "memory": "1.6Gi",
                                             },
                                         },
+                                        **cfg["cluster"]["containers"],
                                     }
                                 ],
                                 "restartPolicy": "Never",
@@ -401,7 +406,7 @@ class KubernetesOperator(Operator):
         }
 
         return self.v1_batch.create_namespaced_cron_job(
-            namespace=config.KUBERNETES_NAMESPACE, body=body
+            namespace=cfg["namespace"], body=body
         )
 
     def _create_service(
@@ -426,7 +431,7 @@ class KubernetesOperator(Operator):
                 "type": "ClusterIP",
             },
         }
-        return self.v1_core.create_namespaced_service(config.KUBERNETES_NAMESPACE, body)
+        return self.v1_core.create_namespaced_service(cfg["namespace"], body)
 
     def _create_persistent_volume_claim(self, username):
         body = {
@@ -436,14 +441,14 @@ class KubernetesOperator(Operator):
                 "name": self._get_claim_name(username),
             },
             "spec": {
-                "accessModes": [config.KUBERNETES_STORAGE_ACCESS_MODE],
-                "storageClassName": config.KUBERNETES_STORAGE_CLASS_NAME,
+                "accessModes": [cfg["storageAccessMode"]],
+                "storageClassName": cfg["storageClassName"],
                 "resources": {"requests": {"storage": "20Gi"}},
             },
         }
         try:
             self.v1_core.create_namespaced_persistent_volume_claim(
-                config.KUBERNETES_NAMESPACE, body
+                cfg["namespace"], body
             )
         except kubernetes.client.exceptions.ApiException as e:
             if e.status == 409:
@@ -457,28 +462,22 @@ class KubernetesOperator(Operator):
         )
 
     def _get_service(self, id: str):
-        return self.v1_core.read_namespaced_service(id, config.KUBERNETES_NAMESPACE)
+        return self.v1_core.read_namespaced_service(id, cfg["namespace"])
 
     def _delete_deployment(self, id: str) -> kubernetes.client.V1Status:
         try:
-            return self.v1_apps.delete_namespaced_deployment(
-                id, config.KUBERNETES_NAMESPACE
-            )
+            return self.v1_apps.delete_namespaced_deployment(id, cfg["namespace"])
         except kubernetes.client.exceptions.ApiException:
-            log.exception("Error deleting deployment")
+            log.exception("Error deleting deployment with id: %s", id)
 
     def _delete_cronjob(self, id: str) -> kubernetes.client.V1Status:
         try:
-            return self.v1_batch.delete_namespaced_cron_job(
-                id, config.KUBERNETES_NAMESPACE
-            )
+            return self.v1_batch.delete_namespaced_cron_job(id, cfg["namespace"])
         except kubernetes.client.exceptions.ApiException:
-            log.exception("Error deleting cronjob")
+            log.exception("Error deleting cronjob with id: %s", id)
 
     def _delete_service(self, id: str) -> kubernetes.client.V1Status:
         try:
-            return self.v1_core.delete_namespaced_service(
-                id, config.KUBERNETES_NAMESPACE
-            )
+            return self.v1_core.delete_namespaced_service(id, cfg["namespace"])
         except kubernetes.client.exceptions.ApiException:
-            log.exception("Error deleting service")
+            log.exception("Error deleting service with id: %s", id)
