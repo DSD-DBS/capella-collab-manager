@@ -21,14 +21,20 @@ frontend:
 	docker build --build-arg CONFIGURATION=local -t t4c/client/frontend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend frontend
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend
 
-capella: capella-dockerimages/capella/archives/capella.tar.gz
+capella: capella-download
 	docker build -t base capella-dockerimages/base
 	docker build -t capella/base capella-dockerimages/capella
 	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
 
-capella-dockerimages/capella/archives/capella.tar.gz:
-	curl -L --output $@ 'https://ftp.acc.umu.se/mirror/eclipse.org/capella/core/products/releases/5.2.0-R20211130-125709/capella-5.2.0.202111301257-linux-gtk-x86_64.tar.gz'
+capella-download:
+	cd capella-dockerimages/capella/archives; \
+	if [[ -f "capella.tar.gz" ]] || [[ -f "capella.zip" ]]; \
+	then \
+		echo "Found existing capella archive."; \
+	else \
+		curl -L --output capella.tar.gz 'https://ftp.acc.umu.se/mirror/eclipse.org/capella/core/products/releases/5.2.0-R20211130-125709/capella-5.2.0.202111301257-linux-gtk-x86_64.tar.gz'; \
+	fi
 	
 t4c-client: 
 	docker build -t t4c/client/base capella-dockerimages/t4c
