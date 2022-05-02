@@ -37,8 +37,8 @@ capella-download:
 	else \
 		curl -L --output capella.tar.gz 'https://ftp.acc.umu.se/mirror/eclipse.org/capella/core/products/releases/5.2.0-R20211130-125709/capella-5.2.0.202111301257-linux-gtk-x86_64.tar.gz'; \
 	fi
-	
-t4c-client: 
+
+t4c-client:
 	docker build -t t4c/client/base capella-dockerimages/t4c
 
 readonly:
@@ -83,7 +83,7 @@ helm-deploy:
 		$(RELEASE) ./helm
 	$(MAKE) .provision-guacamole .provision-backend
 
-open: 
+open:
 	export URL=http://localhost:8080; \
 	if [[ "Windows_NT" == "$(OS)" ]]; \
 	then \
@@ -96,7 +96,7 @@ open:
 		open "$$URL"; \
 	fi
 
-clear-backend-db: 
+clear-backend-db:
 	kubectl delete deployment -n t4c-manager $(RELEASE)-backend-postgres
 	kubectl delete pvc -n t4c-manager $(RELEASE)-volume-backend-postgres
 	$(MAKE) helm-deploy
@@ -122,7 +122,7 @@ delete-cluster:
 	rm -f .provision-guacamole .provision-backend
 
 .provision-guacamole:
-	export MSYS_NO_PATHCONV=1;
+	export MSYS_NO_PATHCONV=1; \
 	kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
 	kubectl exec -ti --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole && \
 	touch .provision-guacamole
@@ -145,7 +145,7 @@ dev-backend:
 dev-cleanup:
 	$(MAKE) -C backend cleanup
 
-backend-logs: 
+backend-logs:
 	kubectl logs -f -n $(NAMESPACE) -l id=$(RELEASE)-deployment-backend
 
 ns:
