@@ -13,7 +13,7 @@ your code follows our style guidelines outlined below.
 ## General 
 
 This project consists of several services. Here is the architecture of the services: 
-TODO
+![Capella Collab Manager architecture](doc/architecture.png)
 
 To get an overview of the services, it is also worth taking a look at the Helm Chart, 
 which can be found in the `helm` folder.
