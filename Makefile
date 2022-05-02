@@ -1,7 +1,7 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-CLUSTER_NAME = mycluster
+CLUSTER_NAME = collab-cluster
 LOCAL_REGISTRY_NAME = localhost
 CLUSTER_REGISTRY_NAME = myregistry.localhost
 REGISTRY_PORT = 12345
@@ -122,7 +122,7 @@ delete-cluster:
 	rm -f .provision-guacamole .provision-backend
 
 .provision-guacamole:
-	export MSYS_NO_PATHCONV=1; \
+	export MSYS_NO_PATHCONV=1; \npm@8.8.0
 	kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
 	kubectl exec -ti --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole && \
 	touch .provision-guacamole
