@@ -78,7 +78,7 @@ helm-deploy:
 		--set general.port=8080 \
 		--set t4cServer.apis.usageStats="http://$(RELEASE)-licence-server-mock:80/mock" \
 		--set t4cServer.apis.restAPI="http://$(RELEASE)-t4c-server-mock:80/mock/api/v1.0" \
-		--wait --timeout 4m \
+		--wait --timeout 10m \
 		--debug \
 		$(RELEASE) ./helm
 	$(MAKE) .provision-guacamole .provision-backend
