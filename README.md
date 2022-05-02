@@ -31,8 +31,6 @@ We have more exciting features on our roadmap, for instance:
 
 ## Getting started
 
-### Requirements
-
 ### Running locally with k3d
 
 #### Prerequisites
