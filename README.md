@@ -60,12 +60,14 @@ Create a local k3d cluster and deploy the application
 
 ```zsh
 make create-cluster
-MY_NAME=<USERNAME> make deploy
+make deploy
 ```
 
-Replace `<USERNAME>` with a username. An administrator account will be made for this
-user. Make sure you log in with the defined username if you want to test the admin
-account.
+It can take a long time to run, but shouldn't take more than 5 minutes. Meanwhile, the following message appears several times:
+```
+ready.go:277: [debug] Deployment is not ready: t4c-manager/dev-t4c-manager-backend. 0 out of 1 expected pods are ready
+```
+This is nothing to worry about - it just takes a while for all containers to start.
 
 Verify your deployment - components should be in the "Running" state:
 
@@ -115,7 +117,7 @@ running in a few minutes.
 2. Compare `helm/values.yaml` with your `deployments/yourinstance.values.yaml` and update your configuration accordingly.
 3. Run the following command to deploy to your kubernetes cluster:
     ```
-    helm install production -n <namespace> -f deployments/yourinstance.values.yaml helm
+    helm upgrade production -n <namespace> -f deployments/yourinstance.values.yaml helm
     ```
 
 ### Team for Capella integration
