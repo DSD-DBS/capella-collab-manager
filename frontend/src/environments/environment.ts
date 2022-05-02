@@ -4,6 +4,6 @@ export const environment = {
   privacy: 'https://example.com/privacy',
   imprint: 'https://example.com/imprint',
   provider: 'PROVIDER',
-  authentication: 'AUTHENTICATION_TYPE',
+  authentication: 'OAuth mock',
   usernameAttribute: 'sub',
 };
