@@ -94,10 +94,29 @@ running in a few minutes.
 
 ### Deployment
 
-### Running on a cluster
+### Install on a cluster
 
-* Ensure your `kubectl` configuration points to the right cluster
-* Run `MY_EMAIL=me@mydomain.com make deploy` to deploy to your kubernetes cluster.
+1. Ensure your `kubectl` configuration points to the right cluster
+2. Copy `helm/values.yaml` to `deployments/yourinstance.values.yaml`
+3. Set all required values in the `deployments/yourinstance.values.yaml` configuration file
+4. Create your sessions namespace in your kubernetes cluster: 
+    ```
+    kubectl create namespace <your-namespace>
+    ```
+5. Run the following command to deploy to your kubernetes cluster:
+    ```
+    helm install production -n <namespace> -f deployments/yourinstance.values.yaml helm
+    ```
+6. Set up the database for guacamole
+
+### Upgrade an cluster instance
+
+1. Ensure your `kubectl` configuration points to the right cluster
+2. Compare `helm/values.yaml` with your `deployments/yourinstance.values.yaml` and update your configuration accordingly.
+3. Run the following command to deploy to your kubernetes cluster:
+    ```
+    helm install production -n <namespace> -f deployments/yourinstance.values.yaml helm
+    ```
 
 ### Team for Capella integration
 
