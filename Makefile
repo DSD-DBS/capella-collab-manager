@@ -122,7 +122,7 @@ delete-cluster:
 	rm -f .provision-guacamole .provision-backend
 
 .provision-guacamole:
-	export MSYS_NO_PATHCONV=1; \npm@8.8.0
+	export MSYS_NO_PATHCONV=1;
 	kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
 	kubectl exec -ti --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole && \
 	touch .provision-guacamole
