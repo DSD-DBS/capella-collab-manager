@@ -57,7 +57,7 @@ mock:
 
 capella-dockerimages: capella t4c-client readonly ease
 
-deploy: oauth-mock backend frontend capella mock helm-deploy
+deploy: oauth-mock backend frontend capella mock helm-deploy open
 
 # Deploy with full T4C support:
 deploy-t4c: backend frontend capella t4c-client readonly-ease mock helm-deploy
@@ -79,6 +79,20 @@ helm-deploy:
 		--debug \
 		$(RELEASE) ./helm
 	$(MAKE) .provision-guacamole .provision-backend
+
+open: 
+	export URL=http://localhost:8080; \
+	if [[ "Windows_NT" == "$(OS)" ]]; \
+	then \
+		start "$$URL"; \
+	elif [[ "$(shell uname -s)" == "Linux" ]]; \
+	then \
+		xdg-open "$$URL"; \
+	elif [[ "$(shell uname -s)" == "Darwin" ]]; \
+	then \
+		open "$$URL"; \
+	fi
+
 
 clear-backend-db: 
 	kubectl delete deployment -n t4c-manager $(RELEASE)-backend-postgres
