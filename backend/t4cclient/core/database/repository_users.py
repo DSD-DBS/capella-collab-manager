@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 from sqlalchemy.orm import Session
 from t4cclient.schemas.repositories import (RepositoryUserPermission,
                                             RepositoryUserRole)

@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 """Use repository_name instead of repository_id as Foreign Key
 
 Revision ID: 52aec4f341a5

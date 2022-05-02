@@ -1,3 +1,6 @@
+// Copyright DB Netz AG and the capella-collab-manager contributors
+// SPDX-License-Identifier: Apache-2.0
+
 // This file is required by karma.conf.js and loads recursively all the .spec and framework files
 
 import 'zone.js/testing';

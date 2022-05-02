@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 apiVersion: v2
 name: t4c-access-manager
 description: T4C Access Manager with OnDemand Capella / T4C Client
