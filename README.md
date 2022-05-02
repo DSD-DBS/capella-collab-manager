@@ -75,11 +75,6 @@ Verify your deployment - components should be in the "Running" state:
 kubectl get pods --namespace=t4c-manager
 ```
 
-Important! If you use Windows and the Git Bash to execute the commands, you have to set
-the environment variable: `MSYS_NO_PATHCONV=1`.
-Otherwise the commands will break with UNIX paths, because the Git Bash tries to add a
-Windows path prefix.
-
 If something goes wrong, please open an issue on Github.
 
 To clean up the environment run:
