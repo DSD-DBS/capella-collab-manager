@@ -1,3 +1,6 @@
+// Copyright DB Netz AG and the capella-collab-manager contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import {
   AbstractControl,

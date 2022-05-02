@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 """Remove RDP Username
 
 Revision ID: 1b4c1dc944d6

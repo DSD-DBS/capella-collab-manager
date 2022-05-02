@@ -73,6 +73,8 @@ Verify your deployment - components should be in the "Running" state:
 kubectl get pods --namespace=t4c-manager
 ```
 
+If all goes well, you should find Capella-collab-manager running on http://localhost:8081/.
+
 If something goes wrong, please open an issue on Github.
 
 To clean up the environment run:
@@ -115,11 +117,21 @@ running in a few minutes.
 
 ### Team for Capella integration
 
-TODO
+For environments where TeamForCapella (commercial product of Obeo) is available it is possible to integrate such service with this management app. The integration requires the TeamForCapella backend to have the REST API feature enabled (in 5.0 it was still experimental). The TeamForCapella client then gets "baked" into the t4c-remote session image, however without the license secret. License secret is injected into container at runtime. Additionally, monitoring of available / consumed licenses is available but reqires the license server to be run with monitoring feature enabled.
 
 ## How it works
 
-Here comes a brief intro into architecture of this thing (TODO)
+![Capella Collab Manager architecture](doc/architecture.png)
+
+The Capella Collaboration Manager consists of a couple of components:
+
+* A frontend - what you see in the browser
+* A backend web service - for managing users and sessions
+* [Guacamole](https://guacamole.apache.org/), to expose the sessions via the browser
+* Databases, for state persistence.
+* Optional: A Teams4Capella server
+
+Sessions are created in a separate namespace.
 
 ## Contributing
 

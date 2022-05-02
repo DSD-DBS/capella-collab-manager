@@ -1,3 +1,6 @@
+// Copyright DB Netz AG and the capella-collab-manager contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { TestBed } from '@angular/core/testing';
 
 import { T4CRepoService } from './t4c-repo.service';

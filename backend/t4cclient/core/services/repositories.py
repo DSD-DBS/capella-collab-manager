@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 import typing as t
 
 import t4cclient.extensions.modelsources.git.crud as git_model_crud
