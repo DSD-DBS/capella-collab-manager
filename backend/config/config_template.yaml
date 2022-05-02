@@ -48,7 +48,7 @@ authentication:
   oauth: 
     # Only required when using provider oauth
     endpoints: 
-      wellKnown: http://localhost:8080/default/.well-known/openid-configuration
+      wellKnown: http://localhost:8083/default/.well-known/openid-configuration
       tokenIssuance: 
       authorization: 
 

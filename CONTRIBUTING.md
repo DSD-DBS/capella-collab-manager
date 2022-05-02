@@ -34,23 +34,30 @@ make capella-dockerimages
 We use OAuth2 as authentication protocol for our application. Therefore we need an OAuth2 server.
 For local development, we have an OAuth mock that needs to be started first.
 
-1. Navigate to the `mocks/oauth` directory.
-2. The application requires `https` for requests to the the oauth server. 
-   This means that we need a certificate for localhost. We therefore require the files `projectroot/certs/localhost.cert` and `projectroot/certs/localhost.p12`.
+First of all, navigate to the `mocks/oauth` directory.
 
-   You can easily create them with
-   ```sh
-   make ssl
-   ```
-3. Import the certificate to your local certificate store. 
-   
-   Note for *Linux*-Users: If you run `make dev`, it automatically uses the certificates in the `projectroot/certs` directory.
-   Note for *Windows*-Users: Python doesn't read the certificates from the Windows certmgr. You have to add an environment variable `REQUESTS_CA_BUNDLE` with the path to the `localhost.crt` file.
-4. Run the OAuth2-Mock-Server with: 
+You can handle the SSL-support in two different ways: 
+
+### Option 1: Use insecure connections
+This is the default and recommended option for local development. Do not use it in production!
+1. Run the OAuth2-Mock-Server with: 
    ```sh
    make start
    ```
-5. Verify that the server runs, e.g. by navigating to [Well Known](https://localhost:8080/default/.well-known/openid-configuration)
+2. Verify that the server runs, e.g. by navigating to [Well Known](http://localhost:8080/default/.well-known/openid-configuration)
+
+### Option 2: Create a self signed certificate
+1. We require the files `projectroot/certs/localhost.cert` and `projectroot/certs/localhost.p12`.
+    You can easily create them with
+    ```sh
+    make ssl
+    ```   
+2. Import the certificate to your local certificate store.
+3. Run the OAuth2-Mock-Server with: 
+   ```sh
+   make start-ssl
+   ```
+4. Verify that the server runs, e.g. by navigating to [Well Known](https://localhost:8083/default/.well-known/openid-configuration)
 
 ## Backend
 
@@ -74,18 +81,27 @@ Run the following steps:
    Please copy the file `config_template.yaml` to `config.yaml` and adjust the values.
 
    *Hint*: If you already have the k8d cluster running and the if you have the application deployed, 
-   then no configuration values need to be adjusted. It might be helpful to adjust the initial admin user. 
-   Please use your username as value for the `intial.admin` configuration option.
-   This will setup your user as administrator during the database initialization. 
-4. A PostgreSQL database is required. You can run the following command to set up the database: 
+   then no configuration values need to be adjusted.
+
+4. This step in only **necessary, if you use the self signed certificate** option for the oauth mock).
+   If you don't have the certificate in your local certificate store, please execute the following command: 
+   ```
+   export REQUESTS_CA_BUNDLE=$(pwd)/../certs/localhost.crt
+   ```
+  
+   You need to adjust the option `` in the `config.yaml` to the following value: 
+   ```
+   https://localhost:8083/default/.well-known/openid-configuration
+   ```
+5. A PostgreSQL database is required. You can run the following command to set up the database: 
    ```sh
    make database
    ```
-5. Start the application with: 
+6. Start the application with: 
    ```sh
    make app
    ```
-6. You should see it running on port 8000. 
+7. You should see it running on port 8000. 
    - [Healthcheck](http://localhost:8000/healthcheck)
    - [Documentation](http://localhost:8000/docs)
 
