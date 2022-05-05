@@ -10,63 +10,82 @@ issue](/../../issues). Or go ahead and [open a pull request](/../../pulls) to co
 code. In order to reduce the burden on our maintainers, please make sure that
 your code follows our style guidelines outlined below.
 
-## General 
+## General
 
-This project consists of several services. Here is the architecture of the services: 
+This project consists of several services. Here is the architecture of the services:
 ![Capella Collab Manager architecture](doc/architecture.png)
 
-To get an overview of the services, it is also worth taking a look at the Helm Chart, 
+To get an overview of the services, it is also worth taking a look at the Helm Chart,
 which can be found in the `helm` folder.
 
-We use REST APIs for the communication between frontend and backend. 
-Please follow the [RESTful web API design best practises](https://docs.microsoft.com/en-us/azure/architecture/best-practices/api-design). 
+We use REST APIs for the communication between frontend and backend.
+Please follow the [RESTful web API design best practises](https://docs.microsoft.com/en-us/azure/architecture/best-practices/api-design).
 
 We recommend to get started with the [local k8d deployment](README.md).
 
-## Capella Dockerimages
-Please follow the [README of the Capella Dockerimages repository](/../../../capella-dockerimages/blob/main/README.md). 
-When all files are in the right place, you can execute the following command to build and push the Dockerimages. 
-```
+## Capella Docker images
+
+Please follow the [README of the Capella Docker images repository](/../../../capella-dockerimages/blob/main/README.md).
+When all files are in the right place, you can execute the following command to build
+and push the Docker images.
+
+```sh
 make capella-dockerimages
 ```
 
 ## OAuth Server
-We use OAuth2 as authentication protocol for our application. Therefore we need an OAuth2 server.
-For local development, we have an OAuth mock that needs to be started first.
+
+We use OAuth2 as authentication protocol for our application. Therefore we need an
+OAuth2 server. For local development, we have an OAuth mock that needs to be started
+first.
 
 First of all, navigate to the `mocks/oauth` directory.
 
-You can handle the SSL-support in two different ways: 
+You can handle the SSL-support in two different ways:
 
 ### Option 1: Use insecure connections
-This is the default and recommended option for local development. Do not use it in production!
-1. Run the OAuth2-Mock-Server with: 
+
+This is the default and recommended option for local development.
+Do not use it in production!
+
+1. Run the OAuth2-Mock-Server with:
+
    ```sh
    make start
    ```
-2. Verify that the server runs, e.g. by navigating to [Well Known](http://localhost:8080/default/.well-known/openid-configuration)
+
+2. Verify that the server runs, e.g. by navigating to
+   [Well Known](http://localhost:8080/default/.well-known/openid-configuration)
 
 ### Option 2: Create a self signed certificate
+
 1. We require the files `projectroot/certs/localhost.cert` and `projectroot/certs/localhost.p12`.
-    You can easily create them with
-    ```sh
-    make ssl
-    ```   
+   You can easily create them with
+
+   ```sh
+   make ssl
+   ```
+
 2. Import the certificate to your local certificate store.
-3. Run the OAuth2-Mock-Server with: 
+3. Run the OAuth2-Mock-Server with:
+
    ```sh
    make start-ssl
    ```
-4. Verify that the server runs, e.g. by navigating to [Well Known](https://localhost:8083/default/.well-known/openid-configuration)
+
+4. Verify that the server runs, e.g. by navigating to
+   [Well Known](https://localhost:8083/default/.well-known/openid-configuration)
 
 ## Backend
 
 Requirements:
+
 - `python` and `pip`
 - `docker`
 - `make`
 
-Run the following steps: 
+Run the following steps:
+
 1. Navigate to the `backend` directory of your cloned repository.
 2. We recommend that you develop inside of a virtual environment. To set it up,
    run the following commands:
@@ -77,31 +96,42 @@ Run the following steps:
    pip install -U pip setuptools
    pip install -e '.[dev]'
    ```
-3. The backend uses various configuration settings. You can find them in the `config` directory. 
+
+3. The backend uses various configuration settings. You can find them in the `config`
+   directory.
    Please copy the file `config_template.yaml` to `config.yaml` and adjust the values.
 
-   *Hint*: If you already have the k8d cluster running and the if you have the application deployed, 
-   then no configuration values need to be adjusted.
+   *Hint*: If you already have the k8d cluster running and the if you have the
+   application deployed, then no configuration values need to be adjusted.
 
-4. This step in only **necessary, if you use the self signed certificate** option for the oauth mock).
-   If you don't have the certificate in your local certificate store, please execute the following command: 
-   ```
+4. This step is only **necessary, if you use the self signed certificate** option for the oauth mock.
+
+   If you don't have the certificate in your local certificate store, please execute the following command:
+
+   ```sh
    export REQUESTS_CA_BUNDLE=$(pwd)/../certs/localhost.crt
    ```
-  
-   You need to adjust the option `` in the `config.yaml` to the following value: 
-   ```
+
+   You need to adjust the option `` in the `config.yaml` to the following value:
+
+   ```text
    https://localhost:8083/default/.well-known/openid-configuration
    ```
-5. A PostgreSQL database is required. You can run the following command to set up the database: 
+
+5. A PostgreSQL database is required. You can run the following command to set up the database:
+
    ```sh
    make database
    ```
-6. Start the application with: 
+
+6. Start the application with:
+
    ```sh
    make app
    ```
-7. You should see it running on port 8000. 
+
+7. You should see it running on port 8000.
+
    - [Healthcheck](http://localhost:8000/healthcheck)
    - [Documentation](http://localhost:8000/docs)
 
@@ -113,8 +143,10 @@ We additionally recommend that you set up your editor / IDE as follows.
 
 ### Create database migrations scripts
 
-To create an upgrade script automatically (this will compare the current database state with the models): 
-```
+To create an upgrade script automatically (this will compare the current database state
+with the models):
+
+```sh
 cd t4cclient
 alembic revision --autogenerate -m "Commit message"
 ```
@@ -122,28 +154,31 @@ alembic revision --autogenerate -m "Commit message"
 ## Frontend
 
 Requirements:
+
 - `npm` package manager
 - [Angular CLI](https://angular.io/cli#installing-angular-cli)
 - `make`
 
 Run the following steps:
+
 1. Navigate to the `frontend` folder
 2. Optional: If you like to use your custom favicon, please copy it to `src/favicon.ico`
-3. Optional: If you like to use your custom theme, replace the file `src/custom-theme.scss`. 
+3. Optional: If you like to use your custom theme, replace the file `src/custom-theme.scss`.
    You can generate custom themes [here](http://mcg.mbitson.com/)
 4. Copy the file `src/environment.ts` to `src/environment.dev.ts` and adjust the values.
-5. Run the frontend with: 
+5. Run the frontend with:
+
    ```sh
    make dev
    ```
+
 6. You should see the frontend running von port 4200.
 
 We additionally recommend that you set up your editor / IDE as follows.
+
 - Set up the editor to run [prettier](https://prettier.io/) when saving.
 
-# Code style
-
-## Backend 
+## Code style for the Python backend
 
 We base our code style on a modified version of the [Google style guide for
 Python code](https://google.github.io/styleguide/pyguide.html). The key
@@ -196,6 +231,3 @@ differences are:
   `isinstance` checks to pass) and can grow unwieldy very quickly.
 - Prefer `t.NamedTuple` over `collections.namedtuple`, because the former uses
   a more convenient `class ...:` syntax and also supports type annotations.
-
-
-
