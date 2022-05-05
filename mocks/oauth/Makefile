@@ -15,7 +15,7 @@ start:
 		--name oauth-mock \
 		-v $$(pwd)/$(CERTS_DIR)localhost.p12:/opt/localhost.p12 \
 		-v $$(pwd)/conf.json:/opt/conf.json \
-		-p 8080:8080 \
+		-p 8083:8080 \
 		-e JSON_CONFIG_PATH=/opt/conf.json \
 		ghcr.io/navikt/mock-oauth2-server:0.4.4
 
