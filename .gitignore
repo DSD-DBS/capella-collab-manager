@@ -1,5 +1,5 @@
 .vscode
-.venv
+.venv*
 /.provision-backend
 /.provision-guacamole
 /values*.yaml
