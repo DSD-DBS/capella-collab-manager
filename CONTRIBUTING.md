@@ -91,8 +91,8 @@ Run the following steps:
    run the following commands:
 
    ```sh
-   python3 -m venv .venv39
-   source .venv39/bin/activate
+   python3 -m venv .venv
+   source .venv/bin/activate
    pip install -U pip setuptools
    pip install -e '.[dev]'
    ```
