@@ -155,6 +155,7 @@ alembic revision --autogenerate -m "Commit message"
 
 Requirements:
 
+- Node.js 16 or 17
 - `npm` package manager
 - [Angular CLI](https://angular.io/cli#installing-angular-cli)
 - `make`
