@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 docker: 
   images: 
     workspaces: 
@@ -19,7 +22,7 @@ operators:
   k8s: 
     # Only required when using operator k8s
 
-    context: k3d-mycluster # Only required, if you'd like to use a local k3d environment
+    context: k3d-collab-cluster # Only required, if you'd like to use a local k3d environment
     namespace: t4c-sessions
 
     apiURL: # Only required when no kubectl context is available
