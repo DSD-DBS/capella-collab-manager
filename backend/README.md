@@ -5,16 +5,16 @@ Preparation
 1) Change into the `backend` directory.
 1) Create a virtual environment:
     ```
-    python -m venv .venv39
+    python -m venv .venv
     ```
 1) Activate it:
     On Windows via:
     ```
-    .venv39/Scripts/activate
+    .venv/Scripts/activate
     ```
     On Linux/MacOS:
     ```
-    source .venv39/bin/activate
+    source .venv/bin/activate
     ```
 1) Install required packages: 
     ```
