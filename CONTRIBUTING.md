@@ -112,7 +112,7 @@ Run the following steps:
    export REQUESTS_CA_BUNDLE=$(pwd)/../certs/localhost.crt
    ```
 
-   You need to adjust the option `` in the `config.yaml` to the following value:
+   You need to adjust the option `authentication.oauth.endpoints.wellKnown` in the `config.yaml` to the following value:
 
    ```text
    https://localhost:8083/default/.well-known/openid-configuration
