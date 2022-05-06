@@ -86,8 +86,14 @@ Requirements:
 
 Run the following steps:
 
+1. In the project's root directory you must create a local k3d cluster by running
+
+   ```sh
+   make create-cluster
+   ```
+
 1. Navigate to the `backend` directory of your cloned repository.
-2. We recommend that you develop inside of a virtual environment. To set it up,
+1. We recommend that you develop inside of a virtual environment. To set it up,
    run the following commands:
 
    ```sh
@@ -97,7 +103,7 @@ Run the following steps:
    pip install -e '.[dev]'
    ```
 
-3. The backend uses various configuration settings. You can find them in the `config`
+1. The backend uses various configuration settings. You can find them in the `config`
    directory.
    Please copy the file `config_template.yaml` to `config.yaml` and adjust the values.
 
@@ -106,8 +112,7 @@ Run the following steps:
 
    *Hint*: You can run `python -m t4cclient.config.diff` after each update to check if your config is up to date.
 
-4. This step is only **necessary, if you use the self signed certificate** option for the oauth mock.
-
+1. This step is only **necessary, if you use the self signed certificate** option for the oauth mock.
    If you don't have the certificate in your local certificate store, please execute the following command:
 
    ```sh
@@ -120,19 +125,19 @@ Run the following steps:
    https://localhost:8083/default/.well-known/openid-configuration
    ```
 
-5. A PostgreSQL database is required. You can run the following command to set up the database:
+1. A PostgreSQL database is required. You can run the following command to set up the database:
 
    ```sh
    make database
    ```
 
-6. Start the application with:
+1. Start the application with:
 
    ```sh
    make app
    ```
 
-7. You should see it running on port 8000.
+1. You should see it running on port 8000.
 
    - [Healthcheck](http://localhost:8000/healthcheck)
    - [Documentation](http://localhost:8000/docs)
