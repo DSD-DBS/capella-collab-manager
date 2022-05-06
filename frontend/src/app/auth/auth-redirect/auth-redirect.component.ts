@@ -4,7 +4,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth/auth.service';
-import { RepositoryService } from 'src/app/services/repository/repository.service';
+import { ProjectService } from 'src/app/services/repository/repository.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 
@@ -20,7 +20,7 @@ export class AuthRedirectComponent implements OnInit {
     private userService: UserService,
     private localStorageService: LocalStorageService,
     private router: Router,
-    private repositoryService: RepositoryService
+    private projectService: ProjectService
   ) {}
 
   ngOnInit(): void {
@@ -32,7 +32,7 @@ export class AuthRedirectComponent implements OnInit {
           this.localStorageService.setValue('refresh_token', res.refresh_token);
 
           this.userService.getAndSaveOwnUser();
-          this.repositoryService.getAndSaveManagerRole();
+          this.projectService.getAndSaveManagerRole();
 
           this.router.navigateByUrl('/');
         });

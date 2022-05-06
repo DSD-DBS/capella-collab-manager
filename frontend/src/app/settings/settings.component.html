@@ -7,8 +7,6 @@
   *ngIf="userService.user?.role === 'administrator'"
 ></app-admin-settings>
 <app-repository-manager-settings
-  *ngIf="
-    repositoryService.isManager || userService.user?.role === 'administrator'
-  "
+  *ngIf="projectService.isManager || userService.user?.role === 'administrator'"
 ></app-repository-manager-settings>
 <app-user-settings></app-user-settings>

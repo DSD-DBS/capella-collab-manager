@@ -3,7 +3,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { RepositoryUser } from 'src/app/schemes';
-import { RepositoryService } from 'src/app/services/repository/repository.service';
+import { ProjectService } from 'src/app/services/repository/repository.service';
 import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
@@ -13,11 +13,11 @@ import { UserService } from 'src/app/services/user/user.service';
 })
 export class RepositoryManagerSettingsComponent implements OnInit {
   constructor(
-    public repositoryService: RepositoryService,
+    public projectService: ProjectService,
     public userService: UserService
   ) {}
 
   ngOnInit(): void {
-    this.repositoryService.refreshRepositories();
+    this.projectService.refreshRepositories();
   }
 }

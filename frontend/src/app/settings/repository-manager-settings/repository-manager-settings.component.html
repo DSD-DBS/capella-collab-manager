@@ -9,7 +9,7 @@
   You are Manager of these projects. Please select a project to see all
   settings. <br />
   <button
-    *ngFor="let repo of repositoryService.repositories"
+    *ngFor="let repo of projectService.repositories"
     color="primary"
     mat-flat-button
     [routerLink]="'/settings/projects/' + repo.repository_name"

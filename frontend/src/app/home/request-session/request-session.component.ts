@@ -14,7 +14,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { Session } from 'src/app/schemes';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import {
-  Repository,
+  Project,
   Warnings,
 } from 'src/app/services/repository/repository.service';
 import { SessionService } from 'src/app/services/session/session.service';
@@ -44,7 +44,7 @@ export class RequestSessionComponent implements OnInit {
   }
 
   @Input()
-  repositories: Array<Repository> = [];
+  repositories: Array<Project> = [];
 
   warnings: Array<Warnings> = [];
 

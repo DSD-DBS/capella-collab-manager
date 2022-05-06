@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Component, OnInit } from '@angular/core';
-import { RepositoryService } from 'src/app/services/repository/repository.service';
+import { ProjectService } from 'src/app/services/repository/repository.service';
 import { T4CSyncService } from 'src/app/services/t4c-sync/t4-csync.service';
 
 @Component({
@@ -15,7 +15,7 @@ export class RepositorySyncSettingsComponent implements OnInit {
 
   constructor(
     private t4cSyncService: T4CSyncService,
-    private repositoryService: RepositoryService
+    private projectService: ProjectService
   ) {}
 
   ngOnInit(): void {}
@@ -23,7 +23,7 @@ export class RepositorySyncSettingsComponent implements OnInit {
   synchronizeRepositories() {
     this.t4cSyncService.syncRepositories().subscribe(() => {
       this.synchronizeButtonState = 'success';
-      this.repositoryService.refreshRepositories();
+      this.projectService.refreshRepositories();
       setTimeout(() => {
         this.synchronizeButtonState = 'primary';
       }, 3000);

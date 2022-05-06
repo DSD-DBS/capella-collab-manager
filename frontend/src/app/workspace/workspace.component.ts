@@ -3,8 +3,8 @@
 
 import { Component, OnInit } from '@angular/core';
 import {
-  Repository,
-  RepositoryService,
+  Project,
+  ProjectService,
 } from '../services/repository/repository.service';
 import { SessionService } from '../services/session/session.service';
 
@@ -14,24 +14,24 @@ import { SessionService } from '../services/session/session.service';
   styleUrls: ['./workspace.component.css'],
 })
 export class WorkspaceComponent implements OnInit {
-  repositories: Array<Repository> = [];
+  repositories: Array<Project> = [];
   showSpinner = true;
 
   constructor(
     public sessionService: SessionService,
-    private repositoryService: RepositoryService
+    private projectService: ProjectService
   ) {}
 
   ngOnInit() {
     this.showSpinner = true;
-    this.repositoryService.getRepositories().subscribe(
-      (res: Array<Repository>) => {
+    this.projectService.getProjects().subscribe({
+      next: (res) => {
         this.repositories = res;
         this.showSpinner = false;
       },
-      (err) => {
+      error: () => {
         this.showSpinner = false;
-      }
-    );
+      },
+    });
   }
 }

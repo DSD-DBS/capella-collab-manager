@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Component, OnInit } from '@angular/core';
-import { RepositoryService } from '../services/repository/repository.service';
+import { ProjectService } from '../services/repository/repository.service';
 import { UserService } from '../services/user/user.service';
 
 @Component({
@@ -13,7 +13,7 @@ import { UserService } from '../services/user/user.service';
 export class SettingsComponent implements OnInit {
   constructor(
     public userService: UserService,
-    public repositoryService: RepositoryService
+    public projectService: ProjectService
   ) {}
 
   ngOnInit(): void {

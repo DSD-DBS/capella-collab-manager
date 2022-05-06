@@ -5,8 +5,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import {
-  RepositoryService,
-  Repository,
+  Project,
+  ProjectService,
 } from 'src/app/services/repository/repository.service';
 import { UserService } from 'src/app/services/user/user.service';
 
@@ -17,11 +17,11 @@ import { UserService } from 'src/app/services/user/user.service';
 })
 export class UserSettingsComponent implements OnInit {
   constructor(
-    private repositoryService: RepositoryService,
+    private repositoryService: ProjectService,
     private repositoryUserService: RepositoryUserService,
     private userService: UserService
   ) {}
-  repositories: Array<Repository> = [];
+  repositories: Array<Project> = [];
   updatePasswordSuccess = false;
 
   updatePasswordForm = new FormGroup({
@@ -41,13 +41,11 @@ export class UserSettingsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repositoryService
-      .getRepositories()
-      .subscribe((res: Array<Repository>) => {
-        this.repositories = res.filter((repo) => {
-          return repo.permissions.includes('write');
-        });
+    this.repositoryService.getProjects().subscribe((res: Array<Project>) => {
+      this.repositories = res.filter((repo) => {
+        return repo.permissions.includes('write');
       });
+    });
   }
 
   updatePassword(): void {

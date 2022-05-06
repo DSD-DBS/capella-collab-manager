@@ -4,7 +4,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { RepositoryService } from 'src/app/services/repository/repository.service';
+import { ProjectService } from 'src/app/services/repository/repository.service';
 
 @Component({
   selector: 'app-create-repository',
@@ -20,17 +20,14 @@ export class CreateRepositoryComponent implements OnInit {
     return this.createRepositoryForm.get('name') as FormControl;
   }
 
-  constructor(
-    private repositoryService: RepositoryService,
-    private router: Router
-  ) {}
+  constructor(private projectService: ProjectService, private router: Router) {}
 
   ngOnInit(): void {}
 
   createRepository(): void {
     if (this.createRepositoryForm.valid) {
-      this.repositoryService.createRepository(this.name.value).subscribe(() => {
-        this.repositoryService.refreshRepositories();
+      this.projectService.createRepository(this.name.value).subscribe(() => {
+        this.projectService.refreshRepositories();
         this.router.navigateByUrl('/settings');
       });
     }
