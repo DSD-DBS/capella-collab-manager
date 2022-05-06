@@ -14,10 +14,11 @@ database:
 app:
 	export MSYS_NO_PATHCONV=1; \
 	export OAUTHLIB_INSECURE_TRANSPORT=1; \
+	export UVICORN_COMMAND="uvicorn --reload --reload-include "*.py" --reload-include "*.yaml" --reload-include "*.yml" t4cclient.__main__:app"; \
 	if [ -d "$(VENV)/bin" ]; then \
-		$(VENV)/bin/uvicorn t4cclient.__main__:app --reload; \
+		$(VENV)/bin/$${UVICORN_COMMAND}; \
 	else \
-		$(VENV)/Scripts/uvicorn t4cclient.__main__:app --reload; \
+		$(VENV)/Scripts/$${UVICORN_COMMAND}; \
 	fi
 
 dev: database app
