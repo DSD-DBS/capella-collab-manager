@@ -11,6 +11,8 @@ import typing as t
 import appdirs
 import yaml
 
+from . import loader
+
 log = logging.getLogger(__name__)
 
 
@@ -126,19 +128,8 @@ class ConfigList(list):
     __imul__ = _unsupported
 
 
-config = ConfigDict({})
-
-locations: list[pathlib.Path] = [
-    pathlib.Path(__file__).parents[1] / "config" / "config.yaml",
-    pathlib.Path(appdirs.user_config_dir("capellacollab", "db")) / "config.yaml",
-    pathlib.Path("/etc/capellacollab/config.yaml"),
-]
-
-log.debug("Searching for configuration files...")
-for l in locations:
-    log.debug("Looking at location %s", str(l))
-    if l.exists():
-        config = ConfigDict(yaml.safe_load(l.open()))
-        break
+config_tmp = loader.load_yaml()
+if config_tmp:
+    config = ConfigDict(config_tmp)
 else:
-    log.info("Found no configuration file. Only environment variables will be used.")
+    config = ConfigDict({})

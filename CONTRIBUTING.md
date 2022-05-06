@@ -110,8 +110,9 @@ Run the following steps:
    *Hint*: If you already have the k8d cluster running and the if you have the
    application deployed, then no configuration values need to be adjusted.
 
-1. This step is only **necessary, if you use the self signed certificate** option for the oauth mock.
+   *Hint*: You can run `python -m t4cclient.config.diff` after each update to check if your config is up to date.
 
+1. This step is only **necessary, if you use the self signed certificate** option for the oauth mock.
    If you don't have the certificate in your local certificate store, please execute the following command:
 
    ```sh
