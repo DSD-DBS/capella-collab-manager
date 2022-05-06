@@ -1,6 +1,7 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import importlib
 import logging
 import typing as t
 from importlib import metadata
@@ -109,7 +110,7 @@ eps = metadata.entry_points()["capellacollab.extensions.backups"]
 for ep in eps:
     log.info("Add routes of backup extension %s", ep.name)
     router.include_router(
-        ep.load().routes.router,
+        importlib.import_module(".routes", ep.module).router,
         prefix="/{project}/extensions/backups/" + ep.name,
         tags=[ep.name],
     )
@@ -119,7 +120,7 @@ eps = metadata.entry_points()["capellacollab.extensions.modelsources"]
 for ep in eps:
     log.info("Add routes of modelsource %s", ep.name)
     router.include_router(
-        ep.load().routes.router,
+        importlib.import_module(".routes", ep.module).router,
         prefix="/{project}/extensions/modelsources/" + ep.name,
         tags=[ep.name],
     )
