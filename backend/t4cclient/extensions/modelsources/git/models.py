@@ -1,13 +1,17 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# Standard library:
 import typing as t
 
+# 3rd party:
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import Boolean
+
+# local:
 from t4cclient.core.database import Base
 
 
@@ -55,9 +59,7 @@ class DB_GitModel(Base):
     entrypoint = Column(String)
     revision = Column(String)
     primary = Column(Boolean)
-    repository_name = Column(
-        String, ForeignKey("repositories.name", ondelete="CASCADE")
-    )
-    repository = relationship("DatabaseRepository", back_populates="git_models")
+    project_name = Column(String, ForeignKey("projects.name", ondelete="CASCADE"))
+    project = relationship("DatabaseRepository", back_populates="git_models")
     username = Column(String)
     password = Column(String)

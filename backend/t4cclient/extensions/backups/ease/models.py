@@ -1,11 +1,15 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# Standard library:
 import typing as t
 from datetime import datetime
 
+# 3rd party:
 from pydantic import BaseModel
 from sqlalchemy import Column, ForeignKey, Integer, String
+
+# local:
 from t4cclient.core.database import Base
 
 
@@ -37,10 +41,10 @@ class DB_EASEBackup(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     reference = Column(String)
     gitmodel = Column(Integer, ForeignKey("git_models.id"))
-    t4cmodel = Column(Integer, ForeignKey("projects.id"))
+    t4cmodel = Column(Integer, ForeignKey("t4c_models.id"))
     username = Column(String)
     project = Column(
         String,
-        ForeignKey("repositories.name"),
+        ForeignKey("projects.name"),
         primary_key=True,
     )

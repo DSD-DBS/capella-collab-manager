@@ -1,24 +1,30 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# 3rd party:
 from sqlalchemy.orm import Session
-from t4cclient.projects.models import RepositoryUserAssociation
-from t4cclient.projects.users.models import RepositoryUserPermission, RepositoryUserRole
+
+# local:
+from t4cclient.projects.users.models import (
+    ProjectUserAssociation,
+    RepositoryUserPermission,
+    RepositoryUserRole,
+)
 
 
 def get_users_of_repository(db: Session, repository_name: str):
     return (
-        db.query(RepositoryUserAssociation)
-        .filter(RepositoryUserAssociation.repository_name == repository_name)
+        db.query(ProjectUserAssociation)
+        .filter(ProjectUserAssociation.repository_name == repository_name)
         .all()
     )
 
 
 def get_user_of_repository(db: Session, repository_name: str, username: str):
     return (
-        db.query(RepositoryUserAssociation)
-        .filter(RepositoryUserAssociation.repository_name == repository_name)
-        .filter(RepositoryUserAssociation.username == username)
+        db.query(ProjectUserAssociation)
+        .filter(ProjectUserAssociation.repository_name == repository_name)
+        .filter(ProjectUserAssociation.username == username)
         .first()
     )
 
@@ -30,7 +36,7 @@ def add_user_to_repository(
     username: str,
     permission: RepositoryUserPermission,
 ):
-    association = RepositoryUserAssociation(
+    association = ProjectUserAssociation(
         repository_name=repository_name,
         username=username,
         role=role,
@@ -46,9 +52,9 @@ def change_role_of_user_in_repository(
     db: Session, repository_name: str, role: RepositoryUserRole, username: str
 ):
     repo_user = (
-        db.query(RepositoryUserAssociation)
-        .filter(RepositoryUserAssociation.repository_name == repository_name)
-        .filter(RepositoryUserAssociation.username == username)
+        db.query(ProjectUserAssociation)
+        .filter(ProjectUserAssociation.repository_name == repository_name)
+        .filter(ProjectUserAssociation.username == username)
         .first()
     )
     if role == RepositoryUserRole.MANAGER:
@@ -66,9 +72,9 @@ def change_permission_of_user_in_repository(
     username: str,
 ):
     repo_user = (
-        db.query(RepositoryUserAssociation)
-        .filter(RepositoryUserAssociation.repository_name == repository_name)
-        .filter(RepositoryUserAssociation.username == username)
+        db.query(ProjectUserAssociation)
+        .filter(ProjectUserAssociation.repository_name == repository_name)
+        .filter(ProjectUserAssociation.username == username)
         .first()
     )
     repo_user.permission = permission
@@ -78,14 +84,14 @@ def change_permission_of_user_in_repository(
 
 
 def delete_user_from_repository(db: Session, repository_name: str, username: str):
-    db.query(RepositoryUserAssociation).filter(
-        RepositoryUserAssociation.username == username
-    ).filter(RepositoryUserAssociation.repository_name == repository_name).delete()
+    db.query(ProjectUserAssociation).filter(
+        ProjectUserAssociation.username == username
+    ).filter(ProjectUserAssociation.repository_name == repository_name).delete()
     db.commit()
 
 
 def delete_all_repositories_for_user(db: Session, username: str):
-    db.query(RepositoryUserAssociation).filter(
-        RepositoryUserAssociation.username == username
+    db.query(ProjectUserAssociation).filter(
+        ProjectUserAssociation.username == username
     ).delete()
     db.commit()

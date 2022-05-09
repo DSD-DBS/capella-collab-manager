@@ -1,12 +1,17 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# Standard library:
 import typing as t
 
-import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
-import t4cclient.projects.schemas as schema_repositories
+# 3rd party:
 from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError, Session
+
+# local:
+import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
+import t4cclient.projects.users.models as schema_repositories
+from . import crud as repository_users
 from t4cclient.core.authentication.database import (
     check_username_not_admin,
     check_username_not_in_repository,
@@ -18,8 +23,6 @@ from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, users
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
-
-from . import crud as repository_users
 
 router = APIRouter()
 

@@ -1,10 +1,17 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# Standard library:
 import enum
 import typing as t
 
+# 3rd party:
 from pydantic import BaseModel
+from sqlalchemy import Column, Enum, ForeignKey
+from sqlalchemy.orm import relationship
+
+# local:
+from t4cclient.core.database import Base
 
 
 class Role(enum.Enum):
@@ -53,3 +60,14 @@ class PatchRepositoryUser(BaseModel):
     role: t.Optional[RepositoryUserRole]
     password: t.Optional[str]
     permission: t.Optional[RepositoryUserPermission]
+
+
+class ProjectUserAssociation(Base):
+    __tablename__ = "project_user_association"
+
+    username = Column(ForeignKey("users.name"), primary_key=True)
+    projects_name = Column(ForeignKey("projects.name"), primary_key=True)
+    user = relationship("DatabaseUser", back_populates="projects")
+    projects = relationship("DatabaseProject", back_populates="users")
+    permission = Column(Enum(RepositoryUserPermission), nullable=False)
+    role = Column(Enum(RepositoryUserRole))

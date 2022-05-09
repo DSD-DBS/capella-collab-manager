@@ -1,13 +1,17 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# Standard library:
 import typing as t
 
+# 3rd party:
+from sqlalchemy.orm.session import Session
+
+# local:
 import t4cclient.extensions.modelsources.git.crud as git_model_crud
 import t4cclient.extensions.modelsources.t4c.connection as t4c_ext
-import t4cclient.projects.schemas as repository_schema
+import t4cclient.projects.models as repository_schema
 import t4cclient.projects.users.models as users_schema
-from sqlalchemy.orm.session import Session
 from t4cclient.projects.users.models import RepositoryUserPermission
 
 
