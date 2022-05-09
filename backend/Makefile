@@ -1,4 +1,7 @@
 DB_PORT = 5432
+DB_PASSWORD = dev
+DB_USER = dev
+DB_NAME = dev
 VENV = .venv
 
 database:
@@ -6,9 +9,9 @@ database:
 	docker run -d \
 		--name capella-collab-postgres \
 		-p $(DB_PORT):5432 \
-		-e POSTGRES_PASSWORD=dev \
-		-e POSTGRES_USER=dev \
-		-e POSTGRES_DB=dev \
+		-e POSTGRES_PASSWORD=$(DB_PASSWORD) \
+		-e POSTGRES_USER=$(DB_USER) \
+		-e POSTGRES_DB=$(DB_NAME) \
 		postgres
 
 app:
@@ -26,3 +29,15 @@ dev: database app
 cleanup:
 	docker stop capella-collab-postgres
 	docker rm capella-collab-postgres
+
+dump: 
+	docker run -e PGPASSWORD=$(DB_PASSWORD) --entrypoint pg_dump --network host postgres:latest -h 'localhost' -p $(DB_PORT) -U '$(DB_USER)' $(DB_NAME) > $$(pwd)/../local/tmp.sql
+
+psql: 
+	docker run -e PGPASSWORD=$(DB_PASSWORD) -it --network host --entrypoint="psql" postgres:latest -h 'localhost' -p $(DB_PORT) -U '$(DB_USER)' $(DB_NAME)
+
+clear: 
+	echo "DROP DATABASE $(DB_NAME); CREATE DATABASE $(DB_NAME);" | docker run -e PGPASSWORD=$(DB_PASSWORD) -i --network host --entrypoint="psql" postgres:latest -h 'localhost' -p $(DB_PORT) -U '$(DB_USER)' postgres
+
+load: clear
+	cat $$(pwd)/../local/tmp.sql | docker run -i -e PGPASSWORD=$(DB_PASSWORD) --network host --entrypoint="psql" postgres:latest -h 'localhost' -p $(DB_PORT) -U '$(DB_USER)' $(DB_NAME)
