@@ -126,16 +126,11 @@ Run the following steps:
    https://localhost:8083/default/.well-known/openid-configuration
    ```
 
-1. A PostgreSQL database is required. You can run the following command to set up the database:
+1. To begin the development a PostgreSQL database is required. To run the database and
+   start the backend run:
 
    ```sh
-   make database
-   ```
-
-1. Start the application with:
-
-   ```sh
-   make app
+   make dev
    ```
 
 1. You should see it running on port 8000.
