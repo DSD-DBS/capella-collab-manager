@@ -2,13 +2,17 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import sqlalchemy.orm.session
+import t4cclient.projects.users.crud as repository_users
 from fastapi import Depends, HTTPException
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
-from t4cclient.core.database import get_db, repository_users
+from t4cclient.core.database import get_db
 from t4cclient.core.database.users import get_user
-from t4cclient.schemas.repositories import RepositoryUserPermission, RepositoryUserRole
-from t4cclient.schemas.repositories.users import Role
+from t4cclient.projects.users.models import (
+    RepositoryUserPermission,
+    RepositoryUserRole,
+    Role,
+)
 
 
 def verify_admin(token=Depends(JWTBearer()), db=Depends(get_db)):

@@ -5,10 +5,10 @@ import itertools
 import logging
 import typing as t
 
-import t4cclient.core.database.repositories as repositories_crud
 import t4cclient.extensions.modelsources.git.crud as git_models_crud
 import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
-import t4cclient.schemas.repositories.users as users_schema
+import t4cclient.projects.crud as repositories_crud
+import t4cclient.projects.users.crud as users_schema
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from t4cclient.core.authentication.database import is_admin, verify_repository_role
@@ -19,9 +19,9 @@ from t4cclient.core.database import get_db, sessions, users
 from t4cclient.core.operators import OPERATOR
 from t4cclient.core.services.sessions import inject_attrs_in_sessions
 from t4cclient.extensions import guacamole
+from t4cclient.projects.users.crud import RepositoryUserRole
 from t4cclient.routes import guacamole as guacamole_route
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
-from t4cclient.schemas.repositories import RepositoryUserRole
 from t4cclient.schemas.sessions import (
     AdvancedSessionResponse,
     GetSessionsResponse,

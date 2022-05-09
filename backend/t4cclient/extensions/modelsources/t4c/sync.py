@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends
 from requests import Session
 from t4cclient.core.authentication import database as database_auth
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
-from t4cclient.core.database import get_db, repositories
+from t4cclient.core.database import get_db, projects
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 
 router = APIRouter()
@@ -26,9 +26,9 @@ def fetch_repositories_from_t4c(
     database_auth.verify_admin(token, db)
 
     t4c_server_repos = t4c_manager.get_repositories()
-    repos = [repo.name for repo in repositories.get_all_repositories(db=db)]
+    repos = [repo.name for repo in projects.get_all_repositories(db=db)]
 
     difference = list(set(t4c_server_repos) - set(repos))
 
     for repo in difference:
-        repositories.create_repository(db=db, name=repo)
+        projects.create_repository(db=db, name=repo)

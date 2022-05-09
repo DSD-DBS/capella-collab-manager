@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from sqlalchemy.orm import Session
-from t4cclient.schemas.repositories.users import Role
+from t4cclient.projects.users.models import Role
 from t4cclient.sql_models.users import DatabaseUser
 
 

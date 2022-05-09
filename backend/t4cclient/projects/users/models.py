@@ -1,12 +1,28 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from __future__ import annotations
-
 import enum
 import typing as t
 
 from pydantic import BaseModel
+
+
+class Role(enum.Enum):
+    USER = "user"
+    ADMIN = "administrator"
+
+
+class PatchUserRoleRequest(BaseModel):
+    role: Role
+
+
+class GetUserResponse(BaseModel):
+    id: str
+    name: str
+    role: Role
+
+    class Config:
+        orm_mode = True
 
 
 class RepositoryUserRole(enum.Enum):
@@ -20,25 +36,6 @@ class RepositoryUserPermission(enum.Enum):
     WRITE = "write"
 
 
-class Warning(enum.Enum):
-    LICENCE_LIMIT = "LICENCE_LIMIT"
-    NO_GIT_MODEL_DEFINED = "NO_GIT_MODEL_DEFINED"
-
-
-class GetRepositoryUserResponse(BaseModel):
-    repository_name: str
-    role: RepositoryUserRole
-    permissions: t.List[RepositoryUserPermission]
-    warnings: t.List[Warning]
-
-    class Config:
-        orm_mode = True
-
-
-class PostRepositoryRequest(BaseModel):
-    name: str
-
-
 class PostRepositoryUser(BaseModel):
     username: str
     role: RepositoryUserRole
@@ -49,7 +46,7 @@ class PostRepositoryUser(BaseModel):
 
 
 class RepositoryUser(PostRepositoryUser):
-    repository_name: str
+    name: str
 
 
 class PatchRepositoryUser(BaseModel):

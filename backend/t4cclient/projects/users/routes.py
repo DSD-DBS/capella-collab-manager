@@ -4,7 +4,7 @@
 import typing as t
 
 import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
-import t4cclient.schemas.repositories as schema_repositories
+import t4cclient.projects.schemas as schema_repositories
 from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError, Session
 from t4cclient.core.authentication.database import (
@@ -16,8 +16,10 @@ from t4cclient.core.authentication.database import (
 )
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
-from t4cclient.core.database import get_db, repository_users, users
+from t4cclient.core.database import get_db, users
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
+
+from . import crud as repository_users
 
 router = APIRouter()
 
@@ -56,7 +58,7 @@ def add_user_to_repository(
     users.find_or_create_user(db, body.username)
     check_username_not_admin(body.username, db)
     if body.role == schema_repositories.RepositoryUserRole.MANAGER:
-        body.permission == schema_repositories.RepositoryUserPermission.WRITE
+        body.permission = schema_repositories.RepositoryUserPermission.WRITE
     if body.permission == schema_repositories.RepositoryUserPermission.WRITE:
         t4c_manager.add_user_to_repository(project, body.username)
     return repository_users.add_user_to_repository(

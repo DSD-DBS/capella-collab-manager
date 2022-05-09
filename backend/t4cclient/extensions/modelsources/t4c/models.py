@@ -1,17 +1,28 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String, Table
+from pydantic import BaseModel
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from t4cclient.core.database import Base
 
 
-class DatabaseProject(Base):
-    __tablename__ = "projects"
+class DatabaseT4CModel(Base):
+    __tablename__ = "t4c_models"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
-    repository_name = Column(
-        String, ForeignKey("repositories.name", ondelete="CASCADE")
-    )
-    repository = relationship("DatabaseRepository", back_populates="projects")
+    project_name = Column(String, ForeignKey("projects.name", ondelete="CASCADE"))
+    project = relationship("DatabaseProject", back_populates="projects")
+
+
+class RepositoryProjectBase(BaseModel):
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
+class RepositoryProject(RepositoryProjectBase):
+    id: int
+    repository_name: str

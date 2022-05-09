@@ -5,14 +5,15 @@ import logging
 import os
 import pathlib
 
+import t4cclient.projects.crud as projects
 from alembic import command
 from alembic.config import Config
 from alembic.migration import MigrationContext
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from t4cclient.config import config
-from t4cclient.core.database import Base, repositories, users
-from t4cclient.schemas.repositories.users import Role
+from t4cclient.core.database import Base, users
+from t4cclient.projects.users.models import Role
 
 DATABASE_URL = config["database"]["url"]
 engine = create_engine(DATABASE_URL, connect_args={"connect_timeout": 5})
@@ -57,4 +58,4 @@ def initialize_admin_user():
 def initialize_default_repository():
     LOGGER.info("Initialized repository 'default'")
     with SessionLocal() as db:
-        repositories.create_repository(db=db, name="default")
+        projects.create_repository(db=db, name="default")

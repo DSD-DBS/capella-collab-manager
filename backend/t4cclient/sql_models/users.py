@@ -4,7 +4,7 @@
 from sqlalchemy import Column, Enum, Integer, String
 from sqlalchemy.orm import relationship
 from t4cclient.core.database import Base
-from t4cclient.schemas.repositories.users import Role
+from t4cclient.projects.users.models import Role
 
 
 class DatabaseUser(Base):

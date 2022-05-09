@@ -5,10 +5,10 @@ import typing as t
 
 import t4cclient.extensions.modelsources.git.crud as git_model_crud
 import t4cclient.extensions.modelsources.t4c.connection as t4c_ext
-import t4cclient.schemas.repositories as repository_schema
-import t4cclient.schemas.repositories.users as users_schema
+import t4cclient.projects.schemas as repository_schema
+import t4cclient.projects.users.models as users_schema
 from sqlalchemy.orm.session import Session
-from t4cclient.schemas.repositories import RepositoryUserPermission
+from t4cclient.projects.users.models import RepositoryUserPermission
 
 
 def get_permission(
