@@ -1,0 +1,72 @@
+/*
+ * Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+mat-card {
+  width: fit-content;
+  width: 400px;
+  height: 300px;
+  user-select: none;
+}
+
+.mat-card {
+  padding: 0 !important;
+}
+
+mat-card:hover {
+  background-color: lightcyan;
+  cursor: pointer;
+}
+
+.mat-card-content {
+  padding: 5px !important;
+}
+
+.header {
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 5px 5px 0 0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 20px;
+  font-size: 1.5em;
+}
+
+.content {
+  padding: 10px 20px;
+  min-height: 70%;
+}
+
+.wrapper {
+  height: 100%;
+}
+
+.footer {
+  color: grey;
+  text-align: end;
+  padding: 5px;
+}
+
+#add {
+  font-size: 2em;
+  display: flex;
+  align-items: center;
+}
+
+#add > .content {
+  text-align: center;
+  margin: auto;
+}
+
+.flexbox {
+  display: flex;
+}
+
+.add-icon {
+  font-size: 3em !important;
+}
+
+#add-project-wrapper {
+  padding-top: 100px;
+}

@@ -10,9 +10,10 @@ import { AuthComponent } from './auth/auth/auth.component';
 import { LogoutRedirectComponent } from './auth/logout/logout-redirect/logout-redirect.component';
 import { LogoutComponent } from './auth/logout/logout/logout.component';
 import { HomeComponent } from './home/home.component';
+import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
 import { SessionOverviewComponent } from './session-overview/session-overview.component';
-import { CreateRepositoryComponent } from './settings/admin-settings/create-repository/create-repository.component';
-import { RepositorySettingsComponent } from './settings/repository-manager-settings/repository-settings/repository-settings.component';
+import { CreateProjectComponent } from './projects/create-project/create-project.component';
+import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { SettingsComponent } from './settings/settings.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 
@@ -23,11 +24,16 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
+    path: 'projects',
+    component: ProjectOverviewComponent,
+    canActivate: [AuthGuardService],
+  },
   {
     path: 'maintenance',
     component: MaintenanceComponent,
     canActivate: [AuthGuardService],
   },
+  {
     path: 'active-sessions',
     component: ActiveSessionsComponent,
     canActivate: [AuthGuardService],
@@ -45,13 +51,13 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'settings/projects/create',
-    component: CreateRepositoryComponent,
+    path: 'projects/create',
+    component: CreateProjectComponent,
     canActivate: [AuthGuardService],
   },
   {
-    path: 'settings/projects/:repository',
-    component: RepositorySettingsComponent,
+    path: 'projects/:project',
+    component: ProjectDetailsComponent,
     canActivate: [AuthGuardService],
   },
   {

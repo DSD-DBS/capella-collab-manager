@@ -7,7 +7,7 @@ import { RepositoryUserService } from 'src/app/services/repository-user/reposito
 import {
   Project,
   ProjectService,
-} from 'src/app/services/repository/repository.service';
+} from 'src/app/projects/service/project.service';
 import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
@@ -17,7 +17,6 @@ import { UserService } from 'src/app/services/user/user.service';
 })
 export class UserSettingsComponent implements OnInit {
   constructor(
-    private repositoryService: ProjectService,
     private repositoryUserService: RepositoryUserService,
     private userService: UserService
   ) {}
@@ -41,11 +40,11 @@ export class UserSettingsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.repositoryService.getProjects().subscribe((res: Array<Project>) => {
-      this.repositories = res.filter((repo) => {
-        return repo.permissions.includes('write');
-      });
-    });
+    // this.repositoryService.getProjects().subscribe((res: Array<Project>) => {
+    //   this.repositories = res.filter((repo) => {
+    //     return repo.permissions.includes('write');
+    //   });
+    // });
   }
 
   updatePassword(): void {

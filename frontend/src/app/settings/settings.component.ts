@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Component, OnInit } from '@angular/core';
-import { ProjectService } from '../services/repository/repository.service';
+import { ProjectService } from '../projects/service/project.service';
 import { UserService } from '../services/user/user.service';
 
 @Component({

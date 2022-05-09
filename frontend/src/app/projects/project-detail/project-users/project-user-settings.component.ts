@@ -16,9 +16,9 @@ import { RepositoryUserService } from 'src/app/services/repository-user/reposito
 import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
-  selector: 'app-repository-user-settings',
-  templateUrl: './repository-user-settings.component.html',
-  styleUrls: ['./repository-user-settings.component.css'],
+  selector: 'app-project-user-settings',
+  templateUrl: './project-user-settings.component.html',
+  styleUrls: ['./project-user-settings.component.css'],
 })
 export class RepositoryUserSettingsComponent implements OnInit {
   _repository: string = '';

@@ -1,0 +1,12 @@
+<!--
+ ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<h1 id="title">{{ project }} Project Options</h1>
+<div class="flexbox">
+  <app-project-user-settings [repository]="project">
+  </app-project-user-settings>
+  <app-backup-settings [project]="project"></app-backup-settings>
+  <app-model-source [repository]="project"></app-model-source>
+</div>

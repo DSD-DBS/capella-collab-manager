@@ -14,9 +14,7 @@
       color="primary"
       id="overview"
       mat-raised-button
-      *ngIf="
-        projectService.isManager || userService.user?.role === 'administrator'
-      "
+      *ngIf="userService.user?.role === 'administrator'"
       routerLink="overview"
     >
       Overview

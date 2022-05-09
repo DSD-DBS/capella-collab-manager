@@ -13,10 +13,7 @@ import {
 import { MatSelectChange } from '@angular/material/select';
 import { Session } from 'src/app/schemes';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
-import {
-  Project,
-  Warnings,
-} from 'src/app/services/repository/repository.service';
+import { Project } from 'src/app/projects/service/project.service';
 import { SessionService } from 'src/app/services/session/session.service';
 
 @Component({
@@ -45,10 +42,6 @@ export class RequestSessionComponent implements OnInit {
 
   @Input()
   repositories: Array<Project> = [];
-
-  warnings: Array<Warnings> = [];
-
-  permissions: any = {};
 
   session: Session | undefined = undefined;
   connectionTypeHelpIsOpen = false;
@@ -99,21 +92,5 @@ export class RequestSessionComponent implements OnInit {
           }
         );
     }
-  }
-
-  setPermissionsAndWarningsByName(event: MatSelectChange): void {
-    this.permissions = {};
-    this.warnings = [];
-    for (let repo of this.repositories) {
-      if (repo.repository_name == event.value) {
-        for (let permission of repo.permissions) {
-          this.permissions[permission] =
-            this.repoUserService.PERMISSIONS[permission];
-        }
-        this.warnings = repo.warnings;
-        return;
-      }
-    }
-    this.permissions = {};
   }
 }

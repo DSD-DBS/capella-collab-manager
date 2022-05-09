@@ -3,21 +3,20 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateRepositoryComponent } from './create-repository.component';
+import { ProjectDetailsComponent } from './project-details.component';
 
-describe('CreateRepositoryComponent', () => {
-  let component: CreateRepositoryComponent;
-  let fixture: ComponentFixture<CreateRepositoryComponent>;
+describe('RepositorySettingsComponent', () => {
+  let component: ProjectDetailsComponent;
+  let fixture: ComponentFixture<ProjectDetailsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CreateRepositoryComponent ]
-    })
-    .compileComponents();
+      declarations: [ProjectDetailsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CreateRepositoryComponent);
+    fixture = TestBed.createComponent(ProjectDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

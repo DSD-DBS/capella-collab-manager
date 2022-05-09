@@ -1,11 +1,10 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, Input, OnInit, Renderer2 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
 import { LocalStorageService } from '../auth/local-storage/local-storage.service';
 import { AuthService } from '../services/auth/auth.service';
-import { ProjectService } from '../services/repository/repository.service';
+import { ProjectService } from '../projects/service/project.service';
 import { UserService } from '../services/user/user.service';
 
 @Component({

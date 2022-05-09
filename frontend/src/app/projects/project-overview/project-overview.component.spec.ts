@@ -3,21 +3,21 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RepositoryManagerSettingsComponent } from './repository-manager-settings.component';
+import { ProjectOverviewComponent } from './project-overview.component';
 
-describe('RepositoryManagerSettingsComponent', () => {
-  let component: RepositoryManagerSettingsComponent;
-  let fixture: ComponentFixture<RepositoryManagerSettingsComponent>;
+describe('ProjectOverviewComponent', () => {
+  let component: ProjectOverviewComponent;
+  let fixture: ComponentFixture<ProjectOverviewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RepositoryManagerSettingsComponent ]
+      declarations: [ ProjectOverviewComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RepositoryManagerSettingsComponent);
+    fixture = TestBed.createComponent(ProjectOverviewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

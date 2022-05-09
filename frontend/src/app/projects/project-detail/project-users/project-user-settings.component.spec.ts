@@ -3,21 +3,20 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RepositorySyncSettingsComponent } from './repository-sync-settings.component';
+import { RepositoryUserSettingsComponent } from './project-user-settings.component';
 
-describe('RepositorySyncSettingsComponent', () => {
-  let component: RepositorySyncSettingsComponent;
-  let fixture: ComponentFixture<RepositorySyncSettingsComponent>;
+describe('RepositoryUserSettingsComponent', () => {
+  let component: RepositoryUserSettingsComponent;
+  let fixture: ComponentFixture<RepositoryUserSettingsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RepositorySyncSettingsComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositoryUserSettingsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RepositorySyncSettingsComponent);
+    fixture = TestBed.createComponent(RepositoryUserSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

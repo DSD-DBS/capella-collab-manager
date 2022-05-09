@@ -14,8 +14,8 @@
       <mat-select formControlName="repository">
         <mat-option
           *ngFor="let repository of repositories"
-          [value]="repository.repository_name"
-          >{{ repository.repository_name }}</mat-option
+          [value]="repository.name"
+          >{{ repository.name }}</mat-option
         >
       </mat-select>
       <mat-error *ngIf="repository.getError('required')"

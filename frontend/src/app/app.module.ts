@@ -29,10 +29,9 @@ import { NoRepositoryComponent } from './home/no-repository/no-repository.compon
 import { RequestSessionComponent } from './home/request-session/request-session.component';
 import { SettingsComponent } from './settings/settings.component';
 import { AdminSettingsComponent } from './settings/admin-settings/admin-settings.component';
-import { RepositoryManagerSettingsComponent } from './settings/repository-manager-settings/repository-manager-settings.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { RepositorySettingsComponent } from './settings/repository-manager-settings/repository-settings/repository-settings.component';
+import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { MatListModule } from '@angular/material/list';
 import { ActiveSessionsComponent } from './active-sessions/active-sessions.component';
 import { LogoutComponent } from './auth/logout/logout/logout.component';
@@ -44,15 +43,14 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { ReconnectDialogComponent } from './active-sessions/reconnect-dialog/reconnect-dialog.component';
 import { AlertSettingsComponent } from './settings/admin-settings/alert-settings/alert-settings.component';
 import { AdminUserSettingsComponent } from './settings/admin-settings/admin-user-settings/admin-user-settings.component';
-import { GitModelSettingsComponent } from './settings/repository-manager-settings/repository-settings/model-source/git-model-settings/git-model-settings.component';
+import { GitModelSettingsComponent } from './projects/project-detail/model-source/git-model-settings/git-model-settings.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { RepositorySyncSettingsComponent } from './settings/admin-settings/repository-sync-settings/repository-sync-settings.component';
-import { T4CRepoSettingsComponent } from './settings/repository-manager-settings/repository-settings/model-source/t4c-repo-settings/t4c-repo-settings.component';
-import { RepositoryUserSettingsComponent } from './settings/repository-manager-settings/repository-settings/repository-user-settings/repository-user-settings.component';
-import { ProjectDeletionDialogComponent } from './settings/repository-manager-settings/repository-settings/model-source/t4c-repo-settings/project-deletion-dialog/project-deletion-dialog.component';
+import { T4CRepoSettingsComponent } from './projects/project-detail/model-source/t4c-repo-settings/t4c-repo-settings.component';
+import { RepositoryUserSettingsComponent } from './projects/project-detail/project-users/project-user-settings.component';
+import { ProjectDeletionDialogComponent } from './projects/project-detail/model-source/t4c-repo-settings/project-deletion-dialog/project-deletion-dialog.component';
 import { SimplebarAngularModule } from 'simplebar-angular';
-import { GitModelDeletionDialogComponent } from './settings/repository-manager-settings/repository-settings/model-source/git-model-settings/git-model-deletion-dialog/git-model-deletion-dialog.component';
+import { GitModelDeletionDialogComponent } from './projects/project-detail/model-source/git-model-settings/git-model-deletion-dialog/git-model-deletion-dialog.component';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { WarningComponent } from './home/request-session/warning/warning.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -63,17 +61,22 @@ import { FooterComponent } from './footer/footer.component';
 import { TermsConditionsComponent } from './footer/terms-conditions/terms-conditions.component';
 import { LegalComponent } from './footer/legal/legal.component';
 import { LogoutRedirectComponent } from './auth/logout/logout-redirect/logout-redirect.component';
-import { CreateRepositoryComponent } from './settings/admin-settings/create-repository/create-repository.component';
+import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { SessionCreationProgressComponent } from './session-creation-progress/session-creation-progress.component';
 import { SessionProgressIconComponent } from './session-creation-progress/session-progress-icon/session-progress-icon.component';
 import { LicencesComponent } from './session-overview/licences/licences.component';
-import { BackupSettingsComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/backup-settings.component';
-import { GitBackupSettingsComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/ease-backup-settings/ease-backup-settings.component';
-import { JenkinsBackupSettingsComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/jenkins-backup-settings/jenkins-backup-settings.component';
+import { BackupSettingsComponent } from './projects/project-detail/backup-settings/backup-settings.component';
+import { GitBackupSettingsComponent } from './projects/project-detail/backup-settings/ease-backup-settings/ease-backup-settings.component';
+import { JenkinsBackupSettingsComponent } from './projects/project-detail/backup-settings/jenkins-backup-settings/jenkins-backup-settings.component';
 import { MatTabsModule } from '@angular/material/tabs';
-import { CreateEASEBackupComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/ease-backup-settings/create-ease-backup/create-ease-backup.component';
-import { ModelSourceComponent } from './settings/repository-manager-settings/repository-settings/model-source/model-source.component';
-import { ViewLogsDialogComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/ease-backup-settings/view-logs-dialog/view-logs-dialog.component';
+import { CreateEASEBackupComponent } from './projects/project-detail/backup-settings/ease-backup-settings/create-ease-backup/create-ease-backup.component';
+import { ModelSourceComponent } from './projects/project-detail/model-source/model-source.component';
+import { ViewLogsDialogComponent } from './projects/project-detail/backup-settings/ease-backup-settings/view-logs-dialog/view-logs-dialog.component';
+import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
+import { MatRippleModule } from '@angular/material/core';
+import { MaintenanceComponent } from './maintenance/maintenance.component';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @NgModule({
   declarations: [
@@ -89,8 +92,7 @@ import { ViewLogsDialogComponent } from './settings/repository-manager-settings/
     RequestSessionComponent,
     SettingsComponent,
     AdminSettingsComponent,
-    RepositoryManagerSettingsComponent,
-    RepositorySettingsComponent,
+    ProjectDetailsComponent,
     ActiveSessionsComponent,
     LogoutComponent,
     DeleteSessionDialogComponent,
@@ -100,7 +102,6 @@ import { ViewLogsDialogComponent } from './settings/repository-manager-settings/
     AlertSettingsComponent,
     AdminUserSettingsComponent,
     GitModelSettingsComponent,
-    RepositorySyncSettingsComponent,
     T4CRepoSettingsComponent,
     RepositoryUserSettingsComponent,
     ProjectDeletionDialogComponent,
@@ -111,7 +112,7 @@ import { ViewLogsDialogComponent } from './settings/repository-manager-settings/
     TermsConditionsComponent,
     LegalComponent,
     LogoutRedirectComponent,
-    CreateRepositoryComponent,
+    CreateProjectComponent,
     SessionCreationProgressComponent,
     SessionProgressIconComponent,
     LicencesComponent,
@@ -121,6 +122,8 @@ import { ViewLogsDialogComponent } from './settings/repository-manager-settings/
     CreateEASEBackupComponent,
     ModelSourceComponent,
     ViewLogsDialogComponent,
+    ProjectOverviewComponent,
+    MaintenanceComponent,
   ],
   imports: [
     BrowserModule,
@@ -149,6 +152,9 @@ import { ViewLogsDialogComponent } from './settings/repository-manager-settings/
     MatSlideToggleModule,
     MatMenuModule,
     MatTabsModule,
+    MatRippleModule,
+    MatStepperModule,
+    MatButtonToggleModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
