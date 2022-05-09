@@ -63,7 +63,7 @@ authentication:
       - openid
 
     client: 
-      id: 
+      id: default
       secret: 
 
     redirectURI: http://localhost:4200/oauth2/callback
