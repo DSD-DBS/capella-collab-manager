@@ -1,0 +1,66 @@
+<!--
+ ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="wrapper">
+  <h1>Create Project</h1>
+</div>
+
+<mat-stepper linear #stepper>
+  <mat-step>
+    <form [formGroup]="createProjectForm">
+      <ng-template matStepLabel>General information</ng-template>
+      <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" />
+        <mat-error>Please enter a project name!</mat-error>
+      </mat-form-field>
+      <br />
+      <mat-form-field appearance="fill">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+      </mat-form-field>
+      <br />
+      Please select your primary editing mode: <br />
+      <mat-button-toggle-group formControlName="editingMode">
+        <mat-button-toggle value="t4c">Team4Capella</mat-button-toggle>
+        <mat-button-toggle value="git">Git</mat-button-toggle>
+      </mat-button-toggle-group>
+      <br />
+      Please select the type of your project: <br />
+      <mat-button-toggle-group formControlName="type">
+        <mat-button-toggle value="project">Project</mat-button-toggle>
+        <mat-button-toggle value="library">Library</mat-button-toggle>
+      </mat-button-toggle-group>
+      <br />
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-flat-button color="primary" (click)="createProject(stepper)">
+        Next
+      </button>
+    </form>
+  </mat-step>
+  <mat-step>
+    <form [formGroup]="createProjectForm">
+      <ng-template matStepLabel>Add team members</ng-template>
+      You role will be project lead.
+    </form>
+  </mat-step>
+  <mat-step>
+    <form [formGroup]="createProjectForm">
+      <ng-template matStepLabel>Link models</ng-template>
+    </form>
+  </mat-step>
+  <mat-step>
+    <form [formGroup]="createProjectForm">
+      <ng-template matStepLabel
+        >Add modifiers, integrations and backups</ng-template
+      >
+    </form>
+  </mat-step>
+  <mat-step>
+    <form [formGroup]="createProjectForm">
+      <ng-template matStepLabel>Finish</ng-template>
+    </form>
+  </mat-step>
+</mat-stepper>
