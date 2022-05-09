@@ -29,6 +29,12 @@ export class AppComponent implements OnInit {
         this.notice = false;
         break;
       }
+      case '/maintenance': {
+        this.header = false;
+        this.footer = false;
+        this.notice = false;
+        break;
+      }
       default: {
         this.header = true;
         this.footer = true;
