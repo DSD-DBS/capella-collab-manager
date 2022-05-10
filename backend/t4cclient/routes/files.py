@@ -38,7 +38,7 @@ async def upload_files(files: list[UploadFile]):
     for file in files:
         try:
             contents = await file.read()
-            async with aiofiles.open(f"data/{file.filename}", "wb") as f:
+            async with aiofiles.open(file.filename, "wb") as f:
                 await f.write(contents)
         except Exception:
             return {"message": "There was an error uploading the file(s)"}
