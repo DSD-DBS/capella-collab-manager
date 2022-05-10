@@ -27,7 +27,6 @@ use_parentheses = true
 [tool.pyright]
 pythonVersion = "3.10"
 typeCheckingMode = "strict"
-include = ["backend", "tests",]
 reportConstantRedefinition = "warning"
 reportGeneralTypeIssues = false  # reported by mypy
 reportUnknownArgumentType = false
@@ -36,4 +35,6 @@ reportUnknownVariableType = false  # annoying, e. g. 'for diag in model.diagrams
 reportUntypedFunctionDecorator = false
 reportUnusedImport = false  # reported by flake8 (F401)
 reportUnusedVariable = false  # reported by flake8 (F841)
+venvPath = "."
+venv = ".venv"
 
