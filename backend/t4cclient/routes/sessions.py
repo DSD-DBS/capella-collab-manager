@@ -20,6 +20,7 @@ from t4cclient.core.operators import OPERATOR
 from t4cclient.core.services.sessions import inject_attrs_in_sessions
 from t4cclient.extensions import guacamole
 from t4cclient.routes import guacamole as guacamole_route
+from t4cclient.routes import files as files_route
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.repositories import RepositoryUserRole
 from t4cclient.schemas.sessions import (
@@ -198,6 +199,10 @@ def get_session_usage():
     return t4c_manager.get_t4c_status()
 
 
+router.include_router(
+    files_route.router,
+    prefix="/{id}/files",
+)
 router.include_router(
     guacamole_route.router,
     prefix="/{id}/guacamole-tokens",
