@@ -39,9 +39,20 @@ export class RepositoryService {
       this.repositories = res;
     });
   }
+
   createRepository(name: string): Observable<Repository> {
     return this.http.post<Repository>(this.BACKEND_URL_PREFIX, {
       name,
     });
+  }
+
+  deleteRepository(name: string): Observable<any> {
+    return this.http.delete<any>(
+      this.BACKEND_URL_PREFIX + name);
+  }
+
+  stageForProjectDeletion(project_name: string, username: string): Observable<any> {
+    return this.http.patch<any>(
+      this.BACKEND_URL_PREFIX + project_name, { username });
   }
 }

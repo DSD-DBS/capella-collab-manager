@@ -74,6 +74,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { CreateEASEBackupComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/ease-backup-settings/create-ease-backup/create-ease-backup.component';
 import { ModelSourceComponent } from './settings/repository-manager-settings/repository-settings/model-source/model-source.component';
 import { ViewLogsDialogComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/ease-backup-settings/view-logs-dialog/view-logs-dialog.component';
+import { DeleteRepositoryComponent } from './settings/repository-manager-settings/repository-settings/delete-repository/delete-repository.component';
+import { StagedToDeleteOverviewComponent } from './settings/admin-settings/staged-to-delete-overview/staged-to-delete-overview.component';
+
 
 @NgModule({
   declarations: [
@@ -121,6 +124,8 @@ import { ViewLogsDialogComponent } from './settings/repository-manager-settings/
     CreateEASEBackupComponent,
     ModelSourceComponent,
     ViewLogsDialogComponent,
+    DeleteRepositoryComponent,
+    StagedToDeleteOverviewComponent
   ],
   imports: [
     BrowserModule,

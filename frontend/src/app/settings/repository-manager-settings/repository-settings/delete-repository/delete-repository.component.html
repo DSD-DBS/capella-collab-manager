@@ -1,0 +1,60 @@
+<mat-card id="delete-project">
+
+  <!--
+ <h1>Delete Project</h1>
+  Are you sure you to delete project <b> {{ this.repository_name }}</b>? <br />
+<br />
+<button mat-raised-button	 (click)="goBack()">
+  Back <mat-icon>last_page</mat-icon>
+</button>
+<button mat-flat-button color="primary" (click)="deleteRepository()" style="margin-left:20px">
+  Yes <mat-icon> delete </mat-icon>
+</button>
+
+ -->
+
+ <div *ngIf="!isStaged">
+  <h1> Stage project <b> {{ this.repository_name }} </b></h1>
+    Are you sure to mark the project to be deleted?
+    <br />
+    <br />
+  <button mat-raised-button	 (click)="goBack()">
+    <mat-icon>last_page</mat-icon> Back
+  </button>
+  <button mat-flat-button color="primary" (click)="stageForProjectDeletion()" style="margin-left:20px">
+    <mat-icon> keyboard_arrow_right </mat-icon> Yes
+  </button>
+  </div>
+
+<div *ngIf="isStaged && repoService.isManager && userService.user?.role !== 'administrator'">
+  <h2>Only administrators are allowed to delete repositories.</h2>
+  <br />
+  <button mat-raised-button	 (click)="goBack()">
+    <mat-icon>last_page</mat-icon> Back
+  </button>
+</div>
+
+<div *ngIf="isStaged &&  userService.user?.role === 'administrator'
+            && repository.staged_by !== userService.getUsernameFromLocalStorage()">
+  <h1> Delete project <b> {{ this.repository_name }} </b>  </h1>
+  Are you sure to delete project?
+  <br />
+  <br />
+  <button mat-raised-button	 (click)="goBack()">
+    <mat-icon>last_page</mat-icon> Back
+  </button>
+  <button mat-flat-button color="primary" (click)="deleteRepository()" style="margin-left:20px">
+    <mat-icon> delete </mat-icon> Yes
+  </button>
+</div>
+
+<div *ngIf="isStaged &&  userService.user?.role === 'administrator'
+            && repository.staged_by === userService.getUsernameFromLocalStorage()">
+  <h2> The repository can not staged and deleted by the same person.</h2>
+  <br />
+  <button mat-raised-button	 (click)="goBack()">
+    <mat-icon>last_page</mat-icon> Back
+  </button>
+</div>
+
+</mat-card>
