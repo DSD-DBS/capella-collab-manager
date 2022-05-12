@@ -1,10 +1,11 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String, Table
+from sqlalchemy import (Boolean, Column, Enum, ForeignKey, Integer, String,
+                        Table)
 from sqlalchemy.orm import relationship
 from t4cclient.core.database import Base
-from t4cclient.schemas.repositories import RepositoryUserPermission, RepositoryUserRole
+from t4cclient.schemas.repositories import (RepositoryUserPermission,
+                                            RepositoryUserRole)
 
 
 class RepositoryUserAssociation(Base):
@@ -23,6 +24,7 @@ class DatabaseRepository(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
+    staged_by = Column(String)
     users = relationship(
         "RepositoryUserAssociation",
         back_populates="repository",

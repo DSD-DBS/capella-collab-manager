@@ -28,6 +28,7 @@ class Warning(enum.Enum):
 class GetRepositoryUserResponse(BaseModel):
     repository_name: str
     role: RepositoryUserRole
+    staged_by: str | None
     permissions: t.List[RepositoryUserPermission]
     warnings: t.List[Warning]
 
@@ -56,3 +57,7 @@ class PatchRepositoryUser(BaseModel):
     role: t.Optional[RepositoryUserRole]
     password: t.Optional[str]
     permission: t.Optional[RepositoryUserPermission]
+
+
+class StageRepositoryRequest(BaseModel):
+    username: str
