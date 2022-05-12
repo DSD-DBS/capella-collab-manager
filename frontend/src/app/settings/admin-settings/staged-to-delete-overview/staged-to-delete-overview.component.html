@@ -1,16 +1,6 @@
   <div class="flexbox">
   <mat-card id="staged-for-deletion">
     <h2>Delete projects</h2>
-    <mat-form-field id="search" appearance="outline">
-      <mat-label>Search</mat-label>
-      <input
-        [(ngModel)]="search"
-        autocomplete="off"
-        matInput
-        placeholder="Repository name"
-      />
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
 
     <ngx-simplebar class="repo-selection">
       <mat-selection-list #repos [multiple]="false">
