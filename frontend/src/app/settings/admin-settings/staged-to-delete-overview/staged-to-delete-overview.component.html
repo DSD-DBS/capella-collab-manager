@@ -1,0 +1,37 @@
+  <div class="flexbox">
+  <mat-card id="staged-for-deletion">
+    <h2>Delete projects</h2>
+    <mat-form-field id="search" appearance="outline">
+      <mat-label>Search</mat-label>
+      <input
+        [(ngModel)]="search"
+        autocomplete="off"
+        matInput
+        placeholder="Repository name"
+      />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <ngx-simplebar class="repo-selection">
+      <mat-selection-list #repos [multiple]="false">
+        <mat-list-option
+          *ngFor="let repo of stagedRepositories"
+          [value]="repo"
+        >
+          <div mat-line>{{ repo.repository_name }}</div>
+
+        </mat-list-option>
+      </mat-selection-list>
+    </ngx-simplebar>
+
+    <div *ngIf="repos.selectedOptions.selected.length">
+      <button
+      color="primary"
+      mat-flat-button
+      [routerLink]="['/settings/projects/', repos.selectedOptions.selected[0]?.value.repository_name, 'delete']">
+      Delete <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+
+  </mat-card>
+</div>
