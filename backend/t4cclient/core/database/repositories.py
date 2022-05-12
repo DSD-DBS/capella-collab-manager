@@ -1,6 +1,3 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
-# SPDX-License-Identifier: Apache-2.0
-
 import typing as t
 
 from sqlalchemy.orm import Session
@@ -26,3 +23,18 @@ def create_repository(db: Session, name: str):
 def delete_repository(db: Session, name: str):
     db.query(DatabaseRepository).filter(DatabaseRepository.name == name).delete()
     db.commit()
+
+
+def stage_repository_for_deletion(db: Session, project_name: str, username: str):
+    repo = get_repository(db, project_name)
+    repo.staged_by = username
+    db.commit()
+    db.refresh(repo)
+    return repo
+
+
+def stage_status(db: Session, project_name: str):
+    repo = get_repository(db, project_name)
+    if repo.staged_by is not None and repo.staged_by != "":
+        return True
+    return False
