@@ -1,7 +1,7 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
 import { Session } from '../schemes';
@@ -47,8 +47,10 @@ export class ActiveSessionsComponent implements OnInit {
   }
 
   openReconnectDialog(session: Session): void {
-    this.dialog.open(ReconnectDialogComponent, {
-      data: session,
-    });
+    if (session.state == "Started" || session.state == "START_SESSION"){
+      this.dialog.open(ReconnectDialogComponent, {
+        data: session,
+      });
+    }
   }
 }
