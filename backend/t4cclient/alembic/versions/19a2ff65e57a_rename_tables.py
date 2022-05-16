@@ -60,13 +60,13 @@ def upgrade():
     # Update index names for t4c_models
     op.drop_index("ix_projects_name", table_name="t4c_models")
     op.drop_index("ix_projects_id", table_name="t4c_models")
-    op.create_index(op.f("ix_t4c_models_id"), "t4c_models", ["id"], unique=False)
-    op.create_index(op.f("ix_t4c_models_name"), "t4c_models", ["name"], unique=True)
+    op.create_index(op.f("ix_t4c_models_id"), "t4c_models", ["id"], unique=True)
+    op.create_index(op.f("ix_t4c_models_name"), "t4c_models", ["name"], unique=False)
 
     # Update index names for projects
     op.drop_index("ix_repositories_id", table_name="projects")
     op.drop_index("ix_repositories_name", table_name="projects")
-    op.create_index(op.f("ix_projects_id"), "projects", ["id"], unique=False)
+    op.create_index(op.f("ix_projects_id"), "projects", ["id"], unique=True)
     op.create_index(op.f("ix_projects_name"), "projects", ["name"], unique=True)
 
     # Create foreign keys again
@@ -82,9 +82,7 @@ def upgrade():
     op.create_foreign_key(
         None, "t4c_models", "projects", ["project_name"], ["name"], ondelete="CASCADE"
     )
-    op.create_foreign_key(
-        None, "EASEBackup", "projects", ["project"], ["name"], ondelete="CASCADE"
-    )
+    op.create_foreign_key(None, "EASEBackup", "projects", ["project"], ["name"])
 
 
 def downgrade():
@@ -125,8 +123,8 @@ def downgrade():
     # Update index names for t4c_models
     op.drop_index("ix_t4c_models_id", table_name="projects")
     op.drop_index("ix_t4c_models_name", table_name="projects")
-    op.create_index(op.f("ix_projects_id"), "projects", ["id"], unique=False)
-    op.create_index(op.f("ix_projects_name"), "projects", ["name"], unique=True)
+    op.create_index(op.f("ix_projects_id"), "projects", ["id"], unique=True)
+    op.create_index(op.f("ix_projects_name"), "projects", ["name"], unique=False)
 
     op.create_foreign_key(
         None,
