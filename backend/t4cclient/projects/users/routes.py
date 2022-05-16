@@ -1,6 +1,8 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
+
 # Standard library:
 import typing as t
 
@@ -33,7 +35,10 @@ router = APIRouter()
     responses=AUTHENTICATION_RESPONSES,
 )
 def get_users_for_repository(
-    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    project: str,
+    username: t.Union[str, None] = None,
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
 ):
     verify_repository_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db

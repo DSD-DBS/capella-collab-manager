@@ -1,7 +1,10 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# 3rd party:
 from sqlalchemy.orm import Session
+
+# local:
 from t4cclient.projects.users.models import Role
 from t4cclient.sql_models.users import DatabaseUser
 
@@ -26,7 +29,7 @@ def create_user(db: Session, username: str, role: Role = Role.USER):
     user = DatabaseUser(
         name=username,
         role=role,
-        repositories=[],
+        projects=[],
     )
     db.add(user)
     db.commit()

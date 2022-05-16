@@ -13,7 +13,7 @@ from requests import Session
 
 # local:
 import t4cclient.core.services.repositories as repository_service
-import t4cclient.projects.crud as projects
+import t4cclient.projects.crud as crud
 from .users import routes as router_users
 from t4cclient.core.authentication.database import (
     is_admin,
@@ -25,9 +25,14 @@ from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db
 from t4cclient.core.database import users as database_users
 from t4cclient.extensions.modelsources.t4c import connection
-from t4cclient.projects.models import GetProject, PostRepositoryRequest
-from t4cclient.projects.users.models import RepositoryUserPermission, RepositoryUserRole
+from t4cclient.projects.models import PostRepositoryRequest, Project
+from t4cclient.projects.users.models import (
+    ProjectUserAssociation,
+    RepositoryUserPermission,
+    RepositoryUserRole,
+)
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
+from t4cclient.sql_models.users import DatabaseUser
 
 log = logging.getLogger(__name__)
 router = APIRouter()
@@ -35,35 +40,25 @@ router = APIRouter()
 
 @router.get(
     "/",
-    response_model=t.List[GetProject],
+    response_model=t.List[Project],
     tags=["projects"],
     responses=AUTHENTICATION_RESPONSES,
 )
 def get_projects(db: Session = Depends(get_db), token=Depends(JWTBearer())):
     if is_admin(token, db):
-        return [
-            GetProject(
-                name=repo.name,
-                permissions=repository_service.get_permission(
-                    RepositoryUserPermission.WRITE, repo.name, db
-                ),
-                warnings=repository_service.get_warnings(repo.name, db),
-                role=RepositoryUserRole.ADMIN,
-            )
-            for repo in projects.get_all_repositories(db)
-        ]
+        projects = crud.get_all_projects(db)
+    else:
+        project_user: list[ProjectUserAssociation] = database_users.get_user(
+            db=db, username=get_username(token)
+        ).projects
+        projects = [project.projects for project in project_user]
 
-    db_user = database_users.get_user(db=db, username=get_username(token))
     return [
-        GetProject(
-            repository_name=repo.repository_name,
-            role=repo.role,
-            permissions=repository_service.get_permission(
-                repo.permission, repo.repository_name, db
-            ),
-            warnings=repository_service.get_warnings(repo.repository_name, db),
+        Project(
+            name=project.name,
+            description=project.description,
         )
-        for repo in db_user.repositories
+        for project in projects
     ]
 
 
@@ -72,7 +67,7 @@ def get_repository_by_name(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
     verify_repository_role(project, token=token, db=db)
-    return projects.get_repository(db, project)
+    return crud.get_project(db, project)
 
 
 @router.post("/", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
@@ -83,7 +78,7 @@ def create_repository(
 ):
     verify_admin(token, db)
     connection.create_repository(body.name)
-    return projects.create_repository(db, body.name)
+    return crud.create_project(db, body.name)
 
 
 @router.delete(
@@ -96,13 +91,13 @@ def delete_repository(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
     verify_admin(token, db)
-    projects.delete_repository(db, project)
+    crud.delete_project(db, project)
 
 
 router.include_router(
     router_users.router,
     prefix="/{project}/users",
-    tags=["Repository Users"],
+    tags=["project users"],
 )
 
 # Load backup extension routes

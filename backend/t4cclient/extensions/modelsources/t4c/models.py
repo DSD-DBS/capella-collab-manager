@@ -10,13 +10,13 @@ from sqlalchemy.orm import relationship
 from t4cclient.core.database import Base
 
 
-class DatabaseT4CModel(Base):
+class DB_T4CModel(Base):
     __tablename__ = "t4c_models"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, unique=True, primary_key=True, index=True)
     name = Column(String, index=True)
-    project_name = Column(String, ForeignKey("projects.name", ondelete="CASCADE"))
-    project = relationship("DatabaseProject", back_populates="projects")
+    model_id = Column(Integer, ForeignKey("capella_models.id"))
+    model = relationship("DB_CapellaModel", back_populates="t4c_model")
 
 
 class RepositoryProjectBase(BaseModel):

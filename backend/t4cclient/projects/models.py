@@ -14,18 +14,9 @@ from sqlalchemy.orm import relationship
 
 # local:
 # Import required for sqlalchemy
+import t4cclient.projects.capellamodels.models
 import t4cclient.projects.users.models
 from t4cclient.core.database import Base
-
-
-class EditingMode(enum.Enum):
-    T4C = "t4c"
-    GIT = "git"
-
-
-class ProjectType(enum.Enum):
-    PROJECT = "project"
-    LIBRARY = "library"
 
 
 class Warning(enum.Enum):
@@ -33,11 +24,9 @@ class Warning(enum.Enum):
     NO_GIT_MODEL_DEFINED = "NO_GIT_MODEL_DEFINED"
 
 
-class GetProject(BaseModel):
+class Project(BaseModel):
     name: str
-    description: str
-    editing_mode: EditingMode
-    type: ProjectType
+    description: t.Optional[str]
 
     class Config:
         orm_mode = True
@@ -50,14 +39,11 @@ class PostRepositoryRequest(BaseModel):
 class DatabaseProject(Base):
     __tablename__ = "projects"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, unique=True, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
     description = Column(String)
-    editing_mode = Column(Enum(EditingMode))
-    project_type = Column(Enum(ProjectType))
     users = relationship(
-        "RepositoryUserAssociation",
+        "ProjectUserAssociation",
         back_populates="projects",
     )
-    t4c_models = relationship("DatabaseT4CModel", back_populates="project")
-    git_models = relationship("DB_GitModel", back_populates="project")
+    models = relationship("DB_CapellaModel", back_populates="project")
