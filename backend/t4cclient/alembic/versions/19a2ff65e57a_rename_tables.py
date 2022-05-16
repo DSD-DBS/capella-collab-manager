@@ -157,5 +157,3 @@ def downgrade():
         ondelete="CASCADE",
     )
     op.create_foreign_key(None, "EASEBackup", "repositories", ["project"], ["name"])
-
-    # ### end Alembic commands ###
