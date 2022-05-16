@@ -16,7 +16,7 @@ from t4cclient.core.authentication.database import (
 )
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
-from t4cclient.core.database import get_db, repositories
+from t4cclient.core.database import get_db, repositories, repository_users
 from t4cclient.core.database import users as database_users
 from t4cclient.extensions.modelsources.t4c import connection
 from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
@@ -82,6 +82,7 @@ def create_repository(
     token=Depends(JWTBearer()),
 ):
     verify_admin(token, db)
+    connection.add_user_to_repository(body.name, get_username(token), isAdmin=True)
     connection.create_repository(body.name)
     return repositories.create_repository(db, body.name)
 
