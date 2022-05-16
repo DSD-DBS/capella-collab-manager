@@ -131,16 +131,17 @@ delete-cluster:
 	echo "insert into repository_user_association values ('$(MY_EMAIL)', 'default', 'WRITE', 'MANAGER');" | kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-backend-postgres --no-headers | cut -f1 -d' ') -- psql -U backend backend && \
 	touch .provision-backend
 
-.PHONY: backend frontend capella oauth-mock deploy undeploy create-cluster delete-cluster persistent-volume ns
-
 # Execute with `make -j2 dev`
-dev: dev-frontend dev-backend
+dev: dev-oauth-mock dev-frontend dev-backend
 
 dev-frontend:
 	$(MAKE) -C frontend dev
 
 dev-backend:
 	$(MAKE) -C backend dev
+
+dev-oauth-mock: 
+	$(MAKE) -C mocks/oauth start
 
 dev-cleanup:
 	$(MAKE) -C backend cleanup
@@ -150,3 +151,5 @@ backend-logs:
 
 ns:
 	kubectl config set-context k3d-$(CLUSTER_NAME) --namespace=$(NAMESPACE)
+
+.PHONY: *
