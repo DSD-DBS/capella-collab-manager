@@ -24,14 +24,15 @@ Please follow the [RESTful web API design best practises](https://docs.microsoft
 We recommend to get started with the [local k8d deployment](README.md).
 
 By default, the services run on the following ports when using the instructions below:
-| Port | Service             |
-|------|---------------------|
-| 8080 | k3d deployment      |
-| 4200 | frontend            |
-| 8000 | backend             |
-| 8081 | t4c-server mock     |
-| 8082 | license-server mock |
-| 8083 | oauth-mock          |
+| Port  | Service             |
+|-------|---------------------|
+| 8080  | k3d deployment      |
+| 12345 | k3d registry        |
+| 4200  | frontend            |
+| 8000  | backend             |
+| 8081  | t4c-server mock     |
+| 8082  | license-server mock |
+| 8083  | oauth-mock          |
 
 ## Capella Docker images
 
