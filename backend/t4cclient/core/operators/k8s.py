@@ -425,7 +425,13 @@ class KubernetesOperator(Operator):
                         "protocol": "TCP",
                         "port": 3389,
                         "targetPort": 3389,
-                    }
+                    },
+                    {
+                        "name": "metrics",
+                        "protocol": "TCP",
+                        "port": 9118,
+                        "targetPort": 9118,
+                    },
                 ],
                 "selector": {"app": deployment_name},
                 "type": "ClusterIP",
