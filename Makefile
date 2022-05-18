@@ -58,9 +58,13 @@ mock:
 	docker build -t t4c/licence/mock -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock mocks/licence-server
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock
 
-capella-dockerimages: capella t4c-client readonly ease
+monitoring:
+	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/prometheus capella-dockerimages/monitoring
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/prometheus
 
-deploy: oauth-mock backend frontend capella mock helm-deploy open
+capella-dockerimages: capella t4c-client readonly ease monitoring
+
+deploy: oauth-mock backend frontend capella mock monitoring helm-deploy open
 
 # Deploy with full T4C support:
 deploy-t4c: backend frontend capella t4c-client readonly-ease mock helm-deploy
