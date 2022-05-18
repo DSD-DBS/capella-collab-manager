@@ -4,7 +4,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-promotheus
+  name: {{ .Release.Name }}-promotheus-server
   namespace: t4c-manager
   annotations:
     prometheus.io/scrape: "true"
@@ -12,7 +12,7 @@ metadata:
   labels:
     id: {{ .Release.Name }}-service-promotheus
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     id: {{ .Release.Name }}-deployment-promotheus
   ports:
