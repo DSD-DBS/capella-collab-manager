@@ -21,6 +21,9 @@ docker:
     # Docker Image for EASE
     ease: /t4c/client/ease
 
+    # Docker Image for Monitoring
+    monitoring: /t4c/client/prometheus
+
     # Docker Image for T4C Backup
     importer: /t4c/client/importer
 
