@@ -8,3 +8,6 @@
 .mypy_cache
 deployments/*
 certs/*
+/node_modules
+package.json
+*-lock.json

@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prometheus.deployment
+  name: {{ .Release.Name }}-prometheus-server
   namespace: t4c-manager
   labels:
-    app: prometheus-server
+    app: {{ .Release.Name }}-prometheus-server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: prometheus-server
+      app: {{ .Release.Name }}-prometheus-server
   template:
     metadata:
       labels:
-        app: prometheus-server
+        app: {{ .Release.Name }}-prometheus-server
     spec:
       containers:
         - name: prometheus

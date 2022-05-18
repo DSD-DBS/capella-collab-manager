@@ -5,10 +5,9 @@
 ### APPLICATION RELATED CONFIGURATION ###
 #########################################
 
-
 docker:
   # Registry for Docker Images, will be used as prefix for Docker Images
-  registry: 
+  registry:
     internal: localhost
     external: docker.io
 
@@ -25,39 +24,38 @@ docker:
     # Docker Image for T4C Backup
     importer: /t4c/client/importer
 
-    workspaces: 
+    workspaces:
       # Docker Image for the Persistent Workspace Session
       persistent: /t4c/client/remote
 
       # Docker Image for the ReadOnly Workspace
       readonly: /capella/readonly
 
-    guacamole: 
+    guacamole:
       # The registry needs to specified here!
       guacamole: docker.io/guacamole/guacamole
       guacd: docker.io/guacamole/guacd
 
-general: 
+general:
   # Base URL on which the service listens
   host: localhost
   port: 80
   scheme: http
 
-database: 
+database:
   # Database Configuration for Guacamole
-  guacamole: 
-
+  guacamole:
     # Define whether the database should also be deployed
-    # in the cluster or whether it already exists externally. 
+    # in the cluster or whether it already exists externally.
     deploy: True
 
-    internal: 
+    internal:
       ###### IF database.guacamole.deploy == True ######
 
       # Admin password of the database
       password: secret
 
-    external: 
+    external:
       ###### IF database.guacamole.deploy == False ######
 
       # Select type of external database
@@ -65,29 +63,28 @@ database:
       type: POSTGRES
 
       # Configure the hostname of the external database
-      hostname: 
+      hostname:
 
       # Configure the database name of the external database
-      database: 
+      database:
 
       # Configure the username of the external database
-      username: 
+      username:
 
       # Configure the password of the external database
-      password: 
+      password:
 
   # Database Configuration for the T4C Manager
-  backend: 
-
+  backend:
     # Define whether the database should also be deployed
-    # in the cluster or whether it already exists externally. 
+    # in the cluster or whether it already exists externally.
     deploy: True
-    
-    # Username of an initial admin user 
+
+    # Username of an initial admin user
     # Is only set if the database is empty!
     initialAdmin: admin
 
-    internal: 
+    internal:
       ###### IF database.backend.deploy == True ######
 
       # Admin password of the database
@@ -110,9 +107,9 @@ backend:
     jwt:
       usernameClaim: sub # azure: preferred_username
 
-    oauth: 
+    oauth:
       # Only required when using provider oauth
-      endpoints: 
+      endpoints:
         wellKnown: http://dev-t4c-manager-oauth-mock:8080/default/.well-known/openid-configuration
         # Override endpoint that issues JWT Tokens
         tokenIssuance: ""
@@ -125,10 +122,10 @@ backend:
         -----BEGIN PUBLIC KEY-----
         -----END PUBLIC KEY-----
 
-      scopes: 
+      scopes:
         - openid
 
-      client: 
+      client:
         # OAUTH2 Client ID
         id: tbd
         # OAUTH2 Client Secret
@@ -136,17 +133,17 @@ backend:
 
       redirectURI: http://localhost:8080/oauth2/callback
 
-    azure: 
+    azure:
       # Only required when using provider oauth
       authorizationEndpoint: tbd
-      
-      client: 
+
+      client:
         id: tbd
         secret: tbd
 
       audience: tbd
       redirectURI: tbd
-      
+
       connectConfigurationEndpoint: tbd
 
   garbageCleaner:
@@ -162,14 +159,14 @@ t4cServer:
   # URL to access the REST APIs of the T4C Server
 
   apis:
-    # API Base for usage and status endpoints 
-    # The following endpoints have to be reachable: 
+    # API Base for usage and status endpoints
+    # The following endpoints have to be reachable:
     # - <base>/usage/json
     # - <base>/status/json
     usageStats: http://localhost:8086
 
     # REST API Base for REST API including the prefix (CRUD for repositories, projects and users)
-    # All REST endpoints have to reachable. 
+    # All REST endpoints have to reachable.
     restAPI: http://localhost:8090/api/v1.0
 
   # Credentials to authenticate against the REST API endpoint (HTTPBasic)
@@ -203,8 +200,6 @@ git:
   # Repository URL for Scripts used by the Jenkins Backup Job (dsh-tools)
   scriptRepoURL: tbd
 
-
-
 ########################################
 ### KUBERNETES RELATED CONFIGURATION ###
 ########################################
@@ -212,16 +207,21 @@ git:
 # target: local | azure
 target: local
 
-cluster: 
+cluster:
   kind: Kubernetes # Kubernetes | OpenShift
 
-  containers: 
+  containers:
     # The following values are appended to each container
 
-  service: 
+  service:
     fqdn: capella.example.de
 
-  namespaces: 
-    sessions: 
-      containers: 
+  namespaces:
+    sessions:
+      containers:
         # The following values are appended to each container in the sessions namespace
+
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/path: /metrics # default
+          prometheus.io/port: "9118"
