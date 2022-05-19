@@ -52,22 +52,13 @@
 
 
         <button
-          *ngIf="session.state === 'Started' || session.state === 'START_SESSION'"
           mat-flat-button
           color="primary"
           (click)="openReconnectDialog(session)"
+          [disabled]="!(session.state === 'Started' || session.state === 'START_SESSION')"
         >
           Reconnect
         </button>
-
-        <button
-          *ngIf="session.state === 'Scheduled'"
-          mat-flat-button
-          [disabled]="true"
-        >
-          Reconnect
-        </button>
-
       </div>
     </mat-card>
   </div>
