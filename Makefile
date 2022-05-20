@@ -31,7 +31,7 @@ capella: capella-download
 
 capella-download:
 	cd capella-dockerimages/capella/archives; \
-	if [[ -f "capella.tar.gz" ]] || [[ -f "capella.zip" ]]; \
+	if [ -f "capella.tar.gz" ] || [ -f "capella.zip" ]; \
 	then \
 		echo "Found existing capella archive."; \
 	else \
@@ -58,13 +58,9 @@ mock:
 	docker build -t t4c/licence/mock -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock mocks/licence-server
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock
 
-monitoring:
-	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/prometheus capella-dockerimages/monitoring
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/prometheus
+capella-dockerimages: capella t4c-client readonly ease
 
-capella-dockerimages: capella t4c-client readonly ease monitoring
-
-deploy: oauth-mock backend frontend capella mock monitoring helm-deploy open
+deploy: oauth-mock backend frontend capella mock helm-deploy open
 
 # Deploy with full T4C support:
 deploy-t4c: backend frontend capella t4c-client readonly-ease mock helm-deploy
@@ -89,13 +85,13 @@ helm-deploy:
 
 open:
 	export URL=http://localhost:8080; \
-	if [[ "Windows_NT" == "$(OS)" ]]; \
+	if [ "Windows_NT" = "$(OS)" ]; \
 	then \
 		start "$$URL"; \
-	elif [[ "$(shell uname -s)" == "Linux" ]]; \
+	elif [ "$(shell uname -s)" = "Linux" ]; \
 	then \
 		xdg-open "$$URL"; \
-	elif [[ "$(shell uname -s)" == "Darwin" ]]; \
+	elif [ "$(shell uname -s)" = "Darwin" ]; \
 	then \
 		open "$$URL"; \
 	fi
@@ -111,6 +107,7 @@ rollout: backend frontend
 
 undeploy:
 	helm uninstall --kube-context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $(RELEASE)
+	kubectl --context k3d-$(CLUSTER_NAME) delete --all deployments -n $(NAMESPACE)
 	rm -f .provision-guacamole .provision-backend
 
 create-cluster:
