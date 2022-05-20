@@ -17,12 +17,12 @@ spec:
     spec:
       containers:
         - name: prometheus
-          image: prom/prometheus
+          image: {{ .Values.docker.images.prometheus }}
           args:
             - "--storage.tsdb.retention.time=12h"
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus/"
-            - "--web.external-url=http://localhost:8080/prometheus/"
+            - "--web.external-url=http://{{ .Values.general.host }}:8080/prometheus/"
           ports:
             - containerPort: 9118
           resources:

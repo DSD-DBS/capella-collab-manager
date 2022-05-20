@@ -15,7 +15,7 @@ operators:
     storageAccessMode: {{ .Values.backend.storageAccessMode }}
 
     cluster:
-      containers: 
+      containers:
         {{- toYaml .Values.cluster.namespaces.sessions.containers | nindent 8 }}
 
 extensions: 
@@ -43,7 +43,7 @@ authentication:
     publicKey: |
       {{- .Values.backend.authentication.oauth.publicKey | nindent 6}}
 
-    scopes: 
+    scopes:
       {{- toYaml .Values.backend.authentication.oauth.scopes | nindent 6}}
 
     client: 

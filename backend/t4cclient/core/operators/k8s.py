@@ -333,7 +333,14 @@ class KubernetesOperator(Operator):
                 "replicas": 1,
                 "selector": {"matchLabels": {"app": name}},
                 "template": {
-                    "metadata": {"labels": {"app": name}},
+                    "metadata": {
+                        "labels": {"app": name},
+                        "annotations": {
+                            "prometheus.io/scrape": "true",
+                            "prometheus.io/path": "/metrics",
+                            "prometheus.io/port": "9118",
+                        },
+                    },
                     "spec": {
                         "containers": [
                             {
