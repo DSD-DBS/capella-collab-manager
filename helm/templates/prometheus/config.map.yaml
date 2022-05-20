@@ -8,15 +8,15 @@ metadata:
 data:
   prometheus.rules: |-
     groups:
-    - name: devopscube demo alert
+    - name: Inactivity
       rules:
-      - alert: High Pod Memory
-        expr: sum(container_memory_usage_bytes) > 1
+      - alert: Inactivity (10m)
+        expr: idletime_minutes > 600
         for: 1m
         labels:
           severity: slack
         annotations:
-          summary: High Memory Usage
+          summary: High Idletime
   prometheus.yml: |-
     global:
       scrape_interval: 5s
@@ -65,6 +65,9 @@ data:
 
         kubernetes_sd_configs:
         - role: pod
+          namespaces:
+            names:
+            - t4c-sessions
 
         relabel_configs:
         - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]

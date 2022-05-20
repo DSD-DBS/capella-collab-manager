@@ -4,26 +4,27 @@ metadata:
   name: {{ .Release.Name }}-prometheus-server
   namespace: t4c-manager
   labels:
-    app: {{ .Release.Name }}-prometheus-server
+    id: {{ .Release.Name }}-prometheus-server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-prometheus-server
+      id: {{ .Release.Name }}-prometheus-server
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}-prometheus-server
+        id: {{ .Release.Name }}-prometheus-server
     spec:
       containers:
         - name: prometheus
-          image: {{ .Values.docker.registry.internal }}{{ .Values.docker.images.monitoring }}
+          image: prom/prometheus
           args:
             - "--storage.tsdb.retention.time=12h"
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus/"
+            - "--web.external-url=http://localhost:8080/prometheus/"
           ports:
-            - containerPort: 9090
+            - containerPort: 9118
           resources:
             requests:
               cpu: 500m
