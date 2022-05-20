@@ -9,6 +9,8 @@ metadata:
   labels: 
     id: {{ .Release.Name }}-nginx
   annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9118"
     {{ if eq .Values.target "local" }}
     ingress.kubernetes.io/ssl-redirect: "false"
     {{ else }}
@@ -40,6 +42,13 @@ spec:
                 name: {{ .Release.Name }}-guacamole-guacamole
                 port:
                   number: 8080
+          - path: /prometheus
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-prometheus-server
+                port:
+                  name: promui
           {{ if eq .Values.target "local" }}
           - path: /default
             pathType: Prefix
