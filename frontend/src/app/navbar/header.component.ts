@@ -6,6 +6,7 @@ import { LocalStorageService } from '../auth/local-storage/local-storage.service
 import { AuthService } from '../services/auth/auth.service';
 import { ProjectService } from '../projects/service/project.service';
 import { UserService } from '../services/user/user.service';
+import { NavBarService } from './service/nav-bar.service';
 
 @Component({
   selector: 'app-header',
@@ -13,14 +14,12 @@ import { UserService } from '../services/user/user.service';
   styleUrls: ['./header.component.css'],
 })
 export class HeaderComponent implements OnInit {
-  @Input()
-  title = 'Capella Collaboration Plattform';
-
   constructor(
     public localStorageService: LocalStorageService,
     public authService: AuthService,
     public userService: UserService,
-    public projectService: ProjectService
+    public projectService: ProjectService,
+    public navbarService: NavBarService
   ) {}
 
   ngOnInit(): void {

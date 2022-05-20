@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Component, OnInit } from '@angular/core';
+import { NavBarService } from '../navbar/service/nav-bar.service';
 import { ProjectService } from '../projects/service/project.service';
 import { UserService } from '../services/user/user.service';
 
@@ -13,8 +14,11 @@ import { UserService } from '../services/user/user.service';
 export class SettingsComponent implements OnInit {
   constructor(
     public userService: UserService,
-    public projectService: ProjectService
-  ) {}
+    public projectService: ProjectService,
+    private navbarService: NavBarService
+  ) {
+    this.navbarService.title = 'Settings';
+  }
 
   ngOnInit(): void {
     this.userService

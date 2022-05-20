@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Component, OnInit } from '@angular/core';
+import { NavBarService } from '../navbar/service/nav-bar.service';
 import { Project, ProjectService } from '../projects/service/project.service';
 import { SessionService } from '../services/session/session.service';
 
@@ -16,8 +17,11 @@ export class WorkspaceComponent implements OnInit {
 
   constructor(
     public sessionService: SessionService,
-    private projectService: ProjectService
-  ) {}
+    private projectService: ProjectService,
+    private navbarService: NavBarService
+  ) {
+    this.navbarService.title = 'Workspaces';
+  }
 
   ngOnInit() {
     this.showSpinner = true;

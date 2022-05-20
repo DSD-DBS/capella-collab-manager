@@ -8,6 +8,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
+import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { environment } from 'src/environments/environment';
 
@@ -26,7 +27,13 @@ export class AuthComponent implements OnInit {
 
   authProvider = environment.authentication;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private navbarService: NavBarService
+  ) {
+    this.navbarService.title = 'Authentication';
+    this.navbarService.disableAll();
+  }
 
   ngOnInit(): void {}
 

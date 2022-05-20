@@ -12,8 +12,16 @@
 
 #title {
   margin-left: 20px;
+  width: 400px;
+  user-select: none;
+}
+
+#maintitle {
+  font-size: 1em;
+}
+
+#subtitle {
   font-size: 1.5em;
-  width: 300px;
 }
 
 .flexbox {

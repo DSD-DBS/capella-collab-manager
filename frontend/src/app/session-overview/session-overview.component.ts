@@ -5,6 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
+import { NavBarService } from '../navbar/service/nav-bar.service';
 import { Session, SessionsUsage } from '../schemes';
 import { SessionService } from '../services/session/session.service';
 
@@ -16,8 +17,11 @@ import { SessionService } from '../services/session/session.service';
 export class SessionOverviewComponent implements OnInit {
   constructor(
     private sessionService: SessionService,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+    private navbarService: NavBarService
+  ) {
+    this.navbarService.title = 'Session Overview';
+  }
 
   sessions: Array<Session> = [];
   displayedColumns = [

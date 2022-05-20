@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Component, OnInit } from '@angular/core';
+import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import { Project, ProjectService } from '../service/project.service';
 
 @Component({
@@ -13,7 +14,13 @@ export class ProjectOverviewComponent implements OnInit {
   projects: Array<Project> = [];
   showSpinner = true;
 
-  constructor(private projectService: ProjectService) {}
+  constructor(
+    private projectService: ProjectService,
+    private navbarService: NavBarService
+  ) {
+    this.navbarService.title = 'Projects';
+    this.navbarService.enableAll();
+  }
 
   ngOnInit() {
     this.showSpinner = true;

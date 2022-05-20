@@ -4,7 +4,10 @@
  -->
 
 <div id="toolbar">
-  <div class="flexbox primaryText" id="title">{{ title }}</div>
+  <div class="primaryText" id="title">
+    <div id="maintitle">Capella Collaboration Manager</div>
+    <div id="subtitle">/ {{ navbarService.title }}</div>
+  </div>
   <div class="flexbox">
     <button mat-raised-button color="primary" routerLink="/projects">
       Projects
@@ -35,7 +38,12 @@
       </span>
     </div>
     <mat-menu #profileMenu="matMenu">
-      <button class="profileMenuButton" mat-menu-item routerLink="settings">
+      <button
+        *ngIf="userService.user?.role === 'administrator'"
+        class="profileMenuButton"
+        mat-menu-item
+        routerLink="settings"
+      >
         Settings <mat-icon>settings</mat-icon>
       </button>
       <button
