@@ -11,7 +11,7 @@ import { SessionOverviewComponent } from './session-overview/session-overview.co
 import { MatTableModule } from '@angular/material/table';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HomeComponent } from './home/home.component';
-import { HeaderComponent } from './header/header.component';
+import { HeaderComponent } from './navbar/header.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,7 +28,6 @@ import { RDPComponent } from './session-created/rdp/rdp.component';
 import { NoRepositoryComponent } from './home/no-repository/no-repository.component';
 import { RequestSessionComponent } from './home/request-session/request-session.component';
 import { SettingsComponent } from './settings/settings.component';
-import { AdminSettingsComponent } from './settings/admin-settings/admin-settings.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
@@ -37,12 +36,10 @@ import { ActiveSessionsComponent } from './active-sessions/active-sessions.compo
 import { LogoutComponent } from './auth/logout/logout/logout.component';
 import { DeleteSessionDialogComponent } from './delete-session-dialog/delete-session-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
-import { UserSettingsComponent } from './settings/user-settings/user-settings.component';
 import { NoticeComponent } from './notice/notice.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ReconnectDialogComponent } from './active-sessions/reconnect-dialog/reconnect-dialog.component';
-import { AlertSettingsComponent } from './settings/admin-settings/alert-settings/alert-settings.component';
-import { AdminUserSettingsComponent } from './settings/admin-settings/admin-user-settings/admin-user-settings.component';
+import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { GitModelSettingsComponent } from './projects/project-detail/model-source/git-model-settings/git-model-settings.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -77,6 +74,12 @@ import { MatRippleModule } from '@angular/material/core';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { ModelOverviewComponent } from './projects/project-detail/model-overview/model-overview.component';
+import { SetT4CPasswordComponent } from './projects/project-detail/model-source/t4c-repo-settings/set-t4c-password/set-t4c-password.component';
+import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
+import { WorkspaceSettingsComponent } from './settings/core/workspace-settings/workspace-settings.component';
+import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
+import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 
 @NgModule({
   declarations: [
@@ -91,16 +94,13 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     NoRepositoryComponent,
     RequestSessionComponent,
     SettingsComponent,
-    AdminSettingsComponent,
     ProjectDetailsComponent,
     ActiveSessionsComponent,
     LogoutComponent,
     DeleteSessionDialogComponent,
-    UserSettingsComponent,
     NoticeComponent,
     ReconnectDialogComponent,
     AlertSettingsComponent,
-    AdminUserSettingsComponent,
     GitModelSettingsComponent,
     T4CRepoSettingsComponent,
     RepositoryUserSettingsComponent,
@@ -124,6 +124,12 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     ViewLogsDialogComponent,
     ProjectOverviewComponent,
     MaintenanceComponent,
+    ModelOverviewComponent,
+    SetT4CPasswordComponent,
+    UserSettingsComponent,
+    WorkspaceSettingsComponent,
+    GitSettingsComponent,
+    T4CSettingsComponent,
   ],
   imports: [
     BrowserModule,

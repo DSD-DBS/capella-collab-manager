@@ -3,21 +3,21 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AdminSettingsComponent } from './admin-settings.component';
+import { GitSettingsComponent } from './git-settings.component';
 
-describe('AdminSettingsComponent', () => {
-  let component: AdminSettingsComponent;
-  let fixture: ComponentFixture<AdminSettingsComponent>;
+describe('GitSettingsComponent', () => {
+  let component: GitSettingsComponent;
+  let fixture: ComponentFixture<GitSettingsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AdminSettingsComponent ]
+      declarations: [ GitSettingsComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AdminSettingsComponent);
+    fixture = TestBed.createComponent(GitSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

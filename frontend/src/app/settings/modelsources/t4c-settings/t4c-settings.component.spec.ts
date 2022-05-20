@@ -3,21 +3,20 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AdminUserSettingsComponent } from './admin-user-settings.component';
+import { T4CSettingsComponent } from './t4c-settings.component';
 
-describe('AdminUserSettingsComponent', () => {
-  let component: AdminUserSettingsComponent;
-  let fixture: ComponentFixture<AdminUserSettingsComponent>;
+describe('T4CSettingsComponent', () => {
+  let component: T4CSettingsComponent;
+  let fixture: ComponentFixture<T4CSettingsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AdminUserSettingsComponent ]
-    })
-    .compileComponents();
+      declarations: [T4CSettingsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AdminUserSettingsComponent);
+    fixture = TestBed.createComponent(T4CSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -3,12 +3,3 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-h1 {
-  margin: 10px;
-}
-
-.flexbox {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-}

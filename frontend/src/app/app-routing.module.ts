@@ -16,6 +16,11 @@ import { CreateProjectComponent } from './projects/create-project/create-project
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { SettingsComponent } from './settings/settings.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
+import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
+import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
+import { WorkspaceSettingsComponent } from './settings/core/workspace-settings/workspace-settings.component';
+import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
+import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 
 const routes: Routes = [
   {
@@ -48,6 +53,36 @@ const routes: Routes = [
   {
     path: 'settings',
     component: SettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/core/users',
+    component: UserSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/core/alerts',
+    component: AlertSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/core/workspaces',
+    component: WorkspaceSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/core/workspaces',
+    component: WorkspaceSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/modelsources/git',
+    component: GitSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/modelsources/t4c',
+    component: T4CSettingsComponent,
     canActivate: [AuthGuardService],
   },
   {

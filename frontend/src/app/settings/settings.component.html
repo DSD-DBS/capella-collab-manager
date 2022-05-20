@@ -3,6 +3,45 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<app-admin-settings
-  *ngIf="userService.user?.role === 'administrator'"
-></app-admin-settings>
+<div class="title">Core functionality</div>
+<div class="options-list">
+  <mat-card matRipple [routerLink]="['/settings/core/users']">
+    <div class="subtitle">Manage users</div>
+    <mat-icon>supervised_user_circle</mat-icon>
+  </mat-card>
+  <mat-card matRipple [routerLink]="['/settings/core/alerts']">
+    <div class="subtitle">Maintenance and alerts</div>
+    <mat-icon>add_alert</mat-icon>
+  </mat-card>
+  <mat-card matRipple [routerLink]="['/settings/core/workspaces']">
+    <div class="subtitle">Workspaces</div>
+    <mat-icon>folder</mat-icon>
+  </mat-card>
+</div>
+
+<div class="title">Modelsources</div>
+<div class="options-list">
+  <mat-card matRipple [routerLink]="['/settings/modelsources/git']">
+    <div class="subtitle">Git models</div>
+    <img
+      id="git"
+      src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"
+    />
+  </mat-card>
+  <mat-card matRipple [routerLink]="['/settings/modelsources/t4c']">
+    <div class="subtitle">Team For Capella</div>
+    <mat-icon>people</mat-icon>
+  </mat-card>
+</div>
+
+<div class="title">Integrations</div>
+<div class="options-list">
+  <mat-card matRipple [routerLink]="['/settings/integrations/jenkins']">
+    <div class="subtitle">Jenkins backups</div>
+    <mat-icon>backup</mat-icon>
+  </mat-card>
+  <mat-card matRipple [routerLink]="['/settings/integrations/importer']">
+    <div class="subtitle">T4C importer backups</div>
+    <mat-icon>backup</mat-icon>
+  </mat-card>
+</div>

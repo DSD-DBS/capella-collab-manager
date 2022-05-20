@@ -10,6 +10,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import { NoticeService } from 'src/app/services/notice/notice.service';
 
 @Component({
@@ -32,7 +33,12 @@ export class AlertSettingsComponent implements OnInit {
     return this.createAlertForm.get('message') as FormControl;
   }
 
-  constructor(public noticeService: NoticeService) {}
+  constructor(
+    public noticeService: NoticeService,
+    private navbarService: NavBarService
+  ) {
+    this.navbarService.title = 'Settings / Core / Alerts';
+  }
 
   ngOnInit(): void {}
 

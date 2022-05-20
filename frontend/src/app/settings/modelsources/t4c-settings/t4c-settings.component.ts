@@ -4,11 +4,11 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-admin-settings',
-  templateUrl: './admin-settings.component.html',
-  styleUrls: ['./admin-settings.component.css'],
+  selector: 'app-t4c-settings',
+  templateUrl: './t4c-settings.component.html',
+  styleUrls: ['./t4c-settings.component.css'],
 })
-export class AdminSettingsComponent implements OnInit {
+export class T4CSettingsComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {}
