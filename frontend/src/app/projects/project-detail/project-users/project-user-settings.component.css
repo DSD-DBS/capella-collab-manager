@@ -20,3 +20,7 @@ button {
   padding-bottom: 0px;
   width: 400px;
 }
+
+mat-card {
+  width: 400px;
+}
