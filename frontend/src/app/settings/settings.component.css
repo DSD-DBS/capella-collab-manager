@@ -24,6 +24,11 @@ mat-card:hover {
   background-color: var(--hover-color);
 }
 
+.disabled {
+  cursor: not-allowed !important;
+  background-color: grey !important;
+}
+
 mat-icon {
   font-size: 2em;
   position: relative;

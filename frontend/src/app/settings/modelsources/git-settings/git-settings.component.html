@@ -3,4 +3,44 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<p>git-settings works!</p>
+<div class="wrapper">
+  <div class="title">Existing instances</div>
+  <div class="instances">
+    <mat-card>
+      <div class="mat-title">
+        Github
+        <span class="mat-subtitle">General Git (restricted)</span>
+      </div>
+      <div class="content">Instance base URL: https://github.com/DSD-DBS/</div>
+    </mat-card>
+  </div>
+  <br />
+
+  <div class="title">Add new integration</div>
+  <br />
+
+  Supported instances: <br />
+  <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
+    <mat-button-toggle value="git">General Git (restricted)</mat-button-toggle>
+    <mat-button-toggle disabled value="gitlab">Gitlab</mat-button-toggle>
+    <mat-button-toggle disabled value="github">Github</mat-button-toggle>
+    <mat-button-toggle disabled value="azure">Azure DevOps</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <form id="add-instance-form">
+    <mat-form-field id="instance-url" appearance="fill">
+      <mat-label>Name</mat-label>
+      <input matInput />
+    </mat-form-field>
+    <br />
+    <mat-form-field id="instance-url" appearance="fill">
+      <mat-label>Instance base URL</mat-label>
+      <input matInput /> </mat-form-field
+    ><br />
+    <mat-form-field id="instance-url" appearance="fill">
+      <mat-label>Default email for commits</mat-label>
+      <input matInput />
+    </mat-form-field>
+  </form>
+  <button mat-raised-button>Create</button>
+</div>

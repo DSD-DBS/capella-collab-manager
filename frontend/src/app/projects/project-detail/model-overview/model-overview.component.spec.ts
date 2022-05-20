@@ -3,20 +3,21 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProjectDeletionDialogComponent } from './project-deletion-dialog.component';
+import { ModelOverviewComponent } from './model-overview.component';
 
-describe('ProjectDeletionDialogComponent', () => {
-  let component: ProjectDeletionDialogComponent;
-  let fixture: ComponentFixture<ProjectDeletionDialogComponent>;
+describe('ModelOverviewComponent', () => {
+  let component: ModelOverviewComponent;
+  let fixture: ComponentFixture<ModelOverviewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ProjectDeletionDialogComponent],
-    }).compileComponents();
+      declarations: [ ModelOverviewComponent ]
+    })
+    .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ProjectDeletionDialogComponent);
+    fixture = TestBed.createComponent(ModelOverviewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

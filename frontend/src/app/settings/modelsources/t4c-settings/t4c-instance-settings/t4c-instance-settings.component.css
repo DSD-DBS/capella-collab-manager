@@ -3,10 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#title {
-  margin-left: 10px;
-}
-
-.flexbox {
-  justify-content: space-between;
+.wrapper {
+  margin: 20px;
 }

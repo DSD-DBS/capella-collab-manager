@@ -16,7 +16,7 @@ import {
   GitModel,
   GitModelService,
 } from 'src/app/services/modelsources/git-model/git-model.service';
-import { T4CRepoService } from 'src/app/services/modelsources/t4c-repos/t4c-repo.service';
+import { T4CRepoService } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 import { GitModelDeletionDialogComponent } from './git-model-deletion-dialog/git-model-deletion-dialog.component';
 
 @Component({

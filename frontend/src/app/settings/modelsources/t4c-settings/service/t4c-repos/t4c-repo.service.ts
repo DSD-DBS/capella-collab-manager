@@ -14,10 +14,10 @@ export class T4CRepoService {
   constructor(private http: HttpClient) {}
   repositories: Array<T4CRepository> = [];
 
-  getRepositoryProjects(repository: string): Observable<Array<T4CRepository>> {
+  getT4CRepositories(instance_id: number): Observable<Array<T4CRepository>> {
     return this.http
       .get<Array<T4CRepository>>(
-        `${environment.backend_url}/projects/${repository}/extensions/modelsources/t4c`
+        `${environment.backend_url}/integrations/modelsources/t4c/instances/${instance_id}/repositories`
       )
       .pipe(
         tap((res: Array<T4CRepository>) => {
@@ -26,22 +26,22 @@ export class T4CRepoService {
       );
   }
 
-  createRepositoryProject(
-    repository: string,
-    project_name: string
+  createT4CRepository(
+    name: string,
+    instance_id: number
   ): Observable<T4CRepository> {
     return this.http.post<T4CRepository>(
-      `${environment.backend_url}/projects/${repository}/extensions/modelsources/t4c`,
-      { name: project_name }
+      `${environment.backend_url}/integrations/modelsources/t4c/instances/${instance_id}/repositories`,
+      { name: name }
     );
   }
 
-  deleteRepositoryProject(
-    repository: string,
-    project_id: number
+  deleteRepository(
+    instance_id: number,
+    repository_name: string
   ): Observable<T4CRepository> {
     return this.http.delete<T4CRepository>(
-      `${environment.backend_url}/projects/${repository}/extensions/modelsources/t4c/${project_id}`
+      `${environment.backend_url}/integrations/modelsources/t4c/instances/${instance_id}/repositories/${repository_name}`
     );
   }
 }
@@ -49,5 +49,5 @@ export class T4CRepoService {
 export interface T4CRepository {
   id: number;
   name: string;
-  repository_name: string;
+  instance_id: number;
 }

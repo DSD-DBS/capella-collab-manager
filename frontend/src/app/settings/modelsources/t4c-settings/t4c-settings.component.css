@@ -3,3 +3,81 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+.title {
+  font-size: 2em;
+}
+
+.wrapper {
+  margin: 20px;
+}
+
+.instances {
+  display: flex;
+}
+
+mat-card {
+  width: fit-content;
+  width: 400px;
+  height: 300px;
+  user-select: none;
+}
+
+.mat-card {
+  padding: 0 !important;
+  margin: 10px 20px 0 0;
+}
+
+.mat-card-content {
+  padding: 5px !important;
+}
+
+.content {
+  margin: 20px;
+  overflow: hidden;
+}
+
+.mat-title {
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 5px 5px 0 0;
+  display: flex;
+  flex-direction: column;
+  padding: 5px 20px;
+  font-size: 1.5em;
+}
+
+.mat-subtitle {
+  font-size: 0.5em;
+  line-height: 10px;
+  margin-bottom: 5px;
+}
+
+.instance {
+  background-color: darkred !important;
+  color: white;
+  font-size: 1.5em;
+}
+
+#add-instance-form {
+  margin-top: 10px;
+}
+
+.fullwidth {
+  width: 405px;
+}
+
+mat-button-toggle-group {
+  margin: 5px 0;
+}
+
+#name {
+  width: 275px;
+}
+
+#capella-version {
+  width: 120px;
+}
+
+mat-card:hover {
+  cursor: pointer;
+}

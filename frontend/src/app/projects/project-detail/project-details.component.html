@@ -3,10 +3,9 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<h1 id="title">{{ project }} Project Options</h1>
 <div class="flexbox">
-  <app-project-user-settings [repository]="project">
-  </app-project-user-settings>
-  <app-backup-settings [project]="project"></app-backup-settings>
-  <app-model-source [repository]="project"></app-model-source>
+  <app-model-overview></app-model-overview>
+  <app-project-user-settings [repository]="project"></app-project-user-settings>
+  <!--<app-backup-settings [project]="project"></app-backup-settings>
+  <app-model-source [repository]="project"></app-model-source>-->
 </div>

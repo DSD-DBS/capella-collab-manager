@@ -10,7 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SessionOverviewComponent } from './session-overview/session-overview.component';
 import { MatTableModule } from '@angular/material/table';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { HomeComponent } from './home/home.component';
+import { HomeComponent } from './workspaces/home.component';
 import { HeaderComponent } from './navbar/header.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,8 +25,8 @@ import { AuthComponent } from './auth/auth/auth.component';
 import { AuthInterceptor } from './auth/http-interceptor/auth.interceptor';
 import { GuacamoleComponent } from './session-created/guacamole/guacamole.component';
 import { RDPComponent } from './session-created/rdp/rdp.component';
-import { NoRepositoryComponent } from './home/no-repository/no-repository.component';
-import { RequestSessionComponent } from './home/request-session/request-session.component';
+import { NoRepositoryComponent } from './workspaces/no-repository/no-repository.component';
+import { RequestSessionComponent } from './workspaces/request-session/request-session.component';
 import { SettingsComponent } from './settings/settings.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -45,11 +45,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { T4CRepoSettingsComponent } from './projects/project-detail/model-source/t4c-repo-settings/t4c-repo-settings.component';
 import { RepositoryUserSettingsComponent } from './projects/project-detail/project-users/project-user-settings.component';
-import { ProjectDeletionDialogComponent } from './projects/project-detail/model-source/t4c-repo-settings/project-deletion-dialog/project-deletion-dialog.component';
+import { T4CRepoDeletionDialogComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-repo-deletion-dialog/t4c-repo-deletion-dialog.component';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { GitModelDeletionDialogComponent } from './projects/project-detail/model-source/git-model-settings/git-model-deletion-dialog/git-model-deletion-dialog.component';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { WarningComponent } from './home/request-session/warning/warning.component';
+import { WarningComponent } from './workspaces/request-session/warning/warning.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { WhitespaceUrlInterceptor } from './services/encoder/encoder.interceptor';
 import { MatMenuModule } from '@angular/material/menu';
@@ -80,6 +80,9 @@ import { UserSettingsComponent } from './settings/core/user-settings/user-settin
 import { WorkspaceSettingsComponent } from './settings/core/workspace-settings/workspace-settings.component';
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
+import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-instance-settings.component';
+import { GuacamoleSettingsComponent } from './settings/integrations/guacamole-settings/guacamole-settings.component';
+import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4c-importer-settings/t4c-importer-settings.component';
 
 @NgModule({
   declarations: [
@@ -104,7 +107,7 @@ import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-s
     GitModelSettingsComponent,
     T4CRepoSettingsComponent,
     RepositoryUserSettingsComponent,
-    ProjectDeletionDialogComponent,
+    T4CRepoDeletionDialogComponent,
     GitModelDeletionDialogComponent,
     WarningComponent,
     WorkspaceComponent,
@@ -130,6 +133,9 @@ import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-s
     WorkspaceSettingsComponent,
     GitSettingsComponent,
     T4CSettingsComponent,
+    T4CInstanceSettingsComponent,
+    GuacamoleSettingsComponent,
+    T4CImporterSettingsComponent,
   ],
   imports: [
     BrowserModule,

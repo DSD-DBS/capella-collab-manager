@@ -1,28 +1,10 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  FormGroupDirective,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+
 import { MatDialog } from '@angular/material/dialog';
-import {
-  T4CRepoService,
-  T4CRepository,
-} from 'src/app/services/modelsources/t4c-repos/t4c-repo.service';
-import { ProjectDeletionDialogComponent } from './project-deletion-dialog/project-deletion-dialog.component';
+import { T4CRepoService } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 
 @Component({
   selector: 'app-t4c-repo-settings',
@@ -30,74 +12,10 @@ import { ProjectDeletionDialogComponent } from './project-deletion-dialog/projec
   styleUrls: ['./t4c-repo-settings.component.css'],
 })
 export class T4CRepoSettingsComponent implements OnInit {
-  createProjectForm = new FormGroup({
-    name: new FormControl('', Validators.required),
-  });
-
-  _repository: string = '';
-
-  @ViewChild('projectsList') projectsList: any;
+  constructor(public projectService: T4CRepoService) {}
 
   @Input()
-  set repository(value: string) {
-    this._repository = value;
-    this.refreshProjects();
-  }
-
-  get repository() {
-    return this._repository;
-  }
-
-  projectNonexistenceValidator(): Validators {
-    return (control: AbstractControl): ValidationErrors | null => {
-      for (let project of this.projectService.repositories) {
-        if (project.name == control.value) {
-          return { projectExistsError: true };
-        }
-      }
-      return null;
-    };
-  }
-
-  constructor(
-    public projectService: T4CRepoService,
-    private dialog: MatDialog
-  ) {}
+  repository = '';
 
   ngOnInit(): void {}
-
-  refreshProjects(): void {
-    this.projectService.getRepositoryProjects(this.repository).subscribe();
-  }
-
-  createProject(formDirective: FormGroupDirective): void {
-    if (this.createProjectForm.valid) {
-      this.projectService
-        .createRepositoryProject(
-          this.repository,
-          this.createProjectForm.value.name
-        )
-        .subscribe(() => {
-          this.refreshProjects();
-          formDirective.resetForm();
-          this.createProjectForm.reset();
-        });
-    }
-  }
-
-  removeProject(project: T4CRepository): void {
-    const dialogRef = this.dialog.open(ProjectDeletionDialogComponent, {
-      data: project,
-    });
-
-    dialogRef.afterClosed().subscribe((val) => {
-      if (val) {
-        this.refreshProjects();
-      }
-    });
-  }
-
-  get selectedProject(): T4CRepository {
-    return this.projectsList.selectedOptions.selected[0].value;
-  }
 }

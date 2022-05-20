@@ -9,7 +9,7 @@ import { AuthRedirectComponent } from './auth/auth-redirect/auth-redirect.compon
 import { AuthComponent } from './auth/auth/auth.component';
 import { LogoutRedirectComponent } from './auth/logout/logout-redirect/logout-redirect.component';
 import { LogoutComponent } from './auth/logout/logout/logout.component';
-import { HomeComponent } from './home/home.component';
+import { HomeComponent } from './workspaces/home.component';
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
 import { SessionOverviewComponent } from './session-overview/session-overview.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
@@ -21,6 +21,9 @@ import { AlertSettingsComponent } from './settings/core/alert-settings/alert-set
 import { WorkspaceSettingsComponent } from './settings/core/workspace-settings/workspace-settings.component';
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
+import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-instance-settings.component';
+import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4c-importer-settings/t4c-importer-settings.component';
+import { GuacamoleSettingsComponent } from './settings/integrations/guacamole-settings/guacamole-settings.component';
 
 const routes: Routes = [
   {
@@ -83,6 +86,21 @@ const routes: Routes = [
   {
     path: 'settings/modelsources/t4c',
     component: T4CSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/modelsources/t4c/instances/:id',
+    component: T4CInstanceSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/integrations/backups/importer',
+    component: T4CImporterSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/integrations/guacamole',
+    component: GuacamoleSettingsComponent,
     canActivate: [AuthGuardService],
   },
   {

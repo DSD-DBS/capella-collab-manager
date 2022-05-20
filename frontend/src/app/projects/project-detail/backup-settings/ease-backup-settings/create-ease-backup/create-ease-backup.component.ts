@@ -6,7 +6,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EASEBackupService } from 'src/app/services/backups/ease/easebackup.service';
 import { GitModelService } from 'src/app/services/modelsources/git-model/git-model.service';
-import { T4CRepoService } from 'src/app/services/modelsources/t4c-repos/t4c-repo.service';
+import { T4CRepoService } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 
 @Component({
   selector: 'app-create-ease-backup',

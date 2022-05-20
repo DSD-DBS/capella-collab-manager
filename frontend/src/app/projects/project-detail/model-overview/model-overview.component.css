@@ -1,0 +1,117 @@
+/*
+ * Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.models {
+  margin: 10px;
+}
+
+#settings-icon {
+  margin-left: 10px;
+  position: relative;
+  bottom: 5px;
+  font-size: 1.5em;
+}
+
+mat-card {
+  width: fit-content;
+  width: 400px;
+  height: 150px;
+  user-select: none;
+}
+
+.mat-card {
+  padding: 0 !important;
+}
+
+mat-card:hover {
+  background-color: var(--hover-color);
+  cursor: pointer;
+}
+
+.mat-card-content {
+  padding: 5px !important;
+}
+
+.header {
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 5px 5px 0 0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 20px;
+  font-size: 1.5em;
+}
+
+#title {
+  margin: 20px;
+}
+
+.add-icon {
+  font-size: 3em !important;
+}
+
+#add-model-wrapper {
+  padding-top: 100px;
+}
+
+#add {
+  font-size: 2em;
+  display: flex;
+  align-items: center;
+}
+
+#add > .content {
+  text-align: center;
+  margin: auto;
+}
+
+.flexbox {
+  display: flex;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 70%;
+}
+
+.content {
+  margin: 10px;
+}
+
+mat-icon {
+  margin: 10px;
+}
+
+.nature {
+  background-color: darkgreen !important;
+  color: white;
+}
+
+.editingMode {
+  background-color: darkred !important;
+  color: white;
+}
+
+.actions > .right > mat-card {
+  width: fit-content;
+  height: fit-content;
+  margin: 5px;
+}
+
+.actions > .right > mat-card > div {
+  margin: 5px;
+}
+
+.actions > .right {
+  display: flex;
+  margin-right: 5px;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+}
