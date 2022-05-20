@@ -53,7 +53,7 @@ def get_users_for_repository(
 )
 def add_user_to_repository(
     project: str,
-    body: schema_repositories.PostRepositoryUser,
+    body: schema_repositories.RepositoryUser,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):

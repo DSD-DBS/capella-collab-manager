@@ -1,16 +1,20 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# Standard library:
 import logging
 import os
 import pathlib
 
-import t4cclient.projects.crud as projects
+# 3rd party:
 from alembic import command
 from alembic.config import Config
 from alembic.migration import MigrationContext
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+# local:
+import t4cclient.projects.crud as projects
 from t4cclient.config import config
 from t4cclient.core.database import Base, users
 from t4cclient.projects.users.models import Role
@@ -58,4 +62,4 @@ def initialize_admin_user():
 def initialize_default_repository():
     LOGGER.info("Initialized repository 'default'")
     with SessionLocal() as db:
-        projects.create_repository(db=db, name="default")
+        projects.create_project(db=db, name="default")

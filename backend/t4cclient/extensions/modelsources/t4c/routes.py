@@ -1,17 +1,20 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# Standard library:
 import typing as t
 
-import t4cclient.core.database as database
-import t4cclient.extensions.modelsources.t4c.crud as database_projects
+# 3rd party:
 from fastapi import APIRouter, Depends
 from requests import Session
+
+# local:
+import t4cclient.core.database as database
+import t4cclient.extensions.modelsources.t4c.crud as database_projects
+from . import models as schema_projects
 from t4cclient.core.authentication.database import verify_admin, verify_repository_role
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
-
-from . import models as schema_projects
 
 router = APIRouter()
 
@@ -21,7 +24,7 @@ router = APIRouter()
     response_model=t.List[schema_projects.RepositoryProject],
     responses=AUTHENTICATION_RESPONSES,
 )
-def get_projects_for_repository(
+def get_t4c_model_for_model(
     project: str,
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
@@ -29,7 +32,7 @@ def get_projects_for_repository(
     verify_repository_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
-    db_models = database_projects.get_all_projects(db, project)
+    db_models = database_projects.get_all_t4c_models(db, project)
     return db_models
 
 

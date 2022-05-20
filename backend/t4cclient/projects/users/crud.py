@@ -12,18 +12,18 @@ from t4cclient.projects.users.models import (
 )
 
 
-def get_users_of_repository(db: Session, repository_name: str):
+def get_users_of_repository(db: Session, projects_name: str):
     return (
         db.query(ProjectUserAssociation)
-        .filter(ProjectUserAssociation.repository_name == repository_name)
+        .filter(ProjectUserAssociation.projects_name == projects_name)
         .all()
     )
 
 
-def get_user_of_repository(db: Session, repository_name: str, username: str):
+def get_user_of_repository(db: Session, projects_name: str, username: str):
     return (
         db.query(ProjectUserAssociation)
-        .filter(ProjectUserAssociation.repository_name == repository_name)
+        .filter(ProjectUserAssociation.projects_name == projects_name)
         .filter(ProjectUserAssociation.username == username)
         .first()
     )
@@ -31,13 +31,13 @@ def get_user_of_repository(db: Session, repository_name: str, username: str):
 
 def add_user_to_repository(
     db: Session,
-    repository_name: str,
+    projects_name: str,
     role: RepositoryUserRole,
     username: str,
     permission: RepositoryUserPermission,
 ):
     association = ProjectUserAssociation(
-        repository_name=repository_name,
+        projects_name=projects_name,
         username=username,
         role=role,
         permission=permission,
@@ -49,11 +49,11 @@ def add_user_to_repository(
 
 
 def change_role_of_user_in_repository(
-    db: Session, repository_name: str, role: RepositoryUserRole, username: str
+    db: Session, projects_name: str, role: RepositoryUserRole, username: str
 ):
     repo_user = (
         db.query(ProjectUserAssociation)
-        .filter(ProjectUserAssociation.repository_name == repository_name)
+        .filter(ProjectUserAssociation.projects_name == projects_name)
         .filter(ProjectUserAssociation.username == username)
         .first()
     )
@@ -67,13 +67,13 @@ def change_role_of_user_in_repository(
 
 def change_permission_of_user_in_repository(
     db: Session,
-    repository_name: str,
+    projects_name: str,
     permission: RepositoryUserPermission,
     username: str,
 ):
     repo_user = (
         db.query(ProjectUserAssociation)
-        .filter(ProjectUserAssociation.repository_name == repository_name)
+        .filter(ProjectUserAssociation.projects_name == projects_name)
         .filter(ProjectUserAssociation.username == username)
         .first()
     )
@@ -83,10 +83,10 @@ def change_permission_of_user_in_repository(
     return repo_user
 
 
-def delete_user_from_repository(db: Session, repository_name: str, username: str):
+def delete_user_from_repository(db: Session, projects_name: str, username: str):
     db.query(ProjectUserAssociation).filter(
         ProjectUserAssociation.username == username
-    ).filter(ProjectUserAssociation.repository_name == repository_name).delete()
+    ).filter(ProjectUserAssociation.projects_name == projects_name).delete()
     db.commit()
 
 

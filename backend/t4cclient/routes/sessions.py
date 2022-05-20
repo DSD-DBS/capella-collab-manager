@@ -1,16 +1,20 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# Standard library:
 import itertools
 import logging
 import typing as t
 
+# 3rd party:
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+# local:
 import t4cclient.extensions.modelsources.git.crud as git_models_crud
 import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.projects.crud as repositories_crud
 import t4cclient.projects.users.crud as users_schema
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from t4cclient.core.authentication.database import is_admin, verify_repository_role
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
@@ -101,7 +105,7 @@ def request_session(
         user = users.get_user(db, owner)
         if user.role == users_schema.Role.ADMIN:
             repositories = [
-                repo.name for repo in repositories_crud.get_all_repositories(db)
+                repo.name for repo in repositories_crud.get_all_projects(db)
             ]
         else:
             repositories = [repo.repository_name for repo in user.repositories]

@@ -43,17 +43,13 @@ class RepositoryUserPermission(enum.Enum):
     WRITE = "write"
 
 
-class PostRepositoryUser(BaseModel):
+class RepositoryUser(BaseModel):
     username: str
     role: RepositoryUserRole
     permission: RepositoryUserPermission
 
     class Config:
         orm_mode = True
-
-
-class RepositoryUser(PostRepositoryUser):
-    name: str
 
 
 class PatchRepositoryUser(BaseModel):
