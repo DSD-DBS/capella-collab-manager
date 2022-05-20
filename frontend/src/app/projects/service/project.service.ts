@@ -32,11 +32,16 @@ export class ProjectService {
   }
 }
 
+export interface UserMetadata {
+  leads: number;
+  contributors: number;
+  subscribers: number;
+}
+
 export interface Project {
   name: string;
   description: string;
-  editing_mode: EditingMode;
-  type: ProjectType;
+  users: UserMetadata;
 }
 
 export type EditingMode = 't4c' | 'git';
