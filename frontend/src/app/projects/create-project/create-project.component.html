@@ -45,6 +45,11 @@
       <ng-template matStepLabel>Add team members</ng-template>
       You role will be project lead.
     </form>
+    <ng-template matStepContent>
+      <app-project-user-settings
+        [repository]="name.value"
+      ></app-project-user-settings>
+    </ng-template>
   </mat-step>
   <mat-step>
     <form [formGroup]="createProjectForm">
