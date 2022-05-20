@@ -19,7 +19,7 @@ def get_all_projects(db: Session) -> t.List[DatabaseProject]:
     return db.query(DatabaseProject).all()
 
 
-def create_project(db: Session, name: str):
+def create_project(db: Session, name: str) -> DatabaseProject:
     repo = DatabaseProject(name=name, users=[])
     db.add(repo)
     db.commit()
@@ -27,6 +27,6 @@ def create_project(db: Session, name: str):
     return repo
 
 
-def delete_project(db: Session, name: str):
+def delete_project(db: Session, name: str) -> None:
     db.query(DatabaseProject).filter(DatabaseProject.name == name).delete()
     db.commit()
