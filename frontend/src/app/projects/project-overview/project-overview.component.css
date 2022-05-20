@@ -6,7 +6,7 @@
 mat-card {
   width: fit-content;
   width: 400px;
-  height: 300px;
+  height: 250px;
   user-select: none;
 }
 
@@ -15,7 +15,7 @@ mat-card {
 }
 
 mat-card:hover {
-  background-color: lightcyan;
+  background-color: var(--hover-color);
   cursor: pointer;
 }
 
@@ -35,7 +35,7 @@ mat-card:hover {
 
 .content {
   padding: 10px 20px;
-  min-height: 70%;
+  min-height: 64%;
 }
 
 .wrapper {

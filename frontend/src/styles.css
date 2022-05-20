@@ -45,6 +45,7 @@ mat-form-field.mat-form-field-invalid {
   --error-color: darkred;
   --warning-color: darkorange;
   --success-color: darkgreen;
+  --hover-color: lightcyan;
 }
 
 button.primary {
