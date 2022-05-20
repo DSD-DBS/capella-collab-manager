@@ -19,19 +19,6 @@ docker:
     # Docker Image for the Backend
     backend: /capella/collab/backend
 
-    # Docker Image for EASE
-    ease: /t4c/client/ease
-
-    # Docker Image for T4C Backup
-    importer: /t4c/client/importer
-
-    workspaces: 
-      # Docker Image for the Persistent Workspace Session
-      persistent: /t4c/client/remote
-
-      # Docker Image for the ReadOnly Workspace
-      readonly: /capella/readonly
-
     guacamole: 
       # The registry needs to specified here!
       guacamole: docker.io/guacamole/guacamole
@@ -99,11 +86,6 @@ database:
       # Provide URI to the datebase in the format: postgresql://user:password@url:port/db_name
       uri: postgresql://user:password@url:port/db_name
 
-guacamole:
-  # Credentials for the Guacamole Admin User
-  username: guacadmin
-  password: guacadmin
-
 backend:
   authentication:
     provider: oauth # oauth | azure
@@ -149,60 +131,11 @@ backend:
       
       connectConfigurationEndpoint: tbd
 
-  garbageCleaner:
-    cron: "*/10 * * * *"
-
   # Namespace in which the Session Deployments / Pods should be spawned.
   # IMPORTANT: The namespace has to exist already
   k8sSessionNamespace: t4c-sessions
   storageClassName: local-path
   storageAccessMode: ReadWriteOnce
-
-t4cServer:
-  # URL to access the REST APIs of the T4C Server
-
-  apis:
-    # API Base for usage and status endpoints 
-    # The following endpoints have to be reachable: 
-    # - <base>/usage/json
-    # - <base>/status/json
-    usageStats: http://localhost:8086
-
-    # REST API Base for REST API including the prefix (CRUD for repositories, projects and users)
-    # All REST endpoints have to reachable. 
-    restAPI: http://localhost:8090/api/v1.0
-
-  # Credentials to authenticate against the REST API endpoint (HTTPBasic)
-  username: sampleUser
-  password: samplePassword
-
-  # IPv4 Address of the T4C Server
-  host: localhost
-  port: 2036
-  licenseKey: tbd
-
-jenkins:
-  # Admin Credentials for Jenkins Instance
-  username: tbd
-  password: tbd
-
-  # Base URL of the existing Jenkins Instance
-  baseURL: tbd
-
-git:
-  # Git Credentials to fetch the Models from Git for the Read Only Workspaces.
-  username: tbd
-  password: tbd
-
-  # E-Mail for Commits made by the created Backups Jobs
-  email: tbd
-
-  # Jenkins Git Credentials ID (Git Plugin)
-  credentialID: tbd
-
-  # Repository URL for Scripts used by the Jenkins Backup Job (dsh-tools)
-  scriptRepoURL: tbd
-
 
 
 ########################################
