@@ -25,7 +25,7 @@ from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db
 from t4cclient.core.database import users as database_users
 from t4cclient.extensions.modelsources.t4c import connection
-from t4cclient.projects.models import PostRepositoryRequest, Project
+from t4cclient.projects.models import PostRepositoryRequest, Project, UserMetadata
 from t4cclient.projects.users.models import (
     ProjectUserAssociation,
     RepositoryUserPermission,
@@ -57,6 +57,31 @@ def get_projects(db: Session = Depends(get_db), token=Depends(JWTBearer())):
         Project(
             name=project.name,
             description=project.description,
+            users=UserMetadata(
+                leads=len(
+                    [
+                        user
+                        for user in project.users
+                        if user.role == RepositoryUserRole.MANAGER
+                    ]
+                ),
+                contributors=len(
+                    [
+                        user
+                        for user in project.users
+                        if user.role == RepositoryUserRole.USER
+                        and user.permission == RepositoryUserPermission.WRITE
+                    ]
+                ),
+                subscribers=len(
+                    [
+                        user
+                        for user in project.users
+                        if user.role == RepositoryUserRole.USER
+                        and user.permission == RepositoryUserPermission.READ
+                    ]
+                ),
+            ),
         )
         for project in projects
     ]

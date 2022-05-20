@@ -24,9 +24,16 @@ class Warning(enum.Enum):
     NO_GIT_MODEL_DEFINED = "NO_GIT_MODEL_DEFINED"
 
 
+class UserMetadata(BaseModel):
+    leads: int
+    contributors: int
+    subscribers: int
+
+
 class Project(BaseModel):
     name: str
     description: t.Optional[str]
+    users: UserMetadata
 
     class Config:
         orm_mode = True
