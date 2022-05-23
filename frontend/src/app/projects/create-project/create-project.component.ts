@@ -31,8 +31,8 @@ export class CreateProjectComponent implements OnInit {
 
   createProject(stepper: MatStepper): void {
     if (this.createProjectForm.valid) {
-      this.projectService.createRepository(this.name.value).subscribe(() => {
-        this.projectService.refreshRepositories();
+      this.projectService.createProject(this.name.value).subscribe(() => {
+        this.projectService.refreshProjects();
         stepper.next();
       });
     }

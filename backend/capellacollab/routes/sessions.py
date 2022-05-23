@@ -15,7 +15,7 @@ import capellacollab.extensions.modelsources.git.crud as git_models_crud
 import capellacollab.extensions.modelsources.t4c.connection as t4c_manager
 import capellacollab.projects.crud as repositories_crud
 import capellacollab.projects.users.crud as users_schema
-from capellacollab.core.authentication.database import is_admin, verify_repository_role
+from capellacollab.core.authentication.database import is_admin, verify_project_role
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.credentials import generate_password
@@ -126,7 +126,7 @@ def request_session(
                     "reason": f"You already have a open Read-Only Session for the repository {body.repository}. Please navigate to 'Active Sessions' to Reconnect",
                 },
             )
-        verify_repository_role(repository=body.repository, token=token, db=db)
+        verify_project_role(repository=body.repository, token=token, db=db)
         git_model = git_models_crud.get_primary_model_of_repository(db, body.repository)
         if not git_model:
             raise HTTPException(
@@ -178,7 +178,7 @@ def request_session(
 @router.delete("/{id}/", status_code=204, responses=AUTHENTICATION_RESPONSES)
 def end_session(id: str, db: Session = Depends(get_db), token=Depends(JWTBearer())):
     s = sessions.get_session_by_id(db, id)
-    if s.owner_name != get_username(token) and verify_repository_role(
+    if s.owner_name != get_username(token) and verify_project_role(
         repository=s.repository,
         token=token,
         db=db,
