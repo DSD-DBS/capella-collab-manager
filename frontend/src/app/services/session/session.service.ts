@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Session, SessionsUsage } from '../../schemes';
+import { Session, SessionUsage } from '../../schemes';
 
 @Injectable({
   providedIn: 'root',
@@ -32,12 +32,12 @@ export class SessionService {
     return this.http.delete<any>(this.BACKEND_URL_PREFIX + id);
   }
 
-  getSessionsUsage(): Observable<SessionsUsage> {
-    return this.http.get<SessionsUsage>(this.BACKEND_URL_PREFIX + 'usage');
+  getSessionUsage(): Observable<SessionUsage> {
+    return this.http.get<SessionUsage>(this.BACKEND_URL_PREFIX + 'usage');
   }
 
   beatifyState(state: string | undefined): SessionState {
-    /* Possible states are (and a few more states): 
+    /* Possible states are (and a few more states):
     https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/events/event.go */
 
     let text = state;

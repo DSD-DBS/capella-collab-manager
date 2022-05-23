@@ -1,11 +1,12 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import datetime
 import logging
 import re
+import requests
 import typing as t
 
-import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 from t4cclient import config
 from t4cclient.core.operators import OPERATOR
 from t4cclient.schemas.sessions import WorkspaceType
@@ -21,12 +22,27 @@ def inject_attrs_in_sessions(
     for s in db_sessions:
         session_dict = s.__dict__
         session_dict["state"] = _determine_session_state(session_dict)
-        session_dict["last_seen"] = t4c_manager.fetch_last_seen(session_dict["mac"])
+        session_dict["last_seen"] = get_last_seen(db_sessions.id)
         session_dict["owner"] = session_dict["owner_name"]
 
         sessions_list.append(session_dict)
 
     return sessions_list
+
+
+def get_last_seen(id: str) -> str:
+    """Return project session last seen activity"""
+    r = requests.get(config["prometheus"]["externalUrl"])
+    result = r.json()["result"][int(id)]
+    return _get_last_seen(result)
+
+
+def _get_last_seen(idletime: int | float) -> str:
+    if idletime == -1:
+        "Never connected"
+    last_seen = datetime.now() - datetime.timedelta(minutes=idletime)
+    time = last_seen.strftime("%m/%d/%Y %H:%M:%S")
+    return f"{idletime}mins ago ({time})"
 
 
 def _determine_session_state(session: t.Dict[str, t.Any]) -> str:

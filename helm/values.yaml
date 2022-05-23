@@ -362,6 +362,8 @@ prometheus:
             annotations:
               summary: High Idletime
 
+  externalUrl: http://localhost:8080/prometheus/
+
 ########################################
 ### KUBERNETES RELATED CONFIGURATION ###
 ########################################
