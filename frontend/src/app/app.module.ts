@@ -83,6 +83,7 @@ import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-s
 import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-instance-settings.component';
 import { GuacamoleSettingsComponent } from './settings/integrations/guacamole-settings/guacamole-settings.component';
 import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4c-importer-settings/t4c-importer-settings.component';
+import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
 
 @NgModule({
   declarations: [
@@ -136,6 +137,7 @@ import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4
     T4CInstanceSettingsComponent,
     GuacamoleSettingsComponent,
     T4CImporterSettingsComponent,
+    ModelDetailComponent,
   ],
   imports: [
     BrowserModule,
