@@ -3,7 +3,11 @@
 
 import { Component, OnInit } from '@angular/core';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
-import { Project, ProjectService } from '../service/project.service';
+import {
+  Project,
+  ProjectService,
+  UserMetadata,
+} from '../service/project.service';
 
 @Component({
   selector: 'app-project-overview',
@@ -26,12 +30,23 @@ export class ProjectOverviewComponent implements OnInit {
     this.showSpinner = true;
     this.projectService.getProjects().subscribe({
       next: (res) => {
-        this.projects = res;
+        this.projects = this.sortProject(res);
         this.showSpinner = false;
       },
       error: () => {
         this.showSpinner = false;
       },
     });
+  }
+
+  sortProject(projects: Array<Project>): Array<Project> {
+    // Sort projects by user count
+    return projects.sort((a: Project, b: Project) => {
+      return this.sumUsers(b.users) - this.sumUsers(a.users);
+    });
+  }
+
+  sumUsers(user: UserMetadata): number {
+    return user.contributors + user.leads + user.subscribers;
   }
 }
