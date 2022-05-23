@@ -29,7 +29,6 @@ export class SessionOverviewComponent implements OnInit {
     'docker_state',
     'guacamole_user',
     'last_seen',
-    'mac',
     'actions',
   ];
 
