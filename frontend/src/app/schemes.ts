@@ -15,7 +15,6 @@ export interface Session {
   repository: string;
   state: string;
   owner: string;
-  mac: string;
 }
 
 export interface User {
