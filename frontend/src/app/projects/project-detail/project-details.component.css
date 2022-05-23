@@ -8,5 +8,13 @@
 }
 
 .flexbox {
-  justify-content: space-between;
+  justify-content: space-evenly;
+}
+
+.item {
+  margin: 0 auto;
+}
+
+.users {
+  margin-left: auto;
 }

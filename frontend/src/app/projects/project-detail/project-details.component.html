@@ -4,8 +4,15 @@
  -->
 
 <div class="flexbox">
-  <app-model-overview [project]="project"></app-model-overview>
-  <app-project-user-settings [repository]="project"></app-project-user-settings>
+  <div class="item">
+    <app-project-metadata [project]="project"></app-project-metadata>
+    <app-model-overview [project]="project"></app-model-overview>
+  </div>
+  <div class="users">
+    <app-project-user-settings
+      [repository]="project"
+    ></app-project-user-settings>
+  </div>
   <!--<app-backup-settings [project]="project"></app-backup-settings>
   <app-model-source [repository]="project"></app-model-source>-->
 </div>

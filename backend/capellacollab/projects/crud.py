@@ -11,12 +11,19 @@ from sqlalchemy.orm import Session
 from capellacollab.projects.models import DatabaseProject
 
 
-def get_project(db: Session, name: str):
+def get_project(db: Session, name: str) -> DatabaseProject:
     return db.query(DatabaseProject).filter(DatabaseProject.name == name).first()
 
 
 def get_all_projects(db: Session) -> t.List[DatabaseProject]:
     return db.query(DatabaseProject).all()
+
+
+def update_description(db: Session, name: str, description: str) -> DatabaseProject:
+    project = get_project(db, name)
+    project.description = description
+    db.commit()
+    return project
 
 
 def create_project(db: Session, name: str) -> DatabaseProject:

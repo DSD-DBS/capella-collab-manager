@@ -61,6 +61,34 @@ def get_projects(db: Session = Depends(get_db), token=Depends(JWTBearer())):
     return [convert_project(project) for project in projects]
 
 
+@router.patch(
+    "/{project}",
+    response_model=Project,
+    tags=["projects"],
+    responses=AUTHENTICATION_RESPONSES,
+)
+def update_project(
+    project: str,
+    body: PatchProject,
+    database: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
+):
+
+    log.info(
+        "User %s updated the description of project %s to '%s'",
+        get_username(token),
+        project,
+        body.description,
+    )
+
+    verify_project_role(project, token, database, ["manager", "administrator"])
+
+    if body.description:
+        crud.update_description(database, project, body.description)
+
+    return convert_project(crud.get_project(database, project))
+
+
 @router.get("/{project}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
 def get_repository_by_name(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())

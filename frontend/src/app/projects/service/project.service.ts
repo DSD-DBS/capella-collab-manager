@@ -14,18 +14,29 @@ export class ProjectService {
   BACKEND_URL_PREFIX = environment.backend_url + '/projects/';
 
   projects: Array<Project> = [];
+  project: Project | null = null;
 
   getProjects(): Observable<Array<Project>> {
     return this.http.get<Array<Project>>(this.BACKEND_URL_PREFIX);
   }
 
-  refreshRepositories(): void {
+  getProject(name: string): Observable<Project> {
+    return this.http.get<Project>(this.BACKEND_URL_PREFIX + name);
+  }
+
+  refreshProjects(): void {
     this.getProjects().subscribe((res) => {
       this.projects = res;
     });
   }
 
-  createRepository(name: string): Observable<Project> {
+  updateDescription(name: string, description: string): Observable<Project> {
+    return this.http.patch<Project>(this.BACKEND_URL_PREFIX + name, {
+      description,
+    });
+  }
+
+  createProject(name: string): Observable<Project> {
     return this.http.post<Project>(this.BACKEND_URL_PREFIX, {
       name,
     });

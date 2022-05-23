@@ -25,6 +25,7 @@ import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settin
 import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4c-importer-settings/t4c-importer-settings.component';
 import { GuacamoleSettingsComponent } from './settings/integrations/guacamole-settings/guacamole-settings.component';
 import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
+import { RequestsComponent } from './settings/requests/requests.component';
 
 const routes: Routes = [
   {
@@ -35,6 +36,11 @@ const routes: Routes = [
   {
     path: 'projects',
     component: ProjectOverviewComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'workspaces',
+    component: HomeComponent,
     canActivate: [AuthGuardService],
   },
   {
@@ -57,6 +63,11 @@ const routes: Routes = [
   {
     path: 'settings',
     component: SettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/requests',
+    component: RequestsComponent,
     canActivate: [AuthGuardService],
   },
   {

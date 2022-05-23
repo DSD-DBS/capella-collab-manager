@@ -39,6 +39,10 @@ class Project(BaseModel):
         orm_mode = True
 
 
+class PatchProject(BaseModel):
+    description: str
+
+
 class PostRepositoryRequest(BaseModel):
     name: str
 

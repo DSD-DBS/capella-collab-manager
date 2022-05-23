@@ -84,6 +84,10 @@ import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settin
 import { GuacamoleSettingsComponent } from './settings/integrations/guacamole-settings/guacamole-settings.component';
 import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4c-importer-settings/t4c-importer-settings.component';
 import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ProjectMetadataComponent } from './projects/project-detail/project-metadata/project-metadata.component';
+import { MatBadgeModule } from '@angular/material/badge';
+import { RequestsComponent } from './settings/requests/requests.component';
 
 @NgModule({
   declarations: [
@@ -138,6 +142,8 @@ import { ModelDetailComponent } from './projects/project-detail/model-overview/m
     GuacamoleSettingsComponent,
     T4CImporterSettingsComponent,
     ModelDetailComponent,
+    ProjectMetadataComponent,
+    RequestsComponent,
   ],
   imports: [
     BrowserModule,
@@ -169,6 +175,8 @@ import { ModelDetailComponent } from './projects/project-detail/model-overview/m
     MatRippleModule,
     MatStepperModule,
     MatButtonToggleModule,
+    MatTooltipModule,
+    MatBadgeModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
