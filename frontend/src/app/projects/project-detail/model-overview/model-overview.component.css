@@ -82,8 +82,8 @@ mat-card:hover {
   margin: 10px;
 }
 
-mat-icon {
-  margin: 10px;
+button {
+  margin: 5px;
 }
 
 .nature {
@@ -105,13 +105,12 @@ mat-icon {
 .actions > .right > mat-card > div {
   margin: 5px;
 }
-
 .actions > .right {
   display: flex;
   margin-right: 5px;
 }
-
 .actions {
   display: flex;
   justify-content: space-between;
+  margin-left: 5px;
 }

@@ -5,38 +5,31 @@
 
 <h2 id="title">Models <mat-icon id="settings-icon">settings</mat-icon></h2>
 <div class="models">
-  <mat-card matRipple>
+  <mat-card>
     <div class="header">testmodel</div>
     <div class="content-wrapper">
       <div class="content">No description provided.</div>
       <div class="actions">
         <div class="left">
-          <mat-icon>settings</mat-icon>
-          <mat-icon>cloud_download</mat-icon>
-          <mat-icon>sync</mat-icon>
-          <mat-icon>link</mat-icon>
+          <button
+            mat-mini-fab
+            [routerLink]="'/projects/' + project + '/models/' + 'testmodel'"
+          >
+            <mat-icon>settings</mat-icon>
+          </button>
+          <button mat-mini-fab disabled>
+            <mat-icon>cloud_download</mat-icon>
+          </button>
+          <button mat-mini-fab disabled>
+            <mat-icon>sync</mat-icon>
+          </button>
+          <button mat-mini-fab disabled>
+            <mat-icon>link</mat-icon>
+          </button>
         </div>
         <div class="right">
           <mat-card class="nature"><div>Library</div> </mat-card>
           <mat-card class="editingMode"><div>T4C</div></mat-card>
-        </div>
-      </div>
-    </div>
-  </mat-card>
-  <mat-card matRipple>
-    <div class="header">testmodel</div>
-    <div class="content-wrapper">
-      <div class="content">No description provided.</div>
-      <div class="actions">
-        <div class="left">
-          <mat-icon>settings</mat-icon>
-          <mat-icon>cloud_download</mat-icon>
-          <mat-icon>sync</mat-icon>
-          <mat-icon>link</mat-icon>
-        </div>
-        <div class="right">
-          <mat-card class="nature"><div>Project</div> </mat-card>
-          <mat-card class="editingMode"><div>Git</div></mat-card>
         </div>
       </div>
     </div>
