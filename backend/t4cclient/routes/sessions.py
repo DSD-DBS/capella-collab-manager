@@ -17,7 +17,7 @@ from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.credentials import generate_password
 from t4cclient.core.database import get_db, sessions, users
 from t4cclient.core.operators import OPERATOR
-from t4cclient.core.services.sessions import inject_attrs_in_sessions
+from t4cclient.core.services.sessions import inject_attrs_in_sessions, get_last_seen
 from t4cclient.extensions import guacamole
 from t4cclient.routes import guacamole as guacamole_route
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
@@ -166,8 +166,7 @@ def request_session(
     response["state"] = OPERATOR.get_session_state(response["id"])
     response["rdp_password"] = rdp_password
     response["guacamole_password"] = guacamole_password
-    response["last_seen"] = t4c_manager.fetch_last_seen(response["mac"])
-
+    response["last_seen"] = get_last_seen(database_model.id)
     return response
 
 
