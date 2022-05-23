@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools", "wheel", "versioneer-518"]
 build-backend = "setuptools.build_meta"
 
 [tool.black]
@@ -24,8 +24,7 @@ skip = ["typings", ".venv"]
 skip_glob = ["**/*.pyi"]
 use_parentheses = true
 
-[tool.pyright]
-pythonVersion = "3.10"
+pyrightpythonVersion = "3.10"
 typeCheckingMode = "strict"
 include = ["backend", "tests",]
 reportConstantRedefinition = "warning"
