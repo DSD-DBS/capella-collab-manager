@@ -16,7 +16,7 @@ import capellacollab.projects.crud as crud
 from capellacollab.core.authentication.database import (
     is_admin,
     verify_admin,
-    verify_repository_role,
+    verify_project_role,
 )
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
@@ -24,6 +24,7 @@ from capellacollab.core.database import get_db
 from capellacollab.core.database import users as database_users
 from capellacollab.projects.models import (
     DatabaseProject,
+    PatchProject,
     PostRepositoryRequest,
     Project,
     UserMetadata,
@@ -64,7 +65,7 @@ def get_projects(db: Session = Depends(get_db), token=Depends(JWTBearer())):
 def get_repository_by_name(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
-    verify_repository_role(project, token=token, db=db)
+    verify_project_role(project, token=token, db=db)
     return convert_project(crud.get_project(db, project))
 
 

@@ -13,7 +13,7 @@ import capellacollab.core.database as database
 import capellacollab.extensions.modelsources.t4c.crud as database_projects
 from capellacollab.core.authentication.database import (
     verify_admin,
-    verify_repository_role,
+    verify_project_role,
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
@@ -34,7 +34,7 @@ def get_t4c_model_for_model(
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
 ):
-    verify_repository_role(
+    verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
     db_models = database_projects.get_all_t4c_models(db, project)
@@ -52,7 +52,7 @@ def create_project_in_repository(
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
 ):
-    verify_repository_role(
+    verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
     return database_projects.create_project(db, project, body.name)

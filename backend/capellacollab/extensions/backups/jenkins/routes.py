@@ -12,7 +12,7 @@ from requests import Session
 
 # 1st party:
 import capellacollab.extensions.backups.jenkins.models as jenkins_schema
-from capellacollab.core.authentication.database import verify_repository_role
+from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.database.git_models import (
     verify_gitmodel_permission,
 )
@@ -39,7 +39,7 @@ def get_jenkins_pipeline(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    verify_repository_role(
+    verify_project_role(
         repository_name, token=token, db=db, allowed_roles=["manager", "administrator"]
     )
     verify_gitmodel_permission(repository_name, model_id, db)
@@ -68,7 +68,7 @@ def create_jenkins_pipeline(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    verify_repository_role(
+    verify_project_role(
         repository_name, allowed_roles=["manager", "administrator"], token=token, db=db
     )
     verify_gitmodel_permission(repository_name, model_id, db)
@@ -91,7 +91,7 @@ def delete_pipeline(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    verify_repository_role(
+    verify_project_role(
         repository_name, allowed_roles=["manager", "administrator"], token=token, db=db
     )
     verify_jenkins_permission(
@@ -117,7 +117,7 @@ def create_jenkins_job(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    verify_repository_role(
+    verify_project_role(
         repository_name, allowed_roles=["manager", "administrator"], token=token, db=db
     )
     verify_jenkins_permission(

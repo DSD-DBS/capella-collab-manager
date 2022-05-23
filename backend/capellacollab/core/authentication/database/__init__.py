@@ -30,13 +30,13 @@ def is_admin(token=Depends(JWTBearer()), db=Depends(get_db)) -> bool:
     return get_user(db=db, username=get_username(token)).role == Role.ADMIN
 
 
-def verify_repository_role(
+def verify_project_role(
     repository: str,
     token: JWTBearer,
     db: sqlalchemy.orm.session.Session,
     allowed_roles=["user", "manager", "administrator"],
 ):
-    if not check_repository_role(
+    if not check_project_role(
         repository=repository, allowed_roles=allowed_roles, token=token, db=db
     ):
         raise HTTPException(
@@ -45,7 +45,7 @@ def verify_repository_role(
         )
 
 
-def check_repository_role(
+def check_project_role(
     repository: str,
     token: JWTBearer,
     db: sqlalchemy.orm.session.Session,
@@ -56,11 +56,12 @@ def check_repository_role(
     return any(
         (
             "user" in allowed_roles
-            and any(repo.repository_name == repository for repo in user.repositories),
+            and any(project.name == repository for project in user.projects),
             "manager" in allowed_roles
             and any(
-                r.repository_name == repository and r.role == RepositoryUserRole.MANAGER
-                for r in user.projects
+                project.name == repository
+                and project.role == RepositoryUserRole.MANAGER
+                for project in user.projects
             ),
             "administrator" in allowed_roles and user.role == Role.ADMIN,
         )

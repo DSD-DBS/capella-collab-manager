@@ -17,7 +17,7 @@ from capellacollab.core.authentication.database import (
     check_username_not_admin,
     check_username_not_in_repository,
     is_admin,
-    verify_repository_role,
+    verify_project_role,
     verify_write_permission,
 )
 from capellacollab.core.authentication.helper import get_username
@@ -42,7 +42,7 @@ def get_users_for_repository(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    verify_repository_role(
+    verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
     return repository_users.get_users_of_repository(db, project)
@@ -59,7 +59,7 @@ def add_user_to_repository(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    verify_repository_role(
+    verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
 
@@ -88,7 +88,7 @@ def patch_repository_user(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    verify_repository_role(
+    verify_project_role(
         project,
         allowed_roles=["user", "manager", "administrator"],
         token=token,
@@ -96,7 +96,7 @@ def patch_repository_user(
     )
 
     if body.role:
-        verify_repository_role(
+        verify_project_role(
             project,
             allowed_roles=["manager", "administrator"],
             token=token,
@@ -107,7 +107,7 @@ def patch_repository_user(
             db, project, body.role, username
         )
     if body.password:
-        verify_repository_role(
+        verify_project_role(
             project,
             token=token,
             db=db,
@@ -131,7 +131,7 @@ def patch_repository_user(
                 )
 
     if body.permission:
-        verify_repository_role(
+        verify_project_role(
             project,
             allowed_roles=["manager", "administrator"],
             token=token,
@@ -165,7 +165,7 @@ def remove_user_from_repository(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    verify_repository_role(
+    verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
     check_username_not_admin(username, db)

@@ -10,7 +10,7 @@ from fastapi import APIRouter, Depends
 from requests import Session
 
 # 1st party:
-from capellacollab.core.authentication.database import verify_repository_role
+from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.database.git_models import (
     verify_gitmodel_permission,
 )
@@ -37,7 +37,7 @@ router = APIRouter()
 def get_models_for_repository(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
-    verify_repository_role(project, token=token, db=db)
+    verify_project_role(project, token=token, db=db)
     db_models = git.crud.get_models_of_repository(db, project)
     return_models: t.List[GetRepositoryGitModel] = []
     for db_model in db_models:
@@ -59,7 +59,7 @@ def assign_model_to_repository(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    verify_repository_role(
+    verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
     body.model.path = base64.b64decode(body.model.path).decode("utf-8")
@@ -81,7 +81,7 @@ def unassign_model_from_repository(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    verify_repository_role(
+    verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
     verify_gitmodel_permission(project, model_id, db)
@@ -101,7 +101,7 @@ def patch_model(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    verify_repository_role(project, token=token, db=db)
+    verify_project_role(project, token=token, db=db)
     verify_gitmodel_permission(project, model_id, db)
     if body.primary is not None:
         db_model = git.crud.make_model_primary(db, project, model_id)
