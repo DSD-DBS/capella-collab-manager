@@ -60,7 +60,7 @@ mock:
 
 capella-dockerimages: capella t4c-client readonly ease
 
-deploy: oauth-mock backend frontend capella mock helm-deploy open
+deploy: backend frontend capella mock helm-deploy open
 
 # Deploy with full T4C support:
 deploy-t4c: backend frontend capella t4c-client readonly-ease mock helm-deploy
