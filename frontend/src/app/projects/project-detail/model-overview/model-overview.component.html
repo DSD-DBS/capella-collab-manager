@@ -6,7 +6,13 @@
 <h2 id="title">Models <mat-icon id="settings-icon">settings</mat-icon></h2>
 <div class="models">
   <mat-card>
-    <div class="header">testmodel</div>
+    <div class="header">
+      <div class="title">testmodel</div>
+      <div class="right">
+        <mat-card class="nature"><div>Library</div> </mat-card>
+        <mat-card class="editingMode"><div>T4C</div></mat-card>
+      </div>
+    </div>
     <div class="content-wrapper">
       <div class="content">No description provided.</div>
       <div class="actions">
@@ -14,22 +20,40 @@
           <button
             mat-mini-fab
             [routerLink]="'/projects/' + project + '/models/' + 'testmodel'"
+            matTooltip="Configure model"
           >
             <mat-icon>settings</mat-icon>
           </button>
-          <button mat-mini-fab disabled>
+          <button mat-mini-fab disabled matTooltip="Download model">
             <mat-icon>cloud_download</mat-icon>
           </button>
-          <button mat-mini-fab disabled>
+          <button
+            *ngIf="integrations.git"
+            mat-mini-fab
+            disabled
+            matTooltip="Start synchronization"
+          >
             <mat-icon>sync</mat-icon>
           </button>
-          <button mat-mini-fab disabled>
+          <button
+            *ngIf="integrations.git"
+            mat-mini-fab
+            disabled
+            matTooltip="Open git repository"
+          >
             <mat-icon>link</mat-icon>
           </button>
-        </div>
-        <div class="right">
-          <mat-card class="nature"><div>Library</div> </mat-card>
-          <mat-card class="editingMode"><div>T4C</div></mat-card>
+          <button
+            *ngIf="integrations.git"
+            mat-mini-fab
+            matTooltip="Request persistent session"
+            routerLink="/workspaces"
+          >
+            <mat-icon> screen_share</mat-icon>
+          </button>
+          <button mat-mini-fab matTooltip="Open readonly session">
+            <mat-icon>remove_red_eye</mat-icon>
+          </button>
         </div>
       </div>
     </div>

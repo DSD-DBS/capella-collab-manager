@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Component, Input, OnInit } from '@angular/core';
+import { IntegrationService } from 'src/app/integrations/integration.service';
 
 @Component({
   selector: 'app-model-overview',
@@ -12,7 +13,7 @@ export class ModelOverviewComponent implements OnInit {
   @Input()
   project = '';
 
-  constructor() {}
+  constructor(public integrations: IntegrationService) {}
 
   ngOnInit(): void {}
 }
