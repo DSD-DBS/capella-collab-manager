@@ -60,7 +60,7 @@ mock:
 
 capella-dockerimages: capella t4c-client readonly ease
 
-deploy: oauth-mock backend frontend capella mock helm-deploy open rollout
+deploy: backend frontend capella mock helm-deploy open rollout
 
 # Deploy with full T4C support:
 deploy-t4c: backend frontend capella t4c-client readonly-ease mock helm-deploy
@@ -132,7 +132,7 @@ delete-cluster:
 	echo "insert into repository_user_association values ('$(MY_EMAIL)', 'default', 'WRITE', 'MANAGER');" | kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-backend-postgres --no-headers | cut -f1 -d' ') -- psql -U backend backend && \
 	touch .provision-backend
 
-# Execute with `make -j2 dev`
+# Execute with `make -j3 dev`
 dev: dev-oauth-mock dev-frontend dev-backend
 
 dev-frontend:
