@@ -95,7 +95,7 @@ backups:
       scriptRepoURL: "{{ .Values.git.scriptRepoURL }}"
 
 prometheus:
-  externalUrl: "{{ .Values.prometheus.externalUrl }}"
+  url: "http://dev-t4c-manager-prometheus-server:9118/prometheus/"
 
 database:
   {{ if .Values.database.backend.deploy }}

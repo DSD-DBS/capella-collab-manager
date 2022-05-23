@@ -38,12 +38,15 @@ def get_last_seen(sid: str) -> str:
     """Return project session last seen activity"""
     url = config.config["prometheus"]["url"]
     url += "/".join(("api", "v1", "query?query=idletime_minutes"))
-    response = requests.get(url)
     try:
+        response = requests.get(url)
         for session in response.json()["data"]["result"]:
             if sid == session["metric"]["app"]:
                 return _get_last_seen(float(session["value"][1]))
         log.exception("No session was found.")
+        return "UNKNOWN"
+    except requests.ConnectionError as error:
+        log.exception("ConnectionError: %s", error.args[0])
         return "UNKNOWN"
     except KeyError:
         log.exception("Something is wrong with prometheus idletime metric.")
