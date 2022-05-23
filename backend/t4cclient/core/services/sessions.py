@@ -1,12 +1,17 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
+from __future__ import annotations
 
+# Standard library:
 import datetime
 import logging
 import re
-import requests
 import typing as t
 
+# 3rd party:
+import requests
+
+# local:
 from t4cclient import config
 from t4cclient.core.operators import OPERATOR
 from t4cclient.schemas.sessions import WorkspaceType
@@ -19,10 +24,10 @@ def inject_attrs_in_sessions(
     db_sessions: t.List[DatabaseSession],
 ) -> t.List[t.Dict[str, t.Any]]:
     sessions_list = []
-    for s in db_sessions:
-        session_dict = s.__dict__
+    for session in db_sessions:
+        session_dict = session.__dict__
         session_dict["state"] = _determine_session_state(session_dict)
-        session_dict["last_seen"] = get_last_seen(db_sessions.id)
+        session_dict["last_seen"] = get_last_seen(session.id)
         session_dict["owner"] = session_dict["owner_name"]
 
         sessions_list.append(session_dict)
@@ -32,15 +37,16 @@ def inject_attrs_in_sessions(
 
 def get_last_seen(id: str) -> str:
     """Return project session last seen activity"""
-    r = requests.get(config["prometheus"]["externalUrl"])
+    r = requests.get(config.config["prometheus"]["externalUrl"])
     result = r.json()["result"][int(id)]
     return _get_last_seen(result)
 
 
 def _get_last_seen(idletime: int | float) -> str:
     if idletime == -1:
-        "Never connected"
-    last_seen = datetime.now() - datetime.timedelta(minutes=idletime)
+        return "Never connected"
+
+    last_seen = datetime.datetime.now() - datetime.timedelta(minutes=idletime)
     time = last_seen.strftime("%m/%d/%Y %H:%M:%S")
     return f"{idletime}mins ago ({time})"
 

@@ -1,8 +1,11 @@
+# Standard library:
 import os
 import pathlib
 
+# 3rd party:
 import yaml
-from pydantic import create_model_from_typeddict
+
+# local:
 from t4cclient import config
 
 
