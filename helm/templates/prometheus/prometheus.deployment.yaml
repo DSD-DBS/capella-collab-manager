@@ -22,7 +22,7 @@ spec:
             - "--storage.tsdb.retention.time=12h"
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus/"
-            - "--web.external-url={{ .Values.prometheus.externalUrl }}"
+            - "--web.external-url=http://{{ .Release.Name }}-prometheus-server/prometheus/"
           ports:
             - containerPort: 9118
           resources:
