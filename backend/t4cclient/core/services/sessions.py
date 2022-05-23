@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 # Standard library:
-import datetime
 import logging
 import re
 import typing as t
