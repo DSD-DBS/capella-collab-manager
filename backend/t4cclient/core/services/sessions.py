@@ -35,20 +35,30 @@ def inject_attrs_in_sessions(
     return sessions_list
 
 
-def get_last_seen(id: str) -> str:
+def get_last_seen(sid: str) -> str:
     """Return project session last seen activity"""
-    r = requests.get(config.config["prometheus"]["externalUrl"])
-    result = r.json()["result"][int(id)]
-    return _get_last_seen(result)
+    url = config.config["prometheus"]["url"]
+    url += "/".join(("api", "v1", "query?query=idletime_minutes"))
+    response = requests.get(url)
+    try:
+        for session in response.json()["data"]["result"]:
+            if sid == session["metric"]["app"]:
+                return _get_last_seen(float(session["value"][1]))
+        log.exception("No session was found.")
+        return "UNKNOWN"
+    except KeyError:
+        log.exception("Something is wrong with prometheus idletime metric.")
+        return "UNKNOWN"
 
 
 def _get_last_seen(idletime: int | float) -> str:
     if idletime == -1:
         return "Never connected"
 
-    last_seen = datetime.datetime.now() - datetime.timedelta(minutes=idletime)
-    time = last_seen.strftime("%m/%d/%Y %H:%M:%S")
-    return f"{idletime}mins ago ({time})"
+    if (idlehours := idletime / 60) > 1:
+        return f"{round(idlehours, 2)} hrs ago"
+
+    return f"{idletime} mins ago"
 
 
 def _determine_session_state(session: t.Dict[str, t.Any]) -> str:
