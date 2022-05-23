@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
-import { Session, SessionsUsage } from '../schemes';
+import { Session, SessionUsage } from '../schemes';
 import { SessionService } from '../services/session/session.service';
 
 @Component({
