@@ -5,13 +5,13 @@ import { Component, OnInit } from '@angular/core';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 
 @Component({
-  selector: 'app-workspace-settings',
-  templateUrl: './workspace-settings.component.html',
-  styleUrls: ['./workspace-settings.component.css'],
+  selector: 'app-dockerimage-settings',
+  templateUrl: './dockerimage-settings.component.html',
+  styleUrls: ['./dockerimage-settings.component.css'],
 })
-export class WorkspaceSettingsComponent implements OnInit {
+export class DockerimageSettingsComponent implements OnInit {
   constructor(private navbarService: NavBarService) {
-    this.navbarService.title = 'Settings / Core / Workspaces';
+    this.navbarService.title = 'Settings / Core / Dockerimages';
   }
 
   ngOnInit(): void {}

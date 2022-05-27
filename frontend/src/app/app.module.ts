@@ -42,7 +42,6 @@ import { ReconnectDialogComponent } from './active-sessions/reconnect-dialog/rec
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { GitModelSettingsComponent } from './projects/project-detail/model-source/git-model-settings/git-model-settings.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { T4CRepoSettingsComponent } from './projects/project-detail/model-source/t4c-repo-settings/t4c-repo-settings.component';
 import { RepositoryUserSettingsComponent } from './projects/project-detail/project-users/project-user-settings.component';
 import { T4CRepoDeletionDialogComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-repo-deletion-dialog/t4c-repo-deletion-dialog.component';
@@ -168,7 +167,6 @@ import { ToastrModule } from 'ngx-toastr';
     MatDialogModule,
     MatExpansionModule,
     MatCheckboxModule,
-    MatSnackBarModule,
     FormsModule,
     SimplebarAngularModule,
     OverlayModule,
@@ -180,7 +178,14 @@ import { ToastrModule } from 'ngx-toastr';
     MatButtonToggleModule,
     MatTooltipModule,
     MatBadgeModule,
-    ToastrModule.forRoot({ positionClass: 'toast-bottom-left' }),
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-left',
+      timeOut: 10000,
+      extendedTimeOut: 2000,
+      maxOpened: 5,
+      preventDuplicates: true,
+      countDuplicates: true,
+    }),
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

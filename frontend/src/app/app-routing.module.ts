@@ -18,7 +18,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
-import { WorkspaceSettingsComponent } from './settings/core/workspace-settings/workspace-settings.component';
+import { DockerimageSettingsComponent } from './settings/core/dockerimage-settings/dockerimage-settings.component';
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-instance-settings.component';
@@ -81,13 +81,8 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'settings/core/workspaces',
-    component: WorkspaceSettingsComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'settings/core/workspaces',
-    component: WorkspaceSettingsComponent,
+    path: 'settings/core/dockerimages',
+    component: DockerimageSettingsComponent,
     canActivate: [AuthGuardService],
   },
   {

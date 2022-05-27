@@ -3,7 +3,7 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { WorkspaceSettingsComponent } from './workspace-settings.component';
+import { WorkspaceSettingsComponent } from './dockerimage-settings.component';
 
 describe('WorkspaceSettingsComponent', () => {
   let component: WorkspaceSettingsComponent;
@@ -11,9 +11,8 @@ describe('WorkspaceSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WorkspaceSettingsComponent ]
-    })
-    .compileComponents();
+      declarations: [WorkspaceSettingsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
