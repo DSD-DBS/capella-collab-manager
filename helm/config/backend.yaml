@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 docker: 
   images: 
     workspaces: 
@@ -60,7 +63,6 @@ authentication:
       id: "{{ .Values.backend.authentication.azure.client.id }}"
       secret: "{{ .Values.backend.authentication.azure.client.secret }}"
 
-    audience: "{{ .Values.backend.authentication.azure.audience }}"
     redirectURI: "{{ .Values.backend.authentication.azure.redirectURI }}"
     
     connectConfigurationEndpoint: "{{ .Values.backend.authentication.azure.connectConfigurationEndpoint }}"

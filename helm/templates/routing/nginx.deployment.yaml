@@ -40,8 +40,6 @@ spec:
           volumeMounts:
             - name: {{ .Release.Name }}-nginx
               mountPath: /etc/nginx
-          {{ if .Values.cluster.container }}
-          {{ if .Values.cluster.container }}
+          {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
-          {{ end }}
           {{ end }}
