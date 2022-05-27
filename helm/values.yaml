@@ -144,7 +144,6 @@ backend:
         id: tbd
         secret: tbd
 
-      audience: tbd
       redirectURI: tbd
       
       connectConfigurationEndpoint: tbd
