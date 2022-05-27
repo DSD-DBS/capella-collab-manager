@@ -12,6 +12,7 @@ from fastapi import APIRouter
 # 1st party:
 from capellacollab.config import config
 from capellacollab.projects import routes as projects
+import capellacollab.config.routes as configuration
 
 # local:
 from . import notices, sessions, users
@@ -24,6 +25,7 @@ router.include_router(sessions.router, prefix="/sessions", tags=["Sessions"])
 router.include_router(projects.router, prefix="/projects")
 router.include_router(users.router, prefix="/users", tags=["Users"])
 router.include_router(notices.router, prefix="/notices", tags=["Notices"])
+router.include_router(configuration.router, prefix="/configurations", tags=["Notices"])
 
 # Load authentication routes
 try:
