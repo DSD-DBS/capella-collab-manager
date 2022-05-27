@@ -3,6 +3,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { ToastService } from 'src/app/toast/toast.service';
 import { ProjectService } from '../../service/project.service';
 
 @Component({
@@ -14,7 +15,10 @@ export class ProjectMetadataComponent implements OnInit {
   @Input()
   project = '';
 
-  constructor(public projectService: ProjectService) {}
+  constructor(
+    public projectService: ProjectService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {}
 
@@ -32,6 +36,10 @@ export class ProjectMetadataComponent implements OnInit {
             this.updateDescriptionForm.reset();
             this.updateDescriptionForm.setValue(res.description);
             this.projectService.project = res;
+            this.toastService.showSuccess(
+              'Description updated for project ' + this.project,
+              "Updated to '" + res.description + "'"
+            );
           },
           error: (res) => {},
         });

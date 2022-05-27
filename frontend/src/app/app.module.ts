@@ -88,6 +88,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ProjectMetadataComponent } from './projects/project-detail/project-metadata/project-metadata.component';
 import { MatBadgeModule } from '@angular/material/badge';
 import { RequestsComponent } from './settings/requests/requests.component';
+import { CommonModule } from '@angular/common';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -146,6 +148,7 @@ import { RequestsComponent } from './settings/requests/requests.component';
     RequestsComponent,
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
@@ -177,6 +180,7 @@ import { RequestsComponent } from './settings/requests/requests.component';
     MatButtonToggleModule,
     MatTooltipModule,
     MatBadgeModule,
+    ToastrModule.forRoot({ positionClass: 'toast-bottom-left' }),
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

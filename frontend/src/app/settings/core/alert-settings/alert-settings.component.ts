@@ -12,6 +12,7 @@ import {
 } from '@angular/forms';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import { NoticeService } from 'src/app/services/notice/notice.service';
+import { ToastService } from 'src/app/toast/toast.service';
 
 @Component({
   selector: 'app-alert-settings',
@@ -35,7 +36,8 @@ export class AlertSettingsComponent implements OnInit {
 
   constructor(
     public noticeService: NoticeService,
-    private navbarService: NavBarService
+    private navbarService: NavBarService,
+    private toastService: ToastService
   ) {
     this.navbarService.title = 'Settings / Core / Alerts';
   }
@@ -55,17 +57,36 @@ export class AlertSettingsComponent implements OnInit {
 
   createNotice(): void {
     if (this.createAlertForm.valid) {
-      this.noticeService
-        .createNotice(this.createAlertForm.value)
-        .subscribe(() => {
+      this.noticeService.createNotice(this.createAlertForm.value).subscribe({
+        next: () => {
           this.noticeService.refreshNotices();
-        });
+          this.toastService.showSuccess(
+            'Alert created',
+            this.createAlertForm.value.title
+          );
+        },
+        error: () => {
+          this.toastService.showError(
+            'Creation of alert failed',
+            'Please try again'
+          );
+        },
+      });
     }
   }
 
   deleteNotice(id: number): void {
-    this.noticeService.deleteNotice(id).subscribe(() => {
-      this.noticeService.refreshNotices();
+    this.noticeService.deleteNotice(id).subscribe({
+      next: () => {
+        this.toastService.showSuccess('Alert deleted', 'ID: ' + id);
+        this.noticeService.refreshNotices();
+      },
+      error: () => {
+        this.toastService.showSuccess(
+          'Deletion of alert failed',
+          'Please try again'
+        );
+      },
     });
   }
 }

@@ -14,6 +14,7 @@ import {
 import { RepositoryUser } from 'src/app/schemes';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import { UserService } from 'src/app/services/user/user.service';
+import { ToastService } from 'src/app/toast/toast.service';
 
 @Component({
   selector: 'app-project-user-settings',
@@ -51,7 +52,8 @@ export class RepositoryUserSettingsComponent implements OnInit {
   );
   constructor(
     public repoUserService: RepositoryUserService,
-    public userService: UserService
+    public userService: UserService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {}
@@ -114,6 +116,10 @@ export class RepositoryUserSettingsComponent implements OnInit {
           formDirective.resetForm();
           this.addUserToRepoForm.reset();
           this.refreshRepoUsers();
+          this.toastService.showSuccess(
+            'User added to project ' + this.repository,
+            ''
+          );
         });
     }
   }

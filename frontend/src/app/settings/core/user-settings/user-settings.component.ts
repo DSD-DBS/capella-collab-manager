@@ -7,6 +7,7 @@ import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import { User } from 'src/app/schemes';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import { UserService } from 'src/app/services/user/user.service';
+import { ToastService } from 'src/app/toast/toast.service';
 
 @Component({
   selector: 'app-user-settings',
@@ -24,7 +25,8 @@ export class UserSettingsComponent implements OnInit {
   constructor(
     public userService: UserService,
     public repoUserService: RepositoryUserService,
-    private navbarService: NavBarService
+    private navbarService: NavBarService,
+    private toastService: ToastService
   ) {
     this.navbarService.title = 'Settings / Core / Users';
   }
@@ -44,18 +46,43 @@ export class UserSettingsComponent implements OnInit {
           this.createAdministratorFormGroup.value.username,
           'administrator'
         )
-        .subscribe(() => {
-          this.getUsers();
+        .subscribe({
+          next: () => {
+            this.toastService.showSuccess(
+              'Role of user updated',
+              this.createAdministratorFormGroup.value.username +
+                ' has now the role administrator'
+            );
+            this.getUsers();
+          },
+          error: () => {
+            this.toastService.showError(
+              'Update of role failed',
+              'The role of ' +
+                this.createAdministratorFormGroup.value.username +
+                ' was not updated'
+            );
+          },
         });
     }
   }
 
   createAdministratorWithUsername(username: string) {
-    this.userService
-      .updateRoleOfUser(username, 'administrator')
-      .subscribe(() => {
+    this.userService.updateRoleOfUser(username, 'administrator').subscribe({
+      next: () => {
+        this.toastService.showSuccess(
+          'Role of user updated',
+          username + ' has now the role administrator'
+        );
         this.getUsers();
-      });
+      },
+      error: () => {
+        this.toastService.showError(
+          'Update of role failed',
+          'The role of ' + username + ' has not been updated'
+        );
+      },
+    });
   }
 
   getUsers() {
@@ -65,14 +92,39 @@ export class UserSettingsComponent implements OnInit {
   }
 
   removeAdministrator(username: string) {
-    this.userService.updateRoleOfUser(username, 'user').subscribe(() => {
-      this.getUsers();
+    this.userService.updateRoleOfUser(username, 'user').subscribe({
+      next: () => {
+        this.toastService.showSuccess(
+          'Role of user updated',
+          username + ' has now the role user'
+        );
+        this.getUsers();
+        this.getUsers();
+      },
+      error: () => {
+        this.toastService.showError(
+          'Update of role failed',
+          'The role of ' + username + ' has not been updated'
+        );
+      },
     });
   }
 
   deleteUser(username: string) {
-    this.userService.deleteUser(username).subscribe(() => {
-      this.getUsers();
+    this.userService.deleteUser(username).subscribe({
+      next: () => {
+        this.toastService.showSuccess(
+          'User deleted',
+          username + ' has been deleted'
+        );
+        this.getUsers();
+      },
+      error: () => {
+        this.toastService.showError(
+          'User deletion failed',
+          username + ' has not been deleted'
+        );
+      },
     });
   }
 
