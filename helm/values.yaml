@@ -145,9 +145,7 @@ backend:
         secret: tbd
 
       redirectURI: tbd
-      
-      connectConfigurationEndpoint: tbd
-
+    
   garbageCleaner:
     cron: "*/10 * * * *"
 
