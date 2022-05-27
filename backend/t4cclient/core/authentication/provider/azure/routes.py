@@ -21,7 +21,7 @@ def ad_session():
     return ConfidentialClientApplication(
         cfg["client"]["id"],
         client_credential=cfg["client"]["secret"],
-        authority=cfg["connectConfigurationEndpoint"],
+        authority=cfg["authorizationEndpoint"],
     )
 
 
