@@ -17,4 +17,11 @@ export class ToastService {
   showError(title: string, message: string) {
     this.toastr.error(message, title);
   }
+
+  showPersistentError(title: string, message: string) {
+    this.toastr.error(message, title, {
+      disableTimeOut: true,
+      tapToDismiss: false,
+    });
+  }
 }
