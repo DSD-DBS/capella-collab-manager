@@ -56,6 +56,6 @@ spec:
             - name: config
               mountPath: /etc/capellacollab
               readOnly: true
-          {{ if .Values.cluster.container }}
+          {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
