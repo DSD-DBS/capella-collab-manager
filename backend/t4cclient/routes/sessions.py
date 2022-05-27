@@ -4,12 +4,12 @@
 import itertools
 import logging
 import typing as t
+from fastapi import APIRouter, Depends, HTTPException
 
 import t4cclient.core.database.repositories as repositories_crud
 import t4cclient.extensions.modelsources.git.crud as git_models_crud
 import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories.users as users_schema
-from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from t4cclient.core.authentication.database import is_admin, verify_repository_role
 from t4cclient.core.authentication.helper import get_username
@@ -172,7 +172,7 @@ def request_session(
     return response
 
 
-@router.delete("/{id}/", status_code=204, responses=AUTHENTICATION_RESPONSES)
+@router.delete("/{id}", status_code=204, responses=AUTHENTICATION_RESPONSES)
 def end_session(id: str, db: Session = Depends(get_db), token=Depends(JWTBearer())):
     s = sessions.get_session_by_id(db, id)
     if s.owner_name != get_username(token) and verify_repository_role(
