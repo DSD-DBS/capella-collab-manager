@@ -1,16 +1,23 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# Standard library:
 import secrets
 import typing as t
 from functools import lru_cache
 
+# 3rd party:
 from cachetools import TTLCache
 from fastapi import APIRouter, Depends
 from msal import ConfidentialClientApplication
+
+# local:
 from t4cclient.config import config
 from t4cclient.core.authentication import jwt_bearer
+from t4cclient.core.authentication.database import verify_admin
 from t4cclient.core.authentication.schemas import RefreshTokenRequest, TokenRequest
+from t4cclient.core.database import get_db
+from t4cclient.schemas.repositories.users import Role
 
 router = APIRouter()
 cfg = config["authentication"]["azure"]
@@ -69,5 +76,9 @@ async def logout(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
 
 
 @router.get("/tokens", name="Validate the token")
-async def validate_token(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
-    return jwt_decoded
+async def validate_token(
+    scope: t.Optional[Role], token=Depends(jwt_bearer.JWTBearer()), db=Depends(get_db)
+):
+    if scope.ADMIN:
+        verify_admin(token, db)
+    return token
