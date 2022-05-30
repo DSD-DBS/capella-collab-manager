@@ -4,7 +4,8 @@
 import itertools
 import logging
 import typing as t
-from fastapi import APIRouter, Depends, HTTPException
+import aiofiles
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
 import t4cclient.core.database.repositories as repositories_crud
 import t4cclient.extensions.modelsources.git.crud as git_models_crud
@@ -20,7 +21,6 @@ from t4cclient.core.operators import OPERATOR
 from t4cclient.core.services.sessions import inject_attrs_in_sessions
 from t4cclient.extensions import guacamole
 from t4cclient.routes import guacamole as guacamole_route
-from t4cclient.routes import files as files_route
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.repositories import RepositoryUserRole
 from t4cclient.schemas.sessions import (
@@ -199,10 +199,26 @@ def get_session_usage():
     return t4c_manager.get_t4c_status()
 
 
-router.include_router(
-    files_route.router,
-    prefix="/{id}/files",
+@router.post(
+    "/{id}",
+    status_code=204,
+    responses=AUTHENTICATION_RESPONSES,
 )
+async def upload_files(
+    file: UploadFile,
+):
+    try:
+        contents = file.read()
+        with aiofiles.open(file.filename, "wb") as f:
+            f.write(contents)
+    except Exception:
+        return {"message": "There was an error uploading the file(s)"}
+    finally:
+        file.close()
+
+    return {"message": f"Successfuly uploaded"}
+
+
 router.include_router(
     guacamole_route.router,
     prefix="/{id}/guacamole-tokens",
