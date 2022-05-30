@@ -1,0 +1,35 @@
+
+<button mat-button color="primary"
+      (click)="fileInput.click()"
+      style="margin-right:20px"
+      >
+      Select Files
+      <mat-icon>attach_file</mat-icon>
+</button>
+
+<input
+  hidden type="file"
+  #fileInput (change)="onFileInput(fileInput.files)"
+  multiple
+/>
+
+<button
+  [disabled]="!files"
+  type="submit"
+  mat-raised-button
+  color="primary"
+  (click)="onSubmit()"
+  style="margin-bottom:30px"
+>
+  Submit
+</button>
+
+<li *ngFor="let file of files">
+  {{ file.name }}
+</li>
+{{this.files || "No file uploaded yet."}}
+
+
+<div mat-dialog-actions>
+  <button mat-button (click)="this.dialogRef.close()">Close</button>
+</div>
