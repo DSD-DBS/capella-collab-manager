@@ -41,7 +41,7 @@
       <button
         class="profileMenuButton"
         mat-menu-item
-        routerLink="logout"
+        routerLink="logout/redirect"
         [queryParams]="{ reason: 'logout' }"
         *ngIf="localStorageService.getValue('access_token')"
       >
