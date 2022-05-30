@@ -9,8 +9,6 @@ metadata:
   labels: 
     id: {{ .Release.Name }}-nginx
   annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "9118"
     {{ if eq .Values.target "local" }}
     ingress.kubernetes.io/ssl-redirect: "false"
     {{ else }}
