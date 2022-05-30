@@ -3,16 +3,20 @@
 
 from __future__ import annotations
 
+# Standard library:
 import logging
 import random
 import string
 import typing as t
 from datetime import datetime
 
+# 3rd party:
 import kubernetes
 import kubernetes.client.exceptions
 import kubernetes.client.models
 import kubernetes.config
+
+# local:
 from t4cclient.config import config
 from t4cclient.core.operators.abc import Operator
 
@@ -88,6 +92,7 @@ class KubernetesOperator(Operator):
                 "T4C_SERVER_PORT": t4c_cfg["port"],
                 "T4C_REPOSITORIES": ",".join(repositories),
                 "RMT_PASSWORD": password,
+                "T4C_USERNAME": username,
             },
             self._get_claim_name(username),
         )
