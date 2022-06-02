@@ -1,3 +1,11 @@
+<div class="progress">
+  <mat-progress-bar class="progress-bar" mode="determinate"
+                    [value]="uploadProgress" *ngIf="uploadProgress">
+  </mat-progress-bar>
+  <mat-icon class="cancel-upload" (click)="cancelUpload()"
+            *ngIf="uploadProgress">delete_forever</mat-icon>
+</div>
+
 
 <button mat-button color="primary"
       (click)="fileInput.click()"
@@ -14,7 +22,7 @@
 />
 
 <button
-  [disabled]="!files"
+  [disabled]="!files.length"
   type="submit"
   mat-raised-button
   color="primary"
@@ -26,9 +34,9 @@
 
 <li *ngFor="let file of files">
   {{ file.name }}
+  <button mat-button (click)="removeFile(file)">X</button>
 </li>
 {{this.files || "No file uploaded yet."}}
-
 
 <div mat-dialog-actions>
   <button mat-button (click)="this.dialogRef.close()">Close</button>
