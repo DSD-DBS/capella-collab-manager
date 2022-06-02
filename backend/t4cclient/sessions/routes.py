@@ -19,11 +19,14 @@ from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.credentials import generate_password
 from t4cclient.core.database import get_db, users
 from t4cclient.core.operators import OPERATOR
-from t4cclient.schemas.guacamole import GuacamoleAuthentication
-from t4cclient.sessions.sessions import inject_attrs_in_sessions, get_last_seen
-from t4cclient.extensions import guacamole
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.repositories import RepositoryUserRole
+
+from t4cclient.sessions.schema import GuacamoleAuthentication
+from t4cclient.sessions.sessions import inject_attrs_in_sessions, get_last_seen
+from t4cclient.sessions import guacamole
+from t4cclient.sessions import database
+from t4cclient.sessions.models import DatabaseSession
 from t4cclient.sessions.schema import (
     AdvancedSessionResponse,
     GetSessionsResponse,
@@ -31,8 +34,6 @@ from t4cclient.sessions.schema import (
     PostSessionRequest,
     WorkspaceType,
 )
-from t4cclient.sessions import database
-from t4cclient.sessions.models import DatabaseSession
 
 router = APIRouter()
 log = logging.getLogger(__name__)
