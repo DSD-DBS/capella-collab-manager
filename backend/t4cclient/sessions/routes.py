@@ -24,7 +24,7 @@ from t4cclient.sessions.sessions import inject_attrs_in_sessions, get_last_seen
 from t4cclient.extensions import guacamole
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.repositories import RepositoryUserRole
-from t4cclient.schemas.sessions import (
+from t4cclient.sessions.schema import (
     AdvancedSessionResponse,
     GetSessionsResponse,
     GetSessionUsageResponse,

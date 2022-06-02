@@ -4,8 +4,7 @@
 from sqlalchemy import ARRAY, TIMESTAMP, Column, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from t4cclient.core.database import Base
-from t4cclient.schemas.repositories import RepositoryUserPermission
-from t4cclient.schemas.sessions import WorkspaceType
+from t4cclient.sessions.schema import WorkspaceType
 
 
 class DatabaseSession(Base):

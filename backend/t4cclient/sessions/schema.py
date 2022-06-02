@@ -6,7 +6,6 @@ import enum
 import typing as t
 
 from pydantic import BaseModel
-from t4cclient.schemas.repositories import RepositoryUserPermission
 
 
 class WorkspaceType(enum.Enum):
