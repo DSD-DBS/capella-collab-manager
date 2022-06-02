@@ -13,10 +13,8 @@ import {
 import { MatSelectChange } from '@angular/material/select';
 import { Session } from 'src/app/schemes';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
-import {
-  Repository,
-  Warnings,
-} from 'src/app/services/repository/repository.service';
+import { Repository, Warnings } from 'src/app/schemes';
+
 import { SessionService } from 'src/app/services/session/session.service';
 
 @Component({

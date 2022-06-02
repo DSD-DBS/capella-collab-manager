@@ -5,9 +5,10 @@ import sqlalchemy.orm.session
 from fastapi import Depends, HTTPException
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
-from t4cclient.core.database import get_db, repository_users
+from t4cclient.core.database import get_db, repositories, repository_users
 from t4cclient.core.database.users import get_user
-from t4cclient.schemas.repositories import RepositoryUserPermission, RepositoryUserRole
+from t4cclient.schemas.repositories import (RepositoryUserPermission,
+                                            RepositoryUserRole)
 from t4cclient.schemas.repositories.users import Role
 
 
@@ -102,4 +103,32 @@ def check_username_not_in_repository(
         raise HTTPException(
             status_code=409,
             detail="The user already exists for this repository.",
+        )
+
+
+def check_repository_exists(repository: str, db: sqlalchemy.orm.session.Session):
+    user = repositories.get_repository(db, repository)
+    if not user:
+        raise HTTPException(
+            status_code=409,
+            detail="The repository does not exist.",
+        )
+
+
+def verify_staged(repository: str, db: sqlalchemy.orm.session.Session):
+    repo = repositories.get_repository(db, repository)
+    if repo.staged_by is None or repo.staged_by == "":
+        raise HTTPException(
+            status_code=409,
+            detail="The repository has to be staged by another administrator before deletion.",
+        )
+
+
+def verify_not_staged_and_deleted(
+    repository: str, username: str, db: sqlalchemy.orm.session.Session
+):
+    if username == repositories.get_repository(db, repository).staged_by:
+        raise HTTPException(
+            status_code=409,
+            detail="A single administrator can not stage and delete a repository at the same time.",
         )

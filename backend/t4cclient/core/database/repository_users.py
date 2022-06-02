@@ -14,13 +14,15 @@ def get_users_of_repository(db: Session, repository_name: str):
         .all()
     )
 
-def get_user_of_repository(db: Session, repository_name: str, username: str): 
+
+def get_user_of_repository(db: Session, repository_name: str, username: str):
     return (
         db.query(RepositoryUserAssociation)
         .filter(RepositoryUserAssociation.repository_name == repository_name)
         .filter(RepositoryUserAssociation.username == username)
         .first()
     )
+
 
 def add_user_to_repository(
     db: Session,
@@ -44,12 +46,7 @@ def add_user_to_repository(
 def change_role_of_user_in_repository(
     db: Session, repository_name: str, role: RepositoryUserRole, username: str
 ):
-    repo_user = (
-        db.query(RepositoryUserAssociation)
-        .filter(RepositoryUserAssociation.repository_name == repository_name)
-        .filter(RepositoryUserAssociation.username == username)
-        .first()
-    )
+    repo_user = get_user_of_repository(db, repository_name, username)
     if role == RepositoryUserRole.MANAGER:
         repo_user.permission = RepositoryUserPermission.WRITE
     repo_user.role = role
@@ -88,3 +85,13 @@ def delete_all_repositories_for_user(db: Session, username: str):
         RepositoryUserAssociation.username == username
     ).delete()
     db.commit()
+
+
+def stage_repository(db: Session, repository_name: str, username: str):
+    repo_user = get_user_of_repository(db, repository_name, username)
+    if repo_user is None:
+        return
+    repo_user.repository.staged_by = username
+    db.commit()
+    db.refresh(repo_user)
+    return repo_user

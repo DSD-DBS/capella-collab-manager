@@ -9,4 +9,22 @@
   </app-repository-user-settings>
   <app-backup-settings [project]="repository"></app-backup-settings>
   <app-model-source [repository]="repository"></app-model-source>
+
+  <!--  user_role === 'administrator' || user_role === 'manager'
+-->
+  <div *ngIf="repositoryService.isManager || userService.user?.role === 'administrator'">
+    <mat-card id="delete-project">
+      <h2>Delete project</h2>
+      <button
+      color="primary"
+      mat-flat-button
+      [routerLink]="['/settings/projects/', this.repository, 'delete']">
+        Delete <mat-icon>keyboard_arrow_right</mat-icon>
+    </button>
+
+      <!--    (click)="deleteRepository()
+      <app-delete-repository  [repository]="repository"></app-delete-repository>  -->
+    </mat-card>
+  </div>
+
 </div>

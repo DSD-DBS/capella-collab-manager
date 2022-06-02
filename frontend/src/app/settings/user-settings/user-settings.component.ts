@@ -4,11 +4,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
-import {
-  RepositoryService,
-  Repository,
-} from 'src/app/services/repository/repository.service';
+import { RepositoryService } from 'src/app/services/repository/repository.service';
 import { UserService } from 'src/app/services/user/user.service';
+import { Repository } from 'src/app/schemes';
 
 @Component({
   selector: 'app-user-settings',

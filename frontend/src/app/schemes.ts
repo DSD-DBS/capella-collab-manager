@@ -35,3 +35,15 @@ export interface SessionsUsage {
   total: number;
   errors: Array<string>;
 }
+
+
+export type Warnings = 'LICENCE_LIMIT' | 'NO_GIT_MODEL_DEFINED';
+
+export interface Repository {
+  repository_name: string;
+  username: string;
+  permissions: Array<'read' | 'write'>;
+  staged_by: string;
+  warnings: Array<Warnings>;
+  role: 'user' | 'manager' | 'administrator';
+}

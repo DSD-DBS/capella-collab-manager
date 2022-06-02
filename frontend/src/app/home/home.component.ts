@@ -2,10 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Component, OnInit } from '@angular/core';
-import {
-  Repository,
-  RepositoryService,
-} from '../services/repository/repository.service';
+import { RepositoryService} from '../services/repository/repository.service';
+import { Repository } from 'src/app/schemes';
 import { SessionService } from '../services/session/session.service';
 
 @Component({

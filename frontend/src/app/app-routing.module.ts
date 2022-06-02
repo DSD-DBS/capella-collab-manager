@@ -14,6 +14,7 @@ import { SessionOverviewComponent } from './session-overview/session-overview.co
 import { CreateRepositoryComponent } from './settings/admin-settings/create-repository/create-repository.component';
 import { RepositorySettingsComponent } from './settings/repository-manager-settings/repository-settings/repository-settings.component';
 import { SettingsComponent } from './settings/settings.component';
+import { DeleteRepositoryComponent } from './settings/repository-manager-settings/repository-settings/delete-repository/delete-repository.component';
 
 const routes: Routes = [
   {
@@ -41,6 +42,11 @@ const routes: Routes = [
   {
     path: 'settings/projects/create',
     component: CreateRepositoryComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/projects/:repository/delete',
+    component: DeleteRepositoryComponent,
     canActivate: [AuthGuardService],
   },
   {
