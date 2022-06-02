@@ -10,7 +10,7 @@ from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, repository_users, users
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
-from t4cclient.routes.sessions import inject_attrs_in_sessions
+from t4cclient.sessions.routes import inject_attrs_in_sessions
 from t4cclient.schemas.repositories.users import (
     GetUserResponse,
     PatchUserRoleRequest,
