@@ -4,7 +4,9 @@
 import logging
 
 import click
-from t4cclient.core import database
+
+from t4cclient.core.database import SessionLocal
+from t4cclient.sessions import database
 from t4cclient.sessions import database
 from t4cclient.sessions.routes import inject_attrs_in_sessions
 
@@ -13,7 +15,7 @@ LOGGER = logging.getLogger(__name__)
 
 @click.command()
 def clean_old_sessions():
-    with database.SessionLocal() as db:
+    with SessionLocal() as db:
         for session in inject_attrs_in_sessions(database.get_all_sessions(db)):
             if session["state"] == "exited":
                 try:
