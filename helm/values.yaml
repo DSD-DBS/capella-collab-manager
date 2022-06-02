@@ -36,7 +36,7 @@ docker:
       guacamole: docker.io/guacamole/guacamole
       guacd: docker.io/guacamole/guacd
 
-    prometheus: prom/prometheus
+    prometheus: /prom/prometheus
 
 general:
   # Base URL on which the service listens
