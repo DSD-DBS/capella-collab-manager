@@ -4,8 +4,9 @@
 import itertools
 import logging
 import typing as t
-import aiofiles
+import io
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
+import tarfile
 
 import t4cclient.core.database.repositories as repositories_crud
 import t4cclient.extensions.modelsources.git.crud as git_models_crud
@@ -201,20 +202,28 @@ def get_session_usage():
 
 @router.post(
     "/{id}",
-    status_code=204,
     responses=AUTHENTICATION_RESPONSES,
 )
-async def upload_files(
-    file: UploadFile,
-):
+def upload_files(id: str, files: list[UploadFile]):
+    tar_bytesio = io.BytesIO()
+    tar = tarfile.TarFile(name="upload.tar", mode="w", fileobj=tar_bytesio)
+
+    for file in files:
+        tar.addfile(
+            tar.gettarinfo(arcname=file.filename, fileobj=file.file), fileobj=file.file
+        )
+    tar.close()
+    tar_bytesio.seek(0)
+    tar_bytes = tar_bytesio.read()
+
     try:
-        contents = file.read()
-        with aiofiles.open(file.filename, "wb") as f:
-            f.write(contents)
+        OPERATOR.upload_files(id, tar_bytes)
     except Exception:
-        return {"message": "There was an error uploading the file(s)"}
-    finally:
-        file.close()
+        log.exception("There was an exception during uploading the files.")
+        raise HTTPException(
+            status_code=500,
+            detail="There was an error uploading the file(s).",
+        )
 
     return {"message": f"Successfuly uploaded"}
 

@@ -11,6 +11,7 @@ from datetime import datetime
 
 import kubernetes
 import kubernetes.client.exceptions
+import kubernetes.stream.stream
 import kubernetes.client.models
 import kubernetes.config
 from t4cclient.config import config
@@ -481,3 +482,40 @@ class KubernetesOperator(Operator):
             return self.v1_core.delete_namespaced_service(id, cfg["namespace"])
         except kubernetes.client.exceptions.ApiException:
             log.exception("Error deleting service with id: %s", id)
+
+    def upload_files(
+        self,
+        id: str,
+        content: bytes,
+    ):
+        pod_name = self.v1_core.list_namespaced_pod(
+            namespace=cfg["namespace"], label_selector="app=" + id
+        ).to_dict()["items"][0]["metadata"]["name"]
+
+        try:
+            exec_command = ["tar", "xf", "-", "-C", "/workspace/"]
+            stream = kubernetes.stream.stream(
+                self.v1_core.connect_get_namespaced_pod_exec,
+                pod_name,
+                namespace=cfg["namespace"],
+                command=exec_command,
+                stderr=True,
+                stdin=True,
+                stdout=True,
+                tty=False,
+                _preload_content=False,
+            )
+
+            stream.write_stdin(content)
+            stream.update(timeout=1)
+            if stream.peek_stdout():
+                print("STDOUT: %s" % stream.read_stdout())
+            if stream.peek_stderr():
+                print("STDERR: %s" % stream.read_stderr())
+
+        except kubernetes.client.exceptions.ApiException as e:
+            log.exception("Exception when copying file to the pod")
+            raise e
+
+        finally:
+            stream.close()
