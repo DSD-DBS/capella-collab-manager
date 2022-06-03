@@ -44,7 +44,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ .Release.Name }}-prometheus-server
+                name: {{ .Release.Name }}-prometheus-nginx
                 port:
                   name: promui
           {{ if eq .Values.target "local" }}

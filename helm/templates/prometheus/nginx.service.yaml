@@ -12,7 +12,7 @@ spec:
   selector:
     id: {{ .Release.Name }}-deployment-prometheus-nginx
   ports:
-    - port: 80
-      targetPort: http
+    - port: 9118
+      targetPort: promui
       protocol: TCP
-      name: http
+      name: promui
