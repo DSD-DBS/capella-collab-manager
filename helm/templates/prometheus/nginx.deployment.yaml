@@ -27,8 +27,8 @@ spec:
         - name: {{ .Release.Name }}-prometheus-nginx
           image: {{ .Values.docker.registry.external }}/nginxinc/nginx-unprivileged
           ports:
-            - name: http
-              containerPort: 8080
+            - name: promui
+              containerPort: 9118
               protocol: TCP
           resources:
             limits:
