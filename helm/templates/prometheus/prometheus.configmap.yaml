@@ -52,8 +52,9 @@ data:
             replacement: $1:$2
             target_label: __address__
           # Transfer app label from kubernetes (name of the deployment)
-          - action: labelmap
-            regex: __meta_kubernetes_pod_label_app
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            action: replace
+            target_label: app
           # Set label kubernetes_namespace
           - source_labels: [__meta_kubernetes_namespace]
             action: replace
