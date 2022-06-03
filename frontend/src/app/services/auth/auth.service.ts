@@ -3,6 +3,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { CookieService } from 'ngx-cookie';
 import { Observable } from 'rxjs';
 import { LocalStorageService } from 'src/app/auth/local-storage/local-storage.service';
 import { environment } from 'src/environments/environment';
@@ -13,7 +14,8 @@ import { environment } from 'src/environments/environment';
 export class AuthService {
   constructor(
     private http: HttpClient,
-    private localStorageService: LocalStorageService
+    private localStorageService: LocalStorageService,
+    private cookieService: CookieService
   ) {}
 
   getRedirectURL(): Observable<GetRedirectURLResponse> {
@@ -44,14 +46,13 @@ export class AuthService {
   }
 
   logOut() {
+    this.localStorageService.setValue('access_token', '');
+    this.localStorageService.setValue('refresh_token', '');
+    this.localStorageService.setValue('GUAC_AUTH', '');
+    this.cookieService.remove('access_token', { path: '/prometheus' });
     return this.http
       .get(environment.backend_url + '/authentication/logout')
-      .toPromise()
-      .then(() => {
-        this.localStorageService.setValue('access_token', '');
-        this.localStorageService.setValue('refresh_token', '');
-        this.localStorageService.setValue('GUAC_AUTH', '');
-      });
+      .subscribe();
   }
 }
 

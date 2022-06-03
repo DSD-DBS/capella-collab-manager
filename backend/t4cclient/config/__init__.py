@@ -3,13 +3,13 @@
 
 from __future__ import annotations
 
+# Standard library:
 import logging
 import os
-import pathlib
 import typing as t
 
-import appdirs
-import yaml
+# local:
+from . import loader
 
 from . import loader
 

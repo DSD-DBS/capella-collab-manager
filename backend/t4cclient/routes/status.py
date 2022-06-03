@@ -1,10 +1,12 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# 3rd party:
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from t4cclient import config
+
+# local:
 from t4cclient.core.database import get_db
 from t4cclient.core.operators import OPERATOR
 from t4cclient.extensions.guacamole import get_admin_token
