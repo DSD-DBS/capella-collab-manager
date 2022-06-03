@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 import capellacollab.extensions.modelsources.git.crud as git_models_crud
 import capellacollab.extensions.modelsources.t4c.connection as t4c_manager
 import capellacollab.projects.crud as repositories_crud
-import capellacollab.projects.users.crud as users_schema
+import capellacollab.projects.users.models as users_models
 from capellacollab.core.authentication.database import is_admin, verify_project_role
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
@@ -103,7 +103,7 @@ def request_session(
                 },
             )
         user = users.get_user(db, owner)
-        if user.role == users_schema.Role.ADMIN:
+        if user.role == users_models.Role.ADMIN:
             repositories = [
                 repo.name for repo in repositories_crud.get_all_projects(db)
             ]
