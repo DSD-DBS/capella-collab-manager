@@ -3,13 +3,13 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div id="licences" *ngIf="sessionsUsage">
-  <div *ngIf="!sessionsUsage.errors.length">
-    Used licences: {{ sessionsUsage.total - sessionsUsage.free }}/{{
-      sessionsUsage.total
+<div id="licences" *ngIf="sessionUsage">
+  <div *ngIf="!sessionUsage.errors.length">
+    Used licences: {{ sessionUsage.total - sessionUsage.free }}/{{
+      sessionUsage.total
     }}
   </div>
-  <div class="error" *ngFor="let error of sessionsUsage.errors">
+  <div class="error" *ngFor="let error of sessionUsage.errors">
     {{ getErrorMessage(error) }}
   </div>
 </div>

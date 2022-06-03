@@ -19,11 +19,14 @@ config = context.config
 # with the path given in the config of the main code
 config.set_main_option("sqlalchemy.url", cfg["database"]["url"])
 
-
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.attributes.get("configure_logger", True):
     fileConfig(config.config_file_name)
+
+# Import models
+import t4cclient.sql_models  # isort:skip
+from t4cclient.sql_models import extensions  # isort:skip
 
 # add your model's MetaData object here
 # for 'autogenerate' support

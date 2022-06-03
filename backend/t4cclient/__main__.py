@@ -19,15 +19,6 @@ from t4cclient.config import config
 from t4cclient.core.database import __main__ as database
 from t4cclient.routes import router, status
 
-# Load extension models
-eps = (
-    metadata.entry_points()["capellacollab.extensions.backups"]
-    + metadata.entry_points()["capellacollab.extensions.modelsources"]
-)
-for ep in eps:
-    log.info("Import models of extension %s", ep.name)
-    ep.load().models
-
 database.migrate_db()
 
 

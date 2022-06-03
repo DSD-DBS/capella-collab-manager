@@ -1,5 +1,5 @@
 DB_PORT = 5432
-VENV = .venv39
+VENV = .venv
 
 database:
 	docker start capella-collab-postgres || \

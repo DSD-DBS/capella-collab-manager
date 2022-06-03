@@ -19,6 +19,16 @@
     >
       Overview
     </button>
+    <a
+      color="primary"
+      id="overview"
+      mat-raised-button
+      *ngIf="userService.user?.role === 'administrator'"
+      href="/prometheus/graph"
+      target="_blank"
+    >
+      Prometheus <mat-icon>open_in_new</mat-icon>
+    </a>
   </div>
   <div class="right-aligned">
     <div>
@@ -41,7 +51,7 @@
       <button
         class="profileMenuButton"
         mat-menu-item
-        routerLink="logout"
+        routerLink="logout/redirect"
         [queryParams]="{ reason: 'logout' }"
         *ngIf="localStorageService.getValue('access_token')"
       >

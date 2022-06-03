@@ -1,0 +1,45 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-prometheus-nginx
+  labels: 
+    id: {{ .Release.Name }}-deployment-prometheus-nginx
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/prometheus/nginx.configmap.yaml") . | sha256sum }}
+spec:
+  replicas: {{ .Values.replicaCount | default 1 }}
+  selector: 
+    matchLabels: 
+      id: {{ .Release.Name }}-deployment-prometheus-nginx
+  template:
+    metadata: 
+      labels: 
+        id: {{ .Release.Name }}-deployment-prometheus-nginx
+    spec:
+      volumes:
+        - name: {{ .Release.Name }}-prometheus-nginx
+          configMap:
+            name: {{ .Release.Name }}-prometheus-nginx
+      containers:
+        - name: {{ .Release.Name }}-prometheus-nginx
+          image: {{ .Values.docker.registry.external }}/nginxinc/nginx-unprivileged
+          ports:
+            - name: promui
+              containerPort: 9118
+              protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: 100Mi
+            requests:
+              cpu: "0.25"
+              memory: 50Mi
+          volumeMounts:
+            - name: {{ .Release.Name }}-prometheus-nginx
+              mountPath: /etc/nginx
+          {{ if .Values.cluster.containers }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}
