@@ -13,8 +13,6 @@ import t4cclient.extensions.modelsources.git.crud as crud_git_models
 import t4cclient.extensions.modelsources.git.models as database_git_models
 from t4cclient.config import config
 
-from . import crud, models, routes
-
 cfg = config["backups"]["jenkins"]
 JENKINS_AUTH = (cfg["username"], cfg["password"])
 

@@ -1,0 +1,49 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-prometheus-server
+  namespace: t4c-manager
+  labels:
+    id: {{ .Release.Name }}-prometheus-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      id: {{ .Release.Name }}-prometheus-server
+  template:
+    metadata:
+      labels:
+        id: {{ .Release.Name }}-prometheus-server
+    spec:
+      containers:
+        - name: prometheus
+          image: {{ .Values.docker.registry.external }}{{ .Values.docker.images.prometheus }}
+          args:
+            - "--storage.tsdb.retention.time=12h"
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.tsdb.path=/prometheus/"
+            - "--web.external-url=http://{{ .Release.Name }}-prometheus-server/prometheus/"
+          ports:
+            - containerPort: 9118
+          resources:
+            requests:
+              cpu: 500m
+              memory: 500M
+            limits:
+              cpu: 1
+              memory: 1Gi
+          volumeMounts:
+            - name: prometheus-config-volume
+              mountPath: /etc/prometheus/
+            - name: prometheus-storage-volume
+              mountPath: /prometheus/
+      volumes:
+        - name: prometheus-config-volume
+          configMap:
+            defaultMode: 420
+            name: prometheus-server-conf
+        - name: prometheus-storage-volume
+          emptyDir: {}
