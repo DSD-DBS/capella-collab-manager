@@ -76,7 +76,6 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { ModelOverviewComponent } from './projects/project-detail/model-overview/model-overview.component';
 import { SetT4CPasswordComponent } from './projects/project-detail/model-source/t4c-repo-settings/set-t4c-password/set-t4c-password.component';
 import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
-import { WorkspaceSettingsComponent } from './settings/core/workspace-settings/workspace-settings.component';
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-instance-settings.component';
@@ -89,6 +88,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { RequestsComponent } from './settings/requests/requests.component';
 import { CommonModule } from '@angular/common';
 import { ToastrModule } from 'ngx-toastr';
+import { DockerimageSettingsComponent } from './settings/core/dockerimage-settings/dockerimage-settings.component';
 
 @NgModule({
   declarations: [
@@ -136,7 +136,7 @@ import { ToastrModule } from 'ngx-toastr';
     ModelOverviewComponent,
     SetT4CPasswordComponent,
     UserSettingsComponent,
-    WorkspaceSettingsComponent,
+    DockerimageSettingsComponent,
     GitSettingsComponent,
     T4CSettingsComponent,
     T4CInstanceSettingsComponent,
