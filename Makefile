@@ -7,6 +7,7 @@ CLUSTER_REGISTRY_NAME = myregistry.localhost
 REGISTRY_PORT = 12345
 RELEASE = dev-t4c-manager
 NAMESPACE = t4c-manager
+SESSION_NAMESPACE = t4c-sessions
 EASE_DEBUG_PORT = 3390
 
 all: backend frontend
@@ -107,7 +108,7 @@ rollout: backend frontend
 
 undeploy:
 	helm uninstall --kube-context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $(RELEASE)
-	kubectl --context k3d-$(CLUSTER_NAME) delete --all deployments -n $(NAMESPACE)
+	kubectl --context k3d-$(CLUSTER_NAME) delete --all deployments -n $(SESSION_NAMESPACE)
 	rm -f .provision-guacamole .provision-backend
 
 create-cluster:
