@@ -55,7 +55,7 @@ Do not use it in production!
    ```
 
 2. Verify that the server runs, e.g. by navigating to
-   [Well Known](http://localhost:8080/default/.well-known/openid-configuration)
+   [Well Known](http://localhost:8083/default/.well-known/openid-configuration)
 
 ### Option 2: Create a self signed certificate
 

@@ -7,6 +7,7 @@ CLUSTER_REGISTRY_NAME = myregistry.localhost
 REGISTRY_PORT = 12345
 RELEASE = dev-t4c-manager
 NAMESPACE = t4c-manager
+SESSION_NAMESPACE = t4c-sessions
 EASE_DEBUG_PORT = 3390
 
 all: backend frontend
@@ -31,7 +32,7 @@ capella: capella-download
 
 capella-download:
 	cd capella-dockerimages/capella/archives; \
-	if [[ -f "capella.tar.gz" ]] || [[ -f "capella.zip" ]]; \
+	if [ -f "capella.tar.gz" ] || [ -f "capella.zip" ]; \
 	then \
 		echo "Found existing capella archive."; \
 	else \
@@ -60,7 +61,7 @@ mock:
 
 capella-dockerimages: capella t4c-client readonly ease
 
-deploy: oauth-mock backend frontend capella mock helm-deploy open
+deploy: backend frontend capella mock helm-deploy open rollout
 
 # Deploy with full T4C support:
 deploy-t4c: backend frontend capella t4c-client readonly-ease mock helm-deploy
@@ -85,13 +86,13 @@ helm-deploy:
 
 open:
 	export URL=http://localhost:8080; \
-	if [[ "Windows_NT" == "$(OS)" ]]; \
+	if [ "Windows_NT" = "$(OS)" ]; \
 	then \
 		start "$$URL"; \
-	elif [[ "$(shell uname -s)" == "Linux" ]]; \
+	elif [ "$(shell uname -s)" = "Linux" ]; \
 	then \
 		xdg-open "$$URL"; \
-	elif [[ "$(shell uname -s)" == "Darwin" ]]; \
+	elif [ "$(shell uname -s)" = "Darwin" ]; \
 	then \
 		open "$$URL"; \
 	fi
@@ -107,6 +108,7 @@ rollout: backend frontend
 
 undeploy:
 	helm uninstall --kube-context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $(RELEASE)
+	kubectl --context k3d-$(CLUSTER_NAME) delete --all deployments -n $(SESSION_NAMESPACE)
 	rm -f .provision-guacamole .provision-backend
 
 create-cluster:
@@ -131,16 +133,17 @@ delete-cluster:
 	echo "insert into repository_user_association values ('$(MY_EMAIL)', 'default', 'WRITE', 'MANAGER');" | kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-backend-postgres --no-headers | cut -f1 -d' ') -- psql -U backend backend && \
 	touch .provision-backend
 
-.PHONY: backend frontend capella oauth-mock deploy undeploy create-cluster delete-cluster persistent-volume ns
-
-# Execute with `make -j2 dev`
-dev: dev-frontend dev-backend
+# Execute with `make -j3 dev`
+dev: dev-oauth-mock dev-frontend dev-backend
 
 dev-frontend:
 	$(MAKE) -C frontend dev
 
 dev-backend:
 	$(MAKE) -C backend dev
+
+dev-oauth-mock: 
+	$(MAKE) -C mocks/oauth start
 
 dev-cleanup:
 	$(MAKE) -C backend cleanup
@@ -150,3 +153,5 @@ backend-logs:
 
 ns:
 	kubectl config set-context k3d-$(CLUSTER_NAME) --namespace=$(NAMESPACE)
+
+.PHONY: *
