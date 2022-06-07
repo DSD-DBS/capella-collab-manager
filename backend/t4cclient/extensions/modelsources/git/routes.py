@@ -15,7 +15,7 @@ from t4cclient.extensions.modelsources import git
 from t4cclient.extensions.modelsources.git.models import (
     GetRepositoryGitModel, PatchRepositoryGitModel, PostGitModel,
     RepositoryGitInnerModel, RepositoryGitModel)
-from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
+from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
 
 router = APIRouter()
 

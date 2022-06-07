@@ -7,10 +7,8 @@ import logging
 import re
 import typing as t
 
-# 3rd party:
 import requests
 
-# local:
 from t4cclient import config
 from t4cclient.sessions.models import DatabaseSession
 from t4cclient.sessions.operators import OPERATOR
