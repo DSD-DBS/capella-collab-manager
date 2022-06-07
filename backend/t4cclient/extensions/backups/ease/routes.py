@@ -13,7 +13,7 @@ from t4cclient.config import config
 from t4cclient.core import credentials
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db
-from t4cclient.core.operators import OPERATOR
+from t4cclient.sessions.operators import OPERATOR
 from t4cclient.extensions.modelsources import git, t4c
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 

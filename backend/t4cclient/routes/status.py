@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 # local:
 from t4cclient.core.database import get_db
-from t4cclient.core.operators import OPERATOR
+from t4cclient.sessions.operators import OPERATOR
 from t4cclient.sessions.guacamole import get_admin_token
 from t4cclient.extensions.modelsources.t4c.connection import get_t4c_status
 
