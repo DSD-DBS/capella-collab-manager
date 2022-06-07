@@ -106,6 +106,7 @@ Run the following steps:
 1. The backend uses various configuration settings. You can find them in the `config`
    directory.
    Please copy the file `config_template.yaml` to `config.yaml` and adjust the values.
+   Specify the admin username replacing the value at the key `initial:admin`.
 
    *Hint*: If you already have the k8d cluster running and the if you have the
    application deployed, then no configuration values need to be adjusted.
@@ -221,14 +222,14 @@ Run the following steps:
 1. Optional: If you like to use your custom favicon, please copy it to `src/favicon.ico`
 1. Optional: If you like to use your custom theme, replace the file `src/custom-theme.scss`.
    You can generate custom themes [here](http://mcg.mbitson.com/)
-1. Copy the file `src/environment.ts` to `src/environment.dev.ts` and adjust the values.
+1. Copy the file `src/environment.ts` to `src/environment.dev.ts` and adjust the values. In order to access the backend, set `backend_url` to your backend (defaults to "http://localhost:8000/api/v1").
 1. Run the frontend with:
 
    ```sh
    make dev
    ```
 
-1. You should see the frontend running von port 4200.
+1. You should see the frontend running from port 4200.
 
 We additionally recommend that you set up your editor / IDE as follows.
 
