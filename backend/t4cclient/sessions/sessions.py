@@ -12,9 +12,9 @@ import requests
 
 # local:
 from t4cclient import config
+from t4cclient.sessions.models import DatabaseSession
 from t4cclient.sessions.operators import OPERATOR
 from t4cclient.sessions.schema import WorkspaceType
-from t4cclient.sessions.models import DatabaseSession
 
 log = logging.getLogger(__name__)
 

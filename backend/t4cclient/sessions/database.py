@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from sqlalchemy.orm import Session
+
 from t4cclient.sessions.models import DatabaseSession
 
 
