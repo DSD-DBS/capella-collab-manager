@@ -6,34 +6,33 @@ import json
 import logging
 import typing as t
 
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
 import t4cclient.core.database.repositories as repositories_crud
 import t4cclient.extensions.modelsources.git.crud as git_models_crud
 import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories.users as users_schema
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from t4cclient.config import config
 from t4cclient.core.authentication.database import is_admin, verify_repository_role
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.credentials import generate_password
 from t4cclient.core.database import get_db, users
-from t4cclient.sessions.operators import OPERATOR
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.repositories import RepositoryUserRole
-
-from t4cclient.sessions.schema import GuacamoleAuthentication
-from t4cclient.sessions.sessions import inject_attrs_in_sessions, get_last_seen
-from t4cclient.sessions import guacamole
-from t4cclient.sessions import database
+from t4cclient.sessions import database, guacamole
 from t4cclient.sessions.models import DatabaseSession
+from t4cclient.sessions.operators import OPERATOR
 from t4cclient.sessions.schema import (
     AdvancedSessionResponse,
     GetSessionsResponse,
     GetSessionUsageResponse,
+    GuacamoleAuthentication,
     PostSessionRequest,
     WorkspaceType,
 )
+from t4cclient.sessions.sessions import inject_attrs_in_sessions, get_last_seen
 
 router = APIRouter()
 log = logging.getLogger(__name__)

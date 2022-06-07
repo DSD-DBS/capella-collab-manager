@@ -7,7 +7,6 @@ import click
 
 from t4cclient.core.database import SessionLocal
 from t4cclient.sessions import database
-from t4cclient.sessions import database
 from t4cclient.sessions.routes import inject_attrs_in_sessions
 
 LOGGER = logging.getLogger(__name__)

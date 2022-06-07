@@ -3,6 +3,7 @@
 
 from sqlalchemy import ARRAY, TIMESTAMP, Column, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+
 from t4cclient.core.database import Base
 from t4cclient.sessions.schema import WorkspaceType
 
