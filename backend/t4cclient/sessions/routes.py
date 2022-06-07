@@ -18,7 +18,7 @@ from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.credentials import generate_password
 from t4cclient.core.database import get_db, users
-from t4cclient.core.operators import OPERATOR
+from t4cclient.sessions.operators import OPERATOR
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.repositories import RepositoryUserRole
 
