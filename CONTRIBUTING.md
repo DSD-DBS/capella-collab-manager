@@ -107,6 +107,7 @@ Run the following steps:
    directory.
    Please copy the file `config_template.yaml` to `config.yaml` and adjust the values.
    Specify the admin username replacing the value at the key `initial:admin`.
+   Specify the url to the Prometheus server at the key `prometheus:url`.
 
    *Hint*: If you already have the k8d cluster running and the if you have the
    application deployed, then no configuration values need to be adjusted.
@@ -222,7 +223,7 @@ Run the following steps:
 1. Optional: If you like to use your custom favicon, please copy it to `src/favicon.ico`
 1. Optional: If you like to use your custom theme, replace the file `src/custom-theme.scss`.
    You can generate custom themes [here](http://mcg.mbitson.com/)
-1. Copy the file `src/environment.ts` to `src/environment.dev.ts` and adjust the values. In order to access the backend, set `backend_url` to your backend (defaults to "http://localhost:8000/api/v1").
+1. Copy the file `src/environments/environment.ts` to `src/environments/environment.dev.ts` and adjust the values. In order to access the backend, set `backend_url` to your backend (defaults to "http://localhost:8000/api/v1").
 1. Run the frontend with:
 
    ```sh
