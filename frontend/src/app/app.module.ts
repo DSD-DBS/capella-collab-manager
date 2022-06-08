@@ -76,6 +76,7 @@ import { ModelSourceComponent } from './settings/repository-manager-settings/rep
 import { ViewLogsDialogComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/ease-backup-settings/view-logs-dialog/view-logs-dialog.component';
 import { UploadDialogComponent } from './active-sessions/upload-dialog/upload-dialog.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTreeModule } from '@angular/material/tree';
 
 @NgModule({
   declarations: [
@@ -152,7 +153,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatSlideToggleModule,
     MatMenuModule,
     MatTabsModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatTreeModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
