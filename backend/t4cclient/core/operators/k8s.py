@@ -8,6 +8,7 @@ import random
 import string
 import typing as t
 from datetime import datetime
+import os
 
 import kubernetes
 import kubernetes.client.exceptions
@@ -483,14 +484,17 @@ class KubernetesOperator(Operator):
         except kubernetes.client.exceptions.ApiException:
             log.exception("Error deleting service with id: %s", id)
 
+    def _get_pod_name(self, id: str) -> str:
+        return self.v1_core.list_namespaced_pod(
+            namespace=cfg["namespace"], label_selector="app=" + id
+        ).to_dict()["items"][0]["metadata"]["name"]
+
     def upload_files(
         self,
         id: str,
         content: bytes,
     ):
-        pod_name = self.v1_core.list_namespaced_pod(
-            namespace=cfg["namespace"], label_selector="app=" + id
-        ).to_dict()["items"][0]["metadata"]["name"]
+        pod_name = self._get_pod_name(id)
 
         try:
             exec_command = ["tar", "xf", "-", "-C", "/workspace/"]
@@ -519,3 +523,105 @@ class KubernetesOperator(Operator):
 
         finally:
             stream.close()
+
+    def get_files(self, id):
+        pod_name = self._get_pod_name(id)
+        return self.__get_files(
+            pod_name,
+            file_paths={"id": 0, "name": "workspace", "children": []},
+            current_dir="/workspace",
+        )[0]
+
+    def __get_files(self, pod_name: str, file_paths, current_dir):
+        id_counter = file_paths["id"]
+        try:
+            exec_command = [
+                "/bin/sh",
+                "-c",
+                f"cd {current_dir} && ls",
+            ]
+            response = kubernetes.stream.stream(
+                self.v1_core.connect_get_namespaced_pod_exec,
+                pod_name,
+                namespace=cfg["namespace"],
+                command=exec_command,
+                stderr=True,
+                stdin=False,
+                stdout=True,
+                tty=False,
+            )
+
+            if response:
+                response = response[:-1] if response[-1] == "\n" else response
+                paths = [f"{current_dir}/{p}" for p in response.split("\n")]
+                for i, path in enumerate(paths, start=1):
+                    if self._is_dir(path, pod_name):
+                        nested_paths, id_counter = self.__get_files(
+                            pod_name,
+                            {
+                                "id": id_counter + i,
+                                "name": os.path.basename(path),
+                                "children": [],
+                            },
+                            path,
+                        )
+                        file_paths["children"].append(nested_paths)
+                    else:
+                        file_paths["children"].append(
+                            {"id": id_counter + i, "name": os.path.basename(path)}
+                        )
+
+            return file_paths, id_counter
+
+        except kubernetes.client.exceptions.ApiException as e:
+            log.exception("Exception when copying file to t he pod")
+            raise e
+
+    def file_exists(self, path, id) -> bool:
+        pod_name = self._get_pod_name(id)
+        try:
+            exec_command = [
+                "/bin/sh",
+                "-c",
+                f"[ -f {path} ] && echo yes",
+            ]
+            return bool(
+                kubernetes.stream.stream(
+                    self.v1_core.connect_get_namespaced_pod_exec,
+                    pod_name,
+                    namespace=cfg["namespace"],
+                    command=exec_command,
+                    stderr=True,
+                    stdin=False,
+                    stdout=True,
+                    tty=False,
+                )
+            )
+
+        except kubernetes.client.exceptions.ApiException as e:
+            log.exception("Exception when copying file to the pod")
+            raise e
+
+    def _is_dir(self, path, pod_name) -> bool:
+        try:
+            exec_command = [
+                "/bin/sh",
+                "-c",
+                f"[ -d {path} ] && echo yes",
+            ]
+            return bool(
+                kubernetes.stream.stream(
+                    self.v1_core.connect_get_namespaced_pod_exec,
+                    pod_name,
+                    namespace=cfg["namespace"],
+                    command=exec_command,
+                    stderr=True,
+                    stdin=False,
+                    stdout=True,
+                    tty=False,
+                )
+            )
+
+        except kubernetes.client.exceptions.ApiException as e:
+            log.exception("Exception when copying file to the pod")
+            raise e
