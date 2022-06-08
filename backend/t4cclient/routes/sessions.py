@@ -7,6 +7,7 @@ import typing as t
 import io
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 import tarfile
+import json
 
 import t4cclient.core.database.repositories as repositories_crud
 import t4cclient.extensions.modelsources.git.crud as git_models_crud
@@ -200,6 +201,19 @@ def get_session_usage():
     return t4c_manager.get_t4c_status()
 
 
+@router.get("/{id}")
+def get_file_system(id: str):
+    try:
+        file_structure = json.dumps(OPERATOR.get_files(id))
+        return file_structure
+    except Exception:
+        log.exception("There was an internal error.")
+        raise HTTPException(
+            status_code=500,
+            detail="There was an internal error.",
+        )
+
+
 @router.post(
     "/{id}",
     responses=AUTHENTICATION_RESPONSES,
@@ -209,9 +223,12 @@ def upload_files(id: str, files: list[UploadFile]):
     tar = tarfile.TarFile(name="upload.tar", mode="w", fileobj=tar_bytesio)
 
     for file in files:
+        file.filename = file.filename.replace(" ", "_")
         tar.addfile(
-            tar.gettarinfo(arcname=file.filename, fileobj=file.file), fileobj=file.file
+            tar.gettarinfo(arcname=file.filename, fileobj=file.file),
+            fileobj=file.file,
         )
+
     tar.close()
     tar_bytesio.seek(0)
     tar_bytes = tar_bytesio.read()
