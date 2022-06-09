@@ -4,21 +4,21 @@ theme:
 nav:
   - Home: index.md
   - Getting Started: onboarding.md
-  - Projects: 
-    - Request a new project: projects/new.md
-    - Delete a project: projects/delete.md
-  - Sessions: 
-    - Session Types: sessions/types.md
-    - Request Session: sessions/request.md
-    - (Re-)Connect to Session: sessions/reconnect.md
-    - Terminate Session: sessions/terminate.md
-    - Taking Screenshots: sessions/screenshots.md
-    - Flows: 
-      - Git: sessions/flows/git
-      - TeamForCapella: sessions/flows/t4c
+  - Projects:
+      - Request a new project: projects/new.md
+      - Delete a project: projects/delete.md
+  - Sessions:
+      - Session Types: sessions/types.md
+      - Request Session: sessions/request.md
+      - (Re-)Connect to Session: sessions/reconnect.md
+      - Terminate Session: sessions/terminate.md
+      - Taking Screenshots: sessions/screenshots.md
+      - Flows:
+          - Git: sessions/flows/git
+          - TeamForCapella: sessions/flows/t4c
   - User Management: users.md
-  - Additional Configuration: 
-    - Create an alert: additional/alert
+  - Additional Configuration:
+      - Create an alert: additional/alert
   - About: about.md
 
 repo_url: https://github.com/DSD-DBS/capella-collab-manager
@@ -30,3 +30,8 @@ markdown_extensions:
   - pymdownx.superfences
   - abbr
   - pymdownx.snippets
+
+extra:
+  generator: false
+
+copyright: Copyright &copy; 2022 DB Netz AG
