@@ -51,7 +51,6 @@ import { RepositorySyncSettingsComponent } from './settings/admin-settings/repos
 import { T4CRepoSettingsComponent } from './settings/repository-manager-settings/repository-settings/model-source/t4c-repo-settings/t4c-repo-settings.component';
 import { RepositoryUserSettingsComponent } from './settings/repository-manager-settings/repository-settings/repository-user-settings/repository-user-settings.component';
 import { ProjectDeletionDialogComponent } from './settings/repository-manager-settings/repository-settings/model-source/t4c-repo-settings/project-deletion-dialog/project-deletion-dialog.component';
-import { SimplebarAngularModule } from 'simplebar-angular';
 import { GitModelDeletionDialogComponent } from './settings/repository-manager-settings/repository-settings/model-source/git-model-settings/git-model-deletion-dialog/git-model-deletion-dialog.component';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { WarningComponent } from './home/request-session/warning/warning.component';
@@ -145,7 +144,6 @@ import { CookieModule } from 'ngx-cookie';
     MatCheckboxModule,
     MatSnackBarModule,
     FormsModule,
-    SimplebarAngularModule,
     OverlayModule,
     MatSlideToggleModule,
     MatMenuModule,
