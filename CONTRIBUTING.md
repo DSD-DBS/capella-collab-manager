@@ -230,7 +230,7 @@ Run the following steps:
    make dev
    ```
 
-1. You should see the frontend running from port 4200.
+1. You should see the frontend running on port 4200.
 
 We additionally recommend that you set up your editor / IDE as follows.
 
