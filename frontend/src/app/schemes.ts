@@ -5,6 +5,7 @@ export interface Session {
   ports: Array<string>;
   created_at: string;
   id: string;
+  last_seen: string;
   type: 'persistent' | 'readonly';
   rdp_username: string;
   rdp_password: string;
@@ -14,7 +15,6 @@ export interface Session {
   repository: string;
   state: string;
   owner: string;
-  mac: string;
 }
 
 export interface User {
@@ -30,7 +30,7 @@ export interface RepositoryUser {
   role: 'user' | 'manager' | 'administrator';
 }
 
-export interface SessionsUsage {
+export interface SessionUsage {
   free: number;
   total: number;
   errors: Array<string>;
