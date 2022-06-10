@@ -40,3 +40,8 @@ button {
   padding-bottom: 0px;
   width: 400px;
 }
+
+.scrollable {
+  max-height: 40vh;
+  overflow-y: auto;
+}
