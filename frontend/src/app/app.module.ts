@@ -77,6 +77,7 @@ import { ViewLogsDialogComponent } from './settings/repository-manager-settings/
 import { UploadDialogComponent } from './active-sessions/upload-dialog/upload-dialog.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTreeModule } from '@angular/material/tree';
+import { FileExistsDialogComponent } from './active-sessions/upload-dialog/file-exists-dialog/file-exists-dialog.component';
 
 @NgModule({
   declarations: [
@@ -125,6 +126,7 @@ import { MatTreeModule } from '@angular/material/tree';
     ModelSourceComponent,
     ViewLogsDialogComponent,
     UploadDialogComponent,
+    FileExistsDialogComponent,
   ],
   imports: [
     BrowserModule,

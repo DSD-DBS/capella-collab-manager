@@ -35,9 +35,3 @@ export interface SessionsUsage {
   total: number;
   errors: Array<string>;
 }
-
-export interface PathNode {
-  id: number;
-  name: string;
-  children?: PathNode[];
-}
