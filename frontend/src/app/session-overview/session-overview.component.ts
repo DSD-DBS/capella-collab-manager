@@ -3,10 +3,9 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { forkJoin } from 'rxjs';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
 import { NavBarService } from '../navbar/service/nav-bar.service';
-import { Session, SessionsUsage } from '../schemes';
+import { Session } from '../schemes';
 import { SessionService } from '../services/session/session.service';
 
 @Component({
@@ -33,7 +32,6 @@ export class SessionOverviewComponent implements OnInit {
     'docker_state',
     'guacamole_user',
     'last_seen',
-    'mac',
     'actions',
   ];
 

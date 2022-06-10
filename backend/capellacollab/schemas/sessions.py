@@ -25,7 +25,6 @@ class GetSessionsResponse(BaseModel):
     guacamole_username: str
     guacamole_connection_id: str
     last_seen: str
-    mac: str
 
     class Config:
         orm_mode = True

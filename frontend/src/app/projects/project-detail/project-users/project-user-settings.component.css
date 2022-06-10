@@ -24,3 +24,8 @@ button {
 mat-card {
   width: 400px;
 }
+
+.scrollable {
+  max-height: 40vh;
+  overflow-y: scroll;
+}

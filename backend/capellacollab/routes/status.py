@@ -7,7 +7,6 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 # 1st party:
-from capellacollab import config
 from capellacollab.core.database import get_db
 from capellacollab.core.operators import OPERATOR
 from capellacollab.extensions.guacamole import get_admin_token

@@ -25,7 +25,7 @@ def ad_session():
     return ConfidentialClientApplication(
         cfg["client"]["id"],
         client_credential=cfg["client"]["secret"],
-        authority=cfg["connectConfigurationEndpoint"],
+        authority=cfg["authorizationEndpoint"],
     )
 
 
@@ -73,5 +73,9 @@ async def logout(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
 
 
 @router.get("/tokens", name="Validate the token")
-async def validate_token(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
-    return jwt_decoded
+async def validate_token(
+    scope: t.Optional[Role], token=Depends(jwt_bearer.JWTBearer()), db=Depends(get_db)
+):
+    if scope.ADMIN:
+        verify_admin(token, db)
+    return token

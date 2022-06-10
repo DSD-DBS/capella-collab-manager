@@ -16,7 +16,6 @@ import kubernetes.client.exceptions
 import kubernetes.client.models
 import kubernetes.config
 
-# 1st party:
 from capellacollab.config import config
 from capellacollab.core.operators.abc import Operator
 
@@ -92,6 +91,7 @@ class KubernetesOperator(Operator):
                 "T4C_SERVER_PORT": t4c_cfg["port"],
                 "T4C_REPOSITORIES": ",".join(repositories),
                 "RMT_PASSWORD": password,
+                "T4C_USERNAME": username,
             },
             self._get_claim_name(username),
         )
@@ -337,7 +337,14 @@ class KubernetesOperator(Operator):
                 "replicas": 1,
                 "selector": {"matchLabels": {"app": name}},
                 "template": {
-                    "metadata": {"labels": {"app": name}},
+                    "metadata": {
+                        "labels": {"app": name},
+                        "annotations": {
+                            "prometheus.io/scrape": "true",
+                            "prometheus.io/path": "/metrics",
+                            "prometheus.io/port": "9118",
+                        },
+                    },
                     "spec": {
                         "containers": [
                             {
@@ -429,7 +436,13 @@ class KubernetesOperator(Operator):
                         "protocol": "TCP",
                         "port": 3389,
                         "targetPort": 3389,
-                    }
+                    },
+                    {
+                        "name": "metrics",
+                        "protocol": "TCP",
+                        "port": 9118,
+                        "targetPort": 9118,
+                    },
                 ],
                 "selector": {"app": deployment_name},
                 "type": "ClusterIP",

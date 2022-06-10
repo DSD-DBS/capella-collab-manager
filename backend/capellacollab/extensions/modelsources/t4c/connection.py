@@ -66,6 +66,7 @@ def get_t4c_status():
 
 
 def fetch_last_seen(mac_addr: str):
+    """Return t4c-session last seen activity status."""
     try:
         status = get_t4c_status()
         if "errors" in status:

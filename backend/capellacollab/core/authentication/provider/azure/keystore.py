@@ -8,6 +8,7 @@ import typing as t
 
 # 3rd party:
 import requests
+from jose import jwt
 from pydantic import BaseModel
 
 # 1st party:

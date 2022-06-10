@@ -3,7 +3,6 @@
 
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -45,7 +44,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { T4CRepoSettingsComponent } from './projects/project-detail/model-source/t4c-repo-settings/t4c-repo-settings.component';
 import { RepositoryUserSettingsComponent } from './projects/project-detail/project-users/project-user-settings.component';
 import { T4CRepoDeletionDialogComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-repo-deletion-dialog/t4c-repo-deletion-dialog.component';
-import { SimplebarAngularModule } from 'simplebar-angular';
 import { GitModelDeletionDialogComponent } from './projects/project-detail/model-source/git-model-settings/git-model-deletion-dialog/git-model-deletion-dialog.component';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { WarningComponent } from './workspaces/request-session/warning/warning.component';
@@ -65,9 +63,6 @@ import { BackupSettingsComponent } from './projects/project-detail/backup-settin
 import { GitBackupSettingsComponent } from './projects/project-detail/backup-settings/ease-backup-settings/ease-backup-settings.component';
 import { JenkinsBackupSettingsComponent } from './projects/project-detail/backup-settings/jenkins-backup-settings/jenkins-backup-settings.component';
 import { MatTabsModule } from '@angular/material/tabs';
-import { CreateEASEBackupComponent } from './projects/project-detail/backup-settings/ease-backup-settings/create-ease-backup/create-ease-backup.component';
-import { ModelSourceComponent } from './projects/project-detail/model-source/model-source.component';
-import { ViewLogsDialogComponent } from './projects/project-detail/backup-settings/ease-backup-settings/view-logs-dialog/view-logs-dialog.component';
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
 import { MatRippleModule } from '@angular/material/core';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
@@ -89,6 +84,9 @@ import { RequestsComponent } from './settings/requests/requests.component';
 import { CommonModule } from '@angular/common';
 import { ToastrModule } from 'ngx-toastr';
 import { DockerimageSettingsComponent } from './settings/core/dockerimage-settings/dockerimage-settings.component';
+import { CookieModule } from 'ngx-cookie';
+import { ViewLogsDialogComponent } from './projects/project-detail/backup-settings/ease-backup-settings/view-logs-dialog/view-logs-dialog.component';
+import { CreateEASEBackupComponent } from './projects/project-detail/backup-settings/ease-backup-settings/create-ease-backup/create-ease-backup.component';
 
 @NgModule({
   declarations: [
@@ -128,9 +126,6 @@ import { DockerimageSettingsComponent } from './settings/core/dockerimage-settin
     BackupSettingsComponent,
     GitBackupSettingsComponent,
     JenkinsBackupSettingsComponent,
-    CreateEASEBackupComponent,
-    ModelSourceComponent,
-    ViewLogsDialogComponent,
     ProjectOverviewComponent,
     MaintenanceComponent,
     ModelOverviewComponent,
@@ -145,6 +140,8 @@ import { DockerimageSettingsComponent } from './settings/core/dockerimage-settin
     ModelDetailComponent,
     ProjectMetadataComponent,
     RequestsComponent,
+    ViewLogsDialogComponent,
+    CreateEASEBackupComponent,
   ],
   imports: [
     CommonModule,
@@ -168,7 +165,6 @@ import { DockerimageSettingsComponent } from './settings/core/dockerimage-settin
     MatExpansionModule,
     MatCheckboxModule,
     FormsModule,
-    SimplebarAngularModule,
     OverlayModule,
     MatSlideToggleModule,
     MatMenuModule,
@@ -186,6 +182,7 @@ import { DockerimageSettingsComponent } from './settings/core/dockerimage-settin
       preventDuplicates: true,
       countDuplicates: true,
     }),
+    CookieModule.withOptions(),
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

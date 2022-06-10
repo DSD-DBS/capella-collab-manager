@@ -5,10 +5,9 @@
 ### APPLICATION RELATED CONFIGURATION ###
 #########################################
 
-
 docker:
   # Registry for Docker Images, will be used as prefix for Docker Images
-  registry: 
+  registry:
     internal: localhost
     external: docker.io
 
@@ -24,27 +23,28 @@ docker:
       guacamole: docker.io/guacamole/guacamole
       guacd: docker.io/guacamole/guacd
 
-general: 
+    prometheus: /prom/prometheus
+
+general:
   # Base URL on which the service listens
   host: localhost
   port: 80
   scheme: http
 
-database: 
+database:
   # Database Configuration for Guacamole
-  guacamole: 
-
+  guacamole:
     # Define whether the database should also be deployed
-    # in the cluster or whether it already exists externally. 
+    # in the cluster or whether it already exists externally.
     deploy: True
 
-    internal: 
+    internal:
       ###### IF database.guacamole.deploy == True ######
 
       # Admin password of the database
       password: secret
 
-    external: 
+    external:
       ###### IF database.guacamole.deploy == False ######
 
       # Select type of external database
@@ -52,29 +52,28 @@ database:
       type: POSTGRES
 
       # Configure the hostname of the external database
-      hostname: 
+      hostname:
 
       # Configure the database name of the external database
-      database: 
+      database:
 
       # Configure the username of the external database
-      username: 
+      username:
 
       # Configure the password of the external database
-      password: 
+      password:
 
   # Database Configuration for the T4C Manager
-  backend: 
-
+  backend:
     # Define whether the database should also be deployed
-    # in the cluster or whether it already exists externally. 
+    # in the cluster or whether it already exists externally.
     deploy: True
-    
-    # Username of an initial admin user 
+
+    # Username of an initial admin user
     # Is only set if the database is empty!
     initialAdmin: admin
 
-    internal: 
+    internal:
       ###### IF database.backend.deploy == True ######
 
       # Admin password of the database
@@ -92,9 +91,9 @@ backend:
     jwt:
       usernameClaim: sub # azure: preferred_username
 
-    oauth: 
+    oauth:
       # Only required when using provider oauth
-      endpoints: 
+      endpoints:
         wellKnown: http://dev-t4c-manager-oauth-mock:8080/default/.well-known/openid-configuration
         # Override endpoint that issues JWT Tokens
         tokenIssuance: ""
@@ -107,10 +106,10 @@ backend:
         -----BEGIN PUBLIC KEY-----
         -----END PUBLIC KEY-----
 
-      scopes: 
+      scopes:
         - openid
 
-      client: 
+      client:
         # OAUTH2 Client ID
         id: tbd
         # OAUTH2 Client Secret
@@ -118,19 +117,16 @@ backend:
 
       redirectURI: http://localhost:8080/oauth2/callback
 
-    azure: 
+    azure:
       # Only required when using provider oauth
       authorizationEndpoint: tbd
-      
-      client: 
+
+      client:
         id: tbd
         secret: tbd
 
-      audience: tbd
       redirectURI: tbd
       
-      connectConfigurationEndpoint: tbd
-
   # Namespace in which the Session Deployments / Pods should be spawned.
   # IMPORTANT: The namespace has to exist already
   k8sSessionNamespace: t4c-sessions
@@ -145,16 +141,16 @@ backend:
 # target: local | azure
 target: local
 
-cluster: 
+cluster:
   kind: Kubernetes # Kubernetes | OpenShift
 
-  containers: 
+  containers:
     # The following values are appended to each container
 
-  service: 
+  service:
     fqdn: capella.example.de
 
-  namespaces: 
-    sessions: 
-      containers: 
-        # The following values are appended to each container in the sessions namespace
+  namespaces:
+    sessions:
+      containers:
+      # The following values are appended to each container in the sessions namespace

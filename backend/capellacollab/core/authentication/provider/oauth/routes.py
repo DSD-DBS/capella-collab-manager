@@ -1,15 +1,18 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# 3rd party:
 from fastapi import APIRouter, Depends
 
-# 1st party:
-from capellacollab.core.authentication import jwt_bearer
-from capellacollab.core.authentication.schemas import RefreshTokenRequest, TokenRequest
+import typing as t
 
-# local:
+from fastapi import APIRouter, Depends
+
 from .flow import get_auth_redirect_url, get_token, refresh_token
+from capellacollab.core.authentication import jwt_bearer
+from capellacollab.core.authentication.database import verify_admin
+from capellacollab.core.authentication.schemas import RefreshTokenRequest, TokenRequest
+from capellacollab.core.database import get_db
+from capellacollab.projects.users.models import Role
 
 router = APIRouter()
 
@@ -35,5 +38,9 @@ async def logout(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
 
 
 @router.get("/tokens", name="Validate the token")
-async def validate_token(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
-    return jwt_decoded
+async def validate_token(
+    scope: t.Optional[Role], token=Depends(jwt_bearer.JWTBearer()), db=Depends(get_db)
+):
+    if scope.ADMIN:
+        verify_admin(token, db)
+    return token

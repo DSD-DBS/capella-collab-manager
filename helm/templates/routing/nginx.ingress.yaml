@@ -40,6 +40,13 @@ spec:
                 name: {{ .Release.Name }}-guacamole-guacamole
                 port:
                   number: 8080
+          - path: /prometheus
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-prometheus-nginx
+                port:
+                  name: promui
           {{ if eq .Values.target "local" }}
           - path: /default
             pathType: Prefix

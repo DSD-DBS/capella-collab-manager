@@ -170,8 +170,7 @@ def request_session(
     response["state"] = OPERATOR.get_session_state(response["id"])
     response["rdp_password"] = rdp_password
     response["guacamole_password"] = guacamole_password
-    response["last_seen"] = t4c_manager.fetch_last_seen(response["mac"])
-
+    response["last_seen"] = get_last_seen(database_model.id)
     return response
 
 

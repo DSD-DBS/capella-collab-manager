@@ -1,12 +1,14 @@
-docker: 
-  images: 
-    workspaces: 
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+docker:
+  images:
+    workspaces:
       persistent: "{{ .Values.docker.registry.internal }}{{ .Values.docker.images.workspaces.persistent }}"
       readonly: "{{ .Values.docker.registry.internal }}{{ .Values.docker.images.workspaces.readonly }}"
-  
+
     backup: "{{ .Values.docker.registry.internal }}{{ .Values.docker.images.importer }}"
 
-operators: 
+operators:
   operator: k8s
 
   k8s:
@@ -15,14 +17,14 @@ operators:
     storageAccessMode: {{ .Values.backend.storageAccessMode }}
 
     cluster:
-      containers: 
+      containers:
         {{- toYaml .Values.cluster.namespaces.sessions.containers | nindent 8 }}
 
-extensions: 
-  guacamole: 
+extensions:
+  guacamole:
     baseURI: "http://{{ .Release.Name }}-guacamole-guacamole:8080/guacamole"
     publicURI: "{{ .Values.general.scheme }}://{{ .Values.general.host }}:{{ .Values.general.port }}/guacamole"
-    
+
     username: "{{ .Values.guacamole.username }}"
     password: "{{ .Values.guacamole.password }}"
 
@@ -31,9 +33,9 @@ authentication:
   jwt:
     usernameClaim: "{{ .Values.backend.authentication.jwt.usernameClaim }}"
 
-  oauth: 
+  oauth:
     # Only required when using provider oauth
-    endpoints: 
+    endpoints:
       tokenIssuance: "{{ .Values.backend.authentication.oauth.endpoints.tokenIssuance }}"
       authorization: "{{ .Values.backend.authentication.oauth.endpoints.authorization }}"
       wellKnown: "{{ .Values.backend.authentication.oauth.endpoints.wellKnown }}"
@@ -43,30 +45,29 @@ authentication:
     publicKey: |
       {{- .Values.backend.authentication.oauth.publicKey | nindent 6}}
 
-    scopes: 
+    scopes:
       {{- toYaml .Values.backend.authentication.oauth.scopes | nindent 6}}
 
-    client: 
+    client:
       id: "{{ .Values.backend.authentication.oauth.client.id }}"
       secret: "{{ .Values.backend.authentication.oauth.client.secret }}"
 
     redirectURI: "{{ .Values.backend.authentication.oauth.redirectURI }}"
-    
-  azure: 
+
+  azure:
     # Only required when using provider oauth
     authorizationEndpoint: "{{ .Values.backend.authentication.azure.authorizationEndpoint }}"
-    
-    client: 
+
+    client:
       id: "{{ .Values.backend.authentication.azure.client.id }}"
       secret: "{{ .Values.backend.authentication.azure.client.secret }}"
 
-    audience: "{{ .Values.backend.authentication.azure.audience }}"
     redirectURI: "{{ .Values.backend.authentication.azure.redirectURI }}"
-    
+
     connectConfigurationEndpoint: "{{ .Values.backend.authentication.azure.connectConfigurationEndpoint }}"
 
-modelsources: 
-  t4c: 
+modelsources:
+  t4c:
     usageAPI: "{{ .Values.t4cServer.apis.usageStats }}"
     restAPI: "{{ .Values.t4cServer.apis.restAPI }}"
 
@@ -77,25 +78,27 @@ modelsources:
     port: "{{ .Values.t4cServer.port }}"
     licence: "{{ .Values.t4cServer.licenseKey }}"
 
-backups: 
+backups:
   enabled: ["importer"]
- 
-  importer: 
-    git: 
+
+  importer:
+    git:
       email: "{{ .Values.git.email }}"
 
-  jenkins: 
+  jenkins:
     username: "{{ .Values.jenkins.username }}"
     password: "{{ .Values.jenkins.password }}"
     baseURL: "{{ .Values.jenkins.baseURL }}"
 
-    git: 
+    git:
       credentialID: "{{ .Values.git.credentialID }}"
       email: "{{ .Values.git.email }}"
       scriptRepoURL: "{{ .Values.git.scriptRepoURL }}"
 
+prometheus:
+  url: "http://{{ .Release.Name }}-prometheus-server:9118/prometheus/"
 
-database: 
+database:
   {{ if .Values.database.backend.deploy }}
   url: "postgresql://backend:{{ .Values.database.backend.internal.password }}@{{ .Release.Name }}-backend-postgres:5432/backend"
   {{ else }}
@@ -103,11 +106,11 @@ database:
   {{ end }}
 
 
-initial: 
+initial:
   admin: "{{ .Values.database.backend.initialAdmin }}"
 
-logging: 
+logging:
   level: DEBUG
 
-requests: 
+requests:
   timeout: 2

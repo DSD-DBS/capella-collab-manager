@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Component, OnInit } from '@angular/core';
-import { SessionsUsage } from 'src/app/schemes';
+import { SessionUsage } from 'src/app/schemes';
 import { SessionService } from 'src/app/services/session/session.service';
 
 @Component({
@@ -14,12 +14,12 @@ export class LicencesComponent implements OnInit {
   constructor(private sessionService: SessionService) {}
 
   ngOnInit(): void {
-    this.sessionService.getSessionsUsage().subscribe((res) => {
-      this.sessionsUsage = res;
+    this.sessionService.getSessionUsage().subscribe((res) => {
+      this.sessionUsage = res;
     });
   }
 
-  sessionsUsage: SessionsUsage | undefined = undefined;
+  sessionUsage: SessionUsage | undefined = undefined;
 
   getErrorMessage(error: string): string {
     switch (error) {

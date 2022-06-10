@@ -124,6 +124,7 @@ Run the following steps:
    *Hint*: You can run `python -m capellacollab.config.diff` after each update to check if your config is up to date.
 
 1. This step is only **necessary, if you use the self signed certificate** option for the oauth mock.
+
    If you don't have the certificate in your local certificate store, please execute the following command:
 
    ```sh
