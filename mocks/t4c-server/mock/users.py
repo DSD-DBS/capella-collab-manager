@@ -8,15 +8,14 @@ from pydantic import BaseModel
 router = APIRouter()
 
 
-class PostServerRequest(BaseModel):
+class PostUserRequest(BaseModel):
     id: str
     isAdmin: bool
     password: str
 
 
 @router.post("/")
-def add_user(body: PostServerRequest, repositoryName: str):
-    print(body)
+def add_user(body: PostUserRequest, repositoryName: str):
     return body
 
 
