@@ -1,11 +1,25 @@
-import { NestedTreeControl } from '@angular/cdk/tree';
+import { NestedTreeControl, FlatTreeControl } from '@angular/cdk/tree';
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
+import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
+
 import { MatTreeNestedDataSource  } from '@angular/material/tree';
 import { Subscription, finalize } from 'rxjs';
-import { Session, PathNode } from 'src/app/schemes';
+import { Session } from 'src/app/schemes';
 import { LoadFilesService } from 'src/app/services/load-files/load-files.service';
 import { HttpEventType } from '@angular/common/http'
+
+import { FileExistsDialogComponent } from './file-exists-dialog/file-exists-dialog.component';
+
+export class PathNode {
+  id: number = -1;
+  level: number = -1;
+  name: string = "";
+  children?: PathNode[];
+}
+
+
 
 
 @Component({
@@ -22,25 +36,59 @@ export class UploadDialogComponent implements OnInit{
   treeControl = new NestedTreeControl<PathNode>(node => node.children);
   dataSource = new MatTreeNestedDataSource<PathNode>();
 
+  //treeControl: FlatTreeControl<PathNode>;
+
+  //treeFlattener: MatTreeFlattener<PathNode>;
+
+  //dataSource: MatTreeFlatDataSource<PathNode>;
+
   lastID: number = 0;
 
   constructor(
     private loadService: LoadFilesService,
+    private dialog: MatDialog,
     public dialogRef: MatDialogRef<UploadDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public session: Session
-  ) { }
+  ) {
+    /*
+    this.treeFlattener = new MatTreeFlattener(
+      this._transformer,
+      this.getLevel,
+      this.isExpandable,
+      this.getChildren,
+    );
+    this.treeControl = new FlatTreeControl<PathNode>(this.getLevel, this.isExpandable);
+    this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);*/
+
+  }
 
   ngOnInit(): void {
     this.loadService.getCurrentFiles(this.session.id).subscribe((fileSystem: any) => {
       this.dataSource.data = [JSON.parse(fileSystem)];
+
       this.getLastID(this.dataSource.data[0]);
-      console.log(this.dataSource.data);
     });
   }
 
-  hasChild = (_: number, node: PathNode) => !!node.children; // && node.children.length > 0;
+  hasChild = (_: number, node: PathNode) => !!node.children;
 
-  hasNoContent = (_: number, _nodeData: PathNode) => _nodeData.name === '';
+  getLevel = (node: PathNode) => node.level;
+
+  getChildren = (node: PathNode): PathNode[] | undefined => node.children;
+
+  isExpandable = (node: PathNode): boolean => !!node.children;
+
+  /*transformer = (node: PathNode, level: number) => {
+    const existingNode = this.nestedNodeMap.get(node);
+    const flatNode =
+      existingNode && existingNode.item === node.item ? existingNode : new TodoItemFlatNode();
+    flatNode.item = node.item;
+    flatNode.level = level;
+    flatNode.expandable = !!node.children?.length;
+    this.flatNodeMap.set(flatNode, node);
+    this.nestedNodeMap.set(node, flatNode);
+    return flatNode;
+  };*/
 
   getLastID(node: PathNode){
     console.log(node)
@@ -50,72 +98,99 @@ export class UploadDialogComponent implements OnInit{
     })
   }
 
-  addNewDir(node: PathNode, name: string) {
-    // TODO
-    node.name = name;
-    node.children = [];
-    this.dataSource.data[0].children?.push(node);
-  }
+  getParentNode(node: PathNode): PathNode | null {
+    const currentLevel = this.getLevel(node);
 
+    if (currentLevel < 1) {
+      return null;
+    }
 
+    var startIndex = this.treeControl.dataNodes.indexOf(node) - 1;
 
-  pushToDatasource(node: PathNode,  newNode: PathNode, position: number){
-    node.children?.forEach((child: PathNode) => {
-      if (position == child.id){
-        child.children?.push(newNode);
+    for (let i = startIndex; i >= 0; i--) {
+      var currentNode = this.treeControl.dataNodes[i]
+
+      if (this.getLevel(currentNode) < currentLevel) {
+        return currentNode;
       }
-    });
-    console.log(this.dataSource.data);
+    }
+
+    return null;
   }
 
-  buildFilePathPrefix(node: PathNode, names: string[], searchedID: number): any {
+
+  buildPathPrefix(node: PathNode): string {
+    if (!node.level){
+      return ""
+    }
+    return this.getParentNode(node) + `/${node.name}`
+  }
+
+  _buildFilePathPrefix(node: PathNode, names: string[], searchedID: number): string {
     if (node.id == searchedID) return "";
 
-    node.children?.forEach((child: PathNode) => {
-      if (searchedID == child.id) {
-        var filePath = "";
-        names.forEach((name: string) => {
-          filePath += `/${name}`
+    var filePath = "";
+    if (!!node.children){
+      for (var i = 0; i < node.children.length; i++) {
+        const child = node.children[i];
+        if (searchedID == child.id) {
+          names.forEach((name: string) => {
+            filePath += `${name}/`
+          })
+          filePath += `${child.name}`;
+          break;
+        }else{
+          names.push(child.name);
+          filePath = this._buildFilePathPrefix(child, names, searchedID);
+          const index: number = names.indexOf(child.name);
+          names.splice(index, 1);
         }
-      )
-      return filePath;
       }
-      else {
-        names.push(child.name);
-        return this.buildFilePathPrefix(child, names, searchedID);
-      }
-    })
+    }
+    return filePath;
   }
 
+  buildFilePathPrefix(id: number){
+    return this._buildFilePathPrefix(this.dataSource.data[0], [], id)
+  }
+
+
   onFileInput(files: FileList | null, id: number): void {
-    console.log("id" , id)
-    var prefix = this.buildFilePathPrefix(this.dataSource.data[0], [], id);
-    console.log("dls", prefix);
+    // const prefix = this.buildPathPrefix(node);
+    const prefix = this.buildFilePathPrefix(id)
+    console.log(prefix);
+
     if (files) {
       for (let file of Array.from(files)) {
-        if (! this.files.includes([file, prefix])) {
-          this.files.push([file, prefix]);
-        }
-        else {
-          // TODO: Are you sure to overwrite `${file.name}`?
+        if (this.checkIfFileExists(file, prefix)) {
+
+          const dialogRef = this.dialog.open(
+            FileExistsDialogComponent,
+            {data: file.name}
+          )
+          dialogRef.afterClosed().subscribe(response => {
+            if (! this.files.includes([file, prefix]) && response){
+              this.files.push([file, prefix]);
+            }
+          })
+        }else if (! this.files.includes([file, prefix])){
+            this.files.push([file, prefix]);
         }
       }
     }
   }
 
-  removeFileFromSelection(file: File): void {
-    // TODO
-    const prefix = "placeholder";
+  checkIfFileExists(file: File, prefix: string): boolean {
+    var result = false;
+    this.dataSource.data[0].children?.forEach((child: PathNode) => {
+      if (file.name == child.name) result = true;
+    });
+    return result;
+  }
+
+  removeFileFromSelection(file: File, prefix: string): void {
     const index: number = this.files.indexOf([file, prefix]);
     this.files.splice(index, 1);
-  }
-
-  removeFileFromSystem(name: string): void {
-    //TODO
-  }
-
-  placeholder() {
-
   }
 
   onSubmit() {
