@@ -528,12 +528,13 @@ class KubernetesOperator(Operator):
         pod_name = self._get_pod_name(id)
         return self.__get_files(
             pod_name,
-            file_paths={"id": 0, "name": "workspace", "children": []},
+            file_paths={"id": 0, "level": 0, "name": "workspace", "children": []},
             current_dir="/workspace",
         )[0]
 
     def __get_files(self, pod_name: str, file_paths, current_dir):
         id_counter = file_paths["id"]
+        level = file_paths["level"] + 1
         try:
             exec_command = [
                 "/bin/sh",
@@ -556,10 +557,11 @@ class KubernetesOperator(Operator):
                 paths = [f"{current_dir}/{p}" for p in response.split("\n")]
                 for i, path in enumerate(paths, start=1):
                     if self._is_dir(path, pod_name):
-                        nested_paths, id_counter = self.__get_files(
+                        nested_paths, id_counter, _ = self.__get_files(
                             pod_name,
                             {
                                 "id": id_counter + i,
+                                "level": level,
                                 "name": os.path.basename(path),
                                 "children": [],
                             },
@@ -568,10 +570,14 @@ class KubernetesOperator(Operator):
                         file_paths["children"].append(nested_paths)
                     else:
                         file_paths["children"].append(
-                            {"id": id_counter + i, "name": os.path.basename(path)}
+                            {
+                                "id": id_counter + i,
+                                "level": level,
+                                "name": os.path.basename(path),
+                            }
                         )
 
-            return file_paths, id_counter
+            return file_paths, id_counter, level
 
         except kubernetes.client.exceptions.ApiException as e:
             log.exception("Exception when copying file to t he pod")
