@@ -8,3 +8,4 @@
 .mypy_cache
 deployments/*
 certs/*
+/node_modules

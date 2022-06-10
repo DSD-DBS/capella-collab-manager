@@ -55,7 +55,7 @@ Do not use it in production!
    ```
 
 2. Verify that the server runs, e.g. by navigating to
-   [Well Known](http://localhost:8080/default/.well-known/openid-configuration)
+   [Well Known](http://localhost:8083/default/.well-known/openid-configuration)
 
 ### Option 2: Create a self signed certificate
 
@@ -113,6 +113,7 @@ Run the following steps:
    *Hint*: You can run `python -m t4cclient.config.diff` after each update to check if your config is up to date.
 
 1. This step is only **necessary, if you use the self signed certificate** option for the oauth mock.
+
    If you don't have the certificate in your local certificate store, please execute the following command:
 
    ```sh

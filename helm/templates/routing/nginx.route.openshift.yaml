@@ -1,7 +1,11 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 {{- if eq .Values.cluster.kind "OpenShift" }}
 {{ $frontend := dict "path" "/" "service" "frontend" }}
 {{ $backend := dict "path" "/api/v1" "service" "nginx-clusterip" }}
 {{ $guacamole := dict "path" "/guacamole" "service" "guacamole-guacamole" }}
+{{ $guacamole := dict "path" "/prometheus" "service" "prometheus-nginx" }}
 {{ $routes := list $frontend $backend $guacamole }}
 {{ range $route := $routes }}
 kind: Route

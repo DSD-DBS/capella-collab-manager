@@ -101,6 +101,5 @@ class DockerOperator(Operator):
                 ]
             ),
             "created_at": container.attrs["Created"],
-            "mac": container.attrs["NetworkSettings"]["MacAddress"],
             "host": cfg["containerHost"],
         }

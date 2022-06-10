@@ -72,7 +72,7 @@ spec:
             {{ end }}
             - name: {{ .Release.Name }}-initsql
               mountPath: /docker-entrypoint-initdb.d
-          {{ if .Values.cluster.container }}
+          {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
 {{ end }}

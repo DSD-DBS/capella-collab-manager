@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 {{ if eq .Values.target "local" }}
 apiVersion: apps/v1
 kind: Deployment
@@ -39,7 +42,7 @@ spec:
             requests:
               cpu: "0.5"
               memory: 100Mi
-          {{ if .Values.cluster.container }}
+          {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
 {{ end }}
