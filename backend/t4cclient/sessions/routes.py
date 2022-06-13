@@ -2,34 +2,37 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import itertools
+import json
 import logging
 import typing as t
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
 import t4cclient.core.database.repositories as repositories_crud
 import t4cclient.extensions.modelsources.git.crud as git_models_crud
 import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories.users as users_schema
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from t4cclient.config import config
 from t4cclient.core.authentication.database import is_admin, verify_repository_role
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.credentials import generate_password
-from t4cclient.core.database import get_db, sessions, users
-from t4cclient.core.operators import OPERATOR
-from t4cclient.core.services.sessions import inject_attrs_in_sessions, get_last_seen
-from t4cclient.extensions import guacamole
-from t4cclient.routes import guacamole as guacamole_route
-from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
+from t4cclient.core.database import get_db, users
+from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.repositories import RepositoryUserRole
-from t4cclient.schemas.sessions import (
+from t4cclient.sessions import database, guacamole
+from t4cclient.sessions.models import DatabaseSession
+from t4cclient.sessions.operators import OPERATOR
+from t4cclient.sessions.schema import (
     AdvancedSessionResponse,
     GetSessionsResponse,
     GetSessionUsageResponse,
+    GuacamoleAuthentication,
     PostSessionRequest,
     WorkspaceType,
 )
-from t4cclient.sql_models.sessions import DatabaseSession
+from t4cclient.sessions.sessions import inject_attrs_in_sessions, get_last_seen
 
 router = APIRouter()
 log = logging.getLogger(__name__)
@@ -38,7 +41,7 @@ log = logging.getLogger(__name__)
 @router.get("/", response_model=t.List[GetSessionsResponse])
 def get_current_sessions(db: Session = Depends(get_db), token=Depends(JWTBearer())):
     if is_admin(token, db):
-        return inject_attrs_in_sessions(sessions.get_all_sessions(db))
+        return inject_attrs_in_sessions(database.get_all_sessions(db))
 
     db_user = users.get_user(db=db, username=get_username(token))
     if not any(
@@ -53,7 +56,7 @@ def get_current_sessions(db: Session = Depends(get_db), token=Depends(JWTBearer(
         list(
             itertools.chain.from_iterable(
                 [
-                    sessions.get_sessions_for_repository(db, repository)
+                    database.get_sessions_for_repository(db, repository)
                     for repository in [
                         r.repository_name
                         for r in db_user.repositories
@@ -84,7 +87,7 @@ def request_session(
     guacamole_token = guacamole.get_admin_token()
     guacamole.create_user(guacamole_token, guacamole_username, guacamole_password)
 
-    existing_user_sessions = sessions.get_sessions_for_user(db, owner)
+    existing_user_sessions = database.get_sessions_for_user(db, owner)
 
     if body.type == WorkspaceType.PERSISTENT:
         body.repository = ""
@@ -161,7 +164,7 @@ def request_session(
         **body.dict(),
         **session,
     )
-    response = sessions.create_session(db=db, session=database_model).__dict__
+    response = database.create_session(db=db, session=database_model).__dict__
     response["owner"] = response["owner_name"]
     response["state"] = OPERATOR.get_session_state(response["id"])
     response["rdp_password"] = rdp_password
@@ -172,7 +175,7 @@ def request_session(
 
 @router.delete("/{id}/", status_code=204, responses=AUTHENTICATION_RESPONSES)
 def end_session(id: str, db: Session = Depends(get_db), token=Depends(JWTBearer())):
-    s = sessions.get_session_by_id(db, id)
+    s = database.get_session_by_id(db, id)
     if s.owner_name != get_username(token) and verify_repository_role(
         repository=s.repository,
         token=token,
@@ -183,7 +186,7 @@ def end_session(id: str, db: Session = Depends(get_db), token=Depends(JWTBearer(
             status_code=403,
             detail="The owner of the repository does not match with your username. You have to be administrator or manager to delete other sessions.",
         )
-    sessions.delete_session(db, id)
+    database.delete_session(db, id)
     OPERATOR.kill_session(id)
 
 
@@ -197,7 +200,25 @@ def get_session_usage():
     return t4c_manager.get_t4c_status()
 
 
-router.include_router(
-    guacamole_route.router,
-    prefix="/{id}/guacamole-tokens",
+@router.post(
+    "/{id}/guacamole-tokens",
+    response_model=GuacamoleAuthentication,
+    responses=AUTHENTICATION_RESPONSES,
 )
+def create_guacamole_token(
+    id: str,
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
+):
+    session = database.get_session_by_id(db, id)
+    if session.owner_name != get_username(token):
+        raise HTTPException(
+            status_code=403,
+            detail="The owner of the session does not match with your username.",
+        )
+
+    token = guacamole.get_token(session.guacamole_username, session.guacamole_password)
+    return GuacamoleAuthentication(
+        token=json.dumps(token),
+        url=config["extensions"]["guacamole"]["publicURI"] + "/#/",
+    )

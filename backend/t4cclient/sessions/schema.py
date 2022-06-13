@@ -6,7 +6,6 @@ import enum
 import typing as t
 
 from pydantic import BaseModel
-from t4cclient.schemas.repositories import RepositoryUserPermission
 
 
 class WorkspaceType(enum.Enum):
@@ -49,6 +48,14 @@ class GetSessionUsageResponse(BaseModel):
     free: int
     total: int
     errors: t.List[str]
+
+    class Config:
+        orm_mode = True
+
+
+class GuacamoleAuthentication(BaseModel):
+    token: str
+    url: str
 
     class Config:
         orm_mode = True
