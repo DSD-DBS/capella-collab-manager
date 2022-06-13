@@ -16,28 +16,26 @@
       />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
-    <ngx-simplebar class="user-selection">
-      <mat-selection-list #adminusers [multiple]="false">
-        <div mat-subheader>Administrators</div>
-        <mat-list-option
-          *ngFor="let user of getUsersByRole('administrator')"
-          [value]="user"
-        >
-          <mat-icon mat-list-icon>account_circle</mat-icon>
-          <div mat-line>{{ user.name }}</div>
-          <div mat-line>{{ repoUserService.ADVANCED_ROLES[user.role] }}</div>
-        </mat-list-option>
-        <div mat-subheader>Users</div>
-        <mat-list-option
-          *ngFor="let user of getUsersByRole('user')"
-          [value]="user"
-        >
-          <mat-icon mat-list-icon>account_circle</mat-icon>
-          <div mat-line>{{ user.name }}</div>
-          <div mat-line>{{ repoUserService.ADVANCED_ROLES[user.role] }}</div>
-        </mat-list-option>
-      </mat-selection-list>
-    </ngx-simplebar>
+    <mat-selection-list #adminusers [multiple]="false" class="scrollable simple-scroll">
+      <div mat-subheader>Administrators</div>
+      <mat-list-option
+        *ngFor="let user of getUsersByRole('administrator')"
+        [value]="user"
+      >
+        <mat-icon mat-list-icon>account_circle</mat-icon>
+        <div mat-line>{{ user.name }}</div>
+        <div mat-line>{{ repoUserService.ADVANCED_ROLES[user.role] }}</div>
+      </mat-list-option>
+      <div mat-subheader>Users</div>
+      <mat-list-option
+        *ngFor="let user of getUsersByRole('user')"
+        [value]="user"
+      >
+        <mat-icon mat-list-icon>account_circle</mat-icon>
+        <div mat-line>{{ user.name }}</div>
+        <div mat-line>{{ repoUserService.ADVANCED_ROLES[user.role] }}</div>
+      </mat-list-option>
+    </mat-selection-list>
 
     <div *ngIf="adminusers.selectedOptions.selected.length">
       <button
