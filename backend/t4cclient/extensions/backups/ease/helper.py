@@ -1,7 +1,7 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from t4cclient.core.operators import OPERATOR
+from t4cclient.sessions.operators import OPERATOR
 
 from . import models
 
