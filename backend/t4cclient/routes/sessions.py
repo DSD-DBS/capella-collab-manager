@@ -1,32 +1,37 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import itertools
-import logging
-import typing as t
+# Standard library:
 import io
-from fastapi import APIRouter, Depends, HTTPException, UploadFile
-import tarfile
+import itertools
 import json
+import logging
+import tarfile
+import typing as t
 
+# 3rd party:
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
+from sqlalchemy.orm import Session
+
+# local:
 import t4cclient.core.database.repositories as repositories_crud
 import t4cclient.extensions.modelsources.git.crud as git_models_crud
 import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories.users as users_schema
-from sqlalchemy.orm import Session
 from t4cclient.core.authentication.database import is_admin, verify_repository_role
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.credentials import generate_password
 from t4cclient.core.database import get_db, sessions, users
 from t4cclient.core.operators import OPERATOR
-from t4cclient.core.services.sessions import inject_attrs_in_sessions, get_last_seen
+from t4cclient.core.services.sessions import get_last_seen, inject_attrs_in_sessions
 from t4cclient.extensions import guacamole
 from t4cclient.routes import guacamole as guacamole_route
 from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.repositories import RepositoryUserRole
 from t4cclient.schemas.sessions import (
     AdvancedSessionResponse,
+    FileTree,
     GetSessionsResponse,
     GetSessionUsageResponse,
     PostSessionRequest,
@@ -200,21 +205,13 @@ def get_session_usage():
     return t4c_manager.get_t4c_status()
 
 
-@router.get("/{id}")
-def get_file_system(id: str):
-    try:
-        file_structure = json.dumps(OPERATOR.get_files(id))
-        return file_structure
-    except Exception:
-        log.exception("There was an internal error.")
-        raise HTTPException(
-            status_code=500,
-            detail="There was an internal error.",
-        )
+@router.get("/{id}/files", response_model=FileTree)
+def get_files(id: str):
+    return OPERATOR.get_files(id)
 
 
 @router.post(
-    "/{id}",
+    "/{id}/files",
     responses=AUTHENTICATION_RESPONSES,
 )
 def upload_files(id: str, files: list[UploadFile]):
@@ -232,16 +229,9 @@ def upload_files(id: str, files: list[UploadFile]):
     tar_bytesio.seek(0)
     tar_bytes = tar_bytesio.read()
 
-    try:
-        OPERATOR.upload_files(id, tar_bytes)
-    except Exception:
-        log.exception("There was an exception during uploading the files.")
-        raise HTTPException(
-            status_code=500,
-            detail="There was an error uploading the file(s).",
-        )
+    OPERATOR.upload_files(id, tar_bytes)
 
-    return {"message": f"Successfuly uploaded"}
+    return {"message": "Upload successful"}
 
 
 router.include_router(

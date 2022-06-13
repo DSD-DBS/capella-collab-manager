@@ -1,11 +1,19 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
+
+# Standard library:
 import datetime
 import enum
+import numbers
 import typing as t
 
+# 3rd party:
 from pydantic import BaseModel
+
+# local:
+from t4cclient.core.operators.k8s import FileType
 from t4cclient.schemas.repositories import RepositoryUserPermission
 
 
@@ -32,6 +40,16 @@ class GetSessionsResponse(BaseModel):
 
 class AdvancedSessionResponse(GetSessionsResponse):
     rdp_password: str
+
+    class Config:
+        orm_mode = True
+
+
+class FileTree(BaseModel):
+    path: str
+    name: str
+    type: FileType
+    children: t.Optional[list[FileTree]]
 
     class Config:
         orm_mode = True
