@@ -8,6 +8,7 @@ import re
 import typing as t
 
 import requests
+from requests import JSONDecodeError
 
 from t4cclient import config
 from t4cclient.sessions.models import DatabaseSession
@@ -42,6 +43,9 @@ def get_last_seen(sid: str) -> str:
             if sid == session["metric"]["app"]:
                 return _get_last_seen(float(session["value"][1]))
         log.exception("No session was found.")
+        return "UNKNOWN"
+    except JSONDecodeError as error:
+        log.exception("Prometheus service not available: %s", error.args[0])
         return "UNKNOWN"
     except requests.ConnectionError as error:
         log.exception("ConnectionError: %s", error.args[0])
