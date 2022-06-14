@@ -4,7 +4,6 @@
 # Standard library:
 import io
 import itertools
-import json
 import logging
 import tarfile
 import typing as t
@@ -20,6 +19,7 @@ import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories.users as users_schema
 from t4cclient.core.authentication.database import is_admin, verify_repository_role
 from t4cclient.core.authentication.helper import get_username
+from t4cclient.core.authentication.database import check_session_belongs_to_user
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.credentials import generate_password
 from t4cclient.core.database import get_db, sessions, users
@@ -206,7 +206,8 @@ def get_session_usage():
 
 
 @router.get("/{id}/files", response_model=FileTree)
-def get_files(id: str):
+def get_files(id: str, db: Session = Depends(get_db), token=Depends(JWTBearer())):
+    check_session_belongs_to_user(get_username(token), id, db)
     return OPERATOR.get_files(id)
 
 
@@ -214,7 +215,14 @@ def get_files(id: str):
     "/{id}/files",
     responses=AUTHENTICATION_RESPONSES,
 )
-def upload_files(id: str, files: list[UploadFile]):
+def upload_files(
+    id: str,
+    files: list[UploadFile],
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
+):
+    check_session_belongs_to_user(get_username(token), id, db)
+
     tar_bytesio = io.BytesIO()
     tar = tarfile.TarFile(name="upload.tar", mode="w", fileobj=tar_bytesio)
 
