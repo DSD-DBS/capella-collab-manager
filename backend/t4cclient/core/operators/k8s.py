@@ -531,7 +531,7 @@ class KubernetesOperator(Operator):
         pod_name = self._get_pod_name(id)
 
         try:
-            exec_command = ["tar", "xf", "-", "-C", "/workspace/"]
+            exec_command = ["tar", "xf", "-", "-C", "/"]
             stream = kubernetes.stream.stream(
                 self.v1_core.connect_get_namespaced_pod_exec,
                 pod_name,
@@ -562,21 +562,22 @@ class KubernetesOperator(Operator):
         pod_name = self._get_pod_name(id)
         return self.__get_files(
             pod_name,
-            current_dir=pathlib.Path("/workspace"),
+            current_dir=pathlib.PurePosixPath("/workspace"),
         )
 
-    def __get_files(self, pod_name: str, current_dir: pathlib.Path) -> File:
+    def __get_files(self, pod_name: str, current_dir: pathlib.PurePosixPath) -> File:
         file = File(
-            path=str(current_dir.absolute()),
+            path=str(current_dir),
             name=current_dir.name,
-            type="directory",
+            type=FileType.DIRECTORY,
             children=[],
         )
 
+        abs_path = str(current_dir)
         exec_command = [
             "/bin/sh",
             "-c",
-            f"ls -l {str(current_dir.absolute())}",
+            f"ls -l {abs_path}",
         ]
 
         response = kubernetes.stream.stream(
@@ -591,7 +592,7 @@ class KubernetesOperator(Operator):
         )
 
         if response:
-            for line in response.splitlines():
+            for line in response.splitlines()[1:]:
                 splitted_line = line.split()
 
                 path: pathlib.Path = current_dir / splitted_line[-1]
@@ -603,7 +604,7 @@ class KubernetesOperator(Operator):
                     file.children.append(
                         File(
                             name=path.name,
-                            path=str(path.absolute()),
+                            path=str(path),
                             type=FileType.FILE,
                         )
                     )
