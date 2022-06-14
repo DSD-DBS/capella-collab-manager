@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { PathNode } from 'src/app/schemes'
 
 @Injectable({
   providedIn: 'root',
@@ -21,15 +22,7 @@ export class LoadFilesService {
     });
   }
 
-  getCurrentFiles(id: string): Observable<FileTree> {
-    return this.http.get<FileTree>(this.BACKEND_URL_PREFIX + id + '/files');
+  getCurrentFiles(id: string): Observable<PathNode> {
+    return this.http.get<PathNode>(this.BACKEND_URL_PREFIX + id + '/files');
   }
-}
-
-export interface FileTree {
-  path: string;
-  name: string;
-  type: 'file' | 'directory';
-  children: FileTree[] | null;
-  newFile: boolean;
 }
