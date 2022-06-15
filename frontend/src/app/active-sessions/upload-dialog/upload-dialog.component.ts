@@ -56,8 +56,6 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
   isExpandable = (node: PathNode): boolean => !!node.children;
 
   addFiles(files: FileList | null, path: string, parentNode: PathNode): void {
-    console.log("nodes", this.dataSource.value)
-
     if (files) {
       for (let file of Array.from(files)) {
         if (this.checkIfFileExists(parentNode, file.name)) {
@@ -124,6 +122,25 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
   return false;
   }
 
+  expandToNode(node: PathNode): void{
+    this._expandToNode(this.dataSource.value[0], node);
+  }
+
+  _expandToNode(parentNode: PathNode, node: PathNode): boolean {
+    var result = false;
+    if (node === parentNode) {
+      this.treeControl.expand(parentNode);
+      result = true;
+    } else if (!!parentNode.children){
+      for (var i = 0; i < parentNode.children?.length; i++) {
+        result = this._expandToNode(parentNode.children[i], node);
+        if (result) {
+          this.treeControl.expand(parentNode);
+        }
+      }
+    }
+    return result;
+  }
 
   removeFile(path: string, filename: string): void{
     this.removeFileFromSelection(path, filename);
@@ -156,6 +173,7 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
     if (!!result) {
       result[0].children?.splice(result[1], 1);
       this.dataSource.next([{ ...this.dataSource.value[0] }]);
+      this.expandToNode(result[0]);
     }
   }
 
