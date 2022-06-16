@@ -23,16 +23,13 @@ export class AuthRedirectComponent implements OnInit {
     private router: Router,
     private repositoryService: RepositoryService,
     private cookieService: CookieService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       if (params['error']) {
-        const test = Object.keys(params).map(key => {
-          key
-        })
-        const redirect_url = '/auth?' + Object.keys(params).map(key => 
-          ['error', 'error_description', 'error_uri'].includes(key) ? [key, params[key]].join('=') : ""
+        const redirect_url = '/auth?' + Object.keys(params).map(key =>
+          ['error', 'error_description', 'error_uri'].includes(key) ? [key, params[key]].join('=') : ""
         ).join('&')
         this.router.navigateByUrl(redirect_url)
         return

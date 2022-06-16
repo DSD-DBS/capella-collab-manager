@@ -30,8 +30,8 @@ export class AuthComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    public route: ActivatedRoute,
-  ) {}
+    private route: ActivatedRoute,
+  ) { }
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(res => {
