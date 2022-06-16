@@ -573,11 +573,10 @@ class KubernetesOperator(Operator):
             children=[],
         )
 
-        abs_path = str(current_dir)
         exec_command = [
             "/bin/sh",
             "-c",
-            f"ls -l {abs_path}",
+            f"ls -l {str(current_dir)}",
         ]
 
         response = kubernetes.stream.stream(
