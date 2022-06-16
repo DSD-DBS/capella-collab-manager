@@ -59,10 +59,10 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
     if (files) {
       for (let file of Array.from(files)) {
         if (this.checkIfFileExists(parentNode, file.name)) {
-          const dialogRef = this.dialog.open(FileExistsDialogComponent, {
+          const fileExistsDialog = this.dialog.open(FileExistsDialogComponent, {
             data: file.name,
           });
-          dialogRef.afterClosed().subscribe((response) => {
+          fileExistsDialog.afterClosed().subscribe((response) => {
             if (!this.files.includes([file, path]) && response) {
               this.files.push([file, path]);
               if (!!parentNode.children){
@@ -201,7 +201,10 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
 
     const upload$ = this.loadService
       .upload(this.session.id, formData)
-      .pipe(finalize(() => this.reset()));
+      .pipe(finalize(() => {
+        if (this.uploadProgress===100) this.dialogRef.close();
+      }
+      ));
 
     this.subscription = upload$.subscribe((event) => {
       if (event && event.type == HttpEventType.UploadProgress) {
@@ -219,6 +222,5 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
     this.uploadProgress = null;
     this.subscription = undefined;
     this.files = [];
-    window.location.reload();
   }
 }
