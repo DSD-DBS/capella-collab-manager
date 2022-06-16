@@ -111,9 +111,8 @@ def check_session_belongs_to_user(
     id: str,
     db: sqlalchemy.orm.session.Session,
 ):
-    sessions = get_sessions_for_user(db, username)
     session = get_session_by_id(db, id)
-    if not session in sessions:
+    if not session.owner_name == username:
         raise HTTPException(
             status_code=403,
             detail="You are not allowed to upload or get files in this session.",
