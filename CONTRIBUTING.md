@@ -85,6 +85,7 @@ Do not use it in production!
   source.venv/bin/activate
   pip install -U pip setuptools
   pip install -e '.[options]'
+  ```
 
 1. Launch the server :
   The port must match the key modelsources.t4c.usageAPI in the backend
@@ -110,7 +111,7 @@ Run the following steps:
    make create-cluster
    ```
 
-1. In order to use Guacamole, the cluster must be deployed :
+1. In order to use Guacamole, the cluster must be deployed:
   ```sh
   make deploy
   ```
