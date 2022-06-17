@@ -5,6 +5,7 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { Subscription, finalize, BehaviorSubject } from 'rxjs';
 import { Session, PathNode } from 'src/app/schemes';
@@ -33,10 +34,13 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
     private loadService: LoadFilesService,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<UploadDialogComponent>,
+    private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public session: Session
   ) {}
 
   ngOnInit(): void {
+    this.loadingFiles = true;
+
     this.loadService.getCurrentFiles(this.session.id).subscribe({
       next: (file: PathNode) => {
         this.dataSource.next([file]);
@@ -199,17 +203,26 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     const formData = new FormData();
+    var size = 0;
+    this.files.forEach(([file, prefix]: [File, string]) => {
+      size += file.size;
+    });
+
+    if (size > 104857600) {
+      this.snackBar.open('The file size must not exceed 100MB!', 'Ok!');
+      return;
+    }
+
     this.files.forEach(([file, prefix]: [File, string]) => {
       formData.append('files', file, `${prefix}/${file.name}`);
     });
     formData.append('id', this.session.id);
 
-    const upload$ = this.loadService
-      .upload(this.session.id, formData)
-      .pipe(finalize(() => {
-        if (this.uploadProgress===100) this.dialogRef.close();
-      }
-      ));
+    const upload$ = this.loadService.upload(this.session.id, formData).pipe(
+      finalize(() => {
+        if (this.uploadProgress === 100) this.dialogRef.close();
+      })
+    );
 
     this.subscription = upload$.subscribe((event) => {
       if (event && event.type == HttpEventType.UploadProgress) {

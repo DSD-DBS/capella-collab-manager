@@ -14,7 +14,7 @@
 <div class="progress">
   <mat-progress-bar
     class="progress-bar"
-    mode="determinate"
+    [mode]="uploadProgress === 100 ? 'indeterminate' : 'determinate'"
     [value]="uploadProgress"
     *ngIf="uploadProgress"
   >
@@ -37,23 +37,13 @@
     matTreeNodeToggle
     matTreeNodePadding
   >
-    <mat-icon
-      class="file-icon"
-      >
-      insert_drive_file
-    </mat-icon>
+    <mat-icon class="file-icon"> insert_drive_file </mat-icon>
 
-    <p style="margin: 0px"
-      [ngClass]="node.isNew ? 'new-file' : ''">
-        {{ node.name }}
+    <p style="margin: 0px" [ngClass]="node.isNew ? 'new-file' : ''">
+      {{ node.name }}
     </p>
-      <div *ngIf="node.isNew">
-        <button
-        mat-button
-        (click)="removeFile(node.path, node.name)"
-      >
-        X
-      </button>
+    <div *ngIf="node.isNew">
+      <button mat-button (click)="removeFile(node.path, node.name)">X</button>
     </div>
   </mat-tree-node>
 
@@ -65,10 +55,7 @@
           matTreeNodeToggle
           [attr.aria-label]="'Expand ' + node.name"
         >
-          <mat-icon
-            class="dir-icon">
-            folder
-          </mat-icon>
+          <mat-icon class="dir-icon"> folder </mat-icon>
         </button>
         {{ node.name }}
       </div>
@@ -88,12 +75,12 @@
     </div>
     <div
       [class.file-tree-invisible]="!treeControl.isExpanded(node)"
-      role="group">
+      role="group"
+    >
       <ng-container matTreeNodeOutlet></ng-container>
     </div>
   </mat-nested-tree-node>
 </mat-tree>
-
 
 <div mat-dialog-actions>
   <div class="flexbox">
