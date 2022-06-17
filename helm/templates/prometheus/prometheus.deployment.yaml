@@ -18,7 +18,7 @@ spec:
       labels:
         id: {{ .Release.Name }}-prometheus-server
     spec:
-      serviceAccountName: {{ .Release.Name }}-serviceaccount-backend
+      serviceAccountName: {{ .Release.Name }}-serviceaccount-prometheus
       containers:
         - name: prometheus
           image: {{ .Values.docker.registry.external }}{{ .Values.docker.images.prometheus }}
