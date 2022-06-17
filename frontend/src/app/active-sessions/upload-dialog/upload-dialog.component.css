@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-
- .file-tree {
+.file-tree {
   max-height: 50vh;
-  overflow-y: scroll;
- }
+  overflow-y: auto;
+}
 
 .file-tree-invisible {
   display: none;
