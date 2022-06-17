@@ -6,7 +6,7 @@ from __future__ import annotations
 from importlib import metadata
 
 from t4cclient.config import config
-from t4cclient.core.operators.abc import Operator
+from t4cclient.sessions.operators.abc import Operator
 
 try:
     OPERATOR = next(

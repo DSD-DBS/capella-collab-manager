@@ -23,7 +23,7 @@ import kubernetes.stream.stream
 
 # local:
 from t4cclient.config import config
-from t4cclient.core.operators.abc import Operator
+from t4cclient.sessions.operators.abc import Operator
 
 log = logging.getLogger(__name__)
 cfg = config["operators"]["k8s"]

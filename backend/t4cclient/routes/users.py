@@ -9,14 +9,14 @@ from t4cclient.core.authentication.database import is_admin, verify_admin
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, repository_users, users
-from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
-from t4cclient.routes.sessions import inject_attrs_in_sessions
+from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
+from t4cclient.sessions.routes import inject_attrs_in_sessions
 from t4cclient.schemas.repositories.users import (
     GetUserResponse,
     PatchUserRoleRequest,
     Role,
 )
-from t4cclient.schemas.sessions import AdvancedSessionResponse
+from t4cclient.sessions.schema import AdvancedSessionResponse
 
 router = APIRouter()
 
@@ -68,7 +68,7 @@ def update_role_of_user(
         repository_users.delete_all_repositories_for_user(db, username)
     return users.update_role_of_user(db, username, body.role)
 
-
+# TODO: This is actually a sessions route (sessions/{username}?)
 @router.get("/{username}/sessions", response_model=t.List[AdvancedSessionResponse])
 def get_sessions_for_user(
     username: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
