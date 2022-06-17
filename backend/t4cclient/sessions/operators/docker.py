@@ -6,10 +6,10 @@ import pathlib
 import shutil
 import typing as t
 
-from t4cclient.config import config
-from t4cclient.core.operators.abc import Operator
-
 import docker
+
+from t4cclient.config import config
+from t4cclient.sessions.operators.abc import Operator
 
 log = logging.getLogger(__name__)
 cfg = config["operators"]["docker"]

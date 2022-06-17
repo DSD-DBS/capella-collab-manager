@@ -7,15 +7,13 @@ import logging
 import re
 import typing as t
 
-# 3rd party:
 import requests
 from requests import JSONDecodeError
 
-# local:
 from t4cclient import config
-from t4cclient.core.operators import OPERATOR
-from t4cclient.schemas.sessions import WorkspaceType
-from t4cclient.sql_models.sessions import DatabaseSession
+from t4cclient.sessions.models import DatabaseSession
+from t4cclient.sessions.operators import OPERATOR
+from t4cclient.sessions.schema import WorkspaceType
 
 log = logging.getLogger(__name__)
 

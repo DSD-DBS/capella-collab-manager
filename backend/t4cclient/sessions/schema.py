@@ -70,3 +70,11 @@ class GetSessionUsageResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class GuacamoleAuthentication(BaseModel):
+    token: str
+    url: str
+
+    class Config:
+        orm_mode = True
