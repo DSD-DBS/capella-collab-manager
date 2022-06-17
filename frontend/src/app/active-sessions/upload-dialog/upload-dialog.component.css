@@ -19,7 +19,7 @@
   list-style-type: none;
 }
 
-.file-tree .mat-nested-tree-node div[role="group"]{
+.file-tree .mat-nested-tree-node div[role="group"] {
   padding-left: 20px;
 }
 
