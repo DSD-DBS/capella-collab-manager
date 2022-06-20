@@ -132,7 +132,7 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
 
   _expandToNode(parentNode: PathNode, node: PathNode): boolean {
     var result = false;
-    if (node === parentNode) {
+    if (node.path === parentNode.path) {
       this.treeControl.expand(parentNode);
       result = true;
     } else if (!!parentNode.children) {
