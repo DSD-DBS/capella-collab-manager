@@ -24,12 +24,12 @@ from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.database import check_session_belongs_to_user
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.credentials import generate_password
-from t4cclient.core.database import get_db, sessions, users
-from t4cclient.core.operators import OPERATOR
-from t4cclient.core.services.sessions import get_last_seen, inject_attrs_in_sessions
-from t4cclient.extensions import guacamole
-from t4cclient.routes import guacamole as guacamole_route
-from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
+from t4cclient.core.database import get_db, users
+from t4cclient.sessions.operators import OPERATOR
+from t4cclient.sessions.sessions import get_last_seen, inject_attrs_in_sessions
+from t4cclient.sessions import guacamole
+from t4cclient.sessions import guacamole as guacamole_route
+from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.repositories import RepositoryUserRole
 from t4cclient.sessions import database, guacamole
 from t4cclient.sessions.models import DatabaseSession
@@ -43,7 +43,6 @@ from t4cclient.sessions.schema import (
     PostSessionRequest,
     WorkspaceType,
 )
-from t4cclient.sessions.sessions import inject_attrs_in_sessions, get_last_seen
 
 router = APIRouter()
 log = logging.getLogger(__name__)
@@ -240,6 +239,7 @@ def upload_files(
         )
 
     for file in files:
+        file.file.seek(0)
         file.filename = file.filename.replace(" ", "_")
         tar.addfile(
             tar.gettarinfo(arcname=file.filename, fileobj=file.file),
@@ -253,12 +253,6 @@ def upload_files(
     OPERATOR.upload_files(id, tar_bytes)
 
     return {"message": "Upload successful"}
-
-
-router.include_router(
-    guacamole_route.router,
-    prefix="/{id}/guacamole-tokens",
-)
 
 
 def create_guacamole_token(
