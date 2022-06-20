@@ -6,7 +6,7 @@ from fastapi import Depends, HTTPException
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, repository_users
-from t4cclient.core.database.sessions import get_sessions_for_user, get_session_by_id
+from t4cclient.sessions.database import get_session_by_id
 from t4cclient.core.database.users import get_user
 from t4cclient.schemas.repositories import RepositoryUserPermission, RepositoryUserRole
 from t4cclient.schemas.repositories.users import Role
