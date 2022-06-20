@@ -13,7 +13,7 @@ import typing as t
 from pydantic import BaseModel
 
 # local:
-from t4cclient.core.operators.k8s import FileType
+from t4cclient.sessions.operators.k8s import FileType
 from t4cclient.schemas.repositories import RepositoryUserPermission
 
 
