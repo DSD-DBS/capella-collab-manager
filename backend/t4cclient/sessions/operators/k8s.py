@@ -358,18 +358,16 @@ class KubernetesOperator(Operator):
                 "template": {
                     "metadata": {
                         "labels": {"app": name},
-                        "annotations": {
-                            "prometheus.io/scrape": "true",
-                            "prometheus.io/path": "/metrics",
-                            "prometheus.io/port": "9118",
-                        },
                     },
                     "spec": {
                         "containers": [
                             {
                                 "name": name,
                                 "image": image,
-                                "ports": [{"containerPort": 3389, "protocol": "TCP"}],
+                                "ports": [
+                                    {"containerPort": 3389, "protocol": "TCP"},
+                                    {"containerPort": 9118, "protocol": "TCP"},
+                                ],
                                 "env": [
                                     {"name": key, "value": str(value)}
                                     for key, value in environment.items()
@@ -447,6 +445,12 @@ class KubernetesOperator(Operator):
             "apiVersion": "v1",
             "metadata": {
                 "name": name,
+                "labels": {"app": name},
+                "annotations": {
+                    "prometheus.io/scrape": "true",
+                    "prometheus.io/path": "/metrics",
+                    "prometheus.io/port": "9118",
+                },
             },
             "spec": {
                 "ports": [
