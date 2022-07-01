@@ -559,9 +559,6 @@ class KubernetesOperator(Operator):
             log.exception("Exception when copying file to the pod")
             raise e
 
-        finally:
-            stream.close()
-
     def get_files(self, id: str) -> File:
         pod_name = self._get_pod_name(id)
         return self.__get_files(
