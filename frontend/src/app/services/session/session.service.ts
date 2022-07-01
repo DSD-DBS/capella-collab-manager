@@ -95,6 +95,10 @@ export class SessionService {
         text = 'Your session is scheduled';
         css = 'warning';
         break;
+      case 'FailedScheduling':
+        text = 'High demand. Please wait a moment.';
+        css = 'warning';
+        break;
 
       // Cases for readonly containers
       case 'START_LOAD_MODEL':
