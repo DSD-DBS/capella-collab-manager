@@ -19,19 +19,20 @@ import t4cclient.extensions.modelsources.git.crud as git_models_crud
 import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories.users as users_schema
 from t4cclient.config import config
-from t4cclient.core.authentication.database import is_admin, verify_repository_role
+from t4cclient.core.authentication.database import (
+    check_session_belongs_to_user,
+    is_admin,
+    verify_repository_role,
+)
 from t4cclient.core.authentication.helper import get_username
-from t4cclient.core.authentication.database import check_session_belongs_to_user
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.credentials import generate_password
 from t4cclient.core.database import get_db, users
-from t4cclient.sessions.operators import OPERATOR
-from t4cclient.sessions.sessions import get_last_seen, inject_attrs_in_sessions
-from t4cclient.sessions import guacamole
-from t4cclient.sessions import guacamole as guacamole_route
 from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.repositories import RepositoryUserRole
-from t4cclient.sessions import database, guacamole
+from t4cclient.sessions import database
+from t4cclient.sessions import guacamole
+from t4cclient.sessions import guacamole as guacamole_route
 from t4cclient.sessions.models import DatabaseSession
 from t4cclient.sessions.operators import OPERATOR
 from t4cclient.sessions.schema import (
@@ -43,6 +44,7 @@ from t4cclient.sessions.schema import (
     PostSessionRequest,
     WorkspaceType,
 )
+from t4cclient.sessions.sessions import get_last_seen, inject_attrs_in_sessions
 
 router = APIRouter()
 log = logging.getLogger(__name__)
