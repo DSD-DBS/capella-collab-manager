@@ -12,19 +12,21 @@
 >
 </mat-progress-bar>
 <div class="progress">
-  <mat-progress-bar
-    class="progress-bar"
-    [mode]="uploadProgress === 100 ? 'indeterminate' : 'determinate'"
-    [value]="uploadProgress"
-    *ngIf="uploadProgress"
-  >
-  </mat-progress-bar>
-  <mat-icon
-    class="cancel-upload"
-    (click)="cancelUpload()"
-    *ngIf="uploadProgress"
-    >cancel</mat-icon
-  >
+  <div>
+    <mat-progress-bar
+      class="progress-bar"
+      color="primary"
+      [mode]="uploadProgress === 100 ? 'indeterminate' : 'determinate'"
+      [value]="uploadProgress"
+      *ngIf="uploadProgress"
+    >
+    </mat-progress-bar>
+  </div>
+  <button mat-button>
+    <mat-icon class="cancel-upload" (click)="reset()" *ngIf="uploadProgress"
+      >cancel
+    </mat-icon>
+  </button>
 </div>
 
 <mat-tree
@@ -91,7 +93,7 @@
       type="submit"
       mat-raised-button
       color="primary"
-      (click)="onSubmit()"
+      (click)="submit()"
       style="margin-left: 30px"
     >
       Submit
