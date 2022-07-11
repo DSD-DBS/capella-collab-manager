@@ -2,33 +2,32 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialog } from '@angular/material/dialog';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
-import { Subscription, finalize, BehaviorSubject } from 'rxjs';
-import { Session, PathNode } from 'src/app/schemes';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { PathNode, Session } from 'src/app/schemes';
 import { LoadFilesService } from 'src/app/services/load-files/load-files.service';
-import { HttpEventType } from '@angular/common/http';
-
 import { FileExistsDialogComponent } from './file-exists-dialog/file-exists-dialog.component';
-
 @Component({
   selector: 'upload-dialog',
   templateUrl: 'upload-dialog.component.html',
   styleUrls: ['upload-dialog.component.css'],
 })
 export class UploadDialogComponent implements OnInit, OnDestroy {
-  files: [File, string][] = [];
   private subscription: Subscription | undefined;
+
+  files: [File, string][] = [];
   uploadProgress: number | null = null;
   loadingFiles = false;
 
   treeControl = new NestedTreeControl<PathNode>((node) => node.children);
   dataSource = new BehaviorSubject<PathNode[]>([]);
-
-  lastID: number = 0;
 
   constructor(
     private loadService: LoadFilesService,
@@ -57,14 +56,13 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
 
   hasChild = (_: number, node: PathNode) => !!node.children;
 
-  isExpandable = (node: PathNode): boolean => !!node.children;
-
   addFiles(files: FileList | null, path: string, parentNode: PathNode): void {
     if (files) {
       for (let file of Array.from(files)) {
-        if (this.checkIfFileExists(parentNode, file.name)) {
+        var name = file.name.replace(/\s/g, '_');
+        if (this.checkIfFileExists(parentNode, name)) {
           const fileExistsDialog = this.dialog.open(FileExistsDialogComponent, {
-            data: file.name,
+            data: name,
           });
           fileExistsDialog.afterClosed().subscribe((response) => {
             if (!this.files.includes([file, path]) && response) {
@@ -72,7 +70,7 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
               if (!!parentNode.children) {
                 for (var i = 0; i < parentNode.children.length; i++) {
                   const child = parentNode.children[i];
-                  if (child.name === file.name) {
+                  if (child.name === name) {
                     child.isNew = true;
                     break;
                   }
@@ -81,9 +79,8 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
             }
           });
         } else if (!this.files.includes([file, path])) {
-          this.addFileToTree(this.dataSource.value[0], path, file.name);
+          this.addFileToTree(this.dataSource.value[0], path, name);
           this.files.push([file, path]);
-
           this.treeControl.expand(this.dataSource.value[0]);
         }
       }
@@ -93,7 +90,6 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
   addFileToTree(parentNode: PathNode, path: string, name: string): boolean {
     var result = false;
     if (parentNode.path === path) {
-      name = name.replace(' ', '_');
       parentNode.children?.push({
         path: path + `/${name}`,
         name: name,
@@ -201,10 +197,10 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSubmit() {
+  submit() {
     const formData = new FormData();
     var size = 0;
-    this.files.forEach(([file, prefix]: [File, string]) => {
+    this.files.forEach(([file, _]: [File, string]) => {
       size += file.size;
     });
 
@@ -218,27 +214,30 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
     });
     formData.append('id', this.session.id);
 
-    const upload$ = this.loadService.upload(this.session.id, formData).pipe(
-      finalize(() => {
-        if (this.uploadProgress === 100) this.dialogRef.close();
-      })
-    );
-
-    this.subscription = upload$.subscribe((event) => {
-      if (event && event.type == HttpEventType.UploadProgress) {
-        this.uploadProgress = Math.round(100 * (event.loaded / event.total));
-      }
-    });
-  }
-
-  cancelUpload() {
-    this.subscription?.unsubscribe();
-    this.reset();
+    this.subscription = this.loadService
+      .upload(this.session.id, formData)
+      .subscribe({
+        next: (event: HttpEvent<any>) => {
+          if (event.type == HttpEventType.Response) {
+            this.dialogRef.close();
+          } else if (
+            event.type == HttpEventType.UploadProgress &&
+            event.total
+          ) {
+            this.uploadProgress = Math.round(
+              100 * (event.loaded / event.total)
+            );
+          }
+        },
+        error: () => {
+          this.reset();
+        },
+      });
   }
 
   reset() {
+    this.subscription?.unsubscribe();
     this.uploadProgress = null;
     this.subscription = undefined;
-    this.files = [];
   }
 }
