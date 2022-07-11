@@ -234,10 +234,10 @@ def upload_files(
     tar = tarfile.TarFile(name="upload.tar", mode="w", fileobj=tar_bytesio)
 
     size = sum([len(file.file.read()) for file in files])
-    if size > 104857600:
+    if size > 31457280:
         raise HTTPException(
             status_code=413,
-            detail="The summed file size must not exceed 100MB.",
+            detail="The summed file size must not exceed 30MB.",
         )
 
     for file in files:

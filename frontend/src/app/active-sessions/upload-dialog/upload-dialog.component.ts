@@ -204,8 +204,8 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
       size += file.size;
     });
 
-    if (size > 104857600) {
-      this.snackBar.open('The file size must not exceed 100MB!', 'Ok!');
+    if (size > 31457280) {
+      this.snackBar.open('The file size must not exceed 30MB!', 'Ok!');
       return;
     }
 
