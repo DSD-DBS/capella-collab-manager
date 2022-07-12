@@ -1,13 +1,17 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# Standard library:
 import json
 import logging
 import typing as t
 from socket import timeout
 
+# 3rd party:
 import requests
 from requests.auth import HTTPBasicAuth
+
+# local:
 from t4cclient.config import config
 from t4cclient.core.credentials import generate_password
 
@@ -84,14 +88,14 @@ def add_user_to_repository(
     repository: str,
     username: str,
     password: str = generate_password(),
-    isAdmin: bool = False,
+    is_admin: bool = False,
 ):
     r = requests.post(
         config["modelsources"]["t4c"]["restAPI"] + "/users",
         params={"repositoryName": repository},
         json={
             "id": username,
-            "isAdmin": isAdmin,
+            "isAdmin": is_admin,
             "password": password,
         },
         auth=T4C_BACKEND_AUTHENTICATION,
