@@ -6,37 +6,51 @@
 <div class="wrapper">
   <div class="title">Existing instances</div>
   <div class="instances">
-    <mat-card>
+    <mat-card *ngFor="let instance of instances | keyvalue">
       <div class="mat-title">
-        Github
-        <span class="mat-subtitle">General Git (restricted)</span>
+        <div class="instance-head">
+          {{ instance.value.type }}
+          <span class="mat-subtitle">{{ instance.value.name }}</span>
+        </div>
+        <div class="icon-container">
+          <a mat-icon-button [routerLink]="['./edit', instance.value.id]">
+            <mat-icon aria-label="Edit the source">settings</mat-icon>
+          </a>
+          <button mat-icon-button>
+            <mat-icon aria-label="Delete the source"
+              (click)="openDialog(instance.value.id)">delete</mat-icon>
+          </button>
+        </div>
       </div>
-      <div class="content">Instance base URL: https://github.com/DSD-DBS/</div>
+      <div class="content">Instance base URL:
+        <a href="{{ instance.value.url }}">{{ instance.value.url }}</a>
+      </div>
     </mat-card>
   </div>
   <br />
-
   <div class="title">Add new integration</div>
   <br />
-
-  Supported instances: <br />
-  <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
-    <mat-button-toggle value="git">General Git (restricted)</mat-button-toggle>
-    <mat-button-toggle disabled value="gitlab">Gitlab</mat-button-toggle>
-    <mat-button-toggle disabled value="github">Github</mat-button-toggle>
-    <mat-button-toggle disabled value="azure">Azure DevOps</mat-button-toggle>
-  </mat-button-toggle-group>
-
-  <form id="add-instance-form">
+  <form [formGroup]="gitSettingsForm" id="add-instance-form">
+    Supported instances: <br />
+    <mat-form-field id="instance-url" appearance="fill">
+      <mat-label>Git Type</mat-label>
+      <mat-select matInput formControlName="type">
+        <mat-option value="0" selected>General Git (limited)</mat-option>
+        <mat-option value="1" disabled>GitLab (unsupported)</mat-option>
+        <mat-option value="2" disabled>GitHub (unsupported)</mat-option>
+        <mat-option value="3" disabled>Azure DevOps (unsupported)</mat-option>
+      </mat-select> 
+    </mat-form-field>
+    <br />
     <mat-form-field id="instance-url" appearance="fill">
       <mat-label>Name</mat-label>
-      <input matInput />
+      <input matInput formControlName="name" />
     </mat-form-field>
     <br />
     <mat-form-field id="instance-url" appearance="fill">
       <mat-label>Instance base URL</mat-label>
-      <input matInput />
+      <input matInput formControlName="url" />
     </mat-form-field>
   </form>
-  <button mat-raised-button>Create</button>
+  <button mat-raised-button (click)="createGitSettings()">Create</button>
 </div>

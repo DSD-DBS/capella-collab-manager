@@ -41,9 +41,14 @@ mat-card {
   color: white;
   border-radius: 5px 5px 0 0;
   display: flex;
-  flex-direction: column;
-  padding: 5px 20px;
+  justify-content: space-between;
+  padding: 5px 12px 5px 20px;
   font-size: 1.5em;
+}
+
+.instance-head {
+  display: flex;
+  flex-direction: column;
 }
 
 .mat-subtitle {

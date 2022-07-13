@@ -13,14 +13,18 @@ import { ProjectService } from '../../service/project.service';
 })
 export class ProjectMetadataComponent implements OnInit {
   @Input()
-  project = '';
+  project_slug = '';
 
   constructor(
     public projectService: ProjectService,
     private toastService: ToastService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.projectService.getSlug(this.project_slug).subscribe(project => {
+      this.projectService.project = project
+    });
+  }
 
   updateDescriptionForm = new FormControl(
     this.projectService.project?.description,
@@ -28,20 +32,19 @@ export class ProjectMetadataComponent implements OnInit {
   );
 
   updateDescription() {
-    if (this.updateDescriptionForm.valid) {
+    if (this.updateDescriptionForm.valid && this.projectService.project) {
       this.projectService
-        .updateDescription(this.project, this.updateDescriptionForm.value)
+        .updateDescription(this.projectService.project.name, this.updateDescriptionForm.value)
         .subscribe({
           next: (res) => {
             this.updateDescriptionForm.reset();
             this.updateDescriptionForm.setValue(res.description);
-            this.projectService.project = res;
             this.toastService.showSuccess(
-              'Description updated for project ' + this.project,
+              'Description updated for project ' + this.projectService.project,
               "Updated to '" + res.description + "'"
             );
           },
-          error: (res) => {},
+          error: () => {},
         });
     }
   }

@@ -15,6 +15,7 @@ import { RepositoryUser } from 'src/app/schemes';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { ToastService } from 'src/app/toast/toast.service';
+import { ProjectService } from '../../service/project.service';
 
 @Component({
   selector: 'app-project-user-settings',
@@ -26,8 +27,10 @@ export class RepositoryUserSettingsComponent implements OnInit {
 
   @Input()
   set repository(value: string) {
-    this._repository = value;
-    this.refreshRepoUsers();
+    this.projectService.init(value).subscribe(project => {
+      this._repository = project.name;
+      this.refreshRepoUsers();
+    })
   }
 
   get repository() {
@@ -52,6 +55,7 @@ export class RepositoryUserSettingsComponent implements OnInit {
   );
   constructor(
     public repoUserService: RepositoryUserService,
+    private projectService: ProjectService,
     public userService: UserService,
     private toastService: ToastService
   ) {}

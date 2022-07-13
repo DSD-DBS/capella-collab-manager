@@ -3,6 +3,7 @@
 
 # Standard library:
 import importlib
+import json
 import logging
 import typing as t
 from importlib import metadata
@@ -43,13 +44,15 @@ log = logging.getLogger(__name__)
 router = APIRouter()
 
 
+
 @router.get(
     "/",
     response_model=t.List[Project],
     tags=["projects"],
     responses=AUTHENTICATION_RESPONSES,
 )
-def get_projects(db: Session = Depends(get_db), token=Depends(JWTBearer())):
+def get_projects(db: Session = Depends(get_db), 
+    token = Depends(JWTBearer())):
     if is_admin(token, db):
         projects = crud.get_all_projects(db)
     else:
@@ -97,6 +100,18 @@ def get_repository_by_name(
     return convert_project(crud.get_project(db, project))
 
 
+@router.get('/details/', response_model=Project)
+def get(slug: t.Optional[str] = None, id: t.Optional[int] = None,
+    db: Session = Depends(get_db), token=Depends(JWTBearer())):
+    assert (slug and not id) or (id and not slug)
+    if slug:
+        project = crud.get_slug(db, slug)
+    elif id:
+        project = crud.get_id(db, id)
+    verify_project_role(project, token=token, db=db)
+    return convert_project(project)
+    
+
 @router.post("/", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
 def create_repository(
     body: PostRepositoryRequest,
@@ -123,6 +138,7 @@ def delete_repository(
 def convert_project(project: DatabaseProject) -> Project:
     return Project(
         name=project.name,
+        slug=project.slug,
         description=project.description,
         users=UserMetadata(
             leads=len(
@@ -150,13 +166,6 @@ def convert_project(project: DatabaseProject) -> Project:
             ),
         ),
     )
-
-
-router.include_router(
-    router_users.router,
-    prefix="/{project}/users",
-    tags=["project users"],
-)
 
 
 # Load backup extension routes

@@ -36,7 +36,6 @@ class DB_CapellaModel(Base):
     description = Column(String)
     editing_mode = Column(Enum(EditingMode))
     model_type = Column(Enum(CapellaModelType))
-    project = relationship("DatabaseProject", back_populates="models")
     project_name = Column(String, ForeignKey("projects.name"))
     t4c_model = relationship("DB_T4CModel", back_populates="model")
     git_model = relationship("DB_GitModel", back_populates="model")

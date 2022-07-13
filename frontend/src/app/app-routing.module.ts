@@ -26,6 +26,9 @@ import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4
 import { GuacamoleSettingsComponent } from './settings/integrations/guacamole-settings/guacamole-settings.component';
 import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
 import { RequestsComponent } from './settings/requests/requests.component';
+import { EditGitSettingsComponent } from './settings/modelsources/edit-git-settings/edit-git-settings.component';
+import { CreateModelComponent } from './projects/project-detail/create-model/create-model.component';
+import { CreateCoworkingMethodComponent } from './projects/project-detail/create-coworking-method/create-coworking-method.component';
 
 const routes: Routes = [
   {
@@ -91,6 +94,11 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
+    path: 'settings/modelsources/git/edit/:id',
+    component: EditGitSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
     path: 'settings/modelsources/t4c',
     component: T4CSettingsComponent,
     canActivate: [AuthGuardService],
@@ -116,13 +124,23 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'projects/create',
+    path: 'create-project',
     component: CreateProjectComponent,
     canActivate: [AuthGuardService],
   },
   {
-    path: 'projects/:project',
+    path: 'create-coworking-method/:project/:model',
+    component: CreateCoworkingMethodComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'project/:project',
     component: ProjectDetailsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'create-model/:project',
+    component: CreateModelComponent,
     canActivate: [AuthGuardService],
   },
   {
