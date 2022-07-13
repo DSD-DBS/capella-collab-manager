@@ -23,6 +23,17 @@ Please follow the [RESTful web API design best practises](https://docs.microsoft
 
 We recommend to get started with the [local k8d deployment](README.md).
 
+By default, the services run on the following ports when using the instructions below:
+| Port  | Service             |
+|-------|---------------------|
+| 8080  | k3d deployment      |
+| 12345 | k3d registry        |
+| 4200  | frontend            |
+| 8000  | backend             |
+| 8081  | t4c-server mock     |
+| 8082  | license-server mock |
+| 8083  | oauth-mock          |
+
 ## Capella Docker images
 
 Please follow the [README of the Capella Docker images repository](/../../../capella-dockerimages/blob/main/README.md).
@@ -134,7 +145,7 @@ Run the following steps:
    *Hint*: If you already have the k8d cluster running and the if you have the
    application deployed, then no configuration values need to be adjusted.
 
-   *Hint*: You can run `python -m t4cclient.config.diff` after each update to check if your config is up to date.
+   *Hint*: You can run `python -m capellacollab.config.diff` after each update to check if your config is up to date.
 
 1. This step is only **necessary, if you use the self signed certificate** option for the oauth mock.
 
@@ -174,7 +185,7 @@ To create an upgrade script automatically (this will compare the current databas
 with the models):
 
 ```sh
-cd t4cclient
+cd capellacollab
 alembic revision --autogenerate -m "Commit message"
 ```
 

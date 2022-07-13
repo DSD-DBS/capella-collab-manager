@@ -6,7 +6,7 @@ import pathlib
 import yaml
 
 # local:
-from t4cclient import config
+from capellacollab import config
 
 
 def test_config_loading():
