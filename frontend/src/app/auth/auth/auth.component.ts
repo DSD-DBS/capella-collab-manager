@@ -8,6 +8,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { environment } from 'src/environments/environment';
 
@@ -25,10 +26,18 @@ export class AuthComponent implements OnInit {
   }
 
   authProvider = environment.authentication;
+  public params = {} as ParamMap;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private route: ActivatedRoute,
+  ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.route.queryParamMap.subscribe(res => {
+      this.params = res;
+    })
+  }
 
   webSSO() {
     this.authService.getRedirectURL().subscribe((res) => {
