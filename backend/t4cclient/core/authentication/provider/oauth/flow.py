@@ -1,3 +1,4 @@
+from  __future__ import annotations
 import typing as t
 
 import requests
@@ -15,7 +16,7 @@ auth_session = OAuth2Session(
 )
 
 
-def get_auth_redirect_url() -> t.Dict[str, str]:
+def get_auth_redirect_url() -> dict[str, str]:
     auth_url, state = auth_session.authorization_url(
         read_well_known()["authorization_endpoint"],
         grant_type="authorization_code",
@@ -24,7 +25,7 @@ def get_auth_redirect_url() -> t.Dict[str, str]:
     return {"auth_url": auth_url, "state": state}
 
 
-def get_token(code: str) -> t.Dict[str, t.Any]:
+def get_token(code: str) -> dict[str, t.Any]:
     return auth_session.fetch_token(
         read_well_known()["token_endpoint"],
         code=code,
@@ -33,7 +34,7 @@ def get_token(code: str) -> t.Dict[str, t.Any]:
     )
 
 
-def refresh_token(refresh_token: str) -> t.Dict[str, t.Any]:
+def refresh_token(refresh_token: str) -> dict[str, t.Any]:
     return auth_session.refresh_token(
         read_well_known()["token_endpoint"],
         refresh_token=refresh_token,
@@ -42,7 +43,7 @@ def refresh_token(refresh_token: str) -> t.Dict[str, t.Any]:
     )
 
 
-def read_well_known() -> t.Dict[str, t.Any]:
+def read_well_known() -> dict[str, t.Any]:
     if cfg["endpoints"]["wellKnown"]:
         r = requests.get(
             cfg["endpoints"]["wellKnown"], timeout=config["requests"]["timeout"]
