@@ -4,10 +4,14 @@
 from __future__ import annotations
 
 # Standard library:
+import enum
 import logging
+import os
+import pathlib
 import random
 import string
 import typing as t
+from dataclasses import dataclass
 from datetime import datetime
 
 # 3rd party:
@@ -15,6 +19,7 @@ import kubernetes
 import kubernetes.client.exceptions
 import kubernetes.client.models
 import kubernetes.config
+import kubernetes.stream.stream
 
 # local:
 from t4cclient.config import config
@@ -57,6 +62,19 @@ except kubernetes.config.ConfigException:
                 ],
             }
         )
+
+
+class FileType(enum.Enum):
+    FILE = "file"
+    DIRECTORY = "directory"
+
+
+@dataclass
+class File:
+    path: str
+    name: str
+    type: FileType
+    children: t.Optional[list[File]] = None
 
 
 class KubernetesOperator(Operator):
@@ -503,3 +521,92 @@ class KubernetesOperator(Operator):
             return self.v1_core.delete_namespaced_service(id, cfg["namespace"])
         except kubernetes.client.exceptions.ApiException:
             log.exception("Error deleting service with id: %s", id)
+
+    def _get_pod_name(self, id: str) -> str:
+        return self.v1_core.list_namespaced_pod(
+            namespace=cfg["namespace"], label_selector="app=" + id
+        ).to_dict()["items"][0]["metadata"]["name"]
+
+    def upload_files(
+        self,
+        id: str,
+        content: bytes,
+    ):
+        pod_name = self._get_pod_name(id)
+
+        try:
+            exec_command = ["tar", "xf", "-", "-C", "/"]
+            stream = kubernetes.stream.stream(
+                self.v1_core.connect_get_namespaced_pod_exec,
+                pod_name,
+                namespace=cfg["namespace"],
+                command=exec_command,
+                stderr=True,
+                stdin=True,
+                stdout=True,
+                tty=False,
+                _preload_content=False,
+            )
+
+            stream.write_stdin(content)
+            stream.update(timeout=1)
+            if stream.peek_stdout():
+                print("STDOUT: %s" % stream.read_stdout())
+            if stream.peek_stderr():
+                print("STDERR: %s" % stream.read_stderr())
+
+        except kubernetes.client.exceptions.ApiException as e:
+            log.exception("Exception when copying file to the pod")
+            raise e
+
+    def get_files(self, id: str) -> File:
+        pod_name = self._get_pod_name(id)
+        return self.__get_files(
+            pod_name,
+            current_dir=pathlib.PurePosixPath("/workspace"),
+        )
+
+    def __get_files(self, pod_name: str, current_dir: pathlib.PurePosixPath) -> File:
+        file = File(
+            path=str(current_dir),
+            name=current_dir.name,
+            type=FileType.DIRECTORY,
+            children=[],
+        )
+
+        exec_command = [
+            "/bin/sh",
+            "-c",
+            f"ls -l {str(current_dir)}",
+        ]
+
+        response = kubernetes.stream.stream(
+            self.v1_core.connect_get_namespaced_pod_exec,
+            pod_name,
+            namespace=cfg["namespace"],
+            command=exec_command,
+            stderr=True,
+            stdin=False,
+            stdout=True,
+            tty=False,
+        )
+
+        if response:
+            for line in response.splitlines()[1:]:
+                splitted_line = line.split()
+
+                path: pathlib.Path = current_dir / splitted_line[-1]
+                permissions: str = splitted_line[0]
+
+                if permissions.startswith("d"):
+                    file.children.append(self.__get_files(pod_name, path))
+                else:
+                    file.children.append(
+                        File(
+                            name=path.name,
+                            path=str(path),
+                            type=FileType.FILE,
+                        )
+                    )
+
+        return file

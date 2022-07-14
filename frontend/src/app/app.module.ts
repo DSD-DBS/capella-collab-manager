@@ -73,6 +73,10 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { CreateEASEBackupComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/ease-backup-settings/create-ease-backup/create-ease-backup.component';
 import { ModelSourceComponent } from './settings/repository-manager-settings/repository-settings/model-source/model-source.component';
 import { ViewLogsDialogComponent } from './settings/repository-manager-settings/repository-settings/backup-settings/ease-backup-settings/view-logs-dialog/view-logs-dialog.component';
+import { UploadDialogComponent } from './active-sessions/upload-dialog/upload-dialog.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTreeModule } from '@angular/material/tree';
+import { FileExistsDialogComponent } from './active-sessions/upload-dialog/file-exists-dialog/file-exists-dialog.component';
 import { CookieModule } from 'ngx-cookie';
 
 @NgModule({
@@ -121,6 +125,8 @@ import { CookieModule } from 'ngx-cookie';
     CreateEASEBackupComponent,
     ModelSourceComponent,
     ViewLogsDialogComponent,
+    UploadDialogComponent,
+    FileExistsDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -148,6 +154,8 @@ import { CookieModule } from 'ngx-cookie';
     MatSlideToggleModule,
     MatMenuModule,
     MatTabsModule,
+    MatProgressBarModule,
+    MatTreeModule,
     CookieModule.withOptions(),
   ],
   providers: [

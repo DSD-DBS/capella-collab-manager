@@ -23,6 +23,9 @@ app:
 		$(VENV)/Scripts/uvicorn t4cclient.__main__:app --reload; \
 	fi
 
+install: 
+	$(VENV)/bin/pip install -e ".[dev]"
+
 dev: database app
 
 cleanup:

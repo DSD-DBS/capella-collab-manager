@@ -35,3 +35,11 @@ export interface SessionUsage {
   total: number;
   errors: Array<string>;
 }
+
+export interface PathNode {
+  path: string;
+  name: string;
+  type: 'file' | 'directory';
+  isNew: boolean;
+  children: PathNode[] | null;
+}
