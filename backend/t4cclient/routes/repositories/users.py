@@ -116,7 +116,7 @@ def patch_repository_user(
                 raise HTTPException(
                     status_code=500,
                     detail="Invalid response from T4C Server",
-                )
+                ) from err
 
     if body.permission:
         verify_repository_role(
