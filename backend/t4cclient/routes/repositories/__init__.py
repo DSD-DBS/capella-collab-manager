@@ -83,7 +83,7 @@ def create_repository(
 ):
     verify_admin(token, db)
     connection.create_repository(body.name)
-    connection.add_user_to_repository(body.name, get_username(token), isAdmin=True)
+    connection.add_user_to_repository(body.name, get_username(token), is_admin=True)
     connection.create_repository(body.name)
     return repositories.create_repository(db, body.name)
 
