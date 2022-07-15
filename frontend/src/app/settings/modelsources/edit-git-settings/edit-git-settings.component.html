@@ -4,31 +4,7 @@
  -->
 
 <div class="wrapper">
-  <div class="title">Existing instances</div>
-  <div class="instances">
-    <mat-card *ngFor="let instance of instances | keyvalue">
-      <div class="mat-title">
-        <div class="instance-head">
-          {{ instance.value.type }}
-          <span class="mat-subtitle">{{ instance.value.name }}</span>
-        </div>
-        <div class="icon-container">
-          <a mat-icon-button [routerLink]="['./edit', instance.value.id]">
-            <mat-icon aria-label="Edit the source">settings</mat-icon>
-          </a>
-          <button mat-icon-button>
-            <mat-icon aria-label="Delete the source"
-              (click)="openDialog(instance.value.id)">delete</mat-icon>
-          </button>
-        </div>
-      </div>
-      <div class="content">Instance base URL:
-        <a href="{{ instance.value.url }}">{{ instance.value.url }}</a>
-      </div>
-    </mat-card>
-  </div>
-  <br />
-  <div class="title">Add new integration</div>
+  <div class="title">Change selected integration</div>
   <br />
   <form [formGroup]="gitSettingsForm" id="add-instance-form">
     Supported instances: <br />
@@ -52,5 +28,5 @@
       <input matInput formControlName="url" />
     </mat-form-field>
   </form>
-  <button mat-raised-button (click)="createGitSettings()">Create</button>
+  <button mat-raised-button (click)="editGitSettings()">Edit</button>
 </div>
