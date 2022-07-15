@@ -11,9 +11,8 @@ describe('ReconnectDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ReconnectDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [ReconnectDialogComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

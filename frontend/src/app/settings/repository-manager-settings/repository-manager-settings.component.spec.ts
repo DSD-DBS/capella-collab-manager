@@ -11,9 +11,8 @@ describe('RepositoryManagerSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RepositoryManagerSettingsComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositoryManagerSettingsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

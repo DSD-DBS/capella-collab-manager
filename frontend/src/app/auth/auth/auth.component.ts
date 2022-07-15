@@ -30,13 +30,13 @@ export class AuthComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private route: ActivatedRoute,
-  ) { }
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
-    this.route.queryParamMap.subscribe(res => {
+    this.route.queryParamMap.subscribe((res) => {
       this.params = res;
-    })
+    });
   }
 
   webSSO() {

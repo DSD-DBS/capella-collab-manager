@@ -11,9 +11,8 @@ describe('AdminUserSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AdminUserSettingsComponent ]
-    })
-    .compileComponents();
+      declarations: [AdminUserSettingsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
