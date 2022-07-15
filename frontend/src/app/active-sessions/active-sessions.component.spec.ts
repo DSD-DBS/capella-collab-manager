@@ -11,9 +11,8 @@ describe('ActiveSessionsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ActiveSessionsComponent ]
-    })
-    .compileComponents();
+      declarations: [ActiveSessionsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

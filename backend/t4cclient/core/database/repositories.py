@@ -4,6 +4,7 @@
 import typing as t
 
 from sqlalchemy.orm import Session
+
 from t4cclient.sql_models.repositories import DatabaseRepository
 
 

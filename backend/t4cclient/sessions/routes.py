@@ -32,7 +32,7 @@ from t4cclient.sessions.schema import (
     PostSessionRequest,
     WorkspaceType,
 )
-from t4cclient.sessions.sessions import inject_attrs_in_sessions, get_last_seen
+from t4cclient.sessions.sessions import get_last_seen, inject_attrs_in_sessions
 
 router = APIRouter()
 log = logging.getLogger(__name__)

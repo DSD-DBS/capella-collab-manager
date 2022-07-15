@@ -16,7 +16,11 @@
       />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
-    <mat-selection-list #adminusers [multiple]="false" class="scrollable simple-scroll">
+    <mat-selection-list
+      #adminusers
+      [multiple]="false"
+      class="scrollable simple-scroll"
+    >
       <div mat-subheader>Administrators</div>
       <mat-list-option
         *ngFor="let user of getUsersByRole('administrator')"
