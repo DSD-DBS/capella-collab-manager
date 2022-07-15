@@ -67,7 +67,6 @@ export class SessionOverviewComponent implements OnInit {
   }
 
   selectAllSessions(checked: boolean): void {
-    console.log('test');
     for (const id in this.deletionFormGroup.controls) {
       this.deletionFormGroup.get(id)?.setValue(checked);
     }
