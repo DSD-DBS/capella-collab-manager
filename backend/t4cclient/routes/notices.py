@@ -5,6 +5,7 @@ import typing as t
 
 from fastapi import APIRouter, Depends
 from requests import Session
+
 from t4cclient.core.authentication.database import verify_admin
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, notices

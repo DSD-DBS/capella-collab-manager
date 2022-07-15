@@ -1,7 +1,11 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 import typing as t
 
 import requests
 from requests_oauthlib import OAuth2Session
+
 from t4cclient.config import config
 
 cfg = config["authentication"]["oauth"]

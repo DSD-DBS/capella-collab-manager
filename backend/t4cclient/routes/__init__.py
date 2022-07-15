@@ -4,12 +4,12 @@
 import importlib
 import logging
 from importlib import metadata
-from ..sessions import routes as session_routes
 
 from fastapi import APIRouter
-from t4cclient.config import config
 
+from ..sessions import routes as session_routes
 from . import notices, repositories, sync, users
+from t4cclient.config import config
 
 log = logging.getLogger(__name__)
 

@@ -3,6 +3,7 @@
 
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import Enum, Integer, String
+
 from t4cclient.core.database import Base
 from t4cclient.schemas.notices import NoticeLevel
 

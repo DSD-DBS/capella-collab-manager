@@ -11,8 +11,6 @@ import typing as t
 # local:
 from . import loader
 
-from . import loader
-
 log = logging.getLogger(__name__)
 
 

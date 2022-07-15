@@ -8,6 +8,7 @@ import typing as t
 import requests
 from jose import jwt
 from pydantic import BaseModel
+
 from t4cclient.config import config
 
 log = logging.getLogger(__name__)

@@ -6,16 +6,20 @@ import typing as t
 
 from fastapi import APIRouter, Depends
 from requests import Session
+
 from t4cclient.core.authentication.database import verify_repository_role
-from t4cclient.core.authentication.database.git_models import \
-    verify_gitmodel_permission
+from t4cclient.core.authentication.database.git_models import verify_gitmodel_permission
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db
+from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
 from t4cclient.extensions.modelsources import git
 from t4cclient.extensions.modelsources.git.models import (
-    GetRepositoryGitModel, PatchRepositoryGitModel, PostGitModel,
-    RepositoryGitInnerModel, RepositoryGitModel)
-from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
+    GetRepositoryGitModel,
+    PatchRepositoryGitModel,
+    PostGitModel,
+    RepositoryGitInnerModel,
+    RepositoryGitModel,
+)
 
 router = APIRouter()
 
