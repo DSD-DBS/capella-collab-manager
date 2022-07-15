@@ -3,6 +3,7 @@
 
 from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import relationship
+
 from t4cclient.core.database import Base
 
 

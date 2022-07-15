@@ -11,9 +11,8 @@ describe('LicencesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LicencesComponent ]
-    })
-    .compileComponents();
+      declarations: [LicencesComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

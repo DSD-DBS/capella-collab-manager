@@ -11,9 +11,8 @@ describe('DeleteSessionDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DeleteSessionDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [DeleteSessionDialogComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from sqlalchemy.orm import Session
+
 from t4cclient.schemas.notices import CreateNoticeRequest, NoticeResponse
 from t4cclient.sql_models.notices import DatabaseNotice
 

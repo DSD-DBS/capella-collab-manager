@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from sqlalchemy.orm import Session
-from t4cclient.schemas.repositories import (RepositoryUserPermission,
-                                            RepositoryUserRole)
+
+from t4cclient.schemas.repositories import RepositoryUserPermission, RepositoryUserRole
 from t4cclient.sql_models.repositories import RepositoryUserAssociation
 
 
@@ -14,13 +14,15 @@ def get_users_of_repository(db: Session, repository_name: str):
         .all()
     )
 
-def get_user_of_repository(db: Session, repository_name: str, username: str): 
+
+def get_user_of_repository(db: Session, repository_name: str, username: str):
     return (
         db.query(RepositoryUserAssociation)
         .filter(RepositoryUserAssociation.repository_name == repository_name)
         .filter(RepositoryUserAssociation.username == username)
         .first()
     )
+
 
 def add_user_to_repository(
     db: Session,
