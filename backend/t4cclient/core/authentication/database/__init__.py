@@ -3,6 +3,7 @@
 
 import sqlalchemy.orm.session
 from fastapi import Depends, HTTPException
+
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, repository_users
