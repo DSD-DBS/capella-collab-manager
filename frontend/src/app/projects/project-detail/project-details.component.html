@@ -5,12 +5,13 @@
 
 <div class="flexbox">
   <div class="item">
-    <app-project-metadata [project]="project"></app-project-metadata>
-    <app-model-overview [project]="project"></app-model-overview>
+    <app-project-metadata [project_slug]="project_slug"></app-project-metadata>
+    <mat-divider></mat-divider>
+    <app-model-overview [project_slug]="project_slug"></app-model-overview>
   </div>
   <div class="users">
     <app-project-user-settings
-      [repository]="project"
+      [repository]="project_slug"
     ></app-project-user-settings>
   </div>
   <!--<app-backup-settings [project]="project"></app-backup-settings>

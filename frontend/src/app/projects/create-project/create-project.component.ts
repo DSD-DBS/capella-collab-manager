@@ -25,14 +25,16 @@ export class CreateProjectComponent implements OnInit {
     return this.createProjectForm.get('name') as FormControl;
   }
 
-  constructor(private projectService: ProjectService, private router: Router) {}
+  constructor(
+    private projectService: ProjectService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {}
 
   createProject(stepper: MatStepper): void {
     if (this.createProjectForm.valid) {
       this.projectService.createProject(this.name.value).subscribe(() => {
-        this.projectService.refreshProjects();
         stepper.next();
       });
     }

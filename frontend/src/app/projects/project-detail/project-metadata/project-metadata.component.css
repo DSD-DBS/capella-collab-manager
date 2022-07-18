@@ -10,18 +10,10 @@
 
 mat-card {
   margin: 0;
-  height: 100px;
 }
 
 mat-form-field {
   width: 460px;
-}
-
-#submit {
-  margin-top: -200px !important;
-  position: relative;
-  top: 5px;
-  left: 400px;
 }
 
 textarea {

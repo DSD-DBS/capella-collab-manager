@@ -87,7 +87,9 @@ import { DockerimageSettingsComponent } from './settings/core/dockerimage-settin
 import { CookieModule } from 'ngx-cookie';
 import { ViewLogsDialogComponent } from './projects/project-detail/backup-settings/ease-backup-settings/view-logs-dialog/view-logs-dialog.component';
 import { CreateEASEBackupComponent } from './projects/project-detail/backup-settings/ease-backup-settings/create-ease-backup/create-ease-backup.component';
-
+import { EditGitSettingsComponent } from './settings/modelsources/edit-git-settings/edit-git-settings.component';
+import {MatRadioModule} from '@angular/material/radio'; 
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 @NgModule({
   declarations: [
     AppComponent,
@@ -142,6 +144,7 @@ import { CreateEASEBackupComponent } from './projects/project-detail/backup-sett
     RequestsComponent,
     ViewLogsDialogComponent,
     CreateEASEBackupComponent,
+    EditGitSettingsComponent,
   ],
   imports: [
     CommonModule,
@@ -174,6 +177,8 @@ import { CreateEASEBackupComponent } from './projects/project-detail/backup-sett
     MatButtonToggleModule,
     MatTooltipModule,
     MatBadgeModule,
+    MatRadioModule,
+    MatAutocompleteModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-left',
       timeOut: 10000,
