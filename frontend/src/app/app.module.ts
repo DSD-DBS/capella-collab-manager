@@ -89,7 +89,8 @@ import { HomeComponent } from './workspaces/home.component';
 import { NoRepositoryComponent } from './workspaces/no-repository/no-repository.component';
 import { RequestSessionComponent } from './workspaces/request-session/request-session.component';
 import { WarningComponent } from './workspaces/request-session/warning/warning.component';
-
+import {MatRadioModule} from '@angular/material/radio'; 
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 @NgModule({
   declarations: [
     AppComponent,
@@ -178,6 +179,8 @@ import { WarningComponent } from './workspaces/request-session/warning/warning.c
     MatButtonToggleModule,
     MatTooltipModule,
     MatBadgeModule,
+    MatRadioModule,
+    MatAutocompleteModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-left',
       timeOut: 10000,

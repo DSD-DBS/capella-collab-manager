@@ -3,6 +3,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { IntegrationService } from 'src/app/integrations/integration.service';
+import { ProjectService } from '../../service/project.service';
 
 @Component({
   selector: 'app-model-overview',
@@ -11,9 +12,14 @@ import { IntegrationService } from 'src/app/integrations/integration.service';
 })
 export class ModelOverviewComponent implements OnInit {
   @Input()
-  project = '';
+  project_slug = '';
 
-  constructor(public integrations: IntegrationService) {}
+  constructor(
+    public integrations: IntegrationService,
+    public projectService: ProjectService,
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.projectService.init(this.project_slug).subscribe();
+  }
 }

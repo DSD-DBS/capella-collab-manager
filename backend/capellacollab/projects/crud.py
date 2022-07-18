@@ -3,6 +3,9 @@
 
 # Standard library:
 import typing as t
+from h11 import Data
+from slugify import slugify
+from sqlalchemy import select
 
 # 3rd party:
 from sqlalchemy.orm import Session
@@ -27,7 +30,8 @@ def update_description(db: Session, name: str, description: str) -> DatabaseProj
 
 
 def create_project(db: Session, name: str) -> DatabaseProject:
-    repo = DatabaseProject(name=name, users=[])
+    slug = slugify(name)
+    repo = DatabaseProject(name=name, slug=slug, users=[])
     db.add(repo)
     db.commit()
     db.refresh(repo)
@@ -37,3 +41,11 @@ def create_project(db: Session, name: str) -> DatabaseProject:
 def delete_project(db: Session, name: str) -> None:
     db.query(DatabaseProject).filter(DatabaseProject.name == name).delete()
     db.commit()
+
+def get_slug(db: Session, slug: str) -> DatabaseProject:
+    return db.query(DatabaseProject)\
+        .filter(DatabaseProject.slug == slug).first()
+
+def get_id(db: Session, id: int):
+    return db.query(DatabaseProject)\
+        .filter(DatabaseProject.id == id).first()

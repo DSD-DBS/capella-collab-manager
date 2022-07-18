@@ -92,6 +92,11 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
+    path: 'settings/modelsources/git/edit/:id',
+    component: EditGitSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
     path: 'settings/modelsources/t4c',
     component: T4CSettingsComponent,
     canActivate: [AuthGuardService],
@@ -117,12 +122,12 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'projects/create',
+    path: 'create-project',
     component: CreateProjectComponent,
     canActivate: [AuthGuardService],
   },
   {
-    path: 'projects/:project',
+    path: 'project/:project',
     component: ProjectDetailsComponent,
     canActivate: [AuthGuardService],
   },

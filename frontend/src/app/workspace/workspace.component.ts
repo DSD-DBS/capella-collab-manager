@@ -25,7 +25,7 @@ export class WorkspaceComponent implements OnInit {
 
   ngOnInit() {
     this.showSpinner = true;
-    this.projectService.getProjects().subscribe({
+    this.projectService.list().subscribe({
       next: (res) => {
         this.repositories = res;
         this.showSpinner = false;

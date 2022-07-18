@@ -28,7 +28,7 @@ export class ProjectOverviewComponent implements OnInit {
 
   ngOnInit() {
     this.showSpinner = true;
-    this.projectService.getProjects().subscribe({
+    this.projectService.init_all().subscribe({
       next: (res) => {
         this.projects = this.sortProject(res);
         this.showSpinner = false;

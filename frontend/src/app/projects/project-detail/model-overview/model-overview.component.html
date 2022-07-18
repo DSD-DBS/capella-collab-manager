@@ -2,9 +2,13 @@
  ~ Copyright DB Netz AG and the capella-collab-manager contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
-
-<h2 id="title">Models <mat-icon id="settings-icon">settings</mat-icon></h2>
 <div class="models">
+  <div class="models-title">
+    <h2 id="title">Models</h2>
+    <a mat-button [routerLink]="['/create-model', projectService.project?.slug]">
+      <mat-icon id="add-icon">add</mat-icon>
+    </a>
+  </div>
   <mat-card>
     <div class="header">
       <div class="title">testmodel</div>
@@ -17,13 +21,11 @@
       <div class="content">No description provided.</div>
       <div class="actions">
         <div class="left">
-          <button
-            mat-mini-fab
-            [routerLink]="'/projects/' + project + '/models/' + 'testmodel'"
-            matTooltip="Configure model"
-          >
+          <a mat-mini-fab matTooltip="Configure model"
+            [routerLink]="['/model', project_slug, 'testmodel']"
+            matTooltip="Configure model">
             <mat-icon>settings</mat-icon>
-          </button>
+          </a>
           <button mat-mini-fab disabled matTooltip="Download model">
             <mat-icon>cloud_download</mat-icon>
           </button>
