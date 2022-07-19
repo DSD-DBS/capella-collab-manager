@@ -27,6 +27,8 @@ import { GuacamoleSettingsComponent } from './settings/integrations/guacamole-se
 import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
 import { RequestsComponent } from './settings/requests/requests.component';
 import { EditGitSettingsComponent } from './settings/modelsources/edit-git-settings/edit-git-settings.component';
+import { CreateModelComponent } from './projects/project-detail/create-model/create-model.component';
+import { CreateCoworkingMethodComponent } from './projects/project-detail/create-coworking-method/create-coworking-method.component';
 
 const routes: Routes = [
   {
@@ -127,8 +129,18 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
+    path: 'create-coworking-method/:project/:model',
+    component: CreateCoworkingMethodComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
     path: 'project/:project',
     component: ProjectDetailsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'create-model/:project',
+    component: CreateModelComponent,
     canActivate: [AuthGuardService],
   },
   {

@@ -3,6 +3,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { IntegrationService } from 'src/app/integrations/integration.service';
+import { ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from '../../service/project.service';
 
 @Component({
@@ -17,9 +18,12 @@ export class ModelOverviewComponent implements OnInit {
   constructor(
     public integrations: IntegrationService,
     public projectService: ProjectService,
+    public modelService: ModelService,
   ) {}
 
   ngOnInit(): void {
-    this.projectService.init(this.project_slug).subscribe();
+    this.modelService.init_all(this.project_slug).subscribe(value => {
+      console.log(value);
+    });
   }
 }

@@ -7,20 +7,20 @@
   <a *ngFor="let project of projects" [routerLink]="['/project', project.slug]">
   <mat-card>
     <div class="wrapper">
-      <div class="header"><span class="no-underline">{{ project.name }}</span></div>
+      <div class="header">{{ project.name }}</div>
       <div class="wrapper">
         <div class="content">
-          <p *ngIf="project.description; else elseBlock">
+          <div *ngIf="project.description; else elseBlock">
             {{ project.description }}
-          </p>
-          <ng-template #elseBlock><p>No description provided.</p></ng-template>
+          </div>
+          <ng-template #elseBlock>No description provided.</ng-template>
         </div>
-        <p class="footer">
+        <div class="footer">
           {{ project.users.leads }} project lead(s),
           {{ project.users.contributors }} contributor(s),
           {{ project.users.subscribers }}
           subscriber(s)
-        </p>
+        </div>
       </div>
     </div>
   </mat-card>

@@ -88,8 +88,10 @@ import { CookieModule } from 'ngx-cookie';
 import { ViewLogsDialogComponent } from './projects/project-detail/backup-settings/ease-backup-settings/view-logs-dialog/view-logs-dialog.component';
 import { CreateEASEBackupComponent } from './projects/project-detail/backup-settings/ease-backup-settings/create-ease-backup/create-ease-backup.component';
 import { EditGitSettingsComponent } from './settings/modelsources/edit-git-settings/edit-git-settings.component';
+import { CreateModelComponent } from './projects/project-detail/create-model/create-model.component';
 import {MatRadioModule} from '@angular/material/radio'; 
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { CreateCoworkingMethodComponent } from './projects/project-detail/create-coworking-method/create-coworking-method.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -145,6 +147,8 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
     ViewLogsDialogComponent,
     CreateEASEBackupComponent,
     EditGitSettingsComponent,
+    CreateModelComponent,
+    CreateCoworkingMethodComponent,
   ],
   imports: [
     CommonModule,

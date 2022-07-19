@@ -40,6 +40,7 @@
       </button>
     </form>
   </mat-step>
+
   <mat-step>
     <form [formGroup]="createProjectForm">
       <ng-template matStepLabel>Add team members</ng-template>
@@ -47,7 +48,7 @@
     </form>
     <ng-template matStepContent>
       <app-project-user-settings
-        [repository]="name.value"
+        [repository]="project_slug"
       ></app-project-user-settings>
     </ng-template>
   </mat-step>
