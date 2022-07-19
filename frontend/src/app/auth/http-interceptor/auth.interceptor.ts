@@ -35,6 +35,7 @@ export class AuthInterceptor implements HttpInterceptor {
     const req = this.injectAccessToken(request);
     return next.handle(req).pipe(
       catchError((err) => {
+        throwError(() => err)
         if (err.status === 401) {
           if (err.error.detail.err_code == 'token_exp') {
             return this.refreshToken().pipe(
@@ -51,6 +52,7 @@ export class AuthInterceptor implements HttpInterceptor {
             this.router.navigateByUrl('/logout?reason=unauthorized');
           }
         } else if (
+          typeof err.error !== 'undefined' &&
           typeof err.error.detail !== 'undefined' &&
           err.error.detail.reason
         ) {

@@ -10,14 +10,17 @@ import pathlib
 from alembic import command
 from alembic.config import Config
 from alembic.migration import MigrationContext
+from pytest import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 # 1st party:
 import capellacollab.projects.crud as projects
+import capellacollab.tools.crud as tools
 from capellacollab.config import config
 from capellacollab.core.database import Base, users
 from capellacollab.projects.users.models import Role
+from capellacollab.tools.models import Tool
 
 DATABASE_URL = config["database"]["url"]
 engine = create_engine(DATABASE_URL, connect_args={"connect_timeout": 5})
@@ -51,6 +54,7 @@ def migrate_db():
             command.stamp(alembic_cfg, "head")
             initialize_admin_user()
             initialize_default_repository()
+            create_tools()
 
 
 def initialize_admin_user():
@@ -63,3 +67,32 @@ def initialize_default_repository():
     LOGGER.info("Initialized repository 'default'")
     with SessionLocal() as db:
         projects.create_project(db=db, name="default")
+
+def create_tools():
+    LOGGER.info("Initialized tools")
+    with SessionLocal() as db:
+        capella = Tool(
+            name="Capella",
+            docker_image_template="/t4c/client/remote/$version:prod"
+        )
+        papyrus = Tool(
+            name="Papyrus",
+            docker_image_template="/papyrus/client/remote/$version:prod"
+        )
+        tools.create_tool(db, capella)
+        tools.create_tool(db, papyrus)
+
+        tools.create_version(db, capella.id, "6.2", True)
+        tools.create_version(db, capella.id, "6.0")
+        tools.create_version(db, capella.id, "5.2")
+        
+        tools.create_version(db, papyrus.id, "6.2")
+        tools.create_version(db, papyrus.id, "6.0")
+
+        tools.create_type(db, capella.id, "model")
+        tools.create_type(db, capella.id, "library")
+
+        tools.create_type(db, papyrus.id, "UML 2.5")
+        tools.create_type(db, papyrus.id, "SysML 1.4")
+        tools.create_type(db, papyrus.id, "SysML 1.1")
+

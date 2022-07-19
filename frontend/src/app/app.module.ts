@@ -89,8 +89,10 @@ import { HomeComponent } from './workspaces/home.component';
 import { NoRepositoryComponent } from './workspaces/no-repository/no-repository.component';
 import { RequestSessionComponent } from './workspaces/request-session/request-session.component';
 import { WarningComponent } from './workspaces/request-session/warning/warning.component';
+import { CreateModelComponent } from './projects/project-detail/create-model/create-model.component';
 import {MatRadioModule} from '@angular/material/radio'; 
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { CreateCoworkingMethodComponent } from './projects/project-detail/create-coworking-method/create-coworking-method.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -147,6 +149,8 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
     CreateEASEBackupComponent,
     DeleteGitSettingsDialogComponent,
     EditGitSettingsComponent,
+    CreateModelComponent,
+    CreateCoworkingMethodComponent,
   ],
   imports: [
     CommonModule,

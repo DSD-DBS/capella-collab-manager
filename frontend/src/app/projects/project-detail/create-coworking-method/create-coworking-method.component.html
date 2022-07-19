@@ -1,0 +1,69 @@
+<!--
+ ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="wrapper">
+  <mat-card class="section-card">
+    <h2>Add coworking method to model</h2>
+    <mat-radio-group class="form-radio-group" value="new-git"
+      [(ngModel)]="method">
+      <mat-radio-button class="form-radio-button" value="new-git">
+        new Git repository on managed platform
+      </mat-radio-button>
+      <mat-radio-button class="form-radio-button" value="existing-git">
+        existing Git repository
+      </mat-radio-button>
+    </mat-radio-group>
+  
+    <form *ngIf="method == 'new-git'" [formGroup]="newGitForm">
+      <fieldset>
+        <mat-form-field>
+          <mat-label>Git Management Platform</mat-label>
+          <mat-select formControlName="instance">
+            <mat-option value="0">
+              https://github.com/DSD-DBS/
+            </mat-option>
+            <mat-option value="1">
+              https://git.tech.rz.db.de/dbb_sea/
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div class="field-separator"></div>
+        <mat-form-field>
+          <mat-label>Repository slug</mat-label>
+          <input matInput formControlName="slug">
+        </mat-form-field>
+      </fieldset>
+      <button mat-raised-button color="primary"
+        [disabled]="!newGitForm.valid" type="submit">
+        Add co-working method
+      </button>
+    </form>
+  
+    <form *ngIf="method == 'existing-git'" 
+      [formGroup]="existingGitForm">
+      <fieldset>
+        <mat-form-field>
+          <mat-label>Repository url</mat-label>
+          <input matInput formControlName="url">
+        </mat-form-field>
+      </fieldset>
+      <fieldset>
+        <mat-form-field>
+          <mat-label>Git username</mat-label>
+          <input matInput formControlName="username">
+        </mat-form-field>
+        <div class="field-separator"></div>
+        <mat-form-field>
+          <mat-label>Git password</mat-label>
+          <input matInput formControlName="password">
+        </mat-form-field>
+      </fieldset>
+      <button mat-raised-button color="primary"
+        [disabled]="!existingGitForm.valid" type="submit">
+        Add co-working method
+      </button>
+    </form>
+  </mat-card>
+</div>

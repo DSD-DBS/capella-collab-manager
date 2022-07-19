@@ -27,6 +27,8 @@ import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-s
 import { RequestsComponent } from './settings/requests/requests.component';
 import { SettingsComponent } from './settings/settings.component';
 import { HomeComponent } from './workspaces/home.component';
+import { CreateModelComponent } from './projects/project-detail/create-model/create-model.component';
+import { CreateCoworkingMethodComponent } from './projects/project-detail/create-coworking-method/create-coworking-method.component';
 
 const routes: Routes = [
   {
@@ -127,6 +129,11 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
+    path: 'create-coworking-method/:project/:model',
+    component: CreateCoworkingMethodComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
     path: 'project/:project',
     component: ProjectDetailsComponent,
     canActivate: [AuthGuardService],
@@ -134,6 +141,11 @@ const routes: Routes = [
   {
     path: 'settings/modelsources/git/instances/:id',
     component: EditGitSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'create-model/:project',
+    component: CreateModelComponent,
     canActivate: [AuthGuardService],
   },
   {
