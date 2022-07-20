@@ -3,7 +3,6 @@
 
 # Standard library:
 import typing as t
-from numpy import integer
 
 # 3rd party:
 from enum import Enum
@@ -16,6 +15,8 @@ from sqlalchemy.sql.sqltypes import Boolean
 # 1st party:
 from capellacollab.core.database import Base
 
+from capellacollab.projects.users.models import Role
+
 
 class GitType(Enum):
     GENERAL = "General"
@@ -25,9 +26,9 @@ class GitType(Enum):
 
 
 class GitSettings(BaseModel):
-    type: GitType
-    name: str
-    url: str
+    type: t.Optional[GitType]
+    name: t.Optional[str]
+    url: t.Optional[str]
 
 
 class GitSettingsGitGetResponse(BaseModel):
