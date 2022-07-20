@@ -4,8 +4,16 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
-import { GitSettings, GitSettingsService, GitType } from 'src/app/services/settings/git-settings.service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  GitSettings,
+  GitSettingsService,
+  GitType,
+} from 'src/app/services/settings/git-settings.service';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-git-settings',
@@ -13,8 +21,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
   styleUrls: ['./git-settings.component.css'],
 })
 export class GitSettingsComponent implements OnInit {
-
-  public instances: {[id: number]: GitSettings};
+  public instances: { [id: number]: GitSettings };
   gitSettingsForm = new FormGroup({
     type: new FormControl('', Validators.required),
     name: new FormControl('', Validators.required),
@@ -24,48 +31,50 @@ export class GitSettingsComponent implements OnInit {
   constructor(
     private navbarService: NavBarService,
     private gitSettingsService: GitSettingsService,
-    public dialog: MatDialog,
+    public dialog: MatDialog
   ) {
     this.navbarService.title = 'Settings / Modelsources / Git';
     this.instances = {};
   }
 
   ngOnInit(): void {
-    this.gitSettingsService.listGitSettings().subscribe(res => {
-      res.forEach(instance => {
+    this.gitSettingsService.listGitSettings().subscribe((res) => {
+      res.forEach((instance) => {
         this.instances[instance.id] = instance;
       });
-    })
+    });
   }
 
   createGitSettings(): void {
     if (this.gitSettingsForm.valid) {
-      this.gitSettingsService.createGitSettings(
-        (this.gitSettingsForm.get('name') as FormControl).value,
-        (this.gitSettingsForm.get('url') as FormControl).value,
-        (this.gitSettingsForm.get('type') as FormControl).value,
-      ).subscribe(res => {
-        this.gitSettingsForm.reset();
-        this.instances[res["id"]] = res;
-      })
+      this.gitSettingsService
+        .createGitSettings(
+          (this.gitSettingsForm.get('name') as FormControl).value,
+          (this.gitSettingsForm.get('url') as FormControl).value,
+          (this.gitSettingsForm.get('type') as FormControl).value
+        )
+        .subscribe((res) => {
+          this.gitSettingsForm.reset();
+          this.instances[res['id']] = res;
+        });
     }
   }
 
   deleteGitSettings(id: number): void {
-    this.gitSettingsService.deleteGitSettings(id).subscribe(_ => {
+    this.gitSettingsService.deleteGitSettings(id).subscribe((_) => {
       delete this.instances[id];
-    })
+    });
   }
 
   openDialog(id: number): void {
     const dialogRef = this.dialog.open(DialogDeleteGitSettings, {
       data: this.instances[id],
-    })
-    dialogRef.afterClosed().subscribe(result => {
+    });
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.deleteGitSettings(id);
       }
-    })
+    });
   }
 }
 
@@ -76,7 +85,7 @@ export class GitSettingsComponent implements OnInit {
 export class DialogDeleteGitSettings {
   constructor(
     public dialogRef: MatDialogRef<DialogDeleteGitSettings>,
-    @Inject(MAT_DIALOG_DATA) public data: GitSettings,
+    @Inject(MAT_DIALOG_DATA) public data: GitSettings
   ) {}
 
   close(result: boolean): void {
