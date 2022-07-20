@@ -12,6 +12,7 @@ from fastapi import APIRouter
 # 1st party:
 from capellacollab.config import config
 from capellacollab.projects import routes as projects
+from capellacollab.sources.git_settings import routes as git_settings
 import capellacollab.config.routes as configuration
 
 # local:
@@ -26,6 +27,9 @@ router.include_router(projects.router, prefix="/projects")
 router.include_router(users.router, prefix="/users", tags=["Users"])
 router.include_router(notices.router, prefix="/notices", tags=["Notices"])
 router.include_router(configuration.router, prefix="/configurations", tags=["Notices"])
+router.include_router(
+    git_settings.router, prefix="/git-settings", tags=["Git-Settings"]
+)
 
 # Load authentication routes
 try:
