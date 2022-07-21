@@ -5,11 +5,11 @@
 import typing as t
 
 # 3rd party:
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
 
 # 1st party:
-from capellacollab.core.authentication.database import verify_project_role
+from capellacollab.core.authentication.database import verify_project_role, is_admin
 from capellacollab.core.authentication.database.git_models import (
     verify_gitmodel_permission,
 )
@@ -28,37 +28,41 @@ router = APIRouter()
 
 @router.get("/", tags=["Git-Settings"], responses=AUTHENTICATION_RESPONSES)
 def list_git_settings(db: Session = Depends(get_db), token=Depends(JWTBearer())):
-    return [
-        GitSettingsGitGetResponse(
-            id=1,
-            type=GitType.GITHUB,
-            name="First instance",
-            url="https://github.com/machin-bidule",
-        ),
-        GitSettingsGitGetResponse(
-            id=2,
-            type=GitType.GITHUB,
-            name="Second instance",
-            url="https://github.com/truc",
-        ),
-    ]
+    if is_admin(token, db):
+        return crud.get_all_git_settings(db)
+
+    # TODO: can manager get git settings? how to associate user with git settings?
+
+    raise HTTPException(
+        status_code=500,
+        detail="The role administrator is required for this transaction.",
+    )
 
 
 @router.get("/{id}", tags=["Git-Settings"], responses=AUTHENTICATION_RESPONSES)
-def get_git_settings(id: int, db: Session = Depends(get_db)):
-    return (
-        GitSettingsGitGetResponse(
-            id=id,
-            type=GitType.GITHUB,
-            name="Second instance",
-            url="https://github.com/truc",
-        ),
+def get_git_settings(
+    id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())
+):
+    if is_admin(token, db):
+        return crud.get_git_settings(db, id)
+
+    raise HTTPException(
+        status_code=500,
+        detail="The role administrator is required for this transaction.",
     )
 
 
 @router.post("/", tags=["Git-Settings"], responses=AUTHENTICATION_RESPONSES)
-def create_git_settings(body: GitSettings):
-    pass
+def create_git_settings(
+    body: GitSettings, db: Session = Depends(get_db), token=Depends(JWTBearer())
+):
+    if is_admin(token, db):
+        return crud.create_git_settings(db, body)
+
+    raise HTTPException(
+        status_code=500,
+        detail="The role administrator is required for this transaction.",
+    )
 
 
 @router.put("/{id}", tags=["Git-Settings"], responses=AUTHENTICATION_RESPONSES)
@@ -67,5 +71,13 @@ def edit_git_settings(id: int, body: GitSettings):
 
 
 @router.delete("/{id}", tags=["Git-Settings"], responses=AUTHENTICATION_RESPONSES)
-def delete_git_settings(id: int):
-    pass
+def delete_git_settings(
+    id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())
+):
+    if is_admin(token, db):
+        return crud.delete_git_settings(db, id)
+
+    raise HTTPException(
+        status_code=500,
+        detail="The role administrator is required for this transaction.",
+    )
