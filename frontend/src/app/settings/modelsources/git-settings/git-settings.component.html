@@ -4,16 +4,16 @@
  -->
 
 <div class="wrapper">
-  <div class="title">Existing instances</div>
-  <div class="instances">
-    <mat-card *ngFor="let instance of instances | keyvalue">
+  <div class="title" *ngIf="instances.length">Existing instances</div>
+  <div class="instances" *ngIf="instances.length">
+    <mat-card *ngFor="let instance of instances">
       <div class="mat-title">
         <div class="instance-head">
-          {{ instance.value.type }}
-          <span class="mat-subtitle">{{ instance.value.name }}</span>
+          {{ instance.type }}
+          <span class="mat-subtitle">{{ instance.name }}</span>
         </div>
         <div class="icon-container">
-          <a mat-icon-button [routerLink]="['./edit', instance.value.id]">
+          <a mat-icon-button [routerLink]="['./edit', instance.id]">
             <mat-icon aria-label="Edit the source">settings</mat-icon>
           </a>
           <button mat-icon-button>
@@ -22,8 +22,9 @@
           </button>
         </div>
       </div>
-      <div class="content">Instance base URL:
-        <a href="{{ instance.value.url }}">{{ instance.value.url }}</a>
+      <div class="content">
+        Instance base URL:
+        <a href="{{ instance.url }}">{{ instance.url }}</a>
       </div>
     </mat-card>
   </div>
@@ -39,7 +40,7 @@
         <mat-option value="1" disabled>GitLab (unsupported)</mat-option>
         <mat-option value="2" disabled>GitHub (unsupported)</mat-option>
         <mat-option value="3" disabled>Azure DevOps (unsupported)</mat-option>
-      </mat-select> 
+      </mat-select>
     </mat-form-field>
     <br />
     <mat-form-field id="instance-url" appearance="fill">

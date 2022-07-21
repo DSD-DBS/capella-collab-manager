@@ -21,7 +21,7 @@ import {
   styleUrls: ['./git-settings.component.css'],
 })
 export class GitSettingsComponent implements OnInit {
-  public instances: { [id: number]: GitSettings };
+  public instances: Array<GitSettings>;
   gitSettingsForm = new FormGroup({
     type: new FormControl('', Validators.required),
     name: new FormControl('', Validators.required),
@@ -31,16 +31,17 @@ export class GitSettingsComponent implements OnInit {
   constructor(
     private navbarService: NavBarService,
     private gitSettingsService: GitSettingsService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>
   ) {
     this.navbarService.title = 'Settings / Modelsources / Git';
-    this.instances = {};
+    this.instances = [];
   }
 
   ngOnInit(): void {
     this.gitSettingsService.listGitSettings().subscribe((res) => {
       res.forEach((instance) => {
-        this.instances[instance.id] = instance;
+        this.instances.push(instance);
       });
     });
   }
@@ -55,7 +56,8 @@ export class GitSettingsComponent implements OnInit {
         )
         .subscribe((res) => {
           this.gitSettingsForm.reset();
-          this.instances[res['id']] = res;
+          this.instances.push(res);
+          window.location.reload();
         });
     }
   }
