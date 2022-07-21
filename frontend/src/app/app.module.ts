@@ -34,7 +34,7 @@ import { MatListModule } from '@angular/material/list';
 import { ActiveSessionsComponent } from './active-sessions/active-sessions.component';
 import { LogoutComponent } from './auth/logout/logout/logout.component';
 import { DeleteSessionDialogComponent } from './delete-session-dialog/delete-session-dialog.component';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { NoticeComponent } from './notice/notice.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ReconnectDialogComponent } from './active-sessions/reconnect-dialog/reconnect-dialog.component';
@@ -87,6 +87,7 @@ import { DockerimageSettingsComponent } from './settings/core/dockerimage-settin
 import { CookieModule } from 'ngx-cookie';
 import { ViewLogsDialogComponent } from './projects/project-detail/backup-settings/ease-backup-settings/view-logs-dialog/view-logs-dialog.component';
 import { CreateEASEBackupComponent } from './projects/project-detail/backup-settings/ease-backup-settings/create-ease-backup/create-ease-backup.component';
+import { DeleteGitSettingsDialogComponent } from './src/app/settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
 
 @NgModule({
   declarations: [
@@ -142,6 +143,7 @@ import { CreateEASEBackupComponent } from './projects/project-detail/backup-sett
     RequestsComponent,
     ViewLogsDialogComponent,
     CreateEASEBackupComponent,
+    DeleteGitSettingsDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -190,6 +192,10 @@ import { CreateEASEBackupComponent } from './projects/project-detail/backup-sett
       provide: HTTP_INTERCEPTORS,
       useClass: WhitespaceUrlInterceptor,
       multi: true,
+    },
+    {
+      provide: MatDialogRef,
+      useValue: {},
     },
   ],
   bootstrap: [AppComponent],

@@ -9,11 +9,8 @@ import {
   GitSettingsService,
   GitType,
 } from 'src/app/services/settings/git-settings.service';
-import {
-  MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
 
 @Component({
   selector: 'app-git-settings',
@@ -63,34 +60,18 @@ export class GitSettingsComponent implements OnInit {
   }
 
   deleteGitSettings(id: number): void {
-    this.gitSettingsService.deleteGitSettings(id).subscribe((_) => {
-      delete this.instances[id];
-    });
-  }
-
-  openDialog(id: number): void {
-    const dialogRef = this.dialog.open(DialogDeleteGitSettings, {
-      data: this.instances[id],
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.deleteGitSettings(id);
-      }
-    });
-  }
-}
-
-@Component({
-  selector: 'dialog-delete-git-settings',
-  templateUrl: 'dialog-delete-git-settings.html',
-})
-export class DialogDeleteGitSettings {
-  constructor(
-    public dialogRef: MatDialogRef<DialogDeleteGitSettings>,
-    @Inject(MAT_DIALOG_DATA) public data: GitSettings
-  ) {}
-
-  close(result: boolean): void {
-    this.dialogRef.close(result);
+    const index: number = this.instances.findIndex((obj) => obj.id == id);
+    this.dialog
+      .open(DeleteGitSettingsDialogComponent, {
+        data: this.instances[index],
+      })
+      .afterClosed()
+      .subscribe((response) => {
+        if (response) {
+          this.gitSettingsService.deleteGitSettings(id).subscribe((_) => {
+            this.instances.splice(index, 1);
+          });
+        }
+      });
   }
 }
