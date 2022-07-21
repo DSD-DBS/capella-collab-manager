@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
 })
 export class GitSettingsService {
   constructor(private http: HttpClient) {}
-  BACKEND_URL_PREFIX = environment.backend_url + '/sources/git-settings/';
+  BACKEND_URL_PREFIX = environment.backend_url + '/git-settings/';
 
   listGitSettings(): Observable<GitSettings[]> {
     return this.http.get<GitSettings[]>(this.BACKEND_URL_PREFIX);
@@ -26,10 +26,12 @@ export class GitSettingsService {
     url: string,
     type: GitType
   ): Observable<GitSettings> {
+    const typeName = GitType[type];
+    console.log(GitType[type], typeName, typeof typeName);
     return this.http.post<GitSettings>(this.BACKEND_URL_PREFIX, {
-      type,
-      name,
-      url,
+      type: GitType[type],
+      name: name,
+      url: url,
     });
   }
 
@@ -48,7 +50,6 @@ export class GitSettingsService {
   }
 
   deleteGitSettings(id: number) {
-    return of({});
     return this.http.delete(this.BACKEND_URL_PREFIX + id);
   }
 
