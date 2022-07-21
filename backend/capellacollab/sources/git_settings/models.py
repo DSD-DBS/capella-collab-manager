@@ -26,7 +26,7 @@ class GitType(Enum):
 
 
 class GitSettings(BaseModel):
-    type: t.Optional[GitType]
+    type: t.Optional[str]
     name: t.Optional[str]
     url: t.Optional[str]
 
