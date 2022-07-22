@@ -24,6 +24,7 @@ skip = ["typings", ".venv"]
 skip_glob = ["**/*.pyi"]
 use_parentheses = true
 
+[tool.pyright]
 pyrightpythonVersion = "3.10"
 typeCheckingMode = "strict"
 include = ["backend", "tests",]
