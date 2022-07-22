@@ -8,9 +8,9 @@ from sqlalchemy.orm import Session
 
 # 1st party:
 from capellacollab.core.database import get_db
-from capellacollab.core.operators import OPERATOR
-from capellacollab.extensions.guacamole import get_admin_token
 from capellacollab.extensions.modelsources.t4c.connection import get_t4c_status
+from capellacollab.sessions.guacamole import get_admin_token
+from capellacollab.sessions.operators import OPERATOR
 
 
 class StatusResponse(BaseModel):

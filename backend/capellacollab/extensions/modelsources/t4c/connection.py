@@ -85,14 +85,17 @@ def fetch_last_seen(mac_addr: str):
 
 
 def add_user_to_repository(
-    repository: str, username: str, password: str = generate_password()
+    repository: str,
+    username: str,
+    password: str = generate_password(),
+    is_admin: bool = False,
 ):
     r = requests.post(
         config["modelsources"]["t4c"]["restAPI"] + "/users",
         params={"repositoryName": repository},
         json={
             "id": username,
-            "isAdmin": False,
+            "isAdmin": is_admin,
             "password": password,
         },
         auth=T4C_BACKEND_AUTHENTICATION,

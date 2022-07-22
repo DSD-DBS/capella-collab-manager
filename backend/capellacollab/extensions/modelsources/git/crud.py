@@ -8,42 +8,33 @@ import typing as t
 from sqlalchemy.orm import Session
 
 # 1st party:
-from capellacollab.extensions.modelsources.git.models import (
-    DB_GitModel,
-    PostGitModel,
-    RepositoryGitModel,
-)
+from capellacollab.extensions.modelsources.git.models import DB_GitModel, PostGitModel
 
 
-def get_models_of_repository(db: Session, project_name: str) -> t.List[DB_GitModel]:
-    return db.query(DB_GitModel).filter(DB_GitModel.project_name == project_name).all()
+def get_gitmodels_of_capellamodels(db: Session, model_id: int) -> t.List[DB_GitModel]:
+    return db.query(DB_GitModel).filter(DB_GitModel.model_id == model_id).all()
 
 
-def get_primary_model_of_repository(db: Session, project_name: str):
+def get_primary_gitmodel_of_capellamodels(db: Session, model_id: int):
     return (
         db.query(DB_GitModel)
-        .filter(DB_GitModel.project_name == project_name)
-        .filter(DB_GitModel.primary == True)
+        .filter(DB_GitModel.model_id == model_id)
+        .filter(DB_GitModel.primary)
         .first()
     )
 
 
-def get_model_by_id(db: Session, repository_name: str, model_id: int) -> DB_GitModel:
-    return (
-        db.query(DB_GitModel)
-        .filter(DB_GitModel.project_name == project_name)
-        .filter(DB_GitModel.id == model_id)
-        .first()
-    )
+def get_gitmodel_by_id(db: Session, id: int) -> DB_GitModel:
+    return db.query(DB_GitModel).filter(DB_GitModel.id == id).first()
 
 
-def make_model_primary(db: Session, project_name: str, model_id: int) -> DB_GitModel:
-    primary_model = get_primary_model_of_repository(db, project_name)
+def make_gitmodel_primary(db: Session, id: int) -> DB_GitModel:
+    primary_model = get_primary_gitmodel_of_capellamodels(db, id)
     if primary_model:
         primary_model.primary = False
         db.add(primary_model)
 
-    new_primary_model = get_model_by_id(db, project_name, model_id)
+    new_primary_model = get_gitmodel_by_id(db, id)
     new_primary_model.primary = True
 
     db.add(new_primary_model)
@@ -52,14 +43,14 @@ def make_model_primary(db: Session, project_name: str, model_id: int) -> DB_GitM
     return new_primary_model
 
 
-def add_model_to_repository(db: Session, project_name: str, model: PostGitModel):
-    if len(get_models_of_repository(db, project_name)):
+def add_gitmodel_to_capellamodel(db: Session, capellamodel_id, model: PostGitModel):
+    if len(get_gitmodels_of_capellamodels(db, capellamodel_id)):
         primary = False
     else:
         primary = True
 
+    # FIXME: Update the parameters according to the new structure
     model = DB_GitModel(
-        project_name=project_name,
         **model.model.dict(),
         name=model.name,
         primary=primary,
@@ -72,8 +63,8 @@ def add_model_to_repository(db: Session, project_name: str, model: PostGitModel)
     return model
 
 
-def delete_model_from_repository(db: Session, project_name: str, model_id: int):
+def delete_model_from_repository(db: Session, capellamodel_id: int, model_id: int):
     db.query(DB_GitModel).filter(DB_GitModel.id == model_id).filter(
-        DB_GitModel.project_name == project_name
+        DB_GitModel.model_id == capellamodel_id
     ).delete()
     db.commit()

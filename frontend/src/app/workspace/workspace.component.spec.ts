@@ -11,9 +11,8 @@ describe('WorkspaceComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WorkspaceComponent ]
-    })
-    .compileComponents();
+      declarations: [WorkspaceComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

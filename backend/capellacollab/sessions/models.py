@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship
 
 # 1st party:
 from capellacollab.core.database import Base
-from capellacollab.schemas.sessions import WorkspaceType
+from capellacollab.sessions.schema import WorkspaceType
 
 
 class DatabaseSession(Base):

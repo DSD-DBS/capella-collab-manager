@@ -24,6 +24,9 @@ app:
 		$(VENV)/Scripts/$${UVICORN_COMMAND}; \
 	fi
 
+install: 
+	$(VENV)/bin/pip install -e ".[dev]"
+
 dev: database app
 
 cleanup:

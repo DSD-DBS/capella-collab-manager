@@ -3,6 +3,7 @@
 
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import Enum, Integer, String
+
 from capellacollab.core.database import Base
 from capellacollab.schemas.notices import NoticeLevel
 

@@ -9,14 +9,16 @@ from importlib import metadata
 # 3rd party:
 from fastapi import APIRouter
 
+import capellacollab.config.routes as configuration
+import capellacollab.sessions.routes as sessions
+
+# local:
+from . import notices, users
+
 # 1st party:
 from capellacollab.config import config
 from capellacollab.projects import routes as projects
 from capellacollab.sources.git_settings import routes as git_settings
-import capellacollab.config.routes as configuration
-
-# local:
-from . import notices, sessions, users
 
 log = logging.getLogger(__name__)
 

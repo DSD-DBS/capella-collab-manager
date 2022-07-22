@@ -13,6 +13,9 @@ from requests import Session
 
 # 1st party:
 import capellacollab.core.authentication.database as auth
+
+# local:
+from . import crud, helper, models
 from capellacollab.config import config
 from capellacollab.core import credentials
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
@@ -20,9 +23,6 @@ from capellacollab.core.database import get_db
 from capellacollab.core.operators import OPERATOR
 from capellacollab.extensions.modelsources import git, t4c
 from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
-
-# local:
-from . import crud, helper, models
 
 router = APIRouter()
 log = logging.getLogger(__name__)
@@ -68,7 +68,7 @@ def create_backup(
 
     username = "techuser-" + str(uuid.uuid4())
     password = credentials.generate_password()
-    t4c.connection.add_user_to_repository(project, username, password)
+    t4c.connection.add_user_to_repository(project, username, password, is_admin=False)
 
     reference = OPERATOR.create_cronjob(
         image=config["docker"]["images"]["backup"],
