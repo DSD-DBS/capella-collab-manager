@@ -87,7 +87,7 @@ import { DockerimageSettingsComponent } from './settings/core/dockerimage-settin
 import { CookieModule } from 'ngx-cookie';
 import { ViewLogsDialogComponent } from './projects/project-detail/backup-settings/ease-backup-settings/view-logs-dialog/view-logs-dialog.component';
 import { CreateEASEBackupComponent } from './projects/project-detail/backup-settings/ease-backup-settings/create-ease-backup/create-ease-backup.component';
-import { DeleteGitSettingsDialogComponent } from './src/app/settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
+import { DeleteGitSettingsDialogComponent } from './settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
 
 @NgModule({
   declarations: [
