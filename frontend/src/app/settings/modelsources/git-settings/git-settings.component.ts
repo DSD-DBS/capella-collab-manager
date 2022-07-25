@@ -1,15 +1,14 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import {
   GitSettings,
   GitSettingsService,
-  GitType,
 } from 'src/app/services/settings/git-settings.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
 
 @Component({
@@ -54,7 +53,6 @@ export class GitSettingsComponent implements OnInit {
         .subscribe((res) => {
           this.gitSettingsForm.reset();
           this.instances.push(res);
-          window.location.reload();
         });
     }
   }
