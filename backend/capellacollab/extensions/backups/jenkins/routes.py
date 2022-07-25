@@ -12,6 +12,9 @@ from requests import Session
 
 # 1st party:
 import capellacollab.extensions.backups.jenkins.models as jenkins_schema
+
+# local:
+from . import crud as jenkins_database
 from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.database.git_models import (
     verify_gitmodel_permission,
@@ -21,9 +24,6 @@ from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.extensions.backups import jenkins
 from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
-
-# local:
-from . import crud as jenkins_database
 
 router = APIRouter()
 

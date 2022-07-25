@@ -11,9 +11,8 @@ describe('ModelOverviewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ModelOverviewComponent ]
-    })
-    .compileComponents();
+      declarations: [ModelOverviewComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -6,10 +6,10 @@ from logging.config import fileConfig
 
 os.environ["ALEMBIC_CONTEXT"] = "1"
 
-from sqlalchemy import engine_from_config, pool
-from capellacollab.config import config as cfg
-
 from alembic import context
+from sqlalchemy import engine_from_config, pool
+
+from capellacollab.config import config as cfg
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

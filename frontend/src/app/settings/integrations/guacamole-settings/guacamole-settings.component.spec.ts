@@ -11,9 +11,8 @@ describe('GuacamoleSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ GuacamoleSettingsComponent ]
-    })
-    .compileComponents();
+      declarations: [GuacamoleSettingsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

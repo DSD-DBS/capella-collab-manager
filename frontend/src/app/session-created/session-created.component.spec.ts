@@ -11,9 +11,8 @@ describe('SessionCreatedComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SessionCreatedComponent ]
-    })
-    .compileComponents();
+      declarations: [SessionCreatedComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -11,9 +11,8 @@ describe('NoRepositoryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NoRepositoryComponent ]
-    })
-    .compileComponents();
+      declarations: [NoRepositoryComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

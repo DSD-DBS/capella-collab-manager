@@ -22,7 +22,6 @@ from capellacollab.extensions.modelsources.git.models import (
     PatchRepositoryGitModel,
     PostGitModel,
     RepositoryGitInnerModel,
-    RepositoryGitModel,
 )
 from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 

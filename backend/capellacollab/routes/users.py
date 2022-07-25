@@ -20,8 +20,8 @@ from capellacollab.projects.users.models import (
     Role,
 )
 from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
-from capellacollab.routes.sessions import inject_attrs_in_sessions
 from capellacollab.schemas.sessions import AdvancedSessionResponse
+from capellacollab.sessions.routes import inject_attrs_in_sessions
 
 router = APIRouter()
 
@@ -74,6 +74,7 @@ def update_role_of_user(
     return users.update_role_of_user(db, username, body.role)
 
 
+# TODO: This is actually a sessions route (sessions/{username}?)
 @router.get("/{username}/sessions", response_model=t.List[AdvancedSessionResponse])
 def get_sessions_for_user(
     username: str, db: Session = Depends(get_db), token=Depends(JWTBearer())

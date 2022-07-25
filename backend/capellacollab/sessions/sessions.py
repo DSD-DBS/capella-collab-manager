@@ -13,9 +13,9 @@ from requests import JSONDecodeError
 
 # 1st party:
 from capellacollab import config
-from capellacollab.core.operators import OPERATOR
-from capellacollab.schemas.sessions import WorkspaceType
 from capellacollab.sessions.models import DatabaseSession
+from capellacollab.sessions.operators import OPERATOR
+from capellacollab.sessions.schema import WorkspaceType
 
 log = logging.getLogger(__name__)
 

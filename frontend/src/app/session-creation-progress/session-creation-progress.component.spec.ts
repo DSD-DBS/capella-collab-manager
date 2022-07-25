@@ -11,9 +11,8 @@ describe('SessionCreationProgressComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SessionCreationProgressComponent ]
-    })
-    .compileComponents();
+      declarations: [SessionCreationProgressComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

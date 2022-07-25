@@ -8,6 +8,7 @@ from importlib import metadata
 
 # 1st party:
 from capellacollab.config import config
+from capellacollab.sessions.operators.abc import Operator
 
 try:
     OPERATOR = next(

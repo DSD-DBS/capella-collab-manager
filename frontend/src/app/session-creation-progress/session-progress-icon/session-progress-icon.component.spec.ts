@@ -11,9 +11,8 @@ describe('SessionProgressIconComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SessionProgressIconComponent ]
-    })
-    .compileComponents();
+      declarations: [SessionProgressIconComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

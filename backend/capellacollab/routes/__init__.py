@@ -11,12 +11,14 @@ from fastapi import APIRouter
 
 # 1st party:
 import capellacollab.config.routes as configuration
+import capellacollab.sessions.routes as sessions
+
+# local:
+# local:
+from . import notices, sessions, users
 from capellacollab.config import config
 from capellacollab.projects import routes as projects
 from capellacollab.settings.modelsources.git import routes as git_settings
-
-# local:
-from . import notices, sessions, users
 
 log = logging.getLogger(__name__)
 

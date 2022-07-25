@@ -5,7 +5,7 @@
 from sqlalchemy.orm import Session
 
 # 1st party:
-from capellacollab.sql_models.sessions import DatabaseSession
+from capellacollab.sessions.models import DatabaseSession
 
 
 def get_sessions_for_user(db: Session, username: str):
