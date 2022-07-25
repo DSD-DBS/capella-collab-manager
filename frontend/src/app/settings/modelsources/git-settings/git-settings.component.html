@@ -13,7 +13,10 @@
           <span class="mat-subtitle">{{ instance.name }}</span>
         </div>
         <div class="icon-container">
-          <a mat-icon-button [routerLink]="['./edit', instance.id]">
+          <a
+            mat-icon-button
+            [routerLink]="['instances/', instance.id.toString()]"
+          >
             <mat-icon aria-label="Edit the source">settings</mat-icon>
           </a>
           <button mat-icon-button>

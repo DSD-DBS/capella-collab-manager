@@ -9,23 +9,24 @@ import { AuthRedirectComponent } from './auth/auth-redirect/auth-redirect.compon
 import { AuthComponent } from './auth/auth/auth.component';
 import { LogoutRedirectComponent } from './auth/logout/logout-redirect/logout-redirect.component';
 import { LogoutComponent } from './auth/logout/logout/logout.component';
-import { HomeComponent } from './workspaces/home.component';
+import { MaintenanceComponent } from './maintenance/maintenance.component';
+import { CreateProjectComponent } from './projects/create-project/create-project.component';
+import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
+import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
 import { SessionOverviewComponent } from './session-overview/session-overview.component';
-import { CreateProjectComponent } from './projects/create-project/create-project.component';
-import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
-import { SettingsComponent } from './settings/settings.component';
-import { MaintenanceComponent } from './maintenance/maintenance.component';
-import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { DockerimageSettingsComponent } from './settings/core/dockerimage-settings/dockerimage-settings.component';
-import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
-import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
-import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-instance-settings.component';
+import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
 import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4c-importer-settings/t4c-importer-settings.component';
 import { GuacamoleSettingsComponent } from './settings/integrations/guacamole-settings/guacamole-settings.component';
-import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
+import { EditGitSettingsComponent } from './settings/modelsources/git-settings/edit-git-settings/edit-git-settings.component';
+import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
+import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-instance-settings.component';
+import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { RequestsComponent } from './settings/requests/requests.component';
+import { SettingsComponent } from './settings/settings.component';
+import { HomeComponent } from './workspaces/home.component';
 
 const routes: Routes = [
   {
@@ -123,6 +124,11 @@ const routes: Routes = [
   {
     path: 'projects/:project',
     component: ProjectDetailsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/modelsources/git/instances/:id',
+    component: EditGitSettingsComponent,
     canActivate: [AuthGuardService],
   },
   {
