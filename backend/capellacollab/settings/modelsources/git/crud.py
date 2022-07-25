@@ -8,7 +8,7 @@ import typing as t
 from sqlalchemy.orm import Session
 
 # 1st party:
-from capellacollab.sources.git_settings.models import (
+from capellacollab.settings.modelsources.git.models import (
     DB_GitSettings,
     GitSettings,
     GitSettingsGitGetResponse,
@@ -23,7 +23,7 @@ def get_all_git_settings(db: Session) -> t.List[GitSettingsGitGetResponse]:
     return db.query(DB_GitSettings).all()
 
 
-def create_git_settings(db: Session, body: GitSettings) -> DB_GitSettings:
+def create_git_settings(db: Session, body: GitSettings):
     git_settings = DB_GitSettings(type=body.type, name=body.name, url=body.url)
     db.add(git_settings)
     db.commit()
@@ -31,7 +31,7 @@ def create_git_settings(db: Session, body: GitSettings) -> DB_GitSettings:
     return git_settings
 
 
-def update_git_settings(db: Session, id: int, body: GitSettings) -> DB_GitSettings:
+def update_git_settings(db: Session, id: int, body: GitSettings):
     git_settings = get_git_settings(db, id)
     git_settings.type = body.type if body.type else git_settings.type
     git_settings.name = body.name if body.name else git_settings.name

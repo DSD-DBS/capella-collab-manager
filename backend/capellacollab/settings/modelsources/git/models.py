@@ -2,31 +2,27 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
+import enum
 import typing as t
 
 # 3rd party:
-from enum import Enum
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import Boolean
+from sqlalchemy import Column, Enum, Integer, String
 
 # 1st party:
 from capellacollab.core.database import Base
-
 from capellacollab.projects.users.models import Role
 
 
-class GitType(Enum):
-    GENERAL = "General"
-    GITLAB = "GitLab"
-    GITHUB = "GitHub"
-    AZUREDEVOPS = "AzureDevOps"
+class GitType(enum.Enum):
+    General = "General"
+    GitLab = "GitLab"
+    GitHub = "GitHub"
+    AzureDevOps = "AzureDevOps"
 
 
 class GitSettings(BaseModel):
-    type: t.Optional[str]
+    type: t.Optional[GitType]
     name: t.Optional[str]
     url: t.Optional[str]
 
@@ -43,4 +39,4 @@ class DB_GitSettings(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String)
     url = Column(String)
-    type = Column(String)
+    type = Column(Enum(GitType))
