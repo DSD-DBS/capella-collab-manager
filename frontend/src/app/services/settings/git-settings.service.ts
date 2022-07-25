@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
 })
 export class GitSettingsService {
   constructor(private http: HttpClient) {}
-  BACKEND_URL_PREFIX = environment.backend_url + '/git-settings/';
+  BACKEND_URL_PREFIX = environment.backend_url + '/settings/modelsources/git/';
 
   listGitSettings(): Observable<GitSettings[]> {
     return this.http.get<GitSettings[]>(this.BACKEND_URL_PREFIX);
@@ -41,7 +41,6 @@ export class GitSettingsService {
     url: string,
     type: GitType
   ): Observable<GitSettings> {
-    return of({ id, name, url, type });
     return this.http.put<GitSettings>(this.BACKEND_URL_PREFIX + id, {
       type,
       name,
