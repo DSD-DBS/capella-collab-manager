@@ -1,14 +1,13 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
   FormGroup,
   ValidationErrors,
   ValidatorFn,
-  Validators,
 } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { Session } from 'src/app/schemes';
@@ -17,7 +16,10 @@ import {
   Repository,
   Warnings,
 } from 'src/app/services/repository/repository.service';
-import { SessionService } from 'src/app/services/session/session.service';
+import {
+  DepthType,
+  SessionService,
+} from 'src/app/services/session/session.service';
 
 @Component({
   selector: 'app-request-session',
@@ -27,10 +29,15 @@ import { SessionService } from 'src/app/services/session/session.service';
 export class RequestSessionComponent implements OnInit {
   showSpinner = false;
   creationSuccessful = false;
+
+  history: Array<String> = ['Latest commit', 'Complete history'];
+
   repositoryFormGroup = new FormGroup(
     {
       workspaceSwitch: new FormControl(true),
       repository: new FormControl(''),
+      branch: new FormControl('refs/heads/main'),
+      historyDepth: new FormControl(this.history[0]),
     },
     this.validateForm()
   );
@@ -39,12 +46,21 @@ export class RequestSessionComponent implements OnInit {
     return this.repositoryFormGroup.get('repository') as FormControl;
   }
 
+  get branch(): FormControl {
+    return this.repositoryFormGroup.get('branch') as FormControl;
+  }
+
+  get historyDepth(): FormControl {
+    return this.repositoryFormGroup.get('historyDepth') as FormControl;
+  }
+
   get workspaceSwitch(): FormControl {
     return this.repositoryFormGroup.get('workspaceSwitch') as FormControl;
   }
 
   @Input()
   repositories: Array<Repository> = [];
+  chosenRepository: Repository | undefined = undefined;
 
   warnings: Array<Warnings> = [];
 
@@ -86,8 +102,14 @@ export class RequestSessionComponent implements OnInit {
       } else {
         type = 'persistent';
       }
+      if (this.historyDepth.value == 'Latest commit') {
+        var depth = DepthType.LatestCommit;
+      } else {
+        var depth = DepthType.CompleteHistory;
+      }
+      console.log(depth);
       this.sessionService
-        .createNewSession(type, this.repository.value)
+        .createNewSession(type, this.repository.value, this.branch.value, depth)
         .subscribe(
           (res) => {
             this.session = res;
@@ -106,6 +128,8 @@ export class RequestSessionComponent implements OnInit {
     this.warnings = [];
     for (let repo of this.repositories) {
       if (repo.repository_name == event.value) {
+        this.chosenRepository = repo;
+        this.chosenRepository.branches.unshift('All');
         for (let permission of repo.permissions) {
           this.permissions[permission] =
             this.repoUserService.PERMISSIONS[permission];

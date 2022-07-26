@@ -72,12 +72,41 @@
           <mat-option
             *ngFor="let repository of repositories"
             [value]="repository.repository_name"
-            >{{ repository.repository_name }}</mat-option
-          >
+            >{{ repository.repository_name }}
+          </mat-option>
         </mat-select>
-        <mat-error>Please select a repository!</mat-error></mat-form-field
+        <mat-error>Please select a repository!</mat-error> </mat-form-field
       ><br />
+
+      <div
+        *ngIf="
+          chosenRepository && chosenRepository.repository_name !== 'default'
+        "
+      >
+        <mat-form-field appearance="fill">
+          <mat-label>Branch or tag</mat-label>
+          <mat-select formControlName="branch">
+            <mat-option
+              *ngFor="let branch of chosenRepository.branches"
+              [value]="branch"
+              >{{ branch }}
+            </mat-option>
+          </mat-select>
+          <mat-error>Please select a branch!</mat-error> </mat-form-field
+        ><br />
+
+        <mat-form-field appearance="fill">
+          <mat-label>History depth</mat-label>
+          <mat-select formControlName="historyDepth">
+            <mat-option *ngFor="let depth of history" [value]="depth"
+              >{{ depth }}
+            </mat-option>
+          </mat-select>
+          <mat-error>Please select a history depth!</mat-error> </mat-form-field
+        ><br />
+      </div>
     </div>
+
     <div class="center" *ngFor="let warning of warnings">
       <app-warning
         [warning]="warning"
