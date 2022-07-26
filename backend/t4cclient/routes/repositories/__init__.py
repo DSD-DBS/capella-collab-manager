@@ -6,9 +6,12 @@ import logging
 import typing as t
 from importlib import metadata
 
-import t4cclient.core.services.repositories as repository_service
 from fastapi import APIRouter, Depends
+from git.cmd import Git
 from requests import Session
+
+import t4cclient.core.services.repositories as repository_service
+from . import users as router_users
 from t4cclient.core.authentication.database import (
     is_admin,
     verify_admin,
@@ -18,16 +21,16 @@ from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, repositories
 from t4cclient.core.database import users as database_users
-from t4cclient.extensions.modelsources.t4c import connection
 from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
+from t4cclient.extensions.modelsources.git.crud import get_primary_model_of_repository
+from t4cclient.extensions.modelsources.git.models import DB_GitModel
+from t4cclient.extensions.modelsources.t4c import connection
 from t4cclient.schemas.repositories import (
     GetRepositoryUserResponse,
     PostRepositoryRequest,
     RepositoryUserPermission,
     RepositoryUserRole,
 )
-
-from . import users as router_users
 
 log = logging.getLogger(__name__)
 router = APIRouter()
@@ -40,6 +43,7 @@ router = APIRouter()
     responses=AUTHENTICATION_RESPONSES,
 )
 def get_repositories(db: Session = Depends(get_db), token=Depends(JWTBearer())):
+    g = Git()
     if is_admin(token, db):
         return [
             GetRepositoryUserResponse(
@@ -49,6 +53,9 @@ def get_repositories(db: Session = Depends(get_db), token=Depends(JWTBearer())):
                 ),
                 warnings=repository_service.get_warnings(repo.name, db),
                 role=RepositoryUserRole.ADMIN,
+                branches=get_branches(
+                    get_primary_model_of_repository(db, repo.name), g
+                ),
             )
             for repo in repositories.get_all_repositories(db)
         ]
@@ -61,10 +68,25 @@ def get_repositories(db: Session = Depends(get_db), token=Depends(JWTBearer())):
             permissions=repository_service.get_permission(
                 repo.permission, repo.repository_name, db
             ),
+            branches=get_branches(get_primary_model_of_repository(db, repo.name), g),
             warnings=repository_service.get_warnings(repo.repository_name, db),
         )
         for repo in db_user.repositories
     ]
+
+
+def get_branches(git_model: DB_GitModel, g: Git):
+    remote_refs: list[str] = []
+    try:
+        url = git_model.path
+    except AttributeError:
+        return remote_refs
+
+    for ref in g.ls_remote(url).split("\n"):
+        branch = ref.split("\t")[1]
+        if branch.startswith("refs/heads/") or branch.startswith("refs/tags/"):
+            remote_refs.append(branch)
+    return remote_refs
 
 
 @router.get("/{project}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
