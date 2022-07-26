@@ -109,8 +109,17 @@ class KubernetesOperator(Operator):
         entrypoint: str,
         git_username: str,
         git_password: str,
+        git_branch: str,
+        git_depth: int,
     ) -> t.Dict[str, t.Any]:
         id = self._generate_id()
+
+        git_tag = 0
+        if git_branch.startswith("refs/tags/"):
+            git_tag = 1
+            git_branch = git_branch.replace("refs/tags/", "")
+        elif git_branch.startswith("refs/heads/"):
+            git_branch = git_branch.replace("refs/heads/", "")
 
         deployment = self._create_deployment(
             config["docker"]["images"]["workspaces"]["readonly"],
@@ -121,12 +130,41 @@ class KubernetesOperator(Operator):
                 "GIT_URL": git_url,
                 "GIT_REVISION": git_revision,
                 "GIT_ENTRYPOINT": entrypoint,
+                "GIT_BRANCH": git_branch,
+                "GIT_DEPTH": git_depth,
+                "GIT_TAG": git_tag,
                 "RMT_PASSWORD": password,
             },
         )
         self._create_service(id, id)
         service = self._get_service(id)
         return self._export_attrs(deployment, service)
+
+    def get_revisions(self, id: str, git_url: str, heads=True):
+        pod_name = self.v1_core.list_namespaced_pod(
+            namespace=cfg["namespace"], label_selector="job-name=" + id
+        ).to_dict()["items"][0]["metadata"]["name"]
+
+        try:
+            exec_command = ["git", "ls-remote", f"{('--heads', '')[heads]}", git_url]
+            response = kubernetes.stream.stream(
+                self.v1_core.connect_get_namespaced_pod_exec,
+                pod_name,
+                namespace=cfg["namespace"],
+                command=exec_command,
+                stderr=True,
+                stdin=False,
+                stdout=True,
+                tty=False,
+                _preload_content=False,
+            )
+
+            if response:
+                return response.splitlines()[1:]
+
+        except kubernetes.client.exceptions.ApiException as e:
+            log.exception("Exception when copying file to the pod")
+            raise e
 
     def get_cronjob_last_state(self, name: str) -> str:
         job = self._get_last_job_of_cronjob(name)
