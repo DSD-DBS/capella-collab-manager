@@ -55,6 +55,7 @@ export interface Repository {
   repository_name: string;
   username: string;
   permissions: Array<'read' | 'write'>;
+  branches: Array<string>;
   warnings: Array<Warnings>;
   role: 'user' | 'manager' | 'administrator';
 }
