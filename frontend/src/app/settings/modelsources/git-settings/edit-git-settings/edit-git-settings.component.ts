@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   GitSettings,
   GitSettingsService,
-  GitType,
 } from 'src/app/services/settings/git-settings.service';
 
 @Component({
@@ -13,7 +12,7 @@ import {
   styleUrls: ['./edit-git-settings.component.css'],
 })
 export class EditGitSettingsComponent implements OnInit {
-  instance: GitSettings;
+  id: number = -1;
 
   gitSettingsForm = new FormGroup({
     type: new FormControl('', Validators.required),
@@ -24,30 +23,32 @@ export class EditGitSettingsComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private gitSettingsService: GitSettingsService
-  ) {
-    this.instance = { id: 0, name: '', url: '', type: GitType.General };
-  }
+  ) {}
 
   ngOnInit(): void {
-    /*this.route.params.subscribe((params) => {
-      const id = params['instance_id'];
-      if (!!id) {
+    this.route.params.subscribe((params) => {
+      this.id = params['id'];
+      if (!!this.id) {
         this.gitSettingsService
-          .getGitSettings(id)
+          .getGitSettings(this.id)
           .subscribe((instance: GitSettings) => {
-            this.instance = instance;
+            this.gitSettingsForm.controls['type'].setValue(instance.type);
+            this.gitSettingsForm.controls['name'].setValue(instance.name);
+            this.gitSettingsForm.controls['url'].setValue(instance.url);
           });
       }
-    });*/
+    });
   }
 
   editGitSettings() {
-    this.gitSettingsService.editGitSettings(
-      this.instance?.id,
-      (this.gitSettingsForm.get('name') as FormControl).value,
-      (this.gitSettingsForm.get('url') as FormControl).value,
-      (this.gitSettingsForm.get('type') as FormControl).value
-    );
+    this.gitSettingsService
+      .editGitSettings(
+        this.id,
+        (this.gitSettingsForm.get('name') as FormControl).value,
+        (this.gitSettingsForm.get('url') as FormControl).value,
+        (this.gitSettingsForm.get('type') as FormControl).value
+      )
+      .subscribe((_) => this.goBack());
   }
 
   goBack(): void {
