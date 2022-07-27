@@ -16,6 +16,7 @@ from capellacollab.projects.users.models import (
     RepositoryUserRole,
     Role,
 )
+from capellacollab.settings.modelsources.git import crud
 
 
 def verify_admin(token=Depends(JWTBearer()), db=Depends(get_db)):
@@ -110,4 +111,16 @@ def check_username_not_in_repository(
         raise HTTPException(
             status_code=409,
             detail="The user already exists for this repository.",
+        )
+
+
+def check_git_settings_instance_exists(
+    id: int,
+    db: sqlalchemy.orm.session.Session,
+):
+    instance = crud.get_git_settings(db, id)
+    if not instance:
+        raise HTTPException(
+            status_code=409,
+            detail=f"The git settings instance does not exist with id {id}",
         )

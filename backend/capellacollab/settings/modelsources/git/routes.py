@@ -9,7 +9,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
 
 # 1st party:
-from capellacollab.core.authentication.database import is_admin
+from capellacollab.core.authentication.database import (
+    check_git_settings_instance_exists,
+    is_admin,
+)
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
@@ -64,8 +67,7 @@ def edit_git_settings(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    # TODO: Verify id exists
-
+    check_git_settings_instance_exists(db, id)
     if is_admin(token, db):
         return crud.update_git_settings(db, id, body)
 
