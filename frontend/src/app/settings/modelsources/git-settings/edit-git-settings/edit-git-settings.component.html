@@ -1,37 +1,38 @@
-<h1>Edit Instance</h1>
+<div class="wrapper">
+  <div class="title">Edit Instance</div>
 
-<mat-card>
-  <form [formGroup]="gitSettingsForm" id="add-instance-form">
-    Supported instances: <br />
-    <mat-form-field id="instance-url" appearance="fill">
-      <mat-label>Git Type</mat-label>
-      <mat-select matInput formControlName="type">
-        <mat-option value="0" selected>General Git (limited)</mat-option>
-        <mat-option value="1" disabled>GitLab (unsupported)</mat-option>
-        <mat-option value="2" disabled>GitHub (unsupported)</mat-option>
-        <mat-option value="3" disabled>Azure DevOps (unsupported)</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <br />
-    <mat-form-field id="instance-url" appearance="fill">
-      <mat-label>Name</mat-label>
-      <input matInput formControlName="name" />
-    </mat-form-field>
-    <br />
-    <mat-form-field id="instance-url" appearance="fill">
-      <mat-label>Instance base URL</mat-label>
-      <input matInput formControlName="url" />
-    </mat-form-field>
-  </form>
-  <a mat-raised-button (click)="goBack()">
-    <mat-icon>last_page</mat-icon> Back
-  </a>
-  <button
-    [class]="'right-button'"
-    mat-flat-button
-    color="primary"
-    (click)="editGitSettings()"
-  >
-    Save changes
-  </button>
-</mat-card>
+  <mat-card>
+    <form [formGroup]="gitSettingsForm" id="add-instance-form">
+      <mat-form-field id="instance-url" appearance="fill">
+        <mat-label>Git Type</mat-label>
+        <mat-select matInput formControlName="type">
+          <mat-option value="0" selected>General Git (limited)</mat-option>
+          <mat-option value="1" disabled>GitLab (unsupported)</mat-option>
+          <mat-option value="2" disabled>GitHub (unsupported)</mat-option>
+          <mat-option value="3" disabled>Azure DevOps (unsupported)</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <br />
+      <mat-form-field id="instance-url" appearance="fill">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+      <br />
+      <mat-form-field id="instance-url" appearance="fill">
+        <mat-label>Instance base URL</mat-label>
+        <input matInput formControlName="url" />
+      </mat-form-field>
+    </form>
+    <a mat-raised-button (click)="goBack()">
+      <mat-icon>last_page</mat-icon> Back
+    </a>
+    <button
+      [class]="'right-button'"
+      mat-flat-button
+      color="primary"
+      (click)="editGitSettings()"
+    >
+      Save changes
+    </button>
+  </mat-card>
+</div>

@@ -1,3 +1,15 @@
 .right-button {
   margin-left: 20px;
 }
+
+.mat-card {
+  width: fit-content;
+}
+
+.title {
+  font-size: 2em;
+}
+
+.wrapper {
+  margin: 20px;
+}
