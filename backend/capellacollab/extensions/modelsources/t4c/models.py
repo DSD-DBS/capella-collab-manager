@@ -16,7 +16,7 @@ class DB_T4CModel(Base):
     id = Column(Integer, unique=True, primary_key=True, index=True)
     name = Column(String, index=True)
     model_id = Column(Integer, ForeignKey("capella_models.id"))
-    model = relationship("DB_CapellaModel", back_populates="t4c_model")
+    model = relationship("Model", back_populates="t4c_model")
 
 
 class RepositoryProjectBase(BaseModel):

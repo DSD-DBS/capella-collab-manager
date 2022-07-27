@@ -15,9 +15,13 @@ export interface EmptyModel extends NewModel {
   type_id: string;
 }
 
-export interface OfflineModel extends NewModel {}
+export interface GitModel extends NewModel {
+  url: string;
+  username: string;
+  password: string;
+}
 
-export interface GitModel extends NewModel {}
+export interface OfflineModel extends NewModel {}
 
 export interface Model {
   id: number;
@@ -25,9 +29,11 @@ export interface Model {
   slug: string;
   name: string;
   description: string;
-  tool_id: number;
-  version_id: number;
-  type_id: number
+  tool_id: number | null;
+  version_id: number | null;
+  type_id: number | null;
+  t4c_model: number | null;
+  git_model: number | null;
 }
 
 @Injectable({
@@ -116,10 +122,18 @@ export class ModelService {
 
   createEmpty(project_slug: string, model: EmptyModel): Observable<Model> {
     let url = new URL(project_slug + "/create-empty/", this.base_url);
+    return this.createGeneric(url, model)
+  }
+
+  createWithSource(project_slug: string, model: GitModel): Observable<Model> {
+    let url = new URL(project_slug + "/create-git/", this.base_url);
+    return this.createGeneric(url, model)
+  }
+
+  createGeneric<T extends NewModel>(url: URL, new_model: T): Observable<Model> {
     return new Observable<Model>(subscriber => {
-      this.http.post<Model>(url.toString(), model)
+      this.http.post<Model>(url.toString(), new_model)
       .subscribe(model => {
-        console.log(model)
         this.model = model;
         subscriber.next(model);
         subscriber.complete();

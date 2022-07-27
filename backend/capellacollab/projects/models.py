@@ -14,8 +14,8 @@ from sqlalchemy.orm import relationship
 
 # 1st party:
 # Import required for sqlalchemy
-import capellacollab.projects.capellamodels.models
 import capellacollab.projects.users.models
+import capellacollab.models.models
 from capellacollab.core.database import Base
 
 
@@ -59,4 +59,4 @@ class DatabaseProject(Base):
         "ProjectUserAssociation",
         back_populates="projects",
     )
-    models = relationship("DB_CapellaModel", back_populates="project")
+    models = relationship("Model", back_populates="project")

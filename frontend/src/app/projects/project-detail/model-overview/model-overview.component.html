@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="content-wrapper">
-      <div class="content">{{ model.description }}</div>
+      <p class="content">{{ model.git_model ? model.description : "A primary source needs to be set." }}</p>
       <div class="actions">
         <div class="left">
           <a mat-mini-fab matTooltip="Configure model"
@@ -29,18 +29,18 @@
           <a mat-mini-fab disabled matTooltip="Download model">
             <mat-icon>cloud_download</mat-icon>
           </a>
-          <a mat-mini-fab disabled matTooltip="Start synchronization">
+          <a mat-mini-fab [disabled]="!model.t4c_model" matTooltip="Start synchronization">
             <mat-icon>sync</mat-icon>
           </a>
-          <a *ngIf="integrations.git" mat-mini-fab disabled
+          <a *ngIf="integrations.git" mat-mini-fab [disabled]="!model.git_model"
             matTooltip="Open git repository">
             <mat-icon>link</mat-icon>
           </a>
-          <a *ngIf="integrations.git" routerLink="/workspaces"
+          <a *ngIf="integrations.git" routerLink="/workspaces" [disabled]="!model.git_model"
             mat-mini-fab matTooltip="Request persistent session">
             <mat-icon> screen_share</mat-icon>
           </a>
-          <a mat-mini-fab matTooltip="Open readonly session">
+          <a mat-mini-fab matTooltip="Open readonly session" [disabled]="!model.git_model">
             <mat-icon>remove_red_eye</mat-icon>
           </a>
         </div>

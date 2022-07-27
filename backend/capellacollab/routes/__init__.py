@@ -12,7 +12,7 @@ from fastapi import APIRouter
 # 1st party:
 from capellacollab.config import config
 from capellacollab.projects import routes as projects
-from capellacollab.projects.capellamodels import routes as models
+from capellacollab.models import routes as models
 from capellacollab.tools import routes as tools
 import capellacollab.config.routes as configuration
 import capellacollab.sessions.routes as sessions

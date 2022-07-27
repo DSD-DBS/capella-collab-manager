@@ -53,16 +53,6 @@ export class CreateModelComponent implements OnInit {
     entrypoint: new FormControl('', Validators.required),
   })
 
-  tools = ["Capella", "Papyrus"];
-  versions = {
-    Capella: ["6.0", "5.2", "5.0"],
-    Papyrus: ["6.2 (latest)", "6.0 (latest)"],
-  };
-  selected_versions: string[] = [];
-  types = {
-    Capella: ["model", "library"],
-    Papyrus: ["UML 2.5", "SysML 1.4", "SysML 1.1"],
-  };
   selected_types: string[] = [];
   slugs: string[];
   revisions: GitReferences;
@@ -71,7 +61,6 @@ export class CreateModelComponent implements OnInit {
 
   constructor(
     private navbarService: NavBarService,
-    private gitModelService: GitModelService,
     private gitSettingsService: GitSettingsService,
     private modelService: ModelService,
     public projectService: ProjectService,
@@ -100,15 +89,6 @@ export class CreateModelComponent implements OnInit {
       if (button.id != "git-model-button") {
         button.addEventListener('click', () => this.eventSet = false)
       }
-    })
-
-    this.newModelForm.controls['tool'].valueChanges
-    .subscribe(value => {
-      this.selected_versions = this.versions[value as ("Capella" | "Papyrus")]
-      this.newModelForm.controls['version'].setValue(
-        this.versions[value as ("Capella" | "Papyrus")][0]
-      )
-      this.selected_types = this.types[value as ("Capella" | "Papyrus")]
     })
 
     this.existingGitModelForm.controls['url'].valueChanges
@@ -218,7 +198,6 @@ export class CreateModelComponent implements OnInit {
   }
 
   onSubmit(): void {
-    
     if (this.currentNextForm === 'newModelForm') {
       let name = (this.createModelBaseForm.get('name') as FormControl).value;
       let description = (this.createModelBaseForm.get('description') as FormControl).value;
@@ -238,6 +217,7 @@ export class CreateModelComponent implements OnInit {
             result.slug,
           ])
         })
+        this.modelService.init_all(this.projectService.project.slug).subscribe()
       }
     }
   }

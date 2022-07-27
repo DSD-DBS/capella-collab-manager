@@ -60,6 +60,6 @@ class DB_GitModel(Base):
     revision = Column(String)
     primary = Column(Boolean)
     model_id = Column(Integer, ForeignKey("capella_models.id"))
-    model = relationship("DB_CapellaModel", back_populates="git_model")
+    model = relationship("Model", back_populates="git_model")
     username = Column(String)
     password = Column(String)

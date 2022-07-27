@@ -129,7 +129,7 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'create-coworking-method/:project/:model',
+    path: 'create-model/:project',
     component: CreateCoworkingMethodComponent,
     canActivate: [AuthGuardService],
   },
