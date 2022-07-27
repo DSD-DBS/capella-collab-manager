@@ -85,7 +85,10 @@
       >
         <mat-form-field appearance="fill">
           <mat-label>Branch or tag</mat-label>
-          <mat-select formControlName="branch">
+          <mat-select
+            formControlName="branch"
+            (selectionChange)="changeIsTag($event)"
+          >
             <mat-option
               *ngFor="let branch of chosenRepository.branches"
               [value]="branch"
@@ -95,15 +98,19 @@
           <mat-error>Please select a branch!</mat-error> </mat-form-field
         ><br />
 
-        <mat-form-field appearance="fill">
-          <mat-label>History depth</mat-label>
-          <mat-select formControlName="historyDepth">
-            <mat-option *ngFor="let depth of history" [value]="depth"
-              >{{ depth }}
-            </mat-option>
-          </mat-select>
-          <mat-error>Please select a history depth!</mat-error> </mat-form-field
-        ><br />
+        <div *ngIf="!isTag">
+          <mat-form-field appearance="fill">
+            <mat-label>History depth</mat-label>
+            <mat-select formControlName="historyDepth">
+              <mat-option *ngFor="let depth of history" [value]="depth"
+                >{{ depth }}
+              </mat-option>
+            </mat-select>
+            <mat-error>Please select a history depth!</mat-error>
+          </mat-form-field>
+        </div>
+
+        <br />
       </div>
     </div>
 

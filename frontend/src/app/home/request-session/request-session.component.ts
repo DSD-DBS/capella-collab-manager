@@ -31,6 +31,7 @@ export class RequestSessionComponent implements OnInit {
   creationSuccessful = false;
 
   history: Array<String> = ['Latest commit', 'Complete history'];
+  isTag: boolean = false;
 
   repositoryFormGroup = new FormGroup(
     {
@@ -102,12 +103,14 @@ export class RequestSessionComponent implements OnInit {
       } else {
         type = 'persistent';
       }
-      if (this.historyDepth.value == 'Latest commit') {
+      if (
+        this.historyDepth.value == 'Latest commit' ||
+        this.branch.value.startsWith('refs/tags/')
+      ) {
         var depth = DepthType.LatestCommit;
       } else {
         var depth = DepthType.CompleteHistory;
       }
-      console.log(depth);
       this.sessionService
         .createNewSession(type, this.repository.value, this.branch.value, depth)
         .subscribe(
@@ -154,6 +157,11 @@ export class RequestSessionComponent implements OnInit {
       if (branch.endsWith('main')) {
         this.repositoryFormGroup.controls['branch'].setValue('refs/heads/main');
       }
+    }
+  }
+  changeIsTag(event: MatSelectChange) {
+    if (event.value.startsWith('refs/tags/')) {
+      this.isTag = true;
     }
   }
 }
