@@ -1,6 +1,6 @@
 <h1>Edit Instance</h1>
 
-<!--<mat-card>
+<mat-card>
   <form [formGroup]="gitSettingsForm" id="add-instance-form">
     Supported instances: <br />
     <mat-form-field id="instance-url" appearance="fill">
@@ -23,17 +23,15 @@
       <input matInput formControlName="url" />
     </mat-form-field>
   </form>
-  <button mat-raised-button (click)="editGitSettings()">Save changes</button>
-</mat-card>-->
-
-<a mat-raised-button (click)="goBack()">
-  <mat-icon>last_page</mat-icon> Back
-</a>
-<button
-  mat-flat-button
-  color="primary"
-  (click)="editGitSettings()"
-  style="margin-left: 20px"
->
-  Save changes
-</button>
+  <a mat-raised-button (click)="goBack()">
+    <mat-icon>last_page</mat-icon> Back
+  </a>
+  <button
+    [class]="'right-button'"
+    mat-flat-button
+    color="primary"
+    (click)="editGitSettings()"
+  >
+    Save changes
+  </button>
+</mat-card>
