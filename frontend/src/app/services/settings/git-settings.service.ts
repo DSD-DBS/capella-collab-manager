@@ -26,8 +26,6 @@ export class GitSettingsService {
     url: string,
     type: GitType
   ): Observable<GitSettings> {
-    const typeName = GitType[type];
-    console.log(GitType[type], typeName, typeof typeName);
     return this.http.post<GitSettings>(this.BACKEND_URL_PREFIX, {
       type: GitType[type],
       name: name,
