@@ -84,18 +84,23 @@
         "
       >
         <mat-form-field appearance="fill">
-          <mat-label>Branch or tag</mat-label>
+          <mat-label>Branch, tag or revision</mat-label>
           <mat-select
-            formControlName="branch"
+            formControlName="reference"
             (selectionChange)="changeIsTag($event)"
           >
-            <mat-option
-              *ngFor="let branch of chosenRepository.branches"
-              [value]="branch"
-              >{{ branch }}
-            </mat-option>
+            <mat-optgroup label="branch">
+              <mat-option *ngFor="let option of branches" [value]="option">
+                {{ option }}
+              </mat-option>
+            </mat-optgroup>
+            <mat-optgroup label="tag">
+              <mat-option *ngFor="let option of tags" [value]="option">
+                {{ option }}
+              </mat-option>
+            </mat-optgroup>
           </mat-select>
-          <mat-error>Please select a branch!</mat-error> </mat-form-field
+          <mat-error>Please select a branch or tag!</mat-error> </mat-form-field
         ><br />
 
         <div *ngIf="!isTag">

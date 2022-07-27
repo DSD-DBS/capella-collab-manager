@@ -37,7 +37,7 @@ export class RequestSessionComponent implements OnInit {
     {
       workspaceSwitch: new FormControl(true),
       repository: new FormControl(''),
-      branch: new FormControl('refs/heads/main'),
+      reference: new FormControl('refs/heads/main'),
       historyDepth: new FormControl(this.history[0]),
     },
     this.validateForm()
@@ -47,8 +47,8 @@ export class RequestSessionComponent implements OnInit {
     return this.repositoryFormGroup.get('repository') as FormControl;
   }
 
-  get branch(): FormControl {
-    return this.repositoryFormGroup.get('branch') as FormControl;
+  get reference(): FormControl {
+    return this.repositoryFormGroup.get('reference') as FormControl;
   }
 
   get historyDepth(): FormControl {
@@ -71,6 +71,9 @@ export class RequestSessionComponent implements OnInit {
   connectionTypeHelpIsOpen = false;
   persistentWorkspaceHelpIsOpen = false;
   cleanWorkspaceHelpIsOpen = false;
+
+  tags: Array<String> = [];
+  branches: Array<String> = [];
 
   constructor(
     public sessionService: SessionService,
@@ -105,14 +108,19 @@ export class RequestSessionComponent implements OnInit {
       }
       if (
         this.historyDepth.value == 'Latest commit' ||
-        this.branch.value.startsWith('refs/tags/')
+        this.reference.value.startsWith('refs/tags/')
       ) {
         var depth = DepthType.LatestCommit;
       } else {
         var depth = DepthType.CompleteHistory;
       }
       this.sessionService
-        .createNewSession(type, this.repository.value, this.branch.value, depth)
+        .createNewSession(
+          type,
+          this.repository.value,
+          this.reference.value,
+          depth
+        )
         .subscribe(
           (res) => {
             this.session = res;
@@ -145,19 +153,25 @@ export class RequestSessionComponent implements OnInit {
 
   setBranches(repo: Repository) {
     this.chosenRepository = repo;
-    if (!this.chosenRepository.branches.includes('All')) {
-      this.chosenRepository.branches.unshift('All');
-    }
-    for (var branch of repo.branches) {
-      if (branch.endsWith('master')) {
-        this.repositoryFormGroup.controls['branch'].setValue(
+    this.tags = [];
+    this.branches = [];
+    for (var revision of repo.branches) {
+      if (revision.endsWith('master')) {
+        this.repositoryFormGroup.controls['reference'].setValue(
           'refs/heads/master'
         );
+      } else if (revision.endsWith('main')) {
+        this.repositoryFormGroup.controls['reference'].setValue(
+          'refs/heads/main'
+        );
       }
-      if (branch.endsWith('main')) {
-        this.repositoryFormGroup.controls['branch'].setValue('refs/heads/main');
+      if (revision.startsWith('refs/heads/')) {
+        this.branches.push(revision);
+      } else if (revision.startsWith('refs/tags/')) {
+        this.tags.push(revision);
       }
     }
+    this.branches.unshift('All');
   }
   changeIsTag(event: MatSelectChange) {
     if (event.value.startsWith('refs/tags/')) {
