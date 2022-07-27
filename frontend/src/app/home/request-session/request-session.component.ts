@@ -128,8 +128,7 @@ export class RequestSessionComponent implements OnInit {
     this.warnings = [];
     for (let repo of this.repositories) {
       if (repo.repository_name == event.value) {
-        this.chosenRepository = repo;
-        this.chosenRepository.branches.unshift('All');
+        this.setBranches(repo);
         for (let permission of repo.permissions) {
           this.permissions[permission] =
             this.repoUserService.PERMISSIONS[permission];
@@ -139,5 +138,22 @@ export class RequestSessionComponent implements OnInit {
       }
     }
     this.permissions = {};
+  }
+
+  setBranches(repo: Repository) {
+    this.chosenRepository = repo;
+    if (!this.chosenRepository.branches.includes('All')) {
+      this.chosenRepository.branches.unshift('All');
+    }
+    for (var branch of repo.branches) {
+      if (branch.endsWith('master')) {
+        this.repositoryFormGroup.controls['branch'].setValue(
+          'refs/heads/master'
+        );
+      }
+      if (branch.endsWith('main')) {
+        this.repositoryFormGroup.controls['branch'].setValue('refs/heads/main');
+      }
+    }
   }
 }
