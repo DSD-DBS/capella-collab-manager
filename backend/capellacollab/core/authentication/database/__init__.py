@@ -115,8 +115,8 @@ def check_username_not_in_repository(
 
 
 def check_git_settings_instance_exists(
-    id: int,
     db: sqlalchemy.orm.session.Session,
+    id: int,
 ):
     instance = crud.get_git_settings(db, id)
     if not instance:
