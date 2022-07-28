@@ -43,7 +43,7 @@ class GetRepositoryGitModel(RepositoryGitModel):
 
 
 class GetRevisionsModel(BaseModel):
-    revisions: t.list[str]
+    revisions: t.dict[str, t.list[str]]
 
 
 class GitCredentials(BaseModel):
