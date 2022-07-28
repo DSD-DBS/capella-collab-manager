@@ -19,6 +19,9 @@ export interface GitModel extends NewModel {
   url: string;
   username: string;
   password: string;
+  revision: string; 
+  path: string; 
+  entrypoint: string;
 }
 
 export interface OfflineModel extends NewModel {}

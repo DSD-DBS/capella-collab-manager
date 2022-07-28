@@ -10,9 +10,6 @@ export interface Credentials {
 }
 
 export interface Instance {
-  url: string;
-  username: string;
-  password: string;
   revisions: {
     branches: string[],
     tags: string[],
@@ -34,7 +31,6 @@ export class GitService {
 
   fetch(credentials: Credentials): Observable<Instance> {
     let mock = {
-      ...credentials,
       revisions: {
         branches: ['main', 'master', 'staging'],
         tags: ['v0.1', 'v1.0', 'v1.2'],

@@ -24,38 +24,55 @@
       </div>
       <div formGroupName="credentials">
         <fieldset>
-          <mat-form-field>
+          <mat-form-field appearance="fill">
             <mat-label>Repository url</mat-label>
             <input matInput formControlName="url">
           </mat-form-field>
         </fieldset>
         <fieldset>
-          <mat-form-field>
+          <mat-form-field appearance="fill">
             <mat-label>Git username</mat-label>
             <input matInput formControlName="username">
           </mat-form-field>
           <div class="field-separator"></div>
-          <mat-form-field>
+          <mat-form-field appearance="fill">
             <mat-label>Git password or token</mat-label>
             <input matInput formControlName="password" type="password">
           </mat-form-field>
         </fieldset>
       </div>
       <fieldset>
-        <mat-form-field>
-          <mat-label>Revision</mat-label>
-          <input matInput formControlName="revision">
+        <mat-form-field appearance="fill">
+          <mat-label>Branch, tag or revision</mat-label>
+          <input type="text" matInput formControlName="revision"
+            [matAutocomplete]="auto"/>
         </mat-form-field>
-      </fieldset>
+          <mat-autocomplete autoActiveFirstOption 
+            #auto="matAutocomplete">
+            <mat-optgroup label="branch">
+              <mat-option 
+                *ngFor="let option of filteredRevisions.branches"
+                [value]="option">
+                {{ option }}
+              </mat-option>
+            </mat-optgroup>
+            <mat-optgroup label="tag">
+              <mat-option *ngFor="let option of filteredRevisions.tags"
+                [value]="option">
+                {{ option }}
+              </mat-option>
+            </mat-optgroup>
+          </mat-autocomplete>
+        </fieldset>
       <fieldset>
-        <mat-form-field>
+        <mat-form-field appearance="fill">
           <mat-label>Path</mat-label>
-          <input matInput formControlName="path">
+          <input type="text" matInput formControlName="path">
         </mat-form-field>
         <div class="field-separator"></div>
-        <mat-form-field>
+        <mat-form-field appearance="fill">
           <mat-label>Entry point</mat-label>
-          <input matInput formControlName="entrypoint">
+          <input type="text" matInput formControlName="entrypoint">
         </mat-form-field>
       </fieldset>
       <button mat-raised-button color="primary"

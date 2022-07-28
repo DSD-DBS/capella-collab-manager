@@ -3,7 +3,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
@@ -73,7 +73,36 @@ export class GitModelService {
       { primary: true }
     );
   }
+
+  instance: Instance | null = null;
+
+  fetch(repository_url: string): Observable<Instance> {
+    let url = new URL('projects/default/extensions/modelsources/git/revisions/', 
+    environment.backend_url + '/');
+    return new Observable<Instance>(subscriber => {
+      this.http.get<Instance>(url.toString(), {params: {url: repository_url}}).subscribe(value => {
+        console.log(value);
+        this.instance = value;
+        subscriber.next(value);
+        subscriber.complete();
+      })
+    })
+  }
+
 }
+
+
+export interface Credentials {
+  url: string;
+  username: string;
+  password: string;
+}
+
+export interface Instance {
+  branches: string[],
+  tags: string[],
+}
+
 
 export interface GitModel extends BasicGitModel {
   id: number;
