@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import {
   GitSettings,
   GitSettingsService,
@@ -22,6 +23,7 @@ export class EditGitSettingsComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private navbarService: NavBarService,
     private gitSettingsService: GitSettingsService
   ) {}
 
@@ -37,6 +39,8 @@ export class EditGitSettingsComponent implements OnInit {
             this.gitSettingsForm.controls['url'].setValue(instance.url);
           });
       }
+      this.navbarService.title =
+        'Settings / Modelsources / T4C / Instances / ' + this.id;
     });
   }
 
