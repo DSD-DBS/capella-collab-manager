@@ -136,19 +136,14 @@ def request_session(
                 },
             )
 
-        if (
-            body.branch is None
-            or not body.branch.startswith("refs/heads/")
-            and not body.branch.startswith("refs/tags/")
-            and not body.branch == "All"
-        ):
-            raise HTTPException(
-                status_code=400,
-                detail={
-                    "err_code": "branch_format_not_exists",
-                    "reason": f"Either branch {body.branch} not exists or has not the proper format.",
-                },
-            )
+        if body.branch.startswith("refs/heads/"):
+            revision = body.branch.replace("refs/heads/", "")
+        elif body.branch.startswith("refs/tags/"):
+            revision = body.branch.replace("refs/tags/", "")
+        elif body.branch == "All":
+            revision = ""
+        else:
+            revision = git_model.revision
 
         if body.depth == DepthType.LatestCommit:
             depth = 1
@@ -165,11 +160,10 @@ def request_session(
         session = OPERATOR.start_readonly_session(
             password=rdp_password,
             git_url=git_model.path,
-            git_revision=git_model.revision,
+            git_revision=revision,
             entrypoint=git_model.entrypoint,
             git_username=git_model.username,
             git_password=git_model.password,
-            git_branch=body.branch,
             git_depth=depth,
         )
 
