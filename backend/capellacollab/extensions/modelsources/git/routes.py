@@ -8,6 +8,7 @@ import typing as t
 # 3rd party:
 from fastapi import APIRouter, Depends
 from requests import Session
+from git.cmd import Git
 
 # 1st party:
 from capellacollab.core.authentication.database import verify_project_role
@@ -22,6 +23,7 @@ from capellacollab.extensions.modelsources.git.models import (
     PatchRepositoryGitModel,
     PostGitModel,
     RepositoryGitInnerModel,
+    GetRevisionsModel,
 )
 from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 
@@ -109,3 +111,18 @@ def patch_model(
             model=RepositoryGitInnerModel(**db_model.__dict__),
         )
     return None
+
+
+@router.get(
+    "/revisions",
+    response_model=GetRevisionsModel,
+    responses=AUTHENTICATION_RESPONSES,
+)
+def get_revisions(url: str):
+    g = Git()
+    remote_refs: list[str] = []
+    for ref in g.ls_remote(url).split("\n"):
+        branch = ref.split("\t")[1]
+        if branch.startswith("refs/heads/") or branch.startswith("refs/tags/"):
+            remote_refs.append(branch)
+    return remote_refs

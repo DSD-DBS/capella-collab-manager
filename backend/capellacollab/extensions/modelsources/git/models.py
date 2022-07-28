@@ -42,6 +42,10 @@ class GetRepositoryGitModel(RepositoryGitModel):
     username: t.Union[str, None]
 
 
+class GetRevisionsModel(BaseModel):
+    revisions: t.list[str]
+
+
 class GitCredentials(BaseModel):
     username: t.Union[str, None]
     password: t.Union[str, None]
