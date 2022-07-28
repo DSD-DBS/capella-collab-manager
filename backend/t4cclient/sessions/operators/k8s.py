@@ -109,17 +109,9 @@ class KubernetesOperator(Operator):
         entrypoint: str,
         git_username: str,
         git_password: str,
-        git_branch: str,
         git_depth: int,
     ) -> t.Dict[str, t.Any]:
         id = self._generate_id()
-
-        git_tag = 0
-        if git_branch.startswith("refs/tags/"):
-            git_tag = 1
-            git_branch = git_branch.replace("refs/tags/", "")
-        elif git_branch.startswith("refs/heads/"):
-            git_branch = git_branch.replace("refs/heads/", "")
 
         deployment = self._create_deployment(
             config["docker"]["images"]["workspaces"]["readonly"],
@@ -130,9 +122,7 @@ class KubernetesOperator(Operator):
                 "GIT_URL": git_url,
                 "GIT_REVISION": git_revision,
                 "GIT_ENTRYPOINT": entrypoint,
-                "GIT_BRANCH": git_branch,
                 "GIT_DEPTH": git_depth,
-                "GIT_TAG": git_tag,
                 "RMT_PASSWORD": password,
             },
         )
