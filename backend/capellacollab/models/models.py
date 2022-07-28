@@ -78,9 +78,9 @@ class ResponseModel(BaseModel):
     project_slug: str
     name: str
     description: str
-    tool_id: int
-    version_id: int
-    type_id: int
+    tool_id: t.Optional[int]
+    version_id: t.Optional[int]
+    type_id: t.Optional[int]
     t4c_model: t.Optional[int]
     git_model: t.Optional[int]
 

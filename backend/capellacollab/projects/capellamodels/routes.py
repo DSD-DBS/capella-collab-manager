@@ -8,7 +8,7 @@ from capellacollab.core.database import get_db
 from capellacollab.projects import crud as projects_crud
 
 from . import crud
-from .models import DB_CapellaModel, NewModel, ResponseModel
+from .models import NewModel, ResponseModel
 
 
 router = APIRouter()

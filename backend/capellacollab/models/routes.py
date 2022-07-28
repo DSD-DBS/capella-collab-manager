@@ -50,3 +50,10 @@ def create_empty(project_slug: str, new_model: NewModel,
 
     return ResponseModel.from_model(
         crud.create(db, project_slug, new_model))
+
+
+@router.post('/{project_slug}/create-git/', response_model=ResponseModel)
+def create_git(project_slug: str, new_model: NewModel,
+    db: Session = Depends(get_db), token=Depends(JWTBearer())):
+
+    pass

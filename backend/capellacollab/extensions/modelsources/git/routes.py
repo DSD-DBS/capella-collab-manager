@@ -118,15 +118,15 @@ def patch_model(
     response_model=GetRevisionsModel,
     responses=AUTHENTICATION_RESPONSES,
 )
-def get_references(url: str):
+def get_references(url: str) -> GetRevisionsModel:
     g = Git()
-    remote_refs: t.dict[t.dict[str, t.Any]] = {}
-    remote_refs["branches"] = []
-    remote_refs["tags"] = []
+    remote_refs = GetRevisionsModel(
+        branches=[], tags=[]
+    )
     for ref in g.ls_remote(url).split("\n"):
         ref = ref.split("\t")[1]
         if ref.startswith("refs/heads/"):
-            remote_refs["branches"].append(ref)
-        if ref.startswith("refs/tags/"):
-            remote_refs["tags"].append(ref)
+            remote_refs.branches.append(ref)
+        elif ref.startswith("refs/tags/"):
+            remote_refs.tags.append(ref)
     return remote_refs
