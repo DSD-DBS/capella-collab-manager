@@ -42,10 +42,10 @@ def delete_project(db: Session, name: str) -> None:
     db.query(DatabaseProject).filter(DatabaseProject.name == name).delete()
     db.commit()
 
+
 def get_slug(db: Session, slug: str) -> DatabaseProject:
-    return db.query(DatabaseProject)\
-        .filter(DatabaseProject.slug == slug).first()
+    return db.query(DatabaseProject).filter(DatabaseProject.slug == slug).first()
+
 
 def get_id(db: Session, id: int):
-    return db.query(DatabaseProject)\
-        .filter(DatabaseProject.id == id).first()
+    return db.query(DatabaseProject).filter(DatabaseProject.id == id).first()

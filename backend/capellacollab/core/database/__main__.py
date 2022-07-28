@@ -10,7 +10,6 @@ import pathlib
 from alembic import command
 from alembic.config import Config
 from alembic.migration import MigrationContext
-from pytest import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -68,16 +67,15 @@ def initialize_default_repository():
     with SessionLocal() as db:
         projects.create_project(db=db, name="default")
 
+
 def create_tools():
     LOGGER.info("Initialized tools")
     with SessionLocal() as db:
         capella = Tool(
-            name="Capella",
-            docker_image_template="/t4c/client/remote/$version:prod"
+            name="Capella", docker_image_template="/t4c/client/remote/$version:prod"
         )
         papyrus = Tool(
-            name="Papyrus",
-            docker_image_template="/papyrus/client/remote/$version:prod"
+            name="Papyrus", docker_image_template="/papyrus/client/remote/$version:prod"
         )
         tools.create_tool(db, capella)
         tools.create_tool(db, papyrus)
@@ -85,7 +83,7 @@ def create_tools():
         tools.create_version(db, capella.id, "6.2", True)
         tools.create_version(db, capella.id, "6.0")
         tools.create_version(db, capella.id, "5.2")
-        
+
         tools.create_version(db, papyrus.id, "6.2")
         tools.create_version(db, papyrus.id, "6.0")
 
@@ -95,4 +93,3 @@ def create_tools():
         tools.create_type(db, papyrus.id, "UML 2.5")
         tools.create_type(db, papyrus.id, "SysML 1.4")
         tools.create_type(db, papyrus.id, "SysML 1.1")
-
