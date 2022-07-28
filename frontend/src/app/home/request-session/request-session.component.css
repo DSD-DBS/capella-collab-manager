@@ -50,3 +50,9 @@ mat-card {
 .repository-selection {
   margin-bottom: 20px;
 }
+
+.checkbox {
+  position: relative;
+  right: 30px;
+  bottom: 10px;
+}

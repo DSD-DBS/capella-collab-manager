@@ -61,7 +61,9 @@ export class RequestSessionComponent implements OnInit {
 
   @Input()
   repositories: Array<Repository> = [];
+
   chosenRepository: Repository | undefined = undefined;
+  allBranches: boolean = false;
 
   warnings: Array<Warnings> = [];
 
@@ -114,13 +116,12 @@ export class RequestSessionComponent implements OnInit {
       } else {
         var depth = DepthType.CompleteHistory;
       }
+      var reference = this.reference.value;
+      if (this.allBranches) {
+        reference = 'All';
+      }
       this.sessionService
-        .createNewSession(
-          type,
-          this.repository.value,
-          this.reference.value,
-          depth
-        )
+        .createNewSession(type, this.repository.value, reference, depth)
         .subscribe(
           (res) => {
             this.session = res;
@@ -171,11 +172,16 @@ export class RequestSessionComponent implements OnInit {
         this.tags.push(revision);
       }
     }
-    this.branches.unshift('All');
   }
   changeIsTag(event: MatSelectChange) {
     if (event.value.startsWith('refs/tags/')) {
       this.isTag = true;
+    } else {
+      this.isTag = false;
     }
+  }
+
+  changeAllBranches() {
+    this.allBranches = !this.allBranches;
   }
 }

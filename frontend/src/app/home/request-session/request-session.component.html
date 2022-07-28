@@ -88,6 +88,7 @@
           <mat-select
             formControlName="reference"
             (selectionChange)="changeIsTag($event)"
+            [disabled]="allBranches"
           >
             <mat-optgroup label="branch">
               <mat-option *ngFor="let option of branches" [value]="option">
@@ -103,9 +104,13 @@
           <mat-error>Please select a branch or tag!</mat-error> </mat-form-field
         ><br />
 
+        <mat-checkbox class="checkbox" (change)="changeAllBranches()">
+          Tick for all branches
+        </mat-checkbox>
+
         <div *ngIf="!isTag">
           <mat-form-field appearance="fill">
-            <mat-label>History depth</mat-label>
+            <mat-label>Commits history depth</mat-label>
             <mat-select formControlName="historyDepth">
               <mat-option *ngFor="let depth of history" [value]="depth"
                 >{{ depth }}
