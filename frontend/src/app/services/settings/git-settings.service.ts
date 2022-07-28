@@ -27,7 +27,7 @@ export class GitSettingsService {
     type: GitType
   ): Observable<GitSettings> {
     return this.http.post<GitSettings>(this.BACKEND_URL_PREFIX, {
-      type: GitType[type],
+      type: type,
       name: name,
       url: url,
     });
@@ -40,7 +40,7 @@ export class GitSettingsService {
     type: GitType
   ): Observable<GitSettings> {
     return this.http.put<GitSettings>(this.BACKEND_URL_PREFIX + id, {
-      type: GitType[type],
+      type: type,
       name: name,
       url: url,
     });
