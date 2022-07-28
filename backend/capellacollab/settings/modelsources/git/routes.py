@@ -50,7 +50,6 @@ def get_git_settings(
 def create_git_settings(
     body: GitSettings, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
-    print(body)
     if is_admin(token, db):
         return crud.create_git_settings(db, body)
 
