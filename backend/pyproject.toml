@@ -32,4 +32,3 @@ reportUnknownVariableType = false  # annoying, e. g. 'for diag in model.diagrams
 reportUntypedFunctionDecorator = false
 reportUnusedImport = false  # reported by flake8 (F401)
 reportUnusedVariable = false  # reported by flake8 (F841)
-
