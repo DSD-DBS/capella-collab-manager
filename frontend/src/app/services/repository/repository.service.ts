@@ -1,7 +1,7 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -47,6 +47,12 @@ export class RepositoryService {
       name,
     });
   }
+
+  getRevisions(project_name: string) {
+    return this.http.get<Revisions>(this.BACKEND_URL_PREFIX + 'revisions', {
+      headers: new HttpHeaders({ project_name: project_name }),
+    });
+  }
 }
 
 export type Warnings = 'LICENCE_LIMIT' | 'NO_GIT_MODEL_DEFINED';
@@ -58,4 +64,10 @@ export interface Repository {
   branches: Array<string>;
   warnings: Array<Warnings>;
   role: 'user' | 'manager' | 'administrator';
+}
+
+export interface Revisions {
+  branches: Array<string>;
+  tags: Array<string>;
+  default: string;
 }
