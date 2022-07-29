@@ -29,7 +29,6 @@ class GetRepositoryUserResponse(BaseModel):
     repository_name: str
     role: RepositoryUserRole
     permissions: t.List[RepositoryUserPermission]
-    branches: t.List[str]
     warnings: t.List[Warning]
 
     class Config:

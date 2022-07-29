@@ -56,9 +56,6 @@ def get_repositories(db: Session = Depends(get_db), token=Depends(JWTBearer())):
                 ),
                 warnings=repository_service.get_warnings(repo.name, db),
                 role=RepositoryUserRole.ADMIN,
-                branches=get_branches(
-                    get_primary_model_of_repository(db, repo.name), g
-                ),
             )
             for repo in repositories.get_all_repositories(db)
         ]
@@ -71,25 +68,10 @@ def get_repositories(db: Session = Depends(get_db), token=Depends(JWTBearer())):
             permissions=repository_service.get_permission(
                 repo.permission, repo.repository_name, db
             ),
-            branches=get_branches(get_primary_model_of_repository(db, repo.name), g),
             warnings=repository_service.get_warnings(repo.repository_name, db),
         )
         for repo in db_user.repositories
     ]
-
-
-def get_branches(git_model: DB_GitModel, g: Git):
-    remote_refs: list[str] = []
-    try:
-        url = git_model.path
-    except AttributeError:
-        return remote_refs
-
-    for ref in g.ls_remote(url).split("\n"):
-        branch = ref.split("\t")[1]
-        if branch.startswith("refs/heads/") or branch.startswith("refs/tags/"):
-            remote_refs.append(branch)
-    return remote_refs
 
 
 @router.get("/revisions", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)

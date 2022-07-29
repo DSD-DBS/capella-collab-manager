@@ -155,28 +155,6 @@ export class RequestSessionComponent implements OnInit {
     this.permissions = {};
   }
 
-  setBranches(repo: Repository) {
-    this.chosenRepository = repo.repository_name;
-    this.tags = [];
-    this.branches = [];
-    for (var revision of repo.branches) {
-      if (revision.endsWith('master')) {
-        this.repositoryFormGroup.controls['reference'].setValue(
-          'refs/heads/master'
-        );
-      } else if (revision.endsWith('main')) {
-        this.repositoryFormGroup.controls['reference'].setValue(
-          'refs/heads/main'
-        );
-      }
-      if (revision.startsWith('refs/heads/')) {
-        this.branches.push(revision);
-      } else if (revision.startsWith('refs/tags/')) {
-        this.tags.push(revision);
-      }
-    }
-  }
-
   getRevisions(repository_name: string) {
     this.repoService
       .getRevisions(repository_name)
