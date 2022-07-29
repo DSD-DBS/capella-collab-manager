@@ -78,11 +78,7 @@
         <mat-error>Please select a repository!</mat-error> </mat-form-field
       ><br />
 
-      <div
-        *ngIf="
-          chosenRepository && chosenRepository.repository_name !== 'default'
-        "
-      >
+      <div *ngIf="chosenRepository && chosenRepository !== 'default'">
         <mat-form-field appearance="fill">
           <mat-label>Branch, tag or revision</mat-label>
           <mat-select
@@ -105,20 +101,19 @@
         ><br />
 
         <mat-checkbox class="checkbox" (change)="changeAllBranches()">
-          Tick for all branches
+          Download all branches
         </mat-checkbox>
+        <br />
 
-        <div *ngIf="!isTag">
-          <mat-form-field appearance="fill">
-            <mat-label>Commits history depth</mat-label>
-            <mat-select formControlName="historyDepth">
-              <mat-option *ngFor="let depth of history" [value]="depth"
-                >{{ depth }}
-              </mat-option>
-            </mat-select>
-            <mat-error>Please select a history depth!</mat-error>
-          </mat-form-field>
-        </div>
+        <mat-form-field appearance="fill">
+          <mat-label>Commits history depth</mat-label>
+          <mat-select formControlName="historyDepth" [disabled]="isTag">
+            <mat-option *ngFor="let depth of history" [value]="depth"
+              >{{ depth }}
+            </mat-option>
+          </mat-select>
+          <mat-error>Please select a history depth!</mat-error>
+        </mat-form-field>
 
         <br />
       </div>

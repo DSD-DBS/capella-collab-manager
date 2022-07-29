@@ -14,6 +14,8 @@ import { Session } from 'src/app/schemes';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import {
   Repository,
+  RepositoryService,
+  Revisions,
   Warnings,
 } from 'src/app/services/repository/repository.service';
 import {
@@ -62,7 +64,7 @@ export class RequestSessionComponent implements OnInit {
   @Input()
   repositories: Array<Repository> = [];
 
-  chosenRepository: Repository | undefined = undefined;
+  chosenRepository: string = '';
   allBranches: boolean = false;
 
   warnings: Array<Warnings> = [];
@@ -79,7 +81,8 @@ export class RequestSessionComponent implements OnInit {
 
   constructor(
     public sessionService: SessionService,
-    private repoUserService: RepositoryUserService
+    private repoUserService: RepositoryUserService,
+    private repoService: RepositoryService
   ) {}
 
   ngOnInit(): void {}
@@ -118,7 +121,7 @@ export class RequestSessionComponent implements OnInit {
       }
       var reference = this.reference.value;
       if (this.allBranches) {
-        reference = 'All';
+        reference = '';
       }
       this.sessionService
         .createNewSession(type, this.repository.value, reference, depth)
@@ -140,7 +143,7 @@ export class RequestSessionComponent implements OnInit {
     this.warnings = [];
     for (let repo of this.repositories) {
       if (repo.repository_name == event.value) {
-        this.setBranches(repo);
+        this.getRevisions(repo.repository_name);
         for (let permission of repo.permissions) {
           this.permissions[permission] =
             this.repoUserService.PERMISSIONS[permission];
@@ -153,7 +156,7 @@ export class RequestSessionComponent implements OnInit {
   }
 
   setBranches(repo: Repository) {
-    this.chosenRepository = repo;
+    this.chosenRepository = repo.repository_name;
     this.tags = [];
     this.branches = [];
     for (var revision of repo.branches) {
@@ -173,6 +176,20 @@ export class RequestSessionComponent implements OnInit {
       }
     }
   }
+
+  getRevisions(repository_name: string) {
+    this.repoService
+      .getRevisions(repository_name)
+      .subscribe((revisions: Revisions) => {
+        this.branches = revisions.branches;
+        this.tags = revisions.tags;
+        this.repositoryFormGroup.controls['reference'].setValue(
+          revisions.default
+        );
+        this.chosenRepository = repository_name;
+      });
+  }
+
   changeIsTag(event: MatSelectChange) {
     if (event.value.startsWith('refs/tags/')) {
       this.isTag = true;
@@ -183,5 +200,6 @@ export class RequestSessionComponent implements OnInit {
 
   changeAllBranches() {
     this.allBranches = !this.allBranches;
+    this.isTag = false;
   }
 }
