@@ -129,7 +129,9 @@
       mat-flat-button
       color="primary"
       (click)="requestSession()"
-      [disabled]="showSpinner || !repositoryFormGroup.valid"
+      [disabled]="
+        showSpinner || !repositoryFormGroup.valid || !chosenRepository
+      "
     >
       Request Session <mat-icon>keyboard_arrow_right</mat-icon>
     </button>
