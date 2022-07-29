@@ -77,6 +77,12 @@
         </mat-select>
         <mat-error>Please select a repository!</mat-error> </mat-form-field
       ><br />
+      <mat-spinner
+        class="small-spinner"
+        mode="indeterminate"
+        *ngIf="showSmallSpinner"
+      >
+      </mat-spinner>
 
       <div *ngIf="chosenRepository && chosenRepository !== 'default'">
         <mat-form-field appearance="fill">

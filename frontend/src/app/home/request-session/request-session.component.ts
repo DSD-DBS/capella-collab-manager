@@ -30,6 +30,7 @@ import {
 })
 export class RequestSessionComponent implements OnInit {
   showSpinner = false;
+  showSmallSpinner = false;
   creationSuccessful = false;
 
   history: Array<String> = ['Latest commit', 'Complete history'];
@@ -139,6 +140,9 @@ export class RequestSessionComponent implements OnInit {
   }
 
   setPermissionsAndWarningsByName(event: MatSelectChange): void {
+    this.showSmallSpinner = true;
+    if (this.chosenRepository) this.chosenRepository = '';
+
     this.permissions = {};
     this.warnings = [];
     for (let repo of this.repositories) {
@@ -156,16 +160,20 @@ export class RequestSessionComponent implements OnInit {
   }
 
   getRevisions(repository_name: string) {
-    this.repoService
-      .getRevisions(repository_name)
-      .subscribe((revisions: Revisions) => {
+    this.repoService.getRevisions(repository_name).subscribe(
+      (revisions: Revisions) => {
+        this.showSmallSpinner = false;
         this.branches = revisions.branches;
         this.tags = revisions.tags;
         this.repositoryFormGroup.controls['reference'].setValue(
           revisions.default
         );
         this.chosenRepository = repository_name;
-      });
+      },
+      () => {
+        this.showSmallSpinner = true;
+      }
+    );
   }
 
   changeIsTag(event: MatSelectChange) {

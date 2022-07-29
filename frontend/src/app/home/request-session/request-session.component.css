@@ -9,6 +9,10 @@ mat-spinner {
   margin-right: auto;
 }
 
+.small-spinner {
+  zoom: 0.3;
+}
+
 .center {
   margin-left: auto;
   margin-right: auto;
