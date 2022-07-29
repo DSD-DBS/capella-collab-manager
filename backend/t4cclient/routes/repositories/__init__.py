@@ -1,12 +1,15 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import collections.abc as cabc
 import importlib
 import logging
+import os
+import subprocess
 import typing as t
 from importlib import metadata
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from git.cmd import Git
 from requests import Session
 
@@ -87,6 +90,44 @@ def get_branches(git_model: DB_GitModel, g: Git):
         if branch.startswith("refs/heads/") or branch.startswith("refs/tags/"):
             remote_refs.append(branch)
     return remote_refs
+
+
+@router.get("/revisions", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
+def get_revisions(request: Request, db: Session = Depends(get_db)):
+    project = request.headers.get("project_name")
+    remote_refs: dict[str, list[str]] = {}
+    remote_refs["branches"] = []
+    remote_refs["tags"] = []
+    git_model = get_primary_model_of_repository(db, project)
+    try:
+        url = git_model.path
+    except AttributeError:
+        return remote_refs
+
+    git_env = os.environ.copy()
+    git_env["GIT_USERNAME"] = git_model.username
+    git_env["GIT_PASSWORD"] = git_model.password
+    for ref in ls_remote(url, git_env).split("\n"):
+        (_, ref) = ref.split("\t")
+        if ref.startswith("refs/heads/"):
+            remote_refs["branches"].append(ref.replace("refs/heads/", ""))
+        elif ref.startswith("refs/tags/"):
+            remote_refs["tags"].append(ref.replace("refs/tags/", ""))
+
+    if git_model.revision != "HEAD":
+        remote_refs["default"] = git_model.revision
+    elif "master" in remote_refs["branches"]:
+        remote_refs["default"] = "master"
+    else:
+        remote_refs["default"] = "main"
+    return remote_refs
+
+
+def ls_remote(url: str, env: cabc.Mapping[str, str]) -> str:
+    proc = subprocess.run(
+        ["git", "ls-remote", url], capture_output=True, check=True, env=env
+    )
+    return proc.stdout.decode("ascii").strip()
 
 
 @router.get("/{project}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
