@@ -10,7 +10,6 @@ import typing as t
 from importlib import metadata
 
 from fastapi import APIRouter, Depends, Request
-from git.cmd import Git
 from requests import Session
 
 import t4cclient.core.services.repositories as repository_service
@@ -46,7 +45,6 @@ router = APIRouter()
     responses=AUTHENTICATION_RESPONSES,
 )
 def get_repositories(db: Session = Depends(get_db), token=Depends(JWTBearer())):
-    g = Git()
     if is_admin(token, db):
         return [
             GetRepositoryUserResponse(
