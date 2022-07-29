@@ -136,15 +136,7 @@ def request_session(
                 },
             )
 
-        if body.branch.startswith("refs/heads/"):
-            revision = body.branch.replace("refs/heads/", "")
-        elif body.branch.startswith("refs/tags/"):
-            revision = body.branch.replace("refs/tags/", "")
-        elif body.branch == "All":
-            revision = ""
-        else:
-            revision = git_model.revision
-
+        revision = body.branch if body.branch is not None else git_model.revision
         if body.depth == DepthType.LatestCommit:
             depth = 1
         elif body.depth == DepthType.CompleteHistory:
