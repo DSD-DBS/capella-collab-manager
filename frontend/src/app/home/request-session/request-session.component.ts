@@ -114,7 +114,7 @@ export class RequestSessionComponent implements OnInit {
       }
       if (
         this.historyDepth.value == 'Latest commit' ||
-        this.reference.value.startsWith('refs/tags/')
+        this.tags.includes(reference.value)
       ) {
         var depth = DepthType.LatestCommit;
       } else {
@@ -177,7 +177,7 @@ export class RequestSessionComponent implements OnInit {
   }
 
   changeIsTag(event: MatSelectChange) {
-    if (event.value.startsWith('refs/tags/')) {
+    if (this.tags.includes(event.value)) {
       this.isTag = true;
     } else {
       this.isTag = false;
