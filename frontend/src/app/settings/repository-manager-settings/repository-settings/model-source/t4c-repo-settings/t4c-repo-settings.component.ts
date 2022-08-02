@@ -1,14 +1,7 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -71,7 +64,7 @@ export class T4CRepoSettingsComponent implements OnInit {
   }
 
   createProject(formDirective: FormGroupDirective): void {
-    if (this.createProjectForm.valid) {
+    if (this.createProjectForm.valid && this.createProjectForm.value.name) {
       this.projectService
         .createRepositoryProject(
           this.repository,

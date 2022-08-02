@@ -5,8 +5,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import {
-  RepositoryService,
   Repository,
+  RepositoryService,
 } from 'src/app/services/repository/repository.service';
 import { UserService } from 'src/app/services/user/user.service';
 
@@ -53,18 +53,20 @@ export class UserSettingsComponent implements OnInit {
   updatePassword(): void {
     if (this.updatePasswordForm.valid) {
       const value = this.updatePasswordForm.value;
-      this.repositoryUserService
-        .updatePasswordOfUser(
-          value.repository,
-          this.userService.getUsernameFromLocalStorage(),
-          value.password
-        )
-        .subscribe(() => {
-          this.updatePasswordSuccess = true;
-          setTimeout(() => {
-            this.updatePasswordSuccess = false;
-          }, 3000);
-        });
+      if (value.repository && value.password) {
+        this.repositoryUserService
+          .updatePasswordOfUser(
+            value.repository,
+            this.userService.getUsernameFromLocalStorage(),
+            value.password
+          )
+          .subscribe(() => {
+            this.updatePasswordSuccess = true;
+            setTimeout(() => {
+              this.updatePasswordSuccess = false;
+            }, 3000);
+          });
+      }
     }
   }
 }
