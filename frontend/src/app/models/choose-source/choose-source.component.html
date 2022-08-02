@@ -1,0 +1,54 @@
+<div *ngIf="projectService.project && modelService.model">
+  <h1>
+    Add a primary source to the model
+    <i>{{ modelService.model?.name }}</i> of the project
+    <i>{{ projectService.project?.name}}</i>.
+  </h1>
+
+  <h2 class="title">Git sources</h2>
+  <div class="options-list">
+    <a [routerLink]="['/use-existing-git', projectService.project.slug,
+      modelService.model.slug]">
+      <mat-card matRipple>
+        <h3 class="option-title">Use existing repository</h3>
+        <div class="content">
+        <img
+          src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"/>
+        </div>
+      </mat-card>
+    </a>
+    <a [routerLink]="['/settings/core/users']">
+      <mat-card matRipple>
+        <h3 class="option-title">Create repository</h3>
+        <div class="content">
+        <img
+          src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"/>
+        </div>
+      </mat-card>
+    </a>
+  </div>
+
+  <h2 class="title">Team4Capella sources</h2>
+  <div class="options-list">
+    <a [routerLink]="['/add-source', projectService.project.slug,
+      modelService.model.slug]">
+      <mat-card matRipple>
+        <h3 class="option-title">Use existing repository</h3>
+        <div class="content">
+        <img
+          src="https://www.obeosoft.com/images/logos/logo_obeo.png"/>
+        </div>
+      </mat-card>
+    </a>
+    <a [routerLink]="['/settings/core/users']">
+      <mat-card matRipple>
+        <h3 class="option-title">Create repository</h3>
+        <div class="content">
+        <img
+          src="https://www.obeosoft.com/images/logos/logo_obeo.png"/>
+        </div>
+      </mat-card>
+    </a>
+  </div>
+
+</div>

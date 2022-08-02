@@ -74,7 +74,7 @@ def update_project(
     project: str,
     body: PatchProject,
     database: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
+    token: JWTBearer = Depends(JWTBearer()),
 ):
 
     log.info(

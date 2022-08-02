@@ -1,11 +1,14 @@
+# Standard library:
 import enum
-from pydantic import BaseModel
-from slugify import slugify
-from sqlalchemy import (Column, Enum, ForeignKey, Integer, String,
-    UniqueConstraint)
-from sqlalchemy.orm import relationship
 import typing as t
 
+# 3rd party:
+from pydantic import BaseModel
+from slugify import slugify
+from sqlalchemy import Column, Enum, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy.orm import relationship
+
+# 1st party:
 import capellacollab.projects.users.models
 from capellacollab.core.database import Base
 from capellacollab.tools.models import Tool, Type, Version
@@ -22,6 +25,11 @@ class CapellaModelType(enum.Enum):
 
 
 class NewModel(BaseModel):
+    name: str
+    description: str | None
+    tool_id: int
+
+class EmptyModel(BaseModel):
     name: str
     description: str | None
     tool_id: int
@@ -59,8 +67,7 @@ class Model(Base):
     git_model = relationship("DB_GitModel", back_populates="model")
 
     @classmethod
-    def from_new_model(cls, new_model: NewModel,
-        project):
+    def from_empty_model(cls, new_model: EmptyModel, project):
         return cls(
             name = new_model.name,
             slug = slugify(new_model.name),
@@ -69,6 +76,16 @@ class Model(Base):
             version_id = new_model.version_id,
             type_id = new_model.type_id,
             project_id = project.id,
+        )
+    
+    @classmethod
+    def from_new_model(cls, new_model: NewModel, project):
+        return cls(
+            name = new_model.name,
+            slug = slugify(new_model.name),
+            description = new_model.description,
+            project_id = project.id,
+            tool_id = new_model.tool_id,
         )
 
 

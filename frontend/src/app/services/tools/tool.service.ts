@@ -43,10 +43,13 @@ export class ToolService {
 
   init() {
     if (!this.tools) {
-      this.get_tools().subscribe(_ => {
-        this.get_versions().subscribe();
-        this.get_types().subscribe();
-      })
+      this.get_tools().subscribe();
+    }
+    if (!this.versions) {
+      this.get_versions().subscribe();
+    }
+    if (!this.types) {
+      this.get_types().subscribe();
     }
   }
 

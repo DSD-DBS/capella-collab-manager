@@ -10,10 +10,8 @@ export interface Credentials {
 }
 
 export interface Instance {
-  revisions: {
-    branches: string[],
-    tags: string[],
-  }
+  branches: string[],
+  tags: string[],
 }
 
 @Injectable({
@@ -21,7 +19,7 @@ export interface Instance {
 })
 export class GitService {
 
-  base_url = new URL('git-credentials/', environment.backend_url + '/');
+  base_url = new URL('git-utils/', environment.backend_url + '/');
 
   constructor(
     private http: HttpClient,
@@ -29,20 +27,19 @@ export class GitService {
 
   instance: Instance | null = null;
 
-  fetch(credentials: Credentials): Observable<Instance> {
-    let mock = {
-      revisions: {
-        branches: ['main', 'master', 'staging'],
-        tags: ['v0.1', 'v1.0', 'v1.2'],
-      }
-    }
-    return of(mock)
-
-    let url = new URL('fetch/', this.base_url);
-    this.http.get<Instance>(url.toString(), {params: {...credentials}})
-    .subscribe(instance => {
-      this.instance = instance;
-      return instance;
+  fetch(model_slug: string, credentials: Credentials): Observable<Instance> {
+    let url = new URL('revisions/', this.base_url);
+    return new Observable<Instance>(subscriber => {
+      this.http.get<Instance>(url.toString(), {params: {
+        model_slug,
+        url: credentials.url,
+        username: credentials.username,
+        password: credentials.password,
+      }}).subscribe(value => {
+        this.instance = value;
+        subscriber.next(value);
+        subscriber.complete();
+      })
     })
   }
 }

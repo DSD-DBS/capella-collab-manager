@@ -165,3 +165,36 @@ fieldset > :not(.field-separator) {
 .version-selector {
   flex-shrink: 0.5;
 }
+
+.options-list {
+  display: flex;
+  flex-direction: row;
+}
+
+.content {
+  width: 24ch;
+  height: 5em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.content > * {
+  text-align: center;
+  min-height: 2em;
+}
+
+.content > img {
+  width: 70%;
+  margin: auto;
+}
+
+.option-title {
+  text-align: center;
+  max-width: 20ch;
+  min-height: 3em;
+}
+
+.title-box {
+  margin-left: 2em;
+}

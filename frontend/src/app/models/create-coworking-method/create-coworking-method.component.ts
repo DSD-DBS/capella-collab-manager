@@ -4,8 +4,8 @@ import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup,
 import { ActivatedRoute } from '@angular/router';
 import { merge, Observable } from 'rxjs';
 import { GitModel, ModelService } from 'src/app/services/model/model.service';
-import { GitModelService, Instance } from 'src/app/services/modelsources/git-model/git-model.service';
-import { ProjectService } from '../../service/project.service';
+import { ProjectService } from 'src/app/projects/service/project.service';
+import { Credentials, GitService, Instance } from 'src/app/services/git/git.service';
 
 @Component({
   selector: 'app-create-coworking-method',
@@ -14,43 +14,37 @@ import { ProjectService } from '../../service/project.service';
 })
 export class CreateCoworkingMethodComponent implements OnInit {
   
-  validateCredentials: AsyncValidatorFn = (control: AbstractControl):
-  Observable<ValidationErrors | null> => {
-    let credentials = {
-      url: control.get('url')?.value,
-      username: control.get('username')?.value,
-      password: control.get('password')?.value,
-    }
+  validateCredentials = (control: AbstractControl): Observable<ValidationErrors | null> => {
+    let credentials = control.value as Credentials
+
     return new Observable<ValidationErrors | null>(subscriber => {
-      console.log(credentials.url)
-      this.gitModelService.fetch(credentials.url).subscribe({
-        next: (value) => {
-          console.log(value);
-          subscriber.next(null);
-          subscriber.complete();
-        },
-        error: (e) => {
-          console.log(e);
-          subscriber.next({credentials: {value: e.name}});
-          subscriber.complete();
-        },
-      })
+      setTimeout(() => {
+        if (control.value as Credentials === credentials) {
+          this.gitService.fetch('', credentials).subscribe({
+            next: instance => {
+              this.filteredRevisions = instance;
+              subscriber.next(null);
+              subscriber.complete();
+            },
+            error: (e) => {
+              this.filteredRevisions = {branches:[], tags:[]}
+              subscriber.next({credentials: {value: e.name}});
+              subscriber.complete();
+            }
+          })
+        }
+      }, 500)
     })
   }
 
   public gitForm = new FormGroup({
-    info: new FormGroup({
-      name: new FormControl('', Validators.required),
-      description: new FormControl(''),
-    }),
     credentials: new FormGroup({
       url: new FormControl('', Validators.required),
       username: new FormControl(''),
       password: new FormControl(''),
     }, [], this.validateCredentials),
     revision: new FormControl('', Validators.required),
-    path: new FormControl('', Validators.required),
-    entrypoint: new FormControl('', Validators.required),
+    entrypoint: new FormControl('/'),
   }, );
 
   public filteredRevisions: Instance = {branches: [], tags: []}
@@ -59,43 +53,24 @@ export class CreateCoworkingMethodComponent implements OnInit {
     private route: ActivatedRoute,
     public projectService: ProjectService,
     public modelService: ModelService,
-    private gitModelService: GitModelService,
+    private gitService: GitService,
   ) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      this.projectService.init(params.project).subscribe(project => {
-        this.modelService.init_all(project.slug)
-      })
+      this.modelService.init(params.project, params.model).subscribe()
     });
-
-    // initialization : disable fields
-    ['revision', 'path', 'entrypoint']
-    .forEach(field => this.gitForm.controls[field].disable());
-
-    this.createDependency(this.gitForm, ['credentials'], ['revision'])
-    
-    //this.chainDependencies(this.gitForm, ['credentials'], ['revision'],
-    //  ['path', 'entrypoint'])
-
-    this.gitForm.controls.credentials.valueChanges.subscribe(value => {
-      ['url', 'username', 'password'].forEach(field => {
-        console.log(field+ ' ' + this.gitForm.controls.credentials.get(field)?.valid)
-      })
-      console.log(this.gitForm.controls['credentials'].valid)
-    })
     
     this.gitForm.controls.revision.valueChanges.subscribe(value => {
-      console.log(this.gitModelService.instance)
-      if (!this.gitModelService.instance) {
+      if (!this.gitService.instance) {
         this.filteredRevisions = {branches: [], tags: []}
       } else {
         this.filteredRevisions = {
           branches:
-            this.gitModelService.instance.branches
+            this.gitService.instance.branches
             .filter(branch => branch.startsWith(value)),
           tags:
-            this.gitModelService.instance.tags
+            this.gitService.instance.tags
             .filter(tag => tag.startsWith(value)),
         }
       }
@@ -128,7 +103,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
 
   onSubmit(): void {
     if (this.projectService.project && this.gitForm.valid) {
-      this.modelService.createWithSource(
+      this.modelService.addGitSource(
         this.projectService.project.slug,
         this.gitForm.value as GitModel,
       )

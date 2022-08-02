@@ -1,12 +1,13 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, of, subscribeOn } from "rxjs";
+import { Observable } from "rxjs";
 import { ProjectService } from "src/app/projects/service/project.service";
 import { environment } from "src/environments/environment";
 
 export interface NewModel {
   name: string;
   description: string;
+  tool_id: number;
 }
 
 export interface EmptyModel extends NewModel {
@@ -58,7 +59,7 @@ export class ModelService {
     return new Observable<Model>(subscriber => {
       this.projectService.init(project_slug).subscribe(project => {
         if (this.model
-          && (this.model.project_slug !== project_slug)
+          && (this.model.project_slug === project_slug)
           && (this.model.slug === model_slug)
         ) {
           subscriber.next(this.model)
@@ -123,14 +124,19 @@ export class ModelService {
     });
   }
 
-  createEmpty(project_slug: string, model: EmptyModel): Observable<Model> {
-    let url = new URL(project_slug + "/create-empty/", this.base_url);
-    return this.createGeneric(url, model)
+  createNew(project_slug: string, model: NewModel): Observable<Model> {
+    let url = new URL(project_slug + "/create-new/", this.base_url);
+    return this.createGeneric(url, model);
   }
 
-  createWithSource(project_slug: string, model: GitModel): Observable<Model> {
-    let url = new URL(project_slug + "/create-git/", this.base_url);
-    return this.createGeneric(url, model)
+  createEmpty(project_slug: string, model: EmptyModel): Observable<Model> {
+    let url = new URL(project_slug + "/create-empty/", this.base_url);
+    return this.createGeneric(url, model);
+  }
+
+  addGitSource(project_slug: string, model: GitModel): Observable<Model> {
+    let url = new URL(project_slug + "/add-git-source/", this.base_url);
+    return this.createGeneric(url, model);
   }
 
   createGeneric<T extends NewModel>(url: URL, new_model: T): Observable<Model> {
