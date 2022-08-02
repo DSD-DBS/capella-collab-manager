@@ -40,22 +40,25 @@ export class RequestSessionComponent implements OnInit {
     {
       workspaceSwitch: new FormControl(true),
       repository: new FormControl(''),
-      reference: new FormControl('refs/heads/main'),
-      historyDepth: new FormControl(this.history[0]),
     },
     this.validateForm()
   );
+
+  referenceDepthFormGroup = new FormGroup({
+    reference: new FormControl('main'),
+    historyDepth: new FormControl(this.history[0]),
+  });
 
   get repository(): FormControl {
     return this.repositoryFormGroup.get('repository') as FormControl;
   }
 
   get reference(): FormControl {
-    return this.repositoryFormGroup.get('reference') as FormControl;
+    return this.referenceDepthFormGroup.get('reference') as FormControl;
   }
 
   get historyDepth(): FormControl {
-    return this.repositoryFormGroup.get('historyDepth') as FormControl;
+    return this.referenceDepthFormGroup.get('historyDepth') as FormControl;
   }
 
   get workspaceSwitch(): FormControl {
@@ -103,7 +106,10 @@ export class RequestSessionComponent implements OnInit {
   }
 
   requestSession() {
-    if (this.repositoryFormGroup.valid) {
+    if (
+      this.repositoryFormGroup.valid &&
+      (!this.workspaceSwitch.value || this.referenceDepthFormGroup.valid)
+    ) {
       this.showSpinner = true;
       this.creationSuccessful = false;
       let type: 'readonly' | 'persistent' = 'readonly';
@@ -165,7 +171,7 @@ export class RequestSessionComponent implements OnInit {
         this.showSmallSpinner = false;
         this.branches = revisions.branches;
         this.tags = revisions.tags;
-        this.repositoryFormGroup.controls['reference'].setValue(
+        this.referenceDepthFormGroup.controls['reference'].setValue(
           revisions.default
         );
         this.chosenRepository = repository_name;
