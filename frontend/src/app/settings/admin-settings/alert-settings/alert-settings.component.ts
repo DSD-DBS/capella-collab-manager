@@ -10,7 +10,10 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { NoticeService } from 'src/app/services/notice/notice.service';
+import {
+  CreateNotice,
+  NoticeService,
+} from 'src/app/services/notice/notice.service';
 
 @Component({
   selector: 'app-alert-settings',
@@ -50,7 +53,7 @@ export class AlertSettingsComponent implements OnInit {
   createNotice(): void {
     if (this.createAlertForm.valid) {
       this.noticeService
-        .createNotice(this.createAlertForm.value)
+        .createNotice(this.createAlertForm.value as CreateNotice)
         .subscribe(() => {
           this.noticeService.refreshNotices();
         });
