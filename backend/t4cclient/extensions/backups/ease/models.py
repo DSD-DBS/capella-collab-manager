@@ -6,6 +6,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 from sqlalchemy import Column, ForeignKey, Integer, String
+
 from t4cclient.core.database import Base
 
 

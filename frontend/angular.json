@@ -127,5 +127,8 @@
       }
     }
   },
-  "defaultProject": "t4cclient"
+  "defaultProject": "t4cclient",
+  "cli": {
+    "analytics": false
+  }
 }

@@ -83,7 +83,7 @@ modelsources:
   t4c: 
 
     usageAPI: http://localhost:8080/mock
-    restAPI: http://localhost:8080/mock/api/v1.0
+    restAPI: http://localhost:7000/mock/api/v1.0
 
     username: sampleuser
     password: samplepassword

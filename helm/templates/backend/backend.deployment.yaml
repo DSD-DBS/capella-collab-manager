@@ -31,11 +31,13 @@ spec:
             - name: http
               containerPort: 8000
               protocol: TCP
-          {{ if eq .Values.target "local" }}
           env:
+          {{ if eq .Values.target "local" }}
             - name: OAUTHLIB_INSECURE_TRANSPORT
               value: "1"
           {{ end }}
+            - name: no_proxy_additional
+              value: "{{ .Values.proxy.no_proxy }}"
           livenessProbe:
             httpGet:
               path: /healthcheck

@@ -52,13 +52,16 @@ When you have all that installed you can do the following:
 ```zsh
 git clone --recurse-submodules https://github.com/DSD-DBS/capella-collab-manager.git
 cd capella-collab-manager
-```
 
-Create a local k3d cluster and deploy the application
-
-```zsh
+# Create a local k3d cluster
 make create-cluster
+
+# Deploy the application (choose one of the two options)
+# WITHOUT TeamForCapella session support
 make deploy
+
+# WITH TeamForCapella session support
+make deploy-t4c
 ```
 
 It can take a long time to run, but shouldn't take more than 5 minutes. Meanwhile, the following message appears several times:

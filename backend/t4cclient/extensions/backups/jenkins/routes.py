@@ -5,20 +5,18 @@ import typing as t
 from os import path
 
 import fastapi
-import t4cclient.extensions.backups.jenkins.models as jenkins_schema
 from fastapi import APIRouter, Depends
 from requests import Session
+
+import t4cclient.extensions.backups.jenkins.models as jenkins_schema
+from . import crud as jenkins_database
 from t4cclient.core.authentication.database import verify_repository_role
-from t4cclient.core.authentication.database.git_models import \
-    verify_gitmodel_permission
-from t4cclient.core.authentication.database.jenkins import \
-    verify_jenkins_permission
+from t4cclient.core.authentication.database.git_models import verify_gitmodel_permission
+from t4cclient.core.authentication.database.jenkins import verify_jenkins_permission
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db
+from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
 from t4cclient.extensions.backups import jenkins
-from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
-
-from . import crud as jenkins_database
 
 router = APIRouter()
 

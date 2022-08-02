@@ -13,10 +13,10 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import {
+  CreateGitModel,
   GitModel,
   GitModelService,
 } from 'src/app/services/modelsources/git-model/git-model.service';
-import { T4CRepoService } from 'src/app/services/modelsources/t4c-repos/t4c-repo.service';
 import { GitModelDeletionDialogComponent } from './git-model-deletion-dialog/git-model-deletion-dialog.component';
 
 @Component({
@@ -93,10 +93,11 @@ export class GitModelSettingsComponent implements OnInit {
 
   assignGitModel(formDirective: FormGroupDirective) {
     if (this.createGitModel.valid) {
+      //var gitModel: CreateGitModel = this.createGitModel;
       this.gitModelService
         .assignGitRepositoryToRepository(
           this.repository,
-          this.createGitModel.value
+          this.createGitModel.value as CreateGitModel
         )
         .subscribe(() => {
           formDirective.resetForm();

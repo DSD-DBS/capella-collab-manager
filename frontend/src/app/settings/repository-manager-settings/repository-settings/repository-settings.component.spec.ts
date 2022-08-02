@@ -11,9 +11,8 @@ describe('RepositorySettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RepositorySettingsComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositorySettingsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

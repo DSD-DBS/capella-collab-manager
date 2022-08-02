@@ -10,6 +10,7 @@ from alembic.config import Config
 from alembic.migration import MigrationContext
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 from t4cclient.config import config
 from t4cclient.core.database import Base, repositories, users
 from t4cclient.schemas.repositories.users import Role

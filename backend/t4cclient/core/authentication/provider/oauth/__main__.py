@@ -1,6 +1,8 @@
-from t4cclient.config import config
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
 
 from .keystore import KeyStore
+from t4cclient.config import config
 
 cfg = config["authentication"]["oauth"]
 

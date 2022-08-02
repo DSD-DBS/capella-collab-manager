@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from fastapi import Depends, HTTPException
-from t4cclient.core.database import get_db
-from t4cclient.extensions.backups import jenkins
 
 from . import git_models as git_models_auth
+from t4cclient.core.database import get_db
+from t4cclient.extensions.backups import jenkins
 
 
 def verify_jenkins_permission(
