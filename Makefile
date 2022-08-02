@@ -27,6 +27,8 @@ frontend:
 capella: capella-download
 	docker build -t base capella-dockerimages/base
 	docker build -t capella/base capella-dockerimages/capella
+	
+capella/remote: capella
 	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
 
@@ -39,8 +41,10 @@ capella-download:
 		curl -L --output capella.tar.gz 'https://ftp.acc.umu.se/mirror/eclipse.org/capella/core/products/releases/5.2.0-R20211130-125709/capella-5.2.0.202111301257-linux-gtk-x86_64.tar.gz'; \
 	fi
 
-t4c-client:
+t4c-client: capella
 	docker build -t t4c/client/base capella-dockerimages/t4c
+	docker build -t t4c/client/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote --build-arg BASE_IMAGE=t4c/client/base capella-dockerimages/remote
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
 
 readonly:
 	docker build -t capella/ease --build-arg BASE_IMAGE=capella/base --build-arg BUILD_TYPE=online capella-dockerimages/ease
@@ -61,10 +65,10 @@ mock:
 
 capella-dockerimages: capella t4c-client readonly ease
 
-deploy: backend frontend capella mock helm-deploy open rollout
+deploy: backend frontend capella/remote mock helm-deploy open rollout
 
 # Deploy with full T4C support:
-deploy-t4c: backend frontend capella t4c-client readonly-ease mock helm-deploy
+deploy-t4c: backend frontend capella t4c-client readonly ease mock helm-deploy open rollout
 
 helm-deploy:
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
@@ -125,12 +129,12 @@ delete-cluster:
 
 .provision-guacamole:
 	export MSYS_NO_PATHCONV=1; \
-	kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
-	kubectl exec -ti --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole && \
+	kubectl exec --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
+	kubectl exec -ti --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole && \
 	touch .provision-guacamole
 
 .provision-backend:
-	echo "insert into repository_user_association values ('$(MY_EMAIL)', 'default', 'WRITE', 'MANAGER');" | kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-backend-postgres --no-headers | cut -f1 -d' ') -- psql -U backend backend && \
+	echo "insert into repository_user_association values ('$(MY_EMAIL)', 'default', 'WRITE', 'MANAGER');" | kubectl exec --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-backend-postgres --no-headers | cut -f1 -d' ') -- psql -U backend backend && \
 	touch .provision-backend
 
 # Execute with `make -j3 dev`

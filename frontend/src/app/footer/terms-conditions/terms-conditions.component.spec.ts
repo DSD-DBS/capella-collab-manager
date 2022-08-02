@@ -11,9 +11,8 @@ describe('TermsConditionsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TermsConditionsComponent ]
-    })
-    .compileComponents();
+      declarations: [TermsConditionsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

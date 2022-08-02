@@ -6,16 +6,16 @@ import logging
 from importlib import metadata
 
 from fastapi import APIRouter
-from t4cclient.config import config
 
-from ..core.authentication.provider.azure import routes
-from . import notices, repositories, sessions, sync, users
+from ..sessions import routes as session_routes
+from . import notices, repositories, sync, users
+from t4cclient.config import config
 
 log = logging.getLogger(__name__)
 
 
 router = APIRouter()
-router.include_router(sessions.router, prefix="/sessions", tags=["Sessions"])
+router.include_router(session_routes.router, prefix="/sessions", tags=["Sessions"])
 router.include_router(sync.router, prefix="/sync", tags=["T4C Server Synchronization"])
 router.include_router(repositories.router, prefix="/projects")
 router.include_router(users.router, prefix="/users", tags=["Users"])

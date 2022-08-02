@@ -3,15 +3,15 @@
 
 import typing as t
 
+from fastapi import APIRouter, Depends
+from requests import Session
+
 import t4cclient.core.database as database
 import t4cclient.extensions.modelsources.t4c.crud as database_projects
 import t4cclient.schemas.repositories.projects as schema_projects
-from fastapi import APIRouter, Depends
-from requests import Session
-from t4cclient.core.authentication.database import (verify_admin,
-                                                    verify_repository_role)
+from t4cclient.core.authentication.database import verify_admin, verify_repository_role
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
-from t4cclient.routes.open_api_configuration import AUTHENTICATION_RESPONSES
+from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
 
 router = APIRouter()
 

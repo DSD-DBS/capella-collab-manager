@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 import logging
 import time
 import typing as t
@@ -5,6 +8,7 @@ import typing as t
 import jwt
 import requests
 from pydantic import BaseModel
+
 from t4cclient.config import config
 
 log = logging.getLogger(__name__)

@@ -3,11 +3,12 @@
 
 import typing as t
 
+from sqlalchemy.orm.session import Session
+
 import t4cclient.extensions.modelsources.git.crud as git_model_crud
 import t4cclient.extensions.modelsources.t4c.connection as t4c_ext
 import t4cclient.schemas.repositories as repository_schema
 import t4cclient.schemas.repositories.users as users_schema
-from sqlalchemy.orm.session import Session
 from t4cclient.schemas.repositories import RepositoryUserPermission
 
 

@@ -103,18 +103,23 @@ export class RepositoryUserSettingsComponent implements OnInit {
       if (formValue.role == 'manager') {
         permission = 'write';
       }
-      this.repoUserService
-        .addUserToRepo(
-          this.repository,
-          formValue.username,
-          formValue.role,
-          permission
-        )
-        .subscribe(() => {
-          formDirective.resetForm();
-          this.addUserToRepoForm.reset();
-          this.refreshRepoUsers();
-        });
+      if (
+        formValue.username &&
+        permission &&
+        (formValue.role == 'user' || formValue.role == 'manager')
+      )
+        this.repoUserService
+          .addUserToRepo(
+            this.repository,
+            formValue.username,
+            formValue.role,
+            permission
+          )
+          .subscribe(() => {
+            formDirective.resetForm();
+            this.addUserToRepoForm.reset();
+            this.refreshRepoUsers();
+          });
     }
   }
 
