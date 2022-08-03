@@ -37,6 +37,11 @@ class EmptyModel(BaseModel):
     type_id: int
 
 
+class ToolDetails(BaseModel):
+    version_id: int
+    type_id: int
+
+
 class Model(Base):
     __tablename__ = 'capella_models'
     __table_args__ = (

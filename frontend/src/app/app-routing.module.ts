@@ -30,6 +30,8 @@ import { HomeComponent } from './workspaces/home.component';
 import { CreateModelComponent } from './models/create-model/create-model.component';
 import { CreateCoworkingMethodComponent } from './models/create-coworking-method/create-coworking-method.component';
 import { ChooseSourceComponent } from './models/choose-source/choose-source.component';
+import { InitModelComponent } from './models/init-model/init-model.component';
+import { ChooseInitComponent } from './models/choose-init/choose-init.component';
 
 const routes: Routes = [
   {
@@ -145,8 +147,8 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'project/:project',
-    component: ProjectDetailsComponent,
+    path: 'choose-init/:project/:model',
+    component: ChooseInitComponent,
     canActivate: [AuthGuardService],
   },
   {
@@ -157,6 +159,16 @@ const routes: Routes = [
   {
     path: 'create-model/:project',
     component: CreateModelComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'init-model/:project/:model',
+    component: InitModelComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'project/:project',
+    component: ProjectDetailsComponent,
     canActivate: [AuthGuardService],
   },
   {

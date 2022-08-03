@@ -9,6 +9,15 @@ from sqlalchemy.orm import Session
 
 # 1st party:
 from capellacollab.extensions.modelsources.git.models import DB_GitModel, PostGitModel
+import capellacollab.models.crud as models_crud
+import capellacollab.projects.crud as projects_crud
+from capellacollab.extensions.modelsources.git.models import (
+    DB_GitModel,
+    NewGitSource,
+    PostGitModel,
+    RepositoryGitModel,
+)
+from capellacollab.models.models import Model
 
 
 def get_gitmodels_of_capellamodels(db: Session, model_id: int) -> t.List[DB_GitModel]:
@@ -68,3 +77,14 @@ def delete_model_from_repository(db: Session, capellamodel_id: int, model_id: in
         DB_GitModel.model_id == capellamodel_id
     ).delete()
     db.commit()
+
+
+def create(db: Session, project_slug: str, model_slug: str,
+    source: NewGitSource):
+
+    model = models_crud.get_slug(db, project_slug, model_slug)
+    new_source = DB_GitModel.from_new_git_source(model.id, source)
+    db.add(new_source)
+    db.commit()
+    print(new_source)
+    return new_source

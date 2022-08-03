@@ -3,6 +3,7 @@
 
 # Standard library:
 import typing as t
+from urllib.parse import uses_netloc
 
 # 3rd party:
 from pydantic import BaseModel
@@ -56,6 +57,28 @@ class PostGitModel(RepositoryGitModel):
     credentials: GitCredentials
 
 
+class NewGitSource(BaseModel):
+    path: str
+    entrypoint: str
+    revision: str
+    username: str
+    password: str
+
+
+class ResponseGitSource(NewGitSource):
+    id: int
+
+    @classmethod
+    def from_db_git_source(cls, source):
+        return cls(
+            path = source.path,
+            entrypoint = source.entrypoint,
+            revision = source.revision,
+            username = source.username,
+            password = source.password,
+            id = source.id,
+        )
+
 class DB_GitModel(Base):
     __tablename__ = "git_models"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
@@ -68,3 +91,16 @@ class DB_GitModel(Base):
     model = relationship("Model", back_populates="git_model")
     username = Column(String)
     password = Column(String)
+
+    @classmethod
+    def from_new_git_source(cls, model_id: int, source: NewGitSource):
+        return cls(
+            name = "",
+            path = source.path,
+            entrypoint = source.entrypoint,
+            revision = source.revision,
+            primary = True,
+            model_id = model_id,
+            username = source.username,
+            password = source.password,
+        )

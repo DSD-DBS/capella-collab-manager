@@ -1,0 +1,34 @@
+<div *ngIf="projectService.project && modelService.model">
+    <h1>
+      Initialize the model {{ modelService.model.name }} of the project
+      {{ projectService.project.name }}.
+    </h1>
+  
+    <div class="options-list">
+      <a [routerLink]="['/init-model', projectService.project.slug,
+        modelService.model.slug]">
+        <mat-card matRipple>
+          <h3 class="option-title">Use the model of the source.</h3>
+          <div class="content">
+          <img
+            src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"/>
+          </div>
+        </mat-card>
+      </a>
+      <a [routerLink]="['/init-model', projectService.project.slug,
+        modelService.model.slug]">
+        <mat-card matRipple>
+          <h3 class="option-title">Create empty model</h3>
+          <div class="content"></div>
+        </mat-card>
+      </a>
+      <a [routerLink]="['/init-model', projectService.project.slug,
+        modelService.model.slug]">
+        <mat-card matRipple>
+          <h3 class="option-title">Upload offline model</h3>
+          <div class="content"></div>
+        </mat-card>
+      </a>
+    </div>
+  </div>
+  

@@ -139,6 +139,20 @@ export class ModelService {
     return this.createGeneric(url, model);
   }
 
+  setToolDetails(project_slug: string, model_slug: string,
+    version_id: number, type_id: number): Observable<Model> {
+
+    let url = new URL(`${project_slug}/set-tool-details/${model_slug}/`, this.base_url);
+    return new Observable<Model>(subscriber => {
+      this.http.patch<Model>(url.toString(), {version_id, type_id})
+      .subscribe(model => {
+        this.model = model;
+        subscriber.next(model);
+        subscriber.complete();
+      })
+    })
+  }
+
   createGeneric<T extends NewModel>(url: URL, new_model: T): Observable<Model> {
     return new Observable<Model>(subscriber => {
       this.http.post<Model>(url.toString(), new_model)

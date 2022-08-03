@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup,
   ValidationErrors, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { merge, Observable } from 'rxjs';
 import { GitModel, ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/projects/service/project.service';
 import { Credentials, GitService, Instance } from 'src/app/services/git/git.service';
+import { Source, SourceService } from 'src/app/services/source/source.service';
 
 @Component({
   selector: 'app-create-coworking-method',
@@ -42,7 +43,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
       url: new FormControl('', Validators.required),
       username: new FormControl(''),
       password: new FormControl(''),
-    }, [], this.validateCredentials),
+    }),
     revision: new FormControl('', Validators.required),
     entrypoint: new FormControl('/'),
   }, );
@@ -54,6 +55,8 @@ export class CreateCoworkingMethodComponent implements OnInit {
     public projectService: ProjectService,
     public modelService: ModelService,
     private gitService: GitService,
+    private sourceService: SourceService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -101,12 +104,34 @@ export class CreateCoworkingMethodComponent implements OnInit {
     }
   }
 
+  onRevisionFocus(): void {
+    this.gitService.fetch(
+      '',
+      this.gitForm.controls.credentials.value as Credentials
+    ).subscribe(instance => {
+      this.filteredRevisions = instance;
+    })
+  }
+
   onSubmit(): void {
-    if (this.projectService.project && this.gitForm.valid) {
-      this.modelService.addGitSource(
+    if (this.projectService.project && this.modelService.model && this.gitForm.valid) {
+      let form_result = this.gitForm.value;
+      let source: Source = {
+        path: form_result.credentials.url,
+        entrypoint: form_result.entrypoint,
+        revision: form_result.revision,
+        username: form_result.credentials.username,
+        password: form_result.credentials.password,
+      }
+      this.sourceService.addGitSource(
         this.projectService.project.slug,
-        this.gitForm.value as GitModel,
-      )
+        this.modelService.model.slug,
+        source,
+      ).subscribe(_ => {this.router.navigate([
+        '/init-model',
+        this.projectService.project?.slug,
+        this.modelService.model?.slug,
+      ])})
     }
   }
 

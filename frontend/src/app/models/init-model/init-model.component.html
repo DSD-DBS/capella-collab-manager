@@ -1,0 +1,50 @@
+<!--
+ ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="wrapper">
+  <mat-card class="section-card" *ngIf="modelService.model">
+    <h2>
+      Initialize the model {{ this.modelService.model?.name }} of the
+      project {{ this.projectService.project?.name }}.
+    </h2>
+    <form id="new-model-form" [formGroup]="form" (submit)="onSubmit()">
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Modelling tool</mat-label>
+            <input matInput [value]="getTool().name" disabled>
+        </mat-form-field>
+        <div class="field-separator"></div>
+        <mat-form-field appearance="fill">
+          <mat-label>Version</mat-label>
+          <mat-select
+            formControlName="version" id="version-selector">
+            <mat-option *ngFor="let version of getForToolId(toolService.versions)"
+              [value]="version.id">
+              {{ version.name }}
+              <span *ngIf="version.is_recommended"> (recommended)</span>
+              <span *ngIf="version.is_deprecated"> (deprecated)</span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </fieldset>
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Model type</mat-label>
+          <mat-select
+            formControlName="type">
+            <mat-option *ngFor="let type of getForToolId(toolService.types)" 
+              [value]="type.id">
+              {{ type.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </fieldset>
+      <button mat-raised-button color="primary" type="submit"
+        [disabled]="!form.valid">
+        Create model
+      </button>
+    </form>
+  </mat-card>
+</div>

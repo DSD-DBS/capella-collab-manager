@@ -33,7 +33,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Branch, tag or revision</mat-label>
           <input type="text" matInput formControlName="revision"
-            [matAutocomplete]="auto"/>
+            [matAutocomplete]="auto" (focus)="onRevisionFocus()"/>
         </mat-form-field>
           <mat-autocomplete autoActiveFirstOption 
             #auto="matAutocomplete">

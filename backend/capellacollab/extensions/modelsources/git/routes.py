@@ -7,10 +7,12 @@ import typing as t
 
 # 3rd party:
 from fastapi import APIRouter, Depends
-from requests import Session
 from git.cmd import Git
+from requests import Session
 
 # 1st party:
+import capellacollab.models.crud as models_crud
+import capellacollab.projects.crud as projects_crud
 from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.database.git_models import (
     verify_gitmodel_permission,
@@ -20,12 +22,18 @@ from capellacollab.core.database import get_db
 from capellacollab.extensions.modelsources import git
 from capellacollab.extensions.modelsources.git.models import (
     GetRepositoryGitModel,
+    GetRevisionsModel,
+    NewGitSource,
     PatchRepositoryGitModel,
     PostGitModel,
     RepositoryGitInnerModel,
     GetRevisionsModel,
+    ResponseGitSource,
 )
 from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
+
+# local:
+from . import crud
 
 router = APIRouter()
 
@@ -49,6 +57,17 @@ def get_models_for_repository(
             )
         )
     return return_models
+
+
+@router.post("/create/{model_slug}", response_model=ResponseGitSource)
+def create_source(project: str, model_slug: str, source: NewGitSource,
+    db: Session = Depends(get_db),
+    token: JWTBearer = Depends(JWTBearer())):
+
+    project_instance = projects_crud.get_project(db, project)
+    verify_project_role(project_instance.name, token, db)
+    new_source = crud.create(db, project_instance.slug, model_slug, source)
+    return ResponseGitSource.from_db_git_source(new_source)
 
 
 @router.post(
@@ -130,3 +149,4 @@ def get_references(url: str) -> GetRevisionsModel:
         elif ref.startswith("refs/tags/"):
             remote_refs.tags.append(ref)
     return remote_refs
+

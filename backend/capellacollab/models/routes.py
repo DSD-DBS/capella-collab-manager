@@ -13,7 +13,7 @@ from capellacollab.projects import crud as projects_crud
 
 # local:
 from . import crud
-from .models import EmptyModel, NewModel, ResponseModel
+from .models import EmptyModel, NewModel, ResponseModel, ToolDetails
 
 router = APIRouter()
 
@@ -67,6 +67,22 @@ def create_new(project_slug: str, new_model: NewModel,
     return ResponseModel.from_model(
         crud.create_new(db, project_slug, new_model)
     )
+
+@router.patch(
+    '/{project_slug}/set-tool-details/{model_slug}/',
+    response_model=ResponseModel
+)
+def set_tool_details(project_slug: str, model_slug: str,
+    tool_details: ToolDetails, db: Session = Depends(get_db),
+    token: JWTBearer = Depends(JWTBearer())):
+
+    project = projects_crud.get_slug(db, project_slug)
+    verify_project_role(project.name, token, db)
+    return ResponseModel.from_model(crud.set_tool_details(
+        db,
+        crud.get_slug(db, project.slug, model_slug),
+        tool_details,
+    ))
 
 
 @router.post('/{project_slug}/create-git/', response_model=ResponseModel)

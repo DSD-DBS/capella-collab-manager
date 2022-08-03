@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { merge, Observable } from 'rxjs';
 import { environment } from "src/environments/environment";
 
 export interface Tool {
@@ -41,16 +41,10 @@ export class ToolService {
   versions: NestedVersion | null = null;
   types: NestedType | null = null;
 
-  init() {
-    if (!this.tools) {
-      this.get_tools().subscribe();
-    }
-    if (!this.versions) {
-      this.get_versions().subscribe();
-    }
-    if (!this.types) {
-      this.get_types().subscribe();
-    }
+  init(): void {
+    this.get_tools().subscribe();
+    this.get_versions().subscribe();
+    this.get_types().subscribe();
   }
 
   get_tools(): Observable<Tool[]> {

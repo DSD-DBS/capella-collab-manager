@@ -94,6 +94,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { CreateCoworkingMethodComponent } from './models/create-coworking-method/create-coworking-method.component';
 import { ChooseSourceComponent } from './models/choose-source/choose-source.component';
+import { InitModelComponent } from './models/init-model/init-model.component';
+import { ChooseInitComponent } from './models/choose-init/choose-init.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -153,6 +155,8 @@ import { ChooseSourceComponent } from './models/choose-source/choose-source.comp
     CreateModelComponent,
     CreateCoworkingMethodComponent,
     ChooseSourceComponent,
+    InitModelComponent,
+    ChooseInitComponent,
   ],
   imports: [
     CommonModule,

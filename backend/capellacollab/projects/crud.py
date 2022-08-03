@@ -3,11 +3,11 @@
 
 # Standard library:
 import typing as t
+
+# 3rd party:
 from h11 import Data
 from slugify import slugify
 from sqlalchemy import select
-
-# 3rd party:
 from sqlalchemy.orm import Session
 
 # 1st party:
@@ -44,7 +44,10 @@ def delete_project(db: Session, name: str) -> None:
 
 
 def get_slug(db: Session, slug: str) -> DatabaseProject:
-    return db.query(DatabaseProject).filter(DatabaseProject.slug == slug).first()
+    project = db.query(DatabaseProject)\
+        .filter(DatabaseProject.slug == slug).first()
+    assert project is not None
+    return project
 
 
 def get_id(db: Session, id: int):
