@@ -47,7 +47,7 @@ export class CreateModelComponent implements OnInit {
       
     })
     this.route.params.subscribe((params) => {
-      this.modelService.init_all(params.project).subscribe(models => {
+      this.modelService.initAll(params.project).subscribe(models => {
         this.form.controls.name.addValidators(
           this.slugValidator(models.map(value => value.slug))
         )

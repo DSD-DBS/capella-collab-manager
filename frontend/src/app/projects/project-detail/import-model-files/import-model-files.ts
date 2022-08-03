@@ -217,7 +217,7 @@ export class CreateModelComponent implements OnInit {
             result.slug,
           ])
         })
-        this.modelService.init_all(this.projectService.project.slug).subscribe()
+        this.modelService.initAll(this.projectService.project.slug).subscribe()
       }
     }
   }

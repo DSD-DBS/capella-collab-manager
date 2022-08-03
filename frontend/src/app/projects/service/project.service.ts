@@ -30,7 +30,7 @@ export class ProjectService {
     return of(this.project)
   }
 
-  init_all(): Observable<Project[]> {
+  initAll(): Observable<Project[]> {
     if(this.projects) 
       return of(this.projects)
     return this.list()

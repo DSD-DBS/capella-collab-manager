@@ -74,7 +74,7 @@ export class ModelService {
     })
   }
 
-  init_all(project_slug: string): Observable<Model[]> {
+  initAll(project_slug: string): Observable<Model[]> {
     return new Observable<Model[]>(subscriber => {
       this.projectService.init(project_slug).subscribe(project => {
         if (this.models

@@ -22,7 +22,7 @@ export class ModelOverviewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.modelService.init_all(this.project_slug).subscribe(value => {
+    this.modelService.initAll(this.project_slug).subscribe(value => {
       console.log(value);
     });
   }
