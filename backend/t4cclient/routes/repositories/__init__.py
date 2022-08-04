@@ -81,6 +81,7 @@ def get_revisions(request: Request, db: Session = Depends(get_db)):
     git_model = get_primary_model_of_repository(db, project)
     try:
         url = git_model.path
+        log.info("Fetch revisions of git-model, %s,  with url: %s", git_model.name, url)
     except AttributeError:
         return remote_refs
 
@@ -100,6 +101,9 @@ def get_revisions(request: Request, db: Session = Depends(get_db)):
         remote_refs["default"] = "master"
     else:
         remote_refs["default"] = "main"
+    log.info("Branches: %s", remote_refs["branches"])
+    log.info("Tags: %s", remote_refs["tags"])
+    log.info("Default branch: %s", remote_refs["default"])
     return remote_refs
 
 
