@@ -33,7 +33,6 @@ def get_references(model_slug: str, url: str, username: t.Optional[str],
     ) -> GitRevisions:
 
     working_directory = model_slug
-    print(username, url)
     splitted_url = urlsplit(url)
     credentials = (
         quote(username or '', safe='')
@@ -43,8 +42,6 @@ def get_references(model_slug: str, url: str, username: t.Optional[str],
     )
     git_url = f"{splitted_url.scheme}://{credentials}" \
         f"{splitted_url.netloc}{splitted_url.path}"
-    print(git_url)
-    g = Git(working_directory)
     remote_refs = GitRevisions(branches=[], tags=[])
     try:
         empty_repo = git.Repo.init(working_directory)

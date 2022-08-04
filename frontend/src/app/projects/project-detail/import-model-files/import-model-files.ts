@@ -125,8 +125,6 @@ export class CreateModelComponent implements OnInit {
     })
 
     this.existingGitModelForm.controls['reference'].valueChanges.subscribe(value => {
-      console.log(value)
-      console.log(this.filteredRevisions);
       this.filteredRevisions = {
         branches: this.revisions.branches.filter(branch => branch.startsWith(value)),
         tags: this.revisions.tags.filter(tag => tag.startsWith(value))

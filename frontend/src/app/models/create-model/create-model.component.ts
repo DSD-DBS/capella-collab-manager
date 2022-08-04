@@ -32,7 +32,6 @@ export class CreateModelComponent implements OnInit {
   slugValidator(slugs: string[]): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       let new_slug = slugify(control.value, {lower: true});
-      console.log(new_slug);
       for (let slug of slugs) {
         if (slug == new_slug) {
           return {uniqueSlug: {value: slug}}
@@ -54,12 +53,10 @@ export class CreateModelComponent implements OnInit {
       });
     });
     this.form.controls.name.valueChanges.subscribe(_ => {
-      console.log(this.form.controls.name.valid)
     });
   }
 
   onSubmit(): void {
-    console.log()
     if (this.form.valid
       && this.projectService.project?.slug) {
       let new_model = this.form.value as NewModel;

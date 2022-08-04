@@ -23,7 +23,6 @@ export class ProjectService {
 
   init(project_slug: string): Observable<Project> {
     if (!this.project || !(this.project.slug === project_slug)) {
-      console.log(this.project)
       this.project = undefined;
       return this.getSlug(project_slug)
     }
