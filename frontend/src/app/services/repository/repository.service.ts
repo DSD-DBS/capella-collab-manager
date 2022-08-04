@@ -1,7 +1,7 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -49,9 +49,9 @@ export class RepositoryService {
   }
 
   getRevisions(project_name: string) {
-    return this.http.get<Revisions>(this.BACKEND_URL_PREFIX + 'revisions', {
-      headers: new HttpHeaders({ project_name: project_name }),
-    });
+    return this.http.get<Revisions>(
+      this.BACKEND_URL_PREFIX + project_name + '/revisions'
+    );
   }
 }
 

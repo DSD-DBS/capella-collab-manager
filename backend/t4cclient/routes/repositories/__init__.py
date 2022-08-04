@@ -9,7 +9,7 @@ import subprocess
 import typing as t
 from importlib import metadata
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends
 from requests import Session
 
 import t4cclient.core.services.repositories as repository_service
@@ -72,12 +72,16 @@ def get_repositories(db: Session = Depends(get_db), token=Depends(JWTBearer())):
     ]
 
 
-@router.get("/revisions", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
-def get_revisions(request: Request, db: Session = Depends(get_db)):
-    project = request.headers.get("project_name")
+@router.get(
+    "/{project}/revisions", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES
+)
+def get_revisions(
+    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+):
     remote_refs: dict[str, list[str]] = {}
     remote_refs["branches"] = []
     remote_refs["tags"] = []
+
     git_model = get_primary_model_of_repository(db, project)
     try:
         url = git_model.path
