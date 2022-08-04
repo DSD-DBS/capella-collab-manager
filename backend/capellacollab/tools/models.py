@@ -1,12 +1,12 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 
-from capellacollab.core.database import Base;
+from capellacollab.core.database import Base
 
 
 class Tool(Base):
-    __tablename__ = 'tools'
-    
+    __tablename__ = "tools"
+
     id = Column(Integer, primary_key=True)
     name = Column(String)
     docker_image_template = Column(String)
@@ -16,19 +16,19 @@ class Tool(Base):
 
 
 class Version(Base):
-    __tablename__ = 'versions'
-    
+    __tablename__ = "versions"
+
     id = Column(Integer, primary_key=True)
     name = Column(String)
     is_recommended = Column(Boolean)
     is_deprecated = Column(Boolean)
-    
+
     tool_id = Column(Integer, ForeignKey(Tool.id))
     tool = relationship("Tool", back_populates="versions")
 
 
 class Type(Base):
-    __tablename__ = 'types'
+    __tablename__ = "types"
 
     id = Column(Integer, primary_key=True)
     name = Column(String)

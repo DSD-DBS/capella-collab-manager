@@ -29,6 +29,7 @@ class NewModel(BaseModel):
     description: str | None
     tool_id: int
 
+
 class EmptyModel(BaseModel):
     name: str
     description: str | None
@@ -43,10 +44,8 @@ class ToolDetails(BaseModel):
 
 
 class Model(Base):
-    __tablename__ = 'capella_models'
-    __table_args__ = (
-        UniqueConstraint('project_id', 'slug'),
-    )
+    __tablename__ = "capella_models"
+    __table_args__ = (UniqueConstraint("project_id", "slug"),)
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -64,7 +63,7 @@ class Model(Base):
 
     type_id = Column(Integer, ForeignKey(Type.id))
     tool_type = relationship(Type)
-    
+
     editing_mode = Column(Enum(EditingMode))
     model_type = Column(Enum(CapellaModelType))
 
@@ -74,23 +73,23 @@ class Model(Base):
     @classmethod
     def from_empty_model(cls, new_model: EmptyModel, project):
         return cls(
-            name = new_model.name,
-            slug = slugify(new_model.name),
-            description = new_model.description,
-            tool_id = new_model.tool_id,
-            version_id = new_model.version_id,
-            type_id = new_model.type_id,
-            project_id = project.id,
+            name=new_model.name,
+            slug=slugify(new_model.name),
+            description=new_model.description,
+            tool_id=new_model.tool_id,
+            version_id=new_model.version_id,
+            type_id=new_model.type_id,
+            project_id=project.id,
         )
-    
+
     @classmethod
     def from_new_model(cls, new_model: NewModel, project):
         return cls(
-            name = new_model.name,
-            slug = slugify(new_model.name),
-            description = new_model.description,
-            project_id = project.id,
-            tool_id = new_model.tool_id,
+            name=new_model.name,
+            slug=slugify(new_model.name),
+            description=new_model.description,
+            project_id=project.id,
+            tool_id=new_model.tool_id,
         )
 
 
@@ -109,12 +108,12 @@ class ResponseModel(BaseModel):
     @classmethod
     def from_model(cls, model: Model):
         return cls(
-            id = model.id,
-            slug = model.slug,
-            project_slug = model.project.slug,
-            name = model.name,
-            description = model.description,
-            tool_id = model.tool_id,
-            version_id = model.version_id,
-            type_id = model.type_id,
+            id=model.id,
+            slug=model.slug,
+            project_slug=model.project.slug,
+            name=model.name,
+            description=model.description,
+            tool_id=model.tool_id,
+            version_id=model.version_id,
+            type_id=model.type_id,
         )

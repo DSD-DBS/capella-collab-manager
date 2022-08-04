@@ -79,8 +79,7 @@ def delete_model_from_repository(db: Session, capellamodel_id: int, model_id: in
     db.commit()
 
 
-def create(db: Session, project_slug: str, model_slug: str,
-    source: NewGitSource):
+def create(db: Session, project_slug: str, model_slug: str, source: NewGitSource):
 
     model = models_crud.get_slug(db, project_slug, model_slug)
     new_source = DB_GitModel.from_new_git_source(model.id, source)

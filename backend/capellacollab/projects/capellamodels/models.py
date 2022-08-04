@@ -41,6 +41,7 @@ class DB_CapellaModel(Base):
     t4c_model = relationship("DB_T4CModel", back_populates="model")
     git_model = relationship("DB_GitModel", back_populates="model")
 
+
 class NewModel(BaseModel):
     name: str
     description: str | None
@@ -58,8 +59,8 @@ class ResponseModel(BaseModel):
     @classmethod
     def from_model(cls, model: DB_CapellaModel):
         return cls(
-            id = model.id,
-            project_slug = model.project.slug,
-            name = model.name,
-            description = model.description,
+            id=model.id,
+            project_slug=model.project.slug,
+            name=model.name,
+            description=model.description,
         )

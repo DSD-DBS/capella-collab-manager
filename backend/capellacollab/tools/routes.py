@@ -12,14 +12,16 @@ from . import crud
 router = APIRouter()
 
 
-@router.get('/')
-def get_tools(db: Session = Depends(get_db), token = Depends(JWTBearer())):
+@router.get("/")
+def get_tools(db: Session = Depends(get_db), token=Depends(JWTBearer())):
     return crud.get_all_tools(db)
 
-@router.get('/versions')
-def get_tool_versions(db: Session = Depends(get_db), token = Depends(JWTBearer())):
+
+@router.get("/versions")
+def get_tool_versions(db: Session = Depends(get_db), token=Depends(JWTBearer())):
     return crud.get_versions(db)
 
-@router.get('/types')
-def get_tool_types(db: Session = Depends(get_db), token = Depends(JWTBearer())):
+
+@router.get("/types")
+def get_tool_types(db: Session = Depends(get_db), token=Depends(JWTBearer())):
     return crud.get_types(db)

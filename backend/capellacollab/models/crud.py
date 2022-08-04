@@ -12,31 +12,35 @@ from capellacollab.tools.models import Tool, Type, Version
 
 
 def get_all(db: Session, project_slug: str) -> t.List[Model]:
-    project = db.query(DatabaseProject)\
-        .filter(DatabaseProject.slug == project_slug).first()
+    project = (
+        db.query(DatabaseProject).filter(DatabaseProject.slug == project_slug).first()
+    )
     assert project is not None
-    return db.query(Model)\
-        .filter(Model.project_id == project.id).all()
+    return db.query(Model).filter(Model.project_id == project.id).all()
 
 
 def get_id(db: Session, id_: int) -> Model:
-    return db.query(Model)\
-        .filter(Model.id == id_).first()
+    return db.query(Model).filter(Model.id == id_).first()
 
 
 def get_slug(db: Session, project_slug: str, slug: str) -> Model:
     project = projects_crud.get_slug(db, project_slug)
-    model = db.query(Model).filter(
-        Model.project_id == project.id,
-        Model.slug == slug,
-    ).first()
+    model = (
+        db.query(Model)
+        .filter(
+            Model.project_id == project.id,
+            Model.slug == slug,
+        )
+        .first()
+    )
     assert model is not None
     return model
 
 
 def create_new(db: Session, project_slug: str, new_model: NewModel) -> Model:
-    project = db.query(DatabaseProject)\
-        .filter(DatabaseProject.slug == project_slug).first()
+    project = (
+        db.query(DatabaseProject).filter(DatabaseProject.slug == project_slug).first()
+    )
     tool = db.query(Tool).filter(Tool.id == new_model.tool_id).first()
     assert tool is not None
     model = Model.from_new_model(new_model, project)
@@ -46,8 +50,9 @@ def create_new(db: Session, project_slug: str, new_model: NewModel) -> Model:
 
 
 def create_empty(db: Session, project_slug: str, new_model: EmptyModel) -> Model:
-    project = db.query(DatabaseProject)\
-        .filter(DatabaseProject.slug == project_slug).first()
+    project = (
+        db.query(DatabaseProject).filter(DatabaseProject.slug == project_slug).first()
+    )
     tool = db.query(Tool).filter(Tool.id == new_model.tool_id).first()
     version = db.query(Version).filter(Version.id == new_model.version_id).first()
     model_type = db.query(Type).filter(Type.id == new_model.type_id).first()

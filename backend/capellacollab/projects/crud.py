@@ -44,8 +44,7 @@ def delete_project(db: Session, name: str) -> None:
 
 
 def get_slug(db: Session, slug: str) -> DatabaseProject:
-    project = db.query(DatabaseProject)\
-        .filter(DatabaseProject.slug == slug).first()
+    project = db.query(DatabaseProject).filter(DatabaseProject.slug == slug).first()
     assert project is not None
     return project
 

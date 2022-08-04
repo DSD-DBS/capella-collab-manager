@@ -71,13 +71,14 @@ class ResponseGitSource(NewGitSource):
     @classmethod
     def from_db_git_source(cls, source):
         return cls(
-            path = source.path,
-            entrypoint = source.entrypoint,
-            revision = source.revision,
-            username = source.username,
-            password = source.password,
-            id = source.id,
+            path=source.path,
+            entrypoint=source.entrypoint,
+            revision=source.revision,
+            username=source.username,
+            password=source.password,
+            id=source.id,
         )
+
 
 class DB_GitModel(Base):
     __tablename__ = "git_models"
@@ -95,12 +96,12 @@ class DB_GitModel(Base):
     @classmethod
     def from_new_git_source(cls, model_id: int, source: NewGitSource):
         return cls(
-            name = "",
-            path = source.path,
-            entrypoint = source.entrypoint,
-            revision = source.revision,
-            primary = True,
-            model_id = model_id,
-            username = source.username,
-            password = source.password,
+            name="",
+            path=source.path,
+            entrypoint=source.entrypoint,
+            revision=source.revision,
+            primary=True,
+            model_id=model_id,
+            username=source.username,
+            password=source.password,
         )

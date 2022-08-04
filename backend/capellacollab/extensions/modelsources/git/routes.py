@@ -60,9 +60,13 @@ def get_models_for_repository(
 
 
 @router.post("/create/{model_slug}", response_model=ResponseGitSource)
-def create_source(project: str, model_slug: str, source: NewGitSource,
+def create_source(
+    project: str,
+    model_slug: str,
+    source: NewGitSource,
     db: Session = Depends(get_db),
-    token: JWTBearer = Depends(JWTBearer())):
+    token: JWTBearer = Depends(JWTBearer()),
+):
 
     project_instance = projects_crud.get_project(db, project)
     verify_project_role(project_instance.name, token, db)
@@ -139,9 +143,7 @@ def patch_model(
 )
 def get_references(url: str) -> GetRevisionsModel:
     g = Git()
-    remote_refs = GetRevisionsModel(
-        branches=[], tags=[]
-    )
+    remote_refs = GetRevisionsModel(branches=[], tags=[])
     for ref in g.ls_remote(url).split("\n"):
         ref = ref.split("\t")[1]
         if ref.startswith("refs/heads/"):
@@ -149,4 +151,3 @@ def get_references(url: str) -> GetRevisionsModel:
         elif ref.startswith("refs/tags/"):
             remote_refs.tags.append(ref)
     return remote_refs
-

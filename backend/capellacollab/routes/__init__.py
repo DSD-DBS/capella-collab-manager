@@ -30,9 +30,7 @@ log = logging.getLogger(__name__)
 
 
 router = APIRouter()
-router.include_router(
-    sessions.router, prefix="/sessions", tags=["Sessions"]
-)
+router.include_router(sessions.router, prefix="/sessions", tags=["Sessions"])
 router.include_router(projects.router, prefix="/projects")
 router.include_router(models.router, prefix="/models")
 router.include_router(tools.router, prefix="/tools")
@@ -53,15 +51,12 @@ router.include_router(git_utils.router, prefix='/git-utils')
 try:
     ep = next(
         i
-        for i in metadata.entry_points()[
-            "capellacollab.authentication.providers"
-        ]
+        for i in metadata.entry_points()["capellacollab.authentication.providers"]
         if i.name == config["authentication"]["provider"]
     )
 except StopIteration:
     raise ValueError(
-        "Unknown authentication provider "
-        + config["authentication"]["provider"]
+        "Unknown authentication provider " + config["authentication"]["provider"]
     ) from None
 
 router.include_router(
