@@ -266,7 +266,7 @@ Requirements:
 
 Run the following steps:
 
-1. Navigate to the `docs` directory of your cloned repository.
+1. Navigate to the `docs/user` directory of your cloned repository.
 2. We recommend that you develop inside of a virtual environment. To set it up,
    run the following commands:
 
