@@ -6,7 +6,7 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-ease-env
   namespace: {{ .Release.Namespace }}
-  labels: 
+  labels:
     id: {{ .Release.Name }}-configmap-ease-env
 data:
   GIT_REPO_URL: "{{ .Values.git.url }}"

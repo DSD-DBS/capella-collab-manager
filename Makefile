@@ -27,7 +27,7 @@ frontend:
 capella: capella-download
 	docker build -t base capella-dockerimages/base
 	docker build -t capella/base capella-dockerimages/capella
-	
+
 capella/remote: capella
 	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
@@ -146,7 +146,7 @@ dev-frontend:
 dev-backend:
 	$(MAKE) -C backend dev
 
-dev-oauth-mock: 
+dev-oauth-mock:
 	$(MAKE) -C mocks/oauth start
 
 dev-cleanup:

@@ -8,10 +8,9 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-configmap-guacamole-postgres
   namespace: {{ .Release.Namespace }}
-  labels: 
+  labels:
     id: {{ .Release.Name }}-configmap-guacamole-postgres
 data:
-  initdb.sql: |- 
+  initdb.sql: |-
     {{ .Files.Get "config/initdb.sql" | nindent 4 }}
 {{ end }}
-

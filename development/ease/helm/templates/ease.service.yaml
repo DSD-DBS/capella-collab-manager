@@ -5,7 +5,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-ease
-  labels: 
+  labels:
     id: {{ .Release.Name }}-service-ease
 spec:
   type: LoadBalancer

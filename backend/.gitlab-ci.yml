@@ -4,7 +4,7 @@ include:
     file:
       - "/gitlab-ci/docker/upload-registry.yml"
 
-stages: 
+stages:
   - deploy
   - trigger
 

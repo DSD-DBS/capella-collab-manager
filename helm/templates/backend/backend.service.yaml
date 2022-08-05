@@ -5,7 +5,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-backend
-  labels: 
+  labels:
     id: {{ .Release.Name }}-service-backend
 spec:
   type: ClusterIP
