@@ -91,7 +91,7 @@ make delete-cluster
 #### Starting a session
 
 Once the cluster is installed and all services are running (`kubectl get pods`), you can
-get started. Follow our [Getting started guide](docs/getting_started.md) and be up and
+get started. Follow our [Getting started guide](docs/getting_started/getting_started.md) and be up and
 running in a few minutes.
 
 ### Deployment
