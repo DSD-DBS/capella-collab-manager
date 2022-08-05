@@ -1,7 +1,7 @@
-Please follow these steps to request a session: 
+Please follow these steps to request a session:
 
-1. Navigate to the `Workspaces` tab inside the webapplication
-2. Please select your preferred worspace type
+1. Navigate to the `Workspaces` tab inside the webapplication.
+2. Please select your preferred worspace type.
 
     !!! Question "Which type should I use?"
         Please have a look at [Session Types](/sessions/types)
