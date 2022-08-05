@@ -124,7 +124,7 @@ export class RequestSessionComponent implements OnInit {
       }
       if (
         this.historyDepth.value == 'Latest commit' ||
-        this.tags.includes(reference.value)
+        this.tags.includes(this.reference.value)
       ) {
         var depth = DepthType.LatestCommit;
       } else {
