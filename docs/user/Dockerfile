@@ -10,7 +10,7 @@ RUN mkdocs build
 
 FROM nginxinc/nginx-unprivileged:latest
 
-EXPOSE 80
+EXPOSE 8080
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /opt/docs/site /usr/share/nginx/html
