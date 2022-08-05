@@ -4,6 +4,7 @@
 {{- if eq .Values.cluster.kind "OpenShift" }}
 {{ $frontend := dict "path" "/" "service" "frontend" }}
 {{ $backend := dict "path" "/api/v1" "service" "nginx-clusterip" }}
+{{ $backend := dict "path" "/docs" "service" "nginx-clusterip" }}
 {{ $guacamole := dict "path" "/guacamole" "service" "guacamole-guacamole" }}
 {{ $guacamole := dict "path" "/prometheus" "service" "prometheus-nginx" }}
 {{ $routes := list $frontend $backend $guacamole }}
