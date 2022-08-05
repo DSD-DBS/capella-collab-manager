@@ -30,11 +30,11 @@ spec:
               port: http
           resources:
             limits:
-              cpu: "0.1"
-              memory: 10Mi
+              cpu: "0.2"
+              memory: 50Mi
             requests:
               cpu: "0.05"
-              memory: 1Mi
+              memory: 10Mi
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
