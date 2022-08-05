@@ -8,6 +8,7 @@ import {
   FormGroup,
   ValidationErrors,
   ValidatorFn,
+  Validators,
 } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { Session } from 'src/app/schemes';
@@ -44,10 +45,13 @@ export class RequestSessionComponent implements OnInit {
     this.validateForm()
   );
 
-  referenceDepthFormGroup = new FormGroup({
-    reference: new FormControl('main'),
-    historyDepth: new FormControl(this.history[0]),
-  });
+  referenceDepthFormGroup = new FormGroup(
+    {
+      reference: new FormControl(''),
+      historyDepth: new FormControl(this.history[0]),
+    },
+    Validators.required
+  );
 
   get repository(): FormControl {
     return this.repositoryFormGroup.get('repository') as FormControl;

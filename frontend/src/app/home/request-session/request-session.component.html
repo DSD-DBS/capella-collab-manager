@@ -142,8 +142,7 @@
       [disabled]="
         showSpinner ||
         !repositoryFormGroup.valid ||
-        !chosenRepository ||
-        (workspaceSwitch && !referenceDepthFormGroup)
+        (workspaceSwitch && !chosenRepository && !referenceDepthFormGroup.valid)
       "
     >
       Request Session <mat-icon>keyboard_arrow_right</mat-icon>
