@@ -18,6 +18,9 @@ docker:
     # Docker Image for the Backend
     backend: /capella/collab/backend
 
+    # Docker Image serving the documentation
+    docs: /capella/collab/docs
+
     # Docker Image for EASE
     ease: /t4c/client/ease
 
@@ -219,5 +222,5 @@ cluster:
       containers:
       # The following values are appended to each container in the sessions namespace
 
-proxy: 
-  no_proxy: 
+proxy:
+  no_proxy:

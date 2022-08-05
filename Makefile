@@ -27,7 +27,7 @@ frontend:
 capella: capella-download
 	docker build -t base capella-dockerimages/base
 	docker build -t capella/base capella-dockerimages/capella
-	
+
 capella/remote: capella
 	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
@@ -40,6 +40,10 @@ capella-download:
 	else \
 		curl -L --output capella.tar.gz 'https://ftp.acc.umu.se/mirror/eclipse.org/capella/core/products/releases/5.2.0-R20211130-125709/capella-5.2.0.202111301257-linux-gtk-x86_64.tar.gz'; \
 	fi
+
+docs:
+	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs
 
 t4c-client: capella
 	docker build -t t4c/client/base capella-dockerimages/t4c
@@ -65,10 +69,10 @@ mock:
 
 capella-dockerimages: capella t4c-client readonly ease
 
-deploy: backend frontend capella/remote mock helm-deploy open rollout
+deploy: backend frontend capella/remote docs mock helm-deploy open rollout
 
 # Deploy with full T4C support:
-deploy-t4c: backend frontend capella t4c-client readonly ease mock helm-deploy open rollout
+deploy-t4c: backend frontend capella t4c-client readonly ease docs mock helm-deploy open rollout
 
 helm-deploy:
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
@@ -146,7 +150,7 @@ dev-frontend:
 dev-backend:
 	$(MAKE) -C backend dev
 
-dev-oauth-mock: 
+dev-oauth-mock:
 	$(MAKE) -C mocks/oauth start
 
 dev-cleanup:
