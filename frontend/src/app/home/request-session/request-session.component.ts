@@ -11,6 +11,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Session } from 'src/app/schemes';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import {
@@ -90,7 +91,8 @@ export class RequestSessionComponent implements OnInit {
   constructor(
     public sessionService: SessionService,
     private repoUserService: RepositoryUserService,
-    private repoService: RepositoryService
+    private repoService: RepositoryService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {}
@@ -157,7 +159,15 @@ export class RequestSessionComponent implements OnInit {
     this.warnings = [];
     for (let repo of this.repositories) {
       if (repo.repository_name == event.value) {
-        this.getRevisions(repo.repository_name);
+        if (repo.warnings.includes('NO_GIT_MODEL_DEFINED')) {
+          this.snackBar.open(
+            'This repository has no git-model and therefore, a readonly-session cannot be created. To change this, please contact an administrator.',
+            'Ok!'
+          );
+          this.showSmallSpinner = false;
+        } else {
+          this.getRevisions(repo.repository_name);
+        }
         for (let permission of repo.permissions) {
           this.permissions[permission] =
             this.repoUserService.PERMISSIONS[permission];
