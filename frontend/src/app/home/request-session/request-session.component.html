@@ -151,7 +151,7 @@
   </form>
 </div>
 
-<mat-spinner *ngIf="showSpinner"></mat-spinner>
+<mat-spinner class="big-spinner" *ngIf="showSpinner"></mat-spinner>
 <app-session-creation-progress
   *ngIf="creationSuccessful"
   [session]="session"

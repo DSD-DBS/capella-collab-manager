@@ -176,6 +176,9 @@ export class RequestSessionComponent implements OnInit {
         );
         this.chosenRepository = repository_name;
       },
+      (err) => {
+        this.showSmallSpinner = false;
+      },
       () => {
         this.showSmallSpinner = true;
       }
