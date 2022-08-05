@@ -131,7 +131,7 @@ For environments where TeamForCapella (commercial product of Obeo) is available 
 
 ## How it works
 
-![Capella Collab Manager architecture](doc/architecture.png)
+![Capella Collab Manager architecture](docs/architecture.png)
 
 The Capella Collaboration Manager consists of a couple of components:
 
