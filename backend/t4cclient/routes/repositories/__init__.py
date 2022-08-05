@@ -9,7 +9,7 @@ import subprocess
 import typing as t
 from importlib import metadata
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
 
 import t4cclient.core.services.repositories as repository_service
@@ -92,7 +92,7 @@ def get_revisions(
     git_env = os.environ.copy()
     git_env["GIT_USERNAME"] = git_model.username
     git_env["GIT_PASSWORD"] = git_model.password
-    for ref in ls_remote(url, git_env).split("\n"):
+    for ref in ls_remote(url, git_env):
         (_, ref) = ref.split("\t")
         if ref.startswith("refs/heads/"):
             remote_refs["branches"].append(ref.replace("refs/heads/", ""))
@@ -111,11 +111,21 @@ def get_revisions(
     return remote_refs
 
 
-def ls_remote(url: str, env: cabc.Mapping[str, str]) -> str:
-    proc = subprocess.run(
-        ["git", "ls-remote", url], capture_output=True, check=True, env=env
-    )
-    return proc.stdout.decode("ascii").strip()
+def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
+    try:
+        proc = subprocess.run(
+            ["git", "ls-remote", url], capture_output=True, check=True, env=env
+        )
+    except subprocess.CalledProcessError as e:
+        if e.returncode == 128:
+            raise HTTPException(
+                status_code=500,
+                detail={
+                    "err_code": "no_git_model_credentials",
+                    "reason": "There are no credentials for the primary git-model of this repository.",
+                },
+            )
+    return proc.stdout.decode("ascii").strip().split("\n")
 
 
 @router.get("/{project}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
