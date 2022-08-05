@@ -50,7 +50,7 @@ export class EASEBackupService {
   }
 
   beatifyState(state: string | undefined): EASEBackupState {
-    /* Possible states are (and a few more states): 
+    /* Possible states are (and a few more states):
     https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/events/event.go */
 
     let text = state;

@@ -1,9 +1,9 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-docker: 
-  images: 
-    workspaces: 
+docker:
+  images:
+    workspaces:
       persistent: k3d-myregistry.localhost:12345/t4c/client/remote
       readonly: k3d-myregistry.localhost:12345/capella/readonly
 
@@ -62,9 +62,9 @@ authentication:
     scopes:
       - openid
 
-    client: 
+    client:
       id: default
-      secret: 
+      secret:
 
     redirectURI: http://localhost:4200/oauth2/callback
 
@@ -78,9 +78,9 @@ authentication:
 
     audience: tbd
     redirectURI: http://localhost:4200/oauth2/callback
-   
-modelsources: 
-  t4c: 
+
+modelsources:
+  t4c:
 
     usageAPI: http://localhost:8080/mock
     restAPI: http://localhost:7000/mock/api/v1.0
@@ -118,7 +118,7 @@ initial:
 logging:
   level: DEBUG
 
-requests: 
+requests:
   timeout: 2
 
 prometheus:

@@ -4,7 +4,7 @@
 """session: add passwords for rdp and guacamole
 
 Revision ID: 279ec954b302
-Revises: 
+Revises:
 Create Date: 2021-08-12 23:01:08.764707
 
 """

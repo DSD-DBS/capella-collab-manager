@@ -6,7 +6,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-mock-clusterip
-  labels: 
+  labels:
     id: {{ .Release.Name }}-service-mock-clusterip
 spec:
   type: ClusterIP
