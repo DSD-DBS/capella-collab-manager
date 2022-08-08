@@ -180,9 +180,9 @@ export class RequestSessionComponent implements OnInit {
   }
 
   getRevisions(repository_name: string) {
-    this.repoService.getRevisions(repository_name).subscribe(
-      (revisions: Revisions) => {
-        this.showSmallSpinner = false;
+    this.showSmallSpinner = true;
+    this.repoService.getRevisions(repository_name).subscribe({
+      next: (revisions: Revisions) => {
         this.branches = revisions.branches;
         this.tags = revisions.tags;
         this.referenceDepthFormGroup.controls['reference'].setValue(
@@ -190,13 +190,13 @@ export class RequestSessionComponent implements OnInit {
         );
         this.chosenRepository = repository_name;
       },
-      (err) => {
+      error: () => {
         this.showSmallSpinner = false;
       },
-      () => {
-        this.showSmallSpinner = true;
-      }
-    );
+      complete: () => {
+        this.showSmallSpinner = false;
+      },
+    });
   }
 
   changeIsTag(event: MatSelectChange) {
