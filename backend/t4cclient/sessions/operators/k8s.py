@@ -556,7 +556,7 @@ class KubernetesOperator(Operator):
                 log.debug("Upload into %s - STDERR: %s", id, stream.read_stderr())
 
         except kubernetes.client.exceptions.ApiException as e:
-            log.exception("Exception when copying file to the pod")
+            log.exception("Exception when copying file to the pod with id %s", id)
             raise e
 
     def get_files(self, id: str) -> File:
