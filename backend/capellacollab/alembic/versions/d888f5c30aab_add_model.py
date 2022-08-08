@@ -10,9 +10,6 @@ import sqlalchemy as sa
 from alembic import op
 from slugify import slugify
 
-# 1st party:
-from capellacollab.core.database import Base
-
 # revision identifiers, used by Alembic.
 revision = 'd888f5c30aab'
 down_revision = '59233c4fb19f'
