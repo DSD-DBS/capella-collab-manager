@@ -19,7 +19,7 @@ You'll be returned to the Collaboration manager. Now you can start a session. Se
 ![Logged in](img/collab-step-3.png)
 
 The system will now schedule and start a fresh workspace.
-Wait a bit for the workspace to be available 
+Wait a bit for the workspace to be available
 
 ![Starting a session](img/collab-step-4.png)
 

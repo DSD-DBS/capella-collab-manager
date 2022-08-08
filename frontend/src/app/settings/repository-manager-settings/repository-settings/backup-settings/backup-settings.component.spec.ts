@@ -11,9 +11,8 @@ describe('BackupSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BackupSettingsComponent ]
-    })
-    .compileComponents();
+      declarations: [BackupSettingsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

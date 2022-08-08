@@ -1,9 +1,12 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 {{ if eq .Values.target "local" }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-oauth-mock
-  labels: 
+  labels:
     id: {{ .Release.Name }}-service-oauth-mock
 spec:
   type: ClusterIP

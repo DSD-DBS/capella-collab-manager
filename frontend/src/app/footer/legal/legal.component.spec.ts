@@ -11,9 +11,8 @@ describe('LegalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LegalComponent ]
-    })
-    .compileComponents();
+      declarations: [LegalComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

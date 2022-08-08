@@ -11,9 +11,8 @@ describe('ModelSourceComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ModelSourceComponent ]
-    })
-    .compileComponents();
+      declarations: [ModelSourceComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

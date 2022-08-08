@@ -32,4 +32,3 @@ reportUnusedImport = false  # reported by flake8 (F401)
 reportUnusedVariable = false  # reported by flake8 (F841)
 venvPath = "."
 venv = ".venv"
-

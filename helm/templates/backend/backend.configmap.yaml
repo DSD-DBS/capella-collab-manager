@@ -6,7 +6,7 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-backend
   namespace: {{ .Release.Namespace }}
-  labels: 
+  labels:
     id: {{ .Release.Name }}-configmap-backend
 data:
   config.yaml: |

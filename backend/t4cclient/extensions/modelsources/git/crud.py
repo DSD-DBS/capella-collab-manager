@@ -4,6 +4,7 @@
 import typing as t
 
 from sqlalchemy.orm import Session
+
 from t4cclient.extensions.modelsources.git.models import (
     DB_GitModel,
     PostGitModel,
@@ -64,7 +65,7 @@ def add_model_to_repository(db: Session, repository_name: str, model: PostGitMod
         name=model.name,
         primary=primary,
         username=model.credentials.username,
-        password=model.credentials.password
+        password=model.credentials.password,
     )
     db.add(model)
     db.commit()

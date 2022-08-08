@@ -47,7 +47,7 @@ export interface Notice extends CreateNotice {
   id: number;
 }
 
-interface CreateNotice {
+export interface CreateNotice {
   level: NoticeLevel;
   title: string;
   message: string;
