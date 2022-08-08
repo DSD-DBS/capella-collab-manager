@@ -6,16 +6,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-mock-nginx
-  labels: 
+  labels:
     id: {{ .Release.Name }}-deployment-mock-nginx
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
-  selector: 
-    matchLabels: 
+  selector:
+    matchLabels:
       id: {{ .Release.Name }}-deployment-mock-nginx
   template:
-    metadata: 
-      labels: 
+    metadata:
+      labels:
         id: {{ .Release.Name }}-deployment-mock-nginx
     spec:
       volumes:

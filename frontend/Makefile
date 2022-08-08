@@ -1,2 +1,2 @@
-dev: 
+dev:
 	ng serve --open

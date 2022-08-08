@@ -27,7 +27,7 @@ frontend:
 capella: capella-download
 	docker build -t base capella-dockerimages/base
 	docker build -t capella/base capella-dockerimages/capella
-	
+
 capella/remote: capella
 	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
@@ -125,7 +125,7 @@ delete-cluster:
 	k3d cluster list $(CLUSTER_NAME) 2>&- && k3d cluster delete $(CLUSTER_NAME)
 	rm -f .provision-guacamole
 
-wait: 
+wait:
 	@echo "-----------------------------------------------------------"
 	@echo "--- Please wait until all services are in running state ---"
 	@echo "-----------------------------------------------------------"
@@ -134,9 +134,9 @@ wait:
 .provision-guacamole:
 	export MSYS_NO_PATHCONV=1; \
 	echo "Waiting for guacamole container, before we can initialize the database..."
-	kubectl wait --for=condition=Ready pods --timeout=5m -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole
-	kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
-	kubectl exec -ti --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole && \
+	kubectl wait --for=condition=Ready pods --timeout=5m --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole
+	kubectl exec --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
+	kubectl exec -ti --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole && \
 	echo "Guacamole database initialized sucessfully."; \
 	touch .provision-guacamole
 
@@ -149,7 +149,7 @@ dev-frontend:
 dev-backend:
 	$(MAKE) -C backend dev
 
-dev-oauth-mock: 
+dev-oauth-mock:
 	$(MAKE) -C mocks/oauth start
 
 dev-cleanup:

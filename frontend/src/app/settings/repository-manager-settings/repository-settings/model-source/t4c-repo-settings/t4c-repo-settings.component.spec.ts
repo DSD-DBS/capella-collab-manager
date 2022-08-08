@@ -11,9 +11,8 @@ describe('ProjectSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProjectSettingsComponent ]
-    })
-    .compileComponents();
+      declarations: [ProjectSettingsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
