@@ -88,7 +88,7 @@ class DB_GitModel(Base):
     entrypoint = Column(String)
     revision = Column(String)
     primary = Column(Boolean)
-    model_id = Column(Integer, ForeignKey("capella_models.id"))
+    model_id = Column(Integer, ForeignKey("models.id"))
     model = relationship("Model", back_populates="git_model")
     username = Column(String)
     password = Column(String)

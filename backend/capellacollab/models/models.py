@@ -44,7 +44,7 @@ class ToolDetails(BaseModel):
 
 
 class Model(Base):
-    __tablename__ = "capella_models"
+    __tablename__ = "models"
     __table_args__ = (UniqueConstraint("project_id", "slug"),)
 
     id = Column(Integer, primary_key=True)
