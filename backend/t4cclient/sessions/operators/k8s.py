@@ -551,9 +551,9 @@ class KubernetesOperator(Operator):
             stream.write_stdin(content)
             stream.update(timeout=1)
             if stream.peek_stdout():
-                print("STDOUT: %s" % stream.read_stdout())
+                log.debug("Upload into %s - STDOUT: %s", id, stream.read_stdout())
             if stream.peek_stderr():
-                print("STDERR: %s" % stream.read_stderr())
+                log.debug("Upload into %s - STDERR: %s", id, stream.read_stderr())
 
         except kubernetes.client.exceptions.ApiException as e:
             log.exception("Exception when copying file to the pod")
