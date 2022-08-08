@@ -84,8 +84,7 @@ def update_project(
 
     verify_project_role(project, token, database, ["manager", "administrator"])
 
-    if body.description:
-        crud.update_description(database, project, body.description)
+    crud.update_description(database, project, body.description)
 
     return convert_project(crud.get_project(database, project))
 

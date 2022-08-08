@@ -65,6 +65,7 @@ export class ProjectService {
 
   updateDescription(name: string, description: string): Observable<Project> {
     let url = new URL(name, this.base_url)
+    console.log(description)
     return new Observable<Project>(subscriber => {
       this.http.patch<Project>(url.toString(), {description})
       .subscribe(project => {

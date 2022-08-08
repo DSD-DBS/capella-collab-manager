@@ -27,8 +27,7 @@ export class ProjectMetadataComponent implements OnInit {
   }
 
   updateDescriptionForm = new FormControl(
-    this.projectService.project?.description,
-    Validators.required
+    this.projectService.project?.description
   );
 
   updateDescription() {
@@ -40,7 +39,7 @@ export class ProjectMetadataComponent implements OnInit {
             this.updateDescriptionForm.reset();
             this.updateDescriptionForm.setValue(res.description);
             this.toastService.showSuccess(
-              'Description updated for project ' + this.projectService.project,
+              'Description updated for project ' + this.projectService.project?.name,
               "Updated to '" + res.description + "'"
             );
           },
