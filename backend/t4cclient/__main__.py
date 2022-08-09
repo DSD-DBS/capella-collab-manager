@@ -11,11 +11,12 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-logging.basicConfig(level=logging.INFO)
+from t4cclient.config import config
+
+logging.basicConfig(level=config["logging"]["level"])
 log = logging.getLogger(__name__)
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
-from t4cclient.config import config
 from t4cclient.core.database import __main__ as database
 from t4cclient.routes import router, status
 

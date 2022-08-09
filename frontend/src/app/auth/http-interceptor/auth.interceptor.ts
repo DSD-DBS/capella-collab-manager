@@ -70,10 +70,7 @@ export class AuthInterceptor implements HttpInterceptor {
   injectAccessToken(request: HttpRequest<unknown>): HttpRequest<unknown> {
     let access_token = this.localStorageService.getValue('access_token');
     return request.clone({
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${access_token}`,
-      }),
+      headers: request.headers.set("Authorization", `Bearer ${access_token}`),
     });
   }
 

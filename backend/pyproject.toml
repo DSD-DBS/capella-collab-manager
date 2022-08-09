@@ -8,6 +8,7 @@ line-length = 88
 target-version = ["py310",]
 
 [tool.isort]
+profile = "black"
 force_grid_wrap = 0
 include_trailing_comma = true
 known_local_folder = ["t4cclient", "tests",]
@@ -22,7 +23,6 @@ use_parentheses = true
 [tool.pyright]
 pythonVersion = "3.10"
 typeCheckingMode = "strict"
-include = ["backend", "tests",]
 reportConstantRedefinition = "warning"
 reportGeneralTypeIssues = false  # reported by mypy
 reportUnknownArgumentType = false
@@ -31,3 +31,5 @@ reportUnknownVariableType = false  # annoying, e. g. 'for diag in model.diagrams
 reportUntypedFunctionDecorator = false
 reportUnusedImport = false  # reported by flake8 (F401)
 reportUnusedVariable = false  # reported by flake8 (F841)
+venvPath = "."
+venv = ".venv"
