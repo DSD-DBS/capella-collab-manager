@@ -29,6 +29,14 @@
   </button>
 </div>
 
+<mat-checkbox
+  *ngIf="!loadingFiles"
+  [formControl]="showHiddenFiles"
+  (change)="loadFiles()"
+  id="hidden-files"
+  >Show hidden files</mat-checkbox
+>
+
 <mat-tree
   [dataSource]="dataSource"
   [treeControl]="treeControl"
@@ -45,7 +53,9 @@
       {{ node.name }}
     </p>
     <div *ngIf="node.isNew">
-      <button mat-button (click)="removeFile(node.path, node.name)">X</button>
+      <button mat-icon-button (click)="removeFile(node.path, node.name)">
+        <mat-icon>cancel</mat-icon>
+      </button>
     </div>
   </mat-tree-node>
 
@@ -70,7 +80,7 @@
           multiple
         />
 
-        <button mat-button color="primary" (click)="fileInput.click()">
+        <button mat-icon-button color="primary" (click)="fileInput.click()">
           <mat-icon>upload_file</mat-icon>
         </button>
       </div>

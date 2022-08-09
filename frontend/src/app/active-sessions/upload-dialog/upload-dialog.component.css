@@ -65,3 +65,7 @@
 .dir-icon {
   color: darkblue;
 }
+
+#hidden-files {
+  margin-left: 10px;
+}
