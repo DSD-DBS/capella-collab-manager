@@ -6,8 +6,8 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-nginx
   namespace: {{ .Release.Namespace }}
-  labels: 
+  labels:
     id: {{ .Release.Name }}-configmap-nginx
 data:
-  nginx.conf: |- 
+  nginx.conf: |-
     {{ tpl (.Files.Get "config/nginx.conf") . | nindent 4 }}

@@ -1,15 +1,15 @@
 include:
   - project: 'se-toolchain/ci-templates-docker'
     ref: v1.11.0
-    file: 
+    file:
       - '/gitlab-ci/angular/build.yml'
       - '/gitlab-ci/docker/upload-registry.yml'
 
-angular-build: 
+angular-build:
   stage: build
   extends: .angular-build
 
 docker-registry:
   extends: .docker-registry
-  variables: 
+  variables:
     DOCKER_IMAGE_NAME: "t4c/client/frontend"

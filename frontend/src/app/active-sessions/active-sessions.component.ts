@@ -9,6 +9,7 @@ import { BeautifyService } from '../services/beatify/beautify.service';
 import { OwnSessionService } from '../services/own-session/own-session.service';
 import { SessionService } from '../services/session/session.service';
 import { ReconnectDialogComponent } from './reconnect-dialog/reconnect-dialog.component';
+import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
 
 @Component({
   selector: 'app-active-sessions',
@@ -49,6 +50,11 @@ export class ActiveSessionsComponent implements OnInit {
   openReconnectDialog(session: Session): void {
     this.dialog.open(ReconnectDialogComponent, {
       data: session,
+    });
+  }
+
+  uploadFileDialog(session: Session): void {
+    this.dialog.open(UploadDialogComponent, {data: session
     });
   }
 }

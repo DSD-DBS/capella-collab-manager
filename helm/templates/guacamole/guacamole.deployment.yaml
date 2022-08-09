@@ -5,16 +5,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-guacamole-guacamole
-  labels: 
+  labels:
     id: {{ .Release.Name }}-deployment-guacamole-guacamole
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
-  selector: 
-    matchLabels: 
+  selector:
+    matchLabels:
       id: {{ .Release.Name }}-deployment-guacamole-guacamole
   template:
-    metadata: 
-      labels: 
+    metadata:
+      labels:
         id: {{ .Release.Name }}-deployment-guacamole-guacamole
     spec:
       containers:
@@ -57,7 +57,7 @@ spec:
             tcpSocket:
               port: 8080
             initialDelaySeconds: 15
-            periodSeconds: 20          
+            periodSeconds: 20
           resources:
             requests:
               memory: "1Gi"

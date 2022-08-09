@@ -5,18 +5,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-prometheus-nginx
-  labels: 
+  labels:
     id: {{ .Release.Name }}-deployment-prometheus-nginx
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/prometheus/nginx.configmap.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
-  selector: 
-    matchLabels: 
+  selector:
+    matchLabels:
       id: {{ .Release.Name }}-deployment-prometheus-nginx
   template:
-    metadata: 
-      labels: 
+    metadata:
+      labels:
         id: {{ .Release.Name }}-deployment-prometheus-nginx
     spec:
       volumes:
