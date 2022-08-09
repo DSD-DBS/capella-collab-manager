@@ -4,6 +4,7 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import {
   MatDialog,
   MatDialogRef,
@@ -37,17 +38,25 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public session: Session
   ) {}
 
+  showHiddenFiles = new FormControl(false);
+
   ngOnInit(): void {
+    this.loadFiles();
+  }
+
+  loadFiles(): void {
     this.loadingFiles = true;
 
-    this.loadService.getCurrentFiles(this.session.id).subscribe({
-      next: (file: PathNode) => {
-        this.dataSource.next([file]);
-      },
-      complete: () => {
-        this.loadingFiles = false;
-      },
-    });
+    this.loadService
+      .getCurrentFiles(this.session.id, this.showHiddenFiles.value as boolean)
+      .subscribe({
+        next: (file: PathNode) => {
+          this.dataSource.next([file]);
+        },
+        complete: () => {
+          this.loadingFiles = false;
+        },
+      });
   }
 
   ngOnDestroy(): void {
