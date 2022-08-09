@@ -13,6 +13,8 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from requests.auth import HTTPBasicAuth
 from sqlalchemy.orm import Session
 
+from t4cclient.config import config
+
 # local:
 from t4cclient.core.authentication.database import check_session_belongs_to_user
 from t4cclient.core.authentication.helper import get_username
@@ -41,6 +43,7 @@ def get_files(
         "http://" + session.host + ":8000/api/v1/workspaces/files",
         params={"show_hidden": show_hidden},
         auth=HTTPBasicAuth("", session.rdp_password),
+        timeout=config["requests"]["timeout"],
     ).json()
 
 
