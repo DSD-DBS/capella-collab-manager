@@ -204,6 +204,11 @@ def get_session_usage():
     return t4c_manager.get_t4c_status()
 
 
+@router.post(
+    "/{id}/guacamole-tokens",
+    response_model=GuacamoleAuthentication,
+    responses=AUTHENTICATION_RESPONSES,
+)
 def create_guacamole_token(
     id: str,
     db: Session = Depends(get_db),
