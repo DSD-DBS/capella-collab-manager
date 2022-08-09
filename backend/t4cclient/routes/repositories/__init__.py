@@ -98,6 +98,8 @@ def get_revisions(
     )
     for ref in ls_remote(url, git_env):
         (_, ref) = ref.split("\t")
+        if "^" in ref:
+            continue
         if ref.startswith("refs/heads/"):
             remote_refs["branches"].append(ref.replace("refs/heads/", ""))
         elif ref.startswith("refs/tags/"):
