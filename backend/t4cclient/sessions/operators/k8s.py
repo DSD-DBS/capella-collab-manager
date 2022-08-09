@@ -368,6 +368,7 @@ class KubernetesOperator(Operator):
                                 "ports": [
                                     {"containerPort": 3389, "protocol": "TCP"},
                                     {"containerPort": 9118, "protocol": "TCP"},
+                                    {"containerPort": 8000, "protocol": "TCP"},
                                 ],
                                 "env": [
                                     {"name": key, "value": str(value)}
