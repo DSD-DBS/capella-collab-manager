@@ -2,15 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
-import io
 import itertools
 import json
 import logging
-import tarfile
 import typing as t
 
 # 3rd party:
-from fastapi import APIRouter, Depends, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 # local:
@@ -18,26 +16,20 @@ import t4cclient.core.database.repositories as repositories_crud
 import t4cclient.extensions.modelsources.git.crud as git_models_crud
 import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories.users as users_schema
+from .files import routes as files
 from t4cclient.config import config
-from t4cclient.core.authentication.database import (
-    check_session_belongs_to_user,
-    is_admin,
-    verify_repository_role,
-)
+from t4cclient.core.authentication.database import is_admin, verify_repository_role
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.credentials import generate_password
 from t4cclient.core.database import get_db, users
 from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.repositories import RepositoryUserRole
-from t4cclient.sessions import database
-from t4cclient.sessions import guacamole
-from t4cclient.sessions import guacamole as guacamole_route
+from t4cclient.sessions import database, guacamole
 from t4cclient.sessions.models import DatabaseSession
 from t4cclient.sessions.operators import OPERATOR
 from t4cclient.sessions.schema import (
     AdvancedSessionResponse,
-    FileTree,
     GetSessionsResponse,
     GetSessionUsageResponse,
     GuacamoleAuthentication,
@@ -212,51 +204,6 @@ def get_session_usage():
     return t4c_manager.get_t4c_status()
 
 
-@router.get("/{id}/files", response_model=FileTree)
-def get_files(id: str, db: Session = Depends(get_db), token=Depends(JWTBearer())):
-    check_session_belongs_to_user(get_username(token), id, db)
-    return OPERATOR.get_files(id)
-
-
-@router.post(
-    "/{id}/files",
-    responses=AUTHENTICATION_RESPONSES,
-)
-def upload_files(
-    id: str,
-    files: list[UploadFile],
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
-):
-    check_session_belongs_to_user(get_username(token), id, db)
-
-    tar_bytesio = io.BytesIO()
-    tar = tarfile.TarFile(name="upload.tar", mode="w", fileobj=tar_bytesio)
-
-    size = sum([len(file.file.read()) for file in files])
-    if size > 31457280:
-        raise HTTPException(
-            status_code=413,
-            detail="The summed file size must not exceed 30MB.",
-        )
-
-    for file in files:
-        file.file.seek(0)
-        file.filename = file.filename.replace(" ", "_")
-        tar.addfile(
-            tar.gettarinfo(arcname=file.filename, fileobj=file.file),
-            fileobj=file.file,
-        )
-
-    tar.close()
-    tar_bytesio.seek(0)
-    tar_bytes = tar_bytesio.read()
-
-    OPERATOR.upload_files(id, tar_bytes)
-
-    return {"message": "Upload successful"}
-
-
 def create_guacamole_token(
     id: str,
     db: Session = Depends(get_db),
@@ -274,3 +221,6 @@ def create_guacamole_token(
         token=json.dumps(token),
         url=config["extensions"]["guacamole"]["publicURI"] + "/#/",
     )
+
+
+router.include_router(router=files.router, prefix="/{id}/files")
