@@ -39,7 +39,7 @@ def get_files(
 
     return requests.get(
         "http://" + session.host + ":8080/api/v1/workspaces/files",
-        params={"show_hidden": True},
+        params={"show_hidden": show_hidden},
         auth=HTTPBasicAuth("", session.rdp_password),
     ).json()
 
