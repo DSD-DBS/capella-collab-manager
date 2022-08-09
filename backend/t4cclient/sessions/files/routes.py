@@ -38,7 +38,7 @@ def get_files(
     session = get_session_by_id(db, id)
 
     return requests.get(
-        "http://" + session.host + ":8080/api/v1/workspaces/files",
+        "http://" + session.host + ":8000/api/v1/workspaces/files",
         params={"show_hidden": show_hidden},
         auth=HTTPBasicAuth("", session.rdp_password),
     ).json()
