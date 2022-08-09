@@ -5,18 +5,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-backend
-  labels: 
+  labels:
     id: {{ .Release.Name }}-deployment-backend
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/backend/backend.configmap.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
-  selector: 
-    matchLabels: 
+  selector:
+    matchLabels:
       id: {{ .Release.Name }}-deployment-backend
   template:
-    metadata: 
-      labels: 
+    metadata:
+      labels:
         id: {{ .Release.Name }}-deployment-backend
     spec:
       serviceAccountName: {{ .Release.Name }}-serviceaccount-backend
@@ -43,14 +43,14 @@ spec:
               path: /healthcheck
               port: http
             initialDelaySeconds: 30
-          readinessProbe: 
+          readinessProbe:
             httpGet:
               path: /healthcheck
               port: http
           resources:
             limits:
               cpu: "1"
-              memory: 200Mi
+              memory: 500Mi
             requests:
               cpu: "0.25"
               memory: 20Mi

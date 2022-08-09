@@ -6,16 +6,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-oauth-mock
-  labels: 
+  labels:
     id: {{ .Release.Name }}-deployment-oauth-mock
 spec:
   replicas: 1
-  selector: 
-    matchLabels: 
+  selector:
+    matchLabels:
       id: {{ .Release.Name }}-deployment-oauth-mock
   template:
-    metadata: 
-      labels: 
+    metadata:
+      labels:
         id: {{ .Release.Name }}-deployment-oauth-mock
     spec:
       volumes:

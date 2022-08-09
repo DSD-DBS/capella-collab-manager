@@ -10,7 +10,7 @@ import typing as t
 import requests
 from requests import JSONDecodeError
 
-from t4cclient import config
+from t4cclient.config import config
 from t4cclient.sessions.models import DatabaseSession
 from t4cclient.sessions.operators import OPERATOR
 from t4cclient.sessions.schema import WorkspaceType
@@ -35,10 +35,13 @@ def inject_attrs_in_sessions(
 
 def get_last_seen(sid: str) -> str:
     """Return project session last seen activity"""
-    url = config.config["prometheus"]["url"]
+    url = config["prometheus"]["url"]
     url += "/".join(("api", "v1", "query?query=idletime_minutes"))
     try:
-        response = requests.get(url)
+        response = requests.get(
+            url,
+            timeout=config["requests"]["timeout"],
+        )
         for session in response.json()["data"]["result"]:
             if sid == session["metric"]["app"]:
                 return _get_last_seen(float(session["value"][1]))
@@ -52,6 +55,9 @@ def get_last_seen(sid: str) -> str:
         return "UNKNOWN"
     except KeyError:
         log.exception("Something is wrong with prometheus idletime metric.")
+        return "UNKNOWN"
+    except Exception:
+        log.exception("Exception during fetching of last seen.")
         return "UNKNOWN"
 
 

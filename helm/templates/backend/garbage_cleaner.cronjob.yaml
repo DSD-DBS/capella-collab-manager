@@ -1,7 +1,7 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-{{- /* 
+{{- /*
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -15,15 +15,15 @@ spec:
       template:
         spec:
           restartPolicy: "OnFailure"
-          containers: 
+          containers:
             - name: {{ .Release.Name }}-garbage-cleaner
               image: {{ .Values.docker.registry.internal }}{{ .Values.docker.images.backend }}
               command: ["python3"]
               args: ["-m", "t4cclient.core.garbage_cleaner"]
               envFrom:
-                - configMapRef: 
+                - configMapRef:
                     name: {{ .Release.Name }}-backend-env
-              resources: 
+              resources:
                 limits:
                   cpu: "0.5"
                   memory: 100Mi
