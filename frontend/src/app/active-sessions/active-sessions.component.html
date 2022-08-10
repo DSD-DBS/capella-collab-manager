@@ -60,6 +60,17 @@
         >
           Reconnect
         </button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="uploadFileDialog(session)"
+          [disabled]="
+            !(session.state === 'Started' || session.state === 'START_SESSION')
+          "
+        >
+          Upload
+        </button>
       </div>
     </mat-card>
   </div>

@@ -245,14 +245,14 @@ Run the following steps:
 1. Optional: If you like to use your custom favicon, please copy it to `src/favicon.ico`
 1. Optional: If you like to use your custom theme, replace the file `src/custom-theme.scss`.
    You can generate custom themes [here](http://mcg.mbitson.com/)
-1. Copy the file `src/environment.ts` to `src/environment.dev.ts` and adjust the values.
+1. Copy the file `src/environments/environment.ts` to `src/environments/environment.dev.ts` and adjust the values.
 1. Run the frontend with:
 
    ```sh
    make dev
    ```
 
-1. You should see the frontend running von port 4200.
+1. You should see the frontend running on port 4200.
 
 We additionally recommend that you set up your editor / IDE as follows.
 

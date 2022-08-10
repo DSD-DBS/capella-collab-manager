@@ -5,18 +5,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-nginx
-  labels: 
+  labels:
     id: {{ .Release.Name }}-deployment-nginx
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/routing/nginx.configmap.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
-  selector: 
-    matchLabels: 
+  selector:
+    matchLabels:
       id: {{ .Release.Name }}-deployment-nginx
   template:
-    metadata: 
-      labels: 
+    metadata:
+      labels:
         id: {{ .Release.Name }}-deployment-nginx
     spec:
       volumes:

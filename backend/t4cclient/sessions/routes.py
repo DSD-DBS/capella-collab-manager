@@ -1,18 +1,22 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# Standard library:
 import itertools
 import json
 import logging
 import typing as t
 
+# 3rd party:
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+# local:
 import t4cclient.core.database.repositories as repositories_crud
 import t4cclient.extensions.modelsources.git.crud as git_models_crud
 import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories.users as users_schema
+from .files import routes as files
 from t4cclient.config import config
 from t4cclient.core.authentication.database import is_admin, verify_repository_role
 from t4cclient.core.authentication.helper import get_username
@@ -173,7 +177,7 @@ def request_session(
     return response
 
 
-@router.delete("/{id}/", status_code=204, responses=AUTHENTICATION_RESPONSES)
+@router.delete("/{id}", status_code=204, responses=AUTHENTICATION_RESPONSES)
 def end_session(id: str, db: Session = Depends(get_db), token=Depends(JWTBearer())):
     s = database.get_session_by_id(db, id)
     if s.owner_name != get_username(token) and verify_repository_role(
@@ -222,3 +226,6 @@ def create_guacamole_token(
         token=json.dumps(token),
         url=config["extensions"]["guacamole"]["publicURI"] + "/#/",
     )
+
+
+router.include_router(router=files.router, prefix="/{id}/files")

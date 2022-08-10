@@ -62,36 +62,38 @@
       </ng-template>
     </div>
     <br />
-    <div class="clean-workspace" *ngIf="workspaceSwitch.value">
-      <mat-form-field appearance="fill">
-        <mat-label>Repository</mat-label>
-        <mat-select
-          formControlName="repository"
-          (selectionChange)="setPermissionsAndWarningsByName($event)"
-        >
-          <mat-option
-            *ngFor="let repository of repositories"
-            [value]="repository.repository_name"
-            >{{ repository.repository_name }}</mat-option
+    <div class="center">
+      <div class="clean-workspace" *ngIf="workspaceSwitch.value">
+        <mat-form-field appearance="fill">
+          <mat-label>Repository</mat-label>
+          <mat-select
+            formControlName="repository"
+            (selectionChange)="setPermissionsAndWarningsByName($event)"
           >
-        </mat-select>
-        <mat-error>Please select a repository!</mat-error></mat-form-field
-      ><br />
+            <mat-option
+              *ngFor="let repository of repositories"
+              [value]="repository.repository_name"
+              >{{ repository.repository_name }}</mat-option
+            >
+          </mat-select>
+          <mat-error>Please select a repository!</mat-error></mat-form-field
+        ><br />
+      </div>
+      <div *ngFor="let warning of warnings">
+        <app-warning
+          [warning]="warning"
+          [persistent]="!workspaceSwitch.value"
+        ></app-warning>
+      </div>
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="requestSession()"
+        [disabled]="showSpinner || !repositoryFormGroup.valid"
+      >
+        Request Session <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
     </div>
-    <div class="center" *ngFor="let warning of warnings">
-      <app-warning
-        [warning]="warning"
-        [persistent]="!workspaceSwitch.value"
-      ></app-warning>
-    </div>
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="requestSession()"
-      [disabled]="showSpinner || !repositoryFormGroup.valid"
-    >
-      Request Session <mat-icon>keyboard_arrow_right</mat-icon>
-    </button>
   </form>
 </div>
 

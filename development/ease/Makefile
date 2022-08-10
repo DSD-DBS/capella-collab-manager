@@ -1,12 +1,10 @@
-#!make
-
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 include .env
 export
 
-dev: 
+dev:
 	docker build -t t4c/client/ease/remote --build-arg BASE_IMAGE=t4c/client/ease ../../capella-dockerimages/remote
 	docker build -t t4c/client/ease/remote/debug --build-arg BASE_IMAGE=t4c/client/ease/remote ../../capella-dockerimages/ease/debug
 	docker stop ease-debug || true
@@ -21,7 +19,7 @@ dev:
 		t4c/client/ease/remote/debug
 	docker logs --follow ease-debug
 
-deploy: 
+deploy:
 	helm upgrade --install \
 		--kube-context $(CONTEXT) \
 		--create-namespace \
@@ -31,13 +29,13 @@ deploy:
 		--debug \
 		$(RELEASE) ./helm
 
-endpoint: 
+endpoint:
 	kubectl get -n $(NAMESPACE) -o jsonpath="{.subsets[0].addresses[0].ip}" endpoints $(RELEASE)-ease
 
-exec: 
+exec:
 	kubectl exec --stdin --tty -n $(NAMESPACE) $(shell kubectl get -n debug -o jsonpath="{.items[0].metadata.name}" pods -l "id=$(RELEASE)-deployment-ease") -- /bin/bash
 
-undeploy: 
+undeploy:
 	helm uninstall \
 		--kube-context $(CONTEXT) \
 		--namespace $(NAMESPACE) \
