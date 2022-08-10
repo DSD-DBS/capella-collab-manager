@@ -6,7 +6,7 @@
 {{ $backend := dict "path" "/api/v1" "service" "nginx-clusterip" "targetPort" "http" }}
 {{ $docs := dict "path" "/docs" "service" "docs" "targetPort" "http" }}
 {{ $guacamole := dict "path" "/guacamole" "service" "guacamole-guacamole" "targetPort" "http" }}
-{{ $prometheus := dict "path" "/prometheus" "service" "prometheus-nginx" "targetPort" "http" }}
+{{ $prometheus := dict "path" "/prometheus" "service" "prometheus-nginx" "targetPort" "promui" }}
 {{ $routes := list $frontend $backend $docs $guacamole $prometheus }}
 {{ range $route := $routes }}
 kind: Route
