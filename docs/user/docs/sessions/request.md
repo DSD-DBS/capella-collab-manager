@@ -4,7 +4,7 @@ Please follow these steps to request a session:
 2. Please select your preferred worspace type.
 
     !!! Question "Which type should I use?"
-        Please have a look at [Session Types](/sessions/types)
+        Please have a look at [Session Types](../types)
 
 3. Click the `Request session` button.
 4. You should see the state of your request. It can take up to 2 minutes, until we can assign the required resources. In most of the cases this takes under 30 seconds.
