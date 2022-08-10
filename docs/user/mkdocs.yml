@@ -26,6 +26,7 @@ nav:
   - About: about.md
 
 repo_url: https://github.com/DSD-DBS/capella-collab-manager
+edit_uri: edit/master/docs/user/docs
 
 markdown_extensions:
   - meta
