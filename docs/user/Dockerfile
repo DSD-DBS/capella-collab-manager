@@ -13,4 +13,4 @@ FROM nginxinc/nginx-unprivileged:latest
 EXPOSE 8080
 
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=build /opt/docs/site /usr/share/nginx/html
+COPY --from=build /opt/docs/site /usr/share/nginx/html/docs
