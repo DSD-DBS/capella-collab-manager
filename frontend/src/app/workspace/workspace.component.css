@@ -5,10 +5,13 @@
 
 .center {
   margin-top: 50px;
-  text-align: center;
   margin-left: auto;
   margin-right: auto;
   display: inline;
+}
+
+.center-text {
+  text-align: center;
 }
 
 button {
