@@ -3,9 +3,9 @@ title: TeamForCapella
 ---
 
 !!! Info
-    Please [request a session](/sessions/request/) before you continue with the instructions here.
+    Please [request a session](../request.md) before you continue with the instructions here.
 
-1. You have to set you own password for each TeamForCapella repository you have access to. Please navigate to [Profile](/settings). Here you should see the User settings section, where you can set your password:
+1. You have to set you own password for each TeamForCapella repository you have access to. Please navigate to <a href="/settings" target="_blank">Profile</a>. Here you should see the User settings section, where you can set your password:
     ![Set T4C password](t4c_password.png)
 
 2. Go back to your session
@@ -16,14 +16,14 @@ title: TeamForCapella
 5. Select your model from the dropdown list:
 
     !!! Question "Your model is missing?"
-        Please have a look at [Project access](/projects/access)
+        Please have a look at [Project access](../../projects/access.md)
 
     ![Select the model](step_3.png)
 6. Click on `Test connection` and enter your personal credentials.
 
     !!! Question "What is my username?"
         You can find your username after your session was started.
-        Alternatively, you can reopen the dialog when [Reconnecting](/sessions/reconnect.md)
+        Alternatively, you can reopen the dialog when [Reconnecting](../reconnect.md)
 
     !!! Question "What is my password?"
         Please use the password you did set in step 1.
