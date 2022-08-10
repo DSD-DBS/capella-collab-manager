@@ -1,3 +1,6 @@
+// Copyright DB Netz AG and the capella-collab-manager contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UploadDialogComponent } from './upload-dialog.component';
@@ -8,9 +11,8 @@ describe('UploadDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UploadDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [UploadDialogComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
