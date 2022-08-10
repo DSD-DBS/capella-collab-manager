@@ -54,7 +54,6 @@ export class ActiveSessionsComponent implements OnInit {
   }
 
   uploadFileDialog(session: Session): void {
-    this.dialog.open(UploadDialogComponent, {data: session
-    });
+    this.dialog.open(UploadDialogComponent, { data: session });
   }
 }

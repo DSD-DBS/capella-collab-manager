@@ -12,9 +12,10 @@ import typing as t
 # 3rd party:
 from pydantic import BaseModel
 
+from t4cclient.schemas.repositories import RepositoryUserPermission
+
 # local:
 from t4cclient.sessions.operators.k8s import FileType
-from t4cclient.schemas.repositories import RepositoryUserPermission
 
 
 class WorkspaceType(enum.Enum):
