@@ -249,7 +249,11 @@ class KubernetesOperator(Operator):
         )
 
     def create_cronjob(
-        self, image: str, environment: t.Dict[str, str], schedule="* * * * *"
+        self,
+        image: str,
+        environment: t.Dict[str, str],
+        schedule="* * * * *",
+        timeout=18000,
     ) -> str:
         id = self._generate_id()
         self._create_cronjob(
@@ -257,6 +261,7 @@ class KubernetesOperator(Operator):
             image=image,
             environment=environment,
             schedule=schedule,
+            timeout=timeout,
         )
         return id
 
@@ -394,7 +399,12 @@ class KubernetesOperator(Operator):
         return self.v1_apps.create_namespaced_deployment(cfg["namespace"], body)
 
     def _create_cronjob(
-        self, name: str, image: str, environment: t.Dict[str, str], schedule="* * * * *"
+        self,
+        name: str,
+        image: str,
+        environment: t.Dict[str, str],
+        schedule="* * * * *",
+        timeout=18000,
     ) -> kubernetes.client.V1CronJob:
         body = {
             "kind": "CronJob",
@@ -431,7 +441,7 @@ class KubernetesOperator(Operator):
                             }
                         },
                         "backoffLimit": 1,
-                        "activeDeadlineSeconds": 600,
+                        "activeDeadlineSeconds": timeout,
                     }
                 },
             },
