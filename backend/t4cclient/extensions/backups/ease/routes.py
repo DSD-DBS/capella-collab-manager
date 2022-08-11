@@ -73,6 +73,7 @@ def create_backup(
             "GIT_REPO_BRANCH": gitmodel.revision,
             "T4C_REPO_HOST": config["modelsources"]["t4c"]["host"],
             "T4C_REPO_PORT": config["modelsources"]["t4c"]["port"],
+            "T4C_CDO_PORT": config["modelsources"]["t4c"]["cdoPort"],
             "T4C_REPO_NAME": project,
             "T4C_PROJECT_NAME": t4cmodel.name,
             "T4C_USERNAME": username,
