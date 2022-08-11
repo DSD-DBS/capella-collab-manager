@@ -24,13 +24,7 @@ from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, repositories
 from t4cclient.core.database import users as database_users
 from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
-
-<<<<<<< HEAD
 from t4cclient.extensions.modelsources.git.crud import get_primary_model_of_repository
-from t4cclient.extensions.modelsources.git.models import DB_GitModel
-
-=======
->>>>>>> origin/staging
 from t4cclient.extensions.modelsources.t4c import connection
 from t4cclient.schemas.repositories import (
     GetRepositoryUserResponse,
