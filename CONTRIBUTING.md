@@ -28,6 +28,17 @@ Please follow the [RESTful web API design best practises](https://docs.microsoft
 
 We recommend to get started with the [local k8d deployment](README.md).
 
+## Git
+The commit messages have to follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#specification) specification.
+
+In general, we use pre-commit hooks to enforce some conding standards.
+To setup the pre-commit hooks, please run the following commands:
+
+```
+pip install -U pip pre-commit
+pre-commit install
+```
+
 ## Capella Docker images
 
 Please follow the [README of the Capella Docker images repository](/../../../capella-dockerimages/blob/main/README.md).
