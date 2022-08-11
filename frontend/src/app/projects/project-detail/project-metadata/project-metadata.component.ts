@@ -21,8 +21,8 @@ export class ProjectMetadataComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.projectService.getSlug(this.project_slug).subscribe(project => {
-      this.projectService.project = project
+    this.projectService.getSlug(this.project_slug).subscribe((project) => {
+      this.projectService.project = project;
     });
   }
 
@@ -33,13 +33,17 @@ export class ProjectMetadataComponent implements OnInit {
   updateDescription() {
     if (this.updateDescriptionForm.valid && this.projectService.project) {
       this.projectService
-        .updateDescription(this.projectService.project.name, this.updateDescriptionForm.value)
+        .updateDescription(
+          this.projectService.project.name,
+          this.updateDescriptionForm.value
+        )
         .subscribe({
           next: (res) => {
             this.updateDescriptionForm.reset();
             this.updateDescriptionForm.setValue(res.description);
             this.toastService.showSuccess(
-              'Description updated for project ' + this.projectService.project?.name,
+              'Description updated for project ' +
+                this.projectService.project?.name,
               "Updated to '" + res.description + "'"
             );
           },

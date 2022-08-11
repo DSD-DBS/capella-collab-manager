@@ -12,10 +12,11 @@ from pydantic import BaseModel
 from sqlalchemy import Column, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
+import capellacollab.models.models
+
 # 1st party:
 # Import required for sqlalchemy
 import capellacollab.projects.users.models
-import capellacollab.models.models
 from capellacollab.core.database import Base
 
 

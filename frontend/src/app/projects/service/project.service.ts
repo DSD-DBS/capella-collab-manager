@@ -10,13 +10,11 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class ProjectService {
-  constructor(
-    private http: HttpClient,
-  ) {}
+  constructor(private http: HttpClient) {}
 
   BACKEND_URL_PREFIX = environment.backend_url + '/projects/';
-  
-  base_url = new URL('projects/', environment.backend_url + '/')
+
+  base_url = new URL('projects/', environment.backend_url + '/');
 
   projects: Array<Project> | undefined;
   project: Project | undefined;
@@ -24,39 +22,39 @@ export class ProjectService {
   init(project_slug: string): Observable<Project> {
     if (!this.project || !(this.project.slug === project_slug)) {
       this.project = undefined;
-      return this.getSlug(project_slug)
+      return this.getSlug(project_slug);
     }
-    return of(this.project)
+    return of(this.project);
   }
 
   initAll(): Observable<Project[]> {
-    if(this.projects) 
-      return of(this.projects)
-    return this.list()
+    if (this.projects) return of(this.projects);
+    return this.list();
   }
 
   getSlug(slug: string): Observable<Project> {
-    let url = new URL('details/', this.base_url)
-    return new Observable<Project>(subscriber => {
-      this.http.get<Project>(url.toString(), {params: {slug}})
-      .subscribe(project => {
-        this.project = project;
-        subscriber.next(project);
-        subscriber.complete();
-      });
-    })
+    let url = new URL('details/', this.base_url);
+    return new Observable<Project>((subscriber) => {
+      this.http
+        .get<Project>(url.toString(), { params: { slug } })
+        .subscribe((project) => {
+          this.project = project;
+          subscriber.next(project);
+          subscriber.complete();
+        });
+    });
   }
 
   list(): Observable<Project[]> {
-    return new Observable<Project[]>(subscriber => {
-      this.http.get<Array<Project>>(this.BACKEND_URL_PREFIX)
-      .subscribe(projects => {
-        this.projects = projects;
-        subscriber.next(projects);
-        subscriber.complete();
-      });
-    })
-
+    return new Observable<Project[]>((subscriber) => {
+      this.http
+        .get<Array<Project>>(this.BACKEND_URL_PREFIX)
+        .subscribe((projects) => {
+          this.projects = projects;
+          subscriber.next(projects);
+          subscriber.complete();
+        });
+    });
   }
 
   getProject(name: string): Observable<Project> {
@@ -64,30 +62,32 @@ export class ProjectService {
   }
 
   updateDescription(name: string, description: string): Observable<Project> {
-    let url = new URL(name, this.base_url)
-    console.log(description)
-    return new Observable<Project>(subscriber => {
-      this.http.patch<Project>(url.toString(), {description})
-      .subscribe(project => {
-        this.project = project
-        subscriber.next(project)
-        subscriber.complete()
-      })
-    })
+    let url = new URL(name, this.base_url);
+    console.log(description);
+    return new Observable<Project>((subscriber) => {
+      this.http
+        .patch<Project>(url.toString(), { description })
+        .subscribe((project) => {
+          this.project = project;
+          subscriber.next(project);
+          subscriber.complete();
+        });
+    });
   }
 
   createProject(name: string): Observable<Project> {
-    return new Observable<Project>(subscriber => {
-      this.http.post<Project>(this.BACKEND_URL_PREFIX, {
-        name,
-      }).subscribe(project => {
-        this.project = project;
-        this.list().subscribe();
-        subscriber.next(project)
-        subscriber.complete()
-      })
-    })
-
+    return new Observable<Project>((subscriber) => {
+      this.http
+        .post<Project>(this.BACKEND_URL_PREFIX, {
+          name,
+        })
+        .subscribe((project) => {
+          this.project = project;
+          this.list().subscribe();
+          subscriber.next(project);
+          subscriber.complete();
+        });
+    });
   }
 }
 

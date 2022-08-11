@@ -27,10 +27,10 @@ export class RepositoryUserSettingsComponent implements OnInit {
 
   @Input()
   set repository(value: string) {
-    this.projectService.init(value).subscribe(project => {
+    this.projectService.init(value).subscribe((project) => {
       this._repository = project.name;
       this.refreshRepoUsers();
-    })
+    });
   }
 
   get repository() {

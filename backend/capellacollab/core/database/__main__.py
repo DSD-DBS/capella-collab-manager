@@ -42,7 +42,7 @@ def migrate_db():
 
         context = MigrationContext.configure(conn)
         current_rev = context.get_current_revision()
-        tools_exist = inspect(engine).has_table('tools')
+        tools_exist = inspect(engine).has_table("tools")
 
         if current_rev:
             LOGGER.info("Upgrade database to head")
@@ -54,7 +54,7 @@ def migrate_db():
             command.stamp(alembic_cfg, "head")
             initialize_admin_user()
             initialize_default_repository()
-        
+
         if not tools_exist:
             create_tools()
 

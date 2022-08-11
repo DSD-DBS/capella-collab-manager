@@ -90,7 +90,7 @@ import { NoRepositoryComponent } from './workspaces/no-repository/no-repository.
 import { RequestSessionComponent } from './workspaces/request-session/request-session.component';
 import { WarningComponent } from './workspaces/request-session/warning/warning.component';
 import { CreateModelComponent } from './models/create-model/create-model.component';
-import { MatRadioModule } from '@angular/material/radio'; 
+import { MatRadioModule } from '@angular/material/radio';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { CreateCoworkingMethodComponent } from './models/create-coworking-method/create-coworking-method.component';
 import { ChooseSourceComponent } from './models/choose-source/choose-source.component';

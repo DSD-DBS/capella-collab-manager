@@ -1,10 +1,12 @@
-from ensurepip import version
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 import typing as t
+from ensurepip import version
 
 from sqlalchemy.orm import Session
 
 from capellacollab.tools.models import Tool, Type, Version
-
 
 ############
 ### Tool ###

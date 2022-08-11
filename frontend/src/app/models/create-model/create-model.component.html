@@ -5,10 +5,15 @@
 
 <div class="wrapper">
   <mat-card class="section-card">
-    <h2>Add model to project
-      {{ projectService.project ? projectService.project.name : "" }}</h2>
-    <form id="create-model-base-form" [formGroup]="form"
-      (ngSubmit)="onSubmit()">
+    <h2>
+      Add model to project
+      {{ projectService.project ? projectService.project.name : "" }}
+    </h2>
+    <form
+      id="create-model-base-form"
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+    >
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Model name</mat-label>
@@ -18,22 +23,28 @@
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Model description</mat-label>
-          <textarea rows="3" matInput formControlName="description">
-          </textarea>
+          <textarea rows="3" matInput formControlName="description"> </textarea>
         </mat-form-field>
       </fieldset>
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Model tool</mat-label>
           <mat-select matInput formControlName="tool_id">
-            <mat-option *ngFor="let tool of toolService.tools" value='{{ tool.id }}'>
+            <mat-option
+              *ngFor="let tool of toolService.tools"
+              value="{{ tool.id }}"
+            >
               {{ tool.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
       </fieldset>
-      <button mat-raised-button color="primary" type="submit"
-        [disabled]="!form.valid">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="!form.valid"
+      >
         Create model
       </button>
     </form>

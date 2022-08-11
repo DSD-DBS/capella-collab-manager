@@ -1,3 +1,6 @@
+// Copyright DB Netz AG and the capella-collab-manager contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InitModelComponent } from './init-model.component';
@@ -8,9 +11,8 @@ describe('InitModelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ InitModelComponent ]
-    })
-    .compileComponents();
+      declarations: [InitModelComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

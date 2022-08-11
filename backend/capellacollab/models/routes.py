@@ -1,3 +1,6 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 # Standard library:
 import typing as t
 
@@ -5,15 +8,15 @@ import typing as t
 from fastapi import APIRouter, Depends
 from requests import Session
 
+# local:
+from . import crud
+from .models import EmptyModel, NewModel, ResponseModel, ToolDetails
+
 # 1st party:
 from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.projects import crud as projects_crud
-
-# local:
-from . import crud
-from .models import EmptyModel, NewModel, ResponseModel, ToolDetails
 
 router = APIRouter()
 

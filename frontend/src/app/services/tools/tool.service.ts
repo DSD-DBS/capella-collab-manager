@@ -1,7 +1,10 @@
+// Copyright DB Netz AG and the capella-collab-manager contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { merge, Observable } from 'rxjs';
-import { environment } from "src/environments/environment";
+import { environment } from 'src/environments/environment';
 
 export interface Tool {
   id: number;
@@ -16,7 +19,7 @@ export interface Version {
   is_deprecated: boolean;
 }
 
-type NestedVersion = {[id: number]: Version[]}
+type NestedVersion = { [id: number]: Version[] };
 
 export interface Type {
   id: number;
@@ -24,18 +27,15 @@ export interface Type {
   tool_id: number;
 }
 
-type NestedType = {[id: number]: Type[]}
+type NestedType = { [id: number]: Type[] };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ToolService {
+  constructor(private http: HttpClient) {}
 
-  constructor(
-    private http: HttpClient,
-  ) { }
-  
-  base_url = new URL('tools/', environment.backend_url + '/')
+  base_url = new URL('tools/', environment.backend_url + '/');
 
   tools: Tool[] | null = null;
   versions: NestedVersion | null = null;
@@ -49,54 +49,52 @@ export class ToolService {
 
   get_tools(): Observable<Tool[]> {
     let url = this.base_url;
-    return new Observable<Tool[]>(subscriber => {
-      this.http.get<Tool[]>(url.toString()).subscribe(tools => {
+    return new Observable<Tool[]>((subscriber) => {
+      this.http.get<Tool[]>(url.toString()).subscribe((tools) => {
         this.tools = tools;
         subscriber.next(tools);
         subscriber.complete();
-      })
-    })
+      });
+    });
   }
 
   get_versions(): Observable<NestedVersion> {
     let url = new URL('versions/', this.base_url);
-    return new Observable<NestedVersion>(subscriber => {
-      this.http.get<Version[]>(url.toString()).subscribe(versions => {
-        this.versions = {}
-        versions.forEach(version => {
+    return new Observable<NestedVersion>((subscriber) => {
+      this.http.get<Version[]>(url.toString()).subscribe((versions) => {
+        this.versions = {};
+        versions.forEach((version) => {
           if (this.versions) {
             if (version.tool_id in this.versions) {
-              this.versions[version.tool_id].push(version)
+              this.versions[version.tool_id].push(version);
             } else {
-              this.versions[version.tool_id] = [version]
+              this.versions[version.tool_id] = [version];
             }
           }
-        })
+        });
         subscriber.next(this.versions);
         subscriber.complete();
-      })
-    })
+      });
+    });
   }
-  
+
   get_types(): Observable<NestedType> {
     let url = new URL('types/', this.base_url);
-    return new Observable<NestedType>(subscriber => {
-      this.http.get<Version[]>(url.toString()).subscribe(types => {
-        this.types = {}
-        types.forEach(tool_type => {
+    return new Observable<NestedType>((subscriber) => {
+      this.http.get<Version[]>(url.toString()).subscribe((types) => {
+        this.types = {};
+        types.forEach((tool_type) => {
           if (this.types) {
             if (tool_type.tool_id in this.types) {
-              this.types[tool_type.tool_id].push(tool_type)
+              this.types[tool_type.tool_id].push(tool_type);
             } else {
-              this.types[tool_type.tool_id] = [tool_type]
+              this.types[tool_type.tool_id] = [tool_type];
             }
           }
-        })
+        });
         subscriber.next(this.types);
         subscriber.complete();
-      })
-    })
+      });
+    });
   }
-
 }
-

@@ -5,61 +5,74 @@
 
 <div *ngIf="projectService.project && modelService.model" class="wrapper">
   <mat-card class="section-card">
-    <h2>Add a primary source for the model
+    <h2>
+      Add a primary source for the model
       <i>{{ modelService.model?.name }}</i> of the project
-      <i>{{ projectService.project?.name }}</i>.</h2>
+      <i>{{ projectService.project?.name }}</i
+      >.
+    </h2>
     <form [formGroup]="gitForm" (submit)="onSubmit()">
-
       <div formGroupName="credentials">
         <fieldset>
           <mat-form-field appearance="fill">
             <mat-label>Repository url</mat-label>
-            <input matInput formControlName="url">
+            <input matInput formControlName="url" />
           </mat-form-field>
         </fieldset>
         <fieldset>
           <mat-form-field appearance="fill">
             <mat-label>Git username</mat-label>
-            <input matInput formControlName="username">
+            <input matInput formControlName="username" />
           </mat-form-field>
           <div class="field-separator"></div>
           <mat-form-field appearance="fill">
             <mat-label>Git password or token</mat-label>
-            <input matInput formControlName="password" type="password">
+            <input matInput formControlName="password" type="password" />
           </mat-form-field>
         </fieldset>
       </div>
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Branch, tag or revision</mat-label>
-          <input type="text" matInput formControlName="revision"
-            [matAutocomplete]="auto" (focus)="onRevisionFocus()"/>
+          <input
+            type="text"
+            matInput
+            formControlName="revision"
+            [matAutocomplete]="auto"
+            (focus)="onRevisionFocus()"
+          />
         </mat-form-field>
-          <mat-autocomplete autoActiveFirstOption 
-            #auto="matAutocomplete">
-            <mat-optgroup label="branch">
-              <mat-option 
-                *ngFor="let option of filteredRevisions.branches"
-                [value]="option">
-                {{ option }}
-              </mat-option>
-            </mat-optgroup>
-            <mat-optgroup label="tag">
-              <mat-option *ngFor="let option of filteredRevisions.tags"
-                [value]="option">
-                {{ option }}
-              </mat-option>
-            </mat-optgroup>
-          </mat-autocomplete>
-        </fieldset>
+        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+          <mat-optgroup label="branch">
+            <mat-option
+              *ngFor="let option of filteredRevisions.branches"
+              [value]="option"
+            >
+              {{ option }}
+            </mat-option>
+          </mat-optgroup>
+          <mat-optgroup label="tag">
+            <mat-option
+              *ngFor="let option of filteredRevisions.tags"
+              [value]="option"
+            >
+              {{ option }}
+            </mat-option>
+          </mat-optgroup>
+        </mat-autocomplete>
+      </fieldset>
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Entry point</mat-label>
-          <input type="text" matInput formControlName="entrypoint">
+          <input type="text" matInput formControlName="entrypoint" />
         </mat-form-field>
       </fieldset>
-      <button mat-raised-button color="primary"
-        [disabled]="!gitForm.valid" type="submit">
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="!gitForm.valid"
+        type="submit"
+      >
         Add source
       </button>
     </form>

@@ -12,19 +12,16 @@ from fastapi import APIRouter
 
 # 1st party:
 import capellacollab.config.routes as configuration
-from capellacollab.config import config
-from capellacollab.models import routes as models
-from capellacollab.projects import routes as projects
-from capellacollab.tools import routes as tools
-import capellacollab.config.routes as configuration
 import capellacollab.sessions.routes as sessions
-from capellacollab.utils import git_utils
 
 # local:
 from . import notices, sessions, users
 from capellacollab.config import config
+from capellacollab.models import routes as models
 from capellacollab.projects import routes as projects
 from capellacollab.settings.modelsources.git import routes as git_settings
+from capellacollab.tools import routes as tools
+from capellacollab.utils import git_utils
 
 log = logging.getLogger(__name__)
 
@@ -38,14 +35,11 @@ router.include_router(users.router, prefix="/users", tags=["Users"])
 router.include_router(notices.router, prefix="/notices", tags=["Notices"])
 router.include_router(configuration.router, prefix="/configurations", tags=["Notices"])
 router.include_router(
-    git_settings.router, prefix="/settings/modelsources/git", tags=["GitSettings"])
-router.include_router(
-    notices.router, prefix="/notices", tags=["Notices"]
+    git_settings.router, prefix="/settings/modelsources/git", tags=["GitSettings"]
 )
-router.include_router(
-    configuration.router, prefix="/configurations", tags=["Notices"]
-)
-router.include_router(git_utils.router, prefix='/git-utils')
+router.include_router(notices.router, prefix="/notices", tags=["Notices"])
+router.include_router(configuration.router, prefix="/configurations", tags=["Notices"])
+router.include_router(git_utils.router, prefix="/git-utils")
 
 # Load authentication routes
 try:

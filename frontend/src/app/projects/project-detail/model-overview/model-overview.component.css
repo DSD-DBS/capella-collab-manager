@@ -98,7 +98,8 @@ mat-card:hover {
   margin: 10px;
 }
 
-button, a {
+button,
+a {
   margin: 5px;
 }
 

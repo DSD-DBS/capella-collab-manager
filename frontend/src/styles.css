@@ -42,7 +42,6 @@ body {
   --hover-color: lightcyan;
   --field-padding: 0.75em;
   --section-card-width: 32em;
-  
 }
 
 button.primary {
@@ -132,16 +131,15 @@ fieldset > :not(.field-separator) {
 
 .section-card {
   width: var(--section-card-width);
-  margin-left: max(10px, calc(30vw - var(--section-card-width)/3 - 16px));
+  margin-left: max(10px, calc(30vw - var(--section-card-width) / 3 - 16px));
 }
 
 .url-before-path-separator {
-  
   align-self: right;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  width: calc(14em - 2*var(--field-padding));
+  width: calc(14em - 2 * var(--field-padding));
   padding: 0.25em var(--field-padding);
   border-radius: 4px;
 
@@ -150,7 +148,7 @@ fieldset > :not(.field-separator) {
 
 .form-radio-group {
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
   padding-bottom: 1.34375em;
 }
 

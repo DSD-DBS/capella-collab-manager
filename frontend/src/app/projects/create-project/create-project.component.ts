@@ -27,10 +27,7 @@ export class CreateProjectComponent implements OnInit {
     return this.createProjectForm.get('name') as FormControl;
   }
 
-  constructor(
-    public projectService: ProjectService,
-    private router: Router
-  ) {}
+  constructor(public projectService: ProjectService, private router: Router) {}
 
   ngOnInit(): void {
     this.projectService.project = undefined;
@@ -38,10 +35,12 @@ export class CreateProjectComponent implements OnInit {
 
   createProject(stepper: MatStepper): void {
     if (this.createProjectForm.valid) {
-      this.projectService.createProject(this.name.value).subscribe((project) => {
-        this.project_slug = project.slug;
-        stepper.next();
-      });
+      this.projectService
+        .createProject(this.name.value)
+        .subscribe((project) => {
+          this.project_slug = project.slug;
+          stepper.next();
+        });
     }
   }
 }

@@ -18,11 +18,10 @@ export class ModelOverviewComponent implements OnInit {
   constructor(
     public integrations: IntegrationService,
     public projectService: ProjectService,
-    public modelService: ModelService,
+    public modelService: ModelService
   ) {}
 
   ngOnInit(): void {
-    this.modelService.initAll(this.project_slug).subscribe(value => {
-    });
+    this.modelService.initAll(this.project_slug).subscribe((value) => {});
   }
 }

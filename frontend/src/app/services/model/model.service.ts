@@ -1,8 +1,11 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { ProjectService } from "src/app/projects/service/project.service";
-import { environment } from "src/environments/environment";
+// Copyright DB Netz AG and the capella-collab-manager contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ProjectService } from 'src/app/projects/service/project.service';
+import { environment } from 'src/environments/environment';
 
 export interface NewModel {
   name: string;
@@ -20,8 +23,8 @@ export interface GitModel extends NewModel {
   url: string;
   username: string;
   password: string;
-  revision: string; 
-  path: string; 
+  revision: string;
+  path: string;
   entrypoint: string;
 }
 
@@ -41,126 +44,133 @@ export interface Model {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ModelService {
-
-  base_url = new URL('models/', environment.backend_url + '/')
+  base_url = new URL('models/', environment.backend_url + '/');
 
   constructor(
     private http: HttpClient,
-    private projectService: ProjectService,
+    private projectService: ProjectService
   ) {}
 
   model: Model | null = null;
   models: Model[] | null = null;
 
   init(project_slug: string, model_slug: string): Observable<Model> {
-    return new Observable<Model>(subscriber => {
-      this.projectService.init(project_slug).subscribe(project => {
-        if (this.model
-          && (this.model.project_slug === project_slug)
-          && (this.model.slug === model_slug)
+    return new Observable<Model>((subscriber) => {
+      this.projectService.init(project_slug).subscribe((project) => {
+        if (
+          this.model &&
+          this.model.project_slug === project_slug &&
+          this.model.slug === model_slug
         ) {
-          subscriber.next(this.model)
-          subscriber.complete()
+          subscriber.next(this.model);
+          subscriber.complete();
         } else {
-          this.getSlug(model_slug, project.slug).subscribe(model => {
-            subscriber.next(model)
-            subscriber.complete()
-          })
+          this.getSlug(model_slug, project.slug).subscribe((model) => {
+            subscriber.next(model);
+            subscriber.complete();
+          });
         }
-      })
-    })
+      });
+    });
   }
 
   initAll(project_slug: string): Observable<Model[]> {
-    return new Observable<Model[]>(subscriber => {
-      this.projectService.init(project_slug).subscribe(project => {
-        if (this.models
-          && (this.models[0].project_slug !== project_slug)
-        ) {
+    return new Observable<Model[]>((subscriber) => {
+      this.projectService.init(project_slug).subscribe((project) => {
+        if (this.models && this.models[0].project_slug !== project_slug) {
           subscriber.next(this.models);
           subscriber.complete();
         } else {
-          this.list(project.slug).subscribe(models => {
+          this.list(project.slug).subscribe((models) => {
             subscriber.next(models);
             subscriber.complete();
-          })
+          });
         }
-      })
-    })
+      });
+    });
   }
 
-  list(project_slug: string, q: string | undefined = undefined): Observable<Model[]> {
+  list(
+    project_slug: string,
+    q: string | undefined = undefined
+  ): Observable<Model[]> {
     let url = new URL(project_slug, this.base_url);
-    return new Observable<Model[]>(subscriber => {
+    return new Observable<Model[]>((subscriber) => {
       let result = q
-      ? this.http.get<Model[]>(url.toString(), {params: {q}})
-      : this.http.get<Model[]>(url.toString());
-      result.subscribe(models => {
+        ? this.http.get<Model[]>(url.toString(), { params: { q } })
+        : this.http.get<Model[]>(url.toString());
+      result.subscribe((models) => {
         this.models = models;
         subscriber.next(models);
-        subscriber.complete();
-      })
-    })
-  }
-
-  getId(id: number): Observable<Model> {
-    let url = this.base_url;
-    return this.http.get<Model>(url.toString(), {params: {id}});
-  }
-
-  getSlug(slug: string, project_slug: string): Observable<Model> {
-    let url = new URL(`${project_slug}/details/`, this.base_url);
-    return new Observable<Model>(subscriber => {
-      this.http.get<Model>(
-        url.toString(), {params: {slug}}
-      ).subscribe(model => {
-        this.model = model;
-        subscriber.next(model);
         subscriber.complete();
       });
     });
   }
 
+  getId(id: number): Observable<Model> {
+    let url = this.base_url;
+    return this.http.get<Model>(url.toString(), { params: { id } });
+  }
+
+  getSlug(slug: string, project_slug: string): Observable<Model> {
+    let url = new URL(`${project_slug}/details/`, this.base_url);
+    return new Observable<Model>((subscriber) => {
+      this.http
+        .get<Model>(url.toString(), { params: { slug } })
+        .subscribe((model) => {
+          this.model = model;
+          subscriber.next(model);
+          subscriber.complete();
+        });
+    });
+  }
+
   createNew(project_slug: string, model: NewModel): Observable<Model> {
-    let url = new URL(project_slug + "/create-new/", this.base_url);
+    let url = new URL(project_slug + '/create-new/', this.base_url);
     return this.createGeneric(url, model);
   }
 
   createEmpty(project_slug: string, model: EmptyModel): Observable<Model> {
-    let url = new URL(project_slug + "/create-empty/", this.base_url);
+    let url = new URL(project_slug + '/create-empty/', this.base_url);
     return this.createGeneric(url, model);
   }
 
   addGitSource(project_slug: string, model: GitModel): Observable<Model> {
-    let url = new URL(project_slug + "/add-git-source/", this.base_url);
+    let url = new URL(project_slug + '/add-git-source/', this.base_url);
     return this.createGeneric(url, model);
   }
 
-  setToolDetails(project_slug: string, model_slug: string,
-    version_id: number, type_id: number): Observable<Model> {
-
-    let url = new URL(`${project_slug}/set-tool-details/${model_slug}/`, this.base_url);
-    return new Observable<Model>(subscriber => {
-      this.http.patch<Model>(url.toString(), {version_id, type_id})
-      .subscribe(model => {
-        this.model = model;
-        subscriber.next(model);
-        subscriber.complete();
-      })
-    })
+  setToolDetails(
+    project_slug: string,
+    model_slug: string,
+    version_id: number,
+    type_id: number
+  ): Observable<Model> {
+    let url = new URL(
+      `${project_slug}/set-tool-details/${model_slug}/`,
+      this.base_url
+    );
+    return new Observable<Model>((subscriber) => {
+      this.http
+        .patch<Model>(url.toString(), { version_id, type_id })
+        .subscribe((model) => {
+          this.model = model;
+          subscriber.next(model);
+          subscriber.complete();
+        });
+    });
   }
 
   createGeneric<T extends NewModel>(url: URL, new_model: T): Observable<Model> {
-    return new Observable<Model>(subscriber => {
-      this.http.post<Model>(url.toString(), new_model)
-      .subscribe(model => {
+    return new Observable<Model>((subscriber) => {
+      this.http.post<Model>(url.toString(), new_model).subscribe((model) => {
         this.model = model;
         subscriber.next(model);
         subscriber.complete();
       });
-    })
+    });
   }
 }

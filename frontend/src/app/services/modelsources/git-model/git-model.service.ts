@@ -77,19 +77,18 @@ export class GitModelService {
   instance: Instance | null = null;
 
   fetch(repository_url: string): Observable<Instance> {
-    let url = new URL('git-utils/', 
-    environment.backend_url + '/');
-    return new Observable<Instance>(subscriber => {
-      this.http.get<Instance>(url.toString(), {params: {url: repository_url}}).subscribe(value => {
-        this.instance = value;
-        subscriber.next(value);
-        subscriber.complete();
-      })
-    })
+    let url = new URL('git-utils/', environment.backend_url + '/');
+    return new Observable<Instance>((subscriber) => {
+      this.http
+        .get<Instance>(url.toString(), { params: { url: repository_url } })
+        .subscribe((value) => {
+          this.instance = value;
+          subscriber.next(value);
+          subscriber.complete();
+        });
+    });
   }
-
 }
-
 
 export interface Credentials {
   url: string;
@@ -98,10 +97,9 @@ export interface Credentials {
 }
 
 export interface Instance {
-  branches: string[],
-  tags: string[],
+  branches: string[];
+  tags: string[];
 }
-
 
 export interface GitModel extends BasicGitModel {
   id: number;

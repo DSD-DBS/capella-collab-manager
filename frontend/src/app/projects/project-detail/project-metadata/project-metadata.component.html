@@ -15,7 +15,9 @@
           rows="3"
           [ngModel]="projectService.project?.description"
           style="resize: none"
-          [placeholder]="'This is the description of the project ' + project_slug"
+          [placeholder]="
+            'This is the description of the project ' + project_slug
+          "
         ></textarea>
       </mat-form-field>
     </form>
