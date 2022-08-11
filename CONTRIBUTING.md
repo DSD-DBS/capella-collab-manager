@@ -36,7 +36,7 @@ To setup the pre-commit hooks, please run the following commands:
 
 ```
 pip install -U pip pre-commit
-pre-commit install
+pre-commit install -t pre-commit -t commit-msg
 ```
 
 ## Capella Docker images
