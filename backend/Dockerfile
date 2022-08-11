@@ -18,4 +18,5 @@ COPY . /backend
 WORKDIR /backend
 RUN pip install .
 
-CMD ["uvicorn", "t4cclient.__main__:app", "--host", "0.0.0.0"]
+RUN chmod +x /backend/startup.sh
+CMD ["/backend/startup.sh"]

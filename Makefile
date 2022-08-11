@@ -27,7 +27,7 @@ frontend:
 capella: capella-download
 	docker build -t base capella-dockerimages/base
 	docker build -t capella/base capella-dockerimages/capella
-	
+
 capella/remote: capella
 	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
@@ -83,10 +83,8 @@ helm-deploy:
 		--set general.port=8080 \
 		--set t4cServer.apis.usageStats="http://$(RELEASE)-licence-server-mock:80/mock" \
 		--set t4cServer.apis.restAPI="http://$(RELEASE)-t4c-server-mock:80/mock/api/v1.0" \
-		--wait --timeout 10m \
-		--debug \
 		$(RELEASE) ./helm
-	$(MAKE) .provision-guacamole .provision-backend
+	$(MAKE) .provision-guacamole wait
 
 open:
 	export URL=http://localhost:8080; \
@@ -113,7 +111,7 @@ rollout: backend frontend
 undeploy:
 	helm uninstall --kube-context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $(RELEASE)
 	kubectl --context k3d-$(CLUSTER_NAME) delete --all deployments -n $(SESSION_NAMESPACE)
-	rm -f .provision-guacamole .provision-backend
+	rm -f .provision-guacamole
 
 create-cluster:
 	type k3d || { echo "K3D is not installed, install k3d and run 'make create-cluster' again"; exit 1; }
@@ -125,17 +123,22 @@ create-cluster:
 
 delete-cluster:
 	k3d cluster list $(CLUSTER_NAME) 2>&- && k3d cluster delete $(CLUSTER_NAME)
-	rm -f .provision-guacamole .provision-backend
+	rm -f .provision-guacamole
+
+wait:
+	@echo "-----------------------------------------------------------"
+	@echo "--- Please wait until all services are in running state ---"
+	@echo "-----------------------------------------------------------"
+	@kubectl get -n $(NAMESPACE) --watch pods
 
 .provision-guacamole:
 	export MSYS_NO_PATHCONV=1; \
-	kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
-	kubectl exec -ti --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole && \
+	echo "Waiting for guacamole container, before we can initialize the database..."
+	kubectl wait --for=condition=Ready pods --timeout=5m --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole
+	kubectl exec --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
+	kubectl exec -ti --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole && \
+	echo "Guacamole database initialized sucessfully."; \
 	touch .provision-guacamole
-
-.provision-backend:
-	echo "insert into repository_user_association values ('$(MY_EMAIL)', 'default', 'WRITE', 'MANAGER');" | kubectl exec --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-backend-postgres --no-headers | cut -f1 -d' ') -- psql -U backend backend && \
-	touch .provision-backend
 
 # Execute with `make -j3 dev`
 dev: dev-oauth-mock dev-frontend dev-backend
@@ -146,7 +149,7 @@ dev-frontend:
 dev-backend:
 	$(MAKE) -C backend dev
 
-dev-oauth-mock: 
+dev-oauth-mock:
 	$(MAKE) -C mocks/oauth start
 
 dev-cleanup:

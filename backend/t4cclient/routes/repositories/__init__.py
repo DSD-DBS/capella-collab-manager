@@ -24,8 +24,13 @@ from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, repositories
 from t4cclient.core.database import users as database_users
 from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
+
+<<<<<<< HEAD
 from t4cclient.extensions.modelsources.git.crud import get_primary_model_of_repository
 from t4cclient.extensions.modelsources.git.models import DB_GitModel
+
+=======
+>>>>>>> origin/staging
 from t4cclient.extensions.modelsources.t4c import connection
 from t4cclient.schemas.repositories import (
     GetRepositoryUserResponse,
@@ -150,6 +155,7 @@ def create_repository(
 ):
     verify_admin(token, db)
     connection.create_repository(body.name)
+    connection.add_user_to_repository(body.name, get_username(token), is_admin=True)
     return repositories.create_repository(db, body.name)
 
 

@@ -11,9 +11,8 @@ describe('ViewLogsDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ViewLogsDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [ViewLogsDialogComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

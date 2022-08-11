@@ -1,8 +1,9 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import t4cclient.extensions.modelsources.git.crud as crud_git_models
 from fastapi import Depends, HTTPException
+
+import t4cclient.extensions.modelsources.git.crud as crud_git_models
 from t4cclient.core.database import get_db
 
 

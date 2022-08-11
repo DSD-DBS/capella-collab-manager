@@ -62,91 +62,96 @@
       </ng-template>
     </div>
     <br />
-    <div class="clean-workspace" *ngIf="workspaceSwitch.value">
-      <mat-form-field appearance="fill">
-        <mat-label>Repository</mat-label>
-        <mat-select
-          formControlName="repository"
-          (selectionChange)="setPermissionsAndWarningsByName($event)"
+
+    <div class="center">
+      <div class="clean-workspace" *ngIf="workspaceSwitch.value">
+        <mat-form-field appearance="fill">
+          <mat-label>Repository</mat-label>
+          <mat-select
+            formControlName="repository"
+            (selectionChange)="setPermissionsAndWarningsByName($event)"
+          >
+            <mat-option
+              *ngFor="let repository of repositories"
+              [value]="repository.repository_name"
+              >{{ repository.repository_name }}
+            </mat-option>
+          </mat-select>
+          <mat-error>Please select a repository!</mat-error> </mat-form-field
+        ><br />
+        <mat-spinner
+          class="small-spinner"
+          mode="indeterminate"
+          *ngIf="showSmallSpinner"
         >
-          <mat-option
-            *ngFor="let repository of repositories"
-            [value]="repository.repository_name"
-            >{{ repository.repository_name }}
-          </mat-option>
-        </mat-select>
-        <mat-error>Please select a repository!</mat-error> </mat-form-field
-      ><br />
-      <mat-spinner
-        class="small-spinner"
-        mode="indeterminate"
-        *ngIf="showSmallSpinner"
-      >
-      </mat-spinner>
+        </mat-spinner>
 
-      <div *ngIf="chosenRepository && chosenRepository !== 'default'">
-        <form [formGroup]="referenceDepthFormGroup">
-          <mat-form-field appearance="fill">
-            <mat-label>Branch, tag or revision</mat-label>
-            <mat-select
-              formControlName="reference"
-              (selectionChange)="changeIsTag($event)"
-              [disabled]="allBranches"
-            >
-              <mat-optgroup label="branch">
-                <mat-option *ngFor="let option of branches" [value]="option">
-                  {{ option }}
+        <div *ngIf="chosenRepository && chosenRepository !== 'default'">
+          <form [formGroup]="referenceDepthFormGroup">
+            <mat-form-field appearance="fill">
+              <mat-label>Branch, tag or revision</mat-label>
+              <mat-select
+                formControlName="reference"
+                (selectionChange)="changeIsTag($event)"
+                [disabled]="allBranches"
+              >
+                <mat-optgroup label="branch">
+                  <mat-option *ngFor="let option of branches" [value]="option">
+                    {{ option }}
+                  </mat-option>
+                </mat-optgroup>
+                <mat-optgroup label="tag">
+                  <mat-option *ngFor="let option of tags" [value]="option">
+                    {{ option }}
+                  </mat-option>
+                </mat-optgroup>
+              </mat-select>
+              <mat-error
+                >Please select a branch or tag!</mat-error
+              > </mat-form-field
+            ><br />
+
+            <mat-checkbox class="checkbox" (change)="changeAllBranches()">
+              Download all branches
+            </mat-checkbox>
+            <br />
+
+            <mat-form-field appearance="fill">
+              <mat-label>Commits history depth</mat-label>
+              <mat-select formControlName="historyDepth" [disabled]="isTag">
+                <mat-option *ngFor="let depth of history" [value]="depth"
+                  >{{ depth }}
                 </mat-option>
-              </mat-optgroup>
-              <mat-optgroup label="tag">
-                <mat-option *ngFor="let option of tags" [value]="option">
-                  {{ option }}
-                </mat-option>
-              </mat-optgroup>
-            </mat-select>
-            <mat-error
-              >Please select a branch or tag!</mat-error
-            > </mat-form-field
-          ><br />
+              </mat-select>
+              <mat-error>Please select a history depth!</mat-error>
+            </mat-form-field>
 
-          <mat-checkbox class="checkbox" (change)="changeAllBranches()">
-            Download all branches
-          </mat-checkbox>
-          <br />
-
-          <mat-form-field appearance="fill">
-            <mat-label>Commits history depth</mat-label>
-            <mat-select formControlName="historyDepth" [disabled]="isTag">
-              <mat-option *ngFor="let depth of history" [value]="depth"
-                >{{ depth }}
-              </mat-option>
-            </mat-select>
-            <mat-error>Please select a history depth!</mat-error>
-          </mat-form-field>
-
-          <br />
-        </form>
+            <br />
+          </form>
+        </div>
       </div>
-    </div>
 
-    <div class="center" *ngFor="let warning of warnings">
-      <app-warning
-        [warning]="warning"
-        [persistent]="!workspaceSwitch.value"
-      ></app-warning>
+      <div class="center" *ngFor="let warning of warnings">
+        <app-warning
+          [warning]="warning"
+          [persistent]="!workspaceSwitch.value"
+        ></app-warning>
+      </div>
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="requestSession()"
+        [disabled]="
+          showSpinner ||
+          !repositoryFormGroup.valid ||
+          (workspaceSwitch &&
+            !chosenRepository &&
+            !referenceDepthFormGroup.valid)
+        "
+      >
+        Request Session <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
     </div>
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="requestSession()"
-      [disabled]="
-        showSpinner ||
-        !repositoryFormGroup.valid ||
-        (workspaceSwitch && !chosenRepository && !referenceDepthFormGroup.valid)
-      "
-    >
-      Request Session <mat-icon>keyboard_arrow_right</mat-icon>
-    </button>
   </form>
 </div>
 

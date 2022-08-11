@@ -14,11 +14,6 @@
   margin-bottom: 40px;
 }
 
-.center {
-  margin-left: auto;
-  margin-right: auto;
-}
-
 mat-card {
   width: fit-content;
   margin: auto;
@@ -60,4 +55,8 @@ mat-card {
   position: relative;
   right: 20px;
   bottom: 10px;
+}
+
+.center {
+  text-align: center;
 }

@@ -4,10 +4,14 @@
 from __future__ import annotations
 
 # Standard library:
+import enum
 import logging
+import os
+import pathlib
 import random
 import string
 import typing as t
+from dataclasses import dataclass
 from datetime import datetime
 
 # 3rd party:
@@ -15,6 +19,7 @@ import kubernetes
 import kubernetes.client.exceptions
 import kubernetes.client.models
 import kubernetes.config
+import kubernetes.stream.stream
 
 # local:
 from t4cclient.config import config
@@ -59,6 +64,19 @@ except kubernetes.config.ConfigException:
         )
 
 
+class FileType(enum.Enum):
+    FILE = "file"
+    DIRECTORY = "directory"
+
+
+@dataclass
+class File:
+    path: str
+    name: str
+    type: FileType
+    children: t.Optional[list[File]] = None
+
+
 class KubernetesOperator(Operator):
     def __init__(self) -> None:
         self.v1_core = kubernetes.client.CoreV1Api()
@@ -92,6 +110,7 @@ class KubernetesOperator(Operator):
                 "T4C_SERVER_PORT": t4c_cfg["port"],
                 "T4C_REPOSITORIES": ",".join(repositories),
                 "RMT_PASSWORD": password,
+                "FILESERVICE_PASSWORD": password,
                 "T4C_USERNAME": username,
             },
             self._get_claim_name(username),
@@ -377,6 +396,7 @@ class KubernetesOperator(Operator):
                                 "ports": [
                                     {"containerPort": 3389, "protocol": "TCP"},
                                     {"containerPort": 9118, "protocol": "TCP"},
+                                    {"containerPort": 8000, "protocol": "TCP"},
                                 ],
                                 "env": [
                                     {"name": key, "value": str(value)}
@@ -476,6 +496,12 @@ class KubernetesOperator(Operator):
                         "port": 9118,
                         "targetPort": 9118,
                     },
+                    {
+                        "name": "fileservice",
+                        "protocol": "TCP",
+                        "port": 8000,
+                        "targetPort": 8000,
+                    },
                 ],
                 "selector": {"app": deployment_name},
                 "type": "ClusterIP",
@@ -531,3 +557,40 @@ class KubernetesOperator(Operator):
             return self.v1_core.delete_namespaced_service(id, cfg["namespace"])
         except kubernetes.client.exceptions.ApiException:
             log.exception("Error deleting service with id: %s", id)
+
+    def _get_pod_name(self, id: str) -> str:
+        return self.v1_core.list_namespaced_pod(
+            namespace=cfg["namespace"], label_selector="app=" + id
+        ).to_dict()["items"][0]["metadata"]["name"]
+
+    def upload_files(
+        self,
+        id: str,
+        content: bytes,
+    ):
+        pod_name = self._get_pod_name(id)
+
+        try:
+            exec_command = ["tar", "xf", "-", "-C", "/"]
+            stream = kubernetes.stream.stream(
+                self.v1_core.connect_get_namespaced_pod_exec,
+                pod_name,
+                namespace=cfg["namespace"],
+                command=exec_command,
+                stderr=True,
+                stdin=True,
+                stdout=True,
+                tty=False,
+                _preload_content=False,
+            )
+
+            stream.write_stdin(content)
+            stream.update(timeout=1)
+            if stream.peek_stdout():
+                log.debug("Upload into %s - STDOUT: %s", id, stream.read_stdout())
+            if stream.peek_stderr():
+                log.debug("Upload into %s - STDERR: %s", id, stream.read_stderr())
+
+        except kubernetes.client.exceptions.ApiException as e:
+            log.exception("Exception when copying file to the pod with id %s", id)
+            raise e

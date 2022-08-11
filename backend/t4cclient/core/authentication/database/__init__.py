@@ -3,12 +3,14 @@
 
 import sqlalchemy.orm.session
 from fastapi import Depends, HTTPException
+
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, repository_users
 from t4cclient.core.database.users import get_user
 from t4cclient.schemas.repositories import RepositoryUserPermission, RepositoryUserRole
 from t4cclient.schemas.repositories.users import Role
+from t4cclient.sessions.database import get_session_by_id
 
 
 def verify_admin(token=Depends(JWTBearer()), db=Depends(get_db)):
@@ -102,4 +104,17 @@ def check_username_not_in_repository(
         raise HTTPException(
             status_code=409,
             detail="The user already exists for this repository.",
+        )
+
+
+def check_session_belongs_to_user(
+    username: str,
+    id: str,
+    db: sqlalchemy.orm.session.Session,
+):
+    session = get_session_by_id(db, id)
+    if not session.owner_name == username:
+        raise HTTPException(
+            status_code=403,
+            detail="You are not allowed to upload or get files in this session.",
         )

@@ -218,3 +218,6 @@ cluster:
     sessions:
       containers:
       # The following values are appended to each container in the sessions namespace
+
+proxy:
+  no_proxy:

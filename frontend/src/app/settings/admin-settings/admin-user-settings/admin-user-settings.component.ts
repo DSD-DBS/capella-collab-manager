@@ -6,7 +6,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { User } from 'src/app/schemes';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { lowerCaseValidator } from 'src/app/validators/validators';
 
 @Component({
   selector: 'app-admin-user-settings',
@@ -38,7 +37,7 @@ export class AdminUserSettingsComponent implements OnInit {
     if (this.createAdministratorFormGroup.valid) {
       this.userService
         .updateRoleOfUser(
-          this.createAdministratorFormGroup.value.username,
+          this.createAdministratorFormGroup.value.username as string,
           'administrator'
         )
         .subscribe(() => {
@@ -75,8 +74,9 @@ export class AdminUserSettingsComponent implements OnInit {
 
   getUsersByRole(role: 'administrator' | 'user'): Array<User> {
     return this.users.filter(
-      (u) => u.role == role
-      && u.name.toLowerCase().includes(this.search.toLowerCase())
+      (u) =>
+        u.role == role &&
+        u.name.toLowerCase().includes(this.search.toLowerCase())
     );
   }
 }

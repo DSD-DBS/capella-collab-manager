@@ -6,16 +6,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-t4c-server-mock
-  labels: 
+  labels:
     id: {{ .Release.Name }}-deployment-t4c-server-mock
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
-  selector: 
-    matchLabels: 
+  selector:
+    matchLabels:
       id: {{ .Release.Name }}-deployment-t4c-server-mock
   template:
-    metadata: 
-      labels: 
+    metadata:
+      labels:
         id: {{ .Release.Name }}-deployment-t4c-server-mock
     spec:
       containers:
@@ -29,7 +29,7 @@ spec:
             httpGet:
               path: /healthcheck
               port: http
-          readinessProbe: 
+          readinessProbe:
             httpGet:
               path: /healthcheck
               port: http

@@ -3,9 +3,10 @@
 
 import typing as t
 
-import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 from fastapi import APIRouter, Depends
 from requests import Session
+
+import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 from t4cclient.core.authentication import database as database_auth
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, repositories

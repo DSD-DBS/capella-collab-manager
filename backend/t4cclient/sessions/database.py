@@ -18,7 +18,7 @@ def get_sessions_for_repository(db: Session, repository: str):
     )
 
 
-def get_session_by_id(db: Session, id: str):
+def get_session_by_id(db: Session, id: str) -> DatabaseSession:
     return db.query(DatabaseSession).filter(DatabaseSession.id == id).first()
 
 

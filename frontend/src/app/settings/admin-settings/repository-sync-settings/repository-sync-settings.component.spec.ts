@@ -11,9 +11,8 @@ describe('RepositorySyncSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RepositorySyncSettingsComponent ]
-    })
-    .compileComponents();
+      declarations: [RepositorySyncSettingsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

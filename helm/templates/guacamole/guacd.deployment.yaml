@@ -5,16 +5,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-guacamole-guacd
-  labels: 
+  labels:
     id: {{ .Release.Name }}-deployment-guacamole-guacd
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
-  selector: 
-    matchLabels: 
+  selector:
+    matchLabels:
       id: {{ .Release.Name }}-deployment-guacamole-guacd
   template:
-    metadata: 
-      labels: 
+    metadata:
+      labels:
         id: {{ .Release.Name }}-deployment-guacamole-guacd
     spec:
       containers:

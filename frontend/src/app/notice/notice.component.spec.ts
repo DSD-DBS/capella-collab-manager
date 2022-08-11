@@ -11,9 +11,8 @@ describe('NoticeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NoticeComponent ]
-    })
-    .compileComponents();
+      declarations: [NoticeComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
