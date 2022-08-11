@@ -95,3 +95,7 @@ repos:
     rev: v1.0.0
     hooks:
       - id: reuse
+  - repo: https://github.com/qoomon/git-conventional-commits
+    rev: v2.1.0
+    hooks:
+      - id: conventional-commits
