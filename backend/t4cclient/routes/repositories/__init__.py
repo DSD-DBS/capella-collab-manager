@@ -80,11 +80,17 @@ def get_revisions(
     remote_refs: dict[str, list[str]] = {"branches": [], "tags": []}
 
     git_model = get_primary_model_of_repository(db, project)
-    try:
-        url = git_model.path
-        log.info("Fetch revisions of git-model, %s,  with url: %s", git_model.name, url)
-    except AttributeError:
-        return remote_refs
+    if not git_model:
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "err_code": "no_git_model",
+                "reason": "No git model is assigned to your project. Please ask a project lead to assign a git model.",
+            },
+        )
+
+    url = git_model.path
+    log.debug("Fetch revisions of git-model, %s,  with url: %s", git_model.name, url)
 
     git_env = os.environ.copy()
     git_env["GIT_USERNAME"] = (
