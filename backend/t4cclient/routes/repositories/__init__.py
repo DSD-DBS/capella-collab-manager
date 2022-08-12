@@ -122,6 +122,14 @@ def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
             ["git", "ls-remote", url], capture_output=True, check=True, env=env
         )
     except subprocess.CalledProcessError as e:
+        log.debug(
+            {
+                "msg": "Exit code 128 during cloning of the repository " + url,
+                "stdout": e.stdout,
+                "stderr": e.stderr,
+                "exitcode": e.returncode,
+            }
+        )
         if e.returncode == 128:
             raise HTTPException(
                 status_code=500,
