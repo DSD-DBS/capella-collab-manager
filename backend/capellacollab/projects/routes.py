@@ -93,7 +93,6 @@ def update_project(
 def get_repository_by_name(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
-    verify_project_role(project, token=token, db=db)
     return convert_project(crud.get_project(db, project))
 
 
@@ -104,7 +103,6 @@ def get(
     token=Depends(JWTBearer()),
 ):
     project = crud.get_slug(db, slug)
-    verify_project_role(project, token=token, db=db)
     return convert_project(project)
 
 

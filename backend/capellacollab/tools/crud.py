@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import typing as t
-from ensurepip import version
 
 from sqlalchemy.orm import Session
 
@@ -38,13 +37,13 @@ def get_tool_versions(db: Session, tool_id: int) -> t.List[Version]:
 def create_version(
     db: Session,
     tool_id: Tool,
-    version: str,
+    model_version: str,
     is_recommended: bool = False,
     is_deprecated: bool = False,
 ):
     db.add(
         Version(
-            name=version,
+            name=model_version,
             is_recommended=is_recommended,
             is_deprecated=is_deprecated,
             tool_id=tool_id,
@@ -66,10 +65,10 @@ def get_tool_types(db: Session, tool_id: int) -> t.List[Version]:
     return db.query(Version).filter(Version.tool_id == tool_id)
 
 
-def create_type(db: Session, tool_id, type: str):
+def create_type(db: Session, tool_id: int, model_type: str):
     db.add(
         Type(
-            name=type,
+            name=model_type,
             tool_id=tool_id,
         )
     )

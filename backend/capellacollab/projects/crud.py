@@ -7,9 +7,7 @@ import typing as t
 from fastapi import HTTPException
 
 # 3rd party:
-from h11 import Data
 from slugify import slugify
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 # 1st party:
@@ -50,7 +48,3 @@ def get_slug(db: Session, slug: str) -> DatabaseProject:
     if not project:
         raise HTTPException(404, "Project not found.")
     return project
-
-
-def get_id(db: Session, id: int):
-    return db.query(DatabaseProject).filter(DatabaseProject.id == id).first()

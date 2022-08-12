@@ -5,7 +5,7 @@
 import typing as t
 
 # 3rd party:
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
 
 # local:
@@ -27,8 +27,10 @@ def get_id(
 ) -> t.List[ResponseModel]:
 
     project = projects_crud.get_slug(db, project_slug)
-    verify_project_role(project.name, token, db)
-    return [ResponseModel.from_model(model) for model in crud.get_all(db, project_slug)]
+    if not project:
+        raise HTTPException(404, "Project not found.")
+
+    return [ResponseModel.from_model(model) for model in crud.get_all(db, project.slug)]
 
 
 @router.get("/{project_slug}/details/", response_model=ResponseModel)
@@ -40,7 +42,8 @@ def get_slug(
 ) -> ResponseModel:
 
     project = projects_crud.get_slug(db, project_slug)
-    verify_project_role(project, token, db)
+    if not project:
+        raise HTTPException(404, "Project not found.")
     response_model = ResponseModel.from_model(crud.get_slug(db, project_slug, slug))
     return response_model
 
@@ -95,11 +98,17 @@ def set_tool_details(
 ):
 
     project = projects_crud.get_slug(db, project_slug)
-    verify_project_role(project.name, token, db)
+    if not project:
+        raise HTTPException(404, "Project Not found.")
+    verify_project_role(project.name, token, db, ["manager", "administrator"])
+    model = crud.get_slug(db, project.slug, model_slug)
+    if not model:
+        raise HTTPException(404, "Model not found.")
+
     return ResponseModel.from_model(
         crud.set_tool_details(
             db,
-            crud.get_slug(db, project.slug, model_slug),
+            model,
             tool_details,
         )
     )

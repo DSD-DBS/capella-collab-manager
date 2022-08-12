@@ -14,15 +14,15 @@ router = APIRouter()
 
 
 @router.get("/")
-def get_tools(db: Session = Depends(get_db), token=Depends(JWTBearer())):
+def get_tools(db: Session = Depends(get_db)):
     return crud.get_all_tools(db)
 
 
 @router.get("/versions")
-def get_tool_versions(db: Session = Depends(get_db), token=Depends(JWTBearer())):
+def get_tool_versions(db: Session = Depends(get_db)):
     return crud.get_versions(db)
 
 
 @router.get("/types")
-def get_tool_types(db: Session = Depends(get_db), token=Depends(JWTBearer())):
+def get_tool_types(db: Session = Depends(get_db)):
     return crud.get_types(db)
