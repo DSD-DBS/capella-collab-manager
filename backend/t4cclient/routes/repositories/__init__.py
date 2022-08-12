@@ -135,7 +135,7 @@ def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
                 status_code=500,
                 detail={
                     "err_code": "no_git_model_credentials",
-                    "reason": "There are no credentials for the primary git-model of this repository.",
+                    "reason": "There was an error accessing the model. Please ask your project lead for more information. In most cases, the credentials need to be updated.",
                 },
             )
     return proc.stdout.decode("ascii").strip().splitlines()

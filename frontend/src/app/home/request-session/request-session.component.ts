@@ -161,7 +161,7 @@ export class RequestSessionComponent implements OnInit {
       if (repo.repository_name == event.value) {
         if (repo.warnings.includes('NO_GIT_MODEL_DEFINED')) {
           this.snackBar.open(
-            'This repository has no git-model and therefore, a readonly-session cannot be created. To change this, please contact an administrator.',
+            'This project has no assigned read-only model and therefore, a readonly-session cannot be created. Please contact your project lead.',
             'Ok!'
           );
           this.showSmallSpinner = false;
