@@ -2,26 +2,30 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import base64
+import logging
+import os
 import typing as t
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
 
+from .core import ls_remote
 from t4cclient.core.authentication.database import verify_repository_role
 from t4cclient.core.authentication.database.git_models import verify_gitmodel_permission
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db
 from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
 from t4cclient.extensions.modelsources import git
+from t4cclient.extensions.modelsources.git.crud import get_primary_model_of_repository
 from t4cclient.extensions.modelsources.git.models import (
     GetRepositoryGitModel,
     PatchRepositoryGitModel,
     PostGitModel,
     RepositoryGitInnerModel,
-    RepositoryGitModel,
 )
 
 router = APIRouter()
+log = logging.getLogger(__name__)
 
 
 @router.get(
@@ -105,3 +109,52 @@ def patch_model(
             model=RepositoryGitInnerModel(**db_model.__dict__),
         )
     return None
+
+
+@router.get(
+    "/primary/revisions", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES
+)
+def get_revisions(
+    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+):
+    remote_refs: dict[str, list[str]] = {"branches": [], "tags": []}
+
+    git_model = get_primary_model_of_repository(db, project)
+    if not git_model:
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "err_code": "no_git_model",
+                "reason": "No git model is assigned to your project. Please ask a project lead to assign a git model.",
+            },
+        )
+
+    url = git_model.path
+    log.debug("Fetch revisions of git-model, %s,  with url: %s", git_model.name, url)
+
+    git_env = os.environ.copy()
+    git_env["GIT_USERNAME"] = (
+        git_model.username if git_model.username is not None else ""
+    )
+    git_env["GIT_PASSWORD"] = (
+        git_model.password if git_model.password is not None else ""
+    )
+    for ref in ls_remote(url, git_env):
+        (_, ref) = ref.split("\t")
+        if "^" in ref:
+            continue
+        if ref.startswith("refs/heads/"):
+            remote_refs["branches"].append(ref.replace("refs/heads/", ""))
+        elif ref.startswith("refs/tags/"):
+            remote_refs["tags"].append(ref.replace("refs/tags/", ""))
+
+    if git_model.revision != "HEAD":
+        remote_refs["default"] = git_model.revision
+    elif "master" in remote_refs["branches"]:
+        remote_refs["default"] = "master"
+    else:
+        remote_refs["default"] = "main"
+    log.info("Branches: %s", remote_refs["branches"])
+    log.info("Tags: %s", remote_refs["tags"])
+    log.info("Default branch: %s", remote_refs["default"])
+    return remote_refs
