@@ -144,9 +144,9 @@ def get_revisions(
         if "^" in ref:
             continue
         if ref.startswith("refs/heads/"):
-            remote_refs["branches"].append(ref.replace("refs/heads/", ""))
+            remote_refs["branches"].append(ref[len("refs/heads/") :])
         elif ref.startswith("refs/tags/"):
-            remote_refs["tags"].append(ref.replace("refs/tags/", ""))
+            remote_refs["tags"].append(ref[len("refs/tags/") :])
 
     if git_model.revision != "HEAD":
         remote_refs["default"] = git_model.revision
