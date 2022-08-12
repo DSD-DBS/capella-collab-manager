@@ -96,7 +96,3 @@ export interface CreateGitModel extends BasicGitModel {
     password: string;
   };
 }
-
-function isAnCreateGitModel(obj: any): obj is CreateGitModel {
-  return 'model' in obj && 'name' in obj && 'credentials' in obj;
-}
