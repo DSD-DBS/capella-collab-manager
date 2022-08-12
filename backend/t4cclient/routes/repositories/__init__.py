@@ -77,9 +77,7 @@ def get_repositories(db: Session = Depends(get_db), token=Depends(JWTBearer())):
 def get_revisions(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
-    remote_refs: dict[str, list[str]] = {}
-    remote_refs["branches"] = []
-    remote_refs["tags"] = []
+    remote_refs: dict[str, list[str]] = {"branches": [], "tags": []}
 
     git_model = get_primary_model_of_repository(db, project)
     try:
