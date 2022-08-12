@@ -34,4 +34,4 @@ def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
             )
         else:
             raise e
-    return proc.stdout.decode("ascii").strip().splitlines()
+    return proc.stdout.decode().strip().splitlines()
