@@ -130,7 +130,7 @@ def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
                     "reason": "There are no credentials for the primary git-model of this repository.",
                 },
             )
-    return proc.stdout.decode("ascii").strip().split("\n")
+    return proc.stdout.decode("ascii").strip().splitlines()
 
 
 @router.get("/{project}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
