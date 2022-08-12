@@ -13,11 +13,14 @@ import {
 import { MatSelectChange } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Session } from 'src/app/schemes';
+import {
+  GitModelService,
+  Revisions,
+} from 'src/app/services/modelsources/git-model/git-model.service';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import {
   Repository,
   RepositoryService,
-  Revisions,
   Warnings,
 } from 'src/app/services/repository/repository.service';
 import {
@@ -92,6 +95,7 @@ export class RequestSessionComponent implements OnInit {
     public sessionService: SessionService,
     private repoUserService: RepositoryUserService,
     private repoService: RepositoryService,
+    private gitModelService: GitModelService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -181,7 +185,7 @@ export class RequestSessionComponent implements OnInit {
 
   getRevisions(repository_name: string) {
     this.showSmallSpinner = true;
-    this.repoService.getRevisions(repository_name).subscribe({
+    this.gitModelService.getRevisions(repository_name).subscribe({
       next: (revisions: Revisions) => {
         this.branches = revisions.branches;
         this.tags = revisions.tags;

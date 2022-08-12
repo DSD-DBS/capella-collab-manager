@@ -73,6 +73,15 @@ export class GitModelService {
       { primary: true }
     );
   }
+
+  getRevisions(project_name: string) {
+    return this.http.get<Revisions>(
+      environment.backend_url +
+        '/projects/' +
+        project_name +
+        '/extensions/modelsources/git/primary/revisions'
+    );
+  }
 }
 
 export interface GitModel extends BasicGitModel {
@@ -95,4 +104,10 @@ export interface CreateGitModel extends BasicGitModel {
     username: string;
     password: string;
   };
+}
+
+export interface Revisions {
+  branches: Array<string>;
+  tags: Array<string>;
+  default: string;
 }
