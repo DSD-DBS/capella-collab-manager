@@ -1,5 +1,9 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 import typing as t
 
+from fastapi import HTTPException
 from h11 import Data
 from slugify import slugify
 from sqlalchemy import insert
@@ -31,14 +35,22 @@ def get_slug(db: Session, project_slug: str, id: int) -> DB_CapellaModel:
     )
 
 
-def create(db: Session, project_slug, new_model: NewModel) -> DB_CapellaModel:
+def create(db: Session, project_slug: str, new_model: NewModel) -> DB_CapellaModel:
     project = (
         db.query(DatabaseProject).filter(DatabaseProject.slug == project_slug).first()
     )
+    if not project:
+        raise HTTPException(404, "Project not found.")
     tool = db.query(Tool).filter(Tool.id == new_model.tool_id).first()
     version = db.query(Version).filter(Version.id == new_model.version_id).first()
     model_type = db.query(Type).filter(Type.id == new_model.type_id).first()
-    assert version.tool == tool and model_type.tool == tool
+    if not tool:
+        raise HTTPException(404, "Tool not found.")
+    if not version or version.tool_id != tool.id:
+        raise HTTPException(404, f"Version not found for tool {tool.name}.")
+    if not model_type or model_type.tool_id != tool.id:
+        raise HTTPException(404, f"Type not found for tool {tool.name}.")
+
     model = DB_CapellaModel(
         name=new_model.name,
         description=new_model.description,

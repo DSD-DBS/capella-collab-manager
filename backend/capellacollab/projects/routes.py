@@ -99,16 +99,11 @@ def get_repository_by_name(
 
 @router.get("/details/", response_model=Project)
 def get(
-    slug: t.Optional[str] = None,
-    id: t.Optional[int] = None,
+    slug: str,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    assert (slug and not id) or (id and not slug)
-    if slug:
-        project = crud.get_slug(db, slug)
-    elif id:
-        project = crud.get_id(db, id)
+    project = crud.get_slug(db, slug)
     verify_project_role(project, token=token, db=db)
     return convert_project(project)
 

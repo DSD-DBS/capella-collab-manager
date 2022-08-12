@@ -4,6 +4,8 @@
 # Standard library:
 import typing as t
 
+from fastapi import HTTPException
+
 # 3rd party:
 from h11 import Data
 from slugify import slugify
@@ -45,7 +47,8 @@ def delete_project(db: Session, name: str) -> None:
 
 def get_slug(db: Session, slug: str) -> DatabaseProject:
     project = db.query(DatabaseProject).filter(DatabaseProject.slug == slug).first()
-    assert project is not None
+    if not project:
+        raise HTTPException(404, "Project not found.")
     return project
 
 

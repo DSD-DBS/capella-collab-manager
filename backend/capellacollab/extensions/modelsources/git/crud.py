@@ -7,10 +7,10 @@ import typing as t
 # 3rd party:
 from sqlalchemy.orm import Session
 
-# 1st party:
-from capellacollab.extensions.modelsources.git.models import DB_GitModel, PostGitModel
 import capellacollab.models.crud as models_crud
 import capellacollab.projects.crud as projects_crud
+
+# 1st party:
 from capellacollab.extensions.modelsources.git.models import (
     DB_GitModel,
     NewGitSource,
@@ -85,5 +85,4 @@ def create(db: Session, project_slug: str, model_slug: str, source: NewGitSource
     new_source = DB_GitModel.from_new_git_source(model.id, source)
     db.add(new_source)
     db.commit()
-    print(new_source)
     return new_source
