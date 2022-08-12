@@ -32,4 +32,6 @@ def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
                     "reason": "There was an error accessing the model. Please ask your project lead for more information. In most cases, the credentials need to be updated.",
                 },
             )
+        else:
+            raise e
     return proc.stdout.decode("ascii").strip().splitlines()
