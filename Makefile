@@ -28,6 +28,10 @@ capella: capella-download
 	docker build -t base capella-dockerimages/base
 	docker build -t capella/base capella-dockerimages/capella
 
+importer:
+	docker build -t t4c/client/importer -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/importer capella-dockerimages/importer
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/importer
+
 capella/remote: capella
 	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
@@ -72,7 +76,7 @@ capella-dockerimages: capella t4c-client readonly ease
 deploy: backend frontend capella/remote docs mock helm-deploy open rollout
 
 # Deploy with full T4C support:
-deploy-t4c: backend frontend capella t4c-client readonly ease docs mock helm-deploy open rollout
+deploy-t4c: backend frontend capella t4c-client importer readonly ease docs mock helm-deploy open rollout
 
 helm-deploy:
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster

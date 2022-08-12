@@ -76,6 +76,7 @@ modelsources:
 
     host: "{{ .Values.t4cServer.host }}"
     port: "{{ .Values.t4cServer.port }}"
+    cdoPort: "{{ .Values.t4cServer.cdoPort }}"
     licence: "{{ .Values.t4cServer.licenseKey }}"
 
 backups:

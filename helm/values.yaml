@@ -177,6 +177,7 @@ t4cServer:
   # IPv4 Address of the T4C Server
   host: localhost
   port: 2036
+  cdoPort: 12036
   licenseKey: tbd
 
 jenkins:
