@@ -11,13 +11,13 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { merge, Observable } from 'rxjs';
-import { ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/projects/service/project.service';
 import {
   Credentials,
   GitService,
   Instance,
 } from 'src/app/services/git/git.service';
+import { ModelService } from 'src/app/services/model/model.service';
 import { Source, SourceService } from 'src/app/services/source/source.service';
 
 @Component({

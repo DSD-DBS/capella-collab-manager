@@ -10,8 +10,8 @@ import {
   GitReferences,
   GitSettingsService,
 } from 'src/app/services/settings/git-settings.service';
-import { ProjectService } from '../../service/project.service';
 import { ToolService } from 'src/app/services/tools/tool.service';
+import { ProjectService } from '../../service/project.service';
 
 @Component({
   selector: 'app-create-model',

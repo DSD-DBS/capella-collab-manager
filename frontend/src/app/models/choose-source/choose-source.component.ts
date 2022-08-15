@@ -3,8 +3,8 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/projects/service/project.service';
+import { ModelService } from 'src/app/services/model/model.service';
 
 @Component({
   selector: 'app-choose-source',
