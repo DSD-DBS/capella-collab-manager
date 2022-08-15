@@ -130,7 +130,7 @@ def get_revisions(
         )
 
     url = git_model.path
-    log.debug("Fetch revisions of git-model, %s,  with url: %s", git_model.name, url)
+    log.debug("Fetch revisions of git-model '%s' with url '%s'", git_model.name, url)
 
     git_env = os.environ.copy()
     git_env["GIT_USERNAME"] = (
