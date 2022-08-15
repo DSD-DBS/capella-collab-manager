@@ -62,28 +62,6 @@ export class CreateCoworkingMethodComponent implements OnInit {
     });
   }
 
-  createDependency(
-    form: FormGroup,
-    sources: string[],
-    targets: string[]
-  ): void {
-    merge(
-      ...sources.map((field) => form.controls[field].valueChanges)
-    ).subscribe((_) => {
-      if (sources.map((field) => form.get(field)?.valid).every(Boolean)) {
-        targets.forEach((field) => form.controls[field].enable());
-      } else {
-        targets.forEach((field) => form.controls[field].disable());
-      }
-    });
-  }
-
-  chainDependencies(form: FormGroup, ...chain: string[][]) {
-    for (let i = 0; i < chain.length - 1; i++) {
-      this.createDependency(form, chain[i], chain[i + 1]);
-    }
-  }
-
   onRevisionFocus(): void {
     this.gitService
       .fetch('', this.gitForm.controls.credentials.value as Credentials)
