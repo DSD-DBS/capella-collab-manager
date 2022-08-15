@@ -2,13 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Component, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { merge, Observable } from 'rxjs';
 import { ProjectService } from 'src/app/projects/service/project.service';
@@ -26,31 +20,6 @@ import { Source, SourceService } from 'src/app/services/source/source.service';
   styleUrls: ['./create-coworking-method.component.css'],
 })
 export class CreateCoworkingMethodComponent implements OnInit {
-  validateCredentials = (
-    control: AbstractControl
-  ): Observable<ValidationErrors | null> => {
-    let credentials = control.value as Credentials;
-
-    return new Observable<ValidationErrors | null>((subscriber) => {
-      setTimeout(() => {
-        if ((control.value as Credentials) === credentials) {
-          this.gitService.fetch('', credentials).subscribe({
-            next: (instance) => {
-              this.filteredRevisions = instance;
-              subscriber.next(null);
-              subscriber.complete();
-            },
-            error: (e) => {
-              this.filteredRevisions = { branches: [], tags: [] };
-              subscriber.next({ credentials: { value: e.name } });
-              subscriber.complete();
-            },
-          });
-        }
-      }, 500);
-    });
-  };
-
   public gitForm = new FormGroup({
     credentials: new FormGroup({
       url: new FormControl('', Validators.required),
