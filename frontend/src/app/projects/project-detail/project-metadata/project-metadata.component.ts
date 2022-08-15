@@ -21,9 +21,11 @@ export class ProjectMetadataComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.projectService.getSlug(this.project_slug).subscribe((project) => {
-      this.projectService.project = project;
-    });
+    this.projectService
+      .getProjectBySlug(this.project_slug)
+      .subscribe((project) => {
+        this.projectService.project = project;
+      });
   }
 
   updateDescriptionForm = new FormControl(

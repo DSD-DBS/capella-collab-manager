@@ -63,7 +63,7 @@ export class CreateModelComponent implements OnInit {
     if (this.form.valid && this.projectService.project?.slug) {
       let new_model = this.form.value as NewModel;
       this.modelService
-        .createNew(this.projectService.project?.slug, new_model)
+        .createNewModel(this.projectService.project?.slug, new_model)
         .subscribe((result) => {
           this.router.navigate([
             '/choose-source',

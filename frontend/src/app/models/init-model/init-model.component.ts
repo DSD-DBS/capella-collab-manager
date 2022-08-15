@@ -48,7 +48,7 @@ export class InitModelComponent implements OnInit {
       this.projectService.project
     ) {
       this.modelService
-        .setToolDetails(
+        .setToolDetailsForModel(
           this.projectService.project.slug,
           this.modelService.model.slug,
           this.form.value.version,

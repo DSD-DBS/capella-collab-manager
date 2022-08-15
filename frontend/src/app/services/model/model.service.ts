@@ -68,7 +68,7 @@ export class ModelService {
           subscriber.next(this.model);
           subscriber.complete();
         } else {
-          this.getSlug(model_slug, project.slug).subscribe((model) => {
+          this.getModelBySlug(model_slug, project.slug).subscribe((model) => {
             subscriber.next(model);
             subscriber.complete();
           });
@@ -110,12 +110,7 @@ export class ModelService {
     });
   }
 
-  getId(id: number): Observable<Model> {
-    let url = this.base_url;
-    return this.http.get<Model>(url.toString(), { params: { id } });
-  }
-
-  getSlug(slug: string, project_slug: string): Observable<Model> {
+  getModelBySlug(slug: string, project_slug: string): Observable<Model> {
     let url = new URL(`${project_slug}/details/`, this.base_url);
     return new Observable<Model>((subscriber) => {
       this.http
@@ -128,22 +123,17 @@ export class ModelService {
     });
   }
 
-  createNew(project_slug: string, model: NewModel): Observable<Model> {
+  createNewModel(project_slug: string, model: NewModel): Observable<Model> {
     let url = new URL(project_slug + '/create-new/', this.base_url);
-    return this.createGeneric(url, model);
+    return this.createModelGeneric(url, model);
   }
 
-  createEmpty(project_slug: string, model: EmptyModel): Observable<Model> {
+  createEmptyModel(project_slug: string, model: EmptyModel): Observable<Model> {
     let url = new URL(project_slug + '/create-empty/', this.base_url);
-    return this.createGeneric(url, model);
+    return this.createModelGeneric(url, model);
   }
 
-  addGitSource(project_slug: string, model: GitModel): Observable<Model> {
-    let url = new URL(project_slug + '/add-git-source/', this.base_url);
-    return this.createGeneric(url, model);
-  }
-
-  setToolDetails(
+  setToolDetailsForModel(
     project_slug: string,
     model_slug: string,
     version_id: number,
@@ -164,7 +154,10 @@ export class ModelService {
     });
   }
 
-  createGeneric<T extends NewModel>(url: URL, new_model: T): Observable<Model> {
+  createModelGeneric<T extends NewModel>(
+    url: URL,
+    new_model: T
+  ): Observable<Model> {
     return new Observable<Model>((subscriber) => {
       this.http.post<Model>(url.toString(), new_model).subscribe((model) => {
         this.model = model;

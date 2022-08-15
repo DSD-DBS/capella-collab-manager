@@ -22,7 +22,7 @@ export class ProjectService {
   init(project_slug: string): Observable<Project> {
     if (!this.project || !(this.project.slug === project_slug)) {
       this.project = undefined;
-      return this.getSlug(project_slug);
+      return this.getProjectBySlug(project_slug);
     }
     return of(this.project);
   }
@@ -32,7 +32,7 @@ export class ProjectService {
     return this.list();
   }
 
-  getSlug(slug: string): Observable<Project> {
+  getProjectBySlug(slug: string): Observable<Project> {
     let url = new URL('details/', this.base_url);
     return new Observable<Project>((subscriber) => {
       this.http
@@ -63,7 +63,6 @@ export class ProjectService {
 
   updateDescription(name: string, description: string): Observable<Project> {
     let url = new URL(name, this.base_url);
-    console.log(description);
     return new Observable<Project>((subscriber) => {
       this.http
         .patch<Project>(url.toString(), { description })
