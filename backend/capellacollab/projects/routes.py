@@ -72,7 +72,7 @@ def update_project(
     project: str,
     body: PatchProject,
     database: Session = Depends(get_db),
-    token: JWTBearer = Depends(JWTBearer()),
+    token=Depends(JWTBearer()),
 ):
 
     log.info(
@@ -90,9 +90,7 @@ def update_project(
 
 
 @router.get("/{project}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
-def get_repository_by_name(
-    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
-):
+def get_repository_by_name(project: str, db: Session = Depends(get_db)):
     return convert_project(crud.get_project(db, project))
 
 
@@ -100,9 +98,8 @@ def get_repository_by_name(
 def get(
     slug: str,
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ):
-    project = crud.get_slug(db, slug)
+    project = crud.get_project_by_slug(db, slug)
     return convert_project(project)
 
 
@@ -110,7 +107,7 @@ def get(
 def create_repository(
     body: PostRepositoryRequest,
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
+    token: JWTBearer = Depends(JWTBearer()),
 ):
     verify_admin(token, db)
     return convert_project(crud.create_project(db, body.name))

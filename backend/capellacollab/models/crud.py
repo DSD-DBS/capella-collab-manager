@@ -16,7 +16,7 @@ from capellacollab.projects.models import DatabaseProject
 from capellacollab.tools.models import Tool, Type, Version
 
 
-def get_all(db: Session, project_slug: str) -> t.List[Model]:
+def get_all_models(db: Session, project_slug: str) -> t.List[Model]:
     project = (
         db.query(DatabaseProject).filter(DatabaseProject.slug == project_slug).first()
     )
@@ -25,12 +25,12 @@ def get_all(db: Session, project_slug: str) -> t.List[Model]:
     return db.query(Model).filter(Model.project_id == project.id).all()
 
 
-def get_id(db: Session, id_: int) -> Model:
+def get_model_by_id(db: Session, id_: int) -> Model:
     return db.query(Model).filter(Model.id == id_).first()
 
 
-def get_slug(db: Session, project_slug: str, slug: str) -> Model:
-    project = projects_crud.get_slug(db, project_slug)
+def get_model_by_slug(db: Session, project_slug: str, slug: str) -> Model:
+    project = projects_crud.get_project_by_slug(db, project_slug)
     model = (
         db.query(Model)
         .filter(
@@ -44,7 +44,7 @@ def get_slug(db: Session, project_slug: str, slug: str) -> Model:
     return model
 
 
-def create_new(db: Session, project_slug: str, new_model: NewModel) -> Model:
+def create_new_model(db: Session, project_slug: str, new_model: NewModel) -> Model:
     project = (
         db.query(DatabaseProject).filter(DatabaseProject.slug == project_slug).first()
     )
@@ -57,7 +57,7 @@ def create_new(db: Session, project_slug: str, new_model: NewModel) -> Model:
     return model
 
 
-def create_empty(db: Session, project_slug: str, new_model: EmptyModel) -> Model:
+def create_empty_model(db: Session, project_slug: str, new_model: EmptyModel) -> Model:
     project = (
         db.query(DatabaseProject).filter(DatabaseProject.slug == project_slug).first()
     )
@@ -76,7 +76,7 @@ def create_empty(db: Session, project_slug: str, new_model: EmptyModel) -> Model
     return model
 
 
-def set_tool_details(db: Session, model: Model, tool_details: ToolDetails):
+def set_tool_details_for_model(db: Session, model: Model, tool_details: ToolDetails):
     version = db.query(Version).filter(Version.id == tool_details.version_id).first()
     model_type = db.query(Type).filter(Type.id == tool_details.type_id).first()
     if not version:
