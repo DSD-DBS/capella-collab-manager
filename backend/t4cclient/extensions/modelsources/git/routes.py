@@ -133,12 +133,8 @@ def get_revisions(
     log.debug("Fetch revisions of git-model '%s' with url '%s'", git_model.name, url)
 
     git_env = os.environ.copy()
-    git_env["GIT_USERNAME"] = (
-        git_model.username if git_model.username is not None else ""
-    )
-    git_env["GIT_PASSWORD"] = (
-        git_model.password if git_model.password is not None else ""
-    )
+    git_env["GIT_USERNAME"] = git_model.username or ""
+    git_env["GIT_PASSWORD"] = git_model.password or ""
     for ref in ls_remote(url, git_env):
         (_, ref) = ref.split("\t")
         if "^" in ref:
