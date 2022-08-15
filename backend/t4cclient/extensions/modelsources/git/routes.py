@@ -150,7 +150,7 @@ def get_revisions(
 
     remote_refs["default"] = git_model.revision
 
-    log.info("Branches: %s", remote_refs["branches"])
-    log.info("Tags: %s", remote_refs["tags"])
-    log.info("Default branch: %s", remote_refs["default"])
+    log.debug("Determined branches: %s", remote_refs["branches"])
+    log.debug("Determined tags: %s", remote_refs["tags"])
+    log.debug("Determined default branch: %s", remote_refs["default"])
     return remote_refs
