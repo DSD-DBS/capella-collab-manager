@@ -49,7 +49,7 @@ export class CreateModelComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.toolService.get_tools().subscribe((tools) => {});
+    this.toolService.get_tools().subscribe();
     this.route.params.subscribe((params) => {
       this.modelService.initAll(params.project).subscribe((models) => {
         this.form.controls.name.addValidators(
@@ -57,7 +57,6 @@ export class CreateModelComponent implements OnInit {
         );
       });
     });
-    this.form.controls.name.valueChanges.subscribe((_) => {});
   }
 
   onSubmit(): void {
