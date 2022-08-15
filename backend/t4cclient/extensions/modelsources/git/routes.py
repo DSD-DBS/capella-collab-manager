@@ -148,12 +148,8 @@ def get_revisions(
         elif ref.startswith("refs/tags/"):
             remote_refs["tags"].append(ref[len("refs/tags/") :])
 
-    if git_model.revision != "HEAD":
-        remote_refs["default"] = git_model.revision
-    elif "master" in remote_refs["branches"]:
-        remote_refs["default"] = "master"
-    else:
-        remote_refs["default"] = "main"
+    remote_refs["default"] = git_model.revision
+
     log.info("Branches: %s", remote_refs["branches"])
     log.info("Tags: %s", remote_refs["tags"])
     log.info("Default branch: %s", remote_refs["default"])
