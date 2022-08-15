@@ -3,20 +3,12 @@
 
 # Standard library:
 import importlib
-import json
 import logging
 import typing as t
 from importlib import metadata
 
-# 3rd party:
-from fastapi import APIRouter, Depends
-from requests import Session
-
 # 1st party:
 import capellacollab.projects.crud as crud
-
-# local:
-from .users import routes as router_users
 from capellacollab.core.authentication.database import (
     is_admin,
     verify_admin,
@@ -39,6 +31,10 @@ from capellacollab.projects.users.models import (
     RepositoryUserRole,
 )
 from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
+
+# 3rd party:
+from fastapi import APIRouter, Depends
+from requests import Session
 
 log = logging.getLogger(__name__)
 router = APIRouter()

@@ -5,11 +5,6 @@
 import base64
 import typing as t
 
-# 3rd party:
-from fastapi import APIRouter, Depends
-from git.cmd import Git
-from requests import Session
-
 # 1st party:
 import capellacollab.models.crud as models_crud
 import capellacollab.projects.crud as projects_crud
@@ -27,10 +22,14 @@ from capellacollab.extensions.modelsources.git.models import (
     PatchRepositoryGitModel,
     PostGitModel,
     RepositoryGitInnerModel,
-    GetRevisionsModel,
     ResponseGitSource,
 )
 from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
+
+# 3rd party:
+from fastapi import APIRouter, Depends
+from git.cmd import Git
+from requests import Session
 
 # local:
 from . import crud

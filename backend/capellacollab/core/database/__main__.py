@@ -6,20 +6,20 @@ import logging
 import os
 import pathlib
 
+# 1st party:
+import capellacollab.projects.crud as projects
+import capellacollab.tools.crud as tools
+
 # 3rd party:
 from alembic import command
 from alembic.config import Config
 from alembic.migration import MigrationContext
-from sqlalchemy import create_engine, inspect
-from sqlalchemy.orm import sessionmaker
-
-# 1st party:
-import capellacollab.projects.crud as projects
-import capellacollab.tools.crud as tools
 from capellacollab.config import config
 from capellacollab.core.database import Base, users
 from capellacollab.projects.users.models import Role
 from capellacollab.tools.models import Tool
+from sqlalchemy import create_engine, inspect
+from sqlalchemy.orm import sessionmaker
 
 DATABASE_URL = config["database"]["url"]
 engine = create_engine(DATABASE_URL, connect_args={"connect_timeout": 5})

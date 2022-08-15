@@ -4,9 +4,6 @@
 # Standard library:
 import typing as t
 
-# 3rd party:
-from sqlalchemy.orm import Session
-
 import capellacollab.models.crud as models_crud
 
 # 1st party:
@@ -15,6 +12,9 @@ from capellacollab.extensions.modelsources.git.models import (
     NewGitSource,
     PostGitModel,
 )
+
+# 3rd party:
+from sqlalchemy.orm import Session
 
 
 def get_gitmodels_of_capellamodels(db: Session, model_id: int) -> t.List[DB_GitModel]:

@@ -1,14 +1,11 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import typing as t
-
+from capellacollab.core.database import get_db
 from fastapi import APIRouter, Depends
 from requests import Session
 
 from . import crud
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.database import get_db
 
 router = APIRouter()
 

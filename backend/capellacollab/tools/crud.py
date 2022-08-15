@@ -3,9 +3,8 @@
 
 import typing as t
 
-from sqlalchemy.orm import Session
-
 from capellacollab.tools.models import Tool, Type, Version
+from sqlalchemy.orm import Session
 
 ############
 ### Tool ###

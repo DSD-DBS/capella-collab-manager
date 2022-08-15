@@ -4,16 +4,15 @@
 # Standard library:
 import typing as t
 
-from fastapi import HTTPException
-
-# 3rd party:
-from sqlalchemy.orm import Session
-
 # 1st party:
 import capellacollab.projects.crud as projects_crud
 from capellacollab.models.models import EmptyModel, Model, NewModel, ToolDetails
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.tools.models import Tool, Type, Version
+from fastapi import HTTPException
+
+# 3rd party:
+from sqlalchemy.orm import Session
 
 
 def get_all_models(db: Session, project_slug: str) -> t.List[Model]:

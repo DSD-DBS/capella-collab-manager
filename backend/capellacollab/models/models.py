@@ -5,16 +5,15 @@
 import enum
 import typing as t
 
+# 1st party:
+from capellacollab.core.database import Base
+from capellacollab.tools.models import Tool, Type, Version
+
 # 3rd party:
 from pydantic import BaseModel
 from slugify import slugify
 from sqlalchemy import Column, Enum, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import relationship
-
-# 1st party:
-import capellacollab.projects.users.models
-from capellacollab.core.database import Base
-from capellacollab.tools.models import Tool, Type, Version
 
 
 class EditingMode(enum.Enum):

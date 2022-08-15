@@ -3,15 +3,12 @@
 
 import typing as t
 
+from capellacollab.projects.models import DatabaseProject
+from capellacollab.tools.models import Tool, Type, Version
 from fastapi import HTTPException
-from h11 import Data
-from slugify import slugify
-from sqlalchemy import insert
 from sqlalchemy.orm import Session
 
 from .models import CapellaModelType, DB_CapellaModel, EditingMode, NewModel
-from capellacollab.projects.models import DatabaseProject
-from capellacollab.tools.models import Tool, Type, Version
 
 
 def get_all(db: Session, project_slug: str) -> t.List[DB_CapellaModel]:

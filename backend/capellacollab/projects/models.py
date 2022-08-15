@@ -7,17 +7,15 @@ from __future__ import annotations
 import enum
 import typing as t
 
-# 3rd party:
-from pydantic import BaseModel
-from sqlalchemy import Column, Enum, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
-
-import capellacollab.models.models
-
 # 1st party:
 # Import required for sqlalchemy
 import capellacollab.projects.users.models
 from capellacollab.core.database import Base
+
+# 3rd party:
+from pydantic import BaseModel
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 
 
 class Warning(enum.Enum):

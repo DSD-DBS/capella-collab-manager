@@ -3,7 +3,9 @@
 
 # Standard library:
 import typing as t
-from urllib.parse import uses_netloc
+
+# 1st party:
+from capellacollab.core.database import Base
 
 # 3rd party:
 from pydantic import BaseModel
@@ -11,9 +13,6 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import Boolean
-
-# 1st party:
-from capellacollab.core.database import Base
 
 
 class RepositoryGitInnerModel(BaseModel):
