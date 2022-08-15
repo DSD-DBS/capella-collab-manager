@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import { ProjectService } from 'src/app/projects/service/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-create-project',

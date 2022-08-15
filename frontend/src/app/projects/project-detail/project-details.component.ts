@@ -4,7 +4,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
-import { ProjectService } from '../service/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-project-details',

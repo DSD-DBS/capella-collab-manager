@@ -4,7 +4,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ToastService } from 'src/app/toast/toast.service';
-import { ProjectService } from '../../service/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-project-metadata',

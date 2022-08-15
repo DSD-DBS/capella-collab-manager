@@ -7,7 +7,7 @@ import {
   Project,
   ProjectService,
   UserMetadata,
-} from '../service/project.service';
+} from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-project-overview',

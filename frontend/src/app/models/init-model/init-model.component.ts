@@ -4,7 +4,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProjectService } from 'src/app/projects/service/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 import { ModelService } from 'src/app/services/model/model.service';
 import { SourceService } from 'src/app/services/source/source.service';
 import { Tool, ToolService } from 'src/app/services/tools/tool.service';

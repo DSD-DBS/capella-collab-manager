@@ -3,7 +3,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ProjectService } from 'src/app/projects/service/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 import { ModelService } from 'src/app/services/model/model.service';
 
 @Component({

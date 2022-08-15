@@ -4,7 +4,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ProjectService } from 'src/app/projects/service/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 import { environment } from 'src/environments/environment';
 
 export interface NewModel {

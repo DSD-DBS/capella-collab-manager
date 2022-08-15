@@ -12,7 +12,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import slugify from 'slugify';
-import { ProjectService } from 'src/app/projects/service/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 import { ModelService, NewModel } from 'src/app/services/model/model.service';
 import { ToolService } from 'src/app/services/tools/tool.service';
 

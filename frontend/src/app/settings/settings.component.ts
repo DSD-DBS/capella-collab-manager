@@ -4,7 +4,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IntegrationService } from '../integrations/integration.service';
 import { NavBarService } from '../navbar/service/nav-bar.service';
-import { ProjectService } from '../projects/service/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 import { UserService } from '../services/user/user.service';
 
 @Component({
