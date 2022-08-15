@@ -4,19 +4,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import { EmptyModel, ModelService } from 'src/app/services/model/model.service';
 import {
-  CreateGitModel,
-  GitModelService,
-} from 'src/app/services/modelsources/git-model/git-model.service';
-import {
   GitReferences,
-  GitSettings,
   GitSettingsService,
 } from 'src/app/services/settings/git-settings.service';
-import { NewModel } from 'src/app/services/model/model.service';
 import { ProjectService } from '../../service/project.service';
 import { ToolService } from 'src/app/services/tools/tool.service';
 

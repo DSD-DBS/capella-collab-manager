@@ -4,7 +4,6 @@
 import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
-  AsyncValidatorFn,
   FormControl,
   FormGroup,
   ValidationErrors,
@@ -12,7 +11,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { merge, Observable } from 'rxjs';
-import { GitModel, ModelService } from 'src/app/services/model/model.service';
+import { ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/projects/service/project.service';
 import {
   Credentials,
