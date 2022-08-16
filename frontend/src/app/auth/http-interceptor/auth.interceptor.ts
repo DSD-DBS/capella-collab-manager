@@ -1,23 +1,22 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Injectable } from '@angular/core';
 import {
-  HttpRequest,
-  HttpHandler,
   HttpEvent,
+  HttpHandler,
   HttpInterceptor,
-  HttpHeaders,
+  HttpRequest,
 } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { LocalStorageService } from '../local-storage/local-storage.service';
-import { catchError, first, map, tap, switchMap } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { Observable, throwError } from 'rxjs';
+import { catchError, first, map, switchMap } from 'rxjs/operators';
 import {
   AuthService,
   RefreshTokenResponse,
 } from 'src/app/services/auth/auth.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LocalStorageService } from '../local-storage/local-storage.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {

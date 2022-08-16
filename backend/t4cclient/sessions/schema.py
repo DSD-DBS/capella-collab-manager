@@ -23,6 +23,11 @@ class WorkspaceType(enum.Enum):
     READONLY = "readonly"
 
 
+class DepthType(enum.Enum):
+    LatestCommit = "LatestCommit"
+    CompleteHistory = "CompleteHistory"
+
+
 class GetSessionsResponse(BaseModel):
     id: str
     type: WorkspaceType
@@ -58,6 +63,8 @@ class FileTree(BaseModel):
 
 class PostSessionRequest(BaseModel):
     type: WorkspaceType
+    branch: str
+    depth: DepthType
     repository: t.Optional[str]
 
     class Config:
