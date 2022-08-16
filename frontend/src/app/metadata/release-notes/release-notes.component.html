@@ -1,0 +1,18 @@
+<!--
+ ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="wrapper">
+  <h1 mat-dialog-title>Release Notes</h1>
+  <div class="body" mat-dialog-content>
+    <div *ngFor="let release of releaseNotes">
+      <h2>{{ release.name }}</h2>
+      <markdown [data]="release.body"> </markdown>
+      <hr class="dashed" />
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button mat-dialog-close cdkFocusInitial>Close</button>
+  </div>
+</div>
