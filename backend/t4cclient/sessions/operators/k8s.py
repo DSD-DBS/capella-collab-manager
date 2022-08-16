@@ -128,6 +128,7 @@ class KubernetesOperator(Operator):
         entrypoint: str,
         git_username: str,
         git_password: str,
+        git_depth: int,
     ) -> t.Dict[str, t.Any]:
         id = self._generate_id()
 
@@ -140,6 +141,7 @@ class KubernetesOperator(Operator):
                 "GIT_URL": git_url,
                 "GIT_REVISION": git_revision,
                 "GIT_ENTRYPOINT": entrypoint,
+                "GIT_DEPTH": git_depth,
                 "RMT_PASSWORD": password,
             },
         )

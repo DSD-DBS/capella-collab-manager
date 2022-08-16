@@ -30,6 +30,7 @@ from t4cclient.sessions.models import DatabaseSession
 from t4cclient.sessions.operators import OPERATOR
 from t4cclient.sessions.schema import (
     AdvancedSessionResponse,
+    DepthType,
     GetSessionsResponse,
     GetSessionUsageResponse,
     GuacamoleAuthentication,
@@ -68,7 +69,7 @@ def get_current_sessions(db: Session = Depends(get_db), token=Depends(JWTBearer(
                     ]
                 ]
             )
-        )
+        ),
     )
 
 
@@ -78,7 +79,6 @@ def get_current_sessions(db: Session = Depends(get_db), token=Depends(JWTBearer(
 def request_session(
     body: PostSessionRequest, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
-
     rdp_password = generate_password(length=64)
 
     owner = get_username(token)
@@ -139,13 +139,28 @@ def request_session(
                     "reason": "The Model has no connected Git Model. Please contact a project manager or admininistrator",
                 },
             )
+
+        revision = body.branch or git_model.revision
+        if body.depth == DepthType.LatestCommit:
+            depth = 1
+        elif body.depth == DepthType.CompleteHistory:
+            depth = 0
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "err_code": "wrong_depth_format",
+                    "reason": f"Depth type {depth} is not allowed.",
+                },
+            )
         session = OPERATOR.start_readonly_session(
             password=rdp_password,
             git_url=git_model.path,
-            git_revision=git_model.revision,
+            git_revision=revision,
             entrypoint=git_model.entrypoint,
             git_username=git_model.username,
             git_password=git_model.password,
+            git_depth=depth,
         )
 
     guacamole_identifier = guacamole.create_connection(
@@ -159,13 +174,17 @@ def request_session(
         guacamole_token, guacamole_username, guacamole_identifier
     )
 
+    body_dict = body.dict()
+    del body_dict["branch"]
+    del body_dict["depth"]
+
     database_model = DatabaseSession(
         guacamole_username=guacamole_username,
         guacamole_password=guacamole_password,
         rdp_password=rdp_password,
         guacamole_connection_id=guacamole_identifier,
         owner_name=owner,
-        **body.dict(),
+        **body_dict,
         **session,
     )
     response = database.create_session(db=db, session=database_model).__dict__

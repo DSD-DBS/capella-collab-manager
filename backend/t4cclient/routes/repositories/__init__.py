@@ -1,12 +1,13 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import collections.abc as cabc
 import importlib
 import logging
 import typing as t
 from importlib import metadata
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
 
 import t4cclient.core.services.repositories as repository_service
@@ -21,6 +22,7 @@ from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db, repositories
 from t4cclient.core.database import users as database_users
 from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
+from t4cclient.extensions.modelsources.git.crud import get_primary_model_of_repository
 from t4cclient.extensions.modelsources.t4c import connection
 from t4cclient.schemas.repositories import (
     GetRepositoryUserResponse,
