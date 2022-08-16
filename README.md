@@ -69,6 +69,11 @@ Please wait until all services are in the "Running" state.
 
 If all goes well, you should find Capella-collab-manager running on [http://localhost:8080/](http://localhost:8080/).
 
+If you want to see the individual services in the Kubernetes dashboard, you can run the following command:
+
+```zsh
+make dashboard
+```
 
 If something goes wrong, please open an issue on Github.
 
