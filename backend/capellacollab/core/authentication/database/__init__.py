@@ -8,8 +8,9 @@ import capellacollab.projects.users.crud as repository_users
 import sqlalchemy.orm.session
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.database import get_db, repositories, repository_users
+from capellacollab.core.database import get_db
 from capellacollab.core.database.users import get_user
+from capellacollab.projects.crud import get_project
 from capellacollab.projects.users.models import (
     RepositoryUserPermission,
     RepositoryUserRole,
@@ -115,7 +116,7 @@ def check_username_not_in_repository(
 
 
 def check_repository_exists(repository: str, db: sqlalchemy.orm.session.Session):
-    user = repositories.get_repository(db, repository)
+    user = get_project(db, repository)
     if not user:
         raise HTTPException(
             status_code=409,
@@ -124,7 +125,7 @@ def check_repository_exists(repository: str, db: sqlalchemy.orm.session.Session)
 
 
 def verify_staged(repository: str, db: sqlalchemy.orm.session.Session):
-    repo = repositories.get_repository(db, repository)
+    repo = get_project(db, repository)
     if repo.staged_by is None or repo.staged_by == "":
         raise HTTPException(
             status_code=409,
@@ -135,7 +136,7 @@ def verify_staged(repository: str, db: sqlalchemy.orm.session.Session):
 def verify_not_staged_and_deleted(
     repository: str, username: str, db: sqlalchemy.orm.session.Session
 ):
-    if username == repositories.get_repository(db, repository).staged_by:
+    if username == get_project(db, repository).staged_by:
         raise HTTPException(
             status_code=409,
             detail="A single administrator can not stage and delete a repository at the same time.",
