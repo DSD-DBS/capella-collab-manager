@@ -33,6 +33,13 @@ spec:
                 name: {{ .Release.Name }}-nginx-clusterip
                 port:
                   number: 80
+          - path: /docs
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-docs
+                port:
+                  number: 80
           - path: /guacamole
             pathType: Prefix
             backend:

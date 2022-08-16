@@ -258,7 +258,39 @@ We additionally recommend that you set up your editor / IDE as follows.
 
 - Set up the editor to run [prettier](https://prettier.io/) when saving.
 
-## Code style for the Python backend
+## User documentation
+
+Requirements:
+
+- `python` + `pip`
+
+Run the following steps:
+
+1. Navigate to the `docs/user` directory of your cloned repository.
+2. We recommend that you develop inside of a virtual environment. To set it up,
+   run the following commands:
+
+   ```zsh
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install -U pip setuptools
+   ```
+
+3. Install MkDocs Material:
+
+   ```zsh
+   pip install mkdocs-material
+   ```
+
+4. Serve the docs:
+
+   ```zsh
+   mkdocs serve
+   ```
+
+## Code style
+
+### Backend
 
 We base our code style on a modified version of the [Google style guide for
 Python code](https://google.github.io/styleguide/pyguide.html). The key

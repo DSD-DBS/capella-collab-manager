@@ -2,11 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 {{- if eq .Values.cluster.kind "OpenShift" }}
-{{ $frontend := dict "path" "/" "service" "frontend" }}
-{{ $backend := dict "path" "/api/v1" "service" "nginx-clusterip" }}
-{{ $guacamole := dict "path" "/guacamole" "service" "guacamole-guacamole" }}
-{{ $guacamole := dict "path" "/prometheus" "service" "prometheus-nginx" }}
-{{ $routes := list $frontend $backend $guacamole }}
+{{ $frontend := dict "path" "/" "service" "frontend" "targetPort" "http" }}
+{{ $backend := dict "path" "/api/v1" "service" "nginx-clusterip" "targetPort" "http" }}
+{{ $docs := dict "path" "/docs" "service" "docs" "targetPort" "http" }}
+{{ $guacamole := dict "path" "/guacamole" "service" "guacamole-guacamole" "targetPort" "http" }}
+{{ $prometheus := dict "path" "/prometheus" "service" "prometheus-nginx" "targetPort" "promui" }}
+{{ $routes := list $frontend $backend $docs $guacamole $prometheus }}
 {{ range $route := $routes }}
 kind: Route
 apiVersion: route.openshift.io/v1
@@ -19,7 +20,7 @@ spec:
     kind: Service
     name: {{ $.Release.Name }}-{{ get $route "service" }}
   port:
-    targetPort: http
+    targetPort: {{ get $route "targetPort" }}
   tls:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect

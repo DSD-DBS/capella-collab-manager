@@ -91,7 +91,7 @@ make delete-cluster
 #### Starting a session
 
 Once the cluster is installed and all services are running (`kubectl get pods`), you can
-get started. Follow our [Getting started guide](doc/getting_started.md) and be up and
+get started. Follow our [Getting started guide](docs/getting_started/getting_started.md) and be up and
 running in a few minutes.
 
 ### Deployment
@@ -131,7 +131,7 @@ For environments where TeamForCapella (commercial product of Obeo) is available 
 
 ## How it works
 
-![Capella Collab Manager architecture](doc/architecture.png)
+![Capella Collab Manager architecture](docs/architecture.png)
 
 The Capella Collaboration Manager consists of a couple of components:
 
