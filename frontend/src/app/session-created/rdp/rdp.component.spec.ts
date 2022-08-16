@@ -11,9 +11,8 @@ describe('RDPComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RDPComponent ]
-    })
-    .compileComponents();
+      declarations: [RDPComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

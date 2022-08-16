@@ -9,4 +9,10 @@ export const environment = {
   provider: 'PROVIDER',
   authentication: 'OAuth mock',
   usernameAttribute: 'sub',
+  integrations: {
+    modelsources: {
+      t4c: true,
+      git: true,
+    },
+  },
 };

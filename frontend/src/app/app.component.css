@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-.wrapper {
-  margin: 10px;
-  flex: 1;
-}
-
 .overall-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100%;
+}
+
+.wrapper {
+  min-height: 88vh;
+  margin: 1vh 1vw;
 }

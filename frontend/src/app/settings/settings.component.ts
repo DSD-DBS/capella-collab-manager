@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Component, OnInit } from '@angular/core';
-import { RepositoryService } from '../services/repository/repository.service';
+import { IntegrationService } from '../integrations/integration.service';
+import { NavBarService } from '../navbar/service/nav-bar.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 import { UserService } from '../services/user/user.service';
 
 @Component({
@@ -13,8 +15,12 @@ import { UserService } from '../services/user/user.service';
 export class SettingsComponent implements OnInit {
   constructor(
     public userService: UserService,
-    public repositoryService: RepositoryService
-  ) {}
+    public projectService: ProjectService,
+    private navbarService: NavBarService,
+    public integrations: IntegrationService
+  ) {
+    this.navbarService.title = 'Settings';
+  }
 
   ngOnInit(): void {
     this.userService
@@ -22,5 +28,7 @@ export class SettingsComponent implements OnInit {
       .subscribe((res) => {
         this.userService.user = res;
       });
+
+    console.log(this.integrations.t4c);
   }
 }

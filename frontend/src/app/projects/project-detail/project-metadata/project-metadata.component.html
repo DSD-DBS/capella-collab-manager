@@ -1,0 +1,28 @@
+<!--
+ ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="wrapper">
+  <h2 id="title">Metadata</h2>
+  <mat-card>
+    <form>
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>Description</mat-label>
+        <textarea
+          [formControl]="updateDescriptionForm"
+          matInput
+          rows="3"
+          [ngModel]="projectService.project?.description"
+          style="resize: none"
+          [placeholder]="
+            'This is the description of the project ' + project_slug
+          "
+        ></textarea>
+      </mat-form-field>
+    </form>
+    <button (click)="updateDescription()" mat-raised-button id="submit">
+      Submit
+    </button>
+  </mat-card>
+</div>

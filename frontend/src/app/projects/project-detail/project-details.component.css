@@ -1,0 +1,20 @@
+/*
+ * Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#title {
+  margin-left: 10px;
+}
+
+.flexbox {
+  justify-content: space-evenly;
+}
+
+.item {
+  margin: 0 auto;
+}
+
+.users {
+  margin-left: auto;
+}

@@ -2,8 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Component, OnInit } from '@angular/core';
-import { RepositoryService } from '../services/repository/repository.service';
-import { Repository } from 'src/app/schemes';
+import {
+  Project,
+  ProjectService,
+} from 'src/app/services/project/project.service';
+import { NavBarService } from '../navbar/service/nav-bar.service';
 import { SessionService } from '../services/session/session.service';
 
 @Component({
@@ -12,24 +15,27 @@ import { SessionService } from '../services/session/session.service';
   styleUrls: ['./workspace.component.css'],
 })
 export class WorkspaceComponent implements OnInit {
-  repositories: Array<Repository> = [];
+  repositories: Array<Project> = [];
   showSpinner = true;
 
   constructor(
     public sessionService: SessionService,
-    private repositoryService: RepositoryService
-  ) {}
+    private projectService: ProjectService,
+    private navbarService: NavBarService
+  ) {
+    this.navbarService.title = 'Workspaces';
+  }
 
   ngOnInit() {
     this.showSpinner = true;
-    this.repositoryService.getRepositories().subscribe(
-      (res: Array<Repository>) => {
+    this.projectService.list().subscribe({
+      next: (res) => {
         this.repositories = res;
         this.showSpinner = false;
       },
-      (err) => {
+      error: () => {
         this.showSpinner = false;
-      }
-    );
+      },
+    });
   }
 }

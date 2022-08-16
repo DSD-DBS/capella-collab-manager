@@ -1,0 +1,65 @@
+<!--
+ ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="wrapper">
+  <div class="title" *ngIf="instances.length">Existing instances</div>
+  <div class="instances" *ngIf="instances.length">
+    <mat-card *ngFor="let instance of instances">
+      <div class="mat-title">
+        <div class="instance-head">
+          {{ instance.type }}
+          <span class="mat-subtitle">{{ instance.name }}</span>
+        </div>
+        <div class="icon-container">
+          <a
+            mat-icon-button
+            [routerLink]="['instances/', instance.id.toString()]"
+          >
+            <mat-icon aria-label="Edit the source">settings</mat-icon>
+          </a>
+          <button mat-icon-button>
+            <mat-icon
+              aria-label="Delete the source"
+              (click)="deleteGitSettings(instance.id)"
+              >delete</mat-icon
+            >
+          </button>
+        </div>
+      </div>
+      <div class="content">
+        Instance base URL:
+        <a href="{{ instance.url }}">{{ instance.url }}</a>
+      </div>
+    </mat-card>
+  </div>
+  <br />
+  <div class="title">Add new integration</div>
+  <br />
+  <form [formGroup]="gitSettingsForm" id="add-instance-form">
+    Supported instances: <br />
+    <mat-form-field id="instance-url" appearance="fill">
+      <mat-label>Git Type</mat-label>
+      <mat-select matInput formControlName="type">
+        <mat-option value="General" selected>General Git (limited)</mat-option>
+        <mat-option value="GitLab" disabled>GitLab (unsupported)</mat-option>
+        <mat-option value="GitHub" disabled>GitHub (unsupported)</mat-option>
+        <mat-option value="AzureDevOps" disabled
+          >Azure DevOps (unsupported)</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+    <br />
+    <mat-form-field id="instance-url" appearance="fill">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+    <br />
+    <mat-form-field id="instance-url" appearance="fill">
+      <mat-label>Instance base URL</mat-label>
+      <input matInput formControlName="url" />
+    </mat-form-field>
+  </form>
+  <button mat-raised-button (click)="createGitSettings()">Create</button>
+</div>

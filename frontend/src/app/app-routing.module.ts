@@ -9,17 +9,50 @@ import { AuthRedirectComponent } from './auth/auth-redirect/auth-redirect.compon
 import { AuthComponent } from './auth/auth/auth.component';
 import { LogoutRedirectComponent } from './auth/logout/logout-redirect/logout-redirect.component';
 import { LogoutComponent } from './auth/logout/logout/logout.component';
-import { HomeComponent } from './home/home.component';
+import { MaintenanceComponent } from './maintenance/maintenance.component';
+import { ChooseInitComponent } from './models/choose-init/choose-init.component';
+import { ChooseSourceComponent } from './models/choose-source/choose-source.component';
+import { CreateCoworkingMethodComponent } from './models/create-coworking-method/create-coworking-method.component';
+import { CreateModelComponent } from './models/create-model/create-model.component';
+import { InitModelComponent } from './models/init-model/init-model.component';
+import { CreateProjectComponent } from './projects/create-project/create-project.component';
+import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
+import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
+import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
 import { SessionOverviewComponent } from './session-overview/session-overview.component';
-import { CreateRepositoryComponent } from './settings/admin-settings/create-repository/create-repository.component';
-import { RepositorySettingsComponent } from './settings/repository-manager-settings/repository-settings/repository-settings.component';
-import { SettingsComponent } from './settings/settings.component';
+import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
+import { DockerimageSettingsComponent } from './settings/core/dockerimage-settings/dockerimage-settings.component';
+import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
+import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4c-importer-settings/t4c-importer-settings.component';
+import { GuacamoleSettingsComponent } from './settings/integrations/guacamole-settings/guacamole-settings.component';
+import { EditGitSettingsComponent } from './settings/modelsources/git-settings/edit-git-settings/edit-git-settings.component';
+import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
+import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-instance-settings.component';
+import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { DeleteRepositoryComponent } from './settings/repository-manager-settings/repository-settings/delete-repository/delete-repository.component';
+import { RequestsComponent } from './settings/requests/requests.component';
+import { SettingsComponent } from './settings/settings.component';
+import { HomeComponent } from './workspaces/home.component';
 
 const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'projects',
+    component: ProjectOverviewComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'workspaces',
+    component: HomeComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'maintenance',
+    component: MaintenanceComponent,
     canActivate: [AuthGuardService],
   },
   {
@@ -40,8 +73,8 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'settings/projects/create',
-    component: CreateRepositoryComponent,
+    path: 'settings/requests',
+    component: RequestsComponent,
     canActivate: [AuthGuardService],
   },
   {
@@ -50,8 +83,98 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'settings/projects/:repository',
-    component: RepositorySettingsComponent,
+    path: 'settings/core/users',
+    component: UserSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/core/alerts',
+    component: AlertSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/core/dockerimages',
+    component: DockerimageSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/modelsources/git',
+    component: GitSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/modelsources/git/edit/:id',
+    component: EditGitSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/modelsources/t4c',
+    component: T4CSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/modelsources/t4c/instances/:id',
+    component: T4CInstanceSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'projects/:project/models/:model',
+    component: ModelDetailComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/integrations/backups/importer',
+    component: T4CImporterSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/integrations/guacamole',
+    component: GuacamoleSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'create-project',
+    component: CreateProjectComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'create-model/:project',
+    component: CreateModelComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'choose-source/:project/:model',
+    component: ChooseSourceComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'use-existing-git/:project/:model',
+    component: CreateCoworkingMethodComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'choose-init/:project/:model',
+    component: ChooseInitComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings/modelsources/git/instances/:id',
+    component: EditGitSettingsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'create-model/:project',
+    component: CreateModelComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'init-model/:project/:model',
+    component: InitModelComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'project/:project',
+    component: ProjectDetailsComponent,
     canActivate: [AuthGuardService],
   },
   {

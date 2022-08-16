@@ -1,0 +1,19 @@
+<!--
+ ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<h1 mat-dialog-title>Remove T4C repository</h1>
+<div mat-dialog-content>
+  <p>
+    Do you really want delete the T4C repository {{ repo.name }} with the ID
+    {{ repo.id }}?
+  </p>
+  <p>The deletion cannot be undone!</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="this.dialogRef.close(false)">No</button>
+  <button mat-flat-button (click)="remoteRepository()">
+    Remove the project
+  </button>
+</div>

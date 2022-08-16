@@ -49,10 +49,14 @@
         >
           Terminate
         </button>
+
         <button
           mat-flat-button
           color="primary"
           (click)="openReconnectDialog(session)"
+          [disabled]="
+            !(session.state === 'Started' || session.state === 'START_SESSION')
+          "
         >
           Reconnect
         </button>

@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Delete Instance {{ instance.name }}</h1>
+<div mat-dialog-content>
+  <p>
+    Are you sure you want to delete Instance <i>{{ instance.name }} </i> with ID
+    <i>{{ instance.id }}</i
+    >?
+  </p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="this.dialogRef.close(false)">No</button>
+  <button mat-raised-button (click)="this.dialogRef.close(true)">Yes</button>
+</div>

@@ -23,6 +23,17 @@ Please follow the [RESTful web API design best practises](https://docs.microsoft
 
 We recommend to get started with the [local k8d deployment](README.md).
 
+By default, the services run on the following ports when using the instructions below:
+| Port  | Service             |
+|-------|---------------------|
+| 8080  | k3d deployment      |
+| 12345 | k3d registry        |
+| 4200  | frontend            |
+| 8000  | backend             |
+| 8081  | t4c-server mock     |
+| 8082  | license-server mock |
+| 8083  | oauth-mock          |
+
 ## Capella Docker images
 
 Please follow the [README of the Capella Docker images repository](/../../../capella-dockerimages/blob/main/README.md).
@@ -55,7 +66,7 @@ Do not use it in production!
    ```
 
 2. Verify that the server runs, e.g. by navigating to
-   [Well Known](http://localhost:8080/default/.well-known/openid-configuration)
+   [Well Known](http://localhost:8083/default/.well-known/openid-configuration)
 
 ### Option 2: Create a self signed certificate
 
@@ -76,6 +87,25 @@ Do not use it in production!
 4. Verify that the server runs, e.g. by navigating to
    [Well Known](https://localhost:8083/default/.well-known/openid-configuration)
 
+## t4cserver
+
+1. Navigate to `mocks/t4cserver/`.
+1. Setup a local python environment
+  ```sh
+  python3 -m venv .venv
+  source.venv/bin/activate
+  pip install -U pip setuptools
+  pip install -e '.[options]'
+  ```
+
+1. Launch the server :
+  The port must match the key modelsources.t4c.usageAPI in the backend
+  config. Change it to 7000 for example.
+  ```sh
+  source .venv/bin/activate # if not sourced before
+  uvicorn mock:app --host 0.0.0.0 --port 7000 --reload
+  ```
+
 ## Backend
 
 Requirements:
@@ -92,16 +122,21 @@ Run the following steps:
    make create-cluster
    ```
 
+1. In order to use Guacamole, the cluster must be deployed:
+  ```sh
+  make deploy
+  ```
+
 1. Navigate to the `backend` directory of your cloned repository.
 1. We recommend that you develop inside of a virtual environment. To set it up,
    run the following commands:
 
-   ```sh
-   python3 -m venv .venv
-   source .venv/bin/activate
-   pip install -U pip setuptools
-   pip install -e '.[dev]'
-   ```
+  ```sh
+  python3 -m venv .venv
+  source .venv/bin/activate
+  pip install -U pip setuptools
+  pip install -e '.[dev]'
+  ```
 
 1. The backend uses various configuration settings. You can find them in the `config`
    directory.
@@ -110,9 +145,10 @@ Run the following steps:
    *Hint*: If you already have the k8d cluster running and the if you have the
    application deployed, then no configuration values need to be adjusted.
 
-   *Hint*: You can run `python -m t4cclient.config.diff` after each update to check if your config is up to date.
+   *Hint*: You can run `python -m capellacollab.config.diff` after each update to check if your config is up to date.
 
 1. This step is only **necessary, if you use the self signed certificate** option for the oauth mock.
+
    If you don't have the certificate in your local certificate store, please execute the following command:
 
    ```sh
@@ -125,16 +161,11 @@ Run the following steps:
    https://localhost:8083/default/.well-known/openid-configuration
    ```
 
-1. A PostgreSQL database is required. You can run the following command to set up the database:
+1. To begin the development a PostgreSQL database is required. To run the database and
+   start the backend run:
 
    ```sh
-   make database
-   ```
-
-1. Start the application with:
-
-   ```sh
-   make app
+   make dev
    ```
 
 1. You should see it running on port 8000.
@@ -154,9 +185,60 @@ To create an upgrade script automatically (this will compare the current databas
 with the models):
 
 ```sh
-cd t4cclient
+cd capellacollab
 alembic revision --autogenerate -m "Commit message"
 ```
+
+## Authentication without application frontend
+
+Request the `auth_url`
+
+```sh
+curl -X 'GET' \
+  'http://127.0.0.1:8000/api/v1/authentication/' \
+  -H 'accept: application/json'
+```
+
+Opening the `auth_url` in a browser leads you to a "Mock OAuth2 Server Sign-in" page.
+
+Login as user `admin` to be redirected to a page that is reachable when the frontend
+runs. Anyway the redirect URL in the browser's address input field contains two
+parameters `code` and `status`.
+
+Example:
+
+<pre>
+    http://localhost:4200/oauth2/callback?...
+    ...code=<span style="color:green">MREy4raZT9JqaYn_50yJraU4zkclGQbNcbudW404ekc</span>...
+    ...&state=<span style="color:green">r7huaqqdDBWTb8x4gUDIpt36izM0Au</span>
+</pre>
+
+One must copy these parameters and post them via a second request returning an access
+token:
+
+```sh
+curl -X 'POST' \
+  'http://127.0.0.1:8000/api/v1/authentication/tokens' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "code": "MREy4raZT9JqaYn_50yJraU4zkclGQbNcbudW404ekc",
+  "state": "r7huaqqdDBWTb8x4gUDIpt36izM0Au"
+}'
+```
+
+To send a request using that token you may want to request the list of projects:
+
+```sh
+curl -X 'GET' \
+  'http://127.0.0.1:8000/api/v1/projects/' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer <TOKEN>'
+```
+
+whereby `<TOKEN>` must be replaced by the token you received above.
+
+Using the Swagger UI one can click on the lock symbols to enter the access token.
 
 ## Frontend
 
@@ -170,17 +252,18 @@ Requirements:
 Run the following steps:
 
 1. Navigate to the `frontend` folder
-2. Optional: If you like to use your custom favicon, please copy it to `src/favicon.ico`
-3. Optional: If you like to use your custom theme, replace the file `src/custom-theme.scss`.
+1. Install dependencies via `npm install`
+1. Optional: If you like to use your custom favicon, please copy it to `src/favicon.ico`
+1. Optional: If you like to use your custom theme, replace the file `src/custom-theme.scss`.
    You can generate custom themes [here](http://mcg.mbitson.com/)
-4. Copy the file `src/environment.ts` to `src/environment.dev.ts` and adjust the values.
-5. Run the frontend with:
+1. Copy the file `src/environment.ts` to `src/environment.dev.ts` and adjust the values.
+1. Run the frontend with:
 
    ```sh
    make dev
    ```
 
-6. You should see the frontend running von port 4200.
+1. You should see the frontend running von port 4200.
 
 We additionally recommend that you set up your editor / IDE as follows.
 

@@ -1,6 +1,10 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# 3rd party:
 import setuptools
 
-setuptools.setup()
+# 1st party:
+import versioneer
+
+setuptools.setup(version=versioneer.get_version(), cmdclass=versioneer.get_cmdclass())

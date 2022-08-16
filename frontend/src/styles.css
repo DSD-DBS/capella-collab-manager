@@ -25,12 +25,6 @@ body {
   flex: 1;
 }
 
-mat-form-field.mat-form-field-invalid {
-  animation: add-margin-for-mat-error;
-  animation-duration: 0.3s;
-  margin-bottom: 13px;
-}
-
 @keyframes add-margin-for-mat-error {
   from {
     margin-bottom: 0;
@@ -45,6 +39,9 @@ mat-form-field.mat-form-field-invalid {
   --error-color: darkred;
   --warning-color: darkorange;
   --success-color: darkgreen;
+  --hover-color: lightcyan;
+  --field-padding: 0.75em;
+  --section-card-width: 32em;
 }
 
 button.primary {
@@ -64,10 +61,6 @@ button.success {
 mat-card {
   width: fit-content;
   margin: 10px;
-}
-
-mat-form-field {
-  margin-right: 10px;
 }
 
 h1 {
@@ -100,4 +93,106 @@ mat-spinner {
 
 .workspace-toggle * .mat-slide-toggle-thumb {
   background-color: #fafafa !important;
+}
+
+.vertical-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.field-separator {
+  margin: 0 1em;
+  display: inline-block;
+}
+
+.field-separator::before {
+  display: inline-block;
+  content: "\00a0\00a0";
+}
+
+.path-separator::before {
+  content: "/";
+}
+
+fieldset {
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
+  align-items: center;
+  border: none;
+  width: auto;
+  display: flex;
+}
+
+fieldset > :not(.field-separator) {
+  flex-grow: 1;
+}
+
+.section-card {
+  width: var(--section-card-width);
+  margin-left: max(10px, calc(30vw - var(--section-card-width) / 3 - 16px));
+}
+
+.url-before-path-separator {
+  align-self: right;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: calc(14em - 2 * var(--field-padding));
+  padding: 0.25em var(--field-padding);
+  border-radius: 4px;
+
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.form-radio-group {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1.34375em;
+}
+
+.form-radio-button {
+  padding: 0.5em 0;
+}
+
+.form-button-wrapper {
+  padding-bottom: 1.34375em;
+}
+
+.version-selector {
+  flex-shrink: 0.5;
+}
+
+.options-list {
+  display: flex;
+  flex-direction: row;
+}
+
+.content {
+  width: 24ch;
+  height: 5em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.content > * {
+  text-align: center;
+  min-height: 2em;
+}
+
+.content > img {
+  width: 70%;
+  margin: auto;
+}
+
+.option-title {
+  text-align: center;
+  max-width: 20ch;
+  min-height: 3em;
+}
+
+.title-box {
+  margin-left: 2em;
 }

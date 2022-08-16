@@ -1,3 +1,34 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools", "wheel", "versioneer-518"]
 build-backend = "setuptools.build_meta"
+
+[tool.black]
+extend-exclude = "notebooks|typings|.*?\\.ipynb|versioneer.py|_version.py"
+line-length = 88
+target-version = ["py310",]
+
+[tool.isort]
+profile = "black"
+force_grid_wrap = 0
+include_trailing_comma = true
+known_local_folder = ["capellacollab", "tests",]
+line_length = 88
+multi_line_output = 3
+py_version = "auto"
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER",]
+skip = ["typings", ".venv"]
+skip_glob = ["**/*.pyi"]
+use_parentheses = true
+
+[tool.pyright]
+pyrightpythonVersion = "3.10"
+typeCheckingMode = "strict"
+include = ["backend", "tests",]
+reportConstantRedefinition = "warning"
+reportGeneralTypeIssues = false  # reported by mypy
+reportUnknownArgumentType = false
+reportUnknownMemberType = false  # Pylance sometimes reports that for stuff like logger.info() etc.
+reportUnknownVariableType = false  # annoying, e. g. 'for diag in model.diagrams' scribbles diag here
+reportUntypedFunctionDecorator = false
+reportUnusedImport = false  # reported by flake8 (F401)
+reportUnusedVariable = false  # reported by flake8 (F841)

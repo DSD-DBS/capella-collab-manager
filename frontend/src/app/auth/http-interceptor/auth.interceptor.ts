@@ -17,7 +17,7 @@ import {
   AuthService,
   RefreshTokenResponse,
 } from 'src/app/services/auth/auth.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastService } from 'src/app/toast/toast.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -25,7 +25,7 @@ export class AuthInterceptor implements HttpInterceptor {
     private localStorageService: LocalStorageService,
     private router: Router,
     private authService: AuthService,
-    private snackBar: MatSnackBar
+    private toastService: ToastService
   ) {}
 
   intercept(
@@ -35,6 +35,7 @@ export class AuthInterceptor implements HttpInterceptor {
     const req = this.injectAccessToken(request);
     return next.handle(req).pipe(
       catchError((err) => {
+        throwError(() => err)
         if (err.status === 401) {
           if (err.error.detail.err_code == 'token_exp') {
             return this.refreshToken().pipe(
@@ -51,14 +52,23 @@ export class AuthInterceptor implements HttpInterceptor {
             this.router.navigateByUrl('/logout?reason=unauthorized');
           }
         } else if (
+          typeof err.error !== 'undefined' &&
           typeof err.error.detail !== 'undefined' &&
           err.error.detail.reason
         ) {
-          this.snackBar.open(err.error.detail.reason, 'Ok!');
+          this.toastService.showError(
+            'An error occurred!',
+            'err.error.detail.reason'
+          );
+        } else if (err.status === 0) {
+          this.toastService.showPersistentError(
+            'Backend not reachable',
+            'Please check your internet connection and refresh the page!'
+          );
         } else if (err.status !== 404) {
-          this.snackBar.open(
-            'An unknown error occurred! If you encounter the problem again, please open an issue on Github!',
-            'Ok!'
+          this.toastService.showError(
+            'An error occurred!',
+            'Please try again!'
           );
         }
 

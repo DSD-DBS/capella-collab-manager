@@ -1,9 +1,15 @@
+# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+# Standard library:
 import os
 import pathlib
 
+# 3rd party:
 import yaml
-from pydantic import create_model_from_typeddict
-from t4cclient import config
+
+# 1st party:
+from capellacollab import config
 
 
 def test_config_loading():
