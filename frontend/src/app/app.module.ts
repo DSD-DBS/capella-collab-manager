@@ -89,7 +89,13 @@ import { HomeComponent } from './workspaces/home.component';
 import { NoRepositoryComponent } from './workspaces/no-repository/no-repository.component';
 import { RequestSessionComponent } from './workspaces/request-session/request-session.component';
 import { WarningComponent } from './workspaces/request-session/warning/warning.component';
-
+import { CreateModelComponent } from './models/create-model/create-model.component';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { CreateCoworkingMethodComponent } from './models/create-coworking-method/create-coworking-method.component';
+import { ChooseSourceComponent } from './models/choose-source/choose-source.component';
+import { InitModelComponent } from './models/init-model/init-model.component';
+import { ChooseInitComponent } from './models/choose-init/choose-init.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -146,6 +152,11 @@ import { WarningComponent } from './workspaces/request-session/warning/warning.c
     CreateEASEBackupComponent,
     DeleteGitSettingsDialogComponent,
     EditGitSettingsComponent,
+    CreateModelComponent,
+    CreateCoworkingMethodComponent,
+    ChooseSourceComponent,
+    InitModelComponent,
+    ChooseInitComponent,
   ],
   imports: [
     CommonModule,
@@ -178,6 +189,8 @@ import { WarningComponent } from './workspaces/request-session/warning/warning.c
     MatButtonToggleModule,
     MatTooltipModule,
     MatBadgeModule,
+    MatRadioModule,
+    MatAutocompleteModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-left',
       timeOut: 10000,

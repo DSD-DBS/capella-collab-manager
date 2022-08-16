@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import { ProjectService } from 'src/app/projects/service/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-create-project',
@@ -21,20 +21,26 @@ export class CreateProjectComponent implements OnInit {
     type: new FormControl('project'),
   });
 
+  project_slug = '';
+
   get name(): FormControl {
     return this.createProjectForm.get('name') as FormControl;
   }
 
-  constructor(private projectService: ProjectService, private router: Router) {}
+  constructor(public projectService: ProjectService, private router: Router) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.projectService.project = undefined;
+  }
 
   createProject(stepper: MatStepper): void {
     if (this.createProjectForm.valid) {
-      this.projectService.createProject(this.name.value).subscribe(() => {
-        this.projectService.refreshProjects();
-        stepper.next();
-      });
+      this.projectService
+        .createProject(this.name.value)
+        .subscribe((project) => {
+          this.project_slug = project.slug;
+          stepper.next();
+        });
     }
   }
 }

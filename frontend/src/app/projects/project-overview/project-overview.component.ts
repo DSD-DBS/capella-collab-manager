@@ -7,7 +7,7 @@ import {
   Project,
   ProjectService,
   UserMetadata,
-} from '../service/project.service';
+} from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-project-overview',
@@ -28,7 +28,7 @@ export class ProjectOverviewComponent implements OnInit {
 
   ngOnInit() {
     this.showSpinner = true;
-    this.projectService.getProjects().subscribe({
+    this.projectService.initAll().subscribe({
       next: (res) => {
         this.projects = this.sortProject(res);
         this.showSpinner = false;

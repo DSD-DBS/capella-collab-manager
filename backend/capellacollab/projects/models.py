@@ -7,16 +7,15 @@ from __future__ import annotations
 import enum
 import typing as t
 
-# 3rd party:
-from pydantic import BaseModel
-from sqlalchemy import Column, Enum, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
-
 # 1st party:
 # Import required for sqlalchemy
-import capellacollab.projects.capellamodels.models
 import capellacollab.projects.users.models
 from capellacollab.core.database import Base
+
+# 3rd party:
+from pydantic import BaseModel
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 
 
 class Warning(enum.Enum):
@@ -32,6 +31,7 @@ class UserMetadata(BaseModel):
 
 class Project(BaseModel):
     name: str
+    slug: str
     description: t.Optional[str]
     users: UserMetadata
 
@@ -52,9 +52,10 @@ class DatabaseProject(Base):
 
     id = Column(Integer, unique=True, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
+    slug = Column(String, unique=True, index=True)
     description = Column(String)
     users = relationship(
         "ProjectUserAssociation",
         back_populates="projects",
     )
-    models = relationship("DB_CapellaModel", back_populates="project")
+    models = relationship("Model", back_populates="project")

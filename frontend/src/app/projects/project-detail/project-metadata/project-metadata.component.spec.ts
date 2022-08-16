@@ -11,9 +11,8 @@ describe('ProjectMetadataComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProjectMetadataComponent ]
-    })
-    .compileComponents();
+      declarations: [ProjectMetadataComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

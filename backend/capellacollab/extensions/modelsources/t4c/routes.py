@@ -4,19 +4,19 @@
 # Standard library:
 import typing as t
 
+# 1st party:
+import capellacollab.core.database as database
+import capellacollab.extensions.modelsources.t4c.crud as database_projects
+from capellacollab.core.authentication.database import verify_admin, verify_project_role
+from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
+
 # 3rd party:
 from fastapi import APIRouter, Depends
 from requests import Session
 
-# 1st party:
-import capellacollab.core.database as database
-import capellacollab.extensions.modelsources.t4c.crud as database_projects
-
 # local:
 from . import models as schema_projects
-from capellacollab.core.authentication.database import verify_admin, verify_project_role
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 
 router = APIRouter()
 

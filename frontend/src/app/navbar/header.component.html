@@ -9,11 +9,11 @@
     <div id="subtitle">/ {{ navbarService.title }}</div>
   </div>
   <div class="flexbox">
-    <button mat-raised-button color="primary" routerLink="/projects">
+    <a mat-raised-button color="primary" routerLink="/projects">
       Projects
-    </button>
-    <button mat-raised-button color="primary" routerLink="">Workspaces</button>
-    <button
+    </a>
+    <a mat-raised-button color="primary" routerLink="">Workspaces</a>
+    <a
       color="primary"
       id="overview"
       mat-raised-button
@@ -21,7 +21,7 @@
       routerLink="overview"
     >
       Overview
-    </button>
+    </a>
     <a
       color="primary"
       id="overview"
@@ -48,26 +48,26 @@
       </span>
     </div>
     <mat-menu #profileMenu="matMenu">
-      <button
+      <a
         *ngIf="userService.user?.role === 'administrator'"
         class="profileMenuButton"
         mat-menu-item
         routerLink="settings"
       >
         Settings <mat-icon>settings</mat-icon>
-      </button>
-      <button
+      </a>
+      <a
         *ngIf="userService.user?.role === 'administrator'"
         class="profileMenuButton"
         mat-menu-item
         routerLink="settings/requests"
       >
         Requests <mat-icon>inbox</mat-icon>
-      </button>
-      <button class="profileMenuButton" mat-menu-item disabled>
+      </a>
+      <a class="profileMenuButton" mat-menu-item disabled>
         Events <mat-icon>event_note</mat-icon>
-      </button>
-      <button
+      </a>
+      <a
         class="profileMenuButton"
         mat-menu-item
         routerLink="logout/redirect"
@@ -75,7 +75,7 @@
         *ngIf="localStorageService.getValue('access_token')"
       >
         Log out <mat-icon>logout</mat-icon>
-      </button>
+      </a>
     </mat-menu>
     <button
       color="primary"

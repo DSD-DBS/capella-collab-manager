@@ -6,18 +6,20 @@ import logging
 import os
 import pathlib
 
+# 1st party:
+import capellacollab.projects.crud as projects
+import capellacollab.tools.crud as tools
+
 # 3rd party:
 from alembic import command
 from alembic.config import Config
 from alembic.migration import MigrationContext
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-# 1st party:
-import capellacollab.projects.crud as projects
 from capellacollab.config import config
 from capellacollab.core.database import Base, users
 from capellacollab.projects.users.models import Role
+from capellacollab.tools.models import Tool
+from sqlalchemy import create_engine, inspect
+from sqlalchemy.orm import sessionmaker
 
 DATABASE_URL = config["database"]["url"]
 engine = create_engine(DATABASE_URL, connect_args={"connect_timeout": 5})
@@ -40,6 +42,7 @@ def migrate_db():
 
         context = MigrationContext.configure(conn)
         current_rev = context.get_current_revision()
+        tools_exist = inspect(engine).has_table("tools")
 
         if current_rev:
             LOGGER.info("Upgrade database to head")
@@ -52,6 +55,9 @@ def migrate_db():
             initialize_admin_user()
             initialize_default_repository()
 
+        if not tools_exist:
+            create_tools()
+
 
 def initialize_admin_user():
     LOGGER.info("Initialized adminuser " + config["initial"]["admin"])
@@ -63,3 +69,30 @@ def initialize_default_repository():
     LOGGER.info("Initialized repository 'default'")
     with SessionLocal() as db:
         projects.create_project(db=db, name="default")
+
+
+def create_tools():
+    LOGGER.info("Initialized tools")
+    with SessionLocal() as db:
+        capella = Tool(
+            name="Capella", docker_image_template="/t4c/client/remote/$version:prod"
+        )
+        papyrus = Tool(
+            name="Papyrus", docker_image_template="/papyrus/client/remote/$version:prod"
+        )
+        tools.create_tool(db, capella)
+        tools.create_tool(db, papyrus)
+
+        tools.create_version(db, capella.id, "6.2", True)
+        tools.create_version(db, capella.id, "6.0")
+        tools.create_version(db, capella.id, "5.2")
+
+        tools.create_version(db, papyrus.id, "6.2")
+        tools.create_version(db, papyrus.id, "6.0")
+
+        tools.create_type(db, capella.id, "model")
+        tools.create_type(db, capella.id, "library")
+
+        tools.create_type(db, papyrus.id, "UML 2.5")
+        tools.create_type(db, papyrus.id, "SysML 1.4")
+        tools.create_type(db, papyrus.id, "SysML 1.1")

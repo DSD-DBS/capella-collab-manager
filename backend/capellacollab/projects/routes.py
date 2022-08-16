@@ -7,10 +7,6 @@ import logging
 import typing as t
 from importlib import metadata
 
-# 3rd party:
-from fastapi import APIRouter, Depends
-from requests import Session
-
 # 1st party:
 import capellacollab.projects.crud as crud
 from capellacollab.core.authentication.database import (
@@ -36,8 +32,9 @@ from capellacollab.projects.users.models import (
 )
 from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 
-# local:
-from .users import routes as router_users
+# 3rd party:
+from fastapi import APIRouter, Depends
+from requests import Session
 
 log = logging.getLogger(__name__)
 router = APIRouter()
@@ -83,25 +80,30 @@ def update_project(
 
     verify_project_role(project, token, database, ["manager", "administrator"])
 
-    if body.description:
-        crud.update_description(database, project, body.description)
+    crud.update_description(database, project, body.description)
 
     return convert_project(crud.get_project(database, project))
 
 
 @router.get("/{project}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
-def get_repository_by_name(
-    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
-):
-    verify_project_role(project, token=token, db=db)
+def get_repository_by_name(project: str, db: Session = Depends(get_db)):
     return convert_project(crud.get_project(db, project))
+
+
+@router.get("/details/", response_model=Project)
+def get(
+    slug: str,
+    db: Session = Depends(get_db),
+):
+    project = crud.get_project_by_slug(db, slug)
+    return convert_project(project)
 
 
 @router.post("/", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
 def create_repository(
     body: PostRepositoryRequest,
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
+    token: JWTBearer = Depends(JWTBearer()),
 ):
     verify_admin(token, db)
     return convert_project(crud.create_project(db, body.name))
@@ -123,6 +125,7 @@ def delete_repository(
 def convert_project(project: DatabaseProject) -> Project:
     return Project(
         name=project.name,
+        slug=project.slug,
         description=project.description,
         users=UserMetadata(
             leads=len(
@@ -150,13 +153,6 @@ def convert_project(project: DatabaseProject) -> Project:
             ),
         ),
     )
-
-
-router.include_router(
-    router_users.router,
-    prefix="/{project}/users",
-    tags=["project users"],
-)
 
 
 # Load backup extension routes

@@ -3,57 +3,75 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<h2 id="title">Models <mat-icon id="settings-icon">settings</mat-icon></h2>
-<div class="models">
-  <mat-card>
+<div class="models" *ngIf="this.modelService.models">
+  <div class="models-title">
+    <h2 id="title">Models</h2>
+    <a
+      mat-button
+      [routerLink]="['/create-model', projectService.project?.slug]"
+    >
+      <mat-icon id="add-icon">add</mat-icon>
+    </a>
+  </div>
+  <mat-card *ngFor="let model of this.modelService.models">
     <div class="header">
-      <div class="title">testmodel</div>
+      <div class="title">{{ model.name }}</div>
       <div class="right">
         <mat-card class="nature"><div>Library</div> </mat-card>
         <mat-card class="editingMode"><div>T4C</div></mat-card>
       </div>
     </div>
     <div class="content-wrapper">
-      <div class="content">No description provided.</div>
+      <p class="content">
+        {{
+          model.git_model
+            ? model.description
+            : "A primary source needs to be set."
+        }}
+      </p>
       <div class="actions">
         <div class="left">
-          <button
+          <a
             mat-mini-fab
-            [routerLink]="'/projects/' + project + '/models/' + 'testmodel'"
             matTooltip="Configure model"
+            [routerLink]="['/model', project_slug, model.slug]"
           >
             <mat-icon>settings</mat-icon>
-          </button>
-          <button mat-mini-fab disabled matTooltip="Download model">
+          </a>
+          <a mat-mini-fab disabled matTooltip="Download model">
             <mat-icon>cloud_download</mat-icon>
-          </button>
-          <button
-            *ngIf="integrations.git"
+          </a>
+          <a
             mat-mini-fab
-            disabled
+            [disabled]="!model.t4c_model"
             matTooltip="Start synchronization"
           >
             <mat-icon>sync</mat-icon>
-          </button>
-          <button
+          </a>
+          <a
             *ngIf="integrations.git"
             mat-mini-fab
-            disabled
+            [disabled]="!model.git_model"
             matTooltip="Open git repository"
           >
             <mat-icon>link</mat-icon>
-          </button>
-          <button
+          </a>
+          <a
             *ngIf="integrations.git"
+            routerLink="/workspaces"
+            [disabled]="!model.git_model"
             mat-mini-fab
             matTooltip="Request persistent session"
-            routerLink="/workspaces"
           >
             <mat-icon> screen_share</mat-icon>
-          </button>
-          <button mat-mini-fab matTooltip="Open readonly session">
+          </a>
+          <a
+            mat-mini-fab
+            matTooltip="Open readonly session"
+            [disabled]="!model.git_model"
+          >
             <mat-icon>remove_red_eye</mat-icon>
-          </button>
+          </a>
         </div>
       </div>
     </div>

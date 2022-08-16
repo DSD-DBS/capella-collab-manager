@@ -1,19 +1,17 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
   FormGroup,
   ValidationErrors,
   ValidatorFn,
-  Validators,
 } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
 import { Session } from 'src/app/schemes';
+import { Project } from 'src/app/services/project/project.service';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
-import { Project } from 'src/app/projects/service/project.service';
 import { SessionService } from 'src/app/services/session/session.service';
 
 @Component({

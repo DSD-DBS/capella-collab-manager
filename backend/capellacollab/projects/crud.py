@@ -4,11 +4,13 @@
 # Standard library:
 import typing as t
 
-# 3rd party:
-from sqlalchemy.orm import Session
-
 # 1st party:
 from capellacollab.projects.models import DatabaseProject
+from fastapi import HTTPException
+
+# 3rd party:
+from slugify import slugify
+from sqlalchemy.orm import Session
 
 
 def get_project(db: Session, name: str) -> DatabaseProject:
@@ -27,7 +29,8 @@ def update_description(db: Session, name: str, description: str) -> DatabaseProj
 
 
 def create_project(db: Session, name: str) -> DatabaseProject:
-    repo = DatabaseProject(name=name, users=[])
+    slug = slugify(name)
+    repo = DatabaseProject(name=name, slug=slug, users=[])
     db.add(repo)
     db.commit()
     db.refresh(repo)
@@ -37,3 +40,10 @@ def create_project(db: Session, name: str) -> DatabaseProject:
 def delete_project(db: Session, name: str) -> None:
     db.query(DatabaseProject).filter(DatabaseProject.name == name).delete()
     db.commit()
+
+
+def get_project_by_slug(db: Session, slug: str) -> DatabaseProject:
+    project = db.query(DatabaseProject).filter(DatabaseProject.slug == slug).first()
+    if not project:
+        raise HTTPException(404, "Project not found.")
+    return project

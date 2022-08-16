@@ -4,30 +4,28 @@
  -->
 
 <div class="flexbox">
-  <mat-card
-    matRipple
-    *ngFor="let project of projects"
-    [routerLink]="'/projects/' + project.name"
-  >
-    <div class="wrapper">
-      <div class="header">{{ project.name }}</div>
+  <a *ngFor="let project of projects" [routerLink]="['/project', project.slug]">
+    <mat-card>
       <div class="wrapper">
-        <div class="content">
-          <div *ngIf="project.description; else elseBlock">
-            {{ project.description }}
+        <div class="header">{{ project.name }}</div>
+        <div class="wrapper">
+          <div class="content">
+            <div *ngIf="project.description; else elseBlock">
+              {{ project.description }}
+            </div>
+            <ng-template #elseBlock>No description provided.</ng-template>
           </div>
-          <ng-template #elseBlock>No description provided.</ng-template>
-        </div>
-        <div class="footer">
-          {{ project.users.leads }} project lead(s),
-          {{ project.users.contributors }} contributor(s),
-          {{ project.users.subscribers }}
-          subscriber(s)
+          <div class="footer">
+            {{ project.users.leads }} project lead(s),
+            {{ project.users.contributors }} contributor(s),
+            {{ project.users.subscribers }}
+            subscriber(s)
+          </div>
         </div>
       </div>
-    </div>
-  </mat-card>
-  <mat-card matRipple id="add" routerLink="/projects/create">
+    </mat-card>
+  </a>
+  <mat-card matRipple id="add" routerLink="/create-project">
     <div class="content">
       Add new project <br />
       <div id="add-project-wrapper">

@@ -4,11 +4,17 @@
 # Standard library:
 import typing as t
 
-# 3rd party:
-from sqlalchemy.orm import Session
+import capellacollab.models.crud as models_crud
 
 # 1st party:
-from capellacollab.extensions.modelsources.git.models import DB_GitModel, PostGitModel
+from capellacollab.extensions.modelsources.git.models import (
+    DB_GitModel,
+    NewGitSource,
+    PostGitModel,
+)
+
+# 3rd party:
+from sqlalchemy.orm import Session
 
 
 def get_gitmodels_of_capellamodels(db: Session, model_id: int) -> t.List[DB_GitModel]:
@@ -43,7 +49,9 @@ def make_gitmodel_primary(db: Session, id: int) -> DB_GitModel:
     return new_primary_model
 
 
-def add_gitmodel_to_capellamodel(db: Session, capellamodel_id, model: PostGitModel):
+def add_gitmodel_to_capellamodel(
+    db: Session, capellamodel_id: int, model: PostGitModel
+):
     if len(get_gitmodels_of_capellamodels(db, capellamodel_id)):
         primary = False
     else:
@@ -68,3 +76,12 @@ def delete_model_from_repository(db: Session, capellamodel_id: int, model_id: in
         DB_GitModel.model_id == capellamodel_id
     ).delete()
     db.commit()
+
+
+def create(db: Session, project_slug: str, model_slug: str, source: NewGitSource):
+
+    model = models_crud.get_model_by_slug(db, project_slug, model_slug)
+    new_source = DB_GitModel.from_new_git_source(model.id, source)
+    db.add(new_source)
+    db.commit()
+    return new_source

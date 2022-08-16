@@ -3,7 +3,10 @@
 
 import { Component, OnInit } from '@angular/core';
 import { NavBarService } from '../navbar/service/nav-bar.service';
-import { Project, ProjectService } from '../projects/service/project.service';
+import {
+  Project,
+  ProjectService,
+} from 'src/app/services/project/project.service';
 import { SessionService } from '../services/session/session.service';
 
 @Component({
@@ -25,7 +28,7 @@ export class WorkspaceComponent implements OnInit {
 
   ngOnInit() {
     this.showSpinner = true;
-    this.projectService.getProjects().subscribe({
+    this.projectService.list().subscribe({
       next: (res) => {
         this.repositories = res;
         this.showSpinner = false;
