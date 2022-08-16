@@ -140,7 +140,7 @@ def request_session(
                 },
             )
 
-        revision = body.branch if body.branch is not None else git_model.revision
+        revision = body.branch or git_model.revision
         if body.depth == DepthType.LatestCommit:
             depth = 1
         elif body.depth == DepthType.CompleteHistory:
