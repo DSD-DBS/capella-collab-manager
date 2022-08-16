@@ -38,10 +38,10 @@ spec:
           resources:
             limits:
               cpu: "0.5"
-              memory: 1Gi
+              memory: 500Mi
             requests:
-              cpu: "0.5"
-              memory: 100Mi
+              cpu: "0.05"
+              memory: 5Mi
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}

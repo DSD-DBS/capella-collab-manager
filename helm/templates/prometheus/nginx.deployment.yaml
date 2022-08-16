@@ -31,12 +31,21 @@ spec:
               containerPort: 9118
               protocol: TCP
           resources:
+            {{ if eq .Values.target "local" }}
+            limits:
+              cpu: "0.1"
+              memory: 50Mi
+            requests:
+              cpu: "0.05"
+              memory: 5Mi
+            {{ else }}
             limits:
               cpu: "1"
               memory: 100Mi
             requests:
               cpu: "0.25"
               memory: 50Mi
+            {{ end }}
           volumeMounts:
             - name: {{ .Release.Name }}-prometheus-nginx
               mountPath: /etc/nginx

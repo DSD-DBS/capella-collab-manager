@@ -29,12 +29,21 @@ spec:
               path: /
               port: http
           resources:
+            {{ if eq .Values.target "local" }}
+            limits:
+              cpu: "0.05"
+              memory: 10Mi
+            requests:
+              cpu: "0.01"
+              memory: 5Mi
+            {{ else }}
             limits:
               cpu: "0.2"
               memory: 50Mi
             requests:
               cpu: "0.05"
               memory: 10Mi
+            {{ end }}
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
