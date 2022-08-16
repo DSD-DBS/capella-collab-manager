@@ -78,6 +78,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTreeModule } from '@angular/material/tree';
 import { FileExistsDialogComponent } from './active-sessions/upload-dialog/file-exists-dialog/file-exists-dialog.component';
 import { CookieModule } from 'ngx-cookie';
+import { ReleaseNotesComponent } from './metadata/release-notes/release-notes.component';
+import { MarkdownModule } from 'ngx-markdown';
 
 @NgModule({
   declarations: [
@@ -127,6 +129,7 @@ import { CookieModule } from 'ngx-cookie';
     ViewLogsDialogComponent,
     UploadDialogComponent,
     FileExistsDialogComponent,
+    ReleaseNotesComponent,
   ],
   imports: [
     BrowserModule,
@@ -157,6 +160,7 @@ import { CookieModule } from 'ngx-cookie';
     MatProgressBarModule,
     MatTreeModule,
     CookieModule.withOptions(),
+    MarkdownModule.forRoot(),
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
