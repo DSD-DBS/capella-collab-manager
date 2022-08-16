@@ -4,8 +4,6 @@
 import collections.abc as cabc
 import importlib
 import logging
-import os
-import subprocess
 import typing as t
 from importlib import metadata
 
@@ -69,68 +67,6 @@ def get_repositories(db: Session = Depends(get_db), token=Depends(JWTBearer())):
         )
         for repo in db_user.repositories
     ]
-
-
-@router.get(
-    "/{project}/revisions", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES
-)
-def get_revisions(
-    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
-):
-    remote_refs: dict[str, list[str]] = {}
-    remote_refs["branches"] = []
-    remote_refs["tags"] = []
-
-    git_model = get_primary_model_of_repository(db, project)
-    try:
-        url = git_model.path
-        log.info("Fetch revisions of git-model, %s,  with url: %s", git_model.name, url)
-    except AttributeError:
-        return remote_refs
-
-    git_env = os.environ.copy()
-    git_env["GIT_USERNAME"] = (
-        git_model.username if git_model.username is not None else ""
-    )
-    git_env["GIT_PASSWORD"] = (
-        git_model.password if git_model.password is not None else ""
-    )
-    for ref in ls_remote(url, git_env):
-        (_, ref) = ref.split("\t")
-        if "^" in ref:
-            continue
-        if ref.startswith("refs/heads/"):
-            remote_refs["branches"].append(ref.replace("refs/heads/", ""))
-        elif ref.startswith("refs/tags/"):
-            remote_refs["tags"].append(ref.replace("refs/tags/", ""))
-
-    if git_model.revision != "HEAD":
-        remote_refs["default"] = git_model.revision
-    elif "master" in remote_refs["branches"]:
-        remote_refs["default"] = "master"
-    else:
-        remote_refs["default"] = "main"
-    log.info("Branches: %s", remote_refs["branches"])
-    log.info("Tags: %s", remote_refs["tags"])
-    log.info("Default branch: %s", remote_refs["default"])
-    return remote_refs
-
-
-def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
-    try:
-        proc = subprocess.run(
-            ["git", "ls-remote", url], capture_output=True, check=True, env=env
-        )
-    except subprocess.CalledProcessError as e:
-        if e.returncode == 128:
-            raise HTTPException(
-                status_code=500,
-                detail={
-                    "err_code": "no_git_model_credentials",
-                    "reason": "There are no credentials for the primary git-model of this repository.",
-                },
-            )
-    return proc.stdout.decode("ascii").strip().split("\n")
 
 
 @router.get("/{project}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)

@@ -86,7 +86,11 @@
         >
         </mat-spinner>
 
-        <div *ngIf="chosenRepository && chosenRepository !== 'default'">
+        <div *ngIf="chosenRepository">
+          <mat-checkbox class="checkbox" (change)="changeAllBranches()">
+            Download all branches
+          </mat-checkbox>
+
           <form [formGroup]="referenceDepthFormGroup">
             <mat-form-field appearance="fill">
               <mat-label>Branch, tag or revision</mat-label>
@@ -110,11 +114,6 @@
                 >Please select a branch or tag!</mat-error
               > </mat-form-field
             ><br />
-
-            <mat-checkbox class="checkbox" (change)="changeAllBranches()">
-              Download all branches
-            </mat-checkbox>
-            <br />
 
             <mat-form-field appearance="fill">
               <mat-label>Commits history depth</mat-label>

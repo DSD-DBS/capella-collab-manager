@@ -47,12 +47,6 @@ export class RepositoryService {
       name,
     });
   }
-
-  getRevisions(project_name: string) {
-    return this.http.get<Revisions>(
-      this.BACKEND_URL_PREFIX + project_name + '/revisions'
-    );
-  }
 }
 
 export type Warnings = 'LICENCE_LIMIT' | 'NO_GIT_MODEL_DEFINED';
@@ -63,10 +57,4 @@ export interface Repository {
   permissions: Array<'read' | 'write'>;
   warnings: Array<Warnings>;
   role: 'user' | 'manager' | 'administrator';
-}
-
-export interface Revisions {
-  branches: Array<string>;
-  tags: Array<string>;
-  default: string;
 }

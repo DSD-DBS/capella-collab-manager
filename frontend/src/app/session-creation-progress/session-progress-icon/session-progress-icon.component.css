@@ -2,7 +2,6 @@
  * Copyright DB Netz AG and the capella-collab-manager contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 :host ::ng-deep .mat-progress-spinner circle,
 .mat-spinner circle {
   stroke: black;
@@ -11,9 +10,8 @@
 }
 
 mat-icon {
-  font-size: 2.5em;
-  background-color: white;
-  margin-bottom: 5px;
+  margin-left: 5px;
+  transform: scale(1.75);
 }
 
 .error {
@@ -26,4 +24,8 @@ mat-icon {
 
 .success {
   background-color: var(--success-color);
+}
+
+.item {
+  height: 35px;
 }

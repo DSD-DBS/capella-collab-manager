@@ -13,11 +13,14 @@ import {
 import { MatSelectChange } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Session } from 'src/app/schemes';
+import {
+  GitModelService,
+  Revisions,
+} from 'src/app/services/modelsources/git-model/git-model.service';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import {
   Repository,
   RepositoryService,
-  Revisions,
   Warnings,
 } from 'src/app/services/repository/repository.service';
 import {
@@ -92,6 +95,7 @@ export class RequestSessionComponent implements OnInit {
     public sessionService: SessionService,
     private repoUserService: RepositoryUserService,
     private repoService: RepositoryService,
+    private gitModelService: GitModelService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -161,7 +165,7 @@ export class RequestSessionComponent implements OnInit {
       if (repo.repository_name == event.value) {
         if (repo.warnings.includes('NO_GIT_MODEL_DEFINED')) {
           this.snackBar.open(
-            'This repository has no git-model and therefore, a readonly-session cannot be created. To change this, please contact an administrator.',
+            'This project has no assigned read-only model and therefore, a readonly-session cannot be created. Please contact your project lead.',
             'Ok!'
           );
           this.showSmallSpinner = false;
@@ -181,7 +185,7 @@ export class RequestSessionComponent implements OnInit {
 
   getRevisions(repository_name: string) {
     this.showSmallSpinner = true;
-    this.repoService.getRevisions(repository_name).subscribe({
+    this.gitModelService.getRevisions(repository_name).subscribe({
       next: (revisions: Revisions) => {
         this.branches = revisions.branches;
         this.tags = revisions.tags;
