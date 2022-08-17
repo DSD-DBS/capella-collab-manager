@@ -66,9 +66,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   createProject(stepper: MatStepper): void {
     if (this.createProjectForm.valid) {
       const project_creation_subject = connectable<Project>(
-        this.projectService.createProject(
-          this.createProjectForm.controls.name.value
-        ),
+        this.projectService.createProject(this.createProjectForm.value),
         {
           connector: () => new Subject(),
           resetOnDisconnect: false,

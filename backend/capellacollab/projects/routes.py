@@ -112,7 +112,7 @@ def create_repository(
     token: JWTBearer = Depends(JWTBearer()),
 ):
     verify_admin(token, db)
-    return convert_project(crud.create_project(db, body.name))
+    return convert_project(crud.create_project(db, body.name, body.description))
 
 
 @router.delete(
