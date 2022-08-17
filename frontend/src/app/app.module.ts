@@ -82,6 +82,7 @@ import { FileExistsDialogComponent } from './active-sessions/upload-dialog/file-
 import { CookieModule } from 'ngx-cookie';
 import { ReleaseNotesComponent } from './metadata/release-notes/release-notes.component';
 import { MarkdownModule } from 'ngx-markdown';
+import { VersionComponent } from './metadata/version/version.component';
 
 @NgModule({
   declarations: [
@@ -132,6 +133,7 @@ import { MarkdownModule } from 'ngx-markdown';
     UploadDialogComponent,
     FileExistsDialogComponent,
     ReleaseNotesComponent,
+    VersionComponent,
   ],
   imports: [
     BrowserModule,

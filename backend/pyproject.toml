@@ -59,7 +59,6 @@ dev = [
 
 [project.entry-points."capellacollab.extensions.backups"]
 ease = "t4cclient.extensions.backups.ease"
-jenkins = "t4cclient.extensions.backups.jenkins"
 
 [project.entry-points."capellacollab.extensions.modelsources"]
 git = "t4cclient.extensions.modelsources.git"

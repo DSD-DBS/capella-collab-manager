@@ -11,11 +11,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ReleaseNoteService {
-  constructor(private httpClient: HttpClient) {}
-
-  loadReleaseNotes(): Observable<Array<ReleaseNote>> {
-    return this.httpClient.get<Array<ReleaseNote>>('assets/releases.json');
-  }
+  constructor() {}
 }
 
 export interface ReleaseNote {
