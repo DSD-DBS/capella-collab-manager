@@ -13,8 +13,9 @@ import {
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { connectable, Subject, switchMap, tap } from 'rxjs';
+import { connectable, filter, Subject, switchMap, tap } from 'rxjs';
 import slugify from 'slugify';
+import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import {
   Project,
   ProjectService,
@@ -36,7 +37,8 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   constructor(
     public projectService: ProjectService,
     private router: Router,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private navBarService: NavBarService
   ) {}
 
   slugValidator(slugs: string[]): ValidatorFn {
@@ -52,9 +54,14 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.createProjectForm.controls.name.addValidators(
-      this.slugValidator(this.projectService.projects!.map((p) => p.slug))
-    );
+    this.navBarService.title = 'Create Project';
+    this.projectService._projects
+      .pipe(filter(Boolean))
+      .subscribe((projects) => {
+        this.createProjectForm.controls.name.addValidators(
+          this.slugValidator(projects.map((p) => p.slug))
+        );
+      });
   }
 
   ngOnDestroy(): void {
