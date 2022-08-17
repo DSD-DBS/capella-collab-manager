@@ -53,12 +53,21 @@ spec:
             initialDelaySeconds: 45
             timeoutSeconds: 2
           resources:
+            {{ if eq .Values.target "local" }}
+            limits:
+              cpu: "0.2"
+              memory: 100Mi
+            requests:
+              cpu: "0.1"
+              memory: 20Mi
+            {{ else }}
             requests:
               memory: "128Mi"
               cpu: "250m"
             limits:
               memory: "1Gi"
               cpu: "1"
+            {{ end }}
           {{ if ne .Values.target "local" }}
           volumeMounts:
             - name: {{ .Release.Name }}-data
