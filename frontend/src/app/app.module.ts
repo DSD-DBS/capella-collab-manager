@@ -96,6 +96,8 @@ import { CreateCoworkingMethodComponent } from './models/create-coworking-method
 import { ChooseSourceComponent } from './models/choose-source/choose-source.component';
 import { InitModelComponent } from './models/init-model/init-model.component';
 import { ChooseInitComponent } from './models/choose-init/choose-init.component';
+import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
+import { ModelWrapperComponent } from './models/model-wrapper/model-wrapper.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -157,6 +159,8 @@ import { ChooseInitComponent } from './models/choose-init/choose-init.component'
     ChooseSourceComponent,
     InitModelComponent,
     ChooseInitComponent,
+    ProjectWrapperComponent,
+    ModelWrapperComponent,
   ],
   imports: [
     CommonModule,

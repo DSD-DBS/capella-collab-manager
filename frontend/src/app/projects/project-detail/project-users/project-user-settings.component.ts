@@ -1,7 +1,14 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -15,27 +22,18 @@ import { RepositoryUser } from 'src/app/schemes';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { ToastService } from 'src/app/toast/toast.service';
-import { ProjectService } from 'src/app/services/project/project.service';
+import {
+  Project,
+  ProjectService,
+} from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-project-user-settings',
   templateUrl: './project-user-settings.component.html',
   styleUrls: ['./project-user-settings.component.css'],
 })
-export class RepositoryUserSettingsComponent implements OnInit {
-  _repository: string = '';
-
-  @Input()
-  set repository(value: string) {
-    this.projectService.init(value).subscribe((project) => {
-      this._repository = project.name;
-      this.refreshRepoUsers();
-    });
-  }
-
-  get repository() {
-    return this._repository;
-  }
+export class RepositoryUserSettingsComponent implements OnChanges {
+  @Input() repository!: Project;
 
   repositoryUsers: Array<RepositoryUser> = [];
   search = '';
@@ -55,12 +53,13 @@ export class RepositoryUserSettingsComponent implements OnInit {
   );
   constructor(
     public repoUserService: RepositoryUserService,
-    private projectService: ProjectService,
     public userService: UserService,
     private toastService: ToastService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnChanges(_changes: SimpleChanges): void {
+    this.refreshRepoUsers();
+  }
 
   get username(): FormControl {
     return this.addUserToRepoForm.get('username') as FormControl;
@@ -96,7 +95,7 @@ export class RepositoryUserSettingsComponent implements OnInit {
   }
 
   refreshRepoUsers(): void {
-    this.repoUserService.getRepoUsers(this.repository).subscribe((res) => {
+    this.repoUserService.getRepoUsers(this.repository.name).subscribe((res) => {
       this.repositoryUsers = res;
     });
   }
@@ -111,7 +110,7 @@ export class RepositoryUserSettingsComponent implements OnInit {
       }
       this.repoUserService
         .addUserToRepo(
-          this.repository,
+          this.repository.name,
           formValue.username,
           formValue.role,
           permission
@@ -121,7 +120,7 @@ export class RepositoryUserSettingsComponent implements OnInit {
           this.addUserToRepoForm.reset();
           this.refreshRepoUsers();
           this.toastService.showSuccess(
-            'User added to project ' + this.repository,
+            'User added to project ' + this.repository.name,
             ''
           );
         });
@@ -130,7 +129,7 @@ export class RepositoryUserSettingsComponent implements OnInit {
 
   removeUserFromRepo(username: string): void {
     this.repoUserService
-      .deleteUserFromRepo(this.repository, username)
+      .deleteUserFromRepo(this.repository.name, username)
       .subscribe(() => {
         this.refreshRepoUsers();
       });
@@ -138,7 +137,7 @@ export class RepositoryUserSettingsComponent implements OnInit {
 
   upgradeUserToRepositoryManager(username: string): void {
     this.repoUserService
-      .changeRoleOfRepoUser(this.repository, username, 'manager')
+      .changeRoleOfRepoUser(this.repository.name, username, 'manager')
       .subscribe(() => {
         this.refreshRepoUsers();
       });
@@ -146,7 +145,7 @@ export class RepositoryUserSettingsComponent implements OnInit {
 
   downgradeUserToUserRole(username: string): void {
     this.repoUserService
-      .changeRoleOfRepoUser(this.repository, username, 'user')
+      .changeRoleOfRepoUser(this.repository.name, username, 'user')
       .subscribe(() => {
         this.refreshRepoUsers();
       });
@@ -154,7 +153,7 @@ export class RepositoryUserSettingsComponent implements OnInit {
 
   setUserPermission(username: string, permission: 'read' | 'write'): void {
     this.repoUserService
-      .changePermissionOfRepoUser(this.repository, username, permission)
+      .changePermissionOfRepoUser(this.repository.name, username, permission)
       .subscribe(() => {
         this.refreshRepoUsers();
       });

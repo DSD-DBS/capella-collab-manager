@@ -16,7 +16,7 @@ from requests import Session
 import capellacollab.projects.crud as crud
 
 # local:
-from .users import routes as router_users
+from .users.routes import router as router_users
 from capellacollab.core.authentication.database import (
     is_admin,
     verify_admin,
@@ -42,6 +42,8 @@ from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 
 log = logging.getLogger(__name__)
 router = APIRouter()
+
+router.include_router(router_users, prefix="/{project}/users")
 
 
 @router.get(

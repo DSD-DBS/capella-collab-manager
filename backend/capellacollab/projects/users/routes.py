@@ -69,8 +69,6 @@ def add_user_to_repository(
     check_username_not_admin(body.username, db)
     if body.role == schema_repositories.RepositoryUserRole.MANAGER:
         body.permission = schema_repositories.RepositoryUserPermission.WRITE
-    if body.permission == schema_repositories.RepositoryUserPermission.WRITE:
-        t4c_manager.add_user_to_repository(project, body.username, is_admin=False)
     return repository_users.add_user_to_repository(
         db, project, body.role, body.username, body.permission
     )

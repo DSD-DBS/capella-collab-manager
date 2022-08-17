@@ -1,8 +1,8 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { filter, map, Subscription } from 'rxjs';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 
@@ -11,26 +11,26 @@ import { ProjectService } from 'src/app/services/project/project.service';
   templateUrl: './project-details.component.html',
   styleUrls: ['./project-details.component.css'],
 })
-export class ProjectDetailsComponent implements OnInit {
-  project_slug: string = '';
+export class ProjectDetailsComponent implements OnInit, OnDestroy {
+  project_subscription?: Subscription;
 
   constructor(
-    private route: ActivatedRoute,
     private navbarService: NavBarService,
-    private projectService: ProjectService
-  ) {
-    this.navbarService.title = 'Projects / loading';
-  }
+    public projectService: ProjectService
+  ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      this.project_slug = params['project'];
-      this.projectService.init(params['project']).subscribe({
-        next: (res) => {
-          this.navbarService.title = 'Projects / ' + res.name;
-        },
-        error: () => {},
+    this.project_subscription = this.projectService._project
+      .pipe(
+        filter(Boolean),
+        map((project) => project.name)
+      )
+      .subscribe((name) => {
+        this.navbarService.title = `Projects / ${name}`;
       });
-    });
+  }
+
+  ngOnDestroy(): void {
+    this.project_subscription?.unsubscribe();
   }
 }

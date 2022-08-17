@@ -4,7 +4,22 @@
  -->
 
 <div class="flexbox">
-  <a *ngFor="let project of projects" [routerLink]="['/project', project.slug]">
+  <a routerLink="/create-project">
+    <mat-card matRipple id="add">
+      <div class="content">
+        Add new project <br />
+        <div id="add-project-wrapper">
+          <span class="add-icon">
+            <mat-icon [inline]="true">add_circle_outline</mat-icon>
+          </span>
+        </div>
+      </div>
+    </mat-card>
+  </a>
+  <a
+    *ngFor="let project of projectService.projects"
+    [routerLink]="['/project', project.slug]"
+  >
     <mat-card>
       <div class="wrapper">
         <div class="header">{{ project.name }}</div>
@@ -25,14 +40,4 @@
       </div>
     </mat-card>
   </a>
-  <mat-card matRipple id="add" routerLink="/create-project">
-    <div class="content">
-      Add new project <br />
-      <div id="add-project-wrapper">
-        <span class="add-icon">
-          <mat-icon [inline]="true">add_circle_outline</mat-icon>
-        </span>
-      </div>
-    </div>
-  </mat-card>
 </div>
