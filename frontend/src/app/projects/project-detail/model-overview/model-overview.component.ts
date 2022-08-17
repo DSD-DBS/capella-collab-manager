@@ -7,6 +7,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Component, Input, OnInit } from '@angular/core';
+import { tap } from 'rxjs';
 import { IntegrationService } from 'src/app/integrations/integration.service';
 import { Model, ModelService } from 'src/app/services/model/model.service';
 import {
