@@ -1,3 +1,8 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
 # Contributing
 
 Thanks for your interest in our project. Contributions are always welcome!

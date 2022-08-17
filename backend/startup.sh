@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 
 # When running inside the cluster, the k8s service host should not use the proxy

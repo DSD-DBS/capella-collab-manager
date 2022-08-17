@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 DB_PORT = 5432
 DB_PASSWORD = dev
 DB_USER = dev

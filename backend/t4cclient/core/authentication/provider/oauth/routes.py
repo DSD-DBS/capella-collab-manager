@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
@@ -7,13 +7,17 @@ import typing as t
 # 3rd party:
 from fastapi import APIRouter, Depends
 
-# local:
-from .flow import get_auth_redirect_url, get_token, refresh_token
 from t4cclient.core.authentication import jwt_bearer
 from t4cclient.core.authentication.database import verify_admin
-from t4cclient.core.authentication.schemas import RefreshTokenRequest, TokenRequest
+from t4cclient.core.authentication.schemas import (
+    RefreshTokenRequest,
+    TokenRequest,
+)
 from t4cclient.core.database import get_db
 from t4cclient.schemas.repositories.users import Role
+
+# local:
+from .flow import get_auth_redirect_url, get_token, refresh_token
 
 router = APIRouter()
 

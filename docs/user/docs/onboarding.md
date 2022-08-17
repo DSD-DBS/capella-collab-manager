@@ -1,3 +1,8 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
 Thanks for using our tools and welcome onboard the Capella Collaboration Manager!
 
 To work with the application, you need access to a project: [How do I get access to a project?](projects/access.md) <br />

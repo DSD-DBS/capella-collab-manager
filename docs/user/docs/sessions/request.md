@@ -1,3 +1,8 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
 Please follow these steps to request a session:
 
 1. Navigate to the `Workspaces` tab inside the web application.

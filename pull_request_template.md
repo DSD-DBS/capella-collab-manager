@@ -1,3 +1,8 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
 # Description
 
 Please add a description of the changes. If the changes are in the frontend, please attach a screenshot.

@@ -1,5 +1,7 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 /**
  * This file includes polyfills needed by Angular and is loaded before the app.

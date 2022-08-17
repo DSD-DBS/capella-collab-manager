@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 import importlib
@@ -7,9 +7,10 @@ from importlib import metadata
 
 from fastapi import APIRouter
 
+from t4cclient.config import config
+
 from ..sessions import routes as session_routes
 from . import notices, repositories, sync, users
-from t4cclient.config import config
 
 log = logging.getLogger(__name__)
 
