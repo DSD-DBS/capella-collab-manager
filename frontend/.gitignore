@@ -48,3 +48,6 @@ Thumbs.db
 /src/environments/environment.dev.ts
 
 .angular
+
+
+/src/assets/version.json
