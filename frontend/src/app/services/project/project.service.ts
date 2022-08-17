@@ -60,9 +60,12 @@ export class ProjectService {
     return this.http.patch<Project>(url.toString(), { description });
   }
 
-  createProject(name: string): Observable<Project> {
+  createProject(project: {
+    name: string;
+    description: string;
+  }): Observable<Project> {
     return this.http
-      .post<Project>(this.BACKEND_URL_PREFIX, { name })
+      .post<Project>(this.BACKEND_URL_PREFIX, project)
       .pipe(single());
   }
 }

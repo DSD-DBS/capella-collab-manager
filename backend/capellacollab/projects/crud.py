@@ -30,9 +30,9 @@ def update_description(
     return project
 
 
-def create_project(db: Session, name: str) -> DatabaseProject:
+def create_project(db: Session, name: str, description: str | None) -> DatabaseProject:
     slug = slugify(name)
-    repo = DatabaseProject(name=name, slug=slug, users=[])
+    repo = DatabaseProject(name=name, slug=slug, description=description, users=[])
     db.add(repo)
     db.commit()
     db.refresh(repo)
