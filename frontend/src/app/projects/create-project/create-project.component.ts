@@ -39,7 +39,9 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
     private router: Router,
     private toastrService: ToastrService,
     private navBarService: NavBarService
-  ) {}
+  ) {
+    this.navBarService.title = 'Create Project';
+  }
 
   slugValidator(slugs: string[]): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -54,7 +56,6 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.navBarService.title = 'Create Project';
     this.projectService._projects
       .pipe(filter(Boolean))
       .subscribe((projects) => {
