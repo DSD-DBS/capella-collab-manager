@@ -28,7 +28,6 @@ export class SourceService {
   constructor(
     private http: HttpClient,
     private projectService: ProjectService,
-    private modelService: ModelService
   ) {}
 
   source: Source | null = null;
@@ -40,21 +39,23 @@ export class SourceService {
     source: Source
   ): Observable<Source> {
     return new Observable<Source>((subscriber) => {
-      this.projectService.init(project_slug).subscribe((project) => {
-        this.http
-          .post<Source>(
-            environment.backend_url +
-              '/projects/' +
-              project.name +
-              '/extensions/modelsources/git/create/' +
-              model_slug,
-            source
-          )
-          .subscribe((new_source) => {
-            subscriber.next(new_source);
-            subscriber.complete();
-          });
-      });
+      this.projectService
+        .getProjectBySlug(project_slug)
+        .subscribe((project) => {
+          this.http
+            .post<Source>(
+              environment.backend_url +
+                '/projects/' +
+                project.name +
+                '/extensions/modelsources/git/create/' +
+                model_slug,
+              source
+            )
+            .subscribe((new_source) => {
+              subscriber.next(new_source);
+              subscriber.complete();
+            });
+        });
     });
   }
 }

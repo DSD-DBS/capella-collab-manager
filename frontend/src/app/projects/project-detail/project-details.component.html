@@ -10,13 +10,20 @@
 
 <div class="flexbox">
   <div class="item">
-    <app-project-metadata [project_slug]="project_slug"></app-project-metadata>
+    <app-project-metadata
+      *ngIf="projectService.project"
+      [project]="projectService.project"
+    ></app-project-metadata>
     <mat-divider></mat-divider>
-    <app-model-overview [project_slug]="project_slug"></app-model-overview>
+    <app-model-overview
+      *ngIf="projectService.project"
+      [project]="projectService.project"
+    ></app-model-overview>
   </div>
   <div class="users">
     <app-project-user-settings
-      [repository]="project_slug"
+      *ngIf="projectService.project"
+      [repository]="projectService.project"
     ></app-project-user-settings>
   </div>
   <!--<app-backup-settings [project]="project"></app-backup-settings>

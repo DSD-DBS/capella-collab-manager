@@ -7,7 +7,7 @@
   <app-header *ngIf="navbarService.showHeader"></app-header>
   <app-notice *ngIf="navbarService.showNotice"></app-notice>
   <div class="wrapper">
-    <router-outlet></router-outlet>
+    <router-outlet *ngIf="projectService.projects"></router-outlet>
   </div>
   <div class="footer">
     <app-version id="left"></app-version>

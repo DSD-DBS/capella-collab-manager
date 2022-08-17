@@ -18,10 +18,9 @@
           [formControl]="updateDescriptionForm"
           matInput
           rows="3"
-          [ngModel]="projectService.project?.description"
           style="resize: none"
           [placeholder]="
-            'This is the description of the project ' + project_slug
+            'This is the description of the project ' + project!.slug
           "
         ></textarea>
       </mat-form-field>

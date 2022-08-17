@@ -7,7 +7,6 @@ from urllib.parse import quote, urlsplit
 
 import git
 from fastapi import APIRouter, Depends, HTTPException
-from git import Git
 from pydantic import BaseModel
 
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
