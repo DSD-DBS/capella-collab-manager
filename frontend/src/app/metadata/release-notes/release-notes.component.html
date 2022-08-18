@@ -8,11 +8,13 @@
   <div class="body" mat-dialog-content>
     <div *ngFor="let release of releaseNotes">
       <h2>{{ release.name }}</h2>
+      <span>Released on {{ release.created_at }}</span>
+      <br />
       <markdown [data]="release.body"> </markdown>
       <hr class="dashed" />
     </div>
   </div>
-  <div mat-dialog-actions>
+  <div class="align-right" mat-dialog-actions>
     <button mat-button mat-dialog-close cdkFocusInitial>Close</button>
   </div>
 </div>

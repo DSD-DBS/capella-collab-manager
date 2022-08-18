@@ -12,3 +12,12 @@
   max-height: 80vh;
   overflow-y: scroll;
 }
+
+h2 {
+  margin: 0;
+}
+
+.align-right {
+  display: flex;
+  justify-content: flex-end;
+}

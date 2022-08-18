@@ -5,7 +5,9 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { ReleaseNote } from '../release-notes/release-note.service';
 
 @Injectable({
@@ -17,6 +19,12 @@ export class VersionService {
   loadVersion(): Observable<Version> {
     return this.httpClient.get<Version>('assets/version.json');
   }
+
+  loadBackendMetadata(): Observable<BackendMetadata> {
+    return this.httpClient.get<BackendMetadata>(
+      environment.backend_url + '/metadata'
+    );
+  }
 }
 
 export interface GitVersion {
@@ -27,4 +35,9 @@ export interface GitVersion {
 export interface Version {
   git: GitVersion;
   github: Array<ReleaseNote>;
+}
+
+export interface BackendMetadata {
+  version: string;
+  tag: string;
 }

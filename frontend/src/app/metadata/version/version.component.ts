@@ -4,7 +4,9 @@
  */
 
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
+import { ReleaseNotesComponent } from '../release-notes/release-notes.component';
 import { BackendMetadata, Version, VersionService } from './version.service';
 
 @Component({
@@ -17,7 +19,10 @@ export class VersionComponent implements OnInit {
   frontend: string = '-';
   env: string = (environment as any)['environment'] || 'not specified';
 
-  constructor(private versionService: VersionService) {}
+  constructor(
+    private versionService: VersionService,
+    public dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.versionService.loadVersion().subscribe((version: Version) => {
@@ -29,5 +34,9 @@ export class VersionComponent implements OnInit {
       .subscribe((metadata: BackendMetadata) => {
         this.backend = metadata.version;
       });
+  }
+
+  openReleaseNotes(): void {
+    this.dialog.open(ReleaseNotesComponent);
   }
 }

@@ -9,6 +9,12 @@
   <div class="wrapper">
     <router-outlet (activate)="changedRoute()"></router-outlet>
   </div>
-  <app-footer *ngIf="footer" class="footer"></app-footer>
-  <app-legal></app-legal>
+  <div class="footer">
+    <app-version id="left"></app-version>
+    <div id="middle">
+      <app-footer *ngIf="footer" class="footer"></app-footer>
+      <app-legal></app-legal>
+    </div>
+    <div id="placeholder"></div>
+  </div>
 </div>
