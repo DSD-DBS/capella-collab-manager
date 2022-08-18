@@ -55,6 +55,10 @@ import { InitModelComponent } from './models/init-model/init-model.component';
 import { HeaderComponent } from './navbar/header.component';
 import { NoticeComponent } from './notice/notice.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
+import { DeleteProjectDialogComponent } from './projects/delete-project/delete-project-dialog/delete-project-dialog.component';
+import { DeleteProjectComponent } from './projects/delete-project/delete-project.component';
+import { StageProjectDialogComponent } from './projects/delete-project/stage-project-dialog/stage-project-dialog.component';
+import { StageProjectComponent } from './projects/delete-project/stage-project/stage-project.component';
 import { BackupSettingsComponent } from './projects/project-detail/backup-settings/backup-settings.component';
 import { CreateEASEBackupComponent } from './projects/project-detail/backup-settings/ease-backup-settings/create-ease-backup/create-ease-backup.component';
 import { GitBackupSettingsComponent } from './projects/project-detail/backup-settings/ease-backup-settings/ease-backup-settings.component';
@@ -78,7 +82,6 @@ import { SessionCreationProgressComponent } from './session-creation-progress/se
 import { SessionProgressIconComponent } from './session-creation-progress/session-progress-icon/session-progress-icon.component';
 import { LicencesComponent } from './session-overview/licences/licences.component';
 import { SessionOverviewComponent } from './session-overview/session-overview.component';
-import { StagedToDeleteOverviewComponent } from './settings/admin-settings/staged-to-delete-overview/staged-to-delete-overview.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { DockerimageSettingsComponent } from './settings/core/dockerimage-settings/dockerimage-settings.component';
 import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
@@ -90,8 +93,8 @@ import { GitSettingsComponent } from './settings/modelsources/git-settings/git-s
 import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-instance-settings.component';
 import { T4CRepoDeletionDialogComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-repo-deletion-dialog/t4c-repo-deletion-dialog.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
-import { DeleteRepositoryComponent } from './settings/repository-manager-settings/repository-settings/delete-repository/delete-repository.component';
 import { RequestsComponent } from './settings/requests/requests.component';
+import { StagedProjectsOverviewComponent } from './settings/requests/staged-projects-overview/staged-projects-overview.component';
 import { SettingsComponent } from './settings/settings.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { HomeComponent } from './workspaces/home.component';
@@ -152,8 +155,6 @@ import { WarningComponent } from './workspaces/request-session/warning/warning.c
     ProjectMetadataComponent,
     RequestsComponent,
     ViewLogsDialogComponent,
-    DeleteRepositoryComponent,
-    StagedToDeleteOverviewComponent,
     CreateEASEBackupComponent,
     DeleteGitSettingsDialogComponent,
     EditGitSettingsComponent,
@@ -162,6 +163,11 @@ import { WarningComponent } from './workspaces/request-session/warning/warning.c
     ChooseSourceComponent,
     InitModelComponent,
     ChooseInitComponent,
+    DeleteProjectComponent,
+    StageProjectComponent,
+    DeleteProjectDialogComponent,
+    StageProjectDialogComponent,
+    StagedProjectsOverviewComponent,
   ],
   imports: [
     CommonModule,
