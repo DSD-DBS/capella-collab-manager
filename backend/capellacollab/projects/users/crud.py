@@ -95,3 +95,13 @@ def delete_all_repositories_for_user(db: Session, username: str):
         ProjectUserAssociation.username == username
     ).delete()
     db.commit()
+
+
+def stage_project_of_user(
+    db: Session, repository_name: str, username: str, staged_by: str
+) -> ProjectUserAssociation:
+    project_user = get_user_of_repository(db, repository_name, username)
+    project_user.projects.staged_by = staged_by
+    db.commit()
+    db.refresh(project_user)
+    return project_user

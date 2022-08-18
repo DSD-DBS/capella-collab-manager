@@ -18,6 +18,7 @@ from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.core.database import users as database_users
+from capellacollab.projects.capellamodels import crud as project_models
 from capellacollab.projects.models import (
     DatabaseProject,
     PatchProject,
@@ -25,6 +26,7 @@ from capellacollab.projects.models import (
     Project,
     UserMetadata,
 )
+from capellacollab.projects.users import crud as repository_users
 from capellacollab.projects.users.models import (
     ProjectUserAssociation,
     RepositoryUserPermission,
@@ -33,7 +35,7 @@ from capellacollab.projects.users.models import (
 from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 
 # 3rd party:
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
 
 log = logging.getLogger(__name__)
@@ -54,7 +56,6 @@ def get_projects(db: Session = Depends(get_db), token=Depends(JWTBearer())):
             db=db, username=get_username(token)
         ).projects
         projects = [project.projects for project in project_user]
-
     return [convert_project(project) for project in projects]
 
 
@@ -115,11 +116,67 @@ def create_repository(
     status_code=204,
     responses=AUTHENTICATION_RESPONSES,
 )
-def delete_repository(
+def delete_project(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
-):
+) -> None:
     verify_admin(token, db)
+    staged_by = check_repository_exists(project, db).staged_by
+    if not staged_by:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "err_code": "unstaged_project",
+                "reason": "The repository has to be staged by another administrator before deletion.",
+            },
+        )
+    if staged_by == get_username(token):
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "err_code": "not_staged_and_deleted",
+                "reason": "A single administrator can not stage and delete a repository at the same time.",
+            },
+        )
+    for user in repository_users.get_users_of_repository(db, project):
+        repository_users.delete_user_from_repository(db, project, user.username)
+    for model in crud.get_project(db, project).models:
+        project_models.delete_model_from_project(db, project, model.name)
     crud.delete_project(db, project)
+
+
+@router.patch(
+    "/{project}/stage",
+    tags=["Repositories"],
+    status_code=204,
+    responses=AUTHENTICATION_RESPONSES,
+)
+def stage_project(
+    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+) -> DatabaseProject:
+    # verify_project_role(project, token, db, allowed_roles=["admin", "manager"])
+    check_repository_exists(project, db)
+    username = get_username(token)
+    for user in repository_users.get_users_of_repository(db, project):
+        repository_users.stage_project_of_user(db, project, user.username, username)
+    for model in crud.get_project(db, project).models:
+        project_models.stage_project_of_model(db, project, model.name, username)
+    return crud.stage_project_for_deletion(db, project, username)
+
+
+def check_repository_exists(
+    project_name: str,
+    db: Session,
+) -> DatabaseProject:
+    project = crud.get_project(db, project_name)
+    if not project:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "err_code": "project_does_not_exist",
+                "reason": "The project does not exist.",
+            },
+        )
+    return project
 
 
 def convert_project(project: DatabaseProject) -> Project:

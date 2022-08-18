@@ -47,3 +47,13 @@ def get_project_by_slug(db: Session, slug: str) -> DatabaseProject:
     if not project:
         raise HTTPException(404, "Project not found.")
     return project
+
+
+def stage_project_for_deletion(
+    db: Session, project_name: str, username: str
+) -> DatabaseProject:
+    project = get_project(db, project_name)
+    project.staged_by = username
+    db.commit()
+    db.refresh(project)
+    return project

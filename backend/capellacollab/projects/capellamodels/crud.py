@@ -61,3 +61,24 @@ def create(db: Session, project_slug: str, new_model: NewModel) -> DB_CapellaMod
     db.add(model)
     db.commit()
     return model
+
+
+def delete_model_from_project(db: Session, projects_name: str, model_name: str) -> None:
+    db.query(DB_Model).filter(DB_Model.name == model_name).filter(
+        DB_Model.projects_name == projects_name
+    ).delete()
+    db.commit()
+
+
+def stage_project_of_model(
+    db: Session, project_name: str, model_name: str, username: str
+) -> DB_Model:
+    model = (
+        db.query(DB_Model)
+        .filter(DB_Model.name == model_name)
+        .filter(DB_Model.projects_name == project_name)
+    ).first()
+    model.projects.staged_by = username
+    db.commit()
+    db.refresh(model)
+    return model
