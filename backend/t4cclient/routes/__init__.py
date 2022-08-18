@@ -2,11 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import importlib
+import importlib.metadata
 import logging
-from importlib import metadata
 
 from fastapi import APIRouter
 
+import t4cclient.core.metadata as metadata
 from t4cclient.config import config
 
 from ..sessions import routes as session_routes
@@ -16,8 +17,13 @@ log = logging.getLogger(__name__)
 
 
 router = APIRouter()
-router.include_router(session_routes.router, prefix="/sessions", tags=["Sessions"])
-router.include_router(sync.router, prefix="/sync", tags=["T4C Server Synchronization"])
+router.include_router(metadata.router, tags=["Metadata"])
+router.include_router(
+    session_routes.router, prefix="/sessions", tags=["Sessions"]
+)
+router.include_router(
+    sync.router, prefix="/sync", tags=["T4C Server Synchronization"]
+)
 router.include_router(repositories.router, prefix="/projects")
 router.include_router(users.router, prefix="/users", tags=["Users"])
 router.include_router(notices.router, prefix="/notices", tags=["Notices"])
@@ -26,12 +32,15 @@ router.include_router(notices.router, prefix="/notices", tags=["Notices"])
 try:
     ep = next(
         i
-        for i in metadata.entry_points()["capellacollab.authentication.providers"]
+        for i in importlib.metadata.entry_points()[
+            "capellacollab.authentication.providers"
+        ]
         if i.name == config["authentication"]["provider"]
     )
 except StopIteration:
     raise ValueError(
-        f"Unknown authentication provider " + config["authentication"]["provider"]
+        f"Unknown authentication provider "
+        + config["authentication"]["provider"]
     ) from None
 
 router.include_router(

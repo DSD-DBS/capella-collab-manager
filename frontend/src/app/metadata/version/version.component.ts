@@ -5,7 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Version, VersionService } from './version.service';
+import { BackendMetadata, Version, VersionService } from './version.service';
 
 @Component({
   selector: 'app-version',
@@ -23,5 +23,11 @@ export class VersionComponent implements OnInit {
     this.versionService.loadVersion().subscribe((version: Version) => {
       this.frontend = version.git.version;
     });
+
+    this.versionService
+      .loadBackendMetadata()
+      .subscribe((metadata: BackendMetadata) => {
+        this.backend = metadata.version;
+      });
   }
 }
