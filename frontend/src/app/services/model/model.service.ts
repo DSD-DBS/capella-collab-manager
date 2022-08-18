@@ -4,7 +4,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, single } from 'rxjs';
-import { ProjectService } from 'src/app/services/project/project.service';
 import { environment } from 'src/environments/environment';
 
 export interface NewModel {
@@ -49,36 +48,26 @@ export interface Model {
 export class ModelService {
   base_url = new URL('models/', environment.backend_url + '/');
 
-  constructor(
-    private http: HttpClient,
-    private projectService: ProjectService
-  ) {}
-
-  _model: BehaviorSubject<Model | undefined> = new BehaviorSubject<
-    Model | undefined
-  >(undefined);
-  _models: BehaviorSubject<Model[] | undefined> = new BehaviorSubject<
-    Model[] | undefined
-  >(undefined);
-
-  get models(): Model[] | undefined {
-    return this._models.value;
-  }
+  _model = new BehaviorSubject<Model | undefined>(undefined);
+  _models = new BehaviorSubject<Model[] | undefined>(undefined);
 
   get model(): Model | undefined {
     return this._model.value;
   }
+  get models(): Model[] | undefined {
+    return this._models.value;
+  }
+
+  constructor(private http: HttpClient) {}
 
   list(project_slug: string): Observable<Model[]> {
     let url = new URL(project_slug, this.base_url);
-    return this.http.get<Model[]>(url.toString()).pipe(single());
+    return this.http.get<Model[]>(url.toString());
   }
 
   getModelBySlug(slug: string, project_slug: string): Observable<Model> {
     let url = new URL(`${project_slug}/details/`, this.base_url);
-    return this.http
-      .get<Model>(url.toString(), { params: { slug } })
-      .pipe(single());
+    return this.http.get<Model>(url.toString(), { params: { slug } });
   }
 
   createNewModel(project_slug: string, model: NewModel): Observable<Model> {

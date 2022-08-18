@@ -1,8 +1,7 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { dematerialize, filter, materialize, single, Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 import { NavBarService } from './navbar/service/nav-bar.service';
 import { ProjectService } from './services/project/project.service';
 
@@ -11,21 +10,17 @@ import { ProjectService } from './services/project/project.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit {
   constructor(
     public navbarService: NavBarService,
     public projectService: ProjectService
   ) {}
 
-  project_list_subscription?: Subscription;
-
   ngOnInit(): void {
-    this.project_list_subscription = this.projectService
-      .list()
-      .subscribe(this.projectService._projects);
-  }
-
-  ngOnDestroy(): void {
-    this.project_list_subscription?.unsubscribe();
+    let projects = this.projectService._projects;
+    this.projectService.list().subscribe({
+      next: projects.next.bind(projects),
+      error: projects.error.bind(projects),
+    });
   }
 }

@@ -3,39 +3,27 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {
-  BehaviorSubject,
-  dematerialize,
-  materialize,
-  Observable,
-  of,
-  single,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProjectService {
-  constructor(private http: HttpClient) {}
-
   BACKEND_URL_PREFIX = environment.backend_url + '/projects/';
-
   base_url = new URL('projects/', environment.backend_url + '/');
 
-  _project: BehaviorSubject<Project | undefined> = new BehaviorSubject<
-    Project | undefined
-  >(undefined);
-  _projects: BehaviorSubject<Project[] | undefined> = new BehaviorSubject<
-    Project[] | undefined
-  >(undefined);
+  _project = new BehaviorSubject<Project | undefined>(undefined);
+  _projects = new BehaviorSubject<Project[] | undefined>(undefined);
+
   get project() {
     return this._project.value;
   }
   get projects() {
-    return this._projects.getValue();
+    return this._projects.value;
   }
+
+  constructor(private http: HttpClient) {}
 
   getProjectBySlug(slug: string): Observable<Project> {
     let url = new URL('details/', this.base_url);
@@ -43,7 +31,7 @@ export class ProjectService {
   }
 
   list(): Observable<Project[]> {
-    return this.http.get<Project[]>(this.BACKEND_URL_PREFIX).pipe(single());
+    return this.http.get<Project[]>(this.BACKEND_URL_PREFIX);
   }
 
   getProject(name: string): Observable<Project> {
@@ -59,9 +47,7 @@ export class ProjectService {
     name: string;
     description: string;
   }): Observable<Project> {
-    return this.http
-      .post<Project>(this.BACKEND_URL_PREFIX, project)
-      .pipe(single());
+    return this.http.post<Project>(this.BACKEND_URL_PREFIX, project);
   }
 }
 
