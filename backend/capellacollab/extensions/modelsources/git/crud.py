@@ -4,7 +4,7 @@
 # Standard library:
 import typing as t
 
-import capellacollab.models.crud as models_crud
+import capellacollab.projects.capellamodels.crud as models_crud
 
 # 1st party:
 from capellacollab.extensions.modelsources.git.models import (

@@ -60,4 +60,4 @@ class DatabaseProject(Base):
         "ProjectUserAssociation",
         back_populates="projects",
     )
-    models = relationship("Model", back_populates="project")
+    models = relationship("DB_Model", back_populates="project")

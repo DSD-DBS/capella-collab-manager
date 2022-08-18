@@ -6,7 +6,7 @@ import base64
 import typing as t
 
 # 1st party:
-import capellacollab.models.crud as models_crud
+import capellacollab.projects.capellamodels.crud as models_crud
 import capellacollab.projects.crud as projects_crud
 from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.database.git_models import (
