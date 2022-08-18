@@ -14,6 +14,15 @@
       [repository]="project_slug"
     ></app-project-user-settings>
   </div>
+  <div class="delete" *ngIf="isStaged; else stageFirst">
+    <app-delete-project [project_name]="project_name"></app-delete-project>
+  </div>
+  <ng-template #stageFirst>
+    <app-stage-project
+      class="delete"
+      [project_name]="project_name"
+    ></app-stage-project>
+  </ng-template>
   <!--<app-backup-settings [project]="project"></app-backup-settings>
   <app-model-source [repository]="project"></app-model-source>-->
 </div>

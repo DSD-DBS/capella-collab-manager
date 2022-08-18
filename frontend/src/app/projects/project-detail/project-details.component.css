@@ -17,4 +17,19 @@
 
 .users {
   margin-left: auto;
+  position: relative;
+  right: 80px;
+}
+
+.delete {
+  margin-left: auto;
+  position: relative;
+  width: 455px;
+  right: 77px;
+  bottom: 10px;
+}
+
+.stage {
+  position: relative;
+  bottom: 10px;
 }
