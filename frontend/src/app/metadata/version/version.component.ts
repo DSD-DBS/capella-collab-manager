@@ -20,15 +20,11 @@ export class VersionComponent implements OnInit {
   env: string = (environment as any)['environment'] || 'not specified';
 
   constructor(
-    private versionService: VersionService,
+    public versionService: VersionService,
     public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this.versionService.loadVersion().subscribe((version: Version) => {
-      this.frontend = version.git.version;
-    });
-
     this.versionService
       .loadBackendMetadata()
       .subscribe((metadata: BackendMetadata) => {

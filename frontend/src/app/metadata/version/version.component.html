@@ -5,7 +5,7 @@
 
 <div class="wrapper" (click)="openReleaseNotes()">
   Environment: {{ env }} <br />
-  Frontend version: {{ frontend }} <br />
+  Frontend version: {{ versionService.version?.git?.version }} <br />
   Backend version:
   {{ backend }}
 </div>

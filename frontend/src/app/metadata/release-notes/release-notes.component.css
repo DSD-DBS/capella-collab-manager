@@ -21,3 +21,27 @@ h2 {
   display: flex;
   justify-content: flex-end;
 }
+
+mat-card {
+  display: inline-block;
+  margin: 0;
+  padding: 10px;
+}
+
+.release-title {
+  font-size: 1.5em;
+  margin-right: 10px;
+}
+
+.new {
+  background: lightgreen;
+}
+
+.not-deployed {
+  background: lightcoral;
+}
+
+.release-header {
+  display: flex;
+  align-items: center;
+}

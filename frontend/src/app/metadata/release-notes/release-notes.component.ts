@@ -4,8 +4,7 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { Version, VersionService } from '../version/version.service';
-import { ReleaseNote } from './release-note.service';
+import { VersionService } from '../version/version.service';
 
 @Component({
   selector: 'app-release-notes',
@@ -13,15 +12,7 @@ import { ReleaseNote } from './release-note.service';
   styleUrls: ['./release-notes.component.css'],
 })
 export class ReleaseNotesComponent implements OnInit {
-  version = '0.0.5';
-
-  releaseNotes: Array<ReleaseNote> = [];
-
-  constructor(private versionService: VersionService) {
-    this.versionService.loadVersion().subscribe((version: Version) => {
-      this.releaseNotes = version.github;
-    });
-  }
+  constructor(public versionService: VersionService) {}
 
   ngOnInit(): void {}
 }
