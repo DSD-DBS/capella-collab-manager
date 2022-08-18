@@ -4,24 +4,23 @@
 # Standard library:
 import importlib
 import logging
-from email import utils
 from importlib import metadata
-
-# 3rd party:
-from fastapi import APIRouter
 
 # 1st party:
 import capellacollab.config.routes as configuration
 import capellacollab.sessions.routes as sessions
-
-# local:
-from . import notices, sessions, users
 from capellacollab.config import config
-from capellacollab.models import routes as models
 from capellacollab.projects import routes as projects
+from capellacollab.projects.capellamodels import routes as models
 from capellacollab.settings.modelsources.git import routes as git_settings
 from capellacollab.tools import routes as tools
 from capellacollab.utils import git_utils
+
+# 3rd party:
+from fastapi import APIRouter
+
+# local:
+from . import notices, sessions, users
 
 log = logging.getLogger(__name__)
 
