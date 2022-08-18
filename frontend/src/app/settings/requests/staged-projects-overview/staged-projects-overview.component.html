@@ -1,1 +1,23 @@
-<p>staged-projects-overview works!</p>
+<div class="flexbox">
+  <mat-card id="staged-for-deletion">
+    <h2>Delete projects</h2>
+
+    <mat-selection-list #projects [multiple]="false">
+      <mat-list-option *ngFor="let project of stagedProjects" [value]="project">
+        <div mat-line>{{ project.name }}</div>
+      </mat-list-option>
+    </mat-selection-list>
+
+    <div *ngIf="projects.selectedOptions.selected.length">
+      <button
+        color="primary"
+        mat-flat-button
+        (click)="
+          openDeleteDialog(projects.selectedOptions.selected[0].value.name)
+        "
+      >
+        Delete <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </mat-card>
+</div>
