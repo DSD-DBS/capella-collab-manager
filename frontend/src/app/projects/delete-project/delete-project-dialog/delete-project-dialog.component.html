@@ -3,16 +3,26 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<h1>Delete Project {{ project_name }}</h1>
+<h1>Delete Project {{ data.project_name }}</h1>
 <p>
-  Are you sure to delete project <b>{{ project_name }}</b
+  Are you sure to delete project <b>{{ data.project_name }}</b
   >?
 </p>
-<button mat-button (click)="this.dialogRef.close(false)">No</button>
+<button
+  mat-button
+  (click)="
+    data.overview ? dialogRefOverview.close(false) : dialogRef.close(false)
+  "
+>
+  No
+</button>
+
 <button
   mat-raised-button
   class="yes-button"
-  (click)="this.dialogRef.close(true)"
+  (click)="
+    data.overview ? dialogRefOverview.close(true) : dialogRef.close(true)
+  "
   color="primary"
 >
   Yes

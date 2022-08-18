@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DeleteProjectComponent } from 'src/app/projects/delete-project/delete-project.component';
-
+import { StagedProjectsOverviewComponent } from 'src/app/settings/requests/staged-projects-overview/staged-projects-overview.component';
 @Component({
   selector: 'app-delete-project-dialog',
   templateUrl: './delete-project-dialog.component.html',
@@ -10,7 +10,9 @@ import { DeleteProjectComponent } from 'src/app/projects/delete-project/delete-p
 export class DeleteProjectDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<DeleteProjectComponent>,
-    @Inject(MAT_DIALOG_DATA) public project_name: string
+    public dialogRefOverview: MatDialogRef<StagedProjectsOverviewComponent>,
+    @Inject(MAT_DIALOG_DATA)
+    public data: { project_name: string; overview: boolean }
   ) {}
   ngOnInit(): void {}
 }

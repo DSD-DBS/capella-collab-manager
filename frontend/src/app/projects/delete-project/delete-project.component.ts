@@ -22,7 +22,7 @@ export class DeleteProjectComponent implements OnInit {
 
   openDeleteDialog() {
     const deleteProjectDialog = this.dialog.open(DeleteProjectDialogComponent, {
-      data: this.project_name,
+      data: { project_name: this.project_name, overview: false },
     });
     deleteProjectDialog.afterClosed().subscribe((response) => {
       if (response) {
