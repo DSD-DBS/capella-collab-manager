@@ -92,7 +92,7 @@ def get_repository_by_name(project: str, db: Session = Depends(get_db)):
 
 
 @router.get("/details/", response_model=Project)
-def get_prpject(
+def get_project(
     slug: str,
     db: Session = Depends(get_db),
 ) -> Project:
