@@ -1,0 +1,16 @@
+.wrapper {
+  margin: 10px;
+  height: 100%;
+}
+
+textarea {
+  resize: none;
+}
+
+mat-card {
+  margin: 0;
+}
+
+mat-form-field {
+  width: 460px;
+}
