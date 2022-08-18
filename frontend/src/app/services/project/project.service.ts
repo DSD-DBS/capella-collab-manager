@@ -88,6 +88,17 @@ export class ProjectService {
         });
     });
   }
+
+  deleteProject(project_name: string): Observable<any> {
+    return this.http.delete<any>(this.BACKEND_URL_PREFIX + project_name);
+  }
+
+  stageForProjectDeletion(project_name: string): Observable<any> {
+    return this.http.patch<any>(
+      this.BACKEND_URL_PREFIX + `${project_name}/stage`,
+      {}
+    );
+  }
 }
 
 export interface UserMetadata {
@@ -99,6 +110,7 @@ export interface UserMetadata {
 export interface Project {
   name: string;
   slug: string;
+  staged_by: string;
   description: string;
   users: UserMetadata;
 }
