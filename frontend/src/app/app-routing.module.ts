@@ -29,7 +29,6 @@ import { EditGitSettingsComponent } from './settings/modelsources/git-settings/e
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
 import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-instance-settings.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
-import { DeleteRepositoryComponent } from './settings/repository-manager-settings/repository-settings/delete-repository/delete-repository.component';
 import { RequestsComponent } from './settings/requests/requests.component';
 import { SettingsComponent } from './settings/settings.component';
 import { HomeComponent } from './workspaces/home.component';
@@ -75,11 +74,6 @@ const routes: Routes = [
   {
     path: 'settings/requests',
     component: RequestsComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'settings/projects/:repository/delete',
-    component: DeleteRepositoryComponent,
     canActivate: [AuthGuardService],
   },
   {
