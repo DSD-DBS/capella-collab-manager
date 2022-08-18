@@ -34,7 +34,7 @@ async function main() {
     },
   };
 
-  writeFileSync('src/assets/version.json', JSON.stringify(json));
+  writeFileSync(__dirname + '/src/assets/version.json', JSON.stringify(json));
 }
 
 main();

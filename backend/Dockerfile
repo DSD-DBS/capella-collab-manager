@@ -16,10 +16,12 @@ RUN apt-get update && \
     kubernetes-client && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8000
-COPY . /backend
+COPY . /tmp/backend
+COPY .git_archival.txt /tmp/.git_archival.txt
+COPY startup.sh /opt/.startup.sh
 
-WORKDIR /backend
+WORKDIR /tmp/backend
 RUN pip install .
 
-RUN chmod +x /backend/startup.sh
-CMD ["/backend/startup.sh"]
+RUN chmod +x /opt/.startup.sh
+CMD ["/opt/.startup.sh"]

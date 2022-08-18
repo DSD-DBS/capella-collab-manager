@@ -10,3 +10,4 @@ config/*
 .venv
 *.egg-info
 build
+.git_archival.txt

@@ -4,7 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "node fetch-version.ts && ng build",
+    "fetch-version": "node fetch-version.ts",
+    "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -22,6 +23,7 @@
     "@angular/router": "~14.1.3",
     "ngx-cookie": "^6.0.1",
     "ngx-markdown": "^14.0.1",
+    "npm": "^8.18.0",
     "rxjs": "~7.5.6",
     "semver": "^7.3.7",
     "tslib": "^2.4.0",
