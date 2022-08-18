@@ -126,6 +126,7 @@ def convert_project(project: DatabaseProject) -> Project:
     return Project(
         name=project.name,
         slug=project.slug,
+        staged_by=project.staged_by,
         description=project.description,
         users=UserMetadata(
             leads=len(

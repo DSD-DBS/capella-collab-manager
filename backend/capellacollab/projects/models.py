@@ -32,6 +32,7 @@ class UserMetadata(BaseModel):
 class Project(BaseModel):
     name: str
     slug: str
+    staged_by: str | None
     description: t.Optional[str]
     users: UserMetadata
 
@@ -53,6 +54,7 @@ class DatabaseProject(Base):
     id = Column(Integer, unique=True, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
     slug = Column(String, unique=True, index=True)
+    staged_by = Column(String)
     description = Column(String)
     users = relationship(
         "ProjectUserAssociation",
