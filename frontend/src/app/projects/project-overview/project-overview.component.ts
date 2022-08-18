@@ -3,10 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
-
 import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import {
   ProjectService,
@@ -20,6 +18,7 @@ import {
 })
 export class ProjectOverviewComponent implements OnInit {
   showSpinner = true;
+  project_list_subscription?: Subscription;
 
   constructor(
     public projectService: ProjectService,
@@ -30,7 +29,11 @@ export class ProjectOverviewComponent implements OnInit {
 
   ngOnInit() {
     this.navbarService.enableAll();
-    this.projectService.list().subscribe(this.projectService._projects);
+    let projects = this.projectService._projects;
+    this.projectService.list().subscribe({
+      next: projects.next.bind(projects),
+      error: projects.error.bind(projects),
+    });
   }
 
   sumUsers(user: UserMetadata): number {

@@ -4,19 +4,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
-  BehaviorSubject,
-  connect,
   Connectable,
   connectable,
-  dematerialize,
-  filter,
   map,
-  materialize,
-  share,
   Subject,
   Subscription,
   switchMap,
-  tap,
 } from 'rxjs';
 import { ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
@@ -33,7 +26,7 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
 
   constructor(
     private _route: ActivatedRoute,
-    public _projectService: ProjectService,
+    public projectService: ProjectService,
     public _modelService: ModelService
   ) {}
 
@@ -49,10 +42,10 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
     this.project_subscription = param_subject
       .pipe(
         switchMap(
-          this._projectService.getProjectBySlug.bind(this._projectService)
+          this.projectService.getProjectBySlug.bind(this.projectService)
         )
       )
-      .subscribe(this._projectService._project);
+      .subscribe(this.projectService._project);
 
     this.models_subscription = param_subject
       .pipe(switchMap(this._modelService.list.bind(this._modelService)))
@@ -64,7 +57,7 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.project_subscription?.unsubscribe();
     this.models_subscription?.unsubscribe();
-    this._projectService._project.next(undefined);
+    this.projectService._project.next(undefined);
     this._modelService._models.next(undefined);
   }
 }
