@@ -12,7 +12,9 @@ from capellacollab.projects.users.models import (
 from sqlalchemy.orm import Session
 
 
-def get_users_of_repository(db: Session, projects_name: str):
+def get_users_of_repository(
+    db: Session, projects_name: str
+) -> list[ProjectUserAssociation]:
     return (
         db.query(ProjectUserAssociation)
         .filter(ProjectUserAssociation.projects_name == projects_name)
@@ -20,7 +22,9 @@ def get_users_of_repository(db: Session, projects_name: str):
     )
 
 
-def get_user_of_repository(db: Session, projects_name: str, username: str):
+def get_user_of_repository(
+    db: Session, projects_name: str, username: str
+) -> ProjectUserAssociation:
     return (
         db.query(ProjectUserAssociation)
         .filter(ProjectUserAssociation.projects_name == projects_name)
@@ -35,7 +39,7 @@ def add_user_to_repository(
     role: RepositoryUserRole,
     username: str,
     permission: RepositoryUserPermission,
-):
+) -> ProjectUserAssociation:
     association = ProjectUserAssociation(
         projects_name=projects_name,
         username=username,
@@ -50,7 +54,7 @@ def add_user_to_repository(
 
 def change_role_of_user_in_repository(
     db: Session, projects_name: str, role: RepositoryUserRole, username: str
-):
+) -> ProjectUserAssociation:
     repo_user = (
         db.query(ProjectUserAssociation)
         .filter(ProjectUserAssociation.projects_name == projects_name)
@@ -70,7 +74,7 @@ def change_permission_of_user_in_repository(
     projects_name: str,
     permission: RepositoryUserPermission,
     username: str,
-):
+) -> ProjectUserAssociation:
     repo_user = (
         db.query(ProjectUserAssociation)
         .filter(ProjectUserAssociation.projects_name == projects_name)
@@ -83,14 +87,14 @@ def change_permission_of_user_in_repository(
     return repo_user
 
 
-def delete_user_from_repository(db: Session, projects_name: str, username: str):
+def delete_user_from_repository(db: Session, projects_name: str, username: str) -> None:
     db.query(ProjectUserAssociation).filter(
         ProjectUserAssociation.username == username
     ).filter(ProjectUserAssociation.projects_name == projects_name).delete()
     db.commit()
 
 
-def delete_all_repositories_for_user(db: Session, username: str):
+def delete_all_repositories_for_user(db: Session, username: str) -> None:
     db.query(ProjectUserAssociation).filter(
         ProjectUserAssociation.username == username
     ).delete()

@@ -5,13 +5,13 @@
 import enum
 import typing as t
 
+# 1st party:
+from capellacollab.core.database import Base
+
 # 3rd party:
 from pydantic import BaseModel
 from sqlalchemy import Column, Enum, ForeignKey
 from sqlalchemy.orm import relationship
-
-# 1st party:
-from capellacollab.core.database import Base
 
 
 class Role(enum.Enum):

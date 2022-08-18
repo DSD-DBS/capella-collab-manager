@@ -92,10 +92,10 @@ def get_repository_by_name(project: str, db: Session = Depends(get_db)):
 
 
 @router.get("/details/", response_model=Project)
-def get(
+def get_prpject(
     slug: str,
     db: Session = Depends(get_db),
-):
+) -> Project:
     project = crud.get_project_by_slug(db, slug)
     return convert_project(project)
 
@@ -105,7 +105,7 @@ def create_repository(
     body: PostRepositoryRequest,
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
-):
+) -> Project:
     verify_admin(token, db)
     return convert_project(crud.create_project(db, body.name))
 
