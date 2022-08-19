@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { DeleteProjectDialogComponent } from 'src/app/projects/delete-project/delete-project-dialog/delete-project-dialog.component';
 import {
   Project,
@@ -17,8 +16,7 @@ export class StagedProjectsOverviewComponent implements OnInit {
 
   constructor(
     private projectService: ProjectService,
-    private dialog: MatDialog,
-    private router: Router
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -34,7 +32,14 @@ export class StagedProjectsOverviewComponent implements OnInit {
     deleteProjectDialog.afterClosed().subscribe((response) => {
       if (response) {
         this.projectService.deleteProject(project_name).subscribe({
-          complete: () => this.router.navigateByUrl('/settings/requests'),
+          complete: () => {
+            for (let i = 0; i < this.stagedProjects.length; i++) {
+              if (this.stagedProjects[i].name == project_name) {
+                this.stagedProjects.splice(i, 1);
+                break;
+              }
+            }
+          },
         });
       }
     });
