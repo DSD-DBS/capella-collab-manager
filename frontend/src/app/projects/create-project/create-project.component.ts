@@ -35,7 +35,7 @@ import {
   styleUrls: ['./create-project.component.css'],
 })
 export class CreateProjectComponent implements OnInit, OnDestroy {
-  createProjectForm = new FormGroup({
+  form = new FormGroup({
     name: new FormControl('', Validators.required),
     description: new FormControl(''),
   });
@@ -54,17 +54,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.createProjectForm.controls.name.addValidators(
-      (control: AbstractControl): ValidationErrors | null => {
-        let new_slug = slugify(control.value, { lower: true });
-        for (let slug of this.projects_slugs.value) {
-          if (slug == new_slug) {
-            return { uniqueSlug: { value: slug } };
-          }
-        }
-        return null;
-      }
-    );
+    this.form.controls.name.addValidators(this.slugValidator.bind(this));
 
     let projects = this.projectService._projects;
 
@@ -90,9 +80,9 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
 
   createProject(stepper: MatStepper): void {
     let project_subject = this.projectService._project;
-    if (this.createProjectForm.valid) {
+    if (this.form.valid) {
       const project_creation_subject = connectable<Project>(
-        this.projectService.createProject(this.createProjectForm.value),
+        this.projectService.createProject(this.form.value),
         {
           connector: () => new Subject(),
           resetOnDisconnect: false,
@@ -127,5 +117,15 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   finish(): void {
     this.project_details = true;
     this.router.navigate(['/project', this.projectService.project!.slug]);
+  }
+
+  slugValidator(control: AbstractControl): ValidationErrors | null {
+    let new_slug = slugify(control.value, { lower: true });
+    for (let slug of this.projects_slugs.value) {
+      if (slug == new_slug) {
+        return { uniqueSlug: { value: slug } };
+      }
+    }
+    return null;
   }
 }

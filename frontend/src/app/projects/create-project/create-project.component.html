@@ -7,21 +7,17 @@
   <mat-horizontal-stepper linear #stepper>
     <mat-step completed="false" label="General information">
       <mat-card class="section-card">
-        <form [formGroup]="createProjectForm">
+        <form [formGroup]="form">
           <fieldset>
             <mat-form-field appearance="fill">
               <mat-label>Name</mat-label>
               <input matInput formControlName="name" />
-              <mat-error
-                *ngIf="createProjectForm.controls.name.errors?.uniqueSlug"
-              >
+              <mat-error *ngIf="form.controls.name.errors?.uniqueSlug">
                 A project having the slug “{{
-                  createProjectForm.controls.name.errors!.uniqueSlug.value
+                  form.controls.name.errors!.uniqueSlug.value
                 }}” already exists.
               </mat-error>
-              <mat-error
-                *ngIf="createProjectForm.controls.name.errors?.required"
-              >
+              <mat-error *ngIf="form.controls.name.errors?.required">
                 A project name is required.
               </mat-error>
             </mat-form-field>
