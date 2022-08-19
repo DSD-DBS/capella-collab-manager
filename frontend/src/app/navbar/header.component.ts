@@ -1,10 +1,10 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ProjectService } from 'src/app/services/project/project.service';
 import { LocalStorageService } from '../auth/local-storage/local-storage.service';
 import { AuthService } from '../services/auth/auth.service';
-import { ProjectService } from 'src/app/services/project/project.service';
 import { UserService } from '../services/user/user.service';
 import { NavBarService } from './service/nav-bar.service';
 
@@ -14,6 +14,8 @@ import { NavBarService } from './service/nav-bar.service';
   styleUrls: ['./header.component.css'],
 })
 export class HeaderComponent implements OnInit {
+  numMessages: number = 0;
+
   constructor(
     public localStorageService: LocalStorageService,
     public authService: AuthService,
@@ -24,6 +26,14 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.createGithubButton();
+    this.collectRequests();
+  }
+
+  collectRequests() {
+    this.projectService.listStagedProjects().subscribe((stagedProjects) => {
+      console.log(stagedProjects.length);
+      this.numMessages += stagedProjects.length;
+    });
   }
 
   createGithubButton(): void {
