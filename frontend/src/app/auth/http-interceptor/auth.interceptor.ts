@@ -58,7 +58,7 @@ export class AuthInterceptor implements HttpInterceptor {
         ) {
           this.toastService.showError(
             'An error occurred!',
-            'err.error.detail.reason'
+            err.error.detail.reason
           );
         } else if (err.status === 0) {
           this.toastService.showPersistentError(
