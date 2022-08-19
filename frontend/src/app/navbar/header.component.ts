@@ -31,7 +31,6 @@ export class HeaderComponent implements OnInit {
 
   collectRequests() {
     this.projectService.listStagedProjects().subscribe((stagedProjects) => {
-      console.log(stagedProjects.length);
       this.numMessages += stagedProjects.length;
     });
   }
