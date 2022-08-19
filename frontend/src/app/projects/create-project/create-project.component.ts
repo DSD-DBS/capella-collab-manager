@@ -56,9 +56,15 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    let projects = this.projectService._projects;
+    this.projectService.list().subscribe({
+      next: projects.next.bind(projects),
+      error: projects.error.bind(projects),
+    });
     this.projectService._projects
       .pipe(filter(Boolean))
       .subscribe((projects) => {
+        console.log(this.createProjectForm.controls.name.validator);
         this.createProjectForm.controls.name.addValidators(
           this.slugValidator(projects.map((p) => p.slug))
         );
