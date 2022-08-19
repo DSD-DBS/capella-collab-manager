@@ -57,6 +57,15 @@ export class ProjectService {
     });
   }
 
+  listStagedProjects(): Observable<Array<Project>> {
+    return new Observable<Project[]>((subscriber) => {
+      this.list().subscribe((projects: Array<Project>) => {
+        const stagedProjects = projects.filter((project) => project.staged_by);
+        subscriber.next(stagedProjects);
+      });
+    });
+  }
+
   getProject(name: string): Observable<Project> {
     return this.http.get<Project>(this.BACKEND_URL_PREFIX + name);
   }

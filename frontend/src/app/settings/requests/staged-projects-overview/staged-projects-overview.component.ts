@@ -20,9 +20,11 @@ export class StagedProjectsOverviewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.projectService.list().subscribe((projects: Array<Project>) => {
-      this.stagedProjects = projects.filter((project) => project.staged_by);
-    });
+    this.projectService
+      .listStagedProjects()
+      .subscribe((stagedProjects: Array<Project>) => {
+        this.stagedProjects = stagedProjects;
+      });
   }
 
   openDeleteDialog(project_name: string) {
