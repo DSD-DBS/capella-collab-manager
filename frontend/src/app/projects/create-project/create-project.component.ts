@@ -7,13 +7,21 @@ import {
   FormControl,
   FormGroup,
   ValidationErrors,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { connectable, filter, Subject, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  connectable,
+  filter,
+  map,
+  Subject,
+  Subscription,
+  switchMap,
+  tap,
+} from 'rxjs';
 import slugify from 'slugify';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import {
@@ -33,6 +41,8 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   });
 
   private project_details = false;
+  private projects_slugs = new BehaviorSubject<string[]>([]);
+  private slugs_subscription?: Subscription;
 
   constructor(
     public projectService: ProjectService,
@@ -43,35 +53,36 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
     this.navBarService.title = 'Create Project';
   }
 
-  slugValidator(slugs: string[]): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      let new_slug = slugify(control.value, { lower: true });
-      for (let slug of slugs) {
-        if (slug == new_slug) {
-          return { uniqueSlug: { value: slug } };
-        }
-      }
-      return null;
-    };
-  }
-
   ngOnInit(): void {
+    this.createProjectForm.controls.name.addValidators(
+      (control: AbstractControl): ValidationErrors | null => {
+        let new_slug = slugify(control.value, { lower: true });
+        for (let slug of this.projects_slugs.value) {
+          if (slug == new_slug) {
+            return { uniqueSlug: { value: slug } };
+          }
+        }
+        return null;
+      }
+    );
+
     let projects = this.projectService._projects;
+
     this.projectService.list().subscribe({
       next: projects.next.bind(projects),
       error: projects.error.bind(projects),
     });
-    this.projectService._projects
-      .pipe(filter(Boolean))
-      .subscribe((projects) => {
-        console.log(this.createProjectForm.controls.name.validator);
-        this.createProjectForm.controls.name.addValidators(
-          this.slugValidator(projects.map((p) => p.slug))
-        );
-      });
+
+    this.slugs_subscription = projects
+      .pipe(
+        filter(Boolean),
+        map((projects) => projects.map((p) => p.slug))
+      )
+      .subscribe(this.projects_slugs);
   }
 
   ngOnDestroy(): void {
+    this.slugs_subscription?.unsubscribe();
     if (!this.project_details) {
       this.projectService._project.next(undefined);
     }
