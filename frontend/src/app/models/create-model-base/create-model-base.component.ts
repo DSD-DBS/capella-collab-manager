@@ -27,11 +27,11 @@ import { ToolService } from 'src/app/services/tools/tool.service';
 import { connectable, filter, first, single, Subject, switchMap } from 'rxjs';
 
 @Component({
-  selector: 'app-create-model',
-  templateUrl: './create-model.component.html',
-  styleUrls: ['./create-model.component.css'],
+  selector: 'app-create-model-base',
+  templateUrl: './create-model-base.component.html',
+  styleUrls: ['./create-model-base.component.css'],
 })
-export class CreateModelComponent implements OnInit {
+export class CreateModelBaseComponent implements OnInit {
   public form = new FormGroup({
     name: new FormControl('', Validators.required),
     description: new FormControl(''),

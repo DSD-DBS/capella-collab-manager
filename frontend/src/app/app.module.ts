@@ -91,7 +91,7 @@ import { HomeComponent } from './workspaces/home.component';
 import { NoRepositoryComponent } from './workspaces/no-repository/no-repository.component';
 import { RequestSessionComponent } from './workspaces/request-session/request-session.component';
 import { WarningComponent } from './workspaces/request-session/warning/warning.component';
-import { CreateModelComponent } from './models/create-model/create-model.component';
+import { CreateModelBaseComponent } from './models/create-model-base/create-model-base.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { CreateCoworkingMethodComponent } from './models/create-coworking-method/create-coworking-method.component';
@@ -164,7 +164,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     CreateEASEBackupComponent,
     DeleteGitSettingsDialogComponent,
     EditGitSettingsComponent,
-    CreateModelComponent,
+    CreateModelBaseComponent,
     CreateCoworkingMethodComponent,
     ChooseSourceComponent,
     InitModelComponent,
