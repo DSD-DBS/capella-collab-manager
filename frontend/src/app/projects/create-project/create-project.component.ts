@@ -89,6 +89,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   createProject(stepper: MatStepper): void {
+    let project_subject = this.projectService._project;
     if (this.createProjectForm.valid) {
       const project_creation_subject = connectable<Project>(
         this.projectService.createProject(this.createProjectForm.value),
@@ -99,7 +100,12 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
       );
 
       project_creation_subject
-        .pipe(tap(this.projectService._project))
+        .pipe(
+          tap({
+            next: project_subject.next.bind(project_subject),
+            error: project_subject.next.bind(project_subject),
+          })
+        )
         .subscribe((project) => {
           this.toastrService.success(
             `The project “${project!.name}” was successfuly created.`,
