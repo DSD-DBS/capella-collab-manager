@@ -158,7 +158,7 @@ def delete_project(
 def stage_project(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ) -> DatabaseProject:
-    # verify_project_role(project, token, db, allowed_roles=["admin", "manager"])
+    verify_project_role(project, token, db, allowed_roles=["admin", "manager"])
     check_repository_exists(project, db)
     username = get_username(token)
     for user in repository_users.get_users_of_repository(db, project):
