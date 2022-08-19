@@ -31,6 +31,7 @@ export class RepositoryUserService {
     role: 'user' | 'manager',
     permission: string
   ): Observable<RepositoryUser> {
+    console.log(repository, username, role, permission);
     return this.http.post<RepositoryUser>(
       this.BACKEND_URL_PREFIX + repository + '/users',
       { username, role, permission }

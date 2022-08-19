@@ -38,8 +38,13 @@ from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
 
+# local:
+from .users.routes import router as router_users
+
 log = logging.getLogger(__name__)
 router = APIRouter()
+
+router.include_router(router_users, prefix="/{project}/users")
 
 
 @router.get(
@@ -107,7 +112,7 @@ def create_repository(
     token: JWTBearer = Depends(JWTBearer()),
 ) -> Project:
     verify_admin(token, db)
-    return convert_project(crud.create_project(db, body.name))
+    return convert_project(crud.create_project(db, body.name, body.description))
 
 
 @router.delete(

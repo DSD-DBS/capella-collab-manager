@@ -14,13 +14,8 @@ import { ModelService } from 'src/app/services/model/model.service';
 export class ChooseSourceComponent implements OnInit {
   constructor(
     public projectService: ProjectService,
-    public modelService: ModelService,
-    private route: ActivatedRoute
+    public modelService: ModelService
   ) {}
 
-  ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      this.modelService.init(params.project, params.model).subscribe();
-    });
-  }
+  ngOnInit(): void {}
 }

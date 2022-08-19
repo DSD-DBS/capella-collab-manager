@@ -32,7 +32,6 @@ export class CreateCoworkingMethodComponent implements OnInit {
   public filteredRevisions: Instance = { branches: [], tags: [] };
 
   constructor(
-    private route: ActivatedRoute,
     public projectService: ProjectService,
     public modelService: ModelService,
     private gitService: GitService,
@@ -41,10 +40,6 @@ export class CreateCoworkingMethodComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      this.modelService.init(params.project, params.model).subscribe();
-    });
-
     this.gitForm.controls.revision.valueChanges.subscribe((value) => {
       if (!this.gitService.instance) {
         this.filteredRevisions = { branches: [], tags: [] };
@@ -91,9 +86,11 @@ export class CreateCoworkingMethodComponent implements OnInit {
         )
         .subscribe((_) => {
           this.router.navigate([
-            '/init-model',
-            this.projectService.project?.slug,
+            'project',
+            this.projectService.project!.slug,
+            'model',
             this.modelService.model?.slug,
+            'init-model',
           ]);
         });
     }

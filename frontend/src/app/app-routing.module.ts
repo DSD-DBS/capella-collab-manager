@@ -15,10 +15,12 @@ import { ChooseSourceComponent } from './models/choose-source/choose-source.comp
 import { CreateCoworkingMethodComponent } from './models/create-coworking-method/create-coworking-method.component';
 import { CreateModelComponent } from './models/create-model/create-model.component';
 import { InitModelComponent } from './models/init-model/init-model.component';
+import { ModelWrapperComponent } from './models/model-wrapper/model-wrapper.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
+import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { SessionOverviewComponent } from './session-overview/session-overview.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { DockerimageSettingsComponent } from './settings/core/dockerimage-settings/dockerimage-settings.component';
@@ -112,9 +114,45 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'projects/:project/models/:model',
-    component: ModelDetailComponent,
+    path: 'project/:project',
+    component: ProjectWrapperComponent,
     canActivate: [AuthGuardService],
+    children: [
+      {
+        path: '',
+        component: ProjectDetailsComponent,
+      },
+      {
+        path: 'create-model',
+        component: CreateModelComponent,
+      },
+      {
+        path: 'model/:model',
+        component: ModelWrapperComponent,
+        children: [
+          {
+            path: '',
+            component: ModelDetailComponent,
+          },
+          {
+            path: 'choose-source',
+            component: ChooseSourceComponent,
+          },
+          {
+            path: 'choose-init',
+            component: ChooseInitComponent,
+          },
+          {
+            path: 'use-existing-git',
+            component: CreateCoworkingMethodComponent,
+          },
+          {
+            path: 'init-model',
+            component: InitModelComponent,
+          },
+        ],
+      },
+    ],
   },
   {
     path: 'settings/integrations/backups/importer',
@@ -132,43 +170,8 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'create-model/:project',
-    component: CreateModelComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'choose-source/:project/:model',
-    component: ChooseSourceComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'use-existing-git/:project/:model',
-    component: CreateCoworkingMethodComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'choose-init/:project/:model',
-    component: ChooseInitComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
     path: 'settings/modelsources/git/instances/:id',
     component: EditGitSettingsComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'create-model/:project',
-    component: CreateModelComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'init-model/:project/:model',
-    component: InitModelComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'project/:project',
-    component: ProjectDetailsComponent,
     canActivate: [AuthGuardService],
   },
   {

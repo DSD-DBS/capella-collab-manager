@@ -5,21 +5,13 @@
 
 <div *ngIf="projectService.project && modelService.model">
   <h1>
-    Add a primary source to the model
-    <i>{{ modelService.model?.name }}</i> of the project
-    <i>{{ projectService.project?.name }}</i
-    >.
+    Add a primary source to the model “{{ modelService.model!.name }}” of the
+    project “{{ projectService.project!.name }}”.
   </h1>
 
   <h2 class="title">Git sources</h2>
   <div class="options-list">
-    <a
-      [routerLink]="[
-        '/use-existing-git',
-        projectService.project.slug,
-        modelService.model.slug
-      ]"
-    >
+    <a [routerLink]="['..', 'use-existing-git']">
       <mat-card matRipple>
         <h3 class="option-title">Use existing repository</h3>
         <div class="content">

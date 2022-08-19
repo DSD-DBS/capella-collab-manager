@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import {
-  Project,
   ProjectService,
   UserMetadata,
 } from 'src/app/services/project/project.service';
@@ -15,34 +15,22 @@ import {
   styleUrls: ['./project-overview.component.css'],
 })
 export class ProjectOverviewComponent implements OnInit {
-  projects: Array<Project> = [];
   showSpinner = true;
+  project_list_subscription?: Subscription;
 
   constructor(
-    private projectService: ProjectService,
+    public projectService: ProjectService,
     private navbarService: NavBarService
   ) {
     this.navbarService.title = 'Projects';
-    this.navbarService.enableAll();
   }
 
   ngOnInit() {
-    this.showSpinner = true;
-    this.projectService.initAll().subscribe({
-      next: (res) => {
-        this.projects = this.sortProject(res);
-        this.showSpinner = false;
-      },
-      error: () => {
-        this.showSpinner = false;
-      },
-    });
-  }
-
-  sortProject(projects: Array<Project>): Array<Project> {
-    // Sort projects by user count
-    return projects.sort((a: Project, b: Project) => {
-      return this.sumUsers(b.users) - this.sumUsers(a.users);
+    this.navbarService.enableAll();
+    let projects = this.projectService._projects;
+    this.projectService.list().subscribe({
+      next: projects.next.bind(projects),
+      error: projects.error.bind(projects),
     });
   }
 

@@ -52,6 +52,7 @@ import { ChooseSourceComponent } from './models/choose-source/choose-source.comp
 import { CreateCoworkingMethodComponent } from './models/create-coworking-method/create-coworking-method.component';
 import { CreateModelComponent } from './models/create-model/create-model.component';
 import { InitModelComponent } from './models/init-model/init-model.component';
+import { ModelWrapperComponent } from './models/model-wrapper/model-wrapper.component';
 import { HeaderComponent } from './navbar/header.component';
 import { NoticeComponent } from './notice/notice.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
@@ -74,6 +75,7 @@ import { ProjectDetailsComponent } from './projects/project-detail/project-detai
 import { ProjectMetadataComponent } from './projects/project-detail/project-metadata/project-metadata.component';
 import { RepositoryUserSettingsComponent } from './projects/project-detail/project-users/project-user-settings.component';
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
+import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { WhitespaceUrlInterceptor } from './services/encoder/encoder.interceptor';
 import { GuacamoleComponent } from './session-created/guacamole/guacamole.component';
 import { RDPComponent } from './session-created/rdp/rdp.component';
@@ -101,7 +103,6 @@ import { HomeComponent } from './workspaces/home.component';
 import { NoRepositoryComponent } from './workspaces/no-repository/no-repository.component';
 import { RequestSessionComponent } from './workspaces/request-session/request-session.component';
 import { WarningComponent } from './workspaces/request-session/warning/warning.component';
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -168,6 +169,8 @@ import { WarningComponent } from './workspaces/request-session/warning/warning.c
     DeleteProjectDialogComponent,
     StageProjectDialogComponent,
     StagedProjectsOverviewComponent,
+    ProjectWrapperComponent,
+    ModelWrapperComponent,
   ],
   imports: [
     CommonModule,

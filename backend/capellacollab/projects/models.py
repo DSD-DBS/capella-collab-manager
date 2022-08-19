@@ -46,6 +46,7 @@ class PatchProject(BaseModel):
 
 class PostRepositoryRequest(BaseModel):
     name: str
+    description: str | None
 
 
 class DatabaseProject(Base):

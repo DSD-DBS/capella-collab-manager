@@ -3,6 +3,8 @@
 
 # Standard library:
 import typing as t
+
+# Standard library:
 from urllib.parse import quote, urlsplit
 
 # 3rd party:
@@ -11,6 +13,7 @@ import git
 # 1st party:
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.exceptions import RequestValidationError
 from git import Git
 from pydantic import BaseModel
 
@@ -53,6 +56,7 @@ def get_references(
         origin = empty_repo.create_remote("origin", git_url)
         origin.fetch()
     except git.exc.GitCommandError as exc:
+        print(exc.status)
         empty_repo.delete_remote("origin")
         raise HTTPException(status_code=422, detail="Wrong credentials") from exc
     remote_refs.branches = [ref.name[7:] for ref in origin.refs]

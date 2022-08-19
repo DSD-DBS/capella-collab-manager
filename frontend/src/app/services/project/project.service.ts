@@ -3,58 +3,35 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProjectService {
-  constructor(private http: HttpClient) {}
-
   BACKEND_URL_PREFIX = environment.backend_url + '/projects/';
-
   base_url = new URL('projects/', environment.backend_url + '/');
 
-  projects: Array<Project> | undefined;
-  project: Project | undefined;
+  _project = new BehaviorSubject<Project | undefined>(undefined);
+  _projects = new BehaviorSubject<Project[] | undefined>(undefined);
 
-  init(project_slug: string): Observable<Project> {
-    if (!this.project || !(this.project.slug === project_slug)) {
-      this.project = undefined;
-      return this.getProjectBySlug(project_slug);
-    }
-    return of(this.project);
+  get project() {
+    return this._project.value;
+  }
+  get projects() {
+    return this._projects.value;
   }
 
-  initAll(): Observable<Project[]> {
-    if (this.projects) return of(this.projects);
-    return this.list();
-  }
+  constructor(private http: HttpClient) {}
 
   getProjectBySlug(slug: string): Observable<Project> {
     let url = new URL('details/', this.base_url);
-    return new Observable<Project>((subscriber) => {
-      this.http
-        .get<Project>(url.toString(), { params: { slug } })
-        .subscribe((project) => {
-          this.project = project;
-          subscriber.next(project);
-          subscriber.complete();
-        });
-    });
+    return this.http.get<Project>(url.toString(), { params: { slug } });
   }
 
   list(): Observable<Project[]> {
-    return new Observable<Project[]>((subscriber) => {
-      this.http
-        .get<Array<Project>>(this.BACKEND_URL_PREFIX)
-        .subscribe((projects) => {
-          this.projects = projects;
-          subscriber.next(projects);
-          subscriber.complete();
-        });
-    });
+    return this.http.get<Project[]>(this.BACKEND_URL_PREFIX);
   }
 
   listStagedProjects(): Observable<Array<Project>> {
@@ -72,30 +49,14 @@ export class ProjectService {
 
   updateDescription(name: string, description: string): Observable<Project> {
     let url = new URL(name, this.base_url);
-    return new Observable<Project>((subscriber) => {
-      this.http
-        .patch<Project>(url.toString(), { description })
-        .subscribe((project) => {
-          this.project = project;
-          subscriber.next(project);
-          subscriber.complete();
-        });
-    });
+    return this.http.patch<Project>(url.toString(), { description });
   }
 
-  createProject(name: string): Observable<Project> {
-    return new Observable<Project>((subscriber) => {
-      this.http
-        .post<Project>(this.BACKEND_URL_PREFIX, {
-          name,
-        })
-        .subscribe((project) => {
-          this.project = project;
-          this.list().subscribe();
-          subscriber.next(project);
-          subscriber.complete();
-        });
-    });
+  createProject(project: {
+    name: string;
+    description: string;
+  }): Observable<Project> {
+    return this.http.post<Project>(this.BACKEND_URL_PREFIX, project);
   }
 
   deleteProject(project_name: string): Observable<any> {

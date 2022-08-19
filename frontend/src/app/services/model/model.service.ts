@@ -3,8 +3,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ProjectService } from 'src/app/services/project/project.service';
+import { BehaviorSubject, Observable, single } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 export interface NewModel {
@@ -49,78 +48,26 @@ export interface Model {
 export class ModelService {
   base_url = new URL('models/', environment.backend_url + '/');
 
-  constructor(
-    private http: HttpClient,
-    private projectService: ProjectService
-  ) {}
+  _model = new BehaviorSubject<Model | undefined>(undefined);
+  _models = new BehaviorSubject<Model[] | undefined>(undefined);
 
-  model: Model | null = null;
-  models: Model[] | null = null;
-
-  init(project_slug: string, model_slug: string): Observable<Model> {
-    return new Observable<Model>((subscriber) => {
-      this.projectService.init(project_slug).subscribe((project) => {
-        if (
-          this.model &&
-          this.model.project_slug === project_slug &&
-          this.model.slug === model_slug
-        ) {
-          subscriber.next(this.model);
-          subscriber.complete();
-        } else {
-          this.getModelBySlug(model_slug, project.slug).subscribe((model) => {
-            subscriber.next(model);
-            subscriber.complete();
-          });
-        }
-      });
-    });
+  get model(): Model | undefined {
+    return this._model.value;
+  }
+  get models(): Model[] | undefined {
+    return this._models.value;
   }
 
-  initAll(project_slug: string): Observable<Model[]> {
-    return new Observable<Model[]>((subscriber) => {
-      this.projectService.init(project_slug).subscribe((project) => {
-        if (this.models && this.models[0].project_slug !== project_slug) {
-          subscriber.next(this.models);
-          subscriber.complete();
-        } else {
-          this.list(project.slug).subscribe((models) => {
-            subscriber.next(models);
-            subscriber.complete();
-          });
-        }
-      });
-    });
-  }
+  constructor(private http: HttpClient) {}
 
-  list(
-    project_slug: string,
-    q: string | undefined = undefined
-  ): Observable<Model[]> {
+  list(project_slug: string): Observable<Model[]> {
     let url = new URL(project_slug, this.base_url);
-    return new Observable<Model[]>((subscriber) => {
-      let result = q
-        ? this.http.get<Model[]>(url.toString(), { params: { q } })
-        : this.http.get<Model[]>(url.toString());
-      result.subscribe((models) => {
-        this.models = models;
-        subscriber.next(models);
-        subscriber.complete();
-      });
-    });
+    return this.http.get<Model[]>(url.toString());
   }
 
   getModelBySlug(slug: string, project_slug: string): Observable<Model> {
     let url = new URL(`${project_slug}/details/`, this.base_url);
-    return new Observable<Model>((subscriber) => {
-      this.http
-        .get<Model>(url.toString(), { params: { slug } })
-        .subscribe((model) => {
-          this.model = model;
-          subscriber.next(model);
-          subscriber.complete();
-        });
-    });
+    return this.http.get<Model>(url.toString(), { params: { slug } });
   }
 
   createNewModel(project_slug: string, model: NewModel): Observable<Model> {
@@ -143,27 +90,13 @@ export class ModelService {
       `${project_slug}/set-tool-details/${model_slug}/`,
       this.base_url
     );
-    return new Observable<Model>((subscriber) => {
-      this.http
-        .patch<Model>(url.toString(), { version_id, type_id })
-        .subscribe((model) => {
-          this.model = model;
-          subscriber.next(model);
-          subscriber.complete();
-        });
-    });
+    return this.http.patch<Model>(url.toString(), { version_id, type_id });
   }
 
   createModelGeneric<T extends NewModel>(
     url: URL,
     new_model: T
   ): Observable<Model> {
-    return new Observable<Model>((subscriber) => {
-      this.http.post<Model>(url.toString(), new_model).subscribe((model) => {
-        this.model = model;
-        subscriber.next(model);
-        subscriber.complete();
-      });
-    });
+    return this.http.post<Model>(url.toString(), new_model);
   }
 }
