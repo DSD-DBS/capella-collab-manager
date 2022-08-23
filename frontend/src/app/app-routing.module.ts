@@ -137,22 +137,6 @@ const routes: Routes = [
             path: '',
             component: ModelDetailComponent,
           },
-          {
-            path: 'choose-source',
-            component: ChooseSourceComponent,
-          },
-          {
-            path: 'choose-init',
-            component: ChooseInitComponent,
-          },
-          {
-            path: 'use-existing-git',
-            component: CreateCoworkingMethodComponent,
-          },
-          {
-            path: 'init-model',
-            component: InitModelComponent,
-          },
         ],
       },
     ],
