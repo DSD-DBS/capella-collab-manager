@@ -21,7 +21,10 @@
       [repository]="projectService.project"
     ></app-project-user-settings>
   </div>
-  <div class="delete" *ngIf="isStaged; else stageFirst">
+  <div
+    class="delete"
+    *ngIf="!!projectService.project?.staged_by; else stageFirst"
+  >
     <app-delete-project [project_name]="project_name"></app-delete-project>
   </div>
   <ng-template #stageFirst>
