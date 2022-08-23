@@ -58,12 +58,12 @@
       </mat-card>
     </mat-step>
     <mat-step label="Add models">
-      <app-create-model [as_stepper]="true"></app-create-model>
-      <div class="section-card">
-        <button mat-flat-button color="primary" (click)="finish()">
-          Finish project creation
-        </button>
-      </div>
+      <app-create-model
+        *ngIf="!_reload"
+        [as_stepper]="true"
+        (complete)="onComplete($event)"
+        #model_creator
+      ></app-create-model>
     </mat-step>
   </mat-horizontal-stepper>
 </div>

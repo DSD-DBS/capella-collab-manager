@@ -5,30 +5,38 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import { Model } from 'src/app/services/model/model.service';
+import { Model, ModelService } from 'src/app/services/model/model.service';
 
 @Component({
   selector: 'app-create-model',
   templateUrl: './create-model.component.html',
   styleUrls: ['./create-model.component.css'],
 })
-export class CreateModelComponent implements OnInit {
+export class CreateModelComponent implements OnInit, OnDestroy {
   @ViewChild('stepper') stepper!: MatStepper;
   @Input() as_stepper?: boolean;
   @Output() complete = new EventEmitter<boolean>();
 
   source?: string;
-  init?: string;
+  choosen_init?: string;
+  detail?: boolean;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private modelService: ModelService) {}
 
   ngOnInit(): void {}
+
+  ngOnDestroy(): void {
+    if (!this.detail) {
+      this.modelService._model.next(undefined);
+    }
+  }
 
   afterModelCreated(model: Model): void {
     console.log(model);
@@ -58,16 +66,16 @@ export class CreateModelComponent implements OnInit {
 
   onInitClick(value: string): void {
     this.stepper.steps.get(3)!.completed = true;
-    this.init = value;
+    this.choosen_init = value;
     this.stepper.next();
   }
 
-  afterModelInitialized(created: boolean): void {
-    console.log(created);
-    if (created) {
+  afterModelInitialized(options: { created: boolean; again?: boolean }): void {
+    if (options.created) {
       if (this.as_stepper) {
-        this.complete.emit(true);
+        this.complete.emit(options.again);
       } else {
+        this.detail = true;
         this.router.navigateByUrl('../');
       }
     } else {

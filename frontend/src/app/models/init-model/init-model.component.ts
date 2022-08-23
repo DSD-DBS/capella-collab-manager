@@ -6,7 +6,7 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService } from 'src/app/services/project/project.service';
@@ -21,14 +21,14 @@ import { filter } from 'rxjs';
   styleUrls: ['./init-model.component.css'],
 })
 export class InitModelComponent implements OnInit {
-  @Output() create = new EventEmitter<boolean>();
+  @Output() create = new EventEmitter<{ created: boolean; again?: boolean }>();
+  @Input() as_stepper?: boolean;
 
   constructor(
     public projectService: ProjectService,
     public modelService: ModelService,
     public sourceService: SourceService,
-    public toolService: ToolService,
-    private router: Router
+    public toolService: ToolService
   ) {}
 
   public form = new FormGroup({
@@ -44,7 +44,7 @@ export class InitModelComponent implements OnInit {
     this.toolService.init();
   }
 
-  onSubmit(): void {
+  onSubmit(again: boolean): void {
     if (
       this.form.valid &&
       this.modelService.model &&
@@ -60,7 +60,7 @@ export class InitModelComponent implements OnInit {
           this.form.value.type
         )
         .subscribe((_) => {
-          this.create.emit(true);
+          this.create.emit({ created: true, again: again });
         });
     }
   }

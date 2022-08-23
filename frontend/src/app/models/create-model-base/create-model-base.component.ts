@@ -21,14 +21,7 @@ import {
   NewModel,
 } from 'src/app/services/model/model.service';
 import { ToolService } from 'src/app/services/tools/tool.service';
-import {
-  Connectable,
-  connectable,
-  filter,
-  Subject,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { connectable, filter, Subject, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-create-model-base',
@@ -37,6 +30,8 @@ import {
 })
 export class CreateModelBaseComponent implements OnInit {
   @Output() create = new EventEmitter<Model>();
+  @Output() finish = new EventEmitter<boolean>();
+  @Input() as_stepper?: boolean;
 
   public form = new FormGroup({
     name: new FormControl('', Validators.required),
