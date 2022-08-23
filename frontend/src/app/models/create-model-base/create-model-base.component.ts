@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -12,19 +12,23 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import slugify from 'slugify';
-import {
-  Project,
-  ProjectService,
-} from 'src/app/services/project/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 import {
   Model,
   ModelService,
   NewModel,
 } from 'src/app/services/model/model.service';
 import { ToolService } from 'src/app/services/tools/tool.service';
-import { connectable, filter, first, single, Subject, switchMap } from 'rxjs';
+import {
+  Connectable,
+  connectable,
+  filter,
+  Subject,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 @Component({
   selector: 'app-create-model-base',
@@ -32,6 +36,8 @@ import { connectable, filter, first, single, Subject, switchMap } from 'rxjs';
   styleUrls: ['./create-model-base.component.css'],
 })
 export class CreateModelBaseComponent implements OnInit {
+  @Output() create = new EventEmitter<Model>();
+
   public form = new FormGroup({
     name: new FormControl('', Validators.required),
     description: new FormControl(''),
@@ -41,8 +47,7 @@ export class CreateModelBaseComponent implements OnInit {
   constructor(
     private modelService: ModelService,
     public projectService: ProjectService,
-    public toolService: ToolService,
-    private router: Router
+    public toolService: ToolService
   ) {}
 
   slugValidator(slugs: string[]): ValidatorFn {
@@ -64,32 +69,21 @@ export class CreateModelBaseComponent implements OnInit {
         this.slugValidator(models.map((model) => model.slug))
       );
     });
+    this.modelService._model.next(undefined);
   }
 
   onSubmit(): void {
-    if (this.form.valid && this.projectService.project!.slug) {
+    if (this.form.valid && this.projectService.project?.slug) {
       let new_model = this.form.value as NewModel;
 
       const modelConnectable = connectable<Model>(
-        this.modelService.createNewModel(
-          this.projectService.project!.slug,
-          new_model
-        ),
+        this.modelService
+          .createNewModel(this.projectService.project.slug, new_model)
         {
           connector: () => new Subject(),
           resetOnDisconnect: false,
         }
       );
-
-      modelConnectable.subscribe((model) => {
-        this.router.navigate([
-          'project',
-          this.projectService.project!.slug,
-          'model',
-          model.slug,
-          'choose-source',
-        ]);
-      });
 
       modelConnectable
         .pipe(
@@ -100,6 +94,10 @@ export class CreateModelBaseComponent implements OnInit {
         .subscribe((value) => {
           this.modelService._models.next(value);
         });
+
+      modelConnectable
+        .pipe(tap(this.modelService._model))
+        .subscribe(this.create.emit.bind(this.create));
 
       modelConnectable.connect();
     }

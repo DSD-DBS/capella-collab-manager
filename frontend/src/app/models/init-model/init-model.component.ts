@@ -6,13 +6,14 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { ModelService } from 'src/app/services/model/model.service';
 import { SourceService } from 'src/app/services/source/source.service';
 import { Tool, ToolService } from 'src/app/services/tools/tool.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-init-model',
@@ -20,6 +21,8 @@ import { Tool, ToolService } from 'src/app/services/tools/tool.service';
   styleUrls: ['./init-model.component.css'],
 })
 export class InitModelComponent implements OnInit {
+  @Output() create = new EventEmitter<boolean>();
+
   constructor(
     public projectService: ProjectService,
     public modelService: ModelService,
@@ -34,9 +37,9 @@ export class InitModelComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.modelService._model.subscribe((model) => {
-      this.form.controls.version.patchValue(model!.version_id);
-      this.form.controls.type.patchValue(model!.type_id);
+    this.modelService._model.pipe(filter(Boolean)).subscribe((model) => {
+      this.form.controls.version.patchValue(model.version_id);
+      this.form.controls.type.patchValue(model.type_id);
     });
     this.toolService.init();
   }
@@ -57,7 +60,7 @@ export class InitModelComponent implements OnInit {
           this.form.value.type
         )
         .subscribe((_) => {
-          this.router.navigate(['/project', this.projectService.project?.slug]);
+          this.create.emit(true);
         });
     }
   }

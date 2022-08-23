@@ -108,6 +108,7 @@ import { MarkdownModule } from 'ngx-markdown';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
+import { CreateModelComponent } from './models/create-model/create-model.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -175,6 +176,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     FileExistsDialogComponent,
     ReleaseNotesComponent,
     VersionComponent,
+    CreateModelComponent,
   ],
   imports: [
     CommonModule,

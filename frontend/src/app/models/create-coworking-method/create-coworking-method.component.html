@@ -11,10 +11,10 @@
 <div *ngIf="projectService.project && modelService.model" class="wrapper">
   <mat-card class="section-card">
     <h2>
-      Add a primary source for the model “{{ modelService.model?.name }}” of the
-      project “{{ projectService.project?.name }}”.
+      Add a primary source for the model “{{ modelService.model.name }}” of the
+      project “{{ projectService.project.name }}”.
     </h2>
-    <form [formGroup]="gitForm" (submit)="onSubmit()">
+    <form [formGroup]="form">
       <div formGroupName="credentials">
         <fieldset>
           <mat-form-field appearance="fill">
@@ -70,14 +70,17 @@
           <input type="text" matInput formControlName="entrypoint" />
         </mat-form-field>
       </fieldset>
-      <button
-        mat-raised-button
-        color="primary"
-        [disabled]="!gitForm.valid"
-        type="submit"
-      >
-        Add source
-      </button>
     </form>
+    <button mat-button (click)="create.emit(false)">Choose source</button>
+    <div class="field-separator"></div>
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="!form.valid"
+      type="submit"
+      (click)="onSubmit()"
+    >
+      Add source
+    </button>
   </mat-card>
 </div>

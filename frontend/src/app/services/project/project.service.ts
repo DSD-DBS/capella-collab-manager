@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Tool, Type, Version } from '../tools/tool.service';
 
 @Injectable({
   providedIn: 'root',
@@ -64,6 +65,9 @@ export interface Project {
   slug: string;
   description: string;
   users: UserMetadata;
+  tool?: Tool;
+  version?: Version;
+  type?: Type;
 }
 
 export type EditingMode = 't4c' | 'git';
