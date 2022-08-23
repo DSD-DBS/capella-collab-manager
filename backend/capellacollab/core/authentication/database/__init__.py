@@ -119,7 +119,7 @@ def check_repository_exists(repository: str, db: sqlalchemy.orm.session.Session)
     user = get_project(db, repository)
     if not user:
         raise HTTPException(
-            status_code=409,
+            status_code=404,
             detail="The repository does not exist.",
         )
 
