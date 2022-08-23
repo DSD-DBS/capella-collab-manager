@@ -249,6 +249,11 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
       });
   }
 
+  download(name: string) {
+    this.loadService
+      .download(this.session.id, name)
+      .subscribe((file: FormData) => {});
+  }
   reset() {
     this.subscription?.unsubscribe();
     this.uploadProgress = null;
