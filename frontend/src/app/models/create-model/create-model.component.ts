@@ -1,7 +1,14 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { Model } from 'src/app/services/model/model.service';
@@ -13,6 +20,8 @@ import { Model } from 'src/app/services/model/model.service';
 })
 export class CreateModelComponent implements OnInit {
   @ViewChild('stepper') stepper!: MatStepper;
+  @Input() as_stepper?: boolean;
+  @Output() complete = new EventEmitter<boolean>();
 
   source?: string;
   init?: string;
@@ -56,7 +65,11 @@ export class CreateModelComponent implements OnInit {
   afterModelInitialized(created: boolean): void {
     console.log(created);
     if (created) {
-      this.router.navigateByUrl('../');
+      if (this.as_stepper) {
+        this.complete.emit(true);
+      } else {
+        this.router.navigateByUrl('../');
+      }
     } else {
       this.stepper.previous();
     }

@@ -29,6 +29,7 @@
             </mat-form-field>
           </fieldset>
           <a routerLink="/projects" mat-button matStepperPrevious>Cancel</a>
+          <div class="field-separator"></div>
           <button
             mat-flat-button
             color="primary"
@@ -46,14 +47,29 @@
         <app-project-user-settings
           [repository]="projectService.project"
         ></app-project-user-settings>
+        <button mat-flat-button color="primary" (click)="stepper.next()">
+          Add models
+        </button>
+        <div class="field-separator"></div>
+        <a
+          mat-flat-button
+          [routerLink]="['/project', projectService.project!.slug]"
+        >
+          Finish project creation
+        </a>
+      </mat-card>
+    </mat-step>
+    <mat-step label="Add models">
+      <app-create-model [as_stepper]="true"></app-create-model>
+      <div class="section-card">
         <a
           mat-flat-button
           color="primary"
-          [routerLink]="['/project', projectService.project!.slug]"
+          [routerLink]="['/project', projectService.project?.slug]"
         >
-          Finish
+          Finish project creation
         </a>
-      </mat-card>
+      </div>
     </mat-step>
   </mat-horizontal-stepper>
 </div>
