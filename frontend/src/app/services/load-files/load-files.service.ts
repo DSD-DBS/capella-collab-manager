@@ -29,4 +29,11 @@ export class LoadFilesService {
       this.BACKEND_URL_PREFIX + id + '/files?show_hidden=' + showHiddenFiles
     );
   }
+
+  download(id: string, name: string): Observable<FormData> {
+    return this.http.get<FormData>(
+      this.BACKEND_URL_PREFIX + id + '/files/download',
+      { params: { filename: name } }
+    );
+  }
 }
