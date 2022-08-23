@@ -34,6 +34,7 @@
             mat-flat-button
             color="primary"
             (click)="createProject(stepper)"
+            [disabled]="!form.valid"
           >
             Create project
           </button>
@@ -60,16 +61,12 @@
       </mat-card>
     </mat-step>
     <mat-step label="Add models">
-      <app-create-model [as_stepper]="true"></app-create-model>
-      <div class="section-card">
-        <a
-          mat-flat-button
-          color="primary"
-          [routerLink]="['/project', projectService.project?.slug]"
-        >
-          Finish project creation
-        </a>
-      </div>
+      <app-create-model
+        *ngIf="!_reload"
+        [as_stepper]="true"
+        (complete)="onComplete($event)"
+        #model_creator
+      ></app-create-model>
     </mat-step>
   </mat-horizontal-stepper>
 </div>

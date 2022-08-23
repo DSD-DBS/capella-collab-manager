@@ -36,8 +36,8 @@
           </mat-select>
         </mat-form-field>
       </fieldset>
-      <a mat-button routerLink="..">Back to project</a>
-      <div class="field-separator"></div>
+      <a mat-button routerLink=".." *ngIf="!as_stepper">Back to project</a>
+      <div class="field-separator" *ngIf="!as_stepper"></div>
       <button
         mat-raised-button
         color="primary"
@@ -45,6 +45,15 @@
         [disabled]="!form.valid"
       >
         Create model
+      </button>
+      <div class="field-separator" *ngIf="as_stepper"></div>
+      <button
+        mat-raised-button
+        [color]="form.controls.name.value ? 'basic' : 'primary'"
+        *ngIf="as_stepper"
+        (click)="finish.emit(true)"
+      >
+        Finish project creation
       </button>
     </form>
   </mat-card>

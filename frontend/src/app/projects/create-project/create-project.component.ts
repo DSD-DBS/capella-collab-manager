@@ -1,7 +1,7 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -23,6 +23,7 @@ import {
   tap,
 } from 'rxjs';
 import slugify from 'slugify';
+import { CreateModelComponent } from 'src/app/models/create-model/create-model.component';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import {
   Project,
@@ -35,14 +36,17 @@ import {
   styleUrls: ['./create-project.component.css'],
 })
 export class CreateProjectComponent implements OnInit, OnDestroy {
+  @ViewChild('model_creator') model_creator!: CreateModelComponent;
+
   form = new FormGroup({
     name: new FormControl('', Validators.required),
     description: new FormControl(''),
   });
 
-  private project_details = false;
+  private project_detail = false;
   private projects_slugs = new BehaviorSubject<string[]>([]);
   private slugs_subscription?: Subscription;
+  public _reload = false;
 
   constructor(
     public projectService: ProjectService,
@@ -73,7 +77,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.slugs_subscription?.unsubscribe();
-    if (!this.project_details) {
+    if (!this.project_detail) {
       this.projectService._project.next(undefined);
     }
   }
@@ -115,7 +119,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   finish(): void {
-    this.project_details = true;
+    this.project_detail = true;
     this.router.navigate(['/project', this.projectService.project!.slug]);
   }
 
@@ -127,5 +131,17 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
       }
     }
     return null;
+  }
+
+  onComplete(again?: boolean): void {
+    console.log(again);
+    if (again) {
+      this._reload = true;
+      setTimeout(() => {
+        this._reload = false;
+      });
+    } else {
+      this.router.navigate(['/project', this.projectService.project!.slug]);
+    }
   }
 }
