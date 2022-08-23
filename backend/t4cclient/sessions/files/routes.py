@@ -86,3 +86,23 @@ def upload_files(
     OPERATOR.upload_files(id, tar_bytes)
 
     return {"message": "Upload successful"}
+
+
+@router.get(
+    "/download",
+    responses=AUTHENTICATION_RESPONSES,
+)
+def download_file(
+    id: str,
+    filename: str,
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
+) -> UploadFile:
+    check_session_belongs_to_user(get_username(token), id, db)
+
+    tar_bytes = OPERATOR.download_file(id, filename)
+
+    with open(filename, "wb") as f:
+        f.write(tar_bytes)
+
+    return UploadFile(filename=filename, file=tar_bytes)
