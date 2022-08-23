@@ -20,7 +20,6 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log(this.projectService._project);
     this.project_subscription = this.projectService._project
       .pipe(
         filter(Boolean),

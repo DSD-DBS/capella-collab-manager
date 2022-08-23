@@ -98,6 +98,7 @@ import { InitModelComponent } from './models/init-model/init-model.component';
 import { ChooseInitComponent } from './models/choose-init/choose-init.component';
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { ModelWrapperComponent } from './models/model-wrapper/model-wrapper.component';
+import { CreateModelComponent } from './models/create-model/create-model.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -161,6 +162,7 @@ import { ModelWrapperComponent } from './models/model-wrapper/model-wrapper.comp
     ChooseInitComponent,
     ProjectWrapperComponent,
     ModelWrapperComponent,
+    CreateModelComponent,
   ],
   imports: [
     CommonModule,

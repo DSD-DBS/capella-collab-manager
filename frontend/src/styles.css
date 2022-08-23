@@ -167,30 +167,37 @@ fieldset > :not(.field-separator) {
 .options-list {
   display: flex;
   flex-direction: row;
+  padding-bottom: 2rem;
+}
+
+.options-list > button {
+  font-size: 16px;
+  width: 24ch;
+  height: calc(2.4rem + 12px + 5rem + 2rem);
+  display: flex;
+  flex-direction: row;
+  padding: 1rem 2ch;
+}
+
+.button-content-wrapper {
+  display: flex;
+  flex-direction: column;
 }
 
 .content {
-  width: 24ch;
-  height: 5em;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.content > * {
-  text-align: center;
-  min-height: 2em;
-}
-
-.content > img {
-  width: 70%;
+  max-width: 20ch;
+  max-height: 5rem;
   margin: auto;
 }
 
 .option-title {
   text-align: center;
-  max-width: 20ch;
-  min-height: 3em;
+  display: inline-block;
+  white-space: break-spaces;
+  overflow: hidden;
+  line-height: 1.2rem;
+  height: 2.4rem;
+  width: 20ch;
 }
 
 .title-box {

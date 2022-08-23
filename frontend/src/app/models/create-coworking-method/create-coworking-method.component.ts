@@ -1,9 +1,8 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService } from 'src/app/services/project/project.service';
 import {
   Credentials,
@@ -19,7 +18,9 @@ import { Source, SourceService } from 'src/app/services/source/source.service';
   styleUrls: ['./create-coworking-method.component.css'],
 })
 export class CreateCoworkingMethodComponent implements OnInit {
-  public gitForm = new FormGroup({
+  @Output() create = new EventEmitter<boolean>();
+
+  public form = new FormGroup({
     credentials: new FormGroup({
       url: new FormControl('', Validators.required),
       username: new FormControl(''),
@@ -35,12 +36,11 @@ export class CreateCoworkingMethodComponent implements OnInit {
     public projectService: ProjectService,
     public modelService: ModelService,
     private gitService: GitService,
-    private sourceService: SourceService,
-    private router: Router
+    private sourceService: SourceService
   ) {}
 
   ngOnInit(): void {
-    this.gitForm.controls.revision.valueChanges.subscribe((value) => {
+    this.form.controls.revision.valueChanges.subscribe((value) => {
       if (!this.gitService.instance) {
         this.filteredRevisions = { branches: [], tags: [] };
       } else {
@@ -58,7 +58,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
 
   onRevisionFocus(): void {
     this.gitService
-      .fetch('', this.gitForm.controls.credentials.value as Credentials)
+      .fetch('', this.form.controls.credentials.value as Credentials)
       .subscribe((instance) => {
         this.filteredRevisions = instance;
       });
@@ -68,9 +68,9 @@ export class CreateCoworkingMethodComponent implements OnInit {
     if (
       this.projectService.project &&
       this.modelService.model &&
-      this.gitForm.valid
+      this.form.valid
     ) {
-      let form_result = this.gitForm.value;
+      let form_result = this.form.value;
       let source: Source = {
         path: form_result.credentials.url,
         entrypoint: form_result.entrypoint,
@@ -85,13 +85,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
           source
         )
         .subscribe((_) => {
-          this.router.navigate([
-            'project',
-            this.projectService.project!.slug,
-            'model',
-            this.modelService.model?.slug,
-            'init-model',
-          ]);
+          this.create.emit(true);
         });
     }
   }

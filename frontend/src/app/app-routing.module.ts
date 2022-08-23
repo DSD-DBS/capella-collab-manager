@@ -34,6 +34,7 @@ import { InitModelComponent } from './models/init-model/init-model.component';
 import { ChooseInitComponent } from './models/choose-init/choose-init.component';
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { ModelWrapperComponent } from './models/model-wrapper/model-wrapper.component';
+import { CreateModelComponent } from './models/create-model/create-model.component';
 
 const routes: Routes = [
   {
@@ -124,7 +125,7 @@ const routes: Routes = [
       },
       {
         path: 'create-model',
-        component: CreateModelBaseComponent,
+        component: CreateModelComponent,
       },
       {
         path: 'model/:model',
