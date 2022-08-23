@@ -58,10 +58,10 @@ def check_project_role(
     return any(
         (
             "user" in allowed_roles
-            and any(project.name == repository for project in user.projects),
+            and any(project.projects_name == repository for project in user.projects),
             "manager" in allowed_roles
             and any(
-                project.name == repository
+                project.projects_name == repository
                 and project.role == RepositoryUserRole.MANAGER
                 for project in user.projects
             ),
@@ -111,7 +111,10 @@ def check_username_not_in_repository(
     if user:
         raise HTTPException(
             status_code=409,
-            detail="The user already exists for this repository.",
+            detail={
+                "err": "user_already_in_repo",
+                "reason": "The user already exists for this repository.",
+            },
         )
 
 
@@ -120,7 +123,10 @@ def check_repository_exists(repository: str, db: sqlalchemy.orm.session.Session)
     if not user:
         raise HTTPException(
             status_code=404,
-            detail="The repository does not exist.",
+            detail={
+                "err": "repo_does_not_exist",
+                "reason": "The repository does not exist.",
+            },
         )
 
 
@@ -129,7 +135,10 @@ def verify_staged(repository: str, db: sqlalchemy.orm.session.Session):
     if repo.staged_by is None or repo.staged_by == "":
         raise HTTPException(
             status_code=409,
-            detail="The repository has to be staged by another administrator before deletion.",
+            detail={
+                "err": "not_staged",
+                "reason": "The repository has to be staged by another administrator before deletion.",
+            },
         )
 
 
@@ -139,7 +148,10 @@ def verify_not_staged_and_deleted(
     if username == get_project(db, repository).staged_by:
         raise HTTPException(
             status_code=409,
-            detail="A single administrator can not stage and delete a repository at the same time.",
+            detail={
+                "err": "not_staged_and_deleted",
+                "reason": "A single administrator can not stage and delete a repository at the same time.",
+            },
         )
 
 
