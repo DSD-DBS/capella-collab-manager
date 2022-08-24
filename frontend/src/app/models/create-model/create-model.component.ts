@@ -13,6 +13,7 @@ import {
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { Model, ModelService } from 'src/app/services/model/model.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-create-model',
@@ -28,7 +29,11 @@ export class CreateModelComponent implements OnInit, OnDestroy {
   choosen_init?: string;
   detail?: boolean;
 
-  constructor(private router: Router, private modelService: ModelService) {}
+  constructor(
+    private router: Router,
+    private projectService: ProjectService,
+    private modelService: ModelService
+  ) {}
 
   ngOnInit(): void {}
 
@@ -76,7 +81,12 @@ export class CreateModelComponent implements OnInit, OnDestroy {
         this.complete.emit(options.again);
       } else {
         this.detail = true;
-        this.router.navigateByUrl('../');
+        this.router.navigate([
+          '/project',
+          this.projectService.project!.slug,
+          'model',
+          this.modelService.model!.slug,
+        ]);
       }
     } else {
       this.stepper.previous();
