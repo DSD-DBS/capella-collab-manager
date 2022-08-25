@@ -3,7 +3,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { merge, Observable } from 'rxjs';
+import { BehaviorSubject, merge, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 export interface Tool {
@@ -19,15 +19,11 @@ export interface Version {
   is_deprecated: boolean;
 }
 
-type NestedVersion = { [id: number]: Version[] };
-
 export interface Type {
   id: number;
   name: string;
   tool_id: number;
 }
-
-type NestedType = { [id: number]: Type[] };
 
 @Injectable({
   providedIn: 'root',
@@ -37,9 +33,18 @@ export class ToolService {
 
   base_url = new URL('tools/', environment.backend_url + '/');
 
-  tools: Tool[] | null = null;
-  versions: NestedVersion | null = null;
-  types: NestedType | null = null;
+  _tools = new BehaviorSubject<Tool[] | undefined>(undefined);
+  get tools(): Tool[] | undefined {
+    return this._tools.getValue();
+  }
+  _versions = new BehaviorSubject<Version[] | undefined>(undefined);
+  get versions() {
+    return this._versions.getValue();
+  }
+  _types = new BehaviorSubject<Type[] | undefined>(undefined);
+  get types() {
+    return this._types.getValue();
+  }
 
   init(): void {
     this.get_tools().subscribe();
@@ -49,52 +54,16 @@ export class ToolService {
 
   get_tools(): Observable<Tool[]> {
     let url = this.base_url;
-    return new Observable<Tool[]>((subscriber) => {
-      this.http.get<Tool[]>(url.toString()).subscribe((tools) => {
-        this.tools = tools;
-        subscriber.next(tools);
-        subscriber.complete();
-      });
-    });
+    return this.http.get<Tool[]>(url.toString());
   }
 
-  get_versions(): Observable<NestedVersion> {
+  get_versions(): Observable<Version[]> {
     let url = new URL('versions/', this.base_url);
-    return new Observable<NestedVersion>((subscriber) => {
-      this.http.get<Version[]>(url.toString()).subscribe((versions) => {
-        this.versions = {};
-        versions.forEach((version) => {
-          if (this.versions) {
-            if (version.tool_id in this.versions) {
-              this.versions[version.tool_id].push(version);
-            } else {
-              this.versions[version.tool_id] = [version];
-            }
-          }
-        });
-        subscriber.next(this.versions);
-        subscriber.complete();
-      });
-    });
+    return this.http.get<Version[]>(url.toString());
   }
 
-  get_types(): Observable<NestedType> {
+  get_types(): Observable<Type[]> {
     let url = new URL('types/', this.base_url);
-    return new Observable<NestedType>((subscriber) => {
-      this.http.get<Version[]>(url.toString()).subscribe((types) => {
-        this.types = {};
-        types.forEach((tool_type) => {
-          if (this.types) {
-            if (tool_type.tool_id in this.types) {
-              this.types[tool_type.tool_id].push(tool_type);
-            } else {
-              this.types[tool_type.tool_id] = [tool_type];
-            }
-          }
-        });
-        subscriber.next(this.types);
-        subscriber.complete();
-      });
-    });
+    return this.http.get<Version[]>(url.toString());
   }
 }

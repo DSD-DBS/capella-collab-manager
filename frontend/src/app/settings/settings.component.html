@@ -5,41 +5,43 @@
 
 <div class="title">Core functionality</div>
 <div class="options-list">
-  <mat-card matRipple [routerLink]="['/settings/core/users']">
-    <div class="subtitle">Manage users</div>
-    <mat-icon>supervised_user_circle</mat-icon>
-  </mat-card>
-  <mat-card matRipple [routerLink]="['/settings/core/alerts']">
-    <div class="subtitle">Maintenance and alerts</div>
-    <mat-icon>add_alert</mat-icon>
-  </mat-card>
-  <mat-card matRipple [routerLink]="['/settings/core/dockerimages']">
-    <div class="subtitle">Dockerimages</div>
-    <mat-icon>folder</mat-icon>
-  </mat-card>
+  <a [routerLink]="['/settings/core/users']">
+    <mat-card matRipple>
+      <div class="subtitle">Manage users</div>
+      <mat-icon>supervised_user_circle</mat-icon>
+    </mat-card>
+  </a>
+  <a [routerLink]="['/settings/core/alerts']">
+    <mat-card matRipple>
+      <div class="subtitle">Maintenance and alerts</div>
+      <mat-icon>add_alert</mat-icon>
+    </mat-card>
+  </a>
+  <a [routerLink]="['/settings/core/dockerimages']">
+    <mat-card matRipple>
+      <div class="subtitle">Tools</div>
+      <mat-icon>build</mat-icon>
+    </mat-card>
+  </a>
 </div>
 
 <div class="title">Modelsources</div>
 <div class="options-list">
-  <mat-card
-    *ngIf="integrations.git"
-    matRipple
-    [routerLink]="['/settings/modelsources/git']"
-  >
-    <div class="subtitle">Git models</div>
-    <img
-      id="git"
-      src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"
-    />
-  </mat-card>
-  <mat-card
-    *ngIf="integrations.t4c"
-    matRipple
-    [routerLink]="['/settings/modelsources/t4c']"
-  >
-    <div class="subtitle">Team For Capella</div>
-    <mat-icon>people</mat-icon>
-  </mat-card>
+  <a *ngIf="integrations.git" [routerLink]="['/settings/modelsources/git']">
+    <mat-card matRipple>
+      <div class="subtitle">Git models</div>
+      <img
+        id="git"
+        src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"
+      />
+    </mat-card>
+  </a>
+  <a *ngIf="integrations.t4c" [routerLink]="['/settings/modelsources/t4c']">
+    <mat-card matRipple>
+      <div class="subtitle">Team For Capella</div>
+      <mat-icon>people</mat-icon>
+    </mat-card>
+  </a>
 </div>
 
 <div class="title">Integrations</div>
@@ -48,19 +50,20 @@
     <div class="subtitle">Jenkins backups</div>
     <mat-icon>backup</mat-icon>
   </mat-card>
-  <mat-card
-    matRipple
-    [routerLink]="['/settings/integrations/backups/importer']"
-  >
-    <div class="subtitle">T4C importer backups</div>
-    <mat-icon>backup</mat-icon>
-  </mat-card>
+  <a [routerLink]="['/settings/integrations/backups/importer']">
+    <mat-card matRipple>
+      <div class="subtitle">T4C importer backups</div>
+      <mat-icon>backup</mat-icon>
+    </mat-card>
+  </a>
   <mat-card class="disabled">
     <div class="subtitle">Garbage cleaner</div>
     <mat-icon>delete_forever</mat-icon>
   </mat-card>
-  <mat-card matRipple [routerLink]="['/settings/integrations/guacamole']">
-    <div class="subtitle">Guacamole</div>
-    <mat-icon> screen_share</mat-icon>
-  </mat-card>
+  <a [routerLink]="['/settings/integrations/guacamole']">
+    <mat-card matRipple>
+      <div class="subtitle">Guacamole</div>
+      <mat-icon> screen_share</mat-icon>
+    </mat-card>
+  </a>
 </div>

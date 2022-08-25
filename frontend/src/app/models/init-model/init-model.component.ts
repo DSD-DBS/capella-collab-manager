@@ -1,23 +1,42 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { ModelService } from 'src/app/services/model/model.service';
 import { SourceService } from 'src/app/services/source/source.service';
-import { Tool, ToolService } from 'src/app/services/tools/tool.service';
-import { filter } from 'rxjs';
+import {
+  Tool,
+  ToolService,
+  Type,
+  Version,
+} from 'src/app/services/tools/tool.service';
+import { filter, forkJoin, map, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-init-model',
   templateUrl: './init-model.component.html',
   styleUrls: ['./init-model.component.css'],
 })
-export class InitModelComponent implements OnInit {
+export class InitModelComponent implements OnInit, OnDestroy {
   @Output() create = new EventEmitter<{ created: boolean; again?: boolean }>();
   @Input() as_stepper?: boolean;
+  tool?: Tool;
+  versions?: Version[];
+  types?: Type[];
+
+  tool_subscription?: Subscription;
+  types_subscription?: Subscription;
+  versions_subscription?: Subscription;
 
   constructor(
     public projectService: ProjectService,
@@ -36,7 +55,59 @@ export class InitModelComponent implements OnInit {
       this.form.controls.version.patchValue(model.version_id);
       this.form.controls.type.patchValue(model.type_id);
     });
-    this.toolService.init();
+    this.toolService.get_tools().subscribe(this.toolService._tools);
+    this.toolService.get_versions().subscribe(this.toolService._versions);
+    this.toolService.get_types().subscribe(this.toolService._types);
+
+    this.tool_subscription = forkJoin([
+      this.modelService._model.pipe(filter(Boolean)),
+      this.toolService._tools.pipe(filter(Boolean)),
+    ])
+      .pipe(
+        map((value) => {
+          let [model, tools] = value;
+          return tools.filter((tool) => model.tool_id == tool.id)[0];
+        })
+      )
+      .subscribe((tool) => {
+        this.tool = tool;
+      });
+
+    this.types_subscription = forkJoin([
+      this.modelService._model.pipe(filter(Boolean)),
+      this.toolService._types.pipe(filter(Boolean)),
+    ])
+      .pipe(
+        map((value) => {
+          let [model, types] = value;
+          return types.filter((type) => type.tool_id === model.tool_id);
+        })
+      )
+      .subscribe((types) => {
+        this.types = types;
+      });
+
+    this.versions_subscription = forkJoin([
+      this.modelService._model.pipe(filter(Boolean)),
+      this.toolService._versions.pipe(filter(Boolean)),
+    ])
+      .pipe(
+        map((value) => {
+          let [model, versions] = value;
+          return versions.filter(
+            (version) => version.tool_id === model.tool_id
+          );
+        })
+      )
+      .subscribe((versions) => {
+        this.versions = versions;
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.tool_subscription?.unsubscribe();
+    this.types_subscription?.unsubscribe();
+    this.versions_subscription?.unsubscribe();
   }
 
   onSubmit(again: boolean): void {

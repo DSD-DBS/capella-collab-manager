@@ -4,17 +4,16 @@
  -->
 
 <div class="wrapper">
-  <div class="title">Persistent workspaces</div>
-  <mat-form-field appearance="fill">
-    <mat-label>Dockerimage</mat-label>
-    <input matInput placeholder="/t4c/client/remote" />
-  </mat-form-field>
-  <div class="title">
-    <span>Read-only workspaces</span>
-  </div>
-  <mat-form-field appearance="fill">
-    <mat-label>Dockerimage</mat-label>
-    <input matInput placeholder="/t4c/client/remote" /> </mat-form-field
-  ><br />
-  <button mat-raised-button>Save</button>
+  <h1>Available Tools</h1>
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Capella </mat-panel-title>
+        <mat-panel-description> Test test </mat-panel-description>
+      </mat-expansion-panel-header>
+      <a mat-raised-button>Edit available versions</a>
+      <a mat-raised-button>Edit available types</a>
+      <a mat-raised-button>Edit dockerimages</a>
+    </mat-expansion-panel>
+  </mat-accordion>
 </div>

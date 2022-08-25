@@ -10,7 +10,6 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
 import slugify from 'slugify';
 import { ProjectService } from 'src/app/services/project/project.service';
 import {
@@ -18,8 +17,17 @@ import {
   ModelService,
   NewModel,
 } from 'src/app/services/model/model.service';
-import { ToolService } from 'src/app/services/tools/tool.service';
-import { connectable, filter, Subject, switchMap, tap } from 'rxjs';
+import { Tool, ToolService, Type } from 'src/app/services/tools/tool.service';
+import {
+  connectable,
+  filter,
+  forkJoin,
+  map,
+  merge,
+  Subject,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 @Component({
   selector: 'app-create-model-base',
@@ -30,6 +38,7 @@ export class CreateModelBaseComponent implements OnInit {
   @Output() create = new EventEmitter<Model>();
   @Output() finish = new EventEmitter<boolean>();
   @Input() as_stepper?: boolean;
+  types?: Type[];
 
   public form = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -56,12 +65,14 @@ export class CreateModelBaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.toolService.get_tools().subscribe();
+    this.toolService.get_tools().subscribe(this.toolService._tools);
+
     this.modelService._models.pipe(filter(Boolean)).subscribe((models) => {
       this.form.controls.name.addValidators(
         this.slugValidator(models.map((model) => model.slug))
       );
     });
+
     this.modelService._model.next(undefined);
   }
 

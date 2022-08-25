@@ -13,16 +13,13 @@
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Modelling tool</mat-label>
-          <input matInput [value]="getTool().name" disabled />
+          <input matInput [value]="tool?.name" disabled />
         </mat-form-field>
         <div class="field-separator"></div>
         <mat-form-field appearance="fill">
           <mat-label>Version</mat-label>
           <mat-select formControlName="version" id="version-selector">
-            <mat-option
-              *ngFor="let version of getForToolId(toolService.versions)"
-              [value]="version.id"
-            >
+            <mat-option *ngFor="let version of versions" [value]="version.id">
               {{ version.name }}
               <span *ngIf="version.is_recommended"> (recommended)</span>
               <span *ngIf="version.is_deprecated"> (deprecated)</span>
@@ -34,10 +31,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Model type</mat-label>
           <mat-select formControlName="type">
-            <mat-option
-              *ngFor="let type of getForToolId(toolService.types)"
-              [value]="type.id"
-            >
+            <mat-option *ngFor="let type of types" [value]="type.id">
               {{ type.name }}
             </mat-option>
           </mat-select>
