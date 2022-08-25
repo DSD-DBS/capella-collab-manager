@@ -30,7 +30,12 @@ export class ModelWrapperComponent implements OnInit, OnDestroy {
       ),
     ])
       .pipe(switchMap((args) => this.modelService.getModelBySlug(...args)))
-      .subscribe(this.modelService._model);
+      .subscribe({
+        next: this.modelService._model.next.bind(this.modelService._model),
+        error: (_) => {
+          this.modelService._model.next(undefined);
+        },
+      });
   }
 
   ngOnDestroy(): void {
