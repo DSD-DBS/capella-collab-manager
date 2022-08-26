@@ -63,9 +63,9 @@ export class ProjectService {
     return this.http.delete<any>(this.BACKEND_URL_PREFIX + project_name);
   }
 
-  stageForProjectDeletion(project_name: string): Observable<any> {
+  stageForProjectDeletion(project_slug: string): Observable<any> {
     return this.http.patch<any>(
-      this.BACKEND_URL_PREFIX + `${project_name}/stage`,
+      this.BACKEND_URL_PREFIX + `${project_slug}/stage`,
       {}
     );
   }

@@ -14,6 +14,7 @@ import { ProjectService } from 'src/app/services/project/project.service';
 })
 export class ModelWrapperComponent implements OnInit, OnDestroy {
   model_subscription?: Subscription;
+  is_error?: Boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -30,7 +31,13 @@ export class ModelWrapperComponent implements OnInit, OnDestroy {
       ),
     ])
       .pipe(switchMap((args) => this.modelService.getModelBySlug(...args)))
-      .subscribe(this.modelService._model);
+      .subscribe({
+        next: this.modelService._model.next.bind(this.modelService._model),
+        error: (_) => {
+          this.modelService._model.next(undefined);
+          this.is_error = true;
+        },
+      });
   }
 
   ngOnDestroy(): void {

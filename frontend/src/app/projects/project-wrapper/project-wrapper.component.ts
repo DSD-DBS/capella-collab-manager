@@ -4,15 +4,20 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
+  BehaviorSubject,
   Connectable,
   connectable,
   map,
   Subject,
   Subscription,
   switchMap,
+  tap,
 } from 'rxjs';
 import { ModelService } from 'src/app/services/model/model.service';
-import { ProjectService } from 'src/app/services/project/project.service';
+import {
+  Project,
+  ProjectService,
+} from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-project-wrapper',
@@ -23,14 +28,17 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
   param_subject?: Connectable<string>;
   project_subscription?: Subscription;
   models_subscription?: Subscription;
+  is_error?: Boolean;
 
   constructor(
     private _route: ActivatedRoute,
     public projectService: ProjectService,
-    public _modelService: ModelService
+    public modelServico: ModelService
   ) {}
 
   ngOnInit(): void {
+    const project = this.projectService._project;
+    const models = this.modelServico._models;
     const param_subject = connectable<string>(
       this._route.params.pipe(map((params) => params.project)),
       {
@@ -45,11 +53,22 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
           this.projectService.getProjectBySlug.bind(this.projectService)
         )
       )
-      .subscribe(this.projectService._project);
+      .subscribe({
+        next: project.next.bind(project),
+        error: (_) => {
+          project.next(undefined);
+          this.is_error = true;
+        },
+      });
 
     this.models_subscription = param_subject
-      .pipe(switchMap(this._modelService.list.bind(this._modelService)))
-      .subscribe(this._modelService._models);
+      .pipe(switchMap(this.modelServico.list.bind(this.modelServico)))
+      .subscribe({
+        next: models.next.bind(models),
+        error: (_) => {
+          models.next(undefined);
+        },
+      });
 
     param_subject.connect();
   }
@@ -58,6 +77,6 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
     this.project_subscription?.unsubscribe();
     this.models_subscription?.unsubscribe();
     this.projectService._project.next(undefined);
-    this._modelService._models.next(undefined);
+    this.modelServico._models.next(undefined);
   }
 }

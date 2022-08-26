@@ -25,12 +25,16 @@
     class="delete"
     *ngIf="!!projectService.project?.staged_by; else stageFirst"
   >
-    <app-delete-project [project_name]="project_name"></app-delete-project>
+    <app-delete-project
+      *ngIf="projectService.project"
+      [project]="projectService.project"
+    ></app-delete-project>
   </div>
   <ng-template #stageFirst>
     <app-stage-project
       class="delete"
-      [project_name]="project_name"
+      *ngIf="projectService.project"
+      [project]="projectService.project"
     ></app-stage-project>
   </ng-template>
   <!--<app-backup-settings [project]="project"></app-backup-settings>

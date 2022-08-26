@@ -12,8 +12,6 @@ import { ProjectService } from 'src/app/services/project/project.service';
   styleUrls: ['./project-details.component.css'],
 })
 export class ProjectDetailsComponent implements OnInit, OnDestroy {
-  project_slug: string = '';
-  project_name: string = '';
   project_subscription?: Subscription;
 
   constructor(
