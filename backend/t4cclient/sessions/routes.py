@@ -28,6 +28,7 @@ from t4cclient.core.database import get_db, users
 from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
 from t4cclient.schemas.repositories import RepositoryUserRole
 from t4cclient.sessions import database, guacamole
+from t4cclient.sessions.files import routes as files
 from t4cclient.sessions.models import DatabaseSession
 from t4cclient.sessions.operators import OPERATOR
 from t4cclient.sessions.schema import (

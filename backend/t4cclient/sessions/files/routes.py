@@ -10,6 +10,7 @@ import requests
 
 # 3rd party:
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
+from fastapi.responses import StreamingResponse
 from requests.auth import HTTPBasicAuth
 from sqlalchemy.orm import Session
 
@@ -100,9 +101,10 @@ def download_file(
 ) -> UploadFile:
     check_session_belongs_to_user(get_username(token), id, db)
 
-    tar_bytes = OPERATOR.download_file(id, filename)
-
-    with open(filename, "wb") as f:
-        f.write(tar_bytes)
-
-    return UploadFile(filename=filename, file=tar_bytes)
+    return StreamingResponse(
+        OPERATOR.download_file(id, filename),
+        headers={
+            "content-disposition": 'attachment; filename="download.tar"',
+            "content-type": "application/x-tar",
+        },
+    )
