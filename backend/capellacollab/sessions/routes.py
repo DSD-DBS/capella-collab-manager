@@ -8,7 +8,6 @@ import json
 import logging
 import typing as t
 
-import requests
 from fastapi import APIRouter, Depends, HTTPException, status
 from requests.exceptions import RequestException
 from sqlalchemy.orm import Session
