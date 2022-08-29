@@ -17,6 +17,8 @@ import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { PathNode, Session } from 'src/app/schemes';
 import { LoadFilesService } from 'src/app/services/load-files/load-files.service';
 import { FileExistsDialogComponent } from './file-exists-dialog/file-exists-dialog.component';
+import { saveAs } from 'file-saver';
+
 @Component({
   selector: 'upload-dialog',
   templateUrl: 'upload-dialog.component.html',
@@ -249,11 +251,14 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
       });
   }
 
-  download(name: string) {
+  download(filename: string) {
     this.loadService
-      .download(this.session.id, name)
-      .subscribe((file: FormData) => {});
+      .download(this.session.id, filename)
+      .subscribe((response: Blob) => {
+        saveAs(response, 'download.tar');
+      });
   }
+
   reset() {
     this.subscription?.unsubscribe();
     this.uploadProgress = null;

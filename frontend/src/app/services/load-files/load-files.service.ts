@@ -30,10 +30,11 @@ export class LoadFilesService {
     );
   }
 
-  download(id: string, name: string): Observable<FormData> {
-    return this.http.get<FormData>(
-      this.BACKEND_URL_PREFIX + id + '/files/download',
-      { params: { filename: name } }
+  download(id: string, filename: string): Observable<Blob> {
+    return this.http.request(
+      'GET',
+      `${this.BACKEND_URL_PREFIX}${id}/files/download`,
+      { params: { filename: filename }, responseType: 'blob' }
     );
   }
 }
