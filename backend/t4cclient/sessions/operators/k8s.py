@@ -10,6 +10,7 @@ import binascii
 import enum
 import logging
 import random
+import shlex
 import string
 import typing as t
 from dataclasses import dataclass
@@ -616,7 +617,11 @@ class KubernetesOperator(Operator):
     def download_file(self, id: str, filename: str) -> t.Iterable[bytes]:
         pod_name = self._get_pod_name(id)
         try:
-            exec_command = ["bash", "-c", f"tar cf - '{filename}' | base64"]
+            exec_command = [
+                "bash",
+                "-c",
+                f"zip -qr /tmp/archive.zip '{shlex.quote(filename)}' && cat /tmp/archive.zip | base64 && rm -f /tmp/archive.zip",
+            ]
             stream = kubernetes.stream.stream(
                 self.v1_core.connect_get_namespaced_pod_exec,
                 pod_name,
