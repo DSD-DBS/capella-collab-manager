@@ -29,13 +29,13 @@ class CapellaModelType(enum.Enum):
 
 class NewModel(BaseModel):
     name: str
-    description: str | None
+    description: t.Optional[str]
     tool_id: int
 
 
 class EmptyModel(BaseModel):
     name: str
-    description: str | None
+    description: t.Optional[str]
     tool_id: int
     version_id: int
     type_id: int

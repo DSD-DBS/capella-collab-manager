@@ -1,7 +1,7 @@
 ARG BASE_IMAGE=node:17
 FROM $BASE_IMAGE as build
 
-ARG CONFIGURATION=production
+ARG CONFIGURATION=development
 
 COPY ./ /work/
 WORKDIR /work
