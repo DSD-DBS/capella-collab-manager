@@ -36,7 +36,6 @@ export interface SessionUsage {
   errors: Array<string>;
 }
 
-
 export type Warnings = 'LICENCE_LIMIT' | 'NO_GIT_MODEL_DEFINED';
 
 export interface Repository {

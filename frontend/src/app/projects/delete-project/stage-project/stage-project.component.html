@@ -5,9 +5,12 @@
 
 <div class="wrapper">
   <mat-card>
-    <h2 id="title">Stage Project {{ project.name }}</h2>
+    <h2 id="title">
+      {{ project.staged_by ? "Uns" : "S" }}tage Project {{ project.name }}
+    </h2>
     <button mat-flat-button color="primary" (click)="openStageDialog()">
-      Stage project for deletion <mat-icon>delete</mat-icon>
+      {{ project.staged_by ? "Uns" : "S" }}tage project for deletion
+      <mat-icon>delete</mat-icon>
     </button>
   </mat-card>
 </div>

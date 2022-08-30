@@ -3,7 +3,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -63,11 +63,16 @@ export class ProjectService {
     return this.http.delete<any>(this.BACKEND_URL_PREFIX + project_name);
   }
 
-  stageForProjectDeletion(project_slug: string): Observable<any> {
-    return this.http.patch<any>(
-      this.BACKEND_URL_PREFIX + `${project_slug}/stage`,
-      {}
-    );
+  stageForProjectDeletion(project_slug: string): Observable<{}> {
+    const url = new URL(`${project_slug}/stage`, this.base_url);
+    return this.http.patch<{}>(url.toString(), null);
+  }
+
+  unstageProject(project_slug: string): Observable<Project> {
+    const url = new URL(`${project_slug}/unstage`, this.base_url);
+    return this.http
+      .patch<Project>(url.toString(), null)
+      .pipe(tap(console.log));
   }
 }
 
@@ -80,9 +85,9 @@ export interface UserMetadata {
 export interface Project {
   name: string;
   slug: string;
-  staged_by: string;
+  staged_by: { name: string };
   description: string;
-  users: UserMetadata;
+  users_metadata: UserMetadata;
 }
 
 export type EditingMode = 't4c' | 'git';

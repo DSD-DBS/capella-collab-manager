@@ -7,8 +7,16 @@ import logging
 import typing as t
 from importlib import metadata
 
+# 3rd party:
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
+from sqlalchemy.orm.session import Session
+
 # 1st party:
 import capellacollab.projects.crud as crud
+
+# local:
+from .users.routes import router as router_users
 from capellacollab.core.authentication.database import (
     is_admin,
     verify_admin,
@@ -33,13 +41,7 @@ from capellacollab.projects.users.models import (
     RepositoryUserRole,
 )
 from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
-
-# 3rd party:
-from fastapi import APIRouter, Depends, HTTPException
-from requests import Session
-
-# local:
-from .users.routes import router as router_users
+from capellacollab.sql_models.users import DatabaseUser
 
 log = logging.getLogger(__name__)
 router = APIRouter()
@@ -116,16 +118,17 @@ def create_repository(
 
 
 @router.delete(
-    "/{project}",
+    "/{project_slug}",
     tags=["Repositories"],
     status_code=204,
     responses=AUTHENTICATION_RESPONSES,
 )
 def delete_project(
-    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    project_slug: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ) -> None:
     verify_admin(token, db)
-    staged_by = check_repository_exists(project, db).staged_by
+    project = crud.get_project_by_slug(db, project_slug)
+    staged_by = project.staged_by
     if not staged_by:
         raise HTTPException(
             status_code=409,
@@ -134,7 +137,7 @@ def delete_project(
                 "reason": "The repository has to be staged by another administrator before deletion.",
             },
         )
-    if staged_by == get_username(token):
+    if staged_by.name == get_username(token):
         raise HTTPException(
             status_code=409,
             detail={
@@ -142,40 +145,55 @@ def delete_project(
                 "reason": "A single administrator can not stage and delete a repository at the same time.",
             },
         )
-    for user in repository_users.get_users_of_repository(db, project):
-        repository_users.delete_user_from_repository(db, project, user.username)
-    for model in crud.get_project(db, project).models:
-        project_models.delete_model_from_project(db, project, model.name)
-    crud.delete_project(db, project)
+    db.delete(project)
+    db.commit()
 
 
 @router.patch(
-    "/{project}/stage",
+    "/{project_slug}/stage",
     tags=["Repositories"],
     status_code=204,
     responses=AUTHENTICATION_RESPONSES,
 )
 def stage_project(
-    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
-) -> DatabaseProject:
-    verify_project_role(project, token, db, allowed_roles=["admin", "manager"])
-    check_repository_exists(project, db)
+    project_slug: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+) -> Project:
+    project = crud.get_project_by_slug(db, project_slug)
+    verify_project_role(
+        project.name, token, db, allowed_roles=["administrator", "manager"]
+    )
+    check_repository_exists(project.name, db)
     username = get_username(token)
-    for user in repository_users.get_users_of_repository(db, project):
-        repository_users.stage_project_of_user(db, project, user.username, username)
-    for model in crud.get_project(db, project).models:
-        project_models.stage_project_of_model(db, project, model.name, username)
-    return crud.stage_project_for_deletion(db, project, username)
+    user = db.execute(select(DatabaseUser).filter_by(name=username)).scalar_one()
+    project.staged_by = user
+    db.commit()
+    return Project.from_orm(project)
+
+
+@router.patch("/{project_slug}/unstage")
+def unstage_project(
+    project_slug: str,
+    db: Session = Depends(get_db),
+    token: JWTBearer = Depends(JWTBearer()),
+) -> Project:
+    project = crud.get_project_by_slug(db, project_slug)
+    if not project:
+        raise HTTPException(404, "Project not found")
+    verify_project_role(
+        project.name, token, db, allowed_roles=["administrator", "manager"]
+    )
+    return Project.from_orm(repository_users.unstage_project(db, project))
 
 
 def check_repository_exists(
     project_name: str,
     db: Session,
 ) -> DatabaseProject:
+    print(project_name)
     project = crud.get_project(db, project_name)
     if not project:
         raise HTTPException(
-            status_code=409,
+            status_code=404,
             detail={
                 "err_code": "project_does_not_exist",
                 "reason": "The project does not exist.",
@@ -184,38 +202,35 @@ def check_repository_exists(
     return project
 
 
-def convert_project(project: DatabaseProject) -> Project:
-    return Project(
-        name=project.name,
-        slug=project.slug,
-        staged_by=project.staged_by,
-        description=project.description,
-        users=UserMetadata(
-            leads=len(
-                [
-                    user
-                    for user in project.users
-                    if user.role == RepositoryUserRole.MANAGER
-                ]
-            ),
-            contributors=len(
-                [
-                    user
-                    for user in project.users
-                    if user.role == RepositoryUserRole.USER
-                    and user.permission == RepositoryUserPermission.WRITE
-                ]
-            ),
-            subscribers=len(
-                [
-                    user
-                    for user in project.users
-                    if user.role == RepositoryUserRole.USER
-                    and user.permission == RepositoryUserPermission.READ
-                ]
-            ),
+def convert_project(db_project: DatabaseProject) -> Project:
+    project = Project.from_orm(db_project)
+    project.users_metadata = UserMetadata(
+        leads=len(
+            [
+                user
+                for user in db_project.users
+                if user.role == RepositoryUserRole.MANAGER
+            ]
+        ),
+        contributors=len(
+            [
+                user
+                for user in db_project.users
+                if user.role == RepositoryUserRole.USER
+                and user.permission == RepositoryUserPermission.WRITE
+            ]
+        ),
+        subscribers=len(
+            [
+                user
+                for user in db_project.users
+                if user.role == RepositoryUserRole.USER
+                and user.permission == RepositoryUserPermission.READ
+            ]
         ),
     )
+    print(project.users_metadata)
+    return project
 
 
 # Load backup extension routes

@@ -6,7 +6,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { RepositoryUser } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
-import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,9 +14,18 @@ export class RepositoryUserService {
   constructor(private http: HttpClient) {}
   BACKEND_URL_PREFIX = environment.backend_url + '/projects/';
 
-  PERMISSIONS = { read: 'Read only', write: 'Read/Write' };
-  ROLES = { user: 'User', manager: 'Manager' };
-  ADVANCED_ROLES = { administrator: 'Administrator', ...this.ROLES };
+  PERMISSIONS = {
+    read: 'Read only',
+    write: 'Read/Write',
+  };
+  ROLES = {
+    user: 'User',
+    manager: 'Manager',
+  };
+  ADVANCED_ROLES = {
+    administrator: 'Administrator',
+    ...this.ROLES,
+  };
 
   getRepoUsers(repository: string): Observable<Array<RepositoryUser>> {
     return this.http.get<Array<RepositoryUser>>(
@@ -31,7 +39,6 @@ export class RepositoryUserService {
     role: 'user' | 'manager',
     permission: string
   ): Observable<RepositoryUser> {
-    console.log(repository, username, role, permission);
     return this.http.post<RepositoryUser>(
       this.BACKEND_URL_PREFIX + repository + '/users',
       { username, role, permission }

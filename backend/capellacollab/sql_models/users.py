@@ -20,6 +20,10 @@ class DatabaseUser(Base):
         "ProjectUserAssociation",
         back_populates="user",
     )
+    stages = relationship(
+        "DatabaseProject",
+        back_populates="staged_by",
+    )
     sessions = relationship(
         "DatabaseSession",
         back_populates="owner",

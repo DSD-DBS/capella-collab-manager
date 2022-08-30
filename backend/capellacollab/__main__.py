@@ -6,11 +6,11 @@ import logging
 import random
 import string
 import time
-from importlib import metadata
+import typing as t
 
 # 3rd party:
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 logging.basicConfig(level=logging.INFO)
@@ -46,17 +46,23 @@ app.add_middleware(
 
 
 @app.middleware("http")
-async def log_requests(request, call_next):
+async def log_requests(
+    request: Request, call_next: t.Callable[[Request], t.Awaitable[Response]]
+) -> Response:
     idem = "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
-    log.debug(f"rid={idem} start request path={request.url.path}")
+    log.debug(
+        "rid=%(idem)s start request path=%(path)s",
+        {"idem": idem, "path": request.url.path},
+    )
     start_time = time.time()
 
     response = await call_next(request)
 
     process_time = (time.time() - start_time) * 1000
-    formatted_process_time = "{0:.2f}".format(process_time)
+    formatted_process_time = str(round(process_time, 2))
     log.debug(
-        f"rid={idem} completed_in={formatted_process_time}ms status_code={response.status_code}"
+        "rid=%(idem)s completed_in=%(time)sms status_code=%(code)s",
+        {"idem": idem, "time": formatted_process_time, "code": response.status_code},
     )
 
     return response

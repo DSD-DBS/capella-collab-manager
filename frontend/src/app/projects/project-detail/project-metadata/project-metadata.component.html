@@ -10,13 +10,11 @@
       <mat-form-field class="example-full-width" appearance="fill">
         <mat-label>Description</mat-label>
         <textarea
+          class="description-area"
           [formControl]="updateDescriptionForm"
           matInput
           rows="3"
           style="resize: none"
-          [placeholder]="
-            'This is the description of the project ' + project!.slug
-          "
         ></textarea>
       </mat-form-field>
     </form>

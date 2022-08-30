@@ -7,15 +7,16 @@ from __future__ import annotations
 import enum
 import typing as t
 
+# 3rd party:
+from pydantic import BaseModel
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
 # 1st party:
 # Import required for sqlalchemy
 import capellacollab.projects.users.models
 from capellacollab.core.database import Base
-
-# 3rd party:
-from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
+from capellacollab.projects.users.models import RepositoryUser
 
 
 class Warning(enum.Enum):
@@ -29,15 +30,26 @@ class UserMetadata(BaseModel):
     subscribers: int
 
 
-class Project(BaseModel):
+class Username(BaseModel):
     name: str
-    slug: str
-    staged_by: str | None
-    description: t.Optional[str]
-    users: UserMetadata
 
     class Config:
         orm_mode = True
+
+
+class Project(BaseModel):
+    name: str
+    slug: str
+    staged_by: Username | None
+    description: str | None
+    users_metadata: UserMetadata | None
+
+    class Config:
+        orm_mode = True
+
+
+class ProjectWithUsers(Project):
+    users: list[RepositoryUser]
 
 
 class PatchProject(BaseModel):
@@ -55,10 +67,17 @@ class DatabaseProject(Base):
     id = Column(Integer, unique=True, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
     slug = Column(String, unique=True, index=True)
-    staged_by = Column(String)
+    staged_by_id = Column(Integer, ForeignKey("users.id"))
     description = Column(String)
+
     users = relationship(
         "ProjectUserAssociation",
         back_populates="projects",
+        cascade="all, delete",
     )
-    models = relationship("DB_Model", back_populates="project")
+    models = relationship(
+        "DB_Model",
+        back_populates="project",
+        cascade="all, delete",
+    )
+    staged_by = relationship("DatabaseUser", back_populates="stages")

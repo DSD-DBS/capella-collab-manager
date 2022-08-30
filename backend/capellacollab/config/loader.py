@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import logging
 import pathlib
+import typing as t
 
 import appdirs
 import yaml
@@ -18,7 +19,7 @@ locations: list[pathlib.Path] = [
 ]
 
 
-def load_yaml() -> None | dict:
+def load_yaml() -> t.Any | None:
     log.debug("Searching for configuration files...")
     for l in locations:
         if l.exists():

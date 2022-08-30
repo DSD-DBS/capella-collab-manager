@@ -11,22 +11,12 @@
   justify-content: space-evenly;
 }
 
-.item {
-  margin: 0 auto;
-}
-
-.users {
-  margin-left: auto;
-  position: relative;
-  right: 80px;
+.flexbox > div {
+  width: 460px;
 }
 
 .delete {
-  margin-left: auto;
-  position: relative;
-  width: 455px;
-  right: 77px;
-  bottom: 10px;
+  width: 460px;
 }
 
 .stage {

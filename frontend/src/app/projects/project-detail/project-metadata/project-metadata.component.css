@@ -12,10 +12,10 @@ mat-card {
   margin: 0;
 }
 
-mat-form-field {
-  width: 460px;
-}
-
 textarea {
   resize: none;
+}
+
+.example-full-width {
+  width: 100%;
 }

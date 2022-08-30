@@ -2,9 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { filter, map, Subscription } from 'rxjs';
+import { filter, map, Subscription, tap } from 'rxjs';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
-import { ProjectService } from 'src/app/services/project/project.service';
+import {
+  Project,
+  ProjectService,
+} from 'src/app/services/project/project.service';
+import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'app-project-details',
@@ -16,13 +20,15 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   constructor(
     private navbarService: NavBarService,
-    public projectService: ProjectService
+    public projectService: ProjectService,
+    public userService: UserService
   ) {}
 
   ngOnInit(): void {
     this.project_subscription = this.projectService._project
       .pipe(
         filter(Boolean),
+        tap(console.log),
         map((project) => project.name)
       )
       .subscribe((name) => {

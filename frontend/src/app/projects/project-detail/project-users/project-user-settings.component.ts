@@ -66,6 +66,7 @@ export class RepositoryUserSettingsComponent implements OnChanges {
   }
 
   get selectedUser(): RepositoryUser {
+    console.log(this.users.selectedOptions.selected[0].value);
     return this.users.selectedOptions.selected[0].value;
   }
 

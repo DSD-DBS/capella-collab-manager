@@ -1,25 +1,28 @@
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# 1st party:
-from capellacollab.projects.users.models import (
-    ProjectUserAssociation,
-    RepositoryUserPermission,
-    RepositoryUserRole,
-)
+from sqlalchemy import select
 
 # 3rd party:
 from sqlalchemy.orm import Session
 
+from capellacollab.projects.models import DatabaseProject, ProjectWithUsers
 
-def get_users_of_repository(
-    db: Session, projects_name: str
-) -> list[ProjectUserAssociation]:
-    return (
-        db.query(ProjectUserAssociation)
-        .filter(ProjectUserAssociation.projects_name == projects_name)
-        .all()
-    )
+# 1st party:
+from capellacollab.projects.users.models import (
+    ProjectUserAssociation,
+    RepositoryUser,
+    RepositoryUserPermission,
+    RepositoryUserRole,
+)
+from capellacollab.sql_models.users import DatabaseUser
+
+
+def get_users_of_repository(db: Session, project_name: str) -> list[RepositoryUser]:
+    project = db.execute(
+        select(DatabaseProject).filter_by(name=project_name)
+    ).scalar_one()
+    return ProjectWithUsers.from_orm(project).users
 
 
 def get_user_of_repository(
@@ -105,7 +108,15 @@ def stage_project_of_user(
     db: Session, repository_name: str, username: str, staged_by: str
 ) -> ProjectUserAssociation:
     project_user = get_user_of_repository(db, repository_name, username)
-    project_user.projects.staged_by = staged_by
+    user = db.execute(select(DatabaseUser).filter_by(name=staged_by)).scalar_one()
+    project_user.projects.staged_by = user
     db.commit()
     db.refresh(project_user)
     return project_user
+
+
+def unstage_project(db: Session, project: DatabaseProject) -> ProjectUserAssociation:
+    del project.staged_by
+    db.commit()
+    print(project)
+    return project

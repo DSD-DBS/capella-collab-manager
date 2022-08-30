@@ -21,22 +21,20 @@
       [repository]="projectService.project"
     ></app-project-user-settings>
   </div>
-  <div
-    class="delete"
-    *ngIf="!!projectService.project?.staged_by; else stageFirst"
-  >
-    <app-delete-project
-      *ngIf="projectService.project"
-      [project]="projectService.project"
-    ></app-delete-project>
-  </div>
-  <ng-template #stageFirst>
+
+  <div *ngIf="projectService.project">
     <app-stage-project
-      class="delete"
-      *ngIf="projectService.project"
+      *ngIf="userService.user?.role; in: ['manager', 'administrator']"
       [project]="projectService.project"
     ></app-stage-project>
-  </ng-template>
+    <app-delete-project
+      *ngIf="
+        projectService.project.staged_by &&
+        projectService.project.staged_by.name != userService.user?.name
+      "
+      [project]="projectService.project!"
+    ></app-delete-project>
+  </div>
   <!--<app-backup-settings [project]="project"></app-backup-settings>
   <app-model-source [repository]="project"></app-model-source>-->
 </div>

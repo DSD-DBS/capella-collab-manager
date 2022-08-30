@@ -26,17 +26,31 @@ export class StageProjectComponent implements OnInit {
   ngOnInit(): void {}
 
   openStageDialog() {
-    const stageProjectDialog = this.dialog.open(StageProjectDialogComponent, {
-      data: this.project.name,
+    if (this.project.staged_by) {
+      this.unstage();
+    } else {
+      const stageProjectDialog = this.dialog.open(StageProjectDialogComponent, {
+        data: this.project.name,
+      });
+      stageProjectDialog
+        .afterClosed()
+        .pipe(
+          filter(Boolean),
+          switchMap(() => {
+            return this.projectService.stageForProjectDeletion(
+              this.project.slug
+            );
+          })
+        )
+        .subscribe((_) => this.router.navigateByUrl('/projects'));
+    }
+  }
+
+  unstage() {
+    this.projectService.unstageProject(this.project.slug).subscribe({
+      next: this.projectService._project.next.bind(
+        this.projectService._project
+      ),
     });
-    stageProjectDialog
-      .afterClosed()
-      .pipe(
-        filter(Boolean),
-        switchMap(() => {
-          return this.projectService.stageForProjectDeletion(this.project.slug);
-        })
-      )
-      .subscribe((_) => this.router.navigateByUrl('/projects'));
   }
 }

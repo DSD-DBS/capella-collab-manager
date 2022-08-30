@@ -62,7 +62,6 @@ def add_user_to_repository(
     verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
-
     check_username_not_in_repository(project, body.username, db=db)
 
     users.find_or_create_user(db, body.username)
