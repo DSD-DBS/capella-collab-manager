@@ -255,7 +255,7 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
     this.loadService
       .download(this.session.id, filename)
       .subscribe((response: Blob) => {
-        saveAs(response, 'download.tar');
+        saveAs(response, 'download.zip');
       });
   }
 
