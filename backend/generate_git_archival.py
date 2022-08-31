@@ -8,7 +8,10 @@ import typing as t
 
 def run_git_command(cmd: t.List[str]):
     return subprocess.run(
-        ["git", *cmd], check=True, capture_output=True
+        ["git", *cmd],
+        check=True,
+        capture_output=True,
+        cwd=pathlib.Path(__file__).parent,
     ).stdout.decode()
 
 
