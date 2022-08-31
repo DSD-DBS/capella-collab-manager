@@ -238,7 +238,7 @@ Using the Swagger UI one can click on the lock symbols to enter the access token
 
 Requirements:
 
-- Node.js 16 or 17
+- Node.js 18
 - `npm` package manager
 - [Angular CLI](https://angular.io/cli#installing-angular-cli)
 - `make`
