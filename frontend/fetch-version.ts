@@ -8,8 +8,12 @@ const util = require('node:util');
 const exec = util.promisify(require('node:child_process').exec);
 
 async function main() {
-  const git = exec('git describe --tags');
-  const gitTag = exec('git describe --tags --abbrev=0');
+  const git = exec('git describe --tags', {
+    cwd: __dirname,
+  });
+  const gitTag = exec('git describe --tags --abbrev=0', {
+    cwd: __dirname,
+  });
 
   const github = fetch(
     'https://api.github.com/repos/DSD-DBS/capella-collab-manager/releases'
