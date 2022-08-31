@@ -7,6 +7,12 @@ const { writeFileSync } = require('fs');
 const util = require('node:util');
 const exec = util.promisify(require('node:child_process').exec);
 
+if (process.env.http_proxy) {
+  const { setGlobalDispatcher, ProxyAgent } = require('undici');
+
+  setGlobalDispatcher(new ProxyAgent(process.env.http_proxy));
+}
+
 async function main() {
   const git = exec('git describe --tags', {
     cwd: __dirname,
