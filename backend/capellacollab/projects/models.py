@@ -49,7 +49,7 @@ class DatabaseProject(Base):
 
     id = Column(Integer, unique=True, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
-    slug = Column(String, unique=True, index=True)
+    slug = Column(String, unique=True, index=True, nullable=False)
     description = Column(String)
     users = relationship(
         "ProjectUserAssociation",

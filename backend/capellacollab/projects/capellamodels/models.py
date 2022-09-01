@@ -50,9 +50,9 @@ class DatabaseCapellaModel(Base):
     __tablename__ = "models"
     __table_args__ = (UniqueConstraint("project_id", "slug"),)
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    slug = Column(String)
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    slug = Column(String, nullable=False)
     description = Column(String)
 
     project_id = Column(Integer, ForeignKey("projects.id"))
