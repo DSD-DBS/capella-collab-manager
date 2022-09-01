@@ -31,6 +31,9 @@ async function main() {
   console.error(gitTagResponse.stderr);
   const response = await github;
   const data = await response.json();
+  if (!response.ok) {
+    console.error(data);
+  }
 
   if (gitTagResponse.error || gitResponse.error || !response.ok) {
     process.exit(1);
