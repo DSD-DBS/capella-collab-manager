@@ -27,6 +27,7 @@ app:
 	fi
 
 install:
+	python generate_git_archival.py
 	$(VENV)/bin/pip install -e ".[dev]"
 
 dev: database app
