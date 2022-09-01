@@ -26,12 +26,12 @@ if config.attributes.get("configure_logger", True):
     fileConfig(config.config_file_name)
 
 # Import models
-import capellacollab.sql_models  # isort:skip
-from capellacollab.sql_models import extensions  # isort:skip
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 from capellacollab.core.database import Base
+
+print(*Base.metadata.tables.keys(), sep="\n")
 
 target_metadata = Base.metadata
 # target_metadata = None
