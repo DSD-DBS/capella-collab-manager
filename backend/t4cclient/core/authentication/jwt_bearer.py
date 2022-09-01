@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 import importlib
@@ -9,9 +9,10 @@ from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt
 
-from . import get_authentication_entrypoint
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.database import SessionLocal, users
+
+from . import get_authentication_entrypoint
 
 log = logging.getLogger(__name__)
 ep = get_authentication_entrypoint()

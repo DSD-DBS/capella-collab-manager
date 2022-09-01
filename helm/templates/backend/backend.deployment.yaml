@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 apiVersion: apps/v1
@@ -48,12 +48,21 @@ spec:
               path: /healthcheck
               port: http
           resources:
+            {{ if eq .Values.target "local" }}
+            limits:
+              cpu: "0.2"
+              memory: 100Mi
+            requests:
+              cpu: "0.05"
+              memory: 20Mi
+            {{ else }}
             limits:
               cpu: "1"
               memory: 500Mi
             requests:
               cpu: "0.25"
               memory: 20Mi
+            {{ end }}
           volumeMounts:
             - name: config
               mountPath: /etc/capellacollab

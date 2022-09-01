@@ -1,5 +1,7 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 export const environment = {
   production: true,
@@ -9,4 +11,5 @@ export const environment = {
   provider: 'PROVIDER',
   authentication: 'OAuth mock',
   usernameAttribute: 'sub',
+  environment: 'production',
 };

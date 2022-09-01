@@ -1,3 +1,8 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
 # Capella Collaboration Manager
 
 A web platform for collaboration on [Capella](https://www.eclipse.org/capella/)
@@ -64,21 +69,16 @@ make deploy
 make deploy-t4c
 ```
 
-It can take a long time to run, but shouldn't take more than 5 minutes. Meanwhile, the following message appears several times:
+It can take a long time to run, but shouldn't take more than 5 minutes.
+Please wait until all services are in the "Running" state.
 
-```text
-ready.go:277: [debug] Deployment is not ready: t4c-manager/dev-t4c-manager-backend. 0 out of 1 expected pods are ready
-```
+If all goes well, you should find Capella-collab-manager running on [http://localhost:8080/](http://localhost:8080/).
 
-This is nothing to worry about - it just takes a while for all containers to start.
-
-Verify your deployment - components should be in the "Running" state:
+If you want to see the individual services in the Kubernetes dashboard, you can run the following command:
 
 ```zsh
-kubectl get pods --namespace=t4c-manager
+make dashboard
 ```
-
-If all goes well, you should find Capella-collab-manager running on http://localhost:8081/.
 
 If something goes wrong, please open an issue on Github.
 

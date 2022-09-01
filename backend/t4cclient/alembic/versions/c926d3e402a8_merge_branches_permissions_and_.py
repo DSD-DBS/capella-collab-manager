@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Merge branches permissions and guacamole-rework

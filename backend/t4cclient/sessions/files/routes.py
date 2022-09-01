@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
@@ -16,7 +16,9 @@ from sqlalchemy.orm import Session
 from t4cclient.config import config
 
 # local:
-from t4cclient.core.authentication.database import check_session_belongs_to_user
+from t4cclient.core.authentication.database import (
+    check_session_belongs_to_user,
+)
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.database import get_db

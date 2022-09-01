@@ -1,4 +1,9 @@
 
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
 1. Please navigate to your <a href="/" target="_blank">Active Sessions</a>
 2. Find your session and select `Reconnect`. A new window should pop up.
 3. Please click on `Connect to Session`.

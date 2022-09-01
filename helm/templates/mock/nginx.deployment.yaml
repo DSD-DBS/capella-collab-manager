@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 {{ if eq .Values.target "local" }}
@@ -31,11 +31,11 @@ spec:
               protocol: TCP
           resources:
             limits:
-              cpu: "1"
-              memory: 100Mi
-            requests:
               cpu: "0.1"
-              memory: 10Mi
+              memory: 50Mi
+            requests:
+              cpu: "0.05"
+              memory: 5Mi
           volumeMounts:
             - name: {{ .Release.Name }}-mock-nginx
               mountPath: /etc/nginx
