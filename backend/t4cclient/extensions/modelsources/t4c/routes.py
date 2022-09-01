@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 import typing as t
@@ -9,7 +9,10 @@ from requests import Session
 import t4cclient.core.database as database
 import t4cclient.extensions.modelsources.t4c.crud as database_projects
 import t4cclient.schemas.repositories.projects as schema_projects
-from t4cclient.core.authentication.database import verify_admin, verify_repository_role
+from t4cclient.core.authentication.database import (
+    verify_admin,
+    verify_repository_role,
+)
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.oauth.responses import AUTHENTICATION_RESPONSES
 

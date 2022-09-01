@@ -1,3 +1,8 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
 # Capella Collaboration Manager
 
 A web platform for collaboration on [Capella](https://www.eclipse.org/capella/)

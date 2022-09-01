@@ -1,11 +1,22 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String, Table
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Enum,
+    ForeignKey,
+    Integer,
+    String,
+    Table,
+)
 from sqlalchemy.orm import relationship
 
 from t4cclient.core.database import Base
-from t4cclient.schemas.repositories import RepositoryUserPermission, RepositoryUserRole
+from t4cclient.schemas.repositories import (
+    RepositoryUserPermission,
+    RepositoryUserRole,
+)
 
 
 class RepositoryUserAssociation(Base):

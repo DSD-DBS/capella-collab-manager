@@ -1,3 +1,8 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
 # Contributing
 
 Thanks for your interest in our project. Contributions are always welcome!
@@ -233,7 +238,7 @@ Using the Swagger UI one can click on the lock symbols to enter the access token
 
 Requirements:
 
-- Node.js 16 or 17
+- Node.js 18
 - `npm` package manager
 - [Angular CLI](https://angular.io/cli#installing-angular-cli)
 - `make`

@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
@@ -16,9 +16,11 @@ import t4cclient.core.database.repositories as repositories_crud
 import t4cclient.extensions.modelsources.git.crud as git_models_crud
 import t4cclient.extensions.modelsources.t4c.connection as t4c_manager
 import t4cclient.schemas.repositories.users as users_schema
-from .files import routes as files
 from t4cclient.config import config
-from t4cclient.core.authentication.database import is_admin, verify_repository_role
+from t4cclient.core.authentication.database import (
+    is_admin,
+    verify_repository_role,
+)
 from t4cclient.core.authentication.helper import get_username
 from t4cclient.core.authentication.jwt_bearer import JWTBearer
 from t4cclient.core.credentials import generate_password
@@ -38,6 +40,8 @@ from t4cclient.sessions.schema import (
     WorkspaceType,
 )
 from t4cclient.sessions.sessions import get_last_seen, inject_attrs_in_sessions
+
+from .files import routes as files
 
 router = APIRouter()
 log = logging.getLogger(__name__)

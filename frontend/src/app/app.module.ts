@@ -1,5 +1,7 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -78,6 +80,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTreeModule } from '@angular/material/tree';
 import { FileExistsDialogComponent } from './active-sessions/upload-dialog/file-exists-dialog/file-exists-dialog.component';
 import { CookieModule } from 'ngx-cookie';
+import { ReleaseNotesComponent } from './metadata/release-notes/release-notes.component';
+import { MarkdownModule } from 'ngx-markdown';
+import { VersionComponent } from './metadata/version/version.component';
 
 @NgModule({
   declarations: [
@@ -127,6 +132,8 @@ import { CookieModule } from 'ngx-cookie';
     ViewLogsDialogComponent,
     UploadDialogComponent,
     FileExistsDialogComponent,
+    ReleaseNotesComponent,
+    VersionComponent,
   ],
   imports: [
     BrowserModule,
@@ -157,6 +164,7 @@ import { CookieModule } from 'ngx-cookie';
     MatProgressBarModule,
     MatTreeModule,
     CookieModule.withOptions(),
+    MarkdownModule.forRoot(),
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
