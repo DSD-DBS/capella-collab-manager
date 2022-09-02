@@ -31,3 +31,16 @@ jobs:
       - name: Validate chart with kubernetes schema
         run : |
           helm template ./helm | kubeconform -strict
+  install-chart:
+    runs-on: ubuntu-latest
+    name: Install chart in kind cluster
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install helm
+        uses: azure/setup-helm@v3
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.3.0
+      - name: Install chart
+        run: |
+          helm install test ./helm
