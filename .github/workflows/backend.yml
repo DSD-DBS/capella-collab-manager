@@ -13,9 +13,12 @@ jobs:
   deploy-backend-image:
     runs-on: ubuntu-latest
     name: Build and push backend image
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
