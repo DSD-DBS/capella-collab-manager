@@ -36,6 +36,9 @@ jobs:
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
       - name: Fetch version
         run: |
           node frontend/fetch-version.ts
