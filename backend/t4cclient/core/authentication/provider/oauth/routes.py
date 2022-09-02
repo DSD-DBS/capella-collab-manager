@@ -44,7 +44,9 @@ async def logout(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
 
 @router.get("/tokens", name="Validate the token")
 async def validate_token(
-    scope: t.Optional[Role], token=Depends(jwt_bearer.JWTBearer()), db=Depends(get_db)
+    scope: t.Optional[Role],
+    token=Depends(jwt_bearer.JWTBearer()),
+    db=Depends(get_db),
 ):
     if scope.ADMIN:
         verify_admin(token, db)

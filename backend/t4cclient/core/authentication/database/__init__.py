@@ -54,10 +54,14 @@ def check_repository_role(
     return any(
         (
             "user" in allowed_roles
-            and any(repo.repository_name == repository for repo in user.repositories),
+            and any(
+                repo.repository_name == repository
+                for repo in user.repositories
+            ),
             "manager" in allowed_roles
             and any(
-                r.repository_name == repository and r.role == RepositoryUserRole.MANAGER
+                r.repository_name == repository
+                and r.role == RepositoryUserRole.MANAGER
                 for r in user.repositories
             ),
             "administrator" in allowed_roles and user.role == Role.ADMIN,
@@ -91,7 +95,9 @@ def check_write_permission(
     db: sqlalchemy.orm.session.Session,
 ) -> bool:
 
-    user = repository_users.get_user_of_repository(db, repository, get_username(token))
+    user = repository_users.get_user_of_repository(
+        db, repository, get_username(token)
+    )
     if not user:
         return get_user(db=db, username=get_username(token)).role == Role.ADMIN
     return RepositoryUserPermission.WRITE == user.permission

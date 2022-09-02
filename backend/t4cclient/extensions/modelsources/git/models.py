@@ -59,6 +59,8 @@ class DB_GitModel(Base):
     repository_name = Column(
         String, ForeignKey("repositories.name", ondelete="CASCADE")
     )
-    repository = relationship("DatabaseRepository", back_populates="git_models")
+    repository = relationship(
+        "DatabaseRepository", back_populates="git_models"
+    )
     username = Column(String)
     password = Column(String)

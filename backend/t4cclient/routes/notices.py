@@ -43,6 +43,8 @@ def create_notice(
     status_code=204,
     responses=AUTHENTICATION_RESPONSES,
 )
-def delete_notice(id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())):
+def delete_notice(
+    id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())
+):
     verify_admin(token, db)
     notices.delete_notice(db, id)

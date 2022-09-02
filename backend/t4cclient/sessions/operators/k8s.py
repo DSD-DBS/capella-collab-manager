@@ -117,7 +117,11 @@ class KubernetesOperator(Operator):
         )
         self._create_service(id, id)
         service = self._get_service(id)
-        log.info("Launched a persistent session for user %s with id %s", username, id)
+        log.info(
+            "Launched a persistent session for user %s with id %s",
+            username,
+            id,
+        )
         return self._export_attrs(deployment, service)
 
     def start_readonly_session(
@@ -188,12 +192,15 @@ class KubernetesOperator(Operator):
             )
 
             log.debug("Received k8s pods: %s", pods.items[0].metadata.name)
-            log.debug("Fetching k8s events for pod: %s", pods.items[0].metadata.name)
+            log.debug(
+                "Fetching k8s events for pod: %s", pods.items[0].metadata.name
+            )
 
             return (
                 self.v1_core.list_namespaced_event(
                     namespace=cfg["namespace"],
-                    field_selector="involvedObject.name=" + pods.items[0].metadata.name,
+                    field_selector="involvedObject.name="
+                    + pods.items[0].metadata.name,
                 )
                 .items[-1]
                 .reason
@@ -289,7 +296,9 @@ class KubernetesOperator(Operator):
             ),
             spec=cronjob.spec.job_template.spec,
         )
-        self.v1_batch.create_namespaced_job(namespace=cfg["namespace"], body=job)
+        self.v1_batch.create_namespaced_job(
+            namespace=cfg["namespace"], body=job
+        )
 
     def delete_cronjob(self, id: str) -> None:
         self._delete_cronjob(id=id)
@@ -331,9 +340,13 @@ class KubernetesOperator(Operator):
         return {
             "id": deployment.to_dict()["metadata"]["name"],
             "ports": set([3389]),
-            "created_at": deployment.to_dict()["metadata"]["creation_timestamp"],
+            "created_at": deployment.to_dict()["metadata"][
+                "creation_timestamp"
+            ],
             "mac": "-",
-            "host": service.to_dict()["metadata"]["name"] + "." + cfg["namespace"],
+            "host": service.to_dict()["metadata"]["name"]
+            + "."
+            + cfg["namespace"],
         }
 
     def _create_deployment(
@@ -347,7 +360,9 @@ class KubernetesOperator(Operator):
         volume = []
 
         if volume_claim_name:
-            volume_mount.append({"name": "workspace", "mountPath": "/workspace"})
+            volume_mount.append(
+                {"name": "workspace", "mountPath": "/workspace"}
+            )
 
             volume.append(
                 {
@@ -383,7 +398,10 @@ class KubernetesOperator(Operator):
                                 ],
                                 "resources": {
                                     "limits": {"cpu": "2", "memory": "6Gi"},
-                                    "requests": {"cpu": "0.4", "memory": "1.6Gi"},
+                                    "requests": {
+                                        "cpu": "0.4",
+                                        "memory": "1.6Gi",
+                                    },
                                 },
                                 "imagePullPolicy": "Always",
                                 "volumeMounts": volume_mount,
@@ -396,7 +414,9 @@ class KubernetesOperator(Operator):
                 },
             },
         }
-        return self.v1_apps.create_namespaced_deployment(cfg["namespace"], body)
+        return self.v1_apps.create_namespaced_deployment(
+            cfg["namespace"], body
+        )
 
     def _create_cronjob(
         self,
@@ -428,7 +448,10 @@ class KubernetesOperator(Operator):
                                             for key, value in environment.items()
                                         ],
                                         "resources": {
-                                            "limits": {"cpu": "2", "memory": "6Gi"},
+                                            "limits": {
+                                                "cpu": "2",
+                                                "memory": "6Gi",
+                                            },
                                             "requests": {
                                                 "cpu": "0.4",
                                                 "memory": "1.6Gi",
@@ -526,13 +549,17 @@ class KubernetesOperator(Operator):
 
     def _delete_deployment(self, id: str) -> kubernetes.client.V1Status:
         try:
-            return self.v1_apps.delete_namespaced_deployment(id, cfg["namespace"])
+            return self.v1_apps.delete_namespaced_deployment(
+                id, cfg["namespace"]
+            )
         except kubernetes.client.exceptions.ApiException:
             log.exception("Error deleting deployment with id: %s", id)
 
     def _delete_cronjob(self, id: str) -> kubernetes.client.V1Status:
         try:
-            return self.v1_batch.delete_namespaced_cron_job(id, cfg["namespace"])
+            return self.v1_batch.delete_namespaced_cron_job(
+                id, cfg["namespace"]
+            )
         except kubernetes.client.exceptions.ApiException:
             log.exception("Error deleting cronjob with id: %s", id)
 
@@ -571,10 +598,16 @@ class KubernetesOperator(Operator):
             stream.write_stdin(content)
             stream.update(timeout=1)
             if stream.peek_stdout():
-                log.debug("Upload into %s - STDOUT: %s", id, stream.read_stdout())
+                log.debug(
+                    "Upload into %s - STDOUT: %s", id, stream.read_stdout()
+                )
             if stream.peek_stderr():
-                log.debug("Upload into %s - STDERR: %s", id, stream.read_stderr())
+                log.debug(
+                    "Upload into %s - STDERR: %s", id, stream.read_stderr()
+                )
 
         except kubernetes.client.exceptions.ApiException as e:
-            log.exception("Exception when copying file to the pod with id %s", id)
+            log.exception(
+                "Exception when copying file to the pod with id %s", id
+            )
             raise e

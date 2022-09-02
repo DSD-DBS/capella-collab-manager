@@ -81,10 +81,14 @@ def change_permission_of_user_in_repository(
     return repo_user
 
 
-def delete_user_from_repository(db: Session, repository_name: str, username: str):
+def delete_user_from_repository(
+    db: Session, repository_name: str, username: str
+):
     db.query(RepositoryUserAssociation).filter(
         RepositoryUserAssociation.username == username
-    ).filter(RepositoryUserAssociation.repository_name == repository_name).delete()
+    ).filter(
+        RepositoryUserAssociation.repository_name == repository_name
+    ).delete()
     db.commit()
 
 
