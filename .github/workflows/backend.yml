@@ -10,10 +10,27 @@ on:
     branches: [main, staging]
 
 jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    name: Run pytest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Install python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          pip install ./backend
+      - name: Run pytest
+        run: |
+          pytest tests
   deploy-backend-image:
     runs-on: ubuntu-latest
     name: Build and push backend image
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
