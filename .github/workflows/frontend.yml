@@ -36,6 +36,12 @@ jobs:
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
+      - name: Fetch version
+        run: |
+          node frontend/fetch-version.ts
+      - name: Prepare environment.prod.ts
+        run: |
+          cp frontend/src/environments/environment.ts frontend/src/environments/environment.prod.ts
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
