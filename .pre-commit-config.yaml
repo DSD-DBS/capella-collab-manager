@@ -28,7 +28,13 @@ repos:
     rev: 22.6.0
     hooks:
       - id: black
+        entry: bash -c "echo "test"; cd backend && black ."
+        pass_filenames: false
+        files: "^backend/"
         types: [python]
+      - id: black
+        types: [python]
+        exclude: "^backend/"
   - repo: https://github.com/PyCQA/isort
     rev: 5.10.1
     hooks:
