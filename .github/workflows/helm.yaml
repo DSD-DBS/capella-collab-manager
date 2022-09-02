@@ -41,6 +41,9 @@ jobs:
         uses: azure/setup-helm@v3
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.3.0
+      - name: Create sessions namespace
+        run: |
+          kubectl create namespace t4c-sessions
       - name: Install chart
         run: |
           helm install test ./helm
