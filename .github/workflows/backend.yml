@@ -27,7 +27,7 @@ jobs:
           pip install "./backend[dev]"
       - name: Run pytest
         run: |
-          pytest tests
+          pytest backend/tests
   deploy-backend-image:
     runs-on: ubuntu-latest
     name: Build and push backend image
