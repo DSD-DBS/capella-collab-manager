@@ -24,6 +24,7 @@ jobs:
       - name: Install kubeconform
         run: |
           go install github.com/yannh/kubeconform/cmd/kubeconform@latest
+          echo "$HOME/go/bin" >> $GITHUB_PATH
       - name: Run helm lint
         run: |
           helm lint --strict ./helm
