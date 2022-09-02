@@ -28,4 +28,5 @@ jobs:
         run: |
           helm lint --strict ./helm
       - name: Validate chart with kubernetes schema
+        run : |
           helm template ./helm | kubeconform -strict
