@@ -16,4 +16,6 @@ try:
     ).load()()
 
 except StopIteration:
-    raise KeyError(f"Unknown operator " + config["operators"]["operator"]) from None
+    raise KeyError(
+        f"Unknown operator " + config["operators"]["operator"]
+    ) from None

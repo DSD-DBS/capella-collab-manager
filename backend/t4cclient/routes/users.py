@@ -23,22 +23,30 @@ router = APIRouter()
 
 
 @router.get(
-    "/", response_model=t.List[GetUserResponse], responses=AUTHENTICATION_RESPONSES
+    "/",
+    response_model=t.List[GetUserResponse],
+    responses=AUTHENTICATION_RESPONSES,
 )
 def get_users(token=Depends(JWTBearer()), db: Session = Depends(get_db)):
     verify_admin(token, db)
     return users.get_all_users(db)
 
 
-@router.post("/", response_model=GetUserResponse, responses=AUTHENTICATION_RESPONSES)
+@router.post(
+    "/", response_model=GetUserResponse, responses=AUTHENTICATION_RESPONSES
+)
 def create_user(token=Depends(JWTBearer()), db: Session = Depends(get_db)):
     return users.create_user(db, get_username(token))
 
 
 @router.get(
-    "/{username}", response_model=GetUserResponse, responses=AUTHENTICATION_RESPONSES
+    "/{username}",
+    response_model=GetUserResponse,
+    responses=AUTHENTICATION_RESPONSES,
 )
-def get_user(username: str, db: Session = Depends(get_db), token=Depends(JWTBearer())):
+def get_user(
+    username: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+):
     if username != get_username(token) and not is_admin(token, db):
         raise HTTPException(
             status_code=403,
@@ -47,7 +55,9 @@ def get_user(username: str, db: Session = Depends(get_db), token=Depends(JWTBear
     return users.get_user(db=db, username=username)
 
 
-@router.delete("/{username}", status_code=204, responses=AUTHENTICATION_RESPONSES)
+@router.delete(
+    "/{username}", status_code=204, responses=AUTHENTICATION_RESPONSES
+)
 def delete_user(
     username: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
@@ -71,7 +81,9 @@ def update_role_of_user(
 
 
 # TODO: This is actually a sessions route (sessions/{username}?)
-@router.get("/{username}/sessions", response_model=t.List[AdvancedSessionResponse])
+@router.get(
+    "/{username}/sessions", response_model=t.List[AdvancedSessionResponse]
+)
 def get_sessions_for_user(
     username: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):

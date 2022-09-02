@@ -35,7 +35,9 @@ def upgrade():
         ),
     )
     op.execute("UPDATE repository_user_association SET permission='WRITE'")
-    op.alter_column("repository_user_association", "permission", nullable=False)
+    op.alter_column(
+        "repository_user_association", "permission", nullable=False
+    )
 
     # ### end Alembic commands ###
 

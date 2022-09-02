@@ -44,7 +44,9 @@ def get_ease_backups(
 
 
 @router.post(
-    "/", response_model=models.EASEBackupResponse, responses=AUTHENTICATION_RESPONSES
+    "/",
+    response_model=models.EASEBackupResponse,
+    responses=AUTHENTICATION_RESPONSES,
 )
 def create_backup(
     project: str,
@@ -60,11 +62,15 @@ def create_backup(
         db=db, repository_name=project, model_id=body.gitmodel
     )
 
-    t4cmodel = t4c.crud.get_project_by_id(db=db, id=body.t4cmodel, repo_name=project)
+    t4cmodel = t4c.crud.get_project_by_id(
+        db=db, id=body.t4cmodel, repo_name=project
+    )
 
     username = "techuser-" + str(uuid.uuid4())
     password = credentials.generate_password()
-    t4c.connection.add_user_to_repository(project, username, password, is_admin=False)
+    t4c.connection.add_user_to_repository(
+        project, username, password, is_admin=False
+    )
 
     reference = OPERATOR.create_cronjob(
         image=config["docker"]["images"]["backup"],
@@ -89,7 +95,10 @@ def create_backup(
         crud.create_backup(
             db=db,
             backup=models.DB_EASEBackup(
-                project=project, **body.dict(), reference=reference, username=username
+                project=project,
+                **body.dict(),
+                reference=reference,
+                username=username,
             ),
         )
     )
@@ -101,18 +110,27 @@ def create_backup(
     responses=AUTHENTICATION_RESPONSES,
 )
 def delete_backup(
-    project: str, id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    project: str,
+    id: int,
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
 ):
     auth.verify_repository_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
 
     backup = crud.get_backup(db, project, id)
-    t4cmodel = t4c.crud.get_project_by_id(db=db, id=backup.t4cmodel, repo_name=project)
+    t4cmodel = t4c.crud.get_project_by_id(
+        db=db, id=backup.t4cmodel, repo_name=project
+    )
     try:
-        t4c.connection.remove_user_from_repository(t4cmodel.name, backup.username)
+        t4c.connection.remove_user_from_repository(
+            t4cmodel.name, backup.username
+        )
     except requests.HTTPError:
-        log.warning("Error during the deletion of user %s in t4c", exc_info=True)
+        log.warning(
+            "Error during the deletion of user %s in t4c", exc_info=True
+        )
 
     OPERATOR.delete_cronjob(backup.reference)
 

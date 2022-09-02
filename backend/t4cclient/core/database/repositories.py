@@ -9,7 +9,11 @@ from t4cclient.sql_models.repositories import DatabaseRepository
 
 
 def get_repository(db: Session, name: str):
-    return db.query(DatabaseRepository).filter(DatabaseRepository.name == name).first()
+    return (
+        db.query(DatabaseRepository)
+        .filter(DatabaseRepository.name == name)
+        .first()
+    )
 
 
 def get_all_repositories(db: Session) -> t.List[DatabaseRepository]:
@@ -25,5 +29,7 @@ def create_repository(db: Session, name: str):
 
 
 def delete_repository(db: Session, name: str):
-    db.query(DatabaseRepository).filter(DatabaseRepository.name == name).delete()
+    db.query(DatabaseRepository).filter(
+        DatabaseRepository.name == name
+    ).delete()
     db.commit()

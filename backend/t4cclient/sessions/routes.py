@@ -48,7 +48,9 @@ log = logging.getLogger(__name__)
 
 
 @router.get("/", response_model=t.List[GetSessionsResponse])
-def get_current_sessions(db: Session = Depends(get_db), token=Depends(JWTBearer())):
+def get_current_sessions(
+    db: Session = Depends(get_db), token=Depends(JWTBearer())
+):
     if is_admin(token, db):
         return inject_attrs_in_sessions(database.get_all_sessions(db))
 
@@ -78,10 +80,14 @@ def get_current_sessions(db: Session = Depends(get_db), token=Depends(JWTBearer(
 
 
 @router.post(
-    "/", response_model=AdvancedSessionResponse, responses=AUTHENTICATION_RESPONSES
+    "/",
+    response_model=AdvancedSessionResponse,
+    responses=AUTHENTICATION_RESPONSES,
 )
 def request_session(
-    body: PostSessionRequest, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    body: PostSessionRequest,
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
 ):
     rdp_password = generate_password(length=64)
 
@@ -93,7 +99,9 @@ def request_session(
     guacamole_password = generate_password(length=64)
 
     guacamole_token = guacamole.get_admin_token()
-    guacamole.create_user(guacamole_token, guacamole_username, guacamole_password)
+    guacamole.create_user(
+        guacamole_token, guacamole_username, guacamole_password
+    )
 
     existing_user_sessions = database.get_sessions_for_user(db, owner)
 
@@ -112,7 +120,8 @@ def request_session(
         user = users.get_user(db, owner)
         if user.role == users_schema.Role.ADMIN:
             repositories = [
-                repo.name for repo in repositories_crud.get_all_repositories(db)
+                repo.name
+                for repo in repositories_crud.get_all_repositories(db)
             ]
         else:
             repositories = [repo.repository_name for repo in user.repositories]
@@ -134,7 +143,9 @@ def request_session(
                 },
             )
         verify_repository_role(repository=body.repository, token=token, db=db)
-        git_model = git_models_crud.get_primary_model_of_repository(db, body.repository)
+        git_model = git_models_crud.get_primary_model_of_repository(
+            db, body.repository
+        )
         if not git_model:
             raise HTTPException(
                 status_code=404,
@@ -201,7 +212,9 @@ def request_session(
 
 
 @router.delete("/{id}", status_code=204, responses=AUTHENTICATION_RESPONSES)
-def end_session(id: str, db: Session = Depends(get_db), token=Depends(JWTBearer())):
+def end_session(
+    id: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+):
     s = database.get_session_by_id(db, id)
     if s.owner_name != get_username(token) and verify_repository_role(
         repository=s.repository,
@@ -244,7 +257,9 @@ def create_guacamole_token(
             detail="The owner of the session does not match with your username.",
         )
 
-    token = guacamole.get_token(session.guacamole_username, session.guacamole_password)
+    token = guacamole.get_token(
+        session.guacamole_username, session.guacamole_password
+    )
     return GuacamoleAuthentication(
         token=json.dumps(token),
         url=config["extensions"]["guacamole"]["publicURI"] + "/#/",

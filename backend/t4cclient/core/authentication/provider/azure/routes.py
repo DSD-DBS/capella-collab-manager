@@ -45,7 +45,10 @@ async def get_redirect_url():
     assert state not in global_session_data
     session_data = ad_session().initiate_auth_code_flow(scopes=[], state=state)
     global_session_data[session_data["state"]] = session_data
-    return {"auth_url": session_data["auth_uri"], "state": session_data["state"]}
+    return {
+        "auth_url": session_data["auth_uri"],
+        "state": session_data["state"],
+    }
 
 
 @router.post("/tokens", name="Create access_token")
@@ -67,7 +70,9 @@ async def api_get_token(body: TokenRequest):
 
 @router.put("/tokens", name="Refresh the access_token")
 async def api_refresh_token(body: RefreshTokenRequest):
-    return ad_session().acquire_token_by_refresh_token(body.refresh_token, scopes=[])
+    return ad_session().acquire_token_by_refresh_token(
+        body.refresh_token, scopes=[]
+    )
 
 
 @router.delete("/tokens", name="Invalidate the token (log out)")
@@ -80,7 +85,9 @@ async def logout(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
 
 @router.get("/tokens", name="Validate the token")
 async def validate_token(
-    scope: t.Optional[Role], token=Depends(jwt_bearer.JWTBearer()), db=Depends(get_db)
+    scope: t.Optional[Role],
+    token=Depends(jwt_bearer.JWTBearer()),
+    db=Depends(get_db),
 ):
     if scope.ADMIN:
         verify_admin(token, db)

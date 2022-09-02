@@ -44,7 +44,9 @@ router = APIRouter()
     tags=["Repositories"],
     responses=AUTHENTICATION_RESPONSES,
 )
-def get_repositories(db: Session = Depends(get_db), token=Depends(JWTBearer())):
+def get_repositories(
+    db: Session = Depends(get_db), token=Depends(JWTBearer())
+):
     if is_admin(token, db):
         return [
             GetRepositoryUserResponse(
@@ -72,7 +74,9 @@ def get_repositories(db: Session = Depends(get_db), token=Depends(JWTBearer())):
     ]
 
 
-@router.get("/{project}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
+@router.get(
+    "/{project}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES
+)
 def get_repository_by_name(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
@@ -88,7 +92,9 @@ def create_repository(
 ):
     verify_admin(token, db)
     connection.create_repository(body.name)
-    connection.add_user_to_repository(body.name, get_username(token), is_admin=True)
+    connection.add_user_to_repository(
+        body.name, get_username(token), is_admin=True
+    )
     return repositories.create_repository(db, body.name)
 
 
