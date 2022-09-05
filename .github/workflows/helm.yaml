@@ -47,3 +47,12 @@ jobs:
       - name: Install chart
         run: |
           helm install test ./helm
+      - name: Wait for all containers to be ready
+        run: |
+          kubectl wait --all --for=condition=Ready pods --timeout=5m
+      - name: Print status of Pods
+        run: |
+          kubectl get pods
+      - name: Print logs of backend container
+        run: |
+          kubectl logs deployment/test-t4c-manager-backend
