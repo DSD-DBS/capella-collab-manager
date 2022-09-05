@@ -5,6 +5,12 @@
 
 # Capella Collaboration Manager
 
+![backend](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/backend.yml/badge.svg)
+![frontend](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/frontend.yml/badge.svg)
+![helm](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/helm.yaml/badge.svg)
+![pre-commit](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/pre-commit.yml/badge.svg)
+![docs](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/docs.yml/badge.svg)
+
 A web platform for collaboration on [Capella](https://www.eclipse.org/capella/)
 (MBSE) projects
 
