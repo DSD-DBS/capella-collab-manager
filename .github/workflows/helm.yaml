@@ -79,7 +79,11 @@ jobs:
         if: always()
         run: |
           kubectl get pods
+      - name: Describe deployments
+        if: always()
+        run: |
+          kubectl describe deployment
       - name: Print logs of backend container
         if: always()
         run: |
-          kubectl logs deployment/test-t4c-manager-backend
+          kubectl logs deployment/test-backend
