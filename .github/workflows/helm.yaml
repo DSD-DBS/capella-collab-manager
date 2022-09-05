@@ -51,8 +51,10 @@ jobs:
         run: |
           kubectl wait --all --for=condition=Ready pods --timeout=5m
       - name: Print status of Pods
+        if: always()
         run: |
           kubectl get pods
       - name: Print logs of backend container
+        if: always()
         run: |
           kubectl logs deployment/test-t4c-manager-backend
