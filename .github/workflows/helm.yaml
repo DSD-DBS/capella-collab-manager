@@ -33,6 +33,7 @@ jobs:
           helm template ./helm | kubeconform -strict
   install-chart:
     runs-on: ubuntu-latest
+    needs: [deploy-frontend-image, deploy-docs-image, deploy-backend-image, deploy-docker-images]
     name: Install chart in kind cluster
     steps:
       - name: Checkout repository
