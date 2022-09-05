@@ -4,7 +4,7 @@ name: Push backend image
 
 on:
   push:
-    branches: [main, staging, actions]
+    branches: ['**']
     tags: ["v*.*.*"]
   pull_request:
     branches: [main, staging]
