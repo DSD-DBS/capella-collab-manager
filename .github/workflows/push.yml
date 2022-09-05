@@ -85,7 +85,7 @@ jobs:
           push: true
   install-chart:
     runs-on: ubuntu-latest
-    needs: [backend, frontend, docs-and-mocks]
+    needs: [push-images]
     name: Install chart in kind cluster
     steps:
       - name: Checkout repository
