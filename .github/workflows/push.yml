@@ -10,64 +10,79 @@ on:
     branches: [master, staging]
 
 jobs:
-  backend:
-    runs-on: ubuntu-latest
-    name: Build and push backend image
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Fetch version
-        run: |
-          python backend/generate_git_archival.py
-      - uses: ./.github/workflows/docker-template.yml
-        with:
-          context: ./backend
-          image: ghcr.io/dsd-dbs/capella-collab-manager/backend
-  frontend:
-    runs-on: ubuntu-latest
-    name: Build and push frontend image
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: Fetch version
-        run: |
-          node frontend/fetch-version.ts
-      - name: Prepare environment.prod.ts
-        run: |
-          cp frontend/src/environments/environment.ts frontend/src/environments/environment.prod.ts
-      - uses: ./.github/workflows/docker-template.yml
-        with:
-          context: ./frontend
-          image: ghcr.io/dsd-dbs/capella-collab-manager/frontend
-  docs-and-mocks:
+  push-images:
     runs-on: ubuntu-latest
     name: Build and push ${{ matrix.name }} image
     strategy:
       matrix:
         include:
+          - name: backend
+            image: ghcr.io/dsd-dbs/capella-collab-manager/backend
+            context: ./backend
+          - name: frontend
+            image: ghcr.io/dsd-dbs/capella-collab-manager/frontend
+            context: ./frontend
+          - name: docs
+            image: ghcr.io/dsd-dbs/capella-collab-manager/docs
+            context: ./docs/user
           - name: t4c-server-mock
             image: ghcr.io/dsd-dbs/capella-collab-manager/t4c/server/mock
             context: mocks/t4c-server
           - name: t4c-license-mock
             image: ghcr.io/dsd-dbs/capella-collab-manager/t4c/licence/mock
             context: mocks/licence-server
-          - name: docs
-            image: ghcr.io/dsd-dbs/capella-collab-manager/docs
-            context: ./docs/user
     steps:
       - name: Checkout repository
+        if: ${{ !contains(['frontend', 'backend'], matrix.name) }}
         uses: actions/checkout@v2
-      - uses: ./.github/workflows/docker-template.yml
+      - name: Checkout repository
+        if: ${{ contains(['frontend', 'backend'], matrix.name) }}
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Fetch version
+        if: ${{ matrix.name == 'backend' }}
+        run: |
+          python backend/generate_git_archival.py
+      - uses: actions/setup-node@v3
+        if: ${{ matrix.name == 'frontend' }}
+        with:
+          node-version: 18
+      - name: Fetch version
+        if: ${{ matrix.name == 'frontend' }}
+        run: |
+          node frontend/fetch-version.ts
+      - name: Prepare environment.prod.ts
+        if: ${{ matrix.name == 'frontend' }}
+        run: |
+          cp frontend/src/environments/environment.ts frontend/src/environments/environment.prod.ts
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to github container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ matrix.image }}
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v3
         with:
           context: ${{ matrix.context }}
-          image: ${{ matrix.image }}
+          tags: ${{ steps.meta.outputs.tags }}
+          push: true
   install-chart:
     runs-on: ubuntu-latest
     needs: [backend, frontend, docs-and-mocks]
