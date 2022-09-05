@@ -33,10 +33,10 @@ jobs:
             context: mocks/licence-server
     steps:
       - name: Checkout repository
-        if: ${{ !contains(['frontend', 'backend'], matrix.name) }}
+        if: ${{ matrix.name != 'frontend' && matrix.name != 'backend' }}
         uses: actions/checkout@v2
       - name: Checkout repository
-        if: ${{ contains(['frontend', 'backend'], matrix.name) }}
+        if: ${{ matrix.name == 'frontend' || matrix.name == 'backend' }}
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
