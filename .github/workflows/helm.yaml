@@ -83,6 +83,10 @@ jobs:
         if: always()
         run: |
           kubectl describe deployment
+      - name: Describe pods
+        if: always()
+        run: |
+          kubectl describe pods
       - name: Print logs of backend container
         if: always()
         run: |
