@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: {{ .Release.Name }}-licence-server-mock
-          image: {{ .Values.docker.registry.internal }}/t4c/licence/mock
+          image: {{ .Values.docker.registry.internal }}{{ .Values.docker.images.mocks.licenseServer }}
           ports:
             - name: http
               containerPort: 80
