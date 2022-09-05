@@ -60,6 +60,16 @@ jobs:
       - name: Create sessions namespace
         run: |
           kubectl create namespace t4c-sessions
+      - name: Add registry token
+        run: |
+          kubectl create secret docker-registry github \
+            --docker-server=ghcr.io \
+            --docker-username=${{ github.actor }} \
+            --docker-password=${{ secrets.GITHUB_TOKEN }}
+      - name: Add secret to default serviceaccount
+        run: |
+          kubectl patch serviceaccount default \
+            -p '{"imagePullSecrets": [{"name": "github"}]}'
       - name: Install chart
         run: |
           export TAG=${{ steps.tag.outputs.tag }}
