@@ -137,6 +137,10 @@ jobs:
           --set t4cServer.apis.usageStats="http://test-licence-server-mock:80/mock" \
           --set t4cServer.apis.restAPI="http://test-t4c-server-mock:80/mock/api/v1.0" \
           ./helm
+      - name: Add secret to backend serviceaccount
+        run: |
+          kubectl patch deployment/test-backend \
+            -p '{"spec": {"template": {"spec": {"imagePullSecrets": [{"name": "github"}]}}}}'
       - name: Wait for all containers to be ready
         run: |
           kubectl wait --all --for=condition=Ready pods --timeout=5m
