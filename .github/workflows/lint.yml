@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: CC0-1.0
+name: lint
+
+on:
+  push:
+    branches: ['**']
+    tags: ["v*.*.*"]
+  pull_request:
+    branches: [master, staging]
+
+jobs:
+  helm-chart:
+    runs-on: ubuntu-latest
+    name: Validate helm chart with linter and kubernetes yaml schemas
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install helm
+        uses: azure/setup-helm@v3
+      - name: Install go
+        uses: actions/setup-go@v3
+      - name: Install kubeconform
+        run: |
+          go install github.com/yannh/kubeconform/cmd/kubeconform@latest
+          echo "$HOME/go/bin" >> $GITHUB_PATH
+      - name: Run helm lint
+        run: |
+          helm lint --strict ./helm
+      - name: Validate chart with kubernetes schema
+        run : |
+          helm template ./helm | kubeconform -strict
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+      - name: Install pre-commit
+        run: |-
+          python -m pip install pre-commit
+      - name: Run pre-commit
+        run: |-
+          pre-commit run --all-files
