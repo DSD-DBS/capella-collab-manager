@@ -1,21 +1,20 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: CC0-1.0
-name: docs
 
 on:
-  push:
-    branches: ['**']
-    tags: ["v*.*.*"]
-  pull_request:
-    branches: [master, staging]
+  workflow_call:
+    inputs:
+      image:
+        required: true
+        type: string
+      context:
+        required: true
+        type: string
 
 jobs:
-  deploy-docs-image:
+  build-and-push:
     runs-on: ubuntu-latest
-    name: Build and push docs image
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -30,15 +29,16 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/dsd-dbs/capella-collab-manager/docs
+          images: ${{ inputs.image }}
           tags: |
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
       - name: Build and push Docker image
+        id: build-and-push
         uses: docker/build-push-action@v3
         with:
-          context: ./docs/user
+          context: ${{ inputs.context }}
           tags: ${{ steps.meta.outputs.tags }}
           push: true

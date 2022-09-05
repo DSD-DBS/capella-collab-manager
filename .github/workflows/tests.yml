@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: CC0-1.0
+name: tests
+
+on:
+  push:
+    branches: ['**']
+    tags: ["v*.*.*"]
+  pull_request:
+    branches: [master, staging]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    name: Run pytest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Install python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          pip install "./backend[dev]"
+      - name: Run pytest
+        run: |
+          pytest backend/tests
