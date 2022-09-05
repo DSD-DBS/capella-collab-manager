@@ -132,6 +132,8 @@ jobs:
           --set docker.images.frontend="/frontend:$TAG" \
           --set docker.images.backend="/backend:$TAG" \
           --set docker.images.docs="/docs:$TAG" \
+          --set docker.images.mocks.t4cServer="/t4c/server/mock:$TAG" \
+          --set docker.images.mocks.licenseServer="/t4c/licence/mock:$TAG" \
           --set t4cServer.apis.usageStats="http://test-licence-server-mock:80/mock" \
           --set t4cServer.apis.restAPI="http://test-t4c-server-mock:80/mock/api/v1.0" \
           ./helm
