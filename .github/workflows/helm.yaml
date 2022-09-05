@@ -70,8 +70,8 @@ jobs:
           --set docker.images.backend="/backend:$TAG" \
           --set docker.images.docs="/docs:$TAG" \
           --set t4cServer.apis.usageStats="http://test-licence-server-mock:80/mock" \
-          --set t4cServer.apis.restAPI="http://test-t4c-server-mock:80/mock/api/v1.0"
-           ./helm
+          --set t4cServer.apis.restAPI="http://test-t4c-server-mock:80/mock/api/v1.0" \
+          ./helm
       - name: Wait for all containers to be ready
         run: |
           kubectl wait --all --for=condition=Ready pods --timeout=5m
