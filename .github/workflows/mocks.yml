@@ -19,7 +19,7 @@ jobs:
         include:
           - image: ghcr.io/dsd-dbs/capella-collab-manager/t4c/server/mock
             context: mocks/t4c-server
-          - image: ghcr.io/dsd-dbs/capella-collab-manager/capella/base
+          - image: ghcr.io/dsd-dbs/capella-collab-manager/t4c/licence/mock
             context: mocks/licence-server
     name: build and push ${{ matrix.context }}
     steps:
