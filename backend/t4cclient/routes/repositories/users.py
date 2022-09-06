@@ -59,7 +59,9 @@ def add_user_to_repository(
     if body.role == schema_repositories.RepositoryUserRole.MANAGER:
         body.permission == schema_repositories.RepositoryUserPermission.WRITE
     if body.permission == schema_repositories.RepositoryUserPermission.WRITE:
-        t4c_manager.add_user_to_repository(project, body.username, is_admin=False)
+        t4c_manager.add_user_to_repository(
+            project, body.username, is_admin=False
+        )
     return repository_users.add_user_to_repository(
         db, project, body.role, body.username, body.permission
     )
@@ -111,7 +113,9 @@ def patch_repository_user(
             )
 
         try:
-            t4c_manager.update_password_of_user(project, username, body.password)
+            t4c_manager.update_password_of_user(
+                project, username, body.password
+            )
         except HTTPError as err:
             if err.response.status_code == 404:
                 t4c_manager.add_user_to_repository(

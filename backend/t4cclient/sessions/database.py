@@ -8,13 +8,17 @@ from t4cclient.sessions.models import DatabaseSession
 
 def get_sessions_for_user(db: Session, username: str):
     return (
-        db.query(DatabaseSession).filter(DatabaseSession.owner_name == username).all()
+        db.query(DatabaseSession)
+        .filter(DatabaseSession.owner_name == username)
+        .all()
     )
 
 
 def get_sessions_for_repository(db: Session, repository: str):
     return (
-        db.query(DatabaseSession).filter(DatabaseSession.repository == repository).all()
+        db.query(DatabaseSession)
+        .filter(DatabaseSession.repository == repository)
+        .all()
     )
 
 

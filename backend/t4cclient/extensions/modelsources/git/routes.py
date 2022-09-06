@@ -55,7 +55,9 @@ def get_models_for_repository(
 
 
 @router.post(
-    "/", response_model=GetRepositoryGitModel, responses=AUTHENTICATION_RESPONSES
+    "/",
+    response_model=GetRepositoryGitModel,
+    responses=AUTHENTICATION_RESPONSES,
 )
 def assign_model_to_repository(
     project: str,
@@ -117,7 +119,9 @@ def patch_model(
 
 
 @router.get(
-    "/primary/revisions", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES
+    "/primary/revisions",
+    tags=["Repositories"],
+    responses=AUTHENTICATION_RESPONSES,
 )
 def get_revisions(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
@@ -135,7 +139,9 @@ def get_revisions(
         )
 
     url = git_model.path
-    log.debug("Fetch revisions of git-model '%s' with url '%s'", git_model.name, url)
+    log.debug(
+        "Fetch revisions of git-model '%s' with url '%s'", git_model.name, url
+    )
 
     git_env = os.environ.copy()
     git_env["GIT_USERNAME"] = git_model.username or ""

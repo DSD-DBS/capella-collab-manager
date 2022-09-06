@@ -49,7 +49,8 @@ def refresh_token(refresh_token: str) -> t.Dict[str, t.Any]:
 def read_well_known() -> dict[str, t.Any]:
     if cfg["endpoints"]["wellKnown"]:
         r = requests.get(
-            cfg["endpoints"]["wellKnown"], timeout=config["requests"]["timeout"]
+            cfg["endpoints"]["wellKnown"],
+            timeout=config["requests"]["timeout"],
         )
         r.raise_for_status()
 

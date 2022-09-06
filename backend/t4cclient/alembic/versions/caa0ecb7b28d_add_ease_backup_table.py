@@ -40,7 +40,9 @@ def upgrade():
         ),
         sa.PrimaryKeyConstraint("id", "project"),
     )
-    op.create_index(op.f("ix_EASEBackup_id"), "EASEBackup", ["id"], unique=False)
+    op.create_index(
+        op.f("ix_EASEBackup_id"), "EASEBackup", ["id"], unique=False
+    )
     # ### end Alembic commands ###
 
 
