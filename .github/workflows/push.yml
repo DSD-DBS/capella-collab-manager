@@ -145,7 +145,7 @@ jobs:
             -p '{"spec": {"template": {"spec": {"imagePullSecrets": [{"name": "github"}]}}}}'
       - name: Wait for all containers to be ready
         run: |
-          kubectl wait --all --for=condition=Ready pods --timeout=5m
+          kubectl wait --all deployment --for condition=Available=True --timeout=5m
       - name: Print status of Pods
         if: always()
         run: |
