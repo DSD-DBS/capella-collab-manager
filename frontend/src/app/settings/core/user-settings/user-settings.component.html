@@ -1,5 +1,5 @@
 <!--
- ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
@@ -53,38 +53,37 @@
         "
         (click)="
           this.removeAdministrator(
-            adminusers.selectedOptions.selected[0]?.value.name
+            adminusers.selectedOptions.selected[0].value.name
           )
         "
       >
         <mat-icon>arrow_downward</mat-icon>
         Downgrade
-        {{ adminusers.selectedOptions.selected[0]?.value.name }} to User
+        {{ adminusers.selectedOptions.selected[0].value.name }} to User
       </button>
       <button
         mat-flat-button
         color="primary"
         (click)="
           createAdministratorWithUsername(
-            adminusers.selectedOptions.selected[0]?.value.name
+            adminusers.selectedOptions.selected[0].value.name
           )
         "
         *ngIf="adminusers.selectedOptions.selected[0]?.value.role === 'user'"
       >
         <mat-icon>arrow_upward</mat-icon>
         Upgrade
-        {{ adminusers.selectedOptions.selected[0]?.value.name }} to
-        Administrator
+        {{ adminusers.selectedOptions.selected[0].value.name }} to Administrator
       </button>
       <button
         mat-flat-button
         color="primary"
-        (click)="deleteUser(adminusers.selectedOptions.selected[0]?.value.name)"
+        (click)="deleteUser(adminusers.selectedOptions.selected[0].value.name)"
         *ngIf="adminusers.selectedOptions.selected[0]?.value.role === 'user'"
       >
         <mat-icon>delete</mat-icon>
         Delete
-        {{ adminusers.selectedOptions.selected[0]?.value.name }}
+        {{ adminusers.selectedOptions.selected[0].value.name }}
       </button>
     </div>
   </mat-card>

@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 apiVersion: v1
@@ -6,8 +6,8 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-prometheus-nginx
   namespace: {{ .Release.Namespace }}
-  labels: 
+  labels:
     id: {{ .Release.Name }}-configmap-prometheus-nginx
 data:
-  nginx.conf: |- 
+  nginx.conf: |-
     {{ tpl (.Files.Get "config/nginx-prometheus.conf") . | nindent 4 }}

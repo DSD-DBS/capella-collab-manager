@@ -1,16 +1,29 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
+
+# Standard library:
 import datetime
 import enum
+import numbers
 import typing as t
 
+# 3rd party:
 from pydantic import BaseModel
+
+# local:
+from capellacollab.sessions.operators.k8s import FileType
 
 
 class WorkspaceType(enum.Enum):
     PERSISTENT = "persistent"
     READONLY = "readonly"
+
+
+class DepthType(enum.Enum):
+    LatestCommit = "LatestCommit"
+    CompleteHistory = "CompleteHistory"
 
 
 class GetSessionsResponse(BaseModel):
@@ -36,8 +49,20 @@ class AdvancedSessionResponse(GetSessionsResponse):
         orm_mode = True
 
 
+class FileTree(BaseModel):
+    path: str
+    name: str
+    type: FileType
+    children: t.Optional[list[FileTree]]
+
+    class Config:
+        orm_mode = True
+
+
 class PostSessionRequest(BaseModel):
     type: WorkspaceType
+    branch: str
+    depth: DepthType
     repository: t.Optional[str]
 
     class Config:

@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
@@ -13,16 +13,18 @@ from requests import Session
 
 # 1st party:
 import capellacollab.core.authentication.database as auth
-
-# local:
-from . import crud, helper, models
 from capellacollab.config import config
 from capellacollab.core import credentials
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.authentication.responses import (
+    AUTHENTICATION_RESPONSES,
+)
 from capellacollab.core.database import get_db
-from capellacollab.core.operators import OPERATOR
 from capellacollab.extensions.modelsources import git, t4c
-from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
+from capellacollab.sessions.operators import OPERATOR
+
+# local:
+from . import crud, helper, models
 
 router = APIRouter()
 log = logging.getLogger(__name__)
@@ -48,7 +50,9 @@ def get_ease_backups(
 
 
 @router.post(
-    "/", response_model=models.EASEBackupResponse, responses=AUTHENTICATION_RESPONSES
+    "/",
+    response_model=models.EASEBackupResponse,
+    responses=AUTHENTICATION_RESPONSES,
 )
 def create_backup(
     project: str,
@@ -64,11 +68,15 @@ def create_backup(
         db=db, repository_name=project, model_id=body.gitmodel
     )
 
-    t4cmodel = t4c.crud.get_project_by_id(db=db, id=body.t4cmodel, repo_name=project)
+    t4cmodel = t4c.crud.get_project_by_id(
+        db=db, id=body.t4cmodel, repo_name=project
+    )
 
     username = "techuser-" + str(uuid.uuid4())
     password = credentials.generate_password()
-    t4c.connection.add_user_to_repository(project, username, password, is_admin=False)
+    t4c.connection.add_user_to_repository(
+        project, username, password, is_admin=False
+    )
 
     reference = OPERATOR.create_cronjob(
         image=config["docker"]["images"]["backup"],
@@ -78,6 +86,7 @@ def create_backup(
             "GIT_REPO_BRANCH": gitmodel.revision,
             "T4C_REPO_HOST": config["modelsources"]["t4c"]["host"],
             "T4C_REPO_PORT": config["modelsources"]["t4c"]["port"],
+            "T4C_CDO_PORT": config["modelsources"]["t4c"]["cdoPort"],
             "T4C_REPO_NAME": project,
             "T4C_PROJECT_NAME": t4cmodel.name,
             "T4C_USERNAME": username,
@@ -92,7 +101,10 @@ def create_backup(
         crud.create_backup(
             db=db,
             backup=models.DB_EASEBackup(
-                project=project, **body.dict(), reference=reference, username=username
+                project=project,
+                **body.dict(),
+                reference=reference,
+                username=username,
             ),
         )
     )
@@ -104,18 +116,27 @@ def create_backup(
     responses=AUTHENTICATION_RESPONSES,
 )
 def delete_backup(
-    project: str, id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    project: str,
+    id: int,
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
 ):
     auth.verify_repository_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
 
     backup = crud.get_backup(db, project, id)
-    t4cmodel = t4c.crud.get_project_by_id(db=db, id=backup.t4cmodel, repo_name=project)
+    t4cmodel = t4c.crud.get_project_by_id(
+        db=db, id=backup.t4cmodel, repo_name=project
+    )
     try:
-        t4c.connection.remove_user_from_repository(t4cmodel.name, backup.username)
+        t4c.connection.remove_user_from_repository(
+            t4cmodel.name, backup.username
+        )
     except requests.HTTPError:
-        log.warning("Error during the deletion of user %s in t4c", exc_info=True)
+        log.warning(
+            "Error during the deletion of user %s in t4c", exc_info=True
+        )
 
     OPERATOR.delete_cronjob(backup.reference)
 

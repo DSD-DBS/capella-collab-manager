@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
@@ -13,7 +13,9 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-logging.basicConfig(level=logging.INFO)
+from capellacollab.config import config
+
+logging.basicConfig(level=config["logging"]["level"])
 log = logging.getLogger(__name__)
 
 # 1st party:

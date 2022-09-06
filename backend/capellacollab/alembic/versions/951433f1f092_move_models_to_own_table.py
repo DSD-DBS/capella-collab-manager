@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
@@ -29,7 +32,9 @@ def upgrade():
         sa.Column("name", sa.String(), nullable=True),
         sa.Column("description", sa.String(), nullable=True),
         sa.Column(
-            "editing_mode", sa.Enum("T4C", "GIT", name="editingmode"), nullable=True
+            "editing_mode",
+            sa.Enum("T4C", "GIT", name="editingmode"),
+            nullable=True,
         ),
         sa.Column(
             "model_type",
@@ -48,7 +53,10 @@ def upgrade():
         op.f("ix_capella_models_id"), "capella_models", ["id"], unique=False
     )
     op.create_index(
-        op.f("ix_capella_models_name"), "capella_models", ["name"], unique=False
+        op.f("ix_capella_models_name"),
+        "capella_models",
+        ["name"],
+        unique=False,
     )
 
     # Fetch all models
@@ -57,14 +65,26 @@ def upgrade():
     t4c_models = conn.execute("SELECT * FROM t4c_models")
 
     # Update foreign keys
-    op.add_column("git_models", sa.Column("model_id", sa.Integer(), nullable=True))
-    op.drop_constraint("git_models_project_name_fkey", "git_models", type_="foreignkey")
-    op.create_foreign_key(None, "git_models", "capella_models", ["model_id"], ["id"])
+    op.add_column(
+        "git_models", sa.Column("model_id", sa.Integer(), nullable=True)
+    )
+    op.drop_constraint(
+        "git_models_project_name_fkey", "git_models", type_="foreignkey"
+    )
+    op.create_foreign_key(
+        None, "git_models", "capella_models", ["model_id"], ["id"]
+    )
     op.drop_column("git_models", "project_name")
 
-    op.add_column("t4c_models", sa.Column("model_id", sa.Integer(), nullable=True))
-    op.drop_constraint("t4c_models_project_name_fkey", "t4c_models", type_="foreignkey")
-    op.create_foreign_key(None, "t4c_models", "capella_models", ["model_id"], ["id"])
+    op.add_column(
+        "t4c_models", sa.Column("model_id", sa.Integer(), nullable=True)
+    )
+    op.drop_constraint(
+        "t4c_models_project_name_fkey", "t4c_models", type_="foreignkey"
+    )
+    op.create_foreign_key(
+        None, "t4c_models", "capella_models", ["model_id"], ["id"]
+    )
     op.drop_column("t4c_models", "project_name")
 
     # Update values of foreign keys
@@ -97,9 +117,13 @@ def downgrade():
 
     op.add_column(
         "t4c_models",
-        sa.Column("project_name", sa.VARCHAR(), autoincrement=False, nullable=True),
+        sa.Column(
+            "project_name", sa.VARCHAR(), autoincrement=False, nullable=True
+        ),
     )
-    op.drop_constraint("t4c_models_model_id_fkey", "t4c_models", type_="foreignkey")
+    op.drop_constraint(
+        "t4c_models_model_id_fkey", "t4c_models", type_="foreignkey"
+    )
     op.create_foreign_key(
         "t4c_models_project_name_fkey",
         "t4c_models",
@@ -111,9 +135,13 @@ def downgrade():
     op.drop_column("t4c_models", "model_id")
     op.add_column(
         "git_models",
-        sa.Column("project_name", sa.VARCHAR(), autoincrement=False, nullable=True),
+        sa.Column(
+            "project_name", sa.VARCHAR(), autoincrement=False, nullable=True
+        ),
     )
-    op.drop_constraint("git_models_model_id_fkey", "git_models", type_="foreignkey")
+    op.drop_constraint(
+        "git_models_model_id_fkey", "git_models", type_="foreignkey"
+    )
     op.create_foreign_key(
         "git_models_project_name_fkey",
         "git_models",
@@ -136,16 +164,28 @@ def downgrade():
     for git_model in git_models:
         id = git_model.id
         project_name = next(
-            (model.project_name for model in models if model.id == git_model.model_id)
+            (
+                model.project_name
+                for model in models
+                if model.id == git_model.model_id
+            )
         )
-        op.execute(f"UPDATE git_models SET project_name='{project_name}' WHERE id={id}")
+        op.execute(
+            f"UPDATE git_models SET project_name='{project_name}' WHERE id={id}"
+        )
 
     for t4c_model in t4c_models:
         id = t4c_model.id
         project_name = next(
-            (model.project_name for model in models if model[0] == t4c_model[-1])
+            (
+                model.project_name
+                for model in models
+                if model[0] == t4c_model[-1]
+            )
         )
-        op.execute(f"UPDATE t4c_models SET project_name='{project_name}' WHERE id={id}")
+        op.execute(
+            f"UPDATE t4c_models SET project_name='{project_name}' WHERE id={id}"
+        )
 
     op.alter_column("git_models", "project_name", nullable=False)
     op.alter_column("t4c_models", "project_name", nullable=False)

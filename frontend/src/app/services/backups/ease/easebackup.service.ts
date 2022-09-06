@@ -1,5 +1,7 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import { ObserversModule } from '@angular/cdk/observers';
 import { HttpClient } from '@angular/common/http';
@@ -50,7 +52,7 @@ export class EASEBackupService {
   }
 
   beatifyState(state: string | undefined): EASEBackupState {
-    /* Possible states are (and a few more states): 
+    /* Possible states are (and a few more states):
     https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/events/event.go */
 
     let text = state;

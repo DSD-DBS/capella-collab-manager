@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
@@ -6,6 +9,10 @@ import importlib
 import logging
 import typing as t
 from importlib import metadata
+
+# 3rd party:
+from fastapi import APIRouter, Depends
+from requests import Session
 
 # 1st party:
 import capellacollab.projects.crud as crud
@@ -16,6 +23,9 @@ from capellacollab.core.authentication.database import (
 )
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.authentication.responses import (
+    AUTHENTICATION_RESPONSES,
+)
 from capellacollab.core.database import get_db
 from capellacollab.core.database import users as database_users
 from capellacollab.projects.models import (
@@ -30,11 +40,6 @@ from capellacollab.projects.users.models import (
     RepositoryUserPermission,
     RepositoryUserRole,
 )
-from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
-
-# 3rd party:
-from fastapi import APIRouter, Depends
-from requests import Session
 
 log = logging.getLogger(__name__)
 router = APIRouter()
@@ -85,7 +90,9 @@ def update_project(
     return convert_project(crud.get_project(database, project))
 
 
-@router.get("/{project}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
+@router.get(
+    "/{project}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES
+)
 def get_repository_by_name(project: str, db: Session = Depends(get_db)):
     return convert_project(crud.get_project(db, project))
 

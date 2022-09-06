@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
@@ -7,6 +7,7 @@ import uuid
 # 3rd party:
 import requests
 from requests.auth import HTTPBasicAuth
+from requests.exceptions import HTTPError
 
 # 1st party:
 from capellacollab.config import config
@@ -21,6 +22,10 @@ proxies = {
 }
 
 
+class GuacamoleError(Exception):
+    pass
+
+
 def get_admin_token() -> str:
     r = requests.post(
         cfg["baseURI"] + "/api/tokens",
@@ -29,7 +34,20 @@ def get_admin_token() -> str:
         timeout=config["requests"]["timeout"],
         proxies=proxies,
     )
-    r.raise_for_status()
+    try:
+        r.raise_for_status()
+    except HTTPError as e:
+        status = e.response.status_code
+        if status == 404:
+            raise GuacamoleError(
+                "Could not create an admin token. Please make sure that your Guacamole instance is running."
+            ) from e
+        elif status == 500:
+            raise GuacamoleError(
+                "Could not create an admin token. Please make sure that your Guacamole database is initialized properly."
+            ) from e
+        else:
+            raise e
     return r.json()["authToken"]
 
 

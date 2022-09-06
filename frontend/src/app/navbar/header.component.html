@@ -1,5 +1,5 @@
 <!--
- ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
@@ -9,9 +9,7 @@
     <div id="subtitle">/ {{ navbarService.title }}</div>
   </div>
   <div class="flexbox">
-    <a mat-raised-button color="primary" routerLink="/projects">
-      Projects
-    </a>
+    <a mat-raised-button color="primary" routerLink="/projects"> Projects </a>
     <a mat-raised-button color="primary" routerLink="">Workspaces</a>
     <a
       color="primary"
@@ -24,13 +22,15 @@
     </a>
     <a
       color="primary"
-      id="overview"
       mat-raised-button
       *ngIf="userService.user?.role === 'administrator'"
       href="/prometheus/graph"
       target="_blank"
     >
       Prometheus <mat-icon>open_in_new</mat-icon>
+    </a>
+    <a color="primary" mat-raised-button href="/docs/" target="_blank">
+      Documentation <mat-icon>open_in_new</mat-icon>
     </a>
   </div>
   <div class="right-aligned">

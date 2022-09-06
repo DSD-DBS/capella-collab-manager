@@ -1,10 +1,12 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { RepositoryUser } from 'src/app/schemes';
+import { ProjectUser } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../auth/auth.service';
 
@@ -19,8 +21,8 @@ export class RepositoryUserService {
   ROLES = { user: 'User', manager: 'Manager' };
   ADVANCED_ROLES = { administrator: 'Administrator', ...this.ROLES };
 
-  getRepoUsers(repository: string): Observable<Array<RepositoryUser>> {
-    return this.http.get<Array<RepositoryUser>>(
+  getRepoUsers(repository: string): Observable<Array<ProjectUser>> {
+    return this.http.get<Array<ProjectUser>>(
       this.BACKEND_URL_PREFIX + repository + '/users'
     );
   }
@@ -30,8 +32,8 @@ export class RepositoryUserService {
     username: string,
     role: 'user' | 'manager',
     permission: string
-  ): Observable<RepositoryUser> {
-    return this.http.post<RepositoryUser>(
+  ): Observable<ProjectUser> {
+    return this.http.post<ProjectUser>(
       this.BACKEND_URL_PREFIX + repository + '/users',
       { username, role, permission }
     );

@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
@@ -79,17 +84,12 @@ export interface GitSettings {
   type: GitType;
 }
 
-export enum GitType {
-  General,
-  GitLab,
-  GitHub,
-  AzureDevOps,
-}
-
 export interface GitReferences {
   branches: string[];
   tags: string[];
 }
+
+export type GitType = 'general' | 'gitlab' | 'github' | 'azuredevops';
 
 export type EditingMode = 't4c' | 'git';
 export type ProjectType = 'project' | 'library';

@@ -1,5 +1,7 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { OverlayModule } from '@angular/cdk/overlay';
@@ -96,6 +98,14 @@ import { CreateCoworkingMethodComponent } from './models/create-coworking-method
 import { ChooseSourceComponent } from './models/choose-source/choose-source.component';
 import { InitModelComponent } from './models/init-model/init-model.component';
 import { ChooseInitComponent } from './models/choose-init/choose-init.component';
+import { UploadDialogComponent } from './active-sessions/upload-dialog/upload-dialog.component';
+import { FileExistsDialogComponent } from './active-sessions/upload-dialog/file-exists-dialog/file-exists-dialog.component';
+import { ReleaseNotesComponent } from './metadata/release-notes/release-notes.component';
+import { VersionComponent } from './metadata/version/version.component';
+import { MarkdownModule } from 'ngx-markdown';
+import { MatTreeModule } from '@angular/material/tree';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -157,6 +167,10 @@ import { ChooseInitComponent } from './models/choose-init/choose-init.component'
     ChooseSourceComponent,
     InitModelComponent,
     ChooseInitComponent,
+    UploadDialogComponent,
+    FileExistsDialogComponent,
+    ReleaseNotesComponent,
+    VersionComponent,
   ],
   imports: [
     CommonModule,
@@ -191,6 +205,8 @@ import { ChooseInitComponent } from './models/choose-init/choose-init.component'
     MatBadgeModule,
     MatRadioModule,
     MatAutocompleteModule,
+    MatTreeModule,
+    MatProgressBarModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-left',
       timeOut: 10000,
@@ -200,6 +216,7 @@ import { ChooseInitComponent } from './models/choose-init/choose-init.component'
       countDuplicates: true,
     }),
     CookieModule.withOptions(),
+    MarkdownModule.forRoot(),
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 CLUSTER_NAME = collab-cluster
@@ -17,17 +17,23 @@ build: backend frontend capella
 build-all: build ease
 
 backend:
+	python backend/generate_git_archival.py;
 	docker build -t t4c/client/backend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/backend backend
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/backend
 
 frontend:
+	node frontend/fetch-version.ts
 	docker build --build-arg CONFIGURATION=local -t t4c/client/frontend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend frontend
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend
 
 capella: capella-download
 	docker build -t base capella-dockerimages/base
 	docker build -t capella/base capella-dockerimages/capella
-	
+
+importer:
+	docker build -t t4c/client/importer -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/importer capella-dockerimages/importer
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/importer
+
 capella/remote: capella
 	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
@@ -40,6 +46,10 @@ capella-download:
 	else \
 		curl -L --output capella.tar.gz 'https://ftp.acc.umu.se/mirror/eclipse.org/capella/core/products/releases/5.2.0-R20211130-125709/capella-5.2.0.202111301257-linux-gtk-x86_64.tar.gz'; \
 	fi
+
+docs:
+	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs
 
 t4c-client: capella
 	docker build -t t4c/client/base capella-dockerimages/t4c
@@ -65,10 +75,10 @@ mock:
 
 capella-dockerimages: capella t4c-client readonly ease
 
-deploy: backend frontend capella/remote mock helm-deploy open rollout
+deploy: backend frontend capella/remote docs mock helm-deploy open rollout
 
 # Deploy with full T4C support:
-deploy-t4c: backend frontend capella t4c-client readonly ease mock helm-deploy open rollout
+deploy-t4c: backend frontend capella t4c-client importer readonly ease docs mock helm-deploy open rollout
 
 helm-deploy:
 	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
@@ -83,10 +93,8 @@ helm-deploy:
 		--set general.port=8080 \
 		--set t4cServer.apis.usageStats="http://$(RELEASE)-licence-server-mock:80/mock" \
 		--set t4cServer.apis.restAPI="http://$(RELEASE)-t4c-server-mock:80/mock/api/v1.0" \
-		--wait --timeout 10m \
-		--debug \
 		$(RELEASE) ./helm
-	$(MAKE) .provision-guacamole .provision-backend
+	$(MAKE) .provision-guacamole wait
 
 open:
 	export URL=http://localhost:8080; \
@@ -109,11 +117,11 @@ clear-backend-db:
 rollout: backend frontend
 	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-backend
 	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-frontend
+	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-docs
 
 undeploy:
 	helm uninstall --kube-context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $(RELEASE)
 	kubectl --context k3d-$(CLUSTER_NAME) delete --all deployments -n $(SESSION_NAMESPACE)
-	rm -f .provision-guacamole .provision-backend
 
 create-cluster:
 	type k3d || { echo "K3D is not installed, install k3d and run 'make create-cluster' again"; exit 1; }
@@ -125,17 +133,20 @@ create-cluster:
 
 delete-cluster:
 	k3d cluster list $(CLUSTER_NAME) 2>&- && k3d cluster delete $(CLUSTER_NAME)
-	rm -f .provision-guacamole .provision-backend
+
+wait:
+	@echo "-----------------------------------------------------------"
+	@echo "--- Please wait until all services are in running state ---"
+	@echo "-----------------------------------------------------------"
+	@kubectl get -n $(NAMESPACE) --watch pods
 
 .provision-guacamole:
 	export MSYS_NO_PATHCONV=1; \
-	kubectl exec --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
-	kubectl exec -ti --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole && \
-	touch .provision-guacamole
-
-.provision-backend:
-	echo "insert into repository_user_association values ('$(MY_EMAIL)', 'default', 'WRITE', 'MANAGER');" | kubectl exec --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-backend-postgres --no-headers | cut -f1 -d' ') -- psql -U backend backend && \
-	touch .provision-backend
+	echo "Waiting for guacamole container, before we can initialize the database..."
+	kubectl wait --for=condition=Ready pods --timeout=5m --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole
+	kubectl exec --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
+	kubectl exec -ti --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole && \
+	echo "Guacamole database initialized sucessfully.";
 
 # Execute with `make -j3 dev`
 dev: dev-oauth-mock dev-frontend dev-backend
@@ -146,7 +157,7 @@ dev-frontend:
 dev-backend:
 	$(MAKE) -C backend dev
 
-dev-oauth-mock: 
+dev-oauth-mock:
 	$(MAKE) -C mocks/oauth start
 
 dev-cleanup:
@@ -157,5 +168,13 @@ backend-logs:
 
 ns:
 	kubectl config set-context k3d-$(CLUSTER_NAME) --namespace=$(NAMESPACE)
+
+dashboard:
+	kubectl apply --context k3d-$(CLUSTER_NAME) -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.5.0/aio/deploy/recommended.yaml
+	kubectl apply -f dashboard/dashboard.rolebinding.yml -f dashboard/dashboard.serviceaccount.yml
+	echo "Please open the portal: http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login"
+	echo "Please use the following token: $$(kubectl --context k3d-$(CLUSTER_NAME) get secret $$(kubectl get --context k3d-$(CLUSTER_NAME) serviceaccount -o "jsonpath={.secrets[0].name}" dashboard-admin) -o jsonpath={.data.token} | base64 --decode)"
+	kubectl proxy
+
 
 .PHONY: *

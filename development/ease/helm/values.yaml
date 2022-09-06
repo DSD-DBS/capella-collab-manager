@@ -1,26 +1,26 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-git: 
-  url: 
-  branch: 
-  username: 
-  password: 
+git:
+  url:
+  branch:
+  username:
+  password:
 
-t4c: 
-  host: 
-  port: 
-  repo: 
-  repos: 
-  project: 
-  username: 
-  password: 
-  licence: 
+t4c:
+  host:
+  port:
+  repo:
+  repos:
+  project:
+  username:
+  password:
+  licence:
 
-rdp: 
-  password: 
+rdp:
+  password:
 
 docker:
-  registry: 
+  registry:
 
 storageClassName:

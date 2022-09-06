@@ -1,12 +1,14 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# Standard library:
 # Standard library:
 import itertools
 import json
 import logging
 import typing as t
 
+# 3rd party:
 # 3rd party:
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -15,17 +17,21 @@ from sqlalchemy.orm import Session
 import capellacollab.extensions.modelsources.git.crud as git_models_crud
 import capellacollab.projects.crud as repositories_crud
 import capellacollab.projects.users.models as users_models
-from capellacollab.core.authentication.database import is_admin, verify_project_role
+from capellacollab.core.authentication.database import (
+    is_admin,
+    verify_project_role,
+)
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.authentication.responses import (
+    AUTHENTICATION_RESPONSES,
+)
 from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db, users
-from capellacollab.core.operators import OPERATOR
-from capellacollab.core.services.sessions import inject_attrs_in_sessions
 from capellacollab.projects.users.crud import RepositoryUserRole
-from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from capellacollab.schemas.sessions import (
     AdvancedSessionResponse,
+    DepthType,
     GetSessionsResponse,
     GetSessionUsageResponse,
     GuacamoleAuthentication,
@@ -34,14 +40,22 @@ from capellacollab.schemas.sessions import (
 )
 from capellacollab.sessions import database, guacamole
 from capellacollab.sessions.models import DatabaseSession
-from capellacollab.sessions.sessions import get_last_seen, inject_attrs_in_sessions
+from capellacollab.sessions.operators import OPERATOR
+from capellacollab.sessions.sessions import (
+    get_last_seen,
+    inject_attrs_in_sessions,
+)
+
+from .files import routes as files
 
 router = APIRouter()
 log = logging.getLogger(__name__)
 
 
 @router.get("/", response_model=t.List[GetSessionsResponse])
-def get_current_sessions(db: Session = Depends(get_db), token=Depends(JWTBearer())):
+def get_current_sessions(
+    db: Session = Depends(get_db), token=Depends(JWTBearer())
+):
     if is_admin(token, db):
         return inject_attrs_in_sessions(database.get_all_sessions(db))
 
@@ -66,17 +80,20 @@ def get_current_sessions(db: Session = Depends(get_db), token=Depends(JWTBearer(
                     ]
                 ]
             )
-        )
+        ),
     )
 
 
 @router.post(
-    "/", response_model=AdvancedSessionResponse, responses=AUTHENTICATION_RESPONSES
+    "/",
+    response_model=AdvancedSessionResponse,
+    responses=AUTHENTICATION_RESPONSES,
 )
 def request_session(
-    body: PostSessionRequest, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    body: PostSessionRequest,
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
 ):
-
     rdp_password = generate_password(length=64)
 
     owner = get_username(token)
@@ -87,7 +104,9 @@ def request_session(
     guacamole_password = generate_password(length=64)
 
     guacamole_token = guacamole.get_admin_token()
-    guacamole.create_user(guacamole_token, guacamole_username, guacamole_password)
+    guacamole.create_user(
+        guacamole_token, guacamole_username, guacamole_password
+    )
 
     existing_user_sessions = database.get_sessions_for_user(db, owner)
 
@@ -128,7 +147,9 @@ def request_session(
                 },
             )
         verify_project_role(repository=body.repository, token=token, db=db)
-        git_model = git_models_crud.get_primary_model_of_repository(db, body.repository)
+        git_model = git_models_crud.get_primary_model_of_repository(
+            db, body.repository
+        )
         if not git_model:
             raise HTTPException(
                 status_code=404,
@@ -137,13 +158,28 @@ def request_session(
                     "reason": "The Model has no connected Git Model. Please contact a project manager or admininistrator",
                 },
             )
+
+        revision = body.branch or git_model.revision
+        if body.depth == DepthType.LatestCommit:
+            depth = 1
+        elif body.depth == DepthType.CompleteHistory:
+            depth = 0
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "err_code": "wrong_depth_format",
+                    "reason": f"Depth type {depth} is not allowed.",
+                },
+            )
         session = OPERATOR.start_readonly_session(
             password=rdp_password,
             git_url=git_model.path,
-            git_revision=git_model.revision,
+            git_revision=revision,
             entrypoint=git_model.entrypoint,
             git_username=git_model.username,
             git_password=git_model.password,
+            git_depth=depth,
         )
 
     guacamole_identifier = guacamole.create_connection(
@@ -157,13 +193,17 @@ def request_session(
         guacamole_token, guacamole_username, guacamole_identifier
     )
 
+    body_dict = body.dict()
+    del body_dict["branch"]
+    del body_dict["depth"]
+
     database_model = DatabaseSession(
         guacamole_username=guacamole_username,
         guacamole_password=guacamole_password,
         rdp_password=rdp_password,
         guacamole_connection_id=guacamole_identifier,
         owner_name=owner,
-        **body.dict(),
+        **body_dict,
         **session,
     )
     response = database.create_session(db=db, session=database_model).__dict__
@@ -175,8 +215,10 @@ def request_session(
     return response
 
 
-@router.delete("/{id}/", status_code=204, responses=AUTHENTICATION_RESPONSES)
-def end_session(id: str, db: Session = Depends(get_db), token=Depends(JWTBearer())):
+@router.delete("/{id}", status_code=204, responses=AUTHENTICATION_RESPONSES)
+def end_session(
+    id: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+):
     s = sessions.get_session_by_id(db, id)
     if s.owner_name != get_username(token) and verify_project_role(
         repository=s.repository,
@@ -219,8 +261,13 @@ def create_guacamole_token(
             detail="The owner of the session does not match with your username.",
         )
 
-    token = guacamole.get_token(session.guacamole_username, session.guacamole_password)
+    token = guacamole.get_token(
+        session.guacamole_username, session.guacamole_password
+    )
     return GuacamoleAuthentication(
         token=json.dumps(token),
         url=config["extensions"]["guacamole"]["publicURI"] + "/#/",
     )
+
+
+router.include_router(router=files.router, prefix="/{id}/files")

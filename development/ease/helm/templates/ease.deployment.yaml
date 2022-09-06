@@ -1,20 +1,20 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-ease
-  labels: 
+  labels:
     id: {{ .Release.Name }}-deployment-ease
 spec:
   replicas: 1
-  selector: 
-    matchLabels: 
+  selector:
+    matchLabels:
       id: {{ .Release.Name }}-deployment-ease
   template:
-    metadata: 
-      labels: 
+    metadata:
+      labels:
         id: {{ .Release.Name }}-deployment-ease
     spec:
       volumes:
@@ -28,7 +28,7 @@ spec:
         - name: {{ .Release.Name }}-backend
           image: {{ .Values.docker.registry.internal }}/t4c/client/ease/remote/debug
           envFrom:
-            - configMapRef: 
+            - configMapRef:
                 name: {{ .Release.Name }}-ease-env
           ports:
             - name: rdp

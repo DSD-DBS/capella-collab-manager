@@ -1,17 +1,17 @@
 <!--
- ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<span *ngIf="state === 'success'" class="circle"
-  ><mat-icon style="color: green">check_circle</mat-icon></span
+<span *ngIf="state === 'success'" class="item" style="color: green"
+  ><mat-icon>check_circle</mat-icon></span
 >
-<span *ngIf="state === 'running'" class="circle"
+<span *ngIf="state === 'running'" class="circle item"
   ><mat-spinner [diameter]="35"></mat-spinner
 ></span>
-<span *ngIf="state === 'pending'" class="circle" style="color: grey"
+<span *ngIf="state === 'pending'" class="item" style="color: grey"
   ><mat-icon>access_time</mat-icon></span
 >
-<span *ngIf="state === 'error'" class="circle" style="color: darkred"
+<span *ngIf="state === 'error'" class="item" style="color: darkred"
   ><mat-icon>error</mat-icon></span
 >

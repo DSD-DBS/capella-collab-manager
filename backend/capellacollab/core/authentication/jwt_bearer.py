@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
@@ -11,12 +11,12 @@ from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt
 
-# local:
-from . import get_authentication_entrypoint
-
 # 1st party:
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.database import SessionLocal, users
+
+# local:
+from . import get_authentication_entrypoint
 
 log = logging.getLogger(__name__)
 ep = get_authentication_entrypoint()

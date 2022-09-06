@@ -1,0 +1,24 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+import pathlib
+import subprocess
+import typing as t
+
+
+def run_git_command(cmd: t.List[str]):
+    return subprocess.run(
+        ["git", *cmd],
+        check=True,
+        capture_output=True,
+        cwd=pathlib.Path(__file__).parent,
+    ).stdout.decode()
+
+
+(pathlib.Path(__file__).parent / ".git_archival.txt").write_text(
+    f"node: {run_git_command(['log', '-1', '--format=%H'])}"
+    f"node-date: {run_git_command(['log', '-1', '--format=%cI'])}"
+    f"describe-name: {run_git_command(['describe', '--tags'])}"
+    f"ref-names: {run_git_command(['log', '-1', '--format=%D'])}",
+    encoding="ascii",
+)

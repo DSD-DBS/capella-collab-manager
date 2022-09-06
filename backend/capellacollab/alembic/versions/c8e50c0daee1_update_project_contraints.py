@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
@@ -22,7 +25,9 @@ depends_on = None
 def upgrade():
     # Add description, editing_mode and project_type to project table
 
-    op.add_column("projects", sa.Column("description", sa.String(), nullable=True))
+    op.add_column(
+        "projects", sa.Column("description", sa.String(), nullable=True)
+    )
 
 
 def downgrade():

@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
@@ -22,7 +22,9 @@ class bcolors:
 print("Start comparison of configuration files")
 
 config_template = yaml.safe_load(
-    (pathlib.Path(__file__).parents[2] / "config" / "config_template.yaml").open()
+    (
+        pathlib.Path(__file__).parents[2] / "config" / "config_template.yaml"
+    ).open()
 )
 
 config = loader.load_yaml()

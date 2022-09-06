@@ -1,34 +1,209 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 [build-system]
-requires = ["setuptools", "wheel", "versioneer-518"]
+requires = ["setuptools>=61", "setuptools_scm[toml]>=3.4", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[project]
+dynamic = ["version"]
+
+name = "capellacollab-backend"
+readme = "README.md"
+requires-python = ">=3.9, <3.11"
+license = { text = "Apache-2.0" }
+authors = [
+  { name = "DB Netz AG" },
+]
+keywords = []
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "License :: OSI Approved :: Apache Software License",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+]
+dependencies = [
+    "PyYAML",
+    "alembic",
+    "appdirs",
+    "cachetools",
+    "docker",
+    "fastapi",
+    "kubernetes",
+    "msal",
+    "psycopg2-binary",
+    "pydantic",
+    "python-dateutil",
+    "python-jose",
+    "python-multipart",
+    "requests_oauthlib",
+    "sqlalchemy",
+    "uvicorn[standard]",
+    "python-slugify[unidecode]",
+]
+
+[project.urls]
+Homepage = "https://github.com/DSD-DBS/capella-collab-manager"
+
+[project.optional-dependencies]
+dev = [
+  "black",
+  "deepdiff",
+  "isort",
+  "mypy",
+  "pylint",
+  "pytest"
+]
+
+[project.entry-points."capellacollab.extensions.backups"]
+ease = "capellacollab.extensions.backups.ease"
+
+[project.entry-points."capellacollab.extensions.modelsources"]
+git = "capellacollab.extensions.modelsources.git"
+t4c = "capellacollab.extensions.modelsources.t4c"
+
+[project.entry-points."capellacollab.operators"]
+k8s = "capellacollab.sessions.operators.k8s:KubernetesOperator"
+docker = "capellacollab.sessions.operators.docker:DockerOperator"
+
+[project.entry-points."capellacollab.authentication.providers"]
+oauth = "capellacollab.core.authentication.provider.oauth"
+azure = "capellacollab.core.authentication.provider.azure"
+
+[project.entry-points."capellacollab.settings.modelsources"]
+git = "capellacollab.settings.modelsources.git"
+t4c = "capellacollab.settings.modelsources.t4c"
+
 [tool.black]
-extend-exclude = "notebooks|typings|.*?\\.ipynb|versioneer.py|_version.py"
-line-length = 88
-target-version = ["py310",]
+line-length = 79
+target-version = ["py39"]
 
 [tool.isort]
-profile = "black"
-force_grid_wrap = 0
-include_trailing_comma = true
-known_local_folder = ["capellacollab", "tests",]
-line_length = 88
-multi_line_output = 3
-py_version = "auto"
-sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER",]
-skip = ["typings", ".venv"]
-skip_glob = ["**/*.pyi"]
-use_parentheses = true
+profile = 'black'
+line_length = 79
 
-[tool.pyright]
-pyrightpythonVersion = "3.10"
-typeCheckingMode = "strict"
-include = ["backend", "tests",]
-reportConstantRedefinition = "warning"
-reportGeneralTypeIssues = false  # reported by mypy
-reportUnknownArgumentType = false
-reportUnknownMemberType = false  # Pylance sometimes reports that for stuff like logger.info() etc.
-reportUnknownVariableType = false  # annoying, e. g. 'for diag in model.diagrams' scribbles diag here
-reportUntypedFunctionDecorator = false
-reportUnusedImport = false  # reported by flake8 (F401)
-reportUnusedVariable = false  # reported by flake8 (F841)
+[tool.mypy]
+check_untyped_defs = true
+no_implicit_optional = true
+show_error_codes = true
+warn_redundant_casts = true
+warn_unreachable = true
+python_version = "3.9"
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+allow_incomplete_defs = true
+allow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+# Untyped third party libraries
+module = [
+  # ...
+]
+ignore_missing_imports = true
+
+[tool.pydocstyle]
+convention = "numpy"
+add-select = [
+  "D212",  # Multi-line docstring summary should start at the first line
+  "D402",  # First line should not be the function’s “signature”
+  "D417",  # Missing argument descriptions in the docstring
+]
+add-ignore = [
+  "D201",  # No blank lines allowed before function docstring  # auto-formatting
+  "D202",  # No blank lines allowed after function docstring  # auto-formatting
+  "D203",  # 1 blank line required before class docstring  # auto-formatting
+  "D204",  # 1 blank line required after class docstring  # auto-formatting
+  "D211",  # No blank lines allowed before class docstring  # auto-formatting
+  "D213",  # Multi-line docstring summary should start at the second line
+]
+
+[tool.pylint.messages_control]
+disable = [
+  "broad-except",
+  "consider-using-f-string",
+  "cyclic-import",
+  "global-statement",
+  "import-outside-toplevel",
+  "invalid-name",
+  "missing-class-docstring",
+  "missing-function-docstring",
+  "missing-module-docstring",
+  "no-else-break",
+  "no-else-continue",
+  "no-else-raise",
+  "no-else-return",
+  "protected-access",
+  "redefined-builtin",
+  "too-few-public-methods",
+  "too-many-ancestors",
+  "too-many-arguments",
+  "too-many-boolean-expressions",
+  "too-many-branches",
+  "too-many-instance-attributes",
+  "too-many-lines",
+  "too-many-locals",
+  "too-many-public-methods",
+  "too-many-return-statements",
+  "too-many-statements",
+
+  # Auto-formatting
+  "bad-indentation",
+  "inconsistent-quotes",
+  "line-too-long",
+  "missing-final-newline",
+  "mixed-line-endings",
+  "multiple-imports",
+  "multiple-statements",
+  "trailing-newlines",
+  "trailing-whitespace",
+  "unexpected-line-ending-format",
+  "ungrouped-imports",
+  "wrong-import-order",
+  "wrong-import-position",
+
+  # Handled by mypy
+  "arguments-differ",
+  "assignment-from-no-return",
+  "import-error",
+  "missing-kwoa",
+  "no-member",
+  "no-value-for-parameter",
+  "redundant-keyword-arg",
+  "signature-differs",
+  "syntax-error",
+  "too-many-function-args",
+  "unbalanced-tuple-unpacking",
+  "undefined-variable",
+  "unexpected-keyword-arg",
+]
+enable = [
+  "c-extension-no-member",
+  "deprecated-pragma",
+  "use-symbolic-message-instead",
+  "useless-suppression",
+]
+
+[tool.pytest.ini_options]
+addopts = """
+  --strict-config
+  --strict-markers
+"""
+testpaths = ["tests"]
+xfail_strict = true
+
+[tool.setuptools]
+platforms = ["any"]
+zip-safe = false
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
+
+[tool.setuptools.packages.find]
+exclude = ["LICENSES"]
+
+[tool.setuptools_scm]
+root = ".."

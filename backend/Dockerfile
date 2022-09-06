@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 ARG BASE_IMAGE=buildpack-deps:bullseye
 FROM $BASE_IMAGE
 
@@ -13,9 +16,12 @@ RUN apt-get update && \
     kubernetes-client && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8000
-COPY . /backend
+COPY . /tmp/backend
+COPY .git_archival.txt /tmp/.git_archival.txt
+COPY startup.sh /opt/.startup.sh
 
-WORKDIR /backend
+WORKDIR /tmp/backend
 RUN pip install .
 
-CMD ["uvicorn", "capellacollab.__main__:app", "--host", "0.0.0.0"]
+RUN chmod +x /opt/.startup.sh
+CMD ["/opt/.startup.sh"]

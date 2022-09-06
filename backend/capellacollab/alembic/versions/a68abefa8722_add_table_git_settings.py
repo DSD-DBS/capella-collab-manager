@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 """Add table git_settings
 
 Revision ID: a68abefa8722
@@ -25,12 +28,16 @@ def upgrade():
         sa.Column("url", sa.String(), nullable=True),
         sa.Column(
             "type",
-            sa.Enum("GENERAL", "GITLAB", "GITHUB", "AZUREDEVOPS", name="gittype"),
+            sa.Enum(
+                "GENERAL", "GITLAB", "GITHUB", "AZUREDEVOPS", name="gittype"
+            ),
             nullable=True,
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f("ix_git_settings_id"), "git_settings", ["id"], unique=False)
+    op.create_index(
+        op.f("ix_git_settings_id"), "git_settings", ["id"], unique=False
+    )
     # ### end Alembic commands ###
 
 

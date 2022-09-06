@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 DB_PORT = 5432
 DB_PASSWORD = dev
 DB_USER = dev
@@ -24,7 +27,7 @@ app:
 		$(VENV)/Scripts/$${UVICORN_COMMAND}; \
 	fi
 
-install: 
+install:
 	$(VENV)/bin/pip install -e ".[dev]"
 
 dev: database app
@@ -33,13 +36,13 @@ cleanup:
 	docker stop capella-collab-postgres
 	docker rm capella-collab-postgres
 
-dump: 
+dump:
 	docker run -e PGPASSWORD=$(DB_PASSWORD) --entrypoint pg_dump --network host postgres:latest -h 'localhost' -p $(DB_PORT) -U '$(DB_USER)' $(DB_NAME) > $$(pwd)/../local/tmp.sql
 
-psql: 
+psql:
 	docker run -e PGPASSWORD=$(DB_PASSWORD) -it --network host --entrypoint="psql" postgres:latest -h 'localhost' -p $(DB_PORT) -U '$(DB_USER)' $(DB_NAME)
 
-clear: 
+clear:
 	echo "DROP DATABASE $(DB_NAME); CREATE DATABASE $(DB_NAME);" | docker run -e PGPASSWORD=$(DB_PASSWORD) -i --network host --entrypoint="psql" postgres:latest -h 'localhost' -p $(DB_PORT) -U '$(DB_USER)' postgres
 
 load: clear

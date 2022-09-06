@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
@@ -16,7 +16,9 @@ from capellacollab.projects.users.models import RepositoryUserPermission
 
 
 def get_permission(
-    repo_permission: RepositoryUserPermission, repository_name: str, db: Session
+    repo_permission: RepositoryUserPermission,
+    repository_name: str,
+    db: Session,
 ) -> t.List[RepositoryUserPermission]:
     allowed_permissions: t.List[RepositoryUserPermission] = []
 

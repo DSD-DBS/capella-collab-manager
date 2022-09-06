@@ -1,12 +1,9 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# local:
-from . import models
-
-# 1st party:
-from capellacollab.core.operators import OPERATOR
 from capellacollab.sessions.operators import OPERATOR
+
+from . import models
 
 
 def _inject_last_run(model: models.DB_EASEBackup) -> models.EASEBackupResponse:

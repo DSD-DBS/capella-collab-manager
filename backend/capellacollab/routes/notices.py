@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
@@ -11,8 +11,10 @@ from requests import Session
 # 1st party:
 from capellacollab.core.authentication.database import verify_admin
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.authentication.responses import (
+    AUTHENTICATION_RESPONSES,
+)
 from capellacollab.core.database import get_db, notices
-from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from capellacollab.schemas.notices import CreateNoticeRequest, NoticeResponse
 
 router = APIRouter()
@@ -46,6 +48,8 @@ def create_notice(
     status_code=204,
     responses=AUTHENTICATION_RESPONSES,
 )
-def delete_notice(id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())):
+def delete_notice(
+    id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())
+):
     verify_admin(token, db)
     notices.delete_notice(db, id)

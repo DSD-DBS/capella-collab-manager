@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
@@ -7,12 +10,12 @@ from urllib.parse import quote, urlsplit
 
 # 3rd party:
 import git
-
-# 1st party:
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from fastapi import APIRouter, Depends, HTTPException
 from git import Git
 from pydantic import BaseModel
+
+# 1st party:
+from capellacollab.core.authentication.jwt_bearer import JWTBearer
 
 
 class GitRevisions(BaseModel):
@@ -41,7 +44,10 @@ def get_references(
     working_directory = model_slug
     splitted_url = urlsplit(url)
     credentials = (
-        quote(username or "", safe="") + ":" + quote(password or "", safe="") + "@"
+        quote(username or "", safe="")
+        + ":"
+        + quote(password or "", safe="")
+        + "@"
     )
     git_url = (
         f"{splitted_url.scheme}://{credentials}"
@@ -54,7 +60,9 @@ def get_references(
         origin.fetch()
     except git.exc.GitCommandError as exc:
         empty_repo.delete_remote("origin")
-        raise HTTPException(status_code=422, detail="Wrong credentials") from exc
+        raise HTTPException(
+            status_code=422, detail="Wrong credentials"
+        ) from exc
     remote_refs.branches = [ref.name[7:] for ref in origin.refs]
     remote_refs.tags = [tag.name for tag in empty_repo.tags]
     return remote_refs

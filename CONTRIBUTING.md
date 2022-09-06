@@ -1,3 +1,8 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
 # Contributing
 
 Thanks for your interest in our project. Contributions are always welcome!
@@ -244,7 +249,7 @@ Using the Swagger UI one can click on the lock symbols to enter the access token
 
 Requirements:
 
-- Node.js 16 or 17
+- Node.js 18
 - `npm` package manager
 - [Angular CLI](https://angular.io/cli#installing-angular-cli)
 - `make`
@@ -256,20 +261,52 @@ Run the following steps:
 1. Optional: If you like to use your custom favicon, please copy it to `src/favicon.ico`
 1. Optional: If you like to use your custom theme, replace the file `src/custom-theme.scss`.
    You can generate custom themes [here](http://mcg.mbitson.com/)
-1. Copy the file `src/environment.ts` to `src/environment.dev.ts` and adjust the values.
+1. Copy the file `src/environments/environment.ts` to `src/environments/environment.dev.ts` and adjust the values.
 1. Run the frontend with:
 
    ```sh
    make dev
    ```
 
-1. You should see the frontend running von port 4200.
+1. You should see the frontend running on port 4200.
 
 We additionally recommend that you set up your editor / IDE as follows.
 
 - Set up the editor to run [prettier](https://prettier.io/) when saving.
 
-## Code style for the Python backend
+## User documentation
+
+Requirements:
+
+- `python` + `pip`
+
+Run the following steps:
+
+1. Navigate to the `docs/user` directory of your cloned repository.
+2. We recommend that you develop inside of a virtual environment. To set it up,
+   run the following commands:
+
+   ```zsh
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install -U pip setuptools
+   ```
+
+3. Install MkDocs Material:
+
+   ```zsh
+   pip install mkdocs-material
+   ```
+
+4. Serve the docs:
+
+   ```zsh
+   mkdocs serve
+   ```
+
+## Code style
+
+### Backend
 
 We base our code style on a modified version of the [Google style guide for
 Python code](https://google.github.io/styleguide/pyguide.html). The key

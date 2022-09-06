@@ -1,18 +1,21 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
 import typing as t
 
+# 3rd party:
+from fastapi import APIRouter, Depends, HTTPException
+from requests import Session
+
 # 1st party:
 from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.projects import crud as projects_crud
-
-# 3rd party:
-from fastapi import APIRouter, Depends, HTTPException
-from requests import Session
 
 # local:
 from . import crud
@@ -22,7 +25,9 @@ router = APIRouter()
 
 
 @router.get("/{project_slug}/", response_model=t.List[ResponseModel])
-def get_id(project_slug: str, db: Session = Depends(get_db)) -> t.List[ResponseModel]:
+def get_id(
+    project_slug: str, db: Session = Depends(get_db)
+) -> t.List[ResponseModel]:
 
     project = projects_crud.get_project_by_slug(db, project_slug)
     if not project:
@@ -87,11 +92,14 @@ def create_new(
         allowed_roles=["manager", "administrator"],
     )
 
-    return ResponseModel.from_model(crud.create_new_model(db, project_slug, new_model))
+    return ResponseModel.from_model(
+        crud.create_new_model(db, project_slug, new_model)
+    )
 
 
 @router.patch(
-    "/{project_slug}/set-tool-details/{model_slug}/", response_model=ResponseModel
+    "/{project_slug}/set-tool-details/{model_slug}/",
+    response_model=ResponseModel,
 )
 def set_tool_details(
     project_slug: str,

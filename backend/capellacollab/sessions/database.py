@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # 3rd party:
@@ -10,17 +10,21 @@ from capellacollab.sessions.models import DatabaseSession
 
 def get_sessions_for_user(db: Session, username: str):
     return (
-        db.query(DatabaseSession).filter(DatabaseSession.owner_name == username).all()
+        db.query(DatabaseSession)
+        .filter(DatabaseSession.owner_name == username)
+        .all()
     )
 
 
 def get_sessions_for_repository(db: Session, repository: str):
     return (
-        db.query(DatabaseSession).filter(DatabaseSession.repository == repository).all()
+        db.query(DatabaseSession)
+        .filter(DatabaseSession.repository == repository)
+        .all()
     )
 
 
-def get_session_by_id(db: Session, id: str):
+def get_session_by_id(db: Session, id: str) -> DatabaseSession:
     return db.query(DatabaseSession).filter(DatabaseSession.id == id).first()
 
 

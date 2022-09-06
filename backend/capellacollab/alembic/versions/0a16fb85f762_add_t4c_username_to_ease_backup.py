@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Add t4c username to ease backup
@@ -20,7 +20,9 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column("EASEBackup", sa.Column("username", sa.String(), nullable=True))
+    op.add_column(
+        "EASEBackup", sa.Column("username", sa.String(), nullable=True)
+    )
 
 
 def downgrade():

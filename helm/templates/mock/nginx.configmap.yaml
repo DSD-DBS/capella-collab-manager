@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 {{ if eq .Values.target "local" }}
@@ -7,9 +7,9 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-mock-nginx
   namespace: {{ .Release.Namespace }}
-  labels: 
+  labels:
     id: {{ .Release.Name }}-configmap-mock-nginx
 data:
-  nginx.conf: |- 
+  nginx.conf: |-
     {{ tpl (.Files.Get "config/nginx-mock.conf") . | nindent 4 }}
 {{ end }}

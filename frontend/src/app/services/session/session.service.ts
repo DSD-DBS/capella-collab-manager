@@ -1,5 +1,7 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -20,11 +22,15 @@ export class SessionService {
 
   createNewSession(
     type: 'readonly' | 'persistent',
-    repository: string | undefined
+    repository: string | undefined,
+    branch: string,
+    depth: DepthType
   ): Observable<Session> {
     return this.http.post<Session>(this.BACKEND_URL_PREFIX, {
-      type,
-      repository,
+      type: type,
+      repository: repository,
+      branch: branch,
+      depth: DepthType[depth],
     });
   }
 
@@ -95,6 +101,10 @@ export class SessionService {
         text = 'Your session is scheduled';
         css = 'warning';
         break;
+      case 'FailedScheduling':
+        text = 'High demand. Please wait a moment.';
+        css = 'warning';
+        break;
 
       // Cases for readonly containers
       case 'START_LOAD_MODEL':
@@ -141,4 +151,9 @@ export class SessionService {
 export interface SessionState {
   text: string;
   css: string;
+}
+
+export enum DepthType {
+  LatestCommit,
+  CompleteHistory,
 }

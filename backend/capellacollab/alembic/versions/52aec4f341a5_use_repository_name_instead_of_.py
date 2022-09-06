@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Use repository_name instead of repository_id as Foreign Key
@@ -35,7 +35,9 @@ def upgrade():
 def downgrade():
     op.add_column(
         "git_models",
-        sa.Column("repository_id", sa.INTEGER(), autoincrement=False, nullable=True),
+        sa.Column(
+            "repository_id", sa.INTEGER(), autoincrement=False, nullable=True
+        ),
     )
     op.drop_constraint(None, "git_models", type_="foreignkey")
     op.create_foreign_key(

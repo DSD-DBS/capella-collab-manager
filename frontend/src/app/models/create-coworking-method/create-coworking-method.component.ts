@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
@@ -51,10 +56,10 @@ export class CreateCoworkingMethodComponent implements OnInit {
       } else {
         this.filteredRevisions = {
           branches: this.gitService.instance.branches.filter((branch) =>
-            branch.startsWith(value)
+            branch.startsWith(value as string)
           ),
           tags: this.gitService.instance.tags.filter((tag) =>
-            tag.startsWith(value)
+            tag.startsWith(value as string)
           ),
         };
       }
@@ -75,14 +80,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
       this.modelService.model &&
       this.gitForm.valid
     ) {
-      let form_result = this.gitForm.value;
-      let source: Source = {
-        path: form_result.credentials.url,
-        entrypoint: form_result.entrypoint,
-        revision: form_result.revision,
-        username: form_result.credentials.username,
-        password: form_result.credentials.password,
-      };
+      let source: Source = this.gitForm.value as Source;
       this.sourceService
         .addGitSource(
           this.projectService.project.slug,

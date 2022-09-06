@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 from __future__ import annotations
@@ -21,7 +21,9 @@ class ConfigDict(dict):
         super().__init__(value)
         self.path = path
 
-    def __getitem__(self, __k: str) -> "ConfigDict" | "ConfigList" | float | int | str:
+    def __getitem__(
+        self, __k: str
+    ) -> "ConfigDict" | "ConfigList" | float | int | str:
         # Read environment variable
         env_key = "_".join([i.upper() for i in self.path + [__k]])
         env_value = os.environ.get(env_key, "")
@@ -39,7 +41,9 @@ class ConfigDict(dict):
                 env_key,
                 yaml_key,
             )
-            log.warning("Will use the yaml value, because it has a higher priority.")
+            log.warning(
+                "Will use the yaml value, because it has a higher priority."
+            )
 
         value = yaml_value or env_value
 

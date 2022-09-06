@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # 3rd party:
@@ -16,6 +16,7 @@ from capellacollab.projects.users.models import (
     RepositoryUserRole,
     Role,
 )
+from capellacollab.sessions.database import get_session_by_id
 from capellacollab.settings.modelsources.git import crud
 
 
@@ -95,7 +96,9 @@ def check_write_permission(
     db: sqlalchemy.orm.session.Session,
 ) -> bool:
 
-    user = repository_users.get_user_of_repository(db, repository, get_username(token))
+    user = repository_users.get_user_of_repository(
+        db, repository, get_username(token)
+    )
     if not user:
         return get_user(db=db, username=get_username(token)).role == Role.ADMIN
     return RepositoryUserPermission.WRITE == user.permission
@@ -111,6 +114,19 @@ def check_username_not_in_repository(
         raise HTTPException(
             status_code=409,
             detail="The user already exists for this repository.",
+        )
+
+
+def check_session_belongs_to_user(
+    username: str,
+    id: str,
+    db: sqlalchemy.orm.session.Session,
+):
+    session = get_session_by_id(db, id)
+    if not session.owner_name == username:
+        raise HTTPException(
+            status_code=403,
+            detail="You are not allowed to upload or get files in this session.",
         )
 
 

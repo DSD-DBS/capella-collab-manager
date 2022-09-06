@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Add cascades
@@ -23,9 +23,16 @@ def upgrade():
     op.drop_constraint(
         "git_models_repository_name_fkey", "git_models", type_="foreignkey"
     )
-    op.drop_constraint("git_models_project_id_fkey", "git_models", type_="foreignkey")
+    op.drop_constraint(
+        "git_models_project_id_fkey", "git_models", type_="foreignkey"
+    )
     op.create_foreign_key(
-        None, "git_models", "projects", ["project_id"], ["id"], ondelete="CASCADE"
+        None,
+        "git_models",
+        "projects",
+        ["project_id"],
+        ["id"],
+        ondelete="CASCADE",
     )
     op.create_foreign_key(
         None,
@@ -35,11 +42,20 @@ def upgrade():
         ["name"],
         ondelete="CASCADE",
     )
-    op.drop_constraint("jenkins_git_model_id_fkey", "jenkins", type_="foreignkey")
-    op.create_foreign_key(
-        None, "jenkins", "git_models", ["git_model_id"], ["id"], ondelete="CASCADE"
+    op.drop_constraint(
+        "jenkins_git_model_id_fkey", "jenkins", type_="foreignkey"
     )
-    op.drop_constraint("projects_repository_name_fkey", "projects", type_="foreignkey")
+    op.create_foreign_key(
+        None,
+        "jenkins",
+        "git_models",
+        ["git_model_id"],
+        ["id"],
+        ondelete="CASCADE",
+    )
+    op.drop_constraint(
+        "projects_repository_name_fkey", "projects", type_="foreignkey"
+    )
     op.create_foreign_key(
         None,
         "projects",
@@ -61,12 +77,20 @@ def downgrade():
     )
     op.drop_constraint(None, "jenkins", type_="foreignkey")
     op.create_foreign_key(
-        "jenkins_git_model_id_fkey", "jenkins", "git_models", ["git_model_id"], ["id"]
+        "jenkins_git_model_id_fkey",
+        "jenkins",
+        "git_models",
+        ["git_model_id"],
+        ["id"],
     )
     op.drop_constraint(None, "git_models", type_="foreignkey")
     op.drop_constraint(None, "git_models", type_="foreignkey")
     op.create_foreign_key(
-        "git_models_project_id_fkey", "git_models", "projects", ["project_id"], ["id"]
+        "git_models_project_id_fkey",
+        "git_models",
+        "projects",
+        ["project_id"],
+        ["id"],
     )
     op.create_foreign_key(
         "git_models_repository_name_fkey",

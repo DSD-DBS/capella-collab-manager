@@ -1,0 +1,47 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.wrapper {
+  min-height: 90vh;
+  min-width: 50vw;
+}
+
+.body {
+  max-height: 80vh;
+  overflow-y: scroll;
+}
+
+h2 {
+  margin: 0;
+}
+
+.align-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+mat-card {
+  display: inline-block;
+  margin: 0;
+  padding: 10px;
+}
+
+.release-title {
+  font-size: 1.5em;
+  margin-right: 10px;
+}
+
+.new {
+  background: lightgreen;
+}
+
+.not-deployed {
+  background: lightcoral;
+}
+
+.release-header {
+  display: flex;
+  align-items: center;
+}

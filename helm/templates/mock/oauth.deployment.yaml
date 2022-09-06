@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 {{ if eq .Values.target "local" }}
@@ -6,16 +6,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-oauth-mock
-  labels: 
+  labels:
     id: {{ .Release.Name }}-deployment-oauth-mock
 spec:
   replicas: 1
-  selector: 
-    matchLabels: 
+  selector:
+    matchLabels:
       id: {{ .Release.Name }}-deployment-oauth-mock
   template:
-    metadata: 
-      labels: 
+    metadata:
+      labels:
         id: {{ .Release.Name }}-deployment-oauth-mock
     spec:
       volumes:
@@ -38,10 +38,10 @@ spec:
           resources:
             limits:
               cpu: "0.5"
-              memory: 1Gi
+              memory: 500Mi
             requests:
-              cpu: "0.5"
-              memory: 100Mi
+              cpu: "0.05"
+              memory: 5Mi
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}

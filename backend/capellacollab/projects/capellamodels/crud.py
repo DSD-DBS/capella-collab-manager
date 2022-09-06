@@ -1,19 +1,25 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 import typing as t
 
-from capellacollab.projects.models import DatabaseProject
-from capellacollab.tools.models import Tool, Type, Version
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
+
+from capellacollab.projects.models import DatabaseProject
+from capellacollab.tools.models import Tool, Type, Version
 
 from .models import CapellaModelType, DB_CapellaModel, EditingMode, NewModel
 
 
 def get_all(db: Session, project_slug: str) -> t.List[DB_CapellaModel]:
     project = (
-        db.query(DatabaseProject).filter(DatabaseProject.slug == project_slug).first()
+        db.query(DatabaseProject)
+        .filter(DatabaseProject.slug == project_slug)
+        .first()
     )
     return (
         db.query(DB_CapellaModel)
@@ -24,7 +30,9 @@ def get_all(db: Session, project_slug: str) -> t.List[DB_CapellaModel]:
 
 def get_slug(db: Session, project_slug: str, id: int) -> DB_CapellaModel:
     project = (
-        db.query(DatabaseProject).filter(DatabaseProject.slug == project_slug).first()
+        db.query(DatabaseProject)
+        .filter(DatabaseProject.slug == project_slug)
+        .first()
     )
     return db.query(DB_CapellaModel).filter(
         DB_CapellaModel.project_name == project.name,
@@ -32,14 +40,20 @@ def get_slug(db: Session, project_slug: str, id: int) -> DB_CapellaModel:
     )
 
 
-def create(db: Session, project_slug: str, new_model: NewModel) -> DB_CapellaModel:
+def create(
+    db: Session, project_slug: str, new_model: NewModel
+) -> DB_CapellaModel:
     project = (
-        db.query(DatabaseProject).filter(DatabaseProject.slug == project_slug).first()
+        db.query(DatabaseProject)
+        .filter(DatabaseProject.slug == project_slug)
+        .first()
     )
     if not project:
         raise HTTPException(404, "Project not found.")
     tool = db.query(Tool).filter(Tool.id == new_model.tool_id).first()
-    version = db.query(Version).filter(Version.id == new_model.version_id).first()
+    version = (
+        db.query(Version).filter(Version.id == new_model.version_id).first()
+    )
     model_type = db.query(Type).filter(Type.id == new_model.type_id).first()
     if not tool:
         raise HTTPException(404, "Tool not found.")

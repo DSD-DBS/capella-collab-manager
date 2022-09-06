@@ -1,11 +1,11 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-guacamole-guacd
-  labels: 
+  labels:
     id: {{ .Release.Name }}-service-guacamole-guacd
 spec:
   type: ClusterIP

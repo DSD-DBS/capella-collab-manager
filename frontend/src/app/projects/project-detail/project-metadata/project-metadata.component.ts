@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
@@ -37,7 +42,7 @@ export class ProjectMetadataComponent implements OnInit {
       this.projectService
         .updateDescription(
           this.projectService.project.name,
-          this.updateDescriptionForm.value
+          this.updateDescriptionForm.value as string
         )
         .subscribe({
           next: (res) => {

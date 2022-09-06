@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
@@ -12,11 +12,14 @@ def get_authentication_entrypoint():
     try:
         ep = next(
             i
-            for i in metadata.entry_points()["capellacollab.authentication.providers"]
+            for i in metadata.entry_points()[
+                "capellacollab.authentication.providers"
+            ]
             if i.name == config["authentication"]["provider"]
         )
         return ep
     except StopIteration:
         raise ValueError(
-            "Unknown authentication provider " + config["authentication"]["provider"]
+            "Unknown authentication provider "
+            + config["authentication"]["provider"]
         ) from None

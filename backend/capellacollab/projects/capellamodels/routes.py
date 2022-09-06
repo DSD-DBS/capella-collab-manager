@@ -1,14 +1,18 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 import typing as t
 
+from fastapi import APIRouter, Depends
+from requests import Session
+
 from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.projects import crud as projects_crud
-from fastapi import APIRouter, Depends
-from requests import Session
 
 from . import crud
 from .models import NewModel, ResponseModel
@@ -18,11 +22,16 @@ router = APIRouter()
 
 @router.get("/{project_slug}/", response_model=t.List[ResponseModel])
 def list_models(
-    project_slug: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    project_slug: str,
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
 ):
     project = projects_crud.get_slug(db, project_slug)
     verify_project_role(project.name, token, db)
-    return [ResponseModel.from_model(model) for model in crud.get_all(db, project_slug)]
+    return [
+        ResponseModel.from_model(model)
+        for model in crud.get_all(db, project_slug)
+    ]
 
 
 @router.get("/{project_slug}/details/")
@@ -51,5 +60,7 @@ def create_empty(
         db=db,
         allowed_roles=["manager", "administrator"],
     )
-    response_model = ResponseModel.from_model(crud.create(db, project_slug, model))
+    response_model = ResponseModel.from_model(
+        crud.create(db, project_slug, model)
+    )
     return response_model

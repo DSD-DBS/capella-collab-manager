@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Use Project ID as reference instead of Project Name
@@ -20,16 +20,24 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column("git_models", sa.Column("project_id", sa.Integer(), nullable=False))
-    op.drop_constraint("git_models_project_name_fkey", "git_models", type_="foreignkey")
-    op.create_foreign_key(None, "git_models", "projects", ["project_id"], ["id"])
+    op.add_column(
+        "git_models", sa.Column("project_id", sa.Integer(), nullable=False)
+    )
+    op.drop_constraint(
+        "git_models_project_name_fkey", "git_models", type_="foreignkey"
+    )
+    op.create_foreign_key(
+        None, "git_models", "projects", ["project_id"], ["id"]
+    )
     op.drop_column("git_models", "project_name")
 
 
 def downgrade():
     op.add_column(
         "git_models",
-        sa.Column("project_name", sa.VARCHAR(), autoincrement=False, nullable=False),
+        sa.Column(
+            "project_name", sa.VARCHAR(), autoincrement=False, nullable=False
+        ),
     )
     op.drop_constraint(None, "git_models", type_="foreignkey")
     op.create_foreign_key(

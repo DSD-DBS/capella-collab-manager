@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
@@ -25,7 +30,7 @@ export class CreateModelComponent implements OnInit {
   public form = new FormGroup({
     name: new FormControl('', Validators.required),
     description: new FormControl(''),
-    tool_id: new FormControl('', Validators.required),
+    tool_id: new FormControl(-1, Validators.required),
   });
 
   constructor(

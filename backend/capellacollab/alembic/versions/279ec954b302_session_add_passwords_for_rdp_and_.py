@@ -1,10 +1,10 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """session: add passwords for rdp and guacamole
 
 Revision ID: 279ec954b302
-Revises: 
+Revises:
 Create Date: 2021-08-12 23:01:08.764707
 
 """
@@ -20,7 +20,9 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column("sessions", sa.Column("rdp_password", sa.String(), nullable=True))
+    op.add_column(
+        "sessions", sa.Column("rdp_password", sa.String(), nullable=True)
+    )
     op.add_column(
         "sessions", sa.Column("guacamole_password", sa.String(), nullable=True)
     )

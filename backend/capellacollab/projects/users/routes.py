@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 from __future__ import annotations
@@ -13,9 +13,6 @@ from requests import HTTPError, Session
 # 1st party:
 import capellacollab.extensions.modelsources.t4c.connection as t4c_manager
 import capellacollab.projects.users.models as schema_repositories
-
-# local:
-from . import crud as repository_users
 from capellacollab.core.authentication.database import (
     check_username_not_admin,
     check_username_not_in_repository,
@@ -26,7 +23,12 @@ from capellacollab.core.authentication.database import (
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db, users
-from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
+from capellacollab.routes.open_api_configuration import (
+    AUTHENTICATION_RESPONSES,
+)
+
+# local:
+from . import crud as repository_users
 
 router = APIRouter()
 
@@ -70,7 +72,9 @@ def add_user_to_repository(
     if body.role == schema_repositories.RepositoryUserRole.MANAGER:
         body.permission = schema_repositories.RepositoryUserPermission.WRITE
     if body.permission == schema_repositories.RepositoryUserPermission.WRITE:
-        t4c_manager.add_user_to_repository(project, body.username, is_admin=False)
+        t4c_manager.add_user_to_repository(
+            project, body.username, is_admin=False
+        )
     return repository_users.add_user_to_repository(
         db, project, body.role, body.username, body.permission
     )
@@ -122,7 +126,9 @@ def patch_repository_user(
             )
 
         try:
-            t4c_manager.update_password_of_user(project, username, body.password)
+            t4c_manager.update_password_of_user(
+                project, username, body.password
+            )
         except HTTPError as err:
             if err.response.status_code == 404:
                 t4c_manager.add_user_to_repository(

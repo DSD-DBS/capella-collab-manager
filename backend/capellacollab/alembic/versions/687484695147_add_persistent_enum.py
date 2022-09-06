@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Add Persistent Enum
@@ -21,7 +21,9 @@ depends_on = None
 
 
 def upgrade():
-    workspacetype = postgresql.ENUM("PERSISTENT", "READONLY", name="workspacetype")
+    workspacetype = postgresql.ENUM(
+        "PERSISTENT", "READONLY", name="workspacetype"
+    )
     workspacetype.create(op.get_bind())
     op.add_column(
         "sessions",
@@ -37,5 +39,7 @@ def upgrade():
 def downgrade():
     op.drop_column("sessions", "type")
 
-    workspacetype = postgresql.ENUM("PERSISTENT", "READONLY", name="workspacetype")
+    workspacetype = postgresql.ENUM(
+        "PERSISTENT", "READONLY", name="workspacetype"
+    )
     workspacetype.drop(op.get_bind())

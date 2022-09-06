@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Add Git models for repositories
@@ -35,7 +35,9 @@ def upgrade():
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f("ix_git_models_id"), "git_models", ["id"], unique=False)
+    op.create_index(
+        op.f("ix_git_models_id"), "git_models", ["id"], unique=False
+    )
 
 
 def downgrade():

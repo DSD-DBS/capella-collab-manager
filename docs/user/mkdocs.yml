@@ -1,0 +1,49 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+site_name: Capella Collaboration Manager Documentation
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Getting Started: onboarding.md
+  - Projects:
+      - Get access to a project: projects/access.md
+      - Request a new project: projects/new.md
+      - Delete a project: projects/delete.md
+      - Roles: projects/roles.md
+  - Sessions:
+      - Session Types: sessions/types.md
+      - Request Session: sessions/request.md
+      - (Re-)Connect to Session: sessions/reconnect.md
+      - Terminate Session: sessions/terminate.md
+      - Taking Screenshots: sessions/screenshot/screenshots.md
+      - Flows:
+          - Git: sessions/flows/git.md
+          - TeamForCapella: sessions/flows/t4c.md
+  - User Management: users.md
+  - Additional Configuration:
+      - Alerts:
+          - Create an alert: additional/alerts/create.md
+          - Delete an alert: additional/alerts/delete.md
+  - About: about.md
+
+repo_url: https://github.com/DSD-DBS/capella-collab-manager
+edit_uri: edit/master/docs/user/docs
+
+markdown_extensions:
+  - meta
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - abbr
+  - pymdownx.snippets
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+extra:
+  generator: false
+
+copyright: Copyright &copy; 2022 DB Netz AG

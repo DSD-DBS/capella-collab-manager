@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Add EASE backup table
@@ -40,7 +40,9 @@ def upgrade():
         ),
         sa.PrimaryKeyConstraint("id", "project"),
     )
-    op.create_index(op.f("ix_EASEBackup_id"), "EASEBackup", ["id"], unique=False)
+    op.create_index(
+        op.f("ix_EASEBackup_id"), "EASEBackup", ["id"], unique=False
+    )
 
 
 def downgrade():

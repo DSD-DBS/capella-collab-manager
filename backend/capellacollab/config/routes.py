@@ -1,12 +1,18 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from capellacollab.core.authentication.database import verify_admin
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.database import get_db
-from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 from fastapi import APIRouter, Depends
 from requests import Session
+
+from capellacollab.core.authentication.database import verify_admin
+from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.authentication.responses import (
+    AUTHENTICATION_RESPONSES,
+)
+from capellacollab.core.database import get_db
 
 router = APIRouter()
 
@@ -25,7 +31,9 @@ def update_dockerimages(
     token=Depends(JWTBearer()),
 ):
     verify_admin(token, db)
-    return crud.update_dockerimages_for_environment(db, environment, body).toPydantic()
+    return crud.update_dockerimages_for_environment(
+        db, environment, body
+    ).toPydantic()
 
 
 @router.get(

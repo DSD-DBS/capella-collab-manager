@@ -1,20 +1,20 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-guacamole-guacamole
-  labels: 
+  labels:
     id: {{ .Release.Name }}-deployment-guacamole-guacamole
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
-  selector: 
-    matchLabels: 
+  selector:
+    matchLabels:
       id: {{ .Release.Name }}-deployment-guacamole-guacamole
   template:
-    metadata: 
-      labels: 
+    metadata:
+      labels:
         id: {{ .Release.Name }}-deployment-guacamole-guacamole
     spec:
       containers:
@@ -57,14 +57,23 @@ spec:
             tcpSocket:
               port: 8080
             initialDelaySeconds: 15
-            periodSeconds: 20          
+            periodSeconds: 20
           resources:
+            {{ if eq .Values.target "local" }}
+            limits:
+              cpu: "0.5"
+              memory: 500Mi
+            requests:
+              cpu: "0.05"
+              memory: 5Mi
+            {{ else }}
             requests:
               memory: "1Gi"
               cpu: "500m"
             limits:
               memory: "2Gi"
               cpu: "2"
+            {{ end }}
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}

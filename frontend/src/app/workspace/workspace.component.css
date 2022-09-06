@@ -1,14 +1,17 @@
 /*
- * Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 
 .center {
   margin-top: 50px;
-  text-align: center;
   margin-left: auto;
   margin-right: auto;
   display: inline;
+}
+
+.center-text {
+  text-align: center;
 }
 
 button {

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 CERTS_DIR = ../../certs/
 
 ssl:
@@ -8,7 +11,7 @@ ssl:
 	-addext "subjectAltName = DNS:localhost";
 	openssl pkcs12 -export -in $(CERTS_DIR)localhost.crt -inkey $(CERTS_DIR)localhost.key -out $(CERTS_DIR)localhost.p12 -passout "pass:"
 
-start: 
+start:
 	export MSYS_NO_PATHCONV=1; \
 	docker start oauth-mock || \
 	docker run \
@@ -19,6 +22,6 @@ start:
 		-e JSON_CONFIG_PATH=/opt/conf.json \
 		ghcr.io/navikt/mock-oauth2-server:0.4.4
 
-stop: 
+stop:
 	docker stop oauth-mock && \
 	docker rm oauth-mock

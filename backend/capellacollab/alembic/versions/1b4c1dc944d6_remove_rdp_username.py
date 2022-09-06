@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Remove RDP Username
@@ -26,5 +26,7 @@ def upgrade():
 def downgrade():
     op.add_column(
         "sessions",
-        sa.Column("rdp_username", sa.VARCHAR(), autoincrement=False, nullable=True),
+        sa.Column(
+            "rdp_username", sa.VARCHAR(), autoincrement=False, nullable=True
+        ),
     )

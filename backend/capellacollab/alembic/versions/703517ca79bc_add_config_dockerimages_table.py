@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
@@ -10,7 +13,6 @@ Create Date: 2022-05-27 12:27:22.682178
 """
 import sqlalchemy as sa
 from alembic import op
-
 
 # revision identifiers, used by Alembic.
 revision = "703517ca79bc"
@@ -29,7 +31,10 @@ def upgrade():
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        op.f("ix_config_dockerimages_id"), "config_dockerimages", ["id"], unique=False
+        op.f("ix_config_dockerimages_id"),
+        "config_dockerimages",
+        ["id"],
+        unique=False,
     )
 
     op.bulk_insert(
@@ -45,5 +50,7 @@ def upgrade():
 
 
 def downgrade():
-    op.drop_index(op.f("ix_config_dockerimages_id"), table_name="config_dockerimages")
+    op.drop_index(
+        op.f("ix_config_dockerimages_id"), table_name="config_dockerimages"
+    )
     op.drop_table("config_dockerimages")

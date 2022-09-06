@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
@@ -43,7 +43,9 @@ class _KeyStore:
 
     def refresh_keys(self) -> None:
         try:
-            resp = requests.get(self.jwks_uri, timeout=config["requests"]["timeout"])
+            resp = requests.get(
+                self.jwks_uri, timeout=config["requests"]["timeout"]
+            )
         except Exception as e:
             log.error("Could not retrieve JWKS data from %s", self.jwks_uri)
             return
@@ -53,7 +55,9 @@ class _KeyStore:
         for key in jwks.keys:
             self.public_keys[key.kid] = key
 
-    def key_for_token(self, token: str, *, in_retry: int = 0) -> t.Dict[str, t.Any]:
+    def key_for_token(
+        self, token: str, *, in_retry: int = 0
+    ) -> t.Dict[str, t.Any]:
         # Before we do anything, the validation keys may need to be refreshed.
         # If so, refresh them.
         if self.keys_need_refresh():

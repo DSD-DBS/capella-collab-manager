@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
@@ -12,8 +17,8 @@ export interface Source {
   path: string;
   entrypoint: string;
   revision: string;
-  username: string;
-  password: string;
+  username?: string;
+  password?: string;
 }
 
 @Injectable({

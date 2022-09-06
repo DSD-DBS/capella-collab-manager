@@ -1,40 +1,44 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
 import base64
+import logging
+import os
 import typing as t
 
+from fastapi import APIRouter, Depends, HTTPException
+from requests import Session
+
 # 1st party:
-import capellacollab.models.crud as models_crud
 import capellacollab.projects.crud as projects_crud
 from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.database.git_models import (
     verify_gitmodel_permission,
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.authentication.responses import (
+    AUTHENTICATION_RESPONSES,
+)
 from capellacollab.core.database import get_db
 from capellacollab.extensions.modelsources import git
+from capellacollab.extensions.modelsources.git.crud import (
+    get_primary_gitmodel_of_capellamodels,
+)
 from capellacollab.extensions.modelsources.git.models import (
     GetRepositoryGitModel,
-    GetRevisionsModel,
     NewGitSource,
     PatchRepositoryGitModel,
     PostGitModel,
     RepositoryGitInnerModel,
     ResponseGitSource,
 )
-from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
 
-# 3rd party:
-from fastapi import APIRouter, Depends
-from git.cmd import Git
-from requests import Session
-
-# local:
 from . import crud
+from .core import ls_remote
 
 router = APIRouter()
+log = logging.getLogger(__name__)
 
 
 @router.get(
@@ -74,7 +78,9 @@ def create_source(
 
 
 @router.post(
-    "/", response_model=GetRepositoryGitModel, responses=AUTHENTICATION_RESPONSES
+    "/",
+    response_model=GetRepositoryGitModel,
+    responses=AUTHENTICATION_RESPONSES,
 )
 def assign_model_to_repository(
     project: str,
@@ -136,17 +142,45 @@ def patch_model(
 
 
 @router.get(
-    "/revisions",
-    response_model=GetRevisionsModel,
+    "/primary/revisions",
+    tags=["Repositories"],
     responses=AUTHENTICATION_RESPONSES,
 )
-def get_references(url: str) -> GetRevisionsModel:
-    g = Git()
-    remote_refs = GetRevisionsModel(branches=[], tags=[])
-    for ref in g.ls_remote(url).split("\n"):
-        ref = ref.split("\t")[1]
+def get_revisions(
+    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+):
+    remote_refs: dict[str, list[str]] = {"branches": [], "tags": []}
+
+    git_model = get_primary_gitmodel_of_capellamodels(db, project)
+    if not git_model:
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "err_code": "no_git_model",
+                "reason": "No git model is assigned to your project. Please ask a project lead to assign a git model.",
+            },
+        )
+
+    url = git_model.path
+    log.debug(
+        "Fetch revisions of git-model '%s' with url '%s'", git_model.name, url
+    )
+
+    git_env = os.environ.copy()
+    git_env["GIT_USERNAME"] = git_model.username or ""
+    git_env["GIT_PASSWORD"] = git_model.password or ""
+    for ref in ls_remote(url, git_env):
+        (_, ref) = ref.split("\t")
+        if "^" in ref:
+            continue
         if ref.startswith("refs/heads/"):
-            remote_refs.branches.append(ref)
+            remote_refs["branches"].append(ref[len("refs/heads/") :])
         elif ref.startswith("refs/tags/"):
-            remote_refs.tags.append(ref)
+            remote_refs["tags"].append(ref[len("refs/tags/") :])
+
+    remote_refs["default"] = git_model.revision
+
+    log.debug("Determined branches: %s", remote_refs["branches"])
+    log.debug("Determined tags: %s", remote_refs["tags"])
+    log.debug("Determined default branch: %s", remote_refs["default"])
     return remote_refs

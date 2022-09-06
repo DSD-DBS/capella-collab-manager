@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
@@ -83,7 +86,9 @@ def change_permission_of_user_in_repository(
     return repo_user
 
 
-def delete_user_from_repository(db: Session, projects_name: str, username: str):
+def delete_user_from_repository(
+    db: Session, projects_name: str, username: str
+):
     db.query(ProjectUserAssociation).filter(
         ProjectUserAssociation.username == username
     ).filter(ProjectUserAssociation.projects_name == projects_name).delete()

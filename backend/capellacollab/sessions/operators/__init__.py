@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 from __future__ import annotations
@@ -8,7 +8,6 @@ from importlib import metadata
 
 # 1st party:
 from capellacollab.config import config
-from capellacollab.sessions.operators.abc import Operator
 
 try:
     OPERATOR = next(
@@ -18,4 +17,6 @@ try:
     ).load()()
 
 except StopIteration:
-    raise KeyError(f"Unknown operator " + config["operators"]["operator"]) from None
+    raise KeyError(
+        f"Unknown operator " + config["operators"]["operator"]
+    ) from None

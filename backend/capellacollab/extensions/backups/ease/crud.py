@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 # Standard library:
@@ -36,7 +36,7 @@ def create_backup(db: Session, backup: models.DB_EASEBackup):
 
 
 def delete_backup(db: Session, project: str, id: int):
-    db.query(models.DB_EASEBackup).filter(models.DB_EASEBackup.id == id).filter(
-        models.DB_EASEBackup.project == project
-    ).delete()
+    db.query(models.DB_EASEBackup).filter(
+        models.DB_EASEBackup.id == id
+    ).filter(models.DB_EASEBackup.project == project).delete()
     db.commit()

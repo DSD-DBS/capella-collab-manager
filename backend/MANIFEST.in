@@ -1,2 +1,0 @@
-include versioneer.py
-include capellacollab/_version.py
