@@ -136,6 +136,8 @@ jobs:
           --set docker.images.mocks.licenseServer="/t4c/licence/mock:$TAG" \
           --set t4cServer.apis.usageStats="http://test-licence-server-mock:80/mock" \
           --set t4cServer.apis.restAPI="http://test-t4c-server-mock:80/mock/api/v1.0" \
+          --set general.port=8080 \
+          --set backend.authentication.oauth.endpoints.wellKnown="http://test-oauth-mock:8080/default/.well-known/openid-configuration" \
           ./helm
       - name: Add secret to backend serviceaccount
         run: |
