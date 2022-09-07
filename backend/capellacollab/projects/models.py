@@ -43,7 +43,7 @@ class PatchProject(BaseModel):
 
 class PostRepositoryRequest(BaseModel):
     name: str
-    description: str | None
+    description: t.Optional[str]
 
 
 class DatabaseProject(Base):

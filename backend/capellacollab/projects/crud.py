@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+from __future__ import annotations
+
+# Standard library:
 import typing as t
 
 from fastapi import HTTPException
@@ -34,7 +37,9 @@ def create_project(
     db: Session, name: str, description: str | None = None
 ) -> DatabaseProject:
     slug = slugify(name)
-    repo = DatabaseProject(name=name, slug=slug, description=description, users=[])
+    repo = DatabaseProject(
+        name=name, slug=slug, description=description, users=[]
+    )
     db.add(repo)
     db.commit()
     db.refresh(repo)
