@@ -27,7 +27,7 @@ export interface Source {
 export class SourceService {
   constructor(
     private http: HttpClient,
-    private projectService: ProjectService,
+    private projectService: ProjectService
   ) {}
 
   source: Source | null = null;
