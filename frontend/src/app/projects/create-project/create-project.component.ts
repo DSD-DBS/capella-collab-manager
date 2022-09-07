@@ -13,7 +13,7 @@ import {
 } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from '../../toast/toast.service';
 import {
   BehaviorSubject,
   connectable,
@@ -49,7 +49,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   constructor(
     public projectService: ProjectService,
     private router: Router,
-    private toastrService: ToastrService,
+    private toastService: ToastService,
     private navBarService: NavBarService
   ) {
     this.navBarService.title = 'Create Project';
@@ -102,7 +102,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
           })
         )
         .subscribe((project) => {
-          this.toastrService.success(
+          this.toastService.showSuccess(
             `The project “${project!.name}” was successfuly created.`,
             'Project created'
           );
