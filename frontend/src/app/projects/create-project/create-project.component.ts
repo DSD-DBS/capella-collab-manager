@@ -84,12 +84,10 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
     let project_subject = this.projectService._project;
     if (this.form.valid) {
       const project_creation_subject = connectable<Project>(
-        this.projectService.createProject(
-          {
-            name: this.form.value.name!,
-            description: this.form.value.name,
-          }
-        ),
+        this.projectService.createProject({
+          name: this.form.value.name!,
+          description: this.form.value.name!,
+        }),
         {
           connector: () => new Subject(),
           resetOnDisconnect: false,
