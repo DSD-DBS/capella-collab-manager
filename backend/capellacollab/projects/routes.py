@@ -121,9 +121,7 @@ def create_repository(
         get_username(token),
         RepositoryUserPermission.WRITE,
     )
-    return convert_project(
-        crud.create_project(db, body.name, body.description)
-    )
+    return convert_project(project)
 
 
 @router.delete(
