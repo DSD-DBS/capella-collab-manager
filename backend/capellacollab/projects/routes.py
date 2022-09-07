@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends
 from requests import Session
 
 import capellacollab.projects.crud as crud
+import capellacollab.projects.users.crud as users_crud
 from capellacollab.core.authentication.database import (
     is_admin,
     verify_admin,
@@ -112,7 +113,14 @@ def create_repository(
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
 ):
-    verify_admin(token, db)
+    project = crud.create_project(db, body.name, body.description)
+    users_crud.add_user_to_repository(
+        db,
+        project.name,
+        RepositoryUserRole.MANAGER,
+        get_username(token),
+        RepositoryUserPermission.WRITE,
+    )
     return convert_project(
         crud.create_project(db, body.name, body.description)
     )
