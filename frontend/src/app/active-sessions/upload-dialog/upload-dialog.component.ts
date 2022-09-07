@@ -12,10 +12,10 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { PathNode, Session } from 'src/app/schemes';
 import { LoadFilesService } from 'src/app/services/load-files/load-files.service';
+import { ToastService } from 'src/app/toast/toast.service';
 import { FileExistsDialogComponent } from './file-exists-dialog/file-exists-dialog.component';
 @Component({
   selector: 'upload-dialog',
@@ -36,7 +36,7 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
     private loadService: LoadFilesService,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<UploadDialogComponent>,
-    private snackBar: MatSnackBar,
+    private toastService: ToastService,
     @Inject(MAT_DIALOG_DATA) public session: Session
   ) {}
 
@@ -216,7 +216,10 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
     });
 
     if (size > 31457280) {
-      this.snackBar.open('The file size must not exceed 30MB!', 'Ok!');
+      this.toastService.showError(
+        'File too large!',
+        'The file size must not exceed 30MB!'
+      );
       return;
     }
 
