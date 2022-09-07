@@ -7,10 +7,23 @@ const { writeFileSync } = require('fs');
 const util = require('node:util');
 const exec = util.promisify(require('node:child_process').exec);
 
+let options = {};
+
 if (process.env.http_proxy) {
   const { setGlobalDispatcher, ProxyAgent } = require('undici');
 
   setGlobalDispatcher(new ProxyAgent(process.env.http_proxy));
+}
+
+if (process.env.GITHUB_USERNAME && process.env.GITHUB_TOKEN) {
+  console.error('Using credentials from environment variables.');
+  options.headers = {
+    Authorization:
+      'Basic ' +
+      Buffer.from(
+        process.env.GITHUB_USERNAME + ':' + process.env.GITHUB_TOKEN
+      ).toString('base64'),
+  };
 }
 
 async function main() {
@@ -22,7 +35,8 @@ async function main() {
   });
 
   const github = fetch(
-    'https://api.github.com/repos/DSD-DBS/capella-collab-manager/releases'
+    'https://api.github.com/repos/DSD-DBS/capella-collab-manager/releases',
+    options
   );
 
   const gitResponse = await git;
@@ -31,6 +45,9 @@ async function main() {
   console.error(gitTagResponse.stderr);
   const response = await github;
   const data = await response.json();
+  if (!response.ok) {
+    console.error(data);
+  }
 
   if (gitTagResponse.error || gitResponse.error || !response.ok) {
     process.exit(1);

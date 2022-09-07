@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: {{ .Release.Name }}-t4c-server-mock
-          image: {{ .Values.docker.registry.internal }}/t4c/server/mock
+          image: {{ .Values.docker.registry.internal }}{{ .Values.docker.images.mocks.t4cServer }}
           ports:
             - name: http
               containerPort: 80

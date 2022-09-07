@@ -41,6 +41,10 @@ docker:
 
     prometheus: /prom/prometheus
 
+    mocks:
+      t4cServer: /t4c/server/mock
+      licenseServer: /t4c/licence/mock
+
 general:
   # Base URL on which the service listens
   host: localhost

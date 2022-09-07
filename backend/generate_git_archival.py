@@ -18,7 +18,7 @@ def run_git_command(cmd: t.List[str]):
 (pathlib.Path(__file__).parent / ".git_archival.txt").write_text(
     f"node: {run_git_command(['log', '-1', '--format=%H'])}"
     f"node-date: {run_git_command(['log', '-1', '--format=%cI'])}"
-    f"describe-name: {run_git_command(['describe', '--tags'])}"
+    f"describe-name: {run_git_command(['describe', '--tags', '--long'])}"
     f"ref-names: {run_git_command(['log', '-1', '--format=%D'])}",
     encoding="ascii",
 )

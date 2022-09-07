@@ -5,6 +5,10 @@
 
 # Capella Collaboration Manager
 
+![lint](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/lint.yml/badge.svg)
+![tests](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/tests.yml/badge.svg)
+![push](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/push.yml/badge.svg)
+
 A web platform for collaboration on [Capella](https://www.eclipse.org/capella/)
 (MBSE) projects
 
