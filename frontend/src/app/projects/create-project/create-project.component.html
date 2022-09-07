@@ -15,9 +15,7 @@
           <mat-form-field appearance="fill">
             <mat-label>Name</mat-label>
             <input matInput formControlName="name" />
-            <mat-error
-              *ngIf="form.controls.name.errors?.uniqueSlug"
-            >
+            <mat-error *ngIf="form.controls.name.errors?.uniqueSlug">
               A project having the slug “{{
                 form.controls.name.errors!.uniqueSlug.value
               }}” already exists.
@@ -37,6 +35,7 @@
         <button
           mat-flat-button
           color="primary"
+          [disabled]="!form.valid"
           (click)="createProject(stepper)"
         >
           Create project
