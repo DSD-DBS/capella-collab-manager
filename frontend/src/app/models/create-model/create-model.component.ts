@@ -73,7 +73,7 @@ export class CreateModelComponent implements OnInit {
     if (this.form.valid && this.projectService.project!.slug) {
       let new_model = this.form.value as NewModel;
 
-      const model_creation_subject = connectable<Model>(
+      const modelConnectable = connectable<Model>(
         this.modelService.createNewModel(
           this.projectService.project!.slug,
           new_model
@@ -84,7 +84,7 @@ export class CreateModelComponent implements OnInit {
         }
       );
 
-      model_creation_subject.subscribe((model) => {
+      modelConnectable.subscribe((model) => {
         this.router.navigate([
           'project',
           this.projectService.project!.slug,
@@ -94,18 +94,17 @@ export class CreateModelComponent implements OnInit {
         ]);
       });
 
-      model_creation_subject
+      modelConnectable
         .pipe(
-          switchMap(() =>
+          switchMap((_) =>
             this.modelService.list(this.projectService.project!.slug)
           )
         )
-        .pipe(single())
-        .subscribe({
-          next: this.modelService._models.next.bind(this.modelService._models),
+        .subscribe((value) => {
+          this.modelService._models.next(value);
         });
 
-      model_creation_subject.connect();
+      modelConnectable.connect();
     }
   }
 }
