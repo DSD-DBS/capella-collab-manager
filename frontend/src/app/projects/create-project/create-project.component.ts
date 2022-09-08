@@ -42,9 +42,9 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
     description: new FormControl(''),
   });
 
-  private project_details = false;
-  private projects_slugs = new BehaviorSubject<string[]>([]);
-  private slugs_subscription?: Subscription;
+  private projectDetails = false;
+  private projectsSlugs = new BehaviorSubject<string[]>([]);
+  private slugsSubscription?: Subscription;
 
   constructor(
     public projectService: ProjectService,
@@ -65,17 +65,17 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
       error: projects.error.bind(projects),
     });
 
-    this.slugs_subscription = projects
+    this.slugsSubscription = projects
       .pipe(
         filter(Boolean),
         map((projects) => projects.map((p) => p.slug))
       )
-      .subscribe(this.projects_slugs);
+      .subscribe(this.projectsSlugs);
   }
 
   ngOnDestroy(): void {
-    this.slugs_subscription?.unsubscribe();
-    if (!this.project_details) {
+    this.slugsSubscription?.unsubscribe();
+    if (!this.projectDetails) {
       this.projectService._project.next(undefined);
     }
   }
@@ -120,13 +120,13 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   finish(): void {
-    this.project_details = true;
+    this.projectDetails = true;
     this.router.navigate(['/project', this.projectService.project!.slug]);
   }
 
   slugValidator(control: AbstractControl): ValidationErrors | null {
     let new_slug = slugify(control.value, { lower: true });
-    for (let slug of this.projects_slugs.value) {
+    for (let slug of this.projectsSlugs.value) {
       if (slug == new_slug) {
         return { uniqueSlug: { value: slug } };
       }

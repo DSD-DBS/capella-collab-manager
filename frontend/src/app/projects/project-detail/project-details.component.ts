@@ -17,7 +17,7 @@ import { ProjectService } from 'src/app/services/project/project.service';
   styleUrls: ['./project-details.component.css'],
 })
 export class ProjectDetailsComponent implements OnInit, OnDestroy {
-  project_subscription?: Subscription;
+  projectSubscription?: Subscription;
 
   constructor(
     private navbarService: NavBarService,
@@ -25,7 +25,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.project_subscription = this.projectService._project
+    this.projectSubscription = this.projectService._project
       .pipe(
         filter(Boolean),
         map((project) => project.name)
@@ -36,6 +36,6 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.project_subscription?.unsubscribe();
+    this.projectSubscription?.unsubscribe();
   }
 }

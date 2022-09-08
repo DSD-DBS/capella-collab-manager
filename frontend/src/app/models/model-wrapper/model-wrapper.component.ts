@@ -18,7 +18,7 @@ import { ProjectService } from 'src/app/services/project/project.service';
   styleUrls: ['./model-wrapper.component.css'],
 })
 export class ModelWrapperComponent implements OnInit, OnDestroy {
-  model_subscription?: Subscription;
+  modelSubscription?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -27,7 +27,7 @@ export class ModelWrapperComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.model_subscription = combineLatest([
+    this.modelSubscription = combineLatest([
       this.route.params.pipe(map((params) => params.model as string)),
       this.projectService._project.pipe(
         filter(Boolean),
@@ -39,7 +39,7 @@ export class ModelWrapperComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.model_subscription?.unsubscribe();
+    this.modelSubscription?.unsubscribe();
     this.modelService._model.next(undefined);
   }
 }
