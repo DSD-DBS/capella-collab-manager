@@ -125,7 +125,7 @@ const routes: Routes = [
         component: ProjectDetailsComponent,
       },
       {
-        path: 'create-model',
+        path: 'models/create',
         component: CreateModelComponent,
       },
       {
