@@ -56,7 +56,9 @@ def get_user(
     if username != get_username(token) and not is_admin(token, db):
         raise HTTPException(
             status_code=403,
-            detail="The username does not match with your username. You have to be administrator to see other users.",
+            detail={
+                "reason": "The username does not match with your username. You have to be administrator to see other users."
+            },
         )
     return users.get_user(db=db, username=username)
 
@@ -96,7 +98,10 @@ def get_sessions_for_user(
     if username != get_username(token) and not is_admin(token, db):
         raise HTTPException(
             status_code=403,
-            detail="You can only see your own sessions. If you are a manager, please use the /sessions endpoint.",
+            detail={
+                "reason": "You can only see your own sessions.",
+                "technical": "If you are a project lead or administrator, please use the /sessions endpoint",
+            },
         )
 
     user = users.get_user(db, username)

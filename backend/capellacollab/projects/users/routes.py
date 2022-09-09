@@ -122,7 +122,9 @@ def patch_repository_user(
         if not admin and get_username(token) != username:
             raise HTTPException(
                 status_code=403,
-                detail="The username does not match with your user. You have to be administrator to edit other users.",
+                detail={
+                    "reason": "The username does not match with your user. You have to be administrator to edit other users."
+                },
             )
 
         try:
@@ -137,7 +139,7 @@ def patch_repository_user(
             else:
                 raise HTTPException(
                     status_code=500,
-                    detail="Invalid response from T4C Server",
+                    detail={"reason": "Invalid response from T4C server."},
                 ) from err
 
     if body.permission:
@@ -157,7 +159,9 @@ def patch_repository_user(
         if repo_user.role == schema_repositories.RepositoryUserRole.MANAGER:
             raise HTTPException(
                 status_code=403,
-                detail="You are not allowed to set the permission of managers!",
+                detail={
+                    "reason": "You are not allowed to set the permission of project leads!"
+                },
             )
         repository_users.change_permission_of_user_in_repository(
             db, project, body.permission, username

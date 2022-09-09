@@ -61,7 +61,10 @@ def get_references(
     except git.exc.GitCommandError as exc:
         empty_repo.delete_remote("origin")
         raise HTTPException(
-            status_code=422, detail="Wrong credentials"
+            status_code=422,
+            detail={
+                "reason": "The assigned credentials for the repository are not valid.",
+            },
         ) from exc
     remote_refs.branches = [ref.name[7:] for ref in origin.refs]
     remote_refs.tags = [tag.name for tag in empty_repo.tags]

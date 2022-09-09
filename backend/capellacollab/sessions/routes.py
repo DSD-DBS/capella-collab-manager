@@ -66,7 +66,9 @@ def get_current_sessions(
     ):
         raise HTTPException(
             status_code=403,
-            detail="You have to be project manager for at least one repository.",
+            detail={
+                "reason": "You have to be project lead for at least one repository.",
+            },
         )
     return inject_attrs_in_sessions(
         list(
@@ -228,7 +230,9 @@ def end_session(
     ):
         raise HTTPException(
             status_code=403,
-            detail="The owner of the repository does not match with your username. You have to be administrator or manager to delete other sessions.",
+            detail={
+                "reason": "The owner of the repository does not match with your username. You have to be administrator or manager to delete other sessions."
+            },
         )
     database.delete_session(db, id)
     OPERATOR.kill_session(id)
@@ -258,7 +262,9 @@ def create_guacamole_token(
     if session.owner_name != get_username(token):
         raise HTTPException(
             status_code=403,
-            detail="The owner of the session does not match with your username.",
+            detail={
+                "reason": "The owner of the session does not match with your username."
+            },
         )
 
     token = guacamole.get_token(
