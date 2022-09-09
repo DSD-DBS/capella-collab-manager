@@ -7,7 +7,6 @@
 # Standard library:
 import importlib
 import logging
-from email import utils
 from importlib import metadata
 
 # 3rd party:
