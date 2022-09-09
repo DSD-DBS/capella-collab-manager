@@ -9,6 +9,7 @@ import typing as t
 
 from fastapi import HTTPException
 from slugify import slugify
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from capellacollab.projects.models import DatabaseProject
@@ -37,6 +38,11 @@ def create_project(
     db: Session, name: str, description: str | None = None
 ) -> DatabaseProject:
     slug = slugify(name)
+    if (
+        db.query(DatabaseProject).filter(DatabaseProject.slug == slug).first()
+        is not None
+    ):
+        raise HTTPException(409, "Slug already used.")
     repo = DatabaseProject(
         name=name, slug=slug, description=description, users=[]
     )
