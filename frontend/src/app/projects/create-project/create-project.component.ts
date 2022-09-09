@@ -61,8 +61,12 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
     let projects = this.projectService._projects;
 
     this.projectService.list().subscribe({
-      next: projects.next.bind(projects),
-      error: projects.error.bind(projects),
+      next: (value) => {
+        projects.next(value);
+      },
+      error: (_) => {
+        projects.next(undefined);
+      },
     });
 
     this.slugsSubscription = projects
@@ -81,9 +85,9 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   createProject(stepper: MatStepper): void {
-    let project_subject = this.projectService._project;
+    let projectSubject = this.projectService._project;
     if (this.form.valid) {
-      const project_creation_subject = connectable<Project>(
+      const projectConnectable = connectable<Project>(
         this.projectService.createProject({
           name: this.form.value.name!,
           description: this.form.value.name!,
@@ -94,11 +98,15 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
         }
       );
 
-      project_creation_subject
+      projectConnectable
         .pipe(
           tap({
-            next: project_subject.next.bind(project_subject),
-            error: project_subject.next.bind(project_subject),
+            next: (value) => {
+              projectSubject.next(value);
+            },
+            error: (_) => {
+              projectSubject.next(undefined);
+            },
           })
         )
         .subscribe((project) => {
@@ -111,11 +119,18 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
           stepper.steps.get(0)!.editable = false;
         });
 
-      project_creation_subject
+      projectConnectable
         .pipe(switchMap(() => this.projectService.list()))
-        .subscribe(this.projectService._projects);
+        .subscribe({
+          next: (value) => {
+            this.projectService._projects.next(value);
+          },
+          error: (_) => {
+            this.projectService._projects.next(undefined);
+          },
+        });
 
-      project_creation_subject.connect();
+      projectConnectable.connect();
     }
   }
 
