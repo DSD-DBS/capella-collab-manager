@@ -14,6 +14,7 @@ from fastapi import APIRouter
 
 # 1st party:
 import capellacollab.config.routes as configuration
+import capellacollab.core.metadata as core_metadata
 import capellacollab.sessions.routes as sessions
 from capellacollab.config import config
 from capellacollab.models import routes as models
@@ -29,6 +30,7 @@ log = logging.getLogger(__name__)
 
 
 router = APIRouter()
+router.include_router(core_metadata.router, tags=["Metadata"])
 router.include_router(sessions.router, prefix="/sessions", tags=["Sessions"])
 router.include_router(projects.router, prefix="/projects")
 router.include_router(models.router, prefix="/models")
