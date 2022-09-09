@@ -1,16 +1,14 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+
 import logging
 import pathlib
 import shutil
 import typing as t
 
-# 3rd party:
 import docker
 
-# 1st party:
 from capellacollab.config import config
 from capellacollab.core.operators.abc import Operator
 

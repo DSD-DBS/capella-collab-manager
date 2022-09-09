@@ -4,16 +4,13 @@
 
 from __future__ import annotations
 
-# Standard library:
 import logging
 import re
 import typing as t
 
-# 3rd party:
 import requests
 from requests import JSONDecodeError
 
-# 1st party:
 from capellacollab.config import config
 from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import OPERATOR

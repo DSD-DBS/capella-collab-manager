@@ -2,14 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-# Standard library:
 import typing as t
 
-# 3rd party:
 from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
 
-# 1st party:
 from capellacollab.core.authentication.database import (
     check_git_settings_instance_exists,
     is_admin,

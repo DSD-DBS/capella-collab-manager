@@ -1,19 +1,15 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
-# Standard library:
+
 import itertools
 import json
 import logging
 import typing as t
 
-# 3rd party:
-# 3rd party:
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-# 1st party:
 import capellacollab.extensions.modelsources.git.crud as git_models_crud
 import capellacollab.projects.crud as repositories_crud
 import capellacollab.projects.users.models as users_models

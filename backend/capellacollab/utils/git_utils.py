@@ -2,17 +2,14 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-# Standard library:
 import typing as t
 from urllib.parse import quote, urlsplit
 
-# 3rd party:
 import git
 from fastapi import APIRouter, Depends, HTTPException
 from git import Git
 from pydantic import BaseModel
 
-# 1st party:
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 
 

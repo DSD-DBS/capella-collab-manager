@@ -4,11 +4,9 @@
 
 from __future__ import annotations
 
-# Standard library:
 import enum
 import typing as t
 
-# 3rd party:
 from pydantic import BaseModel
 from slugify import slugify
 from sqlalchemy import (
@@ -21,7 +19,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-# 1st party:
 from capellacollab.core.database import Base
 from capellacollab.tools.models import Tool, Type, Version
 

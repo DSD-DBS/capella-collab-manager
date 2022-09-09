@@ -1,12 +1,11 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# 3rd party:
+
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-# 1st party:
 from capellacollab.core.database import get_db
 from capellacollab.extensions.modelsources.t4c.connection import get_t4c_status
 from capellacollab.sessions.guacamole import get_admin_token

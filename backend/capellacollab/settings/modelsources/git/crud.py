@@ -2,13 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-# Standard library:
 import typing as t
 
-# 3rd party:
 from sqlalchemy.orm import Session
 
-# 1st party:
 from capellacollab.settings.modelsources.git.models import (
     DB_GitSettings,
     GitSettings,

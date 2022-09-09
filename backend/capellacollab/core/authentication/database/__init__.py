@@ -1,11 +1,10 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# 3rd party:
+
 import sqlalchemy.orm.session
 from fastapi import Depends, HTTPException
 
-# 1st party:
 import capellacollab.projects.users.crud as repository_users
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer

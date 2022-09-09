@@ -9,7 +9,7 @@ Revises: 703517ca79bc
 Create Date: 2022-07-18 10:16:36.889349
 
 """
-# 3rd party:
+
 import sqlalchemy as sa
 from alembic import op
 from slugify import slugify

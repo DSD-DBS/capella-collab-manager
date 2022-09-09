@@ -3,13 +3,11 @@
 
 from __future__ import annotations
 
-# Standard library:
 import datetime
 import enum
 import numbers
 import typing as t
 
-# 3rd party:
 from pydantic import BaseModel
 
 # local:

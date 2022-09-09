@@ -10,7 +10,7 @@ Create Date: 2022-05-16 12:49:07.592601
 
 """
 
-# 3rd party:
+
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql

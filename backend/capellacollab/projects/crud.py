@@ -2,16 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-# Standard library:
 import typing as t
 
 from fastapi import HTTPException
-
-# 3rd party:
 from slugify import slugify
 from sqlalchemy.orm import Session
 
-# 1st party:
 from capellacollab.projects.models import DatabaseProject
 
 
