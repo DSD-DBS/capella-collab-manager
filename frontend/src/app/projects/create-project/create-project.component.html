@@ -16,7 +16,7 @@
             <mat-label>Name</mat-label>
             <input matInput formControlName="name" />
             <mat-error *ngIf="form.controls.name.errors?.uniqueSlug">
-              A project having the slug “{{
+              A project with a name similar to “{{
                 form.controls.name.errors!.uniqueSlug.value
               }}” already exists.
             </mat-error>
