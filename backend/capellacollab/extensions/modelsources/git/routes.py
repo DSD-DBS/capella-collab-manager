@@ -142,7 +142,6 @@ def patch_model(
 
 @router.get(
     "/primary/revisions",
-    tags=["Repositories"],
     responses=AUTHENTICATION_RESPONSES,
 )
 def get_revisions(

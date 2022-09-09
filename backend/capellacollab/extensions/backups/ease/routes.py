@@ -11,6 +11,9 @@ from fastapi import APIRouter, Depends
 from requests import Session
 
 import capellacollab.core.authentication.database as auth
+import capellacollab.extensions.modelsources.git.crud as git_crud
+import capellacollab.extensions.modelsources.t4c.connection as t4c_connection
+import capellacollab.extensions.modelsources.t4c.crud as t4c_crud
 from capellacollab.config import config
 from capellacollab.core import credentials
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
@@ -18,7 +21,6 @@ from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
 from capellacollab.core.database import get_db
-from capellacollab.extensions.modelsources import git, t4c
 from capellacollab.sessions.operators import OPERATOR
 
 from . import crud, helper, models
@@ -37,7 +39,7 @@ def get_ease_backups(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    auth.verify_repository_role(
+    auth.verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
     return [
@@ -57,21 +59,21 @@ def create_backup(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    auth.verify_repository_role(
+    auth.verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
 
-    gitmodel = git.crud.get_model_by_id(
+    gitmodel = git_crud.get_model_by_id(
         db=db, repository_name=project, model_id=body.gitmodel
     )
 
-    t4cmodel = t4c.crud.get_project_by_id(
+    t4cmodel = t4c_crud.get_project_by_id(
         db=db, id=body.t4cmodel, repo_name=project
     )
 
     username = "techuser-" + str(uuid.uuid4())
     password = credentials.generate_password()
-    t4c.connection.add_user_to_repository(
+    t4c_connection.add_user_to_repository(
         project, username, password, is_admin=False
     )
 
@@ -118,16 +120,16 @@ def delete_backup(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    auth.verify_repository_role(
+    auth.verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
 
     backup = crud.get_backup(db, project, id)
-    t4cmodel = t4c.crud.get_project_by_id(
+    t4cmodel = t4c_crud.get_project_by_id(
         db=db, id=backup.t4cmodel, repo_name=project
     )
     try:
-        t4c.connection.remove_user_from_repository(
+        t4c_connection.remove_user_from_repository(
             t4cmodel.name, backup.username
         )
     except requests.HTTPError:
@@ -152,7 +154,7 @@ def create_job(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    auth.verify_repository_role(
+    auth.verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
 
@@ -173,7 +175,7 @@ def get_logs(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    auth.verify_repository_role(
+    auth.verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
     # TODO: Check if jid is part of bid

@@ -7,7 +7,7 @@ import typing as t
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-import capellacollab.projects.users.crud as repository_users
+import capellacollab.projects.users.crud as project_users
 import capellacollab.users.crud as users
 from capellacollab.core.authentication.database import is_admin, verify_admin
 from capellacollab.core.authentication.helper import get_username
@@ -69,7 +69,7 @@ def delete_user(
     username: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
     verify_admin(token, db)
-    repository_users.delete_all_repositories_for_user(db, username)
+    project_users.delete_all_projects_for_user(db, username)
     users.delete_user(db=db, username=username)
 
 
@@ -83,7 +83,7 @@ def update_role_of_user(
     verify_admin(token, db)
     users.find_or_create_user(db, username)
     if body.role == Role.ADMIN:
-        repository_users.delete_all_repositories_for_user(db, username)
+        project_users.delete_all_projects_for_user(db, username)
     return users.update_role_of_user(db, username, body.role)
 
 

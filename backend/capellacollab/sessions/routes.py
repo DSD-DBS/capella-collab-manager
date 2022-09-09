@@ -11,8 +11,6 @@ from sqlalchemy.orm import Session
 
 import capellacollab.extensions.modelsources.git.crud as git_models_crud
 import capellacollab.extensions.modelsources.t4c.connection as t4c_manager
-import capellacollab.projects.crud as repositories_crud
-import capellacollab.projects.users.models as users_models
 import capellacollab.users.crud as users
 from capellacollab.core.authentication.database import (
     is_admin,
@@ -25,10 +23,10 @@ from capellacollab.core.authentication.responses import (
 )
 from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db
-from capellacollab.projects.users.crud import RepositoryUserRole
+from capellacollab.projects.users.crud import ProjectUserRole
 from capellacollab.sessions import database, guacamole
 from capellacollab.sessions.models import DatabaseSession
-from capellacollab.sessions.operators import OPERATOR, Operator, get_operator
+from capellacollab.sessions.operators import Operator, get_operator
 from capellacollab.sessions.schema import (
     AdvancedSessionResponse,
     DepthType,
@@ -58,8 +56,8 @@ def get_current_sessions(
 
     db_user = users.get_user(db=db, username=get_username(token))
     if not any(
-        repo_user.role == RepositoryUserRole.MANAGER
-        for repo_user in db_user.repositories
+        project_user.role == ProjectUserRole.MANAGER
+        for project_user in db_user.projects
     ):
         raise HTTPException(
             status_code=403,
@@ -71,11 +69,11 @@ def get_current_sessions(
         list(
             itertools.chain.from_iterable(
                 [
-                    database.get_sessions_for_repository(db, repository)
-                    for repository in [
-                        r.repository_name
-                        for r in db_user.repositories
-                        if r.role == RepositoryUserRole.MANAGER
+                    database.get_sessions_for_repository(db, project)
+                    for project in [
+                        p.name
+                        for p in db_user.projects
+                        if p.role == ProjectUserRole.MANAGER
                     ]
                 ]
             )

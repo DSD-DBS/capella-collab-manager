@@ -6,12 +6,12 @@ from sqlalchemy.orm import Session
 
 from capellacollab.projects.users.models import (
     ProjectUserAssociation,
-    RepositoryUserPermission,
-    RepositoryUserRole,
+    ProjectUserPermission,
+    ProjectUserRole,
 )
 
 
-def get_users_of_repository(db: Session, projects_name: str):
+def get_users_of_project(db: Session, projects_name: str):
     return (
         db.query(ProjectUserAssociation)
         .filter(ProjectUserAssociation.projects_name == projects_name)
@@ -19,7 +19,7 @@ def get_users_of_repository(db: Session, projects_name: str):
     )
 
 
-def get_user_of_repository(db: Session, projects_name: str, username: str):
+def get_user_of_project(db: Session, projects_name: str, username: str):
     return (
         db.query(ProjectUserAssociation)
         .filter(ProjectUserAssociation.projects_name == projects_name)
@@ -28,12 +28,12 @@ def get_user_of_repository(db: Session, projects_name: str, username: str):
     )
 
 
-def add_user_to_repository(
+def add_user_to_project(
     db: Session,
     projects_name: str,
-    role: RepositoryUserRole,
+    role: ProjectUserRole,
     username: str,
-    permission: RepositoryUserPermission,
+    permission: ProjectUserPermission,
 ):
     association = ProjectUserAssociation(
         projects_name=projects_name,
@@ -47,27 +47,27 @@ def add_user_to_repository(
     return association
 
 
-def change_role_of_user_in_repository(
-    db: Session, projects_name: str, role: RepositoryUserRole, username: str
+def change_role_of_user_in_project(
+    db: Session, projects_name: str, role: ProjectUserRole, username: str
 ):
-    repo_user = (
+    project_user = (
         db.query(ProjectUserAssociation)
         .filter(ProjectUserAssociation.projects_name == projects_name)
         .filter(ProjectUserAssociation.username == username)
         .first()
     )
-    if role == RepositoryUserRole.MANAGER:
-        repo_user.permission = RepositoryUserPermission.WRITE
-    repo_user.role = role
+    if role == ProjectUserRole.MANAGER:
+        project_user.permission = ProjectUserPermission.WRITE
+    project_user.role = role
     db.commit()
-    db.refresh(repo_user)
-    return repo_user
+    db.refresh(project_user)
+    return project_user
 
 
-def change_permission_of_user_in_repository(
+def change_permission_of_user_in_project(
     db: Session,
     projects_name: str,
-    permission: RepositoryUserPermission,
+    permission: ProjectUserPermission,
     username: str,
 ):
     repo_user = (
@@ -82,16 +82,14 @@ def change_permission_of_user_in_repository(
     return repo_user
 
 
-def delete_user_from_repository(
-    db: Session, projects_name: str, username: str
-):
+def delete_user_from_project(db: Session, projects_name: str, username: str):
     db.query(ProjectUserAssociation).filter(
         ProjectUserAssociation.username == username
     ).filter(ProjectUserAssociation.projects_name == projects_name).delete()
     db.commit()
 
 
-def delete_all_repositories_for_user(db: Session, username: str):
+def delete_all_projects_for_user(db: Session, username: str):
     db.query(ProjectUserAssociation).filter(
         ProjectUserAssociation.username == username
     ).delete()

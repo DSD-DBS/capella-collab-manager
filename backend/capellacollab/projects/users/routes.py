@@ -9,11 +9,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError, Session
 
 import capellacollab.extensions.modelsources.t4c.connection as t4c_manager
-import capellacollab.projects.users.models as schema_repositories
+import capellacollab.projects.users.models as schema_projects
 import capellacollab.users.crud as users
 from capellacollab.core.authentication.database import (
     check_username_not_admin,
-    check_username_not_in_repository,
+    check_username_not_in_project,
     is_admin,
     verify_project_role,
     verify_write_permission,
@@ -32,7 +32,7 @@ router = APIRouter()
 
 @router.get(
     "/",
-    response_model=t.List[schema_repositories.RepositoryUser],
+    response_model=t.List[schema_projects.ProjectUser],
     responses=AUTHENTICATION_RESPONSES,
 )
 def get_users_for_repository(
@@ -44,17 +44,17 @@ def get_users_for_repository(
     verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
-    return repository_users.get_users_of_repository(db, project)
+    return repository_users.get_users_of_project(db, project)
 
 
 @router.post(
     "/",
-    response_model=schema_repositories.RepositoryUser,
+    response_model=schema_projects.ProjectUser,
     responses=AUTHENTICATION_RESPONSES,
 )
 def add_user_to_repository(
     project: str,
-    body: schema_repositories.RepositoryUser,
+    body: schema_projects.ProjectUser,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
@@ -62,17 +62,17 @@ def add_user_to_repository(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
 
-    check_username_not_in_repository(project, body.username, db=db)
+    check_username_not_in_project(project, body.username, db=db)
 
     users.find_or_create_user(db, body.username)
     check_username_not_admin(body.username, db)
-    if body.role == schema_repositories.RepositoryUserRole.MANAGER:
-        body.permission = schema_repositories.RepositoryUserPermission.WRITE
-    if body.permission == schema_repositories.RepositoryUserPermission.WRITE:
+    if body.role == schema_projects.ProjectUserRole.MANAGER:
+        body.permission = schema_projects.ProjectUserPermission.WRITE
+    if body.permission == schema_projects.ProjectUserPermission.WRITE:
         t4c_manager.add_user_to_repository(
             project, body.username, is_admin=False
         )
-    return repository_users.add_user_to_repository(
+    return repository_users.add_user_to_project(
         db, project, body.role, body.username, body.permission
     )
 
@@ -85,7 +85,7 @@ def add_user_to_repository(
 def patch_repository_user(
     project: str,
     username: str,
-    body: schema_repositories.PatchRepositoryUser,
+    body: schema_projects.PatchProjectUser,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
@@ -104,7 +104,7 @@ def patch_repository_user(
             db=db,
         )
         check_username_not_admin(username, db)
-        repository_users.change_role_of_user_in_repository(
+        repository_users.change_role_of_user_in_project(
             db, project, body.role, username
         )
     if body.password:
@@ -147,20 +147,20 @@ def patch_repository_user(
             db=db,
         )
         check_username_not_admin(username, db)
-        repo_user = repository_users.get_user_of_repository(
+        repo_user = repository_users.get_user_of_project(
             db,
             project,
             username,
         )
 
-        if repo_user.role == schema_repositories.RepositoryUserRole.MANAGER:
+        if repo_user.role == schema_projects.ProjectUserRole.MANAGER:
             raise HTTPException(
                 status_code=403,
                 detail={
                     "reason": "You are not allowed to set the permission of project leads!"
                 },
             )
-        repository_users.change_permission_of_user_in_repository(
+        repository_users.change_permission_of_user_in_project(
             db, project, body.permission, username
         )
 
@@ -181,4 +181,4 @@ def remove_user_from_repository(
     )
     check_username_not_admin(username, db)
     t4c_manager.remove_user_from_repository(project, username)
-    repository_users.delete_user_from_repository(db, project, username)
+    repository_users.delete_user_from_project(db, project, username)

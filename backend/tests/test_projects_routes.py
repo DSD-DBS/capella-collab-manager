@@ -4,10 +4,10 @@
 from uuid import uuid1
 
 from capellacollab.projects.crud import create_project
-from capellacollab.projects.users.crud import add_user_to_repository
+from capellacollab.projects.users.crud import add_user_to_project
 from capellacollab.projects.users.models import (
-    RepositoryUserPermission,
-    RepositoryUserRole,
+    ProjectUserPermission,
+    ProjectUserRole,
 )
 from capellacollab.users.crud import create_user
 from capellacollab.users.models import Role
@@ -32,12 +32,12 @@ def test_get_projects_as_user_with_project(client, db, username):
     project_name = str(uuid1())
     create_user(db, username, Role.USER)
     create_project(db, name=project_name)
-    add_user_to_repository(
+    add_user_to_project(
         db,
         projects_name=project_name,
-        role=RepositoryUserRole.MANAGER,
+        role=ProjectUserRole.MANAGER,
         username=username,
-        permission=RepositoryUserPermission.WRITE,
+        permission=ProjectUserPermission.WRITE,
     )
 
     response = client.get("/api/v1/projects")

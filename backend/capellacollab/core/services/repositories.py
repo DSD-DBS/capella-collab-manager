@@ -8,21 +8,21 @@ from sqlalchemy.orm.session import Session
 
 import capellacollab.extensions.modelsources.git.crud as git_model_crud
 import capellacollab.extensions.modelsources.t4c.connection as t4c_ext
-import capellacollab.projects.models as repository_schema
+import capellacollab.projects.models as project_models
 import capellacollab.projects.users.models as users_schema
-from capellacollab.projects.users.models import RepositoryUserPermission
+from capellacollab.projects.users.models import ProjectUserPermission
 
 
 def get_permission(
-    repo_permission: RepositoryUserPermission,
-    repository_name: str,
+    repo_permission: ProjectUserPermission,
+    project: str,
     db: Session,
-) -> t.List[RepositoryUserPermission]:
-    allowed_permissions: t.List[RepositoryUserPermission] = []
+) -> t.List[ProjectUserPermission]:
+    allowed_permissions: t.List[ProjectUserPermission] = []
 
-    if git_model_crud.get_primary_model_of_repository(db, repository_name):
-        allowed_permissions.append(RepositoryUserPermission.READ)
+    if git_model_crud.get_primary_gitmodel_of_capellamodels(db, project):
+        allowed_permissions.append(ProjectUserPermission.READ)
 
-    if repo_permission == RepositoryUserPermission.WRITE:
-        allowed_permissions.append(RepositoryUserPermission.WRITE)
+    if repo_permission == ProjectUserPermission.WRITE:
+        allowed_permissions.append(ProjectUserPermission.WRITE)
     return allowed_permissions

@@ -12,30 +12,30 @@ from sqlalchemy.orm import relationship
 from capellacollab.core.database import Base
 
 
-class RepositoryUserRole(enum.Enum):
+class ProjectUserRole(enum.Enum):
     USER = "user"
     MANAGER = "manager"
     ADMIN = "administrator"
 
 
-class RepositoryUserPermission(enum.Enum):
+class ProjectUserPermission(enum.Enum):
     READ = "read"
     WRITE = "write"
 
 
-class RepositoryUser(BaseModel):
+class ProjectUser(BaseModel):
     username: str
-    role: RepositoryUserRole
-    permission: RepositoryUserPermission
+    role: ProjectUserRole
+    permission: ProjectUserPermission
 
     class Config:
         orm_mode = True
 
 
-class PatchRepositoryUser(BaseModel):
-    role: t.Optional[RepositoryUserRole]
+class PatchProjectUser(BaseModel):
+    role: t.Optional[ProjectUserRole]
     password: t.Optional[str]
-    permission: t.Optional[RepositoryUserPermission]
+    permission: t.Optional[ProjectUserPermission]
 
 
 class ProjectUserAssociation(Base):
@@ -45,5 +45,5 @@ class ProjectUserAssociation(Base):
     projects_name = Column(ForeignKey("projects.name"), primary_key=True)
     user = relationship("DatabaseUser", back_populates="projects")
     projects = relationship("DatabaseProject", back_populates="users")
-    permission = Column(Enum(RepositoryUserPermission), nullable=False)
-    role = Column(Enum(RepositoryUserRole))
+    permission = Column(Enum(ProjectUserPermission), nullable=False)
+    role = Column(Enum(ProjectUserRole))
