@@ -32,6 +32,7 @@ dependencies = [
     "cachetools",
     "docker",
     "fastapi",
+    "gitpython",
     "kubernetes",
     "msal",
     "psycopg2-binary",
