@@ -43,8 +43,6 @@ from .users.routes import router as router_users
 log = logging.getLogger(__name__)
 router = APIRouter()
 
-router.include_router(router_users, prefix="/{project}/users")
-
 
 @router.get(
     "/",
@@ -169,6 +167,8 @@ def convert_project(project: DatabaseProject) -> Project:
         ),
     )
 
+
+router.include_router(router_users, prefix="/{project}/users")
 
 # Load backup extension routes
 eps = metadata.entry_points()["capellacollab.extensions.backups"]
