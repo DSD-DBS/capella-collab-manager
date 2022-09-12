@@ -1,8 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Copyright DB Netz AG and the capella-collab-manager contributors
-# SPDX-License-Identifier: Apache-2.0
 
 """Move models to own table
 
@@ -12,7 +10,7 @@ Create Date: 2022-05-16 12:49:07.592601
 
 """
 
-# 3rd party:
+
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql

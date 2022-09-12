@@ -1,15 +1,13 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+
 import uuid
 
-# 3rd party:
 import requests
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import HTTPError
 
-# 1st party:
 from capellacollab.config import config
 from capellacollab.core.credentials import generate_password
 

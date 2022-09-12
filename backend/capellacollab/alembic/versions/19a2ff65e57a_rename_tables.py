@@ -1,8 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Copyright DB Netz AG and the capella-collab-manager contributors
-# SPDX-License-Identifier: Apache-2.0
 
 """Rename tables
 
@@ -11,7 +9,7 @@ Revises: 0a16fb85f762
 Create Date: 2022-05-09 14:30:00.602652
 
 """
-# 3rd party:
+
 import sqlalchemy as sa
 from alembic import op
 

@@ -1,21 +1,16 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Copyright DB Netz AG and the capella-collab-manager contributors
-# SPDX-License-Identifier: Apache-2.0
 
 from __future__ import annotations
 
-# Standard library:
 import enum
 import typing as t
 
-# 3rd party:
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
-# 1st party:
 # Import required for sqlalchemy
 import capellacollab.projects.users.models
 from capellacollab.core.database import Base

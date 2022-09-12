@@ -1,18 +1,12 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Copyright DB Netz AG and the capella-collab-manager contributors
-# SPDX-License-Identifier: Apache-2.0
 
 import typing as t
 
 from sqlalchemy.orm import Session
 
 from capellacollab.tools.models import Tool, Type, Version
-
-############
-### Tool ###
-############
 
 
 def get_all_tools(db: Session) -> t.List[Tool]:
@@ -22,11 +16,6 @@ def get_all_tools(db: Session) -> t.List[Tool]:
 def create_tool(db: Session, tool: Tool):
     db.add(tool)
     db.commit()
-
-
-###############
-### Version ###
-###############
 
 
 def get_versions(db: Session) -> t.List[Version]:
@@ -53,11 +42,6 @@ def create_version(
         )
     )
     db.commit()
-
-
-############
-### Type ###
-############
 
 
 def get_types(db: Session) -> t.List[Type]:

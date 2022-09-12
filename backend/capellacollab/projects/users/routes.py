@@ -3,14 +3,11 @@
 
 from __future__ import annotations
 
-# Standard library:
 import typing as t
 
-# 3rd party:
 from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError, Session
 
-# 1st party:
 import capellacollab.extensions.modelsources.t4c.connection as t4c_manager
 import capellacollab.projects.users.models as schema_repositories
 from capellacollab.core.authentication.database import (

@@ -1,10 +1,9 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# 3rd party:
+
 from fastapi import Depends, HTTPException
 
-# 1st party:
 from capellacollab.core.database import get_db
 from capellacollab.extensions.backups import jenkins
 

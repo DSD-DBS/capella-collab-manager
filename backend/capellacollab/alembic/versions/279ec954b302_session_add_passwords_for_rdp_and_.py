@@ -8,7 +8,7 @@ Revises:
 Create Date: 2021-08-12 23:01:08.764707
 
 """
-# 3rd party:
+
 import sqlalchemy as sa
 from alembic import op
 

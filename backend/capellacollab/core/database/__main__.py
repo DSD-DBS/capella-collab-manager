@@ -1,19 +1,17 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+
 import logging
 import os
 import pathlib
 
-# 3rd party:
 from alembic import command
 from alembic.config import Config
 from alembic.migration import MigrationContext
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
 
-# 1st party:
 import capellacollab.projects.crud as projects
 import capellacollab.tools.crud as tools
 from capellacollab.config import config

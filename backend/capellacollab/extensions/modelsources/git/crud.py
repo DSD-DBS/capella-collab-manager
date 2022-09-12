@@ -1,18 +1,12 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Copyright DB Netz AG and the capella-collab-manager contributors
-# SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
 import typing as t
 
-# 3rd party:
 from sqlalchemy.orm import Session
 
 import capellacollab.models.crud as models_crud
-
-# 1st party:
 from capellacollab.extensions.modelsources.git.models import (
     DB_GitModel,
     NewGitSource,

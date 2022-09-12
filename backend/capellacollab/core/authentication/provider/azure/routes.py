@@ -1,17 +1,15 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+
 import secrets
 import typing as t
 from functools import lru_cache
 
-# 3rd party:
 from cachetools import TTLCache
 from fastapi import APIRouter, Depends
 from msal import ConfidentialClientApplication
 
-# 1st party:
 from capellacollab.config import config
 from capellacollab.core.authentication import jwt_bearer
 from capellacollab.core.authentication.schemas import (

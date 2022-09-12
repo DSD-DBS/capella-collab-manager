@@ -1,10 +1,9 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# 3rd party:
+
 from fastapi import HTTPException
 
-# 1st party:
 import capellacollab.extensions.modelsources.git.crud as crud_git_models
 
 

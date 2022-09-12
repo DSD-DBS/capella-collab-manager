@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+
 import base64
 import logging
 import os
@@ -10,7 +10,6 @@ import typing as t
 from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
 
-# 1st party:
 import capellacollab.projects.crud as projects_crud
 from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.database.git_models import (
