@@ -27,8 +27,10 @@ export class AuthService {
     this._refreshToken = '';
 
     if (!environment.production) {
-      this._accessToken = this.localStorageService.getValue('access_token');
-      this._refreshToken = this.localStorageService.getValue('refresh_token');
+      this._accessToken =
+        this.localStorageService.getValue('access_token') || '';
+      this._refreshToken =
+        this.localStorageService.getValue('refresh_token') || '';
     }
   }
 
@@ -84,9 +86,10 @@ export class AuthService {
   logIn(accessToken: string, refreshToken: string) {
     this._accessToken = accessToken;
     this._refreshToken = refreshToken;
-    this.localStorageService.setValue('access_token', accessToken);
-    this.localStorageService.setValue('refresh_token', refreshToken);
-
+    if (!environment.production) {
+      this.localStorageService.setValue('access_token', accessToken);
+      this.localStorageService.setValue('refresh_token', refreshToken);
+    }
     this.cookieService.put('access_token', accessToken, {
       path: '/prometheus',
       httpOnly: true,
@@ -97,8 +100,10 @@ export class AuthService {
   logOut() {
     this._accessToken = '';
     this._refreshToken = '';
-    this.localStorageService.setValue('access_token', '');
-    this.localStorageService.setValue('refresh_token', '');
+    if (!environment.production) {
+      this.localStorageService.setValue('access_token', '');
+      this.localStorageService.setValue('refresh_token', '');
+    }
     this.localStorageService.setValue('GUAC_AUTH', '');
     this.cookieService.remove('access_token', { path: '/prometheus' });
     return this.http
