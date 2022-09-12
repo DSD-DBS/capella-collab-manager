@@ -55,14 +55,6 @@ class NewModel(BaseModel):
     tool_id: int
 
 
-class EmptyModel(BaseModel):
-    name: str
-    description: t.Optional[str]
-    tool_id: int
-    version_id: int
-    type_id: int
-
-
 class ToolDetails(BaseModel):
     version_id: int
     type_id: int

@@ -13,7 +13,6 @@ from sqlalchemy.orm import Session
 # 1st party:
 import capellacollab.projects.crud as projects_crud
 from capellacollab.projects.capellamodels.models import (
-    EmptyModel,
     Model,
     NewModel,
     ToolDetails,
@@ -64,31 +63,6 @@ def create_new_model(
     if not tool:
         raise HTTPException(404, "Tool not found.")
     model = Model.from_new_model(new_model, project)
-    db.add(model)
-    db.commit()
-    return model
-
-
-def create_empty_model(
-    db: Session, project_slug: str, new_model: EmptyModel
-) -> Model:
-    project = (
-        db.query(DatabaseProject)
-        .filter(DatabaseProject.slug == project_slug)
-        .first()
-    )
-    tool = db.query(Tool).filter(Tool.id == new_model.tool_id).first()
-    version = (
-        db.query(Version).filter(Version.id == new_model.version_id).first()
-    )
-    model_type = db.query(Type).filter(Type.id == new_model.type_id).first()
-    if not tool:
-        raise HTTPException(404, "Tool not found.")
-    if not version or version.tool_id != tool.id:
-        raise HTTPException(404, f"Version not found for tool {tool.name}.")
-    if not model_type or model_type.tool_id != tool.id:
-        raise HTTPException(404, f"Type not found for tool {tool.name}.")
-    model = Model.from_empty_model(new_model, project)
     db.add(model)
     db.commit()
     return model
