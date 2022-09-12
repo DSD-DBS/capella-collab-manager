@@ -22,7 +22,7 @@ from .models import EmptyModel, NewModel, ResponseModel, ToolDetails
 router = APIRouter()
 
 
-@router.get("/{project_slug}/", response_model=t.List[ResponseModel])
+@router.get("/", response_model=t.List[ResponseModel])
 def get_id(
     project_slug: str, db: Session = Depends(get_db)
 ) -> t.List[ResponseModel]:
@@ -37,7 +37,7 @@ def get_id(
     ]
 
 
-@router.get("/{project_slug}/details/", response_model=ResponseModel)
+@router.get("/{slug}", response_model=ResponseModel)
 def get_slug(
     project_slug: str,
     slug: str,
@@ -96,7 +96,7 @@ def create_new(
 
 
 @router.patch(
-    "/{project_slug}/set-tool-details/{model_slug}/",
+    "/{model_slug}",
     response_model=ResponseModel,
 )
 def set_tool_details(

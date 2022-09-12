@@ -37,7 +37,7 @@ from capellacollab.projects.users.models import (
     RepositoryUserRole,
 )
 
-# local:
+from .capellamodels.routes import router as router_models
 from .users.routes import router as router_users
 
 log = logging.getLogger(__name__)
@@ -169,6 +169,7 @@ def convert_project(project: DatabaseProject) -> Project:
 
 
 router.include_router(router_users, prefix="/{project}/users")
+router.include_router(router_models, prefix="/{project_slug}/models")
 
 # Load backup extension routes
 eps = metadata.entry_points()["capellacollab.extensions.backups"]
