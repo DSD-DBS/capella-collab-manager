@@ -55,6 +55,14 @@ class NewModel(BaseModel):
     tool_id: int
 
 
+class EmptyModel(BaseModel):
+    name: str
+    description: t.Optional[str]
+    tool_id: int
+    version_id: int
+    type_id: int
+
+
 class ToolDetails(BaseModel):
     version_id: int
     type_id: int
@@ -86,18 +94,6 @@ class Model(Base):
 
     t4c_model = relationship("DB_T4CModel", back_populates="model")
     git_model = relationship("DB_GitModel", back_populates="model")
-
-    @classmethod
-    def from_empty_model(cls, new_model: EmptyModel, project):
-        return cls(
-            name=new_model.name,
-            slug=slugify(new_model.name),
-            description=new_model.description,
-            tool_id=new_model.tool_id,
-            version_id=new_model.version_id,
-            type_id=new_model.type_id,
-            project_id=project.id,
-        )
 
     @classmethod
     def from_new_model(cls, new_model: NewModel, project):

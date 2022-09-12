@@ -17,7 +17,7 @@ from capellacollab.projects import crud as projects_crud
 
 # local:
 from . import crud
-from .models import EmptyModel, NewModel, ResponseModel, ToolDetails
+from .models import NewModel, ResponseModel, ToolDetails
 
 router = APIRouter()
 
