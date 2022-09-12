@@ -59,9 +59,11 @@ class JWTBearer(HTTPBearer):
                     "err_code": "token_exp",
                     "reason": "The Signature of the token is expired. Please request a new access token.",
                 },
-            )
-        except (jwt.JWTError, jwt.JWTClaimsError) as e:
+            ) from None
+        except (jwt.JWTError, jwt.JWTClaimsError):
             raise HTTPException(
                 status_code=401,
-                detail="The token verification failed. Please try again with another access token.",
-            )
+                detail={
+                    "technical": "The Signature of the token is expired. Please request a new access token.",
+                },
+            ) from None

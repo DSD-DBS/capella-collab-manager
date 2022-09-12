@@ -70,7 +70,7 @@ def upload_files(
     if size > 31457280:
         raise HTTPException(
             status_code=413,
-            detail="The summed file size must not exceed 30MB.",
+            detail={"reason": "The summed file size must not exceed 30MB."},
         )
 
     for file in files:

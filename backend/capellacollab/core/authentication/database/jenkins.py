@@ -22,5 +22,7 @@ def verify_jenkins_permission(
     ):
         raise HTTPException(
             status_code=403,
-            detail="The Pipeline Name does not match with the connected Git Model!",
+            detail={
+                "reason": "The pipeline name does not match with the connected git Model!"
+            },
         )

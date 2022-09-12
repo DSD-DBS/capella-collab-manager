@@ -24,7 +24,9 @@ def verify_admin(token=Depends(JWTBearer()), db=Depends(get_db)):
     if not is_admin(token, db):
         raise HTTPException(
             status_code=403,
-            detail="The role administrator is required for this transaction.",
+            detail={
+                "reason": "The role administrator is required for this transaction.",
+            },
         )
 
 
@@ -43,7 +45,9 @@ def verify_project_role(
     ):
         raise HTTPException(
             status_code=403,
-            detail=f"One of the roles '{allowed_roles}' in the repository '{repository}' is required.",
+            detail={
+                "reason": f"One of the roles '{allowed_roles}' in the repository '{repository}' is required.",
+            },
         )
 
 
@@ -74,7 +78,7 @@ def check_username_not_admin(username: str, db):
     if get_user(db=db, username=username).role == Role.ADMIN:
         raise HTTPException(
             status_code=403,
-            detail="You are not allowed to edit this user.",
+            detail={"reason": "You are not allowed to edit this user."},
         )
 
 
@@ -86,7 +90,9 @@ def verify_write_permission(
     if not check_write_permission(repository, token, db):
         raise HTTPException(
             status_code=403,
-            detail=f"You need to have 'Write'-Access in the repository!",
+            detail={
+                "reason": "You need to have 'write'-access in the repository!",
+            },
         )
 
 
@@ -113,7 +119,9 @@ def check_username_not_in_repository(
     if user:
         raise HTTPException(
             status_code=409,
-            detail="The user already exists for this repository.",
+            detail={
+                "reason": "The user already exists in this repository.",
+            },
         )
 
 
@@ -126,7 +134,9 @@ def check_session_belongs_to_user(
     if not session.owner_name == username:
         raise HTTPException(
             status_code=403,
-            detail="You are not allowed to upload or get files in this session.",
+            detail={
+                "reason": "You are not allowed to upload or get files in this session."
+            },
         )
 
 
@@ -137,6 +147,8 @@ def check_git_settings_instance_exists(
     instance = crud.get_git_settings(db, id)
     if not instance:
         raise HTTPException(
-            status_code=409,
-            detail=f"The git settings instance does not exist with id {id}",
+            status_code=404,
+            detail={
+                "reason": f"The git instance with id {id} does not exist."
+            },
         )

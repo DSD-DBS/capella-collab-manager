@@ -36,7 +36,10 @@ def list_git_settings(
 
     raise HTTPException(
         status_code=403,
-        detail="The role administrator is required for this transaction.",
+        detail={
+            "reason": "You need to be administrator for this operation.",
+            "technical": "The role administrator is required for this transaction.",
+        },
     )
 
 
@@ -49,7 +52,10 @@ def get_git_settings(
 
     raise HTTPException(
         status_code=403,
-        detail="The role administrator is required for this transaction.",
+        detail={
+            "reason": "You need to be administrator for this operation.",
+            "technical": "The role administrator is required for this transaction.",
+        },
     )
 
 
@@ -64,7 +70,10 @@ def create_git_settings(
 
     raise HTTPException(
         status_code=403,
-        detail="The role administrator is required for this transaction.",
+        detail={
+            "reason": "You need to be administrator for this operation.",
+            "technical": "The role administrator is required for this transaction.",
+        },
     )
 
 
@@ -81,7 +90,10 @@ def edit_git_settings(
 
     raise HTTPException(
         status_code=403,
-        detail="The role administrator is required for this transaction.",
+        detail={
+            "reason": "You need to be administrator for this operation.",
+            "technical": "The role administrator is required for this transaction.",
+        },
     )
 
 
@@ -96,5 +108,8 @@ def delete_git_settings(
 
     raise HTTPException(
         status_code=403,
-        detail="The role administrator is required for this transaction.",
+        detail={
+            "reason": "You need to be administrator for this operation.",
+            "technical": "The role administrator is required for this transaction.",
+        },
     )
