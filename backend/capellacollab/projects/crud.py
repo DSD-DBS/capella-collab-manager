@@ -9,7 +9,6 @@ import typing as t
 
 from fastapi import HTTPException
 from slugify import slugify
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from capellacollab.projects.models import DatabaseProject
