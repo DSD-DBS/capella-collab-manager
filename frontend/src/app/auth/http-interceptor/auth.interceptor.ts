@@ -18,12 +18,10 @@ import {
   AuthService,
   RefreshTokenResponse,
 } from 'src/app/services/auth/auth.service';
-import { LocalStorageService } from '../local-storage/local-storage.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   constructor(
-    private localStorageService: LocalStorageService,
     private router: Router,
     private authService: AuthService,
     private snackBar: MatSnackBar
@@ -69,7 +67,7 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   injectAccessToken(request: HttpRequest<unknown>): HttpRequest<unknown> {
-    let access_token = this.localStorageService.getValue('access_token');
+    let access_token = this.authService.accessToken;
     return request.clone({
       headers: request.headers.set('Authorization', `Bearer ${access_token}`),
     });
@@ -77,14 +75,6 @@ export class AuthInterceptor implements HttpInterceptor {
 
   refreshToken(): Observable<RefreshTokenResponse> {
     console.log('Token is expired. Refreshing token...');
-    const refresh_token = this.localStorageService.getValue('refresh_token');
-
-    return this.authService.refreshToken(refresh_token).pipe(
-      map((res) => {
-        this.localStorageService.setValue('access_token', res.access_token);
-        this.localStorageService.setValue('refresh_token', res.refresh_token);
-        return res;
-      }, first())
-    );
+    return this.authService.performTokenRefresh();
   }
 }
