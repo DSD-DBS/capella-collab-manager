@@ -59,7 +59,7 @@ export class UserSettingsComponent implements OnInit {
         this.repositoryUserService
           .updatePasswordOfUser(
             value.repository,
-            this.userService.getUsernameFromLocalStorage(),
+            this.userService.getUserName(),
             value.password
           )
           .subscribe(() => {

@@ -25,10 +25,25 @@ export class AuthService {
   ) {
     this._accessToken = '';
     this._refreshToken = '';
+
+    if (!environment.production) {
+      this._accessToken = this.localStorageService.getValue('access_token');
+      this._refreshToken = this.localStorageService.getValue('refresh_token');
+    }
   }
 
-  get accessToken() {
+  get accessToken(): string {
     return this._accessToken;
+  }
+
+  get userName(): string {
+    if (!this.isLoggedIn()) {
+      return '';
+    }
+
+    return JSON.parse(atob(this._accessToken.split('.')[1]))[
+      environment.usernameAttribute
+    ].trim();
   }
 
   getRedirectURL(): Observable<GetRedirectURLResponse> {
