@@ -49,7 +49,7 @@
   <div
     *ngIf="
       users.selectedOptions.selected.length &&
-      userService.getUsernameFromLocalStorage() != selectedUser.username
+      userService.getUserName() != selectedUser.username
     "
   >
     <button
