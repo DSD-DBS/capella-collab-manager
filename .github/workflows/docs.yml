@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: CC0-1.0
+
+name: Development documentation
+on:
+  push:
+    branches:
+      - staging
+      - v2/staging # To be removed when v2/staging will be the new staging.
+      - v2/docs
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.10
+      - run: pip install mkdocs-material
+      - run: mkdocs gh-deploy --force
+        working-directory: ./docs/development
