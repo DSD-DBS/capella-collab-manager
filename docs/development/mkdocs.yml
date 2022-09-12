@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+site_name: Capella Collaboration development documentation
+theme:
+  name: material
+
+
+nav:
+  - Home: index.md
+  - Backend:
+      - Technology overview: backend/technology.md
+      - Extension modules: backend/extensions.md
+  - Frontend:
+      - Routes: frontend/routes.md
+markdown_extensions:
+  - meta
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - abbr
+  - pymdownx.snippets
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+extra:
+  generator: false
+
+copyright: Copyright &copy; 2022 DB Netz AG
