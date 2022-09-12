@@ -12,14 +12,15 @@ import capellacollab.config.routes as configuration
 import capellacollab.core.metadata as core_metadata
 import capellacollab.sessions.routes as sessions
 from capellacollab.config import config
-from capellacollab.models import routes as models
 from capellacollab.projects import routes as projects
 from capellacollab.settings.modelsources.git import routes as git_settings
 from capellacollab.tools import routes as tools
 from capellacollab.utils import git_utils
 
+from ..projects.capellamodels import routes as models
+
 # local:
-from . import notices, sessions, users
+from . import notices, users
 
 log = logging.getLogger(__name__)
 
