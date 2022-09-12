@@ -53,28 +53,7 @@ def get_slug(
     return response_model
 
 
-@router.post("/{project_slug}/create-empty/", response_model=ResponseModel)
-def create_empty(
-    project_slug: str,
-    new_model: EmptyModel,
-    db: Session = Depends(get_db),
-    token: JWTBearer = Depends(JWTBearer()),
-) -> ResponseModel:
-
-    project = projects_crud.get_project_by_slug(db, project_slug)
-    verify_project_role(
-        repository=project.name,
-        token=token,
-        db=db,
-        allowed_roles=["manager", "administrator"],
-    )
-
-    return ResponseModel.from_model(
-        crud.create_empty_model(db, project_slug, new_model)
-    )
-
-
-@router.post("/{project_slug}/create-new/", response_model=ResponseModel)
+@router.post("/", response_model=ResponseModel)
 def create_new(
     project_slug: str,
     new_model: NewModel,
