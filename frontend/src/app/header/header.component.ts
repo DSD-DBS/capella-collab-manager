@@ -4,7 +4,6 @@
  */
 
 import { Component, Input, OnInit, Renderer2 } from '@angular/core';
-import { LocalStorageService } from '../auth/local-storage/local-storage.service';
 import { AuthService } from '../services/auth/auth.service';
 import { RepositoryService } from '../services/repository/repository.service';
 import { UserService } from '../services/user/user.service';
@@ -19,7 +18,6 @@ export class HeaderComponent implements OnInit {
   title = 'Capella Collaboration Plattform';
 
   constructor(
-    public localStorageService: LocalStorageService,
     public authService: AuthService,
     public userService: UserService,
     public repositoryService: RepositoryService
