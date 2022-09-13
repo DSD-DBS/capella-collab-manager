@@ -26,7 +26,7 @@ import { Source, SourceService } from 'src/app/services/source/source.service';
 export class CreateCoworkingMethodComponent implements OnInit {
   public gitForm = new FormGroup({
     credentials: new FormGroup({
-      url: new FormControl('', Validators.required),
+      path: new FormControl('', Validators.required),
       username: new FormControl(''),
       password: new FormControl(''),
     }),
@@ -75,7 +75,13 @@ export class CreateCoworkingMethodComponent implements OnInit {
       this.modelService.model &&
       this.gitForm.valid
     ) {
-      let source: Source = this.gitForm.value as Source;
+      let source: Source = {
+        path: this.gitForm.value.credentials!.path!,
+        username: this.gitForm.value.credentials!.username || '',
+        password: this.gitForm.value.credentials!.password || '',
+        revision: this.gitForm.value.revision!,
+        entrypoint: this.gitForm.value.entrypoint || '',
+      };
       this.sourceService
         .addGitSource(
           this.projectService.project.slug,

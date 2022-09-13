@@ -17,23 +17,6 @@ export interface NewModel {
   tool_id: number;
 }
 
-export interface EmptyModel extends NewModel {
-  tool_id: number;
-  version_id: string;
-  type_id: string;
-}
-
-export interface GitModel extends NewModel {
-  url: string;
-  username: string;
-  password: string;
-  revision: string;
-  path: string;
-  entrypoint: string;
-}
-
-export interface OfflineModel extends NewModel {}
-
 export interface Model {
   id: number;
   project_slug: string;
@@ -51,7 +34,7 @@ export interface Model {
   providedIn: 'root',
 })
 export class ModelService {
-  base_url = new URL('models/', environment.backend_url + '/');
+  base_url = new URL('projects/', environment.backend_url + '/');
 
   _model = new BehaviorSubject<Model | undefined>(undefined);
   _models = new BehaviorSubject<Model[] | undefined>(undefined);
@@ -66,22 +49,17 @@ export class ModelService {
   constructor(private http: HttpClient) {}
 
   list(project_slug: string): Observable<Model[]> {
-    let url = new URL(project_slug, this.base_url);
+    let url = new URL(`${project_slug}/models/`, this.base_url);
     return this.http.get<Model[]>(url.toString());
   }
 
   getModelBySlug(slug: string, project_slug: string): Observable<Model> {
-    let url = new URL(`${project_slug}/details/`, this.base_url);
-    return this.http.get<Model>(url.toString(), { params: { slug } });
+    let url = new URL(`${project_slug}/models/${slug}/`, this.base_url);
+    return this.http.get<Model>(url.toString());
   }
 
   createNewModel(project_slug: string, model: NewModel): Observable<Model> {
-    let url = new URL(project_slug + '/create-new/', this.base_url);
-    return this.createModelGeneric(url, model);
-  }
-
-  createEmptyModel(project_slug: string, model: EmptyModel): Observable<Model> {
-    let url = new URL(project_slug + '/create-empty/', this.base_url);
+    let url = new URL(`${project_slug}/models`, this.base_url);
     return this.createModelGeneric(url, model);
   }
 
@@ -91,10 +69,7 @@ export class ModelService {
     version_id: number,
     type_id: number
   ): Observable<Model> {
-    let url = new URL(
-      `${project_slug}/set-tool-details/${model_slug}/`,
-      this.base_url
-    );
+    let url = new URL(`${project_slug}/models/${model_slug}/`, this.base_url);
     return this.http.patch<Model>(url.toString(), { version_id, type_id });
   }
 
