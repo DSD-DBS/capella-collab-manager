@@ -4,6 +4,8 @@
 site_name: Capella Collaboration development documentation
 theme:
   name: material
+  features:
+    - content.code.annotate
 
 
 nav:
@@ -11,6 +13,7 @@ nav:
   - Backend:
       - Technology overview: backend/technology.md
       - Extension modules: backend/extensions.md
+      - Exception handling: backend/exception.md
   - Frontend:
       - Routes: frontend/routes.md
 markdown_extensions:
