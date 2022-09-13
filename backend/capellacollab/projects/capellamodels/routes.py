@@ -18,7 +18,7 @@ from capellacollab.projects import crud as projects_crud
 
 # local:
 from . import crud
-from .models import NewModel, ResponseModel, ToolDetails
+from .models import CapellaModel, ResponseModel, ToolDetails
 
 router = APIRouter()
 
@@ -76,7 +76,7 @@ def get_slug(
 @router.post("/", response_model=ResponseModel)
 def create_new(
     project_slug: str,
-    new_model: NewModel,
+    new_model: CapellaModel,
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
 ) -> ResponseModel:

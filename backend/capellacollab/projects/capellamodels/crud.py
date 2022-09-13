@@ -13,8 +13,8 @@ from sqlalchemy.orm import Session
 # 1st party:
 import capellacollab.projects.crud as projects_crud
 from capellacollab.projects.capellamodels.models import (
+    CapellaModel,
     DatabaseCapellaModel,
-    NewModel,
     ToolDetails,
 )
 from capellacollab.projects.models import DatabaseProject
@@ -60,7 +60,7 @@ def get_model_by_slug(
 
 
 def create_new_model(
-    db: Session, project_slug: str, new_model: NewModel
+    db: Session, project_slug: str, new_model: CapellaModel
 ) -> DatabaseCapellaModel:
     project = (
         db.query(DatabaseProject)

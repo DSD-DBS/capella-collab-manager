@@ -35,21 +35,7 @@ class CapellaModelType(enum.Enum):
     LIBRARY = "library"
 
 
-class DB_CapellaModel(Base):
-    __tablename__ = "capella_models"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String)
-    editing_mode = Column(Enum(EditingMode))
-    model_type = Column(Enum(CapellaModelType))
-    project = relationship("DatabaseProject", back_populates="models")
-    project_name = Column(String, ForeignKey("projects.name"))
-    t4c_model = relationship("DB_T4CModel", back_populates="model")
-    git_model = relationship("DB_GitModel", back_populates="model")
-
-
-class NewModel(BaseModel):
+class CapellaModel(BaseModel):
     name: str
     description: t.Optional[str]
     tool_id: int
@@ -96,7 +82,7 @@ class DatabaseCapellaModel(Base):
     git_model = relationship("DB_GitModel", back_populates="model")
 
     @classmethod
-    def from_new_model(cls, new_model: NewModel, project):
+    def from_new_model(cls, new_model: CapellaModel, project):
         return cls(
             name=new_model.name,
             slug=slugify(new_model.name),
