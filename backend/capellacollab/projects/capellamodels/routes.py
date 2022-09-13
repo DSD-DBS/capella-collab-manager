@@ -2,16 +2,20 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+# Standard library:
 import typing as t
 
+# 3rd party:
 from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
 
+# 1st party:
 from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.projects import crud as projects_crud
 
+# local:
 from . import crud
 from .models import NewModel, ResponseModel, ToolDetails
 

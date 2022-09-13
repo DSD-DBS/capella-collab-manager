@@ -2,11 +2,15 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+# Standard library:
 import typing as t
 
 from fastapi import HTTPException
+
+# 3rd party:
 from sqlalchemy.orm import Session
 
+# 1st party:
 import capellacollab.projects.crud as projects_crud
 from capellacollab.projects.capellamodels.models import (
     Model,

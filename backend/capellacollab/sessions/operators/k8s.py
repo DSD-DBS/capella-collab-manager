@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+# Standard library:
 import enum
 import logging
 import random
@@ -11,6 +12,7 @@ import typing as t
 from dataclasses import dataclass
 from datetime import datetime
 
+# 3rd party:
 import kubernetes
 import kubernetes.client.exceptions
 import kubernetes.client.models
