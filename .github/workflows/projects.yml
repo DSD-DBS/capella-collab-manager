@@ -16,5 +16,5 @@ jobs:
     steps:
       - uses: actions/add-to-project@v0.3.0
         with:
-          project-url: https://github.com/orgs/<orgName>/projects/<projectNumber>
+          project-url: https://github.com/orgs/DSD-DBS/projects/3
           github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
