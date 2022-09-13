@@ -92,7 +92,6 @@ export class AuthService {
     }
     this.cookieService.put('access_token', accessToken, {
       path: '/prometheus',
-      httpOnly: true,
       sameSite: 'strict',
     });
   }
