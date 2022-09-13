@@ -54,6 +54,4 @@ def get_project_by_slug(db: Session, slug: str) -> DatabaseProject:
     project = (
         db.query(DatabaseProject).filter(DatabaseProject.slug == slug).first()
     )
-    if not project:
-        raise HTTPException(404, "Project not found.")
     return project

@@ -27,8 +27,6 @@ def get_all_models(db: Session, project_slug: str) -> t.List[Model]:
         .filter(DatabaseProject.slug == project_slug)
         .first()
     )
-    if not project:
-        raise HTTPException(404, detail="Project not found.")
     return db.query(Model).filter(Model.project_id == project.id).all()
 
 
@@ -46,8 +44,6 @@ def get_model_by_slug(db: Session, project_slug: str, slug: str) -> Model:
         )
         .first()
     )
-    if not model:
-        raise HTTPException(404, "Model not found.")
     return model
 
 
@@ -61,7 +57,10 @@ def create_new_model(
     )
     tool = db.query(Tool).filter(Tool.id == new_model.tool_id).first()
     if not tool:
-        raise HTTPException(404, "Tool not found.")
+        raise HTTPException(
+            404,
+            {"reason": f"The tool with id {new_model.tool_id} was not found."},
+        )
     model = Model.from_new_model(new_model, project)
     db.add(model)
     db.commit()
@@ -76,9 +75,16 @@ def set_tool_details_for_model(
     )
     model_type = db.query(Type).filter(Type.id == tool_details.type_id).first()
     if not version:
-        raise HTTPException(404, "Version not found.")
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The version with id {model.verison_id} was not found."
+            },
+        )
     if not model_type:
-        raise HTTPException(404, "Model_type not found.")
+        raise HTTPException(
+            404, {"reason": f"The type with id {model.type_id} was not found."}
+        )
     model.version_id = version.id
     model.type_id = model_type.id
     db.add(model)

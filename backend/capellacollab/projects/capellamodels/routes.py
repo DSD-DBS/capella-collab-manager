@@ -7,7 +7,8 @@ import typing as t
 
 # 3rd party:
 from fastapi import APIRouter, Depends, HTTPException
-from requests import Session
+from sqlalchemy.exc import DatabaseError
+from sqlalchemy.orm import Session
 
 # 1st party:
 from capellacollab.core.authentication.database import verify_project_role
@@ -29,8 +30,13 @@ def get_id(
 
     project = projects_crud.get_project_by_slug(db, project_slug)
     if not project:
-        raise HTTPException(404, "Project not found.")
-
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The project having the name {project_slug} was not found.",
+                "technical": f"No project with {project_slug} found.",
+            },
+        )
     return [
         ResponseModel.from_model(model)
         for model in crud.get_all_models(db, project.slug)
@@ -46,10 +52,24 @@ def get_slug(
 
     project = projects_crud.get_project_by_slug(db, project_slug)
     if not project:
-        raise HTTPException(404, "Project not found.")
-    response_model = ResponseModel.from_model(
-        crud.get_model_by_slug(db, project_slug, slug)
-    )
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The project having the name {project_slug} was not found.",
+                "technical": f"No project with {project_slug} found.",
+            },
+        )
+    model = crud.get_model_by_slug(db, project_slug, slug)
+    if not model:
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The model having the name {slug} of the project {project.name} was not found.",
+                "technical": f"No model with {slug} found in the project {project.name}.",
+            },
+        )
+
+    response_model = ResponseModel.from_model(model)
     return response_model
 
 
@@ -62,16 +82,31 @@ def create_new(
 ) -> ResponseModel:
 
     project = projects_crud.get_project_by_slug(db, project_slug)
+    if not project:
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The project having the name {project_slug} was not found.",
+                "technical": f"No project with {project_slug} found.",
+            },
+        )
     verify_project_role(
         repository=project.name,
         token=token,
         db=db,
         allowed_roles=["manager", "administrator"],
     )
-
-    return ResponseModel.from_model(
-        crud.create_new_model(db, project_slug, new_model)
-    )
+    try:
+        model = crud.create_new_model(db, project_slug, new_model)
+    except DatabaseError as e:
+        raise HTTPException(
+            409,
+            {
+                "reason": "A model with a similar name already exists.",
+                "technical": "Slug already used",
+            },
+        ) from e
+    return ResponseModel.from_model(model)
 
 
 @router.patch(
@@ -88,11 +123,23 @@ def set_tool_details(
 
     project = projects_crud.get_project_by_slug(db, project_slug)
     if not project:
-        raise HTTPException(404, "Project Not found.")
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The project having the name {project_slug} was not found.",
+                "technical": f"No project with {project_slug} found.",
+            },
+        )
     verify_project_role(project.name, token, db, ["manager", "administrator"])
     model = crud.get_model_by_slug(db, project.slug, model_slug)
     if not model:
-        raise HTTPException(404, "Model not found.")
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The model having the name {model_slug} was not found.",
+                "technical": f"No model with {model_slug} found in the project {project.name}.",
+            },
+        )
 
     return ResponseModel.from_model(
         crud.set_tool_details_for_model(
