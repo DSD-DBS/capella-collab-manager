@@ -36,14 +36,8 @@ def update_description(
 def create_project(
     db: Session, name: str, description: str | None = None
 ) -> DatabaseProject:
-    slug = slugify(name)
-    if (
-        db.query(DatabaseProject).filter(DatabaseProject.slug == slug).first()
-        is not None
-    ):
-        raise HTTPException(409, "Slug already used.")
     repo = DatabaseProject(
-        name=name, slug=slug, description=description, users=[]
+        name=name, slug=slugify(name), description=description, users=[]
     )
     db.add(repo)
     db.commit()

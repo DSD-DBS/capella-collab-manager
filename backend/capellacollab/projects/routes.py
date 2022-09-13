@@ -7,8 +7,9 @@ import logging
 import typing as t
 from importlib import metadata
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
+from sqlalchemy.exc import DatabaseError
 
 import capellacollab.projects.crud as crud
 import capellacollab.projects.users.crud as users_crud
@@ -111,7 +112,16 @@ def create_repository(
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
 ):
-    project = crud.create_project(db, body.name, body.description)
+    try:
+        project = crud.create_project(db, body.name, body.description)
+    except DatabaseError as e:
+        raise HTTPException(
+            409,
+            {
+                "reason": "A project with a similar name already exists.",
+                "technical": "Slug already used",
+            },
+        ) from e
     users_crud.add_user_to_repository(
         db,
         project.name,
