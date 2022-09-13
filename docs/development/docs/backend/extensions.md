@@ -55,7 +55,7 @@ frequently or should be interchangeable, we use Python entrypoints.
 
 A entrypoint can be defined in the `pyproject.toml` file:
 
-```py
+```py title="pyproject.toml"
 [project.entry-points."capellacollab.extensions"]
 extension1 = "path.to.extension1"
 extension2 = "path.to.extension2"
@@ -64,7 +64,7 @@ extension2 = "path.to.extension2"
 The `routes` and `models` components are then imported in the code:
 For example, to include the routers, we use the following code:
 
-```py
+```py title="routes.py"
 eps = metadata.entry_points()["capellacollab.extensions"]
 for ep in eps:
     log.info("Add routes of extension %s", ep.name)
