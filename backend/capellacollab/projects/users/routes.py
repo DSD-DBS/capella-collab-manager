@@ -24,7 +24,6 @@ from capellacollab.core.authentication.responses import (
 )
 from capellacollab.core.database import get_db, users
 
-# local:
 from . import crud as repository_users
 
 router = APIRouter()
