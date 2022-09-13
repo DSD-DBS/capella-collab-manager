@@ -68,7 +68,7 @@ class ToolDetails(BaseModel):
     type_id: int
 
 
-class Model(Base):
+class DatabaseCapellaModel(Base):
     __tablename__ = "models"
     __table_args__ = (UniqueConstraint("project_id", "slug"),)
 
@@ -119,7 +119,7 @@ class ResponseModel(BaseModel):
     git_model: t.Optional[int]
 
     @classmethod
-    def from_model(cls, model: Model):
+    def from_model(cls, model: DatabaseCapellaModel):
         return cls(
             id=model.id,
             slug=model.slug,
