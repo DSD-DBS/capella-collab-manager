@@ -49,7 +49,7 @@
           adminusers.selectedOptions.selected[0]?.value.role ==
             'administrator' &&
           adminusers.selectedOptions.selected[0]?.value.name !=
-            userService.getUsernameFromLocalStorage()
+            userService.getUserName()
         "
         (click)="
           this.removeAdministrator(
