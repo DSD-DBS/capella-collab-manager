@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
@@ -10,10 +13,14 @@ hello = base64.b64encode(b"hello")  # aGVsbG8=
 
 def test_lazy_b64_decode():
     assert as_text(lazy_b64decode([hello])) == "hello"
-    assert as_text(lazy_b64decode([hello[0:3], hello[3:7], hello[7:]])) == "hello"
+    assert (
+        as_text(lazy_b64decode([hello[0:3], hello[3:7], hello[7:]])) == "hello"
+    )
     assert (
         as_text(
-            lazy_b64decode([hello[0:1], hello[1:2], hello[2:3], hello[3:4], hello[4:]])
+            lazy_b64decode(
+                [hello[0:1], hello[1:2], hello[2:3], hello[3:4], hello[4:]]
+            )
         )
         == "hello"
     )
@@ -21,7 +28,9 @@ def test_lazy_b64_decode():
 
 def test_download_file(monkeypatch):
     mock_stream = MockStream([hello.decode("utf-8")])
-    monkeypatch.setattr("kubernetes.stream.stream", lambda *a, **ka: mock_stream)
+    monkeypatch.setattr(
+        "kubernetes.stream.stream", lambda *a, **ka: mock_stream
+    )
     monkeypatch.setattr(
         "t4cclient.sessions.operators.k8s.KubernetesOperator._get_pod_name",
         lambda *a: "",

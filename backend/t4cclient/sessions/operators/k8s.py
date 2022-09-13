@@ -643,7 +643,9 @@ class KubernetesOperator(Operator):
             yield from lazy_b64decode(reader())
 
         except kubernetes.client.exceptions.ApiException as e:
-            log.exception("Exception when copying file to the pod with id %s", id)
+            log.exception(
+                "Exception when copying file to the pod with id %s", id
+            )
             raise
 
 
