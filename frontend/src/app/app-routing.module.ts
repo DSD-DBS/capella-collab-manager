@@ -167,7 +167,7 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'create-project',
+    path: 'projects/create',
     component: CreateProjectComponent,
     canActivate: [AuthGuardService],
   },
