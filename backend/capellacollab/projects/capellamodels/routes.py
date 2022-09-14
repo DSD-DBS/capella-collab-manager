@@ -39,7 +39,7 @@ def get_id(
         )
     return [
         ResponseModel.from_model(model)
-        for model in crud.get_all_models(db, project.slug)
+        for model in crud.get_all_models_in_project(db, project.slug)
     ]
 
 

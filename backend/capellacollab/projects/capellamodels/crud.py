@@ -21,7 +21,7 @@ from capellacollab.projects.models import DatabaseProject
 from capellacollab.tools.models import Tool, Type, Version
 
 
-def get_all_models(
+def get_all_models_in_project(
     db: Session, project_slug: str
 ) -> t.List[DatabaseCapellaModel]:
     project = (
