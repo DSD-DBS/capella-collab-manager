@@ -17,6 +17,7 @@ import {
 } from 'src/app/services/git/git.service';
 import { ModelService } from 'src/app/services/model/model.service';
 import { Source, SourceService } from 'src/app/services/source/source.service';
+import { filter, switchMap, map, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-create-coworking-method',
@@ -70,11 +71,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (
-      this.projectService.project &&
-      this.modelService.model &&
-      this.gitForm.valid
-    ) {
+    if (this.gitForm.valid) {
       let source: Source = {
         path: this.gitForm.value.credentials!.path!,
         username: this.gitForm.value.credentials!.username || '',
@@ -82,11 +79,18 @@ export class CreateCoworkingMethodComponent implements OnInit {
         revision: this.gitForm.value.revision!,
         entrypoint: this.gitForm.value.entrypoint || '',
       };
-      this.sourceService
-        .addGitSource(
-          this.projectService.project.slug,
-          this.modelService.model.slug,
-          source
+      combineLatest([
+        this.projectService._project.pipe(
+          filter(Boolean),
+          map((project) => project.name)
+        ),
+        this.modelService._model.pipe(
+          filter(Boolean),
+          map((model) => model.slug)
+        ),
+      ])
+        .pipe(
+          switchMap((args) => this.sourceService.addGitSource(...args, source))
         )
         .subscribe((_) => {
           this.router.navigate([
