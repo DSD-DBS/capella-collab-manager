@@ -37,14 +37,17 @@ import {
   styleUrls: ['./create-project.component.css'],
 })
 export class CreateProjectComponent implements OnInit, OnDestroy {
+  private projectsSlugs = new BehaviorSubject<string[]>([]);
+  private projectDetails = false;
+  private slugsSubscription?: Subscription;
+
   form = new FormGroup({
-    name: new FormControl('', Validators.required),
+    name: new FormControl('', [
+      Validators.required,
+      this.slugValidator.bind(this),
+    ]),
     description: new FormControl(''),
   });
-
-  private projectDetails = false;
-  private projectsSlugs = new BehaviorSubject<string[]>([]);
-  private slugsSubscription?: Subscription;
 
   constructor(
     public projectService: ProjectService,
@@ -56,8 +59,6 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.form.controls.name.addValidators(this.slugValidator.bind(this));
-
     let projects = this.projectService._projects;
 
     this.projectService.list().subscribe({
