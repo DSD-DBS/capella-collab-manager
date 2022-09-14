@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-# Standard library:
 import typing as t
 
 from fastapi import HTTPException

@@ -3,10 +3,8 @@
 
 from __future__ import annotations
 
-# Standard library:
 import typing as t
 
-# 3rd party:
 from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError, Session
 
@@ -27,7 +25,6 @@ from capellacollab.core.authentication.responses import (
 )
 from capellacollab.core.database import get_db, users
 
-# local:
 from . import crud as repository_users
 
 router = APIRouter()
