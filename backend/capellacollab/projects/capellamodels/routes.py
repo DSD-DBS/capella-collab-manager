@@ -47,7 +47,7 @@ def list_in_project(
 
 
 @router.get("/{slug}", response_model=ResponseModel)
-def get_slug(
+def get_model_by_slug(
     project_slug: str,
     slug: str,
     db: Session = Depends(get_db),
