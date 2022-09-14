@@ -24,8 +24,10 @@ router = APIRouter()
 
 
 @router.get("/", response_model=t.List[ResponseModel])
-def get_id(
-    project_slug: str, db: Session = Depends(get_db)
+def list_in_project(
+    project_slug: str,
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
 ) -> t.List[ResponseModel]:
 
     project = projects_crud.get_project_by_slug(db, project_slug)
@@ -37,6 +39,7 @@ def get_id(
                 "technical": f"No project with {project_slug} found.",
             },
         )
+    verify_project_role(project.name, token, db)
     return [
         ResponseModel.from_model(model)
         for model in crud.get_all_models_in_project(db, project.slug)
@@ -48,6 +51,7 @@ def get_slug(
     project_slug: str,
     slug: str,
     db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
 ) -> ResponseModel:
 
     project = projects_crud.get_project_by_slug(db, project_slug)
@@ -59,6 +63,7 @@ def get_slug(
                 "technical": f"No project with {project_slug} found.",
             },
         )
+    verify_project_role(project.name, token, db)
     model = crud.get_model_by_slug(db, project_slug, slug)
     if not model:
         raise HTTPException(
