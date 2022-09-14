@@ -4,7 +4,7 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, tap } from 'rxjs';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import {
   ProjectService,
@@ -18,7 +18,6 @@ import {
 })
 export class ProjectOverviewComponent implements OnInit {
   showSpinner = true;
-  project_list_subscription?: Subscription;
 
   constructor(
     public projectService: ProjectService,
@@ -30,10 +29,17 @@ export class ProjectOverviewComponent implements OnInit {
   ngOnInit() {
     this.navbarService.enableAll();
     let projects = this.projectService._projects;
-    this.projectService.list().subscribe({
-      next: projects.next.bind(projects),
-      error: projects.error.bind(projects),
-    });
+    this.projectService
+      .list()
+      .pipe(
+        tap(() => {
+          this.showSpinner = false;
+        })
+      )
+      .subscribe({
+        next: projects.next.bind(projects),
+        error: projects.error.bind(projects),
+      });
   }
 
   sumUsers(user: UserMetadata): number {
