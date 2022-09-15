@@ -50,13 +50,7 @@
       <app-project-user-settings
         [repository]="projectService.project"
       ></app-project-user-settings>
-      <a
-        mat-flat-button
-        color="primary"
-        [routerLink]="['/project', projectService.project!.slug]"
-      >
-        Finish
-      </a>
+      <button mat-flat-button color="primary" (click)="finish()">Finish</button>
     </mat-card>
   </mat-step>
 </mat-horizontal-stepper>
