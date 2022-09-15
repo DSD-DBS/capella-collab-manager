@@ -17,6 +17,7 @@ export interface Session {
   repository: string;
   state: string;
   owner: string;
+  download_in_progress: boolean;
 }
 
 export interface User {

@@ -29,6 +29,15 @@
   </button>
 </div>
 
+<mat-card *ngIf="session.download_in_progress">
+  <mat-card-content>
+    <p>Your download is being prepared…</p>
+  </mat-card-content>
+  <mat-card-footer>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </mat-card-footer>
+</mat-card>
+
 <mat-checkbox
   *ngIf="!loadingFiles"
   [formControl]="showHiddenFiles"
@@ -71,7 +80,12 @@
         </button>
         {{ node.name }}
       </div>
-      <button mat-icon-button color="primary" (click)="download(node.path)">
+      <button
+        mat-icon-button
+        color="primary"
+        (click)="download(node.path)"
+        [disabled]="session.download_in_progress"
+      >
         <mat-icon>download_file</mat-icon>
       </button>
       <div>
@@ -97,19 +111,17 @@
   </mat-nested-tree-node>
 </mat-tree>
 
-<div mat-dialog-actions>
-  <div class="flexbox">
-    <button mat-button (click)="this.dialogRef.close()">Close</button>
+<mat-dialog-actions>
+  <button mat-button (click)="this.dialogRef.close()">Close</button>
 
-    <button
-      [disabled]="!files.length"
-      type="submit"
-      mat-raised-button
-      color="primary"
-      (click)="submit()"
-      style="margin-left: 30px"
-    >
-      Submit
-    </button>
-  </div>
-</div>
+  <button
+    [disabled]="!files.length"
+    type="submit"
+    mat-raised-button
+    color="primary"
+    (click)="submit()"
+    style="margin-left: 30px"
+  >
+    Submit
+  </button>
+</mat-dialog-actions>
