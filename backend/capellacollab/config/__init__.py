@@ -3,12 +3,10 @@
 
 from __future__ import annotations
 
-# Standard library:
 import logging
 import os
 import typing as t
 
-# local:
 from . import loader
 
 log = logging.getLogger(__name__)

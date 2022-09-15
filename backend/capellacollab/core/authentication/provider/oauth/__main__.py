@@ -4,7 +4,6 @@
 
 from capellacollab.config import config
 
-# local:
 from .keystore import KeyStore
 
 cfg = config["authentication"]["oauth"]

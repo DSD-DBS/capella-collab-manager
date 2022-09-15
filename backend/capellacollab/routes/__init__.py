@@ -17,9 +17,6 @@ from capellacollab.settings.modelsources.git import routes as git_settings
 from capellacollab.tools import routes as tools
 from capellacollab.utils import git_utils
 
-from ..projects.capellamodels import routes as models
-
-# local:
 from . import notices, users
 
 log = logging.getLogger(__name__)

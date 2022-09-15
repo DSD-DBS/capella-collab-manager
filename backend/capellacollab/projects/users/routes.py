@@ -8,7 +8,6 @@ import typing as t
 from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError, Session
 
-# 1st party:
 import capellacollab.extensions.modelsources.t4c.connection as t4c_manager
 import capellacollab.projects.users.models as schema_repositories
 from capellacollab.core.authentication.database import (

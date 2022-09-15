@@ -3,10 +3,8 @@
 
 from __future__ import annotations
 
-# Standard library:
 from importlib import metadata
 
-# 1st party:
 from capellacollab.config import config
 
 try:

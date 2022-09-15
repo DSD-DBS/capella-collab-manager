@@ -4,7 +4,6 @@
 
 from capellacollab.config import config
 
-# local:
 from . import keystore
 
 # Our "singleton" key store:
