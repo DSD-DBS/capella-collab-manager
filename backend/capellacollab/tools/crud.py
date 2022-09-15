@@ -4,6 +4,7 @@
 
 import typing as t
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from capellacollab.tools.models import Tool, Type, Version
@@ -11,6 +12,10 @@ from capellacollab.tools.models import Tool, Type, Version
 
 def get_all_tools(db: Session) -> t.List[Tool]:
     return db.query(Tool).all()
+
+
+def get_tool_by_id(id_: int, db: Session) -> Tool:
+    return db.execute(select(Tool).where(Tool.id == id_)).scalar_one()
 
 
 def create_tool(db: Session, tool: Tool):

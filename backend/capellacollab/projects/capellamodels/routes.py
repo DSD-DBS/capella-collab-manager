@@ -12,6 +12,7 @@ from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.projects import crud as projects_crud
+from capellacollab.tools import crud as tools_crud
 
 from . import crud
 from .models import CapellaModel, ResponseModel, ToolDetails
@@ -98,7 +99,14 @@ def create_new(
         allowed_roles=["manager", "administrator"],
     )
     try:
-        model = crud.create_new_model(db, project_slug, new_model)
+        tool = tools_crud.get_tool_by_id(new_model.tool_id, db)
+    except IntegrityError as e:
+        raise HTTPException(
+            404,
+            {"reason": f"The tool with id {new_model.tool_id} was not found."},
+        )
+    try:
+        model = crud.create_new_model(db, project, new_model, tool)
     except IntegrityError as e:
         raise HTTPException(
             409,

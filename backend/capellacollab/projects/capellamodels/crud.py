@@ -5,6 +5,7 @@
 import typing as t
 
 from fastapi import HTTPException
+from slugify import slugify
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.crud as projects_crud
@@ -56,22 +57,18 @@ def get_model_by_slug(
 
 
 def create_new_model(
-    db: Session, project_slug: str, new_model: CapellaModel
+    db: Session, project: DatabaseProject, new_model: CapellaModel, tool: Tool
 ) -> DatabaseCapellaModel:
-    project = (
-        db.query(DatabaseProject)
-        .filter(DatabaseProject.slug == project_slug)
-        .first()
+    model = DatabaseCapellaModel(
+        name=new_model.name,
+        slug=slugify(new_model.name),
+        description=new_model.description,
+        project=project,
+        tool=tool,
     )
-    tool = db.query(Tool).filter(Tool.id == new_model.tool_id).first()
-    if not tool:
-        raise HTTPException(
-            404,
-            {"reason": f"The tool with id {new_model.tool_id} was not found."},
-        )
-    model = DatabaseCapellaModel.from_new_model(new_model, project)
     db.add(model)
     db.commit()
+    db.refresh(model)
     return model
 
 

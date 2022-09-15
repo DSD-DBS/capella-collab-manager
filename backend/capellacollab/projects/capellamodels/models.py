@@ -73,16 +73,6 @@ class DatabaseCapellaModel(Base):
     t4c_model = relationship("DB_T4CModel", back_populates="model")
     git_model = relationship("DB_GitModel", back_populates="model")
 
-    @classmethod
-    def from_new_model(cls, new_model: CapellaModel, project):
-        return cls(
-            name=new_model.name,
-            slug=slugify(new_model.name),
-            description=new_model.description,
-            project_id=project.id,
-            tool_id=new_model.tool_id,
-        )
-
 
 class ResponseModel(BaseModel):
     id: int
