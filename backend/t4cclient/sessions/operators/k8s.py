@@ -636,7 +636,7 @@ class KubernetesOperator(Operator):
 
             def reader():
                 while stream.is_open():
-                    content = stream.read_stdout(timeout=30)
+                    content = stream.read_stdout(timeout=60)
                     if content:
                         yield content.encode("utf-8")
 
