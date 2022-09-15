@@ -141,9 +141,9 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   slugValidator(control: AbstractControl): ValidationErrors | null {
-    let new_slug = slugify(control.value, { lower: true });
+    let newSlug = slugify(control.value, { lower: true });
     for (let slug of this.projectsSlugs.value) {
-      if (slug == new_slug) {
+      if (slug == newSlug) {
         return { uniqueSlug: { value: slug } };
       }
     }
