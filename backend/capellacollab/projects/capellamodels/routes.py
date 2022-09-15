@@ -5,7 +5,7 @@
 import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication.database import verify_project_role
@@ -149,11 +149,42 @@ def set_tool_details(
                 "technical": f"No model with {model_slug} found in the project {project.name}.",
             },
         )
+    try:
+        version = tools_crud.get_version_by_id(tool_details.version_id, db)
+    except NoResultFound as e:
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The version with id {model.version_id} was not found."
+            },
+        )
+    if version.tool != model.tool:
+        raise HTTPException(
+            409,
+            {
+                "reason": f"The tool having the version “{version.name}” (“{version.tool.name}”) does not match the tool of the model “{model.name}” (“{model.tool.name}”)."
+            },
+        )
+
+    try:
+        model_type = tools_crud.get_type_by_id(tool_details.type_id, db)
+    except NoResultFound as e:
+        raise HTTPException(
+            404, {"reason": f"The type with id {model.type_id} was not found."}
+        )
+    if model_type.tool != model.tool:
+        raise HTTPException(
+            409,
+            {
+                "reason": f"The tool having the type “{model_type.name}” (“{model_type.tool.name}”) does not match the tool of the model “{model.name}” (“{model.tool.name}”)."
+            },
+        )
 
     return ResponseModel.from_model(
         crud.set_tool_details_for_model(
             db,
             model,
-            tool_details,
+            version,
+            model_type,
         )
     )

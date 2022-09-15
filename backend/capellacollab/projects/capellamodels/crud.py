@@ -4,7 +4,6 @@
 
 import typing as t
 
-from fastapi import HTTPException
 from slugify import slugify
 from sqlalchemy.orm import Session
 
@@ -12,7 +11,6 @@ import capellacollab.projects.crud as projects_crud
 from capellacollab.projects.capellamodels.models import (
     CapellaModel,
     DatabaseCapellaModel,
-    ToolDetails,
 )
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.tools.models import Tool, Type, Version
@@ -73,25 +71,13 @@ def create_new_model(
 
 
 def set_tool_details_for_model(
-    db: Session, model: DatabaseCapellaModel, tool_details: ToolDetails
+    db: Session,
+    model: DatabaseCapellaModel,
+    version: Version,
+    model_type: Type,
 ):
-    version = (
-        db.query(Version).filter(Version.id == tool_details.version_id).first()
-    )
-    model_type = db.query(Type).filter(Type.id == tool_details.type_id).first()
-    if not version:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The version with id {model.verison_id} was not found."
-            },
-        )
-    if not model_type:
-        raise HTTPException(
-            404, {"reason": f"The type with id {model.type_id} was not found."}
-        )
-    model.version_id = version.id
-    model.type_id = model_type.id
+    model.version = version
+    model.type = model_type
     db.add(model)
     db.commit()
     return model
