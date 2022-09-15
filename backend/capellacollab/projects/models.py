@@ -43,6 +43,7 @@ class PatchProject(BaseModel):
 
 class PostRepositoryRequest(BaseModel):
     name: str
+    description: t.Optional[str]
 
 
 class DatabaseProject(Base):
@@ -56,4 +57,4 @@ class DatabaseProject(Base):
         "ProjectUserAssociation",
         back_populates="projects",
     )
-    models = relationship("Model", back_populates="project")
+    models = relationship("DatabaseCapellaModel", back_populates="project")

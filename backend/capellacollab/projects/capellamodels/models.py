@@ -8,12 +8,21 @@ import enum
 import typing as t
 
 from pydantic import BaseModel
-from sqlalchemy import Column, Enum, ForeignKey, Integer, String
+from slugify import slugify
+from sqlalchemy import (
+    Column,
+    Enum,
+    ForeignKey,
+    Integer,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import relationship
 
 # Import required for sqlalchemy
 import capellacollab.projects.users.models
 from capellacollab.core.database import Base
+from capellacollab.tools.models import Tool, Type, Version
 
 
 class EditingMode(enum.Enum):
@@ -26,39 +35,66 @@ class CapellaModelType(enum.Enum):
     LIBRARY = "library"
 
 
-class DB_CapellaModel(Base):
-    __tablename__ = "capella_models"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String)
-    editing_mode = Column(Enum(EditingMode))
-    model_type = Column(Enum(CapellaModelType))
-    project = relationship("DatabaseProject", back_populates="models")
-    project_name = Column(String, ForeignKey("projects.name"))
-    t4c_model = relationship("DB_T4CModel", back_populates="model")
-    git_model = relationship("DB_GitModel", back_populates="model")
-
-
-class NewModel(BaseModel):
+class CapellaModel(BaseModel):
     name: str
-    description: str | None
+    description: t.Optional[str]
     tool_id: int
+
+
+class ToolDetails(BaseModel):
     version_id: int
     type_id: int
 
 
+class DatabaseCapellaModel(Base):
+    __tablename__ = "models"
+    __table_args__ = (UniqueConstraint("project_id", "slug"),)
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    slug = Column(String)
+    description = Column(String)
+
+    project_id = Column(Integer, ForeignKey("projects.id"))
+    project = relationship("DatabaseProject", back_populates="models")
+
+    tool_id = Column(Integer, ForeignKey(Tool.id))
+    tool = relationship(Tool)
+
+    version_id = Column(Integer, ForeignKey(Version.id))
+    version = relationship(Version)
+
+    type_id = Column(Integer, ForeignKey(Type.id))
+    tool_type = relationship(Type)
+
+    editing_mode = Column(Enum(EditingMode))
+    model_type = Column(Enum(CapellaModelType))
+
+    t4c_model = relationship("DB_T4CModel", back_populates="model")
+    git_model = relationship("DB_GitModel", back_populates="model")
+
+
 class ResponseModel(BaseModel):
     id: int
+    slug: str
     project_slug: str
     name: str
     description: str
+    tool_id: t.Optional[int]
+    version_id: t.Optional[int]
+    type_id: t.Optional[int]
+    t4c_model: t.Optional[int]
+    git_model: t.Optional[int]
 
     @classmethod
-    def from_model(cls, model: DB_CapellaModel):
+    def from_model(cls, model: DatabaseCapellaModel):
         return cls(
             id=model.id,
+            slug=model.slug,
             project_slug=model.project.slug,
             name=model.name,
             description=model.description,
+            tool_id=model.tool_id,
+            version_id=model.version_id,
+            type_id=model.type_id,
         )

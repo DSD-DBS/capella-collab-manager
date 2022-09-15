@@ -61,10 +61,13 @@ def check_project_role(
     return any(
         (
             "user" in allowed_roles
-            and any(project.name == repository for project in user.projects),
+            and any(
+                project.projects_name == repository
+                for project in user.projects
+            ),
             "manager" in allowed_roles
             and any(
-                project.name == repository
+                project.projects_name == repository
                 and project.role == RepositoryUserRole.MANAGER
                 for project in user.projects
             ),

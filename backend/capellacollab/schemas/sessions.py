@@ -5,12 +5,10 @@ from __future__ import annotations
 
 import datetime
 import enum
-import numbers
 import typing as t
 
 from pydantic import BaseModel
 
-# local:
 from capellacollab.sessions.operators.k8s import FileType
 
 

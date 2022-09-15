@@ -12,8 +12,6 @@ from requests.auth import HTTPBasicAuth
 from sqlalchemy.orm import Session
 
 from capellacollab.config import config
-
-# local:
 from capellacollab.core.authentication.database import (
     check_session_belongs_to_user,
 )

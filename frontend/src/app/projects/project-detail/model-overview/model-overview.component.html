@@ -8,17 +8,17 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="models" *ngIf="this.modelService.models">
+<div class="models" *ngIf="models">
   <div class="models-title">
     <h2 id="title">Models</h2>
     <a
       mat-button
-      [routerLink]="['/create-model', projectService.project?.slug]"
+      [routerLink]="['/project', project?.slug, 'models', 'create']"
     >
       <mat-icon id="add-icon">add</mat-icon>
     </a>
   </div>
-  <mat-card *ngFor="let model of this.modelService.models">
+  <mat-card *ngFor="let model of models">
     <div class="header">
       <div class="title">{{ model.name }}</div>
       <div class="right">
@@ -39,7 +39,7 @@
           <a
             mat-mini-fab
             matTooltip="Configure model"
-            [routerLink]="['/model', project_slug, model.slug]"
+            [routerLink]="['/projects', project!.slug, model.slug]"
           >
             <mat-icon>settings</mat-icon>
           </a>

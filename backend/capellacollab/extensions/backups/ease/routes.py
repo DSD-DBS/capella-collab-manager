@@ -21,7 +21,6 @@ from capellacollab.core.database import get_db
 from capellacollab.extensions.modelsources import git, t4c
 from capellacollab.sessions.operators import OPERATOR
 
-# local:
 from . import crud, helper, models
 
 router = APIRouter()

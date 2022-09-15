@@ -4,10 +4,8 @@
 
 from fastapi import Depends, HTTPException
 
-from capellacollab.core.database import get_db
 from capellacollab.extensions.backups import jenkins
 
-# local:
 from . import git_models as git_models_auth
 
 

@@ -17,9 +17,17 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import slugify from 'slugify';
-import { ProjectService } from 'src/app/services/project/project.service';
-import { ModelService, NewModel } from 'src/app/services/model/model.service';
+import {
+  Project,
+  ProjectService,
+} from 'src/app/services/project/project.service';
+import {
+  Model,
+  ModelService,
+  NewModel,
+} from 'src/app/services/model/model.service';
 import { ToolService } from 'src/app/services/tools/tool.service';
+import { connectable, filter, first, single, Subject, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-create-model',
@@ -37,7 +45,6 @@ export class CreateModelComponent implements OnInit {
     private modelService: ModelService,
     public projectService: ProjectService,
     public toolService: ToolService,
-    private route: ActivatedRoute,
     private router: Router
   ) {}
 
@@ -55,28 +62,49 @@ export class CreateModelComponent implements OnInit {
 
   ngOnInit(): void {
     this.toolService.get_tools().subscribe();
-    this.route.params.subscribe((params) => {
-      this.modelService.initAll(params.project).subscribe((models) => {
-        this.form.controls.name.addValidators(
-          this.slugValidator(models.map((value) => value.slug))
-        );
-      });
+    this.modelService._models.pipe(filter(Boolean)).subscribe((models) => {
+      this.form.controls.name.addValidators(
+        this.slugValidator(models.map((model) => model.slug))
+      );
     });
   }
 
   onSubmit(): void {
-    if (this.form.valid && this.projectService.project?.slug) {
+    if (this.form.valid && this.projectService.project!.slug) {
       let new_model = this.form.value as NewModel;
-      this.modelService
-        .createNewModel(this.projectService.project?.slug, new_model)
-        .subscribe((result) => {
-          this.router.navigate([
-            '/choose-source',
-            this.projectService.project?.slug,
-            result.slug,
-          ]);
+
+      const modelConnectable = connectable<Model>(
+        this.modelService.createNewModel(
+          this.projectService.project!.slug,
+          new_model
+        ),
+        {
+          connector: () => new Subject(),
+          resetOnDisconnect: false,
+        }
+      );
+
+      modelConnectable.subscribe((model) => {
+        this.router.navigate([
+          'project',
+          this.projectService.project!.slug,
+          'model',
+          model.slug,
+          'choose-source',
+        ]);
+      });
+
+      modelConnectable
+        .pipe(
+          switchMap((_) =>
+            this.modelService.list(this.projectService.project!.slug)
+          )
+        )
+        .subscribe((value) => {
+          this.modelService._models.next(value);
         });
-      this.modelService.list(this.projectService.project.slug).subscribe();
+
+      modelConnectable.connect();
     }
   }
 }

@@ -6,7 +6,6 @@ import typing as t
 
 from sqlalchemy.orm import Session
 
-# local:
 from . import models
 
 

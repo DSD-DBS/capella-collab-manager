@@ -3,75 +3,54 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<!--
- ~ Copyright DB Netz AG and the capella-collab-manager contributors
- ~ SPDX-License-Identifier: Apache-2.0
- -->
-
 <div class="wrapper">
   <h1>Create Project</h1>
 </div>
 
-<mat-stepper linear #stepper>
-  <mat-step>
-    <form [formGroup]="createProjectForm">
-      <ng-template matStepLabel>General information</ng-template>
-      <mat-form-field appearance="fill">
-        <mat-label>Name</mat-label>
-        <input matInput formControlName="name" />
-        <mat-error>Please enter a project name!</mat-error>
-      </mat-form-field>
-      <br />
-      <mat-form-field appearance="fill">
-        <mat-label>Description</mat-label>
-        <textarea matInput formControlName="description"></textarea>
-      </mat-form-field>
-      <br />
-      Please select your primary editing mode: <br />
-      <mat-button-toggle-group formControlName="editingMode">
-        <mat-button-toggle value="t4c">Team4Capella</mat-button-toggle>
-        <mat-button-toggle value="git">Git</mat-button-toggle>
-      </mat-button-toggle-group>
-      <br />
-      Please select the type of your project: <br />
-      <mat-button-toggle-group formControlName="type">
-        <mat-button-toggle value="project">Project</mat-button-toggle>
-        <mat-button-toggle value="library">Library</mat-button-toggle>
-      </mat-button-toggle-group>
-      <br />
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-flat-button color="primary" (click)="createProject(stepper)">
-        Next
-      </button>
-    </form>
+<mat-horizontal-stepper linear #stepper>
+  <mat-step completed="false" label="General informations">
+    <mat-card class="section-card">
+      <form [formGroup]="form">
+        <fieldset>
+          <mat-form-field appearance="fill">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" />
+            <mat-error *ngIf="form.controls.name.errors?.uniqueSlug">
+              A project with a name similar to “{{
+                form.controls.name.errors!.uniqueSlug.value
+              }}” already exists.
+            </mat-error>
+            <mat-error *ngIf="form.controls.name.errors?.required">
+              A project name is required.
+            </mat-error>
+          </mat-form-field>
+        </fieldset>
+        <fieldset>
+          <mat-form-field appearance="fill">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description"></textarea>
+          </mat-form-field>
+        </fieldset>
+        <a routerLink="/projects" mat-button matStepperPrevious>Cancel</a>
+        <button
+          mat-flat-button
+          color="primary"
+          [disabled]="!form.valid"
+          (click)="createProject(stepper)"
+        >
+          Create project
+        </button>
+      </form>
+    </mat-card>
   </mat-step>
 
-  <mat-step>
-    <form [formGroup]="createProjectForm">
-      <ng-template matStepLabel>Add team members</ng-template>
-      You role will be project lead.
-    </form>
-    <ng-template matStepContent>
+  <mat-step label="Add team members">
+    <mat-card class="section-card" *ngIf="projectService.project">
+      <h2>Your role will be project lead.</h2>
       <app-project-user-settings
-        [repository]="project_slug"
+        [repository]="projectService.project"
       ></app-project-user-settings>
-    </ng-template>
+      <button mat-flat-button color="primary" (click)="finish()">Finish</button>
+    </mat-card>
   </mat-step>
-  <mat-step>
-    <form [formGroup]="createProjectForm">
-      <ng-template matStepLabel>Link models</ng-template>
-    </form>
-  </mat-step>
-  <mat-step>
-    <form [formGroup]="createProjectForm">
-      <ng-template matStepLabel
-        >Add modifiers, integrations and backups</ng-template
-      >
-    </form>
-  </mat-step>
-  <mat-step>
-    <form [formGroup]="createProjectForm">
-      <ng-template matStepLabel>Finish</ng-template>
-    </form>
-  </mat-step>
-</mat-stepper>
+</mat-horizontal-stepper>

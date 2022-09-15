@@ -8,7 +8,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { environment } from 'src/environments/environment';
 import { ModelService } from '../model/model.service';
@@ -27,34 +27,24 @@ export interface Source {
 export class SourceService {
   constructor(
     private http: HttpClient,
-    private projectService: ProjectService,
-    private modelService: ModelService
+    private projectService: ProjectService
   ) {}
 
   source: Source | null = null;
   sources: Source[] | null = null;
 
   addGitSource(
-    project_slug: string,
+    project_name: string,
     model_slug: string,
     source: Source
   ): Observable<Source> {
-    return new Observable<Source>((subscriber) => {
-      this.projectService.init(project_slug).subscribe((project) => {
-        this.http
-          .post<Source>(
-            environment.backend_url +
-              '/projects/' +
-              project.name +
-              '/extensions/modelsources/git/create/' +
-              model_slug,
-            source
-          )
-          .subscribe((new_source) => {
-            subscriber.next(new_source);
-            subscriber.complete();
-          });
-      });
-    });
+    return this.http.post<Source>(
+      environment.backend_url +
+        '/projects/' +
+        project_name +
+        '/extensions/modelsources/git/create/' +
+        model_slug,
+      source
+    );
   }
 }

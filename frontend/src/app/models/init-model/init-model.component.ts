@@ -25,7 +25,6 @@ export class InitModelComponent implements OnInit {
     public modelService: ModelService,
     public sourceService: SourceService,
     public toolService: ToolService,
-    private route: ActivatedRoute,
     private router: Router
   ) {}
 
@@ -35,15 +34,11 @@ export class InitModelComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      this.modelService
-        .init(params.project, params.model)
-        .subscribe((model) => {
-          this.form.controls.version.patchValue(model.version_id);
-          this.form.controls.type.patchValue(model.type_id);
-        });
-      this.toolService.init();
+    this.modelService._model.subscribe((model) => {
+      this.form.controls.version.patchValue(model!.version_id);
+      this.form.controls.type.patchValue(model!.type_id);
     });
+    this.toolService.init();
   }
 
   onSubmit(): void {
@@ -68,7 +63,7 @@ export class InitModelComponent implements OnInit {
   }
 
   getTool(): Tool {
-    let tool = this.toolService.tools?.filter((tool) => {
+    let tool = this.toolService.tools!.filter((tool) => {
       return tool.id == this.modelService.model?.tool_id;
     })[0];
     return tool || ({} as Tool);

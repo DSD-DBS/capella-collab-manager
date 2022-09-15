@@ -6,7 +6,7 @@ import typing as t
 
 from sqlalchemy.orm import Session
 
-import capellacollab.models.crud as models_crud
+import capellacollab.projects.capellamodels.crud as models_crud
 from capellacollab.extensions.modelsources.git.models import (
     DB_GitModel,
     NewGitSource,

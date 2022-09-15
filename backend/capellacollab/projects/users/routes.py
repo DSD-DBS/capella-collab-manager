@@ -19,12 +19,11 @@ from capellacollab.core.authentication.database import (
 )
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.database import get_db, users
-from capellacollab.routes.open_api_configuration import (
+from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
+from capellacollab.core.database import get_db, users
 
-# local:
 from . import crud as repository_users
 
 router = APIRouter()

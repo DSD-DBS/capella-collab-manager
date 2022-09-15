@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+from __future__ import annotations
+
 import typing as t
 
 from fastapi import HTTPException
@@ -30,9 +32,12 @@ def update_description(
     return project
 
 
-def create_project(db: Session, name: str) -> DatabaseProject:
-    slug = slugify(name)
-    repo = DatabaseProject(name=name, slug=slug, users=[])
+def create_project(
+    db: Session, name: str, description: str | None = None
+) -> DatabaseProject:
+    repo = DatabaseProject(
+        name=name, slug=slugify(name), description=description, users=[]
+    )
     db.add(repo)
     db.commit()
     db.refresh(repo)
@@ -48,6 +53,4 @@ def get_project_by_slug(db: Session, slug: str) -> DatabaseProject:
     project = (
         db.query(DatabaseProject).filter(DatabaseProject.slug == slug).first()
     )
-    if not project:
-        raise HTTPException(404, "Project not found.")
     return project

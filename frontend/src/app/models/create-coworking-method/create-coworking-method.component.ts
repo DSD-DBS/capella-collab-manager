@@ -17,6 +17,7 @@ import {
 } from 'src/app/services/git/git.service';
 import { ModelService } from 'src/app/services/model/model.service';
 import { Source, SourceService } from 'src/app/services/source/source.service';
+import { filter, switchMap, map, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-create-coworking-method',
@@ -26,7 +27,7 @@ import { Source, SourceService } from 'src/app/services/source/source.service';
 export class CreateCoworkingMethodComponent implements OnInit {
   public gitForm = new FormGroup({
     credentials: new FormGroup({
-      url: new FormControl('', Validators.required),
+      path: new FormControl('', Validators.required),
       username: new FormControl(''),
       password: new FormControl(''),
     }),
@@ -37,7 +38,6 @@ export class CreateCoworkingMethodComponent implements OnInit {
   public filteredRevisions: Instance = { branches: [], tags: [] };
 
   constructor(
-    private route: ActivatedRoute,
     public projectService: ProjectService,
     public modelService: ModelService,
     private gitService: GitService,
@@ -46,10 +46,6 @@ export class CreateCoworkingMethodComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      this.modelService.init(params.project, params.model).subscribe();
-    });
-
     this.gitForm.controls.revision.valueChanges.subscribe((value) => {
       if (!this.gitService.instance) {
         this.filteredRevisions = { branches: [], tags: [] };
@@ -75,23 +71,34 @@ export class CreateCoworkingMethodComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (
-      this.projectService.project &&
-      this.modelService.model &&
-      this.gitForm.valid
-    ) {
-      let source: Source = this.gitForm.value as Source;
-      this.sourceService
-        .addGitSource(
-          this.projectService.project.slug,
-          this.modelService.model.slug,
-          source
+    if (this.gitForm.valid) {
+      let source: Source = {
+        path: this.gitForm.value.credentials!.path!,
+        username: this.gitForm.value.credentials!.username || '',
+        password: this.gitForm.value.credentials!.password || '',
+        revision: this.gitForm.value.revision!,
+        entrypoint: this.gitForm.value.entrypoint || '',
+      };
+      combineLatest([
+        this.projectService._project.pipe(
+          filter(Boolean),
+          map((project) => project.name)
+        ),
+        this.modelService._model.pipe(
+          filter(Boolean),
+          map((model) => model.slug)
+        ),
+      ])
+        .pipe(
+          switchMap((args) => this.sourceService.addGitSource(...args, source))
         )
         .subscribe((_) => {
           this.router.navigate([
-            '/init-model',
-            this.projectService.project?.slug,
+            'project',
+            this.projectService.project!.slug,
+            'model',
             this.modelService.model?.slug,
+            'init-model',
           ]);
         });
     }

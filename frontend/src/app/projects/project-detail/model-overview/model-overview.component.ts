@@ -8,8 +8,11 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { IntegrationService } from 'src/app/integrations/integration.service';
-import { ModelService } from 'src/app/services/model/model.service';
-import { ProjectService } from 'src/app/services/project/project.service';
+import { Model, ModelService } from 'src/app/services/model/model.service';
+import {
+  Project,
+  ProjectService,
+} from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-model-overview',
@@ -17,8 +20,8 @@ import { ProjectService } from 'src/app/services/project/project.service';
   styleUrls: ['./model-overview.component.css'],
 })
 export class ModelOverviewComponent implements OnInit {
-  @Input()
-  project_slug = '';
+  @Input() project!: Project;
+  models?: Model[];
 
   constructor(
     public integrations: IntegrationService,
@@ -27,6 +30,8 @@ export class ModelOverviewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.modelService.initAll(this.project_slug).subscribe();
+    this.modelService._models.pipe().subscribe((models) => {
+      this.models = models;
+    });
   }
 }

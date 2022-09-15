@@ -98,6 +98,8 @@ import { CreateCoworkingMethodComponent } from './models/create-coworking-method
 import { ChooseSourceComponent } from './models/choose-source/choose-source.component';
 import { InitModelComponent } from './models/init-model/init-model.component';
 import { ChooseInitComponent } from './models/choose-init/choose-init.component';
+import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
+import { ModelWrapperComponent } from './models/model-wrapper/model-wrapper.component';
 import { UploadDialogComponent } from './active-sessions/upload-dialog/upload-dialog.component';
 import { FileExistsDialogComponent } from './active-sessions/upload-dialog/file-exists-dialog/file-exists-dialog.component';
 import { ReleaseNotesComponent } from './metadata/release-notes/release-notes.component';
@@ -167,6 +169,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     ChooseSourceComponent,
     InitModelComponent,
     ChooseInitComponent,
+    ProjectWrapperComponent,
+    ModelWrapperComponent,
     UploadDialogComponent,
     FileExistsDialogComponent,
     ReleaseNotesComponent,

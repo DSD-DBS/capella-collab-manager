@@ -18,7 +18,6 @@ from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
 
-# local:
 from . import models as schema_projects
 
 router = APIRouter()

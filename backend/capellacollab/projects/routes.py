@@ -7,10 +7,12 @@ import logging
 import typing as t
 from importlib import metadata
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
+from sqlalchemy.exc import IntegrityError
 
 import capellacollab.projects.crud as crud
+import capellacollab.projects.users.crud as users_crud
 from capellacollab.core.authentication.database import (
     is_admin,
     verify_admin,
@@ -35,6 +37,9 @@ from capellacollab.projects.users.models import (
     RepositoryUserPermission,
     RepositoryUserRole,
 )
+
+from .capellamodels.routes import router as router_models
+from .users.routes import router as router_users
 
 log = logging.getLogger(__name__)
 router = APIRouter()
@@ -107,8 +112,24 @@ def create_repository(
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
 ):
-    verify_admin(token, db)
-    return convert_project(crud.create_project(db, body.name))
+    try:
+        project = crud.create_project(db, body.name, body.description)
+    except IntegrityError as e:
+        raise HTTPException(
+            409,
+            {
+                "reason": "A project with a similar name already exists.",
+                "technical": "Slug already used",
+            },
+        ) from e
+    users_crud.add_user_to_repository(
+        db,
+        project.name,
+        RepositoryUserRole.MANAGER,
+        get_username(token),
+        RepositoryUserPermission.WRITE,
+    )
+    return convert_project(project)
 
 
 @router.delete(
@@ -156,6 +177,9 @@ def convert_project(project: DatabaseProject) -> Project:
         ),
     )
 
+
+router.include_router(router_users, prefix="/{project}/users")
+router.include_router(router_models, prefix="/{project_slug}/models")
 
 # Load backup extension routes
 eps = metadata.entry_points()["capellacollab.extensions.backups"]

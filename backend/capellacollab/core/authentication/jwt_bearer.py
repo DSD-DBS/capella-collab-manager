@@ -13,7 +13,6 @@ from jose import jwt
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.database import SessionLocal, users
 
-# local:
 from . import get_authentication_entrypoint
 
 log = logging.getLogger(__name__)
