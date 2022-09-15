@@ -17,7 +17,8 @@ import { BackendMetadata, Version, VersionService } from './version.service';
 export class VersionComponent implements OnInit {
   backend: string = '-';
   frontend: string = '-';
-  env: string = (environment as any)['environment'] || 'not specified';
+  env: string =
+    ((environment as any)['production'] && 'production') || 'development';
 
   constructor(
     public versionService: VersionService,
