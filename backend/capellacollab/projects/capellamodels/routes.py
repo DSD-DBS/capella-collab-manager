@@ -5,7 +5,7 @@
 import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.exc import DatabaseError
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication.database import verify_project_role
@@ -99,7 +99,7 @@ def create_new(
     )
     try:
         model = crud.create_new_model(db, project_slug, new_model)
-    except DatabaseError as e:
+    except IntegrityError as e:
         raise HTTPException(
             409,
             {

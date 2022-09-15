@@ -9,7 +9,7 @@ from importlib import metadata
 
 from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
-from sqlalchemy.exc import DatabaseError
+from sqlalchemy.exc import IntegrityError
 
 import capellacollab.projects.crud as crud
 import capellacollab.projects.users.crud as users_crud
@@ -114,7 +114,7 @@ def create_repository(
 ):
     try:
         project = crud.create_project(db, body.name, body.description)
-    except DatabaseError as e:
+    except IntegrityError as e:
         raise HTTPException(
             409,
             {
