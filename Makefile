@@ -173,7 +173,7 @@ dashboard:
 	kubectl apply --context k3d-$(CLUSTER_NAME) -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.5.0/aio/deploy/recommended.yaml
 	kubectl apply -f dashboard/dashboard.rolebinding.yml -f dashboard/dashboard.serviceaccount.yml
 	echo "Please open the portal: http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login"
-	echo "Please use the following token: $$(kubectl --context k3d-$(CLUSTER_NAME) get secret $$(kubectl get --context k3d-$(CLUSTER_NAME) serviceaccount -o "jsonpath={.secrets[0].name}" dashboard-admin) -o jsonpath={.data.token} | base64 --decode)"
+	echo "Please use the following token: $$(kubectl -n default create token dashboard-admin)"
 	kubectl proxy
 
 
