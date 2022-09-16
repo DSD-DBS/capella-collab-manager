@@ -37,6 +37,14 @@
         Tool: {{ session.version!.tool.name }} ({{ session.version!.name }})
       </span>
     </div>
+
+    <mat-card *ngIf="session.download_in_progress">
+      <mat-card-content>
+        <p>Your download is being prepared…</p>
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </mat-card-content>
+    </mat-card>
+
   </mat-card-content>
   <mat-card-actions class="flex-space-between">
     <button mat-button color="primary" (click)="openDeletionDialog([session])">
