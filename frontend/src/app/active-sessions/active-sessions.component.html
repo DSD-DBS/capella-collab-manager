@@ -42,6 +42,14 @@
           {{ beautifyService.beatifyDate(session.created_at) }}
           <br />
         </div>
+
+        <mat-card *ngIf="session.download_in_progress">
+          <mat-card-content>
+            <p>Your download is being prepared…</p>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          </mat-card-content>
+        </mat-card>
+
         <button
           mat-flat-button
           color="primary"
