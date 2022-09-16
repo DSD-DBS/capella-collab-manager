@@ -155,14 +155,13 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   onComplete(again?: boolean): void {
-    console.log(again);
     if (again) {
       this._reload = true;
       setTimeout(() => {
         this._reload = false;
       });
     } else {
-      this.router.navigate(['/project', this.projectService.project!.slug]);
+      this.finish();
     }
   }
 }

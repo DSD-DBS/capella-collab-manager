@@ -72,8 +72,10 @@ export class CreateModelBaseComponent implements OnInit {
       let new_model = this.form.value as NewModel;
 
       const modelConnectable = connectable<Model>(
-        this.modelService
-          .createNewModel(this.projectService.project.slug, new_model)
+        this.modelService.createNewModel(
+          this.projectService.project.slug,
+          new_model
+        ),
         {
           connector: () => new Subject(),
           resetOnDisconnect: false,

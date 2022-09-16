@@ -71,26 +71,23 @@ export class CreateCoworkingMethodComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.gitForm.valid) {
+    if (
+      this.form.valid &&
+      this.projectService.project &&
+      this.modelService.model
+    ) {
       let source: Source = {
-        path: this.gitForm.value.credentials!.path!,
-        username: this.gitForm.value.credentials!.username || '',
-        password: this.gitForm.value.credentials!.password || '',
-        revision: this.gitForm.value.revision!,
-        entrypoint: this.gitForm.value.entrypoint || '',
+        path: this.form.value.credentials!.path!,
+        username: this.form.value.credentials!.username || '',
+        password: this.form.value.credentials!.password || '',
+        revision: this.form.value.revision!,
+        entrypoint: this.form.value.entrypoint || '',
       };
-      combineLatest([
-        this.projectService._project.pipe(
-          filter(Boolean),
-          map((project) => project.name)
-        ),
-        this.modelService._model.pipe(
-          filter(Boolean),
-          map((model) => model.slug)
-        ),
-      ])
-        .pipe(
-          switchMap((args) => this.sourceService.addGitSource(...args, source))
+      this.sourceService
+        .addGitSource(
+          this.projectService.project.name,
+          this.modelService.model.slug,
+          source
         )
         .subscribe((_) => {
           this.create.emit(true);
