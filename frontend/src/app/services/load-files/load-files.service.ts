@@ -31,10 +31,9 @@ export class LoadFilesService {
   }
 
   download(id: string, filename: string): Observable<Blob> {
-    return this.http.request(
-      'GET',
-      `${this.BACKEND_URL_PREFIX}${id}/files/download`,
-      { params: { filename: filename }, responseType: 'blob' }
-    );
+    return this.http.get(`${this.BACKEND_URL_PREFIX}${id}/files/download`, {
+      params: { filename: filename },
+      responseType: 'blob',
+    });
   }
 }

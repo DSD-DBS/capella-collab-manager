@@ -1,9 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Copyright DB Netz AG and the capella-collab-manager contributors
-# SPDX-License-Identifier: Apache-2.0
-
 import base64
 
 from t4cclient.sessions.operators.k8s import KubernetesOperator, lazy_b64decode
