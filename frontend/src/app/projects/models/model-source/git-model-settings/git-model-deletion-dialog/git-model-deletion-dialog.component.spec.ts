@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GitModelDeletionDialogComponent } from './git-model-deletion-dialog.component';
 
-describe('GitModelDeletionDialogComponent', () => {
+xdescribe('GitModelDeletionDialogComponent', () => {
   let component: GitModelDeletionDialogComponent;
   let fixture: ComponentFixture<GitModelDeletionDialogComponent>;
 

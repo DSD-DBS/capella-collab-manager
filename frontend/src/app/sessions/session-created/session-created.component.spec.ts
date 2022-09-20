@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SessionCreatedComponent } from './session-created.component';
 
-describe('SessionCreatedComponent', () => {
+xdescribe('SessionCreatedComponent', () => {
   let component: SessionCreatedComponent;
   let fixture: ComponentFixture<SessionCreatedComponent>;
 

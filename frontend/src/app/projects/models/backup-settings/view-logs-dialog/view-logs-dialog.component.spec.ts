@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ViewLogsDialogComponent } from './view-logs-dialog.component';
 
-describe('ViewLogsDialogComponent', () => {
+xdescribe('ViewLogsDialogComponent', () => {
   let component: ViewLogsDialogComponent;
   let fixture: ComponentFixture<ViewLogsDialogComponent>;
 

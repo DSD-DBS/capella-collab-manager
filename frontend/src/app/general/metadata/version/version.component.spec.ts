@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { VersionComponent } from './version.component';
 
-describe('VersionComponent', () => {
+xdescribe('VersionComponent', () => {
   let component: VersionComponent;
   let fixture: ComponentFixture<VersionComponent>;
 

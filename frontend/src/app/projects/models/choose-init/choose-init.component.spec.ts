@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ChooseInitComponent } from './choose-init.component';
 
-describe('ChooseInitComponent', () => {
+xdescribe('ChooseInitComponent', () => {
   let component: ChooseInitComponent;
   let fixture: ComponentFixture<ChooseInitComponent>;
 

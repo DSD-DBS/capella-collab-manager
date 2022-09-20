@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SessionCreationProgressComponent } from './session-creation-progress.component';
 
-describe('SessionCreationProgressComponent', () => {
+xdescribe('SessionCreationProgressComponent', () => {
   let component: SessionCreationProgressComponent;
   let fixture: ComponentFixture<SessionCreationProgressComponent>;
 

@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CreateCoworkingMethodComponent } from './create-coworking-method.component';
 
-describe('CreateCoworkingMethodComponent', () => {
+xdescribe('CreateCoworkingMethodComponent', () => {
   let component: CreateCoworkingMethodComponent;
   let fixture: ComponentFixture<CreateCoworkingMethodComponent>;
 

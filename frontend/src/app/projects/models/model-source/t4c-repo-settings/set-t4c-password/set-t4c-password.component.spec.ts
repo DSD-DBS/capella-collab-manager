@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SetT4CPasswordComponent } from './set-t4c-password.component';
 
-describe('SetT4CPasswordComponent', () => {
+xdescribe('SetT4CPasswordComponent', () => {
   let component: SetT4CPasswordComponent;
   let fixture: ComponentFixture<SetT4CPasswordComponent>;
 

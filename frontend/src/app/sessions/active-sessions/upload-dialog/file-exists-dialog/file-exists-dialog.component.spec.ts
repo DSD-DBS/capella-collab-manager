@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FileExistsDialogComponent } from './file-exists-dialog.component';
 
-describe('FileExistsDialogComponent', () => {
+xdescribe('FileExistsDialogComponent', () => {
   let component: FileExistsDialogComponent;
   let fixture: ComponentFixture<FileExistsDialogComponent>;
 
