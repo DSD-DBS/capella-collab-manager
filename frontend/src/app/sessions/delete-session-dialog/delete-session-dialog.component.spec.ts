@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DeleteSessionDialogComponent } from './delete-session-dialog.component';
 
-describe('DeleteSessionDialogComponent', () => {
+xdescribe('DeleteSessionDialogComponent', () => {
   let component: DeleteSessionDialogComponent;
   let fixture: ComponentFixture<DeleteSessionDialogComponent>;
 

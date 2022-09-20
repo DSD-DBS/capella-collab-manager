@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ReleaseNotesComponent } from './release-notes.component';
 
-describe('ReleaseNotesComponent', () => {
+xdescribe('ReleaseNotesComponent', () => {
   let component: ReleaseNotesComponent;
   let fixture: ComponentFixture<ReleaseNotesComponent>;
 

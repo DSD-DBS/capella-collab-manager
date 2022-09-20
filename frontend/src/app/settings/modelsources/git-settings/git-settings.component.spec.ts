@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GitSettingsComponent } from './git-settings.component';
 
-describe('GitSettingsComponent', () => {
+xdescribe('GitSettingsComponent', () => {
   let component: GitSettingsComponent;
   let fixture: ComponentFixture<GitSettingsComponent>;
 
