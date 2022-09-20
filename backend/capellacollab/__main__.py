@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.config import config
-from capellacollab.core.database import __main__ as database
+from capellacollab.core.database import migration
 from capellacollab.routes import router, status
 
 
@@ -70,5 +70,5 @@ app.include_router(status.router, prefix="", tags=["Status"])
 app.include_router(router, prefix="/api/v1")
 
 if __name__ == "__main__":
-    database.migrate_db()
+    migration.migrate_db()
     uvicorn.run(app)
