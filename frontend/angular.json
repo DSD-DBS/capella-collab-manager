@@ -126,6 +126,12 @@
             ],
             "scripts": [
               "node_modules/marked/marked.min.js"
+            ],
+            "fileReplacements": [
+              {
+                "replace": "src/environments/environment.ts",
+                "with": "src/environments/environment.dev.ts"
+              }
             ]
           }
         },
