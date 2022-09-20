@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
@@ -43,7 +48,7 @@ export class UserSettingsComponent implements OnInit {
     if (this.createAdministratorFormGroup.valid) {
       this.userService
         .updateRoleOfUser(
-          this.createAdministratorFormGroup.value.username,
+          this.createAdministratorFormGroup.value.username as string,
           'administrator'
         )
         .subscribe({

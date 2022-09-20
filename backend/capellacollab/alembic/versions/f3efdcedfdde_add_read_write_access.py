@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Add read/write access
@@ -8,7 +8,7 @@ Revises: d3c85f34aae6
 Create Date: 2021-08-24 12:43:46.471793
 
 """
-# 3rd party:
+
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
@@ -35,7 +35,9 @@ def upgrade():
         ),
     )
     op.execute("UPDATE repository_user_association SET permission='WRITE'")
-    op.alter_column("repository_user_association", "permission", nullable=False)
+    op.alter_column(
+        "repository_user_association", "permission", nullable=False
+    )
 
 
 def downgrade():

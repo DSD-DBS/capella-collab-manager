@@ -1,5 +1,6 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
+
 
 """Add project attributes
 
@@ -8,7 +9,7 @@ Revises: 04482e6f1795
 Create Date: 2022-05-09 15:07:16.515720
 
 """
-# 3rd party:
+
 import sqlalchemy as sa
 from alembic import op
 
@@ -22,7 +23,9 @@ depends_on = None
 def upgrade():
     # Add description, editing_mode and project_type to project table
 
-    op.add_column("projects", sa.Column("description", sa.String(), nullable=True))
+    op.add_column(
+        "projects", sa.Column("description", sa.String(), nullable=True)
+    )
 
 
 def downgrade():

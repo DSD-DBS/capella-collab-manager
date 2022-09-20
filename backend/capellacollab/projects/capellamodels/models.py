@@ -1,19 +1,26 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+from __future__ import annotations
+
 import enum
 import typing as t
 
-# 1st party:
+from pydantic import BaseModel
+from sqlalchemy import (
+    Column,
+    Enum,
+    ForeignKey,
+    Integer,
+    String,
+    UniqueConstraint,
+)
+from sqlalchemy.orm import relationship
+
+# Import required for sqlalchemy
+import capellacollab.projects.users.models
 from capellacollab.core.database import Base
 from capellacollab.tools.models import Tool, Type, Version
-
-# 3rd party:
-from pydantic import BaseModel
-from slugify import slugify
-from sqlalchemy import Column, Enum, ForeignKey, Integer, String, UniqueConstraint
-from sqlalchemy.orm import relationship
 
 
 class EditingMode(enum.Enum):
@@ -26,18 +33,10 @@ class CapellaModelType(enum.Enum):
     LIBRARY = "library"
 
 
-class NewModel(BaseModel):
+class CapellaModel(BaseModel):
     name: str
     description: str | None
     tool_id: int
-
-
-class EmptyModel(BaseModel):
-    name: str
-    description: str | None
-    tool_id: int
-    version_id: int
-    type_id: int
 
 
 class ToolDetails(BaseModel):
@@ -45,7 +44,7 @@ class ToolDetails(BaseModel):
     type_id: int
 
 
-class DB_Model(Base):
+class DatabaseCapellaModel(Base):
     __tablename__ = "models"
     __table_args__ = (UniqueConstraint("project_id", "slug"),)
 
@@ -72,28 +71,6 @@ class DB_Model(Base):
     t4c_model = relationship("DB_T4CModel", back_populates="model")
     git_model = relationship("DB_GitModel", back_populates="model")
 
-    @classmethod
-    def from_empty_model(cls, new_model: EmptyModel, project):
-        return cls(
-            name=new_model.name,
-            slug=slugify(new_model.name),
-            description=new_model.description,
-            tool_id=new_model.tool_id,
-            version_id=new_model.version_id,
-            type_id=new_model.type_id,
-            project_id=project.id,
-        )
-
-    @classmethod
-    def from_new_model(cls, new_model: NewModel, project):
-        return cls(
-            name=new_model.name,
-            slug=slugify(new_model.name),
-            description=new_model.description,
-            project_id=project.id,
-            tool_id=new_model.tool_id,
-        )
-
 
 class ResponseModel(BaseModel):
     id: int
@@ -108,7 +85,7 @@ class ResponseModel(BaseModel):
     git_model: t.Optional[int]
 
     @classmethod
-    def from_model(cls, model: DB_Model):
+    def from_model(cls, model: DatabaseCapellaModel):
         return cls(
             id=model.id,
             slug=model.slug,

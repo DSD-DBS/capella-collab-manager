@@ -1,5 +1,7 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -47,18 +49,20 @@ export class SetT4CPasswordComponent implements OnInit {
   updatePassword(): void {
     if (this.updatePasswordForm.valid) {
       const value = this.updatePasswordForm.value;
-      this.repositoryUserService
-        .updatePasswordOfUser(
-          value.repository,
-          this.userService.getUsernameFromLocalStorage(),
-          value.password
-        )
-        .subscribe(() => {
-          this.updatePasswordSuccess = true;
-          setTimeout(() => {
-            this.updatePasswordSuccess = false;
-          }, 3000);
-        });
+      if (value.repository && value.password) {
+        this.repositoryUserService
+          .updatePasswordOfUser(
+            value.repository,
+            this.userService.getUsernameFromLocalStorage(),
+            value.password
+          )
+          .subscribe(() => {
+            this.updatePasswordSuccess = true;
+            setTimeout(() => {
+              this.updatePasswordSuccess = false;
+            }, 3000);
+          });
+      }
     }
   }
 }

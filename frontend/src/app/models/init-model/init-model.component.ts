@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
@@ -24,8 +29,8 @@ export class InitModelComponent implements OnInit {
   ) {}
 
   public form = new FormGroup({
-    version: new FormControl('', Validators.required),
-    type: new FormControl('', Validators.required),
+    version: new FormControl(-1, Validators.required),
+    type: new FormControl(-1, Validators.required),
   });
 
   ngOnInit(): void {
@@ -40,7 +45,9 @@ export class InitModelComponent implements OnInit {
     if (
       this.form.valid &&
       this.modelService.model &&
-      this.projectService.project
+      this.projectService.project &&
+      this.form.value.version &&
+      this.form.value.type
     ) {
       this.modelService
         .setToolDetailsForModel(
@@ -56,7 +63,7 @@ export class InitModelComponent implements OnInit {
   }
 
   getTool(): Tool {
-    let tool = this.toolService.tools?.filter((tool) => {
+    let tool = this.toolService.tools!.filter((tool) => {
       return tool.id == this.modelService.model?.tool_id;
     })[0];
     return tool || ({} as Tool);

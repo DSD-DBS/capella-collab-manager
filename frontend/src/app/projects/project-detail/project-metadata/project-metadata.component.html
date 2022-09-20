@@ -1,4 +1,9 @@
 <!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<!--
  ~ Copyright DB Netz AG and the capella-collab-manager contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
@@ -15,6 +20,9 @@
           matInput
           rows="3"
           style="resize: none"
+          [placeholder]="
+            'This is the description of the project ' + project!.slug
+          "
         ></textarea>
       </mat-form-field>
     </form>

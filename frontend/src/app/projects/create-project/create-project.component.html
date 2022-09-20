@@ -1,59 +1,56 @@
 <!--
- ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
 <div class="wrapper">
-  <mat-horizontal-stepper linear #stepper>
-    <mat-step completed="false" label="General information">
-      <mat-card class="section-card">
-        <form [formGroup]="form">
-          <fieldset>
-            <mat-form-field appearance="fill">
-              <mat-label>Name</mat-label>
-              <input matInput formControlName="name" />
-              <mat-error *ngIf="form.controls.name.errors?.uniqueSlug">
-                A project having the slug “{{
-                  form.controls.name.errors!.uniqueSlug.value
-                }}” already exists.
-              </mat-error>
-              <mat-error *ngIf="form.controls.name.errors?.required">
-                A project name is required.
-              </mat-error>
-            </mat-form-field>
-          </fieldset>
-          <fieldset>
-            <mat-form-field appearance="fill">
-              <mat-label>Description</mat-label>
-              <textarea matInput formControlName="description"></textarea>
-            </mat-form-field>
-          </fieldset>
-          <a routerLink="/projects" mat-button matStepperPrevious>Cancel</a>
-          <button
-            mat-flat-button
-            color="primary"
-            (click)="createProject(stepper)"
-          >
-            Create project
-          </button>
-        </form>
-      </mat-card>
-    </mat-step>
+  <h1>Create Project</h1>
+</div>
 
-    <mat-step label="Add team members">
-      <mat-card class="section-card" *ngIf="projectService.project">
-        <h2>Your role will be project lead.</h2>
-        <app-project-user-settings
-          [repository]="projectService.project"
-        ></app-project-user-settings>
-        <a
+<mat-horizontal-stepper linear #stepper>
+  <mat-step completed="false" label="General informations">
+    <mat-card class="section-card">
+      <form [formGroup]="form">
+        <fieldset>
+          <mat-form-field appearance="fill">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" />
+            <mat-error *ngIf="form.controls.name.errors?.uniqueSlug">
+              A project with a name similar to “{{
+                form.controls.name.errors!.uniqueSlug.value
+              }}” already exists.
+            </mat-error>
+            <mat-error *ngIf="form.controls.name.errors?.required">
+              A project name is required.
+            </mat-error>
+          </mat-form-field>
+        </fieldset>
+        <fieldset>
+          <mat-form-field appearance="fill">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description"></textarea>
+          </mat-form-field>
+        </fieldset>
+        <a routerLink="/projects" mat-button matStepperPrevious>Cancel</a>
+        <button
           mat-flat-button
           color="primary"
-          [routerLink]="['/project', projectService.project!.slug]"
+          [disabled]="!form.valid"
+          (click)="createProject(stepper)"
         >
-          Finish
-        </a>
-      </mat-card>
-    </mat-step>
-  </mat-horizontal-stepper>
-</div>
+          Create project
+        </button>
+      </form>
+    </mat-card>
+  </mat-step>
+
+  <mat-step label="Add team members">
+    <mat-card class="section-card" *ngIf="projectService.project">
+      <h2>Your role will be project lead.</h2>
+      <app-project-user-settings
+        [repository]="projectService.project"
+      ></app-project-user-settings>
+      <button mat-flat-button color="primary" (click)="finish()">Finish</button>
+    </mat-card>
+  </mat-step>
+</mat-horizontal-stepper>

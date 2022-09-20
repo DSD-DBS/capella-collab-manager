@@ -1,5 +1,7 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -10,17 +12,10 @@ import { AuthComponent } from './auth/auth/auth.component';
 import { LogoutRedirectComponent } from './auth/logout/logout-redirect/logout-redirect.component';
 import { LogoutComponent } from './auth/logout/logout/logout.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
-import { ChooseInitComponent } from './models/choose-init/choose-init.component';
-import { ChooseSourceComponent } from './models/choose-source/choose-source.component';
-import { CreateCoworkingMethodComponent } from './models/create-coworking-method/create-coworking-method.component';
-import { CreateModelComponent } from './models/create-model/create-model.component';
-import { InitModelComponent } from './models/init-model/init-model.component';
-import { ModelWrapperComponent } from './models/model-wrapper/model-wrapper.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
-import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { SessionOverviewComponent } from './session-overview/session-overview.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { DockerimageSettingsComponent } from './settings/core/dockerimage-settings/dockerimage-settings.component';
@@ -34,6 +29,13 @@ import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-s
 import { RequestsComponent } from './settings/requests/requests.component';
 import { SettingsComponent } from './settings/settings.component';
 import { HomeComponent } from './workspaces/home.component';
+import { CreateModelComponent } from './models/create-model/create-model.component';
+import { CreateCoworkingMethodComponent } from './models/create-coworking-method/create-coworking-method.component';
+import { ChooseSourceComponent } from './models/choose-source/choose-source.component';
+import { InitModelComponent } from './models/init-model/init-model.component';
+import { ChooseInitComponent } from './models/choose-init/choose-init.component';
+import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
+import { ModelWrapperComponent } from './models/model-wrapper/model-wrapper.component';
 
 const routes: Routes = [
   {
@@ -123,7 +125,7 @@ const routes: Routes = [
         component: ProjectDetailsComponent,
       },
       {
-        path: 'create-model',
+        path: 'models/create',
         component: CreateModelComponent,
       },
       {
@@ -165,7 +167,7 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'create-project',
+    path: 'projects/create',
     component: CreateProjectComponent,
     canActivate: [AuthGuardService],
   },

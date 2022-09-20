@@ -1,11 +1,18 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# 3rd party:
-from sqlalchemy import ARRAY, TIMESTAMP, Column, Enum, ForeignKey, Integer, String
+
+from sqlalchemy import (
+    ARRAY,
+    TIMESTAMP,
+    Column,
+    Enum,
+    ForeignKey,
+    Integer,
+    String,
+)
 from sqlalchemy.orm import relationship
 
-# 1st party:
 from capellacollab.core.database import Base
 from capellacollab.sessions.schema import WorkspaceType
 

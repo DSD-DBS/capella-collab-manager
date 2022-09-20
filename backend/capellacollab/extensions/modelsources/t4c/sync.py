@@ -1,19 +1,19 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+
 import typing as t
 
-# 3rd party:
 from fastapi import APIRouter, Depends
 from requests import Session
 
-# 1st party:
 import capellacollab.extensions.modelsources.t4c.connection as t4c_manager
 from capellacollab.core.authentication import database as database_auth
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
-from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
+from capellacollab.routes.open_api_configuration import (
+    AUTHENTICATION_RESPONSES,
+)
 
 router = APIRouter()
 

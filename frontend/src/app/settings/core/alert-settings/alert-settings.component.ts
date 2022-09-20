@@ -1,5 +1,7 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import { Component, OnInit } from '@angular/core';
 import {
@@ -11,7 +13,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
-import { NoticeService } from 'src/app/services/notice/notice.service';
+import {
+  CreateNotice,
+  NoticeService,
+} from 'src/app/services/notice/notice.service';
 import { ToastService } from 'src/app/toast/toast.service';
 
 @Component({
@@ -57,21 +62,23 @@ export class AlertSettingsComponent implements OnInit {
 
   createNotice(): void {
     if (this.createAlertForm.valid) {
-      this.noticeService.createNotice(this.createAlertForm.value).subscribe({
-        next: () => {
-          this.noticeService.refreshNotices();
-          this.toastService.showSuccess(
-            'Alert created',
-            this.createAlertForm.value.title
-          );
-        },
-        error: () => {
-          this.toastService.showError(
-            'Creation of alert failed',
-            'Please try again'
-          );
-        },
-      });
+      this.noticeService
+        .createNotice(this.createAlertForm.value as CreateNotice)
+        .subscribe({
+          next: () => {
+            this.noticeService.refreshNotices();
+            this.toastService.showSuccess(
+              'Alert created',
+              this.createAlertForm.value.title as string
+            );
+          },
+          error: () => {
+            this.toastService.showError(
+              'Creation of alert failed',
+              'Please try again'
+            );
+          },
+        });
     }
   }
 

@@ -1,22 +1,19 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+
 import importlib
 import logging
 import typing as t
 
-# 3rd party:
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt
 
-# local:
-from . import get_authentication_entrypoint
-
-# 1st party:
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.database import SessionLocal, users
+
+from . import get_authentication_entrypoint
 
 log = logging.getLogger(__name__)
 ep = get_authentication_entrypoint()
@@ -59,9 +56,11 @@ class JWTBearer(HTTPBearer):
                     "err_code": "token_exp",
                     "reason": "The Signature of the token is expired. Please request a new access token.",
                 },
-            )
-        except (jwt.JWTError, jwt.JWTClaimsError) as e:
+            ) from None
+        except (jwt.JWTError, jwt.JWTClaimsError):
             raise HTTPException(
                 status_code=401,
-                detail="The token verification failed. Please try again with another access token.",
-            )
+                detail={
+                    "technical": "The Signature of the token is expired. Please request a new access token.",
+                },
+            ) from None

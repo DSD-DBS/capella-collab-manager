@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
@@ -37,7 +42,9 @@ export class EditGitSettingsComponent implements OnInit {
         this.gitSettingsService
           .getGitSettings(this.id)
           .subscribe((instance: GitSettings) => {
-            this.gitSettingsForm.controls['type'].setValue(instance.type);
+            this.gitSettingsForm.controls['type'].setValue(
+              instance.type as string
+            );
             this.gitSettingsForm.controls['name'].setValue(instance.name);
             this.gitSettingsForm.controls['url'].setValue(instance.url);
           });

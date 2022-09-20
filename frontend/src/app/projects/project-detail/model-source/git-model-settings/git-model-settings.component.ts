@@ -1,5 +1,7 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import { Component, Input, OnInit } from '@angular/core';
 import {
@@ -13,6 +15,7 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import {
+  CreateGitModel,
   GitModel,
   GitModelService,
 } from 'src/app/services/modelsources/git-model/git-model.service';
@@ -96,7 +99,7 @@ export class GitModelSettingsComponent implements OnInit {
       this.gitModelService
         .assignGitRepositoryToRepository(
           this.repository,
-          this.createGitModel.value
+          this.createGitModel.value as CreateGitModel
         )
         .subscribe(() => {
           formDirective.resetForm();

@@ -1,13 +1,11 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+
 import typing as t
 
-# 3rd party:
 from sqlalchemy.orm.session import Session
 
-# 1st party:
 import capellacollab.extensions.modelsources.git.crud as git_model_crud
 import capellacollab.extensions.modelsources.t4c.connection as t4c_ext
 import capellacollab.projects.models as repository_schema
@@ -16,7 +14,9 @@ from capellacollab.projects.users.models import RepositoryUserPermission
 
 
 def get_permission(
-    repo_permission: RepositoryUserPermission, repository_name: str, db: Session
+    repo_permission: RepositoryUserPermission,
+    repository_name: str,
+    db: Session,
 ) -> t.List[RepositoryUserPermission]:
     allowed_permissions: t.List[RepositoryUserPermission] = []
 

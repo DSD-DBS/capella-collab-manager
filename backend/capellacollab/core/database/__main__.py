@@ -1,25 +1,23 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+
 import logging
 import os
 import pathlib
 
-# 1st party:
-import capellacollab.projects.crud as projects
-import capellacollab.tools.crud as tools
-
-# 3rd party:
 from alembic import command
 from alembic.config import Config
 from alembic.migration import MigrationContext
+from sqlalchemy import create_engine, inspect
+from sqlalchemy.orm import sessionmaker
+
+import capellacollab.projects.crud as projects
+import capellacollab.tools.crud as tools
 from capellacollab.config import config
 from capellacollab.core.database import Base, users
 from capellacollab.projects.users.models import Role
 from capellacollab.tools.models import Tool
-from sqlalchemy import create_engine, inspect
-from sqlalchemy.orm import sessionmaker
 
 DATABASE_URL = config["database"]["url"]
 engine = create_engine(DATABASE_URL, connect_args={"connect_timeout": 5})
@@ -34,7 +32,9 @@ def migrate_db():
 
         # Get current revision of Database. If no revision is available, initialize the database.
         alembic_cfg = Config(root_dir / "alembic.ini")
-        alembic_cfg.set_main_option("script_location", str(root_dir / "alembic"))
+        alembic_cfg.set_main_option(
+            "script_location", str(root_dir / "alembic")
+        )
         alembic_cfg.set_main_option("sqlalchemy.url", DATABASE_URL)
         alembic_cfg.attributes["configure_logger"] = False
 
@@ -62,7 +62,9 @@ def migrate_db():
 def initialize_admin_user():
     LOGGER.info("Initialized adminuser " + config["initial"]["admin"])
     with SessionLocal() as db:
-        users.create_user(db=db, username=config["initial"]["admin"], role=Role.ADMIN)
+        users.create_user(
+            db=db, username=config["initial"]["admin"], role=Role.ADMIN
+        )
 
 
 def initialize_default_repository():
@@ -75,10 +77,12 @@ def create_tools():
     LOGGER.info("Initialized tools")
     with SessionLocal() as db:
         capella = Tool(
-            name="Capella", docker_image_template="/t4c/client/remote/$version:prod"
+            name="Capella",
+            docker_image_template="/t4c/client/remote/$version:prod",
         )
         papyrus = Tool(
-            name="Papyrus", docker_image_template="/papyrus/client/remote/$version:prod"
+            name="Papyrus",
+            docker_image_template="/papyrus/client/remote/$version:prod",
         )
         tools.create_tool(db, capella)
         tools.create_tool(db, papyrus)

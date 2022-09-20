@@ -1,9 +1,11 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from capellacollab.core.database import get_db
+
 from fastapi import APIRouter, Depends
 from requests import Session
+
+from capellacollab.core.database import get_db
 
 from . import crud
 

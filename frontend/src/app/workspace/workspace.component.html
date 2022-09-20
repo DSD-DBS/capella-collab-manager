@@ -1,16 +1,16 @@
 <!--
- ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
 <div class="center">
-  <h1><b>Request Session</b></h1>
+  <h1 class="center-text"><b>Request Session</b></h1>
   <mat-spinner *ngIf="showSpinner"></mat-spinner>
   <app-no-repository
     *ngIf="!repositories.length && !showSpinner"
   ></app-no-repository>
   <app-request-session
     *ngIf="repositories.length"
-    [repositories]="repositories"
+    [ownProjects]="repositories"
   ></app-request-session>
 </div>

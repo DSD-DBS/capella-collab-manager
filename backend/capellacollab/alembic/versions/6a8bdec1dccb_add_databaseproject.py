@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Add DatabaseProject
@@ -8,7 +8,7 @@ Revises: c926d3e402a8
 Create Date: 2021-09-02 16:10:04.355412
 
 """
-# 3rd party:
+
 import sqlalchemy as sa
 from alembic import op
 
@@ -32,7 +32,9 @@ def upgrade():
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_projects_id"), "projects", ["id"], unique=False)
-    op.create_index(op.f("ix_projects_name"), "projects", ["name"], unique=True)
+    op.create_index(
+        op.f("ix_projects_name"), "projects", ["name"], unique=True
+    )
 
 
 def downgrade():

@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Add notices datastructures
@@ -8,7 +8,7 @@ Revises: 279ec954b302
 Create Date: 2021-08-23 14:05:20.897134
 
 """
-# 3rd party:
+
 import sqlalchemy as sa
 from alembic import op
 

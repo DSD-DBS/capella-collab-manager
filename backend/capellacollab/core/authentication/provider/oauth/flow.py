@@ -1,14 +1,12 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+
 import typing as t
 
-# 3rd party:
 import requests
 from requests_oauthlib import OAuth2Session
 
-# 1st party:
 from capellacollab.config import config
 
 cfg = config["authentication"]["oauth"]
@@ -52,7 +50,8 @@ def refresh_token(refresh_token: str) -> t.Dict[str, t.Any]:
 def read_well_known() -> dict[str, t.Any]:
     if cfg["endpoints"]["wellKnown"]:
         r = requests.get(
-            cfg["endpoints"]["wellKnown"], timeout=config["requests"]["timeout"]
+            cfg["endpoints"]["wellKnown"],
+            timeout=config["requests"]["timeout"],
         )
         r.raise_for_status()
 

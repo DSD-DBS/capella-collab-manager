@@ -1,22 +1,23 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
+
 {{ if .Values.database.guacamole.deploy }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-guacamole-postgres
-  labels: 
+  labels:
     id: {{ .Release.Name }}-deployment-guacamole-postgres
 spec:
   replicas: 1
-  selector: 
-    matchLabels: 
+  selector:
+    matchLabels:
       id: {{ .Release.Name }}-deployment-guacamole-postgres
   strategy:
     type: Recreate
   template:
-    metadata: 
-      labels: 
+    metadata:
+      labels:
         id: {{ .Release.Name }}-deployment-guacamole-postgres
     spec:
       volumes:
@@ -59,12 +60,21 @@ spec:
             initialDelaySeconds: 45
             timeoutSeconds: 2
           resources:
+            {{ if eq .Values.target "local" }}
+            limits:
+              cpu: "0.1"
+              memory: 50Mi
+            requests:
+              cpu: "0.05"
+              memory: 5Mi
+            {{ else }}
             requests:
               memory: "128Mi"
               cpu: "250m"
             limits:
               memory: "1Gi"
               cpu: "1"
+            {{ end }}
           volumeMounts:
             {{ if ne .Values.target "local" }}
             - name: {{ .Release.Name }}-data

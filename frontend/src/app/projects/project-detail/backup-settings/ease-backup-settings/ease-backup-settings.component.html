@@ -1,5 +1,5 @@
 <!--
- ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
@@ -35,9 +35,9 @@
     </div>
     <div
       class="state"
-      [ngClass]="easeBackupService.beatifyState(item.lastrun?.state).css"
+      [ngClass]="easeBackupService.beatifyState(item.lastrun.state).css"
     >
-      {{ easeBackupService.beatifyState(item.lastrun?.state).text }}
+      {{ easeBackupService.beatifyState(item.lastrun.state).text }}
       <div class="lastrun" *ngIf="item.lastrun.date">
         {{ beautifyService.beatifyDate(item.lastrun.date) }}
       </div>

@@ -1,4 +1,9 @@
 <!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<!--
  ~ Copyright DB Netz AG and the capella-collab-manager contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
@@ -7,7 +12,7 @@
   <mat-card class="section-card" *ngIf="projectService.project">
     <h2>
       Add model to project
-      {{ projectService.project.name }}
+      {{ projectService.project?.name }}
     </h2>
     <form
       id="create-model-base-form"

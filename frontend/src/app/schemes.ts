@@ -1,5 +1,7 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 export interface Session {
   ports: Array<string>;
@@ -23,11 +25,14 @@ export interface User {
   role: 'user' | 'administrator';
 }
 
-export interface RepositoryUser {
-  repository_name: string;
+export type Warnings = 'LICENCE_LIMIT' | 'NO_GIT_MODEL_DEFINED';
+
+export interface ProjectUser {
+  project_name: string;
   username: string;
   permission: 'read' | 'write';
   role: 'user' | 'manager' | 'administrator';
+  warnings: Array<Warnings>;
 }
 
 export interface SessionUsage {
@@ -36,7 +41,13 @@ export interface SessionUsage {
   errors: Array<string>;
 }
 
-export type Warnings = 'LICENCE_LIMIT' | 'NO_GIT_MODEL_DEFINED';
+export interface PathNode {
+  path: string;
+  name: string;
+  type: 'file' | 'directory';
+  isNew: boolean;
+  children: PathNode[] | null;
+}
 
 export interface Repository {
   repository_name: string;

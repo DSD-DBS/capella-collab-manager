@@ -1,17 +1,15 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+
 import json
 import logging
 import typing as t
 from socket import timeout
 
-# 3rd party:
 import requests
 from requests.auth import HTTPBasicAuth
 
-# 1st party:
 from capellacollab.config import config
 from capellacollab.core.credentials import generate_password
 
@@ -34,7 +32,12 @@ def get_t4c_status():
         return {"free": -1, "total": -1, "used": [], "errors": ["TIMEOUT"]}
     except requests.exceptions.ConnectionError:
         log.info("License server timeout", exc_info=True)
-        return {"free": -1, "total": -1, "used": [], "errors": ["CONNECTION_ERROR"]}
+        return {
+            "free": -1,
+            "total": -1,
+            "used": [],
+            "errors": ["CONNECTION_ERROR"],
+        }
 
     # This API endpoints returns 404 on success -> We have to handle the errors here manually
     if r.status_code != 404 and not r.ok:
@@ -49,18 +52,33 @@ def get_t4c_status():
         status = r.json()["status"]
 
         if status.get("message", "") == "No last status available.":
-            return {"free": -1, "total": -1, "used": [], "errors": ["NO_STATUS"]}
+            return {
+                "free": -1,
+                "total": -1,
+                "used": [],
+                "errors": ["NO_STATUS"],
+            }
 
         if "used" in status:
             return status
     except KeyError:
         log.exception("No status available")
         log.info("Response from T4C is %s", r.content.decode("ascii"))
-        return {"free": -1, "total": -1, "used": [], "errors": ["NO_STATUS_JSON"]}
+        return {
+            "free": -1,
+            "total": -1,
+            "used": [],
+            "errors": ["NO_STATUS_JSON"],
+        }
     except json.JSONDecodeError:
         log.exception("Cannot decode T4C status")
         log.info("Response from T4C is %s", r.content.decode("ascii"))
-        return {"free": -1, "total": -1, "used": [], "errors": ["DECODE_ERROR"]}
+        return {
+            "free": -1,
+            "total": -1,
+            "used": [],
+            "errors": ["DECODE_ERROR"],
+        }
 
     return {"free": -1, "total": -1, "used": [], "errors": ["UNKNOWN_ERROR"]}
 

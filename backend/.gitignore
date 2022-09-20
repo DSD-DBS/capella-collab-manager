@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: CC0-1.0
+
 .idea
 config/*
 !config/config_template.yaml
@@ -7,3 +10,4 @@ config/*
 .venv
 *.egg-info
 build
+.git_archival.txt

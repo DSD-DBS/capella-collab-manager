@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DeleteGitSettingsDialogComponent } from './delete-git-settings-dialog.component';
@@ -8,9 +13,8 @@ describe('DeleteGitSettingsDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DeleteGitSettingsDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [DeleteGitSettingsDialogComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

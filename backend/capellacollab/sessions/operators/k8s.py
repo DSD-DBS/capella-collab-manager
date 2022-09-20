@@ -1,23 +1,24 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 from __future__ import annotations
 
-# Standard library:
+import enum
 import logging
 import random
 import string
 import typing as t
+from dataclasses import dataclass
 from datetime import datetime
 
-# 3rd party:
 import kubernetes
 import kubernetes.client.exceptions
 import kubernetes.client.models
 import kubernetes.config
+import kubernetes.stream.stream
 
 from capellacollab.config import config
-from capellacollab.core.operators.abc import Operator
+from capellacollab.sessions.operators.abc import Operator
 
 log = logging.getLogger(__name__)
 cfg = config["operators"]["k8s"]
@@ -58,6 +59,19 @@ except kubernetes.config.ConfigException:
         )
 
 
+class FileType(enum.Enum):
+    FILE = "file"
+    DIRECTORY = "directory"
+
+
+@dataclass
+class File:
+    path: str
+    name: str
+    type: FileType
+    children: t.Optional[list[File]] = None
+
+
 class KubernetesOperator(Operator):
     def __init__(self) -> None:
         self.v1_core = kubernetes.client.CoreV1Api()
@@ -91,13 +105,18 @@ class KubernetesOperator(Operator):
                 "T4C_SERVER_PORT": t4c_cfg["port"],
                 "T4C_REPOSITORIES": ",".join(repositories),
                 "RMT_PASSWORD": password,
+                "FILESERVICE_PASSWORD": password,
                 "T4C_USERNAME": username,
             },
             self._get_claim_name(username),
         )
         self._create_service(id, id)
         service = self._get_service(id)
-        log.info("Launched a persistent session for user %s with id %s", username, id)
+        log.info(
+            "Launched a persistent session for user %s with id %s",
+            username,
+            id,
+        )
         return self._export_attrs(deployment, service)
 
     def start_readonly_session(
@@ -108,6 +127,7 @@ class KubernetesOperator(Operator):
         entrypoint: str,
         git_username: str,
         git_password: str,
+        git_depth: int,
     ) -> t.Dict[str, t.Any]:
         id = self._generate_id()
 
@@ -120,6 +140,7 @@ class KubernetesOperator(Operator):
                 "GIT_URL": git_url,
                 "GIT_REVISION": git_revision,
                 "GIT_ENTRYPOINT": entrypoint,
+                "GIT_DEPTH": git_depth,
                 "RMT_PASSWORD": password,
             },
         )
@@ -166,12 +187,15 @@ class KubernetesOperator(Operator):
             )
 
             log.debug("Received k8s pods: %s", pods.items[0].metadata.name)
-            log.debug("Fetching k8s events for pod: %s", pods.items[0].metadata.name)
+            log.debug(
+                "Fetching k8s events for pod: %s", pods.items[0].metadata.name
+            )
 
             return (
                 self.v1_core.list_namespaced_event(
                     namespace=cfg["namespace"],
-                    field_selector="involvedObject.name=" + pods.items[0].metadata.name,
+                    field_selector="involvedObject.name="
+                    + pods.items[0].metadata.name,
                 )
                 .items[-1]
                 .reason
@@ -227,7 +251,11 @@ class KubernetesOperator(Operator):
         )
 
     def create_cronjob(
-        self, image: str, environment: t.Dict[str, str], schedule="* * * * *"
+        self,
+        image: str,
+        environment: t.Dict[str, str],
+        schedule="* * * * *",
+        timeout=18000,
     ) -> str:
         id = self._generate_id()
         self._create_cronjob(
@@ -235,6 +263,7 @@ class KubernetesOperator(Operator):
             image=image,
             environment=environment,
             schedule=schedule,
+            timeout=timeout,
         )
         return id
 
@@ -262,7 +291,9 @@ class KubernetesOperator(Operator):
             ),
             spec=cronjob.spec.job_template.spec,
         )
-        self.v1_batch.create_namespaced_job(namespace=cfg["namespace"], body=job)
+        self.v1_batch.create_namespaced_job(
+            namespace=cfg["namespace"], body=job
+        )
 
     def delete_cronjob(self, id: str) -> None:
         self._delete_cronjob(id=id)
@@ -304,9 +335,13 @@ class KubernetesOperator(Operator):
         return {
             "id": deployment.to_dict()["metadata"]["name"],
             "ports": set([3389]),
-            "created_at": deployment.to_dict()["metadata"]["creation_timestamp"],
+            "created_at": deployment.to_dict()["metadata"][
+                "creation_timestamp"
+            ],
             "mac": "-",
-            "host": service.to_dict()["metadata"]["name"] + "." + cfg["namespace"],
+            "host": service.to_dict()["metadata"]["name"]
+            + "."
+            + cfg["namespace"],
         }
 
     def _create_deployment(
@@ -320,7 +355,9 @@ class KubernetesOperator(Operator):
         volume = []
 
         if volume_claim_name:
-            volume_mount.append({"name": "workspace", "mountPath": "/workspace"})
+            volume_mount.append(
+                {"name": "workspace", "mountPath": "/workspace"}
+            )
 
             volume.append(
                 {
@@ -348,6 +385,7 @@ class KubernetesOperator(Operator):
                                 "ports": [
                                     {"containerPort": 3389, "protocol": "TCP"},
                                     {"containerPort": 9118, "protocol": "TCP"},
+                                    {"containerPort": 8000, "protocol": "TCP"},
                                 ],
                                 "env": [
                                     {"name": key, "value": str(value)}
@@ -355,7 +393,10 @@ class KubernetesOperator(Operator):
                                 ],
                                 "resources": {
                                     "limits": {"cpu": "2", "memory": "6Gi"},
-                                    "requests": {"cpu": "0.4", "memory": "1.6Gi"},
+                                    "requests": {
+                                        "cpu": "0.4",
+                                        "memory": "1.6Gi",
+                                    },
                                 },
                                 "imagePullPolicy": "Always",
                                 "volumeMounts": volume_mount,
@@ -368,10 +409,17 @@ class KubernetesOperator(Operator):
                 },
             },
         }
-        return self.v1_apps.create_namespaced_deployment(cfg["namespace"], body)
+        return self.v1_apps.create_namespaced_deployment(
+            cfg["namespace"], body
+        )
 
     def _create_cronjob(
-        self, name: str, image: str, environment: t.Dict[str, str], schedule="* * * * *"
+        self,
+        name: str,
+        image: str,
+        environment: t.Dict[str, str],
+        schedule="* * * * *",
+        timeout=18000,
     ) -> kubernetes.client.V1CronJob:
         body = {
             "kind": "CronJob",
@@ -395,7 +443,10 @@ class KubernetesOperator(Operator):
                                             for key, value in environment.items()
                                         ],
                                         "resources": {
-                                            "limits": {"cpu": "2", "memory": "6Gi"},
+                                            "limits": {
+                                                "cpu": "2",
+                                                "memory": "6Gi",
+                                            },
                                             "requests": {
                                                 "cpu": "0.4",
                                                 "memory": "1.6Gi",
@@ -408,7 +459,7 @@ class KubernetesOperator(Operator):
                             }
                         },
                         "backoffLimit": 1,
-                        "activeDeadlineSeconds": 600,
+                        "activeDeadlineSeconds": timeout,
                     }
                 },
             },
@@ -446,6 +497,12 @@ class KubernetesOperator(Operator):
                         "protocol": "TCP",
                         "port": 9118,
                         "targetPort": 9118,
+                    },
+                    {
+                        "name": "fileservice",
+                        "protocol": "TCP",
+                        "port": 8000,
+                        "targetPort": 8000,
                     },
                 ],
                 "selector": {"app": deployment_name},
@@ -487,13 +544,17 @@ class KubernetesOperator(Operator):
 
     def _delete_deployment(self, id: str) -> kubernetes.client.V1Status:
         try:
-            return self.v1_apps.delete_namespaced_deployment(id, cfg["namespace"])
+            return self.v1_apps.delete_namespaced_deployment(
+                id, cfg["namespace"]
+            )
         except kubernetes.client.exceptions.ApiException:
             log.exception("Error deleting deployment with id: %s", id)
 
     def _delete_cronjob(self, id: str) -> kubernetes.client.V1Status:
         try:
-            return self.v1_batch.delete_namespaced_cron_job(id, cfg["namespace"])
+            return self.v1_batch.delete_namespaced_cron_job(
+                id, cfg["namespace"]
+            )
         except kubernetes.client.exceptions.ApiException:
             log.exception("Error deleting cronjob with id: %s", id)
 
@@ -502,3 +563,46 @@ class KubernetesOperator(Operator):
             return self.v1_core.delete_namespaced_service(id, cfg["namespace"])
         except kubernetes.client.exceptions.ApiException:
             log.exception("Error deleting service with id: %s", id)
+
+    def _get_pod_name(self, id: str) -> str:
+        return self.v1_core.list_namespaced_pod(
+            namespace=cfg["namespace"], label_selector="app=" + id
+        ).to_dict()["items"][0]["metadata"]["name"]
+
+    def upload_files(
+        self,
+        id: str,
+        content: bytes,
+    ):
+        pod_name = self._get_pod_name(id)
+
+        try:
+            exec_command = ["tar", "xf", "-", "-C", "/"]
+            stream = kubernetes.stream.stream(
+                self.v1_core.connect_get_namespaced_pod_exec,
+                pod_name,
+                namespace=cfg["namespace"],
+                command=exec_command,
+                stderr=True,
+                stdin=True,
+                stdout=True,
+                tty=False,
+                _preload_content=False,
+            )
+
+            stream.write_stdin(content)
+            stream.update(timeout=1)
+            if stream.peek_stdout():
+                log.debug(
+                    "Upload into %s - STDOUT: %s", id, stream.read_stdout()
+                )
+            if stream.peek_stderr():
+                log.debug(
+                    "Upload into %s - STDERR: %s", id, stream.read_stderr()
+                )
+
+        except kubernetes.client.exceptions.ApiException as e:
+            log.exception(
+                "Exception when copying file to the pod with id %s", id
+            )
+            raise e

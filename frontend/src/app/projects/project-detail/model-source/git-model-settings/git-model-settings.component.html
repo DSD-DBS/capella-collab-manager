@@ -1,5 +1,5 @@
 <!--
- ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
@@ -12,7 +12,7 @@
       <mat-error>Please enter a name!</mat-error>
     </mat-form-field>
     <br />
-    <form formGroupName="model" class="content">
+    <div formGroupName="model" class="content">
       <mat-form-field id="git-path">
         <mat-label>Git HTTPS-URL</mat-label>
         <input
@@ -47,25 +47,23 @@
         <input matInput formControlName="revision" placeholder="HEAD" />
         <mat-error>Please enter a revision!</mat-error></mat-form-field
       >
-    </form>
-    <div id="credentials">
+    </div>
+    <div id="credentials" formGroupName="credentials">
       Credentials are used for pushes to the repository. <br />
       In private repositories, they are also needed to pull the model.
-      <form formGroupName="credentials">
-        <mat-form-field>
-          <mat-label>Username</mat-label>
-          <input matInput formControlName="username" placeholder="techuser" />
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Password</mat-label>
-          <input
-            matInput
-            formControlName="password"
-            placeholder="**********"
-            type="password"
-          />
-        </mat-form-field>
-      </form>
+      <mat-form-field>
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="username" placeholder="techuser" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          formControlName="password"
+          placeholder="**********"
+          type="password"
+        />
+      </mat-form-field>
     </div>
     <br />
     <button

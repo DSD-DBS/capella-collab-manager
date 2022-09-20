@@ -1,14 +1,10 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 from sqlalchemy import select
-
-# 3rd party:
 from sqlalchemy.orm import Session
 
 from capellacollab.projects.models import DatabaseProject, ProjectWithUsers
-
-# 1st party:
 from capellacollab.projects.users.models import (
     ProjectUserAssociation,
     RepositoryUser,
@@ -18,7 +14,9 @@ from capellacollab.projects.users.models import (
 from capellacollab.sql_models.users import DatabaseUser
 
 
-def get_users_of_repository(db: Session, project_name: str) -> list[RepositoryUser]:
+def get_users_of_repository(
+    db: Session, project_name: str
+) -> list[RepositoryUser]:
     project = db.execute(
         select(DatabaseProject).filter_by(name=project_name)
     ).scalar_one()
@@ -90,7 +88,9 @@ def change_permission_of_user_in_repository(
     return repo_user
 
 
-def delete_user_from_repository(db: Session, projects_name: str, username: str) -> None:
+def delete_user_from_repository(
+    db: Session, projects_name: str, username: str
+):
     db.query(ProjectUserAssociation).filter(
         ProjectUserAssociation.username == username
     ).filter(ProjectUserAssociation.projects_name == projects_name).delete()
@@ -108,14 +108,18 @@ def stage_project_of_user(
     db: Session, repository_name: str, username: str, staged_by: str
 ) -> ProjectUserAssociation:
     project_user = get_user_of_repository(db, repository_name, username)
-    user = db.execute(select(DatabaseUser).filter_by(name=staged_by)).scalar_one()
+    user = db.execute(
+        select(DatabaseUser).filter_by(name=staged_by)
+    ).scalar_one()
     project_user.projects.staged_by = user
     db.commit()
     db.refresh(project_user)
     return project_user
 
 
-def unstage_project(db: Session, project: DatabaseProject) -> ProjectUserAssociation:
+def unstage_project(
+    db: Session, project: DatabaseProject
+) -> ProjectUserAssociation:
     del project.staged_by
     db.commit()
     print(project)

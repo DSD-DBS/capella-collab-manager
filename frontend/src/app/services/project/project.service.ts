@@ -1,9 +1,14 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -34,13 +39,10 @@ export class ProjectService {
     return this.http.get<Project[]>(this.BACKEND_URL_PREFIX);
   }
 
-  listStagedProjects(): Observable<Array<Project>> {
-    return new Observable<Project[]>((subscriber) => {
-      this.list().subscribe((projects: Array<Project>) => {
-        const stagedProjects = projects.filter((project) => project.staged_by);
-        subscriber.next(stagedProjects);
-      });
-    });
+  listStagedProjects(): Observable<Project[]> {
+    return this.list().pipe(
+      map((projects) => projects.filter((project) => project.staged_by))
+    );
   }
 
   getProject(name: string): Observable<Project> {
@@ -70,9 +72,7 @@ export class ProjectService {
 
   unstageProject(project_slug: string): Observable<Project> {
     const url = new URL(`${project_slug}/unstage`, this.base_url);
-    return this.http
-      .patch<Project>(url.toString(), null)
-      .pipe(tap(console.log));
+    return this.http.patch<Project>(url.toString(), null);
   }
 }
 

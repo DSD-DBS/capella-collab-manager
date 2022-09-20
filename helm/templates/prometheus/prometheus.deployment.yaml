@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 apiVersion: apps/v1
@@ -30,12 +30,21 @@ spec:
           ports:
             - containerPort: 9118
           resources:
+            {{ if eq .Values.target "local" }}
+            limits:
+              cpu: "0.1"
+              memory: 50Mi
+            requests:
+              cpu: "0.05"
+              memory: 5Mi
+            {{ else }}
             requests:
               cpu: 500m
               memory: 500M
             limits:
               cpu: 1
               memory: 1Gi
+            {{ end }}
           volumeMounts:
             - name: prometheus-config-volume
               mountPath: /etc/prometheus/

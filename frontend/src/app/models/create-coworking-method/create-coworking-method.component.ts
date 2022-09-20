@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
@@ -12,6 +17,7 @@ import {
 } from 'src/app/services/git/git.service';
 import { ModelService } from 'src/app/services/model/model.service';
 import { Source, SourceService } from 'src/app/services/source/source.service';
+import { filter, switchMap, map, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-create-coworking-method',
@@ -21,7 +27,7 @@ import { Source, SourceService } from 'src/app/services/source/source.service';
 export class CreateCoworkingMethodComponent implements OnInit {
   public gitForm = new FormGroup({
     credentials: new FormGroup({
-      url: new FormControl('', Validators.required),
+      path: new FormControl('', Validators.required),
       username: new FormControl(''),
       password: new FormControl(''),
     }),
@@ -46,10 +52,10 @@ export class CreateCoworkingMethodComponent implements OnInit {
       } else {
         this.filteredRevisions = {
           branches: this.gitService.instance.branches.filter((branch) =>
-            branch.startsWith(value)
+            branch.startsWith(value as string)
           ),
           tags: this.gitService.instance.tags.filter((tag) =>
-            tag.startsWith(value)
+            tag.startsWith(value as string)
           ),
         };
       }
@@ -65,24 +71,26 @@ export class CreateCoworkingMethodComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (
-      this.projectService.project &&
-      this.modelService.model &&
-      this.gitForm.valid
-    ) {
-      let form_result = this.gitForm.value;
+    if (this.gitForm.valid) {
       let source: Source = {
-        path: form_result.credentials.url,
-        entrypoint: form_result.entrypoint,
-        revision: form_result.revision,
-        username: form_result.credentials.username,
-        password: form_result.credentials.password,
+        path: this.gitForm.value.credentials!.path!,
+        username: this.gitForm.value.credentials!.username || '',
+        password: this.gitForm.value.credentials!.password || '',
+        revision: this.gitForm.value.revision!,
+        entrypoint: this.gitForm.value.entrypoint || '',
       };
-      this.sourceService
-        .addGitSource(
-          this.projectService.project.slug,
-          this.modelService.model.slug,
-          source
+      combineLatest([
+        this.projectService._project.pipe(
+          filter(Boolean),
+          map((project) => project.name)
+        ),
+        this.modelService._model.pipe(
+          filter(Boolean),
+          map((model) => model.slug)
+        ),
+      ])
+        .pipe(
+          switchMap((args) => this.sourceService.addGitSource(...args, source))
         )
         .subscribe((_) => {
           this.router.navigate([

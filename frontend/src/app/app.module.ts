@@ -1,5 +1,7 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { OverlayModule } from '@angular/cdk/overlay';
@@ -103,6 +105,23 @@ import { HomeComponent } from './workspaces/home.component';
 import { NoRepositoryComponent } from './workspaces/no-repository/no-repository.component';
 import { RequestSessionComponent } from './workspaces/request-session/request-session.component';
 import { WarningComponent } from './workspaces/request-session/warning/warning.component';
+import { CreateModelComponent } from './models/create-model/create-model.component';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { CreateCoworkingMethodComponent } from './models/create-coworking-method/create-coworking-method.component';
+import { ChooseSourceComponent } from './models/choose-source/choose-source.component';
+import { InitModelComponent } from './models/init-model/init-model.component';
+import { ChooseInitComponent } from './models/choose-init/choose-init.component';
+import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
+import { ModelWrapperComponent } from './models/model-wrapper/model-wrapper.component';
+import { UploadDialogComponent } from './active-sessions/upload-dialog/upload-dialog.component';
+import { FileExistsDialogComponent } from './active-sessions/upload-dialog/file-exists-dialog/file-exists-dialog.component';
+import { ReleaseNotesComponent } from './metadata/release-notes/release-notes.component';
+import { VersionComponent } from './metadata/version/version.component';
+import { MarkdownModule } from 'ngx-markdown';
+import { MatTreeModule } from '@angular/material/tree';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -164,6 +183,12 @@ import { WarningComponent } from './workspaces/request-session/warning/warning.c
     ChooseSourceComponent,
     InitModelComponent,
     ChooseInitComponent,
+    ProjectWrapperComponent,
+    ModelWrapperComponent,
+    UploadDialogComponent,
+    FileExistsDialogComponent,
+    ReleaseNotesComponent,
+    VersionComponent,
     DeleteProjectComponent,
     StageProjectComponent,
     DeleteProjectDialogComponent,
@@ -205,6 +230,8 @@ import { WarningComponent } from './workspaces/request-session/warning/warning.c
     MatBadgeModule,
     MatRadioModule,
     MatAutocompleteModule,
+    MatTreeModule,
+    MatProgressBarModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-left',
       timeOut: 10000,
@@ -214,6 +241,7 @@ import { WarningComponent } from './workspaces/request-session/warning/warning.c
       countDuplicates: true,
     }),
     CookieModule.withOptions(),
+    MarkdownModule.forRoot(),
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

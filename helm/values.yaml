@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 #########################################
@@ -18,12 +18,32 @@ docker:
     # Docker Image for the Backend
     backend: /capella/collab/backend
 
-    guacamole: 
+    # Docker Image serving the documentation
+    docs: /capella/collab/docs
+
+    # Docker Image for EASE
+    ease: /t4c/client/ease
+
+    # Docker Image for T4C Backup
+    importer: /t4c/client/importer
+
+    workspaces:
+      # Docker Image for the Persistent Workspace Session
+      persistent: /t4c/client/remote
+
+      # Docker Image for the ReadOnly Workspace
+      readonly: /capella/readonly
+
+    guacamole:
       # The registry needs to specified here!
       guacamole: docker.io/guacamole/guacamole
       guacd: docker.io/guacamole/guacd
 
     prometheus: /prom/prometheus
+
+    mocks:
+      t4cServer: /t4c/server/mock
+      licenseServer: /t4c/licence/mock
 
 general:
   # Base URL on which the service listens
@@ -126,7 +146,7 @@ backend:
         secret: tbd
 
       redirectURI: tbd
-      
+
   # Namespace in which the Session Deployments / Pods should be spawned.
   # IMPORTANT: The namespace has to exist already
   k8sSessionNamespace: t4c-sessions
@@ -154,3 +174,6 @@ cluster:
     sessions:
       containers:
       # The following values are appended to each container in the sessions namespace
+
+proxy:
+  no_proxy:

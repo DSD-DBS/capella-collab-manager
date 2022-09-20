@@ -1,23 +1,22 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+
 import typing as t
 
-import capellacollab.projects.capellamodels.crud as models_crud
+from sqlalchemy.orm import Session
 
-# 1st party:
+import capellacollab.projects.capellamodels.crud as models_crud
 from capellacollab.extensions.modelsources.git.models import (
     DB_GitModel,
     NewGitSource,
     PostGitModel,
 )
 
-# 3rd party:
-from sqlalchemy.orm import Session
 
-
-def get_gitmodels_of_capellamodels(db: Session, model_id: int) -> t.List[DB_GitModel]:
+def get_gitmodels_of_capellamodels(
+    db: Session, model_id: int
+) -> t.List[DB_GitModel]:
     return db.query(DB_GitModel).filter(DB_GitModel.model_id == model_id).all()
 
 
@@ -71,14 +70,18 @@ def add_gitmodel_to_capellamodel(
     return model
 
 
-def delete_model_from_repository(db: Session, capellamodel_id: int, model_id: int):
+def delete_model_from_repository(
+    db: Session, capellamodel_id: int, model_id: int
+):
     db.query(DB_GitModel).filter(DB_GitModel.id == model_id).filter(
         DB_GitModel.model_id == capellamodel_id
     ).delete()
     db.commit()
 
 
-def create(db: Session, project_slug: str, model_slug: str, source: NewGitSource):
+def create(
+    db: Session, project_slug: str, model_slug: str, source: NewGitSource
+):
 
     model = models_crud.get_model_by_slug(db, project_slug, model_slug)
     new_source = DB_GitModel.from_new_git_source(model.id, source)

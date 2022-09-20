@@ -1,0 +1,11 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="wrapper" (click)="openReleaseNotes()">
+  Environment: {{ env }} <br />
+  Frontend version: {{ versionService.version?.git?.version }} <br />
+  Backend version:
+  {{ backend }}
+</div>

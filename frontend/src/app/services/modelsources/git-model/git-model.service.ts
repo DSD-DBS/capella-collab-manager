@@ -1,5 +1,7 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -88,6 +90,14 @@ export class GitModelService {
         });
     });
   }
+  getRevisions(project_name: string) {
+    return this.http.get<Revisions>(
+      environment.backend_url +
+        '/projects/' +
+        project_name +
+        '/extensions/modelsources/git/primary/revisions'
+    );
+  }
 }
 
 export interface Credentials {
@@ -121,4 +131,10 @@ export interface CreateGitModel extends BasicGitModel {
     username: string;
     password: string;
   };
+}
+
+export interface Revisions {
+  branches: Array<string>;
+  tags: Array<string>;
+  default: string;
 }

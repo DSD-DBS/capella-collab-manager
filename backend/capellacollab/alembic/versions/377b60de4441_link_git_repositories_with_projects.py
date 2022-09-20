@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Link Git Repositories with Projects
@@ -8,7 +8,7 @@ Revises: 6a8bdec1dccb
 Create Date: 2021-09-03 12:58:16.636950
 
 """
-# 3rd party:
+
 import sqlalchemy as sa
 from alembic import op
 
@@ -20,8 +20,12 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column("git_models", sa.Column("project_name", sa.String(), nullable=False))
-    op.create_foreign_key(None, "git_models", "projects", ["project_name"], ["name"])
+    op.add_column(
+        "git_models", sa.Column("project_name", sa.String(), nullable=False)
+    )
+    op.create_foreign_key(
+        None, "git_models", "projects", ["project_name"], ["name"]
+    )
 
 
 def downgrade():

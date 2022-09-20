@@ -34,7 +34,9 @@
             "optimization": {
               "fonts": false
             },
-            "scripts": []
+            "scripts": [
+              "node_modules/marked/marked.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -122,11 +124,16 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/marked/marked.min.js"
+            ]
           }
         }
       }
     }
   },
-  "defaultProject": "t4cclient"
+  "defaultProject": "t4cclient",
+  "cli": {
+    "analytics": false
+  }
 }

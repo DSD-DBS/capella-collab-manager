@@ -1,5 +1,5 @@
 /*
- * Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -45,6 +45,7 @@
 
 .right-aligned {
   display: flex;
+  align-items: center;
 }
 ::ng-deep.mat-menu-panel {
   overflow: hidden !important;
@@ -58,7 +59,7 @@
   justify-content: space-between;
 }
 
-
+a,
 mat-icon {
   margin-left: 10px;
 }

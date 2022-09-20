@@ -1,22 +1,23 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+
 import logging
 import random
 import string
 import time
 import typing as t
 
-# 3rd party:
 import uvicorn
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
-logging.basicConfig(level=logging.INFO)
+from capellacollab.config import config
+
+logging.basicConfig(level=config["logging"]["level"])
 log = logging.getLogger(__name__)
 
-# 1st party:
+
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.config import config
 from capellacollab.core.database import __main__ as database
@@ -62,7 +63,11 @@ async def log_requests(
     formatted_process_time = str(round(process_time, 2))
     log.debug(
         "rid=%(idem)s completed_in=%(time)sms status_code=%(code)s",
-        {"idem": idem, "time": formatted_process_time, "code": response.status_code},
+        {
+            "idem": idem,
+            "time": formatted_process_time,
+            "code": response.status_code,
+        },
     )
 
     return response

@@ -1,21 +1,15 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 from __future__ import annotations
 
-# Standard library:
 import typing as t
 
-# 3rd party:
 from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError, Session
 
-# 1st party:
 import capellacollab.extensions.modelsources.t4c.connection as t4c_manager
 import capellacollab.projects.users.models as schema_repositories
-
-# local:
-from . import crud as repository_users
 from capellacollab.core.authentication.database import (
     check_username_not_admin,
     check_username_not_in_repository,
@@ -25,8 +19,12 @@ from capellacollab.core.authentication.database import (
 )
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.authentication.responses import (
+    AUTHENTICATION_RESPONSES,
+)
 from capellacollab.core.database import get_db, users
-from capellacollab.routes.open_api_configuration import AUTHENTICATION_RESPONSES
+
+from . import crud as repository_users
 
 router = APIRouter()
 
@@ -68,6 +66,10 @@ def add_user_to_repository(
     check_username_not_admin(body.username, db)
     if body.role == schema_repositories.RepositoryUserRole.MANAGER:
         body.permission = schema_repositories.RepositoryUserPermission.WRITE
+    if body.permission == schema_repositories.RepositoryUserPermission.WRITE:
+        t4c_manager.add_user_to_repository(
+            project, body.username, is_admin=False
+        )
     return repository_users.add_user_to_repository(
         db, project, body.role, body.username, body.permission
     )
@@ -115,11 +117,15 @@ def patch_repository_user(
         if not admin and get_username(token) != username:
             raise HTTPException(
                 status_code=403,
-                detail="The username does not match with your user. You have to be administrator to edit other users.",
+                detail={
+                    "reason": "The username does not match with your user. You have to be administrator to edit other users."
+                },
             )
 
         try:
-            t4c_manager.update_password_of_user(project, username, body.password)
+            t4c_manager.update_password_of_user(
+                project, username, body.password
+            )
         except HTTPError as err:
             if err.response.status_code == 404:
                 t4c_manager.add_user_to_repository(
@@ -128,7 +134,7 @@ def patch_repository_user(
             else:
                 raise HTTPException(
                     status_code=500,
-                    detail="Invalid response from T4C Server",
+                    detail={"reason": "Invalid response from T4C server."},
                 ) from err
 
     if body.permission:
@@ -148,7 +154,9 @@ def patch_repository_user(
         if repo_user.role == schema_repositories.RepositoryUserRole.MANAGER:
             raise HTTPException(
                 status_code=403,
-                detail="You are not allowed to set the permission of managers!",
+                detail={
+                    "reason": "You are not allowed to set the permission of project leads!"
+                },
             )
         repository_users.change_permission_of_user_in_repository(
             db, project, body.permission, username

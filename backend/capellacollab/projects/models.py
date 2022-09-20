@@ -1,18 +1,15 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
+
 
 from __future__ import annotations
 
-# Standard library:
 import enum
-import typing as t
 
-# 3rd party:
 from pydantic import BaseModel
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-# 1st party:
 # Import required for sqlalchemy
 import capellacollab.projects.users.models
 from capellacollab.core.database import Base
@@ -76,7 +73,7 @@ class DatabaseProject(Base):
         cascade="all, delete",
     )
     models = relationship(
-        "DB_Model",
+        "DatabaseCapellaModel",
         back_populates="project",
         cascade="all, delete",
     )

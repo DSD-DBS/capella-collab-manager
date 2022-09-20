@@ -1,6 +1,7 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
-# Standard library:
+
+
 import importlib
 import logging
 from importlib import metadata

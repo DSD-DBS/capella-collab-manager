@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Add JenkinsPipeline
@@ -8,7 +8,7 @@ Revises: fc6250459067
 Create Date: 2021-09-06 16:24:02.228776
 
 """
-# 3rd party:
+
 import sqlalchemy as sa
 from alembic import op
 

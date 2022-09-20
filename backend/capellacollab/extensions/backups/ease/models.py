@@ -1,15 +1,13 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+
 import typing as t
 from datetime import datetime
 
-# 3rd party:
 from pydantic import BaseModel
 from sqlalchemy import Column, ForeignKey, Integer, String
 
-# 1st party:
 from capellacollab.core.database import Base
 
 

@@ -1,4 +1,13 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
 # Capella Collaboration Manager
+
+![lint](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/lint.yml/badge.svg)
+![tests](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/tests.yml/badge.svg)
+![push](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/push.yml/badge.svg)
 
 A web platform for collaboration on [Capella](https://www.eclipse.org/capella/)
 (MBSE) projects
@@ -64,21 +73,16 @@ make deploy
 make deploy-t4c
 ```
 
-It can take a long time to run, but shouldn't take more than 5 minutes. Meanwhile, the following message appears several times:
+It can take a long time to run, but shouldn't take more than 5 minutes.
+Please wait until all services are in the "Running" state.
 
-```text
-ready.go:277: [debug] Deployment is not ready: t4c-manager/dev-t4c-manager-backend. 0 out of 1 expected pods are ready
-```
+If all goes well, you should find Capella-collab-manager running on [http://localhost:8080/](http://localhost:8080/).
 
-This is nothing to worry about - it just takes a while for all containers to start.
-
-Verify your deployment - components should be in the "Running" state:
+If you want to see the individual services in the Kubernetes dashboard, you can run the following command:
 
 ```zsh
-kubectl get pods --namespace=t4c-manager
+make dashboard
 ```
-
-If all goes well, you should find Capella-collab-manager running on http://localhost:8081/.
 
 If something goes wrong, please open an issue on Github.
 
@@ -91,7 +95,7 @@ make delete-cluster
 #### Starting a session
 
 Once the cluster is installed and all services are running (`kubectl get pods`), you can
-get started. Follow our [Getting started guide](doc/getting_started.md) and be up and
+get started. Follow our [Getting started guide](docs/getting_started/getting_started.md) and be up and
 running in a few minutes.
 
 ### Deployment
@@ -131,7 +135,7 @@ For environments where TeamForCapella (commercial product of Obeo) is available 
 
 ## How it works
 
-![Capella Collab Manager architecture](doc/architecture.png)
+![Capella Collab Manager architecture](docs/architecture.png)
 
 The Capella Collaboration Manager consists of a couple of components:
 

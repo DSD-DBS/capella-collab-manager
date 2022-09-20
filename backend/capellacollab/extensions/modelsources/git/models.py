@@ -1,18 +1,16 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# Standard library:
+
 import typing as t
 
-# 1st party:
-from capellacollab.core.database import Base
-
-# 3rd party:
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import Boolean
+
+from capellacollab.core.database import Base
 
 
 class RepositoryGitInnerModel(BaseModel):
@@ -88,7 +86,7 @@ class DB_GitModel(Base):
     revision = Column(String)
     primary = Column(Boolean)
     model_id = Column(Integer, ForeignKey("models.id"))
-    model = relationship("DB_Model", back_populates="git_model")
+    model = relationship("DatabaseCapellaModel", back_populates="git_model")
     username = Column(String)
     password = Column(String)
 

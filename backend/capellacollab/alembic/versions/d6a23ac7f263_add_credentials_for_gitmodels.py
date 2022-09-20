@@ -1,4 +1,4 @@
-# Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Add credentials for gitmodels
@@ -8,7 +8,7 @@ Revises: caa0ecb7b28d
 Create Date: 2022-03-04 11:47:41.439896
 
 """
-# 3rd party:
+
 import sqlalchemy as sa
 from alembic import op
 
@@ -20,17 +20,27 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column("EASEBackup", sa.Column("reference", sa.String(), nullable=True))
-    op.add_column("git_models", sa.Column("username", sa.String(), nullable=True))
-    op.add_column("git_models", sa.Column("password", sa.String(), nullable=True))
-    op.drop_constraint("git_models_project_id_fkey", "git_models", type_="foreignkey")
+    op.add_column(
+        "EASEBackup", sa.Column("reference", sa.String(), nullable=True)
+    )
+    op.add_column(
+        "git_models", sa.Column("username", sa.String(), nullable=True)
+    )
+    op.add_column(
+        "git_models", sa.Column("password", sa.String(), nullable=True)
+    )
+    op.drop_constraint(
+        "git_models_project_id_fkey", "git_models", type_="foreignkey"
+    )
     op.drop_column("git_models", "project_id")
 
 
 def downgrade():
     op.add_column(
         "git_models",
-        sa.Column("project_id", sa.INTEGER(), autoincrement=False, nullable=True),
+        sa.Column(
+            "project_id", sa.INTEGER(), autoincrement=False, nullable=True
+        ),
     )
     op.create_foreign_key(
         "git_models_project_id_fkey",

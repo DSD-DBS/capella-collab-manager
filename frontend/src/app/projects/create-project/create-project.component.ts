@@ -1,5 +1,7 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
@@ -11,7 +13,7 @@ import {
 } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from '../../toast/toast.service';
 import {
   BehaviorSubject,
   connectable,
@@ -35,69 +37,81 @@ import {
   styleUrls: ['./create-project.component.css'],
 })
 export class CreateProjectComponent implements OnInit, OnDestroy {
+  private projectsSlugs = new BehaviorSubject<string[]>([]);
+  private projectDetails = false;
+  private slugsSubscription?: Subscription;
+
   form = new FormGroup({
-    name: new FormControl('', Validators.required),
+    name: new FormControl('', [
+      Validators.required,
+      this.slugValidator.bind(this),
+    ]),
     description: new FormControl(''),
   });
-
-  private project_details = false;
-  private projects_slugs = new BehaviorSubject<string[]>([]);
-  private slugs_subscription?: Subscription;
 
   constructor(
     public projectService: ProjectService,
     private router: Router,
-    private toastrService: ToastrService,
+    private toastService: ToastService,
     private navBarService: NavBarService
   ) {
     this.navBarService.title = 'Create Project';
   }
 
   ngOnInit(): void {
-    this.form.controls.name.addValidators(this.slugValidator.bind(this));
-
     let projects = this.projectService._projects;
 
     this.projectService.list().subscribe({
-      next: projects.next.bind(projects),
-      error: projects.error.bind(projects),
+      next: (value) => {
+        projects.next(value);
+      },
+      error: (_) => {
+        projects.next(undefined);
+      },
     });
 
-    this.slugs_subscription = projects
+    this.slugsSubscription = projects
       .pipe(
         filter(Boolean),
         map((projects) => projects.map((p) => p.slug))
       )
-      .subscribe(this.projects_slugs);
+      .subscribe(this.projectsSlugs);
   }
 
   ngOnDestroy(): void {
-    this.slugs_subscription?.unsubscribe();
-    if (!this.project_details) {
+    this.slugsSubscription?.unsubscribe();
+    if (!this.projectDetails) {
       this.projectService._project.next(undefined);
     }
   }
 
   createProject(stepper: MatStepper): void {
-    let project_subject = this.projectService._project;
+    let projectSubject = this.projectService._project;
     if (this.form.valid) {
-      const project_creation_subject = connectable<Project>(
-        this.projectService.createProject(this.form.value),
+      const projectConnectable = connectable<Project>(
+        this.projectService.createProject({
+          name: this.form.value.name!,
+          description: this.form.value.name!,
+        }),
         {
           connector: () => new Subject(),
           resetOnDisconnect: false,
         }
       );
 
-      project_creation_subject
+      projectConnectable
         .pipe(
           tap({
-            next: project_subject.next.bind(project_subject),
-            error: project_subject.next.bind(project_subject),
+            next: (value) => {
+              projectSubject.next(value);
+            },
+            error: (_) => {
+              projectSubject.next(undefined);
+            },
           })
         )
         .subscribe((project) => {
-          this.toastrService.success(
+          this.toastService.showSuccess(
             `The project “${project!.name}” was successfuly created.`,
             'Project created'
           );
@@ -106,23 +120,30 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
           stepper.steps.get(0)!.editable = false;
         });
 
-      project_creation_subject
+      projectConnectable
         .pipe(switchMap(() => this.projectService.list()))
-        .subscribe(this.projectService._projects);
+        .subscribe({
+          next: (value) => {
+            this.projectService._projects.next(value);
+          },
+          error: (_) => {
+            this.projectService._projects.next(undefined);
+          },
+        });
 
-      project_creation_subject.connect();
+      projectConnectable.connect();
     }
   }
 
   finish(): void {
-    this.project_details = true;
+    this.projectDetails = true;
     this.router.navigate(['/project', this.projectService.project!.slug]);
   }
 
   slugValidator(control: AbstractControl): ValidationErrors | null {
-    let new_slug = slugify(control.value, { lower: true });
-    for (let slug of this.projects_slugs.value) {
-      if (slug == new_slug) {
+    let newSlug = slugify(control.value, { lower: true });
+    for (let slug of this.projectsSlugs.value) {
+      if (slug == newSlug) {
         return { uniqueSlug: { value: slug } };
       }
     }

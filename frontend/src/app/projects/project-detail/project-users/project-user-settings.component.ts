@@ -1,11 +1,12 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import {
   Component,
   Input,
   OnChanges,
-  OnInit,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -18,14 +19,11 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { RepositoryUser } from 'src/app/schemes';
+import { ProjectUser } from 'src/app/schemes';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { ToastService } from 'src/app/toast/toast.service';
-import {
-  Project,
-  ProjectService,
-} from 'src/app/services/project/project.service';
+import { Project } from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-project-user-settings',
@@ -35,7 +33,7 @@ import {
 export class RepositoryUserSettingsComponent implements OnChanges {
   @Input() repository!: Project;
 
-  repositoryUsers: Array<RepositoryUser> = [];
+  repositoryUsers: Array<ProjectUser> = [];
   search = '';
 
   @ViewChild('users') users: any;
@@ -65,8 +63,7 @@ export class RepositoryUserSettingsComponent implements OnChanges {
     return this.addUserToRepoForm.get('username') as FormControl;
   }
 
-  get selectedUser(): RepositoryUser {
-    console.log(this.users.selectedOptions.selected[0].value);
+  get selectedUser(): ProjectUser {
     return this.users.selectedOptions.selected[0].value;
   }
 
@@ -112,9 +109,9 @@ export class RepositoryUserSettingsComponent implements OnChanges {
       this.repoUserService
         .addUserToRepo(
           this.repository.name,
-          formValue.username,
-          formValue.role,
-          permission
+          formValue.username as string,
+          formValue.role as 'user' | 'manager',
+          permission as string
         )
         .subscribe(() => {
           formDirective.resetForm();
@@ -160,7 +157,7 @@ export class RepositoryUserSettingsComponent implements OnChanges {
       });
   }
 
-  getRepositoryUsersByRole(role: 'manager' | 'user'): Array<RepositoryUser> {
+  getRepositoryUsersByRole(role: 'manager' | 'user'): Array<ProjectUser> {
     return this.repositoryUsers.filter(
       (u) => u.role == role && u.username.includes(this.search.toLowerCase())
     );

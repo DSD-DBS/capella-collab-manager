@@ -1,5 +1,7 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -47,7 +49,7 @@ export interface Notice extends CreateNotice {
   id: number;
 }
 
-interface CreateNotice {
+export interface CreateNotice {
   level: NoticeLevel;
   title: string;
   message: string;

@@ -1,23 +1,24 @@
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
-import { Injectable } from '@angular/core';
 import {
-  HttpRequest,
-  HttpHandler,
   HttpEvent,
+  HttpHandler,
   HttpInterceptor,
-  HttpHeaders,
+  HttpRequest,
 } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { LocalStorageService } from '../local-storage/local-storage.service';
-import { catchError, first, map, tap, switchMap } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable, throwError } from 'rxjs';
+import { catchError, first, map, switchMap } from 'rxjs/operators';
 import {
   AuthService,
   RefreshTokenResponse,
 } from 'src/app/services/auth/auth.service';
 import { ToastService } from 'src/app/toast/toast.service';
+import { LocalStorageService } from '../local-storage/local-storage.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -35,7 +36,7 @@ export class AuthInterceptor implements HttpInterceptor {
     const req = this.injectAccessToken(request);
     return next.handle(req).pipe(
       catchError((err) => {
-        throwError(() => err)
+        throwError(() => err);
         if (err.status === 401) {
           if (err.error.detail.err_code == 'token_exp') {
             return this.refreshToken().pipe(
@@ -61,7 +62,7 @@ export class AuthInterceptor implements HttpInterceptor {
             err.error.detail.reason
           );
         } else if (err.status === 0) {
-          this.toastService.showPersistentError(
+          this.toastService.showError(
             'Backend not reachable',
             'Please check your internet connection and refresh the page!'
           );
@@ -80,10 +81,7 @@ export class AuthInterceptor implements HttpInterceptor {
   injectAccessToken(request: HttpRequest<unknown>): HttpRequest<unknown> {
     let access_token = this.localStorageService.getValue('access_token');
     return request.clone({
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${access_token}`,
-      }),
+      headers: request.headers.set('Authorization', `Bearer ${access_token}`),
     });
   }
 

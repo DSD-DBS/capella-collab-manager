@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
@@ -79,7 +84,7 @@ export class T4CInstanceSettingsComponent implements OnInit {
     if (this.createRepositoryForm.valid) {
       this.t4cRepoService
         .createT4CRepository(
-          this.createRepositoryForm.value.name,
+          this.createRepositoryForm.value.name as string,
           this.instance_id
         )
         .subscribe(() => {
