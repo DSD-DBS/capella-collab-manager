@@ -6,8 +6,10 @@
 import { Component } from '@angular/core';
 
 import { NavBarService } from '../general/navbar/service/nav-bar.service';
-import { ProjectUserService } from '../projects/project-detail/project-users/service/project-user.service';
-import { ProjectUser } from '../schemes';
+import {
+  Project,
+  ProjectService,
+} from 'src/app/services/project/project.service';
 import { SessionService } from '../services/session/session.service';
 
 @Component({
@@ -16,14 +18,20 @@ import { SessionService } from '../services/session/session.service';
   styleUrls: ['./workspace.component.css'],
 })
 export class WorkspaceComponent {
-  repositories: ProjectUser[] = [];
+  repositories: Project[] = [];
   showSpinner = true;
 
   constructor(
     public sessionService: SessionService,
-    private projectUserService: ProjectUserService,
+    private projectService: ProjectService,
     private navbarService: NavBarService
   ) {
     this.navbarService.title = 'Workspaces';
+  }
+
+  ngOnInit() {
+    this.projectService.list().forEach((res: Project[]) => {
+      this.repositories = res;
+    });
   }
 }

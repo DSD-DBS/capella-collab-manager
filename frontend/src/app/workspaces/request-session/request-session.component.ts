@@ -13,13 +13,16 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
+import {
+  Project,
+  ProjectService,
+} from 'src/app/services/project/project.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { ProjectUser, Session } from 'src/app/schemes';
+import { Session } from 'src/app/schemes';
 import {
   GitModelService,
   Revisions,
 } from 'src/app/services/modelsources/git-model/git-model.service';
-import { ProjectService } from 'src/app/services/project/project.service';
 
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import {
@@ -73,7 +76,7 @@ export class RequestSessionComponent {
   }
 
   @Input()
-  ownProjects: ProjectUser[] = [];
+  ownProjects: Project[] = [];
 
   chosenRepository: string = '';
   allBranches: boolean = false;

@@ -73,8 +73,8 @@
           >
             <mat-option
               *ngFor="let repository of ownProjects"
-              [value]="repository.project_name"
-              >{{ repository.project_name }}
+              [value]="repository.name"
+              >{{ repository.name }}
             </mat-option>
           </mat-select>
           <mat-error>Please select a repository!</mat-error> </mat-form-field
