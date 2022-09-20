@@ -5,8 +5,8 @@ site_name: Capella Collaboration Manager Documentation
 theme:
   name: material
 nav:
-  - Home: index.md
-  - Getting Started: onboarding.md
+  - Introduction: introduction.md
+  - Getting Started: getting-started.md
   - Projects:
       - Get access to a project: projects/access.md
       - Request a new project: projects/new.md

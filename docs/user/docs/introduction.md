@@ -3,24 +3,24 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Getting started with Collaboration Manager
-
-## Introduction
+# Introduction
 
 Welcome onboard of the Modeling Collaboration Manager. This platform should help you co-working on architectures using tools like [Capella](https://www.eclipse.org/capella/).
 
-To work with the application, you need access to a project: [How do I get access to a project?](projects/access.md) <br />
-
 This platform wraps the modeling tools like Capella to create an environment where users can work directly in the project context without having to install or configure the tool. It also takes care of housekeeping for the modeling projects themselves - for example, for TeamForCapella projects the platform does a nightly backup to git (configuration management).
 
-### Ways of co-working on a Modeling Project
+## Ways of co-working on a Modeling Project
 
 In the context of Capella the platform supports 2 main ways of co-working:
 
  - **git-only** - modeling team uses a git repository to work on model. The team may use git features such as branches to work on features or capabilities in parallel and main branch is used for integration and release-tagging. This way of working gives the modeling leads / change control board great control over what contents make it to the model that is used for releases (of things like design documentation). On the downside this co-working method is fairly complicated and requires skilled modeling leadership for challenges like merge conflict resolution and fragmentation management (way to break up model into smaller files to reduce density of merge conflicts).
- - **git + TeamForCapella** - this option requires organization to have a [TeamForCapella](https://www.obeosoft.com/en/team-for-capella) installation and valid licenses. With this approach the modeling team can co-work with a very high degree of concurrency and stay away from the difficulties of merge conflict resolution. On the downside it is much harder to control what makes it into the model as there is no barrier except for maybe a modeling process that would stop a person from making changes that were not allowed. Yet there are a few ways around that limitation. For teams with basic or no experience in modeling and git this is probably the best way to start co-woking. Git is still used for nightly backup of the model and release-tagging.
+ - **git + TeamForCapella** - with this approach the modeling team can co-work with a very high degree of concurrency and stay away from the difficulties of merge conflict resolution. On the downside it is much harder to control what makes it into the model as there is no barrier except for maybe a modeling process that would stop a person from making changes that were not allowed. Yet there are a few ways around that limitation. For teams with basic or no experience in modeling and git this is probably the best way to start co-woking. Git is still used for nightly backup of the model and release-tagging.
+ 
+    !!! warning "Warning: TeamForCapella license required"
 
-### Automations and model-derived products
+        for this co-working method to be enabled you need a valid TeamForCapella license and TeamForCapella server installed and integrated with Collab-Manager. 
+
+## Automations and model-derived products
 
 As you can see, git is quite in the middle of the modeling life. We also use its automation means (pre and post-commit handlers, CI/CD kind of thing) to automate a number of housekeeping activities like:
 
@@ -54,10 +54,25 @@ You can find more details about [how to request a session here](sessions/request
 
 The below sections will give you more details re how to get into editing mode depending on the project co-working models.
 
-## Getting started with read-write access in a TeamForCapella-based project
 
-TODO
 
-## Getting started with a git-only project
+## Next steps
 
-TODO
+If you'd like to start a new project and work on it via Collab Manager - please get in touch with one of tool admins, there is no self-service in this version.
+Admins may follow the [project onboarding guideline](todo) to prepare your project.
+
+To work with the application, you need access to a project - if you don't have it yet or cant find the project you need see [how do I get access to a project?](projects/access.md).
+
+If you are a member of existing project its co-working method is based on ...
+
+-  TeamForCapella - see [getting started with a TeamForCapella project](getting-started.md#getting-started-with-a-teamforcapella-based-project).
+-  git-only - see [getting started with a git-only project](getting-started.md#getting-started-with-a-git-only-project).
+
+
+## Missing information / need support
+
+!!! warning "Important"
+
+    the below is only valid for content-agnostic issues, do not share any proprietary / project related data or real content in reported issues or screenshots.
+
+If you don't find answer to your question within this documentation site please consider opening an [issue on Github](https://github.com/DSD-DBS/capella-collab-manager/issues) or extending the documentation with your own contribution via a [pull request](https://github.com/DSD-DBS/capella-collab-manager/pulls).
