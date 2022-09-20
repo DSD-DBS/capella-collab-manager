@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SessionProgressIconComponent } from './session-progress-icon.component';
 
-describe('SessionProgressIconComponent', () => {
+xdescribe('SessionProgressIconComponent', () => {
   let component: SessionProgressIconComponent;
   let fixture: ComponentFixture<SessionProgressIconComponent>;
 
