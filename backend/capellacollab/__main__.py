@@ -23,8 +23,6 @@ from capellacollab.config import config
 from capellacollab.core.database import __main__ as database
 from capellacollab.routes import router, status
 
-database.migrate_db()
-
 
 class HealthcheckFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
@@ -72,4 +70,5 @@ app.include_router(status.router, prefix="", tags=["Status"])
 app.include_router(router, prefix="/api/v1")
 
 if __name__ == "__main__":
+    database.migrate_db()
     uvicorn.run(app)

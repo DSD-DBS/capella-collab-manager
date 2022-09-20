@@ -14,6 +14,7 @@ from sqlalchemy.orm import relationship
 # Import required for sqlalchemy
 import capellacollab.projects.users.models
 from capellacollab.core.database import Base
+from capellacollab.projects.capellamodels.models import CapellaModel
 
 
 class Warning(enum.Enum):
@@ -32,6 +33,7 @@ class Project(BaseModel):
     slug: str
     description: t.Optional[str]
     users: UserMetadata
+    models: t.List[CapellaModel]
 
     class Config:
         orm_mode = True
