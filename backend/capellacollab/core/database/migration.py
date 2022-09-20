@@ -15,13 +15,15 @@ from sqlalchemy.orm import sessionmaker
 import capellacollab.projects.crud as projects
 import capellacollab.tools.crud as tools
 from capellacollab.config import config
-from capellacollab.core.database import Base, users
+from capellacollab.core.database import (
+    DATABASE_URL,
+    Base,
+    SessionLocal,
+    engine,
+    users,
+)
 from capellacollab.projects.users.models import Role
 from capellacollab.tools.models import Tool
-
-DATABASE_URL = config["database"]["url"]
-engine = create_engine(DATABASE_URL, connect_args={"connect_timeout": 5})
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 LOGGER = logging.getLogger(__name__)
 
