@@ -32,7 +32,7 @@ At the moment Collaboration Manager doesn't provide you with a self-service to c
 Now that you have some understanding of the modeling setup and ways of working we can look into how you can actually work here.
 
 
-## Workin with Capella in Collaboration Manager
+## Working with Capella in Collaboration Manager
 
 Capella is not yet a web native tool, however it runs on Linux - so we can use some basic open-source technologies to deliver it to you via browser. We constructed a [Docker container with Capella](https://github.com/DSD-DBS/capella-dockerimages) and all the plugins you may need, added [xrdp](http://xrdp.org/) to allow remote connection to it and [Apache Guacamole](https://guacamole.apache.org/) to stream that connection to your browser. We call instances of those containers **Sessions**. To make this platform scalable and allow multiple people co-work comfortable we use [Kubernetes](https://kubernetes.io/) to run the **Session** containers - which in Kubernetes terms are called **Pod**s. Collaboration Manager controls a Sessions namespace within a Kubernetes cluster to scale it up and down in response to the number of active users making it run scale at reasonable costs in both public and private cloud environments (but of course one could run it in a VM).
 
@@ -52,22 +52,21 @@ At the moment there are 3 roles you can have in a project context:
 
 You can find more details about [how to request a session here](sessions/request.md)
 
-The below sections will give you more details re how to get into editing mode depending on the project co-working models.
-
-
+You may also [learn more about roles model here](projects/roles.md)
 
 ## Next steps
 
 If you'd like to start a new project and work on it via Collab Manager - please get in touch with one of tool admins, there is no self-service in this version.
-Admins may follow the [project onboarding guideline](todo) to prepare your project.
+Admins may follow the [project onboarding guideline](projects/new.md) to prepare your project.
 
 To work with the application, you need access to a project - if you don't have it yet or cant find the project you need see [how do I get access to a project?](projects/access.md).
 
-If you are a member of existing project its co-working method is based on ...
+At this point you may want to continue to one of the below getting-started sections ...
 
--  TeamForCapella - see [getting started with a TeamForCapella project](getting-started.md#getting-started-with-a-teamforcapella-based-project).
--  git-only - see [getting started with a git-only project](getting-started.md#getting-started-with-a-git-only-project).
-
+- [General introduction to Capella and first steps](getting-started/capella-intro.md)
+- [Getting started with a read-only session](getting-started/read-only.md)
+- [Getting started with a TeamForCapella-based project](getting-started/read-write-t4c.md)
+- Getting started with a git-only project (not yet documented, contact your toolchain team for onboarding)
 
 ## Missing information / need support
 

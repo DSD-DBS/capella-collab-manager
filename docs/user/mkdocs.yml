@@ -6,7 +6,7 @@ theme:
   name: material
 nav:
   - Introduction: introduction.md
-  - Getting Started: getting-started.md
+  - Getting Started: getting-started/getting-started.md
   - Projects:
       - Get access to a project: projects/access.md
       - Request a new project: projects/new.md
