@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProjectWrapperComponent } from './project-wrapper.component';
 
-describe('ProjectWrapperComponent', () => {
+xdescribe('ProjectWrapperComponent', () => {
   let component: ProjectWrapperComponent;
   let fixture: ComponentFixture<ProjectWrapperComponent>;
 
