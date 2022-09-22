@@ -1,6 +1,11 @@
-# Introduction to Capella
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
 
-Capella is an Eclipse-based solution for Model-Based Systems Engineering. 
+ # Introduction to Capella
+
+Capella is an Eclipse-based solution for Model-Based Systems Engineering.
 You can learn more in the short intro video below:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/nv8IOg_xVMs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

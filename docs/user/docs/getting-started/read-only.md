@@ -1,4 +1,9 @@
-# Getting started with read-only project access
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+ # Getting started with read-only project access
 
 If you have a read-only project access or you simply want to check the model without risk of editing real you may start a read-only session.
 
