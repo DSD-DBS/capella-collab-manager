@@ -13,7 +13,9 @@ A web platform for collaboration on [Capella](https://www.eclipse.org/capella/)
 (MBSE) projects
 
 **Copyright 2021, 2022 [DB Netz AG](https://fahrweg.dbnetze.com/),
-licensed under Apache 2.0 License (see full text in [LICENSE](./LICENSE) file)**
+licensed under Apache 2.0 License (see full text [here](./LICENSES/Apache-2.0.txt))**
+
+
 
 Turn your local Capella experience into a browser-based collaboration platform for
 model-based projects. Designed to enable co-working across multiple organizations.
