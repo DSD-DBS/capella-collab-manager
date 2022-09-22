@@ -33,7 +33,7 @@ class Project(BaseModel):
     slug: str
     description: t.Optional[str]
     users: UserMetadata
-    models: t.List[CapellaModel]
+    # models: t.List[CapellaModel]
 
     class Config:
         orm_mode = True
