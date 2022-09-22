@@ -53,3 +53,8 @@ Thumbs.db
 
 
 /src/assets/version.json
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
