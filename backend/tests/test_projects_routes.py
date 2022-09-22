@@ -13,8 +13,15 @@ from testcontainers.postgres import PostgresContainer
 import capellacollab.core.database as database_
 from capellacollab.__main__ import app
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.database import migration, users
-from capellacollab.projects.users.models import Role
+from capellacollab.core.database import migration
+from capellacollab.core.database.users import create_user
+from capellacollab.projects.crud import create_project
+from capellacollab.projects.users.crud import add_user_to_repository
+from capellacollab.projects.users.models import (
+    RepositoryUserPermission,
+    RepositoryUserRole,
+    Role,
+)
 
 
 @pytest.fixture(scope="session")
@@ -65,11 +72,43 @@ def test_get_projects_not_authenticated(client):
     assert response.text == '{"detail":"Not authenticated"}'
 
 
-def test_get_projects(client, db, username):
-    users.create_user(db, username, Role.ADMIN)
+def test_get_projects_as_user(client, db, username):
+    create_user(db, username, Role.USER)
+
     response = client.get("/api/v1/projects")
+
+    assert response.status_code == 200
+    assert response.text == "[]"
+
+
+def test_get_projects_as_user_with_project(client, db, username):
+    project_name = str(uuid1())
+    create_user(db, username, Role.USER)
+    create_project(db, name=project_name)
+    add_user_to_repository(
+        db,
+        projects_name=project_name,
+        role=RepositoryUserRole.MANAGER,
+        username=username,
+        permission=RepositoryUserPermission.WRITE,
+    )
+
+    response = client.get("/api/v1/projects")
+
     assert response.status_code == 200
     assert (
         response.text
-        == '[{"name":"default","slug":"default","description":null,"users":{"leads":0,"contributors":0,"subscribers":0}}]'
+        == f'[{{"name":"{project_name}","slug":"{project_name}","description":null,"users":{{"leads":1,"contributors":0,"subscribers":0}}}}]'
+    )
+
+
+def test_get_projects_as_admin(client, db, username):
+    create_user(db, username, Role.ADMIN)
+
+    response = client.get("/api/v1/projects")
+
+    assert response.status_code == 200
+    assert (
+        '{"name":"default","slug":"default","description":null,"users":{"leads":0,"contributors":0,"subscribers":0}}'
+        in response.text
     )
