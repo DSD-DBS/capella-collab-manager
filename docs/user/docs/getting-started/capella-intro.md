@@ -32,6 +32,6 @@ If you'd like to learn how Capella works you may want to read through our [guide
 
 ## Deriving model-based products
 
-You may prototype-derived products using Python (Jupyter) and [py-capellambse](https://github.com/DSD-DBS/py-capellambse) and there are a few [practical examples](https://github.com/DSD-DBS/py-capellambse/tree/master/examples).
+You may prototype-derived products using Python (Jupyter) and [py-capellambse](https://github.com/DSD-DBS/py-capellambse). It contains a few [practical examples](https://github.com/DSD-DBS/py-capellambse/tree/master/examples).
 
-Eventually you may automate production of model-derived documents and other things via CI/CD pipelines around model git repositories. Get in touch with your Systems Engineering Toolchain team to learn more.
+Eventually you may automate production of model-derived documents and other things via CI/CD pipelines that work on your model git repositories. Get in touch with your Systems Engineering Toolchain team to learn more.
