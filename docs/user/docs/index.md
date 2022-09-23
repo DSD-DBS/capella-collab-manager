@@ -72,6 +72,6 @@ At this point you may want to continue to one of the detailed getting-started se
 
 !!! warning "Important"
 
-    the below is only valid for content-agnostic issues, do not share any proprietary / project related data or real content in reported issues or screenshots.
+    The below is only valid for content-agnostic issues, do not share any proprietary / project related data or real content in reported issues or screenshots.
 
 If you don't find answer to your question on this documentation site please consider opening an [issue on Github](https://github.com/DSD-DBS/capella-collab-manager/issues) or extending the documentation with your own contribution via a [pull request](https://github.com/DSD-DBS/capella-collab-manager/pulls).
