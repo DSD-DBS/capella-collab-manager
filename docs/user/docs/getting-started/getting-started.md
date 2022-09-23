@@ -7,7 +7,7 @@
 
 This page will help you getting started working on a modeling project.
 
-!!! warning "Before reading any further please make sure you read the [introduction](introduction.md)."
+!!! warning "Before reading any further please make sure you read the [introduction](../introduction.md)."
 
 - [Introduction to Capella](capella-intro.md)
 - [Getting started with a read-only session](read-only.md)
