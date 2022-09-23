@@ -9,7 +9,7 @@ import { CookieService } from 'ngx-cookie';
 import { Observable } from 'rxjs';
 import { LocalStorageService } from 'src/app/auth/local-storage/local-storage.service';
 import { environment } from 'src/environments/environment';
-import { first, map } from 'rxjs/operators';
+import { first, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -72,10 +72,9 @@ export class AuthService {
         { refreshToken }
       )
       .pipe(
-        map((res) => {
-          this.logIn(res.access_token, res.refresh_token);
-          return res;
-        }, first())
+        tap({
+          next: (res) => this.logIn(res.access_token, res.refresh_token),
+        })
       );
   }
 
