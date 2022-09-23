@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
- # Getting started with a TeamForCapella-based project
+# Getting started with a TeamForCapella-based project
 
 To get started with a TeamForCapella project you first need read/write access from a Model Manager (usually this role is allocated to lead architects / area owners).
 

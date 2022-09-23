@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
- # Getting started with read-only project access
+# Getting started with read-only project access
 
 If you have a read-only project access or you simply want to check the model without risk of editing, you may start a read-only session.
 
