@@ -5,7 +5,7 @@ site_name: Capella Collaboration Manager Documentation
 theme:
   name: material
 nav:
-  - Introduction: introduction.md
+  - Introduction: index.md
   - Getting Started:
       - Overview: getting-started/getting-started.md
       - Introduction to Capella: getting-started/capella-intro.md
