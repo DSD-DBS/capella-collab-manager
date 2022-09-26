@@ -7,7 +7,7 @@ on:
     branches: ['**']
     tags: ["v*.*.*"]
   pull_request:
-    branches: [master, staging]
+    branches: [master, staging, "v2/staging"]
 
 jobs:
   backend:
@@ -27,4 +27,4 @@ jobs:
           pip install "./backend[dev]"
       - name: Run pytest
         run: |
-          pytest backend/tests
+          cd backend && pytest
