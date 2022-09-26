@@ -16,6 +16,7 @@ locations: list[pathlib.Path] = [
     pathlib.Path(appdirs.user_config_dir("capellacollab", "db"))
     / "config.yaml",
     pathlib.Path("/etc/capellacollab/config.yaml"),
+    pathlib.Path(__file__).parents[2] / "config" / "config_template.yaml",
 ]
 
 
