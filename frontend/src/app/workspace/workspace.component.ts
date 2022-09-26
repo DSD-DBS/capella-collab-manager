@@ -6,11 +6,8 @@
 import { Component } from '@angular/core';
 
 import { NavBarService } from '../general/navbar/service/nav-bar.service';
-import {
-  Project,
-  ProjectService,
-} from 'src/app/services/project/project.service';
-import { SessionService } from '../services/session/session.service';
+import { Project } from 'src/app/services/project/project.service';
+import { DepthType, SessionService } from '../services/session/session.service';
 
 @Component({
   selector: 'app-workspace',
@@ -20,18 +17,29 @@ import { SessionService } from '../services/session/session.service';
 export class WorkspaceComponent {
   repositories: Project[] = [];
   showSpinner = true;
+  canCreateSession = true;
 
   constructor(
     public sessionService: SessionService,
-    private projectService: ProjectService,
     private navbarService: NavBarService
   ) {
     this.navbarService.title = 'Workspaces';
   }
 
-  ngOnInit() {
-    this.projectService.list().forEach((res: Project[]) => {
-      this.repositories = res;
-    });
+  ngOnInit() {}
+
+  requestSession() {
+    var depth = DepthType.CompleteHistory;
+    this.canCreateSession = false;
+    this.sessionService
+      .createNewSession('persistent', undefined, '', depth)
+      .subscribe(
+        (res) => {
+          this.canCreateSession = true;
+        },
+        () => {
+          this.canCreateSession = true;
+        }
+      );
   }
 }

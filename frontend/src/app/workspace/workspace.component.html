@@ -3,14 +3,22 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="center">
-  <h1 class="center-text"><b>Request Session</b></h1>
-  <mat-spinner *ngIf="showSpinner"></mat-spinner>
-  <app-no-repository
-    *ngIf="!repositories.length && !showSpinner"
-  ></app-no-repository>
-  <app-request-session
-    *ngIf="repositories.length"
-    [ownProjects]="repositories"
-  ></app-request-session>
+<div>
+  <h1><b>Persistent Workspace</b></h1>
+  <p>
+    Persistent Workspaces will store all the changes you make on models.
+    Additionally, newly created projects will be stored in your personal
+    workspace.
+  </p>
+
+  <form>
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="requestSession()"
+      [disabled]="!canCreateSession"
+    >
+      Request a Persistent Workspace <mat-icon>keyboard_arrow_right</mat-icon>
+    </button>
+  </form>
 </div>
