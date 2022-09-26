@@ -27,7 +27,7 @@ from capellacollab.core.database import get_db, users
 from capellacollab.projects.users.crud import RepositoryUserRole
 from capellacollab.sessions import database, guacamole
 from capellacollab.sessions.models import DatabaseSession
-from capellacollab.sessions.operators import OPERATOR
+from capellacollab.sessions.operators import OPERATOR, Operator, get_operator
 from capellacollab.sessions.schema import (
     AdvancedSessionResponse,
     DepthType,
@@ -90,6 +90,7 @@ def get_current_sessions(
 def request_session(
     body: PostSessionRequest,
     db: Session = Depends(get_db),
+    operator: Operator = Depends(get_operator),
     token=Depends(JWTBearer()),
 ):
     rdp_password = generate_password(length=64)
@@ -121,13 +122,16 @@ def request_session(
                 },
             )
         user = users.get_user(db, owner)
-        if user.role == users_models.Role.ADMIN:
-            repositories = [
-                repo.name for repo in repositories_crud.get_all_projects(db)
-            ]
-        else:
-            repositories = [repo.repository_name for repo in user.repositories]
-        session = OPERATOR.start_persistent_session(
+
+        # if user.role == users_models.Role.ADMIN:
+        #     repositories = [
+        #         repo.name for repo in repositories_crud.get_all_projects(db)
+        #     ]
+        # else:
+        #     repositories = [repo.repository_name for repo in user.repositories]
+        repositories = []
+
+        session = operator.start_persistent_session(
             username=get_username(token),
             password=rdp_password,
             repositories=repositories,
@@ -170,7 +174,7 @@ def request_session(
                     "reason": f"Depth type {depth} is not allowed.",
                 },
             )
-        session = OPERATOR.start_readonly_session(
+        session = operator.start_readonly_session(
             password=rdp_password,
             git_url=git_model.path,
             git_revision=revision,
@@ -206,7 +210,7 @@ def request_session(
     )
     response = database.create_session(db=db, session=database_model).__dict__
     response["owner"] = response["owner_name"]
-    response["state"] = OPERATOR.get_session_state(response["id"])
+    response["state"] = operator.get_session_state(response["id"])
     response["rdp_password"] = rdp_password
     response["guacamole_password"] = guacamole_password
     response["last_seen"] = get_last_seen(database_model.id)
@@ -215,7 +219,10 @@ def request_session(
 
 @router.delete("/{id}", status_code=204, responses=AUTHENTICATION_RESPONSES)
 def end_session(
-    id: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    id: str,
+    db: Session = Depends(get_db),
+    operator: Operator = Depends(get_operator),
+    token=Depends(JWTBearer()),
 ):
     s = database.get_session_by_id(db, id)
     if s.owner_name != get_username(token) and verify_project_role(
@@ -231,7 +238,7 @@ def end_session(
             },
         )
     database.delete_session(db, id)
-    OPERATOR.kill_session(id)
+    operator.kill_session(id)
 
 
 @router.get(

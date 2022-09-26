@@ -6,6 +6,7 @@ from __future__ import annotations
 from importlib import metadata
 
 from capellacollab.config import config
+from capellacollab.sessions.operators.abc import Operator
 
 try:
     OPERATOR = next(
@@ -18,3 +19,7 @@ except StopIteration:
     raise KeyError(
         f"Unknown operator " + config["operators"]["operator"]
     ) from None
+
+
+def get_operator():
+    return OPERATOR
