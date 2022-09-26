@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
 import itertools
 import json
 import logging
@@ -26,7 +25,10 @@ from capellacollab.core.authentication.responses import (
 from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db, users
 from capellacollab.projects.users.crud import RepositoryUserRole
-from capellacollab.schemas.sessions import (
+from capellacollab.sessions import database, guacamole
+from capellacollab.sessions.models import DatabaseSession
+from capellacollab.sessions.operators import OPERATOR
+from capellacollab.sessions.schema import (
     AdvancedSessionResponse,
     DepthType,
     GetSessionsResponse,
@@ -35,9 +37,6 @@ from capellacollab.schemas.sessions import (
     PostSessionRequest,
     WorkspaceType,
 )
-from capellacollab.sessions import database, guacamole
-from capellacollab.sessions.models import DatabaseSession
-from capellacollab.sessions.operators import OPERATOR
 from capellacollab.sessions.sessions import (
     get_last_seen,
     inject_attrs_in_sessions,
