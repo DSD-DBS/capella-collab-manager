@@ -6,6 +6,46 @@
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
+const webpack = require("webpack");
+const path = require("path");
+
+const webpackConfig = {
+  mode: "development",
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        loader: "tslint-loader",
+        exclude: /node_modules/,
+        enforce: "pre",
+      },
+      {
+        test: /\.ts$/,
+        loader: "ts-loader?silent=true",
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.ts$/,
+        exclude: /(node_modules|\.spec\.ts$)/,
+        loader: "coverage-istanbul-loader",
+        enforce: "post",
+        options: {
+          esModules: true,
+        },
+      },
+    ],
+  },
+  plugins: [
+    new webpack.SourceMapDevToolPlugin({
+      filename: null,
+      test: /\.(ts|js)($|\?)/i,
+    }),
+  ],
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+};
+
 module.exports = function (config) {
   config.set({
     basePath: "",
@@ -15,7 +55,9 @@ module.exports = function (config) {
       require("karma-chrome-launcher"),
       require("karma-jasmine-html-reporter"),
       require("karma-coverage"),
+      require("karma-coverage-istanbul-reporter"),
       require("@angular-devkit/build-angular/plugins/karma"),
+      require("webpack"),
     ],
     client: {
       jasmine: {
@@ -31,12 +73,12 @@ module.exports = function (config) {
     jasmineHtmlReporter: {
       suppressAll: true, // removes the duplicated traces
     },
-    coverageReporter: {
-      dir: require("path").join(__dirname, "./coverage/t4cclient"),
-      subdir: ".",
-      reporters: [{ type: "html" }, { type: "text-summary" }],
+    coverageIstanbulReporter: {
+      fixWebpackSourcePaths: true,
+      reports: ["html", "text-summary"],
+      dir: path.join(__dirname, "test-results", "istanbul-coverage"),
     },
-    reporters: ["progress", "kjhtml", "coverage"],
+    reporters: ["progress", "kjhtml", "coverage-istanbul"],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
@@ -44,5 +86,6 @@ module.exports = function (config) {
     browsers: ["Chrome"],
     singleRun: false,
     restartOnFileChange: true,
+    webpackConfig: webpackConfig,
   });
 };
