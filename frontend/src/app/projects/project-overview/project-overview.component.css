@@ -63,10 +63,6 @@ mat-card:hover {
   display: flex;
 }
 
-.add-icon {
-  font-size: 3em !important;
-}
-
 #add-project-wrapper {
   padding-top: 100px;
 }
