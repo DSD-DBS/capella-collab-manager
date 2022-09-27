@@ -1,4 +1,3 @@
-
 import {
   Component,
   EventEmitter,
@@ -42,7 +41,6 @@ export class CreateModelComponent implements OnInit, OnDestroy {
   }
 
   afterModelCreated(model: Model): void {
-    console.log(model);
     this.stepper.steps.get(0)!.completed = true;
     this.stepper.next();
     this.stepper.steps.get(0)!.editable = false;
@@ -55,14 +53,12 @@ export class CreateModelComponent implements OnInit, OnDestroy {
   }
 
   afterSourceCreated(created: boolean): void {
-    console.log(created);
     if (created) {
       this.stepper.steps.get(2)!.completed = true;
       this.stepper.next();
       this.stepper.steps.get(1)!.editable = false;
       this.stepper.steps.get(2)!.editable = false;
     } else {
-      console.log(this.stepper);
       this.stepper.previous();
     }
   }
