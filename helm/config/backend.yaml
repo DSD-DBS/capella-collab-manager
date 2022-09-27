@@ -67,36 +67,6 @@ authentication:
 
     connectConfigurationEndpoint: "{{ .Values.backend.authentication.azure.connectConfigurationEndpoint }}"
 
-modelsources:
-  t4c:
-    usageAPI: "{{ .Values.t4cServer.apis.usageStats }}"
-    restAPI: "{{ .Values.t4cServer.apis.restAPI }}"
-
-    username: "{{ .Values.t4cServer.username }}"
-    password: "{{ .Values.t4cServer.password }}"
-
-    host: "{{ .Values.t4cServer.host }}"
-    port: "{{ .Values.t4cServer.port }}"
-    cdoPort: "{{ .Values.t4cServer.cdoPort }}"
-    licence: "{{ .Values.t4cServer.licenseKey }}"
-
-backups:
-  enabled: ["importer"]
-
-  importer:
-    git:
-      email: "{{ .Values.git.email }}"
-
-  jenkins:
-    username: "{{ .Values.jenkins.username }}"
-    password: "{{ .Values.jenkins.password }}"
-    baseURL: "{{ .Values.jenkins.baseURL }}"
-
-    git:
-      credentialID: "{{ .Values.git.credentialID }}"
-      email: "{{ .Values.git.email }}"
-      scriptRepoURL: "{{ .Values.git.scriptRepoURL }}"
-
 prometheus:
   url: "http://{{ .Release.Name }}-prometheus-server:9118/prometheus/"
 
