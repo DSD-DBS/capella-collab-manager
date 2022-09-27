@@ -4,11 +4,7 @@
  -->
 
 <div class="wrapper">
-  <mat-horizontal-stepper
-    linear
-    #stepper
-    (selectionChange)="handleSelectionChange()"
-  >
+  <mat-horizontal-stepper linear #stepper>
     <mat-step completed="false" label="Create model">
       <app-create-model-base
         [as_stepper]="as_stepper"

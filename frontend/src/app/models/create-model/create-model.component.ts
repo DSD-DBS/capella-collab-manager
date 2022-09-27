@@ -86,6 +86,4 @@ export class CreateModelComponent implements OnInit, OnDestroy {
       this.stepper.previous();
     }
   }
-
-  handleSelectionChange(): void {}
 }
