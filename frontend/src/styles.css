@@ -14,6 +14,38 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+/* All global variables are defined here */
+:root {
+  --primary-color: #3f51b5;
+  --error-color: darkred;
+  --warning-color: darkorange;
+  --success-color: darkgreen;
+  --hover-color: lightcyan;
+  --field-padding: 0.75em;
+  --section-card-width: 32em;
+}
+
+/* When using icons in the text, they are not properly aligned */
+.mat-icon-position {
+  position: relative;
+  bottom: 3px;
+  margin-right: 5px;
+}
+
+.mat-icon {
+  height: 400px;
+}
+
+/*
+This has to be added to the parent container for an item
+The class transforms the icon to 1.75 of its size
+*/
+.mat-icon-70px {
+  width: 70px !important;
+  height: 70px !important;
+  font-size: 70px !important;
+}
+
 a {
   text-decoration: none !important;
 }
@@ -29,6 +61,7 @@ a {
   flex: 1;
 }
 
+/* When using two line errors, we need to add some margin to the mat-error */
 @keyframes add-margin-for-mat-error {
   from {
     margin-bottom: 0;
@@ -36,16 +69,6 @@ a {
   to {
     margin-bottom: 13px;
   }
-}
-
-:root {
-  --primary-color: #3f51b5;
-  --error-color: darkred;
-  --warning-color: darkorange;
-  --success-color: darkgreen;
-  --hover-color: lightcyan;
-  --field-padding: 0.75em;
-  --section-card-width: 32em;
 }
 
 button.primary {
@@ -85,10 +108,6 @@ button {
 mat-spinner {
   margin-left: auto;
   margin-right: auto;
-}
-
-.mat-icon {
-  vertical-align: middle;
 }
 
 .workspace-toggle * .mat-slide-toggle-bar {
@@ -133,9 +152,19 @@ fieldset > :not(.field-separator) {
   flex-grow: 1;
 }
 
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+}
+
 .section-card {
   width: var(--section-card-width);
-  margin-left: max(10px, calc(30vw - var(--section-card-width) / 3 - 16px));
 }
 
 .url-before-path-separator {
