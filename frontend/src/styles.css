@@ -29,6 +29,13 @@ body {
 .mat-icon-position {
   position: relative;
   bottom: 3px;
+}
+
+.mat-icon-position.right {
+  margin-left: 5px;
+}
+
+.mat-icon-position.left {
   margin-right: 5px;
 }
 
@@ -161,6 +168,16 @@ fieldset > :not(.field-separator) {
 .flex-space-between {
   display: flex;
   justify-content: space-between;
+  flex-direction: row;
+}
+
+.flex-space-between button:only-child {
+  margin-left: auto;
+  flex-direction: row-reverse !important;
+}
+
+.mat-card-default {
+  width: 400px;
 }
 
 .section-card {
