@@ -5,7 +5,6 @@
 import json
 import logging
 import typing as t
-from socket import timeout
 
 import requests
 from requests.auth import HTTPBasicAuth
