@@ -153,15 +153,4 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
     }
     return null;
   }
-
-  onComplete(again?: boolean): void {
-    if (again) {
-      this._reload = true;
-      setTimeout(() => {
-        this._reload = false;
-      });
-    } else {
-      this.finish();
-    }
-  }
 }
