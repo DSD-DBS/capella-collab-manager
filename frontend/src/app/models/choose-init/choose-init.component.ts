@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
 
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ProjectService } from 'src/app/services/project/project.service';
