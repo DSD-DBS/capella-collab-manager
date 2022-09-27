@@ -30,10 +30,10 @@ import { Project } from 'src/app/services/project/project.service';
   templateUrl: './project-user-settings.component.html',
   styleUrls: ['./project-user-settings.component.css'],
 })
-export class RepositoryUserSettingsComponent implements OnChanges {
-  @Input() repository!: Project;
+export class ProjectUserSettingsComponent implements OnChanges {
+  @Input() project!: Project;
 
-  repositoryUsers: Array<ProjectUser> = [];
+  projectUsers: Array<ProjectUser> = [];
   search = '';
 
   @ViewChild('users') users: any;
@@ -42,7 +42,7 @@ export class RepositoryUserSettingsComponent implements OnChanges {
     {
       username: new FormControl('', [
         Validators.required,
-        this.userAlreadyInRepositoryValidator(),
+        this.userAlreadyInProjectValidator(),
       ]),
       role: new FormControl('', Validators.required),
       permission: new FormControl(''),
@@ -81,11 +81,11 @@ export class RepositoryUserSettingsComponent implements OnChanges {
     };
   }
 
-  userAlreadyInRepositoryValidator(): ValidatorFn {
+  userAlreadyInProjectValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      for (let repoUser of this.repositoryUsers) {
+      for (let repoUser of this.projectUsers) {
         if (repoUser.username == control.value) {
-          return { userAlreadyInRepositoryError: true };
+          return { userAlreadyInProjectError: true };
         }
       }
       return null;
@@ -93,8 +93,8 @@ export class RepositoryUserSettingsComponent implements OnChanges {
   }
 
   refreshRepoUsers(): void {
-    this.repoUserService.getRepoUsers(this.repository.name).subscribe((res) => {
-      this.repositoryUsers = res;
+    this.repoUserService.getRepoUsers(this.project.name).subscribe((res) => {
+      this.projectUsers = res;
     });
   }
 
@@ -108,7 +108,7 @@ export class RepositoryUserSettingsComponent implements OnChanges {
       }
       this.repoUserService
         .addUserToRepo(
-          this.repository.name,
+          this.project.name,
           formValue.username as string,
           formValue.role as 'user' | 'manager',
           permission as string
@@ -118,7 +118,7 @@ export class RepositoryUserSettingsComponent implements OnChanges {
           this.addUserToRepoForm.reset();
           this.refreshRepoUsers();
           this.toastService.showSuccess(
-            'User added to project ' + this.repository.name,
+            'User added to project ' + this.project.name,
             ''
           );
         });
@@ -127,15 +127,15 @@ export class RepositoryUserSettingsComponent implements OnChanges {
 
   removeUserFromRepo(username: string): void {
     this.repoUserService
-      .deleteUserFromRepo(this.repository.name, username)
+      .deleteUserFromRepo(this.project.name, username)
       .subscribe(() => {
         this.refreshRepoUsers();
       });
   }
 
-  upgradeUserToRepositoryManager(username: string): void {
+  upgradeUserToProjectManager(username: string): void {
     this.repoUserService
-      .changeRoleOfRepoUser(this.repository.name, username, 'manager')
+      .changeRoleOfRepoUser(this.project.name, username, 'manager')
       .subscribe(() => {
         this.refreshRepoUsers();
       });
@@ -143,7 +143,7 @@ export class RepositoryUserSettingsComponent implements OnChanges {
 
   downgradeUserToUserRole(username: string): void {
     this.repoUserService
-      .changeRoleOfRepoUser(this.repository.name, username, 'user')
+      .changeRoleOfRepoUser(this.project.name, username, 'user')
       .subscribe(() => {
         this.refreshRepoUsers();
       });
@@ -151,14 +151,14 @@ export class RepositoryUserSettingsComponent implements OnChanges {
 
   setUserPermission(username: string, permission: 'read' | 'write'): void {
     this.repoUserService
-      .changePermissionOfRepoUser(this.repository.name, username, permission)
+      .changePermissionOfRepoUser(this.project.name, username, permission)
       .subscribe(() => {
         this.refreshRepoUsers();
       });
   }
 
-  getRepositoryUsersByRole(role: 'manager' | 'user'): Array<ProjectUser> {
-    return this.repositoryUsers.filter(
+  getProjectUsersByRole(role: 'manager' | 'user'): Array<ProjectUser> {
+    return this.projectUsers.filter(
       (u) => u.role == role && u.username.includes(this.search.toLowerCase())
     );
   }

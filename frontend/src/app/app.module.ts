@@ -63,7 +63,7 @@ import { SetT4CPasswordComponent } from './projects/project-detail/model-source/
 import { T4CRepoSettingsComponent } from './projects/project-detail/model-source/t4c-repo-settings/t4c-repo-settings.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { ProjectMetadataComponent } from './projects/project-detail/project-metadata/project-metadata.component';
-import { RepositoryUserSettingsComponent } from './projects/project-detail/project-users/project-user-settings.component';
+import { ProjectUserSettingsComponent } from './projects/project-detail/project-users/project-user-settings.component';
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
 import { WhitespaceUrlInterceptor } from './services/encoder/encoder.interceptor';
 import { GuacamoleComponent } from './session-created/guacamole/guacamole.component';
@@ -131,7 +131,7 @@ import { CreateModelComponent } from './models/create-model/create-model.compone
     AlertSettingsComponent,
     GitModelSettingsComponent,
     T4CRepoSettingsComponent,
-    RepositoryUserSettingsComponent,
+    ProjectUserSettingsComponent,
     T4CRepoDeletionDialogComponent,
     GitModelDeletionDialogComponent,
     WarningComponent,
