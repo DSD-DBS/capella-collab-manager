@@ -189,7 +189,6 @@ fieldset > :not(.field-separator) {
 }
 
 .content {
-  max-width: 20ch;
   max-height: 5rem;
   margin: auto;
 }
