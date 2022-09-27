@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 import capellacollab.extensions.modelsources.git.crud as git_models_crud
+import capellacollab.extensions.modelsources.t4c.connection as t4c_manager
 import capellacollab.projects.crud as repositories_crud
 import capellacollab.projects.users.models as users_models
 from capellacollab.core.authentication.database import (
@@ -217,7 +218,7 @@ def request_session(
 def end_session(
     id: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
-    s = sessions.get_session_by_id(db, id)
+    s = database.get_session_by_id(db, id)
     if s.owner_name != get_username(token) and verify_project_role(
         repository=s.repository,
         token=token,

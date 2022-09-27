@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "proxy": "ng serve --proxy-config=src/proxy.conf.js",
     "fetch-version": "node fetch-version.ts",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
