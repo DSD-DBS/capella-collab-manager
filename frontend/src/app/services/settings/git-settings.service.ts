@@ -69,27 +69,6 @@ export class GitSettingsService {
       .delete(this.BACKEND_URL_PREFIX + id)
       .pipe(tap(() => this.loadGitSettings()));
   }
-
-  getRevisions(
-    url: string,
-    username: string,
-    password: string
-  ): Observable<GitReferences> {
-    return of({
-      branches: ['main', 'develop', 'staging'],
-      tags: ['v0.1', 'v1.0', 'v2.0', 'v2.1'],
-    });
-    return this.http.get<GitReferences>(
-      this.BACKEND_URL_PREFIX + 'list-repository',
-      {
-        params: {
-          url,
-          username,
-          password,
-        },
-      }
-    );
-  }
 }
 
 export interface GitSetting {

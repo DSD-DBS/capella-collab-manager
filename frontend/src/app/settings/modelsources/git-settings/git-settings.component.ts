@@ -53,18 +53,11 @@ export class GitSettingsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.gitSettingsSubscription =
-      this.gitSettingsService.gitSettings.subscribe({
-        next: (gitSettings) => {
-          this.cmpGitSettings = gitSettings;
-        },
-      });
+    this.gitSettingsService.gitSettings.subscribe((gitSettings) => {
+      this.cmpGitSettings = gitSettings;
+    });
 
     this.gitSettingsService.loadGitSettings();
-  }
-
-  ngOnDestroy(): void {
-    this.gitSettingsSubscription?.unsubscribe();
   }
 
   createGitSettings(): void {
