@@ -4,7 +4,13 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
@@ -19,11 +25,18 @@ import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/
   styleUrls: ['./git-settings.component.css'],
 })
 export class GitSettingsComponent implements OnInit {
-  public instances: Array<GitSettings>;
-  gitSettingsForm = new FormGroup({
+  public cmpGitSettings: Array<GitSettings>;
+
+  form = new FormGroup({
     type: new FormControl('', Validators.required),
-    name: new FormControl('', Validators.required),
-    url: new FormControl('', Validators.required),
+    name: new FormControl('', [
+      Validators.required,
+      this.nameValidator.bind(this),
+    ]),
+    url: new FormControl('', [
+      Validators.required,
+      this.urlValidator.bind(this),
+    ]),
   });
 
   constructor(
@@ -33,45 +46,64 @@ export class GitSettingsComponent implements OnInit {
     public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>
   ) {
     this.navbarService.title = 'Settings / Modelsources / Git';
-    this.instances = [];
+    this.cmpGitSettings = [];
   }
 
   ngOnInit(): void {
-    this.gitSettingsService.listGitSettings().subscribe((res) => {
-      res.forEach((instance) => {
-        this.instances.push(instance);
-      });
+    this.gitSettingsService.gitSettings.subscribe((gitSettings) => {
+      this.cmpGitSettings = gitSettings;
     });
+
+    this.gitSettingsService.loadGitSettings();
   }
 
   createGitSettings(): void {
-    if (this.gitSettingsForm.valid) {
+    if (this.form.valid) {
       this.gitSettingsService
         .createGitSettings(
-          (this.gitSettingsForm.get('name') as FormControl).value,
-          (this.gitSettingsForm.get('url') as FormControl).value,
-          (this.gitSettingsForm.get('type') as FormControl).value
+          (this.form.get('name') as FormControl).value,
+          (this.form.get('url') as FormControl).value,
+          (this.form.get('type') as FormControl).value
         )
-        .subscribe((res) => {
-          this.gitSettingsForm.reset();
-          this.instances.push(res);
-        });
+        .subscribe(this.form.reset);
     }
   }
 
   deleteGitSettings(id: number): void {
-    const index: number = this.instances.findIndex((obj) => obj.id == id);
+    const toDeleteGitSetting: GitSettings = this.cmpGitSettings.find(
+      (gitSetting) => gitSetting.id == id
+    )!;
     this.dialog
       .open(DeleteGitSettingsDialogComponent, {
-        data: this.instances[index],
+        data: toDeleteGitSetting,
       })
       .afterClosed()
       .subscribe((response) => {
         if (response) {
-          this.gitSettingsService.deleteGitSettings(id).subscribe((_) => {
-            this.instances.splice(index, 1);
-          });
+          this.gitSettingsService.deleteGitSettings(id).subscribe((_) => {});
         }
       });
+  }
+
+  nameValidator(control: AbstractControl): ValidationErrors | null {
+    let newInstanceName = control.value;
+    let gitSettingNames: string[] = this.cmpGitSettings?.map(
+      (gitSetting) => gitSetting.name
+    );
+
+    if (this.cmpGitSettings === undefined) {
+      return null;
+    }
+
+    for (let gitSettingName of gitSettingNames) {
+      if (gitSettingName == newInstanceName) {
+        return { uniqueName: { value: gitSettingName } };
+      }
+    }
+    return null;
+  }
+
+  urlValidator(control: AbstractControl): ValidationErrors | null {
+    return null;
   }
 }

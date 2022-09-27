@@ -37,7 +37,7 @@ export class EditGitSettingsComponent implements OnInit {
       this.id = params['id'];
       if (!!this.id) {
         this.gitSettingsService
-          .getGitSettings(this.id)
+          .getGitSettingById(this.id)
           .subscribe((instance: GitSettings) => {
             this.gitSettingsForm.controls['type'].setValue(
               instance.type as string
