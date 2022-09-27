@@ -6,10 +6,7 @@
 <div class="models" *ngIf="models">
   <div class="models-title">
     <h2 id="title">Models</h2>
-    <a
-      mat-button
-      [routerLink]="['/project', project?.slug, 'models', 'create']"
-    >
+    <a mat-button [routerLink]="['/project', project.slug, 'models', 'create']">
       <mat-icon id="add-icon">add</mat-icon>
     </a>
   </div>
@@ -22,34 +19,30 @@
       </div>
     </div>
     <div class="content-wrapper">
-      <p class="content">
-        {{
-          model.git_model
-            ? model.description
-            : "A primary source needs to be set."
-        }}
-      </p>
+      <div class="content">
+        {{ model.description || "This model has no description." }}
+      </div>
       <div class="actions">
         <div class="left">
           <a
             mat-mini-fab
             matTooltip="Configure model"
-            [routerLink]="['/projects', project!.slug, model.slug]"
+            [routerLink]="['model', model.slug]"
           >
             <mat-icon>settings</mat-icon>
           </a>
-          <a mat-mini-fab disabled matTooltip="Download model">
+          <a mat-mini-fab disabled matTooltip="Download model (Coming soon)">
             <mat-icon>cloud_download</mat-icon>
           </a>
           <a
             mat-mini-fab
             [disabled]="!model.t4c_model"
-            matTooltip="Start synchronization"
+            matTooltip="Start synchronization (Coming soon)"
           >
             <mat-icon>sync</mat-icon>
           </a>
           <a
-            *ngIf="integrations.git"
+            *ngIf="integrations.git && model.git_model"
             mat-mini-fab
             [disabled]="!model.git_model"
             matTooltip="Open git repository"
@@ -57,9 +50,8 @@
             <mat-icon>link</mat-icon>
           </a>
           <a
-            *ngIf="integrations.git"
+            *ngIf="integrations.t4c && model.t4c_model"
             routerLink="/workspaces"
-            [disabled]="!model.git_model"
             mat-mini-fab
             matTooltip="Request persistent session"
           >
@@ -67,8 +59,8 @@
           </a>
           <a
             mat-mini-fab
+            *ngIf="integrations.git && model.git_model"
             matTooltip="Open readonly session"
-            [disabled]="!model.git_model"
           >
             <mat-icon>remove_red_eye</mat-icon>
           </a>
