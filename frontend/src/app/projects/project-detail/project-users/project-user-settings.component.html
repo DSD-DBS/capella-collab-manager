@@ -13,7 +13,7 @@
       matInput
       placeholder="Username"
     />
-    <mat-icon matSuffix>search</mat-icon> </mat-form-field
+    <app-mat-icon matSuffix>search</app-mat-icon> </mat-form-field
   >.
   <mat-selection-list
     #users
@@ -25,7 +25,7 @@
       *ngFor="let user of getProjectUsersByRole('manager')"
       [value]="user"
     >
-      <mat-icon mat-list-icon>account_circle</mat-icon>
+      <app-mat-icon mat-list-icon>account_circle</app-mat-icon>
       <div mat-line>{{ user.username }}</div>
       <div mat-line>
         {{ repoUserService.ADVANCED_ROLES[user.role] }},
@@ -37,7 +37,7 @@
       *ngFor="let user of getProjectUsersByRole('user')"
       [value]="user"
     >
-      <mat-icon mat-list-icon>account_circle</mat-icon>
+      <app-mat-icon mat-list-icon>account_circle</app-mat-icon>
       <div mat-line>{{ user.username }}</div>
       <div mat-line>
         {{ repoUserService.ADVANCED_ROLES[user.role] }},
@@ -58,7 +58,8 @@
       *ngIf="['user', 'manager'].includes(selectedUser.role)"
       (click)="removeUserFromRepo(selectedUser.username)"
     >
-      <mat-icon>delete</mat-icon> Remove {{ selectedUser.username }} from
+      <app-mat-icon>delete</app-mat-icon> Remove
+      {{ selectedUser.username }} from
       {{ project }}
     </button>
     <button
@@ -67,7 +68,7 @@
       *ngIf="'user' == selectedUser.role"
       (click)="upgradeUserToProjectManager(selectedUser.username)"
     >
-      <mat-icon>arrow_upward</mat-icon>
+      <app-mat-icon>arrow_upward</app-mat-icon>
       Upgrade
       {{ selectedUser.username }} to project manager
     </button>
@@ -77,7 +78,7 @@
       *ngIf="'manager' == selectedUser.role"
       (click)="downgradeUserToUserRole(selectedUser.username)"
     >
-      <mat-icon>arrow_downward</mat-icon>
+      <app-mat-icon>arrow_downward</app-mat-icon>
       Downgrade
       {{ selectedUser.username }} to User
     </button>
@@ -88,7 +89,7 @@
         *ngIf="'read' == selectedUser.permission"
         (click)="setUserPermission(selectedUser.username, 'write')"
       >
-        <mat-icon>folder_shared</mat-icon>
+        <app-mat-icon>folder_shared</app-mat-icon>
         Set permission of User
         {{ selectedUser.username }} to Read/Write
       </button>
@@ -98,7 +99,7 @@
         *ngIf="'write' == selectedUser.permission"
         (click)="setUserPermission(selectedUser.username, 'read')"
       >
-        <mat-icon>folder_open</mat-icon>
+        <app-mat-icon>folder_open</app-mat-icon>
         Set permission of User
         {{ selectedUser.username }} to Read only
       </button>
@@ -149,7 +150,7 @@
       mat-flat-button
       color="primary"
     >
-      Add user <mat-icon>keyboard_arrow_right</mat-icon>
+      Add user <app-mat-icon usage="button">keyboard_arrow_right</app-mat-icon>
     </button>
   </form>
 </mat-card>

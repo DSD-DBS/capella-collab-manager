@@ -22,13 +22,13 @@
             mat-icon-button
             [routerLink]="['instances/', instance.id.toString()]"
           >
-            <mat-icon aria-label="Edit the source">settings</mat-icon>
+            <app-mat-icon aria-label="Edit the source">settings</app-mat-icon>
           </a>
           <button mat-icon-button>
-            <mat-icon
+            <app-mat-icon
               aria-label="Delete the source"
               (click)="deleteGitSettings(instance.id)"
-              >delete</mat-icon
+              >delete</app-mat-icon
             >
           </button>
         </div>

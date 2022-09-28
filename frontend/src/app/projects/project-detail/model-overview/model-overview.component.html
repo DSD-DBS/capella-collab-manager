@@ -7,7 +7,7 @@
   <div class="models-title">
     <h2 id="title">Models</h2>
     <a mat-button [routerLink]="['/project', project.slug, 'models', 'create']">
-      <mat-icon id="add-icon">add</mat-icon>
+      <app-mat-icon usage="button">add</app-mat-icon>
     </a>
   </div>
   <mat-card *ngFor="let model of models">
@@ -39,17 +39,17 @@
             matTooltip="Configure model"
             [routerLink]="['model', model.slug]"
           >
-            <mat-icon>settings</mat-icon>
+            <app-mat-icon>settings</app-mat-icon>
           </a>
           <a mat-mini-fab disabled matTooltip="Download model (Coming soon)">
-            <mat-icon>cloud_download</mat-icon>
+            <app-mat-icon>cloud_download</app-mat-icon>
           </a>
           <a
             mat-mini-fab
             [disabled]="!model.t4c_model"
             matTooltip="Start synchronization (Coming soon)"
           >
-            <mat-icon>sync</mat-icon>
+            <app-mat-icon>sync</app-mat-icon>
           </a>
           <a
             *ngIf="integrations.git && model.git_model"
@@ -57,7 +57,7 @@
             [disabled]="!model.git_model"
             matTooltip="Open git repository"
           >
-            <mat-icon>link</mat-icon>
+            <app-mat-icon>link</app-mat-icon>
           </a>
           <a
             *ngIf="integrations.t4c && model.t4c_model"
@@ -65,14 +65,14 @@
             mat-mini-fab
             matTooltip="Request persistent session"
           >
-            <mat-icon> screen_share</mat-icon>
+            <app-mat-icon> screen_share</app-mat-icon>
           </a>
           <a
             mat-mini-fab
             *ngIf="integrations.git && model.git_model"
             matTooltip="Open readonly session"
           >
-            <mat-icon>remove_red_eye</mat-icon>
+            <app-mat-icon>remove_red_eye</app-mat-icon>
           </a>
         </div>
       </div>

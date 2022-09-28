@@ -14,7 +14,7 @@
         matInput
         placeholder="Username"
       />
-      <mat-icon matSuffix>search</mat-icon>
+      <app-mat-icon matSuffix>search</app-mat-icon>
     </mat-form-field>
     <mat-selection-list
       #adminusers
@@ -26,7 +26,7 @@
         *ngFor="let user of getUsersByRole('administrator')"
         [value]="user"
       >
-        <mat-icon mat-list-icon>account_circle</mat-icon>
+        <app-mat-icon mat-list-icon>account_circle</app-mat-icon>
         <div mat-line>{{ user.name }}</div>
         <div mat-line>{{ repoUserService.ADVANCED_ROLES[user.role] }}</div>
       </mat-list-option>
@@ -35,7 +35,7 @@
         *ngFor="let user of getUsersByRole('user')"
         [value]="user"
       >
-        <mat-icon mat-list-icon>account_circle</mat-icon>
+        <app-mat-icon mat-list-icon>account_circle</app-mat-icon>
         <div mat-line>{{ user.name }}</div>
         <div mat-line>{{ repoUserService.ADVANCED_ROLES[user.role] }}</div>
       </mat-list-option>
@@ -57,7 +57,7 @@
           )
         "
       >
-        <mat-icon>arrow_downward</mat-icon>
+        <app-mat-icon usage="button">arrow_downward</app-mat-icon>
         Downgrade
         {{ adminusers.selectedOptions.selected[0].value.name }} to User
       </button>
@@ -71,7 +71,7 @@
         "
         *ngIf="adminusers.selectedOptions.selected[0]?.value.role === 'user'"
       >
-        <mat-icon>arrow_upward</mat-icon>
+        <app-mat-icon usage="button">arrow_upward</app-mat-icon>
         Upgrade
         {{ adminusers.selectedOptions.selected[0].value.name }} to Administrator
       </button>
@@ -81,7 +81,7 @@
         (click)="deleteUser(adminusers.selectedOptions.selected[0].value.name)"
         *ngIf="adminusers.selectedOptions.selected[0]?.value.role === 'user'"
       >
-        <mat-icon>delete</mat-icon>
+        <app-mat-icon usage="button">delete</app-mat-icon>
         Delete
         {{ adminusers.selectedOptions.selected[0].value.name }}
       </button>
@@ -104,7 +104,8 @@
         </mat-error>
       </mat-form-field>
       <button mat-flat-button (click)="createAdministrator()" color="primary">
-        Create Administrator <mat-icon>keyboard_arrow_right</mat-icon>
+        Create Administrator
+        <app-mat-icon usage="button">keyboard_arrow_right</app-mat-icon>
       </button>
     </form>
   </mat-card>

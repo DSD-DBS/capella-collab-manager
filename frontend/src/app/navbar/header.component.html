@@ -27,10 +27,10 @@
       href="/prometheus/graph"
       target="_blank"
     >
-      Prometheus <mat-icon>open_in_new</mat-icon>
+      Prometheus <app-mat-icon usage="button">open_in_new</app-mat-icon>
     </a>
     <a color="primary" mat-raised-button href="/docs/" target="_blank">
-      Documentation <mat-icon>open_in_new</mat-icon>
+      Documentation <app-mat-icon usage="button">open_in_new</app-mat-icon>
     </a>
   </div>
   <div class="right-aligned">
@@ -54,7 +54,8 @@
         mat-menu-item
         routerLink="settings"
       >
-        Settings <mat-icon>settings</mat-icon>
+        Settings
+        <app-mat-icon class="profile-settings-icon">settings</app-mat-icon>
       </a>
       <a
         *ngIf="userService.user?.role === 'administrator'"
@@ -62,10 +63,10 @@
         mat-menu-item
         routerLink="settings/requests"
       >
-        Requests <mat-icon>inbox</mat-icon>
+        Requests <app-mat-icon>inbox</app-mat-icon>
       </a>
       <a class="profileMenuButton" mat-menu-item disabled>
-        Events <mat-icon>event_note</mat-icon>
+        Events <app-mat-icon usage="text">event_note</app-mat-icon>
       </a>
       <a
         class="profileMenuButton"
@@ -74,7 +75,7 @@
         [queryParams]="{ reason: 'logout' }"
         *ngIf="localStorageService.getValue('access_token')"
       >
-        Log out <mat-icon>logout</mat-icon>
+        Log out <app-mat-icon>logout</app-mat-icon>
       </a>
     </mat-menu>
     <button
@@ -85,7 +86,7 @@
       matBadge="2"
       matBadgeColor="warn"
     >
-      Profile <mat-icon>account_circle</mat-icon>
+      Profile <app-mat-icon usage="button">account_circle</app-mat-icon>
     </button>
   </div>
 </div>

@@ -14,7 +14,7 @@ This option is currently not available.
     mat-icon-button
     *ngIf="!loading && pipeline"
   >
-    <mat-icon>refresh</mat-icon>
+    <app-mat-icon>refresh</app-mat-icon>
   </button>
   <div>
     <div *ngIf="!loading">No backup jobs were found. <br /></div>
@@ -43,10 +43,10 @@ This option is currently not available.
             <span class="text">{{ pipeline.latest_run.result }}</span
             ><br />
           </div>
-          <mat-icon
+          <app-mat-icon
             *ngIf="pipeline.latest_run.result == 'FAILURE'"
             id="error-icon"
-            >error</mat-icon
+            >error</app-mat-icon
           >
         </div>
       </div>
@@ -65,7 +65,7 @@ This option is currently not available.
       [href]="pipeline.latest_run.logs_url"
       *ngIf="pipeline.latest_run"
     >
-      View logs <mat-icon>launch</mat-icon>
+      View logs <app-mat-icon>launch</app-mat-icon>
     </a>
   </div>
 </div>

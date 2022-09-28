@@ -25,36 +25,6 @@ body {
   --section-card-width: 32em;
 }
 
-/* When using icons in the text, they are not properly aligned */
-.mat-icon-position {
-  position: relative;
-  bottom: 3px;
-}
-
-.mat-icon-position.right {
-  margin-left: 5px;
-}
-
-.mat-icon-position.left {
-  margin-right: 5px;
-}
-
-.mat-icon {
-  height: 400px;
-}
-
-.mat-icon-70px {
-  width: 70px !important;
-  height: 70px !important;
-  font-size: 70px !important;
-}
-
-.mat-icon-50px {
-  width: 50px !important;
-  height: 50px !important;
-  font-size: 50px !important;
-}
-
 a {
   text-decoration: none !important;
 }
@@ -238,6 +208,7 @@ fieldset > :not(.field-separator) {
 .button-content-wrapper {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .content {

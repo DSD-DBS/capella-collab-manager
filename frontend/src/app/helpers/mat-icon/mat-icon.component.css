@@ -1,0 +1,13 @@
+/* When using icons in the text, they are not properly aligned */
+.in-text {
+  position: relative;
+  bottom: 3px;
+}
+
+.right {
+  margin-left: 5px;
+}
+
+.left {
+  margin-right: 5px;
+}

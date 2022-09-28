@@ -103,7 +103,7 @@
       <mat-form-field appearance="fill" class="show-git-model">
         <mat-label *ngIf="model.username">Username</mat-label>
         <mat-label *ngIf="!model.username"
-          ><mat-icon>no_encryption</mat-icon> No credentials</mat-label
+          ><app-mat-icon>no_encryption</app-mat-icon> No credentials</mat-label
         >
         <input matInput disabled [value]="model.username" />
       </mat-form-field>

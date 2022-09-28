@@ -109,6 +109,7 @@ import { MatTreeModule } from '@angular/material/tree';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { CreateModelComponent } from './models/create-model/create-model.component';
+import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -177,6 +178,7 @@ import { CreateModelComponent } from './models/create-model/create-model.compone
     ReleaseNotesComponent,
     VersionComponent,
     CreateModelComponent,
+    MatIconComponent,
   ],
   imports: [
     CommonModule,

@@ -23,9 +23,9 @@
     </mat-progress-bar>
   </div>
   <button mat-button>
-    <mat-icon class="cancel-upload" (click)="reset()" *ngIf="uploadProgress"
+    <app-mat-icon class="cancel-upload" (click)="reset()" *ngIf="uploadProgress"
       >cancel
-    </mat-icon>
+    </app-mat-icon>
   </button>
 </div>
 
@@ -47,14 +47,14 @@
     matTreeNodeToggle
     matTreeNodePadding
   >
-    <mat-icon class="file-icon"> insert_drive_file </mat-icon>
+    <app-mat-icon class="file-icon"> insert_drive_file </app-mat-icon>
 
     <p style="margin: 0px" [ngClass]="node.isNew ? 'new-file' : ''">
       {{ node.name }}
     </p>
     <div *ngIf="node.isNew">
       <button mat-icon-button (click)="removeFile(node.path, node.name)">
-        <mat-icon>cancel</mat-icon>
+        <app-mat-icon>cancel</app-mat-icon>
       </button>
     </div>
   </mat-tree-node>
@@ -67,7 +67,7 @@
           matTreeNodeToggle
           [attr.aria-label]="'Expand ' + node.name"
         >
-          <mat-icon class="dir-icon"> folder </mat-icon>
+          <app-mat-icon class="dir-icon"> folder </app-mat-icon>
         </button>
         {{ node.name }}
       </div>
@@ -81,7 +81,7 @@
         />
 
         <button mat-icon-button color="primary" (click)="fileInput.click()">
-          <mat-icon>upload_file</mat-icon>
+          <app-mat-icon>upload_file</app-mat-icon>
         </button>
       </div>
     </div>

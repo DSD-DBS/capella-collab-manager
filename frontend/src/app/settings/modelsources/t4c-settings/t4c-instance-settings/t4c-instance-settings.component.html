@@ -29,7 +29,7 @@
       *ngFor="let repository of t4cRepoService.repositories"
       [value]="repository"
     >
-      <mat-icon mat-list-icon>laptop</mat-icon>
+      <app-mat-icon mat-list-icon>laptop</app-mat-icon>
       <div mat-line>{{ repository.name }}</div>
       <div mat-line>Repository ID: {{ repository.id }}</div>
     </mat-list-option>
@@ -41,7 +41,7 @@
       color="primary"
       (click)="removeRepository(selectedRepository)"
     >
-      <mat-icon>delete</mat-icon> Remove {{ selectedRepository.name }}
+      <app-mat-icon>delete</app-mat-icon> Remove {{ selectedRepository.name }}
     </button>
   </div>
 </mat-card>

@@ -53,13 +53,15 @@
 
 .profileMenuButton {
   margin: 0;
-  padding: 0 0 0 15px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-a,
-mat-icon {
+a {
   margin-left: 10px;
+}
+
+.profile-settings-icon {
+  margin-left: 20px;
 }

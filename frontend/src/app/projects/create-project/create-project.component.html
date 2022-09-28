@@ -31,8 +31,10 @@
             </fieldset>
             <div class="flex-space-between">
               <a routerLink="/projects" mat-button matStepperPrevious>
-                <mat-icon class="mat-icon-position left">arrow_back</mat-icon
-                >Cancel</a
+                <app-mat-icon position="left" usage="text"
+                  >arrow_back</app-mat-icon
+                >
+                Cancel</a
               >
               <button
                 mat-flat-button
@@ -41,8 +43,8 @@
                 (click)="createProject(stepper)"
               >
                 Create project
-                <mat-icon class="mat-icon-position right"
-                  >arrow_forward</mat-icon
+                <app-mat-icon position="right" usage="text"
+                  >arrow_forward</app-mat-icon
                 >
               </button>
             </div>
@@ -61,8 +63,8 @@
             <div class="flex-space-between">
               <button mat-flat-button color="primary" (click)="stepper.next()">
                 Skip
-                <mat-icon class="mat-icon-position right"
-                  >arrow_forward</mat-icon
+                <app-mat-icon usage="button" class="mat-icon-position right"
+                  >arrow_forward</app-mat-icon
                 >
               </button>
             </div>
@@ -73,12 +75,15 @@
     <mat-step label="Add models">
       <app-create-model #model_creator></app-create-model>
       <div class="flex-center">
-        <mat-card class="mat-card-default">
-          <div class="flex-space-between">
-            <button mat-flat-button color="primary" (click)="stepper.next()">
+        <mat-card class="section-card">
+          <div class="flex-center">
+            <a
+              mat-flat-button
+              [routerLink]="['/project', projectService.project]"
+            >
               Finish project creation
-              <mat-icon class="mat-icon-position right">check</mat-icon>
-            </button>
+              <app-mat-icon class="mat-icon-position right">check</app-mat-icon>
+            </a>
           </div>
         </mat-card>
       </div>
