@@ -118,8 +118,8 @@ export class ProjectUserSettingsComponent implements OnChanges {
           this.addUserToRepoForm.reset();
           this.refreshRepoUsers();
           this.toastService.showSuccess(
-            'User added to project ' + this.project.name,
-            ''
+            `User added`,
+            `User '${formValue.username}' has been added to project '${this.project.name}'`
           );
         });
     }
@@ -130,6 +130,10 @@ export class ProjectUserSettingsComponent implements OnChanges {
       .deleteUserFromRepo(this.project.name, username)
       .subscribe(() => {
         this.refreshRepoUsers();
+        this.toastService.showSuccess(
+          `User removed`,
+          `User '${username}' has been removed from project '${this.project.name}'`
+        );
       });
   }
 
@@ -138,6 +142,10 @@ export class ProjectUserSettingsComponent implements OnChanges {
       .changeRoleOfRepoUser(this.project.name, username, 'manager')
       .subscribe(() => {
         this.refreshRepoUsers();
+        this.toastService.showSuccess(
+          `User modified`,
+          `User '${username}' can now manage the project '${this.project.name}'`
+        );
       });
   }
 
@@ -146,6 +154,10 @@ export class ProjectUserSettingsComponent implements OnChanges {
       .changeRoleOfRepoUser(this.project.name, username, 'user')
       .subscribe(() => {
         this.refreshRepoUsers();
+        this.toastService.showSuccess(
+          `User modified`,
+          `User '${username}' is no longer project lead in the project '${this.project.name}'`
+        );
       });
   }
 
@@ -154,6 +166,10 @@ export class ProjectUserSettingsComponent implements OnChanges {
       .changePermissionOfRepoUser(this.project.name, username, permission)
       .subscribe(() => {
         this.refreshRepoUsers();
+        this.toastService.showSuccess(
+          `User modified`,
+          `User '${username}' has the permission '${permission}' in the project '${this.project.name}' now`
+        );
       });
   }
 
