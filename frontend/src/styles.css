@@ -159,6 +159,10 @@ fieldset > :not(.field-separator) {
   flex-grow: 1;
 }
 
+.text-center {
+  text-align: center;
+}
+
 .flex-center {
   display: flex;
   justify-content: center;
