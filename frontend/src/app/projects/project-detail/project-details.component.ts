@@ -5,7 +5,7 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { filter, map, Subscription } from 'rxjs';
-import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
+import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({

@@ -6,7 +6,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LocalStorageService } from 'src/app/auth/local-storage/local-storage.service';
+import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { Session, User } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../auth/auth.service';

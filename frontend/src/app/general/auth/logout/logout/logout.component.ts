@@ -5,7 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
+import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 
 @Component({
   selector: 'app-logout',

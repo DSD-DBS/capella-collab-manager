@@ -3,9 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-
 import { Component, OnInit } from '@angular/core';
-import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
+import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 
 @Component({
   selector: 'app-dockerimage-settings',

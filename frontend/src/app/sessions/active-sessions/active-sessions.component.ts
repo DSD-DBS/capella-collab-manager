@@ -6,10 +6,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
-import { Session } from '../schemes';
-import { BeautifyService } from '../services/beatify/beautify.service';
-import { OwnSessionService } from '../services/own-session/own-session.service';
-import { SessionService } from '../services/session/session.service';
+import { Session } from '../../schemes';
+import { BeautifyService } from '../../services/beatify/beautify.service';
+import { OwnSessionService } from '../../services/own-session/own-session.service';
+import { SessionService } from '../../services/session/session.service';
 import { ReconnectDialogComponent } from './reconnect-dialog/reconnect-dialog.component';
 import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
 

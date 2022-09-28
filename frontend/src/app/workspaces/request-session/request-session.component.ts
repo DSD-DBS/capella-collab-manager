@@ -25,7 +25,7 @@ import {
   DepthType,
   SessionService,
 } from 'src/app/services/session/session.service';
-import { ToastService } from 'src/app/toast/toast.service';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 
 @Component({
   selector: 'app-request-session',

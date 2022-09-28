@@ -17,7 +17,7 @@ import {
   AuthService,
   RefreshTokenResponse,
 } from 'src/app/services/auth/auth.service';
-import { ToastService } from 'src/app/toast/toast.service';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 
 @Injectable()

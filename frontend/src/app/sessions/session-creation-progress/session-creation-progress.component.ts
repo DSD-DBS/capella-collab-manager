@@ -6,10 +6,10 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Session } from '../schemes';
-import { BeautifyService } from '../services/beatify/beautify.service';
-import { OwnSessionService } from '../services/own-session/own-session.service';
-import { SessionService } from '../services/session/session.service';
+import { Session } from '../../schemes';
+import { BeautifyService } from '../../services/beatify/beautify.service';
+import { OwnSessionService } from '../../services/own-session/own-session.service';
+import { SessionService } from '../../services/session/session.service';
 
 @Component({
   selector: 'app-session-creation-progress',

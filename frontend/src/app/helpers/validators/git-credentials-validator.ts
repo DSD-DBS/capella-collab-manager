@@ -10,7 +10,7 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { Observable, of } from 'rxjs';
-import { GitService } from '../services/git/git.service';
+import { GitService } from '../../services/git/git.service';
 
 @Injectable({
   providedIn: 'root',

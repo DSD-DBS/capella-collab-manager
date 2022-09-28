@@ -34,21 +34,20 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CookieModule } from 'ngx-cookie';
 import { ToastrModule } from 'ngx-toastr';
-import { ActiveSessionsComponent } from './active-sessions/active-sessions.component';
-import { ReconnectDialogComponent } from './active-sessions/reconnect-dialog/reconnect-dialog.component';
+import { ActiveSessionsComponent } from './sessions/active-sessions/active-sessions.component';
+import { ReconnectDialogComponent } from './sessions/active-sessions/reconnect-dialog/reconnect-dialog.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AuthComponent } from './auth/auth/auth.component';
-import { AuthInterceptor } from './auth/http-interceptor/auth.interceptor';
-import { LogoutRedirectComponent } from './auth/logout/logout-redirect/logout-redirect.component';
-import { LogoutComponent } from './auth/logout/logout/logout.component';
-import { DeleteSessionDialogComponent } from './delete-session-dialog/delete-session-dialog.component';
-import { FooterComponent } from './footer/footer.component';
-import { LegalComponent } from './footer/legal/legal.component';
-import { TermsConditionsComponent } from './footer/terms-conditions/terms-conditions.component';
-import { MaintenanceComponent } from './maintenance/maintenance.component';
-import { HeaderComponent } from './navbar/header.component';
-import { NoticeComponent } from './notice/notice.component';
+import { AuthComponent } from './general/auth/auth/auth.component';
+import { AuthInterceptor } from './general/auth/http-interceptor/auth.interceptor';
+import { LogoutRedirectComponent } from './general/auth/logout/logout-redirect/logout-redirect.component';
+import { LogoutComponent } from './general/auth/logout/logout/logout.component';
+import { DeleteSessionDialogComponent } from './sessions/delete-session-dialog/delete-session-dialog.component';
+import { FooterComponent } from './general/footer/footer.component';
+import { LegalComponent } from './general/footer/legal/legal.component';
+import { TermsConditionsComponent } from './general/footer/terms-conditions/terms-conditions.component';
+import { HeaderComponent } from './general/navbar/header.component';
+import { NoticeComponent } from './general/notice/notice.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { BackupSettingsComponent } from './projects/project-detail/backup-settings/backup-settings.component';
 import { CreateEASEBackupComponent } from './projects/project-detail/backup-settings/ease-backup-settings/create-ease-backup/create-ease-backup.component';
@@ -66,13 +65,13 @@ import { ProjectMetadataComponent } from './projects/project-detail/project-meta
 import { ProjectUserSettingsComponent } from './projects/project-detail/project-users/project-user-settings.component';
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
 import { WhitespaceUrlInterceptor } from './services/encoder/encoder.interceptor';
-import { GuacamoleComponent } from './session-created/guacamole/guacamole.component';
-import { RDPComponent } from './session-created/rdp/rdp.component';
-import { SessionCreatedComponent } from './session-created/session-created.component';
-import { SessionCreationProgressComponent } from './session-creation-progress/session-creation-progress.component';
-import { SessionProgressIconComponent } from './session-creation-progress/session-progress-icon/session-progress-icon.component';
-import { LicencesComponent } from './session-overview/licences/licences.component';
-import { SessionOverviewComponent } from './session-overview/session-overview.component';
+import { GuacamoleComponent } from './sessions/session-created/guacamole/guacamole.component';
+import { RDPComponent } from './sessions/session-created/rdp/rdp.component';
+import { SessionCreatedComponent } from './sessions/session-created/session-created.component';
+import { SessionCreationProgressComponent } from './sessions/session-creation-progress/session-creation-progress.component';
+import { SessionProgressIconComponent } from './sessions/session-creation-progress/session-progress-icon/session-progress-icon.component';
+import { LicencesComponent } from './sessions/session-overview/licences/licences.component';
+import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { DockerimageSettingsComponent } from './settings/core/dockerimage-settings/dockerimage-settings.component';
 import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
@@ -100,10 +99,10 @@ import { InitModelComponent } from './models/init-model/init-model.component';
 import { ChooseInitComponent } from './models/choose-init/choose-init.component';
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { ModelWrapperComponent } from './models/model-wrapper/model-wrapper.component';
-import { UploadDialogComponent } from './active-sessions/upload-dialog/upload-dialog.component';
-import { FileExistsDialogComponent } from './active-sessions/upload-dialog/file-exists-dialog/file-exists-dialog.component';
-import { ReleaseNotesComponent } from './metadata/release-notes/release-notes.component';
-import { VersionComponent } from './metadata/version/version.component';
+import { UploadDialogComponent } from './sessions/active-sessions/upload-dialog/upload-dialog.component';
+import { FileExistsDialogComponent } from './sessions/active-sessions/upload-dialog/file-exists-dialog/file-exists-dialog.component';
+import { ReleaseNotesComponent } from './general/metadata/release-notes/release-notes.component';
+import { VersionComponent } from './general/metadata/version/version.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -149,7 +148,6 @@ import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
     GitBackupSettingsComponent,
     JenkinsBackupSettingsComponent,
     ProjectOverviewComponent,
-    MaintenanceComponent,
     ModelOverviewComponent,
     SetT4CPasswordComponent,
     UserSettingsComponent,

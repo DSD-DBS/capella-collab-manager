@@ -12,12 +12,12 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
+import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   CreateNotice,
   NoticeService,
 } from 'src/app/services/notice/notice.service';
-import { ToastService } from 'src/app/toast/toast.service';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 
 @Component({
   selector: 'app-alert-settings',

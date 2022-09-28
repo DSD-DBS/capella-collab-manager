@@ -4,8 +4,6 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
-import { tap } from 'rxjs';
-import { IntegrationService } from 'src/app/integrations/integration.service';
 import { Model, ModelService } from 'src/app/services/model/model.service';
 import {
   Project,
@@ -22,7 +20,6 @@ export class ModelOverviewComponent implements OnInit {
   models?: Model[];
 
   constructor(
-    public integrations: IntegrationService,
     public projectService: ProjectService,
     public modelService: ModelService
   ) {}

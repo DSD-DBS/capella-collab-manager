@@ -13,7 +13,7 @@ import {
 } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import { ToastService } from '../../toast/toast.service';
+import { ToastService } from '../../helpers/toast/toast.service';
 import {
   BehaviorSubject,
   connectable,
@@ -26,7 +26,7 @@ import {
 } from 'rxjs';
 import slugify from 'slugify';
 import { CreateModelComponent } from 'src/app/models/create-model/create-model.component';
-import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
+import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   Project,
   ProjectService,

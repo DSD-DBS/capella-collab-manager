@@ -22,7 +22,7 @@ import {
 import { ProjectUser } from 'src/app/schemes';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { ToastService } from 'src/app/toast/toast.service';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { Project } from 'src/app/services/project/project.service';
 
 @Component({

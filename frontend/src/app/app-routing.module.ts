@@ -5,18 +5,17 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ActiveSessionsComponent } from './active-sessions/active-sessions.component';
-import { AuthGuardService } from './auth/auth-guard/auth-guard.service';
-import { AuthRedirectComponent } from './auth/auth-redirect/auth-redirect.component';
-import { AuthComponent } from './auth/auth/auth.component';
-import { LogoutRedirectComponent } from './auth/logout/logout-redirect/logout-redirect.component';
-import { LogoutComponent } from './auth/logout/logout/logout.component';
-import { MaintenanceComponent } from './maintenance/maintenance.component';
+import { ActiveSessionsComponent } from './sessions/active-sessions/active-sessions.component';
+import { AuthGuardService } from './general/auth/auth-guard/auth-guard.service';
+import { AuthRedirectComponent } from './general/auth/auth-redirect/auth-redirect.component';
+import { AuthComponent } from './general/auth/auth/auth.component';
+import { LogoutRedirectComponent } from './general/auth/logout/logout-redirect/logout-redirect.component';
+import { LogoutComponent } from './general/auth/logout/logout/logout.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
-import { SessionOverviewComponent } from './session-overview/session-overview.component';
+import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { DockerimageSettingsComponent } from './settings/core/dockerimage-settings/dockerimage-settings.component';
 import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
@@ -47,11 +46,6 @@ const routes: Routes = [
   {
     path: 'workspaces',
     component: HomeComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'maintenance',
-    component: MaintenanceComponent,
     canActivate: [AuthGuardService],
   },
   {

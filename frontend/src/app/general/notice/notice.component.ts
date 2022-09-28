@@ -4,7 +4,7 @@
  */
 
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { NoticeService } from '../services/notice/notice.service';
+import { NoticeService } from '../../services/notice/notice.service';
 
 @Component({
   selector: 'app-notice',

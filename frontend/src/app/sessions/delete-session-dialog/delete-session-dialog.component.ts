@@ -10,8 +10,8 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
-import { Session } from '../schemes';
-import { SessionService } from '../services/session/session.service';
+import { Session } from '../../schemes';
+import { SessionService } from '../../services/session/session.service';
 
 @Component({
   templateUrl: './delete-session-dialog.component.html',

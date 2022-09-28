@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie';
 import { Observable } from 'rxjs';
-import { LocalStorageService } from 'src/app/auth/local-storage/local-storage.service';
+import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

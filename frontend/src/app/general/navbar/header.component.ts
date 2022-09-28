@@ -5,9 +5,9 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { LocalStorageService } from '../auth/local-storage/local-storage.service';
-import { AuthService } from '../services/auth/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { ProjectService } from 'src/app/services/project/project.service';
-import { UserService } from '../services/user/user.service';
+import { UserService } from '../../services/user/user.service';
 import { NavBarService } from './service/nav-bar.service';
 
 @Component({

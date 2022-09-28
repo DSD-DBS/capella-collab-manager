@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { LocalStorageService } from 'src/app/auth/local-storage/local-storage.service';
+import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { environment } from 'src/environments/environment';
 import { ReleaseNote } from '../release-notes/release-note.service';
 import { ReleaseNotesComponent } from '../release-notes/release-notes.component';
