@@ -35,121 +35,142 @@ import { CreateModelComponent } from './projects/models/create-model/create-mode
 const routes: Routes = [
   {
     path: '',
-    component: HomeComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'projects',
-    component: ProjectOverviewComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'workspaces',
-    component: HomeComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'active-sessions',
-    component: ActiveSessionsComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'overview',
-    component: SessionOverviewComponent,
-    canActivate: [AuthGuardService],
-  },
-  { path: 'auth', component: AuthComponent },
-  { path: 'oauth2/callback', component: AuthRedirectComponent },
-  {
-    path: 'settings',
-    component: SettingsComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'settings/requests',
-    component: RequestsComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'settings/core/users',
-    component: UserSettingsComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'settings/core/alerts',
-    component: AlertSettingsComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'settings/core/dockerimages',
-    component: DockerimageSettingsComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'settings/modelsources/git',
-    component: GitSettingsComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'settings/modelsources/git/edit/:id',
-    component: EditGitSettingsComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'settings/modelsources/t4c',
-    component: T4CSettingsComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'settings/modelsources/t4c/instances/:id',
-    component: T4CInstanceSettingsComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'project/:project',
-    component: ProjectWrapperComponent,
     canActivate: [AuthGuardService],
     children: [
       {
         path: '',
-        component: ProjectDetailsComponent,
+        component: HomeComponent,
       },
       {
-        path: 'models/create',
-        component: CreateModelComponent,
-      },
-      {
-        path: 'model/:model',
-        component: ModelWrapperComponent,
+        path: 'projects',
         children: [
           {
             path: '',
-            component: ModelDetailComponent,
+            component: ProjectOverviewComponent,
+          },
+          {
+            path: 'create',
+            component: CreateProjectComponent,
+          },
+        ],
+      },
+      {
+        path: 'project/:project',
+        component: ProjectWrapperComponent,
+        canActivate: [AuthGuardService],
+        children: [
+          {
+            path: '',
+            component: ProjectDetailsComponent,
+          },
+          {
+            path: 'models/create',
+            component: CreateModelComponent,
+          },
+          {
+            path: 'model/:model',
+            component: ModelWrapperComponent,
+            children: [
+              {
+                path: '',
+                component: ModelDetailComponent,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: 'workspaces',
+        component: HomeComponent,
+      },
+      {
+        path: 'sessions',
+        children: [
+          {
+            path: 'overview',
+            component: SessionOverviewComponent,
+          },
+          {
+            path: 'active',
+            component: ActiveSessionsComponent,
+          },
+        ],
+      },
+      {
+        path: 'settings',
+        children: [
+          {
+            path: '',
+            component: SettingsComponent,
+          },
+          {
+            path: 'requests',
+            component: RequestsComponent,
+          },
+          {
+            path: 'core',
+            children: [
+              {
+                path: 'users',
+                component: UserSettingsComponent,
+              },
+              {
+                path: 'alerts',
+                component: AlertSettingsComponent,
+              },
+              {
+                path: 'dockerimages',
+                component: DockerimageSettingsComponent,
+              },
+            ],
+          },
+          {
+            path: 'modelsources',
+            children: [
+              {
+                path: 'git',
+                children: [
+                  {
+                    path: '',
+                    component: GitSettingsComponent,
+                  },
+                  {
+                    path: 'instances/:id',
+                    component: EditGitSettingsComponent,
+                  },
+                ],
+              },
+              {
+                path: 't4c',
+                children: [
+                  { path: '', component: T4CSettingsComponent },
+                  {
+                    path: 'instances/:id',
+                    component: T4CInstanceSettingsComponent,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            path: 'integrations',
+            children: [
+              {
+                path: 'backups/importer',
+                component: T4CImporterSettingsComponent,
+              },
+              {
+                path: 'guacamole',
+                component: GuacamoleSettingsComponent,
+              },
+            ],
           },
         ],
       },
     ],
   },
-  {
-    path: 'settings/integrations/backups/importer',
-    component: T4CImporterSettingsComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'settings/integrations/guacamole',
-    component: GuacamoleSettingsComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'projects/create',
-    component: CreateProjectComponent,
-    canActivate: [AuthGuardService],
-  },
-  {
-    path: 'settings/modelsources/git/instances/:id',
-    component: EditGitSettingsComponent,
-    canActivate: [AuthGuardService],
-  },
+  { path: 'auth', component: AuthComponent },
+  { path: 'oauth2/callback', component: AuthRedirectComponent },
   {
     path: 'logout/redirect',
     component: LogoutRedirectComponent,
