@@ -49,11 +49,9 @@ import { TermsConditionsComponent } from './general/footer/terms-conditions/term
 import { HeaderComponent } from './general/navbar/header.component';
 import { NoticeComponent } from './general/notice/notice.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
-import { BackupSettingsComponent } from './projects/project-detail/backup-settings/backup-settings.component';
 import { CreateEASEBackupComponent } from './projects/project-detail/backup-settings/ease-backup-settings/create-ease-backup/create-ease-backup.component';
 import { GitBackupSettingsComponent } from './projects/project-detail/backup-settings/ease-backup-settings/ease-backup-settings.component';
 import { ViewLogsDialogComponent } from './projects/project-detail/backup-settings/ease-backup-settings/view-logs-dialog/view-logs-dialog.component';
-import { JenkinsBackupSettingsComponent } from './projects/project-detail/backup-settings/jenkins-backup-settings/jenkins-backup-settings.component';
 import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
 import { ModelOverviewComponent } from './projects/project-detail/model-overview/model-overview.component';
 import { GitModelDeletionDialogComponent } from './projects/project-detail/model-source/git-model-settings/git-model-deletion-dialog/git-model-deletion-dialog.component';
@@ -90,15 +88,15 @@ import { HomeComponent } from './workspaces/home.component';
 import { NoRepositoryComponent } from './workspaces/no-repository/no-repository.component';
 import { RequestSessionComponent } from './workspaces/request-session/request-session.component';
 import { WarningComponent } from './workspaces/request-session/warning/warning.component';
-import { CreateModelBaseComponent } from './models/create-model-base/create-model-base.component';
+import { CreateModelBaseComponent } from './projects/models/create-model-base/create-model-base.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { CreateCoworkingMethodComponent } from './models/create-coworking-method/create-coworking-method.component';
-import { ChooseSourceComponent } from './models/choose-source/choose-source.component';
-import { InitModelComponent } from './models/init-model/init-model.component';
-import { ChooseInitComponent } from './models/choose-init/choose-init.component';
+import { CreateCoworkingMethodComponent } from './projects/models/create-coworking-method/create-coworking-method.component';
+import { ChooseSourceComponent } from './projects/models/choose-source/choose-source.component';
+import { InitModelComponent } from './projects/models/init-model/init-model.component';
+import { ChooseInitComponent } from './projects/models/choose-init/choose-init.component';
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
-import { ModelWrapperComponent } from './models/model-wrapper/model-wrapper.component';
+import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { UploadDialogComponent } from './sessions/active-sessions/upload-dialog/upload-dialog.component';
 import { FileExistsDialogComponent } from './sessions/active-sessions/upload-dialog/file-exists-dialog/file-exists-dialog.component';
 import { ReleaseNotesComponent } from './general/metadata/release-notes/release-notes.component';
@@ -107,7 +105,7 @@ import { MarkdownModule } from 'ngx-markdown';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
-import { CreateModelComponent } from './models/create-model/create-model.component';
+import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 @NgModule({
   declarations: [
@@ -144,9 +142,7 @@ import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
     SessionCreationProgressComponent,
     SessionProgressIconComponent,
     LicencesComponent,
-    BackupSettingsComponent,
     GitBackupSettingsComponent,
-    JenkinsBackupSettingsComponent,
     ProjectOverviewComponent,
     ModelOverviewComponent,
     SetT4CPasswordComponent,

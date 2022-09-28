@@ -29,8 +29,8 @@ import { RequestsComponent } from './settings/requests/requests.component';
 import { SettingsComponent } from './settings/settings.component';
 import { HomeComponent } from './workspaces/home.component';
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
-import { ModelWrapperComponent } from './models/model-wrapper/model-wrapper.component';
-import { CreateModelComponent } from './models/create-model/create-model.component';
+import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
+import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 
 const routes: Routes = [
   {
