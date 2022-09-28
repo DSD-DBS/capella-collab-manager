@@ -246,3 +246,44 @@ fieldset > :not(.field-separator) {
 .title-box {
   margin-left: 2em;
 }
+
+.item-container {
+  display: flex;
+}
+
+.item-card {
+  width: 40ch;
+}
+
+.item-card mat-card-header {
+  display: inline-block;
+  text-align: center;
+  width: 100%;
+}
+
+.item-card mat-card-content {
+  padding-top: 1em;
+  height: 10em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.item-card .icon-container {
+  text-align: center;
+  width: 100%;
+  font-size: 8em;
+  height: 1em;
+  line-height: 1em;
+}
+
+.item-card ul {
+  padding: 0;
+  list-style-type: none;
+  font-size: 1.3em;
+  line-height: 1.5em;
+}
+
+a {
+  text-decoration: none !important;
+}
