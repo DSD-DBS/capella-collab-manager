@@ -72,14 +72,16 @@
     </mat-step>
     <mat-step label="Add models">
       <app-create-model #model_creator></app-create-model>
-      <mat-card class="mat-card-default">
-        <div class="flex-space-between">
-          <button mat-flat-button color="primary" (click)="stepper.next()">
-            Finish project creation
-            <mat-icon class="mat-icon-position right">check</mat-icon>
-          </button>
-        </div>
-      </mat-card>
+      <div class="flex-center">
+        <mat-card class="mat-card-default">
+          <div class="flex-space-between">
+            <button mat-flat-button color="primary" (click)="stepper.next()">
+              Finish project creation
+              <mat-icon class="mat-icon-position right">check</mat-icon>
+            </button>
+          </div>
+        </mat-card>
+      </div>
     </mat-step>
   </mat-horizontal-stepper>
 </div>
