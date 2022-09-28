@@ -20,7 +20,7 @@
     *ngFor="let project of projectService.projects"
     [routerLink]="['/project', project.slug]"
   >
-    <mat-card>
+    <mat-card matRipple>
       <div class="wrapper">
         <div class="header">{{ project.name }}</div>
         <div class="wrapper">
