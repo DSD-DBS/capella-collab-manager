@@ -8,9 +8,8 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper">
+<div class="flex-center">
   <mat-card class="section-card" *ngIf="projectService.project">
-    <h2>Add model to project “{{ projectService.project.name }}”</h2>
     <form
       id="create-model-base-form"
       [formGroup]="form"

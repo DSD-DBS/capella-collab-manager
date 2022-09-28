@@ -9,13 +9,8 @@
  -->
 
 <div *ngIf="projectService.project && modelService.model">
-  <h1>
-    Add a primary source to the model “{{ modelService.model.name }}” of the
-    project “{{ projectService.project.name }}”.
-  </h1>
-
-  <h2 class="title">Git sources</h2>
-  <div class="options-list">
+  <h2 class="title text-center">Git sources</h2>
+  <div class="options-list flex-center">
     <button mat-raised-button (click)="optionClick.emit('git-add')">
       <div class="button-content-wrapper">
         <p class="option-title">Use existing repository</p>

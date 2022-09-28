@@ -9,12 +9,7 @@
  -->
 
 <div *ngIf="projectService.project && modelService.model">
-  <h1>
-    Initialize the model {{ modelService.model.name }} of the project
-    {{ projectService.project.name }}.
-  </h1>
-
-  <div class="options-list">
+  <div class="options-list flex-center">
     <button
       mat-raised-button
       disabled
