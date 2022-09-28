@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-
 import { Component, Input, OnInit } from '@angular/core';
 
 import { MatDialog } from '@angular/material/dialog';

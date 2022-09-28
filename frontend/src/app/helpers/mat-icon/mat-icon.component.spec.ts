@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MatIconComponent } from './mat-icon.component';
@@ -8,9 +13,8 @@ describe('MatIconComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MatIconComponent ]
-    })
-    .compileComponents();
+      declarations: [MatIconComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MatIconComponent);
     component = fixture.componentInstance;

@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ModelDetailComponent } from './model-detail.component';

@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { T4CInstanceSettingsComponent } from './t4c-instance-settings.component';

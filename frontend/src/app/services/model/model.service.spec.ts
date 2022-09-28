@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-
 import { TestBed } from '@angular/core/testing';
 
 import { ModelService } from './model.service';
