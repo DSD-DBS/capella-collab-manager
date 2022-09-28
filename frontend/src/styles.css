@@ -43,14 +43,16 @@ body {
   height: 400px;
 }
 
-/*
-This has to be added to the parent container for an item
-The class transforms the icon to 1.75 of its size
-*/
 .mat-icon-70px {
   width: 70px !important;
   height: 70px !important;
   font-size: 70px !important;
+}
+
+.mat-icon-50px {
+  width: 50px !important;
+  height: 50px !important;
+  font-size: 50px !important;
 }
 
 a {

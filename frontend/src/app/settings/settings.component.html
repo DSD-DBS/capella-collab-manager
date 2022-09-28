@@ -7,15 +7,15 @@
 <div class="options-list">
   <mat-card matRipple [routerLink]="['/settings/core/users']">
     <div class="subtitle">Manage users</div>
-    <mat-icon>supervised_user_circle</mat-icon>
+    <mat-icon class="mat-icon-50px">supervised_user_circle</mat-icon>
   </mat-card>
   <mat-card matRipple [routerLink]="['/settings/core/alerts']">
     <div class="subtitle">Maintenance and alerts</div>
-    <mat-icon>add_alert</mat-icon>
+    <mat-icon class="mat-icon-50px">add_alert</mat-icon>
   </mat-card>
   <mat-card matRipple [routerLink]="['/settings/core/dockerimages']">
     <div class="subtitle">Dockerimages</div>
-    <mat-icon>folder</mat-icon>
+    <mat-icon class="mat-icon-50px">folder</mat-icon>
   </mat-card>
 </div>
 
@@ -38,7 +38,7 @@
     [routerLink]="['/settings/modelsources/t4c']"
   >
     <div class="subtitle">Team For Capella</div>
-    <mat-icon>people</mat-icon>
+    <mat-icon class="mat-icon-50px">people</mat-icon>
   </mat-card>
 </div>
 
@@ -46,18 +46,19 @@
 <div class="options-list">
   <mat-card class="disabled">
     <div class="subtitle">Jenkins backups</div>
-    <mat-icon>backup</mat-icon>
+    <mat-icon class="mat-icon-50px">backup</mat-icon>
   </mat-card>
   <mat-card
     matRipple
     [routerLink]="['/settings/integrations/backups/importer']"
   >
     <div class="subtitle">T4C importer backups</div>
-    <mat-icon>backup</mat-icon>
+    <mat-icon class="mat-icon-50px">backup</mat-icon>
   </mat-card>
+
   <mat-card class="disabled">
     <div class="subtitle">Garbage cleaner</div>
-    <mat-icon>delete_forever</mat-icon>
+    <mat-icon class="mat-icon-50px">delete_forever</mat-icon>
   </mat-card>
   <mat-card matRipple [routerLink]="['/settings/integrations/guacamole']">
     <div class="subtitle">Guacamole</div>
