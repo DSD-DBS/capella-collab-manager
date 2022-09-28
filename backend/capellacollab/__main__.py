@@ -10,6 +10,7 @@ import time
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from capellacollab.config import config
 
@@ -62,6 +63,29 @@ async def log_requests(request, call_next):
     log.debug(
         f"rid={idem} completed_in={formatted_process_time}ms status_code={response.status_code}"
     )
+
+    return response
+
+
+@app.exception_handler(500)
+async def handle_exceptions(request, exc):
+    """
+    A custom exception handler is required, otherwise no CORS headers are included
+    in the case of exceptions.
+    https://github.com/encode/starlette/issues/1175
+    """
+    cors = CORSMiddleware(
+        app=app,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["POST", "GET", "OPTIONS", "DELETE", "PUT", "PATCH"],
+        allow_headers=["*"],
+    )
+
+    response = JSONResponse(
+        status_code=500, content={"body": "Internal Server Error"}
+    )
+    response.headers.update(cors.simple_headers)
 
     return response
 
