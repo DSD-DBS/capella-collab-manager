@@ -13,7 +13,7 @@
       ></app-create-model-base>
     </mat-step>
 
-    <mat-step completed="false" label="Choose source">
+    <mat-step completed="false" label="Choose primary source">
       <app-choose-source
         (optionClick)="onSourceClick($event)"
       ></app-choose-source>
@@ -29,7 +29,7 @@
       <app-choose-init (optionClick)="onInitClick($event)"></app-choose-init>
     </mat-step>
 
-    <mat-step label="Initialize">
+    <mat-step label="Metadata">
       <app-init-model
         [asStepper]="asStepper"
         (create)="afterModelInitialized($event)"
