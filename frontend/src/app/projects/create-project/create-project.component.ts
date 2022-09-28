@@ -25,7 +25,7 @@ import {
   tap,
 } from 'rxjs';
 import slugify from 'slugify';
-import { CreateModelComponent } from 'src/app/models/create-model/create-model.component';
+import { CreateModelComponent } from 'src/app/projects/models/create-model/create-model.component';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   Project,
