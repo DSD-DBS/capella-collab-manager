@@ -5,10 +5,6 @@
 
 <div class="wrapper flex-center">
   <mat-card class="section-card" *ngIf="modelService.model">
-    <h2>
-      Initialize the model “{{ this.modelService.model.name }}” of the project
-      “{{ this.projectService.project?.name }}”.
-    </h2>
     <form id="new-model-form" [formGroup]="form">
       <fieldset>
         <mat-form-field appearance="fill">
@@ -44,27 +40,22 @@
         </mat-form-field>
       </fieldset>
     </form>
-    <button mat-button (click)="create.emit({ created: false })">
-      Choose initialization
-    </button>
-    <div class="field-separator" *ngIf="asStepper"></div>
-    <button
-      mat-raised-button
-      color="primary"
-      [disabled]="!form.valid"
-      (click)="onSubmit(true)"
-      *ngIf="asStepper"
-    >
-      Create new model
-    </button>
-    <div class="field-separator"></div>
-    <button
-      mat-raised-button
-      color="primary"
-      [disabled]="!form.valid"
-      (click)="onSubmit(false)"
-    >
-      Finish
-    </button>
+    <div class="flex-space-between">
+      <button mat-button (click)="create.emit({ created: false })">
+        <app-mat-icon class="mat-icon-position left">arrow_back</app-mat-icon>
+        Choose initialization
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="!form.valid"
+        (click)="onSubmit()"
+      >
+        Finish
+        <app-mat-icon class="mat-icon-position right"
+          >arrow_forward</app-mat-icon
+        >
+      </button>
+    </div>
   </mat-card>
 </div>

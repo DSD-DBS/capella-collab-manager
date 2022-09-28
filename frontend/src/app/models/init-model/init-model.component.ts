@@ -41,7 +41,7 @@ export class InitModelComponent implements OnInit {
     this.toolService.init();
   }
 
-  onSubmit(again: boolean): void {
+  onSubmit(): void {
     if (
       this.form.valid &&
       this.modelService.model &&
@@ -57,7 +57,7 @@ export class InitModelComponent implements OnInit {
           this.form.value.type
         )
         .subscribe((_) => {
-          this.create.emit({ created: true, again: again });
+          this.create.emit({ created: true });
         });
     }
   }
