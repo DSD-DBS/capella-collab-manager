@@ -38,6 +38,9 @@
               {{ tool.name }}
             </mat-option>
           </mat-select>
+          <mat-error *ngIf="form.controls.tool_id.errors?.noValidTool">
+            Please select a valid tool.
+          </mat-error>
         </mat-form-field>
       </fieldset>
       <div class="flex-space-between">

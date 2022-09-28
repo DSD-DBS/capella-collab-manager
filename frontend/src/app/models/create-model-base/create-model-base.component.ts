@@ -36,7 +36,7 @@ export class CreateModelBaseComponent implements OnInit {
   public form = new FormGroup({
     name: new FormControl('', Validators.required),
     description: new FormControl(''),
-    tool_id: new FormControl(-1, Validators.required),
+    tool_id: new FormControl(-1, this.validToolValidator()),
   });
 
   constructor(
@@ -54,6 +54,19 @@ export class CreateModelBaseComponent implements OnInit {
         }
       }
       return null;
+    };
+  }
+
+  validToolValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (this.toolService.tools) {
+        for (let tool of this.toolService.tools) {
+          if (tool.id == control.value) {
+            return null;
+          }
+        }
+      }
+      return { noValidTool: true };
     };
   }
 
