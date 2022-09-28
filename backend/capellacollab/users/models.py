@@ -1,12 +1,31 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import enum
 
+from pydantic import BaseModel
 from sqlalchemy import Column, Enum, Integer, String
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
-from capellacollab.projects.users.models import Role
+
+
+class Role(enum.Enum):
+    USER = "user"
+    ADMIN = "administrator"
+
+
+class GetUserResponse(BaseModel):
+    id: str
+    name: str
+    role: Role
+
+    class Config:
+        orm_mode = True
+
+
+class PatchUserRoleRequest(BaseModel):
+    role: Role
 
 
 class DatabaseUser(Base):

@@ -8,20 +8,21 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.users.crud as repository_users
+import capellacollab.users.crud as users
 from capellacollab.core.authentication.database import is_admin, verify_admin
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
-from capellacollab.core.database import get_db, users
-from capellacollab.projects.users.models import (
+from capellacollab.core.database import get_db
+from capellacollab.sessions.routes import inject_attrs_in_sessions
+from capellacollab.sessions.schema import AdvancedSessionResponse
+from capellacollab.users.models import (
     GetUserResponse,
     PatchUserRoleRequest,
     Role,
 )
-from capellacollab.sessions.routes import inject_attrs_in_sessions
-from capellacollab.sessions.schema import AdvancedSessionResponse
 
 router = APIRouter()
 

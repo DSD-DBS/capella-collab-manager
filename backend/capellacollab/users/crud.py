@@ -5,8 +5,7 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
-from capellacollab.projects.users.models import Role
-from capellacollab.sql_models.users import DatabaseUser
+from capellacollab.users.models import DatabaseUser, Role
 
 
 def find_or_create_user(db: Session, username: str):

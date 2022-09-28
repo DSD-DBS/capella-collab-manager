@@ -13,6 +13,7 @@ import capellacollab.extensions.modelsources.git.crud as git_models_crud
 import capellacollab.extensions.modelsources.t4c.connection as t4c_manager
 import capellacollab.projects.crud as repositories_crud
 import capellacollab.projects.users.models as users_models
+import capellacollab.users.crud as users
 from capellacollab.core.authentication.database import (
     is_admin,
     verify_project_role,
@@ -23,7 +24,7 @@ from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
 from capellacollab.core.credentials import generate_password
-from capellacollab.core.database import get_db, users
+from capellacollab.core.database import get_db
 from capellacollab.projects.users.crud import RepositoryUserRole
 from capellacollab.sessions import database, guacamole
 from capellacollab.sessions.models import DatabaseSession

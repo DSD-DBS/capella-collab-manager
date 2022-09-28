@@ -13,6 +13,7 @@ from sqlalchemy.exc import IntegrityError
 
 import capellacollab.projects.crud as crud
 import capellacollab.projects.users.crud as users_crud
+import capellacollab.users.crud as database_users
 from capellacollab.core.authentication.database import (
     is_admin,
     verify_admin,
@@ -24,7 +25,6 @@ from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
 from capellacollab.core.database import get_db
-from capellacollab.core.database import users as database_users
 from capellacollab.projects.models import (
     DatabaseProject,
     PatchProject,

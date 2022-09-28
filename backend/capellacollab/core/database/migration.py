@@ -14,10 +14,11 @@ from sqlalchemy.orm import sessionmaker
 
 import capellacollab.projects.crud as projects
 import capellacollab.tools.crud as tools
+import capellacollab.users.crud as users
 from capellacollab.config import config
-from capellacollab.core.database import Base, users
-from capellacollab.projects.users.models import Role
+from capellacollab.core.database import Base
 from capellacollab.tools.models import Tool
+from capellacollab.users.models import Role
 
 LOGGER = logging.getLogger(__name__)
 

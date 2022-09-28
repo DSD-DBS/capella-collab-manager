@@ -12,7 +12,7 @@ from capellacollab.core.authentication.schemas import (
     TokenRequest,
 )
 from capellacollab.core.database import get_db
-from capellacollab.projects.users.models import Role
+from capellacollab.users.models import Role
 
 from .flow import get_auth_redirect_url, get_token, refresh_token
 

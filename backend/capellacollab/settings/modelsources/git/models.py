@@ -9,7 +9,6 @@ from pydantic import BaseModel
 from sqlalchemy import Column, Enum, Integer, String
 
 from capellacollab.core.database import Base
-from capellacollab.projects.users.models import Role
 
 
 class GitType(enum.Enum):
