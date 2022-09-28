@@ -77,7 +77,7 @@ def set_tool_details_for_model(
     model_type: Type,
 ):
     model.version = version
-    model.type = model_type
+    model.tool_type = model_type
     db.add(model)
     db.commit()
     return model
