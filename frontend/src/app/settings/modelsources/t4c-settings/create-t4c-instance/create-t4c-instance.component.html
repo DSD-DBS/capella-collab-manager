@@ -1,0 +1,101 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<mat-card class="section-card">
+  <h2>Add a Team4Capella instance.</h2>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <fieldset>
+      <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <input
+          matInput
+          formControlName="name"
+          [disabled]="existing == 'existing'"
+        />
+      </mat-form-field>
+      <div class="field-separator"></div>
+      <mat-form-field appearance="fill">
+        <mat-label>Capella version</mat-label>
+        <mat-select formControlName="version_id">
+          <mat-option [value]="0">6.0</mat-option>
+          <mat-option [value]="1">5.2</mat-option>
+          <mat-option [value]="2">5.0</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </fieldset>
+    <fieldset>
+      <mat-form-field appearance="fill">
+        <mat-label>License configuration</mat-label>
+        <input matInput formControlName="license" />
+      </mat-form-field>
+    </fieldset>
+    <fieldset>
+      <mat-form-field appearance="fill">
+        <mat-label>Host</mat-label>
+        <input matInput formControlName="host" />
+      </mat-form-field>
+      <div class="field-separator"></div>
+      <mat-form-field appearance="fill">
+        <mat-label>Port</mat-label>
+        <input matInput inputmode="numeric" formControlName="port" />
+        <mat-error *ngIf="form.controls.port.errors"
+          >The port is invalid.</mat-error
+        >
+      </mat-form-field>
+    </fieldset>
+    <fieldset>
+      <mat-form-field appearance="fill">
+        <mat-label>License server API</mat-label>
+        <input matInput formControlName="serverAPI" />
+        <mat-error *ngIf="form.controls.serverAPI.errors?.pattern"
+          >The URL should start with “http(s)://”</mat-error
+        >
+      </mat-form-field>
+      <div class="field-separator"></div>
+      <mat-form-field appearance="fill">
+        <mat-label>Experimental REST API</mat-label>
+        <input matInput formControlName="restAPI" />
+        <mat-error *ngIf="form.controls.restAPI.errors?.pattern"
+          >The URL should start with “http(s)://”</mat-error
+        >
+      </mat-form-field>
+    </fieldset>
+    <fieldset>
+      <mat-form-field appearance="fill">
+        <mat-label>Username</mat-label>
+        <input matInput autocomplete="off" formControlName="username" />
+      </mat-form-field>
+      <div class="field-separator"></div>
+      <mat-form-field appearance="fill">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          type="password"
+          autocomplete="new-password"
+          formControlName="password"
+        />
+      </mat-form-field>
+    </fieldset>
+    <div *ngIf="existing == 'editing'" id="editing-button-wrapper">
+      <button mat-flat-button color="warn" (click)="cancelEditing()">
+        Cancel
+      </button>
+      <button mat-flat-button type="submit" color="primary">Submit</button>
+    </div>
+    <div *ngIf="existing == 'existing'">
+      <button mat-flat-button (click)="enableEditing()">Edit</button>
+    </div>
+    <div *ngIf="!existing" id="submit-button-wrapper">
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="!form.valid"
+      >
+        Create
+      </button>
+    </div>
+  </form>
+</mat-card>
