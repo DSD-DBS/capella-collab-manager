@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,7 +19,7 @@ import { filter } from 'rxjs';
 })
 export class InitModelComponent implements OnInit {
   @Output() create = new EventEmitter<{ created: boolean; again?: boolean }>();
-  @Input() as_stepper?: boolean;
+  @Input() asStepper?: boolean;
 
   constructor(
     public projectService: ProjectService,

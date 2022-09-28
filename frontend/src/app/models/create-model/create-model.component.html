@@ -7,7 +7,7 @@
   <mat-horizontal-stepper linear #stepper>
     <mat-step completed="false" label="Create model">
       <app-create-model-base
-        [as_stepper]="as_stepper"
+        [asStepper]="asStepper"
         (create)="afterModelCreated($event)"
         (finish)="complete.emit(false)"
       ></app-create-model-base>
@@ -31,7 +31,7 @@
 
     <mat-step label="Initialize">
       <app-init-model
-        [as_stepper]="as_stepper"
+        [asStepper]="asStepper"
         (create)="afterModelInitialized($event)"
       ></app-init-model>
     </mat-step>

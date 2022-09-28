@@ -47,13 +47,13 @@
     <button mat-button (click)="create.emit({ created: false })">
       Choose initialization
     </button>
-    <div class="field-separator" *ngIf="as_stepper"></div>
+    <div class="field-separator" *ngIf="asStepper"></div>
     <button
       mat-raised-button
       color="primary"
       [disabled]="!form.valid"
       (click)="onSubmit(true)"
-      *ngIf="as_stepper"
+      *ngIf="asStepper"
     >
       Create new model
     </button>

@@ -41,25 +41,26 @@
           </mat-select>
         </mat-form-field>
       </fieldset>
-      <a mat-button routerLink="../.." *ngIf="!as_stepper">Back to project</a>
-      <div class="field-separator" *ngIf="!as_stepper"></div>
-      <button
-        mat-raised-button
-        color="primary"
-        type="submit"
-        [disabled]="!form.valid"
-      >
-        Create model
-      </button>
-      <div class="field-separator" *ngIf="as_stepper"></div>
-      <button
-        mat-raised-button
-        [color]="form.controls.name.value ? 'basic' : 'primary'"
-        *ngIf="as_stepper"
-        (click)="finish.emit(true)"
-      >
-        Finish project creation
-      </button>
+      <div class="flex-space-between">
+        <a
+          *ngIf="asStepper"
+          routerLink="/projects"
+          mat-button
+          matStepperPrevious
+        >
+          <mat-icon class="mat-icon-position left">arrow_back</mat-icon>Back to
+          project</a
+        >
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="!form.valid"
+        >
+          Create model
+          <mat-icon class="mat-icon-position right">arrow_forward</mat-icon>
+        </button>
+      </div>
     </form>
   </mat-card>
 </div>

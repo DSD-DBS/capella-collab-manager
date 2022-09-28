@@ -19,7 +19,7 @@ import { ProjectService } from 'src/app/services/project/project.service';
 })
 export class CreateModelComponent implements OnInit, OnDestroy {
   @ViewChild('stepper') stepper!: MatStepper;
-  @Input() as_stepper?: boolean;
+  @Input() asStepper?: boolean;
   @Output() complete = new EventEmitter<boolean>();
 
   source?: string;
@@ -71,7 +71,7 @@ export class CreateModelComponent implements OnInit, OnDestroy {
 
   afterModelInitialized(options: { created: boolean; again?: boolean }): void {
     if (options.created) {
-      if (this.as_stepper) {
+      if (this.asStepper) {
         this.complete.emit(options.again);
       } else {
         this.detail = true;
