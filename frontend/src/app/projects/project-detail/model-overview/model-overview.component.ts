@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-
 import { Component, Input, OnInit } from '@angular/core';
 import { tap } from 'rxjs';
 import { IntegrationService } from 'src/app/integrations/integration.service';
@@ -32,5 +31,15 @@ export class ModelOverviewComponent implements OnInit {
     this.modelService._models.pipe().subscribe((models) => {
       this.models = models;
     });
+  }
+
+  getPrimaryWorkingMode(model: Model): string {
+    if (model.t4c_model && model.git_model) {
+      return 'T4C';
+    } else if (model.git_model) {
+      return 'Git';
+    } else {
+      return 'Unset';
+    }
   }
 }
