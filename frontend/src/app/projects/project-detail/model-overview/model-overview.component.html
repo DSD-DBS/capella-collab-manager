@@ -12,10 +12,20 @@
   </div>
   <mat-card *ngFor="let model of models">
     <div class="header">
-      <div class="title">{{ model.name }}</div>
+      <div class="header-text">
+        <div class="title">{{ model.name }}</div>
+        <span class="subtitle">
+          Tool: {{ model.tool_id }} {{ model.version_id }}</span
+        >
+      </div>
+
       <div class="right">
-        <mat-card class="nature"><div>Library</div> </mat-card>
-        <mat-card class="editingMode"><div>T4C</div></mat-card>
+        <mat-card class="nature"
+          ><div>{{ model.type_id }}</div>
+        </mat-card>
+        <mat-card class="editingMode"
+          ><div>{{ getPrimaryWorkingMode(model) }}</div></mat-card
+        >
       </div>
     </div>
     <div class="content-wrapper">
