@@ -47,9 +47,9 @@ export class CreateModelBaseComponent implements OnInit {
 
   slugValidator(slugs: string[]): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      let new_slug = slugify(control.value, { lower: true });
+      let newSlug = slugify(control.value, { lower: true });
       for (let slug of slugs) {
-        if (slug == new_slug) {
+        if (slug == newSlug) {
           return { uniqueSlug: { value: slug } };
         }
       }
