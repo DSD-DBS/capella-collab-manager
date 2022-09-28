@@ -6,7 +6,6 @@ import sqlalchemy.orm.session
 from fastapi import Depends, HTTPException
 
 import capellacollab.projects.users.crud as repository_users
-import capellacollab.users.crud as get_user
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
