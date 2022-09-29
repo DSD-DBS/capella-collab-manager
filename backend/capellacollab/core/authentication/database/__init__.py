@@ -16,6 +16,7 @@ from capellacollab.projects.users.models import (
 )
 from capellacollab.sessions.database import get_session_by_id
 from capellacollab.settings.modelsources.git import crud
+from capellacollab.users.crud import get_user
 from capellacollab.users.models import Role
 
 
