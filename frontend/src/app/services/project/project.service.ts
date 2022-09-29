@@ -5,7 +5,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -34,18 +34,40 @@ export class ProjectService {
   }
 
   list(): Observable<Project[]> {
-    return this.http.get<Project[]>(this.base_url);
+    return this.http
+      .get<Project[]>(this.base_url)
+      .pipe(tap((projecs: Project[]) => this._projects.next(projecs)));
+  }
+
+  getProject(name: string): Observable<Project> {
+    return this.http.get<Project>(this.base_url + name);
   }
 
   updateDescription(name: string, description: string): Observable<Project> {
     return this.http.patch<Project>(this.base_url + name, { description });
   }
 
-  createProject(project: {
-    name: string;
-    description: string;
-  }): Observable<Project> {
-    return this.http.post<Project>(this.base_url, project);
+  createProject(
+    project: {
+      name: string;
+      description: string;
+    },
+    update?: boolean
+  ): Observable<Project> {
+    let observable = this.http.post<Project>(this.base_url, project);
+    if (update) {
+      observable = observable.pipe(
+        tap({
+          next: (value) => {
+            this._project.next(value);
+          },
+          error: (_) => {
+            this._project.next(undefined);
+          },
+        })
+      );
+    }
+    return observable;
   }
 }
 
