@@ -56,7 +56,8 @@ dev = [
   "isort",
   "mypy",
   "pylint",
-  "pytest"
+  "pytest",
+  "testcontainers",
 ]
 
 [project.entry-points."capellacollab.extensions.backups"]

@@ -20,8 +20,8 @@ from capellacollab.projects.users.models import (
     PatchUserRoleRequest,
     Role,
 )
-from capellacollab.schemas.sessions import AdvancedSessionResponse
 from capellacollab.sessions.routes import inject_attrs_in_sessions
+from capellacollab.sessions.schema import AdvancedSessionResponse
 
 router = APIRouter()
 

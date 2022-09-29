@@ -23,16 +23,16 @@ class _KeyStore:
     def __init__(
         self,
         *,
-        jwks_uri: str,
+        get_jwks_uri: t.Callable[[], str],
         algorithms: t.List[str] = ["RS256"],
         key_refresh_interval=3600,
     ):
-        self.jwks_uri = jwks_uri
+        self.get_jwks_uri = get_jwks_uri
+        self.jwks_uri = ""
         self.algorithms = algorithms
         self.public_keys = {}
         self.key_refresh_interval = key_refresh_interval
         self.public_keys_last_refreshed = 0
-        self.refresh_keys()
 
     def keys_need_refresh(self) -> bool:
         return (
@@ -40,6 +40,8 @@ class _KeyStore:
         ) > self.key_refresh_interval
 
     def refresh_keys(self) -> None:
+        if not self.jwks_uri:
+            self.jwks_uri = self.get_jwks_uri()
         try:
             resp = requests.get(
                 self.jwks_uri, timeout=config["requests"]["timeout"]
@@ -113,4 +115,4 @@ class KeyIDNotFoundError(Exception):
 
 
 # Our "singleton" key store:
-KeyStore = _KeyStore(jwks_uri=get_jwks_uri())
+KeyStore = _KeyStore(get_jwks_uri=get_jwks_uri)

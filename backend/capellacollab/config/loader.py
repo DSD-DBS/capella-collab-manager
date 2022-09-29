@@ -18,16 +18,27 @@ locations: list[pathlib.Path] = [
     pathlib.Path("/etc/capellacollab/config.yaml"),
 ]
 
+fallback_locations: list[pathlib.Path] = [
+    pathlib.Path(__file__).parents[2] / "config" / "config_template.yaml",
+]
+
 
 def load_yaml() -> None | dict:
     log.debug("Searching for configuration files...")
     for l in locations:
         if l.exists():
-            log.info("Found configuration file at location %s", str(l))
+            log.info("Loading configuration file at location %s", str(l))
             return yaml.safe_load(l.open())
         else:
             log.debug(
                 "Didn't find a configuration file at location %s", str(l)
             )
+
+    for l in fallback_locations:
+        if l.exists():
+            log.warning(
+                "Loading fallback configuration file at location %s", str(l)
+            )
+            return yaml.safe_load(l.open())
 
     return None

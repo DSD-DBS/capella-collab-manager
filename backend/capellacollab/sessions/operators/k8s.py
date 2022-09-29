@@ -28,7 +28,7 @@ try:
 except kubernetes.config.ConfigException:
     try:
         kubernetes.config.load_config(context=cfg["context"])
-    except kubernetes.config.ConfigException:
+    except (TypeError, kubernetes.config.ConfigException):
         kubernetes.config.load_kube_config_from_dict(
             {
                 "apiVersion": "v1",

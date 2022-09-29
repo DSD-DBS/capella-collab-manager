@@ -6,7 +6,6 @@ import logging
 import random
 import string
 import time
-from importlib import metadata
 
 import uvicorn
 from fastapi import FastAPI
@@ -20,10 +19,8 @@ log = logging.getLogger(__name__)
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.config import config
-from capellacollab.core.database import __main__ as database
+from capellacollab.core.database import engine, migration
 from capellacollab.routes import router, status
-
-database.migrate_db()
 
 
 class HealthcheckFilter(logging.Filter):
@@ -36,6 +33,12 @@ log.addFilter(HealthcheckFilter())
 logging.getLogger(__name__).setLevel(config["logging"]["level"])
 
 app = FastAPI(title="Capella Collaboration")
+
+
+@app.on_event("startup")
+async def startup_event():
+    migration.migrate_db(engine)
+
 
 app.add_middleware(
     CORSMiddleware,

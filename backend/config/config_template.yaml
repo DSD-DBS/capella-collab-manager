@@ -25,8 +25,8 @@ operators:
     context: k3d-collab-cluster # Only required, if you'd like to use a local k3d environment
     namespace: t4c-sessions
 
-    apiURL: # Only required when no kubectl context is available
-    token: # Only required when no kubectl context is available
+    apiURL: dummy # Only required when no kubectl context is available
+    token: dummy # Only required when no kubectl context is available
 
     storageClassName: local-path
     storageAccessMode: ReadWriteOnce

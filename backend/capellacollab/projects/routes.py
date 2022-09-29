@@ -51,7 +51,10 @@ router = APIRouter()
     tags=["projects"],
     responses=AUTHENTICATION_RESPONSES,
 )
-def get_projects(db: Session = Depends(get_db), token=Depends(JWTBearer())):
+def get_projects(
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
+):
     if is_admin(token, db):
         projects = crud.get_all_projects(db)
     else:

@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
 from __future__ import annotations
 
 import datetime
@@ -16,6 +15,11 @@ from capellacollab.sessions.operators.k8s import FileType
 class WorkspaceType(enum.Enum):
     PERSISTENT = "persistent"
     READONLY = "readonly"
+
+
+class DepthType(enum.Enum):
+    LatestCommit = "LatestCommit"
+    CompleteHistory = "CompleteHistory"
 
 
 class GetSessionsResponse(BaseModel):
@@ -43,6 +47,8 @@ class AdvancedSessionResponse(GetSessionsResponse):
 
 class PostSessionRequest(BaseModel):
     type: WorkspaceType
+    branch: str
+    depth: DepthType
     repository: t.Optional[str]
 
     class Config:

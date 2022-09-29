@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
@@ -16,11 +17,11 @@ def find_or_create_user(db: Session, username: str):
     return create_user(db, username)
 
 
-def get_user(db: Session, username: str):
+def get_user(db: Session, username: str) -> DatabaseUser | None:
     return db.query(DatabaseUser).filter(DatabaseUser.name == username).first()
 
 
-def get_all_users(db: Session):
+def get_all_users(db: Session) -> list[DatabaseUser]:
     return db.query(DatabaseUser).all()
 
 
