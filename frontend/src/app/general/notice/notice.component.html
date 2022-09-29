@@ -4,7 +4,7 @@
  -->
 
 <div *ngFor="let notice of noticeService.notices">
-  <mat-card *ngIf="notice.scope === 't4c'" [class]="notice.level">
+  <mat-card [class]="notice.level">
     <h3 [innerHTML]="notice.title"></h3>
     <p [innerHTML]="notice.message"></p>
   </mat-card>

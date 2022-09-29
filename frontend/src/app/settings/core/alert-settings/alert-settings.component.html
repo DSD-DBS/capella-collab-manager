@@ -6,7 +6,7 @@
 <mat-card>
   <h2>Create new alert</h2>
   <form [formGroup]="createAlertForm">
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="fill" id="title-form-field">
       <mat-label>Title</mat-label>
       <input matInput formControlName="title" />
     </mat-form-field>
@@ -21,11 +21,6 @@
         </mat-option>
       </mat-select>
       <mat-error>Please select a level!</mat-error>
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Scope</mat-label>
-      <input matInput formControlName="scope" placeholder="t4c" />
-      <mat-error>Please enter a scope!</mat-error>
     </mat-form-field>
     <br />
     <mat-form-field appearance="fill" id="notice-description">
@@ -49,9 +44,6 @@
         <mat-panel-title> {{ notice.title }} </mat-panel-title>
         <mat-panel-description>
           {{ notice.level }}
-        </mat-panel-description>
-        <mat-panel-description>
-          {{ notice.scope }}
         </mat-panel-description>
       </mat-expansion-panel-header>
       <p>{{ notice.message }}</p>

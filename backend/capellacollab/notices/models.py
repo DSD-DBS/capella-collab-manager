@@ -24,7 +24,6 @@ class CreateNoticeRequest(BaseModel):
     level: NoticeLevel
     title: str
     message: str
-    scope: str
 
     class Config:
         orm_mode = True
@@ -41,4 +40,3 @@ class DatabaseNotice(Base):
     title = Column(String)
     message = Column(String)
     level = Column(Enum(NoticeLevel))
-    scope = Column(String)
