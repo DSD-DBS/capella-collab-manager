@@ -4,11 +4,10 @@
 docker:
   images:
     workspaces:
-      persistent: /t4c/client/remote
-      readonly: /capella/readonly
+      persistent: "{{ .Values.docker.registry.internal }}{{ .Values.docker.images.workspaces.persistent }}"
+      readonly: "{{ .Values.docker.registry.internal }}{{ .Values.docker.images.workspaces.readonly }}"
 
     backup: "{{ .Values.docker.registry.internal }}{{ .Values.docker.images.importer }}"
-
 
 operators:
   operator: k8s
@@ -27,8 +26,8 @@ extensions:
     baseURI: "http://{{ .Release.Name }}-guacamole-guacamole:8080/guacamole"
     publicURI: "{{ .Values.general.scheme }}://{{ .Values.general.host }}:{{ .Values.general.port }}/guacamole"
 
-    username: guacadmin
-    password: guacadmin
+    username: "{{ .Values.guacamole.username }}"
+    password: "{{ .Values.guacamole.password }}"
 
 authentication:
   provider: "{{ .Values.backend.authentication.provider }}"
@@ -67,35 +66,6 @@ authentication:
     redirectURI: "{{ .Values.backend.authentication.azure.redirectURI }}"
 
     connectConfigurationEndpoint: "{{ .Values.backend.authentication.azure.connectConfigurationEndpoint }}"
-
-modelsources:
-  t4c:
-    usageAPI: http://localhost:8086
-    restAPI: http://localhost:8090/api/v1.0
-
-    username: sampleUser
-    password: samplePassword
-
-    host: localhost
-    port: 2036
-    licence: test
-
-backups:
-  enabled: ["importer"]
-
-  importer:
-    git:
-      email: tbd
-
-  jenkins:
-    username: tbd
-    password: tbd
-    baseURL: tbd
-
-    git:
-      credentialID: tbd
-      email: tbd
-      scriptRepoURL: tbd
 
 prometheus:
   url: "http://{{ .Release.Name }}-prometheus-server:9118/prometheus/"

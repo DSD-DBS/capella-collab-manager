@@ -79,36 +79,6 @@ authentication:
     audience: tbd
     redirectURI: http://localhost:4200/oauth2/callback
 
-modelsources:
-  t4c:
-
-    usageAPI: http://localhost:8080/mock
-    restAPI: http://localhost:7000/mock/api/v1.0
-
-    username: sampleuser
-    password: samplepassword
-
-    host: localhost
-    port: 2036
-    licence: test
-
-backups:
-  enabled: ["importer"]
-
-  importer:
-    git:
-      email: bot@example.com
-
-  jenkins:
-    username:
-    password:
-    baseURL:
-
-    git:
-      credentialID:
-      email: bot@example.com
-      scriptRepoURL:
-
 database:
   url: postgresql://dev:dev@localhost:5432/dev
 
