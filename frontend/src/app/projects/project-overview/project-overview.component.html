@@ -9,9 +9,7 @@
       <div class="content">
         Add new project <br />
         <div id="add-project-wrapper">
-          <span class="add-icon">
-            <mat-icon [inline]="true">add_circle_outline</mat-icon>
-          </span>
+          <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
         </div>
       </div>
     </mat-card>
@@ -20,7 +18,7 @@
     *ngFor="let project of projectService.projects"
     [routerLink]="['/project', project.slug]"
   >
-    <mat-card>
+    <mat-card matRipple>
       <div class="wrapper">
         <div class="header">{{ project.name }}</div>
         <div class="wrapper">

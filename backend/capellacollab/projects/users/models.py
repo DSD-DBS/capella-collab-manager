@@ -12,24 +12,6 @@ from sqlalchemy.orm import relationship
 from capellacollab.core.database import Base
 
 
-class Role(enum.Enum):
-    USER = "user"
-    ADMIN = "administrator"
-
-
-class PatchUserRoleRequest(BaseModel):
-    role: Role
-
-
-class GetUserResponse(BaseModel):
-    id: str
-    name: str
-    role: Role
-
-    class Config:
-        orm_mode = True
-
-
 class RepositoryUserRole(enum.Enum):
     USER = "user"
     MANAGER = "manager"

@@ -10,6 +10,7 @@ from requests import HTTPError, Session
 
 import capellacollab.extensions.modelsources.t4c.connection as t4c_manager
 import capellacollab.projects.users.models as schema_repositories
+import capellacollab.users.crud as users
 from capellacollab.core.authentication.database import (
     check_username_not_admin,
     check_username_not_in_repository,
@@ -22,7 +23,7 @@ from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
-from capellacollab.core.database import get_db, users
+from capellacollab.core.database import get_db
 
 from . import crud as repository_users
 

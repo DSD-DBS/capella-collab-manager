@@ -4,8 +4,7 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { IntegrationService } from '../integrations/integration.service';
-import { NavBarService } from '../navbar/service/nav-bar.service';
+import { NavBarService } from '../general/navbar/service/nav-bar.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { UserService } from '../services/user/user.service';
 
@@ -18,8 +17,7 @@ export class SettingsComponent implements OnInit {
   constructor(
     public userService: UserService,
     public projectService: ProjectService,
-    private navbarService: NavBarService,
-    public integrations: IntegrationService
+    private navbarService: NavBarService
   ) {
     this.navbarService.title = 'Settings';
   }
@@ -30,7 +28,5 @@ export class SettingsComponent implements OnInit {
       .subscribe((res) => {
         this.userService.user = res;
       });
-
-    console.log(this.integrations.t4c);
   }
 }

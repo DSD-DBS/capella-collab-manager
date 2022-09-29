@@ -22,7 +22,7 @@
   >
     <div mat-subheader>Managers</div>
     <mat-list-option
-      *ngFor="let user of getRepositoryUsersByRole('manager')"
+      *ngFor="let user of getProjectUsersByRole('manager')"
       [value]="user"
     >
       <mat-icon mat-list-icon>account_circle</mat-icon>
@@ -34,7 +34,7 @@
     </mat-list-option>
     <div mat-subheader>Users</div>
     <mat-list-option
-      *ngFor="let user of getRepositoryUsersByRole('user')"
+      *ngFor="let user of getProjectUsersByRole('user')"
       [value]="user"
     >
       <mat-icon mat-list-icon>account_circle</mat-icon>
@@ -59,13 +59,13 @@
       (click)="removeUserFromRepo(selectedUser.username)"
     >
       <mat-icon>delete</mat-icon> Remove {{ selectedUser.username }} from
-      {{ repository }}
+      {{ project }}
     </button>
     <button
       mat-flat-button
       color="primary"
       *ngIf="'user' == selectedUser.role"
-      (click)="upgradeUserToRepositoryManager(selectedUser.username)"
+      (click)="upgradeUserToProjectManager(selectedUser.username)"
     >
       <mat-icon>arrow_upward</mat-icon>
       Upgrade
@@ -117,8 +117,8 @@
       <mat-error *ngIf="username.getError('lowerCaseError')"
         >Usernames can only contain lowercase letters!
       </mat-error>
-      <mat-error *ngIf="username.getError('userAlreadyInRepositoryError')"
-        >The user is already a member of this repository!
+      <mat-error *ngIf="username.getError('userAlreadyInProjectError')"
+        >The user is already a member of this project!
       </mat-error>
     </mat-form-field>
     <br />

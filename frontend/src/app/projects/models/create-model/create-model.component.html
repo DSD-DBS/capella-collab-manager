@@ -1,0 +1,39 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="wrapper">
+  <mat-horizontal-stepper linear #stepper>
+    <mat-step completed="false" label="Create model">
+      <app-create-model-base
+        [asStepper]="asStepper"
+        (create)="afterModelCreated($event)"
+        (finish)="complete.emit(false)"
+      ></app-create-model-base>
+    </mat-step>
+
+    <mat-step completed="false" label="Choose primary source">
+      <app-choose-source
+        (optionClick)="onSourceClick($event)"
+      ></app-choose-source>
+    </mat-step>
+
+    <mat-step label="Add source">
+      <app-create-coworking-method
+        (create)="afterSourceCreated($event)"
+      ></app-create-coworking-method>
+    </mat-step>
+
+    <mat-step label="Choose initialization">
+      <app-choose-init (optionClick)="onInitClick($event)"></app-choose-init>
+    </mat-step>
+
+    <mat-step label="Metadata">
+      <app-init-model
+        [asStepper]="asStepper"
+        (create)="afterModelInitialized($event)"
+      ></app-init-model>
+    </mat-step>
+  </mat-horizontal-stepper>
+</div>

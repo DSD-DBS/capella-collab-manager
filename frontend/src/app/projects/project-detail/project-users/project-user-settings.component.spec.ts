@@ -5,20 +5,20 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RepositoryUserSettingsComponent } from './project-user-settings.component';
+import { ProjectUserSettingsComponent } from './project-user-settings.component';
 
 describe('RepositoryUserSettingsComponent', () => {
-  let component: RepositoryUserSettingsComponent;
-  let fixture: ComponentFixture<RepositoryUserSettingsComponent>;
+  let component: ProjectUserSettingsComponent;
+  let fixture: ComponentFixture<ProjectUserSettingsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [RepositoryUserSettingsComponent],
+      declarations: [ProjectUserSettingsComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RepositoryUserSettingsComponent);
+    fixture = TestBed.createComponent(ProjectUserSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -13,7 +13,7 @@ import {
 } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import { ToastService } from '../../toast/toast.service';
+import { ToastService } from '../../helpers/toast/toast.service';
 import {
   BehaviorSubject,
   connectable,
@@ -25,8 +25,8 @@ import {
   tap,
 } from 'rxjs';
 import slugify from 'slugify';
-import { CreateModelComponent } from 'src/app/models/create-model/create-model.component';
-import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
+import { CreateModelComponent } from 'src/app/projects/models/create-model/create-model.component';
+import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   Project,
   ProjectService,
@@ -152,16 +152,5 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
       }
     }
     return null;
-  }
-
-  onComplete(again?: boolean): void {
-    if (again) {
-      this._reload = true;
-      setTimeout(() => {
-        this._reload = false;
-      });
-    } else {
-      this.finish();
-    }
   }
 }

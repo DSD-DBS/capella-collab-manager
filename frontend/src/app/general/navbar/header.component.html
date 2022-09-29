@@ -1,0 +1,91 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div id="toolbar">
+  <div class="primaryText" id="title">
+    <div id="maintitle">Capella Collaboration Manager</div>
+    <div id="subtitle">/ {{ navbarService.title }}</div>
+  </div>
+  <div class="flexbox">
+    <a mat-raised-button color="primary" routerLink="/projects"> Projects </a>
+    <a mat-raised-button color="primary" routerLink="">Workspaces</a>
+    <a
+      color="primary"
+      id="overview"
+      mat-raised-button
+      *ngIf="userService.user?.role === 'administrator'"
+      [routerLink]="['/sessions', 'overview']"
+    >
+      Overview
+    </a>
+    <a
+      color="primary"
+      mat-raised-button
+      *ngIf="userService.user?.role === 'administrator'"
+      href="/prometheus/graph"
+      target="_blank"
+    >
+      Prometheus <mat-icon>open_in_new</mat-icon>
+    </a>
+    <a color="primary" mat-raised-button href="/docs/" target="_blank">
+      Documentation <mat-icon>open_in_new</mat-icon>
+    </a>
+  </div>
+  <div class="right-aligned">
+    <div>
+      <div class="margin"></div>
+      <span id="github">
+        <a
+          class="github-button"
+          href="https://github.com/DSD-DBS/capella-collab-manager/issues"
+          data-color-scheme="no-preference: light; light: light; dark: dark;"
+          data-size="large"
+          aria-label="Issue DSD-DBS/capella-collab-manager on GitHub"
+          >Open Issue on Github</a
+        >
+      </span>
+    </div>
+    <mat-menu #profileMenu="matMenu">
+      <a
+        *ngIf="userService.user?.role === 'administrator'"
+        class="profileMenuButton"
+        mat-menu-item
+        routerLink="settings"
+      >
+        Settings <mat-icon>settings</mat-icon>
+      </a>
+      <a
+        *ngIf="userService.user?.role === 'administrator'"
+        class="profileMenuButton"
+        mat-menu-item
+        routerLink="settings/requests"
+      >
+        Requests <mat-icon>inbox</mat-icon>
+      </a>
+      <a class="profileMenuButton" mat-menu-item disabled>
+        Events <mat-icon>event_note</mat-icon>
+      </a>
+      <a
+        class="profileMenuButton"
+        mat-menu-item
+        routerLink="logout/redirect"
+        [queryParams]="{ reason: 'logout' }"
+        *ngIf="localStorageService.getValue('access_token')"
+      >
+        Log out <mat-icon>logout</mat-icon>
+      </a>
+    </mat-menu>
+    <button
+      color="primary"
+      id="profile"
+      mat-raised-button
+      [matMenuTriggerFor]="profileMenu"
+      matBadge="2"
+      matBadgeColor="warn"
+    >
+      Profile <mat-icon>account_circle</mat-icon>
+    </button>
+  </div>
+</div>

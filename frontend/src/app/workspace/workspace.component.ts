@@ -4,7 +4,7 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { NavBarService } from '../navbar/service/nav-bar.service';
+import { NavBarService } from '../general/navbar/service/nav-bar.service';
 import {
   Project,
   ProjectService,

@@ -3,9 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
-
 import {
   Component,
   EventEmitter,
@@ -15,7 +12,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ToastService } from 'src/app/toast/toast.service';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   Project,
   ProjectService,

@@ -41,7 +41,7 @@ mat-icon {
 }
 
 .subtitle {
-  min-height: 50%;
+  height: 40px;
 }
 
 #git {

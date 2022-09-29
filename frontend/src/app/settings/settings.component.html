@@ -7,38 +7,30 @@
 <div class="options-list">
   <mat-card matRipple [routerLink]="['/settings/core/users']">
     <div class="subtitle">Manage users</div>
-    <mat-icon>supervised_user_circle</mat-icon>
+    <app-mat-icon size="50px">supervised_user_circle</app-mat-icon>
   </mat-card>
   <mat-card matRipple [routerLink]="['/settings/core/alerts']">
     <div class="subtitle">Maintenance and alerts</div>
-    <mat-icon>add_alert</mat-icon>
+    <app-mat-icon size="50px">add_alert</app-mat-icon>
   </mat-card>
   <mat-card matRipple [routerLink]="['/settings/core/dockerimages']">
     <div class="subtitle">Dockerimages</div>
-    <mat-icon>folder</mat-icon>
+    <app-mat-icon size="50px">folder</app-mat-icon>
   </mat-card>
 </div>
 
 <div class="title">Modelsources</div>
 <div class="options-list">
-  <mat-card
-    *ngIf="integrations.git"
-    matRipple
-    [routerLink]="['/settings/modelsources/git']"
-  >
+  <mat-card matRipple [routerLink]="['/settings/modelsources/git']">
     <div class="subtitle">Git models</div>
     <img
       id="git"
       src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"
     />
   </mat-card>
-  <mat-card
-    *ngIf="integrations.t4c"
-    matRipple
-    [routerLink]="['/settings/modelsources/t4c']"
-  >
+  <mat-card matRipple [routerLink]="['/settings/modelsources/t4c']">
     <div class="subtitle">Team For Capella</div>
-    <mat-icon>people</mat-icon>
+    <app-mat-icon size="50px">people</app-mat-icon>
   </mat-card>
 </div>
 
@@ -46,21 +38,18 @@
 <div class="options-list">
   <mat-card class="disabled">
     <div class="subtitle">Jenkins backups</div>
-    <mat-icon>backup</mat-icon>
+    <app-mat-icon size="50px">backup</app-mat-icon>
   </mat-card>
   <mat-card
     matRipple
     [routerLink]="['/settings/integrations/backups/importer']"
   >
     <div class="subtitle">T4C importer backups</div>
-    <mat-icon>backup</mat-icon>
+    <app-mat-icon size="50px">backup</app-mat-icon>
   </mat-card>
+
   <mat-card class="disabled">
     <div class="subtitle">Garbage cleaner</div>
-    <mat-icon>delete_forever</mat-icon>
-  </mat-card>
-  <mat-card matRipple [routerLink]="['/settings/integrations/guacamole']">
-    <div class="subtitle">Guacamole</div>
-    <mat-icon> screen_share</mat-icon>
+    <app-mat-icon size="50px">delete_forever</app-mat-icon>
   </mat-card>
 </div>

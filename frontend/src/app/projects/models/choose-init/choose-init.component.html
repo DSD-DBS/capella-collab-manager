@@ -1,0 +1,40 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div *ngIf="projectService.project && modelService.model">
+  <div class="options-list flex-center">
+    <button
+      mat-raised-button
+      disabled
+      (click)="optionClick.emit('source-fetch')"
+    >
+      <div class="button-content-wrapper">
+        <p class="option-title">Use the model of the source</p>
+        <img
+          class="content"
+          src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"
+        />
+      </div>
+    </button>
+    <div class="field-separator"></div>
+    <button mat-raised-button (click)="optionClick.emit('create-empty')">
+      <div class="button-content-wrapper">
+        <p class="option-title">Create empty model</p>
+        <app-mat-icon size="70px">create_new_folder</app-mat-icon>
+      </div>
+    </button>
+    <div class="field-separator"></div>
+    <button
+      mat-raised-button
+      disabled
+      (click)="optionClick.emit('upload-offline')"
+    >
+      <div class="button-content-wrapper flex-center">
+        <p class="option-title">Upload offline model</p>
+        <app-mat-icon size="70px">cloud_upload</app-mat-icon>
+      </div>
+    </button>
+  </div>
+</div>

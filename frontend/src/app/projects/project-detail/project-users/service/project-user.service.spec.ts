@@ -3,9 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
-
 import { TestBed } from '@angular/core/testing';
 
 import { ProjectUserService } from './project-user.service';

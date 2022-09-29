@@ -10,8 +10,9 @@ from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt
 
+import capellacollab.users.crud as users
 from capellacollab.core.authentication.helper import get_username
-from capellacollab.core.database import SessionLocal, users
+from capellacollab.core.database import SessionLocal
 
 from . import get_authentication_entrypoint
 

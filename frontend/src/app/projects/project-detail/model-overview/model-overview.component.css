@@ -3,11 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/*
- * Copyright DB Netz AG and the capella-collab-manager contributors
- * SPDX-License-Identifier: Apache-2.0
- */
-
 .models {
   margin: 10px;
 }
@@ -59,18 +54,20 @@ mat-card:hover {
   padding: 10px 10px;
 }
 
+.header-text {
+  margin-left: 10px;
+}
+
 .title {
   font-size: 1.5em;
-  margin-left: 10px;
+}
+
+.subtitle {
+  font-size: 0.9em;
 }
 
 #title {
   margin: 20px;
-}
-
-.add-icon {
-  font-size: 3em !important;
-  vertical-align: center;
 }
 
 #add-model-wrapper {

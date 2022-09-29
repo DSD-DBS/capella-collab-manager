@@ -1,0 +1,80 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div
+  *ngIf="projectService.project && modelService.model"
+  class="wrapper flex-center"
+>
+  <mat-card class="section-card">
+    <form [formGroup]="form">
+      <div formGroupName="credentials">
+        <fieldset>
+          <mat-form-field appearance="fill">
+            <mat-label>Repository url</mat-label>
+            <input matInput formControlName="path" />
+          </mat-form-field>
+        </fieldset>
+        <fieldset>
+          <mat-form-field appearance="fill">
+            <mat-label>Git username</mat-label>
+            <input matInput formControlName="username" />
+          </mat-form-field>
+          <div class="field-separator"></div>
+          <mat-form-field appearance="fill">
+            <mat-label>Git password or token</mat-label>
+            <input matInput formControlName="password" type="password" />
+          </mat-form-field>
+        </fieldset>
+      </div>
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Branch, tag or revision</mat-label>
+          <input
+            type="text"
+            matInput
+            formControlName="revision"
+            [matAutocomplete]="auto"
+            (focus)="onRevisionFocus()"
+          />
+        </mat-form-field>
+        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+          <mat-optgroup label="branch">
+            <mat-option
+              *ngFor="let option of filteredRevisions.branches"
+              [value]="option"
+            >
+              {{ option }}
+            </mat-option>
+          </mat-optgroup>
+          <mat-optgroup label="tag">
+            <mat-option
+              *ngFor="let option of filteredRevisions.tags"
+              [value]="option"
+            >
+              {{ option }}
+            </mat-option>
+          </mat-optgroup>
+        </mat-autocomplete>
+      </fieldset>
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Entry point</mat-label>
+          <input type="text" matInput formControlName="entrypoint" />
+        </mat-form-field>
+      </fieldset>
+    </form>
+    <button mat-button (click)="create.emit(false)">Choose source</button>
+    <div class="field-separator"></div>
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="!form.valid"
+      type="submit"
+      (click)="onSubmit()"
+    >
+      Add source
+    </button>
+  </mat-card>
+</div>

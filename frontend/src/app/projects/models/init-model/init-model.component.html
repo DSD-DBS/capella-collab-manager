@@ -1,0 +1,59 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="wrapper flex-center">
+  <mat-card class="section-card" *ngIf="modelService.model">
+    <form id="new-model-form" [formGroup]="form">
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Modelling tool</mat-label>
+          <input matInput [value]="getTool().name" disabled />
+        </mat-form-field>
+        <div class="field-separator"></div>
+        <mat-form-field appearance="fill">
+          <mat-label>Version</mat-label>
+          <mat-select formControlName="version" id="version-selector">
+            <mat-option
+              *ngFor="let version of getForToolId(toolService.versions)"
+              [value]="version.id"
+            >
+              {{ version.name }}
+              <span *ngIf="version.is_recommended"> (recommended)</span>
+              <span *ngIf="version.is_deprecated"> (deprecated)</span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </fieldset>
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Model type</mat-label>
+          <mat-select formControlName="type">
+            <mat-option
+              *ngFor="let type of getForToolId(toolService.types)"
+              [value]="type.id"
+            >
+              {{ type.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </fieldset>
+    </form>
+    <div class="flex-space-between">
+      <button mat-button (click)="create.emit({ created: false })">
+        <mat-icon class="mat-icon-position left">arrow_back</mat-icon>
+        Choose initialization
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="!form.valid"
+        (click)="onSubmit()"
+      >
+        Finish
+        <mat-icon class="mat-icon-position right">arrow_forward</mat-icon>
+      </button>
+    </div>
+  </mat-card>
+</div>

@@ -3,9 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// Copyright DB Netz AG and the capella-collab-manager contributors
-// SPDX-License-Identifier: Apache-2.0
-
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SetT4CPasswordComponent } from './set-t4c-password.component';

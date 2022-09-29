@@ -6,64 +6,85 @@
 <div class="wrapper">
   <mat-horizontal-stepper linear #stepper>
     <mat-step completed="false" label="General information">
-      <mat-card class="section-card">
-        <form [formGroup]="form">
-          <fieldset>
-            <mat-form-field appearance="fill">
-              <mat-label>Name</mat-label>
-              <input matInput formControlName="name" />
-              <mat-error *ngIf="form.controls.name.errors?.uniqueSlug">
-                A project with a name similar to “{{
-                  form.controls.name.errors!.uniqueSlug.value
-                }}” already exists.
-              </mat-error>
-              <mat-error *ngIf="form.controls.name.errors?.required">
-                A project name is required.
-              </mat-error>
-            </mat-form-field>
-          </fieldset>
-          <fieldset>
-            <mat-form-field appearance="fill">
-              <mat-label>Description</mat-label>
-              <textarea matInput formControlName="description"></textarea>
-            </mat-form-field>
-          </fieldset>
-          <a routerLink="/projects" mat-button matStepperPrevious>Cancel</a>
-          <div class="field-separator"></div>
-          <button
-            mat-flat-button
-            color="primary"
-            [disabled]="!form.valid"
-            (click)="createProject(stepper)"
-          >
-            Create project
-          </button>
-        </form>
-      </mat-card>
+      <div class="flex-center">
+        <mat-card class="section-card">
+          <form [formGroup]="form">
+            <fieldset>
+              <mat-form-field appearance="fill">
+                <mat-label>Name</mat-label>
+                <input matInput formControlName="name" />
+                <mat-error *ngIf="form.controls.name.errors?.uniqueSlug">
+                  A project with a name similar to “{{
+                    form.controls.name.errors!.uniqueSlug.value
+                  }}” already exists.
+                </mat-error>
+                <mat-error *ngIf="form.controls.name.errors?.required">
+                  A project name is required.
+                </mat-error>
+              </mat-form-field>
+            </fieldset>
+            <fieldset>
+              <mat-form-field appearance="fill">
+                <mat-label>Description</mat-label>
+                <textarea matInput formControlName="description"></textarea>
+              </mat-form-field>
+            </fieldset>
+            <div class="flex-space-between">
+              <a routerLink="/projects" mat-button matStepperPrevious>
+                <mat-icon class="mat-icon-position left">arrow_back</mat-icon
+                >Cancel</a
+              >
+              <button
+                mat-flat-button
+                color="primary"
+                [disabled]="!form.valid"
+                (click)="createProject(stepper)"
+              >
+                Create project
+                <mat-icon class="mat-icon-position right"
+                  >arrow_forward</mat-icon
+                >
+              </button>
+            </div>
+          </form>
+        </mat-card>
+      </div>
     </mat-step>
 
     <mat-step label="Add team members">
-      <mat-card class="section-card" *ngIf="projectService.project">
-        <h2>Your role will be project lead.</h2>
-        <app-project-user-settings
-          [repository]="projectService.project"
-        ></app-project-user-settings>
-          <button mat-flat-button color="primary" (click)="stepper.next()">
-            Add models
-          </button>
-          <div class="field-separator"></div>
-        <button mat-flat-button color="primary" (click)="finish()">
-          Finish project creation
-        </button>
-      </mat-card>
+      <div *ngIf="projectService.project" class="flex-center">
+        <div>
+          <app-project-user-settings
+            [project]="projectService.project"
+          ></app-project-user-settings>
+          <mat-card class="mat-card-default">
+            <div class="flex-space-between">
+              <button mat-flat-button color="primary" (click)="stepper.next()">
+                Skip
+                <mat-icon class="mat-icon-position right"
+                  >arrow_forward</mat-icon
+                >
+              </button>
+            </div>
+          </mat-card>
+        </div>
+      </div>
     </mat-step>
     <mat-step label="Add models">
-      <app-create-model
-        *ngIf="!_reload"
-        [as_stepper]="true"
-        (complete)="onComplete($event)"
-        #model_creator
-      ></app-create-model>
+      <app-create-model #model_creator></app-create-model>
+      <div class="flex-center">
+        <mat-card class="section-card">
+          <div class="flex-center">
+            <a
+              mat-flat-button
+              [routerLink]="['/project', projectService.project]"
+            >
+              Finish project creation
+              <mat-icon class="mat-icon-position right">check</mat-icon>
+            </a>
+          </div>
+        </mat-card>
+      </div>
     </mat-step>
   </mat-horizontal-stepper>
 </div>

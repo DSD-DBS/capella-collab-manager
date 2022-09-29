@@ -6,17 +6,18 @@ import sqlalchemy.orm.session
 from fastapi import Depends, HTTPException
 
 import capellacollab.projects.users.crud as repository_users
+import capellacollab.users.crud as get_user
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
-from capellacollab.core.database.users import get_user
 from capellacollab.projects.users.models import (
     RepositoryUserPermission,
     RepositoryUserRole,
-    Role,
 )
 from capellacollab.sessions.database import get_session_by_id
 from capellacollab.settings.modelsources.git import crud
+from capellacollab.users.crud import get_user
+from capellacollab.users.models import Role
 
 
 def verify_admin(token=Depends(JWTBearer()), db=Depends(get_db)):
