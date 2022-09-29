@@ -16,7 +16,7 @@
       id="overview"
       mat-raised-button
       *ngIf="userService.user?.role === 'administrator'"
-      routerLink="overview"
+      [routerLink]="['/sessions', 'overview']"
     >
       Overview
     </a>
