@@ -287,3 +287,8 @@ fieldset > :not(.field-separator) {
 a {
   text-decoration: none !important;
 }
+
+.section-multi-card {
+  display: flex;
+  justify-content: space-evenly;
+}

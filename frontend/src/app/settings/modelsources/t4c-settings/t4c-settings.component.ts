@@ -10,7 +10,7 @@ import { BehaviorSubject } from 'rxjs';
 import {
   T4CInstance,
   T4CInstanceService,
-} from '../../../services/modelsources/t4c-model/t4c-model.service';
+} from '../../../services/settings/t4c-model.service';
 
 @Component({
   selector: 'app-t4c-settings',

@@ -14,6 +14,7 @@ import capellacollab.sessions.routes as sessions
 from capellacollab.config import config
 from capellacollab.projects import routes as projects
 from capellacollab.settings.modelsources.git import routes as git_settings
+from capellacollab.settings.modelsources.t4c import routes as t4c_settings
 from capellacollab.tools import routes as tools
 from capellacollab.utils import git_utils
 
@@ -36,6 +37,11 @@ router.include_router(
 router.include_router(
     git_settings.router,
     prefix="/settings/modelsources/git",
+    tags=["GitSettings"],
+)
+router.include_router(
+    t4c_settings.router,
+    prefix="/settings/modelsources/t4c",
     tags=["GitSettings"],
 )
 router.include_router(notices.router, prefix="/notices", tags=["Notices"])

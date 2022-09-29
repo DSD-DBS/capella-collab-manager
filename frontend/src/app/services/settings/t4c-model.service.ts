@@ -6,13 +6,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface BaseT4CInstance {
   license: string;
   host: string;
   port: number;
-  serverAPI: string;
-  restAPI: string;
+  usage_api: string;
+  rest_api: string;
   username: string;
   password: string;
 }
@@ -34,7 +35,12 @@ export interface T4CInstance extends NewT4CInstance {
   providedIn: 'root',
 })
 export class T4CInstanceService {
-  constructor(http: HttpClient) {}
+  constructor(private http: HttpClient) {}
+
+  base_url = new URL(
+    'settings/modelsources/t4c/',
+    environment.backend_url + '/'
+  );
 
   mock_instances: { [id: number]: T4CInstance | undefined } = {
     0: {
@@ -48,8 +54,8 @@ export class T4CInstanceService {
       license: 'this-is-the-key',
       host: 'https://instance.com/example',
       port: 3000,
-      serverAPI: 'api.com',
-      restAPI: 'rest.com',
+      usage_api: 'api.com',
+      rest_api: 'rest.com',
       username: 'me',
       password: 'pw',
     },
@@ -64,8 +70,8 @@ export class T4CInstanceService {
       license: 'this-is-the-key',
       host: 'https://instance.com/example',
       port: 3000,
-      serverAPI: 'api.com',
-      restAPI: 'rest.com',
+      usage_api: 'api.com',
+      rest_api: 'rest.com',
       username: 'me',
       password: 'pw',
     },
@@ -74,33 +80,23 @@ export class T4CInstanceService {
   _instance = new BehaviorSubject<T4CInstance | undefined>(undefined);
 
   listInstances(): Observable<T4CInstance[]> {
-    return of(Object.values(this.mock_instances) as T4CInstance[]);
+    return this.http.get<T4CInstance[]>(this.base_url.toString());
   }
 
   getInstance(id: number): Observable<T4CInstance> {
-    let instance = this.mock_instances[id];
-    if (instance) return of(instance);
-    throw Error('test');
+    const url = new URL(`${id}/`, this.base_url);
+    return this.http.get<T4CInstance>(url.toString());
   }
 
   createInstance(instance: NewT4CInstance): Observable<T4CInstance> {
-    return of({
-      id: 2,
-      version: { id: instance.version_id, name: 'jspmdr' },
-      ...instance,
-    });
+    return this.http.post<T4CInstance>(this.base_url.toString(), instance);
   }
 
   updateInstance(
     id: number,
     instance: BaseT4CInstance
   ): Observable<T4CInstance> {
-    return of({
-      id: 2,
-      name: 'test',
-      version_id: 2,
-      version: { id: 2, name: 'jspmdr' },
-      ...instance,
-    });
+    const url = new URL(`${id}/`, this.base_url);
+    return this.http.patch<T4CInstance>(url.toString(), instance);
   }
 }

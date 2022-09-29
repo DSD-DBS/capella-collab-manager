@@ -10,6 +10,8 @@ from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
+import capellacollab.projects.capellamodels.models
+
 # Import required for sqlalchemy
 from capellacollab.core.database import Base
 
