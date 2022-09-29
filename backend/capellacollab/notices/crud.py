@@ -4,8 +4,7 @@
 
 from sqlalchemy.orm import Session
 
-from capellacollab.schemas.notices import CreateNoticeRequest, NoticeResponse
-from capellacollab.sql_models.notices import DatabaseNotice
+from capellacollab.notices.models import CreateNoticeRequest, DatabaseNotice
 
 
 def get_notice(db: Session, id: int):
