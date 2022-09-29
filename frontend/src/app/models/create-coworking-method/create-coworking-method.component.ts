@@ -6,9 +6,8 @@
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService } from 'src/app/services/project/project.service';
 import {
   Credentials,
@@ -25,7 +24,9 @@ import { filter, switchMap, map, combineLatest } from 'rxjs';
   styleUrls: ['./create-coworking-method.component.css'],
 })
 export class CreateCoworkingMethodComponent implements OnInit {
-  public gitForm = new FormGroup({
+  @Output() create = new EventEmitter<boolean>();
+
+  public form = new FormGroup({
     credentials: new FormGroup({
       path: new FormControl('', Validators.required),
       username: new FormControl(''),
@@ -41,12 +42,11 @@ export class CreateCoworkingMethodComponent implements OnInit {
     public projectService: ProjectService,
     public modelService: ModelService,
     private gitService: GitService,
-    private sourceService: SourceService,
-    private router: Router
+    private sourceService: SourceService
   ) {}
 
   ngOnInit(): void {
-    this.gitForm.controls.revision.valueChanges.subscribe((value) => {
+    this.form.controls.revision.valueChanges.subscribe((value) => {
       if (!this.gitService.instance) {
         this.filteredRevisions = { branches: [], tags: [] };
       } else {
@@ -64,42 +64,33 @@ export class CreateCoworkingMethodComponent implements OnInit {
 
   onRevisionFocus(): void {
     this.gitService
-      .fetch('', this.gitForm.controls.credentials.value as Credentials)
+      .fetch('', this.form.controls.credentials.value as Credentials)
       .subscribe((instance) => {
         this.filteredRevisions = instance;
       });
   }
 
   onSubmit(): void {
-    if (this.gitForm.valid) {
+    if (
+      this.form.valid &&
+      this.projectService.project &&
+      this.modelService.model
+    ) {
       let source: Source = {
-        path: this.gitForm.value.credentials!.path!,
-        username: this.gitForm.value.credentials!.username || '',
-        password: this.gitForm.value.credentials!.password || '',
-        revision: this.gitForm.value.revision!,
-        entrypoint: this.gitForm.value.entrypoint || '',
+        path: this.form.value.credentials!.path!,
+        username: this.form.value.credentials!.username || '',
+        password: this.form.value.credentials!.password || '',
+        revision: this.form.value.revision!,
+        entrypoint: this.form.value.entrypoint || '',
       };
-      combineLatest([
-        this.projectService._project.pipe(
-          filter(Boolean),
-          map((project) => project.name)
-        ),
-        this.modelService._model.pipe(
-          filter(Boolean),
-          map((model) => model.slug)
-        ),
-      ])
-        .pipe(
-          switchMap((args) => this.sourceService.addGitSource(...args, source))
+      this.sourceService
+        .addGitSource(
+          this.projectService.project.name,
+          this.modelService.model.slug,
+          source
         )
         .subscribe((_) => {
-          this.router.navigate([
-            'project',
-            this.projectService.project!.slug,
-            'model',
-            this.modelService.model?.slug,
-            'init-model',
-          ]);
+          this.create.emit(true);
         });
     }
   }

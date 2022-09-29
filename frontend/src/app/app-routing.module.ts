@@ -29,13 +29,14 @@ import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-s
 import { RequestsComponent } from './settings/requests/requests.component';
 import { SettingsComponent } from './settings/settings.component';
 import { HomeComponent } from './workspaces/home.component';
-import { CreateModelComponent } from './models/create-model/create-model.component';
+import { CreateModelBaseComponent } from './models/create-model-base/create-model-base.component';
 import { CreateCoworkingMethodComponent } from './models/create-coworking-method/create-coworking-method.component';
 import { ChooseSourceComponent } from './models/choose-source/choose-source.component';
 import { InitModelComponent } from './models/init-model/init-model.component';
 import { ChooseInitComponent } from './models/choose-init/choose-init.component';
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { ModelWrapperComponent } from './models/model-wrapper/model-wrapper.component';
+import { CreateModelComponent } from './models/create-model/create-model.component';
 
 const routes: Routes = [
   {
@@ -135,22 +136,6 @@ const routes: Routes = [
           {
             path: '',
             component: ModelDetailComponent,
-          },
-          {
-            path: 'choose-source',
-            component: ChooseSourceComponent,
-          },
-          {
-            path: 'choose-init',
-            component: ChooseInitComponent,
-          },
-          {
-            path: 'use-existing-git',
-            component: CreateCoworkingMethodComponent,
-          },
-          {
-            path: 'init-model',
-            component: InitModelComponent,
           },
         ],
       },

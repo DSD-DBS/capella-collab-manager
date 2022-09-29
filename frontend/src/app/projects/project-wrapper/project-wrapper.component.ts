@@ -46,11 +46,23 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
           this.projectService.getProjectBySlug.bind(this.projectService)
         )
       )
-      .subscribe(this.projectService._project);
+      .subscribe({
+        next: this.projectService._project.next.bind(
+          this.projectService._project
+        ),
+        error: (_) => {
+          this.projectService._project.next(undefined);
+        },
+      });
 
     this.modelsSubscription = param_subject
       .pipe(switchMap(this.modelService.list.bind(this.modelService)))
-      .subscribe(this.modelService._models);
+      .subscribe({
+        next: this.modelService._models.next.bind(this.modelService._models),
+        error: (_) => {
+          this.modelService._models.next(undefined);
+        },
+      });
 
     param_subject.connect();
   }

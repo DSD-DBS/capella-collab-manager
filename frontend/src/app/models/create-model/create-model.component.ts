@@ -1,110 +1,97 @@
-/*
- * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
- * SPDX-License-Identifier: Apache-2.0
- */
-
 // Copyright DB Netz AG and the capella-collab-manager contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Component, OnInit } from '@angular/core';
 import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import slugify from 'slugify';
-import {
-  Project,
-  ProjectService,
-} from 'src/app/services/project/project.service';
-import {
-  Model,
-  ModelService,
-  NewModel,
-} from 'src/app/services/model/model.service';
-import { ToolService } from 'src/app/services/tools/tool.service';
-import { connectable, filter, first, single, Subject, switchMap } from 'rxjs';
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { MatStepper } from '@angular/material/stepper';
+import { Router } from '@angular/router';
+import { Model, ModelService } from 'src/app/services/model/model.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-create-model',
   templateUrl: './create-model.component.html',
   styleUrls: ['./create-model.component.css'],
 })
-export class CreateModelComponent implements OnInit {
-  public form = new FormGroup({
-    name: new FormControl('', Validators.required),
-    description: new FormControl(''),
-    tool_id: new FormControl(-1, Validators.required),
-  });
+export class CreateModelComponent implements OnInit, OnDestroy {
+  @ViewChild('stepper') stepper!: MatStepper;
+  @Input() as_stepper?: boolean;
+  @Output() complete = new EventEmitter<boolean>();
+
+  source?: string;
+  choosen_init?: string;
+  detail?: boolean;
 
   constructor(
-    private modelService: ModelService,
-    public projectService: ProjectService,
-    public toolService: ToolService,
-    private router: Router
+    private router: Router,
+    private projectService: ProjectService,
+    private modelService: ModelService
   ) {}
 
-  slugValidator(slugs: string[]): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      let new_slug = slugify(control.value, { lower: true });
-      for (let slug of slugs) {
-        if (slug == new_slug) {
-          return { uniqueSlug: { value: slug } };
-        }
-      }
-      return null;
-    };
-  }
+  ngOnInit(): void {}
 
-  ngOnInit(): void {
-    this.toolService.get_tools().subscribe();
-    this.modelService._models.pipe(filter(Boolean)).subscribe((models) => {
-      this.form.controls.name.addValidators(
-        this.slugValidator(models.map((model) => model.slug))
-      );
-    });
-  }
-
-  onSubmit(): void {
-    if (this.form.valid && this.projectService.project!.slug) {
-      let new_model = this.form.value as NewModel;
-
-      const modelConnectable = connectable<Model>(
-        this.modelService.createNewModel(
-          this.projectService.project!.slug,
-          new_model
-        ),
-        {
-          connector: () => new Subject(),
-          resetOnDisconnect: false,
-        }
-      );
-
-      modelConnectable.subscribe((model) => {
-        this.router.navigate([
-          'project',
-          this.projectService.project!.slug,
-          'model',
-          model.slug,
-          'choose-source',
-        ]);
-      });
-
-      modelConnectable
-        .pipe(
-          switchMap((_) =>
-            this.modelService.list(this.projectService.project!.slug)
-          )
-        )
-        .subscribe((value) => {
-          this.modelService._models.next(value);
-        });
-
-      modelConnectable.connect();
+  ngOnDestroy(): void {
+    if (!this.detail) {
+      this.modelService._model.next(undefined);
     }
   }
+
+  afterModelCreated(model: Model): void {
+    console.log(model);
+    this.stepper.steps.get(0)!.completed = true;
+    this.stepper.next();
+    this.stepper.steps.get(0)!.editable = false;
+  }
+
+  onSourceClick(value: string): void {
+    this.stepper.steps.get(1)!.completed = true;
+    this.source = value;
+    this.stepper.next();
+  }
+
+  afterSourceCreated(created: boolean): void {
+    console.log(created);
+    if (created) {
+      this.stepper.steps.get(2)!.completed = true;
+      this.stepper.next();
+      this.stepper.steps.get(1)!.editable = false;
+      this.stepper.steps.get(2)!.editable = false;
+    } else {
+      console.log(this.stepper);
+      this.stepper.previous();
+    }
+  }
+
+  onInitClick(value: string): void {
+    this.stepper.steps.get(3)!.completed = true;
+    this.choosen_init = value;
+    this.stepper.next();
+  }
+
+  afterModelInitialized(options: { created: boolean; again?: boolean }): void {
+    if (options.created) {
+      if (this.as_stepper) {
+        this.complete.emit(options.again);
+      } else {
+        this.detail = true;
+        this.router.navigate([
+          '/project',
+          this.projectService.project!.slug,
+          'model',
+          this.modelService.model!.slug,
+        ]);
+      }
+    } else {
+      this.stepper.previous();
+    }
+  }
+
+  handleSelectionChange(): void {}
 }

@@ -38,7 +38,7 @@ export class ProjectMetadataComponent implements OnChanges {
   ) {}
 
   ngOnChanges(_changes: SimpleChanges): void {
-    this.updateDescriptionForm.patchValue(this.project?.description);
+    this.updateDescriptionForm.patchValue(this.project.description);
   }
 
   updateDescription() {

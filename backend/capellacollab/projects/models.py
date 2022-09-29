@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
 from __future__ import annotations
 
 import enum
@@ -42,7 +41,7 @@ class PatchProject(BaseModel):
 
 class PostRepositoryRequest(BaseModel):
     name: str
-    description: t.Optional[str]
+    description: str | None
 
 
 class DatabaseProject(Base):

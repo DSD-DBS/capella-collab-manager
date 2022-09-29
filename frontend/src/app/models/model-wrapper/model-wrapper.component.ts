@@ -4,8 +4,8 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { combineLatest, map, Subscription, switchMap, filter } from 'rxjs';
+import { ActivatedRoute, Params } from '@angular/router';
+import { combineLatest, map, Subscription, switchMap, tap, filter } from 'rxjs';
 import { ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 
@@ -32,7 +32,12 @@ export class ModelWrapperComponent implements OnInit, OnDestroy {
       ),
     ])
       .pipe(switchMap((args) => this.modelService.getModelBySlug(...args)))
-      .subscribe(this.modelService._model);
+      .subscribe({
+        next: this.modelService._model.next.bind(this.modelService._model),
+        error: (_) => {
+          this.modelService._model.next(undefined);
+        },
+      });
   }
 
   ngOnDestroy(): void {

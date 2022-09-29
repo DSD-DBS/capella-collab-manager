@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -25,6 +25,7 @@ import {
   tap,
 } from 'rxjs';
 import slugify from 'slugify';
+import { CreateModelComponent } from 'src/app/models/create-model/create-model.component';
 import { NavBarService } from 'src/app/navbar/service/nav-bar.service';
 import {
   Project,
@@ -37,9 +38,12 @@ import {
   styleUrls: ['./create-project.component.css'],
 })
 export class CreateProjectComponent implements OnInit, OnDestroy {
+  @ViewChild('model_creator') model_creator!: CreateModelComponent;
+
   private projectsSlugs = new BehaviorSubject<string[]>([]);
   private projectDetails = false;
   private slugsSubscription?: Subscription;
+  public _reload = false;
 
   form = new FormGroup({
     name: new FormControl('', [
@@ -148,5 +152,16 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
       }
     }
     return null;
+  }
+
+  onComplete(again?: boolean): void {
+    if (again) {
+      this._reload = true;
+      setTimeout(() => {
+        this._reload = false;
+      });
+    } else {
+      this.finish();
+    }
   }
 }

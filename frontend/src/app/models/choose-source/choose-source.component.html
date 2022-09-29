@@ -10,57 +10,50 @@
 
 <div *ngIf="projectService.project && modelService.model">
   <h1>
-    Add a primary source to the model “{{ modelService.model!.name }}” of the
-    project “{{ projectService.project!.name }}”.
+    Add a primary source to the model “{{ modelService.model.name }}” of the
+    project “{{ projectService.project.name }}”.
   </h1>
 
   <h2 class="title">Git sources</h2>
   <div class="options-list">
-    <a [routerLink]="['..', 'use-existing-git']">
-      <mat-card matRipple>
-        <h3 class="option-title">Use existing repository</h3>
-        <div class="content">
-          <img
-            src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"
-          />
-        </div>
-      </mat-card>
-    </a>
-    <a [routerLink]="['/settings/core/users']">
-      <mat-card matRipple>
-        <h3 class="option-title">Create repository</h3>
-        <div class="content">
-          <img
-            src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"
-          />
-        </div>
-      </mat-card>
-    </a>
+    <button mat-raised-button (click)="optionClick.emit('git-add')">
+      <div class="button-content-wrapper">
+        <p class="option-title">Use existing repository</p>
+        <img
+          class="content"
+          src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"
+        />
+      </div>
+    </button>
+    <div class="field-separator"></div>
+    <button mat-raised-button disabled (click)="optionClick.emit('git-create')">
+      <div class="button-content-wrapper">
+        <p class="option-title">Create repository</p>
+        <img
+          class="content"
+          src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"
+        />
+      </div>
+    </button>
   </div>
 
-  <h2 class="title">Team4Capella sources</h2>
-  <div class="options-list">
-    <a
-      [routerLink]="[
-        '/add-source',
-        projectService.project.slug,
-        modelService.model.slug
-      ]"
-    >
-      <mat-card matRipple>
-        <h3 class="option-title">Use existing repository</h3>
-        <div class="content">
-          <img src="https://www.obeosoft.com/images/logos/logo_obeo.png" />
-        </div>
-      </mat-card>
-    </a>
-    <a [routerLink]="['/settings/core/users']">
-      <mat-card matRipple>
-        <h3 class="option-title">Create repository</h3>
-        <div class="content">
-          <img src="https://www.obeosoft.com/images/logos/logo_obeo.png" />
-        </div>
-      </mat-card>
-    </a>
+  <h2 class="title" *ngIf="projectService.project.tool?.name === 'capella'">
+    Team4Capella sources
+  </h2>
+  <div
+    class="options-list"
+    *ngIf="projectService.project.tool?.name === 'capella'"
+  >
+    <button mat-raised-button disabled>
+      <div class="button-content-wrapper">
+        <p class="option-title">Use existing repository</p>
+      </div>
+    </button>
+    <div class="field-separator"></div>
+    <button mat-raised-button disabled>
+      <div class="button-content-wrapper">
+        <p class="option-title">Create repository</p>
+      </div>
+    </button>
   </div>
 </div>
