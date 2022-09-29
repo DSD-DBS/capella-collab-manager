@@ -10,9 +10,9 @@ import pytest
 
 import capellacollab.sessions.guacamole
 from capellacollab.__main__ import app
-from capellacollab.core.database.users import create_user
-from capellacollab.projects.users.models import Role
 from capellacollab.sessions.operators import Operator, get_operator
+from capellacollab.users.crud import create_user
+from capellacollab.users.models import Role
 
 
 @pytest.fixture(autouse=True)

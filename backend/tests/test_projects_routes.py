@@ -3,14 +3,14 @@
 
 from uuid import uuid1
 
-from capellacollab.core.database.users import create_user
 from capellacollab.projects.crud import create_project
 from capellacollab.projects.users.crud import add_user_to_repository
 from capellacollab.projects.users.models import (
     RepositoryUserPermission,
     RepositoryUserRole,
-    Role,
 )
+from capellacollab.users.crud import create_user
+from capellacollab.users.models import Role
 
 
 def test_get_projects_not_authenticated(client):
