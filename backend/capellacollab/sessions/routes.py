@@ -123,12 +123,7 @@ def request_session(
             )
         user = users.get_user(db, owner)
 
-        # if user.role == users_models.Role.ADMIN:
-        #     repositories = [
-        #         repo.name for repo in repositories_crud.get_all_projects(db)
-        #     ]
-        # else:
-        #     repositories = [repo.repository_name for repo in user.repositories]
+        # FIXME: Get repositories from models with linked TeamForCapella repositories
         repositories = []
 
         session = operator.start_persistent_session(
