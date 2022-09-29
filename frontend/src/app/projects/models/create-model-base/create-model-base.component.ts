@@ -30,7 +30,6 @@ import { connectable, filter, Subject, switchMap, tap } from 'rxjs';
 })
 export class CreateModelBaseComponent implements OnInit {
   @Output() create = new EventEmitter<Model>();
-  @Output() finish = new EventEmitter<boolean>();
   @Input() asStepper?: boolean;
 
   public form = new FormGroup({
