@@ -10,10 +10,12 @@ import {
   NewT4CInstance,
   T4CInstance,
   T4CInstanceService,
-} from '../../../../services/modelsources/t4c-model/t4c-model.service';
+} from '../../../../services/settings/t4c-model.service';
 import { BehaviorSubject, filter, map, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../../../toast/toast.service';
+import { NavBarService } from '../../../../navbar/service/nav-bar.service';
+import { ToolService } from '../../../../services/tools/tool.service';
 
 type State = 'existing' | 'editing';
 
@@ -40,11 +42,11 @@ export class CreateT4cInstanceComponent implements OnInit {
       Validators.min(0),
       Validators.max(65535),
     ]),
-    serverAPI: new FormControl('', [
+    usage_api: new FormControl('', [
       Validators.required,
       Validators.pattern(/^https?:\/\//),
     ]),
-    restAPI: new FormControl('', [
+    rest_api: new FormControl('', [
       Validators.required,
       Validators.pattern(/^https?:\/\//),
     ]),
@@ -53,16 +55,17 @@ export class CreateT4cInstanceComponent implements OnInit {
   });
 
   constructor(
+    private navBarService: NavBarService,
     private t4CInstanceService: T4CInstanceService,
     private route: ActivatedRoute,
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private toolService: ToolService
   ) {}
 
   ngOnInit(): void {
-    this.form.controls.port.valueChanges.subscribe((_) => {
-      console.log(this.form.controls.port.errors);
-    });
+    this.navBarService.title = '/ Settings / Modelsources / T4C / Create';
+
     this.route.params
       .pipe(
         map((params) => params.instance),
@@ -80,6 +83,7 @@ export class CreateT4cInstanceComponent implements OnInit {
     this._instance
       .pipe(tap(console.log), filter(Boolean))
       .subscribe((instance) => {
+        this.navBarService.title = `Settings / Modelsources / T4C / ${instance.name}`;
         this.existing = 'existing';
         this.form.patchValue(instance);
       });
