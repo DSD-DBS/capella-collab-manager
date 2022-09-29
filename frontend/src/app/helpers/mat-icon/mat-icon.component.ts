@@ -14,7 +14,6 @@ export class MatIconComponent implements OnInit {
   @Input() position: MatIconPosition = null;
   @Input() size: string = '24px';
 
-  @Input() usage: MatIconUsage = 'general';
   style = {};
 
   constructor() {}
@@ -25,25 +24,9 @@ export class MatIconComponent implements OnInit {
       height: this.size,
       'font-size': this.size,
       position: 'relative',
-      top: this.mapUsageToCSSRelativeTop(this.usage),
       'margin-right': '0px',
     };
-  }
-
-  mapUsageToCSSRelativeTop(usage: MatIconUsage): string {
-    switch (usage) {
-      case 'button': {
-        return '7px';
-      }
-      case 'text': {
-        return '4px';
-      }
-      default: {
-        return '0px';
-      }
-    }
   }
 }
 
 type MatIconPosition = 'right' | 'left' | null;
-type MatIconUsage = 'button' | 'text' | 'general';
