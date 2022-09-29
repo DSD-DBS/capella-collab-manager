@@ -42,7 +42,7 @@
     </form>
     <div class="flex-space-between">
       <button mat-button (click)="create.emit({ created: false })">
-        <app-mat-icon class="mat-icon-position left">arrow_back</app-mat-icon>
+        <mat-icon class="mat-icon-position left">arrow_back</mat-icon>
         Choose initialization
       </button>
       <button
@@ -52,9 +52,7 @@
         (click)="onSubmit()"
       >
         Finish
-        <app-mat-icon class="mat-icon-position right"
-          >arrow_forward</app-mat-icon
-        >
+        <mat-icon class="mat-icon-position right">arrow_forward</mat-icon>
       </button>
     </div>
   </mat-card>

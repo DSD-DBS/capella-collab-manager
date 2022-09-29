@@ -5,8 +5,7 @@
 
 <div>
   <div id="description">
-    One-way synchronization: T4C
-    <app-mat-icon>arrow_right_alt</app-mat-icon> Git
+    One-way synchronization: T4C <mat-icon>arrow_right_alt</mat-icon> Git
   </div>
   <br />
   <div id="loading">
@@ -26,7 +25,7 @@
         mat-icon-button
         *ngIf="!loading"
       >
-        <app-mat-icon>refresh</app-mat-icon>
+        <mat-icon>refresh</mat-icon>
       </button>
     </div>
   </div>
@@ -65,6 +64,6 @@
     </div>
   </mat-card>
   <mat-card class="item" id="add-button" (click)="createNewBackup()">
-    Create a new backup <app-mat-icon>add</app-mat-icon>
+    Create a new backup <mat-icon>add</mat-icon>
   </mat-card>
 </div>

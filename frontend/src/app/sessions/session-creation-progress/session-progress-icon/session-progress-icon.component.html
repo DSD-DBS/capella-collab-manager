@@ -4,14 +4,14 @@
  -->
 
 <span *ngIf="state === 'success'" class="item" style="color: green"
-  ><app-mat-icon>check_circle</app-mat-icon></span
+  ><mat-icon>check_circle</mat-icon></span
 >
 <span *ngIf="state === 'running'" class="circle item"
   ><mat-spinner [diameter]="35"></mat-spinner
 ></span>
 <span *ngIf="state === 'pending'" class="item" style="color: grey"
-  ><app-mat-icon>access_time</app-mat-icon></span
+  ><mat-icon>access_time</mat-icon></span
 >
 <span *ngIf="state === 'error'" class="item" style="color: darkred"
-  ><app-mat-icon>error</app-mat-icon></span
+  ><mat-icon>error</mat-icon></span
 >

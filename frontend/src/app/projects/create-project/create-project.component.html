@@ -31,10 +31,8 @@
             </fieldset>
             <div class="flex-space-between">
               <a routerLink="/projects" mat-button matStepperPrevious>
-                <app-mat-icon position="left" usage="text"
-                  >arrow_back</app-mat-icon
-                >
-                Cancel</a
+                <mat-icon class="mat-icon-position left">arrow_back</mat-icon
+                >Cancel</a
               >
               <button
                 mat-flat-button
@@ -43,8 +41,8 @@
                 (click)="createProject(stepper)"
               >
                 Create project
-                <app-mat-icon position="right" usage="text"
-                  >arrow_forward</app-mat-icon
+                <mat-icon class="mat-icon-position right"
+                  >arrow_forward</mat-icon
                 >
               </button>
             </div>
@@ -63,8 +61,8 @@
             <div class="flex-space-between">
               <button mat-flat-button color="primary" (click)="stepper.next()">
                 Skip
-                <app-mat-icon usage="button" class="mat-icon-position right"
-                  >arrow_forward</app-mat-icon
+                <mat-icon class="mat-icon-position right"
+                  >arrow_forward</mat-icon
                 >
               </button>
             </div>
@@ -82,7 +80,7 @@
               [routerLink]="['/project', projectService.project]"
             >
               Finish project creation
-              <app-mat-icon class="mat-icon-position right">check</app-mat-icon>
+              <mat-icon class="mat-icon-position right">check</mat-icon>
             </a>
           </div>
         </mat-card>

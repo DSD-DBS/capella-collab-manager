@@ -18,13 +18,13 @@
       <tr>
         <td>
           <button mat-button cdkCopyToClipboard="localhost">
-            localhost &nbsp;<app-mat-icon>content_copy</app-mat-icon>
+            localhost &nbsp;<mat-icon>content_copy</mat-icon>
           </button>
         </td>
         <td>
           <button mat-button [cdkCopyToClipboard]="session.ports[0]">
             {{ session.ports[0] }}
-            &nbsp;<app-mat-icon>content_copy</app-mat-icon>
+            &nbsp;<mat-icon>content_copy</mat-icon>
           </button>
         </td>
       </tr>
@@ -43,12 +43,12 @@
         <td>
           <button mat-button [cdkCopyToClipboard]="session.rdp_username">
             {{ session.rdp_username }}
-            &nbsp;<app-mat-icon>content_copy</app-mat-icon>
+            &nbsp;<mat-icon>content_copy</mat-icon>
           </button>
         </td>
         <td>
           <button mat-button [cdkCopyToClipboard]="session.rdp_password">
-            ****** &nbsp;<app-mat-icon>content_copy</app-mat-icon>
+            ****** &nbsp;<mat-icon>content_copy</mat-icon>
           </button>
         </td>
       </tr>

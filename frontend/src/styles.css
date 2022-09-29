@@ -25,6 +25,24 @@ body {
   --section-card-width: 32em;
 }
 
+/* When using icons in the text, they are not properly aligned */
+.mat-icon-position {
+  position: relative;
+  bottom: 0.1em;
+}
+
+.mat-icon-position.right {
+  margin-left: 5px;
+}
+
+.mat-icon-position.left {
+  margin-right: 5px;
+}
+
+.mat-icon {
+  height: 400px;
+}
+
 a {
   text-decoration: none !important;
 }
@@ -208,7 +226,6 @@ fieldset > :not(.field-separator) {
 .button-content-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 .content {
