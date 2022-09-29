@@ -48,7 +48,7 @@
       <button
         mat-raised-button
         color="primary"
-        [disabled]="!form.valid"
+        [disabled]="!form.valid || buttonDisabled"
         (click)="onSubmit()"
       >
         Finish

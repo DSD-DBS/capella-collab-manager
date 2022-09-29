@@ -25,7 +25,10 @@ import {
   tap,
 } from 'rxjs';
 import slugify from 'slugify';
-import { CreateModelComponent } from 'src/app/projects/models/create-model/create-model.component';
+import {
+  CreateModelComponent,
+  CreateModelStep,
+} from 'src/app/projects/models/create-model/create-model.component';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   Project,
@@ -44,6 +47,8 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   private projectDetails = false;
   private slugsSubscription?: Subscription;
   public _reload = false;
+
+  public modelCreationStep: CreateModelStep = 'create-model';
 
   form = new FormGroup({
     name: new FormControl('', [
@@ -152,5 +157,15 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
       }
     }
     return null;
+  }
+
+  getColorByModelCreationStep(): string {
+    switch (this.modelCreationStep) {
+      case 'create-model':
+      case 'complete':
+        return 'primary';
+      default:
+        return 'warn';
+    }
   }
 }

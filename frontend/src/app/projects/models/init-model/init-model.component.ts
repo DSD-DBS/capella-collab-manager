@@ -18,8 +18,10 @@ import { filter } from 'rxjs';
   styleUrls: ['./init-model.component.css'],
 })
 export class InitModelComponent implements OnInit {
-  @Output() create = new EventEmitter<{ created: boolean; again?: boolean }>();
+  @Output() create = new EventEmitter<{ created: boolean }>();
   @Input() asStepper?: boolean;
+
+  buttonDisabled: boolean = false;
 
   constructor(
     public projectService: ProjectService,
@@ -58,6 +60,7 @@ export class InitModelComponent implements OnInit {
         )
         .subscribe((_) => {
           this.create.emit({ created: true });
+          this.buttonDisabled;
         });
     }
   }

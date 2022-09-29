@@ -71,16 +71,34 @@
       </div>
     </mat-step>
     <mat-step label="Add models">
-      <app-create-model #model_creator></app-create-model>
+      <app-create-model
+        (currentStep)="modelCreationStep = $event"
+        [redirectAfterCompletion]="false"
+        #model_creator
+      ></app-create-model>
       <div class="flex-center">
         <mat-card class="section-card">
           <div class="flex-center">
             <a
               mat-flat-button
-              [routerLink]="['/project', projectService.project]"
+              [routerLink]="['/project', projectService.project?.slug]"
+              [color]="getColorByModelCreationStep()"
             >
-              Finish project creation
-              <mat-icon class="mat-icon-position right">check</mat-icon>
+              <span *ngIf="modelCreationStep == 'create-model'">
+                Skip model creation and finish project creation
+              </span>
+              <span
+                *ngIf="
+                  modelCreationStep != 'create-model' &&
+                  modelCreationStep != 'complete'
+                "
+              >
+                Abort model initialization and finish project creation
+              </span>
+              <span *ngIf="modelCreationStep == 'complete'">
+                Finish project creation
+              </span>
+              <app-mat-icon class="mat-icon-position right">check</app-mat-icon>
             </a>
           </div>
         </mat-card>
