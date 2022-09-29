@@ -15,7 +15,7 @@
 
     <mat-step completed="false" label="Choose primary source">
       <app-choose-source
-        (optionClick)="onSourceClick($event)"
+        (modelSourceSelection)="onSourceClick($event)"
       ></app-choose-source>
     </mat-step>
 
@@ -26,7 +26,9 @@
     </mat-step>
 
     <mat-step label="Choose initialization">
-      <app-choose-init (optionClick)="onInitClick($event)"></app-choose-init>
+      <app-choose-init
+        (modelInitSelection)="onInitClick($event)"
+      ></app-choose-init>
     </mat-step>
 
     <mat-step label="Metadata">

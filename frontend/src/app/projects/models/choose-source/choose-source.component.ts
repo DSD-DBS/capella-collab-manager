@@ -13,7 +13,7 @@ import { ModelService } from 'src/app/services/model/model.service';
   styleUrls: ['./choose-source.component.css'],
 })
 export class ChooseSourceComponent implements OnInit {
-  @Output() optionClick = new EventEmitter<string>();
+  @Output() modelSourceSelection = new EventEmitter<string>();
 
   constructor(
     public projectService: ProjectService,
