@@ -43,10 +43,14 @@ def test_get_projects_as_user_with_project(client, db, username):
     response = client.get("/api/v1/projects")
 
     assert response.status_code == 200
-    assert (
-        response.text
-        == f'[{{"name":"{project_name}","slug":"{project_name}","description":null,"users":{{"leads":1,"contributors":0,"subscribers":0}}}}]'
-    )
+    assert response.json() == [
+        {
+            "name": project_name,
+            "slug": project_name,
+            "description": None,
+            "users": {"leads": 1, "contributors": 0, "subscribers": 0},
+        }
+    ]
 
 
 def test_get_projects_as_admin(client, db, username):
