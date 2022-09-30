@@ -39,7 +39,7 @@ def docker_database():
         },
         remove=True,
         detach=True,
-        ports={"5432/tcp": "5432-6000"},
+        ports={"5432/tcp": None},
     )
 
     yield container
@@ -51,11 +51,15 @@ def docker_database():
 def initialized_database(
     docker_database: docker.models.containers.Container, request
 ):
+    docker_database.reload()
+    port = docker_database.ports["5432/tcp"][0]["HostPort"]
     docker_database.exec_run(
         cmd=f"psql -h 'localhost' -p 5432 -U dev dev -f /tmp/database/{request.param}"
     )
 
-    yield sqlalchemy.create_engine("postgresql://dev:dev@localhost:5432/dev")
+    yield sqlalchemy.create_engine(
+        f"postgresql://dev:dev@localhost:{port}/dev"
+    )
 
 
 @pytest.fixture()
