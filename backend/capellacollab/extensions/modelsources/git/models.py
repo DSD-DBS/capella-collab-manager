@@ -86,7 +86,7 @@ class DB_GitModel(Base):
     revision = Column(String)
     primary = Column(Boolean)
     model_id = Column(Integer, ForeignKey("models.id"))
-    model = relationship("DatabaseCapellaModel", back_populates="git_model")
+    model = relationship("DatabaseCapellaModel", back_populates="git_models")
     username = Column(String)
     password = Column(String)
 
@@ -102,3 +102,17 @@ class DB_GitModel(Base):
             username=source.username,
             password=source.password,
         )
+
+
+class ResponseGitModel(BaseModel):
+    id: int
+    name: str
+    path: str
+    entrypoint: str
+    revision: str
+    primary: bool
+    username: str
+    password: str
+
+    class Config:
+        orm_mode = True

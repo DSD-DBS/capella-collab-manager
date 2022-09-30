@@ -22,6 +22,8 @@ from sqlalchemy.orm import relationship
 # Import required for sqlalchemy
 import capellacollab.projects.users.models
 from capellacollab.core.database import Base
+from capellacollab.extensions.modelsources.git.models import ResponseGitModel
+from capellacollab.extensions.modelsources.t4c.models import ResponseT4CModel
 from capellacollab.tools.models import (
     Tool,
     ToolBase,
@@ -71,8 +73,8 @@ class DatabaseCapellaModel(Base):
 
     editing_mode = Column(Enum(EditingMode))
 
-    t4c_model = relationship("DB_T4CModel", back_populates="model")
-    git_model = relationship("DB_GitModel", back_populates="model")
+    t4c_models = relationship("DB_T4CModel", back_populates="model")
+    git_models = relationship("DB_GitModel", back_populates="model")
 
 
 class ResponseModel(BaseModel):
@@ -83,8 +85,8 @@ class ResponseModel(BaseModel):
     tool: ToolBase
     version: t.Optional[ToolVersionBase]
     type: t.Optional[ToolTypeBase]
-    t4c_model_id: t.Optional[int]
-    git_model_id: t.Optional[int]
+    git_models: t.Optional[list[ResponseGitModel]]
+    t4c_models: t.Optional[list[ResponseT4CModel]]
 
     class Config:
         orm_mode = True
