@@ -32,7 +32,7 @@ def docker_database():
             "POSTGRES_DB": "dev",
         },
         volumes={
-            str(pathlib.Path(__file__).parents[1] / "data" / "database"): {
+            str(pathlib.Path(__file__).parent / "data" / "database"): {
                 "bind": "/tmp/sql",
                 "mode": "ro",
             }
