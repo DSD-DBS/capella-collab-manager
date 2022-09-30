@@ -69,9 +69,9 @@ def initialized_database(
         cmd=f"psql -h 'localhost' -p 5432 -U dev dev -f /tmp/sql/{request.param}"
     )
     if output.exit_code == 0:
-        log.debug(output.output)
+        log.debug(output.output.decode())
     else:
-        raise RuntimeError(output.output)
+        raise RuntimeError(output.output.decode())
 
     yield sqlalchemy.create_engine(
         f"postgresql://dev:dev@localhost:{port}/dev"
