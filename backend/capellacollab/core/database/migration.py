@@ -35,10 +35,10 @@ def migrate_db(engine):
         alembic_cfg.set_main_option("sqlalchemy.url", str(engine.url))
         alembic_cfg.attributes["configure_logger"] = False
 
-        conn = engine.connect()
+        with engine.connect() as conn:
+            context = MigrationContext.configure(conn)
+            current_rev = context.get_current_revision()
 
-        context = MigrationContext.configure(conn)
-        current_rev = context.get_current_revision()
         tools_exist = inspect(engine).has_table("tools")
         session_maker = sessionmaker(bind=engine)
 
