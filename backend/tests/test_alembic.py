@@ -93,9 +93,7 @@ def alembic_cfg(initialized_database):
     yield alembic_cfg
 
 
-def test_init_database(
-    initialized_database, alembic_cfg, monkeypatch: MonkeyPatch
-):
+def test_init_database(initialized_database, alembic_cfg):
     # Update database to HEAD
     migration.migrate_db(initialized_database)
 
