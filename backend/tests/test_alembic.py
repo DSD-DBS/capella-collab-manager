@@ -3,6 +3,7 @@
 
 import logging
 import pathlib
+import time
 
 import docker
 import docker.models.containers
@@ -16,6 +17,7 @@ from testcontainers.postgres import PostgresContainer
 import capellacollab.sql_models
 from capellacollab.core.database import migration
 
+database_connect_timeout = 60  # in seconds
 log = logging.getLogger(__file__)
 log.setLevel("DEBUG")
 client = docker.from_env()
@@ -53,9 +55,26 @@ def initialized_database(
 ):
     docker_database.reload()
     port = docker_database.ports["5432/tcp"][0]["HostPort"]
-    docker_database.exec_run(
-        cmd=f"psql -h 'localhost' -p 5432 -U dev dev -f /tmp/database/{request.param}"
+    for _ in range(int(database_connect_timeout / 2)):
+        log.debug("Wait until database accepts connections")
+        output = docker_database.exec_run(
+            cmd=f"psql -h 'localhost' -p 5432 -U dev dev -f /tmp/sql/{request.param}"
+        )
+        if output.exit_code == 0:
+            log.info("Database is ready and accepts connections")
+            break
+
+        time.sleep(2)
+    else:
+        raise TimeoutError("Database connection timed out")
+
+    output = docker_database.exec_run(
+        cmd=f"psql -h 'localhost' -p 5432 -U dev dev -f /tmp/sql/{request.param}"
     )
+    if output.exit_code == 0:
+        log.debug(output.output)
+    else:
+        raise RuntimeError(output.output)
 
     yield sqlalchemy.create_engine(
         f"postgresql://dev:dev@localhost:{port}/dev"
