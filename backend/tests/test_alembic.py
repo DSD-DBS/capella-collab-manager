@@ -9,12 +9,9 @@ import docker
 import docker.models.containers
 import pytest
 import sqlalchemy
-from _pytest.monkeypatch import MonkeyPatch
 from alembic import command
 from alembic.config import Config
-from testcontainers.postgres import PostgresContainer
 
-import capellacollab.sql_models
 from capellacollab.core.database import migration
 
 database_connect_timeout = 60  # in seconds
