@@ -55,7 +55,7 @@ def initialized_database(
     for _ in range(int(database_connect_timeout / 2)):
         log.debug("Wait until database accepts connections")
         output = docker_database.exec_run(
-            cmd=f"psql -h 'localhost' -p 5432 -U dev dev -f /tmp/sql/{request.param}"
+            cmd="pg_isready -h 'localhost' -p 5432 -U dev -d dev"
         )
         if output.exit_code == 0:
             log.info("Database is ready and accepts connections")
