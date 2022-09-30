@@ -410,8 +410,8 @@ COPY public.alembic_version (version_num) FROM stdin;
 --
 
 COPY public.git_models (id, name, path, entrypoint, revision, "primary", repository_name, project_id) FROM stdin;
-1   py-capellambse  https://github.com/DSD-DBS/py-capellambse.git   tests/data/melodymodel/5_2/Melody Model Test.aird	master  py-capellambse t		3
-2   collab-platform-arch    https://github.com/DSD-DBS/collab-platform-arch.git collab-platform-arch.aird	main	t	collab-platform-arch	1
+1	py-capellambse	https://github.com/DSD-DBS/py-capellambse.git	tests/data/melodymodel/5_2/Melody Model Test.aird	master	f	py-capellambse	3
+2	collab-platform-arch	https://github.com/DSD-DBS/collab-platform-arch.git	collab-platform-arch.aird	main	t	collab-platform-arch	1
 \.
 
 
@@ -439,7 +439,7 @@ COPY public.notices (id, title, message, level, scope) FROM stdin;
 --
 
 COPY public.projects (id, name, repository_name) FROM stdin;
-1	Capella Platform Architecture  collab-platform-arch
+1	Capella Platform Architecture	collab-platform-arch
 2	WizzardEducation	wizzard-education
 3	py-capellambse	py-capellambse
 \.
@@ -495,13 +495,13 @@ c2c5f811c949e9c2ddacca8d2ea9ca57aa474bbfcab38f0c48875b997821c63c	dominiklammers	
 --
 
 COPY public.users (id, name, role) FROM stdin;
-1	moritzweber ADMIN
+1	moritzweber	ADMIN
 2	viktorkravchenko	ADMIN
-3   timothebaillybarthez    USER
+3	timothebaillybarthez	USER
 4	ernstwuerger	USER
 5	jamilraichouni	USER
-6   martinlehmann   USER
-7   dominiklammers  USER
+6	martinlehmann	USER
+7	dominiklammers	USER
 \.
 
 
