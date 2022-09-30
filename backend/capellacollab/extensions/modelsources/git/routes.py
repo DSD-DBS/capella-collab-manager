@@ -26,6 +26,8 @@ from capellacollab.extensions.modelsources.git.crud import (
 )
 from capellacollab.extensions.modelsources.git.models import (
     GetRepositoryGitModel,
+    GetRevisionsModel,
+    GitCredentials,
     NewGitSource,
     PatchRepositoryGitModel,
     PostGitModel,
@@ -34,7 +36,7 @@ from capellacollab.extensions.modelsources.git.models import (
 )
 
 from . import crud
-from .core import ls_remote
+from .core import get_remote_refs, ls_remote
 
 router = APIRouter()
 log = logging.getLogger(__name__)
@@ -144,11 +146,9 @@ def patch_model(
     "/primary/revisions",
     responses=AUTHENTICATION_RESPONSES,
 )
-def get_revisions(
+def get_revisions_of_primary_git_model(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
-    remote_refs: dict[str, list[str]] = {"branches": [], "tags": []}
-
     git_model = get_primary_gitmodel_of_capellamodels(db, project)
     if not git_model:
         raise HTTPException(
@@ -160,25 +160,28 @@ def get_revisions(
         )
 
     url = git_model.path
+    username = git_model.username or ""
+    password = git_model.password or ""
+
     log.debug(
         "Fetch revisions of git-model '%s' with url '%s'", git_model.name, url
     )
 
-    git_env = os.environ.copy()
-    git_env["GIT_USERNAME"] = git_model.username or ""
-    git_env["GIT_PASSWORD"] = git_model.password or ""
-    for ref in ls_remote(url, git_env):
-        (_, ref) = ref.split("\t")
-        if "^" in ref:
-            continue
-        if ref.startswith("refs/heads/"):
-            remote_refs["branches"].append(ref[len("refs/heads/") :])
-        elif ref.startswith("refs/tags/"):
-            remote_refs["tags"].append(ref[len("refs/tags/") :])
-
+    remote_refs = get_remote_refs(url, username, password)
     remote_refs["default"] = git_model.revision
 
-    log.debug("Determined branches: %s", remote_refs["branches"])
-    log.debug("Determined tags: %s", remote_refs["tags"])
     log.debug("Determined default branch: %s", remote_refs["default"])
+
     return remote_refs
+
+
+@router.post("/revisions", response_model=GetRevisionsModel)
+def get_revisions(
+    url: str,
+    credentials: GitCredentials,
+    token: JWTBearer = Depends(JWTBearer()),
+) -> GetRevisionsModel:
+    username = credentials.username
+    password = credentials.password
+
+    return get_remote_refs(url, username, password)

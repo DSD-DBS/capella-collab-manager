@@ -3,6 +3,7 @@
 
 import collections.abc as cabc
 import logging
+import os
 import subprocess
 
 from fastapi import HTTPException
@@ -35,3 +36,24 @@ def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
         else:
             raise e
     return proc.stdout.decode().strip().splitlines()
+
+
+def get_remote_refs(url: str, username: str, password: str):
+    remote_refs: dict[str, list[str]] = {"branches": [], "tags": []}
+
+    git_env = os.environ.copy()
+    git_env["GIT_USERNAME"] = username
+    git_env["GIT_PASSWORD"] = password
+    for ref in ls_remote(url, git_env):
+        (_, ref) = ref.split("\t")
+        if "^" in ref:
+            continue
+        if ref.startswith("refs/heads/"):
+            remote_refs["branches"].append(ref[len("refs/heads/") :])
+        elif ref.startswith("refs/tags/"):
+            remote_refs["tags"].append(ref[len("refs/tags/") :])
+
+    log.debug("Determined branches: %s", remote_refs["branches"])
+    log.debug("Determined tags: %s", remote_refs["tags"])
+
+    return remote_refs
