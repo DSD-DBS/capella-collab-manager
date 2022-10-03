@@ -104,8 +104,6 @@ import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-s
 import { SettingsComponent } from './settings/settings.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { HomeComponent } from './workspaces/home.component';
-import { NoRepositoryComponent } from './workspaces/no-repository/no-repository.component';
-import { RequestSessionComponent } from './workspaces/request-session/request-session.component';
 
 @NgModule({
   declarations: [
@@ -144,7 +142,6 @@ import { RequestSessionComponent } from './workspaces/request-session/request-se
     ModelDetailComponent,
     ModelOverviewComponent,
     ModelWrapperComponent,
-    NoRepositoryComponent,
     NoticeComponent,
     ProjectDetailsComponent,
     ProjectMetadataComponent,
@@ -154,7 +151,6 @@ import { RequestSessionComponent } from './workspaces/request-session/request-se
     RDPComponent,
     ReconnectDialogComponent,
     ReleaseNotesComponent,
-    RequestSessionComponent,
     SessionCreatedComponent,
     SessionCreationProgressComponent,
     SessionOverviewComponent,
