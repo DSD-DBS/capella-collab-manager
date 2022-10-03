@@ -94,7 +94,7 @@ helm-deploy:
 		--set general.port=8080 \
 		--set t4cServer.apis.usageStats="http://$(RELEASE)-licence-server-mock:80/mock" \
 		--set t4cServer.apis.restAPI="http://$(RELEASE)-t4c-server-mock:80/mock/api/v1.0" \
-		--set backend.authentication.redirectURI="http://localhost:$(PORT)/oauth2/callback" \
+		--set backend.authentication.oauth.redirectURI="http://localhost:$(PORT)/oauth2/callback" \
 		$(RELEASE) ./helm
 	$(MAKE) .provision-guacamole wait
 
