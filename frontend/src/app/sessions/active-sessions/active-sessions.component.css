@@ -24,6 +24,11 @@
   text-align: center;
 }
 
+.mat-card-content h3 {
+  margin: 2px 4px;
+  text-align: center;
+}
+
 .sessionContent {
   margin-bottom: 5px;
 }
