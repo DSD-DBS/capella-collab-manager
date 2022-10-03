@@ -3,22 +3,21 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div>
-  <h1><b>Persistent Workspace</b></h1>
-  <p>
-    Persistent Workspaces will store all the changes you make on models.
-    Additionally, newly created projects will be stored in your personal
-    workspace.
-  </p>
+<h1>Persistent Workspace</h1>
 
-  <form>
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="requestSession()"
-      [disabled]="!canCreateSession"
-    >
-      Request a Persistent Workspace <mat-icon>keyboard_arrow_right</mat-icon>
-    </button>
-  </form>
-</div>
+<p>
+  Persistent Workspaces will store all the changes you make on models.
+  Additionally, newly created projects will be stored in your personal
+  workspace.
+</p>
+
+<form>
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="requestSession()"
+    [disabled]="!canCreateSession"
+  >
+    Request a Persistent Workspace <mat-icon>keyboard_arrow_right</mat-icon>
+  </button>
+</form>

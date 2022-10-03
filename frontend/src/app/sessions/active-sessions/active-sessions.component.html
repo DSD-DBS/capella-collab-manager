@@ -3,75 +3,72 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper">
-  <span id="title"><b>Active Sessions</b></span>
+<h1>
+  Active Sessions
+
   <button mat-icon-button (click)="refreshSessions()">
     <mat-icon>refresh </mat-icon>
   </button>
+</h1>
 
-  <mat-spinner *ngIf="showSpinner"></mat-spinner>
+<mat-spinner *ngIf="showSpinner"></mat-spinner>
 
-  <mat-card *ngIf="!ownSessionService.sessions.length && !showSpinner">
-    <h2>No active sessions</h2>
-    <div class="content">
-      No active sessions for your user are found in our system. <br />
-    </div>
-  </mat-card>
-
-  <div class="flexbox">
-    <mat-card *ngFor="let session of ownSessionService.sessions; let i = index">
-      <div class="header">
-        <div class="type">
-          <h2 *ngIf="session.type === 'persistent'">
-            Persistent workspace session
-          </h2>
-          <h2 *ngIf="session.type === 'readonly'">
-            {{ session.repository }} (read-only session)
-          </h2>
-        </div>
-        <div
-          class="state"
-          [ngClass]="sessionService.beatifyState(session.state).css"
-        >
-          <h3>{{ sessionService.beatifyState(session.state).text }}</h3>
-        </div>
-      </div>
-      <div class="content">
-        <div class="text">
-          The session was created
-          {{ beautifyService.beatifyDate(session.created_at) }}
-          <br />
-        </div>
-        <button
-          mat-flat-button
-          color="primary"
-          (click)="openDeletionDialog([session])"
-        >
-          Terminate
-        </button>
-
-        <button
-          mat-flat-button
-          color="primary"
-          (click)="openReconnectDialog(session)"
-          [disabled]="
-            !(session.state === 'Started' || session.state === 'START_SESSION')
-          "
-        >
-          Reconnect
-        </button>
-
-        <button
-          mat-flat-button
-          color="primary"
-          (click)="uploadFileDialog(session)"
-          [disabled]="
-            !(session.state === 'Started' || session.state === 'START_SESSION')
-          "
-        >
-          Upload
-        </button>
-      </div>
-    </mat-card>
+<mat-card *ngIf="!ownSessionService.sessions.length && !showSpinner">
+  <h2>No active sessions</h2>
+  <div class="content">
+    No active sessions for your user are found in our system. <br />
   </div>
-</div>
+</mat-card>
+
+<mat-card *ngFor="let session of ownSessionService.sessions; let i = index">
+  <mat-card-header>
+    <div class="type">
+      <h2 *ngIf="session.type === 'persistent'">
+        Persistent workspace session
+      </h2>
+      <h2 *ngIf="session.type === 'readonly'">
+        {{ session.repository }} (read-only session)
+      </h2>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <h3
+      class="state"
+      [ngClass]="sessionService.beatifyState(session.state).css"
+    >
+      {{ sessionService.beatifyState(session.state).text }}
+    </h3>
+    <p>
+      The session was created
+      {{ beautifyService.beatifyDate(session.created_at) }}
+    </p>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button color="primary" (click)="openDeletionDialog([session])">
+      Terminate
+    </button>
+
+    <button
+      mat-button
+      color="primary"
+      (click)="openReconnectDialog(session)"
+      [disabled]="
+        !(session.state === 'Started' || session.state === 'START_SESSION')
+      "
+    >
+      Reconnect
+    </button>
+
+    <button
+      mat-button
+      color="primary"
+      (click)="uploadFileDialog(session)"
+      [disabled]="
+        !(session.state === 'Started' || session.state === 'START_SESSION')
+      "
+      content
+    >
+      Upload
+    </button>
+  </mat-card-actions>
+</mat-card>
