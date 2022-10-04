@@ -209,52 +209,52 @@ fieldset > :not(.field-separator) {
   width: 20ch;
 }
 
-.title-box {
-  margin-left: 2em;
+/*
+Angular Material Card Styles
+*/
+
+.mat-card-overview .content {
+  padding: 10px 20px;
+  min-height: 64%;
 }
 
-.item-container {
+.mat-card-overview {
+  padding: 0 !important;
+  width: fit-content;
+  width: 400px;
+  height: 250px;
+  user-select: none;
+}
+
+.mat-card-overview.new {
+  font-size: 2em;
   display: flex;
+  align-items: center;
 }
 
-.item-card {
-  width: 40ch;
-}
-
-.item-card mat-card-header {
-  display: inline-block;
+.mat-card-overview.new .content {
   text-align: center;
-  width: 100%;
+  margin: auto;
 }
 
-.item-card mat-card-content {
-  padding-top: 1em;
-  height: 10em;
+.mat-card-overview.new > :first-child {
+  margin: auto !important;
+}
+.mat-card-overview.new .icon {
+  padding-top: 60px;
+}
+
+.mat-card-overview:hover {
+  background-color: var(--hover-color);
+  cursor: pointer;
+}
+
+.mat-card-overview .header {
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 5px 5px 0 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-}
-
-.item-card .icon-container {
-  text-align: center;
-  width: 100%;
-  font-size: 8em;
-  height: 1em;
-  line-height: 1em;
-}
-
-.item-card ul {
-  padding: 0;
-  list-style-type: none;
-  font-size: 1.3em;
-  line-height: 1.5em;
-}
-
-a {
-  text-decoration: none !important;
-}
-
-.section-multi-card {
-  display: flex;
-  justify-content: space-evenly;
+  padding: 10px 20px;
+  font-size: 1.5em;
 }

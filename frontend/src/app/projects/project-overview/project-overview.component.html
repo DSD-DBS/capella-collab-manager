@@ -5,10 +5,10 @@
 
 <div class="flexbox">
   <a routerLink="/projects/create">
-    <mat-card matRipple id="add">
+    <mat-card matRipple class="mat-card-overview new">
       <div class="content">
         Add new project <br />
-        <div id="add-project-wrapper">
+        <div class="icon">
           <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
         </div>
       </div>
@@ -18,23 +18,19 @@
     *ngFor="let project of projectService.projects"
     [routerLink]="['/project', project.slug]"
   >
-    <mat-card matRipple>
-      <div class="wrapper">
-        <div class="header">{{ project.name }}</div>
-        <div class="wrapper">
-          <div class="content">
-            <div *ngIf="project.description; else elseBlock">
-              {{ project.description }}
-            </div>
-            <ng-template #elseBlock>No description provided.</ng-template>
-          </div>
-          <div class="footer">
-            {{ project.users.leads }} project lead(s),
-            {{ project.users.contributors }} contributor(s),
-            {{ project.users.subscribers }}
-            subscriber(s)
-          </div>
+    <mat-card matRipple class="mat-card-overview">
+      <div class="header">{{ project.name }}</div>
+      <div class="content">
+        <div *ngIf="project.description; else elseBlock">
+          {{ project.description }}
         </div>
+        <ng-template #elseBlock>No description provided.</ng-template>
+      </div>
+      <div class="footer">
+        {{ project.users.leads }} project lead(s),
+        {{ project.users.contributors }} contributor(s),
+        {{ project.users.subscribers }}
+        subscriber(s)
       </div>
     </mat-card>
   </a>
