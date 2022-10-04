@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-export interface BaseT4CInstance {
+export type BaseT4CInstance = {
   license: string;
   host: string;
   port: number;
@@ -16,20 +16,20 @@ export interface BaseT4CInstance {
   rest_api: string;
   username: string;
   password: string;
-}
+};
 
-export interface NewT4CInstance extends BaseT4CInstance {
+export type NewT4CInstance = BaseT4CInstance & {
   name: string;
   version_id: number;
-}
+};
 
-export interface T4CInstance extends NewT4CInstance {
+export type T4CInstance = NewT4CInstance & {
   id: number;
   version: {
     id: number;
     name: string;
   };
-}
+};
 
 @Injectable({
   providedIn: 'root',
@@ -41,43 +41,6 @@ export class T4CInstanceService {
     'settings/modelsources/t4c/',
     environment.backend_url + '/'
   );
-
-  mock_instances: { [id: number]: T4CInstance | undefined } = {
-    0: {
-      id: 0,
-      name: 'Primary instance',
-      version_id: 2,
-      version: {
-        id: 2,
-        name: '6.0',
-      },
-      license: 'this-is-the-key',
-      host: 'https://instance.com/example',
-      port: 3000,
-      usage_api: 'api.com',
-      rest_api: 'rest.com',
-      username: 'me',
-      password: 'pw',
-    },
-    1: {
-      id: 1,
-      name: 'Secondary instance',
-      version_id: 2,
-      version: {
-        id: 2,
-        name: '6.0',
-      },
-      license: 'this-is-the-key',
-      host: 'https://instance.com/example',
-      port: 3000,
-      usage_api: 'api.com',
-      rest_api: 'rest.com',
-      username: 'me',
-      password: 'pw',
-    },
-  };
-
-  _instance = new BehaviorSubject<T4CInstance | undefined>(undefined);
 
   listInstances(): Observable<T4CInstance[]> {
     return this.http.get<T4CInstance[]>(this.base_url.toString());
