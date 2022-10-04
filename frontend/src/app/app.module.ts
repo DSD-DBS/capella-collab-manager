@@ -87,7 +87,6 @@ import { WorkspaceComponent } from './workspace/workspace.component';
 import { HomeComponent } from './workspaces/home.component';
 import { NoRepositoryComponent } from './workspaces/no-repository/no-repository.component';
 import { RequestSessionComponent } from './workspaces/request-session/request-session.component';
-import { WarningComponent } from './workspaces/request-session/warning/warning.component';
 import { CreateModelBaseComponent } from './projects/models/create-model-base/create-model-base.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -132,7 +131,6 @@ import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
     ProjectUserSettingsComponent,
     T4CRepoDeletionDialogComponent,
     GitModelDeletionDialogComponent,
-    WarningComponent,
     WorkspaceComponent,
     FooterComponent,
     TermsConditionsComponent,

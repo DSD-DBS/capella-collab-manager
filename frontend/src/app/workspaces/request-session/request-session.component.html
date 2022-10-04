@@ -69,7 +69,7 @@
           <mat-label>Repository</mat-label>
           <mat-select
             formControlName="repository"
-            (selectionChange)="setPermissionsAndWarningsByName($event)"
+            (selectionChange)="getRevisions($event.value)"
           >
             <mat-option
               *ngFor="let repository of ownProjects"
@@ -128,13 +128,6 @@
             <br />
           </form>
         </div>
-      </div>
-
-      <div class="center" *ngFor="let warning of warnings">
-        <app-warning
-          [warning]="warning"
-          [persistent]="!workspaceSwitch.value"
-        ></app-warning>
       </div>
       <button
         mat-flat-button

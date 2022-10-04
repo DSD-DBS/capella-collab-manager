@@ -12,7 +12,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { ProjectUser, Session, Warnings } from 'src/app/schemes';
+import { ProjectUser, Session } from 'src/app/schemes';
 import { MatSelectChange } from '@angular/material/select';
 import { ProjectService } from 'src/app/services/project/project.service';
 import {
@@ -77,8 +77,6 @@ export class RequestSessionComponent implements OnInit {
 
   chosenRepository: string = '';
   allBranches: boolean = false;
-
-  warnings: Array<Warnings> = [];
 
   permissions: any = {};
 
@@ -151,28 +149,6 @@ export class RequestSessionComponent implements OnInit {
             this.showSpinner = false;
           }
         );
-    }
-  }
-
-  setPermissionsAndWarningsByName(event: MatSelectChange): void {
-    this.showSmallSpinner = true;
-    if (this.chosenRepository) this.chosenRepository = '';
-
-    this.warnings = [];
-    for (let project of this.ownProjects) {
-      if (project.project_name == event.value) {
-        if (project.warnings.includes('NO_GIT_MODEL_DEFINED')) {
-          this.toastService.showError(
-            'This project has no assigned read-only model and therefore, a readonly-session cannot be created. Please contact your project lead.',
-            ''
-          );
-          this.showSmallSpinner = false;
-        } else {
-          this.getRevisions(project.project_name);
-        }
-        this.warnings = project.warnings;
-        return;
-      }
     }
   }
 
