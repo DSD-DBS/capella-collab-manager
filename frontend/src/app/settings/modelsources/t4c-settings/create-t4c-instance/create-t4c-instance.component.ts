@@ -83,15 +83,13 @@ export class CreateT4cInstanceComponent implements OnInit {
           this.existing = 'existing';
           this.form.disable();
         }),
-        switchMap((instance) => this.t4CInstanceService.getInstance(instance)),
-        tap(console.log)
+        switchMap((instance) => this.t4CInstanceService.getInstance(instance))
       )
       .subscribe(this._instance);
 
     this.toolService
       .get_versions()
       .pipe(
-        tap(console.log),
         filter(Boolean),
         map((versions) =>
           versions.filter((version: Version) => version.tool_id === 1)
@@ -108,11 +106,9 @@ export class CreateT4cInstanceComponent implements OnInit {
         })
       ),
       this._capella_versions,
-    ])
-      .pipe(tap(console.log))
-      .subscribe((instance: [T4CInstance, Version[]]) => {
-        this.form.patchValue(instance[0]);
-      });
+    ]).subscribe((instance: [T4CInstance, Version[]]) => {
+      this.form.patchValue(instance[0]);
+    });
 
     this.toolService.get_versions().subscribe(this.toolService._versions);
   }
