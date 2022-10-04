@@ -78,17 +78,8 @@ def create_t4c_instance(
                 },
             )
 
-        instance = DatabaseT4CSettings(
-            name=body.name,
-            license=body.license,
-            host=body.host,
-            port=body.port,
-            usage_api=body.usage_api,
-            rest_api=body.rest_api,
-            username=body.username,
-            password=body.password,
-            version=version,
-        )
+        instance = DatabaseT4CSettings(**body.dict())
+        instance.version = version
         return T4CSettings.from_orm(crud.create_t4c_instance(instance, db))
 
     raise HTTPException(
