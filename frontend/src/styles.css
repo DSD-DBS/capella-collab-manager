@@ -107,14 +107,6 @@ mat-spinner {
   margin-right: auto;
 }
 
-.workspace-toggle * .mat-slide-toggle-bar {
-  background-color: green !important;
-}
-
-.workspace-toggle * .mat-slide-toggle-thumb {
-  background-color: #fafafa !important;
-}
-
 .vertical-form {
   display: flex;
   flex-direction: column;
@@ -176,32 +168,6 @@ fieldset > :not(.field-separator) {
 
 .section-card {
   width: var(--section-card-width);
-}
-
-.url-before-path-separator {
-  align-self: right;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  width: calc(14em - 2 * var(--field-padding));
-  padding: 0.25em var(--field-padding);
-  border-radius: 4px;
-
-  background-color: rgba(0, 0, 0, 0.04);
-}
-
-.form-radio-group {
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 1.34375em;
-}
-
-.form-radio-button {
-  padding: 0.5em 0;
-}
-
-.form-button-wrapper {
-  padding-bottom: 1.34375em;
 }
 
 .version-selector {
