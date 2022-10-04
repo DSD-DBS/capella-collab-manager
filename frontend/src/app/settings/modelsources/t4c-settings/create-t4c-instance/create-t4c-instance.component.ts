@@ -18,7 +18,6 @@ import {
   switchMap,
   tap,
   combineLatest,
-  connectable,
 } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
