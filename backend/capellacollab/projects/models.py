@@ -11,8 +11,8 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
 # Import required for sqlalchemy
-import capellamodels.models
-import users.models
+import capellacollab.projects.capellamodels.models
+import capellacollab.projects.users.models
 from capellacollab.core.database import Base
 
 
