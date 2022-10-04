@@ -8,7 +8,7 @@
     <button
       mat-raised-button
       disabled
-      (click)="optionClick.emit('source-fetch')"
+      (click)="modelInitSelection.emit('source-fetch')"
     >
       <div class="button-content-wrapper">
         <p class="option-title">Use the model of the source</p>
@@ -19,7 +19,7 @@
       </div>
     </button>
     <div class="field-separator"></div>
-    <button mat-raised-button (click)="optionClick.emit('create-empty')">
+    <button mat-raised-button (click)="modelInitSelection.emit('create-empty')">
       <div class="button-content-wrapper">
         <p class="option-title">Create empty model</p>
         <app-mat-icon size="70px">create_new_folder</app-mat-icon>
@@ -29,7 +29,7 @@
     <button
       mat-raised-button
       disabled
-      (click)="optionClick.emit('upload-offline')"
+      (click)="modelInitSelection.emit('upload-offline')"
     >
       <div class="button-content-wrapper flex-center">
         <p class="option-title">Upload offline model</p>

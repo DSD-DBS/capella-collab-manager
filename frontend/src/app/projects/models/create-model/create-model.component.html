@@ -4,18 +4,21 @@
  -->
 
 <div class="wrapper">
-  <mat-horizontal-stepper linear #stepper>
+  <mat-horizontal-stepper
+    (selectionChange)="onStepChange($event)"
+    linear
+    #stepper
+  >
     <mat-step completed="false" label="Create model">
       <app-create-model-base
         [asStepper]="asStepper"
         (create)="afterModelCreated($event)"
-        (finish)="complete.emit(false)"
       ></app-create-model-base>
     </mat-step>
 
     <mat-step completed="false" label="Choose primary source">
       <app-choose-source
-        (optionClick)="onSourceClick($event)"
+        (modelSourceSelection)="onSourceClick($event)"
       ></app-choose-source>
     </mat-step>
 
@@ -26,7 +29,9 @@
     </mat-step>
 
     <mat-step label="Choose initialization">
-      <app-choose-init (optionClick)="onInitClick($event)"></app-choose-init>
+      <app-choose-init
+        (modelInitSelection)="onInitClick($event)"
+      ></app-choose-init>
     </mat-step>
 
     <mat-step label="Metadata">

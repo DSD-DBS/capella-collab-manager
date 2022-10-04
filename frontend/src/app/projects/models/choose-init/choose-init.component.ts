@@ -13,7 +13,7 @@ import { ModelService } from 'src/app/services/model/model.service';
   styleUrls: ['./choose-init.component.css'],
 })
 export class ChooseInitComponent implements OnInit {
-  @Output() optionClick = new EventEmitter<string>();
+  @Output() modelInitSelection = new EventEmitter<string>();
 
   constructor(
     public projectService: ProjectService,

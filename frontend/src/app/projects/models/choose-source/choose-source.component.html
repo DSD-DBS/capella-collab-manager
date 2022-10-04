@@ -6,7 +6,7 @@
 <div *ngIf="projectService.project && modelService.model">
   <h2 class="title text-center">Git sources</h2>
   <div class="options-list flex-center">
-    <button mat-raised-button (click)="optionClick.emit('git-add')">
+    <button mat-raised-button (click)="modelSourceSelection.emit('git-add')">
       <div class="button-content-wrapper">
         <p class="option-title">Use existing repository</p>
         <img
@@ -16,7 +16,11 @@
       </div>
     </button>
     <div class="field-separator"></div>
-    <button mat-raised-button disabled (click)="optionClick.emit('git-create')">
+    <button
+      mat-raised-button
+      disabled
+      (click)="modelSourceSelection.emit('git-create')"
+    >
       <div class="button-content-wrapper">
         <p class="option-title">Create repository</p>
         <img

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import {
   Component,
   EventEmitter,
@@ -25,10 +26,11 @@ import { ProjectService } from 'src/app/services/project/project.service';
 export class CreateModelComponent implements OnInit, OnDestroy {
   @ViewChild('stepper') stepper!: MatStepper;
   @Input() asStepper?: boolean;
-  @Output() complete = new EventEmitter<boolean>();
+  @Input() redirectAfterCompletion: boolean = true;
+  @Output() currentStep = new EventEmitter<CreateModelStep>();
 
   source?: string;
-  choosen_init?: string;
+  chosenModelInitOption?: string;
   detail?: boolean;
 
   constructor(
@@ -43,6 +45,17 @@ export class CreateModelComponent implements OnInit, OnDestroy {
     if (!this.detail) {
       this.modelService._model.next(undefined);
     }
+  }
+
+  onStepChange(event: StepperSelectionEvent) {
+    const steps: CreateModelStep[] = [
+      'create-model',
+      'choose-source',
+      'add-source',
+      'choose-init',
+      'metadata',
+    ];
+    this.currentStep.emit(steps.at(event.selectedIndex));
   }
 
   afterModelCreated(model: Model): void {
@@ -70,15 +83,14 @@ export class CreateModelComponent implements OnInit, OnDestroy {
 
   onInitClick(value: string): void {
     this.stepper.steps.get(3)!.completed = true;
-    this.choosen_init = value;
+    this.chosenModelInitOption = value;
     this.stepper.next();
   }
 
-  afterModelInitialized(options: { created: boolean; again?: boolean }): void {
+  afterModelInitialized(options: { created: boolean }): void {
     if (options.created) {
-      if (this.asStepper) {
-        this.complete.emit(options.again);
-      } else {
+      this.currentStep.emit('complete');
+      if (this.redirectAfterCompletion) {
         this.detail = true;
         this.router.navigate([
           '/project',
@@ -92,3 +104,11 @@ export class CreateModelComponent implements OnInit, OnDestroy {
     }
   }
 }
+
+export type CreateModelStep =
+  | 'create-model'
+  | 'choose-source'
+  | 'add-source'
+  | 'choose-init'
+  | 'metadata'
+  | 'complete';
