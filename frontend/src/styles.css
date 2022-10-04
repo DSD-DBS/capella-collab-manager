@@ -14,6 +14,10 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+a {
+  text-decoration: none !important;
+}
+
 /* All global variables are defined here */
 :root {
   --primary-color: #3f51b5;
@@ -41,10 +45,6 @@ body {
 
 .mat-icon {
   height: 400px;
-}
-
-a {
-  text-decoration: none !important;
 }
 
 .expansion-panel > .mat-content {
