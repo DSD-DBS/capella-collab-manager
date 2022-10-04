@@ -30,7 +30,7 @@ def verify_admin(token=Depends(JWTBearer()), db=Depends(get_db)):
         )
 
 
-def is_admin(token=Depends(JWTBearer()), db=Depends(get_db)) -> bool:
+def is_admin(token, db) -> bool:
     return get_user(db=db, username=get_username(token)).role == Role.ADMIN
 
 

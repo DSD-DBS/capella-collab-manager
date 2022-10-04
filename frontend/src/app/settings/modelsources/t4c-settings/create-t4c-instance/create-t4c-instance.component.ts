@@ -11,11 +11,19 @@ import {
   T4CInstance,
   T4CInstanceService,
 } from '../../../../services/settings/t4c-model.service';
-import { BehaviorSubject, filter, map, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  filter,
+  map,
+  switchMap,
+  tap,
+  combineLatest,
+  connectable,
+} from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastService } from '../../../../toast/toast.service';
-import { NavBarService } from '../../../../navbar/service/nav-bar.service';
-import { ToolService } from '../../../../services/tools/tool.service';
+import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { ToolService, Version } from 'src/app/services/tools/tool2.service';
 
 type State = 'existing' | 'editing';
 
@@ -30,6 +38,7 @@ export class CreateT4cInstanceComponent implements OnInit {
   get instance() {
     return this._instance.value;
   }
+  _capella_versions = new BehaviorSubject<Version[]>([]);
 
   public form = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -64,7 +73,7 @@ export class CreateT4cInstanceComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.navBarService.title = '/ Settings / Modelsources / T4C / Create';
+    this.navBarService.title = 'Settings / Modelsources / T4C / Create';
 
     this.route.params
       .pipe(
@@ -74,19 +83,38 @@ export class CreateT4cInstanceComponent implements OnInit {
           this.existing = 'existing';
           this.form.disable();
         }),
-        switchMap((instance) => this.t4CInstanceService.getInstance(instance))
+        switchMap((instance) => this.t4CInstanceService.getInstance(instance)),
+        tap(console.log)
       )
-      .subscribe((instance) => {
-        this._instance.next(instance);
+      .subscribe(this._instance);
+
+    this.toolService
+      .get_versions()
+      .pipe(
+        tap(console.log),
+        filter(Boolean),
+        map((versions) =>
+          versions.filter((version: Version) => version.tool_id === 1)
+        )
+      )
+      .subscribe(this._capella_versions);
+
+    combineLatest([
+      this._instance.pipe(
+        filter(Boolean),
+        tap((instance) => {
+          this.navBarService.title = `Settings / Modelsources / T4C / ${instance.name}`;
+          this.existing = 'existing';
+        })
+      ),
+      this._capella_versions,
+    ])
+      .pipe(tap(console.log))
+      .subscribe((instance: [T4CInstance, Version[]]) => {
+        this.form.patchValue(instance[0]);
       });
 
-    this._instance
-      .pipe(tap(console.log), filter(Boolean))
-      .subscribe((instance) => {
-        this.navBarService.title = `Settings / Modelsources / T4C / ${instance.name}`;
-        this.existing = 'existing';
-        this.form.patchValue(instance);
-      });
+    this.toolService.get_versions().subscribe(this.toolService._versions);
   }
 
   enableEditing(): void {

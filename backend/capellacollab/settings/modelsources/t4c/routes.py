@@ -67,6 +67,7 @@ def create_t4c_instance(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
+    print(type(token))
     if is_admin(token, db):
         try:
             version = tools_crud.get_version_by_id(body.version_id, db)
@@ -111,7 +112,7 @@ def edit_t4c_instance(
 ):
     if is_admin(token, db):
         try:
-            instance = get_t4c_instance(id_)
+            instance = crud.get_t4c_instance(id_, db)
         except NoResultFound:
             raise HTTPException(
                 status_code=404,

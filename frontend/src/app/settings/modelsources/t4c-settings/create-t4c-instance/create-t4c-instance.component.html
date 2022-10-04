@@ -21,9 +21,11 @@
         <mat-form-field appearance="fill">
           <mat-label>Capella version</mat-label>
           <mat-select formControlName="version_id">
-            <mat-option [value]="0">6.0</mat-option>
-            <mat-option [value]="1">5.2</mat-option>
-            <mat-option [value]="2">5.0</mat-option>
+            <mat-option
+              *ngFor="let version of _capella_versions.value"
+              [value]="version.id"
+              >{{ version.name }}</mat-option
+            >
           </mat-select>
         </mat-form-field>
       </fieldset>
@@ -101,6 +103,4 @@
       </div>
     </form>
   </mat-card>
-
-  <app-t4c-instance-settings *ngIf="existing"></app-t4c-instance-settings>
 </div>
