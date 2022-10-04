@@ -49,15 +49,15 @@ import { TermsConditionsComponent } from './general/footer/terms-conditions/term
 import { HeaderComponent } from './general/navbar/header.component';
 import { NoticeComponent } from './general/notice/notice.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
-import { CreateEASEBackupComponent } from './projects/project-detail/backup-settings/ease-backup-settings/create-ease-backup/create-ease-backup.component';
-import { GitBackupSettingsComponent } from './projects/project-detail/backup-settings/ease-backup-settings/ease-backup-settings.component';
-import { ViewLogsDialogComponent } from './projects/project-detail/backup-settings/ease-backup-settings/view-logs-dialog/view-logs-dialog.component';
+import { CreateEASEBackupComponent } from './projects/models/backup-settings/create-ease-backup/create-ease-backup.component';
+import { GitBackupSettingsComponent } from './projects/models/backup-settings/ease-backup-settings.component';
+import { ViewLogsDialogComponent } from './projects/models/backup-settings/view-logs-dialog/view-logs-dialog.component';
 import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
 import { ModelOverviewComponent } from './projects/project-detail/model-overview/model-overview.component';
-import { GitModelDeletionDialogComponent } from './projects/project-detail/model-source/git-model-settings/git-model-deletion-dialog/git-model-deletion-dialog.component';
-import { GitModelSettingsComponent } from './projects/project-detail/model-source/git-model-settings/git-model-settings.component';
-import { SetT4CPasswordComponent } from './projects/project-detail/model-source/t4c-repo-settings/set-t4c-password/set-t4c-password.component';
-import { T4CRepoSettingsComponent } from './projects/project-detail/model-source/t4c-repo-settings/t4c-repo-settings.component';
+import { GitModelDeletionDialogComponent } from './projects/models/model-source/git-model-settings/git-model-deletion-dialog/git-model-deletion-dialog.component';
+import { GitModelSettingsComponent } from './projects/models/model-source/git-model-settings/git-model-settings.component';
+import { SetT4CPasswordComponent } from './projects/models/model-source/t4c-repo-settings/set-t4c-password/set-t4c-password.component';
+import { T4CRepoSettingsComponent } from './projects/models/model-source/t4c-repo-settings/t4c-repo-settings.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { ProjectMetadataComponent } from './projects/project-detail/project-metadata/project-metadata.component';
 import { ProjectUserSettingsComponent } from './projects/project-detail/project-users/project-user-settings.component';
@@ -87,12 +87,11 @@ import { WorkspaceComponent } from './workspace/workspace.component';
 import { HomeComponent } from './workspaces/home.component';
 import { NoRepositoryComponent } from './workspaces/no-repository/no-repository.component';
 import { RequestSessionComponent } from './workspaces/request-session/request-session.component';
-import { WarningComponent } from './workspaces/request-session/warning/warning.component';
 import { CreateModelBaseComponent } from './projects/models/create-model-base/create-model-base.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { CreateCoworkingMethodComponent } from './projects/models/create-coworking-method/create-coworking-method.component';
-import { ChooseSourceComponent } from './projects/models/choose-source/choose-source.component';
+import { ChooseSourceComponent } from './projects/models/model-source/choose-source.component';
 import { InitModelComponent } from './projects/models/init-model/init-model.component';
 import { ChooseInitComponent } from './projects/models/choose-init/choose-init.component';
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
@@ -132,7 +131,6 @@ import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
     ProjectUserSettingsComponent,
     T4CRepoDeletionDialogComponent,
     GitModelDeletionDialogComponent,
-    WarningComponent,
     WorkspaceComponent,
     FooterComponent,
     TermsConditionsComponent,

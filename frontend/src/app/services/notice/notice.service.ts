@@ -53,7 +53,6 @@ export interface CreateNotice {
   level: NoticeLevel;
   title: string;
   message: string;
-  scope: string;
 }
 
 export type NoticeLevel =

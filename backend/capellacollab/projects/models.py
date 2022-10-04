@@ -14,11 +14,6 @@ from sqlalchemy.orm import relationship
 from capellacollab.core.database import Base
 
 
-class Warning(enum.Enum):
-    LICENCE_LIMIT = "LICENCE_LIMIT"
-    NO_GIT_MODEL_DEFINED = "NO_GIT_MODEL_DEFINED"
-
-
 class UserMetadata(BaseModel):
     leads: int
     contributors: int

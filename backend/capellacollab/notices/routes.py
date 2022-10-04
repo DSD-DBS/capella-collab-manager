@@ -7,13 +7,14 @@ import typing as t
 from fastapi import APIRouter, Depends
 from requests import Session
 
+import capellacollab.notices.crud as notices
 from capellacollab.core.authentication.database import verify_admin
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
-from capellacollab.core.database import get_db, notices
-from capellacollab.schemas.notices import CreateNoticeRequest, NoticeResponse
+from capellacollab.core.database import get_db
+from capellacollab.notices.models import CreateNoticeRequest, NoticeResponse
 
 router = APIRouter()
 

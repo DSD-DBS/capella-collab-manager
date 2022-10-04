@@ -29,7 +29,6 @@ export class AlertSettingsComponent implements OnInit {
     {
       title: new FormControl(''),
       message: new FormControl(''),
-      scope: new FormControl('', Validators.required),
       level: new FormControl('', Validators.required),
     },
     this.titleOrDescriptionRequired()

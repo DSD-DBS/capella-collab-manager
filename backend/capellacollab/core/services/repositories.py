@@ -26,15 +26,3 @@ def get_permission(
     if repo_permission == RepositoryUserPermission.WRITE:
         allowed_permissions.append(RepositoryUserPermission.WRITE)
     return allowed_permissions
-
-
-def get_warnings(
-    repository_name: str, db: Session
-) -> t.List[repository_schema.Warning]:
-    warnings: t.List[repository_schema.Warning] = []
-    # if t4c_ext.get_t4c_status()["free"] == 0:
-    warnings.append(repository_schema.Warning.LICENCE_LIMIT)
-
-    if not git_model_crud.get_primary_model_of_repository(db, repository_name):
-        warnings.append(repository_schema.Warning.NO_GIT_MODEL_DEFINED)
-    return warnings
