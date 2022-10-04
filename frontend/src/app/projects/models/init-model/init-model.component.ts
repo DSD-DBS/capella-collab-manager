@@ -60,7 +60,7 @@ export class InitModelComponent implements OnInit {
         )
         .subscribe((_) => {
           this.create.emit({ created: true });
-          this.buttonDisabled;
+          this.buttonDisabled = true;
         });
     }
   }
