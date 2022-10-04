@@ -13,8 +13,8 @@ from sqlalchemy.orm import relationship
 import capellacollab.projects.capellamodels.models
 
 # Import required for sqlalchemy
-import capellamodels.models
-import users.models
+import capellacollab.projects.capellamodels.models
+import capellacollab.projects.users.models
 from capellacollab.core.database import Base
 
 

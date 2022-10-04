@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
 # Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
@@ -14,7 +17,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = "bfd23f119dd4"
-down_revision = "7a3d5e6862a2"
+down_revision = "d64fc5a97252"
 branch_labels = None
 depends_on = None
 
