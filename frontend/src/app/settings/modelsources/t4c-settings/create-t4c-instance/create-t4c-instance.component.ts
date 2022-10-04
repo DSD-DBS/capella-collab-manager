@@ -102,7 +102,6 @@ export class CreateT4cInstanceComponent implements OnInit {
         filter(Boolean),
         tap((instance) => {
           this.navBarService.title = `Settings / Modelsources / T4C / ${instance.name}`;
-          this.existing = 'existing';
         })
       ),
       this._capella_versions,
