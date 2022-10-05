@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-"""empty message
+"""Merge branches add-model-handling and feature/project-view
 
 Revision ID: d64fc5a97252
 Revises: a68abefa8722, d888f5c30aab
