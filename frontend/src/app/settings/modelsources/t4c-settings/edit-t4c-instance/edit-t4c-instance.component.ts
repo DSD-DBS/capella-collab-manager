@@ -38,7 +38,11 @@ export class EditT4CInstanceComponent implements OnInit {
   get instance() {
     return this._instance.value;
   }
+
   _capella_versions = new BehaviorSubject<Version[]>([]);
+  get capella_versions() {
+    return this._capella_versions.value;
+  }
 
   public form = new FormGroup({
     name: new FormControl('', Validators.required),

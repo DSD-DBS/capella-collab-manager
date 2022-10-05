@@ -21,7 +21,7 @@
           <mat-label>Capella version</mat-label>
           <mat-select formControlName="version_id">
             <mat-option
-              *ngFor="let version of _capella_versions.value"
+              *ngFor="let version of capella_versions"
               [value]="version.id"
               >{{ version.name }}</mat-option
             >
