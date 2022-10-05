@@ -116,7 +116,7 @@
         </button>
         <button mat-flat-button type="submit" color="primary">Submit</button>
       </div>
-      <div *ngIf="!editing">
+      <div *ngIf="!editing && existing">
         <button mat-flat-button (click)="enableEditing()">Edit</button>
       </div>
       <div *ngIf="!existing" id="submit-button-wrapper">
