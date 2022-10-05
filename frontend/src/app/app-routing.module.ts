@@ -31,8 +31,7 @@ import { HomeComponent } from './workspaces/home.component';
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
-import { T4cSettingsWrapperComponent } from './settings/modelsources/t4c-settings/t4c-settings-wrapper/t4c-settings-wrapper.component';
-import { CreateT4cInstanceComponent } from './settings/modelsources/t4c-settings/create-t4c-instance/create-t4c-instance.component';
+import { CreateT4CInstanceComponent } from './settings/modelsources/t4c-settings/create-t4c-instance/create-t4c-instance.component';
 
 const routes: Routes = [
   {
@@ -151,11 +150,11 @@ const routes: Routes = [
                   },
                   {
                     path: 'create',
-                    component: CreateT4cInstanceComponent,
+                    component: CreateT4CInstanceComponent,
                   },
                   {
                     path: 'instance/:instance',
-                    component: CreateT4cInstanceComponent,
+                    component: CreateT4CInstanceComponent,
                   },
                 ],
               },

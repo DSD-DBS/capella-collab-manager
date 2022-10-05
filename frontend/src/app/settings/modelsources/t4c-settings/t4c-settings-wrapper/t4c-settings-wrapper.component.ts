@@ -10,4 +10,4 @@ import { Component } from '@angular/core';
   templateUrl: './t4c-settings-wrapper.component.html',
   styleUrls: ['./t4c-settings-wrapper.component.css'],
 })
-export class T4cSettingsWrapperComponent {}
+export class T4CSettingsWrapperComponent {}
