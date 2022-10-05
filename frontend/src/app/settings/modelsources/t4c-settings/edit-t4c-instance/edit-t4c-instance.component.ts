@@ -121,6 +121,7 @@ export class EditT4CInstanceComponent implements OnInit {
         })
       )
       .subscribe((instance: T4CInstance) => {
+        instance.password = '***********';
         this.form.patchValue(instance);
       });
 
@@ -132,6 +133,10 @@ export class EditT4CInstanceComponent implements OnInit {
     this.form.enable();
     this.form.controls.name.disable();
     this.form.controls.version_id.disable();
+
+    this.form.controls.password.patchValue('');
+    this.form.controls.password.removeValidators(Validators.required);
+    this.form.controls.password.updateValueAndValidity();
   }
 
   cancelEditing(): void {
