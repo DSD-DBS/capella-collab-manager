@@ -101,5 +101,5 @@ def edit_t4c_instance(
     for key in body.dict():
         value = body.__getattribute__(key)
         if value:
-            instance.__setattr__(key, body.__getattribute__(key))
+            instance.__setattr__(key, value)
     return T4CInstance.from_orm(crud.update_t4c_instance(instance, db))
