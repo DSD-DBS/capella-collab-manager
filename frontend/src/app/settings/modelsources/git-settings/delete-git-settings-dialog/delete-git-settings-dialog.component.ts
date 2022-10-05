@@ -15,6 +15,6 @@ import { GitSettings } from 'src/app/services/settings/git-settings.service';
 export class DeleteGitSettingsDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public instance: GitSettings
+    @Inject(MAT_DIALOG_DATA) public instance: GitSetting
   ) {}
 }

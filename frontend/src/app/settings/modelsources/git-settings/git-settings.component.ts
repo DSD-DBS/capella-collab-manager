@@ -14,7 +14,7 @@ import {
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
-  GitSettings,
+  GitSetting,
   GitSettingsService,
   GitType,
 } from 'src/app/services/settings/git-settings.service';
@@ -79,7 +79,7 @@ export class GitSettingsComponent implements OnInit {
   }
 
   deleteGitSettings(id: number): void {
-    const toDeleteGitSetting: GitSettings = this.cmpGitSettings.find(
+    const toDeleteGitSetting: GitSetting = this.cmpGitSettings.find(
       (gitSetting) => gitSetting.id == id
     )!;
     this.dialog

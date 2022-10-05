@@ -8,7 +8,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
-  GitSettings,
+  GitSetting,
   GitSettingsService,
 } from 'src/app/services/settings/git-settings.service';
 
@@ -35,7 +35,7 @@ export class EditGitSettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.gitSettingsService.gitSetting.subscribe({
-      next: (instance: GitSettings) => {
+      next: (instance: GitSetting) => {
         this.gitSettingsForm.controls['type'].setValue(instance.type as string);
         this.gitSettingsForm.controls['name'].setValue(instance.name);
         this.gitSettingsForm.controls['url'].setValue(instance.url);
