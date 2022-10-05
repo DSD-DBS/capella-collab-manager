@@ -5,11 +5,10 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 export interface Credentials {
-  url: string;
   username: string;
   password: string;
 }
@@ -23,28 +22,28 @@ export interface Instance {
   providedIn: 'root',
 })
 export class GitService {
-  base_url = environment.backend_url + '/git-utils/';
+  BACKEND_URL_PREFIX = environment.backend_url + '/projects/';
+  base_url = new URL('projects/', environment.backend_url + '/');
+
+  private _instance = new BehaviorSubject<Instance | undefined>(undefined);
+
+  readonly instance = this._instance.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  instance: Instance | null = null;
-
-  fetch(model_slug: string, credentials: Credentials): Observable<Instance> {
-    return new Observable<Instance>((subscriber) => {
-      this.http
-        .get<Instance>(this.base_url + 'revisions/', {
-          params: {
-            model_slug,
-            url: credentials.url,
-            username: credentials.username,
-            password: credentials.password,
-          },
-        })
-        .subscribe((value) => {
-          this.instance = value;
-          subscriber.next(value);
-          subscriber.complete();
-        });
-    });
+  loadInstance(
+    projectName: string,
+    gitUrl: string,
+    credentials: Credentials
+  ): void {
+    this.http
+      .post<Instance>(
+        this.base_url.toString() +
+          projectName +
+          '/extensions/modelsources/git/revisions',
+        credentials,
+        { params: { url: gitUrl } }
+      )
+      .subscribe((instance) => this._instance.next(instance));
   }
 }
