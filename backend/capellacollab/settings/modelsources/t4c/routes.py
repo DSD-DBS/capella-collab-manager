@@ -26,7 +26,6 @@ router = APIRouter()
 
 @router.get(
     "/",
-    tags=["T4C-Instances"],
     responses=AUTHENTICATION_RESPONSES,
     response_model=list[T4CSettings],
 )
@@ -50,7 +49,6 @@ def list_git_settings(
 
 @router.get(
     "/{id_}",
-    tags=["T4C-Instances"],
     responses=AUTHENTICATION_RESPONSES,
     response_model=T4CSettings,
 )
@@ -71,7 +69,6 @@ def get_t4c_instance(
 
 @router.post(
     "/",
-    tags=["T4C-Instances"],
     responses=AUTHENTICATION_RESPONSES,
     response_model=T4CSettings,
 )
@@ -106,7 +103,6 @@ def create_t4c_instance(
 
 @router.patch(
     "/{id_}",
-    tags=["T4C-Instances"],
     responses=AUTHENTICATION_RESPONSES,
     response_model=T4CSettings,
 )
