@@ -21,7 +21,7 @@ import {
 import { ModelService } from 'src/app/services/model/model.service';
 import { Source, SourceService } from 'src/app/services/source/source.service';
 import {
-  GitSettings,
+  GitSetting,
   GitSettingsService,
 } from 'src/app/services/settings/git-settings.service';
 import {
@@ -37,9 +37,9 @@ import {
 export class CreateCoworkingMethodComponent implements OnInit {
   @Output() create = new EventEmitter<{ created: boolean }>();
 
-  public cmpGitSettings: Array<GitSettings> = [];
+  public cmpGitSettings: Array<GitSetting> = [];
   public filteredRevisions: Instance = { branches: [], tags: [] };
-  public selectedGitSetting: GitSettings | undefined = undefined;
+  public selectedGitSetting: GitSetting | undefined = undefined;
 
   public resultUrl: string = '';
 
@@ -50,7 +50,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
 
   public form = new FormGroup({
     urlGroup: new FormGroup({
-      baseUrl: new FormControl<GitSettings | undefined>(undefined),
+      baseUrl: new FormControl<GitSetting | undefined>(undefined),
       inputUrl: new FormControl('', absoluteOrRelativeUrlPrefixValidator()),
     }),
     credentials: new FormGroup({
@@ -105,7 +105,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
     }
   }
 
-  onSelect(value: GitSettings): void {
+  onSelect(value: GitSetting): void {
     let inputUrlFormControl = this.form.controls.urlGroup.controls.inputUrl;
     let inputUrl = inputUrlFormControl.value;
 
@@ -195,7 +195,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
 
   private findLongestUrlMatchingGitSetting(
     url: string
-  ): GitSettings | undefined {
+  ): GitSetting | undefined {
     let longestMatchingGitSetting = undefined;
     let longestUrlLength = 0;
     this.cmpGitSettings.forEach((gitSetting) => {

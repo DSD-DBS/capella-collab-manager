@@ -19,8 +19,8 @@ export class GitSettingsService {
     environment.backend_url + '/'
   );
 
-  private _gitSettings = new BehaviorSubject<GitSettings[]>([]);
-  private _gitSetting = new Subject<GitSettings>();
+  private _gitSettings = new BehaviorSubject<GitSetting[]>([]);
+  private _gitSetting = new Subject<GitSetting>();
 
   readonly gitSettings = this._gitSettings.asObservable();
   readonly gitSetting = this._gitSetting.asObservable();
@@ -28,13 +28,13 @@ export class GitSettingsService {
   constructor(private http: HttpClient) {}
 
   loadGitSettings(): void {
-    this.http.get<GitSettings[]>(this.BACKEND_URL_PREFIX).subscribe({
+    this.http.get<GitSetting[]>(this.BACKEND_URL_PREFIX).subscribe({
       next: (gitSettings) => this._gitSettings.next(gitSettings),
     });
   }
 
   loadGitSettingById(id: number): void {
-    this.http.get<GitSettings>(this.BACKEND_URL_PREFIX + id).subscribe({
+    this.http.get<GitSetting>(this.BACKEND_URL_PREFIX + id).subscribe({
       next: (gitSetting) => this._gitSetting.next(gitSetting),
     });
   }
@@ -43,9 +43,9 @@ export class GitSettingsService {
     name: string;
     url: string;
     type: GitType;
-  }): Observable<GitSettings> {
+  }): Observable<GitSetting> {
     return this.http
-      .post<GitSettings>(this.BACKEND_URL_PREFIX, gitSetting)
+      .post<GitSetting>(this.BACKEND_URL_PREFIX, gitSetting)
       .pipe(tap(() => this.loadGitSettings()));
   }
 
@@ -54,9 +54,9 @@ export class GitSettingsService {
     name: string,
     url: string,
     type: GitType
-  ): Observable<GitSettings> {
+  ): Observable<GitSetting> {
     return this.http
-      .put<GitSettings>(this.BACKEND_URL_PREFIX + id, {
+      .put<GitSetting>(this.BACKEND_URL_PREFIX + id, {
         type: type,
         name: name,
         url: url,
@@ -92,7 +92,7 @@ export class GitSettingsService {
   }
 }
 
-export interface GitSettings {
+export interface GitSetting {
   id: number;
   name: string;
   url: string;
