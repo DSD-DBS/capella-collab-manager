@@ -48,12 +48,7 @@
         <div class="field-separator"></div>
         <mat-form-field appearance="fill">
           <mat-label>Port</mat-label>
-          <input
-            matInput
-            inputmode="numeric"
-            type="number"
-            formControlName="port"
-          />
+          <input matInput inputmode="numeric" formControlName="port" />
           <mat-error
             *ngIf="
               form.controls.port.errors?.min || form.controls.port.errors?.max
