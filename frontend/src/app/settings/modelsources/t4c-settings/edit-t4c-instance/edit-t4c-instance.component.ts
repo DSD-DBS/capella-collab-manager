@@ -113,17 +113,16 @@ export class EditT4CInstanceComponent implements OnInit {
       )
       .subscribe(this._capella_versions);
 
-    combineLatest([
-      this._instance.pipe(
+    this._instance
+      .pipe(
         filter(Boolean),
         tap((instance) => {
           this.navBarService.title = `Settings / Modelsources / T4C / ${instance.name}`;
         })
-      ),
-      this._capella_versions,
-    ]).subscribe((instance: [T4CInstance, Version[]]) => {
-      this.form.patchValue(instance[0]);
-    });
+      )
+      .subscribe((instance: T4CInstance) => {
+        this.form.patchValue(instance);
+      });
 
     this.toolService.get_versions().subscribe(this.toolService._versions);
   }
