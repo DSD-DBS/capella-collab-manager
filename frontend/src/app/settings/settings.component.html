@@ -19,10 +19,10 @@
   </mat-card>
 </div>
 
-<div class="title">Modelsources</div>
+<div class="title">Model sources</div>
 <div class="options-list">
   <mat-card matRipple [routerLink]="['/settings/modelsources/git']">
-    <div class="subtitle">Git models</div>
+    <div class="subtitle">Git</div>
     <img
       id="git"
       src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"
@@ -36,20 +36,11 @@
 
 <div class="title">Integrations</div>
 <div class="options-list">
-  <mat-card class="disabled">
-    <div class="subtitle">Jenkins backups</div>
-    <app-mat-icon size="50px">backup</app-mat-icon>
-  </mat-card>
   <mat-card
     matRipple
     [routerLink]="['/settings/integrations/backups/importer']"
   >
     <div class="subtitle">T4C importer backups</div>
     <app-mat-icon size="50px">backup</app-mat-icon>
-  </mat-card>
-
-  <mat-card class="disabled">
-    <div class="subtitle">Garbage cleaner</div>
-    <app-mat-icon size="50px">delete_forever</app-mat-icon>
   </mat-card>
 </div>

@@ -81,7 +81,6 @@ import { GitSettingsComponent } from './settings/modelsources/git-settings/git-s
 import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-instance-settings.component';
 import { T4CRepoDeletionDialogComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-repo-deletion-dialog/t4c-repo-deletion-dialog.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
-import { RequestsComponent } from './settings/requests/requests.component';
 import { SettingsComponent } from './settings/settings.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { HomeComponent } from './workspaces/home.component';
@@ -153,7 +152,6 @@ import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
     T4CImporterSettingsComponent,
     ModelDetailComponent,
     ProjectMetadataComponent,
-    RequestsComponent,
     ViewLogsDialogComponent,
     CreateEASEBackupComponent,
     DeleteGitSettingsDialogComponent,
