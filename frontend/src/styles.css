@@ -91,11 +91,31 @@ h1 {
   margin: 10px;
 }
 
+/* Flexbox rules */
+
 .flexbox {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   flex-wrap: wrap;
+}
+
+.flex-center,
+.flexbox.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.flex-space-between button:only-child {
+  margin-left: auto;
+  flex-direction: row-reverse !important;
 }
 
 button {
@@ -143,23 +163,6 @@ fieldset > :not(.field-separator) {
 
 .text-center {
   text-align: center;
-}
-
-.flex-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.flex-space-between {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-}
-
-.flex-space-between button:only-child {
-  margin-left: auto;
-  flex-direction: row-reverse !important;
 }
 
 .mat-card-default {
