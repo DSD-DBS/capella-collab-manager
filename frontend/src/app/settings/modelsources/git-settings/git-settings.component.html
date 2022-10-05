@@ -66,6 +66,20 @@
       <mat-error *ngIf="form.controls.url.errors?.required"
         >A base URL is required</mat-error
       >
+      <mat-error
+        *ngIf="
+          form.controls.url.errors?.urlSafetyError && form.controls.url.value
+        "
+      >
+        {{ form.controls.url.errors?.urlSafetyError }}
+      </mat-error>
+      <mat-error
+        *ngIf="
+          form.controls.url.errors?.urlPrefixError && form.controls.url.value
+        "
+      >
+        {{ form.controls.url.errors?.urlPrefixError }}
+      </mat-error>
     </mat-form-field>
   </form>
   <button
