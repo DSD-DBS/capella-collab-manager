@@ -24,15 +24,15 @@ import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ToolService, Version } from 'src/app/services/tools/tool2.service';
 
-type State = 'existing' | 'editing';
-
 @Component({
   selector: 'app-create-t4c-instance',
   templateUrl: './create-t4c-instance.component.html',
   styleUrls: ['./create-t4c-instance.component.css'],
 })
 export class CreateT4CInstanceComponent implements OnInit {
-  existing?: State;
+  editing: boolean = false;
+  existing: boolean = false;
+
   _instance = new BehaviorSubject<T4CInstance | undefined>(undefined);
   get instance() {
     return this._instance.value;
@@ -78,10 +78,10 @@ export class CreateT4CInstanceComponent implements OnInit {
         map((params) => params.instance),
         filter((instance) => instance !== undefined),
         tap(() => {
-          this.existing = 'existing';
+          this.existing = true;
           this.form.disable();
         }),
-        switchMap((instance) => this.t4CInstanceService.getInstance(instance))
+        switchMap((instance) => this.t4cInstanceService.getInstance(instance))
       )
       .subscribe(this._instance);
 
@@ -111,14 +111,14 @@ export class CreateT4CInstanceComponent implements OnInit {
   }
 
   enableEditing(): void {
-    this.existing = 'editing';
+    this.editing = true;
     this.form.enable();
     this.form.controls.name.disable();
     this.form.controls.version_id.disable();
   }
 
   cancelEditing(): void {
-    this.existing = 'existing';
+    this.editing = false;
     this.form.disable();
     this.form.patchValue(this.instance as NewT4CInstance);
   }
@@ -139,10 +139,10 @@ export class CreateT4CInstanceComponent implements OnInit {
 
   update(): void {
     if (this.form.valid) {
-      this.t4CInstanceService
+      this.t4cInstanceService
         .updateInstance(this.instance!.id, this.form.value as BaseT4CInstance)
         .subscribe((instance) => {
-          this.existing = 'existing';
+          this.editing = false;
           this.form.disable();
           this.toastService.showSuccess(
             'Instance updated',
@@ -153,11 +153,10 @@ export class CreateT4CInstanceComponent implements OnInit {
   }
 
   submit(): void {
-    if (!this.existing) {
-      this.create();
-    }
-    if (this.existing == 'editing') {
+    if (this.existing) {
       this.update();
+    } else {
+      this.create();
     }
   }
 }

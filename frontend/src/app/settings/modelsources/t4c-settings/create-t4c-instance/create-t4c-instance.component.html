@@ -11,11 +11,7 @@
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Name</mat-label>
-          <input
-            matInput
-            formControlName="name"
-            [disabled]="existing == 'existing'"
-          />
+          <input matInput formControlName="name" />
           <mat-error *ngIf="form.controls.name.errors?.required">
             The name is required.
           </mat-error>
@@ -114,13 +110,13 @@
           </mat-error>
         </mat-form-field>
       </fieldset>
-      <div *ngIf="existing == 'editing'" id="editing-button-wrapper">
+      <div *ngIf="editing" id="editing-button-wrapper">
         <button mat-flat-button color="warn" (click)="cancelEditing()">
           Cancel
         </button>
         <button mat-flat-button type="submit" color="primary">Submit</button>
       </div>
-      <div *ngIf="existing == 'existing'">
+      <div *ngIf="!editing">
         <button mat-flat-button (click)="enableEditing()">Edit</button>
       </div>
       <div *ngIf="!existing" id="submit-button-wrapper">
