@@ -5,7 +5,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, tap } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -20,46 +20,33 @@ export class GitSettingsService {
   );
 
   private _gitSettings = new BehaviorSubject<GitSettings[]>([]);
-  private dataStore: { gitSettings: GitSettings[] } = { gitSettings: [] };
+  private _gitSetting = new Subject<GitSettings>();
 
   readonly gitSettings = this._gitSettings.asObservable();
+  readonly gitSetting = this._gitSetting.asObservable();
 
   constructor(private http: HttpClient) {}
 
   loadGitSettings(): void {
     this.http.get<GitSettings[]>(this.BACKEND_URL_PREFIX).subscribe({
-      next: (gitSettings) => {
-        this.dataStore.gitSettings = gitSettings;
-        this._gitSettings.next(Object.assign({}, this.dataStore).gitSettings);
-      },
+      next: (gitSettings) => this._gitSettings.next(gitSettings),
     });
   }
 
-  getGitSetting(): Observable<GitSettings[]> {
-    return this.http.get<GitSettings[]>(this.BACKEND_URL_PREFIX);
+  loadGitSettingById(id: number): void {
+    this.http.get<GitSettings>(this.BACKEND_URL_PREFIX + id).subscribe({
+      next: (gitSetting) => this._gitSetting.next(gitSetting),
+    });
   }
 
-  getGitSettingById(id: number): Observable<GitSettings> {
-    return this.http.get<GitSettings>(this.BACKEND_URL_PREFIX + id);
-  }
-
-  createGitSettings(
-    name: string,
-    url: string,
-    type: GitType
-  ): Observable<GitSettings> {
+  createGitSettings(gitSetting: {
+    name: string;
+    url: string;
+    type: GitType;
+  }): Observable<GitSettings> {
     return this.http
-      .post<GitSettings>(this.BACKEND_URL_PREFIX, {
-        type: type,
-        name: name,
-        url: url,
-      })
-      .pipe(
-        tap((gitSetting) => {
-          this.storeGitSetting(gitSetting);
-          this.refreshGitSettings();
-        })
-      );
+      .post<GitSettings>(this.BACKEND_URL_PREFIX, gitSetting)
+      .pipe(tap(() => this.loadGitSettings()));
   }
 
   editGitSettings(
@@ -74,22 +61,13 @@ export class GitSettingsService {
         name: name,
         url: url,
       })
-      .pipe(
-        tap((gitSetting) => {
-          this.removeGitSettingById(id);
-          this.storeGitSetting(gitSetting);
-          this.refreshGitSettings();
-        })
-      );
+      .pipe(tap(() => this.loadGitSettings()));
   }
 
   deleteGitSettings(id: number) {
-    return this.http.delete(this.BACKEND_URL_PREFIX + id).pipe(
-      tap((_) => {
-        this.removeGitSettingById(id);
-        this.refreshGitSettings();
-      })
-    );
+    return this.http
+      .delete(this.BACKEND_URL_PREFIX + id)
+      .pipe(tap(() => this.loadGitSettings()));
   }
 
   getRevisions(
@@ -109,22 +87,6 @@ export class GitSettingsService {
           username,
           password,
         },
-      }
-    );
-  }
-
-  private refreshGitSettings() {
-    this._gitSettings.next(Object.assign({}, this.dataStore).gitSettings);
-  }
-
-  private storeGitSetting(gitSetting: GitSettings): void {
-    this.dataStore.gitSettings.push(gitSetting);
-  }
-
-  private removeGitSettingById(id: number) {
-    this.dataStore.gitSettings = this.dataStore.gitSettings.filter(
-      (gitSetting) => {
-        return gitSetting.id != id;
       }
     );
   }
