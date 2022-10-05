@@ -63,7 +63,7 @@ export class CreateT4CInstanceComponent implements OnInit {
 
   constructor(
     private navBarService: NavBarService,
-    private t4CInstanceService: T4CInstanceService,
+    private t4cInstanceService: T4CInstanceService,
     private route: ActivatedRoute,
     private router: Router,
     private toastService: ToastService,
@@ -125,7 +125,7 @@ export class CreateT4CInstanceComponent implements OnInit {
 
   create(): void {
     if (this.form.valid) {
-      this.t4CInstanceService
+      this.t4cInstanceService
         .createInstance(this.form.value as NewT4CInstance)
         .subscribe((instance) => {
           this.toastService.showSuccess(
