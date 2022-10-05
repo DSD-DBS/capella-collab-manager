@@ -24,7 +24,12 @@ from capellacollab.tools import crud as tools_crud
 router = APIRouter()
 
 
-@router.get("/", tags=["T4C-Instances"], responses=AUTHENTICATION_RESPONSES)
+@router.get(
+    "/",
+    tags=["T4C-Instances"],
+    responses=AUTHENTICATION_RESPONSES,
+    response_model=list[T4CSettings],
+)
 def list_git_settings(
     db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
@@ -44,7 +49,10 @@ def list_git_settings(
 
 
 @router.get(
-    "/{id_}", tags=["T4C-Instances"], responses=AUTHENTICATION_RESPONSES
+    "/{id_}",
+    tags=["T4C-Instances"],
+    responses=AUTHENTICATION_RESPONSES,
+    response_model=T4CSettings,
 )
 def get_t4c_instance(
     id_: int, db: Session = Depends(get_db), token=Depends(JWTBearer())
@@ -61,7 +69,12 @@ def get_t4c_instance(
     )
 
 
-@router.post("/", tags=["T4C-Instances"], responses=AUTHENTICATION_RESPONSES)
+@router.post(
+    "/",
+    tags=["T4C-Instances"],
+    responses=AUTHENTICATION_RESPONSES,
+    response_model=T4CSettings,
+)
 def create_t4c_instance(
     body: CreateT4CSettings,
     db: Session = Depends(get_db),
@@ -92,7 +105,10 @@ def create_t4c_instance(
 
 
 @router.patch(
-    "/{id_}", tags=["T4C-Instances"], responses=AUTHENTICATION_RESPONSES
+    "/{id_}",
+    tags=["T4C-Instances"],
+    responses=AUTHENTICATION_RESPONSES,
+    response_model=T4CSettings,
 )
 def edit_t4c_instance(
     id_: int,
