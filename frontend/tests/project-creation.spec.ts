@@ -41,10 +41,13 @@ test('test the full project creation workflow', async ({ page }) => {
   await expect(page).toHaveURL('http://localhost:4200/projects/create');
 
   const genInfoMatStepHeaderLocator = page.locator('mat-step-header', {
-    hasText: 'General informations',
+    hasText: 'General information',
   });
   const addTeamMemMatStepHeaderLocator = page.locator('mat-step-header', {
     hasText: 'Add team members',
+  });
+  const addModelsMatStepHeaderLocator = page.locator('mat-step-header', {
+    hasText: 'Add models',
   });
 
   await expect(genInfoMatStepHeaderLocator).toHaveAttribute(
@@ -52,6 +55,10 @@ test('test the full project creation workflow', async ({ page }) => {
     'true'
   );
   await expect(addTeamMemMatStepHeaderLocator).toHaveAttribute(
+    'aria-disabled',
+    'true'
+  );
+  await expect(addModelsMatStepHeaderLocator).toHaveAttribute(
     'aria-disabled',
     'true'
   );
@@ -74,8 +81,29 @@ test('test the full project creation workflow', async ({ page }) => {
     'aria-selected',
     'true'
   );
+  await expect(addModelsMatStepHeaderLocator).toHaveAttribute(
+    'aria-disabled',
+    'true'
+  );
 
-  await page.locator('button', { hasText: 'Finish' }).click();
+  await page.locator('button', { hasText: 'Skip' }).click();
+
+  await expect(genInfoMatStepHeaderLocator).toHaveAttribute(
+    'aria-selected',
+    'false'
+  );
+  await expect(addTeamMemMatStepHeaderLocator).toHaveAttribute(
+    'aria-selected',
+    'false'
+  );
+  await expect(addModelsMatStepHeaderLocator).toHaveAttribute(
+    'aria-selected',
+    'true'
+  );
+
+  await page
+    .locator('a:has-text("Skip model creation and finish project creation")')
+    .click();
   await expect(page).toHaveURL(
     `http://localhost:4200/project/${testProjectName}`
   );
