@@ -6,7 +6,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ProjectService } from 'src/app/services/project/project.service';
 import { environment } from 'src/environments/environment';
 
 export interface Source {
@@ -21,10 +20,7 @@ export interface Source {
   providedIn: 'root',
 })
 export class SourceService {
-  constructor(
-    private http: HttpClient,
-    private projectService: ProjectService
-  ) {}
+  constructor(private http: HttpClient) {}
 
   source: Source | null = null;
   sources: Source[] | null = null;
