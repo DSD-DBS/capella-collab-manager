@@ -12,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ToastService } from '../../toast/toast.service';
+import { ToastService } from '../../helpers/toast/toast.service';
 import { BehaviorSubject, find, Observable, of } from 'rxjs';
 import {
   Project,
