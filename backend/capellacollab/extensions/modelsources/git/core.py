@@ -4,6 +4,7 @@
 import collections.abc as cabc
 import logging
 import os
+import pathlib
 import subprocess
 
 from fastapi import HTTPException
@@ -44,6 +45,10 @@ def get_remote_refs(url: str, username: str, password: str):
     git_env = os.environ.copy()
     git_env["GIT_USERNAME"] = username
     git_env["GIT_PASSWORD"] = password
+    git_env["GIT_ASKPASS"] = str(
+        pathlib.Path(__file__).parents[4] / "git_askpass.py"
+    )
+
     for ref in ls_remote(url, git_env):
         (_, ref) = ref.split("\t")
         if "^" in ref:
