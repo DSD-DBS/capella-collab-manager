@@ -46,7 +46,6 @@ export class CreateT4CInstanceComponent implements OnInit {
     host: new FormControl('', Validators.required),
     port: new FormControl(null as number | null, [
       Validators.required,
-      Validators.pattern(/[\d^0]\d*/),
       Validators.min(0),
       Validators.max(65535),
     ]),
