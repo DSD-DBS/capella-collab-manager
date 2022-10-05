@@ -12,7 +12,11 @@
             <fieldset>
               <mat-form-field appearance="fill">
                 <mat-label>Name</mat-label>
-                <input matInput formControlName="name" />
+                <input
+                  matInput
+                  formControlName="name"
+                  data-testId="input-name"
+                />
                 <mat-error *ngIf="form.controls.name.errors?.uniqueSlug">
                   A project with a name similar to “{{
                     form.controls.name.errors!.uniqueSlug.value
@@ -26,11 +30,20 @@
             <fieldset>
               <mat-form-field appearance="fill">
                 <mat-label>Description</mat-label>
-                <textarea matInput formControlName="description"></textarea>
+                <textarea
+                  matInput
+                  formControlName="description"
+                  data-testId="textarea-description"
+                ></textarea>
               </mat-form-field>
             </fieldset>
             <div class="flex-space-between">
-              <a routerLink="/projects" mat-button matStepperPrevious>
+              <a
+                routerLink="/projects"
+                mat-button
+                matStepperPrevious
+                data-testId="a-cancel"
+              >
                 <mat-icon class="mat-icon-position left">arrow_back</mat-icon
                 >Cancel</a
               >
@@ -39,6 +52,7 @@
                 color="primary"
                 [disabled]="!form.valid"
                 (click)="createProject(stepper)"
+                data-testId="button-create-project"
               >
                 Create project
                 <mat-icon class="mat-icon-position right"
@@ -59,7 +73,12 @@
           ></app-project-user-settings>
           <mat-card class="mat-card-default">
             <div class="flex-space-between">
-              <button mat-flat-button color="primary" (click)="stepper.next()">
+              <button
+                mat-flat-button
+                color="primary"
+                (click)="stepper.next()"
+                data-testId="button-skipAddMembers"
+              >
                 Skip
                 <mat-icon class="mat-icon-position right"
                   >arrow_forward</mat-icon
@@ -83,6 +102,7 @@
               mat-flat-button
               [routerLink]="['/project', projectService.project?.slug]"
               [color]="getColorByModelCreationStep()"
+              data-testId="a-skipModelAndFinishProjectCreation"
             >
               <span *ngIf="modelCreationStep == 'create-model'">
                 Skip model creation and finish project creation

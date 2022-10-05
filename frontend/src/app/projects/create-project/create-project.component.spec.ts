@@ -13,7 +13,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ToastService } from '../../helpers/toast/toast.service';
-import { BehaviorSubject, find, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import {
   Project,
   ProjectService,
@@ -24,7 +24,7 @@ import {
   findComponent,
   findElByTestId,
   setFieldValue,
-} from '../../spec-helper/element.spec-helper';
+} from '../../helpers/spec-helper/element.spec-helper';
 import { CreateProjectComponent } from './create-project.component';
 import { Router } from '@angular/router';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -43,6 +43,7 @@ const mockProjects: Project[] = [
 ];
 
 const testProjectName = 'test-project-name';
+const testProjectSlug = 'test-project-name';
 const testProjectDescription = 'test-project-description';
 
 describe('CreateProjectComponent', () => {
@@ -168,7 +169,7 @@ describe('CreateProjectComponent', () => {
     expect(appProjectUserSettingComponent).toBeTruthy();
   });
 
-  it('should render routerLink', () => {
+  it('should render routerLink to /projects', () => {
     let cancelEl: HTMLElement = findElByTestId(
       fixture,
       'a-cancel'
@@ -182,10 +183,16 @@ describe('CreateProjectComponent', () => {
 
     setFieldValue(fixture, 'input-name', testProjectName);
     click(fixture, 'button-create-project');
-
     fixture.detectChanges();
 
-    click(fixture, 'button-finish');
-    expect(navigateSpy).toHaveBeenCalledOnceWith([`/project`, testProjectName]);
+    click(fixture, 'button-skipAddMembers');
+    fixture.detectChanges();
+
+    let skipEl: HTMLElement = findElByTestId(
+      fixture,
+      'a-skipModelAndFinishProjectCreation'
+    ).nativeElement;
+
+    expect(skipEl.getAttribute('href')).toEqual(`/project/${testProjectSlug}`);
   });
 });
