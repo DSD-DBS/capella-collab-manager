@@ -16,6 +16,9 @@
             formControlName="name"
             [disabled]="existing == 'existing'"
           />
+          <mat-error *ngIf="form.controls.name.errors?.required">
+            The name is required.
+          </mat-error>
         </mat-form-field>
         <div class="field-separator"></div>
         <mat-form-field appearance="fill">
@@ -27,12 +30,18 @@
               >{{ version.name }}</mat-option
             >
           </mat-select>
+          <mat-error *ngIf="form.controls.version_id.errors?.required">
+            The version is required.
+          </mat-error>
         </mat-form-field>
       </fieldset>
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>License configuration</mat-label>
           <input matInput formControlName="license" />
+          <mat-error *ngIf="form.controls.license.errors?.required">
+            The license configuration is required.
+          </mat-error>
         </mat-form-field>
       </fieldset>
       <fieldset>
@@ -49,7 +58,15 @@
             type="number"
             formControlName="port"
           />
+          <mat-error
+            *ngIf="
+              form.controls.port.errors?.min || form.controls.port.errors?.max
+            "
+            >Valid ports are between 0 and 65535.</mat-error
           >
+          <mat-error *ngIf="form.controls.port.errors?.required">
+            The port is required.
+          </mat-error>
         </mat-form-field>
       </fieldset>
       <fieldset>
@@ -59,6 +76,9 @@
           <mat-error *ngIf="form.controls.usage_api.errors?.pattern"
             >The URL should start with “http(s)://”</mat-error
           >
+          <mat-error *ngIf="form.controls.usage_api.errors?.required">
+            The license server API is required.
+          </mat-error>
         </mat-form-field>
         <div class="field-separator"></div>
         <mat-form-field appearance="fill">
@@ -67,12 +87,18 @@
           <mat-error *ngIf="form.controls.rest_api.errors?.pattern"
             >The URL should start with “http(s)://”</mat-error
           >
+          <mat-error *ngIf="form.controls.rest_api.errors?.required">
+            The REST server URL is required.
+          </mat-error>
         </mat-form-field>
       </fieldset>
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Username</mat-label>
           <input matInput autocomplete="off" formControlName="username" />
+          <mat-error *ngIf="form.controls.username.errors?.required">
+            The username is required.
+          </mat-error>
         </mat-form-field>
         <div class="field-separator"></div>
         <mat-form-field appearance="fill">
@@ -83,6 +109,9 @@
             autocomplete="new-password"
             formControlName="password"
           />
+          <mat-error *ngIf="form.controls.password.errors?.required">
+            The password is required.
+          </mat-error>
         </mat-form-field>
       </fieldset>
       <div *ngIf="existing == 'editing'" id="editing-button-wrapper">
