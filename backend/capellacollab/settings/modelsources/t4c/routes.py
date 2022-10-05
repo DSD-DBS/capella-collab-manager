@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
-from capellacollab.core.authentication.database import is_admin
+from capellacollab.core.authentication.database import verify_admin
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
@@ -32,19 +32,11 @@ router = APIRouter()
 def list_git_settings(
     db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
-    if is_admin(token, db):
-        return [
-            T4CSettings.from_orm(instance)
-            for instance in crud.get_all_t4c_instances(db)
-        ]
-
-    raise HTTPException(
-        status_code=403,
-        detail={
-            "reason": "You need to be administrator for this operation.",
-            "technical": "The role administrator is required for this transaction.",
-        },
-    )
+    verify_admin(token, db)
+    return [
+        T4CSettings.from_orm(instance)
+        for instance in crud.get_all_t4c_instances(db)
+    ]
 
 
 @router.get(
@@ -55,16 +47,8 @@ def list_git_settings(
 def get_t4c_instance(
     id_: int, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
-    if is_admin(token, db):
-        return T4CSettings.from_orm(crud.get_t4c_instance(id_, db))
-
-    raise HTTPException(
-        status_code=403,
-        detail={
-            "reason": "You need to be administrator for this operation.",
-            "technical": "The role administrator is required for this transaction.",
-        },
-    )
+    verify_admin(token, db)
+    return T4CSettings.from_orm(crud.get_t4c_instance(id_, db))
 
 
 @router.post(
@@ -77,28 +61,20 @@ def create_t4c_instance(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    if is_admin(token, db):
-        try:
-            version = tools_crud.get_version_by_id(body.version_id, db)
-        except NoResultFound as e:
-            raise HTTPException(
-                404,
-                {
-                    "reason": f"The version with id {body.version_id} was not found."
-                },
-            )
+    verify_admin(token, db)
+    try:
+        version = tools_crud.get_version_by_id(body.version_id, db)
+    except NoResultFound as e:
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The version with id {body.version_id} was not found."
+            },
+        )
 
-        instance = DatabaseT4CSettings(**body.dict())
-        instance.version = version
-        return T4CSettings.from_orm(crud.create_t4c_instance(instance, db))
-
-    raise HTTPException(
-        status_code=403,
-        detail={
-            "reason": "You need to be administrator for this operation.",
-            "technical": "The role administrator is required for this transaction.",
-        },
-    )
+    instance = DatabaseT4CSettings(**body.dict())
+    instance.version = version
+    return T4CSettings.from_orm(crud.create_t4c_instance(instance, db))
 
 
 @router.patch(
@@ -112,24 +88,16 @@ def edit_t4c_instance(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    if is_admin(token, db):
-        try:
-            instance = crud.get_t4c_instance(id_, db)
-        except NoResultFound:
-            raise HTTPException(
-                status_code=404,
-                detail={
-                    "reason": "This instance does not exist.",
-                },
-            )
-        for key in body.dict():
-            instance.__setattr__(key, body.__getattribute__(key))
-        return T4CSettings.from_orm(crud.update_t4c_instance(instance, db))
-
-    raise HTTPException(
-        status_code=403,
-        detail={
-            "reason": "You need to be administrator for this operation.",
-            "technical": "The role administrator is required for this transaction.",
-        },
-    )
+    verify_admin(token, db)
+    try:
+        instance = crud.get_t4c_instance(id_, db)
+    except NoResultFound:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "reason": "This instance does not exist.",
+            },
+        )
+    for key in body.dict():
+        instance.__setattr__(key, body.__getattribute__(key))
+    return T4CSettings.from_orm(crud.update_t4c_instance(instance, db))
