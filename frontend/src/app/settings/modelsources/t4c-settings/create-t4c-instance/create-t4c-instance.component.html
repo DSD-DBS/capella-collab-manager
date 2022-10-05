@@ -43,9 +43,12 @@
         <div class="field-separator"></div>
         <mat-form-field appearance="fill">
           <mat-label>Port</mat-label>
-          <input matInput inputmode="numeric" formControlName="port" />
-          <mat-error *ngIf="form.controls.port.errors"
-            >The port is invalid.</mat-error
+          <input
+            matInput
+            inputmode="numeric"
+            type="number"
+            formControlName="port"
+          />
           >
         </mat-form-field>
       </fieldset>
