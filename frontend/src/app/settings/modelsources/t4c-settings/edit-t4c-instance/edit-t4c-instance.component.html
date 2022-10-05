@@ -106,6 +106,7 @@
           <mat-error *ngIf="form.controls.password.errors?.required">
             The password is required.
           </mat-error>
+          <mat-hint *ngIf="existing">Is not changed if empty</mat-hint>
         </mat-form-field>
       </fieldset>
       <div *ngIf="editing" id="editing-button-wrapper">

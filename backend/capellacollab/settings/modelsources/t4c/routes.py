@@ -16,8 +16,8 @@ from capellacollab.settings.modelsources.t4c import crud
 from capellacollab.settings.modelsources.t4c.models import (
     CreateT4CInstance,
     DatabaseT4CSettings,
+    PatchT4CInstance,
     T4CInstance,
-    T4CInstanceWithCredentials,
 )
 from capellacollab.tools import crud as tools_crud
 
@@ -84,7 +84,7 @@ def create_t4c_instance(
 )
 def edit_t4c_instance(
     id_: int,
-    body: T4CInstanceWithCredentials,
+    body: PatchT4CInstance,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
@@ -99,5 +99,7 @@ def edit_t4c_instance(
             },
         )
     for key in body.dict():
-        instance.__setattr__(key, body.__getattribute__(key))
+        value = body.__getattribute__(key)
+        if value:
+            instance.__setattr__(key, body.__getattribute__(key))
     return T4CInstance.from_orm(crud.update_t4c_instance(instance, db))
