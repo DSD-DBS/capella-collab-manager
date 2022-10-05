@@ -27,20 +27,28 @@ class DatabaseT4CSettings(Base):
     version = relationship("Version")
 
 
-class T4CSettingsBase(BaseModel):
+class T4CInstanceBase(BaseModel):
     license: str
     host: str
     port: int
     usage_api: str
     rest_api: str
     username: str
-    password: str
 
     class Config:
         orm_mode = True
 
 
-class CreateT4CSettings(T4CSettingsBase):
+class T4CInstanceComplete(T4CInstanceBase):
+    name: str
+    version_id: int
+
+
+class T4CInstanceWithCredentials(T4CInstanceBase):
+    password: str
+
+
+class CreateT4CInstance(T4CInstanceComplete, T4CInstanceWithCredentials):
     name: str
     version_id: int
 
@@ -53,6 +61,6 @@ class Version(BaseModel):
         orm_mode = True
 
 
-class T4CSettings(CreateT4CSettings):
+class T4CInstance(T4CInstanceComplete):
     id: int
     version: Version

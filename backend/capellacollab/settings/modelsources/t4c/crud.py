@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from capellacollab.settings.modelsources.t4c.models import (
-    CreateT4CSettings,
+    CreateT4CInstance,
     DatabaseT4CSettings,
 )
 
@@ -22,7 +22,7 @@ def get_t4c_instance(id_: int, db: Session) -> DatabaseT4CSettings:
     ).scalar_one()
 
 
-def create_t4c_instance(instance: CreateT4CSettings, db: Session):
+def create_t4c_instance(instance: CreateT4CInstance, db: Session):
     db.add(instance)
     db.commit()
     db.refresh(instance)
