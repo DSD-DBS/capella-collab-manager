@@ -69,15 +69,27 @@ export class EditT4CInstanceComponent implements OnInit {
     private router: Router,
     private toastService: ToastService,
     private toolService: ToolService
-  ) {}
+  ) {
+    this.navBarService.title = 'Settings / Modelsources / T4C';
 
-  ngOnInit(): void {
-    this.navBarService.title = 'Settings / Modelsources / T4C / Create';
-
+    // This has to happen in the constructor because of NG0100
+    // https://angular.io/errors/NG0100
     this.route.params
       .pipe(
         map((params) => params.instance),
-        filter((instance) => instance !== undefined),
+        filter((instance) => instance === undefined)
+      )
+      .subscribe({
+        next: () =>
+          (this.navBarService.title = 'Settings / Modelsources / T4C / Create'),
+      });
+  }
+
+  ngOnInit(): void {
+    this.route.params
+      .pipe(
+        map((params) => params.instance),
+        filter(Boolean),
         tap(() => {
           this.existing = true;
           this.form.disable();
