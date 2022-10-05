@@ -7,11 +7,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
+import { compare } from 'semver';
 import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { environment } from 'src/environments/environment';
 import { ReleaseNote } from '../release-notes/release-note.service';
 import { ReleaseNotesComponent } from '../release-notes/release-notes.component';
-const semverCompare = require('semver/functions/compare');
 
 @Injectable({
   providedIn: 'root',
@@ -75,7 +75,13 @@ export class VersionService {
   }
 
   private compareFrontendVersions(version1: string, version2: string) {
-    return semverCompare(version1, version2);
+    return compare(version1, version2);
+  }
+
+  openReleaseNotes(): void {
+    this.dialog.open(ReleaseNotesComponent);
+    this.localStorageService.setValue('version', this.version?.git.tag);
+    this.changedVersion = false;
   }
 
   openReleaseNotes(): void {
