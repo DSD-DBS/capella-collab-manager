@@ -5,18 +5,18 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateT4CInstanceComponent } from './create-t4c-instance.component';
+import { EditT4CInstanceComponent } from './edit-t4c-instance.component';
 
 describe('CreateT4cInstanceComponent', () => {
-  let component: CreateT4CInstanceComponent;
-  let fixture: ComponentFixture<CreateT4CInstanceComponent>;
+  let component: EditT4CInstanceComponent;
+  let fixture: ComponentFixture<EditT4CInstanceComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CreateT4CInstanceComponent],
+      declarations: [EditT4CInstanceComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CreateT4CInstanceComponent);
+    fixture = TestBed.createComponent(EditT4CInstanceComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
