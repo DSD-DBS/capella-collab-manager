@@ -25,12 +25,13 @@ import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ToolService, Version } from 'src/app/services/tools/tool2.service';
 
 @Component({
-  selector: 'app-create-t4c-instance',
-  templateUrl: './create-t4c-instance.component.html',
-  styleUrls: ['./create-t4c-instance.component.css'],
+  selector: 'app-edit-t4c-instance',
+  templateUrl: './edit-t4c-instance.component.html',
+  styleUrls: ['./edit-t4c-instance.component.css'],
 })
-export class CreateT4CInstanceComponent implements OnInit {
+export class EditT4CInstanceComponent implements OnInit {
   editing: boolean = false;
+
   existing: boolean = false;
 
   _instance = new BehaviorSubject<T4CInstance | undefined>(undefined);
