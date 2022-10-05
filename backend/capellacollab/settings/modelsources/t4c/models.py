@@ -27,10 +27,6 @@ class DatabaseT4CSettings(Base):
     version = relationship("Version")
 
 
-class T4CSettingsId(BaseModel):
-    id: int
-
-
 class T4CSettingsBase(BaseModel):
     license: str
     host: str
@@ -57,5 +53,6 @@ class Version(BaseModel):
         orm_mode = True
 
 
-class T4CSettings(T4CSettingsId, CreateT4CSettings):
+class T4CSettings(CreateT4CSettings):
+    id: int
     version: Version
