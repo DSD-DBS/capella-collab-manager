@@ -95,7 +95,7 @@ def edit_t4c_instance(
         raise HTTPException(
             status_code=404,
             detail={
-                "reason": "This instance does not exist.",
+                "reason": f"The t4c instance with the id {id_} does not exist.",
             },
         )
     for key in body.dict():
