@@ -169,6 +169,20 @@ describe('CreateProjectComponent', () => {
     expect(appProjectUserSettingComponent).toBeTruthy();
   });
 
+  it('loads the app-create-model when clicked on skip button in add member step', () => {
+    setFieldValue(fixture, 'input-name', testProjectName);
+    click(fixture, 'button-create-project');
+
+    fixture.detectChanges();
+
+    click(fixture, 'button-skipAddMembers');
+    fixture.detectChanges();
+
+    const appCreateModelComponent = findComponent(fixture, 'app-create-model');
+
+    expect(appCreateModelComponent).toBeTruthy();
+  });
+
   it('should render routerLink to /projects', () => {
     let cancelEl: HTMLElement = findElByTestId(
       fixture,
