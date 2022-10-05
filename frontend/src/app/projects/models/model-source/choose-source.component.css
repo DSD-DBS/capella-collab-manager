@@ -3,6 +3,57 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+.title {
+  font-size: 2em;
+  margin: 20px;
+  padding-bottom: 20px;
+}
+
+.subtitle {
+  font-size: 1.8em;
+  margin: 20px;
+}
+
+.card-title {
+  min-height: 50%;
+}
+
+a {
+  text-decoration: none;
+}
+
 mat-card {
-  margin: 0 6ch 2em 0;
+  width: 250px;
+  height: 125px;
+  margin: 20px;
+  font-size: 1.5em;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+mat-card:hover {
+  cursor: pointer;
+  background-color: var(--hover-color);
+}
+
+mat-icon {
+  font-size: 2em;
+  position: relative;
+  right: 10px;
+  margin: 10px;
+}
+
+.disabled {
+  cursor: not-allowed !important;
+  background-color: grey !important;
+}
+
+.options-list {
+  display: flex;
+}
+
+.git {
+  max-width: 80%;
 }
