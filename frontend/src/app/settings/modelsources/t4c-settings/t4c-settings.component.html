@@ -8,18 +8,15 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<article class="item-container">
+<article class="flexbox">
   <a [routerLink]="['create']">
-    <mat-card matRipple class="item-card">
-      <mat-card-header>
-        <mat-card-title>Add an instance</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <p class="icon-container">
-          <mat-icon inline>add_circle_outline</mat-icon>
-        </p>
-      </mat-card-content>
-      <mat-card-footer></mat-card-footer>
+    <mat-card matRipple class="mat-card-overview new">
+      <div class="content">
+        Add an instance <br />
+        <div class="icon">
+          <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
+        </div>
+      </div>
     </mat-card>
   </a>
 
@@ -27,25 +24,15 @@
     *ngFor="let instance of instances"
     [routerLink]="['instance', instance.id]"
   >
-    <mat-card matRipple class="item-card">
-      <mat-card-header>
-        <mat-card-title>{{ instance.name }}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <ul>
-          <li>
-            <mat-icon inline>tag</mat-icon>&nbsp;&nbsp;{{
-              instance.version.name
-            }}
-          </li>
-          <li>
-            <mat-icon inline>link</mat-icon>&nbsp;&nbsp; {{ instance.host }}:{{
-              instance.port
-            }}
-          </li>
-        </ul>
-      </mat-card-content>
-      <mat-card-footer></mat-card-footer>
+    <mat-card matRipple class="mat-card-overview">
+      <div class="header">{{ instance.name }}</div>
+      <div class="content">
+        <mat-icon class="aligned">tag</mat-icon> <b> Capella version:</b>
+        {{ instance.version.name }}
+        <br />
+        <mat-icon class="aligned">link</mat-icon><b> Host:</b>
+        {{ instance.host }}:{{ instance.port }}
+      </div>
     </mat-card>
   </a>
 </article>
