@@ -104,8 +104,8 @@ import { VersionComponent } from './general/metadata/version/version.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { CreateT4cInstanceComponent } from './settings/modelsources/t4c-settings/create-t4c-instance/create-t4c-instance.component';
-import { T4cSettingsWrapperComponent } from './settings/modelsources/t4c-settings/t4c-settings-wrapper/t4c-settings-wrapper.component';
+import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/edit-t4c-instance/edit-t4c-instance.component';
+import { T4CSettingsWrapperComponent } from './settings/modelsources/t4c-settings/t4c-settings-wrapper/t4c-settings-wrapper.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 
@@ -175,8 +175,8 @@ import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
     VersionComponent,
     CreateModelComponent,
     MatIconComponent,
-    CreateT4cInstanceComponent,
-    T4cSettingsWrapperComponent,
+    EditT4CInstanceComponent,
+    T4CSettingsWrapperComponent,
   ],
   imports: [
     CommonModule,

@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
+
 from pydantic import BaseModel
 from sqlalchemy import CheckConstraint, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
@@ -27,26 +29,38 @@ class DatabaseT4CSettings(Base):
     version = relationship("Version")
 
 
-class T4CSettingsId(BaseModel):
-    id: int
-
-
-class T4CSettingsBase(BaseModel):
+class T4CInstanceBase(BaseModel):
     license: str
     host: str
     port: int
     usage_api: str
     rest_api: str
     username: str
-    password: str
 
     class Config:
         orm_mode = True
 
 
-class CreateT4CSettings(T4CSettingsBase):
+class PatchT4CInstance(BaseModel):
+    license: t.Optional[str]
+    host: t.Optional[str]
+    port: t.Optional[int]
+    usage_api: t.Optional[str]
+    rest_api: t.Optional[str]
+    username: t.Optional[str]
+    password: t.Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+class T4CInstanceComplete(T4CInstanceBase):
     name: str
     version_id: int
+
+
+class CreateT4CInstance(T4CInstanceComplete):
+    password: str
 
 
 class Version(BaseModel):
@@ -57,5 +71,6 @@ class Version(BaseModel):
         orm_mode = True
 
 
-class T4CSettings(T4CSettingsId, CreateT4CSettings):
+class T4CInstance(T4CInstanceComplete):
+    id: int
     version: Version

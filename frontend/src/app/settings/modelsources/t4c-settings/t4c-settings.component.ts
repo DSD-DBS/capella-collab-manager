@@ -5,7 +5,6 @@
 
 import { Component, OnInit } from '@angular/core';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
-import { T4CSyncService } from 'src/app/services/t4c-sync/t4-csync.service';
 import { BehaviorSubject } from 'rxjs';
 import {
   T4CInstance,

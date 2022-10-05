@@ -5,34 +5,39 @@
 
 <div class="flexbox center">
   <mat-card>
-    <h2 *ngIf="!existing">Add a Team4Capella instance.</h2>
+    <h2 *ngIf="!existing">Add a Team4Capella instance</h2>
     <h2 *ngIf="existing"></h2>
     <form [formGroup]="form" (ngSubmit)="submit()">
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Name</mat-label>
-          <input
-            matInput
-            formControlName="name"
-            [disabled]="existing == 'existing'"
-          />
+          <input matInput formControlName="name" />
+          <mat-error *ngIf="form.controls.name.errors?.required">
+            The name is required.
+          </mat-error>
         </mat-form-field>
         <div class="field-separator"></div>
         <mat-form-field appearance="fill">
           <mat-label>Capella version</mat-label>
           <mat-select formControlName="version_id">
             <mat-option
-              *ngFor="let version of _capella_versions.value"
+              *ngFor="let version of capella_versions"
               [value]="version.id"
               >{{ version.name }}</mat-option
             >
           </mat-select>
+          <mat-error *ngIf="form.controls.version_id.errors?.required">
+            The version is required.
+          </mat-error>
         </mat-form-field>
       </fieldset>
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>License configuration</mat-label>
           <input matInput formControlName="license" />
+          <mat-error *ngIf="form.controls.license.errors?.required">
+            The license configuration is required.
+          </mat-error>
         </mat-form-field>
       </fieldset>
       <fieldset>
@@ -44,9 +49,18 @@
         <mat-form-field appearance="fill">
           <mat-label>Port</mat-label>
           <input matInput inputmode="numeric" formControlName="port" />
-          <mat-error *ngIf="form.controls.port.errors"
-            >The port is invalid.</mat-error
+          <mat-error
+            *ngIf="
+              form.controls.port.errors?.min || form.controls.port.errors?.max
+            "
+            >Valid ports are between 0 and 65535.</mat-error
           >
+          <mat-error *ngIf="form.controls.port.errors?.pattern"
+            >We only support numerical ports :(</mat-error
+          >
+          <mat-error *ngIf="form.controls.port.errors?.required">
+            The port is required.
+          </mat-error>
         </mat-form-field>
       </fieldset>
       <fieldset>
@@ -56,6 +70,9 @@
           <mat-error *ngIf="form.controls.usage_api.errors?.pattern"
             >The URL should start with “http(s)://”</mat-error
           >
+          <mat-error *ngIf="form.controls.usage_api.errors?.required">
+            The license server API is required.
+          </mat-error>
         </mat-form-field>
         <div class="field-separator"></div>
         <mat-form-field appearance="fill">
@@ -64,12 +81,18 @@
           <mat-error *ngIf="form.controls.rest_api.errors?.pattern"
             >The URL should start with “http(s)://”</mat-error
           >
+          <mat-error *ngIf="form.controls.rest_api.errors?.required">
+            The REST server URL is required.
+          </mat-error>
         </mat-form-field>
       </fieldset>
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Username</mat-label>
           <input matInput autocomplete="off" formControlName="username" />
+          <mat-error *ngIf="form.controls.username.errors?.required">
+            The username is required.
+          </mat-error>
         </mat-form-field>
         <div class="field-separator"></div>
         <mat-form-field appearance="fill">
@@ -80,15 +103,19 @@
             autocomplete="new-password"
             formControlName="password"
           />
+          <mat-error *ngIf="form.controls.password.errors?.required">
+            The password is required.
+          </mat-error>
+          <mat-hint *ngIf="existing">Is not changed if empty</mat-hint>
         </mat-form-field>
       </fieldset>
-      <div *ngIf="existing == 'editing'" id="editing-button-wrapper">
+      <div *ngIf="editing" id="editing-button-wrapper">
         <button mat-flat-button color="warn" (click)="cancelEditing()">
           Cancel
         </button>
         <button mat-flat-button type="submit" color="primary">Submit</button>
       </div>
-      <div *ngIf="existing == 'existing'">
+      <div *ngIf="!editing && existing">
         <button mat-flat-button (click)="enableEditing()">Edit</button>
       </div>
       <div *ngIf="!existing" id="submit-button-wrapper">

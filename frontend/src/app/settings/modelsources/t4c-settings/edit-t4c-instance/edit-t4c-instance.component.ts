@@ -24,20 +24,25 @@ import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ToolService, Version } from 'src/app/services/tools/tool2.service';
 
-type State = 'existing' | 'editing';
-
 @Component({
-  selector: 'app-create-t4c-instance',
-  templateUrl: './create-t4c-instance.component.html',
-  styleUrls: ['./create-t4c-instance.component.css'],
+  selector: 'app-edit-t4c-instance',
+  templateUrl: './edit-t4c-instance.component.html',
+  styleUrls: ['./edit-t4c-instance.component.css'],
 })
-export class CreateT4cInstanceComponent implements OnInit {
-  existing?: State;
+export class EditT4CInstanceComponent implements OnInit {
+  editing: boolean = false;
+
+  existing: boolean = false;
+
   _instance = new BehaviorSubject<T4CInstance | undefined>(undefined);
   get instance() {
     return this._instance.value;
   }
+
   _capella_versions = new BehaviorSubject<Version[]>([]);
+  get capella_versions() {
+    return this._capella_versions.value;
+  }
 
   public form = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -46,7 +51,7 @@ export class CreateT4cInstanceComponent implements OnInit {
     host: new FormControl('', Validators.required),
     port: new FormControl(null as number | null, [
       Validators.required,
-      Validators.pattern(/[\d^0]\d*/),
+      Validators.pattern(/^\d*$/),
       Validators.min(0),
       Validators.max(65535),
     ]),
@@ -64,25 +69,37 @@ export class CreateT4cInstanceComponent implements OnInit {
 
   constructor(
     private navBarService: NavBarService,
-    private t4CInstanceService: T4CInstanceService,
+    private t4cInstanceService: T4CInstanceService,
     private route: ActivatedRoute,
     private router: Router,
     private toastService: ToastService,
     private toolService: ToolService
-  ) {}
+  ) {
+    this.navBarService.title = 'Settings / Modelsources / T4C';
 
-  ngOnInit(): void {
-    this.navBarService.title = 'Settings / Modelsources / T4C / Create';
-
+    // This has to happen in the constructor because of NG0100
+    // https://angular.io/errors/NG0100
     this.route.params
       .pipe(
         map((params) => params.instance),
-        filter((instance) => instance !== undefined),
+        filter((instance) => instance === undefined)
+      )
+      .subscribe({
+        next: () =>
+          (this.navBarService.title = 'Settings / Modelsources / T4C / Create'),
+      });
+  }
+
+  ngOnInit(): void {
+    this.route.params
+      .pipe(
+        map((params) => params.instance),
+        filter(Boolean),
         tap(() => {
-          this.existing = 'existing';
+          this.existing = true;
           this.form.disable();
         }),
-        switchMap((instance) => this.t4CInstanceService.getInstance(instance))
+        switchMap((instance) => this.t4cInstanceService.getInstance(instance))
       )
       .subscribe(this._instance);
 
@@ -96,37 +113,41 @@ export class CreateT4cInstanceComponent implements OnInit {
       )
       .subscribe(this._capella_versions);
 
-    combineLatest([
-      this._instance.pipe(
+    this._instance
+      .pipe(
         filter(Boolean),
         tap((instance) => {
           this.navBarService.title = `Settings / Modelsources / T4C / ${instance.name}`;
         })
-      ),
-      this._capella_versions,
-    ]).subscribe((instance: [T4CInstance, Version[]]) => {
-      this.form.patchValue(instance[0]);
-    });
+      )
+      .subscribe((instance: T4CInstance) => {
+        instance.password = '***********';
+        this.form.patchValue(instance);
+      });
 
     this.toolService.get_versions().subscribe(this.toolService._versions);
   }
 
   enableEditing(): void {
-    this.existing = 'editing';
+    this.editing = true;
     this.form.enable();
     this.form.controls.name.disable();
     this.form.controls.version_id.disable();
+
+    this.form.controls.password.patchValue('');
+    this.form.controls.password.removeValidators(Validators.required);
+    this.form.controls.password.updateValueAndValidity();
   }
 
   cancelEditing(): void {
-    this.existing = 'existing';
+    this.editing = false;
     this.form.disable();
     this.form.patchValue(this.instance as NewT4CInstance);
   }
 
   create(): void {
     if (this.form.valid) {
-      this.t4CInstanceService
+      this.t4cInstanceService
         .createInstance(this.form.value as NewT4CInstance)
         .subscribe((instance) => {
           this.toastService.showSuccess(
@@ -140,10 +161,10 @@ export class CreateT4cInstanceComponent implements OnInit {
 
   update(): void {
     if (this.form.valid) {
-      this.t4CInstanceService
+      this.t4cInstanceService
         .updateInstance(this.instance!.id, this.form.value as BaseT4CInstance)
         .subscribe((instance) => {
-          this.existing = 'existing';
+          this.editing = false;
           this.form.disable();
           this.toastService.showSuccess(
             'Instance updated',
@@ -154,11 +175,10 @@ export class CreateT4cInstanceComponent implements OnInit {
   }
 
   submit(): void {
-    if (!this.existing) {
-      this.create();
-    }
-    if (this.existing == 'editing') {
+    if (this.existing) {
       this.update();
+    } else {
+      this.create();
     }
   }
 }
