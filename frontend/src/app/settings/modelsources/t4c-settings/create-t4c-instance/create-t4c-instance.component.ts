@@ -31,7 +31,7 @@ type State = 'existing' | 'editing';
   templateUrl: './create-t4c-instance.component.html',
   styleUrls: ['./create-t4c-instance.component.css'],
 })
-export class CreateT4cInstanceComponent implements OnInit {
+export class CreateT4CInstanceComponent implements OnInit {
   existing?: State;
   _instance = new BehaviorSubject<T4CInstance | undefined>(undefined);
   get instance() {
