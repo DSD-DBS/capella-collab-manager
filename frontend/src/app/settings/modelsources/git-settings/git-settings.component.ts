@@ -16,7 +16,9 @@ import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   GitSettings,
   GitSettingsService,
+  GitType,
 } from 'src/app/services/settings/git-settings.service';
+import { absoluteUrlSafetyValidator } from 'src/app/helpers/validators/url-validator';
 import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
 
 @Component({
@@ -35,7 +37,7 @@ export class GitSettingsComponent implements OnInit {
     ]),
     url: new FormControl('', [
       Validators.required,
-      this.urlValidator.bind(this),
+      absoluteUrlSafetyValidator(),
     ]),
   });
 
@@ -50,8 +52,10 @@ export class GitSettingsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.gitSettingsService.gitSettings.subscribe((gitSettings) => {
-      this.cmpGitSettings = gitSettings;
+    this.gitSettingsService.gitSettings.subscribe({
+      next: (gitSettings) => {
+        this.cmpGitSettings = gitSettings;
+      },
     });
 
     this.gitSettingsService.loadGitSettings();
@@ -59,13 +63,18 @@ export class GitSettingsComponent implements OnInit {
 
   createGitSettings(): void {
     if (this.form.valid) {
+      let url = this.form.value.url!;
+      if (url.endsWith('/')) {
+        url = url.slice(0, -1);
+      }
+
       this.gitSettingsService
-        .createGitSettings(
-          (this.form.get('name') as FormControl).value,
-          (this.form.get('url') as FormControl).value,
-          (this.form.get('type') as FormControl).value
-        )
-        .subscribe(this.form.reset);
+        .createGitSettings({
+          name: this.form.value.name!,
+          url: url,
+          type: this.form.value.type as GitType,
+        })
+        .subscribe((_) => this.form.reset());
     }
   }
 
@@ -90,10 +99,7 @@ export class GitSettingsComponent implements OnInit {
     let gitSettingNames: string[] = this.cmpGitSettings?.map(
       (gitSetting) => gitSetting.name
     );
-
-    if (this.cmpGitSettings === undefined) {
-      return null;
-    }
+    gitSettingNames ??= [];
 
     for (let gitSettingName of gitSettingNames) {
       if (gitSettingName == newInstanceName) {
