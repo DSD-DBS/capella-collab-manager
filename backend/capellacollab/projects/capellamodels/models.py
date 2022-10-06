@@ -86,15 +86,5 @@ class ResponseModel(BaseModel):
     t4c_model_id: t.Optional[int]
     git_model_id: t.Optional[int]
 
-    @classmethod
-    def from_model(cls, model: DatabaseCapellaModel):
-        return cls(
-            id=model.id,
-            slug=model.slug,
-            project_slug=model.project.slug,
-            name=model.name,
-            description=model.description,
-            tool_id=model.tool_id,
-            version_id=model.version_id,
-            type_id=model.type_id,
-        )
+    class Config:
+        orm_mode = True

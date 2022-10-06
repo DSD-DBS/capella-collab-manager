@@ -38,7 +38,7 @@ def list_in_project(
         )
     verify_project_role(project.name, token, db)
     return [
-        ResponseModel.from_model(model)
+        ResponseModel.from_orm(model)
         for model in crud.get_all_models_in_project(db, project.slug)
     ]
 
@@ -71,7 +71,7 @@ def get_model_by_slug(
             },
         )
 
-    response_model = ResponseModel.from_model(model)
+    response_model = ResponseModel.from_orm(model)
     return response_model
 
 
@@ -115,7 +115,7 @@ def create_new(
                 "technical": "Slug already used",
             },
         ) from e
-    return ResponseModel.from_model(model)
+    return ResponseModel.from_orm(model)
 
 
 @router.patch(
@@ -180,7 +180,7 @@ def set_tool_details(
             },
         )
 
-    return ResponseModel.from_model(
+    return ResponseModel.from_orm(
         crud.set_tool_details_for_model(
             db,
             model,
