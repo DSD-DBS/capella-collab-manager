@@ -124,6 +124,7 @@ a {
 .right > mat-card > div {
   margin: 2px 5px;
   text-align: center;
+  min-width: 50px;
 }
 
 .right {
