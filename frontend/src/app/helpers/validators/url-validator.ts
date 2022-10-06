@@ -9,50 +9,37 @@ const urlBlacklistSequences: string[] = ['..', '%'];
 
 export function absoluteUrlSafetyValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    let url: string = control.value;
-    if (!url) return null;
+    let value: string = control.value;
+    if (!value) return null;
 
-    if (!(url.startsWith('http://') || url.startsWith('https://'))) {
+    if (!hasAbsoluteUrlPrefix(value)) {
       return { urlPrefixError: 'Absolute URL must start with http(s)://' };
     }
-    return checkUrlForInvalidSequences(url);
+    return checkUrlForInvalidSequences(value);
   };
 }
 
 export function relativeUrlSafetyValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    let url: string = control.value;
-    if (!url) return null;
+    let value: string = control.value;
+    if (!value) return null;
 
-    if (!url.startsWith('/')) {
+    if (!hasRelativePathPrefix(value)) {
       return { urlPrefixErrors: 'Relative URL must start with /' };
     }
-    return checkUrlForInvalidSequences(url);
+    return checkUrlForInvalidSequences(value);
   };
 }
 
 export function absoluteOrRelativeSafetyValidators(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    let url: string = control.value;
-    if (!url) return null;
+    let value: string = control.value;
+    if (!value) return null;
 
-    if (
-      !(url.startsWith('http://') || url.startsWith('https://')) &&
-      !url.startsWith('/')
-    ) {
+    if (!(hasAbsoluteUrlPrefix(value) || hasRelativePathPrefix(value))) {
       return { urlPrefixError: 'URL must either start with http(s):// or /' };
     }
-    return checkUrlForInvalidSequences(url);
-  };
-}
-
-export function absoluteOrRelativeUrlPrefixValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    let value = control.value;
-    if (value && !value.startsWith('http') && !value.startsWith('/')) {
-      return { urlPrefixError: 'URL must either start with "http" or "/"' };
-    }
-    return null;
+    return checkUrlForInvalidSequences(value);
   };
 }
 
@@ -72,4 +59,12 @@ export function checkUrlForInvalidSequences(url: string) {
     };
   }
   return null;
+}
+
+export function hasAbsoluteUrlPrefix(url: string): boolean {
+  return url.startsWith('http://') || url.startsWith('https://');
+}
+
+export function hasRelativePathPrefix(path: string): boolean {
+  return path.startsWith('/');
 }
