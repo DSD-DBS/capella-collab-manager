@@ -100,21 +100,21 @@ def create_new(
     )
     try:
         tool = tools_crud.get_tool_by_id(new_model.tool_id, db)
-    except IntegrityError as e:
+    except IntegrityError:
         raise HTTPException(
             404,
             {"reason": f"The tool with id {new_model.tool_id} was not found."},
         )
     try:
         model = crud.create_new_model(db, project, new_model, tool)
-    except IntegrityError as e:
+    except IntegrityError:
         raise HTTPException(
             409,
             {
                 "reason": "A model with a similar name already exists.",
                 "technical": "Slug already used",
             },
-        ) from e
+        )
     return ResponseModel.from_orm(model)
 
 
@@ -151,7 +151,7 @@ def set_tool_details(
         )
     try:
         version = tools_crud.get_version_by_id(tool_details.version_id, db)
-    except NoResultFound as e:
+    except NoResultFound:
         raise HTTPException(
             404,
             {
@@ -168,7 +168,7 @@ def set_tool_details(
 
     try:
         model_type = tools_crud.get_type_by_id(tool_details.type_id, db)
-    except NoResultFound as e:
+    except NoResultFound:
         raise HTTPException(
             404, {"reason": f"The type with id {model.type_id} was not found."}
         )
