@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends
 from requests import Session
 
 from capellacollab.core.database import get_db
-from capellacollab.tools.models import ToolBase, ToolVersionBase
+from capellacollab.tools.models import ToolBase, ToolTypeBase, ToolVersionBase
 
 from . import crud
 
@@ -23,6 +23,6 @@ def get_tool_versions(tool_id: int, db: Session = Depends(get_db)):
     return crud.get_tool_versions(db, tool_id)
 
 
-@router.get("/{tool_id}/types", response_model=list[ToolVersionBase])
+@router.get("/{tool_id}/types", response_model=list[ToolTypeBase])
 def get_tool_types(tool_id: int, db: Session = Depends(get_db)):
     return crud.get_tool_types(db, tool_id)
