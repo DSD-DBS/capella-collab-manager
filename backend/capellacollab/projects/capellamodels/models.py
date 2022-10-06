@@ -37,11 +37,6 @@ class EditingMode(enum.Enum):
     GIT = "git"
 
 
-class CapellaModelType(enum.Enum):
-    PROJECT = "project"
-    LIBRARY = "library"
-
-
 class CapellaModel(BaseModel):
     name: str
     description: t.Optional[str]
@@ -75,7 +70,6 @@ class DatabaseCapellaModel(Base):
     tool_type = relationship(Type)
 
     editing_mode = Column(Enum(EditingMode))
-    model_type = Column(Enum(CapellaModelType))
 
     t4c_model = relationship("DB_T4CModel", back_populates="model")
     git_model = relationship("DB_GitModel", back_populates="model")
