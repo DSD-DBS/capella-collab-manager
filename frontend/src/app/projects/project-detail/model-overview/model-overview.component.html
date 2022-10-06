@@ -15,13 +15,16 @@
       <div class="header-text">
         <div class="title">{{ model.name }}</div>
         <span class="subtitle">
-          Tool: {{ model.tool_id }} {{ model.version_id }}</span
-        >
+          {{ model.tool.name }}
+          <span *ngIf="model.version"> {{ model.version.id }}</span>
+          <span *ngIf="!model.version"> (Version not specified)</span>
+        </span>
       </div>
 
       <div class="right">
         <mat-card class="nature"
-          ><div>{{ model.type_id }}</div>
+          ><div *ngIf="model.type">{{ model.type.id }}</div>
+          <div *ngIf="!model.type">Not specified</div>
         </mat-card>
         <mat-card class="editingMode"
           ><div>{{ getPrimaryWorkingMode(model) }}</div></mat-card
