@@ -49,21 +49,21 @@
           </a>
           <a
             mat-mini-fab
-            [disabled]="!model.t4c_model"
+            [disabled]="!model.t4c_model_id"
             matTooltip="Start synchronization (Coming soon)"
           >
             <mat-icon>sync</mat-icon>
           </a>
           <a
-            *ngIf="model.git_model"
+            *ngIf="model.git_model_id"
             mat-mini-fab
-            [disabled]="!model.git_model"
+            [disabled]="!model.git_model_id"
             matTooltip="Open git repository"
           >
             <mat-icon>link</mat-icon>
           </a>
           <a
-            *ngIf="model.t4c_model"
+            *ngIf="model.t4c_model_id"
             routerLink="/workspaces"
             mat-mini-fab
             matTooltip="Request persistent session"
@@ -72,7 +72,7 @@
           </a>
           <a
             mat-mini-fab
-            *ngIf="model.git_model"
+            *ngIf="model.git_model_id"
             matTooltip="Open readonly session"
           >
             <mat-icon>remove_red_eye</mat-icon>
