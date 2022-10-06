@@ -29,7 +29,7 @@ import { connectable, filter, Subject, switchMap, tap } from 'rxjs';
   styleUrls: ['./create-model-base.component.css'],
 })
 export class CreateModelBaseComponent implements OnInit {
-  @Output() create = new EventEmitter<Model>();
+  @Output() create = new EventEmitter();
   @Input() asStepper?: boolean;
 
   public form = new FormGroup({

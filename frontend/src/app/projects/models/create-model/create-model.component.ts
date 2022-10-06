@@ -58,7 +58,7 @@ export class CreateModelComponent implements OnInit, OnDestroy {
     this.currentStep.emit(steps.at(event.selectedIndex));
   }
 
-  afterModelCreated(model: Model): void {
+  afterModelCreated(): void {
     this.stepper.steps.get(0)!.completed = true;
     this.stepper.next();
     this.stepper.steps.get(0)!.editable = false;
