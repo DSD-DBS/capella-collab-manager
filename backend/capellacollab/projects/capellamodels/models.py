@@ -84,8 +84,8 @@ class ResponseModel(BaseModel):
     tool: ToolBase
     version: t.Optional[ToolVersionBase]
     type: t.Optional[ToolTypeBase]
-    t4c_model: t.Optional[int]
-    git_model: t.Optional[int]
+    t4c_model_id: t.Optional[int]
+    git_model_id: t.Optional[int]
 
     @classmethod
     def from_model(cls, model: DatabaseCapellaModel):
