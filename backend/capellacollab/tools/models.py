@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+from pydantic import BaseModel
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -39,3 +40,30 @@ class Type(Base):
 
     tool_id = Column(Integer, ForeignKey(Tool.id))
     tool = relationship("Tool", back_populates="types")
+
+
+class ToolBase(BaseModel):
+    id: int
+    name: str
+    docker_image_template: str
+
+    class Config:
+        orm_mode = True
+
+
+class ToolVersionBase(BaseModel):
+    id: int
+    name: str
+    is_recommended: bool
+    is_deprecated: bool
+
+    class Config:
+        orm_mode = True
+
+
+class ToolTypeBase(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        orm_mode = True

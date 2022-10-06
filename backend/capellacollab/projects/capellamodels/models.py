@@ -22,7 +22,14 @@ from sqlalchemy.orm import relationship
 # Import required for sqlalchemy
 import capellacollab.projects.users.models
 from capellacollab.core.database import Base
-from capellacollab.tools.models import Tool, Type, Version
+from capellacollab.tools.models import (
+    Tool,
+    ToolBase,
+    ToolTypeBase,
+    ToolVersionBase,
+    Type,
+    Version,
+)
 
 
 class EditingMode(enum.Enum):
@@ -80,9 +87,9 @@ class ResponseModel(BaseModel):
     project_slug: str
     name: str
     description: str
-    tool_id: t.Optional[int]
-    version_id: t.Optional[int]
-    type_id: t.Optional[int]
+    tool: t.Optional[ToolBase]
+    version: t.Optional[ToolVersionBase]
+    type: t.Optional[ToolTypeBase]
     t4c_model: t.Optional[int]
     git_model: t.Optional[int]
 
