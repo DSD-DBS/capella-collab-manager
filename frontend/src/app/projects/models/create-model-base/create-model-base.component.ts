@@ -81,12 +81,10 @@ export class CreateModelBaseComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.valid && this.projectService.project?.slug) {
-      let new_model = this.form.value as NewModel;
-
       const modelConnectable = connectable<Model>(
         this.modelService.createNewModel(
           this.projectService.project.slug,
-          new_model
+          this.form.value as NewModel
         ),
         {
           connector: () => new Subject(),
