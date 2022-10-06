@@ -102,7 +102,7 @@ def test_init_database(
     # Update database to HEAD
     migration.migrate_db(initialized_database)
 
-    # Downgrade database to 687484695147
+    # Downgrade database to alembic_revision
     command.downgrade(alembic_cfg, alembic_revision)
 
     # And migrate to HEAD again
