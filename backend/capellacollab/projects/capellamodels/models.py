@@ -81,7 +81,7 @@ class ResponseModel(BaseModel):
     project_slug: str
     name: str
     description: str
-    tool: t.Optional[ToolBase]
+    tool: ToolBase
     version: t.Optional[ToolVersionBase]
     type: t.Optional[ToolTypeBase]
     t4c_model: t.Optional[int]
