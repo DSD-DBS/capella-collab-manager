@@ -20,8 +20,8 @@ log.setLevel("DEBUG")
 client = docker.from_env()
 
 
-@pytest.fixture()
-def docker_database():
+@pytest.fixture(name="docker_database")
+def fixture_docker_database():
     log.info("Start database")
     container = client.containers.run(
         image="postgres",
@@ -46,8 +46,8 @@ def docker_database():
     container.stop()
 
 
-@pytest.fixture(params=["687484695147.sql"])
-def initialized_database(
+@pytest.fixture(name="initialized_database", params=["687484695147.sql"])
+def fixture_initialized_database(
     docker_database: docker.models.containers.Container, request
 ):
     docker_database.reload()
@@ -78,8 +78,8 @@ def initialized_database(
     )
 
 
-@pytest.fixture()
-def alembic_cfg(initialized_database):
+@pytest.fixture(name="alembic_cfg")
+def fixture_alembic_cfg(initialized_database):
     root_dir = pathlib.Path(__file__).parents[1] / "capellacollab"
     alembic_cfg = Config(root_dir / "alembic.ini")
     alembic_cfg.set_main_option("script_location", str(root_dir / "alembic"))
