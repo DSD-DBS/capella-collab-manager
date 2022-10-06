@@ -26,8 +26,11 @@ import {
   GitSettingsService,
 } from 'src/app/services/settings/git-settings.service';
 import {
-  absoluteOrRelativeUrlPrefixValidator,
+  absoluteOrRelativeSafetyValidators,
+  absoluteUrlSafetyValidator,
   checkUrlForInvalidSequences,
+  hasAbsoluteUrlPrefix,
+  hasRelativePathPrefix,
 } from 'src/app/helpers/validators/url-validator';
 
 @Component({
@@ -38,27 +41,30 @@ import {
 export class CreateCoworkingMethodComponent implements OnInit {
   @Output() create = new EventEmitter<{ created: boolean }>();
 
-  public cmpGitSettings: Array<GitSetting> = [];
-  public filteredRevisions: Instance = { branches: [], tags: [] };
+  public availableGitSettings: Array<GitSetting> = [];
   public selectedGitSetting: GitSetting | undefined = undefined;
 
-  public resultUrl: string = '';
-
-  private instances: Instance | undefined = {
+  private availableRevisions: Instance | undefined = {
     branches: [],
     tags: [],
   };
+  public filteredRevisions: Instance = { branches: [], tags: [] };
+
+  public resultUrl: string = '';
 
   public form = new FormGroup({
     urlGroup: new FormGroup({
       baseUrl: new FormControl<GitSetting | undefined>(undefined),
-      inputUrl: new FormControl('', absoluteOrRelativeUrlPrefixValidator()),
+      inputUrl: new FormControl('', absoluteUrlSafetyValidator()),
     }),
     credentials: new FormGroup({
       username: new FormControl(''),
       password: new FormControl(''),
     }),
-    revision: new FormControl('', Validators.required),
+    revision: new FormControl('', [
+      Validators.required,
+      this.validRevisionValidator(),
+    ]),
     entrypoint: new FormControl('/'),
   });
 
@@ -71,68 +77,81 @@ export class CreateCoworkingMethodComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.gitService.instance.subscribe({
-      next: (instance) => {
-        this.instances = instance;
-        this.form.controls.revision.updateValueAndValidity({
-          onlySelf: false,
-          emitEvent: true,
-        });
-      },
+    this.gitService.instance.subscribe((revisions) => {
+      this.availableRevisions = revisions;
+      this.form.controls.revision.updateValueAndValidity({
+        onlySelf: false,
+        emitEvent: true,
+      });
+    });
+
+    this.gitSettingsService.gitSettings.subscribe((gitSettings) => {
+      this.availableGitSettings = gitSettings;
+
+      if (gitSettings.length) {
+        this.form.controls.urlGroup.controls.baseUrl.setValidators([
+          Validators.required,
+        ]);
+        this.form.controls.urlGroup.controls.inputUrl.setValidators([
+          absoluteOrRelativeSafetyValidators(),
+        ]);
+      }
     });
 
     this.form.controls.revision.valueChanges.subscribe((value) =>
       this.filteredRevisionsByPrefix(value as string)
     );
 
-    this.gitSettingsService.gitSettings.subscribe({
-      next: (gitSettings) => {
-        this.cmpGitSettings = gitSettings;
-      },
-    });
+    this.form.controls.urlGroup.setValidators([this.resultUrlValidator()]);
     this.gitSettingsService.loadGitSettings();
-
-    this.form.controls.urlGroup.setValidators(this.urlValidation());
-    this.initializeBaseUrlValidator();
   }
 
   onRevisionFocus(): void {
+    let urlGroup = this.form.controls.urlGroup;
+    if (
+      urlGroup.invalid ||
+      urlGroup.controls.baseUrl.invalid ||
+      urlGroup.controls.inputUrl.invalid
+    ) {
+      return;
+    }
+
     let projectName = this.projectService?.project?.name || '';
-    let url = this.resultUrl;
     let gitCredentials = this.form.controls.credentials.value as Credentials;
 
-    if (url) {
-      this.gitService.loadInstance(projectName, url, gitCredentials);
-    }
+    this.gitService.loadInstance(projectName, this.resultUrl, gitCredentials);
   }
 
   onSelect(value: GitSetting): void {
     let inputUrlFormControl = this.form.controls.urlGroup.controls.inputUrl;
     let inputUrl = inputUrlFormControl.value;
 
-    if (inputUrl && !inputUrl.startsWith('/')) {
+    if (inputUrl && !hasRelativePathPrefix(inputUrl)) {
       inputUrlFormControl.reset();
     }
 
     this.selectedGitSetting = value;
     this.updateResultUrl();
+    this.resetRevisions();
   }
 
   onInputChange(changedInputUrl: string): void {
     this.updateResultUrl();
-    this.form.controls.urlGroup.controls.inputUrl.updateValueAndValidity();
+    this.resetRevisions();
 
-    if (changedInputUrl && changedInputUrl.startsWith('http')) {
+    let urlGroupControls = this.form.controls.urlGroup.controls;
+    urlGroupControls.inputUrl.updateValueAndValidity();
+
+    if (changedInputUrl && hasAbsoluteUrlPrefix(changedInputUrl)) {
       let longestMatchingGitSetting =
         this.findLongestUrlMatchingGitSetting(changedInputUrl);
 
       if (longestMatchingGitSetting) {
-        this.form.controls.urlGroup.controls.baseUrl.setValue(
-          longestMatchingGitSetting
-        );
+        urlGroupControls.baseUrl.setValue(longestMatchingGitSetting);
         this.selectedGitSetting = longestMatchingGitSetting;
-      } else if (this.cmpGitSettings.length) {
-        this.resetResultAndBaseUrl();
+      } else if (this.availableGitSettings.length) {
+        this.selectedGitSetting = undefined;
+        this.form.controls.urlGroup.controls.baseUrl.reset();
       }
     }
   }
@@ -147,7 +166,13 @@ export class CreateCoworkingMethodComponent implements OnInit {
         .addGitSource(
           this.projectService.project.name,
           this.modelService.model.slug,
-          this.createSourceFromForm()
+          {
+            path: this.resultUrl,
+            username: this.form.value.credentials!.username || '',
+            password: this.form.value.credentials!.password || '',
+            revision: this.form.value.revision!,
+            entrypoint: this.form.value.entrypoint || '',
+          } as Source
         )
         .subscribe(() => {
           this.create.emit({ created: true });
@@ -159,23 +184,13 @@ export class CreateCoworkingMethodComponent implements OnInit {
     let inputUrlFormControl = this.form.controls.urlGroup.controls.inputUrl;
 
     let baseUrl = this.selectedGitSetting?.url || '';
-    let inputUrl = inputUrlFormControl.value;
+    let inputUrl = inputUrlFormControl.value || '';
 
-    if (
-      inputUrl?.startsWith('http') &&
-      this.selectedGitSetting &&
-      inputUrl.startsWith(this.selectedGitSetting.url)
-    ) {
+    if (hasAbsoluteUrlPrefix(inputUrl)) {
       this.resultUrl = inputUrl;
     } else {
-      this.resultUrl = baseUrl + (inputUrl || inputUrlFormControl.value || '');
+      this.resultUrl = baseUrl + inputUrl;
     }
-  }
-
-  private resetResultAndBaseUrl() {
-    this.resultUrl = '';
-    this.selectedGitSetting = undefined;
-    this.form.controls.urlGroup.controls.baseUrl.reset();
   }
 
   private filteredRevisionsByPrefix(prefix: string): void {
@@ -184,14 +199,58 @@ export class CreateCoworkingMethodComponent implements OnInit {
       tags: [],
     };
 
-    if (this.instances) {
+    if (this.availableRevisions) {
       this.filteredRevisions = {
-        branches: this.instances!.branches.filter((branch) =>
+        branches: this.availableRevisions!.branches.filter((branch) =>
           branch.startsWith(prefix)
         ),
-        tags: this.instances!.tags.filter((tag) => tag.startsWith(prefix)),
+        tags: this.availableRevisions!.tags.filter((tag) =>
+          tag.startsWith(prefix)
+        ),
       };
     }
+  }
+
+  private resetRevisions() {
+    this.availableRevisions = undefined;
+    this.filteredRevisions = {
+      branches: [],
+      tags: [],
+    };
+    this.form.controls.revision.setValue('');
+  }
+
+  private resultUrlValidator(): ValidatorFn {
+    return (_: AbstractControl): ValidationErrors | null => {
+      this.updateResultUrl();
+
+      let url: string = this.resultUrl;
+      if (!url) return null;
+
+      if (!hasAbsoluteUrlPrefix(url)) {
+        return { urlPrefixError: 'Absolute URL must start with http(s)://' };
+      }
+
+      return checkUrlForInvalidSequences(url);
+    };
+  }
+
+  private validRevisionValidator(): ValidatorFn {
+    return (controls: AbstractControl): ValidationErrors | null => {
+      let value: string = controls.value;
+      if (!value) return null;
+
+      if (
+        this.availableRevisions?.branches.includes(value) ||
+        this.availableRevisions?.tags.includes(value)
+      ) {
+        return null;
+      }
+
+      return {
+        revisionNotFoundError: `${value} does not exists on ${this.resultUrl}`,
+      };
+    };
   }
 
   private findLongestUrlMatchingGitSetting(
@@ -199,7 +258,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
   ): GitSetting | undefined {
     let longestMatchingGitSetting = undefined;
     let longestUrlLength = 0;
-    this.cmpGitSettings.forEach((gitSetting) => {
+    this.availableGitSettings.forEach((gitSetting) => {
       if (
         url.startsWith(gitSetting.url) &&
         gitSetting.url.length > longestUrlLength
@@ -210,38 +269,5 @@ export class CreateCoworkingMethodComponent implements OnInit {
     });
 
     return longestMatchingGitSetting;
-  }
-
-  private createSourceFromForm(): Source {
-    return {
-      path: this.resultUrl,
-      username: this.form.value.credentials!.username || '',
-      password: this.form.value.credentials!.password || '',
-      revision: this.form.value.revision!,
-      entrypoint: this.form.value.entrypoint || '',
-    };
-  }
-
-  private initializeBaseUrlValidator(): void {
-    let baseUrlFormGroup = this.form.controls.urlGroup.controls.baseUrl;
-
-    if (this.cmpGitSettings.length) {
-      baseUrlFormGroup.setValidators([Validators.required]);
-    }
-    baseUrlFormGroup.updateValueAndValidity();
-  }
-
-  private urlValidation(): ValidatorFn {
-    return (_: AbstractControl): ValidationErrors | null => {
-      this.updateResultUrl();
-
-      let url: string = this.resultUrl;
-      if (!url) return null;
-
-      if (!(url.startsWith('http://') || url.startsWith('https://'))) {
-        return { urlPrefixError: 'Absolute URL must start with http(s)://' };
-      }
-      return checkUrlForInvalidSequences(url);
-    };
   }
 }
