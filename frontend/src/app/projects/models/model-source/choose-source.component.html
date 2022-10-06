@@ -31,12 +31,15 @@
     </button>
   </div>
 
-  <h2 class="title" *ngIf="projectService.project.tool?.name === 'capella'">
+  <h2
+    class="title text-center"
+    *ngIf="modelService.model.tool?.name === 'Capella'"
+  >
     Team4Capella sources
   </h2>
   <div
-    class="options-list"
-    *ngIf="projectService.project.tool?.name === 'capella'"
+    class="options-list flex-center"
+    *ngIf="modelService.model.tool?.name === 'Capella'"
   >
     <button mat-raised-button disabled>
       <div class="button-content-wrapper">
