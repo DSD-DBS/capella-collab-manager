@@ -124,8 +124,6 @@ export class EditT4CInstanceComponent implements OnInit {
         instance.password = '***********';
         this.form.patchValue(instance);
       });
-
-    this.toolService.get_versions().subscribe(this.toolService._versions);
   }
 
   enableEditing(): void {
