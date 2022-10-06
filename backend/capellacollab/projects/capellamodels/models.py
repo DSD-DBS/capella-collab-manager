@@ -78,7 +78,6 @@ class DatabaseCapellaModel(Base):
 class ResponseModel(BaseModel):
     id: int
     slug: str
-    project_slug: str
     name: str
     description: str
     tool: ToolBase
