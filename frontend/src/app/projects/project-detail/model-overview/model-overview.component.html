@@ -16,18 +16,25 @@
         <div class="title">{{ model.name }}</div>
         <span class="subtitle">
           {{ model.tool.name }}
-          <span *ngIf="model.version"> {{ model.version.id }}</span>
+          <span *ngIf="model.version"> {{ model.version.name }}</span>
           <span *ngIf="!model.version"> (Version not specified)</span>
         </span>
       </div>
 
       <div class="right">
         <mat-card class="nature"
-          ><div *ngIf="model.type">{{ model.type.id }}</div>
-          <div *ngIf="!model.type">Not specified</div>
-        </mat-card>
+          ><div>
+            <div class="model-badge-title">Nature</div>
+            <div *ngIf="model.type">{{ model.type.id }}</div>
+            <div *ngIf="!model.type">Not specified</div>
+          </div></mat-card
+        >
+        <mat-card class=""> </mat-card>
         <mat-card class="editingMode"
-          ><div>{{ getPrimaryWorkingMode(model) }}</div></mat-card
+          ><div>
+            <div class="model-badge-title">Working mode</div>
+            {{ getPrimaryWorkingMode(model) }}
+          </div></mat-card
         >
       </div>
     </div>
