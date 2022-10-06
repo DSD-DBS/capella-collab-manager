@@ -24,8 +24,8 @@ export interface Model {
   tool: Tool;
   version: ToolVersion | null;
   type: ToolType | null;
-  t4c_model: number | null;
-  git_model: number | null;
+  t4c_model_id: number | null;
+  git_model_id: number | null;
 }
 
 @Injectable({
