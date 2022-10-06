@@ -89,19 +89,4 @@ export class InitModelComponent implements OnInit {
         });
     }
   }
-
-  getTool(): Tool {
-    let tool = this.toolService.tools!.filter((tool) => {
-      return tool.id == this.modelService.model?.tool_id;
-    })[0];
-    return tool || ({} as Tool);
-  }
-
-  getForToolId<Type>(nested_list: { [id: number]: Type[] } | null): Type[] {
-    let tool_id: number | null | undefined = this.modelService.model?.tool_id;
-    if (tool_id && nested_list) {
-      return nested_list[tool_id];
-    }
-    return [];
-  }
 }
