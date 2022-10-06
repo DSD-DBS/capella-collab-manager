@@ -9,24 +9,24 @@
 >
   <mat-card class="section-card">
     <h2>
-      Add a primary source for the model “{{ modelService.model?.name }}” of the
-      project “{{ projectService.project?.name }}”.
+      Add a primary source for the model “{{ modelService.model.name }}” of the
+      project “{{ projectService.project.name }}”.
     </h2>
     <form [formGroup]="form" (submit)="onSubmit()">
       <div formGroupName="urlGroup">
-        <fieldset *ngIf="cmpGitSettings.length">
+        <fieldset *ngIf="availableGitSettings.length">
           <mat-form-field appearance="fill">
             <mat-label>Base integration URL</mat-label>
             <mat-select
               matInput
               formControlName="baseUrl"
               (selectionChange)="onSelect($event.value)"
-              [value]="cmpGitSettings"
+              [value]="availableGitSettings"
             >
               <mat-option
-                *ngFor="let instance of cmpGitSettings"
-                [value]="instance"
-                >{{ instance.url }}</mat-option
+                *ngFor="let gitSetting of availableGitSettings"
+                [value]="gitSetting"
+                >{{ gitSetting.url }}</mat-option
               >
             </mat-select>
           </mat-form-field>
@@ -34,8 +34,10 @@
         <fieldset>
           <mat-form-field appearance="fill">
             <mat-label
-              >Absolute Path
-              {{ cmpGitSettings.length ? "or Relative Path" : "" }}</mat-label
+              >Absolute URL
+              {{
+                availableGitSettings.length ? "or Relative URL" : ""
+              }}</mat-label
             >
             <input
               matInput
@@ -57,7 +59,7 @@
         </fieldset>
         <div>
           <mat-card>
-            <mat-card-subtitle>Resulting URL</mat-card-subtitle>
+            <mat-card-subtitle>Resulting URL*</mat-card-subtitle>
             <mat-card-content>
               <div class="no-text-overflow">
                 <mat-icon class="align-icon" fontIcon="info"></mat-icon>
@@ -67,6 +69,16 @@
             <mat-card-content *ngIf="!resultUrl.length" class="error"
               >A resulting URL is required</mat-card-content
             >
+            <mat-card-content
+              class="error"
+              *ngIf="
+                availableGitSettings.length &&
+                selectedGitSetting === undefined &&
+                resultUrl.length
+              "
+            >
+              A base integration URL is required
+            </mat-card-content>
             <mat-card-content
               class="error"
               *ngIf="form.controls.urlGroup.errors?.urlSafetyError && resultUrl"
@@ -105,6 +117,17 @@
             [matAutocomplete]="auto"
             (focus)="onRevisionFocus()"
           />
+          <mat-error *ngIf="form.controls.revision.errors?.requiredError">
+            {{ form.controls.revision.errors?.requiredError }}
+          </mat-error>
+          <mat-error
+            *ngIf="
+              form.controls.revision.errors?.revisionNotFoundError &&
+              form.controls.revision.value
+            "
+          >
+            {{ form.controls.revision.errors?.revisionNotFoundError }}
+          </mat-error>
         </mat-form-field>
         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
           <mat-optgroup label="branch">
