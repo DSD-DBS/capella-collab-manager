@@ -104,13 +104,8 @@ export class EditT4CInstanceComponent implements OnInit {
       .subscribe(this._instance);
 
     this.toolService
-      .get_versions()
-      .pipe(
-        filter(Boolean),
-        map((versions) =>
-          versions.filter((version: Version) => version.tool_id === 1)
-        )
-      )
+      .getVersionsForTool(1)
+      .pipe(filter(Boolean))
       .subscribe(this._capella_versions);
 
     this._instance
