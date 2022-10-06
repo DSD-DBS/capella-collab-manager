@@ -67,7 +67,7 @@ class DatabaseCapellaModel(Base):
     version = relationship(Version)
 
     type_id = Column(Integer, ForeignKey(Type.id))
-    tool_type = relationship(Type)
+    type = relationship(Type)
 
     editing_mode = Column(Enum(EditingMode))
 
