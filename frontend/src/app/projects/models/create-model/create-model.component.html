@@ -8,7 +8,7 @@
     <mat-step completed="false" label="Create model">
       <app-create-model-base
         [asStepper]="asStepper"
-        (create)="afterModelCreated($event)"
+        (create)="afterModelCreated()"
         (finish)="complete.emit(false)"
       ></app-create-model-base>
     </mat-step>
