@@ -71,8 +71,7 @@ def get_model_by_slug(
             },
         )
 
-    response_model = ResponseModel.from_orm(model)
-    return response_model
+    return ResponseModel.from_orm(model)
 
 
 @router.post("/", response_model=ResponseModel)
