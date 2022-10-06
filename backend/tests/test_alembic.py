@@ -46,9 +46,14 @@ def fixture_docker_database():
     container.stop()
 
 
-@pytest.fixture(name="initialized_database", params=["687484695147.sql"])
+@pytest.fixture(name="alembic_revision", params=["687484695147"])
+def fixture_alembic_revision(request) -> str:
+    return request.param
+
+
+@pytest.fixture(name="initialized_database")
 def fixture_initialized_database(
-    docker_database: docker.models.containers.Container, request
+    docker_database: docker.models.containers.Container, alembic_revision: str
 ):
     docker_database.reload()
     port = docker_database.ports["5432/tcp"][0]["HostPort"]
@@ -66,7 +71,7 @@ def fixture_initialized_database(
         raise TimeoutError("Database connection timed out")
 
     output = docker_database.exec_run(
-        cmd=f"psql -h 'localhost' -p 5432 -U dev dev -f /tmp/sql/{request.param}"
+        cmd=f"psql -h 'localhost' -p 5432 -U dev dev -f /tmp/sql/{alembic_revision}.sql"
     )
     if output.exit_code == 0:
         log.debug(output.output.decode())
@@ -90,12 +95,14 @@ def fixture_alembic_cfg(initialized_database):
     yield alembic_cfg
 
 
-def test_init_database(initialized_database, alembic_cfg):
+def test_init_database(
+    initialized_database, alembic_cfg, alembic_revision: str
+):
     # Update database to HEAD
     migration.migrate_db(initialized_database)
 
     # Downgrade database to 687484695147
-    command.downgrade(alembic_cfg, "687484695147")
+    command.downgrade(alembic_cfg, alembic_revision)
 
     # And migrate to HEAD again
     migration.migrate_db(initialized_database)
