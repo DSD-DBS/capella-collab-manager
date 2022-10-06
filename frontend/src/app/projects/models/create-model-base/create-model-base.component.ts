@@ -20,8 +20,9 @@ import {
   ModelService,
   NewModel,
 } from 'src/app/services/model/model.service';
-import { ToolService } from 'src/app/services/tools/tool.service';
 import { connectable, filter, Subject, switchMap, tap } from 'rxjs';
+import { ToolService } from 'src/app/services/tools/tool.service';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 
 @Component({
   selector: 'app-create-model-base',
@@ -41,7 +42,8 @@ export class CreateModelBaseComponent implements OnInit {
   constructor(
     private modelService: ModelService,
     public projectService: ProjectService,
-    public toolService: ToolService
+    public toolService: ToolService,
+    private toastService: ToastService
   ) {}
 
   slugValidator(slugs: string[]): ValidatorFn {
@@ -70,7 +72,7 @@ export class CreateModelBaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.toolService.get_tools().subscribe();
+    this.toolService.getTools().subscribe();
     this.modelService._models.pipe(filter(Boolean)).subscribe((models) => {
       this.form.controls.name.addValidators(
         this.slugValidator(models.map((model) => model.slug))
@@ -102,9 +104,15 @@ export class CreateModelBaseComponent implements OnInit {
           this.modelService._models.next(value);
         });
 
-      modelConnectable
-        .pipe(tap(this.modelService._model))
-        .subscribe(this.create.emit.bind(this.create));
+      modelConnectable.pipe(tap(this.modelService._model)).subscribe({
+        next: (model: Model | undefined) => {
+          this.toastService.showSuccess(
+            'Model created',
+            `The model with name ${model!.name} has been created`
+          );
+          this.create.emit();
+        },
+      });
 
       modelConnectable.connect();
     }
