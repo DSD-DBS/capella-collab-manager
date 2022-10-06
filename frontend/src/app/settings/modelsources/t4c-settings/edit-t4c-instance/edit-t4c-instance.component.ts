@@ -22,7 +22,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { ToolService, Version } from 'src/app/services/tools/tool2.service';
+import { ToolService, ToolVersion } from 'src/app/services/tools/tool.service';
 
 @Component({
   selector: 'app-edit-t4c-instance',
@@ -39,7 +39,7 @@ export class EditT4CInstanceComponent implements OnInit {
     return this._instance.value;
   }
 
-  _capella_versions = new BehaviorSubject<Version[]>([]);
+  _capella_versions = new BehaviorSubject<ToolVersion[]>([]);
   get capella_versions() {
     return this._capella_versions.value;
   }

@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, single } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Tool, ToolType, ToolVersion } from '../tools/tool.service';
 
 export interface NewModel {
   name: string;
@@ -20,9 +21,9 @@ export interface Model {
   slug: string;
   name: string;
   description: string;
-  tool_id: number | null;
-  version_id: number | null;
-  type_id: number | null;
+  tool: Tool;
+  version: ToolVersion | null;
+  type: ToolType | null;
   t4c_model: number | null;
   git_model: number | null;
 }
