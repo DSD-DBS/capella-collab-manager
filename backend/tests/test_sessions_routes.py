@@ -166,23 +166,6 @@ def test_create_readonly_session_as_user(client, db, username):
     assert "id" in response.json()
 
 
-def test_create_old_style_persistent_session_as_user(client, db, username):
-    create_user(db, username, Role.USER)
-
-    response = client.post(
-        "/api/v1/sessions/",
-        json={
-            "type": "persistent",
-            "branch": "main",
-            "depth": "CompleteHistory",
-            "repository": None,
-        },
-    )
-
-    assert response.status_code == 200
-    assert "id" in response.json()
-
-
 def test_create_persistent_session_as_user(client, db, username):
     create_user(db, username, Role.USER)
 

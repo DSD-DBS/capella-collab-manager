@@ -94,6 +94,8 @@ def request_session(
     operator: Operator = Depends(get_operator),
     token=Depends(JWTBearer()),
 ):
+    assert body.type == WorkspaceType.READONLY
+
     rdp_password = generate_password(length=64)
 
     owner = get_username(token)
@@ -102,75 +104,51 @@ def request_session(
 
     existing_user_sessions = database.get_sessions_for_user(db, owner)
 
-    if body.type == WorkspaceType.PERSISTENT:
-        body.repository = ""
-        if WorkspaceType.PERSISTENT in [
-            session.type for session in existing_user_sessions
-        ]:
-            raise HTTPException(
-                status_code=404,
-                detail={
-                    "err_code": "existing_session",
-                    "reason": "You already have a open Persistent Session. Please navigate to 'Active Sessions' to Reconnect",
-                },
-            )
-        user = users.get_user(db, owner)
-
-        # FIXME: Get repositories from models with linked TeamForCapella repositories
-        repositories = []
-
-        session = operator.start_persistent_session(
-            username=get_username(token),
-            password=rdp_password,
-            repositories=repositories,
+    if body.repository in [
+        session.repository for session in existing_user_sessions
+    ]:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "err_code": "existing_session",
+                "reason": f"You already have a open Read-Only Session for the repository {body.repository}. Please navigate to 'Active Sessions' to Reconnect",
+            },
+        )
+    verify_project_role(repository=body.repository, token=token, db=db)
+    git_model = git_models_crud.get_primary_model_of_repository(
+        db, body.repository
+    )
+    if not git_model:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "err_code": "git_model_not_found",
+                "reason": "The Model has no connected Git Model. Please contact a project manager or admininistrator",
+            },
         )
 
-    elif body.type == WorkspaceType.READONLY:
-        if body.repository in [
-            session.repository for session in existing_user_sessions
-        ]:
-            raise HTTPException(
-                status_code=404,
-                detail={
-                    "err_code": "existing_session",
-                    "reason": f"You already have a open Read-Only Session for the repository {body.repository}. Please navigate to 'Active Sessions' to Reconnect",
-                },
-            )
-        verify_project_role(repository=body.repository, token=token, db=db)
-        git_model = git_models_crud.get_primary_model_of_repository(
-            db, body.repository
+    revision = body.branch or git_model.revision
+    if body.depth == DepthType.LatestCommit:
+        depth = 1
+    elif body.depth == DepthType.CompleteHistory:
+        depth = 0
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "err_code": "wrong_depth_format",
+                "reason": f"Depth type {depth} is not allowed.",
+            },
         )
-        if not git_model:
-            raise HTTPException(
-                status_code=404,
-                detail={
-                    "err_code": "git_model_not_found",
-                    "reason": "The Model has no connected Git Model. Please contact a project manager or admininistrator",
-                },
-            )
-
-        revision = body.branch or git_model.revision
-        if body.depth == DepthType.LatestCommit:
-            depth = 1
-        elif body.depth == DepthType.CompleteHistory:
-            depth = 0
-        else:
-            raise HTTPException(
-                status_code=400,
-                detail={
-                    "err_code": "wrong_depth_format",
-                    "reason": f"Depth type {depth} is not allowed.",
-                },
-            )
-        session = operator.start_readonly_session(
-            password=rdp_password,
-            git_url=git_model.path,
-            git_revision=revision,
-            entrypoint=git_model.entrypoint,
-            git_username=git_model.username,
-            git_password=git_model.password,
-            git_depth=depth,
-        )
+    session = operator.start_readonly_session(
+        password=rdp_password,
+        git_url=git_model.path,
+        git_revision=revision,
+        entrypoint=git_model.entrypoint,
+        git_username=git_model.username,
+        git_password=git_model.password,
+        git_depth=depth,
+    )
 
     return create_guacamole_session(
         WorkspaceType.READONLY,
