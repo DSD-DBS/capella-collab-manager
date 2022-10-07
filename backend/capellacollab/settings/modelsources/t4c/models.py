@@ -7,13 +7,15 @@ from pydantic import BaseModel
 from sqlalchemy import CheckConstraint, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
+# required for sqlalchemy
+import capellacollab.settings.modelsources.t4c.models
 from capellacollab.core.database import Base
 
 
-class DatabaseT4CSettings(Base):
+class DatabaseT4CInstance(Base):
     __tablename__ = "t4c_instances"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String, nullable=False, unique=True)
+    name = Column(String, nullable=False)
     version_id = Column(Integer, ForeignKey("versions.id"))
     license = Column(String)
     host = Column(String)
@@ -27,6 +29,11 @@ class DatabaseT4CSettings(Base):
     password = Column(String)
 
     version = relationship("Version")
+    repositories = relationship(
+        "DatabaseT4CRepository",
+        back_populates="instance",
+        cascade="all, delete",
+    )
 
 
 class T4CInstanceBase(BaseModel):
@@ -74,3 +81,26 @@ class Version(BaseModel):
 class T4CInstance(T4CInstanceComplete):
     id: int
     version: Version
+
+
+class T4CInstanceWithRepositories(T4CInstance):
+    repositories: list["T4CRepository"]
+
+    class Config:
+        orm_mode = True
+
+
+class CreateT4CRepository(BaseModel):
+    name: str
+
+
+class T4CRepository(CreateT4CRepository):
+    id: int
+    instance_id: int
+    instance: T4CInstance
+
+    class Config:
+        orm_mode = True
+
+
+T4CInstanceWithRepositories.update_forward_refs()
