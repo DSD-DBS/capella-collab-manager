@@ -95,7 +95,6 @@ def fixture_alembic_cfg(initialized_database):
     yield alembic_cfg
 
 
-@pytest.mark.xfail()
 def test_init_database(
     initialized_database, alembic_cfg, alembic_revision: str
 ):
