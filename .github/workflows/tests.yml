@@ -26,5 +26,7 @@ jobs:
         run: |
           pip install "./backend[dev]"
       - name: Run pytest
+        working-directory: backend
         run: |
+          pytest
           cd backend && pytest
