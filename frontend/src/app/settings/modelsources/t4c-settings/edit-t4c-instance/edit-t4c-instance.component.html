@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flexbox center">
+<div class="space-evenly">
   <mat-card>
     <h2 *ngIf="!existing">Add a Team4Capella instance</h2>
     <h2 *ngIf="existing"></h2>
@@ -130,4 +130,9 @@
       </div>
     </form>
   </mat-card>
+
+  <app-t4c-instance-settings
+    *ngIf="instance"
+    [instance]="instance"
+  ></app-t4c-instance-settings>
 </div>

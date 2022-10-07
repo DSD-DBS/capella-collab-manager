@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
@@ -15,9 +14,12 @@ from capellacollab.core.database import get_db
 from capellacollab.settings.modelsources.t4c import crud
 from capellacollab.settings.modelsources.t4c.models import (
     CreateT4CInstance,
-    DatabaseT4CSettings,
+    DatabaseT4CInstance,
     PatchT4CInstance,
     T4CInstance,
+)
+from capellacollab.settings.modelsources.t4c.repositories.routes import (
+    router as repositories_router,
 )
 from capellacollab.tools import crud as tools_crud
 
@@ -72,7 +74,7 @@ def create_t4c_instance(
             },
         )
 
-    instance = DatabaseT4CSettings(**body.dict())
+    instance = DatabaseT4CInstance(**body.dict())
     instance.version = version
     return T4CInstance.from_orm(crud.create_t4c_instance(instance, db))
 
@@ -102,3 +104,8 @@ def edit_t4c_instance(
         if value := body.__getattribute__(key):
             instance.__setattr__(key, value)
     return T4CInstance.from_orm(crud.update_t4c_instance(instance, db))
+
+
+router.include_router(
+    repositories_router, prefix="/{instance_id}/repositories"
+)

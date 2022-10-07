@@ -3,18 +3,24 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<mat-card
-  ><h2>T4C Repository Settings</h2>
-  <form [formGroup]="createRepositoryForm" #formDirective="ngForm">
+<mat-card>
+  <h2>T4C Repository Settings</h2>
+  <form [formGroup]="form" #formDirective="ngForm">
     <mat-form-field>
       <mat-label>Repository name</mat-label>
       <input matInput formControlName="name" />
-      <mat-error>Please enter a name</mat-error>
+      <mat-error *ngIf="form.controls.name.errors?.required"
+        >Please enter a name</mat-error
+      >
+      <mat-error *ngIf="form.controls.name.errors?.projectExistsError"
+        >Name already used</mat-error
+      >
     </mat-form-field>
     <div class="field-separator"></div>
     <button
       mat-flat-button
       color="primary"
+      [disabled]="!form.valid"
       (click)="createRepository(formDirective)"
     >
       Add T4C repository
@@ -26,8 +32,10 @@
       [value]="repository"
     >
       <mat-icon mat-list-icon>laptop</mat-icon>
-      <div mat-line>{{ repository.name }}</div>
-      <div mat-line>Repository ID: {{ repository.id }}</div>
+      <div>
+        <div mat-line>{{ repository.name }}</div>
+        <div mat-line>Repository ID: {{ repository.id }}</div>
+      </div>
     </mat-list-option>
   </mat-selection-list>
 

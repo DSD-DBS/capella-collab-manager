@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -13,14 +13,17 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
-import { T4CSyncService } from 'src/app/services/t4c-sync/t4-csync.service';
 import {
+  CreateT4CRepository,
   T4CRepoService,
   T4CRepository,
 } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
+import { T4CSyncService } from 'src/app/services/t4c-sync/t4-csync.service';
+import { ActivatedRoute } from '@angular/router';
+import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { T4CRepoDeletionDialogComponent } from './t4c-repo-deletion-dialog/t4c-repo-deletion-dialog.component';
+import { T4CInstance } from 'src/app/services/settings/t4c-model.service';
+import { tap, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-t4c-instance-settings',
@@ -28,25 +31,23 @@ import { T4CRepoDeletionDialogComponent } from './t4c-repo-deletion-dialog/t4c-r
   styleUrls: ['./t4c-instance-settings.component.css'],
 })
 export class T4CInstanceSettingsComponent implements OnInit {
+  @Input() instance!: T4CInstance;
+
   constructor(
     private t4cSyncService: T4CSyncService,
     public t4cRepoService: T4CRepoService,
-    private dialog: MatDialog,
-    private route: ActivatedRoute,
-    private navbarService: NavBarService
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      this.instance_id = params.id;
-      this.navbarService.title =
-        'Settings / Modelsources / T4C / Instances / ' + this.instance_id;
-    });
+    this.t4cRepoService
+      .getT4CRepositories(this.instance.id)
+      .subscribe((repositories) => {
+        this.t4cRepoService._repositories.next(repositories);
+      });
   }
 
   @ViewChild('repositoryList') repositoryList: any;
-
-  instance_id: number = -1;
   synchronizeButtonState = 'primary';
 
   synchronizeRepositories() {
@@ -58,36 +59,50 @@ export class T4CInstanceSettingsComponent implements OnInit {
     });
   }
 
-  createRepositoryForm = new FormGroup({
-    name: new FormControl('', Validators.required),
+  form = new FormGroup({
+    name: new FormControl('', [
+      Validators.required,
+      this.uniqueNameValidator.bind(this),
+    ]),
   });
 
-  projectNonexistenceValidator(): Validators {
-    return (control: AbstractControl): ValidationErrors | null => {
-      for (const repo of this.t4cRepoService.repositories) {
-        if (repo.name == control.value) {
-          return { projectExistsError: true };
-        }
-      }
-      return null;
-    };
+  uniqueNameValidator(control: AbstractControl): ValidationErrors | null {
+    return this.t4cRepoService.repositories
+      .map((repo) => repo.name)
+      .indexOf(control.value) >= 0
+      ? { projectExistsError: true }
+      : null;
   }
 
   refreshRepositories(): void {
-    this.t4cRepoService.getT4CRepositories(this.instance_id).subscribe();
+    this.t4cRepoService.getT4CRepositories(this.instance!.id).subscribe();
   }
 
   createRepository(formDirective: FormGroupDirective): void {
-    if (this.createRepositoryForm.valid) {
+    if (this.form.valid) {
+      console.log(this.form.valid);
+      this.form.disable();
+
       this.t4cRepoService
         .createT4CRepository(
-          this.createRepositoryForm.value.name as string,
-          this.instance_id
+          this.instance!.id,
+          this.form.value as CreateT4CRepository
         )
-        .subscribe(() => {
-          this.refreshRepositories();
-          formDirective.resetForm();
-          this.createRepositoryForm.reset();
+        .pipe(
+          tap((repository) => {
+            this.form.reset();
+            this.form.enable();
+            this.t4cRepoService._repositories.next([
+              ...this.t4cRepoService.repositories,
+              repository,
+            ]);
+          }),
+          switchMap(() =>
+            this.t4cRepoService.getT4CRepositories(this.instance!.id)
+          )
+        )
+        .subscribe((repositories) => {
+          this.t4cRepoService._repositories.next(repositories);
         });
     }
   }
@@ -99,7 +114,11 @@ export class T4CInstanceSettingsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((val) => {
       if (val) {
-        this.refreshRepositories();
+        this.t4cRepoService
+          .getT4CRepositories(this.instance!.id)
+          .subscribe((repositories) => {
+            this.t4cRepoService._repositories.next(repositories);
+          });
       }
     });
   }

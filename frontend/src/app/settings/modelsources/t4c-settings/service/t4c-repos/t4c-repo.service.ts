@@ -5,7 +5,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
@@ -14,42 +14,47 @@ import { environment } from 'src/environments/environment';
 })
 export class T4CRepoService {
   constructor(private http: HttpClient) {}
-  repositories: T4CRepository[] = [];
+  base_url = new URL(
+    'settings/modelsources/t4c/',
+    environment.backend_url + '/'
+  );
 
-  getT4CRepositories(instance_id: number): Observable<T4CRepository[]> {
-    return this.http
-      .get<T4CRepository[]>(
-        `${environment.backend_url}/integrations/modelsources/t4c/instances/${instance_id}/repositories`
-      )
-      .pipe(
-        tap((res: T4CRepository[]) => {
-          this.repositories = res;
-        })
-      );
+  _repositories = new BehaviorSubject<T4CRepository[]>([]);
+  get repositories(): T4CRepository[] {
+    return this._repositories.value;
+  }
+
+  url_factory(instance_id: number): URL {
+    return new URL(`${instance_id}/repositories/`, this.base_url);
+  }
+
+  getT4CRepositories(instance_id: number): Observable<Array<T4CRepository>> {
+    const url = this.url_factory(instance_id);
+    return this.http.get<T4CRepository[]>(url.toString());
   }
 
   createT4CRepository(
-    name: string,
-    instance_id: number
+    instance_id: number,
+    repository: CreateT4CRepository
   ): Observable<T4CRepository> {
-    return this.http.post<T4CRepository>(
-      `${environment.backend_url}/integrations/modelsources/t4c/instances/${instance_id}/repositories`,
-      { name }
-    );
+    const url = this.url_factory(instance_id);
+    return this.http.post<T4CRepository>(url.toString(), repository);
   }
 
   deleteRepository(
     instance_id: number,
-    repository_name: string
+    repository_id: number
   ): Observable<T4CRepository> {
-    return this.http.delete<T4CRepository>(
-      `${environment.backend_url}/integrations/modelsources/t4c/instances/${instance_id}/repositories/${repository_name}`
-    );
+    const url = new URL(`${repository_id}`, this.url_factory(instance_id));
+    return this.http.delete<T4CRepository>(url.toString());
   }
 }
 
-export interface T4CRepository {
-  id: number;
+export type CreateT4CRepository = {
   name: string;
+};
+
+export type T4CRepository = CreateT4CRepository & {
+  id: number;
   instance_id: number;
-}
+};
