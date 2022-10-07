@@ -54,6 +54,7 @@ def upgrade():
         sa.PrimaryKeyConstraint("id"),
     )
     op.rename_table("capella_models", "models")
+
     with op.batch_alter_table("models") as batch_op:
         batch_op.add_column(sa.Column("slug", sa.String(), nullable=True))
         batch_op.add_column(
@@ -103,7 +104,7 @@ def upgrade():
             slug = base_slug
             index = 0
 
-            while slug in existing_slugs:
+            while slug in existing_slugs[project_id]:
                 slug = f"{base_slug}-{index}"
                 index += 1
 
