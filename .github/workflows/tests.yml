@@ -47,6 +47,7 @@ jobs:
       - name: Install dependencies
         working-directory: frontend
         run: |
+          npm i -g @angular/cli
           npm ci
           export CHROME_BIN=$(which chromium)
       - name: Run tests
