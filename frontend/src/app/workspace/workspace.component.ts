@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component } from '@angular/core';
-
-import { NavBarService } from '../general/navbar/service/nav-bar.service';
+import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Project } from 'src/app/services/project/project.service';
+import { ModelService } from '../services/model/model.service';
 import { DepthType, SessionService } from '../services/session/session.service';
+import { ToolService, Version } from '../services/tools/tool.service';
 
 @Component({
   selector: 'app-workspace',
@@ -19,14 +20,21 @@ export class WorkspaceComponent {
   showSpinner = true;
   canCreateSession = true;
 
+  public form = new FormGroup({
+    tool_id: new FormControl(-1, Validators.required),
+    version: new FormControl(-1, Validators.required),
+  });
+
   constructor(
     public sessionService: SessionService,
-    private navbarService: NavBarService
-  ) {
-    this.navbarService.title = 'Workspaces';
-  }
+    public toolService: ToolService,
+    public modelService: ModelService
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit(): void {
+    this.toolService.get_tools().subscribe();
+    this.toolService.get_versions().subscribe();
+  }
 
   requestSession() {
     var depth = DepthType.CompleteHistory;
@@ -41,5 +49,12 @@ export class WorkspaceComponent {
           this.canCreateSession = true;
         }
       );
+  }
+
+  getVersionsForTool(tool_id: number | null): Version[] {
+    if (!this.toolService.versions || !tool_id) {
+      return [];
+    }
+    return this.toolService.versions[tool_id];
   }
 }

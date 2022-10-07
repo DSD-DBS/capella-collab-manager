@@ -3,21 +3,68 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<h1>Persistent Workspace</h1>
+<mat-card class="persistent-session">
+  <mat-card-header>
+    <h1>Persistent Workspace</h1>
+  </mat-card-header>
 
-<p>
-  Persistent Workspaces will store all the changes you make on models.
-  Additionally, newly created models will be stored in your personal
-  workspace.
-</p>
+  <mat-card-content>
+    <p>
+      Persistent Workspaces will store all the changes you make on models.
+      Additionally, newly created models will be stored in your personal
+      workspace.
+    </p>
 
-<form>
-  <button
-    mat-flat-button
-    color="primary"
-    (click)="requestSession()"
-    [disabled]="!canCreateSession"
-  >
-    Request a Persistent Workspace <mat-icon>keyboard_arrow_right</mat-icon>
-  </button>
-</form>
+    <form [formGroup]="form" (ngSubmit)="requestSession()">
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Model tool</mat-label>
+          <mat-select matInput formControlName="tool_id">
+            <mat-option
+              *ngFor="let tool of toolService.tools"
+              value="{{ tool.id }}"
+            >
+              {{ tool.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error> Please select a valid tool. </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Version</mat-label>
+          <mat-select
+            formControlName="version"
+            [disabled]="
+              form.controls.tool_id.value === null ||
+              form.controls.tool_id.value < 0
+            "
+          >
+            <mat-option
+              *ngFor="
+                let version of getVersionsForTool(form.controls.tool_id.value)
+              "
+              [value]="version.id"
+            >
+              {{ version.name }}
+              <span *ngIf="version.is_recommended"> (recommended)</span>
+              <span *ngIf="version.is_deprecated"> (deprecated)</span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </fieldset>
+
+      <fieldset>
+        <button
+          matInput
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="!canCreateSession"
+        >
+          Request a Persistent Workspace
+          <mat-icon>keyboard_arrow_right</mat-icon>
+        </button>
+      </fieldset>
+    </form>
+  </mat-card-content>
+</mat-card>
