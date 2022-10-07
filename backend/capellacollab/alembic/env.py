@@ -26,12 +26,6 @@ log = logging.getLogger("alembic.database")
 if not config.get_main_option("sqlalchemy.url"):
     config.set_main_option("sqlalchemy.url", cfg["database"]["url"])
 
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
-if config.attributes.get("configure_logger", True):
-    pass
-    # fileConfig(config.config_file_name)
-
 # Import models
 
 # add your model's MetaData object here
@@ -39,8 +33,6 @@ if config.attributes.get("configure_logger", True):
 from capellacollab.core.database import Base
 
 # For debugging purposes:
-# print("Detected the following database tables", end=": ")
-# print(*Base.metadata.tables.keys(), sep=", ")
 log.debug(
     "Detected %d database tables: %s",
     len(Base.metadata.tables.keys()),
