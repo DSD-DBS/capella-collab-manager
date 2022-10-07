@@ -13,6 +13,8 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
+
+### SQL MODELS ARE IMPORTED HERE ###
 import capellacollab.sql_models  # isort:skip
 
 
