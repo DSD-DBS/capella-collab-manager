@@ -7,7 +7,6 @@ theme:
   features:
     - content.code.annotate
 
-
 nav:
   - Home: index.md
   - Backend:
@@ -16,6 +15,7 @@ nav:
       - Exception handling: backend/exception.md
   - Frontend:
       - Routes: frontend/routes.md
+      - Testing: frontend/testing.md
 markdown_extensions:
   - meta
   - admonition
