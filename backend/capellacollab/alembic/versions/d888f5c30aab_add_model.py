@@ -65,21 +65,23 @@ def upgrade():
         )
         batch_op.add_column(sa.Column("type_id", sa.Integer(), nullable=True))
 
-        t_models = sa.Table(
-            "models",
-            sa.MetaData(),
-            sa.Column("id", sa.Integer()),
-            sa.Column("name", sa.String()),
-            sa.Column("slug", sa.String()),
-            sa.Column("project_name", sa.String()),
-            sa.Column("project_id", sa.Integer()),
-        )
-        t_projects = sa.Table(
-            "projects",
-            sa.MetaData(),
-            sa.Column("id", sa.Integer()),
-            sa.Column("name", sa.String()),
-        )
+    t_models = sa.Table(
+        "models",
+        sa.MetaData(),
+        sa.Column("id", sa.Integer()),
+        sa.Column("name", sa.String()),
+        sa.Column("slug", sa.String()),
+        sa.Column("project_name", sa.String()),
+        sa.Column("project_id", sa.Integer()),
+    )
+    t_projects = sa.Table(
+        "projects",
+        sa.MetaData(),
+        sa.Column("id", sa.Integer()),
+        sa.Column("name", sa.String()),
+    )
+
+    with op.batch_alter_table("models") as batch_op:
         joined = t_models.join(
             t_projects, t_models.c.project_name == t_projects.c.name
         )
