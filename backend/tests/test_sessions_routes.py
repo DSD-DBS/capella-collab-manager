@@ -5,11 +5,13 @@ from __future__ import annotations
 
 import typing as t
 from datetime import datetime
+from uuid import uuid1
 
 import pytest
 
 import capellacollab.sessions.guacamole
 from capellacollab.__main__ import app
+from capellacollab.sessions.database import get_session_by_id
 from capellacollab.sessions.operators import Operator, get_operator
 from capellacollab.users.crud import create_user
 from capellacollab.users.models import Role
@@ -67,7 +69,7 @@ class MockOperator(Operator):
         repositories: t.List[str],
     ) -> t.Dict[str, t.Any]:
         return {
-            "id": "test",
+            "id": str(uuid1()),
             "host": "test",
             "ports": [1],
             "created_at": datetime.now(),
@@ -146,7 +148,25 @@ def test_get_sessions_not_authenticated(client):
     assert response.json() == {"detail": "Not authenticated"}
 
 
-def test_create_persistent_session_as_user(client, db, username):
+@pytest.mark.xfail()
+def test_create_readonly_session_as_user(client, db, username):
+    create_user(db, username, Role.USER)
+
+    response = client.post(
+        "/api/v1/sessions/",
+        json={
+            "type": "readonly",
+            "branch": "main",
+            "depth": "CompleteHistory",
+            "repository": "myrepo",
+        },
+    )
+
+    assert response.status_code == 200
+    assert "id" in response.json()
+
+
+def test_create_old_style_persistent_session_as_user(client, db, username):
     create_user(db, username, Role.USER)
 
     response = client.post(
@@ -161,3 +181,23 @@ def test_create_persistent_session_as_user(client, db, username):
 
     assert response.status_code == 200
     assert "id" in response.json()
+
+
+def test_create_persistent_session_as_user(client, db, username):
+    create_user(db, username, Role.USER)
+
+    response = client.post(
+        "/api/v1/sessions/persistent",
+        json={
+            "tool": 1,
+            "version": 1,
+        },
+    )
+
+    out = response.json()
+
+    session = get_session_by_id(db, out["id"])
+
+    assert response.status_code == 200
+    assert session
+    assert session.owner_name == username

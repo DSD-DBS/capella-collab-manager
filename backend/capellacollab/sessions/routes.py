@@ -34,6 +34,7 @@ from capellacollab.sessions.schema import (
     GetSessionsResponse,
     GetSessionUsageResponse,
     GuacamoleAuthentication,
+    PostPersistentSessionRequest,
     PostSessionRequest,
     WorkspaceType,
 )
@@ -98,14 +99,6 @@ def request_session(
     owner = get_username(token)
 
     log.info("Starting session creation for user %s", owner)
-
-    guacamole_username = generate_password()
-    guacamole_password = generate_password(length=64)
-
-    guacamole_token = guacamole.get_admin_token()
-    guacamole.create_user(
-        guacamole_token, guacamole_username, guacamole_password
-    )
 
     existing_user_sessions = database.get_sessions_for_user(db, owner)
 
@@ -179,6 +172,69 @@ def request_session(
             git_depth=depth,
         )
 
+    return create_guacamole_session(
+        WorkspaceType.READONLY,
+        session,
+        owner,
+        rdp_password,
+        db,
+        repository=body.repository,
+    )
+
+
+@router.post(
+    "/persistent",
+    response_model=AdvancedSessionResponse,
+    responses=AUTHENTICATION_RESPONSES,
+)
+def request_session(
+    body: PostPersistentSessionRequest,
+    db: Session = Depends(get_db),
+    operator: Operator = Depends(get_operator),
+    token=Depends(JWTBearer()),
+):
+    rdp_password = generate_password(length=64)
+
+    owner = get_username(token)
+
+    log.info("Starting persistent session for user %s", owner)
+
+    existing_user_sessions = database.get_sessions_for_user(db, owner)
+
+    if WorkspaceType.PERSISTENT in [
+        session.type for session in existing_user_sessions
+    ]:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "err_code": "existing_session",
+                "reason": "You already have a open Persistent Session. Please navigate to 'Active Sessions' to Reconnect",
+            },
+        )
+
+    # TODO: Find the right container to deploy
+    session = operator.start_persistent_session(
+        username=get_username(token),
+        password=rdp_password,
+        repositories=[],
+    )
+
+    return create_guacamole_session(
+        WorkspaceType.PERSISTENT, session, owner, rdp_password, db
+    )
+
+
+def create_guacamole_session(
+    type: WorkspaceType, session, owner, rdp_password, db, repository=""
+):
+    guacamole_username = generate_password()
+    guacamole_password = generate_password(length=64)
+
+    guacamole_token = guacamole.get_admin_token()
+    guacamole.create_user(
+        guacamole_token, guacamole_username, guacamole_password
+    )
+
     guacamole_identifier = guacamole.create_connection(
         guacamole_token,
         rdp_password,
@@ -190,25 +246,22 @@ def request_session(
         guacamole_token, guacamole_username, guacamole_identifier
     )
 
-    body_dict = body.dict()
-    del body_dict["branch"]
-    del body_dict["depth"]
-
     database_model = DatabaseSession(
         guacamole_username=guacamole_username,
         guacamole_password=guacamole_password,
         rdp_password=rdp_password,
         guacamole_connection_id=guacamole_identifier,
         owner_name=owner,
-        **body_dict,
+        repository=repository,
+        type=type,
         **session,
     )
     response = database.create_session(db=db, session=database_model).__dict__
     response["owner"] = response["owner_name"]
-    response["state"] = operator.get_session_state(response["id"])
+    response["state"] = "New"
     response["rdp_password"] = rdp_password
     response["guacamole_password"] = guacamole_password
-    response["last_seen"] = get_last_seen(database_model.id)
+    response["last_seen"] = "UNKNOWN"
     return response
 
 

@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
@@ -23,7 +24,7 @@ def get_sessions_for_repository(db: Session, repository: str):
     )
 
 
-def get_session_by_id(db: Session, id: str) -> DatabaseSession:
+def get_session_by_id(db: Session, id: str) -> DatabaseSession | None:
     return db.query(DatabaseSession).filter(DatabaseSession.id == id).first()
 
 

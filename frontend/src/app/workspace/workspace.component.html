@@ -33,7 +33,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Version</mat-label>
           <mat-select
-            formControlName="version"
+            formControlName="version_id"
             [disabled]="
               form.controls.tool_id.value === null ||
               form.controls.tool_id.value < 0
@@ -59,7 +59,9 @@
           mat-flat-button
           color="primary"
           type="submit"
-          [disabled]="!canCreateSession"
+          [disabled]="
+            !form.controls.tool_id.value || !form.controls.version_id.value
+          "
         >
           Request a Persistent Workspace
           <mat-icon>keyboard_arrow_right</mat-icon>

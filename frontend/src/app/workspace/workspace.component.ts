@@ -22,7 +22,7 @@ export class WorkspaceComponent {
 
   public form = new FormGroup({
     tool_id: new FormControl(-1, Validators.required),
-    version: new FormControl(-1, Validators.required),
+    version_id: new FormControl(-1, Validators.required),
   });
 
   constructor(
@@ -37,10 +37,19 @@ export class WorkspaceComponent {
   }
 
   requestSession() {
-    var depth = DepthType.CompleteHistory;
+    if (
+      !this.form.controls.tool_id.value ||
+      !this.form.controls.version_id.value
+    ) {
+      return;
+    }
+
     this.canCreateSession = false;
     this.sessionService
-      .createNewSession('persistent', undefined, '', depth)
+      .createPersistentSession(
+        this.form.controls.tool_id.value,
+        this.form.controls.version_id.value
+      )
       .subscribe(
         (res) => {
           this.canCreateSession = true;
