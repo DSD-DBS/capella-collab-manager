@@ -43,4 +43,3 @@ def downgrade():
     op.drop_index(op.f("ix_git_settings_id"), table_name="git_settings")
     op.drop_table("git_settings")
     op.execute("DROP TYPE gittype")
-    # ### end Alembic commands ###
