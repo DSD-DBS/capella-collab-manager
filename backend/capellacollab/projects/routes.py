@@ -101,7 +101,7 @@ def get_repository_by_name(project: str, db: Session = Depends(get_db)):
 
 
 @router.get("/details/", tags=["projects"], response_model=Project)
-def get(
+def get_project_details(
     slug: str,
     db: Session = Depends(get_db),
 ):
@@ -110,7 +110,7 @@ def get(
 
 
 @router.post("/", tags=["projects"], responses=AUTHENTICATION_RESPONSES)
-def create_repository(
+def create_project(
     body: PostRepositoryRequest,
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
