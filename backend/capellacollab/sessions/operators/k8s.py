@@ -89,6 +89,7 @@ class KubernetesOperator(Operator):
         self,
         username: str,
         password: str,
+        docker_image: str,
         repositories: t.List[str],
     ) -> t.Dict[str, t.Any]:
         log.info("Launching a persistent session for user %s", username)
@@ -97,7 +98,7 @@ class KubernetesOperator(Operator):
         id = self._generate_id()
         self._create_persistent_volume_claim(username)
         deployment = self._create_deployment(
-            config["docker"]["images"]["workspaces"]["persistent"],
+            docker_image,
             id,
             {
                 "T4C_LICENCE_SECRET": t4c_cfg["licence"],

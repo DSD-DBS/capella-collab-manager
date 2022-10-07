@@ -194,6 +194,7 @@ def request_session(
     session = operator.start_persistent_session(
         username=get_username(token),
         password=rdp_password,
+        docker_image=config["docker"]["images"]["workspaces"]["persistent"],
         repositories=[],
     )
 

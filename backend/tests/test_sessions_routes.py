@@ -66,6 +66,7 @@ class MockOperator(Operator):
         self,
         username: str,
         password: str,
+        docker_image: str,
         repositories: t.List[str],
     ) -> t.Dict[str, t.Any]:
         return {
