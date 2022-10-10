@@ -29,13 +29,28 @@ from capellacollab.tools import crud as tools_crud
 router = APIRouter()
 
 
+def load_instance(
+    id_: int, db: Session = Depends(get_db)
+) -> DatabaseT4CInstance:
+    try:
+        return crud.get_t4c_instance(id_, db)
+    except NoResultFound:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "reason": f"The t4c instance with the id {id_} does not exist.",
+            },
+        )
+
+
 @router.get(
     "/",
     responses=AUTHENTICATION_RESPONSES,
     response_model=list[T4CInstance],
 )
 def list_git_settings(
-    db: Session = Depends(get_db), token=Depends(JWTBearer())
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
 ) -> list[DatabaseT4CInstance]:
     verify_admin(token, db)
     return crud.get_all_t4c_instances(db)
@@ -47,10 +62,12 @@ def list_git_settings(
     response_model=T4CInstance,
 )
 def get_t4c_instance(
-    id_: int, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    instance: T4CInstance = Depends(load_instance),
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
 ):
     verify_admin(token, db)
-    return T4CInstance.from_orm(crud.get_t4c_instance(id_, db))
+    return T4CInstance.from_orm(instance)
 
 
 @router.post(
@@ -85,21 +102,12 @@ def create_t4c_instance(
     response_model=T4CInstance,
 )
 def edit_t4c_instance(
-    id_: int,
     body: PatchT4CInstance,
+    instance: DatabaseT4CInstance = Depends(load_instance),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
     verify_admin(token, db)
-    try:
-        instance = crud.get_t4c_instance(id_, db)
-    except NoResultFound:
-        raise HTTPException(
-            status_code=404,
-            detail={
-                "reason": f"The t4c instance with the id {id_} does not exist.",
-            },
-        )
     for key in body.dict():
         if value := body.__getattribute__(key):
             instance.__setattr__(key, value)

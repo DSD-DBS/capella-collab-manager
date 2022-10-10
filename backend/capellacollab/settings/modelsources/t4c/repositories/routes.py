@@ -17,6 +17,7 @@ from capellacollab.core.database import get_db
 from capellacollab.settings.modelsources.t4c import crud as instance_crud
 from capellacollab.settings.modelsources.t4c.models import (
     CreateT4CRepository,
+    DatabaseT4CInstance,
     Status,
     T4CInstanceWithRepositories,
     T4CRepository,
@@ -25,8 +26,36 @@ from capellacollab.settings.modelsources.t4c.repositories import (
     crud,
     interface,
 )
+from capellacollab.settings.modelsources.t4c.repositories.models import (
+    DatabaseT4CRepository,
+)
 
 router = APIRouter()
+
+
+def load_instance_repository(
+    instance_id: int, id_: int, db: Session = Depends(get_db)
+) -> tuple[DatabaseT4CInstance, DatabaseT4CRepository]:
+    try:
+        instance = instance_crud.get_t4c_instance(instance_id, db)
+    except NoResultFound as e:
+        raise HTTPException(
+            404, {"reason": f"Instance with id {instance_id} was not found."}
+        ) from e
+    try:
+        repository = crud.get_t4c_repository(id_, db)
+    except NoResultFound as e:
+        raise HTTPException(
+            404, {"reason": f"Repository with id {id_} was not found."}
+        ) from e
+    if repository.instance != instance:
+        raise HTTPException(
+            409,
+            {
+                "reason": f"Repository {repository.name} is not part of the instance {instance.name}."
+            },
+        )
+    return instance, repository
 
 
 @router.get(
@@ -113,31 +142,14 @@ def create_t4c_repository(
     status_code=204,
 )
 def delete_t4c_repository(
-    instance_id: int,
-    id_: int,
     token: JWTBearer = Depends(JWTBearer()),
     db: Session = Depends(get_db),
-) -> t.NoReturn:
+    objects: tuple[DatabaseT4CInstance, DatabaseT4CRepository] = Depends(
+        load_instance_repository
+    ),
+) -> None:
+    (instance, repository) = objects
     verify_admin(token, db)
-    try:
-        instance = instance_crud.get_t4c_instance(instance_id, db)
-    except NoResultFound as e:
-        raise HTTPException(
-            404, {"reason": f"Instance with id {instance_id} was not found."}
-        ) from e
-    try:
-        repository = crud.get_t4c_repository(id_, db)
-    except NoResultFound as e:
-        raise HTTPException(
-            404, {"reason": f"Repository with id {id_} was not found."}
-        ) from e
-    if repository.instance != instance:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"Repository {repository.name} is not part of the instance {instance.name}."
-            },
-        )
     interface.delete_repository(instance, repository.name)
     crud.delete_4c_repository(repository, db)
 
@@ -146,31 +158,14 @@ def delete_t4c_repository(
     "/{id_}/start", responses=AUTHENTICATION_RESPONSES, status_code=204
 )
 def start_t4c_repository(
-    instance_id: int,
-    id_: int,
     token: JWTBearer = Depends(JWTBearer()),
     db: Session = Depends(get_db),
-) -> t.NoReturn:
+    objects: tuple[DatabaseT4CInstance, DatabaseT4CRepository] = Depends(
+        load_instance_repository
+    ),
+) -> None:
     verify_admin(token, db)
-    try:
-        instance = instance_crud.get_t4c_instance(instance_id, db)
-    except NoResultFound as e:
-        raise HTTPException(
-            404, {"reason": f"Instance with id {instance_id} was not found."}
-        ) from e
-    try:
-        repository = crud.get_t4c_repository(id_, db)
-    except NoResultFound as e:
-        raise HTTPException(
-            404, {"reason": f"Repository with id {id_} was not found."}
-        ) from e
-    if repository.instance != instance:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"Repository {repository.name} is not part of the instance {instance.name}."
-            },
-        )
+    (instance, repository) = objects
     interface.start_repository(instance, repository.name)
 
 
@@ -178,29 +173,12 @@ def start_t4c_repository(
     "/{id_}/stop", responses=AUTHENTICATION_RESPONSES, status_code=204
 )
 def stop_t4c_repository(
-    instance_id: int,
-    id_: int,
     token: JWTBearer = Depends(JWTBearer()),
     db: Session = Depends(get_db),
-) -> t.NoReturn:
+    objects: tuple[DatabaseT4CInstance, DatabaseT4CRepository] = Depends(
+        load_instance_repository
+    ),
+) -> None:
     verify_admin(token, db)
-    try:
-        instance = instance_crud.get_t4c_instance(instance_id, db)
-    except NoResultFound as e:
-        raise HTTPException(
-            404, {"reason": f"Instance with id {instance_id} was not found."}
-        ) from e
-    try:
-        repository = crud.get_t4c_repository(id_, db)
-    except NoResultFound as e:
-        raise HTTPException(
-            404, {"reason": f"Repository with id {id_} was not found."}
-        ) from e
-    if repository.instance != instance:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"Repository {repository.name} is not part of the instance {instance.name}."
-            },
-        )
+    (instance, repository) = objects
     interface.stop_repository(instance, repository.name)
