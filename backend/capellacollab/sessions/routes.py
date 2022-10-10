@@ -42,6 +42,7 @@ from capellacollab.sessions.sessions import (
     get_last_seen,
     inject_attrs_in_sessions,
 )
+from capellacollab.tools.crud import image_for_tool_and_version
 
 from .files import routes as files
 
@@ -190,11 +191,13 @@ def request_session(
             },
         )
 
+    docker_image = image_for_tool_and_version(body.tool, body.version, db)
+
     # TODO: Find the right container to deploy
     session = operator.start_persistent_session(
         username=get_username(token),
         password=rdp_password,
-        docker_image=config["docker"]["images"]["workspaces"]["persistent"],
+        docker_image=docker_image,
         repositories=[],
     )
 
