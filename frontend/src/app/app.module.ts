@@ -84,8 +84,6 @@ import { DeleteSessionDialogComponent } from './sessions/delete-session-dialog/d
 import { GuacamoleComponent } from './sessions/session-created/guacamole/guacamole.component';
 import { RDPComponent } from './sessions/session-created/rdp/rdp.component';
 import { SessionCreatedComponent } from './sessions/session-created/session-created.component';
-import { SessionCreationProgressComponent } from './sessions/session-creation-progress/session-creation-progress.component';
-import { SessionProgressIconComponent } from './sessions/session-creation-progress/session-progress-icon/session-progress-icon.component';
 import { LicencesComponent } from './sessions/session-overview/licences/licences.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
@@ -152,9 +150,7 @@ import { HomeComponent } from './workspaces/home.component';
     ReconnectDialogComponent,
     ReleaseNotesComponent,
     SessionCreatedComponent,
-    SessionCreationProgressComponent,
     SessionOverviewComponent,
-    SessionProgressIconComponent,
     SetT4CPasswordComponent,
     SettingsComponent,
     T4CImporterSettingsComponent,
