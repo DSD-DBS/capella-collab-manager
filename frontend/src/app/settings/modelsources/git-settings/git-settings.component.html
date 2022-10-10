@@ -19,12 +19,8 @@
           >
             <mat-icon aria-label="Edit the source">settings</mat-icon>
           </a>
-          <button mat-icon-button>
-            <mat-icon
-              aria-label="Delete the source"
-              (click)="deleteGitSettings(instance.id)"
-              >delete</mat-icon
-            >
+          <button mat-icon-button (click)="deleteGitSettings(instance.id)">
+            <mat-icon aria-label="Delete the source">delete</mat-icon>
           </button>
         </div>
       </div>
