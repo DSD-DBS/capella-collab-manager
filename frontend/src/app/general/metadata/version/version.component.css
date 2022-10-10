@@ -8,3 +8,7 @@
   color: grey;
   cursor: pointer;
 }
+
+.version {
+  color: var(--error-color);
+}

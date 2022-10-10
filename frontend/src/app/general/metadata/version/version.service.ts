@@ -27,7 +27,8 @@ export class VersionService {
   }
 
   public version: Version | undefined;
-  private oldVersion: string | undefined;
+  public oldVersion: string | undefined;
+  public changedVersion: boolean = false;
 
   loadVersion(): void {
     if (!this.version) {
@@ -49,9 +50,8 @@ export class VersionService {
   determinateChangedVersion() {
     this.oldVersion = this.localStorageService.getValue('version');
     if (this.oldVersion != this.version?.git.tag) {
-      this.dialog.open(ReleaseNotesComponent);
+      this.changedVersion = true;
     }
-    this.localStorageService.setValue('version', this.version?.git.tag);
   }
 
   compareFrontendVersionWithCurrent(version: string): number {
@@ -77,6 +77,12 @@ export class VersionService {
 
   private compareFrontendVersions(version1: string, version2: string) {
     return semverCompare(version1, version2);
+  }
+
+  openReleaseNotes(): void {
+    this.dialog.open(ReleaseNotesComponent);
+    this.localStorageService.setValue('version', this.version?.git.tag);
+    this.changedVersion = false;
   }
 }
 
