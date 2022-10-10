@@ -93,20 +93,9 @@ def update_project(
     return convert_project(crud.get_project(database, project))
 
 
-@router.get(
-    "/{project}", tags=["projects"], responses=AUTHENTICATION_RESPONSES
-)
-def get_repository_by_name(project: str, db: Session = Depends(get_db)):
-    return convert_project(crud.get_project(db, project))
-
-
-@router.get("/details/", tags=["projects"], response_model=Project)
-def get_project_details(
-    slug: str,
-    db: Session = Depends(get_db),
-):
-    project = crud.get_project_by_slug(db, slug)
-    return convert_project(project)
+@router.get("/{slug}", tags=["projects"], responses=AUTHENTICATION_RESPONSES)
+def get_project_by_slug(slug: str, db: Session = Depends(get_db)):
+    return convert_project(crud.get_project_by_slug(db, slug))
 
 
 @router.post("/", tags=["projects"], responses=AUTHENTICATION_RESPONSES)
