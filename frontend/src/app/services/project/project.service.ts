@@ -28,16 +28,13 @@ export class ProjectService {
   constructor(private http: HttpClient) {}
 
   getProjectBySlug(slug: string): Observable<Project> {
-    let url = new URL('details/', this.base_url);
-    return this.http.get<Project>(url.toString(), { params: { slug } });
+    return this.http.get<Project>(this.BACKEND_URL_PREFIX + slug, {
+      params: { slug },
+    });
   }
 
   list(): Observable<Project[]> {
     return this.http.get<Project[]>(this.BACKEND_URL_PREFIX);
-  }
-
-  getProject(name: string): Observable<Project> {
-    return this.http.get<Project>(this.BACKEND_URL_PREFIX + name);
   }
 
   updateDescription(name: string, description: string): Observable<Project> {

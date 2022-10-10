@@ -52,7 +52,7 @@ def migrate_db(engine):
                 LOGGER.info("Database structure creation successful")
                 command.stamp(alembic_cfg, "head")
                 initialize_admin_user(session)
-                initialize_default_repository(session)
+                initialize_default_project(session)
 
             if not tools_exist:
                 create_tools(session)
@@ -65,8 +65,8 @@ def initialize_admin_user(db):
     )
 
 
-def initialize_default_repository(db):
-    LOGGER.info("Initialized repository 'default'")
+def initialize_default_project(db):
+    LOGGER.info("Initialized project 'default'")
     projects.create_project(db=db, name="default")
 
 
