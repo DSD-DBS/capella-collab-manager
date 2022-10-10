@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 docker:
+  registry: k3d-myregistry.localhost:12345
   images:
     workspaces:
       persistent: k3d-myregistry.localhost:12345/t4c/client/remote

@@ -76,4 +76,5 @@ def create_type(db: Session, tool_id: int, model_type: str):
 
 
 def image_for_tool_and_version(db: Session, tool_id: int, version_id: int):
-    return "k3d-myregistry.localhost:12345/t4c/client/remote"
+    version = get_version_by_id(version_id, db)
+    return version.tool.docker_image_template.replace("$version", version.name)

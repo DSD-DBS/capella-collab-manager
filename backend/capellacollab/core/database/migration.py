@@ -59,7 +59,7 @@ def migrate_db(engine):
 
 
 def initialize_admin_user(db):
-    LOGGER.info("Initialized adminuser " + config["initial"]["admin"])
+    LOGGER.info("Initialized adminuser %s", config["initial"]["admin"])
     users.create_user(
         db=db, username=config["initial"]["admin"], role=Role.ADMIN
     )
@@ -72,13 +72,14 @@ def initialize_default_project(db):
 
 def create_tools(db):
     LOGGER.info("Initialized tools")
+    registry = config["docker"]["registry"]
     capella = Tool(
         name="Capella",
-        docker_image_template="/t4c/client/remote/$version:prod",
+        docker_image_template=f"{registry}/t4c/client/remote/$version:prod",
     )
     papyrus = Tool(
         name="Papyrus",
-        docker_image_template="/papyrus/client/remote/$version:prod",
+        docker_image_template=f"{registry}/papyrus/client/remote/$version:prod",
     )
     tools.create_tool(db, capella)
     tools.create_tool(db, papyrus)

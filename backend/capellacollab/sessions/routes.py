@@ -191,7 +191,7 @@ def request_session(
             },
         )
 
-    docker_image = image_for_tool_and_version(body.tool, body.version, db)
+    docker_image = image_for_tool_and_version(db, body.tool, body.version)
 
     # TODO: Find the right container to deploy
     session = operator.start_persistent_session(
