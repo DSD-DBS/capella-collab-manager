@@ -94,10 +94,20 @@ class CreateT4CRepository(BaseModel):
     name: str
 
 
+import enum
+
+
+class Status(str, enum.Enum):
+    ONLINE = "ONLINE"
+    OFFLINE = "OFFLINE"
+    NOT_FOUND = "NOT FOUND"
+
+
 class T4CRepository(CreateT4CRepository):
     id: int
     instance_id: int
     instance: T4CInstance
+    status: t.Optional[Status]
 
     class Config:
         orm_mode = True

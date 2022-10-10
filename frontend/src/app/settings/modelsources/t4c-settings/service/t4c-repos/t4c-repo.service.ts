@@ -5,8 +5,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -19,8 +18,10 @@ export class T4CRepoService {
     environment.backend_url + '/'
   );
 
-  _repositories = new BehaviorSubject<T4CRepository[]>([]);
-  get repositories(): T4CRepository[] {
+  _repositories = new BehaviorSubject<(T4CRepository & T4CServerRepository)[]>(
+    []
+  );
+  get repositories(): (T4CRepository & T4CServerRepository)[] {
     return this._repositories.value;
   }
 
@@ -28,9 +29,9 @@ export class T4CRepoService {
     return new URL(`${instance_id}/repositories/`, this.base_url);
   }
 
-  getT4CRepositories(instance_id: number): Observable<Array<T4CRepository>> {
+  getT4CRepositories(instance_id: number): Observable<T4CServerRepository[]> {
     const url = this.url_factory(instance_id);
-    return this.http.get<T4CRepository[]>(url.toString());
+    return this.http.get<T4CServerRepository[]>(url.toString());
   }
 
   createT4CRepository(
@@ -44,9 +45,25 @@ export class T4CRepoService {
   deleteRepository(
     instance_id: number,
     repository_id: number
-  ): Observable<T4CRepository> {
+  ): Observable<null> {
     const url = new URL(`${repository_id}`, this.url_factory(instance_id));
-    return this.http.delete<T4CRepository>(url.toString());
+    return this.http.delete<null>(url.toString());
+  }
+
+  startRepository(
+    instance_id: number,
+    repository_id: number
+  ): Observable<null> {
+    const url = new URL(
+      `${repository_id}/start`,
+      this.url_factory(instance_id)
+    );
+    return this.http.post<null>(url.toString(), {});
+  }
+
+  stopRepository(instance_id: number, repository_id: number): Observable<null> {
+    const url = new URL(`${repository_id}/stop`, this.url_factory(instance_id));
+    return this.http.post<null>(url.toString(), {});
   }
 }
 
@@ -57,4 +74,8 @@ export type CreateT4CRepository = {
 export type T4CRepository = CreateT4CRepository & {
   id: number;
   instance_id: number;
+};
+
+export type T4CServerRepository = T4CRepository & {
+  status?: 'ONLINE' | 'OFFLINE' | 'NOT FOUND';
 };
