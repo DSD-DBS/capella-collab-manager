@@ -18,7 +18,6 @@ from capellacollab.core.database import migration
 
 @pytest.fixture(scope="session")
 def postgresql():
-
     with PostgresContainer("postgres:14.1") as postgres:
         database_url = postgres.get_connection_url()
         engine = create_engine(database_url)
