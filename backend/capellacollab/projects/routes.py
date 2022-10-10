@@ -34,8 +34,8 @@ from capellacollab.projects.models import (
 )
 from capellacollab.projects.users.models import (
     ProjectUserAssociation,
-    RepositoryUserPermission,
-    RepositoryUserRole,
+    ProjectUserPermission,
+    ProjectUserRole,
 )
 
 from .capellamodels.routes import router as router_models
@@ -94,14 +94,14 @@ def update_project(
 
 
 @router.get(
-    "/{project}", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES
+    "/{project}", tags=["projects"], responses=AUTHENTICATION_RESPONSES
 )
 def get_repository_by_name(project: str, db: Session = Depends(get_db)):
     return convert_project(crud.get_project(db, project))
 
 
-@router.get("/details/", response_model=Project)
-def get(
+@router.get("/details/", tags=["projects"], response_model=Project)
+def get_project_details(
     slug: str,
     db: Session = Depends(get_db),
 ):
@@ -109,8 +109,8 @@ def get(
     return convert_project(project)
 
 
-@router.post("/", tags=["Repositories"], responses=AUTHENTICATION_RESPONSES)
-def create_repository(
+@router.post("/", tags=["projects"], responses=AUTHENTICATION_RESPONSES)
+def create_project(
     body: PostRepositoryRequest,
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
@@ -125,23 +125,23 @@ def create_repository(
                 "technical": "Slug already used",
             },
         ) from e
-    users_crud.add_user_to_repository(
+    users_crud.add_user_to_project(
         db,
         project.name,
-        RepositoryUserRole.MANAGER,
+        ProjectUserRole.MANAGER,
         get_username(token),
-        RepositoryUserPermission.WRITE,
+        ProjectUserPermission.WRITE,
     )
     return convert_project(project)
 
 
 @router.delete(
     "/{project}",
-    tags=["Repositories"],
+    tags=["projects"],
     status_code=204,
     responses=AUTHENTICATION_RESPONSES,
 )
-def delete_repository(
+def delete_project(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
     verify_admin(token, db)
@@ -158,23 +158,23 @@ def convert_project(project: DatabaseProject) -> Project:
                 [
                     user
                     for user in project.users
-                    if user.role == RepositoryUserRole.MANAGER
+                    if user.role == ProjectUserRole.MANAGER
                 ]
             ),
             contributors=len(
                 [
                     user
                     for user in project.users
-                    if user.role == RepositoryUserRole.USER
-                    and user.permission == RepositoryUserPermission.WRITE
+                    if user.role == ProjectUserRole.USER
+                    and user.permission == ProjectUserPermission.WRITE
                 ]
             ),
             subscribers=len(
                 [
                     user
                     for user in project.users
-                    if user.role == RepositoryUserRole.USER
-                    and user.permission == RepositoryUserPermission.READ
+                    if user.role == ProjectUserRole.USER
+                    and user.permission == ProjectUserPermission.READ
                 ]
             ),
         ),

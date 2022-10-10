@@ -5,13 +5,13 @@
 import sqlalchemy.orm.session
 from fastapi import Depends, HTTPException
 
-import capellacollab.projects.users.crud as repository_users
+import capellacollab.projects.users.crud as project_users
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.projects.users.models import (
-    RepositoryUserPermission,
-    RepositoryUserRole,
+    ProjectUserPermission,
+    ProjectUserRole,
 )
 from capellacollab.sessions.database import get_session_by_id
 from capellacollab.settings.modelsources.git import crud
@@ -34,24 +34,24 @@ def is_admin(token, db) -> bool:
 
 
 def verify_project_role(
-    repository: str,
+    project: str,
     token: JWTBearer,
     db: sqlalchemy.orm.session.Session,
     allowed_roles=["user", "manager", "administrator"],
 ):
     if not check_project_role(
-        repository=repository, allowed_roles=allowed_roles, token=token, db=db
+        project=project, allowed_roles=allowed_roles, token=token, db=db
     ):
         raise HTTPException(
             status_code=403,
             detail={
-                "reason": f"One of the roles '{allowed_roles}' in the repository '{repository}' is required.",
+                "reason": f"One of the roles '{allowed_roles}' in the project '{project}' is required.",
             },
         )
 
 
 def check_project_role(
-    repository: str,
+    project: str,
     token: JWTBearer,
     db: sqlalchemy.orm.session.Session,
     allowed_roles=["user", "manager", "administrator"],
@@ -62,13 +62,12 @@ def check_project_role(
         (
             "user" in allowed_roles
             and any(
-                project.projects_name == repository
-                for project in user.projects
+                project.projects_name == project for project in user.projects
             ),
             "manager" in allowed_roles
             and any(
-                project.projects_name == repository
-                and project.role == RepositoryUserRole.MANAGER
+                project.projects_name == project
+                and project.role == ProjectUserRole.MANAGER
                 for project in user.projects
             ),
             "administrator" in allowed_roles and user.role == Role.ADMIN,
@@ -85,44 +84,42 @@ def check_username_not_admin(username: str, db):
 
 
 def verify_write_permission(
-    repository: str,
+    project: str,
     token: JWTBearer,
     db: sqlalchemy.orm.session.Session,
 ):
-    if not check_write_permission(repository, token, db):
+    if not check_write_permission(project, token, db):
         raise HTTPException(
             status_code=403,
             detail={
-                "reason": "You need to have 'write'-access in the repository!",
+                "reason": "You need to have 'write'-access in the project!",
             },
         )
 
 
 def check_write_permission(
-    repository: str,
+    project: str,
     token: JWTBearer,
     db: sqlalchemy.orm.session.Session,
 ) -> bool:
 
-    user = repository_users.get_user_of_repository(
-        db, repository, get_username(token)
-    )
+    user = project_users.get_user_of_project(db, project, get_username(token))
     if not user:
         return get_user(db=db, username=get_username(token)).role == Role.ADMIN
-    return RepositoryUserPermission.WRITE == user.permission
+    return ProjectUserPermission.WRITE == user.permission
 
 
-def check_username_not_in_repository(
-    repository: str,
+def check_username_not_in_project(
+    project: str,
     username: str,
     db: sqlalchemy.orm.session.Session,
 ):
-    user = repository_users.get_user_of_repository(db, repository, username)
+    user = project_users.get_user_of_project(db, project, username)
     if user:
         raise HTTPException(
             status_code=409,
             detail={
-                "reason": "The user already exists in this repository.",
+                "reason": "The user already exists in this project.",
             },
         )
 

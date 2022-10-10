@@ -92,7 +92,7 @@ def create_new(
             },
         )
     verify_project_role(
-        repository=project.name,
+        project=project.name,
         token=token,
         db=db,
         allowed_roles=["manager", "administrator"],

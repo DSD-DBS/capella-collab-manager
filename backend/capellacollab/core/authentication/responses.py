@@ -23,7 +23,11 @@ AUTHENTICATION_RESPONSES = {
             "application/json": {
                 "example": {
                     "error": {
-                        "detail": "One of the roles '[user, manager, administrator]' in the repository test is required."
+                        "detail": {
+                            "reason": {
+                                "One of the roles '[user, manager, administrator]' in the project test is required."
+                            }
+                        }
                     }
                 }
             }
