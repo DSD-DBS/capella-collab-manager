@@ -20,7 +20,7 @@
     "@angular/material": "^14.2.0",
     "@angular/platform-browser": "~14.2.0",
     "@angular/platform-browser-dynamic": "~14.2.0",
-    "@angular/router": "~14.2.0",
+    "@angular/router": "~14.2.5",
     "ngx-cookie": "^6.0.1",
     "ngx-markdown": "^14.0.1",
     "npm": "^8.19.0",
