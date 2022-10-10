@@ -2,9 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from fastapi import APIRouter, Depends, HTTPException
+from requests import get
+from requests.auth import HTTPBasicAuth
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
+from capellacollab.config import config
 from capellacollab.core.authentication.database import verify_admin
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.authentication.responses import (
@@ -33,12 +36,9 @@ router = APIRouter()
 )
 def list_git_settings(
     db: Session = Depends(get_db), token=Depends(JWTBearer())
-):
+) -> list[DatabaseT4CInstance]:
     verify_admin(token, db)
-    return [
-        T4CInstance.from_orm(instance)
-        for instance in crud.get_all_t4c_instances(db)
-    ]
+    return crud.get_all_t4c_instances(db)
 
 
 @router.get(

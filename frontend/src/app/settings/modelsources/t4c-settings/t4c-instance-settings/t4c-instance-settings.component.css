@@ -6,3 +6,8 @@
 .wrapper {
   margin: 20px;
 }
+
+mat-list-option {
+  display: flex;
+  flex-direction: column;
+}

@@ -31,34 +31,47 @@
       *ngFor="let repository of t4cRepoService.repositories"
       [value]="repository"
     >
-      <mat-icon mat-list-icon>laptop</mat-icon>
+      <mat-icon mat-list-icon *ngIf="!repository.status">sync</mat-icon>
+      <mat-icon mat-list-icon *ngIf="repository.status === 'OFFLINE'"
+        >cloud_off</mat-icon
+      >
+      <mat-icon mat-list-icon *ngIf="repository.status === 'ONLINE'"
+        >cloud_queue</mat-icon
+      >
       <div>
         <div mat-line>{{ repository.name }}</div>
         <div mat-line>Repository ID: {{ repository.id }}</div>
+        <div mat-line>status: {{ repository.status || "LOADING" }}</div>
       </div>
     </mat-list-option>
   </mat-selection-list>
 
-  <div *ngIf="repositoryList.selectedOptions.selected.length">
+  <div
+    *ngIf="repositoryList.selectedOptions.selected.length"
+    class="flex-space-between"
+  >
     <button
       mat-flat-button
-      color="primary"
+      color="warn"
       (click)="removeRepository(selectedRepository)"
     >
       <mat-icon>delete</mat-icon> Remove {{ selectedRepository.name }}
     </button>
+    <button
+      mat-flat-button
+      color="warn"
+      *ngIf="selectedRepository.status === 'ONLINE'"
+      (click)="stopRepository(selectedRepository)"
+    >
+      Stop repository
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      *ngIf="selectedRepository.status === 'OFFLINE'"
+      (click)="startRepository(selectedRepository)"
+    >
+      Start repository
+    </button>
   </div>
 </mat-card>
-
-<div class="wrapper">
-  <button
-    mat-flat-button
-    (click)="synchronizeRepositories()"
-    [ngClass]="synchronizeButtonState"
-  >
-    <div *ngIf="synchronizeButtonState == 'primary'">Synchronize with T4C</div>
-    <div *ngIf="synchronizeButtonState == 'success'">
-      Synchronization successful
-    </div>
-  </button>
-</div>

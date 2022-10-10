@@ -17,13 +17,12 @@ import {
   CreateT4CRepository,
   T4CRepoService,
   T4CRepository,
+  T4CServerRepository,
 } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 import { T4CSyncService } from 'src/app/services/t4c-sync/t4-csync.service';
-import { ActivatedRoute } from '@angular/router';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { T4CRepoDeletionDialogComponent } from './t4c-repo-deletion-dialog/t4c-repo-deletion-dialog.component';
 import { T4CInstance } from 'src/app/services/settings/t4c-model.service';
-import { tap, switchMap } from 'rxjs';
+import { tap, switchMap, BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-t4c-instance-settings',
@@ -33,6 +32,9 @@ import { tap, switchMap } from 'rxjs';
 export class T4CInstanceSettingsComponent implements OnInit {
   @Input() instance!: T4CInstance;
 
+  _repositories = new BehaviorSubject<(T4CRepository & T4CServerRepository)[]>(
+    []
+  );
   constructor(
     private t4cSyncService: T4CSyncService,
     public t4cRepoService: T4CRepoService,
@@ -48,21 +50,12 @@ export class T4CInstanceSettingsComponent implements OnInit {
   }
 
   @ViewChild('repositoryList') repositoryList: any;
-  synchronizeButtonState = 'primary';
-
-  synchronizeRepositories() {
-    this.t4cSyncService.syncRepositories().subscribe(() => {
-      this.synchronizeButtonState = 'success';
-      setTimeout(() => {
-        this.synchronizeButtonState = 'primary';
-      }, 3000);
-    });
-  }
 
   form = new FormGroup({
     name: new FormControl('', [
       Validators.required,
       this.uniqueNameValidator.bind(this),
+      Validators.pattern(/^[-a-zA-Z0-9_]+$/),
     ]),
   });
 
@@ -80,7 +73,6 @@ export class T4CInstanceSettingsComponent implements OnInit {
 
   createRepository(formDirective: FormGroupDirective): void {
     if (this.form.valid) {
-      console.log(this.form.valid);
       this.form.disable();
 
       this.t4cRepoService
@@ -123,7 +115,38 @@ export class T4CInstanceSettingsComponent implements OnInit {
     });
   }
 
-  get selectedRepository(): T4CRepository {
+  startRepository(repository: T4CServerRepository): void {
+    delete repository.status;
+    this.t4cRepoService
+      .startRepository(repository.instance_id, repository.id)
+      .pipe(
+        tap(() => (repository.status = 'ONLINE')),
+        switchMap(() =>
+          this.t4cRepoService.getT4CRepositories(this.instance!.id)
+        )
+      )
+      .subscribe((repositories) => {
+        this.t4cRepoService._repositories.next(repositories);
+      });
+  }
+
+  stopRepository(repository: T4CServerRepository): void {
+    console.log(this.repositoryList);
+    delete repository.status;
+    this.t4cRepoService
+      .stopRepository(repository.instance_id, repository.id)
+      .pipe(
+        tap(() => (repository.status = 'OFFLINE')),
+        switchMap(() =>
+          this.t4cRepoService.getT4CRepositories(this.instance!.id)
+        )
+      )
+      .subscribe((repositories) => {
+        this.t4cRepoService._repositories.next(repositories);
+      });
+  }
+
+  get selectedRepository(): T4CRepository & T4CServerRepository {
     return this.repositoryList.selectedOptions.selected[0].value;
   }
 }
