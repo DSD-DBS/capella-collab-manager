@@ -25,7 +25,7 @@ from capellacollab.core.authentication.responses import (
 )
 from capellacollab.core.database import get_db
 
-from . import crud as repository_users
+from . import crud
 
 router = APIRouter()
 
@@ -35,7 +35,7 @@ router = APIRouter()
     response_model=t.List[schema_projects.ProjectUser],
     responses=AUTHENTICATION_RESPONSES,
 )
-def get_users_for_repository(
+def get_users_for_project(
     project: str,
     username: t.Union[str, None] = None,
     db: Session = Depends(get_db),
@@ -44,7 +44,7 @@ def get_users_for_repository(
     verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
-    return repository_users.get_users_of_project(db, project)
+    return crud.get_users_of_project(db, project)
 
 
 @router.post(
@@ -52,7 +52,7 @@ def get_users_for_repository(
     response_model=schema_projects.ProjectUser,
     responses=AUTHENTICATION_RESPONSES,
 )
-def add_user_to_repository(
+def add_user_to_project(
     project: str,
     body: schema_projects.ProjectUser,
     db: Session = Depends(get_db),
@@ -72,7 +72,7 @@ def add_user_to_repository(
         t4c_manager.add_user_to_repository(
             project, body.username, is_admin=False
         )
-    return repository_users.add_user_to_project(
+    return crud.add_user_to_project(
         db, project, body.role, body.username, body.permission
     )
 
@@ -82,7 +82,7 @@ def add_user_to_repository(
     status_code=204,
     responses=AUTHENTICATION_RESPONSES,
 )
-def patch_repository_user(
+def patch_project_user(
     project: str,
     username: str,
     body: schema_projects.PatchProjectUser,
@@ -104,9 +104,7 @@ def patch_repository_user(
             db=db,
         )
         check_username_not_admin(username, db)
-        repository_users.change_role_of_user_in_project(
-            db, project, body.role, username
-        )
+        crud.change_role_of_user_in_project(db, project, body.role, username)
     if body.password:
         verify_project_role(
             project,
@@ -147,7 +145,7 @@ def patch_repository_user(
             db=db,
         )
         check_username_not_admin(username, db)
-        repo_user = repository_users.get_user_of_project(
+        repo_user = crud.get_user_of_project(
             db,
             project,
             username,
@@ -160,7 +158,7 @@ def patch_repository_user(
                     "reason": "You are not allowed to set the permission of project leads!"
                 },
             )
-        repository_users.change_permission_of_user_in_project(
+        crud.change_permission_of_user_in_project(
             db, project, body.permission, username
         )
 
@@ -170,7 +168,7 @@ def patch_repository_user(
     status_code=204,
     responses=AUTHENTICATION_RESPONSES,
 )
-def remove_user_from_repository(
+def remove_user_from_project(
     project: str,
     username: str,
     db: Session = Depends(get_db),
@@ -181,4 +179,4 @@ def remove_user_from_repository(
     )
     check_username_not_admin(username, db)
     t4c_manager.remove_user_from_repository(project, username)
-    repository_users.delete_user_from_project(db, project, username)
+    crud.delete_user_from_project(db, project, username)

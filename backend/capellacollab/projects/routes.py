@@ -28,7 +28,7 @@ from capellacollab.core.database import get_db
 from capellacollab.projects.models import (
     DatabaseProject,
     PatchProject,
-    PostRepositoryRequest,
+    PostProjectRequest,
     Project,
     UserMetadata,
 )
@@ -111,7 +111,7 @@ def get_project_details(
 
 @router.post("/", tags=["projects"], responses=AUTHENTICATION_RESPONSES)
 def create_project(
-    body: PostRepositoryRequest,
+    body: PostProjectRequest,
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
 ):
