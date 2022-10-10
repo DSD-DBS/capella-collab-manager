@@ -3,74 +3,36 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper">
-  <div class="title">Existing instances</div>
-  <div class="instances">
-    <mat-card
-      matRipple
-      [routerLink]="['/settings/modelsources/t4c/instances/' + 'id']"
-    >
-      <div class="mat-title">
-        Main instance
-        <span class="mat-subtitle">General Git (restricted)</span>
-      </div>
+<!--
+ ~ Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<article class="flexbox">
+  <a [routerLink]="['create']">
+    <mat-card matRipple class="mat-card-overview new">
       <div class="content">
-        Capella version: v5.0.0 <br />
-        Host: hostname <br />
-        Port: 2036 <br />
-        licenseKey: hidden (reveal) <br />
-        REST-API: URL <br />
-        licenseServer-API: <br />
-        username: <br />
-        password: <br />
+        Add an instance <br />
+        <div class="icon">
+          <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
+        </div>
       </div>
     </mat-card>
-  </div>
-  <br />
+  </a>
 
-  <div class="title">Add new instance</div>
-  <br />
-
-  <form id="add-instance-form">
-    <mat-form-field id="name" appearance="fill">
-      <mat-label>Name</mat-label>
-      <input matInput />
-    </mat-form-field>
-    <mat-form-field id="capella-version" appearance="fill">
-      <mat-label>Capella version</mat-label>
-      <input matInput />
-    </mat-form-field>
-    <br />
-    <mat-form-field class="fullwidth" appearance="fill">
-      <mat-label>License configuration</mat-label>
-      <input matInput />
-    </mat-form-field>
-    <br />
-    <mat-form-field id="host" appearance="fill">
-      <mat-label>Host</mat-label>
-      <input matInput />
-    </mat-form-field>
-    <mat-form-field id="port" appearance="fill">
-      <mat-label>Port</mat-label>
-      <input matInput /> </mat-form-field
-    ><br />
-    <mat-form-field id="usageAPI" appearance="fill">
-      <mat-label>License server usageAPI</mat-label>
-      <input matInput />
-    </mat-form-field>
-    <mat-form-field id="restAPI" appearance="fill">
-      <mat-label>Experimental REST-API</mat-label>
-      <input matInput />
-    </mat-form-field>
-    <br />
-    <mat-form-field id="username" appearance="fill">
-      <mat-label>Username</mat-label>
-      <input matInput />
-    </mat-form-field>
-    <mat-form-field id="password" appearance="fill">
-      <mat-label>Password</mat-label>
-      <input matInput />
-    </mat-form-field>
-  </form>
-  <button mat-raised-button>Create</button>
-</div>
+  <a
+    *ngFor="let instance of instances"
+    [routerLink]="['instance', instance.id]"
+  >
+    <mat-card matRipple class="mat-card-overview">
+      <div class="header">{{ instance.name }}</div>
+      <div class="content">
+        <mat-icon class="aligned">tag</mat-icon> <b> Capella version:</b>
+        {{ instance.version.name }}
+        <br />
+        <mat-icon class="aligned">link</mat-icon><b> Host:</b>
+        {{ instance.host }}:{{ instance.port }}
+      </div>
+    </mat-card>
+  </a>
+</article>

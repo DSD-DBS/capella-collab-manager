@@ -14,6 +14,10 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+a {
+  text-decoration: none !important;
+}
+
 /* All global variables are defined here */
 :root {
   --primary-color: #3f51b5;
@@ -41,10 +45,6 @@ body {
 
 .mat-icon {
   height: 400px;
-}
-
-a {
-  text-decoration: none !important;
 }
 
 .expansion-panel > .mat-content {
@@ -91,11 +91,31 @@ h1 {
   margin: 10px;
 }
 
+/* Flexbox rules */
+
 .flexbox {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   flex-wrap: wrap;
+}
+
+.flex-center,
+.flexbox.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.flex-space-between button:only-child {
+  margin-left: auto;
+  flex-direction: row-reverse !important;
 }
 
 button {
@@ -105,14 +125,6 @@ button {
 mat-spinner {
   margin-left: auto;
   margin-right: auto;
-}
-
-.workspace-toggle * .mat-slide-toggle-bar {
-  background-color: green !important;
-}
-
-.workspace-toggle * .mat-slide-toggle-thumb {
-  background-color: #fafafa !important;
 }
 
 .vertical-form {
@@ -153,55 +165,12 @@ fieldset > :not(.field-separator) {
   text-align: center;
 }
 
-.flex-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.flex-space-between {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-}
-
-.flex-space-between button:only-child {
-  margin-left: auto;
-  flex-direction: row-reverse !important;
-}
-
 .mat-card-default {
   width: 400px;
 }
 
 .section-card {
   width: var(--section-card-width);
-}
-
-.url-before-path-separator {
-  align-self: right;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  width: calc(14em - 2 * var(--field-padding));
-  padding: 0.25em var(--field-padding);
-  border-radius: 4px;
-
-  background-color: rgba(0, 0, 0, 0.04);
-}
-
-.form-radio-group {
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 1.34375em;
-}
-
-.form-radio-button {
-  padding: 0.5em 0;
-}
-
-.form-button-wrapper {
-  padding-bottom: 1.34375em;
 }
 
 .version-selector {
@@ -243,6 +212,52 @@ fieldset > :not(.field-separator) {
   width: 20ch;
 }
 
-.title-box {
-  margin-left: 2em;
+/*
+Angular Material Card Styles
+*/
+
+.mat-card-overview .content {
+  padding: 10px 20px;
+  min-height: 64%;
+}
+
+.mat-card-overview {
+  padding: 0 !important;
+  width: fit-content;
+  width: 400px;
+  height: 250px;
+  user-select: none;
+}
+
+.mat-card-overview.new {
+  font-size: 2em;
+  display: flex;
+  align-items: center;
+}
+
+.mat-card-overview.new .content {
+  text-align: center;
+  margin: auto;
+}
+
+.mat-card-overview.new > :first-child {
+  margin: auto !important;
+}
+.mat-card-overview.new .icon {
+  padding-top: 60px;
+}
+
+.mat-card-overview:hover {
+  background-color: var(--hover-color);
+  cursor: pointer;
+}
+
+.mat-card-overview .header {
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 5px 5px 0 0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 20px;
+  font-size: 1.5em;
 }

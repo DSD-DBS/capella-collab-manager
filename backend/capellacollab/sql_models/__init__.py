@@ -10,6 +10,7 @@ from importlib import metadata
 import capellacollab.projects.models
 from capellacollab.config import models
 from capellacollab.notices import models
+from capellacollab.sessions import models
 from capellacollab.users import models
 
 log = logging.getLogger(__name__)

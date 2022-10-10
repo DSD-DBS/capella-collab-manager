@@ -118,11 +118,13 @@ a {
 .right > mat-card {
   width: fit-content;
   height: fit-content;
-  margin: 5px;
+  margin: 0 5px;
 }
 
 .right > mat-card > div {
-  margin: 5px;
+  margin: 2px 5px;
+  text-align: center;
+  min-width: 50px;
 }
 
 .right {
@@ -132,4 +134,10 @@ a {
 
 .actions {
   margin: 10px;
+}
+
+.model-badge-title {
+  font-size: 0.8em;
+  margin: 0;
+  line-height: 1;
 }

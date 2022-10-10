@@ -5,12 +5,16 @@
 
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService } from 'src/app/services/project/project.service';
-import { ModelService } from 'src/app/services/model/model.service';
+import { Model, ModelService } from 'src/app/services/model/model.service';
 import { SourceService } from 'src/app/services/source/source.service';
-import { Tool, ToolService } from 'src/app/services/tools/tool.service';
-import { filter } from 'rxjs';
+import { combineLatest, filter, map, switchMap, tap } from 'rxjs';
+import {
+  Tool,
+  ToolService,
+  ToolType,
+  ToolVersion,
+} from 'src/app/services/tools/tool.service';
 
 @Component({
   selector: 'app-init-model',
@@ -20,6 +24,9 @@ import { filter } from 'rxjs';
 export class InitModelComponent implements OnInit {
   @Output() create = new EventEmitter<{ created: boolean }>();
   @Input() asStepper?: boolean;
+
+  toolVersions: ToolVersion[] = [];
+  toolTypes: ToolType[] = [];
 
   buttonDisabled: boolean = false;
 
@@ -36,11 +43,29 @@ export class InitModelComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.modelService._model.pipe(filter(Boolean)).subscribe((model) => {
-      this.form.controls.version.patchValue(model.version_id);
-      this.form.controls.type.patchValue(model.type_id);
-    });
-    this.toolService.init();
+    this.modelService._model
+      .pipe(filter(Boolean))
+      .pipe(
+        tap((model) => {
+          if (model.version) {
+            this.form.controls.version.patchValue(model.version.id);
+          }
+          if (model.type) {
+            this.form.controls.type.patchValue(model.type.id);
+          }
+        }),
+        map((model: Model) => model.tool),
+        switchMap((tool: Tool) =>
+          combineLatest([
+            this.toolService.getVersionsForTool(tool.id),
+            this.toolService.getTypesForTool(tool.id),
+          ])
+        )
+      )
+      .subscribe((result: [ToolVersion[], ToolType[]]) => {
+        this.toolVersions = result[0];
+        this.toolTypes = result[1];
+      });
   }
 
   onSubmit(): void {
@@ -63,20 +88,5 @@ export class InitModelComponent implements OnInit {
           this.buttonDisabled = true;
         });
     }
-  }
-
-  getTool(): Tool {
-    let tool = this.toolService.tools!.filter((tool) => {
-      return tool.id == this.modelService.model?.tool_id;
-    })[0];
-    return tool || ({} as Tool);
-  }
-
-  getForToolId<Type>(nested_list: { [id: number]: Type[] } | null): Type[] {
-    let tool_id: number | null | undefined = this.modelService.model?.tool_id;
-    if (tool_id && nested_list) {
-      return nested_list[tool_id];
-    }
-    return [];
   }
 }

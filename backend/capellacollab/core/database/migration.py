@@ -83,11 +83,11 @@ def create_tools(db):
     tools.create_tool(db, capella)
     tools.create_tool(db, papyrus)
 
-    tools.create_version(db, capella.id, "6.2", True)
-    tools.create_version(db, capella.id, "6.0")
+    tools.create_version(db, capella.id, "6.0", True)
     tools.create_version(db, capella.id, "5.2")
+    tools.create_version(db, capella.id, "5.0")
 
-    tools.create_version(db, papyrus.id, "6.2")
+    tools.create_version(db, papyrus.id, "6.1")
     tools.create_version(db, papyrus.id, "6.0")
 
     tools.create_type(db, capella.id, "model")

@@ -12,10 +12,10 @@ import capellacollab.config.routes as configuration
 import capellacollab.core.metadata as core_metadata
 import capellacollab.notices.routes as notices
 import capellacollab.sessions.routes as sessions
+import capellacollab.settings.routes as settings
 import capellacollab.users.routes as users
 from capellacollab.config import config
 from capellacollab.projects import routes as projects
-from capellacollab.settings.modelsources.git import routes as git_settings
 from capellacollab.tools import routes as tools
 
 log = logging.getLogger(__name__)
@@ -31,11 +31,8 @@ router.include_router(notices.router, prefix="/notices", tags=["Notices"])
 router.include_router(
     configuration.router, prefix="/configurations", tags=["Notices"]
 )
-router.include_router(
-    git_settings.router,
-    prefix="/settings/modelsources/git",
-    tags=["GitSettings"],
-)
+router.include_router(settings.router, prefix="/settings")
+router.include_router(notices.router, prefix="/notices", tags=["Notices"])
 router.include_router(
     configuration.router, prefix="/configurations", tags=["Notices"]
 )

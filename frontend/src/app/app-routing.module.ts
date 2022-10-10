@@ -30,6 +30,7 @@ import { HomeComponent } from './workspaces/home.component';
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
+import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/edit-t4c-instance/edit-t4c-instance.component';
 
 const routes: Routes = [
   {
@@ -138,10 +139,17 @@ const routes: Routes = [
               {
                 path: 't4c',
                 children: [
-                  { path: '', component: T4CSettingsComponent },
                   {
-                    path: 'instances/:id',
-                    component: T4CInstanceSettingsComponent,
+                    path: '',
+                    component: T4CSettingsComponent,
+                  },
+                  {
+                    path: 'create',
+                    component: EditT4CInstanceComponent,
+                  },
+                  {
+                    path: 'instance/:instance',
+                    component: EditT4CInstanceComponent,
                   },
                 ],
               },

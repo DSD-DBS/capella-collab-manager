@@ -38,7 +38,7 @@ def list_in_project(
         )
     verify_project_role(project.name, token, db)
     return [
-        ResponseModel.from_model(model)
+        ResponseModel.from_orm(model)
         for model in crud.get_all_models_in_project(db, project.slug)
     ]
 
@@ -71,8 +71,7 @@ def get_model_by_slug(
             },
         )
 
-    response_model = ResponseModel.from_model(model)
-    return response_model
+    return ResponseModel.from_orm(model)
 
 
 @router.post("/", response_model=ResponseModel)
@@ -100,22 +99,22 @@ def create_new(
     )
     try:
         tool = tools_crud.get_tool_by_id(new_model.tool_id, db)
-    except IntegrityError as e:
+    except IntegrityError:
         raise HTTPException(
             404,
             {"reason": f"The tool with id {new_model.tool_id} was not found."},
         )
     try:
         model = crud.create_new_model(db, project, new_model, tool)
-    except IntegrityError as e:
+    except IntegrityError:
         raise HTTPException(
             409,
             {
                 "reason": "A model with a similar name already exists.",
                 "technical": "Slug already used",
             },
-        ) from e
-    return ResponseModel.from_model(model)
+        )
+    return ResponseModel.from_orm(model)
 
 
 @router.patch(
@@ -151,7 +150,7 @@ def set_tool_details(
         )
     try:
         version = tools_crud.get_version_by_id(tool_details.version_id, db)
-    except NoResultFound as e:
+    except NoResultFound:
         raise HTTPException(
             404,
             {
@@ -168,7 +167,7 @@ def set_tool_details(
 
     try:
         model_type = tools_crud.get_type_by_id(tool_details.type_id, db)
-    except NoResultFound as e:
+    except NoResultFound:
         raise HTTPException(
             404, {"reason": f"The type with id {model.type_id} was not found."}
         )
@@ -180,7 +179,7 @@ def set_tool_details(
             },
         )
 
-    return ResponseModel.from_model(
+    return ResponseModel.from_orm(
         crud.set_tool_details_for_model(
             db,
             model,
