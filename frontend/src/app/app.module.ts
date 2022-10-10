@@ -216,6 +216,8 @@ import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
       maxOpened: 5,
       preventDuplicates: true,
       countDuplicates: true,
+      resetTimeoutOnDuplicate: true,
+      includeTitleDuplicates: true,
     }),
     CookieModule.withOptions(),
     MarkdownModule.forRoot(),
