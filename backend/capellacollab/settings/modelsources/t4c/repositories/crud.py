@@ -5,7 +5,8 @@ from __future__ import annotations
 
 import typing as t
 
-from sqlmodel import Session, select
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from capellacollab.settings.modelsources.t4c.models import (
     CreateT4CRepository,
