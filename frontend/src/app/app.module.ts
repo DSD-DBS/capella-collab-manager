@@ -89,6 +89,7 @@ import { SessionCreatedComponent } from './sessions/session-created/session-crea
 import { LicencesComponent } from './sessions/session-overview/licences/licences.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
+import { ToolDetailsComponent } from './settings/core/tools-settings/tool-details/tool-details.component';
 import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
 import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
 import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4c-importer-settings/t4c-importer-settings.component';
@@ -161,6 +162,7 @@ import { HomeComponent } from './workspaces/home.component';
     T4CSettingsComponent,
     T4CSettingsWrapperComponent,
     TermsConditionsComponent,
+    ToolDetailsComponent,
     ToolsSettingsComponent,
     UploadDialogComponent,
     UserSettingsComponent,
