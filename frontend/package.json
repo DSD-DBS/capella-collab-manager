@@ -25,6 +25,7 @@
     "@angular/router": "~14.2.0",
     "ngx-cookie": "^6.0.1",
     "ngx-markdown": "^14.0.1",
+    "ngx-skeleton-loader": "^6.0.0",
     "ngx-toastr": "^14.3.0",
     "npm": "^8.19.0",
     "rxjs": "~7.5.6",

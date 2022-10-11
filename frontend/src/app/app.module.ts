@@ -103,6 +103,7 @@ import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-s
 import { SettingsComponent } from './settings/settings.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { HomeComponent } from './workspaces/home.component';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @NgModule({
   declarations: [
@@ -203,6 +204,7 @@ import { HomeComponent } from './workspaces/home.component';
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
+    NgxSkeletonLoaderModule.forRoot(),
     OverlayModule,
     ReactiveFormsModule,
     ToastrModule.forRoot({
