@@ -19,7 +19,8 @@ export class SetT4CPasswordComponent implements OnInit {
     private repositoryUserService: RepositoryUserService,
     private userService: UserService
   ) {}
-  repositories: Array<Project> = [];
+
+  repositories: Project[] = [];
   updatePasswordSuccess = false;
 
   updatePasswordForm = new FormGroup({

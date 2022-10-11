@@ -37,7 +37,7 @@ export class RequestSessionComponent implements OnInit {
   showSmallSpinner = false;
   creationSuccessful = false;
 
-  history: Array<String> = ['Latest commit', 'Complete history'];
+  history: String[] = ['Latest commit', 'Complete history'];
   isTag: boolean = false;
 
   repositoryFormGroup = new FormGroup(
@@ -73,7 +73,7 @@ export class RequestSessionComponent implements OnInit {
   }
 
   @Input()
-  ownProjects: Array<ProjectUser> = [];
+  ownProjects: ProjectUser[] = [];
 
   chosenRepository: string = '';
   allBranches: boolean = false;
@@ -85,8 +85,8 @@ export class RequestSessionComponent implements OnInit {
   persistentWorkspaceHelpIsOpen = false;
   cleanWorkspaceHelpIsOpen = false;
 
-  tags: Array<String> = [];
-  branches: Array<String> = [];
+  tags: String[] = [];
+  branches: String[] = [];
 
   constructor(
     public sessionService: SessionService,
@@ -133,7 +133,7 @@ export class RequestSessionComponent implements OnInit {
       } else {
         var depth = DepthType.CompleteHistory;
       }
-      var reference = this.reference.value;
+      let reference = this.reference.value;
       if (this.allBranches) {
         reference = '';
       }
@@ -158,7 +158,7 @@ export class RequestSessionComponent implements OnInit {
       next: (revisions: Revisions) => {
         this.branches = revisions.branches;
         this.tags = revisions.tags;
-        this.referenceDepthFormGroup.controls['reference'].setValue(
+        this.referenceDepthFormGroup.controls.reference.setValue(
           revisions.default
         );
         this.chosenRepository = repository_name;

@@ -26,7 +26,7 @@ export class LogoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
-      this.reason = params['reason'];
+      this.reason = params.reason;
       if (this.reason === 'session-expired') {
         this.autoLogin = true;
       }

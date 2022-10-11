@@ -33,7 +33,7 @@ import { Project } from 'src/app/services/project/project.service';
 export class ProjectUserSettingsComponent implements OnChanges {
   @Input() project!: Project;
 
-  projectUsers: Array<ProjectUser> = [];
+  projectUsers: ProjectUser[] = [];
   search = '';
 
   @ViewChild('users') users: any;
@@ -49,6 +49,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
     },
     this.permissionRequiredValidator()
   );
+
   constructor(
     public repoUserService: RepositoryUserService,
     public userService: UserService,
@@ -83,7 +84,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
 
   userAlreadyInProjectValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      for (let repoUser of this.projectUsers) {
+      for (const repoUser of this.projectUsers) {
         if (repoUser.username == control.value) {
           return { userAlreadyInProjectError: true };
         }
@@ -173,7 +174,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
       });
   }
 
-  getProjectUsersByRole(role: 'manager' | 'user'): Array<ProjectUser> {
+  getProjectUsersByRole(role: 'manager' | 'user'): ProjectUser[] {
     return this.projectUsers.filter(
       (u) => u.role == role && u.username.includes(this.search.toLowerCase())
     );

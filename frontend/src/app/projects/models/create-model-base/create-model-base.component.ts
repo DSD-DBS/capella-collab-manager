@@ -48,8 +48,8 @@ export class CreateModelBaseComponent implements OnInit {
 
   slugValidator(slugs: string[]): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      let newSlug = slugify(control.value, { lower: true });
-      for (let slug of slugs) {
+      const newSlug = slugify(control.value, { lower: true });
+      for (const slug of slugs) {
         if (slug == newSlug) {
           return { uniqueSlug: { value: slug } };
         }
@@ -60,8 +60,8 @@ export class CreateModelBaseComponent implements OnInit {
 
   validToolValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (this.toolService.tools) {
-        for (let tool of this.toolService.tools) {
+      if (this.toolService.tools != null) {
+        for (const tool of this.toolService.tools) {
           if (tool.id == control.value) {
             return null;
           }

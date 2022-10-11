@@ -19,7 +19,7 @@ import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/
   styleUrls: ['./git-settings.component.css'],
 })
 export class GitSettingsComponent implements OnInit {
-  public instances: Array<GitSettings>;
+  public instances: GitSettings[];
   gitSettingsForm = new FormGroup({
     type: new FormControl('', Validators.required),
     name: new FormControl('', Validators.required),

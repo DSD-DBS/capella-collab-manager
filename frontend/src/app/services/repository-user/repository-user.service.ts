@@ -21,8 +21,8 @@ export class RepositoryUserService {
   ROLES = { user: 'User', manager: 'Manager' };
   ADVANCED_ROLES = { administrator: 'Administrator', ...this.ROLES };
 
-  getRepoUsers(repository: string): Observable<Array<ProjectUser>> {
-    return this.http.get<Array<ProjectUser>>(
+  getRepoUsers(repository: string): Observable<ProjectUser[]> {
+    return this.http.get<ProjectUser[]>(
       this.BACKEND_URL_PREFIX + repository + '/users'
     );
   }

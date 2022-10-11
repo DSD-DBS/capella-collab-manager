@@ -21,7 +21,7 @@ export class UserSettingsComponent implements OnInit {
     username: new FormControl('', [Validators.required]),
   });
 
-  users: Array<User> = [];
+  users: User[] = [];
   search = '';
 
   constructor(
@@ -88,7 +88,7 @@ export class UserSettingsComponent implements OnInit {
   }
 
   getUsers() {
-    this.userService.getUsers().subscribe((res: Array<User>) => {
+    this.userService.getUsers().subscribe((res: User[]) => {
       this.users = res;
     });
   }
@@ -130,7 +130,7 @@ export class UserSettingsComponent implements OnInit {
     });
   }
 
-  getUsersByRole(role: 'administrator' | 'user'): Array<User> {
+  getUsersByRole(role: 'administrator' | 'user'): User[] {
     return this.users.filter(
       (u) =>
         u.role == role &&

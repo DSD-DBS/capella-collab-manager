@@ -19,7 +19,7 @@ export class GitCredentialsValidator implements AsyncValidator {
   constructor(private gitService: GitService) {}
 
   validate(control: AbstractControl): Observable<ValidationErrors | null> {
-    let credentials = {
+    const credentials = {
       url: control.get('url')?.value,
       username: control.get('username')?.value,
       password: control.get('password')?.value,

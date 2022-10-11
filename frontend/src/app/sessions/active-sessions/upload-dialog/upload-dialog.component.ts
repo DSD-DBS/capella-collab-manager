@@ -25,7 +25,7 @@ import { FileExistsDialogComponent } from './file-exists-dialog/file-exists-dial
 export class UploadDialogComponent implements OnInit, OnDestroy {
   private subscription: Subscription | undefined;
 
-  files: [File, string][] = [];
+  files: Array<[File, string]> = [];
   uploadProgress: number | null = null;
   loadingFiles = false;
 
@@ -65,11 +65,11 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
     this.subscription?.unsubscribe();
   }
 
-  hasChild = (_: number, node: PathNode) => !!node.children;
+  hasChild = (_: number, node: PathNode) => !(node.children == null);
 
   addFiles(files: FileList | null, path: string, parentNode: PathNode): void {
-    if (files) {
-      for (let file of Array.from(files)) {
+    if (files != null) {
+      for (const file of Array.from(files)) {
         var name = file.name.replace(/\s/g, '_');
         if (this.checkIfFileExists(parentNode, name)) {
           const fileExistsDialog = this.dialog.open(FileExistsDialogComponent, {
@@ -78,8 +78,8 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
           fileExistsDialog.afterClosed().subscribe((response) => {
             if (!this.files.includes([file, path]) && response) {
               this.files.push([file, path]);
-              if (!!parentNode.children) {
-                for (var i = 0; i < parentNode.children.length; i++) {
+              if (parentNode.children != null) {
+                for (let i = 0; i < parentNode.children.length; i++) {
                   const child = parentNode.children[i];
                   if (child.name === name) {
                     child.isNew = true;
@@ -99,11 +99,11 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
   }
 
   addFileToTree(parentNode: PathNode, path: string, name: string): boolean {
-    var result = false;
+    let result = false;
     if (parentNode.path === path) {
       parentNode.children?.push({
         path: path + `/${name}`,
-        name: name,
+        name,
         type: 'file',
         children: null,
         isNew: true,
@@ -111,8 +111,8 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
       this.dataSource.next([{ ...this.dataSource.value[0] }]);
       this.treeControl.expand(parentNode);
       return true;
-    } else if (!!parentNode.children) {
-      for (var i = 0; i < parentNode.children.length; i++) {
+    } else if (parentNode.children != null) {
+      for (let i = 0; i < parentNode.children.length; i++) {
         const child = parentNode.children[i];
         result = this.addFileToTree(child, path, name);
         if (result) {
@@ -125,8 +125,8 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
   }
 
   checkIfFileExists(parentNode: PathNode, fileName: string): boolean {
-    if (!!parentNode.children) {
-      for (var i = 0; i < parentNode.children.length; i++) {
+    if (parentNode.children != null) {
+      for (let i = 0; i < parentNode.children.length; i++) {
         if (fileName == parentNode.children[i].name) return true;
       }
     }
@@ -138,12 +138,12 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
   }
 
   _expandToNode(parentNode: PathNode, node: PathNode): boolean {
-    var result = false;
+    let result = false;
     if (node.path === parentNode.path) {
       this.treeControl.expand(parentNode);
       result = true;
-    } else if (!!parentNode.children) {
-      for (var i = 0; i < parentNode.children?.length; i++) {
+    } else if (parentNode.children != null) {
+      for (let i = 0; i < parentNode.children?.length; i++) {
         result = this._expandToNode(parentNode.children[i], node);
         if (result) {
           this.treeControl.expand(parentNode);
@@ -167,14 +167,14 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
     searchedName: string,
     prefix: string
   ): [PathNode, number] | null {
-    if (parentNode.children!!) {
-      for (var i = 0; i < parentNode.children.length; i++) {
+    if (parentNode.children!) {
+      for (let i = 0; i < parentNode.children.length; i++) {
         const child = parentNode.children[i];
         if (child.name === searchedName && child.path === prefix) {
           return [parentNode, i];
         } else {
-          var result = this._findNode(child, searchedName, prefix);
-          if (!!result) {
+          const result = this._findNode(child, searchedName, prefix);
+          if (result != null) {
             return result;
           }
         }
@@ -185,7 +185,7 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
 
   removeFileFromTree(path: string, filename: string): void {
     const result = this.findNode(path, filename);
-    if (!!result) {
+    if (result != null) {
       result[0].children?.splice(result[1], 1);
       this.dataSource.next([{ ...this.dataSource.value[0] }]);
       this.expandToNode(result[0]);
@@ -193,16 +193,16 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
   }
 
   removeFileFromSelection(path: string, filename: string): void {
-    var file,
-      prefix = null;
-    for (var i = 0; i < this.files.length; i++) {
+    let file;
+    let prefix = null;
+    for (let i = 0; i < this.files.length; i++) {
       file = this.files[i][0];
       prefix = this.files[i][1];
       if (this.files[i][0].name === filename && this.files[i][1] === path) {
         break;
       }
     }
-    if (!!file && !!prefix) {
+    if (!(file == null) && !!prefix) {
       const index: number = this.files.indexOf([file, prefix]);
       this.files.splice(index, 1);
     }
@@ -210,7 +210,7 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
 
   submit() {
     const formData = new FormData();
-    var size = 0;
+    let size = 0;
     this.files.forEach(([file, _]: [File, string]) => {
       size += file.size;
     });

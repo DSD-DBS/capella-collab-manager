@@ -39,7 +39,7 @@ export class SessionCreationProgressComponent implements OnInit, OnDestroy {
         map(() => {
           if (this.session !== undefined) {
             this.ownSessionService.refreshSessions().subscribe(
-              (res: Array<Session>) => {
+              (res: Session[]) => {
                 const session = res.find(
                   (session: Session) => session.id === this.session?.id
                 );
@@ -69,7 +69,7 @@ export class SessionCreationProgressComponent implements OnInit, OnDestroy {
 
   evaluateStep(step: string): string {
     const splittedState = this.session?.state.split('_');
-    if (splittedState && splittedState.length >= 2) {
+    if (splittedState != null && splittedState.length >= 2) {
       const type = splittedState[0];
       const detectedStep = splittedState.slice(1).join('_');
       const stepOrder = [

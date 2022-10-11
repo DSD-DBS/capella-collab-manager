@@ -14,20 +14,20 @@ import { environment } from 'src/environments/environment';
 })
 export class GitModelService {
   constructor(private http: HttpClient) {}
-  models: Array<GitModel> = [];
+  models: GitModel[] = [];
 
   getGitRepositoriesForRepository(
     repository_name: string
-  ): Observable<Array<GitModel>> {
+  ): Observable<GitModel[]> {
     return this.http
-      .get<Array<GitModel>>(
+      .get<GitModel[]>(
         environment.backend_url +
           '/projects/' +
           repository_name +
           '/extensions/modelsources/git'
       )
       .pipe(
-        tap((res: Array<GitModel>) => {
+        tap((res: GitModel[]) => {
           this.models = res;
         })
       );
@@ -136,7 +136,7 @@ export interface CreateGitModel extends BasicGitModel {
 }
 
 export interface Revisions {
-  branches: Array<string>;
-  tags: Array<string>;
+  branches: string[];
+  tags: string[];
   default: string;
 }

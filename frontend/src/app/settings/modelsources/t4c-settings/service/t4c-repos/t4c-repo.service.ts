@@ -14,15 +14,15 @@ import { environment } from 'src/environments/environment';
 })
 export class T4CRepoService {
   constructor(private http: HttpClient) {}
-  repositories: Array<T4CRepository> = [];
+  repositories: T4CRepository[] = [];
 
-  getT4CRepositories(instance_id: number): Observable<Array<T4CRepository>> {
+  getT4CRepositories(instance_id: number): Observable<T4CRepository[]> {
     return this.http
-      .get<Array<T4CRepository>>(
+      .get<T4CRepository[]>(
         `${environment.backend_url}/integrations/modelsources/t4c/instances/${instance_id}/repositories`
       )
       .pipe(
-        tap((res: Array<T4CRepository>) => {
+        tap((res: T4CRepository[]) => {
           this.repositories = res;
         })
       );
@@ -34,7 +34,7 @@ export class T4CRepoService {
   ): Observable<T4CRepository> {
     return this.http.post<T4CRepository>(
       `${environment.backend_url}/integrations/modelsources/t4c/instances/${instance_id}/repositories`,
-      { name: name }
+      { name }
     );
   }
 

@@ -68,7 +68,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    let projects = this.projectService._projects;
+    const projects = this.projectService._projects;
 
     this.projectService.list().subscribe({
       next: (value) => {
@@ -95,7 +95,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   createProject(stepper: MatStepper): void {
-    let projectSubject = this.projectService._project;
+    const projectSubject = this.projectService._project;
     if (this.form.valid) {
       const projectConnectable = connectable<Project>(
         this.projectService.createProject({
@@ -121,7 +121,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
         )
         .subscribe((project) => {
           this.toastService.showSuccess(
-            `The project “${project!.name}” was successfuly created.`,
+            `The project “${project.name}” was successfuly created.`,
             'Project created'
           );
           stepper.steps.get(0)!.completed = true;
@@ -150,8 +150,8 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   slugValidator(control: AbstractControl): ValidationErrors | null {
-    let newSlug = slugify(control.value, { lower: true });
-    for (let slug of this.projectsSlugs.value) {
+    const newSlug = slugify(control.value, { lower: true });
+    for (const slug of this.projectsSlugs.value) {
       if (slug == newSlug) {
         return { uniqueSlug: { value: slug } };
       }

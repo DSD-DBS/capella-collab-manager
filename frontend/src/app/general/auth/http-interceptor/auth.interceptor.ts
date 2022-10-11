@@ -77,7 +77,7 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   injectAccessToken(request: HttpRequest<unknown>): HttpRequest<unknown> {
-    let access_token = this.authService.accessToken;
+    const access_token = this.authService.accessToken;
     return request.clone({
       headers: request.headers.set('Authorization', `Bearer ${access_token}`),
     });

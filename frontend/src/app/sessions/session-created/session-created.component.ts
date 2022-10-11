@@ -16,6 +16,7 @@ import { SessionService } from '../../services/session/session.service';
 export class SessionCreatedComponent implements OnInit {
   @Input()
   session: Session | undefined = undefined;
+
   constructor(private ownSessionService: OwnSessionService) {}
 
   ngOnInit(): void {

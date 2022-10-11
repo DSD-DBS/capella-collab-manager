@@ -39,7 +39,7 @@ export class ActiveSessionsComponent implements OnInit {
     });
   }
 
-  openDeletionDialog(sessions: Array<Session>): void {
+  openDeletionDialog(sessions: Session[]): void {
     const dialogRef = this.dialog.open(DeleteSessionDialogComponent, {
       data: sessions,
     });

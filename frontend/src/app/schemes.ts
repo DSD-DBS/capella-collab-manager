@@ -4,7 +4,7 @@
  */
 
 export interface Session {
-  ports: Array<string>;
+  ports: string[];
   created_at: string;
   id: string;
   last_seen: string;
@@ -32,13 +32,13 @@ export interface ProjectUser {
   username: string;
   permission: 'read' | 'write';
   role: 'user' | 'manager' | 'administrator';
-  warnings: Array<Warnings>;
+  warnings: Warnings[];
 }
 
 export interface SessionUsage {
   free: number;
   total: number;
-  errors: Array<string>;
+  errors: string[];
 }
 
 export interface PathNode {

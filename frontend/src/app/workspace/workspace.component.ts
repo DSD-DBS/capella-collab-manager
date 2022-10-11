@@ -19,7 +19,7 @@ import { ProjectUserService } from '../projects/project-detail/project-users/ser
   styleUrls: ['./workspace.component.css'],
 })
 export class WorkspaceComponent implements OnInit {
-  repositories: Array<ProjectUser> = [];
+  repositories: ProjectUser[] = [];
   showSpinner = true;
 
   constructor(

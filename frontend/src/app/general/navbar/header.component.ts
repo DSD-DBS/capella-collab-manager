@@ -27,7 +27,7 @@ export class HeaderComponent implements OnInit {
   }
 
   createGithubButton(): void {
-    let githubButtonScript = document.createElement('script');
+    const githubButtonScript = document.createElement('script');
     githubButtonScript.type = 'text/javascript';
     githubButtonScript.src = 'https://buttons.github.io/buttons.js';
     document.head.appendChild(githubButtonScript);

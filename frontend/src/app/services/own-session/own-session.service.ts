@@ -13,13 +13,13 @@ import { UserService } from '../user/user.service';
   providedIn: 'root',
 })
 export class OwnSessionService {
-  sessions: Array<Session> = [];
+  sessions: Session[] = [];
 
   constructor(private userService: UserService) {}
 
-  refreshSessions(): Observable<Array<Session>> {
+  refreshSessions(): Observable<Session[]> {
     return this.userService.getOwnActiveSessions().pipe(
-      tap((res: Array<Session>) => {
+      tap((res: Session[]) => {
         this.sessions = res;
       })
     );

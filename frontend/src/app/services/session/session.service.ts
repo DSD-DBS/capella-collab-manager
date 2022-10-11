@@ -16,8 +16,8 @@ export class SessionService {
   constructor(private http: HttpClient) {}
   BACKEND_URL_PREFIX = environment.backend_url + '/sessions/';
 
-  getCurrentSessions(): Observable<Array<Session>> {
-    return this.http.get<Array<Session>>(this.BACKEND_URL_PREFIX);
+  getCurrentSessions(): Observable<Session[]> {
+    return this.http.get<Session[]>(this.BACKEND_URL_PREFIX);
   }
 
   createNewSession(
@@ -27,9 +27,9 @@ export class SessionService {
     depth: DepthType
   ): Observable<Session> {
     return this.http.post<Session>(this.BACKEND_URL_PREFIX, {
-      type: type,
-      repository: repository,
-      branch: branch,
+      type,
+      repository,
+      branch,
       depth: DepthType[depth],
     });
   }
@@ -143,7 +143,7 @@ export class SessionService {
 
     return {
       text: text || '',
-      css: css,
+      css,
     };
   }
 }

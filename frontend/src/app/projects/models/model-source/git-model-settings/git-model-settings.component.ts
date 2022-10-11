@@ -111,7 +111,7 @@ export class GitModelSettingsComponent implements OnInit {
 
   unassignGitModel(model: GitModel) {
     const dialogRef = this.dialog.open(GitModelDeletionDialogComponent, {
-      data: { model: model, repository: this.repository },
+      data: { model, repository: this.repository },
     });
 
     dialogRef.afterClosed().subscribe((val) => {

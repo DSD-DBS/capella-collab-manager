@@ -23,7 +23,7 @@ export class AuthRedirectComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
-      if (params['error']) {
+      if (params.error) {
         const redirect_url =
           '/auth?' +
           Object.keys(params)
@@ -37,7 +37,7 @@ export class AuthRedirectComponent implements OnInit {
         return;
       }
       this.authService
-        .getAccessToken(params['code'], params['state'])
+        .getAccessToken(params.code, params.state)
         .subscribe((res) => {
           this.authService.logIn(res.access_token, res.refresh_token);
           this.userService.getAndSaveOwnUser();

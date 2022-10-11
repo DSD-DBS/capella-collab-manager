@@ -38,7 +38,7 @@ export class T4CInstanceSettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.instance_id = params['id'];
+      this.instance_id = params.id;
       this.navbarService.title =
         'Settings / Modelsources / T4C / Instances / ' + this.instance_id;
     });
@@ -64,7 +64,7 @@ export class T4CInstanceSettingsComponent implements OnInit {
 
   projectNonexistenceValidator(): Validators {
     return (control: AbstractControl): ValidationErrors | null => {
-      for (let repo of this.t4cRepoService.repositories) {
+      for (const repo of this.t4cRepoService.repositories) {
         if (repo.name == control.value) {
           return { projectExistsError: true };
         }

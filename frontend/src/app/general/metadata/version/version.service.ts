@@ -31,7 +31,7 @@ export class VersionService {
   public changedVersion: boolean = false;
 
   loadVersion(): void {
-    if (!this.version) {
+    if (this.version == null) {
       this.httpClient
         .get<Version>('assets/version.json')
         .subscribe((version: Version) => {
@@ -93,7 +93,7 @@ export interface GitVersion {
 
 export interface Version {
   git: GitVersion;
-  github: Array<ReleaseNote>;
+  github: ReleaseNote[];
 }
 
 export interface BackendMetadata {

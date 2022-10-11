@@ -21,7 +21,7 @@ export class DeleteSessionDialogComponent implements OnInit {
   constructor(
     private sessionService: SessionService,
     public dialogRef: MatDialogRef<DeleteSessionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public sessions: Array<Session>
+    @Inject(MAT_DIALOG_DATA) public sessions: Session[]
   ) {}
 
   ngOnInit(): void {}
@@ -33,8 +33,8 @@ export class DeleteSessionDialogComponent implements OnInit {
   deleteAllSessions() {
     this.deleteButton.disabled = true;
     this.deleteButton.text = 'Please wait...';
-    let requests = [];
-    for (let session of this.sessions) {
+    const requests = [];
+    for (const session of this.sessions) {
       requests.push(this.sessionService.deleteSession(session.id));
     }
 

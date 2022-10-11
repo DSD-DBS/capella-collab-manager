@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-export type BaseT4CInstance = {
+export interface BaseT4CInstance {
   license: string;
   host: string;
   port: number;
@@ -16,7 +16,7 @@ export type BaseT4CInstance = {
   rest_api: string;
   username: string;
   password: string;
-};
+}
 
 export type NewT4CInstance = BaseT4CInstance & {
   name: string;
