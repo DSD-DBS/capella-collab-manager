@@ -31,6 +31,10 @@ body {
   bottom: 0.1em;
 }
 
+.mat-icon-position.top {
+  top: 5px;
+}
+
 .mat-icon-position.right {
   margin-left: 5px;
 }

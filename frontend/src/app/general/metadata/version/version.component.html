@@ -11,7 +11,9 @@
     >
       New version available (<span *ngIf="versionService.oldVersion"
         >{{ versionService.oldVersion }}
-        <mat-icon class="position">arrow_right_alt</mat-icon></span
+        <mat-icon class="mat-icon-position top left"
+          >arrow_right_alt</mat-icon
+        ></span
       >{{ versionService.version.git.tag }})!
     </div>
     Environment: {{ env }} <br />
