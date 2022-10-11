@@ -17,5 +17,6 @@ module.exports = {
   },
   rules: {
     "@typescript-eslint/prefer-readonly": "off",
+    "sort-imports": "error",
   },
 };

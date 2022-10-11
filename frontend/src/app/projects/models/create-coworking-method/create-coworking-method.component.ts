@@ -13,7 +13,7 @@ import {
 } from 'src/app/services/git/git.service';
 import { ModelService } from 'src/app/services/model/model.service';
 import { Source, SourceService } from 'src/app/services/source/source.service';
-import { filter, switchMap, map, combineLatest } from 'rxjs';
+import { combineLatest, filter, map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-create-coworking-method',

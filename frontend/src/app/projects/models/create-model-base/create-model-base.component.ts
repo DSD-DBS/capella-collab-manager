@@ -20,7 +20,7 @@ import {
   ModelService,
   NewModel,
 } from 'src/app/services/model/model.service';
-import { connectable, filter, Subject, switchMap, tap } from 'rxjs';
+import { Subject, connectable, filter, switchMap, tap } from 'rxjs';
 import { ToolService } from 'src/app/services/tools/tool.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 

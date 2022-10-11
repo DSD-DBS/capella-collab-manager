@@ -8,9 +8,9 @@ import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
+  MAT_DIALOG_DATA,
   MatDialog,
   MatDialogRef,
-  MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { PathNode, Session } from 'src/app/schemes';

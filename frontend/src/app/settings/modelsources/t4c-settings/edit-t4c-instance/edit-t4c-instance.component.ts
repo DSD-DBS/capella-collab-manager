@@ -13,11 +13,11 @@ import {
 } from '../../../../services/settings/t4c-model.service';
 import {
   BehaviorSubject,
+  combineLatest,
   filter,
   map,
   switchMap,
   tap,
-  combineLatest,
 } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';

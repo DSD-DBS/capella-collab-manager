@@ -6,12 +6,12 @@
 import { Injectable } from '@angular/core';
 import { DefaultUrlSerializer, UrlSerializer, UrlTree } from '@angular/router';
 import {
-  HttpRequest,
-  HttpHandler,
   HttpEvent,
+  HttpHandler,
   HttpInterceptor,
   HttpParameterCodec,
   HttpParams,
+  HttpRequest,
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
