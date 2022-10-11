@@ -4,7 +4,9 @@
 
 from sqlalchemy.orm import Session
 
-from capellacollab.extensions.modelsources.t4c.models import DB_T4CModel
+from capellacollab.projects.capellamodels.modelsources.t4c.models import (
+    DB_T4CModel,
+)
 
 
 def get_t4c_model(db: Session, name: str, model_id: int):

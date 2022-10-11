@@ -16,13 +16,18 @@ from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
 from capellacollab.core.database import get_db
+from capellacollab.projects.capellamodels.modelsources.git.models import (
+    GetRevisionsModel,
+    GitCredentials,
+)
 from capellacollab.settings.modelsources.git import crud
+from capellacollab.settings.modelsources.git.core import get_remote_refs
 from capellacollab.settings.modelsources.git.models import GitSettings
 
 router = APIRouter()
 
 
-@router.get("/", tags=["Git-Settings"], responses=AUTHENTICATION_RESPONSES)
+@router.get("/", tags=["GitSettings"], responses=AUTHENTICATION_RESPONSES)
 def list_git_settings(
     db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
@@ -30,7 +35,7 @@ def list_git_settings(
     return crud.get_all_git_settings(db)
 
 
-@router.get("/{id}", tags=["Git-Settings"], responses=AUTHENTICATION_RESPONSES)
+@router.get("/{id}", tags=["GitSettings"], responses=AUTHENTICATION_RESPONSES)
 def get_git_settings(
     id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
@@ -38,7 +43,7 @@ def get_git_settings(
     return crud.get_git_settings(db, id)
 
 
-@router.post("/", tags=["Git-Settings"], responses=AUTHENTICATION_RESPONSES)
+@router.post("/", tags=["GitSettings"], responses=AUTHENTICATION_RESPONSES)
 def create_git_settings(
     body: GitSettings,
     db: Session = Depends(get_db),
@@ -48,7 +53,19 @@ def create_git_settings(
     return crud.create_git_settings(db, body)
 
 
-@router.put("/{id}", tags=["Git-Settings"], responses=AUTHENTICATION_RESPONSES)
+@router.post("/revisions", response_model=GetRevisionsModel)
+def get_revisions(
+    url: str,
+    credentials: GitCredentials,
+    token: JWTBearer = Depends(JWTBearer()),
+) -> GetRevisionsModel:
+    username = credentials.username
+    password = credentials.password
+
+    return get_remote_refs(url, username, password)
+
+
+@router.put("/{id}", tags=["GitSettings"], responses=AUTHENTICATION_RESPONSES)
 def edit_git_settings(
     id: int,
     body: GitSettings,
@@ -61,7 +78,7 @@ def edit_git_settings(
 
 
 @router.delete(
-    "/{id}", tags=["Git-Settings"], responses=AUTHENTICATION_RESPONSES
+    "/{id}", tags=["GitSettings"], responses=AUTHENTICATION_RESPONSES
 )
 def delete_git_settings(
     id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())

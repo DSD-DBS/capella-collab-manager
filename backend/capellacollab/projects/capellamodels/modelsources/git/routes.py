@@ -2,10 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import base64
 import logging
-import os
-import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
@@ -17,39 +14,31 @@ from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
 from capellacollab.core.database import get_db
-from capellacollab.extensions.modelsources import git
-from capellacollab.extensions.modelsources.git.crud import (
+from capellacollab.projects.capellamodels.modelsources.git.crud import (
     get_primary_gitmodel_of_capellamodels,
 )
-from capellacollab.extensions.modelsources.git.models import (
-    GetRepositoryGitModel,
-    GetRevisionsModel,
-    GitCredentials,
+from capellacollab.projects.capellamodels.modelsources.git.models import (
     NewGitSource,
-    PatchRepositoryGitModel,
-    PostGitModel,
-    RepositoryGitInnerModel,
-    ResponseGitModel,
     ResponseGitSource,
 )
+from capellacollab.settings.modelsources.git.core import get_remote_refs
 
 from . import crud
-from .core import get_remote_refs, ls_remote
 
 router = APIRouter()
 log = logging.getLogger(__name__)
 
 
-@router.post("/create/{model_slug}", response_model=ResponseGitSource)
+@router.post("/", response_model=ResponseGitSource)
 def create_source(
-    project: str,
+    project_name: str,
     model_slug: str,
     source: NewGitSource,
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
 ):
-
-    project_instance = projects_crud.get_project(db, project)
+    print("testtt")
+    project_instance = projects_crud.get_project_by_name(db, project_name)
     verify_project_role(project_instance.name, token, db)
     new_source = crud.create(db, project_instance.slug, model_slug, source)
     return ResponseGitSource.from_orm(new_source)
@@ -86,15 +75,3 @@ def get_revisions_of_primary_git_model(
     log.debug("Determined default branch: %s", remote_refs["default"])
 
     return remote_refs
-
-
-@router.post("/revisions", response_model=GetRevisionsModel)
-def get_revisions(
-    url: str,
-    credentials: GitCredentials,
-    token: JWTBearer = Depends(JWTBearer()),
-) -> GetRevisionsModel:
-    username = credentials.username
-    password = credentials.password
-
-    return get_remote_refs(url, username, password)
