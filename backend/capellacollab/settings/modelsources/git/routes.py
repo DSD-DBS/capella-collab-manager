@@ -65,6 +65,9 @@ def create_git_settings(
     return crud.create_git_settings(db, body)
 
 
+# In the future, check if the HTTP QUERY method is available in fast api,
+# and if so, use it instead of POST
+# (https://www.ietf.org/archive/id/draft-ietf-httpbis-safe-method-w-body-02.html)
 @router.post("/revisions", response_model=GetRevisionsModel)
 def get_revisions(
     url: str,
