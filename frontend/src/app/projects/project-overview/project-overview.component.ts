@@ -17,7 +17,7 @@ import {
   styleUrls: ['./project-overview.component.css'],
 })
 export class ProjectOverviewComponent implements OnInit {
-  showSpinner = true;
+  loading = true;
 
   constructor(
     public projectService: ProjectService,
@@ -33,7 +33,7 @@ export class ProjectOverviewComponent implements OnInit {
       .list()
       .pipe(
         tap(() => {
-          this.showSpinner = false;
+          this.loading = false;
         })
       )
       .subscribe({

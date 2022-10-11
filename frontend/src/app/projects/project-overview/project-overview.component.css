@@ -8,3 +8,7 @@
   text-align: end;
   padding: 5px;
 }
+
+app-mat-card-overview-loader {
+  display: contents;
+}
