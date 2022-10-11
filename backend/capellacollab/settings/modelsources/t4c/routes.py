@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from fastapi import APIRouter, Depends, HTTPException
-from requests import get
-from requests.auth import HTTPBasicAuth
+from requests.exceptions import InvalidURL
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
@@ -93,7 +92,10 @@ def create_t4c_instance(
 
     instance = DatabaseT4CInstance(**body.dict())
     instance.version = version
-    return T4CInstance.from_orm(crud.create_t4c_instance(instance, db))
+    try:
+        return T4CInstance.from_orm(crud.create_t4c_instance(instance, db))
+    except InvalidURL:
+        raise HTTPException(400, {"Invalid REST API url."})
 
 
 @router.patch(
@@ -111,9 +113,12 @@ def edit_t4c_instance(
     for key in body.dict():
         if value := body.__getattribute__(key):
             instance.__setattr__(key, value)
-    return T4CInstance.from_orm(crud.update_t4c_instance(instance, db))
+    try:
+        return T4CInstance.from_orm(crud.update_t4c_instance(instance, db))
+    except InvalidURL:
+        raise HTTPException(400, {"Invalid REST API url."})
 
 
 router.include_router(
-    repositories_router, prefix="/{instance_id}/repositories"
+    repositories_router, prefix="/{t4c_instance_id}/repositories"
 )

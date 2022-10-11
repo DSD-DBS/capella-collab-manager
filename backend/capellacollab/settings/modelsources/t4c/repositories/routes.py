@@ -5,6 +5,7 @@
 import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException
+from requests.exceptions import RequestException
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import Session
 
@@ -14,7 +15,7 @@ from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
 from capellacollab.core.database import get_db
-from capellacollab.settings.modelsources.t4c import crud as instance_crud
+from capellacollab.settings.modelsources.t4c.injectables import load_instance
 from capellacollab.settings.modelsources.t4c.models import (
     CreateT4CRepository,
     DatabaseT4CInstance,
@@ -34,19 +35,18 @@ router = APIRouter()
 
 
 def load_instance_repository(
-    instance_id: int, id_: int, db: Session = Depends(get_db)
+    t4c_repository_id: int,
+    db: Session = Depends(get_db),
+    instance: DatabaseT4CInstance = Depends(load_instance),
 ) -> tuple[DatabaseT4CInstance, DatabaseT4CRepository]:
     try:
-        instance = instance_crud.get_t4c_instance(instance_id, db)
+        repository = crud.get_t4c_repository(t4c_repository_id, db)
     except NoResultFound as e:
         raise HTTPException(
-            404, {"reason": f"Instance with id {instance_id} was not found."}
-        ) from e
-    try:
-        repository = crud.get_t4c_repository(id_, db)
-    except NoResultFound as e:
-        raise HTTPException(
-            404, {"reason": f"Repository with id {id_} was not found."}
+            404,
+            {
+                "reason": f"Repository with id {t4c_repository_id} was not found."
+            },
         ) from e
     if repository.instance != instance:
         raise HTTPException(
@@ -59,25 +59,27 @@ def load_instance_repository(
 
 
 @router.get(
-    "/", responses=AUTHENTICATION_RESPONSES, response_model=list[T4CRepository]
+    "/",
+    responses=AUTHENTICATION_RESPONSES,
+    response_model=tuple[list[T4CRepository], bool],
 )
 def list_t4c_repositories(
-    instance_id: int,
+    t4c_instance_id: int,
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
-) -> list[T4CRepository]:
+    instance: DatabaseT4CInstance = Depends(load_instance),
+) -> tuple[list[T4CRepository], bool]:
     verify_admin(token, db)
-    try:
-        instance = instance_crud.get_t4c_instance(instance_id, db)
-    except NoResultFound:
-        raise HTTPException(
-            404, {"reason": f"Instance with id {instance_id} was not found."}
-        )
-    server_repositories = interface.list_repositories(instance)
-    server_repositories.sort(key=lambda r: r["name"])
     db_repositories = T4CInstanceWithRepositories.from_orm(
         instance
     ).repositories
+    try:
+        server_repositories = interface.list_repositories(instance)
+    except RequestException:
+        for i in range(len(db_repositories)):
+            db_repositories[i].status = Status.INSTANCE_UNREACHABLE
+        return db_repositories, False
+    server_repositories.sort(key=lambda r: r["name"])
     db_repositories.sort(key=lambda r: r.name)
 
     i = j = 0
@@ -104,25 +106,19 @@ def list_t4c_repositories(
         interface.create_repository(instance, repo.name)
         repo.status = Status.ONLINE
 
-    return sorted(db_repositories, key=lambda r: r.id)
+    return sorted(db_repositories, key=lambda r: r.id), True
 
 
 @router.post(
     "/", responses=AUTHENTICATION_RESPONSES, response_model=T4CRepository
 )
 def create_t4c_repository(
-    instance_id: int,
     body: CreateT4CRepository,
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
+    instance: DatabaseT4CInstance = Depends(load_instance),
 ) -> T4CRepository:
     verify_admin(token, db)
-    try:
-        instance = instance_crud.get_t4c_instance(instance_id, db)
-    except NoResultFound as e:
-        raise HTTPException(
-            404, {"reason": f"Instance with id {instance_id} was not found."}
-        ) from e
     try:
         return T4CRepository.from_orm(
             crud.create_t4c_repository(body, instance, db)
@@ -137,7 +133,7 @@ def create_t4c_repository(
 
 
 @router.delete(
-    "/{id_}",
+    "/{t4c_repository_id}",
     responses=AUTHENTICATION_RESPONSES,
     status_code=204,
 )
@@ -155,7 +151,9 @@ def delete_t4c_repository(
 
 
 @router.post(
-    "/{id_}/start", responses=AUTHENTICATION_RESPONSES, status_code=204
+    "/{t4c_repository_id}/start",
+    responses=AUTHENTICATION_RESPONSES,
+    status_code=204,
 )
 def start_t4c_repository(
     token: JWTBearer = Depends(JWTBearer()),
@@ -170,7 +168,9 @@ def start_t4c_repository(
 
 
 @router.post(
-    "/{id_}/stop", responses=AUTHENTICATION_RESPONSES, status_code=204
+    "/{t4c_repository_id}/stop",
+    responses=AUTHENTICATION_RESPONSES,
+    status_code=204,
 )
 def stop_t4c_repository(
     token: JWTBearer = Depends(JWTBearer()),

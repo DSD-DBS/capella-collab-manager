@@ -11,3 +11,8 @@ mat-list-option {
   display: flex;
   flex-direction: column;
 }
+
+.button-header {
+  display: flex;
+  justify-content: space-evenly;
+}

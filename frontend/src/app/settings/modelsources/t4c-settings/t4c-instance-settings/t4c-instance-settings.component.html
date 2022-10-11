@@ -4,7 +4,14 @@
  -->
 
 <mat-card>
-  <h2>T4C Repository Settings</h2>
+  <mat-card-header class="button-header">
+    <mat-card-title><h2>T4C Repository Settings</h2></mat-card-title>
+    <h2>
+      <button mat-button [disabled]="!instance" (click)="refreshRepositories()">
+        <mat-icon>sync</mat-icon>
+      </button>
+    </h2>
+  </mat-card-header>
   <form [formGroup]="form" #formDirective="ngForm">
     <mat-form-field>
       <mat-label>Repository name</mat-label>
@@ -38,6 +45,11 @@
       <mat-icon mat-list-icon *ngIf="repository.status === 'ONLINE'"
         >cloud_queue</mat-icon
       >
+      <mat-icon
+        mat-list-icon
+        *ngIf="repository.status === 'INSTANCE_UNREACHABLE'"
+        >sync_problem</mat-icon
+      >
       <div>
         <div mat-line>{{ repository.name }}</div>
         <div mat-line>Repository ID: {{ repository.id }}</div>
@@ -46,32 +58,33 @@
     </mat-list-option>
   </mat-selection-list>
 
-  <div
-    *ngIf="repositoryList.selectedOptions.selected.length"
-    class="flex-space-between"
-  >
-    <button
-      mat-flat-button
-      color="warn"
-      (click)="removeRepository(selectedRepository)"
-    >
-      <mat-icon>delete</mat-icon> Remove {{ selectedRepository.name }}
-    </button>
-    <button
-      mat-flat-button
-      color="warn"
-      *ngIf="selectedRepository.status === 'ONLINE'"
-      (click)="stopRepository(selectedRepository)"
-    >
-      Stop repository
-    </button>
-    <button
-      mat-flat-button
-      color="primary"
-      *ngIf="selectedRepository.status === 'OFFLINE'"
-      (click)="startRepository(selectedRepository)"
-    >
-      Start repository
-    </button>
+  <div *ngIf="repositoryList.selectedOptions.selected.length">
+    <div class="field-separator"></div>
+    <div class="flex-space-between">
+      <button
+        mat-flat-button
+        color="warn"
+        (click)="removeRepository(selectedRepository)"
+        *ngIf="selectedRepository.status !== 'INSTANCE_UNREACHABLE'"
+      >
+        <mat-icon>delete</mat-icon> Remove {{ selectedRepository.name }}
+      </button>
+      <button
+        mat-flat-button
+        color="warn"
+        *ngIf="selectedRepository.status === 'ONLINE'"
+        (click)="stopRepository(selectedRepository)"
+      >
+        Stop repository
+      </button>
+      <button
+        mat-flat-button
+        color="primary"
+        *ngIf="selectedRepository.status === 'OFFLINE'"
+        (click)="startRepository(selectedRepository)"
+      >
+        Start repository
+      </button>
+    </div>
   </div>
 </mat-card>
