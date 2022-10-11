@@ -12,8 +12,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class ProjectService {
-  BACKEND_URL_PREFIX = environment.backend_url + '/projects/';
-  base_url = new URL('projects/', environment.backend_url + '/');
+  base_url = environment.backend_url + '/projects/';
 
   _project = new BehaviorSubject<Project | undefined>(undefined);
   _projects = new BehaviorSubject<Project[] | undefined>(undefined);
@@ -28,25 +27,24 @@ export class ProjectService {
   constructor(private http: HttpClient) {}
 
   getProjectBySlug(slug: string): Observable<Project> {
-    return this.http.get<Project>(this.BACKEND_URL_PREFIX + slug, {
+    return this.http.get<Project>(this.base_url + slug, {
       params: { slug },
     });
   }
 
   list(): Observable<Project[]> {
-    return this.http.get<Project[]>(this.BACKEND_URL_PREFIX);
+    return this.http.get<Project[]>(this.base_url);
   }
 
   updateDescription(name: string, description: string): Observable<Project> {
-    let url = new URL(name, this.base_url);
-    return this.http.patch<Project>(url.toString(), { description });
+    return this.http.patch<Project>(this.base_url + name, { description });
   }
 
   createProject(project: {
     name: string;
     description: string;
   }): Observable<Project> {
-    return this.http.post<Project>(this.BACKEND_URL_PREFIX, project);
+    return this.http.post<Project>(this.base_url, project);
   }
 }
 
