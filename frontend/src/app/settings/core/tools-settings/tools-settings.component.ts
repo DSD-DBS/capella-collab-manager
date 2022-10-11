@@ -8,10 +8,10 @@ import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 
 @Component({
   selector: 'app-dockerimage-settings',
-  templateUrl: './dockerimage-settings.component.html',
-  styleUrls: ['./dockerimage-settings.component.css'],
+  templateUrl: './tools-settings.component.html',
+  styleUrls: ['./tools-settings.component.css'],
 })
-export class DockerimageSettingsComponent {
+export class ToolsSettingsComponent implements OnInit {
   constructor(private navbarService: NavBarService) {
     this.navbarService.title = 'Settings / Core / Dockerimages';
   }

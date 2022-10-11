@@ -5,20 +5,20 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DockerimageSettingsComponent } from './dockerimage-settings.component';
+import { ToolsSettingsComponent } from './tools-settings.component';
 
 xdescribe('WorkspaceSettingsComponent', () => {
-  let component: DockerimageSettingsComponent;
-  let fixture: ComponentFixture<DockerimageSettingsComponent>;
+  let component: ToolsSettingsComponent;
+  let fixture: ComponentFixture<ToolsSettingsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DockerimageSettingsComponent],
+      declarations: [ToolsSettingsComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DockerimageSettingsComponent);
+    fixture = TestBed.createComponent(ToolsSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

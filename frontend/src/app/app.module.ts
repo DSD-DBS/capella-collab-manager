@@ -89,7 +89,7 @@ import { SessionCreatedComponent } from './sessions/session-created/session-crea
 import { LicencesComponent } from './sessions/session-overview/licences/licences.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
-import { DockerimageSettingsComponent } from './settings/core/dockerimage-settings/dockerimage-settings.component';
+import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
 import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
 import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4c-importer-settings/t4c-importer-settings.component';
 import { GuacamoleSettingsComponent } from './settings/integrations/guacamole-settings/guacamole-settings.component';
@@ -120,7 +120,6 @@ import { HomeComponent } from './workspaces/home.component';
     CreateProjectComponent,
     DeleteGitSettingsDialogComponent,
     DeleteSessionDialogComponent,
-    DockerimageSettingsComponent,
     EditGitSettingsComponent,
     EditT4CInstanceComponent,
     FileExistsDialogComponent,
@@ -162,6 +161,7 @@ import { HomeComponent } from './workspaces/home.component';
     T4CSettingsComponent,
     T4CSettingsWrapperComponent,
     TermsConditionsComponent,
+    ToolsSettingsComponent,
     UploadDialogComponent,
     UserSettingsComponent,
     VersionComponent,
