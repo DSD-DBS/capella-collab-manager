@@ -53,6 +53,7 @@ import { VersionComponent } from './general/metadata/version/version.component';
 import { HeaderComponent } from './general/navbar/header.component';
 import { NoticeComponent } from './general/notice/notice.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
+import { MatCardOverviewLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-loader/mat-card-overview-loader.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { CreateEASEBackupComponent } from './projects/models/backup-settings/create-ease-backup/create-ease-backup.component';
 import { GitBackupSettingsComponent } from './projects/models/backup-settings/ease-backup-settings.component';
@@ -165,6 +166,7 @@ import { HomeComponent } from './workspaces/home.component';
     VersionComponent,
     ViewLogsDialogComponent,
     WorkspaceComponent,
+    MatCardOverviewLoaderComponent,
   ],
   imports: [
     AppRoutingModule,
