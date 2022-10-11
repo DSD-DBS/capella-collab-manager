@@ -3,9 +3,22 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper" (click)="openReleaseNotes()">
-  Environment: {{ env }} <br />
-  Frontend version: {{ versionService.version?.git?.version }} <br />
-  Backend version:
-  {{ backend }}
-</div>
+<a>
+  <div class="wrapper" (click)="versionService.openReleaseNotes()">
+    <div
+      class="version"
+      *ngIf="versionService.changedVersion && versionService.version"
+    >
+      New version available (<span *ngIf="versionService.oldVersion"
+        >{{ versionService.oldVersion }}
+        <mat-icon class="mat-icon-position top left"
+          >arrow_right_alt</mat-icon
+        ></span
+      >{{ versionService.version.git.tag }})!
+    </div>
+    Environment: {{ env }} <br />
+    Frontend version: {{ versionService.version?.git?.version }} <br />
+    Backend version:
+    {{ backend }}
+  </div>
+</a>

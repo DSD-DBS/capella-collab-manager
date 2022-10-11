@@ -31,8 +31,4 @@ export class VersionComponent implements OnInit {
         this.backend = metadata.version;
       });
   }
-
-  openReleaseNotes(): void {
-    this.dialog.open(ReleaseNotesComponent);
-  }
 }
