@@ -9,6 +9,7 @@ import {
   FormControl,
   FormGroup,
   ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -31,10 +32,7 @@ export class GitSettingsComponent implements OnInit {
 
   form = new FormGroup({
     type: new FormControl('', Validators.required),
-    name: new FormControl('', [
-      Validators.required,
-      this.nameValidator.bind(this),
-    ]),
+    name: new FormControl('', [Validators.required, this.nameValidator()]),
     url: new FormControl('', [
       Validators.required,
       absoluteUrlSafetyValidator(),
@@ -94,22 +92,20 @@ export class GitSettingsComponent implements OnInit {
       });
   }
 
-  nameValidator(control: AbstractControl): ValidationErrors | null {
-    let newInstanceName = control.value;
-    let gitSettingNames: string[] = this.cmpGitSettings?.map(
-      (gitSetting) => gitSetting.name
-    );
-    gitSettingNames ??= [];
+  nameValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      let newInstanceName = control.value;
+      let gitSettingNames: string[] = this.cmpGitSettings?.map(
+        (gitSetting) => gitSetting.name
+      );
+      gitSettingNames ??= [];
 
-    for (let gitSettingName of gitSettingNames) {
-      if (gitSettingName == newInstanceName) {
-        return { uniqueName: { value: gitSettingName } };
+      for (let gitSettingName of gitSettingNames) {
+        if (gitSettingName == newInstanceName) {
+          return { uniqueName: { value: gitSettingName } };
+        }
       }
-    }
-    return null;
-  }
-
-  urlValidator(control: AbstractControl): ValidationErrors | null {
-    return null;
+      return null;
+    };
   }
 }
