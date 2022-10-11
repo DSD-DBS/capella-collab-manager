@@ -13,16 +13,20 @@ from . import crud
 router = APIRouter()
 
 
-@router.get("/", response_model=list[ToolBase])
+@router.get("/", tags=["Tools"], response_model=list[ToolBase])
 def get_tools(db: Session = Depends(get_db)):
     return crud.get_all_tools(db)
 
 
-@router.get("/{tool_id}/versions", response_model=list[ToolVersionBase])
+@router.get(
+    "/{tool_id}/versions", tags=["Tools"], response_model=list[ToolVersionBase]
+)
 def get_tool_versions(tool_id: int, db: Session = Depends(get_db)):
     return crud.get_tool_versions(db, tool_id)
 
 
-@router.get("/{tool_id}/types", response_model=list[ToolTypeBase])
+@router.get(
+    "/{tool_id}/types", tags=["Tools"], response_model=list[ToolTypeBase]
+)
 def get_tool_types(tool_id: int, db: Session = Depends(get_db)):
     return crud.get_tool_types(db, tool_id)
