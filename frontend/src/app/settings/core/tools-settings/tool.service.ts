@@ -25,6 +25,11 @@ export interface ToolType {
   name: string;
 }
 
+export type ToolExtended = {
+  types: ToolType[];
+  versions: ToolVersion[];
+};
+
 @Injectable({
   providedIn: 'root',
 })

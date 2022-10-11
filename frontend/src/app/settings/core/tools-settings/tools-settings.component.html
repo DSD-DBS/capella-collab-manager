@@ -3,18 +3,33 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper">
-  <div class="title">Persistent workspaces</div>
-  <mat-form-field appearance="fill">
-    <mat-label>Dockerimage</mat-label>
-    <input matInput placeholder="/t4c/client/remote" />
-  </mat-form-field>
-  <div class="title">
-    <span>Read-only workspaces</span>
-  </div>
-  <mat-form-field appearance="fill">
-    <mat-label>Dockerimage</mat-label>
-    <input matInput placeholder="/t4c/client/remote" /> </mat-form-field
-  ><br />
-  <button mat-raised-button>Save</button>
-</div>
+<article class="flexbox">
+  <a [routerLink]="['create']">
+    <mat-card matRipple class="mat-card-overview new">
+      <div class="content">
+        Add a tool <br />
+        <div class="icon">
+          <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
+        </div>
+      </div>
+    </mat-card>
+  </a>
+
+  <a
+    *ngFor="let tool of toolService.tools"
+    [routerLink]="['..', 'tool', tool.id]"
+  >
+    <mat-card matRipple class="mat-card-overview">
+      <div class="header">{{ tool.name }}</div>
+      <div class="content">
+        <mat-icon class="mat-icon-position top">history</mat-icon>
+        <b> Available versions:</b>
+        {{ mapToolVersionOrTypeToName(tools[tool.id]["versions"]).join(", ") }}
+        <br />
+        <mat-icon class="mat-icon-position top">extension</mat-icon
+        ><b> Available types:</b>
+        {{ mapToolVersionOrTypeToName(tools[tool.id]["types"]).join(", ") }}
+      </div>
+    </mat-card>
+  </a>
+</article>
