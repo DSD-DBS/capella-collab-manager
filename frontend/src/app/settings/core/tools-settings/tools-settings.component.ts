@@ -13,6 +13,6 @@ import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 })
 export class ToolsSettingsComponent implements OnInit {
   constructor(private navbarService: NavBarService) {
-    this.navbarService.title = 'Settings / Core / Dockerimages';
+    this.navbarService.title = 'Settings / Core / Tools';
   }
 }

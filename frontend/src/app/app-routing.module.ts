@@ -122,7 +122,7 @@ const routes: Routes = [
                 component: AlertSettingsComponent,
               },
               {
-                path: 'dockerimages',
+                path: 'tools',
                 component: ToolsSettingsComponent,
               },
             ],
