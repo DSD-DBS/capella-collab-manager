@@ -37,26 +37,20 @@
     <button mat-button color="primary" (click)="openDeletionDialog([session])">
       Terminate
     </button>
-
     <button
-      mat-button
+      mat-flat-button
       color="primary"
       (click)="openReconnectDialog(session)"
-      [disabled]="
-        !(session.state === 'Started' || session.state === 'START_SESSION')
-      "
+      [disabled]="!sessionService.beatifyState(session.state).success"
     >
-      Connect
+      Reconnect
     </button>
 
     <button
-      mat-button
+      mat-flat-button
       color="primary"
       (click)="uploadFileDialog(session)"
-      [disabled]="
-        !(session.state === 'Started' || session.state === 'START_SESSION')
-      "
-      content
+      [disabled]="!sessionService.beatifyState(session.state).success"
     >
       Upload
     </button>
