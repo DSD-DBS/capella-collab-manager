@@ -64,7 +64,6 @@ def load_instance_repository(
     response_model=tuple[list[T4CRepository], bool],
 )
 def list_t4c_repositories(
-    t4c_instance_id: int,
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
     instance: DatabaseT4CInstance = Depends(load_instance),
@@ -103,8 +102,7 @@ def list_t4c_repositories(
         db_repositories.append(db_repo)
 
     for repo in [repo for repo in db_repositories if not repo.status]:
-        interface.create_repository(instance, repo.name)
-        repo.status = Status.ONLINE
+        repo.status = Status.NOT_FOUND
 
     return sorted(db_repositories, key=lambda r: r.id), True
 
@@ -120,7 +118,7 @@ def create_t4c_repository(
 ) -> T4CRepository:
     verify_admin(token, db)
     try:
-        return T4CRepository.from_orm(
+        new_repo = T4CRepository.from_orm(
             crud.create_t4c_repository(body, instance, db)
         )
     except IntegrityError as e:
@@ -130,6 +128,13 @@ def create_t4c_repository(
                 "reason": f"Repository {body.name} of instance {instance.name} already exists.",
             },
         ) from e
+    try:
+        interface.create_repository(instance, new_repo.name)
+    except RequestException:
+        new_repo.status = Status.INSTANCE_UNREACHABLE
+    else:
+        new_repo.status = Status.ONLINE
+    return new_repo
 
 
 @router.delete(
@@ -146,7 +151,10 @@ def delete_t4c_repository(
 ) -> None:
     (instance, repository) = objects
     verify_admin(token, db)
-    interface.delete_repository(instance, repository.name)
+    try:
+        interface.delete_repository(instance, repository.name)
+    except RequestException:
+        pass
     crud.delete_4c_repository(repository, db)
 
 
@@ -182,3 +190,20 @@ def stop_t4c_repository(
     verify_admin(token, db)
     (instance, repository) = objects
     interface.stop_repository(instance, repository.name)
+
+
+@router.post(
+    "/{t4c_repository_id}/recreate",
+    responses=AUTHENTICATION_RESPONSES,
+    status_code=204,
+)
+def stop_t4c_repository(
+    token: JWTBearer = Depends(JWTBearer()),
+    db: Session = Depends(get_db),
+    objects: tuple[DatabaseT4CInstance, DatabaseT4CRepository] = Depends(
+        load_instance_repository
+    ),
+) -> None:
+    verify_admin(token, db)
+    (instance, repository) = objects
+    interface.create_repository(instance, repository.name)

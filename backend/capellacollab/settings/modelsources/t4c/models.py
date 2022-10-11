@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import enum
 import typing as t
 
 from pydantic import BaseModel
@@ -83,24 +84,15 @@ class T4CInstance(T4CInstanceComplete):
     version: Version
 
 
-class T4CInstanceWithRepositories(T4CInstance):
-    repositories: list["T4CRepository"]
-
-    class Config:
-        orm_mode = True
-
-
 class CreateT4CRepository(BaseModel):
     name: str
-
-
-import enum
 
 
 class Status(str, enum.Enum):
     ONLINE = "ONLINE"
     OFFLINE = "OFFLINE"
     INSTANCE_UNREACHABLE = "INSTANCE_UNREACHABLE"
+    NOT_FOUND = "NOT_FOUND"
 
 
 class T4CRepository(CreateT4CRepository):
@@ -113,4 +105,8 @@ class T4CRepository(CreateT4CRepository):
         orm_mode = True
 
 
-T4CInstanceWithRepositories.update_forward_refs()
+class T4CInstanceWithRepositories(T4CInstance):
+    repositories: list[T4CRepository]
+
+    class Config:
+        orm_mode = True

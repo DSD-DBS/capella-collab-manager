@@ -41,9 +41,6 @@ import { MatSelectionList } from '@angular/material/list';
 export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
   @Input() instance?: T4CInstance;
 
-  _repositories = new BehaviorSubject<(T4CRepository & T4CServerRepository)[]>(
-    []
-  );
   constructor(
     private t4cSyncService: T4CSyncService,
     public t4cRepoService: T4CRepoService,
@@ -159,6 +156,22 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
       .stopRepository(repository.instance_id, repository.id)
       .pipe(
         tap(() => (repository.status = 'OFFLINE')),
+        switchMap(() =>
+          this.t4cRepoService.getT4CRepositories(this.instance!.id)
+        )
+      )
+      .subscribe((repositories) => {
+        this.t4cRepoService._repositories.next(repositories);
+      });
+  }
+
+  recreateRepository(repository: T4CServerRepository): void {
+    this.repositoryList.selectedOptions.clear();
+    delete repository.status;
+    this.t4cRepoService
+      .recreateRepository(repository.instance_id, repository.id)
+      .pipe(
+        tap(() => (repository.status = 'ONLINE')),
         switchMap(() =>
           this.t4cRepoService.getT4CRepositories(this.instance!.id)
         )
