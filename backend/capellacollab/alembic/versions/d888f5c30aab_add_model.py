@@ -95,6 +95,9 @@ def upgrade():
             ).select_from(joined)
         )
 
+        # Names were not unique before, therefore conflicts can occur.
+        # Model slugs have to unique per project.
+        # If there is a conflicts with slugs, they get a suffix with a counting number.
         existing_slugs = {}
         for id_, name, project_id in models:
             if not project_id in existing_slugs:
