@@ -21,7 +21,7 @@ import {
   NewModel,
 } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
-import { ToolService } from 'src/app/services/tools/tool.service';
+import { ToolService } from 'src/app/settings/core/tools-settings/tool.service';
 
 @Component({
   selector: 'app-create-model-base',

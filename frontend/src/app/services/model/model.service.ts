@@ -7,7 +7,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Tool, ToolType, ToolVersion } from '../tools/tool.service';
+import {
+  Tool,
+  ToolType,
+  ToolVersion,
+} from 'src/app/settings/core/tools-settings/tool.service';
 
 export interface NewModel {
   name: string;
