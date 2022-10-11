@@ -62,7 +62,7 @@
             <mat-card-subtitle>Resulting URL*</mat-card-subtitle>
             <mat-card-content>
               <div class="no-text-overflow">
-                <mat-icon class="align-icon" fontIcon="info"></mat-icon>
+                <mat-icon class="mat-icon-position" fontIcon="info"></mat-icon>
                 {{ resultUrl }}
               </div>
             </mat-card-content>
@@ -157,7 +157,7 @@
     </form>
     <div class="flex-space-between">
       <button mat-button (click)="create.emit({ created: false })">
-        <mat-icon class="align-icon">arrow_back</mat-icon>
+        <mat-icon class="mat-icon-position">arrow_back</mat-icon>
         Choose primary source
       </button>
 
@@ -169,7 +169,7 @@
         (click)="onSubmit()"
       >
         Add source
-        <mat-icon class="align-icon">arrow_forward</mat-icon>
+        <mat-icon class="mat-icon-position">arrow_forward</mat-icon>
       </button>
     </div>
   </mat-card>
