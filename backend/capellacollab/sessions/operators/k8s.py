@@ -122,6 +122,7 @@ class KubernetesOperator(Operator):
     def start_readonly_session(
         self,
         password: str,
+        docker_image: str,
         git_url: str,
         git_revision: str,
         entrypoint: str,
@@ -132,7 +133,7 @@ class KubernetesOperator(Operator):
         id = self._generate_id()
 
         deployment = self._create_deployment(
-            config["docker"]["images"]["workspaces"]["readonly"],
+            docker_image,
             id,
             {
                 "GIT_USERNAME": git_username,

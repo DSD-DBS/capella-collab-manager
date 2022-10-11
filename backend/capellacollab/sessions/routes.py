@@ -146,6 +146,7 @@ def request_session(
         )
     session = operator.start_readonly_session(
         password=rdp_password,
+        docker_image=config["docker"]["images"]["workspaces"]["readonly"],
         git_url=git_model.path,
         git_revision=revision,
         entrypoint=git_model.entrypoint,

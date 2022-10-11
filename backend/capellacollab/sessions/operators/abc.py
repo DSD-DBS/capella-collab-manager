@@ -42,6 +42,7 @@ class Operator(abc.ABC):
     def start_readonly_session(
         self,
         password: str,
+        docker_image: str,
         git_url: str,
         git_revision: str,
         entrypoint: str,
@@ -54,6 +55,8 @@ class Operator(abc.ABC):
         ---------
         password
             Password for the remote connection
+        docker_image
+            Image to run for this session
         git_url
             Git URL of the model that should be cloned
         git_branch

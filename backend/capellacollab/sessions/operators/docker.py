@@ -59,6 +59,7 @@ class DockerOperator(Operator):
     def start_readonly_session(
         self,
         password: str,
+        docker_image: str,
         git_url: str,
         git_revision: str,
         entrypoint: str,
@@ -66,7 +67,7 @@ class DockerOperator(Operator):
         git_password: str,
     ) -> t.Dict[str, t.Any]:
         con = self.client.containers.run(
-            image=config["docker"]["images"]["workspaces"]["readonly"],
+            image=docker_image,
             ports={"3389/tcp": cfg["portRange"]},
             environment={
                 "GIT_USERNAME": git_username,

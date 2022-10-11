@@ -86,6 +86,7 @@ class MockOperator(Operator):
     def start_readonly_session(
         self,
         password: str,
+        docker_image: str,
         git_url: str,
         git_revision: str,
         entrypoint: str,
