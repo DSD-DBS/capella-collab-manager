@@ -14,10 +14,7 @@ import { ToastService } from '../../../../../helpers/toast/toast.service';
 })
 export class T4CRepoService {
   constructor(private http: HttpClient, private toastService: ToastService) {}
-  base_url = new URL(
-    'settings/modelsources/t4c/',
-    environment.backend_url + '/'
-  );
+  base_url = environment.backend_url + '/settings/modelsources/t4c/';
 
   _repositories = new BehaviorSubject<(T4CRepository & T4CServerRepository)[]>(
     []
@@ -26,13 +23,13 @@ export class T4CRepoService {
     return this._repositories.value;
   }
 
-  url_factory(instance_id: number): URL {
-    return new URL(`${instance_id}/repositories/`, this.base_url);
+  url_factory(instance_id: number): string {
+    return `${this.base_url}${instance_id}/repositories/`;
   }
 
   getT4CRepositories(instance_id: number): Observable<T4CServerRepository[]> {
     const url = this.url_factory(instance_id);
-    return this.http.get<[T4CServerRepository[], boolean]>(url.toString()).pipe(
+    return this.http.get<[T4CServerRepository[], boolean]>(url).pipe(
       tap((res) => {
         if (!res[1]) {
           this.toastService.showError(
@@ -50,31 +47,36 @@ export class T4CRepoService {
     repository: CreateT4CRepository
   ): Observable<T4CRepository> {
     const url = this.url_factory(instance_id);
-    return this.http.post<T4CRepository>(url.toString(), repository);
+    return this.http.post<T4CRepository>(url, repository);
   }
 
   deleteRepository(
     instance_id: number,
     repository_id: number
   ): Observable<null> {
-    const url = new URL(`${repository_id}`, this.url_factory(instance_id));
-    return this.http.delete<null>(url.toString());
+    const url = `${this.url_factory(instance_id)}${repository_id}/`;
+    return this.http.delete<null>(url);
   }
 
   startRepository(
     instance_id: number,
     repository_id: number
   ): Observable<null> {
-    const url = new URL(
-      `${repository_id}/start`,
-      this.url_factory(instance_id)
-    );
-    return this.http.post<null>(url.toString(), {});
+    const url = `${this.url_factory(instance_id)}${repository_id}/start/`;
+    return this.http.post<null>(url, {});
   }
 
   stopRepository(instance_id: number, repository_id: number): Observable<null> {
-    const url = new URL(`${repository_id}/stop`, this.url_factory(instance_id));
-    return this.http.post<null>(url.toString(), {});
+    const url = `${this.url_factory(instance_id)}${repository_id}/stop/`;
+    return this.http.post<null>(url, {});
+  }
+
+  recreateRepository(
+    instance_id: number,
+    repository_id: number
+  ): Observable<null> {
+    const url = `${this.url_factory(instance_id)}${repository_id}/recreate/`;
+    return this.http.post<null>(url, {});
   }
 }
 
@@ -88,5 +90,5 @@ export type T4CRepository = CreateT4CRepository & {
 };
 
 export type T4CServerRepository = T4CRepository & {
-  status?: 'ONLINE' | 'OFFLINE' | 'INSTANCE_UNREACHABLE';
+  status?: 'ONLINE' | 'OFFLINE' | 'INSTANCE_UNREACHABLE' | 'NOT_FOUND';
 };

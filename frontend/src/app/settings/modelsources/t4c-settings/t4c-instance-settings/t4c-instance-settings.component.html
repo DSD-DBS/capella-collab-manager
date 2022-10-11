@@ -45,6 +45,9 @@
       <mat-icon mat-list-icon *ngIf="repository.status === 'ONLINE'"
         >cloud_queue</mat-icon
       >
+      <mat-icon mat-list-icon *ngIf="repository.status === 'NOT_FOUND'"
+        >block</mat-icon
+      >
       <mat-icon
         mat-list-icon
         *ngIf="repository.status === 'INSTANCE_UNREACHABLE'"
@@ -65,7 +68,6 @@
         mat-flat-button
         color="warn"
         (click)="removeRepository(selectedRepository)"
-        *ngIf="selectedRepository.status !== 'INSTANCE_UNREACHABLE'"
       >
         <mat-icon>delete</mat-icon> Remove {{ selectedRepository.name }}
       </button>
@@ -84,6 +86,14 @@
         (click)="startRepository(selectedRepository)"
       >
         Start repository
+      </button>
+      <button
+        mat-flat-button
+        color="primary"
+        *ngIf="selectedRepository.status === 'NOT_FOUND'"
+        (click)="recreateRepository(selectedRepository)"
+      >
+        Create on instance {{ instance!.name }}
       </button>
     </div>
   </div>
