@@ -100,7 +100,7 @@ import enum
 class Status(str, enum.Enum):
     ONLINE = "ONLINE"
     OFFLINE = "OFFLINE"
-    NOT_FOUND = "NOT FOUND"
+    INSTANCE_UNREACHABLE = "INSTANCE_UNREACHABLE"
 
 
 class T4CRepository(CreateT4CRepository):

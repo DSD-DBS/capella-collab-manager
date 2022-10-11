@@ -5,14 +5,15 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ToastService } from '../../../../../helpers/toast/toast.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class T4CRepoService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private toastService: ToastService) {}
   base_url = new URL(
     'settings/modelsources/t4c/',
     environment.backend_url + '/'
@@ -31,7 +32,17 @@ export class T4CRepoService {
 
   getT4CRepositories(instance_id: number): Observable<T4CServerRepository[]> {
     const url = this.url_factory(instance_id);
-    return this.http.get<T4CServerRepository[]>(url.toString());
+    return this.http.get<[T4CServerRepository[], boolean]>(url.toString()).pipe(
+      tap((res) => {
+        if (!res[1]) {
+          this.toastService.showError(
+            'Instance Error',
+            'The Instance is unreachable, check the REST API URL.'
+          );
+        }
+      }),
+      map((res) => res[0])
+    );
   }
 
   createT4CRepository(
@@ -77,5 +88,5 @@ export type T4CRepository = CreateT4CRepository & {
 };
 
 export type T4CServerRepository = T4CRepository & {
-  status?: 'ONLINE' | 'OFFLINE' | 'NOT FOUND';
+  status?: 'ONLINE' | 'OFFLINE' | 'INSTANCE_UNREACHABLE';
 };

@@ -4,135 +4,133 @@
  -->
 
 <div class="space-evenly">
-  <mat-card>
-    <h2 *ngIf="!existing">Add a Team4Capella instance</h2>
-    <h2 *ngIf="existing"></h2>
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <fieldset>
-        <mat-form-field appearance="fill">
-          <mat-label>Name</mat-label>
-          <input matInput formControlName="name" />
-          <mat-error *ngIf="form.controls.name.errors?.required">
-            The name is required.
-          </mat-error>
-        </mat-form-field>
-        <div class="field-separator"></div>
-        <mat-form-field appearance="fill">
-          <mat-label>Capella version</mat-label>
-          <mat-select formControlName="version_id">
-            <mat-option
-              *ngFor="let version of capella_versions"
-              [value]="version.id"
-              >{{ version.name }}</mat-option
+  <div>
+    <mat-card>
+      <h2 *ngIf="!existing">Add a Team4Capella instance</h2>
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <fieldset>
+          <mat-form-field appearance="fill">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" />
+            <mat-error *ngIf="form.controls.name.errors?.required">
+              The name is required.
+            </mat-error>
+          </mat-form-field>
+          <div class="field-separator"></div>
+          <mat-form-field appearance="fill">
+            <mat-label>Capella version</mat-label>
+            <mat-select formControlName="version_id">
+              <mat-option
+                *ngFor="let version of capella_versions"
+                [value]="version.id"
+                >{{ version.name }}</mat-option
+              >
+            </mat-select>
+            <mat-error *ngIf="form.controls.version_id.errors?.required">
+              The version is required.
+            </mat-error>
+          </mat-form-field>
+        </fieldset>
+        <fieldset>
+          <mat-form-field appearance="fill">
+            <mat-label>License configuration</mat-label>
+            <input matInput formControlName="license" [disabled]="!instance" />
+            <mat-error *ngIf="form.controls.license.errors?.required">
+              The license configuration is required.
+            </mat-error>
+          </mat-form-field>
+        </fieldset>
+        <fieldset>
+          <mat-form-field appearance="fill">
+            <mat-label>Host</mat-label>
+            <input matInput formControlName="host" />
+          </mat-form-field>
+          <div class="field-separator"></div>
+          <mat-form-field appearance="fill">
+            <mat-label>Port</mat-label>
+            <input matInput inputmode="numeric" formControlName="port" />
+            <mat-error
+              *ngIf="
+                form.controls.port.errors?.min || form.controls.port.errors?.max
+              "
+              >Valid ports are between 0 and 65535.</mat-error
             >
-          </mat-select>
-          <mat-error *ngIf="form.controls.version_id.errors?.required">
-            The version is required.
-          </mat-error>
-        </mat-form-field>
-      </fieldset>
-      <fieldset>
-        <mat-form-field appearance="fill">
-          <mat-label>License configuration</mat-label>
-          <input matInput formControlName="license" />
-          <mat-error *ngIf="form.controls.license.errors?.required">
-            The license configuration is required.
-          </mat-error>
-        </mat-form-field>
-      </fieldset>
-      <fieldset>
-        <mat-form-field appearance="fill">
-          <mat-label>Host</mat-label>
-          <input matInput formControlName="host" />
-        </mat-form-field>
-        <div class="field-separator"></div>
-        <mat-form-field appearance="fill">
-          <mat-label>Port</mat-label>
-          <input matInput inputmode="numeric" formControlName="port" />
-          <mat-error
-            *ngIf="
-              form.controls.port.errors?.min || form.controls.port.errors?.max
-            "
-            >Valid ports are between 0 and 65535.</mat-error
+            <mat-error *ngIf="form.controls.port.errors?.pattern"
+              >We only support numerical ports :(</mat-error
+            >
+            <mat-error *ngIf="form.controls.port.errors?.required">
+              The port is required.
+            </mat-error>
+          </mat-form-field>
+        </fieldset>
+        <fieldset>
+          <mat-form-field appearance="fill">
+            <mat-label>License server API</mat-label>
+            <input matInput formControlName="usage_api" />
+            <mat-error *ngIf="form.controls.usage_api.errors?.pattern"
+              >The URL should start with “http(s)://”</mat-error
+            >
+            <mat-error *ngIf="form.controls.usage_api.errors?.required">
+              The license server API is required.
+            </mat-error>
+          </mat-form-field>
+          <div class="field-separator"></div>
+          <mat-form-field appearance="fill">
+            <mat-label>Experimental REST API</mat-label>
+            <input matInput formControlName="rest_api" />
+            <mat-error *ngIf="form.controls.rest_api.errors?.pattern"
+              >The URL should start with “http(s)://”</mat-error
+            >
+            <mat-error *ngIf="form.controls.rest_api.errors?.required">
+              The REST server URL is required.
+            </mat-error>
+          </mat-form-field>
+        </fieldset>
+        <fieldset>
+          <mat-form-field appearance="fill">
+            <mat-label>Username</mat-label>
+            <input matInput autocomplete="off" formControlName="username" />
+            <mat-error *ngIf="form.controls.username.errors?.required">
+              The username is required.
+            </mat-error>
+          </mat-form-field>
+          <div class="field-separator"></div>
+          <mat-form-field appearance="fill">
+            <mat-label>Password</mat-label>
+            <input
+              matInput
+              type="password"
+              autocomplete="new-password"
+              formControlName="password"
+            />
+            <mat-error *ngIf="form.controls.password.errors?.required">
+              The password is required.
+            </mat-error>
+            <mat-hint *ngIf="existing">Is not changed if empty</mat-hint>
+          </mat-form-field>
+        </fieldset>
+        <div *ngIf="editing" id="editing-button-wrapper">
+          <button mat-flat-button color="warn" (click)="cancelEditing()">
+            Cancel
+          </button>
+          <button mat-flat-button type="submit" color="primary">Submit</button>
+        </div>
+        <div *ngIf="!editing && existing">
+          <button mat-flat-button (click)="enableEditing()">Edit</button>
+        </div>
+        <div *ngIf="!existing" id="submit-button-wrapper">
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="!form.valid"
           >
-          <mat-error *ngIf="form.controls.port.errors?.pattern"
-            >We only support numerical ports :(</mat-error
-          >
-          <mat-error *ngIf="form.controls.port.errors?.required">
-            The port is required.
-          </mat-error>
-        </mat-form-field>
-      </fieldset>
-      <fieldset>
-        <mat-form-field appearance="fill">
-          <mat-label>License server API</mat-label>
-          <input matInput formControlName="usage_api" />
-          <mat-error *ngIf="form.controls.usage_api.errors?.pattern"
-            >The URL should start with “http(s)://”</mat-error
-          >
-          <mat-error *ngIf="form.controls.usage_api.errors?.required">
-            The license server API is required.
-          </mat-error>
-        </mat-form-field>
-        <div class="field-separator"></div>
-        <mat-form-field appearance="fill">
-          <mat-label>Experimental REST API</mat-label>
-          <input matInput formControlName="rest_api" />
-          <mat-error *ngIf="form.controls.rest_api.errors?.pattern"
-            >The URL should start with “http(s)://”</mat-error
-          >
-          <mat-error *ngIf="form.controls.rest_api.errors?.required">
-            The REST server URL is required.
-          </mat-error>
-        </mat-form-field>
-      </fieldset>
-      <fieldset>
-        <mat-form-field appearance="fill">
-          <mat-label>Username</mat-label>
-          <input matInput autocomplete="off" formControlName="username" />
-          <mat-error *ngIf="form.controls.username.errors?.required">
-            The username is required.
-          </mat-error>
-        </mat-form-field>
-        <div class="field-separator"></div>
-        <mat-form-field appearance="fill">
-          <mat-label>Password</mat-label>
-          <input
-            matInput
-            type="password"
-            autocomplete="new-password"
-            formControlName="password"
-          />
-          <mat-error *ngIf="form.controls.password.errors?.required">
-            The password is required.
-          </mat-error>
-          <mat-hint *ngIf="existing">Is not changed if empty</mat-hint>
-        </mat-form-field>
-      </fieldset>
-      <div *ngIf="editing" id="editing-button-wrapper">
-        <button mat-flat-button color="warn" (click)="cancelEditing()">
-          Cancel
-        </button>
-        <button mat-flat-button type="submit" color="primary">Submit</button>
-      </div>
-      <div *ngIf="!editing && existing">
-        <button mat-flat-button (click)="enableEditing()">Edit</button>
-      </div>
-      <div *ngIf="!existing" id="submit-button-wrapper">
-        <button
-          mat-flat-button
-          color="primary"
-          type="submit"
-          [disabled]="!form.valid"
-        >
-          Create
-        </button>
-      </div>
-    </form>
-  </mat-card>
+            Create
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  </div>
 
-  <app-t4c-instance-settings
-    *ngIf="instance"
-    [instance]="instance"
-  ></app-t4c-instance-settings>
+  <app-t4c-instance-settings [instance]="instance"></app-t4c-instance-settings>
 </div>

@@ -3,7 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -23,14 +31,15 @@ import { T4CSyncService } from 'src/app/services/t4c-sync/t4-csync.service';
 import { T4CRepoDeletionDialogComponent } from './t4c-repo-deletion-dialog/t4c-repo-deletion-dialog.component';
 import { T4CInstance } from 'src/app/services/settings/t4c-model.service';
 import { tap, switchMap, BehaviorSubject } from 'rxjs';
+import { MatSelectionList } from '@angular/material/list';
 
 @Component({
   selector: 'app-t4c-instance-settings',
   templateUrl: './t4c-instance-settings.component.html',
   styleUrls: ['./t4c-instance-settings.component.css'],
 })
-export class T4CInstanceSettingsComponent implements OnInit {
-  @Input() instance!: T4CInstance;
+export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
+  @Input() instance?: T4CInstance;
 
   _repositories = new BehaviorSubject<(T4CRepository & T4CServerRepository)[]>(
     []
@@ -41,15 +50,17 @@ export class T4CInstanceSettingsComponent implements OnInit {
     private dialog: MatDialog
   ) {}
 
-  ngOnInit(): void {
-    this.t4cRepoService
-      .getT4CRepositories(this.instance.id)
-      .subscribe((repositories) => {
-        this.t4cRepoService._repositories.next(repositories);
-      });
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.instance) {
+      this.t4cRepoService
+        .getT4CRepositories(this.instance.id)
+        .subscribe((repositories) => {
+          this.t4cRepoService._repositories.next(repositories);
+        });
+    }
   }
 
-  @ViewChild('repositoryList') repositoryList: any;
+  @ViewChild('repositoryList') repositoryList!: MatSelectionList;
 
   form = new FormGroup({
     name: new FormControl('', [
@@ -68,7 +79,17 @@ export class T4CInstanceSettingsComponent implements OnInit {
   }
 
   refreshRepositories(): void {
-    this.t4cRepoService.getT4CRepositories(this.instance!.id).subscribe();
+    this.t4cRepoService._repositories.next(
+      this.t4cRepoService.repositories.map((repo) => ({
+        ...repo,
+        status: undefined,
+      }))
+    );
+    this.t4cRepoService
+      .getT4CRepositories(this.instance!.id)
+      .subscribe((repositories) => {
+        this.t4cRepoService._repositories.next(repositories);
+      });
   }
 
   createRepository(formDirective: FormGroupDirective): void {
@@ -116,6 +137,7 @@ export class T4CInstanceSettingsComponent implements OnInit {
   }
 
   startRepository(repository: T4CServerRepository): void {
+    this.repositoryList.selectedOptions.clear();
     delete repository.status;
     this.t4cRepoService
       .startRepository(repository.instance_id, repository.id)
@@ -131,7 +153,7 @@ export class T4CInstanceSettingsComponent implements OnInit {
   }
 
   stopRepository(repository: T4CServerRepository): void {
-    console.log(this.repositoryList);
+    this.repositoryList.selectedOptions.clear();
     delete repository.status;
     this.t4cRepoService
       .stopRepository(repository.instance_id, repository.id)
@@ -148,5 +170,9 @@ export class T4CInstanceSettingsComponent implements OnInit {
 
   get selectedRepository(): T4CRepository & T4CServerRepository {
     return this.repositoryList.selectedOptions.selected[0].value;
+  }
+
+  ngOnDestroy(): void {
+    this.t4cRepoService._repositories.next([]);
   }
 }
