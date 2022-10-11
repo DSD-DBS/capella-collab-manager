@@ -22,8 +22,8 @@ export interface Instance {
   providedIn: 'root',
 })
 export class GitService {
-  BACKEND_URL_PREFIX = environment.backend_url + '/projects/';
-  base_url = new URL('projects/', environment.backend_url + '/');
+  BACKEND_URL_PREFIX = environment.backend_url;
+  base_url = new URL(environment.backend_url);
 
   private _instance = new BehaviorSubject<Instance | undefined>(undefined);
 
@@ -31,16 +31,10 @@ export class GitService {
 
   constructor(private http: HttpClient) {}
 
-  loadInstance(
-    projectName: string,
-    gitUrl: string,
-    credentials: Credentials
-  ): void {
+  loadInstance(gitUrl: string, credentials: Credentials): void {
     this.http
       .post<Instance>(
-        this.base_url.toString() +
-          projectName +
-          '/extensions/modelsources/git/revisions',
+        this.base_url.toString() + '/settings/modelsources/git/revisions',
         credentials,
         { params: { url: gitUrl } }
       )

@@ -34,8 +34,9 @@ export class SourceService {
       environment.backend_url +
         '/projects/' +
         project_name +
-        '/extensions/modelsources/git/create/' +
-        model_slug,
+        '/models/' +
+        model_slug +
+        '/git/',
       source
     );
   }

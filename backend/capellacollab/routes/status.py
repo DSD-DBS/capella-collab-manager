@@ -7,7 +7,9 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from capellacollab.core.database import get_db
-from capellacollab.extensions.modelsources.t4c.connection import get_t4c_status
+from capellacollab.projects.capellamodels.modelsources.t4c.connection import (
+    get_t4c_status,
+)
 from capellacollab.sessions.guacamole import get_admin_token
 from capellacollab.sessions.operators import OPERATOR
 

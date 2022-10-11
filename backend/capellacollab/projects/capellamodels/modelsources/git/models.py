@@ -4,7 +4,7 @@
 
 import typing as t
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
@@ -65,16 +65,8 @@ class NewGitSource(BaseModel):
 class ResponseGitSource(NewGitSource):
     id: int
 
-    @classmethod
-    def from_db_git_source(cls, source):
-        return cls(
-            path=source.path,
-            entrypoint=source.entrypoint,
-            revision=source.revision,
-            username=source.username,
-            password=source.password,
-            id=source.id,
-        )
+    class Config:
+        orm_mode = True
 
 
 class DB_GitModel(Base):
@@ -112,7 +104,13 @@ class ResponseGitModel(BaseModel):
     revision: str
     primary: bool
     username: str
-    password: str
+    password: bool
+
+    @validator("password", pre=True, whole=True)
+    def transform_password(cls, test: str) -> bool:
+        if type(test) == bool:
+            return test
+        return test is not None and len(test) > 0
 
     class Config:
         orm_mode = True

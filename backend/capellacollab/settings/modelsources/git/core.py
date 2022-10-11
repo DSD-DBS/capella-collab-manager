@@ -46,7 +46,7 @@ def get_remote_refs(url: str, username: str, password: str):
     git_env["GIT_USERNAME"] = username
     git_env["GIT_PASSWORD"] = password
     git_env["GIT_ASKPASS"] = str(
-        pathlib.Path(__file__).parents[4] / "git_askpass.py"
+        pathlib.Path(__file__).parents[0] / "askpass.py"
     )
 
     for ref in ls_remote(url, git_env):

@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends
 from requests import Session
 
 import capellacollab.core.database as database
-import capellacollab.extensions.modelsources.t4c.crud as database_projects
+import capellacollab.projects.capellamodels.modelsources.t4c.crud as database_projects
 from capellacollab.core.authentication.database import (
     verify_admin,
     verify_project_role,

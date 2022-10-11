@@ -22,8 +22,12 @@ from sqlalchemy.orm import relationship
 # Import required for sqlalchemy
 import capellacollab.projects.users.models
 from capellacollab.core.database import Base
-from capellacollab.extensions.modelsources.git.models import ResponseGitModel
-from capellacollab.extensions.modelsources.t4c.models import ResponseT4CModel
+from capellacollab.projects.capellamodels.modelsources.git.models import (
+    ResponseGitModel,
+)
+from capellacollab.projects.capellamodels.modelsources.t4c.models import (
+    ResponseT4CModel,
+)
 from capellacollab.tools.models import (
     Tool,
     ToolBase,

@@ -9,8 +9,8 @@ import typing as t
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-import capellacollab.extensions.modelsources.git.crud as git_models_crud
-import capellacollab.extensions.modelsources.t4c.connection as t4c_manager
+import capellacollab.projects.capellamodels.modelsources.git.crud as git_models_crud
+import capellacollab.projects.capellamodels.modelsources.t4c.connection as t4c_manager
 import capellacollab.users.crud as users
 from capellacollab.config import config
 from capellacollab.core.authentication.database import (

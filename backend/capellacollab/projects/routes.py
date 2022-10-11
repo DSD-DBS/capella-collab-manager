@@ -40,6 +40,8 @@ from capellacollab.projects.users.models import (
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser
 
+from .capellamodels.modelsources.git.routes import router as router_sources_git
+from .capellamodels.modelsources.t4c.routes import router as router_sources_t4c
 from .capellamodels.routes import router as router_models
 from .users.routes import router as router_users
 
@@ -50,7 +52,7 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=t.List[Project],
-    tags=["projects"],
+    tags=["Projects"],
     responses=AUTHENTICATION_RESPONSES,
 )
 def get_projects(
@@ -73,7 +75,7 @@ def get_projects(
 @router.patch(
     "/{project}",
     response_model=Project,
-    tags=["projects"],
+    tags=["Projects"],
     responses=AUTHENTICATION_RESPONSES,
 )
 def update_project(
@@ -94,15 +96,15 @@ def update_project(
 
     crud.update_description(database, project, body.description)
 
-    return convert_project(crud.get_project(database, project))
+    return convert_project(crud.get_project_by_name(database, project))
 
 
-@router.get("/{slug}", tags=["projects"], responses=AUTHENTICATION_RESPONSES)
+@router.get("/{slug}", tags=["Projects"], responses=AUTHENTICATION_RESPONSES)
 def get_project_by_slug(slug: str, db: Session = Depends(get_db)):
     return convert_project(crud.get_project_by_slug(db, slug))
 
 
-@router.post("/", tags=["projects"], responses=AUTHENTICATION_RESPONSES)
+@router.post("/", tags=["Projects"], responses=AUTHENTICATION_RESPONSES)
 def create_project(
     body: PostProjectRequest,
     db: Session = Depends(get_db),
@@ -130,7 +132,7 @@ def create_project(
 
 @router.delete(
     "/{project}",
-    tags=["projects"],
+    tags=["Projects"],
     status_code=204,
     responses=AUTHENTICATION_RESPONSES,
 )
@@ -175,8 +177,22 @@ def convert_project(project: DatabaseProject) -> Project:
     )
 
 
-router.include_router(router_users, prefix="/{project}/users")
-router.include_router(router_models, prefix="/{project_slug}/models")
+router.include_router(
+    router_users, tags=["Projects"], prefix="/{project}/users"
+)
+router.include_router(
+    router_models, tags=["Projects"], prefix="/{project_slug}/models"
+)
+router.include_router(
+    router_sources_git,
+    tags=["Projects"],
+    prefix="/{project_name}/models/{model_slug}/git",
+)
+router.include_router(
+    router_sources_t4c,
+    tags=["Projects"],
+    prefix="/{project_name}/models/{model_slug}/t4c",
+)
 
 # Load backup extension routes
 eps = metadata.entry_points()["capellacollab.extensions.backups"]
@@ -185,15 +201,5 @@ for ep in eps:
     router.include_router(
         importlib.import_module(".routes", ep.module).router,
         prefix="/{project}/extensions/backups/" + ep.name,
-        tags=[ep.name],
-    )
-
-# Load modelsource extension routes
-eps = metadata.entry_points()["capellacollab.extensions.modelsources"]
-for ep in eps:
-    log.info("Add routes of modelsource %s", ep.name)
-    router.include_router(
-        importlib.import_module(".routes", ep.module).router,
-        prefix="/{project}/extensions/modelsources/" + ep.name,
         tags=[ep.name],
     )

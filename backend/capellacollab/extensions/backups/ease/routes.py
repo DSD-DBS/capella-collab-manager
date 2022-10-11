@@ -11,9 +11,9 @@ from fastapi import APIRouter, Depends
 from requests import Session
 
 import capellacollab.core.authentication.database as auth
-import capellacollab.extensions.modelsources.git.crud as git_crud
-import capellacollab.extensions.modelsources.t4c.connection as t4c_connection
-import capellacollab.extensions.modelsources.t4c.crud as t4c_crud
+import capellacollab.projects.capellamodels.modelsources.git.crud as git_crud
+import capellacollab.projects.capellamodels.modelsources.t4c.connection as t4c_connection
+import capellacollab.projects.capellamodels.modelsources.t4c.crud as t4c_crud
 from capellacollab.config import config
 from capellacollab.core import credentials
 from capellacollab.core.authentication.jwt_bearer import JWTBearer

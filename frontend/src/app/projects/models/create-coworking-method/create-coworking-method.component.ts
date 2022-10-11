@@ -116,10 +116,9 @@ export class CreateCoworkingMethodComponent implements OnInit {
       return;
     }
 
-    let projectName = this.projectService?.project?.name || '';
     let gitCredentials = this.form.controls.credentials.value as Credentials;
 
-    this.gitService.loadInstance(projectName, this.resultUrl, gitCredentials);
+    this.gitService.loadInstance(this.resultUrl, gitCredentials);
   }
 
   onSelect(value: GitSetting): void {
