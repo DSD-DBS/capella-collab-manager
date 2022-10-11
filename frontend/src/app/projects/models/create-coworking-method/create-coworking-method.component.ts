@@ -246,7 +246,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
       }
 
       return {
-        revisionNotFoundError: `${value} does not exists on ${this.resultUrl}`,
+        revisionNotFoundError: `${value} does not exist on ${this.resultUrl}`,
       };
     };
   }
