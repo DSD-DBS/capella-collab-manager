@@ -14,9 +14,7 @@ from capellacollab.core.authentication.responses import (
 )
 from capellacollab.core.database import get_db
 from capellacollab.settings.modelsources.t4c import crud
-from capellacollab.settings.modelsources.t4c.injectables import (
-    load_instance,
-)
+from capellacollab.settings.modelsources.t4c.injectables import load_instance
 from capellacollab.settings.modelsources.t4c.models import (
     CreateT4CInstance,
     DatabaseT4CInstance,
