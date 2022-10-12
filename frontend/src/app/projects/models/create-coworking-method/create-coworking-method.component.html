@@ -114,8 +114,8 @@
             [matAutocomplete]="auto"
             (focus)="onRevisionFocus()"
           />
-          <mat-error *ngIf="form.controls.revision.errors?.requiredError">
-            {{ form.controls.revision.errors?.requiredError }}
+          <mat-error *ngIf="form.controls.revision.errors?.required">
+            A revision is required
           </mat-error>
           <mat-error
             *ngIf="
