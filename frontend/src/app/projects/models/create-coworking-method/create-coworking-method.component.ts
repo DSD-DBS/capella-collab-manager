@@ -40,8 +40,8 @@ import {
 export class CreateCoworkingMethodComponent implements OnInit {
   @Output() create = new EventEmitter<{ created: boolean }>();
 
-  public availableGitSettings: Array<GitSetting> = [];
-  public selectedGitSetting: GitSetting | undefined = undefined;
+  public availableGitInstances: Array<GitSetting> = [];
+  public selectedGitInstance: GitSetting | undefined = undefined;
 
   private availableRevisions: Instance | undefined = {
     branches: [],
@@ -85,7 +85,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
     });
 
     this.gitSettingsService.gitSettings.subscribe((gitSettings) => {
-      this.availableGitSettings = gitSettings;
+      this.availableGitInstances = gitSettings;
 
       if (gitSettings.length) {
         this.form.controls.urlGroup.controls.baseUrl.setValidators([
@@ -128,7 +128,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
       inputUrlFormControl.reset();
     }
 
-    this.selectedGitSetting = value;
+    this.selectedGitInstance = value;
     this.updateResultUrl();
     this.resetRevisions();
   }
@@ -146,9 +146,9 @@ export class CreateCoworkingMethodComponent implements OnInit {
 
       if (longestMatchingGitSetting) {
         urlGroupControls.baseUrl.setValue(longestMatchingGitSetting);
-        this.selectedGitSetting = longestMatchingGitSetting;
-      } else if (this.availableGitSettings.length) {
-        this.selectedGitSetting = undefined;
+        this.selectedGitInstance = longestMatchingGitSetting;
+      } else if (this.availableGitInstances.length) {
+        this.selectedGitInstance = undefined;
         this.form.controls.urlGroup.controls.baseUrl.reset();
       }
     }
@@ -181,7 +181,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
   private updateResultUrl(): void {
     let inputUrlFormControl = this.form.controls.urlGroup.controls.inputUrl;
 
-    let baseUrl = this.selectedGitSetting?.url || '';
+    let baseUrl = this.selectedGitInstance?.url || '';
     let inputUrl = inputUrlFormControl.value || '';
 
     if (hasAbsoluteUrlPrefix(inputUrl)) {
@@ -242,7 +242,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
 
       if (!hasAbsoluteUrlPrefix(url)) {
         return { urlPrefixError: 'Absolute URL must start with http(s)://' };
-      } else if (this.availableGitSettings && baseUrlGroup.invalid) {
+      } else if (this.availableGitInstances && baseUrlGroup.invalid) {
         return baseUrlGroup.errors;
       } else if (inputUrlGroup.invalid) {
         return inputUrlGroup.errors;
@@ -282,7 +282,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
   ): GitSetting | undefined {
     let longestMatchingGitSetting = undefined;
     let longestUrlLength = 0;
-    this.availableGitSettings.forEach((gitSetting) => {
+    this.availableGitInstances.forEach((gitSetting) => {
       if (
         url.startsWith(gitSetting.url) &&
         gitSetting.url.length > longestUrlLength

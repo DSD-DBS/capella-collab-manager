@@ -14,17 +14,17 @@
     </h2>
     <form [formGroup]="form" (submit)="onSubmit()">
       <div formGroupName="urlGroup">
-        <fieldset *ngIf="availableGitSettings.length">
+        <fieldset *ngIf="availableGitInstances.length">
           <mat-form-field appearance="fill">
             <mat-label>Base integration URL</mat-label>
             <mat-select
               matInput
               formControlName="baseUrl"
               (selectionChange)="onSelect($event.value)"
-              [value]="availableGitSettings"
+              [value]="availableGitInstances"
             >
               <mat-option
-                *ngFor="let gitSetting of availableGitSettings"
+                *ngFor="let gitSetting of availableGitInstances"
                 [value]="gitSetting"
                 >{{ gitSetting.url }}</mat-option
               >
@@ -36,7 +36,7 @@
             <mat-label
               >Absolute URL
               {{
-                availableGitSettings.length ? "or Relative URL" : ""
+                availableGitInstances.length ? "or Relative URL" : ""
               }}</mat-label
             >
             <input
@@ -72,8 +72,8 @@
             <mat-card-content
               class="error"
               *ngIf="
-                availableGitSettings.length &&
-                selectedGitSetting === undefined &&
+                availableGitInstances.length &&
+                selectedGitInstance === undefined &&
                 resultUrl.length
               "
             >
