@@ -30,6 +30,8 @@ export class InitModelComponent implements OnInit {
 
   buttonDisabled: boolean = false;
 
+  private modelSubscription?: Subscription;
+
   constructor(
     public projectService: ProjectService,
     public modelService: ModelService,
@@ -38,12 +40,15 @@ export class InitModelComponent implements OnInit {
   ) {}
 
   public form = new FormGroup({
-    version: new FormControl(-1, Validators.required),
-    type: new FormControl(-1, Validators.required),
+    version: new FormControl<number | undefined>(
+      undefined,
+      Validators.required
+    ),
+    type: new FormControl<number | undefined>(undefined, Validators.required),
   });
 
   ngOnInit(): void {
-    this.modelService._model
+    this.modelSubscription = this.modelService._model
       .pipe(filter(Boolean))
       .pipe(
         tap((model) => {
@@ -66,6 +71,10 @@ export class InitModelComponent implements OnInit {
         this.toolVersions = result[0];
         this.toolTypes = result[1];
       });
+  }
+
+  ngOnDestroy(): void {
+    this.modelSubscription?.unsubscribe();
   }
 
   onSubmit(): void {
