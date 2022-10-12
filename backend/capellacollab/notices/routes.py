@@ -52,3 +52,4 @@ def delete_notice(
 ):
     verify_admin(token, db)
     notices.delete_notice(db, id)
+    return None

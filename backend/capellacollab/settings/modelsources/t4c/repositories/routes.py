@@ -175,6 +175,7 @@ def start_t4c_repository(
     verify_admin(token, db)
     (instance, repository) = objects
     interface.start_repository(instance, repository.name)
+    return None
 
 
 @router.post(
@@ -192,6 +193,7 @@ def stop_t4c_repository(
     verify_admin(token, db)
     (instance, repository) = objects
     interface.stop_repository(instance, repository.name)
+    return None
 
 
 @router.post(
@@ -209,3 +211,4 @@ def stop_t4c_repository(
     verify_admin(token, db)
     (instance, repository) = objects
     interface.create_repository(instance, repository.name)
+    return None
