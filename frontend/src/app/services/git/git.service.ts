@@ -13,7 +13,7 @@ export interface Credentials {
   password: string;
 }
 
-export interface Instance {
+export interface Revisions {
   branches: string[];
   tags: string[];
 }
@@ -25,21 +25,21 @@ export class GitService {
   BACKEND_URL_PREFIX = environment.backend_url;
   base_url = new URL(environment.backend_url);
 
-  private _instance = new BehaviorSubject<Instance | undefined>(undefined);
+  private _revisions = new BehaviorSubject<Revisions | undefined>(undefined);
 
-  readonly instance = this._instance.asObservable();
+  readonly revisions = this._revisions.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  loadInstance(gitUrl: string, credentials: Credentials): void {
+  loadRevisions(gitUrl: string, credentials: Credentials): void {
     this.http
-      .post<Instance>(
+      .post<Revisions>(
         this.base_url.toString() + '/settings/modelsources/git/revisions',
         {
           credentials: credentials,
           url: gitUrl,
         }
       )
-      .subscribe((instance) => this._instance.next(instance));
+      .subscribe((revisions) => this._revisions.next(revisions));
   }
 }
