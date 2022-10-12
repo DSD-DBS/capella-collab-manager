@@ -21,6 +21,7 @@ import {
 } from 'src/app/services/settings/git-settings.service';
 import { absoluteUrlSafetyValidator } from 'src/app/helpers/validators/url-validator';
 import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-git-settings',
@@ -39,6 +40,8 @@ export class GitSettingsComponent implements OnInit {
     ]),
   });
 
+  private gitSettingsSubscription?: Subscription;
+
   constructor(
     private navbarService: NavBarService,
     private gitSettingsService: GitSettingsService,
@@ -50,13 +53,18 @@ export class GitSettingsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.gitSettingsService.gitSettings.subscribe({
-      next: (gitSettings) => {
-        this.cmpGitSettings = gitSettings;
-      },
-    });
+    this.gitSettingsSubscription =
+      this.gitSettingsService.gitSettings.subscribe({
+        next: (gitSettings) => {
+          this.cmpGitSettings = gitSettings;
+        },
+      });
 
     this.gitSettingsService.loadGitSettings();
+  }
+
+  ngOnDestroy(): void {
+    this.gitSettingsSubscription?.unsubscribe();
   }
 
   createGitSettings(): void {
