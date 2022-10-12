@@ -14,8 +14,6 @@ import { SessionService } from '../../services/session/session.service';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
 import { ReconnectDialogComponent } from './reconnect-dialog/reconnect-dialog.component';
 import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
-import { Subscription, timer } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-active-sessions',

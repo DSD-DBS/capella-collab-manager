@@ -48,6 +48,7 @@ class Operator(abc.ABC):
         entrypoint: str,
         git_username: str,
         git_password: str,
+        git_depth: int,
     ) -> t.Dict[str, t.Any]:
         """Start / Create a session
 

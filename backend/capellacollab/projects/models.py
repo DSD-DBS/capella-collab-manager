@@ -21,6 +21,11 @@ from capellacollab.projects.users.models import (
     ProjectUserRole,
 )
 
+if t.TYPE_CHECKING:
+    from capellacollab.projects.capellamodels.models import (
+        DatabaseCapellaModel,
+    )
+
 
 class UserMetadata(BaseModel):
     leads: int
@@ -91,6 +96,6 @@ class DatabaseProject(Base):
         "ProjectUserAssociation",
         back_populates="projects",
     )
-    models: DatabaseCapellaModel = relationship(
+    models: list[DatabaseCapellaModel] = relationship(
         "DatabaseCapellaModel", back_populates="project"
     )

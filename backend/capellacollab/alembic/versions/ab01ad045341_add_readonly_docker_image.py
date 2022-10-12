@@ -4,7 +4,7 @@
 """add readonly docker image
 
 Revision ID: ab01ad045341
-Revises: 24fd3c70bacf
+Revises: 8eceebe9b3ea
 Create Date: 2022-10-13 10:51:57.631309
 
 """
@@ -13,7 +13,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "ab01ad045341"
-down_revision = "24fd3c70bacf"
+down_revision = "8eceebe9b3ea"
 branch_labels = None
 depends_on = None
 

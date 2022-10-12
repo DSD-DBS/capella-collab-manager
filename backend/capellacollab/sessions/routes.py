@@ -32,20 +32,24 @@ from capellacollab.sessions.schema import (
     GetSessionsResponse,
     GuacamoleAuthentication,
     PostPersistentSessionRequest,
-    PostSessionRequest,
+    PostReadonlySessionRequest,
     WorkspaceType,
 )
 from capellacollab.sessions.sessions import inject_attrs_in_sessions
 from capellacollab.settings.modelsources.t4c.repositories.crud import (
     get_user_t4c_repositories,
 )
-from capellacollab.tools.crud import get_image_for_tool_version
+from capellacollab.tools.crud import get_image_for_tool_version, get_readonly_image_for_version
 from capellacollab.tools.injectables import (
     get_exisiting_tool_version,
     get_existing_tool,
 )
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role
+from capellacollab.projects.models import DatabaseProject
+from capellacollab.projects.capellamodels.injectables import (
+    get_existing_project,
+)
 
 router = APIRouter(
     dependencies=[Depends(RoleVerification(required_role=Role.USER))]
@@ -89,71 +93,60 @@ def get_current_sessions(
 
 
 @router.post(
-    "/",
+    "/readonly",
     response_model=AdvancedSessionResponse,
 )
 def request_session(
-    body: PostSessionRequest,
+    body: PostReadonlySessionRequest,
     db_user: DatabaseUser = Depends(get_own_user),
     operator: Operator = Depends(get_operator),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    assert body.type == WorkspaceType.READONLY
-
     rdp_password = generate_password(length=64)
 
-    owner = db_user.username
+    owner = db_user.name
 
     log.info("Starting persistent session creation for user %s", owner)
 
-    existing_user_sessions = database.get_sessions_for_user(db, owner)
-
-    if body.repository in [
-        session.repository for session in existing_user_sessions
-    ]:
+    project = get_project_by_slug(db, body.project_slug)
+    if not project:
         raise HTTPException(
-            status_code=404,
-            detail={
-                "err_code": "existing_session",
-                "reason": f"You already have a open Read-Only Session for the repository {body.repository}. Please navigate to 'Active Sessions' to Reconnect",
+            404,
+            {
+                "reason": f"The project having the name {body.project_slug} was not found.",
+                "technical": f"No project with {body.project_slug} found.",
             },
         )
-    verify_project_role(repository=body.repository, token=token, db=db)
-    git_model = git_models_crud.get_primary_model_of_repository(
-        db, body.repository
-    )
-    if not git_model:
+    verify_project_role(project.name, token, db)
+
+    models = [
+        m
+        for m in project.models
+        if m.git_models and m.version_id == body.version
+    ]
+    if not models:
         raise HTTPException(
             status_code=404,
             detail={
                 "err_code": "git_model_not_found",
-                "reason": "The Model has no connected Git Model. Please contact a project manager or admininistrator",
+                "reason": "The Project has no connected Git Model. Please contact a project manager or admininistrator",
             },
         )
 
-    revision = body.branch or git_model.revision
-    if body.depth == DepthType.LatestCommit:
-        depth = 1
-    elif body.depth == DepthType.CompleteHistory:
-        depth = 0
-    else:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "err_code": "wrong_depth_format",
-                "reason": f"Depth type {depth} is not allowed.",
-            },
-        )
+    docker_image = get_readonly_image_for_version(db, body.version)
+
+    git_model = models[0].git_models[0]
+
     session = operator.start_readonly_session(
         password=rdp_password,
-        docker_image=config["docker"]["images"]["workspaces"]["readonly"],
+        docker_image=docker_image,
         git_url=git_model.path,
-        git_revision=revision,
+        git_revision=git_model.revision,
         entrypoint=git_model.entrypoint,
         git_username=git_model.username,
         git_password=git_model.password,
-        git_depth=depth,
+        git_depth=DepthType.LatestCommit,
     )
 
     return create_database_and_guacamole_session(
@@ -162,7 +155,7 @@ def request_session(
         owner,
         rdp_password,
         db,
-        repository=body.repository,
+        repository=[],
     )
 
 
