@@ -104,6 +104,7 @@ import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-s
 import { SettingsComponent } from './settings/settings.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { HomeComponent } from './workspaces/home.component';
+import { ErrorHandlingInterceptor } from './general/error-handling/error-handling.interceptor';
 
 @NgModule({
   declarations: [
@@ -228,6 +229,11 @@ import { HomeComponent } from './workspaces/home.component';
     {
       provide: MatDialogRef,
       useValue: {},
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorHandlingInterceptor,
+      multi: true,
     },
   ],
   bootstrap: [AppComponent],
