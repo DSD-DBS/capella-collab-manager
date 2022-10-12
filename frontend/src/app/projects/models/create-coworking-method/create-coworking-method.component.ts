@@ -95,8 +95,8 @@ export class CreateCoworkingMethodComponent implements OnInit {
         this.form.controls.urlGroup.controls.inputUrl.setValidators([
           absoluteOrRelativeSafetyValidators(),
         ]);
-        this.form.controls.urlGroup.setValidators([this.resultUrlValidator()]);
       }
+      this.form.controls.urlGroup.setValidators([this.resultUrlValidator()]);
     });
 
     this.form.controls.revision.valueChanges.subscribe((value) =>
@@ -252,9 +252,9 @@ export class CreateCoworkingMethodComponent implements OnInit {
       let validationResult = checkUrlForInvalidSequences(url);
 
       if (!validationResult) {
-        this.disableAllExpectUrlGroup();
-      } else {
         this.enableAllExceptUrlGroup();
+      } else {
+        this.disableAllExpectUrlGroup();
       }
       return validationResult;
     };
