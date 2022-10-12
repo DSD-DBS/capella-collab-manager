@@ -4,7 +4,7 @@
 
 import typing as t
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from requests.exceptions import RequestException
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import Session
@@ -15,6 +15,7 @@ from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
 from capellacollab.core.database import get_db
+from capellacollab.core.models import Message, ResponseModel
 from capellacollab.settings.modelsources.t4c.injectables import load_instance
 from capellacollab.settings.modelsources.t4c.models import (
     CreateT4CRepository,
@@ -142,9 +143,10 @@ def create_t4c_repository(
 @router.delete(
     "/{t4c_repository_id}",
     responses=AUTHENTICATION_RESPONSES,
-    status_code=204,
+    response_model=ResponseModel,
 )
 def delete_t4c_repository(
+    response: Response,
     token: JWTBearer = Depends(JWTBearer()),
     db: Session = Depends(get_db),
     objects: tuple[DatabaseT4CInstance, DatabaseT4CRepository] = Depends(
@@ -153,11 +155,40 @@ def delete_t4c_repository(
 ) -> None:
     (instance, repository) = objects
     verify_admin(token, db)
+    crud.delete_4c_repository(repository, db)
     try:
         interface.delete_repository(instance, repository.name)
-    except RequestException:
-        pass
-    crud.delete_4c_repository(repository, db)
+    except HTTPException as e:
+        response.status_code = status.HTTP_207_MULTI_STATUS
+        return ResponseModel(
+            warnings=[
+                Message(
+                    title="Repository deletion failed partially.",
+                    reason=(
+                        "The TeamForCapella returned an error when deleting the repository.",
+                        "We deleted it the repository our database. When the connection is successful, we'll synchronize the repositories again.",
+                    ),
+                    technical=f"TeamForCapella returned status code {e.status_code}",
+                )
+            ]
+        )
+    except RequestException as e:
+        response.status_code = status.HTTP_207_MULTI_STATUS
+        return ResponseModel(
+            warnings=[
+                Message(
+                    title="Repository deletion failed partially.",
+                    reason=(
+                        "The TeamForCapella server is not reachable.",
+                        "We deleted the repository from our database.",
+                        "During the next connection attempt, we'll synchronize the repository again.",
+                    ),
+                    technical=f"TeamForCapella not reachable with exception {e}",
+                )
+            ]
+        )
+    response.status_code = status.HTTP_204_NO_CONTENT
+    return None
 
 
 @router.post(
@@ -201,7 +232,7 @@ def stop_t4c_repository(
     responses=AUTHENTICATION_RESPONSES,
     status_code=204,
 )
-def stop_t4c_repository(
+def recreate_t4c_repository(
     token: JWTBearer = Depends(JWTBearer()),
     db: Session = Depends(get_db),
     objects: tuple[DatabaseT4CInstance, DatabaseT4CRepository] = Depends(
