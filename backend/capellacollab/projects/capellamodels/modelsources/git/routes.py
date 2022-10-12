@@ -4,6 +4,7 @@
 
 import logging
 
+import sqlalchemy.orm.session
 from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
 
@@ -22,11 +23,51 @@ from capellacollab.projects.capellamodels.modelsources.git.models import (
     ResponseGitSource,
 )
 from capellacollab.settings.modelsources.git.core import get_remote_refs
+from capellacollab.settings.modelsources.git.crud import get_all_git_settings
 
 from . import crud
 
 router = APIRouter()
 log = logging.getLogger(__name__)
+
+
+def verify_path_prefix(path: str, db: sqlalchemy.orm.session.Session):
+    git_settings = get_all_git_settings(db)
+
+    if not git_settings:
+        return
+
+    for git_setting in git_settings:
+        if path.startswith(git_setting.url):
+            return
+
+    raise HTTPException(
+        status_code=400,
+        detail={
+            "err_code": "no_git_instance_with_prefix_found",
+            "reason": "There exist no git instance with an url being a prefix of the provdided source path. Please check whether you correctly selected a git instance.",
+        },
+    )
+
+
+def verify_valid_path_sequences(path: str):
+    sequence_blacklist = ["..", "%"]
+
+    invalid_sequences = []
+    for sequence in sequence_blacklist:
+        if sequence in path:
+            invalid_sequences.append(sequence)
+
+    if not invalid_sequences:
+        return
+
+    raise HTTPException(
+        status_code=400,
+        detail={
+            "err_code": "invalid_path_sequences",
+            "reason": "The provide source path contains invalid sequences.",
+        },
+    )
 
 
 @router.post("/", response_model=ResponseGitSource)
@@ -37,9 +78,12 @@ def create_source(
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
 ):
-    print("testtt")
     project_instance = projects_crud.get_project_by_name(db, project_name)
     verify_project_role(project_instance.name, token, db)
+
+    verify_path_prefix(source.path, db)
+    verify_valid_path_sequences(source.path)
+
     new_source = crud.create(db, project_instance.slug, model_slug, source)
     return ResponseGitSource.from_orm(new_source)
 
