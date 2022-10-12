@@ -12,7 +12,7 @@ import {
   HttpRequest,
   HttpResponse,
 } from '@angular/common/http';
-import { Observable, pipe, tap } from 'rxjs';
+import { Observable, tap, map } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 
 @Injectable({
@@ -30,7 +30,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
         next: (event: HttpEvent<any>) => {
           if (event.type == HttpEventType.Response) {
             const body = event.body;
-            if (body.errors) {
+            if (body?.errors) {
               for (let error of body.errors) {
                 if (error.reason)
                   if (Array.isArray(error.reason)) {
@@ -42,7 +42,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
                 );
               }
             }
-            if (body.warnings) {
+            if (body?.warnings) {
               for (let warning of body.warnings) {
                 if (warning.reason)
                   if (Array.isArray(warning.reason)) {
@@ -78,6 +78,15 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
             );
           }
         },
+      }),
+      // If the body has a payload attribute, map to the attribute
+      map((event: HttpEvent<any>) => {
+        if (event.type == HttpEventType.Response) {
+          if (event.body?.payload) {
+            event = event.clone({ body: event.body.payload });
+          }
+        }
+        return event;
       })
     );
   }
