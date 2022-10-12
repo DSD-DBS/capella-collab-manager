@@ -27,18 +27,19 @@ export class T4CRepoService {
   }
 
   getT4CRepositories(instance_id: number): Observable<T4CServerRepository[]> {
-    const url = this.url_factory(instance_id);
-    return this.http.get<[T4CServerRepository[], boolean]>(url).pipe(
-      tap((res) => {
-        if (!res[1]) {
-          this.toastService.showError(
-            'Instance Error',
-            'The Instance is unreachable, check the REST API URL.'
-          );
-        }
-      }),
-      map((res) => res[0])
-    );
+    return this.http
+      .get<[T4CServerRepository[], boolean]>(this.urlFactory(instance_id))
+      .pipe(
+        tap((res) => {
+          if (!res[1]) {
+            this.toastService.showError(
+              'TeamForCapella server unreachable',
+              'The selected TeamForCapella instance is unreachable, please check the REST API URL.'
+            );
+          }
+        }),
+        map((res) => res[0])
+      );
   }
 
   createT4CRepository(
