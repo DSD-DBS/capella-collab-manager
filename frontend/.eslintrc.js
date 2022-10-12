@@ -4,26 +4,50 @@
  */
 
 module.exports = {
-  env: {
-    browser: true,
-    es2021: true,
-  },
-  extends: ["standard-with-typescript", "prettier"],
-  overrides: [],
-  parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
-    project: "./tsconfig.json",
-  },
-  rules: {
-    "@typescript-eslint/prefer-readonly": "off",
-    "import/order": [
-      "error",
-      {
-        alphabetize: {
-          order: "asc",
-        },
+  root: true,
+  overrides: [
+    {
+      files: ["*.ts"],
+      parserOptions: {
+        project: ["tsconfig.json"],
+        createDefaultProgram: true,
       },
-    ],
-  },
+      extends: [
+        "plugin:@angular-eslint/recommended",
+        "plugin:@angular-eslint/template/process-inline-templates",
+      ],
+      plugins: ["import"],
+      rules: {
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            type: "attribute",
+            prefix: "app",
+            style: "camelCase",
+          },
+        ],
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            type: "element",
+            prefix: "app",
+            style: "kebab-case",
+          },
+        ],
+        "import/order": [
+          "error",
+          {
+            alphabetize: {
+              order: "asc",
+            },
+          },
+        ],
+      },
+    },
+    {
+      files: ["*.html"],
+      extends: ["plugin:@angular-eslint/template/recommended"],
+      rules: {},
+    },
+  ],
 };

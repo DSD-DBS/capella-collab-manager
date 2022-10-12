@@ -15,8 +15,9 @@ import { CreateModelComponent } from './projects/models/create-model/create-mode
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
-import { ActiveSessionsComponent } from './sessions/active-sessions/active-sessions.component';
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
+import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
+import { ActiveSessionsComponent } from './sessions/active-sessions/active-sessions.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { DockerimageSettingsComponent } from './settings/core/dockerimage-settings/dockerimage-settings.component';
@@ -30,7 +31,6 @@ import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settin
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
 import { HomeComponent } from './workspaces/home.component';
-import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 
 const routes: Routes = [
   {

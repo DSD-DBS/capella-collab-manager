@@ -48,8 +48,8 @@
     (click)="synchronizeRepositories()"
     [ngClass]="synchronizeButtonState"
   >
-    <div *ngIf="synchronizeButtonState == 'primary'">Synchronize with T4C</div>
-    <div *ngIf="synchronizeButtonState == 'success'">
+    <div *ngIf="synchronizeButtonState === 'primary'">Synchronize with T4C</div>
+    <div *ngIf="synchronizeButtonState === 'success'">
       Synchronization successful
     </div>
   </button>
