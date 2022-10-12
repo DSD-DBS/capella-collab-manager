@@ -15,7 +15,8 @@ from capellacollab.core.authentication.responses import (
 )
 from capellacollab.core.database import get_db
 from capellacollab.projects.capellamodels.modelsources.git.models import (
-    GetRevisionsModel,
+    GetRevisionModel,
+    GetRevisionsResponseModel,
     GitCredentials,
 )
 from capellacollab.settings.modelsources.git import crud
@@ -68,14 +69,14 @@ def create_git_settings(
 # In the future, check if the HTTP QUERY method is available in fast api,
 # and if so, use it instead of POST
 # (https://www.ietf.org/archive/id/draft-ietf-httpbis-safe-method-w-body-02.html)
-@router.post("/revisions", response_model=GetRevisionsModel)
+@router.post("/revisions", response_model=GetRevisionsResponseModel)
 def get_revisions(
-    url: str,
-    credentials: GitCredentials,
+    body: GetRevisionModel,
     token: JWTBearer = Depends(JWTBearer()),
-) -> GetRevisionsModel:
-    username = credentials.username
-    password = credentials.password
+) -> GetRevisionsResponseModel:
+    url = body.url
+    username = body.credentials.username
+    password = body.credentials.password
 
     return get_remote_refs(url, username, password)
 

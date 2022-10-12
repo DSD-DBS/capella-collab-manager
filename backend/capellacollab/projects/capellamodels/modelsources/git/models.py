@@ -40,7 +40,7 @@ class GetRepositoryGitModel(RepositoryGitModel):
     username: t.Union[str, None]
 
 
-class GetRevisionsModel(BaseModel):
+class GetRevisionsResponseModel(BaseModel):
     branches: t.List[str]
     tags: t.List[str]
 
@@ -48,6 +48,11 @@ class GetRevisionsModel(BaseModel):
 class GitCredentials(BaseModel):
     username: t.Union[str, None]
     password: t.Union[str, None]
+
+
+class GetRevisionModel(BaseModel):
+    url: str
+    credentials: GitCredentials
 
 
 class PostGitModel(RepositoryGitModel):
