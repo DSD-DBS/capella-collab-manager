@@ -19,8 +19,7 @@ export function regExpValidator(
   value: string,
   errors: ValidationErrors
 ): ValidationErrors | null {
-  let regExResult = ruleRegExp.test(value);
-  if (!regExResult) {
+  if (!ruleRegExp.test(value)) {
     return errors;
   }
   return null;
