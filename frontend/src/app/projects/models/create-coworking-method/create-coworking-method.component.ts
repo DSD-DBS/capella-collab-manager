@@ -16,7 +16,7 @@ import { ProjectService } from 'src/app/services/project/project.service';
 import {
   Credentials,
   GitService,
-  Instance,
+  Revisions,
 } from 'src/app/services/git/git.service';
 import { ModelService } from 'src/app/services/model/model.service';
 import { Source, SourceService } from 'src/app/services/source/source.service';
@@ -43,11 +43,11 @@ export class CreateCoworkingMethodComponent implements OnInit {
   public availableGitInstances: Array<GitSetting> = [];
   public selectedGitInstance: GitSetting | undefined = undefined;
 
-  private availableRevisions: Instance | undefined = {
+  private availableRevisions: Revisions | undefined = {
     branches: [],
     tags: [],
   };
-  public filteredRevisions: Instance = { branches: [], tags: [] };
+  public filteredRevisions: Revisions = { branches: [], tags: [] };
 
   public resultUrl: string = '';
 
@@ -76,7 +76,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.gitService.instance.subscribe((revisions) => {
+    this.gitService.revisions.subscribe((revisions) => {
       this.availableRevisions = revisions;
       this.form.controls.revision.updateValueAndValidity();
     });
@@ -114,7 +114,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
 
     let gitCredentials = this.form.controls.credentials.value as Credentials;
 
-    this.gitService.loadInstance(this.resultUrl, gitCredentials);
+    this.gitService.loadRevisions(this.resultUrl, gitCredentials);
   }
 
   onSelect(value: GitSetting): void {
