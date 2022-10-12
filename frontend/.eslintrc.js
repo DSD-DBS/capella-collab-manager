@@ -26,6 +26,7 @@ module.exports = {
             style: "camelCase",
           },
         ],
+        /* Find a proper naming strategy
         "@angular-eslint/component-selector": [
           "error",
           {
@@ -33,7 +34,7 @@ module.exports = {
             prefix: "app",
             style: "kebab-case",
           },
-        ],
+        ], */
         "import/order": [
           "error",
           {
