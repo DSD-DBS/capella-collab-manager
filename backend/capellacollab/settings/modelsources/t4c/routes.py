@@ -14,6 +14,9 @@ from capellacollab.core.authentication.responses import (
 )
 from capellacollab.core.database import get_db
 from capellacollab.settings.modelsources.t4c import crud
+from capellacollab.settings.modelsources.t4c.injectables import (
+    load_instance,
+)
 from capellacollab.settings.modelsources.t4c.models import (
     CreateT4CInstance,
     DatabaseT4CInstance,
@@ -26,20 +29,6 @@ from capellacollab.settings.modelsources.t4c.repositories.routes import (
 from capellacollab.tools import crud as tools_crud
 
 router = APIRouter()
-
-
-def load_instance(
-    id_: int, db: Session = Depends(get_db)
-) -> DatabaseT4CInstance:
-    try:
-        return crud.get_t4c_instance(id_, db)
-    except NoResultFound:
-        raise HTTPException(
-            status_code=404,
-            detail={
-                "reason": f"The t4c instance with the id {id_} does not exist.",
-            },
-        )
 
 
 @router.get(
@@ -56,7 +45,7 @@ def list_git_settings(
 
 
 @router.get(
-    "/{id_}",
+    "/{t4c_instance_id}",
     responses=AUTHENTICATION_RESPONSES,
     response_model=T4CInstance,
 )
@@ -99,7 +88,7 @@ def create_t4c_instance(
 
 
 @router.patch(
-    "/{id_}",
+    "/{t4c_instance_id}",
     responses=AUTHENTICATION_RESPONSES,
     response_model=T4CInstance,
 )
