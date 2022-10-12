@@ -30,7 +30,7 @@ import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/
 export class GitSettingsComponent implements OnInit {
   public cmpGitSettings: GitSettings[];
 
-  form = new FormGroup({
+  gitInstancesForm = new FormGroup({
     type: new FormControl('', Validators.required),
     name: new FormControl('', [Validators.required, this.nameValidator()]),
     url: new FormControl('', [
@@ -60,19 +60,19 @@ export class GitSettingsComponent implements OnInit {
   }
 
   createGitSettings(): void {
-    if (this.form.valid) {
-      let url = this.form.value.url!;
+    if (this.gitInstancesForm.valid) {
+      let url = this.gitInstancesForm.value.url!;
       if (url.endsWith('/')) {
         url = url.slice(0, -1);
       }
 
       this.gitSettingsService
         .createGitSettings({
-          name: this.form.value.name!,
+          name: this.gitInstancesForm.value.name!,
           url: url,
-          type: this.form.value.type as GitType,
+          type: this.gitInstancesForm.value.type as GitType,
         })
-        .subscribe((_) => this.form.reset());
+        .subscribe((_) => this.gitInstancesForm.reset());
     }
   }
 
