@@ -129,11 +129,13 @@ def create_t4c_repository(
             },
         ) from e
     try:
-        interface.create_repository(instance, new_repo.name)
+        new_repo.status = Status(
+            interface.create_repository(instance, new_repo.name)["repository"][
+                "status"
+            ]
+        )
     except RequestException:
         new_repo.status = Status.INSTANCE_UNREACHABLE
-    else:
-        new_repo.status = Status.ONLINE
     return new_repo
 
 
