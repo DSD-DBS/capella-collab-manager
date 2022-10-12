@@ -104,15 +104,17 @@ export class CreateModelBaseComponent implements OnInit {
           this.modelService._models.next(value);
         });
 
-      modelConnectable.pipe(tap(this.modelService._model)).subscribe({
-        next: (model: Model | undefined) => {
-          this.toastService.showSuccess(
-            'Model created',
-            `The model with name ${model!.name} has been created`
-          );
-          this.create.emit();
-        },
-      });
+      modelConnectable
+        .pipe(tap((model) => this.modelService._model.next(model)))
+        .subscribe({
+          next: (model: Model | undefined) => {
+            this.toastService.showSuccess(
+              'Model created',
+              `The model with name ${model!.name} has been created`
+            );
+            this.create.emit();
+          },
+        });
 
       modelConnectable.connect();
     }
