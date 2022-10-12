@@ -36,6 +36,6 @@ def create_t4c_repository(
 
 def delete_4c_repository(
     repository: DatabaseT4CRepository, db: Session
-) -> t.NoReturn:
+) -> None:
     db.delete(repository)
     db.commit()
