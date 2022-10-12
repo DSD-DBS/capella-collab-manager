@@ -62,7 +62,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
     }),
     revision: new FormControl({ value: '', disabled: true }, [
       Validators.required,
-      this.validRevisionValidator(),
+      this.existingRevisionValidator(),
     ]),
     entrypoint: new FormControl({ value: '/', disabled: true }),
   });
@@ -98,6 +98,14 @@ export class CreateCoworkingMethodComponent implements OnInit {
     this.form.controls.revision.valueChanges.subscribe((value) =>
       this.filteredRevisionsByPrefix(value as string)
     );
+
+    this.modelService._model.subscribe((model) => {
+      if (model?.tool.name === 'Capella') {
+        this.form.controls.entrypoint.addValidators(
+          this.cappellaSuffixValidator()
+        );
+      }
+    });
 
     this.gitSettingsService.loadGitSettings();
   }
@@ -256,7 +264,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
     };
   }
 
-  private validRevisionValidator(): ValidatorFn {
+  private existingRevisionValidator(): ValidatorFn {
     return (controls: AbstractControl): ValidationErrors | null => {
       let value: string = controls.value;
       if (!value) return null;
@@ -270,6 +278,21 @@ export class CreateCoworkingMethodComponent implements OnInit {
 
       return {
         revisionNotFoundError: `${value} does not exist on ${this.resultUrl}`,
+      };
+    };
+  }
+
+  private cappellaSuffixValidator(): ValidatorFn {
+    return (controls: AbstractControl): ValidationErrors | null => {
+      let value: string = controls.value;
+      if (!value) return null;
+
+      if (value.endsWith('.aird')) {
+        return null;
+      }
+
+      return {
+        cappellaSuffixError: `${value} must end with ".aird" in case of a capella model`,
       };
     };
   }

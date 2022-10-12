@@ -149,6 +149,14 @@
         <mat-form-field appearance="fill">
           <mat-label>Entry point</mat-label>
           <input type="text" matInput formControlName="entrypoint" />
+          <mat-error *ngIf="form.controls.entrypoint.errors?.required">
+            An endpoint is required
+          </mat-error>
+          <mat-error
+            *ngIf="form.controls.entrypoint.errors?.cappellaSuffixError"
+          >
+            {{ form.controls.entrypoint.errors?.cappellaSuffixError }}
+          </mat-error>
         </mat-form-field>
       </fieldset>
     </form>
