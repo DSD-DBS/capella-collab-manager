@@ -32,6 +32,7 @@ import {
   hasAbsoluteUrlPrefix,
   hasRelativePathPrefix,
 } from 'src/app/helpers/validators/url-validator';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-create-coworking-method',
@@ -68,6 +69,10 @@ export class CreateCoworkingMethodComponent implements OnInit {
     entrypoint: new FormControl({ value: '/', disabled: true }),
   });
 
+  private gitSettingsSubscription?: Subscription;
+  private modelSubscription?: Subscription;
+  private revisionsSubscription?: Subscription;
+
   constructor(
     public projectService: ProjectService,
     public modelService: ModelService,
@@ -77,30 +82,33 @@ export class CreateCoworkingMethodComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.gitService.revisions.subscribe((revisions) => {
-      this.availableRevisions = revisions;
-      this.form.controls.revision.updateValueAndValidity();
-    });
-
-    this.gitSettingsService.gitSettings.subscribe((gitSettings) => {
-      this.availableGitInstances = gitSettings;
-
-      if (gitSettings.length) {
-        this.form.controls.urls.controls.baseUrl.setValidators([
-          Validators.required,
-        ]);
-        this.form.controls.urls.controls.inputUrl.setValidators([
-          absoluteOrRelativeSafetyValidators(),
-        ]);
+    this.revisionsSubscription = this.gitService.revisions.subscribe(
+      (revisions) => {
+        this.availableRevisions = revisions;
+        this.form.controls.revision.updateValueAndValidity();
       }
-      this.form.controls.urls.setValidators([this.resultUrlValidator()]);
-    });
+    );
+
+    this.gitSettingsSubscription =
+      this.gitSettingsService.gitSettings.subscribe((gitSettings) => {
+        this.availableGitInstances = gitSettings;
+
+        if (gitSettings.length) {
+          this.form.controls.urls.controls.baseUrl.setValidators([
+            Validators.required,
+          ]);
+          this.form.controls.urls.controls.inputUrl.setValidators([
+            absoluteOrRelativeSafetyValidators(),
+          ]);
+        }
+        this.form.controls.urls.setValidators([this.resultUrlValidator()]);
+      });
 
     this.form.controls.revision.valueChanges.subscribe((value) =>
       this.filteredRevisionsByPrefix(value as string)
     );
 
-    this.modelService._model.subscribe((model) => {
+    this.modelSubscription = this.modelService._model.subscribe((model) => {
       if (model?.tool.name === 'Capella') {
         this.form.controls.entrypoint.addValidators(
           this.cappellaSuffixValidator()
@@ -109,6 +117,12 @@ export class CreateCoworkingMethodComponent implements OnInit {
     });
 
     this.gitSettingsService.loadGitSettings();
+  }
+
+  ngOnDestroy(): void {
+    this.gitSettingsSubscription?.unsubscribe();
+    this.modelSubscription?.unsubscribe();
+    this.revisionsSubscription?.unsubscribe();
   }
 
   onRevisionFocus(): void {
