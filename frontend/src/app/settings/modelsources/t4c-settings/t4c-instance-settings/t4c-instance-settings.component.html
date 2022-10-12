@@ -4,15 +4,17 @@
  -->
 
 <mat-card>
-  <mat-card-header class="button-header">
-    <mat-card-title><h2>T4C Repository Settings</h2></mat-card-title>
-    <h2>
-      <button mat-button [disabled]="!instance" (click)="refreshRepositories()">
-        <mat-icon>sync</mat-icon>
-      </button>
-    </h2>
-  </mat-card-header>
-  <form [formGroup]="form">
+  <div class="flex-space-between">
+    <mat-card-title><h2>Manage T4C repositories</h2></mat-card-title>
+    <button
+      mat-icon-button
+      [disabled]="!instance"
+      (click)="refreshRepositories()"
+    >
+      <mat-icon>sync</mat-icon>
+    </button>
+  </div>
+  <form [formGroup]="form" #formDirective="ngForm">
     <mat-form-field>
       <mat-label>Repository name</mat-label>
       <input matInput formControlName="name" />
