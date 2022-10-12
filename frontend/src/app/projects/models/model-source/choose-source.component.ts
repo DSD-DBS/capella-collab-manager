@@ -6,6 +6,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { ModelService } from 'src/app/services/model/model.service';
+import { UserService } from '../../../services/user/user.service';
 
 @Component({
   selector: 'app-choose-source',
@@ -17,7 +18,8 @@ export class ChooseSourceComponent implements OnInit {
 
   constructor(
     public projectService: ProjectService,
-    public modelService: ModelService
+    public modelService: ModelService,
+    public userService: UserService
   ) {}
 
   ngOnInit(): void {}

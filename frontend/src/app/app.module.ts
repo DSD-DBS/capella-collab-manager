@@ -106,6 +106,7 @@ import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/e
 import { T4CSettingsWrapperComponent } from './settings/modelsources/t4c-settings/t4c-settings-wrapper/t4c-settings-wrapper.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
+import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
 
 @NgModule({
   declarations: [
@@ -173,6 +174,7 @@ import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
     MatIconComponent,
     EditT4CInstanceComponent,
     T4CSettingsWrapperComponent,
+    AddT4cSourceComponent,
   ],
   imports: [
     CommonModule,

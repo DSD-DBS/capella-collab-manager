@@ -61,7 +61,7 @@ def get_models_for_repository(
     return return_models
 
 
-@router.post("/create/{model_slug}", response_model=ResponseGitSource)
+@router.post("/create/", response_model=ResponseGitSource)
 def create_source(
     project: str,
     model_slug: str,

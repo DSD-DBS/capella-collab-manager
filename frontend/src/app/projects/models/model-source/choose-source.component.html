@@ -41,7 +41,11 @@
     class="options-list flex-center"
     *ngIf="modelService.model.tool?.name === 'Capella'"
   >
-    <button mat-raised-button disabled>
+    <button
+      mat-raised-button
+      (click)="modelSourceSelection.emit('t4c-add')"
+      [disabled]="!(userService.user?.role === 'administrator')"
+    >
       <div class="button-content-wrapper">
         <p class="option-title">Use existing repository</p>
       </div>

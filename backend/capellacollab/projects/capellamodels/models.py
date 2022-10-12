@@ -71,7 +71,7 @@ class DatabaseCapellaModel(Base):
 
     editing_mode = Column(Enum(EditingMode))
 
-    t4c_model = relationship("DB_T4CModel", back_populates="model")
+    t4c_model = relationship("DatabaseT4CModel", back_populates="model")
     git_model = relationship("DB_GitModel", back_populates="model")
 
 

@@ -23,9 +23,16 @@
     </mat-step>
 
     <mat-step label="Add source">
-      <app-create-coworking-method
-        (create)="afterSourceCreated($event)"
-      ></app-create-coworking-method>
+      <div [ngSwitch]="source">
+        <app-create-coworking-method
+          *ngSwitchCase="'git-add'"
+          (create)="afterSourceCreated($event)"
+        ></app-create-coworking-method>
+        <app-add-t4c-source
+          *ngSwitchCase="'t4c-add'"
+          (create)="afterSourceCreated($event)"
+        ></app-add-t4c-source>
+      </div>
     </mat-step>
 
     <mat-step label="Choose initialization">
