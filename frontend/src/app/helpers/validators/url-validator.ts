@@ -19,18 +19,6 @@ export function absoluteUrlSafetyValidator(): ValidatorFn {
   };
 }
 
-export function relativeUrlSafetyValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    let value: string = control.value;
-    if (!value) return null;
-
-    if (!hasRelativePathPrefix(value)) {
-      return { urlPrefixErrors: 'Relative URL must start with /' };
-    }
-    return checkUrlForInvalidSequences(value);
-  };
-}
-
 export function absoluteOrRelativeSafetyValidators(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     let value: string = control.value;
