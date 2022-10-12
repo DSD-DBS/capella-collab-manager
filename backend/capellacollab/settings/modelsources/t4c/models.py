@@ -11,6 +11,7 @@ from sqlalchemy.orm import relationship
 # required for sqlalchemy
 import capellacollab.settings.modelsources.t4c.models
 from capellacollab.core.database import Base
+from capellacollab.core.models import ResponseModel
 
 
 class DatabaseT4CInstance(Base):
@@ -131,6 +132,10 @@ class T4CRepository(CreateT4CRepository):
 
     class Config:
         orm_mode = True
+
+
+class T4CRepositories(ResponseModel):
+    payload: t.List[T4CRepository]
 
 
 class T4CInstanceWithRepositories(T4CInstance):

@@ -22,6 +22,7 @@ from capellacollab.settings.modelsources.t4c.models import (
     DatabaseT4CInstance,
     Status,
     T4CInstanceWithRepositories,
+    T4CRepositories,
     T4CRepository,
 )
 from capellacollab.settings.modelsources.t4c.repositories import (
@@ -62,13 +63,13 @@ def load_instance_repository(
 @router.get(
     "/",
     responses=AUTHENTICATION_RESPONSES,
-    response_model=tuple[list[T4CRepository], bool],
+    response_model=T4CRepositories,
 )
 def list_t4c_repositories(
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
     instance: DatabaseT4CInstance = Depends(load_instance),
-) -> tuple[list[T4CRepository], bool]:
+) -> T4CRepositories:
     verify_admin(token, db)
     db_repositories = T4CInstanceWithRepositories.from_orm(
         instance
@@ -78,7 +79,17 @@ def list_t4c_repositories(
     except RequestException:
         for i in range(len(db_repositories)):
             db_repositories[i].status = Status.INSTANCE_UNREACHABLE
-        return db_repositories, False
+        return T4CRepositories(
+            payload=db_repositories,
+            warnings=[
+                Message(
+                    title="TeamForCapella server not reachable.",
+                    reason=(
+                        "We will only show a representation of our database."
+                    ),
+                )
+            ],
+        )
     server_repositories.sort(key=lambda r: r["name"])
     db_repositories.sort(key=lambda r: r.name)
 
@@ -105,7 +116,7 @@ def list_t4c_repositories(
     for repo in [repo for repo in db_repositories if not repo.status]:
         repo.status = Status.NOT_FOUND
 
-    return sorted(db_repositories, key=lambda r: r.id), True
+    return T4CRepositories(payload=sorted(db_repositories, key=lambda r: r.id))
 
 
 @router.post(
