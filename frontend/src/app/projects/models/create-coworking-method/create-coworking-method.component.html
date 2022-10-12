@@ -13,7 +13,7 @@
       project “{{ projectService.project.name }}”.
     </h2>
     <form [formGroup]="form" (submit)="onSubmit()">
-      <div formGroupName="urlGroup">
+      <div formGroupName="urls">
         <fieldset *ngIf="availableGitInstances.length">
           <mat-form-field appearance="fill">
             <mat-label>Base integration URL</mat-label>
@@ -46,14 +46,11 @@
             />
             <mat-error
               *ngIf="
-                form.controls.urlGroup.controls.inputUrl.errors
-                  ?.urlPrefixError &&
-                form.controls.urlGroup.controls.inputUrl.value
+                form.controls.urls.controls.inputUrl.errors?.urlPrefixError &&
+                form.controls.urls.controls.inputUrl.value
               "
             >
-              {{
-                form.controls.urlGroup.controls.inputUrl.errors?.urlPrefixError
-              }}
+              {{ form.controls.urls.controls.inputUrl.errors?.urlPrefixError }}
             </mat-error>
           </mat-form-field>
         </fieldset>
@@ -81,15 +78,15 @@
             </mat-card-content>
             <mat-card-content
               class="error"
-              *ngIf="form.controls.urlGroup.errors?.urlSafetyError && resultUrl"
+              *ngIf="form.controls.urls.errors?.urlSafetyError && resultUrl"
             >
-              {{ form.controls.urlGroup.errors?.urlSafetyError }}
+              {{ form.controls.urls.errors?.urlSafetyError }}
             </mat-card-content>
             <mat-card-content
               class="error"
-              *ngIf="form.controls.urlGroup.errors?.urlPrefixError && resultUrl"
+              *ngIf="form.controls.urls.errors?.urlPrefixError && resultUrl"
             >
-              {{ form.controls.urlGroup.errors?.urlPrefixError }}
+              {{ form.controls.urls.errors?.urlPrefixError }}
             </mat-card-content>
           </mat-card>
         </div>
