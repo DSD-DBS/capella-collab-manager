@@ -6,10 +6,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
 import { NavBarService } from '../../general/navbar/service/nav-bar.service';
 import { Session } from '../../schemes';
 import { SessionService } from '../../services/session/session.service';
+import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
 
 @Component({
   selector: 'app-session-overview',

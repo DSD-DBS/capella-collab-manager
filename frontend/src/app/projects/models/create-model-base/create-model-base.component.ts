@@ -13,16 +13,16 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subject, connectable, filter, switchMap, tap } from 'rxjs';
 import slugify from 'slugify';
-import { ProjectService } from 'src/app/services/project/project.service';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   Model,
   ModelService,
   NewModel,
 } from 'src/app/services/model/model.service';
-import { Subject, connectable, filter, switchMap, tap } from 'rxjs';
+import { ProjectService } from 'src/app/services/project/project.service';
 import { ToolService } from 'src/app/services/tools/tool.service';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
 
 @Component({
   selector: 'app-create-model-base',

@@ -4,8 +4,8 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { environment } from 'src/environments/environment';
 

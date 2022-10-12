@@ -12,20 +12,20 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { ProjectUser, Session } from 'src/app/schemes';
 import { MatSelectChange } from '@angular/material/select';
-import { ProjectService } from 'src/app/services/project/project.service';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { ProjectUser, Session } from 'src/app/schemes';
 import {
   GitModelService,
   Revisions,
 } from 'src/app/services/modelsources/git-model/git-model.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import {
   DepthType,
   SessionService,
 } from 'src/app/services/session/session.service';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
 
 @Component({
   selector: 'app-request-session',

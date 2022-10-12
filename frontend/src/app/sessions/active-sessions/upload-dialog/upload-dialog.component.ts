@@ -13,9 +13,9 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { PathNode, Session } from 'src/app/schemes';
 import { LoadFilesService } from 'src/app/services/load-files/load-files.service';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { FileExistsDialogComponent } from './file-exists-dialog/file-exists-dialog.component';
 @Component({
   selector: 'upload-dialog',

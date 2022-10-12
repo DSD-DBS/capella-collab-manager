@@ -5,15 +5,15 @@
 
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ProjectService } from 'src/app/services/project/project.service';
+import { combineLatest, filter, map, switchMap } from 'rxjs';
 import {
   Credentials,
   GitService,
   Instance,
 } from 'src/app/services/git/git.service';
 import { ModelService } from 'src/app/services/model/model.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 import { Source, SourceService } from 'src/app/services/source/source.service';
-import { combineLatest, filter, map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-create-coworking-method',

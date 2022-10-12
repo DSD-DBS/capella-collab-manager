@@ -4,8 +4,8 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { NavBarService } from '../general/navbar/service/nav-bar.service';
 import { ProjectService } from 'src/app/services/project/project.service';
+import { NavBarService } from '../general/navbar/service/nav-bar.service';
 import { UserService } from '../services/user/user.service';
 
 @Component({

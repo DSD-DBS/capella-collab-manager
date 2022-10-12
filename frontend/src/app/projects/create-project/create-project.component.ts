@@ -13,7 +13,6 @@ import {
 } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import { ToastService } from '../../helpers/toast/toast.service';
 import {
   BehaviorSubject,
   Subject,
@@ -25,15 +24,16 @@ import {
   tap,
 } from 'rxjs';
 import slugify from 'slugify';
+import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   CreateModelComponent,
   CreateModelStep,
 } from 'src/app/projects/models/create-model/create-model.component';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   Project,
   ProjectService,
 } from 'src/app/services/project/project.service';
+import { ToastService } from '../../helpers/toast/toast.service';
 
 @Component({
   selector: 'app-create-project',

@@ -19,11 +19,11 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ProjectUser } from 'src/app/schemes';
+import { Project } from 'src/app/services/project/project.service';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Project } from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-project-user-settings',

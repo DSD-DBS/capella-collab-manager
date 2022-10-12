@@ -4,8 +4,8 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { BehaviorSubject } from 'rxjs';
+import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   T4CInstance,
   T4CInstanceService,
