@@ -14,7 +14,6 @@ import { environment } from 'src/environments/environment';
 })
 export class T4CRepoService {
   constructor(private http: HttpClient, private toastService: ToastService) {}
-  base_url = environment.backend_url + '/settings/modelsources/t4c/';
 
   _repositories = new BehaviorSubject<(T4CRepository & T4CServerRepository)[]>(
     []
@@ -23,8 +22,8 @@ export class T4CRepoService {
     return this._repositories.value;
   }
 
-  url_factory(instance_id: number): string {
-    return `${this.base_url}${instance_id}/repositories/`;
+  urlFactory(instance_id: number): string {
+    return `${environment.backend_url}/settings/modelsources/t4c/${instance_id}/repositories/`;
   }
 
   getT4CRepositories(instance_id: number): Observable<T4CServerRepository[]> {
@@ -54,7 +53,7 @@ export class T4CRepoService {
     instance_id: number,
     repository_id: number
   ): Observable<null> {
-    const url = `${this.url_factory(instance_id)}${repository_id}/`;
+    const url = `${this.urlFactory(instance_id)}${repository_id}/`;
     return this.http.delete<null>(url);
   }
 
@@ -62,12 +61,12 @@ export class T4CRepoService {
     instance_id: number,
     repository_id: number
   ): Observable<null> {
-    const url = `${this.url_factory(instance_id)}${repository_id}/start/`;
+    const url = `${this.urlFactory(instance_id)}${repository_id}/start/`;
     return this.http.post<null>(url, {});
   }
 
   stopRepository(instance_id: number, repository_id: number): Observable<null> {
-    const url = `${this.url_factory(instance_id)}${repository_id}/stop/`;
+    const url = `${this.urlFactory(instance_id)}${repository_id}/stop/`;
     return this.http.post<null>(url, {});
   }
 
@@ -75,7 +74,7 @@ export class T4CRepoService {
     instance_id: number,
     repository_id: number
   ): Observable<null> {
-    const url = `${this.url_factory(instance_id)}${repository_id}/recreate/`;
+    const url = `${this.urlFactory(instance_id)}${repository_id}/recreate/`;
     return this.http.post<null>(url, {});
   }
 }
