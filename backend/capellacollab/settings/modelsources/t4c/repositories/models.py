@@ -19,7 +19,9 @@ class DatabaseT4CRepository(Base):
     __tablename__ = "t4c_repositories"
     __table_args__ = (UniqueConstraint("instance_id", "name"),)
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    id = Column(
+        Integer, primary_key=True, index=True, autoincrement=True, unique=True
+    )
     name = Column(String, nullable=False)
     instance_id = Column(
         Integer, ForeignKey("t4c_instances.id"), nullable=False
@@ -27,6 +29,12 @@ class DatabaseT4CRepository(Base):
 
     instance = relationship(
         "DatabaseT4CInstance", back_populates="repositories"
+    )
+
+    models = relationship(
+        "DatabaseT4CModel",
+        back_populates="repository",
+        cascade="all, delete",
     )
 
 

@@ -1,0 +1,76 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div
+  *ngIf="projectService.project && modelService.model"
+  class="wrapper flex-center"
+>
+  <mat-card class="section-card">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Instance</mat-label>
+          <mat-select formControlName="t4c_instance_id">
+            <mat-option
+              *ngFor="let instance of instances"
+              value="{{ instance.id }}"
+            >
+              {{ instance.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.controls.t4c_instance_id.errors">
+            Please select an instance.
+          </mat-error>
+        </mat-form-field>
+      </fieldset>
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Repository</mat-label>
+          <mat-select
+            formControlName="t4c_repository_id"
+            [disabled]="!form.controls.t4c_instance_id.valid"
+            #selectedRepository
+          >
+            <mat-option
+              *ngFor="let repository of repositories"
+              value="{{ repository.id }}"
+            >
+              {{ repository.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.controls.t4c_repository_id.errors">
+            Please select a repository.
+          </mat-error>
+        </mat-form-field>
+      </fieldset>
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Source name</mat-label>
+          <input
+            matInput
+            formControlName="name"
+            [disabled]="!form.controls.t4c_repository_id.valid"
+            [matAutocomplete]="auto"
+          />
+        </mat-form-field>
+        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+          <mat-option *ngIf="currentRepo" [value]="currentRepo">{{
+            currentRepo
+          }}</mat-option>
+        </mat-autocomplete>
+      </fieldset>
+      <button mat-button (click)="create.emit(false)">Choose source</button>
+      <div class="field-separator"></div>
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="!form.valid"
+        type="submit"
+      >
+        Add source
+      </button>
+    </form>
+  </mat-card>
+</div>

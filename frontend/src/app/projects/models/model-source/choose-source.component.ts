@@ -6,6 +6,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
+import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'app-choose-source',
@@ -17,6 +18,7 @@ export class ChooseSourceComponent {
 
   constructor(
     public projectService: ProjectService,
-    public modelService: ModelService
+    public modelService: ModelService,
+    public userService: UserService
   ) {}
 }

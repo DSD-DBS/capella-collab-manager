@@ -3,31 +3,30 @@
 
 
 from pydantic import BaseModel
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
 
 
-class DB_T4CModel(Base):
+class DatabaseT4CModel(Base):
     __tablename__ = "t4c_models"
+    __table_args__ = (UniqueConstraint("repository_id", "name"),)
 
     id = Column(Integer, unique=True, primary_key=True, index=True)
     name = Column(String, index=True)
+
+    repository_id = Column(Integer, ForeignKey("t4c_repositories.id"))
+    repository = relationship("DatabaseT4CRepository", back_populates="models")
+
     model_id = Column(Integer, ForeignKey("models.id"))
     model = relationship("DatabaseCapellaModel", back_populates="t4c_models")
 
 
-class RepositoryProjectBase(BaseModel):
+class CreateT4CModel(BaseModel):
     name: str
-
-    class Config:
-        orm_mode = True
-
-
-class RepositoryProject(RepositoryProjectBase):
-    id: int
-    repository_name: str
+    t4c_instance_id: int
+    t4c_repository_id: int
 
 
 class ResponseT4CModel(BaseModel):

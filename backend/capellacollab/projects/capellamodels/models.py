@@ -8,7 +8,6 @@ import enum
 import typing as t
 
 from pydantic import BaseModel
-from slugify import slugify
 from sqlalchemy import (
     Column,
     Enum,
@@ -77,7 +76,7 @@ class DatabaseCapellaModel(Base):
 
     editing_mode = Column(Enum(EditingMode))
 
-    t4c_models = relationship("DB_T4CModel", back_populates="model")
+    t4c_models = relationship("DatabaseT4CModel", back_populates="model")
     git_models = relationship("DB_GitModel", back_populates="model")
 
 
