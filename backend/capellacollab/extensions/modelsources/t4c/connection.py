@@ -160,7 +160,6 @@ def get_repositories() -> t.List[str]:
         timeout=config["requests"]["timeout"],
     )
     r.raise_for_status()
-    print(r.json())
 
     return [repo["name"] for repo in r.json()["repositories"]]
 
