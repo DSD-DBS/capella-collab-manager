@@ -78,10 +78,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
   ngOnInit(): void {
     this.gitService.instance.subscribe((revisions) => {
       this.availableRevisions = revisions;
-      this.form.controls.revision.updateValueAndValidity({
-        onlySelf: false,
-        emitEvent: true,
-      });
+      this.form.controls.revision.updateValueAndValidity();
     });
 
     this.gitSettingsService.gitSettings.subscribe((gitSettings) => {
