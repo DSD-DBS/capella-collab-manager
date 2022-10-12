@@ -46,37 +46,46 @@ export class T4CRepoService {
     instance_id: number,
     repository: CreateT4CRepository
   ): Observable<T4CRepository> {
-    const url = this.url_factory(instance_id);
-    return this.http.post<T4CRepository>(url, repository);
+    return this.http.post<T4CRepository>(
+      this.urlFactory(instance_id),
+      repository
+    );
   }
 
   deleteRepository(
     instance_id: number,
     repository_id: number
   ): Observable<null> {
-    const url = `${this.urlFactory(instance_id)}${repository_id}/`;
-    return this.http.delete<null>(url);
+    return this.http.delete<null>(
+      `${this.urlFactory(instance_id)}${repository_id}/`
+    );
   }
 
   startRepository(
     instance_id: number,
     repository_id: number
   ): Observable<null> {
-    const url = `${this.urlFactory(instance_id)}${repository_id}/start/`;
-    return this.http.post<null>(url, {});
+    return this.http.post<null>(
+      `${this.urlFactory(instance_id)}${repository_id}/start/`,
+      {}
+    );
   }
 
   stopRepository(instance_id: number, repository_id: number): Observable<null> {
-    const url = `${this.urlFactory(instance_id)}${repository_id}/stop/`;
-    return this.http.post<null>(url, {});
+    return this.http.post<null>(
+      `${this.urlFactory(instance_id)}${repository_id}/stop/`,
+      {}
+    );
   }
 
   recreateRepository(
     instance_id: number,
     repository_id: number
   ): Observable<null> {
-    const url = `${this.urlFactory(instance_id)}${repository_id}/recreate/`;
-    return this.http.post<null>(url, {});
+    return this.http.post<null>(
+      `${this.urlFactory(instance_id)}${repository_id}/recreate/`,
+      {}
+    );
   }
 }
 
