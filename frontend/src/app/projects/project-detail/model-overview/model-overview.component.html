@@ -4,12 +4,15 @@
  -->
 
 <div class="models" *ngIf="models">
-  <div class="models-title">
-    <h2 id="title">Models</h2>
+  <h2>
+    Models
     <a mat-button [routerLink]="['/project', project.slug, 'models', 'create']">
       <mat-icon id="add-icon">add</mat-icon>
     </a>
-  </div>
+    <a mat-mini-fab *ngIf="models" matTooltip="Open readonly session">
+      <mat-icon>remove_red_eye</mat-icon>
+    </a>
+  </h2>
   <mat-card *ngFor="let model of models">
     <div class="header">
       <div class="header-text">
@@ -75,7 +78,7 @@
             mat-mini-fab
             matTooltip="Request persistent session"
           >
-            <mat-icon> screen_share</mat-icon>
+            <mat-icon>screen_share</mat-icon>
           </a>
           <a
             mat-mini-fab
