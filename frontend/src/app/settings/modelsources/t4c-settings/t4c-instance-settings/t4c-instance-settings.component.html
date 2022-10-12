@@ -24,6 +24,9 @@
       <mat-error *ngIf="form.controls.name.errors?.projectExistsError"
         >Name already used</mat-error
       >
+      <mat-error *ngIf="form.controls.name.errors?.pattern"
+        >The following characters are allowed: A-Z, a-z, 0-9, _, -
+      </mat-error>
     </mat-form-field>
     <div class="field-separator"></div>
     <button
