@@ -172,10 +172,10 @@ export class CreateCoworkingMethodComponent implements OnInit {
           this.modelService.model.slug,
           {
             path: this.resultUrl,
-            username: this.form.value.credentials!.username || '',
-            password: this.form.value.credentials!.password || '',
+            username: this.form.value.credentials!.username,
+            password: this.form.value.credentials!.password,
             revision: this.form.value.revision!,
-            entrypoint: this.form.value.entrypoint || '',
+            entrypoint: this.form.value.entrypoint,
           } as Source
         )
         .subscribe(() => {
