@@ -52,7 +52,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
   public resultUrl: string = '';
 
   public form = new FormGroup({
-    urlGroup: new FormGroup({
+    urls: new FormGroup({
       baseUrl: new FormControl<GitSetting | undefined>(undefined),
       inputUrl: new FormControl('', absoluteUrlSafetyValidator()),
     }),
@@ -88,14 +88,14 @@ export class CreateCoworkingMethodComponent implements OnInit {
       this.availableGitInstances = gitSettings;
 
       if (gitSettings.length) {
-        this.form.controls.urlGroup.controls.baseUrl.setValidators([
+        this.form.controls.urls.controls.baseUrl.setValidators([
           Validators.required,
         ]);
-        this.form.controls.urlGroup.controls.inputUrl.setValidators([
+        this.form.controls.urls.controls.inputUrl.setValidators([
           absoluteOrRelativeSafetyValidators(),
         ]);
       }
-      this.form.controls.urlGroup.setValidators([this.resultUrlValidator()]);
+      this.form.controls.urls.setValidators([this.resultUrlValidator()]);
     });
 
     this.form.controls.revision.valueChanges.subscribe((value) =>
@@ -106,11 +106,11 @@ export class CreateCoworkingMethodComponent implements OnInit {
   }
 
   onRevisionFocus(): void {
-    let urlGroup = this.form.controls.urlGroup;
+    let urls = this.form.controls.urls;
     if (
-      urlGroup.invalid ||
-      urlGroup.controls.baseUrl.invalid ||
-      urlGroup.controls.inputUrl.invalid
+      urls.invalid ||
+      urls.controls.baseUrl.invalid ||
+      urls.controls.inputUrl.invalid
     ) {
       return;
     }
@@ -121,7 +121,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
   }
 
   onSelect(value: GitSetting): void {
-    let inputUrlFormControl = this.form.controls.urlGroup.controls.inputUrl;
+    let inputUrlFormControl = this.form.controls.urls.controls.inputUrl;
     let inputUrl = inputUrlFormControl.value;
 
     if (inputUrl && !hasRelativePathPrefix(inputUrl)) {
@@ -137,19 +137,19 @@ export class CreateCoworkingMethodComponent implements OnInit {
     this.updateResultUrl();
     this.resetRevisions();
 
-    let urlGroupControls = this.form.controls.urlGroup.controls;
-    urlGroupControls.inputUrl.updateValueAndValidity();
+    let urlsControls = this.form.controls.urls.controls;
+    urlsControls.inputUrl.updateValueAndValidity();
 
     if (changedInputUrl && hasAbsoluteUrlPrefix(changedInputUrl)) {
       let longestMatchingGitSetting =
         this.findLongestUrlMatchingGitSetting(changedInputUrl);
 
       if (longestMatchingGitSetting) {
-        urlGroupControls.baseUrl.setValue(longestMatchingGitSetting);
+        urlsControls.baseUrl.setValue(longestMatchingGitSetting);
         this.selectedGitInstance = longestMatchingGitSetting;
       } else if (this.availableGitInstances.length) {
         this.selectedGitInstance = undefined;
-        this.form.controls.urlGroup.controls.baseUrl.reset();
+        this.form.controls.urls.controls.baseUrl.reset();
       }
     }
   }
@@ -179,7 +179,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
   }
 
   private updateResultUrl(): void {
-    let inputUrlFormControl = this.form.controls.urlGroup.controls.inputUrl;
+    let inputUrlFormControl = this.form.controls.urls.controls.inputUrl;
 
     let baseUrl = this.selectedGitInstance?.url || '';
     let inputUrl = inputUrlFormControl.value || '';
@@ -218,13 +218,13 @@ export class CreateCoworkingMethodComponent implements OnInit {
     this.form.controls.revision.setValue('');
   }
 
-  private disableAllExpectUrlGroup() {
+  private disableAllExpectUrls() {
     this.form.controls.credentials.disable();
     this.form.controls.entrypoint.disable();
     this.form.controls.revision.disable();
   }
 
-  private enableAllExceptUrlGroup() {
+  private enableAllExceptUrls() {
     this.form.controls.credentials.enable();
     this.form.controls.entrypoint.enable();
     this.form.controls.revision.enable();
@@ -234,26 +234,26 @@ export class CreateCoworkingMethodComponent implements OnInit {
     return (_: AbstractControl): ValidationErrors | null => {
       this.updateResultUrl();
 
-      let baseUrlGroup = this.form.controls.urlGroup.controls.baseUrl;
-      let inputUrlGroup = this.form.controls.urlGroup.controls.inputUrl;
+      let baseUrl = this.form.controls.urls.controls.baseUrl;
+      let inputUrl = this.form.controls.urls.controls.inputUrl;
 
       let url: string = this.resultUrl;
       if (!url) return { required: 'Resulting URL is required' };
 
       if (!hasAbsoluteUrlPrefix(url)) {
         return { urlPrefixError: 'Absolute URL must start with http(s)://' };
-      } else if (this.availableGitInstances && baseUrlGroup.invalid) {
-        return baseUrlGroup.errors;
-      } else if (inputUrlGroup.invalid) {
-        return inputUrlGroup.errors;
+      } else if (this.availableGitInstances && baseUrl.invalid) {
+        return baseUrl.errors;
+      } else if (inputUrl.invalid) {
+        return inputUrl.errors;
       }
 
       let validationResult = checkUrlForInvalidSequences(url);
 
       if (!validationResult) {
-        this.enableAllExceptUrlGroup();
+        this.enableAllExceptUrls();
       } else {
-        this.disableAllExpectUrlGroup();
+        this.disableAllExpectUrls();
       }
       return validationResult;
     };
