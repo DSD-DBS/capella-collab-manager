@@ -42,6 +42,7 @@ module.exports = {
             },
           },
         ],
+        "@angular-eslint/sort-ngmodule-metadata-arrays": ["error"],
       },
     },
     {
