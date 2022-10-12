@@ -35,8 +35,10 @@ export class GitService {
     this.http
       .post<Instance>(
         this.base_url.toString() + '/settings/modelsources/git/revisions',
-        credentials,
-        { params: { url: gitUrl } }
+        {
+          credentials: credentials,
+          url: gitUrl,
+        }
       )
       .subscribe((instance) => this._instance.next(instance));
   }
