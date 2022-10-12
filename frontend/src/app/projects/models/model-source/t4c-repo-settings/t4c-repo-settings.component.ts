@@ -13,11 +13,9 @@ import { T4CRepoService } from 'src/app/settings/modelsources/t4c-settings/servi
   templateUrl: './t4c-repo-settings.component.html',
   styleUrls: ['./t4c-repo-settings.component.css'],
 })
-export class T4CRepoSettingsComponent implements OnInit {
+export class T4CRepoSettingsComponent {
   constructor(public projectService: T4CRepoService) {}
 
   @Input()
   repository = '';
-
-  ngOnInit(): void {}
 }

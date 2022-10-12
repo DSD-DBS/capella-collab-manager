@@ -11,11 +11,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   templateUrl: './file-exists-dialog.component.html',
   styleUrls: ['./file-exists-dialog.component.css'],
 })
-export class FileExistsDialogComponent implements OnInit {
+export class FileExistsDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<FileExistsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public filename: string
   ) {}
-
-  ngOnInit(): void {}
 }

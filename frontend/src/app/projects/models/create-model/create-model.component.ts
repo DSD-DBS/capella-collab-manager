@@ -23,7 +23,7 @@ import { ProjectService } from 'src/app/services/project/project.service';
   templateUrl: './create-model.component.html',
   styleUrls: ['./create-model.component.css'],
 })
-export class CreateModelComponent implements OnInit, OnDestroy {
+export class CreateModelComponent implements OnDestroy {
   @ViewChild('stepper') stepper!: MatStepper;
   @Input() asStepper?: boolean;
   @Input() redirectAfterCompletion: boolean = true;
@@ -38,8 +38,6 @@ export class CreateModelComponent implements OnInit, OnDestroy {
     private projectService: ProjectService,
     private modelService: ModelService
   ) {}
-
-  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     if (!this.detail) {

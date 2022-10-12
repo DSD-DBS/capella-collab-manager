@@ -12,11 +12,9 @@ import { GitSettings } from 'src/app/services/settings/git-settings.service';
   templateUrl: './delete-git-settings-dialog.component.html',
   styleUrls: ['./delete-git-settings-dialog.component.css'],
 })
-export class DeleteGitSettingsDialogComponent implements OnInit {
+export class DeleteGitSettingsDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public instance: GitSettings
   ) {}
-
-  ngOnInit(): void {}
 }

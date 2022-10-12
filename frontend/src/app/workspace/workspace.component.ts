@@ -18,7 +18,7 @@ import { SessionService } from '../services/session/session.service';
   templateUrl: './workspace.component.html',
   styleUrls: ['./workspace.component.css'],
 })
-export class WorkspaceComponent implements OnInit {
+export class WorkspaceComponent {
   repositories: ProjectUser[] = [];
   showSpinner = true;
 
@@ -28,19 +28,5 @@ export class WorkspaceComponent implements OnInit {
     private navbarService: NavBarService
   ) {
     this.navbarService.title = 'Workspaces';
-  }
-
-  ngOnInit() {
-    // FIXME: Fetch project users
-    // this.showSpinner = true;
-    // this.projectUserService.subscribe({
-    //   next: (res) => {
-    //     this.repositories = res;
-    //     this.showSpinner = false;
-    //   },
-    //   error: () => {
-    //     this.showSpinner = false;
-    //   },
-    // });
   }
 }

@@ -15,14 +15,12 @@ import {
   templateUrl: './t4c-repo-deletion-dialog.component.html',
   styleUrls: ['./t4c-repo-deletion-dialog.component.css'],
 })
-export class T4CRepoDeletionDialogComponent implements OnInit {
+export class T4CRepoDeletionDialogComponent {
   constructor(
     private repoService: T4CRepoService,
     public dialogRef: MatDialogRef<T4CRepoDeletionDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public repo: T4CRepository
   ) {}
-
-  ngOnInit(): void {}
 
   remoteRepository(): void {
     this.repoService

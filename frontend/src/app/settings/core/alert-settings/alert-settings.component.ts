@@ -24,7 +24,7 @@ import {
   templateUrl: './alert-settings.component.html',
   styleUrls: ['./alert-settings.component.css'],
 })
-export class AlertSettingsComponent implements OnInit {
+export class AlertSettingsComponent {
   createAlertForm = new FormGroup(
     {
       title: new FormControl(''),
@@ -45,8 +45,6 @@ export class AlertSettingsComponent implements OnInit {
   ) {
     this.navbarService.title = 'Settings / Core / Alerts';
   }
-
-  ngOnInit(): void {}
 
   titleOrDescriptionRequired(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {

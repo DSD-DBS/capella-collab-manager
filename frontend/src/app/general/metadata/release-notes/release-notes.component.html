@@ -12,11 +12,11 @@
         <mat-card
           class="new"
           *ngIf="
-            versionService.compareFrontendVersionWithOld(release.tag_name) ==
+            versionService.compareFrontendVersionWithOld(release.tag_name) ===
               1 &&
             versionService.compareFrontendVersionWithCurrent(
               release.tag_name
-            ) != 1
+            ) !== 1
           "
           >This version was added since your last visit!</mat-card
         >
@@ -25,7 +25,7 @@
           *ngIf="
             versionService.compareFrontendVersionWithCurrent(
               release.tag_name
-            ) == 1
+            ) === 1
           "
           >This version is not yet deployed to this instance. Please ask your
           administrator to deploy the changes!</mat-card

@@ -11,8 +11,6 @@ import { VersionService } from '../version/version.service';
   templateUrl: './release-notes.component.html',
   styleUrls: ['./release-notes.component.css'],
 })
-export class ReleaseNotesComponent implements OnInit {
+export class ReleaseNotesComponent {
   constructor(public versionService: VersionService) {}
-
-  ngOnInit(): void {}
 }

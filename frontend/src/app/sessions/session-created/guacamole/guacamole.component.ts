@@ -14,7 +14,7 @@ import { UserService } from 'src/app/services/user/user.service';
   templateUrl: './guacamole.component.html',
   styleUrls: ['./guacamole.component.css'],
 })
-export class GuacamoleComponent implements OnInit {
+export class GuacamoleComponent {
   @Input()
   session: Session | undefined = undefined;
 
@@ -23,8 +23,6 @@ export class GuacamoleComponent implements OnInit {
     private localStorageService: LocalStorageService,
     private guacamoleService: GuacamoleService
   ) {}
-
-  ngOnInit(): void {}
 
   redirectToGuacamole(): void {
     this.guacamoleService

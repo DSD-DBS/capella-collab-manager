@@ -15,14 +15,12 @@ import {
   templateUrl: './git-model-deletion-dialog.component.html',
   styleUrls: ['./git-model-deletion-dialog.component.css'],
 })
-export class GitModelDeletionDialogComponent implements OnInit {
+export class GitModelDeletionDialogComponent {
   constructor(
     private gitModelService: GitModelService,
     public dialogRef: MatDialogRef<GitModelDeletionDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public input: GitModelDeletionDialogInput
   ) {}
-
-  ngOnInit(): void {}
 
   unassignGitModel() {
     this.gitModelService

@@ -11,11 +11,9 @@ import { environment } from 'src/environments/environment';
   templateUrl: './legal.component.html',
   styleUrls: ['./legal.component.css'],
 })
-export class LegalComponent implements OnInit {
+export class LegalComponent {
   imprint = environment.imprint;
   privacy = environment.privacy;
 
   constructor() {}
-
-  ngOnInit(): void {}
 }

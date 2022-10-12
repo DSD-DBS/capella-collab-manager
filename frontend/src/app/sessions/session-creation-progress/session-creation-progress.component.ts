@@ -16,7 +16,7 @@ import { SessionService } from '../../services/session/session.service';
   templateUrl: './session-creation-progress.component.html',
   styleUrls: ['./session-creation-progress.component.css'],
 })
-export class SessionCreationProgressComponent implements OnInit, OnDestroy {
+export class SessionCreationProgressComponent implements OnDestroy {
   @Input()
   sessionType = '';
 
@@ -103,8 +103,6 @@ export class SessionCreationProgressComponent implements OnInit, OnDestroy {
       }
     }
   }
-
-  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.refreshSessionsSubscription.unsubscribe();

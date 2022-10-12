@@ -10,8 +10,6 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './model-detail.component.html',
   styleUrls: ['./model-detail.component.css'],
 })
-export class ModelDetailComponent implements OnInit {
+export class ModelDetailComponent {
   constructor() {}
-
-  ngOnInit(): void {}
 }

@@ -32,7 +32,7 @@ import {
   templateUrl: './request-session.component.html',
   styleUrls: ['./request-session.component.css'],
 })
-export class RequestSessionComponent implements OnInit {
+export class RequestSessionComponent {
   showSpinner = false;
   showSmallSpinner = false;
   creationSuccessful = false;
@@ -95,8 +95,6 @@ export class RequestSessionComponent implements OnInit {
     private gitModelService: GitModelService,
     private toastService: ToastService
   ) {}
-
-  ngOnInit(): void {}
 
   validateForm(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {

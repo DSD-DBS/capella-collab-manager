@@ -12,11 +12,9 @@ import { Session } from 'src/app/schemes';
   templateUrl: './reconnect-dialog.component.html',
   styleUrls: ['./reconnect-dialog.component.css'],
 })
-export class ReconnectDialogComponent implements OnInit {
+export class ReconnectDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ReconnectDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public session: Session
   ) {}
-
-  ngOnInit(): void {}
 }

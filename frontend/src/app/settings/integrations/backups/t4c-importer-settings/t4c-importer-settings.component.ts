@@ -10,8 +10,6 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './t4c-importer-settings.component.html',
   styleUrls: ['./t4c-importer-settings.component.css'],
 })
-export class T4CImporterSettingsComponent implements OnInit {
+export class T4CImporterSettingsComponent {
   constructor() {}
-
-  ngOnInit(): void {}
 }

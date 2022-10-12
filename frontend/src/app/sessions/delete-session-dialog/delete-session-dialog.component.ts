@@ -17,14 +17,13 @@ import { SessionService } from '../../services/session/session.service';
   templateUrl: './delete-session-dialog.component.html',
   styleUrls: ['./delete-session-dialog.component.css'],
 })
-export class DeleteSessionDialogComponent implements OnInit {
+export class DeleteSessionDialogComponent {
   constructor(
     private sessionService: SessionService,
     public dialogRef: MatDialogRef<DeleteSessionDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public sessions: Session[]
   ) {}
 
-  ngOnInit(): void {}
   deleteButton = {
     disabled: false,
     text: 'Terminate',

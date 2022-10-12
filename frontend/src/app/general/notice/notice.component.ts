@@ -12,8 +12,6 @@ import { NoticeService } from '../../services/notice/notice.service';
   styleUrls: ['./notice.component.css'],
   encapsulation: ViewEncapsulation.None,
 })
-export class NoticeComponent implements OnInit {
+export class NoticeComponent {
   constructor(public noticeService: NoticeService) {}
-
-  ngOnInit(): void {}
 }

@@ -12,11 +12,9 @@ import { SessionService } from 'src/app/services/session/session.service';
   templateUrl: './rdp.component.html',
   styleUrls: ['./rdp.component.css'],
 })
-export class RDPComponent implements OnInit {
+export class RDPComponent {
   @Input()
   session: Session | undefined = undefined;
 
   constructor() {}
-
-  ngOnInit(): void {}
 }

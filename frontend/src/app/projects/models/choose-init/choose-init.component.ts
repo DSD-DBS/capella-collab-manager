@@ -12,13 +12,11 @@ import { ProjectService } from 'src/app/services/project/project.service';
   templateUrl: './choose-init.component.html',
   styleUrls: ['./choose-init.component.css'],
 })
-export class ChooseInitComponent implements OnInit {
+export class ChooseInitComponent {
   @Output() modelInitSelection = new EventEmitter<string>();
 
   constructor(
     public projectService: ProjectService,
     public modelService: ModelService
   ) {}
-
-  ngOnInit(): void {}
 }

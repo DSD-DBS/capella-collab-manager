@@ -10,11 +10,9 @@ import { Component, Input, OnInit } from '@angular/core';
   templateUrl: './session-progress-icon.component.html',
   styleUrls: ['./session-progress-icon.component.css'],
 })
-export class SessionProgressIconComponent implements OnInit {
+export class SessionProgressIconComponent {
   @Input()
   state = 'pending';
 
   constructor() {}
-
-  ngOnInit(): void {}
 }
