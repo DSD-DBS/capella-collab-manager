@@ -23,8 +23,7 @@ import {
 export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private router: Router,
-    private authService: AuthService,
-    private toastService: ToastService
+    private authService: AuthService
   ) {}
 
   intercept(
@@ -50,25 +49,6 @@ export class AuthInterceptor implements HttpInterceptor {
           } else {
             this.router.navigateByUrl('/logout?reason=unauthorized');
           }
-        } else if (
-          typeof err.error !== 'undefined' &&
-          typeof err.error.detail !== 'undefined' &&
-          err.error.detail.reason
-        ) {
-          this.toastService.showError(
-            'An error occurred!',
-            err.error.detail.reason
-          );
-        } else if (err.status === 0) {
-          this.toastService.showError(
-            'Backend not reachable',
-            'Please check your internet connection and refresh the page!'
-          );
-        } else if (err.status !== 404) {
-          this.toastService.showError(
-            'An error occurred!',
-            'Please try again!'
-          );
         }
 
         return throwError(err);
