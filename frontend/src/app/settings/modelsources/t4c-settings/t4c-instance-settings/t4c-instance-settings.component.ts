@@ -67,7 +67,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
   uniqueNameValidator(control: AbstractControl): ValidationErrors | null {
     return this.t4cRepoService.repositories
       .map((repo) => repo.name)
-      .indexOf(control.value) >= 0
+      .includes(control.value)
       ? { projectExistsError: true }
       : null;
   }
