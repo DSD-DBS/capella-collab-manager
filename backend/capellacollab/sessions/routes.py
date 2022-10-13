@@ -193,7 +193,6 @@ def request_persistent_session(
 
     docker_image = get_image_for_tool_version(db, body.version)
 
-    # TODO: Find the right container to deploy
     session = operator.start_persistent_session(
         username=get_username(token),
         password=rdp_password,
