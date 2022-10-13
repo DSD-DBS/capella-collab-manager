@@ -43,7 +43,9 @@
       *ngFor="let repository of t4cRepoService.repositories"
       [value]="repository"
     >
-      <mat-icon mat-list-icon *ngIf="!repository.status">sync</mat-icon>
+      <mat-icon mat-list-icon *ngIf="repository.status === 'LOADING'"
+        >sync</mat-icon
+      >
       <mat-icon mat-list-icon *ngIf="repository.status === 'OFFLINE'"
         >cloud_off</mat-icon
       >
@@ -61,7 +63,7 @@
       <div>
         <div mat-line>{{ repository.name }}</div>
         <div mat-line>Repository ID: {{ repository.id }}</div>
-        <div mat-line>status: {{ repository.status || "LOADING" }}</div>
+        <div mat-line>status: {{ repository.status }}</div>
       </div>
     </mat-list-option>
   </mat-selection-list>

@@ -15,10 +15,8 @@ import { environment } from 'src/environments/environment';
 export class T4CRepoService {
   constructor(private http: HttpClient, private toastService: ToastService) {}
 
-  _repositories = new BehaviorSubject<(T4CRepository & T4CServerRepository)[]>(
-    []
-  );
-  get repositories(): (T4CRepository & T4CServerRepository)[] {
+  _repositories = new BehaviorSubject<T4CServerRepository[]>([]);
+  get repositories(): T4CServerRepository[] {
     return this._repositories.value;
   }
 
@@ -87,5 +85,10 @@ export type T4CRepository = CreateT4CRepository & {
 };
 
 export type T4CServerRepository = T4CRepository & {
-  status?: 'ONLINE' | 'OFFLINE' | 'INSTANCE_UNREACHABLE' | 'NOT_FOUND';
+  status:
+    | 'ONLINE'
+    | 'OFFLINE'
+    | 'INSTANCE_UNREACHABLE'
+    | 'NOT_FOUND'
+    | 'LOADING';
 };

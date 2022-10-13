@@ -76,7 +76,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
     this.t4cRepoService._repositories.next(
       this.t4cRepoService.repositories.map((repo) => ({
         ...repo,
-        status: undefined,
+        status: 'LOADING',
       }))
     );
     this.t4cRepoService
@@ -101,7 +101,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
             this.form.enable();
             this.t4cRepoService._repositories.next([
               ...this.t4cRepoService.repositories,
-              repository,
+              { ...repository, status: 'LOADING' },
             ]);
           }),
           switchMap(() =>
@@ -132,7 +132,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
 
   startRepository(repository: T4CServerRepository): void {
     this.repositoryList.selectedOptions.clear();
-    delete repository.status;
+    repository.status = 'LOADING';
     this.t4cRepoService
       .startRepository(repository.instance.id, repository.id)
       .pipe(
@@ -148,7 +148,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
 
   stopRepository(repository: T4CServerRepository): void {
     this.repositoryList.selectedOptions.clear();
-    delete repository.status;
+    repository.status = 'LOADING';
     this.t4cRepoService
       .stopRepository(repository.instance.id, repository.id)
       .pipe(
@@ -164,7 +164,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
 
   recreateRepository(repository: T4CServerRepository): void {
     this.repositoryList.selectedOptions.clear();
-    delete repository.status;
+    repository.status = 'LOADING';
     this.t4cRepoService
       .recreateRepository(repository.instance.id, repository.id)
       .pipe(
