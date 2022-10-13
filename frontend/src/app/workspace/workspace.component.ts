@@ -21,8 +21,8 @@ export class WorkspaceComponent {
   canCreateSession = true;
 
   public form = new FormGroup({
-    tool_id: new FormControl(-1, Validators.required),
-    version_id: new FormControl(-1, Validators.required),
+    tool_id: new FormControl(null, Validators.required),
+    version_id: new FormControl(null, Validators.required),
   });
 
   constructor(
@@ -42,13 +42,16 @@ export class WorkspaceComponent {
     }
 
     this.canCreateSession = false;
+    let self = this;
     this.sessionService
       .createPersistentSession(
-        this.form.controls.tool_id.value,
-        this.form.controls.version_id.value
+        this.form.controls.tool_id.value!,
+        this.form.controls.version_id.value!
       )
       .subscribe({
-        complete() { this.canCreateSession = true; }
+        complete() {
+          self.canCreateSession = true;
+        },
       });
   }
 

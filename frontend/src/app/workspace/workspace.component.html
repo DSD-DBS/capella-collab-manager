@@ -57,9 +57,7 @@
           mat-flat-button
           color="primary"
           type="submit"
-          [disabled]="
-            !form.controls.tool_id.value || !form.controls.version_id.value
-          "
+          [disabled]="!(canCreateSession && form.valid)"
         >
           Request a Persistent Workspace
           <mat-icon>keyboard_arrow_right</mat-icon>
