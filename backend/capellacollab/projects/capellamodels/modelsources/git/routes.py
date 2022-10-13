@@ -8,6 +8,7 @@ import sqlalchemy.orm.session
 from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
 
+import capellacollab.projects.capellamodels.crud as capella_model_crud
 import capellacollab.projects.crud as projects_crud
 from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
@@ -15,11 +16,9 @@ from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
 from capellacollab.core.database import get_db
-from capellacollab.projects.capellamodels.modelsources.git.crud import (
-    get_primary_gitmodel_of_capellamodels,
-)
 from capellacollab.projects.capellamodels.modelsources.git.models import (
     NewGitSource,
+    ResponseGitModel,
     ResponseGitSource,
 )
 from capellacollab.settings.modelsources.git.core import get_remote_refs
@@ -95,7 +94,7 @@ def create_source(
 def get_revisions_of_primary_git_model(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
-    git_model = get_primary_gitmodel_of_capellamodels(db, project)
+    git_model = crud.get_primary_gitmodel_of_capellamodels(db, project)
     if not git_model:
         raise HTTPException(
             status_code=500,
@@ -119,3 +118,24 @@ def get_revisions_of_primary_git_model(
     log.debug("Determined default branch: %s", remote_refs["default"])
 
     return remote_refs
+
+
+# FIXME: Add verification
+@router.get("/git-models", response_model=list[ResponseGitModel])
+def get_git_models(
+    project_name: str,
+    model_slug: str,
+    db: Session = Depends(get_db),
+    token: JWTBearer = Depends(JWTBearer()),
+):
+    project_instance = projects_crud.get_project_by_name(db, project_name)
+    capella_model = capella_model_crud.get_model_by_slug(
+        db, project_instance.slug, model_slug
+    )
+    git_models = crud.get_gitmodels_of_capellamodels(db, capella_model.id)
+
+    response_git_models: list[ResponseGitSource] = [
+        ResponseGitModel.from_orm(git_model) for git_model in git_models
+    ]
+
+    return response_git_models
