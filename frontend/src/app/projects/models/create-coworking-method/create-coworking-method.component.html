@@ -29,6 +29,11 @@
                 >{{ gitSetting.url }}</mat-option
               >
             </mat-select>
+            <mat-error
+              *ngIf="form.controls.urls.controls.baseUrl.errors?.required"
+            >
+              A base integration URL is required
+            </mat-error>
           </mat-form-field>
         </fieldset>
         <fieldset>
@@ -66,16 +71,6 @@
             <mat-card-content *ngIf="!resultUrl.length" class="error"
               >A resulting URL is required</mat-card-content
             >
-            <mat-card-content
-              class="error"
-              *ngIf="
-                availableGitInstances.length &&
-                selectedGitInstance === undefined &&
-                resultUrl.length
-              "
-            >
-              A base integration URL is required
-            </mat-card-content>
             <mat-card-content
               class="error"
               *ngIf="form.controls.urls.errors?.urlSafetyError && resultUrl"
