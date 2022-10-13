@@ -57,8 +57,7 @@ class PostSessionRequest(BaseModel):
 
 class PostReadonlySessionRequest(BaseModel):
     project_slug: str
-    tool: int
-    version: int
+    tool_version: int
 
     class Config:
         orm_mode = True

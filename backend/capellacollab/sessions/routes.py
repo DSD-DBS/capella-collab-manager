@@ -123,7 +123,7 @@ def request_session(
     models = [
         m
         for m in project.models
-        if m.git_models and m.version_id == body.version
+        if m.git_models and m.version_id == body.tool_version
     ]
     if not models:
         raise HTTPException(
@@ -134,7 +134,7 @@ def request_session(
             },
         )
 
-    docker_image = get_readonly_image_for_version(db, body.version)
+    docker_image = get_readonly_image_for_version(db, body.tool_version)
 
     git_model = models[0].git_models[0]
 

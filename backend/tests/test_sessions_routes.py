@@ -1,4 +1,4 @@
-tests/test_sessions_routes.py# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 from __future__ import annotations
@@ -198,7 +198,7 @@ def test_create_readonly_session_as_user(client, db, username, kubernetes):
         tool=tool,
         version=version,
     )
-    git_model = add_gitmodel_to_capellamodel(
+    add_gitmodel_to_capellamodel(
         db,
         model,
         PostGitModel(
@@ -210,8 +210,7 @@ def test_create_readonly_session_as_user(client, db, username, kubernetes):
         "/api/v1/sessions/readonly",
         json={
             "project_slug": project.slug,
-            "tool": tool.id,
-            "version": version.id,
+            "tool_version": version.id,
         },
     )
 
