@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
 
@@ -26,6 +27,7 @@ class Tool(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     docker_image_template = Column(String)
+    readonly_docker_image_template = Column(String)
 
     versions = relationship("Version", back_populates="tool")
     natures = relationship("Nature", back_populates="tool")

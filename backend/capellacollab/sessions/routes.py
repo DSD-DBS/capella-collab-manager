@@ -20,6 +20,7 @@ from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db
+from capellacollab.projects.crud import get_project_by_slug
 from capellacollab.projects.users.crud import ProjectUserRole
 from capellacollab.sessions import database, guacamole
 from capellacollab.sessions.files import routes as files
