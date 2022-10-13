@@ -9,6 +9,7 @@ import {
   Project,
   ProjectService,
 } from 'src/app/services/project/project.service';
+import { SessionService } from '../../../services/session/session.service';
 
 @Component({
   selector: 'app-model-overview',
@@ -21,7 +22,8 @@ export class ModelOverviewComponent implements OnInit {
 
   constructor(
     public projectService: ProjectService,
-    public modelService: ModelService
+    public modelService: ModelService,
+    public sessionService: SessionService
   ) {}
 
   ngOnInit(): void {
@@ -37,5 +39,17 @@ export class ModelOverviewComponent implements OnInit {
       return 'Git';
     }
     return 'Unset';
+  }
+
+  requestSession() {
+    console.log("How 'bout a session?");
+    if (!this.models) {
+      console.log('no models?', this.models);
+      return;
+    }
+    // let model = this.models[0];
+
+    console.log('create session:');
+    this.sessionService.createReadonlySession('default', 2).subscribe();
   }
 }

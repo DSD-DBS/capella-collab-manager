@@ -20,6 +20,16 @@ export class SessionService {
     return this.http.get<Session[]>(this.BACKEND_URL_PREFIX);
   }
 
+  createReadonlySession(
+    project_slug: string,
+    version_id: number
+  ): Observable<Session> {
+    return this.http.post<Session>(`${this.BACKEND_URL_PREFIX}readonly`, {
+      project_slug,
+      version_id,
+    });
+  }
+
   createPersistentSession(
     toolId: number,
     versionId: number
