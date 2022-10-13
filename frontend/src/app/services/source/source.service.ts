@@ -8,12 +8,21 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
-export interface Source {
+export interface BaseGitModel {
   path: string;
-  entrypoint: string;
   revision: string;
+  entrypoint: string;
   username?: string;
+}
+
+export interface CreateGitModel extends BaseGitModel {
   password?: string;
+}
+
+export interface GetGitModel extends BaseGitModel {
+  id: number;
+  primary: boolean;
+  password: boolean;
 }
 
 @Injectable({
@@ -22,21 +31,14 @@ export interface Source {
 export class SourceService {
   constructor(private http: HttpClient) {}
 
-  source: Source | null = null;
-  sources: Source[] | null = null;
-
   addGitSource(
     project_name: string,
     model_slug: string,
-    source: Source
-  ): Observable<Source> {
-    return this.http.post<Source>(
+    source: CreateGitModel
+  ): Observable<GetGitModel> {
+    return this.http.post<GetGitModel>(
       environment.backend_url +
-        '/projects/' +
-        project_name +
-        '/models/' +
-        model_slug +
-        '/git/',
+        `/projects/${project_name}/models/${model_slug}/git/`,
       source
     );
   }

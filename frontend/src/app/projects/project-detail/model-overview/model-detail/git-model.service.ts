@@ -6,7 +6,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { GetSource } from 'src/app/services/source/source.service';
+import { GetGitModel } from 'src/app/services/source/source.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -18,13 +18,13 @@ export class GitModelService {
 
   constructor(private http: HttpClient) {}
 
-  private _gitModels = new BehaviorSubject<Array<GetSource>>([]);
+  private _gitModels = new BehaviorSubject<Array<GetGitModel>>([]);
 
   readonly gitModels = this._gitModels.asObservable();
 
   loadGitSources(project_name: string, model_slug: string): void {
     this.http
-      .get<Array<GetSource>>(
+      .get<Array<GetGitModel>>(
         this.base_url.toString() +
           `/projects/${project_name}/models/${model_slug}/git/git-models`
       )

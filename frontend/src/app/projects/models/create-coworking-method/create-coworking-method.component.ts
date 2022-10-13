@@ -19,7 +19,10 @@ import {
   Revisions,
 } from 'src/app/services/git/git.service';
 import { ModelService } from 'src/app/services/model/model.service';
-import { Source, SourceService } from 'src/app/services/source/source.service';
+import {
+  CreateGitModel,
+  SourceService,
+} from 'src/app/services/source/source.service';
 import {
   GitSetting,
   GitSettingsService,
@@ -189,7 +192,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
             password: this.form.value.credentials!.password,
             revision: this.form.value.revision!,
             entrypoint: this.form.value.entrypoint,
-          } as Source
+          } as CreateGitModel
         )
         .subscribe(() => {
           this.create.emit({ created: true });
