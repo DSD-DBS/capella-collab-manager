@@ -7,9 +7,6 @@ from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
-from capellacollab.settings.modelsources.t4c.repositories.models import (
-    DatabaseT4CRepository,
-)
 
 
 class DatabaseT4CModel(Base):
@@ -30,3 +27,11 @@ class CreateT4CModel(BaseModel):
     name: str
     t4c_instance_id: int
     t4c_repository_id: int
+
+
+class T4CModel(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        orm_mode = True

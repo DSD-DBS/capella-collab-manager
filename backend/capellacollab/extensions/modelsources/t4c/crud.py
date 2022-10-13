@@ -2,9 +2,14 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from capellacollab.extensions.modelsources.t4c.models import DatabaseT4CModel
+from capellacollab.settings.modelsources.t4c.repositories.models import (
+    DatabaseT4CRepository,
+    T4CRepositoryWithModels,
+)
 
 
 def get_t4c_model(db: Session, name: str, model_id: int):
@@ -31,6 +36,12 @@ def get_all_t4c_models(db: Session, model_id: int):
         .filter(DatabaseT4CModel.model_id == model_id)
         .all()
     )
+
+
+def list_t4c_models_of_repository(
+    db: Session, repository: DatabaseT4CRepository
+):
+    return T4CRepositoryWithModels.from_orm(repository)
 
 
 def create_t4c_model(
