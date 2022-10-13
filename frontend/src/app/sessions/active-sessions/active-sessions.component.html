@@ -14,7 +14,7 @@
   </div>
 </mat-card>
 
-<mat-card *ngFor="let session of ownSessionService.sessions; let i = index">
+<mat-card *ngFor="let session of ownSessionService.sessions">
   <div class="type">
     <h2 *ngIf="session.type === 'persistent'">Persistent workspace session</h2>
     <h2 *ngIf="session.type === 'readonly'">
