@@ -18,3 +18,8 @@
 .primary {
   background-color: var(--primary-color);
 }
+
+.mat-card-content h3 {
+  margin: 2px 4px;
+  text-align: center;
+}
