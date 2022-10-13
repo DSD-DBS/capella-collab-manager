@@ -47,14 +47,9 @@ export class WorkspaceComponent {
         this.form.controls.tool_id.value,
         this.form.controls.version_id.value
       )
-      .subscribe(
-        (res) => {
-          this.canCreateSession = true;
-        },
-        () => {
-          this.canCreateSession = true;
-        }
-      );
+      .subscribe({
+        complete() { this.canCreateSession = true; }
+      });
   }
 
   getVersionsForTool(tool_id: number | null): Version[] {
