@@ -40,14 +40,14 @@ def get_model_by_id(db: Session, id_: int) -> DatabaseCapellaModel:
 
 
 def get_model_by_slug(
-    db: Session, project_slug: str, slug: str
+    db: Session, project_slug: str, model_slug: str
 ) -> DatabaseCapellaModel:
     project = projects_crud.get_project_by_slug(db, project_slug)
     model = (
         db.query(DatabaseCapellaModel)
         .filter(
             DatabaseCapellaModel.project_id == project.id,
-            DatabaseCapellaModel.slug == slug,
+            DatabaseCapellaModel.slug == model_slug,
         )
         .first()
     )
