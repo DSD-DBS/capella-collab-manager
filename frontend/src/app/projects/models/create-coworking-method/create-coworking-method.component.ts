@@ -37,7 +37,6 @@ import {
   GitSetting,
   GitSettingsService,
 } from 'src/app/services/settings/git-settings.service';
-import { Source, SourceService } from 'src/app/services/source/source.service';
 
 @Component({
   selector: 'app-create-coworking-method',
@@ -195,7 +194,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
             password: this.form.value.credentials!.password,
             revision: this.form.value.revision!,
             entrypoint: this.form.value.entrypoint,
-          } as Source
+          } as CreateGitModel
         )
         .subscribe(() => {
           this.create.emit({ created: true });

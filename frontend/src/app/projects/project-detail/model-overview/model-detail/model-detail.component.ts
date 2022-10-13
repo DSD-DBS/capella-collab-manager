@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
-import { GetSource } from 'src/app/services/source/source.service';
+import { GetGitModel } from 'src/app/services/source/source.service';
 import { GitModelService } from './git-model.service';
 
 @Component({
@@ -16,7 +16,7 @@ import { GitModelService } from './git-model.service';
   styleUrls: ['./model-detail.component.css'],
 })
 export class ModelDetailComponent implements OnInit {
-  public gitModels: Array<GetSource> = [];
+  public gitModels: Array<GetGitModel> = [];
 
   private gitModelsSubscription?: Subscription;
 
