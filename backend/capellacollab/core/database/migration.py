@@ -76,7 +76,7 @@ def create_tools(db):
     capella = Tool(
         name="Capella",
         docker_image_template=f"{registry}/t4c/client/remote/$version:prod",
-        readonly_docker_image_template=f"{registry}/t4c/client/readonly/$version:prod",
+        readonly_docker_image_template=f"{registry}/capella/readonly/$version:prod",
     )
     papyrus = Tool(
         name="Papyrus",
