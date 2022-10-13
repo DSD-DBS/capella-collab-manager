@@ -90,33 +90,37 @@ def list_t4c_repositories(
                 )
             ],
         )
-    server_repositories.sort(key=lambda r: r["name"])
-    db_repositories.sort(key=lambda r: r.name)
 
-    i = j = 0
-    while i < len(db_repositories) and j < len(server_repositories):
-        if db_repositories[i].name < server_repositories[j]["name"]:
-            i += 1
-            continue
-        if db_repositories[i].name > server_repositories[j]["name"]:
-            j += 1
-            continue
-        db_repositories[i].status = server_repositories[j]["status"]
-        del server_repositories[j]
-        i += 1
+    server_repositories_dict = {
+        repo["name"]: repo for repo in server_repositories
+    }
+    db_repositories_dict = {repo.name: repo for repo in db_repositories}
 
-    for repo in server_repositories:
-        new_repo = CreateT4CRepository(name=repo["name"])
+    server_repositories_names = set(server_repositories_dict.keys())
+    db_repositories_names = set(db_repositories_dict.keys())
+
+    # Repository exists on the server and in the database
+    for repo in server_repositories_names.intersection(db_repositories_names):
+        db_repositories_dict[repo].status = server_repositories_dict[repo][
+            "status"
+        ]
+
+    # Repository exists in the database, but not on the server
+    for repo in db_repositories_names - server_repositories_names:
+        db_repositories_dict[repo].status = Status.NOT_FOUND
+
+    # Repository exists on the server, but not in the database
+    for repo in server_repositories_names - db_repositories_names:
+        new_repo = CreateT4CRepository(name=repo)
         db_repo = T4CRepository.from_orm(
             crud.create_t4c_repository(new_repo, instance, db)
         )
-        db_repo.status = repo["status"]
-        db_repositories.append(db_repo)
+        db_repo.status = db_repositories_dict[repo]["status"]
+        db_repositories_dict[repo] = db_repo
 
-    for repo in [repo for repo in db_repositories if not repo.status]:
-        repo.status = Status.NOT_FOUND
-
-    return T4CRepositories(payload=sorted(db_repositories, key=lambda r: r.id))
+    return T4CRepositories(
+        payload=sorted(db_repositories_dict.values(), key=lambda r: r.id)
+    )
 
 
 @router.post(
