@@ -57,7 +57,7 @@ def load_instance_repository(
                 "reason": f"Repository {repository.name} is not part of the instance {instance.name}."
             },
         )
-    return instance, repository
+    return repository
 
 
 @router.get(
@@ -164,11 +164,9 @@ def delete_t4c_repository(
     response: Response,
     token: JWTBearer = Depends(JWTBearer()),
     db: Session = Depends(get_db),
-    objects: tuple[DatabaseT4CInstance, DatabaseT4CRepository] = Depends(
-        load_instance_repository
-    ),
+    instance: DatabaseT4CInstance = Depends(load_instance),
+    repository: DatabaseT4CRepository = Depends(load_instance_repository),
 ) -> None:
-    (instance, repository) = objects
     verify_admin(token, db)
     crud.delete_4c_repository(repository, db)
     try:
@@ -214,12 +212,10 @@ def delete_t4c_repository(
 def start_t4c_repository(
     token: JWTBearer = Depends(JWTBearer()),
     db: Session = Depends(get_db),
-    objects: tuple[DatabaseT4CInstance, DatabaseT4CRepository] = Depends(
-        load_instance_repository
-    ),
+    instance: DatabaseT4CInstance = Depends(load_instance),
+    repository: DatabaseT4CRepository = Depends(load_instance_repository),
 ) -> None:
     verify_admin(token, db)
-    (instance, repository) = objects
     interface.start_repository(instance, repository.name)
     return None
 
@@ -232,12 +228,10 @@ def start_t4c_repository(
 def stop_t4c_repository(
     token: JWTBearer = Depends(JWTBearer()),
     db: Session = Depends(get_db),
-    objects: tuple[DatabaseT4CInstance, DatabaseT4CRepository] = Depends(
-        load_instance_repository
-    ),
+    instance: DatabaseT4CInstance = Depends(load_instance),
+    repository: DatabaseT4CRepository = Depends(load_instance_repository),
 ) -> None:
     verify_admin(token, db)
-    (instance, repository) = objects
     interface.stop_repository(instance, repository.name)
     return None
 
@@ -250,11 +244,9 @@ def stop_t4c_repository(
 def recreate_t4c_repository(
     token: JWTBearer = Depends(JWTBearer()),
     db: Session = Depends(get_db),
-    objects: tuple[DatabaseT4CInstance, DatabaseT4CRepository] = Depends(
-        load_instance_repository
-    ),
+    instance: DatabaseT4CInstance = Depends(load_instance),
+    repository: DatabaseT4CRepository = Depends(load_instance_repository),
 ) -> None:
     verify_admin(token, db)
-    (instance, repository) = objects
     interface.create_repository(instance, repository.name)
     return None
