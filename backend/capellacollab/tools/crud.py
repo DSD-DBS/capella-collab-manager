@@ -75,6 +75,6 @@ def create_type(db: Session, tool_id: int, model_type: str):
     db.commit()
 
 
-def image_for_tool_and_version(db: Session, tool_id: int, version_id: int):
+def get_image_for_tool_version(db: Session, version_id: int):
     version = get_version_by_id(version_id, db)
     return version.tool.docker_image_template.replace("$version", version.name)

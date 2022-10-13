@@ -42,7 +42,7 @@ from capellacollab.sessions.sessions import (
     get_last_seen,
     inject_attrs_in_sessions,
 )
-from capellacollab.tools.crud import image_for_tool_and_version
+from capellacollab.tools.crud import get_image_for_tool_version
 
 from .files import routes as files
 
@@ -151,7 +151,7 @@ def request_session(
         git_depth=depth,
     )
 
-    return create_guacamole_session(
+    return create_database_and_guacamole_session(
         WorkspaceType.READONLY,
         session,
         owner,
@@ -191,7 +191,7 @@ def request_session(
             },
         )
 
-    docker_image = image_for_tool_and_version(db, body.tool, body.version)
+    docker_image = get_image_for_tool_version(db, body.version)
 
     # TODO: Find the right container to deploy
     session = operator.start_persistent_session(
@@ -201,12 +201,12 @@ def request_session(
         repositories=[],
     )
 
-    return create_guacamole_session(
+    return create_database_and_guacamole_session(
         WorkspaceType.PERSISTENT, session, owner, rdp_password, db
     )
 
 
-def create_guacamole_session(
+def create_database_and_guacamole_session(
     type: WorkspaceType, session, owner, rdp_password, db, repository=""
 ):
     guacamole_username = generate_password()
