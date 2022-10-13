@@ -19,25 +19,38 @@ from capellacollab.extensions.modelsources.t4c import crud
 from capellacollab.extensions.modelsources.t4c.injectables import (
     load_project_model,
 )
-from capellacollab.extensions.modelsources.t4c.models import CreateT4CModel
+from capellacollab.extensions.modelsources.t4c.models import (
+    CreateT4CModel,
+    T4CModel,
+)
 from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.models import DatabaseProject
-from capellacollab.settings.modelsources.t4c import crud as t4c_instance_crud
 from capellacollab.settings.modelsources.t4c.injectables import load_instance
-from capellacollab.settings.modelsources.t4c.models import DatabaseT4CInstance
-from capellacollab.settings.modelsources.t4c.repositories import (
-    crud as t4c_repository_crud,
-)
 from capellacollab.settings.modelsources.t4c.repositories.models import (
-    DatabaseT4CRepository,
+    T4CRepositoryWithModels,
 )
 from capellacollab.settings.modelsources.t4c.repositories.routes import (
     load_instance_repository,
 )
 
-from . import models as schema_projects
-
 router = APIRouter()
+
+
+@router.get(
+    "/",
+    responses=AUTHENTICATION_RESPONSES,
+    response_model=list[T4CModel],
+)
+def list_t4c_models(
+    t4c_instance_id: int,
+    t4c_repository_id: int,
+    db: Session = Depends(database.get_db),
+    token: JWTBearer = Depends(JWTBearer()),
+):
+    verify_admin(token, db)
+    instance = load_instance(t4c_instance_id, db)
+    repository = load_instance_repository(t4c_repository_id, db, instance)[1]
+    return T4CRepositoryWithModels.from_orm(repository).models
 
 
 @router.post(

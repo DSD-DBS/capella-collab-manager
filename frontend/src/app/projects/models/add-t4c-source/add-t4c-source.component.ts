@@ -19,11 +19,15 @@ import {
   T4CRepoService,
   T4CRepository,
 } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
-import { ProjectService } from 'src/app/services/project/project.service';
-import { ModelService } from 'src/app/services/model/model.service';
+import {
+  Project,
+  ProjectService,
+} from 'src/app/services/project/project.service';
+import { Model, ModelService } from 'src/app/services/model/model.service';
 import { BehaviorSubject, filter, switchMap, tap } from 'rxjs';
 import {
   CreateT4CModel,
+  T4CModel,
   T4cModelService,
 } from '../../../services/source/t4c-model.service';
 
@@ -59,6 +63,17 @@ export class AddT4cSourceComponent implements OnInit {
       : { error: true };
   }
 
+  private _models = new BehaviorSubject<T4CModel[]>([]);
+  get models() {
+    return this._models.getValue();
+  }
+
+  uniqueNameValidator(control: AbstractControl): ValidationErrors | null {
+    return this.models.map((m) => m.name).indexOf(control.value) >= 0
+      ? { alreadyUsed: true }
+      : null;
+  }
+
   public form = new FormGroup({
     t4c_instance_id: new FormControl(null as null | number, [
       Validators.required,
@@ -68,7 +83,10 @@ export class AddT4cSourceComponent implements OnInit {
       Validators.required,
       this.repositoryValidator.bind(this),
     ]),
-    name: new FormControl({ value: '', disabled: true }, Validators.required),
+    name: new FormControl({ value: '', disabled: true }, [
+      Validators.required,
+      this.uniqueNameValidator.bind(this),
+    ]),
   });
 
   constructor(
@@ -103,22 +121,37 @@ export class AddT4cSourceComponent implements OnInit {
     });
 
     this.form.controls.t4c_repository_id.valueChanges
-      .pipe(filter((value) => this.form.controls.t4c_repository_id.valid))
-      .subscribe(() => {
-        this.form.controls.name.enable();
+      .pipe(
+        filter((value) => this.form.controls.t4c_repository_id.valid),
+        tap(() => {
+          this.form.controls.name.enable();
+          this._models.next([]);
+        }),
+        switchMap((id) =>
+          this.t4cModelService.listT4CModels(
+            this.projectService.project!.slug,
+            this.modelService.model!.slug,
+            this.currentRepo!.instance_id,
+            this.currentRepo!.id
+          )
+        )
+      )
+      .subscribe((models) => {
+        this._models.next(models);
       });
 
     this.form.controls.t4c_repository_id.valueChanges
       .pipe(filter((value) => !this.form.controls.t4c_repository_id.valid))
       .subscribe(() => {
         this.form.controls.name.disable();
+        this._models.next([]);
       });
   }
 
-  get currentRepo() {
+  get currentRepo(): T4CRepository | undefined {
     return this.repositories.filter(
       (r) => r.id == this.form.value.t4c_repository_id
-    )[0]?.name;
+    )[0];
   }
 
   onSubmit() {

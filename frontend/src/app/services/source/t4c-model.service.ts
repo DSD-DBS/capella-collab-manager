@@ -18,6 +18,18 @@ export class T4cModelService {
     return `${environment.backend_url}/projects/extensions/modelsources/t4c/project/${project_slug}/model/${model_slug}/`;
   }
 
+  listT4CModels(
+    project_slug: string,
+    model_slug: string,
+    t4c_instance_id: number,
+    t4c_repository_id: number
+  ): Observable<T4CModel[]> {
+    return this.http.get<T4CModel[]>(
+      this.urlFactory(project_slug, model_slug),
+      { params: { t4c_instance_id, t4c_repository_id } }
+    );
+  }
+
   createT4CModel(
     project_slug: string,
     model_slug: string,
@@ -34,4 +46,11 @@ export type CreateT4CModel = {
   t4c_instance_id: number;
   t4c_repository_id: number;
   name: string;
+};
+
+export type T4CModel = {
+  t4c_instance_id: number;
+  t4c_repository_id: number;
+  name: string;
+  id: number;
 };

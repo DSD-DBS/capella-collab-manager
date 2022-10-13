@@ -54,10 +54,14 @@
             [disabled]="!form.controls.t4c_repository_id.valid"
             [matAutocomplete]="auto"
           />
+          <mat-error *ngIf="form.controls.name.errors?.alreadyUsed"
+            >The name {{ form.value.name }} is already used. Consider using
+            another repository.</mat-error
+          >
         </mat-form-field>
         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-          <mat-option *ngIf="currentRepo" [value]="currentRepo">{{
-            currentRepo
+          <mat-option *ngIf="currentRepo" [value]="currentRepo.name">{{
+            currentRepo.name
           }}</mat-option>
         </mat-autocomplete>
       </fieldset>
