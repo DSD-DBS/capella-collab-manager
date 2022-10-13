@@ -101,7 +101,7 @@ def request_session(
 
     owner = get_username(token)
 
-    log.info("Starting session creation for user %s", owner)
+    log.info("Starting persistent session creation for user %s", owner)
 
     existing_user_sessions = database.get_sessions_for_user(db, owner)
 
