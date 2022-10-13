@@ -10,9 +10,9 @@ from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
-import capellacollab.projects.capellamodels.models
-
 # Import required for sqlalchemy
+import capellacollab.projects.capellamodels.models
+import capellacollab.projects.users.models
 from capellacollab.core.database import Base
 
 
@@ -46,7 +46,7 @@ class DatabaseProject(Base):
 
     id = Column(Integer, unique=True, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
-    slug = Column(String, unique=True, index=True)
+    slug = Column(String, unique=True, index=True, nullable=False)
     description = Column(String)
     users = relationship(
         "ProjectUserAssociation",

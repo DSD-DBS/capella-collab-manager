@@ -31,7 +31,6 @@ class HealthcheckFilter(logging.Filter):
 
 logging.getLogger("uvicorn.access").addFilter(HealthcheckFilter())
 log.addFilter(HealthcheckFilter())
-logging.getLogger(__name__).setLevel(config["logging"]["level"])
 
 app = FastAPI(title="Capella Collaboration")
 

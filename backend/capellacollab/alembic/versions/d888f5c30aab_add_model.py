@@ -54,6 +54,7 @@ def upgrade():
         sa.PrimaryKeyConstraint("id"),
     )
     op.rename_table("capella_models", "models")
+
     with op.batch_alter_table("models") as batch_op:
         batch_op.add_column(sa.Column("slug", sa.String(), nullable=True))
         batch_op.add_column(
@@ -65,21 +66,23 @@ def upgrade():
         )
         batch_op.add_column(sa.Column("type_id", sa.Integer(), nullable=True))
 
-        t_models = sa.Table(
-            "models",
-            sa.MetaData(),
-            sa.Column("id", sa.Integer()),
-            sa.Column("name", sa.String()),
-            sa.Column("slug", sa.String()),
-            sa.Column("project_name", sa.String()),
-            sa.Column("project_id", sa.Integer()),
-        )
-        t_projects = sa.Table(
-            "projects",
-            sa.MetaData(),
-            sa.Column("id", sa.Integer()),
-            sa.Column("name", sa.String()),
-        )
+    t_models = sa.Table(
+        "models",
+        sa.MetaData(),
+        sa.Column("id", sa.Integer()),
+        sa.Column("name", sa.String()),
+        sa.Column("slug", sa.String()),
+        sa.Column("project_name", sa.String()),
+        sa.Column("project_id", sa.Integer()),
+    )
+    t_projects = sa.Table(
+        "projects",
+        sa.MetaData(),
+        sa.Column("id", sa.Integer()),
+        sa.Column("name", sa.String()),
+    )
+
+    with op.batch_alter_table("models") as batch_op:
         joined = t_models.join(
             t_projects, t_models.c.project_name == t_projects.c.name
         )
@@ -92,6 +95,9 @@ def upgrade():
             ).select_from(joined)
         )
 
+        # Names were not unique before, therefore conflicts can occur.
+        # Model slugs have to unique per project.
+        # If there is a conflicts with slugs, they get a suffix with a counting number.
         existing_slugs = {}
         for id_, name, project_id in models:
             if not project_id in existing_slugs:
@@ -101,7 +107,7 @@ def upgrade():
             slug = base_slug
             index = 0
 
-            while slug in existing_slugs:
+            while slug in existing_slugs[project_id]:
                 slug = f"{base_slug}-{index}"
                 index += 1
 

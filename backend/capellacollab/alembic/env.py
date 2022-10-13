@@ -6,6 +6,8 @@ from logging.config import fileConfig
 
 os.environ["ALEMBIC_CONTEXT"] = "1"
 
+import logging
+
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
@@ -15,23 +17,27 @@ from capellacollab.config import config as cfg
 # access to the values within the .ini file in use.
 config = context.config
 
+logging.basicConfig(level=cfg["logging"]["level"])
+logging.getLogger("capellacollab").setLevel("WARNING")
+log = logging.getLogger("alembic.database")
+
 # this will overwrite the ini-file sqlalchemy.url path
 # with the path given in the config of the main code
 if not config.get_main_option("sqlalchemy.url"):
     config.set_main_option("sqlalchemy.url", cfg["database"]["url"])
 
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
-if config.attributes.get("configure_logger", True):
-    fileConfig(config.config_file_name)
-
 # Import models
-import capellacollab.sql_models  # isort:skip
-from capellacollab.sql_models import extensions  # isort:skip
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 from capellacollab.core.database import Base
+
+# For debugging purposes:
+log.debug(
+    "Detected %d database tables: %s",
+    len(Base.metadata.tables.keys()),
+    ", ".join(Base.metadata.tables.keys()),
+)
 
 target_metadata = Base.metadata
 # target_metadata = None

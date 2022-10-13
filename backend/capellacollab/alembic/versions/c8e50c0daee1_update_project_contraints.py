@@ -24,7 +24,10 @@ def upgrade():
     # Add description, editing_mode and project_type to project table
 
     op.add_column(
-        "projects", sa.Column("description", sa.String(), nullable=True)
+        "projects",
+        sa.Column(
+            "description", sa.String(), nullable=True, server_default=""
+        ),
     )
 
 

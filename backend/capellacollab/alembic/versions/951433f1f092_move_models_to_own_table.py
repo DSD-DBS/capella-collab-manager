@@ -28,7 +28,9 @@ def upgrade():
         "capella_models",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(), nullable=True),
-        sa.Column("description", sa.String(), nullable=True),
+        sa.Column(
+            "description", sa.String(), nullable=True, server_default=""
+        ),
         sa.Column(
             "editing_mode",
             sa.Enum("T4C", "GIT", name="editingmode"),

@@ -40,6 +40,9 @@ def upgrade():
             t_projects.c.name,
         )
     )
+
+    # Names were not unique before, therefore conflicts can occur.
+    # If there is a conflicts with slugs, they get a suffix with a counting number.
     existing_slugs = []
     for id_, name in projects:
         base_slug = slugify(name)
