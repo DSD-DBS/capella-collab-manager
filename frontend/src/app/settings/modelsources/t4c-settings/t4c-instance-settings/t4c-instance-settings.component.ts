@@ -135,7 +135,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
     this.repositoryList.selectedOptions.clear();
     delete repository.status;
     this.t4cRepoService
-      .startRepository(repository.instance_id, repository.id)
+      .startRepository(repository.instance.id, repository.id)
       .pipe(
         tap(() => (repository.status = 'ONLINE')),
         switchMap(() =>
@@ -151,7 +151,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
     this.repositoryList.selectedOptions.clear();
     delete repository.status;
     this.t4cRepoService
-      .stopRepository(repository.instance_id, repository.id)
+      .stopRepository(repository.instance.id, repository.id)
       .pipe(
         tap(() => (repository.status = 'OFFLINE')),
         switchMap(() =>
@@ -167,7 +167,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
     this.repositoryList.selectedOptions.clear();
     delete repository.status;
     this.t4cRepoService
-      .recreateRepository(repository.instance_id, repository.id)
+      .recreateRepository(repository.instance.id, repository.id)
       .pipe(
         tap(() => (repository.status = 'ONLINE')),
         switchMap(() =>

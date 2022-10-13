@@ -124,7 +124,6 @@ class Status(str, enum.Enum):
 
 class T4CRepository(CreateT4CRepository):
     id: int
-    instance_id: int
     instance: T4CInstance
     status: t.Optional[Status]
 

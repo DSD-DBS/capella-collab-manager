@@ -37,7 +37,7 @@ export class T4CRepoDeletionDialogComponent {
   remoteRepository(): void {
     if (this.repositoryNameForm.valid) {
       this.repoService
-        .deleteRepository(this.repo.instance_id, this.repo.id)
+        .deleteRepository(this.repo.instance.id, this.repo.id)
         .subscribe(() => {
           this.dialogRef.close(true);
         });

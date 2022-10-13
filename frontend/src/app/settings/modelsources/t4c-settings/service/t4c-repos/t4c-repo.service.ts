@@ -83,7 +83,7 @@ export type CreateT4CRepository = {
 
 export type T4CRepository = CreateT4CRepository & {
   id: number;
-  instance_id: number;
+  instance: T4CInstance;
 };
 
 export type T4CServerRepository = T4CRepository & {
