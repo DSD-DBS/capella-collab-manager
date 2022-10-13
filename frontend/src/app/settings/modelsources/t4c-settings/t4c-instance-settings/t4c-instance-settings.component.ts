@@ -40,7 +40,6 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
   @Input() instance?: T4CInstance;
 
   constructor(
-    private t4cSyncService: T4CSyncService,
     public t4cRepoService: T4CRepoService,
     private dialog: MatDialog
   ) {}
