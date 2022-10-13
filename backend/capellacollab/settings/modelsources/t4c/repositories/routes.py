@@ -158,7 +158,7 @@ def create_t4c_repository(
 @router.delete(
     "/{t4c_repository_id}",
     responses=AUTHENTICATION_RESPONSES,
-    response_model=ResponseModel,
+    response_model=t.Optional[ResponseModel],
 )
 def delete_t4c_repository(
     response: Response,
