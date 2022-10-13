@@ -8,7 +8,6 @@ from pydantic import BaseModel, validator
 from sqlalchemy import CheckConstraint, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-# required for sqlalchemy
 from capellacollab.core.database import Base
 from capellacollab.core.models import ResponseModel
 
