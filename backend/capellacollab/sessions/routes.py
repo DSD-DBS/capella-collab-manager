@@ -166,7 +166,7 @@ def request_session(
     response_model=AdvancedSessionResponse,
     responses=AUTHENTICATION_RESPONSES,
 )
-def request_session(
+def request_persistent_session(
     body: PostPersistentSessionRequest,
     db: Session = Depends(get_db),
     operator: Operator = Depends(get_operator),
