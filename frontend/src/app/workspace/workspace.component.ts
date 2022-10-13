@@ -37,10 +37,7 @@ export class WorkspaceComponent {
   }
 
   requestSession() {
-    if (
-      !this.form.controls.tool_id.value ||
-      !this.form.controls.version_id.value
-    ) {
+    if (!this.form.valid) {
       return;
     }
 
