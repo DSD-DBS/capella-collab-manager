@@ -18,7 +18,12 @@ Please type in the name of the repository to confirm the deletion: <br />
 <form>
   <mat-form-field appearance="fill">
     <mat-label>Repository name</mat-label>
-    <input matInput [formControl]="repositoryNameForm" />
+    <input
+      (paste)="(false)"
+      matInput
+      [formControl]="repositoryNameForm"
+      [placeholder]="repo.name"
+    />
     <mat-error *ngIf="repositoryNameForm.errors?.required">
       You have to type in the repository name!
     </mat-error>
