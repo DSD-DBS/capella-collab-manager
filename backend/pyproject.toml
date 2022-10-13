@@ -189,6 +189,7 @@ enable = [
   "use-symbolic-message-instead",
   "useless-suppression",
 ]
+extension-pkg-whitelist = "pydantic" # https://github.com/pydantic/pydantic/issues/1961
 
 [tool.pytest.ini_options]
 addopts = """
