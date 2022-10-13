@@ -100,7 +100,7 @@ def list_t4c_repositories(
     db_repositories_names = set(db_repositories_dict.keys())
 
     # Repository exists on the server and in the database
-    for repo in server_repositories_names.intersection(db_repositories_names):
+    for repo in server_repositories_names & db_repositories_names:
         db_repositories_dict[repo].status = server_repositories_dict[repo][
             "status"
         ]
