@@ -30,6 +30,7 @@ import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/e
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
 import { HomeComponent } from './workspaces/home.component';
+import { CreateCoworkingMethodComponent } from './projects/models/create-coworking-method/create-coworking-method.component';
 
 const routes: Routes = [
   {
@@ -56,7 +57,6 @@ const routes: Routes = [
       {
         path: 'project/:project',
         component: ProjectWrapperComponent,
-        canActivate: [AuthGuardService],
         children: [
           {
             path: '',
@@ -73,6 +73,14 @@ const routes: Routes = [
               {
                 path: '',
                 component: ModelDetailComponent,
+              },
+              {
+                path: 'git-model/create',
+                component: CreateCoworkingMethodComponent,
+              },
+              {
+                path: 'git-model/:id',
+                component: CreateCoworkingMethodComponent,
               },
             ],
           },
