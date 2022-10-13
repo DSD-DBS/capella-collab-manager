@@ -23,17 +23,16 @@ export interface Instance {
   providedIn: 'root',
 })
 export class GitService {
-  base_url = new URL('git-utils/', environment.backend_url + '/');
+  base_url = environment.backend_url + '/git-utils/';
 
   constructor(private http: HttpClient) {}
 
   instance: Instance | null = null;
 
   fetch(model_slug: string, credentials: Credentials): Observable<Instance> {
-    let url = new URL('revisions/', this.base_url);
     return new Observable<Instance>((subscriber) => {
       this.http
-        .get<Instance>(url.toString(), {
+        .get<Instance>(this.base_url + 'revisions/', {
           params: {
             model_slug,
             url: credentials.url,

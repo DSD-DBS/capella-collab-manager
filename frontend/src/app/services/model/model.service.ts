@@ -32,7 +32,7 @@ export interface Model {
   providedIn: 'root',
 })
 export class ModelService {
-  base_url = new URL('projects/', environment.backend_url + '/');
+  base_url = environment.backend_url + '/projects/';
 
   _model = new BehaviorSubject<Model | undefined>(undefined);
   _models = new BehaviorSubject<Model[] | undefined>(undefined);
@@ -47,18 +47,20 @@ export class ModelService {
   constructor(private http: HttpClient) {}
 
   list(project_slug: string): Observable<Model[]> {
-    let url = new URL(`${project_slug}/models/`, this.base_url);
-    return this.http.get<Model[]>(url.toString());
+    return this.http.get<Model[]>(`${this.base_url}${project_slug}/models/`);
   }
 
   getModelBySlug(slug: string, project_slug: string): Observable<Model> {
-    let url = new URL(`${project_slug}/models/${slug}/`, this.base_url);
-    return this.http.get<Model>(url.toString());
+    return this.http.get<Model>(
+      `${this.base_url}${project_slug}/models/${slug}/`
+    );
   }
 
   createNewModel(project_slug: string, model: NewModel): Observable<Model> {
-    let url = new URL(`${project_slug}/models`, this.base_url);
-    return this.createModelGeneric(url, model);
+    return this.http.post<Model>(
+      `${this.base_url}${project_slug}/models`,
+      model
+    );
   }
 
   setToolDetailsForModel(
@@ -67,14 +69,9 @@ export class ModelService {
     version_id: number,
     type_id: number
   ): Observable<Model> {
-    let url = new URL(`${project_slug}/models/${model_slug}/`, this.base_url);
-    return this.http.patch<Model>(url.toString(), { version_id, type_id });
-  }
-
-  createModelGeneric<T extends NewModel>(
-    url: URL,
-    new_model: T
-  ): Observable<Model> {
-    return this.http.post<Model>(url.toString(), new_model);
+    return this.http.patch<Model>(
+      `${this.base_url}${project_slug}/models/${model_slug}/`,
+      { version_id, type_id }
+    );
   }
 }

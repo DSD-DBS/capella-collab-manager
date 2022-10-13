@@ -31,7 +31,7 @@ export type ToolType = {
 export class ToolService {
   constructor(private http: HttpClient) {}
 
-  base_url = new URL('tools/', environment.backend_url + '/');
+  base_url = environment.backend_url + '/tools/';
 
   _tools = new BehaviorSubject<Tool[] | undefined>(undefined);
   get tools(): Tool[] | undefined {
@@ -51,12 +51,10 @@ export class ToolService {
   }
 
   getVersionsForTool(toolId: number): Observable<ToolVersion[]> {
-    let url = new URL(`${toolId}/versions/`, this.base_url);
-    return this.http.get<ToolVersion[]>(url.toString());
+    return this.http.get<ToolVersion[]>(`${this.base_url}${toolId}/versions/`);
   }
 
   getTypesForTool(toolId: number): Observable<ToolType[]> {
-    let url = new URL(`${toolId}/types/`, this.base_url);
-    return this.http.get<ToolVersion[]>(url.toString());
+    return this.http.get<ToolVersion[]>(`${this.base_url}${toolId}/types/`);
   }
 }

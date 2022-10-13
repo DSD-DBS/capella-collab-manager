@@ -79,10 +79,11 @@ export class GitModelService {
   instance: Instance | null = null;
 
   fetch(repository_url: string): Observable<Instance> {
-    let url = new URL('git-utils/', environment.backend_url + '/');
     return new Observable<Instance>((subscriber) => {
       this.http
-        .get<Instance>(url.toString(), { params: { url: repository_url } })
+        .get<Instance>(environment.backend_url + '/git-utils/', {
+          params: { url: repository_url },
+        })
         .subscribe((value) => {
           this.instance = value;
           subscriber.next(value);
@@ -90,6 +91,7 @@ export class GitModelService {
         });
     });
   }
+
   getRevisions(project_name: string) {
     return this.http.get<Revisions>(
       environment.backend_url +
