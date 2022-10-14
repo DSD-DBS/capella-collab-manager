@@ -60,7 +60,7 @@ export class CreateModelBaseComponent implements OnInit {
 
   validToolValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (this.toolService.tools != null) {
+      if (this.toolService.tools) {
         for (const tool of this.toolService.tools) {
           if (tool.id == control.value) {
             return null;

@@ -47,10 +47,10 @@ export class InitModelComponent implements OnInit {
       .pipe(filter(Boolean))
       .pipe(
         tap((model) => {
-          if (model.version != null) {
+          if (model.version) {
             this.form.controls.version.patchValue(model.version.id);
           }
-          if (model.type != null) {
+          if (model.type) {
             this.form.controls.type.patchValue(model.type.id);
           }
         }),
@@ -71,8 +71,8 @@ export class InitModelComponent implements OnInit {
   onSubmit(): void {
     if (
       this.form.valid &&
-      this.modelService.model != null &&
-      this.projectService.project != null &&
+      this.modelService.model &&
+      this.projectService.project &&
       this.form.value.version &&
       this.form.value.type
     ) {

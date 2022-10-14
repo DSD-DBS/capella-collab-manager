@@ -44,7 +44,7 @@ export class CreateCoworkingMethodComponent implements OnInit {
 
   ngOnInit(): void {
     this.form.controls.revision.valueChanges.subscribe((value) => {
-      if (this.gitService.instance == null) {
+      if (!this.gitService.instance) {
         this.filteredRevisions = { branches: [], tags: [] };
       } else {
         this.filteredRevisions = {
@@ -70,8 +70,8 @@ export class CreateCoworkingMethodComponent implements OnInit {
   onSubmit(): void {
     if (
       this.form.valid &&
-      this.projectService.project != null &&
-      this.modelService.model != null
+      this.projectService.project &&
+      this.modelService.model
     ) {
       const source: Source = {
         path: this.form.value.credentials!.path!,

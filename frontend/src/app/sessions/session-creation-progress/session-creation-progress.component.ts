@@ -69,7 +69,7 @@ export class SessionCreationProgressComponent implements OnDestroy {
 
   evaluateStep(step: string): string {
     const splittedState = this.session?.state.split('_');
-    if (splittedState != null && splittedState.length >= 2) {
+    if (splittedState && splittedState.length >= 2) {
       const type = splittedState[0];
       const detectedStep = splittedState.slice(1).join('_');
       const stepOrder = [

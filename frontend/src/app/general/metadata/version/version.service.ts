@@ -31,7 +31,7 @@ export class VersionService {
   public changedVersion: boolean = false;
 
   loadVersion(): void {
-    if (this.version == null) {
+    if (!this.version) {
       this.httpClient
         .get<Version>('assets/version.json')
         .subscribe((version: Version) => {
