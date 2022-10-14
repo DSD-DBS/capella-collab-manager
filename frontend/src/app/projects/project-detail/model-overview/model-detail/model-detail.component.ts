@@ -31,8 +31,8 @@ export class ModelDetailComponent implements OnInit {
       (gitModels) => (this.gitModels = gitModels)
     );
 
-    this.gitModelService.loadGitSources(
-      this.projectService.project!.name,
+    this.gitModelService.loadGitModels(
+      this.projectService.project!.slug,
       this.modelService.model!.slug
     );
   }

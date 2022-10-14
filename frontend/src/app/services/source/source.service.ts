@@ -32,13 +32,13 @@ export class SourceService {
   constructor(private http: HttpClient) {}
 
   addGitSource(
-    project_name: string,
+    project_slug: string,
     model_slug: string,
     source: CreateGitModel
   ): Observable<GetGitModel> {
     return this.http.post<GetGitModel>(
       environment.backend_url +
-        `/projects/${project_name}/models/${model_slug}/git/`,
+        `/projects/${project_slug}/models/${model_slug}/git/`,
       source
     );
   }
