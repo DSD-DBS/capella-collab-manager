@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import typing as t
 
-from fastapi import HTTPException
 from slugify import slugify
 from sqlalchemy.orm import Session
 
@@ -16,6 +15,12 @@ from capellacollab.projects.models import DatabaseProject
 def get_project_by_name(db: Session, name: str) -> DatabaseProject:
     return (
         db.query(DatabaseProject).filter(DatabaseProject.name == name).first()
+    )
+
+
+def get_project_by_slug(db: Session, slug: str) -> DatabaseProject:
+    return (
+        db.query(DatabaseProject).filter(DatabaseProject.slug == slug).first()
     )
 
 
@@ -47,10 +52,3 @@ def create_project(
 def delete_project(db: Session, name: str) -> None:
     db.query(DatabaseProject).filter(DatabaseProject.name == name).delete()
     db.commit()
-
-
-def get_project_by_slug(db: Session, slug: str) -> DatabaseProject:
-    project = (
-        db.query(DatabaseProject).filter(DatabaseProject.slug == slug).first()
-    )
-    return project
