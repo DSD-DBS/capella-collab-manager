@@ -186,7 +186,7 @@ router.include_router(
 router.include_router(
     router_sources_git,
     tags=["Projects"],
-    prefix="/{project_name}/models/{model_slug}/git",
+    prefix="/{project_slug}/models/{model_slug}/git",
 )
 router.include_router(
     router_sources_t4c,
