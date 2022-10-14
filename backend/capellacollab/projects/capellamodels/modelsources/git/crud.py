@@ -9,7 +9,6 @@ from sqlalchemy.orm import Session
 import capellacollab.projects.capellamodels.crud as models_crud
 from capellacollab.projects.capellamodels.modelsources.git.models import (
     DB_GitModel,
-    NewGitSource,
     PostGitModel,
 )
 
@@ -48,28 +47,6 @@ def make_gitmodel_primary(db: Session, id: int) -> DB_GitModel:
     return new_primary_model
 
 
-def add_gitmodel_to_capellamodel(
-    db: Session, capellamodel_id: int, model: PostGitModel
-):
-    if len(get_gitmodels_of_capellamodels(db, capellamodel_id)):
-        primary = False
-    else:
-        primary = True
-
-    # FIXME: Update the parameters according to the new structure
-    model = DB_GitModel(
-        **model.model.dict(),
-        name=model.name,
-        primary=primary,
-        username=model.credentials.username,
-        password=model.credentials.password,
-    )
-    db.add(model)
-    db.commit()
-    db.refresh(model)
-    return model
-
-
 def delete_model_from_repository(
     db: Session, capellamodel_id: int, model_id: int
 ):
@@ -79,12 +56,17 @@ def delete_model_from_repository(
     db.commit()
 
 
-def create(
-    db: Session, project_slug: str, model_slug: str, source: NewGitSource
+def add_gitmodel_to_capellamodel(
+    db: Session, project_slug: str, model_slug: str, source: PostGitModel
 ):
-
     model = models_crud.get_model_by_slug(db, project_slug, model_slug)
-    new_source = DB_GitModel.from_new_git_source(model.id, source)
-    db.add(new_source)
+
+    if len(get_gitmodels_of_capellamodels(db, model.id)):
+        primary = False
+    else:
+        primary = True
+    new_model = DB_GitModel.from_post_git_model(model.id, primary, source)
+    db.add(new_model)
     db.commit()
-    return new_source
+    db.refresh(model)
+    return new_model
