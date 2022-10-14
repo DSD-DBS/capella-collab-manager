@@ -7,7 +7,7 @@ import typing as t
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from capellacollab.tools.models import Tool, Type, Version
+from capellacollab.tools.models import CreateTool, Tool, Type, Version
 
 
 def get_all_tools(db: Session) -> t.List[Tool]:
@@ -21,6 +21,13 @@ def get_tool_by_id(id_: int, db: Session) -> Tool:
 def create_tool(db: Session, tool: Tool):
     db.add(tool)
     db.commit()
+
+
+def update_tool(db: Session, tool: Tool, patch_tool: CreateTool):
+    tool.name = patch_tool.name
+    db.add(tool)
+    db.commit()
+    return tool
 
 
 def get_versions(db: Session) -> t.List[Version]:

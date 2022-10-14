@@ -18,9 +18,17 @@ def get_tools(db: Session = Depends(get_db)):
     return crud.get_all_tools(db)
 
 
-@router.get(
-    "/{tool_id}/versions", tags=["Tools"], response_model=list[ToolVersionBase]
+@router.put(
+    "/{tool_id}",
+    response_model=ToolTypeBase,
+    dependencies=[Depends(verify_admin)],
 )
+def update_tool(tool_id: int, body: CreateTool, db: Session = Depends(get_db)):
+    tool = crud.get_tool_by_id(tool_id, db)
+    return crud.update_tool(db, tool, body)
+
+
+@router.get("/{tool_id}/versions", response_model=list[ToolVersionBase])
 def get_tool_versions(tool_id: int, db: Session = Depends(get_db)):
     return crud.get_tool_versions(db, tool_id)
 
