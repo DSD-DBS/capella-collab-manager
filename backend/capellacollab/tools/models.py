@@ -68,3 +68,7 @@ class ToolTypeBase(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class CreateTool(BaseModel):
+    name: str

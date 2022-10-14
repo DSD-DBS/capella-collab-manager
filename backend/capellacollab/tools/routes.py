@@ -18,6 +18,15 @@ def get_tools(db: Session = Depends(get_db)):
     return crud.get_all_tools(db)
 
 
+@router.post(
+    "",
+    response_model=ToolTypeBase,
+    dependencies=[Depends(verify_admin)],
+)
+def create_tool(body: CreateTool, db: Session = Depends(get_db)):
+    return crud.create_tool(db, models.Tool(name=body.name))
+
+
 @router.put(
     "/{tool_id}",
     response_model=ToolTypeBase,
