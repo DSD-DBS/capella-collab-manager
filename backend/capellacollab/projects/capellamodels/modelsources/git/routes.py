@@ -17,9 +17,8 @@ from capellacollab.core.authentication.responses import (
 )
 from capellacollab.core.database import get_db
 from capellacollab.projects.capellamodels.modelsources.git.models import (
-    NewGitSource,
+    PostGitModel,
     ResponseGitModel,
-    ResponseGitSource,
 )
 from capellacollab.settings.modelsources.git.core import get_remote_refs
 from capellacollab.settings.modelsources.git.crud import get_all_git_settings
@@ -69,22 +68,24 @@ def verify_valid_path_sequences(path: str):
     )
 
 
-@router.post("/", response_model=ResponseGitSource)
+@router.post("/", response_model=ResponseGitModel)
 def create_source(
-    project_name: str,
+    project_slug: str,
     model_slug: str,
-    source: NewGitSource,
+    source: PostGitModel,
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
 ):
-    project_instance = projects_crud.get_project_by_name(db, project_name)
+    project_instance = projects_crud.get_project_by_slug(db, project_slug)
     verify_project_role(project_instance.name, token, db)
 
     verify_path_prefix(source.path, db)
     verify_valid_path_sequences(source.path)
 
-    new_source = crud.create(db, project_instance.slug, model_slug, source)
-    return ResponseGitSource.from_orm(new_source)
+    new_source = crud.add_gitmodel_to_capellamodel(
+        db, project_instance.slug, model_slug, source
+    )
+    return ResponseGitModel.from_orm(new_source)
 
 
 @router.get(
@@ -123,19 +124,49 @@ def get_revisions_of_primary_git_model(
 # FIXME: Add verification
 @router.get("/git-models", response_model=list[ResponseGitModel])
 def get_git_models(
-    project_name: str,
+    project_slug: str,
     model_slug: str,
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
 ):
-    project_instance = projects_crud.get_project_by_name(db, project_name)
+    project_instance = projects_crud.get_project_by_slug(db, project_slug)
     capella_model = capella_model_crud.get_model_by_slug(
         db, project_instance.slug, model_slug
     )
+
     git_models = crud.get_gitmodels_of_capellamodels(db, capella_model.id)
+    return git_models
 
-    response_git_models: list[ResponseGitSource] = [
-        ResponseGitModel.from_orm(git_model) for git_model in git_models
-    ]
 
-    return response_git_models
+# FIXME: Add validation
+# user has acess to the project/model
+# git model actually exists on project/model
+@router.get("/git-model/{git_model_id}", response_model=ResponseGitModel)
+def get_git_model_by_id(
+    project_slug: str,
+    model_slug: str,
+    git_model_id: int,
+    db: Session = Depends(get_db),
+    token: JWTBearer = Depends(JWTBearer()),
+):
+    git_model = crud.get_gitmodel_by_id(db, git_model_id)
+    return git_model
+
+
+# FIXME Add validation
+# git model actually exists on project/model
+# prefix exists in git settings (for url)
+# user has access to the project/model
+@router.patch("/git-model/{git_model_id}", response_model=ResponseGitModel)
+def update_git_model_by_id(
+    project_slug: str,
+    model_slug: str,
+    git_model_id: int,
+    source: PostGitModel,
+    db: Session = Depends(get_db),
+    token: JWTBearer = Depends(JWTBearer()),
+):
+    updated_git_model = crud.update_git_model(
+        db, git_model_id, project_slug, model_slug, source
+    )
+    return updated_git_model

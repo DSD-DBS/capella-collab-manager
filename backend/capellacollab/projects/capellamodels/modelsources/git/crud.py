@@ -19,7 +19,9 @@ def get_gitmodels_of_capellamodels(
     return db.query(DB_GitModel).filter(DB_GitModel.model_id == model_id).all()
 
 
-def get_primary_gitmodel_of_capellamodels(db: Session, model_id: int):
+def get_primary_gitmodel_of_capellamodels(
+    db: Session, model_id: int
+) -> DB_GitModel:
     return (
         db.query(DB_GitModel)
         .filter(DB_GitModel.model_id == model_id)
@@ -58,7 +60,7 @@ def delete_model_from_repository(
 
 def add_gitmodel_to_capellamodel(
     db: Session, project_slug: str, model_slug: str, source: PostGitModel
-):
+) -> DB_GitModel:
     model = models_crud.get_model_by_slug(db, project_slug, model_slug)
 
     if len(get_gitmodels_of_capellamodels(db, model.id)):
@@ -70,3 +72,26 @@ def add_gitmodel_to_capellamodel(
     db.commit()
     db.refresh(model)
     return new_model
+
+
+def update_git_model(
+    db: Session,
+    id: int,
+    project_slug: str,
+    model_slug: str,
+    source: PostGitModel,
+) -> DB_GitModel:
+    model = get_gitmodel_by_id(db, id)
+
+    model.path = source.path
+    model.entrypoint = source.entrypoint
+    model.revision = source.revision
+
+    if source.password:
+        model.username = source.username
+        model.password = source.password
+    elif not source.username:
+        model.username = ""
+        model.password = ""
+    db.commit()
+    return model
