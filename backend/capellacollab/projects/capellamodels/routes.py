@@ -12,6 +12,7 @@ from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.projects import crud as projects_crud
+from capellacollab.projects.models import DatabaseProject
 from capellacollab.tools import crud as tools_crud
 
 from . import crud
@@ -20,13 +21,9 @@ from .models import CapellaModel, ResponseModel, ToolDetails
 router = APIRouter()
 
 
-@router.get("/", response_model=t.List[ResponseModel])
-def list_in_project(
-    project_slug: str,
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
-) -> t.List[ResponseModel]:
-
+def get_existing_project(
+    project_slug: str, db: Session = Depends(get_db)
+) -> DatabaseProject:
     project = projects_crud.get_project_by_slug(db, project_slug)
     if not project:
         raise HTTPException(
@@ -36,6 +33,15 @@ def list_in_project(
                 "technical": f"No project with {project_slug} found.",
             },
         )
+    return project
+
+
+@router.get("/", response_model=t.List[ResponseModel])
+def list_in_project(
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
+    project=Depends(get_existing_project),
+) -> t.List[ResponseModel]:
     verify_project_role(project.name, token, db)
     return [
         ResponseModel.from_orm(model)
@@ -49,17 +55,8 @@ def get_model_by_slug(
     slug: str,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
+    project=Depends(get_existing_project),
 ) -> ResponseModel:
-
-    project = projects_crud.get_project_by_slug(db, project_slug)
-    if not project:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The project having the name {project_slug} was not found.",
-                "technical": f"No project with {project_slug} found.",
-            },
-        )
     verify_project_role(project.name, token, db)
     model = crud.get_model_by_slug(db, project_slug, slug)
     if not model:
@@ -76,21 +73,11 @@ def get_model_by_slug(
 
 @router.post("/", response_model=ResponseModel)
 def create_new(
-    project_slug: str,
     new_model: CapellaModel,
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
+    project=Depends(get_existing_project),
 ) -> ResponseModel:
-
-    project = projects_crud.get_project_by_slug(db, project_slug)
-    if not project:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The project having the name {project_slug} was not found.",
-                "technical": f"No project with {project_slug} found.",
-            },
-        )
     verify_project_role(
         project=project.name,
         token=token,
@@ -122,22 +109,12 @@ def create_new(
     response_model=ResponseModel,
 )
 def set_tool_details(
-    project_slug: str,
     model_slug: str,
     tool_details: ToolDetails,
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
+    project=Depends(get_existing_project),
 ):
-
-    project = projects_crud.get_project_by_slug(db, project_slug)
-    if not project:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The project having the name {project_slug} was not found.",
-                "technical": f"No project with {project_slug} found.",
-            },
-        )
     verify_project_role(project.name, token, db, ["manager", "administrator"])
     model = crud.get_model_by_slug(db, project.slug, model_slug)
     if not model:
