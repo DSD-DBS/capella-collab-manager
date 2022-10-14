@@ -16,7 +16,12 @@ from capellacollab.projects.models import DatabaseProject
 from capellacollab.tools import crud as tools_crud
 
 from . import crud
-from .models import CapellaModel, ResponseModel, ToolDetails
+from .models import (
+    CapellaModel,
+    DatabaseCapellaModel,
+    ResponseModel,
+    ToolDetails,
+)
 
 router = APIRouter()
 
@@ -36,6 +41,21 @@ def get_existing_project(
     return project
 
 
+def get_existing_model(
+    project_slug: str, model_slug: str, db: Session = Depends(get_db)
+) -> DatabaseCapellaModel:
+    model = crud.get_model_by_slug(db, project_slug, model_slug)
+    if not model:
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The model having the name {model_slug} of the project {project_slug} was not found.",
+                "technical": f"No model with {model_slug} found in the project {project_slug}.",
+            },
+        )
+    return model
+
+
 @router.get("/", response_model=t.List[ResponseModel])
 def list_in_project(
     db: Session = Depends(get_db),
@@ -49,25 +69,16 @@ def list_in_project(
     ]
 
 
-@router.get("/{slug}", response_model=ResponseModel)
+@router.get("/{model_slug}", response_model=ResponseModel)
 def get_model_by_slug(
     project_slug: str,
-    slug: str,
+    model_slug: str,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
     project=Depends(get_existing_project),
+    model=Depends(get_existing_model),
 ) -> ResponseModel:
     verify_project_role(project.name, token, db)
-    model = crud.get_model_by_slug(db, project_slug, slug)
-    if not model:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The model having the name {slug} of the project {project.name} was not found.",
-                "technical": f"No model with {slug} found in the project {project.name}.",
-            },
-        )
-
     return ResponseModel.from_orm(model)
 
 
@@ -114,17 +125,9 @@ def set_tool_details(
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
     project=Depends(get_existing_project),
-):
+    model=Depends(get_existing_model),
+) -> ResponseModel:
     verify_project_role(project.name, token, db, ["manager", "administrator"])
-    model = crud.get_model_by_slug(db, project.slug, model_slug)
-    if not model:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The model having the name {model_slug} was not found.",
-                "technical": f"No model with {model_slug} found in the project {project.name}.",
-            },
-        )
     try:
         version = tools_crud.get_version_by_id(tool_details.version_id, db)
     except NoResultFound:
