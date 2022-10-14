@@ -8,7 +8,6 @@ from importlib import metadata
 
 from fastapi import APIRouter
 
-import capellacollab.config.routes as configuration
 import capellacollab.core.metadata as core_metadata
 import capellacollab.notices.routes as notices
 import capellacollab.sessions.routes as sessions
