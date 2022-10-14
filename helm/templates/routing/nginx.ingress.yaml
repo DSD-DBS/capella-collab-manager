@@ -11,13 +11,12 @@ metadata:
   annotations:
     {{ if eq .Values.target "local" }}
     ingress.kubernetes.io/ssl-redirect: "false"
-    {{ else }}
-    kubernetes.io/ingress.class: nginx
     {{ end }}
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
 spec:
+  ingressClassName: nginx
   rules:
     - host: {{ .Values.general.host }}
       http:
