@@ -79,7 +79,7 @@ const routes: Routes = [
                 component: CreateCoworkingMethodComponent,
               },
               {
-                path: 'git-model/:id',
+                path: 'git-model/:git-model',
                 component: CreateCoworkingMethodComponent,
               },
             ],
