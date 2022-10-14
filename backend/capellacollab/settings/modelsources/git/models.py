@@ -37,3 +37,18 @@ class DB_GitSettings(Base):
     name = Column(String)
     url = Column(String)
     type = Column(Enum(GitType))
+
+
+class GetRevisionsResponseModel(BaseModel):
+    branches: t.List[str]
+    tags: t.List[str]
+
+
+class GitCredentials(BaseModel):
+    username: t.Union[str, None]
+    password: t.Union[str, None]
+
+
+class GetRevisionModel(BaseModel):
+    url: str
+    credentials: GitCredentials

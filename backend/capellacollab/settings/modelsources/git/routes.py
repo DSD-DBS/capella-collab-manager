@@ -14,14 +14,13 @@ from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
 from capellacollab.core.database import get_db
-from capellacollab.projects.capellamodels.modelsources.git.models import (
-    GetRevisionModel,
-    GetRevisionsResponseModel,
-    GitCredentials,
-)
 from capellacollab.settings.modelsources.git import crud
 from capellacollab.settings.modelsources.git.core import get_remote_refs
-from capellacollab.settings.modelsources.git.models import GitSettings
+from capellacollab.settings.modelsources.git.models import (
+    GetRevisionModel,
+    GetRevisionsResponseModel,
+    GitSettings,
+)
 
 router = APIRouter()
 

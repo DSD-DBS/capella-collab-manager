@@ -13,53 +13,7 @@ from sqlalchemy.sql.sqltypes import Boolean
 from capellacollab.core.database import Base
 
 
-class RepositoryGitInnerModel(BaseModel):
-    path: str
-    entrypoint: str
-    revision: str
-
-    class Config:
-        orm_mode = True
-
-
-class RepositoryGitModel(BaseModel):
-    name: str
-    model: RepositoryGitInnerModel
-
-    class Config:
-        orm_mode = True
-
-
-class PatchRepositoryGitModel(BaseModel):
-    primary: t.Optional[bool]
-
-
-class GetRepositoryGitModel(RepositoryGitModel):
-    id: int
-    primary: bool
-    username: t.Union[str, None]
-
-
-class GetRevisionsResponseModel(BaseModel):
-    branches: t.List[str]
-    tags: t.List[str]
-
-
-class GitCredentials(BaseModel):
-    username: t.Union[str, None]
-    password: t.Union[str, None]
-
-
-class GetRevisionModel(BaseModel):
-    url: str
-    credentials: GitCredentials
-
-
-class PostGitModel(RepositoryGitModel):
-    credentials: GitCredentials
-
-
-class NewGitSource(BaseModel):
+class PostGitModel(BaseModel):
     path: str
     entrypoint: str
     revision: str
@@ -67,8 +21,21 @@ class NewGitSource(BaseModel):
     password: str
 
 
-class ResponseGitSource(NewGitSource):
+class ResponseGitModel(BaseModel):
     id: int
+    name: str
+    path: str
+    entrypoint: str
+    revision: str
+    primary: bool
+    username: str
+    password: bool
+
+    @validator("password", pre=True, whole=True)
+    def transform_password(cls, passw: str) -> bool:
+        if isinstance(passw, bool):
+            return passw
+        return passw is not None and len(passw) > 0
 
     class Config:
         orm_mode = True
@@ -88,34 +55,16 @@ class DB_GitModel(Base):
     password = Column(String)
 
     @classmethod
-    def from_new_git_source(cls, model_id: int, source: NewGitSource):
+    def from_post_git_model(
+        cls, model_id: int, primary: bool, new_model: PostGitModel
+    ):
         return cls(
             name="",
-            path=source.path,
-            entrypoint=source.entrypoint,
-            revision=source.revision,
-            primary=True,
+            path=new_model.path,
+            entrypoint=new_model.entrypoint,
+            revision=new_model.revision,
+            primary=primary,
             model_id=model_id,
-            username=source.username,
-            password=source.password,
+            username=new_model.username,
+            password=new_model.password,
         )
-
-
-class ResponseGitModel(BaseModel):
-    id: int
-    name: str
-    path: str
-    entrypoint: str
-    revision: str
-    primary: bool
-    username: str
-    password: bool
-
-    @validator("password", pre=True, whole=True)
-    def transform_password(cls, test: str) -> bool:
-        if type(test) == bool:
-            return test
-        return test is not None and len(test) > 0
-
-    class Config:
-        orm_mode = True
