@@ -22,13 +22,11 @@ from capellacollab.extensions.modelsources.t4c.injectables import (
 from capellacollab.extensions.modelsources.t4c.models import (
     CreateT4CModel,
     T4CModel,
+    T4CRepositoryWithModels,
 )
 from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.settings.modelsources.t4c.injectables import load_instance
-from capellacollab.settings.modelsources.t4c.repositories.models import (
-    T4CRepositoryWithModels,
-)
 from capellacollab.settings.modelsources.t4c.repositories.routes import (
     load_instance_repository,
 )
@@ -51,6 +49,14 @@ def list_t4c_models(
     instance = load_instance(t4c_instance_id, db)
     repository = load_instance_repository(t4c_repository_id, db, instance)[1]
     return T4CRepositoryWithModels.from_orm(repository).models
+
+
+@router.get("/{t4c_model_id}/", response_model=T4CModel)
+def get_t4c_model(
+    t4c_model_id: int,
+    db: Session = Depends(database.get_db),
+):
+    return crud.get_t4c_model(db, t4c_model_id)
 
 
 @router.post(

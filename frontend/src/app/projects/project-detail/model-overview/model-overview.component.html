@@ -56,7 +56,7 @@
           </a>
           <a
             mat-mini-fab
-            [disabled]="!model.t4c_model_id"
+            [disabled]="!model.t4c_model"
             matTooltip="Start synchronization (Coming soon)"
           >
             <mat-icon>sync</mat-icon>
@@ -70,7 +70,7 @@
             <mat-icon>link</mat-icon>
           </a>
           <a
-            *ngIf="model.t4c_model_id"
+            *ngIf="model.t4c_model"
             routerLink="/workspaces"
             mat-mini-fab
             matTooltip="Request persistent session"

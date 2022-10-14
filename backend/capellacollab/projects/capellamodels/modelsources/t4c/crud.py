@@ -5,20 +5,19 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from capellacollab.extensions.modelsources.t4c.models import DatabaseT4CModel
+from capellacollab.extensions.modelsources.t4c.models import (
+    DatabaseT4CModel,
+    T4CRepositoryWithModels,
+)
 from capellacollab.settings.modelsources.t4c.repositories.models import (
     DatabaseT4CRepository,
-    T4CRepositoryWithModels,
 )
 
 
-def get_t4c_model(db: Session, name: str, model_id: int):
-    return (
-        db.query(DatabaseT4CModel)
-        .filter(DatabaseT4CModel.name == name)
-        .filter(DatabaseT4CModel.model_id == model_id)
-        .first()
-    )
+def get_t4c_model(db: Session, id_: int):
+    return db.execute(
+        select(DatabaseT4CModel).where(DatabaseT4CModel.id == id_)
+    ).scalar_one()
 
 
 def get_t4c_model_by_id(db: Session, id: int, model_id: int):

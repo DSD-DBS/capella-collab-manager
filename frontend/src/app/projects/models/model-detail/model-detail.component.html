@@ -1,0 +1,12 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div *ngIf="modelService.model">
+  <a
+    *ngFor="let t4cModel of modelService.model.t4c_model"
+    [routerLink]="['t4c-model', t4cModel.id]"
+    >Test</a
+  >
+</div>

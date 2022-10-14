@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-export interface BaseT4CInstance {
+export type BaseT4CInstance = {
   license: string;
   host: string;
   port: number;
@@ -16,7 +16,7 @@ export interface BaseT4CInstance {
   rest_api: string;
   username: string;
   password: string;
-}
+};
 
 export type NewT4CInstance = BaseT4CInstance & {
   name: string;
@@ -37,7 +37,7 @@ export type T4CInstance = NewT4CInstance & {
 export class T4CInstanceService {
   constructor(private http: HttpClient) {}
 
-  base_url = environment.backend_url + '/settings/modelsources/t4c/';
+  base_url = `${environment.backend_url}/settings/modelsources/t4c/`;
 
   listInstances(): Observable<T4CInstance[]> {
     return this.http.get<T4CInstance[]>(this.base_url);

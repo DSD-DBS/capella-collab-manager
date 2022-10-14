@@ -32,6 +32,8 @@ import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/e
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
 import { HomeComponent } from './workspaces/home.component';
+import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
+import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
 
 const routes: Routes = [
   {
@@ -82,6 +84,16 @@ const routes: Routes = [
               {
                 path: 'git-model/:git-model',
                 component: CreateCoworkingMethodComponent,
+              },
+              {
+                path: 't4c-model/:t4c_model_id',
+                component: T4cModelWrapperComponent,
+                children: [
+                  {
+                    path: '',
+                    component: AddT4cSourceComponent,
+                  },
+                ],
               },
             ],
           },

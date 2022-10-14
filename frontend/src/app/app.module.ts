@@ -109,6 +109,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { HomeComponent } from './workspaces/home.component';
 import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
+import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
 
 @NgModule({
   declarations: [
@@ -177,6 +178,7 @@ import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-
     ViewLogsDialogComponent,
     WorkspaceComponent,
     AddT4cSourceComponent,
+    T4cModelWrapperComponent,
   ],
   imports: [
     AppRoutingModule,

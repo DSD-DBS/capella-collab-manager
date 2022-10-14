@@ -3,7 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -24,7 +32,15 @@ import {
   ProjectService,
 } from 'src/app/services/project/project.service';
 import { Model, ModelService } from 'src/app/services/model/model.service';
-import { BehaviorSubject, filter, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  filter,
+  switchMap,
+  take,
+  tap,
+  combineLatest,
+  map,
+} from 'rxjs';
 import {
   CreateT4CModel,
   T4CModel,
@@ -83,7 +99,7 @@ export class AddT4cSourceComponent implements OnInit {
       Validators.required,
       this.repositoryValidator.bind(this),
     ]),
-    name: new FormControl({ value: '', disabled: true }, [
+    name: new FormControl('', [
       Validators.required,
       this.uniqueNameValidator.bind(this),
     ]),
@@ -97,7 +113,16 @@ export class AddT4cSourceComponent implements OnInit {
     private t4cModelService: T4cModelService
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.t4cModelService._t4cModel.pipe(filter(Boolean)).subscribe((model) => {
+      this.form.controls.t4c_instance_id.patchValue(
+        model.repository.instance.id
+      );
+      this.form.controls.t4c_repository_id.patchValue(model.repository.id);
+      this.form.controls.name.patchValue(model.name);
+      console.log(this.form.value);
+    });
+
     this.t4cInstanceService.listInstances().subscribe((instances) => {
       this._instances.next(instances);
     });
@@ -116,10 +141,6 @@ export class AddT4cSourceComponent implements OnInit {
         this._repositories.next(repositories);
       });
 
-    this.form.controls.t4c_repository_id.valueChanges.subscribe(() => {
-      this.form.controls.name.reset();
-    });
-
     this.form.controls.t4c_repository_id.valueChanges
       .pipe(
         filter((value) => this.form.controls.t4c_repository_id.valid),
@@ -131,7 +152,7 @@ export class AddT4cSourceComponent implements OnInit {
           this.t4cModelService.listT4CModels(
             this.projectService.project!.slug,
             this.modelService.model!.slug,
-            this.currentRepo!.instance_id,
+            this.currentRepo!.instance.id,
             this.currentRepo!.id
           )
         )
