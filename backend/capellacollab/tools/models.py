@@ -22,6 +22,7 @@ class Tool(Base):
 
 class Version(Base):
     __tablename__ = "versions"
+    __table_args__ = (UniqueConstraint("tool_id", "name"),)
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
