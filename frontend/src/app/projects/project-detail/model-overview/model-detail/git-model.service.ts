@@ -5,8 +5,11 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { GetGitModel } from 'src/app/services/source/source.service';
+import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
+import {
+  GetGitModel,
+  CreateGitModel,
+} from 'src/app/services/source/source.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -18,16 +21,51 @@ export class GitModelService {
 
   constructor(private http: HttpClient) {}
 
+  private _gitModel = new Subject<GetGitModel>();
   private _gitModels = new BehaviorSubject<Array<GetGitModel>>([]);
 
+  readonly gitModel = this._gitModel.asObservable();
   readonly gitModels = this._gitModels.asObservable();
 
-  loadGitSources(project_name: string, model_slug: string): void {
+  loadGitModels(project_slug: string, model_slug: string): void {
     this.http
       .get<Array<GetGitModel>>(
         this.base_url.toString() +
-          `/projects/${project_name}/models/${model_slug}/git/git-models`
+          `/projects/${project_slug}/models/${model_slug}/git/git-models`
       )
       .subscribe((gitModels) => this._gitModels.next(gitModels));
+  }
+
+  loadGitModelById(
+    project_slug: string,
+    model_slug: string,
+    git_model_id: number
+  ): void {
+    this.http
+      .get<GetGitModel>(
+        this.base_url.toString() +
+          `/projects/${project_slug}/models/${model_slug}/git/git-model/${git_model_id}`
+      )
+      .subscribe((gitModel) => this._gitModel.next(gitModel));
+  }
+
+  updateGitInstance(
+    project_slug: string,
+    model_slug: string,
+    git_model_id: number,
+    gitModel: CreateGitModel
+  ): Observable<GetGitModel> {
+    return this.http
+      .patch<GetGitModel>(
+        this.base_url.toString() +
+          `/projects/${project_slug}/models/${model_slug}/git/git-model/${git_model_id}`,
+        gitModel
+      )
+      .pipe(
+        tap((gitModel) => {
+          this.loadGitModels(project_slug, model_slug);
+          this._gitModel.next(gitModel);
+        })
+      );
   }
 }
