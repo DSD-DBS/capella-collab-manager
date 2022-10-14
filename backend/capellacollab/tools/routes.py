@@ -13,7 +13,9 @@ from . import crud
 router = APIRouter()
 
 
-@router.get("/", tags=["Tools"], response_model=list[ToolBase])
+@router.get(
+    "/", response_model=list[ToolBase], dependencies=[Depends(JWTBearer())]
+)
 def get_tools(db: Session = Depends(get_db)):
     return crud.get_all_tools(db)
 
