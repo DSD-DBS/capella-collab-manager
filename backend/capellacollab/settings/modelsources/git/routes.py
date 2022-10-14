@@ -4,6 +4,7 @@
 
 import typing as t
 
+import sqlalchemy.orm.session
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -21,7 +22,21 @@ from capellacollab.settings.modelsources.git.models import (
 router = APIRouter()
 
 
-@router.get("/", tags=["GitSettings"])
+def check_git_settings_instance_exists(
+    db: sqlalchemy.orm.session.Session,
+    id: int,
+):
+    instance = crud.get_git_settings(db, id)
+    if not instance:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "reason": f"The git instance with id {id} does not exist."
+            },
+        )
+
+
+@router.get("/")
 def list_git_settings(
     db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
@@ -29,7 +44,7 @@ def list_git_settings(
     return crud.get_all_git_settings(db)
 
 
-@router.get("/{id}", tags=["GitSettings"])
+@router.get("/{id}")
 def get_git_settings(
     id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
@@ -37,7 +52,7 @@ def get_git_settings(
     return crud.get_git_settings(db, id)
 
 
-@router.post("/", tags=["GitSettings"])
+@router.post("/")
 def create_git_settings(
     body: GitSettings,
     db: Session = Depends(get_db),
@@ -61,7 +76,7 @@ def get_revisions(
     return get_remote_refs(url, username, password)
 
 
-@router.put("/{id}", tags=["GitSettings"])
+@router.put("/{id}")
 def edit_git_settings(
     id: int,
     body: GitSettings,
@@ -73,7 +88,7 @@ def edit_git_settings(
     return crud.update_git_settings(db, id, body)
 
 
-@router.delete("/{id}", tags=["GitSettings"])
+@router.delete("/{id}")
 def delete_git_settings(
     id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):

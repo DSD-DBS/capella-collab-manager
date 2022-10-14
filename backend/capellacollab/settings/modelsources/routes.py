@@ -11,10 +11,10 @@ router = APIRouter()
 router.include_router(
     git_settings.router,
     prefix="/git",
-    tags=["GitSettings"],
+    tags=["Settings - Modelsources - Git"],
 )
 router.include_router(
     t4c_settings.router,
     prefix="/t4c",
-    tags=["T4CSettings"],
+    tags=["Settings - Modelsources - T4C"],
 )
