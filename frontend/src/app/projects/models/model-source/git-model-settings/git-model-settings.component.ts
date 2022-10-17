@@ -19,6 +19,7 @@ import {
   GitModel,
   GitModelService,
 } from 'src/app/services/modelsources/git-model/git-model.service';
+import { cappellaSuffixValidator } from 'src/app/helpers/validators/validators';
 import { GitModelDeletionDialogComponent } from './git-model-deletion-dialog/git-model-deletion-dialog.component';
 
 @Component({
@@ -33,7 +34,7 @@ export class GitModelSettingsComponent implements OnInit {
       path: new FormControl('', [Validators.required, this.gitURLValidator()]),
       entrypoint: new FormControl('', [
         Validators.required,
-        this.airdFileValidator(),
+        cappellaSuffixValidator(),
       ]),
       revision: new FormControl('', Validators.required),
     }),
@@ -80,16 +81,6 @@ export class GitModelSettingsComponent implements OnInit {
         return null;
       }
       return { gitURLError: true };
-    };
-  }
-
-  airdFileValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const regex = /\.aird$/;
-      if (regex.test(control.value) || !control.value) {
-        return null;
-      }
-      return { airdFileIncorrect: true };
     };
   }
 

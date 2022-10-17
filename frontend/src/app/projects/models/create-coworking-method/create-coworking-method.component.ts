@@ -49,11 +49,11 @@ import {
   hasAbsoluteUrlPrefix,
   hasRelativePathPrefix,
 } from 'src/app/helpers/validators/url-validator';
+import { cappellaSuffixValidator } from 'src/app/helpers/validators/validators';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { GitModelService } from '../../project-detail/model-overview/model-detail/git-model.service';
-import { filter, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-coworking-method',
@@ -153,9 +153,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
 
     this.modelSubscription = this.modelService._model.subscribe((model) => {
       if (model?.tool.name === 'Capella') {
-        this.form.controls.entrypoint.addValidators(
-          this.cappellaSuffixValidator()
-        );
+        this.form.controls.entrypoint.addValidators(cappellaSuffixValidator());
       }
     });
 
@@ -292,16 +290,13 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
   }
 
   private createGitModelFromForm(): CreateGitModel {
-    let createGitModel: CreateGitModel = {} as CreateGitModel;
-
-    createGitModel.path = this.resultUrl;
-    createGitModel.revision = this.form.value.revision!;
-    createGitModel.entrypoint = this.form.value.entrypoint!;
-
-    createGitModel.username = this.form.value.credentials!.username!;
-    createGitModel.password = this.form.value.credentials!.password!;
-
-    return createGitModel;
+    return {
+      path: this.resultUrl,
+      revision: this.form.value.revision!,
+      entrypoint: this.form.value.entrypoint!,
+      username: this.form.value.credentials?.username!,
+      password: this.form.value.credentials?.password!,
+    };
   }
 
   private fillFormWithGitModel(gitModel: GetGitModel): void {
@@ -423,21 +418,6 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
 
       return {
         revisionNotFoundError: `${value} does not exist on ${this.resultUrl}`,
-      };
-    };
-  }
-
-  private cappellaSuffixValidator(): ValidatorFn {
-    return (controls: AbstractControl): ValidationErrors | null => {
-      let value: string = controls.value;
-      if (!value) return null;
-
-      if (value.endsWith('.aird')) {
-        return null;
-      }
-
-      return {
-        cappellaSuffixError: `${value} must end with ".aird" in case of a capella model`,
       };
     };
   }
