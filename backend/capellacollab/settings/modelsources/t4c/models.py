@@ -4,12 +4,31 @@
 import enum
 import typing as t
 
+import pydantic
+import requests
+from fastapi import HTTPException
+from requests.exceptions import InvalidURL
 from pydantic import BaseModel, validator
 from sqlalchemy import CheckConstraint, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
 from capellacollab.core.models import ResponseModel
+
+
+def validate_rest_api_url(value: t.Optional[str]):
+    if value:
+        try:
+            requests.Request("GET", value).prepare()
+        except InvalidURL as e:
+            raise HTTPException(
+                400,
+                {
+                    "title": "Bad request",
+                    "reason": "The provided TeamForCapella REST API is not valid.",
+                    "technical": str(e),
+                },
+            )
 
 
 class DatabaseT4CInstance(Base):
@@ -59,6 +78,10 @@ class T4CInstanceBase(BaseModel):
         latin_1_validator
     )
 
+    _validate_rest_api_url = pydantic.validator("rest_api", allow_reuse=True)(
+        validate_rest_api_url
+    )
+
     class Config:
         orm_mode = True
 
@@ -76,8 +99,13 @@ class PatchT4CInstance(BaseModel):
     _validate_username = validator("username", allow_reuse=True)(
         latin_1_validator
     )
+
     _validate_password = validator("password", allow_reuse=True)(
         latin_1_validator
+    )
+
+    _validate_rest_api_url = pydantic.validator("rest_api", allow_reuse=True)(
+        validate_rest_api_url
     )
 
     class Config:

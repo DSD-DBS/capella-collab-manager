@@ -1,9 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import requests
 from fastapi import APIRouter, Depends, HTTPException
-from requests.exceptions import InvalidURL
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
@@ -79,7 +77,6 @@ def create_t4c_instance(
 
     instance = DatabaseT4CInstance(**body.dict())
     instance.version = version
-    validate_rest_api_url(body.rest_api)
     return T4CInstance.from_orm(crud.create_t4c_instance(instance, db))
 
 
@@ -98,23 +95,8 @@ def edit_t4c_instance(
     for key in body.dict():
         if value := body.__getattribute__(key):
             instance.__setattr__(key, value)
-    if body.rest_api:
-        validate_rest_api_url(body.rest_api)
+
     return T4CInstance.from_orm(crud.update_t4c_instance(instance, db))
-
-
-def validate_rest_api_url(url: str):
-    try:
-        requests.Request("GET", url).prepare()
-    except InvalidURL as e:
-        raise HTTPException(
-            400,
-            {
-                "title": "Bad request",
-                "reason": "The provided TeamForCapella REST API is not valid.",
-                "technical": str(e),
-            },
-        )
 
 
 router.include_router(
