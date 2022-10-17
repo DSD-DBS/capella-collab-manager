@@ -106,7 +106,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
   constructor(
     public projectService: ProjectService,
     public modelService: ModelService,
-    public gitSettingsService: GitSettingsService,
+    private gitSettingsService: GitSettingsService,
     private gitService: GitService,
     private gitModelService: GitModelService,
     private sourceService: SourceService,
@@ -124,6 +124,10 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
         this.availableRevisions = revisions;
         this.form.controls.revision.updateValueAndValidity();
       }
+    );
+
+    this.form.controls.revision.valueChanges.subscribe((value) =>
+      this.filteredRevisionsByPrefix(value as string)
     );
 
     this.gitSettingsSubscription =
@@ -146,10 +150,6 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
           );
         }
       });
-
-    this.form.controls.revision.valueChanges.subscribe((value) =>
-      this.filteredRevisionsByPrefix(value as string)
-    );
 
     this.modelSubscription = this.modelService._model.subscribe((model) => {
       if (model?.tool.name === 'Capella') {
@@ -185,26 +185,20 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
   }
 
   onRevisionFocus(): void {
-    let urls = this.form.controls.urls;
-    if (
-      urls.invalid ||
-      urls.controls.baseUrl.invalid ||
-      urls.controls.inputUrl.invalid
-    ) {
-      return;
+    if (this.form.controls.urls.valid) {
+      this.gitService.loadRevisions(
+        this.resultUrl,
+        this.form.value.credentials as Credentials
+      );
     }
-    this.gitService.loadRevisions(
-      this.resultUrl,
-      this.form.value.credentials as Credentials
-    );
   }
 
   onSelect(value: GitSetting): void {
-    let inputUrlFormControl = this.urls.inputUrl;
-    let inputUrl = inputUrlFormControl.value;
+    let inputUrlControl = this.urls.inputUrl;
+    let inputUrl = inputUrlControl.value;
 
     if (inputUrl && !hasRelativePathPrefix(inputUrl)) {
-      inputUrlFormControl.reset();
+      inputUrlControl.reset();
     }
 
     this.selectedGitInstance = value;
@@ -232,15 +226,11 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
   }
 
   onCreateSubmit(): void {
-    if (
-      this.form.valid &&
-      this.projectService.project &&
-      this.modelService.model
-    ) {
+    if (this.form.valid) {
       this.sourceService
         .addGitSource(
-          this.projectService.project.slug,
-          this.modelService.model.slug,
+          this.projectService.project?.slug!,
+          this.modelService.model?.slug!,
           this.createGitModelFromForm()
         )
         .subscribe(() => {
@@ -254,18 +244,14 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
   }
 
   onEditSubmit(): void {
-    if (
-      this.form.valid &&
-      this.projectService.project &&
-      this.modelService.model
-    ) {
+    if (this.form.valid) {
       const patchGitModel = this.createGitModelFromForm() as PatchGitModel;
       patchGitModel.primary = this.form.value.primary;
 
       this.gitModelService
         .updateGitInstance(
-          this.projectService.project.slug,
-          this.modelService.model.slug,
+          this.projectService.project?.slug!,
+          this.modelService.model?.slug!,
           this.gitModelId!,
           patchGitModel
         )
@@ -319,7 +305,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
 
   private updateResultUrl(): void {
     let baseUrl = this.selectedGitInstance?.url || '';
-    let inputUrl = this.urls.inputUrl.value || '';
+    let inputUrl = this.urls.inputUrl.value!;
 
     if (hasAbsoluteUrlPrefix(inputUrl)) {
       this.resultUrl = inputUrl;
@@ -392,7 +378,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
         innerValidationResult = inputUrl.errors;
       }
 
-      let outerValidationResult = checkUrlForInvalidSequences(url);
+      const outerValidationResult = checkUrlForInvalidSequences(url);
 
       if (!innerValidationResult && !outerValidationResult) {
         this.enableAllExceptUrls();
