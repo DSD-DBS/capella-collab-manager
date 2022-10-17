@@ -15,7 +15,7 @@ class Role(enum.Enum):
     ADMIN = "administrator"
 
 
-class GetUserResponse(BaseModel):
+class User(BaseModel):
     id: str
     name: str
     role: Role

@@ -18,18 +18,14 @@ from capellacollab.core.authentication.responses import (
 from capellacollab.core.database import get_db
 from capellacollab.sessions.routes import inject_attrs_in_sessions
 from capellacollab.sessions.schema import AdvancedSessionResponse
-from capellacollab.users.models import (
-    GetUserResponse,
-    PatchUserRoleRequest,
-    Role,
-)
+from capellacollab.users.models import PatchUserRoleRequest, Role, User
 
 router = APIRouter()
 
 
 @router.get(
     "/",
-    response_model=t.List[GetUserResponse],
+    response_model=t.List[User],
     responses=AUTHENTICATION_RESPONSES,
 )
 def get_users(token=Depends(JWTBearer()), db: Session = Depends(get_db)):
@@ -37,16 +33,14 @@ def get_users(token=Depends(JWTBearer()), db: Session = Depends(get_db)):
     return users.get_all_users(db)
 
 
-@router.post(
-    "/", response_model=GetUserResponse, responses=AUTHENTICATION_RESPONSES
-)
+@router.post("/", response_model=User, responses=AUTHENTICATION_RESPONSES)
 def create_user(token=Depends(JWTBearer()), db: Session = Depends(get_db)):
     return users.create_user(db, get_username(token))
 
 
 @router.get(
     "/{username}",
-    response_model=GetUserResponse,
+    response_model=User,
     responses=AUTHENTICATION_RESPONSES,
 )
 def get_user(
