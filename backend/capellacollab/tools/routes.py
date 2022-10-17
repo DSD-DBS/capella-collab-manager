@@ -40,7 +40,7 @@ def get_existing_tool(tool_id: str) -> Tool:
 
 
 @router.get(
-    "/",
+    "",
     response_model=list[ToolBase],
     dependencies=[Depends(RoleVerification(required_role=Role.USER))],
 )
