@@ -33,14 +33,12 @@ export class DeleteSessionDialogComponent {
       requests.push(this.sessionService.deleteSession(session.id));
     }
 
-    forkJoin(requests).subscribe(
-      () => {
-        this.dialogRef.close();
-      },
-      (_) => {
+    forkJoin(requests).subscribe({
+      next: () => this.dialogRef.close(),
+      error: (err) => {
         this.deleteButton.disabled = false;
         this.deleteButton.text = 'Failure. Try again.';
-      }
-    );
+      },
+    });
   }
 }
