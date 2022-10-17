@@ -169,7 +169,7 @@ fieldset > :not(.field-separator) {
   text-align: center;
 }
 
-.mat-card-default {
+mat-card.default {
   width: 400px;
 }
 
