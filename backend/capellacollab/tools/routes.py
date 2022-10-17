@@ -26,8 +26,8 @@ from . import crud
 router = APIRouter()
 
 
-def get_existing_tool(tool_id: str) -> Tool:
-    tool = crud.get_tool_by_id(tool_id)
+def get_existing_tool(tool_id: str, db: Session = Depends(get_db)) -> Tool:
+    tool = crud.get_tool_by_id(id_=tool_id, db=db)
     if not tool:
         raise HTTPException(
             404,
