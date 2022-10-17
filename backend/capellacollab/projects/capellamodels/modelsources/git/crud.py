@@ -34,19 +34,17 @@ def get_gitmodel_by_id(db: Session, id: int) -> DB_GitModel:
     return db.query(DB_GitModel).filter(DB_GitModel.id == id).first()
 
 
-def make_gitmodel_primary(db: Session, id: int) -> DB_GitModel:
-    primary_model = get_primary_gitmodel_of_capellamodels(db, id)
-    if primary_model:
-        primary_model.primary = False
-        db.add(primary_model)
+def make_git_model_primary(
+    db: Session, capella_model_id: int, git_model_id: int
+) -> DB_GitModel:
+    primary_model = get_primary_gitmodel_of_capellamodels(db, capella_model_id)
+    primary_model.primary = False
 
-    new_primary_model = get_gitmodel_by_id(db, id)
-    new_primary_model.primary = True
+    patch_git_model = get_gitmodel_by_id(db, git_model_id)
+    patch_git_model.primary = True
 
-    db.add(new_primary_model)
     db.commit()
-    db.refresh(new_primary_model)
-    return new_primary_model
+    return patch_git_model
 
 
 def delete_model_from_repository(
@@ -76,22 +74,21 @@ def add_gitmodel_to_capellamodel(
 
 def update_git_model(
     db: Session,
-    id: int,
-    project_slug: str,
-    model_slug: str,
-    source: PostGitModel,
+    model_id: int,
+    model: PostGitModel,
 ) -> DB_GitModel:
-    model = get_gitmodel_by_id(db, id)
+    updated_model = get_gitmodel_by_id(db, model_id)
 
-    model.path = source.path
-    model.entrypoint = source.entrypoint
-    model.revision = source.revision
+    updated_model.path = model.path
+    updated_model.entrypoint = model.entrypoint
+    updated_model.revision = model.revision
 
-    if source.password:
-        model.username = source.username
-        model.password = source.password
-    elif not source.username:
-        model.username = ""
-        model.password = ""
+    if model.password:
+        updated_model.username = model.username
+        updated_model.password = model.password
+    elif not model.username:
+        updated_model.username = ""
+        updated_model.password = ""
+
     db.commit()
-    return model
+    return updated_model

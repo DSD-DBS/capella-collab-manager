@@ -4,9 +4,9 @@
 
 import logging
 
-import sqlalchemy.orm.session
 from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
+from sqlalchemy.orm import Session
 
 import capellacollab.projects.capellamodels.crud as capella_model_crud
 import capellacollab.projects.crud as projects_crud
@@ -17,6 +17,7 @@ from capellacollab.core.authentication.responses import (
 )
 from capellacollab.core.database import get_db
 from capellacollab.projects.capellamodels.modelsources.git.models import (
+    PatchGitModel,
     PostGitModel,
     ResponseGitModel,
 )
@@ -29,7 +30,7 @@ router = APIRouter()
 log = logging.getLogger(__name__)
 
 
-def verify_path_prefix(path: str, db: sqlalchemy.orm.session.Session):
+def verify_path_prefix(db: Session, path: str):
     git_settings = get_all_git_settings(db)
 
     if not git_settings:
@@ -68,6 +69,26 @@ def verify_valid_path_sequences(path: str):
     )
 
 
+def verify_valid_git_model_on_project_and_capella_model(
+    db: Session, project_slug: str, model_slug: str, git_model_id
+):
+    capella_model = capella_model_crud.get_model_by_slug(
+        db, project_slug, model_slug
+    )
+
+    for git_model in capella_model.git_models:
+        if git_model.id == git_model_id:
+            return
+
+    return HTTPException(
+        status_code=400,
+        detail={
+            "err_code": "git_model_not_exists_on_project_and_model",
+            "reason": "The git model does not exists on the capella model for the project",
+        },
+    )
+
+
 @router.post("/", response_model=ResponseGitModel)
 def create_source(
     project_slug: str,
@@ -79,7 +100,7 @@ def create_source(
     project_instance = projects_crud.get_project_by_slug(db, project_slug)
     verify_project_role(project_instance.name, token, db)
 
-    verify_path_prefix(source.path, db)
+    verify_path_prefix(db, source.path)
     verify_valid_path_sequences(source.path)
 
     new_source = crud.add_gitmodel_to_capellamodel(
@@ -121,7 +142,6 @@ def get_revisions_of_primary_git_model(
     return remote_refs
 
 
-# FIXME: Add verification
 @router.get("/git-models", response_model=list[ResponseGitModel])
 def get_git_models(
     project_slug: str,
@@ -129,18 +149,18 @@ def get_git_models(
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
 ):
-    project_instance = projects_crud.get_project_by_slug(db, project_slug)
+    project = projects_crud.get_project_by_slug(db, project_slug)
+    verify_project_role(project, token, db)
+
     capella_model = capella_model_crud.get_model_by_slug(
-        db, project_instance.slug, model_slug
+        db, project.slug, model_slug
     )
 
     git_models = crud.get_gitmodels_of_capellamodels(db, capella_model.id)
+
     return git_models
 
 
-# FIXME: Add validation
-# user has acess to the project/model
-# git model actually exists on project/model
 @router.get("/git-model/{git_model_id}", response_model=ResponseGitModel)
 def get_git_model_by_id(
     project_slug: str,
@@ -149,24 +169,53 @@ def get_git_model_by_id(
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
 ):
+    project = projects_crud.get_project_by_slug(db, project_slug)
+    verify_project_role(project, token, db)
+
+    verify_valid_git_model_on_project_and_capella_model(
+        db, project_slug, model_slug, git_model_id
+    )
+
     git_model = crud.get_gitmodel_by_id(db, git_model_id)
+    if not git_model:
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "err_code": "no_git_model",
+                "reason": f"No git model with the id {git_model_id} exists",
+            },
+        )
+
     return git_model
 
 
-# FIXME Add validation
-# git model actually exists on project/model
-# prefix exists in git settings (for url)
-# user has access to the project/model
 @router.patch("/git-model/{git_model_id}", response_model=ResponseGitModel)
 def update_git_model_by_id(
     project_slug: str,
     model_slug: str,
     git_model_id: int,
-    source: PostGitModel,
+    git_model: PatchGitModel,
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
 ):
-    updated_git_model = crud.update_git_model(
-        db, git_model_id, project_slug, model_slug, source
+    project = projects_crud.get_project_by_slug(db, project_slug)
+    verify_project_role(project, token, db)
+
+    verify_valid_git_model_on_project_and_capella_model(
+        db, project_slug, model_slug, git_model_id
     )
+
+    verify_path_prefix(db, git_model.path)
+    verify_valid_path_sequences(git_model.path)
+
+    updated_git_model = crud.update_git_model(db, git_model_id, git_model)
+
+    if git_model.primary and not updated_git_model.primary:
+        capella_model = capella_model_crud.get_model_by_slug(
+            db, project_slug, model_slug
+        )
+        updated_git_model = crud.make_git_model_primary(
+            db, capella_model.id, git_model_id
+        )
+
     return updated_git_model

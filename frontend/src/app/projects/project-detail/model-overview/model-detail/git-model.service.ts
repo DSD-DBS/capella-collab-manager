@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
 import {
   GetGitModel,
-  CreateGitModel,
+  PatchGitModel,
 } from 'src/app/services/source/source.service';
 import { environment } from 'src/environments/environment';
 
@@ -53,13 +53,32 @@ export class GitModelService {
     project_slug: string,
     model_slug: string,
     git_model_id: number,
-    gitModel: CreateGitModel
+    gitModel: PatchGitModel
   ): Observable<GetGitModel> {
     return this.http
       .patch<GetGitModel>(
         this.base_url.toString() +
           `/projects/${project_slug}/models/${model_slug}/git/git-model/${git_model_id}`,
         gitModel
+      )
+      .pipe(
+        tap((gitModel) => {
+          this.loadGitModels(project_slug, model_slug);
+          this._gitModel.next(gitModel);
+        })
+      );
+  }
+
+  makeGitInstancePrimary(
+    project_slug: string,
+    model_slug: string,
+    git_model_id: number
+  ): Observable<GetGitModel> {
+    return this.http
+      .patch<GetGitModel>(
+        this.base_url.toString() +
+          `/projects/${project_slug}/models/${model_slug}/git/git-model/${git_model_id}`,
+        true
       )
       .pipe(
         tap((gitModel) => {

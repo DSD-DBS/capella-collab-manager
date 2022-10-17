@@ -32,7 +32,12 @@ import {
   Revisions,
 } from 'src/app/services/git/git.service';
 import { ModelService } from 'src/app/services/model/model.service';
-import { ProjectService } from 'src/app/services/project/project.service';
+import {
+  CreateGitModel,
+  GetGitModel,
+  PatchGitModel,
+  SourceService,
+} from 'src/app/services/source/source.service';
 import {
   GitSetting,
   GitSettingsService,
@@ -48,6 +53,7 @@ import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { GitModelService } from '../../project-detail/model-overview/model-detail/git-model.service';
+import { filter, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-coworking-method',
@@ -83,10 +89,11 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
       this.existingRevisionValidator(),
     ]),
     entrypoint: new FormControl({ value: '/', disabled: true }),
+    primary: new FormControl(),
   });
 
   private gitModelId: number | undefined;
-  private gitModel: GetGitModel | undefined;
+  public gitModel: GetGitModel | undefined;
 
   public isEditMode: boolean = false;
   public editing: boolean = false;
@@ -236,7 +243,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
         .addGitSource(
           this.projectService.project.slug,
           this.modelService.model.slug,
-          this.createSourceFromForm()
+          this.createGitModelFromForm()
         )
         .subscribe(() => {
           if (this.asStepper) {
@@ -254,12 +261,15 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
       this.projectService.project &&
       this.modelService.model
     ) {
+      const patchGitModel = this.createGitModelFromForm() as PatchGitModel;
+      patchGitModel.primary = this.form.value.primary;
+
       this.gitModelService
         .updateGitInstance(
           this.projectService.project.slug,
           this.modelService.model.slug,
           this.gitModelId!,
-          this.createSourceFromForm()
+          patchGitModel
         )
         .subscribe(() => this.location.back());
     }
@@ -268,6 +278,9 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
   enableEditing(): void {
     this.editing = true;
     this.form.enable();
+    if (this.gitModel!.primary) {
+      this.form.controls.primary.disable();
+    }
     this.form.controls.credentials.controls.password.setValue('');
     this.form.updateValueAndValidity();
   }
@@ -278,14 +291,13 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
     this.fillFormWithGitModel(this.gitModel!);
   }
 
-  private createSourceFromForm(): CreateGitModel {
+  private createGitModelFromForm(): CreateGitModel {
     let createGitModel: CreateGitModel = {} as CreateGitModel;
 
     createGitModel.path = this.resultUrl;
     createGitModel.revision = this.form.value.revision!;
     createGitModel.entrypoint = this.form.value.entrypoint!;
 
-    //FIXME: Make username and password optional values for post/patch
     createGitModel.username = this.form.value.credentials!.username!;
     createGitModel.password = this.form.value.credentials!.password!;
 
@@ -307,6 +319,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
 
     this.form.controls.revision.setValue(gitModel.revision);
     this.form.controls.entrypoint.setValue(gitModel.entrypoint);
+    this.form.controls.primary.setValue(this.gitModel?.primary);
   }
 
   private updateResultUrl(): void {
@@ -348,12 +361,16 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
   }
 
   private disableAllExpectUrls() {
+    this.form.controls.primary.disable();
     this.form.controls.credentials.disable();
     this.form.controls.entrypoint.disable();
     this.form.controls.revision.disable();
   }
 
   private enableAllExceptUrls() {
+    if (this.isEditMode && !this.gitModel!.primary) {
+      this.form.controls.primary.enable();
+    }
     this.form.controls.credentials.enable();
     this.form.controls.entrypoint.enable();
     this.form.controls.revision.enable();
@@ -366,25 +383,29 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
       let baseUrl = this.urls.baseUrl;
       let inputUrl = this.urls.inputUrl;
 
+      let innerValidationResult: ValidationErrors | null = null;
       let url: string = this.resultUrl;
       if (!url) return { required: 'Resulting URL is required' };
 
       if (!hasAbsoluteUrlPrefix(url)) {
-        return { urlPrefixError: 'Absolute URL must start with http(s)://' };
+        innerValidationResult = {
+          urlPrefixError: 'Absolute URL must start with http(s)://',
+        };
       } else if (this.availableGitInstances && baseUrl.invalid) {
-        return baseUrl.errors;
+        innerValidationResult = baseUrl.errors;
       } else if (inputUrl.invalid) {
-        return inputUrl.errors;
+        innerValidationResult = inputUrl.errors;
       }
 
-      let validationResult = checkUrlForInvalidSequences(url);
+      let outerValidationResult = checkUrlForInvalidSequences(url);
 
-      if (!validationResult) {
+      if (!innerValidationResult && !outerValidationResult) {
         this.enableAllExceptUrls();
       } else {
         this.disableAllExpectUrls();
+        return Object.assign({}, outerValidationResult, innerValidationResult);
       }
-      return validationResult;
+      return null;
     };
   }
 

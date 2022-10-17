@@ -19,6 +19,10 @@ export interface CreateGitModel extends BaseGitModel {
   password?: string;
 }
 
+export interface PatchGitModel extends CreateGitModel {
+  primary: boolean;
+}
+
 export interface GetGitModel extends BaseGitModel {
   id: number;
   primary: boolean;

@@ -21,6 +21,10 @@ class PostGitModel(BaseModel):
     password: str
 
 
+class PatchGitModel(PostGitModel):
+    primary: bool
+
+
 class ResponseGitModel(BaseModel):
     id: int
     name: str
