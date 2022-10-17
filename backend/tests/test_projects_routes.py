@@ -30,13 +30,13 @@ def test_get_projects_as_user(client, db, username):
 
 def test_get_projects_as_user_with_project(client, db, username):
     project_name = str(uuid1())
-    create_user(db, username, Role.USER)
+    user = create_user(db, username, Role.USER)
     create_project(db, name=project_name)
     add_user_to_project(
         db,
         projects_name=project_name,
         role=ProjectUserRole.MANAGER,
-        username=username,
+        user_id=user.id,
         permission=ProjectUserPermission.WRITE,
     )
 
