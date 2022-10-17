@@ -27,6 +27,7 @@ def get_tool_by_id(id_: int, db: Session) -> Tool:
 def create_tool(db: Session, tool: Tool):
     db.add(tool)
     db.commit()
+    return tool
 
 
 def update_tool(
