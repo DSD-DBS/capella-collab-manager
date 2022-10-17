@@ -18,14 +18,6 @@ branch_labels = None
 depends_on = None
 
 
-t_users = sa.Table(
-    "users",
-    sa.MetaData(),
-    autoload=True,
-    autoload_with=op.get_bind(),
-)
-
-
 def upgrade():
     op.add_column(
         "project_user_association",
@@ -33,6 +25,13 @@ def upgrade():
     )
     op.create_foreign_key(
         None, "project_user_association", "users", ["user_id"], ["id"]
+    )
+
+    t_users = sa.Table(
+        "users",
+        sa.MetaData(),
+        autoload=True,
+        autoload_with=op.get_bind(),
     )
 
     t_project_user_association = sa.Table(
@@ -70,6 +69,13 @@ def downgrade():
     )
     op.create_foreign_key(
         None, "project_user_association", "users", ["username"], ["name"]
+    )
+
+    t_users = sa.Table(
+        "users",
+        sa.MetaData(),
+        autoload=True,
+        autoload_with=op.get_bind(),
     )
 
     t_project_user_association = sa.Table(
