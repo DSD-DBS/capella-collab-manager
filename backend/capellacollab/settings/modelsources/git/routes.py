@@ -4,13 +4,11 @@
 
 import typing as t
 
+import sqlalchemy.orm.session
 from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
 
-from capellacollab.core.authentication.database import (
-    check_git_settings_instance_exists,
-    verify_admin,
-)
+from capellacollab.core.authentication.database import verify_admin
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
@@ -20,6 +18,20 @@ from capellacollab.settings.modelsources.git import crud
 from capellacollab.settings.modelsources.git.models import GitSettings
 
 router = APIRouter()
+
+
+def check_git_settings_instance_exists(
+    db: sqlalchemy.orm.session.Session,
+    id: int,
+):
+    instance = crud.get_git_settings(db, id)
+    if not instance:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "reason": f"The git instance with id {id} does not exist."
+            },
+        )
 
 
 @router.get("/", tags=["Git-Settings"], responses=AUTHENTICATION_RESPONSES)
