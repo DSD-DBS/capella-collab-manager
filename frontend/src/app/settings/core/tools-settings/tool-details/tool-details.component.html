@@ -3,18 +3,101 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper">
-  <div class="title">Persistent workspaces</div>
-  <mat-form-field appearance="fill">
-    <mat-label>Dockerimage</mat-label>
-    <input matInput placeholder="/t4c/client/remote" />
-  </mat-form-field>
-  <div class="title">
-    <span>Read-only workspaces</span>
-  </div>
-  <mat-form-field appearance="fill">
-    <mat-label>Dockerimage</mat-label>
-    <input matInput placeholder="/t4c/client/remote" /> </mat-form-field
-  ><br />
-  <button mat-raised-button>Save</button>
+<div class="flexbox space-around">
+  <mat-card class="default">
+    <h2>Metadata</h2>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <input formControlName="name" matInput placeholder="Testtool" />
+        <mat-error
+          *ngIf="
+            form.controls.dockerimages.controls.persistent.errors
+              ?.validDockerImageNameInvalid
+          "
+          >A name for the tool is required!</mat-error
+        >
+      </mat-form-field>
+      <br />
+      <hr />
+      <div formGroupName="dockerimages">
+        You need to specify two different Dockerimages, <br />depending on the
+        workspace type: <br /><br />
+        <mat-form-field appearance="fill">
+          <mat-label>Persistent workspaces</mat-label>
+          <input
+            formControlName="persistent"
+            matInput
+            placeholder="docker.io/tool/persistent:$version"
+          />
+          <mat-error
+            *ngIf="
+              form.controls.dockerimages.controls.persistent.errors?.required
+            "
+            >You have to provide a persistent docker image!</mat-error
+          >
+          <mat-error
+            *ngIf="
+              form.controls.dockerimages.controls.persistent.errors?.maxLength
+            "
+            >The maximal allowed length is 4096!</mat-error
+          >
+          <mat-error
+            *ngIf="
+              form.controls.dockerimages.controls.persistent.errors
+                ?.validDockerImageNameInvalid
+            "
+            >The input is not a valid docker image name!</mat-error
+          >
+        </mat-form-field>
+        <div class="title">
+          <span></span>
+        </div>
+        <mat-form-field appearance="fill">
+          <mat-label>Read-only workspaces</mat-label>
+          <input
+            matInput
+            formControlName="readonly"
+            placeholder="docker.io/tool/readonly:$version"
+          />
+          <mat-error
+            *ngIf="
+              form.controls.dockerimages.controls.readonly.errors?.maxLength
+            "
+            >The maximal allowed length is 4096!</mat-error
+          >
+          <mat-error
+            *ngIf="
+              form.controls.dockerimages.controls.readonly.errors
+                ?.validDockerImageNameInvalid
+            "
+            >The input is not a valid docker image name!</mat-error
+          >
+        </mat-form-field>
+      </div>
+      <br />
+      <div *ngIf="editing" id="editing-button-wrapper">
+        <button mat-flat-button color="warn" (click)="cancelEditing()">
+          Cancel
+        </button>
+        <button mat-flat-button type="submit" color="primary">Submit</button>
+      </div>
+      <div *ngIf="!editing && existing">
+        <button mat-flat-button (click)="enableEditing()">Edit</button>
+      </div>
+      <div *ngIf="!existing" id="submit-button-wrapper">
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="!form.valid"
+        >
+          Create
+        </button>
+      </div>
+    </form>
+  </mat-card>
+  <mat-card *ngIf="existing" class="default">
+    <h2>Versions</h2>
+  </mat-card>
 </div>
