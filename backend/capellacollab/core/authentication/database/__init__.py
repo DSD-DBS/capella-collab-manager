@@ -60,15 +60,15 @@ class ProjectRoleVerification:
     def __call__(
         self, project_slug: str, token=Depends(JWTBearer()), db=Depends(get_db)
     ) -> bool:
-        role = get_user(db=db, username=get_username(token)).role
+        user = get_user(db=db, username=get_username(token))
 
         # TODO: Use slug directly
         project = get_project_by_slug(db, project_slug)
         project_user = project_users.get_user_of_project(
-            db, projects_name=project.name
+            db, project_name=project.name, user_id=user.id
         )
 
-        if role == Role.ADMIN:
+        if user.role == Role.ADMIN:
             return True
 
         # Check role
@@ -79,7 +79,7 @@ class ProjectRoleVerification:
                 raise HTTPException(
                     status_code=403,
                     detail={
-                        "reason": f"The role '{self.required_role}' in the project '{project_slug}' is required.",
+                        "reason": f"The role '{self.required_role.value}' in the project '{project_slug}' is required.",
                     },
                 )
             return False
@@ -94,7 +94,7 @@ class ProjectRoleVerification:
                     raise HTTPException(
                         status_code=403,
                         detail={
-                            "reason": f"You need to have '{self.required_permission}'-access in the project!",
+                            "reason": f"You need to have '{self.required_permission.value}'-access in the project!",
                         },
                     )
                 return False

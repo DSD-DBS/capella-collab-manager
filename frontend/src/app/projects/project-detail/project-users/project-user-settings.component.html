@@ -26,10 +26,10 @@
       [value]="user"
     >
       <mat-icon mat-list-icon>account_circle</mat-icon>
-      <div mat-line>{{ user.username }}</div>
+      <div mat-line>{{ user.user.name }}</div>
       <div mat-line>
-        {{ repoUserService.ADVANCED_ROLES[user.role] }},
-        {{ repoUserService.PERMISSIONS[user.permission] }}
+        {{ projectUserService.ADVANCED_ROLES[user.role] }},
+        {{ projectUserService.PERMISSIONS[user.permission] }}
       </div>
     </mat-list-option>
     <div mat-subheader>Users</div>
@@ -38,10 +38,10 @@
       [value]="user"
     >
       <mat-icon mat-list-icon>account_circle</mat-icon>
-      <div mat-line>{{ user.username }}</div>
+      <div mat-line>{{ user.user.name }}</div>
       <div mat-line>
-        {{ repoUserService.ADVANCED_ROLES[user.role] }},
-        {{ repoUserService.PERMISSIONS[user.permission] }}
+        {{ projectUserService.ADVANCED_ROLES[user.role] }},
+        {{ projectUserService.PERMISSIONS[user.permission] }}
       </div>
     </mat-list-option>
   </mat-selection-list>
@@ -49,58 +49,58 @@
   <div
     *ngIf="
       users.selectedOptions.selected.length &&
-      userService.getUserName() !== selectedUser.username
+      userService.getUserName() !== selectedUser.user.name
     "
   >
     <button
       mat-flat-button
       color="primary"
       *ngIf="['user', 'manager'].includes(selectedUser.role)"
-      (click)="removeUserFromRepo(selectedUser.username)"
+      (click)="removeUserFromRepo(selectedUser.user)"
     >
-      <mat-icon>delete</mat-icon> Remove {{ selectedUser.username }} from
+      <mat-icon>delete</mat-icon> Remove {{ selectedUser.user.name }} from
       {{ project }}
     </button>
     <button
       mat-flat-button
       color="primary"
       *ngIf="'user' === selectedUser.role"
-      (click)="upgradeUserToProjectManager(selectedUser.username)"
+      (click)="upgradeUserToProjectManager(selectedUser.user)"
     >
       <mat-icon>arrow_upward</mat-icon>
       Upgrade
-      {{ selectedUser.username }} to project manager
+      {{ selectedUser.user.name }} to project manager
     </button>
     <button
       mat-flat-button
       color="primary"
       *ngIf="'manager' === selectedUser.role"
-      (click)="downgradeUserToUserRole(selectedUser.username)"
+      (click)="downgradeUserToUserRole(selectedUser.user)"
     >
       <mat-icon>arrow_downward</mat-icon>
       Downgrade
-      {{ selectedUser.username }} to User
+      {{ selectedUser.user.name }} to User
     </button>
     <div *ngIf="'manager' !== selectedUser.role">
       <button
         mat-flat-button
         color="primary"
         *ngIf="'read' === selectedUser.permission"
-        (click)="setUserPermission(selectedUser.username, 'write')"
+        (click)="setUserPermission(selectedUser.user, 'write')"
       >
         <mat-icon>folder_shared</mat-icon>
         Set permission of User
-        {{ selectedUser.username }} to Read/Write
+        {{ selectedUser.user.name }} to Read/Write
       </button>
       <button
         mat-flat-button
         color="primary"
         *ngIf="'write' === selectedUser.permission"
-        (click)="setUserPermission(selectedUser.username, 'read')"
+        (click)="setUserPermission(selectedUser.user, 'read')"
       >
         <mat-icon>folder_open</mat-icon>
         Set permission of User
-        {{ selectedUser.username }} to Read only
+        {{ selectedUser.user.name }} to Read only
       </button>
     </div>
   </div>
@@ -126,7 +126,7 @@
       <mat-label>Role</mat-label>
       <mat-select formControlName="role">
         <mat-option
-          *ngFor="let role of repoUserService.ROLES | keyvalue"
+          *ngFor="let role of projectUserService.ROLES | keyvalue"
           [value]="role.key"
           >{{ role.value }}</mat-option
         >
@@ -137,7 +137,7 @@
       <mat-label>Permission</mat-label>
       <mat-select formControlName="permission">
         <mat-option
-          *ngFor="let permission of repoUserService.PERMISSIONS | keyvalue"
+          *ngFor="let permission of projectUserService.PERMISSIONS | keyvalue"
           [value]="permission.key"
           >{{ permission.value }}</mat-option
         >

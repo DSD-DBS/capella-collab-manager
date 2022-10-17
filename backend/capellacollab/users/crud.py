@@ -20,6 +20,10 @@ def get_user(db: Session, username: str) -> DatabaseUser | None:
     return db.query(DatabaseUser).filter(DatabaseUser.name == username).first()
 
 
+def get_user_by_id(db: Session, user_id: int) -> DatabaseUser | None:
+    return db.query(DatabaseUser).filter(DatabaseUser.id == user_id).first()
+
+
 def get_all_users(db: Session) -> list[DatabaseUser]:
     return db.query(DatabaseUser).all()
 

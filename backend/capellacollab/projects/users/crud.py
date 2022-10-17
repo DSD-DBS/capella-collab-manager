@@ -19,11 +19,11 @@ def get_users_of_project(db: Session, projects_name: str):
     )
 
 
-def get_user_of_project(db: Session, projects_name: str, username: str):
+def get_user_of_project(db: Session, project_name: str, user_id: int):
     return (
         db.query(ProjectUserAssociation)
-        .filter(ProjectUserAssociation.projects_name == projects_name)
-        .filter(ProjectUserAssociation.username == username)
+        .filter(ProjectUserAssociation.projects_name == project_name)
+        .filter(ProjectUserAssociation.user_id == user_id)
         .first()
     )
 
@@ -32,12 +32,12 @@ def add_user_to_project(
     db: Session,
     projects_name: str,
     role: ProjectUserRole,
-    username: str,
+    user_id: int,
     permission: ProjectUserPermission,
 ):
     association = ProjectUserAssociation(
         projects_name=projects_name,
-        username=username,
+        user_id=user_id,
         role=role,
         permission=permission,
     )
@@ -48,12 +48,12 @@ def add_user_to_project(
 
 
 def change_role_of_user_in_project(
-    db: Session, projects_name: str, role: ProjectUserRole, username: str
+    db: Session, projects_name: str, role: ProjectUserRole, user_id: int
 ):
     project_user = (
         db.query(ProjectUserAssociation)
         .filter(ProjectUserAssociation.projects_name == projects_name)
-        .filter(ProjectUserAssociation.username == username)
+        .filter(ProjectUserAssociation.user_id == user_id)
         .first()
     )
     if role == ProjectUserRole.MANAGER:
@@ -68,12 +68,12 @@ def change_permission_of_user_in_project(
     db: Session,
     projects_name: str,
     permission: ProjectUserPermission,
-    username: str,
+    user_id: int,
 ):
     repo_user = (
         db.query(ProjectUserAssociation)
         .filter(ProjectUserAssociation.projects_name == projects_name)
-        .filter(ProjectUserAssociation.username == username)
+        .filter(ProjectUserAssociation.user_id == user_id)
         .first()
     )
     repo_user.permission = permission
@@ -82,15 +82,15 @@ def change_permission_of_user_in_project(
     return repo_user
 
 
-def delete_user_from_project(db: Session, projects_name: str, username: str):
+def delete_user_from_project(db: Session, projects_name: str, user_id: int):
     db.query(ProjectUserAssociation).filter(
-        ProjectUserAssociation.username == username
+        ProjectUserAssociation.user_id == user_id
     ).filter(ProjectUserAssociation.projects_name == projects_name).delete()
     db.commit()
 
 
-def delete_all_projects_for_user(db: Session, username: str):
+def delete_all_projects_for_user(db: Session, user_id: int):
     db.query(ProjectUserAssociation).filter(
-        ProjectUserAssociation.username == username
+        ProjectUserAssociation.user_id == user_id
     ).delete()
     db.commit()
