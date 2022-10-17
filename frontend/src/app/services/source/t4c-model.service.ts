@@ -50,16 +50,27 @@ export class T4cModelService {
   createT4CModel(
     project_slug: string,
     model_slug: string,
-    body: CreateT4CModel
+    body: SubmitT4CModel
   ): Observable<null> {
     return this.http.post<null>(
       this.urlFactory(project_slug, model_slug),
       body
     );
   }
+
+  editT4CModel(
+    project_slug: string,
+    model_slug: string,
+    body: SubmitT4CModel
+  ): Observable<null> {
+    return this.http.patch<null>(
+      this.urlFactory(project_slug, model_slug),
+      body
+    );
+  }
 }
 
-export type CreateT4CModel = {
+export type SubmitT4CModel = {
   t4c_instance_id: number;
   t4c_repository_id: number;
   name: string;

@@ -52,6 +52,21 @@ def create_t4c_model(
     return t4c_model
 
 
+def get_t4c_model(db: Session, t4c_model_id) -> DatabaseT4CModel:
+    return db.execute(
+        select(DatabaseT4CModel).where(DatabaseT4CModel.id == t4c_model_id)
+    ).scalar_one()
+
+
+def patch_t4c_model(
+    db: Session, t4c_model: DatabaseT4CModel
+) -> DatabaseT4CModel:
+    db.add(t4c_model)
+    db.commit()
+    db.refresh(t4c_model)
+    return t4c_model
+
+
 def delete_project(db: Session, id: int, repo_name: str):
     db.query(DatabaseT4CModel).filter(DatabaseT4CModel.id == id).filter(
         DatabaseT4CModel.repository_name == repo_name

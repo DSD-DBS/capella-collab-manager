@@ -24,7 +24,7 @@ import {
   ProjectService,
 } from 'src/app/services/project/project.service';
 import { Model, ModelService } from 'src/app/services/model/model.service';
-import { BehaviorSubject, filter, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, filter, switchMap, take, tap } from 'rxjs';
 import {
   SubmitT4CModel,
   T4CModel,
@@ -32,12 +32,14 @@ import {
 } from '../../../services/source/t4c-model.service';
 
 @Component({
-  selector: 'app-add-t4c-source',
-  templateUrl: './add-t4c-source.component.html',
-  styleUrls: ['./add-t4c-source.component.css'],
+  selector: 'app-edit-t4c-source',
+  templateUrl: './edit-t4c-source.component.html',
+  styleUrls: ['./edit-t4c-source.component.css'],
 })
-export class AddT4cSourceComponent implements OnInit {
+export class EditT4cSourceComponent implements OnInit {
   @Output() create = new EventEmitter<boolean>();
+
+  public editing: boolean = false;
 
   private _instances = new BehaviorSubject<T4CInstance[]>([]);
   get instances() {
@@ -102,14 +104,7 @@ export class AddT4cSourceComponent implements OnInit {
       this._instances.next(instances);
     });
 
-    this.t4cModelService._t4cModel.pipe(filter(Boolean)).subscribe((model) => {
-      this.form.disable();
-      this.form.patchValue({
-        t4c_instance_id: model.repository.instance.id,
-        t4c_repository_id: model.repository.id,
-        name: model.name,
-      });
-    });
+    this.resetToInstance();
 
     this.form.controls.t4c_instance_id.valueChanges
       .pipe(
@@ -176,8 +171,27 @@ export class AddT4cSourceComponent implements OnInit {
           this.form.value as SubmitT4CModel
         )
         .subscribe((_) => {
-          this.create.emit(true);
+          this.resetToInstance();
         });
     }
+  }
+
+  onEditing() {
+    this.editing = true;
+    this.form.enable({ emitEvent: false });
+  }
+
+  resetToInstance() {
+    this.editing = false;
+    this.t4cModelService._t4cModel
+      .pipe(filter(Boolean), take(1))
+      .subscribe((model) => {
+        this.form.disable();
+        this.form.patchValue({
+          t4c_instance_id: model.repository.instance.id,
+          t4c_repository_id: model.repository.id,
+          name: model.name,
+        });
+      });
   }
 }

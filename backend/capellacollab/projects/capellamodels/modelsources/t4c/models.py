@@ -27,7 +27,7 @@ class DatabaseT4CModel(Base):
     model = relationship("DatabaseCapellaModel", back_populates="t4c_models")
 
 
-class CreateT4CModel(BaseModel):
+class SubmitT4CModel(BaseModel):
     name: str
     t4c_instance_id: int
     t4c_repository_id: int

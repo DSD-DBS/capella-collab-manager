@@ -6,7 +6,7 @@ import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, NoResultFound
 
 import capellacollab.core.database as database
 import capellacollab.projects.capellamodels.modelsources.t4c.crud as database_projects
@@ -20,7 +20,7 @@ from capellacollab.extensions.modelsources.t4c.injectables import (
     load_project_model,
 )
 from capellacollab.extensions.modelsources.t4c.models import (
-    CreateT4CModel,
+    SubmitT4CModel,
     T4CModel,
     T4CRepositoryWithModels,
 )
@@ -63,7 +63,7 @@ def get_t4c_model(
     "/",
 )
 def create_t4c_model(
-    body: CreateT4CModel,
+    body: SubmitT4CModel,
     project_model: tuple[DatabaseProject, DatabaseCapellaModel] = Depends(
         load_project_model
     ),
@@ -79,6 +79,46 @@ def create_t4c_model(
         return crud.create_t4c_model(
             db, project_model[1], repository, body.name
         )
+    except IntegrityError:
+        raise HTTPException(
+            409,
+            {
+                "reason": f"A model named {body.name} already exists in the repository {repository.name}."
+            },
+        )
+
+
+@router.patch("/{t4c_model_id}", responses=AUTHENTICATION_RESPONSES)
+def edit_t4c_model(
+    t4c_model_id: int,
+    body: SubmitT4CModel,
+    project_model: tuple[DatabaseProject, DatabaseCapellaModel] = Depends(
+        load_project_model
+    ),
+    db: Session = Depends(database.get_db),
+    token=Depends(JWTBearer()),
+):
+    verify_admin(token, db)
+    instance = load_instance(body.t4c_instance_id, db)
+    repository = load_instance_repository(
+        body.t4c_repository_id, db, instance
+    )[1]
+    try:
+        t4c_model = crud.get_t4c_model(
+            db, project_model[1], repository, t4c_model_id
+        )
+    except NoResultFound:
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The model with the id {t4c_model_id} does not exist."
+            },
+        )
+    for key in body.dict():
+        if value := body.__getattribute__(key):
+            t4c_model.__setattr__(key, value)
+    try:
+        return crud.patch_t4c_model(db, t4c_model)
     except IntegrityError:
         raise HTTPException(
             409,

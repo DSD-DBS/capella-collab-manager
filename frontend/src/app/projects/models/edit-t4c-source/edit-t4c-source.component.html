@@ -65,16 +65,20 @@
           }}</mat-option>
         </mat-autocomplete>
       </fieldset>
-      <button mat-button (click)="create.emit(false)">Choose source</button>
-      <div class="field-separator"></div>
-      <button
-        mat-raised-button
-        color="primary"
-        [disabled]="!form.valid"
-        type="submit"
-      >
-        Add source
-      </button>
+
+      <div *ngIf="!editing" class="flex-space-between">
+        <button mat-flat-button (click)="onEditing()" color="primary">
+          Edit source
+        </button>
+      </div>
+      <div *ngIf="editing" class="flex-space-between">
+        <button mat-flat-button (click)="resetToInstance()" color="warn">
+          Cancel editing
+        </button>
+        <button mat-flat-button (click)="onSubmit()" color="primary">
+          Save source
+        </button>
+      </div>
     </form>
   </mat-card>
 </div>
