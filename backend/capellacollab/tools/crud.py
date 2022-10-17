@@ -7,7 +7,13 @@ import typing as t
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from capellacollab.tools.models import CreateTool, Tool, Type, Version
+from capellacollab.tools.models import (
+    CreateTool,
+    PatchToolDockerimage,
+    Tool,
+    Type,
+    Version,
+)
 
 
 def get_all_tools(db: Session) -> t.List[Tool]:
@@ -23,11 +29,25 @@ def create_tool(db: Session, tool: Tool):
     db.commit()
 
 
-def update_tool(db: Session, tool: Tool, patch_tool: CreateTool):
-    tool.name = patch_tool.name
+def update_tool(
+    db: Session,
+    tool: Tool,
+    patch_tool: t.Union[CreateTool, PatchToolDockerimage],
+):
+    if isinstance(patch_tool, CreateTool):
+        tool.name = patch_tool.name
+    else:
+        if patch_tool.persistent:
+            tool.docker_image_template = patch_tool.persistent
+            # FIXME: Set readonly image
     db.add(tool)
     db.commit()
     return tool
+
+
+def delete_tool(db: Session, tool: Tool):
+    db.delete(tool)
+    db.commit()
 
 
 def get_versions(db: Session) -> t.List[Version]:

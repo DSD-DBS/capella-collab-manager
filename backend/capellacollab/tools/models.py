@@ -2,8 +2,17 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import typing as t
+
 from pydantic import BaseModel
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import (
+    Boolean,
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
@@ -50,6 +59,16 @@ class ToolBase(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class ToolDockerimage(BaseModel):
+    persistent: str
+    readonly: str
+
+
+class PatchToolDockerimage(BaseModel):
+    persistent: t.Optional[str]
+    readonly: t.Optional[str]
 
 
 class ToolVersionBase(BaseModel):
