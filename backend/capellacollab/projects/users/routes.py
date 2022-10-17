@@ -5,15 +5,14 @@ from __future__ import annotations
 
 import typing as t
 
+import sqlalchemy.orm.session
 from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError, Session
 
-import capellacollab.extensions.modelsources.t4c.connection as t4c_manager
+import capellacollab.projects.users.crud as project_users
 import capellacollab.projects.users.models as schema_projects
 import capellacollab.users.crud as users
 from capellacollab.core.authentication.database import (
-    check_username_not_admin,
-    check_username_not_in_project,
     is_admin,
     verify_project_role,
     verify_write_permission,
@@ -24,10 +23,34 @@ from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
 from capellacollab.core.database import get_db
+from capellacollab.users.models import Role
 
 from . import crud
 
 router = APIRouter()
+
+
+def check_username_not_admin(username: int, db):
+    if users.get_user(db=db, username=username).role == Role.ADMIN:
+        raise HTTPException(
+            status_code=403,
+            detail={"reason": "You are not allowed to edit this user."},
+        )
+
+
+def check_username_not_in_project(
+    project: str,
+    username: str,
+    db: sqlalchemy.orm.session.Session,
+):
+    user = project_users.get_user_of_project(db, project, username)
+    if user:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "reason": "The user already exists in this project.",
+            },
+        )
 
 
 @router.get(

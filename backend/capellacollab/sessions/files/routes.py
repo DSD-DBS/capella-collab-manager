@@ -7,14 +7,12 @@ import logging
 import tarfile
 
 import requests
+import sqlalchemy.orm.session
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from requests.auth import HTTPBasicAuth
 from sqlalchemy.orm import Session
 
 from capellacollab.config import config
-from capellacollab.core.authentication.database import (
-    check_session_belongs_to_user,
-)
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.authentication.responses import (
@@ -27,6 +25,21 @@ from capellacollab.sessions.schema import FileTree
 
 router = APIRouter()
 log = logging.getLogger(__name__)
+
+
+def check_session_belongs_to_user(
+    username: str,
+    id: str,
+    db: sqlalchemy.orm.session.Session,
+):
+    session = get_session_by_id(db, id)
+    if not session.owner_name == username:
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "reason": "You are not allowed to upload or get files in this session."
+            },
+        )
 
 
 @router.get("/", response_model=FileTree)
