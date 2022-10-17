@@ -3,6 +3,7 @@
 
 
 import typing as t
+from copy import deepcopy
 
 from pydantic import BaseModel
 from sqlalchemy import (
@@ -64,6 +65,17 @@ class ToolBase(BaseModel):
 class ToolDockerimage(BaseModel):
     persistent: str
     readonly: str
+
+    @classmethod
+    def from_orm(cls, obj: ToolBase) -> "ToolDockerimage":
+        obj
+        obj.persistent = obj.docker_image_template
+        obj.readonly = obj.docker_image_template
+
+        return super().from_orm(obj)
+
+    class Config:
+        orm_mode = True
 
 
 class PatchToolDockerimage(BaseModel):
