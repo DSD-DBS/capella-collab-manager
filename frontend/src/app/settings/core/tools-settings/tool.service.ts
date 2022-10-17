@@ -8,17 +8,20 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
-export interface Tool {
-  id: number;
+export type CreateTool = {
   name: string;
-}
+};
 
-export interface ToolVersion {
+export type Tool = CreateTool & {
+  id: number;
+};
+
+export type ToolVersion = {
   id: number;
   name: string;
   is_recommended: boolean;
   is_deprecated: boolean;
-}
+};
 
 export interface ToolType {
   id: number;
@@ -30,13 +33,18 @@ export type ToolExtended = {
   versions: ToolVersion[];
 };
 
+export type ToolDockerimages = {
+  persistent: string;
+  readonly: string;
+};
+
 @Injectable({
   providedIn: 'root',
 })
 export class ToolService {
   constructor(private http: HttpClient) {}
 
-  base_url = environment.backend_url + '/tools/';
+  baseURL = environment.backend_url + '/tools';
 
   _tools = new BehaviorSubject<Tool[] | undefined>(undefined);
   get tools(): Tool[] | undefined {
@@ -48,18 +56,48 @@ export class ToolService {
   }
 
   getTools(): Observable<Tool[]> {
-    return this.http.get<Tool[]>(this.base_url.toString()).pipe(
+    return this.http.get<Tool[]>(this.baseURL).pipe(
       tap((tools: Tool[]) => {
         this._tools.next(tools);
       })
     );
   }
 
+  createTool(name: string): Observable<Tool> {
+    return this.http.post<Tool>(this.baseURL, { name });
+  }
+
+  updateTool(toolId: number, toolName: string): Observable<Tool> {
+    return this.http.put<Tool>(`${this.baseURL}/${toolId}`, {
+      name: toolName,
+    });
+  }
+
+  deleteTool(tool_id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseURL}/${tool_id}`);
+  }
+
   getVersionsForTool(toolId: number): Observable<ToolVersion[]> {
-    return this.http.get<ToolVersion[]>(`${this.base_url}${toolId}/versions/`);
+    return this.http.get<ToolVersion[]>(`${this.baseURL}/${toolId}/versions/`);
   }
 
   getTypesForTool(toolId: number): Observable<ToolType[]> {
-    return this.http.get<ToolVersion[]>(`${this.base_url}${toolId}/types/`);
+    return this.http.get<ToolVersion[]>(`${this.baseURL}/${toolId}/types/`);
+  }
+
+  getDockerimagesForTool(toolId: number): Observable<ToolDockerimages> {
+    return this.http.get<ToolDockerimages>(
+      `${this.baseURL}/${toolId}/dockerimages`
+    );
+  }
+
+  updateDockerimagesForTool(
+    toolId: number,
+    dockerimages: ToolDockerimages
+  ): Observable<ToolDockerimages> {
+    return this.http.put<ToolDockerimages>(
+      `${this.baseURL}/${toolId}/dockerimages`,
+      dockerimages
+    );
   }
 }
