@@ -13,11 +13,11 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   AuthService,
   RefreshTokenResponse,
 } from 'src/app/services/auth/auth.service';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
