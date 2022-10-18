@@ -2,12 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import enum
+import json
+import logging
 import typing as t
 
 import pydantic
 import requests
-from fastapi import HTTPException
-from requests.exceptions import InvalidURL
+from requests.exceptions import RequestException
 from pydantic import BaseModel, validator
 from sqlalchemy import CheckConstraint, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
@@ -15,19 +16,17 @@ from sqlalchemy.orm import relationship
 from capellacollab.core.database import Base
 from capellacollab.core.models import ResponseModel
 
+log = logging.getLogger(__name__)
+
 
 def validate_rest_api_url(value: t.Optional[str]):
     if value:
         try:
             requests.Request("GET", value).prepare()
-        except InvalidURL as e:
-            raise HTTPException(
-                400,
-                {
-                    "title": "Bad request",
-                    "reason": "The provided TeamForCapella REST API is not valid.",
-                    "technical": str(e),
-                },
+        except RequestException:
+            log.info("REST API Validation failed", exc_info=True)
+            raise ValueError(
+                "The provided TeamForCapella REST API is not valid."
             )
 
 

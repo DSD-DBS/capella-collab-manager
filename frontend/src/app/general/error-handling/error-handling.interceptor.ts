@@ -10,10 +10,10 @@ import {
   HttpHandler,
   HttpInterceptor,
   HttpRequest,
-  HttpResponse,
 } from '@angular/common/http';
 import { Observable, tap, map } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { getReasonPhrase } from 'http-status-codes';
 
 @Injectable({
   providedIn: 'root',
@@ -63,19 +63,29 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
 
           if (
             typeof err.error !== 'undefined' &&
-            typeof err.error.detail !== 'undefined' &&
-            err.error.detail.reason
+            typeof err.error.detail !== 'undefined'
           ) {
-            this.toastService.showError(
-              'An error occurred!',
-              err.error.detail.reason
-            );
+            if (Array.isArray(err.error.detail)) {
+              // Pydantic errors
+              for (let error of err.error.detail) {
+                this.toastService.showError(
+                  getReasonPhrase(err.status),
+                  error.msg
+                );
+              }
+            } else if (err.error.detail.reason) {
+              // User defined error
+              this.toastService.showError(
+                'An error occurred!',
+                err.error.detail.reason
+              );
+            }
           } else if (err.status === 0) {
             this.toastService.showError(
               'Backend not reachable',
               'Please check your internet connection and refresh the page!'
             );
-          } else if (err.status !== 404) {
+          } else {
             this.toastService.showError(
               'An error occurred!',
               'Please try again!'
