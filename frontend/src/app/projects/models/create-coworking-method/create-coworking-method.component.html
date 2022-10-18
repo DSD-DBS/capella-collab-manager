@@ -9,17 +9,13 @@
 >
   <mat-card class="section-card">
     <h2>
-      Add a primary source for the model “{{ modelService.model.name }}” of the
-      project “{{ projectService.project.name }}”.
+      Add a {{ asStepper ? "primary" : "" }} source for the model “{{
+        modelService.model.name
+      }}” of the project “{{ projectService.project.name }}”.
     </h2>
     <form [formGroup]="form">
       <fieldset *ngIf="!asStepper && isEditMode">
-        <mat-slide-toggle
-          formControlName="primary"
-          [disabled]="gitModel!.primary"
-        >
-          Primary
-        </mat-slide-toggle>
+        <mat-slide-toggle formControlName="primary"> Primary </mat-slide-toggle>
       </fieldset>
       <div formGroupName="urls">
         <fieldset *ngIf="availableGitInstances.length">
