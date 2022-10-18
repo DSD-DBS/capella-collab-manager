@@ -101,7 +101,7 @@ def add_user_to_project(
 )
 def patch_project_user(
     project: str,
-    user_id: str,
+    user_id: int,
     body: schema_projects.PatchProjectUser,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
