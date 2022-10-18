@@ -22,7 +22,7 @@ import {
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ProjectUser, User } from 'src/app/schemes';
 import { Project } from 'src/app/services/project/project.service';
-import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
+import { ProjectUserService } from 'src/app/services/repository-user/repository-user.service';
 import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
@@ -51,7 +51,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
   );
 
   constructor(
-    public projectUserService: RepositoryUserService,
+    public projectUserService: ProjectUserService,
     public userService: UserService,
     private toastService: ToastService
   ) {}

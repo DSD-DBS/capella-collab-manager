@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class RepositoryUserService {
+export class ProjectUserService {
   constructor(private http: HttpClient) {}
   BACKEND_URL_PREFIX = environment.backend_url + '/projects/';
 
