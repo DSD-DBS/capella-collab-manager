@@ -51,7 +51,7 @@ class ProjectRoleVerification:
         self,
         required_role: ProjectUserRole,
         verify: bool = True,
-        required_permission: ProjectUserPermission = None,
+        required_permission: t.Union[ProjectUserPermission, None] = None,
     ):
         self.required_role = required_role
         self.verify = verify
