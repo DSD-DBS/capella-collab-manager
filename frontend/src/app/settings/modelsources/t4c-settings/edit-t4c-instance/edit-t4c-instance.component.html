@@ -111,7 +111,7 @@
             <mat-error *ngIf="form.controls.password.errors?.required">
               The password is required.
             </mat-error>
-            <mat-error *ngIf="form.controls.username.errors?.pattern">
+            <mat-error *ngIf="form.controls.password.errors?.pattern">
               The password should only use latin-1 characters.
             </mat-error>
             <mat-hint *ngIf="existing">Is not changed if empty</mat-hint>
