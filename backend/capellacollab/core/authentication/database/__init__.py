@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import typing as t
+
 import sqlalchemy.orm.session
 from fastapi import Depends, HTTPException
 
