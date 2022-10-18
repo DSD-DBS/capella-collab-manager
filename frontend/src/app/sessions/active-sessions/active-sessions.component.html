@@ -24,9 +24,9 @@
   <mat-card-content class="sessionContent">
     <h3
       class="state"
-      [ngClass]="sessionService.beatifyState(session.state).css"
+      [ngClass]="sessionService.beautifyState(session.state).css"
     >
-      {{ sessionService.beatifyState(session.state).text }}
+      {{ sessionService.beautifyState(session.state).text }}
     </h3>
     <p id="creationTime">
       The session was created
@@ -41,7 +41,7 @@
       mat-flat-button
       color="primary"
       (click)="openReconnectDialog(session)"
-      [disabled]="!sessionService.beatifyState(session.state).success"
+      [disabled]="!sessionService.beautifyState(session.state).success"
     >
       Reconnect
     </button>
@@ -50,7 +50,7 @@
       mat-flat-button
       color="primary"
       (click)="uploadFileDialog(session)"
-      [disabled]="!sessionService.beatifyState(session.state).success"
+      [disabled]="!sessionService.beautifyState(session.state).success"
     >
       Upload
     </button>

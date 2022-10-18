@@ -52,7 +52,7 @@ export class SessionService {
     return this.http.get<SessionUsage>(this.BACKEND_URL_PREFIX + 'usage');
   }
 
-  beatifyState(state: string | undefined): SessionState {
+  beautifyState(state: string | undefined): SessionState {
     /* Possible states are (and a few more states):
     https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/events/event.go */
 
