@@ -5,10 +5,9 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, switchMap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { environment } from 'src/environments/environment';
-import { ModelService } from '../model/model.service';
 
 export interface Source {
   path: string;

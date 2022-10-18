@@ -3,12 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, Inject, OnInit } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { Session } from '../../schemes';
 import { SessionService } from '../../services/session/session.service';
@@ -41,7 +37,7 @@ export class DeleteSessionDialogComponent {
       () => {
         this.dialogRef.close();
       },
-      (err) => {
+      (_) => {
         this.deleteButton.disabled = false;
         this.deleteButton.text = 'Failure. Try again.';
       }

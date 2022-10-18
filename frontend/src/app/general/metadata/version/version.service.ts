@@ -11,7 +11,6 @@ import { LocalStorageService } from 'src/app/general/auth/local-storage/local-st
 import { environment } from 'src/environments/environment';
 import { ReleaseNote } from '../release-notes/release-note.service';
 import { ReleaseNotesComponent } from '../release-notes/release-notes.component';
-const semver = require('semver');
 const semverCompare = require('semver/functions/compare');
 
 @Injectable({

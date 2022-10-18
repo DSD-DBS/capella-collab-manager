@@ -6,14 +6,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  BehaviorSubject,
-  combineLatest,
-  filter,
-  map,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, filter, map, switchMap, tap } from 'rxjs';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ToolService, ToolVersion } from 'src/app/services/tools/tool.service';

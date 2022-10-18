@@ -16,7 +16,7 @@ module.exports = {
         "plugin:@angular-eslint/recommended",
         "plugin:@angular-eslint/template/process-inline-templates",
       ],
-      plugins: ["import"],
+      plugins: ["import", "unused-imports"],
       rules: {
         "@angular-eslint/directive-selector": [
           "error",
@@ -44,6 +44,15 @@ module.exports = {
           },
         ],
         "@angular-eslint/sort-ngmodule-metadata-arrays": ["error"],
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            argsIgnorePattern: "^_",
+            varsIgnorePattern: "^_",
+            caughtErrorsIgnorePattern: "^_",
+          },
+        ],
+        "unused-imports/no-unused-imports": "error",
       },
     },
     {

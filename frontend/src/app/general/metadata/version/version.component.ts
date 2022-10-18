@@ -6,8 +6,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
-import { ReleaseNotesComponent } from '../release-notes/release-notes.component';
-import { BackendMetadata, Version, VersionService } from './version.service';
+import { BackendMetadata, VersionService } from './version.service';
 
 @Component({
   selector: 'app-version',

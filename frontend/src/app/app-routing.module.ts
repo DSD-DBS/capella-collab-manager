@@ -27,7 +27,6 @@ import { GuacamoleSettingsComponent } from './settings/integrations/guacamole-se
 import { EditGitSettingsComponent } from './settings/modelsources/git-settings/edit-git-settings/edit-git-settings.component';
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
 import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/edit-t4c-instance/edit-t4c-instance.component';
-import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-instance-settings.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
 import { HomeComponent } from './workspaces/home.component';

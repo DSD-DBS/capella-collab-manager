@@ -12,7 +12,6 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Subject, connectable, filter, switchMap, tap } from 'rxjs';
 import slugify from 'slugify';
 import { ToastService } from 'src/app/helpers/toast/toast.service';

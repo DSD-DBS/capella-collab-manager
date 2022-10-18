@@ -6,7 +6,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Session } from '../../schemes';
 import { OwnSessionService } from '../../services/own-session/own-session.service';
-import { SessionService } from '../../services/session/session.service';
 
 @Component({
   selector: 'app-session-created',

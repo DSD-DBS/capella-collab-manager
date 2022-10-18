@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { Session } from 'src/app/schemes';
 import { GuacamoleService } from 'src/app/services/guacamole/guacamole.service';

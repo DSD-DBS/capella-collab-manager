@@ -4,7 +4,7 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { Subscription, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   ProjectService,

@@ -9,7 +9,7 @@ import {
   AsyncValidator,
   ValidationErrors,
 } from '@angular/forms';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { GitService } from '../../services/git/git.service';
 
 @Injectable({
