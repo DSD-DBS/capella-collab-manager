@@ -4,7 +4,7 @@
 import enum
 import typing as t
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from sqlalchemy import CheckConstraint, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -37,6 +37,16 @@ class DatabaseT4CInstance(Base):
     )
 
 
+def latin_1_validator(value: t.Optional[str]) -> t.Optional[str]:
+    if not value:
+        return value
+    try:
+        value.encode("latin-1")
+    except UnicodeEncodeError as e:
+        raise ValueError("Value should only use latin-1 characters.")
+    return value
+
+
 class T4CInstanceBase(BaseModel):
     license: str
     host: str
@@ -44,6 +54,11 @@ class T4CInstanceBase(BaseModel):
     usage_api: str
     rest_api: str
     username: str
+
+    # validators
+    _validate_username = validator("username", allow_reuse=True)(
+        latin_1_validator
+    )
 
     class Config:
         orm_mode = True
@@ -58,6 +73,14 @@ class PatchT4CInstance(BaseModel):
     username: t.Optional[str]
     password: t.Optional[str]
 
+    # validators
+    _validate_username = validator("username", allow_reuse=True)(
+        latin_1_validator
+    )
+    _validate_password = validator("password", allow_reuse=True)(
+        latin_1_validator
+    )
+
     class Config:
         orm_mode = True
 
@@ -69,6 +92,11 @@ class T4CInstanceComplete(T4CInstanceBase):
 
 class CreateT4CInstance(T4CInstanceComplete):
     password: str
+
+    # validators
+    _validate_password = validator("password", allow_reuse=True)(
+        latin_1_validator
+    )
 
 
 class Version(BaseModel):
