@@ -130,11 +130,11 @@ def verify_project_role(
     """
     if not allowed_roles:
         allowed_roles = ["user", "manager", "administrator"]
-    required_role = ProjectUserRole.USER
+    required_role = ProjectUserRole.ADMIN
     if "manager" in allowed_roles:
         required_role = ProjectUserRole.MANAGER
-    if "admin" in allowed_roles:
-        required_role = ProjectUserRole.ADMIN
+    if "user" in allowed_roles:
+        required_role = ProjectUserRole.USER
 
     project = get_project(db, project)
     return ProjectRoleVerification(required_role=required_role, verify=True)(
