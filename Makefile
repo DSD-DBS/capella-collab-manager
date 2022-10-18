@@ -36,8 +36,8 @@ importer:
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/importer
 
 capella/remote: capella
-	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote capella-dockerimages/remote
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
+	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote/5.2:prod capella-dockerimages/remote
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote/5.2:prod
 
 capella-download:
 	cd capella-dockerimages/capella/archives; \
@@ -60,8 +60,9 @@ t4c-client: capella
 readonly:
 	docker build -t capella/ease --build-arg BASE_IMAGE=capella/base --build-arg BUILD_TYPE=online capella-dockerimages/ease
 	docker build -t capella/ease/remote --build-arg BASE_IMAGE=capella/ease capella-dockerimages/remote
-	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly --build-arg BASE_IMAGE=capella/ease/remote capella-dockerimages/readonly
+	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly/5.2:prod --build-arg BASE_IMAGE=capella/ease/remote capella-dockerimages/readonly
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly/5.2:prod
 
 ease:
 	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/ease --build-arg BASE_IMAGE=t4c/client/base --build-arg BUILD_TYPE=online capella-dockerimages/ease
@@ -94,7 +95,7 @@ helm-deploy:
 		--set general.port=8080 \
 		--set t4cServer.apis.usageStats="http://$(RELEASE)-licence-server-mock:80/mock" \
 		--set t4cServer.apis.restAPI="http://$(RELEASE)-t4c-server-mock:80/mock/api/v1.0" \
-		--set backend.authentication.redirectURI="http://localhost:$(PORT)/oauth2/callback" \
+		--set backend.authentication.oauth.redirectURI="http://localhost:$(PORT)/oauth2/callback" \
 		$(RELEASE) ./helm
 	$(MAKE) .provision-guacamole wait
 

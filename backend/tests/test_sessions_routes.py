@@ -5,12 +5,15 @@ from __future__ import annotations
 
 import typing as t
 from datetime import datetime
+from uuid import uuid1
 
 import pytest
 
 import capellacollab.sessions.guacamole
 from capellacollab.__main__ import app
+from capellacollab.sessions.database import get_session_by_id
 from capellacollab.sessions.operators import Operator, get_operator
+from capellacollab.tools.crud import get_versions
 from capellacollab.users.crud import create_user
 from capellacollab.users.models import Role
 
@@ -59,15 +62,20 @@ def guacamole(monkeypatch):
 
 
 class MockOperator(Operator):
+
+    sessions = []
+
     @classmethod
     def start_persistent_session(
-        self,
+        cls,
         username: str,
         password: str,
+        docker_image: str,
         repositories: t.List[str],
     ) -> t.Dict[str, t.Any]:
+        cls.sessions.append({"docker_image": docker_image})
         return {
-            "id": "test",
+            "id": str(uuid1()),
             "host": "test",
             "ports": [1],
             "created_at": datetime.now(),
@@ -131,6 +139,7 @@ class MockOperator(Operator):
 @pytest.fixture(autouse=True)
 def kubernetes():
     mock = MockOperator()
+    mock.sessions.clear()
 
     def get_mock_operator():
         return mock
@@ -146,18 +155,51 @@ def test_get_sessions_not_authenticated(client):
     assert response.json() == {"detail": "Not authenticated"}
 
 
-def test_create_persistent_session_as_user(client, db, username):
+@pytest.mark.xfail()
+def test_create_readonly_session_as_user(client, db, username):
     create_user(db, username, Role.USER)
 
     response = client.post(
         "/api/v1/sessions/",
         json={
-            "type": "persistent",
+            "type": "readonly",
             "branch": "main",
             "depth": "CompleteHistory",
-            "repository": None,
+            "repository": "myrepo",
         },
     )
 
     assert response.status_code == 200
     assert "id" in response.json()
+
+
+def test_create_persistent_session_as_user(client, db, username, kubernetes):
+    create_user(db, username, Role.USER)
+    versions = get_versions(db)
+
+    tool_id, version_id = next(
+        (v.tool_id, v.id)
+        for v in versions
+        if v.tool.name == "Capella" and v.name == "5.0"
+    )
+
+    response = client.post(
+        "/api/v1/sessions/persistent",
+        json={
+            "tool": tool_id,
+            "version": version_id,
+        },
+    )
+
+    out = response.json()
+
+    session = get_session_by_id(db, out["id"])
+
+    assert response.status_code == 200
+    assert session
+    assert session.owner_name == username
+    assert kubernetes.sessions
+    assert (
+        kubernetes.sessions[0]["docker_image"]
+        == "k3d-myregistry.localhost:12345/t4c/client/remote/5.0:prod"
+    )

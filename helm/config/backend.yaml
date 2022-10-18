@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 docker:
+  registry: "{{ .Values.docker.registry.internal }}"
   images:
     workspaces:
       persistent: "{{ .Values.docker.registry.internal }}{{ .Values.docker.images.workspaces.persistent }}"

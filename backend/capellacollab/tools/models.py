@@ -29,7 +29,7 @@ class Version(Base):
     is_deprecated = Column(Boolean)
 
     tool_id = Column(Integer, ForeignKey(Tool.id))
-    tool = relationship("Tool", back_populates="versions")
+    tool: Tool = relationship("Tool", back_populates="versions")
 
 
 class Type(Base):

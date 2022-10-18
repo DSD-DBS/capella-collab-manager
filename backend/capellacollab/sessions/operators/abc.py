@@ -15,6 +15,7 @@ class Operator(abc.ABC):
         self,
         username: str,
         password: str,
+        docker_image: str,
         repositories: t.List[str],
     ) -> t.Dict[str, t.Any]:
         """Start / Create a session
@@ -25,6 +26,8 @@ class Operator(abc.ABC):
             Username of the workspace user
         password
             Password for the remote connection
+        docker_image:
+            The image to start
         repositories
             T4C Repositories that are predefined in the workspace
 

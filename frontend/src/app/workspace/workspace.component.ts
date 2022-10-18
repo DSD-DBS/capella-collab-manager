@@ -3,27 +3,62 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component } from '@angular/core';
-
-import { NavBarService } from '../general/navbar/service/nav-bar.service';
-import { ProjectUserService } from '../projects/project-detail/project-users/service/project-user.service';
-import { ProjectUser } from '../schemes';
+import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ModelService } from '../services/model/model.service';
 import { SessionService } from '../services/session/session.service';
+import { ToolService, ToolVersion } from '../services/tools/tool.service';
 
 @Component({
   selector: 'app-workspace',
   templateUrl: './workspace.component.html',
   styleUrls: ['./workspace.component.css'],
 })
-export class WorkspaceComponent {
-  repositories: ProjectUser[] = [];
+export class WorkspaceComponent implements OnInit {
   showSpinner = true;
+  canCreateSession = true;
+
+  versions: ToolVersion[] = [];
+
+  public form = new FormGroup({
+    toolId: new FormControl(null, Validators.required),
+    versionId: new FormControl(null, Validators.required),
+  });
 
   constructor(
     public sessionService: SessionService,
-    private projectUserService: ProjectUserService,
-    private navbarService: NavBarService
-  ) {
-    this.navbarService.title = 'Workspaces';
+    public toolService: ToolService,
+    public modelService: ModelService
+  ) {}
+
+  ngOnInit(): void {
+    this.toolService.getTools().subscribe();
+  }
+
+  requestSession() {
+    if (!this.form.valid) {
+      return;
+    }
+
+    this.canCreateSession = false;
+    this.sessionService
+      .createPersistentSession(
+        this.form.controls.toolId.value!,
+        this.form.controls.versionId.value!
+      )
+      .subscribe({
+        complete: () => {
+          this.canCreateSession = true;
+        },
+      });
+  }
+
+  getVersionsForTool(toolId: number): void {
+    this.versions = [];
+    this.toolService
+      .getVersionsForTool(toolId)
+      .subscribe((res: ToolVersion[]) => {
+        this.versions = res;
+      });
   }
 }

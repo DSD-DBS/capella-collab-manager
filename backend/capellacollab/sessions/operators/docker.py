@@ -27,6 +27,7 @@ class DockerOperator(Operator):
         self,
         username: str,
         password: str,
+        docker_image: str,
         repositories: t.List[str],
     ) -> t.Dict[str, t.Any]:
         path_to_workspace = pathlib.Path("/workspaces", username)
@@ -35,7 +36,7 @@ class DockerOperator(Operator):
             shutil.chown(path_to_workspace, user=1001380000)
 
         con = self.client.containers.run(
-            image=config["docker"]["images"]["workspaces"]["persistent"],
+            image=docker_image,
             volumes={
                 cfg["mountVolume"]
                 + f"/workspaces/{username}": {

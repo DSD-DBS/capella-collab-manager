@@ -3,55 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-mat-card {
-  width: fit-content;
-  margin: 10px;
-}
-
-button {
-  margin: 10px 5px 0;
-}
-
-.flexbox {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  align-items: center;
-}
-.header {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-}
-
-#title {
-  font-size: 24px;
-  text-align: center;
-}
-
-h2 {
-  margin: 5px 10px;
-}
-
-.header > .type {
-  background-color: var(--primary-color);
-  color: white;
-  border-radius: 5px 5px 0 0;
-}
-
-.header > .state {
-  color: white;
-  border-radius: 0 0 10px 10px;
-}
-
 .error {
   background-color: var(--error-color);
 }
@@ -68,18 +19,24 @@ h2 {
   background-color: var(--primary-color);
 }
 
-.content {
-  padding: 0 10px 10px;
+.mat-card-content h3 {
+  margin: 2px 4px;
+  text-align: center;
 }
 
-.content > .text {
-  text-align: left;
+.sessionContent {
+  margin-bottom: 5px;
 }
 
-.mat-card {
-  padding: 0 !important;
+.state {
+  color: white;
+  border-radius: 10px;
 }
 
-.mat-card-content {
-  padding: 5px !important;
+h2 {
+  margin-bottom: 2px;
+}
+
+#creationTime {
+  margin-top: 5px;
 }

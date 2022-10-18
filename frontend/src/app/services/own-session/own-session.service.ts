@@ -20,7 +20,9 @@ export class OwnSessionService {
   refreshSessions(): Observable<Session[]> {
     return this.userService.getOwnActiveSessions().pipe(
       tap((res: Session[]) => {
-        this.sessions = res;
+        if (res != this.sessions) {
+          this.sessions = res;
+        }
       })
     );
   }

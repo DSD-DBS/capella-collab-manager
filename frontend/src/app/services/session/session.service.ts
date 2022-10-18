@@ -34,6 +34,16 @@ export class SessionService {
     });
   }
 
+  createPersistentSession(
+    toolId: number,
+    versionId: number
+  ): Observable<Session> {
+    return this.http.post<Session>(`${this.BACKEND_URL_PREFIX}persistent`, {
+      tool: toolId,
+      version: versionId,
+    });
+  }
+
   deleteSession(id: string): Observable<any> {
     return this.http.delete<any>(this.BACKEND_URL_PREFIX + id);
   }

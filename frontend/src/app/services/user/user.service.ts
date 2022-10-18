@@ -52,7 +52,7 @@ export class UserService {
 
   getOwnActiveSessions(): Observable<Array<Session>> {
     return this.http.get<Session[]>(
-      this.BACKEND_URL_PREFIX + this.getUserName() + '/sessions/'
+      this.BACKEND_URL_PREFIX + this.getUserName() + '/sessions'
     );
   }
 

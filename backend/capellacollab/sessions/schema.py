@@ -55,6 +55,11 @@ class PostSessionRequest(BaseModel):
         orm_mode = True
 
 
+class PostPersistentSessionRequest(BaseModel):
+    tool: int
+    version: int
+
+
 class GetSessionUsageResponse(BaseModel):
     free: int
     total: int
