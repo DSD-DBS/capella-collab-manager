@@ -35,12 +35,12 @@ export class SessionService {
   }
 
   createPersistentSession(
-    tool_id: number,
-    version_id: number
+    toolId: number,
+    versionId: number
   ): Observable<Session> {
     return this.http.post<Session>(`${this.BACKEND_URL_PREFIX}persistent`, {
-      tool: tool_id,
-      version: version_id,
+      tool: toolId,
+      version: versionId,
     });
   }
 
