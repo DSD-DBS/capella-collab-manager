@@ -17,7 +17,11 @@
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Model tool</mat-label>
-          <mat-select matInput formControlName="tool_id">
+          <mat-select
+            matInput
+            formControlName="toolId"
+            (selectionChange)="getVersionsForTool($event.value)"
+          >
             <mat-option
               *ngFor="let tool of toolService.tools"
               value="{{ tool.id }}"
@@ -31,16 +35,14 @@
         <mat-form-field appearance="fill">
           <mat-label>Version</mat-label>
           <mat-select
-            formControlName="version_id"
+            formControlName="versionId"
             [disabled]="
-              form.controls.tool_id.value === null ||
-              form.controls.tool_id.value < 0
+              form.controls.toolId.value === null ||
+              form.controls.toolId.value < 0
             "
           >
             <mat-option
-              *ngFor="
-                let version of getVersionsForTool(form.controls.tool_id.value)
-              "
+              *ngFor="let version of this.versions"
               [value]="version.id"
             >
               {{ version.name }}

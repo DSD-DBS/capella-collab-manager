@@ -5,24 +5,24 @@
 
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Project } from 'src/app/services/project/project.service';
 import { ModelService } from '../services/model/model.service';
-import { DepthType, SessionService } from '../services/session/session.service';
-import { ToolService, Version } from '../services/tools/tool.service';
+import { SessionService } from '../services/session/session.service';
+import { ToolService, ToolVersion } from '../services/tools/tool.service';
 
 @Component({
   selector: 'app-workspace',
   templateUrl: './workspace.component.html',
   styleUrls: ['./workspace.component.css'],
 })
-export class WorkspaceComponent {
-  repositories: Project[] = [];
+export class WorkspaceComponent implements OnInit {
   showSpinner = true;
   canCreateSession = true;
 
+  versions: ToolVersion[] = [];
+
   public form = new FormGroup({
-    tool_id: new FormControl(null, Validators.required),
-    version_id: new FormControl(null, Validators.required),
+    toolId: new FormControl(null, Validators.required),
+    versionId: new FormControl(null, Validators.required),
   });
 
   constructor(
@@ -32,8 +32,7 @@ export class WorkspaceComponent {
   ) {}
 
   ngOnInit(): void {
-    this.toolService.get_tools().subscribe();
-    this.toolService.get_versions().subscribe();
+    this.toolService.getTools().subscribe();
   }
 
   requestSession() {
@@ -45,8 +44,8 @@ export class WorkspaceComponent {
     let self = this;
     this.sessionService
       .createPersistentSession(
-        this.form.controls.tool_id.value!,
-        this.form.controls.version_id.value!
+        this.form.controls.toolId.value!,
+        this.form.controls.versionId.value!
       )
       .subscribe({
         complete() {
@@ -55,10 +54,12 @@ export class WorkspaceComponent {
       });
   }
 
-  getVersionsForTool(tool_id: number | null): Version[] {
-    if (!this.toolService.versions || !tool_id) {
-      return [];
-    }
-    return this.toolService.versions[tool_id];
+  getVersionsForTool(toolId: number): void {
+    this.versions = [];
+    this.toolService
+      .getVersionsForTool(toolId)
+      .subscribe((res: ToolVersion[]) => {
+        this.versions = res;
+      });
   }
 }
