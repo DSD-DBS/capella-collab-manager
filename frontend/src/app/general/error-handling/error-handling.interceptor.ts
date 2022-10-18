@@ -57,6 +57,10 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
           }
         },
         error: (err) => {
+          if (err.error.detail.err_code == 'token_exp') {
+            return;
+          }
+
           if (
             typeof err.error !== 'undefined' &&
             typeof err.error.detail !== 'undefined' &&
