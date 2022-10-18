@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import enum
-import json
 import logging
 import typing as t
 
@@ -28,6 +27,7 @@ def validate_rest_api_url(value: t.Optional[str]):
             raise ValueError(
                 "The provided TeamForCapella REST API is not valid."
             )
+    return value
 
 
 class DatabaseT4CInstance(Base):
