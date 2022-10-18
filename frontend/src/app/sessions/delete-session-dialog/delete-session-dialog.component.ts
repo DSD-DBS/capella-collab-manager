@@ -5,9 +5,9 @@
 
 import { Component, Inject, OnInit } from '@angular/core';
 import {
+  MAT_DIALOG_DATA,
   MatDialog,
   MatDialogRef,
-  MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { Session } from '../../schemes';
@@ -17,14 +17,13 @@ import { SessionService } from '../../services/session/session.service';
   templateUrl: './delete-session-dialog.component.html',
   styleUrls: ['./delete-session-dialog.component.css'],
 })
-export class DeleteSessionDialogComponent implements OnInit {
+export class DeleteSessionDialogComponent {
   constructor(
     private sessionService: SessionService,
     public dialogRef: MatDialogRef<DeleteSessionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public sessions: Array<Session>
+    @Inject(MAT_DIALOG_DATA) public sessions: Session[]
   ) {}
 
-  ngOnInit(): void {}
   deleteButton = {
     disabled: false,
     text: 'Terminate',
@@ -33,8 +32,8 @@ export class DeleteSessionDialogComponent implements OnInit {
   deleteAllSessions() {
     this.deleteButton.disabled = true;
     this.deleteButton.text = 'Please wait...';
-    let requests = [];
-    for (let session of this.sessions) {
+    const requests = [];
+    for (const session of this.sessions) {
       requests.push(this.sessionService.deleteSession(session.id));
     }
 

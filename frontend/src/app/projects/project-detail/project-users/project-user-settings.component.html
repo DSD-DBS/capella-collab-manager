@@ -49,7 +49,7 @@
   <div
     *ngIf="
       users.selectedOptions.selected.length &&
-      userService.getUserName() != selectedUser.username
+      userService.getUserName() !== selectedUser.username
     "
   >
     <button
@@ -64,7 +64,7 @@
     <button
       mat-flat-button
       color="primary"
-      *ngIf="'user' == selectedUser.role"
+      *ngIf="'user' === selectedUser.role"
       (click)="upgradeUserToProjectManager(selectedUser.username)"
     >
       <mat-icon>arrow_upward</mat-icon>
@@ -74,18 +74,18 @@
     <button
       mat-flat-button
       color="primary"
-      *ngIf="'manager' == selectedUser.role"
+      *ngIf="'manager' === selectedUser.role"
       (click)="downgradeUserToUserRole(selectedUser.username)"
     >
       <mat-icon>arrow_downward</mat-icon>
       Downgrade
       {{ selectedUser.username }} to User
     </button>
-    <div *ngIf="'manager' != selectedUser.role">
+    <div *ngIf="'manager' !== selectedUser.role">
       <button
         mat-flat-button
         color="primary"
-        *ngIf="'read' == selectedUser.permission"
+        *ngIf="'read' === selectedUser.permission"
         (click)="setUserPermission(selectedUser.username, 'write')"
       >
         <mat-icon>folder_shared</mat-icon>
@@ -95,7 +95,7 @@
       <button
         mat-flat-button
         color="primary"
-        *ngIf="'write' == selectedUser.permission"
+        *ngIf="'write' === selectedUser.permission"
         (click)="setUserPermission(selectedUser.username, 'read')"
       >
         <mat-icon>folder_open</mat-icon>
@@ -133,7 +133,7 @@
       </mat-select>
       <mat-error>You have to select a role!</mat-error> </mat-form-field
     ><br />
-    <mat-form-field *ngIf="addUserToRepoForm.value.role != 'manager'">
+    <mat-form-field *ngIf="addUserToRepoForm.value.role !== 'manager'">
       <mat-label>Permission</mat-label>
       <mat-select formControlName="permission">
         <mat-option

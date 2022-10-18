@@ -8,22 +8,22 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
-export type Tool = {
+export interface Tool {
   id: number;
   name: string;
-};
+}
 
-export type ToolVersion = {
+export interface ToolVersion {
   id: number;
   name: string;
   is_recommended: boolean;
   is_deprecated: boolean;
-};
+}
 
-export type ToolType = {
+export interface ToolType {
   id: number;
   name: string;
-};
+}
 
 @Injectable({
   providedIn: 'root',

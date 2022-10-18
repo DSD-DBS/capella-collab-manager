@@ -20,6 +20,7 @@ export class ProjectService {
   get project() {
     return this._project.value;
   }
+
   get projects() {
     return this._projects.value;
   }

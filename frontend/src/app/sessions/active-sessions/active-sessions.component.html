@@ -22,10 +22,10 @@
     <mat-card *ngFor="let session of ownSessionService.sessions; let i = index">
       <div class="header">
         <div class="type">
-          <h2 *ngIf="session.type == 'persistent'">
+          <h2 *ngIf="session.type === 'persistent'">
             Persistent workspace session
           </h2>
-          <h2 *ngIf="session.type == 'readonly'">
+          <h2 *ngIf="session.type === 'readonly'">
             {{ session.repository }} (read-only session)
           </h2>
         </div>

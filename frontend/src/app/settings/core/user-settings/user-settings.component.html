@@ -46,9 +46,9 @@
         mat-flat-button
         color="primary"
         *ngIf="
-          adminusers.selectedOptions.selected[0]?.value.role ==
+          adminusers.selectedOptions.selected[0]?.value.role ===
             'administrator' &&
-          adminusers.selectedOptions.selected[0]?.value.name !=
+          adminusers.selectedOptions.selected[0]?.value.name !==
             userService.getUserName()
         "
         (click)="

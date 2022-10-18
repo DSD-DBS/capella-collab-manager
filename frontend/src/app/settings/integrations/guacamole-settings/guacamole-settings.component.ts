@@ -11,10 +11,8 @@ import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
   templateUrl: './guacamole-settings.component.html',
   styleUrls: ['./guacamole-settings.component.css'],
 })
-export class GuacamoleSettingsComponent implements OnInit {
+export class GuacamoleSettingsComponent {
   constructor(private navbarService: NavBarService) {
     this.navbarService.title = 'Settings / Integrations / Gucamole';
   }
-
-  ngOnInit(): void {}
 }

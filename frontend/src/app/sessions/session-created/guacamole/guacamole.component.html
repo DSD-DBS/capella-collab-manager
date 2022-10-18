@@ -17,7 +17,7 @@
     After opening the session, Capella starts automatically. This can up to one
     minute.
   </mat-card>
-  <mat-card class="inner-mat-card" *ngIf="session.type == 'persistent'">
+  <mat-card class="inner-mat-card" *ngIf="session.type === 'persistent'">
     <div class="title">Step 3: T4C Login</div>
     Please enter "{{ userService.getUserName() }}" as username and your
     password. <br />

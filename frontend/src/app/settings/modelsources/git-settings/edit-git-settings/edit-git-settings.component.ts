@@ -25,6 +25,7 @@ export class EditGitSettingsComponent implements OnInit {
     name: new FormControl('', Validators.required),
     url: new FormControl('', Validators.required),
   });
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -34,16 +35,16 @@ export class EditGitSettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.id = params['id'];
-      if (!!this.id) {
+      this.id = params.id;
+      if (this.id) {
         this.gitSettingsService
           .getGitSettings(this.id)
           .subscribe((instance: GitSettings) => {
-            this.gitSettingsForm.controls['type'].setValue(
+            this.gitSettingsForm.controls.type.setValue(
               instance.type as string
             );
-            this.gitSettingsForm.controls['name'].setValue(instance.name);
-            this.gitSettingsForm.controls['url'].setValue(instance.url);
+            this.gitSettingsForm.controls.name.setValue(instance.name);
+            this.gitSettingsForm.controls.url.setValue(instance.url);
           });
       }
       this.navbarService.title =

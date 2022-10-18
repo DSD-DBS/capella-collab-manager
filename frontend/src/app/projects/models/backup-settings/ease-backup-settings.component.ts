@@ -36,13 +36,13 @@ export class GitBackupSettingsComponent implements OnInit {
     this.refreshBackups();
   }
 
-  backups: Array<EASEBackup> = [];
+  backups: EASEBackup[] = [];
 
   refreshBackups(): void {
     this.loading = true;
     this.easeBackupService
       .getBackups(this.project)
-      .subscribe((res: Array<EASEBackup>) => {
+      .subscribe((res: EASEBackup[]) => {
         this.backups = res;
         this.loading = false;
       });

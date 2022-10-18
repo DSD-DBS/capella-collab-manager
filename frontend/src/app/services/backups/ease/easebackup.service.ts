@@ -15,8 +15,8 @@ import { environment } from 'src/environments/environment';
 export class EASEBackupService {
   constructor(private http: HttpClient) {}
 
-  getBackups(project: string): Observable<Array<EASEBackup>> {
-    return this.http.get<Array<EASEBackup>>(
+  getBackups(project: string): Observable<EASEBackup[]> {
+    return this.http.get<EASEBackup[]>(
       `${environment.backend_url}/projects/${project}/extensions/backups/ease`
     );
   }
@@ -125,7 +125,7 @@ export class EASEBackupService {
 
     return {
       text: text || '',
-      css: css,
+      css,
     };
   }
 }

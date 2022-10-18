@@ -28,7 +28,7 @@ export class ProjectOverviewComponent implements OnInit {
 
   ngOnInit() {
     this.navbarService.enableAll();
-    let projects = this.projectService._projects;
+    const projects = this.projectService._projects;
     this.projectService
       .list()
       .pipe(

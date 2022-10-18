@@ -13,13 +13,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
+import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
+import { T4CSyncService } from 'src/app/services/t4c-sync/t4-csync.service';
 import {
   T4CRepoService,
   T4CRepository,
 } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
-import { T4CSyncService } from 'src/app/services/t4c-sync/t4-csync.service';
-import { ActivatedRoute } from '@angular/router';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { T4CRepoDeletionDialogComponent } from './t4c-repo-deletion-dialog/t4c-repo-deletion-dialog.component';
 
 @Component({
@@ -38,7 +38,7 @@ export class T4CInstanceSettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.instance_id = params['id'];
+      this.instance_id = params.id;
       this.navbarService.title =
         'Settings / Modelsources / T4C / Instances / ' + this.instance_id;
     });
@@ -64,7 +64,7 @@ export class T4CInstanceSettingsComponent implements OnInit {
 
   projectNonexistenceValidator(): Validators {
     return (control: AbstractControl): ValidationErrors | null => {
-      for (let repo of this.t4cRepoService.repositories) {
+      for (const repo of this.t4cRepoService.repositories) {
         if (repo.name == control.value) {
           return { projectExistsError: true };
         }

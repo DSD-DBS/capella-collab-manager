@@ -93,7 +93,7 @@ export interface GitVersion {
 
 export interface Version {
   git: GitVersion;
-  github: Array<ReleaseNote>;
+  github: ReleaseNote[];
 }
 
 export interface BackendMetadata {

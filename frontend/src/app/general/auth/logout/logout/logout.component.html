@@ -4,9 +4,9 @@
  -->
 
 <div class="message">
-  <div *ngIf="reason == 'logout'">The Logout was successful.</div>
-  <div *ngIf="reason == 'session-expired'">Your session has expired.</div>
-  <div *ngIf="reason == 'unauthorized'">
+  <div *ngIf="reason === 'logout'">The Logout was successful.</div>
+  <div *ngIf="reason === 'session-expired'">Your session has expired.</div>
+  <div *ngIf="reason === 'unauthorized'">
     An unknown error occurred during the authorization.
   </div>
   <app-auth [autoLogin]="autoLogin"></app-auth>

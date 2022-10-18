@@ -13,12 +13,10 @@ import { TermsConditionsComponent } from './terms-conditions/terms-conditions.co
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css'],
 })
-export class FooterComponent implements OnInit {
+export class FooterComponent {
   constructor(public dialog: MatDialog) {}
 
   provider = environment.provider;
-
-  ngOnInit(): void {}
 
   openTC(): void {
     this.dialog.open(TermsConditionsComponent);

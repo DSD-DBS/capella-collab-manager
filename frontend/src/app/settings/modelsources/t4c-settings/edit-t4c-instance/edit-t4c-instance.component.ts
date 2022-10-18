@@ -5,24 +5,24 @@
 
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import {
+  BehaviorSubject,
+  combineLatest,
+  filter,
+  map,
+  switchMap,
+  tap,
+} from 'rxjs';
+import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { ToolService, ToolVersion } from 'src/app/services/tools/tool.service';
 import {
   BaseT4CInstance,
   NewT4CInstance,
   T4CInstance,
   T4CInstanceService,
 } from '../../../../services/settings/t4c-model.service';
-import {
-  BehaviorSubject,
-  filter,
-  map,
-  switchMap,
-  tap,
-  combineLatest,
-} from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { ToolService, ToolVersion } from 'src/app/services/tools/tool.service';
 
 @Component({
   selector: 'app-edit-t4c-instance',

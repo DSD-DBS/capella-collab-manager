@@ -12,32 +12,32 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { ProjectUser, Session } from 'src/app/schemes';
 import { MatSelectChange } from '@angular/material/select';
-import { ProjectService } from 'src/app/services/project/project.service';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { ProjectUser, Session } from 'src/app/schemes';
 import {
   GitModelService,
   Revisions,
 } from 'src/app/services/modelsources/git-model/git-model.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import {
   DepthType,
   SessionService,
 } from 'src/app/services/session/session.service';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
 
 @Component({
   selector: 'app-request-session',
   templateUrl: './request-session.component.html',
   styleUrls: ['./request-session.component.css'],
 })
-export class RequestSessionComponent implements OnInit {
+export class RequestSessionComponent {
   showSpinner = false;
   showSmallSpinner = false;
   creationSuccessful = false;
 
-  history: Array<String> = ['Latest commit', 'Complete history'];
+  history: String[] = ['Latest commit', 'Complete history'];
   isTag: boolean = false;
 
   repositoryFormGroup = new FormGroup(
@@ -73,7 +73,7 @@ export class RequestSessionComponent implements OnInit {
   }
 
   @Input()
-  ownProjects: Array<ProjectUser> = [];
+  ownProjects: ProjectUser[] = [];
 
   chosenRepository: string = '';
   allBranches: boolean = false;
@@ -85,8 +85,8 @@ export class RequestSessionComponent implements OnInit {
   persistentWorkspaceHelpIsOpen = false;
   cleanWorkspaceHelpIsOpen = false;
 
-  tags: Array<String> = [];
-  branches: Array<String> = [];
+  tags: String[] = [];
+  branches: String[] = [];
 
   constructor(
     public sessionService: SessionService,
@@ -95,8 +95,6 @@ export class RequestSessionComponent implements OnInit {
     private gitModelService: GitModelService,
     private toastService: ToastService
   ) {}
-
-  ngOnInit(): void {}
 
   validateForm(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -133,7 +131,7 @@ export class RequestSessionComponent implements OnInit {
       } else {
         var depth = DepthType.CompleteHistory;
       }
-      var reference = this.reference.value;
+      let reference = this.reference.value;
       if (this.allBranches) {
         reference = '';
       }
@@ -158,7 +156,7 @@ export class RequestSessionComponent implements OnInit {
       next: (revisions: Revisions) => {
         this.branches = revisions.branches;
         this.tags = revisions.tags;
-        this.referenceDepthFormGroup.controls['reference'].setValue(
+        this.referenceDepthFormGroup.controls.reference.setValue(
           revisions.default
         );
         this.chosenRepository = repository_name;

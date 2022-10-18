@@ -84,18 +84,18 @@
               [routerLink]="['/project', projectService.project?.slug]"
               [color]="getColorByModelCreationStep()"
             >
-              <span *ngIf="modelCreationStep == 'create-model'">
+              <span *ngIf="modelCreationStep === 'create-model'">
                 Skip model creation and finish project creation
               </span>
               <span
                 *ngIf="
-                  modelCreationStep != 'create-model' &&
-                  modelCreationStep != 'complete'
+                  modelCreationStep !== 'create-model' &&
+                  modelCreationStep !== 'complete'
                 "
               >
                 Abort model initialization and finish project creation
               </span>
-              <span *ngIf="modelCreationStep == 'complete'">
+              <span *ngIf="modelCreationStep === 'complete'">
                 Finish project creation
               </span>
               <mat-icon class="mat-icon-position right">check</mat-icon>

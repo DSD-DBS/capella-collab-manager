@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class NoticeService {
-  notices: Array<Notice> = [];
+  notices: Notice[] = [];
   noticeLevels = [
     'primary',
     'secondary',
@@ -22,6 +22,7 @@ export class NoticeService {
     'info',
     'alert',
   ];
+
   constructor(private http: HttpClient) {
     this.refreshNotices();
   }
@@ -32,8 +33,8 @@ export class NoticeService {
     });
   }
 
-  getNotices(): Observable<Array<Notice>> {
-    return this.http.get<Array<Notice>>(environment.backend_url + '/notices');
+  getNotices(): Observable<Notice[]> {
+    return this.http.get<Notice[]>(environment.backend_url + '/notices');
   }
 
   deleteNotice(id: number): Observable<void> {

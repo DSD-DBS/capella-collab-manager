@@ -13,11 +13,11 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   AuthService,
   RefreshTokenResponse,
 } from 'src/app/services/auth/auth.service';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -77,7 +77,7 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   injectAccessToken(request: HttpRequest<unknown>): HttpRequest<unknown> {
-    let access_token = this.authService.accessToken;
+    const access_token = this.authService.accessToken;
     return request.clone({
       headers: request.headers.set('Authorization', `Bearer ${access_token}`),
     });

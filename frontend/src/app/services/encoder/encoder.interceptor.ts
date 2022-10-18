@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Injectable } from '@angular/core';
-import { DefaultUrlSerializer, UrlSerializer, UrlTree } from '@angular/router';
 import {
-  HttpRequest,
-  HttpHandler,
   HttpEvent,
+  HttpHandler,
   HttpInterceptor,
   HttpParameterCodec,
   HttpParams,
+  HttpRequest,
 } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { DefaultUrlSerializer, UrlSerializer, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 
 // The HTTPClient removes trailing whitespaces in usernames by default, but they exist.

@@ -4,22 +4,22 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { NavBarService } from '../general/navbar/service/nav-bar.service';
 import {
   Project,
   ProjectService,
 } from 'src/app/services/project/project.service';
-import { SessionService } from '../services/session/session.service';
-import { ProjectUser } from '../schemes';
+import { NavBarService } from '../general/navbar/service/nav-bar.service';
 import { ProjectUserService } from '../projects/project-detail/project-users/service/project-user.service';
+import { ProjectUser } from '../schemes';
+import { SessionService } from '../services/session/session.service';
 
 @Component({
   selector: 'app-workspace',
   templateUrl: './workspace.component.html',
   styleUrls: ['./workspace.component.css'],
 })
-export class WorkspaceComponent implements OnInit {
-  repositories: Array<ProjectUser> = [];
+export class WorkspaceComponent {
+  repositories: ProjectUser[] = [];
   showSpinner = true;
 
   constructor(
@@ -28,19 +28,5 @@ export class WorkspaceComponent implements OnInit {
     private navbarService: NavBarService
   ) {
     this.navbarService.title = 'Workspaces';
-  }
-
-  ngOnInit() {
-    // FIXME: Fetch project users
-    // this.showSpinner = true;
-    // this.projectUserService.subscribe({
-    //   next: (res) => {
-    //     this.repositories = res;
-    //     this.showSpinner = false;
-    //   },
-    //   error: () => {
-    //     this.showSpinner = false;
-    //   },
-    // });
   }
 }

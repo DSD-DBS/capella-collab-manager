@@ -13,27 +13,27 @@ import {
 } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import { ToastService } from '../../helpers/toast/toast.service';
 import {
   BehaviorSubject,
+  Subject,
+  Subscription,
   connectable,
   filter,
   map,
-  Subject,
-  Subscription,
   switchMap,
   tap,
 } from 'rxjs';
 import slugify from 'slugify';
+import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   CreateModelComponent,
   CreateModelStep,
 } from 'src/app/projects/models/create-model/create-model.component';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   Project,
   ProjectService,
 } from 'src/app/services/project/project.service';
+import { ToastService } from '../../helpers/toast/toast.service';
 
 @Component({
   selector: 'app-create-project',
@@ -68,7 +68,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    let projects = this.projectService._projects;
+    const projects = this.projectService._projects;
 
     this.projectService.list().subscribe({
       next: (value) => {
@@ -95,7 +95,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   createProject(stepper: MatStepper): void {
-    let projectSubject = this.projectService._project;
+    const projectSubject = this.projectService._project;
     if (this.form.valid) {
       const projectConnectable = connectable<Project>(
         this.projectService.createProject({
@@ -121,7 +121,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
         )
         .subscribe((project) => {
           this.toastService.showSuccess(
-            `The project “${project!.name}” was successfuly created.`,
+            `The project “${project.name}” was successfuly created.`,
             'Project created'
           );
           stepper.steps.get(0)!.completed = true;
@@ -150,8 +150,8 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   slugValidator(control: AbstractControl): ValidationErrors | null {
-    let newSlug = slugify(control.value, { lower: true });
-    for (let slug of this.projectsSlugs.value) {
+    const newSlug = slugify(control.value, { lower: true });
+    for (const slug of this.projectsSlugs.value) {
       if (slug == newSlug) {
         return { uniqueSlug: { value: slug } };
       }

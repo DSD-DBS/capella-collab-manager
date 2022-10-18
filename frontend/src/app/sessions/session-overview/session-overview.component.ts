@@ -6,10 +6,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
 import { NavBarService } from '../../general/navbar/service/nav-bar.service';
 import { Session } from '../../schemes';
 import { SessionService } from '../../services/session/session.service';
+import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
 
 @Component({
   selector: 'app-session-overview',
@@ -27,7 +27,7 @@ export class SessionOverviewComponent implements OnInit {
 
   deletionFormGroup = new FormGroup({});
 
-  sessions: Array<Session> = [];
+  sessions: Session[] = [];
   displayedColumns = [
     'checkbox',
     'id',
@@ -45,21 +45,19 @@ export class SessionOverviewComponent implements OnInit {
   }
 
   refreshSessions() {
-    this.sessionService
-      .getCurrentSessions()
-      .subscribe((res: Array<Session>) => {
-        this.sessions = res;
-        for (const id in this.deletionFormGroup.controls) {
-          this.deletionFormGroup.removeControl(id);
-        }
-        this.sessions.forEach((session: Session) => {
-          this.deletionFormGroup.addControl(session.id, new FormControl(false));
-        });
+    this.sessionService.getCurrentSessions().subscribe((res: Session[]) => {
+      this.sessions = res;
+      for (const id in this.deletionFormGroup.controls) {
+        this.deletionFormGroup.removeControl(id);
+      }
+      this.sessions.forEach((session: Session) => {
+        this.deletionFormGroup.addControl(session.id, new FormControl(false));
       });
+    });
   }
 
   openDeletionDialog(): void {
-    const sessions: Array<Session> = this.sessions.filter(
+    const sessions: Session[] = this.sessions.filter(
       (session: Session) => this.deletionFormGroup.get(session.id)?.value
     );
 

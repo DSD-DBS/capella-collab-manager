@@ -11,10 +11,8 @@ import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
   templateUrl: './dockerimage-settings.component.html',
   styleUrls: ['./dockerimage-settings.component.css'],
 })
-export class DockerimageSettingsComponent implements OnInit {
+export class DockerimageSettingsComponent {
   constructor(private navbarService: NavBarService) {
     this.navbarService.title = 'Settings / Core / Dockerimages';
   }
-
-  ngOnInit(): void {}
 }

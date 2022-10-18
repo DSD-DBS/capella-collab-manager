@@ -40,6 +40,7 @@ export class ModelService {
   get model(): Model | undefined {
     return this._model.value;
   }
+
   get models(): Model[] | undefined {
     return this._models.value;
   }

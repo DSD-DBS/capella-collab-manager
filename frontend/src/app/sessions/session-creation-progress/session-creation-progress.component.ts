@@ -16,7 +16,7 @@ import { SessionService } from '../../services/session/session.service';
   templateUrl: './session-creation-progress.component.html',
   styleUrls: ['./session-creation-progress.component.css'],
 })
-export class SessionCreationProgressComponent implements OnInit, OnDestroy {
+export class SessionCreationProgressComponent implements OnDestroy {
   @Input()
   sessionType = '';
 
@@ -39,7 +39,7 @@ export class SessionCreationProgressComponent implements OnInit, OnDestroy {
         map(() => {
           if (this.session !== undefined) {
             this.ownSessionService.refreshSessions().subscribe(
-              (res: Array<Session>) => {
+              (res: Session[]) => {
                 const session = res.find(
                   (session: Session) => session.id === this.session?.id
                 );
@@ -103,8 +103,6 @@ export class SessionCreationProgressComponent implements OnInit, OnDestroy {
       }
     }
   }
-
-  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.refreshSessionsSubscription.unsubscribe();

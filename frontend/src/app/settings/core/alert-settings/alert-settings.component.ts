@@ -13,18 +13,18 @@ import {
   Validators,
 } from '@angular/forms';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   CreateNotice,
   NoticeService,
 } from 'src/app/services/notice/notice.service';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
 
 @Component({
   selector: 'app-alert-settings',
   templateUrl: './alert-settings.component.html',
   styleUrls: ['./alert-settings.component.css'],
 })
-export class AlertSettingsComponent implements OnInit {
+export class AlertSettingsComponent {
   createAlertForm = new FormGroup(
     {
       title: new FormControl(''),
@@ -45,8 +45,6 @@ export class AlertSettingsComponent implements OnInit {
   ) {
     this.navbarService.title = 'Settings / Core / Alerts';
   }
-
-  ngOnInit(): void {}
 
   titleOrDescriptionRequired(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {

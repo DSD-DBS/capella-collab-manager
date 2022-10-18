@@ -4,7 +4,7 @@
  */
 
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Session } from 'src/app/schemes';
 
 @Component({
@@ -12,11 +12,9 @@ import { Session } from 'src/app/schemes';
   templateUrl: './reconnect-dialog.component.html',
   styleUrls: ['./reconnect-dialog.component.css'],
 })
-export class ReconnectDialogComponent implements OnInit {
+export class ReconnectDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ReconnectDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public session: Session
   ) {}
-
-  ngOnInit(): void {}
 }

@@ -16,7 +16,7 @@
   under "Active Sessions". <br />You may need to request a new session.
 </mat-card>
 
-<div *ngIf="session?.type == 'persistent' && !containerReady && !failure">
+<div *ngIf="session?.type === 'persistent' && !containerReady && !failure">
   The current state of your request is: <br />
   <mat-card
     class="session-state"
@@ -26,7 +26,7 @@
   </mat-card>
 </div>
 
-<div *ngIf="session?.type == 'readonly' && !containerReady && !failure">
+<div *ngIf="session?.type === 'readonly' && !containerReady && !failure">
   <ul>
     <li>
       <mat-card class="step">

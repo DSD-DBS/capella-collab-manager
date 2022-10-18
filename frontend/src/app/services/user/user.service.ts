@@ -42,8 +42,8 @@ export class UserService {
     return this.http.delete<any>(this.BACKEND_URL_PREFIX + username);
   }
 
-  getUsers(): Observable<Array<User>> {
-    return this.http.get<Array<User>>(this.BACKEND_URL_PREFIX);
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(this.BACKEND_URL_PREFIX);
   }
 
   getUserName(): string {
@@ -51,7 +51,7 @@ export class UserService {
   }
 
   getOwnActiveSessions(): Observable<Array<Session>> {
-    return this.http.get<Array<Session>>(
+    return this.http.get<Session[]>(
       this.BACKEND_URL_PREFIX + this.getUserName() + '/sessions/'
     );
   }

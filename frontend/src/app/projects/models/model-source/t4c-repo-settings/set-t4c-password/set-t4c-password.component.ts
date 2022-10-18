@@ -5,8 +5,8 @@
 
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import { Project } from 'src/app/services/project/project.service';
+import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
@@ -14,12 +14,13 @@ import { UserService } from 'src/app/services/user/user.service';
   templateUrl: './set-t4c-password.component.html',
   styleUrls: ['./set-t4c-password.component.css'],
 })
-export class SetT4CPasswordComponent implements OnInit {
+export class SetT4CPasswordComponent {
   constructor(
     private repositoryUserService: RepositoryUserService,
     private userService: UserService
   ) {}
-  repositories: Array<Project> = [];
+
+  repositories: Project[] = [];
   updatePasswordSuccess = false;
 
   updatePasswordForm = new FormGroup({
@@ -36,14 +37,6 @@ export class SetT4CPasswordComponent implements OnInit {
 
   get password(): FormControl {
     return this.updatePasswordForm.get('password') as FormControl;
-  }
-
-  ngOnInit(): void {
-    // this.repositoryService.getProjects().subscribe((res: Array<Project>) => {
-    //   this.repositories = res.filter((repo) => {
-    //     return repo.permissions.includes('write');
-    //   });
-    // });
   }
 
   updatePassword(): void {

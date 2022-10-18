@@ -7,7 +7,7 @@ const { writeFileSync } = require('fs');
 const util = require('node:util');
 const exec = util.promisify(require('node:child_process').exec);
 
-let options = {};
+const options = {};
 
 if (process.env.http_proxy) {
   const { setGlobalDispatcher, ProxyAgent } = require('undici');
@@ -41,7 +41,7 @@ async function main() {
 
   const gitResponse = await git;
   console.error(gitResponse.stderr);
-  let gitTagResponse = await gitTag;
+  const gitTagResponse = await gitTag;
   console.error(gitTagResponse.stderr);
   const response = await github;
   const data = await response.json();

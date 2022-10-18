@@ -6,10 +6,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { User } from 'src/app/schemes';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
 
 @Component({
   selector: 'app-user-settings',
@@ -21,7 +21,7 @@ export class UserSettingsComponent implements OnInit {
     username: new FormControl('', [Validators.required]),
   });
 
-  users: Array<User> = [];
+  users: User[] = [];
   search = '';
 
   constructor(
@@ -88,7 +88,7 @@ export class UserSettingsComponent implements OnInit {
   }
 
   getUsers() {
-    this.userService.getUsers().subscribe((res: Array<User>) => {
+    this.userService.getUsers().subscribe((res: User[]) => {
       this.users = res;
     });
   }
@@ -130,7 +130,7 @@ export class UserSettingsComponent implements OnInit {
     });
   }
 
-  getUsersByRole(role: 'administrator' | 'user'): Array<User> {
+  getUsersByRole(role: 'administrator' | 'user'): User[] {
     return this.users.filter(
       (u) =>
         u.role == role &&

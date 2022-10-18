@@ -11,6 +11,7 @@ export const environment = {
   provider: 'PROVIDER',
   authentication: 'OAuth mock',
   usernameAttribute: 'sub',
+  environment: 'development',
   integrations: {
     modelsources: {
       t4c: true,

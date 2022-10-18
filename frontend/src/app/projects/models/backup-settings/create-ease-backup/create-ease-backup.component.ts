@@ -5,7 +5,7 @@
 
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   EASEBackupService,
   PostEASEBackup,
@@ -18,7 +18,7 @@ import { T4CRepoService } from 'src/app/settings/modelsources/t4c-settings/servi
   templateUrl: './create-ease-backup.component.html',
   styleUrls: ['./create-ease-backup.component.css'],
 })
-export class CreateEASEBackupComponent implements OnInit {
+export class CreateEASEBackupComponent {
   constructor(
     public gitModelService: GitModelService,
     public t4cRepoService: T4CRepoService,
@@ -26,8 +26,6 @@ export class CreateEASEBackupComponent implements OnInit {
     private dialogRef: MatDialogRef<CreateEASEBackupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: CreateEASEBackupData
   ) {}
-
-  ngOnInit(): void {}
 
   createGitBackupForm = new FormGroup({
     gitmodel: new FormControl('', Validators.required),

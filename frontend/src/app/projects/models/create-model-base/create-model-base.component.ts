@@ -13,16 +13,16 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subject, connectable, filter, switchMap, tap } from 'rxjs';
 import slugify from 'slugify';
-import { ProjectService } from 'src/app/services/project/project.service';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   Model,
   ModelService,
   NewModel,
 } from 'src/app/services/model/model.service';
-import { connectable, filter, Subject, switchMap, tap } from 'rxjs';
+import { ProjectService } from 'src/app/services/project/project.service';
 import { ToolService } from 'src/app/services/tools/tool.service';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
 
 @Component({
   selector: 'app-create-model-base',
@@ -48,8 +48,8 @@ export class CreateModelBaseComponent implements OnInit {
 
   slugValidator(slugs: string[]): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      let newSlug = slugify(control.value, { lower: true });
-      for (let slug of slugs) {
+      const newSlug = slugify(control.value, { lower: true });
+      for (const slug of slugs) {
         if (slug == newSlug) {
           return { uniqueSlug: { value: slug } };
         }
@@ -61,7 +61,7 @@ export class CreateModelBaseComponent implements OnInit {
   validToolValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (this.toolService.tools) {
-        for (let tool of this.toolService.tools) {
+        for (const tool of this.toolService.tools) {
           if (tool.id == control.value) {
             return null;
           }

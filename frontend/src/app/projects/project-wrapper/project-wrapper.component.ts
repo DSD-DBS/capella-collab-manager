@@ -7,10 +7,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   Connectable,
-  connectable,
-  map,
   Subject,
   Subscription,
+  connectable,
+  map,
   switchMap,
 } from 'rxjs';
 import { ModelService } from 'src/app/services/model/model.service';
