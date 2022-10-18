@@ -49,6 +49,8 @@ To deploy the application you need:
 * [Docker](https://docs.docker.com/engine/install/ubuntu/)
 * [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
 * [helm](https://helm.sh/docs/intro/install/)
+* [Python 3](https://www.python.org/downloads/)
+* [Node.js 18](https://nodejs.org/de/blog/announcements/v18-release-announce/)
 
 If you'd like to run it locally, these tools are additionally required:
 
