@@ -41,15 +41,14 @@ export class WorkspaceComponent implements OnInit {
     }
 
     this.canCreateSession = false;
-    let self = this;
     this.sessionService
       .createPersistentSession(
         this.form.controls.toolId.value!,
         this.form.controls.versionId.value!
       )
       .subscribe({
-        complete() {
-          self.canCreateSession = true;
+        complete: () => {
+          this.canCreateSession = true;
         },
       });
   }
