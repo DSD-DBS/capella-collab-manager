@@ -246,7 +246,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
   onEditSubmit(): void {
     if (this.form.valid) {
       const patchGitModel = this.createGitModelFromForm() as PatchGitModel;
-      patchGitModel.primary = this.form.value.primary;
+      patchGitModel.primary = this.form.controls.primary.value;
 
       this.gitModelService
         .updateGitInstance(
@@ -290,17 +290,17 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
 
     this.urls.inputUrl.setValue(gitModel.path);
 
-    if (this.gitModel?.username) {
+    if (gitModel.username) {
       credentials.username.setValue(gitModel?.username!);
     }
 
-    if (this.gitModel?.password) {
+    if (gitModel.password) {
       credentials.password.setValue('placeholder');
     }
 
     this.form.controls.revision.setValue(gitModel.revision);
     this.form.controls.entrypoint.setValue(gitModel.entrypoint);
-    this.form.controls.primary.setValue(this.gitModel?.primary);
+    this.form.controls.primary.setValue(gitModel.primary);
   }
 
   private updateResultUrl(): void {
