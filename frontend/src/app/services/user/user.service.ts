@@ -29,7 +29,7 @@ export class UserService {
   }
 
   getAndSaveOwnUser(): void {
-    this.getUser(this.getUsernameFromLocalStorage()).subscribe((res) => {
+    this.getUser(this.getUserName()).subscribe((res) => {
       this.user = res;
     });
   }
@@ -46,17 +46,13 @@ export class UserService {
     return this.http.get<Array<User>>(this.BACKEND_URL_PREFIX);
   }
 
-  getUsernameFromLocalStorage(): string {
-    return JSON.parse(
-      atob(this.localStorageService.getValue('access_token').split('.')[1])
-    )[environment.usernameAttribute].trim();
+  getUserName(): string {
+    return this.authService.userName;
   }
 
   getOwnActiveSessions(): Observable<Array<Session>> {
     return this.http.get<Array<Session>>(
-      this.BACKEND_URL_PREFIX +
-        this.getUsernameFromLocalStorage() +
-        '/sessions/'
+      this.BACKEND_URL_PREFIX + this.getUserName() + '/sessions/'
     );
   }
 
