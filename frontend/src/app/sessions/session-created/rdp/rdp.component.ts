@@ -3,9 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Session } from 'src/app/schemes';
-import { SessionService } from 'src/app/services/session/session.service';
 
 @Component({
   selector: 'app-rdp',

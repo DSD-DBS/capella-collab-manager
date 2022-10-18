@@ -7,11 +7,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   EASEBackup,
-  EASEBackupJob,
   EASEBackupService,
 } from 'src/app/services/backups/ease/easebackup.service';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
-import { SessionService } from 'src/app/services/session/session.service';
 import { CreateEASEBackupComponent } from './create-ease-backup/create-ease-backup.component';
 import { ViewLogsDialogComponent } from './view-logs-dialog/view-logs-dialog.component';
 

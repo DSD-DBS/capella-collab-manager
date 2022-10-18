@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Project } from 'src/app/services/project/project.service';
 import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';

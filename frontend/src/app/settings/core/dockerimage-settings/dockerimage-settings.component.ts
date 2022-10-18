@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 
 @Component({

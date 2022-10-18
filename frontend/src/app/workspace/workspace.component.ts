@@ -3,11 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
-import {
-  Project,
-  ProjectService,
-} from 'src/app/services/project/project.service';
+import { Component } from '@angular/core';
+
 import { NavBarService } from '../general/navbar/service/nav-bar.service';
 import { ProjectUserService } from '../projects/project-detail/project-users/service/project-user.service';
 import { ProjectUser } from '../schemes';

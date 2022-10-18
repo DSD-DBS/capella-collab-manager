@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Session } from '../../schemes';
@@ -56,7 +56,7 @@ export class SessionCreationProgressComponent implements OnDestroy {
                   this.refreshSessionsSubscription.unsubscribe();
                 }
               },
-              (err) => {
+              (_) => {
                 this.refreshSessionsSubscription.unsubscribe();
                 this.failure = true;
               }
