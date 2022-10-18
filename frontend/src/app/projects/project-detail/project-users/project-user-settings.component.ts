@@ -70,15 +70,16 @@ export class ProjectUserSettingsComponent implements OnChanges {
 
   permissionRequiredValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
+      const permission = control.get('permission')!;
+      const role = control.get('role');
       if (
-        control.get('permission')?.value in
-          this.projectUserService.PERMISSIONS ||
-        control.get('role')?.value == 'manager'
+        permission?.value in this.projectUserService.PERMISSIONS ||
+        role?.value == 'manager'
       ) {
-        control.get('permission')?.setErrors(null);
+        permission?.setErrors(null);
         return null;
       }
-      control.get('permission')?.setErrors({ permissionInvalid: true });
+      permission?.setErrors({ permissionInvalid: true });
       return {};
     };
   }
