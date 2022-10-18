@@ -23,3 +23,20 @@
   margin: 2px 4px;
   text-align: center;
 }
+
+.sessionContent {
+  margin-bottom: 5px;
+}
+
+.state {
+  color: white;
+  border-radius: 10px;
+}
+
+h2 {
+  margin-bottom: 2px;
+}
+
+#creationTime {
+  margin-top: 5px;
+}

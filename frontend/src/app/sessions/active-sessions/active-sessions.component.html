@@ -21,14 +21,14 @@
       {{ session.repository }} (read-only session)
     </h2>
   </div>
-  <mat-card-content>
+  <mat-card-content class="sessionContent">
     <h3
       class="state"
       [ngClass]="sessionService.beatifyState(session.state).css"
     >
       {{ sessionService.beatifyState(session.state).text }}
     </h3>
-    <p>
+    <p id="creationTime">
       The session was created
       {{ beautifyService.beatifyDate(session.created_at) }}
     </p>
