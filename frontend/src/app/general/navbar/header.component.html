@@ -64,7 +64,7 @@
         mat-menu-item
         routerLink="logout/redirect"
         [queryParams]="{ reason: 'logout' }"
-        *ngIf="localStorageService.getValue('access_token')"
+        *ngIf="authService.isLoggedIn()"
       >
         Log out <mat-icon>logout</mat-icon>
       </a>

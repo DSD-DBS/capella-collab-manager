@@ -6,10 +6,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth/auth.service';
-import { ProjectService } from 'src/app/services/project/project.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { LocalStorageService } from '../local-storage/local-storage.service';
-import { CookieService } from 'ngx-cookie';
 
 @Component({
   selector: 'app-auth-redirect',
@@ -21,9 +18,7 @@ export class AuthRedirectComponent implements OnInit {
     private route: ActivatedRoute,
     private authService: AuthService,
     private userService: UserService,
-    private localStorageService: LocalStorageService,
-    private router: Router,
-    private cookieService: CookieService
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -44,13 +39,7 @@ export class AuthRedirectComponent implements OnInit {
       this.authService
         .getAccessToken(params['code'], params['state'])
         .subscribe((res) => {
-          this.localStorageService.setValue('access_token', res.access_token);
-          this.localStorageService.setValue('refresh_token', res.refresh_token);
-
-          this.cookieService.put('access_token', res.access_token, {
-            path: '/prometheus',
-          });
-
+          this.authService.logIn(res.access_token, res.refresh_token);
           this.userService.getAndSaveOwnUser();
 
           this.router.navigateByUrl('/');

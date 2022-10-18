@@ -5,8 +5,12 @@ site_name: Capella Collaboration Manager Documentation
 theme:
   name: material
 nav:
-  - Home: index.md
-  - Getting Started: onboarding.md
+  - Introduction: index.md
+  - Getting Started:
+      - Overview: getting-started/getting-started.md
+      - Introduction to Capella: getting-started/capella-intro.md
+      - Read-only sessions: getting-started/read-only.md
+      - Read-Write (TeamForCapella): getting-started/read-write-t4c.md
   - Projects:
       - Get access to a project: projects/access.md
       - Request a new project: projects/new.md

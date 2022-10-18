@@ -39,6 +39,18 @@ By default, the services run on the following ports when using the instructions 
 | 8082  | license-server mock |
 | 8083  | oauth-mock          |
 
+## Git
+
+The commit messages have to follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#specification) specification.
+
+In general, we use pre-commit hooks to enforce coding standards.
+To setup the pre-commit hooks, please run the following commands:
+
+```zsh
+pip install -U pip pre-commit
+pre-commit install -t pre-commit -t commit-msg
+```
+
 ## Capella Docker images
 
 Please follow the [README of the Capella Docker images repository](/../../../capella-dockerimages/blob/main/README.md).
