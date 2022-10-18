@@ -6,7 +6,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { Session, User } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../auth/auth.service';
@@ -18,11 +17,7 @@ export class UserService {
   user: User | undefined = undefined;
 
   BACKEND_URL_PREFIX = environment.backend_url + '/users/';
-  constructor(
-    private http: HttpClient,
-    private localStorageService: LocalStorageService,
-    private authService: AuthService
-  ) {
+  constructor(private http: HttpClient, private authService: AuthService) {
     if (this.authService.isLoggedIn()) {
       this.getAndSaveOwnUser();
     }
@@ -35,11 +30,15 @@ export class UserService {
   }
 
   getUser(username: string): Observable<User> {
-    return this.http.get<User>(this.BACKEND_URL_PREFIX + username);
+    return this.http.get<User>(
+      this.BACKEND_URL_PREFIX + encodeURIComponent(username)
+    );
   }
 
   deleteUser(username: string): Observable<any> {
-    return this.http.delete<any>(this.BACKEND_URL_PREFIX + username);
+    return this.http.delete<any>(
+      this.BACKEND_URL_PREFIX + encodeURIComponent(username)
+    );
   }
 
   getUsers(): Observable<User[]> {
@@ -52,7 +51,9 @@ export class UserService {
 
   getOwnActiveSessions(): Observable<Array<Session>> {
     return this.http.get<Session[]>(
-      this.BACKEND_URL_PREFIX + this.getUserName() + '/sessions'
+      this.BACKEND_URL_PREFIX +
+        encodeURIComponent(this.getUserName()) +
+        '/sessions'
     );
   }
 
@@ -60,8 +61,9 @@ export class UserService {
     username: string,
     role: 'user' | 'administrator'
   ): Observable<User> {
+    console.log(encodeURIComponent(username));
     return this.http.patch<User>(
-      this.BACKEND_URL_PREFIX + username + '/roles',
+      this.BACKEND_URL_PREFIX + encodeURIComponent(username) + '/roles',
       {
         role,
       }
