@@ -114,7 +114,7 @@ def list_t4c_repositories(
         db_repo = T4CRepository.from_orm(
             crud.create_t4c_repository(new_repo, instance, db)
         )
-        db_repo.status = db_repositories_dict[repo]["status"]
+        db_repo.status = server_repositories_dict[repo]["status"]
         db_repositories_dict[repo] = db_repo
 
     return T4CRepositories(
