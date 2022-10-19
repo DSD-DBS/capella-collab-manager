@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
+from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import NoResultFound
@@ -15,6 +16,7 @@ from capellacollab.settings.modelsources.t4c.models import (
     DatabaseT4CInstance,
     PatchT4CInstance,
     T4CInstance,
+    T4CInstanceWithRepositories,
 )
 from capellacollab.settings.modelsources.t4c.repositories.routes import (
     router as repositories_router,
@@ -28,6 +30,15 @@ router = APIRouter()
     "/",
     response_model=list[T4CInstance],
 )
+def list_git_settings(
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
+) -> list[DatabaseT4CInstance]:
+    verify_admin(token, db)
+    return crud.get_all_t4c_instances(db)
+
+
+@router.get("/repositories", response_model=list[T4CInstanceWithRepositories])
 def list_git_settings(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),

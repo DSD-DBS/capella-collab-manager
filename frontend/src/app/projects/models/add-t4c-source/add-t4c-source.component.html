@@ -28,11 +28,7 @@
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Repository</mat-label>
-          <mat-select
-            formControlName="t4c_repository_id"
-            [disabled]="!form.controls.t4c_instance_id.valid"
-            #selectedRepository
-          >
+          <mat-select formControlName="t4c_repository_id">
             <mat-option
               *ngFor="let repository of repositories"
               [value]="repository.id"
@@ -47,13 +43,8 @@
       </fieldset>
       <fieldset>
         <mat-form-field appearance="fill">
-          <mat-label>Source name</mat-label>
-          <input
-            matInput
-            formControlName="name"
-            [disabled]="!form.controls.t4c_repository_id.valid"
-            [matAutocomplete]="auto"
-          />
+          <mat-label>T4C project name</mat-label>
+          <input matInput formControlName="name" [matAutocomplete]="auto" />
           <mat-error *ngIf="form.controls.name.errors?.alreadyUsed"
             >The name {{ form.value.name }} is already used. Consider using
             another repository.</mat-error

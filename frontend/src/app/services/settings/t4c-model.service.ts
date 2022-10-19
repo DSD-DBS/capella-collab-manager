@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { T4CRepository } from '../../settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 
 export type BaseT4CInstance = {
   license: string;
@@ -31,6 +32,10 @@ export type T4CInstance = NewT4CInstance & {
   };
 };
 
+export type T4CInstanceWithRepository = T4CInstance & {
+  repositories: T4CRepository[];
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -41,6 +46,12 @@ export class T4CInstanceService {
 
   listInstances(): Observable<T4CInstance[]> {
     return this.http.get<T4CInstance[]>(this.base_url);
+  }
+
+  listInstancesWithRepositories(): Observable<T4CInstanceWithRepository[]> {
+    return this.http.get<T4CInstanceWithRepository[]>(
+      `${this.base_url}/repositories`
+    );
   }
 
   getInstance(id: number): Observable<T4CInstance> {
