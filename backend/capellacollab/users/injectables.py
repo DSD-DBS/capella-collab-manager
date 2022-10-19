@@ -15,7 +15,7 @@ from . import crud
 def get_own_user(
     db=Depends(get_db),
     token=Depends(JWTBearer()),
-):
+) -> DatabaseUser:
     username = get_username(token)
     return crud.get_user(db, username)
 
