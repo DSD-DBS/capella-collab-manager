@@ -46,6 +46,7 @@ import { AuthComponent } from './general/auth/auth/auth.component';
 import { AuthInterceptor } from './general/auth/http-interceptor/auth.interceptor';
 import { LogoutRedirectComponent } from './general/auth/logout/logout-redirect/logout-redirect.component';
 import { LogoutComponent } from './general/auth/logout/logout/logout.component';
+import { ErrorHandlingInterceptor } from './general/error-handling/error-handling.interceptor';
 import { FooterComponent } from './general/footer/footer.component';
 import { LegalComponent } from './general/footer/legal/legal.component';
 import { TermsConditionsComponent } from './general/footer/terms-conditions/terms-conditions.component';
@@ -104,7 +105,6 @@ import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-s
 import { SettingsComponent } from './settings/settings.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { HomeComponent } from './workspaces/home.component';
-import { ErrorHandlingInterceptor } from './general/error-handling/error-handling.interceptor';
 
 @NgModule({
   declarations: [

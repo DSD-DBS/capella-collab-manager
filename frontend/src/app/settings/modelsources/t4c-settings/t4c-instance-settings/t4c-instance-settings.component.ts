@@ -22,7 +22,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSelectionList } from '@angular/material/list';
 import { tap, switchMap } from 'rxjs';
 import { T4CInstance } from 'src/app/services/settings/t4c-model.service';
-import { T4CSyncService } from 'src/app/services/t4c-sync/t4-csync.service';
 import {
   CreateT4CRepository,
   T4CRepoService,

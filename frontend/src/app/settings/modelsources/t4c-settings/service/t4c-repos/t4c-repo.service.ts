@@ -5,8 +5,9 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { T4CInstance } from 'src/app/services/settings/t4c-model.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

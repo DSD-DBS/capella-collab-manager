@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Injectable } from '@angular/core';
 import {
   HttpEvent,
   HttpEventType,
@@ -11,9 +10,10 @@ import {
   HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { getReasonPhrase } from 'http-status-codes';
 import { Observable, tap, map } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { getReasonPhrase } from 'http-status-codes';
 
 @Injectable({
   providedIn: 'root',
