@@ -38,6 +38,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CookieModule } from 'ngx-cookie';
 import { MarkdownModule } from 'ngx-markdown';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ToastrModule } from 'ngx-toastr';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -103,7 +104,6 @@ import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-s
 import { SettingsComponent } from './settings/settings.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { HomeComponent } from './workspaces/home.component';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @NgModule({
   declarations: [
@@ -138,6 +138,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
     LicencesComponent,
     LogoutComponent,
     LogoutRedirectComponent,
+    MatCardOverviewLoaderComponent,
     MatIconComponent,
     ModelDetailComponent,
     ModelOverviewComponent,
@@ -167,7 +168,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
     VersionComponent,
     ViewLogsDialogComponent,
     WorkspaceComponent,
-    MatCardOverviewLoaderComponent,
   ],
   imports: [
     AppRoutingModule,
