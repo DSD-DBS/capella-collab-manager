@@ -57,7 +57,7 @@ def get_current_sessions(
     if is_admin(token, db):
         return inject_attrs_in_sessions(database.get_all_sessions(db))
 
-    db_user = users.get_user(db=db, username=get_username(token))
+    db_user = users.get_user_by_name(db=db, username=get_username(token))
     if not any(
         project_user.role == ProjectUserRole.MANAGER
         for project_user in db_user.projects

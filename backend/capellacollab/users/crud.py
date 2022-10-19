@@ -9,14 +9,14 @@ from capellacollab.users.models import DatabaseUser, Role
 
 
 def find_or_create_user(db: Session, username: str):
-    user = get_user(db, username)
+    user = get_user_by_name(db, username)
     if user:
         return user
 
     return create_user(db, username)
 
 
-def get_user(db: Session, username: str) -> DatabaseUser | None:
+def get_user_by_name(db: Session, username: str) -> DatabaseUser | None:
     return db.query(DatabaseUser).filter(DatabaseUser.name == username).first()
 
 
