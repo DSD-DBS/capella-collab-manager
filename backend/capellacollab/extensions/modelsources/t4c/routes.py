@@ -74,3 +74,4 @@ def delete_project_from_repository(
         id=project_id,
         repo_name=project,
     )
+    return None

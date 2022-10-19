@@ -2,15 +2,32 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import enum
+import logging
 import typing as t
 
+import pydantic
+import requests
 from pydantic import BaseModel, validator
+from requests.exceptions import RequestException
 from sqlalchemy import CheckConstraint, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-# required for sqlalchemy
-import capellacollab.settings.modelsources.t4c.models
 from capellacollab.core.database import Base
+from capellacollab.core.models import ResponseModel
+
+log = logging.getLogger(__name__)
+
+
+def validate_rest_api_url(value: t.Optional[str]):
+    if value:
+        try:
+            requests.Request("GET", value).prepare()
+        except RequestException:
+            log.info("REST API Validation failed", exc_info=True)
+            raise ValueError(
+                "The provided TeamForCapella REST API is not valid."
+            )
+    return value
 
 
 class DatabaseT4CInstance(Base):
@@ -60,6 +77,10 @@ class T4CInstanceBase(BaseModel):
         latin_1_validator
     )
 
+    _validate_rest_api_url = pydantic.validator("rest_api", allow_reuse=True)(
+        validate_rest_api_url
+    )
+
     class Config:
         orm_mode = True
 
@@ -77,8 +98,13 @@ class PatchT4CInstance(BaseModel):
     _validate_username = validator("username", allow_reuse=True)(
         latin_1_validator
     )
+
     _validate_password = validator("password", allow_reuse=True)(
         latin_1_validator
+    )
+
+    _validate_rest_api_url = pydantic.validator("rest_api", allow_reuse=True)(
+        validate_rest_api_url
     )
 
     class Config:
@@ -110,31 +136,3 @@ class Version(BaseModel):
 class T4CInstance(T4CInstanceComplete):
     id: int
     version: Version
-
-
-class CreateT4CRepository(BaseModel):
-    name: str
-
-
-class Status(str, enum.Enum):
-    ONLINE = "ONLINE"
-    OFFLINE = "OFFLINE"
-    INSTANCE_UNREACHABLE = "INSTANCE_UNREACHABLE"
-    NOT_FOUND = "NOT_FOUND"
-
-
-class T4CRepository(CreateT4CRepository):
-    id: int
-    instance_id: int
-    instance: T4CInstance
-    status: t.Optional[Status]
-
-    class Config:
-        orm_mode = True
-
-
-class T4CInstanceWithRepositories(T4CInstance):
-    repositories: list[T4CRepository]
-
-    class Config:
-        orm_mode = True

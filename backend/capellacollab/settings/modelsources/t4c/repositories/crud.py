@@ -3,16 +3,12 @@
 
 from __future__ import annotations
 
-import typing as t
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from capellacollab.settings.modelsources.t4c.models import (
-    CreateT4CRepository,
-    DatabaseT4CInstance,
-)
+from capellacollab.settings.modelsources.t4c.models import DatabaseT4CInstance
 from capellacollab.settings.modelsources.t4c.repositories.models import (
+    CreateT4CRepository,
     DatabaseT4CRepository,
 )
 
@@ -36,6 +32,6 @@ def create_t4c_repository(
 
 def delete_4c_repository(
     repository: DatabaseT4CRepository, db: Session
-) -> t.NoReturn:
+) -> None:
     db.delete(repository)
     db.commit()

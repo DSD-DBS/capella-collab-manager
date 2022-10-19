@@ -22,7 +22,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSelectionList } from '@angular/material/list';
 import { tap, switchMap } from 'rxjs';
 import { T4CInstance } from 'src/app/services/settings/t4c-model.service';
-import { T4CSyncService } from 'src/app/services/t4c-sync/t4-csync.service';
 import {
   CreateT4CRepository,
   T4CRepoService,
@@ -40,7 +39,6 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
   @Input() instance?: T4CInstance;
 
   constructor(
-    private t4cSyncService: T4CSyncService,
     public t4cRepoService: T4CRepoService,
     private dialog: MatDialog
   ) {}
@@ -68,7 +66,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
   uniqueNameValidator(control: AbstractControl): ValidationErrors | null {
     return this.t4cRepoService.repositories
       .map((repo) => repo.name)
-      .indexOf(control.value) >= 0
+      .includes(control.value)
       ? { projectExistsError: true }
       : null;
   }
@@ -77,7 +75,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
     this.t4cRepoService._repositories.next(
       this.t4cRepoService.repositories.map((repo) => ({
         ...repo,
-        status: undefined,
+        status: 'LOADING',
       }))
     );
     this.t4cRepoService
@@ -102,7 +100,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
             this.form.enable();
             this.t4cRepoService._repositories.next([
               ...this.t4cRepoService.repositories,
-              repository,
+              { ...repository, status: 'LOADING' },
             ]);
           }),
           switchMap(() =>
@@ -133,9 +131,9 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
 
   startRepository(repository: T4CServerRepository): void {
     this.repositoryList.selectedOptions.clear();
-    delete repository.status;
+    repository.status = 'LOADING';
     this.t4cRepoService
-      .startRepository(repository.instance_id, repository.id)
+      .startRepository(repository.instance.id, repository.id)
       .pipe(
         tap(() => (repository.status = 'ONLINE')),
         switchMap(() =>
@@ -149,9 +147,9 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
 
   stopRepository(repository: T4CServerRepository): void {
     this.repositoryList.selectedOptions.clear();
-    delete repository.status;
+    repository.status = 'LOADING';
     this.t4cRepoService
-      .stopRepository(repository.instance_id, repository.id)
+      .stopRepository(repository.instance.id, repository.id)
       .pipe(
         tap(() => (repository.status = 'OFFLINE')),
         switchMap(() =>
@@ -165,9 +163,9 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
 
   recreateRepository(repository: T4CServerRepository): void {
     this.repositoryList.selectedOptions.clear();
-    delete repository.status;
+    repository.status = 'LOADING';
     this.t4cRepoService
-      .recreateRepository(repository.instance_id, repository.id)
+      .recreateRepository(repository.instance.id, repository.id)
       .pipe(
         tap(() => (repository.status = 'ONLINE')),
         switchMap(() =>

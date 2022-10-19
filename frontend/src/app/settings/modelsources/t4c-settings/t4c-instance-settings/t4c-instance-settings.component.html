@@ -4,16 +4,18 @@
  -->
 
 <mat-card>
-  <mat-card-header class="button-header">
-    <mat-card-title><h2>T4C Repository Settings</h2></mat-card-title>
-    <h2>
-      <button mat-button [disabled]="!instance" (click)="refreshRepositories()">
-        <mat-icon>sync</mat-icon>
-      </button>
-    </h2>
-  </mat-card-header>
-  <form [formGroup]="form">
-    <mat-form-field>
+  <div class="flex-space-between">
+    <mat-card-title><h2>Manage T4C repositories</h2></mat-card-title>
+    <button
+      mat-icon-button
+      [disabled]="!instance"
+      (click)="refreshRepositories()"
+    >
+      <mat-icon>sync</mat-icon>
+    </button>
+  </div>
+  <form [formGroup]="form" #formDirective="ngForm">
+    <mat-form-field appearance="fill">
       <mat-label>Repository name</mat-label>
       <input matInput formControlName="name" />
       <mat-error *ngIf="form.controls.name.errors?.required"
@@ -22,6 +24,9 @@
       <mat-error *ngIf="form.controls.name.errors?.projectExistsError"
         >Name already used</mat-error
       >
+      <mat-error *ngIf="form.controls.name.errors?.pattern"
+        >The following characters are allowed: A-Z, a-z, 0-9, _, -
+      </mat-error>
     </mat-form-field>
     <div class="field-separator"></div>
     <button
@@ -38,7 +43,9 @@
       *ngFor="let repository of t4cRepoService.repositories"
       [value]="repository"
     >
-      <mat-icon mat-list-icon *ngIf="!repository.status">sync</mat-icon>
+      <mat-icon mat-list-icon *ngIf="repository.status === 'LOADING'"
+        >sync</mat-icon
+      >
       <mat-icon mat-list-icon *ngIf="repository.status === 'OFFLINE'"
         >cloud_off</mat-icon
       >
@@ -48,6 +55,9 @@
       <mat-icon mat-list-icon *ngIf="repository.status === 'NOT_FOUND'"
         >block</mat-icon
       >
+      <mat-icon mat-list-icon *ngIf="repository.status === 'INITIAL'"
+        >cloud_upload</mat-icon
+      >
       <mat-icon
         mat-list-icon
         *ngIf="repository.status === 'INSTANCE_UNREACHABLE'"
@@ -56,7 +66,7 @@
       <div>
         <div mat-line>{{ repository.name }}</div>
         <div mat-line>Repository ID: {{ repository.id }}</div>
-        <div mat-line>status: {{ repository.status || "LOADING" }}</div>
+        <div mat-line>status: {{ repository.status }}</div>
       </div>
     </mat-list-option>
   </mat-selection-list>

@@ -71,6 +71,7 @@ def delete_user(
     verify_admin(token, db)
     project_users.delete_all_projects_for_user(db, username)
     users.delete_user(db=db, username=username)
+    return None
 
 
 @router.patch("/{username}/roles", responses=AUTHENTICATION_RESPONSES)

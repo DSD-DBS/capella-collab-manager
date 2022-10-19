@@ -2,11 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from fastapi import APIRouter, Depends, HTTPException
-from requests.exceptions import InvalidURL
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
-from capellacollab.config import config
 from capellacollab.core.authentication.database import verify_admin
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.authentication.responses import (
@@ -14,6 +12,7 @@ from capellacollab.core.authentication.responses import (
 )
 from capellacollab.core.database import get_db
 from capellacollab.settings.modelsources.t4c import crud
+from capellacollab.settings.modelsources.t4c.injectables import load_instance
 from capellacollab.settings.modelsources.t4c.models import (
     CreateT4CInstance,
     DatabaseT4CInstance,
@@ -26,20 +25,6 @@ from capellacollab.settings.modelsources.t4c.repositories.routes import (
 from capellacollab.tools import crud as tools_crud
 
 router = APIRouter()
-
-
-def load_instance(
-    id_: int, db: Session = Depends(get_db)
-) -> DatabaseT4CInstance:
-    try:
-        return crud.get_t4c_instance(id_, db)
-    except NoResultFound:
-        raise HTTPException(
-            status_code=404,
-            detail={
-                "reason": f"The t4c instance with the id {id_} does not exist.",
-            },
-        )
 
 
 @router.get(
@@ -56,7 +41,7 @@ def list_git_settings(
 
 
 @router.get(
-    "/{id_}",
+    "/{t4c_instance_id}",
     responses=AUTHENTICATION_RESPONSES,
     response_model=T4CInstance,
 )
@@ -92,14 +77,11 @@ def create_t4c_instance(
 
     instance = DatabaseT4CInstance(**body.dict())
     instance.version = version
-    try:
-        return T4CInstance.from_orm(crud.create_t4c_instance(instance, db))
-    except InvalidURL:
-        raise HTTPException(400, {"Invalid REST API url."})
+    return T4CInstance.from_orm(crud.create_t4c_instance(instance, db))
 
 
 @router.patch(
-    "/{id_}",
+    "/{t4c_instance_id}",
     responses=AUTHENTICATION_RESPONSES,
     response_model=T4CInstance,
 )
@@ -113,10 +95,8 @@ def edit_t4c_instance(
     for key in body.dict():
         if value := body.__getattribute__(key):
             instance.__setattr__(key, value)
-    try:
-        return T4CInstance.from_orm(crud.update_t4c_instance(instance, db))
-    except InvalidURL:
-        raise HTTPException(400, {"Invalid REST API url."})
+
+    return T4CInstance.from_orm(crud.update_t4c_instance(instance, db))
 
 
 router.include_router(

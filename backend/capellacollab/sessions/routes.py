@@ -268,6 +268,7 @@ def end_session(
         )
     database.delete_session(db, id)
     operator.kill_session(id)
+    return None
 
 
 @router.get(

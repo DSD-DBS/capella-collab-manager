@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import json
 import logging
 import random
 import string
@@ -52,15 +53,21 @@ app.add_middleware(
 @app.middleware("http")
 async def log_requests(request, call_next):
     idem = "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
-    log.debug(f"rid={idem} start request path={request.url.path}")
+    log.debug(
+        "rid=%s start request path=%s",
+        idem,
+        request.url.path,
+    )
     start_time = time.time()
 
     response = await call_next(request)
 
     process_time = (time.time() - start_time) * 1000
-    formatted_process_time = "{0:.2f}".format(process_time)
     log.debug(
-        f"rid={idem} completed_in={formatted_process_time}ms status_code={response.status_code}"
+        "rid=%s completed_in=%.2fms status_code=%s",
+        idem,
+        process_time,
+        response.status_code,
     )
 
     return response

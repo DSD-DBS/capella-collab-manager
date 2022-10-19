@@ -161,6 +161,7 @@ def patch_project_user(
         crud.change_permission_of_user_in_project(
             db, project, body.permission, username
         )
+    return None
 
 
 @router.delete(
@@ -180,3 +181,4 @@ def remove_user_from_project(
     check_username_not_admin(username, db)
     t4c_manager.remove_user_from_repository(project, username)
     crud.delete_user_from_project(db, project, username)
+    return None

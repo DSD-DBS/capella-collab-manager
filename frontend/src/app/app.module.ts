@@ -46,6 +46,7 @@ import { AuthComponent } from './general/auth/auth/auth.component';
 import { AuthInterceptor } from './general/auth/http-interceptor/auth.interceptor';
 import { LogoutRedirectComponent } from './general/auth/logout/logout-redirect/logout-redirect.component';
 import { LogoutComponent } from './general/auth/logout/logout/logout.component';
+import { ErrorHandlingInterceptor } from './general/error-handling/error-handling.interceptor';
 import { FooterComponent } from './general/footer/footer.component';
 import { LegalComponent } from './general/footer/legal/legal.component';
 import { TermsConditionsComponent } from './general/footer/terms-conditions/terms-conditions.component';
@@ -228,6 +229,11 @@ import { HomeComponent } from './workspaces/home.component';
     {
       provide: MatDialogRef,
       useValue: {},
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorHandlingInterceptor,
+      multi: true,
     },
   ],
   bootstrap: [AppComponent],

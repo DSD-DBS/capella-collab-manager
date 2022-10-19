@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-from requests import Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -24,8 +23,6 @@ def get_t4c_instance(id_: int, db: Session) -> DatabaseT4CInstance:
 
 
 def create_t4c_instance(instance: CreateT4CInstance, db: Session):
-    request = Request("GET", instance.rest_api)
-    request.prepare()
     db.add(instance)
     db.commit()
     db.refresh(instance)
@@ -33,8 +30,6 @@ def create_t4c_instance(instance: CreateT4CInstance, db: Session):
 
 
 def update_t4c_instance(instance: DatabaseT4CInstance, db: Session):
-    request = Request("GET", instance.rest_api)
-    request.prepare()
     db.add(instance)
     db.commit()
     return instance
