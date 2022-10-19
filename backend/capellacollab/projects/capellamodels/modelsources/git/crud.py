@@ -7,8 +7,10 @@ import typing as t
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.capellamodels.crud as models_crud
+from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.capellamodels.modelsources.git.models import (
     DB_GitModel,
+    PatchGitModel,
     PostGitModel,
 )
 
@@ -57,38 +59,42 @@ def delete_model_from_repository(
 
 
 def add_gitmodel_to_capellamodel(
-    db: Session, project_slug: str, model_slug: str, source: PostGitModel
+    db: Session,
+    capella_model: DatabaseCapellaModel,
+    post_git_model: PostGitModel,
 ) -> DB_GitModel:
-    model = models_crud.get_model_by_slug(db, project_slug, model_slug)
-
-    if len(get_gitmodels_of_capellamodels(db, model.id)):
+    if len(get_gitmodels_of_capellamodels(db, capella_model.id)):
         primary = False
     else:
         primary = True
-    new_model = DB_GitModel.from_post_git_model(model.id, primary, source)
+    new_model = DB_GitModel.from_post_git_model(
+        capella_model.id, primary, post_git_model
+    )
     db.add(new_model)
     db.commit()
-    db.refresh(model)
+
     return new_model
 
 
 def update_git_model(
     db: Session,
-    model_id: int,
-    model: PostGitModel,
+    db_capella_model: DatabaseCapellaModel,
+    db_model: DB_GitModel,
+    patch_model: PatchGitModel,
 ) -> DB_GitModel:
-    updated_model = get_gitmodel_by_id(db, model_id)
+    db_model.path = patch_model.path
+    db_model.entrypoint = patch_model.entrypoint
+    db_model.revision = patch_model.revision
 
-    updated_model.path = model.path
-    updated_model.entrypoint = model.entrypoint
-    updated_model.revision = model.revision
+    if patch_model.password:
+        db_model.username = patch_model.username
+        db_model.password = patch_model.password
+    elif not patch_model.username:
+        db_model.username = ""
+        db_model.password = ""
 
-    if model.password:
-        updated_model.username = model.username
-        updated_model.password = model.password
-    elif not model.username:
-        updated_model.username = ""
-        updated_model.password = ""
+    if patch_model.primary and not db_model.primary:
+        db_model = make_git_model_primary(db, db_capella_model.id, db_model.id)
 
     db.commit()
-    return updated_model
+    return db_model
