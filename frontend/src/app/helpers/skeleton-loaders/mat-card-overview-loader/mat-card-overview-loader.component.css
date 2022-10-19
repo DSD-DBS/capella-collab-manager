@@ -2,13 +2,3 @@
  * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
-.footer {
-  color: grey;
-  text-align: end;
-  padding: 5px;
-}
-
-app-mat-card-overview-loader {
-  display: contents;
-}

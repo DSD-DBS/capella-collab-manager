@@ -17,7 +17,7 @@ import {
   styleUrls: ['./project-overview.component.css'],
 })
 export class ProjectOverviewComponent implements OnInit {
-  showSpinner = true;
+  loading = true;
 
   constructor(
     public projectService: ProjectService,
@@ -31,11 +31,7 @@ export class ProjectOverviewComponent implements OnInit {
     const projects = this.projectService._projects;
     this.projectService
       .list()
-      .pipe(
-        tap(() => {
-          this.showSpinner = false;
-        })
-      )
+      .pipe(tap(() => (this.loading = false)))
       .subscribe({
         next: projects.next.bind(projects),
         error: projects.error.bind(projects),

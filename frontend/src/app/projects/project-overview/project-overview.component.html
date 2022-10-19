@@ -14,24 +14,29 @@
       </div>
     </mat-card>
   </a>
-  <a
-    *ngFor="let project of projectService.projects"
-    [routerLink]="['/project', project.slug]"
-  >
-    <mat-card matRipple class="mat-card-overview">
-      <div class="header">{{ project.name }}</div>
-      <div class="content">
-        <div *ngIf="project.description; else elseBlock">
-          {{ project.description }}
+  <app-mat-card-overview-loader
+    [loading]="loading"
+  ></app-mat-card-overview-loader>
+  <ng-container *ngIf="!loading">
+    <a
+      *ngFor="let project of projectService.projects"
+      [routerLink]="['/project', project.slug]"
+    >
+      <mat-card matRipple class="mat-card-overview">
+        <div class="header">{{ project.name }}</div>
+        <div class="content">
+          <div *ngIf="project.description; else elseBlock">
+            {{ project.description }}
+          </div>
+          <ng-template #elseBlock>No description provided.</ng-template>
         </div>
-        <ng-template #elseBlock>No description provided.</ng-template>
-      </div>
-      <div class="footer">
-        {{ project.users.leads }} project lead(s),
-        {{ project.users.contributors }} contributor(s),
-        {{ project.users.subscribers }}
-        subscriber(s)
-      </div>
-    </mat-card>
-  </a>
+        <div class="footer">
+          {{ project.users.leads }} project lead(s),
+          {{ project.users.contributors }} contributor(s),
+          {{ project.users.subscribers }}
+          subscriber(s)
+        </div>
+      </mat-card>
+    </a>
+  </ng-container>
 </div>
