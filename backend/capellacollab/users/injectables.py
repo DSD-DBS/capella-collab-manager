@@ -8,6 +8,7 @@ from fastapi import Depends
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
+from capellacollab.users.models import DatabaseUser
 
 from . import crud
 
@@ -17,7 +18,7 @@ def get_own_user(
     token=Depends(JWTBearer()),
 ) -> DatabaseUser:
     username = get_username(token)
-    return crud.get_user(db, username)
+    return crud.get_user_by_name(db, username)
 
 
 def get_user(

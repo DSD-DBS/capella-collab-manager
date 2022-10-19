@@ -18,7 +18,7 @@ from capellacollab.projects.users.models import (
 )
 from capellacollab.sessions.database import get_session_by_id
 from capellacollab.settings.modelsources.git import crud
-from capellacollab.users.crud import get_user
+from capellacollab.users.crud import get_user_by_name
 from capellacollab.users.models import Role
 
 
@@ -28,7 +28,7 @@ class RoleVerification:
         self.verify = verify
 
     def __call__(self, token=Depends(JWTBearer()), db=Depends(get_db)) -> bool:
-        role = get_user(db=db, username=get_username(token)).role
+        role = get_user_by_name(db=db, username=get_username(token)).role
         if role == Role.USER and self.required_role == Role.ADMIN:
             if self.verify:
                 raise HTTPException(
@@ -62,7 +62,7 @@ class ProjectRoleVerification:
     def __call__(
         self, project_slug: str, token=Depends(JWTBearer()), db=Depends(get_db)
     ) -> bool:
-        user = get_user(db=db, username=get_username(token))
+        user = get_user_by_name(db=db, username=get_username(token))
 
         if user.role == Role.ADMIN:
             return True
