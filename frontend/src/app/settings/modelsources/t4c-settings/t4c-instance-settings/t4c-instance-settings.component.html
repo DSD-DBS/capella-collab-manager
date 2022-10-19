@@ -12,7 +12,7 @@
       </button>
     </h2>
   </mat-card-header>
-  <form [formGroup]="form" #formDirective="ngForm">
+  <form [formGroup]="form">
     <mat-form-field>
       <mat-label>Repository name</mat-label>
       <input matInput formControlName="name" />
@@ -28,7 +28,7 @@
       mat-flat-button
       color="primary"
       [disabled]="!form.valid"
-      (click)="createRepository(formDirective)"
+      (click)="createRepository()"
     >
       Add T4C repository
     </button>

@@ -5,7 +5,6 @@
 
 import {
   Component,
-  OnInit,
   OnDestroy,
   ViewChild,
   Input,
@@ -16,22 +15,21 @@ import {
   AbstractControl,
   FormControl,
   FormGroup,
-  FormGroupDirective,
   ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSelectionList } from '@angular/material/list';
+import { tap, switchMap } from 'rxjs';
+import { T4CInstance } from 'src/app/services/settings/t4c-model.service';
+import { T4CSyncService } from 'src/app/services/t4c-sync/t4-csync.service';
 import {
   CreateT4CRepository,
   T4CRepoService,
   T4CRepository,
   T4CServerRepository,
 } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
-import { T4CSyncService } from 'src/app/services/t4c-sync/t4-csync.service';
 import { T4CRepoDeletionDialogComponent } from './t4c-repo-deletion-dialog/t4c-repo-deletion-dialog.component';
-import { T4CInstance } from 'src/app/services/settings/t4c-model.service';
-import { tap, switchMap, BehaviorSubject } from 'rxjs';
-import { MatSelectionList } from '@angular/material/list';
 
 @Component({
   selector: 'app-t4c-instance-settings',
@@ -47,7 +45,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
     private dialog: MatDialog
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(_changes: SimpleChanges): void {
     if (this.instance) {
       this.t4cRepoService
         .getT4CRepositories(this.instance.id)
@@ -89,7 +87,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
       });
   }
 
-  createRepository(formDirective: FormGroupDirective): void {
+  createRepository(): void {
     if (this.form.valid) {
       this.form.disable();
 
