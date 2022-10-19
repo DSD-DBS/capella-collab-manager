@@ -33,7 +33,9 @@ Please type in the name of the repository to confirm the deletion: <br />
   </mat-form-field>
 
   <div mat-dialog-actions class="flex-space-between">
-    <button mat-button (click)="this.dialogRef.close(false)">No</button>
+    <button type="button" mat-button (click)="this.dialogRef.close(false)">
+      Cancel
+    </button>
     <button mat-flat-button type="submit" color="warn">
       Remove the repository
     </button>
