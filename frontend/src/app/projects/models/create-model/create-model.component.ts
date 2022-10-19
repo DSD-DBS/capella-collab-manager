@@ -67,8 +67,8 @@ export class CreateModelComponent implements OnDestroy {
     this.stepper.next();
   }
 
-  afterSourceCreated(options: { created: boolean }): void {
-    if (options.created) {
+  afterSourceCreated(created: boolean): void {
+    if (created) {
       this.stepper.steps.get(2)!.completed = true;
       this.stepper.next();
       this.stepper.steps.get(1)!.editable = false;
