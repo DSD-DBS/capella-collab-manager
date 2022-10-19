@@ -82,7 +82,7 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
     responses=AUTHENTICATION_RESPONSES,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
-def delete_user(user_id: str, db: Session = Depends(get_db)):
+def delete_user(user_id: int, db: Session = Depends(get_db)):
     project_users.delete_all_projects_for_user(db, user_id)
     crud.delete_user(db=db, user_id=user_id)
 
@@ -93,7 +93,7 @@ def delete_user(user_id: str, db: Session = Depends(get_db)):
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def update_role_of_user(
-    user_id: str,
+    user_id: int,
     body: PatchUserRoleRequest,
     db: Session = Depends(get_db),
 ):
