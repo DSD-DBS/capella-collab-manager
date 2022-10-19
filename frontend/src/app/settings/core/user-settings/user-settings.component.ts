@@ -80,19 +80,19 @@ export class UserSettingsComponent implements OnInit {
     }
   }
 
-  createAdministratorWithUsername(username: string) {
-    this.userService.updateRoleOfUser(username, 'administrator').subscribe({
+  createAdministratorWithUsername(user: User) {
+    this.userService.updateRoleOfUser(user, 'administrator').subscribe({
       next: () => {
         this.toastService.showSuccess(
           'Role of user updated',
-          username + ' has now the role administrator'
+          user.name + ' has now the role administrator'
         );
         this.getUsers();
       },
       error: () => {
         this.toastService.showError(
           'Update of role failed',
-          'The role of ' + username + ' has not been updated'
+          'The role of ' + user.name + ' has not been updated'
         );
       },
     });
@@ -104,12 +104,12 @@ export class UserSettingsComponent implements OnInit {
     });
   }
 
-  removeAdministrator(username: string) {
-    this.userService.updateRoleOfUser(username, 'user').subscribe({
+  removeAdministrator(user: User) {
+    this.userService.updateRoleOfUser(user, 'user').subscribe({
       next: () => {
         this.toastService.showSuccess(
           'Role of user updated',
-          username + ' has now the role user'
+          user.name + ' has now the role user'
         );
         this.getUsers();
         this.getUsers();
@@ -117,25 +117,25 @@ export class UserSettingsComponent implements OnInit {
       error: () => {
         this.toastService.showError(
           'Update of role failed',
-          'The role of ' + username + ' has not been updated'
+          'The role of ' + user.name + ' has not been updated'
         );
       },
     });
   }
 
-  deleteUser(username: string) {
-    this.userService.deleteUser(username).subscribe({
+  deleteUser(user: User) {
+    this.userService.deleteUser(user).subscribe({
       next: () => {
         this.toastService.showSuccess(
           'User deleted',
-          username + ' has been deleted'
+          user.name + ' has been deleted'
         );
         this.getUsers();
       },
       error: () => {
         this.toastService.showError(
           'User deletion failed',
-          username + ' has not been deleted'
+          user.name + ' has not been deleted'
         );
       },
     });

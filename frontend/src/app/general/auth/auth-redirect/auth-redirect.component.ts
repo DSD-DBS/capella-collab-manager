@@ -40,7 +40,7 @@ export class AuthRedirectComponent implements OnInit {
         .getAccessToken(params.code, params.state)
         .subscribe((res) => {
           this.authService.logIn(res.access_token, res.refresh_token);
-          this.userService.getAndSaveOwnUser();
+          this.userService.updateOwnUser();
 
           this.router.navigateByUrl('/');
         });
