@@ -27,5 +27,4 @@ def get_user(
 ):
     if user_id == "current":
         return get_own_user(db, token)
-    else:
-        return crud.get_user_by_id(db, user_id)
+    return crud.get_user_by_id(db, user_id)
