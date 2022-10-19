@@ -8,7 +8,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.users.crud as project_users
-import capellacollab.users.crud as users
 from capellacollab.core.authentication.database import (
     RoleVerification,
     is_admin,
@@ -28,7 +27,7 @@ from capellacollab.users.models import (
     User,
 )
 
-from . import injectables
+from . import crud, injectables
 
 router = APIRouter()
 
@@ -42,7 +41,7 @@ router = APIRouter()
 def get_users(
     db: Session = Depends(get_db),
 ):
-    return users.get_all_users(db)
+    return crud.get_all_users(db)
 
 
 @router.post(
@@ -52,7 +51,7 @@ def get_users(
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def create_user(body: BaseUser, db: Session = Depends(get_db)):
-    return users.create_user(db, body.name)
+    return crud.create_user(db, body.name)
 
 
 @router.get(
@@ -64,7 +63,7 @@ def create_user(body: BaseUser, db: Session = Depends(get_db)):
 def get_current_user(
     db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
-    return users.get_user(db=db, username=get_username(token))
+    return crud.get_user_by_name(db=db, username=get_username(token))
 
 
 @router.get(
@@ -74,7 +73,7 @@ def get_current_user(
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def get_user(user_id: int, db: Session = Depends(get_db)):
-    return users.get_user_by_id(db=db, user_id=user_id)
+    return crud.get_user_by_id(db=db, user_id=user_id)
 
 
 @router.delete(
@@ -85,7 +84,7 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
 )
 def delete_user(user_id: str, db: Session = Depends(get_db)):
     project_users.delete_all_projects_for_user(db, user_id)
-    users.delete_user(db=db, user_id=user_id)
+    crud.delete_user(db=db, user_id=user_id)
 
 
 @router.patch(
@@ -100,7 +99,7 @@ def update_role_of_user(
 ):
     if body.role == Role.ADMIN:
         project_users.delete_all_projects_for_user(db, user_id)
-    return users.update_role_of_user(db, user_id, body.role)
+    return crud.update_role_of_user(db, user_id, body.role)
 
 
 # TODO: This is actually a sessions route (sessions/{username}?)
