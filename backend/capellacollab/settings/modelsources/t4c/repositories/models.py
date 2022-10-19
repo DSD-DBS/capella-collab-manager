@@ -39,6 +39,7 @@ class T4CRepositoryStatus(str, enum.Enum):
     OFFLINE = "OFFLINE"
     INSTANCE_UNREACHABLE = "INSTANCE_UNREACHABLE"
     NOT_FOUND = "NOT_FOUND"
+    INITIAL = "INITIAL"
 
 
 class T4CRepositories(ResponseModel):
