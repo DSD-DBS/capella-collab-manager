@@ -3,7 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -12,19 +18,7 @@ import {
   ValidatorFn,
   AbstractControl,
 } from '@angular/forms';
-import { ProjectService } from 'src/app/services/project/project.service';
-import {
-  Credentials,
-  GitService,
-  Revisions,
-} from 'src/app/services/git/git.service';
-import { ModelService } from 'src/app/services/model/model.service';
-import { ProjectService } from 'src/app/services/project/project.service';
-import { Source, SourceService } from 'src/app/services/source/source.service';
-import {
-  GitSetting,
-  GitSettingsService,
-} from 'src/app/services/settings/git-settings.service';
+import { Subscription } from 'rxjs';
 import {
   absoluteOrRelativeSafetyValidators,
   absoluteUrlSafetyValidator,
@@ -32,14 +26,25 @@ import {
   hasAbsoluteUrlPrefix,
   hasRelativePathPrefix,
 } from 'src/app/helpers/validators/url-validator';
-import { Subscription } from 'rxjs';
+import {
+  Credentials,
+  GitService,
+  Revisions,
+} from 'src/app/services/git/git.service';
+import { ModelService } from 'src/app/services/model/model.service';
+import { ProjectService } from 'src/app/services/project/project.service';
+import {
+  GitSetting,
+  GitSettingsService,
+} from 'src/app/services/settings/git-settings.service';
+import { Source, SourceService } from 'src/app/services/source/source.service';
 
 @Component({
   selector: 'app-create-coworking-method',
   templateUrl: './create-coworking-method.component.html',
   styleUrls: ['./create-coworking-method.component.css'],
 })
-export class CreateCoworkingMethodComponent implements OnInit {
+export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
   @Output() create = new EventEmitter<{ created: boolean }>();
 
   public availableGitInstances: Array<GitSetting> = [];

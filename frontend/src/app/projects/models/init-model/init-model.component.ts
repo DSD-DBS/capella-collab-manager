@@ -3,9 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { combineLatest, filter, map, switchMap, tap } from 'rxjs';
+import { combineLatest, filter, map, Subscription, switchMap, tap } from 'rxjs';
 import { Model, ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { SourceService } from 'src/app/services/source/source.service';
@@ -21,7 +28,7 @@ import {
   templateUrl: './init-model.component.html',
   styleUrls: ['./init-model.component.css'],
 })
-export class InitModelComponent implements OnInit {
+export class InitModelComponent implements OnInit, OnDestroy {
   @Output() create = new EventEmitter<{ created: boolean }>();
   @Input() asStepper?: boolean;
 

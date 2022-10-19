@@ -5,7 +5,7 @@
 
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { GitSettings } from 'src/app/services/settings/git-settings.service';
+import { GitSetting } from 'src/app/services/settings/git-settings.service';
 
 @Component({
   selector: 'app-delete-git-settings-dialog',

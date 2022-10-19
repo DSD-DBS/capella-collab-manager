@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -18,7 +18,7 @@ import {
   templateUrl: './edit-git-settings.component.html',
   styleUrls: ['./edit-git-settings.component.css'],
 })
-export class EditGitSettingsComponent implements OnInit {
+export class EditGitSettingsComponent implements OnInit, OnDestroy {
   id: number = -1;
 
   gitSettingsForm = new FormGroup({

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -13,23 +13,23 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
+import { absoluteUrlSafetyValidator } from 'src/app/helpers/validators/url-validator';
 import {
   GitSetting,
   GitSettingsService,
   GitType,
 } from 'src/app/services/settings/git-settings.service';
-import { absoluteUrlSafetyValidator } from 'src/app/helpers/validators/url-validator';
 import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-git-settings',
   templateUrl: './git-settings.component.html',
   styleUrls: ['./git-settings.component.css'],
 })
-export class GitSettingsComponent implements OnInit {
-  public cmpGitSettings: GitSettings[];
+export class GitSettingsComponent implements OnInit, OnDestroy {
+  public cmpGitSettings: GitSetting[];
 
   gitInstancesForm = new FormGroup({
     type: new FormControl('', Validators.required),
