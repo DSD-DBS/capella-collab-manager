@@ -87,24 +87,25 @@
       </button>
     </div>
   </mat-card>
-  <mat-card>
-    <h2>Create Administrator</h2>
-    Be careful with this option: <br />
-    Administrators can control all sessions <br />
-    and can modify all repositories! <br />
-    <form [formGroup]="createAdministratorFormGroup">
+  <mat-card class="default">
+    <h2>Create User</h2>
+    In general, users are created automatically when logging in the first time.
+    <br />
+    However, there may be cases where you want to create the user before the
+    first login. <br />
+    <form [formGroup]="createUserFormGroup" class="flex-space-between">
       <mat-form-field>
         <mat-label>Username</mat-label>
         <input matInput formControlName="username" />
         <mat-error *ngIf="username.getError('required')"
           >Please enter a username!</mat-error
         >
-        <mat-error *ngIf="username.getError('lowerCaseError')"
-          >Usernames can only contain lowercase letters!
-        </mat-error>
+        <mat-error *ngIf="username.getError('userAlreadyExists')"
+          >The username does already exist!</mat-error
+        >
       </mat-form-field>
-      <button mat-flat-button (click)="createAdministrator()" color="primary">
-        Create Administrator <mat-icon>keyboard_arrow_right</mat-icon>
+      <button mat-flat-button (click)="createUser()" color="primary">
+        Create User <mat-icon>keyboard_arrow_right</mat-icon>
       </button>
     </form>
   </mat-card>
