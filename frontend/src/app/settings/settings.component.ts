@@ -23,10 +23,6 @@ export class SettingsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userService
-      .getUser(this.userService.getUserName())
-      .subscribe((res) => {
-        this.userService.user = res;
-      });
+    this.userService.updateOwnUser();
   }
 }

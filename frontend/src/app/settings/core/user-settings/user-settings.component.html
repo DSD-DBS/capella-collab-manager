@@ -52,9 +52,7 @@
             userService.getUserName()
         "
         (click)="
-          this.removeAdministrator(
-            adminusers.selectedOptions.selected[0].value.name
-          )
+          this.removeAdministrator(adminusers.selectedOptions.selected[0].value)
         "
       >
         <mat-icon>arrow_downward</mat-icon>
@@ -66,7 +64,7 @@
         color="primary"
         (click)="
           createAdministratorWithUsername(
-            adminusers.selectedOptions.selected[0].value.name
+            adminusers.selectedOptions.selected[0].value
           )
         "
         *ngIf="adminusers.selectedOptions.selected[0]?.value.role === 'user'"
@@ -78,7 +76,7 @@
       <button
         mat-flat-button
         color="primary"
-        (click)="deleteUser(adminusers.selectedOptions.selected[0].value.name)"
+        (click)="deleteUser(adminusers.selectedOptions.selected[0].value)"
         *ngIf="adminusers.selectedOptions.selected[0]?.value.role === 'user'"
       >
         <mat-icon>delete</mat-icon>

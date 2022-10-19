@@ -40,14 +40,14 @@ def create_user(db: Session, username: str, role: Role = Role.USER):
     return user
 
 
-def update_role_of_user(db: Session, username: str, role: Role):
-    user = get_user(db, username)
+def update_role_of_user(db: Session, user_id: int, role: Role):
+    user = get_user_by_id(db, user_id)
     user.role = role
     db.commit()
     db.refresh(user)
     return user
 
 
-def delete_user(db: Session, username: str):
-    db.query(DatabaseUser).filter(DatabaseUser.name == username).delete()
+def delete_user(db: Session, user_id: int):
+    db.query(DatabaseUser).filter(DatabaseUser.id == user_id).delete()
     db.commit()

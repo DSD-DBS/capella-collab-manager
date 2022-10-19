@@ -15,13 +15,16 @@ class Role(enum.Enum):
     ADMIN = "administrator"
 
 
-class User(BaseModel):
-    id: str
+class BaseUser(BaseModel):
     name: str
     role: Role
 
     class Config:
         orm_mode = True
+
+
+class User(BaseUser):
+    id: str
 
 
 class PatchUserRoleRequest(BaseModel):
