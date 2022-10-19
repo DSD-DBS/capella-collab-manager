@@ -31,11 +31,7 @@ export class ProjectOverviewComponent implements OnInit {
     const projects = this.projectService._projects;
     this.projectService
       .list()
-      .pipe(
-        tap(() => {
-          this.loading = false;
-        })
-      )
+      .pipe(tap(() => (this.loading = false)))
       .subscribe({
         next: projects.next.bind(projects),
         error: projects.error.bind(projects),
