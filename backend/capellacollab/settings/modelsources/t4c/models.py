@@ -136,34 +136,3 @@ class Version(BaseModel):
 class T4CInstance(T4CInstanceComplete):
     id: int
     version: Version
-
-
-class CreateT4CRepository(BaseModel):
-    name: str
-
-
-class Status(str, enum.Enum):
-    ONLINE = "ONLINE"
-    OFFLINE = "OFFLINE"
-    INSTANCE_UNREACHABLE = "INSTANCE_UNREACHABLE"
-    NOT_FOUND = "NOT_FOUND"
-
-
-class T4CRepository(CreateT4CRepository):
-    id: int
-    instance: T4CInstance
-    status: t.Optional[Status]
-
-    class Config:
-        orm_mode = True
-
-
-class T4CRepositories(ResponseModel):
-    payload: t.List[T4CRepository]
-
-
-class T4CInstanceWithRepositories(T4CInstance):
-    repositories: list[T4CRepository]
-
-    class Config:
-        orm_mode = True

@@ -17,20 +17,21 @@ from capellacollab.core.authentication.responses import (
 from capellacollab.core.database import get_db
 from capellacollab.core.models import Message, ResponseModel
 from capellacollab.settings.modelsources.t4c.injectables import load_instance
-from capellacollab.settings.modelsources.t4c.models import (
-    CreateT4CRepository,
-    DatabaseT4CInstance,
-    Status,
-    T4CInstanceWithRepositories,
-    T4CRepositories,
-    T4CRepository,
-)
+from capellacollab.settings.modelsources.t4c.models import DatabaseT4CInstance
 from capellacollab.settings.modelsources.t4c.repositories import (
     crud,
     interface,
 )
 from capellacollab.settings.modelsources.t4c.repositories.models import (
     DatabaseT4CRepository,
+)
+
+from .models import (
+    CreateT4CRepository,
+    T4CInstanceWithRepositories,
+    T4CRepositories,
+    T4CRepository,
+    T4CRepositoryStatus,
 )
 
 router = APIRouter()
@@ -78,7 +79,9 @@ def list_t4c_repositories(
         server_repositories = interface.list_repositories(instance)
     except RequestException:
         for i in range(len(db_repositories)):
-            db_repositories[i].status = Status.INSTANCE_UNREACHABLE
+            db_repositories[
+                i
+            ].status = T4CRepositoryStatus.INSTANCE_UNREACHABLE
         return T4CRepositories(
             payload=db_repositories,
             warnings=[
@@ -107,7 +110,7 @@ def list_t4c_repositories(
 
     # Repository exists in the database, but not on the server
     for repo in db_repositories_names - server_repositories_names:
-        db_repositories_dict[repo].status = Status.NOT_FOUND
+        db_repositories_dict[repo].status = T4CRepositoryStatus.NOT_FOUND
 
     # Repository exists on the server, but not in the database
     for repo in server_repositories_names - db_repositories_names:
@@ -145,13 +148,13 @@ def create_t4c_repository(
             },
         ) from e
     try:
-        new_repo.status = Status(
+        new_repo.status = T4CRepositoryStatus(
             interface.create_repository(instance, new_repo.name)["repository"][
                 "status"
             ]
         )
     except RequestException:
-        new_repo.status = Status.INSTANCE_UNREACHABLE
+        new_repo.status = T4CRepositoryStatus.INSTANCE_UNREACHABLE
     return new_repo
 
 

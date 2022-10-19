@@ -8,11 +8,9 @@ import typing as t
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from capellacollab.settings.modelsources.t4c.models import (
-    CreateT4CRepository,
-    DatabaseT4CInstance,
-)
+from capellacollab.settings.modelsources.t4c.models import DatabaseT4CInstance
 from capellacollab.settings.modelsources.t4c.repositories.models import (
+    CreateT4CRepository,
     DatabaseT4CRepository,
 )
 
