@@ -157,11 +157,7 @@ def request_session(
     )
 
 
-@router.post(
-    "/persistent",
-    response_model=AdvancedSessionResponse,
-    responses=AUTHENTICATION_RESPONSES,
-)
+@router.post("/persistent", response_model=AdvancedSessionResponse)
 def request_persistent_session(
     body: PostPersistentSessionRequest,
     db: Session = Depends(get_db),
