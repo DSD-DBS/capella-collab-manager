@@ -72,7 +72,7 @@ export class CreateModelBaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.toolService.get_tools().subscribe();
+    this.toolService.getTools().subscribe();
     this.modelService._models.subscribe();
     this.modelService._model.next(undefined);
   }
