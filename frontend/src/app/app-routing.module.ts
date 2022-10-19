@@ -11,6 +11,7 @@ import { AuthComponent } from './general/auth/auth/auth.component';
 import { LogoutRedirectComponent } from './general/auth/logout/logout-redirect/logout-redirect.component';
 import { LogoutComponent } from './general/auth/logout/logout/logout.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
+import { CreateCoworkingMethodComponent } from './projects/models/create-coworking-method/create-coworking-method.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
@@ -30,7 +31,6 @@ import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/e
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
 import { HomeComponent } from './workspaces/home.component';
-import { CreateCoworkingMethodComponent } from './projects/models/create-coworking-method/create-coworking-method.component';
 
 const routes: Routes = [
   {

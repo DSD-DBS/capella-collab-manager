@@ -6,6 +6,7 @@
 import {
   Component,
   EventEmitter,
+  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -18,6 +19,7 @@ import {
   ValidatorFn,
   AbstractControl,
 } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import {
   absoluteOrRelativeSafetyValidators,
@@ -32,25 +34,17 @@ import {
   Revisions,
 } from 'src/app/services/git/git.service';
 import { ModelService } from 'src/app/services/model/model.service';
+import { ProjectService } from 'src/app/services/project/project.service';
+import {
+  GitSetting,
+  GitSettingsService,
+} from 'src/app/services/settings/git-settings.service';
 import {
   CreateGitModel,
   GetGitModel,
   PatchGitModel,
   SourceService,
 } from 'src/app/services/source/source.service';
-import {
-  GitSetting,
-  GitSettingsService,
-} from 'src/app/services/settings/git-settings.service';
-import {
-  absoluteOrRelativeSafetyValidators,
-  absoluteUrlSafetyValidator,
-  checkUrlForInvalidSequences,
-  hasAbsoluteUrlPrefix,
-  hasRelativePathPrefix,
-} from 'src/app/helpers/validators/url-validator';
-import { Subscription } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
 import { GitModelService } from '../../project-detail/model-overview/model-detail/git-model.service';
 
 @Component({
