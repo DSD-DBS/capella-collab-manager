@@ -77,7 +77,7 @@ def list_t4c_repositories(
         server_repositories = interface.list_repositories(instance)
     except RequestException:
         for repo in db_repositories:
-            db_repositories.status = T4CRepositoryStatus.INSTANCE_UNREACHABLE
+            repo.status = T4CRepositoryStatus.INSTANCE_UNREACHABLE
         return T4CRepositories(
             payload=db_repositories,
             warnings=[
