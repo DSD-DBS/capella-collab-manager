@@ -35,7 +35,7 @@ export class DeleteSessionDialogComponent {
 
     forkJoin(requests).subscribe({
       next: () => this.dialogRef.close(),
-      error: (err) => {
+      error: () => {
         this.deleteButton.disabled = false;
         this.deleteButton.text = 'Failure. Try again.';
       },
