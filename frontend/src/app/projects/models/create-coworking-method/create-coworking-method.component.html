@@ -154,10 +154,8 @@
           <mat-error *ngIf="form.controls.entrypoint.errors?.required">
             An endpoint is required
           </mat-error>
-          <mat-error
-            *ngIf="form.controls.entrypoint.errors?.cappellaSuffixError"
-          >
-            {{ form.controls.entrypoint.errors?.cappellaSuffixError }}
+          <mat-error *ngIf="form.controls.entrypoint.errors?.pattern">
+            Entrypoint must end with ".aird" in case of a capella model
           </mat-error>
         </mat-form-field>
       </fieldset>

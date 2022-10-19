@@ -49,10 +49,8 @@ import {
   hasAbsoluteUrlPrefix,
   hasRelativePathPrefix,
 } from 'src/app/helpers/validators/url-validator';
-import { cappellaSuffixValidator } from 'src/app/helpers/validators/validators';
 import { Subscription } from 'rxjs';
-import { Location } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GitModelService } from '../../project-detail/model-overview/model-detail/git-model.service';
 
 @Component({
@@ -153,7 +151,9 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
 
     this.modelSubscription = this.modelService._model.subscribe((model) => {
       if (model?.tool.name === 'Capella') {
-        this.form.controls.entrypoint.addValidators(cappellaSuffixValidator());
+        this.form.controls.entrypoint.addValidators(
+          Validators.pattern(/^$|\.aird$/)
+        );
       }
     });
 

@@ -19,7 +19,6 @@ import {
   GitModel,
   GitModelService,
 } from 'src/app/services/modelsources/git-model/git-model.service';
-import { cappellaSuffixValidator } from 'src/app/helpers/validators/validators';
 import { GitModelDeletionDialogComponent } from './git-model-deletion-dialog/git-model-deletion-dialog.component';
 
 @Component({
@@ -34,7 +33,7 @@ export class GitModelSettingsComponent implements OnInit {
       path: new FormControl('', [Validators.required, this.gitURLValidator()]),
       entrypoint: new FormControl('', [
         Validators.required,
-        cappellaSuffixValidator(),
+        Validators.pattern(/^$|\.aird$/),
       ]),
       revision: new FormControl('', Validators.required),
     }),

@@ -24,18 +24,3 @@ export function regExpValidator(
   }
   return null;
 }
-
-export function cappellaSuffixValidator(): ValidatorFn {
-  return (controls: AbstractControl): ValidationErrors | null => {
-    let value: string = controls.value;
-    if (!value) return null;
-
-    if (value.endsWith('.aird')) {
-      return null;
-    }
-
-    return {
-      cappellaSuffixError: `${value} must end with ".aird" in case of a capella model`,
-    };
-  };
-}
