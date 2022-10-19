@@ -60,6 +60,10 @@ export class GitSettingsComponent implements OnInit, OnDestroy {
     this.gitSettingsService.loadGitSettings();
   }
 
+  ngOnDestroy(): void {
+    this.gitSettingsSubscription?.unsubscribe();
+  }
+
   createGitSettings(): void {
     if (this.gitInstancesForm.valid) {
       let url = this.gitInstancesForm.value.url!;
