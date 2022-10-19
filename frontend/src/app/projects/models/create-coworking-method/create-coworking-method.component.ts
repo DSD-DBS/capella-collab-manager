@@ -108,7 +108,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
     private gitService: GitService,
     private gitModelService: GitModelService,
     private sourceService: SourceService,
-    private location: Location,
+    private router: Router,
     private route: ActivatedRoute
   ) {}
 
@@ -237,7 +237,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
           if (this.asStepper) {
             this.create.emit({ created: true });
           } else {
-            this.location.back();
+            this.router.navigate(['../..'], { relativeTo: this.route });
           }
         });
     }
@@ -255,7 +255,9 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
           this.gitModelId!,
           patchGitModel
         )
-        .subscribe(() => this.location.back());
+        .subscribe(() =>
+          this.router.navigate(['../..'], { relativeTo: this.route })
+        );
     }
   }
 
