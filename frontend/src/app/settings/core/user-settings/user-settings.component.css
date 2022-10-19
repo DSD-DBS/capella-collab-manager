@@ -45,3 +45,11 @@ button {
   max-height: 40vh;
   overflow-y: auto;
 }
+
+.default {
+  width: 400px;
+}
+
+.flex-space-between {
+  align-items: center;
+}
