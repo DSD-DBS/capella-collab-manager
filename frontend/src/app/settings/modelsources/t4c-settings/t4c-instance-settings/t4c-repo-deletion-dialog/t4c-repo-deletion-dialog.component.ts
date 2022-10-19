@@ -4,7 +4,14 @@
  */
 
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  AbstractControl,
+  FormControl,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   T4CRepoService,
   T4CRepository,
@@ -16,6 +23,11 @@ import {
   styleUrls: ['./t4c-repo-deletion-dialog.component.css'],
 })
 export class T4CRepoDeletionDialogComponent {
+  repositoryNameForm = new FormControl('', [
+    Validators.required,
+    this.repositoryNameMatchValidator(),
+  ]);
+
   constructor(
     private repoService: T4CRepoService,
     public dialogRef: MatDialogRef<T4CRepoDeletionDialogComponent>,
@@ -23,10 +35,21 @@ export class T4CRepoDeletionDialogComponent {
   ) {}
 
   remoteRepository(): void {
-    this.repoService
-      .deleteRepository(this.repo.instance_id, this.repo.name)
-      .subscribe(() => {
-        this.dialogRef.close(true);
-      });
+    if (this.repositoryNameForm.valid) {
+      this.repoService
+        .deleteRepository(this.repo.instance.id, this.repo.id)
+        .subscribe(() => {
+          this.dialogRef.close(true);
+        });
+    }
+  }
+
+  repositoryNameMatchValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (control.value && control.value !== this.repo.name) {
+        return { repositoryNameMatchFailed: true };
+      }
+      return null;
+    };
   }
 }

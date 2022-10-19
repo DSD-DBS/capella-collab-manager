@@ -5,14 +5,14 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { T4CSyncService } from './t4-csync.service';
+import { ErrorHandlingInterceptor } from './error-handling.interceptor';
 
-describe('T4CSyncService', () => {
-  let service: T4CSyncService;
+describe('ErrorHandlingInterceptorService', () => {
+  let service: ErrorHandlingInterceptor;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(T4CSyncService);
+    service = TestBed.inject(ErrorHandlingInterceptor);
   });
 
   it('should be created', () => {

@@ -151,31 +151,3 @@ def update_password_of_user(repository: str, username: str, password: str):
     )
     r.raise_for_status()
     return r.json()
-
-
-def get_repositories() -> t.List[str]:
-    r = requests.get(
-        config["modelsources"]["t4c"]["restAPI"] + "/repositories",
-        auth=T4C_BACKEND_AUTHENTICATION,
-        timeout=config["requests"]["timeout"],
-    )
-    r.raise_for_status()
-
-    return [repo["name"] for repo in r.json()["repositories"]]
-
-
-def create_repository(name: str) -> None:
-    r = requests.post(
-        config["modelsources"]["t4c"]["restAPI"] + "/repositories",
-        json={
-            "repositoryName": name,
-            "authenticationType": "FILE",
-            "authenticationData": {
-                "users": [{"login": "admin", "password": generate_password()}]
-            },
-            "datasourceType": "H2_EMBEDDED",
-        },
-        auth=T4C_BACKEND_AUTHENTICATION,
-        timeout=config["requests"]["timeout"],
-    )
-    r.raise_for_status()

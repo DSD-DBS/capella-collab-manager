@@ -8,17 +8,17 @@ from sqlalchemy.orm import Session
 
 from capellacollab.settings.modelsources.t4c.models import (
     CreateT4CInstance,
-    DatabaseT4CSettings,
+    DatabaseT4CInstance,
 )
 
 
-def get_all_t4c_instances(db: Session) -> list[DatabaseT4CSettings]:
-    return db.execute(select(DatabaseT4CSettings)).scalars().all()
+def get_all_t4c_instances(db: Session) -> list[DatabaseT4CInstance]:
+    return db.execute(select(DatabaseT4CInstance)).scalars().all()
 
 
-def get_t4c_instance(id_: int, db: Session) -> DatabaseT4CSettings:
+def get_t4c_instance(id_: int, db: Session) -> DatabaseT4CInstance:
     return db.execute(
-        select(DatabaseT4CSettings).where(DatabaseT4CSettings.id == id_)
+        select(DatabaseT4CInstance).where(DatabaseT4CInstance.id == id_)
     ).scalar_one()
 
 
@@ -29,7 +29,7 @@ def create_t4c_instance(instance: CreateT4CInstance, db: Session):
     return instance
 
 
-def update_t4c_instance(instance: DatabaseT4CSettings, db: Session):
+def update_t4c_instance(instance: DatabaseT4CInstance, db: Session):
     db.add(instance)
     db.commit()
     return instance

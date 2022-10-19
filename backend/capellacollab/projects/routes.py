@@ -135,6 +135,7 @@ def delete_project(
 ):
     verify_admin(token, db)
     crud.delete_project(db, project)
+    return None
 
 
 def convert_project(project: DatabaseProject) -> Project:

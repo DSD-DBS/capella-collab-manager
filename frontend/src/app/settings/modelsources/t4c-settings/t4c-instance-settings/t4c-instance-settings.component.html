@@ -3,19 +3,37 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<mat-card
-  ><h2>T4C Repository Settings</h2>
-  <form [formGroup]="createRepositoryForm" #formDirective="ngForm">
-    <mat-form-field>
+<mat-card>
+  <div class="flex-space-between">
+    <mat-card-title><h2>Manage T4C repositories</h2></mat-card-title>
+    <button
+      mat-icon-button
+      [disabled]="!instance"
+      (click)="refreshRepositories()"
+    >
+      <mat-icon>sync</mat-icon>
+    </button>
+  </div>
+  <form [formGroup]="form" #formDirective="ngForm">
+    <mat-form-field appearance="fill">
       <mat-label>Repository name</mat-label>
       <input matInput formControlName="name" />
-      <mat-error>Please enter a name</mat-error>
+      <mat-error *ngIf="form.controls.name.errors?.required"
+        >Please enter a name</mat-error
+      >
+      <mat-error *ngIf="form.controls.name.errors?.projectExistsError"
+        >Name already used</mat-error
+      >
+      <mat-error *ngIf="form.controls.name.errors?.pattern"
+        >The following characters are allowed: A-Z, a-z, 0-9, _, -
+      </mat-error>
     </mat-form-field>
     <div class="field-separator"></div>
     <button
       mat-flat-button
       color="primary"
-      (click)="createRepository(formDirective)"
+      [disabled]="!form.valid"
+      (click)="createRepository()"
     >
       Add T4C repository
     </button>
@@ -25,32 +43,68 @@
       *ngFor="let repository of t4cRepoService.repositories"
       [value]="repository"
     >
-      <mat-icon mat-list-icon>laptop</mat-icon>
-      <div mat-line>{{ repository.name }}</div>
-      <div mat-line>Repository ID: {{ repository.id }}</div>
+      <mat-icon mat-list-icon *ngIf="repository.status === 'LOADING'"
+        >sync</mat-icon
+      >
+      <mat-icon mat-list-icon *ngIf="repository.status === 'OFFLINE'"
+        >cloud_off</mat-icon
+      >
+      <mat-icon mat-list-icon *ngIf="repository.status === 'ONLINE'"
+        >cloud_queue</mat-icon
+      >
+      <mat-icon mat-list-icon *ngIf="repository.status === 'NOT_FOUND'"
+        >block</mat-icon
+      >
+      <mat-icon mat-list-icon *ngIf="repository.status === 'INITIAL'"
+        >cloud_upload</mat-icon
+      >
+      <mat-icon
+        mat-list-icon
+        *ngIf="repository.status === 'INSTANCE_UNREACHABLE'"
+        >sync_problem</mat-icon
+      >
+      <div>
+        <div mat-line>{{ repository.name }}</div>
+        <div mat-line>Repository ID: {{ repository.id }}</div>
+        <div mat-line>status: {{ repository.status }}</div>
+      </div>
     </mat-list-option>
   </mat-selection-list>
 
   <div *ngIf="repositoryList.selectedOptions.selected.length">
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="removeRepository(selectedRepository)"
-    >
-      <mat-icon>delete</mat-icon> Remove {{ selectedRepository.name }}
-    </button>
+    <div class="field-separator"></div>
+    <div class="flex-space-between">
+      <button
+        mat-flat-button
+        color="warn"
+        (click)="removeRepository(selectedRepository)"
+      >
+        <mat-icon>delete</mat-icon> Remove {{ selectedRepository.name }}
+      </button>
+      <button
+        mat-flat-button
+        color="warn"
+        *ngIf="selectedRepository.status === 'ONLINE'"
+        (click)="stopRepository(selectedRepository)"
+      >
+        Stop repository
+      </button>
+      <button
+        mat-flat-button
+        color="primary"
+        *ngIf="selectedRepository.status === 'OFFLINE'"
+        (click)="startRepository(selectedRepository)"
+      >
+        Start repository
+      </button>
+      <button
+        mat-flat-button
+        color="primary"
+        *ngIf="selectedRepository.status === 'NOT_FOUND'"
+        (click)="recreateRepository(selectedRepository)"
+      >
+        Create on instance {{ instance!.name }}
+      </button>
+    </div>
   </div>
 </mat-card>
-
-<div class="wrapper">
-  <button
-    mat-flat-button
-    (click)="synchronizeRepositories()"
-    [ngClass]="synchronizeButtonState"
-  >
-    <div *ngIf="synchronizeButtonState === 'primary'">Synchronize with T4C</div>
-    <div *ngIf="synchronizeButtonState === 'success'">
-      Synchronization successful
-    </div>
-  </button>
-</div>

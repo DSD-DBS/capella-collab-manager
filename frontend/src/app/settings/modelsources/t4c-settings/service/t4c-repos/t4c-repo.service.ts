@@ -5,51 +5,92 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { T4CInstance } from 'src/app/services/settings/t4c-model.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class T4CRepoService {
-  constructor(private http: HttpClient) {}
-  repositories: T4CRepository[] = [];
+  constructor(private http: HttpClient, private toastService: ToastService) {}
 
-  getT4CRepositories(instance_id: number): Observable<T4CRepository[]> {
-    return this.http
-      .get<T4CRepository[]>(
-        `${environment.backend_url}/integrations/modelsources/t4c/instances/${instance_id}/repositories`
-      )
-      .pipe(
-        tap((res: T4CRepository[]) => {
-          this.repositories = res;
-        })
-      );
+  _repositories = new BehaviorSubject<T4CServerRepository[]>([]);
+  get repositories(): T4CServerRepository[] {
+    return this._repositories.value;
+  }
+
+  urlFactory(instance_id: number): string {
+    return `${environment.backend_url}/settings/modelsources/t4c/${instance_id}/repositories/`;
+  }
+
+  getT4CRepositories(instance_id: number): Observable<T4CServerRepository[]> {
+    return this.http.get<T4CServerRepository[]>(this.urlFactory(instance_id));
   }
 
   createT4CRepository(
-    name: string,
-    instance_id: number
+    instance_id: number,
+    repository: CreateT4CRepository
   ): Observable<T4CRepository> {
     return this.http.post<T4CRepository>(
-      `${environment.backend_url}/integrations/modelsources/t4c/instances/${instance_id}/repositories`,
-      { name }
+      this.urlFactory(instance_id),
+      repository
     );
   }
 
   deleteRepository(
     instance_id: number,
-    repository_name: string
-  ): Observable<T4CRepository> {
-    return this.http.delete<T4CRepository>(
-      `${environment.backend_url}/integrations/modelsources/t4c/instances/${instance_id}/repositories/${repository_name}`
+    repository_id: number
+  ): Observable<null> {
+    return this.http.delete<null>(
+      `${this.urlFactory(instance_id)}${repository_id}/`
+    );
+  }
+
+  startRepository(
+    instance_id: number,
+    repository_id: number
+  ): Observable<null> {
+    return this.http.post<null>(
+      `${this.urlFactory(instance_id)}${repository_id}/start/`,
+      {}
+    );
+  }
+
+  stopRepository(instance_id: number, repository_id: number): Observable<null> {
+    return this.http.post<null>(
+      `${this.urlFactory(instance_id)}${repository_id}/stop/`,
+      {}
+    );
+  }
+
+  recreateRepository(
+    instance_id: number,
+    repository_id: number
+  ): Observable<null> {
+    return this.http.post<null>(
+      `${this.urlFactory(instance_id)}${repository_id}/recreate/`,
+      {}
     );
   }
 }
 
-export interface T4CRepository {
-  id: number;
+export type CreateT4CRepository = {
   name: string;
-  instance_id: number;
-}
+};
+
+export type T4CRepository = CreateT4CRepository & {
+  id: number;
+  instance: T4CInstance;
+};
+
+export type T4CServerRepository = T4CRepository & {
+  status:
+    | 'ONLINE'
+    | 'OFFLINE'
+    | 'INITIAL'
+    | 'INSTANCE_UNREACHABLE'
+    | 'NOT_FOUND'
+    | 'LOADING';
+};

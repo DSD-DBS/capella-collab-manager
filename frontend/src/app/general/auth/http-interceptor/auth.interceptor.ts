@@ -13,7 +13,6 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   AuthService,
   RefreshTokenResponse,
@@ -21,11 +20,7 @@ import {
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(
-    private router: Router,
-    private authService: AuthService,
-    private toastService: ToastService
-  ) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   intercept(
     request: HttpRequest<unknown>,
@@ -50,25 +45,6 @@ export class AuthInterceptor implements HttpInterceptor {
           } else {
             this.router.navigateByUrl('/logout?reason=unauthorized');
           }
-        } else if (
-          typeof err.error !== 'undefined' &&
-          typeof err.error.detail !== 'undefined' &&
-          err.error.detail.reason
-        ) {
-          this.toastService.showError(
-            'An error occurred!',
-            err.error.detail.reason
-          );
-        } else if (err.status === 0) {
-          this.toastService.showError(
-            'Backend not reachable',
-            'Please check your internet connection and refresh the page!'
-          );
-        } else if (err.status !== 404) {
-          this.toastService.showError(
-            'An error occurred!',
-            'Please try again!'
-          );
         }
 
         return throwError(err);

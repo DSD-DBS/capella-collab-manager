@@ -20,6 +20,10 @@ export class ToastService {
     this.toastr.error(message, title);
   }
 
+  showWarning(title: string, message: string) {
+    this.toastr.warning(message, title);
+  }
+
   showPersistentError(title: string, message: string) {
     this.toastr.error(message, title, {
       disableTimeOut: true,
