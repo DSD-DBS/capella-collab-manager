@@ -42,11 +42,12 @@ class DB_GitSettings(Base):
 class GetRevisionsResponseModel(BaseModel):
     branches: t.List[str]
     tags: t.List[str]
+    default: t.Optional[str]
 
 
 class GitCredentials(BaseModel):
-    username: t.Union[str, None]
-    password: t.Union[str, None]
+    username: str
+    password: str
 
 
 class GetRevisionModel(BaseModel):
