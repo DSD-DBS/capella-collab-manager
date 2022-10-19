@@ -52,12 +52,13 @@ export class SessionService {
     return this.http.get<SessionUsage>(this.BACKEND_URL_PREFIX + 'usage');
   }
 
-  beatifyState(state: string | undefined): SessionState {
+  beautifyState(state: string | undefined): SessionState {
     /* Possible states are (and a few more states):
     https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/events/event.go */
 
     let text = state;
     let css = 'warning';
+    let success = false;
     switch (state) {
       case 'Created':
         text = 'Created session';
@@ -66,6 +67,7 @@ export class SessionService {
       case 'Started':
         text = 'Started session';
         css = 'success';
+        success = true;
         break;
       case 'Failed':
       case 'FailedCreatePodContainer':
@@ -116,6 +118,17 @@ export class SessionService {
         css = 'warning';
         break;
 
+      // Pod phases (that are not handled before)
+      case 'Pending':
+        text = 'Your session is scheduled';
+        css = 'warning';
+        break;
+      case 'Running':
+        text = 'Session is running';
+        css = 'success';
+        success = true;
+        break;
+
       // Cases for readonly containers
       case 'START_LOAD_MODEL':
         text = 'Modelloading started';
@@ -144,8 +157,10 @@ export class SessionService {
       case 'START_SESSION':
         text = 'Session started';
         css = 'success';
+        success = true;
         break;
       case 'unknown':
+      case 'Unknown':
         text = 'Unknown State';
         css = 'primary';
         break;
@@ -153,7 +168,8 @@ export class SessionService {
 
     return {
       text: text || '',
-      css,
+      css: css,
+      success: success,
     };
   }
 }
@@ -161,6 +177,7 @@ export class SessionService {
 export interface SessionState {
   text: string;
   css: string;
+  success: boolean;
 }
 
 export enum DepthType {

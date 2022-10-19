@@ -43,6 +43,7 @@ def get_last_seen(sid: str) -> str:
             url,
             timeout=config["requests"]["timeout"],
         )
+        response.raise_for_status()
         for session in response.json()["data"]["result"]:
             if sid == session["metric"]["app"]:
                 return _get_last_seen(float(session["value"][1]))

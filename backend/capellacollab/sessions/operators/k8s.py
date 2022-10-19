@@ -183,30 +183,31 @@ class KubernetesOperator(Operator):
 
     def _get_pod_state(self, label_selector: str):
         try:
-            pods = self.v1_core.list_namespaced_pod(
+            pod = self.v1_core.list_namespaced_pod(
                 namespace=cfg["namespace"], label_selector=label_selector
+            ).items[0]
+
+            log.debug("Received k8s pods: %s", pod.metadata.name)
+            log.debug("Fetching k8s events for pod: %s", pod.metadata.name)
+
+            events = self.v1_core.list_namespaced_event(
+                namespace=cfg["namespace"],
+                field_selector="involvedObject.name=" + pod.metadata.name,
             )
 
-            log.debug("Received k8s pods: %s", pods.items[0].metadata.name)
-            log.debug(
-                "Fetching k8s events for pod: %s", pods.items[0].metadata.name
-            )
+            if events.items:
+                return events.items[-1].reason
 
-            return (
-                self.v1_core.list_namespaced_event(
-                    namespace=cfg["namespace"],
-                    field_selector="involvedObject.name="
-                    + pods.items[0].metadata.name,
-                )
-                .items[-1]
-                .reason
-            )
+            # Fallback if no event is available
+            return pod.status.phase
+
         except kubernetes.client.exceptions.ApiException as e:
             log.warning("Kubernetes error", exc_info=True)
             return "error-" + str(e.status)
-        except Exception as e:
+        except Exception:
             log.exception("Error getting the session state")
-            return "unknown"
+
+        return "unknown"
 
     def _get_pod_starttime(self, label_selector: str) -> datetime | None:
         try:
@@ -216,7 +217,7 @@ class KubernetesOperator(Operator):
             log.debug("Received k8s pods: %s", pods)
 
             return pods["items"][0]["status"]["start_time"]
-        except Exception as e:
+        except Exception:
             log.exception("Error fetching the starting_time")
             return None
 
