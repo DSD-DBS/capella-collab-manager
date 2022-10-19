@@ -22,12 +22,10 @@ from capellacollab.settings.modelsources.t4c.repositories import (
     crud,
     interface,
 )
-from capellacollab.settings.modelsources.t4c.repositories.models import (
-    DatabaseT4CRepository,
-)
 
 from .models import (
     CreateT4CRepository,
+    DatabaseT4CRepository,
     T4CInstanceWithRepositories,
     T4CRepositories,
     T4CRepository,
@@ -78,10 +76,8 @@ def list_t4c_repositories(
     try:
         server_repositories = interface.list_repositories(instance)
     except RequestException:
-        for i in range(len(db_repositories)):
-            db_repositories[
-                i
-            ].status = T4CRepositoryStatus.INSTANCE_UNREACHABLE
+        for repo in db_repositories:
+            db_repositories.status = T4CRepositoryStatus.INSTANCE_UNREACHABLE
         return T4CRepositories(
             payload=db_repositories,
             warnings=[
