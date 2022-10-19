@@ -55,6 +55,9 @@
       <mat-icon mat-list-icon *ngIf="repository.status === 'NOT_FOUND'"
         >block</mat-icon
       >
+      <mat-icon mat-list-icon *ngIf="repository.status === 'INITIAL'"
+        >cloud_upload</mat-icon
+      >
       <mat-icon
         mat-list-icon
         *ngIf="repository.status === 'INSTANCE_UNREACHABLE'"

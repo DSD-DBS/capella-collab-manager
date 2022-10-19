@@ -88,6 +88,7 @@ export type T4CServerRepository = T4CRepository & {
   status:
     | 'ONLINE'
     | 'OFFLINE'
+    | 'INITIAL'
     | 'INSTANCE_UNREACHABLE'
     | 'NOT_FOUND'
     | 'LOADING';
