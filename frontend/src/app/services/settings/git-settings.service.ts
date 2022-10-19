@@ -14,10 +14,6 @@ import { environment } from 'src/environments/environment';
 export class GitSettingsService {
   private BACKEND_URL_PREFIX =
     environment.backend_url + '/settings/modelsources/git/';
-  private baseUrl = new URL(
-    '/settings/modelsources/git',
-    environment.backend_url + '/'
-  );
 
   private _gitSettings = new BehaviorSubject<GitSetting[]>([]);
   private _gitSetting = new Subject<GitSetting>();
@@ -28,15 +24,15 @@ export class GitSettingsService {
   constructor(private http: HttpClient) {}
 
   loadGitSettings(): void {
-    this.http.get<GitSetting[]>(this.BACKEND_URL_PREFIX).subscribe({
-      next: (gitSettings) => this._gitSettings.next(gitSettings),
-    });
+    this.http
+      .get<GitSetting[]>(this.BACKEND_URL_PREFIX)
+      .subscribe((gitSettings) => this._gitSettings.next(gitSettings));
   }
 
   loadGitSettingById(id: number): void {
-    this.http.get<GitSetting>(this.BACKEND_URL_PREFIX + id).subscribe({
-      next: (gitSetting) => this._gitSetting.next(gitSetting),
-    });
+    this.http
+      .get<GitSetting>(this.BACKEND_URL_PREFIX + id)
+      .subscribe((gitSetting) => this._gitSetting.next(gitSetting));
   }
 
   createGitSettings(gitSetting: {
@@ -76,11 +72,6 @@ export interface GitSetting {
   name: string;
   url: string;
   type: GitType;
-}
-
-export interface GitReferences {
-  branches: string[];
-  tags: string[];
 }
 
 export type GitType = 'general' | 'gitlab' | 'github' | 'azuredevops';
