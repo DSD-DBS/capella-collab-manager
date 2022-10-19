@@ -3,8 +3,6 @@
 
 from __future__ import annotations
 
-import typing as t
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
