@@ -53,12 +53,8 @@ export class UserSettingsComponent implements OnInit {
 
   userAlreadyExistsValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (this.users) {
-        for (const user of this.users) {
-          if (user.name == control.value) {
-            return { userAlreadyExists: true };
-          }
-        }
+      if (this.users && this.users.find((user) => user.name == control.value)) {
+        return { userAlreadyExists: true };
       }
       return null;
     };
