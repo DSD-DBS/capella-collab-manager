@@ -16,6 +16,7 @@ from capellacollab.projects.models import DatabaseProject
 from capellacollab.tools import crud as tools_crud
 
 from . import crud
+from .injectables import get_existing_capella_model, get_existing_project
 from .models import (
     CapellaModel,
     DatabaseCapellaModel,
@@ -26,41 +27,12 @@ from .models import (
 router = APIRouter()
 
 
-def get_existing_project(
-    project_slug: str, db: Session = Depends(get_db)
-) -> DatabaseProject:
-    project = projects_crud.get_project_by_slug(db, project_slug)
-    if not project:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The project having the name {project_slug} was not found.",
-                "technical": f"No project with {project_slug} found.",
-            },
-        )
-    return project
-
-
-def get_existing_model(
-    project_slug: str, model_slug: str, db: Session = Depends(get_db)
-) -> DatabaseCapellaModel:
-    model = crud.get_model_by_slug(db, project_slug, model_slug)
-    if not model:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The model having the name {model_slug} of the project {project_slug} was not found.",
-                "technical": f"No model with {model_slug} found in the project {project_slug}.",
-            },
-        )
-    return model
-
-
+# FIXME: Add verification by dependency injection
 @router.get("/", response_model=t.List[ResponseModel])
 def list_in_project(
+    project=Depends(get_existing_project),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
-    project=Depends(get_existing_project),
 ) -> t.List[ResponseModel]:
     verify_project_role(project.name, token, db)
     return [
@@ -69,25 +41,25 @@ def list_in_project(
     ]
 
 
+# FIXME: Add verification by dependency injection
 @router.get("/{model_slug}", response_model=ResponseModel)
 def get_model_by_slug(
-    project_slug: str,
-    model_slug: str,
+    project=Depends(get_existing_project),
+    model=Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
-    project=Depends(get_existing_project),
-    model=Depends(get_existing_model),
 ) -> ResponseModel:
     verify_project_role(project.name, token, db)
     return ResponseModel.from_orm(model)
 
 
+# FIXME: Add verification by dependency injection
 @router.post("/", response_model=ResponseModel)
 def create_new(
     new_model: CapellaModel,
+    project=Depends(get_existing_project),
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
-    project=Depends(get_existing_project),
 ) -> ResponseModel:
     verify_project_role(
         project=project.name,
@@ -115,17 +87,17 @@ def create_new(
     return ResponseModel.from_orm(model)
 
 
+# FIXME: Add verification by dependency injection
 @router.patch(
     "/{model_slug}",
     response_model=ResponseModel,
 )
 def set_tool_details(
-    model_slug: str,
     tool_details: ToolDetails,
+    project=Depends(get_existing_project),
+    model=Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
-    project=Depends(get_existing_project),
-    model=Depends(get_existing_model),
 ) -> ResponseModel:
     verify_project_role(project.name, token, db, ["manager", "administrator"])
     try:
