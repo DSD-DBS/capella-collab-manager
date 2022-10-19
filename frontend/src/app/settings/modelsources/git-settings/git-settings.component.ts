@@ -29,7 +29,7 @@ import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/
   styleUrls: ['./git-settings.component.css'],
 })
 export class GitSettingsComponent implements OnInit, OnDestroy {
-  public cmpGitSettings: GitSetting[];
+  public cmpGitSettings: GitSetting[] = [];
 
   gitInstancesForm = new FormGroup({
     type: new FormControl('', Validators.required),
@@ -77,7 +77,7 @@ export class GitSettingsComponent implements OnInit, OnDestroy {
           url: url,
           type: this.gitInstancesForm.value.type as GitType,
         })
-        .subscribe((_) => this.gitInstancesForm.reset());
+        .subscribe(() => this.gitInstancesForm.reset());
     }
   }
 
@@ -92,23 +92,19 @@ export class GitSettingsComponent implements OnInit, OnDestroy {
       .afterClosed()
       .subscribe((response) => {
         if (response) {
-          this.gitSettingsService.deleteGitSettings(id).subscribe((_) => {});
+          this.gitSettingsService.deleteGitSettings(id).subscribe();
         }
       });
   }
 
   nameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      let newInstanceName = control.value;
-      let gitSettingNames: string[] = this.cmpGitSettings?.map(
-        (gitSetting) => gitSetting.name
+      const existingGitSetting = this.cmpGitSettings.find(
+        (gitSetting) => gitSetting.name == control.value
       );
-      gitSettingNames ??= [];
 
-      for (let gitSettingName of gitSettingNames) {
-        if (gitSettingName == newInstanceName) {
-          return { uniqueName: { value: gitSettingName } };
-        }
+      if (existingGitSetting) {
+        return { uniqueName: { value: existingGitSetting.name } };
       }
       return null;
     };
