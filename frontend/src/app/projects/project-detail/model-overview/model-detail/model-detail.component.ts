@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
@@ -15,7 +15,7 @@ import { GitModelService } from './git-model.service';
   templateUrl: './model-detail.component.html',
   styleUrls: ['./model-detail.component.css'],
 })
-export class ModelDetailComponent implements OnInit {
+export class ModelDetailComponent implements OnInit, OnDestroy {
   public gitModels: Array<GetGitModel> = [];
 
   private gitModelsSubscription?: Subscription;
