@@ -60,3 +60,7 @@ class T4CRepository(CreateT4CRepository):
 
     class Config:
         orm_mode = True
+
+
+T4CInstanceWithRepositories.update_forward_refs()
+T4CRepositories.update_forward_refs()
