@@ -6,6 +6,7 @@ import typing as t
 
 import sqlalchemy.orm.session
 from fastapi import Depends, HTTPException
+from sqlalchemy.orm import Session
 
 import capellacollab.projects.users.crud as project_users
 from capellacollab.core.authentication.helper import get_username

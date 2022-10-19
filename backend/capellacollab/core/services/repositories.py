@@ -4,7 +4,7 @@
 
 import typing as t
 
-from sqlalchemy.orm.session import Session
+from sqlalchemy.orm import Session
 
 import capellacollab.extensions.modelsources.git.crud as git_model_crud
 import capellacollab.extensions.modelsources.t4c.connection as t4c_ext

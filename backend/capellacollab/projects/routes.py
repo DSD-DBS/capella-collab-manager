@@ -8,8 +8,8 @@ import typing as t
 from importlib import metadata
 
 from fastapi import APIRouter, Depends, HTTPException
-from requests import Session
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
 import capellacollab.projects.crud as crud
 import capellacollab.projects.users.crud as users_crud

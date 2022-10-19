@@ -5,7 +5,7 @@
 import typing as t
 
 from fastapi import APIRouter, Depends
-from requests import Session
+from sqlalchemy.orm import Session
 
 import capellacollab.notices.crud as notices
 from capellacollab.core.authentication.database import verify_admin

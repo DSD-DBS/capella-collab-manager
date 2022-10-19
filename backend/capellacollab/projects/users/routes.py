@@ -7,7 +7,8 @@ import typing as t
 
 import sqlalchemy.orm.session
 from fastapi import APIRouter, Depends, HTTPException
-from requests import Session
+from requests import HTTPError
+from sqlalchemy.orm import Session
 
 import capellacollab.projects.users.crud as project_users
 import capellacollab.projects.users.models as schema_projects

@@ -3,7 +3,7 @@
 
 
 from fastapi import APIRouter, Depends
-from requests import Session
+from sqlalchemy.orm import Session
 
 from capellacollab.core.database import get_db
 from capellacollab.tools.models import ToolBase, ToolTypeBase, ToolVersionBase

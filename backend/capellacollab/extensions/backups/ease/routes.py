@@ -6,9 +6,8 @@ import logging
 import typing as t
 import uuid
 
-import requests
 from fastapi import APIRouter, Depends
-from requests import Session
+from sqlalchemy.orm import Session
 
 import capellacollab.core.authentication.database as auth
 import capellacollab.projects.capellamodels.modelsources.git.crud as git_crud

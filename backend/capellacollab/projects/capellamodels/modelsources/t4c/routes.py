@@ -5,7 +5,7 @@
 import typing as t
 
 from fastapi import APIRouter, Depends
-from requests import Session
+from sqlalchemy.orm import Session
 
 import capellacollab.core.database as database
 import capellacollab.projects.capellamodels.modelsources.t4c.crud as database_projects
