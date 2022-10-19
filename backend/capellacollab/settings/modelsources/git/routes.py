@@ -10,9 +10,6 @@ from requests import Session
 
 from capellacollab.core.authentication.database import verify_admin
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
 from capellacollab.core.database import get_db
 from capellacollab.settings.modelsources.git import crud
 from capellacollab.settings.modelsources.git.core import get_remote_refs
@@ -25,21 +22,7 @@ from capellacollab.settings.modelsources.git.models import (
 router = APIRouter()
 
 
-def check_git_settings_instance_exists(
-    db: sqlalchemy.orm.session.Session,
-    id: int,
-):
-    instance = crud.get_git_settings(db, id)
-    if not instance:
-        raise HTTPException(
-            status_code=404,
-            detail={
-                "reason": f"The git instance with id {id} does not exist."
-            },
-        )
-
-
-@router.get("/", tags=["GitSettings"], responses=AUTHENTICATION_RESPONSES)
+@router.get("/", tags=["GitSettings"])
 def list_git_settings(
     db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
@@ -47,7 +30,7 @@ def list_git_settings(
     return crud.get_all_git_settings(db)
 
 
-@router.get("/{id}", tags=["GitSettings"], responses=AUTHENTICATION_RESPONSES)
+@router.get("/{id}", tags=["GitSettings"])
 def get_git_settings(
     id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):
@@ -55,7 +38,7 @@ def get_git_settings(
     return crud.get_git_settings(db, id)
 
 
-@router.post("/", tags=["GitSettings"], responses=AUTHENTICATION_RESPONSES)
+@router.post("/", tags=["GitSettings"])
 def create_git_settings(
     body: GitSettings,
     db: Session = Depends(get_db),
@@ -80,7 +63,7 @@ def get_revisions(
     return get_remote_refs(url, username, password)
 
 
-@router.put("/{id}", tags=["GitSettings"], responses=AUTHENTICATION_RESPONSES)
+@router.put("/{id}", tags=["GitSettings"])
 def edit_git_settings(
     id: int,
     body: GitSettings,
@@ -92,9 +75,7 @@ def edit_git_settings(
     return crud.update_git_settings(db, id, body)
 
 
-@router.delete(
-    "/{id}", tags=["GitSettings"], responses=AUTHENTICATION_RESPONSES
-)
+@router.delete("/{id}", tags=["GitSettings"])
 def delete_git_settings(
     id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())
 ):

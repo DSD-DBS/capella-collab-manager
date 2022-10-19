@@ -19,9 +19,6 @@ from capellacollab.core.authentication.database import (
 )
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
 from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db
 from capellacollab.projects.users.crud import ProjectUserRole
@@ -87,7 +84,6 @@ def get_current_sessions(
 @router.post(
     "/",
     response_model=AdvancedSessionResponse,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def request_session(
     body: PostSessionRequest,
@@ -246,7 +242,7 @@ def create_database_and_guacamole_session(
     return response
 
 
-@router.delete("/{id}", status_code=204, responses=AUTHENTICATION_RESPONSES)
+@router.delete("/{id}", status_code=204)
 def end_session(
     id: str,
     db: Session = Depends(get_db),
@@ -274,7 +270,6 @@ def end_session(
 @router.get(
     "/usage",
     response_model=GetSessionUsageResponse,
-    responses=AUTHENTICATION_RESPONSES,
     dependencies=[Depends(JWTBearer())],
 )
 def get_session_usage():
@@ -284,7 +279,6 @@ def get_session_usage():
 @router.post(
     "/{id}/guacamole-tokens",
     response_model=GuacamoleAuthentication,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def create_guacamole_token(
     id: str,

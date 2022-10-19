@@ -21,9 +21,6 @@ from capellacollab.core.authentication.database import (
 )
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
 from capellacollab.core.database import get_db
 from capellacollab.projects.models import (
     DatabaseProject,
@@ -53,7 +50,6 @@ router = APIRouter()
     "/",
     response_model=t.List[Project],
     tags=["Projects"],
-    responses=AUTHENTICATION_RESPONSES,
 )
 def get_projects(
     db: Session = Depends(get_db),
@@ -76,7 +72,6 @@ def get_projects(
     "/{project}",
     response_model=Project,
     tags=["Projects"],
-    responses=AUTHENTICATION_RESPONSES,
 )
 def update_project(
     project: str,
@@ -99,12 +94,12 @@ def update_project(
     return convert_project(crud.get_project_by_name(database, project))
 
 
-@router.get("/{slug}", tags=["Projects"], responses=AUTHENTICATION_RESPONSES)
+@router.get("/{slug}", tags=["Projects"])
 def get_project_by_slug(slug: str, db: Session = Depends(get_db)):
     return convert_project(crud.get_project_by_slug(db, slug))
 
 
-@router.post("/", tags=["Projects"], responses=AUTHENTICATION_RESPONSES)
+@router.post("/", tags=["Projects"])
 def create_project(
     body: PostProjectRequest,
     db: Session = Depends(get_db),
@@ -134,7 +129,6 @@ def create_project(
     "/{project}",
     tags=["Projects"],
     status_code=204,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def delete_project(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())

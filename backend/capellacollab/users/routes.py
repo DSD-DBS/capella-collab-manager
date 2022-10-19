@@ -14,9 +14,6 @@ from capellacollab.core.authentication.database import (
 )
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
 from capellacollab.core.database import get_db
 from capellacollab.sessions.routes import inject_attrs_in_sessions
 from capellacollab.sessions.schema import AdvancedSessionResponse

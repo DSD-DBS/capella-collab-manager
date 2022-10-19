@@ -15,9 +15,6 @@ from sqlalchemy.orm import Session
 from capellacollab.config import config
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
 from capellacollab.core.database import get_db
 from capellacollab.sessions.database import get_session_by_id
 from capellacollab.sessions.operators import OPERATOR
@@ -60,10 +57,7 @@ def get_files(
     ).json()
 
 
-@router.post(
-    "/",
-    responses=AUTHENTICATION_RESPONSES,
-)
+@router.post("/")
 def upload_files(
     id: str,
     files: list[UploadFile],
