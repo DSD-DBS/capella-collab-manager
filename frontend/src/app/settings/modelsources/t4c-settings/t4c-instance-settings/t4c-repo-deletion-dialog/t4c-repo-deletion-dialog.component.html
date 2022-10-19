@@ -15,7 +15,7 @@
   <p><b>The deletion cannot be undone!</b></p>
 </div>
 Please type in the name of the repository to confirm the deletion: <br />
-<form>
+<form (submit)="remoteRepository()">
   <mat-form-field appearance="fill">
     <mat-label>Repository name</mat-label>
     <input
@@ -34,12 +34,7 @@ Please type in the name of the repository to confirm the deletion: <br />
 
   <div mat-dialog-actions class="flex-space-between">
     <button mat-button (click)="this.dialogRef.close(false)">No</button>
-    <button
-      mat-flat-button
-      type="submit"
-      color="warn"
-      (click)="remoteRepository()"
-    >
+    <button mat-flat-button type="submit" color="warn">
       Remove the repository
     </button>
   </div>
