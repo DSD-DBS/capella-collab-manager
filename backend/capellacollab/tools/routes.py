@@ -77,11 +77,20 @@ def update_tool(tool_id: int, body: CreateTool, db: Session = Depends(get_db)):
 
 @router.delete(
     "/{tool_id}",
-    response_model=list[ToolTypeBase],
+    status_code=204,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
-def delete_tool(tool_id: int, db: Session = Depends(get_db)):
-    crud.delete_tool(db, tool_id)
+def delete_tool(
+    tool: Tool = Depends(get_existing_tool), db: Session = Depends(get_db)
+):
+    if tool.id == 1:
+        raise HTTPException(
+            403,
+            {
+                "reason": "The tool 'Capella' can not be deleted.",
+            },
+        )
+    crud.delete_tool(db, tool)
     return None
 
 
