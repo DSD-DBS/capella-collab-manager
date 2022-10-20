@@ -12,7 +12,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { Subject, connectable, filter, switchMap, tap } from 'rxjs';
+import { Subject, connectable, switchMap, tap } from 'rxjs';
 import slugify from 'slugify';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
@@ -33,7 +33,7 @@ export class CreateModelBaseComponent implements OnInit {
   @Input() asStepper?: boolean;
 
   public form = new FormGroup({
-    name: new FormControl('', Validators.required),
+    name: new FormControl('', [Validators.required, this.slugValidator()]),
     description: new FormControl(''),
     tool_id: new FormControl(-1, this.validToolValidator()),
   });
@@ -45,11 +45,12 @@ export class CreateModelBaseComponent implements OnInit {
     private toastService: ToastService
   ) {}
 
-  slugValidator(slugs: string[]): ValidatorFn {
+  slugValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const newSlug = slugify(control.value, { lower: true });
-      for (const slug of slugs) {
-        if (slug == newSlug) {
+      const models = this.modelService.models;
+      if (models) {
+        const slug = slugify(control.value, { lower: true });
+        if (models.map((model) => model.slug).includes(slug)) {
           return { uniqueSlug: { value: slug } };
         }
       }
@@ -72,11 +73,7 @@ export class CreateModelBaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.toolService.getTools().subscribe();
-    this.modelService._models.pipe(filter(Boolean)).subscribe((models) => {
-      this.form.controls.name.addValidators(
-        this.slugValidator(models.map((model) => model.slug))
-      );
-    });
+    this.modelService._models.subscribe();
     this.modelService._model.next(undefined);
   }
 

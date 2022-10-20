@@ -9,30 +9,18 @@ import {
   FormControl,
   FormGroup,
   ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import {
-  BehaviorSubject,
-  Subject,
-  Subscription,
-  connectable,
-  filter,
-  map,
-  switchMap,
-  tap,
-} from 'rxjs';
 import slugify from 'slugify';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   CreateModelComponent,
   CreateModelStep,
 } from 'src/app/projects/models/create-model/create-model.component';
-import {
-  Project,
-  ProjectService,
-} from 'src/app/services/project/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 import { ToastService } from '../../helpers/toast/toast.service';
 
 @Component({
@@ -43,18 +31,12 @@ import { ToastService } from '../../helpers/toast/toast.service';
 export class CreateProjectComponent implements OnInit, OnDestroy {
   @ViewChild('model_creator') model_creator!: CreateModelComponent;
 
-  private projectsSlugs = new BehaviorSubject<string[]>([]);
   private projectDetails = false;
-  private slugsSubscription?: Subscription;
-  public _reload = false;
 
   public modelCreationStep: CreateModelStep = 'create-model';
 
   form = new FormGroup({
-    name: new FormControl('', [
-      Validators.required,
-      this.slugValidator.bind(this),
-    ]),
+    name: new FormControl('', [Validators.required, this.slugValidator()]),
     description: new FormControl(''),
   });
 
@@ -68,56 +50,24 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const projects = this.projectService._projects;
-
-    this.projectService.list().subscribe({
-      next: (value) => {
-        projects.next(value);
-      },
-      error: (_) => {
-        projects.next(undefined);
-      },
-    });
-
-    this.slugsSubscription = projects
-      .pipe(
-        filter(Boolean),
-        map((projects) => projects.map((p) => p.slug))
-      )
-      .subscribe(this.projectsSlugs);
+    this.projectService.list().subscribe();
   }
 
   ngOnDestroy(): void {
-    this.slugsSubscription?.unsubscribe();
     if (!this.projectDetails) {
       this.projectService._project.next(undefined);
     }
   }
 
   createProject(stepper: MatStepper): void {
-    const projectSubject = this.projectService._project;
     if (this.form.valid) {
-      const projectConnectable = connectable<Project>(
-        this.projectService.createProject({
-          name: this.form.value.name!,
-          description: this.form.value.name!,
-        }),
-        {
-          connector: () => new Subject(),
-          resetOnDisconnect: false,
-        }
-      );
-
-      projectConnectable
-        .pipe(
-          tap({
-            next: (value) => {
-              projectSubject.next(value);
-            },
-            error: (_) => {
-              projectSubject.next(undefined);
-            },
-          })
+      this.projectService
+        .createProject(
+          {
+            name: this.form.value.name!,
+            description: this.form.value.name!,
+          },
+          true
         )
         .subscribe((project) => {
           this.toastService.showSuccess(
@@ -128,19 +78,6 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
           stepper.next();
           stepper.steps.get(0)!.editable = false;
         });
-
-      projectConnectable
-        .pipe(switchMap(() => this.projectService.list()))
-        .subscribe({
-          next: (value) => {
-            this.projectService._projects.next(value);
-          },
-          error: (_) => {
-            this.projectService._projects.next(undefined);
-          },
-        });
-
-      projectConnectable.connect();
     }
   }
 
@@ -149,16 +86,19 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
     this.router.navigate(['/project', this.projectService.project!.slug]);
   }
 
-  slugValidator(control: AbstractControl): ValidationErrors | null {
-    const newSlug = slugify(control.value, { lower: true });
-    for (const slug of this.projectsSlugs.value) {
-      if (slug == newSlug) {
+  slugValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const slug = slugify(control.value, { lower: true });
+      if (
+        this.projectService.projects
+          ?.map((project) => project.slug)
+          .includes(slug)
+      ) {
         return { uniqueSlug: { value: slug } };
       }
-    }
-    return null;
+      return null;
+    };
   }
-
   getColorByModelCreationStep(): string {
     switch (this.modelCreationStep) {
       case 'create-model':

@@ -28,14 +28,10 @@ export class ProjectOverviewComponent implements OnInit {
 
   ngOnInit() {
     this.navbarService.enableAll();
-    const projects = this.projectService._projects;
     this.projectService
       .list()
       .pipe(tap(() => (this.loading = false)))
-      .subscribe({
-        next: projects.next.bind(projects),
-        error: projects.error.bind(projects),
-      });
+      .subscribe();
   }
 
   sumUsers(user: UserMetadata): number {

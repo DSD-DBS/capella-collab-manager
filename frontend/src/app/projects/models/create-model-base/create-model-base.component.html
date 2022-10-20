@@ -14,7 +14,14 @@
         <mat-form-field appearance="fill">
           <mat-label>Model name</mat-label>
           <input matInput formControlName="name" />
-          <mat-error> Please provide a model name. </mat-error>
+          <mat-error *ngIf="form.controls.name.errors?.required">
+            Please provide a model name.
+          </mat-error>
+          <mat-error *ngIf="form.controls.name.errors?.uniqueSlug">
+            A project with a name similar to “{{
+              form.controls.name.errors!.uniqueSlug.value
+            }}” already exists.
+          </mat-error>
         </mat-form-field>
       </fieldset>
       <fieldset>
