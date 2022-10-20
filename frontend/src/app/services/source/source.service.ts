@@ -12,7 +12,7 @@ export interface BaseGitModel {
   path: string;
   revision: string;
   entrypoint: string;
-  username?: string;
+  username: string;
 }
 
 export interface CreateGitModel extends BaseGitModel {
