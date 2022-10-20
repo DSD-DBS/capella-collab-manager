@@ -23,7 +23,6 @@ export interface Revisions {
 })
 export class GitService {
   BACKEND_URL_PREFIX = environment.backend_url;
-  base_url = new URL(environment.backend_url);
 
   private _revisions = new BehaviorSubject<Revisions | undefined>(undefined);
 
@@ -34,7 +33,7 @@ export class GitService {
   loadRevisions(gitUrl: string, credentials: Credentials): void {
     this.http
       .post<Revisions>(
-        this.base_url.toString() + '/settings/modelsources/git/revisions',
+        this.BACKEND_URL_PREFIX + '/settings/modelsources/git/revisions',
         {
           credentials: credentials,
           url: gitUrl,

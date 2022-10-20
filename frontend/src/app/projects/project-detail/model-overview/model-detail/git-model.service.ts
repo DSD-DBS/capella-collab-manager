@@ -17,7 +17,6 @@ import { environment } from 'src/environments/environment';
 })
 export class GitModelService {
   BACKEND_URL_PREFIX = environment.backend_url;
-  base_url = new URL(environment.backend_url);
 
   constructor(private http: HttpClient) {}
 
@@ -30,7 +29,7 @@ export class GitModelService {
   loadGitModels(project_slug: string, model_slug: string): void {
     this.http
       .get<Array<GetGitModel>>(
-        this.base_url.toString() +
+        this.BACKEND_URL_PREFIX +
           `/projects/${project_slug}/models/${model_slug}/git/git-models`
       )
       .subscribe((gitModels) => this._gitModels.next(gitModels));
@@ -43,7 +42,7 @@ export class GitModelService {
   ): void {
     this.http
       .get<GetGitModel>(
-        this.base_url.toString() +
+        this.BACKEND_URL_PREFIX +
           `/projects/${project_slug}/models/${model_slug}/git/git-model/${git_model_id}`
       )
       .subscribe((gitModel) => this._gitModel.next(gitModel));
@@ -57,7 +56,7 @@ export class GitModelService {
   ): Observable<GetGitModel> {
     return this.http
       .patch<GetGitModel>(
-        this.base_url.toString() +
+        this.BACKEND_URL_PREFIX +
           `/projects/${project_slug}/models/${model_slug}/git/git-model/${git_model_id}`,
         gitModel
       )
@@ -76,7 +75,7 @@ export class GitModelService {
   ): Observable<GetGitModel> {
     return this.http
       .patch<GetGitModel>(
-        this.base_url.toString() +
+        this.BACKEND_URL_PREFIX +
           `/projects/${project_slug}/models/${model_slug}/git/git-model/${git_model_id}`,
         true
       )
