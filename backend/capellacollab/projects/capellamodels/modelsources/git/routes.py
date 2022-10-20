@@ -121,7 +121,6 @@ def get_revisions_with_model_credentials(
     url: str = Body(),
     git_model: DB_GitModel = Depends(get_existing_git_model),
 ):
-    print("got here")
     return get_remote_refs(url, git_model.username, git_model.password)
 
 
