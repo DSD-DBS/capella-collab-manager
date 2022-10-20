@@ -21,7 +21,7 @@
   >
     <mat-card matRipple class="mat-card-overview">
       <div class="header">{{ tool.name }}</div>
-      <div class="content">
+      <div class="content" *ngIf="tools[tool.id]">
         <mat-icon class="mat-icon-position top">history</mat-icon>
         <b> Available versions:</b>
         {{ mapToolVersionOrTypeToName(tools[tool.id]["versions"]).join(", ") }}
