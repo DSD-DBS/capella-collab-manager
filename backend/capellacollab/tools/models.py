@@ -68,7 +68,6 @@ class ToolDockerimage(BaseModel):
 
     @classmethod
     def from_orm(cls, obj: ToolBase) -> "ToolDockerimage":
-        obj
         obj.persistent = obj.docker_image_template
         obj.readonly = obj.docker_image_template
 
