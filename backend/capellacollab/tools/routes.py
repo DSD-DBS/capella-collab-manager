@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from http.client import HTTPException
-
-from fastapi import APIRouter, Depends
+import sqlalchemy.exc
+from fastapi import APIRouter, Depends, HTTPException
+from requests import Session
 from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication.database import RoleVerification
@@ -27,8 +27,9 @@ router = APIRouter()
 
 
 def get_existing_tool(tool_id: str, db: Session = Depends(get_db)) -> Tool:
-    tool = crud.get_tool_by_id(id_=tool_id, db=db)
-    if not tool:
+    try:
+        return crud.get_tool_by_id(id_=tool_id, db=db)
+    except sqlalchemy.exc.NoResultFound:
         raise HTTPException(
             404,
             {
@@ -36,7 +37,6 @@ def get_existing_tool(tool_id: str, db: Session = Depends(get_db)) -> Tool:
                 "technical": f"Database returned 'None' when searching for the tool with id {tool_id}.",
             },
         )
-    return tool
 
 
 @router.get(
