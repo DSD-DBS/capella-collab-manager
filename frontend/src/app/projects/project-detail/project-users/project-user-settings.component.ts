@@ -20,9 +20,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { ProjectUser } from 'src/app/schemes';
+import { ProjectUser, User } from 'src/app/schemes';
 import { Project } from 'src/app/services/project/project.service';
-import { RepositoryUserService } from 'src/app/services/repository-user/repository-user.service';
+import { ProjectUserService } from 'src/app/services/repository-user/repository-user.service';
 import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
@@ -51,7 +51,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
   );
 
   constructor(
-    public repoUserService: RepositoryUserService,
+    public projectUserService: ProjectUserService,
     public userService: UserService,
     private toastService: ToastService
   ) {}
@@ -70,22 +70,24 @@ export class ProjectUserSettingsComponent implements OnChanges {
 
   permissionRequiredValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
+      const permission = control.get('permission')!;
+      const role = control.get('role');
       if (
-        control.get('permission')?.value in this.repoUserService.PERMISSIONS ||
-        control.get('role')?.value == 'manager'
+        permission?.value in this.projectUserService.PERMISSIONS ||
+        role?.value == 'manager'
       ) {
-        control.get('permission')?.setErrors(null);
+        permission?.setErrors(null);
         return null;
       }
-      control.get('permission')?.setErrors({ permissionInvalid: true });
+      permission?.setErrors({ permissionInvalid: true });
       return {};
     };
   }
 
   userAlreadyInProjectValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      for (const repoUser of this.projectUsers) {
-        if (repoUser.username == control.value) {
+      for (const projectUser of this.projectUsers) {
+        if (projectUser.user.name == control.value) {
           return { userAlreadyInProjectError: true };
         }
       }
@@ -94,7 +96,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
   }
 
   refreshRepoUsers(): void {
-    this.repoUserService.getRepoUsers(this.project.name).subscribe((res) => {
+    this.projectUserService.getRepoUsers(this.project.name).subscribe((res) => {
       this.projectUsers = res;
     });
   }
@@ -107,7 +109,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
       if (formValue.role == 'manager') {
         permission = 'write';
       }
-      this.repoUserService
+      this.projectUserService
         .addUserToRepo(
           this.project.name,
           formValue.username as string,
@@ -126,57 +128,57 @@ export class ProjectUserSettingsComponent implements OnChanges {
     }
   }
 
-  removeUserFromRepo(username: string): void {
-    this.repoUserService
-      .deleteUserFromRepo(this.project.name, username)
+  removeUserFromRepo(user: User): void {
+    this.projectUserService
+      .deleteUserFromRepo(this.project.name, user.id)
       .subscribe(() => {
         this.refreshRepoUsers();
         this.toastService.showSuccess(
           `User removed`,
-          `User '${username}' has been removed from project '${this.project.name}'`
+          `User '${user.name}' has been removed from project '${this.project.name}'`
         );
       });
   }
 
-  upgradeUserToProjectManager(username: string): void {
-    this.repoUserService
-      .changeRoleOfRepoUser(this.project.name, username, 'manager')
+  upgradeUserToProjectManager(user: User): void {
+    this.projectUserService
+      .changeRoleOfRepoUser(this.project.name, user.id, 'manager')
       .subscribe(() => {
         this.refreshRepoUsers();
         this.toastService.showSuccess(
           `User modified`,
-          `User '${username}' can now manage the project '${this.project.name}'`
+          `User '${user.name}' can now manage the project '${this.project.name}'`
         );
       });
   }
 
-  downgradeUserToUserRole(username: string): void {
-    this.repoUserService
-      .changeRoleOfRepoUser(this.project.name, username, 'user')
+  downgradeUserToUserRole(user: User): void {
+    this.projectUserService
+      .changeRoleOfRepoUser(this.project.name, user.id, 'user')
       .subscribe(() => {
         this.refreshRepoUsers();
         this.toastService.showSuccess(
           `User modified`,
-          `User '${username}' is no longer project lead in the project '${this.project.name}'`
+          `User '${user.name}' is no longer project lead in the project '${this.project.name}'`
         );
       });
   }
 
-  setUserPermission(username: string, permission: 'read' | 'write'): void {
-    this.repoUserService
-      .changePermissionOfRepoUser(this.project.name, username, permission)
+  setUserPermission(user: User, permission: 'read' | 'write'): void {
+    this.projectUserService
+      .changePermissionOfRepoUser(this.project.name, user.id, permission)
       .subscribe(() => {
         this.refreshRepoUsers();
         this.toastService.showSuccess(
           `User modified`,
-          `User '${username}' has the permission '${permission}' in the project '${this.project.name}' now`
+          `User '${user.name}' has the permission '${permission}' in the project '${this.project.name}' now`
         );
       });
   }
 
   getProjectUsersByRole(role: 'manager' | 'user'): ProjectUser[] {
     return this.projectUsers.filter(
-      (u) => u.role == role && u.username.includes(this.search.toLowerCase())
+      (u) => u.role == role && u.user.name.includes(this.search.toLowerCase())
     );
   }
 }

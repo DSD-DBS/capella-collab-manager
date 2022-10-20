@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import typing as t
+
 import sqlalchemy.orm.session
 from fastapi import Depends, HTTPException
 
@@ -9,78 +11,137 @@ import capellacollab.projects.users.crud as project_users
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
+from capellacollab.projects.crud import get_project, get_project_by_slug
 from capellacollab.projects.users.models import (
     ProjectUserPermission,
     ProjectUserRole,
 )
 from capellacollab.sessions.database import get_session_by_id
 from capellacollab.settings.modelsources.git import crud
-from capellacollab.users.crud import get_user
+from capellacollab.users.crud import get_user_by_name
 from capellacollab.users.models import Role
 
 
-def verify_admin(token=Depends(JWTBearer()), db=Depends(get_db)):
-    if not is_admin(token, db):
-        raise HTTPException(
-            status_code=403,
-            detail={
-                "reason": "The role administrator is required for this transaction.",
-            },
+class RoleVerification:
+    def __init__(self, required_role: Role, verify: bool = True):
+        self.required_role = required_role
+        self.verify = verify
+
+    def __call__(self, token=Depends(JWTBearer()), db=Depends(get_db)) -> bool:
+        role = get_user_by_name(db=db, username=get_username(token)).role
+        if role == Role.USER and self.required_role == Role.ADMIN:
+            if self.verify:
+                raise HTTPException(
+                    status_code=403,
+                    detail={
+                        "reason": "You need to be administrator for this transaction.",
+                    },
+                )
+            else:
+                return False
+        return True
+
+
+class ProjectRoleVerification:
+    roles = [
+        ProjectUserRole.USER,
+        ProjectUserRole.MANAGER,
+        ProjectUserRole.ADMIN,
+    ]
+
+    def __init__(
+        self,
+        required_role: ProjectUserRole,
+        verify: bool = True,
+        required_permission: t.Union[ProjectUserPermission, None] = None,
+    ):
+        self.required_role = required_role
+        self.verify = verify
+        self.required_permission = required_permission
+
+    def __call__(
+        self, project_slug: str, token=Depends(JWTBearer()), db=Depends(get_db)
+    ) -> bool:
+        user = get_user_by_name(db=db, username=get_username(token))
+
+        if user.role == Role.ADMIN:
+            return True
+
+        # TODO: Use slug directly
+        project = get_project_by_slug(db, project_slug)
+        project_user = project_users.get_user_of_project(
+            db, project_name=project.name, user_id=user.id
         )
+
+        # Check role
+        if not project_user or self.roles.index(
+            project_user.role
+        ) < self.roles.index(self.required_role):
+            if self.verify:
+                raise HTTPException(
+                    status_code=403,
+                    detail={
+                        "reason": f"The role '{self.required_role.value}' in the project '{project_slug}' is required.",
+                    },
+                )
+            return False
+
+        # Check permission
+        if self.required_permission:
+            if (
+                project_user.permission == ProjectUserPermission.READ
+                and self.required_permission == ProjectUserPermission.WRITE
+            ):
+                if self.verify:
+                    raise HTTPException(
+                        status_code=403,
+                        detail={
+                            "reason": f"You need to have '{self.required_permission.value}'-access in the project!",
+                        },
+                    )
+                return False
+
+        return True
+
+
+def verify_admin(token=Depends(JWTBearer()), db=Depends(get_db)):
+    """
+    .. deprecated:: 2.0.0
+        Please use the `RoleVerification` class instead.
+    """
+    RoleVerification(required_role=Role.ADMIN)(token=token, db=db)
 
 
 def is_admin(token, db) -> bool:
-    return get_user(db=db, username=get_username(token)).role == Role.ADMIN
+    """
+    .. deprecated:: 2.0.0
+        Please use the `RoleVerification` class instead.
+    """
+    return RoleVerification(required_role=Role.ADMIN, verify=False)(token, db)
 
 
 def verify_project_role(
     project: str,
     token: JWTBearer,
     db: sqlalchemy.orm.session.Session,
-    allowed_roles=["user", "manager", "administrator"],
+    allowed_roles=None,
 ):
-    if not check_project_role(
-        project=project, allowed_roles=allowed_roles, token=token, db=db
-    ):
-        raise HTTPException(
-            status_code=403,
-            detail={
-                "reason": f"One of the roles '{allowed_roles}' in the project '{project}' is required.",
-            },
-        )
+    """
+    .. deprecated:: 2.0.0
+        Please use the `ProjectRoleVerification` class instead.
+    """
+    if not allowed_roles:
+        allowed_roles = ["user", "manager", "administrator"]
+    required_role = ProjectUserRole.ADMIN
+    if "manager" in allowed_roles:
+        required_role = ProjectUserRole.MANAGER
+    if "user" in allowed_roles:
+        required_role = ProjectUserRole.USER
 
-
-def check_project_role(
-    project: str,
-    token: JWTBearer,
-    db: sqlalchemy.orm.session.Session,
-    allowed_roles=["user", "manager", "administrator"],
-) -> bool:
-
-    user = get_user(db=db, username=get_username(token))
-    return any(
-        (
-            "user" in allowed_roles
-            and any(
-                project.projects_name == project for project in user.projects
-            ),
-            "manager" in allowed_roles
-            and any(
-                project.projects_name == project
-                and project.role == ProjectUserRole.MANAGER
-                for project in user.projects
-            ),
-            "administrator" in allowed_roles and user.role == Role.ADMIN,
-        )
+    project = get_project(db, project)
+    return ProjectRoleVerification(required_role=required_role, verify=True)(
+        project_slug=project.slug, token=token, db=db
     )
-
-
-def check_username_not_admin(username: str, db):
-    if get_user(db=db, username=username).role == Role.ADMIN:
-        raise HTTPException(
-            status_code=403,
-            detail={"reason": "You are not allowed to edit this user."},
-        )
 
 
 def verify_write_permission(
@@ -88,66 +149,13 @@ def verify_write_permission(
     token: JWTBearer,
     db: sqlalchemy.orm.session.Session,
 ):
-    if not check_write_permission(project, token, db):
-        raise HTTPException(
-            status_code=403,
-            detail={
-                "reason": "You need to have 'write'-access in the project!",
-            },
-        )
-
-
-def check_write_permission(
-    project: str,
-    token: JWTBearer,
-    db: sqlalchemy.orm.session.Session,
-) -> bool:
-
-    user = project_users.get_user_of_project(db, project, get_username(token))
-    if not user:
-        return get_user(db=db, username=get_username(token)).role == Role.ADMIN
-    return ProjectUserPermission.WRITE == user.permission
-
-
-def check_username_not_in_project(
-    project: str,
-    username: str,
-    db: sqlalchemy.orm.session.Session,
-):
-    user = project_users.get_user_of_project(db, project, username)
-    if user:
-        raise HTTPException(
-            status_code=409,
-            detail={
-                "reason": "The user already exists in this project.",
-            },
-        )
-
-
-def check_session_belongs_to_user(
-    username: str,
-    id: str,
-    db: sqlalchemy.orm.session.Session,
-):
-    session = get_session_by_id(db, id)
-    if not session.owner_name == username:
-        raise HTTPException(
-            status_code=403,
-            detail={
-                "reason": "You are not allowed to upload or get files in this session."
-            },
-        )
-
-
-def check_git_settings_instance_exists(
-    db: sqlalchemy.orm.session.Session,
-    id: int,
-):
-    instance = crud.get_git_settings(db, id)
-    if not instance:
-        raise HTTPException(
-            status_code=404,
-            detail={
-                "reason": f"The git instance with id {id} does not exist."
-            },
-        )
+    """
+    .. deprecated:: 2.0.0
+        Please use the `ProjectRoleVerification` class instead.
+    """
+    project = get_project(db, project)
+    return ProjectRoleVerification(
+        required_role=ProjectUserRole.USER,
+        verify=True,
+        required_permission=ProjectUserPermission.WRITE,
+    )(project_slug=project.slug, token=token, db=db)

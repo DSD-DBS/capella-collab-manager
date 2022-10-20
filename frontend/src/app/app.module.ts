@@ -68,7 +68,6 @@ import { InitModelComponent } from './projects/models/init-model/init-model.comp
 import { ChooseSourceComponent } from './projects/models/model-source/choose-source.component';
 import { GitModelDeletionDialogComponent } from './projects/models/model-source/git-model-settings/git-model-deletion-dialog/git-model-deletion-dialog.component';
 import { GitModelSettingsComponent } from './projects/models/model-source/git-model-settings/git-model-settings.component';
-import { SetT4CPasswordComponent } from './projects/models/model-source/t4c-repo-settings/set-t4c-password/set-t4c-password.component';
 import { T4CRepoSettingsComponent } from './projects/models/model-source/t4c-repo-settings/t4c-repo-settings.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
@@ -155,7 +154,6 @@ import { HomeComponent } from './workspaces/home.component';
     ReleaseNotesComponent,
     SessionCreatedComponent,
     SessionOverviewComponent,
-    SetT4CPasswordComponent,
     SettingsComponent,
     T4CImporterSettingsComponent,
     T4CInstanceSettingsComponent,

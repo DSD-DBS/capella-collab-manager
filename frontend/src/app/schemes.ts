@@ -29,10 +29,10 @@ export type Warnings = 'LICENCE_LIMIT' | 'NO_GIT_MODEL_DEFINED';
 
 export interface ProjectUser {
   project_name: string;
-  username: string;
   permission: 'read' | 'write';
   role: 'user' | 'manager' | 'administrator';
-  warnings: Warnings[];
+  warnings: Array<Warnings>;
+  user: User;
 }
 
 export interface SessionUsage {

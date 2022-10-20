@@ -58,7 +58,9 @@ def get_projects(
     if is_admin(token, db):
         projects = crud.get_all_projects(db)
     else:
-        project_user: list[ProjectUserAssociation] = database_users.get_user(
+        project_user: list[
+            ProjectUserAssociation
+        ] = database_users.get_user_by_name(
             db=db, username=get_username(token)
         ).projects
         projects = [project.projects for project in project_user]

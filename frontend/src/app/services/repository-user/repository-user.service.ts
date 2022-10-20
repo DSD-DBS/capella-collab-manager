@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class RepositoryUserService {
+export class ProjectUserService {
   constructor(private http: HttpClient) {}
   BACKEND_URL_PREFIX = environment.backend_url + '/projects/';
 
@@ -40,40 +40,40 @@ export class RepositoryUserService {
 
   changeRoleOfRepoUser(
     repository: string,
-    username: string,
+    userID: number,
     role: 'user' | 'manager'
   ): Observable<any> {
     return this.http.patch<any>(
-      this.BACKEND_URL_PREFIX + repository + '/users/' + username,
+      this.BACKEND_URL_PREFIX + repository + '/users/' + userID,
       { role }
     );
   }
 
   updatePasswordOfUser(
     repository: string,
-    username: string,
+    userID: number,
     password: string
   ): Observable<void> {
     return this.http.patch<any>(
-      this.BACKEND_URL_PREFIX + repository + '/users/' + username,
+      this.BACKEND_URL_PREFIX + repository + '/users/' + userID,
       { password }
     );
   }
 
   changePermissionOfRepoUser(
     repository: string,
-    username: string,
+    userID: number,
     permission: 'read' | 'write'
   ): Observable<any> {
     return this.http.patch<any>(
-      this.BACKEND_URL_PREFIX + repository + '/users/' + username,
+      this.BACKEND_URL_PREFIX + repository + '/users/' + userID,
       { permission }
     );
   }
 
-  deleteUserFromRepo(repository: string, username: string): Observable<any> {
+  deleteUserFromRepo(repository: string, userID: number): Observable<any> {
     return this.http.delete<any>(
-      this.BACKEND_URL_PREFIX + repository + '/users/' + username
+      this.BACKEND_URL_PREFIX + repository + '/users/' + userID
     );
   }
 }

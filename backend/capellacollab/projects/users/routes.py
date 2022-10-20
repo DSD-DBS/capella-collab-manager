@@ -5,29 +5,52 @@ from __future__ import annotations
 
 import typing as t
 
+import sqlalchemy.orm.session
 from fastapi import APIRouter, Depends, HTTPException
-from requests import HTTPError, Session
+from requests import Session
 
-import capellacollab.extensions.modelsources.t4c.connection as t4c_manager
+import capellacollab.projects.users.crud as project_users
 import capellacollab.projects.users.models as schema_projects
 import capellacollab.users.crud as users
-from capellacollab.core.authentication.database import (
-    check_username_not_admin,
-    check_username_not_in_project,
-    is_admin,
-    verify_project_role,
-    verify_write_permission,
-)
-from capellacollab.core.authentication.helper import get_username
+from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
 from capellacollab.core.database import get_db
+from capellacollab.users.models import Role, User
 
 from . import crud
 
 router = APIRouter()
+
+
+def check_user_id_not_admin(user_id: int, db):
+    """
+    Administrators have access to all projects.
+    We have to prevent that they get roles in projects.
+    """
+    if users.get_user_by_id(db=db, user_id=user_id).role == Role.ADMIN:
+        raise HTTPException(
+            status_code=403,
+            detail={"reason": "You are not allowed to edit this user."},
+        )
+
+
+def check_username_not_in_project(
+    project: str,
+    user: User,
+    db: sqlalchemy.orm.session.Session,
+):
+    if project_users.get_user_of_project(
+        db=db, project_name=project, user_id=user.id
+    ):
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "reason": "The user already exists in this project.",
+            },
+        )
 
 
 @router.get(
@@ -37,7 +60,6 @@ router = APIRouter()
 )
 def get_users_for_project(
     project: str,
-    username: t.Union[str, None] = None,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
@@ -54,37 +76,32 @@ def get_users_for_project(
 )
 def add_user_to_project(
     project: str,
-    body: schema_projects.ProjectUser,
+    body: schema_projects.PostProjectUser,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
     verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
+    user = users.find_or_create_user(db, body.username)
+    check_username_not_in_project(project, user, db=db)
 
-    check_username_not_in_project(project, body.username, db=db)
-
-    users.find_or_create_user(db, body.username)
-    check_username_not_admin(body.username, db)
+    check_user_id_not_admin(user.id, db)
     if body.role == schema_projects.ProjectUserRole.MANAGER:
         body.permission = schema_projects.ProjectUserPermission.WRITE
-    if body.permission == schema_projects.ProjectUserPermission.WRITE:
-        t4c_manager.add_user_to_repository(
-            project, body.username, is_admin=False
-        )
     return crud.add_user_to_project(
-        db, project, body.role, body.username, body.permission
+        db, project, body.role, user.id, body.permission
     )
 
 
 @router.patch(
-    "/{username}",
+    "/{user_id}",
     status_code=204,
     responses=AUTHENTICATION_RESPONSES,
 )
 def patch_project_user(
     project: str,
-    username: str,
+    user_id: int,
     body: schema_projects.PatchProjectUser,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
@@ -103,39 +120,8 @@ def patch_project_user(
             token=token,
             db=db,
         )
-        check_username_not_admin(username, db)
-        crud.change_role_of_user_in_project(db, project, body.role, username)
-    if body.password:
-        verify_project_role(
-            project,
-            token=token,
-            db=db,
-        )
-        verify_write_permission(project, token, db)
-
-        admin = is_admin(token, db)
-        if not admin and get_username(token) != username:
-            raise HTTPException(
-                status_code=403,
-                detail={
-                    "reason": "The username does not match with your user. You have to be administrator to edit other users."
-                },
-            )
-
-        try:
-            t4c_manager.update_password_of_user(
-                project, username, body.password
-            )
-        except HTTPError as err:
-            if err.response.status_code == 404:
-                t4c_manager.add_user_to_repository(
-                    project, username, body.password, is_admin=admin
-                )
-            else:
-                raise HTTPException(
-                    status_code=500,
-                    detail={"reason": "Invalid response from T4C server."},
-                ) from err
+        check_user_id_not_admin(user_id, db)
+        crud.change_role_of_user_in_project(db, project, body.role, user_id)
 
     if body.permission:
         verify_project_role(
@@ -144,11 +130,11 @@ def patch_project_user(
             token=token,
             db=db,
         )
-        check_username_not_admin(username, db)
+        check_user_id_not_admin(user_id, db)
         repo_user = crud.get_user_of_project(
             db,
             project,
-            username,
+            user_id,
         )
 
         if repo_user.role == schema_projects.ProjectUserRole.MANAGER:
@@ -159,26 +145,25 @@ def patch_project_user(
                 },
             )
         crud.change_permission_of_user_in_project(
-            db, project, body.permission, username
+            db, project, body.permission, user_id
         )
     return None
 
 
 @router.delete(
-    "/{username}",
+    "/{user_id}",
     status_code=204,
     responses=AUTHENTICATION_RESPONSES,
 )
 def remove_user_from_project(
     project: str,
-    username: str,
+    user_id: int,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
     verify_project_role(
         project, allowed_roles=["manager", "administrator"], token=token, db=db
     )
-    check_username_not_admin(username, db)
-    t4c_manager.remove_user_from_repository(project, username)
-    crud.delete_user_from_project(db, project, username)
+    check_user_id_not_admin(user_id, db)
+    crud.delete_user_from_project(db, project, user_id)
     return None
