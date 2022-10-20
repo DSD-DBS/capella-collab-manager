@@ -20,7 +20,7 @@ import {
   AbstractControl,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { filter, map, Subscription } from 'rxjs';
 import {
   absoluteOrRelativeSafetyValidators,
   absoluteUrlSafetyValidator,
@@ -84,8 +84,8 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
     primary: new FormControl(),
   });
 
-  private gitModelId: number | undefined;
-  public gitModel: GetGitModel | undefined;
+  private gitModelId?: number;
+  public gitModel?: GetGitModel;
 
   public isEditMode: boolean = false;
   public editing: boolean = false;
@@ -94,6 +94,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
   private modelSubscription?: Subscription;
   private revisionsSubscription?: Subscription;
   private gitModelSubscription?: Subscription;
+  private paramSubscription?: Subscription;
 
   constructor(
     public projectService: ProjectService,
@@ -133,14 +134,6 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
           ]);
         }
         this.form.controls.urls.setValidators([this.resultUrlValidator()]);
-
-        if (this.isEditMode) {
-          this.fillFormWithGitModel(this.gitModel!);
-          this.gitService.loadRevisions(
-            this.resultUrl,
-            this.form.value.credentials as Credentials
-          );
-        }
       });
 
     this.modelSubscription = this.modelService._model.subscribe((model) => {
@@ -151,22 +144,36 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.gitModelId = this.route.snapshot.params['git-model'];
-    this.isEditMode = !!this.gitModelId;
+    this.paramSubscription = this.route.params
+      .pipe(
+        filter((params) => !!params['git-model']),
+        map((params) => params['git-model'])
+      )
+      .subscribe((gitModelId) => {
+        this.isEditMode = true;
+        this.gitModelId = gitModelId;
+        this.form.disable();
 
-    if (this.isEditMode) {
-      this.form.disable();
+        this.gitModelSubscription = this.gitModelService.gitModel.subscribe(
+          (gitModel) => {
+            this.gitModel = gitModel;
+            this.fillFormWithGitModel(gitModel);
 
-      this.gitModelSubscription = this.gitModelService.gitModel.subscribe(
-        (gitModel) => (this.gitModel = gitModel)
-      );
+            this.gitService.loadPrivateRevisions(
+              gitModel.path,
+              this.projectService.project?.slug!,
+              this.modelService.model?.slug!,
+              gitModelId
+            );
+          }
+        );
 
-      this.gitModelService.loadGitModelById(
-        this.projectService.project!.slug,
-        this.modelService.model!.slug,
-        this.gitModelId!
-      );
-    }
+        this.gitModelService.loadGitModelById(
+          this.projectService.project!.slug,
+          this.modelService.model!.slug,
+          gitModelId
+        );
+      });
 
     this.gitSettingsService.loadGitSettings();
   }
@@ -176,14 +183,27 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
     this.modelSubscription?.unsubscribe();
     this.revisionsSubscription?.unsubscribe();
     this.gitModelSubscription?.unsubscribe();
+    this.paramSubscription?.unsubscribe();
   }
 
   onRevisionFocus(): void {
     if (this.form.controls.urls.valid) {
-      this.gitService.loadRevisions(
-        this.resultUrl,
-        this.form.value.credentials as Credentials
-      );
+      if (
+        this.isEditMode &&
+        !this.form.controls.credentials.controls.password.value
+      ) {
+        this.gitService.loadPrivateRevisions(
+          this.resultUrl,
+          this.projectService.project?.slug!,
+          this.modelService.model?.slug!,
+          this.gitModelId!
+        );
+      } else {
+        this.gitService.loadRevisions(
+          this.resultUrl,
+          this.form.value.credentials as Credentials
+        );
+      }
     }
   }
 
@@ -282,13 +302,10 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
   }
 
   private fillFormWithGitModel(gitModel: GetGitModel): void {
-    let credentials = this.form.controls.credentials.controls;
-
     this.urls.inputUrl.setValue(gitModel.path);
 
-    if (gitModel.username) {
-      credentials.username.setValue(gitModel?.username!);
-    }
+    const credentials = this.form.controls.credentials.controls;
+    credentials.username.setValue(gitModel.username!);
 
     if (gitModel.password) {
       credentials.password.setValue('placeholder');

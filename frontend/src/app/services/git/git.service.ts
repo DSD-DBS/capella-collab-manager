@@ -39,6 +39,27 @@ export class GitService {
           url: gitUrl,
         }
       )
-      .subscribe((revisions) => this._revisions.next(revisions));
+      .subscribe({
+        next: (revisions) => this._revisions.next(revisions),
+        error: () => this._revisions.next(undefined),
+      });
+  }
+
+  loadPrivateRevisions(
+    gitUrl: string,
+    project_slug: string,
+    model_slug: string,
+    git_model_id: number
+  ): void {
+    this.http
+      .post<Revisions>(
+        this.BACKEND_URL_PREFIX +
+          `/projects/${project_slug}/models/${model_slug}/git/git-model/${git_model_id}/revisions`,
+        gitUrl
+      )
+      .subscribe({
+        next: (revisions) => this._revisions.next(revisions),
+        error: () => this._revisions.next(undefined),
+      });
   }
 }
