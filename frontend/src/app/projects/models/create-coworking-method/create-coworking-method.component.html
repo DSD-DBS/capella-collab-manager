@@ -24,7 +24,7 @@
             <mat-select
               matInput
               formControlName="baseUrl"
-              (selectionChange)="onSelect($event.value)"
+              (selectionChange)="onBaseIntegrationUrlSelect($event.value)"
               [value]="selectedGitInstance"
             >
               <mat-option
@@ -48,7 +48,7 @@
             >
             <input
               matInput
-              (ngModelChange)="onInputChange($event)"
+              (ngModelChange)="onUrlInputChange($event)"
               formControlName="inputUrl"
             />
             <mat-error
@@ -161,7 +161,7 @@
       </fieldset>
     </form>
     <div *ngIf="asStepper; else notFromStepper" class="flex-space-between">
-      <button mat-button (click)="create.emit({ created: false })">
+      <button mat-button (click)="create.emit(false)">
         <mat-icon class="mat-icon-position">arrow_back</mat-icon>
         Choose primary source
       </button>

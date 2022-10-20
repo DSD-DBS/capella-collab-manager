@@ -54,7 +54,7 @@ import { GitModelService } from '../../project-detail/model-overview/model-detai
 })
 export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
   @Input() asStepper?: boolean;
-  @Output() create = new EventEmitter<{ created: boolean }>();
+  @Output() create = new EventEmitter<boolean>();
 
   public availableGitInstances: Array<GitSetting> = [];
   public selectedGitInstance: GitSetting | undefined = undefined;
@@ -187,7 +187,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelect(value: GitSetting): void {
+  onBaseIntegrationUrlSelect(value: GitSetting): void {
     let inputUrlControl = this.urls.inputUrl;
     let inputUrl = inputUrlControl.value;
 
@@ -200,7 +200,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
     this.resetRevisions();
   }
 
-  onInputChange(changedInputUrl: string): void {
+  onUrlInputChange(changedInputUrl: string): void {
     this.updateResultUrl();
     this.resetRevisions();
 
@@ -229,7 +229,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
         )
         .subscribe(() => {
           if (this.asStepper) {
-            this.create.emit({ created: true });
+            this.create.emit(true);
           } else {
             this.router.navigate(['../..'], { relativeTo: this.route });
           }
