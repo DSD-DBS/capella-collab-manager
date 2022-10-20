@@ -22,6 +22,7 @@ def validate_path(path: t.Optional[str]):
                 raise ValueError(
                     "The provide path contains invalid sequences."
                 )
+    return path
 
 
 class PostGitModel(BaseModel):
