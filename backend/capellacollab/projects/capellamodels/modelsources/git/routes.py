@@ -54,26 +54,6 @@ def verify_path_prefix(db: Session, path: str):
     )
 
 
-def verify_valid_path_sequences(path: str):
-    sequence_blacklist = ["..", "%"]
-
-    invalid_sequences = []
-    for sequence in sequence_blacklist:
-        if sequence in path:
-            invalid_sequences.append(sequence)
-
-    if not invalid_sequences:
-        return
-
-    raise HTTPException(
-        status_code=400,
-        detail={
-            "err_code": "invalid_path_sequences",
-            "reason": "The provide source path contains invalid sequences.",
-        },
-    )
-
-
 # FIXME: Add role verification: All roles?
 @router.get("/git-models", response_model=list[ResponseGitModel])
 def get_git_models(
@@ -115,7 +95,6 @@ def create_source(
     db: Session = Depends(get_db),
 ) -> ResponseGitModel:
     verify_path_prefix(db, post_git_model.path)
-    verify_valid_path_sequences(post_git_model.path)
 
     new_git_model = crud.add_gitmodel_to_capellamodel(
         db, capella_model, post_git_model
@@ -134,7 +113,6 @@ def update_git_model_by_id(
     db: Session = Depends(get_db),
 ) -> ResponseGitModel:
     verify_path_prefix(db, patch_git_model.path)
-    verify_valid_path_sequences(patch_git_model.path)
 
     updated_git_model = crud.update_git_model(
         db, db_capella_model, db_git_model, patch_git_model
