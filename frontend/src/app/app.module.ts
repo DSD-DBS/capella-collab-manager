@@ -91,6 +91,8 @@ import { SessionOverviewComponent } from './sessions/session-overview/session-ov
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { ToolDeletionDialogComponent } from './settings/core/tools-settings/tool-details/tool-deletion-dialog/tool-deletion-dialog.component';
 import { ToolDetailsComponent } from './settings/core/tools-settings/tool-details/tool-details.component';
+import { ToolTypeComponent } from './settings/core/tools-settings/tool-details/tool-type/tool-type.component';
+import { ToolVersionComponent } from './settings/core/tools-settings/tool-details/tool-version/tool-version.component';
 import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
 import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
 import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4c-importer-settings/t4c-importer-settings.component';
@@ -166,6 +168,8 @@ import { HomeComponent } from './workspaces/home.component';
     ToolDeletionDialogComponent,
     ToolDetailsComponent,
     ToolsSettingsComponent,
+    ToolTypeComponent,
+    ToolVersionComponent,
     UploadDialogComponent,
     UserSettingsComponent,
     VersionComponent,

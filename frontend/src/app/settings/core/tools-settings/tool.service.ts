@@ -82,7 +82,7 @@ export class ToolService {
   }
 
   createVersionForTool(toolId: number, name: string): Observable<ToolVersion> {
-    return this.http.post<ToolVersion>(`this.baseURL/${toolId}/versions`, {
+    return this.http.post<ToolVersion>(`${this.baseURL}/${toolId}/versions`, {
       name,
     });
   }
@@ -101,7 +101,7 @@ export class ToolService {
   }
 
   createTypeForTool(toolId: number, name: string): Observable<ToolType> {
-    return this.http.post<ToolType>(`this.baseURL/${toolId}/types`, {
+    return this.http.post<ToolType>(`${this.baseURL}/${toolId}/types`, {
       name,
     });
   }
