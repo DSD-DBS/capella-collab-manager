@@ -4,9 +4,11 @@
  -->
 
 <div class="wrapper">
-  <div class="title" *ngIf="cmpGitSettings.length">Existing instances</div>
-  <div class="instances" *ngIf="cmpGitSettings.length">
-    <mat-card *ngFor="let instance of cmpGitSettings">
+  <div class="title" *ngIf="availableGitSettings.length">
+    Existing instances
+  </div>
+  <div class="instances" *ngIf="availableGitSettings.length">
+    <mat-card *ngFor="let instance of availableGitSettings">
       <div class="mat-title">
         <div class="instance-head">
           {{ instance.type }}

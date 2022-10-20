@@ -29,7 +29,7 @@ import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/
   styleUrls: ['./git-settings.component.css'],
 })
 export class GitSettingsComponent implements OnInit, OnDestroy {
-  public cmpGitSettings: GitSetting[] = [];
+  public availableGitSettings: GitSetting[] = [];
 
   gitInstancesForm = new FormGroup({
     type: new FormControl('', Validators.required),
@@ -49,12 +49,11 @@ export class GitSettingsComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>
   ) {
     this.navbarService.title = 'Settings / Modelsources / Git';
-    this.cmpGitSettings = [];
   }
 
   ngOnInit(): void {
     this.gitSettingsService.gitSettings.subscribe((gitSettings) => {
-      this.cmpGitSettings = gitSettings;
+      this.availableGitSettings = gitSettings;
     });
 
     this.gitSettingsService.loadGitSettings();
@@ -82,7 +81,7 @@ export class GitSettingsComponent implements OnInit, OnDestroy {
   }
 
   deleteGitSettings(id: number): void {
-    const toDeleteGitSetting: GitSetting = this.cmpGitSettings.find(
+    const toDeleteGitSetting: GitSetting = this.availableGitSettings.find(
       (gitSetting) => gitSetting.id == id
     )!;
     this.dialog
@@ -99,7 +98,7 @@ export class GitSettingsComponent implements OnInit, OnDestroy {
 
   nameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const existingGitSetting = this.cmpGitSettings.find(
+      const existingGitSetting = this.availableGitSettings.find(
         (gitSetting) => gitSetting.name == control.value
       );
 
