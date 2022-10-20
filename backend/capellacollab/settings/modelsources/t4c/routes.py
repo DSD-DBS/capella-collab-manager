@@ -38,7 +38,6 @@ def list_git_settings(
 
 @router.get(
     "/{t4c_instance_id}",
-    responses=AUTHENTICATION_RESPONSES,
     response_model=T4CInstance,
 )
 def get_t4c_instance(
@@ -77,7 +76,6 @@ def create_t4c_instance(
 
 @router.patch(
     "/{t4c_instance_id}",
-    responses=AUTHENTICATION_RESPONSES,
     response_model=T4CInstance,
 )
 def edit_t4c_instance(
