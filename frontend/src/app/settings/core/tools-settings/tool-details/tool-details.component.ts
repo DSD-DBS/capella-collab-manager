@@ -17,6 +17,7 @@ import { combineLatest, filter, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { Tool, ToolDockerimages, ToolService } from '../tool.service';
+import { ToolDeletionDialogComponent } from './tool-deletion-dialog/tool-deletion-dialog.component';
 
 @Component({
   selector: 'app-tool-details',
@@ -51,7 +52,8 @@ export class ToolDetailsComponent {
     private navBarService: NavBarService,
     private toolService: ToolService,
     private toastService: ToastService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {
     this.toolService.getTools().subscribe();
     this.route.params
@@ -204,6 +206,24 @@ export class ToolDetailsComponent {
           this.cancelEditing();
         });
     }
+  }
+
+  deleteTool(): void {
+    this.dialog
+      .open(ToolDeletionDialogComponent, {
+        data: this.selectedTool,
+      })
+      .afterClosed()
+      .pipe(filter((res: boolean) => res))
+      .subscribe(() => {
+        this.router.navigate(['../..', 'tools'], {
+          relativeTo: this.route,
+        });
+        this.toastService.showSuccess(
+          'Tool deleted',
+          `The tool '${this.selectedTool?.name}' was deleted successfully`
+        );
+      });
   }
 
   submit(): void {

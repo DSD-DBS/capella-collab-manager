@@ -84,6 +84,9 @@
       </div>
       <div *ngIf="!editing && existing" class="flex-space-between">
         <button mat-flat-button (click)="enableEditing()">Edit</button>
+        <button mat-raised-button color="warn" (click)="deleteTool()">
+          Delete
+        </button>
       </div>
       <div *ngIf="!existing" id="submit-button-wrapper">
         <button
@@ -97,7 +100,8 @@
       </div>
     </form>
   </mat-card>
-  <mat-card *ngIf="existing" class="default">
-    <h2>Versions</h2>
-  </mat-card>
+  <div *ngIf="existing">
+    <app-tool-version [tool]="selectedTool"> </app-tool-version>
+    <app-tool-type></app-tool-type>
+  </div>
 </div>
