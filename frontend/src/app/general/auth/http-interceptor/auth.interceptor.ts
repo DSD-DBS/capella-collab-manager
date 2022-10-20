@@ -60,7 +60,6 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   refreshToken(): Observable<RefreshTokenResponse> {
-    console.log('Token is expired. Refreshing token...');
     return this.authService.performTokenRefresh();
   }
 }
