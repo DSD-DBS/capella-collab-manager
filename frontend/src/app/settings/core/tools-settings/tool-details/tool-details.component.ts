@@ -13,14 +13,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, map, switchMap, tap } from 'rxjs';
+import { combineLatest, filter, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import {
-  Tool,
-  ToolDockerimages,
-  ToolService,
-} from '../tool.service';
+import { Tool, ToolDockerimages, ToolService } from '../tool.service';
 
 @Component({
   selector: 'app-tool-details',
@@ -57,13 +53,43 @@ export class ToolDetailsComponent {
     private toastService: ToastService,
     private router: Router
   ) {
+    this.toolService.getTools().subscribe();
     this.route.params
       .pipe(
-        map((params) => params.instance),
-        filter((instance) => instance === undefined)
+        map((params) => params.toolID),
+        filter((toolID) => toolID === undefined)
       )
       .subscribe({
         next: () => (this.navBarService.title = 'Settings / Tools / Create'),
+      });
+
+    this.route.params
+      .pipe(
+        map((params) => params.toolID),
+        filter((toolID) => toolID !== undefined),
+        mergeMap((toolID) => {
+          return combineLatest([
+            of(toolID),
+            this.toolService._tools,
+            this.toolService.getDockerimagesForTool(toolID),
+          ]);
+        }),
+        tap(([_toolID, _tools, dockerimages]) => {
+          this.dockerimages = dockerimages;
+        }),
+        map(([toolID, tools, _dockerimages]) => {
+          return tools?.find((tool: Tool) => {
+            return tool.id == toolID;
+          });
+        })
+      )
+      .subscribe({
+        next: (tool) => {
+          this.navBarService.title = 'Settings / Tools / ' + tool?.name;
+          this.existing = true;
+          this.selectedTool = tool;
+          this.updateForm();
+        },
       });
   }
 
@@ -75,6 +101,14 @@ export class ToolDetailsComponent {
   cancelEditing(): void {
     this.editing = false;
     this.form.disable();
+  }
+
+  updateForm(): void {
+    this.form.patchValue({
+      name: this.selectedTool?.name,
+      dockerimages: this.dockerimages,
+    });
+    this.cancelEditing();
   }
 
   validDockerImageNameValidator(): ValidatorFn {
@@ -146,12 +180,19 @@ export class ToolDetailsComponent {
             );
           })
         )
-        .subscribe();
+        .subscribe((tool) => {
+          this.selectedTool = tool;
+        });
 
       this.toolService
         .updateDockerimagesForTool(
           this.selectedTool!.id,
           this.form.controls.dockerimages.value as ToolDockerimages
+        )
+        .pipe(
+          tap((dockerimages) => {
+            this.dockerimages = dockerimages;
+          })
         )
         .subscribe((_) => {
           this.toastService.showSuccess(
@@ -160,6 +201,7 @@ export class ToolDetailsComponent {
               this.selectedTool!.id
             } were updated.`
           );
+          this.cancelEditing();
         });
     }
   }

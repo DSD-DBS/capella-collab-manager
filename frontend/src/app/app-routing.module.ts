@@ -135,7 +135,7 @@ const routes: Routes = [
                   },
                 ],
               },
-              { path: 'tool/:id', component: ToolDetailsComponent },
+              { path: 'tool/:toolID', component: ToolDetailsComponent },
             ],
           },
           {
