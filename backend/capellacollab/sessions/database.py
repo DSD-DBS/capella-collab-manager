@@ -35,7 +35,6 @@ def get_all_sessions(db: Session):
 def create_session(db: Session, session: DatabaseSession):
     db.add(session)
     db.commit()
-    db.refresh(session)
     return session
 
 

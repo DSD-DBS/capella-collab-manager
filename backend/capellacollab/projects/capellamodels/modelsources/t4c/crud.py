@@ -35,7 +35,6 @@ def create_t4c_model(db: Session, model_id: int, project_name: str):
     project = DB_T4CModel(model_id=model_id, name=project_name)
     db.add(project)
     db.commit()
-    db.refresh(project)
     return project
 
 

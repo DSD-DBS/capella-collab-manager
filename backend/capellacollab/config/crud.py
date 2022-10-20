@@ -24,5 +24,4 @@ def update_dockerimages_for_environment(
     dockerimages.persistentworkspace = config.workspaces.persistent
     dockerimages.readonlyworkspace = config.workspaces.readonly
     db.commit()
-    db.refresh(dockerimages)
     return dockerimages

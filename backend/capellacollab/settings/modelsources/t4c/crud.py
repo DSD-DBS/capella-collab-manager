@@ -25,7 +25,6 @@ def get_t4c_instance(id_: int, db: Session) -> DatabaseT4CInstance:
 def create_t4c_instance(instance: CreateT4CInstance, db: Session):
     db.add(instance)
     db.commit()
-    db.refresh(instance)
     return instance
 
 

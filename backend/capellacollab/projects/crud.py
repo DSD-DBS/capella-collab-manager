@@ -45,7 +45,6 @@ def create_project(
     )
     db.add(repo)
     db.commit()
-    db.refresh(repo)
     return repo
 
 

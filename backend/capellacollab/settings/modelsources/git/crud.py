@@ -25,7 +25,6 @@ def create_git_settings(db: Session, body: GitSettings):
     git_settings = DB_GitSettings(type=body.type, name=body.name, url=body.url)
     db.add(git_settings)
     db.commit()
-    db.refresh(git_settings)
     return git_settings
 
 

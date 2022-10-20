@@ -19,7 +19,6 @@ def create_notice(db: Session, body: CreateNoticeRequest):
     notice = DatabaseNotice(**body.dict())
     db.add(notice)
     db.commit()
-    db.refresh(notice)
     return notice
 
 

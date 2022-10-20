@@ -43,7 +43,6 @@ def add_user_to_project(
     )
     db.add(association)
     db.commit()
-    db.refresh(association)
     return association
 
 
@@ -60,7 +59,6 @@ def change_role_of_user_in_project(
         project_user.permission = ProjectUserPermission.WRITE
     project_user.role = role
     db.commit()
-    db.refresh(project_user)
     return project_user
 
 
@@ -78,7 +76,6 @@ def change_permission_of_user_in_project(
     )
     repo_user.permission = permission
     db.commit()
-    db.refresh(repo_user)
     return repo_user
 
 

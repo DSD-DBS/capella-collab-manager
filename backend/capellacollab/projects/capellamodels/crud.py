@@ -66,7 +66,6 @@ def create_new_model(
     )
     db.add(model)
     db.commit()
-    db.refresh(model)
     return model
 
 
