@@ -78,11 +78,38 @@ export class ToolService {
   }
 
   getVersionsForTool(toolId: number): Observable<ToolVersion[]> {
-    return this.http.get<ToolVersion[]>(`${this.baseURL}/${toolId}/versions/`);
+    return this.http.get<ToolVersion[]>(`${this.baseURL}/${toolId}/versions`);
+  }
+
+  createVersionForTool(toolId: number, name: string): Observable<ToolVersion> {
+    return this.http.post<ToolVersion>(`this.baseURL/${toolId}/versions`, {
+      name,
+    });
+  }
+
+  deleteVersionForTool(
+    toolId: number,
+    toolVersion: ToolVersion
+  ): Observable<void> {
+    return this.http.delete<void>(
+      `${this.baseURL}/${toolId}/versions/${toolVersion.id}`
+    );
   }
 
   getTypesForTool(toolId: number): Observable<ToolType[]> {
-    return this.http.get<ToolVersion[]>(`${this.baseURL}/${toolId}/types/`);
+    return this.http.get<ToolVersion[]>(`${this.baseURL}/${toolId}/types`);
+  }
+
+  createTypeForTool(toolId: number, name: string): Observable<ToolType> {
+    return this.http.post<ToolType>(`this.baseURL/${toolId}/types`, {
+      name,
+    });
+  }
+
+  deleteTypeForTool(toolId: number, toolType: ToolType): Observable<void> {
+    return this.http.delete<void>(
+      `${this.baseURL}/${toolId}/types/${toolType.id}`
+    );
   }
 
   getDockerimagesForTool(toolId: number): Observable<ToolDockerimages> {
