@@ -4,7 +4,7 @@
 
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.capellamodels.crud as capella_model_crud
@@ -108,6 +108,21 @@ def get_revisions_of_primary_git_model(
         primary_git_model.password,
         default=primary_git_model.revision,
     )
+
+
+@router.post(
+    "/git-model/{git_model_id}/revisions",
+    response_model=GetRevisionsResponseModel,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
+    ],
+)
+def get_revisions_with_model_credentials(
+    url: str = Body(),
+    git_model: DB_GitModel = Depends(get_existing_git_model),
+):
+    print("got here")
+    return get_remote_refs(url, git_model.username, git_model.password)
 
 
 @router.post(
