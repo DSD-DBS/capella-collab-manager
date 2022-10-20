@@ -54,7 +54,6 @@ def create_git_settings(
 @router.post("/revisions", response_model=GetRevisionsResponseModel)
 def get_revisions(
     body: GetRevisionModel,
-    token: JWTBearer = Depends(JWTBearer()),
 ) -> GetRevisionsResponseModel:
     url = body.url
     username = body.credentials.username
