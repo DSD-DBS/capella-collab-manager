@@ -32,8 +32,6 @@ export class MatCardOverviewLoaderComponent implements OnInit {
 
   resize(width: number, height: number) {
     // Margin is 1vw (left + right) and 1vh (top + bottom)
-    console.log('Inner width: ' + window.innerWidth);
-    console.log('Margin: ' + width * 0.01);
 
     const cardsPerColumn = (0.98 * width) / 425;
     const cardsPerRow = (0.98 * height - 120) / 275;
