@@ -127,7 +127,7 @@ export class ToolDetailsComponent {
           })
         )
         .subscribe(() => {
-          this.router.navigate(['..', this.selectedTool?.id], {
+          this.router.navigate(['../..', 'tool', this.selectedTool?.id], {
             relativeTo: this.route,
           });
         });
