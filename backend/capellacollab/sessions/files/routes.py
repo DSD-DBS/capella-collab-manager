@@ -7,7 +7,6 @@ import logging
 import tarfile
 
 import requests
-import sqlalchemy.orm.session
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from requests.auth import HTTPBasicAuth
 from sqlalchemy.orm import Session
@@ -27,7 +26,7 @@ log = logging.getLogger(__name__)
 def check_session_belongs_to_user(
     username: str,
     id: str,
-    db: sqlalchemy.orm.session.Session,
+    db: Session,
 ):
     session = get_session_by_id(db, id)
     if not session.owner_name == username:

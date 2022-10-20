@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import typing as t
 
-import sqlalchemy.orm.session
 from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError
 from sqlalchemy.orm import Session
@@ -38,7 +37,7 @@ def check_user_id_not_admin(user_id: int, db):
 def check_username_not_in_project(
     project: str,
     user: User,
-    db: sqlalchemy.orm.session.Session,
+    db: Session,
 ):
     if project_users.get_user_of_project(
         db=db, project_name=project, user_id=user.id

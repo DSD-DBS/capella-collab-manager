@@ -4,7 +4,6 @@
 
 import typing as t
 
-import sqlalchemy.orm.session
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -12,6 +11,10 @@ import capellacollab.projects.users.crud as project_users
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
+from capellacollab.projects.crud import (
+    get_project_by_name,
+    get_project_by_slug,
+)
 from capellacollab.projects.users.models import (
     ProjectUserPermission,
     ProjectUserRole,
@@ -123,7 +126,7 @@ def is_admin(token, db) -> bool:
 def verify_project_role(
     project: str,
     token: JWTBearer,
-    db: sqlalchemy.orm.session.Session,
+    db: Session,
     allowed_roles=None,
 ):
     """
@@ -138,7 +141,7 @@ def verify_project_role(
     if "user" in allowed_roles:
         required_role = ProjectUserRole.USER
 
-    project = get_project(db, project)
+    project = get_project_by_name(db, project)
     return ProjectRoleVerification(required_role=required_role, verify=True)(
         project_slug=project.slug, token=token, db=db
     )
@@ -147,13 +150,13 @@ def verify_project_role(
 def verify_write_permission(
     project: str,
     token: JWTBearer,
-    db: sqlalchemy.orm.session.Session,
+    db: Session,
 ):
     """
     .. deprecated:: 2.0.0
         Please use the `ProjectRoleVerification` class instead.
     """
-    project = get_project(db, project)
+    project = get_project_by_name(db, project)
     return ProjectRoleVerification(
         required_role=ProjectUserRole.USER,
         verify=True,
