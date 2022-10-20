@@ -73,7 +73,7 @@ def get_current_user(
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def get_user(user_id: int, db: Session = Depends(get_db)):
-    return crud.get_user_by_id(db=db, user_id=user_id)
+    return crud.get_user_by_id(db, user_id)
 
 
 @router.delete(
@@ -84,7 +84,7 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
 )
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     project_users.delete_all_projects_for_user(db, user_id)
-    crud.delete_user(db=db, user_id=user_id)
+    crud.delete_user(db, user_id)
     return None
 
 
