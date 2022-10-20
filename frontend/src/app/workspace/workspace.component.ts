@@ -7,7 +7,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModelService } from '../services/model/model.service';
 import { SessionService } from '../services/session/session.service';
-import { ToolService, ToolVersion } from '../services/tools/tool.service';
+import {
+  ToolService,
+  ToolVersion,
+} from '../settings/core/tools-settings/tool.service';
 
 @Component({
   selector: 'app-workspace',
