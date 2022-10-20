@@ -30,7 +30,7 @@ def check_user_id_not_admin(user_id: int, db):
     Administrators have access to all projects.
     We have to prevent that they get roles in projects.
     """
-    if users.get_user_by_id(db=db, user_id=user_id).role == Role.ADMIN:
+    if users.get_user_by_id(db, user_id).role == Role.ADMIN:
         raise HTTPException(
             status_code=403,
             detail={"reason": "You are not allowed to edit this user."},
