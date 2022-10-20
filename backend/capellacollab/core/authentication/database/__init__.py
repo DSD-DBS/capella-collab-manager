@@ -11,7 +11,6 @@ import capellacollab.projects.users.crud as project_users
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
-from capellacollab.projects.crud import get_project, get_project_by_slug
 from capellacollab.projects.users.models import (
     ProjectUserPermission,
     ProjectUserRole,
