@@ -21,7 +21,7 @@ def get_gitmodels_of_capellamodels(
     return db.query(DB_GitModel).filter(DB_GitModel.model_id == model_id).all()
 
 
-def get_primary_gitmodel_of_capellamodels(
+def get_primary_gitmodel_of_capellamodel(
     db: Session, model_id: int
 ) -> DB_GitModel:
     return (
@@ -39,7 +39,7 @@ def get_gitmodel_by_id(db: Session, id: int) -> DB_GitModel:
 def make_git_model_primary(
     db: Session, capella_model_id: int, git_model_id: int
 ) -> DB_GitModel:
-    primary_model = get_primary_gitmodel_of_capellamodels(db, capella_model_id)
+    primary_model = get_primary_gitmodel_of_capellamodel(db, capella_model_id)
     primary_model.primary = False
 
     patch_git_model = get_gitmodel_by_id(db, git_model_id)

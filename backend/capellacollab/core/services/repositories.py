@@ -20,7 +20,7 @@ def get_permission(
 ) -> t.List[ProjectUserPermission]:
     allowed_permissions: t.List[ProjectUserPermission] = []
 
-    if git_model_crud.get_primary_gitmodel_of_capellamodels(db, project):
+    if git_model_crud.get_primary_gitmodel_of_capellamodel(db, project):
         allowed_permissions.append(ProjectUserPermission.READ)
 
     if repo_permission == ProjectUserPermission.WRITE:

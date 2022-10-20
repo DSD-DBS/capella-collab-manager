@@ -39,7 +39,7 @@ def get_existing_primary_git_model(
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ) -> DB_GitModel:
-    primary_git_model = crud.get_primary_gitmodel_of_capellamodels(
+    primary_git_model = crud.get_primary_gitmodel_of_capellamodel(
         db, capella_model.id
     )
 
