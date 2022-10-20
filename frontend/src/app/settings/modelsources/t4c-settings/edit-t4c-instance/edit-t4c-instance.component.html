@@ -117,7 +117,7 @@
             <mat-hint *ngIf="existing">Is not changed if empty</mat-hint>
           </mat-form-field>
         </fieldset>
-        <div *ngIf="editing" id="editing-button-wrapper">
+        <div *ngIf="editing" class="flex-space-between">
           <button mat-flat-button color="warn" (click)="cancelEditing()">
             Cancel
           </button>
@@ -140,5 +140,8 @@
     </mat-card>
   </div>
 
-  <app-t4c-instance-settings [instance]="instance"></app-t4c-instance-settings>
+  <app-t4c-instance-settings
+    *ngIf="this.instance"
+    [instance]="instance"
+  ></app-t4c-instance-settings>
 </div>
