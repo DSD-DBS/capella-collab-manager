@@ -37,6 +37,8 @@ from capellacollab.projects.users.models import (
     ProjectUserPermission,
     ProjectUserRole,
 )
+from capellacollab.users.injectables import get_own_user
+from capellacollab.users.models import DatabaseUser
 
 from .capellamodels.routes import router as router_models
 from .users.routes import router as router_users
@@ -104,7 +106,7 @@ def get_project_by_slug(slug: str, db: Session = Depends(get_db)):
 def create_project(
     body: PostProjectRequest,
     db: Session = Depends(get_db),
-    token: JWTBearer = Depends(JWTBearer()),
+    user: DatabaseUser = Depends(get_own_user),
 ):
     try:
         project = crud.create_project(db, body.name, body.description)
@@ -120,7 +122,7 @@ def create_project(
         db,
         project.name,
         ProjectUserRole.MANAGER,
-        get_username(token),
+        user.id,
         ProjectUserPermission.WRITE,
     )
     return convert_project(project)
