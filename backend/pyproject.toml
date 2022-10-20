@@ -63,10 +63,6 @@ dev = [
 [project.entry-points."capellacollab.extensions.backups"]
 ease = "capellacollab.extensions.backups.ease"
 
-[project.entry-points."capellacollab.extensions.modelsources"]
-git = "capellacollab.extensions.modelsources.git"
-t4c = "capellacollab.extensions.modelsources.t4c"
-
 [project.entry-points."capellacollab.operators"]
 k8s = "capellacollab.sessions.operators.k8s:KubernetesOperator"
 docker = "capellacollab.sessions.operators.docker:DockerOperator"
