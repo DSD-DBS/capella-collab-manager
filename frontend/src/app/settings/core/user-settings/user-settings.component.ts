@@ -24,15 +24,15 @@ import { UserService } from 'src/app/services/user/user.service';
   styleUrls: ['./user-settings.component.css'],
 })
 export class UserSettingsComponent implements OnInit {
+  users: User[] = [];
+  search = '';
+
   createUserFormGroup = new FormGroup({
     username: new FormControl('', [
       Validators.required,
       this.userAlreadyExistsValidator(),
     ]),
   });
-
-  users: User[] = [];
-  search = '';
 
   constructor(
     public userService: UserService,
@@ -53,7 +53,7 @@ export class UserSettingsComponent implements OnInit {
 
   userAlreadyExistsValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (this.users && this.users.find((user) => user.name == control.value)) {
+      if (this.users.find((user) => user.name == control.value)) {
         return { userAlreadyExists: true };
       }
       return null;
