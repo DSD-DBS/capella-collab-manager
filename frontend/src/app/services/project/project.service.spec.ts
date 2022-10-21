@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { TestBed } from '@angular/core/testing';
+import { HttpParams } from '@angular/common/http';
 import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
 
-import { ProjectService, Project } from './project.service';
 import { environment } from 'src/environments/environment';
-import { HttpParams } from '@angular/common/http';
+import { ProjectService, Project } from './project.service';
 
 const BACKEND_PROJECTS_URL = environment.backend_url + '/projects/';
 
@@ -67,12 +67,11 @@ describe('ProjectService', () => {
       next: (project) => expect(project).toEqual(mockProject),
     });
 
-    let url: URL = new URL('details/', BACKEND_PROJECTS_URL);
-    url.searchParams.append('slug', testProjectSlug);
-
-    const req = httpTestingController.expectOne(url.href);
+    const req = httpTestingController.expectOne(
+      BACKEND_PROJECTS_URL + testProjectSlug
+    );
     expect(req.request.method).toEqual('GET');
-    expect(req.request.params.get('slug')).toEqual(testProjectSlug);
+    expect(req.request.body).toBeNull();
 
     req.flush(mockProject);
   });

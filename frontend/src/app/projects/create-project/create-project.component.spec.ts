@@ -3,16 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SpyLocation } from '@angular/common/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ToastService } from '../../helpers/toast/toast.service';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import {
   Project,
@@ -25,9 +26,8 @@ import {
   findElByTestId,
   setFieldValue,
 } from '../../helpers/spec-helper/element.spec-helper';
+import { ToastService } from '../../helpers/toast/toast.service';
 import { CreateProjectComponent } from './create-project.component';
-import { Router } from '@angular/router';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 const mockProjects: Project[] = [
   {
@@ -49,19 +49,19 @@ const testProjectDescription = 'test-project-description';
 describe('CreateProjectComponent', () => {
   let fixture: ComponentFixture<CreateProjectComponent>;
   let component: CreateProjectComponent;
-  let router: Router;
 
   const fakeToastService: Pick<ToastService, 'showSuccess'> = {
-    showSuccess(title: string, message: string): void {},
+    showSuccess(): void {},
   };
 
   const fakeProjectService: Pick<
     ProjectService,
-    '_project' | '_projects' | 'list' | 'createProject' | 'project'
+    '_project' | '_projects' | 'list' | 'createProject' | 'project' | 'projects'
   > = {
     _project: new BehaviorSubject<Project | undefined>(undefined),
     _projects: new BehaviorSubject<Project[] | undefined>(undefined),
     list() {
+      this._projects.next(mockProjects);
       return of(mockProjects);
     },
     createProject(project: Project): Observable<Project> {
@@ -73,6 +73,9 @@ describe('CreateProjectComponent', () => {
       };
       this._project.next(projectToCreate);
       return of(projectToCreate);
+    },
+    get projects(): Project[] | undefined {
+      return this._projects.value;
     },
     get project(): Project | undefined {
       return this._project.value;
@@ -105,7 +108,7 @@ describe('CreateProjectComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('creates', () => {
     expect(component).toBeTruthy();
   });
 
@@ -131,10 +134,13 @@ describe('CreateProjectComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fakeProjectService.createProject).toHaveBeenCalledOnceWith({
-      name: testProjectName,
-      description: '',
-    });
+    expect(fakeProjectService.createProject).toHaveBeenCalledOnceWith(
+      {
+        name: testProjectName,
+        description: '',
+      },
+      true
+    );
     expect(fakeToastService.showSuccess).toHaveBeenCalledTimes(1);
   });
 
@@ -148,10 +154,13 @@ describe('CreateProjectComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fakeProjectService.createProject).toHaveBeenCalledOnceWith({
-      name: testProjectName,
-      description: testProjectDescription,
-    });
+    expect(fakeProjectService.createProject).toHaveBeenCalledOnceWith(
+      {
+        name: testProjectName,
+        description: testProjectDescription,
+      },
+      true
+    );
     expect(fakeToastService.showSuccess).toHaveBeenCalledTimes(1);
   });
 
@@ -183,7 +192,7 @@ describe('CreateProjectComponent', () => {
     expect(appCreateModelComponent).toBeTruthy();
   });
 
-  it('should render routerLink to /projects', () => {
+  it('renders routerLink to /projects', () => {
     let cancelEl: HTMLElement = findElByTestId(
       fixture,
       'a-cancel'
@@ -193,8 +202,6 @@ describe('CreateProjectComponent', () => {
   });
 
   it('gets redirected to project/:projectName after clicking on finish', () => {
-    const navigateSpy = spyOn(router, 'navigate');
-
     setFieldValue(fixture, 'input-name', testProjectName);
     click(fixture, 'button-create-project');
     fixture.detectChanges();
