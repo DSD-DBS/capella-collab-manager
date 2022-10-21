@@ -5,14 +5,14 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { T4cModelService } from '../../settings/t4c-model.service';
+import { T4CInstanceService } from './t4c-model.service';
 
 xdescribe('T4cModelService', () => {
-  let service: T4cModelService;
+  let service: T4CInstanceService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(T4cModelService);
+    service = TestBed.inject(T4CInstanceService);
   });
 
   it('should be created', () => {
