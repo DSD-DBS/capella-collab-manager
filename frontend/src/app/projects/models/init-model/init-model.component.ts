@@ -3,9 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { combineLatest, filter, map, switchMap, tap } from 'rxjs';
+import { combineLatest, filter, map, Subscription, switchMap, tap } from 'rxjs';
 import { Model, ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { SourceService } from 'src/app/services/source/source.service';
@@ -21,7 +28,7 @@ import {
   templateUrl: './init-model.component.html',
   styleUrls: ['./init-model.component.css'],
 })
-export class InitModelComponent implements OnInit {
+export class InitModelComponent implements OnInit, OnDestroy {
   @Output() create = new EventEmitter<{ created: boolean }>();
   @Input() asStepper?: boolean;
 
@@ -29,6 +36,8 @@ export class InitModelComponent implements OnInit {
   toolTypes: ToolType[] = [];
 
   buttonDisabled: boolean = false;
+
+  private modelSubscription?: Subscription;
 
   constructor(
     public projectService: ProjectService,
@@ -38,12 +47,15 @@ export class InitModelComponent implements OnInit {
   ) {}
 
   public form = new FormGroup({
-    version: new FormControl(-1, Validators.required),
-    type: new FormControl(-1, Validators.required),
+    version: new FormControl<number | undefined>(
+      undefined,
+      Validators.required
+    ),
+    type: new FormControl<number | undefined>(undefined, Validators.required),
   });
 
   ngOnInit(): void {
-    this.modelService._model
+    this.modelSubscription = this.modelService._model
       .pipe(filter(Boolean))
       .pipe(
         tap((model) => {
@@ -66,6 +78,10 @@ export class InitModelComponent implements OnInit {
         this.toolVersions = result[0];
         this.toolTypes = result[1];
       });
+  }
+
+  ngOnDestroy(): void {
+    this.modelSubscription?.unsubscribe();
   }
 
   onSubmit(): void {

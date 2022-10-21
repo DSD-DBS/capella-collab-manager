@@ -45,16 +45,16 @@ export class ViewLogsDialogComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.easeBackupService
       .getLogs(this.data.project, this.data.backup_id, this.data.job_id)
-      .subscribe(
-        (res: string) => {
+      .subscribe({
+        next: (res: string) => {
           this.loading = false;
           this.logs = res;
         },
-        () => {
+        error: () => {
           this.loading = false;
           this.logs = "Couldn't fetch logs";
-        }
-      );
+        },
+      });
   }
 }
 

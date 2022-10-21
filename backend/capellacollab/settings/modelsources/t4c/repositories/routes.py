@@ -11,9 +11,6 @@ from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication.database import verify_admin
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
 from capellacollab.core.database import get_db
 from capellacollab.core.models import Message, ResponseModel
 from capellacollab.settings.modelsources.t4c.injectables import load_instance
@@ -61,7 +58,6 @@ def load_instance_repository(
 
 @router.get(
     "/",
-    responses=AUTHENTICATION_RESPONSES,
     response_model=T4CRepositories,
 )
 def list_t4c_repositories(
@@ -122,9 +118,7 @@ def list_t4c_repositories(
     )
 
 
-@router.post(
-    "/", responses=AUTHENTICATION_RESPONSES, response_model=T4CRepository
-)
+@router.post("/", response_model=T4CRepository)
 def create_t4c_repository(
     body: CreateT4CRepository,
     db: Session = Depends(get_db),
@@ -156,7 +150,6 @@ def create_t4c_repository(
 
 @router.delete(
     "/{t4c_repository_id}",
-    responses=AUTHENTICATION_RESPONSES,
     response_model=t.Optional[ResponseModel],
 )
 def delete_t4c_repository(
@@ -205,7 +198,6 @@ def delete_t4c_repository(
 
 @router.post(
     "/{t4c_repository_id}/start",
-    responses=AUTHENTICATION_RESPONSES,
     status_code=204,
 )
 def start_t4c_repository(
@@ -221,7 +213,6 @@ def start_t4c_repository(
 
 @router.post(
     "/{t4c_repository_id}/stop",
-    responses=AUTHENTICATION_RESPONSES,
     status_code=204,
 )
 def stop_t4c_repository(
@@ -237,7 +228,6 @@ def stop_t4c_repository(
 
 @router.post(
     "/{t4c_repository_id}/recreate",
-    responses=AUTHENTICATION_RESPONSES,
     status_code=204,
 )
 def recreate_t4c_repository(

@@ -3,6 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-mat-card {
-  margin: 0 6ch 2em 0;
+.title {
+  font-size: 2em;
+  margin: 20px;
+  padding-bottom: 20px;
+}
+
+.git {
+  max-width: 80%;
 }

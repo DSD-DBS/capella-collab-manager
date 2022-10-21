@@ -3,13 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
-  GitSettings,
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
+import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
+import { absoluteUrlSafetyValidator } from 'src/app/helpers/validators/url-validator';
+import {
+  GitSetting,
   GitSettingsService,
+  GitType,
 } from 'src/app/services/settings/git-settings.service';
 import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
 
@@ -18,13 +28,19 @@ import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/
   templateUrl: './git-settings.component.html',
   styleUrls: ['./git-settings.component.css'],
 })
-export class GitSettingsComponent implements OnInit {
-  public instances: GitSettings[];
-  gitSettingsForm = new FormGroup({
+export class GitSettingsComponent implements OnInit, OnDestroy {
+  public availableGitSettings: GitSetting[] = [];
+
+  gitInstancesForm = new FormGroup({
     type: new FormControl('', Validators.required),
-    name: new FormControl('', Validators.required),
-    url: new FormControl('', Validators.required),
+    name: new FormControl('', [Validators.required, this.nameValidator()]),
+    url: new FormControl('', [
+      Validators.required,
+      absoluteUrlSafetyValidator(),
+    ]),
   });
+
+  private gitSettingsSubscription?: Subscription;
 
   constructor(
     private navbarService: NavBarService,
@@ -33,45 +49,63 @@ export class GitSettingsComponent implements OnInit {
     public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>
   ) {
     this.navbarService.title = 'Settings / Modelsources / Git';
-    this.instances = [];
   }
 
   ngOnInit(): void {
-    this.gitSettingsService.listGitSettings().subscribe((res) => {
-      res.forEach((instance) => {
-        this.instances.push(instance);
-      });
+    this.gitSettingsService.gitSettings.subscribe((gitSettings) => {
+      this.availableGitSettings = gitSettings;
     });
+
+    this.gitSettingsService.loadGitSettings();
+  }
+
+  ngOnDestroy(): void {
+    this.gitSettingsSubscription?.unsubscribe();
   }
 
   createGitSettings(): void {
-    if (this.gitSettingsForm.valid) {
+    if (this.gitInstancesForm.valid) {
+      let url = this.gitInstancesForm.value.url!;
+      if (url.endsWith('/')) {
+        url = url.slice(0, -1);
+      }
+
       this.gitSettingsService
-        .createGitSettings(
-          (this.gitSettingsForm.get('name') as FormControl).value,
-          (this.gitSettingsForm.get('url') as FormControl).value,
-          (this.gitSettingsForm.get('type') as FormControl).value
-        )
-        .subscribe((res) => {
-          this.gitSettingsForm.reset();
-          this.instances.push(res);
-        });
+        .createGitSettings({
+          name: this.gitInstancesForm.value.name!,
+          url: url,
+          type: this.gitInstancesForm.value.type as GitType,
+        })
+        .subscribe(() => this.gitInstancesForm.reset());
     }
   }
 
   deleteGitSettings(id: number): void {
-    const index: number = this.instances.findIndex((obj) => obj.id == id);
+    const toDeleteGitSetting: GitSetting = this.availableGitSettings.find(
+      (gitSetting) => gitSetting.id == id
+    )!;
     this.dialog
       .open(DeleteGitSettingsDialogComponent, {
-        data: this.instances[index],
+        data: toDeleteGitSetting,
       })
       .afterClosed()
       .subscribe((response) => {
         if (response) {
-          this.gitSettingsService.deleteGitSettings(id).subscribe((_) => {
-            this.instances.splice(index, 1);
-          });
+          this.gitSettingsService.deleteGitSettings(id).subscribe();
         }
       });
+  }
+
+  nameValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const existingGitSetting = this.availableGitSettings.find(
+        (gitSetting) => gitSetting.name == control.value
+      );
+
+      if (existingGitSetting) {
+        return { uniqueName: { value: existingGitSetting.name } };
+      }
+      return null;
+    };
   }
 }

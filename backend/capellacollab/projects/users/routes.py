@@ -5,18 +5,15 @@ from __future__ import annotations
 
 import typing as t
 
-import sqlalchemy.orm.session
 from fastapi import APIRouter, Depends, HTTPException
-from requests import Session
+from requests import HTTPError
+from sqlalchemy.orm import Session
 
 import capellacollab.projects.users.crud as project_users
 import capellacollab.projects.users.models as schema_projects
 import capellacollab.users.crud as users
 from capellacollab.core.authentication.database import verify_project_role
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
 from capellacollab.core.database import get_db
 from capellacollab.users.models import Role, User
 
@@ -40,7 +37,7 @@ def check_user_id_not_admin(user_id: int, db):
 def check_username_not_in_project(
     project: str,
     user: User,
-    db: sqlalchemy.orm.session.Session,
+    db: Session,
 ):
     if project_users.get_user_of_project(
         db=db, project_name=project, user_id=user.id
@@ -56,7 +53,6 @@ def check_username_not_in_project(
 @router.get(
     "/",
     response_model=t.List[schema_projects.ProjectUser],
-    responses=AUTHENTICATION_RESPONSES,
 )
 def get_users_for_project(
     project: str,
@@ -72,7 +68,6 @@ def get_users_for_project(
 @router.post(
     "/",
     response_model=schema_projects.ProjectUser,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def add_user_to_project(
     project: str,
@@ -97,7 +92,6 @@ def add_user_to_project(
 @router.patch(
     "/{user_id}",
     status_code=204,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def patch_project_user(
     project: str,
@@ -153,7 +147,6 @@ def patch_project_user(
 @router.delete(
     "/{user_id}",
     status_code=204,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def remove_user_from_project(
     project: str,

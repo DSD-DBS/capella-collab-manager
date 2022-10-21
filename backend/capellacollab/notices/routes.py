@@ -5,14 +5,11 @@
 import typing as t
 
 from fastapi import APIRouter, Depends
-from requests import Session
+from sqlalchemy.orm import Session
 
 import capellacollab.notices.crud as notices
 from capellacollab.core.authentication.database import verify_admin
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
 from capellacollab.core.database import get_db
 from capellacollab.notices.models import CreateNoticeRequest, NoticeResponse
 
@@ -32,7 +29,7 @@ def get_notice_by_id(id: int, db: Session = Depends(get_db)):
     return notices.get_notice(db, id)
 
 
-@router.post("/", responses=AUTHENTICATION_RESPONSES)
+@router.post("/")
 def create_notice(
     body: CreateNoticeRequest,
     db: Session = Depends(get_db),
@@ -45,7 +42,6 @@ def create_notice(
 @router.delete(
     "/{id}",
     status_code=204,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def delete_notice(
     id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())

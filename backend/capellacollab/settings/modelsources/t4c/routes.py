@@ -7,9 +7,6 @@ from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication.database import verify_admin
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
 from capellacollab.core.database import get_db
 from capellacollab.settings.modelsources.t4c import crud
 from capellacollab.settings.modelsources.t4c.injectables import load_instance
@@ -29,7 +26,6 @@ router = APIRouter()
 
 @router.get(
     "/",
-    responses=AUTHENTICATION_RESPONSES,
     response_model=list[T4CInstance],
 )
 def list_git_settings(
@@ -42,7 +38,6 @@ def list_git_settings(
 
 @router.get(
     "/{t4c_instance_id}",
-    responses=AUTHENTICATION_RESPONSES,
     response_model=T4CInstance,
 )
 def get_t4c_instance(
@@ -56,7 +51,6 @@ def get_t4c_instance(
 
 @router.post(
     "/",
-    responses=AUTHENTICATION_RESPONSES,
     response_model=T4CInstance,
 )
 def create_t4c_instance(
@@ -82,7 +76,6 @@ def create_t4c_instance(
 
 @router.patch(
     "/{t4c_instance_id}",
-    responses=AUTHENTICATION_RESPONSES,
     response_model=T4CInstance,
 )
 def edit_t4c_instance(

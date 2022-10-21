@@ -8,14 +8,89 @@
   class="wrapper flex-center"
 >
   <mat-card class="section-card">
+    <h2>
+      Add a {{ asStepper ? "primary" : "" }} source for the model “{{
+        modelService.model.name
+      }}” of the project “{{ projectService.project.name }}”.
+    </h2>
     <form [formGroup]="form">
-      <div formGroupName="credentials">
-        <fieldset>
+      <fieldset *ngIf="!asStepper && isEditMode">
+        <mat-slide-toggle formControlName="primary"> Primary </mat-slide-toggle>
+      </fieldset>
+      <div formGroupName="urls">
+        <fieldset *ngIf="availableGitInstances.length">
           <mat-form-field appearance="fill">
-            <mat-label>Repository url</mat-label>
-            <input matInput formControlName="path" />
+            <mat-label>Base integration URL</mat-label>
+            <mat-select
+              matInput
+              formControlName="baseUrl"
+              (selectionChange)="onBaseIntegrationUrlSelect($event.value)"
+              [value]="selectedGitInstance"
+            >
+              <mat-option
+                *ngFor="let gitSetting of availableGitInstances"
+                [value]="gitSetting"
+                >{{ gitSetting.url }}</mat-option
+              >
+            </mat-select>
+            <mat-error *ngIf="urls.baseUrl.errors?.required">
+              A base integration URL is required
+            </mat-error>
           </mat-form-field>
         </fieldset>
+        <fieldset>
+          <mat-form-field appearance="fill">
+            <mat-label
+              >Absolute URL
+              {{
+                availableGitInstances.length ? "or Relative URL" : ""
+              }}</mat-label
+            >
+            <input
+              matInput
+              (ngModelChange)="onUrlInputChange($event)"
+              formControlName="inputUrl"
+            />
+            <mat-error
+              *ngIf="
+                urls.inputUrl.errors?.urlPrefixError && urls.inputUrl.value
+              "
+            >
+              {{ urls.inputUrl.errors?.urlPrefixError }}
+            </mat-error>
+          </mat-form-field>
+        </fieldset>
+        <div>
+          <mat-card>
+            <mat-card-subtitle>Resulting URL*</mat-card-subtitle>
+            <mat-card-content>
+              <div class="no-text-overflow">
+                <mat-icon
+                  class="mat-icon-position top"
+                  fontIcon="info"
+                ></mat-icon>
+                {{ resultUrl }}
+              </div>
+            </mat-card-content>
+            <mat-card-content *ngIf="!resultUrl.length" class="error"
+              >A resulting URL is required</mat-card-content
+            >
+            <mat-card-content
+              class="error"
+              *ngIf="form.controls.urls.errors?.urlSafetyError && resultUrl"
+            >
+              {{ form.controls.urls.errors?.urlSafetyError }}
+            </mat-card-content>
+            <mat-card-content
+              class="error"
+              *ngIf="form.controls.urls.errors?.urlPrefixError && resultUrl"
+            >
+              {{ form.controls.urls.errors?.urlPrefixError }}
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+      <div formGroupName="credentials">
         <fieldset>
           <mat-form-field appearance="fill">
             <mat-label>Git username</mat-label>
@@ -25,6 +100,9 @@
           <mat-form-field appearance="fill">
             <mat-label>Git password or token</mat-label>
             <input matInput formControlName="password" type="password" />
+            <mat-hint *ngIf="isEditMode">
+              If empty password gets not updated
+            </mat-hint>
           </mat-form-field>
         </fieldset>
       </div>
@@ -38,6 +116,17 @@
             [matAutocomplete]="auto"
             (focus)="onRevisionFocus()"
           />
+          <mat-error *ngIf="form.controls.revision.errors?.required">
+            A revision is required
+          </mat-error>
+          <mat-error
+            *ngIf="
+              form.controls.revision.errors?.revisionNotFoundError &&
+              form.controls.revision.value
+            "
+          >
+            {{ form.controls.revision.errors?.revisionNotFoundError }}
+          </mat-error>
         </mat-form-field>
         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
           <mat-optgroup label="branch">
@@ -62,19 +151,83 @@
         <mat-form-field appearance="fill">
           <mat-label>Entry point</mat-label>
           <input type="text" matInput formControlName="entrypoint" />
+          <mat-error *ngIf="form.controls.entrypoint.errors?.required">
+            An endpoint is required
+          </mat-error>
+          <mat-error *ngIf="form.controls.entrypoint.errors?.pattern">
+            Entrypoint must end with ".aird" in case of a capella model
+          </mat-error>
         </mat-form-field>
       </fieldset>
     </form>
-    <button mat-button (click)="create.emit(false)">Choose source</button>
-    <div class="field-separator"></div>
-    <button
-      mat-raised-button
-      color="primary"
-      [disabled]="!form.valid"
-      type="submit"
-      (click)="onSubmit()"
-    >
-      Add source
-    </button>
+    <div *ngIf="asStepper; else notFromStepper" class="flex-space-between">
+      <button mat-button (click)="create.emit(false)">
+        <mat-icon class="mat-icon-position">arrow_back</mat-icon>
+        Choose primary source
+      </button>
+
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="!form.valid"
+        type="submit"
+        (click)="onCreateSubmit()"
+      >
+        Add source
+        <mat-icon class="mat-icon-position">arrow_forward</mat-icon>
+      </button>
+    </div>
+    <ng-template #notFromStepper>
+      <ng-container *ngIf="!isEditMode; else editGitModel">
+        <div class="flex-space-between">
+          <a mat-button [routerLink]="['../..']">
+            <mat-icon class="mat-icon-position">arrow_back</mat-icon>
+            Cancel
+          </a>
+
+          <button
+            mat-raised-button
+            color="primary"
+            [disabled]="!form.valid"
+            type="submit"
+            (click)="onCreateSubmit()"
+          >
+            Add source
+            <mat-icon class="mat-icon-position">arrow_forward</mat-icon>
+          </button>
+        </div>
+      </ng-container>
+    </ng-template>
+    <ng-template #editGitModel>
+      <div *ngIf="editing">
+        <div class="flex-space-between">
+          <button mat-raised-button color="warn" (click)="cancelEditing()">
+            Cancel
+          </button>
+
+          <button
+            mat-raised-button
+            color="primary"
+            [disabled]="!form.valid"
+            type="submit"
+            (click)="onEditSubmit()"
+          >
+            Apply changes
+          </button>
+        </div>
+      </div>
+      <div *ngIf="!editing">
+        <div class="flex-space-between">
+          <a mat-button [routerLink]="['../..']">
+            <mat-icon class="mat-icon-position">arrow_back</mat-icon>
+            Back
+          </a>
+
+          <button mat-raised-button color="primary" (click)="enableEditing()">
+            Edit
+          </button>
+        </div>
+      </div>
+    </ng-template>
   </mat-card>
 </div>

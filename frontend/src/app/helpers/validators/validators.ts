@@ -13,3 +13,14 @@ export function lowerCaseValidator(): ValidatorFn {
     return null;
   };
 }
+
+export function regExpValidator(
+  ruleRegExp: RegExp,
+  value: string,
+  errors: ValidationErrors
+): ValidationErrors | null {
+  if (!ruleRegExp.test(value)) {
+    return errors;
+  }
+  return null;
+}

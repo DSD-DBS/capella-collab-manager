@@ -7,7 +7,6 @@ import logging
 import tarfile
 
 import requests
-import sqlalchemy.orm.session
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from requests.auth import HTTPBasicAuth
 from sqlalchemy.orm import Session
@@ -15,9 +14,6 @@ from sqlalchemy.orm import Session
 from capellacollab.config import config
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
 from capellacollab.core.database import get_db
 from capellacollab.sessions.database import get_session_by_id
 from capellacollab.sessions.operators import OPERATOR
@@ -30,7 +26,7 @@ log = logging.getLogger(__name__)
 def check_session_belongs_to_user(
     username: str,
     id: str,
-    db: sqlalchemy.orm.session.Session,
+    db: Session,
 ):
     session = get_session_by_id(db, id)
     if not session.owner_name == username:
@@ -60,10 +56,7 @@ def get_files(
     ).json()
 
 
-@router.post(
-    "/",
-    responses=AUTHENTICATION_RESPONSES,
-)
+@router.post("/")
 def upload_files(
     id: str,
     files: list[UploadFile],

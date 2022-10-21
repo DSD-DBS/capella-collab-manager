@@ -4,9 +4,11 @@
  -->
 
 <div class="wrapper">
-  <div class="title" *ngIf="instances.length">Existing instances</div>
-  <div class="instances" *ngIf="instances.length">
-    <mat-card *ngFor="let instance of instances">
+  <div class="title" *ngIf="availableGitSettings.length">
+    Existing instances
+  </div>
+  <div class="instances" *ngIf="availableGitSettings.length">
+    <mat-card *ngFor="let instance of availableGitSettings">
       <div class="mat-title">
         <div class="instance-head">
           {{ instance.type }}
@@ -33,7 +35,7 @@
   <br />
   <div class="title">Add new integration</div>
   <br />
-  <form [formGroup]="gitSettingsForm" id="add-instance-form">
+  <form [formGroup]="gitInstancesForm" id="add-instance-form">
     Supported instances: <br />
     <mat-form-field id="instance-url" appearance="fill">
       <mat-label>Git Type</mat-label>
@@ -50,12 +52,45 @@
     <mat-form-field id="instance-url" appearance="fill">
       <mat-label>Name</mat-label>
       <input matInput formControlName="name" />
+      <mat-error *ngIf="gitInstancesForm.controls.name.errors?.uniqueName"
+        >An instance with the name "{{
+          gitInstancesForm.controls.name.errors?.uniqueName.value
+        }}" already exists</mat-error
+      >
+      <mat-error *ngIf="gitInstancesForm.controls.name.errors?.required"
+        >An instance name is required</mat-error
+      >
     </mat-form-field>
     <br />
     <mat-form-field id="instance-url" appearance="fill">
       <mat-label>Instance base URL</mat-label>
       <input matInput formControlName="url" />
+      <mat-error *ngIf="gitInstancesForm.controls.url.errors?.required"
+        >A base URL is required</mat-error
+      >
+      <mat-error
+        *ngIf="
+          gitInstancesForm.controls.url.errors?.urlSafetyError &&
+          gitInstancesForm.controls.url.value
+        "
+      >
+        {{ gitInstancesForm.controls.url.errors?.urlSafetyError }}
+      </mat-error>
+      <mat-error
+        *ngIf="
+          gitInstancesForm.controls.url.errors?.urlPrefixError &&
+          gitInstancesForm.controls.url.value
+        "
+      >
+        {{ gitInstancesForm.controls.url.errors?.urlPrefixError }}
+      </mat-error>
     </mat-form-field>
   </form>
-  <button mat-raised-button (click)="createGitSettings()">Create</button>
+  <button
+    mat-raised-button
+    [disabled]="!gitInstancesForm.valid"
+    (click)="createGitSettings()"
+  >
+    Create Integration
+  </button>
 </div>

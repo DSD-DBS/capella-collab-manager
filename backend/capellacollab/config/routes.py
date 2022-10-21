@@ -3,13 +3,10 @@
 
 
 from fastapi import APIRouter, Depends
-from requests import Session
+from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication.database import verify_admin
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
 from capellacollab.core.database import get_db
 
 router = APIRouter()
@@ -20,7 +17,6 @@ from . import crud, models
 @router.put(
     "/dockerimages/environments/{environment}",
     response_model=models.Dockerimages,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def update_dockerimages(
     body: models.Dockerimages,
@@ -37,7 +33,6 @@ def update_dockerimages(
 @router.get(
     "/dockerimages/environments/{environment}",
     response_model=models.Dockerimages,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def get_dockerimages(
     environment: str,

@@ -5,16 +5,15 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 export interface Credentials {
-  url: string;
   username: string;
   password: string;
 }
 
-export interface Instance {
+export interface Revisions {
   branches: string[];
   tags: string[];
 }
@@ -23,28 +22,44 @@ export interface Instance {
   providedIn: 'root',
 })
 export class GitService {
-  base_url = environment.backend_url + '/git-utils/';
+  BACKEND_URL_PREFIX = environment.backend_url;
+
+  private _revisions = new BehaviorSubject<Revisions | undefined>(undefined);
+
+  readonly revisions = this._revisions.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  instance: Instance | null = null;
+  loadRevisions(gitUrl: string, credentials: Credentials): void {
+    this.http
+      .post<Revisions>(
+        this.BACKEND_URL_PREFIX + '/settings/modelsources/git/revisions',
+        {
+          credentials: credentials,
+          url: gitUrl,
+        }
+      )
+      .subscribe({
+        next: (revisions) => this._revisions.next(revisions),
+        error: () => this._revisions.next(undefined),
+      });
+  }
 
-  fetch(model_slug: string, credentials: Credentials): Observable<Instance> {
-    return new Observable<Instance>((subscriber) => {
-      this.http
-        .get<Instance>(this.base_url + 'revisions/', {
-          params: {
-            model_slug,
-            url: credentials.url,
-            username: credentials.username,
-            password: credentials.password,
-          },
-        })
-        .subscribe((value) => {
-          this.instance = value;
-          subscriber.next(value);
-          subscriber.complete();
-        });
-    });
+  loadPrivateRevisions(
+    gitUrl: string,
+    project_slug: string,
+    model_slug: string,
+    git_model_id: number
+  ): void {
+    this.http
+      .post<Revisions>(
+        this.BACKEND_URL_PREFIX +
+          `/projects/${project_slug}/models/${model_slug}/git/git-model/${git_model_id}/revisions`,
+        gitUrl
+      )
+      .subscribe({
+        next: (revisions) => this._revisions.next(revisions),
+        error: () => this._revisions.next(undefined),
+      });
   }
 }

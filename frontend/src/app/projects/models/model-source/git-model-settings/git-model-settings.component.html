@@ -38,9 +38,9 @@
         <mat-error *ngIf="entrypoint.getError('required')"
           >Please enter a entrypoint!</mat-error
         >
-        <mat-error *ngIf="entrypoint.getError('airdFileIncorrect')"
-          >Your Entrypoint has to end with .aird!</mat-error
-        >
+        <mat-error *ngIf="entrypoint.errors?.pattern">
+          Entrypoint must end with ".aird" in case of a capella model
+        </mat-error>
       </mat-form-field>
       <mat-form-field>
         <mat-label>Revision</mat-label>

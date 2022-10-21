@@ -11,6 +11,7 @@ import { AuthComponent } from './general/auth/auth/auth.component';
 import { LogoutRedirectComponent } from './general/auth/logout/logout-redirect/logout-redirect.component';
 import { LogoutComponent } from './general/auth/logout/logout/logout.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
+import { CreateCoworkingMethodComponent } from './projects/models/create-coworking-method/create-coworking-method.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
@@ -56,7 +57,6 @@ const routes: Routes = [
       {
         path: 'project/:project',
         component: ProjectWrapperComponent,
-        canActivate: [AuthGuardService],
         children: [
           {
             path: '',
@@ -73,6 +73,14 @@ const routes: Routes = [
               {
                 path: '',
                 component: ModelDetailComponent,
+              },
+              {
+                path: 'git-model/create',
+                component: CreateCoworkingMethodComponent,
+              },
+              {
+                path: 'git-model/:git-model',
+                component: CreateCoworkingMethodComponent,
               },
             ],
           },

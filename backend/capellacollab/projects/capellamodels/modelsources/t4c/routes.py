@@ -5,18 +5,15 @@
 import typing as t
 
 from fastapi import APIRouter, Depends
-from requests import Session
+from sqlalchemy.orm import Session
 
 import capellacollab.core.database as database
-import capellacollab.extensions.modelsources.t4c.crud as database_projects
+import capellacollab.projects.capellamodels.modelsources.t4c.crud as database_projects
 from capellacollab.core.authentication.database import (
     verify_admin,
     verify_project_role,
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
 
 from . import models as schema_projects
 
@@ -26,7 +23,6 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=t.List[schema_projects.RepositoryProject],
-    responses=AUTHENTICATION_RESPONSES,
 )
 def get_t4c_model_for_model(
     project: str,
@@ -43,7 +39,6 @@ def get_t4c_model_for_model(
 @router.post(
     "/",
     response_model=schema_projects.RepositoryProject,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def create_project_in_repository(
     project: str,
@@ -60,7 +55,6 @@ def create_project_in_repository(
 @router.delete(
     "/{project_id}",
     status_code=204,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def delete_project_from_repository(
     project: str,

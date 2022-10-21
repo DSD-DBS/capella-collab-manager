@@ -6,40 +6,43 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ProjectService } from 'src/app/services/project/project.service';
 import { environment } from 'src/environments/environment';
 
-export interface Source {
+export interface BaseGitModel {
   path: string;
-  entrypoint: string;
   revision: string;
-  username?: string;
+  entrypoint: string;
+  username: string;
+}
+
+export interface CreateGitModel extends BaseGitModel {
   password?: string;
+}
+
+export interface PatchGitModel extends CreateGitModel {
+  primary: boolean;
+}
+
+export interface GetGitModel extends BaseGitModel {
+  id: number;
+  primary: boolean;
+  password: boolean;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class SourceService {
-  constructor(
-    private http: HttpClient,
-    private projectService: ProjectService
-  ) {}
-
-  source: Source | null = null;
-  sources: Source[] | null = null;
+  constructor(private http: HttpClient) {}
 
   addGitSource(
-    project_name: string,
+    project_slug: string,
     model_slug: string,
-    source: Source
-  ): Observable<Source> {
-    return this.http.post<Source>(
+    source: CreateGitModel
+  ): Observable<GetGitModel> {
+    return this.http.post<GetGitModel>(
       environment.backend_url +
-        '/projects/' +
-        project_name +
-        '/extensions/modelsources/git/create/' +
-        model_slug,
+        `/projects/${project_slug}/models/${model_slug}/git/`,
       source
     );
   }

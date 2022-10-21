@@ -29,7 +29,6 @@ def get_backups(db: Session, project: str) -> t.List[models.DB_EASEBackup]:
 def create_backup(db: Session, backup: models.DB_EASEBackup):
     db.add(backup)
     db.commit()
-    db.refresh(backup)
     return backup
 
 

@@ -14,9 +14,6 @@ from capellacollab.core.authentication.database import (
 )
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
 from capellacollab.core.database import get_db
 from capellacollab.sessions.routes import inject_attrs_in_sessions
 from capellacollab.sessions.schema import AdvancedSessionResponse
@@ -35,7 +32,6 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=t.List[User],
-    responses=AUTHENTICATION_RESPONSES,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def get_users(
@@ -47,7 +43,6 @@ def get_users(
 @router.post(
     "/",
     response_model=User,
-    responses=AUTHENTICATION_RESPONSES,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def create_user(body: BaseUser, db: Session = Depends(get_db)):
@@ -57,7 +52,6 @@ def create_user(body: BaseUser, db: Session = Depends(get_db)):
 @router.get(
     "/current",
     response_model=User,
-    responses=AUTHENTICATION_RESPONSES,
     dependencies=[Depends(RoleVerification(required_role=Role.USER))],
 )
 def get_current_user(
@@ -69,7 +63,6 @@ def get_current_user(
 @router.get(
     "/{user_id}",
     response_model=User,
-    responses=AUTHENTICATION_RESPONSES,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def get_user(user_id: int, db: Session = Depends(get_db)):
@@ -79,7 +72,6 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
 @router.delete(
     "/{user_id}",
     status_code=204,
-    responses=AUTHENTICATION_RESPONSES,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def delete_user(user_id: int, db: Session = Depends(get_db)):
@@ -90,7 +82,6 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
 
 @router.patch(
     "/{user_id}/roles",
-    responses=AUTHENTICATION_RESPONSES,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def update_role_of_user(

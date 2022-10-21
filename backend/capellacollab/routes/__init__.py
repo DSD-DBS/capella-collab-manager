@@ -15,6 +15,9 @@ import capellacollab.sessions.routes as sessions
 import capellacollab.settings.routes as settings
 import capellacollab.users.routes as users
 from capellacollab.config import config
+from capellacollab.core.authentication.responses import (
+    AUTHENTICATION_RESPONSES,
+)
 from capellacollab.projects import routes as projects
 from capellacollab.tools import routes as tools
 
@@ -23,18 +26,51 @@ log = logging.getLogger(__name__)
 
 router = APIRouter()
 router.include_router(core_metadata.router, tags=["Metadata"])
-router.include_router(sessions.router, prefix="/sessions", tags=["Sessions"])
-router.include_router(projects.router, prefix="/projects")
-router.include_router(tools.router, prefix="/tools")
-router.include_router(users.router, prefix="/users", tags=["Users"])
-router.include_router(notices.router, prefix="/notices", tags=["Notices"])
 router.include_router(
-    configuration.router, prefix="/configurations", tags=["Notices"]
+    sessions.router,
+    prefix="/sessions",
+    tags=["Sessions"],
+    responses=AUTHENTICATION_RESPONSES,
 )
-router.include_router(settings.router, prefix="/settings")
+router.include_router(
+    projects.router,
+    prefix="/projects",
+    responses=AUTHENTICATION_RESPONSES,
+)
+router.include_router(
+    tools.router,
+    prefix="/tools",
+    responses=AUTHENTICATION_RESPONSES,
+)
+router.include_router(
+    users.router,
+    prefix="/users",
+    tags=["Users"],
+    responses=AUTHENTICATION_RESPONSES,
+)
 router.include_router(notices.router, prefix="/notices", tags=["Notices"])
 router.include_router(
-    configuration.router, prefix="/configurations", tags=["Notices"]
+    configuration.router,
+    prefix="/configurations",
+    tags=["Notices"],
+    responses=AUTHENTICATION_RESPONSES,
+)
+router.include_router(
+    settings.router,
+    prefix="/settings",
+    responses=AUTHENTICATION_RESPONSES,
+)
+router.include_router(
+    notices.router,
+    prefix="/notices",
+    tags=["Notices"],
+    responses=AUTHENTICATION_RESPONSES,
+)
+router.include_router(
+    configuration.router,
+    prefix="/configurations",
+    tags=["Notices"],
+    responses=AUTHENTICATION_RESPONSES,
 )
 
 # Load authentication routes

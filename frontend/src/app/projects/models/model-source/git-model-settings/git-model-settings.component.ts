@@ -33,7 +33,7 @@ export class GitModelSettingsComponent implements OnInit {
       path: new FormControl('', [Validators.required, this.gitURLValidator()]),
       entrypoint: new FormControl('', [
         Validators.required,
-        this.airdFileValidator(),
+        Validators.pattern(/^$|\.aird$/),
       ]),
       revision: new FormControl('', Validators.required),
     }),
@@ -80,16 +80,6 @@ export class GitModelSettingsComponent implements OnInit {
         return null;
       }
       return { gitURLError: true };
-    };
-  }
-
-  airdFileValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const regex = /\.aird$/;
-      if (regex.test(control.value) || !control.value) {
-        return null;
-      }
-      return { airdFileIncorrect: true };
     };
   }
 

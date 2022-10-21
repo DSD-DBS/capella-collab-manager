@@ -4,7 +4,9 @@
 
 from sqlalchemy.orm import Session
 
-from capellacollab.extensions.modelsources.t4c.models import DB_T4CModel
+from capellacollab.projects.capellamodels.modelsources.t4c.models import (
+    DB_T4CModel,
+)
 
 
 def get_t4c_model(db: Session, name: str, model_id: int):
@@ -33,7 +35,6 @@ def create_t4c_model(db: Session, model_id: int, project_name: str):
     project = DB_T4CModel(model_id=model_id, name=project_name)
     db.add(project)
     db.commit()
-    db.refresh(project)
     return project
 
 

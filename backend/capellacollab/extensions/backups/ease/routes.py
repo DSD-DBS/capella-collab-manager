@@ -6,20 +6,16 @@ import logging
 import typing as t
 import uuid
 
-import requests
 from fastapi import APIRouter, Depends
-from requests import Session
+from sqlalchemy.orm import Session
 
 import capellacollab.core.authentication.database as auth
-import capellacollab.extensions.modelsources.git.crud as git_crud
-import capellacollab.extensions.modelsources.t4c.connection as t4c_connection
-import capellacollab.extensions.modelsources.t4c.crud as t4c_crud
+import capellacollab.projects.capellamodels.modelsources.git.crud as git_crud
+import capellacollab.projects.capellamodels.modelsources.t4c.connection as t4c_connection
+import capellacollab.projects.capellamodels.modelsources.t4c.crud as t4c_crud
 from capellacollab.config import config
 from capellacollab.core import credentials
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
 from capellacollab.core.database import get_db
 from capellacollab.sessions.operators import OPERATOR
 
@@ -32,7 +28,6 @@ log = logging.getLogger(__name__)
 @router.get(
     "/",
     response_model=t.List[models.EASEBackupResponse],
-    responses=AUTHENTICATION_RESPONSES,
 )
 def get_ease_backups(
     project: str,
@@ -51,7 +46,6 @@ def get_ease_backups(
 @router.post(
     "/",
     response_model=models.EASEBackupResponse,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def create_backup(
     project: str,
@@ -112,7 +106,6 @@ def create_backup(
 @router.delete(
     "/{id}",
     status_code=204,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def delete_backup(
     project: str,
@@ -146,7 +139,6 @@ def delete_backup(
 @router.post(
     "/{id}/jobs",
     response_model=models.EASEBackupResponse,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def create_job(
     project: str,
@@ -166,7 +158,6 @@ def create_job(
 @router.get(
     "/{bid}/jobs/{jid}/logs",
     response_model=str,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def get_logs(
     project: str,

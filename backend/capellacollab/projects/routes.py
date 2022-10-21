@@ -8,8 +8,8 @@ import typing as t
 from importlib import metadata
 
 from fastapi import APIRouter, Depends, HTTPException
-from requests import Session
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
 import capellacollab.projects.crud as crud
 import capellacollab.projects.users.crud as users_crud
@@ -21,9 +21,6 @@ from capellacollab.core.authentication.database import (
 )
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
 from capellacollab.core.database import get_db
 from capellacollab.projects.models import (
     DatabaseProject,
@@ -40,6 +37,8 @@ from capellacollab.projects.users.models import (
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser
 
+from .capellamodels.modelsources.git.routes import router as router_sources_git
+from .capellamodels.modelsources.t4c.routes import router as router_sources_t4c
 from .capellamodels.routes import router as router_models
 from .users.routes import router as router_users
 
@@ -50,8 +49,7 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=t.List[Project],
-    tags=["projects"],
-    responses=AUTHENTICATION_RESPONSES,
+    tags=["Projects"],
 )
 def get_projects(
     db: Session = Depends(get_db),
@@ -73,8 +71,7 @@ def get_projects(
 @router.patch(
     "/{project}",
     response_model=Project,
-    tags=["projects"],
-    responses=AUTHENTICATION_RESPONSES,
+    tags=["Projects"],
 )
 def update_project(
     project: str,
@@ -94,15 +91,15 @@ def update_project(
 
     crud.update_description(database, project, body.description)
 
-    return convert_project(crud.get_project(database, project))
+    return convert_project(crud.get_project_by_name(database, project))
 
 
-@router.get("/{slug}", tags=["projects"], responses=AUTHENTICATION_RESPONSES)
+@router.get("/{slug}", tags=["Projects"])
 def get_project_by_slug(slug: str, db: Session = Depends(get_db)):
     return convert_project(crud.get_project_by_slug(db, slug))
 
 
-@router.post("/", tags=["projects"], responses=AUTHENTICATION_RESPONSES)
+@router.post("/", tags=["Projects"])
 def create_project(
     body: PostProjectRequest,
     db: Session = Depends(get_db),
@@ -130,9 +127,8 @@ def create_project(
 
 @router.delete(
     "/{project}",
-    tags=["projects"],
+    tags=["Projects"],
     status_code=204,
-    responses=AUTHENTICATION_RESPONSES,
 )
 def delete_project(
     project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
@@ -175,8 +171,22 @@ def convert_project(project: DatabaseProject) -> Project:
     )
 
 
-router.include_router(router_users, prefix="/{project}/users")
-router.include_router(router_models, prefix="/{project_slug}/models")
+router.include_router(
+    router_users, tags=["Projects"], prefix="/{project}/users"
+)
+router.include_router(
+    router_models, tags=["Projects"], prefix="/{project_slug}/models"
+)
+router.include_router(
+    router_sources_git,
+    tags=["Projects"],
+    prefix="/{project_slug}/models/{model_slug}/git",
+)
+router.include_router(
+    router_sources_t4c,
+    tags=["Projects"],
+    prefix="/{project_name}/models/{model_slug}/t4c",
+)
 
 # Load backup extension routes
 eps = metadata.entry_points()["capellacollab.extensions.backups"]
@@ -185,15 +195,5 @@ for ep in eps:
     router.include_router(
         importlib.import_module(".routes", ep.module).router,
         prefix="/{project}/extensions/backups/" + ep.name,
-        tags=[ep.name],
-    )
-
-# Load modelsource extension routes
-eps = metadata.entry_points()["capellacollab.extensions.modelsources"]
-for ep in eps:
-    log.info("Add routes of modelsource %s", ep.name)
-    router.include_router(
-        importlib.import_module(".routes", ep.module).router,
-        prefix="/{project}/extensions/modelsources/" + ep.name,
         tags=[ep.name],
     )
