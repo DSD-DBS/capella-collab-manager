@@ -242,7 +242,30 @@ def create_tool_type(
 def delete_tool_type(
     type=Depends(get_exisiting_tool_type), db: Session = Depends(get_db)
 ):
-    return crud.delete_tool_type(type, db)
+    try:
+        return crud.delete_tool_type(type, db)
+    except sqlalchemy.exc.IntegrityError:
+        db.rollback()
+
+        dependencies = []
+        # Search for occurrences in project-models
+        for model in projects_models_crud.get_models_by_type(type.id, db):
+            dependencies.append(
+                f"Model '{model.name}' in project '{model.project.name}'"
+            )
+
+        for i in range(len(dependencies) - 1):
+            dependencies[i] = dependencies[i] + ","
+
+        raise HTTPException(
+            409,
+            {
+                "reason": [
+                    f"The type '{type.name}' can not be deleted. Please remove the following dependencies first:"
+                ]
+                + dependencies,
+            },
+        )
 
 
 @router.get(

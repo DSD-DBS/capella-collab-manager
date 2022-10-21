@@ -41,6 +41,16 @@ def get_models_by_version(
     )
 
 
+def get_models_by_type(
+    type_id: int, db: Session
+) -> t.List[DatabaseCapellaModel]:
+    return (
+        db.query(DatabaseCapellaModel)
+        .filter(DatabaseCapellaModel.type_id == type_id)
+        .all()
+    )
+
+
 def get_model_by_id(db: Session, id_: int) -> DatabaseCapellaModel:
     return (
         db.query(DatabaseCapellaModel)
