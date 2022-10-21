@@ -7,17 +7,22 @@ from fastapi import APIRouter, Depends, HTTPException
 from requests import Session
 from sqlalchemy.orm import Session
 
+import capellacollab.projects.capellamodels.crud as projects_models_crud
+import capellacollab.settings.modelsources.t4c.crud as settings_t4c_crud
 from capellacollab.core.authentication.database import RoleVerification
 from capellacollab.core.database import get_db
 from capellacollab.tools import models
 from capellacollab.tools.models import (
     CreateTool,
+    CreateToolVersion,
     PatchToolDockerimage,
     Tool,
     ToolBase,
     ToolDockerimage,
     ToolTypeBase,
     ToolVersionBase,
+    UpdateToolVersion,
+    Version,
 )
 from capellacollab.users.models import Role
 
@@ -35,6 +40,36 @@ def get_existing_tool(tool_id: str, db: Session = Depends(get_db)) -> Tool:
             {
                 "reason": f"The tool with the ID {tool_id} was not found.",
                 "technical": f"Database returned 'None' when searching for the tool with id {tool_id}.",
+            },
+        )
+
+
+def get_exisiting_tool_version(
+    tool_id: str, version_id, db: Session = Depends(get_db)
+) -> Version:
+    try:
+        return crud.get_version_for_tool(tool_id, version_id, db)
+    except sqlalchemy.exc.NoResultFound:
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The version with tool_id {tool_id} and version_id {version_id} was not found.",
+                "technical": f"Database returned 'None' when searching for the version with tool_id {tool_id} and version_id {version_id}.",
+            },
+        )
+
+
+def get_exisiting_tool_type(
+    tool_id: str, type_id, db: Session = Depends(get_db)
+) -> Version:
+    try:
+        return crud.get_type_for_tool(tool_id, type_id, db)
+    except sqlalchemy.exc.NoResultFound:
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The version with tool_id {tool_id} and type_id {type_id} was not found.",
+                "technical": f"Database returned 'None' when searching for the version with tool_id {tool_id} and type_id {type_id}.",
             },
         )
 
@@ -105,11 +140,74 @@ def get_tool_versions(tool_id: int, db: Session = Depends(get_db)):
 
 @router.post(
     "/{tool_id}/versions",
-    response_model=list[ToolVersionBase],
+    response_model=ToolVersionBase,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
-def create_tool_version(tool_id: int, db: Session = Depends(get_db)):
-    return crud.get_tool_versions(db, tool_id)
+def create_tool_version(
+    body: CreateToolVersion,
+    tool: Tool = Depends(get_existing_tool),
+    db: Session = Depends(get_db),
+):
+    return crud.create_version(db, tool.id, body.name, False, False)
+
+
+@router.patch(
+    "/{tool_id}/versions/{version_id}",
+    response_model=ToolVersionBase,
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+)
+def patch_tool_version(
+    body: UpdateToolVersion,
+    version=Depends(get_exisiting_tool_version),
+    db: Session = Depends(get_db),
+):
+    for key, value in body.dict().items():
+        if value is not None:
+            version.__setattr__(key, value)
+
+    return crud.update_version(version, db)
+
+
+@router.delete(
+    "/{tool_id}/versions/{version_id}",
+    status_code=204,
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+)
+def delete_tool_type(
+    version=Depends(get_exisiting_tool_version), db: Session = Depends(get_db)
+):
+    try:
+        return crud.delete_tool_version(version, db)
+    except sqlalchemy.exc.IntegrityError:
+        db.rollback()
+
+        dependencies = []
+        # Search for occurrences in T4C Instances
+        for instance in settings_t4c_crud.get_t4c_instances_by_version(
+            version.id, db
+        ):
+            dependencies.append(f"TeamForCapella instance '{instance.name}'")
+
+        # Search for occurrences in project-models
+        for model in projects_models_crud.get_models_by_version(
+            version.id, db
+        ):
+            dependencies.append(
+                f"Model '{model.name}' in project '{model.project.name}'"
+            )
+
+        for i in range(len(dependencies) - 1):
+            dependencies[i] = dependencies[i] + ","
+
+        raise HTTPException(
+            409,
+            {
+                "reason": [
+                    f"The version '{version.name}' can not be deleted. Please remove the following dependencies first:"
+                ]
+                + dependencies,
+            },
+        )
 
 
 @router.get(

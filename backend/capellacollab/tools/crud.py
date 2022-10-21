@@ -55,8 +55,21 @@ def get_versions(db: Session) -> t.List[Version]:
     return db.query(Version).all()
 
 
+def get_version_for_tool(tool_id: int, version_id: int, db: Session):
+    return db.execute(
+        select(Version)
+        .where(Version.id == version_id)
+        .where(Version.tool_id == tool_id)
+    ).scalar_one()
+
+
 def get_version_by_id(id_: int, db: Session) -> Version:
     return db.execute(select(Version).where(Version.id == id_)).scalar_one()
+
+
+def delete_tool_version(version: Version, db: Session):
+    db.delete(version)
+    db.commit()
 
 
 def get_tool_versions(db: Session, tool_id: int) -> t.List[Version]:
@@ -66,19 +79,19 @@ def get_tool_versions(db: Session, tool_id: int) -> t.List[Version]:
 def create_version(
     db: Session,
     tool_id: Tool,
-    model_version: str,
+    name: str,
     is_recommended: bool = False,
     is_deprecated: bool = False,
 ):
-    db.add(
-        Version(
-            name=model_version,
-            is_recommended=is_recommended,
-            is_deprecated=is_deprecated,
-            tool_id=tool_id,
-        )
+    version = Version(
+        name=name,
+        is_recommended=is_recommended,
+        is_deprecated=is_deprecated,
+        tool_id=tool_id,
     )
+    db.add(version)
     db.commit()
+    return version
 
 
 def get_types(db: Session) -> t.List[Type]:

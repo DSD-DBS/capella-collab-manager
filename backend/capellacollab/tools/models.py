@@ -82,6 +82,16 @@ class PatchToolDockerimage(BaseModel):
     readonly: t.Optional[str]
 
 
+class CreateToolVersion(BaseModel):
+    name: str
+
+
+class UpdateToolVersion(BaseModel):
+    name: t.Optional[str]
+    is_recommended: t.Optional[bool]
+    is_deprecated: t.Optional[bool]
+
+
 class ToolVersionBase(BaseModel):
     id: int
     name: str

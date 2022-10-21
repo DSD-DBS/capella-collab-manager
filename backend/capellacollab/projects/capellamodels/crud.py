@@ -31,6 +31,16 @@ def get_all_models_in_project(
     )
 
 
+def get_models_by_version(
+    version_id: int, db: Session
+) -> t.List[DatabaseCapellaModel]:
+    return (
+        db.query(DatabaseCapellaModel)
+        .filter(DatabaseCapellaModel.version_id == version_id)
+        .all()
+    )
+
+
 def get_model_by_id(db: Session, id_: int) -> DatabaseCapellaModel:
     return (
         db.query(DatabaseCapellaModel)
