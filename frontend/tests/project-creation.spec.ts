@@ -4,8 +4,12 @@
  */
 
 import { test, expect } from '@playwright/test';
+import { config } from 'tests/config.playwright';
 
 const nearPixelArea = 50; // Specifies how far away an element can be when using near
+
+const backendUrl = config.backend_url;
+const frontendUrl = config.frontend_url;
 
 test('test the full project creation workflow', async ({ page }) => {
   const testProjectName = `test-project-name-${Math.trunc(
@@ -13,32 +17,27 @@ test('test the full project creation workflow', async ({ page }) => {
   )}`;
   const testProjectDescription = 'test-project-description';
 
-  await page.goto('http://localhost:4200/');
+  await page.goto(frontendUrl);
 
   // Check whether you got redirected to the /auth page
-  await expect(page).toHaveURL('http://localhost:4200/auth');
+  await expect(page).toHaveURL(frontendUrl + '/auth');
 
   await page.locator('button:text-matches("Login with .*", "g")').click();
 
   // Wait for the response from the backend
-  await page.waitForResponse('http://localhost:8000/api/v1/authentication/');
-
-  // Everything static except the state which is generated from the backend
-  await expect(page).toHaveURL(
-    /http:\/\/localhost:8083\/default\/authorize\?response_type=code&client_id=default&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Foauth2%2Fcallback&scope?=openid&state=.*&grant_type=authorization_code/
-  );
+  await page.waitForResponse(backendUrl + '/authentication/');
 
   await page
     .locator('[placeholder="Enter any user\\/subject"]')
     .fill('username');
   await page.locator('input:has-text("Sign-in")').click();
-  await expect(page).toHaveURL('http://localhost:4200/');
+  await expect(page).toHaveURL(frontendUrl);
 
   await page.locator('a:has-text("Projects")').click();
-  await expect(page).toHaveURL('http://localhost:4200/projects');
+  await expect(page).toHaveURL(frontendUrl + '/projects');
 
   await page.locator('a', { hasText: 'Add new project' }).click();
-  await expect(page).toHaveURL('http://localhost:4200/projects/create');
+  await expect(page).toHaveURL(frontendUrl + '/projects/create');
 
   const genInfoMatStepHeaderLocator = page.locator('mat-step-header', {
     hasText: 'General information',
@@ -104,12 +103,10 @@ test('test the full project creation workflow', async ({ page }) => {
   await page
     .locator('a:has-text("Skip model creation and finish project creation")')
     .click();
-  await expect(page).toHaveURL(
-    `http://localhost:4200/project/${testProjectName}`
-  );
+  await expect(page).toHaveURL(frontendUrl + `/project/${testProjectName}`);
 
   await page.locator('a:has-text("Projects")').click();
-  await expect(page).toHaveURL('http://localhost:4200/projects');
+  await expect(page).toHaveURL(frontendUrl + '/projects');
 
   await expect(
     page.locator(`//a[@href='/project/${testProjectName}']`)
