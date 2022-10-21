@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flexbox space-around">
+<div class="flexbox center-horizontally">
   <mat-card class="default">
     <h2>Metadata</h2>
     <form [formGroup]="form" (ngSubmit)="submit()">
@@ -100,8 +100,6 @@
       </div>
     </form>
   </mat-card>
-  <div *ngIf="existing">
-    <app-tool-version [tool]="selectedTool"> </app-tool-version>
-    <app-tool-type></app-tool-type>
-  </div>
+  <app-tool-version *ngIf="existing" [tool]="selectedTool"> </app-tool-version>
+  <app-tool-type *ngIf="existing" [tool]="selectedTool"></app-tool-type>
 </div>

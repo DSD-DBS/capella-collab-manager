@@ -14,6 +14,7 @@ from capellacollab.core.database import get_db
 from capellacollab.tools import models
 from capellacollab.tools.models import (
     CreateTool,
+    CreateToolType,
     CreateToolVersion,
     PatchToolDockerimage,
     Tool,
@@ -21,6 +22,7 @@ from capellacollab.tools.models import (
     ToolDockerimage,
     ToolTypeBase,
     ToolVersionBase,
+    Type,
     UpdateToolVersion,
     Version,
 )
@@ -61,7 +63,7 @@ def get_exisiting_tool_version(
 
 def get_exisiting_tool_type(
     tool_id: str, type_id, db: Session = Depends(get_db)
-) -> Version:
+) -> Type:
     try:
         return crud.get_type_for_tool(tool_id, type_id, db)
     except sqlalchemy.exc.NoResultFound:
@@ -173,7 +175,7 @@ def patch_tool_version(
     status_code=204,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
-def delete_tool_type(
+def delete_tool_version(
     version=Depends(get_exisiting_tool_version), db: Session = Depends(get_db)
 ):
     try:
@@ -221,11 +223,15 @@ def get_tool_types(tool_id: int, db: Session = Depends(get_db)):
 
 @router.post(
     "/{tool_id}/types",
-    response_model=list[ToolTypeBase],
+    response_model=ToolTypeBase,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
-def create_tool_type(tool_id: int, db: Session = Depends(get_db)):
-    return crud.get_tool_types(db, tool_id)
+def create_tool_type(
+    tool_id: int,
+    body: CreateToolType,
+    db: Session = Depends(get_db),
+):
+    return crud.create_type(db, tool_id, body.name)
 
 
 @router.delete(

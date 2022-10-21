@@ -86,6 +86,10 @@ class CreateToolVersion(BaseModel):
     name: str
 
 
+class CreateToolType(BaseModel):
+    name: str
+
+
 class UpdateToolVersion(BaseModel):
     name: t.Optional[str]
     is_recommended: t.Optional[bool]

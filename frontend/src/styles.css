@@ -111,6 +111,11 @@ h1 {
   align-items: center;
 }
 
+.flexbox.center-horizontally {
+  display: flex;
+  justify-content: center;
+}
+
 .flex-space-between {
   display: flex;
   justify-content: space-between;

@@ -122,14 +122,14 @@ def delete_tool_type(type: Type, db: Session):
     db.commit()
 
 
-def create_type(db: Session, tool_id: int, model_type: str):
-    db.add(
-        Type(
-            name=model_type,
-            tool_id=tool_id,
-        )
+def create_type(db: Session, tool_id: int, name: str):
+    type = Type(
+        name=name,
+        tool_id=tool_id,
     )
+    db.add(type)
     db.commit()
+    return type
 
 
 def get_image_for_tool_version(db: Session, version_id: int):

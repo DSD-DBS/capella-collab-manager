@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -12,10 +12,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import {
-  MatSelectionList,
-  MatSelectionListChange,
-} from '@angular/material/list';
+import { MatSelectionListChange } from '@angular/material/list';
 import { finalize, switchMap, tap } from 'rxjs';
 import {
   PatchToolVersion,
@@ -49,8 +46,6 @@ export class ToolVersionComponent implements OnInit {
 
   constructor(private toolService: ToolService) {}
 
-  @ViewChild('toolVersionList') toolVersionList!: MatSelectionList;
-
   loadingMetadata = false;
   toolVersionForm = new FormGroup({
     name: new FormControl('', [
@@ -71,7 +66,6 @@ export class ToolVersionComponent implements OnInit {
   }
 
   onSelectionChange(event: MatSelectionListChange) {
-    console.log('test');
     this.selectedToolVersion = event.options[0].value;
     this.toolVersionMetadataForm.patchValue({
       isDeprecated: this.selectedToolVersion?.is_deprecated,
