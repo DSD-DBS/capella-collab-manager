@@ -228,6 +228,17 @@ def create_tool_type(tool_id: int, db: Session = Depends(get_db)):
     return crud.get_tool_types(db, tool_id)
 
 
+@router.delete(
+    "/{tool_id}/types/{type_id}",
+    status_code=204,
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+)
+def delete_tool_type(
+    type=Depends(get_exisiting_tool_type), db: Session = Depends(get_db)
+):
+    return crud.delete_tool_type(type, db)
+
+
 @router.get(
     "/{tool_id}/dockerimages",
     response_model=ToolDockerimage,

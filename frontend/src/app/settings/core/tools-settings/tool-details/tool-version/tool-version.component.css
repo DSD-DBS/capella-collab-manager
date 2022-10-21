@@ -2,3 +2,14 @@
  * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
  * SPDX-License-Identifier: Apache-2.0
  */
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 10;
+}
+
+mat-list-option {
+  height: 88px !important;
+}

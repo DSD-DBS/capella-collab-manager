@@ -13,8 +13,7 @@
       <mat-error *ngIf="toolVersionForm.controls.name.errors?.required"
         >Please enter a version name</mat-error
       >
-      <mat-error
-        *ngIf="toolVersionForm.controls.name.errors?.projectExistsError"
+      <mat-error *ngIf="toolVersionForm.controls.name.errors?.toolVersionExists"
         >Version name is already used</mat-error
       >
     </mat-form-field>
@@ -32,10 +31,12 @@
     #toolVersionList
     [multiple]="false"
     class="user-selection"
+    (selectionChange)="onSelectionChange($event)"
   >
     <mat-list-option
       *ngFor="let toolVersion of this.toolVersions"
       [value]="toolVersion"
+      [selected]="isToolVersionSelected(toolVersion)"
     >
       <mat-icon mat-list-icon>history</mat-icon>
       <div>
@@ -45,17 +46,31 @@
       </div>
     </mat-list-option>
   </mat-selection-list>
-
   <div *ngIf="toolVersionList.selectedOptions.selected.length">
+    <hr />
     <div class="field-separator"></div>
     <div class="flex-space-between">
+      <div>
+        <form [formGroup]="toolVersionMetadataForm" *ngIf="!loadingMetadata">
+          <mat-checkbox formControlName="isDeprecated"
+            >Is deprecated</mat-checkbox
+          >
+          <br />
+          <mat-checkbox formControlName="isRecommended"
+            >Is recommended</mat-checkbox
+          >
+        </form>
+      </div>
+      <div *ngIf="loadingMetadata" class="spinner">
+        <mat-spinner [diameter]="20"></mat-spinner>
+      </div>
       <button
         mat-flat-button
         color="warn"
-        (click)="removeToolVersion(selectedToolVersion)"
+        (click)="removeToolVersion(selectedToolVersion!)"
       >
         <mat-icon>delete</mat-icon> Remove version
-        {{ selectedToolVersion.name }}
+        {{ selectedToolVersion!.name }}
       </button>
     </div>
   </div>

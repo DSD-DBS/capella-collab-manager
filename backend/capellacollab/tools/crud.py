@@ -67,6 +67,11 @@ def get_version_by_id(id_: int, db: Session) -> Version:
     return db.execute(select(Version).where(Version.id == id_)).scalar_one()
 
 
+def update_version(version: Version, db: Session):
+    db.commit()
+    return version
+
+
 def delete_tool_version(version: Version, db: Session):
     db.delete(version)
     db.commit()
@@ -74,6 +79,12 @@ def delete_tool_version(version: Version, db: Session):
 
 def get_tool_versions(db: Session, tool_id: int) -> t.List[Version]:
     return db.query(Version).filter(Version.tool_id == tool_id).all()
+
+
+def get_type_for_tool(tool_id: int, type_id: int, db: Session):
+    return db.execute(
+        select(Type).where(Type.id == type_id).where(Type.tool_id == tool_id)
+    ).scalar_one()
 
 
 def create_version(
@@ -104,6 +115,11 @@ def get_type_by_id(id_: int, db: Session) -> Type:
 
 def get_tool_types(db: Session, tool_id: int) -> t.List[Type]:
     return db.query(Type).filter(Type.tool_id == tool_id).all()
+
+
+def delete_tool_type(type: Type, db: Session):
+    db.delete(type)
+    db.commit()
 
 
 def create_type(db: Session, tool_id: int, model_type: str):

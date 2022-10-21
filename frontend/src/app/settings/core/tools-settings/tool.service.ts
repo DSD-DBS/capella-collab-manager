@@ -23,6 +23,11 @@ export type ToolVersion = {
   is_deprecated: boolean;
 };
 
+export type PatchToolVersion = {
+  isRecommended: boolean;
+  isDeprecated: boolean;
+};
+
 export interface ToolType {
   id: number;
   name: string;
@@ -85,6 +90,20 @@ export class ToolService {
     return this.http.post<ToolVersion>(`${this.baseURL}/${toolId}/versions`, {
       name,
     });
+  }
+
+  patchToolVersion(
+    toolId: number,
+    versionId: number,
+    updatedToolVersion: PatchToolVersion
+  ) {
+    return this.http.patch<ToolVersion>(
+      `${this.baseURL}/${toolId}/versions/${versionId}`,
+      {
+        is_recommended: updatedToolVersion.isRecommended,
+        is_deprecated: updatedToolVersion.isDeprecated,
+      }
+    );
   }
 
   deleteVersionForTool(

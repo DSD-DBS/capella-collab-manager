@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -12,16 +12,24 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { MatSelectionList } from '@angular/material/list';
-import { tap } from 'rxjs';
-import { Tool, ToolService, ToolVersion } from '../../tool.service';
+import {
+  MatSelectionList,
+  MatSelectionListChange,
+} from '@angular/material/list';
+import { finalize, switchMap, tap } from 'rxjs';
+import {
+  PatchToolVersion,
+  Tool,
+  ToolService,
+  ToolVersion,
+} from '../../tool.service';
 
 @Component({
   selector: 'app-tool-version',
   templateUrl: './tool-version.component.html',
   styleUrls: ['./tool-version.component.css'],
 })
-export class ToolVersionComponent {
+export class ToolVersionComponent implements OnInit {
   _tool: Tool | undefined = undefined;
 
   @Input()
@@ -43,16 +51,63 @@ export class ToolVersionComponent {
 
   @ViewChild('toolVersionList') toolVersionList!: MatSelectionList;
 
-  get selectedToolVersion(): ToolVersion {
-    return this.toolVersionList.selectedOptions.selected[0].value;
-  }
-
+  loadingMetadata = false;
   toolVersionForm = new FormGroup({
     name: new FormControl('', [
       Validators.required,
       this.uniqueNameValidator(),
     ]),
   });
+
+  toolVersionMetadataForm = new FormGroup({
+    isDeprecated: new FormControl(false),
+    isRecommended: new FormControl(false),
+  });
+
+  selectedToolVersion: ToolVersion | undefined = undefined;
+
+  isToolVersionSelected(toolVersion: ToolVersion) {
+    return toolVersion.id === this.selectedToolVersion?.id;
+  }
+
+  onSelectionChange(event: MatSelectionListChange) {
+    console.log('test');
+    this.selectedToolVersion = event.options[0].value;
+    this.toolVersionMetadataForm.patchValue({
+      isDeprecated: this.selectedToolVersion?.is_deprecated,
+      isRecommended: this.selectedToolVersion?.is_recommended,
+    });
+  }
+
+  ngOnInit(): void {
+    this.onToolVersionMetadataFormChanges();
+  }
+
+  onToolVersionMetadataFormChanges(): void {
+    this.toolVersionMetadataForm.valueChanges
+      .pipe(
+        tap(() => {
+          this.loadingMetadata = true;
+        }),
+        switchMap(() => {
+          return this.toolService.patchToolVersion(
+            this._tool!.id,
+            this.selectedToolVersion!.id,
+            this.toolVersionMetadataForm.value as PatchToolVersion
+          );
+        }),
+        tap(() => {
+          this.loadingMetadata = false;
+        })
+      )
+      .subscribe((res) => {
+        const index = this.toolVersions.findIndex(
+          (version) => version.id === res.id
+        );
+        this.toolVersions[index] = res;
+        this.selectedToolVersion = res;
+      });
+  }
 
   uniqueNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -74,13 +129,11 @@ export class ToolVersionComponent {
           this.toolVersionForm.controls.name.value!
         )
         .pipe(
-          tap({
-            next: () => {
-              this.toolVersionForm.reset();
-            },
-            complete: () => {
-              this.toolVersionForm.enable();
-            },
+          tap(() => {
+            this.toolVersionForm.reset();
+          }),
+          finalize(() => {
+            this.toolVersionForm.enable();
           })
         )
         .subscribe((version: ToolVersion) => {
