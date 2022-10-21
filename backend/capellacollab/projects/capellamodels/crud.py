@@ -51,6 +51,16 @@ def get_models_by_type(
     )
 
 
+def get_models_by_tool(
+    tool_id: int, db: Session
+) -> t.List[DatabaseCapellaModel]:
+    return (
+        db.query(DatabaseCapellaModel)
+        .filter(DatabaseCapellaModel.tool_id == tool_id)
+        .all()
+    )
+
+
 def get_model_by_id(db: Session, id_: int) -> DatabaseCapellaModel:
     return (
         db.query(DatabaseCapellaModel)

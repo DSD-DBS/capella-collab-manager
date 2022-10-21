@@ -127,8 +127,30 @@ def delete_tool(
                 "reason": "The tool 'Capella' can not be deleted.",
             },
         )
-    crud.delete_tool(db, tool)
-    return None
+    try:
+        return crud.delete_tool(db, tool)
+    except sqlalchemy.exc.IntegrityError:
+        db.rollback()
+
+        dependencies = []
+        # Search for occurrences in project-models
+        for model in projects_models_crud.get_models_by_tool(tool.id, db):
+            dependencies.append(
+                f"Model '{model.name}' in project '{model.project.name}'"
+            )
+
+        for i in range(len(dependencies) - 1):
+            dependencies[i] = dependencies[i] + ","
+
+        raise HTTPException(
+            409,
+            {
+                "reason": [
+                    f"The tool '{tool.name}' can not be deleted. Please remove the following dependencies first:"
+                ]
+                + dependencies,
+            },
+        )
 
 
 @router.get(
