@@ -197,13 +197,3 @@ for ep in eps:
         prefix="/{project}/extensions/backups/" + ep.name,
         tags=[f"Projects - Backups - {ep.name}"],
     )
-
-# Load modelsource extension routes
-eps = metadata.entry_points()["capellacollab.extensions.modelsources"]
-for ep in eps:
-    log.info("Add routes of modelsource %s", ep.name)
-    router.include_router(
-        importlib.import_module(".routes", ep.module).router,
-        prefix="/{project}/extensions/modelsources/" + ep.name,
-        tags=[f"Projects - Modelsources - {ep.name}"],
-    )
