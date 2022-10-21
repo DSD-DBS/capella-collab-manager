@@ -83,12 +83,6 @@ export class VersionService {
     this.localStorageService.setValue('version', this.version?.git.tag);
     this.changedVersion = false;
   }
-
-  openReleaseNotes(): void {
-    this.dialog.open(ReleaseNotesComponent);
-    this.localStorageService.setValue('version', this.version?.git.tag);
-    this.changedVersion = false;
-  }
 }
 
 export interface GitVersion {
