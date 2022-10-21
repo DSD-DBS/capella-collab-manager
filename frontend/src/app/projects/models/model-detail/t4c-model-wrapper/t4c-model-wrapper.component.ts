@@ -5,14 +5,10 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { T4CRepoService } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
-import {
-  T4CModel,
-  T4cModelService,
-} from 'src/app/services/source/t4c-model.service';
-import { ProjectService } from 'src/app/services/project/project.service';
+import { map, combineLatest, switchMap, filter } from 'rxjs';
 import { ModelService } from 'src/app/services/model/model.service';
-import { map, combineLatest, switchMap, filter, tap, Observable } from 'rxjs';
+import { ProjectService } from 'src/app/services/project/project.service';
+import { T4cModelService } from 'src/app/services/source/t4c-model.service';
 
 @Component({
   selector: 'app-t4c-model-wrapper',
@@ -22,8 +18,8 @@ import { map, combineLatest, switchMap, filter, tap, Observable } from 'rxjs';
 export class T4cModelWrapperComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
-    private projectService: ProjectService,
-    private modelService: ModelService,
+    public projectService: ProjectService,
+    public modelService: ModelService,
     private t4cModelService: T4cModelService
   ) {}
 

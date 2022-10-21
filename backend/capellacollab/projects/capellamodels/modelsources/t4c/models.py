@@ -8,8 +8,7 @@ from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
 from capellacollab.settings.modelsources.t4c.repositories.models import (
-    BaseT4CRepository,
-    T4CRepositoryWithInstance,
+    T4CRepository,
 )
 
 
@@ -36,14 +35,14 @@ class SubmitT4CModel(BaseModel):
 class ResponseT4CModel(BaseModel):
     id: int
     name: str
-    repository: T4CRepositoryWithInstance
+    repository: T4CRepository
 
     class Config:
         orm_mode = True
 
 
-class T4CRepositoryWithModels(BaseT4CRepository):
-    models: list[T4CModel]
+class T4CRepositoryWithModels(T4CRepository):
+    models: list[ResponseT4CModel]
 
     class Config:
         orm_mode = True

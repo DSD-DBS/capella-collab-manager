@@ -16,6 +16,8 @@ from capellacollab.settings.modelsources.t4c.models import (
     DatabaseT4CInstance,
     PatchT4CInstance,
     T4CInstance,
+)
+from capellacollab.settings.modelsources.t4c.repositories.models import (
     T4CInstanceWithRepositories,
 )
 from capellacollab.settings.modelsources.t4c.repositories.routes import (

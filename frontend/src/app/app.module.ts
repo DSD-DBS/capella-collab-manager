@@ -57,6 +57,7 @@ import { NoticeComponent } from './general/notice/notice.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 import { MatCardOverviewLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-loader/mat-card-overview-loader.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
+import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
 import { CreateEASEBackupComponent } from './projects/models/backup-settings/create-ease-backup/create-ease-backup.component';
 import { GitBackupSettingsComponent } from './projects/models/backup-settings/ease-backup-settings.component';
 import { ViewLogsDialogComponent } from './projects/models/backup-settings/view-logs-dialog/view-logs-dialog.component';
@@ -65,12 +66,13 @@ import { CreateCoworkingMethodComponent } from './projects/models/create-coworki
 import { CreateModelBaseComponent } from './projects/models/create-model-base/create-model-base.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { InitModelComponent } from './projects/models/init-model/init-model.component';
+import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
+import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
 import { ChooseSourceComponent } from './projects/models/model-source/choose-source.component';
 import { GitModelDeletionDialogComponent } from './projects/models/model-source/git-model-settings/git-model-deletion-dialog/git-model-deletion-dialog.component';
 import { GitModelSettingsComponent } from './projects/models/model-source/git-model-settings/git-model-settings.component';
 import { T4CRepoSettingsComponent } from './projects/models/model-source/t4c-repo-settings/t4c-repo-settings.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
-import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
 import { ModelOverviewComponent } from './projects/project-detail/model-overview/model-overview.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { ProjectMetadataComponent } from './projects/project-detail/project-metadata/project-metadata.component';
@@ -108,13 +110,11 @@ import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-s
 import { SettingsComponent } from './settings/settings.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { HomeComponent } from './workspaces/home.component';
-import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
-import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
-import { EditT4cSourceComponent } from './projects/models/edit-t4c-source/edit-t4c-source.component';
 
 @NgModule({
   declarations: [
     ActiveSessionsComponent,
+    AddT4cSourceComponent,
     AlertSettingsComponent,
     AppComponent,
     AuthComponent,
@@ -163,6 +163,7 @@ import { EditT4cSourceComponent } from './projects/models/edit-t4c-source/edit-t
     SettingsComponent,
     T4CImporterSettingsComponent,
     T4CInstanceSettingsComponent,
+    T4cModelWrapperComponent,
     T4CRepoDeletionDialogComponent,
     T4CRepoSettingsComponent,
     T4CSettingsComponent,
@@ -178,9 +179,6 @@ import { EditT4cSourceComponent } from './projects/models/edit-t4c-source/edit-t
     VersionComponent,
     ViewLogsDialogComponent,
     WorkspaceComponent,
-    AddT4cSourceComponent,
-    T4cModelWrapperComponent,
-    EditT4cSourceComponent,
   ],
   imports: [
     AppRoutingModule,

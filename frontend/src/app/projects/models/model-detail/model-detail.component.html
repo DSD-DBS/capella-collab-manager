@@ -3,10 +3,78 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div *ngIf="modelService.model">
-  <a
-    *ngFor="let t4cModel of modelService.model.t4c_model"
-    [routerLink]="['t4c-model', t4cModel.id]"
-    >Test</a
-  >
+<div class="wrapper" *ngIf="projectService.project && modelService.model">
+  <h1 class="title">Git Models</h1>
+  <div class="flexbox">
+    <a [routerLink]="['git-model', 'create']">
+      <mat-card matRipple class="mat-card-overview new">
+        <div class="content">
+          Use existing repository <br />
+          <div class="icon">
+            <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
+          </div>
+        </div>
+      </mat-card>
+    </a>
+
+    <mat-card class="mat-card-overview new visually-disabled">
+      <div class="content">
+        Create repository <br />
+        <div class="icon">
+          <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
+        </div>
+      </div>
+    </mat-card>
+    <a
+      *ngFor="let gitModel of gitModels"
+      [routerLink]="['git-model', gitModel.id]"
+    >
+      <mat-card matRipple class="mat-card-overview">
+        <div class="header">Integration {{ gitModel.id }}</div>
+        <div class="content">
+          <div>Path: {{ gitModel.path }}</div>
+          <div>Revision: {{ gitModel.revision }}</div>
+          <div>Entry point: {{ gitModel.entrypoint }}</div>
+          <div>Primary: {{ gitModel.primary ? "True" : "False" }}</div>
+          <div>Username: {{ gitModel.username }}</div>
+          <div>Password set: {{ gitModel.password ? "True" : "False" }}</div>
+        </div>
+      </mat-card>
+    </a>
+  </div>
+  <h1 class="title">T4C Models</h1>
+  <div class="flexbox">
+    <a [routerLink]="['t4c-model', 'create']">
+      <mat-card matRipple class="mat-card-overview new">
+        <div class="content">
+          Use existing repository <br />
+          <div class="icon">
+            <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
+          </div>
+        </div>
+      </mat-card>
+    </a>
+
+    <mat-card class="mat-card-overview new visually-disabled">
+      <div class="content">
+        Create repository <br />
+        <div class="icon">
+          <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
+        </div>
+      </div>
+    </mat-card>
+    <a
+      *ngFor="let t4cModel of t4cModels"
+      [routerLink]="['t4c-model', t4cModel.id]"
+    >
+      <mat-card matRipple class="mat-card-overview">
+        <div class="header">Integration {{ t4cModel.id }}</div>
+        <div class="content">
+          <div>Instance: {{ t4cModel.repository.instance.name }}</div>
+          <div>Repository: {{ t4cModel.repository.name }}</div>
+          <div>Name: {{ t4cModel.name }}</div>
+        </div>
+      </mat-card>
+    </a>
+  </div>
 </div>

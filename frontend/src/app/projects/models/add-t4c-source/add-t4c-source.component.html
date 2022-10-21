@@ -71,6 +71,10 @@
         *ngIf="t4cModelService.t4cModel && !editing"
         class="flex-space-between"
       >
+        <a mat-button [routerLink]="['../..']">
+          <mat-icon class="mat-icon-position">arrow_back</mat-icon>
+          Cancel
+        </a>
         <button mat-flat-button (click)="onEditing()" color="primary">
           Edit source
         </button>

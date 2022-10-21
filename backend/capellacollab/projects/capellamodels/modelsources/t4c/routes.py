@@ -1,32 +1,33 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
 import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, NoResultFound
+from sqlalchemy.orm import Session
 
 import capellacollab.core.database as database
-import capellacollab.projects.capellamodels.modelsources.t4c.crud as database_projects
-from capellacollab.core.authentication.database import (
-    verify_admin,
-    verify_project_role,
-)
+from capellacollab.core.authentication.database import verify_admin
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.extensions.modelsources.t4c import crud
-from capellacollab.extensions.modelsources.t4c.injectables import (
-    load_project_model,
-)
-from capellacollab.extensions.modelsources.t4c.models import (
-    SubmitT4CModel,
-    T4CModel,
-    T4CRepositoryWithModels,
+from capellacollab.projects.capellamodels.injectables import (
+    get_existing_capella_model,
 )
 from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
+from capellacollab.projects.capellamodels.modelsources.t4c import crud
+from capellacollab.projects.capellamodels.modelsources.t4c.injectables import (
+    load_project_model,
+)
+from capellacollab.projects.capellamodels.modelsources.t4c.models import (
+    ResponseT4CModel,
+    SubmitT4CModel,
+    T4CRepositoryWithModels,
+)
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.settings.modelsources.t4c.injectables import load_instance
+from capellacollab.settings.modelsources.t4c.repositories.models import (
+    DatabaseT4CRepository,
+)
 from capellacollab.settings.modelsources.t4c.repositories.routes import (
     load_instance_repository,
 )
@@ -36,22 +37,23 @@ router = APIRouter()
 
 @router.get(
     "/",
-    responses=AUTHENTICATION_RESPONSES,
-    response_model=list[T4CModel],
+    response_model=list[ResponseT4CModel],
 )
 def list_t4c_models(
-    t4c_instance_id: int,
-    t4c_repository_id: int,
     db: Session = Depends(database.get_db),
     token: JWTBearer = Depends(JWTBearer()),
+    model=Depends(get_existing_capella_model),
+    repository: t.Optional[DatabaseT4CRepository] = Depends(
+        load_instance_repository
+    ),
 ):
     verify_admin(token, db)
-    instance = load_instance(t4c_instance_id, db)
-    repository = load_instance_repository(t4c_repository_id, db, instance)[1]
+    if not repository:
+        return crud.get_all_t4c_models(db, model)
     return T4CRepositoryWithModels.from_orm(repository).models
 
 
-@router.get("/{t4c_model_id}/", response_model=T4CModel)
+@router.get("/{t4c_model_id}/", response_model=ResponseT4CModel)
 def get_t4c_model(
     t4c_model_id: int,
     db: Session = Depends(database.get_db),
@@ -72,9 +74,7 @@ def create_t4c_model(
 ):
     verify_admin(token, db)
     instance = load_instance(body.t4c_instance_id, db)
-    repository = load_instance_repository(
-        body.t4c_repository_id, db, instance
-    )[1]
+    repository = load_instance_repository(body.t4c_repository_id, db, instance)
     try:
         return crud.create_t4c_model(
             db, project_model[1], repository, body.name
@@ -90,8 +90,7 @@ def create_t4c_model(
 
 @router.patch(
     "/{t4c_model_id}",
-    responses=AUTHENTICATION_RESPONSES,
-    response_model=T4CModel,
+    response_model=ResponseT4CModel,
 )
 def edit_t4c_model(
     t4c_model_id: int,
@@ -104,9 +103,7 @@ def edit_t4c_model(
 ):
     verify_admin(token, db)
     instance = load_instance(body.t4c_instance_id, db)
-    repository = load_instance_repository(
-        body.t4c_repository_id, db, instance
-    )[1]
+    repository = load_instance_repository(body.t4c_repository_id, db, instance)
     try:
         t4c_model = crud.get_t4c_model(db, t4c_model_id)
     except NoResultFound:

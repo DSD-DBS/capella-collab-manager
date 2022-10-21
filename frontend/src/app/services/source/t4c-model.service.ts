@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { T4CInstance } from '../settings/t4c-model.service';
 import { T4CRepository } from '../../settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 
 @Injectable({
@@ -22,10 +21,17 @@ export class T4cModelService {
   }
 
   urlFactory(project_slug: string, model_slug: string): string {
-    return `${environment.backend_url}/projects/extensions/modelsources/t4c/project/${project_slug}/model/${model_slug}/`;
+    return `${environment.backend_url}/projects/${project_slug}/models/${model_slug}/t4c/`;
   }
 
   listT4CModels(
+    project_slug: string,
+    model_slug: string
+  ): Observable<T4CModel[]> {
+    return this.http.get<T4CModel[]>(this.urlFactory(project_slug, model_slug));
+  }
+
+  listT4CModelsOfRepository(
     project_slug: string,
     model_slug: string,
     t4c_instance_id: number,

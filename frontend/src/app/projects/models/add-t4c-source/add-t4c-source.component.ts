@@ -10,35 +10,23 @@ import {
   FormGroup,
   ValidationErrors,
   Validators,
-  FormControlStatus,
 } from '@angular/forms';
+import { BehaviorSubject, filter, take, delay } from 'rxjs';
+import { ModelService } from 'src/app/services/model/model.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 import {
   T4CInstanceService,
   T4CInstance,
-  T4CInstanceWithRepository,
 } from 'src/app/services/settings/t4c-model.service';
-import {
-  T4CRepoService,
-  T4CRepository,
-} from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
-import { ProjectService } from 'src/app/services/project/project.service';
-import { Model, ModelService } from 'src/app/services/model/model.service';
-import {
-  BehaviorSubject,
-  filter,
-  combineLatest,
-  switchMap,
-  tap,
-  map,
-  Observable,
-  take,
-  delay,
-} from 'rxjs';
 import {
   SubmitT4CModel,
   T4CModel,
   T4cModelService,
-} from '../../../services/source/t4c-model.service';
+} from 'src/app/services/source/t4c-model.service';
+import {
+  T4CRepoService,
+  T4CRepository,
+} from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 
 @Component({
   selector: 'app-add-t4c-source',
@@ -134,9 +122,8 @@ export class AddT4cSourceComponent implements OnInit {
       this._instances.next(instances);
     });
 
-    this.form.controls.t4c_instance_id.valueChanges
-      .pipe(tap((value) => console.log('new value', value)))
-      .subscribe((t4c_instance_id) => {
+    this.form.controls.t4c_instance_id.valueChanges.subscribe(
+      (t4c_instance_id) => {
         this.form.controls.t4c_repository_id.reset();
         if (this.form.controls.t4c_instance_id.valid) {
           this._repositories.next(undefined);
@@ -150,7 +137,8 @@ export class AddT4cSourceComponent implements OnInit {
           this._repositories.next(undefined);
           this.form.controls.t4c_repository_id.disable();
         }
-      });
+      }
+    );
 
     this.form.controls.t4c_repository_id.valueChanges.subscribe(
       (t4c_repository_id) => {
@@ -158,7 +146,7 @@ export class AddT4cSourceComponent implements OnInit {
         if (this.form.controls.t4c_repository_id.valid) {
           this._models.next(undefined);
           this.t4cModelService
-            .listT4CModels(
+            .listT4CModelsOfRepository(
               this.projectService.project!.slug,
               this.modelService.model!.slug,
               this.form.value.t4c_instance_id!,
@@ -186,22 +174,21 @@ export class AddT4cSourceComponent implements OnInit {
   resetToInstance() {
     this.editing = false;
     this.t4cModelService._t4cModel
-      .pipe(filter(Boolean), tap(console.log), take(1))
+      .pipe(filter(Boolean), take(1))
       .subscribe((model: T4CModel) => {
-        console.log('in reset instance', model.repository.instance.id);
         this.form.controls.t4c_instance_id.patchValue(
           model.repository.instance.id
         );
 
         this._repositories
           .pipe(filter(Boolean), delay(50), take(1))
-          .subscribe((repositories) => {
+          .subscribe(() => {
             this.form.controls.t4c_repository_id.patchValue(
               model.repository.id
             );
             this._models
               .pipe(filter(Boolean), delay(50), take(1))
-              .subscribe((models) => {
+              .subscribe(() => {
                 this.form.controls.name.patchValue(model.name);
                 this.form.disable({ emitEvent: false });
               });

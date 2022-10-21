@@ -33,10 +33,19 @@ router = APIRouter()
 
 
 def load_instance_repository(
-    t4c_repository_id: int,
+    t4c_repository_id: t.Optional[int] = None,
     db: Session = Depends(get_db),
-    instance: DatabaseT4CInstance = Depends(load_instance),
-) -> tuple[DatabaseT4CInstance, DatabaseT4CRepository]:
+    instance: t.Optional[DatabaseT4CInstance] = Depends(load_instance),
+) -> t.Optional[DatabaseT4CRepository]:
+    if not t4c_repository_id:
+        return None
+    if not instance:
+        raise HTTPException(
+            400,
+            detail={
+                "reason": "Parameters contain a repository id but no instance id."
+            },
+        )
     try:
         repository = crud.get_t4c_repository(t4c_repository_id, db)
     except NoResultFound as e:

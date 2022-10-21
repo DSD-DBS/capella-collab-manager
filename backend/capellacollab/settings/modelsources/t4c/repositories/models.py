@@ -13,7 +13,6 @@ from sqlalchemy.orm import relationship
 from capellacollab.core.database import Base
 from capellacollab.core.models import ResponseModel
 from capellacollab.settings.modelsources.t4c.models import T4CInstance
-from capellacollab.extensions.modelsources.t4c.models import T4CModel
 
 
 class DatabaseT4CRepository(Base):

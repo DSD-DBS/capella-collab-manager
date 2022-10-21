@@ -11,7 +11,7 @@ import {
   ToolType,
   ToolVersion,
 } from 'src/app/settings/core/tools-settings/tool.service';
-import { T4CModel } from 'src/app/source/t4c-model.service';
+import { T4CModel } from 'src/app/services/source/t4c-model.service';
 import { environment } from 'src/environments/environment';
 
 export interface NewModel {

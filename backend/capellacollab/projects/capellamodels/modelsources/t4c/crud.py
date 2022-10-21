@@ -5,7 +5,8 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from capellacollab.extensions.modelsources.t4c.models import (
+from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
+from capellacollab.projects.capellamodels.modelsources.t4c.models import (
     DatabaseT4CModel,
     T4CRepositoryWithModels,
 )
@@ -29,10 +30,12 @@ def get_t4c_model_by_id(db: Session, id: int, model_id: int):
     )
 
 
-def get_all_t4c_models(db: Session, model_id: int):
+def get_all_t4c_models(db: Session, model: DatabaseCapellaModel):
     return (
-        db.query(DatabaseT4CModel)
-        .filter(DatabaseT4CModel.model_id == model_id)
+        db.execute(
+            select(DatabaseT4CModel).where(DatabaseT4CModel.model == model)
+        )
+        .scalars()
         .all()
     )
 
