@@ -49,15 +49,6 @@ def make_git_model_primary(
     return patch_git_model
 
 
-def delete_model_from_repository(
-    db: Session, capellamodel_id: int, model_id: int
-):
-    db.query(DB_GitModel).filter(DB_GitModel.id == model_id).filter(
-        DB_GitModel.model_id == capellamodel_id
-    ).delete()
-    db.commit()
-
-
 def add_gitmodel_to_capellamodel(
     db: Session,
     capella_model: DatabaseCapellaModel,
