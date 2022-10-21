@@ -78,11 +78,7 @@ class DB_GitModel(Base):
     ):
         return cls(
             name="",
-            path=new_model.path,
-            entrypoint=new_model.entrypoint,
-            revision=new_model.revision,
             primary=primary,
             model_id=model_id,
-            username=new_model.username,
-            password=new_model.password,
+            **new_model.dict(),
         )
