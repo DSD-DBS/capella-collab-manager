@@ -134,10 +134,10 @@ export class AddT4cSourceComponent implements OnInit {
       this._instances.next(instances);
     });
 
-    this.form.controls.t4c_instance_id.valueChanges.subscribe(
-      (t4c_instance_id) => {
+    this.form.controls.t4c_instance_id.valueChanges
+      .pipe(tap((value) => console.log('new value', value)))
+      .subscribe((t4c_instance_id) => {
         this.form.controls.t4c_repository_id.reset();
-        console.log(this.form.controls.t4c_instance_id.valid);
         if (this.form.controls.t4c_instance_id.valid) {
           this._repositories.next(undefined);
           this.t4cRepositoryService
@@ -150,8 +150,7 @@ export class AddT4cSourceComponent implements OnInit {
           this._repositories.next(undefined);
           this.form.controls.t4c_repository_id.disable();
         }
-      }
-    );
+      });
 
     this.form.controls.t4c_repository_id.valueChanges.subscribe(
       (t4c_repository_id) => {
@@ -186,22 +185,28 @@ export class AddT4cSourceComponent implements OnInit {
 
   resetToInstance() {
     this.editing = false;
-    this.t4cModelService._t4cModel.pipe(filter(Boolean)).subscribe((model) => {
-      this.form.controls.t4c_instance_id.patchValue(
-        model.repository.instance.id
-      );
-      this._repositories
-        .pipe(filter(Boolean), delay(50), take(1))
-        .subscribe((repositories) => {
-          this.form.controls.t4c_repository_id.patchValue(model.repository.id);
-          this._models
-            .pipe(filter(Boolean), delay(50), take(1))
-            .subscribe((models) => {
-              this.form.controls.name.patchValue(model.name);
-              this.form.disable({ emitEvent: false });
-            });
-        });
-    });
+    this.t4cModelService._t4cModel
+      .pipe(filter(Boolean), tap(console.log), take(1))
+      .subscribe((model: T4CModel) => {
+        console.log('in reset instance', model.repository.instance.id);
+        this.form.controls.t4c_instance_id.patchValue(
+          model.repository.instance.id
+        );
+
+        this._repositories
+          .pipe(filter(Boolean), delay(50), take(1))
+          .subscribe((repositories) => {
+            this.form.controls.t4c_repository_id.patchValue(
+              model.repository.id
+            );
+            this._models
+              .pipe(filter(Boolean), delay(50), take(1))
+              .subscribe((models) => {
+                this.form.controls.name.patchValue(model.name);
+                this.form.disable({ emitEvent: false });
+              });
+          });
+      });
   }
 
   onSubmit() {

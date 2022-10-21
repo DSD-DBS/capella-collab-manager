@@ -42,9 +42,9 @@ export class T4cModelService {
     model_slug: string,
     id: number
   ): Observable<T4CModel> {
-    return this.http
-      .get<T4CModel>(this.urlFactory(project_slug, model_slug) + id + '/')
-      .pipe(tap(console.log));
+    return this.http.get<T4CModel>(
+      this.urlFactory(project_slug, model_slug) + id + '/'
+    );
   }
 
   createT4CModel(
@@ -65,18 +65,7 @@ export class T4cModelService {
     body: SubmitT4CModel
   ): Observable<T4CModel> {
     return this.http.patch<T4CModel>(
-      this.urlFactory(project_slug, model_slug),
-      body
-    );
-  }
-
-  editT4CModel(
-    project_slug: string,
-    model_slug: string,
-    body: SubmitT4CModel
-  ): Observable<null> {
-    return this.http.patch<null>(
-      this.urlFactory(project_slug, model_slug),
+      this.urlFactory(project_slug, model_slug) + t4c_model_id,
       body
     );
   }

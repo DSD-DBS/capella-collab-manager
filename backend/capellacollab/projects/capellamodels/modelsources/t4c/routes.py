@@ -88,7 +88,11 @@ def create_t4c_model(
         )
 
 
-@router.patch("/{t4c_model_id}", responses=AUTHENTICATION_RESPONSES)
+@router.patch(
+    "/{t4c_model_id}",
+    responses=AUTHENTICATION_RESPONSES,
+    response_model=T4CModel,
+)
 def edit_t4c_model(
     t4c_model_id: int,
     body: SubmitT4CModel,

@@ -82,7 +82,12 @@
         <button mat-flat-button (click)="resetToInstance()" color="warn">
           Cancel editing
         </button>
-        <button mat-flat-button (click)="onSubmit()" color="primary">
+        <button
+          mat-flat-button
+          [disabled]="!form.valid"
+          type="submit"
+          color="primary"
+        >
           Save source
         </button>
       </div>
