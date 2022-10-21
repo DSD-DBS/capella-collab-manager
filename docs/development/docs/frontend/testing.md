@@ -5,7 +5,7 @@
 
 # Frontend Testing
 
-## Integration testing
+## Unit & Integration testing
 
 ### Technologies
 
