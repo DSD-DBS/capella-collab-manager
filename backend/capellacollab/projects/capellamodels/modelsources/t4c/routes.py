@@ -104,9 +104,7 @@ def edit_t4c_model(
         body.t4c_repository_id, db, instance
     )[1]
     try:
-        t4c_model = crud.get_t4c_model(
-            db, project_model[1], repository, t4c_model_id
-        )
+        t4c_model = crud.get_t4c_model(db, t4c_model_id)
     except NoResultFound:
         raise HTTPException(
             404,
@@ -114,15 +112,14 @@ def edit_t4c_model(
                 "reason": f"The model with the id {t4c_model_id} does not exist."
             },
         )
-    for key in body.dict():
-        if value := body.__getattribute__(key):
-            t4c_model.__setattr__(key, value)
-    try:
-        return crud.patch_t4c_model(db, t4c_model)
-    except IntegrityError:
+    if t4c_model.model != project_model[1]:
         raise HTTPException(
             409,
             {
-                "reason": f"A model named {body.name} already exists in the repository {repository.name}."
+                "reason": f"The t4c model {t4c_model.name} is not part of the model {project_model[1].name}."
             },
         )
+    for key in body.dict():
+        if value := body.__getattribute__(key):
+            t4c_model.__setattr__(key, value)
+    return crud.patch_t4c_model(db, t4c_model)
