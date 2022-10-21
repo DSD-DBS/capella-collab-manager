@@ -92,7 +92,7 @@ const routes: Routes = [
                 children: [
                   {
                     path: '',
-                    component: EditT4cSourceComponent,
+                    component: AddT4cSourceComponent,
                   },
                 ],
               },

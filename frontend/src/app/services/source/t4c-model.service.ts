@@ -58,6 +58,18 @@ export class T4cModelService {
     );
   }
 
+  patchT4CModel(
+    project_slug: string,
+    model_slug: string,
+    t4c_model_id: number,
+    body: SubmitT4CModel
+  ): Observable<T4CModel> {
+    return this.http.patch<T4CModel>(
+      this.urlFactory(project_slug, model_slug),
+      body
+    );
+  }
+
   editT4CModel(
     project_slug: string,
     model_slug: string,

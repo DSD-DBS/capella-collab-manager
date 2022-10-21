@@ -32,6 +32,7 @@ import {
   map,
   Observable,
   take,
+  delay,
 } from 'rxjs';
 import {
   SubmitT4CModel,
@@ -46,6 +47,8 @@ import {
 })
 export class AddT4cSourceComponent implements OnInit {
   @Output() create = new EventEmitter<boolean>();
+
+  editing = false;
 
   private _instances = new BehaviorSubject<T4CInstance[] | undefined>(
     undefined
@@ -123,7 +126,7 @@ export class AddT4cSourceComponent implements OnInit {
     public modelService: ModelService,
     public t4cInstanceService: T4CInstanceService,
     public t4cRepositoryService: T4CRepoService,
-    private t4cModelService: T4cModelService
+    public t4cModelService: T4cModelService
   ) {}
 
   ngOnInit(): void {
@@ -134,6 +137,7 @@ export class AddT4cSourceComponent implements OnInit {
     this.form.controls.t4c_instance_id.valueChanges.subscribe(
       (t4c_instance_id) => {
         this.form.controls.t4c_repository_id.reset();
+        console.log(this.form.controls.t4c_instance_id.valid);
         if (this.form.controls.t4c_instance_id.valid) {
           this._repositories.next(undefined);
           this.t4cRepositoryService
@@ -143,7 +147,7 @@ export class AddT4cSourceComponent implements OnInit {
               this.form.controls.t4c_repository_id.enable();
             });
         } else {
-          this._repositories.next([]);
+          this._repositories.next(undefined);
           this.form.controls.t4c_repository_id.disable();
         }
       }
@@ -172,18 +176,32 @@ export class AddT4cSourceComponent implements OnInit {
       }
     );
 
-    this.t4cModelService._t4cModel.pipe(filter(Boolean)).subscribe((model) => {
-      this.form.disable();
-      this.form.patchValue({
-        t4c_instance_id: model.repository.instance.id,
-        t4c_repository_id: model.repository.id,
-        name: model.name,
-      });
-    });
+    this.resetToInstance();
   }
 
-  get currentRepo(): T4CRepository | undefined {
-    return this.repository;
+  onEditing() {
+    this.editing = true;
+    this.form.enable({ emitEvent: false });
+  }
+
+  resetToInstance() {
+    this.editing = false;
+    this.t4cModelService._t4cModel.pipe(filter(Boolean)).subscribe((model) => {
+      this.form.controls.t4c_instance_id.patchValue(
+        model.repository.instance.id
+      );
+      this._repositories
+        .pipe(filter(Boolean), delay(50), take(1))
+        .subscribe((repositories) => {
+          this.form.controls.t4c_repository_id.patchValue(model.repository.id);
+          this._models
+            .pipe(filter(Boolean), delay(50), take(1))
+            .subscribe((models) => {
+              this.form.controls.name.patchValue(model.name);
+              this.form.disable({ emitEvent: false });
+            });
+        });
+    });
   }
 
   onSubmit() {
@@ -192,15 +210,29 @@ export class AddT4cSourceComponent implements OnInit {
       this.projectService.project &&
       this.modelService.model
     ) {
-      this.t4cModelService
-        .createT4CModel(
-          this.projectService.project.slug,
-          this.modelService.model.slug,
-          this.form.value as SubmitT4CModel
-        )
-        .subscribe((_) => {
-          this.create.emit(true);
-        });
+      if (this.t4cModelService.t4cModel) {
+        this.t4cModelService
+          .patchT4CModel(
+            this.projectService.project.slug,
+            this.modelService.model.slug,
+            this.t4cModelService.t4cModel.id,
+            this.form.value as SubmitT4CModel
+          )
+          .subscribe((model) => {
+            this.t4cModelService._t4cModel.next(model);
+            this.resetToInstance();
+          });
+      } else {
+        this.t4cModelService
+          .createT4CModel(
+            this.projectService.project.slug,
+            this.modelService.model.slug,
+            this.form.value as SubmitT4CModel
+          )
+          .subscribe((_) => {
+            this.create.emit(true);
+          });
+      }
     }
   }
 }

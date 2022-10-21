@@ -51,21 +51,41 @@
           >
         </mat-form-field>
         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-          <mat-option *ngIf="currentRepo" [value]="currentRepo.name">{{
-            currentRepo.name
+          <mat-option *ngIf="repository" [value]="repository.name">{{
+            repository.name
           }}</mat-option>
         </mat-autocomplete>
       </fieldset>
-      <button mat-button (click)="create.emit(false)">Choose source</button>
-      <div class="field-separator"></div>
-      <button
-        mat-raised-button
-        color="primary"
-        [disabled]="!form.valid"
-        type="submit"
+      <div *ngIf="!t4cModelService.t4cModel" class="flex-space-between">
+        <button mat-button (click)="create.emit(false)">Choose source</button>
+        <button
+          mat-raised-button
+          color="primary"
+          [disabled]="!form.valid"
+          type="submit"
+        >
+          Add source
+        </button>
+      </div>
+      <div
+        *ngIf="t4cModelService.t4cModel && !editing"
+        class="flex-space-between"
       >
-        Add source
-      </button>
+        <button mat-flat-button (click)="onEditing()" color="primary">
+          Edit source
+        </button>
+      </div>
+      <div
+        *ngIf="t4cModelService.t4cModel && editing"
+        class="flex-space-between"
+      >
+        <button mat-flat-button (click)="resetToInstance()" color="warn">
+          Cancel editing
+        </button>
+        <button mat-flat-button (click)="onSubmit()" color="primary">
+          Save source
+        </button>
+      </div>
     </form>
   </mat-card>
 </div>
