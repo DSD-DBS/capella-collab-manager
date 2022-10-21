@@ -12,7 +12,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import {
@@ -103,7 +102,6 @@ describe('CreateProjectComponent', () => {
     }).compileComponents();
     fixture = TestBed.createComponent(CreateProjectComponent);
     component = fixture.componentInstance;
-    router = TestBed.inject(Router);
 
     fixture.detectChanges();
   });
