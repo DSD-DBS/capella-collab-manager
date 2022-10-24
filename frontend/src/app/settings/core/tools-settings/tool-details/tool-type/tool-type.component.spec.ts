@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ToolTypeComponent } from './tool-type.component';
 
-describe('ToolTypeComponent', () => {
+xdescribe('ToolTypeComponent', () => {
   let component: ToolTypeComponent;
   let fixture: ComponentFixture<ToolTypeComponent>;
 
