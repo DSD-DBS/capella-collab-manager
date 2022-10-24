@@ -45,6 +45,7 @@ class Version(Base):
 
 class Type(Base):
     __tablename__ = "types"
+    __table_args__ = (UniqueConstraint("tool_id", "name"),)
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
