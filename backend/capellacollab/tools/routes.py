@@ -4,7 +4,6 @@
 
 import sqlalchemy.exc
 from fastapi import APIRouter, Depends, HTTPException
-from requests import Session
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.capellamodels.crud as projects_models_crud
@@ -22,58 +21,13 @@ from capellacollab.tools.models import (
     ToolDockerimage,
     ToolTypeBase,
     ToolVersionBase,
-    Type,
     UpdateToolVersion,
-    Version,
 )
 from capellacollab.users.models import Role
 
-from . import crud
+from . import crud, injectables
 
 router = APIRouter()
-
-
-def get_existing_tool(tool_id: int, db: Session = Depends(get_db)) -> Tool:
-    try:
-        return crud.get_tool_by_id(id_=tool_id, db=db)
-    except sqlalchemy.exc.NoResultFound:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The tool with the ID {tool_id} was not found.",
-                "technical": f"Database returned 'None' when searching for the tool with id {tool_id}.",
-            },
-        )
-
-
-def get_exisiting_tool_version(
-    tool_id: int, version_id: int, db: Session = Depends(get_db)
-) -> Version:
-    try:
-        return crud.get_version_for_tool(tool_id, version_id, db)
-    except sqlalchemy.exc.NoResultFound:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The version with tool_id {tool_id} and version_id {version_id} was not found.",
-                "technical": f"Database returned 'None' when searching for the version with tool_id {tool_id} and version_id {version_id}.",
-            },
-        )
-
-
-def get_exisiting_tool_type(
-    tool_id: int, type_id: int, db: Session = Depends(get_db)
-) -> Type:
-    try:
-        return crud.get_type_for_tool(tool_id, type_id, db)
-    except sqlalchemy.exc.NoResultFound:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The version with tool_id {tool_id} and type_id {type_id} was not found.",
-                "technical": f"Database returned 'None' when searching for the version with tool_id {tool_id} and type_id {type_id}.",
-            },
-        )
 
 
 @router.get(
@@ -89,7 +43,7 @@ def get_tools(db: Session = Depends(get_db)):
     "/{tool_id}",
     dependencies=[Depends(RoleVerification(required_role=Role.USER))],
 )
-def get_tool_by_id(tool=Depends(get_existing_tool)):
+def get_tool_by_id(tool=Depends(injectables.get_existing_tool)):
     return tool
 
 
@@ -118,7 +72,8 @@ def update_tool(tool_id: int, body: CreateTool, db: Session = Depends(get_db)):
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def delete_tool(
-    tool: Tool = Depends(get_existing_tool), db: Session = Depends(get_db)
+    tool: Tool = Depends(injectables.get_existing_tool),
+    db: Session = Depends(get_db),
 ):
     if tool.id == 1:
         raise HTTPException(
@@ -169,7 +124,7 @@ def get_tool_versions(tool_id: int, db: Session = Depends(get_db)):
 )
 def create_tool_version(
     body: CreateToolVersion,
-    tool: Tool = Depends(get_existing_tool),
+    tool: Tool = Depends(injectables.get_existing_tool),
     db: Session = Depends(get_db),
 ):
     return crud.create_version(db, tool.id, body.name, False, False)
@@ -182,7 +137,7 @@ def create_tool_version(
 )
 def patch_tool_version(
     body: UpdateToolVersion,
-    version=Depends(get_exisiting_tool_version),
+    version=Depends(injectables.get_exisiting_tool_version),
     db: Session = Depends(get_db),
 ):
     for key, value in body.dict().items():
@@ -198,7 +153,8 @@ def patch_tool_version(
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def delete_tool_version(
-    version=Depends(get_exisiting_tool_version), db: Session = Depends(get_db)
+    version=Depends(injectables.get_exisiting_tool_version),
+    db: Session = Depends(get_db),
 ):
     try:
         return crud.delete_tool_version(version, db)
@@ -262,7 +218,8 @@ def create_tool_type(
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def delete_tool_type(
-    type=Depends(get_exisiting_tool_type), db: Session = Depends(get_db)
+    type=Depends(injectables.get_exisiting_tool_type),
+    db: Session = Depends(get_db),
 ):
     try:
         return crud.delete_tool_type(type, db)
@@ -296,7 +253,7 @@ def delete_tool_type(
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def get_dockerimages(
-    tool: Tool = Depends(get_existing_tool),
+    tool: Tool = Depends(injectables.get_existing_tool),
 ):
     return ToolDockerimage(
         persistent=tool.docker_image_template, readonly="FIXME"
@@ -310,7 +267,7 @@ def get_dockerimages(
 )
 def update_dockerimages(
     body: PatchToolDockerimage,
-    tool: Tool = Depends(get_existing_tool),
+    tool: Tool = Depends(injectables.get_existing_tool),
     db: Session = Depends(get_db),
 ):
     return crud.update_tool(db, tool, body)
