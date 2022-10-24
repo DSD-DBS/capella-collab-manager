@@ -25,8 +25,8 @@ export class SessionService {
     version_id: number
   ): Observable<Session> {
     return this.http.post<Session>(`${this.BACKEND_URL_PREFIX}readonly`, {
-      project_slug,
-      version_id,
+      project_slug: project_slug,
+      tool_version: version_id,
     });
   }
 
