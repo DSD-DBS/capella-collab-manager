@@ -24,7 +24,7 @@ def get_tool_by_id(id_: int, db: Session) -> Tool:
     return db.execute(select(Tool).where(Tool.id == id_)).scalar_one()
 
 
-def create_tool(db: Session, tool: Tool):
+def create_tool(db: Session, tool: Tool) -> Tool:
     db.add(tool)
     db.commit()
     return tool
@@ -34,7 +34,7 @@ def update_tool(
     db: Session,
     tool: Tool,
     patch_tool: t.Union[CreateTool, PatchToolDockerimage],
-):
+) -> Tool:
     if isinstance(patch_tool, CreateTool):
         tool.name = patch_tool.name
     else:
@@ -46,7 +46,7 @@ def update_tool(
     return tool
 
 
-def delete_tool(db: Session, tool: Tool):
+def delete_tool(db: Session, tool: Tool) -> None:
     db.delete(tool)
     db.commit()
 
@@ -55,7 +55,9 @@ def get_versions(db: Session) -> t.List[Version]:
     return db.query(Version).all()
 
 
-def get_version_for_tool(tool_id: int, version_id: int, db: Session):
+def get_version_for_tool(
+    tool_id: int, version_id: int, db: Session
+) -> Version:
     return db.execute(
         select(Version)
         .where(Version.id == version_id)
@@ -67,12 +69,12 @@ def get_version_by_id(id_: int, db: Session) -> Version:
     return db.execute(select(Version).where(Version.id == id_)).scalar_one()
 
 
-def update_version(version: Version, db: Session):
+def update_version(version: Version, db: Session) -> Version:
     db.commit()
     return version
 
 
-def delete_tool_version(version: Version, db: Session):
+def delete_tool_version(version: Version, db: Session) -> None:
     db.delete(version)
     db.commit()
 
@@ -81,7 +83,7 @@ def get_tool_versions(db: Session, tool_id: int) -> t.List[Version]:
     return db.query(Version).filter(Version.tool_id == tool_id).all()
 
 
-def get_type_for_tool(tool_id: int, type_id: int, db: Session):
+def get_type_for_tool(tool_id: int, type_id: int, db: Session) -> Type:
     return db.execute(
         select(Type).where(Type.id == type_id).where(Type.tool_id == tool_id)
     ).scalar_one()
@@ -93,7 +95,7 @@ def create_version(
     name: str,
     is_recommended: bool = False,
     is_deprecated: bool = False,
-):
+) -> Version:
     version = Version(
         name=name,
         is_recommended=is_recommended,
@@ -117,12 +119,12 @@ def get_tool_types(db: Session, tool_id: int) -> t.List[Type]:
     return db.query(Type).filter(Type.tool_id == tool_id).all()
 
 
-def delete_tool_type(type: Type, db: Session):
+def delete_tool_type(type: Type, db: Session) -> None:
     db.delete(type)
     db.commit()
 
 
-def create_type(db: Session, tool_id: int, name: str):
+def create_type(db: Session, tool_id: int, name: str) -> Type:
     type = Type(
         name=name,
         tool_id=tool_id,
@@ -132,6 +134,6 @@ def create_type(db: Session, tool_id: int, name: str):
     return type
 
 
-def get_image_for_tool_version(db: Session, version_id: int):
+def get_image_for_tool_version(db: Session, version_id: int) -> str:
     version = get_version_by_id(version_id, db)
     return version.tool.docker_image_template.replace("$version", version.name)
