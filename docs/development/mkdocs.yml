@@ -7,7 +7,6 @@ theme:
   features:
     - content.code.annotate
 
-
 nav:
   - Home: index.md
   - Backend:
@@ -16,6 +15,7 @@ nav:
       - Exception handling: backend/exception.md
   - Frontend:
       - Routes: frontend/routes.md
+      - Testing: frontend/testing.md
 markdown_extensions:
   - meta
   - admonition
@@ -30,5 +30,7 @@ markdown_extensions:
 
 extra:
   generator: false
+
+dev_addr: 127.0.0.1:8081
 
 copyright: Copyright &copy; 2022 DB Netz AG

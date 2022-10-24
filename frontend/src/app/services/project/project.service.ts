@@ -28,15 +28,13 @@ export class ProjectService {
   constructor(private http: HttpClient) {}
 
   getProjectBySlug(slug: string): Observable<Project> {
-    return this.http.get<Project>(this.base_url + slug, {
-      params: { slug },
-    });
+    return this.http.get<Project>(this.base_url + slug);
   }
 
   list(): Observable<Project[]> {
     return this.http
       .get<Project[]>(this.base_url)
-      .pipe(tap((projecs: Project[]) => this._projects.next(projecs)));
+      .pipe(tap((projects: Project[]) => this._projects.next(projects)));
   }
 
   getProject(name: string): Observable<Project> {

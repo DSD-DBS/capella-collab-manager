@@ -65,7 +65,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
         .createProject(
           {
             name: this.form.value.name!,
-            description: this.form.value.name!,
+            description: this.form.value.description!,
           },
           true
         )

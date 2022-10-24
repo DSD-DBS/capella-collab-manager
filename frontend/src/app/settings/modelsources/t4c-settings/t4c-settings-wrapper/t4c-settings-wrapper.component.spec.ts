@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { T4CSettingsWrapperComponent } from './t4c-settings-wrapper.component';
 
-describe('T4cSettingsWrapperComponent', () => {
+xdescribe('T4cSettingsWrapperComponent', () => {
   let component: T4CSettingsWrapperComponent;
   let fixture: ComponentFixture<T4CSettingsWrapperComponent>;
 

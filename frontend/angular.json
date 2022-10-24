@@ -100,6 +100,9 @@
             },
             "development": {
               "browserTarget": "t4cclient:build:development"
+            },
+            "playwright": {
+              "browserTarget": "t4cclient:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -126,7 +129,14 @@
             ],
             "scripts": [
               "node_modules/marked/marked.min.js"
-            ]
+            ],
+            "fileReplacements": [
+              {
+                "replace": "src/environments/environment.ts",
+                "with": "src/environments/environment.dev.ts"
+              }
+            ],
+            "codeCoverage": true
           }
         },
         "lint": {

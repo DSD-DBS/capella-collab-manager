@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RDPComponent } from './rdp.component';
 
-describe('RDPComponent', () => {
+xdescribe('RDPComponent', () => {
   let component: RDPComponent;
   let fixture: ComponentFixture<RDPComponent>;
 

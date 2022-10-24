@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WorkspaceComponent } from './workspace.component';
 
-describe('WorkspaceComponent', () => {
+xdescribe('WorkspaceComponent', () => {
   let component: WorkspaceComponent;
   let fixture: ComponentFixture<WorkspaceComponent>;
 

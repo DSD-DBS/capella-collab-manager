@@ -26,5 +26,31 @@ jobs:
         run: |
           pip install "./backend[dev]"
       - name: Run pytest
+        working-directory: backend
         run: |
-          cd backend && pytest
+          pytest
+  frontend:
+    runs-on: ubuntu-latest
+    name: Run frontend karma tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Fetch version
+        working-directory: frontend
+        run: |
+          node fetch-version.ts
+      - name: Install dependencies
+        working-directory: frontend
+        run: |
+          npm i -g @angular/cli
+          npm ci
+          export CHROME_BIN=$(which chromium)
+      - name: Run tests
+        working-directory: frontend
+        run: |
+          ng test --watch=false --browsers=ChromeHeadless

@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ModelOverviewComponent } from './model-overview.component';
 
-describe('ModelOverviewComponent', () => {
+xdescribe('ModelOverviewComponent', () => {
   let component: ModelOverviewComponent;
   let fixture: ComponentFixture<ModelOverviewComponent>;
 
