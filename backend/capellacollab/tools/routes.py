@@ -179,25 +179,35 @@ def delete_tool_version(
         return crud.delete_tool_version(version, db)
     except sqlalchemy.exc.IntegrityError:
         db.rollback()
+        find_tool_version_dependencies(db, version)
 
-        dependencies = []
-        # Search for occurrences in T4C Instances
-        for instance in settings_t4c_crud.get_t4c_instances_by_version(
-            version.id, db
-        ):
-            dependencies.append(f"TeamForCapella instance '{instance.name}'")
 
-        # Search for occurrences in project-models
-        for model in projects_models_crud.get_models_by_version(
-            version.id, db
-        ):
-            dependencies.append(
-                f"Model '{model.name}' in project '{model.project.name}'"
-            )
+def find_tool_version_dependencies(db: Session, version: Version) -> None:
+    """Search for tool version occurrences in project-models and T4C instances
 
-        for i in range(len(dependencies) - 1):
-            dependencies[i] = dependencies[i] + ","
+    Raises
+    ------
+    HTTPException
+        If there is a tool version dependency left
+    """
 
+    dependencies = []
+    # Search for occurrences in T4C Instances
+    for instance in settings_t4c_crud.get_t4c_instances_by_version(
+        version.id, db
+    ):
+        dependencies.append(f"TeamForCapella instance '{instance.name}'")
+
+    # Search for occurrences in project-models
+    for model in projects_models_crud.get_models_by_version(version.id, db):
+        dependencies.append(
+            f"Model '{model.name}' in project '{model.project.name}'"
+        )
+
+    for i in range(len(dependencies) - 1):
+        dependencies[i] = dependencies[i] + ","
+
+    if dependencies:
         raise HTTPException(
             409,
             {
@@ -244,17 +254,29 @@ def delete_tool_type(
         return crud.delete_tool_type(type, db)
     except sqlalchemy.exc.IntegrityError:
         db.rollback()
+        find_tool_type_dependencies(db, type)
 
-        dependencies = []
-        # Search for occurrences in project-models
-        for model in projects_models_crud.get_models_by_type(type.id, db):
-            dependencies.append(
-                f"Model '{model.name}' in project '{model.project.name}'"
-            )
 
-        for i in range(len(dependencies) - 1):
-            dependencies[i] = dependencies[i] + ","
+def find_tool_type_dependencies(db: Session, type: Type) -> None:
+    """Search for tool type occurrences in project-models
 
+    Raises
+    ------
+    HTTPException
+        If there is a tool type dependency left
+    """
+
+    dependencies = []
+    # Search for occurrences in project-models
+    for model in projects_models_crud.get_models_by_type(type.id, db):
+        dependencies.append(
+            f"Model '{model.name}' in project '{model.project.name}'"
+        )
+
+    for i in range(len(dependencies) - 1):
+        dependencies[i] = dependencies[i] + ","
+
+    if dependencies:
         raise HTTPException(
             409,
             {
