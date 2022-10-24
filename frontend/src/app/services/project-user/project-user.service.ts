@@ -20,60 +20,60 @@ export class ProjectUserService {
   ROLES = { user: 'User', manager: 'Manager' };
   ADVANCED_ROLES = { administrator: 'Administrator', ...this.ROLES };
 
-  getRepoUsers(repository: string): Observable<ProjectUser[]> {
+  getProjectUsers(project_slug: string): Observable<ProjectUser[]> {
     return this.http.get<ProjectUser[]>(
-      this.BACKEND_URL_PREFIX + repository + '/users'
+      this.BACKEND_URL_PREFIX + project_slug + '/users'
     );
   }
 
-  addUserToRepo(
-    repository: string,
+  addUserToProject(
+    project_slug: string,
     username: string,
     role: 'user' | 'manager',
     permission: string
   ): Observable<ProjectUser> {
     return this.http.post<ProjectUser>(
-      this.BACKEND_URL_PREFIX + repository + '/users',
+      this.BACKEND_URL_PREFIX + project_slug + '/users',
       { username, role, permission }
     );
   }
 
-  changeRoleOfRepoUser(
-    repository: string,
+  changeRoleOfProjectUser(
+    project_slug: string,
     userID: number,
     role: 'user' | 'manager'
   ): Observable<any> {
     return this.http.patch<any>(
-      this.BACKEND_URL_PREFIX + repository + '/users/' + userID,
+      this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
       { role }
     );
   }
 
   updatePasswordOfUser(
-    repository: string,
+    project_slug: string,
     userID: number,
     password: string
   ): Observable<void> {
     return this.http.patch<any>(
-      this.BACKEND_URL_PREFIX + repository + '/users/' + userID,
+      this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
       { password }
     );
   }
 
-  changePermissionOfRepoUser(
-    repository: string,
+  changePermissionOfProjectUser(
+    project_slug: string,
     userID: number,
     permission: 'read' | 'write'
   ): Observable<any> {
     return this.http.patch<any>(
-      this.BACKEND_URL_PREFIX + repository + '/users/' + userID,
+      this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
       { permission }
     );
   }
 
-  deleteUserFromRepo(repository: string, userID: number): Observable<any> {
+  deleteUserFromProject(project_slug: string, userID: number): Observable<any> {
     return this.http.delete<any>(
-      this.BACKEND_URL_PREFIX + repository + '/users/' + userID
+      this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID
     );
   }
 }

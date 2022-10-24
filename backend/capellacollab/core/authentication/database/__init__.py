@@ -70,11 +70,8 @@ class ProjectRoleVerification:
         if user.role == Role.ADMIN:
             return True
 
-        # TODO: Use slug directly
         project = get_project_by_slug(db, project_slug)
-        project_user = project_users.get_user_of_project(
-            db, project_name=project.name, user_id=user.id
-        )
+        project_user = project_users.get_user_of_project(db, project, user)
 
         # Check role
         if not project_user or self.roles.index(

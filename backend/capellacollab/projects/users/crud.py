@@ -4,11 +4,13 @@
 
 from sqlalchemy.orm import Session
 
+from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.models import (
     ProjectUserAssociation,
     ProjectUserPermission,
     ProjectUserRole,
 )
+from capellacollab.users.models import DatabaseUser
 
 
 def get_users_of_project(db: Session, projects_name: str):
@@ -19,25 +21,27 @@ def get_users_of_project(db: Session, projects_name: str):
     )
 
 
-def get_user_of_project(db: Session, project_name: str, user_id: int):
+def get_user_of_project(
+    db: Session, project: DatabaseProject, user: DatabaseProject
+) -> ProjectUserAssociation:
     return (
         db.query(ProjectUserAssociation)
-        .filter(ProjectUserAssociation.projects_name == project_name)
-        .filter(ProjectUserAssociation.user_id == user_id)
+        .filter(ProjectUserAssociation.projects_name == project.name)
+        .filter(ProjectUserAssociation.user_id == user.id)
         .first()
     )
 
 
 def add_user_to_project(
     db: Session,
-    projects_name: str,
+    project: DatabaseProject,
+    user: DatabaseUser,
     role: ProjectUserRole,
-    user_id: int,
     permission: ProjectUserPermission,
-):
+) -> ProjectUserAssociation:
     association = ProjectUserAssociation(
-        projects_name=projects_name,
-        user_id=user_id,
+        projects_name=project.name,
+        user_id=user.id,
         role=role,
         permission=permission,
     )
@@ -47,12 +51,15 @@ def add_user_to_project(
 
 
 def change_role_of_user_in_project(
-    db: Session, projects_name: str, role: ProjectUserRole, user_id: int
+    db: Session,
+    project: DatabaseProject,
+    user: DatabaseUser,
+    role: ProjectUserRole,
 ):
     project_user = (
         db.query(ProjectUserAssociation)
-        .filter(ProjectUserAssociation.projects_name == projects_name)
-        .filter(ProjectUserAssociation.user_id == user_id)
+        .filter(ProjectUserAssociation.projects_name == project.name)
+        .filter(ProjectUserAssociation.user_id == user.id)
         .first()
     )
     if role == ProjectUserRole.MANAGER:
@@ -64,14 +71,14 @@ def change_role_of_user_in_project(
 
 def change_permission_of_user_in_project(
     db: Session,
-    projects_name: str,
+    project: DatabaseProject,
+    user: DatabaseUser,
     permission: ProjectUserPermission,
-    user_id: int,
-):
+) -> ProjectUserAssociation:
     repo_user = (
         db.query(ProjectUserAssociation)
-        .filter(ProjectUserAssociation.projects_name == projects_name)
-        .filter(ProjectUserAssociation.user_id == user_id)
+        .filter(ProjectUserAssociation.projects_name == project.name)
+        .filter(ProjectUserAssociation.user_id == user.id)
         .first()
     )
     repo_user.permission = permission
@@ -79,10 +86,12 @@ def change_permission_of_user_in_project(
     return repo_user
 
 
-def delete_user_from_project(db: Session, projects_name: str, user_id: int):
+def delete_user_from_project(
+    db: Session, project: DatabaseProject, user: DatabaseUser
+):
     db.query(ProjectUserAssociation).filter(
-        ProjectUserAssociation.user_id == user_id
-    ).filter(ProjectUserAssociation.projects_name == projects_name).delete()
+        ProjectUserAssociation.user_id == user.id
+    ).filter(ProjectUserAssociation.projects_name == project.name).delete()
     db.commit()
 
 

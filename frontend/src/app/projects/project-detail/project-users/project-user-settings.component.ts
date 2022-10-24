@@ -21,8 +21,8 @@ import {
 } from '@angular/forms';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ProjectUser, User } from 'src/app/schemes';
+import { ProjectUserService } from 'src/app/services/project-user/project-user.service';
 import { Project } from 'src/app/services/project/project.service';
-import { ProjectUserService } from 'src/app/services/repository-user/repository-user.service';
 import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
@@ -38,7 +38,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
 
   @ViewChild('users') users: any;
 
-  addUserToRepoForm = new FormGroup(
+  addUserToProjectForm = new FormGroup(
     {
       username: new FormControl('', [
         Validators.required,
@@ -61,7 +61,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
   }
 
   get username(): FormControl {
-    return this.addUserToRepoForm.get('username') as FormControl;
+    return this.addUserToProjectForm.get('username') as FormControl;
   }
 
   get selectedUser(): ProjectUser {
@@ -96,29 +96,31 @@ export class ProjectUserSettingsComponent implements OnChanges {
   }
 
   refreshRepoUsers(): void {
-    this.projectUserService.getRepoUsers(this.project.name).subscribe((res) => {
-      this.projectUsers = res;
-    });
+    this.projectUserService
+      .getProjectUsers(this.project.slug)
+      .subscribe((res) => {
+        this.projectUsers = res;
+      });
   }
 
   addUser(formDirective: FormGroupDirective): void {
-    if (this.addUserToRepoForm.valid) {
-      const formValue = this.addUserToRepoForm.value;
+    if (this.addUserToProjectForm.valid) {
+      const formValue = this.addUserToProjectForm.value;
 
       let permission = formValue.permission;
       if (formValue.role == 'manager') {
         permission = 'write';
       }
       this.projectUserService
-        .addUserToRepo(
-          this.project.name,
+        .addUserToProject(
+          this.project.slug,
           formValue.username as string,
           formValue.role as 'user' | 'manager',
           permission as string
         )
         .subscribe(() => {
           formDirective.resetForm();
-          this.addUserToRepoForm.reset();
+          this.addUserToProjectForm.reset();
           this.refreshRepoUsers();
           this.toastService.showSuccess(
             `User added`,
@@ -130,7 +132,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
 
   removeUserFromRepo(user: User): void {
     this.projectUserService
-      .deleteUserFromRepo(this.project.name, user.id)
+      .deleteUserFromProject(this.project.slug, user.id)
       .subscribe(() => {
         this.refreshRepoUsers();
         this.toastService.showSuccess(
@@ -142,7 +144,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
 
   upgradeUserToProjectManager(user: User): void {
     this.projectUserService
-      .changeRoleOfRepoUser(this.project.name, user.id, 'manager')
+      .changeRoleOfProjectUser(this.project.slug, user.id, 'manager')
       .subscribe(() => {
         this.refreshRepoUsers();
         this.toastService.showSuccess(
@@ -154,7 +156,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
 
   downgradeUserToUserRole(user: User): void {
     this.projectUserService
-      .changeRoleOfRepoUser(this.project.name, user.id, 'user')
+      .changeRoleOfProjectUser(this.project.slug, user.id, 'user')
       .subscribe(() => {
         this.refreshRepoUsers();
         this.toastService.showSuccess(
@@ -166,7 +168,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
 
   setUserPermission(user: User, permission: 'read' | 'write'): void {
     this.projectUserService
-      .changePermissionOfRepoUser(this.project.name, user.id, permission)
+      .changePermissionOfProjectUser(this.project.slug, user.id, permission)
       .subscribe(() => {
         this.refreshRepoUsers();
         this.toastService.showSuccess(
