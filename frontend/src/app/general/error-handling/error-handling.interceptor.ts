@@ -70,7 +70,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
                 );
               }
             } else if (detail.reason) {
-              if (detail.reason && Array.isArray(detail.reason)) {
+              if (Array.isArray(detail.reason)) {
                 detail.reason = detail.reason.join(' ');
               }
               // User defined error
