@@ -178,7 +178,7 @@ export class ToolDetailsComponent {
         .pipe(
           tap((tool) => {
             this.toastService.showSuccess(
-              'Docker images updated',
+              'Tool updated',
               `The tool name changed from '${this.selectedTool?.name}' to '${tool.name}'.`
             );
           })
@@ -199,7 +199,7 @@ export class ToolDetailsComponent {
         )
         .subscribe((_) => {
           this.toastService.showSuccess(
-            'Tool created',
+            'Docker images for Tool updated',
             `The Docker images for the tool with id ${
               this.selectedTool!.id
             } were updated.`
