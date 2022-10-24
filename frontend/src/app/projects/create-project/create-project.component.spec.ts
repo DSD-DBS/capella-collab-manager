@@ -15,16 +15,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import {
-  Project,
-  ProjectService,
-} from 'src/app/services/project/project.service';
-
-import {
   click,
   findComponent,
   findElByTestId,
   setFieldValue,
-} from '../../helpers/spec-helper/element.spec-helper';
+} from 'src/../tests/spec-helper/element.spec-helper';
+import {
+  Project,
+  ProjectService,
+} from 'src/app/services/project/project.service';
+
 import { ToastService } from '../../helpers/toast/toast.service';
 import { CreateProjectComponent } from './create-project.component';
 
