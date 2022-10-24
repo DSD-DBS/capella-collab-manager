@@ -2,9 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import typing as t
-
-import sqlalchemy.orm.session
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -23,7 +20,7 @@ router = APIRouter()
 
 
 def check_git_settings_instance_exists(
-    db: sqlalchemy.orm.session.Session,
+    db: Session,
     id: int,
 ):
     instance = crud.get_git_settings(db, id)
