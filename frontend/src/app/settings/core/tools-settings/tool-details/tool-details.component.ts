@@ -29,8 +29,8 @@ export class ToolDetailsComponent {
   editing: boolean = false;
   existing: boolean = false;
 
-  selectedTool: Tool | undefined;
-  dockerimages: ToolDockerimages | undefined;
+  selectedTool?: Tool;
+  dockerimages?: ToolDockerimages;
 
   public form = new FormGroup({
     name: new FormControl('', Validators.required),
