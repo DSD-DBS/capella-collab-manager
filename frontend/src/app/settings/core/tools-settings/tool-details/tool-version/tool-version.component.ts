@@ -27,7 +27,7 @@ import {
   styleUrls: ['./tool-version.component.css'],
 })
 export class ToolVersionComponent implements OnInit {
-  _tool: Tool | undefined = undefined;
+  _tool?: Tool = undefined;
 
   @Input()
   set tool(value: Tool | undefined) {

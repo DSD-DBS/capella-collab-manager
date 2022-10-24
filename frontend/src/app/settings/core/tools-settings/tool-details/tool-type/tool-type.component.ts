@@ -22,7 +22,7 @@ import { Tool, ToolService, ToolType } from '../../tool.service';
   styleUrls: ['./tool-type.component.css'],
 })
 export class ToolTypeComponent {
-  _tool: Tool | undefined = undefined;
+  _tool?: Tool = undefined;
 
   @Input()
   set tool(value: Tool | undefined) {
