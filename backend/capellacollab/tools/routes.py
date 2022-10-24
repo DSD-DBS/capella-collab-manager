@@ -92,17 +92,28 @@ def delete_tool(
         return crud.delete_tool(db, tool)
     except sqlalchemy.exc.IntegrityError:
         db.rollback()
+        find_tool_dependencies(db, tool)
 
-        dependencies = []
-        # Search for occurrences in project-models
-        for model in projects_models_crud.get_models_by_tool(tool.id, db):
-            dependencies.append(
-                f"Model '{model.name}' in project '{model.project.name}'"
-            )
 
-        for i in range(len(dependencies) - 1):
-            dependencies[i] = dependencies[i] + ","
+def find_tool_dependencies(db: Session, tool: Tool) -> None:
+    """Search for tool occurrences in project-models
 
+    Raises
+    ------
+    HTTPException
+        If there is a tool dependency left
+    """
+
+    dependencies = []
+    for model in projects_models_crud.get_models_by_tool(tool.id, db):
+        dependencies.append(
+            f"Model '{model.name}' in project '{model.project.name}'"
+        )
+
+    for i in range(len(dependencies) - 1):
+        dependencies[i] = dependencies[i] + ","
+
+    if dependencies:
         raise HTTPException(
             409,
             {
