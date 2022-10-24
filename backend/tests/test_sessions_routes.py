@@ -17,6 +17,12 @@ from capellacollab.projects.capellamodels.modelsources.git.crud import (
 from capellacollab.projects.capellamodels.modelsources.git.models import PostGitModel
 from capellacollab.projects.capellamodels.crud import create_new_model
 from capellacollab.projects.capellamodels.models import CapellaModel
+from capellacollab.projects.capellamodels.modelsources.git.crud import (
+    add_gitmodel_to_capellamodel,
+)
+from capellacollab.projects.capellamodels.modelsources.git.models import (
+    PostGitModel,
+)
 from capellacollab.projects.crud import create_project
 from capellacollab.projects.users.crud import add_user_to_project
 from capellacollab.projects.users.models import (
@@ -224,7 +230,7 @@ def test_create_readonly_session_as_user(client, db, username, kubernetes):
     assert kubernetes.sessions
     assert (
         kubernetes.sessions[0]["docker_image"]
-        == "k3d-myregistry.localhost:12345/t4c/client/readonly/5.0:prod"
+        == "k3d-myregistry.localhost:12345/capella/readonly/5.0:prod"
     )
 
 
