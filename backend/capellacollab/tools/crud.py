@@ -37,10 +37,9 @@ def update_tool(
 ) -> Tool:
     if isinstance(patch_tool, CreateTool):
         tool.name = patch_tool.name
-    else:
-        if patch_tool.persistent:
-            tool.docker_image_template = patch_tool.persistent
-            # FIXME: Set readonly image
+    elif patch_tool.persistent:
+        tool.docker_image_template = patch_tool.persistent
+        # FIXME: Set readonly image
     db.add(tool)
     db.commit()
     return tool
