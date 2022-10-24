@@ -65,9 +65,10 @@ def create_tool(body: CreateTool, db: Session = Depends(get_db)) -> Tool:
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def update_tool(
-    tool_id: int, body: CreateTool, db: Session = Depends(get_db)
+    body: CreateTool,
+    tool: Tool = Depends(injectables.get_existing_tool),
+    db: Session = Depends(get_db),
 ) -> Tool:
-    tool = crud.get_tool_by_id(tool_id, db)
     return crud.update_tool(db, tool, body)
 
 
