@@ -56,8 +56,8 @@ export class ToolTypeComponent {
 
   uniqueNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      return this.toolTypes.map((type) => type.name).includes(control.value)
-        ? { toolTypeExists: true }
+      return this.toolTypes.find((type) => type.name == control.value)
+        ? { toolVersionExists: true }
         : null;
     };
   }

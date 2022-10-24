@@ -105,9 +105,7 @@ export class ToolVersionComponent implements OnInit {
 
   uniqueNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      return this.toolVersions
-        .map((version) => version.name)
-        .includes(control.value)
+      return this.toolVersions.find((version) => version.name == control.value)
         ? { toolVersionExists: true }
         : null;
     };
