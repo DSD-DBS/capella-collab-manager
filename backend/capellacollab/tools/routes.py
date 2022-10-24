@@ -156,7 +156,7 @@ def create_tool_version(
 )
 def patch_tool_version(
     body: UpdateToolVersion,
-    version=Depends(injectables.get_exisiting_tool_version),
+    version: Version = Depends(injectables.get_exisiting_tool_version),
     db: Session = Depends(get_db),
 ) -> Version:
     for key, value in body.dict().items():
@@ -172,7 +172,7 @@ def patch_tool_version(
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def delete_tool_version(
-    version=Depends(injectables.get_exisiting_tool_version),
+    version: Version = Depends(injectables.get_exisiting_tool_version),
     db: Session = Depends(get_db),
 ) -> None:
     try:
@@ -237,7 +237,7 @@ def create_tool_type(
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def delete_tool_type(
-    type=Depends(injectables.get_exisiting_tool_type),
+    type: Type = Depends(injectables.get_exisiting_tool_type),
     db: Session = Depends(get_db),
 ) -> None:
     try:
