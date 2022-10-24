@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+from __future__ import annotations
+
 import typing as t
-from copy import deepcopy
 
 from pydantic import BaseModel
 from sqlalchemy import (
@@ -68,11 +69,11 @@ class ToolDockerimage(BaseModel):
     readonly: str
 
     @classmethod
-    def from_orm(cls, obj: ToolBase) -> "ToolDockerimage":
-        obj.persistent = obj.docker_image_template
-        obj.readonly = obj.docker_image_template
-
-        return super().from_orm(obj)
+    def from_orm(cls, obj: Tool) -> ToolDockerimage:
+        return ToolDockerimage(
+            persistent=obj.docker_image_template,
+            readonly=obj.docker_image_template,
+        )
 
     class Config:
         orm_mode = True
