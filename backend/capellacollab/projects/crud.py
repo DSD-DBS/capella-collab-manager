@@ -29,9 +29,8 @@ def get_all_projects(db: Session) -> t.List[DatabaseProject]:
 
 
 def update_description(
-    db: Session, name: str, description: str
+    db: Session, project: DatabaseProject, description: str
 ) -> DatabaseProject:
-    project = get_project_by_name(db, name)
     project.description = description
     db.commit()
     return project
@@ -48,6 +47,6 @@ def create_project(
     return repo
 
 
-def delete_project(db: Session, name: str) -> None:
-    db.query(DatabaseProject).filter(DatabaseProject.name == name).delete()
+def delete_project(db: Session, project: DatabaseProject) -> None:
+    project.delete()
     db.commit()

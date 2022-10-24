@@ -41,8 +41,13 @@ export class ProjectService {
     return this.http.get<Project>(this.base_url + name);
   }
 
-  updateDescription(name: string, description: string): Observable<Project> {
-    return this.http.patch<Project>(this.base_url + name, { description });
+  updateDescription(
+    project_slug: string,
+    description: string
+  ): Observable<Project> {
+    return this.http.patch<Project>(this.base_url + project_slug, {
+      description,
+    });
   }
 
   createProject(

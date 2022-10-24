@@ -114,13 +114,13 @@ describe('ProjectService', () => {
     updatedMockProject.description = updatedMockProjectDescription;
 
     projectService
-      .updateDescription(testProjectName, updatedMockProjectDescription)
+      .updateDescription(testProjectSlug, updatedMockProjectDescription)
       .subscribe({
         next: (project) => expect(project).toEqual(updatedMockProject),
       });
 
     const req = httpTestingController.expectOne(
-      BACKEND_PROJECTS_URL + testProjectName
+      BACKEND_PROJECTS_URL + testProjectSlug
     );
     expect(req.request.method).toEqual('PATCH');
     expect(req.request.body).toEqual({
