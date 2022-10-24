@@ -146,7 +146,7 @@ def create_tool_version(
     tool: Tool = Depends(injectables.get_existing_tool),
     db: Session = Depends(get_db),
 ) -> Version:
-    return crud.create_version(db, tool.id, body.name, False, False)
+    return crud.create_version(db, tool.id, body.name)
 
 
 @router.patch(
