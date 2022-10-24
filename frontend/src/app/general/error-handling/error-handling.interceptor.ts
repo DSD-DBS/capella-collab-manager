@@ -59,10 +59,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
             return;
           }
 
-          if (
-            typeof err.error !== 'undefined' &&
-            typeof err.error.detail !== 'undefined'
-          ) {
+          if (err.error && err.error.detail) {
             let detail = err.error.detail;
             if (Array.isArray(detail)) {
               // Pydantic errors
