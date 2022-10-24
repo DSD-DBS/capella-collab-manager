@@ -31,17 +31,18 @@ export class ToolVersionComponent implements OnInit {
 
   @Input()
   set tool(value: Tool | undefined) {
+    if (this._tool && this._tool.id === value?.id) return;
+
     this._tool = value;
     this.toolVersions = [];
 
-    if (value) {
-      this.toolService
-        .getVersionsForTool(value.id)
-        .subscribe((versions: ToolVersion[]) => {
-          this.toolVersions = versions;
-        });
-    }
+    this.toolService
+      .getVersionsForTool(this._tool!.id)
+      .subscribe((versions: ToolVersion[]) => {
+        this.toolVersions = versions;
+      });
   }
+
   toolVersions: ToolVersion[] = [];
 
   constructor(private toolService: ToolService) {}

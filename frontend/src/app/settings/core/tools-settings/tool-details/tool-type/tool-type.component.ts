@@ -26,16 +26,16 @@ export class ToolTypeComponent {
 
   @Input()
   set tool(value: Tool | undefined) {
+    if (this._tool && this._tool.id === value?.id) return;
+
     this._tool = value;
     this.toolTypes = [];
 
-    if (value) {
-      this.toolService
-        .getTypesForTool(value.id)
-        .subscribe((types: ToolType[]) => {
-          this.toolTypes = types;
-        });
-    }
+    this.toolService
+      .getTypesForTool(this._tool!.id)
+      .subscribe((types: ToolType[]) => {
+        this.toolTypes = types;
+      });
   }
   toolTypes: ToolType[] = [];
 
