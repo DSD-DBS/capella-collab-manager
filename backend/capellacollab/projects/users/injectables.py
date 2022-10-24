@@ -20,6 +20,6 @@ def get_existing_user(
         status_code=400,
         detail={
             "err_code": "user_not_exists",
-            "reason": f"The user ({user.id}) does not exists",
+            "reason": f"The user ({user_id}) does not exists",
         },
     )

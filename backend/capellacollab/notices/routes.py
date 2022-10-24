@@ -8,10 +8,16 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 import capellacollab.notices.crud as notices
-from capellacollab.core.authentication.database import verify_admin
+from capellacollab.core.authentication.database import RoleVerification
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
-from capellacollab.notices.models import CreateNoticeRequest, NoticeResponse
+from capellacollab.notices.injectables import get_existing_notice
+from capellacollab.notices.models import (
+    CreateNoticeRequest,
+    DatabaseNotice,
+    NoticeResponse,
+)
+from capellacollab.users.models import Role
 
 router = APIRouter()
 
@@ -24,28 +30,32 @@ def get_notices(db: Session = Depends(get_db)):
     return notices.get_all_notices(db)
 
 
-@router.get("/{id}")
-def get_notice_by_id(id: int, db: Session = Depends(get_db)):
-    return notices.get_notice(db, id)
-
-
-@router.post("/")
-def create_notice(
-    body: CreateNoticeRequest,
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
+@router.get("/{notice_id}")
+def get_notice_by_id(
+    notice: DatabaseNotice = Depends(get_existing_notice),
 ):
-    verify_admin(token, db)
-    return notices.create_notice(db, body)
+    return notice
+
+
+@router.post(
+    "/",
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+)
+def create_notice(
+    post_notice: CreateNoticeRequest,
+    db: Session = Depends(get_db),
+):
+    return notices.create_notice(db, post_notice)
 
 
 @router.delete(
-    "/{id}",
+    "/{notice_id}",
     status_code=204,
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def delete_notice(
-    id: int, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    notice: DatabaseNotice = Depends(get_existing_notice),
+    db: Session = Depends(get_db),
 ):
-    verify_admin(token, db)
-    notices.delete_notice(db, id)
+    notices.delete_notice(db, notice)
     return None
