@@ -95,13 +95,17 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
           this.form.value as CreateT4CRepository
         )
         .pipe(
-          tap((repository) => {
-            this.form.reset();
-            this.form.enable();
-            this.t4cRepoService._repositories.next([
-              ...this.t4cRepoService.repositories,
-              { ...repository, status: 'LOADING' },
-            ]);
+          tap({
+            next: (repository) => {
+              this.form.reset();
+              this.t4cRepoService._repositories.next([
+                ...this.t4cRepoService.repositories,
+                { ...repository, status: 'LOADING' },
+              ]);
+            },
+            complete: () => {
+              this.form.enable();
+            },
           }),
           switchMap(() =>
             this.t4cRepoService.getT4CRepositories(this.instance!.id)

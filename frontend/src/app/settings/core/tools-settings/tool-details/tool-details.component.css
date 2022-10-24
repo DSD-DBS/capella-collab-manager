@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#submit-button-wrapper {
-  text-align: right;
+.flexbox.space-around {
+  display: flex;
+  justify-content: space-around;
 }
 
-.space-evenly {
-  display: flex;
-  justify-content: space-evenly;
+mat-form-field {
+  width: 400px;
 }

@@ -1,0 +1,24 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<h1 mat-dialog-title>Remove Tool</h1>
+<div mat-dialog-content>
+  <p>
+    Do you really want to delete the Tool
+    <span class="monospace">{{ tool.name }}</span
+    >? <br />
+    This will delete the tool, the linked versions and the linked types.
+  </p>
+  <p><b>The deletion cannot be undone!</b></p>
+</div>
+Please remove all models with this tool before deletion. <br />
+<div mat-dialog-actions class="flex-space-between">
+  <button type="button" mat-button (click)="this.dialogRef.close(false)">
+    Cancel
+  </button>
+  <button mat-flat-button type="submit" (click)="deleteTool()" color="warn">
+    Remove the tool
+  </button>
+</div>

@@ -32,10 +32,9 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
             const body = event.body;
             if (body?.errors) {
               for (let error of body.errors) {
-                if (error.reason)
-                  if (Array.isArray(error.reason)) {
-                    error.reason = error.reason.join(' ');
-                  }
+                if (error.reason && Array.isArray(error.reason)) {
+                  error.reason = error.reason.join(' ');
+                }
                 this.toastService.showError(
                   error.title || '',
                   error.reason || ''
@@ -44,10 +43,9 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
             }
             if (body?.warnings) {
               for (let warning of body.warnings) {
-                if (warning.reason)
-                  if (Array.isArray(warning.reason)) {
-                    warning.reason = warning.reason.join(' ');
-                  }
+                if (warning.reason && Array.isArray(warning.reason)) {
+                  warning.reason = warning.reason.join(' ');
+                }
                 this.toastService.showWarning(
                   warning.title || '',
                   warning.reason || ''
@@ -57,28 +55,26 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
           }
         },
         error: (err) => {
-          if (err.error.detail.err_code == 'token_exp') {
+          if (err.error.detail?.err_code == 'token_exp') {
             return;
           }
 
-          if (
-            typeof err.error !== 'undefined' &&
-            typeof err.error.detail !== 'undefined'
-          ) {
-            if (Array.isArray(err.error.detail)) {
+          if (err.error && err.error.detail) {
+            let detail = err.error.detail;
+            if (Array.isArray(detail)) {
               // Pydantic errors
-              for (let error of err.error.detail) {
+              for (let error of detail) {
                 this.toastService.showError(
                   getReasonPhrase(err.status),
                   error.msg
                 );
               }
-            } else if (err.error.detail.reason) {
+            } else if (detail.reason) {
+              if (Array.isArray(detail.reason)) {
+                detail.reason = detail.reason.join(' ');
+              }
               // User defined error
-              this.toastService.showError(
-                'An error occurred!',
-                err.error.detail.reason
-              );
+              this.toastService.showError('An error occurred!', detail.reason);
             }
           } else if (err.status === 0) {
             this.toastService.showError(

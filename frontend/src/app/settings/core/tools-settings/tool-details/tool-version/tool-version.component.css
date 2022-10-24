@@ -3,15 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-.title {
-  font-size: 2em;
-  margin: 20px 0;
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 10;
 }
 
-.wrapper {
-  margin: 20px;
-}
-
-mat-form-field {
-  width: 400px;
+mat-list-option {
+  height: 88px !important;
 }

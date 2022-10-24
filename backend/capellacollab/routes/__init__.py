@@ -8,7 +8,6 @@ from importlib import metadata
 
 from fastapi import APIRouter
 
-import capellacollab.config.routes as configuration
 import capellacollab.core.metadata as core_metadata
 import capellacollab.notices.routes as notices
 import capellacollab.sessions.routes as sessions
@@ -41,35 +40,18 @@ router.include_router(
     tools.router,
     prefix="/tools",
     responses=AUTHENTICATION_RESPONSES,
+    tags=["Tools"],
 )
 router.include_router(
     users.router,
     prefix="/users",
-    tags=["Users"],
     responses=AUTHENTICATION_RESPONSES,
+    tags=["Users"],
 )
 router.include_router(notices.router, prefix="/notices", tags=["Notices"])
 router.include_router(
-    configuration.router,
-    prefix="/configurations",
-    tags=["Notices"],
-    responses=AUTHENTICATION_RESPONSES,
-)
-router.include_router(
     settings.router,
     prefix="/settings",
-    responses=AUTHENTICATION_RESPONSES,
-)
-router.include_router(
-    notices.router,
-    prefix="/notices",
-    tags=["Notices"],
-    responses=AUTHENTICATION_RESPONSES,
-)
-router.include_router(
-    configuration.router,
-    prefix="/configurations",
-    tags=["Notices"],
     responses=AUTHENTICATION_RESPONSES,
 )
 

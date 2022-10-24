@@ -111,10 +111,16 @@ h1 {
   align-items: center;
 }
 
+.flexbox.center-horizontally {
+  display: flex;
+  justify-content: center;
+}
+
 .flex-space-between {
   display: flex;
   justify-content: space-between;
   flex-direction: row;
+  align-items: center;
 }
 
 .flex-space-between button:only-child {
@@ -169,7 +175,7 @@ fieldset > :not(.field-separator) {
   text-align: center;
 }
 
-.mat-card-default {
+mat-card.default {
   width: 400px;
 }
 

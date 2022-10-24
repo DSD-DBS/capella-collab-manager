@@ -172,20 +172,20 @@ def convert_project(project: DatabaseProject) -> Project:
 
 
 router.include_router(
-    router_users, tags=["Projects"], prefix="/{project}/users"
+    router_users, prefix="/{project}/users", tags=["Projects - Users"]
 )
 router.include_router(
-    router_models, tags=["Projects"], prefix="/{project_slug}/models"
+    router_models, prefix="/{project_slug}/models", tags=["Projects - Models"]
 )
 router.include_router(
     router_sources_git,
-    tags=["Projects"],
     prefix="/{project_slug}/models/{model_slug}/git",
+    tags=["Projects - Models - Git"],
 )
 router.include_router(
     router_sources_t4c,
-    tags=["Projects"],
     prefix="/{project_name}/models/{model_slug}/t4c",
+    tags=["Projects - Models - T4C"],
 )
 
 # Load backup extension routes
@@ -195,5 +195,5 @@ for ep in eps:
     router.include_router(
         importlib.import_module(".routes", ep.module).router,
         prefix="/{project}/extensions/backups/" + ep.name,
-        tags=[ep.name],
+        tags=[f"Projects - Backups - {ep.name}"],
     )

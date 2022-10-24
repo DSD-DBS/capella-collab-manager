@@ -21,7 +21,8 @@ import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrap
 import { ActiveSessionsComponent } from './sessions/active-sessions/active-sessions.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
-import { DockerimageSettingsComponent } from './settings/core/dockerimage-settings/dockerimage-settings.component';
+import { ToolDetailsComponent } from './settings/core/tools-settings/tool-details/tool-details.component';
+import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
 import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
 import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4c-importer-settings/t4c-importer-settings.component';
 import { GuacamoleSettingsComponent } from './settings/integrations/guacamole-settings/guacamole-settings.component';
@@ -122,9 +123,19 @@ const routes: Routes = [
                 component: AlertSettingsComponent,
               },
               {
-                path: 'dockerimages',
-                component: DockerimageSettingsComponent,
+                path: 'tools',
+                children: [
+                  {
+                    path: '',
+                    component: ToolsSettingsComponent,
+                  },
+                  {
+                    path: 'create',
+                    component: ToolDetailsComponent,
+                  },
+                ],
               },
+              { path: 'tool/:toolID', component: ToolDetailsComponent },
             ],
           },
           {

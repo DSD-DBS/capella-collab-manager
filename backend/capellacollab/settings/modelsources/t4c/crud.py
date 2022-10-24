@@ -16,6 +16,20 @@ def get_all_t4c_instances(db: Session) -> list[DatabaseT4CInstance]:
     return db.execute(select(DatabaseT4CInstance)).scalars().all()
 
 
+def get_t4c_instances_by_version(
+    version_id: int, db: Session
+) -> list[DatabaseT4CInstance]:
+    return (
+        db.execute(
+            select(DatabaseT4CInstance).where(
+                DatabaseT4CInstance.version_id == version_id
+            )
+        )
+        .scalars()
+        .all()
+    )
+
+
 def get_t4c_instance(id_: int, db: Session) -> DatabaseT4CInstance:
     return db.execute(
         select(DatabaseT4CInstance).where(DatabaseT4CInstance.id == id_)

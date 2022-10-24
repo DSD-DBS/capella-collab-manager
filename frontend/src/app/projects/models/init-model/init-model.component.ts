@@ -21,7 +21,7 @@ import {
   ToolService,
   ToolType,
   ToolVersion,
-} from 'src/app/services/tools/tool.service';
+} from 'src/app/settings/core/tools-settings/tool.service';
 
 @Component({
   selector: 'app-init-model',

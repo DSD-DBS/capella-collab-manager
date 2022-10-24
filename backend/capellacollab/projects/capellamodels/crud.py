@@ -31,6 +31,36 @@ def get_all_models_in_project(
     )
 
 
+def get_models_by_version(
+    version_id: int, db: Session
+) -> t.List[DatabaseCapellaModel]:
+    return (
+        db.query(DatabaseCapellaModel)
+        .filter(DatabaseCapellaModel.version_id == version_id)
+        .all()
+    )
+
+
+def get_models_by_type(
+    type_id: int, db: Session
+) -> t.List[DatabaseCapellaModel]:
+    return (
+        db.query(DatabaseCapellaModel)
+        .filter(DatabaseCapellaModel.type_id == type_id)
+        .all()
+    )
+
+
+def get_models_by_tool(
+    tool_id: int, db: Session
+) -> t.List[DatabaseCapellaModel]:
+    return (
+        db.query(DatabaseCapellaModel)
+        .filter(DatabaseCapellaModel.tool_id == tool_id)
+        .all()
+    )
+
+
 def get_model_by_id(db: Session, id_: int) -> DatabaseCapellaModel:
     return (
         db.query(DatabaseCapellaModel)
