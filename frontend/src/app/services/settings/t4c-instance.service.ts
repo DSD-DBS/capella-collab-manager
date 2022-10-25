@@ -6,6 +6,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { SessionUsage } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
 
 export type Protocol = 'tcp' | 'ssl' | 'ws' | 'wss';
@@ -60,5 +61,9 @@ export class T4CInstanceService {
     instance: BaseT4CInstance
   ): Observable<T4CInstance> {
     return this.http.patch<T4CInstance>(this.base_url + id, instance);
+  }
+
+  getLicenses(id: number): Observable<SessionUsage> {
+    return this.http.get<SessionUsage>(`${this.base_url}${id}/licenses`);
   }
 }

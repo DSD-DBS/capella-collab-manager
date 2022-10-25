@@ -3,9 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { SessionUsage } from 'src/app/schemes';
-import { SessionService } from 'src/app/services/session/session.service';
+import {
+  T4CInstance,
+  T4CInstanceService,
+} from 'src/app/services/settings/t4c-model.service';
 
 @Component({
   selector: 'app-licences',
@@ -13,10 +16,12 @@ import { SessionService } from 'src/app/services/session/session.service';
   styleUrls: ['./licences.component.css'],
 })
 export class LicencesComponent implements OnInit {
-  constructor(private sessionService: SessionService) {}
+  @Input() instance!: T4CInstance;
+
+  constructor(private t4cInstanceService: T4CInstanceService) {}
 
   ngOnInit(): void {
-    this.sessionService.getSessionUsage().subscribe((res) => {
+    this.t4cInstanceService.getLicenses(this.instance.id).subscribe((res) => {
       this.sessionUsage = res;
     });
   }

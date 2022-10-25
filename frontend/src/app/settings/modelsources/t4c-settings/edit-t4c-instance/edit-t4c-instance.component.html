@@ -177,8 +177,11 @@
     </mat-card>
   </div>
 
-  <app-t4c-instance-settings
-    *ngIf="this.instance"
-    [instance]="instance"
-  ></app-t4c-instance-settings>
+  <div>
+    <app-licences *ngIf="this.instance" [instance]="instance"></app-licences>
+    <app-t4c-instance-settings
+      *ngIf="this.instance"
+      [instance]="instance"
+    ></app-t4c-instance-settings>
+  </div>
 </div>
