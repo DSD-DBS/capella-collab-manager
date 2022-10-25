@@ -6,34 +6,37 @@ import typing as t
 
 from sqlalchemy.orm import Session
 
-from . import models
+from capellacollab.extensions.backups.ease.models import DB_EASEBackup
 
 
-def get_backup(db: Session, project: str, id: int):
+# FIXME: Remove usages of project name here (must be first changed in DB_EASEBackup)
+def get_backup(db: Session, project_name: str, backup_id: int):
     return (
-        db.query(models.DB_EASEBackup)
-        .filter(models.DB_EASEBackup.id == id)
-        .filter(models.DB_EASEBackup.project == project)
+        db.query(DB_EASEBackup)
+        .filter(DB_EASEBackup.id == backup_id)
+        .filter(DB_EASEBackup.project == project_name)
         .first()
     )
 
 
-def get_backups(db: Session, project: str) -> t.List[models.DB_EASEBackup]:
+# FIXME: Remove usages of project name here (must be first changed in DB_EASEBackup)
+def get_backups(db: Session, project_name: str) -> t.List[DB_EASEBackup]:
     return (
-        db.query(models.DB_EASEBackup)
-        .filter(models.DB_EASEBackup.project == project)
+        db.query(DB_EASEBackup)
+        .filter(DB_EASEBackup.project == project_name)
         .all()
     )
 
 
-def create_backup(db: Session, backup: models.DB_EASEBackup):
+def create_backup(db: Session, backup: DB_EASEBackup):
     db.add(backup)
     db.commit()
     return backup
 
 
-def delete_backup(db: Session, project: str, id: int):
-    db.query(models.DB_EASEBackup).filter(
-        models.DB_EASEBackup.id == id
-    ).filter(models.DB_EASEBackup.project == project).delete()
+# FIXME: Remove usages of project name here (must be first changed in DB_EASEBackup)
+def delete_backup(db: Session, project_name: str, backup_id: int):
+    db.query(DB_EASEBackup).filter(DB_EASEBackup.id == backup_id).filter(
+        DB_EASEBackup.project == project_name
+    ).delete()
     db.commit()
