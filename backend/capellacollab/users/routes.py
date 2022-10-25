@@ -8,10 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.users.crud as project_users
-from capellacollab.core.authentication.database import (
-    RoleVerification,
-    is_admin,
-)
+from capellacollab.core.authentication.database import RoleVerification
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
@@ -103,7 +100,9 @@ def get_sessions_for_user(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    if user.name != get_username(token) and not is_admin(token, db):
+    if user.name != get_username(token) and not RoleVerification(
+        required_role=Role.ADMIN, verify=False
+    )(token, db):
         raise HTTPException(
             status_code=403,
             detail={
