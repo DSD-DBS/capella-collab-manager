@@ -12,10 +12,13 @@ from msal import ConfidentialClientApplication
 
 from capellacollab.config import config
 from capellacollab.core.authentication import jwt_bearer
+from capellacollab.core.authentication.database import RoleVerification
 from capellacollab.core.authentication.schemas import (
     RefreshTokenRequest,
     TokenRequest,
 )
+from capellacollab.core.database import get_db
+from capellacollab.users.models import Role
 
 router = APIRouter()
 cfg = config["authentication"]["azure"]
@@ -84,6 +87,6 @@ async def validate_token(
     token=Depends(jwt_bearer.JWTBearer()),
     db=Depends(get_db),
 ):
-    if scope.ADMIN:
-        verify_admin(token, db)
+    if scope and scope.ADMIN:
+        RoleVerification(required_role=Role.ADMIN)(token, db)
     return token

@@ -112,6 +112,14 @@ def verify_admin(token=Depends(JWTBearer()), db=Depends(get_db)):
     RoleVerification(required_role=Role.ADMIN)(token=token, db=db)
 
 
+def is_admin(token, db) -> bool:
+    """
+    .. deprecated:: 2.0.0
+        Please use the `RoleVerification` class instead.
+    """
+    return RoleVerification(required_role=Role.ADMIN, verify=False)(token, db)
+
+
 def verify_project_role(
     project: str,
     token: JWTBearer,

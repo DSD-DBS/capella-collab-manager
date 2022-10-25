@@ -18,9 +18,6 @@ from capellacollab.core.authentication.database import (
     ProjectRoleVerification,
     RoleVerification,
     get_db,
-    is_admin,
-    verify_admin,
-    verify_project_role,
 )
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
@@ -64,7 +61,7 @@ def get_projects(
     if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
         return crud.get_all_projects(db)
 
-    return user.projects
+    return [project.projects for project in user.projects]
 
 
 @router.patch(
@@ -172,6 +169,6 @@ for ep in eps:
     log.info("Add routes of backup extension %s", ep.name)
     router.include_router(
         importlib.import_module(".routes", ep.module).router,
-        prefix="/{project}/extensions/backups/" + ep.name,
+        prefix="/{project_slug}/extensions/backups/" + ep.name,
         tags=[f"Projects - Backups - {ep.name}"],
     )
