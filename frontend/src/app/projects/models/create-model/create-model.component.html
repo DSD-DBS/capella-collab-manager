@@ -30,6 +30,7 @@
           (create)="afterSourceCreated($event)"
         ></app-create-coworking-method>
         <app-add-t4c-source
+          [asStepper]="true"
           *ngSwitchCase="'t4c-add'"
           (create)="afterSourceCreated($event)"
         ></app-add-t4c-source>

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -11,6 +11,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, delay, filter, take } from 'rxjs';
 import { ModelService } from 'src/app/services/model/model.service';
 import {
@@ -34,6 +35,7 @@ import {
   styleUrls: ['./add-t4c-source.component.css'],
 })
 export class AddT4cSourceComponent implements OnInit {
+  @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 
   editing = false;
@@ -116,7 +118,9 @@ export class AddT4cSourceComponent implements OnInit {
     public modelService: ModelService,
     public t4cInstanceService: T4CInstanceService,
     public t4cRepositoryService: T4CRepoService,
-    public t4cModelService: T4cModelService
+    public t4cModelService: T4cModelService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -219,8 +223,12 @@ export class AddT4cSourceComponent implements OnInit {
             this.modelService.model!.slug,
             this.form.value as SubmitT4CModel
           )
-          .subscribe(() => {
-            this.create.emit(true);
+          .subscribe((_) => {
+            if (this.asStepper) {
+              this.create.emit(true);
+            } else {
+              this.router.navigate(['../..'], { relativeTo: this.route });
+            }
           });
       }
     }
