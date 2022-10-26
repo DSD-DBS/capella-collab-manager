@@ -3,7 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -34,11 +41,12 @@ import {
   templateUrl: './add-t4c-source.component.html',
   styleUrls: ['./add-t4c-source.component.css'],
 })
-export class AddT4cSourceComponent implements OnInit {
+export class AddT4cSourceComponent implements OnInit, OnDestroy {
   @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 
   editing = false;
+  editDisabled = true;
 
   private _instances = new BehaviorSubject<T4CInstance[] | undefined>(
     undefined
@@ -179,6 +187,7 @@ export class AddT4cSourceComponent implements OnInit {
 
   resetToInstance() {
     this.editing = false;
+    this.editDisabled = true;
     this.t4cModelService._t4cModel
       .pipe(filter(Boolean), take(1))
       .subscribe((model: T4CModel) => {
@@ -195,8 +204,10 @@ export class AddT4cSourceComponent implements OnInit {
             this._models
               .pipe(filter(Boolean), delay(1), take(1))
               .subscribe(() => {
+                this.form.controls.name.enable({ emitEvent: false });
                 this.form.controls.name.patchValue(model.name);
                 this.form.disable({ emitEvent: false });
+                this.editDisabled = false;
               });
           });
       });
@@ -232,5 +243,9 @@ export class AddT4cSourceComponent implements OnInit {
           });
       }
     }
+  }
+
+  ngOnDestroy(): void {
+    this.t4cModelService._t4cModel.next(undefined);
   }
 }

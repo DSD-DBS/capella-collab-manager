@@ -56,17 +56,46 @@
           }}</mat-option>
         </mat-autocomplete>
       </fieldset>
-      <div *ngIf="!t4cModelService.t4cModel" class="flex-space-between">
-        <button mat-button (click)="create.emit(false)">Choose source</button>
+
+      <div *ngIf="asStepper" class="flex-space-between">
+        <button mat-button (click)="create.emit(false)">
+          <mat-icon class="mat-icon-position">arrow_back</mat-icon>
+          Choose primary source
+        </button>
+
         <button
           mat-raised-button
           color="primary"
           [disabled]="!form.valid"
           type="submit"
+          (click)="onSubmit()"
         >
           Add source
+          <mat-icon class="mat-icon-position">arrow_forward</mat-icon>
         </button>
       </div>
+
+      <div
+        *ngIf="!t4cModelService.t4cModel && !asStepper"
+        class="flex-space-between"
+      >
+        <a mat-button [routerLink]="['../..']">
+          <mat-icon class="mat-icon-position">arrow_back</mat-icon>
+          Cancel
+        </a>
+
+        <button
+          mat-raised-button
+          color="primary"
+          [disabled]="!form.valid"
+          type="submit"
+          (click)="onSubmit()"
+        >
+          Add source
+          <mat-icon class="mat-icon-position">arrow_forward</mat-icon>
+        </button>
+      </div>
+
       <div
         *ngIf="t4cModelService.t4cModel && !editing"
         class="flex-space-between"
@@ -75,7 +104,12 @@
           <mat-icon class="mat-icon-position">arrow_back</mat-icon>
           Cancel
         </a>
-        <button mat-flat-button (click)="onEditing()" color="primary">
+        <button
+          mat-flat-button
+          (click)="onEditing()"
+          color="primary"
+          [disabled]="editDisabled"
+        >
           Edit source
         </button>
       </div>
