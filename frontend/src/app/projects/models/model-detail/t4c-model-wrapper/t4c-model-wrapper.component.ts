@@ -5,7 +5,7 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, filter, map, switchMap } from 'rxjs';
+import { combineLatest, filter, map, Subscription, switchMap } from 'rxjs';
 import { ModelService } from 'src/app/services/model/model.service';
 import { T4cModelService } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
@@ -16,6 +16,8 @@ import { ProjectService } from 'src/app/services/project/project.service';
   styleUrls: ['./t4c-model-wrapper.component.css'],
 })
 export class T4cModelWrapperComponent implements OnInit, OnDestroy {
+  private subscription?: Subscription;
+
   constructor(
     private route: ActivatedRoute,
     public projectService: ProjectService,
@@ -24,7 +26,7 @@ export class T4cModelWrapperComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    combineLatest([
+    this.subscription = combineLatest([
       this.projectService._project.pipe(
         filter(Boolean),
         map((project) => project.slug)
@@ -47,5 +49,6 @@ export class T4cModelWrapperComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.t4cModelService._t4cModel.next(undefined);
+    this.subscription?.unsubscribe();
   }
 }
