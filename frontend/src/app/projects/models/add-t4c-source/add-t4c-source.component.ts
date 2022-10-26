@@ -91,13 +91,13 @@ export class AddT4cSourceComponent implements OnInit {
   }
 
   public form = new FormGroup({
-    t4c_instance_id: new FormControl(null as null | number, [
+    t4c_instance_id: new FormControl<null | number>(null, [
       Validators.required,
       this.instanceValidator.bind(this),
     ]),
-    t4c_repository_id: new FormControl(
+    t4c_repository_id: new FormControl<null | number>(
       {
-        value: null as null | number,
+        value: null,
         disabled: true,
       },
       [Validators.required, this.repositoryValidator.bind(this)]
@@ -183,13 +183,13 @@ export class AddT4cSourceComponent implements OnInit {
         );
 
         this._repositories
-          .pipe(filter(Boolean), delay(50), take(1))
+          .pipe(filter(Boolean), delay(1), take(1))
           .subscribe(() => {
             this.form.controls.t4c_repository_id.patchValue(
               model.repository.id
             );
             this._models
-              .pipe(filter(Boolean), delay(50), take(1))
+              .pipe(filter(Boolean), delay(1), take(1))
               .subscribe(() => {
                 this.form.controls.name.patchValue(model.name);
                 this.form.disable({ emitEvent: false });
@@ -199,16 +199,12 @@ export class AddT4cSourceComponent implements OnInit {
   }
 
   onSubmit() {
-    if (
-      this.form.valid &&
-      this.projectService.project &&
-      this.modelService.model
-    ) {
+    if (this.form.valid) {
       if (this.t4cModelService.t4cModel) {
         this.t4cModelService
           .patchT4CModel(
-            this.projectService.project.slug,
-            this.modelService.model.slug,
+            this.projectService.project!.slug,
+            this.modelService.model!.slug,
             this.t4cModelService.t4cModel.id,
             this.form.value as SubmitT4CModel
           )
@@ -219,8 +215,8 @@ export class AddT4cSourceComponent implements OnInit {
       } else {
         this.t4cModelService
           .createT4CModel(
-            this.projectService.project.slug,
-            this.modelService.model.slug,
+            this.projectService.project!.slug,
+            this.modelService.model!.slug,
             this.form.value as SubmitT4CModel
           )
           .subscribe((_) => {

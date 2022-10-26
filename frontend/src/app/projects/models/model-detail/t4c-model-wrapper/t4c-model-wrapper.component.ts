@@ -27,11 +27,11 @@ export class T4cModelWrapperComponent implements OnInit, OnDestroy {
     combineLatest([
       this.projectService._project.pipe(
         filter(Boolean),
-        map((p) => p.slug)
+        map((project) => project.slug)
       ),
       this.modelService._model.pipe(
         filter(Boolean),
-        map((m) => m.slug)
+        map((model) => model.slug)
       ),
       this.route.params.pipe(map((params) => parseInt(params.t4c_model_id))),
     ])
