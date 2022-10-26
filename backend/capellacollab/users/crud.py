@@ -23,7 +23,7 @@ def get_user_by_id(db: Session, user_id: int) -> DatabaseUser:
     return db.query(DatabaseUser).filter(DatabaseUser.id == user_id).first()
 
 
-def get_all_users(db: Session) -> list[DatabaseUser]:
+def get_users(db: Session) -> list[DatabaseUser]:
     return db.query(DatabaseUser).all()
 
 
@@ -40,13 +40,14 @@ def create_user(
     return user
 
 
-def update_role_of_user(db: Session, user_id: int, role: Role):
-    user = get_user_by_id(db, user_id)
+def update_role_of_user(
+    db: Session, user: DatabaseUser, role: Role
+) -> DatabaseUser:
     user.role = role
     db.commit()
     return user
 
 
-def delete_user(db: Session, user_id: int):
-    db.query(DatabaseUser).filter(DatabaseUser.id == user_id).delete()
+def delete_user(db: Session, user: DatabaseUser):
+    user.delete()
     db.commit()

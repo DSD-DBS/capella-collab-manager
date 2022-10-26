@@ -1,40 +1,54 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
 
 import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-import capellacollab.projects.users.crud as project_users
+import capellacollab.projects.users.crud as project_crud
 from capellacollab.core.authentication.database import RoleVerification
-from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.sessions.routes import inject_attrs_in_sessions
 from capellacollab.sessions.schema import AdvancedSessionResponse
-from capellacollab.users.models import (
-    BaseUser,
-    PatchUserRoleRequest,
-    Role,
-    User,
-)
 
-from . import crud, injectables
+from . import crud
+from .injectables import get_existing_user, get_own_user
+from .models import BaseUser, DatabaseUser, PatchUserRoleRequest, Role, User
 
 router = APIRouter()
 
 
 @router.get(
-    "/",
-    response_model=t.List[User],
+    "/{user_id}",
+    response_model=User,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
-def get_users(
-    db: Session = Depends(get_db),
-):
-    return crud.get_all_users(db)
+def get_user(user: DatabaseUser = Depends(get_existing_user)) -> DatabaseUser:
+    return user
+
+
+@router.get(
+    "/current",
+    response_model=User,
+    dependencies=[Depends(RoleVerification(required_role=Role.USER))],
+)
+def get_current_user(
+    user: DatabaseUser = Depends(get_own_user),
+) -> DatabaseUser:
+    return user
+
+
+@router.get(
+    "/",
+    response_model=list[User],
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+)
+def get_users(db: Session = Depends(get_db)) -> list[DatabaseUser]:
+    return crud.get_users(db)
 
 
 @router.post(
@@ -46,24 +60,19 @@ def create_user(body: BaseUser, db: Session = Depends(get_db)):
     return crud.create_user(db, body.name)
 
 
-@router.get(
-    "/current",
-    response_model=User,
-    dependencies=[Depends(RoleVerification(required_role=Role.USER))],
-)
-def get_current_user(
-    db: Session = Depends(get_db), token=Depends(JWTBearer())
-):
-    return crud.get_user_by_name(db=db, username=get_username(token))
-
-
-@router.get(
-    "/{user_id}",
+@router.patch(
+    "/{user_id}/roles",
     response_model=User,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
-def get_user(user_id: int, db: Session = Depends(get_db)):
-    return crud.get_user_by_id(db, user_id)
+def update_role_of_user(
+    patch_user: PatchUserRoleRequest,
+    db_user: DatabaseUser = Depends(get_existing_user),
+    db: Session = Depends(get_db),
+) -> DatabaseUser:
+    if patch_user.role == Role.ADMIN:
+        project_crud.delete_all_projects_for_user(db, db_user.id)
+    return crud.update_role_of_user(db, db_user, patch_user.role)
 
 
 @router.delete(
@@ -71,36 +80,25 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
     status_code=204,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
-def delete_user(user_id: int, db: Session = Depends(get_db)):
-    project_users.delete_all_projects_for_user(db, user_id)
-    crud.delete_user(db, user_id)
-    return None
-
-
-@router.patch(
-    "/{user_id}/roles",
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
-)
-def update_role_of_user(
-    user_id: int,
-    body: PatchUserRoleRequest,
+def delete_user(
+    user: DatabaseUser = Depends(get_existing_user),
     db: Session = Depends(get_db),
 ):
-    if body.role == Role.ADMIN:
-        project_users.delete_all_projects_for_user(db, user_id)
-    return crud.update_role_of_user(db, user_id, body.role)
+    project_crud.delete_all_projects_for_user(db, user.id)
+    crud.delete_user(db, user)
 
 
 # TODO: This is actually a sessions route (sessions/{username}?)
 @router.get(
-    "/{user_id}/sessions", response_model=t.List[AdvancedSessionResponse]
+    "/{user_id}/sessions", response_model=list[AdvancedSessionResponse]
 )
 def get_sessions_for_user(
-    user: User = Depends(injectables.get_user),
+    user: DatabaseUser = Depends(get_existing_user),
+    current_user: DatabaseUser = Depends(get_own_user),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    if user.name != get_username(token) and not RoleVerification(
+    if user != current_user and not RoleVerification(
         required_role=Role.ADMIN, verify=False
     )(token, db):
         raise HTTPException(
