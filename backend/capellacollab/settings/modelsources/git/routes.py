@@ -1,13 +1,12 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import typing as t
+from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication.database import RoleVerification
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.settings.modelsources.git import crud
 from capellacollab.settings.modelsources.git.core import get_remote_refs
@@ -28,12 +27,10 @@ router = APIRouter()
 
 @router.get(
     "/",
-    response_model=t.List[GitSettingsGitGetResponse],
+    response_model=list[GitSettingsGitGetResponse],
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
-def list_git_settings(
-    db: Session = Depends(get_db), token=Depends(JWTBearer())
-) -> t.List[DB_GitSettings]:
+def list_git_settings(db: Session = Depends(get_db)) -> list[DB_GitSettings]:
     return crud.get_git_settings(db)
 
 
