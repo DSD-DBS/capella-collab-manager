@@ -22,8 +22,26 @@ from .models import (
     ResponseModel,
     ToolDetails,
 )
+from .modelsources.git.routes import router as router_sources_git
+from .modelsources.t4c.routes import router as router_sources_t4c
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
+    ],
+)
+
+
+router.include_router(
+    router_sources_git,
+    prefix="/{model_slug}/git",
+    tags=["Projects - Models - Git"],
+)
+router.include_router(
+    router_sources_t4c,
+    prefix="/{model_slug}/t4c",
+    tags=["Projects - Models - T4C"],
+)
 
 
 @router.get("/", response_model=list[ResponseModel])

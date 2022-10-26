@@ -34,8 +34,6 @@ from capellacollab.projects.users.models import (
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role
 
-from .capellamodels.modelsources.git.routes import router as router_sources_git
-from .capellamodels.modelsources.t4c.routes import router as router_sources_t4c
 from .capellamodels.routes import router as router_models
 from .users.routes import router as router_users
 
@@ -144,16 +142,6 @@ router.include_router(
 )
 router.include_router(
     router_models, prefix="/{project_slug}/models", tags=["Projects - Models"]
-)
-router.include_router(
-    router_sources_git,
-    prefix="/{project_slug}/models/{model_slug}/git",
-    tags=["Projects - Models - Git"],
-)
-router.include_router(
-    router_sources_t4c,
-    prefix="/{project_name}/models/{model_slug}/t4c",
-    tags=["Projects - Models - T4C"],
 )
 
 # Load backup extension routes
