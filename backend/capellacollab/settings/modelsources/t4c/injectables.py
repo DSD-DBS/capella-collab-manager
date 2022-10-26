@@ -12,7 +12,7 @@ from capellacollab.settings.modelsources.t4c import crud
 from capellacollab.settings.modelsources.t4c.models import DatabaseT4CInstance
 
 
-def load_instance(
+def get_existing_instance(
     t4c_instance_id: t.Optional[int] = None, db: Session = Depends(get_db)
 ) -> t.Optional[DatabaseT4CInstance]:
     if not t4c_instance_id:

@@ -10,7 +10,9 @@ from capellacollab.core.authentication.database import verify_admin
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.settings.modelsources.t4c import crud
-from capellacollab.settings.modelsources.t4c.injectables import load_instance
+from capellacollab.settings.modelsources.t4c.injectables import (
+    get_existing_instance,
+)
 from capellacollab.settings.modelsources.t4c.models import (
     CreateT4CInstance,
     DatabaseT4CInstance,
@@ -54,7 +56,7 @@ def list_git_settings(
     response_model=T4CInstance,
 )
 def get_t4c_instance(
-    instance: T4CInstance = Depends(load_instance),
+    instance: T4CInstance = Depends(get_existing_instance),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
@@ -93,7 +95,7 @@ def create_t4c_instance(
 )
 def edit_t4c_instance(
     body: PatchT4CInstance,
-    instance: DatabaseT4CInstance = Depends(load_instance),
+    instance: DatabaseT4CInstance = Depends(get_existing_instance),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):

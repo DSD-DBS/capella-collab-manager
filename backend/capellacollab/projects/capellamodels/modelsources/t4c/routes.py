@@ -31,12 +31,14 @@ from capellacollab.projects.capellamodels.modelsources.t4c.models import (
     T4CRepositoryWithModels,
 )
 from capellacollab.projects.models import DatabaseProject
-from capellacollab.settings.modelsources.t4c.injectables import load_instance
+from capellacollab.settings.modelsources.t4c.injectables import (
+    get_existing_instance,
+)
 from capellacollab.settings.modelsources.t4c.repositories.models import (
     DatabaseT4CRepository,
 )
 from capellacollab.settings.modelsources.t4c.repositories.routes import (
-    load_instance_repository,
+    get_existing_instance_repository,
 )
 
 router = APIRouter()
@@ -50,7 +52,7 @@ def list_t4c_models(
     project: DatabaseProject = Depends(get_existing_project),
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     repository: t.Optional[DatabaseT4CRepository] = Depends(
-        load_instance_repository
+        get_existing_instance_repository
     ),
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
@@ -74,17 +76,19 @@ def get_t4c_model(
 
 @router.post(
     "/",
+    response_model=ResponseT4CModel,
 )
 def create_t4c_model(
     body: SubmitT4CModel,
-    project: DatabaseProject = Depends(get_existing_project),
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
 ):
     verify_admin(token, db)
-    instance = load_instance(body.t4c_instance_id, db)
-    repository = load_instance_repository(body.t4c_repository_id, db, instance)
+    instance = get_existing_instance(body.t4c_instance_id, db)
+    repository = get_existing_instance_repository(
+        body.t4c_repository_id, db, instance
+    )
     try:
         return crud.create_t4c_model(db, model, repository, body.name)
     except IntegrityError:
@@ -101,24 +105,17 @@ def create_t4c_model(
     response_model=ResponseT4CModel,
 )
 def edit_t4c_model(
-    t4c_model_id: int,
     body: SubmitT4CModel,
+    t4c_model: DatabaseT4CModel = Depends(get_existing_t4c_model),
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
 ):
     verify_admin(token, db)
-    instance = load_instance(body.t4c_instance_id, db)
-    repository = load_instance_repository(body.t4c_repository_id, db, instance)
-    try:
-        t4c_model = crud.get_t4c_model_by_id(db, t4c_model_id)
-    except NoResultFound:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The model with the id {t4c_model_id} does not exist."
-            },
-        )
+    instance = get_existing_instance(body.t4c_instance_id, db)
+    repository = get_existing_instance_repository(
+        body.t4c_repository_id, db, instance
+    )
     if t4c_model.model != model:
         raise HTTPException(
             409,
@@ -126,7 +123,4 @@ def edit_t4c_model(
                 "reason": f"The t4c model {t4c_model.name} is not part of the model {model.name}."
             },
         )
-    for key in body.dict():
-        if value := body.__getattribute__(key):
-            t4c_model.__setattr__(key, value)
     return crud.patch_t4c_model(db, t4c_model, body)
