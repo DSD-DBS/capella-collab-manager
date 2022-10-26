@@ -58,7 +58,7 @@ spec:
                 name: {{ .Release.Name }}-prometheus-nginx
                 port:
                   name: promui
-          {{ if eq .Values.target "local" }}
+          {{ if .Values.mocks.oauth }}
           - path: /default
             pathType: Prefix
             backend:
@@ -66,12 +66,5 @@ spec:
                 name: {{ .Release.Name }}-oauth-mock
                 port:
                   number: 8080
-          - path: /mock
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Release.Name }}-mock-clusterip
-                port:
-                  number: 80
           {{ end }}
 {{ end }}

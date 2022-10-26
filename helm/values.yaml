@@ -27,23 +27,12 @@ docker:
     # Docker Image for T4C Backup
     importer: /t4c/client/importer
 
-    workspaces:
-      # Docker Image for the Persistent Workspace Session
-      persistent: /t4c/client/remote
-
-      # Docker Image for the ReadOnly Workspace
-      readonly: /capella/readonly
-
     guacamole:
       # The registry needs to specified here!
       guacamole: docker.io/guacamole/guacamole
       guacd: docker.io/guacamole/guacd
 
     prometheus: /prom/prometheus
-
-    mocks:
-      t4cServer: /t4c/server/mock
-      licenseServer: /t4c/licence/mock
 
 general:
   # Base URL on which the service listens
@@ -161,8 +150,15 @@ guacamole:
 ### KUBERNETES RELATED CONFIGURATION ###
 ########################################
 
-# target: local | azure
-target: local
+# target: local | azure | other
+# Never use 'local' in production!
+target: other
+
+# Specify if you'd like to use the oauth mock
+# Never set mocks.oauth to True in production!
+mocks:
+  oauth: False
+
 
 cluster:
   kind: Kubernetes # Kubernetes | OpenShift
@@ -170,13 +166,12 @@ cluster:
   containers:
     # The following values are appended to each container
 
-  service:
-    fqdn: capella.example.de
-
   namespaces:
     sessions:
       containers:
       # The following values are appended to each container in the sessions namespace
 
+# Specify the NO_PROXY environment for the backend
+# Leave it empty if not needed
 proxy:
   no_proxy:
