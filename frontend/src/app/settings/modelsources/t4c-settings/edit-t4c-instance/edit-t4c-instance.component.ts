@@ -41,7 +41,7 @@ export class EditT4CInstanceComponent implements OnInit {
   }
 
   private latin1Validator = Validators.pattern(
-    /^[A-z\u00C0-\u00ff\s'\.,-\/#!$%\^&\*;:{}=\-_`~()]+$/
+    /^[\dA-z\u00C0-\u00ff\s'.,-\/#!$%^&*;:{}=\-_`~()]+$/
   );
 
   public form = new FormGroup({
