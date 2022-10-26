@@ -1,19 +1,18 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
-import typing as t
+from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import Session
 
-from capellacollab.core.authentication.database import verify_project_role
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.authentication.database import ProjectRoleVerification
 from capellacollab.core.database import get_db
-from capellacollab.projects import crud as projects_crud
 from capellacollab.projects.models import DatabaseProject
+from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.tools import crud as tools_crud
+from capellacollab.tools.models import Tool, Type, Version
 
 from . import crud
 from .injectables import get_existing_capella_model, get_existing_project
@@ -27,53 +26,35 @@ from .models import (
 router = APIRouter()
 
 
-# FIXME: Add verification by dependency injection
-@router.get("/", response_model=t.List[ResponseModel])
-def list_in_project(
-    project=Depends(get_existing_project),
+@router.get("/", response_model=list[ResponseModel])
+def get_models(
+    project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
-) -> t.List[ResponseModel]:
-    verify_project_role(project.name, token, db)
-    return [
-        ResponseModel.from_orm(model)
-        for model in crud.get_all_models_in_project(db, project.slug)
-    ]
+) -> list[DatabaseCapellaModel]:
+    return crud.get_all_models_in_project(db, project)
 
 
-# FIXME: Add verification by dependency injection
 @router.get("/{model_slug}", response_model=ResponseModel)
 def get_model_by_slug(
-    project=Depends(get_existing_project),
     model=Depends(get_existing_capella_model),
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ) -> ResponseModel:
-    verify_project_role(project.name, token, db)
-    return ResponseModel.from_orm(model)
+    return model
 
 
-# FIXME: Add verification by dependency injection
-@router.post("/", response_model=ResponseModel)
+@router.post(
+    "/",
+    response_model=ResponseModel,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
+)
 def create_new(
     new_model: CapellaModel,
-    project=Depends(get_existing_project),
+    project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
-    token: JWTBearer = Depends(JWTBearer()),
-) -> ResponseModel:
-    verify_project_role(
-        project=project.name,
-        token=token,
-        db=db,
-        allowed_roles=["manager", "administrator"],
-    )
-    try:
-        tool = tools_crud.get_tool_by_id(new_model.tool_id, db)
-    except IntegrityError:
-        raise HTTPException(
-            404,
-            {"reason": f"The tool with id {new_model.tool_id} was not found."},
-        )
+) -> DatabaseCapellaModel:
+    tool = get_tool_by_id_or_raise(new_model.tool_id, db)
+
     try:
         model = crud.create_new_model(db, project, new_model, tool)
     except IntegrityError:
@@ -84,31 +65,22 @@ def create_new(
                 "technical": "Slug already used",
             },
         )
-    return ResponseModel.from_orm(model)
+    return model
 
 
-# FIXME: Add verification by dependency injection
 @router.patch(
     "/{model_slug}",
     response_model=ResponseModel,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
 )
 def set_tool_details(
     tool_details: ToolDetails,
-    project=Depends(get_existing_project),
-    model=Depends(get_existing_capella_model),
+    model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
-    token: JWTBearer = Depends(JWTBearer()),
-) -> ResponseModel:
-    verify_project_role(project.name, token, db, ["manager", "administrator"])
-    try:
-        version = tools_crud.get_version_by_id(tool_details.version_id, db)
-    except NoResultFound:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The version with id {model.version_id} was not found."
-            },
-        )
+) -> DatabaseCapellaModel:
+    version = get_version_by_id_or_raise(db, tool_details.version_id)
     if version.tool != model.tool:
         raise HTTPException(
             409,
@@ -117,12 +89,7 @@ def set_tool_details(
             },
         )
 
-    try:
-        model_type = tools_crud.get_type_by_id(tool_details.type_id, db)
-    except NoResultFound:
-        raise HTTPException(
-            404, {"reason": f"The type with id {model.type_id} was not found."}
-        )
+    model_type = get_type_by_id_or_raise(db, tool_details.type_id)
     if model_type.tool != model.tool:
         raise HTTPException(
             409,
@@ -131,11 +98,33 @@ def set_tool_details(
             },
         )
 
-    return ResponseModel.from_orm(
-        crud.set_tool_details_for_model(
-            db,
-            model,
-            version,
-            model_type,
+    return crud.set_tool_details_for_model(db, model, version, model_type)
+
+
+def get_tool_by_id_or_raise(db: Session, tool_id: int) -> Tool:
+    try:
+        return tools_crud.get_tool_by_id(tool_id, db)
+    except NoResultFound:
+        raise HTTPException(
+            404,
+            {"reason": f"The tool with id {tool_id} was not found."},
         )
-    )
+
+
+def get_version_by_id_or_raise(db: Session, version_id: int) -> Version:
+    try:
+        return tools_crud.get_version_by_id(version_id, db)
+    except NoResultFound:
+        raise HTTPException(
+            404,
+            {"reason": f"The version with id {version_id} was not found."},
+        )
+
+
+def get_type_by_id_or_raise(db: Session, type_id: int) -> Type:
+    try:
+        return tools_crud.get_type_by_id(type_id, db)
+    except NoResultFound:
+        raise HTTPException(
+            404, {"reason": f"The type with id {type_id} was not found."}
+        )

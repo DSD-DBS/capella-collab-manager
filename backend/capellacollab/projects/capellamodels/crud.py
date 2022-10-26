@@ -1,8 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
-import typing as t
+from __future__ import annotations
 
 from slugify import slugify
 from sqlalchemy.orm import Session
@@ -17,13 +16,8 @@ from capellacollab.tools.models import Tool, Type, Version
 
 
 def get_all_models_in_project(
-    db: Session, project_slug: str
-) -> t.List[DatabaseCapellaModel]:
-    project = (
-        db.query(DatabaseProject)
-        .filter(DatabaseProject.slug == project_slug)
-        .first()
-    )
+    db: Session, project: DatabaseProject
+) -> list[DatabaseCapellaModel]:
     return (
         db.query(DatabaseCapellaModel)
         .filter(DatabaseCapellaModel.project_id == project.id)
@@ -33,7 +27,7 @@ def get_all_models_in_project(
 
 def get_models_by_version(
     version_id: int, db: Session
-) -> t.List[DatabaseCapellaModel]:
+) -> list[DatabaseCapellaModel]:
     return (
         db.query(DatabaseCapellaModel)
         .filter(DatabaseCapellaModel.version_id == version_id)
@@ -43,7 +37,7 @@ def get_models_by_version(
 
 def get_models_by_type(
     type_id: int, db: Session
-) -> t.List[DatabaseCapellaModel]:
+) -> list[DatabaseCapellaModel]:
     return (
         db.query(DatabaseCapellaModel)
         .filter(DatabaseCapellaModel.type_id == type_id)
@@ -53,7 +47,7 @@ def get_models_by_type(
 
 def get_models_by_tool(
     tool_id: int, db: Session
-) -> t.List[DatabaseCapellaModel]:
+) -> list[DatabaseCapellaModel]:
     return (
         db.query(DatabaseCapellaModel)
         .filter(DatabaseCapellaModel.tool_id == tool_id)
@@ -104,9 +98,8 @@ def set_tool_details_for_model(
     model: DatabaseCapellaModel,
     version: Version,
     model_type: Type,
-):
+) -> DatabaseCapellaModel:
     model.version = version
     model.tool_type = model_type
-    db.add(model)
     db.commit()
     return model
