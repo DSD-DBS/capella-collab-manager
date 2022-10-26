@@ -143,7 +143,7 @@ def delete_project(
     db: Session = Depends(get_db),
 ):
     crud.delete_project(db, project)
-    return True
+    return None
 
 
 router.include_router(
