@@ -11,18 +11,18 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { BehaviorSubject, filter, take, delay } from 'rxjs';
+import { BehaviorSubject, delay, filter, take } from 'rxjs';
 import { ModelService } from 'src/app/services/model/model.service';
-import { ProjectService } from 'src/app/services/project/project.service';
-import {
-  T4CInstanceService,
-  T4CInstance,
-} from 'src/app/services/settings/t4c-model.service';
 import {
   SubmitT4CModel,
   T4CModel,
   T4cModelService,
-} from 'src/app/services/source/t4c-model.service';
+} from 'src/app/services/modelsources/t4c-model/t4c-model.service';
+import { ProjectService } from 'src/app/services/project/project.service';
+import {
+  T4CInstance,
+  T4CInstanceService,
+} from 'src/app/services/settings/t4c-instance.service';
 import {
   T4CRepoService,
   T4CRepository,
@@ -45,9 +45,9 @@ export class AddT4cSourceComponent implements OnInit {
     return this._instances.getValue() || [];
   }
   get instance(): T4CInstance | undefined {
-    return this.instances.filter(
-      (i) => i.id === this.form.value.t4c_instance_id
-    )[0];
+    return this.instances.find(
+      (instance) => instance.id === this.form.value.t4c_instance_id
+    );
   }
   private _repositories = new BehaviorSubject<T4CRepository[] | undefined>(
     undefined
@@ -56,9 +56,9 @@ export class AddT4cSourceComponent implements OnInit {
     return this._repositories.getValue() || [];
   }
   get repository(): T4CRepository | undefined {
-    return this.repositories.filter(
+    return this.repositories.find(
       (r) => r.id === this.form.value.t4c_repository_id
-    )[0];
+    );
   }
   private _models = new BehaviorSubject<T4CModel[] | undefined>(undefined);
   get models() {
@@ -67,23 +67,25 @@ export class AddT4cSourceComponent implements OnInit {
 
   instanceValidator(control: AbstractControl): ValidationErrors | null {
     if (!this._instances.getValue()) return null;
-    return this.instances.map((i) => i.id).indexOf(parseInt(control.value)) >= 0
+    return this.instances.find(
+      (instance) => instance.id == parseInt(control.value)
+    )
       ? null
       : { error: true };
   }
 
   repositoryValidator(control: AbstractControl): ValidationErrors | null {
     if (!this._repositories.getValue()) return null;
-    return this.repositories
-      .map((r) => r.id)
-      .indexOf(parseInt(control.value)) >= 0
+    return this.repositories.find(
+      (repository) => repository.id === parseInt(control.value)
+    )
       ? null
       : { error: true };
   }
 
   uniqueNameValidator(control: AbstractControl): ValidationErrors | null {
     if (!this._models.getValue()) return null;
-    return this.models.map((m) => m.name).indexOf(control.value) >= 0
+    return this.models.find((model) => model.name === control.value)
       ? { alreadyUsed: true }
       : null;
   }

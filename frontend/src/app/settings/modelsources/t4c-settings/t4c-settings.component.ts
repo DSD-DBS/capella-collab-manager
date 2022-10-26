@@ -9,7 +9,7 @@ import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   T4CInstance,
   T4CInstanceService,
-} from '../../../services/settings/t4c-model.service';
+} from '../../../services/settings/t4c-instance.service';
 
 @Component({
   selector: 'app-t4c-settings',

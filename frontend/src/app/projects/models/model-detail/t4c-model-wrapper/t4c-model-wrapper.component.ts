@@ -5,10 +5,10 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { map, combineLatest, switchMap, filter } from 'rxjs';
+import { combineLatest, filter, map, switchMap } from 'rxjs';
 import { ModelService } from 'src/app/services/model/model.service';
+import { T4cModelService } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
-import { T4cModelService } from 'src/app/services/source/t4c-model.service';
 
 @Component({
   selector: 'app-t4c-model-wrapper',

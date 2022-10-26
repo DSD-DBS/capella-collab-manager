@@ -7,12 +7,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, filter, Subscription } from 'rxjs';
 import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { ModelService } from 'src/app/services/model/model.service';
-import { ProjectService } from 'src/app/services/project/project.service';
-import { GetGitModel } from 'src/app/services/source/source.service';
 import {
   T4CModel,
   T4cModelService,
-} from 'src/app/services/source/t4c-model.service';
+} from 'src/app/services/modelsources/t4c-model/t4c-model.service';
+import { ProjectService } from 'src/app/services/project/project.service';
+import { GetGitModel } from 'src/app/services/source/source.service';
 
 @Component({
   selector: 'app-model-detail',

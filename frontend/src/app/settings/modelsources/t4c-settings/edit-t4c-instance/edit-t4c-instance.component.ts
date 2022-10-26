@@ -18,7 +18,7 @@ import {
   NewT4CInstance,
   T4CInstance,
   T4CInstanceService,
-} from '../../../../services/settings/t4c-model.service';
+} from '../../../../services/settings/t4c-instance.service';
 
 @Component({
   selector: 'app-edit-t4c-instance',
