@@ -219,7 +219,7 @@ export class AddT4cSourceComponent implements OnInit {
             this.modelService.model!.slug,
             this.form.value as SubmitT4CModel
           )
-          .subscribe((_) => {
+          .subscribe(() => {
             this.create.emit(true);
           });
       }

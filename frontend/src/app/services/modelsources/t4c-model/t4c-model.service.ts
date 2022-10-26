@@ -57,8 +57,8 @@ export class T4cModelService {
     project_slug: string,
     model_slug: string,
     body: SubmitT4CModel
-  ): Observable<null> {
-    return this.http.post<null>(
+  ): Observable<T4CModel> {
+    return this.http.post<T4CModel>(
       this.urlFactory(project_slug, model_slug),
       body
     );
