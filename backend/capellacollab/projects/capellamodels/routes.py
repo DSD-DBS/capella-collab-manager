@@ -74,7 +74,7 @@ def create_new(
     tool = get_tool_by_id_or_raise(new_model.tool_id, db)
 
     try:
-        model = crud.create_new_model(db, project, new_model, tool)
+        return crud.create_new_model(db, project, new_model, tool)
     except IntegrityError:
         raise HTTPException(
             409,
@@ -83,7 +83,6 @@ def create_new(
                 "technical": "Slug already used",
             },
         )
-    return model
 
 
 @router.patch(
