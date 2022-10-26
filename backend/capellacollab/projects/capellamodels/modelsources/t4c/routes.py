@@ -58,7 +58,7 @@ def get_t4c_model(
     t4c_model_id: int,
     db: Session = Depends(database.get_db),
 ):
-    return crud.get_t4c_model(db, t4c_model_id)
+    return crud.get_t4c_model_by_id(db, t4c_model_id)
 
 
 @router.post(
@@ -105,7 +105,7 @@ def edit_t4c_model(
     instance = load_instance(body.t4c_instance_id, db)
     repository = load_instance_repository(body.t4c_repository_id, db, instance)
     try:
-        t4c_model = crud.get_t4c_model(db, t4c_model_id)
+        t4c_model = crud.get_t4c_model_by_id(db, t4c_model_id)
     except NoResultFound:
         raise HTTPException(
             404,
@@ -123,4 +123,4 @@ def edit_t4c_model(
     for key in body.dict():
         if value := body.__getattribute__(key):
             t4c_model.__setattr__(key, value)
-    return crud.patch_t4c_model(db, t4c_model)
+    return crud.patch_t4c_model(db, t4c_model, body)
