@@ -12,12 +12,10 @@ from capellacollab.core.authentication.database import verify_admin
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.projects.capellamodels.injectables import (
     get_existing_capella_model,
+    get_existing_project,
 )
 from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.capellamodels.modelsources.t4c import crud
-from capellacollab.projects.capellamodels.modelsources.t4c.injectables import (
-    load_project_model,
-)
 from capellacollab.projects.capellamodels.modelsources.t4c.models import (
     ResponseT4CModel,
     SubmitT4CModel,
@@ -66,9 +64,8 @@ def get_t4c_model(
 )
 def create_t4c_model(
     body: SubmitT4CModel,
-    project_model: tuple[DatabaseProject, DatabaseCapellaModel] = Depends(
-        load_project_model
-    ),
+    project: DatabaseProject = Depends(get_existing_project),
+    model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
 ):
@@ -76,9 +73,7 @@ def create_t4c_model(
     instance = load_instance(body.t4c_instance_id, db)
     repository = load_instance_repository(body.t4c_repository_id, db, instance)
     try:
-        return crud.create_t4c_model(
-            db, project_model[1], repository, body.name
-        )
+        return crud.create_t4c_model(db, model, repository, body.name)
     except IntegrityError:
         raise HTTPException(
             409,
@@ -95,9 +90,7 @@ def create_t4c_model(
 def edit_t4c_model(
     t4c_model_id: int,
     body: SubmitT4CModel,
-    project_model: tuple[DatabaseProject, DatabaseCapellaModel] = Depends(
-        load_project_model
-    ),
+    model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
 ):
@@ -113,11 +106,11 @@ def edit_t4c_model(
                 "reason": f"The model with the id {t4c_model_id} does not exist."
             },
         )
-    if t4c_model.model != project_model[1]:
+    if t4c_model.model != model:
         raise HTTPException(
             409,
             {
-                "reason": f"The t4c model {t4c_model.name} is not part of the model {project_model[1].name}."
+                "reason": f"The t4c model {t4c_model.name} is not part of the model {model.name}."
             },
         )
     for key in body.dict():
