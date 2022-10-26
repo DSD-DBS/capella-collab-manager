@@ -9,7 +9,7 @@ from capellacollab.core.database import get_db
 from capellacollab.settings.modelsources.git.models import DB_GitSettings
 
 
-def get_existng_git_setting(
+def get_existing_git_setting(
     git_setting_id: int,
     db: Session = Depends(get_db),
 ) -> DB_GitSettings:
