@@ -8,18 +8,15 @@ import typing as t
 from importlib import metadata
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.crud as crud
 import capellacollab.projects.users.crud as users_crud
-import capellacollab.users.crud as database_users
 from capellacollab.core.authentication.database import (
     ProjectRoleVerification,
     RoleVerification,
     get_db,
 )
-from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.projects.capellamodels.injectables import (
     get_existing_project,
@@ -29,10 +26,8 @@ from capellacollab.projects.models import (
     PatchProject,
     PostProjectRequest,
     Project,
-    UserMetadata,
 )
 from capellacollab.projects.users.models import (
-    ProjectUserAssociation,
     ProjectUserPermission,
     ProjectUserRole,
 )
@@ -76,7 +71,6 @@ def update_project_description(
     patch_project: PatchProject,
     db_project: DatabaseProject = Depends(get_existing_project),
     database: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ) -> DatabaseProject:
     return crud.update_description(
         database, db_project, patch_project.description
@@ -93,7 +87,6 @@ def update_project_description(
 )
 def get_project_by_slug(
     db_project: DatabaseProject = Depends(get_existing_project),
-    db: Session = Depends(get_db),
 ) -> DatabaseProject:
     return db_project
 
