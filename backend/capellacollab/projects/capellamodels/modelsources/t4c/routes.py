@@ -56,11 +56,11 @@ def list_t4c_models(
     ),
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
-):
+) -> DatabaseT4CModel:
     if not repository:
         verify_project_role(project.name, token, db)
         return model.t4c_models
-    return T4CRepositoryWithModels.from_orm(repository).models
+    return repository.models
 
 
 @router.get("/{t4c_model_id}/", response_model=ResponseT4CModel)

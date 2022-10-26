@@ -34,16 +34,7 @@ router = APIRouter()
     "/",
     response_model=list[T4CInstance],
 )
-def list_git_settings(
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
-) -> list[DatabaseT4CInstance]:
-    verify_admin(token, db)
-    return crud.get_all_t4c_instances(db)
-
-
-@router.get("/repositories", response_model=list[T4CInstanceWithRepositories])
-def list_git_settings(
+def list_t4c_settings(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ) -> list[DatabaseT4CInstance]:
@@ -56,12 +47,12 @@ def list_git_settings(
     response_model=T4CInstance,
 )
 def get_t4c_instance(
-    instance: T4CInstance = Depends(get_existing_instance),
+    instance: DatabaseT4CInstance = Depends(get_existing_instance),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
-):
+) -> DatabaseT4CInstance:
     verify_admin(token, db)
-    return T4CInstance.from_orm(instance)
+    return instance
 
 
 @router.post(
@@ -72,7 +63,7 @@ def create_t4c_instance(
     body: CreateT4CInstance,
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
-):
+) -> DatabaseT4CInstance:
     verify_admin(token, db)
     try:
         version = tools_crud.get_version_by_id(body.version_id, db)
@@ -86,7 +77,7 @@ def create_t4c_instance(
 
     instance = DatabaseT4CInstance(**body.dict())
     instance.version = version
-    return T4CInstance.from_orm(crud.create_t4c_instance(instance, db))
+    return crud.create_t4c_instance(instance, db)
 
 
 @router.patch(
@@ -98,13 +89,13 @@ def edit_t4c_instance(
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
-):
+) -> DatabaseT4CInstance:
     verify_admin(token, db)
     for key in body.dict():
         if value := body.__getattribute__(key):
             instance.__setattr__(key, value)
 
-    return T4CInstance.from_orm(crud.update_t4c_instance(instance, db))
+    return crud.update_t4c_instance(instance, db)
 
 
 router.include_router(

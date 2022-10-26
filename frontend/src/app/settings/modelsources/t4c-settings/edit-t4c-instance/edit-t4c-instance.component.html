@@ -35,7 +35,7 @@
         <fieldset>
           <mat-form-field appearance="fill">
             <mat-label>License configuration</mat-label>
-            <input matInput formControlName="license" [disabled]="!instance" />
+            <input matInput formControlName="license" />
             <mat-error *ngIf="form.controls.license.errors?.required">
               The license configuration is required.
             </mat-error>

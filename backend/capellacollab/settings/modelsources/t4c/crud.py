@@ -36,7 +36,7 @@ def get_t4c_instance(id_: int, db: Session) -> DatabaseT4CInstance:
     ).scalar_one()
 
 
-def create_t4c_instance(instance: CreateT4CInstance, db: Session):
+def create_t4c_instance(instance: DatabaseT4CInstance, db: Session):
     db.add(instance)
     db.commit()
     return instance
