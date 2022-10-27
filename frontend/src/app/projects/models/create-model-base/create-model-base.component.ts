@@ -35,7 +35,10 @@ export class CreateModelBaseComponent implements OnInit {
   public form = new FormGroup({
     name: new FormControl('', [Validators.required, this.slugValidator()]),
     description: new FormControl(''),
-    tool_id: new FormControl(-1, this.validToolValidator()),
+    toolID: new FormControl<number | undefined>(undefined, [
+      Validators.required,
+      this.validToolValidator(),
+    ]),
   });
 
   constructor(
@@ -48,11 +51,9 @@ export class CreateModelBaseComponent implements OnInit {
   slugValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const models = this.modelService.models;
-      if (models) {
-        const slug = slugify(control.value, { lower: true });
-        if (models.map((model) => model.slug).includes(slug)) {
-          return { uniqueSlug: { value: slug } };
-        }
+      const slug = slugify(control.value, { lower: true });
+      if (models && models.find((model) => model.slug == slug)) {
+        return { uniqueSlug: { value: slug } };
       }
       return null;
     };
@@ -60,12 +61,10 @@ export class CreateModelBaseComponent implements OnInit {
 
   validToolValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (this.toolService.tools) {
-        for (const tool of this.toolService.tools) {
-          if (tool.id == control.value) {
-            return null;
-          }
-        }
+      const tools = this.toolService.tools;
+      const value = control.value;
+      if (!value || (tools && tools.find((tool) => tool.id == value))) {
+        return null;
       }
       return { noValidTool: true };
     };
@@ -80,10 +79,11 @@ export class CreateModelBaseComponent implements OnInit {
   onSubmit(): void {
     if (this.form.valid && this.projectService.project?.slug) {
       const modelConnectable = connectable<Model>(
-        this.modelService.createNewModel(
-          this.projectService.project.slug,
-          this.form.value as NewModel
-        ),
+        this.modelService.createNewModel(this.projectService.project.slug, {
+          name: this.form.value.name,
+          description: this.form.value.description,
+          tool_id: this.form.value.toolID,
+        } as NewModel),
         {
           connector: () => new Subject(),
           resetOnDisconnect: false,

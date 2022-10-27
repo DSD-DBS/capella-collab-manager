@@ -33,7 +33,7 @@
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Model tool</mat-label>
-          <mat-select matInput formControlName="tool_id">
+          <mat-select matInput formControlName="toolID">
             <mat-option
               *ngFor="let tool of toolService.tools"
               value="{{ tool.id }}"
@@ -41,7 +41,10 @@
               {{ tool.name }}
             </mat-option>
           </mat-select>
-          <mat-error *ngIf="form.controls.tool_id.errors?.noValidTool">
+          <mat-error *ngIf="form.controls.toolID.errors?.required">
+            Please provide a tool
+          </mat-error>
+          <mat-error *ngIf="form.controls.toolID.errors?.noValidTool">
             Please select a valid tool.
           </mat-error>
         </mat-form-field>
