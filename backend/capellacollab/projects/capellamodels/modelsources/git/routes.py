@@ -52,7 +52,7 @@ def verify_path_prefix(db: Session, path: str):
     )
 
 
-@router.get("/git-models", response_model=list[ResponseGitModel])
+@router.get("", response_model=list[ResponseGitModel])
 def get_git_models(
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
 ) -> list[DB_GitModel]:
@@ -60,7 +60,7 @@ def get_git_models(
 
 
 @router.get(
-    "/git-model/{git_model_id}",
+    "/{git_model_id}",
     response_model=ResponseGitModel,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
@@ -85,7 +85,7 @@ def get_revisions_of_primary_git_model(
 
 
 @router.post(
-    "/git-model/{git_model_id}/revisions",
+    "/{git_model_id}/revisions",
     response_model=GetRevisionsResponseModel,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
@@ -119,7 +119,7 @@ def create_source(
 
 
 @router.patch(
-    "/git-model/{git_model_id}",
+    "/{git_model_id}",
     response_model=ResponseGitModel,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
