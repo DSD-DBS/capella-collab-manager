@@ -89,12 +89,7 @@ def get_project_by_slug(
     return db_project
 
 
-@router.post(
-    "/",
-    response_model=Project,
-    tags=["Projects"],
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
-)
+@router.post("/", response_model=Project, tags=["Projects"])
 def create_project(
     post_project: PostProjectRequest,
     user: DatabaseUser = Depends(get_own_user),
