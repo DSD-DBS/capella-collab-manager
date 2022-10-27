@@ -34,14 +34,12 @@ from capellacollab.settings.modelsources.t4c.repositories.routes import (
 from capellacollab.tools import crud as tools_crud
 from capellacollab.users.models import Role
 
-router = APIRouter()
-
-
-@router.get(
-    "/",
-    response_model=list[T4CInstance],
+router = APIRouter(
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
+
+
+@router.get("/", response_model=list[T4CInstance])
 def list_t4c_settings(
     db: Session = Depends(get_db),
 ) -> list[DatabaseT4CInstance]:
