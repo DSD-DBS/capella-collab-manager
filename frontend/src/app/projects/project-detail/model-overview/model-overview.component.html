@@ -9,14 +9,6 @@
     <a mat-button [routerLink]="['/project', project.slug, 'models', 'create']">
       <mat-icon id="add-icon">add</mat-icon>
     </a>
-    <button
-      mat-button
-      *ngIf="models"
-      matTooltip="Open readonly session"
-      (click)="requestSession()"
-    >
-      <mat-icon>remove_red_eye</mat-icon>
-    </button>
   </h2>
   <mat-card *ngFor="let model of models">
     <div class="header">
@@ -85,13 +77,14 @@
           >
             <mat-icon>screen_share</mat-icon>
           </a>
-          <a
+          <button
             mat-mini-fab
             *ngIf="model.git_models"
             matTooltip="Open readonly session"
+            (click)="requestSession(model)"
           >
             <mat-icon>remove_red_eye</mat-icon>
-          </a>
+          </button>
         </div>
       </div>
     </div>

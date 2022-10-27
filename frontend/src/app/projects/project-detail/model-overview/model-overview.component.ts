@@ -41,15 +41,12 @@ export class ModelOverviewComponent implements OnInit {
     return 'Unset';
   }
 
-  requestSession() {
-    console.log("How 'bout a session?");
-    if (!this.models) {
-      console.log('no models?', this.models);
+  requestSession(model: Model) {
+    if (!model.version) {
       return;
     }
-    // let model = this.models[0];
-
-    console.log('create session:');
-    this.sessionService.createReadonlySession('default', 2).subscribe();
+    this.sessionService
+      .createReadonlySession(this.project.slug, model.version.id)
+      .subscribe();
   }
 }
