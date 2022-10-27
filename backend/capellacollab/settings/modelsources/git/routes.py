@@ -25,11 +25,7 @@ from capellacollab.users.models import Role
 router = APIRouter()
 
 
-@router.get(
-    "/",
-    response_model=list[GitSettingsGitGetResponse],
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
-)
+@router.get("/", response_model=list[GitSettingsGitGetResponse])
 def list_git_settings(db: Session = Depends(get_db)) -> list[DB_GitSettings]:
     return crud.get_git_settings(db)
 
