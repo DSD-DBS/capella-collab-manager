@@ -3,12 +3,6 @@
 
 docker:
   registry: k3d-myregistry.localhost:12345
-  images:
-    workspaces:
-      persistent: k3d-myregistry.localhost:12345/t4c/client/remote
-      readonly: k3d-myregistry.localhost:12345/capella/readonly
-
-    backup: k3d-myregistry.localhost:12345/t4c/client/importer
 
 operators:
   operator: k8s # docker | k8s

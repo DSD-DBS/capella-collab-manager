@@ -104,25 +104,6 @@ Do not use it in production!
 4. Verify that the server runs, e.g. by navigating to
    [Well Known](https://localhost:8083/default/.well-known/openid-configuration)
 
-## t4cserver
-
-1. Navigate to `mocks/t4cserver/`.
-1. Setup a local python environment
-  ```sh
-  python3 -m venv .venv
-  source.venv/bin/activate
-  pip install -U pip setuptools
-  pip install -e '.[options]'
-  ```
-
-1. Launch the server :
-  The port must match the key modelsources.t4c.usageAPI in the backend
-  config. Change it to 7000 for example.
-  ```sh
-  source .venv/bin/activate # if not sourced before
-  uvicorn mock:app --host 0.0.0.0 --port 7000 --reload
-  ```
-
 ## Backend
 
 Requirements:

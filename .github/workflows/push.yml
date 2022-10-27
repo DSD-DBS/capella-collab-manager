@@ -25,12 +25,6 @@ jobs:
           - name: docs
             image: ghcr.io/dsd-dbs/capella-collab-manager/docs
             context: ./docs/user
-          - name: t4c-server-mock
-            image: ghcr.io/dsd-dbs/capella-collab-manager/t4c/server/mock
-            context: mocks/t4c-server
-          - name: t4c-license-mock
-            image: ghcr.io/dsd-dbs/capella-collab-manager/t4c/licence/mock
-            context: mocks/licence-server
     steps:
       - name: Checkout repository
         if: ${{ matrix.name != 'frontend' && matrix.name != 'backend' }}
@@ -132,10 +126,8 @@ jobs:
           --set docker.images.frontend="/frontend:$TAG" \
           --set docker.images.backend="/backend:$TAG" \
           --set docker.images.docs="/docs:$TAG" \
-          --set docker.images.mocks.t4cServer="/t4c/server/mock:$TAG" \
-          --set docker.images.mocks.licenseServer="/t4c/licence/mock:$TAG" \
-          --set t4cServer.apis.usageStats="http://test-licence-server-mock:80/mock" \
-          --set t4cServer.apis.restAPI="http://test-t4c-server-mock:80/mock/api/v1.0" \
+          --set mocks.oauth=True \
+          --set target=local \
           --set general.port=8080 \
           --set backend.authentication.oauth.endpoints.wellKnown="http://test-oauth-mock:8080/default/.well-known/openid-configuration" \
           ./helm
