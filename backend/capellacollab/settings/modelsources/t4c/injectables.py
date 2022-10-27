@@ -13,10 +13,8 @@ from capellacollab.settings.modelsources.t4c.models import DatabaseT4CInstance
 
 
 def get_existing_instance(
-    t4c_instance_id: t.Optional[int] = None, db: Session = Depends(get_db)
-) -> t.Optional[DatabaseT4CInstance]:
-    if not t4c_instance_id:
-        return None
+    t4c_instance_id: int, db: Session = Depends(get_db)
+) -> DatabaseT4CInstance:
     try:
         return crud.get_t4c_instance(t4c_instance_id, db)
     except NoResultFound:

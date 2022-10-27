@@ -34,6 +34,9 @@ from capellacollab.projects.models import DatabaseProject
 from capellacollab.settings.modelsources.t4c.injectables import (
     get_existing_instance,
 )
+from capellacollab.settings.modelsources.t4c.repositories.injectables import (
+    get_optional_existing_instance_repository,
+)
 from capellacollab.settings.modelsources.t4c.repositories.models import (
     DatabaseT4CRepository,
 )
@@ -52,7 +55,7 @@ def list_t4c_models(
     project: DatabaseProject = Depends(get_existing_project),
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     repository: t.Optional[DatabaseT4CRepository] = Depends(
-        get_existing_instance_repository
+        get_optional_existing_instance_repository
     ),
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
