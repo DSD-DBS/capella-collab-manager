@@ -5,7 +5,7 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { T4CModelService } from './t4c-model.service';
+import { T4cModelService } from './t4c-model.service';
 
 xdescribe('T4cModelService', () => {
   let service: T4cModelService;
