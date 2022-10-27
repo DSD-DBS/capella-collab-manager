@@ -22,11 +22,11 @@ export class SessionService {
 
   createReadonlySession(
     project_slug: string,
-    version_id: number
+    model_slug: string
   ): Observable<Session> {
     return this.http.post<Session>(`${this.BACKEND_URL_PREFIX}readonly`, {
       project_slug: project_slug,
-      tool_version: version_id,
+      model_slug: model_slug,
     });
   }
 

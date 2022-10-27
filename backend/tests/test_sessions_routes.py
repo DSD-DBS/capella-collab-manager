@@ -222,7 +222,7 @@ def test_create_readonly_session_as_user(client, db, user, kubernetes):
         "/api/v1/sessions/readonly",
         json={
             "project_slug": project.slug,
-            "tool_version": version.id,
+            "model_slug": model.slug,
         },
     )
 

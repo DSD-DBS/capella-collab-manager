@@ -22,6 +22,7 @@ from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db
+from capellacollab.projects.capellamodels.crud import get_model_by_slug
 from capellacollab.projects.capellamodels.injectables import (
     get_existing_project,
 )
@@ -57,6 +58,7 @@ from capellacollab.tools.injectables import (
     get_exisiting_tool_version,
     get_existing_tool,
 )
+from capellacollab.tools.models import Version
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role
 
@@ -123,16 +125,27 @@ def request_session(
         raise HTTPException(
             404,
             {
-                "reason": f"The project having the name {body.project_slug} was not found.",
-                "technical": f"No project with {body.project_slug} found.",
+                "reason": f"The project with name {body.project_slug} was not found.",
+                "technical": f"No project {body.project_slug} found.",
             },
         )
+
     verify_project_role(project.name, token, db)
+
+    model = get_model_by_slug(db, body.project_slug, body.model_slug)
+    if not model:
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The model with name {body.model_slug} was not found.",
+                "technical": f"No model {body.model_slug} found.",
+            },
+        )
 
     models = [
         m
         for m in project.models
-        if m.git_models and m.version_id == body.tool_version
+        if m.git_models and m.version.id == model.version.id
     ]
     if not models:
         raise HTTPException(
@@ -143,14 +156,12 @@ def request_session(
             },
         )
 
-    docker_image = get_readonly_image_for_version(db, body.tool_version)
-
-    git_model = models[0].git_models[0]
+    docker_image = get_readonly_image_for_version(model.version)
 
     session = operator.start_readonly_session(
         password=rdp_password,
         docker_image=docker_image,
-        git_repos_json=list(models_as_json(models, body.tool_version)),
+        git_repos_json=list(models_as_json(models, model.version)),
     )
 
     return create_database_and_guacamole_session(
@@ -163,9 +174,9 @@ def request_session(
     )
 
 
-def models_as_json(models: t.List[DatabaseCapellaModel], version_id: int):
+def models_as_json(models: t.List[DatabaseCapellaModel], version: Version):
     for m in models:
-        if m.version.id == version_id:
+        if m.version.id == version.id:
             yield from model_as_json(m)
 
 

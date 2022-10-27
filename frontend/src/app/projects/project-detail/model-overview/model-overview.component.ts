@@ -49,7 +49,7 @@ export class ModelOverviewComponent implements OnInit {
       return;
     }
     this.sessionService
-      .createReadonlySession(this.project.slug, model.version.id)
+      .createReadonlySession(this.project.slug, model.slug)
       .subscribe(() => {
         this.router.navigateByUrl('/');
       });

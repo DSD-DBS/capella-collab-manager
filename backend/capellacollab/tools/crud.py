@@ -140,8 +140,7 @@ def get_image_for_tool_version(db: Session, version_id: int) -> str:
     return version.tool.docker_image_template.replace("$version", version.name)
 
 
-def get_readonly_image_for_version(db: Session, version_id: int):
-    version = get_version_by_id(version_id, db)
+def get_readonly_image_for_version(version: Version):
     return version.tool.readonly_docker_image_template.replace(
         "$version", version.name
     )
