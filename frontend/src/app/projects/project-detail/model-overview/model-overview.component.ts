@@ -4,6 +4,8 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+
 import { Model, ModelService } from 'src/app/services/model/model.service';
 import {
   Project,
@@ -23,7 +25,8 @@ export class ModelOverviewComponent implements OnInit {
   constructor(
     public projectService: ProjectService,
     public modelService: ModelService,
-    public sessionService: SessionService
+    public sessionService: SessionService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -47,6 +50,8 @@ export class ModelOverviewComponent implements OnInit {
     }
     this.sessionService
       .createReadonlySession(this.project.slug, model.version.id)
-      .subscribe();
+      .subscribe(() => {
+        this.router.navigateByUrl('/');
+      });
   }
 }
