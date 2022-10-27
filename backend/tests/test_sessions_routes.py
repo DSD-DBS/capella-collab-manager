@@ -29,6 +29,7 @@ from capellacollab.sessions.database import get_session_by_id
 from capellacollab.sessions.operators import Operator, get_operator
 from capellacollab.tools.crud import get_versions
 from capellacollab.users.crud import create_user
+from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import Role
 
 
@@ -169,14 +170,25 @@ def kubernetes():
     del app.dependency_overrides[get_operator]
 
 
+@pytest.fixture()
+def user(db, username):
+    user = create_user(db, username, Role.USER)
+
+    def get_mock_own_user():
+        return user
+
+    app.dependency_overrides[get_own_user] = get_mock_own_user
+    yield user
+    del app.dependency_overrides[get_own_user]
+
+
 def test_get_sessions_not_authenticated(client):
     response = client.get("/api/v1/sessions")
     assert response.status_code == 403
     assert response.json() == {"detail": "Not authenticated"}
 
 
-def test_create_readonly_session_as_user(client, db, username, kubernetes):
-    user = create_user(db, username, Role.USER)
+def test_create_readonly_session_as_user(client, db, user, kubernetes):
     tool, version = next(
         (v.tool, v)
         for v in get_versions(db)
@@ -220,7 +232,7 @@ def test_create_readonly_session_as_user(client, db, username, kubernetes):
     session = get_session_by_id(db, out["id"])
 
     assert session
-    assert session.owner_name == username
+    assert session.owner_name == user.name
     assert kubernetes.sessions
     assert (
         kubernetes.sessions[0]["docker_image"]
@@ -229,8 +241,7 @@ def test_create_readonly_session_as_user(client, db, username, kubernetes):
     assert kubernetes.sessions[0]["git_repos_json"][0]["url"] == git_path
 
 
-def test_create_persistent_session_as_user(client, db, username, kubernetes):
-    create_user(db, username, Role.USER)
+def test_create_persistent_session_as_user(client, db, user, kubernetes):
     tool, version = next(
         (v.tool, v)
         for v in get_versions(db)
@@ -249,7 +260,7 @@ def test_create_persistent_session_as_user(client, db, username, kubernetes):
 
     assert response.status_code == 200
     assert session
-    assert session.owner_name == username
+    assert session.owner_name == user.name
     assert kubernetes.sessions
     assert (
         kubernetes.sessions[0]["docker_image"]
