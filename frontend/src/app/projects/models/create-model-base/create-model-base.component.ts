@@ -79,10 +79,11 @@ export class CreateModelBaseComponent implements OnInit {
   onSubmit(): void {
     if (this.form.valid && this.projectService.project?.slug) {
       const modelConnectable = connectable<Model>(
-        this.modelService.createNewModel(
-          this.projectService.project.slug,
-          this.form.value as NewModel
-        ),
+        this.modelService.createNewModel(this.projectService.project.slug, {
+          name: this.form.value.name,
+          description: this.form.value.description,
+          tool_id: this.form.value.toolID,
+        } as NewModel),
         {
           connector: () => new Subject(),
           resetOnDisconnect: false,
