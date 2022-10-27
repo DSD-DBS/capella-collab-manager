@@ -45,7 +45,9 @@ from capellacollab.users.models import DatabaseUser, Role
 
 from .files import routes as files
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(RoleVerification(required_role=Role.USER))]
+)
 log = logging.getLogger(__name__)
 
 

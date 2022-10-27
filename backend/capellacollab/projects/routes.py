@@ -38,7 +38,9 @@ from .capellamodels.routes import router as router_models
 from .users.routes import router as router_users
 
 log = logging.getLogger(__name__)
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(RoleVerification(required_role=Role.USER))]
+)
 
 
 @router.get(
