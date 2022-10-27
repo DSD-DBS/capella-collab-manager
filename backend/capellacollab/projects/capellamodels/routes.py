@@ -47,9 +47,8 @@ router.include_router(
 @router.get("/", response_model=list[ResponseModel])
 def get_models(
     project: DatabaseProject = Depends(get_existing_project),
-    db: Session = Depends(get_db),
 ) -> list[DatabaseCapellaModel]:
-    return crud.get_all_models_in_project(db, project)
+    return project.models
 
 
 @router.get("/{model_slug}", response_model=ResponseModel)
