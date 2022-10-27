@@ -23,15 +23,6 @@ router = APIRouter()
 
 
 @router.get(
-    "/{user_id}",
-    response_model=User,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
-)
-def get_user(user: DatabaseUser = Depends(get_existing_user)) -> DatabaseUser:
-    return user
-
-
-@router.get(
     "/current",
     response_model=User,
     dependencies=[Depends(RoleVerification(required_role=Role.USER))],
@@ -39,6 +30,15 @@ def get_user(user: DatabaseUser = Depends(get_existing_user)) -> DatabaseUser:
 def get_current_user(
     user: DatabaseUser = Depends(get_own_user),
 ) -> DatabaseUser:
+    return user
+
+
+@router.get(
+    "/{user_id}",
+    response_model=User,
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+)
+def get_user(user: DatabaseUser = Depends(get_existing_user)) -> DatabaseUser:
     return user
 
 
