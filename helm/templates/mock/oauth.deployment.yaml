@@ -24,7 +24,7 @@ spec:
             name: {{ .Release.Name }}-oauth-mock
       containers:
         - name: {{ .Release.Name }}-oauth-mock
-          image: ghcr.io/navikt/mock-oauth2-server:0.4.4
+          image: {{ .Values.docker.images.mocks.oauth }}
           ports:
             - name: http
               containerPort: 8080
