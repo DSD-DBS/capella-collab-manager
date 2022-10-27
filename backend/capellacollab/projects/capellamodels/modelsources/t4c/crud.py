@@ -37,7 +37,10 @@ def get_all_t4c_models(
 
 
 def create_t4c_model(
-    db: Session, model, repository, name: str
+    db: Session,
+    model: DatabaseCapellaModel,
+    repository: DatabaseT4CRepository,
+    name: str,
 ) -> DatabaseT4CModel:
     t4c_model = DatabaseT4CModel(name=name, model=model, repository=repository)
     db.add(t4c_model)
@@ -53,6 +56,5 @@ def patch_t4c_model(
     for key in patch_model.dict():
         if value := patch_model.__getattribute__(key):
             t4c_model.__setattr__(key, value)
-    db.add(t4c_model)
     db.commit()
     return t4c_model

@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 
 import capellacollab.core.database as database
 from capellacollab.core.authentication.database import (
+    ProjectRoleVerification,
     RoleVerification,
     verify_admin,
     verify_project_role,
@@ -32,6 +33,7 @@ from capellacollab.projects.capellamodels.modelsources.t4c.models import (
     T4CRepositoryWithModels,
 )
 from capellacollab.projects.models import DatabaseProject
+from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.settings.modelsources.t4c.injectables import (
     get_existing_instance,
 )
@@ -64,19 +66,19 @@ def list_t4c_models(
     token=Depends(JWTBearer()),
 ) -> DatabaseT4CModel:
     if not repository:
-        verify_project_role(project.name, token, db)
+        ProjectRoleVerification(ProjectUserRole.USER)(project.slug, token, db)
         return model.t4c_models
     return repository.models
 
 
-@router.get("/{t4c_model_id}/", response_model=ResponseT4CModel)
+@router.get(
+    "/{t4c_model_id}/",
+    response_model=ResponseT4CModel,
+    dependencies=[Depends(ProjectRoleVerification(ProjectUserRole.USER))],
+)
 def get_t4c_model(
     t4c_model: DatabaseT4CModel = Depends(get_existing_t4c_model),
-    db: Session = Depends(database.get_db),
-    project: DatabaseProject = Depends(get_existing_project),
-    token=Depends(JWTBearer()),
 ) -> DatabaseT4CModel:
-    verify_project_role(project.name, token, db)
     return t4c_model
 
 
