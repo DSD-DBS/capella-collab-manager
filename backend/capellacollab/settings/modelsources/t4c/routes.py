@@ -6,9 +6,15 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
-from capellacollab.core.authentication.database import verify_admin
+from capellacollab.core.authentication.database import (
+    RoleVerification,
+    verify_admin,
+)
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
+from capellacollab.projects.capellamodels.routes import (
+    get_version_by_id_or_raise,
+)
 from capellacollab.settings.modelsources.t4c import crud
 from capellacollab.settings.modelsources.t4c.injectables import (
     get_existing_instance,
@@ -26,6 +32,7 @@ from capellacollab.settings.modelsources.t4c.repositories.routes import (
     router as repositories_router,
 )
 from capellacollab.tools import crud as tools_crud
+from capellacollab.users.models import Role
 
 router = APIRouter()
 
@@ -33,12 +40,11 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=list[T4CInstance],
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def list_t4c_settings(
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ) -> list[DatabaseT4CInstance]:
-    verify_admin(token, db)
     return crud.get_all_t4c_instances(db)
 
 
@@ -48,10 +54,7 @@ def list_t4c_settings(
 )
 def get_t4c_instance(
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ) -> DatabaseT4CInstance:
-    verify_admin(token, db)
     return instance
 
 
@@ -62,19 +65,8 @@ def get_t4c_instance(
 def create_t4c_instance(
     body: CreateT4CInstance,
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ) -> DatabaseT4CInstance:
-    verify_admin(token, db)
-    try:
-        version = tools_crud.get_version_by_id(body.version_id, db)
-    except NoResultFound:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The version with id {body.version_id} was not found."
-            },
-        )
-
+    version = get_version_by_id_or_raise(db, body.version_id)
     instance = DatabaseT4CInstance(**body.dict())
     instance.version = version
     return crud.create_t4c_instance(instance, db)
@@ -88,13 +80,10 @@ def edit_t4c_instance(
     body: PatchT4CInstance,
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ) -> DatabaseT4CInstance:
-    verify_admin(token, db)
     for key in body.dict():
         if value := body.__getattribute__(key):
             instance.__setattr__(key, value)
-
     return crud.update_t4c_instance(instance, db)
 
 

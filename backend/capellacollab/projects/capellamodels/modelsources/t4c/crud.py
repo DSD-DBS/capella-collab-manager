@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import typing as t
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
