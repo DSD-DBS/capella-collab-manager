@@ -29,23 +29,17 @@ from capellacollab.users.models import Role
 
 from . import crud, injectables
 
-router = APIRouter()
-
-
-@router.get(
-    "",
-    response_model=list[ToolBase],
-    dependencies=[Depends(RoleVerification(required_role=Role.USER))],
+router = APIRouter(
+    dependencies=[Depends(RoleVerification(required_role=Role.USER))]
 )
+
+
+@router.get("", response_model=list[ToolBase])
 def get_tools(db: Session = Depends(get_db)) -> list[Tool]:
     return crud.get_all_tools(db)
 
 
-@router.get(
-    "/{tool_id}",
-    response_model=ToolBase,
-    dependencies=[Depends(RoleVerification(required_role=Role.USER))],
-)
+@router.get("/{tool_id}", response_model=ToolBase)
 def get_tool_by_id(tool=Depends(injectables.get_existing_tool)) -> Tool:
     return tool
 
@@ -125,11 +119,7 @@ def find_tool_dependencies(db: Session, tool: Tool) -> None:
         )
 
 
-@router.get(
-    "/{tool_id}/versions",
-    response_model=list[ToolVersionBase],
-    dependencies=[Depends(RoleVerification(required_role=Role.USER))],
-)
+@router.get("/{tool_id}/versions", response_model=list[ToolVersionBase])
 def get_tool_versions(
     tool_id: int, db: Session = Depends(get_db)
 ) -> list[Version]:
@@ -219,11 +209,7 @@ def find_tool_version_dependencies(db: Session, version: Version) -> None:
         )
 
 
-@router.get(
-    "/{tool_id}/types",
-    response_model=list[ToolTypeBase],
-    dependencies=[Depends(RoleVerification(required_role=Role.USER))],
-)
+@router.get("/{tool_id}/types", response_model=list[ToolTypeBase])
 def get_tool_types(tool_id: int, db: Session = Depends(get_db)) -> list[Type]:
     return crud.get_tool_types(db, tool_id)
 

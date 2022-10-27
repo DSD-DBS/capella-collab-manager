@@ -38,7 +38,9 @@ from .capellamodels.routes import router as router_models
 from .users.routes import router as router_users
 
 log = logging.getLogger(__name__)
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(RoleVerification(required_role=Role.USER))]
+)
 
 
 @router.get(
@@ -89,12 +91,7 @@ def get_project_by_slug(
     return db_project
 
 
-@router.post(
-    "/",
-    response_model=Project,
-    tags=["Projects"],
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
-)
+@router.post("/", response_model=Project, tags=["Projects"])
 def create_project(
     post_project: PostProjectRequest,
     user: DatabaseUser = Depends(get_own_user),

@@ -19,7 +19,16 @@ from . import crud
 from .injectables import get_existing_user, get_own_user
 from .models import BaseUser, DatabaseUser, PatchUserRoleRequest, Role, User
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(RoleVerification(required_role=Role.USER))]
+)
+
+
+@router.get("/current", response_model=User)
+def get_current_user(
+    user: DatabaseUser = Depends(get_own_user),
+) -> DatabaseUser:
+    return user
 
 
 @router.get(
@@ -28,17 +37,6 @@ router = APIRouter()
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def get_user(user: DatabaseUser = Depends(get_existing_user)) -> DatabaseUser:
-    return user
-
-
-@router.get(
-    "/current",
-    response_model=User,
-    dependencies=[Depends(RoleVerification(required_role=Role.USER))],
-)
-def get_current_user(
-    user: DatabaseUser = Depends(get_own_user),
-) -> DatabaseUser:
     return user
 
 
