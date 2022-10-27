@@ -26,7 +26,7 @@ export class LicencesComponent implements OnInit {
     });
   }
 
-  sessionUsage: SessionUsage | undefined = undefined;
+  sessionUsage?: SessionUsage;
 
   getErrorMessage(error: string): string {
     switch (error) {
