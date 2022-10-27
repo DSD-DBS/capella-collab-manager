@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from capellacollab.notices.models import CreateNoticeRequest, DatabaseNotice
 
 
-def get_notice(db: Session, id: int):
+def get_notice_by_id(db: Session, id: int):
     return db.query(DatabaseNotice).filter(DatabaseNotice.id == id).first()
 
 
@@ -22,6 +22,6 @@ def create_notice(db: Session, body: CreateNoticeRequest):
     return notice
 
 
-def delete_notice(db: Session, id: int):
-    db.query(DatabaseNotice).filter(DatabaseNotice.id == id).delete()
+def delete_notice(db: Session, notice: DatabaseNotice):
+    notice.delete()
     db.commit()

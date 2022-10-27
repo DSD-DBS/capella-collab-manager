@@ -6,7 +6,7 @@ import typing as t
 from fastapi import APIRouter, Depends
 
 from capellacollab.core.authentication import jwt_bearer
-from capellacollab.core.authentication.database import verify_admin
+from capellacollab.core.authentication.database import RoleVerification
 from capellacollab.core.authentication.schemas import (
     RefreshTokenRequest,
     TokenRequest,
@@ -45,6 +45,6 @@ async def validate_token(
     token=Depends(jwt_bearer.JWTBearer()),
     db=Depends(get_db),
 ):
-    if scope.ADMIN:
-        verify_admin(token, db)
+    if scope and scope.ADMIN:
+        RoleVerification(required_role=Role.ADMIN)(token, db)
     return token

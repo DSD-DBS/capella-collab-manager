@@ -107,7 +107,10 @@
 </mat-card>
 <mat-card>
   <h2>Add user</h2>
-  <form [formGroup]="addUserToRepoForm" #addUserToRepoFormDirective="ngForm">
+  <form
+    [formGroup]="addUserToProjectForm"
+    #addUserToProjectFormDirective="ngForm"
+  >
     <mat-form-field>
       <mat-label>Username</mat-label>
       <input matInput formControlName="username" />
@@ -133,7 +136,7 @@
       </mat-select>
       <mat-error>You have to select a role!</mat-error> </mat-form-field
     ><br />
-    <mat-form-field *ngIf="addUserToRepoForm.value.role !== 'manager'">
+    <mat-form-field *ngIf="addUserToProjectForm.value.role !== 'manager'">
       <mat-label>Permission</mat-label>
       <mat-select formControlName="permission">
         <mat-option
@@ -145,7 +148,7 @@
       <mat-error>You have to select a permission!</mat-error>
     </mat-form-field>
     <button
-      (click)="addUser(addUserToRepoFormDirective)"
+      (click)="addUser(addUserToProjectFormDirective)"
       mat-flat-button
       color="primary"
     >

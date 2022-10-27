@@ -8,37 +8,32 @@ import typing as t
 from importlib import metadata
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.crud as crud
 import capellacollab.projects.users.crud as users_crud
-import capellacollab.users.crud as database_users
 from capellacollab.core.authentication.database import (
-    is_admin,
-    verify_admin,
-    verify_project_role,
+    ProjectRoleVerification,
+    RoleVerification,
+    get_db,
 )
-from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.database import get_db
+from capellacollab.projects.capellamodels.injectables import (
+    get_existing_project,
+)
 from capellacollab.projects.models import (
     DatabaseProject,
     PatchProject,
     PostProjectRequest,
     Project,
-    UserMetadata,
 )
 from capellacollab.projects.users.models import (
-    ProjectUserAssociation,
     ProjectUserPermission,
     ProjectUserRole,
 )
 from capellacollab.users.injectables import get_own_user
-from capellacollab.users.models import DatabaseUser
+from capellacollab.users.models import DatabaseUser, Role
 
-from .capellamodels.modelsources.git.routes import router as router_sources_git
-from .capellamodels.modelsources.t4c.routes import router as router_sources_t4c
 from .capellamodels.routes import router as router_models
 from .users.routes import router as router_users
 
@@ -52,140 +47,101 @@ router = APIRouter()
     tags=["Projects"],
 )
 def get_projects(
+    user: DatabaseUser = Depends(get_own_user),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
-):
-    if is_admin(token, db):
-        projects = crud.get_all_projects(db)
-    else:
-        project_user: list[
-            ProjectUserAssociation
-        ] = database_users.get_user_by_name(
-            db=db, username=get_username(token)
-        ).projects
-        projects = [project.projects for project in project_user]
+) -> t.List[DatabaseProject]:
+    if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
+        return crud.get_all_projects(db)
 
-    return [convert_project(project) for project in projects]
+    return [project.projects for project in user.projects]
 
 
 @router.patch(
-    "/{project}",
+    "/{project_slug}",
     response_model=Project,
     tags=["Projects"],
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
 )
-def update_project(
-    project: str,
-    body: PatchProject,
+def update_project_description(
+    patch_project: PatchProject,
+    db_project: DatabaseProject = Depends(get_existing_project),
     database: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
-):
-
-    log.info(
-        "User %s updated the description of project %s to '%s'",
-        get_username(token),
-        project,
-        body.description,
+) -> DatabaseProject:
+    return crud.update_description(
+        database, db_project, patch_project.description
     )
 
-    verify_project_role(project, token, database, ["manager", "administrator"])
 
-    crud.update_description(database, project, body.description)
+@router.get(
+    "/{project_slug}",
+    response_model=Project,
+    tags=["Projects"],
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
+    ],
+)
+def get_project_by_slug(
+    db_project: DatabaseProject = Depends(get_existing_project),
+) -> DatabaseProject:
+    return db_project
 
-    return convert_project(crud.get_project_by_name(database, project))
 
-
-@router.get("/{slug}", tags=["Projects"])
-def get_project_by_slug(slug: str, db: Session = Depends(get_db)):
-    return convert_project(crud.get_project_by_slug(db, slug))
-
-
-@router.post("/", tags=["Projects"])
+@router.post(
+    "/",
+    response_model=Project,
+    tags=["Projects"],
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+)
 def create_project(
-    body: PostProjectRequest,
-    db: Session = Depends(get_db),
+    post_project: PostProjectRequest,
     user: DatabaseUser = Depends(get_own_user),
-):
-    try:
-        project = crud.create_project(db, body.name, body.description)
-    except IntegrityError as e:
+    db: Session = Depends(get_db),
+) -> DatabaseProject:
+    if crud.get_project_by_name(db, post_project.name):
         raise HTTPException(
             409,
             {
                 "reason": "A project with a similar name already exists.",
                 "technical": "Slug already used",
             },
-        ) from e
+        )
+
+    new_project = crud.create_project(
+        db, post_project.name, post_project.description
+    )
+
     users_crud.add_user_to_project(
         db,
-        project.name,
+        new_project,
+        user,
         ProjectUserRole.MANAGER,
-        user.id,
         ProjectUserPermission.WRITE,
     )
-    return convert_project(project)
+    return new_project
 
 
 @router.delete(
-    "/{project}",
+    "/{project_slug}",
     tags=["Projects"],
     status_code=204,
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def delete_project(
-    project: str, db: Session = Depends(get_db), token=Depends(JWTBearer())
+    project: DatabaseProject = Depends(get_existing_project),
+    db: Session = Depends(get_db),
 ):
-    verify_admin(token, db)
     crud.delete_project(db, project)
     return None
 
 
-def convert_project(project: DatabaseProject) -> Project:
-    return Project(
-        name=project.name,
-        slug=project.slug,
-        description=project.description,
-        users=UserMetadata(
-            leads=len(
-                [
-                    user
-                    for user in project.users
-                    if user.role == ProjectUserRole.MANAGER
-                ]
-            ),
-            contributors=len(
-                [
-                    user
-                    for user in project.users
-                    if user.role == ProjectUserRole.USER
-                    and user.permission == ProjectUserPermission.WRITE
-                ]
-            ),
-            subscribers=len(
-                [
-                    user
-                    for user in project.users
-                    if user.role == ProjectUserRole.USER
-                    and user.permission == ProjectUserPermission.READ
-                ]
-            ),
-        ),
-    )
-
-
 router.include_router(
-    router_users, prefix="/{project}/users", tags=["Projects - Users"]
+    router_users, tags=["Projects"], prefix="/{project_slug}/users"
 )
 router.include_router(
     router_models, prefix="/{project_slug}/models", tags=["Projects - Models"]
-)
-router.include_router(
-    router_sources_git,
-    prefix="/{project_slug}/models/{model_slug}/git",
-    tags=["Projects - Models - Git"],
-)
-router.include_router(
-    router_sources_t4c,
-    prefix="/{project_name}/models/{model_slug}/t4c",
-    tags=["Projects - Models - T4C"],
 )
 
 # Load backup extension routes
@@ -194,6 +150,6 @@ for ep in eps:
     log.info("Add routes of backup extension %s", ep.name)
     router.include_router(
         importlib.import_module(".routes", ep.module).router,
-        prefix="/{project}/extensions/backups/" + ep.name,
+        prefix="/{project_slug}/extensions/backups/" + ep.name,
         tags=[f"Projects - Backups - {ep.name}"],
     )

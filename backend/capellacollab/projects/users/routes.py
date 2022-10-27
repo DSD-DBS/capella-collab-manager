@@ -10,38 +10,49 @@ from requests import HTTPError
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.users.crud as project_users
-import capellacollab.projects.users.models as schema_projects
 import capellacollab.users.crud as users
-from capellacollab.core.authentication.database import verify_project_role
+from capellacollab.core.authentication.database import (
+    ProjectRoleVerification,
+    RoleVerification,
+    verify_project_role,
+)
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
-from capellacollab.users.models import Role, User
+from capellacollab.projects.capellamodels.injectables import (
+    get_existing_project,
+)
+from capellacollab.projects.models import DatabaseProject
+from capellacollab.projects.users.models import (
+    PatchProjectUser,
+    PostProjectUser,
+    ProjectUser,
+    ProjectUserAssociation,
+    ProjectUserPermission,
+    ProjectUserRole,
+)
+from capellacollab.users.models import DatabaseUser, Role, User
 
 from . import crud
+from .injectables import get_existing_user
 
 router = APIRouter()
 
 
-def check_user_id_not_admin(user_id: int, db):
+def check_user_not_admin(user: DatabaseUser) -> bool:
     """
     Administrators have access to all projects.
     We have to prevent that they get roles in projects.
     """
-    if users.get_user_by_id(db, user_id).role == Role.ADMIN:
+    if user.role == Role.ADMIN:
         raise HTTPException(
             status_code=403,
             detail={"reason": "You are not allowed to edit this user."},
         )
+    return True
 
 
-def check_username_not_in_project(
-    project: str,
-    user: User,
-    db: Session,
-):
-    if project_users.get_user_of_project(
-        db=db, project_name=project, user_id=user.id
-    ):
+def check_user_not_in_project(project: DatabaseProject, user: DatabaseUser):
+    if user in project.users:
         raise HTTPException(
             status_code=409,
             detail={
@@ -52,111 +63,97 @@ def check_username_not_in_project(
 
 @router.get(
     "/",
-    response_model=t.List[schema_projects.ProjectUser],
+    response_model=t.List[ProjectUser],
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
 )
 def get_users_for_project(
-    project: str,
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
-):
-    verify_project_role(
-        project, allowed_roles=["manager", "administrator"], token=token, db=db
-    )
-    return crud.get_users_of_project(db, project)
+    project: DatabaseProject = Depends(get_existing_project),
+) -> User:
+    return project.users
 
 
 @router.post(
     "/",
-    response_model=schema_projects.ProjectUser,
+    response_model=ProjectUser,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
 )
 def add_user_to_project(
-    project: str,
-    body: schema_projects.PostProjectUser,
+    post_project_user: PostProjectUser,
+    project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
-):
-    verify_project_role(
-        project, allowed_roles=["manager", "administrator"], token=token, db=db
-    )
-    user = users.find_or_create_user(db, body.username)
-    check_username_not_in_project(project, user, db=db)
+) -> ProjectUserAssociation:
+    user = users.find_or_create_user(db, post_project_user.username)
 
-    check_user_id_not_admin(user.id, db)
-    if body.role == schema_projects.ProjectUserRole.MANAGER:
-        body.permission = schema_projects.ProjectUserPermission.WRITE
+    check_user_not_admin(user)
+    check_user_not_in_project(project, user)
+
+    if post_project_user.role == ProjectUserRole.MANAGER:
+        post_project_user.permission = ProjectUserPermission.WRITE
+
     return crud.add_user_to_project(
-        db, project, body.role, user.id, body.permission
+        db, project, user, post_project_user.role, post_project_user.permission
     )
 
 
 @router.patch(
     "/{user_id}",
     status_code=204,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
+    ],
 )
 def patch_project_user(
-    project: str,
-    user_id: int,
-    body: schema_projects.PatchProjectUser,
+    patch_project_user: PatchProjectUser,
+    user: DatabaseUser = Depends(get_existing_user),
+    project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ):
-    verify_project_role(
-        project,
-        allowed_roles=["user", "manager", "administrator"],
-        token=token,
-        db=db,
-    )
-
-    if body.role:
-        verify_project_role(
-            project,
-            allowed_roles=["manager", "administrator"],
-            token=token,
-            db=db,
-        )
-        check_user_id_not_admin(user_id, db)
-        crud.change_role_of_user_in_project(db, project, body.role, user_id)
-
-    if body.permission:
-        verify_project_role(
-            project,
-            allowed_roles=["manager", "administrator"],
-            token=token,
-            db=db,
-        )
-        check_user_id_not_admin(user_id, db)
-        repo_user = crud.get_user_of_project(
-            db,
-            project,
-            user_id,
-        )
-
-        if repo_user.role == schema_projects.ProjectUserRole.MANAGER:
-            raise HTTPException(
-                status_code=403,
-                detail={
-                    "reason": "You are not allowed to set the permission of project leads!"
-                },
+    if ProjectRoleVerification(
+        required_role=ProjectUserRole.MANAGER
+    ) and check_user_not_admin(user):
+        if patch_project_user.role:
+            crud.change_role_of_user_in_project(
+                db, project, user, patch_project_user.role
             )
-        crud.change_permission_of_user_in_project(
-            db, project, body.permission, user_id
-        )
+
+        if patch_project_user.permission:
+            repo_user = crud.get_user_of_project(
+                db,
+                project,
+                user,
+            )
+
+            if repo_user.role == ProjectUserRole.MANAGER:
+                raise HTTPException(
+                    status_code=403,
+                    detail={
+                        "reason": "You are not allowed to set the permission of project leads!"
+                    },
+                )
+            crud.change_permission_of_user_in_project(
+                db, project, user, patch_project_user.permission
+            )
+
     return None
 
 
 @router.delete(
     "/{user_id}",
     status_code=204,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
 )
 def remove_user_from_project(
-    project: str,
-    user_id: int,
+    project: DatabaseProject = Depends(get_existing_project),
+    user: DatabaseUser = Depends(get_existing_user),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    verify_project_role(
-        project, allowed_roles=["manager", "administrator"], token=token, db=db
-    )
-    check_user_id_not_admin(user_id, db)
-    crud.delete_user_from_project(db, project, user_id)
+    check_user_not_admin(user)
+    crud.delete_user_from_project(db, project, user)
     return None

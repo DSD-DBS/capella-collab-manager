@@ -21,7 +21,7 @@ def get_own_user(
     return crud.get_user_by_name(db, username)
 
 
-def get_user(
+def get_existing_user(
     user_id: t.Union[int, t.Literal["current"]],
     db=Depends(get_db),
     token=Depends(JWTBearer()),

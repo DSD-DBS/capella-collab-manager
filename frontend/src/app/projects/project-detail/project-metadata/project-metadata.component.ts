@@ -41,7 +41,7 @@ export class ProjectMetadataComponent implements OnChanges {
   updateDescription() {
     if (this.updateDescriptionForm.valid) {
       this.projectService
-        .updateDescription(this.project.name, this.updateDescriptionForm.value)
+        .updateDescription(this.project.slug, this.updateDescriptionForm.value)
         .subscribe((project) => {
           this.projectService._project.next(project);
           this.toastService.showSuccess(

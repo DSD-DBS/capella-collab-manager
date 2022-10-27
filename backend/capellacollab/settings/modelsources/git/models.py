@@ -30,6 +30,9 @@ class GitSettingsGitGetResponse(BaseModel):
     url: str
     type: GitType
 
+    class Config:
+        orm_mode = True
+
 
 class DB_GitSettings(Base):
     __tablename__ = "git_settings"

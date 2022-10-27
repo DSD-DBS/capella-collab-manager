@@ -8,27 +8,28 @@ from sqlalchemy.orm import Session
 from capellacollab.users.models import DatabaseUser, Role
 
 
-def find_or_create_user(db: Session, username: str):
-    user = get_user_by_name(db, username)
-    if user:
+def find_or_create_user(db: Session, username: str) -> DatabaseUser:
+    if user := get_user_by_name(db, username):
         return user
 
     return create_user(db, username)
 
 
-def get_user_by_name(db: Session, username: str) -> DatabaseUser | None:
+def get_user_by_name(db: Session, username: str) -> DatabaseUser:
     return db.query(DatabaseUser).filter(DatabaseUser.name == username).first()
 
 
-def get_user_by_id(db: Session, user_id: int) -> DatabaseUser | None:
+def get_user_by_id(db: Session, user_id: int) -> DatabaseUser:
     return db.query(DatabaseUser).filter(DatabaseUser.id == user_id).first()
 
 
-def get_all_users(db: Session) -> list[DatabaseUser]:
+def get_users(db: Session) -> list[DatabaseUser]:
     return db.query(DatabaseUser).all()
 
 
-def create_user(db: Session, username: str, role: Role = Role.USER):
+def create_user(
+    db: Session, username: str, role: Role = Role.USER
+) -> DatabaseUser:
     user = DatabaseUser(
         name=username,
         role=role,
@@ -39,13 +40,14 @@ def create_user(db: Session, username: str, role: Role = Role.USER):
     return user
 
 
-def update_role_of_user(db: Session, user_id: int, role: Role):
-    user = get_user_by_id(db, user_id)
+def update_role_of_user(
+    db: Session, user: DatabaseUser, role: Role
+) -> DatabaseUser:
     user.role = role
     db.commit()
     return user
 
 
-def delete_user(db: Session, user_id: int):
-    db.query(DatabaseUser).filter(DatabaseUser.id == user_id).delete()
+def delete_user(db: Session, user: DatabaseUser):
+    user.delete()
     db.commit()

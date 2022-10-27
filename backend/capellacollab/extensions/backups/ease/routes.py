@@ -6,6 +6,7 @@ import logging
 import typing as t
 import uuid
 
+import requests
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -15,60 +16,67 @@ import capellacollab.projects.capellamodels.modelsources.t4c.connection as t4c_c
 import capellacollab.projects.capellamodels.modelsources.t4c.crud as t4c_crud
 from capellacollab.config import config
 from capellacollab.core import credentials
+from capellacollab.core.authentication.database import ProjectRoleVerification
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
+from capellacollab.extensions.backups.ease.models import (
+    DB_EASEBackup,
+    EASEBackupRequest,
+    EASEBackupResponse,
+)
+from capellacollab.projects.capellamodels.injectables import (
+    get_existing_project,
+)
+from capellacollab.projects.models import DatabaseProject
+from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.sessions.operators import OPERATOR
 
-from . import crud, helper, models
+from . import crud, helper
 
 router = APIRouter()
 log = logging.getLogger(__name__)
 
+# FIXME: Change usage of id to backup_id (id is reserved)
 
+# FIXME: Change usage of project.name to just project (or project.slug)
 @router.get(
     "/",
-    response_model=t.List[models.EASEBackupResponse],
+    response_model=t.List[EASEBackupResponse],
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
 )
 def get_ease_backups(
-    project: str,
+    project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ):
-    auth.verify_project_role(
-        project, allowed_roles=["manager", "administrator"], token=token, db=db
-    )
     return [
         helper._inject_last_run(backup)
-        for backup in crud.get_backups(db=db, project=project)
+        for backup in crud.get_backups(db, project.name)
     ]
 
 
+# FIXME: Change usage of project.name to just project (or project.slug)
 @router.post(
     "/",
-    response_model=models.EASEBackupResponse,
+    response_model=EASEBackupResponse,
 )
 def create_backup(
-    project: str,
-    body: models.EASEBackupRequest,
+    body: EASEBackupRequest,
+    project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ):
-    auth.verify_project_role(
-        project, allowed_roles=["manager", "administrator"], token=token, db=db
-    )
+    gitmodel = git_crud.get_gitmodel_by_id(db, body.gitmodel)
 
-    gitmodel = git_crud.get_model_by_id(
-        db=db, repository_name=project, model_id=body.gitmodel
-    )
-
-    t4cmodel = t4c_crud.get_project_by_id(
-        db=db, id=body.t4cmodel, repo_name=project
+    # FIXME: Not working
+    t4cmodel = t4c_crud.get_t4c_model(db, name, model_id)(
+        db=db, id=body.t4cmodel, repo_name=project.name
     )
 
     username = "techuser-" + str(uuid.uuid4())
     password = credentials.generate_password()
     t4c_connection.add_user_to_repository(
-        project, username, password, is_admin=False
+        project.name, username, password, is_admin=False
     )
 
     reference = OPERATOR.create_cronjob(
@@ -80,7 +88,7 @@ def create_backup(
             "T4C_REPO_HOST": config["modelsources"]["t4c"]["host"],
             "T4C_REPO_PORT": config["modelsources"]["t4c"]["port"],
             "T4C_CDO_PORT": config["modelsources"]["t4c"]["cdoPort"],
-            "T4C_REPO_NAME": project,
+            "T4C_REPO_NAME": project.name,
             "T4C_PROJECT_NAME": t4cmodel.name,
             "T4C_USERNAME": username,
             "T4C_PASSWORD": password,
@@ -93,8 +101,8 @@ def create_backup(
     return helper._inject_last_run(
         crud.create_backup(
             db=db,
-            backup=models.DB_EASEBackup(
-                project=project,
+            backup=DB_EASEBackup(
+                project=project.name,
                 **body.dict(),
                 reference=reference,
                 username=username,
@@ -103,23 +111,24 @@ def create_backup(
     )
 
 
+# FIXME: Change usage of project.name to just project (or project.slug)
 @router.delete(
     "/{id}",
     status_code=204,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
 )
 def delete_backup(
-    project: str,
     id: int,
+    project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ):
-    auth.verify_project_role(
-        project, allowed_roles=["manager", "administrator"], token=token, db=db
-    )
+    backup = crud.get_backup(db, project.name, id)
 
-    backup = crud.get_backup(db, project, id)
+    # FIXME: Not working
     t4cmodel = t4c_crud.get_project_by_id(
-        db=db, id=backup.t4cmodel, repo_name=project
+        db=db, id=backup.t4cmodel, repo_name=project.name
     )
     try:
         t4c_connection.remove_user_from_repository(
@@ -132,43 +141,39 @@ def delete_backup(
 
     OPERATOR.delete_cronjob(backup.reference)
 
-    crud.delete_backup(db, project, id)
+    crud.delete_backup(db, project.name, id)
     return None
 
 
+# FIXME: Change usage of project.name to just project (or project.slug)
 @router.post(
     "/{id}/jobs",
-    response_model=models.EASEBackupResponse,
+    response_model=EASEBackupResponse,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
 )
 def create_job(
-    project: str,
     id: int,
+    project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ):
-    auth.verify_project_role(
-        project, allowed_roles=["manager", "administrator"], token=token, db=db
-    )
-
-    backup = crud.get_backup(db=db, project=project, id=id)
-
+    backup = crud.get_backup(db, project.name, id)
     OPERATOR.trigger_cronjob(name=backup.reference)
 
 
+# FIXME: Change usage of project to project slug
 @router.get(
     "/{bid}/jobs/{jid}/logs",
     response_model=str,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
 )
 def get_logs(
-    project: str,
     bid: int,
     jid: str,
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ):
-    auth.verify_project_role(
-        project, allowed_roles=["manager", "administrator"], token=token, db=db
-    )
     # TODO: Check if jid is part of bid
 
     return OPERATOR.get_job_logs(id=jid)

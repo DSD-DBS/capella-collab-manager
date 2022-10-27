@@ -7,14 +7,7 @@ import logging
 from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-import capellacollab.projects.capellamodels.crud as capella_model_crud
-import capellacollab.projects.crud as projects_crud
-from capellacollab.core.authentication.database import (
-    ProjectRoleVerification,
-    RoleVerification,
-    verify_project_role,
-)
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.authentication.database import ProjectRoleVerification
 from capellacollab.core.database import get_db
 from capellacollab.projects.capellamodels.injectables import (
     get_existing_capella_model,
@@ -26,12 +19,9 @@ from capellacollab.projects.capellamodels.modelsources.git.models import (
     PostGitModel,
     ResponseGitModel,
 )
-from capellacollab.projects.users.models import (
-    ProjectUserPermission,
-    ProjectUserRole,
-)
+from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.settings.modelsources.git.core import get_remote_refs
-from capellacollab.settings.modelsources.git.crud import get_all_git_settings
+from capellacollab.settings.modelsources.git.crud import get_git_settings
 from capellacollab.settings.modelsources.git.models import (
     GetRevisionsResponseModel,
 )
@@ -44,7 +34,7 @@ log = logging.getLogger(__name__)
 
 
 def verify_path_prefix(db: Session, path: str):
-    git_settings = get_all_git_settings(db)
+    git_settings = get_git_settings(db)
 
     if not git_settings:
         return
@@ -62,20 +52,11 @@ def verify_path_prefix(db: Session, path: str):
     )
 
 
-@router.get(
-    "/git-models",
-    response_model=list[ResponseGitModel],
-    dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
-    ],
-)
+@router.get("/git-models", response_model=list[ResponseGitModel])
 def get_git_models(
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
-):
-    return [
-        ResponseGitModel.from_orm(git_model)
-        for git_model in capella_model.git_models
-    ]
+) -> list[DB_GitModel]:
+    return capella_model.git_models
 
 
 @router.get(
@@ -87,19 +68,12 @@ def get_git_models(
 )
 def get_git_model_by_id(
     git_model: DB_GitModel = Depends(get_existing_git_model),
-):
-    return ResponseGitModel.from_orm(git_model)
+) -> DB_GitModel:
+    return git_model
 
 
-@router.get(
-    "/primary/revisions",
-    response_model=GetRevisionsResponseModel,
-    dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
-    ],
-)
+@router.get("/primary/revisions", response_model=GetRevisionsResponseModel)
 def get_revisions_of_primary_git_model(
-    capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     primary_git_model: DB_GitModel = Depends(get_existing_primary_git_model),
 ) -> GetRevisionsResponseModel:
     return get_remote_refs(
@@ -114,7 +88,7 @@ def get_revisions_of_primary_git_model(
     "/git-model/{git_model_id}/revisions",
     response_model=GetRevisionsResponseModel,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
 )
 def get_revisions_with_model_credentials(
@@ -135,13 +109,13 @@ def create_source(
     post_git_model: PostGitModel,
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
-) -> ResponseGitModel:
+) -> DB_GitModel:
     verify_path_prefix(db, post_git_model.path)
 
     new_git_model = crud.add_gitmodel_to_capellamodel(
         db, capella_model, post_git_model
     )
-    return ResponseGitModel.from_orm(new_git_model)
+    return new_git_model
 
 
 @router.patch(
@@ -158,11 +132,11 @@ def update_git_model_by_id(
         get_existing_capella_model
     ),
     db: Session = Depends(get_db),
-) -> ResponseGitModel:
+) -> DB_GitModel:
     verify_path_prefix(db, patch_git_model.path)
 
     updated_git_model = crud.update_git_model(
         db, db_capella_model, db_git_model, patch_git_model
     )
 
-    return ResponseGitModel.from_orm(updated_git_model)
+    return updated_git_model

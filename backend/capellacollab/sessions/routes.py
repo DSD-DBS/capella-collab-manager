@@ -14,7 +14,7 @@ import capellacollab.projects.capellamodels.modelsources.t4c.connection as t4c_m
 import capellacollab.users.crud as users
 from capellacollab.config import config
 from capellacollab.core.authentication.database import (
-    is_admin,
+    RoleVerification,
     verify_project_role,
 )
 from capellacollab.core.authentication.helper import get_username
@@ -40,6 +40,8 @@ from capellacollab.sessions.sessions import (
     inject_attrs_in_sessions,
 )
 from capellacollab.tools.crud import get_image_for_tool_version
+from capellacollab.users.injectables import get_own_user
+from capellacollab.users.models import DatabaseUser, Role
 
 from .files import routes as files
 
@@ -49,12 +51,13 @@ log = logging.getLogger(__name__)
 
 @router.get("/", response_model=t.List[GetSessionsResponse])
 def get_current_sessions(
-    db: Session = Depends(get_db), token=Depends(JWTBearer())
+    db_user: DatabaseUser = Depends(get_own_user),
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
 ):
-    if is_admin(token, db):
+    if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
         return inject_attrs_in_sessions(database.get_all_sessions(db))
 
-    db_user = users.get_user_by_name(db=db, username=get_username(token))
     if not any(
         project_user.role == ProjectUserRole.MANAGER
         for project_user in db_user.projects
@@ -87,15 +90,16 @@ def get_current_sessions(
 )
 def request_session(
     body: PostSessionRequest,
-    db: Session = Depends(get_db),
+    db_user: DatabaseUser = Depends(get_own_user),
     operator: Operator = Depends(get_operator),
+    db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
     assert body.type == WorkspaceType.READONLY
 
     rdp_password = generate_password(length=64)
 
-    owner = get_username(token)
+    owner = db_user.username
 
     log.info("Starting persistent session creation for user %s", owner)
 

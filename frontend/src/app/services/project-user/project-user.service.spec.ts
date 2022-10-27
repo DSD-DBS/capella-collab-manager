@@ -5,7 +5,7 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { ProjectUserService } from './repository-user.service';
+import { ProjectUserService } from './project-user.service';
 
 xdescribe('ProjectUserService', () => {
   let service: ProjectUserService;
