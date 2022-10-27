@@ -7,22 +7,22 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   EASEBackup,
-  EASEBackupService,
-} from 'src/app/projects/models/backup-settings/service/ease/easebackup.service';
+  BackupService,
+} from 'src/app/projects/models/backup-settings/service/backup.service';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
 import { CreateBackupComponent } from './create-backup/create-backup.component';
 import { ViewLogsDialogComponent } from './view-logs-dialog/view-logs-dialog.component';
 
 @Component({
-  selector: 'app-ease-backup-settings',
-  templateUrl: './ease-backup-settings.component.html',
-  styleUrls: ['./ease-backup-settings.component.css'],
+  selector: 'app-backup-settings',
+  templateUrl: './backup-settings.component.html',
+  styleUrls: ['./backup-settings.component.css'],
 })
 export class GitBackupSettingsComponent implements OnInit {
   constructor(
     public beautifyService: BeautifyService,
     public dialog: MatDialog,
-    public easeBackupService: EASEBackupService
+    public easeBackupService: BackupService
   ) {}
 
   @Input()

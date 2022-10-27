@@ -7,23 +7,23 @@ import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
-  EASEBackupService,
+  BackupService,
   PostEASEBackup,
-} from 'src/app/services/backups/ease/easebackup.service';
+} from 'src/app/projects/models/backup-settings/service/backup.service';
 import { GitModelService } from 'src/app/services/modelsources/git-model/git-model.service';
 import { T4CRepoService } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 
 @Component({
-  selector: 'app-create-ease-backup',
-  templateUrl: './create-ease-backup.component.html',
-  styleUrls: ['./create-ease-backup.component.css'],
+  selector: 'app-create-backup',
+  templateUrl: './create-backup.component.html',
+  styleUrls: ['./create-backup.component.css'],
 })
-export class CreateEASEBackupComponent {
+export class CreateBackupComponent {
   constructor(
     public gitModelService: GitModelService,
     public t4cRepoService: T4CRepoService,
-    private easeBackupService: EASEBackupService,
-    private dialogRef: MatDialogRef<CreateEASEBackupComponent>,
+    private easeBackupService: BackupService,
+    private dialogRef: MatDialogRef<CreateBackupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: CreateEASEBackupData
   ) {}
 

@@ -5,14 +5,14 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { EASEBackupService } from './easebackup.service';
+import { BackupService } from './backup.service';
 
-xdescribe('EASEBackupService', () => {
-  let service: EASEBackupService;
+xdescribe('BackupService', () => {
+  let service: BackupService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(EASEBackupService);
+    service = TestBed.inject(BackupService);
   });
 
   it('should be created', () => {
