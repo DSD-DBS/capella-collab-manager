@@ -140,13 +140,3 @@ router.include_router(
 router.include_router(
     router_models, prefix="/{project_slug}/models", tags=["Projects - Models"]
 )
-
-# Load backup extension routes
-eps = metadata.entry_points()["capellacollab.extensions.backups"]
-for ep in eps:
-    log.info("Add routes of backup extension %s", ep.name)
-    router.include_router(
-        importlib.import_module(".routes", ep.module).router,
-        prefix="/{project_slug}/extensions/backups/" + ep.name,
-        tags=[f"Projects - Backups - {ep.name}"],
-    )
