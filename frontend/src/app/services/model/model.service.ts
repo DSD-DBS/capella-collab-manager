@@ -6,12 +6,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { T4CModel } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
 import {
   Tool,
   ToolType,
   ToolVersion,
 } from 'src/app/settings/core/tools-settings/tool.service';
-import {T4CModel} from "src/app/services/modelsources/t4c-model/t4c-model.service";
 import { environment } from 'src/environments/environment';
 
 export interface NewModel {
