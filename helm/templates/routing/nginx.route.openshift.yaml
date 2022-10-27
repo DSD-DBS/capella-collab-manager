@@ -18,7 +18,7 @@ apiVersion: route.openshift.io/v1
 metadata:
   name: {{ $.Release.Name }}-route-{{ get $route "service" }}
 spec:
-  host: "{{ $.Values.general.scheme }}://{{ $.Values.general.host }}:{{ $.Values.general.port }}"
+  host: "{{ $.Values.general.host }}"
   path: {{ get $route "path" }}
   to:
     kind: Service
