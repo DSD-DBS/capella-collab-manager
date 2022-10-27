@@ -39,7 +39,7 @@ export class AuthInterceptor implements HttpInterceptor {
               }),
               catchError(() => {
                 this.router.navigateByUrl('/logout?reason=session-expired');
-                return throwError(err);
+                return throwError(() => new Error(err));
               })
             );
           } else {
@@ -47,7 +47,7 @@ export class AuthInterceptor implements HttpInterceptor {
           }
         }
 
-        return throwError(err);
+        return throwError(() => new Error(err));
       })
     );
   }
