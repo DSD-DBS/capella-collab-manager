@@ -70,7 +70,7 @@ def create_new(
     project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
 ) -> DatabaseCapellaModel:
-    tool = get_tool_by_id_or_raise(new_model.tool_id, db)
+    tool = get_tool_by_id_or_raise(db, new_model.tool_id)
 
     try:
         return crud.create_new_model(db, project, new_model, tool)
