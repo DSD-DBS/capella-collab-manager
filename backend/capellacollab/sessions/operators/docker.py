@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
+import json
 import logging
 import pathlib
 import shutil
@@ -60,21 +60,13 @@ class DockerOperator(Operator):
         self,
         password: str,
         docker_image: str,
-        git_url: str,
-        git_revision: str,
-        entrypoint: str,
-        git_username: str,
-        git_password: str,
+        git_repos_json: t.List[t.Dict[str, str | int]],
     ) -> t.Dict[str, t.Any]:
         con = self.client.containers.run(
             image=docker_image,
             ports={"3389/tcp": cfg["portRange"]},
             environment={
-                "GIT_USERNAME": git_username,
-                "GIT_PASSWORD": git_password,
-                "GIT_URL": git_url,
-                "GIT_REVISION": git_revision,
-                "GIT_ENTRYPOINT": entrypoint,
+                "GIT_REPOS_JSON": json.dumps(git_repos_json),
                 "RMT_PASSWORD": password,
             },
             detach=True,

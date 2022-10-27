@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
+
 import itertools
 import json
 import logging
@@ -20,6 +22,10 @@ from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db
+from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
+from capellacollab.projects.capellamodels.modelsources.git.models import (
+    DB_GitModel,
+)
 from capellacollab.projects.crud import get_project_by_slug
 from capellacollab.projects.users.crud import ProjectUserRole
 from capellacollab.sessions import database, guacamole
@@ -141,12 +147,7 @@ def request_session(
     session = operator.start_readonly_session(
         password=rdp_password,
         docker_image=docker_image,
-        git_url=git_model.path,
-        git_revision=git_model.revision,
-        entrypoint=git_model.entrypoint,
-        git_username=git_model.username,
-        git_password=git_model.password,
-        git_depth=DepthType.LatestCommit,
+        git_repos_json=list(models_as_json(models, body.tool_version)),
     )
 
     return create_database_and_guacamole_session(
@@ -157,6 +158,31 @@ def request_session(
         db,
         repository=[],
     )
+
+
+def models_as_json(models: t.List[DatabaseCapellaModel], version_id: int):
+    for m in models:
+        if m.version.id == version_id:
+            yield from model_as_json(m)
+
+
+def model_as_json(model: DatabaseCapellaModel):
+    for git_model in model.git_models:
+        yield git_model_as_json(git_model)
+
+
+def git_model_as_json(git_model: DB_GitModel) -> dict[str, str | int]:
+    json = {
+        "url": git_model.path,
+        "revision": git_model.revision,
+        "depth": 1,
+        "entrypoint": git_model.entrypoint,
+        "nature": "project",
+    }
+    if git_model.username:
+        json["username"] = git_model.username
+        json["password"] = git_model.password
+    return json
 
 
 @router.post("/persistent", response_model=AdvancedSessionResponse)

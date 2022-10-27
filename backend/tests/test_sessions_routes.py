@@ -105,14 +105,11 @@ class MockOperator(Operator):
         cls,
         password: str,
         docker_image: str,
-        git_url: str,
-        git_revision: str,
-        entrypoint: str,
-        git_username: str,
-        git_password: str,
-        git_depth: int,
+        git_repos_json: t.List[t.Dict[str, str | int]],
     ) -> t.Dict[str, t.Any]:
-        cls.sessions.append({"docker_image": docker_image})
+        cls.sessions.append(
+            {"docker_image": docker_image, "git_repos_json": git_repos_json}
+        )
         return {
             "id": str(uuid1()),
             "host": "test",
@@ -204,11 +201,12 @@ def test_create_readonly_session_as_user(client, db, username, kubernetes):
         tool=tool,
         version=version,
     )
+    git_path = str(uuid1())
     add_gitmodel_to_capellamodel(
         db,
         model,
         PostGitModel(
-            path="", entrypoint="", revision="", username="", password=""
+            path=git_path, entrypoint="", revision="", username="", password=""
         ),
     )
 
@@ -232,6 +230,7 @@ def test_create_readonly_session_as_user(client, db, username, kubernetes):
         kubernetes.sessions[0]["docker_image"]
         == "k3d-myregistry.localhost:12345/capella/readonly/5.0:prod"
     )
+    assert kubernetes.sessions[0]["git_repos_json"][0]["url"] == git_path
 
 
 def test_create_persistent_session_as_user(client, db, username, kubernetes):

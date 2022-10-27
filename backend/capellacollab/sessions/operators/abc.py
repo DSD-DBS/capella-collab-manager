@@ -43,12 +43,7 @@ class Operator(abc.ABC):
         self,
         password: str,
         docker_image: str,
-        git_url: str,
-        git_revision: str,
-        entrypoint: str,
-        git_username: str,
-        git_password: str,
-        git_depth: int,
+        git_repos_json: t.List[t.Dict[str, str | int]],
     ) -> t.Dict[str, t.Any]:
         """Start / Create a session
 
@@ -58,10 +53,8 @@ class Operator(abc.ABC):
             Password for the remote connection
         docker_image
             Image to run for this session
-        git_url
-            Git URL of the model that should be cloned
-        git_branch
-            Git Branch of the model that should be cloned
+        git_repos_json
+            A list of repository metadata
 
         Returns
         ------

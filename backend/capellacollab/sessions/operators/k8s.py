@@ -123,12 +123,7 @@ class KubernetesOperator(Operator):
         self,
         password: str,
         docker_image: str,
-        git_url: str,
-        git_revision: str,
-        entrypoint: str,
-        git_username: str,
-        git_password: str,
-        git_depth: int,
+        git_repos_json: t.List[t.Dict[str, str | int]],
     ) -> t.Dict[str, t.Any]:
         id = self._generate_id()
 
@@ -136,12 +131,7 @@ class KubernetesOperator(Operator):
             docker_image,
             id,
             {
-                "GIT_USERNAME": git_username,
-                "GIT_PASSWORD": git_password,
-                "GIT_URL": git_url,
-                "GIT_REVISION": git_revision,
-                "GIT_ENTRYPOINT": entrypoint,
-                "GIT_DEPTH": git_depth,
+                "GIT_REPOS_JSON": json.dumps(git_repos_json),
                 "RMT_PASSWORD": password,
             },
         )
