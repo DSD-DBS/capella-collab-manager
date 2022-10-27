@@ -15,7 +15,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 ### SQL MODELS ARE IMPORTED HERE ###
-import capellacollab.sql_models  # isort:skip
+from . import models  # isort:skip
 
 
 def get_db():
