@@ -3,10 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, filter, map, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  filter,
+  map,
+  Subscription,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
@@ -25,8 +32,9 @@ import {
   templateUrl: './edit-t4c-instance.component.html',
   styleUrls: ['./edit-t4c-instance.component.css'],
 })
-export class EditT4CInstanceComponent implements OnInit {
+export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   editing: boolean = false;
+  paramsSubscription?: Subscription;
 
   existing: boolean = false;
 
@@ -91,7 +99,7 @@ export class EditT4CInstanceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.params
+    this.paramsSubscription = this.route.params
       .pipe(
         map((params) => params.instance),
         filter(Boolean),
@@ -147,7 +155,10 @@ export class EditT4CInstanceComponent implements OnInit {
             'Instance created',
             `The instance “${instance.name}” was created.`
           );
-          this.router.navigate(['..'], { relativeTo: this.route });
+          this._instance.next(instance);
+          this.router.navigate(['..', 'instance', instance.id], {
+            relativeTo: this.route,
+          });
         });
     }
   }
@@ -173,5 +184,10 @@ export class EditT4CInstanceComponent implements OnInit {
     } else {
       this.create();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.paramsSubscription?.unsubscribe();
+    this._instance.next(undefined);
   }
 }
