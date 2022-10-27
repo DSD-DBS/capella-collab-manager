@@ -10,7 +10,7 @@ import {
   BackupService,
   PostEASEBackup,
 } from 'src/app/projects/models/backup-settings/service/backup.service';
-import { GitModelService } from 'src/app/services/modelsources/git-model/git-model.service';
+import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { T4CRepoService } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 
 @Component({

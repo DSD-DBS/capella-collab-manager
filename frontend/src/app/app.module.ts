@@ -69,8 +69,6 @@ import { InitModelComponent } from './projects/models/init-model/init-model.comp
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
 import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
 import { ChooseSourceComponent } from './projects/models/model-source/choose-source.component';
-import { GitModelDeletionDialogComponent } from './projects/models/model-source/git-model-settings/git-model-deletion-dialog/git-model-deletion-dialog.component';
-import { GitModelSettingsComponent } from './projects/models/model-source/git-model-settings/git-model-settings.component';
 import { T4CRepoSettingsComponent } from './projects/models/model-source/t4c-repo-settings/t4c-repo-settings.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { ModelOverviewComponent } from './projects/project-detail/model-overview/model-overview.component';
@@ -132,8 +130,6 @@ import { HomeComponent } from './workspaces/home.component';
     FileExistsDialogComponent,
     FooterComponent,
     GitBackupSettingsComponent,
-    GitModelDeletionDialogComponent,
-    GitModelSettingsComponent,
     GitSettingsComponent,
     GuacamoleComponent,
     GuacamoleSettingsComponent,

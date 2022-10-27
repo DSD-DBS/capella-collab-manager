@@ -23,10 +23,10 @@
     <mat-label>Select target (git model)</mat-label>
     <mat-select formControlName="gitmodel">
       <mat-option
-        *ngFor="let gitModel of gitModelService.models"
+        *ngFor="let gitModel of gitModelService.gitModels | async"
         [value]="gitModel.id"
       >
-        {{ gitModel.name }}
+        {{ gitModel.path }}
       </mat-option>
     </mat-select>
     <mat-error>Please select a git model!</mat-error>
@@ -34,7 +34,10 @@
 </form>
 
 <div
-  *ngIf="!gitModelService.models.length || !t4cRepoService.repositories.length"
+  *ngIf="
+    !(gitModelService.gitModels | async)?.length ||
+    !t4cRepoService.repositories.length
+  "
 ></div>
 <div mat-dialog-actions>
   <button mat-button [mat-dialog-close]="false">Cancel</button>
