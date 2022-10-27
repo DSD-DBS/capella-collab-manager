@@ -16,7 +16,7 @@ module.exports = {
         "plugin:@angular-eslint/recommended",
         "plugin:@angular-eslint/template/process-inline-templates",
       ],
-      plugins: ["import", "unused-imports"],
+      plugins: ["import", "unused-imports", "deprecation"],
       rules: {
         "@angular-eslint/directive-selector": [
           "error",
@@ -54,6 +54,7 @@ module.exports = {
         ],
         "unused-imports/no-unused-imports": "error",
         "no-console": ["error", { allow: ["error"] }],
+        "deprecation/deprecation": "error",
       },
     },
     {
