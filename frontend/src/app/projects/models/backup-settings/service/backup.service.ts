@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class EASEBackupService {
+export class BackupService {
   constructor(private http: HttpClient) {}
 
   getBackups(project: string): Observable<EASEBackup[]> {

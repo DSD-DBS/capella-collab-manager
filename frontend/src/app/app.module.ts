@@ -58,8 +58,8 @@ import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 import { MatCardOverviewLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-loader/mat-card-overview-loader.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
-import { CreateEASEBackupComponent } from './projects/models/backup-settings/create-ease-backup/create-ease-backup.component';
-import { GitBackupSettingsComponent } from './projects/models/backup-settings/ease-backup-settings.component';
+import { GitBackupSettingsComponent } from './projects/models/backup-settings/backup-settings.component';
+import { CreateBackupComponent } from './projects/models/backup-settings/create-backup/create-backup.component';
 import { ViewLogsDialogComponent } from './projects/models/backup-settings/view-logs-dialog/view-logs-dialog.component';
 import { ChooseInitComponent } from './projects/models/choose-init/choose-init.component';
 import { CreateCoworkingMethodComponent } from './projects/models/create-coworking-method/create-coworking-method.component';
@@ -120,8 +120,8 @@ import { HomeComponent } from './workspaces/home.component';
     AuthComponent,
     ChooseInitComponent,
     ChooseSourceComponent,
+    CreateBackupComponent,
     CreateCoworkingMethodComponent,
-    CreateEASEBackupComponent,
     CreateModelBaseComponent,
     CreateModelComponent,
     CreateProjectComponent,
