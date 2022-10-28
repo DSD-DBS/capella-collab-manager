@@ -91,10 +91,11 @@ def create_t4c_model(
     body: SubmitT4CModel,
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(database.get_db),
-    repository: DatabaseT4CRepository = Depends(
-        get_existing_instance_repository
-    ),
 ):
+    instance = get_existing_instance(body.t4c_instance_id, db)
+    repository = get_existing_instance_repository(
+        body.t4c_repository_id, db, instance
+    )
     try:
         return crud.create_t4c_model(db, model, repository, body.name)
     except IntegrityError:
