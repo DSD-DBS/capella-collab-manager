@@ -31,12 +31,11 @@ export class ModelOverviewComponent implements OnInit {
   }
 
   getPrimaryWorkingMode(model: Model): string {
-    if (model.t4c_models && model.git_model_id) {
+    if (model.t4c_models.length) {
       return 'T4C';
-    } else if (model.git_model_id) {
+    } else if (model.git_models.length) {
       return 'Git';
-    } else {
-      return 'Unset';
     }
+    return 'Unset';
   }
 }
