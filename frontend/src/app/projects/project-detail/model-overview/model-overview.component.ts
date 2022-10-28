@@ -4,11 +4,13 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Model, ModelService } from 'src/app/services/model/model.service';
 import {
   Project,
   ProjectService,
 } from 'src/app/services/project/project.service';
+import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 
 @Component({
   selector: 'app-model-overview',
@@ -21,7 +23,8 @@ export class ModelOverviewComponent implements OnInit {
 
   constructor(
     public projectService: ProjectService,
-    public modelService: ModelService
+    public modelService: ModelService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -37,5 +40,9 @@ export class ModelOverviewComponent implements OnInit {
       return 'Git';
     }
     return 'Unset';
+  }
+
+  openPipelineDialog(): void {
+    this.dialog.open(TriggerPipelineComponent);
   }
 }
