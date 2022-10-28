@@ -23,7 +23,7 @@ export interface PatchGitModel extends CreateGitModel {
   primary: boolean;
 }
 
-export interface GetGitModel extends BaseGitModel {
+export interface GitModel extends BaseGitModel {
   id: number;
   primary: boolean;
   password: boolean;
@@ -39,8 +39,8 @@ export class SourceService {
     project_slug: string,
     model_slug: string,
     source: CreateGitModel
-  ): Observable<GetGitModel> {
-    return this.http.post<GetGitModel>(
+  ): Observable<GitModel> {
+    return this.http.post<GitModel>(
       environment.backend_url +
         `/projects/${project_slug}/models/${model_slug}/git/`,
       source
