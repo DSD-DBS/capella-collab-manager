@@ -41,8 +41,5 @@ class DB_EASEBackup(Base):
     gitmodel = Column(Integer, ForeignKey("git_models.id"))
     t4cmodel = Column(Integer, ForeignKey("t4c_models.id"))
     username = Column(String)
-    project = Column(
-        String,
-        ForeignKey("projects.name"),
-        primary_key=True,
-    )
+    model_id = Column(Integer, ForeignKey("models.id"))
+    t4c_username = Column(String)

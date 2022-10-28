@@ -10,35 +10,29 @@ import requests
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-import capellacollab.core.authentication.database as auth
-import capellacollab.projects.capellamodels.modelsources.git.crud as git_crud
 import capellacollab.projects.capellamodels.modelsources.t4c.connection as t4c_connection
-import capellacollab.projects.capellamodels.modelsources.t4c.crud as t4c_crud
 from capellacollab.config import config
 from capellacollab.core import credentials
 from capellacollab.core.authentication.database import ProjectRoleVerification
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
-from capellacollab.extensions.backups.ease.models import (
-    DB_EASEBackup,
-    EASEBackupRequest,
-    EASEBackupResponse,
-)
 from capellacollab.projects.capellamodels.injectables import (
+    get_existing_capella_model,
     get_existing_project,
+)
+from capellacollab.projects.capellamodels.modelsources.git.injectables import (
+    get_existing_git_model,
 )
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.sessions.operators import OPERATOR
 
-from . import crud, helper
+from . import crud, helper, injectables
+from .models import DB_EASEBackup, EASEBackupRequest, EASEBackupResponse
 
 router = APIRouter()
 log = logging.getLogger(__name__)
 
-# FIXME: Change usage of id to backup_id (id is reserved)
 
-# FIXME: Change usage of project.name to just project (or project.slug)
 @router.get(
     "/",
     response_model=t.List[EASEBackupResponse],
@@ -56,7 +50,6 @@ def get_ease_backups(
     ]
 
 
-# FIXME: Change usage of project.name to just project (or project.slug)
 @router.post(
     "/",
     response_model=EASEBackupResponse,
@@ -64,12 +57,11 @@ def get_ease_backups(
 def create_backup(
     body: EASEBackupRequest,
     project: DatabaseProject = Depends(get_existing_project),
+    capella_model=Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ):
-    gitmodel = git_crud.get_gitmodel_by_id(db, body.gitmodel)
-
-    # FIXME: Not working
-    t4cmodel = t4c_crud.get_t4c_model(db, name, model_id)(
+    gitmodel = get_existing_git_model(body.gitmodel, capella_model, db)
+    t4cmodel = get_existing_t4c_model(body.t4cmodel, capella_model, db)(
         db=db, id=body.t4cmodel, repo_name=project.name
     )
 
@@ -99,7 +91,7 @@ def create_backup(
     )
 
     return helper._inject_last_run(
-        crud.create_backup(
+        crud.create_pipeline(
             db=db,
             backup=DB_EASEBackup(
                 project=project.name,
@@ -111,43 +103,32 @@ def create_backup(
     )
 
 
-# FIXME: Change usage of project.name to just project (or project.slug)
 @router.delete(
-    "/{id}",
+    "/{pipeline_id}",
     status_code=204,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
 )
-def delete_backup(
-    id: int,
-    project: DatabaseProject = Depends(get_existing_project),
+def delete_pipeline(
+    pipeline: DB_EASEBackup = Depends(injectables.get_existing_pipeline),
     db: Session = Depends(get_db),
 ):
-    backup = crud.get_backup(db, project.name, id)
 
-    # FIXME: Not working
-    t4cmodel = t4c_crud.get_project_by_id(
-        db=db, id=backup.t4cmodel, repo_name=project.name
-    )
     try:
         t4c_connection.remove_user_from_repository(
-            t4cmodel.name, backup.username
+            pipeline.t4c_model.repository.name, pipeline.t4c_username
         )
     except requests.HTTPError:
-        log.warning(
-            "Error during the deletion of user %s in t4c", exc_info=True
-        )
+        log.error("Error during the deletion of user %s in t4c", exc_info=True)
 
-    OPERATOR.delete_cronjob(backup.reference)
+    OPERATOR.delete_cronjob(pipeline.reference)
 
-    crud.delete_backup(db, project.name, id)
-    return None
+    crud.delete_pipeline(db, pipeline)
 
 
-# FIXME: Change usage of project.name to just project (or project.slug)
 @router.post(
-    "/{id}/jobs",
+    "/{pipeline_id}/runs",
     response_model=EASEBackupResponse,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
@@ -155,25 +136,21 @@ def delete_backup(
 )
 def create_job(
     id: int,
-    project: DatabaseProject = Depends(get_existing_project),
+    pipeline: DB_EASEBackup = Depends(injectables.get_existing_pipeline),
     db: Session = Depends(get_db),
 ):
-    backup = crud.get_backup(db, project.name, id)
-    OPERATOR.trigger_cronjob(name=backup.reference)
+    OPERATOR.trigger_cronjob(name=pipeline.reference)
 
 
-# FIXME: Change usage of project to project slug
 @router.get(
-    "/{bid}/jobs/{jid}/logs",
+    "/{pipeline_id}/runs/{run_id}/logs",
     response_model=str,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
 )
 def get_logs(
-    bid: int,
-    jid: str,
+    pipeline_run_id: str = Depends(injectables.get_existing_pipeline_run),
 ):
-    # TODO: Check if jid is part of bid
-
-    return OPERATOR.get_job_logs(id=jid)
+    OPERATOR.get_job_logs(id=pipeline_run_id)
+    return helper.filter_logs()
