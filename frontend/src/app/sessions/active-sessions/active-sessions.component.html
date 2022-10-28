@@ -33,21 +33,20 @@
       {{ beautifyService.beatifyDate(session.created_at) }}
     </p>
   </mat-card-content>
-  <mat-card-actions>
+  <mat-card-actions class="flex-space-between">
     <button mat-button color="primary" (click)="openDeletionDialog([session])">
       Terminate
     </button>
     <button
-      mat-flat-button
+      mat-button
       color="primary"
       (click)="openReconnectDialog(session)"
       [disabled]="!sessionService.beautifyState(session.state).success"
     >
-      Reconnect
+      Connect
     </button>
-
     <button
-      mat-flat-button
+      mat-button
       color="primary"
       (click)="uploadFileDialog(session)"
       [disabled]="!sessionService.beautifyState(session.state).success"
