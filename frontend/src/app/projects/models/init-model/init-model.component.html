@@ -32,10 +32,13 @@
       </fieldset>
       <fieldset>
         <mat-form-field appearance="fill">
-          <mat-label>Model type</mat-label>
-          <mat-select formControlName="type">
-            <mat-option *ngFor="let type of this.toolTypes" [value]="type.id">
-              {{ type.name }}
+          <mat-label>Model nature</mat-label>
+          <mat-select formControlName="nature">
+            <mat-option
+              *ngFor="let nature of this.toolNatures"
+              [value]="nature.id"
+            >
+              {{ nature.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>

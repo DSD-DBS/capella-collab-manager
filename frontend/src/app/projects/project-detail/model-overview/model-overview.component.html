@@ -25,8 +25,8 @@
         <mat-card class="nature"
           ><div>
             <div class="model-badge-title">Nature</div>
-            <div *ngIf="model.type">{{ model.type.name }}</div>
-            <div *ngIf="!model.type">Not specified</div>
+            <div *ngIf="model.nature">{{ model.nature.name }}</div>
+            <div *ngIf="!model.nature">Not specified</div>
           </div></mat-card
         >
         <mat-card class=""> </mat-card>
@@ -62,9 +62,9 @@
             <mat-icon>sync</mat-icon>
           </a>
           <a
-            *ngIf="model.git_model_id"
+            *ngIf="model.git_models"
             mat-mini-fab
-            [disabled]="!model.git_model_id"
+            [disabled]="!model.git_models"
             matTooltip="Open git repository"
           >
             <mat-icon>link</mat-icon>
@@ -79,7 +79,7 @@
           </a>
           <a
             mat-mini-fab
-            *ngIf="model.git_model_id"
+            *ngIf="model.git_models"
             matTooltip="Open readonly session"
           >
             <mat-icon>remove_red_eye</mat-icon>

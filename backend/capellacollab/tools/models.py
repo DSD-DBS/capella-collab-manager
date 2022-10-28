@@ -28,7 +28,7 @@ class Tool(Base):
     docker_image_template = Column(String)
 
     versions = relationship("Version", back_populates="tool")
-    types = relationship("Type", back_populates="tool")
+    natures = relationship("Nature", back_populates="tool")
 
 
 class Version(Base):
@@ -44,7 +44,7 @@ class Version(Base):
     tool: Tool = relationship("Tool", back_populates="versions")
 
 
-class Type(Base):
+class Nature(Base):
     __tablename__ = "types"
     __table_args__ = (UniqueConstraint("tool_id", "name"),)
 
@@ -52,7 +52,7 @@ class Type(Base):
     name = Column(String)
 
     tool_id = Column(Integer, ForeignKey(Tool.id))
-    tool = relationship("Tool", back_populates="types")
+    tool = relationship("Tool", back_populates="natures")
 
 
 class ToolBase(BaseModel):
@@ -88,7 +88,7 @@ class CreateToolVersion(BaseModel):
     name: str
 
 
-class CreateToolType(BaseModel):
+class CreateToolNature(BaseModel):
     name: str
 
 
@@ -108,7 +108,7 @@ class ToolVersionBase(BaseModel):
         orm_mode = True
 
 
-class ToolTypeBase(BaseModel):
+class ToolNatureBase(BaseModel):
     id: int
     name: str
 

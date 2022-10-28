@@ -12,7 +12,7 @@ from capellacollab.projects.capellamodels.models import (
     DatabaseCapellaModel,
 )
 from capellacollab.projects.models import DatabaseProject
-from capellacollab.tools.models import Tool, Type, Version
+from capellacollab.tools.models import Nature, Tool, Version
 
 
 def get_all_models_in_project(
@@ -36,11 +36,11 @@ def get_models_by_version(
 
 
 def get_models_by_type(
-    type_id: int, db: Session
+    nature_id: int, db: Session
 ) -> list[DatabaseCapellaModel]:
     return (
         db.query(DatabaseCapellaModel)
-        .filter(DatabaseCapellaModel.type_id == type_id)
+        .filter(DatabaseCapellaModel.nature_id == nature_id)
         .all()
     )
 
@@ -97,9 +97,9 @@ def set_tool_details_for_model(
     db: Session,
     model: DatabaseCapellaModel,
     version: Version,
-    model_type: Type,
+    nature: Nature,
 ) -> DatabaseCapellaModel:
     model.version = version
-    model.tool_type = model_type
+    model.nature = nature
     db.commit()
     return model

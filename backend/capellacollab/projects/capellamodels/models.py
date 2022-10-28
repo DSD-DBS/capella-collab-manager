@@ -28,11 +28,11 @@ from capellacollab.projects.capellamodels.modelsources.t4c.models import (
     ResponseT4CModel,
 )
 from capellacollab.tools.models import (
+    Nature,
     Tool,
     ToolBase,
-    ToolTypeBase,
+    ToolNatureBase,
     ToolVersionBase,
-    Type,
     Version,
 )
 
@@ -50,7 +50,7 @@ class CapellaModel(BaseModel):
 
 class ToolDetails(BaseModel):
     version_id: int
-    type_id: int
+    nature_id: int
 
 
 class DatabaseCapellaModel(Base):
@@ -71,8 +71,8 @@ class DatabaseCapellaModel(Base):
     version_id = Column(Integer, ForeignKey(Version.id))
     version = relationship(Version)
 
-    type_id = Column(Integer, ForeignKey(Type.id))
-    type = relationship(Type)
+    nature_id = Column(Integer, ForeignKey(Nature.id))
+    nature = relationship(Nature)
 
     editing_mode = Column(Enum(EditingMode))
 
@@ -87,7 +87,7 @@ class ResponseModel(BaseModel):
     description: str
     tool: ToolBase
     version: t.Optional[ToolVersionBase]
-    type: t.Optional[ToolTypeBase]
+    nature: t.Optional[ToolNatureBase]
     git_models: t.Optional[list[ResponseGitModel]]
     t4c_models: t.Optional[list[ResponseT4CModel]]
 

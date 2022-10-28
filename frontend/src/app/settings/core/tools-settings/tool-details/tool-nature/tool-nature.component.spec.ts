@@ -5,18 +5,18 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ToolTypeComponent } from './tool-type.component';
+import { ToolNatureComponent } from './tool-nature.component';
 
-xdescribe('ToolTypeComponent', () => {
-  let component: ToolTypeComponent;
-  let fixture: ComponentFixture<ToolTypeComponent>;
+xdescribe('ToolNatureComponent', () => {
+  let component: ToolNatureComponent;
+  let fixture: ComponentFixture<ToolNatureComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ToolTypeComponent],
+      declarations: [ToolNatureComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ToolTypeComponent);
+    fixture = TestBed.createComponent(ToolNatureComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

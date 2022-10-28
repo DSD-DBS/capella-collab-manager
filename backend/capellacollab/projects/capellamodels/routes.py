@@ -12,7 +12,7 @@ from capellacollab.core.database import get_db
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.tools import crud as tools_crud
-from capellacollab.tools.models import Tool, Type, Version
+from capellacollab.tools.models import Nature, Tool, Version
 
 from . import crud
 from .injectables import get_existing_capella_model, get_existing_project
@@ -105,16 +105,16 @@ def set_tool_details(
             },
         )
 
-    model_type = get_type_by_id_or_raise(db, tool_details.type_id)
-    if model_type.tool != model.tool:
+    nature = get_nature_by_id_or_raise(db, tool_details.nature_id)
+    if nature.tool != model.tool:
         raise HTTPException(
             409,
             {
-                "reason": f"The tool having the type “{model_type.name}” (“{model_type.tool.name}”) does not match the tool of the model “{model.name}” (“{model.tool.name}”)."
+                "reason": f"The tool having the nature “{nature.name}” (“{nature.tool.name}”) does not match the tool of the model “{model.name}” (“{model.tool.name}”)."
             },
         )
 
-    return crud.set_tool_details_for_model(db, model, version, model_type)
+    return crud.set_tool_details_for_model(db, model, version, nature)
 
 
 def get_tool_by_id_or_raise(db: Session, tool_id: int) -> Tool:
@@ -137,10 +137,10 @@ def get_version_by_id_or_raise(db: Session, version_id: int) -> Version:
         )
 
 
-def get_type_by_id_or_raise(db: Session, type_id: int) -> Type:
+def get_nature_by_id_or_raise(db: Session, nature_id: int) -> Nature:
     try:
-        return tools_crud.get_type_by_id(type_id, db)
+        return tools_crud.get_nature_by_id(nature_id, db)
     except NoResultFound:
         raise HTTPException(
-            404, {"reason": f"The type with id {type_id} was not found."}
+            404, {"reason": f"The type with id {nature_id} was not found."}
         )
