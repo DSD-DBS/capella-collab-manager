@@ -6,8 +6,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { T4CModel } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
-import { GitModel } from 'src/app/services/source/source.service';
 import {
   Tool,
   ToolNature,
@@ -31,7 +31,7 @@ export type Model = {
   version?: ToolVersion;
   nature?: ToolNature;
   t4c_models: T4CModel[];
-  git_models: GitModel[];
+  git_models: GetGitModel[];
 };
 
 @Injectable({
