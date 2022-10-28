@@ -35,7 +35,7 @@
         <fieldset>
           <mat-form-field appearance="fill">
             <mat-label>License configuration</mat-label>
-            <input matInput formControlName="license" [disabled]="!instance" />
+            <input matInput formControlName="license" />
             <mat-error *ngIf="form.controls.license.errors?.required">
               The license configuration is required.
             </mat-error>
@@ -123,8 +123,14 @@
           </button>
           <button mat-flat-button type="submit" color="primary">Submit</button>
         </div>
-        <div *ngIf="!editing && existing">
-          <button mat-flat-button (click)="enableEditing()">Edit</button>
+        <div *ngIf="!editing && existing" class="flex-space-between">
+          <a mat-button [routerLink]="['../..']">
+            <mat-icon class="mat-icon-position">arrow_back</mat-icon>
+            Back
+          </a>
+          <button mat-flat-button color="primary" (click)="enableEditing()">
+            Edit
+          </button>
         </div>
         <div *ngIf="!existing" id="submit-button-wrapper">
           <button

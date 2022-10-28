@@ -5,9 +5,9 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { T4CInstanceService } from './t4c-model.service';
+import { T4CInstanceService } from './t4c-instance.service';
 
-xdescribe('T4cModelService', () => {
+xdescribe('T4CInstanceService', () => {
   let service: T4CInstanceService;
 
   beforeEach(() => {

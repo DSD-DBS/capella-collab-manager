@@ -42,4 +42,39 @@
       </mat-card>
     </a>
   </div>
+  <h1 class="title">T4C Models</h1>
+  <div class="flexbox">
+    <a [routerLink]="['t4c-model', 'create']">
+      <mat-card matRipple class="mat-card-overview new">
+        <div class="content">
+          Use existing repository <br />
+          <div class="icon">
+            <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
+          </div>
+        </div>
+      </mat-card>
+    </a>
+
+    <mat-card class="mat-card-overview new visually-disabled">
+      <div class="content">
+        Create repository <br />
+        <div class="icon">
+          <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
+        </div>
+      </div>
+    </mat-card>
+    <a
+      *ngFor="let t4cModel of t4cModels"
+      [routerLink]="['t4c-model', t4cModel.id]"
+    >
+      <mat-card matRipple class="mat-card-overview">
+        <div class="header">Integration {{ t4cModel.id }}</div>
+        <div class="content">
+          <div>Instance: {{ t4cModel.repository.instance.name }}</div>
+          <div>Repository: {{ t4cModel.repository.name }}</div>
+          <div>Name: {{ t4cModel.name }}</div>
+        </div>
+      </mat-card>
+    </a>
+  </div>
 </div>

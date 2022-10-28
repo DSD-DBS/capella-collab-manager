@@ -2,44 +2,59 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import typing as t
+
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.capellamodels.modelsources.t4c.models import (
-    DB_T4CModel,
+    DatabaseT4CModel,
+    SubmitT4CModel,
+    T4CRepositoryWithModels,
+)
+from capellacollab.settings.modelsources.t4c.repositories.models import (
+    DatabaseT4CRepository,
 )
 
 
-def get_t4c_model(db: Session, name: str, model_id: int):
+def get_t4c_model_by_id(db: Session, t4c_model_id: int) -> DatabaseT4CModel:
+    return db.execute(
+        select(DatabaseT4CModel).where(DatabaseT4CModel.id == t4c_model_id)
+    ).scalar_one()
+
+
+def get_all_t4c_models(
+    db: Session, model: DatabaseCapellaModel
+) -> list[DatabaseT4CModel]:
     return (
-        db.query(DB_T4CModel)
-        .filter(DB_T4CModel.name == name)
-        .filter(DB_T4CModel.model_id == model_id)
-        .first()
+        db.execute(
+            select(DatabaseT4CModel).where(DatabaseT4CModel.model == model)
+        )
+        .scalars()
+        .all()
     )
 
 
-def get_t4c_model_by_id(db: Session, id: int, model_id: int):
-    return (
-        db.query(DB_T4CModel)
-        .filter(DB_T4CModel.id == id)
-        .filter(DB_T4CModel.model_id == model_id)
-        .first()
-    )
-
-
-def get_all_t4c_models(db: Session, model_id: int):
-    return db.query(DB_T4CModel).filter(DB_T4CModel.model_id == model_id).all()
-
-
-def create_t4c_model(db: Session, model_id: int, project_name: str):
-    project = DB_T4CModel(model_id=model_id, name=project_name)
-    db.add(project)
+def create_t4c_model(
+    db: Session,
+    model: DatabaseCapellaModel,
+    repository: DatabaseT4CRepository,
+    name: str,
+) -> DatabaseT4CModel:
+    t4c_model = DatabaseT4CModel(name=name, model=model, repository=repository)
+    db.add(t4c_model)
     db.commit()
-    return project
+    return t4c_model
 
 
-def delete_project(db: Session, id: int, repo_name: str):
-    db.query(DB_T4CModel).filter(DB_T4CModel.id == id).filter(
-        DB_T4CModel.repository_name == repo_name
-    ).delete()
+def patch_t4c_model(
+    db: Session,
+    t4c_model: DatabaseT4CModel,
+    patch_model: SubmitT4CModel,
+) -> DatabaseT4CModel:
+    for key in patch_model.dict():
+        if value := patch_model.__getattribute__(key):
+            t4c_model.__setattr__(key, value)
     db.commit()
+    return t4c_model

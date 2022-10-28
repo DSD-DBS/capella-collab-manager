@@ -1,38 +1,48 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
+from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
-from capellacollab.core.authentication.database import verify_admin
+from capellacollab.core.authentication.database import (
+    RoleVerification,
+    verify_admin,
+)
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
+from capellacollab.projects.capellamodels.routes import (
+    get_version_by_id_or_raise,
+)
 from capellacollab.settings.modelsources.t4c import crud
-from capellacollab.settings.modelsources.t4c.injectables import load_instance
+from capellacollab.settings.modelsources.t4c.injectables import (
+    get_existing_instance,
+)
 from capellacollab.settings.modelsources.t4c.models import (
     CreateT4CInstance,
     DatabaseT4CInstance,
     PatchT4CInstance,
     T4CInstance,
 )
+from capellacollab.settings.modelsources.t4c.repositories.models import (
+    T4CInstanceWithRepositories,
+)
 from capellacollab.settings.modelsources.t4c.repositories.routes import (
     router as repositories_router,
 )
 from capellacollab.tools import crud as tools_crud
+from capellacollab.users.models import Role
 
-router = APIRouter()
-
-
-@router.get(
-    "/",
-    response_model=list[T4CInstance],
+router = APIRouter(
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
-def list_git_settings(
+
+
+@router.get("/", response_model=list[T4CInstance])
+def list_t4c_settings(
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ) -> list[DatabaseT4CInstance]:
-    verify_admin(token, db)
     return crud.get_all_t4c_instances(db)
 
 
@@ -41,12 +51,9 @@ def list_git_settings(
     response_model=T4CInstance,
 )
 def get_t4c_instance(
-    instance: T4CInstance = Depends(load_instance),
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
-):
-    verify_admin(token, db)
-    return T4CInstance.from_orm(instance)
+    instance: DatabaseT4CInstance = Depends(get_existing_instance),
+) -> DatabaseT4CInstance:
+    return instance
 
 
 @router.post(
@@ -56,22 +63,11 @@ def get_t4c_instance(
 def create_t4c_instance(
     body: CreateT4CInstance,
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
-):
-    verify_admin(token, db)
-    try:
-        version = tools_crud.get_version_by_id(body.version_id, db)
-    except NoResultFound:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The version with id {body.version_id} was not found."
-            },
-        )
-
+) -> DatabaseT4CInstance:
+    version = get_version_by_id_or_raise(db, body.version_id)
     instance = DatabaseT4CInstance(**body.dict())
     instance.version = version
-    return T4CInstance.from_orm(crud.create_t4c_instance(instance, db))
+    return crud.create_t4c_instance(instance, db)
 
 
 @router.patch(
@@ -80,16 +76,13 @@ def create_t4c_instance(
 )
 def edit_t4c_instance(
     body: PatchT4CInstance,
-    instance: DatabaseT4CInstance = Depends(load_instance),
+    instance: DatabaseT4CInstance = Depends(get_existing_instance),
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
-):
-    verify_admin(token, db)
+) -> DatabaseT4CInstance:
     for key in body.dict():
         if value := body.__getattribute__(key):
             instance.__setattr__(key, value)
-
-    return T4CInstance.from_orm(crud.update_t4c_instance(instance, db))
+    return crud.update_t4c_instance(instance, db)
 
 
 router.include_router(

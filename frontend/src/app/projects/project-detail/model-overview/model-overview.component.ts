@@ -31,7 +31,7 @@ export class ModelOverviewComponent implements OnInit {
   }
 
   getPrimaryWorkingMode(model: Model): string {
-    if (model.t4c_model_id && model.git_model_id) {
+    if (model.t4c_models && model.git_model_id) {
       return 'T4C';
     } else if (model.git_model_id) {
       return 'Git';

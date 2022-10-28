@@ -11,10 +11,12 @@ import { AuthComponent } from './general/auth/auth/auth.component';
 import { LogoutRedirectComponent } from './general/auth/logout/logout-redirect/logout-redirect.component';
 import { LogoutComponent } from './general/auth/logout/logout/logout.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
+import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
 import { CreateCoworkingMethodComponent } from './projects/models/create-coworking-method/create-coworking-method.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
+import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
+import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
-import { ModelDetailComponent } from './projects/project-detail/model-overview/model-detail/model-detail.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
@@ -82,6 +84,25 @@ const routes: Routes = [
               {
                 path: 'git-model/:git-model',
                 component: CreateCoworkingMethodComponent,
+              },
+              {
+                path: 't4c-model',
+                children: [
+                  {
+                    path: 'create',
+                    component: AddT4cSourceComponent,
+                  },
+                  {
+                    path: ':t4c_model_id',
+                    component: T4cModelWrapperComponent,
+                    children: [
+                      {
+                        path: '',
+                        component: AddT4cSourceComponent,
+                      },
+                    ],
+                  },
+                ],
               },
             ],
           },

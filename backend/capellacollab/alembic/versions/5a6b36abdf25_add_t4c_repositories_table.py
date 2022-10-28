@@ -14,7 +14,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "5a6b36abdf25"
-down_revision = "3fe3ed1167fb"
+down_revision = "3fa75ddfdde8"
 branch_labels = None
 depends_on = None
 

@@ -7,7 +7,7 @@ import typing as t
 
 import pydantic
 import requests
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, root_validator, validator
 from requests.exceptions import RequestException
 from sqlalchemy import CheckConstraint, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship

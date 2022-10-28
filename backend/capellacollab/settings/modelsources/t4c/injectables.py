@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
+
 from fastapi import Depends, HTTPException
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
@@ -10,7 +12,7 @@ from capellacollab.settings.modelsources.t4c import crud
 from capellacollab.settings.modelsources.t4c.models import DatabaseT4CInstance
 
 
-def load_instance(
+def get_existing_instance(
     t4c_instance_id: int, db: Session = Depends(get_db)
 ) -> DatabaseT4CInstance:
     try:
