@@ -137,6 +137,4 @@ def delete_project(
 router.include_router(
     router_users, tags=["Projects"], prefix="/{project_slug}/users"
 )
-router.include_router(
-    router_models, prefix="/{project_slug}/models", tags=["Projects - Models"]
-)
+router.include_router(router_models, prefix="/{project_slug}/models")
