@@ -54,7 +54,7 @@ export class GitService {
     this.http
       .post<Revisions>(
         this.BACKEND_URL_PREFIX +
-          `/projects/${project_slug}/models/${model_slug}/git/git-model/${git_model_id}/revisions`,
+          `/projects/${project_slug}/models/${model_slug}/modelsources/git/${git_model_id}/revisions`,
         gitUrl
       )
       .subscribe({

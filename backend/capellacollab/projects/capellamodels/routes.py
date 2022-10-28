@@ -15,6 +15,7 @@ from capellacollab.tools import crud as tools_crud
 from capellacollab.tools.models import Nature, Tool, Version
 
 from . import crud
+from .backups.routes import router as router_backups
 from .injectables import get_existing_capella_model, get_existing_project
 from .models import (
     CapellaModel,
@@ -22,8 +23,7 @@ from .models import (
     ResponseModel,
     ToolDetails,
 )
-from .modelsources.git.routes import router as router_sources_git
-from .modelsources.t4c.routes import router as router_sources_t4c
+from .modelsources.routes import router as router_modelsources
 
 router = APIRouter(
     dependencies=[
@@ -32,26 +32,18 @@ router = APIRouter(
 )
 
 
-router.include_router(
-    router_sources_git,
-    prefix="/{model_slug}/git",
-    tags=["Projects - Models - Git"],
+@router.get(
+    "/", response_model=list[ResponseModel], tags=["Projects - Models"]
 )
-router.include_router(
-    router_sources_t4c,
-    prefix="/{model_slug}/t4c",
-    tags=["Projects - Models - T4C"],
-)
-
-
-@router.get("/", response_model=list[ResponseModel])
 def get_models(
     project: DatabaseProject = Depends(get_existing_project),
 ) -> list[DatabaseCapellaModel]:
     return project.models
 
 
-@router.get("/{model_slug}", response_model=ResponseModel)
+@router.get(
+    "/{model_slug}", response_model=ResponseModel, tags=["Projects - Models"]
+)
 def get_model_by_slug(
     model=Depends(get_existing_capella_model),
 ) -> ResponseModel:
@@ -64,6 +56,7 @@ def get_model_by_slug(
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
+    tags=["Projects - Models"],
 )
 def create_new(
     new_model: CapellaModel,
@@ -90,6 +83,7 @@ def create_new(
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
+    tags=["Projects - Models"],
 )
 def set_tool_details(
     tool_details: ToolDetails,
@@ -144,3 +138,14 @@ def get_nature_by_id_or_raise(db: Session, nature_id: int) -> Nature:
         raise HTTPException(
             404, {"reason": f"The nature with id {nature_id} was not found."}
         )
+
+
+router.include_router(
+    router_modelsources,
+    prefix="/{model_slug}/modelsources",
+)
+router.include_router(
+    router_backups,
+    prefix="/{model_slug}/backups/pipelines",
+    tags=["Projects - Models - Backups"],
+)
