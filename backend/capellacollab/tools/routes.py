@@ -210,7 +210,7 @@ def find_tool_version_dependencies(db: Session, version: Version) -> None:
 
 
 @router.get("/{tool_id}/natures", response_model=list[ToolNatureBase])
-def get_tool_types(
+def get_tool_natures(
     tool_id: int, db: Session = Depends(get_db)
 ) -> list[Nature]:
     return crud.get_tool_natures(db, tool_id)
@@ -221,7 +221,7 @@ def get_tool_types(
     response_model=ToolNatureBase,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
-def create_tool_type(
+def create_tool_nature(
     tool_id: int,
     body: CreateToolNature,
     db: Session = Depends(get_db),
@@ -234,7 +234,7 @@ def create_tool_type(
     status_code=204,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
-def delete_tool_type(
+def delete_tool_nature(
     nature: Nature = Depends(injectables.get_exisiting_tool_nature),
     db: Session = Depends(get_db),
 ) -> None:

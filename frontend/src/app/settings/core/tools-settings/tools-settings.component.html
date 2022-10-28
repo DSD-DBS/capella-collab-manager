@@ -24,11 +24,13 @@
       <div class="content" *ngIf="tools[tool.id]">
         <mat-icon class="mat-icon-position top">history</mat-icon>
         <b> Available versions:</b>
-        {{ mapToolVersionOrTypeToName(tools[tool.id]["versions"]).join(", ") }}
+        {{
+          mapToolVersionOrNatureToName(tools[tool.id]["versions"]).join(", ")
+        }}
         <br />
         <mat-icon class="mat-icon-position top">extension</mat-icon
         ><b> Available types:</b>
-        {{ mapToolVersionOrTypeToName(tools[tool.id]["natures"]).join(", ") }}
+        {{ mapToolVersionOrNatureToName(tools[tool.id]["natures"]).join(", ") }}
       </div>
     </mat-card>
   </a>

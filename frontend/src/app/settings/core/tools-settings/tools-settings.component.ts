@@ -44,9 +44,9 @@ export class ToolsSettingsComponent {
     });
   }
 
-  mapToolVersionOrTypeToName(
-    versionOrType: ToolVersion[] | ToolNature[]
+  mapToolVersionOrNatureToName(
+    versionOrNature: ToolVersion[] | ToolNature[]
   ): string[] {
-    return versionOrType.map((elem) => elem.name);
+    return versionOrNature.map((elem) => elem.name);
   }
 }
