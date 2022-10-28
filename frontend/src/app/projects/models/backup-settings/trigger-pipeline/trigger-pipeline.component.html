@@ -1,0 +1,63 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="mat-dialog">
+  <div>
+    <div *ngIf="!selectedPipeline" class="flex-space-between margin default">
+      <span>Please select the pipeline you'd like to execute: </span>
+      <a routerLink=""><mat-icon>settings</mat-icon></a>
+    </div>
+    <div *ngFor="let pipeline of pipelines">
+      <mat-card
+        matRipple
+        *ngIf="!selectedPipeline || selectedPipeline.id === pipeline.id"
+        (click)="selectPipeline(pipeline)"
+        class="pipeline-card"
+        ><span class="text-center"><b>Backup</b> (ID: {{ pipeline.id }})</span
+        ><br />
+        <hr />
+        <div class="flex-space-between">
+          <span style="flex-basis: 45%"
+            ><b>TeamForCapella</b> <br />
+            Instance <i>dev-5.0</i>, <br />Repository <i>py-capellambse</i>,
+            <br />Project: <i>py-capellambse</i> </span
+          ><span style="flex-basis: 10%"
+            ><mat-icon class="mat-icon-position top">arrow_forward</mat-icon>
+          </span>
+          <span style="flex-basis: 45%"
+            ><b>Git</b> <br />
+            URL: <i>https://github.com/DSD-DBS/py-capellambse.git</i>,
+            <br />revision: <i>master</i>, <br />entrypoint:
+            <i>tests/data/melodymodel/5_2/Melody Model Test.aird</i>
+          </span>
+        </div></mat-card
+      >
+    </div>
+
+    <form [formGroup]="configurationForm">
+      <div *ngIf="selectedPipeline" class="flex-space-between">
+        <div class="margin default">
+          Please select the following configuration options: <br />
+          <mat-checkbox formControlName="includeHistory"
+            >Include commit history</mat-checkbox
+          >
+          <br /><br />
+          Current estimate of the duration (according to the selected
+          configuration):
+          {{ estimateTime() }}
+        </div>
+
+        <button
+          class="margin default"
+          mat-raised-button
+          (click)="runPipeline()"
+          color="primary"
+        >
+          Run pipeline
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

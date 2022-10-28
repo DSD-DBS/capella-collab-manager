@@ -4,14 +4,15 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-
 import { Model, ModelService } from 'src/app/services/model/model.service';
 import {
   Project,
   ProjectService,
 } from 'src/app/services/project/project.service';
 import { SessionService } from 'src/app/services/session/session.service';
+import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 
 @Component({
   selector: 'app-model-overview',
@@ -25,6 +26,7 @@ export class ModelOverviewComponent implements OnInit {
   constructor(
     public projectService: ProjectService,
     public modelService: ModelService,
+    private dialog: MatDialog,
     public sessionService: SessionService,
     private router: Router
   ) {}
@@ -53,5 +55,9 @@ export class ModelOverviewComponent implements OnInit {
       .subscribe(() => {
         this.router.navigateByUrl('/');
       });
+  }
+
+  openPipelineDialog(): void {
+    this.dialog.open(TriggerPipelineComponent);
   }
 }
