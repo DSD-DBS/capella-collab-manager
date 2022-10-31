@@ -43,7 +43,7 @@ def get_exisiting_tool_nature(
     tool_id: int, nature_id: int, db: Session = Depends(get_db)
 ) -> Nature:
     try:
-        return crud.get_type_for_tool(tool_id, nature_id, db)
+        return crud.get_nature_for_tool(tool_id, nature_id, db)
     except sqlalchemy.exc.NoResultFound:
         raise HTTPException(
             404,

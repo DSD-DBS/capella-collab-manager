@@ -251,12 +251,12 @@ def find_tool_nature_dependencies(db: Session, nature: Nature) -> None:
     Raises
     ------
     HTTPException
-        If there is a tool type dependency left
+        If there is a tool nature dependency left
     """
 
     dependencies = []
     # Search for occurrences in project-models
-    for model in projects_models_crud.get_models_by_type(nature.id, db):
+    for model in projects_models_crud.get_models_by_nature(nature.id, db):
         dependencies.append(
             f"Model '{model.name}' in project '{model.project.name}'"
         )
@@ -269,7 +269,7 @@ def find_tool_nature_dependencies(db: Session, nature: Nature) -> None:
             409,
             {
                 "reason": [
-                    f"The type '{nature.name}' can not be deleted. Please remove the following dependencies first:"
+                    f"The nature '{nature.name}' can not be deleted. Please remove the following dependencies first:"
                 ]
                 + dependencies,
             },

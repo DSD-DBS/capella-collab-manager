@@ -82,7 +82,7 @@ def get_tool_versions(db: Session, tool_id: int) -> t.List[Version]:
     return db.query(Version).filter(Version.tool_id == tool_id).all()
 
 
-def get_type_for_tool(tool_id: int, nature_id: int, db: Session) -> Nature:
+def get_nature_for_tool(tool_id: int, nature_id: int, db: Session) -> Nature:
     return db.execute(
         select(Nature)
         .where(Nature.id == nature_id)

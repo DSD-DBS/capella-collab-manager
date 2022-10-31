@@ -35,7 +35,7 @@ def get_models_by_version(
     )
 
 
-def get_models_by_type(
+def get_models_by_nature(
     nature_id: int, db: Session
 ) -> list[DatabaseCapellaModel]:
     return (

@@ -142,5 +142,5 @@ def get_nature_by_id_or_raise(db: Session, nature_id: int) -> Nature:
         return tools_crud.get_nature_by_id(nature_id, db)
     except NoResultFound:
         raise HTTPException(
-            404, {"reason": f"The type with id {nature_id} was not found."}
+            404, {"reason": f"The nature with id {nature_id} was not found."}
         )
