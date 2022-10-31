@@ -9,7 +9,7 @@ import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   ToolExtended,
   ToolService,
-  ToolType,
+  ToolNature,
   ToolVersion,
 } from './tool.service';
 
@@ -30,12 +30,12 @@ export class ToolsSettingsComponent {
     this.toolService.getTools().subscribe(() => {
       for (let tool of this.toolService.tools!.map((tool) => tool.id)) {
         combineLatest([
-          this.toolService.getTypesForTool(tool),
+          this.toolService.getNaturesForTool(tool),
           this.toolService.getVersionsForTool(tool),
         ]).subscribe({
-          next: (result: [ToolType[], ToolVersion[]]) => {
+          next: (result: [ToolNature[], ToolVersion[]]) => {
             this.tools[tool] = {
-              types: result[0],
+              natures: result[0],
               versions: result[1],
             };
           },
@@ -44,9 +44,9 @@ export class ToolsSettingsComponent {
     });
   }
 
-  mapToolVersionOrTypeToName(
-    versionOrType: ToolVersion[] | ToolType[]
+  mapToolVersionOrNatureToName(
+    versionOrNature: ToolVersion[] | ToolNature[]
   ): string[] {
-    return versionOrType.map((elem) => elem.name);
+    return versionOrNature.map((elem) => elem.name);
   }
 }

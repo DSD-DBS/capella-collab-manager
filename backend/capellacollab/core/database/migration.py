@@ -91,9 +91,9 @@ def create_tools(db):
     tools.create_version(db, papyrus.id, "6.1")
     tools.create_version(db, papyrus.id, "6.0")
 
-    tools.create_type(db, capella.id, "model")
-    tools.create_type(db, capella.id, "library")
+    tools.create_nature(db, capella.id, "model")
+    tools.create_nature(db, capella.id, "library")
 
-    tools.create_type(db, papyrus.id, "UML 2.5")
-    tools.create_type(db, papyrus.id, "SysML 1.4")
-    tools.create_type(db, papyrus.id, "SysML 1.1")
+    tools.create_nature(db, papyrus.id, "UML 2.5")
+    tools.create_nature(db, papyrus.id, "SysML 1.4")
+    tools.create_nature(db, papyrus.id, "SysML 1.1")

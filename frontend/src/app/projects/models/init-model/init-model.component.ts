@@ -19,7 +19,7 @@ import { SourceService } from 'src/app/services/source/source.service';
 import {
   Tool,
   ToolService,
-  ToolType,
+  ToolNature,
   ToolVersion,
 } from 'src/app/settings/core/tools-settings/tool.service';
 
@@ -33,7 +33,7 @@ export class InitModelComponent implements OnInit, OnDestroy {
   @Input() asStepper?: boolean;
 
   toolVersions: ToolVersion[] = [];
-  toolTypes: ToolType[] = [];
+  toolNatures: ToolNature[] = [];
 
   buttonDisabled: boolean = false;
 
@@ -51,7 +51,7 @@ export class InitModelComponent implements OnInit, OnDestroy {
       undefined,
       Validators.required
     ),
-    type: new FormControl<number | undefined>(undefined, Validators.required),
+    nature: new FormControl<number | undefined>(undefined, Validators.required),
   });
 
   ngOnInit(): void {
@@ -62,21 +62,21 @@ export class InitModelComponent implements OnInit, OnDestroy {
           if (model.version) {
             this.form.controls.version.patchValue(model.version.id);
           }
-          if (model.type) {
-            this.form.controls.type.patchValue(model.type.id);
+          if (model.nature) {
+            this.form.controls.nature.patchValue(model.nature.id);
           }
         }),
         map((model: Model) => model.tool),
         switchMap((tool: Tool) =>
           combineLatest([
             this.toolService.getVersionsForTool(tool.id),
-            this.toolService.getTypesForTool(tool.id),
+            this.toolService.getNaturesForTool(tool.id),
           ])
         )
       )
-      .subscribe((result: [ToolVersion[], ToolType[]]) => {
+      .subscribe((result: [ToolVersion[], ToolNature[]]) => {
         this.toolVersions = result[0];
-        this.toolTypes = result[1];
+        this.toolNatures = result[1];
       });
   }
 
@@ -90,14 +90,14 @@ export class InitModelComponent implements OnInit, OnDestroy {
       this.modelService.model &&
       this.projectService.project &&
       this.form.value.version &&
-      this.form.value.type
+      this.form.value.nature
     ) {
       this.modelService
         .setToolDetailsForModel(
           this.projectService.project.slug,
           this.modelService.model.slug,
           this.form.value.version,
-          this.form.value.type
+          this.form.value.nature
         )
         .subscribe((_) => {
           this.create.emit({ created: true });

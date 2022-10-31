@@ -13,15 +13,15 @@ from capellacollab.core.database import get_db
 from capellacollab.tools import models
 from capellacollab.tools.models import (
     CreateTool,
-    CreateToolType,
+    CreateToolNature,
     CreateToolVersion,
+    Nature,
     PatchToolDockerimage,
     Tool,
     ToolBase,
     ToolDockerimage,
-    ToolTypeBase,
+    ToolNatureBase,
     ToolVersionBase,
-    Type,
     UpdateToolVersion,
     Version,
 )
@@ -46,7 +46,7 @@ def get_tool_by_id(tool=Depends(injectables.get_existing_tool)) -> Tool:
 
 @router.post(
     "",
-    response_model=ToolTypeBase,
+    response_model=ToolNatureBase,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def create_tool(body: CreateTool, db: Session = Depends(get_db)) -> Tool:
@@ -55,7 +55,7 @@ def create_tool(body: CreateTool, db: Session = Depends(get_db)) -> Tool:
 
 @router.put(
     "/{tool_id}",
-    response_model=ToolTypeBase,
+    response_model=ToolNatureBase,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def update_tool(
@@ -209,52 +209,54 @@ def find_tool_version_dependencies(db: Session, version: Version) -> None:
         )
 
 
-@router.get("/{tool_id}/types", response_model=list[ToolTypeBase])
-def get_tool_types(tool_id: int, db: Session = Depends(get_db)) -> list[Type]:
-    return crud.get_tool_types(db, tool_id)
+@router.get("/{tool_id}/natures", response_model=list[ToolNatureBase])
+def get_tool_natures(
+    tool_id: int, db: Session = Depends(get_db)
+) -> list[Nature]:
+    return crud.get_tool_natures(db, tool_id)
 
 
 @router.post(
-    "/{tool_id}/types",
-    response_model=ToolTypeBase,
+    "/{tool_id}/natures",
+    response_model=ToolNatureBase,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
-def create_tool_type(
+def create_tool_nature(
     tool_id: int,
-    body: CreateToolType,
+    body: CreateToolNature,
     db: Session = Depends(get_db),
-) -> Type:
-    return crud.create_type(db, tool_id, body.name)
+) -> Nature:
+    return crud.create_nature(db, tool_id, body.name)
 
 
 @router.delete(
-    "/{tool_id}/types/{type_id}",
+    "/{tool_id}/natures/{nature_id}",
     status_code=204,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
-def delete_tool_type(
-    type: Type = Depends(injectables.get_exisiting_tool_type),
+def delete_tool_nature(
+    nature: Nature = Depends(injectables.get_exisiting_tool_nature),
     db: Session = Depends(get_db),
 ) -> None:
     try:
-        return crud.delete_tool_type(type, db)
+        return crud.delete_tool_nature(nature, db)
     except sqlalchemy.exc.IntegrityError:
         db.rollback()
-        find_tool_type_dependencies(db, type)
+        find_tool_nature_dependencies(db, nature)
 
 
-def find_tool_type_dependencies(db: Session, type: Type) -> None:
-    """Search for tool type occurrences in project-models
+def find_tool_nature_dependencies(db: Session, nature: Nature) -> None:
+    """Search for tool nature occurrences in project-models
 
     Raises
     ------
     HTTPException
-        If there is a tool type dependency left
+        If there is a tool nature dependency left
     """
 
     dependencies = []
     # Search for occurrences in project-models
-    for model in projects_models_crud.get_models_by_type(type.id, db):
+    for model in projects_models_crud.get_models_by_nature(nature.id, db):
         dependencies.append(
             f"Model '{model.name}' in project '{model.project.name}'"
         )
@@ -267,7 +269,7 @@ def find_tool_type_dependencies(db: Session, type: Type) -> None:
             409,
             {
                 "reason": [
-                    f"The type '{type.name}' can not be deleted. Please remove the following dependencies first:"
+                    f"The nature '{nature.name}' can not be deleted. Please remove the following dependencies first:"
                 ]
                 + dependencies,
             },

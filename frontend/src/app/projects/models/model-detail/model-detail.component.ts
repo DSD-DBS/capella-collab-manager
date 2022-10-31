@@ -12,7 +12,7 @@ import {
   T4cModelService,
 } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
-import { GetGitModel } from 'src/app/services/source/source.service';
+import { GitModel } from 'src/app/services/source/source.service';
 
 @Component({
   selector: 'app-model-detail',
@@ -20,7 +20,7 @@ import { GetGitModel } from 'src/app/services/source/source.service';
   styleUrls: ['./model-detail.component.css'],
 })
 export class ModelDetailComponent implements OnInit, OnDestroy {
-  public gitModels: Array<GetGitModel> = [];
+  public gitModels: Array<GitModel> = [];
   private _t4cModels = new BehaviorSubject<T4CModel[] | undefined>(undefined);
   public t4cModels: T4CModel[] = [];
 

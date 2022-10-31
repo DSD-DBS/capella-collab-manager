@@ -9,10 +9,11 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { T4CModel } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
 import {
   Tool,
-  ToolType,
+  ToolNature,
   ToolVersion,
 } from 'src/app/settings/core/tools-settings/tool.service';
 import { environment } from 'src/environments/environment';
+import { GitModel } from '../source/source.service';
 
 export interface NewModel {
   name: string;
@@ -27,10 +28,10 @@ export interface Model {
   name: string;
   description: string;
   tool: Tool;
-  version: ToolVersion | null;
-  type: ToolType | null;
+  version?: ToolVersion;
+  nature?: ToolNature;
   t4c_models: T4CModel[];
-  git_model_id: number | null;
+  git_models: GitModel[];
 }
 
 @Injectable({
@@ -73,11 +74,11 @@ export class ModelService {
     project_slug: string,
     model_slug: string,
     version_id: number,
-    type_id: number
+    nature_id: number
   ): Observable<Model> {
     return this.http.patch<Model>(
       `${this.base_url}${project_slug}/models/${model_slug}/`,
-      { version_id, type_id }
+      { version_id, nature_id }
     );
   }
 }

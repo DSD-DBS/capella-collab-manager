@@ -9,9 +9,9 @@ from sqlalchemy.orm import Session
 
 from capellacollab.tools.models import (
     CreateTool,
+    Nature,
     PatchToolDockerimage,
     Tool,
-    Type,
     Version,
 )
 
@@ -82,9 +82,11 @@ def get_tool_versions(db: Session, tool_id: int) -> t.List[Version]:
     return db.query(Version).filter(Version.tool_id == tool_id).all()
 
 
-def get_type_for_tool(tool_id: int, type_id: int, db: Session) -> Type:
+def get_nature_for_tool(tool_id: int, nature_id: int, db: Session) -> Nature:
     return db.execute(
-        select(Type).where(Type.id == type_id).where(Type.tool_id == tool_id)
+        select(Nature)
+        .where(Nature.id == nature_id)
+        .where(Nature.tool_id == tool_id)
     ).scalar_one()
 
 
@@ -106,31 +108,31 @@ def create_version(
     return version
 
 
-def get_types(db: Session) -> t.List[Type]:
-    return db.query(Type).all()
+def get_natures(db: Session) -> t.List[Nature]:
+    return db.query(Nature).all()
 
 
-def get_type_by_id(id_: int, db: Session) -> Type:
-    return db.execute(select(Type).where(Type.id == id_)).scalar_one()
+def get_nature_by_id(id_: int, db: Session) -> Nature:
+    return db.execute(select(Nature).where(Nature.id == id_)).scalar_one()
 
 
-def get_tool_types(db: Session, tool_id: int) -> t.List[Type]:
-    return db.query(Type).filter(Type.tool_id == tool_id).all()
+def get_tool_natures(db: Session, tool_id: int) -> t.List[Nature]:
+    return db.query(Nature).filter(Nature.tool_id == tool_id).all()
 
 
-def delete_tool_type(type: Type, db: Session) -> None:
-    db.delete(type)
+def delete_tool_nature(nature: Nature, db: Session) -> None:
+    db.delete(nature)
     db.commit()
 
 
-def create_type(db: Session, tool_id: int, name: str) -> Type:
-    type = Type(
+def create_nature(db: Session, tool_id: int, name: str) -> Nature:
+    nature = Nature(
         name=name,
         tool_id=tool_id,
     )
-    db.add(type)
+    db.add(nature)
     db.commit()
-    return type
+    return nature
 
 
 def get_image_for_tool_version(db: Session, version_id: int) -> str:

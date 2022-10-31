@@ -1,0 +1,55 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+<mat-card class="default">
+  <div class="flex-space-between">
+    <mat-card-title><h2>Tool Natures</h2></mat-card-title>
+  </div>
+  <form [formGroup]="toolNatureForm" #formDirective="ngForm">
+    <mat-form-field appearance="fill">
+      <mat-label>Nature name</mat-label>
+      <input matInput formControlName="name" />
+      <mat-error *ngIf="toolNatureForm.controls.name.errors?.required"
+        >Please enter a tool nature name</mat-error
+      >
+      <mat-error *ngIf="toolNatureForm.controls.name.errors?.toolNaureExists"
+        >Nature name is already used</mat-error
+      >
+    </mat-form-field>
+    <div class="field-separator"></div>
+    <button
+      mat-flat-button
+      color="primary"
+      [disabled]="!toolNatureForm.valid"
+      (click)="createToolNature()"
+    >
+      Add Tool Nature
+    </button>
+  </form>
+  <mat-selection-list #toolNatureList [multiple]="false" class="user-selection">
+    <mat-list-option
+      *ngFor="let toolNature of this.toolNatures"
+      [value]="toolNature"
+    >
+      <mat-icon mat-list-icon>extension</mat-icon>
+      <div>
+        <div mat-line>{{ toolNature.name }}</div>
+      </div>
+    </mat-list-option>
+  </mat-selection-list>
+  <div *ngIf="toolNatureList.selectedOptions.selected.length">
+    <hr />
+    <div class="field-separator"></div>
+    <div class="flex-space-between">
+      <button
+        mat-flat-button
+        color="warn"
+        (click)="removeToolNature(selectedToolNature)"
+      >
+        <mat-icon>delete</mat-icon> Remove tool nature
+        {{ selectedToolNature.name }}
+      </button>
+    </div>
+  </div>
+</mat-card>

@@ -28,13 +28,13 @@ export type PatchToolVersion = {
   isDeprecated: boolean;
 };
 
-export interface ToolType {
+export interface ToolNature {
   id: number;
   name: string;
 }
 
 export type ToolExtended = {
-  types: ToolType[];
+  natures: ToolNature[];
   versions: ToolVersion[];
 };
 
@@ -115,19 +115,22 @@ export class ToolService {
     );
   }
 
-  getTypesForTool(toolId: number): Observable<ToolType[]> {
-    return this.http.get<ToolVersion[]>(`${this.baseURL}/${toolId}/types`);
+  getNaturesForTool(toolId: number): Observable<ToolNature[]> {
+    return this.http.get<ToolVersion[]>(`${this.baseURL}/${toolId}/natures`);
   }
 
-  createTypeForTool(toolId: number, name: string): Observable<ToolType> {
-    return this.http.post<ToolType>(`${this.baseURL}/${toolId}/types`, {
+  createNatureForTool(toolId: number, name: string): Observable<ToolNature> {
+    return this.http.post<ToolNature>(`${this.baseURL}/${toolId}/natures`, {
       name,
     });
   }
 
-  deleteTypeForTool(toolId: number, toolType: ToolType): Observable<void> {
+  deleteNatureForTool(
+    toolId: number,
+    toolNature: ToolNature
+  ): Observable<void> {
     return this.http.delete<void>(
-      `${this.baseURL}/${toolId}/types/${toolType.id}`
+      `${this.baseURL}/${toolId}/natures/${toolNature.id}`
     );
   }
 

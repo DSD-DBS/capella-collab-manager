@@ -6,7 +6,7 @@ from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from capellacollab.core.database import get_db
-from capellacollab.tools.models import Tool, Type, Version
+from capellacollab.tools.models import Nature, Tool, Version
 
 from . import crud
 
@@ -39,16 +39,16 @@ def get_exisiting_tool_version(
         )
 
 
-def get_exisiting_tool_type(
-    tool_id: int, type_id: int, db: Session = Depends(get_db)
-) -> Type:
+def get_exisiting_tool_nature(
+    tool_id: int, nature_id: int, db: Session = Depends(get_db)
+) -> Nature:
     try:
-        return crud.get_type_for_tool(tool_id, type_id, db)
+        return crud.get_nature_for_tool(tool_id, nature_id, db)
     except sqlalchemy.exc.NoResultFound:
         raise HTTPException(
             404,
             {
-                "reason": f"The version with tool_id {tool_id} and type_id {type_id} was not found.",
-                "technical": f"Database returned 'None' when searching for the version with tool_id {tool_id} and type_id {type_id}.",
+                "reason": f"The version with tool_id {tool_id} and nature_id {nature_id} was not found.",
+                "technical": f"Database returned 'None' when searching for the version with tool_id {tool_id} and nature_id {nature_id}.",
             },
         )

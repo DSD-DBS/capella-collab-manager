@@ -41,7 +41,7 @@ import {
 } from 'src/app/services/settings/git-settings.service';
 import {
   CreateGitModel,
-  GetGitModel,
+  GitModel,
   PatchGitModel,
   SourceService,
 } from 'src/app/services/source/source.service';
@@ -85,7 +85,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
   });
 
   private gitModelId?: number;
-  public gitModel?: GetGitModel;
+  public gitModel?: GitModel;
 
   public isEditMode: boolean = false;
   public editing: boolean = false;
@@ -301,7 +301,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
     };
   }
 
-  private fillFormWithGitModel(gitModel: GetGitModel): void {
+  private fillFormWithGitModel(gitModel: GitModel): void {
     this.urls.inputUrl.setValue(gitModel.path);
 
     const credentials = this.form.controls.credentials.controls;
