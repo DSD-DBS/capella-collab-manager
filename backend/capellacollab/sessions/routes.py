@@ -7,6 +7,7 @@ import logging
 import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.capellamodels.modelsources.git.crud as git_models_crud
@@ -43,6 +44,18 @@ from capellacollab.tools.crud import get_image_for_tool_version
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role
 
+from ..projects.capellamodels.models import DatabaseCapellaModel
+from ..projects.capellamodels.modelsources.t4c.models import DatabaseT4CModel
+from ..projects.models import DatabaseProject
+from ..projects.users.models import (
+    ProjectUserAssociation,
+    ProjectUserPermission,
+)
+from ..settings.modelsources.t4c.repositories.models import (
+    DatabaseT4CRepository,
+)
+from ..tools.injectables import get_exisiting_tool_version, get_existing_tool
+from ..tools.models import Tool, Version
 from .files import routes as files
 
 router = APIRouter(
@@ -166,6 +179,7 @@ def request_session(
 @router.post("/persistent", response_model=AdvancedSessionResponse)
 def request_persistent_session(
     body: PostPersistentSessionRequest,
+    user: DatabaseUser = Depends(get_own_user),
     db: Session = Depends(get_db),
     operator: Operator = Depends(get_operator),
     token=Depends(JWTBearer()),
@@ -189,13 +203,63 @@ def request_persistent_session(
             },
         )
 
-    docker_image = get_image_for_tool_version(db, body.version)
+    tool = get_existing_tool(body.tool_id, db)
+    version = get_exisiting_tool_version(tool.id, body.version_id, db)
+
+    docker_image = get_image_for_tool_version(db, version.id)
+
+    admin_stmt = (
+        select(DatabaseT4CRepository)
+        .join(DatabaseT4CRepository.models)
+        .join(DatabaseT4CModel.model)
+        .join(DatabaseCapellaModel.tool)
+        .where(Tool.id == tool.id)
+        .join(DatabaseCapellaModel.version)
+        .where(Version.id == version.id)
+    )
+
+    stmt = (
+        admin_stmt.join(DatabaseCapellaModel.project)
+        .join(DatabaseProject.users)
+        .where(
+            ProjectUserAssociation.permission == ProjectUserPermission.WRITE
+        )
+        .join(ProjectUserAssociation.user)
+        .where(DatabaseUser.id == user.id)
+    )
+
+    t4c_repositories: t.Optional[list[DatabaseT4CRepository]] = (
+        (
+            db.execute(admin_stmt if user.role == Role.ADMIN else stmt)
+            .scalars()
+            .all()
+        )
+        if tool.name == "Capella"
+        else None
+    )
+
+    print(t4c_repositories)
+
+    t4c_json: list[dict[str, str | int]] = [
+        {
+            "repository": repository.name,
+            "port": repository.instance.port,
+            "host": repository.instance.host,
+            "instance": repository.instance.name,
+        }
+        for repository in t4c_repositories
+    ]
+
+    t4c_license_secret: str = (
+        t4c_repositories[0].instance.license if t4c_repositories else None
+    )
 
     session = operator.start_persistent_session(
         username=get_username(token),
         password=rdp_password,
         docker_image=docker_image,
-        repositories=[],
+        t4c_license_secret=t4c_license_secret,
+        t4c_json=t4c_json,
     )
 
     return create_database_and_guacamole_session(

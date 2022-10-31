@@ -16,7 +16,8 @@ class Operator(abc.ABC):
         username: str,
         password: str,
         docker_image: str,
-        repositories: t.List[str],
+        t4c_license_secret: str | None,
+        t4c_json: list[dict[str, str | int]] | None,
     ) -> t.Dict[str, t.Any]:
         """Start / Create a session
 
