@@ -32,7 +32,7 @@ spec:
               containerPort: 8000
               protocol: TCP
           env:
-          {{ if eq .Values.target "local" }}
+          {{ if .Values.mocks.oauth }}
             - name: OAUTHLIB_INSECURE_TRANSPORT
               value: "1"
           {{ end }}

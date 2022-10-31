@@ -11,11 +11,12 @@ SESSION_NAMESPACE = t4c-sessions
 EASE_DEBUG_PORT = 3390
 PORT ?= 8080
 
-all: backend frontend
+# Adds support for msys
+export MSYS_NO_PATHCONV := 1
 
-build: backend frontend capella
+build: backend frontend docs capella/remote readonly
 
-build-all: build ease
+build-all: build t4c-client importer
 
 backend:
 	python backend/generate_git_archival.py;
@@ -27,9 +28,9 @@ frontend:
 	docker build --build-arg CONFIGURATION=local -t t4c/client/frontend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend frontend
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend
 
-capella: capella-download
+capella:
 	docker build -t base capella-dockerimages/base
-	docker build -t capella/base capella-dockerimages/capella
+	docker build -t capella/base capella-dockerimages/capella --build-arg BUILD_TYPE=online --build-arg CAPELLA_VERSION=5.2.0
 
 importer:
 	docker build -t t4c/client/importer -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/importer capella-dockerimages/importer
@@ -38,15 +39,6 @@ importer:
 capella/remote: capella
 	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote/5.2:prod capella-dockerimages/remote
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote/5.2:prod
-
-capella-download:
-	cd capella-dockerimages/capella/archives; \
-	if [ -f "capella.tar.gz" ] || [ -f "capella.zip" ]; \
-	then \
-		echo "Found existing capella archive."; \
-	else \
-		curl -L --output capella.tar.gz 'https://ftp.acc.umu.se/mirror/eclipse.org/capella/core/products/releases/5.2.0-R20211130-125709/capella-5.2.0.202111301257-linux-gtk-x86_64.tar.gz'; \
-	fi
 
 docs:
 	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user
@@ -64,43 +56,32 @@ readonly:
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly/5.2:prod
 
-ease:
-	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/ease --build-arg BASE_IMAGE=t4c/client/base --build-arg BUILD_TYPE=online capella-dockerimages/ease
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/ease
+deploy: build helm-deploy open rollout
 
-mock:
-	docker build -t t4c/server/mock -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/server/mock mocks/t4c-server
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/server/mock
+# Deploy with full T4C client support:
+deploy-t4c: build-all helm-deploy open rollout
 
-	docker build -t t4c/licence/mock -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock mocks/licence-server
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/licence/mock
-
-capella-dockerimages: capella t4c-client readonly ease
-
-deploy: backend frontend capella/remote docs mock helm-deploy open rollout
-
-# Deploy with full T4C support:
-deploy-t4c: backend frontend capella t4c-client importer readonly ease docs mock helm-deploy open rollout
+deploy-without-build: helm-deploy open rollout
 
 helm-deploy:
-	k3d cluster list $(CLUSTER_NAME) 2>&- || $(MAKE) create-cluster
-	kubectl create namespace t4c-sessions || true
-	helm upgrade --install \
+	@k3d cluster list $(CLUSTER_NAME) >/dev/null || $(MAKE) create-cluster
+	@kubectl create namespace t4c-sessions 2> /dev/null || true
+	@helm upgrade --install \
 		--kube-context k3d-$(CLUSTER_NAME) \
 		--create-namespace \
 		--namespace $(NAMESPACE) \
 		--values helm/values.yaml \
 		$$(test -f secrets.yaml && echo "--values secrets.yaml") \
 		--set docker.registry.internal=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
+		--set mocks.oauth=True \
+		--set target=local \
 		--set general.port=8080 \
-		--set t4cServer.apis.usageStats="http://$(RELEASE)-licence-server-mock:80/mock" \
-		--set t4cServer.apis.restAPI="http://$(RELEASE)-t4c-server-mock:80/mock/api/v1.0" \
 		--set backend.authentication.oauth.redirectURI="http://localhost:$(PORT)/oauth2/callback" \
 		$(RELEASE) ./helm
-	$(MAKE) .provision-guacamole wait
+	$(MAKE) provision-guacamole wait
 
 open:
-	export URL=http://localhost:8080; \
+	@export URL=http://localhost:8080; \
 	if [ "Windows_NT" = "$(OS)" ]; \
 	then \
 		start "$$URL"; \
@@ -117,7 +98,7 @@ clear-backend-db:
 	kubectl delete pvc -n t4c-manager $(RELEASE)-volume-backend-postgres
 	$(MAKE) helm-deploy
 
-rollout: backend frontend
+rollout:
 	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-backend
 	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-frontend
 	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-docs
@@ -137,21 +118,26 @@ create-cluster:
 delete-cluster:
 	k3d cluster list $(CLUSTER_NAME) 2>&- && k3d cluster delete $(CLUSTER_NAME)
 
+.ONESHELL:
 wait:
 	@echo "-----------------------------------------------------------"
 	@echo "--- Please wait until all services are in running state ---"
 	@echo "-----------------------------------------------------------"
-	@kubectl get -n $(NAMESPACE) --watch pods
+	@(kubectl get --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) --watch pods) &
+	@kubectl wait --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) --for=condition=Ready --all pods --timeout=5m
+	@kill %%
 
-.provision-guacamole:
-	export MSYS_NO_PATHCONV=1; \
-	echo "Waiting for guacamole container, before we can initialize the database..."
-	sleep 2
-	kubectl wait --for=condition=Ready pods --timeout=5m --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole
-	kubectl wait --for=condition=Ready pods --timeout=5m --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres
-	kubectl exec --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
-	kubectl exec -ti --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole && \
-	echo "Guacamole database initialized sucessfully.";
+.ONESHELL:
+provision-guacamole:
+	@echo "Waiting for guacamole container, before we can initialize the database..."
+	@kubectl get -n $(NAMESPACE) --watch pods &
+	@sleep 2
+	@kubectl wait --for=condition=Ready pods --timeout=5m --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole
+	@kubectl wait --for=condition=Ready pods --timeout=5m --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres
+	@kill %%
+	@kubectl exec --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
+	kubectl exec -ti --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole
+	@echo "Guacamole database initialized sucessfully.";
 
 # Execute with `make -j3 dev`
 dev: dev-oauth-mock dev-frontend dev-backend
@@ -180,6 +166,5 @@ dashboard:
 	echo "Please open the portal: http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login"
 	echo "Please use the following token: $$(kubectl -n default create token dashboard-admin)"
 	kubectl proxy
-
 
 .PHONY: *

@@ -3,12 +3,6 @@
 
 docker:
   registry: "{{ .Values.docker.registry.internal }}"
-  images:
-    workspaces:
-      persistent: "{{ .Values.docker.registry.internal }}{{ .Values.docker.images.workspaces.persistent }}"
-      readonly: "{{ .Values.docker.registry.internal }}{{ .Values.docker.images.workspaces.readonly }}"
-
-    backup: "{{ .Values.docker.registry.internal }}{{ .Values.docker.images.importer }}"
 
 operators:
   operator: k8s
