@@ -11,7 +11,7 @@ import {
   Project,
   ProjectService,
 } from 'src/app/services/project/project.service';
-import { SessionService } from '../../../services/session/session.service';
+import { SessionService } from 'src/app/services/session/session.service';
 
 @Component({
   selector: 'app-model-overview',
