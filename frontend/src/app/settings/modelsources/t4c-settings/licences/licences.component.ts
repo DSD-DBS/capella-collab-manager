@@ -9,7 +9,7 @@ import { SessionUsage } from 'src/app/schemes';
 import {
   T4CInstance,
   T4CInstanceService,
-} from 'src/app/services/settings/t4c-model.service';
+} from 'src/app/services/settings/t4c-instance.service';
 
 @Component({
   selector: 'app-licences',
