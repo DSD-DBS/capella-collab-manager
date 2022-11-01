@@ -63,7 +63,6 @@ class PostPersistentSessionRequest(BaseModel):
 class GetSessionUsageResponse(BaseModel):
     free: int
     total: int
-    errors: t.List[str]
 
     class Config:
         orm_mode = True

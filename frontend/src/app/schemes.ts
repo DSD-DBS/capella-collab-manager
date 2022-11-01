@@ -38,7 +38,6 @@ export interface ProjectUser {
 export interface SessionUsage {
   free: number;
   total: number;
-  errors: string[];
 }
 
 export interface PathNode {

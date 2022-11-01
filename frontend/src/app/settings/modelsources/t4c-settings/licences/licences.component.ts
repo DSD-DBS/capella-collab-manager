@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, Input } from '@angular/core';
 import { SessionUsage } from 'src/app/schemes';
 import {
@@ -18,11 +19,18 @@ import {
 export class LicencesComponent implements OnInit {
   @Input() instance!: T4CInstance;
 
+  public errorMessage?: string;
+
   constructor(private t4cInstanceService: T4CInstanceService) {}
 
   ngOnInit(): void {
-    this.t4cInstanceService.getLicenses(this.instance.id).subscribe((res) => {
-      this.sessionUsage = res;
+    this.t4cInstanceService.getLicenses(this.instance.id).subscribe({
+      next: (res) => {
+        this.sessionUsage = res;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.errorMessage = this.getErrorMessage(err.error.detail.code);
+      },
     });
   }
 
