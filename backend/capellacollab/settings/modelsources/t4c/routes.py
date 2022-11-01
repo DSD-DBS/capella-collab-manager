@@ -17,7 +17,7 @@ from capellacollab.projects.capellamodels.routes import (
 from capellacollab.sessions.schema import GetSessionUsageResponse
 from capellacollab.settings.modelsources.t4c import crud
 from capellacollab.settings.modelsources.t4c.injectables import (
-    get_existing_instance, load_instance
+    get_existing_instance,
 )
 from capellacollab.settings.modelsources.t4c.interface import get_t4c_status
 from capellacollab.settings.modelsources.t4c.models import (
@@ -88,7 +88,7 @@ def edit_t4c_instance(
     response_model=GetSessionUsageResponse,
 )
 def fetch_t4c_licenses(
-    instance: DatabaseT4CInstance = Depends(load_instance),
+    instance: DatabaseT4CInstance = Depends(get_existing_instance),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
