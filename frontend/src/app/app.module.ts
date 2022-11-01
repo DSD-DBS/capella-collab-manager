@@ -88,7 +88,6 @@ import { DeleteSessionDialogComponent } from './sessions/delete-session-dialog/d
 import { GuacamoleComponent } from './sessions/session-created/guacamole/guacamole.component';
 import { RDPComponent } from './sessions/session-created/rdp/rdp.component';
 import { SessionCreatedComponent } from './sessions/session-created/session-created.component';
-import { LicencesComponent } from './sessions/session-overview/licences/licences.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { ToolDeletionDialogComponent } from './settings/core/tools-settings/tool-details/tool-deletion-dialog/tool-deletion-dialog.component';
@@ -103,6 +102,7 @@ import { DeleteGitSettingsDialogComponent } from './settings/modelsources/git-se
 import { EditGitSettingsComponent } from './settings/modelsources/git-settings/edit-git-settings/edit-git-settings.component';
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
 import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/edit-t4c-instance/edit-t4c-instance.component';
+import { LicencesComponent } from './settings/modelsources/t4c-settings/licences/licences.component';
 import { T4CInstanceSettingsComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-instance-settings.component';
 import { T4CRepoDeletionDialogComponent } from './settings/modelsources/t4c-settings/t4c-instance-settings/t4c-repo-deletion-dialog/t4c-repo-deletion-dialog.component';
 import { T4CSettingsWrapperComponent } from './settings/modelsources/t4c-settings/t4c-settings-wrapper/t4c-settings-wrapper.component';
