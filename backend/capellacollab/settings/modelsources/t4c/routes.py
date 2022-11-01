@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.exc import NoResultFound
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication.database import (
@@ -18,15 +17,15 @@ from capellacollab.projects.capellamodels.routes import (
 from capellacollab.sessions.schema import GetSessionUsageResponse
 from capellacollab.settings.modelsources.t4c import crud
 from capellacollab.settings.modelsources.t4c.injectables import (
-    get_existing_instance,
+    get_existing_instance, load_instance
 )
+from capellacollab.settings.modelsources.t4c.interface import get_t4c_status
 from capellacollab.settings.modelsources.t4c.models import (
     CreateT4CInstance,
     DatabaseT4CInstance,
     PatchT4CInstance,
     T4CInstance,
 )
-from capellacollab.settings.modelsources.t4c.repositories import interface
 from capellacollab.settings.modelsources.t4c.repositories.routes import (
     router as repositories_router,
 )
@@ -94,7 +93,7 @@ def fetch_t4c_licenses(
     token=Depends(JWTBearer()),
 ):
     verify_admin(token, db)
-    return interface.get_t4c_status(instance)
+    return get_t4c_status(instance)
 
 
 router.include_router(
