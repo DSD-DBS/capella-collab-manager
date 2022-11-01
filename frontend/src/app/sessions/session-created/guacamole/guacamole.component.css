@@ -39,3 +39,18 @@ a {
   text-decoration: none;
   color: var(--primary-color);
 }
+
+.blur {
+  filter: blur(4px);
+}
+
+.border {
+  margin-right: 5px;
+  padding: 5px;
+  border: 2px solid var(--primary-color);
+  border-radius: 5px;
+}
+
+.mat-dialog-actions {
+  justify-content: right;
+}

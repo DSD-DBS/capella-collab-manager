@@ -3,25 +3,44 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div *ngIf="session">
-  <div class="title-2">Connect directly via Browser</div>
-  <mat-card class="inner-mat-card">
-    <div class="title">Step 1: How do I connect to the server?</div>
-    Please click on this button to connect to the server: <br />
-    <button mat-flat-button color="primary" (click)="redirectToGuacamole()">
-      Connect to Session
-    </button>
-  </mat-card>
-  <mat-card class="inner-mat-card">
-    <div class="title">Step 2: Wait for Capella</div>
-    After opening the session, Capella starts automatically. This can up to one
-    minute.
-  </mat-card>
-  <mat-card class="inner-mat-card" *ngIf="session.type === 'persistent'">
-    <div class="title">Step 3: T4C Login</div>
-    Please enter "{{ userService.getUserName() }}" as username and your
-    password. <br />
-    If you don't know your password, you can change it in the
-    <a routerLink="/settings">settings</a>. <br />
-  </mat-card>
+<mat-card class="inner-mat-card">
+  <div class="title">Step 1: How do I connect to the server?</div>
+  Please click on this button to connect to the server: <br />
+  <button mat-flat-button color="primary" (click)="redirectToGuacamole()">
+    Connect to Session
+  </button>
+</mat-card>
+<mat-card class="inner-mat-card">
+  <div class="title">Step 2: Wait for Capella</div>
+  After opening the session, Capella starts automatically. This can up to one
+  minute.
+</mat-card>
+<mat-card class="inner-mat-card" *ngIf="session!.type === 'persistent'">
+  <div class="title">Step 3: T4C Login</div>
+  Please enter "{{ userService.getUserName() }}" as username and use your
+  session token as password: <br />
+  <span class="monospace border" [cdkCopyToClipboard]="session!.t4c_password">
+    <span [ngClass]="{ blur: !t4cPasswordRevealed }">{{
+      session!.t4c_password
+    }}</span></span
+  >
+  <button
+    *ngIf="!t4cPasswordRevealed"
+    (click)="this.t4cPasswordRevealed = true"
+    mat-mini-fab
+    matTooltip="Show session token"
+  >
+    <mat-icon> blur_off</mat-icon>
+  </button>
+  <button
+    *ngIf="t4cPasswordRevealed"
+    (click)="this.t4cPasswordRevealed = false"
+    mat-mini-fab
+    matTooltip="Hide session token"
+  >
+    <mat-icon> blur_on</mat-icon>
+  </button>
+</mat-card>
+<div mat-dialog-actions>
+  <button mat-button (click)="this.dialogRef.close()">Close</button>
 </div>
