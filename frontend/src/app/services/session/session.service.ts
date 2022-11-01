@@ -161,8 +161,3 @@ export interface SessionState {
   css: string;
   success: boolean;
 }
-
-export enum DepthType {
-  LatestCommit,
-  CompleteHistory,
-}
