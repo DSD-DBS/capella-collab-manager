@@ -29,7 +29,6 @@ from capellacollab.sessions.schema import (
     AdvancedSessionResponse,
     DepthType,
     GetSessionsResponse,
-    GetSessionUsageResponse,
     GuacamoleAuthentication,
     PostPersistentSessionRequest,
     PostSessionRequest,
