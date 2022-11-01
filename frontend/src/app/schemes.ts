@@ -17,6 +17,7 @@ export interface Session {
   repository: string;
   state: string;
   owner: string;
+  t4c_password: string;
 }
 
 export interface User {
