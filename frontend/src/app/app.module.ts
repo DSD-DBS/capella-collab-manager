@@ -79,13 +79,10 @@ import { ProjectOverviewComponent } from './projects/project-overview/project-ov
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { WhitespaceUrlInterceptor } from './services/encoder/encoder.interceptor';
 import { ActiveSessionsComponent } from './sessions/active-sessions/active-sessions.component';
-import { ReconnectDialogComponent } from './sessions/active-sessions/reconnect-dialog/reconnect-dialog.component';
 import { FileExistsDialogComponent } from './sessions/active-sessions/upload-dialog/file-exists-dialog/file-exists-dialog.component';
 import { UploadDialogComponent } from './sessions/active-sessions/upload-dialog/upload-dialog.component';
 import { DeleteSessionDialogComponent } from './sessions/delete-session-dialog/delete-session-dialog.component';
 import { GuacamoleComponent } from './sessions/session-created/guacamole/guacamole.component';
-import { RDPComponent } from './sessions/session-created/rdp/rdp.component';
-import { SessionCreatedComponent } from './sessions/session-created/session-created.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { ToolDeletionDialogComponent } from './settings/core/tools-settings/tool-details/tool-deletion-dialog/tool-deletion-dialog.component';
@@ -147,10 +144,7 @@ import { HomeComponent } from './workspaces/home.component';
     ProjectOverviewComponent,
     ProjectUserSettingsComponent,
     ProjectWrapperComponent,
-    RDPComponent,
-    ReconnectDialogComponent,
     ReleaseNotesComponent,
-    SessionCreatedComponent,
     SessionOverviewComponent,
     SettingsComponent,
     T4CInstanceSettingsComponent,
