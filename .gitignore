@@ -11,3 +11,4 @@
 deployments/*
 certs/*
 /node_modules
+.idea
