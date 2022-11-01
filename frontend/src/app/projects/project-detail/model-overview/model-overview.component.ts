@@ -44,7 +44,7 @@ export class ModelOverviewComponent implements OnInit {
     return 'Unset';
   }
 
-  requestSession(model: Model) {
+  requestSession(model: Model): void {
     if (!model.version) {
       return;
     }

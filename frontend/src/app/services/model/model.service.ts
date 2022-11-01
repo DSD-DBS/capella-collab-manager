@@ -15,13 +15,13 @@ import {
 import { environment } from 'src/environments/environment';
 import { GitModel } from '../source/source.service';
 
-export interface NewModel {
+export type NewModel = {
   name: string;
   description: string;
   tool_id: number;
-}
+};
 
-export interface Model {
+export type Model = {
   id: number;
   project_slug: string;
   slug: string;
