@@ -297,15 +297,6 @@ def end_session(
     return None
 
 
-@router.get(
-    "/usage",
-    response_model=GetSessionUsageResponse,
-    dependencies=[Depends(JWTBearer())],
-)
-def get_session_usage():
-    return t4c_manager.get_t4c_status()
-
-
 @router.post(
     "/{id}/guacamole-tokens",
     response_model=GuacamoleAuthentication,
