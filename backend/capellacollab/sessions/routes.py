@@ -170,7 +170,6 @@ def request_session(
         owner,
         rdp_password,
         db,
-        repository=[],
     )
 
 
