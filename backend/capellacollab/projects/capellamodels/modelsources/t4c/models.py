@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
 
 from pydantic import BaseModel
 from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
@@ -10,6 +11,11 @@ from capellacollab.core.database import Base
 from capellacollab.settings.modelsources.t4c.repositories.models import (
     T4CRepository,
 )
+
+if t.TYPE_CHECKING:
+    from capellacollab.projects.capellamodels.models import (
+        DatabaseCapellaModel,
+    )
 
 
 class DatabaseT4CModel(Base):
@@ -23,7 +29,9 @@ class DatabaseT4CModel(Base):
     repository = relationship("DatabaseT4CRepository", back_populates="models")
 
     model_id = Column(Integer, ForeignKey("models.id"))
-    model = relationship("DatabaseCapellaModel", back_populates="t4c_models")
+    model: "DatabaseCapellaModel" = relationship(
+        "DatabaseCapellaModel", back_populates="t4c_models"
+    )
 
 
 class SubmitT4CModel(BaseModel):

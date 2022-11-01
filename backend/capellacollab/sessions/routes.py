@@ -250,7 +250,7 @@ def request_persistent_session(
         for repository in t4c_repositories
     ]
 
-    t4c_license_secret: str = (
+    t4c_license_secret = (
         t4c_repositories[0].instance.license if t4c_repositories else None
     )
 
