@@ -238,8 +238,6 @@ def request_persistent_session(
         else None
     )
 
-    print(t4c_repositories)
-
     t4c_json: list[dict[str, str | int]] = [
         {
             "repository": repository.name,
