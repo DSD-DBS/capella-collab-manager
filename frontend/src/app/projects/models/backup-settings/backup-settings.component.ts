@@ -18,7 +18,7 @@ import { ViewLogsDialogComponent } from './view-logs-dialog/view-logs-dialog.com
   templateUrl: './backup-settings.component.html',
   styleUrls: ['./backup-settings.component.css'],
 })
-export class GitBackupSettingsComponent implements OnInit {
+export class BackupSettingsComponent implements OnInit {
   constructor(
     public beautifyService: BeautifyService,
     public dialog: MatDialog,
