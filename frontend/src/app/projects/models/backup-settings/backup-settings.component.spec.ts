@@ -5,20 +5,20 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GitBackupSettingsComponent } from './backup-settings.component';
+import { BackupSettingsComponent } from './backup-settings.component';
 
 xdescribe('GitBackupSettingsComponent', () => {
-  let component: GitBackupSettingsComponent;
-  let fixture: ComponentFixture<GitBackupSettingsComponent>;
+  let component: BackupSettingsComponent;
+  let fixture: ComponentFixture<BackupSettingsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [GitBackupSettingsComponent],
+      declarations: [BackupSettingsComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GitBackupSettingsComponent);
+    fixture = TestBed.createComponent(BackupSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
