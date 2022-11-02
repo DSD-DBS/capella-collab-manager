@@ -42,7 +42,9 @@ export class ModelOverviewComponent implements OnInit {
     return 'Unset';
   }
 
-  openPipelineDialog(): void {
-    this.dialog.open(TriggerPipelineComponent);
+  openPipelineDialog(model: Model): void {
+    this.dialog.open(TriggerPipelineComponent, {
+      data: model,
+    });
   }
 }

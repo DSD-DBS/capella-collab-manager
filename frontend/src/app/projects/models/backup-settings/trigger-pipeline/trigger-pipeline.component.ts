@@ -7,6 +7,7 @@ import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { Model } from 'src/app/services/model/model.service';
 
 @Component({
   selector: 'app-trigger-pipeline',
@@ -24,7 +25,7 @@ export class TriggerPipelineComponent {
   constructor(
     private toastService: ToastService,
     private dialogRef: MatDialogRef<TriggerPipelineComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: boolean
+    @Inject(MAT_DIALOG_DATA) public model: Model
   ) {}
 
   selectPipeline(pipeline: Pipeline) {
@@ -45,6 +46,10 @@ export class TriggerPipelineComponent {
     } else {
       return '5-10 minutes';
     }
+  }
+
+  closeDialog(): void {
+    this.dialogRef.close();
   }
 }
 
