@@ -26,7 +26,7 @@ export class GitModelService {
     this.http
       .get<Array<GetGitModel>>(
         this.BACKEND_URL_PREFIX +
-          `/projects/${project_slug}/models/${model_slug}/git`
+          `/projects/${project_slug}/models/${model_slug}/modelsources/git`
       )
       .subscribe((gitModels) => this._gitModels.next(gitModels));
   }
@@ -39,7 +39,7 @@ export class GitModelService {
     this.http
       .get<GetGitModel>(
         this.BACKEND_URL_PREFIX +
-          `/projects/${project_slug}/models/${model_slug}/git/${git_model_id}`
+          `/projects/${project_slug}/models/${model_slug}/modelsources/git/${git_model_id}`
       )
       .subscribe((gitModel) => this._gitModel.next(gitModel));
   }
@@ -53,7 +53,7 @@ export class GitModelService {
     return this.http
       .patch<GetGitModel>(
         this.BACKEND_URL_PREFIX +
-          `/projects/${project_slug}/models/${model_slug}/git/${git_model_id}`,
+          `/projects/${project_slug}/models/${model_slug}/modelsources/git/${git_model_id}`,
         gitModel
       )
       .pipe(
@@ -72,7 +72,7 @@ export class GitModelService {
     return this.http
       .patch<GetGitModel>(
         this.BACKEND_URL_PREFIX +
-          `/projects/${project_slug}/models/${model_slug}/git/${git_model_id}`,
+          `/projects/${project_slug}/models/${model_slug}/modelsources/git/${git_model_id}`,
         true
       )
       .pipe(
