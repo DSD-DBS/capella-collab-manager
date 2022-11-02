@@ -12,7 +12,7 @@ class Operator(abc.ABC):
     @classmethod
     @abc.abstractmethod
     def start_persistent_session(
-        self,
+        cls,
         username: str,
         password: str,
         docker_image: str,
