@@ -22,8 +22,18 @@ from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db
+from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
+from capellacollab.projects.capellamodels.modelsources.t4c.models import (
+    DatabaseT4CModel,
+)
+from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.crud import ProjectUserRole
+from capellacollab.projects.users.models import (
+    ProjectUserAssociation,
+    ProjectUserPermission,
+)
 from capellacollab.sessions import database, guacamole
+from capellacollab.sessions.files import routes as files
 from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import Operator, get_operator
 from capellacollab.sessions.schema import (
@@ -36,27 +46,18 @@ from capellacollab.sessions.schema import (
     PostSessionRequest,
     WorkspaceType,
 )
-from capellacollab.sessions.sessions import (
-    get_last_seen,
-    inject_attrs_in_sessions,
-)
-from capellacollab.tools.crud import get_image_for_tool_version
-from capellacollab.users.injectables import get_own_user
-from capellacollab.users.models import DatabaseUser, Role
-
-from ..projects.capellamodels.models import DatabaseCapellaModel
-from ..projects.capellamodels.modelsources.t4c.models import DatabaseT4CModel
-from ..projects.models import DatabaseProject
-from ..projects.users.models import (
-    ProjectUserAssociation,
-    ProjectUserPermission,
-)
-from ..settings.modelsources.t4c.repositories.models import (
+from capellacollab.sessions.sessions import inject_attrs_in_sessions
+from capellacollab.settings.modelsources.t4c.repositories.models import (
     DatabaseT4CRepository,
 )
-from ..tools.injectables import get_exisiting_tool_version, get_existing_tool
-from ..tools.models import Tool, Version
-from .files import routes as files
+from capellacollab.tools.crud import get_image_for_tool_version
+from capellacollab.tools.injectables import (
+    get_exisiting_tool_version,
+    get_existing_tool,
+)
+from capellacollab.tools.models import Tool, Version
+from capellacollab.users.injectables import get_own_user
+from capellacollab.users.models import DatabaseUser, Role
 
 router = APIRouter(
     dependencies=[Depends(RoleVerification(required_role=Role.USER))]
