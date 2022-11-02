@@ -7,7 +7,12 @@
   <div>
     <div *ngIf="!selectedPipeline" class="flex-space-between margin default">
       <span>Please select the pipeline you'd like to execute: </span>
-      <a routerLink=""><mat-icon>settings</mat-icon></a>
+      <a
+        mat-icon-button
+        (click)="closeDialog()"
+        [routerLink]="['model', model.slug, 'backups']"
+        ><mat-icon>settings</mat-icon></a
+      >
     </div>
     <div *ngFor="let pipeline of pipelines">
       <mat-card

@@ -57,7 +57,9 @@ export class ModelOverviewComponent implements OnInit {
       });
   }
 
-  openPipelineDialog(): void {
-    this.dialog.open(TriggerPipelineComponent);
+  openPipelineDialog(model: Model): void {
+    this.dialog.open(TriggerPipelineComponent, {
+      data: model,
+    });
   }
 }
