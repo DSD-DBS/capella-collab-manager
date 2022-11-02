@@ -29,7 +29,6 @@ export class AuthInterceptor implements HttpInterceptor {
     const req = this.injectAccessToken(request);
     return next.handle(req).pipe(
       catchError((err) => {
-        throwError(() => err);
         if (err.status === 401) {
           if (err.error.detail.err_code == 'token_exp') {
             return this.refreshToken().pipe(
