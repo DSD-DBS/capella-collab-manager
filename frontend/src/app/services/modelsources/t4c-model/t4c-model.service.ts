@@ -21,7 +21,7 @@ export class T4cModelService {
   }
 
   urlFactory(project_slug: string, model_slug: string): string {
-    return `${environment.backend_url}/projects/${project_slug}/models/${model_slug}/t4c/`;
+    return `${environment.backend_url}/projects/${project_slug}/models/${model_slug}/modelsources/t4c`;
   }
 
   listT4CModels(
