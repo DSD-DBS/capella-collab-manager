@@ -52,13 +52,14 @@
               >
             </mat-select>
           </mat-form-field>
-          <div class="half-field-separator"></div>
+          <div class="field-separator"></div>
           <mat-form-field id="host" appearance="fill">
             <mat-label>Host</mat-label>
             <input matInput formControlName="host" />
           </mat-form-field>
-          <div class="half-field-separator"></div>
-          <mat-form-field id="port" appearance="fill">
+        </fieldset>
+        <fieldset>
+          <mat-form-field appearance="fill">
             <mat-label>Port</mat-label>
             <input matInput inputmode="numeric" formControlName="port" />
             <mat-error
@@ -75,8 +76,7 @@
               The port is required.
             </mat-error>
           </mat-form-field>
-        </fieldset>
-        <fieldset>
+          <div class="field-separator"></div>
           <mat-form-field appearance="fill">
             <mat-label>CDO port</mat-label>
             <input matInput inputmode="numeric" formControlName="cdo_port" />

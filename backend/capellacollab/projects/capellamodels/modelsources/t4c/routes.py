@@ -64,7 +64,7 @@ def list_t4c_models(
     ),
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
-) -> DatabaseT4CModel:
+) -> list[DatabaseT4CModel]:
     if not repository:
         ProjectRoleVerification(ProjectUserRole.USER)(project.slug, token, db)
         return model.t4c_models
