@@ -65,6 +65,12 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
       Validators.min(0),
       Validators.max(65535),
     ]),
+    cdo_port: new FormControl(null as number | null, [
+      Validators.required,
+      Validators.pattern(/^\d*$/),
+      Validators.min(0),
+      Validators.max(65535),
+    ]),
     usage_api: new FormControl('', [
       Validators.required,
       Validators.pattern(/^https?:\/\//),
