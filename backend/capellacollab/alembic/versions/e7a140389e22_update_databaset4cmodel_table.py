@@ -32,12 +32,16 @@ def upgrade():
         existing_type=sa.INTEGER(),
         nullable=False,
     )
-    op.create_unique_constraint(None, "t4c_models", ["repository_id", "name"])
+    op.create_unique_constraint(
+        None, "t4c_models", ["repository_id", "model_id", "name"]
+    )
 
 
 def downgrade():
     op.drop_constraint(
-        "t4c_models_repository_id_name_key", "t4c_models", type_="unique"
+        "t4c_models_repository_id_model_id_name_key",
+        "t4c_models",
+        type_="unique",
     )
     op.alter_column(
         "t4c_repositories",

@@ -20,7 +20,7 @@ if t.TYPE_CHECKING:
 
 class DatabaseT4CModel(Base):
     __tablename__ = "t4c_models"
-    __table_args__ = (UniqueConstraint("repository_id", "name"),)
+    __table_args__ = (UniqueConstraint("repository_id", "model_id", "name"),)
 
     id = Column(Integer, unique=True, primary_key=True, index=True)
     name = Column(String, index=True)

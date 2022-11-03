@@ -68,7 +68,7 @@ def list_t4c_models(
     if not repository:
         ProjectRoleVerification(ProjectUserRole.USER)(project.slug, token, db)
         return model.t4c_models
-    return repository.models
+    return crud.get_repository_model_t4c_models(db, repository, model)
 
 
 @router.get(
