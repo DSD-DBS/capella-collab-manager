@@ -59,13 +59,13 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
     license: new FormControl('', Validators.required),
     protocol: new FormControl<Protocol>('tcp', Validators.required),
     host: new FormControl('', Validators.required),
-    port: new FormControl(null as number | null, [
+    port: new FormControl(2036, [
       Validators.required,
       Validators.pattern(/^\d*$/),
       Validators.min(0),
       Validators.max(65535),
     ]),
-    cdo_port: new FormControl(null as number | null, [
+    cdo_port: new FormControl(12036, [
       Validators.required,
       Validators.pattern(/^\d*$/),
       Validators.min(0),
