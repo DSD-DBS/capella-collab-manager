@@ -7,13 +7,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { T4CModel } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
+import { GitModel } from 'src/app/services/source/source.service';
 import {
   Tool,
   ToolNature,
   ToolVersion,
 } from 'src/app/settings/core/tools-settings/tool.service';
 import { environment } from 'src/environments/environment';
-import { GitModel } from '../source/source.service';
 
 export type NewModel = {
   name: string;
@@ -32,7 +32,7 @@ export type Model = {
   nature?: ToolNature;
   t4c_models: T4CModel[];
   git_models: GitModel[];
-}
+};
 
 @Injectable({
   providedIn: 'root',
