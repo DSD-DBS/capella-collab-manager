@@ -236,7 +236,7 @@ def request_persistent_session(
         else None
     )
 
-    t4c_json: list[dict[str, str | int]] = [
+    t4c_json = [
         {
             "repository": repository.name,
             "port": repository.instance.port,
