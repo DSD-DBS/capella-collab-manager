@@ -5,19 +5,24 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { T4CRepository } from '../../../settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class T4cModelService {
+export class T4CModelService {
   constructor(private http: HttpClient) {}
 
   _t4cModel = new BehaviorSubject<T4CModel | undefined>(undefined);
   get t4cModel() {
     return this._t4cModel.value;
+  }
+
+  _t4cModels = new BehaviorSubject<T4CModel[] | undefined>(undefined);
+  get t4cModels() {
+    return this._t4cModels.value;
   }
 
   urlFactory(project_slug: string, model_slug: string): string {
@@ -28,7 +33,9 @@ export class T4cModelService {
     project_slug: string,
     model_slug: string
   ): Observable<T4CModel[]> {
-    return this.http.get<T4CModel[]>(this.urlFactory(project_slug, model_slug));
+    return this.http
+      .get<T4CModel[]>(this.urlFactory(project_slug, model_slug))
+      .pipe(tap((models) => this._t4cModels.next(models)));
   }
 
   listT4CModelsOfRepository(
