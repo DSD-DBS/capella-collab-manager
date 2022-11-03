@@ -27,7 +27,7 @@ def upgrade():
         sa.Column("version_id", sa.Integer(), nullable=True),
         sa.Column("license", sa.String(), nullable=True),
         sa.Column("host", sa.String(), nullable=True),
-        sa.Column("port", sa.Integer(), nullable=True),
+        sa.Column("port", sa.Integer(), nullable=False, server_default="2036"),
         sa.Column("usage_api", sa.String(), nullable=True),
         sa.Column("rest_api", sa.String(), nullable=True),
         sa.Column("username", sa.String(), nullable=True),

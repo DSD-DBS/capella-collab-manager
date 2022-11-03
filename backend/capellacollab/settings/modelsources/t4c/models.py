@@ -53,6 +53,8 @@ class DatabaseT4CInstance(Base):
     port = Column(
         Integer,
         CheckConstraint("port >= 0 AND port <= 65535"),
+        nullable=False,
+        default=2036,
     )
     cdo_port = Column(
         Integer,
@@ -76,6 +78,13 @@ class DatabaseT4CInstance(Base):
         back_populates="instance",
         cascade="all, delete",
     )
+
+
+def port_validator(value: t.Optional[int]) -> t.Optional[int]:
+    if not value:
+        return value
+    assert 0 <= value <= 65535
+    return value
 
 
 def latin_1_validator(value: t.Optional[str]) -> t.Optional[str]:
@@ -107,6 +116,14 @@ class T4CInstanceBase(BaseModel):
         validate_rest_api_url
     )
 
+    _validate_port = pydantic.validator("port", allow_reuse=True)(
+        port_validator
+    )
+
+    _validate_cdo_port = pydantic.validator("cdo_port", allow_reuse=True)(
+        port_validator
+    )
+
     class Config:
         orm_mode = True
 
@@ -133,6 +150,14 @@ class PatchT4CInstance(BaseModel):
 
     _validate_rest_api_url = pydantic.validator("rest_api", allow_reuse=True)(
         validate_rest_api_url
+    )
+
+    _validate_port = pydantic.validator("port", allow_reuse=True)(
+        port_validator
+    )
+
+    _validate_cdo_port = pydantic.validator("cdo_port", allow_reuse=True)(
+        port_validator
     )
 
     class Config:
