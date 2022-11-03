@@ -213,10 +213,8 @@ def request_persistent_session(
         select(DatabaseT4CRepository)
         .join(DatabaseT4CRepository.models)
         .join(DatabaseT4CModel.model)
-        .join(DatabaseCapellaModel.tool)
-        .where(Tool.id == tool.id)
-        .join(DatabaseCapellaModel.version)
-        .where(Version.id == version.id)
+        .where(DatabaseCapellaModel.tool == tool)
+        .where(DatabaseCapellaModel.version == version)
     )
 
     stmt = (
@@ -225,8 +223,7 @@ def request_persistent_session(
         .where(
             ProjectUserAssociation.permission == ProjectUserPermission.WRITE
         )
-        .join(ProjectUserAssociation.user)
-        .where(DatabaseUser.id == user.id)
+        .where(ProjectUserAssociation.user == user)
     )
 
     t4c_repositories: t.Optional[list[DatabaseT4CRepository]] = (
