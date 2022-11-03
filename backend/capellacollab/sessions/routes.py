@@ -8,7 +8,7 @@ import json
 import logging
 import typing as t
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.capellamodels.modelsources.git.crud as git_models_crud
@@ -123,7 +123,7 @@ def request_session(
     project = get_project_by_slug(db, body.project_slug)
     if not project:
         raise HTTPException(
-            404,
+            status.HTTP_404_NOT_FOUND,
             {
                 "reason": f"The project with name {body.project_slug} was not found.",
                 "technical": f"No project {body.project_slug} found.",
@@ -135,7 +135,7 @@ def request_session(
     model = get_model_by_slug(db, body.project_slug, body.model_slug)
     if not model:
         raise HTTPException(
-            404,
+            status.HTTP_404_NOT_FOUND,
             {
                 "reason": f"The model with name {body.model_slug} was not found.",
                 "technical": f"No model {body.model_slug} found.",
@@ -149,7 +149,7 @@ def request_session(
     ]
     if not models:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "err_code": "git_model_not_found",
                 "reason": "The Project has no connected Git Model. Please contact a project manager or admininistrator",
@@ -157,6 +157,14 @@ def request_session(
         )
 
     docker_image = get_readonly_image_for_version(model.version)
+    if not docker_image:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "err_code": "image_not_found",
+                "reason": "The model has no associated read-only docker image configured. Please contact a project manager or admininistrator",
+            },
+        )
 
     session = operator.start_readonly_session(
         password=rdp_password,
@@ -218,7 +226,7 @@ def request_persistent_session(
         session.type for session in existing_user_sessions
     ]:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "err_code": "existing_session",
                 "reason": "You already have a open Persistent Session. Please navigate to 'Active Sessions' to Reconnect",
