@@ -18,6 +18,7 @@ from capellacollab.core.authentication.database import (
     get_db,
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.logging import get_error_code_logger, get_logger
 from capellacollab.projects.capellamodels.injectables import (
     get_existing_project,
 )
@@ -38,7 +39,7 @@ from capellacollab.users.models import DatabaseUser, Role
 from .capellamodels.routes import router as router_models
 from .users.routes import router as router_users
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 router = APIRouter(
     dependencies=[Depends(RoleVerification(required_role=Role.USER))]
 )
@@ -53,10 +54,13 @@ def get_projects(
     user: DatabaseUser = Depends(get_own_user),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
+    log: logging.LoggerAdapter = Depends(get_logger),
 ) -> t.List[DatabaseProject]:
     if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
+        log.info(f"{user.name} (Administrator) gets all projects")
         return crud.get_all_projects(db)
 
+    log.info(f"{user.name} (User) gets all projects they have access to")
     return [project.projects for project in user.projects]
 
 
@@ -70,12 +74,18 @@ def get_projects(
 )
 def update_project_description(
     patch_project: PatchProject,
+    user: DatabaseUser = Depends(get_own_user),
     db_project: DatabaseProject = Depends(get_existing_project),
-    database: Session = Depends(get_db),
+    db: Session = Depends(get_db),
+    log=Depends(get_logger),
 ) -> DatabaseProject:
-    return crud.update_description(
-        database, db_project, patch_project.description
+    log.info(
+        f'{user.name} updates the description of project "{db_project.name}" ({db_project.description} -> {patch_project.description})'
     )
+    db_project = crud.update_description(
+        db, db_project, patch_project.description
+    )
+    return db_project
 
 
 @router.get(
@@ -88,7 +98,10 @@ def update_project_description(
 )
 def get_project_by_slug(
     db_project: DatabaseProject = Depends(get_existing_project),
+    user: DatabaseUser = Depends(get_own_user),
+    log=Depends(get_logger),
 ) -> DatabaseProject:
+    log.info(f"{user.name} gets the project {db_project.name}")
     return db_project
 
 
