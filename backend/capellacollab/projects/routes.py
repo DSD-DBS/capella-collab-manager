@@ -15,6 +15,7 @@ from capellacollab.core.authentication.database import (
     get_db,
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.logging import get_error_code_logger, get_logger
 from capellacollab.projects import crud
 from capellacollab.projects.models import (
     DatabaseProject,
@@ -35,7 +36,7 @@ from capellacollab.users.models import DatabaseUser, Role
 from .toolmodels.routes import router as router_models
 from .users.routes import router as router_users
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 router = APIRouter(
     dependencies=[Depends(RoleVerification(required_role=Role.USER))]
 )
@@ -50,10 +51,13 @@ def get_projects(
     user: DatabaseUser = Depends(get_own_user),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
+    log: logging.LoggerAdapter = Depends(get_logger),
 ) -> t.List[DatabaseProject]:
     if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
+        log.info(f"{user.name} (Administrator) gets all projects")
         return crud.get_all_projects(db)
 
+    log.info(f"{user.name} (User) gets all projects they have access to")
     return [association.project for association in user.projects]
 
 
@@ -65,7 +69,7 @@ def get_projects(
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
 )
-def patch_project(
+def update_project(
     patch_project: PatchProject,
     project: DatabaseProject = Depends(get_existing_project),
     database: Session = Depends(get_db),
@@ -95,7 +99,10 @@ def patch_project(
 )
 def get_project_by_slug(
     db_project: DatabaseProject = Depends(get_existing_project),
+    user: DatabaseUser = Depends(get_own_user),
+    log=Depends(get_logger),
 ) -> DatabaseProject:
+    log.info(f"{user.name} gets the project {db_project.name}")
     return db_project
 
 
