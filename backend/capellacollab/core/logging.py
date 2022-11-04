@@ -88,7 +88,7 @@ def get_general_logger(name: str, log_leveL=LOGGING_LEVEL) -> logging.Logger:
     if not logger.handlers:
         handler = logging.StreamHandler()
         formatter = logging.Formatter(
-            "time=%(asctime)s log_level=%(levelname)s %(message)s"
+            "time=%(asctime)s level=%(levelname)s function=%(funcName)s %(message)s"
         )
         handler.setFormatter(formatter)
         logger.addHandler(handler)
