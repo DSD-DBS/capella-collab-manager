@@ -6,7 +6,7 @@ import random
 import string
 import typing as t
 
-from fastapi import Depends, Request, Response
+from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from capellacollab.config import config
@@ -28,7 +28,7 @@ class AttachTraceIdMiddleware(BaseHTTPMiddleware):
 
 class AttachUserNameMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        username = "not set"
+        username = "unset"
         if token := await JWTBearer(auto_error=False)(request):
             username = get_username(token)
 
@@ -62,8 +62,8 @@ class ReqLogAdapter(logging.LoggerAdapter):
                 path=self.extra["path"],
                 user=self.extra["user"],
                 client=self.extra["client"],
-                msg_pref="" if self.extra["chaining"] else "message=",
-                msg=msg,
+                msg_pref="" if self.extra["chaining"] else 'message="',
+                msg=msg + ("" if self.extra["chaining"] else '"'),
             ),
             kwargs,
         )
@@ -72,13 +72,13 @@ class ReqLogAdapter(logging.LoggerAdapter):
 class ErrorLogAdapter(logging.LoggerAdapter):
     def process(self, msg, kwargs):
         error_code = kwargs.pop("error_code", self.extra["error_code"])
-        return (f"error_code={error_code} message={msg}", kwargs)
+        return (f'error_code={error_code} message="{msg}"', kwargs)
 
 
 class ResLogAdapter(logging.LoggerAdapter):
     def process(self, msg, kwargs):
         status_code = kwargs.pop("status_code", self.extra["status_code"])
-        return (f"status_code={status_code} message={msg}", kwargs)
+        return (f'status_code={status_code} message="{msg}"', kwargs)
 
 
 def get_general_logger(name: str, log_leveL=LOGGING_LEVEL) -> logging.Logger:
