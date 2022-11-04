@@ -83,6 +83,7 @@ class ResLogAdapter(logging.LoggerAdapter):
 
 def get_general_logger(name: str, log_leveL=LOGGING_LEVEL) -> logging.Logger:
     logger: logging.Logger = logging.getLogger(name)
+    logger.addFilter(HealthcheckFilter())
     logger.setLevel(log_leveL)
 
     if not logger.handlers:
