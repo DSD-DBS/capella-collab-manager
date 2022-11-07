@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 import capellacollab.projects.capellamodels.crud as models_crud
 from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.capellamodels.modelsources.git.models import (
-    DB_GitModel,
+    DatabaseGitModel,
     PatchGitModel,
     PostGitModel,
 )
@@ -17,28 +17,32 @@ from capellacollab.projects.capellamodels.modelsources.git.models import (
 
 def get_gitmodels_of_capellamodels(
     db: Session, model_id: int
-) -> t.List[DB_GitModel]:
-    return db.query(DB_GitModel).filter(DB_GitModel.model_id == model_id).all()
+) -> t.List[DatabaseGitModel]:
+    return (
+        db.query(DatabaseGitModel)
+        .filter(DatabaseGitModel.model_id == model_id)
+        .all()
+    )
 
 
 def get_primary_gitmodel_of_capellamodel(
     db: Session, model_id: int
-) -> DB_GitModel:
+) -> DatabaseGitModel:
     return (
-        db.query(DB_GitModel)
-        .filter(DB_GitModel.model_id == model_id)
-        .filter(DB_GitModel.primary)
+        db.query(DatabaseGitModel)
+        .filter(DatabaseGitModel.model_id == model_id)
+        .filter(DatabaseGitModel.primary)
         .first()
     )
 
 
-def get_gitmodel_by_id(db: Session, id: int) -> DB_GitModel:
-    return db.query(DB_GitModel).filter(DB_GitModel.id == id).first()
+def get_gitmodel_by_id(db: Session, id: int) -> DatabaseGitModel:
+    return db.query(DatabaseGitModel).filter(DatabaseGitModel.id == id).first()
 
 
 def make_git_model_primary(
     db: Session, capella_model_id: int, git_model_id: int
-) -> DB_GitModel:
+) -> DatabaseGitModel:
     primary_model = get_primary_gitmodel_of_capellamodel(db, capella_model_id)
     primary_model.primary = False
 
@@ -53,12 +57,12 @@ def add_gitmodel_to_capellamodel(
     db: Session,
     capella_model: DatabaseCapellaModel,
     post_git_model: PostGitModel,
-) -> DB_GitModel:
+) -> DatabaseGitModel:
     if len(get_gitmodels_of_capellamodels(db, capella_model.id)):
         primary = False
     else:
         primary = True
-    new_model = DB_GitModel.from_post_git_model(
+    new_model = DatabaseGitModel.from_post_git_model(
         capella_model.id, primary, post_git_model
     )
     db.add(new_model)
@@ -70,9 +74,9 @@ def add_gitmodel_to_capellamodel(
 def update_git_model(
     db: Session,
     db_capella_model: DatabaseCapellaModel,
-    db_model: DB_GitModel,
+    db_model: DatabaseGitModel,
     patch_model: PatchGitModel,
-) -> DB_GitModel:
+) -> DatabaseGitModel:
     db_model.path = patch_model.path
     db_model.entrypoint = patch_model.entrypoint
     db_model.revision = patch_model.revision

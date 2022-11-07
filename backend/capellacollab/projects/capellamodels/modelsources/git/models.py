@@ -59,7 +59,7 @@ class ResponseGitModel(BaseModel):
         orm_mode = True
 
 
-class DB_GitModel(Base):
+class DatabaseGitModel(Base):
     __tablename__ = "git_models"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String)
