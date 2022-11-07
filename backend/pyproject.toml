@@ -60,10 +60,6 @@ dev = [
   "testcontainers",
 ]
 
-[project.entry-points."capellacollab.operators"]
-k8s = "capellacollab.sessions.operators.k8s:KubernetesOperator"
-docker = "capellacollab.sessions.operators.docker:DockerOperator"
-
 [project.entry-points."capellacollab.authentication.providers"]
 oauth = "capellacollab.core.authentication.provider.oauth"
 azure = "capellacollab.core.authentication.provider.azure"

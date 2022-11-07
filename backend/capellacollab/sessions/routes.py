@@ -27,14 +27,15 @@ from capellacollab.projects.capellamodels.injectables import (
 )
 from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.capellamodels.modelsources.git.models import (
-    DB_GitModel,
+    DatabaseGitModel,
 )
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.crud import ProjectUserRole
 from capellacollab.sessions import database, guacamole
 from capellacollab.sessions.files import routes as files
 from capellacollab.sessions.models import DatabaseSession
-from capellacollab.sessions.operators import Operator, get_operator
+from capellacollab.sessions.operators import get_operator
+from capellacollab.sessions.operators.k8s import KubernetesOperator
 from capellacollab.sessions.schema import (
     AdvancedSessionResponse,
     DepthType,
@@ -117,7 +118,7 @@ def request_session(
     body: PostReadonlySessionRequest,
     db_user: DatabaseUser = Depends(get_own_user),
     project: DatabaseProject = Depends(get_existing_project),
-    operator: Operator = Depends(get_operator),
+    operator: KubernetesOperator = Depends(get_operator),
     db: Session = Depends(get_db),
 ):
     log.info("Starting persistent session creation for user %s", db_user.name)
@@ -171,7 +172,7 @@ def models_as_json(models: t.List[DatabaseCapellaModel], version: Version):
             yield git_model_as_json(git_model)
 
 
-def git_model_as_json(git_model: DB_GitModel) -> dict[str, str | int]:
+def git_model_as_json(git_model: DatabaseGitModel) -> dict[str, str | int]:
     json = {
         "url": git_model.path,
         "revision": git_model.revision,
@@ -190,7 +191,7 @@ def request_persistent_session(
     body: PostPersistentSessionRequest,
     user: DatabaseUser = Depends(get_own_user),
     db: Session = Depends(get_db),
-    operator: Operator = Depends(get_operator),
+    operator: KubernetesOperator = Depends(get_operator),
     token=Depends(JWTBearer()),
 ):
     rdp_password = generate_password(length=64)
@@ -296,7 +297,7 @@ def create_database_and_guacamole_session(
 def end_session(
     id: str,
     db: Session = Depends(get_db),
-    operator: Operator = Depends(get_operator),
+    operator: KubernetesOperator = Depends(get_operator),
     token=Depends(JWTBearer()),
 ):
     s = database.get_session_by_id(db, id)
