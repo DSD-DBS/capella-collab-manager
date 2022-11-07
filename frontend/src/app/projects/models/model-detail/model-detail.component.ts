@@ -8,7 +8,7 @@ import { BehaviorSubject, filter, Subscription } from 'rxjs';
 import { ModelService } from 'src/app/services/model/model.service';
 import {
   T4CModel,
-  T4cModelService,
+  T4CModelService,
 } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 import {
@@ -33,7 +33,7 @@ export class ModelDetailComponent implements OnInit, OnDestroy {
     private gitModelService: GitModelService,
     public modelService: ModelService,
     public projectService: ProjectService,
-    private t4cModelService: T4cModelService
+    private t4cModelService: T4CModelService
   ) {}
 
   ngOnInit(): void {

@@ -24,7 +24,7 @@ import { ModelService } from 'src/app/services/model/model.service';
 import {
   SubmitT4CModel,
   T4CModel,
-  T4cModelService,
+  T4CModelService,
 } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 import {
@@ -126,7 +126,7 @@ export class AddT4cSourceComponent implements OnInit, OnDestroy {
     public modelService: ModelService,
     public t4cInstanceService: T4CInstanceService,
     public t4cRepositoryService: T4CRepoService,
-    public t4cModelService: T4cModelService,
+    public t4cModelService: T4CModelService,
     private router: Router,
     private route: ActivatedRoute
   ) {}

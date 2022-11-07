@@ -5,7 +5,9 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BaseGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
+import { T4CModel } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -14,138 +16,88 @@ import { environment } from 'src/environments/environment';
 export class BackupService {
   constructor(private http: HttpClient) {}
 
-  getBackups(project: string): Observable<EASEBackup[]> {
-    return this.http.get<EASEBackup[]>(
-      `${environment.backend_url}/projects/${project}/extensions/backups/ease`
+  pipelines = new BehaviorSubject<Pipeline[] | undefined>(undefined);
+  loading: boolean = false;
+
+  getBackups(project: string, modelSlug: string): Observable<Pipeline[]> {
+    this.loading = true;
+    return this.http
+      .get<Pipeline[]>(
+        `${environment.backend_url}/projects/${project}/models/${modelSlug}/backups/pipelines`
+      )
+      .pipe(
+        tap((pipelines: Pipeline[]) => {
+          this.loading = false;
+          this.pipelines.next(pipelines);
+        })
+      );
+  }
+
+  createBackup(
+    project: string,
+    modelSlug: string,
+    body: PostPipeline
+  ): Observable<Pipeline> {
+    return this.http.post<Pipeline>(
+      `${environment.backend_url}/projects/${project}/models/${modelSlug}/backups/pipelines`,
+      {
+        git_model_id: body.gitmodelId,
+        t4c_model_id: body.t4cmodelId,
+        include_commit_history: body.includeCommitHistory,
+        run_nightly: body.runNightly,
+      }
     );
   }
 
-  createBackup(project: string, body: PostEASEBackup): Observable<EASEBackup> {
-    return this.http.post<EASEBackup>(
-      `${environment.backend_url}/projects/${project}/extensions/backups/ease`,
-      body
-    );
-  }
-
-  removeBackup(project: string, backup_id: number): Observable<void> {
+  removeBackup(
+    project: string,
+    modelSlug: string,
+    backupId: number
+  ): Observable<void> {
     return this.http.delete<void>(
-      `${environment.backend_url}/projects/${project}/extensions/backups/ease/${backup_id}`
+      `${environment.backend_url}/projects/${project}/models/${modelSlug}/backups/pipelines/${backupId}`
     );
   }
 
-  triggerRun(project: string, backup_id: number): Observable<EASEBackupJob> {
-    return this.http.post<EASEBackupJob>(
-      `${environment.backend_url}/projects/${project}/extensions/backups/ease/${backup_id}/jobs`,
+  triggerRun(
+    project: string,
+    modelSlug: string,
+    backupId: number
+  ): Observable<PipelineJob> {
+    return this.http.post<PipelineJob>(
+      `${environment.backend_url}/projects/${project}/models/${modelSlug}/backups/pipelines/${backupId}/runs`,
       null
     );
   }
 
   getLogs(
     project: string,
-    backup_id: number,
-    job_id: string
+    backupId: number,
+    modelSlug: string,
+    runId: string
   ): Observable<string> {
     return this.http.get<string>(
-      `${environment.backend_url}/projects/${project}/extensions/backups/ease/${backup_id}/jobs/${job_id}/logs`
+      `${environment.backend_url}/projects/${project}/models/${modelSlug}/backups/pipelines/${backupId}/runs/${runId}/logs`
     );
-  }
-
-  beatifyState(state: string | undefined): EASEBackupState {
-    /* Possible states are (and a few more states):
-    https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/events/event.go */
-
-    let text = state;
-    let css = 'warning';
-    switch (state) {
-      case 'Created':
-        text = 'Created job';
-        css = 'warning';
-        break;
-      case 'Started':
-        text = 'Started job';
-        css = 'success';
-        break;
-      case 'Failed':
-      case 'FailedCreatePodContainer':
-        text = 'Failed to create job';
-        css = 'error';
-        break;
-      case 'Killing':
-        text = 'Stopping job';
-        css = 'error';
-        break;
-      case 'Preempting':
-        text = 'Job is waiting in the queue';
-        css = 'error';
-        break;
-      case 'BackOff':
-        text = 'Job crashed unexpectedly';
-        css = 'error';
-        break;
-      case 'ExceededGracePeriod':
-        text = 'The job stopped.';
-        css = 'error';
-        break;
-
-      case 'FailedKillPod':
-        text = 'Failed to stop job';
-        css = 'error';
-        break;
-      case 'NetworkNotReady':
-        text = 'Backend network issues';
-        css = 'error';
-        break;
-      case 'Pulling':
-        text = 'Preparation of the job';
-        css = 'warning';
-        break;
-      case 'Pulled':
-        text = 'Preparation finished';
-        css = 'warning';
-        break;
-
-      // Some additional reasons that came up
-      case 'Scheduled':
-        text = 'Next run is scheduled';
-        css = 'warning';
-        break;
-
-      // Custom messages
-      case 'NoJob':
-        text = 'No job started yet';
-        css = 'warning';
-        break;
-
-      case 'unknown':
-        text = 'Unknown State';
-        css = 'primary';
-        break;
-    }
-
-    return {
-      text: text || '',
-      css,
-    };
   }
 }
 
-export interface EASEBackupJob {
+export interface PipelineJob {
   id: string;
   date: string;
   state: string;
 }
 
-export interface EASEBackup extends PostEASEBackup {
+export interface Pipeline {
   id: number;
-  lastrun: EASEBackupJob;
+  lastrun: PipelineJob;
+  t4cModel: T4CModel;
+  gitModel: BaseGitModel;
 }
 
-export interface PostEASEBackup {
-  t4cmodel: string;
-  gitmodel: string;
-}
-
-export interface EASEBackupState {
-  text: string;
-  css: string;
+export interface PostPipeline {
+  t4cmodelId: number;
+  gitmodelId: number;
+  includeCommitHistory: boolean;
+  runNightly: boolean;
 }

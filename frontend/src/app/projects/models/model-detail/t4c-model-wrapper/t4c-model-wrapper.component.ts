@@ -7,7 +7,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, filter, map, Subscription, switchMap } from 'rxjs';
 import { ModelService } from 'src/app/services/model/model.service';
-import { T4cModelService } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
+import { T4CModelService } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
@@ -22,7 +22,7 @@ export class T4cModelWrapperComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     public projectService: ProjectService,
     public modelService: ModelService,
-    private t4cModelService: T4cModelService
+    private t4cModelService: T4CModelService
   ) {}
 
   ngOnInit(): void {

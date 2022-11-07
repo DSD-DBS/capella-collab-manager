@@ -44,7 +44,12 @@ export class ViewLogsDialogComponent implements OnInit, OnDestroy {
   refreshLogs(): void {
     this.loading = true;
     this.easeBackupService
-      .getLogs(this.data.project, this.data.backup_id, this.data.job_id)
+      .getLogs(
+        this.data.project,
+        this.data.backup_id,
+        this.data.modelSlug,
+        this.data.job_id
+      )
       .subscribe({
         next: (res: string) => {
           this.loading = false;
@@ -59,6 +64,7 @@ export class ViewLogsDialogComponent implements OnInit, OnDestroy {
 }
 
 export interface ViewLogsData {
+  modelSlug: string;
   job_id: string;
   backup_id: number;
   project: string;
