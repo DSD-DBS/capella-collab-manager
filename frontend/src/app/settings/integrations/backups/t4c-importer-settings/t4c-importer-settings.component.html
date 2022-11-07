@@ -4,11 +4,28 @@
  -->
 
 <div class="wrapper">
-  <mat-form-field appearance="fill">
-    <mat-label>Dockerimage</mat-label>
-    <input matInput placeholder="/t4c/client/importer" />
-  </mat-form-field>
-  <div class="title">
-    <button mat-raised-button>Save</button>
-  </div>
+  <form
+    [formGroup]="t4cImporterSettingsForm"
+    (ngSubmit)="updateBackupSettings()"
+  >
+    <mat-form-field appearance="fill">
+      <mat-label>Dockerimage</mat-label>
+      <input
+        formControlName="dockerImage"
+        matInput
+        placeholder="docker.io/t4c/client/backup:5.2-latest"
+      />
+    </mat-form-field>
+    <div *ngIf="editing" class="flex-space-between">
+      <button mat-flat-button color="warn" (click)="disableEditing()">
+        Cancel
+      </button>
+      <button mat-flat-button type="submit" color="primary">Submit</button>
+    </div>
+    <div *ngIf="!editing" class="flex-space-between">
+      <button mat-flat-button color="primary" (click)="enableEditing()">
+        Edit
+      </button>
+    </div>
+  </form>
 </div>
