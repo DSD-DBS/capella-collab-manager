@@ -3,16 +3,16 @@
 
 from capellacollab.sessions.operators import OPERATOR
 
-from .models import DB_EASEBackup, EASEBackupJob, EASEBackupResponse
+from .models import Backup, BackupJob, DatabaseBackup
 
 
-def _inject_last_run(model: DB_EASEBackup) -> EASEBackupResponse:
-    backup_job = EASEBackupJob(
+def _inject_last_run(model: DatabaseBackup) -> Backup:
+    backup_job = BackupJob(
         id=OPERATOR.get_cronjob_last_run(model.reference),
         date=OPERATOR.get_cronjob_last_starting_date(model.reference),
         state=OPERATOR.get_cronjob_last_state(model.reference),
     )
-    return EASEBackupResponse(
+    return Backup(
         gitmodel=model.gitmodel,
         t4cmodel=model.t4cmodel,
         id=model.id,

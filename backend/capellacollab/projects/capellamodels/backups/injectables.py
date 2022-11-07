@@ -6,7 +6,7 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from capellacollab.core.database import get_db
-from capellacollab.projects.capellamodels.backups.models import DB_EASEBackup
+from capellacollab.projects.capellamodels.backups.models import DatabaseBackup
 from capellacollab.projects.capellamodels.injectables import (
     get_existing_capella_model,
 )
@@ -19,7 +19,7 @@ def get_existing_pipeline(
     pipeline_id: int,
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
-) -> DB_EASEBackup:
+) -> DatabaseBackup:
     try:
         return crud.get_pipeline_by_id(db, pipeline_id)
     except NoResultFound:
@@ -33,7 +33,7 @@ def get_existing_pipeline(
 
 def get_existing_pipeline_run(
     run_id: int,
-    pipeline: DB_EASEBackup = Depends(get_existing_pipeline),
+    pipeline: DatabaseBackup = Depends(get_existing_pipeline),
     db: Session = Depends(get_db),
 ):
     try:
