@@ -35,7 +35,7 @@ def create_pipeline(db: Session, pipeline: DatabaseBackup):
 
 
 def delete_pipeline(db: Session, pipeline: DatabaseBackup):
-    pipeline.delete()
+    db.delete(pipeline)
     db.commit()
 
 

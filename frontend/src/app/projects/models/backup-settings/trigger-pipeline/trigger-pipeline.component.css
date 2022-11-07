@@ -15,3 +15,7 @@
 .footer-wrapper {
   align-items: flex-end;
 }
+
+.pipelines {
+  max-height: 80vh;
+}

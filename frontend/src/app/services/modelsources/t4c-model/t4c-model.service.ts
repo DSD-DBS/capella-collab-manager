@@ -95,3 +95,9 @@ export type T4CModel = {
   id: number;
   repository: T4CRepository;
 };
+
+export type SimpleT4CModel = {
+  project_name: string;
+  repository_name: string;
+  instance_name: string;
+};

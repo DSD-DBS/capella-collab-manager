@@ -18,8 +18,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-# Import required for sqlalchemy
-import capellacollab.projects.users.models
 from capellacollab.core.database import Base
 from capellacollab.projects.capellamodels.modelsources.git.models import (
     ResponseGitModel,

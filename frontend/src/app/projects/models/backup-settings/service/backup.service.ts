@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { BaseGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { T4CModel } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
+import { SimpleT4CModel } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -62,22 +62,22 @@ export class BackupService {
   triggerRun(
     project: string,
     modelSlug: string,
-    backupId: number
+    backupId: number,
+    includeCommitHistory: boolean
   ): Observable<PipelineJob> {
     return this.http.post<PipelineJob>(
       `${environment.backend_url}/projects/${project}/models/${modelSlug}/backups/pipelines/${backupId}/runs`,
-      null
+      { include_commit_history: includeCommitHistory }
     );
   }
 
   getLogs(
     project: string,
     backupId: number,
-    modelSlug: string,
-    runId: string
+    modelSlug: string
   ): Observable<string> {
     return this.http.get<string>(
-      `${environment.backend_url}/projects/${project}/models/${modelSlug}/backups/pipelines/${backupId}/runs/${runId}/logs`
+      `${environment.backend_url}/projects/${project}/models/${modelSlug}/backups/pipelines/${backupId}/runs/latest/logs`
     );
   }
 }
@@ -91,8 +91,8 @@ export interface PipelineJob {
 export interface Pipeline {
   id: number;
   lastrun: PipelineJob;
-  t4cModel: T4CModel;
-  gitModel: BaseGitModel;
+  t4c_model: SimpleT4CModel;
+  git_model: BaseGitModel;
 }
 
 export interface PostPipeline {

@@ -96,7 +96,6 @@ def remove_user_from_repository(
 ):
     r = requests.delete(
         f"{instance.rest_api}/users/{urllib.parse.quote(username, safe='')}",
-        config["modelsources"]["t4c"]["restAPI"] + "" + username,
         params={"repositoryName": repository_name},
         auth=HTTPBasicAuth(instance.username, instance.password),
         timeout=config["requests"]["timeout"],
