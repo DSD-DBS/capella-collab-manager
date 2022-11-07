@@ -22,7 +22,7 @@
     "@angular/material": "^14.2.6",
     "@angular/platform-browser": "~14.2.8",
     "@angular/platform-browser-dynamic": "~14.2.8",
-    "@angular/router": "~14.2.8",
+    "@angular/router": "~14.2.9",
     "http-status-codes": "^2.2.0",
     "@types/semver": "^7.3.13",
     "ngx-cookie": "^6.0.1",
