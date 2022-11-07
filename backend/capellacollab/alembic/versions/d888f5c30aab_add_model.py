@@ -39,6 +39,7 @@ def upgrade():
             ["tools.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("tool_id", "name"),
     )
     op.create_table(
         "versions",
@@ -52,6 +53,7 @@ def upgrade():
             ["tools.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("tool_id", "name"),
     )
     op.rename_table("capella_models", "models")
 

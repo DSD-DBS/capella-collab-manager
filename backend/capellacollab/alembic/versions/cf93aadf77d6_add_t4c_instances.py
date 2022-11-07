@@ -37,7 +37,6 @@ def upgrade():
             ["versions.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("name"),
     )
     op.create_index(
         op.f("ix_t4c_instances_id"), "t4c_instances", ["id"], unique=False

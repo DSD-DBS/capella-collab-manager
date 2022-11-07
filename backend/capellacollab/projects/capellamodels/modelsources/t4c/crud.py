@@ -24,7 +24,11 @@ def get_t4c_model_by_id(db: Session, t4c_model_id: int) -> DatabaseT4CModel:
     ).scalar_one()
 
 
-def get_all_t4c_models(
+def get_all_t4c_models(db) -> list[DatabaseT4CModel]:
+    return db.execute(select(DatabaseT4CModel)).scalars().all()
+
+
+def get_all_t4c_models_for_model(
     db: Session, model: DatabaseCapellaModel
 ) -> list[DatabaseT4CModel]:
     return (
@@ -72,3 +76,12 @@ def patch_t4c_model(
             t4c_model.__setattr__(key, value)
     db.commit()
     return t4c_model
+
+
+def set_repository_for_t4c_model(
+    db: Session,
+    t4c_model: DatabaseT4CModel,
+    t4c_repository: DatabaseT4CRepository,
+):
+    t4c_model.repository = t4c_repository
+    db.commit()
