@@ -12,7 +12,6 @@ from sqlalchemy.orm import Session
 
 import capellacollab.projects.capellamodels.modelsources.git.crud as git_models_crud
 import capellacollab.projects.capellamodels.modelsources.t4c.connection as t4c_manager
-import capellacollab.users.crud as users
 from capellacollab.config import config
 from capellacollab.core.authentication.database import (
     RoleVerification,
@@ -47,6 +46,9 @@ from capellacollab.sessions.schema import (
     WorkspaceType,
 )
 from capellacollab.sessions.sessions import inject_attrs_in_sessions
+from capellacollab.settings.modelsources.t4c.repositories.crud import (
+    get_user_t4c_repositories,
+)
 from capellacollab.settings.modelsources.t4c.repositories.models import (
     DatabaseT4CRepository,
 )
@@ -55,7 +57,6 @@ from capellacollab.tools.injectables import (
     get_exisiting_tool_version,
     get_existing_tool,
 )
-from capellacollab.tools.models import Tool, Version
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role
 
@@ -209,29 +210,8 @@ def request_persistent_session(
 
     docker_image = get_image_for_tool_version(db, version.id)
 
-    admin_stmt = (
-        select(DatabaseT4CRepository)
-        .join(DatabaseT4CRepository.models)
-        .join(DatabaseT4CModel.model)
-        .where(DatabaseCapellaModel.tool == tool)
-        .where(DatabaseCapellaModel.version == version)
-    )
-
-    stmt = (
-        admin_stmt.join(DatabaseCapellaModel.project)
-        .join(DatabaseProject.users)
-        .where(
-            ProjectUserAssociation.permission == ProjectUserPermission.WRITE
-        )
-        .where(ProjectUserAssociation.user == user)
-    )
-
-    t4c_repositories: t.Optional[list[DatabaseT4CRepository]] = (
-        (
-            db.execute(admin_stmt if user.role == Role.ADMIN else stmt)
-            .scalars()
-            .all()
-        )
+    t4c_repositories = (
+        get_user_t4c_repositories(db, tool, version, user)
         if tool.name == "Capella"
         else None
     )
