@@ -8,6 +8,8 @@ DB_NAME = dev
 VENV = .venv
 
 DATABASE_LOAD_FILE ?= ../local/load.sql
+DATABASE_SAVE_DIR ?= ../local
+
 
 database:
 	docker start capella-collab-postgres || \
@@ -50,3 +52,6 @@ clear:
 
 load: clear
 	cat $(DATABASE_LOAD_FILE) | docker run -i -e PGPASSWORD=$(DB_PASSWORD) --network host --entrypoint="psql" postgres:latest -h 'localhost' -p $(DB_PORT) -U '$(DB_USER)' $(DB_NAME)
+
+save:
+	docker run -i -e PGPASSWORD=$(DB_PASSWORD) --network host --entrypoint="pg_dump" postgres:latest -h 'localhost' -p $(DB_PORT) -U '$(DB_USER)' $(DB_NAME) > $(DATABASE_SAVE_DIR)/$(shell date +"%FT%T").sql
