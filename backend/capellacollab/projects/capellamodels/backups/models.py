@@ -11,29 +11,31 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from capellacollab.core.database import Base
 
 
-class EASEBackupRequest(BaseModel):
+class CreateBackup(BaseModel):
     gitmodel: int
     t4cmodel: int
+    include_commit_history: bool
+    run_nightly: bool
 
     class Config:
         orm_mode = True
 
 
-class EASEBackupJob(BaseModel):
+class BackupJob(BaseModel):
     id: t.Union[str, None]
     date: t.Union[datetime, None]
     state: str
 
 
-class EASEBackupResponse(EASEBackupRequest):
+class Backup(CreateBackup):
     id: int
-    lastrun: EASEBackupJob
+    lastrun: BackupJob
 
     class Config:
         orm_mode = True
 
 
-class DB_EASEBackup(Base):
+class DatabaseBackup(Base):
     __tablename__ = "EASEBackup"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)

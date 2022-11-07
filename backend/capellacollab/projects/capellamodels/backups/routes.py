@@ -2,15 +2,17 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import json
 import logging
 import typing as t
 import uuid
 
+import fastapi
 import requests
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-import capellacollab.projects.capellamodels.modelsources.t4c.connection as t4c_connection
+import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repository_interface
 from capellacollab.config import config
 from capellacollab.core import credentials
 from capellacollab.core.authentication.database import ProjectRoleVerification
@@ -19,81 +21,93 @@ from capellacollab.projects.capellamodels.injectables import (
     get_existing_capella_model,
     get_existing_project,
 )
+from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.capellamodels.modelsources.git.injectables import (
     get_existing_git_model,
+)
+from capellacollab.projects.capellamodels.modelsources.t4c.injectables import (
+    get_existing_t4c_model,
 )
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.sessions.operators import OPERATOR
 
 from . import crud, helper, injectables
-from .models import DB_EASEBackup, EASEBackupRequest, EASEBackupResponse
+from .core import get_environment
+from .models import Backup, CreateBackup, DatabaseBackup
 
 router = APIRouter()
 log = logging.getLogger(__name__)
 
 
 @router.get(
-    "/",
-    response_model=t.List[EASEBackupResponse],
+    "",
+    response_model=t.List[Backup],
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
 )
-def get_ease_backups(
-    project: DatabaseProject = Depends(get_existing_project),
+def get_pipelines(
+    model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ):
     return [
         helper._inject_last_run(backup)
-        for backup in crud.get_backups(db, project.name)
+        for backup in crud.get_pipelines_for_model(db, model)
     ]
 
 
 @router.post(
-    "/",
-    response_model=EASEBackupResponse,
+    "",
+    response_model=Backup,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
 )
 def create_backup(
-    body: EASEBackupRequest,
+    body: CreateBackup,
     project: DatabaseProject = Depends(get_existing_project),
-    capella_model=Depends(get_existing_capella_model),
+    capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ):
     gitmodel = get_existing_git_model(body.gitmodel, capella_model, db)
-    t4cmodel = get_existing_t4c_model(body.t4cmodel, capella_model, db)(
-        db=db, id=body.t4cmodel, repo_name=project.name
-    )
+    t4cmodel = get_existing_t4c_model(body.t4cmodel, capella_model, db)
 
     username = "techuser-" + str(uuid.uuid4())
     password = credentials.generate_password()
-    t4c_connection.add_user_to_repository(
-        project.name, username, password, is_admin=False
-    )
 
-    reference = OPERATOR.create_cronjob(
-        image=config["docker"]["images"]["backup"],
-        environment={
-            "EASE_LOG_LOCATION": "/proc/1/fd/1",
-            "GIT_REPO_URL": gitmodel.path,
-            "GIT_REPO_BRANCH": gitmodel.revision,
-            "T4C_REPO_HOST": config["modelsources"]["t4c"]["host"],
-            "T4C_REPO_PORT": config["modelsources"]["t4c"]["port"],
-            "T4C_CDO_PORT": config["modelsources"]["t4c"]["cdoPort"],
-            "T4C_REPO_NAME": project.name,
-            "T4C_PROJECT_NAME": t4cmodel.name,
-            "T4C_USERNAME": username,
-            "T4C_PASSWORD": password,
-            "GIT_USERNAME": gitmodel.username,
-            "GIT_PASSWORD": gitmodel.password,
-        },
-        schedule="0 3 * * *",
-    )
+    try:
+        t4c_repository_interface.add_user_to_repository(
+            t4cmodel.repository.instance,
+            t4cmodel.repository.name,
+            username,
+            password,
+            is_admin=False,
+        )
+    except requests.HTTPError:
+        raise fastapi.HTTPException(
+            500,
+            {
+                "title": "Creation of the pipeline failed",
+                "reason": "We're not able to connect to the TeamForCapella server and therefore cannot prepare the backups. Please try again later or contact your administrator.",
+            },
+        )
+
+    if body.run_nightly:
+        reference = OPERATOR.create_cronjob(
+            image="",  # FIXME
+            environment=get_environment(
+                gitmodel,
+                t4cmodel,
+                body.include_commit_history,
+            ),
+            schedule="0 3 * * *",
+        )
 
     return helper._inject_last_run(
         crud.create_pipeline(
             db=db,
-            backup=DB_EASEBackup(
+            backup=DatabaseBackup(
                 project=project.name,
                 **body.dict(),
                 reference=reference,
@@ -111,13 +125,15 @@ def create_backup(
     ],
 )
 def delete_pipeline(
-    pipeline: DB_EASEBackup = Depends(injectables.get_existing_pipeline),
+    pipeline: DatabaseBackup = Depends(injectables.get_existing_pipeline),
     db: Session = Depends(get_db),
 ):
 
     try:
-        t4c_connection.remove_user_from_repository(
-            pipeline.t4c_model.repository.name, pipeline.t4c_username
+        t4c_repository_interface.remove_user_from_repository(
+            pipeline.t4c_model.repository.instance,
+            pipeline.t4c_model.repository.name,
+            pipeline.t4c_username,
         )
     except requests.HTTPError:
         log.error("Error during the deletion of user %s in t4c", exc_info=True)
@@ -129,14 +145,14 @@ def delete_pipeline(
 
 @router.post(
     "/{pipeline_id}/runs",
-    response_model=EASEBackupResponse,
+    response_model=Backup,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
 )
 def create_job(
     id: int,
-    pipeline: DB_EASEBackup = Depends(injectables.get_existing_pipeline),
+    pipeline: DatabaseBackup = Depends(injectables.get_existing_pipeline),
     db: Session = Depends(get_db),
 ):
     OPERATOR.trigger_cronjob(name=pipeline.reference)
