@@ -33,6 +33,7 @@ from capellacollab.projects.capellamodels.modelsources.t4c.injectables import (
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.sessions.operators import OPERATOR
+from capellacollab.settings.backup.crud import get_backup_settings
 
 from . import crud, helper, injectables
 from .core import get_environment
@@ -95,7 +96,7 @@ def create_backup(
 
     if body.run_nightly:
         reference = OPERATOR.create_cronjob(
-            image="k3d-myregistry.localhost:12345/t4c/client/backup:5.2-latest",  # FIXME
+            image=get_backup_settings(db).docker_image,
             environment=get_environment(
                 git_model,
                 t4c_model,
@@ -107,7 +108,7 @@ def create_backup(
         )
     else:
         reference = OPERATOR.create_job(
-            image="k3d-myregistry.localhost:12345/t4c/client/backup:5.2-latest",  # FIXME
+            image=get_backup_settings(db).docker_image,
             environment=get_environment(
                 git_model,
                 t4c_model,
@@ -116,7 +117,6 @@ def create_backup(
                 body.include_commit_history,
             ),
         )
-        pass
 
     return crud.create_pipeline(
         db=db,
