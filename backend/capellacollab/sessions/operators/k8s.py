@@ -19,7 +19,6 @@ import kubernetes.config
 import kubernetes.stream.stream
 
 from capellacollab.config import config
-from capellacollab.sessions.operators.abc import Operator
 
 log = logging.getLogger(__name__)
 cfg = config["operators"]["k8s"]
@@ -73,7 +72,7 @@ class File:
     children: t.Optional[list[File]] = None
 
 
-class KubernetesOperator(Operator):
+class KubernetesOperator:
     def __init__(self) -> None:
         self.v1_core = kubernetes.client.CoreV1Api()
         self.v1_apps = kubernetes.client.AppsV1Api()

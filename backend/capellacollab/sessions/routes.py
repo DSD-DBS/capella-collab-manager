@@ -24,7 +24,8 @@ from capellacollab.projects.users.crud import ProjectUserRole
 from capellacollab.sessions import database, guacamole
 from capellacollab.sessions.files import routes as files
 from capellacollab.sessions.models import DatabaseSession
-from capellacollab.sessions.operators import Operator, get_operator
+from capellacollab.sessions.operators import get_operator
+from capellacollab.sessions.operators.k8s import KubernetesOperator
 from capellacollab.sessions.schema import (
     AdvancedSessionResponse,
     DepthType,
@@ -94,7 +95,7 @@ def get_current_sessions(
 def request_session(
     body: PostSessionRequest,
     db_user: DatabaseUser = Depends(get_own_user),
-    operator: Operator = Depends(get_operator),
+    operator: KubernetesOperator = Depends(get_operator),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
@@ -169,7 +170,7 @@ def request_persistent_session(
     body: PostPersistentSessionRequest,
     user: DatabaseUser = Depends(get_own_user),
     db: Session = Depends(get_db),
-    operator: Operator = Depends(get_operator),
+    operator: KubernetesOperator = Depends(get_operator),
     token=Depends(JWTBearer()),
 ):
     rdp_password = generate_password(length=64)
@@ -275,7 +276,7 @@ def create_database_and_guacamole_session(
 def end_session(
     id: str,
     db: Session = Depends(get_db),
-    operator: Operator = Depends(get_operator),
+    operator: KubernetesOperator = Depends(get_operator),
     token=Depends(JWTBearer()),
 ):
     s = database.get_session_by_id(db, id)

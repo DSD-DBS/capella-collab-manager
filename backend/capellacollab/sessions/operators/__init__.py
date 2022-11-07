@@ -6,19 +6,9 @@ from __future__ import annotations
 from importlib import metadata
 
 from capellacollab.config import config
-from capellacollab.sessions.operators.abc import Operator
+from capellacollab.sessions.operators.k8s import KubernetesOperator
 
-try:
-    OPERATOR = next(
-        i
-        for i in metadata.entry_points()["capellacollab.operators"]
-        if i.name == config["operators"]["operator"]
-    ).load()()
-
-except StopIteration:
-    raise KeyError(
-        f"Unknown operator " + config["operators"]["operator"]
-    ) from None
+OPERATOR = KubernetesOperator()
 
 
 def get_operator():
