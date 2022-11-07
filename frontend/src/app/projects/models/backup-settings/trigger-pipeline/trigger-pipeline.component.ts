@@ -3,19 +3,27 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Model } from 'src/app/services/model/model.service';
+import { Model, ModelService } from 'src/app/services/model/model.service';
+import { ProjectService } from 'src/app/services/project/project.service';
+import { SessionService } from 'src/app/services/session/session.service';
+import { CreateBackupComponent } from '../create-backup/create-backup.component';
+import { BackupService, Pipeline } from '../service/backup.service';
+import { ViewLogsDialogComponent } from '../view-logs-dialog/view-logs-dialog.component';
 
 @Component({
   selector: 'app-trigger-pipeline',
   templateUrl: './trigger-pipeline.component.html',
   styleUrls: ['./trigger-pipeline.component.css'],
 })
-export class TriggerPipelineComponent {
-  pipelines: Pipeline[] = [{ id: 1 }, { id: 2 }];
+export class TriggerPipelineComponent implements OnInit {
   selectedPipeline?: Pipeline = undefined;
 
   configurationForm = new FormGroup({
@@ -25,8 +33,23 @@ export class TriggerPipelineComponent {
   constructor(
     private toastService: ToastService,
     private dialogRef: MatDialogRef<TriggerPipelineComponent>,
-    @Inject(MAT_DIALOG_DATA) public model: Model
+    @Inject(MAT_DIALOG_DATA) public data: { model: Model },
+    public dialog: MatDialog,
+    public backupService: BackupService,
+    public sessionService: SessionService,
+    private modelService: ModelService,
+    private projectService: ProjectService
   ) {}
+
+  ngOnInit(): void {
+    this.modelService._model.next(this.data.model);
+    this.backupService
+      .getBackups(
+        this.projectService.project!.slug,
+        this.modelService.model!.slug
+      )
+      .subscribe();
+  }
 
   selectPipeline(pipeline: Pipeline) {
     this.selectedPipeline = pipeline;
@@ -51,8 +74,44 @@ export class TriggerPipelineComponent {
   closeDialog(): void {
     this.dialogRef.close();
   }
-}
 
-export type Pipeline = {
-  id: number;
-};
+  removeBackup(backup: Pipeline): void {
+    this.backupService
+      .removeBackup(
+        this.projectService.project!.slug,
+        this.modelService.model!.slug,
+        backup.id
+      )
+      .subscribe(() => {
+        this.backupService.getBackups(
+          this.projectService.project!.slug,
+          this.modelService.model!.slug
+        );
+      });
+  }
+
+  viewLogs(backup: Pipeline): void {
+    this.dialog.open(ViewLogsDialogComponent, {
+      data: {
+        job_id: backup.lastrun.id,
+        backup_id: backup.id,
+        project: this.projectService.project!.slug,
+      },
+    });
+  }
+
+  createNewBackup(): void {
+    const dialogRef = this.dialog.open(CreateBackupComponent, {
+      data: { project: this.projectService.project!.slug },
+    });
+
+    dialogRef.afterClosed().subscribe((success) => {
+      if (success) {
+        this.backupService.getBackups(
+          this.projectService.project!.slug,
+          this.modelService.model!.slug
+        );
+      }
+    });
+  }
+}

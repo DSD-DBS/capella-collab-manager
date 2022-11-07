@@ -58,7 +58,6 @@ import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 import { MatCardOverviewLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-loader/mat-card-overview-loader.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
-import { BackupSettingsComponent } from './projects/models/backup-settings/backup-settings.component';
 import { CreateBackupComponent } from './projects/models/backup-settings/create-backup/create-backup.component';
 import { TriggerPipelineComponent } from './projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { ViewLogsDialogComponent } from './projects/models/backup-settings/view-logs-dialog/view-logs-dialog.component';
@@ -117,7 +116,6 @@ import { HomeComponent } from './workspaces/home.component';
     AlertSettingsComponent,
     AppComponent,
     AuthComponent,
-    BackupSettingsComponent,
     ChooseInitComponent,
     ChooseSourceComponent,
     CreateBackupComponent,

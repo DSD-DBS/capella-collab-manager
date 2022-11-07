@@ -59,7 +59,7 @@ export class ModelOverviewComponent implements OnInit {
 
   openPipelineDialog(model: Model): void {
     this.dialog.open(TriggerPipelineComponent, {
-      data: model,
+      data: { project: this.project, model: model },
     });
   }
 }

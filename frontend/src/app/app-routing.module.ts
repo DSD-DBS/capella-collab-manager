@@ -12,7 +12,6 @@ import { LogoutRedirectComponent } from './general/auth/logout/logout-redirect/l
 import { LogoutComponent } from './general/auth/logout/logout/logout.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
-import { BackupSettingsComponent } from './projects/models/backup-settings/backup-settings.component';
 import { CreateCoworkingMethodComponent } from './projects/models/create-coworking-method/create-coworking-method.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
@@ -87,10 +86,6 @@ const routes: Routes = [
                     component: CreateCoworkingMethodComponent,
                   },
                 ],
-              },
-              {
-                path: 'backups',
-                component: BackupSettingsComponent,
               },
               {
                 path: 't4c-model',

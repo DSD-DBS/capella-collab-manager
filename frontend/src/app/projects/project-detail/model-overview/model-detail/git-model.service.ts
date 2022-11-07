@@ -17,7 +17,7 @@ export class GitModelService {
   constructor(private http: HttpClient) {}
 
   private _gitModel = new Subject<GetGitModel>();
-  private _gitModels = new BehaviorSubject<Array<GetGitModel>>([]);
+  public _gitModels = new BehaviorSubject<Array<GetGitModel>>([]);
 
   readonly gitModel = this._gitModel.asObservable();
   readonly gitModels = this._gitModels.asObservable();

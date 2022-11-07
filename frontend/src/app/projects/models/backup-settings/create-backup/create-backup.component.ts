@@ -3,15 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, Inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import {
   BackupService,
-  PostEASEBackup,
+  PostPipeline,
 } from 'src/app/projects/models/backup-settings/service/backup.service';
 import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { T4CRepoService } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
+import { ModelService } from 'src/app/services/model/model.service';
+import { T4CModelService } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-create-backup',
@@ -21,31 +23,64 @@ import { T4CRepoService } from 'src/app/settings/modelsources/t4c-settings/servi
 export class CreateBackupComponent {
   constructor(
     public gitModelService: GitModelService,
-    public t4cRepoService: T4CRepoService,
-    private easeBackupService: BackupService,
+    public t4cModelService: T4CModelService,
+    private backupService: BackupService,
     private dialogRef: MatDialogRef<CreateBackupComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: CreateEASEBackupData
-  ) {}
+    private projectService: ProjectService,
+    private modelService: ModelService
+  ) {
+    this.t4cModelService
+      .listT4CModels(
+        this.projectService.project!.slug,
+        this.modelService.model!.slug
+      )
+      .subscribe();
 
-  createGitBackupForm = new FormGroup({
-    gitmodel: new FormControl('', Validators.required),
-    t4cmodel: new FormControl('', Validators.required),
+    this.gitModelService.loadGitModels(
+      this.projectService.project!.slug,
+      this.modelService.model!.slug
+    );
+  }
+
+  createBackupForm = new FormGroup({
+    gitmodel: new FormControl([], [Validators.min(0)]),
+    t4cmodel: new FormControl([], [Validators.min(0)]),
+    configuration: new FormGroup({
+      includeCommitHistory: new FormControl(false),
+      runNightly: new FormControl(true),
+    }),
   });
 
   createGitBackup() {
-    if (this.createGitBackupForm.valid) {
-      this.easeBackupService
+    if (this.createBackupForm.valid) {
+      const formValue = this.createBackupForm.value;
+      const createBackupformValue: PostPipeline = {
+        gitmodelId: formValue.gitmodel![0],
+        t4cmodelId: formValue.t4cmodel![0],
+        includeCommitHistory: formValue.configuration!.includeCommitHistory!,
+        runNightly: formValue.configuration!.runNightly!,
+      };
+      this.backupService
         .createBackup(
-          this.data.project,
-          this.createGitBackupForm.value as PostEASEBackup
+          this.projectService.project!.slug,
+          this.modelService.model!.slug,
+          createBackupformValue as unknown as PostPipeline
         )
         .subscribe(() => {
           this.dialogRef.close(true);
         });
     }
   }
+
+  t4cModelAndGitModelExists(): boolean {
+    return !!(
+      this.t4cModelService.t4cModels?.length &&
+      this.gitModelService?._gitModels.value.length
+    );
+  }
 }
 
 export interface CreateEASEBackupData {
   project: string;
+  modelSlug: string;
 }
