@@ -7,19 +7,10 @@ from .models import Backup, BackupJob, DatabaseBackup
 
 
 def _inject_last_run(model: DatabaseBackup) -> Backup:
-    backup_job = BackupJob(
-        id=OPERATOR.get_cronjob_last_run(model.reference),
-        date=OPERATOR.get_cronjob_last_starting_date(model.reference),
-        state=OPERATOR.get_cronjob_last_state(model.reference),
-    )
-    return Backup(
-        gitmodel=model.gitmodel,
-        t4cmodel=model.t4cmodel,
-        id=model.id,
-        lastrun=backup_job,
-    )
+    return model
 
 
-def filter_logs(content: str, forbidden_strings: list):
+def filter_logs(content: str, forbidden_strings: list) -> str:
     for forbidden_string in forbidden_strings:
         content = content.replace(forbidden_string, "***********")
+    return content

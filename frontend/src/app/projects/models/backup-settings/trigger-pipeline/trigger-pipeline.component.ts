@@ -56,11 +56,20 @@ export class TriggerPipelineComponent implements OnInit {
   }
 
   runPipeline() {
-    this.toastService.showSuccess(
-      'Pipeline triggered',
-      'You can check the current status in the pipeline settings.'
-    );
-    this.dialogRef.close();
+    this.backupService
+      .triggerRun(
+        this.projectService.project!.slug,
+        this.modelService.model!.slug,
+        this.selectedPipeline!.id,
+        this.configurationForm.value.includeHistory!
+      )
+      .subscribe(() => {
+        this.toastService.showSuccess(
+          'Pipeline triggered',
+          'You can check the current status in the pipeline settings.'
+        );
+        this.dialogRef.close();
+      });
   }
 
   estimateTime(): string {
@@ -83,16 +92,18 @@ export class TriggerPipelineComponent implements OnInit {
         backup.id
       )
       .subscribe(() => {
-        this.backupService.getBackups(
-          this.projectService.project!.slug,
-          this.modelService.model!.slug
+        this.toastService.showSuccess(
+          'Backup pipeline deleted',
+          `The pipeline with the ID ${backup.id} has been deleted`
         );
+        this.dialogRef.close();
       });
   }
 
   viewLogs(backup: Pipeline): void {
     this.dialog.open(ViewLogsDialogComponent, {
       data: {
+        modelSlug: this.modelService.model!.slug,
         job_id: backup.lastrun.id,
         backup_id: backup.id,
         project: this.projectService.project!.slug,

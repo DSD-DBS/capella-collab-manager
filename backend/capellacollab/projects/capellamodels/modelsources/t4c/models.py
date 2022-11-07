@@ -3,6 +3,8 @@
 
 import typing as t
 
+from __future__ import annotations
+
 from pydantic import BaseModel
 from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import relationship
@@ -39,6 +41,23 @@ class SubmitT4CModel(BaseModel):
     name: str
     t4c_instance_id: int
     t4c_repository_id: int
+
+
+class SimpleT4CModel(BaseModel):
+    project_name: str
+    repository_name: str
+    instance_name: str
+
+    @classmethod
+    def from_orm(cls, obj: DatabaseT4CModel) -> SimpleT4CModel:
+        return SimpleT4CModel(
+            project_name=obj.name,
+            repository_name=obj.repository.name,
+            instance_name=obj.repository.instance.name,
+        )
+
+    class Config:
+        orm_mode = True
 
 
 class ResponseT4CModel(BaseModel):

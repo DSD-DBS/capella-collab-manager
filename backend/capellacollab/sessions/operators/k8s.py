@@ -258,10 +258,23 @@ class KubernetesOperator:
         )
         return id
 
-    def trigger_cronjob(self, name: str) -> None:
+    def trigger_cronjob(self, name: str, overwrite_environment: None) -> None:
         cronjob = self.v1_batch.read_namespaced_cron_job(
             namespace=cfg["namespace"], name=name
         )
+
+        job_spec = cronjob.spec.job_template.spec
+        if overwrite_environment:
+            for index, env in enumerate(
+                job_spec.template.spec.containers[0].env
+            ):
+                name = env.name
+                if env.name in overwrite_environment:
+                    job_spec.template.spec.containers[0].env[index] = {
+                        "name": name,
+                        "value": overwrite_environment[name],
+                    }
+
         job = kubernetes.client.V1Job(
             api_version="batch/v1",
             kind="Job",
@@ -280,7 +293,7 @@ class KubernetesOperator:
                     }
                 ],
             ),
-            spec=cronjob.spec.job_template.spec,
+            spec=job_spec,
         )
         self.v1_batch.create_namespaced_job(
             namespace=cfg["namespace"], body=job

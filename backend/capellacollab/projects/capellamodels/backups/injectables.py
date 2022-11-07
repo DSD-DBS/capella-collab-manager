@@ -29,19 +29,3 @@ def get_existing_pipeline(
                 "reason": f"The pipeline with the id {pipeline_id} of the model with th id {model.id} was not found.",
             },
         )
-
-
-def get_existing_pipeline_run(
-    run_id: int,
-    pipeline: DatabaseBackup = Depends(get_existing_pipeline),
-    db: Session = Depends(get_db),
-):
-    try:
-        return crud.get_pipeline_run_by_id(db, pipeline, run_id)
-    except NoResultFound:
-        raise HTTPException(
-            404,
-            {
-                "reason": f"The pipeline run with the id {run_id} of the pipeline with th id {pipeline.id} was not found.",
-            },
-        )

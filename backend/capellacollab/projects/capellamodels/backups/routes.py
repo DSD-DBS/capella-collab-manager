@@ -16,6 +16,8 @@ import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_rep
 from capellacollab.config import config
 from capellacollab.core import credentials
 from capellacollab.core.authentication.database import ProjectRoleVerification
+from capellacollab.core.authentication.helper import get_username
+from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.projects.capellamodels.injectables import (
     get_existing_capella_model,
@@ -34,7 +36,7 @@ from capellacollab.sessions.operators import OPERATOR
 
 from . import crud, helper, injectables
 from .core import get_environment
-from .models import Backup, CreateBackup, DatabaseBackup
+from .models import Backup, CreateBackup, DatabaseBackup, Job
 
 router = APIRouter()
 log = logging.getLogger(__name__)
@@ -51,10 +53,7 @@ def get_pipelines(
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ):
-    return [
-        helper._inject_last_run(backup)
-        for backup in crud.get_pipelines_for_model(db, model)
-    ]
+    return crud.get_pipelines_for_model(db, model)
 
 
 @router.post(
@@ -69,17 +68,18 @@ def create_backup(
     project: DatabaseProject = Depends(get_existing_project),
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
 ):
-    gitmodel = get_existing_git_model(body.gitmodel, capella_model, db)
-    t4cmodel = get_existing_t4c_model(body.t4cmodel, capella_model, db)
+    git_model = get_existing_git_model(body.git_model_id, capella_model, db)
+    t4c_model = get_existing_t4c_model(body.t4c_model_id, capella_model, db)
 
     username = "techuser-" + str(uuid.uuid4())
     password = credentials.generate_password()
 
     try:
         t4c_repository_interface.add_user_to_repository(
-            t4cmodel.repository.instance,
-            t4cmodel.repository.name,
+            t4c_model.repository.instance,
+            t4c_model.repository.name,
             username,
             password,
             is_admin=False,
@@ -95,25 +95,40 @@ def create_backup(
 
     if body.run_nightly:
         reference = OPERATOR.create_cronjob(
-            image="",  # FIXME
+            image="k3d-myregistry.localhost:12345/t4c/client/backup:5.2-latest",  # FIXME
             environment=get_environment(
-                gitmodel,
-                t4cmodel,
+                git_model,
+                t4c_model,
+                username,
+                password,
                 body.include_commit_history,
             ),
             schedule="0 3 * * *",
         )
-
-    return helper._inject_last_run(
-        crud.create_pipeline(
-            db=db,
-            backup=DatabaseBackup(
-                project=project.name,
-                **body.dict(),
-                reference=reference,
-                username=username,
+    else:
+        reference = OPERATOR.create_job(
+            image="k3d-myregistry.localhost:12345/t4c/client/backup:5.2-latest",  # FIXME
+            environment=get_environment(
+                git_model,
+                t4c_model,
+                username,
+                password,
+                body.include_commit_history,
             ),
         )
+        pass
+
+    return crud.create_pipeline(
+        db=db,
+        pipeline=DatabaseBackup(
+            k8s_cronjob_id=reference,
+            git_model=git_model,
+            t4c_model=t4c_model,
+            created_by=get_username(token),
+            model=capella_model,
+            t4c_username=username,
+            t4c_password=password,
+        ),
     )
 
 
@@ -138,7 +153,7 @@ def delete_pipeline(
     except requests.HTTPError:
         log.error("Error during the deletion of user %s in t4c", exc_info=True)
 
-    OPERATOR.delete_cronjob(pipeline.reference)
+    OPERATOR.delete_cronjob(pipeline.k8s_cronjob_id)
 
     crud.delete_pipeline(db, pipeline)
 
@@ -151,22 +166,34 @@ def delete_pipeline(
     ],
 )
 def create_job(
-    id: int,
+    body: Job,
     pipeline: DatabaseBackup = Depends(injectables.get_existing_pipeline),
     db: Session = Depends(get_db),
 ):
-    OPERATOR.trigger_cronjob(name=pipeline.reference)
+    if pipeline.run_nightly:
+        OPERATOR.trigger_cronjob(
+            name=pipeline.k8s_cronjob_id,
+            overwrite_environment={
+                "INCLUDE_COMMIT_HISTORY": json.dumps(
+                    body.include_commit_history
+                ),
+            },
+        )
+        return pipeline
+    else:
+        raise NotImplementedError()
 
 
 @router.get(
-    "/{pipeline_id}/runs/{run_id}/logs",
+    "/{pipeline_id}/runs/latest/logs",
     response_model=str,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
 )
 def get_logs(
-    pipeline_run_id: str = Depends(injectables.get_existing_pipeline_run),
+    pipeline: str = Depends(injectables.get_existing_pipeline),
 ):
-    OPERATOR.get_job_logs(id=pipeline_run_id)
-    return helper.filter_logs()
+    backup = Backup.from_orm(pipeline)
+    logs = OPERATOR.get_job_logs(id=backup.lastrun.id)
+    return helper.filter_logs(logs, [pipeline.t4c_password])
