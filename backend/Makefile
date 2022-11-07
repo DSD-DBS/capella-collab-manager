@@ -7,7 +7,7 @@ DB_USER = dev
 DB_NAME = dev
 VENV = .venv
 
-DATABASE_LOAD_DIR ?= ../local/load.sql
+DATABASE_LOAD_FILE ?= ../local/load.sql
 
 database:
 	docker start capella-collab-postgres || \
@@ -49,4 +49,4 @@ clear:
 	echo "DROP DATABASE $(DB_NAME); CREATE DATABASE $(DB_NAME);" | docker run -e PGPASSWORD=$(DB_PASSWORD) -i --network host --entrypoint="psql" postgres:latest -h 'localhost' -p $(DB_PORT) -U '$(DB_USER)' postgres
 
 load: clear
-	cat $(DATABASE_LOAD_DIR) | docker run -i -e PGPASSWORD=$(DB_PASSWORD) --network host --entrypoint="psql" postgres:latest -h 'localhost' -p $(DB_PORT) -U '$(DB_USER)' $(DB_NAME)
+	cat $(DATABASE_LOAD_FILE) | docker run -i -e PGPASSWORD=$(DB_PASSWORD) --network host --entrypoint="psql" postgres:latest -h 'localhost' -p $(DB_PORT) -U '$(DB_USER)' $(DB_NAME)
