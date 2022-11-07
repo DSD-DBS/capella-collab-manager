@@ -12,6 +12,7 @@ import { environment } from 'src/environments/environment';
 export type Protocol = 'tcp' | 'ssl' | 'ws' | 'wss';
 
 export type BaseT4CInstance = {
+  version_id: number;
   license: string;
   host: string;
   port: number;
@@ -25,7 +26,6 @@ export type BaseT4CInstance = {
 
 export type NewT4CInstance = BaseT4CInstance & {
   name: string;
-  version_id: number;
 };
 
 export type T4CInstance = NewT4CInstance & {

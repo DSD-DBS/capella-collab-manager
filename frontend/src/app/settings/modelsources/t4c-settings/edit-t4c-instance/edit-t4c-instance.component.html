@@ -27,6 +27,10 @@
                 {{ version.name }}
               </mat-option>
             </mat-select>
+            <mat-hint
+              *ngIf="instance && instance.version.id !== form.value.version_id"
+              >Models are not auto-migrated on version change.</mat-hint
+            >
             <mat-error *ngIf="form.controls.version_id.errors?.required">
               The version is required.
             </mat-error>
