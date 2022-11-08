@@ -85,7 +85,7 @@ def guacamole(monkeypatch):
     )
 
 
-class MockOperator(Operator):
+class MockOperator:
 
     sessions = []
 
