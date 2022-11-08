@@ -49,6 +49,11 @@ export class T4CImporterSettingsComponent implements OnInit {
   disableEditing(): void {
     this.editing = false;
     this.t4cImporterSettingsForm.disable();
+    if (this.backupSettingsService.backupSettings) {
+      this.updateForm(this.backupSettingsService.backupSettings);
+    } else {
+      this.t4cImporterSettingsForm.reset();
+    }
   }
 
   updateBackupSettings(): void {
