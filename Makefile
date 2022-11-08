@@ -9,16 +9,13 @@ RELEASE = dev-t4c-manager
 NAMESPACE = t4c-manager
 SESSION_NAMESPACE = t4c-sessions
 PORT ?= 8080
-
+CAPELLA_VERSIONS = 5.0.0 5.2.0 6.0.0
 CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 DOCKER_REGISTRY=$(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)
 
 # Adds support for msys
 export MSYS_NO_PATHCONV := 1
 
-build: backend frontend docs
-
-build-capella:
-	$(CAPELLA_DOCKERIMAGES) capella/remote capella/readonly
+build: backend frontend docs capella
 
 build-t4c: build
 	$(CAPELLA_DOCKERIMAGES) t4c/client/remote t4c/client/backup
@@ -32,6 +29,14 @@ frontend:
 	node frontend/fetch-version.ts
 	docker build --build-arg CONFIGURATION=local -t t4c/client/frontend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend frontend
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend
+
+capella:
+	for version in $(CAPELLA_VERSIONS)
+	do $(MAKE) capella-$$version
+	done
+
+capella-%: registry
+	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSION=$* capella/remote capella/readonly
 
 docs:
 	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user
@@ -90,9 +95,11 @@ undeploy:
 	kubectl --context k3d-$(CLUSTER_NAME) delete --all cronjobs -n $(SESSION_NAMESPACE)
 	kubectl --context k3d-$(CLUSTER_NAME) delete --all jobs -n $(SESSION_NAMESPACE)
 
-create-cluster:
+registry:
 	type k3d || { echo "K3D is not installed, install k3d and run 'make create-cluster' again"; exit 1; }
 	k3d registry list $(CLUSTER_REGISTRY_NAME) 2>&- || k3d registry create $(CLUSTER_REGISTRY_NAME) --port $(REGISTRY_PORT)
+
+create-cluster: registry
 	k3d cluster list $(CLUSTER_NAME) 2>&- || k3d cluster create $(CLUSTER_NAME) \
 		--registry-use k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
 		--port "8080:80@loadbalancer"
