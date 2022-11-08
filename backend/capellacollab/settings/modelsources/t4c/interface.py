@@ -63,7 +63,7 @@ def get_t4c_status(instance: DatabaseT4CInstance) -> GetSessionUsageResponse:
         raise HTTPException(
             502,
             {
-                "reason": "The license server API has no status.",
+                "reason": "The license server response has no status.",
                 "err_code": "NO_STATUS_JSON",
             },
         )
