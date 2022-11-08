@@ -46,19 +46,9 @@ def upgrade():
     op.create_index(op.f("ix_backups_id"), "backups", ["id"], unique=False)
     op.drop_index("ix_EASEBackup_id", table_name="EASEBackup")
     op.drop_table("EASEBackup")
-    op.drop_constraint(
-        "t4c_instances_name_key", "t4c_instances", type_="unique"
-    )
-    op.create_unique_constraint(None, "types", ["tool_id", "name"])
-    op.create_unique_constraint(None, "versions", ["tool_id", "name"])
 
 
 def downgrade():
-    op.drop_constraint(None, "versions", type_="unique")
-    op.drop_constraint(None, "types", type_="unique")
-    op.create_unique_constraint(
-        "t4c_instances_name_key", "t4c_instances", ["name"]
-    )
     op.create_table(
         "EASEBackup",
         sa.Column(
