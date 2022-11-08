@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import enum
 import typing as t
 
 from pydantic import BaseModel, validator
