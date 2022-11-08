@@ -85,7 +85,8 @@ def create_backup(
             password,
             is_admin=False,
         )
-    except requests.HTTPError:
+    except requests.RequestException:
+        log.warning("Pipeline could not be created", exc_info=True)
         raise fastapi.HTTPException(
             500,
             {
