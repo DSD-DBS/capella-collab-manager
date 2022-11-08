@@ -86,13 +86,11 @@ def edit_t4c_instance(
 @router.get(
     "/{t4c_instance_id}/licenses",
     response_model=GetSessionUsageResponse,
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def fetch_t4c_licenses(
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
-):
-    verify_admin(token, db)
+) -> GetSessionUsageResponse:
     return get_t4c_status(instance)
 
 
