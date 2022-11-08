@@ -66,7 +66,6 @@ def get_pipelines(
 )
 def create_backup(
     body: CreateBackup,
-    project: DatabaseProject = Depends(get_existing_project),
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
