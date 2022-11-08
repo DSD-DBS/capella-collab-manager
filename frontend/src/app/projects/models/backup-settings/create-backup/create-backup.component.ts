@@ -4,7 +4,13 @@
  */
 
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+} from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import {
   BackupService,
@@ -43,13 +49,22 @@ export class CreateBackupComponent {
   }
 
   createBackupForm = new FormGroup({
-    gitmodel: new FormControl([], [Validators.min(0)]),
-    t4cmodel: new FormControl([], [Validators.min(0)]),
+    gitmodel: new FormControl([], [this.listNotEmptyValidator()]),
+    t4cmodel: new FormControl([], [this.listNotEmptyValidator()]),
     configuration: new FormGroup({
       includeCommitHistory: new FormControl(false),
       runNightly: new FormControl(true),
     }),
   });
+
+  listNotEmptyValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value.length) {
+        return { listNotEmpty: true };
+      }
+      return null;
+    };
+  }
 
   createGitBackup() {
     if (this.createBackupForm.valid) {
