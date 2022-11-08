@@ -4,7 +4,7 @@
 """add readonly docker image
 
 Revision ID: ab01ad045341
-Revises: 8eceebe9b3ea
+Revises: fdff657f3cc1
 Create Date: 2022-10-13 10:51:57.631309
 
 """
@@ -13,18 +13,18 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "ab01ad045341"
-down_revision = "8eceebe9b3ea"
+down_revision = "fdff657f3cc1"
 branch_labels = None
 depends_on = None
 
 
 def upgrade():
-    with op.batch_alter_table("tools") as batch_op:
-        batch_op.add_column(
-            sa.Column(
-                "readonly_docker_image_template", sa.String(), nullable=True
-            )
-        )
+    op.add_column(
+        "tools",
+        sa.Column(
+            "readonly_docker_image_template", sa.String(), nullable=True
+        ),
+    )
 
 
 def downgrade():
