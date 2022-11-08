@@ -30,7 +30,7 @@ def get_t4c_status(instance: DatabaseT4CInstance) -> GetSessionUsageResponse:
             },
         )
 
-    # This API endpoints returns 404 on success -> We have to handle the errors here manually
+    # This API endpoint returns 404 on success -> We have to handle the error here manually
     if r.status_code != 404 and not r.ok:
         raise HTTPException(
             502,
