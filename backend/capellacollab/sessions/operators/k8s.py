@@ -267,6 +267,21 @@ class KubernetesOperator:
         )
         return id
 
+    def create_job(
+        self,
+        image: str,
+        environment: t.Dict[str, str],
+        timeout=18000,
+    ) -> str:
+        id = self._generate_id()
+        self._create_job(
+            name=id,
+            image=image,
+            environment=environment,
+            timeout=timeout,
+        )
+        return id
+
     def trigger_cronjob(self, name: str, overwrite_environment: None) -> None:
         cronjob = self.v1_batch.read_namespaced_cron_job(
             namespace=cfg["namespace"], name=name
@@ -326,7 +341,7 @@ class KubernetesOperator:
             log.debug("Received k8s pods: %s", pods)
 
             return pods["items"][0]["metadata"]["name"]
-        except Exception as e:
+        except Exception:
             log.exception("Error fetching the last run id")
             return ""
 
@@ -475,6 +490,56 @@ class KubernetesOperator:
                         "activeDeadlineSeconds": timeout,
                     }
                 },
+            },
+        }
+
+        return self.v1_batch.create_namespaced_cron_job(
+            namespace=cfg["namespace"], body=body
+        )
+
+    def _create_job(
+        self,
+        name: str,
+        image: str,
+        environment: t.Dict[str, str],
+        timeout=18000,
+    ) -> kubernetes.client.V1CronJob:
+        body = {
+            "kind": "Job",
+            "apiVersion": "batch/v1",
+            "metadata": {
+                "name": name,
+            },
+            "spec": {
+                "template": {
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": name,
+                                "image": image,
+                                "imagePullPolicy": "Always",
+                                "env": [
+                                    {"name": key, "value": value}
+                                    for key, value in environment.items()
+                                ],
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "2",
+                                        "memory": "6Gi",
+                                    },
+                                    "requests": {
+                                        "cpu": "0.4",
+                                        "memory": "1.6Gi",
+                                    },
+                                },
+                                **cfg["cluster"]["containers"],
+                            }
+                        ],
+                        "restartPolicy": "Never",
+                    }
+                },
+                "backoffLimit": 1,
+                "activeDeadlineSeconds": timeout,
             },
         }
 

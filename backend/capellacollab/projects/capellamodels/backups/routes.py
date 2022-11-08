@@ -128,6 +128,8 @@ def create_backup(
             model=capella_model,
             t4c_username=username,
             t4c_password=password,
+            include_commit_history=body.include_commit_history,
+            run_nightly=body.run_nightly,
         ),
     )
 
@@ -168,7 +170,6 @@ def delete_pipeline(
 def create_job(
     body: Job,
     pipeline: DatabaseBackup = Depends(injectables.get_existing_pipeline),
-    db: Session = Depends(get_db),
 ):
     if pipeline.run_nightly:
         OPERATOR.trigger_cronjob(

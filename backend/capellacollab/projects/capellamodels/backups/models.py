@@ -92,5 +92,5 @@ class DatabaseBackup(Base):
     t4c_username = Column(String)
     t4c_password = Column(String)
 
-    include_commit_history = Column(Boolean)
-    run_nightly = Column(Boolean)
+    include_commit_history = Column(Boolean, nullable=False)
+    run_nightly = Column(Boolean, nullable=False)
