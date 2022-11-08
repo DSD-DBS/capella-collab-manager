@@ -11,12 +11,16 @@ SESSION_NAMESPACE = t4c-sessions
 EASE_DEBUG_PORT = 3390
 PORT ?= 8080
 
+CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 LOCAL_REGISTRY_NAME=$(LOCAL_REGISTRY_NAME) LOCAL_REGISTRY_PORT=$(REGISTRY_PORT)
+
 # Adds support for msys
 export MSYS_NO_PATHCONV := 1
 
-build: backend frontend docs capella/remote readonly
+build: backend frontend docs
+	$(CAPELLA_DOCKERIMAGES) capella/remote capella/readonly
 
-build-all: build t4c-client importer
+build-all: build
+	$(CAPELLA_DOCKERIMAGES) t4c/client/remote t4c/client/importer
 
 backend:
 	python backend/generate_git_archival.py;
@@ -28,33 +32,9 @@ frontend:
 	docker build --build-arg CONFIGURATION=local -t t4c/client/frontend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend frontend
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend
 
-capella:
-	docker build -t base capella-dockerimages/base
-	docker build -t capella/base capella-dockerimages/capella --build-arg BUILD_TYPE=online --build-arg CAPELLA_VERSION=5.2.0
-
-importer:
-	docker build -t t4c/client/importer -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/importer capella-dockerimages/importer
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/importer
-
-capella/remote: capella
-	docker build -t capella/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote/5.2:prod capella-dockerimages/remote
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote/5.2:prod
-
 docs:
 	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs
-
-t4c-client: capella
-	docker build -t t4c/client/base capella-dockerimages/t4c
-	docker build -t t4c/client/remote -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote --build-arg BASE_IMAGE=t4c/client/base capella-dockerimages/remote
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/t4c/client/remote
-
-readonly:
-	docker build -t capella/ease --build-arg BASE_IMAGE=capella/base --build-arg BUILD_TYPE=online capella-dockerimages/ease
-	docker build -t capella/ease/remote --build-arg BASE_IMAGE=capella/ease capella-dockerimages/remote
-	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly/5.2:prod --build-arg BASE_IMAGE=capella/ease/remote capella-dockerimages/readonly
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/readonly/5.2:prod
 
 deploy: build helm-deploy open rollout
 
@@ -151,13 +131,10 @@ dev-backend:
 dev-oauth-mock:
 	$(MAKE) -C mocks/oauth start
 
-dev-cleanup:
-	$(MAKE) -C backend cleanup
-
 backend-logs:
 	kubectl logs -f -n $(NAMESPACE) -l id=$(RELEASE)-deployment-backend
 
-ns:
+context:
 	kubectl config set-context k3d-$(CLUSTER_NAME) --namespace=$(NAMESPACE)
 
 dashboard:
