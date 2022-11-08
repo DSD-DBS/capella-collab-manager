@@ -1,11 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from json import JSONDecodeError
-
 from requests import delete, get, post
 from requests.auth import HTTPBasicAuth
-from requests.exceptions import ConnectionError, Timeout
 
 from capellacollab.config import config
 from capellacollab.settings.modelsources.t4c.models import DatabaseT4CInstance

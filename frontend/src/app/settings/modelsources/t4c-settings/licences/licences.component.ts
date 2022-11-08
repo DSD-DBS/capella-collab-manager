@@ -29,7 +29,7 @@ export class LicencesComponent implements OnInit {
         this.sessionUsage = res;
       },
       error: (err: HttpErrorResponse) => {
-        this.errorMessage = this.getErrorMessage(err.error.detail.code);
+        this.errorMessage = this.getErrorMessage(err.error.detail.err_code);
       },
     });
   }
@@ -49,7 +49,7 @@ export class LicencesComponent implements OnInit {
       case 'NO_STATUS_JSON':
         return 'No status in response from license server.';
       case 'UNKNOWN_ERROR':
-        return 'An unknown error occured when communicating with the license server.';
+        return 'An unknown error occurred when communicating with the license server.';
       case 'DECODE_ERROR':
         return 'License server response could not be decoded.';
       default:
