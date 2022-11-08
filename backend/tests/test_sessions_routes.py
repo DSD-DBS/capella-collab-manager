@@ -12,7 +12,7 @@ import pytest
 import capellacollab.sessions.guacamole
 from capellacollab.__main__ import app
 from capellacollab.sessions.database import get_session_by_id
-from capellacollab.sessions.operators import Operator, get_operator
+from capellacollab.sessions.operators import get_operator
 from capellacollab.tools.crud import get_versions
 from capellacollab.users.crud import create_user
 from capellacollab.users.models import Role
@@ -61,7 +61,7 @@ def guacamole(monkeypatch):
     )
 
 
-class MockOperator(Operator):
+class MockOperator:
 
     sessions = []
 
