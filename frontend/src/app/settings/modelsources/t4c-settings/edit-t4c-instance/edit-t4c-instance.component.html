@@ -42,12 +42,23 @@
           </mat-form-field>
         </fieldset>
         <fieldset>
-          <mat-form-field appearance="fill">
+          <mat-form-field id="protocol" appearance="fill">
+            <mat-label>Protocol</mat-label>
+            <mat-select formControlName="protocol">
+              <mat-option
+                *ngFor="let protocol of ['tcp', 'ssl', 'ws', 'wss']"
+                [value]="protocol"
+                >{{ protocol }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+          <div class="half-field-separator"></div>
+          <mat-form-field id="host" appearance="fill">
             <mat-label>Host</mat-label>
             <input matInput formControlName="host" />
           </mat-form-field>
-          <div class="field-separator"></div>
-          <mat-form-field appearance="fill">
+          <div class="half-field-separator"></div>
+          <mat-form-field id="port" appearance="fill">
             <mat-label>Port</mat-label>
             <input matInput inputmode="numeric" formControlName="port" />
             <mat-error

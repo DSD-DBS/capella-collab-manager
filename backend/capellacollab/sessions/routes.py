@@ -206,6 +206,7 @@ def request_persistent_session(
     t4c_json = [
         {
             "repository": repository.name,
+            "protocol": repository.instance.protocol,
             "port": repository.instance.port,
             "host": repository.instance.host,
             "instance": repository.instance.name,

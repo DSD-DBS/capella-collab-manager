@@ -7,13 +7,19 @@ import typing as t
 
 import pydantic
 import requests
-from pydantic import BaseModel, root_validator, validator
+from pydantic import BaseModel, validator
 from requests.exceptions import RequestException
-from sqlalchemy import CheckConstraint, Column, ForeignKey, Integer, String
+from sqlalchemy import (
+    CheckConstraint,
+    Column,
+    Enum,
+    ForeignKey,
+    Integer,
+    String,
+)
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
-from capellacollab.core.models import ResponseModel
 
 log = logging.getLogger(__name__)
 
@@ -28,6 +34,13 @@ def validate_rest_api_url(value: t.Optional[str]):
                 "The provided TeamForCapella REST API is not valid."
             )
     return value
+
+
+class Protocol(str, enum.Enum):
+    tcp = "tcp"
+    ssl = "ssl"
+    ws = "ws"
+    wss = "wss"
 
 
 class DatabaseT4CInstance(Base):
@@ -45,6 +58,11 @@ class DatabaseT4CInstance(Base):
     rest_api = Column(String)
     username = Column(String)
     password = Column(String)
+    protocol = Column(
+        Enum(Protocol),
+        nullable=False,
+        default=Protocol.tcp,
+    )
 
     version = relationship("Version")
     repositories = relationship(
@@ -71,6 +89,7 @@ class T4CInstanceBase(BaseModel):
     usage_api: str
     rest_api: str
     username: str
+    protocol: Protocol
 
     # validators
     _validate_username = validator("username", allow_reuse=True)(
@@ -93,6 +112,7 @@ class PatchT4CInstance(BaseModel):
     rest_api: t.Optional[str]
     username: t.Optional[str]
     password: t.Optional[str]
+    protocol: t.Optional[Protocol]
 
     # validators
     _validate_username = validator("username", allow_reuse=True)(
