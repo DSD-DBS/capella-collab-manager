@@ -63,7 +63,9 @@ export class T4CInstanceService {
     return this.http.patch<T4CInstance>(this.base_url + id, instance);
   }
 
-  getLicenses(id: number): Observable<SessionUsage> {
-    return this.http.get<SessionUsage>(`${this.base_url}${id}/licenses`);
+  getLicenses(t4cInstanceId: number): Observable<SessionUsage> {
+    return this.http.get<SessionUsage>(
+      `${this.base_url}${t4cInstanceId}/licenses`
+    );
   }
 }

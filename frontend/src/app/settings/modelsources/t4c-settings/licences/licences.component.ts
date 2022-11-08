@@ -29,31 +29,10 @@ export class LicencesComponent implements OnInit {
         this.sessionUsage = res;
       },
       error: (err: HttpErrorResponse) => {
-        this.errorMessage = this.getErrorMessage(err.error.detail.err_code);
+        this.errorMessage = err.error.detail.reason;
       },
     });
   }
 
   sessionUsage?: SessionUsage;
-
-  getErrorMessage(error: string): string {
-    switch (error) {
-      case 'T4C_ERROR':
-        return 'Internal server error in the license server.';
-      case 'TIMEOUT':
-        return 'The connection to the license server timed out.';
-      case 'CONNECTION_ERROR':
-        return 'The connection to the license server failed.';
-      case 'NO_STATUS':
-        return 'No status is available. This can happen during and after license server restarts.';
-      case 'NO_STATUS_JSON':
-        return 'No status in response from license server.';
-      case 'UNKNOWN_ERROR':
-        return 'An unknown error occurred when communicating with the license server.';
-      case 'DECODE_ERROR':
-        return 'License server response could not be decoded.';
-      default:
-        return 'Unknown error. Please contact your system administrator.';
-    }
-  }
 }
