@@ -73,7 +73,7 @@ class ToolDockerimage(BaseModel):
     def from_orm(cls, obj: Tool) -> ToolDockerimage:
         return ToolDockerimage(
             persistent=obj.docker_image_template,
-            readonly=obj.docker_image_template,
+            readonly=obj.readonly_docker_image_template,
         )
 
     class Config:
