@@ -10,7 +10,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.capellamodels.modelsources.git.crud as git_models_crud
-import capellacollab.projects.capellamodels.modelsources.t4c.connection as t4c_manager
 from capellacollab.config import config
 from capellacollab.core.authentication.database import (
     RoleVerification,
