@@ -288,7 +288,7 @@ def test_create_persistent_session_as_user(client, db, user, kubernetes):
     tool, version = next(
         (v.tool, v)
         for v in get_versions(db)
-        if v.tool.name == "Capella" and v.name == "5.0"
+        if v.tool.name == "Capella" and v.name == "5.0.0"
     )
 
     response = client.post(
