@@ -181,7 +181,7 @@ def test_create_persistent_session_as_user(client, db, username, kubernetes):
     tool_id, version_id = next(
         (v.tool_id, v.id)
         for v in versions
-        if v.tool.name == "Capella" and v.name == "5.0"
+        if v.tool.name == "Capella" and v.name == "5.0.0"
     )
 
     response = client.post(
@@ -202,5 +202,5 @@ def test_create_persistent_session_as_user(client, db, username, kubernetes):
     assert kubernetes.sessions
     assert (
         kubernetes.sessions[0]["docker_image"]
-        == "k3d-myregistry.localhost:12345/t4c/client/remote/5.0:prod"
+        == "k3d-myregistry.localhost:12345/t4c/client/remote:5.0.0-latest"
     )
