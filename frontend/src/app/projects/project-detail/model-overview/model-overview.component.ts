@@ -6,6 +6,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { Model, ModelService } from 'src/app/services/model/model.service';
 import {
   Project,
@@ -28,7 +29,8 @@ export class ModelOverviewComponent implements OnInit {
     public modelService: ModelService,
     private dialog: MatDialog,
     public sessionService: SessionService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -61,5 +63,18 @@ export class ModelOverviewComponent implements OnInit {
     this.dialog.open(TriggerPipelineComponent, {
       data: { project: this.project, model: model },
     });
+  }
+
+  getPrimaryGitModelURL(model: Model): string {
+    const primaryModel = model.git_models.find((gitModel) => gitModel.primary);
+    if (primaryModel) {
+      return primaryModel.path;
+    } else {
+      this.toastService.showError(
+        "Couldn't open the Git repository",
+        'No primary Git model was found. Please contact your project lead or administrator.'
+      );
+      return '';
+    }
   }
 }
