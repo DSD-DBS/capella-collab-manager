@@ -11,7 +11,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, throwError, EMPTY } from 'rxjs';
+import { Observable, EMPTY } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import {
   AuthService,
