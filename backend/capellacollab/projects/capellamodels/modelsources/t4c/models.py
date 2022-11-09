@@ -1,9 +1,9 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import typing as t
-
 from __future__ import annotations
+
+import typing as t
 
 from pydantic import BaseModel
 from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
