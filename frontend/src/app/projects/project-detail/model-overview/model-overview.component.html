@@ -73,8 +73,10 @@
             mat-mini-fab
             [disabled]="!model.git_models"
             matTooltip="Open git repository"
+            target="_blank"
+            [href]="getPrimaryGitModelURL(model)"
           >
-            <mat-icon>link</mat-icon>
+            <mat-icon>open_in_new</mat-icon>
           </a>
           <a
             *ngIf="model.t4c_models"
