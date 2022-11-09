@@ -54,3 +54,7 @@ a {
 .mat-dialog-actions {
   justify-content: right;
 }
+
+.copy {
+  cursor: copy;
+}
