@@ -41,10 +41,14 @@
   </div>
   <hr />
   <div>Please specify the configuration for your backup job:</div>
-  <section>
-    <mat-checkbox>Run nightly (at 3 am)</mat-checkbox><br />
-    <mat-checkbox>Include commit history</mat-checkbox>
-  </section>
+  <form formGroupName="configuration">
+    <mat-checkbox formControlName="runNightly"
+      >Run nightly (at 3 am)</mat-checkbox
+    ><br />
+    <mat-checkbox formControlName="includeCommitHistory"
+      >Include commit history</mat-checkbox
+    >
+  </form>
 
   <br />Please note that the configuration is laid down. <br />If the
   Teamforcapella or Git configuration changes, the nightly backup must be

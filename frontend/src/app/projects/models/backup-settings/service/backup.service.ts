@@ -93,6 +93,8 @@ export interface Pipeline {
   lastrun: PipelineJob;
   t4c_model: SimpleT4CModel;
   git_model: BaseGitModel;
+  run_nightly: boolean;
+  include_commit_history: boolean;
 }
 
 export interface PostPipeline {

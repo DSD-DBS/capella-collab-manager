@@ -118,10 +118,12 @@ export class TriggerPipelineComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((success) => {
       if (success) {
-        this.backupService.getBackups(
-          this.projectService.project!.slug,
-          this.modelService.model!.slug
-        );
+        this.backupService
+          .getBackups(
+            this.projectService.project!.slug,
+            this.modelService.model!.slug
+          )
+          .subscribe();
       }
     });
   }
