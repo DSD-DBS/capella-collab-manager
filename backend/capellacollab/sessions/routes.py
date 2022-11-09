@@ -11,6 +11,7 @@ import typing as t
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+import capellacollab.projects.capellamodels.modelsources.git.crud as git_models_crud
 from capellacollab.config import config
 from capellacollab.core.authentication.database import (
     ProjectRoleVerification,
