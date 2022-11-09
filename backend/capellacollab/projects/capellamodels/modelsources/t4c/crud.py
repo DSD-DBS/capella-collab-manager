@@ -36,6 +36,20 @@ def get_all_t4c_models(
     )
 
 
+def get_repository_model_t4c_models(
+    db: Session, repository: DatabaseT4CRepository, model: DatabaseCapellaModel
+) -> list[DatabaseT4CModel]:
+    return (
+        db.execute(
+            select(DatabaseT4CModel)
+            .where(DatabaseT4CModel.model == model)
+            .where(DatabaseT4CModel.repository == repository)
+        )
+        .scalars()
+        .all()
+    )
+
+
 def create_t4c_model(
     db: Session,
     model: DatabaseCapellaModel,

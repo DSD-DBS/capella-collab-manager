@@ -52,13 +52,14 @@
               >
             </mat-select>
           </mat-form-field>
-          <div class="half-field-separator"></div>
+          <div class="field-separator"></div>
           <mat-form-field id="host" appearance="fill">
             <mat-label>Host</mat-label>
             <input matInput formControlName="host" />
           </mat-form-field>
-          <div class="half-field-separator"></div>
-          <mat-form-field id="port" appearance="fill">
+        </fieldset>
+        <fieldset>
+          <mat-form-field appearance="fill">
             <mat-label>Port</mat-label>
             <input matInput inputmode="numeric" formControlName="port" />
             <mat-error
@@ -73,6 +74,25 @@
             </mat-error>
             <mat-error *ngIf="form.controls.port.errors?.required">
               The port is required.
+            </mat-error>
+          </mat-form-field>
+          <div class="field-separator"></div>
+          <mat-form-field appearance="fill">
+            <mat-label>CDO port</mat-label>
+            <input matInput inputmode="numeric" formControlName="cdo_port" />
+            <mat-error
+              *ngIf="
+                form.controls.cdo_port.errors?.min ||
+                form.controls.cdo_port.errors?.max
+              "
+            >
+              Valid CDO ports are between 0 and 65535.
+            </mat-error>
+            <mat-error *ngIf="form.controls.cdo_port.errors?.pattern">
+              We only support numerical CDO ports :(
+            </mat-error>
+            <mat-error *ngIf="form.controls.cdo_port.errors?.required">
+              The CDO port is required.
             </mat-error>
           </mat-form-field>
         </fieldset>
