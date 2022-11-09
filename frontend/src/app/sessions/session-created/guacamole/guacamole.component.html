@@ -19,27 +19,37 @@
   <div class="title">Step 3: T4C Login</div>
   Please enter "{{ userService.getUserName() }}" as username and use your
   session token as password: <br />
-  <span class="monospace border" [cdkCopyToClipboard]="session!.t4c_password">
-    <span [ngClass]="{ blur: !t4cPasswordRevealed }">{{
-      session!.t4c_password
-    }}</span></span
-  >
-  <button
-    *ngIf="!t4cPasswordRevealed"
-    (click)="this.t4cPasswordRevealed = true"
-    mat-mini-fab
-    matTooltip="Show session token"
-  >
-    <mat-icon> blur_off</mat-icon>
-  </button>
-  <button
-    *ngIf="t4cPasswordRevealed"
-    (click)="this.t4cPasswordRevealed = false"
-    mat-mini-fab
-    matTooltip="Hide session token"
-  >
-    <mat-icon> blur_on</mat-icon>
-  </button>
+  <div *ngIf="session?.t4c_password">
+    <span
+      class="monospace border copy"
+      [cdkCopyToClipboard]="session!.t4c_password"
+      (click)="showClipboardMessage()"
+    >
+      <span [ngClass]="{ blur: !t4cPasswordRevealed }">{{
+        session!.t4c_password
+      }}</span></span
+    >
+
+    <button
+      *ngIf="!t4cPasswordRevealed"
+      (click)="this.t4cPasswordRevealed = true"
+      mat-mini-fab
+      matTooltip="Show session token"
+    >
+      <mat-icon> blur_off</mat-icon>
+    </button>
+    <button
+      *ngIf="t4cPasswordRevealed"
+      (click)="this.t4cPasswordRevealed = false"
+      mat-mini-fab
+      matTooltip="Hide session token"
+    >
+      <mat-icon> blur_on</mat-icon>
+    </button>
+  </div>
+  <div *ngIf="!session?.t4c_password">
+    No session token could be created. Please recreate the session to try again.
+  </div>
 </mat-card>
 <div mat-dialog-actions>
   <button mat-button (click)="this.dialogRef.close()">Close</button>
