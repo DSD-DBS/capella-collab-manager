@@ -38,6 +38,10 @@ class GetSessionsResponse(BaseModel):
         orm_mode = True
 
 
+class OwnSessionResponse(GetSessionsResponse):
+    t4c_password: t.Optional[str]
+
+
 class PostSessionRequest(BaseModel):
     type: WorkspaceType
     branch: str
