@@ -38,7 +38,6 @@ from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import get_operator
 from capellacollab.sessions.operators.k8s import KubernetesOperator
 from capellacollab.sessions.schema import (
-    AdvancedSessionResponse,
     DepthType,
     GetSessionsResponse,
     GuacamoleAuthentication,
@@ -110,7 +109,7 @@ def get_current_sessions(
 
 @project_router.post(
     "/readonly",
-    response_model=AdvancedSessionResponse,
+    response_model=GetSessionsResponse,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
     ],
@@ -187,7 +186,7 @@ def git_model_as_json(git_model: DatabaseGitModel) -> dict[str, str | int]:
     return json
 
 
-@router.post("/persistent", response_model=AdvancedSessionResponse)
+@router.post("/persistent", response_model=GetSessionsResponse)
 def request_persistent_session(
     body: PostPersistentSessionRequest,
     user: DatabaseUser = Depends(get_own_user),

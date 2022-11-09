@@ -38,13 +38,6 @@ class GetSessionsResponse(BaseModel):
         orm_mode = True
 
 
-class AdvancedSessionResponse(GetSessionsResponse):
-    rdp_password: str
-
-    class Config:
-        orm_mode = True
-
-
 class PostSessionRequest(BaseModel):
     type: WorkspaceType
     branch: str
