@@ -22,7 +22,8 @@ def get_t4c_status(instance: DatabaseT4CInstance) -> GetSessionUsageResponse:
         raise HTTPException(
             502,
             {
-                "reason": "The license server API timed out.",
+                "reason": "The connection to the license server timed out.",
+                "technical": "The license server API timed out.",
                 "err_code": "TIMEOUT",
             },
         )
@@ -30,7 +31,8 @@ def get_t4c_status(instance: DatabaseT4CInstance) -> GetSessionUsageResponse:
         raise HTTPException(
             502,
             {
-                "reason": "We failed to connect to the license server API.",
+                "reason": "The connection to the license server failed.",
+                "technical": "We failed to connect to the license server API.",
                 "err_code": "CONNECTION_ERROR",
             },
         )
@@ -40,7 +42,8 @@ def get_t4c_status(instance: DatabaseT4CInstance) -> GetSessionUsageResponse:
         raise HTTPException(
             502,
             {
-                "reason": "The license server API returned an error.",
+                "reason": "Internal server error in the license server.",
+                "technical": "The license server API returned an error.",
                 "err_code": "T4C_ERROR",
             },
         )
@@ -52,7 +55,8 @@ def get_t4c_status(instance: DatabaseT4CInstance) -> GetSessionUsageResponse:
             raise HTTPException(
                 502,
                 {
-                    "reason": "The license server API returned no status.",
+                    "reason": "No status is available. This can happen during and after license server restarts.",
+                    "technical": "The license server API returned no status.",
                     "err_code": "NO_STATUS",
                 },
             )
@@ -63,7 +67,8 @@ def get_t4c_status(instance: DatabaseT4CInstance) -> GetSessionUsageResponse:
         raise HTTPException(
             502,
             {
-                "reason": "The license server response has no status.",
+                "reason": "No status in response from license server.",
+                "technical": "The license server response has no status.",
                 "err_code": "NO_STATUS_JSON",
             },
         )
@@ -71,7 +76,8 @@ def get_t4c_status(instance: DatabaseT4CInstance) -> GetSessionUsageResponse:
         raise HTTPException(
             502,
             {
-                "reason": "The returned status couldn’t be decoded.",
+                "reason": "License server response could not be decoded.",
+                "technical": "The returned status couldn’t be decoded.",
                 "err_code": "DECODE_ERROR",
             },
         )
@@ -79,7 +85,8 @@ def get_t4c_status(instance: DatabaseT4CInstance) -> GetSessionUsageResponse:
     raise HTTPException(
         502,
         {
-            "reason": "An unknown error has been encountered.",
+            "reason": "An unknown error occurred when communicating with the license server.",
+            "technical": "An unknown error has been encountered.",
             "err_code": "UNKNOWN_ERROR",
         },
     )

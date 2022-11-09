@@ -29,7 +29,9 @@ export class LicencesComponent implements OnInit {
         this.sessionUsage = res;
       },
       error: (err: HttpErrorResponse) => {
-        this.errorMessage = err.error.detail.reason;
+        this.errorMessage =
+          err.error.detail.reason ||
+          'Unknown error. Please contact your system administrator.';
       },
     });
   }
