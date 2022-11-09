@@ -17,9 +17,11 @@ CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 LOCAL_REGIS
 export MSYS_NO_PATHCONV := 1
 
 build: backend frontend docs
+
+build-capella:
 	$(CAPELLA_DOCKERIMAGES) capella/remote capella/readonly
 
-build-all: build
+build-t4c: build
 	$(CAPELLA_DOCKERIMAGES) t4c/client/remote t4c/client/backup
 
 backend:
@@ -36,10 +38,10 @@ docs:
 	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs
 
-deploy: build helm-deploy open rollout
+deploy: build build-capella helm-deploy open rollout
 
 # Deploy with full T4C client support:
-deploy-t4c: build-all helm-deploy open rollout
+deploy-t4c: build build-t4c helm-deploy open rollout
 
 deploy-without-build: helm-deploy open rollout
 
