@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
+
 import json
 
 from capellacollab.projects.capellamodels.modelsources.git.models import (
@@ -17,7 +19,7 @@ def get_environment(
     t4c_username: str,
     t4c_password: str,
     include_commit_history: bool,
-):
+) -> dict[str, str]:
     return {
         "GIT_REPO_URL": gitmodel.path,
         "GIT_REPO_BRANCH": gitmodel.revision,

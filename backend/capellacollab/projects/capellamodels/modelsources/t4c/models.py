@@ -11,13 +11,15 @@ from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
 from capellacollab.settings.modelsources.t4c.repositories.models import (
-    DatabaseT4CRepository,
     T4CRepository,
 )
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.capellamodels.models import (
         DatabaseCapellaModel,
+    )
+    from capellacollab.settings.modelsources.t4c.repositories.models import (
+        DatabaseT4CRepository,
     )
 
 
@@ -29,10 +31,12 @@ class DatabaseT4CModel(Base):
     name = Column(String, index=True)
 
     repository_id = Column(Integer, ForeignKey("t4c_repositories.id"))
-    repository = relationship(DatabaseT4CRepository, back_populates="models")
+    repository: DatabaseT4CRepository = relationship(
+        "DatabaseT4CRepository", back_populates="models"
+    )
 
     model_id = Column(Integer, ForeignKey("models.id"))
-    model: "DatabaseCapellaModel" = relationship(
+    model: DatabaseCapellaModel = relationship(
         "DatabaseCapellaModel", back_populates="t4c_models"
     )
 
