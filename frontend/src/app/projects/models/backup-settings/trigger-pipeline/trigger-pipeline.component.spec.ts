@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TriggerPipelineComponent } from './trigger-pipeline.component';
 
-describe('TriggerPipelineComponent', () => {
+xdescribe('TriggerPipelineComponent', () => {
   let component: TriggerPipelineComponent;
   let fixture: ComponentFixture<TriggerPipelineComponent>;
 
