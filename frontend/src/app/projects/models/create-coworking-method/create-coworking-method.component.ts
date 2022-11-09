@@ -299,7 +299,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
     };
   }
 
-  private fillFormWithGitModel(gitModel: GitModel): void {
+  private fillFormWithGitModel(gitModel: GetGitModel): void {
     this.urls.inputUrl.setValue(gitModel.path);
 
     const credentials = this.form.controls.credentials.controls;
