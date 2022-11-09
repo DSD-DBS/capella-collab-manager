@@ -22,6 +22,18 @@
           class="pipeline-card"
           ><span class="text-center"><b>Backup</b> (ID: {{ pipeline.id }})</span
           ><br />
+          <span *ngIf="pipeline.run_nightly"
+            >Runs nightly at 3am
+            <span *ngIf="pipeline.include_commit_history"
+              >with commit history</span
+            ><span *ngIf="!pipeline.include_commit_history"
+              >without commit history</span
+            >
+            or with manual trigger
+          </span>
+          <span *ngIf="!pipeline.run_nightly"
+            >Runs only with manual trigger</span
+          >
           <hr />
           <div class="flex-space-between">
             <span style="flex-basis: 45%"
