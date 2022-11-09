@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import enum
+import json
 import logging
 import random
 import string
@@ -90,10 +91,10 @@ class KubernetesOperator(Operator):
         username: str,
         password: str,
         docker_image: str,
-        repositories: t.List[str],
-    ) -> t.Dict[str, t.Any]:
+        t4c_license_secret: str | None,
+        t4c_json: list[dict[str, str | int]] | None,
+    ) -> dict[str, t.Any]:
         log.info("Launching a persistent session for user %s", username)
-        t4c_cfg = config["modelsources"]["t4c"]
 
         id = self._generate_id()
         self._create_persistent_volume_claim(username)
@@ -101,10 +102,8 @@ class KubernetesOperator(Operator):
             docker_image,
             id,
             {
-                "T4C_LICENCE_SECRET": t4c_cfg["licence"],
-                "T4C_SERVER_HOST": t4c_cfg["host"],
-                "T4C_SERVER_PORT": t4c_cfg["port"],
-                "T4C_REPOSITORIES": ",".join(repositories),
+                "T4C_LICENCE_SECRET": t4c_license_secret,
+                "T4C_JSON": json.dumps(t4c_json),
                 "RMT_PASSWORD": password,
                 "FILESERVICE_PASSWORD": password,
                 "T4C_USERNAME": username,

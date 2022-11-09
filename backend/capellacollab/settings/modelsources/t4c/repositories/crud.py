@@ -6,11 +6,22 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
+from capellacollab.projects.capellamodels.modelsources.t4c.models import (
+    DatabaseT4CModel,
+)
+from capellacollab.projects.models import DatabaseProject
+from capellacollab.projects.users.models import (
+    ProjectUserAssociation,
+    ProjectUserPermission,
+)
 from capellacollab.settings.modelsources.t4c.models import DatabaseT4CInstance
 from capellacollab.settings.modelsources.t4c.repositories.models import (
     CreateT4CRepository,
     DatabaseT4CRepository,
 )
+from capellacollab.tools.models import Tool, Version
+from capellacollab.users.models import DatabaseUser, Role
 
 
 def get_t4c_repository(id_: int, db: Session) -> DatabaseT4CRepository:
@@ -35,3 +46,30 @@ def delete_4c_repository(
 ) -> None:
     db.delete(repository)
     db.commit()
+
+
+def get_user_t4c_repositories(
+    db: Session, tool: Tool, version: Version, user: DatabaseUser
+) -> list[DatabaseT4CRepository]:
+    admin_stmt = (
+        select(DatabaseT4CRepository)
+        .join(DatabaseT4CRepository.models)
+        .join(DatabaseT4CModel.model)
+        .where(DatabaseCapellaModel.tool == tool)
+        .where(DatabaseCapellaModel.version == version)
+    )
+
+    stmt = (
+        admin_stmt.join(DatabaseCapellaModel.project)
+        .join(DatabaseProject.users)
+        .where(
+            ProjectUserAssociation.permission == ProjectUserPermission.WRITE
+        )
+        .where(ProjectUserAssociation.user == user)
+    )
+
+    return (
+        db.execute(admin_stmt if user.role == Role.ADMIN else stmt)
+        .scalars()
+        .all()
+    )

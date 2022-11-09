@@ -56,8 +56,8 @@ class PostSessionRequest(BaseModel):
 
 
 class PostPersistentSessionRequest(BaseModel):
-    tool: int
-    version: int
+    tool_id: int
+    version_id: int
 
 
 class GetSessionUsageResponse(BaseModel):

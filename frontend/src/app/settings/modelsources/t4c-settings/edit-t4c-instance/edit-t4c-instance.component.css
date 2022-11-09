@@ -11,3 +11,15 @@
   display: flex;
   justify-content: space-evenly;
 }
+
+#protocol {
+  width: 6em;
+}
+
+#host {
+  width: 15em;
+}
+
+#port {
+  width: 8em;
+}

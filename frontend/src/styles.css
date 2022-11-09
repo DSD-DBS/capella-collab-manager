@@ -148,6 +148,11 @@ mat-spinner {
   display: inline-block;
 }
 
+.half-field-separator {
+  margin: 0 1em 0 0;
+  display: inline-block;
+}
+
 .field-separator::before {
   display: inline-block;
   content: "\00a0\00a0";

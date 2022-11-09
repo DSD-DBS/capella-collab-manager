@@ -9,6 +9,8 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { T4CRepository } from '../../settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 
+export type Protocol = 'tcp' | 'ssl' | 'ws' | 'wss';
+
 export type BaseT4CInstance = {
   license: string;
   host: string;
@@ -17,6 +19,7 @@ export type BaseT4CInstance = {
   rest_api: string;
   username: string;
   password: string;
+  protocol: Protocol;
 };
 
 export type NewT4CInstance = BaseT4CInstance & {

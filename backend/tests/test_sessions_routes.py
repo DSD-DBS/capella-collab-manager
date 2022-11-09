@@ -71,7 +71,8 @@ class MockOperator(Operator):
         username: str,
         password: str,
         docker_image: str,
-        repositories: t.List[str],
+        t4c_license_secret: str | None,
+        t4c_json: list[dict[str, str | int]] | None,
     ) -> t.Dict[str, t.Any]:
         cls.sessions.append({"docker_image": docker_image})
         return {
@@ -186,8 +187,8 @@ def test_create_persistent_session_as_user(client, db, username, kubernetes):
     response = client.post(
         "/api/v1/sessions/persistent",
         json={
-            "tool": tool_id,
-            "version": version_id,
+            "tool_id": tool_id,
+            "version_id": version_id,
         },
     )
 

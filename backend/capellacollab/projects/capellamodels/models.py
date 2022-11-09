@@ -36,6 +36,15 @@ from capellacollab.tools.models import (
     Version,
 )
 
+if t.TYPE_CHECKING:
+    from capellacollab.projects.capellamodels.modelsources.git.models import (
+        DB_GitModel,
+    )
+    from capellacollab.projects.capellamodels.modelsources.t4c.models import (
+        DatabaseT4CModel,
+    )
+    from capellacollab.projects.models import DatabaseProject
+
 
 class EditingMode(enum.Enum):
     T4C = "t4c"
@@ -63,21 +72,27 @@ class DatabaseCapellaModel(Base):
     description = Column(String)
 
     project_id = Column(Integer, ForeignKey("projects.id"))
-    project = relationship("DatabaseProject", back_populates="models")
+    project: DatabaseProject = relationship(
+        "DatabaseProject", back_populates="models"
+    )
 
     tool_id = Column(Integer, ForeignKey(Tool.id))
-    tool = relationship(Tool)
+    tool: Tool = relationship(Tool)
 
     version_id = Column(Integer, ForeignKey(Version.id))
-    version = relationship(Version)
+    version: Version = relationship(Version)
 
     nature_id = Column(Integer, ForeignKey(Nature.id))
     nature = relationship(Nature)
 
     editing_mode = Column(Enum(EditingMode))
 
-    t4c_models = relationship("DatabaseT4CModel", back_populates="model")
-    git_models = relationship("DB_GitModel", back_populates="model")
+    t4c_models: list[DatabaseT4CModel] = relationship(
+        "DatabaseT4CModel", back_populates="model"
+    )
+    git_models: list[DB_GitModel] = relationship(
+        "DB_GitModel", back_populates="model"
+    )
 
 
 class ResponseModel(BaseModel):

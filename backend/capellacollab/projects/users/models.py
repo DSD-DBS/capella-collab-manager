@@ -54,5 +54,7 @@ class ProjectUserAssociation(Base):
     projects_name = Column(ForeignKey("projects.name"), primary_key=True)
     user = relationship("DatabaseUser", back_populates="projects")
     projects = relationship("DatabaseProject", back_populates="users")
-    permission = Column(Enum(ProjectUserPermission), nullable=False)
+    permission: ProjectUserPermission = Column(
+        Enum(ProjectUserPermission), nullable=False
+    )
     role = Column(Enum(ProjectUserRole))

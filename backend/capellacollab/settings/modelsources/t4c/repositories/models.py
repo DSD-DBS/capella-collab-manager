@@ -7,12 +7,27 @@ import enum
 import typing as t
 
 from pydantic import BaseModel
-from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import (
+    Column,
+    Enum,
+    ForeignKey,
+    Integer,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
 from capellacollab.core.models import ResponseModel
-from capellacollab.settings.modelsources.t4c.models import T4CInstance
+from capellacollab.settings.modelsources.t4c.models import (
+    DatabaseT4CInstance,
+    T4CInstance,
+)
+
+if t.TYPE_CHECKING:
+    from capellacollab.projects.capellamodels.modelsources.t4c.models import (
+        DatabaseT4CModel,
+    )
 
 
 class DatabaseT4CRepository(Base):
@@ -27,11 +42,11 @@ class DatabaseT4CRepository(Base):
         Integer, ForeignKey("t4c_instances.id"), nullable=False
     )
 
-    instance = relationship(
+    instance: DatabaseT4CInstance = relationship(
         "DatabaseT4CInstance", back_populates="repositories"
     )
 
-    models = relationship(
+    models: list[DatabaseT4CModel] = relationship(
         "DatabaseT4CModel",
         back_populates="repository",
         cascade="all, delete",

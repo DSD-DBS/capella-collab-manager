@@ -17,15 +17,16 @@ import {
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
+  BaseT4CInstance,
+  NewT4CInstance,
+  Protocol,
+  T4CInstance,
+  T4CInstanceService,
+} from 'src/app/services/settings/t4c-instance.service';
+import {
   ToolService,
   ToolVersion,
 } from 'src/app/settings/core/tools-settings/tool.service';
-import {
-  BaseT4CInstance,
-  NewT4CInstance,
-  T4CInstance,
-  T4CInstanceService,
-} from '../../../../services/settings/t4c-instance.service';
 
 @Component({
   selector: 'app-edit-t4c-instance',
@@ -56,6 +57,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
     name: new FormControl('', Validators.required),
     version_id: new FormControl(-1, Validators.required),
     license: new FormControl('', Validators.required),
+    protocol: new FormControl<Protocol>('tcp', Validators.required),
     host: new FormControl('', Validators.required),
     port: new FormControl(null as number | null, [
       Validators.required,

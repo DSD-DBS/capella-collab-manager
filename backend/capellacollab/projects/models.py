@@ -14,6 +14,7 @@ from sqlalchemy.orm import relationship
 import capellacollab.projects.capellamodels.models
 import capellacollab.projects.users.models
 from capellacollab.core.database import Base
+from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.users.models import (
     ProjectUserAssociation,
     ProjectUserPermission,
@@ -86,8 +87,10 @@ class DatabaseProject(Base):
     name = Column(String, unique=True, index=True)
     slug = Column(String, unique=True, index=True, nullable=False)
     description = Column(String)
-    users = relationship(
+    users: ProjectUserAssociation = relationship(
         "ProjectUserAssociation",
         back_populates="projects",
     )
-    models = relationship("DatabaseCapellaModel", back_populates="project")
+    models: DatabaseCapellaModel = relationship(
+        "DatabaseCapellaModel", back_populates="project"
+    )

@@ -11,7 +11,6 @@ from sqlalchemy.orm import Session
 
 import capellacollab.projects.capellamodels.modelsources.git.crud as git_models_crud
 import capellacollab.projects.capellamodels.modelsources.t4c.connection as t4c_manager
-import capellacollab.users.crud as users
 from capellacollab.config import config
 from capellacollab.core.authentication.database import (
     RoleVerification,
@@ -23,6 +22,7 @@ from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db
 from capellacollab.projects.users.crud import ProjectUserRole
 from capellacollab.sessions import database, guacamole
+from capellacollab.sessions.files import routes as files
 from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import Operator, get_operator
 from capellacollab.sessions.schema import (
@@ -35,15 +35,17 @@ from capellacollab.sessions.schema import (
     PostSessionRequest,
     WorkspaceType,
 )
-from capellacollab.sessions.sessions import (
-    get_last_seen,
-    inject_attrs_in_sessions,
+from capellacollab.sessions.sessions import inject_attrs_in_sessions
+from capellacollab.settings.modelsources.t4c.repositories.crud import (
+    get_user_t4c_repositories,
 )
 from capellacollab.tools.crud import get_image_for_tool_version
+from capellacollab.tools.injectables import (
+    get_exisiting_tool_version,
+    get_existing_tool,
+)
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role
-
-from .files import routes as files
 
 router = APIRouter(
     dependencies=[Depends(RoleVerification(required_role=Role.USER))]
@@ -166,6 +168,7 @@ def request_session(
 @router.post("/persistent", response_model=AdvancedSessionResponse)
 def request_persistent_session(
     body: PostPersistentSessionRequest,
+    user: DatabaseUser = Depends(get_own_user),
     db: Session = Depends(get_db),
     operator: Operator = Depends(get_operator),
     token=Depends(JWTBearer()),
@@ -189,13 +192,38 @@ def request_persistent_session(
             },
         )
 
-    docker_image = get_image_for_tool_version(db, body.version)
+    tool = get_existing_tool(body.tool_id, db)
+    version = get_exisiting_tool_version(tool.id, body.version_id, db)
+
+    docker_image = get_image_for_tool_version(db, version.id)
+
+    t4c_repositories = (
+        get_user_t4c_repositories(db, tool, version, user)
+        if tool.name == "Capella"
+        else None
+    )
+
+    t4c_json = [
+        {
+            "repository": repository.name,
+            "protocol": repository.instance.protocol,
+            "port": repository.instance.port,
+            "host": repository.instance.host,
+            "instance": repository.instance.name,
+        }
+        for repository in t4c_repositories
+    ]
+
+    t4c_license_secret = (
+        t4c_repositories[0].instance.license if t4c_repositories else None
+    )
 
     session = operator.start_persistent_session(
         username=get_username(token),
         password=rdp_password,
         docker_image=docker_image,
-        repositories=[],
+        t4c_license_secret=t4c_license_secret,
+        t4c_json=t4c_json,
     )
 
     return create_database_and_guacamole_session(
