@@ -107,16 +107,7 @@ def create_backup(
             schedule="0 3 * * *",
         )
     else:
-        reference = OPERATOR.create_job(
-            image=get_backup_settings(db).docker_image,
-            environment=get_environment(
-                git_model,
-                t4c_model,
-                username,
-                password,
-                body.include_commit_history,
-            ),
-        )
+        reference = OPERATOR._generate_id()
 
     return crud.create_pipeline(
         db=db,
@@ -145,7 +136,6 @@ def delete_pipeline(
     pipeline: DatabaseBackup = Depends(injectables.get_existing_pipeline),
     db: Session = Depends(get_db),
 ):
-
     try:
         t4c_repository_interface.remove_user_from_repository(
             pipeline.t4c_model.repository.instance,
@@ -155,14 +145,15 @@ def delete_pipeline(
     except requests.HTTPError:
         log.error("Error during the deletion of user %s in t4c", exc_info=True)
 
-    OPERATOR.delete_cronjob(pipeline.k8s_cronjob_id)
+    if pipeline.run_nightly:
+        OPERATOR.delete_cronjob(pipeline.k8s_cronjob_id)
 
     crud.delete_pipeline(db, pipeline)
 
 
 @router.post(
     "/{pipeline_id}/runs",
-    response_model=Backup,
+    status_code=201,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
@@ -170,6 +161,7 @@ def delete_pipeline(
 def create_job(
     body: Job,
     pipeline: DatabaseBackup = Depends(injectables.get_existing_pipeline),
+    db: Session = Depends(get_db),
 ):
     if pipeline.run_nightly:
         OPERATOR.trigger_cronjob(
@@ -182,7 +174,17 @@ def create_job(
         )
         return pipeline
     else:
-        raise NotImplementedError()
+        OPERATOR.create_job(
+            image=get_backup_settings(db).docker_image,
+            labels={"app.capellacollab/parent": pipeline.k8s_cronjob_id},
+            environment=get_environment(
+                pipeline.git_model,
+                pipeline.t4c_model,
+                pipeline.t4c_username,
+                pipeline.t4c_password,
+                body.include_commit_history,
+            ),
+        )
 
 
 @router.get(

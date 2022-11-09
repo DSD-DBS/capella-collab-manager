@@ -138,6 +138,9 @@ class KubernetesOperator:
         service = self._get_service(id)
         return self._export_attrs(deployment, service)
 
+    def get_job_state(self, job_name: str) -> str:
+        return self._get_pod_state(label_selector="job-name=" + job_name)
+
     def get_cronjob_last_state(self, name: str) -> str:
         job = self._get_last_job_of_cronjob(name)
         if job:
@@ -152,6 +155,9 @@ class KubernetesOperator:
         else:
             return None
 
+    def get_job_starting_date(self, job_name: str) -> datetime | None:
+        return self._get_pod_starttime(label_selector="job-name=" + job_name)
+
     def _get_last_job_of_cronjob(self, name: str) -> str | None:
         jobs = [
             item
@@ -161,6 +167,19 @@ class KubernetesOperator:
             if item.metadata.owner_references
             and item.metadata.owner_references[0].name == name
         ]
+
+        if jobs:
+            return jobs[-1].metadata.name
+        else:
+            return None
+
+    def _get_last_job_by_label(
+        self, label_key: str, label_value: str
+    ) -> str | None:
+        jobs = self.v1_batch.list_namespaced_job(
+            namespace=cfg["namespace"],
+            label_selector=f"{label_key}={label_value}",
+        ).items
 
         if jobs:
             return jobs[-1].metadata.name
@@ -252,6 +271,7 @@ class KubernetesOperator:
         self._create_cronjob(
             name=id,
             image=image,
+            job_labels={"app.capellacollab/parent": id},
             environment=environment,
             schedule=schedule,
             timeout=timeout,
@@ -261,6 +281,7 @@ class KubernetesOperator:
     def create_job(
         self,
         image: str,
+        labels: t.Dict[str, str],
         environment: t.Dict[str, str],
         timeout=18000,
     ) -> str:
@@ -268,6 +289,7 @@ class KubernetesOperator:
         self._create_job(
             name=id,
             image=image,
+            job_labels=labels,
             environment=environment,
             timeout=timeout,
         )
@@ -307,6 +329,7 @@ class KubernetesOperator:
                         "uid": cronjob.metadata.uid,
                     }
                 ],
+                labels={"app.capellacollab/parent": name},
             ),
             spec=job_spec,
         )
@@ -319,6 +342,15 @@ class KubernetesOperator:
 
     def get_cronjob_last_run(self, name: str) -> str | None:
         job = self._get_last_job_of_cronjob(name)
+        if job:
+            return self._get_pod_id(label_selector="job-name=" + job)
+        else:
+            return None
+
+    def get_cronjob_last_run_by_label(
+        self, label_key: str, label_value: str
+    ) -> str | None:
+        job = self._get_last_job_by_label(label_key, label_value)
         if job:
             return self._get_pod_id(label_selector="job-name=" + job)
         else:
@@ -436,6 +468,7 @@ class KubernetesOperator:
         self,
         name: str,
         image: str,
+        job_labels: t.Dict[str, str],
         environment: t.Dict[str, str],
         schedule="* * * * *",
         timeout=18000,
@@ -449,6 +482,7 @@ class KubernetesOperator:
             "spec": {
                 "schedule": schedule,
                 "jobTemplate": {
+                    "metadata": {"labels": job_labels},
                     "spec": {
                         "template": {
                             "spec": {
@@ -475,11 +509,11 @@ class KubernetesOperator:
                                     }
                                 ],
                                 "restartPolicy": "Never",
-                            }
+                            },
                         },
                         "backoffLimit": 1,
                         "activeDeadlineSeconds": timeout,
-                    }
+                    },
                 },
             },
         }
@@ -492,6 +526,7 @@ class KubernetesOperator:
         self,
         name: str,
         image: str,
+        job_labels: t.Dict[str, str],
         environment: t.Dict[str, str],
         timeout=18000,
     ) -> kubernetes.client.V1CronJob:
@@ -503,6 +538,7 @@ class KubernetesOperator:
             },
             "spec": {
                 "template": {
+                    "metadata": {"labels": job_labels},
                     "spec": {
                         "containers": [
                             {
@@ -527,14 +563,14 @@ class KubernetesOperator:
                             }
                         ],
                         "restartPolicy": "Never",
-                    }
+                    },
                 },
                 "backoffLimit": 1,
                 "activeDeadlineSeconds": timeout,
             },
         }
 
-        return self.v1_batch.create_namespaced_cron_job(
+        return self.v1_batch.create_namespaced_job(
             namespace=cfg["namespace"], body=body
         )
 

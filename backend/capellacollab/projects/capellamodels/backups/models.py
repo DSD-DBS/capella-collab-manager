@@ -44,7 +44,7 @@ class Job(BaseModel):
 
 class Backup(BaseModel):
     id: int
-    k8s_cronjob_id: str
+    k8s_cronjob_id: t.Optional[str]
     lastrun: t.Optional[BackupJob]
     t4c_model: SimpleT4CModel
     git_model: ResponseGitModel
@@ -59,13 +59,20 @@ class Backup(BaseModel):
         if isinstance(value, BackupJob):
             return value
 
-        return BackupJob(
-            id=OPERATOR.get_cronjob_last_run(values["k8s_cronjob_id"]),
-            date=OPERATOR.get_cronjob_last_starting_date(
-                values["k8s_cronjob_id"]
-            ),
-            state=OPERATOR.get_cronjob_last_state(values["k8s_cronjob_id"]),
-        )
+        if "k8s_cronjob_id" not in values:
+            return None
+
+        label = "app.capellacollab/parent"
+        if job_id := OPERATOR.get_cronjob_last_run_by_label(
+            label, values["k8s_cronjob_id"]
+        ):
+            return BackupJob(
+                id=job_id,
+                date=OPERATOR.get_job_starting_date(job_id),
+                state=OPERATOR.get_job_state(job_id),
+            )
+
+        return None
 
     class Config:
         orm_mode = True
