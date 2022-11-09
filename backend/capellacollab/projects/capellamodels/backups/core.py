@@ -25,7 +25,7 @@ def get_environment(
         "GIT_PASSWORD": gitmodel.password,
         "T4C_REPO_HOST": t4cmodel.repository.instance.host,
         "T4C_REPO_PORT": str(t4cmodel.repository.instance.port),
-        "T4C_CDO_PORT": "CDOPORT",  # FIXME
+        "T4C_CDO_PORT": str(t4cmodel.repository.instance.cdo_port),
         "T4C_REPO_NAME": t4cmodel.repository.name,
         "T4C_PROJECT_NAME": t4cmodel.name,
         "T4C_USERNAME": t4c_username,
