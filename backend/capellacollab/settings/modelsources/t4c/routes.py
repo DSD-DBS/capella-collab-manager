@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.exc import NoResultFound
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication.database import (
@@ -15,18 +14,17 @@ from capellacollab.core.database import get_db
 from capellacollab.projects.capellamodels.routes import (
     get_version_by_id_or_raise,
 )
+from capellacollab.sessions.schema import GetSessionUsageResponse
 from capellacollab.settings.modelsources.t4c import crud
 from capellacollab.settings.modelsources.t4c.injectables import (
     get_existing_instance,
 )
+from capellacollab.settings.modelsources.t4c.interface import get_t4c_status
 from capellacollab.settings.modelsources.t4c.models import (
     CreateT4CInstance,
     DatabaseT4CInstance,
     PatchT4CInstance,
     T4CInstance,
-)
-from capellacollab.settings.modelsources.t4c.repositories.models import (
-    T4CInstanceWithRepositories,
 )
 from capellacollab.settings.modelsources.t4c.repositories.routes import (
     router as repositories_router,
@@ -83,6 +81,17 @@ def edit_t4c_instance(
         if value := body.__getattribute__(key):
             instance.__setattr__(key, value)
     return crud.update_t4c_instance(instance, db)
+
+
+@router.get(
+    "/{t4c_instance_id}/licenses",
+    response_model=GetSessionUsageResponse,
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+)
+def fetch_t4c_licenses(
+    instance: DatabaseT4CInstance = Depends(get_existing_instance),
+) -> GetSessionUsageResponse:
+    return get_t4c_status(instance)
 
 
 router.include_router(

@@ -29,7 +29,6 @@ from capellacollab.sessions.schema import (
     AdvancedSessionResponse,
     DepthType,
     GetSessionsResponse,
-    GetSessionUsageResponse,
     GuacamoleAuthentication,
     PostPersistentSessionRequest,
     PostSessionRequest,
@@ -295,15 +294,6 @@ def end_session(
     database.delete_session(db, id)
     operator.kill_session(id)
     return None
-
-
-@router.get(
-    "/usage",
-    response_model=GetSessionUsageResponse,
-    dependencies=[Depends(JWTBearer())],
-)
-def get_session_usage():
-    return t4c_manager.get_t4c_status()
 
 
 @router.post(

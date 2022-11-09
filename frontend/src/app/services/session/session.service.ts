@@ -6,8 +6,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Session } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
-import { Session, SessionUsage } from '../../schemes';
 
 @Injectable({
   providedIn: 'root',
@@ -18,20 +18,6 @@ export class SessionService {
 
   getCurrentSessions(): Observable<Session[]> {
     return this.http.get<Session[]>(this.BACKEND_URL_PREFIX);
-  }
-
-  createNewSession(
-    type: 'readonly' | 'persistent',
-    repository: string | undefined,
-    branch: string,
-    depth: DepthType
-  ): Observable<Session> {
-    return this.http.post<Session>(this.BACKEND_URL_PREFIX, {
-      type,
-      repository,
-      branch,
-      depth: DepthType[depth],
-    });
   }
 
   createPersistentSession(
@@ -46,10 +32,6 @@ export class SessionService {
 
   deleteSession(id: string): Observable<any> {
     return this.http.delete<any>(this.BACKEND_URL_PREFIX + id);
-  }
-
-  getSessionUsage(): Observable<SessionUsage> {
-    return this.http.get<SessionUsage>(this.BACKEND_URL_PREFIX + 'usage');
   }
 
   beautifyState(state: string | undefined): SessionState {
@@ -178,9 +160,4 @@ export interface SessionState {
   text: string;
   css: string;
   success: boolean;
-}
-
-export enum DepthType {
-  LatestCommit,
-  CompleteHistory,
 }
