@@ -21,7 +21,6 @@ from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.projects.capellamodels.injectables import (
     get_existing_capella_model,
-    get_existing_project,
 )
 from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.capellamodels.modelsources.git.injectables import (
@@ -30,10 +29,9 @@ from capellacollab.projects.capellamodels.modelsources.git.injectables import (
 from capellacollab.projects.capellamodels.modelsources.t4c.injectables import (
     get_existing_t4c_model,
 )
-from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.sessions.operators import OPERATOR
-from capellacollab.settings.backup.crud import get_backup_settings
+from capellacollab.tools.crud import get_backup_image_for_tool_version
 
 from . import crud, helper, injectables
 from .core import get_environment
@@ -96,7 +94,9 @@ def create_backup(
 
     if body.run_nightly:
         reference = OPERATOR.create_cronjob(
-            image=get_backup_settings(db).docker_image,
+            image=get_backup_image_for_tool_version(
+                db, capella_model.version_id
+            ),
             environment=get_environment(
                 git_model,
                 t4c_model,
@@ -161,6 +161,7 @@ def delete_pipeline(
 def create_job(
     body: Job,
     pipeline: DatabaseBackup = Depends(injectables.get_existing_pipeline),
+    capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ):
     if pipeline.run_nightly:
@@ -175,7 +176,9 @@ def create_job(
         return pipeline
     else:
         OPERATOR.create_job(
-            image=get_backup_settings(db).docker_image,
+            image=get_backup_image_for_tool_version(
+                db, capella_model.version_id
+            ),
             labels={"app.capellacollab/parent": pipeline.k8s_cronjob_id},
             environment=get_environment(
                 pipeline.git_model,

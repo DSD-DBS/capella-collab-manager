@@ -26,8 +26,6 @@ import { AlertSettingsComponent } from './settings/core/alert-settings/alert-set
 import { ToolDetailsComponent } from './settings/core/tools-settings/tool-details/tool-details.component';
 import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
 import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
-import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4c-importer-settings/t4c-importer-settings.component';
-import { GuacamoleSettingsComponent } from './settings/integrations/guacamole-settings/guacamole-settings.component';
 import { EditGitSettingsComponent } from './settings/modelsources/git-settings/edit-git-settings/edit-git-settings.component';
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
 import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/edit-t4c-instance/edit-t4c-instance.component';
@@ -193,19 +191,6 @@ const routes: Routes = [
                     component: EditT4CInstanceComponent,
                   },
                 ],
-              },
-            ],
-          },
-          {
-            path: 'integrations',
-            children: [
-              {
-                path: 'backups/importer',
-                component: T4CImporterSettingsComponent,
-              },
-              {
-                path: 'guacamole',
-                component: GuacamoleSettingsComponent,
               },
             ],
           },

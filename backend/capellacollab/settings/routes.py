@@ -6,7 +6,6 @@ from fastapi import APIRouter, Depends
 from capellacollab.core.authentication.database import RoleVerification
 from capellacollab.users.models import Role
 
-from .backup import routes as backup
 from .modelsources import routes as modelsources
 
 router = APIRouter(
@@ -15,7 +14,4 @@ router = APIRouter(
 router.include_router(
     modelsources.router,
     prefix="/modelsources",
-)
-router.include_router(
-    backup.router, prefix="/backups", tags=["Settings - Backups"]
 )

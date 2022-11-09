@@ -41,6 +41,7 @@ export type ToolExtended = {
 export type ToolDockerimages = {
   persistent: string;
   readonly: string;
+  backup: string;
 };
 
 @Injectable({

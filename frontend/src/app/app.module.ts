@@ -94,8 +94,6 @@ import { ToolNatureComponent } from './settings/core/tools-settings/tool-details
 import { ToolVersionComponent } from './settings/core/tools-settings/tool-details/tool-version/tool-version.component';
 import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
 import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
-import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4c-importer-settings/t4c-importer-settings.component';
-import { GuacamoleSettingsComponent } from './settings/integrations/guacamole-settings/guacamole-settings.component';
 import { DeleteGitSettingsDialogComponent } from './settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
 import { EditGitSettingsComponent } from './settings/modelsources/git-settings/edit-git-settings/edit-git-settings.component';
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
@@ -131,7 +129,6 @@ import { HomeComponent } from './workspaces/home.component';
     FooterComponent,
     GitSettingsComponent,
     GuacamoleComponent,
-    GuacamoleSettingsComponent,
     HeaderComponent,
     HomeComponent,
     InitModelComponent,
@@ -156,7 +153,6 @@ import { HomeComponent } from './workspaces/home.component';
     SessionCreatedComponent,
     SessionOverviewComponent,
     SettingsComponent,
-    T4CImporterSettingsComponent,
     T4CInstanceSettingsComponent,
     T4cModelWrapperComponent,
     T4CRepoDeletionDialogComponent,

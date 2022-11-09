@@ -20,7 +20,7 @@ build: backend frontend docs
 	$(CAPELLA_DOCKERIMAGES) capella/remote capella/readonly
 
 build-all: build
-	$(CAPELLA_DOCKERIMAGES) t4c/client/remote t4c/client/importer
+	$(CAPELLA_DOCKERIMAGES) t4c/client/remote t4c/client/backup
 
 backend:
 	python backend/generate_git_archival.py;

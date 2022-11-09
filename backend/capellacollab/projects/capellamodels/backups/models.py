@@ -80,24 +80,24 @@ class Backup(BaseModel):
 
 class DatabaseBackup(Base):
     __tablename__ = "backups"
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    k8s_cronjob_id = Column(String)
-    git_model_id = Column(Integer, ForeignKey("git_models.id"))
-    git_model = relationship(
+    id: int = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    k8s_cronjob_id: str = Column(String)
+    git_model_id: int = Column(Integer, ForeignKey("git_models.id"))
+    git_model: DatabaseGitModel = relationship(
         DatabaseGitModel,
     )
-    t4c_model_id = Column(Integer, ForeignKey("t4c_models.id"))
-    t4c_model = relationship(
+    t4c_model_id: int = Column(Integer, ForeignKey("t4c_models.id"))
+    t4c_model: DatabaseT4CModel = relationship(
         DatabaseT4CModel,
     )
 
-    created_by = Column(String)
-    model_id = Column(Integer, ForeignKey("models.id"))
-    model = relationship(
+    created_by: str = Column(String)
+    model_id: int = Column(Integer, ForeignKey("models.id"))
+    model: DatabaseCapellaModel = relationship(
         DatabaseCapellaModel,
     )
-    t4c_username = Column(String)
-    t4c_password = Column(String)
+    t4c_username: str = Column(String)
+    t4c_password: str = Column(String)
 
-    include_commit_history = Column(Boolean, nullable=False)
-    run_nightly = Column(Boolean, nullable=False)
+    include_commit_history: bool = Column(Boolean, nullable=False)
+    run_nightly: bool = Column(Boolean, nullable=False)
