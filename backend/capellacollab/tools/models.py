@@ -23,25 +23,26 @@ from capellacollab.core.database import Base
 class Tool(Base):
     __tablename__ = "tools"
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    docker_image_template = Column(String)
+    id: int = Column(Integer, primary_key=True)
+    name: str = Column(String)
+    docker_image_template: str = Column(String)
+    docker_image_backup_template: str = Column(String)
     readonly_docker_image_template = Column(String)
 
-    versions = relationship("Version", back_populates="tool")
-    natures = relationship("Nature", back_populates="tool")
+    versions: list[Version] = relationship("Version", back_populates="tool")
+    natures: list[Nature] = relationship("Nature", back_populates="tool")
 
 
 class Version(Base):
     __tablename__ = "versions"
     __table_args__ = (UniqueConstraint("tool_id", "name"),)
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    is_recommended = Column(Boolean)
-    is_deprecated = Column(Boolean)
+    id: int = Column(Integer, primary_key=True)
+    name: str = Column(String)
+    is_recommended: bool = Column(Boolean)
+    is_deprecated: bool = Column(Boolean)
 
-    tool_id = Column(Integer, ForeignKey(Tool.id))
+    tool_id: int = Column(Integer, ForeignKey(Tool.id))
     tool: Tool = relationship("Tool", back_populates="versions")
 
 
@@ -49,11 +50,11 @@ class Nature(Base):
     __tablename__ = "types"
     __table_args__ = (UniqueConstraint("tool_id", "name"),)
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
+    id: int = Column(Integer, primary_key=True)
+    name: str = Column(String)
 
-    tool_id = Column(Integer, ForeignKey(Tool.id))
-    tool = relationship("Tool", back_populates="natures")
+    tool_id: int = Column(Integer, ForeignKey(Tool.id))
+    tool: Tool = relationship("Tool", back_populates="natures")
 
 
 class ToolBase(BaseModel):
@@ -68,12 +69,14 @@ class ToolBase(BaseModel):
 class ToolDockerimage(BaseModel):
     persistent: str
     readonly: str
+    backup: t.Optional[str]
 
     @classmethod
     def from_orm(cls, obj: Tool) -> ToolDockerimage:
         return ToolDockerimage(
             persistent=obj.docker_image_template,
             readonly=obj.readonly_docker_image_template,
+            backup=obj.docker_image_backup_template,
         )
 
     class Config:
@@ -83,6 +86,7 @@ class ToolDockerimage(BaseModel):
 class PatchToolDockerimage(BaseModel):
     persistent: t.Optional[str]
     readonly: t.Optional[str]
+    backup: t.Optional[str]
 
 
 class CreateToolVersion(BaseModel):

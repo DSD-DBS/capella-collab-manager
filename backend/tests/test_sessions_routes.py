@@ -224,7 +224,7 @@ def test_create_readonly_session_as_user(client, db, user, kubernetes):
     assert kubernetes.sessions
     assert (
         kubernetes.sessions[0]["docker_image"]
-        == "k3d-myregistry.localhost:12345/capella/readonly/5.0:prod"
+        == "k3d-myregistry.localhost:12345/capella/readonly:5.0.0-latest"
     )
     assert (
         kubernetes.sessions[0]["git_repos_json"][0]["url"]
@@ -307,5 +307,5 @@ def test_create_persistent_session_as_user(client, db, user, kubernetes):
     assert kubernetes.sessions
     assert (
         kubernetes.sessions[0]["docker_image"]
-        == "k3d-myregistry.localhost:12345/t4c/client/remote/5.0:prod"
+        == "k3d-myregistry.localhost:12345/t4c/client/remote:5.0.0-latest"
     )

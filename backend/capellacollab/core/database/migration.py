@@ -75,19 +75,20 @@ def create_tools(db):
     registry = config["docker"]["registry"]
     capella = Tool(
         name="Capella",
-        docker_image_template=f"{registry}/t4c/client/remote/$version:prod",
-        readonly_docker_image_template=f"{registry}/capella/readonly/$version:prod",
+        docker_image_template=f"{registry}/t4c/client/remote:$version-latest",
+        docker_image_backup_template=f"{registry}/t4c/client/backup:$version-latest",
+        readonly_docker_image_template=f"{registry}/capella/readonly:$version-latest",
     )
     papyrus = Tool(
         name="Papyrus",
-        docker_image_template=f"{registry}/papyrus/client/remote/$version:prod",
+        docker_image_template=f"{registry}/papyrus/client/remote:$version-prod",
     )
     tools.create_tool(db, capella)
     tools.create_tool(db, papyrus)
 
-    tools.create_version(db, capella.id, "6.0", True)
-    tools.create_version(db, capella.id, "5.2")
-    tools.create_version(db, capella.id, "5.0")
+    tools.create_version(db, capella.id, "6.0.0", True)
+    tools.create_version(db, capella.id, "5.2.0")
+    tools.create_version(db, capella.id, "5.0.0")
 
     tools.create_version(db, papyrus.id, "6.1")
     tools.create_version(db, papyrus.id, "6.0")
