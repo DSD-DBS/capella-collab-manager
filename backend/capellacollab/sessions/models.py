@@ -2,6 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+from __future__ import annotations
+
+import typing as t
+
 from sqlalchemy import (
     ARRAY,
     TIMESTAMP,
@@ -16,20 +20,26 @@ from sqlalchemy.orm import relationship
 from capellacollab.core.database import Base
 from capellacollab.sessions.schema import WorkspaceType
 
+if t.TYPE_CHECKING:
+    from datetime import datetime
+
+    from capellacollab.users.models import DatabaseUser
+
 
 class DatabaseSession(Base):
     __tablename__ = "sessions"
 
-    id = Column(String, primary_key=True, index=True)
-    owner_name = Column(String, ForeignKey("users.name"))
-    owner = relationship("DatabaseUser")
-    ports = Column(ARRAY(Integer))
-    created_at = Column(TIMESTAMP)
-    rdp_password = Column(String)
-    guacamole_username = Column(String)
-    guacamole_password = Column(String)
-    guacamole_connection_id = Column(String)
-    host = Column(String)
-    type = Column(Enum(WorkspaceType), nullable=False)
-    repository = Column(String)
-    mac = Column(String)
+    id: str = Column(String, primary_key=True, index=True)
+    owner_name: str = Column(String, ForeignKey("users.name"))
+    owner: DatabaseUser = relationship("DatabaseUser")
+    ports: list[int] = Column(ARRAY(Integer))
+    created_at: datetime = Column(TIMESTAMP)
+    t4c_password: str = Column(String, nullable=True)
+    rdp_password: str = Column(String)
+    guacamole_username: str = Column(String)
+    guacamole_password: str = Column(String)
+    guacamole_connection_id: str = Column(String)
+    host: str = Column(String)
+    type: WorkspaceType = Column(Enum(WorkspaceType), nullable=False)
+    repository: str = Column(String)
+    mac: str = Column(String)

@@ -6,7 +6,8 @@ import json
 import logging
 import typing as t
 
-from fastapi import APIRouter, Depends, HTTPException
+import requests
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.capellamodels.modelsources.git.crud as git_models_crud
@@ -183,10 +184,10 @@ def request_persistent_session(
         session.type for session in existing_user_sessions
     ]:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_409_CONFLICT,
             detail={
-                "err_code": "existing_session",
-                "reason": "You already have a open Persistent Session. Please navigate to 'Active Sessions' to Reconnect",
+                "err_code": "EXISTING_SESSION",
+                "reason": "You already have a open persistent session. Please navigate to 'Active Sessions' to connect",
             },
         )
 
@@ -224,13 +225,29 @@ def request_persistent_session(
         t4c_json=t4c_json,
     )
 
+    try:
+        t4c_password = generate_password()
+    except requests.HTTPException:
+        t4c_password = None
+
     return create_database_and_guacamole_session(
-        WorkspaceType.PERSISTENT, session, owner, rdp_password, db
+        WorkspaceType.PERSISTENT,
+        session,
+        owner,
+        rdp_password,
+        db,
+        t4c_password,
     )
 
 
 def create_database_and_guacamole_session(
-    type: WorkspaceType, session, owner, rdp_password, db, repository=""
+    type: WorkspaceType,
+    session,
+    owner,
+    rdp_password,
+    db,
+    repository="",
+    t4c_password: t.Optional[str] = None,
 ):
     guacamole_username = generate_password()
     guacamole_password = generate_password(length=64)
@@ -259,6 +276,7 @@ def create_database_and_guacamole_session(
         owner_name=owner,
         repository=repository,
         type=type,
+        t4c_password=t4c_password,
         **session,
     )
     response = database.create_session(db=db, session=database_model).__dict__
