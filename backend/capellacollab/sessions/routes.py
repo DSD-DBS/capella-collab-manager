@@ -26,7 +26,6 @@ from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import get_operator
 from capellacollab.sessions.operators.k8s import KubernetesOperator
 from capellacollab.sessions.schema import (
-    AdvancedSessionResponse,
     DepthType,
     GetSessionsResponse,
     GuacamoleAuthentication,
@@ -89,7 +88,7 @@ def get_current_sessions(
 
 @router.post(
     "/",
-    response_model=AdvancedSessionResponse,
+    response_model=GetSessionsResponse,
 )
 def request_session(
     body: PostSessionRequest,
@@ -164,7 +163,7 @@ def request_session(
     )
 
 
-@router.post("/persistent", response_model=AdvancedSessionResponse)
+@router.post("/persistent", response_model=GetSessionsResponse)
 def request_persistent_session(
     body: PostPersistentSessionRequest,
     user: DatabaseUser = Depends(get_own_user),
