@@ -229,7 +229,7 @@ def request_persistent_session(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "err_code": "existing_session",
-                "reason": "You already have a open Persistent Session. Please navigate to 'Active Sessions' to Reconnect",
+                "reason": "You already have a open persistent session. Please navigate to 'Active Sessions' to reconnect",
             },
         )
 
