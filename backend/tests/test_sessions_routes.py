@@ -208,9 +208,8 @@ def test_create_readonly_session_as_user(client, db, user, kubernetes):
     model = setup_git_model_for_user(db, user, version)
 
     response = client.post(
-        "/api/v1/sessions/readonly",
+        f"/api/v1/projects/{model.project.slug}/sessions/readonly",
         json={
-            "project_slug": model.project.slug,
             "model_slug": model.slug,
         },
     )
@@ -240,9 +239,8 @@ def test_no_readonly_session_as_user(client, db, user, kubernetes):
     model = setup_git_model_for_user(db, user, version)
 
     response = client.post(
-        "/api/v1/sessions/readonly",
+        f"/api/v1/projects/{model.project.slug}/sessions/readonly",
         json={
-            "project_slug": model.project.slug,
             "model_slug": model.slug,
         },
     )

@@ -56,7 +56,6 @@ class PostSessionRequest(BaseModel):
 
 
 class PostReadonlySessionRequest(BaseModel):
-    project_slug: str
     model_slug: str
 
     class Config:

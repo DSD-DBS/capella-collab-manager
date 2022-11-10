@@ -24,10 +24,12 @@ export class SessionService {
     project_slug: string,
     model_slug: string
   ): Observable<Session> {
-    return this.http.post<Session>(`${this.BACKEND_URL_PREFIX}readonly`, {
-      project_slug: project_slug,
-      model_slug: model_slug,
-    });
+    return this.http.post<Session>(
+      `${environment.backend_url}/projects/${project_slug}/sessions/readonly`,
+      {
+        model_slug: model_slug,
+      }
+    );
   }
 
   createPersistentSession(

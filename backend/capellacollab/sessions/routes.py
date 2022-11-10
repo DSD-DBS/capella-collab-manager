@@ -15,6 +15,7 @@ import capellacollab.projects.capellamodels.modelsources.git.crud as git_models_
 import capellacollab.projects.capellamodels.modelsources.t4c.connection as t4c_manager
 from capellacollab.config import config
 from capellacollab.core.authentication.database import (
+    ProjectRoleVerification,
     RoleVerification,
     verify_project_role,
 )
@@ -65,6 +66,11 @@ from capellacollab.users.models import DatabaseUser, Role
 router = APIRouter(
     dependencies=[Depends(RoleVerification(required_role=Role.USER))]
 )
+
+project_router = APIRouter(
+    dependencies=[Depends(RoleVerification(required_role=Role.USER))]
+)
+
 log = logging.getLogger(__name__)
 
 
@@ -103,36 +109,23 @@ def get_current_sessions(
     )
 
 
-@router.post(
+@project_router.post(
     "/readonly",
     response_model=AdvancedSessionResponse,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
+    ],
 )
 def request_session(
     body: PostReadonlySessionRequest,
     db_user: DatabaseUser = Depends(get_own_user),
+    project: DatabaseProject = Depends(get_existing_project),
     operator: Operator = Depends(get_operator),
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ):
-    rdp_password = generate_password(length=64)
+    log.info("Starting persistent session creation for user %s", db_user.name)
 
-    owner = db_user.name
-
-    log.info("Starting persistent session creation for user %s", owner)
-
-    project = get_project_by_slug(db, body.project_slug)
-    if not project:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND,
-            {
-                "reason": f"The project with name {body.project_slug} was not found.",
-                "technical": f"No project {body.project_slug} found.",
-            },
-        )
-
-    verify_project_role(project.name, token, db)
-
-    model = get_model_by_slug(db, body.project_slug, body.model_slug)
+    model = get_model_by_slug(db, project.slug, body.model_slug)
     if not model:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND,
@@ -166,6 +159,8 @@ def request_session(
             },
         )
 
+    rdp_password = generate_password(length=64)
+
     session = operator.start_readonly_session(
         password=rdp_password,
         docker_image=docker_image,
@@ -176,7 +171,7 @@ def request_session(
         WorkspaceType.READONLY,
         session,
         project,
-        owner,
+        db_user.name,
         rdp_password,
         db,
     )
