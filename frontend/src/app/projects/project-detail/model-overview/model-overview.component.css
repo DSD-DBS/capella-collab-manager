@@ -13,8 +13,13 @@
   align-items: center;
 }
 
+.models-title > h2 {
+  margin: 0;
+}
+
 .models-title {
   display: flex;
+  align-items: center;
 }
 
 #settings-icon {

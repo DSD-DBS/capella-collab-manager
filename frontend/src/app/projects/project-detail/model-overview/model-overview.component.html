@@ -4,12 +4,17 @@
  -->
 
 <div class="models" *ngIf="models">
-  <h2>
-    Models
-    <a mat-button [routerLink]="['/project', project.slug, 'models', 'create']">
-      <mat-icon id="add-icon">add</mat-icon>
-    </a>
-  </h2>
+  <div class="models-title">
+    <h2>
+      Models
+      <a
+        mat-button
+        [routerLink]="['/project', project.slug, 'models', 'create']"
+      >
+        <mat-icon id="add-icon">add</mat-icon>
+      </a>
+    </h2>
+  </div>
   <mat-card *ngFor="let model of models">
     <div class="header">
       <div class="header-text">
