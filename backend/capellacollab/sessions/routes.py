@@ -145,7 +145,7 @@ def request_session(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "err_code": "git_model_not_found",
-                "reason": "The Project has no connected Git Model. Please contact a project manager or admininistrator",
+                "reason": "The selected model has no connected Git repository. Please contact a project manager or administrator",
             },
         )
 
