@@ -175,6 +175,7 @@ def request_session(
     return create_database_and_guacamole_session(
         WorkspaceType.READONLY,
         session,
+        project,
         owner,
         rdp_password,
         db,
@@ -268,12 +269,12 @@ def request_persistent_session(
     )
 
     return create_database_and_guacamole_session(
-        WorkspaceType.PERSISTENT, session, owner, rdp_password, db
+        WorkspaceType.PERSISTENT, session, None, owner, rdp_password, db
     )
 
 
 def create_database_and_guacamole_session(
-    type: WorkspaceType, session, owner, rdp_password, db, repository=""
+    type: WorkspaceType, session, project, owner, rdp_password, db
 ):
     guacamole_username = generate_password()
     guacamole_password = generate_password(length=64)
@@ -300,7 +301,7 @@ def create_database_and_guacamole_session(
         rdp_password=rdp_password,
         guacamole_connection_id=guacamole_identifier,
         owner_name=owner,
-        repository=repository,
+        project=project,
         type=type,
         **session,
     )

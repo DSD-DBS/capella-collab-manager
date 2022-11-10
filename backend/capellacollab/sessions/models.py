@@ -14,6 +14,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
+from capellacollab.projects.models import DatabaseProject
 from capellacollab.sessions.schema import WorkspaceType
 
 
@@ -31,5 +32,6 @@ class DatabaseSession(Base):
     guacamole_connection_id = Column(String)
     host = Column(String)
     type = Column(Enum(WorkspaceType), nullable=False)
-    repository = Column(String)
+    project_id = Column(Integer, ForeignKey("projects.id"), nullable=True)
+    project = relationship(DatabaseProject)
     mac = Column(String)
