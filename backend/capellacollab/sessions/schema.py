@@ -9,6 +9,7 @@ import typing as t
 
 from pydantic import BaseModel
 
+from capellacollab.core.models import Message
 from capellacollab.sessions.operators.k8s import FileType
 
 
@@ -33,6 +34,7 @@ class GetSessionsResponse(BaseModel):
     guacamole_username: str
     guacamole_connection_id: str
     last_seen: str
+    warnings: t.Optional[list[Message]]
 
     class Config:
         orm_mode = True

@@ -55,10 +55,6 @@ export class ModelOverviewComponent implements OnInit {
     if (primaryModel) {
       return primaryModel.path;
     } else {
-      this.toastService.showError(
-        "Couldn't open the Git repository",
-        'No primary Git model was found. Please contact your project lead or administrator.'
-      );
       return '';
     }
   }

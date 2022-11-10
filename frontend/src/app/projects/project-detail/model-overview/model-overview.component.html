@@ -71,7 +71,7 @@
           <a
             *ngIf="model.git_models"
             mat-mini-fab
-            [disabled]="!model.git_models"
+            [disabled]="!getPrimaryGitModelURL(model)"
             matTooltip="Open git repository"
             target="_blank"
             [href]="getPrimaryGitModelURL(model)"

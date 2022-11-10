@@ -19,6 +19,7 @@ from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
 from capellacollab.sessions.schema import WorkspaceType
+from capellacollab.tools.models import Tool, Version
 
 if t.TYPE_CHECKING:
     from datetime import datetime
@@ -32,6 +33,11 @@ class DatabaseSession(Base):
     id: str = Column(String, primary_key=True, index=True)
     owner_name: str = Column(String, ForeignKey("users.name"))
     owner: DatabaseUser = relationship("DatabaseUser")
+    tool_id: int = Column(Integer, ForeignKey(Tool.id))
+    tool: Tool = relationship(Tool)
+
+    version_id: int = Column(Integer, ForeignKey(Version.id))
+    version: Version = relationship(Version)
     ports: list[int] = Column(ARRAY(Integer))
     created_at: datetime = Column(TIMESTAMP)
     t4c_password: str = Column(String, nullable=True)

@@ -3,7 +3,7 @@
 
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from capellacollab.config import config
 
@@ -18,6 +18,6 @@ Base = declarative_base()
 from . import models  # isort:skip
 
 
-def get_db():
+def get_db() -> Session:
     with SessionLocal() as session:
         yield session

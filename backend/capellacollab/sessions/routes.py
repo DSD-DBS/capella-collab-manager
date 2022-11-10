@@ -8,6 +8,7 @@ import typing as t
 
 import requests
 from fastapi import APIRouter, Depends, HTTPException, status
+from requests.exceptions import RequestException
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.capellamodels.modelsources.git.crud as git_models_crud
@@ -20,6 +21,7 @@ from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db
+from capellacollab.core.models import Message
 from capellacollab.projects.users.crud import ProjectUserRole
 from capellacollab.sessions import database, guacamole
 from capellacollab.sessions.files import routes as files
@@ -38,13 +40,20 @@ from capellacollab.sessions.sessions import inject_attrs_in_sessions
 from capellacollab.settings.modelsources.t4c.repositories.crud import (
     get_user_t4c_repositories,
 )
+from capellacollab.settings.modelsources.t4c.repositories.interface import (
+    add_user_to_repository,
+    remove_user_from_repository,
+)
 from capellacollab.tools.crud import get_image_for_tool_version
 from capellacollab.tools.injectables import (
     get_exisiting_tool_version,
     get_existing_tool,
 )
+from capellacollab.tools.models import Tool, Version
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role
+
+from .injectables import get_existing_session
 
 router = APIRouter(
     dependencies=[Depends(RoleVerification(required_role=Role.USER))]
@@ -126,7 +135,7 @@ def request_session(
         raise HTTPException(
             status_code=404,
             detail={
-                "err_code": "git_model_not_found",
+                "err_code": "GIT_MODEL_NOT_FOUND",
                 "reason": "The Model has no connected Git Model. Please contact a project manager or admininistrator",
             },
         )
@@ -140,7 +149,7 @@ def request_session(
         raise HTTPException(
             status_code=400,
             detail={
-                "err_code": "wrong_depth_format",
+                "err_code": "WRONG_DEPTH_FORMAT",
                 "reason": f"Depth type {depth} is not allowed.",
             },
         )
@@ -172,6 +181,7 @@ def request_persistent_session(
     operator: KubernetesOperator = Depends(get_operator),
     token=Depends(JWTBearer()),
 ):
+    warnings: list[Message] = []
     rdp_password = generate_password(length=64)
 
     owner = get_username(token)
@@ -196,26 +206,59 @@ def request_persistent_session(
 
     docker_image = get_image_for_tool_version(db, version.id)
 
-    t4c_repositories = (
-        get_user_t4c_repositories(db, tool, version, user)
-        if tool.name == "Capella"
-        else None
-    )
+    t4c_password = None
+    t4c_json = None
+    t4c_license_secret = None
+    if tool.name == "Capella":
+        t4c_repositories = (
+            get_user_t4c_repositories(db, tool, version, user)
+            if tool.name == "Capella"
+            else None
+        )
 
-    t4c_json = [
-        {
-            "repository": repository.name,
-            "protocol": repository.instance.protocol,
-            "port": repository.instance.port,
-            "host": repository.instance.host,
-            "instance": repository.instance.name,
-        }
-        for repository in t4c_repositories
-    ]
+        t4c_json = [
+            {
+                "repository": repository.name,
+                "protocol": repository.instance.protocol,
+                "port": repository.instance.port,
+                "host": repository.instance.host,
+                "instance": repository.instance.name,
+            }
+            for repository in t4c_repositories
+        ]
 
-    t4c_license_secret = (
-        t4c_repositories[0].instance.license if t4c_repositories else None
-    )
+        t4c_license_secret = (
+            t4c_repositories[0].instance.license if t4c_repositories else None
+        )
+
+        t4c_password = generate_password()
+        for repository in t4c_repositories:
+            try:
+                add_user_to_repository(
+                    repository.instance,
+                    repository.name,
+                    username=owner,
+                    password=t4c_password,
+                    is_admin=RoleVerification(
+                        required_role=Role.ADMIN, verify=False
+                    )(token, db),
+                )
+            except RequestException:
+                warnings.append(
+                    Message(
+                        reason=(
+                            f"The creation of your user in the repository '{repository.name}' of the the instance '{repository.instance.name}' failed.",
+                            "Most likely this is due to a downtime of the corresponding TeamForCapella server.",
+                            "If you don't need access to the repository you can still use the session.",
+                        )
+                    )
+                )
+                log.warning(
+                    "Could not add user to t4c repository '%s' of instance '%s'",
+                    repository.name,
+                    repository.instance.name,
+                    exc_info=True,
+                )
 
     session = operator.start_persistent_session(
         username=get_username(token),
@@ -225,28 +268,30 @@ def request_persistent_session(
         t4c_json=t4c_json,
     )
 
-    try:
-        t4c_password = generate_password()
-    except requests.HTTPException:
-        t4c_password = None
-
-    return create_database_and_guacamole_session(
+    response = create_database_and_guacamole_session(
         WorkspaceType.PERSISTENT,
         session,
         owner,
         rdp_password,
         db,
+        tool,
+        version,
+        None,
         t4c_password,
     )
+    response["warnings"] = warnings
+    return response
 
 
 def create_database_and_guacamole_session(
     type: WorkspaceType,
-    session,
-    owner,
-    rdp_password,
-    db,
-    repository="",
+    session: dict[str, t.Any],
+    owner: str,
+    rdp_password: str,
+    db: Session,
+    tool: Tool,
+    version: Version,
+    repository: str = "",
     t4c_password: t.Optional[str] = None,
 ):
     guacamole_username = generate_password()
@@ -277,6 +322,8 @@ def create_database_and_guacamole_session(
         repository=repository,
         type=type,
         t4c_password=t4c_password,
+        tool=tool,
+        version=version,
         **session,
     )
     response = database.create_session(db=db, session=database_model).__dict__
@@ -288,29 +335,33 @@ def create_database_and_guacamole_session(
     return response
 
 
-@router.delete("/{id}", status_code=204)
+@router.delete("/{session_id}", status_code=204)
 def end_session(
-    id: str,
+    session: DatabaseSession = Depends(get_existing_session),
     db: Session = Depends(get_db),
     operator: KubernetesOperator = Depends(get_operator),
-    token=Depends(JWTBearer()),
 ):
-    s = database.get_session_by_id(db, id)
-    if s.owner_name != get_username(token) and verify_project_role(
-        repository=s.repository,
-        token=token,
-        db=db,
-        allowed_roles=["manager", "administrator"],
+    if (
+        session.tool.name == "Capella"
+        and session.type == WorkspaceType.PERSISTENT
     ):
-        raise HTTPException(
-            status_code=403,
-            detail={
-                "reason": "The owner of the repository does not match with your username. You have to be administrator or manager to delete other sessions."
-            },
-        )
-    database.delete_session(db, id)
-    operator.kill_session(id)
-    return None
+        for repository in get_user_t4c_repositories(
+            db, session.tool, session.version, session.owner
+        ):
+            try:
+                remove_user_from_repository(
+                    repository.instance,
+                    repository.name,
+                    username=session.owner.name,
+                )
+            except RequestException:
+                log.exception(
+                    "Could not delete user from repository '%s' of instance '%s'. Please delete the user manually.",
+                    exc_info=True,
+                )
+
+    database.delete_session(db, session)
+    operator.kill_session(session.id)
 
 
 @router.post(
