@@ -198,7 +198,7 @@ def git_model_as_json(git_model: DB_GitModel) -> dict[str, str | int]:
         "revision": git_model.revision,
         "depth": 1,
         "entrypoint": git_model.entrypoint,
-        "nature": "project",
+        "nature": git_model.model.nature.name,
     }
     if git_model.username:
         json["username"] = git_model.username

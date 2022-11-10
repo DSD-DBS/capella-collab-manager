@@ -257,6 +257,7 @@ def test_no_readonly_session_as_user(client, db, user, kubernetes):
 
 def setup_git_model_for_user(db, user, version):
     project = create_project(db, name=str(uuid1()))
+    nature = get_natures(db)[0]
     add_user_to_project(
         db,
         project,
@@ -272,6 +273,7 @@ def setup_git_model_for_user(db, user, version):
         ),
         tool=version.tool,
         version=version,
+        nature=nature,
     )
     git_path = str(uuid1())
     add_gitmodel_to_capellamodel(
