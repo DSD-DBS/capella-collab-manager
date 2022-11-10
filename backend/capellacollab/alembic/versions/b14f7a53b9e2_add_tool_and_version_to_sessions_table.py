@@ -30,7 +30,9 @@ def upgrade():
 
 
 def downgrade():
-    op.drop_constraint(None, "sessions", type_="foreignkey")
-    op.drop_constraint(None, "sessions", type_="foreignkey")
+    op.drop_constraint("sessions_tool_id_fkey", "sessions", type_="foreignkey")
+    op.drop_constraint(
+        "sessions_version_id_fkey", "sessions", type_="foreignkey"
+    )
     op.drop_column("sessions", "version_id")
     op.drop_column("sessions", "tool_id")
