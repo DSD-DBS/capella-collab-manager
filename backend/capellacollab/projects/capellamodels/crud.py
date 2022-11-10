@@ -12,7 +12,7 @@ from capellacollab.projects.capellamodels.models import (
     DatabaseCapellaModel,
 )
 from capellacollab.projects.models import DatabaseProject
-from capellacollab.tools.models import Nature, Tool, Version, Nature
+from capellacollab.tools.models import Nature, Tool, Version
 
 
 def get_all_models_in_project(

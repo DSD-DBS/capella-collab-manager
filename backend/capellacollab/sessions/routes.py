@@ -22,11 +22,15 @@ from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db
+from capellacollab.projects.capellamodels.injectables import (
+    get_existing_project,
+)
 from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.capellamodels.modelsources.git.models import (
     DB_GitModel,
 )
 from capellacollab.projects.crud import get_project_by_slug
+from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.crud import ProjectUserRole
 from capellacollab.sessions import database, guacamole
 from capellacollab.sessions.files import routes as files
@@ -45,17 +49,16 @@ from capellacollab.sessions.sessions import inject_attrs_in_sessions
 from capellacollab.settings.modelsources.t4c.repositories.crud import (
     get_user_t4c_repositories,
 )
-from capellacollab.tools.crud import get_image_for_tool_version, get_readonly_image_for_version
+from capellacollab.tools.crud import (
+    get_image_for_tool_version,
+    get_readonly_image_for_version,
+)
 from capellacollab.tools.injectables import (
     get_exisiting_tool_version,
     get_existing_tool,
 )
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role
-from capellacollab.projects.models import DatabaseProject
-from capellacollab.projects.capellamodels.injectables import (
-    get_existing_project,
-)
 
 router = APIRouter(
     dependencies=[Depends(RoleVerification(required_role=Role.USER))]
