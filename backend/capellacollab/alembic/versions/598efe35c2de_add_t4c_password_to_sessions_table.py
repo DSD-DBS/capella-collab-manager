@@ -3,7 +3,7 @@
 
 """Add t4c_password to sessions table
 
-Revision ID: 598efe35c2de
+Revision ID: c3320b81a372
 Revises: 9a1e6729858b
 Create Date: 2022-11-09 16:50:52.026374
 
@@ -13,7 +13,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "598efe35c2de"
-down_revision = "9a1e6729858b"
+down_revision = "c3320b81a372"
 branch_labels = None
 depends_on = None
 
