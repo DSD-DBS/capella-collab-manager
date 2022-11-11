@@ -26,6 +26,7 @@ class Tool(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     docker_image_template = Column(String)
+    readonly_docker_image_template = Column(String)
 
     versions = relationship("Version", back_populates="tool")
     natures = relationship("Nature", back_populates="tool")
@@ -72,7 +73,7 @@ class ToolDockerimage(BaseModel):
     def from_orm(cls, obj: Tool) -> ToolDockerimage:
         return ToolDockerimage(
             persistent=obj.docker_image_template,
-            readonly=obj.docker_image_template,
+            readonly=obj.readonly_docker_image_template,
         )
 
     class Config:

@@ -55,9 +55,19 @@ class PostSessionRequest(BaseModel):
         orm_mode = True
 
 
+class PostReadonlySessionRequest(BaseModel):
+    model_slug: str
+
+    class Config:
+        orm_mode = True
+
+
 class PostPersistentSessionRequest(BaseModel):
     tool_id: int
     version_id: int
+
+    class Config:
+        orm_mode = True
 
 
 class GetSessionUsageResponse(BaseModel):

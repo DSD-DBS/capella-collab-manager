@@ -42,11 +42,8 @@ class Operator(abc.ABC):
     def start_readonly_session(
         self,
         password: str,
-        git_url: str,
-        git_revision: str,
-        entrypoint: str,
-        git_username: str,
-        git_password: str,
+        docker_image: str,
+        git_repos_json: t.List[t.Dict[str, str | int]],
     ) -> t.Dict[str, t.Any]:
         """Start / Create a session
 
@@ -54,10 +51,10 @@ class Operator(abc.ABC):
         ---------
         password
             Password for the remote connection
-        git_url
-            Git URL of the model that should be cloned
-        git_branch
-            Git Branch of the model that should be cloned
+        docker_image
+            Image to run for this session
+        git_repos_json
+            A list of repository metadata
 
         Returns
         ------

@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
 
 import typing as t
 
@@ -39,7 +40,7 @@ def update_tool(
         tool.name = patch_tool.name
     elif patch_tool.persistent:
         tool.docker_image_template = patch_tool.persistent
-        # FIXME: Set readonly image
+        tool.readonly_docker_image_template = patch_tool.readonly
     db.add(tool)
     db.commit()
     return tool
@@ -92,7 +93,7 @@ def get_nature_for_tool(tool_id: int, nature_id: int, db: Session) -> Nature:
 
 def create_version(
     db: Session,
-    tool_id: Tool,
+    tool_id: int,
     name: str,
     is_recommended: bool = False,
     is_deprecated: bool = False,
@@ -138,3 +139,8 @@ def create_nature(db: Session, tool_id: int, name: str) -> Nature:
 def get_image_for_tool_version(db: Session, version_id: int) -> str:
     version = get_version_by_id(version_id, db)
     return version.tool.docker_image_template.replace("$version", version.name)
+
+
+def get_readonly_image_for_version(version: Version) -> str | None:
+    template = version.tool.readonly_docker_image_template
+    return template.replace("$version", version.name) if template else None

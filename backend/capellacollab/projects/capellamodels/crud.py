@@ -79,7 +79,12 @@ def get_model_by_slug(
 
 
 def create_new_model(
-    db: Session, project: DatabaseProject, new_model: CapellaModel, tool: Tool
+    db: Session,
+    project: DatabaseProject,
+    new_model: CapellaModel,
+    tool: Tool,
+    version: Version | None = None,
+    nature: Nature | None = None,
 ) -> DatabaseCapellaModel:
     model = DatabaseCapellaModel(
         name=new_model.name,
@@ -87,6 +92,8 @@ def create_new_model(
         description=new_model.description,
         project=project,
         tool=tool,
+        version=version,
+        nature=nature,
     )
     db.add(model)
     db.commit()

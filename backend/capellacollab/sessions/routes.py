@@ -1,18 +1,19 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
+
 import itertools
 import json
 import logging
 import typing as t
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-import capellacollab.projects.capellamodels.modelsources.git.crud as git_models_crud
-import capellacollab.projects.capellamodels.modelsources.t4c.connection as t4c_manager
 from capellacollab.config import config
 from capellacollab.core.authentication.database import (
+    ProjectRoleVerification,
     RoleVerification,
     verify_project_role,
 )
@@ -20,6 +21,15 @@ from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db
+from capellacollab.projects.capellamodels.injectables import (
+    get_existing_capella_model,
+    get_existing_project,
+)
+from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
+from capellacollab.projects.capellamodels.modelsources.git.models import (
+    DB_GitModel,
+)
+from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.crud import ProjectUserRole
 from capellacollab.sessions import database, guacamole
 from capellacollab.sessions.files import routes as files
@@ -31,24 +41,33 @@ from capellacollab.sessions.schema import (
     GetSessionsResponse,
     GuacamoleAuthentication,
     PostPersistentSessionRequest,
-    PostSessionRequest,
+    PostReadonlySessionRequest,
     WorkspaceType,
 )
 from capellacollab.sessions.sessions import inject_attrs_in_sessions
 from capellacollab.settings.modelsources.t4c.repositories.crud import (
     get_user_t4c_repositories,
 )
-from capellacollab.tools.crud import get_image_for_tool_version
+from capellacollab.tools.crud import (
+    get_image_for_tool_version,
+    get_readonly_image_for_version,
+)
 from capellacollab.tools.injectables import (
     get_exisiting_tool_version,
     get_existing_tool,
 )
+from capellacollab.tools.models import Version
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role
 
 router = APIRouter(
     dependencies=[Depends(RoleVerification(required_role=Role.USER))]
 )
+
+project_router = APIRouter(
+    dependencies=[Depends(RoleVerification(required_role=Role.USER))]
+)
+
 log = logging.getLogger(__name__)
 
 
@@ -87,81 +106,83 @@ def get_current_sessions(
     )
 
 
-@router.post(
-    "/",
+@project_router.post(
+    "/readonly",
     response_model=AdvancedSessionResponse,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
+    ],
 )
 def request_session(
-    body: PostSessionRequest,
+    body: PostReadonlySessionRequest,
     db_user: DatabaseUser = Depends(get_own_user),
+    project: DatabaseProject = Depends(get_existing_project),
     operator: Operator = Depends(get_operator),
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ):
-    assert body.type == WorkspaceType.READONLY
+    log.info("Starting persistent session creation for user %s", db_user.name)
+
+    model = get_existing_capella_model(project.slug, body.model_slug, db)
+    models = [
+        m
+        for m in project.models
+        if m.git_models and m.version.id == model.version.id
+    ]
+    if not models:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "err_code": "git_model_not_found",
+                "reason": "The selected model has no connected Git repository. Please contact a project manager or administrator",
+            },
+        )
+
+    docker_image = get_readonly_image_for_version(model.version)
+    if not docker_image:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "err_code": "image_not_found",
+                "reason": "The tool has no read-only support. Please contact an admininistrator",
+            },
+        )
 
     rdp_password = generate_password(length=64)
 
-    owner = db_user.username
-
-    log.info("Starting persistent session creation for user %s", owner)
-
-    existing_user_sessions = database.get_sessions_for_user(db, owner)
-
-    if body.repository in [
-        session.repository for session in existing_user_sessions
-    ]:
-        raise HTTPException(
-            status_code=404,
-            detail={
-                "err_code": "existing_session",
-                "reason": f"You already have a open Read-Only Session for the repository {body.repository}. Please navigate to 'Active Sessions' to Reconnect",
-            },
-        )
-    verify_project_role(repository=body.repository, token=token, db=db)
-    git_model = git_models_crud.get_primary_model_of_repository(
-        db, body.repository
-    )
-    if not git_model:
-        raise HTTPException(
-            status_code=404,
-            detail={
-                "err_code": "git_model_not_found",
-                "reason": "The Model has no connected Git Model. Please contact a project manager or admininistrator",
-            },
-        )
-
-    revision = body.branch or git_model.revision
-    if body.depth == DepthType.LatestCommit:
-        depth = 1
-    elif body.depth == DepthType.CompleteHistory:
-        depth = 0
-    else:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "err_code": "wrong_depth_format",
-                "reason": f"Depth type {depth} is not allowed.",
-            },
-        )
     session = operator.start_readonly_session(
         password=rdp_password,
-        git_url=git_model.path,
-        git_revision=revision,
-        entrypoint=git_model.entrypoint,
-        git_username=git_model.username,
-        git_password=git_model.password,
-        git_depth=depth,
+        docker_image=docker_image,
+        git_repos_json=list(models_as_json(models, model.version)),
     )
 
     return create_database_and_guacamole_session(
         WorkspaceType.READONLY,
         session,
-        owner,
+        project,
+        db_user.name,
         rdp_password,
         db,
-        repository=body.repository,
     )
+
+
+def models_as_json(models: t.List[DatabaseCapellaModel], version: Version):
+    for model in models:
+        for git_model in model.git_models:
+            yield git_model_as_json(git_model)
+
+
+def git_model_as_json(git_model: DB_GitModel) -> dict[str, str | int]:
+    json = {
+        "url": git_model.path,
+        "revision": git_model.revision,
+        "depth": 1,
+        "entrypoint": git_model.entrypoint,
+        "nature": git_model.model.nature.name,
+    }
+    if git_model.username:
+        json["username"] = git_model.username
+        json["password"] = git_model.password
+    return json
 
 
 @router.post("/persistent", response_model=AdvancedSessionResponse)
@@ -184,10 +205,10 @@ def request_persistent_session(
         session.type for session in existing_user_sessions
     ]:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "err_code": "existing_session",
-                "reason": "You already have a open Persistent Session. Please navigate to 'Active Sessions' to Reconnect",
+                "reason": "You already have a open persistent session. Please navigate to 'Active Sessions' to reconnect",
             },
         )
 
@@ -226,12 +247,12 @@ def request_persistent_session(
     )
 
     return create_database_and_guacamole_session(
-        WorkspaceType.PERSISTENT, session, owner, rdp_password, db
+        WorkspaceType.PERSISTENT, session, None, owner, rdp_password, db
     )
 
 
 def create_database_and_guacamole_session(
-    type: WorkspaceType, session, owner, rdp_password, db, repository=""
+    type: WorkspaceType, session, project, owner, rdp_password, db
 ):
     guacamole_username = generate_password()
     guacamole_password = generate_password(length=64)
@@ -258,7 +279,7 @@ def create_database_and_guacamole_session(
         rdp_password=rdp_password,
         guacamole_connection_id=guacamole_identifier,
         owner_name=owner,
-        repository=repository,
+        project=project,
         type=type,
         **session,
     )

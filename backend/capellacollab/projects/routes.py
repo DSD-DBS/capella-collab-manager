@@ -31,6 +31,7 @@ from capellacollab.projects.users.models import (
     ProjectUserPermission,
     ProjectUserRole,
 )
+from capellacollab.sessions.routes import project_router as router_sessions
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role
 
@@ -139,6 +140,11 @@ router.include_router(
 )
 router.include_router(
     router_models, prefix="/{project_slug}/models", tags=["Projects - Models"]
+)
+router.include_router(
+    router_sessions,
+    prefix="/{project_slug}/sessions",
+    tags=["Projects - Sessions"],
 )
 
 # Load backup extension routes

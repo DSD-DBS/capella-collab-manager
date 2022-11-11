@@ -4,11 +4,14 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+
 import { Model, ModelService } from 'src/app/services/model/model.service';
 import {
   Project,
   ProjectService,
 } from 'src/app/services/project/project.service';
+import { SessionService } from 'src/app/services/session/session.service';
 
 @Component({
   selector: 'app-model-overview',
@@ -21,7 +24,9 @@ export class ModelOverviewComponent implements OnInit {
 
   constructor(
     public projectService: ProjectService,
-    public modelService: ModelService
+    public modelService: ModelService,
+    public sessionService: SessionService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -37,5 +42,16 @@ export class ModelOverviewComponent implements OnInit {
       return 'Git';
     }
     return 'Unset';
+  }
+
+  requestSession(model: Model): void {
+    if (!model.version) {
+      return;
+    }
+    this.sessionService
+      .createReadonlySession(this.project.slug, model.slug)
+      .subscribe(() => {
+        this.router.navigateByUrl('/');
+      });
   }
 }

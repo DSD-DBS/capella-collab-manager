@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import enum
 import typing as t
 
 from pydantic import BaseModel, validator
@@ -20,6 +19,11 @@ from capellacollab.projects.users.models import (
     ProjectUserPermission,
     ProjectUserRole,
 )
+
+if t.TYPE_CHECKING:
+    from capellacollab.projects.capellamodels.models import (
+        DatabaseCapellaModel,
+    )
 
 
 class UserMetadata(BaseModel):
@@ -91,6 +95,6 @@ class DatabaseProject(Base):
         "ProjectUserAssociation",
         back_populates="projects",
     )
-    models: DatabaseCapellaModel = relationship(
+    models: list[DatabaseCapellaModel] = relationship(
         "DatabaseCapellaModel", back_populates="project"
     )
