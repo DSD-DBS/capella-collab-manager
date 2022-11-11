@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import os
 import random
 import string
 import typing as t
@@ -14,6 +15,12 @@ from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 
 LOGGING_LEVEL = config["logging"]["level"]
+
+
+class MakeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
+    def __init__(self, filename):
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        super().__init__(filename, when="M", backupCount=5, delay=True)
 
 
 class AttachTraceIdMiddleware(BaseHTTPMiddleware):

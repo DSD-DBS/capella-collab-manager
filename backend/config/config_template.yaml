@@ -82,6 +82,7 @@ initial:
 
 logging:
   level: DEBUG
+  logPath: logs/
 
 requests:
   timeout: 2

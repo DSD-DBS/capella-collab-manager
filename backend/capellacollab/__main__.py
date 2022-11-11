@@ -10,13 +10,6 @@ from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from capellacollab.config import config
-
-logging.basicConfig(
-    level=config["logging"]["level"], handlers=[logging.NullHandler()]
-)
-
-
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.config import config
 from capellacollab.core.database import engine, migration
@@ -25,10 +18,21 @@ from capellacollab.core.logging import (
     AttachUserNameMiddleware,
     HealthcheckFilter,
     LogRequestsMiddleware,
+    MakeTimedRotatingFileHandler,
 )
 from capellacollab.routes import router, status
 from capellacollab.sessions.idletimeout import (
     terminate_idle_sessions_in_background,
+)
+
+logging.basicConfig(
+    level=config["logging"]["level"],
+    handlers=[
+        MakeTimedRotatingFileHandler(
+            str(config["logging"]["logPath"]) + "backend.log"
+        )
+    ],
+    format="time=%(asctime)s level=%(levelname)s function=%(funcName)s %(message)s",
 )
 
 logging.getLogger("uvicorn.access").addFilter(HealthcheckFilter())
