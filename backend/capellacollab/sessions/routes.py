@@ -11,8 +11,6 @@ import typing as t
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-import capellacollab.projects.capellamodels.modelsources.git.crud as git_models_crud
-import capellacollab.projects.capellamodels.modelsources.t4c.connection as t4c_manager
 from capellacollab.config import config
 from capellacollab.core.authentication.database import (
     ProjectRoleVerification,
@@ -23,7 +21,6 @@ from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db
-from capellacollab.projects.capellamodels.crud import get_model_by_slug
 from capellacollab.projects.capellamodels.injectables import (
     get_existing_capella_model,
     get_existing_project,
@@ -32,7 +29,6 @@ from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.capellamodels.modelsources.git.models import (
     DB_GitModel,
 )
-from capellacollab.projects.crud import get_project_by_slug
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.crud import ProjectUserRole
 from capellacollab.sessions import database, guacamole
@@ -126,7 +122,7 @@ def request_session(
 ):
     log.info("Starting persistent session creation for user %s", db_user.name)
 
-    model = get_existing_capella_model(db, project.slug, body.model_slug)
+    model = get_existing_capella_model(project.slug, body.model_slug, db)
     models = [
         m
         for m in project.models
