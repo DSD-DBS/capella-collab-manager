@@ -261,7 +261,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
       patchGitModel.primary = this.form.controls.primary.value;
 
       this.gitModelService
-        .updateGitInstance(
+        .updateGitRepository(
           this.projectService.project?.slug!,
           this.modelService.model?.slug!,
           this.gitModelId!,

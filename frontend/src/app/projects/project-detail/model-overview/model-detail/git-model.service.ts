@@ -44,14 +44,14 @@ export class GitModelService {
       .subscribe((gitModel) => this._gitModel.next(gitModel));
   }
 
-  updateGitInstance(
+  updateGitRepository(
     project_slug: string,
     model_slug: string,
     git_model_id: number,
     gitModel: PatchGitModel
   ): Observable<GetGitModel> {
     return this.http
-      .patch<GetGitModel>(
+      .put<GetGitModel>(
         this.BACKEND_URL_PREFIX +
           `/projects/${project_slug}/models/${model_slug}/modelsources/git/${git_model_id}`,
         gitModel

@@ -120,7 +120,7 @@ def create_git_model(
     return new_git_model
 
 
-@router.patch(
+@router.put(
     "/{git_model_id}",
     response_model=ResponseGitModel,
     dependencies=[
