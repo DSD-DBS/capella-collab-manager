@@ -81,4 +81,15 @@ export class ModelService {
       { version_id, nature_id }
     );
   }
+
+  updateModelDescription(
+    project_slug: string,
+    model_slug: string,
+    description: string
+  ): Observable<Model> {
+    return this.http.patch<Model>(
+      `${this.base_url}${project_slug}/models/${model_slug}/description`,
+      { description }
+    );
+  }
 }

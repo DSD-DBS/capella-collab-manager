@@ -55,6 +55,10 @@ class CapellaModel(BaseModel):
     tool_id: int
 
 
+class CapellaModelDescription(BaseModel):
+    description: str
+
+
 class ToolDetails(BaseModel):
     version_id: int
     nature_id: int

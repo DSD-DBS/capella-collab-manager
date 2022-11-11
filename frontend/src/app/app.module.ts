@@ -66,6 +66,7 @@ import { CreateCoworkingMethodComponent } from './projects/models/create-coworki
 import { CreateModelBaseComponent } from './projects/models/create-model-base/create-model-base.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { InitModelComponent } from './projects/models/init-model/init-model.component';
+import { ModelDescriptionComponent } from './projects/models/model-description/model-description.component';
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
 import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
 import { ChooseSourceComponent } from './projects/models/model-source/choose-source.component';
@@ -135,6 +136,7 @@ import { HomeComponent } from './workspaces/home.component';
     LogoutRedirectComponent,
     MatCardOverviewLoaderComponent,
     MatIconComponent,
+    ModelDescriptionComponent,
     ModelDetailComponent,
     ModelOverviewComponent,
     ModelWrapperComponent,

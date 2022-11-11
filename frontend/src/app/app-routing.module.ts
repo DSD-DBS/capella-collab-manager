@@ -14,6 +14,7 @@ import { CreateProjectComponent } from './projects/create-project/create-project
 import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
 import { CreateCoworkingMethodComponent } from './projects/models/create-coworking-method/create-coworking-method.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
+import { ModelDescriptionComponent } from './projects/models/model-description/model-description.component';
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
 import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
@@ -74,6 +75,10 @@ const routes: Routes = [
               {
                 path: '',
                 component: ModelDetailComponent,
+              },
+              {
+                path: 'metadata',
+                component: ModelDescriptionComponent,
               },
               {
                 path: 'git-model',

@@ -19,6 +19,7 @@ from .backups.routes import router as router_backups
 from .injectables import get_existing_capella_model, get_existing_project
 from .models import (
     CapellaModel,
+    CapellaModelDescription,
     DatabaseCapellaModel,
     ResponseModel,
     ToolDetails,
@@ -75,6 +76,22 @@ def create_new(
                 "technical": "Slug already used",
             },
         )
+
+
+@router.patch(
+    "/{model_slug}/description",
+    response_model=ResponseModel,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
+    tags=["Projects - Models"],
+)
+def update_description(
+    body: CapellaModelDescription,
+    model: DatabaseCapellaModel = Depends(get_existing_capella_model),
+    db: Session = Depends(get_db),
+) -> DatabaseCapellaModel:
+    return crud.update_model(db, model, body.description)
 
 
 @router.patch(
