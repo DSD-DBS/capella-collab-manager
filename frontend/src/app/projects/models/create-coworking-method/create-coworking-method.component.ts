@@ -29,6 +29,12 @@ import {
   hasRelativePathPrefix,
 } from 'src/app/helpers/validators/url-validator';
 import {
+  CreateGitModel,
+  GetGitModel,
+  GitModelService,
+  PatchGitModel,
+} from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
+import {
   Credentials,
   GitService,
   Revisions,
@@ -39,12 +45,6 @@ import {
   GitSetting,
   GitSettingsService,
 } from 'src/app/services/settings/git-settings.service';
-import {
-  CreateGitModel,
-  GetGitModel,
-  GitModelService,
-  PatchGitModel,
-} from '../../project-detail/model-overview/model-detail/git-model.service';
 
 @Component({
   selector: 'app-create-coworking-method',

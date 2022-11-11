@@ -5,16 +5,16 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, filter, Subscription } from 'rxjs';
+import {
+  GetGitModel,
+  GitModelService,
+} from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { ModelService } from 'src/app/services/model/model.service';
 import {
   T4CModel,
   T4CModelService,
 } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
-import {
-  GetGitModel,
-  GitModelService,
-} from '../../project-detail/model-overview/model-detail/git-model.service';
 
 @Component({
   selector: 'app-model-detail',
