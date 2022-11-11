@@ -58,9 +58,9 @@ export class ViewLogsDialogComponent implements OnInit, OnDestroy {
   }
 }
 
-export interface ViewLogsData {
+export type ViewLogsData = {
   modelSlug: string;
   job_id: string;
   backup_id: number;
   project: string;
-}
+};

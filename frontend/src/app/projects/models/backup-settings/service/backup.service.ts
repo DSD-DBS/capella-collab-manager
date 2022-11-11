@@ -82,24 +82,24 @@ export class BackupService {
   }
 }
 
-export interface PipelineJob {
+export type PipelineJob = {
   id: string;
   date: string;
   state: string;
-}
+};
 
-export interface Pipeline {
+export type Pipeline = {
   id: number;
   lastrun: PipelineJob;
   t4c_model: SimpleT4CModel;
   git_model: BaseGitModel;
   run_nightly: boolean;
   include_commit_history: boolean;
-}
+};
 
-export interface PostPipeline {
+export type PostPipeline = {
   t4cmodelId: number;
   gitmodelId: number;
   includeCommitHistory: boolean;
   runNightly: boolean;
-}
+};
