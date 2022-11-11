@@ -27,6 +27,7 @@ Team for Capella is only available for Capella models, and can only be selected 
 ### Add source
 
 #### Git source
+
 The Git source should be a Git repository with write rights.
 
 !!! Warning, the credentials entered will be used to write on the repository. This means that from the repository
@@ -40,6 +41,7 @@ while keeping the credentials could give access to another repository on behalf 
 use a repository-level token.
 
 #### T4C source
+
 A T4C Instance has to exist in database, with an available repository. See #TODO
 
 For right managements at a Team for Capella level, although it’s possible to create several sources per repository, it’s

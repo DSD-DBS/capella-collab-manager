@@ -7,7 +7,7 @@
 
 If you have a read-only project access, or you simply want to check the model without risk of editing, you may start a read-only session.
 
-![Starting a read-only session](screenshots/read-only.jpg)
+To do so, go to the model where you want to start a read-only session, and click on the eye.
 
 Starting read-only session may take a bit of time, depending on the size of the model and depth of change history you requested.
 
