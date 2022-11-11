@@ -20,7 +20,10 @@ import capellacollab.tools.crud as tools
 import capellacollab.users.crud as users
 from capellacollab.config import config
 from capellacollab.core.database import Base
-from capellacollab.settings.modelsources.t4c.models import DatabaseT4CInstance
+from capellacollab.settings.modelsources.t4c.models import (
+    DatabaseT4CInstance,
+    Protocol,
+)
 from capellacollab.settings.modelsources.t4c.repositories.models import (
     CreateT4CRepository,
 )
@@ -66,7 +69,7 @@ def migrate_db(engine):
                 create_tools(session)
 
             if not repositories_exist:
-                create_repositories(session)
+                create_t4c_instance_and_repositories(session)
 
 
 def initialize_admin_user(db):
@@ -112,15 +115,17 @@ def create_tools(db):
     tools.create_nature(db, papyrus.id, "SysML 1.1")
 
 
-def create_repositories(db):
-    LOGGER.info("Initialized repositories")
+def create_t4c_instance_and_repositories(db):
+    LOGGER.info("Initialized T4C instance and repositories")
     tool = tools.get_tool_by_name(db, "Capella")
-    version = tools.get_version_by_name(db, tool, "5.2")
+    version = tools.get_version_by_name(db, tool, "5.2.0")
     default_instance = DatabaseT4CInstance(
         name="default",
         license="placeholder",
+        protocol=Protocol.tcp,
         host="placeholder",
         port=2036,
+        cdo_port=12036,
         usage_api="http://placeholder.com",
         rest_api="http://placeholder.com",
         username="placeholder",
