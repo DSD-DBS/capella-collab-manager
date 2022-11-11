@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from slugify import slugify
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.crud as projects_crud
@@ -13,6 +14,10 @@ from capellacollab.projects.capellamodels.models import (
 )
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.tools.models import Nature, Tool, Version
+
+
+def get_all_models(db: Session) -> list[DatabaseCapellaModel]:
+    return db.execute(select(DatabaseCapellaModel)).scalars().all()
 
 
 def get_all_models_in_project(
