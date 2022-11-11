@@ -178,14 +178,9 @@ def request_session(
 
 
 def models_as_json(models: t.List[DatabaseCapellaModel], version: Version):
-    for m in models:
-        if m.version.id == version.id:
-            yield from model_as_json(m)
-
-
-def model_as_json(model: DatabaseCapellaModel):
-    for git_model in model.git_models:
-        yield git_model_as_json(git_model)
+    for model in models:
+        for git_model in model.git_models:
+            yield git_model_as_json(git_model)
 
 
 def git_model_as_json(git_model: DB_GitModel) -> dict[str, str | int]:
