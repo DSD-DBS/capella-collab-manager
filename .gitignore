@@ -12,3 +12,4 @@ deployments/*
 certs/*
 /node_modules
 .idea
+/backend/log/*
