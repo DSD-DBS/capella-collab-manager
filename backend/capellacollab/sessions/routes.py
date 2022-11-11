@@ -25,6 +25,7 @@ from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db
 from capellacollab.projects.capellamodels.crud import get_model_by_slug
 from capellacollab.projects.capellamodels.injectables import (
+    get_existing_capella_model,
     get_existing_project,
 )
 from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
@@ -125,16 +126,7 @@ def request_session(
 ):
     log.info("Starting persistent session creation for user %s", db_user.name)
 
-    model = get_model_by_slug(db, project.slug, body.model_slug)
-    if not model:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND,
-            {
-                "reason": f"The model with name {body.model_slug} was not found.",
-                "technical": f"No model {body.model_slug} found.",
-            },
-        )
-
+    model = get_existing_capella_model(db, project.slug, body.model_slug)
     models = [
         m
         for m in project.models
