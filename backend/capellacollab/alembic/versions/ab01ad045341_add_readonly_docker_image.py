@@ -28,5 +28,4 @@ def upgrade():
 
 
 def downgrade():
-    with op.batch_alter_table("tools") as batch_op:
-        batch_op.drop_column("readonly_docker_image_template")
+    op.drop_column("tools", "readonly_docker_image_template")
