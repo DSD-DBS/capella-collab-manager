@@ -94,8 +94,3 @@ export class CreateBackupComponent {
     );
   }
 }
-
-export interface CreateEASEBackupData {
-  project: string;
-  modelSlug: string;
-}
