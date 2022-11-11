@@ -155,7 +155,7 @@ def request_session(
             status_code=status.HTTP_409_CONFLICT,
             detail={
                 "err_code": "image_not_found",
-                "reason": "The model has no associated read-only docker image configured. Please contact a project manager or admininistrator",
+                "reason": "The tool has no read-only support. Please contact an admininistrator",
             },
         )
 
