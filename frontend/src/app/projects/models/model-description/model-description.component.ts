@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ModelService } from 'src/app/services/model/model.service';
-import { ProjectService } from '../../../services/project/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-model-description',
