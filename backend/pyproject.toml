@@ -58,22 +58,12 @@ dev = [
   "pylint",
   "pytest",
   "testcontainers",
+  "httpx",
 ]
-
-[project.entry-points."capellacollab.extensions.backups"]
-ease = "capellacollab.extensions.backups.ease"
-
-[project.entry-points."capellacollab.operators"]
-k8s = "capellacollab.sessions.operators.k8s:KubernetesOperator"
-docker = "capellacollab.sessions.operators.docker:DockerOperator"
 
 [project.entry-points."capellacollab.authentication.providers"]
 oauth = "capellacollab.core.authentication.provider.oauth"
 azure = "capellacollab.core.authentication.provider.azure"
-
-[project.entry-points."capellacollab.settings.modelsources"]
-git = "capellacollab.settings.modelsources.git"
-t4c = "capellacollab.settings.modelsources.t4c"
 
 [tool.black]
 line-length = 79

@@ -39,6 +39,6 @@ def create_session(db: Session, session: DatabaseSession):
     return session
 
 
-def delete_session(db: Session, session_id: str):
-    db.query(DatabaseSession).filter(DatabaseSession.id == session_id).delete()
+def delete_session(db: Session, session: DatabaseSession):
+    db.delete(session)
     db.commit()

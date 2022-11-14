@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
+
 import enum
 import logging
 import typing as t
@@ -19,7 +21,11 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
+import capellacollab.tools.models as tools_models
 from capellacollab.core.database import Base
+
+if t.TYPE_CHECKING:
+    from .repositories.models import DatabaseT4CRepository
 
 log = logging.getLogger(__name__)
 
@@ -45,35 +51,35 @@ class Protocol(str, enum.Enum):
 
 class DatabaseT4CInstance(Base):
     __tablename__ = "t4c_instances"
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String, nullable=False)
-    version_id = Column(Integer, ForeignKey("versions.id"))
-    license = Column(String)
-    host = Column(String)
-    port = Column(
+    id: int = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    name: str = Column(String, nullable=False)
+    version_id: int = Column(Integer, ForeignKey("versions.id"))
+    license: str = Column(String)
+    host: str = Column(String)
+    port: int = Column(
         Integer,
         CheckConstraint("port >= 0 AND port <= 65535"),
         nullable=False,
         default=2036,
     )
-    cdo_port = Column(
+    cdo_port: int = Column(
         Integer,
         CheckConstraint("cdo_port >= 0 AND cdo_port <= 65535"),
         nullable=False,
         default=12036,
     )
-    usage_api = Column(String)
-    rest_api = Column(String)
-    username = Column(String)
-    password = Column(String)
-    protocol = Column(
+    usage_api: str = Column(String)
+    rest_api: str = Column(String)
+    username: str = Column(String)
+    password: str = Column(String)
+    protocol: Protocol = Column(
         Enum(Protocol),
         nullable=False,
         default=Protocol.tcp,
     )
 
-    version = relationship("Version")
-    repositories = relationship(
+    version: tools_models.Version = relationship(tools_models.Version)
+    repositories: list[DatabaseT4CRepository] = relationship(
         "DatabaseT4CRepository",
         back_populates="instance",
         cascade="all, delete",

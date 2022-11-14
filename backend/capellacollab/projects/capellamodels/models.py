@@ -18,8 +18,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-# Import required for sqlalchemy
-import capellacollab.projects.users.models
 from capellacollab.core.database import Base
 from capellacollab.projects.capellamodels.modelsources.git.models import (
     ResponseGitModel,
@@ -38,7 +36,7 @@ from capellacollab.tools.models import (
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.capellamodels.modelsources.git.models import (
-        DB_GitModel,
+        DatabaseGitModel,
     )
     from capellacollab.projects.capellamodels.modelsources.t4c.models import (
         DatabaseT4CModel,
@@ -90,8 +88,8 @@ class DatabaseCapellaModel(Base):
     t4c_models: list[DatabaseT4CModel] = relationship(
         "DatabaseT4CModel", back_populates="model"
     )
-    git_models: list[DB_GitModel] = relationship(
-        "DB_GitModel", back_populates="model"
+    git_models: list[DatabaseGitModel] = relationship(
+        "DatabaseGitModel", back_populates="model"
     )
 
 

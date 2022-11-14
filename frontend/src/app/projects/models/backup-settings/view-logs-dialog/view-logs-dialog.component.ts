@@ -7,7 +7,7 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subscription, timer } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { EASEBackupService } from 'src/app/services/backups/ease/easebackup.service';
+import { BackupService } from 'src/app/projects/models/backup-settings/service/backup.service';
 
 @Component({
   selector: 'app-view-logs-dialog',
@@ -19,7 +19,7 @@ export class ViewLogsDialogComponent implements OnInit, OnDestroy {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ViewLogsData,
-    private easeBackupService: EASEBackupService
+    private easeBackupService: BackupService
   ) {
     this.refreshLogsSubscription = timer(0, 5000)
       .pipe(
@@ -44,7 +44,7 @@ export class ViewLogsDialogComponent implements OnInit, OnDestroy {
   refreshLogs(): void {
     this.loading = true;
     this.easeBackupService
-      .getLogs(this.data.project, this.data.backup_id, this.data.job_id)
+      .getLogs(this.data.project, this.data.backup_id, this.data.modelSlug)
       .subscribe({
         next: (res: string) => {
           this.loading = false;
@@ -58,8 +58,9 @@ export class ViewLogsDialogComponent implements OnInit, OnDestroy {
   }
 }
 
-export interface ViewLogsData {
+export type ViewLogsData = {
+  modelSlug: string;
   job_id: string;
   backup_id: number;
   project: string;
-}
+};

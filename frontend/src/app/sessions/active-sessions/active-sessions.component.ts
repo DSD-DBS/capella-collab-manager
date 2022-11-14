@@ -12,7 +12,7 @@ import { BeautifyService } from '../../services/beatify/beautify.service';
 import { OwnSessionService } from '../../services/own-session/own-session.service';
 import { SessionService } from '../../services/session/session.service';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
-import { ReconnectDialogComponent } from './reconnect-dialog/reconnect-dialog.component';
+import { GuacamoleComponent } from '../session-created/guacamole/guacamole.component';
 import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
 
 @Component({
@@ -63,8 +63,8 @@ export class ActiveSessionsComponent implements OnInit, OnDestroy {
     });
   }
 
-  openReconnectDialog(session: Session): void {
-    this.dialog.open(ReconnectDialogComponent, {
+  openConnectDialog(session: Session): void {
+    this.dialog.open(GuacamoleComponent, {
       data: session,
     });
   }

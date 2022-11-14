@@ -38,9 +38,13 @@ def update_tool(
 ) -> Tool:
     if isinstance(patch_tool, CreateTool):
         tool.name = patch_tool.name
-    elif patch_tool.persistent:
-        tool.docker_image_template = patch_tool.persistent
-        tool.readonly_docker_image_template = patch_tool.readonly
+    elif isinstance(patch_tool, PatchToolDockerimage):
+        if patch_tool.persistent:
+            tool.docker_image_template = patch_tool.persistent
+        if patch_tool.readonly:
+            tool.readonly_docker_image_template = patch_tool.readonly
+        if patch_tool.backup:
+            tool.docker_image_backup_template = patch_tool.backup
     db.add(tool)
     db.commit()
     return tool
@@ -144,3 +148,10 @@ def get_image_for_tool_version(db: Session, version_id: int) -> str:
 def get_readonly_image_for_version(version: Version) -> str | None:
     template = version.tool.readonly_docker_image_template
     return template.replace("$version", version.name) if template else None
+
+
+def get_backup_image_for_tool_version(db: Session, version_id: int) -> str:
+    version = get_version_by_id(version_id, db)
+    return version.tool.docker_image_backup_template.replace(
+        "$version", version.name
+    )

@@ -8,19 +8,20 @@ REGISTRY_PORT = 12345
 RELEASE = dev-t4c-manager
 NAMESPACE = t4c-manager
 SESSION_NAMESPACE = t4c-sessions
-EASE_DEBUG_PORT = 3390
 PORT ?= 8080
 
-CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 LOCAL_REGISTRY_NAME=$(LOCAL_REGISTRY_NAME) LOCAL_REGISTRY_PORT=$(REGISTRY_PORT)
+CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 DOCKER_REGISTRY=$(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)
 
 # Adds support for msys
 export MSYS_NO_PATHCONV := 1
 
 build: backend frontend docs
+
+build-capella:
 	$(CAPELLA_DOCKERIMAGES) capella/remote capella/readonly
 
-build-all: build
-	$(CAPELLA_DOCKERIMAGES) t4c/client/remote t4c/client/importer
+build-t4c: build
+	$(CAPELLA_DOCKERIMAGES) t4c/client/remote t4c/client/backup
 
 backend:
 	python backend/generate_git_archival.py;
@@ -36,10 +37,10 @@ docs:
 	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs
 
-deploy: build helm-deploy open rollout
+deploy: build build-capella helm-deploy open rollout
 
 # Deploy with full T4C client support:
-deploy-t4c: build-all helm-deploy open rollout
+deploy-t4c: build build-t4c helm-deploy open rollout
 
 deploy-without-build: helm-deploy open rollout
 
@@ -86,6 +87,8 @@ rollout:
 undeploy:
 	helm uninstall --kube-context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $(RELEASE)
 	kubectl --context k3d-$(CLUSTER_NAME) delete --all deployments -n $(SESSION_NAMESPACE)
+	kubectl --context k3d-$(CLUSTER_NAME) delete --all cronjobs -n $(SESSION_NAMESPACE)
+	kubectl --context k3d-$(CLUSTER_NAME) delete --all jobs -n $(SESSION_NAMESPACE)
 
 create-cluster:
 	type k3d || { echo "K3D is not installed, install k3d and run 'make create-cluster' again"; exit 1; }

@@ -11,7 +11,6 @@ from sqlalchemy.orm import relationship
 
 # Import required for sqlalchemy
 import capellacollab.projects.capellamodels.models
-import capellacollab.projects.users.models
 from capellacollab.core.database import Base
 from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.users.models import (

@@ -1,0 +1,121 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="mat-dialog">
+  <div>
+    <div *ngIf="!selectedPipeline" class="flex-space-between margin default">
+      <span
+        >Please select the pipeline you'd like to execute or to see the logs:
+      </span>
+      <a mat-icon-button (click)="createNewBackup()"
+        ><mat-icon>add_circle</mat-icon></a
+      >
+    </div>
+    <div class="pipelines">
+      <div *ngFor="let pipeline of this.backupService.pipelines.value">
+        <mat-card
+          matRipple
+          *ngIf="!selectedPipeline || selectedPipeline.id === pipeline.id"
+          (click)="selectPipeline(pipeline)"
+          class="pipeline-card"
+          ><span class="text-center"><b>Backup</b> (ID: {{ pipeline.id }})</span
+          ><br />
+          <span *ngIf="pipeline.run_nightly"
+            >Runs nightly at 3am
+            <span *ngIf="pipeline.include_commit_history"
+              >with commit history</span
+            ><span *ngIf="!pipeline.include_commit_history"
+              >without commit history</span
+            >
+            or with manual trigger
+          </span>
+          <span *ngIf="!pipeline.run_nightly"
+            >Runs only with manual trigger</span
+          >
+          <hr />
+          <div class="flex-space-between">
+            <span style="flex-basis: 45%"
+              ><b>TeamForCapella</b> <br />
+              Instance <i>{{ pipeline.t4c_model.instance_name }}</i
+              >, <br />Repository <i>{{ pipeline.t4c_model.repository_name }}</i
+              >, <br />Project:
+              <i>{{ pipeline.t4c_model.project_name }}</i> </span
+            ><span style="flex-basis: 10%"
+              ><mat-icon class="mat-icon-position top">arrow_forward</mat-icon>
+            </span>
+            <span style="flex-basis: 45%"
+              ><b>Git</b> <br />
+              URL: <i>{{ pipeline.git_model.path }}</i
+              >, <br />revision: <i>{{ pipeline.git_model.revision }}</i
+              >, <br />entrypoint:
+              <i>{{ pipeline.git_model.entrypoint }}</i>
+            </span>
+          </div></mat-card
+        >
+      </div>
+    </div>
+    <div
+      class="margin default"
+      *ngIf="
+        !this.backupService.pipelines.value?.length &&
+        !this.backupService.loading
+      "
+    >
+      No pipelines found. Please create a new pipeline.
+    </div>
+
+    <div class="margin default">
+      <form *ngIf="selectedPipeline" [formGroup]="configurationForm">
+        <hr />
+        <h3>Run the pipeline</h3>
+
+        <div class="flex-space-between">
+          <div>
+            Please select the following configuration options: <br />
+            <mat-checkbox formControlName="includeHistory"
+              >Include commit history</mat-checkbox
+            >
+            <br /><br />
+            Current estimate of the duration (according to the selected
+            configuration):
+            {{ estimateTime() }}
+          </div>
+
+          <button
+            class="margin default"
+            mat-raised-button
+            (click)="runPipeline()"
+            color="primary"
+          >
+            Run pipeline
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="margin default" *ngIf="selectedPipeline">
+      <hr />
+      <h3>Additional actions</h3>
+
+      <button
+        class="margin default"
+        mat-raised-button
+        (click)="viewLogs(selectedPipeline)"
+        color="primary"
+        *ngIf="selectedPipeline.lastrun.id"
+      >
+        View logs of last run
+      </button>
+      <button
+        class="margin default"
+        mat-raised-button
+        (click)="removeBackup(selectedPipeline)"
+        color="primary"
+      >
+        Remove pipeline
+      </button>
+    </div>
+  </div>
+</div>

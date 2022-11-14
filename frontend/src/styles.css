@@ -184,6 +184,10 @@ mat-card.default {
   width: 400px;
 }
 
+.margin.default {
+  margin: 10px;
+}
+
 .section-card {
   width: var(--section-card-width);
 }
@@ -279,4 +283,8 @@ Angular Material Card Styles
 
 .monospace {
   font-family: monospace;
+}
+
+.mat-dialog {
+  min-width: 800px;
 }

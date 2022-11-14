@@ -4,14 +4,16 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { Model, ModelService } from 'src/app/services/model/model.service';
 import {
   Project,
   ProjectService,
 } from 'src/app/services/project/project.service';
 import { SessionService } from 'src/app/services/session/session.service';
+import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 
 @Component({
   selector: 'app-model-overview',
@@ -25,8 +27,10 @@ export class ModelOverviewComponent implements OnInit {
   constructor(
     public projectService: ProjectService,
     public modelService: ModelService,
+    private dialog: MatDialog,
     public sessionService: SessionService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -53,5 +57,20 @@ export class ModelOverviewComponent implements OnInit {
       .subscribe(() => {
         this.router.navigateByUrl('/');
       });
+  }
+
+  openPipelineDialog(model: Model): void {
+    this.dialog.open(TriggerPipelineComponent, {
+      data: { project: this.project, model: model },
+    });
+  }
+
+  getPrimaryGitModelURL(model: Model): string {
+    const primaryModel = model.git_models.find((gitModel) => gitModel.primary);
+    if (primaryModel) {
+      return primaryModel.path;
+    } else {
+      return '';
+    }
   }
 }

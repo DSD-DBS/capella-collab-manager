@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
+
 import typing as t
 
 from pydantic import BaseModel
@@ -16,6 +18,9 @@ if t.TYPE_CHECKING:
     from capellacollab.projects.capellamodels.models import (
         DatabaseCapellaModel,
     )
+    from capellacollab.settings.modelsources.t4c.repositories.models import (
+        DatabaseT4CRepository,
+    )
 
 
 class DatabaseT4CModel(Base):
@@ -26,10 +31,12 @@ class DatabaseT4CModel(Base):
     name = Column(String, index=True)
 
     repository_id = Column(Integer, ForeignKey("t4c_repositories.id"))
-    repository = relationship("DatabaseT4CRepository", back_populates="models")
+    repository: DatabaseT4CRepository = relationship(
+        "DatabaseT4CRepository", back_populates="models"
+    )
 
     model_id = Column(Integer, ForeignKey("models.id"))
-    model: "DatabaseCapellaModel" = relationship(
+    model: DatabaseCapellaModel = relationship(
         "DatabaseCapellaModel", back_populates="t4c_models"
     )
 
@@ -38,6 +45,23 @@ class SubmitT4CModel(BaseModel):
     name: str
     t4c_instance_id: int
     t4c_repository_id: int
+
+
+class SimpleT4CModel(BaseModel):
+    project_name: str
+    repository_name: str
+    instance_name: str
+
+    @classmethod
+    def from_orm(cls, obj: DatabaseT4CModel) -> SimpleT4CModel:
+        return SimpleT4CModel(
+            project_name=obj.name,
+            repository_name=obj.repository.name,
+            instance_name=obj.repository.instance.name,
+        )
+
+    class Config:
+        orm_mode = True
 
 
 class ResponseT4CModel(BaseModel):

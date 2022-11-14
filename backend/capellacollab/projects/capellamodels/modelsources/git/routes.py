@@ -14,7 +14,7 @@ from capellacollab.projects.capellamodels.injectables import (
 )
 from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.capellamodels.modelsources.git.models import (
-    DB_GitModel,
+    DatabaseGitModel,
     PatchGitModel,
     PostGitModel,
     ResponseGitModel,
@@ -52,29 +52,31 @@ def verify_path_prefix(db: Session, path: str):
     )
 
 
-@router.get("/git-models", response_model=list[ResponseGitModel])
+@router.get("", response_model=list[ResponseGitModel])
 def get_git_models(
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
-) -> list[DB_GitModel]:
+) -> list[DatabaseGitModel]:
     return capella_model.git_models
 
 
 @router.get(
-    "/git-model/{git_model_id}",
+    "/{git_model_id}",
     response_model=ResponseGitModel,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
 )
 def get_git_model_by_id(
-    git_model: DB_GitModel = Depends(get_existing_git_model),
-) -> DB_GitModel:
+    git_model: DatabaseGitModel = Depends(get_existing_git_model),
+) -> DatabaseGitModel:
     return git_model
 
 
 @router.get("/primary/revisions", response_model=GetRevisionsResponseModel)
 def get_revisions_of_primary_git_model(
-    primary_git_model: DB_GitModel = Depends(get_existing_primary_git_model),
+    primary_git_model: DatabaseGitModel = Depends(
+        get_existing_primary_git_model
+    ),
 ) -> GetRevisionsResponseModel:
     return get_remote_refs(
         primary_git_model.path,
@@ -85,7 +87,7 @@ def get_revisions_of_primary_git_model(
 
 
 @router.post(
-    "/git-model/{git_model_id}/revisions",
+    "/{git_model_id}/revisions",
     response_model=GetRevisionsResponseModel,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
@@ -93,23 +95,23 @@ def get_revisions_of_primary_git_model(
 )
 def get_revisions_with_model_credentials(
     url: str = Body(),
-    git_model: DB_GitModel = Depends(get_existing_git_model),
+    git_model: DatabaseGitModel = Depends(get_existing_git_model),
 ):
     return get_remote_refs(url, git_model.username, git_model.password)
 
 
 @router.post(
-    "/",
+    "",
     response_model=ResponseGitModel,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
 )
-def create_source(
+def create_git_model(
     post_git_model: PostGitModel,
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
-) -> DB_GitModel:
+) -> DatabaseGitModel:
     verify_path_prefix(db, post_git_model.path)
 
     new_git_model = crud.add_gitmodel_to_capellamodel(
@@ -118,8 +120,8 @@ def create_source(
     return new_git_model
 
 
-@router.patch(
-    "/git-model/{git_model_id}",
+@router.put(
+    "/{git_model_id}",
     response_model=ResponseGitModel,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
@@ -127,12 +129,12 @@ def create_source(
 )
 def update_git_model_by_id(
     patch_git_model: PatchGitModel,
-    db_git_model: DB_GitModel = Depends(get_existing_git_model),
+    db_git_model: DatabaseGitModel = Depends(get_existing_git_model),
     db_capella_model: DatabaseCapellaModel = Depends(
         get_existing_capella_model
     ),
     db: Session = Depends(get_db),
-) -> DB_GitModel:
+) -> DatabaseGitModel:
     verify_path_prefix(db, patch_git_model.path)
 
     updated_git_model = crud.update_git_model(

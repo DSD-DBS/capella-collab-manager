@@ -3,7 +3,7 @@
 
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from capellacollab.config import config
 
@@ -15,9 +15,9 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 ### SQL MODELS ARE IMPORTED HERE ###
-import capellacollab.sql_models  # isort:skip
+from . import models  # isort:skip
 
 
-def get_db():
+def get_db() -> Session:
     with SessionLocal() as session:
         yield session

@@ -58,8 +58,8 @@ import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 import { MatCardOverviewLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-loader/mat-card-overview-loader.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
-import { CreateEASEBackupComponent } from './projects/models/backup-settings/create-ease-backup/create-ease-backup.component';
-import { GitBackupSettingsComponent } from './projects/models/backup-settings/ease-backup-settings.component';
+import { CreateBackupComponent } from './projects/models/backup-settings/create-backup/create-backup.component';
+import { TriggerPipelineComponent } from './projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { ViewLogsDialogComponent } from './projects/models/backup-settings/view-logs-dialog/view-logs-dialog.component';
 import { ChooseInitComponent } from './projects/models/choose-init/choose-init.component';
 import { CreateCoworkingMethodComponent } from './projects/models/create-coworking-method/create-coworking-method.component';
@@ -69,8 +69,6 @@ import { InitModelComponent } from './projects/models/init-model/init-model.comp
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
 import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
 import { ChooseSourceComponent } from './projects/models/model-source/choose-source.component';
-import { GitModelDeletionDialogComponent } from './projects/models/model-source/git-model-settings/git-model-deletion-dialog/git-model-deletion-dialog.component';
-import { GitModelSettingsComponent } from './projects/models/model-source/git-model-settings/git-model-settings.component';
 import { T4CRepoSettingsComponent } from './projects/models/model-source/t4c-repo-settings/t4c-repo-settings.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { ModelOverviewComponent } from './projects/project-detail/model-overview/model-overview.component';
@@ -81,13 +79,10 @@ import { ProjectOverviewComponent } from './projects/project-overview/project-ov
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { WhitespaceUrlInterceptor } from './services/encoder/encoder.interceptor';
 import { ActiveSessionsComponent } from './sessions/active-sessions/active-sessions.component';
-import { ReconnectDialogComponent } from './sessions/active-sessions/reconnect-dialog/reconnect-dialog.component';
 import { FileExistsDialogComponent } from './sessions/active-sessions/upload-dialog/file-exists-dialog/file-exists-dialog.component';
 import { UploadDialogComponent } from './sessions/active-sessions/upload-dialog/upload-dialog.component';
 import { DeleteSessionDialogComponent } from './sessions/delete-session-dialog/delete-session-dialog.component';
 import { GuacamoleComponent } from './sessions/session-created/guacamole/guacamole.component';
-import { RDPComponent } from './sessions/session-created/rdp/rdp.component';
-import { SessionCreatedComponent } from './sessions/session-created/session-created.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { ToolDeletionDialogComponent } from './settings/core/tools-settings/tool-details/tool-deletion-dialog/tool-deletion-dialog.component';
@@ -96,8 +91,6 @@ import { ToolNatureComponent } from './settings/core/tools-settings/tool-details
 import { ToolVersionComponent } from './settings/core/tools-settings/tool-details/tool-version/tool-version.component';
 import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
 import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
-import { T4CImporterSettingsComponent } from './settings/integrations/backups/t4c-importer-settings/t4c-importer-settings.component';
-import { GuacamoleSettingsComponent } from './settings/integrations/guacamole-settings/guacamole-settings.component';
 import { DeleteGitSettingsDialogComponent } from './settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
 import { EditGitSettingsComponent } from './settings/modelsources/git-settings/edit-git-settings/edit-git-settings.component';
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
@@ -120,8 +113,8 @@ import { HomeComponent } from './workspaces/home.component';
     AuthComponent,
     ChooseInitComponent,
     ChooseSourceComponent,
+    CreateBackupComponent,
     CreateCoworkingMethodComponent,
-    CreateEASEBackupComponent,
     CreateModelBaseComponent,
     CreateModelComponent,
     CreateProjectComponent,
@@ -131,12 +124,8 @@ import { HomeComponent } from './workspaces/home.component';
     EditT4CInstanceComponent,
     FileExistsDialogComponent,
     FooterComponent,
-    GitBackupSettingsComponent,
-    GitModelDeletionDialogComponent,
-    GitModelSettingsComponent,
     GitSettingsComponent,
     GuacamoleComponent,
-    GuacamoleSettingsComponent,
     HeaderComponent,
     HomeComponent,
     InitModelComponent,
@@ -155,13 +144,9 @@ import { HomeComponent } from './workspaces/home.component';
     ProjectOverviewComponent,
     ProjectUserSettingsComponent,
     ProjectWrapperComponent,
-    RDPComponent,
-    ReconnectDialogComponent,
     ReleaseNotesComponent,
-    SessionCreatedComponent,
     SessionOverviewComponent,
     SettingsComponent,
-    T4CImporterSettingsComponent,
     T4CInstanceSettingsComponent,
     T4cModelWrapperComponent,
     T4CRepoDeletionDialogComponent,
@@ -174,6 +159,7 @@ import { HomeComponent } from './workspaces/home.component';
     ToolNatureComponent,
     ToolsSettingsComponent,
     ToolVersionComponent,
+    TriggerPipelineComponent,
     UploadDialogComponent,
     UserSettingsComponent,
     VersionComponent,

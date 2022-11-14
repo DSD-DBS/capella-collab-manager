@@ -1,0 +1,73 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<h1 mat-dialog-title>Create a new backup pipeline</h1>
+
+<form [formGroup]="createBackupForm" *ngIf="t4cModelAndGitModelExists()">
+  <div class="flexbox center">
+    <mat-card>
+      Please select a T4C model:
+      <mat-selection-list formControlName="t4cmodel" [multiple]="false">
+        <mat-list-option
+          *ngFor="let t4cModel of t4cModelService.t4cModels"
+          [value]="t4cModel.id"
+        >
+          <div mat-line>TeamForCapella model '{{ t4cModel.name }}'</div>
+          <div mat-line>
+            repository '{{ t4cModel.name }}', instance '{{
+              t4cModel.repository.instance.name
+            }}'
+          </div>
+        </mat-list-option>
+      </mat-selection-list>
+    </mat-card>
+    <mat-icon>arrow_right_alt</mat-icon>
+    <mat-card>
+      Please select a Git model:
+      <mat-selection-list formControlName="gitmodel" [multiple]="false">
+        <mat-list-option
+          *ngFor="let gitModel of gitModelService.gitModels | async"
+          [value]="gitModel.id"
+        >
+          <div mat-line>Git model {{ gitModel.id }}</div>
+          <div mat-line>
+            URL '{{ gitModel.path }}', revision '{{ gitModel.revision }}'
+          </div>
+        </mat-list-option>
+      </mat-selection-list>
+    </mat-card>
+  </div>
+  <hr />
+  <div>Please specify the configuration for your backup job:</div>
+  <form formGroupName="configuration">
+    <mat-checkbox formControlName="runNightly"
+      >Run nightly (at 3 am)</mat-checkbox
+    ><br />
+    <mat-checkbox formControlName="includeCommitHistory"
+      >Include commit history</mat-checkbox
+    >
+  </form>
+
+  <br />Please note that the configuration is laid down. <br />If the
+  Teamforcapella or Git configuration changes, the nightly backup must be
+  re-generated.
+</form>
+
+<div *ngIf="!t4cModelAndGitModelExists()">
+  Please add a T4C model and Git model first!
+</div>
+
+<div mat-dialog-actions class="flex-space-between">
+  <button mat-button [mat-dialog-close]="false">Cancel</button>
+  <button
+    mat-button
+    *ngIf="t4cModelAndGitModelExists()"
+    (click)="createGitBackup()"
+    cdkFocusInitial
+    [disabled]="!createBackupForm.valid"
+  >
+    Create
+  </button>
+</div>

@@ -45,6 +45,11 @@ export class ToolDetailsComponent {
         Validators.maxLength(4096),
         this.validDockerImageNameValidator(),
       ]),
+      backup: new FormControl('', [
+        Validators.required,
+        Validators.maxLength(4096),
+        this.validDockerImageNameValidator(),
+      ]),
     }),
   });
 

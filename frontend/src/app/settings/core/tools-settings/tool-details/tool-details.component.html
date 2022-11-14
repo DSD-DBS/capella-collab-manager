@@ -21,8 +21,7 @@
       <br />
       <hr />
       <div formGroupName="dockerimages">
-        You need to specify two different Docker images, <br />depending on the
-        workspace type: <br /><br />
+        Here you can specify the used Docker images: <br /><br />
         <mat-form-field appearance="fill">
           <mat-label>Persistent workspaces</mat-label>
           <input
@@ -66,6 +65,25 @@
           <mat-error
             *ngIf="
               form.controls.dockerimages.controls.readonly.errors
+                ?.validDockerImageNameInvalid
+            "
+            >The input is not a valid docker image name!</mat-error
+          >
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Backup image (optional)</mat-label>
+          <input
+            formControlName="backup"
+            matInput
+            placeholder="docker.io/tool/backup:$version-latest"
+          />
+          <mat-error
+            *ngIf="form.controls.dockerimages.controls.backup.errors?.maxLength"
+            >The maximal allowed length is 4096!</mat-error
+          >
+          <mat-error
+            *ngIf="
+              form.controls.dockerimages.controls.backup.errors
                 ?.validDockerImageNameInvalid
             "
             >The input is not a valid docker image name!</mat-error

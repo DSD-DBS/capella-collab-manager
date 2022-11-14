@@ -10,7 +10,7 @@ from capellacollab.projects.capellamodels.injectables import (
 )
 from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.capellamodels.modelsources.git.models import (
-    DB_GitModel,
+    DatabaseGitModel,
 )
 
 from . import crud
@@ -20,7 +20,7 @@ def get_existing_git_model(
     git_model_id: int,
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
-) -> DB_GitModel:
+) -> DatabaseGitModel:
     git_model = crud.get_gitmodel_by_id(db, git_model_id)
 
     if git_model.model_id == capella_model.id:
@@ -38,7 +38,7 @@ def get_existing_git_model(
 def get_existing_primary_git_model(
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
-) -> DB_GitModel:
+) -> DatabaseGitModel:
     primary_git_model = crud.get_primary_gitmodel_of_capellamodel(
         db, capella_model.id
     )

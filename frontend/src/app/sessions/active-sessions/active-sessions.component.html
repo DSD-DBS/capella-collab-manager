@@ -40,7 +40,7 @@
     <button
       mat-button
       color="primary"
-      (click)="openReconnectDialog(session)"
+      (click)="openConnectDialog(session)"
       [disabled]="!sessionService.beautifyState(session.state).success"
     >
       Connect

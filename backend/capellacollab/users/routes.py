@@ -13,7 +13,7 @@ from capellacollab.core.authentication.database import RoleVerification
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.sessions.routes import inject_attrs_in_sessions
-from capellacollab.sessions.schema import AdvancedSessionResponse
+from capellacollab.sessions.schema import OwnSessionResponse
 
 from . import crud
 from .injectables import get_existing_user, get_own_user
@@ -87,9 +87,7 @@ def delete_user(
 
 
 # TODO: This is actually a sessions route (sessions/{username}?)
-@router.get(
-    "/{user_id}/sessions", response_model=list[AdvancedSessionResponse]
-)
+@router.get("/{user_id}/sessions", response_model=list[OwnSessionResponse])
 def get_sessions_for_user(
     user: DatabaseUser = Depends(get_existing_user),
     current_user: DatabaseUser = Depends(get_own_user),

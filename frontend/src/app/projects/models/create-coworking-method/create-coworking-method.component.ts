@@ -29,6 +29,12 @@ import {
   hasRelativePathPrefix,
 } from 'src/app/helpers/validators/url-validator';
 import {
+  CreateGitModel,
+  GetGitModel,
+  GitModelService,
+  PatchGitModel,
+} from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
+import {
   Credentials,
   GitService,
   Revisions,
@@ -39,13 +45,6 @@ import {
   GitSetting,
   GitSettingsService,
 } from 'src/app/services/settings/git-settings.service';
-import {
-  CreateGitModel,
-  GitModel,
-  PatchGitModel,
-  SourceService,
-} from 'src/app/services/source/source.service';
-import { GitModelService } from '../../project-detail/model-overview/model-detail/git-model.service';
 
 @Component({
   selector: 'app-create-coworking-method',
@@ -85,7 +84,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
   });
 
   private gitModelId?: number;
-  public gitModel?: GitModel;
+  public gitModel?: GetGitModel;
 
   public isEditMode: boolean = false;
   public editing: boolean = false;
@@ -102,7 +101,6 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
     private gitSettingsService: GitSettingsService,
     private gitService: GitService,
     private gitModelService: GitModelService,
-    private sourceService: SourceService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -241,7 +239,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
 
   onCreateSubmit(): void {
     if (this.form.valid) {
-      this.sourceService
+      this.gitModelService
         .addGitSource(
           this.projectService.project?.slug!,
           this.modelService.model?.slug!,
@@ -263,7 +261,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
       patchGitModel.primary = this.form.controls.primary.value;
 
       this.gitModelService
-        .updateGitInstance(
+        .updateGitRepository(
           this.projectService.project?.slug!,
           this.modelService.model?.slug!,
           this.gitModelId!,
@@ -301,7 +299,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
     };
   }
 
-  private fillFormWithGitModel(gitModel: GitModel): void {
+  private fillFormWithGitModel(gitModel: GetGitModel): void {
     this.urls.inputUrl.setValue(gitModel.path);
 
     const credentials = this.form.controls.credentials.controls;

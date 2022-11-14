@@ -19,7 +19,6 @@ import kubernetes.config
 import kubernetes.stream.stream
 
 from capellacollab.config import config
-from capellacollab.sessions.operators.abc import Operator
 
 log = logging.getLogger(__name__)
 cfg = config["operators"]["k8s"]
@@ -73,7 +72,7 @@ class File:
     children: t.Optional[list[File]] = None
 
 
-class KubernetesOperator(Operator):
+class KubernetesOperator:
     def __init__(self) -> None:
         self.v1_core = kubernetes.client.CoreV1Api()
         self.v1_apps = kubernetes.client.AppsV1Api()
@@ -139,6 +138,9 @@ class KubernetesOperator(Operator):
         service = self._get_service(id)
         return self._export_attrs(deployment, service)
 
+    def get_job_state(self, job_name: str) -> str:
+        return self._get_pod_state(label_selector="job-name=" + job_name)
+
     def get_cronjob_last_state(self, name: str) -> str:
         job = self._get_last_job_of_cronjob(name)
         if job:
@@ -153,6 +155,9 @@ class KubernetesOperator(Operator):
         else:
             return None
 
+    def get_job_starting_date(self, job_name: str) -> datetime | None:
+        return self._get_pod_starttime(label_selector="job-name=" + job_name)
+
     def _get_last_job_of_cronjob(self, name: str) -> str | None:
         jobs = [
             item
@@ -162,6 +167,19 @@ class KubernetesOperator(Operator):
             if item.metadata.owner_references
             and item.metadata.owner_references[0].name == name
         ]
+
+        if jobs:
+            return jobs[-1].metadata.name
+        else:
+            return None
+
+    def _get_last_job_by_label(
+        self, label_key: str, label_value: str
+    ) -> str | None:
+        jobs = self.v1_batch.list_namespaced_job(
+            namespace=cfg["namespace"],
+            label_selector=f"{label_key}={label_value}",
+        ).items
 
         if jobs:
             return jobs[-1].metadata.name
@@ -253,16 +271,47 @@ class KubernetesOperator(Operator):
         self._create_cronjob(
             name=id,
             image=image,
+            job_labels={"app.capellacollab/parent": id},
             environment=environment,
             schedule=schedule,
             timeout=timeout,
         )
         return id
 
-    def trigger_cronjob(self, name: str) -> None:
+    def create_job(
+        self,
+        image: str,
+        labels: t.Dict[str, str],
+        environment: t.Dict[str, str],
+        timeout=18000,
+    ) -> str:
+        id = self._generate_id()
+        self._create_job(
+            name=id,
+            image=image,
+            job_labels=labels,
+            environment=environment,
+            timeout=timeout,
+        )
+        return id
+
+    def trigger_cronjob(self, name: str, overwrite_environment: None) -> None:
         cronjob = self.v1_batch.read_namespaced_cron_job(
             namespace=cfg["namespace"], name=name
         )
+
+        job_spec = cronjob.spec.job_template.spec
+        if overwrite_environment:
+            for index, env in enumerate(
+                job_spec.template.spec.containers[0].env
+            ):
+                name = env.name
+                if env.name in overwrite_environment:
+                    job_spec.template.spec.containers[0].env[index] = {
+                        "name": name,
+                        "value": overwrite_environment[name],
+                    }
+
         job = kubernetes.client.V1Job(
             api_version="batch/v1",
             kind="Job",
@@ -280,8 +329,9 @@ class KubernetesOperator(Operator):
                         "uid": cronjob.metadata.uid,
                     }
                 ],
+                labels={"app.capellacollab/parent": name},
             ),
-            spec=cronjob.spec.job_template.spec,
+            spec=job_spec,
         )
         self.v1_batch.create_namespaced_job(
             namespace=cfg["namespace"], body=job
@@ -297,6 +347,15 @@ class KubernetesOperator(Operator):
         else:
             return None
 
+    def get_cronjob_last_run_by_label(
+        self, label_key: str, label_value: str
+    ) -> str | None:
+        job = self._get_last_job_by_label(label_key, label_value)
+        if job:
+            return self._get_pod_id(label_selector="job-name=" + job)
+        else:
+            return None
+
     def _get_pod_id(self, label_selector: str) -> str:
         try:
             pods = self.v1_core.list_namespaced_pod(
@@ -305,7 +364,7 @@ class KubernetesOperator(Operator):
             log.debug("Received k8s pods: %s", pods)
 
             return pods["items"][0]["metadata"]["name"]
-        except Exception as e:
+        except Exception:
             log.exception("Error fetching the last run id")
             return ""
 
@@ -409,6 +468,7 @@ class KubernetesOperator(Operator):
         self,
         name: str,
         image: str,
+        job_labels: t.Dict[str, str],
         environment: t.Dict[str, str],
         schedule="* * * * *",
         timeout=18000,
@@ -422,6 +482,7 @@ class KubernetesOperator(Operator):
             "spec": {
                 "schedule": schedule,
                 "jobTemplate": {
+                    "metadata": {"labels": job_labels},
                     "spec": {
                         "template": {
                             "spec": {
@@ -448,16 +509,68 @@ class KubernetesOperator(Operator):
                                     }
                                 ],
                                 "restartPolicy": "Never",
-                            }
+                            },
                         },
                         "backoffLimit": 1,
                         "activeDeadlineSeconds": timeout,
-                    }
+                    },
                 },
             },
         }
 
         return self.v1_batch.create_namespaced_cron_job(
+            namespace=cfg["namespace"], body=body
+        )
+
+    def _create_job(
+        self,
+        name: str,
+        image: str,
+        job_labels: t.Dict[str, str],
+        environment: t.Dict[str, str],
+        timeout=18000,
+    ) -> kubernetes.client.V1CronJob:
+        body = {
+            "kind": "Job",
+            "apiVersion": "batch/v1",
+            "metadata": {
+                "name": name,
+            },
+            "spec": {
+                "template": {
+                    "metadata": {"labels": job_labels},
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": name,
+                                "image": image,
+                                "imagePullPolicy": "Always",
+                                "env": [
+                                    {"name": key, "value": value}
+                                    for key, value in environment.items()
+                                ],
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "2",
+                                        "memory": "6Gi",
+                                    },
+                                    "requests": {
+                                        "cpu": "0.4",
+                                        "memory": "1.6Gi",
+                                    },
+                                },
+                                **cfg["cluster"]["containers"],
+                            }
+                        ],
+                        "restartPolicy": "Never",
+                    },
+                },
+                "backoffLimit": 1,
+                "activeDeadlineSeconds": timeout,
+            },
+        }
+
+        return self.v1_batch.create_namespaced_job(
             namespace=cfg["namespace"], body=body
         )
 

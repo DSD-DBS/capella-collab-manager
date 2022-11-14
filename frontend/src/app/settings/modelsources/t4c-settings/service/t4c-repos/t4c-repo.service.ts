@@ -5,7 +5,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { T4CInstance } from 'src/app/services/settings/t4c-instance.service';
 import { environment } from 'src/environments/environment';
@@ -26,7 +26,9 @@ export class T4CRepoService {
   }
 
   getT4CRepositories(instance_id: number): Observable<T4CServerRepository[]> {
-    return this.http.get<T4CServerRepository[]>(this.urlFactory(instance_id));
+    return this.http
+      .get<T4CServerRepository[]>(this.urlFactory(instance_id))
+      .pipe(tap((repositories) => this._repositories.next(repositories)));
   }
 
   createT4CRepository(

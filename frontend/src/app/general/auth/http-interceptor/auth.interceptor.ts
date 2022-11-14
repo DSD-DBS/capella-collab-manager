@@ -11,7 +11,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, throwError } from 'rxjs';
+import { Observable, EMPTY } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import {
   AuthService,
@@ -29,7 +29,6 @@ export class AuthInterceptor implements HttpInterceptor {
     const req = this.injectAccessToken(request);
     return next.handle(req).pipe(
       catchError((err) => {
-        throwError(() => err);
         if (err.status === 401) {
           if (err.error.detail.err_code == 'token_exp') {
             return this.refreshToken().pipe(
@@ -47,7 +46,7 @@ export class AuthInterceptor implements HttpInterceptor {
           }
         }
 
-        throw err;
+        return EMPTY;
       })
     );
   }

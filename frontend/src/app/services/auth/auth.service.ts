@@ -66,11 +66,10 @@ export class AuthService {
   }
 
   performTokenRefresh(): Observable<RefreshTokenResponse> {
-    const refreshToken = this._refreshToken;
     return this.http
       .put<PostTokenResponse>(
         environment.backend_url + '/authentication/tokens',
-        { refreshToken }
+        { refresh_token: this._refreshToken }
       )
       .pipe(
         tap({

@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
+import logging
 import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
@@ -31,6 +32,7 @@ from .models import (
 )
 
 router = APIRouter()
+log = logging.getLogger(__name__)
 
 
 @router.get(
@@ -49,6 +51,7 @@ def list_t4c_repositories(
     except RequestException:
         for repo in db_repositories:
             repo.status = T4CRepositoryStatus.INSTANCE_UNREACHABLE
+        log.debug("TeamForCapella server not reachable", exc_info=True)
         return T4CRepositories(
             payload=db_repositories,
             warnings=[
@@ -137,6 +140,7 @@ def delete_t4c_repository(
     try:
         interface.delete_repository(instance, repository.name)
     except HTTPException as e:
+        log.debug("Repository deletion failed partially", exc_info=True)
         response.status_code = status.HTTP_207_MULTI_STATUS
         return ResponseModel(
             warnings=[
@@ -151,6 +155,7 @@ def delete_t4c_repository(
             ]
         )
     except RequestException as e:
+        log.debug("Repository deletion failed partially", exc_info=True)
         response.status_code = status.HTTP_207_MULTI_STATUS
         return ResponseModel(
             warnings=[

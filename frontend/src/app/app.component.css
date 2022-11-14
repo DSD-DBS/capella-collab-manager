@@ -28,3 +28,7 @@
   min-height: calc(100vh - 2vh - 65px - 110px);
   margin: 1vh 1vw;
 }
+
+.navBar {
+  min-height: 65px;
+}

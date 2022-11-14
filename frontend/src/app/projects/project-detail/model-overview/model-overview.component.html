@@ -52,27 +52,36 @@
           <a
             mat-mini-fab
             matTooltip="Configure model"
-            [routerLink]="['model', model.slug]"
+            [routerLink]="['model', model.slug, 'metdata']"
           >
             <mat-icon>settings</mat-icon>
+          </a>
+          <a
+            mat-mini-fab
+            matTooltip="Configure model sources"
+            [routerLink]="['model', model.slug]"
+          >
+            <mat-icon>link</mat-icon>
           </a>
           <a mat-mini-fab disabled matTooltip="Download model (Coming soon)">
             <mat-icon>cloud_download</mat-icon>
           </a>
           <a
             mat-mini-fab
-            [disabled]="!model.t4c_models"
-            matTooltip="Start synchronization (Coming soon)"
+            matTooltip="Start synchronization"
+            (click)="openPipelineDialog(model)"
           >
             <mat-icon>sync</mat-icon>
           </a>
           <a
             *ngIf="model.git_models"
             mat-mini-fab
-            [disabled]="!model.git_models"
+            [disabled]="!getPrimaryGitModelURL(model)"
             matTooltip="Open git repository"
+            target="_blank"
+            [href]="getPrimaryGitModelURL(model)"
           >
-            <mat-icon>link</mat-icon>
+            <mat-icon>open_in_new</mat-icon>
           </a>
           <a
             *ngIf="model.t4c_models"

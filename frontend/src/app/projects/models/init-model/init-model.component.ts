@@ -15,13 +15,13 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { combineLatest, filter, map, Subscription, switchMap, tap } from 'rxjs';
 import { Model, ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
-import { SourceService } from 'src/app/services/source/source.service';
 import {
   Tool,
   ToolService,
   ToolNature,
   ToolVersion,
 } from 'src/app/settings/core/tools-settings/tool.service';
+import { GitModelService } from '../../project-detail/model-overview/model-detail/git-model.service';
 
 @Component({
   selector: 'app-init-model',
@@ -42,7 +42,7 @@ export class InitModelComponent implements OnInit, OnDestroy {
   constructor(
     public projectService: ProjectService,
     public modelService: ModelService,
-    public sourceService: SourceService,
+    public gitModelService: GitModelService,
     public toolService: ToolService
   ) {}
 
