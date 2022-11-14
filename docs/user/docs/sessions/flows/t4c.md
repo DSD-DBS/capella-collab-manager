@@ -3,10 +3,6 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
----
-title: TeamForCapella
----
-
 !!! Info
     Please [request a session](../request.md) before you continue with the instructions here.
 
