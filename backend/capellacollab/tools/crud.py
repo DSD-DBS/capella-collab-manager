@@ -60,7 +60,7 @@ def get_tool_by_name(db: Session, name: str) -> Tool:
 
 
 def get_versions(db: Session) -> t.List[Version]:
-    return db.query(Version).all()
+    return db.execute(select(Version)).scalars().all()
 
 
 def get_version_for_tool(
