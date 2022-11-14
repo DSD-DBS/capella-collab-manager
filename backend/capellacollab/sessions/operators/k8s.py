@@ -100,7 +100,7 @@ class KubernetesOperator:
         docker_image = get_image_for_tool_version(version)
 
         id = self._generate_id()
-        self._create_persistent_volume_claim(username)
+        self._create_persistent_volume_claim(username, version)
         deployment = self._create_deployment(
             docker_image,
             id,
@@ -111,7 +111,7 @@ class KubernetesOperator:
                 "FILESERVICE_PASSWORD": password,
                 "T4C_USERNAME": username,
             },
-            self._get_claim_name(username),
+            self._get_claim_name(username, version),
         )
         self._create_service(id, id)
         service = self._get_service(id)
@@ -620,12 +620,16 @@ class KubernetesOperator:
         }
         return self.v1_core.create_namespaced_service(cfg["namespace"], body)
 
-    def _create_persistent_volume_claim(self, username):
+    def _create_persistent_volume_claim(self, username: str, version: Version):
         body = {
             "apiVersion": "v1",
             "kind": "PersistentVolumeClaim",
             "metadata": {
-                "name": self._get_claim_name(username),
+                "name": self._get_claim_name(username, version),
+                "labels": {
+                    "tool": version.tool.name,
+                    "version": version.name,
+                },
             },
             "spec": {
                 "accessModes": [cfg["storageAccessMode"]],
@@ -642,10 +646,12 @@ class KubernetesOperator:
                 return
             raise
 
-    def _get_claim_name(self, username: str) -> str:
+    def _get_claim_name(self, username: str, version: Version) -> str:
         return (
             "persistent-session-"
             + username.replace("@", "-at-").replace(".", "-dot-").lower()
+            + "-"
+            + str(version.id)
         )
 
     def _get_service(self, id: str):
