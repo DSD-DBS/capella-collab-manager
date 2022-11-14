@@ -162,7 +162,6 @@ target: other
 mocks:
   oauth: False
 
-
 cluster:
   kind: Kubernetes # Kubernetes | OpenShift
 
@@ -173,6 +172,9 @@ cluster:
     sessions:
       containers:
       # The following values are appended to each container in the sessions namespace
+
+  pvc:
+    storageClassName: null
 
 # Specify the NO_PROXY environment for the backend
 # Leave it empty if not needed

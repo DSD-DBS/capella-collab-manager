@@ -13,6 +13,6 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: {{ .Values.database.backend.internal.storageClassName }}
+  storageClassName: {{ .Values.cluster.pvc.storageClassName }}
 {{ end }}
 {{ end }}
