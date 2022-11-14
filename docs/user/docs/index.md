@@ -5,9 +5,9 @@
 
 # Introduction
 
-Welcome onboard of the Modeling Collaboration Manager. This platform helps you co-work on architectures using tools like [Capella](https://www.eclipse.org/capella/).
+Welcome onboard of the Modeling Collaboration Manager. This platform helps you co-work on architectures using tools like [Capella](https://www.eclipse.org/capella/) and [Papyrus](https://www.eclipse.org/papyrus/).
 
-This platform wraps the modeling tools like Capella to create an environment where users can work directly in the project context without having to install or configure the tool. It also takes care of housekeeping for the modeling projects themselves. For example, [TeamForCapella](https://www.obeosoft.com/en/team-for-capella) projects are automatically backed up to git (configuration management).
+This platform wraps the modeling tools to create an environment where users can work directly in the project context without having to install or configure the tool. It also takes care of housekeeping for the modeling projects themselves. For example, [TeamForCapella](https://www.obeosoft.com/en/team-for-capella) projects are automatically backed up to git (configuration management).
 
 ## Ways of co-working on a Modeling Project
 
