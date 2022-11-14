@@ -10,6 +10,7 @@ NAMESPACE = t4c-manager
 SESSION_NAMESPACE = t4c-sessions
 PORT ?= 8080
 CAPELLA_VERSIONS = 5.0.0 5.2.0 6.0.0
+T4C_CLIENT_VERSIONS = 5.2.0 6.0.0
 CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 DOCKER_REGISTRY=$(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)
 
 # Adds support for msys
@@ -17,8 +18,7 @@ export MSYS_NO_PATHCONV := 1
 
 build: backend frontend docs capella
 
-build-t4c: build
-	$(CAPELLA_DOCKERIMAGES) t4c/client/remote t4c/client/backup
+build-t4c: build t4c-client
 
 backend:
 	python backend/generate_git_archival.py;
@@ -37,6 +37,14 @@ capella:
 
 capella-%: registry
 	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSION=$* capella/remote capella/readonly
+
+t4c-client:
+	for version in $(T4C_CLIENT_VERSIONS)
+	do $(MAKE) t4c-client-$$version
+	done
+
+t4c-client-%: registry
+	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSION=$* t4c/client/remote t4c/client/backup
 
 docs:
 	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user
