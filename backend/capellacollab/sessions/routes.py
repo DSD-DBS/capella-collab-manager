@@ -41,7 +41,6 @@ from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import get_operator
 from capellacollab.sessions.operators.k8s import KubernetesOperator
 from capellacollab.sessions.schema import (
-    DepthType,
     GetSessionsResponse,
     GuacamoleAuthentication,
     PostPersistentSessionRequest,
@@ -229,8 +228,6 @@ def request_persistent_session(
     tool = get_existing_tool(body.tool_id, db)
     version = get_exisiting_tool_version(tool.id, body.version_id, db)
 
-    docker_image = get_image_for_tool_version(db, version.id)
-
     t4c_password = None
     t4c_json = None
     t4c_license_secret = None
@@ -288,7 +285,7 @@ def request_persistent_session(
     session = operator.start_persistent_session(
         username=get_username(token),
         password=rdp_password,
-        docker_image=docker_image,
+        version=version,
         t4c_license_secret=t4c_license_secret,
         t4c_json=t4c_json,
     )

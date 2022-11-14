@@ -33,6 +33,7 @@ from capellacollab.sessions.operators import get_operator
 from capellacollab.tools.crud import (
     create_tool,
     create_version,
+    get_image_for_tool_version,
     get_natures,
     get_versions,
 )
@@ -94,11 +95,12 @@ class MockOperator:
         cls,
         username: str,
         password: str,
-        docker_image: str,
+        version: Version,
         t4c_license_secret: str | None,
         t4c_json: list[dict[str, str | int]] | None,
     ) -> t.Dict[str, t.Any]:
-        assert docker_image
+        assert version
+        docker_image = get_image_for_tool_version(version)
         cls.sessions.append({"docker_image": docker_image})
         return {
             "id": str(uuid1()),

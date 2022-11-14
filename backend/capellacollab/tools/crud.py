@@ -140,8 +140,7 @@ def create_nature(db: Session, tool_id: int, name: str) -> Nature:
     return nature
 
 
-def get_image_for_tool_version(db: Session, version_id: int) -> str:
-    version = get_version_by_id(version_id, db)
+def get_image_for_tool_version(version: Version) -> str:
     return version.tool.docker_image_template.replace("$version", version.name)
 
 

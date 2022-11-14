@@ -19,6 +19,8 @@ import kubernetes.config
 import kubernetes.stream.stream
 
 from capellacollab.config import config
+from capellacollab.projects.capellamodels.models import Version
+from capellacollab.tools.crud import get_image_for_tool_version
 
 log = logging.getLogger(__name__)
 cfg = config["operators"]["k8s"]
@@ -89,11 +91,13 @@ class KubernetesOperator:
         self,
         username: str,
         password: str,
-        docker_image: str,
+        version: Version,
         t4c_license_secret: str | None,
         t4c_json: list[dict[str, str | int]] | None,
     ) -> dict[str, t.Any]:
         log.info("Launching a persistent session for user %s", username)
+
+        docker_image = get_image_for_tool_version(version)
 
         id = self._generate_id()
         self._create_persistent_volume_claim(username)
