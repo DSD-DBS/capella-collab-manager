@@ -29,14 +29,14 @@ from capellacollab.sessions.database import (
     get_session_by_id,
     get_sessions_for_user,
 )
-from capellacollab.sessions.operators import Operator, get_operator
+from capellacollab.sessions.operators import get_operator
 from capellacollab.tools.crud import (
     create_tool,
     create_version,
     get_natures,
     get_versions,
 )
-from capellacollab.tools.models import Tool, Version
+from capellacollab.tools.models import Tool
 from capellacollab.users.crud import create_user
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import Role
@@ -202,7 +202,7 @@ def test_create_readonly_session_as_user(client, db, user, kubernetes):
     tool, version = next(
         (v.tool, v)
         for v in get_versions(db)
-        if v.tool.name == "Capella" and v.name == "5.0"
+        if v.tool.name == "Capella" and v.name == "5.0.0"
     )
 
     model = setup_git_model_for_user(db, user, version)

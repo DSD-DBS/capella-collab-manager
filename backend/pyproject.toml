@@ -58,6 +58,7 @@ dev = [
   "pylint",
   "pytest",
   "testcontainers",
+  "httpx",
 ]
 
 [project.entry-points."capellacollab.authentication.providers"]
