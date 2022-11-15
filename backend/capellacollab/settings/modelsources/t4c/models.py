@@ -134,7 +134,7 @@ class T4CInstanceBase(BaseModel):
         orm_mode = True
 
 
-class PatchT4CInstance(BaseModel):
+class FieldsT4CInstance(BaseModel):
     license: t.Optional[str]
     host: t.Optional[str]
     port: t.Optional[int]
@@ -168,6 +168,10 @@ class PatchT4CInstance(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class PatchT4CInstance(FieldsT4CInstance):
+    version_id: t.Optional[int]
 
 
 class T4CInstanceComplete(T4CInstanceBase):

@@ -12,11 +12,21 @@ from alembic.migration import MigrationContext
 from sqlalchemy import inspect
 from sqlalchemy.orm import sessionmaker
 
+import capellacollab.projects.capellamodels.modelsources.t4c.crud as t4c_models
 import capellacollab.projects.crud as projects
+import capellacollab.settings.modelsources.t4c.crud as t4c_instances
+import capellacollab.settings.modelsources.t4c.repositories.crud as t4c_repositories
 import capellacollab.tools.crud as tools
 import capellacollab.users.crud as users
 from capellacollab.config import config
 from capellacollab.core.database import Base
+from capellacollab.settings.modelsources.t4c.models import (
+    DatabaseT4CInstance,
+    Protocol,
+)
+from capellacollab.settings.modelsources.t4c.repositories.models import (
+    CreateT4CRepository,
+)
 from capellacollab.tools.models import Tool
 from capellacollab.users.models import Role
 
@@ -40,6 +50,7 @@ def migrate_db(engine):
             current_rev = context.get_current_revision()
 
         tools_exist = inspect(engine).has_table("tools")
+        repositories_exist = inspect(engine).has_table("t4c_repositories")
         session_maker = sessionmaker(bind=engine)
 
         with session_maker() as session:
@@ -56,6 +67,9 @@ def migrate_db(engine):
 
             if not tools_exist:
                 create_tools(session)
+
+            if not repositories_exist:
+                create_t4c_instance_and_repositories(session)
 
 
 def initialize_admin_user(db):
@@ -99,3 +113,31 @@ def create_tools(db):
     tools.create_nature(db, papyrus.id, "UML 2.5")
     tools.create_nature(db, papyrus.id, "SysML 1.4")
     tools.create_nature(db, papyrus.id, "SysML 1.1")
+
+
+def create_t4c_instance_and_repositories(db):
+    LOGGER.info("Initialized T4C instance and repositories")
+    tool = tools.get_tool_by_name(db, "Capella")
+    version = tools.get_version_by_name(db, tool, "5.2.0")
+    default_instance = DatabaseT4CInstance(
+        name="default",
+        license="placeholder",
+        protocol=Protocol.tcp,
+        host="localhost",
+        port=2036,
+        cdo_port=12036,
+        usage_api="http://localhost:8086",
+        rest_api="http://localhost:8081/api/v1.0",
+        username="admin",
+        password="password",
+        version=version,
+    )
+    t4c_instances.create_t4c_instance(default_instance, db)
+    for t4c_model in t4c_models.get_all_t4c_models(db):
+        repository = CreateT4CRepository(
+            name=t4c_model.name,
+        )
+        t4c_repository = t4c_repositories.create_t4c_repository(
+            repository, default_instance, db
+        )
+        t4c_models.set_repository_for_t4c_model(db, t4c_model, t4c_repository)

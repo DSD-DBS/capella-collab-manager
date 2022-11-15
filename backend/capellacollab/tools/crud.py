@@ -55,8 +55,12 @@ def delete_tool(db: Session, tool: Tool) -> None:
     db.commit()
 
 
+def get_tool_by_name(db: Session, name: str) -> Tool:
+    return db.execute(select(Tool).where(Tool.name == name)).scalar_one()
+
+
 def get_versions(db: Session) -> t.List[Version]:
-    return db.query(Version).all()
+    return db.execute(select(Version)).scalars().all()
 
 
 def get_version_for_tool(
@@ -71,6 +75,12 @@ def get_version_for_tool(
 
 def get_version_by_id(id_: int, db: Session) -> Version:
     return db.execute(select(Version).where(Version.id == id_)).scalar_one()
+
+
+def get_version_by_name(db: Session, tool: Tool, name: str) -> Version:
+    return db.execute(
+        select(Version).where(Version.tool == tool).where(Version.name == name)
+    ).scalar_one()
 
 
 def update_version(version: Version, db: Session) -> Version:
