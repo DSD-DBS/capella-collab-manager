@@ -24,7 +24,8 @@ def upgrade():
         "EASEBackup", sa.Column("reference", sa.String(), nullable=True)
     )
     op.add_column(
-        "git_models", sa.Column("username", sa.String(), nullable=True)
+        "git_models",
+        sa.Column("username", sa.String(), nullable=True, server_default=""),
     )
     op.add_column(
         "git_models", sa.Column("password", sa.String(), nullable=True)

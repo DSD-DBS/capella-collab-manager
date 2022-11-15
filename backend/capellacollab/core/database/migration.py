@@ -12,6 +12,7 @@ from alembic.migration import MigrationContext
 from sqlalchemy import inspect
 from sqlalchemy.orm import sessionmaker
 
+import capellacollab.projects.capellamodels.crud as models
 import capellacollab.projects.capellamodels.modelsources.t4c.crud as t4c_models
 import capellacollab.projects.crud as projects
 import capellacollab.settings.modelsources.t4c.crud as t4c_instances
@@ -100,19 +101,25 @@ def create_tools(db):
     tools.create_tool(db, capella)
     tools.create_tool(db, papyrus)
 
-    tools.create_version(db, capella.id, "6.0.0", True)
+    default_version = tools.create_version(db, capella.id, "6.0.0", True)
     tools.create_version(db, capella.id, "5.2.0")
     tools.create_version(db, capella.id, "5.0.0")
 
     tools.create_version(db, papyrus.id, "6.1")
     tools.create_version(db, papyrus.id, "6.0")
 
-    tools.create_nature(db, capella.id, "model")
+    default_nature = tools.create_nature(db, capella.id, "model")
     tools.create_nature(db, capella.id, "library")
 
     tools.create_nature(db, papyrus.id, "UML 2.5")
     tools.create_nature(db, papyrus.id, "SysML 1.4")
     tools.create_nature(db, papyrus.id, "SysML 1.1")
+
+    for model in models.get_all_models(db):
+        models.set_tool_for_model(db, model, capella)
+        models.set_tool_details_for_model(
+            db, model, default_version, default_nature
+        )
 
 
 def create_t4c_instance_and_repositories(db):
