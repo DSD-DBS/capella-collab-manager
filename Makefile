@@ -32,19 +32,14 @@ frontend:
 
 capella:
 	for version in $(CAPELLA_VERSIONS)
-	do $(MAKE) capella-$$version
+	do $(CAPELLA_DOCKERIMAGES) CAPELLA_VERSION=$$version capella/remote capella/readonly
 	done
-
-capella-%: registry
-	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSION=$* capella/remote capella/readonly
 
 t4c-client:
 	for version in $(T4C_CLIENT_VERSIONS)
-	do $(MAKE) t4c-client-$$version
+	do $(CAPELLA_DOCKERIMAGES) CAPELLA_VERSION=$$version t4c/client/remote t4c/client/backup
 	done
 
-t4c-client-%: registry
-	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSION=$* t4c/client/remote t4c/client/backup
 
 docs:
 	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user
