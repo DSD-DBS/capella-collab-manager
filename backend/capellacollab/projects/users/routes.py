@@ -9,12 +9,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from requests import HTTPError
 from sqlalchemy.orm import Session
 
-import capellacollab.projects.users.crud as project_users
 import capellacollab.users.crud as users
 from capellacollab.core.authentication.database import (
     ProjectRoleVerification,
     RoleVerification,
-    verify_project_role,
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
@@ -68,7 +66,7 @@ def get_current_user(
     project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
-) -> ProjectUserAssociation:
+) -> ProjectUserAssociation | ProjectUser:
     if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
         return ProjectUser(
             role=ProjectUserRole.ADMIN,
