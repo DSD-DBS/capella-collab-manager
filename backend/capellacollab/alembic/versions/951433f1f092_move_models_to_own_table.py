@@ -90,21 +90,15 @@ def upgrade():
     # Update values of foreign keys
     for model in git_models:
         id = model.id
-        name = model.name
         project_name = model.project_name
-        model_id = conn.execute(
-            f"INSERT INTO capella_models (name, editing_mode, model_type, project_name) VALUES ('{name}', 'GIT', 'PROJECT', '{project_name}') RETURNING *;"
-        ).fetchone()[0]
 
+        model_id = get_or_create_model(conn, project_name)
         op.execute(f"UPDATE git_models SET model_id={model_id} WHERE id={id}")
 
     for model in t4c_models:
         id = model.id
-        name = model.name
         project_name = model.project_name
-        model_id = conn.execute(
-            f"INSERT INTO capella_models (name, editing_mode, model_type, project_name) VALUES ('{name}', 'T4C', 'PROJECT', '{project_name}') RETURNING *;"
-        ).fetchone()[0]
+        model_id = get_or_create_model(conn, project_name)
 
         op.execute(f"UPDATE t4c_models SET model_id={model_id} WHERE id={id}")
 
@@ -189,3 +183,18 @@ def downgrade():
 
     op.alter_column("git_models", "project_name", nullable=False)
     op.alter_column("t4c_models", "project_name", nullable=False)
+
+
+def get_or_create_model(conn, project_name) -> int:
+    models = conn.execute(
+        f"SELECT id FROM capella_models WHERE project_name='{project_name}';"
+    ).fetchone()
+
+    if models:
+        model_id = models[0]
+    else:
+        model_id = conn.execute(
+            f"INSERT INTO capella_models (name, editing_mode, model_type, project_name) VALUES ('{project_name}', 'GIT', 'PROJECT', '{project_name}') RETURNING *;"
+        ).fetchone()[0]
+
+    return model_id
