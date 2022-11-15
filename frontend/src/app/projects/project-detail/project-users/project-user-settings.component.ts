@@ -20,10 +20,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { ProjectUser, User } from 'src/app/schemes';
+import { ProjectUser } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { ProjectUserService } from 'src/app/services/project-user/project-user.service';
 import { Project } from 'src/app/services/project/project.service';
-import { UserService } from 'src/app/services/user/user.service';
+import { User, UserService } from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'app-project-user-settings',

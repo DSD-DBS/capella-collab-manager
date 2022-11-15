@@ -6,7 +6,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Session, User } from 'src/app/schemes';
+import { Session } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../auth/auth.service';
 
@@ -74,4 +74,10 @@ export class UserService {
       role,
     });
   }
+}
+
+export interface User {
+  id: number;
+  name: string;
+  role: 'user' | 'administrator';
 }

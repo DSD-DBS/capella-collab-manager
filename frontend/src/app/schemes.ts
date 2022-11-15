@@ -20,27 +20,6 @@ export interface Session {
   t4c_password: string;
 }
 
-export interface User {
-  id: number;
-  name: string;
-  role: 'user' | 'administrator';
-}
-
-export type Warnings = 'LICENCE_LIMIT' | 'NO_GIT_MODEL_DEFINED';
-
-export interface ProjectUser {
-  project_name: string;
-  permission: 'read' | 'write';
-  role: 'user' | 'manager' | 'administrator';
-  warnings: Array<Warnings>;
-  user: User;
-}
-
-export interface SessionUsage {
-  free: number;
-  total: number;
-}
-
 export interface PathNode {
   path: string;
   name: string;
