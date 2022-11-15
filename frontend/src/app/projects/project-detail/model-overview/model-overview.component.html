@@ -10,6 +10,7 @@
       <a
         mat-button
         [routerLink]="['/project', project.slug, 'models', 'create']"
+        *ngIf="projectUserService.verifyRole('manager')"
       >
         <mat-icon id="add-icon">add</mat-icon>
       </a>
