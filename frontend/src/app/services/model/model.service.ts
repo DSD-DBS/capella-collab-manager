@@ -88,7 +88,7 @@ export class ModelService {
     description: string
   ): Observable<Model> {
     return this.http.patch<Model>(
-      `${this.base_url}${project_slug}/models/${model_slug}/description`,
+      `${this.base_url}${project_slug}/models/${model_slug}/`,
       { description }
     );
   }
