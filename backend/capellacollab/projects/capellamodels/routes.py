@@ -94,7 +94,7 @@ def patch_capella_model(
     db: Session = Depends(get_db),
 ) -> DatabaseCapellaModel:
 
-    if type(body) == CapellaModelDescription:
+    if isinstance(body, CapellaModelDescription):
         return crud.update_model(db, model, body.description)
 
     version = get_version_by_id_or_raise(db, body.version_id)
