@@ -13,8 +13,6 @@ import capellacollab.core.database as database
 from capellacollab.core.authentication.database import (
     ProjectRoleVerification,
     RoleVerification,
-    verify_admin,
-    verify_project_role,
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.projects.capellamodels.injectables import (
@@ -30,7 +28,6 @@ from capellacollab.projects.capellamodels.modelsources.t4c.models import (
     DatabaseT4CModel,
     ResponseT4CModel,
     SubmitT4CModel,
-    T4CRepositoryWithModels,
 )
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.models import ProjectUserRole
@@ -72,7 +69,7 @@ def list_t4c_models(
 
 
 @router.get(
-    "/{t4c_model_id}/",
+    "/{t4c_model_id}",
     response_model=ResponseT4CModel,
     dependencies=[Depends(ProjectRoleVerification(ProjectUserRole.USER))],
 )
