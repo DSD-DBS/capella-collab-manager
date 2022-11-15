@@ -16,7 +16,7 @@ CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 DOCKER_REGI
 # Adds support for msys
 export MSYS_NO_PATHCONV := 1
 
-build: backend frontend docs capella
+build: backend frontend docs
 
 build-t4c: build t4c-client
 
@@ -50,10 +50,10 @@ docs:
 	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs
 
-deploy: build build-capella helm-deploy open rollout
+deploy: build capella helm-deploy open rollout
 
 # Deploy with full T4C client support:
-deploy-t4c: build build-t4c helm-deploy open rollout
+deploy-t4c: build t4c-client helm-deploy open rollout
 
 deploy-without-build: helm-deploy open rollout
 
