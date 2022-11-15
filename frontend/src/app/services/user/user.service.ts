@@ -6,7 +6,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Session, User } from 'src/app/schemes';
+import { Session } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../auth/auth.service';
 
@@ -30,10 +30,7 @@ export class UserService {
     }
   }
 
-  createUser(
-    username: string,
-    role: 'user' | 'administrator'
-  ): Observable<User> {
+  createUser(username: string, role: UserRole): Observable<User> {
     return this.http.post<User>(this.BACKEND_URL_PREFIX, {
       name: username,
       role: role,
@@ -66,12 +63,17 @@ export class UserService {
     );
   }
 
-  updateRoleOfUser(
-    user: User,
-    role: 'user' | 'administrator'
-  ): Observable<User> {
+  updateRoleOfUser(user: User, role: UserRole): Observable<User> {
     return this.http.patch<User>(this.BACKEND_URL_PREFIX + user.id + '/roles', {
       role,
     });
   }
 }
+
+export type User = {
+  id: number;
+  name: string;
+  role: UserRole;
+};
+
+export type UserRole = 'user' | 'administrator';

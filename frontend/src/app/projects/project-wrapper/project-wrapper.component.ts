@@ -6,8 +6,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, Subscription, connectable, map, switchMap } from 'rxjs';
-import { ModelService } from 'src/app/services/model/model.service';
-import { ProjectService } from 'src/app/services/project/project.service';
+import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
+import { Model, ModelService } from 'src/app/services/model/model.service';
+import {
+  Project,
+  ProjectService,
+} from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-project-wrapper',
@@ -17,15 +21,17 @@ import { ProjectService } from 'src/app/services/project/project.service';
 export class ProjectWrapperComponent implements OnInit, OnDestroy {
   projectSubscription?: Subscription;
   modelsSubscription?: Subscription;
+  projectUserSubscription?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
     public projectService: ProjectService,
-    public modelService: ModelService
+    public modelService: ModelService,
+    private projectUserService: ProjectUserService
   ) {}
 
   ngOnInit(): void {
-    const param_subject = connectable<string>(
+    const paramSubject = connectable<string>(
       this.route.params.pipe(map((params) => params.project)),
       {
         connector: () => new Subject(),
@@ -33,37 +39,49 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
       }
     );
 
-    this.projectSubscription = param_subject
+    this.projectSubscription = paramSubject
       .pipe(
-        switchMap(
-          this.projectService.getProjectBySlug.bind(this.projectService)
+        switchMap((projectSlug: string) =>
+          this.projectService.getProjectBySlug(projectSlug)
         )
       )
       .subscribe({
-        next: this.projectService._project.next.bind(
-          this.projectService._project
-        ),
-        error: (_) => {
+        next: (project: Project) => this.projectService._project.next(project),
+        error: () => {
           this.projectService._project.next(undefined);
         },
       });
 
-    this.modelsSubscription = param_subject
-      .pipe(switchMap(this.modelService.list.bind(this.modelService)))
+    this.modelsSubscription = paramSubject
+      .pipe(
+        switchMap((projectSlug: string) =>
+          this.modelService.getModels(projectSlug)
+        )
+      )
       .subscribe({
-        next: this.modelService._models.next.bind(this.modelService._models),
-        error: (_) => {
+        next: (model: Model[]) => this.modelService._models.next(model),
+        error: () => {
           this.modelService._models.next(undefined);
         },
       });
 
-    param_subject.connect();
+    this.projectUserSubscription = paramSubject
+      .pipe(
+        switchMap((projectSlug: string) =>
+          this.projectUserService.getOwnProjectUser(projectSlug)
+        )
+      )
+      .subscribe();
+
+    paramSubject.connect();
   }
 
   ngOnDestroy(): void {
     this.projectSubscription?.unsubscribe();
     this.modelsSubscription?.unsubscribe();
+    this.projectUserSubscription?.unsubscribe();
     this.projectService._project.next(undefined);
     this.modelService._models.next(undefined);
+    this.projectUserService.projectUser.next(undefined);
   }
 }

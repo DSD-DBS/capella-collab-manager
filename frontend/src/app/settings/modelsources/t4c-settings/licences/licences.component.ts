@@ -5,8 +5,8 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, Input } from '@angular/core';
-import { SessionUsage } from 'src/app/schemes';
 import {
+  SessionUsage,
   T4CInstance,
   T4CInstanceService,
 } from 'src/app/services/settings/t4c-instance.service';

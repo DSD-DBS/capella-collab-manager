@@ -6,6 +6,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, filter, map } from 'rxjs';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
+import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
@@ -18,7 +19,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   constructor(
     private navbarService: NavBarService,
-    public projectService: ProjectService
+    public projectService: ProjectService,
+    public projectUserService: ProjectUserService
   ) {}
 
   ngOnInit(): void {

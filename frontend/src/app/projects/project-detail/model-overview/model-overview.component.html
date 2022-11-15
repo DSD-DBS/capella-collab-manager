@@ -10,6 +10,7 @@
       <a
         mat-button
         [routerLink]="['/project', project.slug, 'models', 'create']"
+        *ngIf="projectUserService.verifyRole('manager')"
       >
         <mat-icon id="add-icon">add</mat-icon>
       </a>
@@ -53,6 +54,7 @@
             mat-mini-fab
             matTooltip="Configure model"
             [routerLink]="['model', model.slug, 'metadata']"
+            *ngIf="projectUserService.verifyRole('manager')"
           >
             <mat-icon>settings</mat-icon>
           </a>
@@ -60,6 +62,7 @@
             mat-mini-fab
             matTooltip="Configure model sources"
             [routerLink]="['model', model.slug]"
+            *ngIf="projectUserService.verifyRole('manager')"
           >
             <mat-icon>link</mat-icon>
           </a>
@@ -70,11 +73,14 @@
             mat-mini-fab
             matTooltip="Start synchronization"
             (click)="openPipelineDialog(model)"
+            *ngIf="projectUserService.verifyRole('manager')"
           >
             <mat-icon>sync</mat-icon>
           </a>
           <a
-            *ngIf="model.git_models"
+            *ngIf="
+              model.git_models && projectUserService.verifyPermission('read')
+            "
             mat-mini-fab
             [disabled]="!getPrimaryGitModelURL(model)"
             matTooltip="Open git repository"
@@ -84,7 +90,9 @@
             <mat-icon>open_in_new</mat-icon>
           </a>
           <a
-            *ngIf="model.t4c_models"
+            *ngIf="
+              model.t4c_models && projectUserService.verifyPermission('write')
+            "
             routerLink="/workspaces"
             mat-mini-fab
             matTooltip="Request persistent session"
@@ -93,7 +101,9 @@
           </a>
           <button
             mat-mini-fab
-            *ngIf="model.git_models"
+            *ngIf="
+              model.git_models && projectUserService.verifyPermission('read')
+            "
             matTooltip="Open readonly session"
             (click)="requestSession(model)"
           >

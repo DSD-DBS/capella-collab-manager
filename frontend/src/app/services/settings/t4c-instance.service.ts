@@ -6,7 +6,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SessionUsage } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
 
 export type Protocol = 'tcp' | 'ssl' | 'ws' | 'wss';
@@ -69,3 +68,8 @@ export class T4CInstanceService {
     );
   }
 }
+
+export type SessionUsage = {
+  free: number;
+  total: number;
+};
