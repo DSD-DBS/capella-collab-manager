@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import typing as t
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import Session
@@ -19,6 +21,7 @@ from .backups.routes import router as router_backups
 from .injectables import get_existing_capella_model, get_existing_project
 from .models import (
     CapellaModel,
+    CapellaModelDescription,
     DatabaseCapellaModel,
     ResponseModel,
     ToolDetails,
@@ -85,12 +88,16 @@ def create_new(
     ],
     tags=["Projects - Models"],
 )
-def set_tool_details(
-    tool_details: ToolDetails,
+def patch_capella_model(
+    body: t.Union[ToolDetails, CapellaModelDescription],
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ) -> DatabaseCapellaModel:
-    version = get_version_by_id_or_raise(db, tool_details.version_id)
+
+    if isinstance(body, CapellaModelDescription):
+        return crud.update_model(db, model, body.description)
+
+    version = get_version_by_id_or_raise(db, body.version_id)
     if version.tool != model.tool:
         raise HTTPException(
             409,
@@ -99,7 +106,7 @@ def set_tool_details(
             },
         )
 
-    nature = get_nature_by_id_or_raise(db, tool_details.nature_id)
+    nature = get_nature_by_id_or_raise(db, body.nature_id)
     if nature.tool != model.tool:
         raise HTTPException(
             409,

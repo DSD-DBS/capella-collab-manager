@@ -1,0 +1,30 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="wrapper flex-center">
+  <mat-card *ngIf="modelService.model" class="section-card">
+    <mat-card-title>{{ modelService.model.name }}</mat-card-title>
+    <form (submit)="onSubmit()">
+      <mat-form-field>
+        <mat-label>Description</mat-label>
+        <textarea
+          [formControl]="form"
+          matInput
+          rows="3"
+          style="resize: none"
+        ></textarea>
+      </mat-form-field>
+      <br />
+      <div class="flex-space-between">
+        <a mat-button [routerLink]="'../../..'"
+          ><mat-icon>arrow_back</mat-icon>Back</a
+        >
+        <button mat-flat-button color="primary" type="submit">
+          Update description
+        </button>
+      </div>
+    </form>
+  </mat-card>
+</div>
