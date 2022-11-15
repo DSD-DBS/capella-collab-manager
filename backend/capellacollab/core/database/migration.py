@@ -123,13 +123,13 @@ def create_t4c_instance_and_repositories(db):
         name="default",
         license="placeholder",
         protocol=Protocol.tcp,
-        host="placeholder",
+        host="localhost",
         port=2036,
         cdo_port=12036,
-        usage_api="http://placeholder.com",
-        rest_api="http://placeholder.com",
-        username="placeholder",
-        password="placeholder",
+        usage_api="http://localhost:8086",
+        rest_api="http://localhost:8081/api/v1.0",
+        username="admin",
+        password="password",
         version=version,
     )
     t4c_instances.create_t4c_instance(default_instance, db)
