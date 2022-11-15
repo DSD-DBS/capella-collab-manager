@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import typing as t
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import Session
@@ -87,7 +89,7 @@ def create_new(
     tags=["Projects - Models"],
 )
 def patch_capella_model(
-    body: ToolDetails | CapellaModelDescription,
+    body: t.Union[ToolDetails, CapellaModelDescription],
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ) -> DatabaseCapellaModel:
