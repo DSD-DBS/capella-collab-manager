@@ -105,6 +105,16 @@ def create_new_model(
     return model
 
 
+def set_tool_for_model(
+    db: Session,
+    model: DatabaseCapellaModel,
+    tool: Tool,
+) -> DatabaseCapellaModel:
+    model.tool = tool
+    db.commit()
+    return model
+
+
 def set_tool_details_for_model(
     db: Session,
     model: DatabaseCapellaModel,

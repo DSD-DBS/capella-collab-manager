@@ -116,6 +116,7 @@ def create_tools(db):
     tools.create_nature(db, papyrus.id, "SysML 1.1")
 
     for model in models.get_all_models(db):
+        models.set_tool_for_model(db, model, capella)
         models.set_tool_details_for_model(
             db, model, default_version, default_nature
         )
