@@ -46,7 +46,7 @@ export class ModelDescriptionComponent implements OnInit {
         )
         .pipe(
           switchMap((_model) =>
-            this.modelService.list(this.projectService.project!.slug)
+            this.modelService.getModels(this.projectService.project!.slug)
           )
         )
         .subscribe((models) => {
