@@ -14,7 +14,7 @@ import {
 } from '@angular/forms';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { ProjectUserService } from 'src/app/services/project-user/project-user.service';
+import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { User, UserService } from 'src/app/services/user/user.service';
 
 @Component({
@@ -35,7 +35,7 @@ export class UserSettingsComponent implements OnInit {
 
   constructor(
     public userService: UserService,
-    public repoUserService: ProjectUserService,
+    public projectUserService: ProjectUserService,
     private navbarService: NavBarService,
     private toastService: ToastService
   ) {

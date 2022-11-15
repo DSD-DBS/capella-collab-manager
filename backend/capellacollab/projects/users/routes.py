@@ -30,6 +30,7 @@ from capellacollab.projects.users.models import (
     ProjectUserPermission,
     ProjectUserRole,
 )
+from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role, User
 
 from . import crud
@@ -59,6 +60,23 @@ def check_user_not_in_project(project: DatabaseProject, user: DatabaseUser):
                 "reason": "The user already exists in this project.",
             },
         )
+
+
+@router.get("/current", response_model=ProjectUser)
+def get_current_user(
+    user: DatabaseUser = Depends(get_own_user),
+    project: DatabaseProject = Depends(get_existing_project),
+    db: Session = Depends(get_db),
+    token: JWTBearer = Depends(JWTBearer()),
+) -> ProjectUserAssociation:
+    print(RoleVerification(required_role=Role.ADMIN, verify=False))
+    if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
+        return ProjectUser(
+            role=ProjectUserRole.ADMIN,
+            permission=ProjectUserPermission.WRITE,
+            user=user,
+        )
+    return crud.get_user_of_project(db, project, user)
 
 
 @router.get(
@@ -103,7 +121,7 @@ def add_user_to_project(
     "/{user_id}",
     status_code=204,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
 )
 def patch_project_user(
@@ -112,33 +130,29 @@ def patch_project_user(
     project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
 ):
-    if ProjectRoleVerification(
-        required_role=ProjectUserRole.MANAGER
-    ) and check_user_not_admin(user):
-        if patch_project_user.role:
-            crud.change_role_of_user_in_project(
-                db, project, user, patch_project_user.role
-            )
+    check_user_not_admin(user)
+    if patch_project_user.role:
+        crud.change_role_of_user_in_project(
+            db, project, user, patch_project_user.role
+        )
 
-        if patch_project_user.permission:
-            repo_user = crud.get_user_of_project(
-                db,
-                project,
-                user,
-            )
+    if patch_project_user.permission:
+        repo_user = crud.get_user_of_project(
+            db,
+            project,
+            user,
+        )
 
-            if repo_user.role == ProjectUserRole.MANAGER:
-                raise HTTPException(
-                    status_code=403,
-                    detail={
-                        "reason": "You are not allowed to set the permission of project leads!"
-                    },
-                )
-            crud.change_permission_of_user_in_project(
-                db, project, user, patch_project_user.permission
+        if repo_user.role == ProjectUserRole.MANAGER:
+            raise HTTPException(
+                status_code=403,
+                detail={
+                    "reason": "You are not allowed to set the permission of project leads!"
+                },
             )
-
-    return None
+        crud.change_permission_of_user_in_project(
+            db, project, user, patch_project_user.permission
+        )
 
 
 @router.delete(
@@ -152,7 +166,6 @@ def remove_user_from_project(
     project: DatabaseProject = Depends(get_existing_project),
     user: DatabaseUser = Depends(get_existing_user),
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ):
     check_user_not_admin(user)
     crud.delete_user_from_project(db, project, user)

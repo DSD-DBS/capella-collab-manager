@@ -6,7 +6,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { Model, ModelService } from 'src/app/services/model/model.service';
 import {
   Project,
@@ -30,7 +30,7 @@ export class ModelOverviewComponent implements OnInit {
     private dialog: MatDialog,
     public sessionService: SessionService,
     private router: Router,
-    private toastService: ToastService
+    public projectUserService: ProjectUserService
   ) {}
 
   ngOnInit(): void {

@@ -53,8 +53,8 @@ export class ModelService {
 
   constructor(private http: HttpClient) {}
 
-  list(project_slug: string): Observable<Model[]> {
-    return this.http.get<Model[]>(`${this.base_url}${project_slug}/models/`);
+  getModels(project_slug: string): Observable<Model[]> {
+    return this.http.get<Model[]>(`${this.base_url}${project_slug}/models`);
   }
 
   getModelBySlug(slug: string, project_slug: string): Observable<Model> {

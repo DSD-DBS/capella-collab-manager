@@ -5,7 +5,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { User } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
 
@@ -19,6 +19,42 @@ export class ProjectUserService {
   PERMISSIONS = { read: 'Read only', write: 'Read/Write' };
   ROLES = { user: 'User', manager: 'Manager' };
   ADVANCED_ROLES = { administrator: 'Administrator', ...this.ROLES };
+
+  projectUser = new BehaviorSubject<ProjectUser | undefined>(undefined);
+
+  verifyRole(requiredRole: ProjectUserRole): boolean {
+    if (!this.projectUser.value) {
+      return false;
+    }
+
+    const roles = ['user', 'manager', 'administrator'];
+    return (
+      roles.indexOf(requiredRole) <= roles.indexOf(this.projectUser.value.role)
+    );
+  }
+
+  verifyPermission(requiredPermission: ProjectUserPermission): boolean {
+    if (!this.projectUser.value) {
+      return false;
+    }
+    const permissions = ['read', 'write'];
+    return (
+      permissions.indexOf(requiredPermission) <=
+      permissions.indexOf(this.projectUser.value.permission)
+    );
+  }
+
+  getOwnProjectUser(projectSlug: string): Observable<ProjectUser> {
+    return this.http
+      .get<ProjectUser>(
+        this.BACKEND_URL_PREFIX + projectSlug + '/users/current'
+      )
+      .pipe(
+        tap((projectUser) => {
+          this.projectUser.next(projectUser);
+        })
+      );
+  }
 
   getProjectUsers(project_slug: string): Observable<ProjectUser[]> {
     return this.http.get<ProjectUser[]>(
@@ -80,7 +116,10 @@ export class ProjectUserService {
 
 export type ProjectUser = {
   project_name: string;
-  permission: 'read' | 'write';
-  role: 'user' | 'manager' | 'administrator';
+  permission: ProjectUserPermission;
+  role: ProjectUserRole;
   user: User;
 };
+
+export type ProjectUserPermission = 'read' | 'write';
+export type ProjectUserRole = 'user' | 'manager' | 'administrator';

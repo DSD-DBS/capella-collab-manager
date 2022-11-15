@@ -93,7 +93,7 @@ export class CreateModelBaseComponent implements OnInit {
       modelConnectable
         .pipe(
           switchMap((_) =>
-            this.modelService.list(this.projectService.project!.slug)
+            this.modelService.getModels(this.projectService.project!.slug)
           )
         )
         .subscribe((value) => {

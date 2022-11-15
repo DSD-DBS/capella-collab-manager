@@ -5,17 +5,20 @@
 
 <div class="flexbox">
   <div class="item">
-    <app-project-metadata
-      *ngIf="projectService.project"
-      [project]="projectService.project"
-    ></app-project-metadata>
-    <mat-divider></mat-divider>
+    <div
+      *ngIf="projectService.project && projectUserService.verifyRole('manager')"
+    >
+      <app-project-metadata
+        [project]="projectService.project"
+      ></app-project-metadata>
+      <mat-divider></mat-divider>
+    </div>
     <app-model-overview
       *ngIf="projectService.project"
       [project]="projectService.project"
     ></app-model-overview>
   </div>
-  <div class="users">
+  <div class="users" *ngIf="projectUserService.verifyRole('manager')">
     <app-project-user-settings
       *ngIf="projectService.project"
       [project]="projectService.project"

@@ -22,7 +22,7 @@ def get_users_of_project(db: Session, projects_name: str):
 
 
 def get_user_of_project(
-    db: Session, project: DatabaseProject, user: DatabaseProject
+    db: Session, project: DatabaseProject, user: DatabaseUser
 ) -> ProjectUserAssociation:
     return (
         db.query(ProjectUserAssociation)

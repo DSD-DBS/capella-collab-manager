@@ -20,8 +20,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { ProjectUser } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import { ProjectUserService } from 'src/app/services/project-user/project-user.service';
+import {
+  ProjectUser,
+  ProjectUserService,
+} from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { Project } from 'src/app/services/project/project.service';
 import { User, UserService } from 'src/app/services/user/user.service';
 
@@ -57,7 +59,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
   ) {}
 
   ngOnChanges(_changes: SimpleChanges): void {
-    this.refreshRepoUsers();
+    this.refreshProjectUsers();
   }
 
   get username(): FormControl {
@@ -95,7 +97,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
     };
   }
 
-  refreshRepoUsers(): void {
+  refreshProjectUsers(): void {
     this.projectUserService
       .getProjectUsers(this.project.slug)
       .subscribe((res) => {
@@ -121,7 +123,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
         .subscribe(() => {
           formDirective.resetForm();
           this.addUserToProjectForm.reset();
-          this.refreshRepoUsers();
+          this.refreshProjectUsers();
           this.toastService.showSuccess(
             `User added`,
             `User '${formValue.username}' has been added to project '${this.project.name}'`
@@ -130,11 +132,11 @@ export class ProjectUserSettingsComponent implements OnChanges {
     }
   }
 
-  removeUserFromRepo(user: User): void {
+  removeUserFromProject(user: User): void {
     this.projectUserService
       .deleteUserFromProject(this.project.slug, user.id)
       .subscribe(() => {
-        this.refreshRepoUsers();
+        this.refreshProjectUsers();
         this.toastService.showSuccess(
           `User removed`,
           `User '${user.name}' has been removed from project '${this.project.name}'`
@@ -146,7 +148,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
     this.projectUserService
       .changeRoleOfProjectUser(this.project.slug, user.id, 'manager')
       .subscribe(() => {
-        this.refreshRepoUsers();
+        this.refreshProjectUsers();
         this.toastService.showSuccess(
           `User modified`,
           `User '${user.name}' can now manage the project '${this.project.name}'`
@@ -158,7 +160,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
     this.projectUserService
       .changeRoleOfProjectUser(this.project.slug, user.id, 'user')
       .subscribe(() => {
-        this.refreshRepoUsers();
+        this.refreshProjectUsers();
         this.toastService.showSuccess(
           `User modified`,
           `User '${user.name}' is no longer project lead in the project '${this.project.name}'`
@@ -170,7 +172,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
     this.projectUserService
       .changePermissionOfProjectUser(this.project.slug, user.id, permission)
       .subscribe(() => {
-        this.refreshRepoUsers();
+        this.refreshProjectUsers();
         this.toastService.showSuccess(
           `User modified`,
           `User '${user.name}' has the permission '${permission}' in the project '${this.project.name}' now`

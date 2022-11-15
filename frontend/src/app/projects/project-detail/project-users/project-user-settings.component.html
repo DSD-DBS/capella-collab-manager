@@ -56,7 +56,7 @@
       mat-flat-button
       color="primary"
       *ngIf="['user', 'manager'].includes(selectedUser.role)"
-      (click)="removeUserFromRepo(selectedUser.user)"
+      (click)="removeUserFromProject(selectedUser.user)"
     >
       <mat-icon>delete</mat-icon> Remove {{ selectedUser.user.name }} from
       {{ project.name }}
