@@ -30,10 +30,7 @@ export class UserService {
     }
   }
 
-  createUser(
-    username: string,
-    role: 'user' | 'administrator'
-  ): Observable<User> {
+  createUser(username: string, role: UserRole): Observable<User> {
     return this.http.post<User>(this.BACKEND_URL_PREFIX, {
       name: username,
       role: role,
@@ -66,18 +63,17 @@ export class UserService {
     );
   }
 
-  updateRoleOfUser(
-    user: User,
-    role: 'user' | 'administrator'
-  ): Observable<User> {
+  updateRoleOfUser(user: User, role: UserRole): Observable<User> {
     return this.http.patch<User>(this.BACKEND_URL_PREFIX + user.id + '/roles', {
       role,
     });
   }
 }
 
-export interface User {
+export type User = {
   id: number;
   name: string;
-  role: 'user' | 'administrator';
-}
+  role: UserRole;
+};
+
+export type UserRole = 'user' | 'administrator';

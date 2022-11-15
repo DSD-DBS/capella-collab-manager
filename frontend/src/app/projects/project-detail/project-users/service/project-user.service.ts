@@ -65,7 +65,7 @@ export class ProjectUserService {
   addUserToProject(
     project_slug: string,
     username: string,
-    role: 'user' | 'manager',
+    role: SimpleProjectUserRole,
     permission: string
   ): Observable<ProjectUser> {
     return this.http.post<ProjectUser>(
@@ -77,7 +77,7 @@ export class ProjectUserService {
   changeRoleOfProjectUser(
     project_slug: string,
     userID: number,
-    role: 'user' | 'manager'
+    role: SimpleProjectUserRole
   ): Observable<any> {
     return this.http.patch<any>(
       this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
@@ -99,7 +99,7 @@ export class ProjectUserService {
   changePermissionOfProjectUser(
     project_slug: string,
     userID: number,
-    permission: 'read' | 'write'
+    permission: ProjectUserPermission
   ): Observable<any> {
     return this.http.patch<any>(
       this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
@@ -123,3 +123,4 @@ export type ProjectUser = {
 
 export type ProjectUserPermission = 'read' | 'write';
 export type ProjectUserRole = 'user' | 'manager' | 'administrator';
+export type SimpleProjectUserRole = 'user' | 'manager';

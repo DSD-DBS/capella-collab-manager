@@ -22,7 +22,9 @@ import {
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   ProjectUser,
+  ProjectUserPermission,
   ProjectUserService,
+  SimpleProjectUserRole,
 } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { Project } from 'src/app/services/project/project.service';
 import { User, UserService } from 'src/app/services/user/user.service';
@@ -117,7 +119,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
         .addUserToProject(
           this.project.slug,
           formValue.username as string,
-          formValue.role as 'user' | 'manager',
+          formValue.role as SimpleProjectUserRole,
           permission as string
         )
         .subscribe(() => {
@@ -168,7 +170,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
       });
   }
 
-  setUserPermission(user: User, permission: 'read' | 'write'): void {
+  setUserPermission(user: User, permission: ProjectUserPermission): void {
     this.projectUserService
       .changePermissionOfProjectUser(this.project.slug, user.id, permission)
       .subscribe(() => {
