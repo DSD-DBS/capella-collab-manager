@@ -78,8 +78,8 @@ export class ProjectUserService {
     project_slug: string,
     userID: number,
     role: SimpleProjectUserRole
-  ): Observable<any> {
-    return this.http.patch<any>(
+  ): Observable<null> {
+    return this.http.patch<null>(
       this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
       { role }
     );
@@ -100,14 +100,17 @@ export class ProjectUserService {
     project_slug: string,
     userID: number,
     permission: ProjectUserPermission
-  ): Observable<any> {
+  ): Observable<null> {
     return this.http.patch<any>(
       this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
       { permission }
     );
   }
 
-  deleteUserFromProject(project_slug: string, userID: number): Observable<any> {
+  deleteUserFromProject(
+    project_slug: string,
+    userID: number
+  ): Observable<null> {
     return this.http.delete<any>(
       this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID
     );
