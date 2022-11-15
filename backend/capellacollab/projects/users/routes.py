@@ -69,7 +69,6 @@ def get_current_user(
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
 ) -> ProjectUserAssociation:
-    print(RoleVerification(required_role=Role.ADMIN, verify=False))
     if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
         return ProjectUser(
             role=ProjectUserRole.ADMIN,
