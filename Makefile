@@ -9,8 +9,10 @@ RELEASE = dev-t4c-manager
 NAMESPACE = t4c-manager
 SESSION_NAMESPACE = t4c-sessions
 PORT ?= 8080
-CAPELLA_VERSIONS = 5.0.0 5.2.0 6.0.0
-T4C_CLIENT_VERSIONS = 5.2.0 6.0.0
+# List of Capella versions, e.g.: `5.0.0 5.2.0 6.0.0`
+CAPELLA_VERSIONS = 5.2.0
+# List of T4C versions, e.g., `5.2.0 6.0.0`
+T4C_CLIENT_VERSIONS = 5.2.0
 CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 DOCKER_REGISTRY=$(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)
 
 # Adds support for msys
