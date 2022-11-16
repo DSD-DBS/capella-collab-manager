@@ -3,51 +3,71 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Create a _Collab Manager_ model
+# Create a _Collaboration Manager_ model
 
-Collab Manager proposes a wizard to create models in a project. To create a model, you have to be at least project
-manager, and you need to be administrator to add a Team for Capella source, which is needed to set up a Team for Capella
-backup. To create a model, go to the _Projects_ tab of the navigation bar, open the project in witch you want to create
-a model, and click on the “+” icon.
+We offer a guided process to create models in a project. To create a model, you have to be at least [project lead](../../projects/roles.md).
+If you're coming from project creation, you're ready to go. Otherwise, please naviate to the _Projects_ tab of the navigation bar,
+open the project in which you want to create a model, and click on the “+” icon.
 
 The creation can be interrupted at any step, however an unfinished model will lack some essential features, so it’s
-recommended to go through the whole project.
+recommended to go through the whole process.
 
-This wizard is also available in the project creation wizard.
+## Step 1: Create model
 
-### Create model
+This page allows to set a project name and description and a tool. The name and tool are required and can not be changed in the future.
 
-This page allows to set a project name and description and a tool. The name and tool are required.
+## Step 2: Choose primary source
 
-### Choose primary source
+On this page, you can select the type of source. Right now, we offer the following options:
 
-On this page, you can select the type of source (Git or Team for Capella) to associate to the model. Note however that
-Team for Capella is only available for Capella models, and can only be selected by administrators.
+1. Link an existing **Git** repository. For this option, you don't need additional support.
+1. Create a new **Git** repository. This option is not supported yet. Please create the repository yourself and continue with the first option.
+1. Link a **TeamForCapella** repository. Only available for the `Capella` tool. If you're project lead and not administrator, you are not able to select this option. You'll need assistance by an administrator. You can abort the process here and continue with the help of an administrator later on.
+1. Create a **TeamForCapella** repository. Only available for the `Capella` tool. If you're project lead and not administrator, you are not able to select this option. You'll need assistance by an administrator. You can abort the process here and continue with the help of an administrator later on.
 
-### Add source
+## Step 3: Add source
 
-#### Git source
+If you chose option 1 or 2 in the last step, please read the `Link existing Git repository` part of this step.
+If you chose option 3 or 4, you can should read the `Link existing T4C repository` part.
 
-The Git source should be a Git repository with write rights.
+### Step 3.1 Link existing Git repository
 
-!!! Warning, the credentials entered will be used to write on the repository. This means that from the repository
-perspective, the author will be the user.
+It is important for this step to have an existing Git repository which is reachable from inside your environment.
 
-!!! Warning, the credentials are stored in the database, and even if not fetchable from the interface, they are stored
-in plain text, so the password of the user should not be used. Rather use a token.
+You have to enter the following information:
 
-!!! Warning, the credentials should only work with the repository and not with others, because changing the repository
-while keeping the credentials could give access to another repository on behalf on the credential user. To prevent this
-use a repository-level token.
+1. **Instance**: If your environment restricts the usage of Git instances, you have to select your instance here. Otherwise, you can continue with the next step.
+1. **URL**: Please enter the URL of your Git repository here. All URLs accepted by the [`git clone`](https://git-scm.com/docs/git-clone) are also accepted in the UI.
 
-#### T4C source
+    !!! info
+        If your environment restricts the usage of instances, make sure to match the given prefix. You can also enter `Relative URLs`. In this case, you can see the resulting URL after the `info`-icon.
 
-A T4C Instance has to exist in database, with an available repository. See #TODO
+1. **Username** and **password/token**: Please enter your username and token here, which is needed to access the repository. Please note that we don't have support for SSH authentication yet.
+    - For public repositories: You don't need to enter credentials. However, backups will need credentials to be able to push to the repository.
+    - For private repositories: You need to enter credentials for read-only sessions and backups.
 
-For right managements at a Team for Capella level, although it’s possible to create several sources per repository, it’s
-recommended to have only one source per repository.
+    !!! danger
+        The credentials are stored in the database, and even if not accessible from outside, they are stored
+        in plain text, so the password of the user should not be used. Rather use a token.
 
-### Choose initialisation
+    !!! warning
+        The credentials should be scoped and should only work for the required repository. When changing the repository URL and the credentials are not changed,
+        other project leads can gain access to different repositories with your token.
 
-For now, the only possible initialisation is to create an empty model, with specifying a version and a nature. This is
-however only an information for the database, and this will not perform any initialisation.
+### Step 3.2 Link existing T4C repository
+
+!!! warning
+        This step can only be executed by administrators
+
+The TeamForCapella instance has to exist before we can continue.
+Please select the TeamForCapella instance and the TeamForCapella repository. With `project`, you can specify the name of the model in Capella.
+We recommend using the same name for the repository and project.
+
+## Step 4: Choose initialisation
+
+Please choose `Create empty model`. This has no effect on the existing TeamForCapella content. More options will follow in the future.
+
+## Step 5: Metadata
+
+This is an important step. Here, you can select the version and the model nature of your tool.
+If you don't select any version, the functionality will be restricted. You will not be able to setup backups or create read-only sessions.

@@ -28,7 +28,7 @@ If your project uses the T4C-workflow, we will suggest all visible models in the
 Readonly Sessions allow you to read information from models without consuming a licence.
 
 !!! warning
-    Readonly sessions work only with linked git models. Please ask your project manager if your model has readonly support.
+    Read-only sessions work only with linked git models. Please ask your project manager if your model has read-only support.
 
 !!! danger
     Any changes made in read-only sessions will NOT be saved and cannot be restored.
