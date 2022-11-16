@@ -21,10 +21,9 @@ from .backups.routes import router as router_backups
 from .injectables import get_existing_capella_model, get_existing_project
 from .models import (
     CapellaModel,
-    CapellaModelDescription,
+    CapellaModelPatch,
     DatabaseCapellaModel,
     ResponseModel,
-    ToolDetails,
 )
 from .modelsources.routes import router as router_modelsources
 
@@ -89,13 +88,10 @@ def create_new(
     tags=["Projects - Models"],
 )
 def patch_capella_model(
-    body: t.Union[ToolDetails, CapellaModelDescription],
+    body: CapellaModelPatch,
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ) -> DatabaseCapellaModel:
-
-    if isinstance(body, CapellaModelDescription):
-        return crud.update_model(db, model, body.description)
 
     version = get_version_by_id_or_raise(db, body.version_id)
     if version.tool != model.tool:
@@ -115,7 +111,7 @@ def patch_capella_model(
             },
         )
 
-    return crud.set_tool_details_for_model(db, model, version, nature)
+    return crud.update_model(db, model, body.description, version, nature)
 
 
 def get_tool_by_id_or_raise(db: Session, tool_id: int) -> Tool:
