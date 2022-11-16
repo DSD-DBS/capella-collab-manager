@@ -20,6 +20,7 @@ A very nice set of videos, highly recommended to watch:
 
 You may find more Capella - related videos on the official channel: [EclipseCapella](https://www.youtube.com/c/EclipseCapella/videos)
 
+Also you can try out this [Capella Tutorial](https://esd.sutd.edu.sg/40014-capella-tutorial/index.html)
 
 ## More advanced topics
 
@@ -34,3 +35,4 @@ If you'd like to learn how Capella works you may want to read through our [guide
 You may prototype-derived products using Python (Jupyter) and [py-capellambse](https://github.com/DSD-DBS/py-capellambse). It contains a few [practical examples](https://github.com/DSD-DBS/py-capellambse/tree/master/examples).
 
 Eventually you may automate production of model-derived documents and other things via CI/CD pipelines that work on your model git repositories. Get in touch with your Systems Engineering Toolchain team to learn more.
+
