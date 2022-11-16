@@ -23,6 +23,8 @@ export type ToolVersion = {
   is_deprecated: boolean;
 };
 
+export type ToolVersionWithTool = ToolVersion & { tool: Tool };
+
 export type PatchToolVersion = {
   isRecommended: boolean;
   isDeprecated: boolean;

@@ -304,7 +304,7 @@ def request_persistent_session(
         None,
         t4c_password,
     )
-    response["warnings"] = warnings
+    response.warnings = warnings
     return response
 
 
@@ -351,12 +351,9 @@ def create_database_and_guacamole_session(
         version=version,
         **session,
     )
-    response = database.create_session(db=db, session=database_model).__dict__
-    response["owner"] = response["owner_name"]
-    response["state"] = "New"
-    response["rdp_password"] = rdp_password
-    response["guacamole_password"] = guacamole_password
-    response["last_seen"] = "UNKNOWN"
+    response = database.create_session(db=db, session=database_model)
+    response.state = "New"
+    response.last_seen = "UNKNOWN"
     return response
 
 

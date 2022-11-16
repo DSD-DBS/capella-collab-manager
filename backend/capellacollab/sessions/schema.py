@@ -10,7 +10,10 @@ import typing as t
 from pydantic import BaseModel
 
 from capellacollab.core.models import Message
+from capellacollab.projects.models import Project
 from capellacollab.sessions.operators.k8s import FileType
+from capellacollab.tools.models import ToolVersionWithTool
+from capellacollab.users.models import BaseUser
 
 
 class WorkspaceType(enum.Enum):
@@ -26,15 +29,15 @@ class DepthType(enum.Enum):
 class GetSessionsResponse(BaseModel):
     id: str
     type: WorkspaceType
-    ports: t.List[str]
     created_at: datetime.datetime
-    owner: str
-    repository: t.Optional[str]
+    owner: BaseUser
     state: str
     guacamole_username: str
     guacamole_connection_id: str
-    last_seen: str
     warnings: t.Optional[list[Message]]
+    last_seen: str
+    project: t.Optional[Project]
+    version: t.Optional[ToolVersionWithTool]
 
     class Config:
         orm_mode = True
@@ -42,16 +45,6 @@ class GetSessionsResponse(BaseModel):
 
 class OwnSessionResponse(GetSessionsResponse):
     t4c_password: t.Optional[str]
-
-
-class PostSessionRequest(BaseModel):
-    type: WorkspaceType
-    branch: str
-    depth: DepthType
-    repository: t.Optional[str]
-
-    class Config:
-        orm_mode = True
 
 
 class PostReadonlySessionRequest(BaseModel):

@@ -60,7 +60,6 @@ class Nature(Base):
 class ToolBase(BaseModel):
     id: int
     name: str
-    docker_image_template: str
 
     class Config:
         orm_mode = True
@@ -111,6 +110,10 @@ class ToolVersionBase(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class ToolVersionWithTool(ToolVersionBase):
+    tool: ToolBase
 
 
 class ToolNatureBase(BaseModel):
