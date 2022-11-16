@@ -56,7 +56,7 @@ export class T4CModelService {
     id: number
   ): Observable<T4CModel> {
     return this.http.get<T4CModel>(
-      this.urlFactory(project_slug, model_slug) + id + '/'
+      `${this.urlFactory(project_slug, model_slug)}/${id}`
     );
   }
 
@@ -78,7 +78,7 @@ export class T4CModelService {
     body: SubmitT4CModel
   ): Observable<T4CModel> {
     return this.http.patch<T4CModel>(
-      this.urlFactory(project_slug, model_slug) + t4c_model_id,
+      `${this.urlFactory(project_slug, model_slug)}/${t4c_model_id}`,
       body
     );
   }

@@ -48,13 +48,11 @@ def get_remote_refs(
         branches=[], tags=[]
     )
 
-    git_env = os.environ.copy()
-    git_env["GIT_USERNAME"] = username
-    git_env["GIT_PASSWORD"] = password
-    git_env["GIT_ASKPASS"] = str(
-        pathlib.Path(__file__).parents[0] / "askpass.py"
-    )
-
+    git_env = {
+        "GIT_USERNAME": username or "",
+        "GIT_PASSWORD": password or "",
+        "GIT_ASKPASS": str(pathlib.Path(__file__).parents[0] / "askpass.py"),
+    }
     for ref in ls_remote(url, git_env):
         (_, ref) = ref.split("\t")
         if "^" in ref:
