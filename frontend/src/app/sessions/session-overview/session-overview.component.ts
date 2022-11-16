@@ -32,12 +32,12 @@ export class SessionOverviewComponent implements OnInit {
     'checkbox',
     'id',
     'user',
-    'repository',
-    'ports',
     'created_at',
-    'docker_state',
+    'state',
     'guacamole_user',
     'last_seen',
+    'project',
+    'tool',
   ];
 
   ngOnInit(): void {

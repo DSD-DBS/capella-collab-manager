@@ -24,12 +24,10 @@ def inject_attrs_in_sessions(
 ) -> t.List[t.Dict[str, t.Any]]:
     sessions_list = []
     for session in db_sessions:
-        session_dict = session.__dict__
-        session_dict["state"] = _determine_session_state(session_dict)
-        session_dict["last_seen"] = get_last_seen(session.id)
-        session_dict["owner"] = session_dict["owner_name"]
+        session.state = _determine_session_state(session)
+        session.last_seen = get_last_seen(session.id)
 
-        sessions_list.append(session_dict)
+        sessions_list.append(session)
 
     return sessions_list
 
@@ -74,12 +72,12 @@ def _get_last_seen(idletime: int | float) -> str:
 
 
 def _determine_session_state(session: t.Dict[str, t.Any]) -> str:
-    state = OPERATOR.get_session_state(session["id"])
+    state = OPERATOR.get_session_state(session.id)
 
-    if session["type"] == WorkspaceType.READONLY:
+    if session.type == WorkspaceType.READONLY:
         try:
             if state == "Started" or state == "BackOff":
-                logs = OPERATOR.get_session_logs(session["id"]).splitlines()
+                logs = OPERATOR.get_session_logs(session.id).splitlines()
                 for line in logs:
                     res = re.search(r"^---(.*?)---$", line)
                     if res:

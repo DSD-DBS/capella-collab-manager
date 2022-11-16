@@ -9,8 +9,7 @@
   <ul>
     <li *ngFor="let session of sessions">
       ID: {{ session.id }} <br />
-      Owner: {{ session.owner }} <br />
-      {{ session.repository }}
+      Owner: {{ session.owner.name }} <br />
     </li>
   </ul>
   <p>This will force close the sessions and all unsaved work will be lost!</p>

@@ -3,8 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { Project } from 'src/app/services/project/project.service';
+import { User } from 'src/app/services/user/user.service';
+import { ToolVersionWithTool } from 'src/app/settings/core/tools-settings/tool.service';
+
 export interface Session {
-  ports: string[];
   created_at: string;
   id: string;
   last_seen: string;
@@ -14,9 +17,10 @@ export interface Session {
   guacamole_username: string;
   guacamole_password: string;
   guacamole_connection_id: string;
-  repository: string;
+  project: Project | undefined;
+  version: ToolVersionWithTool | undefined;
   state: string;
-  owner: string;
+  owner: User;
   t4c_password: string;
 }
 
