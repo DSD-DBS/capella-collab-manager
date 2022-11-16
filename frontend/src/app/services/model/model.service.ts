@@ -34,6 +34,12 @@ export type Model = {
   git_models: GetGitModel[];
 };
 
+export type PatchModel = {
+  description?: string;
+  nature_id?: number;
+  version_id?: number;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -85,11 +91,11 @@ export class ModelService {
   updateModelDescription(
     project_slug: string,
     model_slug: string,
-    description: string
+    patchModel: PatchModel
   ): Observable<Model> {
     return this.http.patch<Model>(
       `${this.base_url}${project_slug}/models/${model_slug}/`,
-      { description }
+      patchModel
     );
   }
 }

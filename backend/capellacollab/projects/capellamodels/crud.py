@@ -130,8 +130,13 @@ def set_tool_details_for_model(
 def update_model(
     db: Session,
     model: DatabaseCapellaModel,
-    description: str,
+    description: str | None,
+    version: Version,
+    nature: Nature,
 ) -> DatabaseCapellaModel:
-    model.description = description
+    model.version = version
+    model.nature = nature
+    if description:
+        model.description = description
     db.commit()
     return model

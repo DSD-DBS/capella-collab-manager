@@ -6,23 +6,53 @@
 <div class="wrapper flex-center">
   <mat-card *ngIf="modelService.model" class="section-card">
     <mat-card-title>{{ modelService.model.name }}</mat-card-title>
-    <form (submit)="onSubmit()">
-      <mat-form-field>
-        <mat-label>Description</mat-label>
-        <textarea
-          [formControl]="form"
-          matInput
-          rows="3"
-          style="resize: none"
-        ></textarea>
-      </mat-form-field>
+    <form (submit)="onSubmit()" [formGroup]="form">
+      <fieldset>
+        <mat-form-field>
+          <mat-label>Description</mat-label>
+          <textarea
+            formControlName="description"
+            matInput
+            rows="3"
+            style="resize: none"
+          ></textarea>
+        </mat-form-field>
+      </fieldset>
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Version</mat-label>
+          <mat-select formControlName="version" id="version-selector">
+            <mat-option
+              *ngFor="let version of this.toolVersions"
+              [value]="version.id"
+            >
+              {{ version.name }}
+              <span *ngIf="version.is_recommended"> (recommended)</span>
+              <span *ngIf="version.is_deprecated"> (deprecated)</span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </fieldset>
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Model nature</mat-label>
+          <mat-select formControlName="nature">
+            <mat-option
+              *ngFor="let nature of this.toolNatures"
+              [value]="nature.id"
+            >
+              {{ nature.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </fieldset>
       <br />
       <div class="flex-space-between">
         <a mat-button [routerLink]="'../../..'"
           ><mat-icon>arrow_back</mat-icon>Back</a
         >
         <button mat-flat-button color="primary" type="submit">
-          Update description
+          Update model
         </button>
       </div>
     </form>

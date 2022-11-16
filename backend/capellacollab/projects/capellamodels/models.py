@@ -55,8 +55,10 @@ class CapellaModel(BaseModel):
     tool_id: int
 
 
-class CapellaModelDescription(BaseModel):
-    description: str
+class CapellaModelPatch(BaseModel):
+    description: t.Optional[str]
+    version_id: int
+    nature_id: int
 
 
 class ToolDetails(BaseModel):
