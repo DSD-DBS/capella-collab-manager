@@ -12,10 +12,10 @@ from capellacollab.core.database import Base
 
 
 class GitType(enum.Enum):
-    General = "General"
-    GitLab = "GitLab"
-    GitHub = "GitHub"
-    AzureDevOps = "AzureDevOps"
+    GENERAL = "General"
+    GITLAB = "GitLab"
+    GITHUB = "GitHub"
+    AZUREDEVOPS = "AzureDevOps"
 
 
 class GitSettings(BaseModel):
