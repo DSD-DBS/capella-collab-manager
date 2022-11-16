@@ -36,6 +36,7 @@ LOGGER = logging.getLogger(__name__)
 
 def migrate_db(engine):
     if os.getenv("ALEMBIC_CONTEXT") != "1":
+        os.environ["ALEMBIC_CONFIGURE_LOGGER"] = "false"
         root_dir = pathlib.Path(__file__).parents[2]
 
         # Get current revision of Database. If no revision is available, initialize the database.

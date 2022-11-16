@@ -18,7 +18,8 @@ from capellacollab.config import config as cfg
 config = context.config
 
 logging.basicConfig(level=cfg["logging"]["level"])
-logging.getLogger("capellacollab").setLevel("WARNING")
+if os.getenv("ALEMBIC_CONFIGURE_LOGGER", "true") != "false":
+    logging.getLogger("capellacollab").setLevel("WARNING")
 log = logging.getLogger("alembic.database")
 
 # this will overwrite the ini-file sqlalchemy.url path
