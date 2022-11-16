@@ -68,7 +68,7 @@ class ToolBase(BaseModel):
 
 class ToolDockerimage(BaseModel):
     persistent: str
-    readonly: str
+    readonly: t.Optional[str]
     backup: t.Optional[str]
 
     @classmethod
