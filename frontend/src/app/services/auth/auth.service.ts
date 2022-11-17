@@ -82,6 +82,12 @@ export class AuthService {
     return !!this._accessToken;
   }
 
+  webSSO() {
+    this.getRedirectURL().subscribe((res) => {
+      window.location.href = res.auth_url;
+    });
+  }
+
   logIn(accessToken: string, refreshToken: string) {
     this._accessToken = accessToken;
     this._refreshToken = refreshToken;
