@@ -44,7 +44,9 @@ def migrate_db(engine):
         alembic_cfg.set_main_option(
             "script_location", str(root_dir / "alembic")
         )
-        alembic_cfg.set_main_option("sqlalchemy.url", str(engine.url))
+        alembic_cfg.set_main_option(
+            "sqlalchemy.url", config["database"]["url"]
+        )
         alembic_cfg.attributes["configure_logger"] = False
 
         with engine.connect() as conn:
