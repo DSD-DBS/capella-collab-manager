@@ -31,8 +31,16 @@ export class AuthGuardService implements CanActivate {
     if (this.authService.isLoggedIn()) {
       return true;
     } else {
-      this.router.navigateByUrl('/auth');
+      // Needs window.location, since Router.url isn't updated yet
+      this.authService.cacheCurrentPath(window.location.pathname);
+      this.webSSO();
       return false;
     }
+  }
+
+  webSSO() {
+    this.authService.getRedirectURL().subscribe((res) => {
+      window.location.href = res.auth_url;
+    });
   }
 }

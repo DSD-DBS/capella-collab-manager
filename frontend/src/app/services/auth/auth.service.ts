@@ -108,6 +108,16 @@ export class AuthService {
       .get(environment.backend_url + '/authentication/logout')
       .subscribe();
   }
+
+  cacheCurrentPath(path: String) {
+    this.localStorageService.setValue('current_path', path);
+  }
+
+  getCurrentPath() {
+    let path = this.localStorageService.getValue('current_path');
+    this.cacheCurrentPath('');
+    return path || '/';
+  }
 }
 
 export interface GetRedirectURLResponse {
