@@ -7,7 +7,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { PureVariantService } from './pure-variant.service';
 
-describe('PureVariantService', () => {
+xdescribe('PureVariantService', () => {
   let service: PureVariantService;
 
   beforeEach(() => {
