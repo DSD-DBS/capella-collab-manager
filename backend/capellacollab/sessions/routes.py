@@ -283,12 +283,12 @@ def request_persistent_session(
                 )
 
     session = operator.start_persistent_session(
-        username=get_username(token),
-        password=rdp_password,
-        docker_image=docker_image,
-        t4c_license_secret=t4c_license_secret,
-        t4c_json=t4c_json,
-        pure_variants_license_server=get_license(db) or "UNSET",
+        get_username(token),
+        rdp_password,
+        docker_image,
+        t4c_license_secret,
+        t4c_json,
+        get_license(db) or "UNSET",
     )
 
     response = create_database_and_guacamole_session(
