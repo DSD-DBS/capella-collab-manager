@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import typing as t
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -21,7 +23,7 @@ router = APIRouter()
 @router.get(
     "/",
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
-    response_model=PureVariantsLicenses | None,
+    response_model=t.Optional[PureVariantsLicenses],
 )
 def get_license(
     db: Session = Depends(get_db),
