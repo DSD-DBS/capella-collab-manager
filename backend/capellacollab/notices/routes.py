@@ -9,7 +9,6 @@ from sqlalchemy.orm import Session
 
 import capellacollab.notices.crud as notices
 from capellacollab.core.authentication.database import RoleVerification
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.notices.injectables import get_existing_notice
 from capellacollab.notices.models import (
@@ -23,7 +22,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/",
+    "",
     response_model=t.List[NoticeResponse],
 )
 def get_notices(db: Session = Depends(get_db)):
@@ -38,7 +37,7 @@ def get_notice_by_id(
 
 
 @router.post(
-    "/",
+    "",
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def create_notice(
