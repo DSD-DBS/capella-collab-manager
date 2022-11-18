@@ -16,7 +16,11 @@ from capellacollab.users.models import Role
 router = APIRouter()
 
 
-@router.get("/", response_model=PureVariantsLicenses | None)
+@router.get(
+    "/",
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    response_model=PureVariantsLicenses | None,
+)
 def get_license(
     db: Session = Depends(get_db),
 ) -> DatabasePureVariantsLicenses | None:
@@ -26,6 +30,7 @@ def get_license(
 @router.patch(
     "/",
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    response_model=PureVariantsLicenses,
 )
 def set_license(
     body: PureVariantsLicenses, db: Session = Depends(get_db)
