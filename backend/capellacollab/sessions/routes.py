@@ -292,7 +292,7 @@ def request_persistent_session(
         docker_image,
         t4c_license_secret,
         t4c_json,
-        get_license(db) or "UNSET",
+        get_license(db).value or "UNSET",
     )
 
     response = create_database_and_guacamole_session(
