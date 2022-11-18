@@ -17,4 +17,4 @@ class PureVariantsLicenses(BaseModel):
     value: str
 
     class Config:
-        from_orm = True
+        orm_mode = True
