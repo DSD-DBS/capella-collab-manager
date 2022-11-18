@@ -43,7 +43,7 @@ def test_get_alerts(client: TestClient, db: Session, username: str):
 def test_create_alert_not_authenticated(client: TestClient):
     response = client.post(
         "/api/v1/notices",
-        {"title": "test", "message": "test", "level": "success"},
+        json={"title": "test", "message": "test", "level": "success"},
     )
 
     assert response.status_code == 403
