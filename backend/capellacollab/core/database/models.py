@@ -9,6 +9,7 @@ import capellacollab.projects.toolmodels.modelsources.git.models
 import capellacollab.projects.toolmodels.modelsources.t4c.models
 import capellacollab.projects.users.models
 import capellacollab.sessions.models
+import capellacollab.settings.integrations.purevariants.models
 import capellacollab.settings.modelsources.git.models
 import capellacollab.settings.modelsources.t4c.models
 import capellacollab.tools.models

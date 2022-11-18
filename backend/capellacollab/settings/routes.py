@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends
 from capellacollab.core.authentication.database import RoleVerification
 from capellacollab.users.models import Role
 
+from .integrations.purevariants import routes as purevariants
 from .modelsources import routes as modelsources
 
 router = APIRouter(
@@ -15,3 +16,4 @@ router.include_router(
     modelsources.router,
     prefix="/modelsources",
 )
+router.include_router(purevariants.router, prefix="/integrations/pure-variant")

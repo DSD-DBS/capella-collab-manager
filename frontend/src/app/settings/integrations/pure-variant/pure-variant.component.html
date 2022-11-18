@@ -1,0 +1,19 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="space-evenly">
+  <mat-card>
+    <h2>Edit pure::variant floating license server</h2>
+    <form (submit)="onSubmit()" [formGroup]="form">
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Floating license server</mat-label>
+          <input matInput formControlName="value" />
+        </mat-form-field>
+      </fieldset>
+      <button mat-flat-button type="submit">Update</button>
+    </form>
+  </mat-card>
+</div>
