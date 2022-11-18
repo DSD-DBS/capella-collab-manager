@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PureVariantComponent } from './pure-variant.component';
 
-describe('PureVariantComponent', () => {
+xdescribe('PureVariantComponent', () => {
   let component: PureVariantComponent;
   let fixture: ComponentFixture<PureVariantComponent>;
 
