@@ -95,6 +95,7 @@ class KubernetesOperator:
         docker_image: str,
         t4c_license_secret: str | None,
         t4c_json: list[dict[str, str | int]] | None,
+        pure_variants_license_server: str = "UNSET",
     ) -> dict[str, t.Any]:
         log.info("Launching a persistent session for user %s", username)
 
@@ -109,6 +110,7 @@ class KubernetesOperator:
                 "RMT_PASSWORD": password,
                 "FILESERVICE_PASSWORD": password,
                 "T4C_USERNAME": username,
+                "PURE_VARIANTS_LICENSE_SERVER": pure_variants_license_server,
             },
             self._get_claim_name(username),
         )
