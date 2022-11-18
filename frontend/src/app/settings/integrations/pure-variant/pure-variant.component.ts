@@ -4,7 +4,7 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { filter } from 'rxjs';
 import { PureVariantService } from 'src/app/services/pure-variant/pure-variant.service';
 
@@ -15,7 +15,7 @@ import { PureVariantService } from 'src/app/services/pure-variant/pure-variant.s
 })
 export class PureVariantComponent implements OnInit {
   form = new FormGroup({
-    value: new FormControl<string>(''),
+    value: new FormControl<string>('', Validators.pattern(/^https?:\/\//)),
   });
 
   constructor(private pureVariantService: PureVariantService) {}
