@@ -1,0 +1,54 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<form [formGroup]="form">
+  <h2 mat-dialog-title>Readonly session</h2>
+  <mat-dialog-content>
+    <fieldset *ngFor="let subform of subforms.controls">
+      <mat-form-field appearance="fill">
+        <mat-label>Branch, tag or revision</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="revision"
+          [matAutocomplete]="auto"
+        />
+        <mat-error *ngIf="subform.controls.revision.errors?.required">
+          A revision is required
+        </mat-error>
+        <mat-error
+          *ngIf="
+            subform.controls.revision.errors?.revisionNotFoundError &&
+            subform.controls.revision.value
+          "
+        >
+          {{ subform.controls.revision.errors?.revisionNotFoundError }}
+        </mat-error>
+      </mat-form-field>
+      <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+        <mat-optgroup label="branch">
+          <mat-option
+            *ngFor="let option of filteredRevisions.branches"
+            [value]="option"
+          >
+            {{ option }}
+          </mat-option>
+        </mat-optgroup>
+        <mat-optgroup label="tag">
+          <mat-option
+            *ngFor="let option of filteredRevisions.tags"
+            [value]="option"
+          >
+            {{ option }}
+          </mat-option>
+        </mat-optgroup>
+      </mat-autocomplete>
+    </fieldset>
+  </mat-dialog-content>
+  <div class="flex-space-between">
+    <button mat-flat-button mat-dialog-close>Cancel</button>
+    <button mat-flat-button cdkFocusInitial>Install</button>
+  </div>
+</form>

@@ -13,6 +13,7 @@ import {
   ProjectService,
 } from 'src/app/services/project/project.service';
 import { SessionService } from 'src/app/services/session/session.service';
+import { NewReadonlySessionDialogComponent } from 'src/app/sessions/new-readonly-session-dialog/new-readonly-session-dialog.component';
 import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 
 @Component({
@@ -52,6 +53,9 @@ export class ModelOverviewComponent implements OnInit {
     if (!model.version) {
       return;
     }
+
+    /// TODO: Open dialog with model details -> repo & checkout depth
+
     this.sessionService
       .createReadonlySession(this.project.slug, model.slug)
       .subscribe(() => {
@@ -72,5 +76,11 @@ export class ModelOverviewComponent implements OnInit {
     } else {
       return '';
     }
+  }
+
+  newReadonlySession(model: Model) {
+    this.dialog.open(NewReadonlySessionDialogComponent, {
+      data: { project: this.project, model: model },
+    });
   }
 }
