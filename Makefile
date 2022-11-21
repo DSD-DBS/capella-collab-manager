@@ -20,8 +20,6 @@ export MSYS_NO_PATHCONV := 1
 
 build: backend frontend docs
 
-build-t4c: build t4c-client
-
 backend:
 	python backend/generate_git_archival.py;
 	docker build -t t4c/client/backend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/backend backend
