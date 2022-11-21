@@ -95,7 +95,6 @@ def upload_files(
 
 @router.get(
     "/download",
-    responses=AUTHENTICATION_RESPONSES,
 )
 def download_file(
     id: str,

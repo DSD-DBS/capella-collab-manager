@@ -7,7 +7,7 @@ import os
 import pytest
 
 if not os.getenv("CI"):
-    from t4cclient.sessions.operators.k8s import (
+    from capellacollab.sessions.operators.k8s import (
         KubernetesOperator,
         lazy_b64decode,
     )
