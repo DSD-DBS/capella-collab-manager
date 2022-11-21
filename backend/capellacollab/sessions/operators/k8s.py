@@ -419,7 +419,7 @@ class KubernetesOperator:
                 {
                     "name": "pure-variants",
                     "mountPath": "/home/techuser/pure-variants",
-                    "readOnly": "true",
+                    "readOnly": True,
                 }
             )
 
@@ -435,7 +435,7 @@ class KubernetesOperator:
                     "name": "pure-variants",
                     "secret": {
                         "secretName": "pure-variants",
-                        "optional": "true",
+                        "optional": True,
                     },
                 }
             )
