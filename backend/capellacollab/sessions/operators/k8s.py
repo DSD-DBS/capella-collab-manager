@@ -407,18 +407,36 @@ class KubernetesOperator:
         environment: t.Dict,
         volume_claim_name: str = None,
     ) -> kubernetes.client.V1Deployment:
-        volume_mount = []
-        volume = []
+        volume_mounts = []
+        volumes = []
 
         if volume_claim_name:
-            volume_mount.append(
+            volume_mounts.append(
                 {"name": "workspace", "mountPath": "/workspace"}
             )
 
-            volume.append(
+            volume_mounts.append(
+                {
+                    "name": "pure-variants",
+                    "mountPath": "/home/techuser/pure-variants",
+                    "readOnly": "true",
+                }
+            )
+
+            volumes.append(
                 {
                     "name": "workspace",
                     "persistentVolumeClaim": {"claimName": volume_claim_name},
+                }
+            )
+
+            volumes.append(
+                {
+                    "name": "pure-variants",
+                    "secret": {
+                        "secretName": "pure-variants",
+                        "optional": "true",
+                    },
                 }
             )
 
@@ -455,11 +473,11 @@ class KubernetesOperator:
                                     },
                                 },
                                 "imagePullPolicy": "Always",
-                                "volumeMounts": volume_mount,
+                                "volumeMounts": volume_mounts,
                                 **cfg["cluster"]["containers"],
                             },
                         ],
-                        "volumes": volume,
+                        "volumes": volumes,
                         "restartPolicy": "Always",
                     },
                 },
