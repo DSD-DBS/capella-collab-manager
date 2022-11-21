@@ -282,13 +282,18 @@ def request_persistent_session(
                     exc_info=True,
                 )
 
+    if pv_license := get_license(db):
+        pv_license_env = pv_license.value
+    else:
+        pv_license_env = "UNSET"
+
     session = operator.start_persistent_session(
         get_username(token),
         rdp_password,
         docker_image,
         t4c_license_secret,
         t4c_json,
-        get_license(db).value or "UNSET",
+        pv_license_env,
     )
 
     response = create_database_and_guacamole_session(
