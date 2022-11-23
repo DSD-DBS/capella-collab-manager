@@ -26,7 +26,10 @@ def create_repository(instance: DatabaseT4CInstance, name: str):
         instance.rest_api + "/repositories",
         json={
             "repositoryName": name,
-            "authenticationType": "",
+            "authenticationType": "FILE",
+            "authenticationData": {
+                "users": [{"login": "admin", "password": generate_password()}]
+            },
             "datasourceType": "H2_EMBEDDED",
         },
         auth=HTTPBasicAuth(instance.username, instance.password),
