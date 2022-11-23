@@ -40,7 +40,7 @@ app = FastAPI(title="Capella Collaboration")
 
 @app.on_event("startup")
 async def migrate_database():
-    migration.migrate_db(engine)
+    migration.migrate_db(engine, config["database"]["url"])
 
 
 @app.on_event("startup")

@@ -34,7 +34,7 @@ def db(postgresql, monkeypatch) -> Session:
     monkeypatch.setattr(database_, "engine", postgresql)
     monkeypatch.setattr(database_, "SessionLocal", session_local)
 
-    migration.migrate_db(postgresql)
+    migration.migrate_db(postgresql, str(postgresql.url))
 
     with session_local() as session:
         yield session

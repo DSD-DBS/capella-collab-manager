@@ -34,7 +34,7 @@ from capellacollab.users.models import Role
 LOGGER = logging.getLogger(__name__)
 
 
-def migrate_db(engine):
+def migrate_db(engine, database_url: str):
     if os.getenv("ALEMBIC_CONTEXT") != "1":
         os.environ["ALEMBIC_CONFIGURE_LOGGER"] = "false"
         root_dir = pathlib.Path(__file__).parents[2]
@@ -44,9 +44,7 @@ def migrate_db(engine):
         alembic_cfg.set_main_option(
             "script_location", str(root_dir / "alembic")
         )
-        alembic_cfg.set_main_option(
-            "sqlalchemy.url", config["database"]["url"]
-        )
+        alembic_cfg.set_main_option("sqlalchemy.url", database_url)
         alembic_cfg.attributes["configure_logger"] = False
 
         with engine.connect() as conn:
