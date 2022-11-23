@@ -17,9 +17,13 @@ To access a TeamForCapella based model you first need read/write access from a m
 
     ![Session password](screenshots/session-password.png)
 
-1. When Capella is finally loaded you navigate to `File` > `New` > `Connect to remote model`.
+1. When Capella is finally loaded you navigate to `File` > `New` > `Other`.
 
-    ![Starting a session](screenshots/cap-conn-remote-model.jpg)
+    ![Open Connection dialog](screenshots/step_1.png)
+
+1. Expand `Team for Capella` and select `Connect to remote model`:
+
+    ![Connect to remote model](screenshots/step_2.png)
 
 1. In the drop down select the repository you like to work on. In most cases the repository and project name should match.
 1. Click on `Test connection` and enter you username and the session token you received in the first step.
