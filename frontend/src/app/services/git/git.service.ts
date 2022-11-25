@@ -5,7 +5,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 export interface Credentials {
@@ -50,8 +50,8 @@ export class GitService {
     project_slug: string,
     model_slug: string,
     git_model_id: number
-  ): Subscription {
-    return this.privateRevisions(
+  ): void {
+    this.privateRevisions(
       gitUrl,
       project_slug,
       model_slug,
