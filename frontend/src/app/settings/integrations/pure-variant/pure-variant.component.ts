@@ -29,10 +29,6 @@ export class PureVariantComponent implements OnInit {
       .get_license()
       .pipe(filter(Boolean))
       .subscribe((res) => {
-        this.toastService.showSuccess(
-          'Floating license server updating.',
-          'The floating license server was updated.'
-        );
         this.form.controls.value.patchValue(res.value);
       });
   }
@@ -41,7 +37,10 @@ export class PureVariantComponent implements OnInit {
     this.pureVariantService
       .set_license(this.form.value.value!)
       .subscribe((res) => {
-        this.toastService;
+        this.toastService.showSuccess(
+          'Floating license server updating.',
+          'The floating license server was updated.'
+        );
         this.form.controls.value.patchValue(res.value);
       });
   }
