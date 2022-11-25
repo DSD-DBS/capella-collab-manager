@@ -18,6 +18,7 @@ import { ModelOptions } from 'src/app/sessions/new-readonly-session-dialog/new-r
 @Component({
   selector: 'new-readonly-session-dialog',
   templateUrl: './new-readonly-session-dialog.component.html',
+  styleUrls: ['./new-readonly-session-dialog.component.css'],
 })
 export class NewReadonlySessionDialogComponent implements OnInit {
   constructor(
