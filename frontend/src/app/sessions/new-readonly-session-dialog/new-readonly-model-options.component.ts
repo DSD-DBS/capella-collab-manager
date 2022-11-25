@@ -48,10 +48,15 @@ export class NewReadonlyModelOptionsComponent implements OnInit {
       Validators.required,
       this.existingRevisionValidator(),
     ]),
+    deepClone: new FormControl(false),
   });
 
   get model(): Model {
     return this.modelOptions!.model;
+  }
+
+  get options(): ModelOptions {
+    return this.modelOptions!;
   }
 
   private existingRevisionValidator(): ValidatorFn {
@@ -73,18 +78,31 @@ export class NewReadonlyModelOptionsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const model = this.model;
-    const primary_git_model = get_primary_git_model(model);
+    const primary_git_model = get_primary_git_model(this.model);
     if (!primary_git_model) {
       return;
     }
 
+    this.form.controls.deepClone.setValue(this.options.deepClone);
+    this.form.controls.include.setValue(this.options.include);
+
+    // Okay, this is kinda lame, but I need the modelOptions to be up to date with the form
+    this.form.controls.deepClone.valueChanges.subscribe((value) => {
+      this.options.deepClone = value || false;
+    });
+    this.form.controls.include.valueChanges.subscribe((value) => {
+      this.options.include = value || false;
+    });
+    this.form.controls.revision.valueChanges.subscribe((value) => {
+      this.options.revision = value || '';
+    });
+
     this.gitService
       .privateRevisions(
-        model.git_models[0].path,
+        primary_git_model.path,
         this.projectSlug,
-        model.slug,
-        model.git_models[0].id
+        this.model.slug,
+        primary_git_model.id
       )
       .subscribe((revisions) => {
         this.availableRevisions = revisions;

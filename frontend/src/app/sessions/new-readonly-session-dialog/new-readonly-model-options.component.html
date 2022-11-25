@@ -49,4 +49,7 @@
       </mat-optgroup>
     </mat-autocomplete>
   </fieldset>
+  <fieldset *ngIf="form.controls.include.value">
+    <mat-slide-toggle formControlName="deepClone">Deep clone</mat-slide-toggle>
+  </fieldset>
 </div>

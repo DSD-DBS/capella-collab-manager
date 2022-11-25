@@ -55,12 +55,12 @@ export class NewReadonlySessionDialogComponent implements OnInit {
     });
   }
 
-  requestSession(model: Model): void {
-    if (!model.version) {
+  requestSession(): void {
+    let included = this.model_options.filter((mo) => mo.include);
+
+    if (!included) {
       return;
     }
-
-    /// TODO: Open dialog with model details -> repo & checkout depth
 
     this.sessionService
       .createReadonlySession(this.data.project.slug, this.data.model.slug)
