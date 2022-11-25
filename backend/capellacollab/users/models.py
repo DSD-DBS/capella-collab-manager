@@ -1,13 +1,20 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
+
 import enum
+import typing as t
 
 from pydantic import BaseModel
 from sqlalchemy import Column, Enum, Integer, String
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
+
+if t.TYPE_CHECKING:
+    from capellacollab.projects.users.models import ProjectUserAssociation
+    from capellacollab.sessions.models import DatabaseSession
 
 
 class Role(enum.Enum):
@@ -34,14 +41,14 @@ class PatchUserRoleRequest(BaseModel):
 class DatabaseUser(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True)
-    role = Column(Enum(Role))
-    projects = relationship(
+    id: int = Column(Integer, primary_key=True, index=True)
+    name: str = Column(String, unique=True, index=True)
+    role: Role = Column(Enum(Role))
+    projects: list["ProjectUserAssociation"] = relationship(
         "ProjectUserAssociation",
         back_populates="user",
     )
-    sessions = relationship(
+    sessions: "DatabaseSession" = relationship(
         "DatabaseSession",
         back_populates="owner",
     )
