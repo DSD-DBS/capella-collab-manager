@@ -1,0 +1,52 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div [formGroup]="form">
+  <h2>
+    <mat-checkbox formControlName="include">{{ model.name }}</mat-checkbox>
+  </h2>
+  <fieldset *ngIf="form.controls.include.value">
+    <mat-form-field appearance="fill">
+      <mat-label
+        >Branch, tag or revision {{ form.controls.revision }}</mat-label
+      >
+      <input
+        type="text"
+        matInput
+        formControlName="revision"
+        [matAutocomplete]="auto"
+      />
+      <mat-error *ngIf="form.controls.revision.errors?.required">
+        A revision is required
+      </mat-error>
+      <mat-error
+        *ngIf="
+          form.controls.revision.errors?.revisionNotFoundError &&
+          form.controls.revision.value
+        "
+      >
+        {{ form.controls.revision.errors?.revisionNotFoundError }}
+      </mat-error>
+    </mat-form-field>
+    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+      <mat-optgroup label="branch">
+        <mat-option
+          *ngFor="let option of filteredRevisions.branches"
+          [value]="option"
+        >
+          {{ option }}
+        </mat-option>
+      </mat-optgroup>
+      <mat-optgroup label="tag">
+        <mat-option
+          *ngFor="let option of filteredRevisions.tags"
+          [value]="option"
+        >
+          {{ option }}
+        </mat-option>
+      </mat-optgroup>
+    </mat-autocomplete>
+  </fieldset>
+</div>

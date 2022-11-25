@@ -4,23 +4,16 @@
  */
 
 import { Component, Inject, OnInit } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  Validators,
-  ValidationErrors,
-  ValidatorFn,
-  AbstractControl,
-  FormArray,
-} from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { Revisions, GitService } from 'src/app/services/git/git.service';
-import { Model } from 'src/app/services/model/model.service';
+import { GitService } from 'src/app/services/git/git.service';
+import { Model, ModelService } from 'src/app/services/model/model.service';
 import { Project } from 'src/app/services/project/project.service';
 import { SessionService } from 'src/app/services/session/session.service';
+import { ModelOptions } from 'src/app/sessions/new-readonly-session-dialog/new-readonly-model-options.component';
 
 @Component({
   selector: 'new-readonly-session-dialog',
@@ -31,78 +24,35 @@ export class NewReadonlySessionDialogComponent implements OnInit {
     public sessionService: SessionService,
     private gitService: GitService,
     private router: Router,
-    private dialogRef: MatDialogRef<NewReadonlySessionDialogComponent>,
+    public modelService: ModelService,
     @Inject(MAT_DIALOG_DATA) public data: { project: Project; model: Model }
   ) {}
 
-  public filteredRevisions: Revisions = { branches: [], tags: [] };
+  private model_options: ModelOptions[] = [];
 
-  public availableRevisions: Revisions | undefined = {
-    branches: [],
-    tags: [],
-  };
-
-  public form = new FormGroup({
-    models: new FormArray([]),
-  });
-
-  private existingRevisionValidator(): ValidatorFn {
-    return (controls: AbstractControl): ValidationErrors | null => {
-      let value: string = controls.value;
-      if (!value) return null;
-
-      if (
-        this.availableRevisions?.branches.includes(value) ||
-        this.availableRevisions?.tags.includes(value)
-      ) {
-        return null;
-      }
-
-      return {
-        revisionNotFoundError: `${value} does not exist`,
-      };
-    };
+  get modelOptions(): ModelOptions[] {
+    return this.model_options;
   }
 
   ngOnInit(): void {
-    [this.data.model, this.data.model].forEach((model) => {
-      const primary_git_model = get_primary_git_model(model);
-      if (!primary_git_model) {
-        return;
-      }
+    this.modelService.getModels(this.data.project.slug).subscribe((models) => {
+      models
+        .filter((m) => m.version?.id == this.data.model.version?.id)
+        .forEach((model) => {
+          const primary_git_model = get_primary_git_model(model);
+          if (!primary_git_model) {
+            return;
+          }
 
-      const subgroup = new FormGroup({
-        revision: new FormControl({ value: '', disabled: true }, [
-          Validators.required,
-          this.existingRevisionValidator(),
-        ]),
-      });
-
-      (this.form.get('models') as FormArray).push(subgroup);
-
-      this.gitService
-        .privateRevisions(
-          this.data.model.git_models[0].path,
-          this.data.project.slug,
-          this.data.model.slug,
-          this.data.model.git_models[0].id
-        )
-        .subscribe((revisions) => {
-          // TODO: This will become problematic:
-          this.availableRevisions = revisions;
-          if (revisions) this.filteredRevisions = revisions;
-
-          subgroup.controls.revision.enable();
-          subgroup.controls.revision.setValue(
-            primary_git_model?.revision || ''
-          );
-          subgroup.controls.revision.updateValueAndValidity();
+          this.model_options.push({
+            model: model,
+            primary_git_model: primary_git_model,
+            include: model.id === this.data.model.id,
+            revision: primary_git_model.revision,
+            deepClone: false,
+          });
         });
     });
-  }
-
-  get subforms(): FormArray<FormGroup> {
-    return this.form.get('models') as FormArray;
   }
 
   requestSession(model: Model): void {
