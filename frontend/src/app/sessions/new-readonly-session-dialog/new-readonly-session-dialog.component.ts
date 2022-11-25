@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -15,7 +15,6 @@ import {
 } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { Revisions, GitService } from 'src/app/services/git/git.service';
@@ -27,7 +26,7 @@ import { SessionService } from 'src/app/services/session/session.service';
   selector: 'new-readonly-session-dialog',
   templateUrl: './new-readonly-session-dialog.component.html',
 })
-export class NewReadonlySessionDialogComponent implements OnInit, OnDestroy {
+export class NewReadonlySessionDialogComponent implements OnInit {
   constructor(
     public sessionService: SessionService,
     private gitService: GitService,
@@ -42,7 +41,6 @@ export class NewReadonlySessionDialogComponent implements OnInit, OnDestroy {
     branches: [],
     tags: [],
   };
-  private revisionsSubscription?: Subscription;
 
   public form = new FormGroup({
     models: new FormArray([]),
@@ -67,13 +65,17 @@ export class NewReadonlySessionDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    [this.data.model].forEach((model) => {
+    [this.data.model, this.data.model].forEach((model) => {
       const primary_git_model = get_primary_git_model(model);
+      if (!primary_git_model) {
+        return;
+      }
+
       const subgroup = new FormGroup({
-        revision: new FormControl(
-          { value: primary_git_model?.revision || '', disabled: true },
-          [Validators.required, this.existingRevisionValidator()]
-        ),
+        revision: new FormControl({ value: '', disabled: true }, [
+          Validators.required,
+          this.existingRevisionValidator(),
+        ]),
       });
 
       (this.form.get('models') as FormArray).push(subgroup);
@@ -89,14 +91,14 @@ export class NewReadonlySessionDialogComponent implements OnInit, OnDestroy {
           // TODO: This will become problematic:
           this.availableRevisions = revisions;
           if (revisions) this.filteredRevisions = revisions;
-          subgroup.controls.revision.updateValueAndValidity();
+
           subgroup.controls.revision.enable();
+          subgroup.controls.revision.setValue(
+            primary_git_model?.revision || ''
+          );
+          subgroup.controls.revision.updateValueAndValidity();
         });
     });
-  }
-
-  ngOnDestroy(): void {
-    this.revisionsSubscription?.unsubscribe();
   }
 
   get subforms(): FormArray<FormGroup> {
