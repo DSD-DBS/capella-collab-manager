@@ -90,7 +90,7 @@ class DatabaseProject(Base):
     description = Column(String)
     users: ProjectUserAssociation = relationship(
         "ProjectUserAssociation",
-        back_populates="projects",
+        back_populates="project",
     )
     models: list[DatabaseCapellaModel] = relationship(
         "DatabaseCapellaModel", back_populates="project"

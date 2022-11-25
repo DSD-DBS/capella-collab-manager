@@ -10,7 +10,10 @@ from sqlalchemy import Column, Enum, ForeignKey
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
-from capellacollab.users.models import User
+from capellacollab.users.models import DatabaseUser, User
+
+if t.TYPE_CHECKING:
+    from capellacollab.projects.models import DatabaseProject
 
 
 class ProjectUserRole(enum.Enum):
@@ -50,11 +53,13 @@ class PatchProjectUser(BaseModel):
 class ProjectUserAssociation(Base):
     __tablename__ = "project_user_association"
 
-    user_id = Column(ForeignKey("users.id"), primary_key=True)
-    projects_name = Column(ForeignKey("projects.name"), primary_key=True)
-    user = relationship("DatabaseUser", back_populates="projects")
-    projects = relationship("DatabaseProject", back_populates="users")
+    user_id: int = Column(ForeignKey("users.id"), primary_key=True)
+    project_id: int = Column(ForeignKey("projects.id"), primary_key=True)
+    user: DatabaseUser = relationship(DatabaseUser, back_populates="projects")
+    project: "DatabaseProject" = relationship(
+        "DatabaseProject", back_populates="users"
+    )
     permission: ProjectUserPermission = Column(
         Enum(ProjectUserPermission), nullable=False
     )
-    role = Column(Enum(ProjectUserRole))
+    role: ProjectUserRole = Column(Enum(ProjectUserRole))

@@ -6,7 +6,6 @@ from __future__ import annotations
 import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException
-from requests import HTTPError
 from sqlalchemy.orm import Session
 
 import capellacollab.users.crud as users
@@ -120,18 +119,16 @@ def add_user_to_project(
     ],
 )
 def patch_project_user(
-    patch_project_user: PatchProjectUser,
+    patch_user: PatchProjectUser,
     user: DatabaseUser = Depends(get_existing_user),
     project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
 ):
     check_user_not_admin(user)
-    if patch_project_user.role:
-        crud.change_role_of_user_in_project(
-            db, project, user, patch_project_user.role
-        )
+    if patch_user.role:
+        crud.change_role_of_user_in_project(db, project, user, patch_user.role)
 
-    if patch_project_user.permission:
+    if patch_user.permission:
         repo_user = crud.get_user_of_project(
             db,
             project,
@@ -146,7 +143,7 @@ def patch_project_user(
                 },
             )
         crud.change_permission_of_user_in_project(
-            db, project, user, patch_project_user.permission
+            db, project, user, patch_user.permission
         )
 
 
