@@ -66,12 +66,10 @@ def get_projects(
 )
 def update_project_description(
     patch_project: PatchProject,
-    db_project: DatabaseProject = Depends(get_existing_project),
+    project: DatabaseProject = Depends(get_existing_project),
     database: Session = Depends(get_db),
 ) -> DatabaseProject:
-    return crud.update_description(
-        database, db_project, patch_project.description
-    )
+    return crud.update_project(database, project, patch_project)
 
 
 @router.get(

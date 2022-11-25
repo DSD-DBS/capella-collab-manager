@@ -114,7 +114,7 @@ describe('ProjectService', () => {
     updatedMockProject.description = updatedMockProjectDescription;
 
     projectService
-      .updateDescription(testProjectSlug, updatedMockProjectDescription)
+      .updateProject(testProjectSlug, updatedMockProjectDescription)
       .subscribe({
         next: (project) => expect(project).toEqual(updatedMockProject),
       });

@@ -11,9 +11,10 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
+  PatchProject,
   Project,
   ProjectService,
 } from 'src/app/services/project/project.service';
@@ -27,7 +28,10 @@ export class ProjectMetadataComponent implements OnChanges {
   @Input() project!: Project;
   @Output() changeProject = new EventEmitter<Project>();
 
-  public updateDescriptionForm = new FormControl();
+  public form = new FormGroup({
+    name: new FormControl<string>('', Validators.required),
+    description: new FormControl<string>('', Validators.required),
+  });
 
   constructor(
     private toastService: ToastService,
@@ -35,13 +39,13 @@ export class ProjectMetadataComponent implements OnChanges {
   ) {}
 
   ngOnChanges(_changes: SimpleChanges): void {
-    this.updateDescriptionForm.patchValue(this.project.description);
+    this.form.patchValue(this.project);
   }
 
   updateDescription() {
-    if (this.updateDescriptionForm.valid) {
+    if (this.form.valid) {
       this.projectService
-        .updateDescription(this.project.slug, this.updateDescriptionForm.value)
+        .updateProject(this.project.slug, this.form.value as PatchProject)
         .subscribe((project) => {
           this.projectService._project.next(project);
           this.toastService.showSuccess(
