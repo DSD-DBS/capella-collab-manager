@@ -49,20 +49,6 @@ export class ModelOverviewComponent implements OnInit {
     return 'Unset';
   }
 
-  requestSession(model: Model): void {
-    if (!model.version) {
-      return;
-    }
-
-    /// TODO: Open dialog with model details -> repo & checkout depth
-
-    this.sessionService
-      .createReadonlySession(this.project.slug, model.slug)
-      .subscribe(() => {
-        this.router.navigateByUrl('/');
-      });
-  }
-
   openPipelineDialog(model: Model): void {
     this.dialog.open(TriggerPipelineComponent, {
       data: { project: this.project, model: model },

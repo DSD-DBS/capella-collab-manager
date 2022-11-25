@@ -64,7 +64,17 @@ export class NewReadonlySessionDialogComponent implements OnInit {
     }
 
     this.sessionService
-      .createReadonlySession(this.data.project.slug, this.data.model.slug)
+      .createReadonlySession(
+        this.data.project.slug,
+        included.map((m) => {
+          return {
+            model_slug: m.model.slug,
+            git_model_id: m.primary_git_model.id,
+            revision: m.revision,
+            deep_clone: m.deepClone,
+          };
+        })
+      )
       .subscribe(() => {
         this.router.navigateByUrl('/');
       });
