@@ -44,6 +44,7 @@ from capellacollab.sessions.schema import (
     GetSessionsResponse,
     GuacamoleAuthentication,
     PostPersistentSessionRequest,
+    PostReadonlySessionEntry,
     PostReadonlySessionRequest,
     WorkspaceType,
 )
@@ -131,22 +132,27 @@ def request_session(
 ):
     log.info("Starting persistent session creation for user %s", db_user.name)
 
-    model = get_existing_capella_model(project.slug, body.model_slug, db)
-    models = [
-        m
-        for m in project.models
-        if m.git_models and m.version.id == model.version.id
+    entries_with_models = [
+        (entry, get_existing_capella_model(project.slug, entry.model_slug, db))
+        for entry in body.models
     ]
-    if not models:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "err_code": "GIT_MODEL_NOT_FOUND",
-                "reason": "The selected model has no connected Git repository. Please contact a project manager or administrator",
-            },
-        )
 
-    docker_image = get_readonly_image_for_version(model.version)
+    # Validate git models against the models
+    for entry, model in entries_with_models:
+        if not any(
+            gm for gm in model.git_models if gm.id == entry.git_model_id
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={
+                    "err_code": "GIT_MODEL_NOT_FOUND",
+                    "reason": "The selected model does not have the requested Git repository. Please contact a project manager or administrator",
+                },
+            )
+
+    docker_image = get_readonly_image_for_version(
+        entries_with_models[0][1].version
+    )
     if not docker_image:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -161,7 +167,7 @@ def request_session(
     session = operator.start_readonly_session(
         password=rdp_password,
         docker_image=docker_image,
-        git_repos_json=list(models_as_json(models, model.version)),
+        git_repos_json=list(models_as_json(entries_with_models)),
     )
 
     return create_database_and_guacamole_session(
@@ -177,17 +183,23 @@ def request_session(
     )
 
 
-def models_as_json(models: t.List[DatabaseCapellaModel], version: Version):
-    for model in models:
-        for git_model in model.git_models:
-            yield git_model_as_json(git_model)
+def models_as_json(
+    models: t.List[t.Tuple[PostReadonlySessionEntry, DatabaseCapellaModel]]
+):
+    for entry, model in models:
+        git_model = next(
+            gm for gm in model.git_models if gm.id == entry.git_model_id
+        )
+        yield git_model_as_json(git_model, entry.deep_clone)
 
 
-def git_model_as_json(git_model: DatabaseGitModel) -> dict[str, str | int]:
+def git_model_as_json(
+    git_model: DatabaseGitModel, depth: int
+) -> dict[str, str | int]:
     json = {
         "url": git_model.path,
         "revision": git_model.revision,
-        "depth": 1,
+        "depth": depth,
         "entrypoint": git_model.entrypoint,
         "nature": git_model.model.nature.name,
     }
