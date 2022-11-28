@@ -1,10 +1,11 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
 import logging
+import urllib.parse
 
 from fastapi import APIRouter, Body, Depends, HTTPException
+from requests import Request
 from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication.database import ProjectRoleVerification
@@ -34,22 +35,34 @@ log = logging.getLogger(__name__)
 
 
 def verify_path_prefix(db: Session, path: str):
-    git_settings = get_git_settings(db)
-
-    if not git_settings:
+    if not (git_settings := get_git_settings(db)):
         return
 
-    for git_setting in git_settings:
-        if path.startswith(git_setting.url):
-            return
+    unquoted_path = urllib.parse.unquote(path)
+    if resolved_path := Request("GET", unquoted_path).prepare().url:
+        for git_setting in git_settings:
+            unquoted_git_url = urllib.parse.unquote(git_setting.url)
+            resolved_git_url = Request("GET", unquoted_git_url).prepare().url
+
+            if resolved_git_url and resolved_path.startswith(resolved_git_url):
+                return
 
     raise HTTPException(
         status_code=400,
         detail={
             "err_code": "no_git_instance_with_prefix_found",
-            "reason": "There exist no git instance with an url being a prefix of the provdided source path. Please check whether you correctly selected a git instance.",
+            "reason": "There exist no git instance having the resolved path as prefix. Please check whether you correctly selected a git instance.",
         },
     )
+
+
+@router.post("/validate/path", response_model=bool)
+def validate_path(url: str = Body(), db: Session = Depends(get_db)) -> bool:
+    try:
+        verify_path_prefix(db, url)
+        return True
+    except Exception:
+        return False
 
 
 @router.get("", response_model=list[ResponseGitModel])
