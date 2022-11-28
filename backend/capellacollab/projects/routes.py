@@ -53,7 +53,7 @@ def get_projects(
     if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
         return crud.get_all_projects(db)
 
-    return [project.project for project in user.projects]
+    return [association.project for association in user.projects]
 
 
 @router.patch(
