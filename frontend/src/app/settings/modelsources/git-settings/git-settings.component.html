@@ -68,21 +68,8 @@
       <mat-error *ngIf="gitInstancesForm.controls.url.errors?.required"
         >A base URL is required</mat-error
       >
-      <mat-error
-        *ngIf="
-          gitInstancesForm.controls.url.errors?.urlSafetyError &&
-          gitInstancesForm.controls.url.value
-        "
-      >
-        {{ gitInstancesForm.controls.url.errors?.urlSafetyError }}
-      </mat-error>
-      <mat-error
-        *ngIf="
-          gitInstancesForm.controls.url.errors?.urlPrefixError &&
-          gitInstancesForm.controls.url.value
-        "
-      >
-        {{ gitInstancesForm.controls.url.errors?.urlPrefixError }}
+      <mat-error *ngIf="gitInstancesForm.controls.url.errors?.urlSchemeError">
+        Base url must start with http(s)://
       </mat-error>
     </mat-form-field>
   </form>
