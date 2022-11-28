@@ -49,8 +49,8 @@ export class ProjectMetadataComponent implements OnChanges {
         .subscribe((project) => {
           this.projectService._project.next(project);
           this.toastService.showSuccess(
-            'Description updated for project ' + this.project.name,
-            "Updated to '" + project.description + "'"
+            'Project updated',
+            `Updated to ${project.name}: ${project.description}`
           );
         });
     }
