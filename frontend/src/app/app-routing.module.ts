@@ -11,8 +11,8 @@ import { AuthComponent } from './general/auth/auth/auth.component';
 import { LogoutRedirectComponent } from './general/auth/logout/logout-redirect/logout-redirect.component';
 import { LogoutComponent } from './general/auth/logout/logout/logout.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
+import { AddGitSourceComponent } from './projects/models/add-git-source/add-git-source';
 import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
-import { CreateCoworkingMethodComponent } from './projects/models/create-coworking-method/create-coworking-method.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { ModelDescriptionComponent } from './projects/models/model-description/model-description.component';
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
@@ -83,10 +83,10 @@ const routes: Routes = [
               {
                 path: 'git-model',
                 children: [
-                  { path: 'create', component: CreateCoworkingMethodComponent },
+                  { path: 'create', component: AddGitSourceComponent },
                   {
                     path: ':git-model',
-                    component: CreateCoworkingMethodComponent,
+                    component: AddGitSourceComponent,
                   },
                 ],
               },
