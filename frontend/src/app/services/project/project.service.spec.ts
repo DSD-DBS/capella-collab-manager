@@ -11,7 +11,7 @@ import {
 import { TestBed } from '@angular/core/testing';
 
 import { environment } from 'src/environments/environment';
-import { ProjectService, Project } from './project.service';
+import { ProjectService, Project, PatchProject } from './project.service';
 
 const BACKEND_PROJECTS_URL = environment.backend_url + '/projects/';
 
@@ -110,13 +110,16 @@ describe('ProjectService', () => {
 
   it('should update the project description', () => {
     const updatedMockProjectDescription = 'update-test-project-description';
-    let updatedMockProject: Project = mockProject;
+    const updatedMockProjectName = 'update-test-project-name';
+    let updatedMockProject: PatchProject = mockProject;
     updatedMockProject.description = updatedMockProjectDescription;
+    updatedMockProject.name = updatedMockProjectName;
 
     projectService
-      .updateProject(testProjectSlug, updatedMockProjectDescription)
+      .updateProject(testProjectSlug, updatedMockProject)
       .subscribe({
-        next: (project) => expect(project).toEqual(updatedMockProject),
+        next: (project) =>
+          expect(project as PatchProject).toEqual(updatedMockProject),
       });
 
     const req = httpTestingController.expectOne(
