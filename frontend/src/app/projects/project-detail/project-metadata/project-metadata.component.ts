@@ -11,7 +11,15 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import slugify from 'slugify';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   PatchProject,
@@ -29,8 +37,11 @@ export class ProjectMetadataComponent implements OnChanges {
   @Output() changeProject = new EventEmitter<Project>();
 
   public form = new FormGroup({
-    name: new FormControl<string>('', Validators.required),
-    description: new FormControl<string>('', Validators.required),
+    name: new FormControl<string>('', [
+      Validators.required,
+      this.slugValidator(),
+    ]),
+    description: new FormControl<string>(''),
   });
 
   constructor(
@@ -39,6 +50,7 @@ export class ProjectMetadataComponent implements OnChanges {
   ) {}
 
   ngOnChanges(_changes: SimpleChanges): void {
+    this.projectService.list().subscribe();
     this.form.patchValue(this.project);
   }
 
@@ -54,5 +66,24 @@ export class ProjectMetadataComponent implements OnChanges {
           );
         });
     }
+  }
+
+  slugValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const slug = slugify(control.value, { lower: true });
+      if (
+        this.projectService.projects
+          ?.map((project) => project.slug)
+          .filter((slug) => slug !== this.projectService.project?.slug)
+          .includes(slug)
+      ) {
+        return { uniqueSlug: { value: slug } };
+      }
+      return null;
+    };
+  }
+
+  get newSlug(): string | null {
+    return this.form.value.name ? slugify(this.form.value.name) : null;
   }
 }

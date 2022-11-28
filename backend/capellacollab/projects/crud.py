@@ -33,6 +33,7 @@ def update_project(
 ) -> DatabaseProject:
     if patch_project.name:
         project.name = patch_project.name
+        project.slug = slugify(patch_project.name)
     if patch_project.description:
         project.description = patch_project.description
     db.commit()

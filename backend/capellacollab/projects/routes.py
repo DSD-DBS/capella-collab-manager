@@ -6,6 +6,7 @@ import logging
 import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException
+from slugify import slugify
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.crud as crud
@@ -69,6 +70,18 @@ def update_project_description(
     project: DatabaseProject = Depends(get_existing_project),
     database: Session = Depends(get_db),
 ) -> DatabaseProject:
+    new_slug = slugify(project.name)
+    if (
+        crud.get_project_by_slug(database, new_slug)
+        and project.slug != new_slug
+    ):
+        raise HTTPException(
+            409,
+            {
+                "reason": "A project with a similar name already exists.",
+                "technical": "Slug already used",
+            },
+        )
     return crud.update_project(database, project, patch_project)
 
 
@@ -92,7 +105,7 @@ def create_project(
     user: DatabaseUser = Depends(get_own_user),
     db: Session = Depends(get_db),
 ) -> DatabaseProject:
-    if crud.get_project_by_name(db, post_project.name):
+    if crud.get_project_by_slug(db, slugify(post_project.name)):
         raise HTTPException(
             409,
             {
