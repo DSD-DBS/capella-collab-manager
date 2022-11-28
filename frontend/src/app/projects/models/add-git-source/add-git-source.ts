@@ -18,13 +18,13 @@ import {
   ValidationErrors,
   ValidatorFn,
   AbstractControl,
+  AsyncValidatorFn,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, map, Subscription } from 'rxjs';
+import { filter, map, Observable, of, Subscription } from 'rxjs';
 import {
-  absoluteOrRelativeSafetyValidators,
-  absoluteUrlSafetyValidator,
-  checkUrlForInvalidSequences,
+  absoluteOrRelativeValidators,
+  absoluteUrlValidator,
   hasAbsoluteUrlPrefix,
   hasRelativePathPrefix,
 } from 'src/app/helpers/validators/url-validator';
@@ -48,10 +48,10 @@ import {
 
 @Component({
   selector: 'app-create-coworking-method',
-  templateUrl: './create-coworking-method.component.html',
-  styleUrls: ['./create-coworking-method.component.css'],
+  templateUrl: './add-git-source.html',
+  styleUrls: ['./add-git-source.css'],
 })
-export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
+export class AddGitSourceComponent implements OnInit, OnDestroy {
   @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 
@@ -69,7 +69,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
   public form = new FormGroup({
     urls: new FormGroup({
       baseUrl: new FormControl<GitSetting | undefined>(undefined),
-      inputUrl: new FormControl('', absoluteUrlSafetyValidator()),
+      inputUrl: new FormControl('', absoluteUrlValidator()),
     }),
     credentials: new FormGroup({
       username: new FormControl({ value: '', disabled: true }),
@@ -127,11 +127,11 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
 
         if (gitSettings.length) {
           this.urls.baseUrl.setValidators([Validators.required]);
-          this.urls.inputUrl.setValidators([
-            absoluteOrRelativeSafetyValidators(),
-          ]);
+          this.urls.inputUrl.setValidators([absoluteOrRelativeValidators()]);
         }
-        this.form.controls.urls.setValidators([this.resultUrlValidator()]);
+        this.form.controls.urls.setAsyncValidators([
+          this.resultUrlPrefixAsyncValidator(),
+        ]);
       });
 
     this.modelSubscription = this.modelService._model.subscribe((model) => {
@@ -214,12 +214,12 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
     }
 
     this.selectedGitInstance = value;
-    this.updateResultUrl();
+    this.form.controls.urls.updateValueAndValidity();
     this.resetRevisions();
   }
 
   onUrlInputChange(changedInputUrl: string): void {
-    this.updateResultUrl();
+    this.form.controls.urls.updateValueAndValidity();
     this.resetRevisions();
 
     this.urls.inputUrl.updateValueAndValidity();
@@ -233,6 +233,7 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
       } else if (this.availableGitInstances.length) {
         this.selectedGitInstance = undefined;
         this.urls.baseUrl.reset();
+        this.disableAllExpectUrls();
       }
     }
   }
@@ -314,17 +315,6 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
     this.form.controls.primary.setValue(gitModel.primary);
   }
 
-  private updateResultUrl(): void {
-    let baseUrl = this.selectedGitInstance?.url || '';
-    let inputUrl = this.urls.inputUrl.value!;
-
-    if (hasAbsoluteUrlPrefix(inputUrl)) {
-      this.resultUrl = inputUrl;
-    } else {
-      this.resultUrl = baseUrl + inputUrl;
-    }
-  }
-
   private filteredRevisionsByPrefix(prefix: string): void {
     this.filteredRevisions = {
       branches: [],
@@ -368,37 +358,44 @@ export class CreateCoworkingMethodComponent implements OnInit, OnDestroy {
     this.form.controls.revision.enable();
   }
 
-  private resultUrlValidator(): ValidatorFn {
-    return (_: AbstractControl): ValidationErrors | null => {
+  private resultUrlPrefixAsyncValidator(): AsyncValidatorFn {
+    return (_: AbstractControl): Observable<ValidationErrors | null> => {
       this.updateResultUrl();
 
-      let baseUrl = this.urls.baseUrl;
-      let inputUrl = this.urls.inputUrl;
+      if (!this.resultUrl) return of({ required: 'Resulting URL is required' });
 
-      let innerValidationResult: ValidationErrors | null = null;
-      let url: string = this.resultUrl;
-      if (!url) return { required: 'Resulting URL is required' };
+      return this.gitModelService
+        .validatePath(
+          this.projectService.project?.slug!,
+          this.modelService.model?.slug!,
+          this.resultUrl
+        )
+        .pipe(
+          map((prefixExists: boolean) => {
+            if (prefixExists) {
+              this.enableAllExceptUrls();
+              return null;
+            }
 
-      if (!hasAbsoluteUrlPrefix(url)) {
-        innerValidationResult = {
-          urlPrefixError: 'Absolute URL must start with http(s)://',
-        };
-      } else if (this.availableGitInstances && baseUrl.invalid) {
-        innerValidationResult = baseUrl.errors;
-      } else if (inputUrl.invalid) {
-        innerValidationResult = inputUrl.errors;
-      }
-
-      const outerValidationResult = checkUrlForInvalidSequences(url);
-
-      if (!innerValidationResult && !outerValidationResult) {
-        this.enableAllExceptUrls();
-      } else {
-        this.disableAllExpectUrls();
-        return Object.assign({}, outerValidationResult, innerValidationResult);
-      }
-      return null;
+            this.disableAllExpectUrls();
+            return {
+              urlPrefixError:
+                'There exists no git setting being a prefix of the resolved url',
+            };
+          })
+        );
     };
+  }
+
+  private updateResultUrl() {
+    let baseUrl = this.selectedGitInstance?.url || '';
+    let inputUrl = this.urls.inputUrl.value!;
+
+    if (hasAbsoluteUrlPrefix(inputUrl)) {
+      this.resultUrl = inputUrl;
+    } else {
+      this.resultUrl = baseUrl + inputUrl;
+    }
   }
 
   private existingRevisionValidator(): ValidatorFn {

@@ -5,20 +5,20 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateCoworkingMethodComponent } from './create-coworking-method.component';
+import { AddGitSourceComponent } from './add-git-source';
 
-xdescribe('CreateCoworkingMethodComponent', () => {
-  let component: CreateCoworkingMethodComponent;
-  let fixture: ComponentFixture<CreateCoworkingMethodComponent>;
+xdescribe('AddGitSourceComponent', () => {
+  let component: AddGitSourceComponent;
+  let fixture: ComponentFixture<AddGitSourceComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CreateCoworkingMethodComponent],
+      declarations: [AddGitSourceComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CreateCoworkingMethodComponent);
+    fixture = TestBed.createComponent(AddGitSourceComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
