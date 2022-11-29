@@ -13,11 +13,16 @@ data:
     groups:
       - name: Inactivity
         rules:
-          - alert: Inactivity (10m)
+          - alert: Inactivity session
             expr: idletime_minutes > 60
             for: 1m
             annotations:
               summary: High Idletime
+          - alert: Unused session
+            expr: idletime_minutes < 0
+            for: 60m
+            annotations:
+              summary: Unused session
 
   prometheus.yml: |-
     global:
