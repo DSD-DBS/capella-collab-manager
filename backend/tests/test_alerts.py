@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
@@ -16,6 +17,12 @@ from capellacollab.notices.models import (
 )
 from capellacollab.users.crud import create_user
 from capellacollab.users.models import Role
+
+
+@pytest.fixture(autouse=True)
+def cleanup_notices(db: Session):
+    for notice in get_all_notices(db):
+        delete_notice(db, notice)
 
 
 def test_get_alerts(client: TestClient, db: Session, username: str):
@@ -36,8 +43,6 @@ def test_get_alerts(client: TestClient, db: Session, username: str):
         "title": "test title",
         "message": "test message",
     }.items() <= response.json()[0].items()
-
-    delete_notice(db, get_all_notices(db)[0])
 
 
 def test_create_alert_not_authenticated(client: TestClient):
@@ -65,8 +70,6 @@ def test_create_alert(client: TestClient, db: Session, username: str):
     assert notices[0].title == "test"
     assert notices[0].message == "test"
     assert notices[0].level == NoticeLevel.SUCCESS
-
-    delete_notice(db, notices[0])
 
 
 def test_delete_alert(client: TestClient, db: Session, username: str):
