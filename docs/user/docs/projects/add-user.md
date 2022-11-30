@@ -4,26 +4,28 @@
  -->
 
 !!! warning
-    You need to be project lead for the specific project or adminstrator for the following steps
-
+    You need to have the Administrator or Project Lead role for the specific
+    project to perform the following steps.
 
 ## Add user to project
 
-1. Please select your project in the project overview.
+1. Select your project in the project overview.
 2. On the right side you should now see user management options:
     ![Add user](add-user/add-user-empty.png)
-3. Please fill in the following fields:
-      1. `Username`: Please ask your administrator if you are not sure which username to enter
-      1. `Role` and `Permission`: Please have a look here for the overview of Roles and Permissions: [Project roles](../projects/roles.md)
+3. Fill in the following fields:
+      1. `Username`: Ask your administrator if you are not sure
+        which username to enter
+      1. `Role` and `Permission`: Have a look here for the overview of
+        Roles and Permissions: [Project roles](../projects/roles.md)
 
         ![Add user](add-user/add-user.png)
 
 ## Modify role or permissions of user
 
-1. Please select your project in the project overview.
+1. Select your project in the project overview.
 1. On the right side you should now see user management options:
     ![User management](add-user/manage-users.png)
-1. Please select the user you want do modify:
+1. Select the user you want do modify:
     ![User modification](add-user/modify-user.png)
 
     You can select from the following options:
@@ -36,4 +38,6 @@
         You can not modify your own user or any administrator!
 
     !!! info
-        Open sessions are not terminated automatically on permission change. The TeamForCapella access is only revoked when the user's last session is terminated.
+        Open sessions are not terminated automatically on permission change.
+        The TeamForCapella access is only revoked
+        when the user's last session is terminated.
