@@ -36,7 +36,7 @@ class NoticeResponse(CreateNoticeRequest):
 class DatabaseNotice(Base):
     __tablename__ = "notices"
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    message = Column(String)
-    level = Column(Enum(NoticeLevel))
+    id: int = Column(Integer, primary_key=True, index=True)
+    title: str = Column(String)
+    message: str = Column(String)
+    level: NoticeLevel = Column(Enum(NoticeLevel))
