@@ -78,6 +78,10 @@ Please wait until all services are in the "Running" state.
 
 If all goes well, you should find Capella-collab-manager running on [http://localhost:8080/](http://localhost:8080/).
 
+To reduce the build time, the default configutation only builds a Capella 5.2.0 image. You can modify the `Makefile`
+if you want to build multiple versions.
+By default the TeamForCapella images are configured. You can change those in the Settings section of the website.
+
 If you want to see the individual services in the Kubernetes dashboard, you can run the following command:
 
 ```zsh
