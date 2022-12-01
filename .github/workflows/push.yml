@@ -4,7 +4,7 @@ name: push
 
 on:
   push:
-    branches: ['**']
+    branches: ["**"]
     tags: ["v*.*.*"]
   pull_request:
     branches: [master, staging]
@@ -98,6 +98,9 @@ jobs:
         run: |
           kubectl patch serviceaccount default \
             -p '{"imagePullSecrets": [{"name": "github"}]}'
+      - name: Update dependencies
+        run: |
+          helm dependency update ./helm
       - name: Install chart
         run: |
           export TAG=${{ steps.tag.outputs.branch }}
@@ -112,10 +115,19 @@ jobs:
           --set general.port=8080 \
           --set backend.authentication.oauth.endpoints.wellKnown="http://test-oauth-mock:8080/default/.well-known/openid-configuration" \
           ./helm
+      - name: Scale down backend deployment
+        run: |
+          kubectl scale deployment test-backend --replicas=0
+      - name: Wait for backend pods to be deleted
+        run: |
+          kubectl wait pod --selector="id=test-deployment-backend" --for=delete --timeout=2m
       - name: Add secret to backend serviceaccount
         run: |
           kubectl patch deployment/test-backend \
             -p '{"spec": {"template": {"spec": {"imagePullSecrets": [{"name": "github"}]}}}}'
+      - name: Scale up backend deployment
+        run: |
+          kubectl scale deployment test-backend --replicas=1
       - name: Wait for all containers to be ready
         run: |
           kubectl wait --all deployment --for condition=Available=True --timeout=5m
@@ -131,7 +143,11 @@ jobs:
         if: always()
         run: |
           kubectl describe pods
+      - name: Describe nodes
+        if: always()
+        run: |
+          kubectl describe nodes
       - name: Print logs of backend container
         if: always()
         run: |
-          kubectl logs deployment/test-backend
+          kubectl logs deployment/test-backend test-backend

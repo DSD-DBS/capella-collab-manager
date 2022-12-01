@@ -63,6 +63,7 @@ helm-deploy:
 	@k3d cluster list $(CLUSTER_NAME) >/dev/null || $(MAKE) create-cluster
 	@kubectl create namespace t4c-sessions 2> /dev/null || true
 	@helm upgrade --install \
+		--dependency-update \
 		--kube-context k3d-$(CLUSTER_NAME) \
 		--create-namespace \
 		--namespace $(NAMESPACE) \
@@ -91,7 +92,7 @@ open:
 
 clear-backend-db:
 	kubectl delete deployment -n t4c-manager $(RELEASE)-backend-postgres
-	kubectl delete pvc -n t4c-manager $(RELEASE)-volume-backend-postgres
+	kubectl delete pvc -n t4c-manager $(RELEASE)-backend-postgres
 	$(MAKE) helm-deploy
 
 rollout:
