@@ -1,0 +1,37 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-backend-idle-sessions
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+            - name: config
+              configMap:
+                name: {{ .Release.Name }}-backend
+          containers:
+            - name: {{ .Release.Name }}-backend-idle-sessions
+              image:  {{ .Values.docker.registry.internal }}{{ .Values.docker.images.backend }}
+              imagePullPolicy: IfNotPresent
+              command:
+                - python3
+                - -m
+                - capellacollab.sessions.idletimeout
+              resources:
+                limits:
+                  cpu: "0.2"
+                  memory: 50Mi
+                requests:
+                  cpu: "0.05"
+                  memory: 20Mi
+              volumeMounts:
+                - name: config
+                  mountPath: /etc/capellacollab
+                  readOnly: true
+          restartPolicy: OnFailure
