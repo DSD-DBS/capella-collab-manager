@@ -1,0 +1,90 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-promtail
+  namespace: {{ .Release.Namespace }}
+  labels:
+    id: {{ .Release.Name }}-configmap-promtail
+data:
+  backend-promtail.yaml: |
+    server:
+      log_level: {{ .Values.promtail.logLevel }}
+      http_listen_port: {{ .Values.promtail.serverPort }}
+
+    clients:
+      {{- tpl (toYaml .Values.promtail.clients) . | nindent 6}}
+
+    positions:
+      filename: /var/log/promtail/positions.yaml
+
+    scrape_configs:
+      - job_name: system
+        pipeline_stages:
+          - multiline:
+              firstline: '^time=\"\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2},\d{3}\"'
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              deployment: {{ .Release.Name }}-deployment-backend
+              __path__: /var/log/backend/*.log
+  guacamole-promtail.yaml: |
+    server:
+      log_level: {{ .Values.promtail.logLevel }}
+      http_listen_port: {{ .Values.promtail.serverPort }}
+
+    clients:
+      {{- tpl (toYaml .Values.promtail.clients) . | nindent 6}}
+
+    positions:
+      filename: /var/log/promtail/positions.yaml
+
+    scrape_configs:
+      - job_name: system
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              deployment: {{ .Release.Name }}-deployment-guacamole-guacamole
+              __path__: /var/log/guacamole/*.log
+  guacd-promtail.yaml: |
+    server:
+      log_level: {{ .Values.promtail.logLevel }}
+      http_listen_port: {{ .Values.promtail.serverPort }}
+
+    clients:
+      {{- tpl (toYaml .Values.promtail.clients) . | nindent 6}}
+
+    positions:
+      filename: /var/log/promtail/positions.yaml
+
+    scrape_configs:
+      - job_name: system
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              deployment: {{ .Release.Name }}-deployment-guacamole-guacd
+              __path__: /var/log/guacd/*.log
+  nginx-frontend-promtail.yaml: |
+    server:
+      log_level: {{ .Values.promtail.logLevel }}
+      http_listen_port: {{ .Values.promtail.serverPort }}
+
+    clients:
+      {{- tpl (toYaml .Values.promtail.clients) . | nindent 6}}
+
+    positions:
+      filename: /var/log/promtail/positions.yaml
+
+    scrape_configs:
+      - job_name: system
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              deployment: {{ .Release.Name }}-deployment-frontend
+              __path__: /var/log/nginx-frontend/*.log
