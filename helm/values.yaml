@@ -5,6 +5,27 @@
 ### APPLICATION RELATED CONFIGURATION ###
 #########################################
 
+definitions:
+  loki:
+    url: &lokiPushUrl http://loki-gateway.{{- .Release.Namespace -}}.svc.cluster.local/loki/api/v1/push
+    username: &lokiUsername localLokiUser
+    password: &lokiPassword localLokiPassword
+
+# Replicas for all deployments (defaults to 1)
+replicaCount:
+  backend:
+  backendPostgres:
+  docs:
+  frontend:
+  grafana:
+  grafanaNginx:
+  guacamole:
+  guacamolePostgres:
+  guacd:
+  prometheus:
+  prometheusNginx:
+  routing:
+
 docker:
   # Registry for Docker Images, will be used as prefix for Docker Images
   registry:
@@ -33,6 +54,9 @@ docker:
       guacd: docker.io/guacamole/guacd
 
     prometheus: /prom/prometheus
+
+    promtail: /grafana/promtail
+    grafana: /grafana/grafana
 
     mocks:
       oauth: ghcr.io/navikt/mock-oauth2-server:0.4.4
@@ -171,7 +195,7 @@ cluster:
   namespaces:
     sessions:
       containers:
-      # The following values are appended to each container in the sessions namespace
+        # The following values are appended to each container
 
   pvc:
     storageClassName: null
@@ -180,3 +204,77 @@ cluster:
 # Leave it empty if not needed
 proxy:
   no_proxy:
+
+promtail:
+  clients:
+    - url: *lokiPushUrl
+      basic_auth:
+        username: *lokiUsername
+        password: *lokiPassword
+  logLevel: info
+  serverPort: 3101
+
+loki:
+  loki:
+    auth_enabled: False
+  gateway:
+    basicAuth:
+      enabled: True
+      username: *lokiUsername
+      password: *lokiPassword
+    resources: &resourcesLoki
+      limits:
+        cpu: "0.1"
+        memory: 50Mi
+      requests:
+        cpu: "0.03"
+        memory: 5Mi
+  read:
+    replicas: 2
+    affinity: ""
+    resources: *resourcesLoki
+    persistence:
+      size: 1Gi
+  write:
+    replicas: 2
+    affinity: ""
+    resources: *resourcesLoki
+    persistence:
+      size: 1Gi
+  serviceAccount:
+    create: False
+  monitoring:
+    selfMonitoring:
+      enabled: False
+      grafanaAgent:
+        installOperator: False
+      lokiCanary: &disabledLoki
+        enabled: False
+    alerts: *disabledLoki
+    serviceMonitor: *disabledLoki
+    rules: *disabledLoki
+    dashboard: *disabledLoki
+  test: *disabledLoki
+  minio:
+    enabled: True
+    configPathmc: /tmp/.mc
+    securityContext:
+      enabled: False
+    resources: &resourcesMinio
+      limits:
+        cpu: "0.1"
+        memory: 50Mi
+      requests:
+        cpu: "0.03"
+        memory: 5Mi
+    makePolicyJob: &minioJob
+      resources: *resourcesMinio
+      securityContext:
+        enabled: True
+        runAsUser: 1004370000
+        runAsGroup: 1004370000
+        fsGroup: 1004370000
+    makeUserJob: *minioJob
+    makeServiceAccountJob: *minioJob
+    makeBucketJob: *minioJob
+    customCommandJob: *minioJob

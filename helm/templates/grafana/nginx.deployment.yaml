@@ -4,33 +4,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-nginx
+  name: {{ .Release.Name }}-grafana-nginx
   labels:
-    id: {{ .Release.Name }}-deployment-nginx
+    id: {{ .Release.Name }}-deployment-grafana-nginx
   annotations:
-    checksum/config: {{ include (print $.Template.BasePath "/routing/nginx.configmap.yaml") . | sha256sum }}
+    checksum/config: {{ include (print $.Template.BasePath "/grafana/nginx.configmap.yaml") . | sha256sum }}
 spec:
-  replicas: {{ .Values.replicaCount.routing | default 1 }}
+  replicas: {{ .Values.replicaCount.grafanaNginx | default 1 }}
   selector:
     matchLabels:
-      id: {{ .Release.Name }}-deployment-nginx
+      id: {{ .Release.Name }}-deployment-grafana-nginx
   template:
     metadata:
       labels:
-        id: {{ .Release.Name }}-deployment-nginx
+        id: {{ .Release.Name }}-deployment-grafana-nginx
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/routing/nginx.configmap.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/grafana/nginx.configmap.yaml") . | sha256sum }}
     spec:
       volumes:
-        - name: {{ .Release.Name }}-nginx
+        - name: {{ .Release.Name }}-grafana-nginx
           configMap:
-            name: {{ .Release.Name }}-nginx
+            name: {{ .Release.Name }}-grafana-nginx
       containers:
-        - name: {{ .Release.Name }}-nginx
+        - name: {{ .Release.Name }}-grafana-nginx
           image: {{ .Values.docker.registry.external }}/nginxinc/nginx-unprivileged
           ports:
-            - name: http
-              containerPort: 8080
+            - name: grafui
+              containerPort: 3118
               protocol: TCP
           resources:
             {{ if eq .Values.target "local" }}
@@ -49,7 +49,7 @@ spec:
               memory: 50Mi
             {{ end }}
           volumeMounts:
-            - name: {{ .Release.Name }}-nginx
+            - name: {{ .Release.Name }}-grafana-nginx
               mountPath: /etc/nginx
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}

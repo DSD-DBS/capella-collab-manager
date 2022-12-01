@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-grafana
+  namespace: {{ .Release.Namespace }}
+  labels:
+    id: {{ .Release.Name }}-configmap-grafana
+data:
+  grafana.ini: |
+    [paths]
+    data = /var/lib/grafana/
+    logs = /var/log/grafana
+    plugins = /var/lib/grafana/plugins
+    provisioning = /etc/grafana/provisioning
+
+    [log]
+    level = debug
+    mode = console
+
+    [server]
+    root_url = http://localhost:8080/grafana/
+    serve_from_sub_path = true
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Loki-Test
+        type: loki
+        access: proxy
+        orgId: 1
+        url: http://loki-gateway.{{ .Release.Namespace }}.svc.cluster.local
+        basicAuth: true
+        basicAuthUser: {{ .Values.definitions.loki.username }}
+        secureJsonData:
+          basicAuthPassword: {{ .Values.definitions.loki.password }}
+        version: 1
+        editable: true
+  dashboards.yaml: |

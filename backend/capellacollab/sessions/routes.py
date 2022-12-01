@@ -160,6 +160,9 @@ def request_session(
     rdp_password = generate_password(length=64)
 
     session = operator.start_readonly_session(
+        username=db_user.name,
+        tool_name=model.tool.name,
+        version_name=model.version.name,
         password=rdp_password,
         docker_image=docker_image,
         git_repos_json=list(models_as_json(models, model.version)),
@@ -235,11 +238,7 @@ def request_persistent_session(
     t4c_json = None
     t4c_license_secret = None
     if tool.name == "Capella":
-        t4c_repositories = (
-            get_user_t4c_repositories(db, tool, version, user)
-            if tool.name == "Capella"
-            else None
-        )
+        t4c_repositories = get_user_t4c_repositories(db, tool, version, user)
 
         t4c_json = [
             {
@@ -287,6 +286,8 @@ def request_persistent_session(
 
     session = operator.start_persistent_session(
         username=get_username(token),
+        tool_name=tool.name,
+        version_name=version.name,
         password=rdp_password,
         docker_image=docker_image,
         t4c_license_secret=t4c_license_secret,

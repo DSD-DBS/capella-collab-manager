@@ -8,6 +8,8 @@ metadata:
   name: {{ .Release.Name }}-oauth-mock
   labels:
     id: {{ .Release.Name }}-deployment-oauth-mock
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/mock/oauth.configmap.yaml") . | sha256sum }}
 spec:
   replicas: 1
   selector:
@@ -17,6 +19,8 @@ spec:
     metadata:
       labels:
         id: {{ .Release.Name }}-deployment-oauth-mock
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/mock/oauth.configmap.yaml") . | sha256sum }}
     spec:
       volumes:
         - name: {{ .Release.Name }}-oauth-mock

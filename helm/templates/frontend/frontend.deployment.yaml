@@ -7,8 +7,10 @@ metadata:
   name: {{ .Release.Name }}-frontend
   labels:
     id: {{ .Release.Name }}-deployment-frontend
+  annotations:
+    checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
 spec:
-  replicas: {{ .Values.replicaCount | default 1 }}
+  replicas: {{ .Values.replicaCount.frontend | default 1 }}
   selector:
     matchLabels:
       id: {{ .Release.Name }}-deployment-frontend
@@ -16,7 +18,21 @@ spec:
     metadata:
       labels:
         id: {{ .Release.Name }}-deployment-frontend
+      annotations:
+        checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
     spec:
+      volumes:
+        - name: prom-config
+          configMap:
+            name: {{ .Release.Name }}-promtail
+            items:
+              - key: nginx-frontend-promtail.yaml
+                path: promtail.yaml
+        - name: prom-position
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-frontend-promtail
+        - name: logs
+          emptyDir: {}
       containers:
         - name: {{ .Release.Name }}-frontend
           image: {{ .Values.docker.registry.internal }}{{ .Values.docker.images.frontend }}
@@ -34,7 +50,7 @@ spec:
               cpu: "0.1"
               memory: 50Mi
             requests:
-              cpu: "0.05"
+              cpu: "0.04"
               memory: 5Mi
             {{ else }}
             limits:
@@ -44,6 +60,44 @@ spec:
               cpu: "0.25"
               memory: 5Mi
             {{ end }}
+          volumeMounts:
+            - name: logs
+              mountPath: /var/log/nginx
+          {{ if .Values.cluster.containers }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}
+        - name: promtail
+          image: {{ .Values.docker.registry.external -}}{{- .Values.docker.images.promtail }}
+          args:
+            - "--config.file=/etc/promtail/promtail.yaml"
+            - "-log-config-reverse-order"
+          ports:
+            - name: logs
+              containerPort: {{ .Values.promtail.serverPort }}
+              protocol: TCP
+          resources:
+            {{ if eq .Values.target "local" }}
+            limits:
+              cpu: "0.1"
+              memory: 50Mi
+            requests:
+              cpu: "0.02"
+              memory: 5Mi
+            {{ else }}
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: "0.2"
+              memory: 250Mi
+            {{ end }}
+          volumeMounts:
+            - name: prom-config
+              mountPath: /etc/promtail
+            - name: prom-position
+              mountPath: /var/log/promtail
+            - name: logs
+              mountPath: /var/log/nginx-frontend
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}

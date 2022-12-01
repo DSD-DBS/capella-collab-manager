@@ -3,9 +3,10 @@
 
 
 import logging
+import sys
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -16,7 +17,7 @@ from capellacollab.core.database import engine, migration
 from capellacollab.core.logging import (
     AttachTraceIdMiddleware,
     AttachUserNameMiddleware,
-    HealthcheckFilter,
+    LogExceptionMiddleware,
     LogRequestsMiddleware,
     MakeTimedRotatingFileHandler,
 )
@@ -29,19 +30,21 @@ logging.basicConfig(
             str(config["logging"]["logPath"]) + "backend.log"
         )
     ],
-    format="time=%(asctime)s level=%(levelname)s function=%(funcName)s %(message)s",
+    format='time="%(asctime)s" level=%(levelname)s function=%(funcName)s %(message)s',
 )
 
-logging.getLogger("uvicorn.access").addFilter(HealthcheckFilter())
+print(logging.getLogger().handlers)
 
 
 async def startup():
     migration.migrate_db(engine)
     logging.getLogger("uvicorn.access").disabled = True
+    logging.getLogger("uvicorn.error").disabled = True
 
 
 async def shutdown():
     logging.getLogger("uvicorn.access").disabled = False
+    logging.getLogger("uvicorn.error").disabled = False
 
 
 app = FastAPI(
@@ -57,6 +60,7 @@ app = FastAPI(
         ),
         Middleware(AttachTraceIdMiddleware),
         Middleware(AttachUserNameMiddleware),
+        Middleware(LogExceptionMiddleware),
         Middleware(LogRequestsMiddleware),
     ],
     on_shutdown=[shutdown],
@@ -64,7 +68,7 @@ app = FastAPI(
 
 
 @app.exception_handler(500)
-async def handle_exceptions(request, exc):
+async def handle_exceptions(request: Request, exc: Exception):
     """
     A custom exception handler is required, otherwise no CORS headers are included
     in the case of exceptions.

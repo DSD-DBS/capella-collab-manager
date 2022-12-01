@@ -1,15 +1,13 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-{{ if .Values.mocks.oauth }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-oauth-mock
+  name: {{ .Release.Name }}-grafana-nginx
   namespace: {{ .Release.Namespace }}
   labels:
-    id: {{ .Release.Name }}-configmap-oauth-mock
+    id: {{ .Release.Name }}-configmap-grafana-nginx
 data:
-  oauth.json: |-
-    {{ .Files.Get "config/oauth.json" | nindent 4 }}
-{{ end }}
+  nginx.conf: |-
+    {{ tpl (.Files.Get "config/nginx-grafana.conf") . | nindent 4 }}

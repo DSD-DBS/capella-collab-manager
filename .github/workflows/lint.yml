@@ -4,7 +4,7 @@ name: lint
 
 on:
   push:
-    branches: ['**']
+    branches: ["**"]
     tags: ["v*.*.*"]
   pull_request:
     branches: [master, staging]
@@ -24,11 +24,14 @@ jobs:
         run: |
           go install github.com/yannh/kubeconform/cmd/kubeconform@latest
           echo "$HOME/go/bin" >> $GITHUB_PATH
+      - name: Run helm dependency update
+        run: |
+          helm dependency update ./helm
       - name: Run helm lint
         run: |
           helm lint --strict ./helm
       - name: Validate chart with kubernetes schema
-        run : |
+        run: |
           helm template ./helm | kubeconform -strict
   pre-commit:
     runs-on: ubuntu-latest

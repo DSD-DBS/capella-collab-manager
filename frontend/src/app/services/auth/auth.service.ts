@@ -93,6 +93,10 @@ export class AuthService {
       path: '/prometheus',
       sameSite: 'strict',
     });
+    this.cookieService.put('access_token', accessToken, {
+      path: '/grafana',
+      sameSite: 'strict',
+    });
   }
 
   logOut() {

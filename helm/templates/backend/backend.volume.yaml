@@ -1,14 +1,12 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-{{ if .Values.database.backend.deploy }}
-{{ if ne .Values.target "local" }}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ .Release.Name }}-backend-postgres
+  name: {{ .Release.Name }}-backend-promtail
   labels:
-    id: {{ .Release.Name }}-pvc-backend-postgres
+    id: {{ .Release.Name }}-pvc-backend-promtail
 spec:
   accessModes:
     - ReadWriteOnce
@@ -16,5 +14,3 @@ spec:
     requests:
       storage: 1Gi
   storageClassName: {{ .Values.cluster.pvc.storageClassName }}
-{{ end }}
-{{ end }}
