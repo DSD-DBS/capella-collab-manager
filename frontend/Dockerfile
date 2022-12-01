@@ -14,3 +14,6 @@ RUN npm run build -- --configuration=${CONFIGURATION}
 FROM nginxinc/nginx-unprivileged:latest
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /work/dist/t4cclient /usr/share/nginx/html
+USER root
+RUN chown -R nginx:nginx /var/log/nginx
+USER nginx
