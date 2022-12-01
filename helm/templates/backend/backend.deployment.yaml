@@ -8,9 +8,10 @@ metadata:
   labels:
     id: {{ .Release.Name }}-deployment-backend
   annotations:
-    checksum/config: {{ include (print $.Template.BasePath "/backend/backend.configmap.yaml") . | sha256sum }}
+    checksum/config-backend: {{ include (print $.Template.BasePath "/backend/backend.configmap.yaml") . | sha256sum }}
+    checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
 spec:
-  replicas: {{ .Values.replicaCount | default 1 }}
+  replicas: {{ .Values.replicaCount.backend | default 1 }}
   selector:
     matchLabels:
       id: {{ .Release.Name }}-deployment-backend
@@ -18,12 +19,26 @@ spec:
     metadata:
       labels:
         id: {{ .Release.Name }}-deployment-backend
+      annotations:
+        checksum/config-backend: {{ include (print $.Template.BasePath "/backend/backend.configmap.yaml") . | sha256sum }}
+        checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
     spec:
-      serviceAccountName: {{ .Release.Name }}-serviceaccount-backend
+      serviceAccountName: {{ .Release.Name }}-backend
       volumes:
         - name: config
           configMap:
             name: {{ .Release.Name }}-backend
+        - name: prom-config
+          configMap:
+            name: {{ .Release.Name }}-promtail
+            items:
+              - key: backend-promtail.yaml
+                path: promtail.yaml
+        - name: prom-position
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-backend-promtail
+        - name: logs
+          emptyDir: {}
       containers:
         - name: {{ .Release.Name }}-backend
           image: {{ .Values.docker.registry.internal }}{{ .Values.docker.images.backend }}
@@ -53,7 +68,7 @@ spec:
               cpu: "0.2"
               memory: 100Mi
             requests:
-              cpu: "0.05"
+              cpu: "0.04"
               memory: 20Mi
             {{ else }}
             limits:
@@ -67,6 +82,44 @@ spec:
             - name: config
               mountPath: /etc/capellacollab
               readOnly: true
+            - name: logs
+              mountPath: /var/log/backend
+          {{ if .Values.cluster.containers }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}
+        - name: promtail
+          image: {{ .Values.docker.registry.external -}}{{- .Values.docker.images.promtail }}
+          args:
+            - "--config.file=/etc/promtail/promtail.yaml"
+            - "-log-config-reverse-order"
+          ports:
+            - name: logs
+              containerPort: {{ .Values.promtail.serverPort }}
+              protocol: TCP
+          resources:
+            {{ if eq .Values.target "local" }}
+            limits:
+              cpu: "0.1"
+              memory: 50Mi
+            requests:
+              cpu: "0.02"
+              memory: 5Mi
+            {{ else }}
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: "0.2"
+              memory: 250Mi
+            {{ end }}
+          volumeMounts:
+            - name: prom-config
+              mountPath: /etc/promtail
+            - name: prom-position
+              mountPath: /var/log/promtail
+            - name: logs
+              readOnly: true
+              mountPath: /var/log/backend
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
