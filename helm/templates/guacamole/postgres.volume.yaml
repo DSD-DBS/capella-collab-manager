@@ -6,7 +6,9 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ .Release.Name }}-volume-guacamole-postgres
+  name: {{ .Release.Name }}-guacamole-postgres
+  labels:
+    id: {{ .Release.Name }}-pvc-guacamole-postgres
 spec:
   accessModes:
     - ReadWriteOnce

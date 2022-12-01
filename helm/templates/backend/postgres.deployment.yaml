@@ -9,7 +9,7 @@ metadata:
   labels:
     id: {{ .Release.Name }}-deployment-backend-postgres
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount.backendPostgres | default 1 }}
   selector:
     matchLabels:
       id: {{ .Release.Name }}-deployment-backend-postgres
@@ -24,7 +24,7 @@ spec:
       volumes:
         - name: {{ .Release.Name }}-data
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-volume-backend-postgres
+            claimName: {{ .Release.Name }}-backend-postgres
       {{ end }}
       containers:
         - name: {{ .Release.Name }}-backend-postgres
@@ -58,7 +58,7 @@ spec:
               cpu: "0.2"
               memory: 100Mi
             requests:
-              cpu: "0.1"
+              cpu: "0.05"
               memory: 20Mi
             {{ else }}
             requests:

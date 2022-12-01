@@ -6,7 +6,7 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-prometheus-nginx
   labels:
-    id: {{ .Release.Name }}-prometheus-nginx-service
+    id: {{ .Release.Name }}-service-prometheus-nginx
 spec:
   type: ClusterIP
   selector:

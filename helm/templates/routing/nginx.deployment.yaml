@@ -10,7 +10,7 @@ metadata:
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/routing/nginx.configmap.yaml") . | sha256sum }}
 spec:
-  replicas: {{ .Values.replicaCount | default 1 }}
+  replicas: {{ .Values.replicaCount.routing | default 1 }}
   selector:
     matchLabels:
       id: {{ .Release.Name }}-deployment-nginx
@@ -18,6 +18,8 @@ spec:
     metadata:
       labels:
         id: {{ .Release.Name }}-deployment-nginx
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/routing/nginx.configmap.yaml") . | sha256sum }}
     spec:
       volumes:
         - name: {{ .Release.Name }}-nginx
