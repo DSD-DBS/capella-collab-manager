@@ -4,17 +4,21 @@
 docker:
   registry: "{{ .Values.docker.registry.internal }}"
 
-operators:
-  operator: k8s
+k8s:
+  namespace: {{ .Values.backend.k8sSessionNamespace }}
+  storageClassName: {{ .Values.backend.storageClassName }}
+  storageAccessMode: {{ .Values.backend.storageAccessMode }}
 
-  k8s:
-    namespace: {{ .Values.backend.k8sSessionNamespace }}
-    storageClassName: {{ .Values.backend.storageClassName }}
-    storageAccessMode: {{ .Values.backend.storageAccessMode }}
+  cluster:
+    containers:
+      {{- toYaml .Values.cluster.namespaces.sessions.containers | nindent 6 }}
 
-    cluster:
-      containers:
-        {{- toYaml .Values.cluster.namespaces.sessions.containers | nindent 8 }}
+  promtail:
+    lokiUrl: {{ tpl .Values.definitions.loki.url . }}
+    lokiUsername: {{ .Values.definitions.loki.username }}
+    lokiPassword: {{ .Values.definitions.loki.password }}
+    logLevel: {{ .Values.promtail.logLevel }}
+    serverPort: {{ .Values.promtail.serverPort }}
 
 extensions:
   guacamole:
@@ -78,6 +82,7 @@ initial:
 
 logging:
   level: DEBUG
+  logPath: /var/log/backend/
 
 requests:
   timeout: 2
