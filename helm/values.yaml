@@ -45,7 +45,7 @@ general:
 
 sessions:
   # Session timeout in minutes for unused and idle sessions
-  timeout: 5
+  timeout: 90
 
 database:
   # Database Configuration for Guacamole
