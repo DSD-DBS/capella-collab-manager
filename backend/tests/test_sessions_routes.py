@@ -93,6 +93,8 @@ class MockOperator:
     def start_persistent_session(
         cls,
         username: str,
+        tool_name: str,
+        version_name: str,
         password: str,
         docker_image: str,
         t4c_license_secret: str | None,
@@ -112,6 +114,9 @@ class MockOperator:
     @classmethod
     def start_readonly_session(
         cls,
+        username: str,
+        tool_name: str,
+        version_name: str,
         password: str,
         docker_image: str,
         git_repos_json: t.List[t.Dict[str, str | int]],
