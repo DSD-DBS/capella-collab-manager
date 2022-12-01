@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import json
 import logging
 import random
 import string
@@ -23,6 +22,9 @@ log = logging.getLogger(__name__)
 from capellacollab.config import config
 from capellacollab.core.database import engine, migration
 from capellacollab.routes import router, status
+from capellacollab.sessions.idletimeout import (
+    terminate_idle_sessions_in_background,
+)
 
 
 class HealthcheckFilter(logging.Filter):
@@ -39,6 +41,11 @@ app = FastAPI(title="Capella Collaboration")
 @app.on_event("startup")
 async def startup_event():
     migration.migrate_db(engine)
+
+
+@app.on_event("startup")
+async def startup_event():
+    await terminate_idle_sessions_in_background()
 
 
 app.add_middleware(
