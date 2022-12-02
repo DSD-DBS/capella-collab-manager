@@ -6,3 +6,11 @@
 mat-form-field {
   width: 460px;
 }
+
+button {
+  margin-left: 8px;
+}
+
+button:first-child {
+  margin-left: 0px;
+}

@@ -51,9 +51,19 @@
         <a mat-button [routerLink]="'../../..'"
           ><mat-icon>arrow_back</mat-icon>Back</a
         >
-        <button mat-flat-button color="primary" type="submit">
-          Update model
-        </button>
+        <div>
+          <button
+            mat-flat-button
+            color="warn"
+            (click)="deleteModel()"
+            *ngIf="canDelete"
+          >
+            Delete
+          </button>
+          <button mat-flat-button color="primary" type="submit">
+            Update model
+          </button>
+        </div>
       </div>
     </form>
   </mat-card>

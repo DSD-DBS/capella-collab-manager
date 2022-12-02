@@ -76,6 +76,12 @@ export class ModelService {
     );
   }
 
+  deleteModel(project_slug: string, model: Model): Observable<any> {
+    return this.http.delete(
+      `${this.base_url}${project_slug}/models/${model.slug}`
+    );
+  }
+
   setToolDetailsForModel(
     project_slug: string,
     model_slug: string,
