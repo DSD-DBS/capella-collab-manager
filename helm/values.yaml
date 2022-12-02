@@ -209,6 +209,10 @@ cluster:
 proxy:
   no_proxy:
 
+grafana:
+  adminUser: admin
+  adminPassword: admin
+
 promtail:
   clients:
     - url: *lokiPushUrl

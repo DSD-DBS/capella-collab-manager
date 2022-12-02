@@ -10,6 +10,10 @@ metadata:
     id: {{ .Release.Name }}-configmap-grafana
 data:
   grafana.ini: |
+    [security]
+    admin_user = {{ .Values.grafana.adminUser }}
+    admin_password = {{ .Values.grafana.adminPassword }}
+
     [paths]
     data = /var/lib/grafana/
     logs = /var/log/grafana
