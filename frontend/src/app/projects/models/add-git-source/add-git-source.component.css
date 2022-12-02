@@ -3,6 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+button {
+  margin-left: 8px;
+}
+
+button:first-child {
+  margin-left: 0px;
+}
+
 .no-line-break {
   white-space: nowrap;
 }

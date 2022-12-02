@@ -290,6 +290,21 @@ export class AddGitSourceComponent implements OnInit, OnDestroy {
     this.fillFormWithGitModel(this.gitModel!);
   }
 
+  deleteGitModel(): void {
+    this.gitModelService
+      .deleteGitSource(
+        this.projectService.project?.slug!,
+        this.modelService.model?.slug!,
+        this.gitModel!
+      )
+      .subscribe(() => {
+        this.router.navigateByUrl(
+          `/project/${this.projectService.project?.slug!}/model/${this
+            .modelService.model?.slug!}`
+        );
+      });
+  }
+
   private createGitModelFromForm(): CreateGitModel {
     return {
       path: this.resultUrl,

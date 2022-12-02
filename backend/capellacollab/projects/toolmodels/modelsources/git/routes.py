@@ -85,7 +85,13 @@ def get_git_model_by_id(
     return git_model
 
 
-@router.get("/primary/revisions", response_model=GetRevisionsResponseModel)
+@router.get(
+    "/primary/revisions",
+    response_model=GetRevisionsResponseModel,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
+)
 def get_revisions_of_primary_git_model(
     primary_git_model: DatabaseGitModel = Depends(
         get_existing_primary_git_model
@@ -155,3 +161,16 @@ def update_git_model_by_id(
     )
 
     return updated_git_model
+
+
+@router.delete(
+    "/{git_model_id}",
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
+)
+def delete_git_model_by_id(
+    db_git_model: DatabaseGitModel = Depends(get_existing_git_model),
+    db: Session = Depends(get_db),
+) -> DatabaseGitModel:
+    crud.delete_git_model(db, db_git_model)
