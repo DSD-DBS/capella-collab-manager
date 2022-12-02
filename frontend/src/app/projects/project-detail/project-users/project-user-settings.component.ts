@@ -90,10 +90,8 @@ export class ProjectUserSettingsComponent implements OnChanges {
 
   userAlreadyInProjectValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      for (const projectUser of this.projectUsers) {
-        if (projectUser.user.name == control.value) {
-          return { userAlreadyInProjectError: true };
-        }
+      if (this.projectUsers.find((pUser) => pUser.user.name == control.value)) {
+        return { userAlreadyInProjectError: true };
       }
       return null;
     };
@@ -102,8 +100,8 @@ export class ProjectUserSettingsComponent implements OnChanges {
   refreshProjectUsers(): void {
     this.projectUserService
       .getProjectUsers(this.project.slug)
-      .subscribe((res) => {
-        this.projectUsers = res;
+      .subscribe((projectUsers) => {
+        this.projectUsers = projectUsers;
       });
   }
 
@@ -182,9 +180,11 @@ export class ProjectUserSettingsComponent implements OnChanges {
       });
   }
 
-  getProjectUsersByRole(role: 'manager' | 'user'): ProjectUser[] {
+  getProjectUsersByRole(role: SimpleProjectUserRole): ProjectUser[] {
     return this.projectUsers.filter(
-      (u) => u.role == role && u.user.name.includes(this.search.toLowerCase())
+      (pUser) =>
+        pUser.role == role &&
+        pUser.user.name.toLowerCase().includes(this.search.toLowerCase())
     );
   }
 }
