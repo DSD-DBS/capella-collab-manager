@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  backend_url: 'http://localhost:8080/api/v1',
+  backend_url: 'http://localhost:8000/api/v1',
   privacy: 'https://example.com/privacy',
   imprint: 'https://example.com/imprint',
   provider: 'PROVIDER',

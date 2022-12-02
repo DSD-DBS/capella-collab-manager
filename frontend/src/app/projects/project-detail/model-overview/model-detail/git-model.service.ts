@@ -116,7 +116,7 @@ export class GitModelService {
     project_slug: string,
     model_slug: string,
     source: GetGitModel
-  ): Observable<object> {
+  ): Observable<any> {
     return this.http.delete(
       environment.backend_url +
         `/projects/${project_slug}/models/${model_slug}/modelsources/git/${source.id}`
