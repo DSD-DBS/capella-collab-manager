@@ -140,3 +140,11 @@ def update_model(
         model.description = description
     db.commit()
     return model
+
+
+def delete_model(
+    db: Session,
+    model: DatabaseCapellaModel,
+):
+    db.delete(model)
+    db.commit()
