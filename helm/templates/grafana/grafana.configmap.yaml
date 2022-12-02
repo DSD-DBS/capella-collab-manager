@@ -26,7 +26,7 @@ data:
   datasources.yaml: |
     apiVersion: 1
     datasources:
-      - name: Loki-Test
+      - name: Loki
         type: loki
         access: proxy
         orgId: 1
@@ -35,6 +35,11 @@ data:
         basicAuthUser: {{ .Values.definitions.loki.username }}
         secureJsonData:
           basicAuthPassword: {{ .Values.definitions.loki.password }}
+        version: 1
+        editable: true
+      - name: Prometheus
+        type: prometheus
+        url: http://{{ .Release.Name }}-prometheus-server.{{ .Release.Namespace }}.svc.cluster.local:9118/prometheus
         version: 1
         editable: true
   dashboards.yaml: |
