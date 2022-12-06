@@ -19,14 +19,14 @@ from capellacollab.core.authentication.database import ProjectRoleVerification
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
-from capellacollab.projects.capellamodels.injectables import (
+from capellacollab.projects.toolmodels.injectables import (
     get_existing_capella_model,
 )
-from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
-from capellacollab.projects.capellamodels.modelsources.git.injectables import (
+from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+from capellacollab.projects.toolmodels.modelsources.git.injectables import (
     get_existing_git_model,
 )
-from capellacollab.projects.capellamodels.modelsources.t4c.injectables import (
+from capellacollab.projects.toolmodels.modelsources.t4c.injectables import (
     get_existing_t4c_model,
 )
 from capellacollab.projects.users.models import ProjectUserRole

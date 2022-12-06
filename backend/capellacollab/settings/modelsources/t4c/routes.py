@@ -11,9 +11,7 @@ from capellacollab.core.authentication.database import (
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
-from capellacollab.projects.capellamodels.routes import (
-    get_version_by_id_or_raise,
-)
+from capellacollab.projects.toolmodels.routes import get_version_by_id_or_raise
 from capellacollab.sessions.schema import GetSessionUsageResponse
 from capellacollab.settings.modelsources.t4c import crud
 from capellacollab.settings.modelsources.t4c.injectables import (

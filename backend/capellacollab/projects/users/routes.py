@@ -16,10 +16,8 @@ from capellacollab.core.authentication.database import (
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
-from capellacollab.projects.capellamodels.injectables import (
-    get_existing_project,
-)
 from capellacollab.projects.models import DatabaseProject
+from capellacollab.projects.toolmodels.injectables import get_existing_project
 from capellacollab.projects.users.models import (
     PatchProjectUser,
     PostProjectUser,

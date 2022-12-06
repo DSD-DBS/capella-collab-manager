@@ -12,9 +12,9 @@ from alembic.migration import MigrationContext
 from sqlalchemy import inspect
 from sqlalchemy.orm import sessionmaker
 
-import capellacollab.projects.capellamodels.crud as models
-import capellacollab.projects.capellamodels.modelsources.t4c.crud as t4c_models
 import capellacollab.projects.crud as projects
+import capellacollab.projects.toolmodels.crud as models
+import capellacollab.projects.toolmodels.modelsources.t4c.crud as t4c_models
 import capellacollab.settings.modelsources.t4c.crud as t4c_instances
 import capellacollab.settings.modelsources.t4c.repositories.crud as t4c_repositories
 import capellacollab.tools.crud as tools
