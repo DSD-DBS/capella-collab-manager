@@ -49,10 +49,6 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
     return this._capella_versions.value;
   }
 
-  private latin1Validator = Validators.pattern(
-    /^[\dA-z\u00C0-\u00ff\s'.,-\/#!$%^&*;:{}=\-_`~()]+$/
-  );
-
   public form = new FormGroup({
     name: new FormControl('', Validators.required),
     version_id: new FormControl(-1, Validators.required),
@@ -79,8 +75,8 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
       Validators.required,
       Validators.pattern(/^https?:\/\//),
     ]),
-    username: new FormControl('', [Validators.required, this.latin1Validator]),
-    password: new FormControl('', [Validators.required, this.latin1Validator]),
+    username: new FormControl('', [Validators.required]),
+    password: new FormControl('', [Validators.required]),
   });
 
   constructor(
