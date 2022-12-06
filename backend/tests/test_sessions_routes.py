@@ -11,15 +11,15 @@ import pytest
 
 import capellacollab.sessions.guacamole
 from capellacollab.__main__ import app
-from capellacollab.projects.capellamodels.crud import create_new_model
-from capellacollab.projects.capellamodels.models import CapellaModel
-from capellacollab.projects.capellamodels.modelsources.git.crud import (
+from capellacollab.projects.crud import create_project
+from capellacollab.projects.toolmodels.crud import create_new_model
+from capellacollab.projects.toolmodels.models import CapellaModel
+from capellacollab.projects.toolmodels.modelsources.git.crud import (
     add_gitmodel_to_capellamodel,
 )
-from capellacollab.projects.capellamodels.modelsources.git.models import (
+from capellacollab.projects.toolmodels.modelsources.git.models import (
     PostGitModel,
 )
-from capellacollab.projects.crud import create_project
 from capellacollab.projects.users.crud import add_user_to_project
 from capellacollab.projects.users.models import (
     ProjectUserPermission,

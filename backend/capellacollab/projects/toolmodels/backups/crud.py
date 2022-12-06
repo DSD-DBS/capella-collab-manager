@@ -5,7 +5,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
+from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 
 from .models import DatabaseBackup
 

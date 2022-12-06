@@ -6,11 +6,11 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
-from capellacollab.projects.capellamodels.modelsources.t4c.models import (
+from capellacollab.projects.models import DatabaseProject
+from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+from capellacollab.projects.toolmodels.modelsources.t4c.models import (
     DatabaseT4CModel,
 )
-from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.models import (
     ProjectUserAssociation,
     ProjectUserPermission,

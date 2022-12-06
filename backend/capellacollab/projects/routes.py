@@ -18,15 +18,13 @@ from capellacollab.core.authentication.database import (
     get_db,
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.projects.capellamodels.injectables import (
-    get_existing_project,
-)
 from capellacollab.projects.models import (
     DatabaseProject,
     PatchProject,
     PostProjectRequest,
     Project,
 )
+from capellacollab.projects.toolmodels.injectables import get_existing_project
 from capellacollab.projects.users.models import (
     ProjectUserPermission,
     ProjectUserRole,
@@ -35,7 +33,7 @@ from capellacollab.sessions.routes import project_router as router_sessions
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role
 
-from .capellamodels.routes import router as router_models
+from .toolmodels.routes import router as router_models
 from .users.routes import router as router_users
 
 log = logging.getLogger(__name__)

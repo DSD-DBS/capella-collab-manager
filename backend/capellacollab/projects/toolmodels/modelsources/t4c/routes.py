@@ -15,21 +15,21 @@ from capellacollab.core.authentication.database import (
     RoleVerification,
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.projects.capellamodels.injectables import (
+from capellacollab.projects.models import DatabaseProject
+from capellacollab.projects.toolmodels.injectables import (
     get_existing_capella_model,
     get_existing_project,
 )
-from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
-from capellacollab.projects.capellamodels.modelsources.t4c import crud
-from capellacollab.projects.capellamodels.modelsources.t4c.injectables import (
+from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+from capellacollab.projects.toolmodels.modelsources.t4c import crud
+from capellacollab.projects.toolmodels.modelsources.t4c.injectables import (
     get_existing_t4c_model,
 )
-from capellacollab.projects.capellamodels.modelsources.t4c.models import (
+from capellacollab.projects.toolmodels.modelsources.t4c.models import (
     DatabaseT4CModel,
     ResponseT4CModel,
     SubmitT4CModel,
 )
-from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.settings.modelsources.t4c.injectables import (
     get_existing_instance,

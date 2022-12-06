@@ -6,11 +6,11 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from capellacollab.core.database import get_db
-from capellacollab.projects.capellamodels.backups.models import DatabaseBackup
-from capellacollab.projects.capellamodels.injectables import (
+from capellacollab.projects.toolmodels.backups.models import DatabaseBackup
+from capellacollab.projects.toolmodels.injectables import (
     get_existing_capella_model,
 )
-from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
+from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 
 from . import crud
 

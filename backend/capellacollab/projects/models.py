@@ -10,9 +10,9 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
 # Import required for sqlalchemy
-import capellacollab.projects.capellamodels.models
+import capellacollab.projects.toolmodels.models
 from capellacollab.core.database import Base
-from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
+from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 from capellacollab.projects.users.models import (
     ProjectUserAssociation,
     ProjectUserPermission,
@@ -20,9 +20,7 @@ from capellacollab.projects.users.models import (
 )
 
 if t.TYPE_CHECKING:
-    from capellacollab.projects.capellamodels.models import (
-        DatabaseCapellaModel,
-    )
+    from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 
 
 class UserMetadata(BaseModel):

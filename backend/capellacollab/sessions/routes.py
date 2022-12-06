@@ -13,7 +13,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from requests.exceptions import RequestException
 from sqlalchemy.orm import Session
 
-import capellacollab.projects.capellamodels.modelsources.git.crud as git_models_crud
+import capellacollab.projects.toolmodels.modelsources.git.crud as git_models_crud
 from capellacollab.config import config
 from capellacollab.core.authentication.database import (
     ProjectRoleVerification,
@@ -25,15 +25,15 @@ from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db
 from capellacollab.core.models import Message
-from capellacollab.projects.capellamodels.injectables import (
+from capellacollab.projects.models import DatabaseProject
+from capellacollab.projects.toolmodels.injectables import (
     get_existing_capella_model,
     get_existing_project,
 )
-from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
-from capellacollab.projects.capellamodels.modelsources.git.models import (
+from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+from capellacollab.projects.toolmodels.modelsources.git.models import (
     DatabaseGitModel,
 )
-from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.crud import ProjectUserRole
 from capellacollab.sessions import database, guacamole
 from capellacollab.sessions.files import routes as files

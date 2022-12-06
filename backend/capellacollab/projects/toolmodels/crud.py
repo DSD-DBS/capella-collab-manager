@@ -8,11 +8,11 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.crud as projects_crud
-from capellacollab.projects.capellamodels.models import (
+from capellacollab.projects.models import DatabaseProject
+from capellacollab.projects.toolmodels.models import (
     CapellaModel,
     DatabaseCapellaModel,
 )
-from capellacollab.projects.models import DatabaseProject
 from capellacollab.tools.models import Nature, Tool, Version
 
 

@@ -5,10 +5,10 @@ from __future__ import annotations
 
 import json
 
-from capellacollab.projects.capellamodels.modelsources.git.models import (
+from capellacollab.projects.toolmodels.modelsources.git.models import (
     DatabaseGitModel,
 )
-from capellacollab.projects.capellamodels.modelsources.t4c.models import (
+from capellacollab.projects.toolmodels.modelsources.t4c.models import (
     DatabaseT4CModel,
 )
 

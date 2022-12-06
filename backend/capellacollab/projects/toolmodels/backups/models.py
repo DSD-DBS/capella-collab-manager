@@ -10,12 +10,12 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
-from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
-from capellacollab.projects.capellamodels.modelsources.git.models import (
+from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+from capellacollab.projects.toolmodels.modelsources.git.models import (
     DatabaseGitModel,
     ResponseGitModel,
 )
-from capellacollab.projects.capellamodels.modelsources.t4c.models import (
+from capellacollab.projects.toolmodels.modelsources.t4c.models import (
     DatabaseT4CModel,
     SimpleT4CModel,
 )

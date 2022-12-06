@@ -19,10 +19,10 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
-from capellacollab.projects.capellamodels.modelsources.git.models import (
+from capellacollab.projects.toolmodels.modelsources.git.models import (
     ResponseGitModel,
 )
-from capellacollab.projects.capellamodels.modelsources.t4c.models import (
+from capellacollab.projects.toolmodels.modelsources.t4c.models import (
     ResponseT4CModel,
 )
 from capellacollab.tools.models import (
@@ -35,13 +35,13 @@ from capellacollab.tools.models import (
 )
 
 if t.TYPE_CHECKING:
-    from capellacollab.projects.capellamodels.modelsources.git.models import (
+    from capellacollab.projects.models import DatabaseProject
+    from capellacollab.projects.toolmodels.modelsources.git.models import (
         DatabaseGitModel,
     )
-    from capellacollab.projects.capellamodels.modelsources.t4c.models import (
+    from capellacollab.projects.toolmodels.modelsources.t4c.models import (
         DatabaseT4CModel,
     )
-    from capellacollab.projects.models import DatabaseProject
 
 
 class EditingMode(enum.Enum):
