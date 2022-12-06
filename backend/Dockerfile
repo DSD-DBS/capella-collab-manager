@@ -12,8 +12,7 @@ RUN apt-get update && \
     python3-pip \
     unzip \
     libpq-dev \
-    docker.io \
-    kubernetes-client && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8000
 COPY . /tmp/backend
