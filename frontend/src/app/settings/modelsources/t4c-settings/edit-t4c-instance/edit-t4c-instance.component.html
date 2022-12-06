@@ -130,9 +130,6 @@
             <mat-error *ngIf="form.controls.username.errors?.required">
               The username is required.
             </mat-error>
-            <mat-error *ngIf="form.controls.username.errors?.pattern">
-              The username should only use latin-1 characters.
-            </mat-error>
           </mat-form-field>
           <div class="field-separator"></div>
           <mat-form-field appearance="fill">
@@ -146,11 +143,9 @@
             <mat-error *ngIf="form.controls.password.errors?.required">
               The password is required.
             </mat-error>
-            <mat-hint *ngIf="!latin1Pattern.test(form.value.password || '')">
-              The password contains non latin-1 characters, it might be an
-              error.
-            </mat-hint>
-            <mat-hint *ngIf="existing">Is not changed if empty</mat-hint>
+            <mat-hint *ngIf="existing && !form.value.password"
+              >Is not changed if empty</mat-hint
+            >
           </mat-form-field>
         </fieldset>
         <div *ngIf="editing" class="flex-space-between">

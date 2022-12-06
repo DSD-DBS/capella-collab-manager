@@ -93,16 +93,6 @@ def port_validator(value: t.Optional[int]) -> t.Optional[int]:
     return value
 
 
-def latin_1_validator(value: t.Optional[str]) -> t.Optional[str]:
-    if not value:
-        return value
-    try:
-        value.encode("latin-1")
-    except UnicodeEncodeError as e:
-        raise ValueError("Value should only use latin-1 characters.")
-    return value
-
-
 class T4CInstanceBase(BaseModel):
     license: str
     host: str
@@ -114,10 +104,6 @@ class T4CInstanceBase(BaseModel):
     protocol: Protocol
 
     # validators
-    _validate_username = validator("username", allow_reuse=True)(
-        latin_1_validator
-    )
-
     _validate_rest_api_url = pydantic.validator("rest_api", allow_reuse=True)(
         validate_rest_api_url
     )
@@ -146,14 +132,6 @@ class FieldsT4CInstance(BaseModel):
     protocol: t.Optional[Protocol]
 
     # validators
-    _validate_username = validator("username", allow_reuse=True)(
-        latin_1_validator
-    )
-
-    _validate_password = validator("password", allow_reuse=True)(
-        latin_1_validator
-    )
-
     _validate_rest_api_url = pydantic.validator("rest_api", allow_reuse=True)(
         validate_rest_api_url
     )
@@ -181,11 +159,6 @@ class T4CInstanceComplete(T4CInstanceBase):
 
 class CreateT4CInstance(T4CInstanceComplete):
     password: str
-
-    # validators
-    _validate_password = validator("password", allow_reuse=True)(
-        latin_1_validator
-    )
 
 
 class Version(BaseModel):
