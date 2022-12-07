@@ -5,9 +5,9 @@
 
 # Introduction
 
-Welcome onboard of the Modeling Collaboration Manager. This platform helps you co-work on architectures using tools like [Capella](https://www.eclipse.org/capella/).
+Welcome onboard of the Modeling Collaboration Manager. This platform helps you co-work on architectures using tools like [Capella](https://www.eclipse.org/capella/) and [Papyrus](https://www.eclipse.org/papyrus/).
 
-This platform wraps the modeling tools like Capella to create an environment where users can work directly in the project context without having to install or configure the tool. It also takes care of housekeeping for the modeling projects themselves. For example, [TeamForCapella](https://www.obeosoft.com/en/team-for-capella) projects are automatically backed up to git (configuration management).
+This platform wraps the modeling tools to create an environment where users can work directly in the project context without having to install or configure the tool. It also takes care of housekeeping for the modeling projects themselves. For example, a automatic backup from [TeamForCapella](https://www.obeosoft.com/en/team-for-capella) to any Git repository can be set up.
 
 ## Ways of co-working on a Modeling Project
 
@@ -56,16 +56,16 @@ You may also [learn more about the roles model here](projects/roles.md).
 
 ## Next steps
 
-If you like to start a new project and work on it via Collab Manager - please get in touch with one of your tool admins: there is no self-service in this version.
-Admins may follow the [project onboarding guideline](projects/new.md) to prepare your project.
+If you like to start a new project and work on it via Collab Manager - please follow this guide: [project onboarding guideline](projects/new.md) to prepare your project.
+If you want to use the TeamForCapella workflow, please contact your administrator. Linking models to TeamForCapella repositories can only be done by administrators.
 
 To work with the application, you need access to a project. If you don't have it yet or can't find the project you need see [how do I get access to a project](projects/access.md).
 
 At this point you may want to continue to one of the detailed getting-started sections:
 
 - [General introduction to Capella and first steps](getting-started/capella-intro.md)
-- [Getting started with a read-only session](getting-started/read-only.md)
-- [Getting started with a TeamForCapella-based project](getting-started/read-write-t4c.md)
+- [Getting started with a read-only session](sessions/types/read-only.md)
+- [Getting started with a TeamForCapella-based project](sessions/types/persistent.md)
 - Getting started with a git-only project (not yet documented, contact your toolchain team for onboarding)
 
 ## Missing information / need support
