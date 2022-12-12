@@ -39,12 +39,12 @@ app = FastAPI(title="Capella Collaboration")
 
 
 @app.on_event("startup")
-async def startup_event():
+async def migrate_database():
     migration.migrate_db(engine)
 
 
 @app.on_event("startup")
-async def startup_event():
+async def schedule_termination_of_idle_sessions():
     await terminate_idle_sessions_in_background()
 
 
