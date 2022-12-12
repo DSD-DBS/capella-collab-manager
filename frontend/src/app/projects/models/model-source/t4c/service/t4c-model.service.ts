@@ -38,18 +38,6 @@ export class T4CModelService {
       .pipe(tap((models) => this._t4cModels.next(models)));
   }
 
-  listT4CModelsOfRepository(
-    project_slug: string,
-    model_slug: string,
-    t4c_instance_id: number,
-    t4c_repository_id: number
-  ): Observable<T4CModel[]> {
-    return this.http.get<T4CModel[]>(
-      this.urlFactory(project_slug, model_slug),
-      { params: { t4c_instance_id, t4c_repository_id } }
-    );
-  }
-
   getT4CModel(
     project_slug: string,
     model_slug: string,
@@ -65,10 +53,11 @@ export class T4CModelService {
     model_slug: string,
     body: SubmitT4CModel
   ): Observable<T4CModel> {
-    return this.http.post<T4CModel>(
-      this.urlFactory(project_slug, model_slug),
-      body
-    );
+    return this.http.post<T4CModel>(this.urlFactory(project_slug, model_slug), {
+      t4c_instance_id: body.t4cInstanceId,
+      t4c_repository_id: body.t4cRepositoryId,
+      name: body.name,
+    });
   }
 
   patchT4CModel(
@@ -79,7 +68,11 @@ export class T4CModelService {
   ): Observable<T4CModel> {
     return this.http.patch<T4CModel>(
       `${this.urlFactory(project_slug, model_slug)}/${t4c_model_id}`,
-      body
+      {
+        t4c_instance_id: body.t4cInstanceId,
+        t4c_repository_id: body.t4cRepositoryId,
+        name: body.name,
+      }
     );
   }
 
@@ -90,8 +83,8 @@ export class T4CModelService {
 }
 
 export type SubmitT4CModel = {
-  t4c_instance_id: number;
-  t4c_repository_id: number;
+  t4cInstanceId: number;
+  t4cRepositoryId: number;
   name: string;
 };
 

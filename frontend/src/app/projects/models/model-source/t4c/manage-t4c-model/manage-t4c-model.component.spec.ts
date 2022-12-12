@@ -5,20 +5,18 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { T4CRepoSettingsComponent } from './t4c-repo-settings.component';
+import { ManageT4CModelComponent } from '../manage-t4c-model/manage-t4c-model.component';
 
-xdescribe('T4CRepoSettingsComponent', () => {
-  let component: T4CRepoSettingsComponent;
-  let fixture: ComponentFixture<T4CRepoSettingsComponent>;
+xdescribe('AddT4cSourceComponent', () => {
+  let component: ManageT4CModelComponent;
+  let fixture: ComponentFixture<ManageT4CModelComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [T4CRepoSettingsComponent],
+      declarations: [ManageT4CModelComponent],
     }).compileComponents();
-  });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(T4CRepoSettingsComponent);
+    fixture = TestBed.createComponent(ManageT4CModelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

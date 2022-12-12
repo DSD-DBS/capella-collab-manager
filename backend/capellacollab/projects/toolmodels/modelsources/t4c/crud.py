@@ -11,7 +11,6 @@ from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 from capellacollab.projects.toolmodels.modelsources.t4c.models import (
     DatabaseT4CModel,
     SubmitT4CModel,
-    T4CRepositoryWithModels,
 )
 from capellacollab.settings.modelsources.t4c.repositories.models import (
     DatabaseT4CRepository,
@@ -28,7 +27,7 @@ def get_all_t4c_models(db) -> list[DatabaseT4CModel]:
     return db.execute(select(DatabaseT4CModel)).scalars().all()
 
 
-def get_all_t4c_models_for_model(
+def get_all_t4c_models_for_tool_model(
     db: Session, model: DatabaseCapellaModel
 ) -> list[DatabaseT4CModel]:
     return (
