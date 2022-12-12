@@ -12,9 +12,12 @@
 
 <!-- prettier-ignore -->
 !!! danger
-    Models are not automatically backed up! Please make sure to set up a nightly backup for productive and important content.
+    Models are not automatically backed up! Please make sure to set up a nightly
+    backup for productive and important content.
 
-We offer the feature to create a backup from any TeamForCapella repository to any Git repository. These can be triggered manually or can be executed every night at around 3pm.
+We offer the feature to create a backup from any TeamForCapella repository to
+any Git repository. These can be triggered manually or can be executed every
+night at around 3pm.
 
 <!-- prettier-ignore-start -->
 
