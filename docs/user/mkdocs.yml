@@ -32,7 +32,7 @@ nav:
       - Flows:
           - Git: sessions/flows/git.md
           - TeamForCapella: sessions/flows/t4c.md
-#      - Files (Upload): sessions/files.md
+      - Files (Upload): sessions/files/files.md
   - Tools:
     - General: tools/index.md
   - User Management: users.md
