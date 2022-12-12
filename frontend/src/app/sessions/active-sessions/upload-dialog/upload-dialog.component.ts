@@ -26,6 +26,7 @@ import { FileExistsDialogComponent } from './file-exists-dialog/file-exists-dial
 })
 export class UploadDialogComponent implements OnInit, OnDestroy {
   private subscription: Subscription | undefined;
+  private downloadSubscription: Subscription | undefined;
 
   files: Array<[File, string]> = [];
   uploadProgress: number | null = null;
@@ -253,22 +254,27 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
 
   download(filename: string) {
     this.session.download_in_progress = true;
-    this.loadService.download(this.session.id, filename).subscribe({
-      next: (response: Blob) => {
-        saveAs(
-          response,
-          `${filename.replace(/^[\/\\: ]+/, '').replace(/[\/\\: ]+/g, '_')}.zip`
-        );
-        this.session.download_in_progress = false;
-      },
-      error: () => {
-        this.session.download_in_progress = false;
-      },
-    });
+    this.downloadSubscription = this.loadService
+      .download(this.session.id, filename)
+      .subscribe({
+        next: (response: Blob) => {
+          saveAs(
+            response,
+            `${filename
+              .replace(/^[\/\\: ]+/, '')
+              .replace(/[\/\\: ]+/g, '_')}.zip`
+          );
+          this.session.download_in_progress = false;
+        },
+        error: () => {
+          this.session.download_in_progress = false;
+        },
+      });
   }
 
   reset() {
     this.subscription?.unsubscribe();
+    this.downloadSubscription?.unsubscribe();
     this.uploadProgress = null;
     this.subscription = undefined;
   }
