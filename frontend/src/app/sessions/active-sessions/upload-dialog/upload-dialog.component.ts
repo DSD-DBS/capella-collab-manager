@@ -253,15 +253,18 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
 
   download(filename: string) {
     this.session.download_in_progress = true;
-    this.loadService
-      .download(this.session.id, filename)
-      .subscribe((response: Blob) => {
+    this.loadService.download(this.session.id, filename).subscribe({
+      next: (response: Blob) => {
         saveAs(
           response,
           `${filename.replace(/^[\/\\: ]+/, '').replace(/[\/\\: ]+/g, '_')}.zip`
         );
         this.session.download_in_progress = false;
-      });
+      },
+      error: () => {
+        this.session.download_in_progress = false;
+      },
+    });
   }
 
   reset() {
