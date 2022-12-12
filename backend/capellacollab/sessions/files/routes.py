@@ -107,7 +107,7 @@ def download_file(
     return StreamingResponse(
         OPERATOR.download_file(id, filename),
         headers={
-            "content-disposition": 'attachment; filename="download.zip"',
+            "content-disposition": 'attachment; filename=f"{filename}.zip"',
             "content-type": "application/zip",
         },
     )
