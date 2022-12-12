@@ -17,9 +17,9 @@ nav:
       - Roles: projects/roles.md
       - Models:
           - Create a model: projects/models/create.md
-#          - Backups:
-#              - Setup a model backup: projects/models/backups/setup.md
-#              - Trigger a model backup: projects/models/backups/trigger.md
+          - Backups:
+              - Setup a model backup: projects/models/backups/setup.md
+              - Trigger a model backup: projects/models/backups/trigger.md
   - Sessions:
       - Session Types:
           - Overview: sessions/types.md
