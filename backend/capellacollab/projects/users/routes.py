@@ -5,10 +5,11 @@ from __future__ import annotations
 
 import typing as t
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 import capellacollab.users.crud as users
+import capellacollab.users.events.crud as event_crud
 from capellacollab.core.authentication.database import (
     ProjectRoleVerification,
     RoleVerification,
@@ -17,6 +18,11 @@ from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.toolmodels.injectables import get_existing_project
+from capellacollab.projects.users.core import (
+    create_add_user_to_project_events,
+    get_project_permission_event_type,
+    get_project_role_event_type,
+)
 from capellacollab.projects.users.models import (
     PatchProjectUser,
     PostProjectUser,
@@ -25,6 +31,7 @@ from capellacollab.projects.users.models import (
     ProjectUserPermission,
     ProjectUserRole,
 )
+from capellacollab.users.events.models import EventType
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role, User
 
@@ -96,19 +103,30 @@ def get_users_for_project(
 def add_user_to_project(
     post_project_user: PostProjectUser,
     project: DatabaseProject = Depends(get_existing_project),
+    own_user: DatabaseUser = Depends(get_own_user),
     db: Session = Depends(get_db),
 ) -> ProjectUserAssociation:
-    user = users.find_or_create_user(db, post_project_user.username)
-
+    if not (user := users.get_user_by_name(db, post_project_user.username)):
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The user with username “{post_project_user.username}” does not exist"
+            },
+        )
     check_user_not_admin(user)
     check_user_not_in_project(project, user)
 
     if post_project_user.role == ProjectUserRole.MANAGER:
         post_project_user.permission = ProjectUserPermission.WRITE
 
-    return crud.add_user_to_project(
+    association = crud.add_user_to_project(
         db, project, user, post_project_user.role, post_project_user.permission
     )
+    create_add_user_to_project_events(
+        post_project_user, user, project, own_user, db
+    )
+
+    return association
 
 
 @router.patch(
@@ -118,24 +136,30 @@ def add_user_to_project(
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
 )
-def patch_project_user(
-    patch_user: PatchProjectUser,
+def update_project_user(
+    patch_project_user: PatchProjectUser,
     user: DatabaseUser = Depends(get_existing_user),
     project: DatabaseProject = Depends(get_existing_project),
+    own_user: DatabaseUser = Depends(get_own_user),
     db: Session = Depends(get_db),
 ):
     check_user_not_admin(user)
-    if patch_user.role:
-        crud.change_role_of_user_in_project(db, project, user, patch_user.role)
+    if role := patch_project_user.role:
+        crud.change_role_of_user_in_project(db, project, user, role)
 
-    if patch_user.permission:
-        repo_user = crud.get_user_of_project(
-            db,
-            project,
-            user,
+        event_crud.create_project_change_event(
+            db=db,
+            user=user,
+            event_type=get_project_role_event_type(role),
+            executor=own_user,
+            project=project,
+            reason=patch_project_user.reason,
         )
 
-        if repo_user.role == ProjectUserRole.MANAGER:
+    if permission := patch_project_user.permission:
+        project_user = crud.get_user_of_project(db, project, user)
+
+        if project_user.role == ProjectUserRole.MANAGER:
             raise HTTPException(
                 status_code=403,
                 detail={
@@ -143,7 +167,16 @@ def patch_project_user(
                 },
             )
         crud.change_permission_of_user_in_project(
-            db, project, user, patch_user.permission
+            db, project, user, permission
+        )
+
+        event_crud.create_project_change_event(
+            db=db,
+            user=user,
+            event_type=get_project_permission_event_type(permission),
+            executor=own_user,
+            project=project,
+            reason=patch_project_user.reason,
         )
 
 
@@ -155,9 +188,16 @@ def patch_project_user(
     ],
 )
 def remove_user_from_project(
+    reason: str = Body(),
     project: DatabaseProject = Depends(get_existing_project),
     user: DatabaseUser = Depends(get_existing_user),
+    own_user: DatabaseUser = Depends(get_own_user),
     db: Session = Depends(get_db),
 ):
     check_user_not_admin(user)
+    print(reason)
+
     crud.delete_user_from_project(db, project, user)
+    event_crud.create_project_change_event(
+        db, user, EventType.REMOVED_FROM_PROJECT, own_user, project, reason
+    )
