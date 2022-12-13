@@ -82,6 +82,12 @@ export class AuthService {
     return !!this._accessToken;
   }
 
+  webSSO() {
+    this.getRedirectURL().subscribe((res) => {
+      window.location.href = res.auth_url;
+    });
+  }
+
   logIn(accessToken: string, refreshToken: string) {
     this._accessToken = accessToken;
     this._refreshToken = refreshToken;
@@ -107,6 +113,16 @@ export class AuthService {
     return this.http
       .get(environment.backend_url + '/authentication/logout')
       .subscribe();
+  }
+
+  cacheCurrentPath(path: String) {
+    this.localStorageService.setValue('current_path', path);
+  }
+
+  getCurrentPath() {
+    let path = this.localStorageService.getValue('current_path');
+    this.cacheCurrentPath('');
+    return path || '/';
   }
 }
 

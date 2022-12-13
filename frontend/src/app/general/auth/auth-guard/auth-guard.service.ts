@@ -7,7 +7,6 @@ import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   CanActivate,
-  Router,
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router';
@@ -18,7 +17,7 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   providedIn: 'root',
 })
 export class AuthGuardService implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService) {}
 
   canActivate(
     _route: ActivatedRouteSnapshot,
@@ -31,7 +30,9 @@ export class AuthGuardService implements CanActivate {
     if (this.authService.isLoggedIn()) {
       return true;
     } else {
-      this.router.navigateByUrl('/auth');
+      // Needs window.location, since Router.url isn't updated yet
+      this.authService.cacheCurrentPath(window.location.pathname);
+      this.authService.webSSO();
       return false;
     }
   }

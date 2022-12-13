@@ -42,7 +42,7 @@ export class AuthRedirectComponent implements OnInit {
           this.authService.logIn(res.access_token, res.refresh_token);
           this.userService.updateOwnUser();
 
-          this.router.navigateByUrl('/');
+          this.router.navigateByUrl(this.authService.getCurrentPath());
         });
     });
   }

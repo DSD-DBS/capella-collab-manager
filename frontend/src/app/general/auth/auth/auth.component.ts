@@ -18,7 +18,7 @@ export class AuthComponent implements OnInit {
   @Input()
   set autoLogin(value: boolean) {
     if (value) {
-      this.webSSO();
+      this.authService.webSSO();
     }
   }
 
@@ -41,8 +41,6 @@ export class AuthComponent implements OnInit {
   }
 
   webSSO() {
-    this.authService.getRedirectURL().subscribe((res) => {
-      window.location.href = res.auth_url;
-    });
+    this.authService.webSSO();
   }
 }
