@@ -10,9 +10,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
 # Import required for sqlalchemy
-import capellacollab.projects.toolmodels.models
 from capellacollab.core.database import Base
-from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 from capellacollab.projects.users.models import (
     ProjectUserAssociation,
     ProjectUserPermission,
@@ -90,7 +88,7 @@ class DatabaseProject(Base):
     description = Column(String)
     users: ProjectUserAssociation = relationship(
         "ProjectUserAssociation",
-        back_populates="projects",
+        back_populates="project",
     )
     models: list[DatabaseCapellaModel] = relationship(
         "DatabaseCapellaModel", back_populates="project"

@@ -3,8 +3,6 @@
 
 from __future__ import annotations
 
-import typing as t
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import Session

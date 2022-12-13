@@ -2,10 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import importlib
 import logging
 import typing as t
-from importlib import metadata
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -55,7 +53,7 @@ def get_projects(
     if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
         return crud.get_all_projects(db)
 
-    return [project.projects for project in user.projects]
+    return [association.project for association in user.projects]
 
 
 @router.patch(
