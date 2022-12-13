@@ -19,6 +19,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { MatSelectionList } from '@angular/material/list';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   ProjectUser,
@@ -40,7 +41,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
   projectUsers: ProjectUser[] = [];
   search = '';
 
-  @ViewChild('users') users: any;
+  @ViewChild('users') users!: MatSelectionList;
 
   addUserToProjectForm = new FormGroup(
     {
@@ -50,6 +51,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
       ]),
       role: new FormControl('', Validators.required),
       permission: new FormControl(''),
+      reason: new FormControl('', Validators.required),
     },
     this.permissionRequiredValidator()
   );
@@ -118,7 +120,8 @@ export class ProjectUserSettingsComponent implements OnChanges {
           this.project.slug,
           formValue.username as string,
           formValue.role as SimpleProjectUserRole,
-          permission as string
+          permission as string,
+          formValue.reason as string
         )
         .subscribe(() => {
           formDirective.resetForm();
@@ -133,8 +136,13 @@ export class ProjectUserSettingsComponent implements OnChanges {
   }
 
   removeUserFromProject(user: User): void {
+    const reason = this.getReason();
+    if (!reason) {
+      return;
+    }
+
     this.projectUserService
-      .deleteUserFromProject(this.project.slug, user.id)
+      .deleteUserFromProject(this.project.slug, user.id, reason)
       .subscribe(() => {
         this.refreshProjectUsers();
         this.toastService.showSuccess(
@@ -145,8 +153,13 @@ export class ProjectUserSettingsComponent implements OnChanges {
   }
 
   upgradeUserToProjectManager(user: User): void {
+    const reason = this.getReason();
+    if (!reason) {
+      return;
+    }
+
     this.projectUserService
-      .changeRoleOfProjectUser(this.project.slug, user.id, 'manager')
+      .changeRoleOfProjectUser(this.project.slug, user.id, 'manager', reason)
       .subscribe(() => {
         this.refreshProjectUsers();
         this.toastService.showSuccess(
@@ -157,8 +170,13 @@ export class ProjectUserSettingsComponent implements OnChanges {
   }
 
   downgradeUserToUserRole(user: User): void {
+    const reason = this.getReason();
+    if (!reason) {
+      return;
+    }
+
     this.projectUserService
-      .changeRoleOfProjectUser(this.project.slug, user.id, 'user')
+      .changeRoleOfProjectUser(this.project.slug, user.id, 'user', reason)
       .subscribe(() => {
         this.refreshProjectUsers();
         this.toastService.showSuccess(
@@ -169,8 +187,18 @@ export class ProjectUserSettingsComponent implements OnChanges {
   }
 
   setUserPermission(user: User, permission: ProjectUserPermission): void {
+    const reason = this.getReason();
+    if (!reason) {
+      return;
+    }
+
     this.projectUserService
-      .changePermissionOfProjectUser(this.project.slug, user.id, permission)
+      .changePermissionOfProjectUser(
+        this.project.slug,
+        user.id,
+        permission,
+        reason
+      )
       .subscribe(() => {
         this.refreshProjectUsers();
         this.toastService.showSuccess(
@@ -178,6 +206,24 @@ export class ProjectUserSettingsComponent implements OnChanges {
           `User '${user.name}' has the permission '${permission}' in the project '${this.project.name}' now`
         );
       });
+  }
+
+  getReason(): string | undefined {
+    const reason = window.prompt('Please enter a reason!');
+    if (!reason) {
+      this.toastService.showError('Reason missing', 'You must enter a reason!');
+      return;
+    }
+    return reason;
+  }
+
+  getReason(): string | undefined {
+    const reason = window.prompt('Please enter a reason!');
+    if (!reason) {
+      this.toastService.showError('Reason missing', 'You must enter a reason!');
+      return;
+    }
+    return reason;
   }
 
   getProjectUsersByRole(role: SimpleProjectUserRole): ProjectUser[] {

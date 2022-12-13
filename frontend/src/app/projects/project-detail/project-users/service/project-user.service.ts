@@ -66,22 +66,24 @@ export class ProjectUserService {
     project_slug: string,
     username: string,
     role: SimpleProjectUserRole,
-    permission: string
+    permission: string,
+    reason: string
   ): Observable<ProjectUser> {
     return this.http.post<ProjectUser>(
       this.BACKEND_URL_PREFIX + project_slug + '/users',
-      { username, role, permission }
+      { username, role, permission, reason }
     );
   }
 
   changeRoleOfProjectUser(
     project_slug: string,
     userID: number,
-    role: SimpleProjectUserRole
+    role: SimpleProjectUserRole,
+    reason: string
   ): Observable<null> {
     return this.http.patch<null>(
       this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
-      { role }
+      { role, reason }
     );
   }
 
@@ -99,20 +101,23 @@ export class ProjectUserService {
   changePermissionOfProjectUser(
     project_slug: string,
     userID: number,
-    permission: ProjectUserPermission
+    permission: ProjectUserPermission,
+    reason: string
   ): Observable<null> {
     return this.http.patch<any>(
       this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
-      { permission }
+      { permission, reason }
     );
   }
 
   deleteUserFromProject(
     project_slug: string,
-    userID: number
-  ): Observable<null> {
-    return this.http.delete<any>(
-      this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID
+    userID: number,
+    reason: string
+  ): Observable<void> {
+    return this.http.delete<void>(
+      this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
+      { body: reason }
     );
   }
 }
