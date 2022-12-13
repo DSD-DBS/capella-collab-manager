@@ -116,16 +116,18 @@ def patch_capella_model(
 
 @router.delete(
     "/{model_slug}",
+    status_code=204,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
     tags=["Projects - Models"],
 )
-def patch_capella_model(
+def delete_capella_model(
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ) -> DatabaseCapellaModel:
-    crud.delete_model(db, model)
+    if not (model.git_models or model.t4c_models):
+        crud.delete_model(db, model)
 
 
 def get_tool_by_id_or_raise(db: Session, tool_id: int) -> Tool:

@@ -76,8 +76,8 @@ export class ModelService {
     );
   }
 
-  deleteModel(project_slug: string, model: Model): Observable<any> {
-    return this.http.delete(
+  deleteModel(project_slug: string, model: Model): Observable<void> {
+    return this.http.delete<void>(
       `${this.base_url}${project_slug}/models/${model.slug}`
     );
   }
