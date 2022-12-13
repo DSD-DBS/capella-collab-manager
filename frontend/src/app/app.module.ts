@@ -80,8 +80,8 @@ import { ProjectOverviewComponent } from './projects/project-overview/project-ov
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { WhitespaceUrlInterceptor } from './services/encoder/encoder.interceptor';
 import { ActiveSessionsComponent } from './sessions/active-sessions/active-sessions.component';
-import { FileExistsDialogComponent } from './sessions/active-sessions/upload-dialog/file-exists-dialog/file-exists-dialog.component';
-import { UploadDialogComponent } from './sessions/active-sessions/upload-dialog/upload-dialog.component';
+import { FileBrowserComponent } from './sessions/active-sessions/file-browser/file-browser.component';
+import { FileExistsDialogComponent } from './sessions/active-sessions/file-browser/file-exists-dialog/file-exists-dialog.component';
 import { DeleteSessionDialogComponent } from './sessions/delete-session-dialog/delete-session-dialog.component';
 import { GuacamoleComponent } from './sessions/session-created/guacamole/guacamole.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
@@ -123,6 +123,7 @@ import { HomeComponent } from './workspaces/home.component';
     DeleteSessionDialogComponent,
     EditGitSettingsComponent,
     EditT4CInstanceComponent,
+    FileBrowserComponent,
     FileExistsDialogComponent,
     FooterComponent,
     GitSettingsComponent,
@@ -162,7 +163,6 @@ import { HomeComponent } from './workspaces/home.component';
     ToolsSettingsComponent,
     ToolVersionComponent,
     TriggerPipelineComponent,
-    UploadDialogComponent,
     UserSettingsComponent,
     VersionComponent,
     ViewLogsDialogComponent,

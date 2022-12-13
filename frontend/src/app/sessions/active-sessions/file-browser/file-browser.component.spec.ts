@@ -5,20 +5,20 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UploadDialogComponent } from './upload-dialog.component';
+import { FileBrowserComponent } from './file-browser.component';
 
-xdescribe('UploadDialogComponent', () => {
-  let component: UploadDialogComponent;
-  let fixture: ComponentFixture<UploadDialogComponent>;
+xdescribe('FileBrowserComponent', () => {
+  let component: FileBrowserComponent;
+  let fixture: ComponentFixture<FileBrowserComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [UploadDialogComponent],
+      declarations: [FileBrowserComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(UploadDialogComponent);
+    fixture = TestBed.createComponent(FileBrowserComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
