@@ -5,7 +5,7 @@
 
 <!-- prettier-ignore -->
 !!! warning
-    You need to have the Administrator or Project Lead role for the specific
+    You need to have the Administrator or Project Lead role for a
     project to perform the following steps.
 
 ## Add user to project
