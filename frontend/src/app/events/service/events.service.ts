@@ -5,8 +5,8 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Project } from '@playwright/test';
 import { BehaviorSubject } from 'rxjs';
+import { Project } from 'src/app/services/project/project.service';
 import { User } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
 
@@ -33,7 +33,7 @@ export type HistoryEvent = {
   execution_time: string;
   event_type: EventType;
   user: User;
-  executor: User;
+  executor?: User;
   project?: Project;
   reason: string;
 };
