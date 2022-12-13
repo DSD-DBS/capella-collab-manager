@@ -125,7 +125,7 @@ def patch_capella_model(
 def delete_capella_model(
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
-) -> DatabaseCapellaModel:
+):
     if not (model.git_models or model.t4c_models):
         crud.delete_model(db, model)
 
