@@ -12,18 +12,21 @@ import {
   MatDialog,
   MatDialogRef,
 } from '@angular/material/dialog';
+import { saveAs } from 'file-saver';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { PathNode, Session } from 'src/app/schemes';
 import { LoadFilesService } from 'src/app/services/load-files/load-files.service';
 import { FileExistsDialogComponent } from './file-exists-dialog/file-exists-dialog.component';
+
 @Component({
-  selector: 'upload-dialog',
-  templateUrl: 'upload-dialog.component.html',
-  styleUrls: ['upload-dialog.component.css'],
+  selector: 'file-browser',
+  templateUrl: 'file-browser.component.html',
+  styleUrls: ['file-browser.component.css'],
 })
-export class UploadDialogComponent implements OnInit, OnDestroy {
+export class FileBrowserComponent implements OnInit, OnDestroy {
   private subscription: Subscription | undefined;
+  private downloadSubscription: Subscription | undefined;
 
   files: Array<[File, string]> = [];
   uploadProgress: number | null = null;
@@ -35,7 +38,7 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
   constructor(
     private loadService: LoadFilesService,
     private dialog: MatDialog,
-    public dialogRef: MatDialogRef<UploadDialogComponent>,
+    public dialogRef: MatDialogRef<FileBrowserComponent>,
     private toastService: ToastService,
     @Inject(MAT_DIALOG_DATA) public session: Session
   ) {}
@@ -249,8 +252,29 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
       });
   }
 
+  download(filename: string) {
+    this.session.download_in_progress = true;
+    this.downloadSubscription = this.loadService
+      .download(this.session.id, filename)
+      .subscribe({
+        next: (response: Blob) => {
+          saveAs(
+            response,
+            `${filename
+              .replace(/^[\/\\: ]+/, '')
+              .replace(/[\/\\: ]+/g, '_')}.zip`
+          );
+          this.session.download_in_progress = false;
+        },
+        error: () => {
+          this.session.download_in_progress = false;
+        },
+      });
+  }
+
   reset() {
     this.subscription?.unsubscribe();
+    this.downloadSubscription?.unsubscribe();
     this.uploadProgress = null;
     this.subscription = undefined;
   }

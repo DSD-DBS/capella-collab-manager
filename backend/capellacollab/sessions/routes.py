@@ -8,7 +8,6 @@ import json
 import logging
 import typing as t
 
-import requests
 from fastapi import APIRouter, Depends, HTTPException, status
 from requests.exceptions import RequestException
 from sqlalchemy.orm import Session
@@ -413,4 +412,4 @@ def create_guacamole_token(
     )
 
 
-router.include_router(router=files.router, prefix="/{id}/files")
+router.include_router(router=files.router, prefix="/{session_id}/files")

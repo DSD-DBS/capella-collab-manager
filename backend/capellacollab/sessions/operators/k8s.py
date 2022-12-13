@@ -3,10 +3,13 @@
 
 from __future__ import annotations
 
+import base64
+import binascii
 import enum
 import json
 import logging
 import random
+import shlex
 import string
 import typing as t
 from dataclasses import dataclass
@@ -711,3 +714,48 @@ class KubernetesOperator:
                 "Exception when copying file to the pod with id %s", id
             )
             raise e
+
+    def download_file(self, id: str, filename: str) -> t.Iterable[bytes]:
+        pod_name = self._get_pod_name(id)
+        try:
+            exec_command = [
+                "bash",
+                "-c",
+                f"zip -qr /tmp/archive.zip '{shlex.quote(filename)}' && base64 /tmp/archive.zip && rm -f /tmp/archive.zip",
+            ]
+            stream = kubernetes.stream.stream(
+                self.v1_core.connect_get_namespaced_pod_exec,
+                pod_name,
+                namespace=cfg["namespace"],
+                command=exec_command,
+                stderr=True,
+                stdin=False,
+                stdout=True,
+                tty=False,
+                _preload_content=False,
+            )
+
+            def reader():
+                while stream.is_open():
+                    content = stream.read_stdout(timeout=60)
+                    if content:
+                        yield content.encode("utf-8")
+
+            yield from lazy_b64decode(reader())
+
+        except kubernetes.client.exceptions.ApiException as e:
+            log.exception(
+                "Exception when copying file to the pod with id %s", id
+            )
+            raise
+
+
+def lazy_b64decode(reader):
+    data = b""
+    for b64data in reader:
+        data += b64data
+        try:
+            yield base64.b64decode(data)
+            data = b""
+        except binascii.Error:
+            pass

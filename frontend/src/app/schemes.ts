@@ -22,6 +22,7 @@ export interface Session {
   state: string;
   owner: User;
   t4c_password: string;
+  download_in_progress: boolean;
 }
 
 export interface PathNode {
