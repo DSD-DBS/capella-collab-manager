@@ -25,11 +25,12 @@ log = logging.getLogger(__name__)
 
 
 def check_session_belongs_to_user(
-    username: str,
-    id: str,
-    db: Session,
+    session_id: str,
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
 ):
-    session = get_session_by_id(db, id)
+    username = get_username(token)
+    session = get_session_by_id(db, session_id)
     if not session.owner_name == username:
         raise HTTPException(
             status_code=403,
@@ -39,15 +40,17 @@ def check_session_belongs_to_user(
         )
 
 
-@router.get("/", response_model=FileTree)
+@router.get(
+    "/",
+    response_model=FileTree,
+    dependencies=[Depends(check_session_belongs_to_user)],
+)
 def get_files(
-    id: str,
+    session_id: str,
     show_hidden: bool,
     db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ):
-    check_session_belongs_to_user(get_username(token), id, db)
-    session = get_session_by_id(db, id)
+    session = get_session_by_id(db, session_id)
 
     return requests.get(
         "http://" + session.host + ":8000/api/v1/workspaces/files",
@@ -57,15 +60,11 @@ def get_files(
     ).json()
 
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(check_session_belongs_to_user)])
 def upload_files(
-    id: str,
+    session_id: str,
     files: list[UploadFile],
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ):
-    check_session_belongs_to_user(get_username(token), id, db)
-
     tar_bytesio = io.BytesIO()
     tar = tarfile.TarFile(name="upload.tar", mode="w", fileobj=tar_bytesio)
 
@@ -88,24 +87,22 @@ def upload_files(
     tar_bytesio.seek(0)
     tar_bytes = tar_bytesio.read()
 
-    OPERATOR.upload_files(id, tar_bytes)
+    OPERATOR.upload_files(session_id, tar_bytes)
 
     return {"message": "Upload successful"}
 
 
 @router.get(
     "/download",
+    response_class=StreamingResponse,
+    dependencies=[Depends(check_session_belongs_to_user)],
 )
 def download_file(
-    id: str,
+    session_id: str,
     filename: str,
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
 ) -> UploadFile:
-    check_session_belongs_to_user(get_username(token), id, db)
-
     return StreamingResponse(
-        OPERATOR.download_file(id, filename),
+        OPERATOR.download_file(session_id, filename),
         headers={
             "content-disposition": 'attachment; filename=f"{filename}.zip"',
             "content-type": "application/zip",

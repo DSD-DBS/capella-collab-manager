@@ -412,4 +412,4 @@ def create_guacamole_token(
     )
 
 
-router.include_router(router=files.router, prefix="/{id}/files")
+router.include_router(router=files.router, prefix="/{session_id}/files")
