@@ -156,6 +156,11 @@ def update_project_user(
             reason=patch_project_user.reason,
         )
 
+        if role == ProjectUserRole.MANAGER:
+            crud.change_permission_of_user_in_project(
+                db, project, user, ProjectUserPermission.WRITE
+            )
+
     if permission := patch_project_user.permission:
         project_user = crud.get_user_of_project(db, project, user)
 
