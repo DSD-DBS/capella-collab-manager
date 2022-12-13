@@ -195,7 +195,6 @@ def remove_user_from_project(
     db: Session = Depends(get_db),
 ):
     check_user_not_admin(user)
-    print(reason)
 
     crud.delete_user_from_project(db, project, user)
     event_crud.create_project_change_event(
