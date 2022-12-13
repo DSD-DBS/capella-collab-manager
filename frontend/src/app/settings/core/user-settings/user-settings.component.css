@@ -9,8 +9,21 @@ mat-card {
   height: fit-content;
 }
 
+mat-card.wider {
+  width: 600px;
+}
+
 mat-form-field {
   margin-right: 10px;
+}
+
+mat-cell,
+.mat-cell,
+mat-footer-cell,
+.mat-footer-cell,
+mat-header-cell,
+.mat-header-cell {
+  padding: 0.75rem !important;
 }
 
 h1 {

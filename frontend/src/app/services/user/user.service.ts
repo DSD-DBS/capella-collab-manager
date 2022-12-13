@@ -6,6 +6,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HistoryEvent } from 'src/app/events/service/events.service';
 import { Session } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../auth/auth.service';
@@ -30,10 +31,15 @@ export class UserService {
     }
   }
 
-  createUser(username: string, role: UserRole): Observable<User> {
+  createUser(
+    username: string,
+    role: UserRole,
+    reason: string
+  ): Observable<User> {
     return this.http.post<User>(this.BACKEND_URL_PREFIX, {
       name: username,
       role: role,
+      reason: reason,
     });
   }
 
@@ -63,17 +69,34 @@ export class UserService {
     );
   }
 
-  updateRoleOfUser(user: User, role: UserRole): Observable<User> {
+  getUserHistory(user: User): Observable<UserHistory> {
+    return this.http.get<UserHistory>(
+      this.BACKEND_URL_PREFIX + user.id + '/history'
+    );
+  }
+
+  updateRoleOfUser(
+    user: User,
+    role: UserRole,
+    reason: string
+  ): Observable<User> {
     return this.http.patch<User>(this.BACKEND_URL_PREFIX + user.id + '/roles', {
       role,
+      reason,
     });
   }
 }
 
-export type User = {
+export interface User {
   id: number;
   name: string;
   role: UserRole;
-};
+}
 
 export type UserRole = 'user' | 'administrator';
+
+export interface UserHistory extends User {
+  created: string;
+  last_login: string;
+  events: HistoryEvent[];
+}
