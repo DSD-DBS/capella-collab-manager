@@ -9,6 +9,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from capellacollab.projects.models import DatabaseProject
+from capellacollab.users.crud import get_user_by_name
 from capellacollab.users.events.models import (
     DatabaseUserHistoryEvent,
     EventType,
@@ -106,3 +107,20 @@ def create_project_change_event(
 
 def get_events(db: Session) -> list[DatabaseUserHistoryEvent]:
     return db.query(DatabaseUserHistoryEvent).all()
+
+
+def get_events_by_username(
+    db: Session, username: str
+) -> list[DatabaseUserHistoryEvent]:
+    user: DatabaseUser = get_user_by_name(db, username)
+    return get_events_by_user_id(db, user.id)
+
+
+def get_events_by_user_id(
+    db: Session, user_id: int
+) -> list[DatabaseUserHistoryEvent]:
+    return (
+        db.query(DatabaseUserHistoryEvent)
+        .filter(DatabaseUserHistoryEvent.user_id == user_id)
+        .all()
+    )
