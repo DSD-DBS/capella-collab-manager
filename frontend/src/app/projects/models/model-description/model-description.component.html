@@ -47,6 +47,9 @@
         </mat-form-field>
       </fieldset>
       <br />
+      <p *ngIf="!canDelete">
+        The model can't be deleted since it has linked git and/or T4C models.
+      </p>
       <div class="flex-space-between">
         <a mat-button [routerLink]="'../../..'"
           ><mat-icon>arrow_back</mat-icon>Back</a
@@ -56,7 +59,7 @@
             mat-flat-button
             color="warn"
             (click)="deleteModel()"
-            *ngIf="canDelete"
+            [disabled]="!canDelete"
             type="button"
           >
             Delete
