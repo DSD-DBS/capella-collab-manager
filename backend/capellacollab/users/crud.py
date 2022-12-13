@@ -49,8 +49,10 @@ def update_role_of_user(
 
 
 def update_last_login(
-    db: Session, user: DatabaseUser, last_login=datetime.now()
+    db: Session, user: DatabaseUser, last_login: datetime | None = None
 ) -> DatabaseUser:
+    if not last_login:
+        last_login = datetime.now()
     user.last_login = last_login
     db.commit()
     return user

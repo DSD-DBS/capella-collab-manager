@@ -9,6 +9,7 @@ from functools import lru_cache
 from cachetools import TTLCache
 from fastapi import APIRouter, Depends
 from msal import ConfidentialClientApplication
+from sqlalchemy.orm import Session
 
 from capellacollab.config import config
 from capellacollab.core.authentication.database import RoleVerification
@@ -18,7 +19,7 @@ from capellacollab.core.authentication.schemas import (
     RefreshTokenRequest,
     TokenRequest,
 )
-from capellacollab.core.database import SessionLocal, get_db
+from capellacollab.core.database import get_db
 from capellacollab.users.crud import get_user_by_name, update_last_login
 from capellacollab.users.models import Role
 
@@ -52,7 +53,7 @@ async def get_redirect_url():
 
 
 @router.post("/tokens", name="Create access_token")
-async def api_get_token(body: TokenRequest):
+async def api_get_token(body: TokenRequest, db: Session = Depends(get_db)):
     auth_data = global_session_data[body.state]
     del global_session_data[body.state]
     token = ad_session().acquire_token_by_auth_code_flow(
@@ -61,8 +62,7 @@ async def api_get_token(body: TokenRequest):
     access_token = token["id_token"]
 
     username = get_username(JWTBearer().validate_token(access_token))
-    with SessionLocal() as session:
-        update_last_login(session, get_user_by_name(session, username))
+    update_last_login(db, get_user_by_name(session, username))
 
     # *Sigh* This is microsoft again. Instead of the access_token, we should use id_token :/
     # https://stackoverflow.com/questions/63195081/how-to-validate-a-jwt-from-azuread-in-python
