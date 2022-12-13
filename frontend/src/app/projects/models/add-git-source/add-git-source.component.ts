@@ -292,8 +292,8 @@ export class AddGitSourceComponent implements OnInit, OnDestroy {
     this.fillFormWithGitModel(this.gitModel!);
   }
 
-  deleteGitModel(): void {
-    if (!window.confirm(`Do you really want to delete this Git model?`)) {
+  unlinkGitModel(): void {
+    if (!window.confirm(`Do you really want to unlink this Git model?`)) {
       return;
     }
 
