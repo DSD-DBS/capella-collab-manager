@@ -43,6 +43,10 @@ general:
   port: 80
   scheme: http
 
+sessions:
+  # Session timeout in minutes for unused and idle sessions
+  timeout: 90
+
 database:
   # Database Configuration for Guacamole
   guacamole:

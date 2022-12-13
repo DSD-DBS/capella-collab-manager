@@ -13,16 +13,21 @@ data:
     groups:
       - name: Inactivity
         rules:
-          - alert: Inactivity (10m)
-            expr: idletime_minutes > 60
+          - alert: Inactivity session
+            expr: idletime_minutes > {{ .Values.sessions.timeout }}
             for: 1m
             annotations:
               summary: High Idletime
+          - alert: Unused session
+            expr: idletime_minutes < 0
+            for: {{ .Values.sessions.timeout }}m
+            annotations:
+              summary: Unused session
 
   prometheus.yml: |-
     global:
-      scrape_interval: 5s
-      evaluation_interval: 5s
+      scrape_interval: 30s
+      evaluation_interval: 30s
     rule_files:
       - /etc/prometheus/prometheus.rules
 
