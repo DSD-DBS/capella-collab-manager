@@ -57,7 +57,7 @@ import { NoticeComponent } from './general/notice/notice.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 import { MatCardOverviewLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-loader/mat-card-overview-loader.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
-import { AddGitSourceComponent } from './projects/models/add-git-source/add-git-source';
+import { AddGitSourceComponent } from './projects/models/add-git-source/add-git-source.component';
 import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
 import { CreateBackupComponent } from './projects/models/backup-settings/create-backup/create-backup.component';
 import { TriggerPipelineComponent } from './projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';

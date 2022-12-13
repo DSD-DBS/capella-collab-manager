@@ -48,8 +48,8 @@ import {
 
 @Component({
   selector: 'app-create-coworking-method',
-  templateUrl: './add-git-source.html',
-  styleUrls: ['./add-git-source.css'],
+  templateUrl: './add-git-source.component.html',
+  styleUrls: ['./add-git-source.component.css'],
 })
 export class AddGitSourceComponent implements OnInit, OnDestroy {
   @Input() asStepper?: boolean;

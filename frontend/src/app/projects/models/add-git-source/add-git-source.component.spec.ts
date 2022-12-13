@@ -5,7 +5,7 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddGitSourceComponent } from './add-git-source';
+import { AddGitSourceComponent } from './add-git-source.component';
 
 xdescribe('AddGitSourceComponent', () => {
   let component: AddGitSourceComponent;

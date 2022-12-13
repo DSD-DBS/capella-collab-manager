@@ -10,8 +10,8 @@
   <mat-card class="section-card">
     <h2>
       Add a {{ asStepper ? "primary" : "" }} source for the model “{{
-      modelService.model.name }}” of the project “{{ projectService.project.name
-      }}”.
+        modelService.model.name
+      }}” of the project “{{ projectService.project.name }}”.
     </h2>
     <form [formGroup]="form">
       <fieldset *ngIf="!asStepper && isEditMode">
@@ -41,8 +41,10 @@
         <fieldset>
           <mat-form-field appearance="fill">
             <mat-label
-              >Absolute URL {{ availableGitInstances.length ? "or Relative URL"
-              : "" }}</mat-label
+              >Absolute URL
+              {{
+                availableGitInstances.length ? "or Relative URL" : ""
+              }}</mat-label
             >
             <input
               matInput
