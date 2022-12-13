@@ -11,13 +11,15 @@ from fastapi import APIRouter, Depends
 from msal import ConfidentialClientApplication
 
 from capellacollab.config import config
-from capellacollab.core.authentication import jwt_bearer
 from capellacollab.core.authentication.database import RoleVerification
+from capellacollab.core.authentication.helper import get_username
+from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.authentication.schemas import (
     RefreshTokenRequest,
     TokenRequest,
 )
-from capellacollab.core.database import get_db
+from capellacollab.core.database import SessionLocal, get_db
+from capellacollab.users.crud import get_user_by_name, update_last_login
 from capellacollab.users.models import Role
 
 router = APIRouter()
@@ -56,11 +58,16 @@ async def api_get_token(body: TokenRequest):
     token = ad_session().acquire_token_by_auth_code_flow(
         auth_data, body.dict(), scopes=[]
     )
+    access_token = token["id_token"]
+
+    username = get_username(JWTBearer().validate_token(access_token))
+    with SessionLocal() as session:
+        update_last_login(session, get_user_by_name(session, username))
 
     # *Sigh* This is microsoft again. Instead of the access_token, we should use id_token :/
     # https://stackoverflow.com/questions/63195081/how-to-validate-a-jwt-from-azuread-in-python
     return {
-        "access_token": token["id_token"],
+        "access_token": access_token,
         "refresh_token": token["refresh_token"],
         "token_type": token["token_type"],
     }
@@ -74,7 +81,7 @@ async def api_refresh_token(body: RefreshTokenRequest):
 
 
 @router.delete("/tokens", name="Invalidate the token (log out)")
-async def logout(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
+async def logout(jwt_decoded=Depends(JWTBearer())):
     for account in ad_session().get_accounts():
         if account["username"] == jwt_decoded["preferred_username"]:
             return ad_session().remove_account(account)
@@ -84,7 +91,7 @@ async def logout(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
 @router.get("/tokens", name="Validate the token")
 async def validate_token(
     scope: t.Optional[Role],
-    token=Depends(jwt_bearer.JWTBearer()),
+    token=Depends(JWTBearer()),
     db=Depends(get_db),
 ):
     if scope and scope.ADMIN:
