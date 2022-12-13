@@ -6,6 +6,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+from capellacollab.projects.toolmodels.modelsources.git.models import (
+    DatabaseGitModel,
+)
 
 from .models import DatabaseBackup
 
@@ -22,6 +25,20 @@ def get_pipelines_for_model(
     return (
         db.execute(
             select(DatabaseBackup).where(DatabaseBackup.model_id == model.id)
+        )
+        .scalars()
+        .all()
+    )
+
+
+def get_pipelines_for_git_model(
+    db: Session, model: DatabaseGitModel
+) -> list[DatabaseBackup]:
+    return (
+        db.execute(
+            select(DatabaseBackup).where(
+                DatabaseBackup.git_model_id == model.id
+            )
         )
         .scalars()
         .all()
