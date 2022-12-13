@@ -19,8 +19,8 @@ def test_get_projects_not_authenticated(client):
     assert response.json() == {"detail": "Not authenticated"}
 
 
-def test_get_projects_as_user(client, db, username):
-    create_user(db, username, Role.USER)
+def test_get_projects_as_user(client, db, executor_name):
+    create_user(db, executor_name, Role.USER)
 
     response = client.get("/api/v1/projects")
 
@@ -28,10 +28,10 @@ def test_get_projects_as_user(client, db, username):
     assert response.json() == []
 
 
-def test_get_projects_as_user_with_project(client, db, username):
+def test_get_projects_as_user_with_project(client, db, executor_name):
     project_name = str(uuid1())
-    user = create_user(db, username, Role.USER)
-    project = create_project(db, name=project_name)
+    user = create_user(db, executor_name, Role.USER)
+    project = create_project(db, project_name)
     add_user_to_project(
         db,
         project=project,
@@ -53,8 +53,8 @@ def test_get_projects_as_user_with_project(client, db, username):
     ]
 
 
-def test_get_projects_as_admin(client, db, username):
-    create_user(db, username, Role.ADMIN)
+def test_get_projects_as_admin(client, db, executor_name):
+    create_user(db, executor_name, Role.ADMIN)
 
     response = client.get("/api/v1/projects")
 

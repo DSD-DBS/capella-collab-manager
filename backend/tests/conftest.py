@@ -14,6 +14,7 @@ import capellacollab.core.database as database_
 from capellacollab.__main__ import app
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import migration
+from capellacollab.projects.crud import create_project
 
 
 @pytest.fixture(scope="session")
@@ -41,7 +42,7 @@ def db(postgresql, monkeypatch) -> Session:
 
 
 @pytest.fixture
-def username(monkeypatch):
+def executor_name(monkeypatch):
     name = str(uuid1())
 
     async def bearer_passthrough(self, request: Request):
@@ -50,6 +51,16 @@ def username(monkeypatch):
     monkeypatch.setattr(JWTBearer, "__call__", bearer_passthrough)
 
     return name
+
+
+@pytest.fixture
+def unique_username():
+    return str(uuid1())
+
+
+@pytest.fixture
+def project(db):
+    return create_project(db, str(uuid1()))
 
 
 @pytest.fixture

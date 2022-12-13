@@ -25,8 +25,8 @@ def cleanup_notices(db: Session):
         delete_notice(db, notice)
 
 
-def test_get_alerts(client: TestClient, db: Session, username: str):
-    create_user(db, username, Role.USER)
+def test_get_alerts(client: TestClient, db: Session, executor_name: str):
+    create_user(db, executor_name, Role.USER)
     create_notice(
         db,
         CreateNoticeRequest(
@@ -55,8 +55,8 @@ def test_create_alert_not_authenticated(client: TestClient):
     assert response.json() == {"detail": "Not authenticated"}
 
 
-def test_create_alert(client: TestClient, db: Session, username: str):
-    create_user(db, username, Role.ADMIN)
+def test_create_alert(client: TestClient, db: Session, executor_name: str):
+    create_user(db, executor_name, Role.ADMIN)
 
     response = client.post(
         "/api/v1/notices",
@@ -72,8 +72,8 @@ def test_create_alert(client: TestClient, db: Session, username: str):
     assert notices[0].level == NoticeLevel.SUCCESS
 
 
-def test_delete_alert(client: TestClient, db: Session, username: str):
-    create_user(db, username, Role.ADMIN)
+def test_delete_alert(client: TestClient, db: Session, executor_name: str):
+    create_user(db, executor_name, Role.ADMIN)
     alert = create_notice(
         db,
         CreateNoticeRequest(

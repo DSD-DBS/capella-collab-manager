@@ -183,8 +183,8 @@ def kubernetes():
 
 
 @pytest.fixture()
-def user(db, username):
-    user = create_user(db, username, Role.USER)
+def user(db, executor_name):
+    user = create_user(db, executor_name, Role.USER)
 
     def get_mock_own_user():
         return user
