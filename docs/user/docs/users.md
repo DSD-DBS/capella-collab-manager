@@ -3,6 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
+<!-- prettier-ignore -->
 !!! Warning "Usage restricted"
     You need to be project manager or administrator to use this feature.
 

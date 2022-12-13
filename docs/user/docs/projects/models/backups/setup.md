@@ -7,14 +7,17 @@
 
 <!-- prettier-ignore -->
 !!! warning
-    You need to have the Administrator or Project Lead role for the specific
+    You need to have the Administrator or Project Lead role for a
     project to perform the following steps.
 
 <!-- prettier-ignore -->
 !!! danger
-    Models are not automatically backed up! Please make sure to set up a nightly backup for productive and important content.
+    Models are not automatically backed up! Please make sure to set up a nightly
+    backup for important content.
 
-We offer the feature to create a backup from any TeamForCapella repository to any Git repository. These can be triggered manually or can be executed every night at around 3pm.
+We offer a feature to create a backup from any TeamForCapella repository to any
+Git repository. These can be triggered manually and can be executed nightly at
+around 3pm.
 
 <!-- prettier-ignore-start -->
 
@@ -36,7 +39,7 @@ We offer the feature to create a backup from any TeamForCapella repository to an
 
     ![Create a backup pipeline](./create-pipeline.png)
 
-    !!! Bug
+    !!! Warning
         If you choose the `Include commit history`-option, backups are resource-intensive
         and each backup can take up to 5 hours depending on the size!
 
