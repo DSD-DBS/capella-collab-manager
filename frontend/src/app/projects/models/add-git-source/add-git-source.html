@@ -72,9 +72,9 @@
             </mat-card-content>
             <mat-error
               class="error"
-              *ngIf="this.form.controls.urls.errors?.urlPrefixError"
+              *ngIf="form.controls.urls.errors?.urlPrefixError"
             >
-              {{ this.form.controls.urls.errors?.urlPrefixError }}
+              {{ form.controls.urls.errors?.urlPrefixError }}
             </mat-error>
           </mat-card>
         </div>
