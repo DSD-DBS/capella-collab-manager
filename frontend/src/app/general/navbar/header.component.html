@@ -56,7 +56,12 @@
       >
         Settings <mat-icon>settings</mat-icon>
       </a>
-      <a class="profileMenuButton" mat-menu-item disabled>
+      <a
+        *ngIf="userService.user?.role === 'administrator'"
+        class="profileMenuButton"
+        mat-menu-item
+        routerLink="events"
+      >
         Events <mat-icon>event_note</mat-icon>
       </a>
       <a
