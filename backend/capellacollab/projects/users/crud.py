@@ -63,8 +63,6 @@ def change_role_of_user_in_project(
         .where(ProjectUserAssociation.project == project)
         .where(ProjectUserAssociation.user == user)
     ).scalar_one()
-    if role == ProjectUserRole.MANAGER:
-        association.permission = ProjectUserPermission.WRITE
     association.role = role
     db.commit()
     return association
