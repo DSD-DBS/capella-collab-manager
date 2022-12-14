@@ -53,7 +53,7 @@ class PostCapellaModel(BaseModel):
     tool_id: int
 
 
-class CapellaModelPatch(BaseModel):
+class PatchCapellaModel(BaseModel):
     description: t.Optional[str]
     version_id: int
     nature_id: int
