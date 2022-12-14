@@ -43,7 +43,9 @@ def test_no_idle_sessions(monkeypatch):
     terminate_idle_session()
 
 
-def test_no_idle_sessions(monkeypatch, db):
+def test_idle_sessions(monkeypatch, db):
+    # db fixture is needed to start the database
+
     operator = MockOperator()
     monkeypatch.setattr(
         requests,
