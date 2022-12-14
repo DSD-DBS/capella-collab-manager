@@ -22,8 +22,8 @@ import { ProjectService } from 'src/app/services/project/project.service';
   styleUrls: ['./model-detail.component.css'],
 })
 export class ModelDetailComponent implements OnInit, OnDestroy {
-  public gitModels: Array<GetGitModel> | undefined = undefined;
-  public t4cModels: T4CModel[] | undefined = undefined;
+  public gitModels?: GetGitModel[] = undefined;
+  public t4cModels?: T4CModel[] = undefined;
 
   private gitModelsSubscription?: Subscription;
   private t4cModelsSubscription?: Subscription;
@@ -45,9 +45,7 @@ export class ModelDetailComponent implements OnInit, OnDestroy {
         this.projectService.project!.slug,
         this.modelService.model!.slug
       )
-      .subscribe((models) => {
-        this.t4cModels = models;
-      });
+      .subscribe((models) => (this.t4cModels = models));
 
     this.gitModelService.loadGitModels(
       this.projectService.project!.slug,

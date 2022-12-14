@@ -35,13 +35,7 @@ export class MatCardOverviewLoaderComponent implements OnInit {
   resize(width: number, height: number) {
     // Margin is 1vw (left + right) and 1vh (top + bottom)
 
-    let cardsPerColumn = 0;
-    if (this.rows) {
-      cardsPerColumn = this.rows;
-    } else {
-      cardsPerColumn = (0.98 * height - 120) / 275;
-    }
-
+    const cardsPerColumn = this.rows ? this.rows : (0.98 * height - 120) / 275;
     const cardsPerRow = (0.98 * width) / 425;
 
     this.cardsNumber =
