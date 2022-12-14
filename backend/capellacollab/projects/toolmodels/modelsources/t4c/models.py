@@ -62,7 +62,7 @@ class SimpleT4CModel(BaseModel):
         orm_mode = True
 
 
-class ResponseT4CModel(BaseModel):
+class T4CModel(BaseModel):
     id: int
     name: str
     repository: T4CRepository
@@ -72,7 +72,7 @@ class ResponseT4CModel(BaseModel):
 
 
 class T4CRepositoryWithModels(T4CRepository):
-    models: list[ResponseT4CModel]
+    models: list[T4CModel]
 
     class Config:
         orm_mode = True
