@@ -24,7 +24,7 @@ class PostGitInstance(BaseModel):
     url: t.Optional[str]
 
 
-class GitSettingsGitGetResponse(BaseModel):
+class GitInstance(BaseModel):
     id: int
     name: str
     url: str
