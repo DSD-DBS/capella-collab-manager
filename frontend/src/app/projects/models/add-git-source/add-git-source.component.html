@@ -74,9 +74,13 @@
             </mat-card-content>
             <mat-error
               class="error"
-              *ngIf="form.controls.urls.errors?.urlPrefixError"
+              *ngIf="
+                form.controls.urls.errors?.urlPrefixError ||
+                (urls.baseUrl.errors?.required && urls.inputUrl.value)
+              "
             >
-              {{ form.controls.urls.errors?.urlPrefixError }}
+              The resolved URL doesn't match with one of the allowed git
+              instances
             </mat-error>
           </mat-card>
         </div>

@@ -128,10 +128,10 @@ export class AddGitSourceComponent implements OnInit, OnDestroy {
         if (gitSettings.length) {
           this.urls.baseUrl.setValidators([Validators.required]);
           this.urls.inputUrl.setValidators([absoluteOrRelativeValidators()]);
+          this.form.controls.urls.setAsyncValidators([
+            this.resultUrlPrefixAsyncValidator(),
+          ]);
         }
-        this.form.controls.urls.setAsyncValidators([
-          this.resultUrlPrefixAsyncValidator(),
-        ]);
       });
 
     this.modelSubscription = this.modelService._model.subscribe((model) => {
@@ -219,7 +219,7 @@ export class AddGitSourceComponent implements OnInit, OnDestroy {
   }
 
   onUrlInputChange(changedInputUrl: string): void {
-    this.form.controls.urls.updateValueAndValidity();
+    this.updateResultUrl();
     this.resetRevisions();
 
     this.urls.inputUrl.updateValueAndValidity();
