@@ -4,7 +4,7 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, filter, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import {
   GetGitModel,
   GitModelService,
@@ -22,9 +22,8 @@ import { ProjectService } from 'src/app/services/project/project.service';
   styleUrls: ['./model-detail.component.css'],
 })
 export class ModelDetailComponent implements OnInit, OnDestroy {
-  public gitModels: Array<GetGitModel> = [];
-  private _t4cModels = new BehaviorSubject<T4CModel[] | undefined>(undefined);
-  public t4cModels: T4CModel[] = [];
+  public gitModels: Array<GetGitModel> | undefined = undefined;
+  public t4cModels: T4CModel[] | undefined = undefined;
 
   private gitModelsSubscription?: Subscription;
   private t4cModelsSubscription?: Subscription;
@@ -41,17 +40,13 @@ export class ModelDetailComponent implements OnInit, OnDestroy {
       (gitModels) => (this.gitModels = gitModels)
     );
 
-    this._t4cModels.pipe(filter(Boolean)).subscribe((models) => {
-      this.t4cModels = models;
-    });
-
     this.t4cModelsSubscription = this.t4cModelService
       .listT4CModels(
         this.projectService.project!.slug,
         this.modelService.model!.slug
       )
       .subscribe((models) => {
-        this._t4cModels.next(models);
+        this.t4cModels = models;
       });
 
     this.gitModelService.loadGitModels(
@@ -62,5 +57,8 @@ export class ModelDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.gitModelsSubscription?.unsubscribe();
+    this.gitModelService.clear();
+    this.t4cModelsSubscription?.unsubscribe();
+    this.t4cModelService.clear();
   }
 }

@@ -90,7 +90,7 @@ export class CreateBackupComponent {
   t4cModelAndGitModelExists(): boolean {
     return !!(
       this.t4cModelService.t4cModels?.length &&
-      this.gitModelService?._gitModels.value.length
+      this.gitModelService._gitModels.value?.length
     );
   }
 }

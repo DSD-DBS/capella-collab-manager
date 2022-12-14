@@ -16,8 +16,10 @@ export class GitModelService {
 
   constructor(private http: HttpClient) {}
 
-  private _gitModel = new Subject<GetGitModel>();
-  public _gitModels = new BehaviorSubject<Array<GetGitModel>>([]);
+  private _gitModel = new Subject<GetGitModel | undefined>();
+  public _gitModels = new BehaviorSubject<Array<GetGitModel> | undefined>(
+    undefined
+  );
 
   readonly gitModel = this._gitModel.asObservable();
   readonly gitModels = this._gitModels.asObservable();
@@ -105,6 +107,11 @@ export class GitModelService {
         `/projects/${project_slug}/models/${model_slug}/modelsources/git/validate/path`,
       path
     );
+  }
+
+  clear() {
+    this._gitModels.next(undefined);
+    this._gitModel.next(undefined);
   }
 }
 

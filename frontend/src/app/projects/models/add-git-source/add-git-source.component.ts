@@ -155,10 +155,10 @@ export class AddGitSourceComponent implements OnInit, OnDestroy {
         this.gitModelSubscription = this.gitModelService.gitModel.subscribe(
           (gitModel) => {
             this.gitModel = gitModel;
-            this.fillFormWithGitModel(gitModel);
+            this.fillFormWithGitModel(gitModel!);
 
             this.gitService.loadPrivateRevisions(
-              gitModel.path,
+              gitModel!.path,
               this.projectService.project?.slug!,
               this.modelService.model?.slug!,
               gitModelId
