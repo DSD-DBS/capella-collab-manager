@@ -217,15 +217,6 @@ export class ProjectUserSettingsComponent implements OnChanges {
     return reason;
   }
 
-  getReason(): string | undefined {
-    const reason = window.prompt('Please enter a reason!');
-    if (!reason) {
-      this.toastService.showError('Reason missing', 'You must enter a reason!');
-      return;
-    }
-    return reason;
-  }
-
   getProjectUsersByRole(role: SimpleProjectUserRole): ProjectUser[] {
     return this.projectUsers.filter(
       (pUser) =>
