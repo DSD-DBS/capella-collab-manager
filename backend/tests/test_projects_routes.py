@@ -1,9 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from uuid import uuid1
 
-from capellacollab.projects.crud import create_project
 from capellacollab.projects.users.crud import add_user_to_project
 from capellacollab.projects.users.models import (
     ProjectUserPermission,
@@ -28,10 +26,8 @@ def test_get_projects_as_user(client, db, executor_name):
     assert response.json() == []
 
 
-def test_get_projects_as_user_with_project(client, db, executor_name):
-    project_name = str(uuid1())
+def test_get_projects_as_user_with_project(client, db, executor_name, project):
     user = create_user(db, executor_name, Role.USER)
-    project = create_project(db, project_name)
     add_user_to_project(
         db,
         project=project,
@@ -45,8 +41,8 @@ def test_get_projects_as_user_with_project(client, db, executor_name):
     assert response.status_code == 200
     assert response.json() == [
         {
-            "name": project_name,
-            "slug": project_name,
+            "name": project.name,
+            "slug": project.slug,
             "description": None,
             "users": {"leads": 1, "contributors": 0, "subscribers": 0},
         }
