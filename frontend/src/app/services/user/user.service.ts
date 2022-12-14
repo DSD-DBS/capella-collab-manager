@@ -51,8 +51,8 @@ export class UserService {
     return this.http.get<User>(this.BACKEND_URL_PREFIX + 'current');
   }
 
-  deleteUser(user: User): Observable<any> {
-    return this.http.delete<any>(this.BACKEND_URL_PREFIX + user.id);
+  deleteUser(user: User): Observable<void> {
+    return this.http.delete<void>(this.BACKEND_URL_PREFIX + user.id);
   }
 
   getUsers(): Observable<User[]> {
