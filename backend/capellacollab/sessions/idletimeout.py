@@ -11,7 +11,8 @@ from starlette.concurrency import run_in_threadpool
 
 from capellacollab.config import config
 from capellacollab.core import database
-from capellacollab.sessions.database import delete_session, get_session_by_id
+from capellacollab.sessions import routes
+from capellacollab.sessions.database import get_session_by_id
 from capellacollab.sessions.operators import OPERATOR
 
 log = logging.getLogger(__name__)
@@ -31,10 +32,9 @@ def terminate_idle_session():
     for metric in response.json()["data"]["result"]:
         if session_id := metric.get("metric", {}).get("app"):
             log.info("Terminating idle session %s", session_id)
-            OPERATOR.kill_session(session_id)
             with database.SessionLocal() as db:
                 if session := get_session_by_id(db, session_id):
-                    delete_session(db, session)
+                    routes.end_session(session, db, OPERATOR)
 
 
 async def terminate_idle_sessions_in_background(interval=60):
