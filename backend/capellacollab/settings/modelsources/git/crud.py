@@ -46,6 +46,6 @@ def update_git_setting(
     return git_setting
 
 
-def delete_git_setting(db: Session, git_setting: DB_GitSettings) -> None:
-    git_setting.delete()
+def delete_git_setting(db: Session, git_setting: DB_GitSettings):
+    db.delete(git_setting)
     db.commit()
