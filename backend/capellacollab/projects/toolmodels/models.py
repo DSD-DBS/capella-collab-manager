@@ -97,7 +97,7 @@ class DatabaseCapellaModel(Base):
     )
 
 
-class ResponseModel(BaseModel):
+class CapellaModel(BaseModel):
     id: int
     slug: str
     name: str
