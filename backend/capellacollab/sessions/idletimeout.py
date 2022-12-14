@@ -12,7 +12,7 @@ from starlette.concurrency import run_in_threadpool
 from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.sessions import routes
-from capellacollab.sessions.database import get_session_by_id
+from capellacollab.sessions.crud import get_session_by_id
 from capellacollab.sessions.operators import OPERATOR
 
 log = logging.getLogger(__name__)

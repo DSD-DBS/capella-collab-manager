@@ -34,7 +34,7 @@ from capellacollab.projects.toolmodels.modelsources.git.models import (
     DatabaseGitModel,
 )
 from capellacollab.projects.users.crud import ProjectUserRole
-from capellacollab.sessions import database, guacamole
+from capellacollab.sessions import crud, guacamole
 from capellacollab.sessions.files import routes as files
 from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import get_operator
@@ -87,7 +87,7 @@ def get_current_sessions(
     token=Depends(JWTBearer()),
 ):
     if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
-        return inject_attrs_in_sessions(database.get_all_sessions(db))
+        return inject_attrs_in_sessions(crud.get_all_sessions(db))
 
     if not any(
         project_user.role == ProjectUserRole.MANAGER
@@ -103,7 +103,7 @@ def get_current_sessions(
         list(
             itertools.chain.from_iterable(
                 [
-                    database.get_sessions_for_repository(db, project)
+                    crud.get_sessions_for_repository(db, project)
                     for project in [
                         p.name
                         for p in db_user.projects
@@ -212,7 +212,7 @@ def request_persistent_session(
 
     log.info("Starting persistent session for user %s", owner)
 
-    existing_user_sessions = database.get_sessions_for_user(db, owner)
+    existing_user_sessions = crud.get_sessions_for_user(db, owner)
 
     if WorkspaceType.PERSISTENT in [
         session.type for session in existing_user_sessions
@@ -350,7 +350,7 @@ def create_database_and_guacamole_session(
         version=version,
         **session,
     )
-    response = database.create_session(db=db, session=database_model)
+    response = crud.create_session(db=db, session=database_model)
     response.state = "New"
     response.last_seen = "UNKNOWN"
     return response
@@ -394,7 +394,7 @@ def create_guacamole_token(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    session = database.get_session_by_id(db, id)
+    session = crud.get_session_by_id(db, id)
     if session.owner_name != get_username(token):
         raise HTTPException(
             status_code=403,

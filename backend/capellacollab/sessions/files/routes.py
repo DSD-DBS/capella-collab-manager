@@ -16,7 +16,7 @@ from capellacollab.config import config
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
-from capellacollab.sessions.database import get_session_by_id
+from capellacollab.sessions.crud import get_session_by_id
 from capellacollab.sessions.operators import OPERATOR
 from capellacollab.sessions.schema import FileTree
 
