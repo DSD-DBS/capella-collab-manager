@@ -47,7 +47,7 @@ class EditingMode(enum.Enum):
     GIT = "git"
 
 
-class CapellaModel(BaseModel):
+class PostCapellaModel(BaseModel):
     name: str
     description: t.Optional[str]
     tool_id: int

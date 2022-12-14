@@ -18,9 +18,9 @@ from . import crud
 from .backups.routes import router as router_backups
 from .injectables import get_existing_capella_model, get_existing_project
 from .models import (
-    CapellaModel,
     CapellaModelPatch,
     DatabaseCapellaModel,
+    PostCapellaModel,
     ResponseModel,
 )
 from .modelsources.routes import router as router_modelsources
@@ -59,7 +59,7 @@ def get_model_by_slug(
     tags=["Projects - Models"],
 )
 def create_new(
-    new_model: CapellaModel,
+    new_model: PostCapellaModel,
     project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
 ) -> DatabaseCapellaModel:
