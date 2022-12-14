@@ -182,7 +182,7 @@ def delete_git_model_by_id(
             status_code=409,
             detail={
                 "err_code": "git_model_used_for_backup",
-                "reason": f"The git model ({db_git_model.name}) can't be deleted: it's used for backup jobs",
+                "reason": f"The git model can't be deleted: it's used for backup jobs",
             },
         )
 
