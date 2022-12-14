@@ -25,7 +25,7 @@ from capellacollab.projects.users.models import (
     ProjectUserPermission,
     ProjectUserRole,
 )
-from capellacollab.sessions.database import (
+from capellacollab.sessions.crud import (
     get_session_by_id,
     get_sessions_for_user,
 )

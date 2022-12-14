@@ -12,12 +12,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from requests.exceptions import RequestException
 from sqlalchemy.orm import Session
 
-import capellacollab.projects.toolmodels.modelsources.git.crud as git_models_crud
 from capellacollab.config import config
 from capellacollab.core.authentication.database import (
     ProjectRoleVerification,
     RoleVerification,
-    verify_project_role,
 )
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
@@ -40,7 +38,6 @@ from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import get_operator
 from capellacollab.sessions.operators.k8s import KubernetesOperator
 from capellacollab.sessions.schema import (
-    DepthType,
     GetSessionsResponse,
     GuacamoleAuthentication,
     PostPersistentSessionRequest,
@@ -53,7 +50,6 @@ from capellacollab.settings.modelsources.t4c.repositories.crud import (
 )
 from capellacollab.settings.modelsources.t4c.repositories.interface import (
     add_user_to_repository,
-    remove_user_from_repository,
 )
 from capellacollab.tools.crud import (
     get_image_for_tool_version,
@@ -67,6 +63,7 @@ from capellacollab.tools.models import Tool, Version
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role
 
+from . import core
 from .injectables import get_existing_session
 
 router = APIRouter(
@@ -362,27 +359,7 @@ def end_session(
     db: Session = Depends(get_db),
     operator: KubernetesOperator = Depends(get_operator),
 ):
-    if (
-        session.tool.name == "Capella"
-        and session.type == WorkspaceType.PERSISTENT
-    ):
-        for repository in get_user_t4c_repositories(
-            db, session.tool, session.version, session.owner
-        ):
-            try:
-                remove_user_from_repository(
-                    repository.instance,
-                    repository.name,
-                    username=session.owner.name,
-                )
-            except RequestException:
-                log.exception(
-                    "Could not delete user from repository '%s' of instance '%s'. Please delete the user manually.",
-                    exc_info=True,
-                )
-
-    database.delete_session(db, session)
-    operator.kill_session(session.id)
+    core.terminate_session(db, session, operator)
 
 
 @router.post(

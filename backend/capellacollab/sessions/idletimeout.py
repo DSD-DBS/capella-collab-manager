@@ -11,7 +11,7 @@ from starlette.concurrency import run_in_threadpool
 
 from capellacollab.config import config
 from capellacollab.core import database
-from capellacollab.sessions import routes
+from capellacollab.sessions import core
 from capellacollab.sessions.crud import get_session_by_id
 from capellacollab.sessions.operators import OPERATOR
 
@@ -34,7 +34,7 @@ def terminate_idle_session():
             log.info("Terminating idle session %s", session_id)
             with database.SessionLocal() as db:
                 if session := get_session_by_id(db, session_id):
-                    routes.end_session(session, db, OPERATOR)
+                    core.terminate_session(session, db, OPERATOR)
                 else:
                     log.error(
                         "Session was not found in our database. Terminating idle session %s",
