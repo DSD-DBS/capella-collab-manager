@@ -17,7 +17,7 @@ from capellacollab.users.models import User
 
 
 class EventType(enum.Enum):
-    CREATED = "Created"
+    CREATED_USER = "CreatedUser"
     ADDED_TO_PROJECT = "AddedToProject"
     REMOVED_FROM_PROJECT = "RemovedFromProject"
     ASSIGNED_PROJECT_ROLE_USER = "AssignedProjectRoleUser"

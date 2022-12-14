@@ -39,7 +39,7 @@ export type HistoryEvent = {
 };
 
 export type EventType =
-  | 'Created'
+  | 'CreatedUser'
   | 'AddedToProject'
   | 'RemovedFromProject'
   | 'AssignedProjectRoleUser'
