@@ -65,12 +65,12 @@ def get_projects(
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
 )
-def update_project_description(
+def patch_project(
     patch_project: PatchProject,
     project: DatabaseProject = Depends(get_existing_project),
     database: Session = Depends(get_db),
 ) -> DatabaseProject:
-    new_slug = slugify(project.name)
+    new_slug = slugify(patch_project.name)
     if (
         crud.get_project_by_slug(database, new_slug)
         and project.slug != new_slug

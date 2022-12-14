@@ -19,6 +19,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 import slugify from 'slugify';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
@@ -46,7 +47,8 @@ export class ProjectMetadataComponent implements OnChanges {
 
   constructor(
     private toastService: ToastService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private router: Router
   ) {}
 
   ngOnChanges(_changes: SimpleChanges): void {
@@ -60,9 +62,12 @@ export class ProjectMetadataComponent implements OnChanges {
         .updateProject(this.project.slug, this.form.value as PatchProject)
         .subscribe((project) => {
           this.projectService._project.next(project);
+          this.router.navigateByUrl(`/project/${project.slug}`);
           this.toastService.showSuccess(
             'Project updated',
-            `Updated to ${project.name}: ${project.description}`
+            `The new name is: '${project.name}' and the new description is '${
+              project.description || ''
+            }'`
           );
         });
     }
