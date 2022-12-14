@@ -33,13 +33,12 @@ Capella splash screen and a workspace will be shown in your browser.
 
 ![Capella welcome screen](img/collab-step-5.png)
 
-
 ## What's next
 
 This introduction only scratches the surface of what's possible with the Collaboration Manager.
 
 More advanced features include:
 
-* Read-only models from Git
-* Connect to a Team4Capella server (commercial product)
-* Manage users and user access
+- Read-only models from Git
+- Connect to a Team4Capella server (commercial product)
+- Manage users and user access

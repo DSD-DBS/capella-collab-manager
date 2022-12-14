@@ -19,23 +19,23 @@ Turn your local Capella experience into a browser-based collaboration platform f
 model-based projects. Designed to enable co-working across multiple organizations.
 Here are some of the key features:
 
-* Run Capella in a browser
-* Supports both git and [Team for Capella](https://www.obeosoft.com/en/team-for-capella)
+- Run Capella in a browser
+- Supports both git and [Team for Capella](https://www.obeosoft.com/en/team-for-capella)
   co-working models
-* Single sign on (SSO) via [OAuth2](https://oauth.net/2/)
-* No need to install or maintain local Capella clients - clients are made on demand in
+- Single sign on (SSO) via [OAuth2](https://oauth.net/2/)
+- No need to install or maintain local Capella clients - clients are made on demand in
   an underlaying [Kubernetes](https://kubernetes.io/) cluster
-* Access to projects and models is self-managed by project leads, model owners or
+- Access to projects and models is self-managed by project leads, model owners or
   delegates
-* Within a project a user could have read or read/ write access. Read-only users don't
+- Within a project a user could have read or read/ write access. Read-only users don't
   consume licenses in Team for Capella projects
-* Integration with git repository management for backup and workflow automation around
+- Integration with git repository management for backup and workflow automation around
   the models
 
 We have more exciting features on our roadmap, for instance:
 
-* an integration of templates
-* a planning and release management for model-derived artifacts like documents,
+- an integration of templates
+- a planning and release management for model-derived artifacts like documents,
   interface definitions, spreadsheets, etc.
 
 ## Getting started
@@ -46,14 +46,14 @@ We have more exciting features on our roadmap, for instance:
 
 To deploy the application you need:
 
-* [Docker](https://docs.docker.com/engine/install/ubuntu/)
-* [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
-* [helm](https://helm.sh/docs/intro/install/)
+- [Docker](https://docs.docker.com/engine/install/ubuntu/)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
+- [helm](https://helm.sh/docs/intro/install/)
 
 If you'd like to run it locally, these tools are additionally required:
 
-* [k3d](https://k3d.io/) - a lightweight k8s cluster simulator
-* `nss-myhostname` to access local container registry
+- [k3d](https://k3d.io/) - a lightweight k8s cluster simulator
+- `nss-myhostname` to access local container registry
   (on Ubuntu you can get it via `sudo apt install libnss-myhostname`)
 
 When you have all that installed you can do the following:
@@ -111,15 +111,15 @@ running in a few minutes.
 3. Set all required values in the `deployments/yourinstance.values.yaml` configuration file
 4. Create your sessions namespace in your kubernetes cluster:
 
-    ```sh
-    kubectl create namespace <your-namespace>
-    ```
+   ```sh
+   kubectl create namespace <your-namespace>
+   ```
 
 5. Run the following command to deploy to your kubernetes cluster:
 
-    ```sh
-    helm install production -n <namespace> -f deployments/yourinstance.values.yaml helm
-    ```
+   ```sh
+   helm install production -n <namespace> -f deployments/yourinstance.values.yaml helm
+   ```
 
 6. Set up the database for guacamole: [Initializing the PostgreSQL database](https://guacamole.apache.org/doc/gug/guacamole-docker.html#initializing-the-postgresql-database)
 
@@ -129,9 +129,9 @@ running in a few minutes.
 2. Compare `helm/values.yaml` with your `deployments/yourinstance.values.yaml` and update your configuration accordingly.
 3. Run the following command to deploy to your kubernetes cluster:
 
-    ```sh
-    helm upgrade production -n <namespace> -f deployments/yourinstance.values.yaml helm
-    ```
+   ```sh
+   helm upgrade production -n <namespace> -f deployments/yourinstance.values.yaml helm
+   ```
 
 ### Team for Capella integration
 
@@ -143,11 +143,11 @@ For environments where TeamForCapella (commercial product of Obeo) is available 
 
 The Capella Collaboration Manager consists of a couple of components:
 
-* A frontend - what you see in the browser
-* A backend web service - for managing users and sessions
-* [Guacamole](https://guacamole.apache.org/), to expose the sessions via the browser
-* Databases, for state persistence.
-* Optional: A Teams4Capella server
+- A frontend - what you see in the browser
+- A backend web service - for managing users and sessions
+- [Guacamole](https://guacamole.apache.org/), to expose the sessions via the browser
+- Databases, for state persistence.
+- Optional: A Teams4Capella server
 
 Sessions are created in a separate namespace.
 

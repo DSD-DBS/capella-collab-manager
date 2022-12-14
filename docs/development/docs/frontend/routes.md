@@ -10,9 +10,9 @@ The structure is based on REST, but not completely the same due to the limitatio
 
 - `/resources` for the resource overview, e.g., `/projects` for the projects overview
 - `/resources/action` for a specific action (not related to a specific instance of the resource), e.g., `/projects/create` to create a project. Possible actions are:
-    - `create`
-    - `delete`
-    - or any other action if the action is not used to `create` or `delete` a resource.
+  - `create`
+  - `delete`
+  - or any other action if the action is not used to `create` or `delete` a resource.
 - `/resources/action/subaction` for a specific action related to a parent action, e.g., `/project/:name/models/create/source` to go to the source stage of the model creation.
 - `resource/:name` to access a single instance of type resource.
 - `resource/:name/childresource` to access a single child resource of a specific instance from type resource.

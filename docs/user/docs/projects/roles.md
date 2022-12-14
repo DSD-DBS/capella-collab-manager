@@ -5,6 +5,8 @@
 
 Projects are self-managed. There are different roles for this:
 
+<!-- prettier-ignore-start -->
+
 | Role                | Permissions |
 |||
 | `Administrator`     | :material-check-all: All permissions <br> :material-check: Manage TeamForCapella instances <br> :material-check: Manage TeamForCapella repositories <br> :material-check: Manage Git repositories |
@@ -12,3 +14,5 @@ Projects are self-managed. There are different roles for this:
 | `User`/`Read/Write` | :material-check: `Read` and `Write` access to linked models <br> :material-check: Access to linked TeamForCapella repositories |
 | `User`/`Read only`  | :material-check: `Read only` access to linked models
 | `User` without project access | :material-check: Start persistent sessions
+
+<!-- prettier-ignore-end -->

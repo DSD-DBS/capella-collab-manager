@@ -17,9 +17,9 @@ nav:
       - Roles: projects/roles.md
       - Models:
           - Create a model: projects/models/create.md
-#          - Backups:
-#              - Setup a model backup: projects/models/backups/setup.md
-#              - Trigger a model backup: projects/models/backups/trigger.md
+          - Backups:
+              - Setup a model backup: projects/models/backups/setup.md
+              - Trigger a model backup: projects/models/backups/trigger.md
   - Sessions:
       - Session Types:
           - Overview: sessions/types.md
@@ -32,7 +32,8 @@ nav:
       - Flows:
           - Git: sessions/flows/git.md
           - TeamForCapella: sessions/flows/t4c.md
-#      - Files (Upload): sessions/files.md
+      - Files (Upload): sessions/files/files.md
+      - Troubleshooting: sessions/troubleshooting.md
   - Tools:
     - General: tools/index.md
   - User Management: users.md
