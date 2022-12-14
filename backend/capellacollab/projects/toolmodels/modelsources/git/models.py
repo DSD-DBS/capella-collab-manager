@@ -25,7 +25,7 @@ class PatchGitModel(PostGitModel):
     primary: bool
 
 
-class ResponseGitModel(BaseModel):
+class GitModel(BaseModel):
     id: int
     name: str
     path: str

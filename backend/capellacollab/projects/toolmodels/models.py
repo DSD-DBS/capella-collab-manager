@@ -19,9 +19,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
-from capellacollab.projects.toolmodels.modelsources.git.models import (
-    ResponseGitModel,
-)
+from capellacollab.projects.toolmodels.modelsources.git.models import GitModel
 from capellacollab.projects.toolmodels.modelsources.t4c.models import (
     ResponseT4CModel,
 )
@@ -107,7 +105,7 @@ class ResponseModel(BaseModel):
     tool: ToolBase
     version: t.Optional[ToolVersionBase]
     nature: t.Optional[ToolNatureBase]
-    git_models: t.Optional[list[ResponseGitModel]]
+    git_models: t.Optional[list[GitModel]]
     t4c_models: t.Optional[list[ResponseT4CModel]]
 
     class Config:

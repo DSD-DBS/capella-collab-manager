@@ -16,9 +16,9 @@ from capellacollab.projects.toolmodels.injectables import (
 from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 from capellacollab.projects.toolmodels.modelsources.git.models import (
     DatabaseGitModel,
+    GitModel,
     PatchGitModel,
     PostGitModel,
-    ResponseGitModel,
 )
 from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.settings.modelsources.git.core import get_remote_refs
@@ -65,7 +65,7 @@ def validate_path(url: str = Body(), db: Session = Depends(get_db)) -> bool:
         return False
 
 
-@router.get("", response_model=list[ResponseGitModel])
+@router.get("", response_model=list[GitModel])
 def get_git_models(
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
 ) -> list[DatabaseGitModel]:
@@ -74,7 +74,7 @@ def get_git_models(
 
 @router.get(
     "/{git_model_id}",
-    response_model=ResponseGitModel,
+    response_model=GitModel,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
@@ -115,7 +115,7 @@ def get_revisions_with_model_credentials(
 
 @router.post(
     "",
-    response_model=ResponseGitModel,
+    response_model=GitModel,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
@@ -135,7 +135,7 @@ def create_git_model(
 
 @router.put(
     "/{git_model_id}",
-    response_model=ResponseGitModel,
+    response_model=GitModel,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
