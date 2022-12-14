@@ -108,19 +108,22 @@ describe('ProjectService', () => {
     req.flush(mockProject);
   });
 
-  it('should update the project description', () => {
+  it('should update the project', () => {
     const updatedMockProjectDescription = 'update-test-project-description';
     const updatedMockProjectName = 'update-test-project-name';
-    let updatedMockProject: PatchProject = mockProject;
+    let updatedMockProject: Project = mockProject;
+
+    let patchMockProject: PatchProject = {
+      name: updatedMockProjectName,
+      description: updatedMockProjectDescription,
+    };
     updatedMockProject.description = updatedMockProjectDescription;
     updatedMockProject.name = updatedMockProjectName;
 
-    projectService
-      .updateProject(testProjectSlug, updatedMockProject)
-      .subscribe({
-        next: (project) =>
-          expect(project as PatchProject).toEqual(updatedMockProject),
-      });
+    projectService.updateProject(testProjectSlug, patchMockProject).subscribe({
+      next: (project) =>
+        expect(project as PatchProject).toEqual(updatedMockProject),
+    });
 
     const req = httpTestingController.expectOne(
       BACKEND_PROJECTS_URL + testProjectSlug
@@ -128,6 +131,7 @@ describe('ProjectService', () => {
     expect(req.request.method).toEqual('PATCH');
     expect(req.request.body).toEqual({
       description: updatedMockProjectDescription,
+      name: updatedMockProjectName,
     });
   });
 
