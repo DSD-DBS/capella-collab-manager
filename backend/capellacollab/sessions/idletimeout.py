@@ -35,6 +35,12 @@ def terminate_idle_session():
             with database.SessionLocal() as db:
                 if session := get_session_by_id(db, session_id):
                     routes.end_session(session, db, OPERATOR)
+                else:
+                    log.error(
+                        "Session was not found in our database. Terminating idle session %s",
+                        session_id,
+                    )
+                    OPERATOR.kill_session(session_id)
 
 
 async def terminate_idle_sessions_in_background(interval=60):
