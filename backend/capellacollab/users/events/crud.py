@@ -9,7 +9,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from capellacollab.projects.models import DatabaseProject
-from capellacollab.users.crud import get_user_by_name
+from capellacollab.users.crud import get_user_by_id, get_user_by_name
 from capellacollab.users.events.models import (
     DatabaseUserHistoryEvent,
     EventType,
@@ -47,13 +47,13 @@ def create_event(
 def create_user_creation_event(
     db: Session,
     user: DatabaseUser,
-    executor: t.Optional[DatabaseUser] = None,
-    reason: t.Optional[str] = None,
-) -> DatabaseUserHistoryEvent:
+    executor: DatabaseUser | None = None,
+    reason: str | None = None,
+):
     return create_event(
         db=db,
         user=user,
-        event_type=EventType.CREATED,
+        event_type=EventType.CREATED_USER,
         executor=executor,
         reason=reason,
     )
@@ -109,18 +109,9 @@ def get_events(db: Session) -> list[DatabaseUserHistoryEvent]:
     return db.query(DatabaseUserHistoryEvent).all()
 
 
-def get_events_by_username(
-    db: Session, username: str
-) -> list[DatabaseUserHistoryEvent]:
-    user: DatabaseUser = get_user_by_name(db, username)
-    return get_events_by_user_id(db, user.id)
-
-
-def get_events_by_user_id(
-    db: Session, user_id: int
-) -> list[DatabaseUserHistoryEvent]:
-    return (
-        db.query(DatabaseUserHistoryEvent)
-        .filter(DatabaseUserHistoryEvent.user_id == user_id)
-        .all()
-    )
+def delete_all_events_involved_in(db: Session, user: DatabaseUser):
+    db.query(DatabaseUserHistoryEvent).filter(
+        (DatabaseUserHistoryEvent.user_id == user.id)
+        | (DatabaseUserHistoryEvent.executor_id == user.id)
+    ).delete()
+    db.commit()
