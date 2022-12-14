@@ -118,13 +118,15 @@ def create_project(
         db, post_project.name, post_project.description
     )
 
-    users_crud.add_user_to_project(
-        db,
-        new_project,
-        user,
-        ProjectUserRole.MANAGER,
-        ProjectUserPermission.WRITE,
-    )
+    if user.role != Role.ADMIN:
+        users_crud.add_user_to_project(
+            db,
+            new_project,
+            user,
+            ProjectUserRole.MANAGER,
+            ProjectUserPermission.WRITE,
+        )
+
     return new_project
 
 
