@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from capellacollab.settings.modelsources.git.models import (
     DatabaseGitInstance,
-    GitSettings,
+    PostGitInstance,
 )
 
 
@@ -26,7 +26,9 @@ def get_git_settings(db: Session) -> list[DatabaseGitInstance]:
     return db.query(DatabaseGitInstance).all()
 
 
-def create_git_setting(db: Session, body: GitSettings) -> DatabaseGitInstance:
+def create_git_setting(
+    db: Session, body: PostGitInstance
+) -> DatabaseGitInstance:
     git_setting = DatabaseGitInstance(
         type=body.type, name=body.name, url=body.url
     )
@@ -39,7 +41,7 @@ def create_git_setting(db: Session, body: GitSettings) -> DatabaseGitInstance:
 def update_git_setting(
     db: Session,
     git_setting: DatabaseGitInstance,
-    update_git_setting: GitSettings,
+    update_git_setting: PostGitInstance,
 ) -> DatabaseGitInstance:
     if update_git_setting.type:
         git_setting.type = update_git_setting.type

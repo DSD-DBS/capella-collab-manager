@@ -18,7 +18,7 @@ class GitType(enum.Enum):
     AZUREDEVOPS = "AzureDevOps"
 
 
-class GitSettings(BaseModel):
+class PostGitInstance(BaseModel):
     type: t.Optional[GitType]
     name: t.Optional[str]
     url: t.Optional[str]

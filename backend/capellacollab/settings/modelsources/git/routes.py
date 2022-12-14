@@ -17,8 +17,8 @@ from capellacollab.settings.modelsources.git.models import (
     DatabaseGitInstance,
     GetRevisionModel,
     GetRevisionsResponseModel,
-    GitSettings,
     GitSettingsGitGetResponse,
+    PostGitInstance,
 )
 from capellacollab.users.models import Role
 
@@ -49,7 +49,7 @@ def get_git_setting(
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def create_git_settings(
-    post_git_setting: GitSettings,
+    post_git_setting: PostGitInstance,
     db: Session = Depends(get_db),
 ) -> DatabaseGitInstance:
     return crud.create_git_setting(db, post_git_setting)
@@ -61,7 +61,7 @@ def create_git_settings(
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def edit_git_settings(
-    put_git_setting: GitSettings,
+    put_git_setting: PostGitInstance,
     db_git_setting: DatabaseGitInstance = Depends(get_existing_git_setting),
     db: Session = Depends(get_db),
 ) -> DatabaseGitInstance:
