@@ -6,13 +6,13 @@ from sqlalchemy.orm import Session
 
 import capellacollab.settings.modelsources.git.crud as crud
 from capellacollab.core.database import get_db
-from capellacollab.settings.modelsources.git.models import DB_GitSettings
+from capellacollab.settings.modelsources.git.models import DatabaseGitInstance
 
 
 def get_existing_git_setting(
     git_setting_id: int,
     db: Session = Depends(get_db),
-) -> DB_GitSettings:
+) -> DatabaseGitInstance:
     if git_setting := crud.get_git_setting_by_id(db, git_setting_id):
         return git_setting
 

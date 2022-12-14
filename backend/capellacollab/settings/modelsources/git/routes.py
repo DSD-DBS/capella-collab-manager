@@ -14,7 +14,7 @@ from capellacollab.settings.modelsources.git.injectables import (
     get_existing_git_setting,
 )
 from capellacollab.settings.modelsources.git.models import (
-    DB_GitSettings,
+    DatabaseGitInstance,
     GetRevisionModel,
     GetRevisionsResponseModel,
     GitSettings,
@@ -26,7 +26,9 @@ router = APIRouter()
 
 
 @router.get("/", response_model=list[GitSettingsGitGetResponse])
-def list_git_settings(db: Session = Depends(get_db)) -> list[DB_GitSettings]:
+def list_git_settings(
+    db: Session = Depends(get_db),
+) -> list[DatabaseGitInstance]:
     return crud.get_git_settings(db)
 
 
@@ -36,7 +38,7 @@ def list_git_settings(db: Session = Depends(get_db)) -> list[DB_GitSettings]:
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def get_git_setting(
-    git_setting: DB_GitSettings = Depends(get_existing_git_setting),
+    git_setting: DatabaseGitInstance = Depends(get_existing_git_setting),
 ):
     return git_setting
 
@@ -49,7 +51,7 @@ def get_git_setting(
 def create_git_settings(
     post_git_setting: GitSettings,
     db: Session = Depends(get_db),
-) -> DB_GitSettings:
+) -> DatabaseGitInstance:
     return crud.create_git_setting(db, post_git_setting)
 
 
@@ -60,9 +62,9 @@ def create_git_settings(
 )
 def edit_git_settings(
     put_git_setting: GitSettings,
-    db_git_setting: DB_GitSettings = Depends(get_existing_git_setting),
+    db_git_setting: DatabaseGitInstance = Depends(get_existing_git_setting),
     db: Session = Depends(get_db),
-) -> DB_GitSettings:
+) -> DatabaseGitInstance:
     return crud.update_git_setting(db, db_git_setting, put_git_setting)
 
 
@@ -71,7 +73,7 @@ def edit_git_settings(
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def delete_git_settings(
-    git_setting: DB_GitSettings = Depends(get_existing_git_setting),
+    git_setting: DatabaseGitInstance = Depends(get_existing_git_setting),
     db: Session = Depends(get_db),
 ):
     return crud.delete_git_setting(db, git_setting)

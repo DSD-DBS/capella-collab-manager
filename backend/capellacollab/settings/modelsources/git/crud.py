@@ -7,25 +7,29 @@ import typing as t
 from sqlalchemy.orm import Session
 
 from capellacollab.settings.modelsources.git.models import (
-    DB_GitSettings,
+    DatabaseGitInstance,
     GitSettings,
 )
 
 
-def get_git_setting_by_id(db: Session, git_setting_id: int) -> DB_GitSettings:
+def get_git_setting_by_id(
+    db: Session, git_setting_id: int
+) -> DatabaseGitInstance:
     return (
-        db.query(DB_GitSettings)
-        .filter(DB_GitSettings.id == git_setting_id)
+        db.query(DatabaseGitInstance)
+        .filter(DatabaseGitInstance.id == git_setting_id)
         .first()
     )
 
 
-def get_git_settings(db: Session) -> t.List[DB_GitSettings]:
-    return db.query(DB_GitSettings).all()
+def get_git_settings(db: Session) -> list[DatabaseGitInstance]:
+    return db.query(DatabaseGitInstance).all()
 
 
-def create_git_setting(db: Session, body: GitSettings) -> DB_GitSettings:
-    git_setting = DB_GitSettings(type=body.type, name=body.name, url=body.url)
+def create_git_setting(db: Session, body: GitSettings) -> DatabaseGitInstance:
+    git_setting = DatabaseGitInstance(
+        type=body.type, name=body.name, url=body.url
+    )
     db.add(git_setting)
 
     db.commit()
@@ -33,8 +37,10 @@ def create_git_setting(db: Session, body: GitSettings) -> DB_GitSettings:
 
 
 def update_git_setting(
-    db: Session, git_setting: DB_GitSettings, update_git_setting: GitSettings
-) -> DB_GitSettings:
+    db: Session,
+    git_setting: DatabaseGitInstance,
+    update_git_setting: GitSettings,
+) -> DatabaseGitInstance:
     if update_git_setting.type:
         git_setting.type = update_git_setting.type
     if update_git_setting.name:
@@ -46,6 +52,6 @@ def update_git_setting(
     return git_setting
 
 
-def delete_git_setting(db: Session, git_setting: DB_GitSettings):
+def delete_git_setting(db: Session, git_setting: DatabaseGitInstance):
     db.delete(git_setting)
     db.commit()

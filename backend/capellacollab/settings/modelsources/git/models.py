@@ -34,7 +34,7 @@ class GitSettingsGitGetResponse(BaseModel):
         orm_mode = True
 
 
-class DB_GitSettings(Base):
+class DatabaseGitInstance(Base):
     __tablename__ = "git_settings"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String)
