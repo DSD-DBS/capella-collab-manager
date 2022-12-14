@@ -43,9 +43,10 @@ async def terminate_idle_sessions_in_background(interval=60):
             try:
                 await asyncio.sleep(interval)
                 await run_in_threadpool(terminate_idle_session)
+            except asyncio.exceptions.CancelledError:
+                return
             except BaseException:
                 log.exception("Could not handle idle sessions")
-                return
 
     asyncio.ensure_future(loop())
 
