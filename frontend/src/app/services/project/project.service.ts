@@ -41,20 +41,15 @@ export class ProjectService {
     return this.http.get<Project>(this.base_url + name);
   }
 
-  updateDescription(
+  updateProject(
     project_slug: string,
-    description: string
+    project: PatchProject
   ): Observable<Project> {
-    return this.http.patch<Project>(this.base_url + project_slug, {
-      description,
-    });
+    return this.http.patch<Project>(this.base_url + project_slug, project);
   }
 
   createProject(
-    project: {
-      name: string;
-      description: string;
-    },
+    project: Required<PatchProject>,
     update?: boolean
   ): Observable<Project> {
     let observable = this.http.post<Project>(this.base_url, project);
@@ -74,18 +69,18 @@ export class ProjectService {
   }
 }
 
-export interface UserMetadata {
+export type UserMetadata = {
   leads: number;
   contributors: number;
   subscribers: number;
-}
+};
 
-export interface Project {
-  name: string;
+export type PatchProject = {
+  name?: string;
+  description?: string;
+};
+
+export type Project = Required<PatchProject> & {
   slug: string;
-  description: string;
   users: UserMetadata;
-}
-
-export type EditingMode = 't4c' | 'git';
-export type ProjectType = 'project' | 'library';
+};

@@ -9,7 +9,7 @@ import typing as t
 from slugify import slugify
 from sqlalchemy.orm import Session
 
-from capellacollab.projects.models import DatabaseProject
+from capellacollab.projects.models import DatabaseProject, PatchProject
 
 
 def get_project_by_name(db: Session, name: str) -> DatabaseProject:
@@ -28,10 +28,14 @@ def get_all_projects(db: Session) -> t.List[DatabaseProject]:
     return db.query(DatabaseProject).all()
 
 
-def update_description(
-    db: Session, project: DatabaseProject, description: str
+def update_project(
+    db: Session, project: DatabaseProject, patch_project: PatchProject
 ) -> DatabaseProject:
-    project.description = description
+    if patch_project.name:
+        project.name = patch_project.name
+        project.slug = slugify(patch_project.name)
+    if patch_project.description:
+        project.description = patch_project.description
     db.commit()
     return project
 

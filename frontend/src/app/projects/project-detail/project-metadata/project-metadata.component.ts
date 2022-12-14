@@ -11,9 +11,19 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import { Router } from '@angular/router';
+import slugify from 'slugify';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
+  PatchProject,
   Project,
   ProjectService,
 } from 'src/app/services/project/project.service';
@@ -27,28 +37,58 @@ export class ProjectMetadataComponent implements OnChanges {
   @Input() project!: Project;
   @Output() changeProject = new EventEmitter<Project>();
 
-  public updateDescriptionForm = new FormControl();
+  public form = new FormGroup({
+    name: new FormControl<string>('', [
+      Validators.required,
+      this.slugValidator(),
+    ]),
+    description: new FormControl<string>(''),
+  });
 
   constructor(
     private toastService: ToastService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private router: Router
   ) {}
 
   ngOnChanges(_changes: SimpleChanges): void {
-    this.updateDescriptionForm.patchValue(this.project.description);
+    this.projectService.list().subscribe();
+    this.form.patchValue(this.project);
   }
 
   updateDescription() {
-    if (this.updateDescriptionForm.valid) {
+    if (this.form.valid) {
       this.projectService
-        .updateDescription(this.project.slug, this.updateDescriptionForm.value)
+        .updateProject(this.project.slug, this.form.value as PatchProject)
         .subscribe((project) => {
           this.projectService._project.next(project);
+          this.router.navigateByUrl(`/project/${project.slug}`);
           this.toastService.showSuccess(
-            'Description updated for project ' + this.project.name,
-            "Updated to '" + project.description + "'"
+            'Project updated',
+            `The new name is: '${project.name}' and the new description is '${
+              project.description || ''
+            }'`
           );
         });
     }
+  }
+
+  slugValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const slug = slugify(control.value, { lower: true });
+      if (
+        this.projectService.projects
+          ?.map((project) => project.slug)
+          .filter((slug) => slug !== this.projectService.project?.slug)
+          .includes(slug)
+      ) {
+        return { uniqueSlug: { value: slug } };
+      }
+      return null;
+    };
+  }
+
+  get newSlug(): string | null {
+    return this.form.value.name ? slugify(this.form.value.name) : null;
   }
 }
