@@ -13,7 +13,7 @@ import capellacollab.sessions.guacamole
 from capellacollab.__main__ import app
 from capellacollab.projects.crud import create_project
 from capellacollab.projects.toolmodels.crud import create_new_model
-from capellacollab.projects.toolmodels.models import CapellaModel
+from capellacollab.projects.toolmodels.models import PostCapellaModel
 from capellacollab.projects.toolmodels.modelsources.git.crud import (
     add_gitmodel_to_capellamodel,
 )
@@ -266,7 +266,7 @@ def setup_git_model_for_user(db, user, version):
     model = create_new_model(
         db,
         project,
-        CapellaModel(
+        PostCapellaModel(
             name=str(uuid1()), description="", tool_id=version.tool.id
         ),
         tool=version.tool,

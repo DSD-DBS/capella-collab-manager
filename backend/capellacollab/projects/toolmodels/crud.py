@@ -10,8 +10,8 @@ from sqlalchemy.orm import Session
 import capellacollab.projects.crud as projects_crud
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.toolmodels.models import (
-    CapellaModel,
     DatabaseCapellaModel,
+    PostCapellaModel,
 )
 from capellacollab.tools.models import Nature, Tool, Version
 
@@ -86,7 +86,7 @@ def get_model_by_slug(
 def create_new_model(
     db: Session,
     project: DatabaseProject,
-    new_model: CapellaModel,
+    new_model: PostCapellaModel,
     tool: Tool,
     version: Version | None = None,
     nature: Nature | None = None,

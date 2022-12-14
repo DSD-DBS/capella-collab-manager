@@ -27,8 +27,8 @@ from capellacollab.projects.toolmodels.modelsources.t4c.injectables import (
 )
 from capellacollab.projects.toolmodels.modelsources.t4c.models import (
     DatabaseT4CModel,
-    ResponseT4CModel,
     SubmitT4CModel,
+    T4CModel,
 )
 from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.settings.modelsources.t4c.injectables import (
@@ -51,7 +51,7 @@ router = APIRouter()
 
 @router.get(
     "/",
-    response_model=list[ResponseT4CModel],
+    response_model=list[T4CModel],
 )
 def list_t4c_models(
     project: DatabaseProject = Depends(get_existing_project),
@@ -70,7 +70,7 @@ def list_t4c_models(
 
 @router.get(
     "/{t4c_model_id}",
-    response_model=ResponseT4CModel,
+    response_model=T4CModel,
     dependencies=[Depends(ProjectRoleVerification(ProjectUserRole.USER))],
 )
 def get_t4c_model(
@@ -81,7 +81,7 @@ def get_t4c_model(
 
 @router.post(
     "/",
-    response_model=ResponseT4CModel,
+    response_model=T4CModel,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def create_t4c_model(
@@ -106,7 +106,7 @@ def create_t4c_model(
 
 @router.patch(
     "/{t4c_model_id}",
-    response_model=ResponseT4CModel,
+    response_model=T4CModel,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def edit_t4c_model(

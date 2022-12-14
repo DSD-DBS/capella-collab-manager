@@ -18,13 +18,13 @@ class GitType(enum.Enum):
     AZUREDEVOPS = "AzureDevOps"
 
 
-class GitSettings(BaseModel):
+class PostGitInstance(BaseModel):
     type: t.Optional[GitType]
     name: t.Optional[str]
     url: t.Optional[str]
 
 
-class GitSettingsGitGetResponse(BaseModel):
+class GitInstance(BaseModel):
     id: int
     name: str
     url: str
@@ -34,7 +34,7 @@ class GitSettingsGitGetResponse(BaseModel):
         orm_mode = True
 
 
-class DB_GitSettings(Base):
+class DatabaseGitInstance(Base):
     __tablename__ = "git_settings"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String)

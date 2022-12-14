@@ -19,9 +19,9 @@ from .backups.routes import router as router_backups
 from .injectables import get_existing_capella_model, get_existing_project
 from .models import (
     CapellaModel,
-    CapellaModelPatch,
     DatabaseCapellaModel,
-    ResponseModel,
+    PatchCapellaModel,
+    PostCapellaModel,
 )
 from .modelsources.routes import router as router_modelsources
 
@@ -32,9 +32,7 @@ router = APIRouter(
 )
 
 
-@router.get(
-    "/", response_model=list[ResponseModel], tags=["Projects - Models"]
-)
+@router.get("/", response_model=list[CapellaModel], tags=["Projects - Models"])
 def get_models(
     project: DatabaseProject = Depends(get_existing_project),
 ) -> list[DatabaseCapellaModel]:
@@ -42,24 +40,24 @@ def get_models(
 
 
 @router.get(
-    "/{model_slug}", response_model=ResponseModel, tags=["Projects - Models"]
+    "/{model_slug}", response_model=CapellaModel, tags=["Projects - Models"]
 )
 def get_model_by_slug(
-    model=Depends(get_existing_capella_model),
-) -> ResponseModel:
+    model: DatabaseCapellaModel = Depends(get_existing_capella_model),
+) -> DatabaseCapellaModel:
     return model
 
 
 @router.post(
     "/",
-    response_model=ResponseModel,
+    response_model=CapellaModel,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
     tags=["Projects - Models"],
 )
 def create_new(
-    new_model: CapellaModel,
+    new_model: PostCapellaModel,
     project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
 ) -> DatabaseCapellaModel:
@@ -79,14 +77,14 @@ def create_new(
 
 @router.patch(
     "/{model_slug}",
-    response_model=ResponseModel,
+    response_model=CapellaModel,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
     tags=["Projects - Models"],
 )
 def patch_capella_model(
-    body: CapellaModelPatch,
+    body: PatchCapellaModel,
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ) -> DatabaseCapellaModel:

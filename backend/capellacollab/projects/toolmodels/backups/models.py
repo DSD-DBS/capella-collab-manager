@@ -13,7 +13,7 @@ from capellacollab.core.database import Base
 from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 from capellacollab.projects.toolmodels.modelsources.git.models import (
     DatabaseGitModel,
-    ResponseGitModel,
+    GitModel,
 )
 from capellacollab.projects.toolmodels.modelsources.t4c.models import (
     DatabaseT4CModel,
@@ -47,7 +47,7 @@ class Backup(BaseModel):
     k8s_cronjob_id: t.Optional[str]
     lastrun: t.Optional[BackupJob]
     t4c_model: SimpleT4CModel
-    git_model: ResponseGitModel
+    git_model: GitModel
     run_nightly: bool
     include_commit_history: bool
 

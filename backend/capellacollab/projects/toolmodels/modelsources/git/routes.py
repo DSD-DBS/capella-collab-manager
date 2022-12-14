@@ -1,10 +1,11 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
 import logging
+import urllib.parse
 
 from fastapi import APIRouter, Body, Depends, HTTPException
+from requests import Request
 from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication.database import ProjectRoleVerification
@@ -15,9 +16,9 @@ from capellacollab.projects.toolmodels.injectables import (
 from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 from capellacollab.projects.toolmodels.modelsources.git.models import (
     DatabaseGitModel,
+    GitModel,
     PatchGitModel,
     PostGitModel,
-    ResponseGitModel,
 )
 from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.settings.modelsources.git.core import get_remote_refs
@@ -34,25 +35,37 @@ log = logging.getLogger(__name__)
 
 
 def verify_path_prefix(db: Session, path: str):
-    git_settings = get_git_settings(db)
-
-    if not git_settings:
+    if not (git_settings := get_git_settings(db)):
         return
 
-    for git_setting in git_settings:
-        if path.startswith(git_setting.url):
-            return
+    unquoted_path = urllib.parse.unquote(path)
+    if resolved_path := Request("GET", unquoted_path).prepare().url:
+        for git_setting in git_settings:
+            unquoted_git_url = urllib.parse.unquote(git_setting.url)
+            resolved_git_url = Request("GET", unquoted_git_url).prepare().url
+
+            if resolved_git_url and resolved_path.startswith(resolved_git_url):
+                return
 
     raise HTTPException(
         status_code=400,
         detail={
             "err_code": "no_git_instance_with_prefix_found",
-            "reason": "There exist no git instance with an url being a prefix of the provdided source path. Please check whether you correctly selected a git instance.",
+            "reason": "There exist no git instance having the resolved path as prefix. Please check whether you correctly selected a git instance.",
         },
     )
 
 
-@router.get("", response_model=list[ResponseGitModel])
+@router.post("/validate/path", response_model=bool)
+def validate_path(url: str = Body(), db: Session = Depends(get_db)) -> bool:
+    try:
+        verify_path_prefix(db, url)
+        return True
+    except Exception:
+        return False
+
+
+@router.get("", response_model=list[GitModel])
 def get_git_models(
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
 ) -> list[DatabaseGitModel]:
@@ -61,7 +74,7 @@ def get_git_models(
 
 @router.get(
     "/{git_model_id}",
-    response_model=ResponseGitModel,
+    response_model=GitModel,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
@@ -102,7 +115,7 @@ def get_revisions_with_model_credentials(
 
 @router.post(
     "",
-    response_model=ResponseGitModel,
+    response_model=GitModel,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
@@ -122,7 +135,7 @@ def create_git_model(
 
 @router.put(
     "/{git_model_id}",
-    response_model=ResponseGitModel,
+    response_model=GitModel,
     dependencies=[
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],

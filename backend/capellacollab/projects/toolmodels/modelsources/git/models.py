@@ -13,18 +13,6 @@ from sqlalchemy.sql.sqltypes import Boolean
 from capellacollab.core.database import Base
 
 
-def validate_path(path: t.Optional[str]):
-    if path:
-        sequence_blacklist = ["..", "%"]
-
-        for sequence in sequence_blacklist:
-            if sequence in path:
-                raise ValueError(
-                    "The provide path contains invalid sequences."
-                )
-    return path
-
-
 class PostGitModel(BaseModel):
     path: str
     entrypoint: str
@@ -32,14 +20,12 @@ class PostGitModel(BaseModel):
     username: str
     password: str
 
-    _validate_path = validator("path", allow_reuse=True)(validate_path)
-
 
 class PatchGitModel(PostGitModel):
     primary: bool
 
 
-class ResponseGitModel(BaseModel):
+class GitModel(BaseModel):
     id: int
     name: str
     path: str

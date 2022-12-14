@@ -53,10 +53,10 @@
             />
             <mat-error
               *ngIf="
-                urls.inputUrl.errors?.urlPrefixError && urls.inputUrl.value
+                urls.inputUrl.errors?.urlSchemeError && urls.inputUrl.value
               "
             >
-              {{ urls.inputUrl.errors?.urlPrefixError }}
+              {{ urls.inputUrl.errors?.urlSchemeError }}
             </mat-error>
           </mat-form-field>
         </fieldset>
@@ -72,21 +72,16 @@
                 {{ resultUrl }}
               </div>
             </mat-card-content>
-            <mat-card-content *ngIf="!resultUrl.length" class="error"
-              >A resulting URL is required</mat-card-content
-            >
-            <mat-card-content
+            <mat-error
               class="error"
-              *ngIf="form.controls.urls.errors?.urlSafetyError && resultUrl"
+              *ngIf="
+                form.controls.urls.errors?.urlPrefixError ||
+                (urls.baseUrl.errors?.required && urls.inputUrl.value)
+              "
             >
-              {{ form.controls.urls.errors?.urlSafetyError }}
-            </mat-card-content>
-            <mat-card-content
-              class="error"
-              *ngIf="form.controls.urls.errors?.urlPrefixError && resultUrl"
-            >
-              {{ form.controls.urls.errors?.urlPrefixError }}
-            </mat-card-content>
+              The resolved URL doesn't match with one of the allowed git
+              instances
+            </mat-error>
           </mat-card>
         </div>
       </div>

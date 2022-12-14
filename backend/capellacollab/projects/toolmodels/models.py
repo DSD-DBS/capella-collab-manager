@@ -19,12 +19,8 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
-from capellacollab.projects.toolmodels.modelsources.git.models import (
-    ResponseGitModel,
-)
-from capellacollab.projects.toolmodels.modelsources.t4c.models import (
-    ResponseT4CModel,
-)
+from capellacollab.projects.toolmodels.modelsources.git.models import GitModel
+from capellacollab.projects.toolmodels.modelsources.t4c.models import T4CModel
 from capellacollab.tools.models import (
     Nature,
     Tool,
@@ -49,13 +45,13 @@ class EditingMode(enum.Enum):
     GIT = "git"
 
 
-class CapellaModel(BaseModel):
+class PostCapellaModel(BaseModel):
     name: str
     description: t.Optional[str]
     tool_id: int
 
 
-class CapellaModelPatch(BaseModel):
+class PatchCapellaModel(BaseModel):
     description: t.Optional[str]
     version_id: int
     nature_id: int
@@ -99,7 +95,7 @@ class DatabaseCapellaModel(Base):
     )
 
 
-class ResponseModel(BaseModel):
+class CapellaModel(BaseModel):
     id: int
     slug: str
     name: str
@@ -107,8 +103,8 @@ class ResponseModel(BaseModel):
     tool: ToolBase
     version: t.Optional[ToolVersionBase]
     nature: t.Optional[ToolNatureBase]
-    git_models: t.Optional[list[ResponseGitModel]]
-    t4c_models: t.Optional[list[ResponseT4CModel]]
+    git_models: t.Optional[list[GitModel]]
+    t4c_models: t.Optional[list[T4CModel]]
 
     class Config:
         orm_mode = True

@@ -15,7 +15,7 @@ import {
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
-import { absoluteUrlSafetyValidator } from 'src/app/helpers/validators/url-validator';
+import { absoluteUrlValidator } from 'src/app/helpers/validators/url-validator';
 import {
   GitSetting,
   GitSettingsService,
@@ -34,10 +34,7 @@ export class GitSettingsComponent implements OnInit, OnDestroy {
   gitInstancesForm = new FormGroup({
     type: new FormControl('', Validators.required),
     name: new FormControl('', [Validators.required, this.nameValidator()]),
-    url: new FormControl('', [
-      Validators.required,
-      absoluteUrlSafetyValidator(),
-    ]),
+    url: new FormControl('', [Validators.required, absoluteUrlValidator()]),
   });
 
   private gitSettingsSubscription?: Subscription;

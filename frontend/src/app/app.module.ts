@@ -57,12 +57,12 @@ import { NoticeComponent } from './general/notice/notice.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 import { MatCardOverviewLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-loader/mat-card-overview-loader.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
+import { AddGitSourceComponent } from './projects/models/add-git-source/add-git-source.component';
 import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
 import { CreateBackupComponent } from './projects/models/backup-settings/create-backup/create-backup.component';
 import { TriggerPipelineComponent } from './projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { ViewLogsDialogComponent } from './projects/models/backup-settings/view-logs-dialog/view-logs-dialog.component';
 import { ChooseInitComponent } from './projects/models/choose-init/choose-init.component';
-import { CreateCoworkingMethodComponent } from './projects/models/create-coworking-method/create-coworking-method.component';
 import { CreateModelBaseComponent } from './projects/models/create-model-base/create-model-base.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { InitModelComponent } from './projects/models/init-model/init-model.component';
@@ -108,6 +108,7 @@ import { HomeComponent } from './workspaces/home.component';
 @NgModule({
   declarations: [
     ActiveSessionsComponent,
+    AddGitSourceComponent,
     AddT4cSourceComponent,
     AlertSettingsComponent,
     AppComponent,
@@ -115,7 +116,6 @@ import { HomeComponent } from './workspaces/home.component';
     ChooseInitComponent,
     ChooseSourceComponent,
     CreateBackupComponent,
-    CreateCoworkingMethodComponent,
     CreateModelBaseComponent,
     CreateModelComponent,
     CreateProjectComponent,
