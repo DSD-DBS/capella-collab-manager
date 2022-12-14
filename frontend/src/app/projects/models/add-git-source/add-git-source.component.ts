@@ -380,7 +380,7 @@ export class AddGitSourceComponent implements OnInit, OnDestroy {
             this.disableAllExpectUrls();
             return {
               urlPrefixError:
-                'There exists no git setting being a prefix of the resolved url',
+                "The resolved URL doesn't match with one of the allowed git instances",
             };
           })
         );
