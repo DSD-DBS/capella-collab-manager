@@ -46,9 +46,10 @@ We have more exciting features on our roadmap, for instance:
 
 To deploy the application you need:
 
-- [Docker](https://docs.docker.com/engine/install/ubuntu/)
-- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
-- [helm](https://helm.sh/docs/intro/install/)
+- [Docker](https://docs.docker.com/engine/install/ubuntu/) >= 20.10.X
+- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) >= 1.24 (Stargazer)
+- [helm](https://helm.sh/docs/intro/install/) >= 3.X.X
+- [Make](https://www.gnu.org/software/make/manual/make.html) >= 3.82, better 4.X
 
 If you'd like to run it locally, these tools are additionally required:
 
