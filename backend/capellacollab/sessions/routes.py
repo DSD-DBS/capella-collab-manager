@@ -63,7 +63,7 @@ from capellacollab.tools.models import Tool, Version
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role
 
-from . import core
+from . import util
 from .injectables import get_existing_session
 
 router = APIRouter(
@@ -359,7 +359,7 @@ def end_session(
     db: Session = Depends(get_db),
     operator: KubernetesOperator = Depends(get_operator),
 ):
-    core.terminate_session(db, session, operator)
+    util.terminate_session(db, session, operator)
 
 
 @router.post(
