@@ -82,6 +82,11 @@ export class T4CModelService {
       body
     );
   }
+
+  clear() {
+    this._t4cModels.next(undefined);
+    this._t4cModel.next(undefined);
+  }
 }
 
 export type SubmitT4CModel = {

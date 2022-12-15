@@ -25,6 +25,11 @@
         </div>
       </div>
     </mat-card>
+    <app-mat-card-overview-loader
+      [rows]="1"
+      [reservedCards]="2"
+      [loading]="gitModels === undefined"
+    ></app-mat-card-overview-loader>
     <a
       *ngFor="let gitModel of gitModels"
       [routerLink]="['git-model', gitModel.id]"
@@ -76,5 +81,10 @@
         </div>
       </mat-card>
     </a>
+    <app-mat-card-overview-loader
+      [rows]="1"
+      [reservedCards]="2"
+      [loading]="t4cModels === undefined"
+    ></app-mat-card-overview-loader>
   </div>
 </div>

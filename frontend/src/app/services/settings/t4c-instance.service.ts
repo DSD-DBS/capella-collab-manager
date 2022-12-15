@@ -41,14 +41,14 @@ export type T4CInstance = NewT4CInstance & {
 export class T4CInstanceService {
   constructor(private http: HttpClient) {}
 
-  base_url = `${environment.backend_url}/settings/modelsources/t4c/`;
+  base_url = `${environment.backend_url}/settings/modelsources/t4c`;
 
   listInstances(): Observable<T4CInstance[]> {
     return this.http.get<T4CInstance[]>(this.base_url);
   }
 
   getInstance(id: number): Observable<T4CInstance> {
-    return this.http.get<T4CInstance>(this.base_url + id);
+    return this.http.get<T4CInstance>(this.base_url + '/' + id);
   }
 
   createInstance(instance: NewT4CInstance): Observable<T4CInstance> {
@@ -59,12 +59,12 @@ export class T4CInstanceService {
     id: number,
     instance: BaseT4CInstance
   ): Observable<T4CInstance> {
-    return this.http.patch<T4CInstance>(this.base_url + id, instance);
+    return this.http.patch<T4CInstance>(this.base_url + '/' + id, instance);
   }
 
   getLicenses(t4cInstanceId: number): Observable<SessionUsage> {
     return this.http.get<SessionUsage>(
-      `${this.base_url}${t4cInstanceId}/licenses`
+      `${this.base_url}/${t4cInstanceId}/licenses`
     );
   }
 }
