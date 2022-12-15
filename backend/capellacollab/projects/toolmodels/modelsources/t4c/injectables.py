@@ -18,10 +18,9 @@ from capellacollab.projects.toolmodels.modelsources.t4c.models import (
 def get_existing_t4c_model(
     t4c_model_id: int,
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
-    db_session: Session = Depends(get_db),
+    db: Session = Depends(get_db),
 ) -> DatabaseT4CModel:
-    t4c_model = crud.get_t4c_model_by_id(db_session, t4c_model_id)
-    if not t4c_model:
+    if not (t4c_model := crud.get_t4c_model_by_id(db, t4c_model_id)):
         raise HTTPException(
             404,
             {

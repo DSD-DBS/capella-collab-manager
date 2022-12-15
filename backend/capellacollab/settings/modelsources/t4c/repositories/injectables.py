@@ -20,11 +20,11 @@ from capellacollab.settings.modelsources.t4c.repositories.models import (
 
 def get_existing_t4c_repository(
     t4c_repository_id: int,
-    db_session: Session = Depends(get_db),
+    db: Session = Depends(get_db),
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
 ) -> DatabaseT4CRepository:
     try:
-        repository = crud.get_t4c_repository(t4c_repository_id, db_session)
+        repository = crud.get_t4c_repository(t4c_repository_id, db)
     except NoResultFound as err:
         raise HTTPException(
             404,

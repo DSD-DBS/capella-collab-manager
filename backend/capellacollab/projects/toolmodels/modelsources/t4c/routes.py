@@ -51,7 +51,7 @@ def list_t4c_models(
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db_session: Session = Depends(database.get_db),
 ) -> list[DatabaseT4CModel]:
-    return crud.get_all_t4c_models_for_tool_model(db_session, model)
+    return crud.get_t4c_models_for_tool_model(db_session, model)
 
 
 @router.get(
@@ -65,7 +65,7 @@ def get_t4c_model(
 
 
 @router.post(
-    "/",
+    "",
     response_model=T4CModel,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )

@@ -141,7 +141,7 @@ def create_t4c_instance_and_repositories(db):
         version=version,
     )
     t4c_instances.create_t4c_instance(default_instance, db)
-    for t4c_model in t4c_models.get_all_t4c_models(db):
+    for t4c_model in t4c_models.get_t4c_models(db):
         repository = CreateT4CRepository(
             name=t4c_model.name,
         )

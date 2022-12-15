@@ -169,7 +169,6 @@ def delete_t4c_repository(
             ]
         )
     response.status_code = status.HTTP_204_NO_CONTENT
-    return None
 
 
 @router.post(
@@ -181,7 +180,6 @@ def start_t4c_repository(
     repository: DatabaseT4CRepository = Depends(get_existing_t4c_repository),
 ) -> None:
     interface.start_repository(instance, repository.name)
-    return None
 
 
 @router.post(
@@ -193,7 +191,6 @@ def stop_t4c_repository(
     repository: DatabaseT4CRepository = Depends(get_existing_t4c_repository),
 ) -> None:
     interface.stop_repository(instance, repository.name)
-    return None
 
 
 @router.post(
@@ -205,4 +202,3 @@ def recreate_t4c_repository(
     repository: DatabaseT4CRepository = Depends(get_existing_t4c_repository),
 ) -> None:
     interface.create_repository(instance, repository.name)
-    return None
