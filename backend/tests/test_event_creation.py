@@ -77,8 +77,8 @@ def test_user_deleted_cleanup(client, db, executor_name, unique_username):
     response = client.delete(f"/api/v1/users/{user_id}")
 
     assert response.status_code == 204
-    assert len(get_events_by_username(db, unique_username)) == 0
-    assert len(get_executed_events_by_user_id(db, executor.id)) == 0
+    assert not get_events_by_username(db, unique_username)
+    assert not get_executed_events_by_user_id(db, executor.id)
 
 
 @pytest.mark.parametrize(

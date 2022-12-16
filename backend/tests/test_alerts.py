@@ -84,4 +84,4 @@ def test_delete_alert(client: TestClient, db: Session, executor_name: str):
     response = client.delete(f"/api/v1/notices/{alert.id}")
 
     assert response.status_code == 204
-    assert len(get_all_notices(db)) == 0
+    assert not get_all_notices(db)
