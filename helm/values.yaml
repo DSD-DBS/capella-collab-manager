@@ -232,8 +232,8 @@ loki:
       password: *lokiPassword
     resources: &resourcesLoki
       limits:
-        cpu: "0.1"
-        memory: 50Mi
+        cpu: "1"
+        memory: 500Mi
       requests:
         cpu: "0.03"
         memory: 5Mi
@@ -272,8 +272,8 @@ loki:
       enabled: False
     resources: &resourcesMinio
       limits:
-        cpu: "0.1"
-        memory: 50Mi
+        cpu: "0.5"
+        memory: 500Mi
       requests:
         cpu: "0.03"
         memory: 5Mi
