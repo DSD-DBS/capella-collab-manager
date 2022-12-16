@@ -265,6 +265,8 @@ loki:
   test: *disabledLoki
   minio:
     enabled: True
+    persistence:
+      size: 10Gi
     configPathmc: /tmp/.mc
     securityContext:
       enabled: False
