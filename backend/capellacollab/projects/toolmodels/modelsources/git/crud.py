@@ -93,3 +93,11 @@ def update_git_model(
 
     db.commit()
     return db_model
+
+
+def delete_git_model(
+    db: Session,
+    git_model: DatabaseGitModel,
+) -> DatabaseGitModel:
+    db.delete(git_model)
+    db.commit()

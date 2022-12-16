@@ -22,6 +22,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, map, Observable, of, Subscription } from 'rxjs';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   absoluteOrRelativeValidators,
   absoluteUrlValidator,
@@ -101,6 +102,7 @@ export class AddGitSourceComponent implements OnInit, OnDestroy {
     private gitSettingsService: GitSettingsService,
     private gitService: GitService,
     private gitModelService: GitModelService,
+    private toastService: ToastService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -288,6 +290,37 @@ export class AddGitSourceComponent implements OnInit, OnDestroy {
     this.editing = false;
     this.form.disable();
     this.fillFormWithGitModel(this.gitModel!);
+  }
+
+  unlinkGitModel(): void {
+    if (!window.confirm(`Do you really want to unlink this Git model?`)) {
+      return;
+    }
+
+    this.gitModelService
+      .deleteGitSource(
+        this.projectService.project?.slug!,
+        this.modelService.model?.slug!,
+        this.gitModel!
+      )
+      .subscribe({
+        next: () => {
+          this.toastService.showSuccess(
+            'Git model deleted',
+            `${this.gitModel!.path} has been deleted`
+          );
+          this.router.navigateByUrl(
+            `/project/${this.projectService.project?.slug!}/model/${this
+              .modelService.model?.slug!}`
+          );
+        },
+        error: () => {
+          this.toastService.showError(
+            'Git model deletion failed',
+            `${this.gitModel!.path} has not been deleted`
+          );
+        },
+      });
   }
 
   private createGitModelFromForm(): CreateGitModel {

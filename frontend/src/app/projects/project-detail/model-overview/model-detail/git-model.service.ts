@@ -111,6 +111,17 @@ export class GitModelService {
     this._gitModels.next(undefined);
     this._gitModel.next(undefined);
   }
+
+  deleteGitSource(
+    project_slug: string,
+    model_slug: string,
+    source: GetGitModel
+  ): Observable<void> {
+    return this.http.delete<void>(
+      environment.backend_url +
+        `/projects/${project_slug}/models/${model_slug}/modelsources/git/${source.id}`
+    );
+  }
 }
 
 export type BaseGitModel = {

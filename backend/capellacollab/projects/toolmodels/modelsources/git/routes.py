@@ -10,6 +10,9 @@ from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication.database import ProjectRoleVerification
 from capellacollab.core.database import get_db
+from capellacollab.projects.toolmodels.backups.crud import (
+    get_pipelines_for_git_model,
+)
 from capellacollab.projects.toolmodels.injectables import (
     get_existing_capella_model,
 )
@@ -85,7 +88,13 @@ def get_git_model_by_id(
     return git_model
 
 
-@router.get("/primary/revisions", response_model=GetRevisionsResponseModel)
+@router.get(
+    "/primary/revisions",
+    response_model=GetRevisionsResponseModel,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
+)
 def get_revisions_of_primary_git_model(
     primary_git_model: DatabaseGitModel = Depends(
         get_existing_primary_git_model
@@ -155,3 +164,26 @@ def update_git_model_by_id(
     )
 
     return updated_git_model
+
+
+@router.delete(
+    "/{git_model_id}",
+    status_code=204,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
+)
+def delete_git_model_by_id(
+    db_git_model: DatabaseGitModel = Depends(get_existing_git_model),
+    db: Session = Depends(get_db),
+) -> DatabaseGitModel:
+    if get_pipelines_for_git_model(db, db_git_model):
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "err_code": "git_model_used_for_backup",
+                "reason": f"The git model can't be deleted: it's used for backup jobs",
+            },
+        )
+
+    crud.delete_git_model(db, db_git_model)

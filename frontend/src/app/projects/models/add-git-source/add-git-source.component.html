@@ -218,9 +218,15 @@
             Back
           </a>
 
-          <button mat-raised-button color="primary" (click)="enableEditing()">
-            Edit
-          </button>
+          <div>
+            <button mat-raised-button color="warn" (click)="unlinkGitModel()">
+              Unlink
+            </button>
+
+            <button mat-raised-button color="primary" (click)="enableEditing()">
+              Edit
+            </button>
+          </div>
         </div>
       </div>
     </ng-template>
