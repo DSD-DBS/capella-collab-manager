@@ -203,12 +203,12 @@ def models_as_json(
 
 
 def git_model_as_json(
-    git_model: DatabaseGitModel, depth: int
+    git_model: DatabaseGitModel, deep_clone: bool
 ) -> dict[str, str | int]:
     d = {
         "url": git_model.path,
         "revision": git_model.revision,
-        "depth": depth,
+        "depth": 0 if deep_clone else 1,
         "entrypoint": git_model.entrypoint,
         "nature": git_model.model.nature.name,
     }
