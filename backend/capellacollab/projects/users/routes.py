@@ -18,11 +18,6 @@ from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.toolmodels.injectables import get_existing_project
-from capellacollab.projects.users.core import (
-    create_add_user_to_project_events,
-    get_project_permission_event_type,
-    get_project_role_event_type,
-)
 from capellacollab.projects.users.models import (
     PatchProjectUser,
     PostProjectUser,
@@ -30,6 +25,11 @@ from capellacollab.projects.users.models import (
     ProjectUserAssociation,
     ProjectUserPermission,
     ProjectUserRole,
+)
+from capellacollab.projects.users.util import (
+    create_add_user_to_project_events,
+    get_project_permission_event_type,
+    get_project_role_event_type,
 )
 from capellacollab.users.events.models import EventType
 from capellacollab.users.injectables import get_own_user
