@@ -159,9 +159,17 @@ def request_session(
                 },
             )
 
-    docker_image = get_readonly_image_for_version(
-        entries_with_models[0][1].version
-    )
+    model = entries_with_models[0][1]
+    if not model.version:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "err_code": "VERSION_NOT_CONFIGURED",
+                "reason": f"Model {model.slug} has no tool version configured.",
+            },
+        )
+
+    docker_image = get_readonly_image_for_version(model.version)
     if not docker_image:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
