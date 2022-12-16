@@ -132,6 +132,15 @@ def request_session(
 ):
     log.info("Starting persistent session creation for user %s", db_user.name)
 
+    if not body.models:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "err_code": "NO_MODELS",
+                "reason": "No models have been provided in this request for a read-only session.",
+            },
+        )
+
     entries_with_models = [
         (entry, get_existing_capella_model(project.slug, entry.model_slug, db))
         for entry in body.models
@@ -196,7 +205,7 @@ def models_as_json(
 def git_model_as_json(
     git_model: DatabaseGitModel, depth: int
 ) -> dict[str, str | int]:
-    json = {
+    d = {
         "url": git_model.path,
         "revision": git_model.revision,
         "depth": depth,
@@ -204,9 +213,9 @@ def git_model_as_json(
         "nature": git_model.model.nature.name,
     }
     if git_model.username:
-        json["username"] = git_model.username
-        json["password"] = git_model.password
-    return json
+        d["username"] = git_model.username
+        d["password"] = git_model.password
+    return d
 
 
 @router.post("/persistent", response_model=GetSessionsResponse)
