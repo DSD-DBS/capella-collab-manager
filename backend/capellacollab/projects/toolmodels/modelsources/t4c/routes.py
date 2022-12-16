@@ -6,7 +6,7 @@ from __future__ import annotations
 import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.exc import IntegrityError, NoResultFound
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 import capellacollab.core.database as database
@@ -14,11 +14,8 @@ from capellacollab.core.authentication.database import (
     ProjectRoleVerification,
     RoleVerification,
 )
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.toolmodels.injectables import (
     get_existing_capella_model,
-    get_existing_project,
 )
 from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 from capellacollab.projects.toolmodels.modelsources.t4c import crud
@@ -34,44 +31,32 @@ from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.settings.modelsources.t4c.injectables import (
     get_existing_instance,
 )
-from capellacollab.settings.modelsources.t4c.models import DatabaseT4CInstance
-from capellacollab.settings.modelsources.t4c.repositories.injectables import (
-    get_optional_existing_instance_repository,
-)
-from capellacollab.settings.modelsources.t4c.repositories.models import (
-    DatabaseT4CRepository,
-)
 from capellacollab.settings.modelsources.t4c.repositories.routes import (
-    get_existing_instance_repository,
+    get_existing_t4c_repository,
 )
 from capellacollab.users.models import Role
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
+)
 
 
 @router.get(
-    "/",
+    "",
     response_model=list[T4CModel],
 )
 def list_t4c_models(
-    project: DatabaseProject = Depends(get_existing_project),
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
-    repository: t.Optional[DatabaseT4CRepository] = Depends(
-        get_optional_existing_instance_repository
-    ),
-    db: Session = Depends(database.get_db),
-    token=Depends(JWTBearer()),
+    db_session: Session = Depends(database.get_db),
 ) -> list[DatabaseT4CModel]:
-    if not repository:
-        ProjectRoleVerification(ProjectUserRole.USER)(project.slug, token, db)
-        return model.t4c_models
-    return crud.get_repository_model_t4c_models(db, repository, model)
+    return crud.get_t4c_models_for_tool_model(db_session, model)
 
 
 @router.get(
     "/{t4c_model_id}",
     response_model=T4CModel,
-    dependencies=[Depends(ProjectRoleVerification(ProjectUserRole.USER))],
 )
 def get_t4c_model(
     t4c_model: DatabaseT4CModel = Depends(get_existing_t4c_model),
@@ -80,28 +65,26 @@ def get_t4c_model(
 
 
 @router.post(
-    "/",
+    "",
     response_model=T4CModel,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 def create_t4c_model(
     body: SubmitT4CModel,
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
-    db: Session = Depends(database.get_db),
+    db_session: Session = Depends(database.get_db),
 ):
-    instance = get_existing_instance(body.t4c_instance_id, db)
-    repository = get_existing_instance_repository(
-        body.t4c_repository_id, db, instance
+    instance = get_existing_instance(body.t4c_instance_id, db_session)
+    repository = get_existing_t4c_repository(
+        body.t4c_repository_id, db_session, instance
     )
     try:
-        return crud.create_t4c_model(db, model, repository, body.name)
-    except IntegrityError:
+        return crud.create_t4c_model(db_session, model, repository, body.name)
+    except IntegrityError as exc:
         raise HTTPException(
             409,
-            {
-                "reason": f"A model named {body.name} already exists in the repository {repository.name}."
-            },
-        )
+            {"reason": "The model has been added already."},
+        ) from exc
 
 
 @router.patch(
@@ -112,20 +95,6 @@ def create_t4c_model(
 def edit_t4c_model(
     body: SubmitT4CModel,
     t4c_model: DatabaseT4CModel = Depends(get_existing_t4c_model),
-    model: DatabaseCapellaModel = Depends(get_existing_capella_model),
-    db: Session = Depends(database.get_db),
-    instance: DatabaseT4CInstance = Depends(get_existing_instance),
-    repository: DatabaseT4CRepository = Depends(
-        get_existing_instance_repository
-    ),
+    db_session: Session = Depends(database.get_db),
 ):
-    if t4c_model.model != model:
-        raise HTTPException(
-            409,
-            {
-                "reason": f"The t4c model {t4c_model.name} is not part of the model {model.name}."
-            },
-        )
-    t4c_model.repository = repository
-    t4c_model.instance = instance
-    return crud.patch_t4c_model(db, t4c_model, body)
+    return crud.patch_t4c_model(db_session, t4c_model, body)

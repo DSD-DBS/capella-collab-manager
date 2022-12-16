@@ -55,10 +55,11 @@ import { VersionComponent } from './general/metadata/version/version.component';
 import { HeaderComponent } from './general/navbar/header.component';
 import { NoticeComponent } from './general/notice/notice.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
+import { ButtonSkeletonLoaderComponent } from './helpers/skeleton-loaders/button-skeleton-loader/button-skeleton-loader.component';
+import { FormFieldSkeletonLoaderComponent } from './helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
 import { MatCardOverviewLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-loader/mat-card-overview-loader.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { AddGitSourceComponent } from './projects/models/add-git-source/add-git-source.component';
-import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
 import { CreateBackupComponent } from './projects/models/backup-settings/create-backup/create-backup.component';
 import { TriggerPipelineComponent } from './projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { ViewLogsDialogComponent } from './projects/models/backup-settings/view-logs-dialog/view-logs-dialog.component';
@@ -70,7 +71,7 @@ import { ModelDescriptionComponent } from './projects/models/model-description/m
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
 import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
 import { ChooseSourceComponent } from './projects/models/model-source/choose-source.component';
-import { T4CRepoSettingsComponent } from './projects/models/model-source/t4c-repo-settings/t4c-repo-settings.component';
+import { ManageT4CModelComponent } from './projects/models/model-source/t4c/manage-t4c-model/manage-t4c-model.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { ModelOverviewComponent } from './projects/project-detail/model-overview/model-overview.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
@@ -109,10 +110,10 @@ import { HomeComponent } from './workspaces/home.component';
   declarations: [
     ActiveSessionsComponent,
     AddGitSourceComponent,
-    AddT4cSourceComponent,
     AlertSettingsComponent,
     AppComponent,
     AuthComponent,
+    ButtonSkeletonLoaderComponent,
     ChooseInitComponent,
     ChooseSourceComponent,
     CreateBackupComponent,
@@ -126,6 +127,7 @@ import { HomeComponent } from './workspaces/home.component';
     FileBrowserComponent,
     FileExistsDialogComponent,
     FooterComponent,
+    FormFieldSkeletonLoaderComponent,
     GitSettingsComponent,
     GuacamoleComponent,
     HeaderComponent,
@@ -135,6 +137,7 @@ import { HomeComponent } from './workspaces/home.component';
     LicencesComponent,
     LogoutComponent,
     LogoutRedirectComponent,
+    ManageT4CModelComponent,
     MatCardOverviewLoaderComponent,
     MatIconComponent,
     ModelDescriptionComponent,
@@ -153,7 +156,6 @@ import { HomeComponent } from './workspaces/home.component';
     T4CInstanceSettingsComponent,
     T4cModelWrapperComponent,
     T4CRepoDeletionDialogComponent,
-    T4CRepoSettingsComponent,
     T4CSettingsComponent,
     T4CSettingsWrapperComponent,
     TermsConditionsComponent,

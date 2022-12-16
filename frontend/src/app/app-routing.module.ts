@@ -12,11 +12,11 @@ import { LogoutRedirectComponent } from './general/auth/logout/logout-redirect/l
 import { LogoutComponent } from './general/auth/logout/logout/logout.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { AddGitSourceComponent } from './projects/models/add-git-source/add-git-source.component';
-import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { ModelDescriptionComponent } from './projects/models/model-description/model-description.component';
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
 import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
+import { ManageT4CModelComponent } from './projects/models/model-source/t4c/manage-t4c-model/manage-t4c-model.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
@@ -95,7 +95,7 @@ const routes: Routes = [
                 children: [
                   {
                     path: 'create',
-                    component: AddT4cSourceComponent,
+                    component: ManageT4CModelComponent,
                   },
                   {
                     path: ':t4c_model_id',
@@ -103,7 +103,7 @@ const routes: Routes = [
                     children: [
                       {
                         path: '',
-                        component: AddT4cSourceComponent,
+                        component: ManageT4CModelComponent,
                       },
                     ],
                   },

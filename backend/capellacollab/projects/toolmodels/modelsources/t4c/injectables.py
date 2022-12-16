@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from fastapi import Depends, HTTPException
-from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from capellacollab.core.database import get_db
@@ -21,15 +20,18 @@ def get_existing_t4c_model(
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ) -> DatabaseT4CModel:
-    try:
-        t4c_model = crud.get_t4c_model_by_id(db, t4c_model_id)
-        if t4c_model.model_id == capella_model.id:
-            return t4c_model
-
-    except NoResultFound:
+    if not (t4c_model := crud.get_t4c_model_by_id(db, t4c_model_id)):
         raise HTTPException(
             404,
             {
-                "reason": f"The t4c model ({t4c_model_id}) does not exists on the capella model with the ID {capella_model}."
+                "reason": f"The TeamForCapella model with the id {t4c_model_id} was not found.",
             },
         )
+    if t4c_model.model.id != capella_model.id:
+        raise HTTPException(
+            404,
+            {
+                "reason": f"The TeamForCapella model with the id {t4c_model_id} doesn't belong to the model '{capella_model.slug}'.",
+            },
+        )
+    return t4c_model

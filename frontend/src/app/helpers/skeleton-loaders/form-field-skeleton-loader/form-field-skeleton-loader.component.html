@@ -1,0 +1,17 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<ng-container *ngIf="loading">
+  <ngx-skeleton-loader
+    class="test"
+    appearance="circle"
+    [theme]="{
+      'border-radius': '5px',
+      height: '52px',
+      width: '448px',
+      border: '1px solid white'
+    }"
+  ></ngx-skeleton-loader>
+</ng-container>

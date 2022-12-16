@@ -161,4 +161,3 @@ def remove_user_from_project(
 ):
     check_user_not_admin(user)
     crud.delete_user_from_project(db, project, user)
-    return None
