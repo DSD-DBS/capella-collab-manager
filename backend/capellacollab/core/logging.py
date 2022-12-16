@@ -75,18 +75,16 @@ class HealthcheckFilter(logging.Filter):
 
 class ReqLogAdapter(logging.LoggerAdapter):
     def process(self, msg, kwargs):
-        return (
-            "trace_id={trace_id} method={method} path={path} user={user} client={client} {msg_pref}{msg}".format(
-                trace_id=self.extra["trace_id"],
-                method=self.extra["method"],
-                path=self.extra["path"],
-                user=self.extra["user"],
-                client=self.extra["client"],
-                msg_pref="" if self.extra["chaining"] else 'message="',
-                msg=msg + ("" if self.extra["chaining"] else '"'),
-            ),
-            kwargs,
+        log_extra = kwargs.get("extra", {})
+        self_extra = self.extra
+        extra: dict = log_extra | self_extra
+        msg = "{msg_pref}{msg} ".format(
+            msg_pref="" if self.extra["chaining"] else 'message="',
+            msg=msg + ("" if self.extra["chaining"] else '"'),
         )
+
+        msg += " ".join([f'{key}="{value}"' for key, value in extra.items()])
+        return (msg, kwargs)
 
 
 class ErrorLogAdapter(logging.LoggerAdapter):
