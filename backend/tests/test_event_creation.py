@@ -159,19 +159,15 @@ def test_create_user_added_to_project_event(
     events = get_events_by_user_id(db, user.id)
     assert len(events) == 3
 
-    for event, expected_event_type in zip(
-        events,
-        [
-            EventType.ADDED_TO_PROJECT,
-            EventType.ASSIGNED_PROJECT_ROLE_USER,
-            expected_permission_event_type,
-        ],
-    ):
-        assert event.event_type == expected_event_type
-        assert event.executor_id == executor.id
-        assert event.reason == reason
-        assert event.project_id == project.id
-        assert event.user_id == user.id
+    user_added_event = events[0]
+    assert user_added_event.event_type == EventType.ADDED_TO_PROJECT
+    assert user_added_event.executor_id == executor.id
+    assert user_added_event.reason == reason
+    assert user_added_event.project_id == project.id
+    assert user_added_event.user_id == user.id
+
+    assert events[1].event_type == EventType.ASSIGNED_PROJECT_ROLE_USER
+    assert events[2].event_type == expected_permission_event_type
 
 
 def test_create_user_removed_from_project_event(
