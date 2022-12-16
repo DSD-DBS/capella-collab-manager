@@ -101,10 +101,7 @@ rollout:
 	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-docs
 
 undeploy:
-	helm uninstall --kube-context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $(RELEASE)
-	kubectl --context k3d-$(CLUSTER_NAME) delete --all deployments -n $(SESSION_NAMESPACE)
-	kubectl --context k3d-$(CLUSTER_NAME) delete --all cronjobs -n $(SESSION_NAMESPACE)
-	kubectl --context k3d-$(CLUSTER_NAME) delete --all jobs -n $(SESSION_NAMESPACE)
+	kubectl --context k3d-$(CLUSTER_NAME) delete namespace $(SESSION_NAMESPACE) $(NAMESPACE)
 
 registry:
 	type k3d || { echo "K3D is not installed, install k3d and run 'make create-cluster' again"; exit 1; }
