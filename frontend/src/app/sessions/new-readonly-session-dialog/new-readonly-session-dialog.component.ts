@@ -9,7 +9,6 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { GitService } from 'src/app/services/git/git.service';
 import { Model, ModelService } from 'src/app/services/model/model.service';
 import { Project } from 'src/app/services/project/project.service';
 import { SessionService } from 'src/app/services/session/session.service';
@@ -23,7 +22,6 @@ import { ModelOptions } from 'src/app/sessions/new-readonly-session-dialog/new-r
 export class NewReadonlySessionDialogComponent implements OnInit {
   constructor(
     public sessionService: SessionService,
-    private gitService: GitService,
     private router: Router,
     public modelService: ModelService,
     @Inject(MAT_DIALOG_DATA) public data: { project: Project; model: Model }
