@@ -7,14 +7,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { filter } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { PureVariantService } from 'src/app/services/pure-variant/pure-variant.service';
+import { PureVariantsService } from 'src/app/settings/integrations/pure-variants/service/pure-variants.service';
 
 @Component({
   selector: 'app-pure-variants',
   templateUrl: './pure-variants.component.html',
   styleUrls: ['./pure-variants.component.css'],
 })
-export class PureVariantComponent implements OnInit {
+export class PureVariantsComponent implements OnInit {
   loading = true;
 
   form = new FormGroup({
@@ -25,12 +25,12 @@ export class PureVariantComponent implements OnInit {
   });
 
   constructor(
-    private pureVariantService: PureVariantService,
+    private pureVariantsService: PureVariantsService,
     private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    this.pureVariantService
+    this.pureVariantsService
       .getLicenseServerURL()
       .pipe(filter(Boolean))
       .subscribe((res) => {
@@ -43,7 +43,7 @@ export class PureVariantComponent implements OnInit {
 
   onSubmit(): void {
     this.loading = true;
-    this.pureVariantService
+    this.pureVariantsService
       .setLicenseServerURL(this.form.value.licenseServerURL!)
       .subscribe((res) => {
         this.loading = false;

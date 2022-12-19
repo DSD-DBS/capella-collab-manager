@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class PureVariantService {
+export class PureVariantsService {
   baseUrl = environment.backend_url + '/settings/integrations/pure-variants';
 
   constructor(private http: HttpClient) {}

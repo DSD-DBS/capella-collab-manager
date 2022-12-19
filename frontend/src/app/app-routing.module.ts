@@ -27,7 +27,7 @@ import { AlertSettingsComponent } from './settings/core/alert-settings/alert-set
 import { ToolDetailsComponent } from './settings/core/tools-settings/tool-details/tool-details.component';
 import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
 import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
-import { PureVariantComponent } from './settings/integrations/pure-variants/pure-variants.component';
+import { PureVariantsComponent } from './settings/integrations/pure-variants/pure-variants.component';
 import { EditGitSettingsComponent } from './settings/modelsources/git-settings/edit-git-settings/edit-git-settings.component';
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
 import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/edit-t4c-instance/edit-t4c-instance.component';
@@ -205,7 +205,7 @@ const routes: Routes = [
             children: [
               {
                 path: 'pure-variants',
-                component: PureVariantComponent,
+                component: PureVariantsComponent,
               },
             ],
           },
