@@ -14,6 +14,12 @@ export type CreateTool = {
 
 export type Tool = CreateTool & {
   id: number;
+  integrations: ToolIntegrations;
+};
+
+export type ToolIntegrations = {
+  t4c: boolean | null;
+  pure_variants: boolean | null;
 };
 
 export type ToolVersion = {
@@ -150,6 +156,16 @@ export class ToolService {
     return this.http.put<ToolDockerimages>(
       `${this.baseURL}/${toolId}/dockerimages`,
       dockerimages
+    );
+  }
+
+  patchToolIntegrations(
+    toolId: number,
+    toolIntegrations: ToolIntegrations
+  ): Observable<ToolIntegrations> {
+    return this.http.put<ToolIntegrations>(
+      `${this.baseURL}/${toolId}/integrations`,
+      toolIntegrations
     );
   }
 }

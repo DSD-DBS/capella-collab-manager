@@ -61,6 +61,7 @@ import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 import { ButtonSkeletonLoaderComponent } from './helpers/skeleton-loaders/button-skeleton-loader/button-skeleton-loader.component';
 import { FormFieldSkeletonLoaderComponent } from './helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
 import { MatCardOverviewLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-loader/mat-card-overview-loader.component';
+import { MatCheckboxLoaderComponent } from './helpers/skeleton-loaders/mat-checkbox-loader/mat-checkbox-loader.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { CreateBackupComponent } from './projects/models/backup-settings/create-backup/create-backup.component';
 import { TriggerPipelineComponent } from './projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';
@@ -94,6 +95,7 @@ import { SessionOverviewComponent } from './sessions/session-overview/session-ov
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { ToolDeletionDialogComponent } from './settings/core/tools-settings/tool-details/tool-deletion-dialog/tool-deletion-dialog.component';
 import { ToolDetailsComponent } from './settings/core/tools-settings/tool-details/tool-details.component';
+import { ToolIntegrationsComponent } from './settings/core/tools-settings/tool-details/tool-integrations/tool-integrations.component';
 import { ToolNatureComponent } from './settings/core/tools-settings/tool-details/tool-nature/tool-nature.component';
 import { ToolVersionComponent } from './settings/core/tools-settings/tool-details/tool-version/tool-version.component';
 import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
@@ -146,6 +148,7 @@ import { HomeComponent } from './workspaces/home.component';
     ManageGitModelComponent,
     ManageT4CModelComponent,
     MatCardOverviewLoaderComponent,
+    MatCheckboxLoaderComponent,
     MatIconComponent,
     ModelDescriptionComponent,
     ModelDetailComponent,
@@ -171,6 +174,7 @@ import { HomeComponent } from './workspaces/home.component';
     TermsConditionsComponent,
     ToolDeletionDialogComponent,
     ToolDetailsComponent,
+    ToolIntegrationsComponent,
     ToolNatureComponent,
     ToolsSettingsComponent,
     ToolVersionComponent,

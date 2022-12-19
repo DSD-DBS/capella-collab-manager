@@ -1,0 +1,34 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<mat-card id="integrations-card" class="default">
+  <form [formGroup]="integrationsForm">
+    <p>
+      <ng-template #t4c>
+        This tool is used with a TeamForCapella integration
+      </ng-template>
+
+      <app-mat-checkbox-loader *ngIf="loading">
+        <ng-template [ngTemplateOutlet]="t4c"> </ng-template>
+      </app-mat-checkbox-loader>
+      <mat-checkbox formControlName="t4c" *ngIf="!loading">
+        <ng-template [ngTemplateOutlet]="t4c"> </ng-template>
+      </mat-checkbox>
+    </p>
+    <p>
+      <ng-template #pv>
+        This tool is used with a pure::variants integration
+      </ng-template>
+
+      <app-mat-checkbox-loader *ngIf="loading">
+        <ng-template [ngTemplateOutlet]="pv"> </ng-template>
+      </app-mat-checkbox-loader>
+
+      <mat-checkbox formControlName="pv" *ngIf="!loading">
+        <ng-template [ngTemplateOutlet]="pv"> </ng-template>
+      </mat-checkbox>
+    </p>
+  </form>
+</mat-card>

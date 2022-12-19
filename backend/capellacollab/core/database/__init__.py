@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+from pydantic import BaseModel
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
@@ -21,3 +22,11 @@ from . import models  # isort:skip
 def get_db() -> Session:
     with SessionLocal() as session:
         yield session
+
+
+def patch_database_with_pydantic_object(
+    database_object: Base, pydantic_object: BaseModel
+):
+    for key, value in pydantic_object.dict().items():
+        if value is not None:
+            database_object.__setattr__(key, value)
