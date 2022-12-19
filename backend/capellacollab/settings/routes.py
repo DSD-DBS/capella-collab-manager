@@ -16,4 +16,6 @@ router.include_router(
     modelsources.router,
     prefix="/modelsources",
 )
-router.include_router(purevariants.router, prefix="/integrations/pure-variant")
+router.include_router(
+    purevariants.router, prefix="/integrations/pure-variants"
+)

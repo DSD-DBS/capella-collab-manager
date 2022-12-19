@@ -282,10 +282,9 @@ def request_persistent_session(
                     exc_info=True,
                 )
 
+    pv_license_env = None
     if pv_license := get_license(db):
-        pv_license_env = pv_license.value
-    else:
-        pv_license_env = "UNSET"
+        pv_license_env = pv_license.license_server_url
 
     session = operator.start_persistent_session(
         get_username(token),

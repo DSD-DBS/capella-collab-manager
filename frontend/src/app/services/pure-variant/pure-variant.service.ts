@@ -12,17 +12,21 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class PureVariantService {
-  baseUrl = environment.backend_url + '/settings/integrations/pure-variant/';
+  baseUrl = environment.backend_url + '/settings/integrations/pure-variants';
 
   constructor(private http: HttpClient) {}
 
-  get_license(): Observable<{ value: string } | null> {
-    return this.http.get<{ value: string } | null>(this.baseUrl);
+  getLicenseServerURL(): Observable<PureVariantsConfiguration> {
+    return this.http.get<PureVariantsConfiguration>(this.baseUrl);
   }
 
-  set_license(value: string): Observable<{ value: string }> {
-    return this.http.patch<{ value: string }>(this.baseUrl, {
-      value,
+  setLicenseServerURL(value: string): Observable<PureVariantsConfiguration> {
+    return this.http.patch<PureVariantsConfiguration>(this.baseUrl, {
+      license_server_url: value,
     });
   }
 }
+
+export type PureVariantsConfiguration = {
+  license_server_url?: string;
+};

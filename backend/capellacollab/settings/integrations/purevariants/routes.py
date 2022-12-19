@@ -17,12 +17,13 @@ from capellacollab.settings.integrations.purevariants.models import (
 )
 from capellacollab.users.models import Role
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+)
 
 
 @router.get(
-    "/",
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    "",
     response_model=t.Optional[PureVariantsLicenses],
 )
 def get_license(
@@ -32,11 +33,10 @@ def get_license(
 
 
 @router.patch(
-    "/",
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    "",
     response_model=PureVariantsLicenses,
 )
 def set_license(
     body: PureVariantsLicenses, db: Session = Depends(get_db)
 ) -> DatabasePureVariantsLicenses:
-    return crud.set_license(db, body.value)
+    return crud.set_license(db, body.license_server_url)

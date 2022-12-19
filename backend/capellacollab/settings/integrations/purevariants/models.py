@@ -32,15 +32,15 @@ def validate_license_url(value: t.Optional[str]):
 class DatabasePureVariantsLicenses(Base):
     __tablename__ = "pure_variants_license"
 
-    value = Column(String, primary_key=True)
-
-    _validate_value = pydantic.validator("value", allow_reuse=True)(
-        validate_license_url
-    )
+    license_server_url = Column(String, primary_key=True)
 
 
 class PureVariantsLicenses(BaseModel):
-    value: str
+    license_server_url: str
+
+    _validate_value = pydantic.validator(
+        "license_server_url", allow_reuse=True
+    )(validate_license_url)
 
     class Config:
         orm_mode = True

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-"""Create pure::variant table.
+"""Create pure::variants table.
 
 Revision ID: 0ef0826d54e7
 Revises: 7617cde6fbb1
@@ -20,11 +20,11 @@ depends_on = None
 
 def upgrade():
     op.create_table(
-        "pure_variants_license",
-        sa.Column("value", sa.String(), nullable=False),
-        sa.PrimaryKeyConstraint("value"),
+        "pure_variants",
+        sa.Column("license_server_url", sa.String(), nullable=False),
+        sa.PrimaryKeyConstraint("license_server_url"),
     )
 
 
 def downgrade():
-    op.drop_table("pure_variants_license")
+    op.drop_table("pure_variants")

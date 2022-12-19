@@ -21,7 +21,7 @@ def set_license(db: Session, value: str) -> DatabasePureVariantsLicenses:
     if pv_license := get_license(db):
         pv_license.value = value
     else:
-        pv_license = DatabasePureVariantsLicenses(value=value)
+        pv_license = DatabasePureVariantsLicenses(license_server_url=value)
         db.add(pv_license)
     db.commit()
     return pv_license

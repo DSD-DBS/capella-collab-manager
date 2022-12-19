@@ -5,15 +5,21 @@
 
 <div class="flex-center">
   <mat-card class="section-card">
-    <h2>Edit pure::variant floating license server</h2>
+    <h2>pure::variants configuration</h2>
     <form (submit)="onSubmit()" [formGroup]="form">
       <fieldset>
         <mat-form-field appearance="fill">
-          <mat-label>Floating license server</mat-label>
-          <input matInput formControlName="value" />
+          <mat-label>Floating license server URL</mat-label>
+          <input
+            placeholder="http://localhost:8080"
+            matInput
+            formControlName="licenseServerURL"
+          />
         </mat-form-field>
       </fieldset>
-      <button mat-flat-button type="submit">Update</button>
+      <div class="flex-space-between">
+        <button mat-raised-button color="primary" type="submit">Update</button>
+      </div>
     </form>
   </mat-card>
 </div>

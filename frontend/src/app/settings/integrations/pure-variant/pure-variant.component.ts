@@ -16,7 +16,10 @@ import { PureVariantService } from 'src/app/services/pure-variant/pure-variant.s
 })
 export class PureVariantComponent implements OnInit {
   form = new FormGroup({
-    value: new FormControl<string>('', Validators.pattern(/^https?:\/\//)),
+    licenseServerURL: new FormControl<string>(
+      '',
+      Validators.pattern(/^https?:\/\//)
+    ),
   });
 
   constructor(
@@ -26,23 +29,24 @@ export class PureVariantComponent implements OnInit {
 
   ngOnInit(): void {
     this.pureVariantService
-      .get_license()
+      .getLicenseServerURL()
       .pipe(filter(Boolean))
       .subscribe((res) => {
-        this.toastService.showSuccess(
-          'Floating license server updating.',
-          'The floating license server was updated.'
+        this.form.controls.licenseServerURL.patchValue(
+          res.license_server_url || ''
         );
-        this.form.controls.value.patchValue(res.value);
       });
   }
 
   onSubmit(): void {
     this.pureVariantService
-      .set_license(this.form.value.value!)
+      .setLicenseServerURL(this.form.value.licenseServerURL!)
       .subscribe((res) => {
-        this.toastService;
-        this.form.controls.value.patchValue(res.value);
+        this.toastService.showSuccess(
+          'pure::variants configuration changed',
+          `The floating license server was updated to "${res.license_server_url}"`
+        );
+        this.form.controls.licenseServerURL.patchValue(res.license_server_url!);
       });
   }
 }
