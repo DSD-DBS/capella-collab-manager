@@ -33,30 +33,24 @@
     </button>
   </div>
 
-  <h2
-    class="title text-center"
-    *ngIf="modelService.model.tool?.name === 'Capella'"
-  >
-    Team4Capella sources
-  </h2>
-  <div
-    class="options-list flex-center"
-    *ngIf="modelService.model.tool?.name === 'Capella'"
-  >
-    <button
-      mat-raised-button
-      (click)="modelSourceSelection.emit('t4c-add')"
-      [disabled]="!(userService.user?.role === 'administrator')"
-    >
-      <div class="button-content-wrapper">
-        <p class="option-title">Use existing repository</p>
-      </div>
-    </button>
-    <div class="field-separator"></div>
-    <button mat-raised-button disabled>
-      <div class="button-content-wrapper">
-        <p class="option-title">Create repository</p>
-      </div>
-    </button>
+  <div *ngIf="modelService.model.tool?.integrations?.t4c">
+    <h2 class="title text-center">Team4Capella sources</h2>
+    <div class="options-list flex-center">
+      <button
+        mat-raised-button
+        (click)="modelSourceSelection.emit('t4c-add')"
+        [disabled]="!(userService.user?.role === 'administrator')"
+      >
+        <div class="button-content-wrapper">
+          <p class="option-title">Use existing repository</p>
+        </div>
+      </button>
+      <div class="field-separator"></div>
+      <button mat-raised-button disabled>
+        <div class="button-content-wrapper">
+          <p class="option-title">Create repository</p>
+        </div>
+      </button>
+    </div>
   </div>
 </div>

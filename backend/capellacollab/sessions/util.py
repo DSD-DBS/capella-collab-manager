@@ -25,7 +25,7 @@ def terminate_session(
     db_session: Session, session: DatabaseSession, operator: KubernetesOperator
 ):
     if (
-        session.tool.name == "Capella"
+        session.tool.integrations.t4c
         and session.type == WorkspaceType.PERSISTENT
     ):
         revoke_session_tokens(db_session, session)
