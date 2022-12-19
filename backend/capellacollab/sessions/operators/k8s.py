@@ -95,12 +95,27 @@ class KubernetesOperator:
         docker_image: str,
         t4c_license_secret: str | None,
         t4c_json: list[dict[str, str | int]] | None,
-        pure_variants_license_server: str = "UNSET",
+        pure_variants_license_server: str = None,
+        pure_variants_secret_name: str = None,
     ) -> dict[str, t.Any]:
         log.info("Launching a persistent session for user %s", username)
 
         id = self._generate_id()
         self._create_persistent_volume_claim(username)
+
+        environment = {
+            "T4C_LICENCE_SECRET": t4c_license_secret,
+            "T4C_JSON": json.dumps(t4c_json),
+            "RMT_PASSWORD": password,
+            "FILESERVICE_PASSWORD": password,
+            "T4C_USERNAME": username,
+        }
+
+        if pure_variants_license_server:
+            environment[
+                "PURE_VARIANTS_LICENSE_SERVER"
+            ] = pure_variants_license_server
+
         deployment = self._create_deployment(
             docker_image,
             id,
@@ -113,6 +128,7 @@ class KubernetesOperator:
                 "PURE_VARIANTS_LICENSE_SERVER": pure_variants_license_server,
             },
             self._get_claim_name(username),
+            pure_variants_secret_name,
         )
         self._create_service(id, id)
         service = self._get_service(id)
@@ -405,16 +421,27 @@ class KubernetesOperator:
         image: str,
         name: str,
         environment: t.Dict,
-        volume_claim_name: str = None,
+        persistent_workspace_claim_name: str = None,
+        pure_variants_secret_name: str = None,
     ) -> kubernetes.client.V1Deployment:
         volume_mounts = []
         volumes = []
 
-        if volume_claim_name:
+        if persistent_workspace_claim_name:
+            volumes.append(
+                {
+                    "name": "workspace",
+                    "persistentVolumeClaim": {
+                        "claimName": persistent_workspace_claim_name
+                    },
+                }
+            )
+
             volume_mounts.append(
                 {"name": "workspace", "mountPath": "/workspace"}
             )
 
+        if pure_variants_secret_name:
             volume_mounts.append(
                 {
                     "name": "pure-variants",
@@ -425,16 +452,9 @@ class KubernetesOperator:
 
             volumes.append(
                 {
-                    "name": "workspace",
-                    "persistentVolumeClaim": {"claimName": volume_claim_name},
-                }
-            )
-
-            volumes.append(
-                {
                     "name": "pure-variants",
                     "secret": {
-                        "secretName": "pure-variants",
+                        "secretName": pure_variants_secret_name,
                         "optional": True,
                     },
                 }
