@@ -97,7 +97,8 @@ class MockOperator:
         docker_image: str,
         t4c_license_secret: str | None,
         t4c_json: list[dict[str, str | int]] | None,
-        pure_variants_license_server: str = "UNSET",
+        pure_variants_license_server: str = None,
+        pure_variants_secret_name: str = None,
     ) -> t.Dict[str, t.Any]:
         assert docker_image
         cls.sessions.append({"docker_image": docker_image})
