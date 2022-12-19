@@ -12,7 +12,7 @@ import { GetGitModel } from 'src/app/projects/project-detail/model-overview/mode
 import { Model, ModelService } from 'src/app/services/model/model.service';
 import { Project } from 'src/app/services/project/project.service';
 import { SessionService } from 'src/app/services/session/session.service';
-import { ModelOptions } from 'src/app/sessions/new-readonly-session-dialog/new-readonly-model-options.component';
+import { ModelOptions } from 'src/app/sessions/new-readonly-session-dialog/new-readonly-model-options/new-readonly-model-options.component';
 
 @Component({
   selector: 'new-readonly-session-dialog',
