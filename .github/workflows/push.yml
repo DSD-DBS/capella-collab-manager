@@ -45,7 +45,7 @@ jobs:
       - name: Fetch version
         if: ${{ matrix.name == 'frontend' }}
         run: |
-          export GITHUB_USERNAME=GITHUB ACTIONS
+          export GITHUB_USERNAME="GITHUB ACTIONS"
           export GITHUB_PASSWORD=${{ secrets.GITHUB_TOKEN }}
           node frontend/fetch-version.ts
       - name: Prepare environment.prod.ts
