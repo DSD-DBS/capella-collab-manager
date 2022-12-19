@@ -10,9 +10,9 @@ import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { PureVariantService } from 'src/app/services/pure-variant/pure-variant.service';
 
 @Component({
-  selector: 'app-pure-variant',
-  templateUrl: './pure-variant.component.html',
-  styleUrls: ['./pure-variant.component.css'],
+  selector: 'app-pure-variants',
+  templateUrl: './pure-variants.component.html',
+  styleUrls: ['./pure-variants.component.css'],
 })
 export class PureVariantComponent implements OnInit {
   form = new FormGroup({

@@ -93,7 +93,7 @@ import { ToolNatureComponent } from './settings/core/tools-settings/tool-details
 import { ToolVersionComponent } from './settings/core/tools-settings/tool-details/tool-version/tool-version.component';
 import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
 import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
-import { PureVariantComponent } from './settings/integrations/pure-variant/pure-variant.component';
+import { PureVariantComponent } from './settings/integrations/pure-variants/pure-variants.component';
 import { DeleteGitSettingsDialogComponent } from './settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
 import { EditGitSettingsComponent } from './settings/modelsources/git-settings/edit-git-settings/edit-git-settings.component';
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
