@@ -39,7 +39,6 @@ import { MatTreeModule } from '@angular/material/tree';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CookieModule } from 'ngx-cookie';
-import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ToastrModule } from 'ngx-toastr';
 import { AppRoutingModule } from './app-routing.module';
@@ -193,7 +192,6 @@ import { HomeComponent } from './workspaces/home.component';
     CookieModule.withOptions(),
     FormsModule,
     HttpClientModule,
-    MarkdownModule.forRoot(),
     MatAutocompleteModule,
     MatBadgeModule,
     MatButtonModule,
