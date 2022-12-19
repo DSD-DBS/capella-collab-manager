@@ -27,10 +27,10 @@ export class NewReadonlySessionDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { project: Project; model: Model }
   ) {}
 
-  private model_options: ModelOptions[] = [];
+  private _modelOptions: ModelOptions[] = [];
 
   get modelOptions(): ModelOptions[] {
-    return this.model_options;
+    return this._modelOptions;
   }
 
   ngOnInit(): void {
@@ -43,7 +43,7 @@ export class NewReadonlySessionDialogComponent implements OnInit {
             return;
           }
 
-          this.model_options.push({
+          this._modelOptions.push({
             model: model,
             primary_git_model: primary_git_model,
             include: model.id === this.data.model.id,
@@ -55,7 +55,7 @@ export class NewReadonlySessionDialogComponent implements OnInit {
   }
 
   requestSession(): void {
-    let included = this.model_options.filter((mo) => mo.include);
+    let included = this._modelOptions.filter((mo) => mo.include);
 
     if (!included) {
       return;
