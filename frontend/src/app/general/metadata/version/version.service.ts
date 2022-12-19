@@ -75,10 +75,6 @@ export class VersionService {
   private compareFrontendVersions(version1: string, version2: string) {
     return compare(version1, version2);
   }
-
-  openReleaseNotes(): void {
-    // TODO: open release notes doc
-  }
 }
 
 export interface GitVersion {
