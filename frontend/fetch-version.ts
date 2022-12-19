@@ -34,27 +34,16 @@ async function main() {
     cwd: __dirname,
   });
 
-  const github = fetch(
-    'https://api.github.com/repos/DSD-DBS/capella-collab-manager/releases',
-    options
-  );
-
   const gitResponse = await git;
   console.error(gitResponse.stderr);
   const gitTagResponse = await gitTag;
   console.error(gitTagResponse.stderr);
-  const response = await github;
-  const data = await response.json();
-  if (!response.ok) {
-    console.error(data);
-  }
 
-  if (gitTagResponse.error || gitResponse.error || !response.ok) {
+  if (gitTagResponse.error || gitResponse.error) {
     process.exit(1);
   }
 
   const json = {
-    github: data,
     git: {
       version: gitResponse.stdout.replace(/\n/g, ''),
       tag: gitTagResponse.stdout.replace(/\n/g, ''),

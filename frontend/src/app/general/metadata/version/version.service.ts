@@ -10,8 +10,6 @@ import { Observable } from 'rxjs';
 import { compare } from 'semver';
 import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { environment } from 'src/environments/environment';
-import { ReleaseNote } from '../release-notes/release-note.service';
-import { ReleaseNotesComponent } from '../release-notes/release-notes.component';
 
 @Injectable({
   providedIn: 'root',
@@ -79,9 +77,7 @@ export class VersionService {
   }
 
   openReleaseNotes(): void {
-    this.dialog.open(ReleaseNotesComponent);
-    this.localStorageService.setValue('version', this.version?.git.tag);
-    this.changedVersion = false;
+    // TODO: open release notes doc
   }
 }
 
@@ -92,7 +88,6 @@ export interface GitVersion {
 
 export interface Version {
   git: GitVersion;
-  github: ReleaseNote[];
 }
 
 export interface BackendMetadata {
