@@ -94,9 +94,9 @@ export class NewReadonlyModelOptionsComponent implements OnInit {
     this.form.controls.include.valueChanges.subscribe((value) => {
       this.options.include = value || false;
     });
-    this.form.controls.revision.valueChanges.subscribe((value) => {
-      this.options.revision = value || '';
-    });
+    this.form.controls.revision.valueChanges.subscribe((value) =>
+      this.filteredRevisionsByPrefix(value as string)
+    );
 
     this.gitService
       .privateRevisions(
@@ -113,6 +113,24 @@ export class NewReadonlyModelOptionsComponent implements OnInit {
         this.form.controls.revision.setValue(primary_git_model?.revision || '');
         this.form.controls.revision.updateValueAndValidity();
       });
+  }
+
+  private filteredRevisionsByPrefix(prefix: string): void {
+    this.filteredRevisions = {
+      branches: [],
+      tags: [],
+    };
+
+    if (this.availableRevisions) {
+      this.filteredRevisions = {
+        branches: this.availableRevisions!.branches.filter((branch) =>
+          branch.startsWith(prefix)
+        ),
+        tags: this.availableRevisions!.tags.filter((tag) =>
+          tag.startsWith(prefix)
+        ),
+      };
+    }
   }
 }
 
