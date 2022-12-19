@@ -1,10 +1,10 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-"""Create pure::variants table.
+"""Create pure::variants table
 
 Revision ID: 0ef0826d54e7
-Revises: 7617cde6fbb1
+Revises: 16398dfaeef7
 Create Date: 2022-11-18 11:40:46.395645
 
 """
@@ -13,7 +13,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "0ef0826d54e7"
-down_revision = "7617cde6fbb1"
+down_revision = "16398dfaeef7"
 branch_labels = None
 depends_on = None
 
