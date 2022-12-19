@@ -15,6 +15,8 @@ import { PureVariantService } from 'src/app/services/pure-variant/pure-variant.s
   styleUrls: ['./pure-variants.component.css'],
 })
 export class PureVariantComponent implements OnInit {
+  loading = true;
+
   form = new FormGroup({
     licenseServerURL: new FormControl<string>(
       '',
@@ -32,6 +34,7 @@ export class PureVariantComponent implements OnInit {
       .getLicenseServerURL()
       .pipe(filter(Boolean))
       .subscribe((res) => {
+        this.loading = false;
         this.form.controls.licenseServerURL.patchValue(
           res.license_server_url || ''
         );
@@ -39,9 +42,11 @@ export class PureVariantComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.loading = true;
     this.pureVariantService
       .setLicenseServerURL(this.form.value.licenseServerURL!)
       .subscribe((res) => {
+        this.loading = false;
         this.toastService.showSuccess(
           'pure::variants configuration changed',
           `The floating license server was updated to "${res.license_server_url}"`

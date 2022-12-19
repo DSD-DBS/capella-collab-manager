@@ -8,7 +8,10 @@
     <h2>pure::variants configuration</h2>
     <form (submit)="onSubmit()" [formGroup]="form">
       <fieldset>
-        <mat-form-field appearance="fill">
+        <app-form-field-skeleton-loader
+          *ngIf="loading"
+        ></app-form-field-skeleton-loader>
+        <mat-form-field *ngIf="!loading" appearance="fill">
           <mat-label>Floating license server URL</mat-label>
           <input
             placeholder="http://localhost:8080"
