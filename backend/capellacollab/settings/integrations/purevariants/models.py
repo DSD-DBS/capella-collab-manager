@@ -30,7 +30,7 @@ def validate_license_url(value: t.Optional[str]):
 
 
 class DatabasePureVariantsLicenses(Base):
-    __tablename__ = "pure_variants_license"
+    __tablename__ = "pure_variants"
 
     license_server_url = Column(String, primary_key=True)
 
