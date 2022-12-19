@@ -16,6 +16,8 @@ from capellacollab.tools.models import (
     Version,
 )
 
+from .integrations.crud import intialize_new_integration_table
+
 
 def get_all_tools(db: Session) -> t.List[Tool]:
     return db.query(Tool).all()
@@ -26,6 +28,7 @@ def get_tool_by_id(id_: int, db: Session) -> Tool:
 
 
 def create_tool(db: Session, tool: Tool) -> Tool:
+    intialize_new_integration_table(db, tool)
     db.add(tool)
     db.commit()
     return tool

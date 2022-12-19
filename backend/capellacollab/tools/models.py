@@ -19,6 +19,11 @@ from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
 
+from .integrations.models import ToolIntegrations
+
+if t.TYPE_CHECKING:
+    from .integrations.models import DatabaseToolIntegrations
+
 
 class Tool(Base):
     __tablename__ = "tools"
@@ -31,6 +36,10 @@ class Tool(Base):
 
     versions: list[Version] = relationship("Version", back_populates="tool")
     natures: list[Nature] = relationship("Nature", back_populates="tool")
+
+    integrations: DatabaseToolIntegrations = relationship(
+        "DatabaseToolIntegrations", back_populates="tool", uselist=False
+    )
 
 
 class Version(Base):
@@ -60,6 +69,7 @@ class Nature(Base):
 class ToolBase(BaseModel):
     id: int
     name: str
+    integrations: ToolIntegrations
 
     class Config:
         orm_mode = True

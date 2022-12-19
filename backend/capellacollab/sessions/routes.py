@@ -56,6 +56,8 @@ from capellacollab.settings.modelsources.t4c.repositories.interface import (
 from capellacollab.tools.crud import (
     get_image_for_tool_version,
     get_readonly_image_for_version,
+    get_tool_by_name,
+    get_version_by_name,
 )
 from capellacollab.tools.injectables import (
     get_exisiting_tool_version,
@@ -260,11 +262,20 @@ def request_persistent_session(
     t4c_password = None
     t4c_json = None
     t4c_license_secret = None
-    if tool.name == "Capella":
-        t4c_repositories = (
-            get_user_t4c_repositories(db, tool, version, user)
-            if tool.name == "Capella"
-            else None
+
+    if tool.integrations.t4c:
+        if tool.name != "Capella":
+            # When using a different tool with TeamForCapella support (e.g. Capella + pure::variants),
+            # the version ID doesn't match the version from the T4C integration.
+            # We have to find the matching version by name.
+            matching_tool_version = get_version_by_name(
+                db, get_tool_by_name(db, "Capella"), version.name
+            )
+        else:
+            matching_tool_version = version
+
+        t4c_repositories = get_user_t4c_repositories(
+            db, tool, matching_tool_version, user
         )
 
         t4c_json = [
@@ -311,9 +322,20 @@ def request_persistent_session(
                     exc_info=True,
                 )
 
-    pv_license_env = None
-    if pv_license := get_license(db):
-        pv_license_env = pv_license.license_server_url
+    pv_license_server_url = None
+    if tool.integrations.pure_variants:
+        if pv_license := get_license(db):
+            pv_license_server_url = pv_license.license_server_url
+        else:
+            warnings.append(
+                Message(
+                    reason=(
+                        "You are trying to create a persistent session with a pure::variants integration.",
+                        "We were not able to find a valid license server URL in our database.",
+                        "Your session will not be connected to the pure::variants license server.",
+                    )
+                )
+            )
 
     session = operator.start_persistent_session(
         username=get_username(token),
@@ -321,7 +343,7 @@ def request_persistent_session(
         docker_image=docker_image,
         t4c_license_secret=t4c_license_secret,
         t4c_json=t4c_json,
-        pure_variants_secret_name=pv_license_env,
+        pure_variants_secret_name=pv_license_server_url,
     )
 
     response = create_database_and_guacamole_session(
