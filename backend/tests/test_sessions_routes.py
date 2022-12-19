@@ -205,12 +205,19 @@ def test_create_readonly_session_as_user(client, db, user, kubernetes):
         if v.tool.name == "Capella" and v.name == "5.0.0"
     )
 
-    model = setup_git_model_for_user(db, user, version)
+    model, git_model = setup_git_model_for_user(db, user, version)
 
     response = client.post(
         f"/api/v1/projects/{model.project.slug}/sessions/readonly",
         json={
-            "model_slug": model.slug,
+            "models": [
+                {
+                    "model_slug": model.slug,
+                    "git_model_id": git_model.id,
+                    "revision": "main",
+                    "deep_clone": False,
+                }
+            ]
         },
     )
 
@@ -236,12 +243,19 @@ def test_no_readonly_session_as_user(client, db, user, kubernetes):
     tool = create_tool(db, Tool(name="Test"))
     version = create_version(db, tool.id, "test")
 
-    model = setup_git_model_for_user(db, user, version)
+    model, git_model = setup_git_model_for_user(db, user, version)
 
     response = client.post(
         f"/api/v1/projects/{model.project.slug}/sessions/readonly",
         json={
-            "model_slug": model.slug,
+            "models": [
+                {
+                    "model_slug": model.slug,
+                    "git_model_id": git_model.id,
+                    "revision": "main",
+                    "deep_clone": False,
+                }
+            ]
         },
     )
 
@@ -274,14 +288,14 @@ def setup_git_model_for_user(db, user, version):
         nature=nature,
     )
     git_path = str(uuid1())
-    add_gitmodel_to_capellamodel(
+    git_model = add_gitmodel_to_capellamodel(
         db,
         model,
         PostGitModel(
             path=git_path, entrypoint="", revision="", username="", password=""
         ),
     )
-    return model
+    return model, git_model
 
 
 def test_create_persistent_session_as_user(client, db, user, kubernetes):

@@ -13,6 +13,7 @@ import {
   ProjectService,
 } from 'src/app/services/project/project.service';
 import { SessionService } from 'src/app/services/session/session.service';
+import { NewReadonlySessionDialogComponent } from 'src/app/sessions/new-readonly-session-dialog/new-readonly-session-dialog.component';
 import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 
 @Component({
@@ -48,17 +49,6 @@ export class ModelOverviewComponent implements OnInit {
     return 'Unset';
   }
 
-  requestSession(model: Model): void {
-    if (!model.version) {
-      return;
-    }
-    this.sessionService
-      .createReadonlySession(this.project.slug, model.slug)
-      .subscribe(() => {
-        this.router.navigateByUrl('/');
-      });
-  }
-
   openPipelineDialog(model: Model): void {
     this.dialog.open(TriggerPipelineComponent, {
       data: { project: this.project, model: model },
@@ -72,5 +62,11 @@ export class ModelOverviewComponent implements OnInit {
     } else {
       return '';
     }
+  }
+
+  newReadonlySession(model: Model) {
+    this.dialog.open(NewReadonlySessionDialogComponent, {
+      data: { project: this.project, model: model },
+    });
   }
 }

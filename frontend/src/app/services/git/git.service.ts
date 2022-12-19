@@ -5,7 +5,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 export interface Credentials {
@@ -51,15 +51,27 @@ export class GitService {
     model_slug: string,
     git_model_id: number
   ): void {
-    this.http
-      .post<Revisions>(
-        this.BACKEND_URL_PREFIX +
-          `/projects/${project_slug}/models/${model_slug}/modelsources/git/${git_model_id}/revisions`,
-        gitUrl
-      )
-      .subscribe({
-        next: (revisions) => this._revisions.next(revisions),
-        error: () => this._revisions.next(undefined),
-      });
+    this.privateRevisions(
+      gitUrl,
+      project_slug,
+      model_slug,
+      git_model_id
+    ).subscribe({
+      next: (revisions) => this._revisions.next(revisions),
+      error: () => this._revisions.next(undefined),
+    });
+  }
+
+  privateRevisions(
+    gitUrl: string,
+    project_slug: string,
+    model_slug: string,
+    git_model_id: number
+  ): Observable<Revisions> {
+    return this.http.post<Revisions>(
+      this.BACKEND_URL_PREFIX +
+        `/projects/${project_slug}/models/${model_slug}/modelsources/git/${git_model_id}/revisions`,
+      gitUrl
+    );
   }
 }

@@ -112,7 +112,7 @@ def get_revisions_of_primary_git_model(
     "/{git_model_id}/revisions",
     response_model=GetRevisionsResponseModel,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
     ],
 )
 def get_revisions_with_model_credentials(

@@ -104,7 +104,8 @@
               model.git_models && projectUserService.verifyPermission('read')
             "
             matTooltip="Open readonly session"
-            (click)="requestSession(model)"
+            [disabled]="!getPrimaryGitModelURL(model)"
+            (click)="newReadonlySession(model)"
           >
             <mat-icon>remove_red_eye</mat-icon>
           </button>
