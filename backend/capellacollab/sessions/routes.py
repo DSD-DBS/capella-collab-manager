@@ -287,12 +287,12 @@ def request_persistent_session(
         pv_license_env = pv_license.license_server_url
 
     session = operator.start_persistent_session(
-        get_username(token),
-        rdp_password,
-        docker_image,
-        t4c_license_secret,
-        t4c_json,
-        pv_license_env,
+        username=get_username(token),
+        password=rdp_password,
+        docker_image=docker_image,
+        t4c_license_secret=t4c_license_secret,
+        t4c_json=t4c_json,
+        pure_variants_secret_name=pv_license_env,
     )
 
     response = create_database_and_guacamole_session(

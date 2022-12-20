@@ -119,14 +119,7 @@ class KubernetesOperator:
         deployment = self._create_deployment(
             docker_image,
             id,
-            {
-                "T4C_LICENCE_SECRET": t4c_license_secret,
-                "T4C_JSON": json.dumps(t4c_json),
-                "RMT_PASSWORD": password,
-                "FILESERVICE_PASSWORD": password,
-                "T4C_USERNAME": username,
-                "PURE_VARIANTS_LICENSE_SERVER": pure_variants_license_server,
-            },
+            environment,
             self._get_claim_name(username),
             pure_variants_secret_name,
         )

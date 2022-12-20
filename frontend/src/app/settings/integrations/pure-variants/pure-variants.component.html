@@ -21,7 +21,14 @@
         </mat-form-field>
       </fieldset>
       <div class="flex-space-between">
-        <button mat-raised-button color="primary" type="submit">Update</button>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="form.invalid"
+        >
+          Update
+        </button>
       </div>
     </form>
   </mat-card>
