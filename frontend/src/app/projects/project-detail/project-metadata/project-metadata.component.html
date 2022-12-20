@@ -39,13 +39,26 @@
         </mat-form-field>
       </fieldset>
     </form>
-    <button
-      [disabled]="!form.valid"
-      (click)="updateDescription()"
-      mat-raised-button
-      id="submit"
-    >
-      Submit
-    </button>
+    <p *ngIf="!canDelete">
+      The project can't be deleted since it has linked models.
+    </p>
+    <div class="flex-space-between">
+      <button
+        [disabled]="!canDelete"
+        (click)="deleteProject()"
+        mat-flat-button
+        color="warn"
+      >
+        Delete
+      </button>
+      <button
+        [disabled]="!form.valid"
+        (click)="updateDescription()"
+        mat-raised-button
+        id="submit"
+      >
+        Submit
+      </button>
+    </div>
   </mat-card>
 </div>

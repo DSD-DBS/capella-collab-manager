@@ -52,5 +52,5 @@ def create_project(
 
 
 def delete_project(db: Session, project: DatabaseProject) -> None:
-    project.delete()
+    db.delete(project)
     db.commit()
