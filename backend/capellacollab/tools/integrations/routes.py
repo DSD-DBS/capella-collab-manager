@@ -14,7 +14,7 @@ from . import crud
 from .models import PatchToolIntegrations, ToolIntegrations
 
 router = APIRouter(
-    dependencies=[Depends(RoleVerification(required_role=Role.USER))]
+    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))]
 )
 
 
