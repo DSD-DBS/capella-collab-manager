@@ -9,10 +9,14 @@ RELEASE = dev-t4c-manager
 NAMESPACE = t4c-manager
 SESSION_NAMESPACE = t4c-sessions
 PORT ?= 8080
+
 # List of Capella versions, e.g.: `5.0.0 5.2.0 6.0.0`
 CAPELLA_VERSIONS = 5.2.0
 # List of T4C versions, e.g., `5.2.0 6.0.0`
 T4C_CLIENT_VERSIONS = 5.2.0
+
+TIMEOUT ?= 10m
+
 CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 DOCKER_REGISTRY=$(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)
 
 # Adds support for msys
@@ -117,7 +121,7 @@ wait:
 	@echo "--- Please wait until all services are in running state ---"
 	@echo "-----------------------------------------------------------"
 	@(kubectl get --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) --watch pods) &
-	@kubectl wait --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) --for=condition=Ready --all pods --timeout=5m
+	@kubectl wait --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) --for=condition=Ready --all pods --timeout=$(TIMEOUT)
 	@kill %%
 
 .ONESHELL:
@@ -125,8 +129,8 @@ provision-guacamole:
 	@echo "Waiting for guacamole container, before we can initialize the database..."
 	@kubectl get -n $(NAMESPACE) --watch pods &
 	@sleep 2
-	@kubectl wait --for=condition=Ready pods --timeout=5m --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole
-	@kubectl wait --for=condition=Ready pods --timeout=5m --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres
+	@kubectl wait --for=condition=Ready pods --timeout=$(TIMEOUT) --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole
+	@kubectl wait --for=condition=Ready pods --timeout=$(TIMEOUT) --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres
 	@kill %%
 	@kubectl exec --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole --no-headers | cut -f1 -d' ') -- /opt/guacamole/bin/initdb.sh --postgres | \
 	kubectl exec -i --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $$(kubectl get pod --namespace $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres --no-headers | cut -f1 -d' ') -- psql -U guacamole guacamole
