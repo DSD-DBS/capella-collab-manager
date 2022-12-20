@@ -46,7 +46,9 @@ from capellacollab.sessions.schema import (
     WorkspaceType,
 )
 from capellacollab.sessions.sessions import inject_attrs_in_sessions
-from capellacollab.settings.integrations.purevariants.crud import get_license
+from capellacollab.settings.integrations.purevariants.crud import (
+    get_pure_variants_configuration,
+)
 from capellacollab.settings.modelsources.t4c.repositories.crud import (
     get_user_t4c_repositories,
 )
@@ -324,7 +326,7 @@ def request_persistent_session(
 
     pv_license_server_url = None
     if tool.integrations.pure_variants:
-        if pv_license := get_license(db):
+        if pv_license := get_pure_variants_configuration(db):
             pv_license_server_url = pv_license.license_server_url
         else:
             warnings.append(
@@ -343,7 +345,8 @@ def request_persistent_session(
         docker_image=docker_image,
         t4c_license_secret=t4c_license_secret,
         t4c_json=t4c_json,
-        pure_variants_secret_name=pv_license_server_url,
+        pure_variants_license_server=pv_license_server_url,
+        pure_variants_secret_name="pure-variants",
     )
 
     response = create_database_and_guacamole_session(

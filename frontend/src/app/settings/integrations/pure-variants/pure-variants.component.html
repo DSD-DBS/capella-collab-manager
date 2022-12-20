@@ -6,29 +6,102 @@
 <div class="flex-center">
   <mat-card class="section-card">
     <h2>pure::variants configuration</h2>
-    <form (submit)="onSubmit()" [formGroup]="form">
-      <fieldset>
+    <form
+      (submit)="onLicenseConfigurationSubmit()"
+      [formGroup]="licenseServerConfigurationForm"
+    >
+      <div>
         <app-form-field-skeleton-loader
-          *ngIf="loading"
+          *ngIf="configuration?.license_server_url === undefined || loading"
         ></app-form-field-skeleton-loader>
-        <mat-form-field *ngIf="!loading" appearance="fill">
-          <mat-label>Floating license server URL</mat-label>
-          <input
-            placeholder="http://localhost:8080"
-            matInput
-            formControlName="licenseServerURL"
-          />
-        </mat-form-field>
-      </fieldset>
+        <fieldset>
+          <mat-form-field
+            *ngIf="configuration?.license_server_url !== undefined && !loading"
+            appearance="fill"
+          >
+            <mat-label>Floating license server URL</mat-label>
+            <input
+              placeholder="http://localhost:8080"
+              matInput
+              formControlName="licenseServerURL"
+            />
+          </mat-form-field>
+        </fieldset>
+      </div>
       <div class="flex-space-between">
         <button
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="form.invalid"
+          [disabled]="licenseServerConfigurationForm.invalid"
         >
           Update
         </button>
+      </div>
+    </form>
+    <hr />
+    <form
+      (submit)="onLicenseFileUploadSubmit()"
+      [formGroup]="licenseKeyUploadForm"
+    >
+      <div>
+        Upload "license.lic" file:
+        <br />
+        <app-form-field-skeleton-loader
+          *ngIf="
+            configuration?.license_key_filename === undefined ||
+            loadingLicenseKey
+          "
+        ></app-form-field-skeleton-loader>
+        <div *ngIf="configuration?.license_key_filename && !loadingLicenseKey">
+          You've uploaded a file with the name '{{
+            configuration?.license_key_filename
+          }}' already. If you want to update the license, please remove the
+          current license file first. <br />
+          <button
+            type="button"
+            color="warn"
+            mat-raised-button
+            (click)="onLicenseFileDeletionClick()"
+          >
+            Delete current license
+          </button>
+        </div>
+        <div
+          *ngIf="
+            configuration?.license_key_filename === null && !loadingLicenseKey
+          "
+          class="flex-space-between"
+        >
+          <div>
+            <button
+              id="choose-file-button"
+              type="button"
+              mat-raised-button
+              (click)="fileInput.click()"
+            >
+              Choose File
+            </button>
+            <input
+              hidden
+              #fileInput
+              type="file"
+              (change)="onLicenseFileChange($event)"
+              formControlName="licenseFileName"
+            /><br />
+            Selected file: {{ selectedFile || "No file selected" }}
+          </div>
+          <div class="flex-space-between">
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              [disabled]="licenseKeyUploadForm.invalid"
+            >
+              Upload
+            </button>
+          </div>
+        </div>
       </div>
     </form>
   </mat-card>

@@ -21,8 +21,10 @@ depends_on = None
 def upgrade():
     op.create_table(
         "pure_variants",
-        sa.Column("license_server_url", sa.String(), nullable=False),
-        sa.PrimaryKeyConstraint("license_server_url"),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("license_server_url", sa.String(), nullable=True),
+        sa.Column("license_key_filename", sa.String(), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
     )
 
 
