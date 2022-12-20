@@ -12,9 +12,9 @@ from capellacollab.sessions.operators import OPERATOR
 
 
 class StatusResponse(BaseModel):
-    guacamole: str
-    database: str
-    operator: str
+    guacamole: bool
+    database: bool
+    operator: bool
 
 
 router = APIRouter()
@@ -32,17 +32,17 @@ def get_status(db: Session = Depends(get_db)):
     )
 
 
-def validate_guacamole() -> str:
+def validate_guacamole() -> bool:
     try:
         get_admin_token()
-        return "ok"
-    except:
-        return "cannot authenticate"
+        return True
+    except BaseException:
+        return False
 
 
-def validate_session(session: Session) -> str:
+def validate_session(session: Session) -> bool:
     try:
         session.connection()
-        return "ok"
+        return True
     except:
-        return "no connection"
+        return False
