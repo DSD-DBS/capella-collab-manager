@@ -53,7 +53,9 @@ def upload_license_key_file(
     operator: KubernetesOperator = fastapi.Depends(get_operator),
     db: Session = fastapi.Depends(get_db),
 ):
-    operator.create_secret("pure-variants", {"license.lic": file.file.read()})
+    operator.create_secret(
+        "pure-variants", {"license.lic": file.file.read()}, overwrite=True
+    )
     return crud.set_license_key_filename(db, value=file.filename)
 
 

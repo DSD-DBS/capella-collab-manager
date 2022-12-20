@@ -502,9 +502,7 @@ class KubernetesOperator:
         )
 
     def create_secret(
-        self,
-        name: str,
-        content: dict[str, bytes],
+        self, name: str, content: dict[str, bytes], overwrite: bool = False
     ) -> kubernetes.client.V1Deployment:
         content_b64 = {
             key: base64.b64encode(value).decode()
@@ -518,6 +516,8 @@ class KubernetesOperator:
             data=content_b64,
         )
 
+        if overwrite:
+            self.delete_secret(name)
         self.v1_core.create_namespaced_secret(cfg["namespace"], secret)
 
     def _create_cronjob(
