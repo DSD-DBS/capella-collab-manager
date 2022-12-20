@@ -182,4 +182,35 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.t4cModelService._t4cModel.next(undefined);
   }
+
+  unlinkT4CModel() {
+    if (!window.confirm(`Do you really want to unlink this T4C model?`)) {
+      return;
+    }
+
+    this.t4cModelService
+      .deleteT4CModel(
+        this.projectService.project?.slug!,
+        this.modelService.model?.slug!,
+        this.t4cModel!.id
+      )
+      .subscribe({
+        next: () => {
+          this.toastService.showSuccess(
+            'T4C model deleted',
+            `${this.t4cModel!.name} has been deleted`
+          );
+          this.router.navigateByUrl(
+            `/project/${this.projectService.project?.slug!}/model/${this
+              .modelService.model?.slug!}`
+          );
+        },
+        error: () => {
+          this.toastService.showError(
+            'T4C model deletion failed',
+            `${this.t4cModel!.name} has not been deleted`
+          );
+        },
+      });
+  }
 }
