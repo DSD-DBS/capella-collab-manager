@@ -81,12 +81,12 @@ class KubernetesOperator:
         self.v1_apps = kubernetes.client.AppsV1Api()
         self.v1_batch = kubernetes.client.BatchV1Api()
 
-    def validate(self) -> str:
+    def validate(self) -> bool:
         try:
             self.v1_core.get_api_resources()
-            return "ok"
-        except:
-            return "cannot connect"
+            return True
+        except BaseException:
+            return False
 
     def start_persistent_session(
         self,
