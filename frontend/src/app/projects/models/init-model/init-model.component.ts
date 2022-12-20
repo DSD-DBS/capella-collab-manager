@@ -88,16 +88,14 @@ export class InitModelComponent implements OnInit, OnDestroy {
     if (
       this.form.valid &&
       this.modelService.model &&
-      this.projectService.project &&
-      this.form.value.version &&
-      this.form.value.nature
+      this.projectService.project
     ) {
       this.modelService
         .setToolDetailsForModel(
           this.projectService.project.slug,
           this.modelService.model.slug,
-          this.form.value.version,
-          this.form.value.nature
+          this.form.value.version!,
+          this.form.value.nature!
         )
         .subscribe((_) => {
           this.create.emit({ created: true });

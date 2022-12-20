@@ -89,12 +89,7 @@ export class CreateModelComponent implements OnDestroy {
       this.currentStep.emit('complete');
       if (this.redirectAfterCompletion) {
         this.detail = true;
-        this.router.navigate([
-          '/project',
-          this.projectService.project!.slug,
-          'model',
-          this.modelService.model!.slug,
-        ]);
+        this.router.navigate(['/project', this.projectService.project!.slug]);
       }
     } else {
       this.stepper.previous();
