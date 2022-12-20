@@ -5,11 +5,13 @@ from __future__ import annotations
 
 import typing as t
 
-from fastapi import APIRouter, Depends
+import fastapi
 from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication.database import RoleVerification
 from capellacollab.core.database import get_db
+from capellacollab.sessions.operators import get_operator
+from capellacollab.sessions.operators.k8s import KubernetesOperator
 from capellacollab.settings.integrations.purevariants import crud
 from capellacollab.settings.integrations.purevariants.models import (
     DatabasePureVariantsLicenses,
@@ -17,8 +19,8 @@ from capellacollab.settings.integrations.purevariants.models import (
 )
 from capellacollab.users.models import Role
 
-router = APIRouter(
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+router = fastapi.APIRouter(
+    dependencies=[fastapi.Depends(RoleVerification(required_role=Role.ADMIN))],
 )
 
 
@@ -27,9 +29,9 @@ router = APIRouter(
     response_model=t.Optional[PureVariantsLicenses],
 )
 def get_license(
-    db: Session = Depends(get_db),
+    db: Session = fastapi.Depends(get_db),
 ) -> DatabasePureVariantsLicenses | None:
-    return crud.get_license(db)
+    return crud.get_pure_variants_configuration(db)
 
 
 @router.patch(
@@ -37,6 +39,28 @@ def get_license(
     response_model=PureVariantsLicenses,
 )
 def set_license(
-    body: PureVariantsLicenses, db: Session = Depends(get_db)
+    body: PureVariantsLicenses, db: Session = fastapi.Depends(get_db)
 ) -> DatabasePureVariantsLicenses:
-    return crud.set_license(db, body.license_server_url)
+    return crud.set_license_server_configuration(db, body.license_server_url)
+
+
+@router.post(
+    "/license-keys",
+    response_model=PureVariantsLicenses,
+)
+def upload_license_key_file(
+    file: fastapi.UploadFile,
+    operator: KubernetesOperator = fastapi.Depends(get_operator),
+    db: Session = fastapi.Depends(get_db),
+):
+    operator.create_secret("pure-variants", {"license.lic": file.file.read()})
+    return crud.set_license_key_filename(db, value=file.filename)
+
+
+@router.delete("/license-keys/0")
+def delete_license_key_file(
+    operator: KubernetesOperator = fastapi.Depends(get_operator),
+    db: Session = fastapi.Depends(get_db),
+):
+    crud.set_license_key_filename(db, None)
+    operator.delete_secret("pure-variants")
