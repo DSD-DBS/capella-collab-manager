@@ -73,6 +73,7 @@ import { InitModelComponent } from './projects/models/init-model/init-model.comp
 import { ModelDescriptionComponent } from './projects/models/model-description/model-description.component';
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
 import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
+import { ModelRestrictionsComponent } from './projects/models/model-restrictions/model-restrictions.component';
 import { ChooseSourceComponent } from './projects/models/model-source/choose-source.component';
 import { ManageGitModelComponent } from './projects/models/model-source/git/manage-git-model/manage-git-model.component';
 import { ManageT4CModelComponent } from './projects/models/model-source/t4c/manage-t4c-model/manage-t4c-model.component';
@@ -153,6 +154,7 @@ import { HomeComponent } from './workspaces/home.component';
     ModelDescriptionComponent,
     ModelDetailComponent,
     ModelOverviewComponent,
+    ModelRestrictionsComponent,
     ModelWrapperComponent,
     NewReadonlyModelOptionsComponent,
     NewReadonlySessionDialogComponent,

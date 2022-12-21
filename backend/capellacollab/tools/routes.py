@@ -153,7 +153,7 @@ def patch_tool_version(
     version: Version = Depends(injectables.get_exisiting_tool_version),
     db: Session = Depends(get_db),
 ) -> Version:
-    patch_database_with_pydantic_object(version, body)
+    patch_database_with_pydantic_object(db, version, body)
 
     return crud.update_version(version, db)
 
