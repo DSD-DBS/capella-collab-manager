@@ -5,14 +5,17 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import {
+  Model,
+  ModelService,
+} from 'src/app/projects/models/service/model.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import { Model, ModelService } from 'src/app/services/model/model.service';
 import {
   Project,
   ProjectService,
 } from 'src/app/services/project/project.service';
 import { SessionService } from 'src/app/services/session/session.service';
+import { UserService } from 'src/app/services/user/user.service';
 import { NewReadonlySessionDialogComponent } from 'src/app/sessions/new-readonly-session-dialog/new-readonly-session-dialog.component';
 import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 
@@ -30,8 +33,8 @@ export class ModelOverviewComponent implements OnInit {
     public modelService: ModelService,
     private dialog: MatDialog,
     public sessionService: SessionService,
-    private router: Router,
-    public projectUserService: ProjectUserService
+    public projectUserService: ProjectUserService,
+    public userService: UserService
   ) {}
 
   ngOnInit(): void {

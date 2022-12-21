@@ -13,9 +13,9 @@ import {
   AbstractControl,
 } from '@angular/forms';
 
+import { Model } from 'src/app/projects/models/service/model.service';
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { Revisions, GitService } from 'src/app/services/git/git.service';
-import { Model } from 'src/app/services/model/model.service';
 
 export type ModelOptions = {
   model: Model;

@@ -29,6 +29,7 @@ import {
   hasAbsoluteUrlPrefix,
   hasRelativePathPrefix,
 } from 'src/app/helpers/validators/url-validator';
+import { ModelService } from 'src/app/projects/models/service/model.service';
 import {
   CreateGitModel,
   GetGitModel,
@@ -40,7 +41,6 @@ import {
   GitService,
   Revisions,
 } from 'src/app/services/git/git.service';
-import { ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 import {
   GitSetting,

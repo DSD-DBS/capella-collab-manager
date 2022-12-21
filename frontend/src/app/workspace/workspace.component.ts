@@ -5,7 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ModelService } from '../services/model/model.service';
+import { ModelService } from '../projects/models/service/model.service';
 import { SessionService } from '../services/session/session.service';
 import {
   ToolService,
