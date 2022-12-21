@@ -24,6 +24,7 @@ from .models import (
     PostCapellaModel,
 )
 from .modelsources.routes import router as router_modelsources
+from .restrictions.routes import router as router_restrictions
 
 router = APIRouter(
     dependencies=[
@@ -163,4 +164,9 @@ router.include_router(
     router_backups,
     prefix="/{model_slug}/backups/pipelines",
     tags=["Projects - Models - Backups"],
+)
+router.include_router(
+    router_restrictions,
+    prefix="/{model_slug}/restrictions",
+    tags=["Projects - Models - Restrictions"],
 )

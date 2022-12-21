@@ -25,8 +25,9 @@ def get_db() -> Session:
 
 
 def patch_database_with_pydantic_object(
-    database_object: Base, pydantic_object: BaseModel
+    db: Session, database_object: Base, pydantic_object: BaseModel
 ):
     for key, value in pydantic_object.dict().items():
         if value is not None:
             database_object.__setattr__(key, value)
+    db.commit()

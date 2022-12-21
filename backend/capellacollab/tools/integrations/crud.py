@@ -17,7 +17,7 @@ def update_integrations(
     patch_integrations: PatchToolIntegrations,
 ) -> Tool:
     patch_database_with_pydantic_object(
-        existing_integrations, patch_integrations
+        db, existing_integrations, patch_integrations
     )
     db.commit()
     return existing_integrations

@@ -5,6 +5,7 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ModelRestrictionsComponent } from 'src/app/projects/models/model-restrictions/model-restrictions.component';
 import { AuthGuardService } from './general/auth/auth-guard/auth-guard.service';
 import { AuthRedirectComponent } from './general/auth/auth-redirect/auth-redirect.component';
 import { AuthComponent } from './general/auth/auth/auth.component';
@@ -80,6 +81,10 @@ const routes: Routes = [
               {
                 path: 'metadata',
                 component: ModelDescriptionComponent,
+              },
+              {
+                path: 'restrictions',
+                component: ModelRestrictionsComponent,
               },
               {
                 path: 'git-model',
