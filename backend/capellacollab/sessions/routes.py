@@ -324,20 +324,10 @@ def request_persistent_session(
                     exc_info=True,
                 )
 
-    pv_license_server_url = None
-    if tool.integrations.pure_variants:
-        if pv_license := get_pure_variants_configuration(db):
-            pv_license_server_url = pv_license.license_server_url
-        else:
-            warnings.append(
-                Message(
-                    reason=(
-                        "You are trying to create a persistent session with a pure::variants integration.",
-                        "We were not able to find a valid license server URL in our database.",
-                        "Your session will not be connected to the pure::variants license server.",
-                    )
-                )
-            )
+    (
+        pv_license_server_url,
+        pure_variants_secret_name,
+    ) = determine_pure_variants_configuration(db, user, tool, warnings)
 
     session = operator.start_persistent_session(
         username=get_username(token),
@@ -346,7 +336,7 @@ def request_persistent_session(
         t4c_license_secret=t4c_license_secret,
         t4c_json=t4c_json,
         pure_variants_license_server=pv_license_server_url,
-        pure_variants_secret_name="pure-variants",
+        pure_variants_secret_name=pure_variants_secret_name,
     )
 
     response = create_database_and_guacamole_session(
@@ -362,6 +352,47 @@ def request_persistent_session(
     )
     response.warnings = warnings
     return response
+
+
+def determine_pure_variants_configuration(
+    db: Session, user: DatabaseUser, tool: Tool, warnings: list[Message]
+):
+    if not tool.integrations.pure_variants:
+        return (None, None)
+
+    if (
+        not [
+            model
+            for association in user.projects
+            for model in association.project.models
+            if model.restrictions.allow_pure_variants
+        ]
+        and user.role == Role.USER
+    ):
+        warnings.append(
+            Message(
+                reason=(
+                    "You are trying to create a persistent session with a pure::variants integration.",
+                    "We were not able to find a model with a pure::variants integration.",
+                    "Your session will not be connected to the pure::variants license server.",
+                )
+            )
+        )
+        return (None, None)
+
+    if not (pv_license := get_pure_variants_configuration(db)):
+        warnings.append(
+            Message(
+                reason=(
+                    "You are trying to create a persistent session with a pure::variants integration.",
+                    "We were not able to find a valid license server URL in our database.",
+                    "Your session will not be connected to the pure::variants license server.",
+                )
+            )
+        )
+        return (None, None)
+
+    return (pv_license.license_server_url, "pure-variants")
 
 
 def create_database_and_guacamole_session(
