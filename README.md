@@ -107,33 +107,60 @@ running in a few minutes.
 
 ### Deployment
 
-### Install on a cluster
+### Install/Upgrade on a cluster
 
 1. Ensure your `kubectl` configuration points to the right cluster
-2. Copy `helm/values.yaml` to `deployments/yourinstance.values.yaml`
-3. Set all required values in the `deployments/yourinstance.values.yaml` configuration file
-4. Create your sessions namespace in your kubernetes cluster:
+1. Make sure that your cluster has enough resources.
+   The minimum required resources are 3 [Kubernetes CPU cores](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu)
+   and around 2,5GiB of memory for the management platform.
+   Depending on the load, the instance can scale up and is limited to 10 Kubernetes CPU cores cores and ~8GiB of memory.
+
+   Each session requires a minimum of 0.4 Kubernetes CPU cores and 1.6Gi of memory.
+   A session can scale up until it reaches 2 Kubernetes CPU cores and 6Gi of memory.
+
+1. Copy `helm/values.yaml` to `deployments/yourinstance.values.yaml` and
+   set all required values in the `deployments/yourinstance.values.yaml` configuration file.
+
+   If you're upgrading the instance, please make sure to compare the changes in the `values.yaml` before continuing.
+
+1. If it doesn't exist yet, create namespace for the sessions in your kubernetes cluster:
 
    ```sh
-   kubectl create namespace <your-namespace>
+   kubectl create namespace <sessions-namespace>
    ```
 
-5. Run the following command to deploy to your kubernetes cluster:
+1. Run the following command to deploy to your kubernetes cluster:
 
    ```sh
-   helm install production -n <namespace> -f deployments/yourinstance.values.yaml helm
+   helm upgrade --install production -n <namespace> -f deployments/yourinstance.values.yaml helm
    ```
 
-6. Set up the database for guacamole: [Initializing the PostgreSQL database](https://guacamole.apache.org/doc/gug/guacamole-docker.html#initializing-the-postgresql-database)
+1. Set up the database for guacamole: [Initializing the PostgreSQL database](https://guacamole.apache.org/doc/gug/guacamole-docker.html#initializing-the-postgresql-database)
+1. Verify the status of all pods with
 
-### Upgrade an cluster instance
+   ```zsh
+   kubectl -n <namespace> get pods
+   ```
 
-1. Ensure your `kubectl` configuration points to the right cluster
-2. Compare `helm/values.yaml` with your `deployments/yourinstance.values.yaml` and update your configuration accordingly.
-3. Run the following command to deploy to your kubernetes cluster:
+### Uninstall the environment
+
+1. If you want to uninstall the management portal, you can run the following comment:
 
    ```sh
-   helm upgrade production -n <namespace> -f deployments/yourinstance.values.yaml helm
+   helm uninstall production -n <namespace> helm
+   ```
+
+1. The previous command doesn't clean the sessions namespace.
+   Please clean it manually by running (this does also remove all persistent workspaces!):
+
+   ```zsh
+   kubectl -n <sessions-namespace> delete all --all
+   ```
+
+   or just delete the namespace:
+
+   ```zsh
+   kubectl delete namespace <sessions-namespace>
    ```
 
 ### Team for Capella integration
@@ -147,12 +174,15 @@ For environments where TeamForCapella (commercial product of Obeo) is available 
 The Capella Collaboration Manager consists of a couple of components:
 
 - A frontend - what you see in the browser
-- A backend web service - for managing users and sessions
+- A backend service - for managing projects, users and sessions
 - [Guacamole](https://guacamole.apache.org/), to expose the sessions via the browser
-- Databases, for state persistence.
-- Optional: A Teams4Capella server
+- Databases, for state persistence
 
-Sessions are created in a separate namespace.
+External software can also be linked. These parts can be installed separately:
+
+- Optional: A Git server (used for read-only sessions and Git backups)
+- Optional: A Team4Capella server
+- Optional: A pure::variants server
 
 ## Contributing
 
