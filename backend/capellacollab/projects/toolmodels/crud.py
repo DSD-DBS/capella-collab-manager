@@ -15,6 +15,8 @@ from capellacollab.projects.toolmodels.models import (
 )
 from capellacollab.tools.models import Nature, Tool, Version
 
+from .restrictions.models import DatabaseToolModelRestrictions
+
 
 def get_all_models(db: Session) -> list[DatabaseCapellaModel]:
     return db.execute(select(DatabaseCapellaModel)).scalars().all()
@@ -91,6 +93,8 @@ def create_new_model(
     version: Version | None = None,
     nature: Nature | None = None,
 ) -> DatabaseCapellaModel:
+    restrictions = DatabaseToolModelRestrictions()
+
     model = DatabaseCapellaModel(
         name=new_model.name,
         slug=slugify(new_model.name),
@@ -99,6 +103,7 @@ def create_new_model(
         tool=tool,
         version=version,
         nature=nature,
+        restrictions=restrictions,
     )
     db.add(model)
     db.commit()

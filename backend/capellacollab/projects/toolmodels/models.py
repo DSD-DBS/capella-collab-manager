@@ -7,7 +7,7 @@ from __future__ import annotations
 import enum
 import typing as t
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from sqlalchemy import (
     Column,
     Enum,
@@ -30,6 +30,8 @@ from capellacollab.tools.models import (
     Version,
 )
 
+from .restrictions.models import ToolModelRestrictions
+
 if t.TYPE_CHECKING:
     from capellacollab.projects.models import DatabaseProject
     from capellacollab.projects.toolmodels.modelsources.git.models import (
@@ -37,6 +39,11 @@ if t.TYPE_CHECKING:
     )
     from capellacollab.projects.toolmodels.modelsources.t4c.models import (
         DatabaseT4CModel,
+    )
+
+    from .restrictions.models import (
+        DatabaseToolModelRestrictions,
+        ToolModelRestrictions,
     )
 
 
@@ -94,6 +101,10 @@ class DatabaseCapellaModel(Base):
         "DatabaseGitModel", back_populates="model"
     )
 
+    restrictions: DatabaseToolModelRestrictions = relationship(
+        "DatabaseToolModelRestrictions", back_populates="model", uselist=False
+    )
+
 
 class CapellaModel(BaseModel):
     id: int
@@ -105,6 +116,8 @@ class CapellaModel(BaseModel):
     nature: t.Optional[ToolNatureBase]
     git_models: t.Optional[list[GitModel]]
     t4c_models: t.Optional[list[T4CModel]]
+
+    restrictions: t.Optional[ToolModelRestrictions]
 
     class Config:
         orm_mode = True
