@@ -11,7 +11,10 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Model, ModelService } from 'src/app/services/model/model.service';
+import {
+  Model,
+  ModelService,
+} from 'src/app/projects/models/service/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { SessionService } from 'src/app/services/session/session.service';
 import { CreateBackupComponent } from '../create-backup/create-backup.component';

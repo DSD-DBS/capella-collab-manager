@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import { ModelService } from 'src/app/services/model/model.service';
+import { ModelService } from 'src/app/projects/models/service/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({

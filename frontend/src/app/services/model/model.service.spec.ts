@@ -5,7 +5,7 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { ModelService } from './model.service';
+import { ModelService } from '../../projects/models/service/model.service';
 
 xdescribe('ModelService', () => {
   let service: ModelService;

@@ -8,8 +8,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
+import {
+  Model,
+  ModelService,
+} from 'src/app/projects/models/service/model.service';
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { Model, ModelService } from 'src/app/services/model/model.service';
 import { Project } from 'src/app/services/project/project.service';
 import { SessionService } from 'src/app/services/session/session.service';
 import { ModelOptions } from 'src/app/sessions/new-readonly-session-dialog/new-readonly-model-options/new-readonly-model-options.component';

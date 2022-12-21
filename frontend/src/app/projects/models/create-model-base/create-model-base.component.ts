@@ -19,7 +19,7 @@ import {
   Model,
   ModelService,
   NewModel,
-} from 'src/app/services/model/model.service';
+} from 'src/app/projects/models/service/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { ToolService } from 'src/app/settings/core/tools-settings/tool.service';
 
