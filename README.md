@@ -118,6 +118,9 @@ running in a few minutes.
    Each session requires a minimum of 0.4 Kubernetes CPU cores and 1.6Gi of memory.
    A session can scale up until it reaches 2 Kubernetes CPU cores and 6Gi of memory.
 
+1. The setup requires at least one Docker container registry, which has to be accessible from the cluster.
+   All images need to be pushed to the registry.
+
 1. Copy `helm/values.yaml` to `deployments/yourinstance.values.yaml` and
    set all required values in the `deployments/yourinstance.values.yaml` configuration file.
 
