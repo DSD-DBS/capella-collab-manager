@@ -47,7 +47,7 @@ class HistoryEvent(BaseHistoryEvent):
 
 
 class UserHistory(User):
-    created: datetime
+    created: t.Optional[datetime]
     last_login: t.Optional[datetime]
     events: t.Optional[list[HistoryEvent]]
 

@@ -102,7 +102,7 @@
     <h2>User information</h2>
     <div *ngIf="selectedUserHistory; else notSelected">
       <div>Username: {{ selectedUserHistory.name }}</div>
-      <div>
+      <div *ngIf="selectedUserHistory.created">
         Created:
         {{ selectedUserHistory.created | date: "EE, dd MMM y HH:mm:ss" }}
       </div>
