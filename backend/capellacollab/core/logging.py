@@ -71,8 +71,8 @@ class LogRequestsMiddleware(base.BaseHTTPMiddleware):
     ):
         get_logger(request).info("request started")
         response: Response = await call_next(request)
-        get_response_logger(request).info(
-            "request finished", status_code=response.status_code
+        get_logger(request).info(
+            "request finished", {"status_code": response.status_code}
         )
 
         return response
@@ -83,30 +83,17 @@ class HealthcheckFilter(logging.Filter):
         return record.getMessage().find("/healthcheck") == -1
 
 
-class RequestLogAdapter(logging.LoggerAdapter):
+class LogAdapter(logging.LoggerAdapter):
     def process(self, msg: str, kwargs):
         log_extra = kwargs.get("extra", {})
         self_extra = self.extra
-        extra: dict = log_extra | self_extra
-        msg = "{msg_pref}{msg} ".format(
-            msg_pref="" if self.extra["chaining"] else 'message="',
-            msg=msg + ("" if self.extra["chaining"] else '"'),
+        extra: dict = self_extra | log_extra
+
+        msg = (
+            " ".join([f'{key}="{value}"' for key, value in extra.items()])
+            + f' message="{msg}"'
         )
-
-        msg += " ".join([f'{key}="{value}"' for key, value in extra.items()])
         return (msg, kwargs)
-
-
-class ErrorLogAdapter(logging.LoggerAdapter):
-    def process(self, msg: str, kwargs):
-        error_code = kwargs.pop("error_code", self.extra["error_code"])
-        return (f'error_code={error_code} message="{msg}"', kwargs)
-
-
-class ResLogAdapter(logging.LoggerAdapter):
-    def process(self, msg: str, kwargs):
-        status_code = kwargs.pop("status_code", self.extra["status_code"])
-        return (f'status_code={status_code} message="{msg}"', kwargs)
 
 
 def get_general_logger(name: str, log_leveL=LOGGING_LEVEL) -> logging.Logger:
@@ -117,7 +104,7 @@ def get_general_logger(name: str, log_leveL=LOGGING_LEVEL) -> logging.Logger:
     if not logger.handlers:
         handler = logging.StreamHandler()
         formatter = logging.Formatter(
-            "time=%(asctime)s level=%(levelname)s function=%(funcName)s %(message)s"
+            'time="%(asctime)s" level=%(levelname)s function=%(funcName)s %(message)s'
         )
         handler.setFormatter(formatter)
         logger.addHandler(handler)
@@ -125,39 +112,19 @@ def get_general_logger(name: str, log_leveL=LOGGING_LEVEL) -> logging.Logger:
     return logger
 
 
-def get_general_log_args(
-    request: Request, chaining=False
-) -> t.Dict[str, t.Any]:
-    client = request.client
-    return {
+def get_log_args(request: Request) -> t.Dict[str, t.Any]:
+    log_args = {}
+    if client := request.client:
+        log_args["client"] = client.host + ":" + str(client.port)
+    return log_args | {
         "trace_id": request.state.trace_id,
         "method": request.method,
         "path": request.url.path,
         "user": request.state.user_name,
-        "client": client[0] + ":" + str(client[1]) if client else "unknown",
-        "chaining": chaining,
     }
 
 
 def get_logger(request: Request) -> logging.LoggerAdapter:
-    return RequestLogAdapter(
-        get_general_logger(request.url.path), get_general_log_args(request)
+    return LogAdapter(
+        get_general_logger(request.url.path), get_log_args(request)
     )
-
-
-def get_error_code_logger(request: Request) -> logging.LoggerAdapter:
-    req_logger = RequestLogAdapter(
-        get_general_logger(request.url.path, log_leveL=logging.ERROR),
-        get_general_log_args(request, chaining=True),
-    )
-    return ErrorLogAdapter(
-        req_logger, {"error_code": None, "request": request}
-    )
-
-
-def get_response_logger(request: Request) -> logging.LoggerAdapter:
-    req_logger = RequestLogAdapter(
-        get_general_logger(request.url.path),
-        get_general_log_args(request, chaining=True),
-    )
-    return ResLogAdapter(req_logger, {"status_code": None, "request": request})

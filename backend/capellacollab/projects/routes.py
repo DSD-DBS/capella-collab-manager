@@ -15,7 +15,7 @@ from capellacollab.core.authentication.database import (
     get_db,
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.logging import get_error_code_logger, get_logger
+from capellacollab.core.logging import get_logger
 from capellacollab.projects import crud
 from capellacollab.projects.models import (
     DatabaseProject,
