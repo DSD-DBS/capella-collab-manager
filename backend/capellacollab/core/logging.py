@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
+
 import logging
 import logging.handlers
 import os
@@ -20,7 +22,7 @@ LOGGING_LEVEL = config["logging"]["level"]
 
 
 class MakeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
-    def __init__(self, filename):
+    def __init__(self, filename: str | os.PathLike[str]):
         pathlib.Path(filename).parent.mkdir(exist_ok=True)
         super().__init__(filename, when="D", backupCount=1, delay=True)
 
