@@ -4,6 +4,7 @@
 import logging
 import logging.handlers
 import os
+import pathlib
 import random
 import string
 import typing as t
@@ -20,7 +21,7 @@ LOGGING_LEVEL = config["logging"]["level"]
 
 class MakeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
     def __init__(self, filename):
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        pathlib.Path(filename).parent.mkdir(exist_ok=True)
         super().__init__(filename, when="D", backupCount=1, delay=True)
 
 
