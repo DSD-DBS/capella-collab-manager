@@ -53,11 +53,10 @@ def get_projects(
     token=Depends(JWTBearer()),
     log: logging.LoggerAdapter = Depends(get_logger),
 ) -> t.List[DatabaseProject]:
+    log.debug("Fetching all projects")
     if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
-        log.info(f"{user.name} (Administrator) gets all projects")
         return crud.get_all_projects(db)
 
-    log.info(f"{user.name} (User) gets all projects they have access to")
     return [association.project for association in user.projects]
 
 
