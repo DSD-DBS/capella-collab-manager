@@ -12,7 +12,7 @@ import string
 import typing as t
 
 from fastapi import Request, Response
-from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware import base
 
 from capellacollab.config import config
 from capellacollab.core.authentication.helper import get_username
@@ -27,8 +27,10 @@ class MakeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
         super().__init__(filename, when="D", backupCount=1, delay=True)
 
 
-class AttachTraceIdMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
+class AttachTraceIdMiddleware(base.BaseHTTPMiddleware):
+    async def dispatch(
+        self, request: Request, call_next: base.RequestResponseEndpoint
+    ):
         request.state.trace_id = "".join(
             random.choices(string.ascii_uppercase + string.digits, k=6)
         )
@@ -36,8 +38,10 @@ class AttachTraceIdMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
 
-class AttachUserNameMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
+class AttachUserNameMiddleware(base.BaseHTTPMiddleware):
+    async def dispatch(
+        self, request: Request, call_next: base.RequestResponseEndpoint
+    ):
         username = "anonymous"
         if token := await JWTBearer(auto_error=False)(request):
             username = get_username(token)
@@ -47,8 +51,10 @@ class AttachUserNameMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
 
-class LogExceptionMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
+class LogExceptionMiddleware(base.BaseHTTPMiddleware):
+    async def dispatch(
+        self, request: Request, call_next: base.RequestResponseEndpoint
+    ):
         try:
             return await call_next(request)
         except Exception as exc:
@@ -59,8 +65,10 @@ class LogExceptionMiddleware(BaseHTTPMiddleware):
             raise exc
 
 
-class LogRequestsMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
+class LogRequestsMiddleware(base.BaseHTTPMiddleware):
+    async def dispatch(
+        self, request: Request, call_next: base.RequestResponseEndpoint
+    ):
         get_logger(request).info("request started")
         response: Response = await call_next(request)
         get_response_logger(request).info(
