@@ -84,7 +84,7 @@ class HealthcheckFilter(logging.Filter):
 
 
 class RequestLogAdapter(logging.LoggerAdapter):
-    def process(self, msg, kwargs):
+    def process(self, msg: str, kwargs):
         log_extra = kwargs.get("extra", {})
         self_extra = self.extra
         extra: dict = log_extra | self_extra
@@ -98,13 +98,13 @@ class RequestLogAdapter(logging.LoggerAdapter):
 
 
 class ErrorLogAdapter(logging.LoggerAdapter):
-    def process(self, msg, kwargs):
+    def process(self, msg: str, kwargs):
         error_code = kwargs.pop("error_code", self.extra["error_code"])
         return (f'error_code={error_code} message="{msg}"', kwargs)
 
 
 class ResLogAdapter(logging.LoggerAdapter):
-    def process(self, msg, kwargs):
+    def process(self, msg: str, kwargs):
         status_code = kwargs.pop("status_code", self.extra["status_code"])
         return (f'status_code={status_code} message="{msg}"', kwargs)
 
