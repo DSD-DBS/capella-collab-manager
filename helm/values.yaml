@@ -5,12 +5,6 @@
 ### APPLICATION RELATED CONFIGURATION ###
 #########################################
 
-definitions:
-  loki:
-    url: &lokiPushUrl http://loki-gateway.{{- .Release.Namespace -}}.svc.cluster.local/loki/api/v1/push
-    username: &lokiUsername localLokiUser
-    password: &lokiPassword localLokiPassword
-
 # Replicas for all deployments (defaults to 1)
 replicaCount:
   backend: 1
@@ -206,6 +200,13 @@ cluster:
 
 # Specify the NO_PROXY environment for the backend
 # Leave it empty if not needed
+
+definitions:
+  loki:
+    url: &lokiPushUrl http://loki-gateway.{{- .Release.Namespace -}}.svc.cluster.local/loki/api/v1/push
+    username: &lokiUsername localLokiUser
+    password: &lokiPassword localLokiPassword
+
 proxy:
   no_proxy:
 
