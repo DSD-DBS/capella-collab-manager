@@ -92,7 +92,7 @@ open:
 
 clear-backend-db:
 	kubectl delete deployment -n t4c-manager $(RELEASE)-backend-postgres
-	kubectl delete pvc -n t4c-manager $(RELEASE)-backend-postgres
+	kubectl delete pvc -n t4c-manager $(RELEASE)-volume-backend-postgres
 	$(MAKE) helm-deploy
 
 rollout:

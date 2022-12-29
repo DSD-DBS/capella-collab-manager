@@ -6,7 +6,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ .Release.Name }}-backend-postgres
+  name: {{ .Release.Name }}-volume-backend-postgres
   labels:
     id: {{ .Release.Name }}-pvc-backend-postgres
 spec:
