@@ -31,8 +31,8 @@ spec:
           resources:
             {{ if eq .Values.target "local" }}
             limits:
-              cpu: "0.05"
-              memory: 10Mi
+              cpu: "0.2"
+              memory: 20Mi
             requests:
               cpu: "0.01"
               memory: 5Mi
