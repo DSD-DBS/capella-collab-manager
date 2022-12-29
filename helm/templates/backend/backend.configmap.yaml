@@ -11,3 +11,5 @@ metadata:
 data:
   config.yaml: |
     {{- tpl (.Files.Get "config/backend.yaml") . | nindent 4 }}
+  config_schema.json: |
+    {{- tpl (.Files.Get "config/backend_schema.json") . | nindent 4 }}
