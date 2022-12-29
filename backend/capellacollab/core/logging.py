@@ -26,10 +26,9 @@ class MakeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
 
 class AttachTraceIdMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        trace_id = "".join(
+        request.state.trace_id = "".join(
             random.choices(string.ascii_uppercase + string.digits, k=6)
         )
-        request.state.trace_id = trace_id
 
         return await call_next(request)
 
