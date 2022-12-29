@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import typing as t
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -66,13 +64,11 @@ def create_t4c_model(
 
 
 def patch_t4c_model(
-    db: Session,
-    t4c_model: DatabaseT4CModel,
-    patch_model: SubmitT4CModel,
+    db: Session, t4c_model: DatabaseT4CModel, patch_model: SubmitT4CModel
 ) -> DatabaseT4CModel:
     for key in patch_model.dict():
-        if value := patch_model.__getattribute__(key):
-            t4c_model.__setattr__(key, value)
+        if value := getattr(patch_model, key):
+            setattr(t4c_model, key, value)
     db.commit()
     return t4c_model
 

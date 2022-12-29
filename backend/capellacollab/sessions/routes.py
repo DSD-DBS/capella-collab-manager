@@ -206,12 +206,16 @@ def request_session(
 
 
 def models_as_json(
-    models: t.List[t.Tuple[PostReadonlySessionEntry, DatabaseCapellaModel]]
+    models: list[tuple[PostReadonlySessionEntry, DatabaseCapellaModel]]
 ):
     for entry, model in models:
-        git_model = next(
-            gm for gm in model.git_models if gm.id == entry.git_model_id
-        )
+        if not (
+            git_model := next(
+                (gm for gm in model.git_models if gm.id == entry.git_model_id),
+                None,
+            )
+        ):
+            return
         yield git_model_as_json(git_model, entry.deep_clone)
 
 
@@ -453,15 +457,13 @@ def end_session(
 
 
 @router.post(
-    "/{id}/guacamole-tokens",
+    "/{session_id}/guacamole-tokens",
     response_model=GuacamoleAuthentication,
 )
 def create_guacamole_token(
-    id: str,
-    db: Session = Depends(get_db),
+    session: DatabaseSession = Depends(get_existing_session),
     token=Depends(JWTBearer()),
 ):
-    session = crud.get_session_by_id(db, id)
     if session.owner_name != get_username(token):
         raise HTTPException(
             status_code=403,

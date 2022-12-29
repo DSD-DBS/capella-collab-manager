@@ -23,14 +23,14 @@ ep_main = importlib.import_module(".__main__", ep.module)
 
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
-        super(JWTBearer, self).__init__(auto_error=auto_error)
+        super().__init__(auto_error=auto_error)
 
     async def __call__(
         self, request: Request
     ) -> t.Optional[t.Dict[str, t.Any]]:
-        credentials: t.Optional[HTTPAuthorizationCredentials] = await super(
-            JWTBearer, self
-        ).__call__(request)
+        credentials: t.Optional[
+            HTTPAuthorizationCredentials
+        ] = await super().__call__(request)
 
         if not credentials or credentials.scheme != "Bearer":
             if self.auto_error:

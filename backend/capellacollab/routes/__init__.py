@@ -14,6 +14,7 @@ import capellacollab.sessions.routes as sessions
 import capellacollab.settings.routes as settings
 import capellacollab.users.routes as users
 from capellacollab.config import config
+from capellacollab.core.authentication import get_authentication_entrypoint
 from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,
 )
@@ -56,19 +57,7 @@ router.include_router(
 )
 
 # Load authentication routes
-try:
-    ep = next(
-        i
-        for i in metadata.entry_points()[
-            "capellacollab.authentication.providers"
-        ]
-        if i.name == config["authentication"]["provider"]
-    )
-except StopIteration:
-    raise ValueError(
-        "Unknown authentication provider "
-        + config["authentication"]["provider"]
-    ) from None
+ep = get_authentication_entrypoint()
 
 router.include_router(
     importlib.import_module(".routes", ep.module).router,

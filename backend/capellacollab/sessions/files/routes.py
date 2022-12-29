@@ -10,13 +10,12 @@ import requests
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 from requests.auth import HTTPBasicAuth
-from sqlalchemy.orm import Session
 
 from capellacollab.config import config
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.database import get_db
-from capellacollab.sessions.crud import get_session_by_id
+from capellacollab.sessions.injectables import get_existing_session
+from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import OPERATOR
 from capellacollab.sessions.schema import FileTree
 
@@ -25,13 +24,10 @@ log = logging.getLogger(__name__)
 
 
 def check_session_belongs_to_user(
-    session_id: str,
-    db: Session = Depends(get_db),
+    session: DatabaseSession = Depends(get_existing_session),
     token=Depends(JWTBearer()),
 ):
-    username = get_username(token)
-    session = get_session_by_id(db, session_id)
-    if not session.owner_name == username:
+    if not session.owner_name == get_username(token):
         raise HTTPException(
             status_code=403,
             detail={
@@ -46,12 +42,8 @@ def check_session_belongs_to_user(
     dependencies=[Depends(check_session_belongs_to_user)],
 )
 def get_files(
-    session_id: str,
-    show_hidden: bool,
-    db: Session = Depends(get_db),
+    show_hidden: bool, session: DatabaseSession = Depends(get_existing_session)
 ):
-    session = get_session_by_id(db, session_id)
-
     return requests.get(
         "http://" + session.host + ":8000/api/v1/workspaces/files",
         params={"show_hidden": show_hidden},
@@ -61,29 +53,29 @@ def get_files(
 
 
 @router.post("/", dependencies=[Depends(check_session_belongs_to_user)])
-def upload_files(
-    session_id: str,
-    files: list[UploadFile],
-):
+def upload_files(session_id: str, files: list[UploadFile]):
     tar_bytesio = io.BytesIO()
-    tar = tarfile.TarFile(name="upload.tar", mode="w", fileobj=tar_bytesio)
 
-    size = sum([len(file.file.read()) for file in files])
-    if size > 31457280:
-        raise HTTPException(
-            status_code=413,
-            detail={"reason": "The summed file size must not exceed 30MB."},
-        )
+    with tarfile.TarFile(
+        name="upload.tar", mode="w", fileobj=tar_bytesio
+    ) as tar:
+        size = sum(len(file.file.read()) for file in files)
+        if size > 31457280:
+            raise HTTPException(
+                status_code=413,
+                detail={
+                    "reason": "The summed file size must not exceed 30MB."
+                },
+            )
 
-    for file in files:
-        file.file.seek(0)
-        file.filename = file.filename.replace(" ", "_")
-        tar.addfile(
-            tar.gettarinfo(arcname=file.filename, fileobj=file.file),
-            fileobj=file.file,
-        )
+        for file in files:
+            file.file.seek(0)
+            file.filename = file.filename.replace(" ", "_")
+            tar.addfile(
+                tar.gettarinfo(arcname=file.filename, fileobj=file.file),
+                fileobj=file.file,
+            )
 
-    tar.close()
     tar_bytesio.seek(0)
     tar_bytes = tar_bytesio.read()
 

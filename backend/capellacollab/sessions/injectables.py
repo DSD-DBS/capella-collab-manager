@@ -18,7 +18,7 @@ from .models import DatabaseSession
 def get_existing_session(
     session_id: str,
     db: Session = Depends(get_db),
-    token: JWTBearer = Depends(JWTBearer()),
+    token=Depends(JWTBearer()),
 ) -> DatabaseSession:
     try:
         session: DatabaseSession = crud.get_session_by_id(db, session_id)

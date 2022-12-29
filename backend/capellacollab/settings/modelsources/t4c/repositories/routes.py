@@ -133,7 +133,7 @@ def delete_t4c_repository(
     db: Session = Depends(get_db),
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
     repository: DatabaseT4CRepository = Depends(get_existing_t4c_repository),
-) -> None | ResponseModel:
+) -> ResponseModel | None:
     crud.delete_4c_repository(repository, db)
     try:
         interface.delete_repository(instance, repository.name)
@@ -169,6 +169,7 @@ def delete_t4c_repository(
             ]
         )
     response.status_code = status.HTTP_204_NO_CONTENT
+    return None
 
 
 @router.post(

@@ -1,9 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from capellacollab.sessions.operators import OPERATOR
-
-from .models import Backup, BackupJob, DatabaseBackup
+from .models import Backup, DatabaseBackup
 
 
 def _inject_last_run(model: DatabaseBackup) -> Backup:

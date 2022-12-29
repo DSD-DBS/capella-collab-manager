@@ -3,6 +3,9 @@
 
 # pylint: skip-file
 # These import statements of the models are required and should not be removed! (SQLAlchemy will not load the models otherwise)
+
+# pylint: disable=unused-import
+
 import capellacollab.notices.models
 import capellacollab.projects.models
 import capellacollab.projects.toolmodels.backups.models

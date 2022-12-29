@@ -87,7 +87,7 @@ def delete_tool(
             },
         )
     try:
-        return crud.delete_tool(db, tool)
+        crud.delete_tool(db, tool)
     except sqlalchemy.exc.IntegrityError:
         db.rollback()
         find_tool_dependencies(db, tool)
@@ -168,7 +168,7 @@ def delete_tool_version(
     db: Session = Depends(get_db),
 ):
     try:
-        return crud.delete_tool_version(version, db)
+        crud.delete_tool_version(version, db)
     except sqlalchemy.exc.IntegrityError:
         db.rollback()
         find_tool_version_dependencies(db, version)
@@ -241,7 +241,7 @@ def delete_tool_nature(
     db: Session = Depends(get_db),
 ):
     try:
-        return crud.delete_tool_nature(nature, db)
+        crud.delete_tool_nature(nature, db)
     except sqlalchemy.exc.IntegrityError:
         db.rollback()
         find_tool_nature_dependencies(db, nature)

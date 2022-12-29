@@ -9,7 +9,7 @@ import typing as t
 
 import pydantic
 import requests
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 from requests.exceptions import RequestException
 from sqlalchemy import (
     CheckConstraint,

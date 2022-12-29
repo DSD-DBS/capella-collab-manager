@@ -6,10 +6,7 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from capellacollab.settings.modelsources.t4c.models import (
-    CreateT4CInstance,
-    DatabaseT4CInstance,
-)
+from capellacollab.settings.modelsources.t4c.models import DatabaseT4CInstance
 
 
 def get_all_t4c_instances(db: Session) -> list[DatabaseT4CInstance]:

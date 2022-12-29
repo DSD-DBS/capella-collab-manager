@@ -67,17 +67,17 @@ def _get_last_seen(idletime: int | float) -> str:
     return f"{idletime} mins ago"
 
 
-def _determine_session_state(session: t.Dict[str, t.Any]) -> str:
+def _determine_session_state(session: DatabaseSession) -> str:
     state = OPERATOR.get_session_state(session.id)
 
     if session.type == WorkspaceType.READONLY:
         try:
-            if state == "Started" or state == "BackOff":
+            if state in ("Started", "BackOff"):
                 logs = OPERATOR.get_session_logs(session.id).splitlines()
                 for line in logs:
                     res = re.search(r"^---(.*?)---$", line)
                     if res:
                         state = res.group(1)
-        except:
+        except Exception:
             log.exception("Could not parse log")
     return state

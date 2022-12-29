@@ -34,7 +34,7 @@ class Project(BaseModel):
     users: UserMetadata
 
     @validator("users", pre=True)
-    def transform_users(
+    def transform_users(  # pylint: disable=no-self-argument
         cls, users: t.Union[UserMetadata, t.List[ProjectUserAssociation]]
     ):
         if isinstance(users, UserMetadata):

@@ -4,8 +4,8 @@
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 
-import capellacollab.settings.modelsources.git.crud as crud
 from capellacollab.core.database import get_db
+from capellacollab.settings.modelsources.git import crud
 from capellacollab.settings.modelsources.git.models import DatabaseGitInstance
 
 

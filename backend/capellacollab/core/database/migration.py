@@ -41,7 +41,8 @@ def migrate_db(engine, database_url: str):
         root_dir = pathlib.Path(__file__).parents[2]
 
         # Get current revision of Database. If no revision is available, initialize the database.
-        alembic_cfg = Config(root_dir / "alembic.ini")
+
+        alembic_cfg = Config(str(root_dir / "alembic.ini"))
         alembic_cfg.set_main_option(
             "script_location", str(root_dir / "alembic")
         )

@@ -70,10 +70,9 @@ def edit_t4c_instance(
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
     db: Session = Depends(get_db),
 ) -> DatabaseT4CInstance:
-    get_version_by_id_or_raise(db, body.version_id)
     for key in body.dict():
-        if value := body.__getattribute__(key):
-            instance.__setattr__(key, value)
+        if value := getattr(body, key):
+            setattr(instance, key, value)
     return crud.update_t4c_instance(instance, db)
 
 

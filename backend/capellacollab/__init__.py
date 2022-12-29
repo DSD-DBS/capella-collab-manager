@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
+# TODO: Remove duplicated code (with: core/__init__.py)
 from importlib import metadata
 
 from capellacollab import config as config_module

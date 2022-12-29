@@ -7,14 +7,7 @@ import enum
 import typing as t
 
 from pydantic import BaseModel
-from sqlalchemy import (
-    Column,
-    Enum,
-    ForeignKey,
-    Integer,
-    String,
-    UniqueConstraint,
-)
+from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base

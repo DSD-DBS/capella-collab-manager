@@ -1,7 +1,11 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-AUTHENTICATION_RESPONSES = {
+from __future__ import annotations
+
+import typing as t
+
+AUTHENTICATION_RESPONSES: dict[str | int, dict[str, t.Any]] = {
     401: {
         "description": "Unauthorized",
         "content": {

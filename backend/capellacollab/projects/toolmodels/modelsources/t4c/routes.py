@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-import capellacollab.core.database as database
+from capellacollab.core import database
 from capellacollab.core.authentication.database import (
     ProjectRoleVerification,
     RoleVerification,
