@@ -48,11 +48,11 @@ import {
 } from 'src/app/services/settings/git-settings.service';
 
 @Component({
-  selector: 'app-create-coworking-method',
-  templateUrl: './add-git-source.component.html',
-  styleUrls: ['./add-git-source.component.css'],
+  selector: 'app-manage-git-model',
+  templateUrl: './manage-git-model.component.html',
+  styleUrls: ['./manage-git-model.component.css'],
 })
-export class AddGitSourceComponent implements OnInit, OnDestroy {
+export class ManageGitModelComponent implements OnInit, OnDestroy {
   @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 

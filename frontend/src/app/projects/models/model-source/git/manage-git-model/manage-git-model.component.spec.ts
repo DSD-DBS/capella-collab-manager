@@ -5,20 +5,20 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddGitSourceComponent } from './add-git-source.component';
+import { ManageGitModelComponent } from './manage-git-model.component';
 
-xdescribe('AddGitSourceComponent', () => {
-  let component: AddGitSourceComponent;
-  let fixture: ComponentFixture<AddGitSourceComponent>;
+xdescribe('ManageGitModelComponent', () => {
+  let component: ManageGitModelComponent;
+  let fixture: ComponentFixture<ManageGitModelComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AddGitSourceComponent],
+      declarations: [ManageGitModelComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AddGitSourceComponent);
+    fixture = TestBed.createComponent(ManageGitModelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

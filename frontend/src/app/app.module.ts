@@ -59,7 +59,6 @@ import { ButtonSkeletonLoaderComponent } from './helpers/skeleton-loaders/button
 import { FormFieldSkeletonLoaderComponent } from './helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
 import { MatCardOverviewLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-loader/mat-card-overview-loader.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
-import { AddGitSourceComponent } from './projects/models/add-git-source/add-git-source.component';
 import { CreateBackupComponent } from './projects/models/backup-settings/create-backup/create-backup.component';
 import { TriggerPipelineComponent } from './projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { ViewLogsDialogComponent } from './projects/models/backup-settings/view-logs-dialog/view-logs-dialog.component';
@@ -71,6 +70,7 @@ import { ModelDescriptionComponent } from './projects/models/model-description/m
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
 import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
 import { ChooseSourceComponent } from './projects/models/model-source/choose-source.component';
+import { ManageGitModelComponent } from './projects/models/model-source/git/manage-git-model/manage-git-model.component';
 import { ManageT4CModelComponent } from './projects/models/model-source/t4c/manage-t4c-model/manage-t4c-model.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { ModelOverviewComponent } from './projects/project-detail/model-overview/model-overview.component';
@@ -112,7 +112,6 @@ import { HomeComponent } from './workspaces/home.component';
 @NgModule({
   declarations: [
     ActiveSessionsComponent,
-    AddGitSourceComponent,
     AlertSettingsComponent,
     AppComponent,
     AuthComponent,
@@ -140,6 +139,7 @@ import { HomeComponent } from './workspaces/home.component';
     LicencesComponent,
     LogoutComponent,
     LogoutRedirectComponent,
+    ManageGitModelComponent,
     ManageT4CModelComponent,
     MatCardOverviewLoaderComponent,
     MatIconComponent,
