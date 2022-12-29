@@ -83,7 +83,7 @@ class HealthcheckFilter(logging.Filter):
         return record.getMessage().find("/healthcheck") == -1
 
 
-class ReqLogAdapter(logging.LoggerAdapter):
+class RequestLogAdapter(logging.LoggerAdapter):
     def process(self, msg, kwargs):
         log_extra = kwargs.get("extra", {})
         self_extra = self.extra
@@ -140,13 +140,13 @@ def get_general_log_args(
 
 
 def get_logger(request: Request) -> logging.LoggerAdapter:
-    return ReqLogAdapter(
+    return RequestLogAdapter(
         get_general_logger(request.url.path), get_general_log_args(request)
     )
 
 
 def get_error_code_logger(request: Request) -> logging.LoggerAdapter:
-    req_logger = ReqLogAdapter(
+    req_logger = RequestLogAdapter(
         get_general_logger(request.url.path, log_leveL=logging.ERROR),
         get_general_log_args(request, chaining=True),
     )
@@ -156,7 +156,7 @@ def get_error_code_logger(request: Request) -> logging.LoggerAdapter:
 
 
 def get_response_logger(request: Request) -> logging.LoggerAdapter:
-    req_logger = ReqLogAdapter(
+    req_logger = RequestLogAdapter(
         get_general_logger(request.url.path),
         get_general_log_args(request, chaining=True),
     )
