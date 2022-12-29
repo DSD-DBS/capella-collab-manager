@@ -133,6 +133,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
           this.form.controls.urls.setAsyncValidators([
             this.resultUrlPrefixAsyncValidator(),
           ]);
+        } else {
+          this.urls.inputUrl.addValidators([Validators.required]);
         }
       });
 
@@ -223,6 +225,14 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   onUrlInputChange(changedInputUrl: string): void {
     this.updateResultUrl();
     this.resetRevisions();
+
+    if (!this.availableGitInstances.length) {
+      if (this.form.controls.urls.controls.inputUrl.valid) {
+        this.enableAllExceptUrls();
+      } else {
+        this.disableAllExpectUrls();
+      }
+    }
 
     this.urls.inputUrl.updateValueAndValidity();
 
