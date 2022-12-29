@@ -53,11 +53,13 @@ def get_projects(
     token=Depends(JWTBearer()),
     log: logging.LoggerAdapter = Depends(get_logger),
 ) -> t.List[DatabaseProject]:
-    log.debug("Fetching all projects")
     if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
+        log.debug("Fetching all projects")
         return crud.get_all_projects(db)
 
-    return [association.project for association in user.projects]
+    projects = [association.projects for association in user.projects]
+    log.debug("Fetching the following projects: %s", projects)
+    return projects
 
 
 @router.patch(
@@ -101,7 +103,7 @@ def get_project_by_slug(
     user: DatabaseUser = Depends(get_own_user),
     log=Depends(get_logger),
 ) -> DatabaseProject:
-    log.info(f"{user.name} gets the project {db_project.name}")
+    log.debug(f"Getting the project {db_project.name}")
     return db_project
 
 
