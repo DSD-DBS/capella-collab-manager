@@ -72,7 +72,7 @@ class JWTBearer(HTTPBearer):
                 raise HTTPException(
                     status_code=401,
                     detail={
-                        "technical": "The Signature of the token is expired. Please request a new access token.",
+                        "technical": "The validation of your access token failed. Please contact your administrator.",
                     },
                 ) from None
             return None
