@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import typing as t
 
@@ -13,6 +14,9 @@ from . import exceptions, loader
 
 log = logging.getLogger(__name__)
 config = loader.load_yaml()
+
+config = loader.load_yaml()
+config_schema = loader.load_config_schema()
 
 
 def validate_schema():
