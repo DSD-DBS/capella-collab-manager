@@ -13,18 +13,18 @@ definitions:
 
 # Replicas for all deployments (defaults to 1)
 replicaCount:
-  backend:
-  backendPostgres:
-  docs:
-  frontend:
-  grafana:
-  grafanaNginx:
-  guacamole:
-  guacamolePostgres:
-  guacd:
-  prometheus:
-  prometheusNginx:
-  routing:
+  backend: 1
+  backendPostgres: 1
+  docs: 1
+  frontend: 1
+  grafana: 1
+  grafanaNginx: 1
+  guacamole: 1
+  guacamolePostgres: 1
+  guacd: 1
+  prometheus: 1
+  prometheusNginx: 1
+  routing: 1
 
 docker:
   # Registry for Docker Images, will be used as prefix for Docker Images
