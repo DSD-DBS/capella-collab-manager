@@ -35,7 +35,7 @@ class AttachTraceIdMiddleware(BaseHTTPMiddleware):
 
 class AttachUserNameMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        username = "unset"
+        username = "anonymous"
         if token := await JWTBearer(auto_error=False)(request):
             username = get_username(token)
 
