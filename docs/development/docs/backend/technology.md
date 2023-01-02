@@ -8,12 +8,16 @@ Here is a quick overview.
 
 ## FastAPI
 
-[FastAPI](https://fastapi.tiangolo.com/) is used to serve the backend API endpoints.
+[FastAPI] is used to serve the backend API endpoints.
 
 ## SQLAlchemy
 
-We use [SQLAlchemy](https://www.sqlalchemy.org/) as ORM for our PostgreSQL database.
+We use [SQLAlchemy] as ORM for our PostgreSQL database.
 
 ## Alembic
 
-[Alembic](https://alembic.sqlalchemy.org/en/latest/) is used for database migrations.
+[Alembic] is used for database migrations.
+
+[fastapi]: https://fastapi.tiangolo.com/
+[sqlalchemy]: https://www.sqlalchemy.org/
+[alembic]: https://alembic.sqlalchemy.org/en/latest/

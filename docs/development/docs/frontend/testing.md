@@ -9,14 +9,14 @@
 
 ### Technologies
 
-- We use [Jasmine](https://jasmine.github.io) as testing framework
-- [Karma](https://karma-runner.github.io) is used as test runner
-- We use [istanbul](https://istanbul.js.org/) to measure and visualize the code coverage
+- We use [Jasmine] as testing framework
+- [Karma] is used as test runner
+- We use [istanbul] to measure and visualize the code coverage
 
 ### Additional sources
 
-- [Official angular testing guide](https://angular.io/guide/testing)
-- Recommended: [Detailed angular testing guide](https://testing-angular.com/)
+- [Official angular testing guide]
+- Recommended: [Detailed angular testing guide]
 
 ### General
 
@@ -66,7 +66,7 @@ covered and what is missing, one can open the `index.html` file in the
 
 ### Technologies
 
-- We use [playwright](https://playwright.dev) for E2E testing
+- We use [playwright] for E2E testing
 
 ### Test generation
 
@@ -90,3 +90,10 @@ A very helpful option when running the tests is `--trace on`. This provides,
 for example, a screenshot of the action and the before/after state (for each step),
 contains a detailed log, and one can also view the console output and
 network calls performed.
+
+[jasmine]: https://jasmine.github.io
+[karma]: https://karma-runner.github.io
+[istanbul]: https://istanbul.js.org/
+[playwright]: https://playwright.dev
+[official angular testing guide]: https://angular.io/guide/testing
+[detailed angular testing guide]: https://testing-angular.com/
