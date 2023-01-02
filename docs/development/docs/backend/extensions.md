@@ -5,8 +5,7 @@
 
 In order to make the whole backend more consistent, it is divided into different modules.
 This is intended to ensure that these are outsourced easily and without major effects
-and that other modules can also be easily added as "plugins", e.g.,
-via [Python entrypoints](https://docs.python.org/3/library/importlib.metadata.html).
+and that other modules can also be easily added as "plugins", e.g., via [Python entrypoints]
 
 A extension has the following structure: <br>
 
@@ -14,6 +13,7 @@ A extension has the following structure: <br>
 extension
 ├── __init__.py
 ├── crud.py
+├── injectables.py
 ├── models.py
 ├── routes.py
 └── ...
@@ -30,10 +30,21 @@ Code to be called to initialize a module.
 ### `crud.py`
 
 All `CRUD` (Create, read, update and delete) related operations.
-They should be used to access the database.
+They should be used to access the database. They should be used
+to access the database, in case there are no existing injectables.
 
 There should not be much logic in the `crud.py` files
 (really just creating, reading, updating and deleting) models in the database.
+
+### `injectables.py`
+
+In the `injectables` module, we define useful functions that allow to
+retrieve resources by simply defining the resource as parameter of the
+fastapi route and using the injectable function as dependency (i.e.,
+`resource: ResourceType = Depends(injectableFunction)`).
+By using these injectables, we reduce the code duplication, since we
+include logic (such as checking whether a project exists) into the
+injectable function, and the readability of the code is increase.
 
 ### `models.py`
 
@@ -74,3 +85,5 @@ for ep in eps:
         tags=[ep.name],
     )
 ```
+
+[python entrypoints]: https://docs.python.org/3/library/importlib.metadata.html
