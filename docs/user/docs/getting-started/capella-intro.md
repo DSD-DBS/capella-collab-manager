@@ -21,6 +21,8 @@ A very nice set of videos, highly recommended to watch:
 You may find more Capella - related videos on the official channel:
 [EclipseCapella](https://www.youtube.com/c/EclipseCapella/videos)
 
+Also you can try out this [Capella Tutorial](https://esd.sutd.edu.sg/40014-capella-tutorial/index.html)
+
 ## More advanced topics
 
 Methods for Modeling System of Systems with Capella:
