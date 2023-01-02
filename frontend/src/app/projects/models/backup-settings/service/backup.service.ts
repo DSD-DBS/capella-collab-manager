@@ -6,8 +6,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { SimpleT4CModel } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { BaseGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { SimpleT4CModel } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

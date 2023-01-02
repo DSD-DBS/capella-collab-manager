@@ -4,11 +4,11 @@
  -->
 
 <div class="wrapper flex-center">
-  <mat-card *ngIf="modelService.model" class="section-card">
+  <mat-card *ngIf="modelService.model">
     <mat-card-title>{{ modelService.model.name }}</mat-card-title>
     <form (submit)="onSubmit()" [formGroup]="form">
       <fieldset>
-        <mat-form-field>
+        <mat-form-field appearance="fill">
           <mat-label>Description</mat-label>
           <textarea
             formControlName="description"
@@ -51,9 +51,25 @@
         <a mat-button [routerLink]="'../../..'"
           ><mat-icon>arrow_back</mat-icon>Back</a
         >
-        <button mat-flat-button color="primary" type="submit">
-          Update model
-        </button>
+        <div>
+          <span
+            matTooltip="The model can't be deleted since it has linked Git and/or T4C models."
+            [matTooltipDisabled]="canDelete"
+          >
+            <button
+              mat-flat-button
+              color="warn"
+              (click)="deleteModel()"
+              [disabled]="!canDelete"
+              type="button"
+            >
+              Delete
+            </button>
+          </span>
+          <button mat-flat-button color="primary" type="submit">
+            Update model
+          </button>
+        </div>
       </div>
     </form>
   </mat-card>

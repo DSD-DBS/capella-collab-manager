@@ -11,7 +11,7 @@ from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.users.models import Role
 
-from . import database
+from . import crud
 from .models import DatabaseSession
 
 
@@ -21,7 +21,7 @@ def get_existing_session(
     token: JWTBearer = Depends(JWTBearer()),
 ) -> DatabaseSession:
     try:
-        session: DatabaseSession = database.get_session_by_id(db, session_id)
+        session: DatabaseSession = crud.get_session_by_id(db, session_id)
     except NoResultFound as e:
         raise HTTPException(
             404,

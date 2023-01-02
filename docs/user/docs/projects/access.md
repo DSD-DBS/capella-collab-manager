@@ -5,17 +5,16 @@
 
 # How do I get access to a project?
 
-Please ask a [project manager](roles.md) of the specific project for access.
+Please ask a [project lead](roles.md) of the specific project for access. The
+project lead can add you as user to the project. After you've been added, you
+should have direct access. If you don't see the project yet, just reload the
+page with `F5`.
 
-You can verify access by running:
+Your project manager can find more information here:
+[Add a user to a project](add-user.md)
 
-**Persistent session**
-
-1. Please navigate to `Profile` ➜ `Settings`.
-2. At the bottom of the page, below the `User options`, you should be able to set your password.
-
-**Readonly session**
-
- 1. Please navigate to `Workspaces`.
- 2. Choose `Read-only workspace` in the selection.
- 3. You should see the required project in the dropdown menu.
+You can verify access by navigating to `Projects`. You should see the project
+now: ![Project overview](access/project-overview.png) If you want to verify if
+the persistent session with the TeamForCapella access works, you can follow the
+[TeamForCapella workflow](../sessions/flows/t4c.md). The model should be listed
+in the connection dialog.

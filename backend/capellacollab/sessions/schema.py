@@ -47,8 +47,15 @@ class OwnSessionResponse(GetSessionsResponse):
     t4c_password: t.Optional[str]
 
 
-class PostReadonlySessionRequest(BaseModel):
+class PostReadonlySessionEntry(BaseModel):
     model_slug: str
+    git_model_id: int
+    revision: str
+    deep_clone: bool
+
+
+class PostReadonlySessionRequest(BaseModel):
+    models: list[PostReadonlySessionEntry]
 
     class Config:
         orm_mode = True

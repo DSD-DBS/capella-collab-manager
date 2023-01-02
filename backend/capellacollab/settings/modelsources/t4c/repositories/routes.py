@@ -21,7 +21,7 @@ from capellacollab.settings.modelsources.t4c.repositories import (
     interface,
 )
 
-from .injectables import get_existing_instance_repository
+from .injectables import get_existing_t4c_repository
 from .models import (
     CreateT4CRepository,
     DatabaseT4CRepository,
@@ -132,9 +132,7 @@ def delete_t4c_repository(
     response: Response,
     db: Session = Depends(get_db),
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
-    repository: DatabaseT4CRepository = Depends(
-        get_existing_instance_repository
-    ),
+    repository: DatabaseT4CRepository = Depends(get_existing_t4c_repository),
 ) -> None | ResponseModel:
     crud.delete_4c_repository(repository, db)
     try:
@@ -171,7 +169,6 @@ def delete_t4c_repository(
             ]
         )
     response.status_code = status.HTTP_204_NO_CONTENT
-    return None
 
 
 @router.post(
@@ -180,12 +177,9 @@ def delete_t4c_repository(
 )
 def start_t4c_repository(
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
-    repository: DatabaseT4CRepository = Depends(
-        get_existing_instance_repository
-    ),
+    repository: DatabaseT4CRepository = Depends(get_existing_t4c_repository),
 ) -> None:
     interface.start_repository(instance, repository.name)
-    return None
 
 
 @router.post(
@@ -194,12 +188,9 @@ def start_t4c_repository(
 )
 def stop_t4c_repository(
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
-    repository: DatabaseT4CRepository = Depends(
-        get_existing_instance_repository
-    ),
+    repository: DatabaseT4CRepository = Depends(get_existing_t4c_repository),
 ) -> None:
     interface.stop_repository(instance, repository.name)
-    return None
 
 
 @router.post(
@@ -208,9 +199,6 @@ def stop_t4c_repository(
 )
 def recreate_t4c_repository(
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
-    repository: DatabaseT4CRepository = Depends(
-        get_existing_instance_repository
-    ),
+    repository: DatabaseT4CRepository = Depends(get_existing_t4c_repository),
 ) -> None:
     interface.create_repository(instance, repository.name)
-    return None

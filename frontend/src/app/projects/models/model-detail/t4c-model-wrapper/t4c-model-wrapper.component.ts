@@ -6,8 +6,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, filter, map, Subscription, switchMap } from 'rxjs';
+import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { ModelService } from 'src/app/services/model/model.service';
-import { T4CModelService } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({

@@ -1,0 +1,38 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+button {
+  margin-left: 8px;
+}
+
+button:first-child {
+  margin-left: 0px;
+}
+
+.no-line-break {
+  white-space: nowrap;
+}
+
+.title {
+  font-size: 2em;
+}
+
+.no-text-overflow {
+  white-space: normal;
+  text-overflow: ellipsis;
+  line-break: anywhere;
+}
+
+.error {
+  color: #f44336;
+  font-size: 10.5px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  margin-bottom: 0px;
+}
+
+.mat-card {
+  margin-left: 0px;
+  margin-right: 0px;
+}

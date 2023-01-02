@@ -25,7 +25,7 @@ from capellacollab.settings.modelsources.t4c.models import (
 )
 
 if t.TYPE_CHECKING:
-    from capellacollab.projects.capellamodels.modelsources.t4c.models import (
+    from capellacollab.projects.toolmodels.modelsources.t4c.models import (
         DatabaseT4CModel,
     )
 

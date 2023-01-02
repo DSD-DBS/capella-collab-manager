@@ -18,20 +18,20 @@ from capellacollab.settings.modelsources.t4c.repositories.models import (
 )
 
 
-def get_existing_instance_repository(
+def get_existing_t4c_repository(
     t4c_repository_id: int,
     db: Session = Depends(get_db),
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
 ) -> DatabaseT4CRepository:
     try:
         repository = crud.get_t4c_repository(t4c_repository_id, db)
-    except NoResultFound as e:
+    except NoResultFound as err:
         raise HTTPException(
             404,
             {
                 "reason": f"Repository with id {t4c_repository_id} was not found."
             },
-        ) from e
+        ) from err
     if repository.instance != instance:
         raise HTTPException(
             409,
@@ -40,22 +40,3 @@ def get_existing_instance_repository(
             },
         )
     return repository
-
-
-def get_optional_existing_instance_repository(
-    t4c_repository_id: t.Optional[int] = None,
-    t4c_instance_id: t.Optional[int] = None,
-    db: Session = Depends(get_db),
-) -> t.Optional[DatabaseT4CRepository]:
-
-    if not t4c_repository_id and not t4c_instance_id:
-        return None
-    if not t4c_repository_id or not t4c_instance_id:
-        raise HTTPException(
-            422,
-            {
-                "reason": "t4c_instance_id and t4c_repository_id must either be both or neither provided."
-            },
-        )
-    instance = get_existing_instance(t4c_instance_id, db)
-    return get_existing_instance_repository(t4c_repository_id, db, instance)

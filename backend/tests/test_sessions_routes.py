@@ -11,21 +11,21 @@ import pytest
 
 import capellacollab.sessions.guacamole
 from capellacollab.__main__ import app
-from capellacollab.projects.capellamodels.crud import create_new_model
-from capellacollab.projects.capellamodels.models import CapellaModel
-from capellacollab.projects.capellamodels.modelsources.git.crud import (
+from capellacollab.projects.crud import create_project
+from capellacollab.projects.toolmodels.crud import create_new_model
+from capellacollab.projects.toolmodels.models import PostCapellaModel
+from capellacollab.projects.toolmodels.modelsources.git.crud import (
     add_gitmodel_to_capellamodel,
 )
-from capellacollab.projects.capellamodels.modelsources.git.models import (
+from capellacollab.projects.toolmodels.modelsources.git.models import (
     PostGitModel,
 )
-from capellacollab.projects.crud import create_project
 from capellacollab.projects.users.crud import add_user_to_project
 from capellacollab.projects.users.models import (
     ProjectUserPermission,
     ProjectUserRole,
 )
-from capellacollab.sessions.database import (
+from capellacollab.sessions.crud import (
     get_session_by_id,
     get_sessions_for_user,
 )
@@ -97,6 +97,8 @@ class MockOperator:
         docker_image: str,
         t4c_license_secret: str | None,
         t4c_json: list[dict[str, str | int]] | None,
+        pure_variants_license_server: str = None,
+        pure_variants_secret_name: str = None,
     ) -> t.Dict[str, t.Any]:
         assert docker_image
         cls.sessions.append({"docker_image": docker_image})
@@ -205,12 +207,19 @@ def test_create_readonly_session_as_user(client, db, user, kubernetes):
         if v.tool.name == "Capella" and v.name == "5.0.0"
     )
 
-    model = setup_git_model_for_user(db, user, version)
+    model, git_model = setup_git_model_for_user(db, user, version)
 
     response = client.post(
         f"/api/v1/projects/{model.project.slug}/sessions/readonly",
         json={
-            "model_slug": model.slug,
+            "models": [
+                {
+                    "model_slug": model.slug,
+                    "git_model_id": git_model.id,
+                    "revision": "main",
+                    "deep_clone": False,
+                }
+            ]
         },
     )
 
@@ -236,12 +245,19 @@ def test_no_readonly_session_as_user(client, db, user, kubernetes):
     tool = create_tool(db, Tool(name="Test"))
     version = create_version(db, tool.id, "test")
 
-    model = setup_git_model_for_user(db, user, version)
+    model, git_model = setup_git_model_for_user(db, user, version)
 
     response = client.post(
         f"/api/v1/projects/{model.project.slug}/sessions/readonly",
         json={
-            "model_slug": model.slug,
+            "models": [
+                {
+                    "model_slug": model.slug,
+                    "git_model_id": git_model.id,
+                    "revision": "main",
+                    "deep_clone": False,
+                }
+            ]
         },
     )
 
@@ -266,7 +282,7 @@ def setup_git_model_for_user(db, user, version):
     model = create_new_model(
         db,
         project,
-        CapellaModel(
+        PostCapellaModel(
             name=str(uuid1()), description="", tool_id=version.tool.id
         ),
         tool=version.tool,
@@ -274,14 +290,14 @@ def setup_git_model_for_user(db, user, version):
         nature=nature,
     )
     git_path = str(uuid1())
-    add_gitmodel_to_capellamodel(
+    git_model = add_gitmodel_to_capellamodel(
         db,
         model,
         PostGitModel(
             path=git_path, entrypoint="", revision="", username="", password=""
         ),
     )
-    return model
+    return model, git_model
 
 
 def test_create_persistent_session_as_user(client, db, user, kubernetes):

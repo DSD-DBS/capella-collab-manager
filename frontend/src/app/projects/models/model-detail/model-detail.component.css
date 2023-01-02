@@ -18,3 +18,7 @@ title {
 .visually-disabled {
   background-color: grey !important;
 }
+
+app-mat-card-overview-loader {
+  display: contents;
+}

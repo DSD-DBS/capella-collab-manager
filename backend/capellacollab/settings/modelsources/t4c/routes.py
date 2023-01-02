@@ -5,15 +5,9 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from capellacollab.core.authentication.database import (
-    RoleVerification,
-    verify_admin,
-)
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.authentication.database import RoleVerification
 from capellacollab.core.database import get_db
-from capellacollab.projects.capellamodels.routes import (
-    get_version_by_id_or_raise,
-)
+from capellacollab.projects.toolmodels.routes import get_version_by_id_or_raise
 from capellacollab.sessions.schema import GetSessionUsageResponse
 from capellacollab.settings.modelsources.t4c import crud
 from capellacollab.settings.modelsources.t4c.injectables import (
@@ -23,14 +17,12 @@ from capellacollab.settings.modelsources.t4c.interface import get_t4c_status
 from capellacollab.settings.modelsources.t4c.models import (
     CreateT4CInstance,
     DatabaseT4CInstance,
-    FieldsT4CInstance,
     PatchT4CInstance,
     T4CInstance,
 )
 from capellacollab.settings.modelsources.t4c.repositories.routes import (
     router as repositories_router,
 )
-from capellacollab.tools import crud as tools_crud
 from capellacollab.users.models import Role
 
 router = APIRouter(
@@ -38,7 +30,7 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=list[T4CInstance])
+@router.get("", response_model=list[T4CInstance])
 def list_t4c_settings(
     db: Session = Depends(get_db),
 ) -> list[DatabaseT4CInstance]:

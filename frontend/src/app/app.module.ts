@@ -55,14 +55,15 @@ import { VersionComponent } from './general/metadata/version/version.component';
 import { HeaderComponent } from './general/navbar/header.component';
 import { NoticeComponent } from './general/notice/notice.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
+import { ButtonSkeletonLoaderComponent } from './helpers/skeleton-loaders/button-skeleton-loader/button-skeleton-loader.component';
+import { FormFieldSkeletonLoaderComponent } from './helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
 import { MatCardOverviewLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-loader/mat-card-overview-loader.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
-import { AddT4cSourceComponent } from './projects/models/add-t4c-source/add-t4c-source.component';
+import { AddGitSourceComponent } from './projects/models/add-git-source/add-git-source.component';
 import { CreateBackupComponent } from './projects/models/backup-settings/create-backup/create-backup.component';
 import { TriggerPipelineComponent } from './projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { ViewLogsDialogComponent } from './projects/models/backup-settings/view-logs-dialog/view-logs-dialog.component';
 import { ChooseInitComponent } from './projects/models/choose-init/choose-init.component';
-import { CreateCoworkingMethodComponent } from './projects/models/create-coworking-method/create-coworking-method.component';
 import { CreateModelBaseComponent } from './projects/models/create-model-base/create-model-base.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { InitModelComponent } from './projects/models/init-model/init-model.component';
@@ -70,7 +71,7 @@ import { ModelDescriptionComponent } from './projects/models/model-description/m
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
 import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
 import { ChooseSourceComponent } from './projects/models/model-source/choose-source.component';
-import { T4CRepoSettingsComponent } from './projects/models/model-source/t4c-repo-settings/t4c-repo-settings.component';
+import { ManageT4CModelComponent } from './projects/models/model-source/t4c/manage-t4c-model/manage-t4c-model.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { ModelOverviewComponent } from './projects/project-detail/model-overview/model-overview.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
@@ -80,9 +81,11 @@ import { ProjectOverviewComponent } from './projects/project-overview/project-ov
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { WhitespaceUrlInterceptor } from './services/encoder/encoder.interceptor';
 import { ActiveSessionsComponent } from './sessions/active-sessions/active-sessions.component';
-import { FileExistsDialogComponent } from './sessions/active-sessions/upload-dialog/file-exists-dialog/file-exists-dialog.component';
-import { UploadDialogComponent } from './sessions/active-sessions/upload-dialog/upload-dialog.component';
+import { FileBrowserComponent } from './sessions/active-sessions/file-browser/file-browser.component';
+import { FileExistsDialogComponent } from './sessions/active-sessions/file-browser/file-exists-dialog/file-exists-dialog.component';
 import { DeleteSessionDialogComponent } from './sessions/delete-session-dialog/delete-session-dialog.component';
+import { NewReadonlyModelOptionsComponent } from './sessions/new-readonly-session-dialog/new-readonly-model-options/new-readonly-model-options.component';
+import { NewReadonlySessionDialogComponent } from './sessions/new-readonly-session-dialog/new-readonly-session-dialog.component';
 import { GuacamoleComponent } from './sessions/session-created/guacamole/guacamole.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
@@ -92,6 +95,7 @@ import { ToolNatureComponent } from './settings/core/tools-settings/tool-details
 import { ToolVersionComponent } from './settings/core/tools-settings/tool-details/tool-version/tool-version.component';
 import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
 import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
+import { PureVariantsComponent } from './settings/integrations/pure-variants/pure-variants.component';
 import { DeleteGitSettingsDialogComponent } from './settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
 import { EditGitSettingsComponent } from './settings/modelsources/git-settings/edit-git-settings/edit-git-settings.component';
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
@@ -108,14 +112,14 @@ import { HomeComponent } from './workspaces/home.component';
 @NgModule({
   declarations: [
     ActiveSessionsComponent,
-    AddT4cSourceComponent,
+    AddGitSourceComponent,
     AlertSettingsComponent,
     AppComponent,
     AuthComponent,
+    ButtonSkeletonLoaderComponent,
     ChooseInitComponent,
     ChooseSourceComponent,
     CreateBackupComponent,
-    CreateCoworkingMethodComponent,
     CreateModelBaseComponent,
     CreateModelComponent,
     CreateProjectComponent,
@@ -123,8 +127,10 @@ import { HomeComponent } from './workspaces/home.component';
     DeleteSessionDialogComponent,
     EditGitSettingsComponent,
     EditT4CInstanceComponent,
+    FileBrowserComponent,
     FileExistsDialogComponent,
     FooterComponent,
+    FormFieldSkeletonLoaderComponent,
     GitSettingsComponent,
     GuacamoleComponent,
     HeaderComponent,
@@ -134,25 +140,28 @@ import { HomeComponent } from './workspaces/home.component';
     LicencesComponent,
     LogoutComponent,
     LogoutRedirectComponent,
+    ManageT4CModelComponent,
     MatCardOverviewLoaderComponent,
     MatIconComponent,
     ModelDescriptionComponent,
     ModelDetailComponent,
     ModelOverviewComponent,
     ModelWrapperComponent,
+    NewReadonlyModelOptionsComponent,
+    NewReadonlySessionDialogComponent,
     NoticeComponent,
     ProjectDetailsComponent,
     ProjectMetadataComponent,
     ProjectOverviewComponent,
     ProjectUserSettingsComponent,
     ProjectWrapperComponent,
+    PureVariantsComponent,
     ReleaseNotesComponent,
     SessionOverviewComponent,
     SettingsComponent,
     T4CInstanceSettingsComponent,
     T4cModelWrapperComponent,
     T4CRepoDeletionDialogComponent,
-    T4CRepoSettingsComponent,
     T4CSettingsComponent,
     T4CSettingsWrapperComponent,
     TermsConditionsComponent,
@@ -162,7 +171,6 @@ import { HomeComponent } from './workspaces/home.component';
     ToolsSettingsComponent,
     ToolVersionComponent,
     TriggerPipelineComponent,
-    UploadDialogComponent,
     UserSettingsComponent,
     VersionComponent,
     ViewLogsDialogComponent,

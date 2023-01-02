@@ -9,6 +9,13 @@ import { Observable } from 'rxjs';
 import { Session } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
 
+export type ReadonlyModel = {
+  model_slug: string;
+  git_model_id: number;
+  revision: string;
+  deep_clone: boolean;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -22,12 +29,12 @@ export class SessionService {
 
   createReadonlySession(
     project_slug: string,
-    model_slug: string
+    models: ReadonlyModel[]
   ): Observable<Session> {
     return this.http.post<Session>(
       `${environment.backend_url}/projects/${project_slug}/sessions/readonly`,
       {
-        model_slug: model_slug,
+        models: models,
       }
     );
   }

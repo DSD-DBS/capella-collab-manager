@@ -6,8 +6,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { T4CModel } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { T4CModel } from 'src/app/services/modelsources/t4c-model/t4c-model.service';
 import {
   Tool,
   ToolNature,
@@ -73,6 +73,12 @@ export class ModelService {
     return this.http.post<Model>(
       `${this.base_url}${project_slug}/models`,
       model
+    );
+  }
+
+  deleteModel(project_slug: string, model: Model): Observable<void> {
+    return this.http.delete<void>(
+      `${this.base_url}${project_slug}/models/${model.slug}`
     );
   }
 

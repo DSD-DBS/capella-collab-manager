@@ -49,5 +49,5 @@ def update_role_of_user(
 
 
 def delete_user(db: Session, user: DatabaseUser):
-    user.delete()
+    db.delete(user)
     db.commit()

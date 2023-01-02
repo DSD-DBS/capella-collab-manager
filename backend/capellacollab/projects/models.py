@@ -10,9 +10,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
 # Import required for sqlalchemy
-import capellacollab.projects.capellamodels.models
 from capellacollab.core.database import Base
-from capellacollab.projects.capellamodels.models import DatabaseCapellaModel
 from capellacollab.projects.users.models import (
     ProjectUserAssociation,
     ProjectUserPermission,
@@ -20,9 +18,7 @@ from capellacollab.projects.users.models import (
 )
 
 if t.TYPE_CHECKING:
-    from capellacollab.projects.capellamodels.models import (
-        DatabaseCapellaModel,
-    )
+    from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 
 
 class UserMetadata(BaseModel):
@@ -75,7 +71,8 @@ class Project(BaseModel):
 
 
 class PatchProject(BaseModel):
-    description: str
+    name: t.Optional[str]
+    description: t.Optional[str]
 
 
 class PostProjectRequest(BaseModel):
@@ -92,7 +89,7 @@ class DatabaseProject(Base):
     description = Column(String)
     users: ProjectUserAssociation = relationship(
         "ProjectUserAssociation",
-        back_populates="projects",
+        back_populates="project",
     )
     models: list[DatabaseCapellaModel] = relationship(
         "DatabaseCapellaModel", back_populates="project"

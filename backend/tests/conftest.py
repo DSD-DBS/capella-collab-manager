@@ -7,7 +7,7 @@ import pytest
 from fastapi import Request
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
 from testcontainers.postgres import PostgresContainer
 
 import capellacollab.core.database as database_
@@ -26,7 +26,7 @@ def postgresql():
 
 
 @pytest.fixture
-def db(postgresql, monkeypatch):
+def db(postgresql, monkeypatch) -> Session:
     session_local = sessionmaker(
         autocommit=False, autoflush=False, bind=postgresql
     )
@@ -34,7 +34,7 @@ def db(postgresql, monkeypatch):
     monkeypatch.setattr(database_, "engine", postgresql)
     monkeypatch.setattr(database_, "SessionLocal", session_local)
 
-    migration.migrate_db(postgresql)
+    migration.migrate_db(postgresql, str(postgresql.url))
 
     with session_local() as session:
         yield session
@@ -53,5 +53,5 @@ def username(monkeypatch):
 
 
 @pytest.fixture
-def client():
+def client() -> TestClient:
     return TestClient(app)

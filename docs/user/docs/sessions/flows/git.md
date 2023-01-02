@@ -3,4 +3,4 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-The documentation for the Git Workflow will follow in the future.
+The documentation for the Git workflow will follow in the future.

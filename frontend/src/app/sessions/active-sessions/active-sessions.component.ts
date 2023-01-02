@@ -13,7 +13,7 @@ import { OwnSessionService } from '../../services/own-session/own-session.servic
 import { SessionService } from '../../services/session/session.service';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
 import { GuacamoleComponent } from '../session-created/guacamole/guacamole.component';
-import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
+import { FileBrowserComponent } from './file-browser/file-browser.component';
 
 @Component({
   selector: 'app-active-sessions',
@@ -70,6 +70,6 @@ export class ActiveSessionsComponent implements OnInit, OnDestroy {
   }
 
   uploadFileDialog(session: Session): void {
-    this.dialog.open(UploadDialogComponent, { data: session });
+    this.dialog.open(FileBrowserComponent, { data: session });
   }
 }

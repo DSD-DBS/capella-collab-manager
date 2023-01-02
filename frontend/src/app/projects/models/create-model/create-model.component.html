@@ -29,11 +29,11 @@
           [asStepper]="true"
           (create)="afterSourceCreated($event)"
         ></app-create-coworking-method>
-        <app-add-t4c-source
+        <app-manage-t4c-model
           [asStepper]="true"
           *ngSwitchCase="'t4c-add'"
           (create)="afterSourceCreated($event)"
-        ></app-add-t4c-source>
+        ></app-manage-t4c-model>
       </div>
     </mat-step>
 

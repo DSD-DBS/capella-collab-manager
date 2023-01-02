@@ -12,9 +12,9 @@ from alembic.migration import MigrationContext
 from sqlalchemy import inspect
 from sqlalchemy.orm import sessionmaker
 
-import capellacollab.projects.capellamodels.crud as models
-import capellacollab.projects.capellamodels.modelsources.t4c.crud as t4c_models
 import capellacollab.projects.crud as projects
+import capellacollab.projects.toolmodels.crud as models
+import capellacollab.projects.toolmodels.modelsources.t4c.crud as t4c_models
 import capellacollab.settings.modelsources.t4c.crud as t4c_instances
 import capellacollab.settings.modelsources.t4c.repositories.crud as t4c_repositories
 import capellacollab.tools.crud as tools
@@ -34,7 +34,7 @@ from capellacollab.users.models import Role
 LOGGER = logging.getLogger(__name__)
 
 
-def migrate_db(engine):
+def migrate_db(engine, database_url: str):
     if os.getenv("ALEMBIC_CONTEXT") != "1":
         os.environ["ALEMBIC_CONFIGURE_LOGGER"] = "false"
         root_dir = pathlib.Path(__file__).parents[2]
@@ -44,7 +44,7 @@ def migrate_db(engine):
         alembic_cfg.set_main_option(
             "script_location", str(root_dir / "alembic")
         )
-        alembic_cfg.set_main_option("sqlalchemy.url", str(engine.url))
+        alembic_cfg.set_main_option("sqlalchemy.url", database_url)
         alembic_cfg.attributes["configure_logger"] = False
 
         with engine.connect() as conn:
@@ -141,7 +141,7 @@ def create_t4c_instance_and_repositories(db):
         version=version,
     )
     t4c_instances.create_t4c_instance(default_instance, db)
-    for t4c_model in t4c_models.get_all_t4c_models(db):
+    for t4c_model in t4c_models.get_t4c_models(db):
         repository = CreateT4CRepository(
             name=t4c_model.name,
         )

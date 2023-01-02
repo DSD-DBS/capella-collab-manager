@@ -3,10 +3,13 @@
 
 from __future__ import annotations
 
+import base64
+import binascii
 import enum
 import json
 import logging
 import random
+import shlex
 import string
 import typing as t
 from dataclasses import dataclass
@@ -92,22 +95,33 @@ class KubernetesOperator:
         docker_image: str,
         t4c_license_secret: str | None,
         t4c_json: list[dict[str, str | int]] | None,
+        pure_variants_license_server: str = None,
+        pure_variants_secret_name: str = None,
     ) -> dict[str, t.Any]:
         log.info("Launching a persistent session for user %s", username)
 
         id = self._generate_id()
         self._create_persistent_volume_claim(username)
+
+        environment = {
+            "T4C_LICENCE_SECRET": t4c_license_secret,
+            "T4C_JSON": json.dumps(t4c_json),
+            "RMT_PASSWORD": password,
+            "FILESERVICE_PASSWORD": password,
+            "T4C_USERNAME": username,
+        }
+
+        if pure_variants_license_server:
+            environment[
+                "PURE_VARIANTS_LICENSE_SERVER"
+            ] = pure_variants_license_server
+
         deployment = self._create_deployment(
             docker_image,
             id,
-            {
-                "T4C_LICENCE_SECRET": t4c_license_secret,
-                "T4C_JSON": json.dumps(t4c_json),
-                "RMT_PASSWORD": password,
-                "FILESERVICE_PASSWORD": password,
-                "T4C_USERNAME": username,
-            },
+            environment,
             self._get_claim_name(username),
+            pure_variants_secret_name,
         )
         self._create_service(id, id)
         service = self._get_service(id)
@@ -400,20 +414,42 @@ class KubernetesOperator:
         image: str,
         name: str,
         environment: t.Dict,
-        volume_claim_name: str = None,
+        persistent_workspace_claim_name: str = None,
+        pure_variants_secret_name: str = None,
     ) -> kubernetes.client.V1Deployment:
-        volume_mount = []
-        volume = []
+        volume_mounts = []
+        volumes = []
 
-        if volume_claim_name:
-            volume_mount.append(
+        if persistent_workspace_claim_name:
+            volumes.append(
+                {
+                    "name": "workspace",
+                    "persistentVolumeClaim": {
+                        "claimName": persistent_workspace_claim_name
+                    },
+                }
+            )
+
+            volume_mounts.append(
                 {"name": "workspace", "mountPath": "/workspace"}
             )
 
-            volume.append(
+        if pure_variants_secret_name:
+            volume_mounts.append(
                 {
-                    "name": "workspace",
-                    "persistentVolumeClaim": {"claimName": volume_claim_name},
+                    "name": "pure-variants",
+                    "mountPath": "/home/techuser/pure-variants",
+                    "readOnly": True,
+                }
+            )
+
+            volumes.append(
+                {
+                    "name": "pure-variants",
+                    "secret": {
+                        "secretName": pure_variants_secret_name,
+                        "optional": True,
+                    },
                 }
             )
 
@@ -450,11 +486,11 @@ class KubernetesOperator:
                                     },
                                 },
                                 "imagePullPolicy": "Always",
-                                "volumeMounts": volume_mount,
+                                "volumeMounts": volume_mounts,
                                 **cfg["cluster"]["containers"],
                             },
                         ],
-                        "volumes": volume,
+                        "volumes": volumes,
                         "restartPolicy": "Always",
                     },
                 },
@@ -711,3 +747,48 @@ class KubernetesOperator:
                 "Exception when copying file to the pod with id %s", id
             )
             raise e
+
+    def download_file(self, id: str, filename: str) -> t.Iterable[bytes]:
+        pod_name = self._get_pod_name(id)
+        try:
+            exec_command = [
+                "bash",
+                "-c",
+                f"zip -qr /tmp/archive.zip '{shlex.quote(filename)}' && base64 /tmp/archive.zip && rm -f /tmp/archive.zip",
+            ]
+            stream = kubernetes.stream.stream(
+                self.v1_core.connect_get_namespaced_pod_exec,
+                pod_name,
+                namespace=cfg["namespace"],
+                command=exec_command,
+                stderr=True,
+                stdin=False,
+                stdout=True,
+                tty=False,
+                _preload_content=False,
+            )
+
+            def reader():
+                while stream.is_open():
+                    content = stream.read_stdout(timeout=60)
+                    if content:
+                        yield content.encode("utf-8")
+
+            yield from lazy_b64decode(reader())
+
+        except kubernetes.client.exceptions.ApiException as e:
+            log.exception(
+                "Exception when copying file to the pod with id %s", id
+            )
+            raise
+
+
+def lazy_b64decode(reader):
+    data = b""
+    for b64data in reader:
+        data += b64data
+        try:
+            yield base64.b64decode(data)
+            data = b""
+        except binascii.Error:
+            pass

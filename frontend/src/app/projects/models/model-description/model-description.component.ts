@@ -7,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, filter, switchMap, tap } from 'rxjs';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 import {
@@ -33,6 +34,7 @@ export class ModelDescriptionComponent implements OnInit {
     public modelService: ModelService,
     public projectService: ProjectService,
     public toolService: ToolService,
+    public toastService: ToastService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -87,5 +89,39 @@ export class ModelDescriptionComponent implements OnInit {
           this.router.navigate(['../../..'], { relativeTo: this.route });
         });
     }
+  }
+
+  get canDelete(): boolean {
+    const model = this.modelService.model!;
+    return !(model.git_models.length || model.t4c_models.length);
+  }
+
+  deleteModel(): void {
+    const model = this.modelService.model!;
+
+    if (
+      !this.canDelete ||
+      !window.confirm(`Do you really want to delete this model?`)
+    ) {
+      return;
+    }
+
+    this.modelService
+      .deleteModel(this.projectService.project?.slug!, model)
+      .subscribe({
+        next: () => {
+          this.toastService.showSuccess(
+            'Model deleted',
+            `${model.name} has been deleted`
+          );
+          this.router.navigate(['../../..'], { relativeTo: this.route });
+        },
+        error: () => {
+          this.toastService.showError(
+            'Model deletion failed',
+            `${model.name} has not been deleted`
+          );
+        },
+      });
   }
 }

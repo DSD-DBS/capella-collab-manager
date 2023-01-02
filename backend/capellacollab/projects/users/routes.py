@@ -6,7 +6,6 @@ from __future__ import annotations
 import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException
-from requests import HTTPError
 from sqlalchemy.orm import Session
 
 import capellacollab.users.crud as users
@@ -16,10 +15,8 @@ from capellacollab.core.authentication.database import (
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
-from capellacollab.projects.capellamodels.injectables import (
-    get_existing_project,
-)
 from capellacollab.projects.models import DatabaseProject
+from capellacollab.projects.toolmodels.injectables import get_existing_project
 from capellacollab.projects.users.models import (
     PatchProjectUser,
     PostProjectUser,
@@ -122,18 +119,16 @@ def add_user_to_project(
     ],
 )
 def patch_project_user(
-    patch_project_user: PatchProjectUser,
+    patch_user: PatchProjectUser,
     user: DatabaseUser = Depends(get_existing_user),
     project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
 ):
     check_user_not_admin(user)
-    if patch_project_user.role:
-        crud.change_role_of_user_in_project(
-            db, project, user, patch_project_user.role
-        )
+    if patch_user.role:
+        crud.change_role_of_user_in_project(db, project, user, patch_user.role)
 
-    if patch_project_user.permission:
+    if patch_user.permission:
         repo_user = crud.get_user_of_project(
             db,
             project,
@@ -148,7 +143,7 @@ def patch_project_user(
                 },
             )
         crud.change_permission_of_user_in_project(
-            db, project, user, patch_project_user.permission
+            db, project, user, patch_user.permission
         )
 
 
@@ -166,4 +161,3 @@ def remove_user_from_project(
 ):
     check_user_not_admin(user)
     crud.delete_user_from_project(db, project, user)
-    return None

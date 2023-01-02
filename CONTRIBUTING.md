@@ -28,6 +28,7 @@ Please follow the [RESTful web API design best practises](https://docs.microsoft
 
 We recommend to get started with the [local k8d deployment](README.md).
 
+<!-- prettier-ignore -->
 By default, the services run on the following ports when using the instructions below:
 | Port  | Service             |
 |-------|---------------------|
@@ -121,29 +122,30 @@ Run the following steps:
    ```
 
 1. In order to use Guacamole, the cluster must be deployed:
-  ```sh
-  make deploy
-  ```
+
+   ```sh
+   make deploy
+   ```
 
 1. Navigate to the `backend` directory of your cloned repository.
 1. We recommend that you develop inside of a virtual environment. To set it up,
    run the following commands:
 
-  ```sh
-  python3 -m venv .venv
-  source .venv/bin/activate
-  pip install -U pip setuptools
-  pip install -e '.[dev]'
-  ```
+   ```sh
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install -U pip setuptools
+   pip install -e '.[dev]'
+   ```
 
 1. The backend uses various configuration settings. You can find them in the `config`
    directory.
    Please copy the file `config_template.yaml` to `config.yaml` and adjust the values.
 
-   *Hint*: If you already have the k8d cluster running and the if you have the
+   _Hint_: If you already have the k8d cluster running and the if you have the
    application deployed, then no configuration values need to be adjusted.
 
-   *Hint*: You can run `python -m capellacollab.config.diff` after each update to check if your config is up to date.
+   _Hint_: You can run `python -m capellacollab.config.diff` after each update to check if your config is up to date.
 
 1. This step is only **necessary, if you use the self signed certificate** option for the oauth mock.
 
@@ -324,6 +326,7 @@ differences are:
   Use [isort](https://github.com/PyCQA/isort) for automatic sorting of imports.
   Its settings should automatically be picked up from the `pyproject.toml` file
   as well.
+
 - **Typing**: We do not make an exception for `typing` imports. Instead of
   writing `from typing import SomeName`, use `import typing as t` and access
   typing related classes like `t.TypedDict`.
@@ -332,16 +335,16 @@ differences are:
   available using `from __future__ import annotations` since Python 3.8. Be
   aware however that this only works in the context of annotations; the code
   still needs to run on Python 3.8! This means that in some (rare) cases, you
-  *must* use the old-style type hints.
+  _must_ use the old-style type hints.
 
   - Instead of `t.Tuple`, `t.List` etc. use the builtin classes `tuple`, `list`
     etc.
-  - For classes that are not builtin (e.g. `Iterable`), `import collections.abc
-    as cabc` and then use them like `cabc.Iterable`.
+  - For classes that are not builtin (e.g. `Iterable`), `import collections.abc as cabc` and then use them like `cabc.Iterable`.
   - Use [PEP-604](https://www.python.org/dev/peps/pep-0604/)-style unions, e.g.
     `int | float` instead of `t.Union[int, float]`.
   - Use `... | None` (with `None` always as the last union member) instead of
     `t.Optional[...]` and always explicitly annotate where `None` is possible.
+
 - **Python style rules**: For conflicting parts, the [Black code
   style](https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html)
   wins. If you have set up `black` correctly, you don't need to worry about

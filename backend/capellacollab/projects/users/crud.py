@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
-
-
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from capellacollab.projects.models import DatabaseProject
@@ -15,8 +14,12 @@ from capellacollab.users.models import DatabaseUser
 
 def get_users_of_project(db: Session, projects_name: str):
     return (
-        db.query(ProjectUserAssociation)
-        .filter(ProjectUserAssociation.projects_name == projects_name)
+        db.execute(
+            select(ProjectUserAssociation)
+            .join(ProjectUserAssociation.project)
+            .where(DatabaseProject.name == projects_name)
+        )
+        .scalars()
         .all()
     )
 
@@ -24,12 +27,11 @@ def get_users_of_project(db: Session, projects_name: str):
 def get_user_of_project(
     db: Session, project: DatabaseProject, user: DatabaseUser
 ) -> ProjectUserAssociation:
-    return (
-        db.query(ProjectUserAssociation)
-        .filter(ProjectUserAssociation.projects_name == project.name)
-        .filter(ProjectUserAssociation.user_id == user.id)
-        .first()
-    )
+    return db.execute(
+        select(ProjectUserAssociation)
+        .where(ProjectUserAssociation.project == project)
+        .where(ProjectUserAssociation.user == user)
+    ).scalar_one()
 
 
 def add_user_to_project(
@@ -40,10 +42,10 @@ def add_user_to_project(
     permission: ProjectUserPermission,
 ) -> ProjectUserAssociation:
     association = ProjectUserAssociation(
-        projects_name=project.name,
-        user_id=user.id,
         role=role,
         permission=permission,
+        project=project,
+        user=user,
     )
     db.add(association)
     db.commit()
@@ -56,17 +58,16 @@ def change_role_of_user_in_project(
     user: DatabaseUser,
     role: ProjectUserRole,
 ):
-    project_user = (
-        db.query(ProjectUserAssociation)
-        .filter(ProjectUserAssociation.projects_name == project.name)
-        .filter(ProjectUserAssociation.user_id == user.id)
-        .first()
-    )
+    association = db.execute(
+        select(ProjectUserAssociation)
+        .where(ProjectUserAssociation.project == project)
+        .where(ProjectUserAssociation.user == user)
+    ).scalar_one()
     if role == ProjectUserRole.MANAGER:
-        project_user.permission = ProjectUserPermission.WRITE
-    project_user.role = role
+        association.permission = ProjectUserPermission.WRITE
+    association.role = role
     db.commit()
-    return project_user
+    return association
 
 
 def change_permission_of_user_in_project(
@@ -75,28 +76,31 @@ def change_permission_of_user_in_project(
     user: DatabaseUser,
     permission: ProjectUserPermission,
 ) -> ProjectUserAssociation:
-    repo_user = (
-        db.query(ProjectUserAssociation)
-        .filter(ProjectUserAssociation.projects_name == project.name)
-        .filter(ProjectUserAssociation.user_id == user.id)
-        .first()
-    )
-    repo_user.permission = permission
+    association = db.execute(
+        select(ProjectUserAssociation)
+        .where(ProjectUserAssociation.project == project)
+        .where(ProjectUserAssociation.user == user)
+    ).scalar_one()
+    association.permission = permission
     db.commit()
-    return repo_user
+    return association
 
 
 def delete_user_from_project(
     db: Session, project: DatabaseProject, user: DatabaseUser
 ):
-    db.query(ProjectUserAssociation).filter(
-        ProjectUserAssociation.user_id == user.id
-    ).filter(ProjectUserAssociation.projects_name == project.name).delete()
+    db.execute(
+        delete(ProjectUserAssociation)
+        .where(ProjectUserAssociation.user == user)
+        .where(ProjectUserAssociation.project == project)
+    )
     db.commit()
 
 
-def delete_all_projects_for_user(db: Session, user_id: int):
-    db.query(ProjectUserAssociation).filter(
-        ProjectUserAssociation.user_id == user_id
-    ).delete()
+def delete_all_projects_for_user(db: Session, user: DatabaseUser):
+    db.execute(
+        delete(ProjectUserAssociation).where(
+            ProjectUserAssociation.user == user
+        )
+    )
     db.commit()

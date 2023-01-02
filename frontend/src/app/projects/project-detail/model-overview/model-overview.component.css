@@ -29,20 +29,17 @@
   font-size: 1.5em;
 }
 
-mat-card {
+.overview-card {
   width: fit-content;
   width: 500px;
-  height: 200px;
+  min-height: 200px;
   user-select: none;
+  display: flex;
+  flex-direction: column;
 }
 
 .mat-card {
   padding: 0 !important;
-}
-
-mat-card:hover {
-  background-color: var(--hover-color);
-  cursor: pointer;
 }
 
 .mat-card-content {
@@ -95,6 +92,7 @@ mat-card:hover {
 }
 
 .content-wrapper {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

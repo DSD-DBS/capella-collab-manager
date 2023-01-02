@@ -99,10 +99,10 @@ def test_init_database(
     initialized_database, alembic_cfg, alembic_revision: str
 ):
     # Update database to HEAD
-    migration.migrate_db(initialized_database)
+    migration.migrate_db(initialized_database, str(initialized_database.url))
 
     # Downgrade database to alembic_revision
     command.downgrade(alembic_cfg, alembic_revision)
 
     # And migrate to HEAD again
-    migration.migrate_db(initialized_database)
+    migration.migrate_db(initialized_database, str(initialized_database.url))

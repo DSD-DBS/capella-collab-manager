@@ -16,7 +16,7 @@
       </a>
     </h2>
   </div>
-  <mat-card *ngFor="let model of models">
+  <mat-card class="overview-card" *ngFor="let model of models">
     <div class="header">
       <div class="header-text">
         <div class="title">{{ model.name }}</div>
@@ -35,7 +35,6 @@
             <div *ngIf="!model.nature">Not specified</div>
           </div></mat-card
         >
-        <mat-card class=""> </mat-card>
         <mat-card class="editingMode"
           ><div>
             <div class="model-badge-title">Working mode</div>
@@ -105,7 +104,8 @@
               model.git_models && projectUserService.verifyPermission('read')
             "
             matTooltip="Open readonly session"
-            (click)="requestSession(model)"
+            [disabled]="!getPrimaryGitModelURL(model)"
+            (click)="newReadonlySession(model)"
           >
             <mat-icon>remove_red_eye</mat-icon>
           </button>

@@ -2,12 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import importlib
 import logging
 import typing as t
-from importlib import metadata
 
 from fastapi import APIRouter, Depends, HTTPException
+from slugify import slugify
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.crud as crud
@@ -18,15 +17,13 @@ from capellacollab.core.authentication.database import (
     get_db,
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.projects.capellamodels.injectables import (
-    get_existing_project,
-)
 from capellacollab.projects.models import (
     DatabaseProject,
     PatchProject,
     PostProjectRequest,
     Project,
 )
+from capellacollab.projects.toolmodels.injectables import get_existing_project
 from capellacollab.projects.users.models import (
     ProjectUserPermission,
     ProjectUserRole,
@@ -35,7 +32,7 @@ from capellacollab.sessions.routes import project_router as router_sessions
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role
 
-from .capellamodels.routes import router as router_models
+from .toolmodels.routes import router as router_models
 from .users.routes import router as router_users
 
 log = logging.getLogger(__name__)
@@ -57,7 +54,7 @@ def get_projects(
     if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
         return crud.get_all_projects(db)
 
-    return [project.projects for project in user.projects]
+    return [association.project for association in user.projects]
 
 
 @router.patch(
@@ -68,14 +65,24 @@ def get_projects(
         Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
     ],
 )
-def update_project_description(
+def patch_project(
     patch_project: PatchProject,
-    db_project: DatabaseProject = Depends(get_existing_project),
+    project: DatabaseProject = Depends(get_existing_project),
     database: Session = Depends(get_db),
 ) -> DatabaseProject:
-    return crud.update_description(
-        database, db_project, patch_project.description
-    )
+    new_slug = slugify(patch_project.name)
+    if (
+        crud.get_project_by_slug(database, new_slug)
+        and project.slug != new_slug
+    ):
+        raise HTTPException(
+            409,
+            {
+                "reason": "A project with a similar name already exists.",
+                "technical": "Slug already used",
+            },
+        )
+    return crud.update_project(database, project, patch_project)
 
 
 @router.get(
@@ -98,7 +105,7 @@ def create_project(
     user: DatabaseUser = Depends(get_own_user),
     db: Session = Depends(get_db),
 ) -> DatabaseProject:
-    if crud.get_project_by_name(db, post_project.name):
+    if crud.get_project_by_slug(db, slugify(post_project.name)):
         raise HTTPException(
             409,
             {
@@ -111,13 +118,15 @@ def create_project(
         db, post_project.name, post_project.description
     )
 
-    users_crud.add_user_to_project(
-        db,
-        new_project,
-        user,
-        ProjectUserRole.MANAGER,
-        ProjectUserPermission.WRITE,
-    )
+    if user.role != Role.ADMIN:
+        users_crud.add_user_to_project(
+            db,
+            new_project,
+            user,
+            ProjectUserRole.MANAGER,
+            ProjectUserPermission.WRITE,
+        )
+
     return new_project
 
 

@@ -4,16 +4,16 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, filter, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
+import {
+  T4CModel,
+  T4CModelService,
+} from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import {
   GetGitModel,
   GitModelService,
 } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { ModelService } from 'src/app/services/model/model.service';
-import {
-  T4CModel,
-  T4CModelService,
-} from 'src/app/services/modelsources/t4c-model/t4c-model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
@@ -22,9 +22,8 @@ import { ProjectService } from 'src/app/services/project/project.service';
   styleUrls: ['./model-detail.component.css'],
 })
 export class ModelDetailComponent implements OnInit, OnDestroy {
-  public gitModels: Array<GetGitModel> = [];
-  private _t4cModels = new BehaviorSubject<T4CModel[] | undefined>(undefined);
-  public t4cModels: T4CModel[] = [];
+  public gitModels?: GetGitModel[] = undefined;
+  public t4cModels?: T4CModel[] = undefined;
 
   private gitModelsSubscription?: Subscription;
   private t4cModelsSubscription?: Subscription;
@@ -41,18 +40,12 @@ export class ModelDetailComponent implements OnInit, OnDestroy {
       (gitModels) => (this.gitModels = gitModels)
     );
 
-    this._t4cModels.pipe(filter(Boolean)).subscribe((models) => {
-      this.t4cModels = models;
-    });
-
     this.t4cModelsSubscription = this.t4cModelService
       .listT4CModels(
         this.projectService.project!.slug,
         this.modelService.model!.slug
       )
-      .subscribe((models) => {
-        this._t4cModels.next(models);
-      });
+      .subscribe((models) => (this.t4cModels = models));
 
     this.gitModelService.loadGitModels(
       this.projectService.project!.slug,
@@ -62,5 +55,8 @@ export class ModelDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.gitModelsSubscription?.unsubscribe();
+    this.gitModelService.clear();
+    this.t4cModelsSubscription?.unsubscribe();
+    this.t4cModelService.clear();
   }
 }
