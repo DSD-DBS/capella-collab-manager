@@ -327,7 +327,9 @@ def request_persistent_session(
     (
         pv_license_server_url,
         pure_variants_secret_name,
-    ) = determine_pure_variants_configuration(db, user, tool, warnings)
+        pv_warnings,
+    ) = determine_pure_variants_configuration(db, user, tool)
+    warnings += pv_warnings
 
     session = operator.start_persistent_session(
         username=get_username(token),
@@ -355,10 +357,11 @@ def request_persistent_session(
 
 
 def determine_pure_variants_configuration(
-    db: Session, user: DatabaseUser, tool: Tool, warnings: list[Message]
-):
+    db: Session, user: DatabaseUser, tool: Tool
+) -> tuple[str, str, list[str]]:
+    warnings = []
     if not tool.integrations.pure_variants:
-        return (None, None)
+        return (None, None, warnings)
 
     if (
         not [
@@ -378,7 +381,7 @@ def determine_pure_variants_configuration(
                 )
             )
         )
-        return (None, None)
+        return (None, None, warnings)
 
     if not (pv_license := get_pure_variants_configuration(db)):
         warnings.append(
@@ -390,9 +393,9 @@ def determine_pure_variants_configuration(
                 )
             )
         )
-        return (None, None)
+        return (None, None, warnings)
 
-    return (pv_license.license_server_url, "pure-variants")
+    return (pv_license.license_server_url, "pure-variants", warnings)
 
 
 def create_database_and_guacamole_session(
