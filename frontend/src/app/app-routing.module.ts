@@ -11,11 +11,11 @@ import { AuthComponent } from './general/auth/auth/auth.component';
 import { LogoutRedirectComponent } from './general/auth/logout/logout-redirect/logout-redirect.component';
 import { LogoutComponent } from './general/auth/logout/logout/logout.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
-import { AddGitSourceComponent } from './projects/models/add-git-source/add-git-source.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { ModelDescriptionComponent } from './projects/models/model-description/model-description.component';
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
 import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
+import { ManageGitModelComponent } from './projects/models/model-source/git/manage-git-model/manage-git-model.component';
 import { ManageT4CModelComponent } from './projects/models/model-source/t4c/manage-t4c-model/manage-t4c-model.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
@@ -84,10 +84,10 @@ const routes: Routes = [
               {
                 path: 'git-model',
                 children: [
-                  { path: 'create', component: AddGitSourceComponent },
+                  { path: 'create', component: ManageGitModelComponent },
                   {
                     path: ':git-model',
-                    component: AddGitSourceComponent,
+                    component: ManageGitModelComponent,
                   },
                 ],
               },

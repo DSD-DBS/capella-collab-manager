@@ -24,14 +24,14 @@
 
     <mat-step label="Add source">
       <div [ngSwitch]="source">
-        <app-create-coworking-method
+        <app-manage-git-model
           *ngSwitchCase="'git-add'"
           [asStepper]="true"
           (create)="afterSourceCreated($event)"
-        ></app-create-coworking-method>
+        ></app-manage-git-model>
         <app-manage-t4c-model
-          [asStepper]="true"
           *ngSwitchCase="'t4c-add'"
+          [asStepper]="true"
           (create)="afterSourceCreated($event)"
         ></app-manage-t4c-model>
       </div>

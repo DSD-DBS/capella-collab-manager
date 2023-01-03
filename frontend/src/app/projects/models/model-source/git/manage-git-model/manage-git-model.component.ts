@@ -48,11 +48,11 @@ import {
 } from 'src/app/services/settings/git-settings.service';
 
 @Component({
-  selector: 'app-create-coworking-method',
-  templateUrl: './add-git-source.component.html',
-  styleUrls: ['./add-git-source.component.css'],
+  selector: 'app-manage-git-model',
+  templateUrl: './manage-git-model.component.html',
+  styleUrls: ['./manage-git-model.component.css'],
 })
-export class AddGitSourceComponent implements OnInit, OnDestroy {
+export class ManageGitModelComponent implements OnInit, OnDestroy {
   @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 
@@ -133,6 +133,8 @@ export class AddGitSourceComponent implements OnInit, OnDestroy {
           this.form.controls.urls.setAsyncValidators([
             this.resultUrlPrefixAsyncValidator(),
           ]);
+        } else {
+          this.urls.inputUrl.addValidators([Validators.required]);
         }
       });
 
@@ -223,6 +225,14 @@ export class AddGitSourceComponent implements OnInit, OnDestroy {
   onUrlInputChange(changedInputUrl: string): void {
     this.updateResultUrl();
     this.resetRevisions();
+
+    if (!this.availableGitInstances.length) {
+      if (this.form.controls.urls.controls.inputUrl.valid) {
+        this.enableAllExceptUrls();
+      } else {
+        this.disableAllExpectUrls();
+      }
+    }
 
     this.urls.inputUrl.updateValueAndValidity();
 

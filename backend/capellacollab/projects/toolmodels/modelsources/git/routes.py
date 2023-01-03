@@ -176,13 +176,13 @@ def update_git_model_by_id(
 def delete_git_model_by_id(
     db_git_model: DatabaseGitModel = Depends(get_existing_git_model),
     db: Session = Depends(get_db),
-) -> DatabaseGitModel:
+):
     if get_pipelines_for_git_model(db, db_git_model):
         raise HTTPException(
             status_code=409,
             detail={
                 "err_code": "git_model_used_for_backup",
-                "reason": f"The git model can't be deleted: it's used for backup jobs",
+                "reason": "The git model can't be deleted: it's used for backup jobs",
             },
         )
 
