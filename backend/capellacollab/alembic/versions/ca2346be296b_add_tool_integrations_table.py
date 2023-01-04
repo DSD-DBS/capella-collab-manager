@@ -53,7 +53,7 @@ def upgrade():
     )
 
     op.bulk_insert(
-        t_tool_integrations, [{"tool_id": tool_id} for tool_id in tools]
+        t_tool_integrations, [{"tool_id": tool_id[0]} for tool_id in tools]
     )
 
 
