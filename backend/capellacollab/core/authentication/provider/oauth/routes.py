@@ -6,6 +6,7 @@ import typing as t
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+import capellacollab.users.crud as users_crud
 from capellacollab.core.authentication.database import RoleVerification
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
@@ -14,7 +15,6 @@ from capellacollab.core.authentication.schemas import (
     TokenRequest,
 )
 from capellacollab.core.database import get_db
-from capellacollab.users.crud import get_user_by_name, update_last_login
 from capellacollab.users.models import Role
 
 from .flow import get_auth_redirect_url, get_token, refresh_token
@@ -32,7 +32,9 @@ async def api_get_token(body: TokenRequest, db: Session = Depends(get_db)):
     token = get_token(body.code)
 
     username = get_username(JWTBearer().validate_token(token["access_token"]))
-    update_last_login(db, get_user_by_name(db, username))
+
+    if user := users_crud.get_user_by_name(db, username):
+        users_crud.update_last_login(db, user)
 
     return token
 

@@ -10,7 +10,7 @@ from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt
 
-import capellacollab.users.crud as users
+import capellacollab.users.crud as users_crud
 import capellacollab.users.events.crud as events
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.database import SessionLocal
@@ -46,8 +46,9 @@ class JWTBearer(HTTPBearer):
     def initialize_user(self, token_decoded: dict[str, str]):
         with SessionLocal() as session:
             username: str = get_username(token_decoded)
-            if not (users.get_user_by_name(session, username)):
-                created_user = users.create_user(session, username)
+            if not (users_crud.get_user_by_name(session, username)):
+                created_user = users_crud.create_user(session, username)
+                users_crud.update_last_login(session, created_user)
                 events.create_user_creation_event(session, created_user)
 
     def validate_token(self, token: str) -> dict[str, t.Any]:

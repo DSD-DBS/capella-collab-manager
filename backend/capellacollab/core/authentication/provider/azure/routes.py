@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends
 from msal import ConfidentialClientApplication
 from sqlalchemy.orm import Session
 
+import capellacollab.users.crud as users_crud
 from capellacollab.config import config
 from capellacollab.core.authentication.database import RoleVerification
 from capellacollab.core.authentication.helper import get_username
@@ -20,7 +21,6 @@ from capellacollab.core.authentication.schemas import (
     TokenRequest,
 )
 from capellacollab.core.database import get_db
-from capellacollab.users.crud import get_user_by_name, update_last_login
 from capellacollab.users.models import Role
 
 router = APIRouter()
@@ -62,7 +62,9 @@ async def api_get_token(body: TokenRequest, db: Session = Depends(get_db)):
     access_token = token["id_token"]
 
     username = get_username(JWTBearer().validate_token(access_token))
-    update_last_login(db, get_user_by_name(session, username))
+
+    if user := users_crud.get_user_by_name(db, username):
+        users_crud.update_last_login(db, user)
 
     # *Sigh* This is microsoft again. Instead of the access_token, we should use id_token :/
     # https://stackoverflow.com/questions/63195081/how-to-validate-a-jwt-from-azuread-in-python
