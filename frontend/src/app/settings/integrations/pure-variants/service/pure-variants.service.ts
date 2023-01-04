@@ -16,7 +16,7 @@ export class PureVariantsService {
 
   constructor(private http: HttpClient) {}
 
-  getLicenseServerURL(): Observable<PureVariantsConfiguration> {
+  getLicenseServerConfiguration(): Observable<PureVariantsConfiguration> {
     return this.http.get<PureVariantsConfiguration>(this.baseUrl);
   }
 
@@ -25,8 +25,24 @@ export class PureVariantsService {
       license_server_url: value,
     });
   }
+
+  uploadLicenseServerFile(
+    formData: FormData
+  ): Observable<PureVariantsConfiguration> {
+    return this.http.post<PureVariantsConfiguration>(
+      this.baseUrl + '/license-keys',
+      formData
+    );
+  }
+
+  deleteLicenseServerFile(): Observable<PureVariantsConfiguration> {
+    return this.http.delete<PureVariantsConfiguration>(
+      this.baseUrl + '/license-keys/0'
+    );
+  }
 }
 
 export type PureVariantsConfiguration = {
   license_server_url?: string;
+  license_key_filename: string;
 };

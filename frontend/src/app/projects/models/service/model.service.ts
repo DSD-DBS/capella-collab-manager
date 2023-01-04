@@ -6,6 +6,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { ModelRestrictions } from 'src/app/projects/models/model-restrictions/service/model-restrictions.service';
 import { T4CModel } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import {
@@ -32,6 +33,7 @@ export type Model = {
   nature?: ToolNature;
   t4c_models: T4CModel[];
   git_models: GetGitModel[];
+  restrictions: ModelRestrictions;
 };
 
 export type PatchModel = {

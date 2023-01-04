@@ -16,6 +16,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 import kubernetes
+import kubernetes.client
 import kubernetes.client.exceptions
 import kubernetes.client.models
 import kubernetes.config
@@ -81,12 +82,12 @@ class KubernetesOperator:
         self.v1_apps = kubernetes.client.AppsV1Api()
         self.v1_batch = kubernetes.client.BatchV1Api()
 
-    def validate(self) -> str:
+    def validate(self) -> bool:
         try:
             self.v1_core.get_api_resources()
-            return "ok"
-        except:
-            return "cannot connect"
+            return True
+        except BaseException:
+            return False
 
     def start_persistent_session(
         self,
@@ -438,7 +439,7 @@ class KubernetesOperator:
             volume_mounts.append(
                 {
                     "name": "pure-variants",
-                    "mountPath": "/home/techuser/pure-variants",
+                    "mountPath": "/inputs/pure-variants",
                     "readOnly": True,
                 }
             )
@@ -499,6 +500,25 @@ class KubernetesOperator:
         return self.v1_apps.create_namespaced_deployment(
             cfg["namespace"], body
         )
+
+    def create_secret(
+        self, name: str, content: dict[str, bytes], overwrite: bool = False
+    ) -> kubernetes.client.V1Deployment:
+        content_b64 = {
+            key: base64.b64encode(value).decode()
+            for key, value in content.items()
+        }
+
+        secret = kubernetes.client.V1Secret(
+            api_version="v1",
+            kind="Secret",
+            metadata=kubernetes.client.V1ObjectMeta(name=name),
+            data=content_b64,
+        )
+
+        if overwrite:
+            self.delete_secret(name)
+        self.v1_core.create_namespaced_secret(cfg["namespace"], secret)
 
     def _create_cronjob(
         self,
@@ -690,6 +710,14 @@ class KubernetesOperator:
             )
         except kubernetes.client.exceptions.ApiException:
             log.exception("Error deleting deployment with id: %s", id)
+
+    def delete_secret(self, name: str) -> kubernetes.client.V1Status:
+        try:
+            return self.v1_core.delete_namespaced_secret(
+                name, cfg["namespace"]
+            )
+        except kubernetes.client.exceptions.ApiException:
+            log.exception("Error deleting secret with name: %s", name)
 
     def _delete_cronjob(self, id: str) -> kubernetes.client.V1Status:
         try:

@@ -25,15 +25,15 @@ class DatabaseT4CModel(Base):
     __tablename__ = "t4c_models"
     __table_args__ = (UniqueConstraint("repository_id", "model_id", "name"),)
 
-    id = Column(Integer, unique=True, primary_key=True, index=True)
-    name = Column(String, index=True)
+    id: int = Column(Integer, unique=True, primary_key=True, index=True)
+    name: str = Column(String, index=True)
 
-    repository_id = Column(Integer, ForeignKey("t4c_repositories.id"))
+    repository_id: int = Column(Integer, ForeignKey("t4c_repositories.id"))
     repository: DatabaseT4CRepository = relationship(
         "DatabaseT4CRepository", back_populates="models"
     )
 
-    model_id = Column(Integer, ForeignKey("models.id"))
+    model_id: int = Column(Integer, ForeignKey("models.id"))
     model: DatabaseCapellaModel = relationship(
         "DatabaseCapellaModel", back_populates="t4c_models"
     )
@@ -49,14 +49,6 @@ class SimpleT4CModel(BaseModel):
     project_name: str
     repository_name: str
     instance_name: str
-
-    @classmethod
-    def from_orm(cls, obj: DatabaseT4CModel) -> SimpleT4CModel:
-        return SimpleT4CModel(
-            project_name=obj.name,
-            repository_name=obj.repository.name,
-            instance_name=obj.repository.instance.name,
-        )
 
     class Config:
         orm_mode = True

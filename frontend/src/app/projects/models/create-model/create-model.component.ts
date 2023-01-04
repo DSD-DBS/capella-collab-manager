@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import { ModelService } from 'src/app/services/model/model.service';
+import { ModelService } from 'src/app/projects/models/service/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
@@ -89,12 +89,7 @@ export class CreateModelComponent implements OnDestroy {
       this.currentStep.emit('complete');
       if (this.redirectAfterCompletion) {
         this.detail = true;
-        this.router.navigate([
-          '/project',
-          this.projectService.project!.slug,
-          'model',
-          this.modelService.model!.slug,
-        ]);
+        this.router.navigate(['/project', this.projectService.project!.slug]);
       }
     } else {
       this.stepper.previous();

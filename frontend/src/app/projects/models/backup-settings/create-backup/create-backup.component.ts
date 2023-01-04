@@ -17,8 +17,8 @@ import {
   PostPipeline,
 } from 'src/app/projects/models/backup-settings/service/backup.service';
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
+import { ModelService } from 'src/app/projects/models/service/model.service';
 import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { ModelService } from 'src/app/services/model/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({

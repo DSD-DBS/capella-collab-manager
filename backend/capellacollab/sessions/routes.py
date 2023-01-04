@@ -46,7 +46,9 @@ from capellacollab.sessions.schema import (
     WorkspaceType,
 )
 from capellacollab.sessions.sessions import inject_attrs_in_sessions
-from capellacollab.settings.integrations.purevariants.crud import get_license
+from capellacollab.settings.integrations.purevariants.crud import (
+    get_pure_variants_configuration,
+)
 from capellacollab.settings.modelsources.t4c.repositories.crud import (
     get_user_t4c_repositories,
 )
@@ -56,6 +58,8 @@ from capellacollab.settings.modelsources.t4c.repositories.interface import (
 from capellacollab.tools.crud import (
     get_image_for_tool_version,
     get_readonly_image_for_version,
+    get_tool_by_name,
+    get_version_by_name,
 )
 from capellacollab.tools.injectables import (
     get_exisiting_tool_version,
@@ -260,12 +264,12 @@ def request_persistent_session(
     t4c_password = None
     t4c_json = None
     t4c_license_secret = None
-    if tool.name == "Capella":
-        t4c_repositories = (
-            get_user_t4c_repositories(db, tool, version, user)
-            if tool.name == "Capella"
-            else None
-        )
+
+    if tool.integrations.t4c:
+        # When using a different tool with TeamForCapella support (e.g. Capella + pure::variants),
+        # the version ID doesn't match the version from the T4C integration.
+        # We have to find the matching Capella version by name.
+        t4c_repositories = get_user_t4c_repositories(db, version.name, user)
 
         t4c_json = [
             {
@@ -311,9 +315,12 @@ def request_persistent_session(
                     exc_info=True,
                 )
 
-    pv_license_env = None
-    if pv_license := get_license(db):
-        pv_license_env = pv_license.license_server_url
+    (
+        pv_license_server_url,
+        pure_variants_secret_name,
+        pv_warnings,
+    ) = determine_pure_variants_configuration(db, user, tool)
+    warnings += pv_warnings
 
     session = operator.start_persistent_session(
         username=get_username(token),
@@ -321,7 +328,8 @@ def request_persistent_session(
         docker_image=docker_image,
         t4c_license_secret=t4c_license_secret,
         t4c_json=t4c_json,
-        pure_variants_secret_name=pv_license_env,
+        pure_variants_license_server=pv_license_server_url,
+        pure_variants_secret_name=pure_variants_secret_name,
     )
 
     response = create_database_and_guacamole_session(
@@ -337,6 +345,48 @@ def request_persistent_session(
     )
     response.warnings = warnings
     return response
+
+
+def determine_pure_variants_configuration(
+    db: Session, user: DatabaseUser, tool: Tool
+) -> tuple[str, str, list[str]]:
+    warnings = []
+    if not tool.integrations.pure_variants:
+        return (None, None, warnings)
+
+    if (
+        not [
+            model
+            for association in user.projects
+            for model in association.project.models
+            if model.restrictions.allow_pure_variants
+        ]
+        and user.role == Role.USER
+    ):
+        warnings.append(
+            Message(
+                reason=(
+                    "You are trying to create a persistent session with a pure::variants integration.",
+                    "We were not able to find a model with a pure::variants integration.",
+                    "Your session will not be connected to the pure::variants license server.",
+                )
+            )
+        )
+        return (None, None, warnings)
+
+    if not (pv_license := get_pure_variants_configuration(db)):
+        warnings.append(
+            Message(
+                reason=(
+                    "You are trying to create a persistent session with a pure::variants integration.",
+                    "We were not able to find a valid license server URL in our database.",
+                    "Your session will not be connected to the pure::variants license server.",
+                )
+            )
+        )
+        return (None, None, warnings)
+
+    return (pv_license.license_server_url, "pure-variants", warnings)
 
 
 def create_database_and_guacamole_session(

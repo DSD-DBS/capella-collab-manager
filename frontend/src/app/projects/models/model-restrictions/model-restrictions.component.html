@@ -1,0 +1,29 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="wrapper flex-center">
+  <mat-card *ngIf="modelService.model">
+    <mat-card-title>Restrictions for models</mat-card-title>
+    <form
+      *ngIf="this.modelService.model.tool.integrations.pure_variants"
+      [formGroup]="restrictionsForm"
+    >
+      <ng-template #pureVariants>
+        Allow the usage of pure::variants
+      </ng-template>
+
+      <app-mat-checkbox-loader *ngIf="loading">
+        <ng-template [ngTemplateOutlet]="pureVariants"> </ng-template>
+      </app-mat-checkbox-loader>
+      <mat-checkbox formControlName="pureVariants" *ngIf="!loading">
+        <ng-template [ngTemplateOutlet]="pureVariants"> </ng-template>
+      </mat-checkbox>
+    </form>
+    <div *ngIf="!this.modelService.model.tool.integrations.pure_variants">
+      This model has no restrictions. Please check the documentation for more
+      information.
+    </div>
+  </mat-card>
+</div>

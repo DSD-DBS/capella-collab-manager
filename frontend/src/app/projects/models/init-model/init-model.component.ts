@@ -13,7 +13,10 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { combineLatest, filter, map, Subscription, switchMap, tap } from 'rxjs';
-import { Model, ModelService } from 'src/app/services/model/model.service';
+import {
+  Model,
+  ModelService,
+} from 'src/app/projects/models/service/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 import {
   Tool,
@@ -88,16 +91,14 @@ export class InitModelComponent implements OnInit, OnDestroy {
     if (
       this.form.valid &&
       this.modelService.model &&
-      this.projectService.project &&
-      this.form.value.version &&
-      this.form.value.nature
+      this.projectService.project
     ) {
       this.modelService
         .setToolDetailsForModel(
           this.projectService.project.slug,
           this.modelService.model.slug,
-          this.form.value.version,
-          this.form.value.nature
+          this.form.value.version!,
+          this.form.value.nature!
         )
         .subscribe((_) => {
           this.create.emit({ created: true });

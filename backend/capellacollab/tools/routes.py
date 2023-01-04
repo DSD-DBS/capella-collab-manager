@@ -9,7 +9,10 @@ from sqlalchemy.orm import Session
 import capellacollab.projects.toolmodels.crud as projects_models_crud
 import capellacollab.settings.modelsources.t4c.crud as settings_t4c_crud
 from capellacollab.core.authentication.database import RoleVerification
-from capellacollab.core.database import get_db
+from capellacollab.core.database import (
+    get_db,
+    patch_database_with_pydantic_object,
+)
 from capellacollab.tools import models
 from capellacollab.tools.models import (
     CreateTool,
@@ -28,6 +31,7 @@ from capellacollab.tools.models import (
 from capellacollab.users.models import Role
 
 from . import crud, injectables
+from .integrations.routes import router as router_integrations
 
 router = APIRouter(
     dependencies=[Depends(RoleVerification(required_role=Role.USER))]
@@ -149,9 +153,7 @@ def patch_tool_version(
     version: Version = Depends(injectables.get_exisiting_tool_version),
     db: Session = Depends(get_db),
 ) -> Version:
-    for key, value in body.dict().items():
-        if value is not None:
-            version.__setattr__(key, value)
+    patch_database_with_pydantic_object(db, version, body)
 
     return crud.update_version(version, db)
 
@@ -298,3 +300,6 @@ def update_dockerimages(
     db: Session = Depends(get_db),
 ) -> Tool:
     return crud.update_tool(db, tool, body)
+
+
+router.include_router(router_integrations, prefix="/{tool_id}/integrations")

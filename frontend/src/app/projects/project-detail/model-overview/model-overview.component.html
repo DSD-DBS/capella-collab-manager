@@ -58,6 +58,14 @@
             <mat-icon>settings</mat-icon>
           </a>
           <a
+            *ngIf="userService.user?.role === 'administrator'"
+            [routerLink]="['model', model.slug, 'restrictions']"
+            mat-mini-fab
+            matTooltip="Model restrictions"
+          >
+            <mat-icon>key</mat-icon>
+          </a>
+          <a
             mat-mini-fab
             matTooltip="Configure model sources"
             [routerLink]="['model', model.slug]"
@@ -98,6 +106,7 @@
           >
             <mat-icon>screen_share</mat-icon>
           </a>
+
           <button
             mat-mini-fab
             *ngIf="

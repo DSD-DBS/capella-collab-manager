@@ -61,6 +61,7 @@ import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 import { ButtonSkeletonLoaderComponent } from './helpers/skeleton-loaders/button-skeleton-loader/button-skeleton-loader.component';
 import { FormFieldSkeletonLoaderComponent } from './helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
 import { MatCardOverviewLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-loader/mat-card-overview-loader.component';
+import { MatCheckboxLoaderComponent } from './helpers/skeleton-loaders/mat-checkbox-loader/mat-checkbox-loader.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { CreateBackupComponent } from './projects/models/backup-settings/create-backup/create-backup.component';
 import { TriggerPipelineComponent } from './projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';
@@ -72,6 +73,7 @@ import { InitModelComponent } from './projects/models/init-model/init-model.comp
 import { ModelDescriptionComponent } from './projects/models/model-description/model-description.component';
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
 import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
+import { ModelRestrictionsComponent } from './projects/models/model-restrictions/model-restrictions.component';
 import { ChooseSourceComponent } from './projects/models/model-source/choose-source.component';
 import { ManageGitModelComponent } from './projects/models/model-source/git/manage-git-model/manage-git-model.component';
 import { ManageT4CModelComponent } from './projects/models/model-source/t4c/manage-t4c-model/manage-t4c-model.component';
@@ -94,6 +96,7 @@ import { SessionOverviewComponent } from './sessions/session-overview/session-ov
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { ToolDeletionDialogComponent } from './settings/core/tools-settings/tool-details/tool-deletion-dialog/tool-deletion-dialog.component';
 import { ToolDetailsComponent } from './settings/core/tools-settings/tool-details/tool-details.component';
+import { ToolIntegrationsComponent } from './settings/core/tools-settings/tool-details/tool-integrations/tool-integrations.component';
 import { ToolNatureComponent } from './settings/core/tools-settings/tool-details/tool-nature/tool-nature.component';
 import { ToolVersionComponent } from './settings/core/tools-settings/tool-details/tool-version/tool-version.component';
 import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
@@ -146,10 +149,12 @@ import { HomeComponent } from './workspaces/home.component';
     ManageGitModelComponent,
     ManageT4CModelComponent,
     MatCardOverviewLoaderComponent,
+    MatCheckboxLoaderComponent,
     MatIconComponent,
     ModelDescriptionComponent,
     ModelDetailComponent,
     ModelOverviewComponent,
+    ModelRestrictionsComponent,
     ModelWrapperComponent,
     NewReadonlyModelOptionsComponent,
     NewReadonlySessionDialogComponent,
@@ -171,6 +176,7 @@ import { HomeComponent } from './workspaces/home.component';
     TermsConditionsComponent,
     ToolDeletionDialogComponent,
     ToolDetailsComponent,
+    ToolIntegrationsComponent,
     ToolNatureComponent,
     ToolsSettingsComponent,
     ToolVersionComponent,
