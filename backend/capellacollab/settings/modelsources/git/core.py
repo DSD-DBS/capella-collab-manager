@@ -17,7 +17,10 @@ log = logging.getLogger(__name__)
 def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
     try:
         proc = subprocess.run(
-            ["git", "ls-remote", url], capture_output=True, check=True, env=env
+            ["git", "ls-remote", url],
+            capture_output=True,
+            check=True,
+            env=os.environ | env,
         )
     except subprocess.CalledProcessError as e:
         log.debug(
