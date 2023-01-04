@@ -4,7 +4,7 @@
 """Add user events
 
 Revision ID: 2df2e0fd7774
-Revises: 0ef0826d54e7
+Revises: 16398dfaeef7
 Create Date: 2022-12-28 16:56:43.714914
 
 """
@@ -13,7 +13,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "2df2e0fd7774"
-down_revision = "0ef0826d54e7"
+down_revision = "16398dfaeef7"
 branch_labels = None
 depends_on = None
 
