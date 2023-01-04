@@ -17,9 +17,10 @@
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
     <mat-selection-list
-      #adminusers
+      #userSelectionList
       [multiple]="false"
       class="scrollable simple-scroll"
+      (selectionChange)="onUserSelect($event.options[0].value)"
     >
       <div mat-subheader>Administrators</div>
       <mat-list-option
@@ -41,47 +42,37 @@
       </mat-list-option>
     </mat-selection-list>
 
-    <div *ngIf="adminusers.selectedOptions.selected.length">
+    <div *ngIf="selectedUser">
       <button
         mat-flat-button
         color="primary"
         *ngIf="
-          adminusers.selectedOptions.selected[0]?.value.role ===
-            'administrator' &&
-          adminusers.selectedOptions.selected[0]?.value.name !==
-            userService.getUserName()
+          selectedUser.role === 'administrator' &&
+          selectedUser.name !== userService.getUserName()
         "
-        (click)="
-          this.removeAdministrator(adminusers.selectedOptions.selected[0].value)
-        "
+        (click)="downgradeToUser(selectedUser)"
       >
         <mat-icon>arrow_downward</mat-icon>
-        Downgrade
-        {{ adminusers.selectedOptions.selected[0].value.name }} to User
+        Downgrade {{ selectedUser.name }} to User
       </button>
       <button
         mat-flat-button
         color="primary"
-        (click)="
-          createAdministratorWithUsername(
-            adminusers.selectedOptions.selected[0].value
-          )
-        "
-        *ngIf="adminusers.selectedOptions.selected[0]?.value.role === 'user'"
+        (click)="upgradeToAdministrator(selectedUser)"
+        *ngIf="selectedUser.role === 'user'"
       >
         <mat-icon>arrow_upward</mat-icon>
         Upgrade
-        {{ adminusers.selectedOptions.selected[0].value.name }} to Administrator
+        {{ selectedUser.name }} to Administrator
       </button>
       <button
         mat-flat-button
         color="primary"
-        (click)="deleteUser(adminusers.selectedOptions.selected[0].value)"
-        *ngIf="adminusers.selectedOptions.selected[0]?.value.role === 'user'"
+        (click)="deleteUser(selectedUser)"
+        *ngIf="selectedUser.role === 'user'"
       >
         <mat-icon>delete</mat-icon>
-        Delete
-        {{ adminusers.selectedOptions.selected[0].value.name }}
+        Delete {{ selectedUser.name }}
       </button>
     </div>
   </mat-card>
@@ -106,5 +97,68 @@
         Create User <mat-icon>keyboard_arrow_right</mat-icon>
       </button>
     </form>
+  </mat-card>
+  <mat-card class="wider">
+    <h2>User information</h2>
+    <div *ngIf="selectedUserHistory; else notSelected">
+      <div>Username: {{ selectedUserHistory.name }}</div>
+      <div *ngIf="selectedUserHistory.created">
+        Created:
+        {{ selectedUserHistory.created | date: "EE, dd MMM y HH:mm:ss" }}
+      </div>
+      <div *ngIf="selectedUserHistory.last_login">
+        Last login:
+        {{ selectedUserHistory.last_login | date: "EE, dd MMM y HH:mm:ss" }}
+      </div>
+      <div>
+        <table mat-table [dataSource]="historyEventDataSource">
+          <ng-container matColumnDef="eventType">
+            <th mat-header-cell *matHeaderCellDef>Event Type</th>
+            <td mat-cell *matCellDef="let event">{{ event.event_type }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="executorName">
+            <th mat-header-cell *matHeaderCellDef>Executor Name</th>
+            <td mat-cell *matCellDef="let event">
+              {{ event.executor?.name || "System" }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="executionTime">
+            <th mat-header-cell *matHeaderCellDef>Execution Time</th>
+            <td mat-cell *matCellDef="let event">
+              {{ event.execution_time | date: "EE, dd MMM y HH:mm:ss" }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="projectName">
+            <th mat-header-cell *matHeaderCellDef>Project Slug</th>
+            <td mat-cell *matCellDef="let event">
+              {{ event.project?.name || "" }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="reason">
+            <th mat-header-cell *matHeaderCellDef>Reason</th>
+            <td mat-cell *matCellDef="let event">{{ event.reason }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    </div>
+    <ng-template #notSelected>
+      You must first select a user to see the user details
+    </ng-template>
+
+    <div [hidden]="!selectedUserHistory">
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 20]"
+        showFirstLastButtons
+        aria-label="Select page of periodic elements"
+      >
+      </mat-paginator>
+    </div>
   </mat-card>
 </div>

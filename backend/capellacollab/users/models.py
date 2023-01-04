@@ -7,7 +7,7 @@ import enum
 import typing as t
 
 from pydantic import BaseModel
-from sqlalchemy import Column, Enum, Integer, String
+from sqlalchemy import Column, DateTime, Enum, Integer, String
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
@@ -36,6 +36,13 @@ class User(BaseUser):
 
 class PatchUserRoleRequest(BaseModel):
     role: Role
+    reason: str
+
+
+class PostUser(BaseModel):
+    name: str
+    role: Role
+    reason: str
 
 
 class DatabaseUser(Base):
@@ -44,6 +51,10 @@ class DatabaseUser(Base):
     id: int = Column(Integer, primary_key=True, index=True)
     name: str = Column(String, unique=True, index=True)
     role: Role = Column(Enum(Role))
+
+    created = Column(DateTime)
+    last_login = Column(DateTime)
+
     projects: list["ProjectUserAssociation"] = relationship(
         "ProjectUserAssociation",
         back_populates="user",
@@ -51,4 +62,9 @@ class DatabaseUser(Base):
     sessions: "DatabaseSession" = relationship(
         "DatabaseSession",
         back_populates="owner",
+    )
+    events = relationship(
+        "DatabaseUserHistoryEvent",
+        back_populates="user",
+        foreign_keys="DatabaseUserHistoryEvent.user_id",
     )

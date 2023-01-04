@@ -40,14 +40,13 @@ class PostProjectUser(BaseModel):
     role: ProjectUserRole
     permission: ProjectUserPermission
     username: str
-
-    class Config:
-        orm_mode = True
+    reason: str
 
 
 class PatchProjectUser(BaseModel):
     role: t.Optional[ProjectUserRole]
     permission: t.Optional[ProjectUserPermission]
+    reason: str
 
 
 class ProjectUserAssociation(Base):

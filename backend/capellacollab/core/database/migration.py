@@ -19,6 +19,7 @@ import capellacollab.settings.modelsources.t4c.crud as t4c_instances
 import capellacollab.settings.modelsources.t4c.repositories.crud as t4c_repositories
 import capellacollab.tools.crud as tools
 import capellacollab.users.crud as users
+import capellacollab.users.events.crud as events
 from capellacollab.config import config
 from capellacollab.core.database import Base
 from capellacollab.settings.modelsources.t4c.models import (
@@ -76,9 +77,10 @@ def migrate_db(engine, database_url: str):
 
 def initialize_admin_user(db):
     LOGGER.info("Initialized adminuser %s", config["initial"]["admin"])
-    users.create_user(
+    admin_user = users.create_user(
         db=db, username=config["initial"]["admin"], role=Role.ADMIN
     )
+    events.create_user_creation_event(db, admin_user)
 
 
 def initialize_default_project(db):

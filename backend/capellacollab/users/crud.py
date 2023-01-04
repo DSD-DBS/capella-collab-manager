@@ -3,16 +3,11 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+
 from sqlalchemy.orm import Session
 
 from capellacollab.users.models import DatabaseUser, Role
-
-
-def find_or_create_user(db: Session, username: str) -> DatabaseUser:
-    if user := get_user_by_name(db, username):
-        return user
-
-    return create_user(db, username)
 
 
 def get_user_by_name(db: Session, username: str) -> DatabaseUser:
@@ -28,15 +23,20 @@ def get_users(db: Session) -> list[DatabaseUser]:
 
 
 def create_user(
-    db: Session, username: str, role: Role = Role.USER
+    db: Session,
+    username: str,
+    role: Role = Role.USER,
 ) -> DatabaseUser:
     user = DatabaseUser(
         name=username,
         role=role,
+        created=datetime.now(),
         projects=[],
+        events=[],
     )
     db.add(user)
     db.commit()
+
     return user
 
 
@@ -44,6 +44,16 @@ def update_role_of_user(
     db: Session, user: DatabaseUser, role: Role
 ) -> DatabaseUser:
     user.role = role
+    db.commit()
+    return user
+
+
+def update_last_login(
+    db: Session, user: DatabaseUser, last_login: datetime | None = None
+) -> DatabaseUser:
+    if not last_login:
+        last_login = datetime.now()
+    user.last_login = last_login
     db.commit()
     return user
 

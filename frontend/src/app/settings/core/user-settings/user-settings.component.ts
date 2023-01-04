@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -12,19 +12,40 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { HistoryEvent } from 'src/app/events/service/events.service';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import { User, UserService } from 'src/app/services/user/user.service';
+import {
+  User,
+  UserHistory,
+  UserRole,
+  UserService,
+} from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'app-user-settings',
   templateUrl: './user-settings.component.html',
   styleUrls: ['./user-settings.component.css'],
 })
-export class UserSettingsComponent implements OnInit {
+export class UserSettingsComponent implements OnInit, AfterViewInit {
+  @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
+  displayedColumns: string[] = [
+    'eventType',
+    'executorName',
+    'executionTime',
+    'projectName',
+    'reason',
+  ];
+
   users: User[] = [];
   search = '';
+  selectedUser?: User;
+  selectedUserHistory?: UserHistory;
+
+  historyEventDataSource = new MatTableDataSource<HistoryEvent>([]);
 
   createUserFormGroup = new FormGroup({
     username: new FormControl('', [
@@ -46,6 +67,10 @@ export class UserSettingsComponent implements OnInit {
     this.getUsers();
   }
 
+  ngAfterViewInit(): void {
+    this.historyEventDataSource.paginator = this.paginator;
+  }
+
   get username(): FormControl {
     return this.createUserFormGroup.get('username') as FormControl;
   }
@@ -60,10 +85,15 @@ export class UserSettingsComponent implements OnInit {
   }
 
   createUser() {
+    const reason = this.getReason();
+    if (!reason) {
+      return;
+    }
+
     if (this.createUserFormGroup.valid) {
       const username = this.createUserFormGroup.value.username!;
 
-      this.userService.createUser(username, 'user').subscribe({
+      this.userService.createUser(username, 'user', reason).subscribe({
         next: () => {
           this.toastService.showSuccess(
             'User created',
@@ -75,8 +105,13 @@ export class UserSettingsComponent implements OnInit {
     }
   }
 
-  createAdministratorWithUsername(user: User) {
-    this.userService.updateRoleOfUser(user, 'administrator').subscribe({
+  upgradeToAdministrator(user: User) {
+    const reason = this.getReason();
+    if (!reason) {
+      return;
+    }
+
+    this.userService.updateRoleOfUser(user, 'administrator', reason).subscribe({
       next: () => {
         this.toastService.showSuccess(
           'Role of user updated',
@@ -93,20 +128,18 @@ export class UserSettingsComponent implements OnInit {
     });
   }
 
-  getUsers() {
-    this.userService.getUsers().subscribe((res: User[]) => {
-      this.users = res;
-    });
-  }
+  downgradeToUser(user: User) {
+    const reason = this.getReason();
+    if (!reason) {
+      return;
+    }
 
-  removeAdministrator(user: User) {
-    this.userService.updateRoleOfUser(user, 'user').subscribe({
+    this.userService.updateRoleOfUser(user, 'user', reason).subscribe({
       next: () => {
         this.toastService.showSuccess(
           'Role of user updated',
           user.name + ' has now the role user'
         );
-        this.getUsers();
         this.getUsers();
       },
       error: () => {
@@ -136,11 +169,40 @@ export class UserSettingsComponent implements OnInit {
     });
   }
 
-  getUsersByRole(role: 'administrator' | 'user'): User[] {
+  getUsers() {
+    this.userService.getUsers().subscribe((users: User[]) => {
+      this.selectedUser = undefined;
+      this.selectedUserHistory = undefined;
+      this.users = users;
+    });
+  }
+
+  getUsersByRole(role: UserRole): User[] {
     return this.users.filter(
-      (u) =>
-        u.role == role &&
-        u.name.toLowerCase().includes(this.search.toLowerCase())
+      (user) =>
+        user.role == role &&
+        user.name.toLowerCase().includes(this.search.toLowerCase())
     );
+  }
+
+  onUserSelect(user: User) {
+    this.selectedUser = user;
+
+    this.userService.getUserHistory(user).subscribe({
+      next: (userHistory) => {
+        this.selectedUserHistory = userHistory;
+        this.historyEventDataSource.data = userHistory.events;
+        this.historyEventDataSource.paginator = this.paginator;
+      },
+    });
+  }
+
+  getReason(): string | undefined {
+    const reason = window.prompt('Please enter a reason!');
+    if (!reason) {
+      this.toastService.showError('Reason missing', 'You must enter a reason!');
+      return;
+    }
+    return reason;
   }
 }

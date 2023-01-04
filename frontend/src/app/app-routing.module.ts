@@ -5,6 +5,7 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { EventsComponent } from './events/events.component';
 import { AuthGuardService } from './general/auth/auth-guard/auth-guard.service';
 import { AuthRedirectComponent } from './general/auth/auth-redirect/auth-redirect.component';
 import { AuthComponent } from './general/auth/auth/auth.component';
@@ -210,6 +211,10 @@ const routes: Routes = [
             ],
           },
         ],
+      },
+      {
+        path: 'events',
+        component: EventsComponent,
       },
     ],
   },

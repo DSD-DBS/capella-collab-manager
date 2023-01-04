@@ -3,21 +3,22 @@
 
 from __future__ import annotations
 
-import typing as t
-
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.users.crud as project_crud
+import capellacollab.users.events.crud as event_crud
 from capellacollab.core.authentication.database import RoleVerification
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.sessions.routes import inject_attrs_in_sessions
 from capellacollab.sessions.schema import OwnSessionResponse
+from capellacollab.users.events.models import EventType
+from capellacollab.users.events.routes import router as router_events
 
 from . import crud
 from .injectables import get_existing_user, get_own_user
-from .models import BaseUser, DatabaseUser, PatchUserRoleRequest, Role, User
+from .models import DatabaseUser, PatchUserRoleRequest, PostUser, Role, User
 
 router = APIRouter(
     dependencies=[Depends(RoleVerification(required_role=Role.USER))]
@@ -54,8 +55,16 @@ def get_users(db: Session = Depends(get_db)) -> list[DatabaseUser]:
     response_model=User,
     dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
 )
-def create_user(body: BaseUser, db: Session = Depends(get_db)):
-    return crud.create_user(db, body.name)
+def create_user(
+    post_user: PostUser,
+    own_user: DatabaseUser = Depends(get_own_user),
+    db: Session = Depends(get_db),
+):
+    created_user = crud.create_user(db, post_user.name)
+    event_crud.create_user_creation_event(
+        db=db, user=created_user, executor=own_user, reason=post_user.reason
+    )
+    return created_user
 
 
 @router.patch(
@@ -65,12 +74,25 @@ def create_user(body: BaseUser, db: Session = Depends(get_db)):
 )
 def update_role_of_user(
     patch_user: PatchUserRoleRequest,
-    db_user: DatabaseUser = Depends(get_existing_user),
+    user: DatabaseUser = Depends(get_existing_user),
+    own_user: DatabaseUser = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> DatabaseUser:
-    if patch_user.role == Role.ADMIN:
-        project_crud.delete_all_projects_for_user(db, db_user)
-    return crud.update_role_of_user(db, db_user, patch_user.role)
+    if (role := patch_user.role) == Role.ADMIN:
+        project_crud.delete_all_projects_for_user(db, user)
+
+    updated_user = crud.update_role_of_user(db, user, role)
+
+    event_type = (
+        EventType.ASSIGNED_ROLE_ADMIN
+        if role == Role.ADMIN
+        else EventType.ASSIGNED_ROLE_USER
+    )
+    event_crud.create_role_change_event(
+        db, user, event_type, own_user, patch_user.reason
+    )
+
+    return updated_user
 
 
 @router.delete(
@@ -83,6 +105,7 @@ def delete_user(
     db: Session = Depends(get_db),
 ):
     project_crud.delete_all_projects_for_user(db, user)
+    event_crud.delete_all_events_involved_in(db, user)
     crud.delete_user(db, user)
 
 
@@ -106,3 +129,6 @@ def get_sessions_for_user(
         )
 
     return inject_attrs_in_sessions(user.sessions)
+
+
+router.include_router(router_events, tags=["Users - History"])

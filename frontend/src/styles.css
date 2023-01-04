@@ -18,6 +18,13 @@ a {
   text-decoration: none !important;
 }
 
+table {
+  table-layout: auto;
+  border-collapse: separate;
+  border-spacing: 2px;
+  width: 100%;
+}
+
 /* All global variables are defined here */
 :root {
   --primary-color: #3f51b5;

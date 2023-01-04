@@ -9,10 +9,13 @@ from functools import lru_cache
 from cachetools import TTLCache
 from fastapi import APIRouter, Depends
 from msal import ConfidentialClientApplication
+from sqlalchemy.orm import Session
 
+import capellacollab.users.crud as users_crud
 from capellacollab.config import config
-from capellacollab.core.authentication import jwt_bearer
 from capellacollab.core.authentication.database import RoleVerification
+from capellacollab.core.authentication.helper import get_username
+from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.authentication.schemas import (
     RefreshTokenRequest,
     TokenRequest,
@@ -50,17 +53,23 @@ async def get_redirect_url():
 
 
 @router.post("/tokens", name="Create access_token")
-async def api_get_token(body: TokenRequest):
+async def api_get_token(body: TokenRequest, db: Session = Depends(get_db)):
     auth_data = global_session_data[body.state]
     del global_session_data[body.state]
     token = ad_session().acquire_token_by_auth_code_flow(
         auth_data, body.dict(), scopes=[]
     )
+    access_token = token["id_token"]
+
+    username = get_username(JWTBearer().validate_token(access_token))
+
+    if user := users_crud.get_user_by_name(db, username):
+        users_crud.update_last_login(db, user)
 
     # *Sigh* This is microsoft again. Instead of the access_token, we should use id_token :/
     # https://stackoverflow.com/questions/63195081/how-to-validate-a-jwt-from-azuread-in-python
     return {
-        "access_token": token["id_token"],
+        "access_token": access_token,
         "refresh_token": token["refresh_token"],
         "token_type": token["token_type"],
     }
@@ -74,7 +83,7 @@ async def api_refresh_token(body: RefreshTokenRequest):
 
 
 @router.delete("/tokens", name="Invalidate the token (log out)")
-async def logout(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
+async def logout(jwt_decoded=Depends(JWTBearer())):
     for account in ad_session().get_accounts():
         if account["username"] == jwt_decoded["preferred_username"]:
             return ad_session().remove_account(account)
@@ -84,7 +93,7 @@ async def logout(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
 @router.get("/tokens", name="Validate the token")
 async def validate_token(
     scope: t.Optional[Role],
-    token=Depends(jwt_bearer.JWTBearer()),
+    token=Depends(JWTBearer()),
     db=Depends(get_db),
 ):
     if scope and scope.ADMIN:

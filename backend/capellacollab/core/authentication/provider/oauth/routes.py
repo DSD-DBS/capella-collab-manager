@@ -4,9 +4,12 @@
 import typing as t
 
 from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
-from capellacollab.core.authentication import jwt_bearer
+import capellacollab.users.crud as users_crud
 from capellacollab.core.authentication.database import RoleVerification
+from capellacollab.core.authentication.helper import get_username
+from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.authentication.schemas import (
     RefreshTokenRequest,
     TokenRequest,
@@ -25,8 +28,15 @@ async def get_redirect_url():
 
 
 @router.post("/tokens", name="Create access_token")
-async def api_get_token(body: TokenRequest):
-    return get_token(body.code)
+async def api_get_token(body: TokenRequest, db: Session = Depends(get_db)):
+    token = get_token(body.code)
+
+    username = get_username(JWTBearer().validate_token(token["access_token"]))
+
+    if user := users_crud.get_user_by_name(db, username):
+        users_crud.update_last_login(db, user)
+
+    return token
 
 
 @router.put("/tokens", name="Refresh the access_token")
@@ -35,14 +45,14 @@ async def api_refresh_token(body: RefreshTokenRequest):
 
 
 @router.delete("/tokens", name="Invalidate the token (log out)")
-async def logout(jwt_decoded=Depends(jwt_bearer.JWTBearer())):
+async def logout(jwt_decoded=Depends(JWTBearer())):
     return None
 
 
 @router.get("/tokens", name="Validate the token")
 async def validate_token(
     scope: t.Optional[Role],
-    token=Depends(jwt_bearer.JWTBearer()),
+    token=Depends(JWTBearer()),
     db=Depends(get_db),
 ):
     if scope and scope.ADMIN:
