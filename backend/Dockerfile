@@ -1,15 +1,13 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-ARG BASE_IMAGE=buildpack-deps:bullseye
+ARG BASE_IMAGE=python:3.11-bullseye
 FROM $BASE_IMAGE
 
 RUN apt-get update && \
     apt-get upgrade --yes && \
     apt-get install --yes \
     ca-certificates \
-    python3 \
-    python3-pip \
     unzip \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
