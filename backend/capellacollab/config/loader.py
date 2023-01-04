@@ -12,21 +12,23 @@ import yaml
 
 log = logging.getLogger(__name__)
 
-locations: list[pathlib.Path] = [
-    pathlib.Path(__file__).parents[2] / "config",
-    pathlib.Path(appdirs.user_config_dir("capellacollab", "db")),
-    pathlib.Path("/etc/capellacollab"),
+config_locations: list[pathlib.Path] = [
+    pathlib.Path(__file__).parents[2] / "config" / "config.yaml",
+    pathlib.Path(appdirs.user_config_dir("capellacollab", "db"))
+    / "config.yaml",
+    pathlib.Path("/etc/capellacollab") / "config.yaml",
 ]
 
-fallback_locations: list[pathlib.Path] = [
+config_fallback_locations: list[pathlib.Path] = [
     pathlib.Path(__file__).parents[2] / "config" / "config_template.yaml",
+]
+
+json_schema_locations = [
+    pathlib.Path(__file__).parents[0] / "config_schema.json"
 ]
 
 
 def load_yaml() -> dict:
-    config_locations = list(map(lambda loc: loc / "config.yaml", locations))
-    config_fallback_locations = fallback_locations
-
     log.debug("Searching for configuration files...")
     for loc in config_locations:
         if loc.exists():
@@ -44,13 +46,10 @@ def load_yaml() -> dict:
             )
             return yaml.safe_load(loc.open())
 
-    return {}
+    raise FileNotFoundError("config.yaml")
 
 
 def load_config_schema() -> dict:
-    json_schema_locations = list(
-        map(lambda loc: loc / "config_schema.json", locations)
-    )
     for loc in json_schema_locations:
         if loc.exists():
             log.info(
@@ -63,4 +62,5 @@ def load_config_schema() -> dict:
                 "Didn't find a configuration schema file at location %s",
                 str(loc),
             )
-    return {}
+
+    raise FileNotFoundError("config_schema.json")
