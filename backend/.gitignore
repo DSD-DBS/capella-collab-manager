@@ -4,8 +4,6 @@
 .idea
 config/*
 !config/config_template.yaml
-!config/config_schema.json
-!config/config_schema.json.license
 .history
 **/__pycache__/
 .vscode
