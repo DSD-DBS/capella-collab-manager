@@ -34,7 +34,7 @@ def terminate_idle_session():
             log.info("Terminating idle session %s", session_id)
             with database.SessionLocal() as db:
                 if session := get_session_by_id(db, session_id):
-                    util.terminate_session(session, db, OPERATOR)
+                    util.terminate_session(db, session, OPERATOR)
                 else:
                     log.error(
                         "Session was not found in our database. Terminating idle session %s",
