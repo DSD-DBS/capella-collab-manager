@@ -439,7 +439,7 @@ class KubernetesOperator:
             volume_mounts.append(
                 {
                     "name": "pure-variants",
-                    "mountPath": "/home/techuser/pure-variants",
+                    "mountPath": "/inputs/pure-variants",
                     "readOnly": True,
                 }
             )
