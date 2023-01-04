@@ -49,14 +49,14 @@ def delete_4c_repository(
 
 
 def get_user_t4c_repositories(
-    db: Session, tool: Tool, version: Version, user: DatabaseUser
+    db: Session, version_name: str, user: DatabaseUser
 ) -> list[DatabaseT4CRepository]:
     admin_stmt = (
         select(DatabaseT4CRepository)
         .join(DatabaseT4CRepository.models)
         .join(DatabaseT4CModel.model)
-        .where(DatabaseCapellaModel.tool == tool)
-        .where(DatabaseCapellaModel.version == version)
+        .join(DatabaseCapellaModel.version)
+        .where(Version.name == version_name)
     )
 
     stmt = (

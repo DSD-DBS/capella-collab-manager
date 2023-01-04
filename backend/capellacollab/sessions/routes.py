@@ -266,19 +266,10 @@ def request_persistent_session(
     t4c_license_secret = None
 
     if tool.integrations.t4c:
-        if tool.name != "Capella":
-            # When using a different tool with TeamForCapella support (e.g. Capella + pure::variants),
-            # the version ID doesn't match the version from the T4C integration.
-            # We have to find the matching version by name.
-            matching_tool_version = get_version_by_name(
-                db, get_tool_by_name(db, "Capella"), version.name
-            )
-        else:
-            matching_tool_version = version
-
-        t4c_repositories = get_user_t4c_repositories(
-            db, tool, matching_tool_version, user
-        )
+        # When using a different tool with TeamForCapella support (e.g. Capella + pure::variants),
+        # the version ID doesn't match the version from the T4C integration.
+        # We have to find the matching Capella version by name.
+        t4c_repositories = get_user_t4c_repositories(db, version.name, user)
 
         t4c_json = [
             {

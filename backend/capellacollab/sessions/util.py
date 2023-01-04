@@ -36,7 +36,7 @@ def terminate_session(
 
 def revoke_session_tokens(db_session: Session, session: DatabaseSession):
     for repository in get_user_t4c_repositories(
-        db_session, session.tool, session.version, session.owner
+        db_session, session.version.name, session.owner
     ):
         try:
             remove_user_from_repository(
