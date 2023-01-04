@@ -11,20 +11,10 @@
     },
     "operators": {
       "type": "object",
-      "deprecated": true,
       "properties": {
         "operator": {
           "type": "string",
           "enum": ["docker", "k8s"]
-        },
-        "docker": {
-          "type": "object",
-          "deprecated": true,
-          "properties": {
-            "mountVolume": { "type": "string" },
-            "portRange": { "type": "string" },
-            "containerHost": { "type": "string" }
-          }
         },
         "k8s": {
           "type": "object",
