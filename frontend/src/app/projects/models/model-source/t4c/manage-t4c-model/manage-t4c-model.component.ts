@@ -154,7 +154,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
           this.t4cModelService._t4cModel.next(model);
           this.patchFormWithExistingT4CModel();
           this.toastService.showSuccess(
-            'TeamForCapella successfully updated',
+            'TeamForCapella repository link successfully updated',
             ''
           );
         });
@@ -172,7 +172,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
             this.router.navigate(['../..'], { relativeTo: this.route });
           }
           this.toastService.showSuccess(
-            'TeamForCapella successfully created',
+            'TeamForCapella repository successfully linked',
             ''
           );
         });
