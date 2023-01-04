@@ -153,7 +153,7 @@
     <br />
     <mat-form-field>
       <mat-label>Reason</mat-label>
-      <input matInput formControlName="reason" />
+      <textarea matInput formControlName="reason"></textarea>
       <mat-error *ngIf="addUserToProjectForm.controls.reason.errors?.required">
         Please enter a reason!
       </mat-error>
