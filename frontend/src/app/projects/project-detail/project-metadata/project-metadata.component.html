@@ -39,18 +39,20 @@
         </mat-form-field>
       </fieldset>
     </form>
-    <p *ngIf="!canDelete">
-      The project can't be deleted since it has linked models.
-    </p>
     <div class="flex-space-between">
-      <button
-        [disabled]="!canDelete"
-        (click)="deleteProject()"
-        mat-flat-button
-        color="warn"
+      <span
+        matTooltip="The project can't be deleted since it has linked models"
+        [matTooltipDisabled]="canDelete"
       >
-        Delete
-      </button>
+        <button
+          [disabled]="!canDelete"
+          (click)="deleteProject()"
+          mat-flat-button
+          color="warn"
+        >
+          Delete
+        </button>
+      </span>
       <button
         [disabled]="!form.valid"
         (click)="updateDescription()"
