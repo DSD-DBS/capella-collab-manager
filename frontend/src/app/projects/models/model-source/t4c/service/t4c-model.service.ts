@@ -76,7 +76,7 @@ export class T4CModelService {
     );
   }
 
-  deleteT4CModel(
+  unlinkT4CModel(
     project_slug: string,
     model_slug: string,
     t4c_model_id: number

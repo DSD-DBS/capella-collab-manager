@@ -189,7 +189,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
     }
 
     this.t4cModelService
-      .deleteT4CModel(
+      .unlinkT4CModel(
         this.projectService.project?.slug!,
         this.modelService.model?.slug!,
         this.t4cModel!.id
