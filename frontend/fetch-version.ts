@@ -7,23 +7,10 @@ const { writeFileSync } = require('fs');
 const util = require('node:util');
 const exec = util.promisify(require('node:child_process').exec);
 
-const options = {};
-
 if (process.env.http_proxy) {
   const { setGlobalDispatcher, ProxyAgent } = require('undici');
 
   setGlobalDispatcher(new ProxyAgent(process.env.http_proxy));
-}
-
-if (process.env.GITHUB_USERNAME && process.env.GITHUB_TOKEN) {
-  console.error('Using credentials from environment variables.');
-  options.headers = {
-    Authorization:
-      'Basic ' +
-      Buffer.from(
-        process.env.GITHUB_USERNAME + ':' + process.env.GITHUB_TOKEN
-      ).toString('base64'),
-  };
 }
 
 async function main() {
