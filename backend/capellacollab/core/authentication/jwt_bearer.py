@@ -54,7 +54,18 @@ class JWTBearer(HTTPBearer):
                 events.create_user_creation_event(session, created_user)
 
     def validate_token(self, token: str) -> t.Optional[t.Dict[str, t.Any]]:
-        jwt_cfg = ep_main.get_jwk_cfg(token)
+        try:
+            jwt_cfg = ep_main.get_jwk_cfg(token)
+        except Exception:
+            if self.auto_error:
+                raise HTTPException(
+                    status_code=401,
+                    detail={
+                        "err_code": "TOKEN_INVALID",
+                        "reason": "The used token is not valid.",
+                    },
+                ) from None
+            return None
         try:
             return jwt.decode(token, **jwt_cfg)
         except jwt.ExpiredSignatureError:
