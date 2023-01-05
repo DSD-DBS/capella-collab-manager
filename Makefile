@@ -22,6 +22,9 @@ CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 DOCKER_REGI
 # Adds support for msys
 export MSYS_NO_PATHCONV := 1
 
+# Use Docker Buildkit on Linux
+export DOCKER_BUILDKIT=1
+
 build: backend frontend docs
 
 backend:
