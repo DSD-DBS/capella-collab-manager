@@ -95,7 +95,12 @@ def delete_user_from_project(
     db.commit()
 
 
-def delete_all_projects_for_user(db: Session, user: DatabaseUser):
+def delete_users_from_project(db: Session, project: DatabaseProject):
+    for association in project.users:
+        delete_user_from_project(db, project, association.user)
+
+
+def delete_projects_for_user(db: Session, user: DatabaseUser):
     db.execute(
         delete(ProjectUserAssociation).where(
             ProjectUserAssociation.user == user
