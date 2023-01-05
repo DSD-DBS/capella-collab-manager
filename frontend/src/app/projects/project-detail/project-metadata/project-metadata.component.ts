@@ -104,7 +104,9 @@ export class ProjectMetadataComponent implements OnChanges {
 
     if (
       !this.canDelete ||
-      !window.confirm(`Do you really want to delete this project?`)
+      !window.confirm(
+        `Do you really want to delete this project? All assigned users will lose access to it! The project cannot be restored!`
+      )
     ) {
       return;
     }
