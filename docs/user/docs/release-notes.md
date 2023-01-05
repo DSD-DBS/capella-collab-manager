@@ -3,6 +3,8 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
+[Full/ Technical Changelog](https://github.com/DSD-DBS/capella-collab-manager/releases)
+
 ## v2.0.0
 
 With version 2.0.0 we create the basis for many new changes and a further
