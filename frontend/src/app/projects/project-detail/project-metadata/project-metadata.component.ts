@@ -22,7 +22,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import slugify from 'slugify';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { ModelService } from 'src/app/services/model/model.service';
+import { ModelService } from 'src/app/projects/models/service/model.service';
 import {
   PatchProject,
   Project,

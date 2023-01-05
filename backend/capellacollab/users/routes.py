@@ -79,7 +79,7 @@ def update_role_of_user(
     db: Session = Depends(get_db),
 ) -> DatabaseUser:
     if (role := patch_user.role) == Role.ADMIN:
-        project_crud.delete_all_projects_for_user(db, user)
+        project_crud.delete_projects_for_user(db, user)
 
     updated_user = crud.update_role_of_user(db, user, role)
 
@@ -104,7 +104,7 @@ def delete_user(
     user: DatabaseUser = Depends(get_existing_user),
     db: Session = Depends(get_db),
 ):
-    project_crud.delete_all_projects_for_user(db, user)
+    project_crud.delete_projects_for_user(db, user)
     event_crud.delete_all_events_involved_in(db, user)
     crud.delete_user(db, user)
 
