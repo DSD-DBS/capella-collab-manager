@@ -34,4 +34,5 @@ def get_environment(
         "T4C_PASSWORD": t4c_password,
         "LOG_LEVEL": "INFO",
         "INCLUDE_COMMIT_HISTORY": json.dumps(include_commit_history),
+        "CONNECTION_TYPE": "telnet",
     }
