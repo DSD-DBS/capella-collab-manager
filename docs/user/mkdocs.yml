@@ -41,8 +41,7 @@ nav:
       - Alerts:
           - Create an alert: additional/alerts/create.md
           - Delete an alert: additional/alerts/delete.md
-  - Release Notes:
-      - v2.0.0 Project support: releases/v2.0.0.md
+  - Release Notes: release-notes.md
   - About: about.md
 
 repo_url: https://github.com/DSD-DBS/capella-collab-manager

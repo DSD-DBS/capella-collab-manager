@@ -39,7 +39,6 @@ import { MatTreeModule } from '@angular/material/tree';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CookieModule } from 'ngx-cookie';
-import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ToastrModule } from 'ngx-toastr';
 import { AppRoutingModule } from './app-routing.module';
@@ -53,7 +52,6 @@ import { ErrorHandlingInterceptor } from './general/error-handling/error-handlin
 import { FooterComponent } from './general/footer/footer.component';
 import { LegalComponent } from './general/footer/legal/legal.component';
 import { TermsConditionsComponent } from './general/footer/terms-conditions/terms-conditions.component';
-import { ReleaseNotesComponent } from './general/metadata/release-notes/release-notes.component';
 import { VersionComponent } from './general/metadata/version/version.component';
 import { HeaderComponent } from './general/navbar/header.component';
 import { NoticeComponent } from './general/notice/notice.component';
@@ -165,7 +163,6 @@ import { HomeComponent } from './workspaces/home.component';
     ProjectUserSettingsComponent,
     ProjectWrapperComponent,
     PureVariantsComponent,
-    ReleaseNotesComponent,
     SessionOverviewComponent,
     SettingsComponent,
     T4CInstanceSettingsComponent,
@@ -195,7 +192,6 @@ import { HomeComponent } from './workspaces/home.component';
     CookieModule.withOptions(),
     FormsModule,
     HttpClientModule,
-    MarkdownModule.forRoot(),
     MatAutocompleteModule,
     MatBadgeModule,
     MatButtonModule,
