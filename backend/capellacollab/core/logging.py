@@ -69,9 +69,9 @@ class LogRequestsMiddleware(base.BaseHTTPMiddleware):
     async def dispatch(
         self, request: Request, call_next: base.RequestResponseEndpoint
     ):
-        get_logger(request).info("request started")
+        get_logger(request).debug("request started")
         response: Response = await call_next(request)
-        get_logger(request).info(
+        get_logger(request).debug(
             "request finished", {"status_code": response.status_code}
         )
 
