@@ -9,6 +9,9 @@ from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 from capellacollab.projects.toolmodels.modelsources.git.models import (
     DatabaseGitModel,
 )
+from capellacollab.projects.toolmodels.modelsources.t4c import (
+    models as t4c_models,
+)
 
 from .models import DatabaseBackup
 
@@ -38,6 +41,20 @@ def get_pipelines_for_git_model(
         db.execute(
             select(DatabaseBackup).where(
                 DatabaseBackup.git_model_id == model.id
+            )
+        )
+        .scalars()
+        .all()
+    )
+
+
+def get_pipelines_for_t4c_model(
+    db: Session, t4c_model: t4c_models.DatabaseT4CModel
+) -> list[DatabaseBackup]:
+    return (
+        db.execute(
+            select(DatabaseBackup).where(
+                DatabaseBackup.t4c_model_id == t4c_model.id
             )
         )
         .scalars()
