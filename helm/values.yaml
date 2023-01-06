@@ -190,12 +190,6 @@ cluster:
   containers:
     # The following values are appended to each container
     securityContext: &securityContext
-      capabilities:
-        drop:
-          - KILL
-          - MKNOD
-          - SETGID
-          - SETUID
       runAsUser: 1004370000
       runAsGroup: 1004370000
       fsGroup: 1004370000
