@@ -25,6 +25,8 @@ from capellacollab.config import config
 
 log = logging.getLogger(__name__)
 
+external_registry: str = config["docker"]["externalRegistry"]
+
 cfg = config["k8s"]
 
 namespace: str = cfg["namespace"]
@@ -568,7 +570,7 @@ class KubernetesOperator:
         containers.append(
             client.V1Container(
                 name="promtail",
-                image="docker.io/grafana/promtail",
+                image=f"{external_registry}/grafana/promtail",
                 args=[
                     "--config.file=/etc/promtail/promtail.yaml",
                     "-log-config-reverse-order",

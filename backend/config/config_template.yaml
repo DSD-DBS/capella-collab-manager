@@ -3,6 +3,7 @@
 
 docker:
   registry: k3d-myregistry.localhost:12345
+  externalRegistry: docker.io
 
 k8s:
   # Only required when using operator k8s
