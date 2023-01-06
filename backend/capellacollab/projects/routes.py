@@ -100,7 +100,6 @@ def update_project(
 )
 def get_project_by_slug(
     db_project: DatabaseProject = Depends(get_existing_project),
-    user: DatabaseUser = Depends(get_own_user),
     log=Depends(get_logger),
 ) -> DatabaseProject:
     log.debug(f"Getting the project {db_project.name}")
