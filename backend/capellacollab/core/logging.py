@@ -85,9 +85,7 @@ class HealthcheckFilter(logging.Filter):
 
 class LogAdapter(logging.LoggerAdapter):
     def process(self, msg: str, kwargs):
-        log_extra = kwargs.get("extra", {})
-        self_extra = self.extra
-        extra: dict = self_extra | log_extra
+        extra: dict = self.extra | kwargs.get("extra", {})
 
         msg = (
             " ".join([f'{key}="{value}"' for key, value in extra.items()])
