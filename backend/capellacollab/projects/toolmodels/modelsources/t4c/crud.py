@@ -84,3 +84,8 @@ def set_repository_for_t4c_model(
 ):
     t4c_model.repository = t4c_repository
     db.commit()
+
+
+def delete_t4c_model(db: Session, t4c_model: DatabaseT4CModel):
+    db.delete(t4c_model)
+    db.commit()

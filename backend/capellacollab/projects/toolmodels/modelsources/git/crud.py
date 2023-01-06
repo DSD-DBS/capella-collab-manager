@@ -95,9 +95,6 @@ def update_git_model(
     return db_model
 
 
-def delete_git_model(
-    db: Session,
-    git_model: DatabaseGitModel,
-) -> DatabaseGitModel:
+def delete_git_model(db: Session, git_model: DatabaseGitModel):
     db.delete(git_model)
     db.commit()

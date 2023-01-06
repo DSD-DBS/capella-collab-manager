@@ -71,6 +71,15 @@
           <mat-icon class="mat-icon-position">arrow_back</mat-icon>
           Choose primary source
         </button>
+        <button
+          *ngIf="editing"
+          (click)="unlinkT4CModel()"
+          mat-flat-button
+          color="warn"
+          type="button"
+        >
+          Unlink
+        </button>
         <app-button-skeleton-loader
           *ngIf="loading"
         ></app-button-skeleton-loader>

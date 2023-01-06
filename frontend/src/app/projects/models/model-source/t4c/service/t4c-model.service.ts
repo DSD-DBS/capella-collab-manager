@@ -76,6 +76,16 @@ export class T4CModelService {
     );
   }
 
+  unlinkT4CModel(
+    projectSlug: string,
+    modelSlug: string,
+    t4cModelId: number
+  ): Observable<void> {
+    return this.http.delete<void>(
+      `${this.urlFactory(projectSlug, modelSlug)}/${t4cModelId}`
+    );
+  }
+
   clear() {
     this._t4cModels.next(undefined);
     this._t4cModel.next(undefined);

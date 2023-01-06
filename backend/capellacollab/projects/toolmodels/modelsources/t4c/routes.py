@@ -3,8 +3,6 @@
 
 from __future__ import annotations
 
-import typing as t
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -14,6 +12,7 @@ from capellacollab.core.authentication.database import (
     ProjectRoleVerification,
     RoleVerification,
 )
+from capellacollab.projects.toolmodels.backups import crud as backups_crud
 from capellacollab.projects.toolmodels.injectables import (
     get_existing_capella_model,
 )
@@ -98,3 +97,26 @@ def edit_t4c_model(
     db_session: Session = Depends(database.get_db),
 ):
     return crud.patch_t4c_model(db_session, t4c_model, body)
+
+
+@router.delete(
+    "/{t4c_model_id}",
+    status_code=204,
+    dependencies=[
+        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+    ],
+)
+def delete_t4c_model(
+    t4c_model: DatabaseT4CModel = Depends(get_existing_t4c_model),
+    db: Session = Depends(database.get_db),
+):
+    if backups_crud.get_pipelines_for_t4c_model(db, t4c_model):
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "err_code": "git_model_used_for_backup",
+                "reason": "The git model can't be deleted: it's used for backup jobs",
+            },
+        )
+
+    crud.delete_t4c_model(db, t4c_model)
