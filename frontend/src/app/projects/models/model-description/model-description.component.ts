@@ -114,6 +114,9 @@ export class ModelDescriptionComponent implements OnInit {
             'Model deleted',
             `${model.name} has been deleted`
           );
+          this.modelService._models.next(
+            this.modelService.models?.filter((m) => m.id !== model.id)
+          );
           this.router.navigate(['../../..'], { relativeTo: this.route });
         },
         error: () => {

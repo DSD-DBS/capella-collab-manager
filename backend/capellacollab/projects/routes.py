@@ -9,14 +9,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from slugify import slugify
 from sqlalchemy.orm import Session
 
-import capellacollab.projects.crud as crud
-import capellacollab.projects.users.crud as users_crud
 from capellacollab.core.authentication.database import (
     ProjectRoleVerification,
     RoleVerification,
     get_db,
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.projects import crud
 from capellacollab.projects.models import (
     DatabaseProject,
     PatchProject,
@@ -24,6 +23,7 @@ from capellacollab.projects.models import (
     Project,
 )
 from capellacollab.projects.toolmodels.injectables import get_existing_project
+from capellacollab.projects.users import crud as users_crud
 from capellacollab.projects.users.models import (
     ProjectUserPermission,
     ProjectUserRole,
@@ -140,8 +140,12 @@ def delete_project(
     project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
 ):
+    if project.models:
+        raise HTTPException(
+            409, {"reason": "The project still has models assigned to it"}
+        )
+    users_crud.delete_users_from_project(db, project)
     crud.delete_project(db, project)
-    return None
 
 
 router.include_router(

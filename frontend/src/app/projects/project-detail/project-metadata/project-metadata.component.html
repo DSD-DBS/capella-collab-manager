@@ -39,13 +39,28 @@
         </mat-form-field>
       </fieldset>
     </form>
-    <button
-      [disabled]="!form.valid"
-      (click)="updateDescription()"
-      mat-raised-button
-      id="submit"
-    >
-      Submit
-    </button>
+    <div class="flex-space-between">
+      <span
+        matTooltip="The project can't be deleted since it has linked models"
+        [matTooltipDisabled]="canDelete"
+      >
+        <button
+          [disabled]="!canDelete"
+          (click)="deleteProject()"
+          mat-flat-button
+          color="warn"
+        >
+          Delete
+        </button>
+      </span>
+      <button
+        [disabled]="!form.valid"
+        (click)="updateDescription()"
+        mat-raised-button
+        id="submit"
+      >
+        Submit
+      </button>
+    </div>
   </mat-card>
 </div>

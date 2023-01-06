@@ -19,9 +19,10 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import slugify from 'slugify';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { ModelService } from 'src/app/projects/models/service/model.service';
 import {
   PatchProject,
   Project,
@@ -48,7 +49,9 @@ export class ProjectMetadataComponent implements OnChanges {
   constructor(
     private toastService: ToastService,
     private projectService: ProjectService,
-    private router: Router
+    private modelService: ModelService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnChanges(_changes: SimpleChanges): void {
@@ -90,5 +93,38 @@ export class ProjectMetadataComponent implements OnChanges {
 
   get newSlug(): string | null {
     return this.form.value.name ? slugify(this.form.value.name) : null;
+  }
+
+  get canDelete(): boolean {
+    return !this.modelService.models?.length;
+  }
+
+  deleteProject(): void {
+    const project = this.project;
+
+    if (
+      !this.canDelete ||
+      !window.confirm(
+        `Do you really want to delete this project? All assigned users will lose access to it! The project cannot be restored!`
+      )
+    ) {
+      return;
+    }
+
+    this.projectService.deleteProject(project.slug).subscribe({
+      next: () => {
+        this.toastService.showSuccess(
+          'Project deleted',
+          `${project.name} has been deleted`
+        );
+        this.router.navigate(['../../projects'], { relativeTo: this.route });
+      },
+      error: () => {
+        this.toastService.showError(
+          'Project deletion failed',
+          `${project.name} has not been deleted`
+        );
+      },
+    });
   }
 }

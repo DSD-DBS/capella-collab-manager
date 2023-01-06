@@ -67,6 +67,10 @@ export class ProjectService {
     }
     return observable;
   }
+
+  deleteProject(projectSlug: string): Observable<void> {
+    return this.http.delete<void>(this.base_url + projectSlug);
+  }
 }
 
 export type UserMetadata = {
