@@ -20,6 +20,7 @@ import kubernetes.config
 import kubernetes.stream.stream
 import yaml
 from kubernetes import client
+from kubernetes.client import exceptions
 
 from capellacollab.config import config
 
@@ -309,7 +310,7 @@ class KubernetesOperator:
             # Fallback if no event is available
             return pod.status.phase
 
-        except client.exceptions.ApiException as e:
+        except exceptions.ApiException as e:
             log.warning("Kubernetes error", exc_info=True)
             return f"error-{str(e.status)}"
         except Exception:
@@ -434,7 +435,7 @@ class KubernetesOperator:
             self.v1_batch.delete_namespaced_cron_job(
                 namespace=namespace, name=_id
             )
-        except client.exceptions.ApiException:
+        except exceptions.ApiException:
             log.exception("Error deleting cronjob with name: %s", _id)
 
     def get_cronjob_last_run(self, name: str) -> str | None:
@@ -729,7 +730,7 @@ class KubernetesOperator:
             self.v1_core.create_namespaced_persistent_volume_claim(
                 namespace, pvc
             )
-        except client.exceptions.ApiException as e:
+        except exceptions.ApiException as e:
             if e.status == 409:
                 return
             raise
@@ -842,7 +843,7 @@ class KubernetesOperator:
     def _delete_deployment(self, name: str) -> client.V1Status:
         try:
             return self.v1_apps.delete_namespaced_deployment(name, namespace)
-        except client.exceptions.ApiException:
+        except exceptions.ApiException:
             log.exception("Error deleting deployment with name: %s", name)
 
     def delete_secret(self, name: str) -> kubernetes.client.V1Status:
@@ -856,13 +857,13 @@ class KubernetesOperator:
     def _delete_config_map(self, name: str) -> client.V1Status:
         try:
             return self.v1_core.delete_namespaced_config_map(name, namespace)
-        except client.exceptions.ApiException:
+        except exceptions.ApiException:
             log.exception("Error deleting config map with name: %s", name)
 
     def _delete_service(self, name: str) -> client.V1Status:
         try:
             return self.v1_core.delete_namespaced_service(name, namespace)
-        except client.exceptions.ApiException:
+        except exceptions.ApiException:
             log.exception("Error deleting service with name: %s", name)
 
     def _get_pod_name(self, _id: str) -> str:
@@ -905,7 +906,7 @@ class KubernetesOperator:
                     "Upload into %s - STDERR: %s", _id, stream.read_stderr()
                 )
 
-        except client.exceptions.ApiException as e:
+        except exceptions.ApiException as e:
             log.exception(
                 "Exception when copying file to the pod with id %s", _id
             )
