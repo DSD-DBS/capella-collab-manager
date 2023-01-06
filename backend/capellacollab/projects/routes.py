@@ -57,7 +57,7 @@ def get_projects(
         log.debug("Fetching all projects")
         return crud.get_all_projects(db)
 
-    projects = [association.projects for association in user.projects]
+    projects = [association.project for association in user.projects]
     log.debug("Fetching the following projects: %s", projects)
     return projects
 
