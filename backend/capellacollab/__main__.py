@@ -17,24 +17,27 @@ from capellacollab.core.database import engine, migration
 from capellacollab.core.logging import (
     AttachTraceIdMiddleware,
     AttachUserNameMiddleware,
+    CustomFormatter,
+    CustomTimedRotatingFileHandler,
     LogExceptionMiddleware,
     LogRequestsMiddleware,
-    MakeTimedRotatingFileHandler,
 )
 from capellacollab.routes import router, status
 from capellacollab.sessions.idletimeout import (
     terminate_idle_sessions_in_background,
 )
 
-logging.basicConfig(
-    level=config["logging"]["level"],
-    handlers=[
-        MakeTimedRotatingFileHandler(
-            str(config["logging"]["logPath"]) + "backend.log"
-        )
-    ],
-    format='time="%(asctime)s" level=%(levelname)s function=%(funcName)s %(message)s',
-)
+handlers: list[logging.Handler] = [
+    logging.StreamHandler(),
+    CustomTimedRotatingFileHandler(
+        str(config["logging"]["logPath"]) + "backend.log"
+    ),
+]
+
+for handler in handlers:
+    handler.setFormatter(CustomFormatter())
+
+logging.basicConfig(level=config["logging"]["level"], handlers=handlers)
 
 
 async def startup():

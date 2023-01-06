@@ -21,7 +21,26 @@ from capellacollab.core.authentication.jwt_bearer import JWTBearer
 LOGGING_LEVEL = config["logging"]["level"]
 
 
-class MakeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
+class CustomFormatter(logging.Formatter):
+    def __init__(self):
+        self._request_formatters = logging.Formatter(
+            'time="%(asctime)s" level=%(levelname)s function=%(funcName)s %(message)s'
+        )
+        self._default_formatter = logging.Formatter(
+            'time="%(asctime)s" level=%(levelname)s name=%(name)s function=%(funcName)s message="%(message)s"'
+        )
+        super().__init__()
+
+    def format(self, record):
+        if record.name == "capellacollab.request":
+            return self._request_formatters.format(record)
+
+        return self._default_formatter.format(record)
+
+
+class CustomTimedRotatingFileHandler(
+    logging.handlers.TimedRotatingFileHandler
+):
     def __init__(self, filename: str | os.PathLike[str]):
         pathlib.Path(filename).parent.mkdir(exist_ok=True)
         super().__init__(filename, when="D", backupCount=1, delay=True)
@@ -32,7 +51,7 @@ class AttachTraceIdMiddleware(base.BaseHTTPMiddleware):
         self, request: Request, call_next: base.RequestResponseEndpoint
     ):
         request.state.trace_id = "".join(
-            random.choices(string.ascii_uppercase + string.digits, k=6)
+            random.choices(string.ascii_uppercase + string.digits, k=10)
         )
 
         return await call_next(request)
@@ -94,18 +113,10 @@ class LogAdapter(logging.LoggerAdapter):
         return (msg, kwargs)
 
 
-def get_general_logger(name: str, log_leveL=LOGGING_LEVEL) -> logging.Logger:
-    logger: logging.Logger = logging.getLogger(name)
+def get_general_logger(log_level=LOGGING_LEVEL) -> logging.Logger:
+    logger: logging.Logger = logging.getLogger("capellacollab.request")
     logger.addFilter(HealthcheckFilter())
-    logger.setLevel(log_leveL)
-
-    if not logger.handlers:
-        handler = logging.StreamHandler()
-        formatter = logging.Formatter(
-            'time="%(asctime)s" level=%(levelname)s function=%(funcName)s %(message)s'
-        )
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
+    logger.setLevel(log_level)
 
     return logger
 
@@ -123,6 +134,4 @@ def get_log_args(request: Request) -> t.Dict[str, t.Any]:
 
 
 def get_logger(request: Request) -> logging.LoggerAdapter:
-    return LogAdapter(
-        get_general_logger(request.url.path), get_log_args(request)
-    )
+    return LogAdapter(get_general_logger(), get_log_args(request))
