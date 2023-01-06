@@ -25,7 +25,7 @@ export MSYS_NO_PATHCONV := 1
 # Use Docker Buildkit on Linux
 export DOCKER_BUILDKIT=1
 
-build: backend frontend docs
+build: backend frontend docs guacamole
 
 backend:
 	python backend/generate_git_archival.py;
@@ -36,6 +36,10 @@ frontend:
 	node frontend/fetch-version.ts
 	docker build --build-arg CONFIGURATION=local -t t4c/client/frontend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend frontend
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend
+
+guacamole:
+	docker build -t capella/collab/guacamole -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/guacamole guacamole
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/guacamole
 
 capella:
 	for version in $(CAPELLA_VERSIONS)
@@ -70,6 +74,7 @@ helm-deploy:
 		--values helm/values.yaml \
 		$$(test -f secrets.yaml && echo "--values secrets.yaml") \
 		--set docker.registry.internal=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
+		--set docker.images.guacamole.guacamole=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/guacamole \
 		--set mocks.oauth=True \
 		--set target=local \
 		--set general.port=8080 \
