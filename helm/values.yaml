@@ -24,7 +24,7 @@ docker:
   # Registry for Docker Images, will be used as prefix for Docker Images
   registry:
     internal: localhost
-    external: docker.io
+    external: &externalRegistry docker.io
 
   images:
     # Docker Image for the Frontend
@@ -189,6 +189,17 @@ cluster:
 
   containers:
     # The following values are appended to each container
+    securityContext: &securityContext
+      capabilities:
+        drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+      runAsUser: 1004370000
+      runAsGroup: 1004370000
+      fsGroup: 1004370000
+      runAsNonRoot: true
 
   namespaces:
     sessions:
@@ -200,16 +211,19 @@ cluster:
 
 # Specify the NO_PROXY environment for the backend
 # Leave it empty if not needed
-
-definitions:
-  loki:
-    url: &lokiPushUrl http://loki-gateway.{{- .Release.Namespace -}}.svc.cluster.local/loki/api/v1/push
-    username: &lokiUsername localLokiUser
-    password: &lokiPassword localLokiPassword
-
 proxy:
   no_proxy:
 
+definitions:
+  loki:
+    # Default username & password for Loki
+    username: &lokiUsername localLokiUser
+    password: &lokiPassword localLokiPassword
+
+    # Please don't change the URL
+    url: &lokiPushUrl httploki-gateway.{{- .Release.Namespace -}}.svc.cluster.local/loki/api/v1/push
+
+# Default passwords for Grafana
 grafana:
   adminUser: admin
   adminPassword: admin
@@ -223,9 +237,17 @@ promtail:
   logLevel: info
   serverPort: 3101
 
+# https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml
 loki:
+  global:
+    image:
+      registry: *externalRegistry
+    dnsService: kube-dns # dns-default for OpenShift
+    dnsNamespace: kube-system # openshift-dns for OpenShift
   loki:
+    # Disabled X-Scope-OrgID authentication
     auth_enabled: False
+    podSecurityContext: *securityContext
   gateway:
     basicAuth:
       enabled: True
@@ -239,31 +261,39 @@ loki:
         cpu: "0.03"
         memory: 5Mi
   read:
+    # Minimum 2 is required
     replicas: 2
+
+    # We don't want to limit to specific noeds
     affinity: ""
     resources: *resourcesLoki
-    persistence:
-      size: 1Gi
   write:
+    # Minimum 2 is required
     replicas: 2
+
+    # We don't want to limit to specific noeds
     affinity: ""
     resources: *resourcesLoki
-    persistence:
-      size: 1Gi
   serviceAccount:
+    # ServiceAccount doesn't work in OpenShift
     create: False
   monitoring:
     selfMonitoring:
       enabled: False
       grafanaAgent:
         installOperator: False
-      lokiCanary: &disabledLoki
+      lokiCanary:
         enabled: False
-    alerts: *disabledLoki
-    serviceMonitor: *disabledLoki
-    rules: *disabledLoki
-    dashboard: *disabledLoki
-  test: *disabledLoki
+    alerts:
+      enabled: False
+    serviceMonitor:
+      enabled: False
+    rules:
+      enabled: False
+    dashboard:
+      enabled: False
+  test:
+    enabled: False
   minio:
     enabled: True
     persistence:
@@ -282,9 +312,7 @@ loki:
       resources: *resourcesMinio
       securityContext:
         enabled: True
-        runAsUser: 1004370000
-        runAsGroup: 1004370000
-        fsGroup: 1004370000
+        << : *securityContext
     makeUserJob: *minioJob
     makeServiceAccountJob: *minioJob
     makeBucketJob: *minioJob
