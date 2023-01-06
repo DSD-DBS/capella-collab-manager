@@ -41,7 +41,7 @@ promtail_server_port: int = cfg["promtail"]["serverPort"]
 
 context: str = cfg["context"]
 api_url: str = cfg["apiURL"]
-toke: str = cfg["token"]
+token: str = cfg["token"]
 
 
 def deserialize_kubernetes_resource(content: any, resource: str):
@@ -93,7 +93,7 @@ except kubernetes.config.ConfigException:
                 "users": [
                     {
                         "name": "tokenuser",
-                        "user": {"token": cfg["token"]},
+                        "user": {"token": token},
                     }
                 ],
             }
