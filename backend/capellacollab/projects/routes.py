@@ -15,7 +15,7 @@ from capellacollab.core.authentication.database import (
     get_db,
 )
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.logging import get_logger
+from capellacollab.core.logging import get_request_logger
 from capellacollab.projects import crud
 from capellacollab.projects.models import (
     DatabaseProject,
@@ -51,7 +51,7 @@ def get_projects(
     user: DatabaseUser = Depends(get_own_user),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
-    log: logging.LoggerAdapter = Depends(get_logger),
+    log: logging.LoggerAdapter = Depends(get_request_logger),
 ) -> t.List[DatabaseProject]:
     if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
         log.debug("Fetching all projects")
@@ -100,7 +100,7 @@ def update_project(
 )
 def get_project_by_slug(
     db_project: DatabaseProject = Depends(get_existing_project),
-    log=Depends(get_logger),
+    log=Depends(get_request_logger),
 ) -> DatabaseProject:
     log.debug(f"Getting the project {db_project.name}")
     return db_project

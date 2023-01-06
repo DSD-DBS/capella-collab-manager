@@ -77,20 +77,17 @@ class LogExceptionMiddleware(base.BaseHTTPMiddleware):
         try:
             return await call_next(request)
         except Exception as exc:
-            logging.getLogger(request.url.path).exception(
-                msg=f'traceId={request.state.trace_id} message="{exc}"',
-                exc_info=True,
-            )
-            raise exc
+            get_request_logger(request).exception(msg=exc, exc_info=True)
+            raise
 
 
 class LogRequestsMiddleware(base.BaseHTTPMiddleware):
     async def dispatch(
         self, request: Request, call_next: base.RequestResponseEndpoint
     ):
-        get_logger(request).debug("request started")
+        get_request_logger(request).debug("request started")
         response: Response = await call_next(request)
-        get_logger(request).debug(
+        get_request_logger(request).debug(
             "request finished", {"status_code": response.status_code}
         )
 
@@ -113,15 +110,7 @@ class LogAdapter(logging.LoggerAdapter):
         return (msg, kwargs)
 
 
-def get_general_logger(log_level=LOGGING_LEVEL) -> logging.Logger:
-    logger: logging.Logger = logging.getLogger("capellacollab.request")
-    logger.addFilter(HealthcheckFilter())
-    logger.setLevel(log_level)
-
-    return logger
-
-
-def get_log_args(request: Request) -> t.Dict[str, t.Any]:
+def _get_log_args(request: Request) -> dict[str, t.Any]:
     log_args = {}
     if client := request.client:
         log_args["client"] = client.host + ":" + str(client.port)
@@ -133,5 +122,9 @@ def get_log_args(request: Request) -> t.Dict[str, t.Any]:
     }
 
 
-def get_logger(request: Request) -> logging.LoggerAdapter:
-    return LogAdapter(get_general_logger(), get_log_args(request))
+def get_request_logger(request: Request) -> logging.LoggerAdapter:
+    logger: logging.Logger = logging.getLogger("capellacollab.request")
+    logger.addFilter(HealthcheckFilter())
+    logger.setLevel(LOGGING_LEVEL)
+
+    return LogAdapter(logger, _get_log_args(request))
