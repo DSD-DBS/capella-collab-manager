@@ -77,12 +77,12 @@ export class T4CModelService {
   }
 
   unlinkT4CModel(
-    project_slug: string,
-    model_slug: string,
-    t4c_model_id: number
+    projectSlug: string,
+    modelSlug: string,
+    t4cModelId: number
   ): Observable<void> {
     return this.http.delete<void>(
-      `${this.urlFactory(project_slug, model_slug)}/${t4c_model_id}`
+      `${this.urlFactory(projectSlug, modelSlug)}/${t4cModelId}`
     );
   }
 
