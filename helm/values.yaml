@@ -196,7 +196,7 @@ cluster:
       imagePullPolicy: Always
 
   pvc:
-    storageClassName: null
+    storageClassName: local-path
 
 # Specify the NO_PROXY environment for the backend
 # Leave it empty if not needed
