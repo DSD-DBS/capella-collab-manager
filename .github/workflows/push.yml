@@ -22,6 +22,9 @@ jobs:
           - name: frontend
             image: ghcr.io/dsd-dbs/capella-collab-manager/frontend
             context: ./frontend
+          - name: guacamole
+            image: ghcr.io/dsd-dbs/capella-collab-manager/guacamole
+            context: ./guacamole
           - name: docs
             image: ghcr.io/dsd-dbs/capella-collab-manager/docs
             context: ./docs/user
@@ -109,6 +112,7 @@ jobs:
           --set docker.registry.internal="ghcr.io/dsd-dbs/capella-collab-manager" \
           --set docker.images.frontend="/frontend:$TAG" \
           --set docker.images.backend="/backend:$TAG" \
+          --set docker.images.guacamole.guacamole="ghcr.io/dsd-dbs/capella-collab-manager/guacamole:$TAG" \
           --set docker.images.docs="/docs:$TAG" \
           --set mocks.oauth=True \
           --set target=local \
