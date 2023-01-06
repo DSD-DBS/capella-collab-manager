@@ -3,7 +3,7 @@
 
 {{- define "capellacollab.pod.spec" }}
 {{- if .Values.cluster.podSecurityContext }}
-podSecurityContext:
+securityContext:
 {{ toYaml .Values.cluster.podSecurityContext | indent 2 }}
 {{ end }}
 {{- end }}
