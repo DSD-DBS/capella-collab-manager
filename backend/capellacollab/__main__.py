@@ -3,7 +3,6 @@
 
 
 import logging
-import sys
 
 import uvicorn
 from fastapi import FastAPI, Request
@@ -44,6 +43,8 @@ async def startup():
     migration.migrate_db(engine)
     logging.getLogger("uvicorn.access").disabled = True
     logging.getLogger("uvicorn.error").disabled = True
+    logging.getLogger("requests_oauthlib.oauth2_session").setLevel("INFO")
+    logging.getLogger("kubernetes.client.rest").setLevel("INFO")
 
 
 async def shutdown():
