@@ -12,8 +12,11 @@ RUN npm install -g npm@latest && npm install
 RUN npm run build -- --configuration=${CONFIGURATION}
 
 FROM nginxinc/nginx-unprivileged:latest
+
+EXPOSE 8080
+
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /work/dist/t4cclient /usr/share/nginx/html
 USER root
-RUN chown -R nginx:nginx /var/log/nginx
+RUN chmod -R 777 /var/log/nginx
 USER nginx
