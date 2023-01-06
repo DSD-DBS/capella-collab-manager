@@ -114,6 +114,9 @@ jobs:
           --set docker.images.backend="/backend:$TAG" \
           --set docker.images.guacamole.guacamole="ghcr.io/dsd-dbs/capella-collab-manager/guacamole:$TAG" \
           --set docker.images.docs="/docs:$TAG" \
+          --set loki.loki.read.persistence.size="500Mi" \
+          --set loki.loki.write.persistence.size="500Mi" \
+          --set loki.minio.persistence.size="500Mi" \
           --set mocks.oauth=True \
           --set target=local \
           --set general.port=8080 \
