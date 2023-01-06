@@ -10,12 +10,7 @@ metadata:
     id: {{ .Release.Name }}-configmap-promtail
 data:
   backend-promtail.yaml: |
-    server:
-      log_level: {{ .Values.promtail.logLevel }}
-      http_listen_port: {{ .Values.promtail.serverPort }}
-
-    clients:
-      {{- tpl (toYaml .Values.promtail.clients) . | nindent 6}}
+    {{- include "capellacollab.promtail.default.config" . | indent 4 }}
 
     positions:
       filename: /var/log/promtail/positions.yaml
@@ -32,12 +27,7 @@ data:
               deployment: {{ .Release.Name }}-deployment-backend
               __path__: /var/log/backend/*.log
   guacamole-promtail.yaml: |
-    server:
-      log_level: {{ .Values.promtail.logLevel }}
-      http_listen_port: {{ .Values.promtail.serverPort }}
-
-    clients:
-      {{- tpl (toYaml .Values.promtail.clients) . | nindent 6}}
+    {{- include "capellacollab.promtail.default.config" . | indent 4 }}
 
     positions:
       filename: /var/log/promtail/positions.yaml
@@ -51,12 +41,7 @@ data:
               deployment: {{ .Release.Name }}-deployment-guacamole-guacamole
               __path__: /var/log/guacamole/*.log
   guacd-promtail.yaml: |
-    server:
-      log_level: {{ .Values.promtail.logLevel }}
-      http_listen_port: {{ .Values.promtail.serverPort }}
-
-    clients:
-      {{- tpl (toYaml .Values.promtail.clients) . | nindent 6}}
+    {{- include "capellacollab.promtail.default.config" . | indent 4 }}
 
     positions:
       filename: /var/log/promtail/positions.yaml
@@ -70,12 +55,7 @@ data:
               deployment: {{ .Release.Name }}-deployment-guacamole-guacd
               __path__: /var/log/guacd/*.log
   nginx-frontend-promtail.yaml: |
-    server:
-      log_level: {{ .Values.promtail.logLevel }}
-      http_listen_port: {{ .Values.promtail.serverPort }}
-
-    clients:
-      {{- tpl (toYaml .Values.promtail.clients) . | nindent 6}}
+    {{- include "capellacollab.promtail.default.config" . | indent 4 }}
 
     positions:
       filename: /var/log/promtail/positions.yaml

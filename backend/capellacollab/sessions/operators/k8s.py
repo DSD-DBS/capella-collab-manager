@@ -37,7 +37,6 @@ storage_class_name: str = cfg["storageClassName"]
 loki_url: str = cfg["promtail"]["lokiUrl"]
 loki_username: str = cfg["promtail"]["lokiUsername"]
 loki_password: str = cfg["promtail"]["lokiPassword"]
-promtail_log_level: str = cfg["promtail"]["logLevel"]
 promtail_server_port: int = cfg["promtail"]["serverPort"]
 
 context: str = cfg["context"]
@@ -788,7 +787,6 @@ class KubernetesOperator:
                 "promtail.yaml": yaml.dump(
                     {
                         "server": {
-                            "log_level": promtail_log_level,
                             "http_listen_port": promtail_server_port,
                         },
                         "clients": [

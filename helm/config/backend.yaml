@@ -16,11 +16,10 @@ k8s:
     imagePullPolicy: {{ .Values.cluster.namespaces.sessions.imagePullPolicy }}
 
   promtail:
-    lokiUrl: {{ tpl .Values.definitions.loki.url . }}
+    lokiUrl: http://loki-gateway.{{- .Release.Namespace -}}.svc.cluster.local/loki/api/v1/push
     lokiUsername: {{ .Values.definitions.loki.username }}
     lokiPassword: {{ .Values.definitions.loki.password }}
-    logLevel: {{ .Values.promtail.logLevel }}
-    serverPort: {{ .Values.promtail.serverPort }}
+    serverPort: 3101
 
 extensions:
   guacamole:

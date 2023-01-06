@@ -95,7 +95,7 @@ spec:
             - "-log-config-reverse-order"
           ports:
             - name: logs
-              containerPort: {{ .Values.promtail.serverPort }}
+              containerPort: 3101
               protocol: TCP
           resources:
             {{ if eq .Values.target "local" }}

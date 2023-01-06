@@ -209,22 +209,10 @@ definitions:
     username: &lokiUsername localLokiUser
     password: &lokiPassword localLokiPassword
 
-    # Please don't change the URL
-    url: &lokiPushUrl httploki-gateway.{{- .Release.Namespace -}}.svc.cluster.local/loki/api/v1/push
-
 # Default passwords for Grafana
 grafana:
   adminUser: admin
   adminPassword: admin
-
-promtail:
-  clients:
-    - url: *lokiPushUrl
-      basic_auth:
-        username: *lokiUsername
-        password: *lokiPassword
-  logLevel: info
-  serverPort: 3101
 
 # https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml
 loki:
