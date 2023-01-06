@@ -337,9 +337,10 @@ class KubernetesOperator:
 
     def get_job_logs(self, _id: str) -> str:
         try:
-            return self.v1_core.read_namespaced_pod_log(
+            if pod_log := self.v1_core.read_namespaced_pod_log(
                 name=_id, namespace=namespace
-            )
+            ):
+                return pod_log
         except Exception:
             pass
 
