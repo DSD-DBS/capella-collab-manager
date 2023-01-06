@@ -41,7 +41,7 @@ class CustomFormatter(logging.Formatter):
 class CustomTimedRotatingFileHandler(
     logging.handlers.TimedRotatingFileHandler
 ):
-    def __init__(self, filename: str | os.PathLike[str]):
+    def __init__(self, filename: str | os.PathLike):
         pathlib.Path(filename).parent.mkdir(exist_ok=True)
         super().__init__(filename, when="D", backupCount=1, delay=True)
 
