@@ -40,7 +40,7 @@ logging.basicConfig(level=config["logging"]["level"], handlers=handlers)
 
 
 async def startup():
-    migration.migrate_db(engine)
+    migration.migrate_db(engine, config["database"]["url"])
     logging.getLogger("uvicorn.access").disabled = True
     logging.getLogger("uvicorn.error").disabled = True
     logging.getLogger("requests_oauthlib.oauth2_session").setLevel("INFO")
