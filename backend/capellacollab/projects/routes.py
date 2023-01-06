@@ -140,9 +140,12 @@ def delete_project(
     project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
 ):
-    if not project.models:
-        users_crud.delete_users_from_project(db, project)
-        crud.delete_project(db, project)
+    if project.models:
+        raise HTTPException(
+            409, {"reason": "The project still has models assigned to it"}
+        )
+    users_crud.delete_users_from_project(db, project)
+    crud.delete_project(db, project)
 
 
 router.include_router(
