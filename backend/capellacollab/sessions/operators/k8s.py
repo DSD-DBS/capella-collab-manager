@@ -767,7 +767,7 @@ class KubernetesOperator:
                     restart_policy="Never",
                 ),
             ),
-            backoff_limit=1,
+            backoff_limit=0,
             active_deadline_seconds=timeout,
         )
 
