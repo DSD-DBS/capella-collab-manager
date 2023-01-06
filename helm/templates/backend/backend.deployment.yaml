@@ -39,6 +39,7 @@ spec:
             claimName: {{ .Release.Name }}-backend-promtail
         - name: logs
           emptyDir: {}
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-backend
           image: {{ .Values.docker.registry.internal }}{{ .Values.docker.images.backend }}

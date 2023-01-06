@@ -23,6 +23,7 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/prometheus/prometheus.configmap.yaml") . | sha256sum }}
     spec:
       serviceAccountName: {{ .Release.Name }}-prometheus
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: prometheus
           image: {{ .Values.docker.registry.external }}{{ .Values.docker.images.prometheus }}

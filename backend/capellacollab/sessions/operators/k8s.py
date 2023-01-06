@@ -44,7 +44,7 @@ api_url: str = cfg["apiURL"]
 token: str = cfg["token"]
 
 
-def deserialize_kubernetes_resource(content: any, resource: str):
+def deserialize_kubernetes_resource(content: t.Any, resource: str):
     # This is needed as "workaround" for the deserialize function
     class FakeKubeResponse:
         def __init__(self, obj):
@@ -55,13 +55,13 @@ def deserialize_kubernetes_resource(content: any, resource: str):
 
 # Resolve securityContext and pullPolicy
 image_pull_policy: str = "Always"
-if _image_pull_policy := cfg["cluster"]["containers"]["imagePullPolicy"]:
+if _image_pull_policy := cfg["cluster"]["imagePullPolicy"]:
     image_pull_policy = _image_pull_policy
 
-security_context = None
-if _security_context := cfg["cluster"]["containers"]["securityContext"]:
-    security_context = deserialize_kubernetes_resource(
-        _security_context, "V1SecurityContext"
+pod_security_context = None
+if _pod_security_context := cfg["cluster"]["podSecurityContext"]:
+    pod_security_context = deserialize_kubernetes_resource(
+        _pod_security_context, client.V1PodSecurityContext.__name__
     )
 
 try:
@@ -563,7 +563,6 @@ class KubernetesOperator:
                     requests={"cpu": "0.4", "memory": "1.6Gi"},
                 ),
                 volume_mounts=session_volume_mounts,
-                security_context=security_context,
                 image_pull_policy=image_pull_policy,
             )
         )
@@ -585,7 +584,6 @@ class KubernetesOperator:
                     requests={"cpu": "0.05", "memory": "5Mi"},
                 ),
                 volume_mounts=promtail_volume_mounts,
-                security_context=security_context,
                 image_pull_policy=image_pull_policy,
             )
         )
@@ -600,6 +598,7 @@ class KubernetesOperator:
                 template=client.V1PodTemplateSpec(
                     metadata=client.V1ObjectMeta(labels={"app": name}),
                     spec=client.V1PodSpec(
+                        security_context=pod_security_context,
                         containers=containers,
                         volumes=volumes,
                         restart_policy="Always",
@@ -754,7 +753,6 @@ class KubernetesOperator:
                     limits={"cpu": "2", "memory": "6Gi"},
                     requests={"cpu": "0.4", "memory": "1.6Gi"},
                 ),
-                security_context=security_context,
                 image_pull_policy=image_pull_policy,
             )
         ]
@@ -763,7 +761,9 @@ class KubernetesOperator:
             template=client.V1PodTemplateSpec(
                 metadata=client.V1ObjectMeta(labels=job_labels),
                 spec=client.V1PodSpec(
-                    containers=containers, restart_policy="Never"
+                    security_context=pod_security_context,
+                    containers=containers,
+                    restart_policy="Never",
                 ),
             ),
             backoff_limit=1,

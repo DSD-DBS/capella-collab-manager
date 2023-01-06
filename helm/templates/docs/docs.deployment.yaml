@@ -17,6 +17,7 @@ spec:
       labels:
         id: {{ .Release.Name }}-deployment-docs
     spec:
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-docs
           image: {{ .Values.docker.registry.internal }}{{ .Values.docker.images.docs }}

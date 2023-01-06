@@ -187,18 +187,19 @@ mocks:
 cluster:
   kind: Kubernetes # Kubernetes | OpenShift
 
+  podSecurityContext: &podSecurityContext
+    runAsUser: 1004370000
+    runAsGroup: 1004370000
+    fsGroup: 1004370000
+    runAsNonRoot: true
+
   containers:
     # The following values are appended to each container
-    securityContext: &securityContext
-      runAsUser: 1004370000
-      runAsGroup: 1004370000
-      fsGroup: 1004370000
-      runAsNonRoot: true
 
   namespaces:
     sessions:
-      containers:
-      # The following values are appended to each container in the sessions namespace
+      podSecurityContext: *podSecurityContext
+      imagePullPolicy: Always
 
   pvc:
     storageClassName: null
@@ -241,7 +242,7 @@ loki:
   loki:
     # Disabled X-Scope-OrgID authentication
     auth_enabled: False
-    podSecurityContext: *securityContext
+    podSecurityContext: *podSecurityContext
   gateway:
     basicAuth:
       enabled: True
@@ -306,7 +307,7 @@ loki:
       resources: *resourcesMinio
       securityContext:
         enabled: True
-        << : *securityContext
+        << : *podSecurityContext
     makeUserJob: *minioJob
     makeServiceAccountJob: *minioJob
     makeBucketJob: *minioJob

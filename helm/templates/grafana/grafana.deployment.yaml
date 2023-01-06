@@ -23,6 +23,7 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/grafana" "/grafana.configmap.yaml") . | sha256sum }}
     spec:
       serviceAccountName: {{ .Release.Name }}-grafana
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: grafana
           image: {{ .Values.docker.registry.external -}}{{- .Values.docker.images.grafana }}

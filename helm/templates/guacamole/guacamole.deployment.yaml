@@ -35,6 +35,7 @@ spec:
           emptyDir: {}
         - name: logs
           emptyDir: {}
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-guacamole-guacamole
           image: {{ .Values.docker.images.guacamole.guacamole }}

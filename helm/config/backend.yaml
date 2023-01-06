@@ -11,8 +11,9 @@ k8s:
   storageAccessMode: {{ .Values.backend.storageAccessMode }}
 
   cluster:
-    containers:
-      {{- toYaml .Values.cluster.namespaces.sessions.containers | nindent 6 }}
+    podSecurityContext:
+      {{- toYaml .Values.cluster.namespaces.sessions.podSecurityContext | nindent 6 }}
+    imagePullPolicy: {{ .Values.cluster.namespaces.sessions.imagePullPolicy }}
 
   promtail:
     lokiUrl: {{ tpl .Values.definitions.loki.url . }}

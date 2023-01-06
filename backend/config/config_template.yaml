@@ -18,8 +18,12 @@ k8s:
   storageAccessMode: ReadWriteOnce
 
   cluster:
-    containers:
-      # The following values are appended to each container
+    imagePullPolicy: Always
+    podSecurityContext:
+      runAsUser: 1004370000
+      runAsGroup: 1004370000
+      fsGroup: 1004370000
+      runAsNonRoot: true
 
 extensions:
   guacamole:

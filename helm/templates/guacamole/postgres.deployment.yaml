@@ -33,6 +33,7 @@ spec:
         - name: {{ .Release.Name }}-initsql
           configMap:
             name: {{ .Release.Name }}-guacamole-postgres
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-guacamole-postgres
           image: {{ .Values.docker.registry.external }}/postgres:14.1

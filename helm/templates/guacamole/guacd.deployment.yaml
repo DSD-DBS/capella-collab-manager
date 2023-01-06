@@ -33,6 +33,7 @@ spec:
             claimName: {{ .Release.Name }}-guacd-promtail
         - name: logs
           emptyDir: {}
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-guacamole-guacd
           image: {{ .Values.docker.images.guacamole.guacd }}

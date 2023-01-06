@@ -26,6 +26,7 @@ spec:
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-backend-postgres
       {{ end }}
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-backend-postgres
           image: {{ .Values.docker.registry.external }}/postgres:14.1
