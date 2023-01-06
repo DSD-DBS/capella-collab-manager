@@ -42,20 +42,24 @@ api_url: str = cfg["apiURL"]
 toke: str = cfg["token"]
 
 
+def deserialize_kubernetes_resource(content: any, resource: str):
+    # This is needed as "workaround" for the deserialize function
+    class FakeKubeResponse:
+        def __init__(self, obj):
+            self.data = json.dumps(obj)
+
+    return client.ApiClient().deserialize(FakeKubeResponse(content), resource)
+
+
+# Resolve securityContext and pullPolicy
 image_pull_policy: str = "Always"
 if _image_pull_policy := cfg["cluster"]["containers"]["imagePullPolicy"]:
     image_pull_policy = _image_pull_policy
 
-
-class FakeKubeResponse:
-    def __init__(self, obj):
-        self.data = json.dumps(obj)
-
-
 security_context = None
 if _security_context := cfg["cluster"]["containers"]["securityContext"]:
-    security_context = client.ApiClient().deserialize(
-        FakeKubeResponse(_security_context), "V1SecurityContext"
+    security_context = deserialize_kubernetes_resource(
+        _security_context, "V1SecurityContext"
     )
 
 try:
