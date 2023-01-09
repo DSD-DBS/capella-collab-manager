@@ -62,7 +62,7 @@ module.exports = {
         ],
         "unused-imports/no-unused-imports": "error",
         "no-console": ["error", { allow: ["error"] }],
-        "deprecation/deprecation": "error",
+        "deprecation/deprecation": "warn",
       },
     },
     {

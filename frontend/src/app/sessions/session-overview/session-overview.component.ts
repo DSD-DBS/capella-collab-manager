@@ -5,7 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { NavBarService } from '../../general/navbar/service/nav-bar.service';
 import { Session } from '../../schemes';
 import { SessionService } from '../../services/session/session.service';

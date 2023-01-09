@@ -19,7 +19,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { MatSelectionList } from '@angular/material/list';
+import { MatLegacySelectionList as MatSelectionList } from '@angular/material/legacy-list';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   ProjectUser,

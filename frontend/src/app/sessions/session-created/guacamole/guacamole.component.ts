@@ -4,7 +4,10 @@
  */
 
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MatLegacyDialogRef as MatDialogRef,
+  MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
+} from '@angular/material/legacy-dialog';
 import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { Session } from 'src/app/schemes';

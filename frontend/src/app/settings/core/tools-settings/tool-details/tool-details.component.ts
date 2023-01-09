@@ -12,7 +12,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, filter, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
