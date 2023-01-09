@@ -78,7 +78,7 @@ def update_tool(
 def delete_tool(
     tool: Tool = Depends(injectables.get_existing_tool),
     db: Session = Depends(get_db),
-) -> None:
+):
     if tool.id == 1:
         raise HTTPException(
             403,
@@ -166,7 +166,7 @@ def patch_tool_version(
 def delete_tool_version(
     version: Version = Depends(injectables.get_exisiting_tool_version),
     db: Session = Depends(get_db),
-) -> None:
+):
     try:
         return crud.delete_tool_version(version, db)
     except sqlalchemy.exc.IntegrityError:
@@ -239,7 +239,7 @@ def create_tool_nature(
 def delete_tool_nature(
     nature: Nature = Depends(injectables.get_exisiting_tool_nature),
     db: Session = Depends(get_db),
-) -> None:
+):
     try:
         return crud.delete_tool_nature(nature, db)
     except sqlalchemy.exc.IntegrityError:

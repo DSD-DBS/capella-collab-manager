@@ -178,7 +178,7 @@ def delete_t4c_repository(
 def start_t4c_repository(
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
     repository: DatabaseT4CRepository = Depends(get_existing_t4c_repository),
-) -> None:
+):
     interface.start_repository(instance, repository.name)
 
 
@@ -189,7 +189,7 @@ def start_t4c_repository(
 def stop_t4c_repository(
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
     repository: DatabaseT4CRepository = Depends(get_existing_t4c_repository),
-) -> None:
+):
     interface.stop_repository(instance, repository.name)
 
 
@@ -200,5 +200,5 @@ def stop_t4c_repository(
 def recreate_t4c_repository(
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
     repository: DatabaseT4CRepository = Depends(get_existing_t4c_repository),
-) -> None:
+):
     interface.create_repository(instance, repository.name)

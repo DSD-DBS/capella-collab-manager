@@ -10,7 +10,7 @@ metadata:
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/prometheus/nginx.configmap.yaml") . | sha256sum }}
 spec:
-  replicas: {{ .Values.replicaCount | default 1 }}
+  replicas: {{ .Values.replicaCount.prometheusNginx | default 1 }}
   selector:
     matchLabels:
       id: {{ .Release.Name }}-deployment-prometheus-nginx
@@ -18,11 +18,14 @@ spec:
     metadata:
       labels:
         id: {{ .Release.Name }}-deployment-prometheus-nginx
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/prometheus/nginx.configmap.yaml") . | sha256sum }}
     spec:
       volumes:
         - name: {{ .Release.Name }}-prometheus-nginx
           configMap:
             name: {{ .Release.Name }}-prometheus-nginx
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-prometheus-nginx
           image: {{ .Values.docker.registry.external }}/nginxinc/nginx-unprivileged

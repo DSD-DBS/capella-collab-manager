@@ -3,85 +3,81 @@
 
 
 import logging
-import random
-import string
-import time
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-
-from capellacollab.config import config
-
-logging.basicConfig(level=config["logging"]["level"])
-log = logging.getLogger(__name__)
-
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.config import config
 from capellacollab.core.database import engine, migration
+from capellacollab.core.logging import (
+    AttachTraceIdMiddleware,
+    AttachUserNameMiddleware,
+    CustomFormatter,
+    CustomTimedRotatingFileHandler,
+    LogExceptionMiddleware,
+    LogRequestsMiddleware,
+)
 from capellacollab.routes import router, status
 from capellacollab.sessions.idletimeout import (
     terminate_idle_sessions_in_background,
 )
 
+handlers: list[logging.Handler] = [
+    logging.StreamHandler(),
+    CustomTimedRotatingFileHandler(
+        str(config["logging"]["logPath"]) + "backend.log"
+    ),
+]
 
-class HealthcheckFilter(logging.Filter):
-    def filter(self, record: logging.LogRecord) -> bool:
-        return record.getMessage().find("/healthcheck") == -1
+for handler in handlers:
+    handler.setFormatter(CustomFormatter())
+
+logging.basicConfig(level=config["logging"]["level"], handlers=handlers)
 
 
-logging.getLogger("uvicorn.access").addFilter(HealthcheckFilter())
-log.addFilter(HealthcheckFilter())
-
-app = FastAPI(title="Capella Collaboration")
-
-
-@app.on_event("startup")
-async def migrate_database():
+async def startup():
     migration.migrate_db(engine, config["database"]["url"])
+    logging.getLogger("uvicorn.access").disabled = True
+    logging.getLogger("uvicorn.error").disabled = True
+    logging.getLogger("requests_oauthlib.oauth2_session").setLevel("INFO")
+    logging.getLogger("kubernetes.client.rest").setLevel("INFO")
 
 
-@app.on_event("startup")
+async def shutdown():
+    logging.getLogger("uvicorn.access").disabled = False
+    logging.getLogger("uvicorn.error").disabled = False
+
+
 async def schedule_termination_of_idle_sessions():
     await terminate_idle_sessions_in_background()
 
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["POST", "GET", "OPTIONS", "DELETE", "PUT", "PATCH"],
-    allow_headers=["*"],
+app = FastAPI(
+    title="Capella Collaboration",
+    on_startup=[startup, schedule_termination_of_idle_sessions],
+    middleware=[
+        Middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_credentials=True,
+            allow_methods=["POST", "GET", "OPTIONS", "DELETE", "PUT", "PATCH"],
+            allow_headers=["*"],
+        ),
+        Middleware(AttachTraceIdMiddleware),
+        Middleware(AttachUserNameMiddleware),
+        Middleware(LogExceptionMiddleware),
+        Middleware(LogRequestsMiddleware),
+    ],
+    on_shutdown=[shutdown],
 )
 
 
-@app.middleware("http")
-async def log_requests(request, call_next):
-    idem = "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
-    log.debug(
-        "rid=%s start request path=%s",
-        idem,
-        request.url.path,
-    )
-    start_time = time.time()
-
-    response = await call_next(request)
-
-    process_time = (time.time() - start_time) * 1000
-    log.debug(
-        "rid=%s completed_in=%.2fms status_code=%s",
-        idem,
-        process_time,
-        response.status_code,
-    )
-
-    return response
-
-
 @app.exception_handler(500)
-async def handle_exceptions(request, exc):
+async def handle_exceptions(request: Request, exc: Exception):
     """
     A custom exception handler is required, otherwise no CORS headers are included
     in the case of exceptions.

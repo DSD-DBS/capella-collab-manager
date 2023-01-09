@@ -5,11 +5,26 @@
 ### APPLICATION RELATED CONFIGURATION ###
 #########################################
 
+# Replicas for all deployments (defaults to 1)
+replicaCount:
+  backend: 1
+  backendPostgres: 1
+  docs: 1
+  frontend: 1
+  grafana: 1
+  grafanaNginx: 1
+  guacamole: 1
+  guacamolePostgres: 1
+  guacd: 1
+  prometheus: 1
+  prometheusNginx: 1
+  routing: 1
+
 docker:
   # Registry for Docker Images, will be used as prefix for Docker Images
   registry:
     internal: localhost
-    external: docker.io
+    external: &externalRegistry docker.io
 
   images:
     # Docker Image for the Frontend
@@ -21,18 +36,15 @@ docker:
     # Docker Image serving the documentation
     docs: /capella/collab/docs
 
-    # Docker Image for EASE
-    ease: /t4c/client/ease
-
-    # Docker Image for T4C Backup
-    importer: /t4c/client/importer
-
     guacamole:
       # The registry needs to specified here!
       guacamole: docker.io/guacamole/guacamole
       guacd: docker.io/guacamole/guacd
 
     prometheus: /prom/prometheus
+
+    promtail: /grafana/promtail
+    grafana: /grafana/grafana
 
     mocks:
       oauth: ghcr.io/navikt/mock-oauth2-server:0.4.4
@@ -169,18 +181,120 @@ mocks:
 cluster:
   kind: Kubernetes # Kubernetes | OpenShift
 
+  podSecurityContext: &podSecurityContext
+    runAsUser: 1004370000
+    runAsGroup: 1004370000
+    fsGroup: 1004370000
+    runAsNonRoot: true
+
   containers:
     # The following values are appended to each container
 
   namespaces:
     sessions:
-      containers:
-      # The following values are appended to each container in the sessions namespace
+      podSecurityContext: *podSecurityContext
+      imagePullPolicy: Always
 
   pvc:
-    storageClassName: null
+    storageClassName: local-path
 
 # Specify the NO_PROXY environment for the backend
 # Leave it empty if not needed
 proxy:
   no_proxy:
+
+promtail:
+  storageAccessMode: ReadWriteOnce
+  storageClassName: local-path
+
+definitions:
+  loki:
+    # Default username & password for Loki
+    username: &lokiUsername localLokiUser
+    password: &lokiPassword localLokiPassword
+
+# Default passwords for Grafana
+grafana:
+  adminUser: admin
+  adminPassword: admin
+
+# https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml
+loki:
+  global:
+    image:
+      registry: *externalRegistry
+    dnsService: kube-dns # dns-default for OpenShift
+    dnsNamespace: kube-system # openshift-dns for OpenShift
+  loki:
+    # Disabled X-Scope-OrgID authentication
+    auth_enabled: False
+    podSecurityContext: *podSecurityContext
+  gateway:
+    basicAuth:
+      enabled: True
+      username: *lokiUsername
+      password: *lokiPassword
+    resources: &resourcesLoki
+      limits:
+        cpu: "1"
+        memory: 500Mi
+      requests:
+        cpu: "0.03"
+        memory: 5Mi
+  read:
+    # Minimum 2 is required
+    replicas: 2
+
+    # We don't want to limit to specific noeds
+    affinity: ""
+    resources: *resourcesLoki
+  write:
+    # Minimum 2 is required
+    replicas: 2
+
+    # We don't want to limit to specific noeds
+    affinity: ""
+    resources: *resourcesLoki
+  serviceAccount:
+    # ServiceAccount doesn't work in OpenShift
+    create: False
+  monitoring:
+    selfMonitoring:
+      enabled: False
+      grafanaAgent:
+        installOperator: False
+      lokiCanary:
+        enabled: False
+    alerts:
+      enabled: False
+    serviceMonitor:
+      enabled: False
+    rules:
+      enabled: False
+    dashboard:
+      enabled: False
+  test:
+    enabled: False
+  minio:
+    enabled: True
+    persistence:
+      size: 10Gi
+    configPathmc: /tmp/.mc
+    securityContext:
+      enabled: False
+    resources: &resourcesMinio
+      limits:
+        cpu: "0.5"
+        memory: 500Mi
+      requests:
+        cpu: "0.03"
+        memory: 5Mi
+    makePolicyJob: &minioJob
+      resources: *resourcesMinio
+      securityContext:
+        enabled: True
+        << : *podSecurityContext
+    makeUserJob: *minioJob
+    makeServiceAccountJob: *minioJob
+    makeBucketJob: *minioJob
+    customCommandJob: *minioJob

@@ -16,22 +16,59 @@ from dataclasses import dataclass
 from datetime import datetime
 
 import kubernetes
-import kubernetes.client
-import kubernetes.client.exceptions
-import kubernetes.client.models
 import kubernetes.config
 import kubernetes.stream.stream
+import yaml
+from kubernetes import client
+from kubernetes.client import exceptions
 
 from capellacollab.config import config
 
 log = logging.getLogger(__name__)
-cfg = config["operators"]["k8s"]
+
+external_registry: str = config["docker"]["externalRegistry"]
+
+cfg = config["k8s"]
+
+namespace: str = cfg["namespace"]
+storage_access_mode: str = cfg["storageAccessMode"]
+storage_class_name: str = cfg["storageClassName"]
+
+loki_url: str = cfg["promtail"]["lokiUrl"]
+loki_username: str = cfg["promtail"]["lokiUsername"]
+loki_password: str = cfg["promtail"]["lokiPassword"]
+promtail_server_port: int = cfg["promtail"]["serverPort"]
+
+context: str = cfg["context"]
+api_url: str = cfg["apiURL"]
+token: str = cfg["token"]
+
+
+def deserialize_kubernetes_resource(content: t.Any, resource: str):
+    # This is needed as "workaround" for the deserialize function
+    class FakeKubeResponse:
+        def __init__(self, obj):
+            self.data = json.dumps(obj)
+
+    return client.ApiClient().deserialize(FakeKubeResponse(content), resource)
+
+
+# Resolve securityContext and pullPolicy
+image_pull_policy: str = "Always"
+if _image_pull_policy := cfg["cluster"]["imagePullPolicy"]:
+    image_pull_policy = _image_pull_policy
+
+pod_security_context = None
+if _pod_security_context := cfg["cluster"]["podSecurityContext"]:
+    pod_security_context = deserialize_kubernetes_resource(
+        _pod_security_context, client.V1PodSecurityContext.__name__
+    )
 
 try:
     kubernetes.config.load_incluster_config()
 except kubernetes.config.ConfigException:
     try:
-        kubernetes.config.load_config(context=cfg["context"])
+        kubernetes.config.load_config(context=context)
     except (TypeError, kubernetes.config.ConfigException):
         kubernetes.config.load_kube_config_from_dict(
             {
@@ -41,7 +78,7 @@ except kubernetes.config.ConfigException:
                     {
                         "cluster": {
                             "insecure-skip-tls-verify": True,
-                            "server": cfg["apiURL"],
+                            "server": api_url,
                         },
                         "name": "cluster",
                     }
@@ -56,7 +93,7 @@ except kubernetes.config.ConfigException:
                 "users": [
                     {
                         "name": "tokenuser",
-                        "user": {"token": cfg["token"]},
+                        "user": {"token": token},
                     }
                 ],
             }
@@ -78,9 +115,9 @@ class File:
 
 class KubernetesOperator:
     def __init__(self) -> None:
-        self.v1_core = kubernetes.client.CoreV1Api()
-        self.v1_apps = kubernetes.client.AppsV1Api()
-        self.v1_batch = kubernetes.client.BatchV1Api()
+        self.v1_core = client.CoreV1Api()
+        self.v1_apps = client.AppsV1Api()
+        self.v1_batch = client.BatchV1Api()
 
     def validate(self) -> bool:
         try:
@@ -92,6 +129,8 @@ class KubernetesOperator:
     def start_persistent_session(
         self,
         username: str,
+        tool_name: str,
+        version_name: str,
         password: str,
         docker_image: str,
         t4c_license_secret: str | None,
@@ -99,9 +138,6 @@ class KubernetesOperator:
         pure_variants_license_server: str = None,
         pure_variants_secret_name: str = None,
     ) -> dict[str, t.Any]:
-        log.info("Launching a persistent session for user %s", username)
-
-        id = self._generate_id()
         self._create_persistent_volume_claim(username)
 
         environment = {
@@ -117,67 +153,119 @@ class KubernetesOperator:
                 "PURE_VARIANTS_LICENSE_SERVER"
             ] = pure_variants_license_server
 
-        deployment = self._create_deployment(
-            docker_image,
-            id,
-            environment,
-            self._get_claim_name(username),
-            pure_variants_secret_name,
+        return self._start_session(
+            image=docker_image,
+            username=username,
+            session_type="persistent",
+            tool_name=tool_name,
+            version_name=version_name,
+            environment=environment,
+            persistent_workspace_claim_name=self._get_claim_name(username),
+            pure_variants_secret_name=pure_variants_secret_name,
         )
-        self._create_service(id, id)
-        service = self._get_service(id)
-        log.info(
-            "Launched a persistent session for user %s with id %s",
-            username,
-            id,
-        )
-        return self._export_attrs(deployment, service)
 
     def start_readonly_session(
         self,
+        username: str,
+        tool_name: str,
+        version_name: str,
         password: str,
         docker_image: str,
-        git_repos_json: t.List[t.Dict[str, str | int]],
-    ) -> t.Dict[str, t.Any]:
-        id = self._generate_id()
-
-        deployment = self._create_deployment(
-            docker_image,
-            id,
-            {
+        git_repos_json: list[dict[str, str | int]],
+    ) -> dict[str, t.Any]:
+        return self._start_session(
+            image=docker_image,
+            username=username,
+            session_type="readonly",
+            tool_name=tool_name,
+            version_name=version_name,
+            environment={
                 "GIT_REPOS_JSON": json.dumps(git_repos_json),
                 "RMT_PASSWORD": password,
             },
         )
-        self._create_service(id, id)
-        service = self._get_service(id)
+
+    def _start_session(
+        self,
+        image: str,
+        username: str,
+        session_type: str,
+        tool_name: str,
+        version_name: str,
+        environment: dict[str, str | None],
+        persistent_workspace_claim_name: str | None = None,
+        pure_variants_secret_name: str | None = None,
+    ) -> dict[str, t.Any]:
+        log.info("Launching a %s session for user %s", session_type, username)
+
+        _id = self._generate_id()
+
+        self._create_config_map(
+            name=_id,
+            username=username,
+            session_type=session_type,
+            tool_name=tool_name,
+            version_name=version_name,
+        )
+
+        deployment = self._create_deployment(
+            image=image,
+            name=_id,
+            environment=environment,
+            persistent_workspace_claim_name=persistent_workspace_claim_name,
+            pure_variants_secret_name=pure_variants_secret_name,
+        )
+
+        service = self._create_service(name=_id, deployment_name=_id)
+
+        log.info(
+            "Launched a %s session for user %s with id %s",
+            session_type,
+            username,
+            _id,
+        )
         return self._export_attrs(deployment, service)
 
+    def kill_session(self, _id: str):
+        log.info("Terminating session %s", _id)
+        dep_status = self._delete_deployment(name=_id)
+        log.info(
+            "Deleted deployment %s: %s", _id, dep_status and dep_status.status
+        )
+        conf_status = self._delete_config_map(name=_id)
+        log.info(
+            "Deleted config map %s: %s",
+            _id,
+            conf_status and conf_status.status,
+        )
+        svc_status = self._delete_service(name=_id)
+        log.info(
+            "Deleted service %s: %s", _id, svc_status and svc_status.status
+        )
+
     def get_job_state(self, job_name: str) -> str:
-        return self._get_pod_state(label_selector="job-name=" + job_name)
+        return self._get_pod_state(label_selector=f"job-name={job_name}")
 
     def get_cronjob_last_state(self, name: str) -> str:
-        job = self._get_last_job_of_cronjob(name)
-        if job:
-            return self._get_pod_state(label_selector="job-name=" + job)
-        else:
-            return "NoJob"
+        if job_name := self._get_last_job_name_of_cronjob(name):
+            return self._get_pod_state(label_selector=f"job-name={job_name}")
+        return "NoJob"
 
     def get_cronjob_last_starting_date(self, name: str) -> datetime | None:
-        job = self._get_last_job_of_cronjob(name)
-        if job:
-            return self._get_pod_starttime(label_selector="job-name=" + job)
-        else:
-            return None
+        if job_name := self._get_last_job_name_of_cronjob(name):
+            return self._get_pod_starttime(
+                label_selector=f"job-name={job_name}"
+            )
+        return None
 
     def get_job_starting_date(self, job_name: str) -> datetime | None:
-        return self._get_pod_starttime(label_selector="job-name=" + job_name)
+        return self._get_pod_starttime(label_selector=f"job-name={job_name}")
 
-    def _get_last_job_of_cronjob(self, name: str) -> str | None:
+    def _get_last_job_name_of_cronjob(self, name: str) -> str | None:
         jobs = [
             item
             for item in self.v1_batch.list_namespaced_job(
-                namespace=cfg["namespace"]
+                namespace=namespace
             ).items
             if item.metadata.owner_references
             and item.metadata.owner_references[0].name == name
@@ -185,37 +273,34 @@ class KubernetesOperator:
 
         if jobs:
             return jobs[-1].metadata.name
-        else:
-            return None
+        return None
 
     def _get_last_job_by_label(
         self, label_key: str, label_value: str
     ) -> str | None:
         jobs = self.v1_batch.list_namespaced_job(
-            namespace=cfg["namespace"],
+            namespace=namespace,
             label_selector=f"{label_key}={label_value}",
         ).items
 
         if jobs:
             return jobs[-1].metadata.name
-        else:
-            return None
+        return None
 
-    def get_session_state(self, id: str) -> str:
-        return self._get_pod_state(label_selector="app=" + id)
+    def get_session_state(self, _id: str) -> str:
+        return self._get_pod_state(label_selector=f"app={_id}")
 
     def _get_pod_state(self, label_selector: str):
         try:
-            pod = self.v1_core.list_namespaced_pod(
-                namespace=cfg["namespace"], label_selector=label_selector
-            ).items[0]
+            pod = self._get_pods(label_selector=label_selector)[0]
+            pod_name = pod.metadata.name
 
-            log.debug("Received k8s pods: %s", pod.metadata.name)
-            log.debug("Fetching k8s events for pod: %s", pod.metadata.name)
+            log.debug("Received k8s pod: %s", pod_name)
+            log.debug("Fetching k8s events for pod: %s", pod_name)
 
             events = self.v1_core.list_namespaced_event(
-                namespace=cfg["namespace"],
-                field_selector="involvedObject.name=" + pod.metadata.name,
+                namespace=namespace,
+                field_selector=f"involvedObject.name={pod_name}",
             )
 
             if events.items:
@@ -224,9 +309,9 @@ class KubernetesOperator:
             # Fallback if no event is available
             return pod.status.phase
 
-        except kubernetes.client.exceptions.ApiException as e:
+        except exceptions.ApiException as e:
             log.warning("Kubernetes error", exc_info=True)
-            return "error-" + str(e.status)
+            return f"error-{str(e.status)}"
         except Exception:
             log.exception("Error getting the session state")
 
@@ -234,34 +319,28 @@ class KubernetesOperator:
 
     def _get_pod_starttime(self, label_selector: str) -> datetime | None:
         try:
-            pods = self.v1_core.list_namespaced_pod(
-                namespace=cfg["namespace"], label_selector=label_selector
-            ).to_dict()
+            pods: list[client.V1Pod] = self._get_pods(
+                label_selector=label_selector
+            )
             log.debug("Received k8s pods: %s", pods)
 
-            return pods["items"][0]["status"]["start_time"]
+            return pods[0].status.start_time
         except Exception:
             log.exception("Error fetching the starting_time")
             return None
 
-    def get_session_logs(self, id: str) -> str:
-        pod_name = self.v1_core.list_namespaced_pod(
-            namespace=cfg["namespace"], label_selector="app=" + id
-        ).to_dict()["items"][0]["metadata"]["name"]
+    def get_session_logs(self, _id: str) -> str:
         return self.v1_core.read_namespaced_pod_log(
-            name=pod_name,
-            namespace=cfg["namespace"],
+            name=self._get_pod_name(_id),
+            namespace=namespace,
         )
 
-    def get_job_logs(self, id: str) -> str:
+    def get_job_logs(self, _id: str) -> str:
         try:
-            log = self.v1_core.read_namespaced_pod_log(
-                name=id,
-                namespace=cfg["namespace"],
-            )
-
-            if log:
-                return log
+            if pod_log := self.v1_core.read_namespaced_pod_log(
+                name=_id, namespace=namespace
+            ):
+                return pod_log
         except Exception:
             pass
 
@@ -269,8 +348,8 @@ class KubernetesOperator:
             [
                 item.reason + ": " + item.message
                 for item in self.v1_core.list_namespaced_event(
-                    namespace=cfg["namespace"],
-                    field_selector="involvedObject.name=" + id,
+                    namespace=namespace,
+                    field_selector=f"involvedObject.name={_id}",
                 ).items
             ]
         )
@@ -278,41 +357,41 @@ class KubernetesOperator:
     def create_cronjob(
         self,
         image: str,
-        environment: t.Dict[str, str],
+        environment: dict[str, str | None],
         schedule="* * * * *",
         timeout=18000,
     ) -> str:
-        id = self._generate_id()
+        _id = self._generate_id()
         self._create_cronjob(
-            name=id,
+            name=_id,
             image=image,
-            job_labels={"app.capellacollab/parent": id},
+            job_labels={"app.capellacollab/parent": _id},
             environment=environment,
             schedule=schedule,
             timeout=timeout,
         )
-        return id
+        return _id
 
     def create_job(
         self,
         image: str,
-        labels: t.Dict[str, str],
-        environment: t.Dict[str, str],
-        timeout=18000,
+        labels: dict[str, str],
+        environment: dict[str, str | None],
+        timeout: int = 18000,
     ) -> str:
-        id = self._generate_id()
+        _id = self._generate_id()
         self._create_job(
-            name=id,
+            name=_id,
             image=image,
             job_labels=labels,
             environment=environment,
             timeout=timeout,
         )
-        return id
+        return _id
 
-    def trigger_cronjob(self, name: str, overwrite_environment: None) -> None:
+    def trigger_cronjob(self, name: str, overwrite_environment=None) -> None:
         cronjob = self.v1_batch.read_namespaced_cron_job(
-            namespace=cfg["namespace"], name=name
+            namespace=namespace, name=name
         )
 
         job_spec = cronjob.spec.job_template.spec
@@ -327,10 +406,10 @@ class KubernetesOperator:
                         "value": overwrite_environment[name],
                     }
 
-        job = kubernetes.client.V1Job(
+        job = client.V1Job(
             api_version="batch/v1",
             kind="Job",
-            metadata=kubernetes.client.models.V1ObjectMeta(
+            metadata=client.models.V1ObjectMeta(
                 name=self._generate_id(),
                 # This annotation is added by kubectl, probably best to add it ourselves as well
                 annotations={"cronjob.kubernetes.io/instantiate": "manual"},
@@ -348,33 +427,32 @@ class KubernetesOperator:
             ),
             spec=job_spec,
         )
-        self.v1_batch.create_namespaced_job(
-            namespace=cfg["namespace"], body=job
-        )
+        self.v1_batch.create_namespaced_job(namespace=namespace, body=job)
 
-    def delete_cronjob(self, id: str) -> None:
-        self._delete_cronjob(id=id)
+    def delete_cronjob(self, _id: str):
+        try:
+            self.v1_batch.delete_namespaced_cron_job(
+                namespace=namespace, name=_id
+            )
+        except exceptions.ApiException:
+            log.exception("Error deleting cronjob with name: %s", _id)
 
     def get_cronjob_last_run(self, name: str) -> str | None:
-        job = self._get_last_job_of_cronjob(name)
-        if job:
-            return self._get_pod_id(label_selector="job-name=" + job)
-        else:
-            return None
+        if job_name := self._get_last_job_name_of_cronjob(name):
+            return self._get_pod_id(label_selector=f"job-name={job_name}")
+        return None
 
     def get_cronjob_last_run_by_label(
         self, label_key: str, label_value: str
     ) -> str | None:
-        job = self._get_last_job_by_label(label_key, label_value)
-        if job:
-            return self._get_pod_id(label_selector="job-name=" + job)
-        else:
-            return None
+        if job_name := self._get_last_job_by_label(label_key, label_value):
+            return self._get_pod_id(label_selector=f"job-name={job_name}")
+        return None
 
     def _get_pod_id(self, label_selector: str) -> str:
         try:
             pods = self.v1_core.list_namespaced_pod(
-                namespace=cfg["namespace"], label_selector=label_selector
+                namespace=namespace, label_selector=label_selector
             ).to_dict()
             log.debug("Received k8s pods: %s", pods)
 
@@ -386,18 +464,11 @@ class KubernetesOperator:
     def _generate_id(self):
         return "".join(random.choices(string.ascii_lowercase, k=25))
 
-    def kill_session(self, id: str) -> None:
-        log.info("Terminating session %s", id)
-        status = self._delete_deployment(id)
-        log.info(f"Deleted deployment {id}: {status and status.status}")
-        self._delete_service(id)
-        log.info(f"Deleted service {id}: {status and status.status}")
-
     def _export_attrs(
         self,
-        deployment: kubernetes.client.V1Deployment,
-        service: kubernetes.client.V1Service,
-    ) -> t.Dict[str, t.Any]:
+        deployment: client.V1Deployment,
+        service: client.V1Service,
+    ) -> dict[str, t.Any]:
         return {
             "id": deployment.to_dict()["metadata"]["name"],
             "ports": set([3389]),
@@ -405,294 +476,361 @@ class KubernetesOperator:
                 "creation_timestamp"
             ],
             "mac": "-",
-            "host": service.to_dict()["metadata"]["name"]
-            + "."
-            + cfg["namespace"],
+            "host": service.to_dict()["metadata"]["name"] + "." + namespace,
         }
 
     def _create_deployment(
         self,
         image: str,
         name: str,
-        environment: t.Dict,
+        environment: dict[str, str | None],
         persistent_workspace_claim_name: str = None,
         pure_variants_secret_name: str = None,
-    ) -> kubernetes.client.V1Deployment:
-        volume_mounts = []
-        volumes = []
+    ) -> client.V1Deployment:
+        volumes: list[client.V1Volume] = []
+        session_volume_mounts: list[client.V1VolumeMount] = []
+        promtail_volume_mounts: list[client.V1VolumeMount] = []
 
         if persistent_workspace_claim_name:
             volumes.append(
-                {
-                    "name": "workspace",
-                    "persistentVolumeClaim": {
-                        "claimName": persistent_workspace_claim_name
-                    },
-                }
+                client.V1Volume(
+                    name="workspace",
+                    persistent_volume_claim=client.V1PersistentVolumeClaimVolumeSource(
+                        claim_name=persistent_workspace_claim_name
+                    ),
+                )
+            )
+            session_volume_mounts.append(
+                client.V1VolumeMount(name="workspace", mount_path="/workspace")
+            )
+            promtail_volume_mounts.append(
+                client.V1VolumeMount(
+                    name="workspace", mount_path="/var/log/promtail"
+                )
             )
 
-            volume_mounts.append(
-                {"name": "workspace", "mountPath": "/workspace"}
+        volumes.append(
+            client.V1Volume(
+                name="prom-config",
+                config_map=client.V1ConfigMapVolumeSource(name=name),
             )
+        )
+        promtail_volume_mounts.append(
+            client.V1VolumeMount(
+                name="prom-config", mount_path="/etc/promtail"
+            )
+        )
 
         if pure_variants_secret_name:
-            volume_mounts.append(
-                {
-                    "name": "pure-variants",
-                    "mountPath": "/inputs/pure-variants",
-                    "readOnly": True,
-                }
+            session_volume_mounts.append(
+                client.V1VolumeMount(
+                    name="pure-variants",
+                    mount_path="/inputs/pure-variants",
+                    read_only=True,
+                )
             )
 
             volumes.append(
-                {
-                    "name": "pure-variants",
-                    "secret": {
-                        "secretName": pure_variants_secret_name,
-                        "optional": True,
-                    },
-                }
+                client.V1Volume(
+                    name="pure-variants",
+                    secret=client.V1SecretVolumeSource(
+                        secret_name=pure_variants_secret_name, optional=True
+                    ),
+                )
             )
 
-        body = {
-            "kind": "Deployment",
-            "apiVersion": "apps/v1",
-            "metadata": {"name": name},
-            "spec": {
-                "replicas": 1,
-                "selector": {"matchLabels": {"app": name}},
-                "template": {
-                    "metadata": {
-                        "labels": {"app": name},
-                    },
-                    "spec": {
-                        "containers": [
-                            {
-                                "name": name,
-                                "image": image,
-                                "ports": [
-                                    {"containerPort": 3389, "protocol": "TCP"},
-                                    {"containerPort": 9118, "protocol": "TCP"},
-                                    {"containerPort": 8000, "protocol": "TCP"},
-                                ],
-                                "env": [
-                                    {"name": key, "value": str(value)}
-                                    for key, value in environment.items()
-                                ],
-                                "resources": {
-                                    "limits": {"cpu": "2", "memory": "6Gi"},
-                                    "requests": {
-                                        "cpu": "0.4",
-                                        "memory": "1.6Gi",
-                                    },
-                                },
-                                "imagePullPolicy": "Always",
-                                "volumeMounts": volume_mounts,
-                                **cfg["cluster"]["containers"],
-                            },
-                        ],
-                        "volumes": volumes,
-                        "restartPolicy": "Always",
-                    },
-                },
-            },
-        }
-        return self.v1_apps.create_namespaced_deployment(
-            cfg["namespace"], body
+        containers: list[client.V1Container] = []
+        containers.append(
+            client.V1Container(
+                name=name,
+                image=image,
+                ports=[
+                    client.V1ContainerPort(
+                        container_port=3389, protocol="TCP"
+                    ),
+                    client.V1ContainerPort(
+                        container_port=9118, protocol="TCP"
+                    ),
+                    client.V1ContainerPort(
+                        container_port=8000, protocol="TCP"
+                    ),
+                ],
+                env=[
+                    client.V1EnvVar(name=key, value=str(value))
+                    for key, value in environment.items()
+                ],
+                resources=client.V1ResourceRequirements(
+                    limits={"cpu": "2", "memory": "6Gi"},
+                    requests={"cpu": "0.4", "memory": "1.6Gi"},
+                ),
+                volume_mounts=session_volume_mounts,
+                image_pull_policy=image_pull_policy,
+            )
         )
+        containers.append(
+            client.V1Container(
+                name="promtail",
+                image=f"{external_registry}/grafana/promtail",
+                args=[
+                    "--config.file=/etc/promtail/promtail.yaml",
+                    "-log-config-reverse-order",
+                ],
+                ports=[
+                    client.V1ContainerPort(
+                        name="metrics", container_port=3101, protocol="TCP"
+                    )
+                ],
+                resources=client.V1ResourceRequirements(
+                    limits={"cpu": "0.1", "memory": "50Mi"},
+                    requests={"cpu": "0.05", "memory": "5Mi"},
+                ),
+                volume_mounts=promtail_volume_mounts,
+                image_pull_policy=image_pull_policy,
+            )
+        )
+
+        deployment: client.V1Deployment = client.V1Deployment(
+            kind="Deployment",
+            api_version="apps/v1",
+            metadata=client.V1ObjectMeta(name=name),
+            spec=client.V1DeploymentSpec(
+                replicas=1,
+                selector=client.V1LabelSelector(match_labels={"app": name}),
+                template=client.V1PodTemplateSpec(
+                    metadata=client.V1ObjectMeta(labels={"app": name}),
+                    spec=client.V1PodSpec(
+                        security_context=pod_security_context,
+                        containers=containers,
+                        volumes=volumes,
+                        restart_policy="Always",
+                    ),
+                ),
+            ),
+        )
+
+        return self.v1_apps.create_namespaced_deployment(namespace, deployment)
 
     def create_secret(
         self, name: str, content: dict[str, bytes], overwrite: bool = False
-    ) -> kubernetes.client.V1Deployment:
+    ) -> client.V1Secret:
         content_b64 = {
             key: base64.b64encode(value).decode()
             for key, value in content.items()
         }
 
-        secret = kubernetes.client.V1Secret(
+        secret = client.V1Secret(
             api_version="v1",
             kind="Secret",
-            metadata=kubernetes.client.V1ObjectMeta(name=name),
+            metadata=client.V1ObjectMeta(name=name),
             data=content_b64,
         )
 
         if overwrite:
             self.delete_secret(name)
-        self.v1_core.create_namespaced_secret(cfg["namespace"], secret)
+        return self.v1_core.create_namespaced_secret(cfg["namespace"], secret)
 
     def _create_cronjob(
         self,
         name: str,
         image: str,
-        job_labels: t.Dict[str, str],
-        environment: t.Dict[str, str],
-        schedule="* * * * *",
-        timeout=18000,
-    ) -> kubernetes.client.V1CronJob:
-        body = {
-            "kind": "CronJob",
-            "apiVersion": "batch/v1",
-            "metadata": {
-                "name": name,
-            },
-            "spec": {
-                "schedule": schedule,
-                "jobTemplate": {
-                    "metadata": {"labels": job_labels},
-                    "spec": {
-                        "template": {
-                            "spec": {
-                                "containers": [
-                                    {
-                                        "name": name,
-                                        "image": image,
-                                        "imagePullPolicy": "Always",
-                                        "env": [
-                                            {"name": key, "value": value}
-                                            for key, value in environment.items()
-                                        ],
-                                        "resources": {
-                                            "limits": {
-                                                "cpu": "2",
-                                                "memory": "6Gi",
-                                            },
-                                            "requests": {
-                                                "cpu": "0.4",
-                                                "memory": "1.6Gi",
-                                            },
-                                        },
-                                        **cfg["cluster"]["containers"],
-                                    }
-                                ],
-                                "restartPolicy": "Never",
-                            },
-                        },
-                        "backoffLimit": 1,
-                        "activeDeadlineSeconds": timeout,
-                    },
-                },
-            },
-        }
-
-        return self.v1_batch.create_namespaced_cron_job(
-            namespace=cfg["namespace"], body=body
+        job_labels: dict[str, str],
+        environment: dict[str, str | None],
+        schedule: str = "* * * * *",
+        timeout: int = 18000,
+    ) -> client.V1CronJob:
+        cron_job: client.V1CronJob = client.V1CronJob(
+            kind="CronJob",
+            api_version="batch/v1",
+            metadata=client.V1ObjectMeta(name=name),
+            spec=client.V1CronJobSpec(
+                schedule=schedule,
+                job_template=client.V1JobTemplateSpec(
+                    metadata=client.V1ObjectMeta(labels=job_labels),
+                    spec=self._create_job_spec(
+                        name, image, job_labels, environment, timeout
+                    ),
+                ),
+            ),
         )
+        return self.v1_batch.create_namespaced_cron_job(namespace, cron_job)
 
     def _create_job(
         self,
         name: str,
         image: str,
-        job_labels: t.Dict[str, str],
-        environment: t.Dict[str, str],
+        job_labels: dict[str, str],
+        environment: dict[str, str | None],
         timeout=18000,
-    ) -> kubernetes.client.V1CronJob:
-        body = {
-            "kind": "Job",
-            "apiVersion": "batch/v1",
-            "metadata": {
-                "name": name,
-            },
-            "spec": {
-                "template": {
-                    "metadata": {"labels": job_labels},
-                    "spec": {
-                        "containers": [
-                            {
-                                "name": name,
-                                "image": image,
-                                "imagePullPolicy": "Always",
-                                "env": [
-                                    {"name": key, "value": value}
-                                    for key, value in environment.items()
-                                ],
-                                "resources": {
-                                    "limits": {
-                                        "cpu": "2",
-                                        "memory": "6Gi",
-                                    },
-                                    "requests": {
-                                        "cpu": "0.4",
-                                        "memory": "1.6Gi",
-                                    },
-                                },
-                                **cfg["cluster"]["containers"],
-                            }
-                        ],
-                        "restartPolicy": "Never",
-                    },
-                },
-                "backoffLimit": 1,
-                "activeDeadlineSeconds": timeout,
-            },
-        }
-
-        return self.v1_batch.create_namespaced_job(
-            namespace=cfg["namespace"], body=body
+    ) -> client.V1Job:
+        job: client.V1Job = client.V1Job(
+            kind="Job",
+            api_version="batch/v1",
+            metadata=client.V1ObjectMeta(name=name),
+            spec=self._create_job_spec(
+                name, image, job_labels, environment, timeout
+            ),
         )
+        return self.v1_batch.create_namespaced_job(namespace, job)
 
     def _create_service(
         self, name: str, deployment_name: str
-    ) -> kubernetes.client.V1Service:
-        body = {
-            "kind": "Service",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": name,
-                "labels": {"app": name},
-                "annotations": {
+    ) -> client.V1Service:
+        service: client.V1Service = client.V1Service(
+            kind="Service",
+            api_version="v1",
+            metadata=client.V1ObjectMeta(
+                name=name,
+                labels={"app": name},
+                annotations={
                     "prometheus.io/scrape": "true",
                     "prometheus.io/path": "/metrics",
                     "prometheus.io/port": "9118",
                 },
-            },
-            "spec": {
-                "ports": [
-                    {
-                        "name": "rdp",
-                        "protocol": "TCP",
-                        "port": 3389,
-                        "targetPort": 3389,
-                    },
-                    {
-                        "name": "metrics",
-                        "protocol": "TCP",
-                        "port": 9118,
-                        "targetPort": 9118,
-                    },
-                    {
-                        "name": "fileservice",
-                        "protocol": "TCP",
-                        "port": 8000,
-                        "targetPort": 8000,
-                    },
+            ),
+            spec=client.V1ServiceSpec(
+                ports=[
+                    client.V1ServicePort(
+                        name="rdp", protocol="TCP", port=3389, target_port=3389
+                    ),
+                    client.V1ServicePort(
+                        name="metrics",
+                        protocol="TCP",
+                        port=9118,
+                        target_port=9118,
+                    ),
+                    client.V1ServicePort(
+                        name="fileservice",
+                        protocol="TCP",
+                        port=8000,
+                        target_port=8000,
+                    ),
                 ],
-                "selector": {"app": deployment_name},
-                "type": "ClusterIP",
-            },
-        }
-        return self.v1_core.create_namespaced_service(cfg["namespace"], body)
+                selector={"app": deployment_name},
+                type="ClusterIP",
+            ),
+        )
+        return self.v1_core.create_namespaced_service(namespace, service)
 
-    def _create_persistent_volume_claim(self, username):
-        body = {
-            "apiVersion": "v1",
-            "kind": "PersistentVolumeClaim",
-            "metadata": {
-                "name": self._get_claim_name(username),
-            },
-            "spec": {
-                "accessModes": [cfg["storageAccessMode"]],
-                "storageClassName": cfg["storageClassName"],
-                "resources": {"requests": {"storage": "20Gi"}},
-            },
-        }
+    def _create_persistent_volume_claim(self, username: str):
+        pvc: client.V1PersistentVolumeClaim = client.V1PersistentVolumeClaim(
+            kind="PersistentVolumeClaim",
+            api_version="v1",
+            metadata=client.V1ObjectMeta(name=self._get_claim_name(username)),
+            spec=client.V1PersistentVolumeClaimSpec(
+                access_modes=[storage_access_mode],
+                storage_class_name=storage_class_name,
+                resources=client.V1ResourceRequirements(
+                    requests={"storage": "20Gi"}
+                ),
+            ),
+        )
+
         try:
             self.v1_core.create_namespaced_persistent_volume_claim(
-                cfg["namespace"], body
+                namespace, pvc
             )
-        except kubernetes.client.exceptions.ApiException as e:
+        except exceptions.ApiException as e:
             if e.status == 409:
                 return
             raise
+
+    def _create_job_spec(
+        self,
+        name: str,
+        image: str,
+        job_labels: dict[str, str],
+        environment: dict[str, str | None],
+        timeout: int = 18000,
+    ) -> client.V1JobSpec:
+        containers: list[client.V1Container] = [
+            client.V1Container(
+                name=name,
+                image=image,
+                env=[
+                    client.V1EnvVar(name=key, value=str(value))
+                    for key, value in environment.items()
+                ],
+                resources=client.V1ResourceRequirements(
+                    limits={"cpu": "2", "memory": "6Gi"},
+                    requests={"cpu": "0.4", "memory": "1.6Gi"},
+                ),
+                image_pull_policy=image_pull_policy,
+            )
+        ]
+
+        return client.V1JobSpec(
+            template=client.V1PodTemplateSpec(
+                metadata=client.V1ObjectMeta(labels=job_labels),
+                spec=client.V1PodSpec(
+                    security_context=pod_security_context,
+                    containers=containers,
+                    restart_policy="Never",
+                ),
+            ),
+            backoff_limit=0,
+            active_deadline_seconds=timeout,
+        )
+
+    def _create_config_map(
+        self,
+        name: str,
+        username: str,
+        session_type: str,
+        tool_name: str,
+        version_name: str,
+    ) -> client.V1ConfigMap:
+        config_map: client.V1ConfigMap = client.V1ConfigMap(
+            kind="ConfigMap",
+            api_version="v1",
+            metadata=client.V1ObjectMeta(name=name),
+            data={
+                "promtail.yaml": yaml.dump(
+                    {
+                        "server": {
+                            "http_listen_port": promtail_server_port,
+                        },
+                        "clients": [
+                            {
+                                "url": loki_url,
+                                "basic_auth": {
+                                    "username": loki_username,
+                                    "password": loki_password,
+                                },
+                            }
+                        ],
+                        "positions": {
+                            "filename": "/var/log/promtail/positions.yaml"
+                        },
+                        "scrape_configs": [
+                            {
+                                "job_name": "system",
+                                "pipeline_stages": [
+                                    {
+                                        "multiline": {
+                                            "firstline": "^[^\t]",
+                                        },
+                                    }
+                                ],
+                                "static_configs": [
+                                    {
+                                        "targets": ["localhost"],
+                                        "labels": {
+                                            "deployment": f"{namespace}-sessions",
+                                            "username": username,
+                                            "session_type": session_type,
+                                            "tool": tool_name,
+                                            "version": version_name,
+                                            "__path__": "/var/log/promtail/**/*.log",
+                                        },
+                                    }
+                                ],
+                            }
+                        ],
+                    }
+                )
+            },
+        )
+        return self.v1_core.create_namespaced_config_map(namespace, config_map)
 
     def _get_claim_name(self, username: str) -> str:
         return (
@@ -700,57 +838,53 @@ class KubernetesOperator:
             + username.replace("@", "-at-").replace(".", "-dot-").lower()
         )
 
-    def _get_service(self, id: str):
-        return self.v1_core.read_namespaced_service(id, cfg["namespace"])
-
-    def _delete_deployment(self, id: str) -> kubernetes.client.V1Status:
+    def _delete_deployment(self, name: str) -> client.V1Status:
         try:
-            return self.v1_apps.delete_namespaced_deployment(
-                id, cfg["namespace"]
-            )
-        except kubernetes.client.exceptions.ApiException:
-            log.exception("Error deleting deployment with id: %s", id)
+            return self.v1_apps.delete_namespaced_deployment(name, namespace)
+        except exceptions.ApiException:
+            log.exception("Error deleting deployment with name: %s", name)
 
     def delete_secret(self, name: str) -> kubernetes.client.V1Status:
         try:
             return self.v1_core.delete_namespaced_secret(
                 name, cfg["namespace"]
             )
-        except kubernetes.client.exceptions.ApiException:
+        except client.exceptions.ApiException:
             log.exception("Error deleting secret with name: %s", name)
 
-    def _delete_cronjob(self, id: str) -> kubernetes.client.V1Status:
+    def _delete_config_map(self, name: str) -> client.V1Status:
         try:
-            return self.v1_batch.delete_namespaced_cron_job(
-                id, cfg["namespace"]
-            )
-        except kubernetes.client.exceptions.ApiException:
-            log.exception("Error deleting cronjob with id: %s", id)
+            return self.v1_core.delete_namespaced_config_map(name, namespace)
+        except exceptions.ApiException:
+            log.exception("Error deleting config map with name: %s", name)
 
-    def _delete_service(self, id: str) -> kubernetes.client.V1Status:
+    def _delete_service(self, name: str) -> client.V1Status:
         try:
-            return self.v1_core.delete_namespaced_service(id, cfg["namespace"])
-        except kubernetes.client.exceptions.ApiException:
-            log.exception("Error deleting service with id: %s", id)
+            return self.v1_core.delete_namespaced_service(name, namespace)
+        except exceptions.ApiException:
+            log.exception("Error deleting service with name: %s", name)
 
-    def _get_pod_name(self, id: str) -> str:
+    def _get_pod_name(self, _id: str) -> str:
+        return self._get_pods(label_selector=f"app={_id}")[0].metadata.name
+
+    def _get_pods(self, label_selector: str) -> list[client.V1Pod]:
         return self.v1_core.list_namespaced_pod(
-            namespace=cfg["namespace"], label_selector="app=" + id
-        ).to_dict()["items"][0]["metadata"]["name"]
+            namespace=namespace, label_selector=label_selector
+        ).items
 
     def upload_files(
         self,
-        id: str,
+        _id: str,
         content: bytes,
     ):
-        pod_name = self._get_pod_name(id)
+        pod_name = self._get_pod_name(_id)
 
         try:
             exec_command = ["tar", "xf", "-", "-C", "/"]
             stream = kubernetes.stream.stream(
                 self.v1_core.connect_get_namespaced_pod_exec,
                 pod_name,
-                namespace=cfg["namespace"],
+                namespace=namespace,
                 command=exec_command,
                 stderr=True,
                 stdin=True,
@@ -763,18 +897,18 @@ class KubernetesOperator:
             stream.update(timeout=1)
             if stream.peek_stdout():
                 log.debug(
-                    "Upload into %s - STDOUT: %s", id, stream.read_stdout()
+                    "Upload into %s - STDOUT: %s", _id, stream.read_stdout()
                 )
             if stream.peek_stderr():
                 log.debug(
-                    "Upload into %s - STDERR: %s", id, stream.read_stderr()
+                    "Upload into %s - STDERR: %s", _id, stream.read_stderr()
                 )
 
-        except kubernetes.client.exceptions.ApiException as e:
+        except exceptions.ApiException as e:
             log.exception(
-                "Exception when copying file to the pod with id %s", id
+                "Exception when copying file to the pod with id %s", _id
             )
-            raise e
+            raise
 
     def download_file(self, id: str, filename: str) -> t.Iterable[bytes]:
         pod_name = self._get_pod_name(id)

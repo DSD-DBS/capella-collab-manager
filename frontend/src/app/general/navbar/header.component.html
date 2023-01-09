@@ -29,6 +29,15 @@
     >
       Prometheus <mat-icon>open_in_new</mat-icon>
     </a>
+    <a
+      color="primary"
+      mat-raised-button
+      *ngIf="userService.user?.role === 'administrator'"
+      href="/grafana/"
+      target="_blank"
+    >
+      Grafana <mat-icon>open_in_new</mat-icon>
+    </a>
     <a color="primary" mat-raised-button href="/docs/" target="_blank">
       Documentation <mat-icon>open_in_new</mat-icon>
     </a>

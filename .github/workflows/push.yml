@@ -4,7 +4,7 @@ name: push
 
 on:
   push:
-    branches: ['**']
+    branches: ["**"]
     tags: ["v*.*.*"]
   pull_request:
     branches: [master, staging]
@@ -22,6 +22,9 @@ jobs:
           - name: frontend
             image: ghcr.io/dsd-dbs/capella-collab-manager/frontend
             context: ./frontend
+          - name: guacamole
+            image: ghcr.io/dsd-dbs/capella-collab-manager/guacamole
+            context: ./guacamole
           - name: docs
             image: ghcr.io/dsd-dbs/capella-collab-manager/docs
             context: ./docs/user
@@ -98,6 +101,9 @@ jobs:
         run: |
           kubectl patch serviceaccount default \
             -p '{"imagePullSecrets": [{"name": "github"}]}'
+      - name: Update dependencies
+        run: |
+          helm dependency update ./helm
       - name: Install chart
         run: |
           export TAG=${{ steps.tag.outputs.branch }}
@@ -106,16 +112,31 @@ jobs:
           --set docker.registry.internal="ghcr.io/dsd-dbs/capella-collab-manager" \
           --set docker.images.frontend="/frontend:$TAG" \
           --set docker.images.backend="/backend:$TAG" \
+          --set docker.images.guacamole.guacamole="ghcr.io/dsd-dbs/capella-collab-manager/guacamole:$TAG" \
           --set docker.images.docs="/docs:$TAG" \
+          --set loki.loki.read.persistence.size="500Mi" \
+          --set loki.loki.write.persistence.size="500Mi" \
+          --set loki.minio.persistence.size="500Mi" \
+          --set cluster.pvc.storageClassName="standard" \
+          --set promtail.storageClassName="standard" \
           --set mocks.oauth=True \
           --set target=local \
           --set general.port=8080 \
           --set backend.authentication.oauth.endpoints.wellKnown="http://test-oauth-mock:8080/default/.well-known/openid-configuration" \
           ./helm
+      - name: Scale down backend deployment
+        run: |
+          kubectl scale deployment test-backend --replicas=0
+      - name: Wait for backend pods to be deleted
+        run: |
+          kubectl wait pod --selector="id=test-deployment-backend" --for=delete --timeout=2m
       - name: Add secret to backend serviceaccount
         run: |
           kubectl patch deployment/test-backend \
             -p '{"spec": {"template": {"spec": {"imagePullSecrets": [{"name": "github"}]}}}}'
+      - name: Scale up backend deployment
+        run: |
+          kubectl scale deployment test-backend --replicas=1
       - name: Wait for all containers to be ready
         run: |
           kubectl wait --all deployment --for condition=Available=True --timeout=5m
@@ -131,7 +152,27 @@ jobs:
         if: always()
         run: |
           kubectl describe pods
+      - name: Describe nodes
+        if: always()
+        run: |
+          kubectl describe nodes
+      - name: Describe PVCs
+        if: always()
+        run: |
+          kubectl describe pvc
+      - name: Describe volumes
+        if: always()
+        run: |
+          kubectl describe pv
+      - name: Describe configmaps
+        if: always()
+        run: |
+          kubectl describe cm
+      - name: Describe secrets
+        if: always()
+        run: |
+          kubectl describe secrets
       - name: Print logs of backend container
         if: always()
         run: |
-          kubectl logs deployment/test-backend
+          kubectl logs deployment/test-backend test-backend

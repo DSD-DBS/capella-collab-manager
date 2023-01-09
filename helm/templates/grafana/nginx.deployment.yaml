@@ -1,0 +1,57 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-grafana-nginx
+  labels:
+    id: {{ .Release.Name }}-deployment-grafana-nginx
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/grafana/nginx.configmap.yaml") . | sha256sum }}
+spec:
+  replicas: {{ .Values.replicaCount.grafanaNginx | default 1 }}
+  selector:
+    matchLabels:
+      id: {{ .Release.Name }}-deployment-grafana-nginx
+  template:
+    metadata:
+      labels:
+        id: {{ .Release.Name }}-deployment-grafana-nginx
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/grafana/nginx.configmap.yaml") . | sha256sum }}
+    spec:
+      volumes:
+        - name: {{ .Release.Name }}-grafana-nginx
+          configMap:
+            name: {{ .Release.Name }}-grafana-nginx
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
+      containers:
+        - name: {{ .Release.Name }}-grafana-nginx
+          image: {{ .Values.docker.registry.external }}/nginxinc/nginx-unprivileged
+          ports:
+            - name: grafui
+              containerPort: 3118
+              protocol: TCP
+          resources:
+            {{ if eq .Values.target "local" }}
+            limits:
+              cpu: "0.1"
+              memory: 50Mi
+            requests:
+              cpu: "0.05"
+              memory: 5Mi
+            {{ else }}
+            limits:
+              cpu: "1"
+              memory: 100Mi
+            requests:
+              cpu: "0.25"
+              memory: 50Mi
+            {{ end }}
+          volumeMounts:
+            - name: {{ .Release.Name }}-grafana-nginx
+              mountPath: /etc/nginx
+          {{ if .Values.cluster.containers }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}

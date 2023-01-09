@@ -6,15 +6,15 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-prometheus-server
   namespace: {{ .Release.Namespace }}
+  labels:
+    id: {{ .Release.Name }}-service-prometheus
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: "9118"
-  labels:
-    id: {{ .Release.Name }}-service-prometheus
 spec:
   type: ClusterIP
   selector:
-    id: {{ .Release.Name }}-prometheus-server
+    id: {{ .Release.Name }}-deployment-prometheus-server
   ports:
     - port: 9118
       targetPort: 9090

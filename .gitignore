@@ -12,3 +12,7 @@ deployments/*
 certs/*
 /node_modules
 .idea
+.vscode
+/backend/log/*
+/helm/charts/*
+/helm/Chart.lock

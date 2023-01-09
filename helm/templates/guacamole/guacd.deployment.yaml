@@ -7,8 +7,10 @@ metadata:
   name: {{ .Release.Name }}-guacamole-guacd
   labels:
     id: {{ .Release.Name }}-deployment-guacamole-guacd
+  annotations:
+    checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
 spec:
-  replicas: {{ .Values.replicaCount | default 1 }}
+  replicas: {{ .Values.replicaCount.guacd | default 1 }}
   selector:
     matchLabels:
       id: {{ .Release.Name }}-deployment-guacamole-guacd
@@ -16,10 +18,26 @@ spec:
     metadata:
       labels:
         id: {{ .Release.Name }}-deployment-guacamole-guacd
+      annotations:
+        checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
     spec:
+      volumes:
+        - name: prom-config
+          configMap:
+            name: {{ .Release.Name }}-promtail
+            items:
+              - key: guacd-promtail.yaml
+                path: promtail.yaml
+        - name: prom-position
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-guacd-promtail
+        - name: logs
+          emptyDir: {}
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-guacamole-guacd
           image: {{ .Values.docker.images.guacamole.guacd }}
+          command: ["/bin/sh", "-c", "mkdir /home/guacd/logs; /usr/local/guacamole/sbin/guacd -b 0.0.0.0 -L $GUACD_LOG_LEVEL -f > /home/guacd/logs/stdout.log 2> /home/guacd/logs/stderr.log"]
           ports:
             - name: guacd
               containerPort: 4822
@@ -37,11 +55,11 @@ spec:
           resources:
             {{ if eq .Values.target "local" }}
             limits:
-              cpu: "0.1"
-              memory: 50Mi
+              cpu: "0.2"
+              memory: 100Mi
             requests:
-              cpu: "0.05"
-              memory: 5Mi
+              cpu: "0.06"
+              memory: 10Mi
             {{ else }}
             requests:
               memory: "512Mi"
@@ -50,6 +68,44 @@ spec:
               memory: "1Gi"
               cpu: "1"
             {{ end }}
+          volumeMounts:
+            - name: logs
+              mountPath: /home/guacd/logs
+          {{ if .Values.cluster.containers }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}
+        - name: promtail
+          image: {{ .Values.docker.registry.external -}}{{- .Values.docker.images.promtail }}
+          args:
+            - "--config.file=/etc/promtail/promtail.yaml"
+            - "-log-config-reverse-order"
+          ports:
+            - name: logs
+              containerPort: 3101
+              protocol: TCP
+          resources:
+            {{ if eq .Values.target "local" }}
+            limits:
+              cpu: "0.1"
+              memory: 50Mi
+            requests:
+              cpu: "0.02"
+              memory: 5Mi
+            {{ else }}
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: "0.2"
+              memory: 250Mi
+            {{ end }}
+          volumeMounts:
+            - name: prom-config
+              mountPath: /etc/promtail
+            - name: prom-position
+              mountPath: /var/log/promtail
+            - name: logs
+              mountPath: /var/log/guacd
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}

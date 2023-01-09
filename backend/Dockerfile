@@ -20,5 +20,8 @@ COPY startup.sh /opt/.startup.sh
 WORKDIR /tmp/backend
 RUN pip install .
 
+# Mount a config.yaml into this directory
+VOLUME [ "/etc/capellacollab" ]
+
 RUN chmod +x /opt/.startup.sh
 CMD ["/opt/.startup.sh"]

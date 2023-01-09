@@ -3,32 +3,27 @@
 
 docker:
   registry: k3d-myregistry.localhost:12345
+  externalRegistry: docker.io
 
-operators:
-  operator: k8s # docker | k8s
+k8s:
+  # Only required when using operator k8s
 
-  docker:
-    ### DEPRECATED. PLEASE CONSIDER SWITCHING TO KUBERNETES ###
-    # Only required when using operator docker
-    mountVolume: C:/workspaces
-    portRange: 50000-50010
-    containerHost: host.docker.internal
+  context: k3d-collab-cluster # Only required, if you'd like to use a local k3d environment
+  namespace: t4c-sessions
 
-  k8s:
-    # Only required when using operator k8s
+  apiURL: dummy # Only required when no kubectl context is available
+  token: dummy # Only required when no kubectl context is available
 
-    context: k3d-collab-cluster # Only required, if you'd like to use a local k3d environment
-    namespace: t4c-sessions
+  storageClassName: local-path
+  storageAccessMode: ReadWriteOnce
 
-    apiURL: dummy # Only required when no kubectl context is available
-    token: dummy # Only required when no kubectl context is available
-
-    storageClassName: local-path
-    storageAccessMode: ReadWriteOnce
-
-    cluster:
-      containers:
-        # The following values are appended to each container
+  cluster:
+    imagePullPolicy: Always
+    podSecurityContext:
+      runAsUser: 1004370000
+      runAsGroup: 1004370000
+      fsGroup: 1004370000
+      runAsNonRoot: true
 
 extensions:
   guacamole:
@@ -82,6 +77,7 @@ initial:
 
 logging:
   level: DEBUG
+  logPath: logs/
 
 requests:
   timeout: 2

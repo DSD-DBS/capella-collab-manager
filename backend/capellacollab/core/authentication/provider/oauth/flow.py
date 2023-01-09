@@ -2,14 +2,18 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import logging
 import typing as t
 
+import fastapi
 import requests
 from requests_oauthlib import OAuth2Session
 
 from capellacollab.config import config
 
 cfg = config["authentication"]["oauth"]
+
+logger = logging.getLogger(__name__)
 
 
 auth_args = {}
@@ -39,12 +43,22 @@ def get_token(code: str) -> t.Dict[str, t.Any]:
 
 
 def refresh_token(refresh_token: str) -> t.Dict[str, t.Any]:
-    return auth_session.refresh_token(
-        read_well_known()["token_endpoint"],
-        refresh_token=refresh_token,
-        client_id=cfg["client"]["id"],
-        client_secret=cfg["client"]["secret"],
-    )
+    try:
+        return auth_session.refresh_token(
+            read_well_known()["token_endpoint"],
+            refresh_token=refresh_token,
+            client_id=cfg["client"]["id"],
+            client_secret=cfg["client"]["secret"],
+        )
+    except Exception as e:
+        logger.debug("Could not refresh token because of exception %s", str(e))
+        raise fastapi.HTTPException(
+            status_code=401,
+            detail={
+                "err_code": "token_exp",
+                "reason": "The Signature of the refresh token is expired. Please request a new access token.",
+            },
+        )
 
 
 def read_well_known() -> dict[str, t.Any]:

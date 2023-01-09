@@ -58,6 +58,13 @@ spec:
                 name: {{ .Release.Name }}-prometheus-nginx
                 port:
                   name: promui
+          - path: /grafana
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-grafana-nginx
+                port:
+                  name: grafui
           {{ if .Values.mocks.oauth }}
           - path: /default
             pathType: Prefix

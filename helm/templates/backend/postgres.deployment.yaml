@@ -9,7 +9,7 @@ metadata:
   labels:
     id: {{ .Release.Name }}-deployment-backend-postgres
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount.backendPostgres | default 1 }}
   selector:
     matchLabels:
       id: {{ .Release.Name }}-deployment-backend-postgres
@@ -26,6 +26,7 @@ spec:
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-volume-backend-postgres
       {{ end }}
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-backend-postgres
           image: {{ .Values.docker.registry.external }}/postgres:14.1
@@ -55,10 +56,10 @@ spec:
           resources:
             {{ if eq .Values.target "local" }}
             limits:
-              cpu: "0.2"
-              memory: 100Mi
+              cpu: "0.25"
+              memory: 150Mi
             requests:
-              cpu: "0.1"
+              cpu: "0.06"
               memory: 20Mi
             {{ else }}
             requests:

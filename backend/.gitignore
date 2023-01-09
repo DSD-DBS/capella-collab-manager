@@ -11,3 +11,4 @@ config/*
 *.egg-info
 build
 .git_archival.txt
+logs

@@ -8,7 +8,7 @@ metadata:
   labels:
     id: {{ .Release.Name }}-deployment-docs
 spec:
-  replicas: {{ .Values.replicaCount | default 1 }}
+  replicas: {{ .Values.replicaCount.docs | default 1 }}
   selector:
     matchLabels:
       id: {{ .Release.Name }}-deployment-docs
@@ -17,6 +17,7 @@ spec:
       labels:
         id: {{ .Release.Name }}-deployment-docs
     spec:
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-docs
           image: {{ .Values.docker.registry.internal }}{{ .Values.docker.images.docs }}
@@ -31,8 +32,8 @@ spec:
           resources:
             {{ if eq .Values.target "local" }}
             limits:
-              cpu: "0.05"
-              memory: 10Mi
+              cpu: "0.2"
+              memory: 20Mi
             requests:
               cpu: "0.01"
               memory: 5Mi

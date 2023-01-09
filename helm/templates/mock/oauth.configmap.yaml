@@ -12,5 +12,4 @@ metadata:
 data:
   oauth.json: |-
     {{ .Files.Get "config/oauth.json" | nindent 4 }}
-
 {{ end }}

@@ -1,0 +1,16 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-frontend-promtail
+  labels:
+    id: {{ .Release.Name }}-pvc-frontend-promtail
+spec:
+  accessModes:
+    - {{ .Values.promtail.storageAccessMode }}
+  resources:
+    requests:
+      storage: 10Mi
+  storageClassName: {{ .Values.promtail.storageClassName }}

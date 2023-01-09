@@ -8,6 +8,8 @@ metadata:
   name: {{ .Release.Name }}-oauth-mock
   labels:
     id: {{ .Release.Name }}-deployment-oauth-mock
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/mock/oauth.configmap.yaml") . | sha256sum }}
 spec:
   replicas: 1
   selector:
@@ -17,11 +19,14 @@ spec:
     metadata:
       labels:
         id: {{ .Release.Name }}-deployment-oauth-mock
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/mock/oauth.configmap.yaml") . | sha256sum }}
     spec:
       volumes:
         - name: {{ .Release.Name }}-oauth-mock
           configMap:
             name: {{ .Release.Name }}-oauth-mock
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-oauth-mock
           image: {{ .Values.docker.images.mocks.oauth }}
@@ -37,7 +42,7 @@ spec:
               value: /opt/oauth.json
           resources:
             limits:
-              cpu: "0.5"
+              cpu: "1"
               memory: 500Mi
             requests:
               cpu: "0.05"

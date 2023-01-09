@@ -7,18 +7,23 @@ metadata:
   name: {{ .Release.Name }}-prometheus-server
   namespace: {{ .Release.Namespace }}
   labels:
-    id: {{ .Release.Name }}-prometheus-server
+    id: {{ .Release.Name }}-deployment-prometheus-server
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/prometheus/prometheus.configmap.yaml") . | sha256sum }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount.prometheus | default 1 }}
   selector:
     matchLabels:
-      id: {{ .Release.Name }}-prometheus-server
+      id: {{ .Release.Name }}-deployment-prometheus-server
   template:
     metadata:
       labels:
-        id: {{ .Release.Name }}-prometheus-server
+        id: {{ .Release.Name }}-deployment-prometheus-server
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/prometheus/prometheus.configmap.yaml") . | sha256sum }}
     spec:
-      serviceAccountName: {{ .Release.Name }}-serviceaccount-prometheus
+      serviceAccountName: {{ .Release.Name }}-prometheus
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: prometheus
           image: {{ .Values.docker.registry.external }}{{ .Values.docker.images.prometheus }}
@@ -54,6 +59,6 @@ spec:
         - name: prometheus-config-volume
           configMap:
             defaultMode: 420
-            name: prometheus-server-conf
+            name: {{ .Release.Name }}-prometheus
         - name: prometheus-storage-volume
           emptyDir: {}

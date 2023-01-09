@@ -25,17 +25,24 @@ export MSYS_NO_PATHCONV := 1
 # Use Docker Buildkit on Linux
 export DOCKER_BUILDKIT=1
 
-build: backend frontend docs
+build: backend frontend docs guacamole
 
+backend: IMAGE=capella/collab/backend
 backend:
 	python backend/generate_git_archival.py;
-	docker build -t t4c/client/backend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/backend backend
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/backend
+	docker build -t $(IMAGE) -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE) backend
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE)
 
+frontend: IMAGE=capella/collab/frontend
 frontend:
 	node frontend/fetch-version.ts
-	docker build --build-arg CONFIGURATION=local -t t4c/client/frontend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend frontend
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend
+	docker build --build-arg CONFIGURATION=local -t $(IMAGE) -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE) frontend
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE)
+
+guacamole: IMAGE=capella/collab/guacamole
+guacamole:
+	docker build -t $(IMAGE) -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE) guacamole
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE)
 
 capella:
 	for version in $(CAPELLA_VERSIONS)
@@ -61,14 +68,16 @@ deploy-without-build: helm-deploy open rollout
 
 helm-deploy:
 	@k3d cluster list $(CLUSTER_NAME) >/dev/null || $(MAKE) create-cluster
-	@kubectl create namespace t4c-sessions 2> /dev/null || true
+	@kubectl create namespace $(SESSION_NAMESPACE) 2> /dev/null || true
 	@helm upgrade --install \
+		--dependency-update \
 		--kube-context k3d-$(CLUSTER_NAME) \
 		--create-namespace \
 		--namespace $(NAMESPACE) \
 		--values helm/values.yaml \
 		$$(test -f secrets.yaml && echo "--values secrets.yaml") \
 		--set docker.registry.internal=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
+		--set docker.images.guacamole.guacamole=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/guacamole \
 		--set mocks.oauth=True \
 		--set target=local \
 		--set general.port=8080 \
@@ -100,10 +109,7 @@ rollout:
 	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-docs
 
 undeploy:
-	helm uninstall --kube-context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) $(RELEASE)
-	kubectl --context k3d-$(CLUSTER_NAME) delete --all deployments -n $(SESSION_NAMESPACE)
-	kubectl --context k3d-$(CLUSTER_NAME) delete --all cronjobs -n $(SESSION_NAMESPACE)
-	kubectl --context k3d-$(CLUSTER_NAME) delete --all jobs -n $(SESSION_NAMESPACE)
+	kubectl --context k3d-$(CLUSTER_NAME) delete namespace $(SESSION_NAMESPACE) $(NAMESPACE)
 
 registry:
 	type k3d || { echo "K3D is not installed, install k3d and run 'make create-cluster' again"; exit 1; }

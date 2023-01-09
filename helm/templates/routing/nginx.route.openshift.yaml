@@ -7,7 +7,8 @@
 {{ $docs := dict "path" "/docs" "service" "docs" "targetPort" "http" }}
 {{ $guacamole := dict "path" "/guacamole" "service" "guacamole-guacamole" "targetPort" "http" }}
 {{ $prometheus := dict "path" "/prometheus" "service" "prometheus-nginx" "targetPort" "promui" }}
-{{ $routes := list $frontend $backend $docs $guacamole $prometheus }}
+{{ $grafana := dict "path" "/grafana" "service" "grafana-nginx" "targetPort" "grafui" }}
+{{ $routes := list $frontend $backend $docs $guacamole $prometheus $grafana }}
 {{ if .Values.mocks.oauth }}
 {{ $oauth := dict "path" "/default" "service" "oauth-mock" "targetPort" "8080" }}
 {{ $routes = append $routes $oauth }}

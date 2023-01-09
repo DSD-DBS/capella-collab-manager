@@ -4,10 +4,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: prometheus-server-conf
+  name: {{ .Release.Name }}-prometheus
+  namespace: {{ .Release.Namespace }}
   labels:
-    name: prometheus-server-conf
-  namespace: "{{ .Release.Namespace }}"
+    id: {{ .Release.Name }}-configmap-prometheus
 data:
   prometheus.rules: |-
     groups:

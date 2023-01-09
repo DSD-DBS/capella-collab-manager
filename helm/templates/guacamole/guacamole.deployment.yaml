@@ -7,8 +7,10 @@ metadata:
   name: {{ .Release.Name }}-guacamole-guacamole
   labels:
     id: {{ .Release.Name }}-deployment-guacamole-guacamole
+  annotations:
+    checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
 spec:
-  replicas: {{ .Values.replicaCount | default 1 }}
+  replicas: {{ .Values.replicaCount.guacamole | default 1 }}
   selector:
     matchLabels:
       id: {{ .Release.Name }}-deployment-guacamole-guacamole
@@ -16,7 +18,24 @@ spec:
     metadata:
       labels:
         id: {{ .Release.Name }}-deployment-guacamole-guacamole
+      annotations:
+        checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
     spec:
+      volumes:
+        - name: prom-config
+          configMap:
+            name: {{ .Release.Name }}-promtail
+            items:
+              - key: guacamole-promtail.yaml
+                path: promtail.yaml
+        - name: prom-position
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-guacamole-promtail
+        - name: unused
+          emptyDir: {}
+        - name: logs
+          emptyDir: {}
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-guacamole-guacamole
           image: {{ .Values.docker.images.guacamole.guacamole }}
@@ -58,13 +77,19 @@ spec:
               port: 8080
             initialDelaySeconds: 15
             periodSeconds: 20
+          volumeMounts:
+            # https://github.com/kubernetes/kubernetes/issues/106194
+            - name: unused
+              mountPath: /home/guacamole/tomcat
+            - name: logs
+              mountPath: /home/guacamole/tomcat/logs
           resources:
             {{ if eq .Values.target "local" }}
             limits:
               cpu: "0.5"
               memory: 500Mi
             requests:
-              cpu: "0.05"
+              cpu: "0.04"
               memory: 5Mi
             {{ else }}
             requests:
@@ -74,6 +99,41 @@ spec:
               memory: "2Gi"
               cpu: "2"
             {{ end }}
+          {{ if .Values.cluster.containers }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}
+        - name: promtail
+          image: {{ .Values.docker.registry.external -}}{{- .Values.docker.images.promtail }}
+          args:
+            - "--config.file=/etc/promtail/promtail.yaml"
+            - "-log-config-reverse-order"
+          ports:
+            - name: logs
+              containerPort: 3101
+              protocol: TCP
+          resources:
+            {{ if eq .Values.target "local" }}
+            limits:
+              cpu: "0.1"
+              memory: 50Mi
+            requests:
+              cpu: "0.02"
+              memory: 5Mi
+            {{ else }}
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: "0.2"
+              memory: 250Mi
+            {{ end }}
+          volumeMounts:
+            - name: prom-config
+              mountPath: /etc/promtail
+            - name: prom-position
+              mountPath: /var/log/promtail
+            - name: logs
+              mountPath: /var/log/guacamole
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
