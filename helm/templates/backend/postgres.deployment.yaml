@@ -24,7 +24,7 @@ spec:
       volumes:
         - name: {{ .Release.Name }}-data
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-backend-postgres
+            claimName: {{ .Release.Name }}-volume-backend-postgres
       {{ end }}
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:

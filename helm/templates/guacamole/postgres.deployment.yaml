@@ -28,7 +28,7 @@ spec:
         {{ if ne .Values.target "local" }}
         - name: {{ .Release.Name }}-data
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-guacamole-postgres
+            claimName: {{ .Release.Name }}-volume-guacamole-postgres
         {{ end }}
         - name: {{ .Release.Name }}-initsql
           configMap:
