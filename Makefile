@@ -27,19 +27,22 @@ export DOCKER_BUILDKIT=1
 
 build: backend frontend docs guacamole
 
+backend: IMAGE=capella/collab/backend
 backend:
 	python backend/generate_git_archival.py;
-	docker build -t t4c/client/backend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/backend backend
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/backend
+	docker build -t $(IMAGE) -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE) backend
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE)
 
+frontend: IMAGE=capella/collab/frontend
 frontend:
 	node frontend/fetch-version.ts
-	docker build --build-arg CONFIGURATION=local -t t4c/client/frontend -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend frontend
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/frontend
+	docker build --build-arg CONFIGURATION=local -t $(IMAGE) -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE) frontend
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE)
 
+guacamole: IMAGE=capella/collab/guacamole
 guacamole:
-	docker build -t capella/collab/guacamole -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/guacamole guacamole
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/guacamole
+	docker build -t $(IMAGE) -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE) guacamole
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE)
 
 capella:
 	for version in $(CAPELLA_VERSIONS)
