@@ -154,6 +154,22 @@ jobs:
         if: always()
         run: |
           kubectl describe nodes
+      - name: Describe PVCs
+        if: always()
+        run: |
+          kubectl describe pvc
+      - name: Describe volumes
+        if: always()
+        run: |
+          kubectl describe pv
+      - name: Describe configmaps
+        if: always()
+        run: |
+          kubectl describe cm
+      - name: Describe secrets
+        if: always()
+        run: |
+          kubectl describe secrets
       - name: Print logs of backend container
         if: always()
         run: |
