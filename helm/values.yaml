@@ -203,6 +203,9 @@ cluster:
 proxy:
   no_proxy:
 
+promtail:
+  storageAccessMode: ReadWriteOnce
+
 definitions:
   loki:
     # Default username & password for Loki

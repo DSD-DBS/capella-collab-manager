@@ -9,7 +9,7 @@ metadata:
     id: {{ .Release.Name }}-pvc-backend-promtail
 spec:
   accessModes:
-    - ReadWriteOnce
+    - {{ .Values.promtail.storageAccessMode }}
   resources:
     requests:
       storage: 10Mi
