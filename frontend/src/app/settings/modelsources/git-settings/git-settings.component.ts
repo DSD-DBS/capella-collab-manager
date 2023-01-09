@@ -12,7 +12,10 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  MatLegacyDialog as MatDialog,
+  MatLegacyDialogRef as MatDialogRef,
+} from '@angular/material/legacy-dialog';
 import { Subscription } from 'rxjs';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { absoluteUrlValidator } from 'src/app/helpers/validators/url-validator';
