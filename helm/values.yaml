@@ -205,6 +205,7 @@ proxy:
 
 promtail:
   storageAccessMode: ReadWriteOnce
+  storageClassName: local-path
 
 definitions:
   loki:
