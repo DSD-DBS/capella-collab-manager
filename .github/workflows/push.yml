@@ -117,6 +117,7 @@ jobs:
           --set loki.loki.read.persistence.size="500Mi" \
           --set loki.loki.write.persistence.size="500Mi" \
           --set loki.minio.persistence.size="500Mi" \
+          --set cluster.pvc.storageClassName="standard" \
           --set mocks.oauth=True \
           --set target=local \
           --set general.port=8080 \
