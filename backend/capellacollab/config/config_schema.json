@@ -1,72 +1,64 @@
 {
   "type": "object",
+  "additionalProperties": false,
   "properties": {
     "docker": {
       "type": "object",
       "properties": {
-        "registry": {
-          "type": "string"
-        }
+        "registry": { "type": "string" },
+        "externalRegistry": { "type": "string" }
       }
     },
-    "operators": {
+    "k8s": {
       "type": "object",
       "properties": {
-        "operator": {
+        "context": { "type": "string" },
+        "namespace": { "type": "string" },
+        "apiURL": { "type": ["string", "null"] },
+        "token": { "type": ["string", "null"] },
+        "storageClassName": { "type": "string" },
+        "storageAccessMode": {
           "type": "string",
-          "enum": ["docker", "k8s"]
+          "enum": [
+            "ReadWriteOnce",
+            "ReadOnlyMany",
+            "ReadWriteMany",
+            "ReadWriteOncePod"
+          ]
         },
-        "k8s": {
+        "cluster": {
           "type": "object",
           "properties": {
-            "context": { "type": "string" },
-            "namespace": { "type": "string" },
-            "apiURL": { "type": "string" },
-            "token": { "type": "string" },
-            "storageClassName": { "type": "string" },
-            "storageAccessMode": {
+            "imagePullPolicy": {
               "type": "string",
-              "enum": [
-                "ReadWriteOnce",
-                "ReadOnlyMany",
-                "ReadWriteMany",
-                "ReadWriteOncePod"
-              ]
+              "enum": ["Always", "IfNotPresent", "Never"]
             },
-            "cluster": {
+            "podSecurityContext": {
               "type": "object",
               "properties": {
-                "containers": {
-                  "type": ["object", "null"],
-                  "properties": {
-                    "securityContext": {
-                      "type": "object",
-                      "properties": {
-                        "capabilities": {
-                          "type": "object",
-                          "properties": {
-                            "drop": {
-                              "type": "array",
-                              "items": {
-                                "type": "string",
-                                "enum": ["KILL", "MKNOD", "SETGID", "SETUID"]
-                              }
-                            }
-                          }
-                        },
-                        "runAsUser": {
-                          "type": "number"
-                        }
-                      }
-                    },
-                    "imagePullPolicy": {
-                      "type": "string",
-                      "enum": ["IfNotPresent", "Always", "Never"]
-                    }
-                  }
+                "runAsUser": {
+                  "type": "number"
+                },
+                "runAsGroup": {
+                  "type": "number"
+                },
+                "fsGroup": {
+                  "type": "number"
+                },
+                "runAsNonRoot": {
+                  "type": "boolean"
                 }
               }
             }
+          }
+        },
+        "promtail": {
+          "type": "object",
+          "properties": {
+            "lokiUrl": { "type": ["string", "null"] },
+            "lokiUserName": { "type": ["string", "null"] },
+            "lokiPassword": { "type": ["string", "null"] },
+            "serverPort": { "type": ["number", "null"] }
           }
         }
       }
@@ -145,6 +137,8 @@
       "type": "object",
       "properties": { "url": { "type": "string" } }
     },
+    "target": { "type": "string" },
+    "test": { "type": "string" },
     "initial": {
       "type": "object",
       "properties": { "admin": { "type": "string" } }
