@@ -25,6 +25,12 @@ k8s:
       fsGroup: 1004370000
       runAsNonRoot: true
 
+  promtail:
+    lokiUrl:
+    lokiUsername:
+    lokiPassword:
+    serverPort:
+
 extensions:
   guacamole:
     baseURI: http://localhost:8080/guacamole
