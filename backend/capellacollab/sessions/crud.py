@@ -28,7 +28,7 @@ def get_sessions_for_repository(db: Session, repository: str):
 def get_session_by_id(db: Session, _id: str) -> DatabaseSession:
     return db.execute(
         select(DatabaseSession).where(DatabaseSession.id == _id)
-    ).scalar_one()
+    ).scalar()
 
 
 def get_all_sessions(db: Session):

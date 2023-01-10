@@ -21,7 +21,7 @@ def mock_config(monkeypatch):
 class MockResponse:
     def __init__(self, *alerts, status_code=200):
         self._alerts = alerts
-        self.status_code = 200
+        self.status_code = status_code
 
     def json(self):
         return {"data": {"result": self._alerts}}
@@ -43,14 +43,15 @@ def test_no_idle_sessions(monkeypatch):
     terminate_idle_session()
 
 
-def test_idle_sessions(monkeypatch, db):
-    # db fixture is needed to start the database
+@pytest.mark.usefixtures("db")
+def test_idle_sessions(monkeypatch):
+    session_id: str = "12345"
 
     operator = MockOperator()
     monkeypatch.setattr(
         requests,
         "get",
-        lambda *args, **kwargs: MockResponse({"metric": {"app": "12345"}}),
+        lambda *args, **kwargs: MockResponse({"metric": {"app": session_id}}),
     )
     monkeypatch.setattr(
         capellacollab.sessions.idletimeout, "OPERATOR", operator
@@ -58,4 +59,4 @@ def test_idle_sessions(monkeypatch, db):
 
     terminate_idle_session()
 
-    assert "12345" in operator.killed_sessions
+    assert session_id in operator.killed_sessions
