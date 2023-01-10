@@ -28,7 +28,7 @@ log = logging.getLogger(__name__)
 
 external_registry: str = config["docker"]["externalRegistry"]
 
-cfg = config["k8s"]
+cfg: dict[str, t.Any] = config["k8s"]
 
 namespace: str = cfg["namespace"]
 storage_access_mode: str = cfg["storageAccessMode"]
@@ -39,9 +39,9 @@ loki_username: str = cfg["promtail"]["lokiUsername"]
 loki_password: str = cfg["promtail"]["lokiPassword"]
 promtail_server_port: int = cfg["promtail"]["serverPort"]
 
-context: str = cfg["context"]
-api_url: str = cfg["apiURL"]
-token: str = cfg["token"]
+context: str | None = cfg.get("context", None)
+api_url: str | None = cfg.get("apiURL", None)
+token: str | None = cfg.get("token", None)
 
 
 def deserialize_kubernetes_resource(content: t.Any, resource: str):
