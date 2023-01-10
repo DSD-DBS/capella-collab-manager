@@ -172,7 +172,6 @@ def create_job(
                 ),
             },
         )
-        return pipeline
     else:
         OPERATOR.create_job(
             image=get_backup_image_for_tool_version(

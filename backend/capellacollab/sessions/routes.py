@@ -78,6 +78,10 @@ project_router = APIRouter(
     dependencies=[Depends(RoleVerification(required_role=Role.USER))]
 )
 
+users_router = APIRouter(
+    dependencies=[Depends(RoleVerification(required_role=Role.USER))]
+)
+
 log = logging.getLogger(__name__)
 
 
@@ -480,3 +484,26 @@ def create_guacamole_token(
 
 
 router.include_router(router=files.router, prefix="/{session_id}/files")
+
+
+@users_router.get(
+    "/{user_id}/sessions", response_model=list[OwnSessionResponse]
+)
+def get_sessions_for_user(
+    user: DatabaseUser = Depends(get_existing_user),
+    current_user: DatabaseUser = Depends(get_own_user),
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
+):
+    if user != current_user and not RoleVerification(
+        required_role=Role.ADMIN, verify=False
+    )(token, db):
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "reason": "You can only see your own sessions.",
+                "technical": "If you are a project lead or administrator, please use the /sessions endpoint",
+            },
+        )
+
+    return inject_attrs_in_sessions(user.sessions)

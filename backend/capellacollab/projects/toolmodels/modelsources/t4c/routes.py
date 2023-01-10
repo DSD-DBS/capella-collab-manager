@@ -114,8 +114,8 @@ def delete_t4c_model(
         raise HTTPException(
             status_code=409,
             detail={
-                "err_code": "git_model_used_for_backup",
-                "reason": "The git model can't be deleted: it's used for backup jobs",
+                "err_code": "t4c_model_used_for_backup",
+                "reason": "The t4c model can't be deleted: it's used for backup jobs",
             },
         )
 
