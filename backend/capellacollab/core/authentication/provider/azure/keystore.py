@@ -23,8 +23,6 @@ cfg = config["authentication"]["azure"]
 
 # Copied and adapted from https://github.com/marpaia/jwks/blob/master/jwks/jwks.py:
 
-# TODO: Reduce duplicated code with oauth/keystore.py
-
 
 class _KeyStore:
     def __init__(

@@ -48,7 +48,7 @@ class JWTBearer(HTTPBearer):
     def initialize_user(self, token_decoded: dict[str, str]):
         with SessionLocal() as session:
             username: str = get_username(token_decoded)
-            if not (users_crud.get_user_by_name(session, username)):
+            if not users_crud.get_user_by_name(session, username):
                 created_user = users_crud.create_user(session, username)
                 users_crud.update_last_login(session, created_user)
                 events.create_user_creation_event(session, created_user)

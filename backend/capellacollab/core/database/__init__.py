@@ -29,5 +29,5 @@ def patch_database_with_pydantic_object(
 ):
     for key, value in pydantic_object.dict().items():
         if value is not None:
-            database_object.__setattr__(key, value)
+            setattr(database_object, key, value)
     db.commit()

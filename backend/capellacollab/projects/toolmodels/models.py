@@ -7,7 +7,7 @@ from __future__ import annotations
 import enum
 import typing as t
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 from sqlalchemy import (
     Column,
     Enum,
@@ -30,7 +30,10 @@ from capellacollab.tools.models import (
     Version,
 )
 
-from .restrictions.models import ToolModelRestrictions
+from .restrictions.models import (
+    DatabaseToolModelRestrictions,
+    ToolModelRestrictions,
+)
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.models import DatabaseProject
@@ -39,11 +42,6 @@ if t.TYPE_CHECKING:
     )
     from capellacollab.projects.toolmodels.modelsources.t4c.models import (
         DatabaseT4CModel,
-    )
-
-    from .restrictions.models import (
-        DatabaseToolModelRestrictions,
-        ToolModelRestrictions,
     )
 
 

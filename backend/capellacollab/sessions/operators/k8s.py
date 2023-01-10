@@ -132,8 +132,8 @@ class KubernetesOperator:
         docker_image: str,
         t4c_license_secret: str | None,
         t4c_json: list[dict[str, str | int]] | None,
-        pure_variants_license_server: str = None,
-        pure_variants_secret_name: str = None,
+        pure_variants_license_server: str | None = None,
+        pure_variants_secret_name: str | None = None,
     ) -> dict[str, t.Any]:
         self._create_persistent_volume_claim(username)
 
@@ -482,8 +482,8 @@ class KubernetesOperator:
         image: str,
         name: str,
         environment: dict[str, str | None],
-        persistent_workspace_claim_name: str = None,
-        pure_variants_secret_name: str = None,
+        persistent_workspace_claim_name: str | None = None,
+        pure_variants_secret_name: str | None = None,
     ) -> client.V1Deployment:
         volumes: list[client.V1Volume] = []
         session_volume_mounts: list[client.V1VolumeMount] = []
@@ -838,29 +838,39 @@ class KubernetesOperator:
 
     def _delete_deployment(self, name: str) -> client.V1Status:
         try:
-            return self.v1_apps.delete_namespaced_deployment(name, namespace)
+            status: client.V1Status = (
+                self.v1_apps.delete_namespaced_deployment(name, namespace)
+            )
         except exceptions.ApiException:
             log.exception("Error deleting deployment with name: %s", name)
+        return status
 
     def delete_secret(self, name: str) -> kubernetes.client.V1Status:
         try:
-            return self.v1_core.delete_namespaced_secret(
+            status: client.V1Status = self.v1_core.delete_namespaced_secret(
                 name, cfg["namespace"]
             )
         except client.exceptions.ApiException:
             log.exception("Error deleting secret with name: %s", name)
+        return status
 
     def _delete_config_map(self, name: str) -> client.V1Status:
         try:
-            return self.v1_core.delete_namespaced_config_map(name, namespace)
+            status: client.V1Status = (
+                self.v1_core.delete_namespaced_config_map(name, namespace)
+            )
         except exceptions.ApiException:
             log.exception("Error deleting config map with name: %s", name)
+        return status
 
     def _delete_service(self, name: str) -> client.V1Status:
         try:
-            return self.v1_core.delete_namespaced_service(name, namespace)
+            status: client.V1Status = self.v1_core.delete_namespaced_service(
+                name, namespace
+            )
         except exceptions.ApiException:
             log.exception("Error deleting service with name: %s", name)
+        return status
 
     def _get_pod_name(self, _id: str) -> str:
         return self._get_pods(label_selector=f"app={_id}")[0].metadata.name
@@ -902,7 +912,7 @@ class KubernetesOperator:
                     "Upload into %s - STDERR: %s", _id, stream.read_stderr()
                 )
 
-        except exceptions.ApiException as e:
+        except exceptions.ApiException:
             log.exception(
                 "Exception when copying file to the pod with id %s", _id
             )
@@ -936,7 +946,7 @@ class KubernetesOperator:
 
             yield from lazy_b64decode(reader())
 
-        except kubernetes.client.exceptions.ApiException as e:
+        except kubernetes.client.exceptions.ApiException:
             log.exception(
                 "Exception when copying file to the pod with id %s", id
             )

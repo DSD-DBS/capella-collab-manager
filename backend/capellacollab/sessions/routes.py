@@ -58,8 +58,6 @@ from capellacollab.settings.modelsources.t4c.repositories.interface import (
 from capellacollab.tools.crud import (
     get_image_for_tool_version,
     get_readonly_image_for_version,
-    get_tool_by_name,
-    get_version_by_name,
 )
 from capellacollab.tools.injectables import (
     get_exisiting_tool_version,
