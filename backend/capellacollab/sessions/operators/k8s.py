@@ -332,6 +332,7 @@ class KubernetesOperator:
     def get_session_logs(self, _id: str) -> str:
         return self.v1_core.read_namespaced_pod_log(
             name=self._get_pod_name(_id),
+            container=_id,
             namespace=namespace,
         )
 

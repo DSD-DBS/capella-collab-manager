@@ -46,19 +46,15 @@ def get_last_seen(sid: str) -> str:
             if sid == session["metric"]["app"]:
                 return _get_last_seen(float(session["value"][1]))
         log.exception("No session was found.")
-        return "UNKNOWN"
     except JSONDecodeError as error:
         log.exception("Prometheus service not available: %s", error.args[0])
-        return "UNKNOWN"
     except requests.ConnectionError as error:
         log.exception("ConnectionError: %s", error.args[0])
-        return "UNKNOWN"
     except KeyError:
         log.exception("Something is wrong with prometheus idletime metric.")
-        return "UNKNOWN"
     except Exception:
         log.exception("Exception during fetching of last seen.")
-        return "UNKNOWN"
+    return "UNKNOWN"
 
 
 def _get_last_seen(idletime: int | float) -> str:
