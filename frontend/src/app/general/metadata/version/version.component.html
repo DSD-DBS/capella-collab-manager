@@ -4,7 +4,11 @@
  -->
 
 <div class="wrapper">
-  <a href="/docs/release-notes/" target="_blank">
+  <a
+    href="/docs/release-notes/"
+    target="_blank"
+    (click)="versionService.clickedOnVersionNotes()"
+  >
     <div
       class="version"
       *ngIf="versionService.changedVersion && versionService.version"
@@ -14,8 +18,7 @@
         <mat-icon class="mat-icon-position top left"
           >arrow_right_alt</mat-icon
         ></span
-      >
-      {{ versionService.version.git.tag }})!
+      >{{ versionService.version.git.tag }})!
     </div>
     Environment: {{ env }} <br />
     Frontend version: {{ versionService.version?.git?.version }} <br />

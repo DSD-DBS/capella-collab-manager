@@ -51,6 +51,11 @@ export class VersionService {
     }
   }
 
+  clickedOnVersionNotes() {
+    this.localStorageService.setValue('version', this.version?.git.tag);
+    this.changedVersion = false;
+  }
+
   compareFrontendVersionWithCurrent(version: string): number {
     /**
      * Compares a version with the current version
