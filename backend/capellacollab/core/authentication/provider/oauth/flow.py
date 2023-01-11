@@ -55,7 +55,7 @@ def refresh_token(refresh_token: str) -> t.Dict[str, t.Any]:
         raise fastapi.HTTPException(
             status_code=401,
             detail={
-                "err_code": "token_exp",
+                "err_code": "REQUEST_TOKEN_EXPIRED",
                 "reason": "The Signature of the refresh token is expired. Please request a new access token.",
             },
         )
