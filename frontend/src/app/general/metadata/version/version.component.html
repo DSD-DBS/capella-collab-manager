@@ -4,7 +4,11 @@
  -->
 
 <div class="wrapper">
-  <a href="/docs/release-notes/" target="_blank">
+  <a
+    href="/docs/release-notes/"
+    target="_blank"
+    (click)="versionService.clickedOnVersionNotes()"
+  >
     <div
       class="version"
       *ngIf="versionService.changedVersion && versionService.version"
