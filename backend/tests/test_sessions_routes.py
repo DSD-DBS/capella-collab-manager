@@ -26,10 +26,13 @@ from capellacollab.projects.users.models import (
     ProjectUserRole,
 )
 from capellacollab.sessions.crud import (
+    create_session,
     get_session_by_id,
     get_sessions_for_user,
 )
+from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import get_operator
+from capellacollab.sessions.schema import WorkspaceType
 from capellacollab.tools.crud import (
     create_tool,
     create_version,
@@ -274,6 +277,34 @@ def test_no_readonly_session_as_user(client, db, user, kubernetes):
     assert not kubernetes.sessions
 
 
+def test_create_readonly_session_as_user(client, db, user, kubernetes):
+    _tool, version = next(
+        (v.tool, v)
+        for v in get_versions(db)
+        if v.tool.name == "Capella" and v.name == "5.0.0"
+    )
+
+    model, git_model = setup_git_model_for_user(db, user, version)
+    setup_active_readonly_session(db, user, model.project, version)
+
+    response = client.post(
+        f"/api/v1/projects/{model.project.slug}/sessions/readonly",
+        json={
+            "models": [
+                {
+                    "model_slug": model.slug,
+                    "git_model_id": git_model.id,
+                    "revision": "main",
+                    "deep_clone": False,
+                }
+            ]
+        },
+    )
+
+    assert response.status_code == 409
+    assert not kubernetes.sessions
+
+
 def setup_git_model_for_user(db, user, version):
     project = create_project(db, name=str(uuid1()))
     nature = get_natures(db)[0]
@@ -303,6 +334,18 @@ def setup_git_model_for_user(db, user, version):
         ),
     )
     return model, git_model
+
+
+def setup_active_readonly_session(db, user, project, version):
+    database_model = DatabaseSession(
+        id=str(uuid1()),
+        type=WorkspaceType.READONLY,
+        owner=user,
+        project=project,
+        tool=version.tool,
+        version=version,
+    )
+    return create_session(db=db, session=database_model)
 
 
 def test_create_persistent_session_as_user(client, db, user, kubernetes):
