@@ -25,6 +25,10 @@ export MSYS_NO_PATHCONV := 1
 # Use Docker Buildkit on Linux
 export DOCKER_BUILDKIT=1
 
+.ONESHELL:
+SHELL = /bin/bash
+.SHELLFLAGS = -euo pipefail -c
+
 build: backend frontend docs guacamole
 
 backend: IMAGE=capella/collab/backend
@@ -119,7 +123,6 @@ create-cluster: registry
 delete-cluster:
 	k3d cluster list $(CLUSTER_NAME) 2>&- && k3d cluster delete $(CLUSTER_NAME)
 
-.ONESHELL:
 wait:
 	@echo "-----------------------------------------------------------"
 	@echo "--- Please wait until all services are in running state ---"
@@ -128,7 +131,6 @@ wait:
 	@kubectl wait --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) --for=condition=Ready --all pods --timeout=$(TIMEOUT)
 	@kill %%
 
-.ONESHELL:
 provision-guacamole:
 	@echo "Waiting for guacamole container, before we can initialize the database..."
 	@kubectl get -n $(NAMESPACE) --watch pods &
