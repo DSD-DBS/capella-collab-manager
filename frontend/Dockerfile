@@ -5,10 +5,14 @@ ARG BASE_IMAGE=node:18
 FROM $BASE_IMAGE as build
 
 ARG CONFIGURATION=production
+RUN npm install -g npm@latest
 
-COPY ./ /work/
 WORKDIR /work
-RUN npm install -g npm@latest && npm install
+
+COPY ./package*.json /work
+RUN npm i
+
+COPY . /work
 RUN npm run build -- --configuration=${CONFIGURATION}
 
 FROM nginxinc/nginx-unprivileged:latest
