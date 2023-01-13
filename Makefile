@@ -11,9 +11,9 @@ SESSION_NAMESPACE = t4c-sessions
 PORT ?= 8080
 
 # List of Capella versions, e.g.: `5.0.0 5.2.0 6.0.0`
-CAPELLA_VERSIONS = 5.2.0
+CAPELLA_VERSIONS ?= 5.2.0
 # List of T4C versions, e.g., `5.2.0 6.0.0`
-T4C_CLIENT_VERSIONS = 5.2.0
+T4C_CLIENT_VERSIONS ?= 5.2.0
 
 TIMEOUT ?= 10m
 
@@ -45,15 +45,10 @@ guacamole:
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE)
 
 capella:
-	for version in $(CAPELLA_VERSIONS)
-	do $(CAPELLA_DOCKERIMAGES) CAPELLA_VERSION=$$version capella/remote capella/readonly
-	done
+	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS=$(CAPELLA_VERSIONS) capella/remote capella/readonly
 
 t4c-client:
-	for version in $(T4C_CLIENT_VERSIONS)
-	do $(CAPELLA_DOCKERIMAGES) CAPELLA_VERSION=$$version t4c/client/remote t4c/client/backup
-	done
-
+	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS=$(T4C_CLIENT_VERSIONS) t4c/client/remote t4c/client/backup
 
 docs:
 	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user
