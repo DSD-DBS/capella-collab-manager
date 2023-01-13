@@ -15,4 +15,3 @@ certs/*
 .vscode
 /backend/log/*
 /helm/charts/*
-/helm/Chart.lock
