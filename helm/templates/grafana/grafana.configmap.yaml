@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+{{ if .Values.loki.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -53,3 +54,4 @@ data:
         version: 1
         editable: true
   dashboards.yaml: |
+{{ end }}

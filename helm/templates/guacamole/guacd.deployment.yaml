@@ -22,6 +22,9 @@ spec:
         checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
     spec:
       volumes:
+        - name: logs
+          emptyDir: {}
+        {{ if .Values.loki.enabled }}
         - name: prom-config
           configMap:
             name: {{ .Release.Name }}-promtail
@@ -31,8 +34,7 @@ spec:
         - name: prom-position
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-guacd-promtail
-        - name: logs
-          emptyDir: {}
+        {{ end }}
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-guacamole-guacd
@@ -74,6 +76,7 @@ spec:
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
+        {{ if .Values.loki.enabled }}
         - name: promtail
           image: {{ .Values.docker.registry.external -}}{{- .Values.docker.images.promtail }}
           args:
@@ -109,3 +112,4 @@ spec:
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
+        {{ end }}

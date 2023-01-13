@@ -220,6 +220,7 @@ grafana:
 
 # https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml
 loki:
+  enabled: true
   global:
     image:
       registry: *externalRegistry
