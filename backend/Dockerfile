@@ -23,5 +23,5 @@ RUN pip install .
 # Mount a config.yaml into this directory
 VOLUME [ "/etc/capellacollab" ]
 
-RUN chmod +x /opt/.startup.sh
+RUN chmod 777 /opt/.startup.sh
 CMD ["/opt/.startup.sh"]
