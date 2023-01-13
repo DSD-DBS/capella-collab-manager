@@ -33,3 +33,13 @@ Please follow these steps to request a session:
    1. [TeamForCapella](flows/t4c.md)
 
 <!-- prettier-ignore-end -->
+
+## Automatic session termination
+
+When your session is inactive for a long time (default 90 minutes), your
+session is terminated. A session is considered inactive when there is no user
+activity with your session, even if you have your session open in the browser.
+
+For read-only sessions this means that you have to start a new session. For
+persistent sessions the data is persisted, and you can just request a new
+session.
