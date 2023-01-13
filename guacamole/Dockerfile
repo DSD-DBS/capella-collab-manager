@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-FROM guacamole/guacamole
+FROM guacamole/guacamole:1.4.0
 
 USER root
 RUN chmod -R 777 \
