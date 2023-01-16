@@ -5,7 +5,7 @@
 
 <h1 mat-dialog-title>Create a new backup pipeline</h1>
 
-<form [formGroup]="createBackupForm" *ngIf="t4cModelAndGitModelExists()">
+<form [formGroup]="createBackupForm" *ngIf="t4cAndGitModelExists">
   <div class="flexbox center">
     <mat-card>
       Please select a T4C model:
@@ -55,7 +55,7 @@
   re-generated.
 </form>
 
-<div *ngIf="!t4cModelAndGitModelExists()">
+<div *ngIf="!t4cAndGitModelExists">
   Please add a T4C model and Git model first!
 </div>
 
@@ -63,7 +63,7 @@
   <button mat-button [mat-dialog-close]="false">Cancel</button>
   <button
     mat-button
-    *ngIf="t4cModelAndGitModelExists()"
+    *ngIf="t4cAndGitModelExists"
     (click)="createGitBackup()"
     cdkFocusInitial
     [disabled]="!createBackupForm.valid"
