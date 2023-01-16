@@ -47,7 +47,7 @@ repos:
     hooks:
       - id: pylint
         name: pylint
-        entry: bash -c "cd backend && pylint"
+        entry: bash -c "cd backend && pylint capellacollab"
         language: system
         types: [python]
   - repo: https://github.com/pre-commit/mirrors-prettier
