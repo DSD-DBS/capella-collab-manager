@@ -21,7 +21,9 @@ jobs:
       - name: Install python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: ./backend/pyproject.toml
+          python-version: "3.11"
       - name: Install dependencies
         run: |
           pip install "./backend[dev]"
