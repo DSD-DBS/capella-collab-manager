@@ -10,3 +10,4 @@ RUN chmod -R 777 \
     /home/guacamole
 
 ENV HOME=/home/guacamole
+ENV JAVA_OPTS="-Duser.home=/home/guacamole"
