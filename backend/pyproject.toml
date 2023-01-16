@@ -35,7 +35,7 @@ dependencies = [
     "gitpython",
     "kubernetes",
     "msal",
-    "psycopg2-binary",
+    "psycopg2",
     "pydantic",
     "python-dateutil",
     "python-jose",
