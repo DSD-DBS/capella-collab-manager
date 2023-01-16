@@ -13,11 +13,7 @@ import jwt
 import requests
 
 from capellacollab.config import config
-from capellacollab.core.authentication.provider.models import (
-    InvalidTokenError,
-    JSONWebKeySet,
-    KeyIDNotFoundError,
-)
+from capellacollab.core.authentication.provider import models
 
 log = logging.getLogger(__name__)
 cfg = config["authentication"]["oauth"]
@@ -59,7 +55,7 @@ class _KeyStore:
         except Exception:
             log.error("Could not retrieve JWKS data from %s", self.jwks_uri)
             return
-        jwks = JSONWebKeySet.parse_raw(resp.text)
+        jwks = models.JSONWebKeySet.parse_raw(resp.text)
         self.public_keys_last_refreshed = time.time()
         self.public_keys.clear()
         for key in jwks.keys:
@@ -78,7 +74,7 @@ class _KeyStore:
         try:
             unverified_claims = jwt.get_unverified_header(token)
         except Exception:
-            raise InvalidTokenError("Unable to parse key ID from token")
+            raise models.InvalidTokenError("Unable to parse key ID from token")
         # See if we have the key identified by this key ID.
 
         try:
@@ -88,7 +84,7 @@ class _KeyStore:
             # haven't refreshed keys yet), then try to refresh the keys and try
             # again.
             if in_retry:
-                raise KeyIDNotFoundError()
+                raise models.KeyIDNotFoundError()
             self.refresh_keys()
             return self.key_for_token(token, in_retry=1)
 
