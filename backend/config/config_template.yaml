@@ -26,6 +26,7 @@ k8s:
       runAsNonRoot: true
 
   promtail:
+    lokiEnabled: false
     lokiUrl:
     lokiUsername:
     lokiPassword:

@@ -34,10 +34,7 @@ namespace: str = cfg["namespace"]
 storage_access_mode: str = cfg["storageAccessMode"]
 storage_class_name: str = cfg["storageClassName"]
 
-loki_url: str = cfg["promtail"]["lokiUrl"]
-loki_username: str = cfg["promtail"]["lokiUsername"]
-loki_password: str = cfg["promtail"]["lokiPassword"]
-promtail_server_port: int = cfg["promtail"]["serverPort"]
+loki_enabled: bool = cfg["promtail"]["lokiEnabled"]
 
 
 def deserialize_kubernetes_resource(content: t.Any, resource: str):
@@ -197,13 +194,14 @@ class KubernetesOperator:
 
         _id = self._generate_id()
 
-        self._create_config_map(
-            name=_id,
-            username=username,
-            session_type=session_type,
-            tool_name=tool_name,
-            version_name=version_name,
-        )
+        if loki_enabled:
+            self._create_config_map(
+                name=_id,
+                username=username,
+                session_type=session_type,
+                tool_name=tool_name,
+                version_name=version_name,
+            )
 
         deployment = self._create_deployment(
             image=image,
@@ -231,7 +229,7 @@ class KubernetesOperator:
                 "Deleted deployment %s with status %s", _id, dep_status.status
             )
 
-        if conf_status := self._delete_config_map(name=_id):
+        if loki_enabled and (conf_status := self._delete_config_map(name=_id)):
             log.info(
                 "Deleted config map %s with status %s", _id, conf_status.status
             )
@@ -507,13 +505,14 @@ class KubernetesOperator:
                     name="workspace", mount_path="/var/log/promtail"
                 )
             )
-
-        volumes.append(
-            client.V1Volume(
-                name="prom-config",
-                config_map=client.V1ConfigMapVolumeSource(name=name),
+        if loki_enabled:
+            volumes.append(
+                client.V1Volume(
+                    name="prom-config",
+                    config_map=client.V1ConfigMapVolumeSource(name=name),
+                )
             )
-        )
+
         promtail_volume_mounts.append(
             client.V1VolumeMount(
                 name="prom-config", mount_path="/etc/promtail"
@@ -566,27 +565,28 @@ class KubernetesOperator:
                 image_pull_policy=image_pull_policy,
             )
         )
-        containers.append(
-            client.V1Container(
-                name="promtail",
-                image=f"{external_registry}/grafana/promtail",
-                args=[
-                    "--config.file=/etc/promtail/promtail.yaml",
-                    "-log-config-reverse-order",
-                ],
-                ports=[
-                    client.V1ContainerPort(
-                        name="metrics", container_port=3101, protocol="TCP"
-                    )
-                ],
-                resources=client.V1ResourceRequirements(
-                    limits={"cpu": "0.1", "memory": "50Mi"},
-                    requests={"cpu": "0.05", "memory": "5Mi"},
-                ),
-                volume_mounts=promtail_volume_mounts,
-                image_pull_policy=image_pull_policy,
+        if loki_enabled:
+            containers.append(
+                client.V1Container(
+                    name="promtail",
+                    image=f"{external_registry}/grafana/promtail",
+                    args=[
+                        "--config.file=/etc/promtail/promtail.yaml",
+                        "-log-config-reverse-order",
+                    ],
+                    ports=[
+                        client.V1ContainerPort(
+                            name="metrics", container_port=3101, protocol="TCP"
+                        )
+                    ],
+                    resources=client.V1ResourceRequirements(
+                        limits={"cpu": "0.1", "memory": "50Mi"},
+                        requests={"cpu": "0.05", "memory": "5Mi"},
+                    ),
+                    volume_mounts=promtail_volume_mounts,
+                    image_pull_policy=image_pull_policy,
+                )
             )
-        )
 
         deployment: client.V1Deployment = client.V1Deployment(
             kind="Deployment",
@@ -786,14 +786,18 @@ class KubernetesOperator:
                 "promtail.yaml": yaml.dump(
                     {
                         "server": {
-                            "http_listen_port": promtail_server_port,
+                            "http_listen_port": cfg["promtail"]["serverPort"],
                         },
                         "clients": [
                             {
-                                "url": loki_url,
+                                "url": cfg["promtail"]["lokiUrl"],
                                 "basic_auth": {
-                                    "username": loki_username,
-                                    "password": loki_password,
+                                    "username": cfg["promtail"][
+                                        "lokiUsername"
+                                    ],
+                                    "password": cfg["promtail"][
+                                        "lokiPassword"
+                                    ],
                                 },
                             }
                         ],
