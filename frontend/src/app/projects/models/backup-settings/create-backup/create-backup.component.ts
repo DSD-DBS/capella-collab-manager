@@ -11,7 +11,8 @@ import {
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatLegacyDialogRef } from '@angular/material/legacy-dialog';
+import { combineLatest } from 'rxjs';
 import {
   BackupService,
   PostPipeline,
@@ -27,11 +28,13 @@ import { ProjectService } from 'src/app/services/project/project.service';
   styleUrls: ['./create-backup.component.css'],
 })
 export class CreateBackupComponent {
+  t4cAndGitModelExists = false;
+
   constructor(
     public gitModelService: GitModelService,
     public t4cModelService: T4CModelService,
     private backupService: BackupService,
-    private dialogRef: MatDialogRef<CreateBackupComponent>,
+    private dialogRef: MatLegacyDialogRef<CreateBackupComponent>,
     private projectService: ProjectService,
     private modelService: ModelService
   ) {
@@ -46,6 +49,13 @@ export class CreateBackupComponent {
       this.projectService.project!.slug,
       this.modelService.model!.slug
     );
+
+    combineLatest([
+      this.gitModelService.gitModels,
+      this.t4cModelService._t4cModels.asObservable(),
+    ]).subscribe(([gitModels, t4cModels]) => {
+      this.t4cAndGitModelExists = !!(gitModels?.length && t4cModels?.length);
+    });
   }
 
   createBackupForm = new FormGroup({
@@ -85,12 +95,5 @@ export class CreateBackupComponent {
           this.dialogRef.close(true);
         });
     }
-  }
-
-  t4cModelAndGitModelExists(): boolean {
-    return !!(
-      this.t4cModelService.t4cModels?.length &&
-      this.gitModelService._gitModels.value?.length
-    );
   }
 }
