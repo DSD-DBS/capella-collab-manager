@@ -85,12 +85,12 @@ spec:
               mountPath: /home/guacamole/tomcat/logs
           resources:
             {{ if eq .Values.target "local" }}
-            limits:
-              cpu: "0.5"
-              memory: 500Mi
             requests:
-              cpu: "0.04"
-              memory: 5Mi
+              cpu: "0.1"
+              memory: 20Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
             {{ else }}
             requests:
               memory: "1Gi"
