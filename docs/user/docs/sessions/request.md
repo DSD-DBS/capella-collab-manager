@@ -19,9 +19,6 @@ Please follow these steps to request a session:
    this project. Instead of choosing a single branch, it is possible to click
    the checkbox to mark that all branches should be downloaded.
 
-    !!! note ""
-        Choosing all revisions and only the latest commit clones only the latest commits for all branches.
-
 1. Click the `Request session` button.
 1. You should see the state of your request. It can take up to 2 minutes, until
    the required resources can be assigned. In most of the cases this takes
@@ -33,3 +30,13 @@ Please follow these steps to request a session:
    1. [TeamForCapella](flows/t4c.md)
 
 <!-- prettier-ignore-end -->
+
+## Automatic session termination
+
+When your session is inactive for a long time (default 90 minutes), your
+session is terminated. A session is considered inactive when there is no user
+activity with your session, even if you have your session open in the browser.
+
+For read-only sessions this means that you have to start a new session. For
+persistent sessions the data is persisted, and you can just request a new
+session.
