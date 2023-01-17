@@ -8,6 +8,8 @@ metadata:
   name: {{ .Release.Name }}-guacamole-promtail
   labels:
     id: {{ .Release.Name }}-pvc-guacamole-promtail
+  annotations:
+    "helm.sh/resource-policy": keep
 spec:
   accessModes:
     - {{ .Values.promtail.storageAccessMode }}

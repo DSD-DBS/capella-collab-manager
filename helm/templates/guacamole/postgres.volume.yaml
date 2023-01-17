@@ -9,6 +9,8 @@ metadata:
   name: {{ .Release.Name }}-volume-guacamole-postgres
   labels:
     id: {{ .Release.Name }}-pvc-guacamole-postgres
+  annotations:
+    "helm.sh/resource-policy": keep
 spec:
   accessModes:
     - ReadWriteOnce

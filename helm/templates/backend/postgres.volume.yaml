@@ -9,6 +9,8 @@ metadata:
   name: {{ .Release.Name }}-volume-backend-postgres
   labels:
     id: {{ .Release.Name }}-pvc-backend-postgres
+  annotations:
+    "helm.sh/resource-policy": keep
 spec:
   accessModes:
     - ReadWriteOnce

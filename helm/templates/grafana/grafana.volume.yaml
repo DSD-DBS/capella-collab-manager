@@ -9,6 +9,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     id: {{ .Release.Name }}-pvc-grafana
+  annotations:
+    "helm.sh/resource-policy": keep
 spec:
   accessModes:
     - ReadWriteOnce

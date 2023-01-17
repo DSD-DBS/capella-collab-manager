@@ -8,6 +8,8 @@ metadata:
   name: {{ .Release.Name }}-guacd-promtail
   labels:
     id: {{ .Release.Name }}-pvc-guacd-promtail
+  annotations:
+    "helm.sh/resource-policy": keep
 spec:
   accessModes:
     - {{ .Values.promtail.storageAccessMode }}

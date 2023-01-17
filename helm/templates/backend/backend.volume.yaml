@@ -8,6 +8,8 @@ metadata:
   name: {{ .Release.Name }}-backend-promtail
   labels:
     id: {{ .Release.Name }}-pvc-backend-promtail
+  annotations:
+    "helm.sh/resource-policy": keep
 spec:
   accessModes:
     - {{ .Values.promtail.storageAccessMode }}
