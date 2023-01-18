@@ -28,6 +28,7 @@
             "ReadWriteOncePod"
           ]
         },
+
         "cluster": {
           "type": "object",
           "additionalProperties": false,
@@ -164,6 +165,9 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "logPath": {
+          "type": "string"
+        },
         "level": {
           "type": "string",
           "enum": ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"]
