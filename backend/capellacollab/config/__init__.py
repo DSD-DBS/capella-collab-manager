@@ -6,24 +6,20 @@ from __future__ import annotations
 import logging
 import typing as t
 
-from jsonschema import exceptions, validate
+import jsonschema
+import jsonschema.exceptions
 
-from . import loader
+from . import exceptions, loader
 
 log = logging.getLogger(__name__)
-
 config = loader.load_yaml()
-
-
-class InvalidConfigurationError(Exception):
-    pass
 
 
 def validate_schema():
     config_schema = loader.load_config_schema()
     try:
-        validate(config, config_schema)
-    except exceptions.ValidationError as error:
-        raise InvalidConfigurationError(
+        jsonschema.validate(config, config_schema)
+    except jsonschema.exceptions.ValidationError as error:
+        raise exceptions.InvalidConfigurationError(
             f"{error.__class__.__name__}: {error.message}",
         ) from None
