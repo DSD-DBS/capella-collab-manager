@@ -18,7 +18,7 @@ COPY .git_archival.txt /tmp/.git_archival.txt
 COPY startup.sh /opt/.startup.sh
 
 WORKDIR /tmp/backend
-RUN pip install .
+RUN pip install ".[psycopg2]"
 
 # Mount a config.yaml into this directory
 VOLUME [ "/etc/capellacollab" ]
