@@ -1,10 +1,23 @@
 {
   "type": "object",
   "additionalProperties": false,
+  "required": [
+    "docker",
+    "k8s",
+    "extensions",
+    "authentication",
+    "prometheus",
+    "database",
+    "target",
+    "initial",
+    "logging",
+    "requests"
+  ],
   "properties": {
     "docker": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["registry", "externalRegistry"],
       "properties": {
         "registry": { "type": "string" },
         "externalRegistry": { "type": "string" }
@@ -13,6 +26,15 @@
     "k8s": {
       "type": "object",
       "additionalProperties": false,
+      "required": [
+        "context",
+        "namespace",
+        "apiURL",
+        "token",
+        "storageClassName",
+        "storageAccessMode",
+        "promtail"
+      ],
       "properties": {
         "context": { "type": "string" },
         "namespace": { "type": "string" },
@@ -28,7 +50,6 @@
             "ReadWriteOncePod"
           ]
         },
-
         "cluster": {
           "type": "object",
           "additionalProperties": false,
@@ -60,6 +81,7 @@
         "promtail": {
           "type": "object",
           "additionalProperties": false,
+          "required": ["lokiUrl", "lokiUserName", "lokiPassword", "serverPort"],
           "properties": {
             "lokiUrl": { "type": ["string", "null"] },
             "lokiUserName": { "type": ["string", "null"] },
@@ -72,10 +94,12 @@
     "extensions": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["guacamole"],
       "properties": {
         "guacamole": {
           "type": "object",
           "additionalProperties": false,
+          "required": ["baseURI", "publicURI", "username", "password"],
           "properties": {
             "baseURI": { "type": "string" },
             "publicURI": { "type": "string" },
@@ -88,8 +112,8 @@
     "authentication": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["provider", "jwt"],
       "properties": {
-        "provider": { "type": "string" },
         "jwt": {
           "type": "object",
           "additionalProperties": false,
@@ -147,23 +171,26 @@
     "prometheus": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["url"],
       "properties": { "url": { "type": "string" } }
     },
     "database": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["url"],
       "properties": { "url": { "type": "string" } }
     },
     "target": { "type": "string" },
-    "test": { "type": "string" },
     "initial": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["admin"],
       "properties": { "admin": { "type": "string" } }
     },
     "logging": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["level", "logPath"],
       "properties": {
         "logPath": {
           "type": "string"
@@ -177,6 +204,7 @@
     "requests": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["timeout"],
       "properties": {
         "timeout": { "type": "number" }
       }
