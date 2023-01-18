@@ -4,6 +4,7 @@
   "properties": {
     "docker": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "registry": { "type": "string" },
         "externalRegistry": { "type": "string" }
@@ -11,6 +12,7 @@
     },
     "k8s": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "context": { "type": "string" },
         "namespace": { "type": "string" },
@@ -28,6 +30,7 @@
         },
         "cluster": {
           "type": "object",
+          "additionalProperties": false,
           "properties": {
             "imagePullPolicy": {
               "type": "string",
@@ -35,6 +38,7 @@
             },
             "podSecurityContext": {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "runAsUser": {
                   "type": "number"
@@ -54,6 +58,7 @@
         },
         "promtail": {
           "type": "object",
+          "additionalProperties": false,
           "properties": {
             "lokiUrl": { "type": ["string", "null"] },
             "lokiUserName": { "type": ["string", "null"] },
@@ -65,9 +70,11 @@
     },
     "extensions": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "guacamole": {
           "type": "object",
+          "additionalProperties": false,
           "properties": {
             "baseURI": { "type": "string" },
             "publicURI": { "type": "string" },
@@ -79,17 +86,21 @@
     },
     "authentication": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "provider": { "type": "string" },
         "jwt": {
           "type": "object",
+          "additionalProperties": false,
           "properties": { "usernameClaim": { "type": "string" } }
         },
         "oauth": {
           "type": "object",
+          "additionalProperties": false,
           "properties": {
             "endpoints": {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "tokenIssuance": { "type": ["string", "null"] },
                 "authorization": { "type": ["string", "null"] },
@@ -104,6 +115,7 @@
             },
             "client": {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "id": { "type": "string" },
                 "secret": { "type": ["string", "null"] }
@@ -114,10 +126,12 @@
         },
         "azure": {
           "type": "object",
+          "additionalProperties": false,
           "properties": {
             "authorizationEndpoint": { "type": "string" },
             "client": {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "id": { "type": "string" },
                 "secret": { "type": "string" }
@@ -131,20 +145,24 @@
     },
     "prometheus": {
       "type": "object",
+      "additionalProperties": false,
       "properties": { "url": { "type": "string" } }
     },
     "database": {
       "type": "object",
+      "additionalProperties": false,
       "properties": { "url": { "type": "string" } }
     },
     "target": { "type": "string" },
     "test": { "type": "string" },
     "initial": {
       "type": "object",
+      "additionalProperties": false,
       "properties": { "admin": { "type": "string" } }
     },
     "logging": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "level": {
           "type": "string",
@@ -154,6 +172,7 @@
     },
     "requests": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "timeout": { "type": "number" }
       }
