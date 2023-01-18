@@ -9,7 +9,7 @@ RUN npm install -g npm@latest
 
 WORKDIR /work
 
-COPY ./package*.json /work
+COPY ./package*.json /work/
 RUN npm i
 
 COPY . /work
