@@ -23,10 +23,6 @@ config_fallback_locations: list[pathlib.Path] = [
     pathlib.Path(__file__).parents[2] / "config" / "config_template.yaml",
 ]
 
-json_schema_locations = [
-    pathlib.Path(__file__).parents[0] / "config_schema.json"
-]
-
 
 def load_yaml() -> dict:
     log.debug("Searching for configuration files...")
@@ -50,17 +46,6 @@ def load_yaml() -> dict:
 
 
 def load_config_schema() -> dict:
-    for loc in json_schema_locations:
-        if loc.exists():
-            log.info(
-                "Loading configuration schema file at location %s", str(loc)
-            )
-            with open(loc, encoding="utf-8") as json_schema:
-                return json.load(json_schema)
-        else:
-            log.debug(
-                "Didn't find a configuration schema file at location %s",
-                str(loc),
-            )
-
-    raise FileNotFoundError("config_schema.json")
+    return json.loads(
+        (pathlib.Path(__file__).parents[0] / "config_schema.json").read_bytes()
+    )
