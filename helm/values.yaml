@@ -220,7 +220,7 @@ grafana:
 
 # https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml
 loki:
-  enabled: false
+  enabled: true
   global:
     image:
       registry: *externalRegistry
@@ -242,6 +242,7 @@ loki:
       requests:
         cpu: "0.03"
         memory: 5Mi
+    affinity: ""
   read:
     # Minimum 2 is required
     replicas: 2
@@ -264,8 +265,8 @@ loki:
       enabled: False
       grafanaAgent:
         installOperator: False
-      lokiCanary:
-        enabled: False
+    lokiCanary:
+      enabled: False
     alerts:
       enabled: False
     serviceMonitor:
