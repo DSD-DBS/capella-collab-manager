@@ -75,14 +75,14 @@
             "lokiPassword": { "type": ["string", "null"] },
             "serverPort": { "type": ["number", "null"] }
           }
-        }
+        },
+        "context": { "type": "string" }
       },
       "anyOf": [
         {
           "type": "object",
-          "required": ["context", "namespace"],
+          "required": ["namespace"],
           "properties": {
-            "context": { "type": "string" },
             "namespace": { "type": "string" }
           }
         },
