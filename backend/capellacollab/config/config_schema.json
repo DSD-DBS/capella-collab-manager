@@ -81,10 +81,10 @@
         "promtail": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["lokiUrl", "lokiUserName", "lokiPassword", "serverPort"],
+          "required": ["lokiUrl", "lokiUsername", "lokiPassword", "serverPort"],
           "properties": {
             "lokiUrl": { "type": ["string", "null"] },
-            "lokiUserName": { "type": ["string", "null"] },
+            "lokiUsername": { "type": ["string", "null"] },
             "lokiPassword": { "type": ["string", "null"] },
             "serverPort": { "type": ["number", "null"] }
           }
