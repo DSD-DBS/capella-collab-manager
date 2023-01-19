@@ -39,10 +39,6 @@ loki_username: str = cfg["promtail"]["lokiUsername"]
 loki_password: str = cfg["promtail"]["lokiPassword"]
 promtail_server_port: int = cfg["promtail"]["serverPort"]
 
-context: str | None = cfg.get("context", None)
-api_url: str | None = cfg.get("apiURL", None)
-token: str | None = cfg.get("token", None)
-
 
 def deserialize_kubernetes_resource(content: t.Any, resource: str):
     # This is needed as "workaround" for the deserialize function
@@ -66,40 +62,39 @@ if _pod_security_context := cfg.get("cluster", {}).get(
         _pod_security_context, client.V1PodSecurityContext.__name__
     )
 
-try:
+if cfg.get("context", None):
+    kubernetes.config.load_config(context=cfg.get("context", None))
+elif cfg.get("apiURL", None) and cfg.get("token", None):
+    kubernetes.config.load_kube_config_from_dict(
+        {
+            "apiVersion": "v1",
+            "kind": "Config",
+            "clusters": [
+                {
+                    "cluster": {
+                        "insecure-skip-tls-verify": True,
+                        "server": cfg.get("apiURL", None),
+                    },
+                    "name": "cluster",
+                }
+            ],
+            "contexts": [
+                {
+                    "context": {"cluster": "cluster", "user": "tokenuser"},
+                    "name": "cluster",
+                }
+            ],
+            "current-context": "cluster",
+            "users": [
+                {
+                    "name": "tokenuser",
+                    "user": {"token": cfg.get("token", None)},
+                }
+            ],
+        }
+    )
+else:
     kubernetes.config.load_incluster_config()
-except kubernetes.config.ConfigException:
-    try:
-        kubernetes.config.load_config(context=context)
-    except (TypeError, kubernetes.config.ConfigException):
-        kubernetes.config.load_kube_config_from_dict(
-            {
-                "apiVersion": "v1",
-                "kind": "Config",
-                "clusters": [
-                    {
-                        "cluster": {
-                            "insecure-skip-tls-verify": True,
-                            "server": api_url,
-                        },
-                        "name": "cluster",
-                    }
-                ],
-                "contexts": [
-                    {
-                        "context": {"cluster": "cluster", "user": "tokenuser"},
-                        "name": "cluster",
-                    }
-                ],
-                "current-context": "cluster",
-                "users": [
-                    {
-                        "name": "tokenuser",
-                        "user": {"token": token},
-                    }
-                ],
-            }
-        )
 
 
 class FileType(enum.Enum):

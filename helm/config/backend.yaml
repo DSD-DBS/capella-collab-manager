@@ -36,7 +36,6 @@ authentication:
 
   {{ if eq .Values.backend.authentication.provider "oauth" }}
   oauth:
-    # Only required when using provider oauth
     endpoints:
       tokenIssuance: "{{ .Values.backend.authentication.oauth.endpoints.tokenIssuance }}"
       authorization: "{{ .Values.backend.authentication.oauth.endpoints.authorization }}"
@@ -54,9 +53,8 @@ authentication:
     redirectURI: "{{ .Values.backend.authentication.oauth.redirectURI }}"
   {{ end }}
 
-  {{ if eq .Values.backend.authentication.provider "azure"}}
+  {{ if eq .Values.backend.authentication.provider "azure" }}
   azure:
-    # Only required when using provider oauth
     authorizationEndpoint: "{{ .Values.backend.authentication.azure.authorizationEndpoint }}"
 
     client:

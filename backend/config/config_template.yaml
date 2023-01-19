@@ -11,8 +11,8 @@ k8s:
   context: k3d-collab-cluster # Only required, if you'd like to use a local k3d environment
   namespace: t4c-sessions
 
-  apiURL: dummy # Only required when no kubectl context is available
-  token: dummy # Only required when no kubectl context is available
+  # apiURL: dummy # Only required when no kubectl context is available
+  # token: dummy # Only required when no kubectl context is available
 
   storageClassName: local-path
   storageAccessMode: ReadWriteOnce
@@ -63,7 +63,7 @@ authentication:
     redirectURI: http://localhost:4200/oauth2/callback
 
   # azure:
-  #   # Only required when using provider oauth
+  #   # Only required when using provider azure
   #   authorizationEndpoint: http://tbd
 
   #   client:
