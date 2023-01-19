@@ -24,21 +24,9 @@
     },
     "k8s": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "context",
-        "namespace",
-        "apiURL",
-        "token",
-        "storageClassName",
-        "storageAccessMode",
-        "promtail"
-      ],
+      "additionalProperties": true,
+      "required": ["storageClassName", "storageAccessMode", "promtail"],
       "properties": {
-        "context": { "type": "string" },
-        "namespace": { "type": "string" },
-        "apiURL": { "type": ["string", "null"] },
-        "token": { "type": ["string", "null"] },
         "storageClassName": { "type": "string" },
         "storageAccessMode": {
           "type": "string",
@@ -88,7 +76,25 @@
             "serverPort": { "type": ["number", "null"] }
           }
         }
-      }
+      },
+      "anyOf": [
+        {
+          "type": "object",
+          "required": ["context", "namespace"],
+          "properties": {
+            "context": { "type": "string" },
+            "namespace": { "type": "string" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["apiURL", "token"],
+          "properties": {
+            "apiURL": { "type": "string" },
+            "token": { "type": "string" }
+          }
+        }
+      ]
     },
     "extensions": {
       "type": "object",
