@@ -44,7 +44,7 @@ fastapi route and using the injectable function as dependency (i.e.,
 `resource: ResourceType = Depends(injectableFunction)`).
 By using these injectables, we reduce the code duplication, since we
 include logic (such as checking whether a project exists) into the
-injectable function, and the readability of the code is increase.
+injectable function, and the readability of the code is increased.
 
 ### `models.py`
 

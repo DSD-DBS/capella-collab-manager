@@ -73,7 +73,7 @@ Python code. The key differences are:
 
 #### Database Models
 
-All SQLAlchemy model should have `Database` as a prefix, e.g., `DatabaseProject` or
+All SQLAlchemy models should have `Database` as a prefix, e.g., `DatabaseProject` or
 `DatbaseUser`.
 
 ## Frontend
@@ -112,7 +112,7 @@ readonly gitModels = this._gitModels.asObservable();
 ```
 
 In this case, we use the prefix `load` to retrieve the data but instead of
-returning it the data is published to all subscriber. However, the naming
+returning it the data is published to all subscribers. However, the naming
 rules from above also apply here (e.g., `loadGitModels` to publish all git models
 to the `gitModels` observable and `loadGitModelById` to publish only one git model
 to the `gitModel` observable)
