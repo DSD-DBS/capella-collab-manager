@@ -1,10 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-example:
-  example2: yaml
-  example4: works
-  example3:
-    - test:
-        test2: test3
-    - test2
+
+class InvalidConfigurationError(Exception):
+    pass

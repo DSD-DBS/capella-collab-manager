@@ -1,0 +1,249 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "docker",
+    "k8s",
+    "extensions",
+    "authentication",
+    "prometheus",
+    "database",
+    "initial",
+    "logging",
+    "requests"
+  ],
+  "properties": {
+    "docker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registry", "externalRegistry"],
+      "properties": {
+        "registry": { "type": "string" },
+        "externalRegistry": { "type": "string" }
+      }
+    },
+    "k8s": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["storageClassName", "storageAccessMode", "promtail"],
+      "properties": {
+        "storageClassName": { "type": "string" },
+        "storageAccessMode": {
+          "type": "string",
+          "enum": [
+            "ReadWriteOnce",
+            "ReadOnlyMany",
+            "ReadWriteMany",
+            "ReadWriteOncePod"
+          ]
+        },
+        "cluster": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "imagePullPolicy": {
+              "type": "string",
+              "enum": ["Always", "IfNotPresent", "Never"]
+            },
+            "podSecurityContext": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "runAsUser": {
+                  "type": "number"
+                },
+                "runAsGroup": {
+                  "type": "number"
+                },
+                "fsGroup": {
+                  "type": "number"
+                },
+                "runAsNonRoot": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "promtail": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["lokiUrl", "lokiUsername", "lokiPassword", "serverPort"],
+          "properties": {
+            "lokiUrl": { "type": ["string", "null"] },
+            "lokiUsername": { "type": ["string", "null"] },
+            "lokiPassword": { "type": ["string", "null"] },
+            "serverPort": { "type": ["number", "null"] }
+          }
+        },
+        "context": { "type": "string" }
+      },
+      "anyOf": [
+        {
+          "type": "object",
+          "required": ["namespace"],
+          "properties": {
+            "namespace": { "type": "string" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["apiURL", "token"],
+          "properties": {
+            "apiURL": { "type": "string" },
+            "token": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "extensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["guacamole"],
+      "properties": {
+        "guacamole": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["baseURI", "publicURI", "username", "password"],
+          "properties": {
+            "baseURI": { "type": "string" },
+            "publicURI": { "type": "string" },
+            "username": { "type": "string" },
+            "password": { "type": "string" }
+          }
+        }
+      }
+    },
+    "authentication": {
+      "type": "object",
+      "required": ["provider"],
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["oauth", "jwt"],
+          "properties": {
+            "provider": {
+              "const": "oauth"
+            },
+            "oauth": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "endpoints",
+                "audience",
+                "scopes",
+                "client",
+                "redirectURI"
+              ],
+              "properties": {
+                "endpoints": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "tokenIssuance": { "type": ["string", "null"] },
+                    "authorization": { "type": ["string", "null"] },
+                    "wellKnown": { "type": ["string", "null"] }
+                  }
+                },
+                "audience": { "type": "string" },
+                "scopes": {
+                  "type": "array",
+                  "items": { "type": "string", "enum": ["openid"] }
+                },
+                "client": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["id", "secret"],
+                  "properties": {
+                    "id": { "type": "string" },
+                    "secret": { "type": ["string", "null"] }
+                  }
+                },
+                "redirectURI": { "type": "string" }
+              }
+            },
+            "jwt": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": { "usernameClaim": { "type": "string" } }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["azure", "jwt"],
+          "properties": {
+            "provider": {
+              "const": "azure"
+            },
+            "azure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["authorizationEndpoint", "client", "redirectURI"],
+              "properties": {
+                "authorizationEndpoint": { "type": "string" },
+                "client": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["id", "secret"],
+                  "properties": {
+                    "id": { "type": "string" },
+                    "secret": { "type": "string" }
+                  }
+                },
+                "redirectURI": { "type": "string" }
+              }
+            },
+            "jwt": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": { "usernameClaim": { "type": "string" } }
+            }
+          }
+        }
+      ]
+    },
+    "prometheus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url"],
+      "properties": { "url": { "type": "string" } }
+    },
+    "database": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url"],
+      "properties": { "url": { "type": "string" } }
+    },
+    "initial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["admin"],
+      "properties": { "admin": { "type": "string" } }
+    },
+    "logging": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "logPath"],
+      "properties": {
+        "logPath": {
+          "type": "string"
+        },
+        "level": {
+          "type": "string",
+          "enum": ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"]
+        }
+      }
+    },
+    "requests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["timeout"],
+      "properties": {
+        "timeout": { "type": "number" }
+      }
+    }
+  }
+}

@@ -12,9 +12,7 @@ name = "capellacollab-backend"
 readme = "README.md"
 requires-python = ">=3.9, <3.12"
 license = { text = "Apache-2.0" }
-authors = [
-  { name = "DB Netz AG" },
-]
+authors = [{ name = "DB Netz AG" }]
 keywords = []
 classifiers = [
   "Development Status :: 5 - Production/Stable",
@@ -26,24 +24,25 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
 ]
 dependencies = [
-    "PyYAML",
-    "alembic",
-    "appdirs",
-    "cachetools",
-    "docker",
-    "fastapi",
-    "gitpython",
-    "kubernetes",
-    "msal",
-    "psycopg2-binary",
-    "pydantic",
-    "python-dateutil",
-    "python-jose",
-    "python-multipart",
-    "requests_oauthlib",
-    "sqlalchemy",
-    "uvicorn[standard]",
-    "python-slugify[unidecode]",
+  "PyYAML",
+  "alembic",
+  "appdirs",
+  "cachetools",
+  "docker",
+  "fastapi",
+  "gitpython",
+  "kubernetes",
+  "msal",
+  "psycopg2-binary",
+  "pydantic",
+  "python-dateutil",
+  "python-jose",
+  "python-multipart",
+  "requests_oauthlib",
+  "sqlalchemy",
+  "uvicorn[standard]",
+  "python-slugify[unidecode]",
+  "jsonschema",
 ]
 
 [project.urls]
@@ -61,7 +60,7 @@ dev = [
   "httpx",
 ]
 psycopg2 = [
-  "psycopg2" # Need when running in a Docker container with AArch64: https://github.com/psycopg/psycopg2/issues/1360
+  "psycopg2", # Need when running in a Docker container with AArch64: https://github.com/psycopg/psycopg2/issues/1360
 ]
 
 [project.entry-points."capellacollab.authentication.providers"]
@@ -99,17 +98,17 @@ ignore_missing_imports = true
 [tool.pydocstyle]
 convention = "numpy"
 add-select = [
-  "D212",  # Multi-line docstring summary should start at the first line
-  "D402",  # First line should not be the function’s “signature”
-  "D417",  # Missing argument descriptions in the docstring
+  "D212", # Multi-line docstring summary should start at the first line
+  "D402", # First line should not be the function’s “signature”
+  "D417", # Missing argument descriptions in the docstring
 ]
 add-ignore = [
-  "D201",  # No blank lines allowed before function docstring  # auto-formatting
-  "D202",  # No blank lines allowed after function docstring  # auto-formatting
-  "D203",  # 1 blank line required before class docstring  # auto-formatting
-  "D204",  # 1 blank line required after class docstring  # auto-formatting
-  "D211",  # No blank lines allowed before class docstring  # auto-formatting
-  "D213",  # Multi-line docstring summary should start at the second line
+  "D201", # No blank lines allowed before function docstring  # auto-formatting
+  "D202", # No blank lines allowed after function docstring  # auto-formatting
+  "D203", # 1 blank line required before class docstring  # auto-formatting
+  "D204", # 1 blank line required after class docstring  # auto-formatting
+  "D211", # No blank lines allowed before class docstring  # auto-formatting
+  "D213", # Multi-line docstring summary should start at the second line
 ]
 
 [tool.pylint.messages_control]
@@ -193,7 +192,7 @@ platforms = ["any"]
 zip-safe = false
 
 [tool.setuptools.package-data]
-"*" = ["py.typed"]
+"*" = ["py.typed", "*.json"]
 
 [tool.setuptools.packages.find]
 exclude = ["LICENSES"]
