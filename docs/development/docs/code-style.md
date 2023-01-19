@@ -104,8 +104,8 @@ In some services, we use the concept of having a static representation of a reso
 a list of resources as observable inside the service. For example,
 
 ```ts
-private _gitModel = new Subject<GetGitModel>();
-public _gitModels = new BehaviorSubject<Array<GetGitModel>>([]);
+private _gitModel = new BehaviorSubject<GetGitModel>(undefined);
+private _gitModels = new BehaviorSubject<Array<GetGitModel>>([]);
 
 readonly gitModel = this._gitModel.asObservable();
 readonly gitModels = this._gitModels.asObservable();
