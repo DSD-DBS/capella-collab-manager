@@ -110,62 +110,94 @@
     },
     "authentication": {
       "type": "object",
-      "additionalProperties": false,
-      "required": ["provider", "jwt"],
-      "properties": {
-        "jwt": {
+      "required": ["provider"],
+      "oneOf": [
+        {
           "type": "object",
           "additionalProperties": false,
-          "properties": { "usernameClaim": { "type": "string" } }
-        },
-        "oauth": {
-          "type": "object",
-          "additionalProperties": false,
+          "required": ["oauth", "jwt"],
           "properties": {
-            "endpoints": {
+            "provider": {
+              "const": "oauth"
+            },
+            "oauth": {
               "type": "object",
               "additionalProperties": false,
+              "required": [
+                "endpoints",
+                "audience",
+                "scopes",
+                "client",
+                "redirectURI"
+              ],
               "properties": {
-                "tokenIssuance": { "type": ["string", "null"] },
-                "authorization": { "type": ["string", "null"] },
-                "wellKnown": { "type": "string" }
+                "endpoints": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "tokenIssuance": { "type": ["string", "null"] },
+                    "authorization": { "type": ["string", "null"] },
+                    "wellKnown": { "type": ["string", "null"] }
+                  }
+                },
+                "audience": { "type": "string" },
+                "scopes": {
+                  "type": "array",
+                  "items": { "type": "string", "enum": ["openid"] }
+                },
+                "client": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["id", "secret"],
+                  "properties": {
+                    "id": { "type": "string" },
+                    "secret": { "type": ["string", "null"] }
+                  }
+                },
+                "redirectURI": { "type": "string" }
               }
             },
-            "audience": { "type": "string" },
-            "publicKey": { "type": "string" },
-            "scopes": {
-              "type": "array",
-              "items": { "type": "string", "enum": ["openid"] }
-            },
-            "client": {
+            "jwt": {
               "type": "object",
               "additionalProperties": false,
-              "properties": {
-                "id": { "type": "string" },
-                "secret": { "type": ["string", "null"] }
-              }
-            },
-            "redirectURI": { "type": "string" }
+              "properties": { "usernameClaim": { "type": "string" } }
+            }
           }
         },
-        "azure": {
+        {
           "type": "object",
           "additionalProperties": false,
+          "required": ["azure", "jwt"],
           "properties": {
-            "authorizationEndpoint": { "type": "string" },
-            "client": {
+            "provider": {
+              "const": "azure"
+            },
+            "azure": {
               "type": "object",
               "additionalProperties": false,
+              "required": ["authorizationEndpoint", "client", "redirectURI"],
               "properties": {
-                "id": { "type": "string" },
-                "secret": { "type": "string" }
+                "authorizationEndpoint": { "type": "string" },
+                "client": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["id", "secret"],
+                  "properties": {
+                    "id": { "type": "string" },
+                    "secret": { "type": "string" }
+                  }
+                },
+                "redirectURI": { "type": "string" }
               }
             },
-            "redirectURI": { "type": "string" },
-            "connectConfigurationEndpoint": { "type": "string" }
+            "jwt": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": { "usernameClaim": { "type": "string" } }
+            }
           }
         }
-      }
+      ]
     },
     "prometheus": {
       "type": "object",

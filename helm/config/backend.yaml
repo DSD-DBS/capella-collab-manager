@@ -65,8 +65,6 @@ authentication:
 
     redirectURI: "{{ .Values.backend.authentication.azure.redirectURI }}"
 
-    connectConfigurationEndpoint: "{{ .Values.backend.authentication.azure.connectConfigurationEndpoint }}"
-
 prometheus:
   url: "http://{{ .Release.Name }}-prometheus-server:9118/prometheus/"
 
