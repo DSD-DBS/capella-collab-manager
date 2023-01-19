@@ -10,6 +10,11 @@ VENV = .venv
 DATABASE_LOAD_FILE ?= ../local/load.sql
 DATABASE_SAVE_DIR ?= ../local
 
+.ONESHELL:
+SHELL = /bin/bash
+.SHELLFLAGS = -euo pipefail -c
+
+export MSYS_NO_PATHCONV=1
 
 database:
 	docker start capella-collab-postgres || \
@@ -22,14 +27,14 @@ database:
 		postgres
 
 app:
-	export MSYS_NO_PATHCONV=1; \
-	export OAUTHLIB_INSECURE_TRANSPORT=1; \
-	export UVICORN_COMMAND="uvicorn --reload --reload-include '*.py' --reload-include '*.yaml' --reload-include '*.yml' capellacollab.__main__:app"; \
-	if [ -d "$(VENV)/bin" ]; then \
-		$(VENV)/bin/$${UVICORN_COMMAND}; \
-	else \
-		$(VENV)/Scripts/$${UVICORN_COMMAND}; \
+	if [ -d "$(VENV)/bin" ]; then
+		source $(VENV)/bin/activate;
+	else
+		source $(VENV)/Scripts/activate;
 	fi
+	export OAUTHLIB_INSECURE_TRANSPORT=1;
+	uvicorn --reload --reload-dir $$(pwd) --reload-include "*.json" --reload-include "*.py" --reload-include "*.yaml" --reload-include "*.yml" capellacollab.__main__:app
+
 
 install:
 	python generate_git_archival.py

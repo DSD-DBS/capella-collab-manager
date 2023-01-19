@@ -10,6 +10,8 @@ import pathlib
 import appdirs
 import yaml
 
+from . import exceptions
+
 log = logging.getLogger(__name__)
 
 config_locations: list[pathlib.Path] = [
@@ -23,9 +25,18 @@ config_fallback_locations: list[pathlib.Path] = [
     pathlib.Path(__file__).parents[2] / "config" / "config_template.yaml",
 ]
 
-json_schema_locations = [
-    pathlib.Path(__file__).parents[0] / "config_schema.json"
-]
+# https://gist.github.com/pypt/94d747fe5180851196eb?permalink_comment_id=4015118#gistcomment-4015118
+class UniqueKeyLoader(yaml.SafeLoader):
+    def construct_mapping(self, node, deep=False):
+        mapping = set()
+        for key_node, _ in node.value:
+            key = self.construct_object(key_node, deep=deep)
+            if key in mapping:
+                raise exceptions.InvalidConfigurationError(
+                    f"Duplicate key {key!r} found in configuration."
+                )
+            mapping.add(key)
+        return super().construct_mapping(node, deep)
 
 
 def load_yaml() -> dict:
@@ -33,7 +44,7 @@ def load_yaml() -> dict:
     for loc in config_locations:
         if loc.exists():
             log.info("Loading configuration file at location %s", str(loc))
-            return yaml.safe_load(loc.open())
+            return yaml.load(loc.open(), UniqueKeyLoader)
         else:
             log.debug(
                 "Didn't find a configuration file at location %s", str(loc)
@@ -50,17 +61,6 @@ def load_yaml() -> dict:
 
 
 def load_config_schema() -> dict:
-    for loc in json_schema_locations:
-        if loc.exists():
-            log.info(
-                "Loading configuration schema file at location %s", str(loc)
-            )
-            with open(loc, encoding="utf-8") as json_schema:
-                return json.load(json_schema)
-        else:
-            log.debug(
-                "Didn't find a configuration schema file at location %s",
-                str(loc),
-            )
-
-    raise FileNotFoundError("config_schema.json")
+    return json.loads(
+        (pathlib.Path(__file__).parents[0] / "config_schema.json").read_bytes()
+    )

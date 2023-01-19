@@ -3,19 +3,23 @@
 
 from __future__ import annotations
 
-import json
 import logging
-import os
-import pathlib
 import typing as t
 
-from jsonschema import validate
+import jsonschema
+import jsonschema.exceptions
 
-from . import loader
+from . import exceptions, loader
 
 log = logging.getLogger(__name__)
-
 config = loader.load_yaml()
-config_schema = loader.load_config_schema()
 
-validate(config, config_schema)
+
+def validate_schema():
+    config_schema = loader.load_config_schema()
+    try:
+        jsonschema.validate(config, config_schema)
+    except jsonschema.exceptions.ValidationError as error:
+        raise exceptions.InvalidConfigurationError(
+            f"{error.__class__.__name__}: {error.message}",
+        ) from None

@@ -53,8 +53,6 @@ authentication:
 
     audience: default
 
-    publicKey: |
-
     scopes:
       - openid
 
@@ -64,16 +62,16 @@ authentication:
 
     redirectURI: http://localhost:4200/oauth2/callback
 
-  azure:
-    # Only required when using provider oauth
-    authorizationEndpoint: http://tbd
+  # azure:
+  #   # Only required when using provider oauth
+  #   authorizationEndpoint: http://tbd
 
-    client:
-      id: tbd
-      secret: tbd
+  #   client:
+  #     id: tbd
+  #     secret: tbd
 
-    audience: tbd
-    redirectURI: http://localhost:4200/oauth2/callback
+  #   audience: tbd
+  #   redirectURI: http://localhost:4200/oauth2/callback
 
 database:
   url: postgresql://dev:dev@localhost:5432/dev

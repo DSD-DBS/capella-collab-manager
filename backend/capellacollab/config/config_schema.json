@@ -1,9 +1,22 @@
 {
   "type": "object",
   "additionalProperties": false,
+  "required": [
+    "docker",
+    "k8s",
+    "extensions",
+    "authentication",
+    "prometheus",
+    "database",
+    "initial",
+    "logging",
+    "requests"
+  ],
   "properties": {
     "docker": {
       "type": "object",
+      "additionalProperties": false,
+      "required": ["registry", "externalRegistry"],
       "properties": {
         "registry": { "type": "string" },
         "externalRegistry": { "type": "string" }
@@ -11,11 +24,9 @@
     },
     "k8s": {
       "type": "object",
+      "additionalProperties": true,
+      "required": ["storageClassName", "storageAccessMode", "promtail"],
       "properties": {
-        "context": { "type": "string" },
-        "namespace": { "type": "string" },
-        "apiURL": { "type": ["string", "null"] },
-        "token": { "type": ["string", "null"] },
         "storageClassName": { "type": "string" },
         "storageAccessMode": {
           "type": "string",
@@ -28,6 +39,7 @@
         },
         "cluster": {
           "type": "object",
+          "additionalProperties": false,
           "properties": {
             "imagePullPolicy": {
               "type": "string",
@@ -35,6 +47,7 @@
             },
             "podSecurityContext": {
               "type": "object",
+              "additionalProperties": false,
               "properties": {
                 "runAsUser": {
                   "type": "number"
@@ -54,20 +67,44 @@
         },
         "promtail": {
           "type": "object",
+          "additionalProperties": false,
+          "required": ["lokiUrl", "lokiUsername", "lokiPassword", "serverPort"],
           "properties": {
             "lokiUrl": { "type": ["string", "null"] },
-            "lokiUserName": { "type": ["string", "null"] },
+            "lokiUsername": { "type": ["string", "null"] },
             "lokiPassword": { "type": ["string", "null"] },
             "serverPort": { "type": ["number", "null"] }
           }
         }
-      }
+      },
+      "anyOf": [
+        {
+          "type": "object",
+          "required": ["context", "namespace"],
+          "properties": {
+            "context": { "type": "string" },
+            "namespace": { "type": "string" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["apiURL", "token"],
+          "properties": {
+            "apiURL": { "type": "string" },
+            "token": { "type": "string" }
+          }
+        }
+      ]
     },
     "extensions": {
       "type": "object",
+      "additionalProperties": false,
+      "required": ["guacamole"],
       "properties": {
         "guacamole": {
           "type": "object",
+          "additionalProperties": false,
+          "required": ["baseURI", "publicURI", "username", "password"],
           "properties": {
             "baseURI": { "type": "string" },
             "publicURI": { "type": "string" },
@@ -79,73 +116,121 @@
     },
     "authentication": {
       "type": "object",
-      "properties": {
-        "provider": { "type": "string" },
-        "jwt": {
+      "required": ["provider"],
+      "oneOf": [
+        {
           "type": "object",
-          "properties": { "usernameClaim": { "type": "string" } }
-        },
-        "oauth": {
-          "type": "object",
+          "additionalProperties": false,
+          "required": ["oauth", "jwt"],
           "properties": {
-            "endpoints": {
+            "provider": {
+              "const": "oauth"
+            },
+            "oauth": {
               "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "endpoints",
+                "audience",
+                "scopes",
+                "client",
+                "redirectURI"
+              ],
               "properties": {
-                "tokenIssuance": { "type": ["string", "null"] },
-                "authorization": { "type": ["string", "null"] },
-                "wellKnown": { "type": "string" }
+                "endpoints": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "tokenIssuance": { "type": ["string", "null"] },
+                    "authorization": { "type": ["string", "null"] },
+                    "wellKnown": { "type": ["string", "null"] }
+                  }
+                },
+                "audience": { "type": "string" },
+                "scopes": {
+                  "type": "array",
+                  "items": { "type": "string", "enum": ["openid"] }
+                },
+                "client": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["id", "secret"],
+                  "properties": {
+                    "id": { "type": "string" },
+                    "secret": { "type": ["string", "null"] }
+                  }
+                },
+                "redirectURI": { "type": "string" }
               }
             },
-            "audience": { "type": "string" },
-            "publicKey": { "type": "string" },
-            "scopes": {
-              "type": "array",
-              "items": { "type": "string", "enum": ["openid"] }
-            },
-            "client": {
+            "jwt": {
               "type": "object",
-              "properties": {
-                "id": { "type": "string" },
-                "secret": { "type": ["string", "null"] }
-              }
-            },
-            "redirectURI": { "type": "string" }
+              "additionalProperties": false,
+              "properties": { "usernameClaim": { "type": "string" } }
+            }
           }
         },
-        "azure": {
+        {
           "type": "object",
+          "additionalProperties": false,
+          "required": ["azure", "jwt"],
           "properties": {
-            "authorizationEndpoint": { "type": "string" },
-            "client": {
+            "provider": {
+              "const": "azure"
+            },
+            "azure": {
               "type": "object",
+              "additionalProperties": false,
+              "required": ["authorizationEndpoint", "client", "redirectURI"],
               "properties": {
-                "id": { "type": "string" },
-                "secret": { "type": "string" }
+                "authorizationEndpoint": { "type": "string" },
+                "client": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["id", "secret"],
+                  "properties": {
+                    "id": { "type": "string" },
+                    "secret": { "type": "string" }
+                  }
+                },
+                "redirectURI": { "type": "string" }
               }
             },
-            "redirectURI": { "type": "string" },
-            "connectConfigurationEndpoint": { "type": "string" }
+            "jwt": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": { "usernameClaim": { "type": "string" } }
+            }
           }
         }
-      }
+      ]
     },
     "prometheus": {
       "type": "object",
+      "additionalProperties": false,
+      "required": ["url"],
       "properties": { "url": { "type": "string" } }
     },
     "database": {
       "type": "object",
+      "additionalProperties": false,
+      "required": ["url"],
       "properties": { "url": { "type": "string" } }
     },
-    "target": { "type": "string" },
-    "test": { "type": "string" },
     "initial": {
       "type": "object",
+      "additionalProperties": false,
+      "required": ["admin"],
       "properties": { "admin": { "type": "string" } }
     },
     "logging": {
       "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "logPath"],
       "properties": {
+        "logPath": {
+          "type": "string"
+        },
         "level": {
           "type": "string",
           "enum": ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"]
@@ -154,6 +239,8 @@
     },
     "requests": {
       "type": "object",
+      "additionalProperties": false,
+      "required": ["timeout"],
       "properties": {
         "timeout": { "type": "number" }
       }
