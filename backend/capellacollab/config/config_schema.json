@@ -8,7 +8,6 @@
     "authentication",
     "prometheus",
     "database",
-    "target",
     "initial",
     "logging",
     "requests"
@@ -180,7 +179,6 @@
       "required": ["url"],
       "properties": { "url": { "type": "string" } }
     },
-    "target": { "type": "string" },
     "initial": {
       "type": "object",
       "additionalProperties": false,
