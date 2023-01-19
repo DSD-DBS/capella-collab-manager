@@ -3,9 +3,9 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Backend
+## Backend
 
-## General
+### General
 
 We base our code style on a modified version of the [Google style guide] for
 Python code. The key differences are:
@@ -69,27 +69,27 @@ Python code. The key differences are:
 - Prefer `t.NamedTuple` over `collections.namedtuple`, because the former uses
   a more convenient `class ...:` syntax and also supports type annotations.
 
-## Naming Conventions
+### Naming Conventions
 
-### Database Models
+#### Database Models
 
 All SQLAlchemy model should have `Database` as a prefix, e.g., `DatabaseProject` or
 `DatbaseUser`.
 
-# Frontend
+## Frontend
 
-## General
+### General
 
-## Naming Conventions
+### Naming Conventions
 
-### Crud Functions
+#### Crud Functions
 
-#### Creating resource
+##### Creating resource
 
 For creating a resource one should use `create` as a prefix followed by
 the resource one wants to create (e.g., `createProject(...): Observable<Project>`)
 
-#### Retriving resources
+##### Retriving resources
 
 In general, one should use `get` as prefix for a function that retrieves and
 returns resources.
