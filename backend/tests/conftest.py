@@ -10,6 +10,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from testcontainers.postgres import PostgresContainer
 
+from capellacollab.config import config
+
+# Patch k8s values in order to load the kubectl configuration properly
+if config["k8s"].get("context", None):
+    del config["k8s"]["context"]
+config["k8s"]["apiURL"] = "dummy"
+config["k8s"]["token"] = "dummy"
+
 import capellacollab.core.database as database_
 from capellacollab.__main__ import app
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
