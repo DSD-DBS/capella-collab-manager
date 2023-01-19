@@ -15,9 +15,6 @@ from . import exceptions, loader
 log = logging.getLogger(__name__)
 config = loader.load_yaml()
 
-config = loader.load_yaml()
-config_schema = loader.load_config_schema()
-
 
 def validate_schema():
     config_schema = loader.load_config_schema()
