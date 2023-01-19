@@ -34,6 +34,7 @@ authentication:
   jwt:
     usernameClaim: "{{ .Values.backend.authentication.jwt.usernameClaim }}"
 
+  {{ if eq .Values.backend.authentication.provider "oauth" }}
   oauth:
     # Only required when using provider oauth
     endpoints:
@@ -43,9 +44,6 @@ authentication:
 
     audience: "{{ .Values.backend.authentication.oauth.audience }}"
 
-    publicKey: |
-      {{- .Values.backend.authentication.oauth.publicKey | nindent 6}}
-
     scopes:
       {{- toYaml .Values.backend.authentication.oauth.scopes | nindent 6}}
 
@@ -54,7 +52,9 @@ authentication:
       secret: "{{ .Values.backend.authentication.oauth.client.secret }}"
 
     redirectURI: "{{ .Values.backend.authentication.oauth.redirectURI }}"
+  {{ end }}
 
+  {{ if eq .Values.backend.authentication.provider "azure"}}
   azure:
     # Only required when using provider oauth
     authorizationEndpoint: "{{ .Values.backend.authentication.azure.authorizationEndpoint }}"
@@ -64,6 +64,7 @@ authentication:
       secret: "{{ .Values.backend.authentication.azure.client.secret }}"
 
     redirectURI: "{{ .Values.backend.authentication.azure.redirectURI }}"
+  {{ end }}
 
 prometheus:
   url: "http://{{ .Release.Name }}-prometheus-server:9118/prometheus/"
