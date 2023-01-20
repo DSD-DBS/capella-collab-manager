@@ -203,6 +203,7 @@ const routes: Routes = [
                 children: [
                   {
                     path: '',
+                    data: { breadcrumb: undefined },
                     component: ToolsSettingsComponent,
                   },
                   {
@@ -215,12 +216,19 @@ const routes: Routes = [
               {
                 path: 'tool/:toolID',
                 data: { breadcrumb: 'Tool' },
-                component: ToolDetailsComponent,
+                children: [
+                  {
+                    path: '',
+                    data: { breadcrumb: undefined },
+                    component: ToolDetailsComponent,
+                  },
+                ],
               },
             ],
           },
           {
             path: 'modelsources',
+            data: { breadcrumb: undefined },
             children: [
               {
                 path: 'git',
@@ -228,6 +236,7 @@ const routes: Routes = [
                 children: [
                   {
                     path: '',
+                    data: { breadcrumb: undefined },
                     component: GitSettingsComponent,
                   },
                   {
@@ -243,6 +252,7 @@ const routes: Routes = [
                 children: [
                   {
                     path: '',
+                    data: { breadcrumb: undefined },
                     component: T4CSettingsComponent,
                   },
                   {
@@ -261,6 +271,7 @@ const routes: Routes = [
           },
           {
             path: 'integrations',
+            data: { breadcrumb: undefined },
             children: [
               {
                 path: 'pure-variants',
