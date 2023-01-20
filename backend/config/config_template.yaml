@@ -27,10 +27,10 @@ k8s:
 
   promtail:
     lokiEnabled: false
-    lokiUrl:
-    lokiUsername:
-    lokiPassword:
-    serverPort:
+    # lokiUrl:
+    # lokiUsername:
+    # lokiPassword:
+    # serverPort:
 
 extensions:
   guacamole:
