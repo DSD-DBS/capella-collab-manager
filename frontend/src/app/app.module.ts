@@ -51,6 +51,7 @@ import { AuthComponent } from './general/auth/auth/auth.component';
 import { AuthInterceptor } from './general/auth/http-interceptor/auth.interceptor';
 import { LogoutComponent } from './general/auth/logout/logout/logout.component';
 import { LogoutRedirectComponent } from './general/auth/logout/logout-redirect/logout-redirect.component';
+import { BreadcrumbsComponent } from './general/breadcrumbs/breadcrumbs.component';
 import { ErrorHandlingInterceptor } from './general/error-handling/error-handling.interceptor';
 import { FooterComponent } from './general/footer/footer.component';
 import { LegalComponent } from './general/footer/legal/legal.component';
@@ -122,6 +123,7 @@ import { HomeComponent } from './workspaces/home.component';
     AlertSettingsComponent,
     AppComponent,
     AuthComponent,
+    BreadcrumbsComponent,
     ButtonSkeletonLoaderComponent,
     ChooseInitComponent,
     ChooseSourceComponent,
