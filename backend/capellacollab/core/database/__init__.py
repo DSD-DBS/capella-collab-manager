@@ -16,7 +16,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 ### SQL MODELS ARE IMPORTED HERE ###
-from . import models  # isort:skip
+from . import models  # isort:skip # pylint: disable=unused-import
 
 
 def get_db() -> Session:

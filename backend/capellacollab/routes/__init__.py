@@ -4,7 +4,6 @@
 
 import importlib
 import logging
-from importlib import metadata
 
 from fastapi import APIRouter
 
@@ -13,7 +12,6 @@ import capellacollab.notices.routes as notices
 import capellacollab.sessions.routes as sessions
 import capellacollab.settings.routes as settings
 import capellacollab.users.routes as users
-from capellacollab.config import config
 from capellacollab.core.authentication import get_authentication_entrypoint
 from capellacollab.core.authentication.responses import (
     AUTHENTICATION_RESPONSES,

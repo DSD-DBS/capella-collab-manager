@@ -179,6 +179,9 @@ enable = [
 ]
 extension-pkg-whitelist = "pydantic" # https://github.com/pydantic/pydantic/issues/1961
 
+[tool.pylint.master]
+init-import = "yes"
+
 [tool.pytest.ini_options]
 addopts = """
   --strict-config

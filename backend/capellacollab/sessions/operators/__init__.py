@@ -3,9 +3,6 @@
 
 from __future__ import annotations
 
-from importlib import metadata
-
-from capellacollab.config import config
 from capellacollab.sessions.operators.k8s import KubernetesOperator
 
 OPERATOR = KubernetesOperator()
