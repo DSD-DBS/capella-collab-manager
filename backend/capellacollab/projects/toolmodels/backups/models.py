@@ -19,7 +19,7 @@ from capellacollab.projects.toolmodels.modelsources.t4c.models import (
     DatabaseT4CModel,
     SimpleT4CModel,
 )
-from capellacollab.sessions.operators import OPERATOR
+from capellacollab.sessions.operators import get_operator
 
 
 class CreateBackup(BaseModel):
@@ -63,13 +63,13 @@ class Backup(BaseModel):
             return None
 
         label = "app.capellacollab/parent"
-        if job_id := OPERATOR.get_cronjob_last_run_by_label(
+        if job_id := get_operator().get_cronjob_last_run_by_label(
             label, values["k8s_cronjob_id"]
         ):
             return BackupJob(
                 id=job_id,
-                date=OPERATOR.get_job_starting_date(job_id),
-                state=OPERATOR.get_job_state(job_id),
+                date=get_operator().get_job_starting_date(job_id),
+                state=get_operator().get_job_state(job_id),
             )
 
         return None
