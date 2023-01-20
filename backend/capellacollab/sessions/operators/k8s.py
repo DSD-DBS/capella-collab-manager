@@ -195,7 +195,7 @@ class KubernetesOperator:
         _id = self._generate_id()
 
         if loki_enabled:
-            self._create_config_map(
+            self._create_promtail_configmap(
                 name=_id,
                 username=username,
                 session_type=session_type,
@@ -497,15 +497,24 @@ class KubernetesOperator:
                     ),
                 )
             )
-            session_volume_mounts.append(
-                client.V1VolumeMount(name="workspace", mount_path="/workspace")
+        else:
+            volumes.append(
+                client.V1Volume(
+                    name="workspace", empty_dir=client.V1EmptyDirVolumeSource()
+                )
             )
+
+        session_volume_mounts.append(
+            client.V1VolumeMount(name="workspace", mount_path="/workspace")
+        )
+
+        if loki_enabled:
             promtail_volume_mounts.append(
                 client.V1VolumeMount(
                     name="workspace", mount_path="/var/log/promtail"
                 )
             )
-        if loki_enabled:
+
             volumes.append(
                 client.V1Volume(
                     name="prom-config",
@@ -513,11 +522,11 @@ class KubernetesOperator:
                 )
             )
 
-        promtail_volume_mounts.append(
-            client.V1VolumeMount(
-                name="prom-config", mount_path="/etc/promtail"
+            promtail_volume_mounts.append(
+                client.V1VolumeMount(
+                    name="prom-config", mount_path="/etc/promtail"
+                )
             )
-        )
 
         if pure_variants_secret_name:
             session_volume_mounts.append(
@@ -770,7 +779,7 @@ class KubernetesOperator:
             active_deadline_seconds=timeout,
         )
 
-    def _create_config_map(
+    def _create_promtail_configmap(
         self,
         name: str,
         username: str,
