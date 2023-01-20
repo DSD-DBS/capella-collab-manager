@@ -1,7 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-{{- if eq .Values.cluster.kind "OpenShift" }}
+{{ if .Values.loki.enabled }}
+{{ if eq .Values.cluster.kind "OpenShift" }}
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
@@ -19,4 +20,5 @@ spec:
               kubernetes.io/metadata.name: {{ .Values.backend.k8sSessionNamespace }}
   policyTypes:
     - Ingress
+{{ end }}
 {{ end }}

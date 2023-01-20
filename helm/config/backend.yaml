@@ -16,6 +16,7 @@ k8s:
     imagePullPolicy: {{ .Values.cluster.namespaces.sessions.imagePullPolicy }}
 
   promtail:
+    lokiEnabled: {{ .Values.loki.enabled }}
     lokiUrl: http://loki-gateway.{{- .Release.Namespace -}}.svc.cluster.local/loki/api/v1/push
     lokiUsername: {{ .Values.definitions.loki.username }}
     lokiPassword: {{ .Values.definitions.loki.password }}

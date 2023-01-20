@@ -22,6 +22,11 @@ spec:
         checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
     spec:
       volumes:
+        {{ if .Values.loki.enabled }}
+        - name: unused
+          emptyDir: {}
+        - name: logs
+          emptyDir: {}
         - name: prom-config
           configMap:
             name: {{ .Release.Name }}-promtail
@@ -31,10 +36,7 @@ spec:
         - name: prom-position
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-guacamole-promtail
-        - name: unused
-          emptyDir: {}
-        - name: logs
-          emptyDir: {}
+        {{ end }}
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-guacamole-guacamole
@@ -78,11 +80,13 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 20
           volumeMounts:
+            {{ if .Values.loki.enabled }}
             # https://github.com/kubernetes/kubernetes/issues/106194
             - name: unused
               mountPath: /home/guacamole/tomcat
             - name: logs
               mountPath: /home/guacamole/tomcat/logs
+            {{ end }}
           resources:
             {{ if eq .Values.target "local" }}
             requests:
@@ -102,6 +106,7 @@ spec:
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
+        {{ if .Values.loki.enabled }}
         - name: promtail
           image: {{ .Values.docker.registry.external -}}{{- .Values.docker.images.promtail }}
           args:
@@ -137,3 +142,4 @@ spec:
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
+        {{ end }}

@@ -22,6 +22,9 @@ spec:
         checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
     spec:
       volumes:
+        {{ if .Values.loki.enabled }}
+        - name: logs
+          emptyDir: {}
         - name: prom-config
           configMap:
             name: {{ .Release.Name }}-promtail
@@ -31,13 +34,12 @@ spec:
         - name: prom-position
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-guacd-promtail
-        - name: logs
-          emptyDir: {}
+        {{ end }}
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-guacamole-guacd
           image: {{ .Values.docker.images.guacamole.guacd }}
-          command: ["/bin/sh", "-c", "mkdir -p /home/guacd/logs; /usr/local/guacamole/sbin/guacd -b 0.0.0.0 -L $GUACD_LOG_LEVEL -f > /home/guacd/logs/stdout.log 2> /home/guacd/logs/stderr.log"]
+          command: ["/bin/bash", "-c", "mkdir -p /home/guacd/logs; /usr/local/guacamole/sbin/guacd -b 0.0.0.0 -L $GUACD_LOG_LEVEL -f > >(tee -a /home/guacd/logs/stdout.log) 2> >(tee -a /home/guacd/logs/stderr.log >&2)"]
           ports:
             - name: guacd
               containerPort: 4822
@@ -69,11 +71,14 @@ spec:
               cpu: "1"
             {{ end }}
           volumeMounts:
+            {{ if .Values.loki.enabled }}
             - name: logs
               mountPath: /home/guacd/logs
+            {{ end }}
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
+        {{ if .Values.loki.enabled }}
         - name: promtail
           image: {{ .Values.docker.registry.external -}}{{- .Values.docker.images.promtail }}
           args:
@@ -109,3 +114,4 @@ spec:
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
+        {{ end }}

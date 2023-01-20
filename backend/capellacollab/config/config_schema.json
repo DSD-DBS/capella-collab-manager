@@ -24,7 +24,7 @@
     },
     "k8s": {
       "type": "object",
-      "additionalProperties": true,
+      "additionalProperties": false,
       "required": [
         "storageClassName",
         "storageAccessMode",
@@ -73,32 +73,40 @@
         "promtail": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["lokiUrl", "lokiUsername", "lokiPassword", "serverPort"],
+          "required": ["lokiEnabled"],
           "properties": {
-            "lokiUrl": { "type": ["string", "null"] },
-            "lokiUsername": { "type": ["string", "null"] },
-            "lokiPassword": { "type": ["string", "null"] },
-            "serverPort": { "type": ["number", "null"] }
-          }
+            "lokiEnabled": { "type": "boolean" },
+            "lokiUrl": { "type": ["string"] },
+            "lokiUsername": { "type": ["string"] },
+            "lokiPassword": { "type": ["string"] },
+            "serverPort": { "type": ["number"] }
+          },
+          "anyOf": [
+            {
+              "properties": { "lokiEnabled": { "const": false } }
+            },
+            {
+              "required": [
+                "lokiUrl",
+                "lokiUsername",
+                "lokiPassword",
+                "serverPort"
+              ]
+            }
+          ]
         },
-        "namespace": { "type": "string" }
+        "namespace": { "type": "string" },
+        "context": { "type": "string" },
+        "apiURL": { "type": "string" },
+        "token": { "type": "string" }
       },
       "not": {
         "allOf": [
           {
-            "type": "object",
-            "required": ["context"],
-            "properties": {
-              "context": { "type": "string" }
-            }
+            "required": ["context"]
           },
           {
-            "type": "object",
-            "required": ["apiURL", "token"],
-            "properties": {
-              "apiURL": { "type": "string" },
-              "token": { "type": "string" }
-            }
+            "required": ["apiURL", "token"]
           }
         ]
       }

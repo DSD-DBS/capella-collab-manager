@@ -26,10 +26,11 @@ k8s:
       runAsNonRoot: true
 
   promtail:
-    lokiUrl:
-    lokiUsername:
-    lokiPassword:
-    serverPort:
+    lokiEnabled: false
+    # lokiUrl:
+    # lokiUsername:
+    # lokiPassword:
+    # serverPort:
 
 extensions:
   guacamole:
