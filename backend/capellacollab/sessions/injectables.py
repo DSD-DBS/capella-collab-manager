@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from fastapi import Depends, HTTPException
-from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication.database import RoleVerification
@@ -20,20 +19,19 @@ def get_existing_session(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ) -> DatabaseSession:
-    try:
-        session: DatabaseSession = crud.get_session_by_id(db, session_id)
-    except NoResultFound as e:
+    if not (session := crud.get_session_by_id(db, session_id)):
         raise HTTPException(
             404,
             {"reason": f"The session with id {session_id} was not found."},
-        ) from e
-    if session.owner_name != get_username(token) and not RoleVerification(
-        required_role=Role.ADMIN, verify=False
-    )(token, db):
+        )
+    if not (
+        session.owner_name == get_username(token)
+        or RoleVerification(required_role=Role.ADMIN, verify=False)(token, db)
+    ):
         raise HTTPException(
             403,
             {
-                "reason": f"The session {session.id} does not belong to your user. Only administrators can manage other sessions!"
+                "reason": f"The session with id {session.id} does not belong to your user. Only administrators can manage other sessions!"
             },
         )
 

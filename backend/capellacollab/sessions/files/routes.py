@@ -12,8 +12,6 @@ from fastapi.responses import StreamingResponse
 from requests.auth import HTTPBasicAuth
 
 from capellacollab.config import config
-from capellacollab.core.authentication.helper import get_username
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.sessions.injectables import get_existing_session
 from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import OPERATOR
@@ -23,24 +21,7 @@ router = APIRouter()
 log = logging.getLogger(__name__)
 
 
-def check_session_belongs_to_user(
-    session: DatabaseSession = Depends(get_existing_session),
-    token=Depends(JWTBearer()),
-):
-    if not session.owner_name == get_username(token):
-        raise HTTPException(
-            status_code=403,
-            detail={
-                "reason": "You are not allowed to upload or get files in this session."
-            },
-        )
-
-
-@router.get(
-    "/",
-    response_model=FileTree,
-    dependencies=[Depends(check_session_belongs_to_user)],
-)
+@router.get("/", response_model=FileTree)
 def get_files(
     show_hidden: bool, session: DatabaseSession = Depends(get_existing_session)
 ):
@@ -52,8 +33,11 @@ def get_files(
     ).json()
 
 
-@router.post("/", dependencies=[Depends(check_session_belongs_to_user)])
-def upload_files(session_id: str, files: list[UploadFile]):
+@router.post("/")
+def upload_files(
+    files: list[UploadFile],
+    session: DatabaseSession = Depends(get_existing_session),
+):
     tar_bytesio = io.BytesIO()
 
     with tarfile.TarFile(
@@ -79,22 +63,17 @@ def upload_files(session_id: str, files: list[UploadFile]):
     tar_bytesio.seek(0)
     tar_bytes = tar_bytesio.read()
 
-    OPERATOR.upload_files(session_id, tar_bytes)
+    OPERATOR.upload_files(session.id, tar_bytes)
 
     return {"message": "Upload successful"}
 
 
-@router.get(
-    "/download",
-    response_class=StreamingResponse,
-    dependencies=[Depends(check_session_belongs_to_user)],
-)
+@router.get("/download", response_class=StreamingResponse)
 def download_file(
-    session_id: str,
-    filename: str,
-) -> UploadFile:
+    filename: str, session: DatabaseSession = Depends(get_existing_session)
+) -> StreamingResponse:
     return StreamingResponse(
-        OPERATOR.download_file(session_id, filename),
+        OPERATOR.download_file(session.id, filename),
         headers={
             "content-disposition": 'attachment; filename=f"{filename}.zip"',
             "content-type": "application/zip",
