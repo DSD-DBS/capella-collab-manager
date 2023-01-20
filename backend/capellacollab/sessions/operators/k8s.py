@@ -225,20 +225,21 @@ class KubernetesOperator:
 
     def kill_session(self, _id: str):
         log.info("Terminating session %s", _id)
-        dep_status = self._delete_deployment(name=_id)
-        log.info(
-            "Deleted deployment %s: %s", _id, dep_status and dep_status.status
-        )
-        conf_status = self._delete_config_map(name=_id)
-        log.info(
-            "Deleted config map %s: %s",
-            _id,
-            conf_status and conf_status.status,
-        )
-        svc_status = self._delete_service(name=_id)
-        log.info(
-            "Deleted service %s: %s", _id, svc_status and svc_status.status
-        )
+
+        if dep_status := self._delete_deployment(name=_id):
+            log.info(
+                "Deleted deployment %s with status %s", _id, dep_status.status
+            )
+
+        if conf_status := self._delete_config_map(name=_id):
+            log.info(
+                "Deleted config map %s with status %s", _id, conf_status.status
+            )
+
+        if svc_status := self._delete_service(name=_id):
+            log.info(
+                "Deleted service %s with status %s", _id, svc_status.status
+            )
 
     def get_job_state(self, job_name: str) -> str:
         return self._get_pod_state(label_selector=f"job-name={job_name}")
@@ -836,41 +837,33 @@ class KubernetesOperator:
             + username.replace("@", "-at-").replace(".", "-dot-").lower()
         )
 
-    def _delete_deployment(self, name: str) -> client.V1Status:
+    def _delete_deployment(self, name: str) -> client.V1Status | None:
         try:
-            status: client.V1Status = (
-                self.v1_apps.delete_namespaced_deployment(name, namespace)
-            )
+            return self.v1_apps.delete_namespaced_deployment(name, namespace)
         except exceptions.ApiException:
             log.exception("Error deleting deployment with name: %s", name)
-        return status
+            return None
 
-    def delete_secret(self, name: str) -> kubernetes.client.V1Status:
+    def delete_secret(self, name: str) -> kubernetes.client.V1Status | None:
         try:
-            status: client.V1Status = self.v1_core.delete_namespaced_secret(
-                name, cfg["namespace"]
-            )
+            return self.v1_core.delete_namespaced_secret(name, namespace)
         except client.exceptions.ApiException:
             log.exception("Error deleting secret with name: %s", name)
-        return status
+            return None
 
-    def _delete_config_map(self, name: str) -> client.V1Status:
+    def _delete_config_map(self, name: str) -> client.V1Status | None:
         try:
-            status: client.V1Status = (
-                self.v1_core.delete_namespaced_config_map(name, namespace)
-            )
+            return self.v1_core.delete_namespaced_config_map(name, namespace)
         except exceptions.ApiException:
             log.exception("Error deleting config map with name: %s", name)
-        return status
+            return None
 
-    def _delete_service(self, name: str) -> client.V1Status:
+    def _delete_service(self, name: str) -> client.V1Status | None:
         try:
-            status: client.V1Status = self.v1_core.delete_namespaced_service(
-                name, namespace
-            )
+            return self.v1_core.delete_namespaced_service(name, namespace)
         except exceptions.ApiException:
             log.exception("Error deleting service with name: %s", name)
-        return status
+            return None
 
     def _get_pod_name(self, _id: str) -> str:
         return self._get_pods(label_selector=f"app={_id}")[0].metadata.name
