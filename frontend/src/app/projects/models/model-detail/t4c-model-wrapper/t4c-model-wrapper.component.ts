@@ -6,6 +6,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, filter, map, Subscription, switchMap } from 'rxjs';
+import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
@@ -22,7 +23,8 @@ export class T4cModelWrapperComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     public projectService: ProjectService,
     public modelService: ModelService,
-    private t4cModelService: T4CModelService
+    private t4cModelService: T4CModelService,
+    private breadCrumbsService: BreadcrumbsService
   ) {}
 
   ngOnInit(): void {
@@ -44,6 +46,7 @@ export class T4cModelWrapperComponent implements OnInit, OnDestroy {
       )
       .subscribe((t4cModel) => {
         this.t4cModelService._t4cModel.next(t4cModel);
+        this.breadCrumbsService.updatePlaceholder({ t4cModel });
       });
   }
 

@@ -22,6 +22,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, map, Observable, of, Subscription } from 'rxjs';
+import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   absoluteOrRelativeValidators,
@@ -103,6 +104,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     private gitService: GitService,
     private gitModelService: GitModelService,
     private toastService: ToastService,
+    private breadCrumbsService: BreadcrumbsService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -160,7 +162,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
           (gitModel) => {
             this.gitModel = gitModel;
             this.fillFormWithGitModel(gitModel!);
-
+            this.breadCrumbsService.updatePlaceholder({ gitModel });
             this.gitService.loadPrivateRevisions(
               gitModel!.path,
               this.projectService.project?.slug!,
@@ -169,6 +171,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
             );
           }
         );
+        this.breadCrumbsService.updatePlaceholder({ gitModel: undefined });
 
         this.gitModelService.loadGitModelById(
           this.projectService.project!.slug,

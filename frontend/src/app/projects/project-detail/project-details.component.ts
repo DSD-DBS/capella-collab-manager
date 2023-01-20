@@ -4,6 +4,7 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription, filter, map } from 'rxjs';
 import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
@@ -20,7 +21,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   constructor(
     private navbarService: NavBarService,
     public projectService: ProjectService,
-    public projectUserService: ProjectUserService
+    public projectUserService: ProjectUserService,
+    public activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {

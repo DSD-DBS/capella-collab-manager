@@ -25,6 +25,10 @@
   font-size: 1.5em;
 }
 
+.breadcrumbs {
+  margin-left: 20px;
+}
+
 .flexbox {
   display: flex;
   align-items: center;

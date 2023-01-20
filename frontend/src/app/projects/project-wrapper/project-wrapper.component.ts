@@ -6,6 +6,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, Subscription, connectable, map, switchMap } from 'rxjs';
+import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import {
   Model,
   ModelService,
@@ -30,7 +31,8 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     public projectService: ProjectService,
     public modelService: ModelService,
-    private projectUserService: ProjectUserService
+    private projectUserService: ProjectUserService,
+    private breadcrumbsService: BreadcrumbsService
   ) {}
 
   ngOnInit(): void {
@@ -49,7 +51,10 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
         )
       )
       .subscribe({
-        next: (project: Project) => this.projectService._project.next(project),
+        next: (project: Project) => {
+          this.breadcrumbsService.updatePlaceholder({ project });
+          return this.projectService._project.next(project);
+        },
         error: () => {
           this.projectService._project.next(undefined);
         },
@@ -62,7 +67,7 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
         )
       )
       .subscribe({
-        next: (model: Model[]) => this.modelService._models.next(model),
+        next: (models: Model[]) => this.modelService._models.next(models),
         error: () => {
           this.modelService._models.next(undefined);
         },
