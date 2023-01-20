@@ -36,9 +36,8 @@ class GitModel(BaseModel):
     password: bool
 
     @validator("password", pre=True)
-    def transform_password(  # pylint: disable=no-self-argument
-        cls, passw: t.Union[str, bool]
-    ) -> bool:
+    @classmethod
+    def transform_password(cls, passw: t.Union[str, bool]) -> bool:
         if isinstance(passw, bool):
             return passw
         return passw is not None and len(passw) > 0
