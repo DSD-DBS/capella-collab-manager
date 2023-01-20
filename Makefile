@@ -5,9 +5,9 @@ CLUSTER_NAME = collab-cluster
 LOCAL_REGISTRY_NAME = localhost
 CLUSTER_REGISTRY_NAME = myregistry.localhost
 REGISTRY_PORT = 12345
-RELEASE = dev-t4c-manager
-NAMESPACE = t4c-manager
-SESSION_NAMESPACE = t4c-sessions
+RELEASE = dev
+NAMESPACE = collab-manager
+SESSION_NAMESPACE = collab-sessions
 PORT ?= 8080
 
 # List of Capella versions, e.g.: `5.0.0 5.2.0 6.0.0`
@@ -80,7 +80,9 @@ helm-deploy:
 		--set mocks.oauth=True \
 		--set target=local \
 		--set general.port=8080 \
+		--set backend.k8sSessionNamespace="$(SESSION_NAMESPACE)" \
 		--set backend.authentication.oauth.redirectURI="http://localhost:$(PORT)/oauth2/callback" \
+		--set backend.authentication.oauth.endpoints.wellKnown="http://$(RELEASE)-oauth-mock:8080/default/.well-known/openid-configuration" \
 		$(RELEASE) ./helm
 	$(MAKE) provision-guacamole wait
 
@@ -98,8 +100,8 @@ open:
 	fi
 
 clear-backend-db:
-	kubectl delete deployment -n t4c-manager $(RELEASE)-backend-postgres
-	kubectl delete pvc -n t4c-manager $(RELEASE)-volume-backend-postgres
+	kubectl delete deployment -n $(NAMESPACE) $(RELEASE)-backend-postgres
+	kubectl delete pvc -n $(NAMESPACE) $(RELEASE)-volume-backend-postgres
 	$(MAKE) helm-deploy
 
 rollout:
@@ -119,6 +121,7 @@ create-cluster: registry
 		--registry-use k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
 		--port "8080:80@loadbalancer"
 	kubectl cluster-info
+	kubectl config set-context --current --namespace=$(NAMESPACE)
 
 delete-cluster:
 	k3d cluster list $(CLUSTER_NAME) 2>&- && k3d cluster delete $(CLUSTER_NAME)
@@ -128,7 +131,7 @@ wait:
 	@echo "--- Please wait until all services are in running state ---"
 	@echo "-----------------------------------------------------------"
 	@(kubectl get --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) --watch pods) &
-	@kubectl wait --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) --for=condition=Ready --all pods --timeout=$(TIMEOUT)
+	@kubectl wait --context k3d-$(CLUSTER_NAME) --all deployment --for condition=Available=True --timeout=$(TIMEOUT)
 	@kill %%
 
 provision-guacamole:

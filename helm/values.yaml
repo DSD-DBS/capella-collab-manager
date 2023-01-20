@@ -122,7 +122,7 @@ backend:
     oauth:
       # Only required when using provider oauth
       endpoints:
-        wellKnown: http://dev-t4c-manager-oauth-mock:8080/default/.well-known/openid-configuration
+        wellKnown: http://dev-oauth-mock:8080/default/.well-known/openid-configuration
         # Override endpoint that issues JWT Tokens
         tokenIssuance: ""
         # Override endpoint that authorizes the User
@@ -157,7 +157,7 @@ backend:
 
   # Namespace in which the Session Deployments / Pods should be spawned.
   # IMPORTANT: The namespace has to exist already
-  k8sSessionNamespace: t4c-sessions
+  k8sSessionNamespace: collab-sessions
   storageClassName: local-path
   storageAccessMode: ReadWriteOnce
 
@@ -293,7 +293,7 @@ loki:
       resources: *resourcesMinio
       securityContext:
         enabled: True
-        << : *podSecurityContext
+        <<: *podSecurityContext
     makeUserJob: *minioJob
     makeServiceAccountJob: *minioJob
     makeBucketJob: *minioJob
