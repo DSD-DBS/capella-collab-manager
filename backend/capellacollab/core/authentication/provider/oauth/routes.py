@@ -45,8 +45,7 @@ async def api_refresh_token(body: RefreshTokenRequest):
 
 
 @router.delete("/tokens", name="Invalidate the token (log out)")
-async def logout(jwt_decoded=Depends(JWTBearer())):
-    # pylint: disable=unused-argument
+async def logout():
     return None
 
 
