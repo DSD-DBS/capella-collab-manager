@@ -22,11 +22,11 @@ spec:
         checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
     spec:
       volumes:
+        {{ if .Values.loki.enabled }}
         - name: unused
           emptyDir: {}
         - name: logs
           emptyDir: {}
-        {{ if .Values.loki.enabled }}
         - name: prom-config
           configMap:
             name: {{ .Release.Name }}-promtail
@@ -80,11 +80,13 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 20
           volumeMounts:
+            {{ if .Values.loki.enabled }}
             # https://github.com/kubernetes/kubernetes/issues/106194
             - name: unused
               mountPath: /home/guacamole/tomcat
             - name: logs
               mountPath: /home/guacamole/tomcat/logs
+            {{ end }}
           resources:
             {{ if eq .Values.target "local" }}
             requests:

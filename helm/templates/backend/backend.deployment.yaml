@@ -28,9 +28,9 @@ spec:
         - name: config
           configMap:
             name: {{ .Release.Name }}-backend
+        {{ if .Values.loki.enabled }}
         - name: logs
           emptyDir: {}
-        {{ if .Values.loki.enabled }}
         - name: prom-config
           configMap:
             name: {{ .Release.Name }}-promtail
@@ -85,8 +85,10 @@ spec:
             - name: config
               mountPath: /etc/capellacollab
               readOnly: true
+            {{ if .Values.loki.enabled }}
             - name: logs
               mountPath: /var/log/backend
+            {{ end }}
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}

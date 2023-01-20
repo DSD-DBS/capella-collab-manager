@@ -22,9 +22,9 @@ spec:
         checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
     spec:
       volumes:
+        {{ if .Values.loki.enabled }}
         - name: logs
           emptyDir: {}
-        {{ if .Values.loki.enabled }}
         - name: prom-config
           configMap:
             name: {{ .Release.Name }}-promtail
@@ -64,8 +64,10 @@ spec:
               memory: 5Mi
             {{ end }}
           volumeMounts:
+            {{ if .Values.loki.enabled }}
             - name: logs
               mountPath: /var/log/nginx
+            {{ end }}
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
