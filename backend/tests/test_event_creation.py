@@ -4,6 +4,7 @@
 import pytest
 from sqlalchemy.orm import Session
 
+from capellacollab.config import config
 from capellacollab.projects.users.crud import add_user_to_project
 from capellacollab.projects.users.models import (
     ProjectUserPermission,
@@ -24,7 +25,7 @@ reason: str = "TestReason"
 
 
 def test_create_admin_user_by_system(db):
-    user: DatabaseUser = get_user_by_name(db, "your-username")
+    user: DatabaseUser = get_user_by_name(db, config["initial"]["admin"])
 
     events: list[DatabaseUserHistoryEvent] = get_events_by_user_id(db, user.id)
 
