@@ -42,39 +42,37 @@ export class BreadcrumbsService {
   }
 
   private updateBreadcrumbs(router: Router) {
-    // Construct the breadcrumb hierarchy
     const root = router.routerState.snapshot.root;
-    const breadcrumbs: Breadcrumb[] = [];
-    this.addBreadcrumb(root, [], breadcrumbs);
-
-    // Emit the new hierarchy
-    this._breadcrumbs.next(breadcrumbs);
-  }
-
-  private addBreadcrumb(
-    route: ActivatedRouteSnapshot | null,
-    parentUrl: string[],
-    breadcrumbs: Breadcrumb[]
-  ) {
-    if (route) {
-      const routeUrl = parentUrl.concat(route.url.map((url) => url.path));
-
-      if (route.data.breadcrumb) {
-        const breadcrumb = {
-          label: expand(route.data.breadcrumb, this.placeholders),
-          url: route.data.redirect
-            ? expand(route.data.redirect, this.placeholders)
-            : '/' + routeUrl.join('/'),
-        };
-        breadcrumbs.push(breadcrumb);
-      }
-
-      this.addBreadcrumb(route.firstChild, routeUrl, breadcrumbs);
-    }
+    this._breadcrumbs.next(breadcrumbs(root, this.placeholders));
   }
 }
 
+const breadcrumbs = (
+  route: ActivatedRouteSnapshot | null,
+  placeholders: Data,
+  parentUrl?: string[]
+): Breadcrumb[] => {
+  if (!route) {
+    return [];
+  }
+
+  const routeUrl = (parentUrl || []).concat(route.url.map((url) => url.path));
+
+  if (route.data.breadcrumb) {
+    const breadcrumb = {
+      label: expand(route.data.breadcrumb, placeholders),
+      url: route.data.redirect
+        ? expand(route.data.redirect, placeholders)
+        : '/' + routeUrl.join('/'),
+    };
+    return [breadcrumb].concat(
+      breadcrumbs(route.firstChild, placeholders, routeUrl)
+    );
+  }
+
+  return breadcrumbs(route.firstChild, placeholders, routeUrl);
+};
+
 const expand = (term: string | Function, placeholders: Data) => {
-  // The breadcrumb can be defined as a static string or as a function to construct the breadcrumb element out of the route data
   return typeof term === 'function' ? term(placeholders) || '...' : term;
 };
