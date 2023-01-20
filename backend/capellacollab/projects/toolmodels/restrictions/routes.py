@@ -8,10 +8,9 @@ from sqlalchemy.orm import Session
 
 from capellacollab.core import database
 from capellacollab.core.authentication.database import ProjectRoleVerification
-from capellacollab.core.database import Base, get_db
+from capellacollab.core.database import get_db
 from capellacollab.projects.users.models import ProjectUserRole
 
-from .. import crud
 from ..injectables import get_existing_capella_model
 from ..models import DatabaseCapellaModel
 from .injectables import get_model_restrictions

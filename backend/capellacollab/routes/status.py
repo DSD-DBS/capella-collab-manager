@@ -44,5 +44,5 @@ def validate_session(session: Session) -> bool:
     try:
         session.connection()
         return True
-    except:
+    except BaseException:
         return False

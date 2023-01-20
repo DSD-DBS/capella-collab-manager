@@ -34,6 +34,7 @@ class Project(BaseModel):
     users: UserMetadata
 
     @validator("users", pre=True)
+    @classmethod
     def transform_users(
         cls, users: t.Union[UserMetadata, t.List[ProjectUserAssociation]]
     ):

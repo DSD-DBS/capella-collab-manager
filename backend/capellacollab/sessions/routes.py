@@ -13,83 +13,82 @@ from requests.exceptions import RequestException
 from sqlalchemy.orm import Session
 
 from capellacollab.config import config
-from capellacollab.core.authentication.database import (
-    ProjectRoleVerification,
-    RoleVerification,
-)
-from capellacollab.core.authentication.helper import get_username
+from capellacollab.core import models as core_models
+from capellacollab.core.authentication import database
+from capellacollab.core.authentication import helper as auth_helper
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db
-from capellacollab.core.models import Message
 from capellacollab.projects.models import DatabaseProject
-from capellacollab.projects.toolmodels.injectables import (
-    get_existing_capella_model,
-    get_existing_project,
+from capellacollab.projects.toolmodels import (
+    injectables as toolmodels_injectables,
 )
 from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
-from capellacollab.projects.toolmodels.modelsources.git.models import (
-    DatabaseGitModel,
+from capellacollab.projects.toolmodels.modelsources.git import (
+    models as git_models,
 )
 from capellacollab.projects.users.crud import ProjectUserRole
-from capellacollab.sessions import crud, guacamole
+from capellacollab.sessions import crud, guacamole, schema
 from capellacollab.sessions.files import routes as files
 from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import get_operator
 from capellacollab.sessions.operators.k8s import KubernetesOperator
-from capellacollab.sessions.schema import (
-    GetSessionsResponse,
-    GuacamoleAuthentication,
-    PostPersistentSessionRequest,
-    PostReadonlySessionEntry,
-    PostReadonlySessionRequest,
-    WorkspaceType,
-)
 from capellacollab.sessions.sessions import inject_attrs_in_sessions
-from capellacollab.settings.integrations.purevariants.crud import (
-    get_pure_variants_configuration,
+from capellacollab.settings.integrations.purevariants import (
+    crud as purevariants_crud,
 )
-from capellacollab.settings.modelsources.t4c.repositories.crud import (
-    get_user_t4c_repositories,
+from capellacollab.settings.modelsources.t4c.repositories import (
+    crud as repo_crud,
 )
-from capellacollab.settings.modelsources.t4c.repositories.interface import (
-    add_user_to_repository,
+from capellacollab.settings.modelsources.t4c.repositories import (
+    interface as repo_interface,
 )
-from capellacollab.tools.crud import (
-    get_image_for_tool_version,
-    get_readonly_image_for_version,
-    get_tool_by_name,
-    get_version_by_name,
-)
-from capellacollab.tools.injectables import (
-    get_exisiting_tool_version,
-    get_existing_tool,
-)
-from capellacollab.tools.models import Tool, Version
-from capellacollab.users.injectables import get_own_user
-from capellacollab.users.models import DatabaseUser, Role
+from capellacollab.tools import crud as tools_crud
+from capellacollab.tools import injectables as tools_injectables
+from capellacollab.tools import models as tools_models
+from capellacollab.users import injectables as users_injectables
+from capellacollab.users import models as users_models
 
-from . import util
-from .injectables import get_existing_session
+from . import injectables, util
 
 router = APIRouter(
-    dependencies=[Depends(RoleVerification(required_role=Role.USER))]
+    dependencies=[
+        Depends(
+            database.RoleVerification(required_role=users_models.Role.USER)
+        )
+    ]
 )
 
 project_router = APIRouter(
-    dependencies=[Depends(RoleVerification(required_role=Role.USER))]
+    dependencies=[
+        Depends(
+            database.RoleVerification(required_role=users_models.Role.USER)
+        )
+    ]
+)
+
+users_router = APIRouter(
+    dependencies=[
+        Depends(
+            database.RoleVerification(required_role=users_models.Role.USER)
+        )
+    ]
 )
 
 log = logging.getLogger(__name__)
 
 
-@router.get("/", response_model=t.List[GetSessionsResponse])
+@router.get("/", response_model=list[schema.GetSessionsResponse])
 def get_current_sessions(
-    db_user: DatabaseUser = Depends(get_own_user),
+    db_user: users_models.DatabaseUser = Depends(
+        users_injectables.get_own_user
+    ),
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
+    if database.RoleVerification(
+        required_role=users_models.Role.ADMIN, verify=False
+    )(token, db):
         return inject_attrs_in_sessions(crud.get_all_sessions(db))
 
     if not any(
@@ -120,15 +119,23 @@ def get_current_sessions(
 
 @project_router.post(
     "/readonly",
-    response_model=GetSessionsResponse,
+    response_model=schema.GetSessionsResponse,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
+        Depends(
+            database.ProjectRoleVerification(
+                required_role=ProjectUserRole.USER
+            )
+        )
     ],
 )
 def request_session(
-    body: PostReadonlySessionRequest,
-    db_user: DatabaseUser = Depends(get_own_user),
-    project: DatabaseProject = Depends(get_existing_project),
+    body: schema.PostReadonlySessionRequest,
+    db_user: users_models.DatabaseUser = Depends(
+        users_injectables.get_own_user
+    ),
+    project: DatabaseProject = Depends(
+        toolmodels_injectables.get_existing_project
+    ),
     operator: KubernetesOperator = Depends(get_operator),
     db: Session = Depends(get_db),
 ):
@@ -144,7 +151,12 @@ def request_session(
         )
 
     entries_with_models = [
-        (entry, get_existing_capella_model(project.slug, entry.model_slug, db))
+        (
+            entry,
+            toolmodels_injectables.get_existing_capella_model(
+                project.slug, entry.model_slug, db
+            ),
+        )
         for entry in body.models
     ]
 
@@ -171,7 +183,7 @@ def request_session(
             },
         )
 
-    docker_image = get_readonly_image_for_version(model.version)
+    docker_image = tools_crud.get_readonly_image_for_version(model.version)
     if not docker_image:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -194,7 +206,7 @@ def request_session(
 
     return create_database_and_guacamole_session(
         db,
-        WorkspaceType.READONLY,
+        schema.WorkspaceType.READONLY,
         session,
         db_user.name,
         rdp_password,
@@ -206,17 +218,21 @@ def request_session(
 
 
 def models_as_json(
-    models: t.List[t.Tuple[PostReadonlySessionEntry, DatabaseCapellaModel]]
+    models: list[tuple[schema.PostReadonlySessionEntry, DatabaseCapellaModel]]
 ):
     for entry, model in models:
-        git_model = next(
-            gm for gm in model.git_models if gm.id == entry.git_model_id
-        )
+        if not (
+            git_model := next(
+                (gm for gm in model.git_models if gm.id == entry.git_model_id),
+                None,
+            )
+        ):
+            continue
         yield git_model_as_json(git_model, entry.deep_clone)
 
 
 def git_model_as_json(
-    git_model: DatabaseGitModel, deep_clone: bool
+    git_model: git_models.DatabaseGitModel, deep_clone: bool
 ) -> dict[str, str | int]:
     d = {
         "url": git_model.path,
@@ -231,24 +247,24 @@ def git_model_as_json(
     return d
 
 
-@router.post("/persistent", response_model=GetSessionsResponse)
+@router.post("/persistent", response_model=schema.GetSessionsResponse)
 def request_persistent_session(
-    body: PostPersistentSessionRequest,
-    user: DatabaseUser = Depends(get_own_user),
+    body: schema.PostPersistentSessionRequest,
+    user: users_models.DatabaseUser = Depends(users_injectables.get_own_user),
     db: Session = Depends(get_db),
     operator: KubernetesOperator = Depends(get_operator),
     token=Depends(JWTBearer()),
 ):
-    warnings: list[Message] = []
+    warnings: list[core_models.Message] = []
     rdp_password = generate_password(length=64)
 
-    owner = get_username(token)
+    owner = auth_helper.get_username(token)
 
     log.info("Starting persistent session for user %s", owner)
 
     existing_user_sessions = crud.get_sessions_for_user(db, owner)
 
-    if WorkspaceType.PERSISTENT in [
+    if schema.WorkspaceType.PERSISTENT in [
         session.type for session in existing_user_sessions
     ]:
         raise HTTPException(
@@ -259,10 +275,12 @@ def request_persistent_session(
             },
         )
 
-    tool = get_existing_tool(body.tool_id, db)
-    version = get_exisiting_tool_version(tool.id, body.version_id, db)
+    tool = tools_injectables.get_existing_tool(body.tool_id, db)
+    version = tools_injectables.get_exisiting_tool_version(
+        tool.id, body.version_id, db
+    )
 
-    docker_image = get_image_for_tool_version(db, version.id)
+    docker_image = tools_crud.get_image_for_tool_version(db, version.id)
 
     t4c_password = None
     t4c_json = None
@@ -272,7 +290,9 @@ def request_persistent_session(
         # When using a different tool with TeamForCapella support (e.g. Capella + pure::variants),
         # the version ID doesn't match the version from the T4C integration.
         # We have to find the matching Capella version by name.
-        t4c_repositories = get_user_t4c_repositories(db, version.name, user)
+        t4c_repositories = repo_crud.get_user_t4c_repositories(
+            db, version.name, user
+        )
 
         t4c_json = [
             {
@@ -292,18 +312,18 @@ def request_persistent_session(
         t4c_password = generate_password()
         for repository in t4c_repositories:
             try:
-                add_user_to_repository(
+                repo_interface.add_user_to_repository(
                     repository.instance,
                     repository.name,
                     username=owner,
                     password=t4c_password,
-                    is_admin=RoleVerification(
-                        required_role=Role.ADMIN, verify=False
+                    is_admin=database.RoleVerification(
+                        required_role=users_models.Role.ADMIN, verify=False
                     )(token, db),
                 )
             except RequestException:
                 warnings.append(
-                    Message(
+                    core_models.Message(
                         reason=(
                             f"The creation of your user in the repository '{repository.name}' of the the instance '{repository.instance.name}' failed.",
                             "Most likely this is due to a downtime of the corresponding TeamForCapella server.",
@@ -326,7 +346,7 @@ def request_persistent_session(
     warnings += pv_warnings
 
     session = operator.start_persistent_session(
-        username=get_username(token),
+        username=auth_helper.get_username(token),
         tool_name=tool.name,
         version_name=version.name,
         password=rdp_password,
@@ -339,7 +359,7 @@ def request_persistent_session(
 
     response = create_database_and_guacamole_session(
         db,
-        WorkspaceType.PERSISTENT,
+        schema.WorkspaceType.PERSISTENT,
         session,
         owner,
         rdp_password,
@@ -353,9 +373,9 @@ def request_persistent_session(
 
 
 def determine_pure_variants_configuration(
-    db: Session, user: DatabaseUser, tool: Tool
-) -> tuple[str, str, list[str]]:
-    warnings = []
+    db: Session, user: users_models.DatabaseUser, tool: tools_models.Tool
+) -> tuple[str | None, str | None, list[core_models.Message]]:
+    warnings: list[core_models.Message] = []
     if not tool.integrations.pure_variants:
         return (None, None, warnings)
 
@@ -366,10 +386,10 @@ def determine_pure_variants_configuration(
             for model in association.project.models
             if model.restrictions.allow_pure_variants
         ]
-        and user.role == Role.USER
+        and user.role == users_models.Role.USER
     ):
         warnings.append(
-            Message(
+            core_models.Message(
                 reason=(
                     "You are trying to create a persistent session with a pure::variants integration.",
                     "We were not able to find a model with a pure::variants integration.",
@@ -379,9 +399,11 @@ def determine_pure_variants_configuration(
         )
         return (None, None, warnings)
 
-    if not (pv_license := get_pure_variants_configuration(db)):
+    if not (
+        pv_license := purevariants_crud.get_pure_variants_configuration(db)
+    ):
         warnings.append(
-            Message(
+            core_models.Message(
                 reason=(
                     "You are trying to create a persistent session with a pure::variants integration.",
                     "We were not able to find a valid license server URL in our database.",
@@ -396,14 +418,14 @@ def determine_pure_variants_configuration(
 
 def create_database_and_guacamole_session(
     db: Session,
-    type: WorkspaceType,
+    type: schema.WorkspaceType,
     session: dict[str, t.Any],
     owner: str,
     rdp_password: str,
-    tool: Tool,
-    version: Version,
+    tool: tools_models.Tool,
+    version: tools_models.Version,
     project,
-    t4c_password: t.Optional[str] = None,
+    t4c_password: str | None = None,
 ):
     guacamole_username = generate_password()
     guacamole_password = generate_password(length=64)
@@ -445,7 +467,7 @@ def create_database_and_guacamole_session(
 
 @router.delete("/{session_id}", status_code=204)
 def end_session(
-    session: DatabaseSession = Depends(get_existing_session),
+    session: DatabaseSession = Depends(injectables.get_existing_session),
     db: Session = Depends(get_db),
     operator: KubernetesOperator = Depends(get_operator),
 ):
@@ -453,16 +475,14 @@ def end_session(
 
 
 @router.post(
-    "/{id}/guacamole-tokens",
-    response_model=GuacamoleAuthentication,
+    "/{session_id}/guacamole-tokens",
+    response_model=schema.GuacamoleAuthentication,
 )
 def create_guacamole_token(
-    id: str,
-    db: Session = Depends(get_db),
+    session: DatabaseSession = Depends(injectables.get_existing_session),
     token=Depends(JWTBearer()),
 ):
-    session = crud.get_session_by_id(db, id)
-    if session.owner_name != get_username(token):
+    if session.owner_name != auth_helper.get_username(token):
         raise HTTPException(
             status_code=403,
             detail={
@@ -473,10 +493,37 @@ def create_guacamole_token(
     token = guacamole.get_token(
         session.guacamole_username, session.guacamole_password
     )
-    return GuacamoleAuthentication(
+    return schema.GuacamoleAuthentication(
         token=json.dumps(token),
         url=config["extensions"]["guacamole"]["publicURI"] + "/#/",
     )
 
 
 router.include_router(router=files.router, prefix="/{session_id}/files")
+
+
+@users_router.get(
+    "/{user_id}/sessions", response_model=list[schema.OwnSessionResponse]
+)
+def get_sessions_for_user(
+    user: users_models.DatabaseUser = Depends(
+        users_injectables.get_existing_user
+    ),
+    current_user: users_models.DatabaseUser = Depends(
+        users_injectables.get_own_user
+    ),
+    db: Session = Depends(get_db),
+    token=Depends(JWTBearer()),
+):
+    if user != current_user and not database.RoleVerification(
+        required_role=users_models.Role.ADMIN, verify=False
+    )(token, db):
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "reason": "You can only see your own sessions.",
+                "technical": "If you are a project lead or administrator, please use the /sessions endpoint",
+            },
+        )
+
+    return inject_attrs_in_sessions(user.sessions)

@@ -20,7 +20,6 @@ from capellacollab.settings.modelsources.t4c.repositories.models import (
     CreateT4CRepository,
     DatabaseT4CRepository,
 )
-from capellacollab.tools.models import Tool, Version
 from capellacollab.users.models import DatabaseUser, Role
 
 

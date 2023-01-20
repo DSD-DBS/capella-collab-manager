@@ -1,6 +1,9 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# pylint: skip-file
+
+from __future__ import annotations
 
 import logging
 import time
@@ -8,9 +11,13 @@ import typing as t
 
 import requests
 from jose import jwt
-from pydantic import BaseModel
 
 from capellacollab.config import config
+from capellacollab.core.authentication.provider.models import (
+    InvalidTokenError,
+    JSONWebKeySet,
+    KeyIDNotFoundError,
+)
 
 log = logging.getLogger(__name__)
 cfg = config["authentication"]["azure"]
@@ -24,14 +31,17 @@ class _KeyStore:
         self,
         *,
         jwks_uri: str,
-        algorithms: t.List[str] = ["RS256"],
+        algorithms: list[str] | None = None,
         key_refresh_interval=3600,
     ):
+        if not algorithms:
+            algorithms = ["RS256"]
+
         self.jwks_uri = jwks_uri
         self.algorithms = algorithms
-        self.public_keys = {}
+        self.public_keys: dict[t.Any, t.Any] = {}
         self.key_refresh_interval = key_refresh_interval
-        self.public_keys_last_refreshed = 0
+        self.public_keys_last_refreshed: float = 0
         self.refresh_keys()
 
     def keys_need_refresh(self) -> bool:
@@ -44,7 +54,7 @@ class _KeyStore:
             resp = requests.get(
                 self.jwks_uri, timeout=config["requests"]["timeout"]
             )
-        except Exception as e:
+        except Exception:
             log.error("Could not retrieve JWKS data from %s", self.jwks_uri)
             return
         jwks = JSONWebKeySet.parse_raw(resp.text)
@@ -93,29 +103,6 @@ def get_jwks_uri_for_azure_ad(
         timeout=config["requests"]["timeout"],
     ).json()
     return openid_config["jwks_uri"]
-
-
-class JSONWebKey(BaseModel):
-    # alg: str
-    kty: str
-    use: str
-    n: str
-    e: str
-    kid: str
-    x5t: str
-    x5c: t.List[str]
-
-
-class JSONWebKeySet(BaseModel):
-    keys: t.List[JSONWebKey]
-
-
-class InvalidTokenError(Exception):
-    pass
-
-
-class KeyIDNotFoundError(Exception):
-    pass
 
 
 # Our "singleton" key store:

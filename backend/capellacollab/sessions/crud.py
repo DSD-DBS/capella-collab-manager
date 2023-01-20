@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from capellacollab.sessions.models import DatabaseSession
@@ -24,8 +25,10 @@ def get_sessions_for_repository(db: Session, repository: str):
     )
 
 
-def get_session_by_id(db: Session, id: str) -> DatabaseSession | None:
-    return db.query(DatabaseSession).filter(DatabaseSession.id == id).first()
+def get_session_by_id(db: Session, _id: str) -> DatabaseSession | None:
+    return db.execute(
+        select(DatabaseSession).where(DatabaseSession.id == _id)
+    ).scalar()
 
 
 def get_all_sessions(db: Session):

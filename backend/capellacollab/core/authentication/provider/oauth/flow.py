@@ -42,11 +42,11 @@ def get_token(code: str) -> t.Dict[str, t.Any]:
     )
 
 
-def refresh_token(refresh_token: str) -> t.Dict[str, t.Any]:
+def refresh_token(_refresh_token: str) -> t.Dict[str, t.Any]:
     try:
         return auth_session.refresh_token(
             read_well_known()["token_endpoint"],
-            refresh_token=refresh_token,
+            refresh_token=_refresh_token,
             client_id=cfg["client"]["id"],
             client_secret=cfg["client"]["secret"],
         )

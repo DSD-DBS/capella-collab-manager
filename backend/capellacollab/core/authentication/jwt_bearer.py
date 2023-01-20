@@ -23,14 +23,14 @@ ep_main = importlib.import_module(".__main__", ep.module)
 
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
-        super(JWTBearer, self).__init__(auto_error=auto_error)
+        super().__init__(auto_error=auto_error)
 
     async def __call__(
         self, request: Request
     ) -> t.Optional[t.Dict[str, t.Any]]:
-        credentials: t.Optional[HTTPAuthorizationCredentials] = await super(
-            JWTBearer, self
-        ).__call__(request)
+        credentials: t.Optional[
+            HTTPAuthorizationCredentials
+        ] = await super().__call__(request)
 
         if not credentials or credentials.scheme != "Bearer":
             if self.auto_error:
@@ -48,7 +48,7 @@ class JWTBearer(HTTPBearer):
     def initialize_user(self, token_decoded: dict[str, str]):
         with SessionLocal() as session:
             username: str = get_username(token_decoded)
-            if not (users_crud.get_user_by_name(session, username)):
+            if not users_crud.get_user_by_name(session, username):
                 created_user = users_crud.create_user(session, username)
                 users_crud.update_last_login(session, created_user)
                 events.create_user_creation_event(session, created_user)

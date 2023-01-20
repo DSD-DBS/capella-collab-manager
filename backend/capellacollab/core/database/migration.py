@@ -41,12 +41,15 @@ def migrate_db(engine, database_url: str):
         root_dir = pathlib.Path(__file__).parents[2]
 
         # Get current revision of Database. If no revision is available, initialize the database.
-        alembic_cfg = Config(root_dir / "alembic.ini")
+
+        alembic_cfg = Config(str(root_dir / "alembic.ini"))
         alembic_cfg.set_main_option(
             "script_location", str(root_dir / "alembic")
         )
         alembic_cfg.set_main_option("sqlalchemy.url", database_url)
-        alembic_cfg.attributes["configure_logger"] = False
+        alembic_cfg.attributes[  # pylint:disable=unsupported-assignment-operation
+            "configure_logger"
+        ] = False
 
         with engine.connect() as conn:
             context = MigrationContext.configure(conn)

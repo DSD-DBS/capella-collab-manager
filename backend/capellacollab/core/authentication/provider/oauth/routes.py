@@ -45,7 +45,7 @@ async def api_refresh_token(body: RefreshTokenRequest):
 
 
 @router.delete("/tokens", name="Invalidate the token (log out)")
-async def logout(jwt_decoded=Depends(JWTBearer())):
+async def logout():
     return None
 
 
@@ -53,7 +53,7 @@ async def logout(jwt_decoded=Depends(JWTBearer())):
 async def validate_token(
     scope: t.Optional[Role],
     token=Depends(JWTBearer()),
-    db=Depends(get_db),
+    db: Session = Depends(get_db),
 ):
     if scope and scope.ADMIN:
         RoleVerification(required_role=Role.ADMIN)(token, db)

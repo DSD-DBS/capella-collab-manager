@@ -16,7 +16,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 ### SQL MODELS ARE IMPORTED HERE ###
-from . import models  # isort:skip
+from . import models  # isort:skip # pylint: disable=unused-import
 
 
 def get_db() -> Session:
@@ -29,5 +29,5 @@ def patch_database_with_pydantic_object(
 ):
     for key, value in pydantic_object.dict().items():
         if value is not None:
-            database_object.__setattr__(key, value)
+            setattr(database_object, key, value)
     db.commit()

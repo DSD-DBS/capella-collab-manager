@@ -1,9 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
-import typing as t
-
 from sqlalchemy.orm import Session
 
 from capellacollab.settings.modelsources.git.models import (
@@ -41,14 +38,14 @@ def create_git_setting(
 def update_git_setting(
     db: Session,
     git_setting: DatabaseGitInstance,
-    update_git_setting: PostGitInstance,
+    post_git_setting: PostGitInstance,
 ) -> DatabaseGitInstance:
-    if update_git_setting.type:
-        git_setting.type = update_git_setting.type
-    if update_git_setting.name:
-        git_setting.name = update_git_setting.name
-    if update_git_setting.url:
-        git_setting.url = update_git_setting.url
+    if _type := post_git_setting.type:
+        git_setting.type = _type
+    if name := post_git_setting.name:
+        git_setting.name = name
+    if url := post_git_setting.url:
+        git_setting.url = url
 
     db.commit()
     return git_setting

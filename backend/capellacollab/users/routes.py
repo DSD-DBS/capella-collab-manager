@@ -3,16 +3,14 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.users.crud as project_crud
 import capellacollab.users.events.crud as event_crud
 from capellacollab.core.authentication.database import RoleVerification
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
-from capellacollab.sessions.routes import inject_attrs_in_sessions
-from capellacollab.sessions.schema import OwnSessionResponse
+from capellacollab.sessions import routes as session_routes
 from capellacollab.users.events.models import EventType
 from capellacollab.users.events.routes import router as router_events
 
@@ -109,26 +107,5 @@ def delete_user(
     crud.delete_user(db, user)
 
 
-# TODO: This is actually a sessions route (sessions/{username}?)
-@router.get("/{user_id}/sessions", response_model=list[OwnSessionResponse])
-def get_sessions_for_user(
-    user: DatabaseUser = Depends(get_existing_user),
-    current_user: DatabaseUser = Depends(get_own_user),
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
-):
-    if user != current_user and not RoleVerification(
-        required_role=Role.ADMIN, verify=False
-    )(token, db):
-        raise HTTPException(
-            status_code=403,
-            detail={
-                "reason": "You can only see your own sessions.",
-                "technical": "If you are a project lead or administrator, please use the /sessions endpoint",
-            },
-        )
-
-    return inject_attrs_in_sessions(user.sessions)
-
-
+router.include_router(session_routes.users_router, tags=["Users - Sessions"])
 router.include_router(router_events, tags=["Users - History"])

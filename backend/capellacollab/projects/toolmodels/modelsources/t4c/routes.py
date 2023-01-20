@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-import capellacollab.core.database as database
+from capellacollab.core import database
 from capellacollab.core.authentication.database import (
     ProjectRoleVerification,
     RoleVerification,
@@ -114,8 +114,8 @@ def delete_t4c_model(
         raise HTTPException(
             status_code=409,
             detail={
-                "err_code": "git_model_used_for_backup",
-                "reason": "The git model can't be deleted: it's used for backup jobs",
+                "err_code": "T4C_MODEL_USED_FOR_BACKUP",
+                "reason": "The t4c model can't be deleted: it's used for backup jobs",
             },
         )
 

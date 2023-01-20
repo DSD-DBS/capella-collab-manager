@@ -3,20 +3,16 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+import fastapi
 
-from capellacollab.core.authentication.database import ProjectRoleVerification
-from capellacollab.core.database import Base, get_db
-from capellacollab.projects.users.models import ProjectUserRole
-
-from .. import crud
-from ..injectables import get_existing_capella_model
-from ..models import DatabaseCapellaModel
-from .models import ToolModelRestrictions
+from .. import injectables as toolmodels_injectables
+from .. import models as toolmodels_models
+from . import models
 
 
 def get_model_restrictions(
-    model: DatabaseCapellaModel = Depends(get_existing_capella_model),
-) -> ToolModelRestrictions:
+    model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
+        toolmodels_injectables.get_existing_capella_model
+    ),
+) -> models.ToolModelRestrictions:
     return model.restrictions

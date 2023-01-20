@@ -13,7 +13,6 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repository_interface
-from capellacollab.config import config
 from capellacollab.core import credentials
 from capellacollab.core.authentication.database import ProjectRoleVerification
 from capellacollab.core.authentication.helper import get_username
@@ -173,7 +172,6 @@ def create_job(
                 ),
             },
         )
-        return pipeline
     else:
         OPERATOR.create_job(
             image=get_backup_image_for_tool_version(
@@ -198,8 +196,11 @@ def create_job(
     ],
 )
 def get_logs(
-    pipeline: str = Depends(injectables.get_existing_pipeline),
+    pipeline: DatabaseBackup = Depends(injectables.get_existing_pipeline),
 ):
-    backup = Backup.from_orm(pipeline)
-    logs = OPERATOR.get_job_logs(id=backup.lastrun.id)
+    backup: Backup = Backup.from_orm(pipeline)
+
+    logs = ""
+    if backup.lastrun and backup.lastrun.id:
+        logs = OPERATOR.get_job_logs(id=backup.lastrun.id)
     return helper.filter_logs(logs, [pipeline.t4c_password])

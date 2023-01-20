@@ -29,7 +29,7 @@ dependencies = [
   "appdirs",
   "cachetools",
   "docker",
-  "fastapi",
+  "fastapi>=0.89.1",
   "gitpython",
   "kubernetes",
   "msal",
@@ -178,6 +178,12 @@ enable = [
   "useless-suppression",
 ]
 extension-pkg-whitelist = "pydantic" # https://github.com/pydantic/pydantic/issues/1961
+
+[tool.pylint.master]
+init-import = "yes"
+
+[tool.pylint.similarities]
+min-similarity-lines = 6
 
 [tool.pytest.ini_options]
 addopts = """
