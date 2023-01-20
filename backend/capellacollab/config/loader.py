@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import json
 import logging
 import pathlib
 
@@ -61,6 +60,6 @@ def load_yaml() -> dict:
 
 
 def load_config_schema() -> dict:
-    return json.loads(
-        (pathlib.Path(__file__).parents[0] / "config_schema.json").read_bytes()
+    return yaml.safe_load(
+        (pathlib.Path(__file__).parents[0] / "config_schema.yaml").read_bytes()
     )
