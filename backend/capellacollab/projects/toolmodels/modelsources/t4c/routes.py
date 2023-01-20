@@ -114,7 +114,7 @@ def delete_t4c_model(
         raise HTTPException(
             status_code=409,
             detail={
-                "err_code": "t4c_model_used_for_backup",
+                "err_code": "T4C_MODEL_USED_FOR_BACKUP",
                 "reason": "The t4c model can't be deleted: it's used for backup jobs",
             },
         )
