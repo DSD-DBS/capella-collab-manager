@@ -227,7 +227,7 @@ def models_as_json(
                 None,
             )
         ):
-            return
+            continue
         yield git_model_as_json(git_model, entry.deep_clone)
 
 
