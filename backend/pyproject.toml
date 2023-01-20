@@ -29,7 +29,7 @@ dependencies = [
   "appdirs",
   "cachetools",
   "docker",
-  "fastapi",
+  "fastapi>=0.89.1",
   "gitpython",
   "kubernetes",
   "msal",
