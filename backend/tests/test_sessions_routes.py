@@ -280,8 +280,8 @@ def test_no_readonly_session_as_user(client, db, user, kubernetes):
 def test_one_readonly_sessions_as_user_per_tool_version(
     client, db, user, kubernetes
 ):
-    _tool, version = next(
-        (v.tool, v)
+    version = next(
+        v
         for v in get_versions(db)
         if v.tool.name == "Capella" and v.name == "5.0.0"
     )
