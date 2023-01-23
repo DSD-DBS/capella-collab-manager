@@ -51,6 +51,7 @@ def fixture_db(
     monkeypatch.setattr(database, "engine", postgresql)
     monkeypatch.setattr(database, "SessionLocal", session_local)
 
+    migration.delete_all_tables_if_existent(postgresql)
     migration.migrate_db(postgresql, str(postgresql.url))
 
     with session_local() as session:

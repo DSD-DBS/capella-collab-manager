@@ -6,6 +6,8 @@ import logging
 import os
 import pathlib
 
+import sqlalchemy
+import sqlalchemy.exc
 from alembic import command
 from alembic.config import Config
 from alembic.migration import MigrationContext
@@ -76,6 +78,44 @@ def migrate_db(engine, database_url: str):
 
             if not repositories_exist:
                 create_t4c_instance_and_repositories(session)
+
+
+def delete_all_tables_if_existent(engine: sqlalchemy.engine.Engine) -> bool:
+    """Delete complete database structure (including the alembic table)
+    If one of the tables does not exist, this function doesn't raise an exception.
+
+    Parameters
+    ----------
+    engine
+        SQLAlchemy database engine
+
+    Returns
+    -------
+    bool
+        True if successful,
+        False if sqlalchemy.exc.ProgrammingError occured during deletion,
+        e.g., when the tables didn't exist.
+
+    """
+    try:
+        Base.metadata.drop_all(engine)
+    except (sqlalchemy.exc.ProgrammingError):
+        return False
+
+    try:
+        t_alembic = sqlalchemy.Table(
+            "alembic_version",
+            sqlalchemy.MetaData(),
+            autoload=True,
+            autoload_with=engine,
+        )
+    except sqlalchemy.exc.NoSuchTableError:
+        return False
+
+    with engine.connect() as session:
+        session.execute(t_alembic.delete())
+
+    return True
 
 
 def initialize_admin_user(db):
