@@ -5,7 +5,6 @@
 
 import { Component } from '@angular/core';
 import { combineLatest } from 'rxjs';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   ToolExtended,
   ToolService,
@@ -21,11 +20,7 @@ import {
 export class ToolsSettingsComponent {
   tools: { [id: string]: ToolExtended } = {};
 
-  constructor(
-    private navbarService: NavBarService,
-    public toolService: ToolService
-  ) {
-    this.navbarService.title = 'Settings / Core / Tools';
+  constructor(public toolService: ToolService) {
     this.tools = {};
     this.toolService.getTools().subscribe(() => {
       for (let tool of this.toolService.tools!.map((tool) => tool.id)) {

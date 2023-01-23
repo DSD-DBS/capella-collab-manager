@@ -15,7 +15,6 @@ import {
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { HistoryEvent } from 'src/app/events/service/events.service';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import {
@@ -57,11 +56,8 @@ export class UserSettingsComponent implements OnInit, AfterViewInit {
   constructor(
     public userService: UserService,
     public projectUserService: ProjectUserService,
-    private navbarService: NavBarService,
     private toastService: ToastService
-  ) {
-    this.navbarService.title = 'Settings / Core / Users';
-  }
+  ) {}
 
   ngOnInit(): void {
     this.getUsers();

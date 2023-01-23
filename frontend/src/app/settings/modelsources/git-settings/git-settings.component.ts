@@ -17,7 +17,6 @@ import {
   MatLegacyDialogRef as MatDialogRef,
 } from '@angular/material/legacy-dialog';
 import { Subscription } from 'rxjs';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { absoluteUrlValidator } from 'src/app/helpers/validators/url-validator';
 import {
   GitSetting,
@@ -43,13 +42,10 @@ export class GitSettingsComponent implements OnInit, OnDestroy {
   private gitSettingsSubscription?: Subscription;
 
   constructor(
-    private navbarService: NavBarService,
     private gitSettingsService: GitSettingsService,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>
-  ) {
-    this.navbarService.title = 'Settings / Modelsources / Git';
-  }
+  ) {}
 
   ngOnInit(): void {
     this.gitSettingsService.gitSettings.subscribe((gitSettings) => {

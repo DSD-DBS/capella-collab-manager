@@ -9,9 +9,6 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class NavBarService {
-  title = 'Capella Collaboration Manager';
-  subtitle = '';
-
   showHeader = true;
   showFooter = true;
   showNotice = true;

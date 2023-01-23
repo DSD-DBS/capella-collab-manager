@@ -15,7 +15,6 @@ import {
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import slugify from 'slugify';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   CreateModelComponent,
   CreateModelStep,
@@ -43,11 +42,8 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   constructor(
     public projectService: ProjectService,
     private router: Router,
-    private toastService: ToastService,
-    private navBarService: NavBarService
-  ) {
-    this.navBarService.title = 'Create Project';
-  }
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.projectService.list().subscribe();

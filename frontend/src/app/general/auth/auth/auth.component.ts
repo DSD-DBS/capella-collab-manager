@@ -30,7 +30,6 @@ export class AuthComponent implements OnInit {
     private navbarService: NavBarService,
     private route: ActivatedRoute
   ) {
-    this.navbarService.title = 'Authentication';
     this.navbarService.disableAll();
   }
 

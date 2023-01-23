@@ -16,7 +16,6 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, filter, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { Tool, ToolDockerimages, ToolService } from '../tool.service';
 import { ToolDeletionDialogComponent } from './tool-deletion-dialog/tool-deletion-dialog.component';
@@ -56,7 +55,6 @@ export class ToolDetailsComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private navBarService: NavBarService,
     private toolService: ToolService,
     private toastService: ToastService,
     private breadcrumbsService: BreadcrumbsService,
@@ -64,14 +62,6 @@ export class ToolDetailsComponent {
     private dialog: MatDialog
   ) {
     this.toolService.getTools().subscribe();
-    this.route.params
-      .pipe(
-        map((params) => params.toolID),
-        filter((toolID) => toolID === undefined)
-      )
-      .subscribe({
-        next: () => (this.navBarService.title = 'Settings / Tools / Create'),
-      });
 
     this.route.params
       .pipe(
@@ -96,7 +86,6 @@ export class ToolDetailsComponent {
       .subscribe({
         next: (tool) => {
           this.breadcrumbsService.updatePlaceholder({ tool });
-          this.navBarService.title = 'Settings / Tools / ' + tool?.name;
           this.existing = true;
           this.selectedTool = tool;
           this.updateForm();

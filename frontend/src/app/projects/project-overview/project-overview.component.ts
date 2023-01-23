@@ -22,9 +22,7 @@ export class ProjectOverviewComponent implements OnInit {
   constructor(
     public projectService: ProjectService,
     private navbarService: NavBarService
-  ) {
-    this.navbarService.title = 'Projects';
-  }
+  ) {}
 
   ngOnInit() {
     this.navbarService.enableAll();

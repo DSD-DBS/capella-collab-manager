@@ -14,7 +14,6 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   BaseT4CInstance,
@@ -80,27 +79,12 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   });
 
   constructor(
-    private navBarService: NavBarService,
     private t4cInstanceService: T4CInstanceService,
     private route: ActivatedRoute,
     private router: Router,
     private toastService: ToastService,
     private toolService: ToolService
-  ) {
-    this.navBarService.title = 'Settings / Modelsources / T4C';
-
-    // This has to happen in the constructor because of NG0100
-    // https://angular.io/errors/NG0100
-    this.route.params
-      .pipe(
-        map((params) => params.instance),
-        filter((instance) => instance === undefined)
-      )
-      .subscribe({
-        next: () =>
-          (this.navBarService.title = 'Settings / Modelsources / T4C / Create'),
-      });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.paramsSubscription = this.route.params
@@ -120,17 +104,10 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
       .pipe(filter(Boolean))
       .subscribe(this._capella_versions);
 
-    this._instance
-      .pipe(
-        filter(Boolean),
-        tap((instance) => {
-          this.navBarService.title = `Settings / Modelsources / T4C / ${instance.name}`;
-        })
-      )
-      .subscribe((instance: T4CInstance) => {
-        instance.password = '***********';
-        this.form.patchValue(instance);
-      });
+    this._instance.pipe(filter(Boolean)).subscribe((instance: T4CInstance) => {
+      instance.password = '***********';
+      this.form.patchValue(instance);
+    });
   }
 
   enableEditing(): void {

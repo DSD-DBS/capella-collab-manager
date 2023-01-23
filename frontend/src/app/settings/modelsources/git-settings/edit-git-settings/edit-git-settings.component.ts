@@ -55,8 +55,6 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
       if (!!this.id) {
         this.gitSettingsService.loadGitSettingById(this.id);
       }
-      this.navbarService.title =
-        'Settings / Modelsources / T4C / Instances / ' + this.id;
     });
   }
 

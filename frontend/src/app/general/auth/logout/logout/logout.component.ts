@@ -20,7 +20,6 @@ export class LogoutComponent implements OnInit {
     private route: ActivatedRoute,
     private navbarService: NavBarService
   ) {
-    this.navbarService.title = 'Logout';
     this.navbarService.disableAll();
   }
 
