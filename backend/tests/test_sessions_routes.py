@@ -277,7 +277,9 @@ def test_no_readonly_session_as_user(client, db, user, kubernetes):
     assert not kubernetes.sessions
 
 
-def test_create_readonly_session_as_user(client, db, user, kubernetes):
+def test_one_readonly_sessions_as_user_per_tool_version(
+    client, db, user, kubernetes
+):
     _tool, version = next(
         (v.tool, v)
         for v in get_versions(db)
