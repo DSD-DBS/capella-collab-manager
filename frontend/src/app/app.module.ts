@@ -56,8 +56,8 @@ import { ErrorHandlingInterceptor } from './general/error-handling/error-handlin
 import { FooterComponent } from './general/footer/footer.component';
 import { LegalComponent } from './general/footer/legal/legal.component';
 import { TermsConditionsComponent } from './general/footer/terms-conditions/terms-conditions.component';
+import { HeaderComponent } from './general/header/header.component';
 import { VersionComponent } from './general/metadata/version/version.component';
-import { HeaderComponent } from './general/navbar/header.component';
 import { NoticeComponent } from './general/notice/notice.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 import { ButtonSkeletonLoaderComponent } from './helpers/skeleton-loaders/button-skeleton-loader/button-skeleton-loader.component';
