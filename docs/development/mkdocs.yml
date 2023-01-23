@@ -16,6 +16,7 @@ nav:
   - Frontend:
       - Routes: frontend/routes.md
       - Testing: frontend/testing.md
+  - Code Style: code-style.md
 markdown_extensions:
   - meta
   - admonition
