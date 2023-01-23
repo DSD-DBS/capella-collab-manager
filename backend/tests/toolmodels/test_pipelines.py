@@ -85,3 +85,29 @@ def test_get_all_pipelines_of_capellamodel(
             "include_commit_history": False,
         }
     ]
+
+
+@pytest.mark.usefixtures(
+    "project_manager",
+    "mockoperator",
+)
+def test_create_pipeline_of_capellamodel_git_model_does_not_exist(
+    project: project_models.DatabaseProject,
+    capella_model: toolmodels_models.CapellaModel,
+    t4c_model: models_t4c_models.T4CModel,
+    client: testclient.TestClient,
+):
+    response = client.post(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines",
+        json={
+            "git_model_id": 0,
+            "t4c_model_id": t4c_model.id,
+            "include_commit_history": False,
+            "run_nightly": False,
+        },
+    )
+
+    assert response.status_code == 400
+    assert {"err_code": "GIT_MODEL_NOT_EXISTANT"}.items() <= response.json()[
+        "detail"
+    ].items()

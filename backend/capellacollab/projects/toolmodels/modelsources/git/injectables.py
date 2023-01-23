@@ -22,14 +22,13 @@ def get_existing_git_model(
     db: Session = Depends(get_db),
 ) -> DatabaseGitModel:
     git_model = crud.get_gitmodel_by_id(db, git_model_id)
-
-    if git_model.model_id == capella_model.id:
+    if git_model and git_model.model.id == capella_model.id:
         return git_model
 
     raise HTTPException(
         status_code=400,
         detail={
-            "err_code": "git_model_not_exists_on_project_and_model",
+            "err_code": "GIT_MODEL_NOT_EXISTANT",
             "reason": f"The git model ({git_model_id}) does not exists on the capella model for the project",
         },
     )
