@@ -4,7 +4,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from capellacollab.core.authentication.database import RoleVerification
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.database import get_db
 from capellacollab.tools import injectables
 from capellacollab.tools.models import Tool
@@ -14,7 +14,9 @@ from . import crud
 from .models import PatchToolIntegrations, ToolIntegrations
 
 router = APIRouter(
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))]
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ]
 )
 
 

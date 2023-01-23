@@ -10,10 +10,7 @@ from sqlalchemy.orm import Session
 
 import capellacollab.users.crud as users
 import capellacollab.users.events.crud as event_crud
-from capellacollab.core.authentication.database import (
-    ProjectRoleVerification,
-    RoleVerification,
-)
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
 from capellacollab.projects.models import DatabaseProject
@@ -71,7 +68,9 @@ def get_current_user(
     db: Session = Depends(get_db),
     token: JWTBearer = Depends(JWTBearer()),
 ) -> ProjectUserAssociation | ProjectUser:
-    if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
+    if auth_injectables.RoleVerification(
+        required_role=Role.ADMIN, verify=False
+    )(token, db):
         return ProjectUser(
             role=ProjectUserRole.ADMIN,
             permission=ProjectUserPermission.WRITE,
@@ -84,7 +83,11 @@ def get_current_user(
     "/",
     response_model=t.List[ProjectUser],
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def get_users_for_project(
@@ -97,7 +100,11 @@ def get_users_for_project(
     "/",
     response_model=ProjectUser,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def add_user_to_project(
@@ -133,7 +140,11 @@ def add_user_to_project(
     "/{user_id}",
     status_code=204,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def update_project_user(
@@ -189,7 +200,11 @@ def update_project_user(
     "/{user_id}",
     status_code=204,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def remove_user_from_project(

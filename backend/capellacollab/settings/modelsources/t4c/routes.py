@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from capellacollab.core.authentication.database import RoleVerification
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.database import get_db
 from capellacollab.projects.toolmodels.routes import get_version_by_id_or_raise
 from capellacollab.sessions.schema import GetSessionUsageResponse
@@ -26,7 +26,9 @@ from capellacollab.settings.modelsources.t4c.repositories.routes import (
 from capellacollab.users.models import Role
 
 router = APIRouter(
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 
 
@@ -79,7 +81,9 @@ def edit_t4c_instance(
 @router.get(
     "/{t4c_instance_id}/licenses",
     response_model=GetSessionUsageResponse,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def fetch_t4c_licenses(
     instance: DatabaseT4CInstance = Depends(get_existing_instance),

@@ -9,11 +9,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from slugify import slugify
 from sqlalchemy.orm import Session
 
-from capellacollab.core.authentication.database import (
-    ProjectRoleVerification,
-    RoleVerification,
-    get_db,
-)
+from capellacollab.core import database
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.logging import get_request_logger
 from capellacollab.projects import crud
@@ -38,7 +35,9 @@ from .users.routes import router as router_users
 
 logger = logging.getLogger(__name__)
 router = APIRouter(
-    dependencies=[Depends(RoleVerification(required_role=Role.USER))]
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.USER))
+    ]
 )
 
 
@@ -49,11 +48,13 @@ router = APIRouter(
 )
 def get_projects(
     user: DatabaseUser = Depends(get_own_user),
-    db: Session = Depends(get_db),
+    db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
     log: logging.LoggerAdapter = Depends(get_request_logger),
 ) -> t.List[DatabaseProject]:
-    if RoleVerification(required_role=Role.ADMIN, verify=False)(token, db):
+    if auth_injectables.RoleVerification(
+        required_role=Role.ADMIN, verify=False
+    )(token, db):
         log.debug("Fetching all projects")
         return crud.get_all_projects(db)
 
@@ -67,19 +68,20 @@ def get_projects(
     response_model=Project,
     tags=["Projects"],
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def update_project(
     patch_project: PatchProject,
     project: DatabaseProject = Depends(get_existing_project),
-    database: Session = Depends(get_db),
+    db: Session = Depends(database.get_db),
 ) -> DatabaseProject:
     new_slug = slugify(patch_project.name)
-    if (
-        crud.get_project_by_slug(database, new_slug)
-        and project.slug != new_slug
-    ):
+    if crud.get_project_by_slug(db, new_slug) and project.slug != new_slug:
         raise HTTPException(
             409,
             {
@@ -87,7 +89,7 @@ def update_project(
                 "technical": "Slug already used",
             },
         )
-    return crud.update_project(database, project, patch_project)
+    return crud.update_project(db, project, patch_project)
 
 
 @router.get(
@@ -95,7 +97,11 @@ def update_project(
     response_model=Project,
     tags=["Projects"],
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.USER
+            )
+        )
     ],
 )
 def get_project_by_slug(
@@ -110,7 +116,7 @@ def get_project_by_slug(
 def create_project(
     post_project: PostProjectRequest,
     user: DatabaseUser = Depends(get_own_user),
-    db: Session = Depends(get_db),
+    db: Session = Depends(database.get_db),
 ) -> DatabaseProject:
     if crud.get_project_by_slug(db, slugify(post_project.name)):
         raise HTTPException(
@@ -141,11 +147,13 @@ def create_project(
     "/{project_slug}",
     tags=["Projects"],
     status_code=204,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def delete_project(
     project: DatabaseProject = Depends(get_existing_project),
-    db: Session = Depends(get_db),
+    db: Session = Depends(database.get_db),
 ):
     if project.models:
         raise HTTPException(

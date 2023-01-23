@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 import capellacollab.projects.toolmodels.crud as projects_models_crud
 import capellacollab.settings.modelsources.t4c.crud as settings_t4c_crud
-from capellacollab.core.authentication.database import RoleVerification
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.database import (
     get_db,
     patch_database_with_pydantic_object,
@@ -34,7 +34,9 @@ from . import crud, injectables
 from .integrations.routes import router as router_integrations
 
 router = APIRouter(
-    dependencies=[Depends(RoleVerification(required_role=Role.USER))]
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.USER))
+    ]
 )
 
 
@@ -51,7 +53,9 @@ def get_tool_by_id(tool=Depends(injectables.get_existing_tool)) -> Tool:
 @router.post(
     "",
     response_model=ToolNatureBase,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def create_tool(body: CreateTool, db: Session = Depends(get_db)) -> Tool:
     return crud.create_tool(db, models.Tool(name=body.name))
@@ -60,7 +64,9 @@ def create_tool(body: CreateTool, db: Session = Depends(get_db)) -> Tool:
 @router.put(
     "/{tool_id}",
     response_model=ToolNatureBase,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def update_tool(
     body: CreateTool,
@@ -73,7 +79,9 @@ def update_tool(
 @router.delete(
     "/{tool_id}",
     status_code=204,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def delete_tool(
     tool: Tool = Depends(injectables.get_existing_tool),
@@ -133,7 +141,9 @@ def get_tool_versions(
 @router.post(
     "/{tool_id}/versions",
     response_model=ToolVersionBase,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def create_tool_version(
     body: CreateToolVersion,
@@ -146,7 +156,9 @@ def create_tool_version(
 @router.patch(
     "/{tool_id}/versions/{version_id}",
     response_model=ToolVersionBase,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def patch_tool_version(
     body: UpdateToolVersion,
@@ -161,7 +173,9 @@ def patch_tool_version(
 @router.delete(
     "/{tool_id}/versions/{version_id}",
     status_code=204,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def delete_tool_version(
     version: Version = Depends(injectables.get_exisiting_tool_version),
@@ -221,7 +235,9 @@ def get_tool_natures(
 @router.post(
     "/{tool_id}/natures",
     response_model=ToolNatureBase,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def create_tool_nature(
     tool_id: int,
@@ -234,7 +250,9 @@ def create_tool_nature(
 @router.delete(
     "/{tool_id}/natures/{nature_id}",
     status_code=204,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def delete_tool_nature(
     nature: Nature = Depends(injectables.get_exisiting_tool_nature),
@@ -281,7 +299,9 @@ def find_tool_nature_dependencies(db: Session, nature: Nature) -> None:
 @router.get(
     "/{tool_id}/dockerimages",
     response_model=ToolDockerimage,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def get_dockerimages(
     tool: Tool = Depends(injectables.get_existing_tool),
@@ -292,7 +312,9 @@ def get_dockerimages(
 @router.put(
     "/{tool_id}/dockerimages",
     response_model=ToolDockerimage,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def update_dockerimages(
     body: PatchToolDockerimage,

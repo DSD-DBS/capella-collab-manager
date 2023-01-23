@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 import capellacollab.notices.crud as notices
-from capellacollab.core.authentication.database import RoleVerification
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.database import get_db
 from capellacollab.notices.injectables import get_existing_notice
 from capellacollab.notices.models import (
@@ -37,7 +37,9 @@ def get_notice_by_id(
 
 @router.post(
     "",
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def create_notice(
     post_notice: CreateNoticeRequest,
@@ -49,7 +51,9 @@ def create_notice(
 @router.delete(
     "/{notice_id}",
     status_code=204,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def delete_notice(
     notice: DatabaseNotice = Depends(get_existing_notice),

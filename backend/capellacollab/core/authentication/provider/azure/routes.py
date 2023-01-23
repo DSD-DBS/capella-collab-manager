@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 
 import capellacollab.users.crud as users_crud
 from capellacollab.config import config
-from capellacollab.core.authentication.database import RoleVerification
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.authentication.schemas import (
@@ -97,5 +97,5 @@ async def validate_token(
     db=Depends(get_db),
 ):
     if scope and scope.ADMIN:
-        RoleVerification(required_role=Role.ADMIN)(token, db)
+        auth_injectables.RoleVerification(required_role=Role.ADMIN)(token, db)
     return token

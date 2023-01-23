@@ -8,7 +8,7 @@ import typing as t
 import fastapi
 from sqlalchemy.orm import Session
 
-from capellacollab.core.authentication.database import RoleVerification
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.database import get_db
 from capellacollab.sessions.operators import get_operator
 from capellacollab.sessions.operators.k8s import KubernetesOperator
@@ -20,7 +20,11 @@ from capellacollab.settings.integrations.purevariants.models import (
 from capellacollab.users.models import Role
 
 router = fastapi.APIRouter(
-    dependencies=[fastapi.Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        fastapi.Depends(
+            auth_injectables.RoleVerification(required_role=Role.ADMIN)
+        )
+    ],
 )
 
 

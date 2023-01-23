@@ -14,8 +14,8 @@ from sqlalchemy.orm import Session
 
 from capellacollab.config import config
 from capellacollab.core import models as core_models
-from capellacollab.core.authentication import database
 from capellacollab.core.authentication import helper as auth_helper
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.credentials import generate_password
 from capellacollab.core.database import get_db
@@ -54,7 +54,9 @@ from . import injectables, util
 router = APIRouter(
     dependencies=[
         Depends(
-            database.RoleVerification(required_role=users_models.Role.USER)
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.USER
+            )
         )
     ]
 )
@@ -62,7 +64,9 @@ router = APIRouter(
 project_router = APIRouter(
     dependencies=[
         Depends(
-            database.RoleVerification(required_role=users_models.Role.USER)
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.USER
+            )
         )
     ]
 )
@@ -70,7 +74,9 @@ project_router = APIRouter(
 users_router = APIRouter(
     dependencies=[
         Depends(
-            database.RoleVerification(required_role=users_models.Role.USER)
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.USER
+            )
         )
     ]
 )
@@ -86,7 +92,7 @@ def get_current_sessions(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    if database.RoleVerification(
+    if auth_injectables.RoleVerification(
         required_role=users_models.Role.ADMIN, verify=False
     )(token, db):
         return inject_attrs_in_sessions(crud.get_all_sessions(db))
@@ -122,7 +128,7 @@ def get_current_sessions(
     response_model=schema.GetSessionsResponse,
     dependencies=[
         Depends(
-            database.ProjectRoleVerification(
+            auth_injectables.ProjectRoleVerification(
                 required_role=ProjectUserRole.USER
             )
         )
@@ -317,7 +323,7 @@ def request_persistent_session(
                     repository.name,
                     username=owner,
                     password=t4c_password,
-                    is_admin=database.RoleVerification(
+                    is_admin=auth_injectables.RoleVerification(
                         required_role=users_models.Role.ADMIN, verify=False
                     )(token, db),
                 )
@@ -515,7 +521,7 @@ def get_sessions_for_user(
     db: Session = Depends(get_db),
     token=Depends(JWTBearer()),
 ):
-    if user != current_user and not database.RoleVerification(
+    if user != current_user and not auth_injectables.RoleVerification(
         required_role=users_models.Role.ADMIN, verify=False
     )(token, db):
         raise HTTPException(

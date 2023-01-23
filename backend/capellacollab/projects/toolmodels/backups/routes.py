@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 
 import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repository_interface
 from capellacollab.core import credentials
-from capellacollab.core.authentication.database import ProjectRoleVerification
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
@@ -44,7 +44,11 @@ log = logging.getLogger(__name__)
     "",
     response_model=t.List[Backup],
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def get_pipelines(
@@ -58,7 +62,11 @@ def get_pipelines(
     "",
     response_model=Backup,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def create_backup(
@@ -128,7 +136,11 @@ def create_backup(
     "/{pipeline_id}",
     status_code=204,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def delete_pipeline(
@@ -154,7 +166,11 @@ def delete_pipeline(
     "/{pipeline_id}/runs",
     status_code=201,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def create_job(
@@ -192,7 +208,11 @@ def create_job(
     "/{pipeline_id}/runs/latest/logs",
     response_model=str,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def get_logs(

@@ -6,7 +6,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from capellacollab.core.authentication.database import RoleVerification
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.database import get_db
 from capellacollab.users.events.models import (
     DatabaseUserHistoryEvent,
@@ -19,7 +19,9 @@ from capellacollab.users.models import DatabaseUser, Role
 from . import crud
 
 router = APIRouter(
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))]
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ]
 )
 
 

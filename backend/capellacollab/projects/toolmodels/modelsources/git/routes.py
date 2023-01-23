@@ -8,7 +8,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 from requests import Request
 from sqlalchemy.orm import Session
 
-from capellacollab.core.authentication.database import ProjectRoleVerification
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.database import get_db
 from capellacollab.projects.toolmodels.backups.crud import (
     get_pipelines_for_git_model,
@@ -79,7 +79,11 @@ def get_git_models(
     "/{git_model_id}",
     response_model=GitModel,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def get_git_model_by_id(
@@ -92,7 +96,11 @@ def get_git_model_by_id(
     "/primary/revisions",
     response_model=GetRevisionsResponseModel,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def get_revisions_of_primary_git_model(
@@ -112,7 +120,11 @@ def get_revisions_of_primary_git_model(
     "/{git_model_id}/revisions",
     response_model=GetRevisionsResponseModel,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.USER
+            )
+        )
     ],
 )
 def get_revisions_with_model_credentials(
@@ -126,7 +138,11 @@ def get_revisions_with_model_credentials(
     "",
     response_model=GitModel,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def create_git_model(
@@ -146,7 +162,11 @@ def create_git_model(
     "/{git_model_id}",
     response_model=GitModel,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def update_git_model_by_id(
@@ -170,7 +190,11 @@ def update_git_model_by_id(
     "/{git_model_id}",
     status_code=204,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def delete_git_model_by_id(
