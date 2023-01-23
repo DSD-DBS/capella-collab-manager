@@ -5,12 +5,14 @@
 import typing as t
 
 from pydantic import BaseModel, validator
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, orm
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import Boolean
 
 from capellacollab.core.database import Base
+
+if t.TYPE_CHECKING:
+    import capellacollab.projects.toolmodels.models as toolmodels_models
 
 
 class PostGitModel(BaseModel):
@@ -48,16 +50,18 @@ class GitModel(BaseModel):
 
 class DatabaseGitModel(Base):
     __tablename__ = "git_models"
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String)
-    path = Column(String)
-    entrypoint = Column(String)
-    revision = Column(String)
-    primary = Column(Boolean)
-    model_id = Column(Integer, ForeignKey("models.id"))
-    model = relationship("DatabaseCapellaModel", back_populates="git_models")
-    username = Column(String)
-    password = Column(String)
+    id: int = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    name: str = Column(String)
+    path: str = Column(String)
+    entrypoint: str = Column(String)
+    revision: str = Column(String)
+    primary: bool = Column(Boolean)
+    model_id: int = Column(Integer, ForeignKey("models.id"))
+    model: "toolmodels_models.DatabaseCapellaModel" = orm.relationship(
+        "DatabaseCapellaModel", back_populates="git_models"
+    )
+    username: str = Column(String)
+    password: str = Column(String)
 
     @classmethod
     def from_post_git_model(
