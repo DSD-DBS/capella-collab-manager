@@ -88,8 +88,7 @@ const routes: Routes = [
               {
                 path: '',
                 data: {
-                  breadcrumb: (data: Data) =>
-                    `${data.model?.name || '...'} models`,
+                  breadcrumb: (data: Data) => data.model?.name || '...',
                 },
                 component: ModelDetailComponent,
               },
@@ -106,7 +105,7 @@ const routes: Routes = [
               {
                 path: 'git-model',
                 data: {
-                  breadcrumb: (data: Data) => data.model?.name,
+                  breadcrumb: (data: Data) => data.model?.name || '...',
                   redirect: (data: Data) =>
                     `/project/${data.project?.slug}/model/${data.model?.slug}`,
                 },
@@ -118,7 +117,10 @@ const routes: Routes = [
                   },
                   {
                     path: ':git-model',
-                    data: { breadcrumb: 'Edit Git Model' },
+                    data: {
+                      breadcrumb: (data: Data) =>
+                        `Integration ${data.gitModel?.id || '...'}`,
+                    },
                     component: ManageGitModelComponent,
                   },
                 ],
@@ -138,7 +140,10 @@ const routes: Routes = [
                   },
                   {
                     path: ':t4c_model_id',
-                    data: { breadcrumb: 'Edit T4C Model' },
+                    data: {
+                      breadcrumb: (data: Data) =>
+                        `Integration ${data.t4cModel?.id || '...'}`,
+                    },
                     component: T4cModelWrapperComponent,
                     children: [
                       {
@@ -215,11 +220,11 @@ const routes: Routes = [
               },
               {
                 path: 'tool/:toolID',
-                data: { breadcrumb: 'Tool' },
+                data: { breadcrumb: 'Tool', redirect: '/settings/core/tools' },
                 children: [
                   {
                     path: '',
-                    data: { breadcrumb: undefined },
+                    data: { breadcrumb: (data: Data) => data.tool?.name },
                     component: ToolDetailsComponent,
                   },
                 ],
