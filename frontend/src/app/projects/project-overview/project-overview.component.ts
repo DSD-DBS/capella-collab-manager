@@ -5,7 +5,6 @@
 
 import { Component, OnInit } from '@angular/core';
 import { tap } from 'rxjs';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   ProjectService,
   UserMetadata,
@@ -19,13 +18,9 @@ import {
 export class ProjectOverviewComponent implements OnInit {
   loading = true;
 
-  constructor(
-    public projectService: ProjectService,
-    private navbarService: NavBarService
-  ) {}
+  constructor(public projectService: ProjectService) {}
 
   ngOnInit() {
-    this.navbarService.enableAll();
     this.projectService
       .list()
       .pipe(tap(() => (this.loading = false)))
