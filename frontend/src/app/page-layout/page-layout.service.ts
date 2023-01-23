@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
-export class NavBarService {
+export class PageLayoutService {
   showHeader = true;
   showFooter = true;
   showNotice = true;

@@ -5,7 +5,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
+import { PageLayoutService } from 'src/app/page-layout/page-layout.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { environment } from 'src/environments/environment';
 
@@ -27,10 +27,10 @@ export class AuthComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private navbarService: NavBarService,
+    private pageLayoutService: PageLayoutService,
     private route: ActivatedRoute
   ) {
-    this.navbarService.disableAll();
+    this.pageLayoutService.disableAll();
   }
 
   ngOnInit(): void {

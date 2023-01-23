@@ -4,7 +4,7 @@
  */
 
 import { Component } from '@angular/core';
-import { NavBarService } from './general/navbar/service/nav-bar.service';
+import { PageLayoutService } from './page-layout/page-layout.service';
 
 @Component({
   selector: 'app-root',
@@ -12,5 +12,5 @@ import { NavBarService } from './general/navbar/service/nav-bar.service';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  constructor(public navbarService: NavBarService) {}
+  constructor(public pageLayoutService: PageLayoutService) {}
 }
