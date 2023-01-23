@@ -183,6 +183,17 @@ def request_session(
             },
         )
 
+    if crud.get_session_by_user_project_version(
+        db, db_user, project, model.version
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "err_code": "EXISTING_SESSION",
+                "reason": "User already has a read-only session for {project.name}/{model.tool.name} {model.version.name}. Close the existing session before starting a new one.",
+            },
+        )
+
     docker_image = tools_crud.get_readonly_image_for_version(model.version)
     if not docker_image:
         raise HTTPException(

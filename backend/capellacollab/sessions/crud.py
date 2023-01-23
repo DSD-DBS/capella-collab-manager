@@ -6,7 +6,10 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from capellacollab.projects.models import DatabaseProject
 from capellacollab.sessions.models import DatabaseSession
+from capellacollab.tools.models import Version
+from capellacollab.users.models import DatabaseUser
 
 
 def get_sessions_for_user(db: Session, username: str):
@@ -29,6 +32,21 @@ def get_session_by_id(db: Session, _id: str) -> DatabaseSession | None:
     return db.execute(
         select(DatabaseSession).where(DatabaseSession.id == _id)
     ).scalar()
+
+
+def get_session_by_user_project_version(
+    db: Session,
+    owner: DatabaseUser,
+    project: DatabaseProject,
+    version: Version,
+) -> DatabaseSession | None:
+    return (
+        db.query(DatabaseSession)
+        .filter(DatabaseSession.owner == owner)
+        .filter(DatabaseSession.project == project)
+        .filter(DatabaseSession.version == version)
+        .first()
+    )
 
 
 def get_all_sessions(db: Session):
