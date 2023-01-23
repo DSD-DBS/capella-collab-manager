@@ -7,7 +7,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   GitSetting,
   GitSettingsService,
@@ -30,7 +29,6 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private navbarService: NavBarService,
     private gitSettingsService: GitSettingsService
   ) {}
 
