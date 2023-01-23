@@ -37,26 +37,51 @@ def fixture_pipeline(
     return pipelines_crud.create_pipeline(db, pipeline)
 
 
-class MockOperator:
-    def get_cronjob_last_run_by_label(self, label_key: str, label_value: str):
-        return None
+@pytest.fixture(name="mockoperator")
+def fixture_mockoperator(monkeypatch: pytest.MonkeyPatch):
+    class MockOperator:
+        def get_cronjob_last_run_by_label(
+            self, label_key: str, label_value: str
+        ):
+            return None
 
-
-@pytest.mark.usefixtures("project_manager")
-def test_get_all_pipelines_of_capellamodel(
-    project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
-    pipeline: pipelines_models.DatabaseBackup,
-    client: testclient.TestClient,
-    monkeypatch: pytest.MonkeyPatch,
-):
     monkeypatch.setattr(
         capellacollab.sessions.operators, "OPERATOR", MockOperator()
     )
 
+
+@pytest.mark.usefixtures("project_manager", "mockoperator", "pipeline")
+def test_get_all_pipelines_of_capellamodel(
+    project: project_models.DatabaseProject,
+    capella_model: toolmodels_models.CapellaModel,
+    client: testclient.TestClient,
+):
     response = client.get(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines"
     )
 
     assert response.status_code == 200
-    assert response.json() == []
+    assert response.json() == [
+        {
+            "id": 1,
+            "k8s_cronjob_id": "unavailable",
+            "lastrun": None,
+            "t4c_model": {
+                "project_name": "default",
+                "repository_name": "test",
+                "instance_name": "default",
+            },
+            "git_model": {
+                "id": 1,
+                "name": "",
+                "path": "http://example.com",
+                "entrypoint": "test/test.aird",
+                "revision": "main",
+                "primary": True,
+                "username": "user",
+                "password": True,
+            },
+            "run_nightly": False,
+            "include_commit_history": False,
+        }
+    ]

@@ -53,6 +53,14 @@ class SimpleT4CModel(BaseModel):
     class Config:
         orm_mode = True
 
+    @classmethod
+    def from_orm(cls, obj: DatabaseT4CModel) -> SimpleT4CModel:
+        return SimpleT4CModel(
+            project_name=obj.name,
+            repository_name=obj.repository.name,
+            instance_name=obj.repository.instance.name,
+        )
+
 
 class T4CModel(BaseModel):
     id: int
