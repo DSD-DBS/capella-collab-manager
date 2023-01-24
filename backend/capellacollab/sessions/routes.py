@@ -190,7 +190,7 @@ def request_session(
             status_code=status.HTTP_409_CONFLICT,
             detail={
                 "err_code": "EXISTING_SESSION",
-                "reason": "User already has a read-only session for {project.name}/{model.tool.name} {model.version.name}. Close the existing session before starting a new one.",
+                "reason": f"You already have a read-only session for {project.name}/{model.tool.name} and tool {model.tool.name}/{model.version.name}. Close the existing session before starting a new one.",
             },
         )
 
