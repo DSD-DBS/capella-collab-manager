@@ -55,11 +55,11 @@ class DatabaseUser(Base):
     created = Column(DateTime)
     last_login = Column(DateTime)
 
-    projects: list["ProjectUserAssociation"] = relationship(
+    projects: list[ProjectUserAssociation] = relationship(
         "ProjectUserAssociation",
         back_populates="user",
     )
-    sessions: "DatabaseSession" = relationship(
+    sessions: DatabaseSession = relationship(
         "DatabaseSession",
         back_populates="owner",
     )

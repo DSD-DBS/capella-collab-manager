@@ -27,7 +27,7 @@ router = APIRouter()
 cfg = config["authentication"]["azure"]
 
 
-@lru_cache()
+@lru_cache
 def ad_session():
     return ConfidentialClientApplication(
         cfg["client"]["id"],

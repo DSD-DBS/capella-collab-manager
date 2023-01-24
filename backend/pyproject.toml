@@ -10,7 +10,7 @@ dynamic = ["version"]
 
 name = "capellacollab-backend"
 readme = "README.md"
-requires-python = ">=3.9, <3.12"
+requires-python = ">=3.11, <3.12"
 license = { text = "Apache-2.0" }
 authors = [{ name = "DB Netz AG" }]
 keywords = []
@@ -20,17 +20,14 @@ classifiers = [
   "Natural Language :: English",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
 ]
 dependencies = [
   "PyYAML",
   "alembic",
   "appdirs",
   "cachetools",
-  "docker",
   "fastapi>=0.89.1",
-  "gitpython",
   "kubernetes",
   "msal",
   "psycopg2-binary",
@@ -58,6 +55,7 @@ dev = [
   "pytest",
   "testcontainers",
   "httpx",
+  "docker",
 ]
 psycopg2 = [
   "psycopg2", # Need when running in a Docker container with AArch64: https://github.com/psycopg/psycopg2/issues/1360
@@ -81,7 +79,7 @@ no_implicit_optional = true
 show_error_codes = true
 warn_redundant_casts = true
 warn_unreachable = true
-python_version = "3.9"
+python_version = "3.11"
 
 [[tool.mypy.overrides]]
 module = ["tests.*"]

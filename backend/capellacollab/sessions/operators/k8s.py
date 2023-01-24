@@ -468,7 +468,7 @@ class KubernetesOperator:
     ) -> dict[str, t.Any]:
         return {
             "id": deployment.to_dict()["metadata"]["name"],
-            "ports": set([3389]),
+            "ports": {3389},
             "created_at": deployment.to_dict()["metadata"][
                 "creation_timestamp"
             ],

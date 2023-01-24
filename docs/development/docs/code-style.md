@@ -45,11 +45,7 @@ Python code. The key differences are:
   writing `from typing import SomeName`, use `import typing as t` and access
   typing related classes like `t.TypedDict`.
 
-      Use the new syntax and classes for typing introduced with Python 3.10 and
-      available using `from __future__ import annotations` since Python 3.8. Be
-      aware however that this only works in the context of annotations; the code
-      still needs to run on Python 3.8! This means that in some (rare) cases, you
-      *must* use the old-style type hints.
+      Use the new syntax and classes for typing introduced with Python 3.10.
 
       - Instead of `t.Tuple`, `t.List` etc. use the builtin classes `tuple`, `list`
         etc.
