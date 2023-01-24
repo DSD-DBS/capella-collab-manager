@@ -20,6 +20,9 @@ COPY startup.sh /opt/.startup.sh
 WORKDIR /tmp/backend
 RUN pip install ".[psycopg2]"
 
+RUN mkdir -p /var/log/backend && \
+    chmod -R 777 /var/log/backend
+
 # Mount a config.yaml into this directory
 VOLUME [ "/etc/capellacollab" ]
 
