@@ -3,17 +3,19 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<mat-card class="persistent-session">
-  <h1>Persistent Workspace</h1>
+<div class="flex-center">
+  <h1>Persistent workspace session</h1>
+</div>
 
+<mat-card class="persistent-session">
   <mat-card-content>
     <p>
-      Persistent Workspaces will store all the changes you make on models.
-      Additionally, newly created models will be stored in your personal
+      Session with persistent workspaces will store all the changes you make on
+      models. Additionally, newly created models will be stored in your personal
       workspace.
     </p>
 
-    <form [formGroup]="form" (ngSubmit)="requestSession()">
+    <form [formGroup]="form" (ngSubmit)="requestPersistentSession()">
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Model tool</mat-label>
@@ -59,7 +61,7 @@
           mat-flat-button
           color="primary"
           type="submit"
-          [disabled]="!(canCreateSession && form.valid)"
+          [disabled]="!form.valid || !!persistenSession"
         >
           Request a Persistent Workspace
           <mat-icon>keyboard_arrow_right</mat-icon>
