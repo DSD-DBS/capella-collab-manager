@@ -458,7 +458,7 @@ class KubernetesOperator:
             log.exception("Error fetching the last run id")
             return ""
 
-    def _generate_id(self):
+    def _generate_id(self) -> str:
         return "".join(random.choices(string.ascii_lowercase, k=25))
 
     def _export_attrs(
