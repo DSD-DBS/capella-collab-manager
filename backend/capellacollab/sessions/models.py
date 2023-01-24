@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import typing as t
+from datetime import datetime
 
 from sqlalchemy import (
     ARRAY,
@@ -18,13 +19,11 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from capellacollab.core.database import Base
-from capellacollab.projects.models import DatabaseProject
 from capellacollab.sessions.schema import WorkspaceType
 from capellacollab.tools.models import Tool, Version
 
 if t.TYPE_CHECKING:
-    from datetime import datetime
-
+    from capellacollab.projects.models import DatabaseProject
     from capellacollab.users.models import DatabaseUser
 
 
@@ -49,5 +48,5 @@ class DatabaseSession(Base):
     host: str = Column(String)
     type: WorkspaceType = Column(Enum(WorkspaceType), nullable=False)
     project_id: str = Column(Integer, ForeignKey("projects.id"), nullable=True)
-    project = relationship(DatabaseProject)
+    project: "DatabaseProject" = relationship("DatabaseProject")
     mac: str = Column(String)
