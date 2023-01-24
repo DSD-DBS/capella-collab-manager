@@ -6,8 +6,6 @@ import logging
 import os
 import pathlib
 
-import sqlalchemy
-import sqlalchemy.exc
 from alembic import command
 from alembic.config import Config
 from alembic.migration import MigrationContext

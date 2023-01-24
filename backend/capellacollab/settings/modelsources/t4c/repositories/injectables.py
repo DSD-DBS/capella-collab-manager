@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from fastapi import Depends, HTTPException
-from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from capellacollab.core.database import get_db
