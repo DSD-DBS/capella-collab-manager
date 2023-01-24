@@ -16,7 +16,7 @@ import {
   ModelService,
 } from 'src/app/projects/models/service/model.service';
 import { ProjectService } from 'src/app/services/project/project.service';
-import { SessionService } from 'src/app/services/session/session.service';
+import { SessionService } from 'src/app/sessions/service/session.service';
 import { CreateBackupComponent } from '../create-backup/create-backup.component';
 import { BackupService, Pipeline } from '../service/backup.service';
 import { ViewLogsDialogComponent } from '../view-logs-dialog/view-logs-dialog.component';

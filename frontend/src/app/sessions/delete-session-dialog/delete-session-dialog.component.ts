@@ -10,7 +10,7 @@ import {
 } from '@angular/material/legacy-dialog';
 import { forkJoin } from 'rxjs';
 import { Session } from '../../schemes';
-import { SessionService } from '../../services/session/session.service';
+import { SessionService } from '../service/session.service';
 
 @Component({
   templateUrl: './delete-session-dialog.component.html',
