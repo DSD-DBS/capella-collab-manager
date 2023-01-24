@@ -8,7 +8,9 @@
   <h1>Capella Collaboration Manager</h1>
 </mat-card>
 
-<div class="flexbox">
-  <app-workspace></app-workspace>
-  <app-active-sessions></app-active-sessions>
-</div>
+<app-user-sessions-wrapper>
+  <div class="flexbox">
+    <app-persistent-session></app-persistent-session>
+    <app-active-sessions></app-active-sessions>
+  </div>
+</app-user-sessions-wrapper>

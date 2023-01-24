@@ -6,10 +6,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'],
+  selector: 'app-sesssions',
+  templateUrl: './sessions.component.html',
+  styleUrls: ['./sessions.component.css'],
 })
-export class HomeComponent {
+export class SessionsComponent {
   constructor() {}
 }
