@@ -77,8 +77,8 @@ class ToolBase(BaseModel):
 
 class ToolDockerimage(BaseModel):
     persistent: str
-    readonly: t.Optional[str]
-    backup: t.Optional[str]
+    readonly: str | None
+    backup: str | None
 
     @classmethod
     def from_orm(cls, obj: Tool) -> ToolDockerimage:
@@ -93,9 +93,9 @@ class ToolDockerimage(BaseModel):
 
 
 class PatchToolDockerimage(BaseModel):
-    persistent: t.Optional[str]
-    readonly: t.Optional[str]
-    backup: t.Optional[str]
+    persistent: str | None
+    readonly: str | None
+    backup: str | None
 
 
 class CreateToolVersion(BaseModel):
@@ -107,9 +107,9 @@ class CreateToolNature(BaseModel):
 
 
 class UpdateToolVersion(BaseModel):
-    name: t.Optional[str]
-    is_recommended: t.Optional[bool]
-    is_deprecated: t.Optional[bool]
+    name: str | None
+    is_recommended: bool | None
+    is_deprecated: bool | None
 
 
 class ToolVersionBase(BaseModel):

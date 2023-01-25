@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import enum
-import typing as t
 from datetime import datetime
 
 from pydantic import BaseModel
@@ -32,11 +31,11 @@ class EventType(enum.Enum):
 
 class BaseHistoryEvent(BaseModel):
     user: User
-    executor: t.Optional[User]
-    project: t.Optional[Project]
+    executor: User | None
+    project: Project | None
     execution_time: datetime
     event_type: EventType
-    reason: t.Optional[str]
+    reason: str | None
 
     class Config:
         orm_mode = True
@@ -47,9 +46,9 @@ class HistoryEvent(BaseHistoryEvent):
 
 
 class UserHistory(User):
-    created: t.Optional[datetime]
-    last_login: t.Optional[datetime]
-    events: t.Optional[list[HistoryEvent]]
+    created: datetime | None
+    last_login: datetime | None
+    events: list[HistoryEvent] | None
 
 
 class DatabaseUserHistoryEvent(Base):

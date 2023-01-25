@@ -44,8 +44,8 @@ class Job(BaseModel):
 
 class Backup(BaseModel):
     id: int
-    k8s_cronjob_id: t.Optional[str]
-    lastrun: t.Optional[BackupJob]
+    k8s_cronjob_id: str | None
+    lastrun: BackupJob | None
     t4c_model: SimpleT4CModel
     git_model: GitModel
     run_nightly: bool
@@ -54,7 +54,7 @@ class Backup(BaseModel):
     @validator("lastrun", pre=True, always=True)
     @classmethod
     def resolve_cronjob(
-        cls, value: t.Optional[BackupJob], values
+        cls, value: BackupJob | None, values
     ) -> BackupJob | None:
         if isinstance(value, BackupJob):
             return value

@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import typing as t
 from datetime import datetime
 
 from sqlalchemy.orm import Session
@@ -20,7 +19,7 @@ def create_event(
     executor: users_models.DatabaseUser | None = None,
     project: projects_models.DatabaseProject | None = None,
     reason: str | None = None,
-    allowed_types: t.Optional[list[models.EventType]] = None,
+    allowed_types: list[models.EventType] | None = None,
 ) -> models.DatabaseUserHistoryEvent:
     if allowed_types and event_type not in allowed_types:
         raise ValueError(

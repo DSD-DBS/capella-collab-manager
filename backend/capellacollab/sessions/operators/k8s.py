@@ -104,7 +104,7 @@ class File:
     path: str
     name: str
     type: FileType
-    children: t.Optional[list[File]] = None
+    children: list[File] | None = None
 
 
 class KubernetesOperator:

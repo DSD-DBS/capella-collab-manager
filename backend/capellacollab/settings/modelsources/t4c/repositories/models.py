@@ -72,7 +72,7 @@ class T4CInstanceWithRepositories(T4CInstance):
 class T4CRepository(CreateT4CRepository):
     id: int
     instance: T4CInstance
-    status: t.Optional[T4CRepositoryStatus]
+    status: T4CRepositoryStatus | None
 
     class Config:
         orm_mode = True

@@ -7,12 +7,12 @@ from pydantic import BaseModel
 
 
 class Message(BaseModel):
-    err_code: t.Optional[str]
-    title: t.Optional[str]
-    reason: t.Optional[t.Union[str, tuple]]
-    technical: t.Optional[str]
+    err_code: str | None
+    title: str | None
+    reason: t.Union[str, tuple] | None
+    technical: str | None
 
 
 class ResponseModel(BaseModel):
-    warnings: t.Optional[list["Message"]]
-    errors: t.Optional[list["Message"]]
+    warnings: list["Message"] | None
+    errors: list["Message"] | None

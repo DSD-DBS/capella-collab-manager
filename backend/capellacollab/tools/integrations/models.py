@@ -24,8 +24,8 @@ class ToolIntegrations(BaseModel):
 
 
 class PatchToolIntegrations(BaseModel):
-    t4c: t.Optional[bool]
-    pure_variants: t.Optional[bool]
+    t4c: bool | None
+    pure_variants: bool | None
 
 
 class DatabaseToolIntegrations(Base):

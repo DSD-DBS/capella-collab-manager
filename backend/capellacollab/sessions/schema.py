@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import datetime
 import enum
-import typing as t
 
 from pydantic import BaseModel
 
@@ -34,17 +33,17 @@ class GetSessionsResponse(BaseModel):
     state: str
     guacamole_username: str
     guacamole_connection_id: str
-    warnings: t.Optional[list[Message]]
+    warnings: list[Message] | None
     last_seen: str
-    project: t.Optional[Project]
-    version: t.Optional[ToolVersionWithTool]
+    project: Project | None
+    version: ToolVersionWithTool | None
 
     class Config:
         orm_mode = True
 
 
 class OwnSessionResponse(GetSessionsResponse):
-    t4c_password: t.Optional[str]
+    t4c_password: str | None
 
 
 class PostReadonlySessionEntry(BaseModel):
@@ -89,7 +88,7 @@ class FileTree(BaseModel):
     path: str
     name: str
     type: FileType
-    children: t.Optional[list[FileTree]]
+    children: list[FileTree] | None
 
     class Config:
         orm_mode = True

@@ -30,7 +30,7 @@ class UserMetadata(BaseModel):
 class Project(BaseModel):
     name: str
     slug: str
-    description: t.Optional[str]
+    description: str | None
     users: UserMetadata
 
     @validator("users", pre=True)
@@ -72,13 +72,13 @@ class Project(BaseModel):
 
 
 class PatchProject(BaseModel):
-    name: t.Optional[str]
-    description: t.Optional[str]
+    name: str | None
+    description: str | None
 
 
 class PostProjectRequest(BaseModel):
     name: str
-    description: t.Optional[str]
+    description: str | None
 
 
 class DatabaseProject(Base):
