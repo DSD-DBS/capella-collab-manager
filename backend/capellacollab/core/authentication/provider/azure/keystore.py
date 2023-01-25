@@ -65,7 +65,7 @@ class _KeyStore:
 
     def key_for_token(
         self, token: str, *, in_retry: int = 0
-    ) -> t.Dict[str, t.Any]:
+    ) -> dict[str, t.Any]:
         # Before we do anything, the validation keys may need to be refreshed.
         # If so, refresh them.
         if self.keys_need_refresh():

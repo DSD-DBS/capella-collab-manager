@@ -25,7 +25,7 @@ class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
         super().__init__(auto_error=auto_error)
 
-    async def __call__(self, request: Request) -> t.Dict[str, t.Any] | None:
+    async def __call__(self, request: Request) -> dict[str, t.Any] | None:
         credentials: HTTPAuthorizationCredentials | None = (
             await super().__call__(request)
         )
@@ -51,7 +51,7 @@ class JWTBearer(HTTPBearer):
                 users_crud.update_last_login(session, created_user)
                 events.create_user_creation_event(session, created_user)
 
-    def validate_token(self, token: str) -> t.Dict[str, t.Any] | None:
+    def validate_token(self, token: str) -> dict[str, t.Any] | None:
         try:
             jwt_cfg = ep_main.get_jwk_cfg(token)
         except Exception:

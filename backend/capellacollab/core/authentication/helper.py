@@ -7,5 +7,5 @@ import typing as t
 from capellacollab.config import config
 
 
-def get_username(token: t.Dict[str, t.Any]) -> str:
+def get_username(token: dict[str, t.Any]) -> str:
     return token[config["authentication"]["jwt"]["usernameClaim"]].strip()

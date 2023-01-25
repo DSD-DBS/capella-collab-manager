@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 
 def inject_attrs_in_sessions(
     db_sessions: list[DatabaseSession],
-) -> list[t.Dict[str, t.Any]]:
+) -> list[dict[str, t.Any]]:
     sessions_list = []
     for session in db_sessions:
         session.state = _determine_session_state(session)
