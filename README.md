@@ -6,6 +6,7 @@
 # Capella Collaboration Manager
 
 [![REUSE status](https://api.reuse.software/badge/github.com/DSD-DBS/capella-collab-manager)](https://api.reuse.software/info/github.com/DSD-DBS/capella-collab-manager)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![lint](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/lint.yml/badge.svg)
 ![tests](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/tests.yml/badge.svg)
 ![push](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/push.yml/badge.svg)
