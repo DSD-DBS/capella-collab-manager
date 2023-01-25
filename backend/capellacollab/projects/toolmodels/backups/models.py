@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import typing as t
 from datetime import datetime
 
 from pydantic import BaseModel, validator
@@ -34,7 +33,7 @@ class CreateBackup(BaseModel):
 
 class BackupJob(BaseModel):
     id: str
-    date: t.Union[datetime, None]
+    date: datetime | None
     state: str
 
 

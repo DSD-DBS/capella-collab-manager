@@ -36,7 +36,7 @@ class Project(BaseModel):
     @validator("users", pre=True)
     @classmethod
     def transform_users(
-        cls, users: t.Union[UserMetadata, list[ProjectUserAssociation]]
+        cls, users: UserMetadata | list[ProjectUserAssociation]
     ):
         if isinstance(users, UserMetadata):
             return users

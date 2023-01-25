@@ -3,8 +3,6 @@
 
 from __future__ import annotations
 
-import typing as t
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -37,7 +35,7 @@ def create_tool(db: Session, tool: Tool) -> Tool:
 def update_tool(
     db: Session,
     tool: Tool,
-    patch_tool: t.Union[CreateTool, PatchToolDockerimage],
+    patch_tool: CreateTool | PatchToolDockerimage,
 ) -> Tool:
     if isinstance(patch_tool, CreateTool):
         tool.name = patch_tool.name
