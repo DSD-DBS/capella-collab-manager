@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from __future__ import annotations
-
 from slugify import slugify
 from sqlalchemy.orm import Session
 
