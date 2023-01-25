@@ -4,7 +4,6 @@
 
 import json
 import logging
-import typing as t
 import uuid
 
 import fastapi
@@ -42,7 +41,7 @@ log = logging.getLogger(__name__)
 
 @router.get(
     "",
-    response_model=t.List[Backup],
+    response_model=list[Backup],
     dependencies=[
         Depends(
             auth_injectables.ProjectRoleVerification(

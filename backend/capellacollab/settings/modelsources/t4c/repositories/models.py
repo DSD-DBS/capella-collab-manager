@@ -59,7 +59,7 @@ class T4CRepositoryStatus(str, enum.Enum):
 
 
 class T4CRepositories(ResponseModel):
-    payload: t.List[T4CRepository]
+    payload: list[T4CRepository]
 
 
 class T4CInstanceWithRepositories(T4CInstance):

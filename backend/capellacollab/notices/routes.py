@@ -1,8 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import typing as t
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -22,7 +20,7 @@ router = APIRouter()
 
 @router.get(
     "",
-    response_model=t.List[NoticeResponse],
+    response_model=list[NoticeResponse],
 )
 def get_notices(db: Session = Depends(get_db)):
     return notices.get_all_notices(db)

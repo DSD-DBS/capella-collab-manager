@@ -122,7 +122,7 @@ class MockOperator:
         version_name: str,
         password: str,
         docker_image: str,
-        git_repos_json: t.List[t.Dict[str, str | int]],
+        git_repos_json: list[t.Dict[str, str | int]],
     ) -> t.Dict[str, t.Any]:
         cls.sessions.append(
             {"docker_image": docker_image, "git_repos_json": git_repos_json}

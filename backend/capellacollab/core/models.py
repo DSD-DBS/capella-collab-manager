@@ -14,5 +14,5 @@ class Message(BaseModel):
 
 
 class ResponseModel(BaseModel):
-    warnings: t.Optional[t.List["Message"]]
-    errors: t.Optional[t.List["Message"]]
+    warnings: t.Optional[list["Message"]]
+    errors: t.Optional[list["Message"]]

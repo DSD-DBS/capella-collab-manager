@@ -3,8 +3,6 @@
 
 from __future__ import annotations
 
-import typing as t
-
 from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -81,7 +79,7 @@ def get_current_user(
 
 @router.get(
     "/",
-    response_model=t.List[ProjectUser],
+    response_model=list[ProjectUser],
     dependencies=[
         Depends(
             auth_injectables.ProjectRoleVerification(

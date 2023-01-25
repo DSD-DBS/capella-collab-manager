@@ -43,8 +43,8 @@ class DatabaseGitInstance(Base):
 
 
 class GetRevisionsResponseModel(BaseModel):
-    branches: t.List[str]
-    tags: t.List[str]
+    branches: list[str]
+    tags: list[str]
     default: t.Optional[str]
 
 

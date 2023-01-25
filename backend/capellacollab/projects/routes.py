@@ -3,7 +3,6 @@
 
 
 import logging
-import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException
 from slugify import slugify
@@ -43,7 +42,7 @@ router = APIRouter(
 
 @router.get(
     "/",
-    response_model=t.List[Project],
+    response_model=list[Project],
     tags=["Projects"],
 )
 def get_projects(
@@ -51,7 +50,7 @@ def get_projects(
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
     log: logging.LoggerAdapter = Depends(get_request_logger),
-) -> t.List[DatabaseProject]:
+) -> list[DatabaseProject]:
     if auth_injectables.RoleVerification(
         required_role=Role.ADMIN, verify=False
     )(token, db):
