@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 import capellacollab.projects.users.crud as project_crud
 import capellacollab.users.events.crud as event_crud
-from capellacollab.core.authentication.database import RoleVerification
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.database import get_db
 from capellacollab.sessions import routes as session_routes
 from capellacollab.users.events.models import EventType
@@ -19,7 +19,9 @@ from .injectables import get_existing_user, get_own_user
 from .models import DatabaseUser, PatchUserRoleRequest, PostUser, Role, User
 
 router = APIRouter(
-    dependencies=[Depends(RoleVerification(required_role=Role.USER))]
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.USER))
+    ]
 )
 
 
@@ -33,7 +35,9 @@ def get_current_user(
 @router.get(
     "/{user_id}",
     response_model=User,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def get_user(user: DatabaseUser = Depends(get_existing_user)) -> DatabaseUser:
     return user
@@ -42,7 +46,9 @@ def get_user(user: DatabaseUser = Depends(get_existing_user)) -> DatabaseUser:
 @router.get(
     "/",
     response_model=list[User],
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def get_users(db: Session = Depends(get_db)) -> list[DatabaseUser]:
     return crud.get_users(db)
@@ -51,7 +57,9 @@ def get_users(db: Session = Depends(get_db)) -> list[DatabaseUser]:
 @router.post(
     "/",
     response_model=User,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def create_user(
     post_user: PostUser,
@@ -68,7 +76,9 @@ def create_user(
 @router.patch(
     "/{user_id}/roles",
     response_model=User,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def update_role_of_user(
     patch_user: PatchUserRoleRequest,
@@ -96,7 +106,9 @@ def update_role_of_user(
 @router.delete(
     "/{user_id}",
     status_code=204,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def delete_user(
     user: DatabaseUser = Depends(get_existing_user),

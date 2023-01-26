@@ -8,10 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from capellacollab.core import database
-from capellacollab.core.authentication.database import (
-    ProjectRoleVerification,
-    RoleVerification,
-)
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects.toolmodels.backups import crud as backups_crud
 from capellacollab.projects.toolmodels.injectables import (
     get_existing_capella_model,
@@ -37,7 +34,11 @@ from capellacollab.users.models import Role
 
 router = APIRouter(
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 
@@ -66,7 +67,9 @@ def get_t4c_model(
 @router.post(
     "",
     response_model=T4CModel,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def create_t4c_model(
     body: SubmitT4CModel,
@@ -89,7 +92,9 @@ def create_t4c_model(
 @router.patch(
     "/{t4c_model_id}",
     response_model=T4CModel,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def edit_t4c_model(
     body: SubmitT4CModel,
@@ -103,7 +108,11 @@ def edit_t4c_model(
     "/{t4c_model_id}",
     status_code=204,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
 )
 def delete_t4c_model(

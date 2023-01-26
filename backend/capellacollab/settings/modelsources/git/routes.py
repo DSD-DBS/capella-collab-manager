@@ -6,7 +6,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from capellacollab.core.authentication.database import RoleVerification
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.database import get_db
 from capellacollab.settings.modelsources.git import crud
 from capellacollab.settings.modelsources.git.core import get_remote_refs
@@ -35,7 +35,9 @@ def list_git_settings(
 @router.get(
     "/{git_setting_id}",
     response_model=GitInstance,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def get_git_setting(
     git_setting: DatabaseGitInstance = Depends(get_existing_git_setting),
@@ -46,7 +48,9 @@ def get_git_setting(
 @router.post(
     "/",
     response_model=GitInstance,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def create_git_settings(
     post_git_setting: PostGitInstance,
@@ -58,7 +62,9 @@ def create_git_settings(
 @router.put(
     "/{git_setting_id}",
     response_model=GitInstance,
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def edit_git_settings(
     put_git_setting: PostGitInstance,
@@ -70,7 +76,9 @@ def edit_git_settings(
 
 @router.delete(
     "/{git_setting_id}",
-    dependencies=[Depends(RoleVerification(required_role=Role.ADMIN))],
+    dependencies=[
+        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+    ],
 )
 def delete_git_settings(
     git_setting: DatabaseGitInstance = Depends(get_existing_git_setting),

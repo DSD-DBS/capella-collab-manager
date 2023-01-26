@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from capellacollab.core import database
-from capellacollab.core.authentication.database import ProjectRoleVerification
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.database import get_db
 from capellacollab.projects.users.models import ProjectUserRole
 
@@ -18,7 +18,11 @@ from .models import ToolModelRestrictions
 
 router = APIRouter(
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.ADMIN))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.ADMIN
+            )
+        )
     ],
 )
 

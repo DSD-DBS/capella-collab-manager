@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import Session
 
-from capellacollab.core.authentication.database import ProjectRoleVerification
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.database import get_db
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.models import ProjectUserRole
@@ -28,7 +28,11 @@ from .restrictions.routes import router as router_restrictions
 
 router = APIRouter(
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.USER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.USER
+            )
+        )
     ],
 )
 
@@ -53,7 +57,11 @@ def get_model_by_slug(
     "/",
     response_model=CapellaModel,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
     tags=["Projects - Models"],
 )
@@ -80,7 +88,11 @@ def create_new(
     "/{model_slug}",
     response_model=CapellaModel,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
     tags=["Projects - Models"],
 )
@@ -115,7 +127,11 @@ def patch_capella_model(
     "/{model_slug}",
     status_code=204,
     dependencies=[
-        Depends(ProjectRoleVerification(required_role=ProjectUserRole.MANAGER))
+        Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
     ],
     tags=["Projects - Models"],
 )

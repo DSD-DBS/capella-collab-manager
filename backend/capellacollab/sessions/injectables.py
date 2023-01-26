@@ -4,7 +4,7 @@
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from capellacollab.core.authentication.database import RoleVerification
+from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import get_db
@@ -26,7 +26,9 @@ def get_existing_session(
         )
     if not (
         session.owner_name == get_username(token)
-        or RoleVerification(required_role=Role.ADMIN, verify=False)(token, db)
+        or auth_injectables.RoleVerification(
+            required_role=Role.ADMIN, verify=False
+        )(token, db)
     ):
         raise HTTPException(
             403,
