@@ -15,17 +15,17 @@ import { SessionService } from '../service/session.service';
 import { UserSessionService } from '../service/user-session.service';
 
 @Component({
-  selector: 'app-persistent-session',
-  templateUrl: './persistent-session.component.html',
-  styleUrls: ['./persistent-session.component.css'],
+  selector: 'app-create-persistent-session',
+  templateUrl: './create-persistent-session.component.html',
+  styleUrls: ['./create-persistent-session.component.css'],
 })
-export class PersistentSessionComponent implements OnInit, OnDestroy {
-  persistenSession?: Session = undefined;
+export class CreatePersistentSessionComponent implements OnInit, OnDestroy {
+  persistentSession?: Session = undefined;
   private persistentSessionsSubscription?: Subscription;
 
   versions: ToolVersion[] = [];
 
-  public form = new FormGroup({
+  public toolSelectionForm = new FormGroup({
     toolId: new FormControl(null, Validators.required),
     versionId: new FormControl(null, Validators.required),
   });
@@ -41,7 +41,7 @@ export class PersistentSessionComponent implements OnInit, OnDestroy {
 
     this.persistentSessionsSubscription =
       this.userSessionService.persistentSessions.subscribe(
-        (sessions) => (this.persistenSession = sessions?.at(0))
+        (sessions) => (this.persistentSession = sessions?.at(0))
       );
   }
 
@@ -50,14 +50,14 @@ export class PersistentSessionComponent implements OnInit, OnDestroy {
   }
 
   requestPersistentSession() {
-    if (!this.form.valid && !this.persistenSession) {
+    if (!this.toolSelectionForm.valid && !this.persistentSession) {
       return;
     }
 
     this.sessionService
       .createPersistentSession(
-        this.form.controls.toolId.value!,
-        this.form.controls.versionId.value!
+        this.toolSelectionForm.controls.toolId.value!,
+        this.toolSelectionForm.controls.versionId.value!
       )
       .subscribe(() => this.userSessionService.loadSessions());
   }
