@@ -5,7 +5,7 @@ default_install_hook_types: [commit-msg, pre-commit]
 default_stages: [commit, merge-commit]
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.2.0
+    rev: v4.4.0
     hooks:
       - id: check-added-large-files
       - id: check-builtin-literals
@@ -27,7 +27,7 @@ repos:
       - id: fix-byte-order-marker
       - id: trailing-whitespace
   - repo: https://github.com/psf/black
-    rev: 22.6.0
+    rev: 22.12.0
     hooks:
       - id: black
         entry: bash -c "cd backend && black ."
@@ -38,7 +38,7 @@ repos:
         types: [python]
         exclude: "^backend/"
   - repo: https://github.com/PyCQA/isort
-    rev: 5.10.1
+    rev: 5.11.4
     hooks:
       - id: isort
         entry: bash -c "cd backend && isort ."
@@ -54,12 +54,12 @@ repos:
         files: "^backend/capellacollab"
         exclude: "^backend/capellacollab/alembic/"
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v2.7.1"
+    rev: v2.7.1
     hooks:
       - id: prettier
         types_or: [ts, css, html, markdown]
   - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.1.13
+    rev: v1.4.2
     hooks:
       - id: insert-license
         name: Insert license headers (shell-style comments)
@@ -111,7 +111,7 @@ repos:
           - --comment-style
           - "..|  |"
   - repo: https://github.com/fsfe/reuse-tool
-    rev: v1.0.0
+    rev: v1.1.0
     hooks:
       - id: reuse
   - repo: https://github.com/pre-commit/mirrors-eslint
@@ -134,6 +134,6 @@ repos:
         types: []
         types_or: ["html", "ts"]
   - repo: https://github.com/qoomon/git-conventional-commits
-    rev: v2.1.0
+    rev: v2.4.1
     hooks:
       - id: conventional-commits
