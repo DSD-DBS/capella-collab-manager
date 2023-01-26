@@ -49,10 +49,10 @@ guacamole:
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE)
 
 capella:
-	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS=$(CAPELLA_VERSIONS) capella/remote capella/readonly
+	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(CAPELLA_VERSIONS)" capella/remote capella/readonly
 
 t4c-client:
-	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS=$(T4C_CLIENT_VERSIONS) t4c/client/remote t4c/client/backup
+	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(T4C_CLIENT_VERSIONS)" t4c/client/remote t4c/client/backup
 
 docs:
 	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user
