@@ -30,7 +30,7 @@ class RoleVerification:
             db=db, username=helper.get_username(token)
         ).role
         if (
-            role == users_models.Role.USER
+            role != users_models.Role.ADMIN
             and self.required_role == users_models.Role.ADMIN
         ):
             if self.verify:
