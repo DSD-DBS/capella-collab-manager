@@ -4,10 +4,7 @@
 name: Development documentation
 on:
   push:
-    branches:
-      - staging
-      - v2/staging # To be removed when v2/staging will be the new staging.
-      - v2/docs
+    branches: [ main ]
 jobs:
   deploy:
     runs-on: ubuntu-latest

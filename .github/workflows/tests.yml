@@ -7,7 +7,7 @@ on:
     branches: ['**']
     tags: ["v*.*.*"]
   pull_request:
-    branches: [master, staging, "v2/staging"]
+    branches: [ main ]
 
 jobs:
   backend:
