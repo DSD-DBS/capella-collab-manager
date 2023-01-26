@@ -18,14 +18,23 @@ a {
   text-decoration: none !important;
 }
 
+h2 {
+  margin: 0px !important;
+}
+
 .dialog {
   padding: 20px;
 }
+
 table {
   table-layout: auto;
   border-collapse: separate;
   border-spacing: 2px;
   width: 100%;
+}
+
+.scrollable {
+  overflow-y: scroll;
 }
 
 /* All global variables are defined here */

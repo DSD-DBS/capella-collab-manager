@@ -51,6 +51,10 @@ export class ModelService {
   _model = new BehaviorSubject<Model | undefined>(undefined);
   _models = new BehaviorSubject<Model[] | undefined>(undefined);
 
+  backendURLFactory(projectSlug: string, modelSlug: string) {
+    return `${this.base_url}${projectSlug}/models/${modelSlug}`;
+  }
+
   get model(): Model | undefined {
     return this._model.value;
   }

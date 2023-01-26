@@ -3,11 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { BeautifyService } from 'src/app/services/beatify/beautify.service';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription, timer } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BeautifyService } from 'src/app/services/beatify/beautify.service';
 import { Session } from '../../schemes';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
 import { SessionService } from '../service/session.service';

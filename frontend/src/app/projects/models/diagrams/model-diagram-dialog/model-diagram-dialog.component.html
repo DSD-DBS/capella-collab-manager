@@ -1,0 +1,38 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+<div class="dialog">
+  <div *ngIf="selectedDiagram"></div>
+  <div class="header">
+    <h2>View diagrams</h2>
+    <span>Last update: Yesterday 10:00am</span>
+    <mat-form-field id="search" appearance="outline">
+      <mat-label>Search</mat-label>
+      <input
+        [(ngModel)]="search"
+        autocomplete="off"
+        matInput
+        placeholder="Diagram name or uuid"
+      />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+  <mat-list class="diagrams scrollable">
+    <div *ngFor="let diagram of filteredDiagrams()">
+      <div class="list-item">
+        <div class="diagram-metadata">
+          <div class="diagram-name">{{ diagram.name }}</div>
+          <div>UUID: {{ diagram.uuid }}</div>
+        </div>
+        <div class="diagram-actions">
+          <button (click)="downloadDiagram(diagram.uuid)" mat-raised-button>
+            <mat-icon>cloud_download</mat-icon>
+          </button>
+          <button mat-raised-button>Open</button>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+    </div>
+  </mat-list>
+</div>

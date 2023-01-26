@@ -15,6 +15,7 @@ from capellacollab.tools.models import Nature, Tool, Version
 
 from . import crud
 from .backups.routes import router as router_backups
+from .diagrams.routes import router as router_diagrams
 from .injectables import get_existing_capella_model, get_existing_project
 from .models import (
     CapellaModel,
@@ -184,4 +185,9 @@ router.include_router(
     router_restrictions,
     prefix="/{model_slug}/restrictions",
     tags=["Projects - Models - Restrictions"],
+)
+router.include_router(
+    router_diagrams,
+    prefix="/{model_slug}/diagrams",
+    tags=["Projects - Models - Diagrams"],
 )
