@@ -51,10 +51,6 @@ a {
   border-radius: 5px;
 }
 
-.mat-dialog-actions {
-  justify-content: right;
-}
-
 .copy {
   cursor: copy;
 }

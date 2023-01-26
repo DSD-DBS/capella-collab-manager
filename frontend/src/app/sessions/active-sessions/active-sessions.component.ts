@@ -4,7 +4,7 @@
  */
 
 import { Component } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
 import { Session } from '../../schemes';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';

@@ -18,6 +18,9 @@ a {
   text-decoration: none !important;
 }
 
+.dialog {
+  padding: 20px;
+}
 table {
   table-layout: auto;
   border-collapse: separate;

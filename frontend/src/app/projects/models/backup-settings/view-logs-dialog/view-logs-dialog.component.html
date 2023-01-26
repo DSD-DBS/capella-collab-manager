@@ -3,14 +3,14 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper">
+<div class="wrapper dialog">
   <div class="header">
     <h1>Logs</h1>
     <mat-spinner [diameter]="25" *ngIf="loading"></mat-spinner>
     The logs are automatically updated
   </div>
   <div class="content" [innerText]="logs"></div>
-  <div mat-dialog-actions class="buttons">
+  <div class="buttons">
     <button mat-button mat-dialog-close cdkFocusInitial>Close</button>
   </div>
 </div>

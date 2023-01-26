@@ -3,8 +3,8 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<h1 mat-dialog-title>Remove T4C repository</h1>
-<div mat-dialog-content>
+<h1>Remove T4C repository</h1>
+<div>
   <p>
     Do you really want to delete the T4C repository
     <span class="monospace">{{ repo.name }}</span
@@ -32,7 +32,7 @@ Please type in the name of the repository to confirm the deletion: <br />
     </mat-error>
   </mat-form-field>
 
-  <div mat-dialog-actions class="flex-space-between">
+  <div class="flex-space-between">
     <button type="button" mat-button (click)="this.dialogRef.close(false)">
       Cancel
     </button>

@@ -4,9 +4,9 @@
  -->
 
 <form (ngSubmit)="requestSession()">
-  <h2 mat-dialog-title>Open Readonly Session</h2>
+  <h2>Open Readonly Session</h2>
   <p>Select the models and revisions you want to load in a readonly session.</p>
-  <mat-dialog-content>
+  <div>
     <div *ngFor="let options of modelOptions">
       <new-readonly-model-options
         [projectSlug]="data.project.slug"
@@ -14,7 +14,7 @@
       >
       </new-readonly-model-options>
     </div>
-  </mat-dialog-content>
+  </div>
   <div class="flex-space-between">
     <button mat-flat-button mat-dialog-close>Cancel</button>
     <button mat-flat-button mat-dialog-close color="primary" type="submit">

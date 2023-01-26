@@ -3,8 +3,8 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<h1 mat-dialog-title>Remove Tool</h1>
-<div mat-dialog-content>
+<h1>Remove Tool</h1>
+<div>
   <p>
     Do you really want to delete the Tool
     <span class="monospace">{{ tool.name }}</span
@@ -14,7 +14,7 @@
   <p><b>The deletion cannot be undone!</b></p>
 </div>
 Please remove all models with this tool before deletion. <br />
-<div mat-dialog-actions class="flex-space-between">
+<div class="flex-space-between">
   <button type="button" mat-button (click)="this.dialogRef.close(false)">
     Cancel
   </button>
