@@ -7,16 +7,25 @@
   <h1>Active Sessions</h1>
 </div>
 
-<mat-spinner *ngIf="sessions === undefined"></mat-spinner>
+<ngx-skeleton-loader
+  *ngIf="(userSessionService.sessions | async) === undefined"
+  appearance="circle"
+  [theme]="{
+    'border-radius': '5px',
+    height: '240px',
+    width: '432px',
+    border: '1px solid white'
+  }"
+></ngx-skeleton-loader>
 
-<mat-card *ngIf="sessions && !sessions.length">
+<mat-card *ngIf="userSessionService.sessions | async">
   <h2>No active sessions</h2>
   <div class="content">
     No active sessions for your user are found in our system. <br />
   </div>
 </mat-card>
 
-<mat-card *ngFor="let session of sessions">
+<mat-card *ngFor="let session of userSessionService.sessions | async">
   <div class="type">
     <h2 *ngIf="session.type === 'persistent'">Persistent workspace session</h2>
     <h2 *ngIf="session.type === 'readonly'">Read-only session</h2>

@@ -3,9 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { Subscription } from 'rxjs';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
 import { Session } from '../../schemes';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
@@ -19,34 +18,20 @@ import { FileBrowserComponent } from './file-browser/file-browser.component';
   templateUrl: './active-sessions.component.html',
   styleUrls: ['./active-sessions.component.css'],
 })
-export class ActiveSessionsComponent implements OnInit, OnDestroy {
+export class ActiveSessionsComponent {
   sessions?: Session[] = undefined;
-  private sessionsSubscription?: Subscription;
 
   constructor(
     public sessionService: SessionService,
     public beautifyService: BeautifyService,
-    private userSessionService: UserSessionService,
+    public userSessionService: UserSessionService,
     private dialog: MatDialog
   ) {}
-
-  ngOnInit(): void {
-    this.sessionsSubscription = this.userSessionService.sessions.subscribe(
-      (sessions) => (this.sessions = sessions)
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.sessionsSubscription?.unsubscribe();
-  }
 
   openDeletionDialog(sessions: Session[]): void {
     const dialogRef = this.dialog.open(DeleteSessionDialogComponent, {
       data: sessions,
     });
-
-    if (sessions.length) {
-    }
 
     dialogRef.afterClosed().subscribe(() => {
       this.userSessionService.loadSessions();
