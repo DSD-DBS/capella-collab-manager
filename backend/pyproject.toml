@@ -39,7 +39,7 @@ dependencies = [
   "python-jose",
   "python-multipart",
   "requests_oauthlib",
-  "sqlalchemy",
+  "sqlalchemy<2.0.0",
   "uvicorn[standard]",
   "python-slugify[unidecode]",
   "jsonschema",
