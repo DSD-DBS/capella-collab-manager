@@ -5,6 +5,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+import capellacollab.tools.models as tools_models
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 from capellacollab.projects.toolmodels.modelsources.t4c.models import (
@@ -54,7 +55,7 @@ def get_user_t4c_repositories(
         .join(DatabaseT4CRepository.models)
         .join(DatabaseT4CModel.model)
         .join(DatabaseCapellaModel.version)
-        .where(Version.name == version_name)
+        .where(tools_models.Version.name == version_name)
     )
 
     stmt = (
