@@ -40,6 +40,8 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
   @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 
+  private projectSlug?: string = undefined;
+
   editing = false;
   loading = false;
 
@@ -85,6 +87,10 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.loading = false;
       });
+
+    this.projectService.project.subscribe(
+      (project) => (this.projectSlug = project?.slug)
+    );
   }
 
   fetchT4CInstances(): Observable<T4CInstance[]> {
@@ -145,7 +151,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
     if (this.t4cModelService.t4cModel) {
       this.t4cModelService
         .patchT4CModel(
-          this.projectService.project!.slug,
+          this.projectSlug!, // TODO: Check if we can actually use ! here
           this.modelService.model!.slug,
           this.t4cModelService.t4cModel.id,
           this.form.value as SubmitT4CModel
@@ -161,7 +167,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
     } else {
       this.t4cModelService
         .createT4CModel(
-          this.projectService.project!.slug,
+          this.projectSlug!, // TODO: Check if we can actually use ! here
           this.modelService.model!.slug,
           this.form.value as SubmitT4CModel
         )
@@ -190,7 +196,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
 
     this.t4cModelService
       .unlinkT4CModel(
-        this.projectService.project?.slug!,
+        this.projectSlug!, // TODO: Check if we can actually use ! here
         this.modelService.model?.slug!,
         this.t4cModel!.id
       )
@@ -201,8 +207,8 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
             `${this.t4cModel!.name} has been deleted`
           );
           this.router.navigateByUrl(
-            `/project/${this.projectService.project?.slug!}/model/${this
-              .modelService.model?.slug!}`
+            `/project/${this.projectSlug!}/model/${this.modelService.model // TODO: Check if we can actually use ! here
+              ?.slug!}`
           );
         },
         error: () => {

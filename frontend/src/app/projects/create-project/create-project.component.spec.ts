@@ -22,7 +22,11 @@ import {
 } from 'src/../tests/spec-helper/element.spec-helper';
 
 import { ToastService } from '../../helpers/toast/toast.service';
-import { Project, ProjectService } from '../service/project.service';
+import {
+  PatchProject,
+  Project,
+  ProjectService,
+} from '../service/project.service';
 import { CreateProjectComponent } from './create-project.component';
 
 const mockProjects: Project[] = [
@@ -50,31 +54,34 @@ describe('CreateProjectComponent', () => {
     showSuccess(): void {},
   };
 
-  const fakeProjectService: Pick<
-    ProjectService,
-    '_project' | '_projects' | 'list' | 'createProject' | 'project' | 'projects'
-  > = {
+  const fakeProjectService = {
     _project: new BehaviorSubject<Project | undefined>(undefined),
     _projects: new BehaviorSubject<Project[] | undefined>(undefined),
-    list() {
+
+    get project(): Observable<Project | undefined> {
+      return this._project.asObservable();
+    },
+
+    get projects(): Observable<Project[] | undefined> {
+      return this._projects.asObservable();
+    },
+
+    loadProjects() {
       this._projects.next(mockProjects);
       return of(mockProjects);
     },
-    createProject(project: Project): Observable<Project> {
+    createProject(project: PatchProject): Observable<Project> {
       let projectToCreate: Project = {
-        name: project.name,
-        description: project.description,
-        slug: project.name,
+        name: project.name!,
+        description: project.description!,
+        slug: project.name!,
         users: { leads: 1, contributors: 0, subscribers: 0 },
       };
       this._project.next(projectToCreate);
       return of(projectToCreate);
     },
-    get projects(): Project[] | undefined {
-      return this._projects.value;
-    },
-    get project(): Project | undefined {
-      return this._project.value;
+    clearProject(): void {
+      this._project.next(undefined);
     },
   };
 
@@ -129,13 +136,10 @@ describe('CreateProjectComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fakeProjectService.createProject).toHaveBeenCalledOnceWith(
-      {
-        name: testProjectName,
-        description: '',
-      },
-      true
-    );
+    expect(fakeProjectService.createProject).toHaveBeenCalledOnceWith({
+      name: testProjectName,
+      description: '',
+    });
     expect(fakeToastService.showSuccess).toHaveBeenCalledTimes(1);
   });
 
@@ -149,13 +153,10 @@ describe('CreateProjectComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fakeProjectService.createProject).toHaveBeenCalledOnceWith(
-      {
-        name: testProjectName,
-        description: testProjectDescription,
-      },
-      true
-    );
+    expect(fakeProjectService.createProject).toHaveBeenCalledOnceWith({
+      name: testProjectName,
+      description: testProjectDescription,
+    });
     expect(fakeToastService.showSuccess).toHaveBeenCalledTimes(1);
   });
 

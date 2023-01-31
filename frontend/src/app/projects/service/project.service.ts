@@ -12,64 +12,75 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class ProjectService {
-  base_url = environment.backend_url + '/projects/';
-
-  _project = new BehaviorSubject<Project | undefined>(undefined);
-  _projects = new BehaviorSubject<Project[] | undefined>(undefined);
-
-  get project() {
-    return this._project.value;
-  }
-
-  get projects() {
-    return this._projects.value;
-  }
+  BACKEND_URL_PREFIX = environment.backend_url + '/projects';
 
   constructor(private http: HttpClient) {}
 
-  getProjectBySlug(slug: string): Observable<Project> {
-    return this.http.get<Project>(this.base_url + slug);
+  private _project = new BehaviorSubject<Project | undefined>(undefined);
+  private _projects = new BehaviorSubject<Project[] | undefined>(undefined);
+
+  readonly project = this._project.asObservable();
+  readonly projects = this._projects.asObservable();
+
+  loadProjects(): void {
+    this.http.get<Project[]>(this.BACKEND_URL_PREFIX).subscribe({
+      next: (projects) => this._projects.next(projects),
+      error: () => this._projects.next(undefined),
+    });
   }
 
-  list(): Observable<Project[]> {
-    return this.http
-      .get<Project[]>(this.base_url)
-      .pipe(tap((projects: Project[]) => this._projects.next(projects)));
-  }
-
-  getProject(name: string): Observable<Project> {
-    return this.http.get<Project>(this.base_url + name);
+  loadProjectBySlug(slug: string): void {
+    this.http.get<Project>(`${this.BACKEND_URL_PREFIX}/${slug}`).subscribe({
+      next: (project) => this._project.next(project),
+      error: () => this._project.next(undefined),
+    });
   }
 
   updateProject(
     project_slug: string,
     project: PatchProject
   ): Observable<Project> {
-    return this.http.patch<Project>(this.base_url + project_slug, project);
-  }
-
-  createProject(
-    project: Required<PatchProject>,
-    update?: boolean
-  ): Observable<Project> {
-    let observable = this.http.post<Project>(this.base_url, project);
-    if (update) {
-      observable = observable.pipe(
+    // TODO: Check if return needed
+    return this.http
+      .patch<Project>(`${this.BACKEND_URL_PREFIX}/${project_slug}`, project)
+      .pipe(
         tap({
-          next: (value) => {
-            this._project.next(value);
+          next: (project) => {
+            this.loadProjects();
+            this._project.next(project);
           },
-          error: (_) => {
-            this._project.next(undefined);
-          },
+          error: () => this._project.next(undefined),
         })
       );
-    }
-    return observable;
+  }
+
+  createProject(project: Required<PatchProject>): Observable<Project> {
+    // TODO: Check if return needed
+    return this.http.post<Project>(this.BACKEND_URL_PREFIX, project).pipe(
+      tap({
+        next: (project) => {
+          this.loadProjects();
+          this._project.next(project);
+        },
+        error: () => this._project.next(undefined),
+      })
+    );
   }
 
   deleteProject(projectSlug: string): Observable<void> {
-    return this.http.delete<void>(this.base_url + projectSlug);
+    return this.http
+      .delete<void>(`${this.BACKEND_URL_PREFIX}/${projectSlug}`)
+      .pipe(
+        tap(() => {
+          this.loadProjects();
+          this._project.next(undefined);
+        })
+      );
+  }
+
+  // TODO: Check whether we really need this
+  clearProject(): void {
+    this._project.next(undefined);
   }
 }
 

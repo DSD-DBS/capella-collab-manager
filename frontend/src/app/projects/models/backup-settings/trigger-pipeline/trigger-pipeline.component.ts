@@ -10,6 +10,8 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { combineLatest } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   Model,
@@ -21,6 +23,7 @@ import { CreateBackupComponent } from '../create-backup/create-backup.component'
 import { BackupService, Pipeline } from '../service/backup.service';
 import { ViewLogsDialogComponent } from '../view-logs-dialog/view-logs-dialog.component';
 
+@UntilDestroy({ checkProperties: true })
 @Component({
   selector: 'app-trigger-pipeline',
   templateUrl: './trigger-pipeline.component.html',
@@ -28,6 +31,9 @@ import { ViewLogsDialogComponent } from '../view-logs-dialog/view-logs-dialog.co
 })
 export class TriggerPipelineComponent implements OnInit {
   selectedPipeline?: Pipeline = undefined;
+
+  private projectSlug?: string = undefined;
+  private modelSlug?: string = undefined;
 
   configurationForm = new FormGroup({
     includeHistory: new FormControl(false),
@@ -46,12 +52,15 @@ export class TriggerPipelineComponent implements OnInit {
 
   ngOnInit(): void {
     this.modelService._model.next(this.data.model);
-    this.backupService
-      .getBackups(
-        this.projectService.project!.slug,
-        this.modelService.model!.slug
-      )
-      .subscribe();
+
+    combineLatest([
+      this.projectService.project,
+      this.modelService._model.asObservable(),
+    ]).subscribe(([project, model]) => {
+      this.projectSlug = project?.slug;
+      this.modelSlug = model?.slug;
+      this.backupService.getBackups(project!.slug, model!.slug).subscribe(); // TODO: Check if we can actually use !. here
+    });
   }
 
   selectPipeline(pipeline: Pipeline) {
@@ -61,8 +70,8 @@ export class TriggerPipelineComponent implements OnInit {
   runPipeline() {
     this.backupService
       .triggerRun(
-        this.projectService.project!.slug,
-        this.modelService.model!.slug,
+        this.projectSlug!, // TODO: Check if we can actually use ! here
+        this.modelSlug!, // TODO: Check if we can actually use ! here
         this.selectedPipeline!.id,
         this.configurationForm.value.includeHistory!
       )
@@ -71,16 +80,15 @@ export class TriggerPipelineComponent implements OnInit {
           'Pipeline triggered',
           'You can check the current status in the pipeline settings.'
         );
-        this.dialogRef.close();
+        this.closeDialog();
       });
   }
 
   estimateTime(): string {
     if (this.configurationForm.value.includeHistory) {
       return '1-6 hours';
-    } else {
-      return '5-10 minutes';
     }
+    return '5-10 minutes';
   }
 
   closeDialog(): void {
@@ -89,43 +97,34 @@ export class TriggerPipelineComponent implements OnInit {
 
   removeBackup(backup: Pipeline): void {
     this.backupService
-      .removeBackup(
-        this.projectService.project!.slug,
-        this.modelService.model!.slug,
-        backup.id
-      )
+      .removeBackup(this.projectSlug!, this.modelSlug!, backup.id) // TODO: Check if we can actually use ! here
       .subscribe(() => {
         this.toastService.showSuccess(
           'Backup pipeline deleted',
           `The pipeline with the ID ${backup.id} has been deleted`
         );
-        this.dialogRef.close();
+        this.closeDialog();
       });
   }
 
   viewLogs(backup: Pipeline): void {
     this.dialog.open(ViewLogsDialogComponent, {
       data: {
-        modelSlug: this.modelService.model!.slug,
+        projectSlug: this.projectSlug!, // TODO: Check if we can actually use ! here
+        modelSlug: this.modelSlug!, // TODO: Check if we can actually use ! here
         job_id: backup.lastrun.id,
         backup_id: backup.id,
-        project: this.projectService.project!.slug,
       },
     });
   }
 
   createNewBackup(): void {
-    const dialogRef = this.dialog.open(CreateBackupComponent, {
-      data: { project: this.projectService.project!.slug },
-    });
+    const dialogRef = this.dialog.open(CreateBackupComponent);
 
     dialogRef.afterClosed().subscribe((success) => {
       if (success) {
         this.backupService
-          .getBackups(
-            this.projectService.project!.slug,
-            this.modelService.model!.slug
-          )
+          .getBackups(this.projectSlug!, this.modelSlug!) // TODO: Check if we can actually use ! here
           .subscribe();
       }
     });

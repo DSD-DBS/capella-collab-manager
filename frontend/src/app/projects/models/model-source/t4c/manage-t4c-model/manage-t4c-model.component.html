@@ -4,7 +4,7 @@
  -->
 
 <div
-  *ngIf="projectService.project && modelService.model"
+  *ngIf="(projectService.project | async) && modelService.model"
   class="wrapper flex-center"
 >
   <mat-card class="section-card">

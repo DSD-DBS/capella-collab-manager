@@ -26,6 +26,8 @@ export class ModelRestrictionsComponent implements OnInit {
   loading = false;
   modelServiceSubscription?: Subscription;
 
+  private projectSlug?: string = undefined;
+
   constructor(
     public projectService: ProjectService,
     public modelService: ModelService,
@@ -47,6 +49,10 @@ export class ModelRestrictionsComponent implements OnInit {
       .subscribe((model: Model) => {
         this.updateRestrictionsForm(model.restrictions);
       });
+
+    this.projectService.project.subscribe(
+      (project) => (this.projectSlug = project?.slug)
+    );
   }
 
   private updateRestrictionsForm(restrictions: ModelRestrictions) {
@@ -73,7 +79,7 @@ export class ModelRestrictionsComponent implements OnInit {
     this.loading = true;
     this.modelRestrictionService
       .patchModelRestrictions(
-        this.projectService.project!.slug,
+        this.projectSlug!, // TODO: Check if we can actually use ! here
         this.modelService.model!.slug,
         this.mapRestrictionsFormToToolModelRestrictionsObject()
       )

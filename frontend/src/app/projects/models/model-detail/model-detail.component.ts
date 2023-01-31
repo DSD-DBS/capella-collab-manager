@@ -4,7 +4,8 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { combineLatest } from 'rxjs';
 import {
   T4CModel,
   T4CModelService,
@@ -16,6 +17,7 @@ import {
 } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { ProjectService } from '../../service/project.service';
 
+@UntilDestroy({ checkProperties: true })
 @Component({
   selector: 'app-model-detail',
   templateUrl: './model-detail.component.html',
@@ -25,9 +27,6 @@ export class ModelDetailComponent implements OnInit, OnDestroy {
   public gitModels?: GetGitModel[] = undefined;
   public t4cModels?: T4CModel[] = undefined;
 
-  private gitModelsSubscription?: Subscription;
-  private t4cModelsSubscription?: Subscription;
-
   constructor(
     private gitModelService: GitModelService,
     public modelService: ModelService,
@@ -36,27 +35,24 @@ export class ModelDetailComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.gitModelsSubscription = this.gitModelService.gitModels.subscribe(
+    this.gitModelService.gitModels.subscribe(
       (gitModels) => (this.gitModels = gitModels)
     );
 
-    this.t4cModelsSubscription = this.t4cModelService
-      .listT4CModels(
-        this.projectService.project!.slug,
-        this.modelService.model!.slug
-      )
-      .subscribe((models) => (this.t4cModels = models));
+    combineLatest([
+      this.projectService.project,
+      this.modelService._model.asObservable(),
+    ]).subscribe(([project, model]) => {
+      this.t4cModelService
+        .listT4CModels(project?.slug!, model?.slug!) // TODO: Check if we can actually use ! here
+        .subscribe((models) => (this.t4cModels = models));
 
-    this.gitModelService.loadGitModels(
-      this.projectService.project!.slug,
-      this.modelService.model!.slug
-    );
+      this.gitModelService.loadGitModels(project?.slug!, model?.slug!);
+    });
   }
 
   ngOnDestroy(): void {
-    this.gitModelsSubscription?.unsubscribe();
     this.gitModelService.clear();
-    this.t4cModelsSubscription?.unsubscribe();
     this.t4cModelService.clear();
   }
 }

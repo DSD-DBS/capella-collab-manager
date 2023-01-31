@@ -5,12 +5,14 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { combineLatest, filter, map, Subscription, switchMap } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import { ProjectService } from 'src/app/projects/service/project.service';
 
+@UntilDestroy({ checkProperties: true })
 @Component({
   selector: 'app-t4c-model-wrapper',
   templateUrl: './t4c-model-wrapper.component.html',
@@ -29,7 +31,7 @@ export class T4cModelWrapperComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscription = combineLatest([
-      this.projectService._project.pipe(
+      this.projectService.project.pipe(
         filter(Boolean),
         map((project) => project.slug)
       ),

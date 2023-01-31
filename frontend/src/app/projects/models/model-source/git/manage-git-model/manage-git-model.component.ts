@@ -3,14 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -21,7 +14,8 @@ import {
   AsyncValidatorFn,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, map, Observable, of, Subscription } from 'rxjs';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { filter, map, Observable, of } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
@@ -48,12 +42,13 @@ import {
   GitInstancesService,
 } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
 
+@UntilDestroy({ checkProperties: true })
 @Component({
   selector: 'app-manage-git-model',
   templateUrl: './manage-git-model.component.html',
   styleUrls: ['./manage-git-model.component.css'],
 })
-export class ManageGitModelComponent implements OnInit, OnDestroy {
+export class ManageGitModelComponent implements OnInit {
   @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 
@@ -85,17 +80,13 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     primary: new FormControl(),
   });
 
+  private projectSlug?: string = undefined;
+
   private gitModelId?: number;
   public gitModel?: GetGitModel;
 
   public isEditMode: boolean = false;
   public editing: boolean = false;
-
-  private gitSettingsSubscription?: Subscription;
-  private modelSubscription?: Subscription;
-  private revisionsSubscription?: Subscription;
-  private gitModelSubscription?: Subscription;
-  private paramSubscription?: Subscription;
 
   constructor(
     public projectService: ProjectService,
@@ -114,18 +105,18 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.revisionsSubscription = this.gitService.revisions.subscribe(
-      (revisions) => {
-        this.availableRevisions = revisions;
-        this.form.controls.revision.updateValueAndValidity();
-      }
-    );
+    this.gitService.revisions.subscribe((revisions) => {
+      this.availableRevisions = revisions;
+      this.form.controls.revision.updateValueAndValidity();
+    });
 
     this.form.controls.revision.valueChanges.subscribe((value) =>
       this.filteredRevisionsByPrefix(value as string)
     );
+    this.gitSettingsService.gitSettings.subscribe((gitSettings) => {
+      this.availableGitInstances = gitSettings;
 
-    this.gitSettingsSubscription =
+<<<<<<< HEAD
       this.gitSettingsService.gitInstances.subscribe((gitSettings) => {
         this.availableGitInstances = gitSettings;
 
@@ -139,8 +130,32 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
           this.urls.inputUrl.addValidators([Validators.required]);
         }
       });
+      if (gitSettings.length) {
+        this.urls.baseUrl.setValidators([Validators.required]);
+        this.urls.inputUrl.setValidators([absoluteOrRelativeValidators()]);
+        this.form.controls.urls.setAsyncValidators([
+          this.resultUrlPrefixAsyncValidator(),
+        ]);
+      } else {
+        this.urls.inputUrl.addValidators([Validators.required]);
+      }
+    });
 
-    this.modelSubscription = this.modelService._model.subscribe((model) => {
+    this.modelService._model.subscribe((model) => {
+=======
+      if (gitSettings.length) {
+        this.urls.baseUrl.setValidators([Validators.required]);
+        this.urls.inputUrl.setValidators([absoluteOrRelativeValidators()]);
+        this.form.controls.urls.setAsyncValidators([
+          this.resultUrlPrefixAsyncValidator(),
+        ]);
+      } else {
+        this.urls.inputUrl.addValidators([Validators.required]);
+      }
+    });
+
+    this.modelService._model.subscribe((model) => {
+>>>>>>> b2ae2aac (feat: Apply new fetching approach to projects)
       if (model?.tool.name === 'Capella') {
         this.form.controls.entrypoint.addValidators(
           Validators.pattern(/^$|\.aird$/)
@@ -148,46 +163,43 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.paramSubscription = this.route.params
-      .pipe(
-        filter((params) => !!params['git-model']),
-        map((params) => params['git-model'])
-      )
-      .subscribe((gitModelId) => {
-        this.isEditMode = true;
-        this.gitModelId = gitModelId;
-        this.form.disable();
+    this.projectService.project.subscribe((project) => {
+      this.projectSlug = project?.slug;
 
-        this.gitModelSubscription = this.gitModelService.gitModel.subscribe(
-          (gitModel) => {
+      this.route.params
+        .pipe(
+          filter((params) => !!params['git-model']),
+          map((params) => params['git-model'])
+        )
+        .subscribe((gitModelId) => {
+          this.isEditMode = true;
+          this.gitModelId = gitModelId;
+          this.form.disable();
+
+          this.gitModelService.gitModel.subscribe((gitModel) => {
             this.gitModel = gitModel;
             this.fillFormWithGitModel(gitModel!);
             this.breadCrumbsService.updatePlaceholder({ gitModel });
             this.gitService.loadPrivateRevisions(
               gitModel!.path,
-              this.projectService.project?.slug!,
+              this.projectSlug!, // TODO: Check if we can actually use ! here
               this.modelService.model?.slug!,
               gitModelId
             );
-          }
-        );
+          });
 
-        this.gitModelService.loadGitModelById(
-          this.projectService.project!.slug,
-          this.modelService.model!.slug,
-          gitModelId
-        );
-      });
+          this.gitModelService.loadGitModelById(
+            this.projectSlug!, // TODO: Check if we can actually use ! here
+            this.modelService.model!.slug,
+            gitModelId
+          );
+        });
+    });
 
     this.gitSettingsService.loadGitInstances();
   }
 
   ngOnDestroy(): void {
-    this.gitSettingsSubscription?.unsubscribe();
-    this.modelSubscription?.unsubscribe();
-    this.revisionsSubscription?.unsubscribe();
-    this.gitModelSubscription?.unsubscribe();
-    this.paramSubscription?.unsubscribe();
     this.breadCrumbsService.updatePlaceholder({ gitModel: undefined });
   }
 
@@ -199,7 +211,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
       ) {
         this.gitService.loadPrivateRevisions(
           this.resultUrl,
-          this.projectService.project?.slug!,
+          this.projectSlug!, // TODO: Check if we can actually use ! here
           this.modelService.model?.slug!,
           this.gitModelId!
         );
@@ -257,7 +269,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     if (this.form.valid) {
       this.gitModelService
         .addGitSource(
-          this.projectService.project?.slug!,
+          this.projectSlug!, // TODO: Check if we can actually use ! here
           this.modelService.model?.slug!,
           this.createGitModelFromForm()
         )
@@ -278,7 +290,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
 
       this.gitModelService
         .updateGitRepository(
-          this.projectService.project?.slug!,
+          this.projectSlug!, // TODO: Check if we can actually use ! here
           this.modelService.model?.slug!,
           this.gitModelId!,
           patchGitModel
@@ -312,7 +324,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
 
     this.gitModelService
       .deleteGitSource(
-        this.projectService.project?.slug!,
+        this.projectSlug!, // TODO: Check if we can actually use ! here
         this.modelService.model?.slug!,
         this.gitModel!
       )
@@ -323,8 +335,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
             `${this.gitModel!.path} has been deleted`
           );
           this.router.navigateByUrl(
-            `/project/${this.projectService.project?.slug!}/model/${this
-              .modelService.model?.slug!}`
+            `/project/${this.projectSlug}/model/${this.modelService.model // TODO: Check if we can actually use ! here
+              ?.slug!}`
           );
         },
         error: () => {
@@ -412,7 +424,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
 
       return this.gitModelService
         .validatePath(
-          this.projectService.project?.slug!,
+          this.projectSlug!, // TODO: Check if we can actually use ! here
           this.modelService.model?.slug!,
           this.resultUrl
         )

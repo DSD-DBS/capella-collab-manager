@@ -3,7 +3,10 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper" *ngIf="projectService.project && modelService.model">
+<div
+  class="wrapper"
+  *ngIf="(projectService.project | async) && modelService.model"
+>
   <h1 class="title">Git Models</h1>
   <div class="flexbox">
     <a [routerLink]="['git-model', 'create']">
