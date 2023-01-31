@@ -13,7 +13,7 @@ import {
   ModelService,
 } from 'src/app/projects/models/service/model.service';
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { Project } from 'src/app/services/project/project.service';
+import { Project } from 'src/app/projects/service/project.service';
 import { ModelOptions } from 'src/app/sessions/new-readonly-session-dialog/new-readonly-model-options/new-readonly-model-options.component';
 import { SessionService } from '../service/session.service';
 

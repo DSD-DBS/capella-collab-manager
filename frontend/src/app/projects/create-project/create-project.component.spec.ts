@@ -20,12 +20,9 @@ import {
   findElByTestId,
   setFieldValue,
 } from 'src/../tests/spec-helper/element.spec-helper';
-import {
-  Project,
-  ProjectService,
-} from 'src/app/services/project/project.service';
 
 import { ToastService } from '../../helpers/toast/toast.service';
+import { Project, ProjectService } from '../service/project.service';
 import { CreateProjectComponent } from './create-project.component';
 
 const mockProjects: Project[] = [

@@ -37,12 +37,12 @@ import {
   GitModelService,
   PatchGitModel,
 } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
+import { ProjectService } from 'src/app/projects/service/project.service';
 import {
   Credentials,
   GitService,
   Revisions,
 } from 'src/app/services/git/git.service';
-import { ProjectService } from 'src/app/services/project/project.service';
 import {
   GitSetting,
   GitSettingsService,

@@ -20,8 +20,8 @@ import {
   ModelService,
   NewModel,
 } from 'src/app/projects/models/service/model.service';
-import { ProjectService } from 'src/app/services/project/project.service';
 import { ToolService } from 'src/app/settings/core/tools-settings/tool.service';
+import { ProjectService } from '../../service/project.service';
 
 @Component({
   selector: 'app-create-model-base',

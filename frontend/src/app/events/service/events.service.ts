@@ -6,7 +6,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Project } from 'src/app/services/project/project.service';
+import { Project } from 'src/app/projects/service/project.service';
 import { User } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
 

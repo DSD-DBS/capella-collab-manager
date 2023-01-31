@@ -4,8 +4,10 @@
  */
 
 import { Component, OnInit } from '@angular/core';
+import { ProjectService } from 'src/app/projects/service/project.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { UserService } from '../../services/user/user.service';
+import { NavBarService } from './service/nav-bar.service';
 
 @Component({
   selector: 'app-header',
@@ -15,7 +17,9 @@ import { UserService } from '../../services/user/user.service';
 export class HeaderComponent implements OnInit {
   constructor(
     public authService: AuthService,
-    public userService: UserService
+    public userService: UserService,
+    public projectService: ProjectService,
+    public navbarService: NavBarService
   ) {}
 
   ngOnInit(): void {

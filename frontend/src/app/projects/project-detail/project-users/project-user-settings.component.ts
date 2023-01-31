@@ -27,8 +27,8 @@ import {
   ProjectUserService,
   SimpleProjectUserRole,
 } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import { Project } from 'src/app/services/project/project.service';
 import { User, UserService } from 'src/app/services/user/user.service';
+import { Project } from '../../service/project.service';
 
 @Component({
   selector: 'app-project-user-settings',

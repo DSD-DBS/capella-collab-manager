@@ -14,7 +14,7 @@ import {
   GetGitModel,
   GitModelService,
 } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { ProjectService } from 'src/app/services/project/project.service';
+import { ProjectService } from '../../service/project.service';
 
 @Component({
   selector: 'app-model-detail',

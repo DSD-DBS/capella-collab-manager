@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import { ProjectService } from 'src/app/services/project/project.service';
+import { ProjectService } from '../service/project.service';
 
 @Component({
   selector: 'app-project-details',
