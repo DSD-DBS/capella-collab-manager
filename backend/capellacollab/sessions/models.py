@@ -42,7 +42,7 @@ class DatabaseSession(Base):
     project_id: str = sa.Column(
         sa.Integer, sa.ForeignKey("projects.id"), nullable=True
     )
-    project: "projects_models.DatabaseProject" = orm.relationship(
+    project: projects_models.DatabaseProject = orm.relationship(
         "DatabaseProject"
     )
     mac: str = sa.Column(sa.String)
