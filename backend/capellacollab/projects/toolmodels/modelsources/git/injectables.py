@@ -28,7 +28,7 @@ def get_existing_git_model(
     raise HTTPException(
         status_code=400,
         detail={
-            "err_code": "GIT_MODEL_NOT_EXISTANT",
+            "err_code": "GIT_MODEL_NOT_EXISTING",
             "reason": f"The git model ({git_model_id}) does not exists on the capella model for the project",
         },
     )

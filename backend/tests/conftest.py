@@ -60,44 +60,6 @@ def fixture_db(
         yield session
 
 
-def delete_all_tables_if_existent(_engine: sqlalchemy.engine.Engine) -> bool:
-    """Delete complete database structure (including the alembic table)
-    If one of the tables does not exist, this function doesn't raise an exception.
-
-    Parameters
-    ----------
-    engine
-        SQLAlchemy database engine
-
-    Returns
-    -------
-    bool
-        True if successful,
-        False if sqlalchemy.exc.ProgrammingError occured during deletion,
-        e.g., when the tables didn't exist.
-
-    """
-    try:
-        database.Base.metadata.drop_all(_engine)
-    except (sqlalchemy.exc.ProgrammingError):
-        return False
-
-    try:
-        t_alembic = sqlalchemy.Table(
-            "alembic_version",
-            sqlalchemy.MetaData(),
-            autoload=True,
-            autoload_with=_engine,
-        )
-    except sqlalchemy.exc.NoSuchTableError:
-        return False
-
-    with _engine.connect() as session:
-        session.execute(t_alembic.delete())
-
-    return True
-
-
 @pytest.fixture(name="executor_name")
 def fixture_executor_name(monkeypatch: pytest.MonkeyPatch) -> str:
     name = str(uuid1())
@@ -140,3 +102,37 @@ def project_manager(
 @pytest.fixture
 def client() -> testclient.TestClient:
     return testclient.TestClient(app)
+
+
+def delete_all_tables_if_existent(_engine: sqlalchemy.engine.Engine) -> bool:
+    """Delete complete database structure (including the alembic table)
+    If one of the tables does not exist, this function doesn't raise an exception.
+
+    Parameters
+    ----------
+    engine
+        SQLAlchemy database engine
+
+    Returns
+    -------
+    bool
+        True if successful,
+        False if sqlalchemy.exc.ProgrammingError occured during deletion,
+        e.g., when the tables didn't exist.
+
+    """
+    try:
+        database.Base.metadata.drop_all(_engine)
+        t_alembic = sqlalchemy.Table(
+            "alembic_version",
+            sqlalchemy.MetaData(),
+            autoload=True,
+            autoload_with=_engine,
+        )
+    except (sqlalchemy.exc.ProgrammingError, sqlalchemy.exc.NoSuchTableError):
+        return False
+
+    with _engine.connect() as session:
+        session.execute(t_alembic.delete())
+
+    return True

@@ -229,5 +229,7 @@ def get_logs(
             },
         )
 
-    logs = operators.get_operator().get_job_logs(id=backup.lastrun.id)
+    logs = operators.get_operator().get_job_logs_or_events(
+        _id=backup.lastrun.id
+    )
     return helper.filter_logs(logs, [pipeline.t4c_password])

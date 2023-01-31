@@ -23,9 +23,9 @@ from capellacollab.settings.modelsources.t4c.repositories.models import (
 from capellacollab.users.models import DatabaseUser, Role
 
 
-def get_t4c_repository(id_: int, db: Session) -> DatabaseT4CRepository:
+def get_t4c_repository(_id: int, db: Session) -> DatabaseT4CRepository:
     return db.execute(
-        select(DatabaseT4CRepository).where(DatabaseT4CRepository.id == id_)
+        select(DatabaseT4CRepository).where(DatabaseT4CRepository.id == _id)
     ).scalar()
 
 

@@ -21,12 +21,13 @@ import capellacollab.tools.crud as tools_crud
 import capellacollab.tools.models as tools_models
 
 
-@pytest.fixture(name="capella_tool_version")
+@pytest.fixture(name="capella_tool_version", params=["6.0.0"])
 def fixture_capella_tool_version(
     db: orm.Session,
+    request: pytest.FixtureRequest,
 ) -> tools_models.Version:
     return tools_crud.get_version_by_name(
-        db, tools_crud.get_tool_by_name(db, "Capella"), "6.0.0"
+        db, tools_crud.get_tool_by_name(db, "Capella"), request.param
     )
 
 

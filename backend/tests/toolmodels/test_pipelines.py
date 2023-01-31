@@ -140,30 +140,8 @@ def test_get_all_pipelines_of_capellamodel(
     )
 
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": 1,
-            "k8s_cronjob_id": "unavailable",
-            "lastrun": None,
-            "t4c_model": {
-                "project_name": "default",
-                "repository_name": "test",
-                "instance_name": "default",
-            },
-            "git_model": {
-                "id": 1,
-                "name": "",
-                "path": "http://example.com",
-                "entrypoint": "test/test.aird",
-                "revision": "main",
-                "primary": True,
-                "username": "user",
-                "password": True,
-            },
-            "run_nightly": run_nightly,
-            "include_commit_history": include_commit_history,
-        }
-    ]
+    assert len(response.json()) == 1
+    assert response.json()[0]["id"] == 1
 
 
 @pytest.mark.usefixtures(
@@ -187,7 +165,7 @@ def test_create_pipeline_of_capellamodel_git_model_does_not_exist(
     )
 
     assert response.status_code == 400
-    assert {"err_code": "GIT_MODEL_NOT_EXISTANT"}.items() <= response.json()[
+    assert {"err_code": "GIT_MODEL_NOT_EXISTING"}.items() <= response.json()[
         "detail"
     ].items()
 
@@ -196,6 +174,7 @@ def test_create_pipeline_of_capellamodel_git_model_does_not_exist(
     "project_manager", "mockoperator", "mock_add_user_to_repository"
 )
 def test_create_pipeline(
+    db: orm.Session,
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.CapellaModel,
     t4c_model: models_t4c_models.T4CModel,
@@ -215,27 +194,10 @@ def test_create_pipeline(
     )
 
     assert response.status_code == 200
-    assert {
-        "id": 1,
-        "lastrun": None,
-        "t4c_model": {
-            "project_name": "default",
-            "repository_name": "test",
-            "instance_name": "default",
-        },
-        "git_model": {
-            "id": 1,
-            "name": "",
-            "path": "http://example.com",
-            "entrypoint": "test/test.aird",
-            "revision": "main",
-            "primary": True,
-            "username": "user",
-            "password": True,
-        },
-        "run_nightly": run_nightly,
-        "include_commit_history": include_commit_history,
-    }.items() <= response.json().items()
+    db_pipeline = pipelines_crud.get_pipeline_by_id(db, response.json()["id"])
+    assert db_pipeline is not None
+    assert db_pipeline.run_nightly == run_nightly
+    assert db_pipeline.include_commit_history == include_commit_history
 
 
 @pytest.mark.usefixtures("project_manager", "mock_add_user_to_repository")

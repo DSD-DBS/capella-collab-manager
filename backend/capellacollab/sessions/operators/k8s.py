@@ -332,7 +332,7 @@ class KubernetesOperator:
             namespace=namespace,
         )
 
-    def get_job_logs(self, _id: str) -> str:
+    def get_job_logs_or_events(self, _id: str) -> str:
         try:
             if pod_log := self.v1_core.read_namespaced_pod_log(
                 name=_id, namespace=namespace
