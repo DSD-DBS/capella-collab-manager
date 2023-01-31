@@ -99,7 +99,7 @@ class KubernetesOperator:
         except BaseException:
             return False
 
-    def start_persistent_session(
+    def start_persistent_capella_session(
         self,
         username: str,
         tool_name: str,

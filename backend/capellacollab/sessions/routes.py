@@ -361,7 +361,8 @@ def request_persistent_session(
     ) = determine_pure_variants_configuration(db, user, tool)
     warnings += pv_warnings
 
-    session = operator.start_persistent_session(
+    # FixMe: reuse method or create a specialized on (this one is specialized for Capella)
+    session = operator.start_persistent_capella_session(
         username=auth_helper.get_username(token),
         tool_name=tool.name,
         version_name=version.name,

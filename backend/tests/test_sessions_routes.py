@@ -91,7 +91,7 @@ class MockOperator:
     sessions = []
 
     @classmethod
-    def start_persistent_session(
+    def start_persistent_capella_session(
         cls,
         username: str,
         tool_name: str,
