@@ -5,6 +5,7 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { Subject, Subscription, connectable, map, switchMap } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import {
@@ -12,8 +13,9 @@ import {
   ModelService,
 } from 'src/app/projects/models/service/model.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import { Project, ProjectService } from '../service/project.service';
+import { ProjectService } from '../service/project.service';
 
+@UntilDestroy({ checkProperties: true })
 @Component({
   selector: 'app-project-wrapper',
   templateUrl: './project-wrapper.component.html',
@@ -41,21 +43,13 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
       }
     );
 
-    this.projectSubscription = paramSubject
-      .pipe(
-        switchMap((projectSlug: string) =>
-          this.projectService.getProjectBySlug(projectSlug)
-        )
-      )
-      .subscribe({
-        next: (project: Project) => {
-          this.breadcrumbsService.updatePlaceholder({ project });
-          this.projectService._project.next(project);
-        },
-        error: () => {
-          this.projectService._project.next(undefined);
-        },
-      });
+    this.projectService.project.subscribe((project) =>
+      this.breadcrumbsService.updatePlaceholder({ project })
+    );
+
+    this.projectSubscription = paramSubject.subscribe((projectSlug) =>
+      this.projectService.loadProjectBySlug(projectSlug)
+    );
 
     this.modelsSubscription = paramSubject
       .pipe(
@@ -82,10 +76,7 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.projectSubscription?.unsubscribe();
-    this.modelsSubscription?.unsubscribe();
-    this.projectUserSubscription?.unsubscribe();
-    this.projectService._project.next(undefined);
+    this.projectService.clearProject();
     this.modelService._models.next(undefined);
     this.projectUserService.projectUser.next(undefined);
     this.breadcrumbsService.updatePlaceholder({ project: undefined });

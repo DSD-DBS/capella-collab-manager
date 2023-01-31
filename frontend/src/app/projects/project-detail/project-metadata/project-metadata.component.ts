@@ -11,17 +11,11 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import slugify from 'slugify';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { asyncProjectSlugValidator } from 'src/app/helpers/validators/slug-validator';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import {
   PatchProject,
@@ -38,14 +32,6 @@ export class ProjectMetadataComponent implements OnChanges {
   @Input() project!: Project;
   @Output() changeProject = new EventEmitter<Project>();
 
-  public form = new FormGroup({
-    name: new FormControl<string>('', [
-      Validators.required,
-      this.slugValidator(),
-    ]),
-    description: new FormControl<string>(''),
-  });
-
   constructor(
     private toastService: ToastService,
     private projectService: ProjectService,
@@ -54,8 +40,17 @@ export class ProjectMetadataComponent implements OnChanges {
     private route: ActivatedRoute
   ) {}
 
+  public form = new FormGroup({
+    name: new FormControl<string>(
+      '',
+      [Validators.required],
+      [asyncProjectSlugValidator(this.projectService.projects)]
+    ),
+    description: new FormControl<string>(''),
+  });
+
   ngOnChanges(_changes: SimpleChanges): void {
-    this.projectService.list().subscribe();
+    this.projectService.loadProjects();
     this.form.patchValue(this.project);
   }
 
@@ -64,7 +59,6 @@ export class ProjectMetadataComponent implements OnChanges {
       this.projectService
         .updateProject(this.project.slug, this.form.value as PatchProject)
         .subscribe((project) => {
-          this.projectService._project.next(project);
           this.router.navigateByUrl(`/project/${project.slug}`);
           this.toastService.showSuccess(
             'Project updated',
@@ -74,21 +68,6 @@ export class ProjectMetadataComponent implements OnChanges {
           );
         });
     }
-  }
-
-  slugValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const slug = slugify(control.value, { lower: true });
-      if (
-        this.projectService.projects
-          ?.map((project) => project.slug)
-          .filter((slug) => slug !== this.projectService.project?.slug)
-          .includes(slug)
-      ) {
-        return { uniqueSlug: { value: slug } };
-      }
-      return null;
-    };
   }
 
   get newSlug(): string | null {

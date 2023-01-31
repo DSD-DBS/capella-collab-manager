@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div *ngIf="projectService.project && modelService.model">
+<div *ngIf="(projectService.project | async) && modelService.model">
   <h2 class="title text-center">Git sources</h2>
   <div class="options-list flex-center">
     <button mat-raised-button (click)="modelSourceSelection.emit('git-add')">

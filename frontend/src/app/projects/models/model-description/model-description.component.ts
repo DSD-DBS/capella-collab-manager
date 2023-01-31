@@ -6,6 +6,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { combineLatest, filter, switchMap, tap } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
@@ -16,6 +17,7 @@ import {
 } from 'src/app/settings/core/tools-settings/tool.service';
 import { ProjectService } from '../../service/project.service';
 
+@UntilDestroy({ checkProperties: true })
 @Component({
   selector: 'app-model-description',
   templateUrl: './model-description.component.html',
@@ -29,6 +31,8 @@ export class ModelDescriptionComponent implements OnInit {
   });
   toolNatures?: ToolNature[];
   toolVersions?: ToolVersion[];
+
+  private projectSlug?: string = undefined;
 
   constructor(
     public modelService: ModelService,
@@ -61,17 +65,17 @@ export class ModelDescriptionComponent implements OnInit {
         this.toolNatures = result[0];
         this.toolVersions = result[1];
       });
+
+    this.projectService.project.subscribe(
+      (project) => (this.projectSlug = project?.slug)
+    );
   }
 
   onSubmit(): void {
-    if (
-      this.form.value &&
-      this.modelService.model &&
-      this.projectService.project
-    ) {
+    if (this.form.value && this.modelService.model && this.projectSlug) {
       this.modelService
         .updateModelDescription(
-          this.projectService.project.slug,
+          this.projectSlug!, // TODO: Check if we can actually use ! here
           this.modelService.model.slug,
           {
             description: this.form.value.description || '',
@@ -80,8 +84,8 @@ export class ModelDescriptionComponent implements OnInit {
           }
         )
         .pipe(
-          switchMap((_model) =>
-            this.modelService.getModels(this.projectService.project!.slug)
+          switchMap(
+            (_model) => this.modelService.getModels(this.projectSlug!) // TODO: Check if we can actually use ! here
           )
         )
         .subscribe((models) => {
@@ -106,25 +110,24 @@ export class ModelDescriptionComponent implements OnInit {
       return;
     }
 
-    this.modelService
-      .deleteModel(this.projectService.project?.slug!, model)
-      .subscribe({
-        next: () => {
-          this.toastService.showSuccess(
-            'Model deleted',
-            `${model.name} has been deleted`
-          );
-          this.modelService._models.next(
-            this.modelService.models?.filter((m) => m.id !== model.id)
-          );
-          this.router.navigate(['../../..'], { relativeTo: this.route });
-        },
-        error: () => {
-          this.toastService.showError(
-            'Model deletion failed',
-            `${model.name} has not been deleted`
-          );
-        },
-      });
+    // TODO: Check if model slug and project slug is needed here
+    this.modelService.deleteModel(this.projectSlug!, model).subscribe({
+      next: () => {
+        this.toastService.showSuccess(
+          'Model deleted',
+          `${model.name} has been deleted`
+        );
+        this.modelService._models.next(
+          this.modelService.models?.filter((m) => m.id !== model.id)
+        );
+        this.router.navigate(['../../..'], { relativeTo: this.route });
+      },
+      error: () => {
+        this.toastService.showError(
+          'Model deletion failed',
+          `${model.name} has not been deleted`
+        );
+      },
+    });
   }
 }

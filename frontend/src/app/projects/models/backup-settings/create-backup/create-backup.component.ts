@@ -12,6 +12,7 @@ import {
   ValidatorFn,
 } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import {
   BackupService,
@@ -22,6 +23,7 @@ import { ModelService } from 'src/app/projects/models/service/model.service';
 import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { ProjectService } from 'src/app/projects/service/project.service';
 
+@UntilDestroy({ checkProperties: true })
 @Component({
   selector: 'app-create-backup',
   templateUrl: './create-backup.component.html',
@@ -29,6 +31,9 @@ import { ProjectService } from 'src/app/projects/service/project.service';
 })
 export class CreateBackupComponent {
   t4cAndGitModelExists = false;
+
+  private projectSlug?: string = undefined; // TODO: Check if I can removed them somehow
+  private modelSlug?: string = undefined; // TODO: Check if I can removed them somehow
 
   constructor(
     public gitModelService: GitModelService,
@@ -38,24 +43,27 @@ export class CreateBackupComponent {
     private projectService: ProjectService,
     private modelService: ModelService
   ) {
-    this.t4cModelService
-      .listT4CModels(
-        this.projectService.project!.slug,
-        this.modelService.model!.slug
-      )
-      .subscribe();
+    // TODO: Try to further simplify when model service is also refactored
+    combineLatest([
+      this.projectService.project,
+      this.modelService._model.asObservable(),
+    ]).subscribe(([project, model]) => {
+      this.projectSlug = project?.slug;
+      this.modelSlug = model?.slug;
 
-    this.gitModelService.loadGitModels(
-      this.projectService.project!.slug,
-      this.modelService.model!.slug
-    );
+      this.t4cModelService
+        .listT4CModels(project!.slug, model!.slug)
+        .subscribe();
+      this.gitModelService.loadGitModels(project!.slug, model!.slug);
+    });
 
     combineLatest([
       this.gitModelService.gitModels,
       this.t4cModelService._t4cModels.asObservable(),
-    ]).subscribe(([gitModels, t4cModels]) => {
-      this.t4cAndGitModelExists = !!(gitModels?.length && t4cModels?.length);
-    });
+    ]).subscribe(
+      ([gitModels, t4cModels]) =>
+        (this.t4cAndGitModelExists = !!(gitModels?.length && t4cModels?.length))
+    );
   }
 
   createBackupForm = new FormGroup({
@@ -77,7 +85,8 @@ export class CreateBackupComponent {
   }
 
   createGitBackup() {
-    if (this.createBackupForm.valid) {
+    // TODO: Check if model slug and project slug is needed here
+    if (this.createBackupForm.valid && this.modelSlug && this.projectSlug) {
       const formValue = this.createBackupForm.value;
       const createBackupformValue: PostPipeline = {
         gitmodelId: formValue.gitmodel![0],
@@ -87,9 +96,9 @@ export class CreateBackupComponent {
       };
       this.backupService
         .createBackup(
-          this.projectService.project!.slug,
-          this.modelService.model!.slug,
-          createBackupformValue as unknown as PostPipeline
+          this.projectSlug,
+          this.modelSlug,
+          createBackupformValue as PostPipeline
         )
         .subscribe(() => {
           this.dialogRef.close(true);

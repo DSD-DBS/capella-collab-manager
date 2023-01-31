@@ -14,7 +14,7 @@ import { UserService } from 'src/app/services/user/user.service';
 import { NewReadonlySessionDialogComponent } from 'src/app/sessions/new-readonly-session-dialog/new-readonly-session-dialog.component';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
-import { Project, ProjectService } from '../../service/project.service';
+import { Project } from '../../service/project.service';
 
 @Component({
   selector: 'app-model-overview',
@@ -26,7 +26,6 @@ export class ModelOverviewComponent implements OnInit {
   models?: Model[];
 
   constructor(
-    public projectService: ProjectService,
     public modelService: ModelService,
     private dialog: MatDialog,
     public sessionService: SessionService,

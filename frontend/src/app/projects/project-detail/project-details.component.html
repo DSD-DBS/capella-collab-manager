@@ -6,22 +6,25 @@
 <div class="flexbox">
   <div class="item">
     <div
-      *ngIf="projectService.project && projectUserService.verifyRole('manager')"
+      *ngIf="
+        (projectService.project | async) &&
+        projectUserService.verifyRole('manager')
+      "
     >
       <app-project-metadata
-        [project]="projectService.project"
+        [project]="(projectService.project | async)!"
       ></app-project-metadata>
       <mat-divider></mat-divider>
     </div>
     <app-model-overview
-      *ngIf="projectService.project"
-      [project]="projectService.project"
+      *ngIf="projectService.project | async"
+      [project]="(projectService.project | async)!"
     ></app-model-overview>
   </div>
   <div class="users" *ngIf="projectUserService.verifyRole('manager')">
     <app-project-user-settings
-      *ngIf="projectService.project"
-      [project]="projectService.project"
+      *ngIf="projectService.project | async"
+      [project]="(projectService.project | async)!"
     ></app-project-user-settings>
   </div>
 </div>
