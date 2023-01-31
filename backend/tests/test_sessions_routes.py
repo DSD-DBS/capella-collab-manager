@@ -169,7 +169,7 @@ class MockOperator:
         return None
 
     @classmethod
-    def get_job_logs(self, id: str) -> str:
+    def get_job_logs_or_events(self, _id: str) -> str:
         return ""
 
     @classmethod

@@ -30,9 +30,10 @@ repos:
     rev: 22.12.0
     hooks:
       - id: black
-        entry: bash -c "cd backend && black ."
-        pass_filenames: false
         files: "^backend/"
+        args:
+          - "--config"
+          - "backend/pyproject.toml"
         types: [python]
       - id: black
         types: [python]

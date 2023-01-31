@@ -4,6 +4,7 @@
 
 import typing as t
 
+import sqlalchemy
 from sqlalchemy.orm import Session
 
 from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
@@ -35,8 +36,10 @@ def get_primary_gitmodel_of_capellamodel(
     )
 
 
-def get_gitmodel_by_id(db: Session, id: int) -> DatabaseGitModel:
-    return db.query(DatabaseGitModel).filter(DatabaseGitModel.id == id).first()
+def get_gitmodel_by_id(db: Session, id: int) -> DatabaseGitModel | None:
+    return db.execute(
+        sqlalchemy.select(DatabaseGitModel).where(DatabaseGitModel.id == id)
+    ).scalar_one_or_none()
 
 
 def make_git_model_primary(
