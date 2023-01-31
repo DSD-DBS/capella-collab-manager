@@ -6,7 +6,7 @@ import subprocess
 import typing as t
 
 
-def run_git_command(cmd: t.List[str]):
+def run_git_command(cmd: list[str]):
     return subprocess.run(
         ["git", *cmd],
         check=True,

@@ -1,9 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from __future__ import annotations
-
-import typing as t
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -19,7 +16,7 @@ from capellacollab.tools.models import (
 from .integrations.crud import intialize_new_integration_table
 
 
-def get_all_tools(db: Session) -> t.List[Tool]:
+def get_all_tools(db: Session) -> list[Tool]:
     return db.query(Tool).all()
 
 
@@ -37,7 +34,7 @@ def create_tool(db: Session, tool: Tool) -> Tool:
 def update_tool(
     db: Session,
     tool: Tool,
-    patch_tool: t.Union[CreateTool, PatchToolDockerimage],
+    patch_tool: CreateTool | PatchToolDockerimage,
 ) -> Tool:
     if isinstance(patch_tool, CreateTool):
         tool.name = patch_tool.name
@@ -62,7 +59,7 @@ def get_tool_by_name(db: Session, name: str) -> Tool:
     return db.execute(select(Tool).where(Tool.name == name)).scalar_one()
 
 
-def get_versions(db: Session) -> t.List[Version]:
+def get_versions(db: Session) -> list[Version]:
     return db.execute(select(Version)).scalars().all()
 
 
@@ -96,7 +93,7 @@ def delete_tool_version(version: Version, db: Session) -> None:
     db.commit()
 
 
-def get_tool_versions(db: Session, tool_id: int) -> t.List[Version]:
+def get_tool_versions(db: Session, tool_id: int) -> list[Version]:
     return db.query(Version).filter(Version.tool_id == tool_id).all()
 
 
@@ -126,7 +123,7 @@ def create_version(
     return version
 
 
-def get_natures(db: Session) -> t.List[Nature]:
+def get_natures(db: Session) -> list[Nature]:
     return db.query(Nature).all()
 
 
@@ -134,7 +131,7 @@ def get_nature_by_id(id_: int, db: Session) -> Nature:
     return db.execute(select(Nature).where(Nature.id == id_)).scalar_one()
 
 
-def get_tool_natures(db: Session, tool_id: int) -> t.List[Nature]:
+def get_tool_natures(db: Session, tool_id: int) -> list[Nature]:
     return db.query(Nature).filter(Nature.tool_id == tool_id).all()
 
 

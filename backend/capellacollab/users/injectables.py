@@ -22,7 +22,7 @@ def get_own_user(
 
 
 def get_existing_user(
-    user_id: t.Union[int, t.Literal["current"]],
+    user_id: int | t.Literal["current"],
     db=Depends(get_db),
     token=Depends(JWTBearer()),
 ) -> DatabaseUser:

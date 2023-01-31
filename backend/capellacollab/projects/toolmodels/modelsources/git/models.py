@@ -39,7 +39,7 @@ class GitModel(pydantic.BaseModel):
 
     @pydantic.validator("password", pre=True)
     @classmethod
-    def transform_password(cls, passw: t.Union[str, bool]) -> bool:
+    def transform_password(cls, passw: str | bool) -> bool:
         if isinstance(passw, bool):
             return passw
         return passw is not None and len(passw) > 0

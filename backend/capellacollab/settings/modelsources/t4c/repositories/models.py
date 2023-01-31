@@ -59,7 +59,7 @@ class T4CRepositoryStatus(str, enum.Enum):
 
 
 class T4CRepositories(ResponseModel):
-    payload: t.List[T4CRepository]
+    payload: list[T4CRepository]
 
 
 class T4CInstanceWithRepositories(T4CInstance):
@@ -72,7 +72,7 @@ class T4CInstanceWithRepositories(T4CInstance):
 class T4CRepository(CreateT4CRepository):
     id: int
     instance: T4CInstance
-    status: t.Optional[T4CRepositoryStatus]
+    status: T4CRepositoryStatus | None
 
     class Config:
         orm_mode = True

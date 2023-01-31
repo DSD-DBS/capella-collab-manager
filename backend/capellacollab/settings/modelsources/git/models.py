@@ -3,7 +3,6 @@
 
 
 import enum
-import typing as t
 
 from pydantic import BaseModel
 from sqlalchemy import Column, Enum, Integer, String
@@ -19,9 +18,9 @@ class GitType(enum.Enum):
 
 
 class PostGitInstance(BaseModel):
-    type: t.Optional[GitType]
-    name: t.Optional[str]
-    url: t.Optional[str]
+    type: GitType | None
+    name: str | None
+    url: str | None
 
 
 class GitInstance(BaseModel):
@@ -43,9 +42,9 @@ class DatabaseGitInstance(Base):
 
 
 class GetRevisionsResponseModel(BaseModel):
-    branches: t.List[str]
-    tags: t.List[str]
-    default: t.Optional[str]
+    branches: list[str]
+    tags: list[str]
+    default: str | None
 
 
 class GitCredentials(BaseModel):

@@ -1,8 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import typing as t
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -51,7 +49,7 @@ async def logout():
 
 @router.get("/tokens", name="Validate the token")
 async def validate_token(
-    scope: t.Optional[Role],
+    scope: Role | None,
     token=Depends(JWTBearer()),
     db: Session = Depends(get_db),
 ):

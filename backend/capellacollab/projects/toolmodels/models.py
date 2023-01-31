@@ -52,12 +52,12 @@ class EditingMode(enum.Enum):
 
 class PostCapellaModel(BaseModel):
     name: str
-    description: t.Optional[str]
+    description: str | None
     tool_id: int
 
 
 class PatchCapellaModel(BaseModel):
-    description: t.Optional[str]
+    description: str | None
     version_id: int
     nature_id: int
 
@@ -110,12 +110,12 @@ class CapellaModel(BaseModel):
     name: str
     description: str
     tool: ToolBase
-    version: t.Optional[ToolVersionBase]
-    nature: t.Optional[ToolNatureBase]
-    git_models: t.Optional[list[GitModel]]
-    t4c_models: t.Optional[list[T4CModel]]
+    version: ToolVersionBase | None
+    nature: ToolNatureBase | None
+    git_models: list[GitModel] | None
+    t4c_models: list[T4CModel] | None
 
-    restrictions: t.Optional[ToolModelRestrictions]
+    restrictions: ToolModelRestrictions | None
 
     class Config:
         orm_mode = True
