@@ -3,20 +3,28 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="models" *ngIf="models">
+<div class="models" *ngIf="modelService.models | async">
   <div class="models-title">
     <h2>
       Models
       <a
         mat-button
-        [routerLink]="['/project', project.slug, 'models', 'create']"
+        [routerLink]="[
+          '/project',
+          (projectService.project | async)!.slug,
+          'models',
+          'create'
+        ]"
         *ngIf="projectUserService.verifyRole('manager')"
       >
         <mat-icon id="add-icon">add</mat-icon>
       </a>
     </h2>
   </div>
-  <mat-card class="overview-card" *ngFor="let model of models">
+  <mat-card
+    class="overview-card"
+    *ngFor="let model of modelService.models | async"
+  >
     <div class="header">
       <div class="header-text">
         <div class="title">{{ model.name }}</div>

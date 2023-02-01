@@ -33,10 +33,8 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
 
   form = new FormGroup({
     name: new FormControl('', {
-      validators: [Validators.required],
-      asyncValidators: [
-        asyncProjectSlugValidator(this.projectService.projects),
-      ],
+      validators: Validators.required,
+      asyncValidators: this.projectService.asyncSlugValidator(),
     }),
     description: new FormControl(''),
   });

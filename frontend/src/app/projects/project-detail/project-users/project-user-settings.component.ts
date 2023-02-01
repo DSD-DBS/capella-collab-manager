@@ -5,8 +5,8 @@
 
 import {
   Component,
-  Input,
   OnChanges,
+  OnInit,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -20,6 +20,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatLegacySelectionList as MatSelectionList } from '@angular/material/legacy-list';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   ProjectUser,
@@ -28,15 +29,17 @@ import {
   SimpleProjectUserRole,
 } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { User, UserService } from 'src/app/services/user/user.service';
-import { Project } from '../../service/project.service';
+import { ProjectService } from '../../service/project.service';
 
+@UntilDestroy({ checkProperties: true })
 @Component({
   selector: 'app-project-user-settings',
   templateUrl: './project-user-settings.component.html',
   styleUrls: ['./project-user-settings.component.css'],
 })
-export class ProjectUserSettingsComponent implements OnChanges {
-  @Input() project!: Project;
+export class ProjectUserSettingsComponent implements OnInit, OnChanges {
+  private projectSlug?: string;
+  public projectName?: string;
 
   projectUsers: ProjectUser[] = [];
   search = '';
@@ -59,8 +62,16 @@ export class ProjectUserSettingsComponent implements OnChanges {
   constructor(
     public projectUserService: ProjectUserService,
     public userService: UserService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private projectService: ProjectService
   ) {}
+
+  ngOnInit(): void {
+    this.projectService.project.subscribe((project) => {
+      this.projectSlug = project!.slug;
+      this.projectName = project!.name;
+    });
+  }
 
   ngOnChanges(_changes: SimpleChanges): void {
     this.refreshProjectUsers();
@@ -101,7 +112,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
 
   refreshProjectUsers(): void {
     this.projectUserService
-      .getProjectUsers(this.project.slug)
+      .getProjectUsers(this.projectSlug!)
       .subscribe((projectUsers) => {
         this.projectUsers = projectUsers;
       });
@@ -117,7 +128,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
       }
       this.projectUserService
         .addUserToProject(
-          this.project.slug,
+          this.projectSlug!,
           formValue.username as string,
           formValue.role as SimpleProjectUserRole,
           permission as string,
@@ -129,7 +140,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
           this.refreshProjectUsers();
           this.toastService.showSuccess(
             `User added`,
-            `User '${formValue.username}' has been added to project '${this.project.name}'`
+            `User '${formValue.username}' has been added to project '${this.projectName}'`
           );
         });
     }
@@ -142,12 +153,12 @@ export class ProjectUserSettingsComponent implements OnChanges {
     }
 
     this.projectUserService
-      .deleteUserFromProject(this.project.slug, user.id, reason)
+      .deleteUserFromProject(this.projectSlug!, user.id, reason)
       .subscribe(() => {
         this.refreshProjectUsers();
         this.toastService.showSuccess(
           `User removed`,
-          `User '${user.name}' has been removed from project '${this.project.name}'`
+          `User '${user.name}' has been removed from project '${this.projectName}'`
         );
       });
   }
@@ -159,12 +170,12 @@ export class ProjectUserSettingsComponent implements OnChanges {
     }
 
     this.projectUserService
-      .changeRoleOfProjectUser(this.project.slug, user.id, 'manager', reason)
+      .changeRoleOfProjectUser(this.projectSlug!, user.id, 'manager', reason)
       .subscribe(() => {
         this.refreshProjectUsers();
         this.toastService.showSuccess(
           `User modified`,
-          `User '${user.name}' can now manage the project '${this.project.name}'`
+          `User '${user.name}' can now manage the project '${this.projectName}'`
         );
       });
   }
@@ -176,12 +187,12 @@ export class ProjectUserSettingsComponent implements OnChanges {
     }
 
     this.projectUserService
-      .changeRoleOfProjectUser(this.project.slug, user.id, 'user', reason)
+      .changeRoleOfProjectUser(this.projectSlug!, user.id, 'user', reason)
       .subscribe(() => {
         this.refreshProjectUsers();
         this.toastService.showSuccess(
           `User modified`,
-          `User '${user.name}' is no longer project lead in the project '${this.project.name}'`
+          `User '${user.name}' is no longer project lead in the project '${this.projectName}'`
         );
       });
   }
@@ -194,7 +205,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
 
     this.projectUserService
       .changePermissionOfProjectUser(
-        this.project.slug,
+        this.projectSlug!,
         user.id,
         permission,
         reason
@@ -203,7 +214,7 @@ export class ProjectUserSettingsComponent implements OnChanges {
         this.refreshProjectUsers();
         this.toastService.showSuccess(
           `User modified`,
-          `User '${user.name}' has the permission '${permission}' in the project '${this.project.name}' now`
+          `User '${user.name}' has the permission '${permission}' in the project '${this.projectName}' now`
         );
       });
   }

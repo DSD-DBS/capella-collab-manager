@@ -41,10 +41,10 @@ export class ModelDetailComponent implements OnInit, OnDestroy {
 
     combineLatest([
       this.projectService.project,
-      this.modelService._model.asObservable(),
+      this.modelService.model,
     ]).subscribe(([project, model]) => {
       this.t4cModelService
-        .listT4CModels(project?.slug!, model?.slug!) // TODO: Check if we can actually use ! here
+        .listT4CModels(project?.slug!, model?.slug!)
         .subscribe((models) => (this.t4cModels = models));
 
       this.gitModelService.loadGitModels(project?.slug!, model?.slug!);

@@ -5,7 +5,7 @@
 
 <div
   class="wrapper"
-  *ngIf="(projectService.project | async) && modelService.model"
+  *ngIf="(projectService.project | async) && (modelService.model | async)"
 >
   <h1 class="title">Git Models</h1>
   <div class="flexbox">

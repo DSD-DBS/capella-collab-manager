@@ -6,14 +6,20 @@
 import { SpyLocation } from '@angular/common/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  ReactiveFormsModule,
+  ValidationErrors,
+} from '@angular/forms';
 import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
 import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import { MatStepperModule } from '@angular/material/stepper';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, take } from 'rxjs';
+import slugify from 'slugify';
 import {
   click,
   findComponent,
@@ -82,6 +88,21 @@ describe('CreateProjectComponent', () => {
     },
     clearProject(): void {
       this._project.next(undefined);
+    },
+    asyncSlugValidator(): AsyncValidatorFn {
+      return (
+        control: AbstractControl
+      ): Observable<ValidationErrors | null> => {
+        const projectSlug = slugify(control.value, { lower: true });
+        return this.projects.pipe(
+          take(1),
+          map((projects) => {
+            return projects?.find((project) => project.slug === projectSlug)
+              ? { uniqueSlug: { value: projectSlug } }
+              : null;
+          })
+        );
+      };
     },
   };
 

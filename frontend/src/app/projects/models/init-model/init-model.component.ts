@@ -36,6 +36,7 @@ export class InitModelComponent implements OnInit {
   buttonDisabled: boolean = false;
 
   private projectSlug?: string = undefined;
+  private modelSlug?: string = undefined;
 
   constructor(
     public projectService: ProjectService,
@@ -53,10 +54,11 @@ export class InitModelComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.modelService._model
+    this.modelService.model
       .pipe(filter(Boolean))
       .pipe(
         tap((model) => {
+          this.modelSlug = model.slug;
           if (model.version) {
             this.form.controls.version.patchValue(model.version.id);
           }
@@ -83,15 +85,15 @@ export class InitModelComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.form.valid && this.modelService.model && this.projectSlug) {
+    if (this.form.valid && this.modelSlug && this.projectSlug) {
       this.modelService
         .setToolDetailsForModel(
-          this.projectSlug!, // TODO: Check if we can actually use ! here
-          this.modelService.model.slug,
+          this.projectSlug!,
+          this.modelSlug!,
           this.form.value.version!,
           this.form.value.nature!
         )
-        .subscribe((_) => {
+        .subscribe(() => {
           this.create.emit({ created: true });
           this.buttonDisabled = true;
         });

@@ -6,16 +6,17 @@
 import {
   Component,
   EventEmitter,
-  Input,
   OnChanges,
+  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { filter } from 'rxjs';
 import slugify from 'slugify';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { asyncProjectSlugValidator } from 'src/app/helpers/validators/slug-validator';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import {
   PatchProject,
@@ -23,14 +24,19 @@ import {
   ProjectService,
 } from '../../service/project.service';
 
+@UntilDestroy({ checkProperties: true })
 @Component({
   selector: 'app-project-metadata',
   templateUrl: './project-metadata.component.html',
   styleUrls: ['./project-metadata.component.css'],
 })
-export class ProjectMetadataComponent implements OnChanges {
-  @Input() project!: Project;
+export class ProjectMetadataComponent implements OnInit, OnChanges {
   @Output() changeProject = new EventEmitter<Project>();
+
+  public canDelete: boolean = false;
+
+  public projectSlug?: string = undefined;
+  public projectName?: string = undefined;
 
   constructor(
     private toastService: ToastService,
@@ -41,23 +47,33 @@ export class ProjectMetadataComponent implements OnChanges {
   ) {}
 
   public form = new FormGroup({
-    name: new FormControl<string>(
-      '',
-      [Validators.required],
-      [asyncProjectSlugValidator(this.projectService.projects)]
-    ),
+    name: new FormControl<string>('', {
+      validators: Validators.required,
+      asyncValidators: this.projectService.asyncSlugValidator(),
+    }),
     description: new FormControl<string>(''),
   });
 
+  ngOnInit(): void {
+    this.projectService.project.pipe(filter(Boolean)).subscribe((project) => {
+      this.projectSlug = project.slug;
+      this.projectName = project.name;
+      this.form.patchValue(project);
+    });
+
+    this.modelService.models
+      .pipe(filter(Boolean))
+      .subscribe((models) => (this.canDelete = !models.length));
+  }
+
   ngOnChanges(_changes: SimpleChanges): void {
-    this.projectService.loadProjects();
-    this.form.patchValue(this.project);
+    this.projectService.loadProjectBySlug(this.projectSlug!);
   }
 
   updateDescription() {
-    if (this.form.valid) {
+    if (this.form.valid && this.projectSlug) {
       this.projectService
-        .updateProject(this.project.slug, this.form.value as PatchProject)
+        .updateProject(this.projectSlug, this.form.value as PatchProject)
         .subscribe((project) => {
           this.router.navigateByUrl(`/project/${project.slug}`);
           this.toastService.showSuccess(
@@ -74,15 +90,10 @@ export class ProjectMetadataComponent implements OnChanges {
     return this.form.value.name ? slugify(this.form.value.name) : null;
   }
 
-  get canDelete(): boolean {
-    return !this.modelService.models?.length;
-  }
-
   deleteProject(): void {
-    const project = this.project;
-
     if (
       !this.canDelete ||
+      !this.projectSlug ||
       !window.confirm(
         `Do you really want to delete this project? All assigned users will lose access to it! The project cannot be restored!`
       )
@@ -90,18 +101,20 @@ export class ProjectMetadataComponent implements OnChanges {
       return;
     }
 
-    this.projectService.deleteProject(project.slug).subscribe({
+    const projectSlug: string = this.projectSlug;
+
+    this.projectService.deleteProject(projectSlug).subscribe({
       next: () => {
         this.toastService.showSuccess(
           'Project deleted',
-          `${project.name} has been deleted`
+          `${projectSlug} has been deleted`
         );
         this.router.navigate(['../../projects'], { relativeTo: this.route });
       },
       error: () => {
         this.toastService.showError(
           'Project deletion failed',
-          `${project.name} has not been deleted`
+          `${projectSlug} has not been deleted`
         );
       },
     });

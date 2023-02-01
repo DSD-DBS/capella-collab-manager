@@ -92,8 +92,8 @@ export class CreateModelComponent implements OnInit {
     if (options.created) {
       this.currentStep.emit('complete');
       if (this.redirectAfterCompletion) {
-        this.modelService._model.next(undefined);
-        this.router.navigate(['/project', this.projectSlug!]); // TODO: Check if we can actually use !. here
+        this.modelService.clearModel();
+        this.router.navigate(['/project', this.projectSlug!]);
       }
     } else {
       this.stepper.previous();
