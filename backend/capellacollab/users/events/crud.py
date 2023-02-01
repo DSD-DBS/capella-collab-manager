@@ -103,11 +103,20 @@ def get_events(db: Session) -> list[models.DatabaseUserHistoryEvent]:
     return db.query(models.DatabaseUserHistoryEvent).all()
 
 
-def delete_all_events_involved_in(
+def delete_all_events_user_involved_in(
     db: Session, user: users_models.DatabaseUser
 ):
     db.query(models.DatabaseUserHistoryEvent).filter(
         (models.DatabaseUserHistoryEvent.user_id == user.id)
         | (models.DatabaseUserHistoryEvent.executor_id == user.id)
+    ).delete()
+    db.commit()
+
+
+def delete_all_events_projects_associated_with(
+    db: Session, project: projects_models.DatabaseProject
+):
+    db.query(models.DatabaseUserHistoryEvent).filter(
+        models.DatabaseUserHistoryEvent.project_id == project.id
     ).delete()
     db.commit()
