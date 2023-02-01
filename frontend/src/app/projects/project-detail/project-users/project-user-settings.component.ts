@@ -21,6 +21,7 @@ import {
 } from '@angular/forms';
 import { MatLegacySelectionList as MatSelectionList } from '@angular/material/legacy-list';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   ProjectUser,
@@ -68,7 +69,7 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.projectService.project
-      .pipe(untilDestroyed(this))
+      .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((project) => {
         this.projectSlug = project!.slug;
         this.projectName = project!.name;
