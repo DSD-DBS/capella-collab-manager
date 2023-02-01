@@ -14,7 +14,7 @@ import {
   AsyncValidatorFn,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map, Observable, of } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
@@ -42,7 +42,7 @@ import {
   GitInstancesService,
 } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
 
-@UntilDestroy({ checkProperties: true })
+@UntilDestroy()
 @Component({
   selector: 'app-manage-git-model',
   templateUrl: './manage-git-model.component.html',
@@ -106,18 +106,22 @@ export class ManageGitModelComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.gitService.revisions.subscribe((revisions) => {
-      this.availableRevisions = revisions;
-      this.form.controls.revision.updateValueAndValidity();
-    });
+    this.gitService.revisions
+      .pipe(untilDestroyed(this))
+      .subscribe((revisions) => {
+        this.availableRevisions = revisions;
+        this.form.controls.revision.updateValueAndValidity();
+      });
 
     this.form.controls.revision.valueChanges.subscribe((value) =>
       this.filteredRevisionsByPrefix(value as string)
     );
-    this.gitSettingsService.gitSettings.subscribe((gitSettings) => {
-      this.availableGitInstances = gitSettings;
+    this.gitSettingsService.gitSettings
+      .pipe(untilDestroyed(this))
+      .subscribe((gitSettings) => {
+        this.availableGitInstances = gitSettings;
 
-<<<<<<< HEAD
+  <<<<<<< HEAD
       this.gitSettingsService.gitInstances.subscribe((gitSettings) => {
         this.availableGitInstances = gitSettings;
 
@@ -145,17 +149,17 @@ export class ManageGitModelComponent implements OnInit {
     this.modelService.model.subscribe((model) => {
 =======
       if (gitSettings.length) {
-        this.urls.baseUrl.setValidators([Validators.required]);
-        this.urls.inputUrl.setValidators([absoluteOrRelativeValidators()]);
-        this.form.controls.urls.setAsyncValidators([
-          this.resultUrlPrefixAsyncValidator(),
-        ]);
-      } else {
-        this.urls.inputUrl.addValidators([Validators.required]);
-      }
-    });
+          this.urls.baseUrl.setValidators([Validators.required]);
+          this.urls.inputUrl.setValidators([absoluteOrRelativeValidators()]);
+          this.form.controls.urls.setAsyncValidators([
+            this.resultUrlPrefixAsyncValidator(),
+          ]);
+        } else {
+          this.urls.inputUrl.addValidators([Validators.required]);
+        }
+      });
 
-    this.modelService.model.subscribe((model) => {
+    this.modelService.model.pipe(untilDestroyed(this)).subscribe((model) => {
       this.modelSlug = model?.slug!;
 >>>>>>> b2ae2aac (feat: Apply new fetching approach to projects)
       if (model?.tool.name === 'Capella') {
@@ -165,38 +169,44 @@ export class ManageGitModelComponent implements OnInit {
       }
     });
 
-    this.projectService.project.subscribe((project) => {
-      this.projectSlug = project?.slug;
+    this.projectService.project
+      .pipe(untilDestroyed(this))
+      .subscribe((project) => {
+        this.projectSlug = project?.slug;
 
-      this.route.params
-        .pipe(
-          filter((params) => !!params['git-model']),
-          map((params) => params['git-model'])
-        )
-        .subscribe((gitModelId) => {
-          this.isEditMode = true;
-          this.gitModelId = gitModelId;
-          this.form.disable();
+        this.route.params
+          .pipe(
+            filter((params) => !!params['git-model']),
+            map((params) => params['git-model'])
+          )
+          .subscribe((gitModelId) => {
+            this.isEditMode = true;
+            this.gitModelId = gitModelId;
+            this.form.disable();
 
-          this.gitModelService.gitModel.subscribe((gitModel) => {
-            this.gitModel = gitModel;
-            this.fillFormWithGitModel(gitModel!);
-            this.breadCrumbsService.updatePlaceholder({ gitModel });
-            this.gitService.loadPrivateRevisions(
-              gitModel!.path,
+            this.gitModelService.gitModel
+              .pipe(untilDestroyed(this))
+              .subscribe((gitModel) => {
+                this.gitModel = gitModel;
+                this.fillFormWithGitModel(gitModel!);
+
+                this.breadCrumbsService.updatePlaceholder({ gitModel });
+
+                this.gitService.loadPrivateRevisions(
+                  gitModel!.path,
+                  this.projectSlug!,
+                  this.modelSlug!,
+                  gitModelId
+                );
+              });
+
+            this.gitModelService.loadGitModelById(
               this.projectSlug!,
               this.modelSlug!,
               gitModelId
             );
           });
-
-          this.gitModelService.loadGitModelById(
-            this.projectSlug!,
-            this.modelSlug!,
-            gitModelId
-          );
-        });
-    });
+      });
 
     this.gitSettingsService.loadGitInstances();
   }

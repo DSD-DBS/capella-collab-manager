@@ -10,7 +10,6 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { CreateBackupComponent } from '../create-backup/create-backup.component';
@@ -20,7 +19,6 @@ import {
   ViewLogsData,
 } from '../view-logs-dialog/view-logs-dialog.component';
 
-@UntilDestroy({ checkProperties: true })
 @Component({
   selector: 'app-trigger-pipeline',
   templateUrl: './trigger-pipeline.component.html',

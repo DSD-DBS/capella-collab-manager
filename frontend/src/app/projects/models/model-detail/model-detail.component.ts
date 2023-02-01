@@ -4,7 +4,7 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import {
   T4CModel,
@@ -17,7 +17,7 @@ import {
 } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { ProjectService } from '../../service/project.service';
 
-@UntilDestroy({ checkProperties: true })
+@UntilDestroy()
 @Component({
   selector: 'app-model-detail',
   templateUrl: './model-detail.component.html',
@@ -35,20 +35,19 @@ export class ModelDetailComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.gitModelService.gitModels.subscribe(
-      (gitModels) => (this.gitModels = gitModels)
-    );
+    this.gitModelService.gitModels
+      .pipe(untilDestroyed(this))
+      .subscribe((gitModels) => (this.gitModels = gitModels));
 
-    combineLatest([
-      this.projectService.project,
-      this.modelService.model,
-    ]).subscribe(([project, model]) => {
-      this.t4cModelService
-        .listT4CModels(project?.slug!, model?.slug!)
-        .subscribe((models) => (this.t4cModels = models));
+    combineLatest([this.projectService.project, this.modelService.model])
+      .pipe(untilDestroyed(this))
+      .subscribe(([project, model]) => {
+        this.t4cModelService
+          .listT4CModels(project?.slug!, model?.slug!)
+          .subscribe((models) => (this.t4cModels = models));
 
-      this.gitModelService.loadGitModels(project?.slug!, model?.slug!);
-    });
+        this.gitModelService.loadGitModels(project?.slug!, model?.slug!);
+      });
   }
 
   ngOnDestroy(): void {

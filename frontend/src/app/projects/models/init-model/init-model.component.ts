@@ -5,7 +5,7 @@
 
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, map, switchMap, tap } from 'rxjs';
 import {
   Model,
@@ -20,7 +20,7 @@ import {
 import { GitModelService } from '../../project-detail/model-overview/model-detail/git-model.service';
 import { ProjectService } from '../../service/project.service';
 
-@UntilDestroy({ checkProperties: true })
+@UntilDestroy()
 @Component({
   selector: 'app-init-model',
   templateUrl: './init-model.component.html',
@@ -55,8 +55,9 @@ export class InitModelComponent implements OnInit {
 
   ngOnInit(): void {
     this.modelService.model
-      .pipe(filter(Boolean))
       .pipe(
+        untilDestroyed(this),
+        filter(Boolean),
         tap((model) => {
           this.modelSlug = model.slug;
           if (model.version) {
@@ -79,9 +80,9 @@ export class InitModelComponent implements OnInit {
         this.toolNatures = result[1];
       });
 
-    this.projectService.project.subscribe(
-      (project) => (this.projectSlug = project?.slug)
-    );
+    this.projectService.project
+      .pipe(untilDestroyed(this))
+      .subscribe((project) => (this.projectSlug = project?.slug));
   }
 
   onSubmit(): void {

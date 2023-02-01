@@ -7,7 +7,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
 
 import {
@@ -18,7 +18,7 @@ import { GetGitModel } from 'src/app/projects/project-detail/model-overview/mode
 import { ModelOptions } from 'src/app/sessions/new-readonly-session-dialog/new-readonly-model-options/new-readonly-model-options.component';
 import { SessionService } from '../service/session.service';
 
-@UntilDestroy({ checkProperties: true })
+@UntilDestroy()
 @Component({
   selector: 'new-readonly-session-dialog',
   templateUrl: './new-readonly-session-dialog.component.html',
@@ -41,13 +41,15 @@ export class NewReadonlySessionDialogComponent implements OnInit {
   ngOnInit(): void {
     this.modelService.models
       .pipe(
+        untilDestroyed(this),
         map((models) =>
           models?.filter(
             (model) => model.version?.id === this.data.model.version?.id
           )
         )
       )
-      .subscribe((models) =>
+      .subscribe((models) => {
+        this._modelOptions = [];
         models?.forEach((model) => {
           const primaryGitModel = getPrimaryGitModel(model);
           if (!primaryGitModel) {
@@ -61,8 +63,8 @@ export class NewReadonlySessionDialogComponent implements OnInit {
             revision: primaryGitModel.revision,
             deepClone: false,
           });
-        })
-      );
+        });
+      });
 
     this.modelService.loadModels(this.data.projectSlug);
   }
