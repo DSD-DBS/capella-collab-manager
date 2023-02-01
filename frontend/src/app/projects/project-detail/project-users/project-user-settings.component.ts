@@ -20,7 +20,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatLegacySelectionList as MatSelectionList } from '@angular/material/legacy-list';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   ProjectUser,
@@ -31,7 +31,7 @@ import {
 import { User, UserService } from 'src/app/services/user/user.service';
 import { ProjectService } from '../../service/project.service';
 
-@UntilDestroy({ checkProperties: true })
+@UntilDestroy()
 @Component({
   selector: 'app-project-user-settings',
   templateUrl: './project-user-settings.component.html',
@@ -67,10 +67,12 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit(): void {
-    this.projectService.project.subscribe((project) => {
-      this.projectSlug = project!.slug;
-      this.projectName = project!.name;
-    });
+    this.projectService.project
+      .pipe(untilDestroyed(this))
+      .subscribe((project) => {
+        this.projectSlug = project!.slug;
+        this.projectName = project!.name;
+      });
   }
 
   ngOnChanges(_changes: SimpleChanges): void {

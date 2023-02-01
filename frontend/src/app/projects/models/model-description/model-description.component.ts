@@ -6,7 +6,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, switchMap, tap } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
@@ -17,7 +17,7 @@ import {
 } from 'src/app/settings/core/tools-settings/tool.service';
 import { ProjectService } from '../../service/project.service';
 
-@UntilDestroy({ checkProperties: true })
+@UntilDestroy()
 @Component({
   selector: 'app-model-description',
   templateUrl: './model-description.component.html',
@@ -48,8 +48,9 @@ export class ModelDescriptionComponent implements OnInit {
 
   ngOnInit(): void {
     this.modelService.model
-      .pipe(filter(Boolean))
       .pipe(
+        untilDestroyed(this),
+        filter(Boolean),
         tap((model) => {
           this.modelSlug = model.slug;
           this.canDelete = !(
@@ -74,9 +75,9 @@ export class ModelDescriptionComponent implements OnInit {
         this.toolVersions = result[1];
       });
 
-    this.projectService.project.subscribe(
-      (project) => (this.projectSlug = project?.slug)
-    );
+    this.projectService.project
+      .pipe(untilDestroyed(this))
+      .subscribe((project) => (this.projectSlug = project?.slug));
   }
 
   onSubmit(): void {

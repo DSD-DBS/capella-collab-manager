@@ -13,7 +13,7 @@ import {
 } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import {
   BackupService,
@@ -22,7 +22,7 @@ import {
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 
-@UntilDestroy({ checkProperties: true })
+@UntilDestroy()
 @Component({
   selector: 'app-create-backup',
   templateUrl: './create-backup.component.html',
@@ -52,10 +52,14 @@ export class CreateBackupComponent implements OnInit {
     combineLatest([
       this.gitModelService.gitModels,
       this.t4cModelService._t4cModels.asObservable(),
-    ]).subscribe(
-      ([gitModels, t4cModels]) =>
-        (this.t4cAndGitModelExists = !!(gitModels?.length && t4cModels?.length))
-    );
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        ([gitModels, t4cModels]) =>
+          (this.t4cAndGitModelExists = !!(
+            gitModels?.length && t4cModels?.length
+          ))
+      );
   }
 
   createBackupForm = new FormGroup({

@@ -12,7 +12,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   ModelService,
@@ -21,7 +21,7 @@ import {
 import { ToolService } from 'src/app/settings/core/tools-settings/tool.service';
 import { ProjectService } from '../../service/project.service';
 
-@UntilDestroy({ checkProperties: true })
+@UntilDestroy()
 @Component({
   selector: 'app-create-model-base',
   templateUrl: './create-model-base.component.html',
@@ -56,9 +56,9 @@ export class CreateModelBaseComponent implements OnInit {
     this.toolService.getTools().subscribe();
     this.modelService.clearModel();
 
-    this.projectService.project.subscribe(
-      (project) => (this.projectSlug = project?.slug)
-    );
+    this.projectService.project
+      .pipe(untilDestroyed(this))
+      .subscribe((project) => (this.projectSlug = project?.slug));
   }
 
   onSubmit(): void {

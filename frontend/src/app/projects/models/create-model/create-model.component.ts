@@ -14,11 +14,11 @@ import {
 } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import { ProjectService } from '../../service/project.service';
 
-@UntilDestroy({ checkProperties: true })
+@UntilDestroy()
 @Component({
   selector: 'app-create-model',
   templateUrl: './create-model.component.html',
@@ -43,9 +43,9 @@ export class CreateModelComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.projectService.project.subscribe(
-      (project) => (this.projectSlug = project?.slug)
-    );
+    this.projectService.project
+      .pipe(untilDestroyed(this))
+      .subscribe((project) => (this.projectSlug = project?.slug));
   }
 
   onStepChange(event: StepperSelectionEvent) {

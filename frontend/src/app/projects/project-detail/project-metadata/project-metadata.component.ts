@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs';
 import slugify from 'slugify';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
@@ -24,7 +24,7 @@ import {
   ProjectService,
 } from '../../service/project.service';
 
-@UntilDestroy({ checkProperties: true })
+@UntilDestroy()
 @Component({
   selector: 'app-project-metadata',
   templateUrl: './project-metadata.component.html',
@@ -55,14 +55,16 @@ export class ProjectMetadataComponent implements OnInit, OnChanges {
   });
 
   ngOnInit(): void {
-    this.projectService.project.pipe(filter(Boolean)).subscribe((project) => {
-      this.projectSlug = project.slug;
-      this.projectName = project.name;
-      this.form.patchValue(project);
-    });
+    this.projectService.project
+      .pipe(untilDestroyed(this), filter(Boolean))
+      .subscribe((project) => {
+        this.projectSlug = project.slug;
+        this.projectName = project.name;
+        this.form.patchValue(project);
+      });
 
     this.modelService.models
-      .pipe(filter(Boolean))
+      .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((models) => (this.canDelete = !models.length));
   }
 

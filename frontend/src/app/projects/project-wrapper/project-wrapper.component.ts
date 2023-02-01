@@ -5,14 +5,12 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { Subscription, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { ProjectService } from '../service/project.service';
 
-@UntilDestroy({ checkProperties: true })
 @Component({
   selector: 'app-project-wrapper',
   templateUrl: './project-wrapper.component.html',

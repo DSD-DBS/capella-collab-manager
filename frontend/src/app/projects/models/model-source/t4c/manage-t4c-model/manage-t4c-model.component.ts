@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, Observable, switchMap, tap } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
@@ -32,7 +32,7 @@ import {
   T4CRepository,
 } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 
-@UntilDestroy({ checkProperties: true })
+@UntilDestroy()
 @Component({
   selector: 'app-manage-t4c-model',
   templateUrl: './manage-t4c-model.component.html',
@@ -91,13 +91,12 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
         this.loading = false;
       });
 
-    combineLatest([
-      this.projectService.project,
-      this.modelService.model,
-    ]).subscribe(([project, model]) => {
-      this.projectSlug = project?.slug;
-      this.modelSlug = model?.slug;
-    });
+    combineLatest([this.projectService.project, this.modelService.model])
+      .pipe(untilDestroyed(this))
+      .subscribe(([project, model]) => {
+        this.projectSlug = project?.slug;
+        this.modelSlug = model?.slug;
+      });
   }
 
   fetchT4CInstances(): Observable<T4CInstance[]> {
