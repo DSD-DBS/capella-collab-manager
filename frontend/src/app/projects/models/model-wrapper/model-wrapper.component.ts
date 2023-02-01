@@ -48,7 +48,6 @@ export class ModelWrapperComponent implements OnInit, OnDestroy {
     this.breadcrumbSubscription?.unsubscribe();
     this.breadcrumbService.updatePlaceholder({ model: undefined });
     this.modelService.clearModel();
-    this.modelService.clearModels();
     this.t4cModelService._t4cModels.next(undefined);
   }
 }
