@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { first } from 'rxjs';
 import { ModelDiagramDialogComponent } from 'src/app/projects/models/diagrams/model-diagram-dialog/model-diagram-dialog.component';
 import {
   Model,
@@ -15,30 +16,22 @@ import { UserService } from 'src/app/services/user/user.service';
 import { NewReadonlySessionDialogComponent } from 'src/app/sessions/new-readonly-session-dialog/new-readonly-session-dialog.component';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
-import { Project } from '../../service/project.service';
+import { ProjectService } from '../../service/project.service';
 
 @Component({
   selector: 'app-model-overview',
   templateUrl: './model-overview.component.html',
   styleUrls: ['./model-overview.component.css'],
 })
-export class ModelOverviewComponent implements OnInit {
-  @Input() project!: Project;
-  models?: Model[];
-
+export class ModelOverviewComponent {
   constructor(
     public modelService: ModelService,
-    private dialog: MatDialog,
     public sessionService: SessionService,
     public projectUserService: ProjectUserService,
-    public userService: UserService
+    public userService: UserService,
+    public projectService: ProjectService,
+    private dialog: MatDialog
   ) {}
-
-  ngOnInit(): void {
-    this.modelService._models.pipe().subscribe((models) => {
-      this.models = models;
-    });
-  }
 
   getPrimaryWorkingMode(model: Model): string {
     if (model.t4c_models.length) {
@@ -50,8 +43,18 @@ export class ModelOverviewComponent implements OnInit {
   }
 
   openPipelineDialog(model: Model): void {
-    this.dialog.open(TriggerPipelineComponent, {
-      data: { project: this.project, model: model },
+    this.projectService.project.pipe(first()).subscribe((project) => {
+      this.dialog.open(TriggerPipelineComponent, {
+        data: { projectSlug: project!.slug, modelSlug: model.slug },
+      });
+    });
+  }
+
+  openDiagramsDialog(model: Model): void {
+    this.dialog.open(ModelDiagramDialogComponent, {
+      height: '80vh',
+      width: '80vw',
+      data: { model: model },
     });
   }
 
@@ -73,8 +76,10 @@ export class ModelOverviewComponent implements OnInit {
   }
 
   newReadonlySession(model: Model) {
-    this.dialog.open(NewReadonlySessionDialogComponent, {
-      data: { project: this.project, model: model },
+    this.projectService.project.pipe(first()).subscribe((project) => {
+      this.dialog.open(NewReadonlySessionDialogComponent, {
+        data: { projectSlug: project!.slug, model: model },
+      });
     });
   }
 }

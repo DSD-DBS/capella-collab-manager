@@ -81,6 +81,7 @@ export class ManageGitModelComponent implements OnInit {
   });
 
   private projectSlug?: string = undefined;
+  private modelSlug?: string = undefined;
 
   private gitModelId?: number;
   public gitModel?: GetGitModel;
@@ -141,7 +142,7 @@ export class ManageGitModelComponent implements OnInit {
       }
     });
 
-    this.modelService._model.subscribe((model) => {
+    this.modelService.model.subscribe((model) => {
 =======
       if (gitSettings.length) {
         this.urls.baseUrl.setValidators([Validators.required]);
@@ -154,7 +155,8 @@ export class ManageGitModelComponent implements OnInit {
       }
     });
 
-    this.modelService._model.subscribe((model) => {
+    this.modelService.model.subscribe((model) => {
+      this.modelSlug = model?.slug!;
 >>>>>>> b2ae2aac (feat: Apply new fetching approach to projects)
       if (model?.tool.name === 'Capella') {
         this.form.controls.entrypoint.addValidators(
@@ -182,15 +184,15 @@ export class ManageGitModelComponent implements OnInit {
             this.breadCrumbsService.updatePlaceholder({ gitModel });
             this.gitService.loadPrivateRevisions(
               gitModel!.path,
-              this.projectSlug!, // TODO: Check if we can actually use ! here
-              this.modelService.model?.slug!,
+              this.projectSlug!,
+              this.modelSlug!,
               gitModelId
             );
           });
 
           this.gitModelService.loadGitModelById(
-            this.projectSlug!, // TODO: Check if we can actually use ! here
-            this.modelService.model!.slug,
+            this.projectSlug!,
+            this.modelSlug!,
             gitModelId
           );
         });
@@ -211,8 +213,8 @@ export class ManageGitModelComponent implements OnInit {
       ) {
         this.gitService.loadPrivateRevisions(
           this.resultUrl,
-          this.projectSlug!, // TODO: Check if we can actually use ! here
-          this.modelService.model?.slug!,
+          this.projectSlug!,
+          this.modelSlug!,
           this.gitModelId!
         );
       } else {
@@ -269,8 +271,8 @@ export class ManageGitModelComponent implements OnInit {
     if (this.form.valid) {
       this.gitModelService
         .addGitSource(
-          this.projectSlug!, // TODO: Check if we can actually use ! here
-          this.modelService.model?.slug!,
+          this.projectSlug!,
+          this.modelSlug!,
           this.createGitModelFromForm()
         )
         .subscribe(() => {
@@ -290,8 +292,8 @@ export class ManageGitModelComponent implements OnInit {
 
       this.gitModelService
         .updateGitRepository(
-          this.projectSlug!, // TODO: Check if we can actually use ! here
-          this.modelService.model?.slug!,
+          this.projectSlug!,
+          this.modelSlug!,
           this.gitModelId!,
           patchGitModel
         )
@@ -323,11 +325,7 @@ export class ManageGitModelComponent implements OnInit {
     }
 
     this.gitModelService
-      .deleteGitSource(
-        this.projectSlug!, // TODO: Check if we can actually use ! here
-        this.modelService.model?.slug!,
-        this.gitModel!
-      )
+      .deleteGitSource(this.projectSlug!, this.modelSlug!, this.gitModel!)
       .subscribe({
         next: () => {
           this.toastService.showSuccess(
@@ -335,8 +333,7 @@ export class ManageGitModelComponent implements OnInit {
             `${this.gitModel!.path} has been deleted`
           );
           this.router.navigateByUrl(
-            `/project/${this.projectSlug}/model/${this.modelService.model // TODO: Check if we can actually use ! here
-              ?.slug!}`
+            `/project/${this.projectSlug}/model/${this.modelSlug!}`
           );
         },
         error: () => {
@@ -423,11 +420,7 @@ export class ManageGitModelComponent implements OnInit {
       if (!this.resultUrl) return of({ required: 'Resulting URL is required' });
 
       return this.gitModelService
-        .validatePath(
-          this.projectSlug!, // TODO: Check if we can actually use ! here
-          this.modelService.model?.slug!,
-          this.resultUrl
-        )
+        .validatePath(this.projectSlug!, this.modelSlug!, this.resultUrl)
         .pipe(
           map((prefixExists: boolean) => {
             if (prefixExists) {

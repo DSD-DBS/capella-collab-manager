@@ -11,17 +11,14 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { combineLatest } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import {
-  Model,
-  ModelService,
-} from 'src/app/projects/models/service/model.service';
-import { ProjectService } from 'src/app/projects/service/project.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { CreateBackupComponent } from '../create-backup/create-backup.component';
 import { BackupService, Pipeline } from '../service/backup.service';
-import { ViewLogsDialogComponent } from '../view-logs-dialog/view-logs-dialog.component';
+import {
+  ViewLogsDialogComponent,
+  ViewLogsData,
+} from '../view-logs-dialog/view-logs-dialog.component';
 
 @UntilDestroy({ checkProperties: true })
 @Component({
@@ -32,9 +29,6 @@ import { ViewLogsDialogComponent } from '../view-logs-dialog/view-logs-dialog.co
 export class TriggerPipelineComponent implements OnInit {
   selectedPipeline?: Pipeline = undefined;
 
-  private projectSlug?: string = undefined;
-  private modelSlug?: string = undefined;
-
   configurationForm = new FormGroup({
     includeHistory: new FormControl(false),
   });
@@ -42,25 +36,17 @@ export class TriggerPipelineComponent implements OnInit {
   constructor(
     private toastService: ToastService,
     private dialogRef: MatDialogRef<TriggerPipelineComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { model: Model },
+    @Inject(MAT_DIALOG_DATA)
+    public data: { projectSlug: string; modelSlug: string },
     public dialog: MatDialog,
     public backupService: BackupService,
-    public sessionService: SessionService,
-    private modelService: ModelService,
-    private projectService: ProjectService
+    public sessionService: SessionService
   ) {}
 
   ngOnInit(): void {
-    this.modelService._model.next(this.data.model);
-
-    combineLatest([
-      this.projectService.project,
-      this.modelService._model.asObservable(),
-    ]).subscribe(([project, model]) => {
-      this.projectSlug = project?.slug;
-      this.modelSlug = model?.slug;
-      this.backupService.getBackups(project!.slug, model!.slug).subscribe(); // TODO: Check if we can actually use !. here
-    });
+    this.backupService
+      .getBackups(this.data.projectSlug, this.data.modelSlug)
+      .subscribe();
   }
 
   selectPipeline(pipeline: Pipeline) {
@@ -70,8 +56,8 @@ export class TriggerPipelineComponent implements OnInit {
   runPipeline() {
     this.backupService
       .triggerRun(
-        this.projectSlug!, // TODO: Check if we can actually use ! here
-        this.modelSlug!, // TODO: Check if we can actually use ! here
+        this.data.projectSlug,
+        this.data.modelSlug,
         this.selectedPipeline!.id,
         this.configurationForm.value.includeHistory!
       )
@@ -97,7 +83,7 @@ export class TriggerPipelineComponent implements OnInit {
 
   removeBackup(backup: Pipeline): void {
     this.backupService
-      .removeBackup(this.projectSlug!, this.modelSlug!, backup.id) // TODO: Check if we can actually use ! here
+      .removeBackup(this.data.projectSlug, this.data.modelSlug, backup.id)
       .subscribe(() => {
         this.toastService.showSuccess(
           'Backup pipeline deleted',
@@ -110,11 +96,11 @@ export class TriggerPipelineComponent implements OnInit {
   viewLogs(backup: Pipeline): void {
     this.dialog.open(ViewLogsDialogComponent, {
       data: {
-        projectSlug: this.projectSlug!, // TODO: Check if we can actually use ! here
-        modelSlug: this.modelSlug!, // TODO: Check if we can actually use ! here
+        projectSlug: this.data.projectSlug,
+        modelSlug: this.data.modelSlug,
         job_id: backup.lastrun.id,
         backup_id: backup.id,
-      },
+      } as ViewLogsData,
     });
   }
 
@@ -124,7 +110,7 @@ export class TriggerPipelineComponent implements OnInit {
     dialogRef.afterClosed().subscribe((success) => {
       if (success) {
         this.backupService
-          .getBackups(this.projectSlug!, this.modelSlug!) // TODO: Check if we can actually use ! here
+          .getBackups(this.data.projectSlug, this.data.modelSlug)
           .subscribe();
       }
     });

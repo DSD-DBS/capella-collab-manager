@@ -4,10 +4,10 @@
  -->
 
 <div class="wrapper flex-center">
-  <mat-card *ngIf="modelService.model">
+  <mat-card *ngIf="modelService.model | async">
     <mat-card-title>Restrictions for models</mat-card-title>
     <form
-      *ngIf="this.modelService.model.tool.integrations.pure_variants"
+      *ngIf="(modelService.model | async)!.tool.integrations.pure_variants"
       [formGroup]="restrictionsForm"
     >
       <ng-template #pureVariants>
@@ -21,7 +21,7 @@
         <ng-template [ngTemplateOutlet]="pureVariants"> </ng-template>
       </mat-checkbox>
     </form>
-    <div *ngIf="!this.modelService.model.tool.integrations.pure_variants">
+    <div *ngIf="!(modelService.model | async)!.tool.integrations.pure_variants">
       This model has no restrictions. Please check the documentation for more
       information.
     </div>

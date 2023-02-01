@@ -4,14 +4,14 @@
  -->
 
 <div class="wrapper flex-center">
-  <mat-card class="section-card" *ngIf="modelService.model">
+  <mat-card class="section-card" *ngIf="modelService.model | async">
     <form id="new-model-form" [formGroup]="form">
       <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Modelling tool</mat-label>
           <input
             matInput
-            [value]="this.modelService.model.tool.name"
+            [value]="(modelService.model | async)!.tool.name"
             disabled
           />
         </mat-form-field>

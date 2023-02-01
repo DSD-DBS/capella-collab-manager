@@ -26,7 +26,8 @@ export class ModelRestrictionsComponent implements OnInit {
   loading = false;
   modelServiceSubscription?: Subscription;
 
-  private projectSlug?: string = undefined;
+  private model?: Model;
+  private projectSlug?: string;
 
   constructor(
     public projectService: ProjectService,
@@ -44,9 +45,10 @@ export class ModelRestrictionsComponent implements OnInit {
       this.patchRestrictions();
     });
 
-    this.modelServiceSubscription = this.modelService._model
+    this.modelServiceSubscription = this.modelService.model
       .pipe(filter(Boolean))
-      .subscribe((model: Model) => {
+      .subscribe((model) => {
+        this.model = model;
         this.updateRestrictionsForm(model.restrictions);
       });
 
@@ -70,7 +72,7 @@ export class ModelRestrictionsComponent implements OnInit {
 
   private patchRestrictions() {
     if (
-      JSON.stringify(this.modelService.model?.restrictions) ===
+      JSON.stringify(this.model?.restrictions) ===
       JSON.stringify(this.mapRestrictionsFormToToolModelRestrictionsObject())
     ) {
       return;
@@ -79,14 +81,12 @@ export class ModelRestrictionsComponent implements OnInit {
     this.loading = true;
     this.modelRestrictionService
       .patchModelRestrictions(
-        this.projectSlug!, // TODO: Check if we can actually use ! here
-        this.modelService.model!.slug,
+        this.projectSlug!,
+        this.model!.slug,
         this.mapRestrictionsFormToToolModelRestrictionsObject()
       )
-      .subscribe((restrictions: ModelRestrictions) => {
-        const newModel = this.modelService.model;
-        newModel!.restrictions = restrictions;
-        this.modelService._model.next(newModel);
+      .subscribe(() => {
+        this.modelService.loadModelbySlug(this.projectSlug!, this.model?.slug!);
         this.loading = false;
       });
   }

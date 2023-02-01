@@ -13,11 +13,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Subject, connectable, switchMap, tap } from 'rxjs';
-import slugify from 'slugify';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
-  Model,
   ModelService,
   NewModel,
 } from 'src/app/projects/models/service/model.service';
@@ -37,7 +34,10 @@ export class CreateModelBaseComponent implements OnInit {
   private projectSlug?: string = undefined;
 
   public form = new FormGroup({
-    name: new FormControl('', [Validators.required, this.slugValidator()]),
+    name: new FormControl('', {
+      validators: Validators.required,
+      asyncValidators: this.modelService.asyncSlugValidator(),
+    }),
     description: new FormControl(''),
     toolID: new FormControl<number | undefined>(undefined, [
       Validators.required,
@@ -54,8 +54,7 @@ export class CreateModelBaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.toolService.getTools().subscribe();
-    this.modelService._models.subscribe();
-    this.modelService._model.next(undefined);
+    this.modelService.clearModel();
 
     this.projectService.project.subscribe(
       (project) => (this.projectSlug = project?.slug)
@@ -63,30 +62,15 @@ export class CreateModelBaseComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // TODO: check if we need the project slug check here
     if (this.form.valid && this.projectSlug) {
-      const modelConnectable = connectable<Model>(
-        this.modelService.createNewModel(this.projectSlug, {
+      this.modelService
+        .createModel(this.projectSlug, {
           name: this.form.value.name,
           description: this.form.value.description,
           tool_id: this.form.value.toolID,
-        } as NewModel),
-        {
-          connector: () => new Subject(),
-          resetOnDisconnect: false,
-        }
-      );
-
-      modelConnectable
-        .pipe(switchMap(() => this.modelService.getModels(this.projectSlug!)))
-        .subscribe((value) => {
-          this.modelService._models.next(value);
-        });
-
-      modelConnectable
-        .pipe(tap((model) => this.modelService._model.next(model)))
+        } as NewModel)
         .subscribe({
-          next: (model: Model | undefined) => {
+          next: (model) => {
             this.toastService.showSuccess(
               'Model created',
               `The model with name ${model!.name} has been created`
@@ -94,20 +78,7 @@ export class CreateModelBaseComponent implements OnInit {
             this.create.emit();
           },
         });
-
-      modelConnectable.connect();
     }
-  }
-
-  slugValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const models = this.modelService.models;
-      const slug = slugify(control.value, { lower: true });
-      if (models && models.find((model) => model.slug == slug)) {
-        return { uniqueSlug: { value: slug } };
-      }
-      return null;
-    };
   }
 
   validToolValidator(): ValidatorFn {

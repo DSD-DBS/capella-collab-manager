@@ -5,7 +5,13 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  ValidationErrors,
+} from '@angular/forms';
+import { BehaviorSubject, map, Observable, take, tap } from 'rxjs';
+import slugify from 'slugify';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -36,11 +42,22 @@ export class ProjectService {
     });
   }
 
+  createProject(project: Required<PatchProject>): Observable<Project> {
+    return this.http.post<Project>(this.BACKEND_URL_PREFIX, project).pipe(
+      tap({
+        next: (project) => {
+          this.loadProjects();
+          this._project.next(project);
+        },
+        error: () => this._project.next(undefined),
+      })
+    );
+  }
+
   updateProject(
     project_slug: string,
     project: PatchProject
   ): Observable<Project> {
-    // TODO: Check if return needed
     return this.http
       .patch<Project>(`${this.BACKEND_URL_PREFIX}/${project_slug}`, project)
       .pipe(
@@ -54,19 +71,6 @@ export class ProjectService {
       );
   }
 
-  createProject(project: Required<PatchProject>): Observable<Project> {
-    // TODO: Check if return needed
-    return this.http.post<Project>(this.BACKEND_URL_PREFIX, project).pipe(
-      tap({
-        next: (project) => {
-          this.loadProjects();
-          this._project.next(project);
-        },
-        error: () => this._project.next(undefined),
-      })
-    );
-  }
-
   deleteProject(projectSlug: string): Observable<void> {
     return this.http
       .delete<void>(`${this.BACKEND_URL_PREFIX}/${projectSlug}`)
@@ -78,9 +82,22 @@ export class ProjectService {
       );
   }
 
-  // TODO: Check whether we really need this
   clearProject(): void {
     this._project.next(undefined);
+  }
+
+  asyncSlugValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      const projectSlug = slugify(control.value, { lower: true });
+      return this.projects.pipe(
+        take(1),
+        map((projects) => {
+          return projects?.find((project) => project.slug === projectSlug)
+            ? { uniqueSlug: { value: projectSlug } }
+            : null;
+        })
+      );
+    };
   }
 }
 

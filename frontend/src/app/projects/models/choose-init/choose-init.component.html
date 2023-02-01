@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div *ngIf="(projectService.project | async) && modelService.model">
+<div *ngIf="(projectService.project | async) && (modelService.model | async)">
   <div class="options-list flex-center">
     <button
       mat-raised-button

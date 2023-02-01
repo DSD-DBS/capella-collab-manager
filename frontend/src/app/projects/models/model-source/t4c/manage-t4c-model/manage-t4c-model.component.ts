@@ -13,7 +13,8 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, switchMap, tap } from 'rxjs';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { combineLatest, Observable, switchMap, tap } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   SubmitT4CModel,
@@ -31,6 +32,7 @@ import {
   T4CRepository,
 } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 
+@UntilDestroy({ checkProperties: true })
 @Component({
   selector: 'app-manage-t4c-model',
   templateUrl: './manage-t4c-model.component.html',
@@ -40,7 +42,8 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
   @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 
-  private projectSlug?: string = undefined;
+  private projectSlug?: string;
+  private modelSlug?: string;
 
   editing = false;
   loading = false;
@@ -88,9 +91,13 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
         this.loading = false;
       });
 
-    this.projectService.project.subscribe(
-      (project) => (this.projectSlug = project?.slug)
-    );
+    combineLatest([
+      this.projectService.project,
+      this.modelService.model,
+    ]).subscribe(([project, model]) => {
+      this.projectSlug = project?.slug;
+      this.modelSlug = model?.slug;
+    });
   }
 
   fetchT4CInstances(): Observable<T4CInstance[]> {
@@ -151,8 +158,8 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
     if (this.t4cModelService.t4cModel) {
       this.t4cModelService
         .patchT4CModel(
-          this.projectSlug!, // TODO: Check if we can actually use ! here
-          this.modelService.model!.slug,
+          this.projectSlug!,
+          this.modelSlug!,
           this.t4cModelService.t4cModel.id,
           this.form.value as SubmitT4CModel
         )
@@ -167,8 +174,8 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
     } else {
       this.t4cModelService
         .createT4CModel(
-          this.projectSlug!, // TODO: Check if we can actually use ! here
-          this.modelService.model!.slug,
+          this.projectSlug!,
+          this.modelSlug!,
           this.form.value as SubmitT4CModel
         )
         .subscribe((_) => {
@@ -195,11 +202,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
     }
 
     this.t4cModelService
-      .unlinkT4CModel(
-        this.projectSlug!, // TODO: Check if we can actually use ! here
-        this.modelService.model?.slug!,
-        this.t4cModel!.id
-      )
+      .unlinkT4CModel(this.projectSlug!, this.modelSlug!, this.t4cModel!.id)
       .subscribe({
         next: () => {
           this.toastService.showSuccess(
@@ -207,8 +210,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
             `${this.t4cModel!.name} has been deleted`
           );
           this.router.navigateByUrl(
-            `/project/${this.projectSlug!}/model/${this.modelService.model // TODO: Check if we can actually use ! here
-              ?.slug!}`
+            `/project/${this.projectSlug!}/model/${this.modelSlug!}`
           );
         },
         error: () => {

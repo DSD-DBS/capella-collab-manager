@@ -6,7 +6,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { combineLatest, filter, map, switchMap } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
@@ -32,20 +32,12 @@ export class ModelWrapperComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     combineLatest([
       this.route.params.pipe(map((params) => params.model as string)),
-      this.projectService.project.pipe(
-        filter(Boolean),
-        map((project) => project.slug)
-      ),
-    ])
-      .pipe(switchMap((args) => this.modelService.getModelBySlug(...args)))
-      .subscribe({
-        next: this.modelService._model.next.bind(this.modelService._model),
-        error: (_) => {
-          this.modelService._model.next(undefined);
-        },
-      });
+      this.projectService.project,
+    ]).subscribe(([modelSlug, project]) =>
+      this.modelService.loadModelbySlug(modelSlug, project?.slug!)
+    );
 
-    this.breadcrumbSubscription = this.modelService._model.subscribe((model) =>
+    this.modelService.model.subscribe((model) =>
       this.breadcrumbService.updatePlaceholder({ model })
     );
   }
@@ -53,7 +45,7 @@ export class ModelWrapperComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.breadcrumbSubscription?.unsubscribe();
     this.breadcrumbService.updatePlaceholder({ model: undefined });
-    this.modelService._model.next(undefined);
+    this.modelService.clearModel();
     this.t4cModelService._t4cModels.next(undefined);
   }
 }
