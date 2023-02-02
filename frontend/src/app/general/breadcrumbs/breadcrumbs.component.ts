@@ -4,12 +4,8 @@
  */
 
 import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
 
-import {
-  Breadcrumb,
-  BreadcrumbsService,
-} from 'src/app/general/breadcrumbs/breadcrumbs.service';
+import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 
 @Component({
   selector: 'app-breadcrumbs',
@@ -17,9 +13,5 @@ import {
   styleUrls: ['./breadcrumbs.component.css'],
 })
 export class BreadcrumbsComponent {
-  breadcrumbs: Observable<Breadcrumb[]>;
-
-  constructor(private readonly breadcrumbService: BreadcrumbsService) {
-    this.breadcrumbs = breadcrumbService.breadcrumbs;
-  }
+  constructor(public readonly breadcrumbService: BreadcrumbsService) {}
 }
