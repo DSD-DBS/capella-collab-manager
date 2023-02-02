@@ -104,7 +104,7 @@
         mat-raised-button
         (click)="viewLogs(selectedPipeline)"
         color="primary"
-        *ngIf="selectedPipeline.lastrun.id"
+        *ngIf="selectedPipeline?.lastrun?.id"
       >
         View logs of last run
       </button>
