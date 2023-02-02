@@ -103,7 +103,12 @@ export class TriggerPipelineComponent implements OnInit {
   }
 
   createNewBackup(): void {
-    const dialogRef = this.dialog.open(CreateBackupComponent);
+    const dialogRef = this.dialog.open(CreateBackupComponent, {
+      data: {
+        projectSlug: this.data.projectSlug,
+        modelSlug: this.data.modelSlug,
+      },
+    });
 
     dialogRef.afterClosed().subscribe((success) => {
       if (success) {
