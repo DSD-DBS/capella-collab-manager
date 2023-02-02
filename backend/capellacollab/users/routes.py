@@ -114,7 +114,7 @@ def delete_user(
     db: Session = Depends(get_db),
 ):
     project_crud.delete_projects_for_user(db, user)
-    event_crud.delete_all_events_involved_in(db, user)
+    event_crud.delete_all_events_user_involved_in(db, user)
     crud.delete_user(db, user)
 
 

@@ -26,6 +26,7 @@ from capellacollab.projects.users.models import (
     ProjectUserRole,
 )
 from capellacollab.sessions.routes import project_router as router_sessions
+from capellacollab.users.events import crud as events_crud
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import DatabaseUser, Role
 
@@ -159,6 +160,8 @@ def delete_project(
             409, {"reason": "The project still has models assigned to it"}
         )
     users_crud.delete_users_from_project(db, project)
+    events_crud.delete_all_events_projects_associated_with(db, project)
+
     crud.delete_project(db, project)
 
 
