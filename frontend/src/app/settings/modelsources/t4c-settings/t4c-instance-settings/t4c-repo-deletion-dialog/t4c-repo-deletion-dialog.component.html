@@ -3,41 +3,43 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<h1>Remove T4C repository</h1>
-<div>
-  <p>
-    Do you really want to delete the T4C repository
-    <span class="monospace">{{ repo.name }}</span
-    >? <br />
-    This will delete the repository in our database AND on the TeamForCapella
-    server.
-  </p>
-  <p><b>The deletion cannot be undone!</b></p>
-</div>
-Please type in the name of the repository to confirm the deletion: <br />
-<form (submit)="remoteRepository()">
-  <mat-form-field appearance="fill">
-    <mat-label>Repository name</mat-label>
-    <input
-      (paste)="(false)"
-      matInput
-      [formControl]="repositoryNameForm"
-      [placeholder]="repo.name"
-    />
-    <mat-error *ngIf="repositoryNameForm.errors?.required">
-      You have to type in the repository name!
-    </mat-error>
-    <mat-error *ngIf="repositoryNameForm.errors?.repositoryNameMatchFailed">
-      The repository name doesn't match the repository you'd like to delete!
-    </mat-error>
-  </mat-form-field>
-
-  <div class="flex-space-between">
-    <button type="button" mat-button (click)="this.dialogRef.close(false)">
-      Cancel
-    </button>
-    <button mat-flat-button type="submit" color="warn">
-      Remove the repository
-    </button>
+<div class="dialog">
+  <h1>Remove T4C repository</h1>
+  <div>
+    <p>
+      Do you really want to delete the T4C repository
+      <span class="monospace">{{ repo.name }}</span
+      >? <br />
+      This will delete the repository in our database AND on the TeamForCapella
+      server.
+    </p>
+    <p><b>The deletion cannot be undone!</b></p>
   </div>
-</form>
+  Please type in the name of the repository to confirm the deletion: <br />
+  <form (submit)="remoteRepository()">
+    <mat-form-field appearance="fill">
+      <mat-label>Repository name</mat-label>
+      <input
+        (paste)="(false)"
+        matInput
+        [formControl]="repositoryNameForm"
+        [placeholder]="repo.name"
+      />
+      <mat-error *ngIf="repositoryNameForm.errors?.required">
+        You have to type in the repository name!
+      </mat-error>
+      <mat-error *ngIf="repositoryNameForm.errors?.repositoryNameMatchFailed">
+        The repository name doesn't match the repository you'd like to delete!
+      </mat-error>
+    </mat-form-field>
+
+    <div class="flex-space-between">
+      <button type="button" mat-button (click)="this.dialogRef.close(false)">
+        Cancel
+      </button>
+      <button mat-flat-button type="submit" color="warn">
+        Remove the repository
+      </button>
+    </div>
+  </form>
+</div>

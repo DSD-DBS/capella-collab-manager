@@ -3,15 +3,17 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<h1>Delete Instance {{ instance.name }}</h1>
-<div>
-  <p>
-    Are you sure you want to delete Instance <i>{{ instance.name }} </i> with ID
-    <i>{{ instance.id }}</i
-    >?
-  </p>
-</div>
-<div>
-  <button mat-button (click)="this.dialogRef.close(false)">No</button>
-  <button mat-raised-button (click)="this.dialogRef.close(true)">Yes</button>
+<div class="dialog">
+  <h1>Delete Instance {{ instance.name }}</h1>
+  <div>
+    <p>
+      Are you sure you want to delete Instance <i>{{ instance.name }} </i> with
+      ID <i>{{ instance.id }}</i
+      >?
+    </p>
+  </div>
+  <div>
+    <button mat-button (click)="this.dialogRef.close(false)">No</button>
+    <button mat-raised-button (click)="this.dialogRef.close(true)">Yes</button>
+  </div>
 </div>
