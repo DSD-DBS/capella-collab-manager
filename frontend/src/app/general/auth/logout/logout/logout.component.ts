@@ -5,7 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
+import { PageLayoutService } from 'src/app/page-layout/page-layout.service';
 
 @Component({
   selector: 'app-logout',
@@ -18,10 +18,9 @@ export class LogoutComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private navbarService: NavBarService
+    private pageLayoutService: PageLayoutService
   ) {
-    this.navbarService.title = 'Logout';
-    this.navbarService.disableAll();
+    this.pageLayoutService.disableAll();
   }
 
   ngOnInit(): void {

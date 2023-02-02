@@ -5,7 +5,6 @@
 
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import {
   T4CInstance,
   T4CInstanceService,
@@ -22,12 +21,7 @@ export class T4CSettingsComponent implements OnInit {
     return this._instances.value;
   }
 
-  constructor(
-    private navbarService: NavBarService,
-    private t4CInstanceService: T4CInstanceService
-  ) {
-    this.navbarService.title = 'Settings / Modelsources / T4C';
-  }
+  constructor(private t4CInstanceService: T4CInstanceService) {}
 
   ngOnInit(): void {
     this.t4CInstanceService.listInstances().subscribe((res) => {

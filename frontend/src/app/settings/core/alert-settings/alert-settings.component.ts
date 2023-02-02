@@ -12,7 +12,6 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   CreateNotice,
@@ -40,11 +39,8 @@ export class AlertSettingsComponent {
 
   constructor(
     public noticeService: NoticeService,
-    private navbarService: NavBarService,
     private toastService: ToastService
-  ) {
-    this.navbarService.title = 'Settings / Core / Alerts';
-  }
+  ) {}
 
   titleOrDescriptionRequired(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {

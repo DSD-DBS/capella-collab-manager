@@ -7,7 +7,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
+import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import {
   GitSetting,
   GitSettingsService,
@@ -30,8 +30,8 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private navbarService: NavBarService,
-    private gitSettingsService: GitSettingsService
+    private gitSettingsService: GitSettingsService,
+    private breadcrumbsService: BreadcrumbsService
   ) {}
 
   private gitSettingsSubscription?: Subscription;
@@ -40,12 +40,13 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.gitSettingsSubscription = this.gitSettingsService.gitSetting.subscribe(
       {
-        next: (instance: GitSetting) => {
+        next: (gitSetting: GitSetting) => {
           this.gitSettingsForm.controls['type'].setValue(
-            instance.type as string
+            gitSetting.type as string
           );
-          this.gitSettingsForm.controls['name'].setValue(instance.name);
-          this.gitSettingsForm.controls['url'].setValue(instance.url);
+          this.gitSettingsForm.controls['name'].setValue(gitSetting.name);
+          this.gitSettingsForm.controls['url'].setValue(gitSetting.url);
+          this.breadcrumbsService.updatePlaceholder({ gitSetting });
         },
       }
     );
@@ -55,14 +56,13 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
       if (!!this.id) {
         this.gitSettingsService.loadGitSettingById(this.id);
       }
-      this.navbarService.title =
-        'Settings / Modelsources / T4C / Instances / ' + this.id;
     });
   }
 
   ngOnDestroy(): void {
     this.gitSettingsSubscription?.unsubscribe();
     this.paramsSubscription?.unsubscribe();
+    this.breadcrumbsService.updatePlaceholder({ gitSetting: undefined });
   }
 
   editGitSettings() {

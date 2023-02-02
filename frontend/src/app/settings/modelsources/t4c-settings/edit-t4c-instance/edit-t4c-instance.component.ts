@@ -14,7 +14,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { NavBarService } from 'src/app/general/navbar/service/nav-bar.service';
+import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   BaseT4CInstance,
@@ -80,27 +80,13 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   });
 
   constructor(
-    private navBarService: NavBarService,
     private t4cInstanceService: T4CInstanceService,
     private route: ActivatedRoute,
     private router: Router,
     private toastService: ToastService,
-    private toolService: ToolService
-  ) {
-    this.navBarService.title = 'Settings / Modelsources / T4C';
-
-    // This has to happen in the constructor because of NG0100
-    // https://angular.io/errors/NG0100
-    this.route.params
-      .pipe(
-        map((params) => params.instance),
-        filter((instance) => instance === undefined)
-      )
-      .subscribe({
-        next: () =>
-          (this.navBarService.title = 'Settings / Modelsources / T4C / Create'),
-      });
-  }
+    private toolService: ToolService,
+    private breadcrumbsService: BreadcrumbsService
+  ) {}
 
   ngOnInit(): void {
     this.paramsSubscription = this.route.params
@@ -121,15 +107,11 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
       .subscribe(this._capella_versions);
 
     this._instance
-      .pipe(
-        filter(Boolean),
-        tap((instance) => {
-          this.navBarService.title = `Settings / Modelsources / T4C / ${instance.name}`;
-        })
-      )
-      .subscribe((instance: T4CInstance) => {
-        instance.password = '***********';
-        this.form.patchValue(instance);
+      .pipe(filter(Boolean))
+      .subscribe((t4cInstance: T4CInstance) => {
+        t4cInstance.password = '***********';
+        this.form.patchValue(t4cInstance);
+        this.breadcrumbsService.updatePlaceholder({ t4cInstance });
       });
   }
 
@@ -192,5 +174,6 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.paramsSubscription?.unsubscribe();
     this._instance.next(undefined);
+    this.breadcrumbsService.updatePlaceholder({ t4cInstance: undefined });
   }
 }

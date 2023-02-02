@@ -6,7 +6,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { NavBarService } from '../../general/navbar/service/nav-bar.service';
 import { Session } from '../../schemes';
 import { SessionService } from '../../services/session/session.service';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
@@ -19,11 +18,8 @@ import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-se
 export class SessionOverviewComponent implements OnInit {
   constructor(
     private sessionService: SessionService,
-    private dialog: MatDialog,
-    private navbarService: NavBarService
-  ) {
-    this.navbarService.title = 'Session Overview';
-  }
+    private dialog: MatDialog
+  ) {}
 
   deletionFormGroup = new FormGroup({});
 

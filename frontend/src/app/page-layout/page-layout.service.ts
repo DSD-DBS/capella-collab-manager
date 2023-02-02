@@ -8,10 +8,7 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
-export class NavBarService {
-  title = 'Capella Collaboration Manager';
-  subtitle = '';
-
+export class PageLayoutService {
   showHeader = true;
   showFooter = true;
   showNotice = true;
