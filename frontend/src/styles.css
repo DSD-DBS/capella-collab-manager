@@ -303,3 +303,11 @@ Angular Material Card Styles
 .monospace {
   font-family: monospace;
 }
+
+.mat-dialog {
+  min-width: 800px;
+}
+
+.form-field-default {
+  width: 405px;
+}

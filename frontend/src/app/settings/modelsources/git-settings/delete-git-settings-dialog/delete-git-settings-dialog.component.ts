@@ -5,7 +5,7 @@
 
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { GitSetting } from 'src/app/services/settings/git-settings.service';
+import { GitInstance } from 'src/app/services/settings/git-settings.service';
 
 @Component({
   selector: 'app-delete-git-settings-dialog',
@@ -15,6 +15,6 @@ import { GitSetting } from 'src/app/services/settings/git-settings.service';
 export class DeleteGitSettingsDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public instance: GitSetting
+    @Inject(MAT_DIALOG_DATA) public instance: GitInstance
   ) {}
 }

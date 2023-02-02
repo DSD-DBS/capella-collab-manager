@@ -44,7 +44,7 @@ import {
   Revisions,
 } from 'src/app/services/git/git.service';
 import {
-  GitSetting,
+  GitInstance,
   GitSettingsService,
 } from 'src/app/services/settings/git-settings.service';
 
@@ -57,8 +57,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 
-  public availableGitInstances: Array<GitSetting> = [];
-  public selectedGitInstance: GitSetting | undefined = undefined;
+  public availableGitInstances: Array<GitInstance> | undefined = undefined;
+  public selectedGitInstance: GitInstance | undefined = undefined;
 
   private availableRevisions: Revisions | undefined = {
     branches: [],
@@ -70,7 +70,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
 
   public form = new FormGroup({
     urls: new FormGroup({
-      baseUrl: new FormControl<GitSetting | undefined>(undefined),
+      baseUrl: new FormControl<GitInstance | undefined>(undefined),
       inputUrl: new FormControl('', absoluteUrlValidator()),
     }),
     credentials: new FormGroup({
@@ -129,7 +129,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
       this.gitSettingsService.gitSettings.subscribe((gitSettings) => {
         this.availableGitInstances = gitSettings;
 
-        if (gitSettings.length) {
+        if (gitSettings?.length) {
           this.urls.baseUrl.setValidators([Validators.required]);
           this.urls.inputUrl.setValidators([absoluteOrRelativeValidators()]);
           this.form.controls.urls.setAsyncValidators([
@@ -179,7 +179,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
         );
       });
 
-    this.gitSettingsService.loadGitSettings();
+    this.gitSettingsService.loadGitInstances();
   }
 
   ngOnDestroy(): void {
@@ -212,7 +212,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     }
   }
 
-  onBaseIntegrationUrlSelect(value: GitSetting): void {
+  onBaseIntegrationUrlSelect(value: GitInstance): void {
     let inputUrlControl = this.urls.inputUrl;
     let inputUrl = inputUrlControl.value;
 
@@ -229,7 +229,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     this.updateResultUrl();
     this.resetRevisions();
 
-    if (!this.availableGitInstances.length) {
+    if (!this.availableGitInstances?.length) {
       if (this.form.controls.urls.controls.inputUrl.valid) {
         this.enableAllExceptUrls();
       } else {
@@ -245,7 +245,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
       if (longestMatchingGitSetting) {
         this.selectedGitInstance = longestMatchingGitSetting;
         this.urls.baseUrl.setValue(longestMatchingGitSetting);
-      } else if (this.availableGitInstances.length) {
+      } else if (this.availableGitInstances?.length) {
         this.selectedGitInstance = undefined;
         this.urls.baseUrl.reset();
         this.disableAllExpectUrls();
@@ -464,10 +464,10 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
 
   private findLongestUrlMatchingGitSetting(
     url: string
-  ): GitSetting | undefined {
+  ): GitInstance | undefined {
     let longestMatchingGitSetting = undefined;
     let longestUrlLength = 0;
-    this.availableGitInstances.forEach((gitSetting) => {
+    this.availableGitInstances?.forEach((gitSetting) => {
       if (
         url.startsWith(gitSetting.url) &&
         gitSetting.url.length > longestUrlLength

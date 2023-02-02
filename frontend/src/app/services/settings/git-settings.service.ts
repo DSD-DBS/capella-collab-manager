@@ -5,7 +5,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -13,66 +13,93 @@ import { environment } from 'src/environments/environment';
 })
 export class GitSettingsService {
   private BACKEND_URL_PREFIX =
-    environment.backend_url + '/settings/modelsources/git/';
+    environment.backend_url + '/settings/modelsources/git';
 
-  private _gitSettings = new BehaviorSubject<GitSetting[]>([]);
-  private _gitSetting = new Subject<GitSetting>();
+  private _gitSettings = new BehaviorSubject<GitInstance[] | undefined>(
+    undefined
+  );
+  private _gitSetting = new BehaviorSubject<GitInstance | undefined>(undefined);
 
   readonly gitSettings = this._gitSettings.asObservable();
   readonly gitSetting = this._gitSetting.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  loadGitSettings(): void {
+  loadGitInstances(): void {
     this.http
-      .get<GitSetting[]>(this.BACKEND_URL_PREFIX)
+      .get<BackendBasicGitInstance[]>(this.BACKEND_URL_PREFIX)
+      .pipe(
+        map((backendGitInstances) => {
+          return backendGitInstances.map((backendGitInstance) =>
+            this.transformGitInstance(backendGitInstance)
+          );
+        })
+      )
       .subscribe((gitSettings) => this._gitSettings.next(gitSettings));
   }
 
-  loadGitSettingById(id: number): void {
+  transformGitInstance(
+    backendGitInstance: BackendBasicGitInstance
+  ): GitInstance {
+    let gitInstance = JSON.parse(JSON.stringify(backendGitInstance));
+
+    gitInstance.apiURL = gitInstance.api_url;
+    return gitInstance;
+  }
+
+  loadGitInstanceById(id: number): void {
     this.http
-      .get<GitSetting>(this.BACKEND_URL_PREFIX + id)
+      .get<GitInstance>(this.BACKEND_URL_PREFIX + '/' + id)
       .subscribe((gitSetting) => this._gitSetting.next(gitSetting));
   }
 
-  createGitSettings(gitSetting: {
-    name: string;
-    url: string;
-    type: GitType;
-  }): Observable<GitSetting> {
+  createGitInstance(gitInstance: BasicGitInstance): Observable<GitInstance> {
     return this.http
-      .post<GitSetting>(this.BACKEND_URL_PREFIX, gitSetting)
-      .pipe(tap(() => this.loadGitSettings()));
+      .post<GitInstance>(this.BACKEND_URL_PREFIX, {
+        name: gitInstance.name,
+        url: gitInstance.url,
+        type: gitInstance.type,
+        api_url: gitInstance.apiURL,
+      })
+      .pipe(tap(() => this.loadGitInstances()));
   }
 
-  editGitSettings(
-    id: number,
-    name: string,
-    url: string,
-    type: GitType
-  ): Observable<GitSetting> {
+  editGitInstance(gitInstance: GitInstance): Observable<GitInstance> {
     return this.http
-      .put<GitSetting>(this.BACKEND_URL_PREFIX + id, {
-        type,
-        name,
-        url,
+      .patch<GitInstance>(this.BACKEND_URL_PREFIX + '/' + gitInstance.id, {
+        type: gitInstance.type,
+        name: gitInstance.name,
+        url: gitInstance.url,
+        api_url: gitInstance.apiURL,
       })
-      .pipe(tap(() => this.loadGitSettings()));
+      .pipe(tap(() => this.loadGitInstances()));
   }
 
   deleteGitSettings(id: number) {
     return this.http
-      .delete(this.BACKEND_URL_PREFIX + id)
-      .pipe(tap(() => this.loadGitSettings()));
+      .delete(this.BACKEND_URL_PREFIX + '/' + id)
+      .pipe(tap(() => this.loadGitInstances()));
   }
 }
 
-export interface GitSetting {
+export type BackendBasicGitInstance = {
   id: number;
   name: string;
   url: string;
+  api_url?: string;
   type: GitType;
-}
+};
+
+export type BasicGitInstance = {
+  name: string;
+  url: string;
+  apiURL?: string;
+  type: GitType;
+};
+
+export type GitInstance = BasicGitInstance & {
+  id: number;
+};
 
 export type GitType = 'general' | 'gitlab' | 'github' | 'azuredevops';
 

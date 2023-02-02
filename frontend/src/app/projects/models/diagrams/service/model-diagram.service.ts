@@ -39,7 +39,7 @@ export class ModelDiagramService {
 
 export type DiagramCacheMetadata = {
   diagrams: DiagramMetadata[];
-  last_modified: string;
+  last_updated: string;
 };
 
 export type DiagramMetadata = {

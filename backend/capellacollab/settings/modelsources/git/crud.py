@@ -23,16 +23,16 @@ def get_git_settings(db: Session) -> list[DatabaseGitInstance]:
     return db.query(DatabaseGitInstance).all()
 
 
-def create_git_setting(
+def create_git_instance(
     db: Session, body: PostGitInstance
 ) -> DatabaseGitInstance:
-    git_setting = DatabaseGitInstance(
-        type=body.type, name=body.name, url=body.url
+    git_instance = DatabaseGitInstance(
+        type=body.type, name=body.name, url=body.url, api_url=body.api_url
     )
-    db.add(git_setting)
+    db.add(git_instance)
 
     db.commit()
-    return git_setting
+    return git_instance
 
 
 def update_git_setting(
@@ -40,12 +40,9 @@ def update_git_setting(
     git_setting: DatabaseGitInstance,
     post_git_setting: PostGitInstance,
 ) -> DatabaseGitInstance:
-    if _type := post_git_setting.type:
-        git_setting.type = _type
-    if name := post_git_setting.name:
-        git_setting.name = name
-    if url := post_git_setting.url:
-        git_setting.url = url
+    for key in post_git_setting.dict():
+        if (value := getattr(post_git_setting, key)) is not None:
+            setattr(git_setting, key, value)
 
     db.commit()
     return git_setting

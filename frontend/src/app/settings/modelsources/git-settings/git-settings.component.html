@@ -11,8 +11,8 @@
     <mat-card *ngFor="let instance of availableGitSettings">
       <div class="mat-title">
         <div class="instance-head">
-          {{ instance.type }}
-          <span class="mat-subtitle">{{ instance.name }}</span>
+          {{ instance.name }}
+          <span class="mat-subtitle">{{ instance.type }}</span>
         </div>
         <div class="icon-container">
           <a
@@ -28,7 +28,8 @@
       </div>
       <div class="content">
         Instance base URL:
-        <a href="{{ instance.url }}">{{ instance.url }}</a>
+        <a href="{{ instance.url }}">{{ instance.url }}</a> <br />
+        <span *ngIf="instance.apiURL">API URL: {{ instance.apiURL }}</span>
       </div>
     </mat-card>
   </div>
@@ -37,11 +38,11 @@
   <br />
   <form [formGroup]="gitInstancesForm" id="add-instance-form">
     Supported instances: <br />
-    <mat-form-field id="instance-url" appearance="fill">
+    <mat-form-field class="form-field-default" appearance="fill">
       <mat-label>Git Type</mat-label>
       <mat-select matInput formControlName="type">
         <mat-option value="General" selected>General Git (limited)</mat-option>
-        <mat-option value="GitLab" disabled>GitLab (unsupported)</mat-option>
+        <mat-option value="GitLab">Gitlab</mat-option>
         <mat-option value="GitHub" disabled>GitHub (unsupported)</mat-option>
         <mat-option value="AzureDevOps" disabled
           >Azure DevOps (unsupported)</mat-option
@@ -49,20 +50,20 @@
       </mat-select>
     </mat-form-field>
     <br />
-    <mat-form-field id="instance-url" appearance="fill">
+    <mat-form-field class="form-field-default" appearance="fill">
       <mat-label>Name</mat-label>
       <input matInput formControlName="name" />
       <mat-error *ngIf="gitInstancesForm.controls.name.errors?.uniqueName"
-        >An instance with the name "{{
+        >A instance with the name "{{
           gitInstancesForm.controls.name.errors?.uniqueName.value
         }}" already exists</mat-error
       >
       <mat-error *ngIf="gitInstancesForm.controls.name.errors?.required"
-        >An instance name is required</mat-error
+        >A instance name is required</mat-error
       >
     </mat-form-field>
     <br />
-    <mat-form-field id="instance-url" appearance="fill">
+    <mat-form-field class="form-field-default" appearance="fill">
       <mat-label>Instance base URL</mat-label>
       <input matInput formControlName="url" />
       <mat-error *ngIf="gitInstancesForm.controls.url.errors?.required"
@@ -70,6 +71,17 @@
       >
       <mat-error *ngIf="gitInstancesForm.controls.url.errors?.urlSchemeError">
         Base url must start with http(s)://
+      </mat-error> </mat-form-field
+    ><br />
+    <mat-form-field
+      *ngIf="gitInstancesForm.controls.type.value !== 'General'"
+      class="form-field-default"
+      appearance="fill"
+    >
+      <mat-label>API Base URL</mat-label>
+      <input matInput formControlName="apiURL" />
+      <mat-error *ngIf="gitInstancesForm.controls.url.errors?.urlSchemeError">
+        API URLs have to start with 'http(s)://'
       </mat-error>
     </mat-form-field>
   </form>

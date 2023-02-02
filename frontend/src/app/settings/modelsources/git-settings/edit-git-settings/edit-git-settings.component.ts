@@ -6,10 +6,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import {
-  GitSetting,
+  GitInstance,
   GitSettingsService,
 } from 'src/app/services/settings/git-settings.service';
 
@@ -25,6 +25,7 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
     type: new FormControl('', Validators.required),
     name: new FormControl('', Validators.required),
     url: new FormControl('', Validators.required),
+    apiURL: new FormControl(''),
   });
 
   constructor(
@@ -38,23 +39,17 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
   private paramsSubscription?: Subscription;
 
   ngOnInit(): void {
-    this.gitSettingsSubscription = this.gitSettingsService.gitSetting.subscribe(
-      {
-        next: (gitSetting: GitSetting) => {
-          this.gitSettingsForm.controls['type'].setValue(
-            gitSetting.type as string
-          );
-          this.gitSettingsForm.controls['name'].setValue(gitSetting.name);
-          this.gitSettingsForm.controls['url'].setValue(gitSetting.url);
-          this.breadcrumbsService.updatePlaceholder({ gitSetting });
-        },
-      }
-    );
+    this.gitSettingsSubscription = this.gitSettingsService.gitSetting
+      .pipe(filter(Boolean))
+      .subscribe((instance: GitInstance) => {
+        this.gitSettingsForm.patchValue(instance);
+        this.breadcrumbsService.updatePlaceholder({ instance });
+      });
 
     this.paramsSubscription = this.route.params.subscribe((params) => {
       this.id = params['id'];
       if (!!this.id) {
-        this.gitSettingsService.loadGitSettingById(this.id);
+        this.gitSettingsService.loadGitInstanceById(this.id);
       }
     });
   }
@@ -67,12 +62,10 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
 
   editGitSettings() {
     this.gitSettingsService
-      .editGitSettings(
-        this.id,
-        (this.gitSettingsForm.get('name') as FormControl).value,
-        (this.gitSettingsForm.get('url') as FormControl).value,
-        (this.gitSettingsForm.get('type') as FormControl).value
-      )
+      .editGitInstance({
+        ...this.gitSettingsForm.value,
+        id: this.id,
+      } as GitInstance)
       .subscribe((_) => this.goBack());
   }
 

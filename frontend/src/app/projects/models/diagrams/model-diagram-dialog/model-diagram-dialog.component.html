@@ -6,7 +6,9 @@
   <div *ngIf="selectedDiagram"></div>
   <div class="header">
     <h2>View diagrams</h2>
-    <span>Last update: Yesterday 10:00am</span>
+    <span
+      >Last update: {{ diagramMetadata?.last_updated || "loading..." }}</span
+    >
     <mat-form-field id="search" appearance="outline">
       <mat-label>Search</mat-label>
       <input

@@ -18,27 +18,26 @@ class GitType(enum.Enum):
 
 
 class PostGitInstance(BaseModel):
-    type: GitType | None
-    name: str | None
-    url: str | None
-
-
-class GitInstance(BaseModel):
-    id: int
+    type: GitType
     name: str
     url: str
-    type: GitType
+    api_url: str | None
 
     class Config:
         orm_mode = True
 
 
+class GitInstance(PostGitInstance):
+    id: int
+
+
 class DatabaseGitInstance(Base):
     __tablename__ = "git_settings"
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String)
-    url = Column(String)
-    type = Column(Enum(GitType))
+    id: int = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    name: str = Column(String)
+    url: str = Column(String)
+    api_url: str = Column(String)
+    type: GitType = Column(Enum(GitType))
 
 
 class GetRevisionsResponseModel(BaseModel):

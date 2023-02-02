@@ -24,7 +24,7 @@ from capellacollab.users.models import Role
 router = APIRouter()
 
 
-@router.get("/", response_model=list[GitInstance])
+@router.get("", response_model=list[GitInstance])
 def list_git_settings(
     db: Session = Depends(get_db),
 ) -> list[DatabaseGitInstance]:
@@ -45,20 +45,20 @@ def get_git_setting(
 
 
 @router.post(
-    "/",
+    "",
     response_model=GitInstance,
     dependencies=[
         Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
     ],
 )
-def create_git_settings(
-    post_git_setting: PostGitInstance,
+def create_git_instance(
+    post_git_instance: PostGitInstance,
     db: Session = Depends(get_db),
 ) -> DatabaseGitInstance:
-    return crud.create_git_setting(db, post_git_setting)
+    return crud.create_git_instance(db, post_git_instance)
 
 
-@router.put(
+@router.patch(
     "/{git_setting_id}",
     response_model=GitInstance,
     dependencies=[
