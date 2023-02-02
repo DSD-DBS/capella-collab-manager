@@ -95,7 +95,10 @@ class LogRequestsMiddleware(base.BaseHTTPMiddleware):
 
 class HealthcheckFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
-        return record.getMessage().find("/healthcheck") == -1
+        return (
+            record.getMessage().find('path="/healthcheck"') == -1
+            or record.levelno > logging.DEBUG
+        )
 
 
 class LogAdapter(logging.LoggerAdapter):
