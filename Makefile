@@ -11,13 +11,16 @@ SESSION_NAMESPACE = collab-sessions
 PORT ?= 8080
 
 # List of Capella versions, e.g.: `5.0.0 5.2.0 6.0.0`
-CAPELLA_VERSIONS ?= 5.2.0
+CAPELLA_VERSIONS ?= 6.0.0
 # List of T4C versions, e.g., `5.2.0 6.0.0`
 T4C_CLIENT_VERSIONS ?= 5.2.0
 
 TIMEOUT ?= 10m
 
-CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 DOCKER_REGISTRY=$(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)
+# UID which is used for the techuser in the Docker images
+TECHUSER_UID = 1004370000
+
+CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages TECHUSER_UID=$(TECHUSER_UID) PUSH_IMAGES=1 DOCKER_REGISTRY=$(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)
 
 # Adds support for msys
 export MSYS_NO_PATHCONV := 1
@@ -53,6 +56,10 @@ capella:
 
 t4c-client:
 	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(T4C_CLIENT_VERSIONS)" t4c/client/remote t4c/client/backup
+
+jupyter:
+	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/jupyter-notebook --build-arg UID=$(TECHUSER_UID) images/jupyter
+	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/jupyter-notebook
 
 docs:
 	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user

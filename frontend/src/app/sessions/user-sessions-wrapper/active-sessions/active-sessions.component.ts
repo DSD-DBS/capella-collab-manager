@@ -39,6 +39,7 @@ export class ActiveSessionsComponent {
   }
 
   openConnectDialog(session: Session): void {
+    // FixMe: determine if we have a web (jupyter) session or a Guacamole session
     this.dialog.open(GuacamoleDialogComponent, {
       data: session,
     });

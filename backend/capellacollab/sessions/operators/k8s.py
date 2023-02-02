@@ -136,6 +136,36 @@ class KubernetesOperator:
             pure_variants_secret_name=pure_variants_secret_name,
         )
 
+    def start_persistent_jupyter_session(
+        self,
+        username: str,
+        tool_name: str,
+        version_name: str,
+        token: str,
+        docker_image: str,
+    ) -> dict[str, t.Any]:
+        self._create_persistent_volume_claim(username)
+
+        environment = {
+            "JUPYTER_ENABLE_LAB": "yes",
+            # "NB_USER": username,
+            "JUPYTER_TOKEN": token,
+        }
+
+        session_parameters = self._start_session(
+            image=docker_image,
+            username=username,
+            session_type="persistent",
+            tool_name=tool_name,
+            version_name=version_name,
+            environment=environment,
+            persistent_workspace_claim_name=self._get_claim_name(username),
+        )
+
+        # TODO: set up ingress route
+
+        return session_parameters
+
     def start_readonly_session(
         self,
         username: str,
@@ -201,6 +231,8 @@ class KubernetesOperator:
 
     def kill_session(self, _id: str):
         log.info("Terminating session %s", _id)
+
+        # TODO: delete ingress (if any)
 
         if dep_status := self._delete_deployment(name=_id):
             log.info(

@@ -272,8 +272,6 @@ def request_persistent_session(
     token=Depends(JWTBearer()),
 ):
     warnings: list[core_models.Message] = []
-    rdp_password = generate_password(length=64)
-
     owner = auth_helper.get_username(token)
 
     log.info("Starting persistent session for user %s", owner)
@@ -361,30 +359,58 @@ def request_persistent_session(
     ) = determine_pure_variants_configuration(db, user, tool)
     warnings += pv_warnings
 
-    # FixMe: reuse method or create a specialized on (this one is specialized for Capella)
-    session = operator.start_persistent_capella_session(
-        username=auth_helper.get_username(token),
-        tool_name=tool.name,
-        version_name=version.name,
-        password=rdp_password,
-        docker_image=docker_image,
-        t4c_license_secret=t4c_license_secret,
-        t4c_json=t4c_json,
-        pure_variants_license_server=pv_license_server_url,
-        pure_variants_secret_name=pure_variants_secret_name,
-    )
+    rdp_password = generate_password(length=64)
 
-    response = create_database_and_guacamole_session(
-        db,
-        schema.WorkspaceType.PERSISTENT,
-        session,
-        owner,
-        rdp_password,
-        tool,
-        version,
-        None,
-        t4c_password,
-    )
+    is_jupyter = True
+    is_capella = False
+
+    if is_capella:
+
+        session = operator.start_persistent_capella_session(
+            username=auth_helper.get_username(token),
+            tool_name=tool.name,
+            version_name=version.name,
+            password=rdp_password,
+            docker_image=docker_image,
+            t4c_license_secret=t4c_license_secret,
+            t4c_json=t4c_json,
+            pure_variants_license_server=pv_license_server_url,
+            pure_variants_secret_name=pure_variants_secret_name,
+        )
+
+        response = create_database_and_guacamole_session(
+            db,
+            schema.WorkspaceType.PERSISTENT,
+            session,
+            owner,
+            rdp_password,
+            tool,
+            version,
+            None,
+            t4c_password,
+        )
+
+    elif is_jupyter:
+
+        session = operator.start_persistent_jupyter_session(
+            username=auth_helper.get_username(token),
+            tool_name=tool.name,
+            version_name=version.name,
+            token=rdp_password,
+            docker_image=docker_image,
+        )
+
+        response = create_database_session(
+            db,
+            schema.WorkspaceType.PERSISTENT,
+            session,
+            owner,
+            rdp_password,
+            tool,
+            version,
+            None,
+        )
+
     response.warnings = warnings
     return response
 
@@ -431,6 +457,28 @@ def determine_pure_variants_configuration(
         return (None, None, warnings)
 
     return (pv_license.license_server_url, "pure-variants", warnings)
+
+
+def create_database_session(
+    db: Session,
+    type: schema.WorkspaceType,
+    session: dict[str, t.Any],
+    owner: str,
+    rdp_password: str,
+    tool: tools_models.Tool,
+    version: tools_models.Version,
+    project: DatabaseProject | None,
+):
+    database_model = DatabaseSession(
+        tool=tool,
+        version=version,
+        owner_name=owner,
+        project=project,
+        type=type,
+        rdp_password=rdp_password,
+        **session,
+    )
+    return crud.create_session(db=db, session=database_model)
 
 
 def create_database_and_guacamole_session(
