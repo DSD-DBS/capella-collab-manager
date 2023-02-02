@@ -27,7 +27,7 @@ export class VersionComponent implements OnInit {
     this.versionService
       .loadBackendMetadata()
       .subscribe((metadata: BackendMetadata) => {
-        this.backend = metadata.version;
+        this.backend = `v${metadata.version}`;
       });
   }
 }
