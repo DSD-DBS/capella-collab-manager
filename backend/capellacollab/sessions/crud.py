@@ -56,6 +56,8 @@ def create_session(db: Session, session: DatabaseSession):
     db.add(session)
     db.commit()
     db.refresh(session)
+    session.state = "New"
+    session.last_seen = "UNKNOWN"
     return session
 
 

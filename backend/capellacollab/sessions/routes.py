@@ -441,7 +441,7 @@ def create_database_and_guacamole_session(
     rdp_password: str,
     tool: tools_models.Tool,
     version: tools_models.Version,
-    project,
+    project: DatabaseProject | None,
     t4c_password: str | None = None,
 ):
     guacamole_username = generate_password()
@@ -464,22 +464,19 @@ def create_database_and_guacamole_session(
     )
 
     database_model = DatabaseSession(
-        guacamole_username=guacamole_username,
-        guacamole_password=guacamole_password,
-        rdp_password=rdp_password,
-        guacamole_connection_id=guacamole_identifier,
+        tool=tool,
+        version=version,
         owner_name=owner,
         project=project,
         type=type,
+        rdp_password=rdp_password,
         t4c_password=t4c_password,
-        tool=tool,
-        version=version,
+        guacamole_username=guacamole_username,
+        guacamole_password=guacamole_password,
+        guacamole_connection_id=guacamole_identifier,
         **session,
     )
-    response = crud.create_session(db=db, session=database_model)
-    response.state = "New"
-    response.last_seen = "UNKNOWN"
-    return response
+    return crud.create_session(db=db, session=database_model)
 
 
 @router.delete("/{session_id}", status_code=204)
