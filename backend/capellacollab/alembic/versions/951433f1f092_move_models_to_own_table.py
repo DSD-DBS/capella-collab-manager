@@ -158,11 +158,9 @@ def downgrade():
     for git_model in git_models:
         id = git_model.id
         project_name = next(
-            (
-                model.project_name
-                for model in models
-                if model.id == git_model.model_id
-            )
+            model.project_name
+            for model in models
+            if model.id == git_model.model_id
         )
         op.execute(
             f"UPDATE git_models SET project_name='{project_name}' WHERE id={id}"
@@ -171,11 +169,7 @@ def downgrade():
     for t4c_model in t4c_models:
         id = t4c_model.id
         project_name = next(
-            (
-                model.project_name
-                for model in models
-                if model[0] == t4c_model[-1]
-            )
+            model.project_name for model in models if model[0] == t4c_model[-1]
         )
         op.execute(
             f"UPDATE t4c_models SET project_name='{project_name}' WHERE id={id}"

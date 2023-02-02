@@ -1,9 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from __future__ import annotations
-
-import typing as t
 
 import fastapi
 from sqlalchemy.orm import Session
@@ -30,7 +27,7 @@ router = fastapi.APIRouter(
 
 @router.get(
     "",
-    response_model=t.Optional[PureVariantsLicenses],
+    response_model=PureVariantsLicenses | None,
 )
 def get_license(
     db: Session = fastapi.Depends(get_db),

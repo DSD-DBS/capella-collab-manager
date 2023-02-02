@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from __future__ import annotations
 
 import typing as t
 from datetime import datetime
@@ -104,7 +103,7 @@ class MockOperator:
         t4c_json: list[dict[str, str | int]] | None,
         pure_variants_license_server: str = None,
         pure_variants_secret_name: str = None,
-    ) -> t.Dict[str, t.Any]:
+    ) -> dict[str, t.Any]:
         assert docker_image
         cls.sessions.append({"docker_image": docker_image})
         return {
@@ -122,8 +121,8 @@ class MockOperator:
         version_name: str,
         password: str,
         docker_image: str,
-        git_repos_json: t.List[t.Dict[str, str | int]],
-    ) -> t.Dict[str, t.Any]:
+        git_repos_json: list[dict[str, str | int]],
+    ) -> dict[str, t.Any]:
         cls.sessions.append(
             {"docker_image": docker_image, "git_repos_json": git_repos_json}
         )
@@ -148,7 +147,7 @@ class MockOperator:
 
     @classmethod
     def create_cronjob(
-        self, image: str, environment: t.Dict[str, str], schedule="* * * * *"
+        self, image: str, environment: dict[str, str], schedule="* * * * *"
     ) -> str:
         return ""
 
@@ -169,7 +168,7 @@ class MockOperator:
         return None
 
     @classmethod
-    def get_job_logs(self, id: str) -> str:
+    def get_job_logs_or_events(self, _id: str) -> str:
         return ""
 
     @classmethod

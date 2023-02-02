@@ -1,9 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
-from __future__ import annotations
 
 import logging
-import typing as t
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from requests.exceptions import RequestException
@@ -126,7 +124,7 @@ def create_t4c_repository(
 
 @router.delete(
     "/{t4c_repository_id}",
-    response_model=t.Optional[ResponseModel],
+    response_model=ResponseModel | None,
 )
 def delete_t4c_repository(
     response: Response,

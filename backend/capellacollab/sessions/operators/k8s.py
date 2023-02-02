@@ -104,7 +104,7 @@ class File:
     path: str
     name: str
     type: FileType
-    children: t.Optional[list[File]] = None
+    children: list[File] | None = None
 
 
 class KubernetesOperator:
@@ -332,7 +332,7 @@ class KubernetesOperator:
             namespace=namespace,
         )
 
-    def get_job_logs(self, _id: str) -> str:
+    def get_job_logs_or_events(self, _id: str) -> str:
         try:
             if pod_log := self.v1_core.read_namespaced_pod_log(
                 name=_id, namespace=namespace
@@ -458,7 +458,7 @@ class KubernetesOperator:
             log.exception("Error fetching the last run id")
             return ""
 
-    def _generate_id(self):
+    def _generate_id(self) -> str:
         return "".join(random.choices(string.ascii_lowercase, k=25))
 
     def _export_attrs(
@@ -468,7 +468,7 @@ class KubernetesOperator:
     ) -> dict[str, t.Any]:
         return {
             "id": deployment.to_dict()["metadata"]["name"],
-            "ports": set([3389]),
+            "ports": {3389},
             "created_at": deployment.to_dict()["metadata"][
                 "creation_timestamp"
             ],

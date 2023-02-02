@@ -3,7 +3,6 @@
 
 
 import secrets
-import typing as t
 from functools import lru_cache
 
 from cachetools import TTLCache
@@ -27,7 +26,7 @@ router = APIRouter()
 cfg = config["authentication"]["azure"]
 
 
-@lru_cache()
+@lru_cache
 def ad_session():
     return ConfidentialClientApplication(
         cfg["client"]["id"],
@@ -92,7 +91,7 @@ async def logout(jwt_decoded=Depends(JWTBearer())):
 
 @router.get("/tokens", name="Validate the token")
 async def validate_token(
-    scope: t.Optional[Role],
+    scope: Role | None,
     token=Depends(JWTBearer()),
     db=Depends(get_db),
 ):

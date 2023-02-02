@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from __future__ import annotations
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+import capellacollab.tools.models as tools_models
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 from capellacollab.projects.toolmodels.modelsources.t4c.models import (
@@ -23,10 +23,10 @@ from capellacollab.settings.modelsources.t4c.repositories.models import (
 from capellacollab.users.models import DatabaseUser, Role
 
 
-def get_t4c_repository(id_: int, db: Session) -> DatabaseT4CRepository:
+def get_t4c_repository(_id: int, db: Session) -> DatabaseT4CRepository:
     return db.execute(
-        select(DatabaseT4CRepository).where(DatabaseT4CRepository.id == id_)
-    ).scalar_one()
+        select(DatabaseT4CRepository).where(DatabaseT4CRepository.id == _id)
+    ).scalar()
 
 
 def create_t4c_repository(
@@ -55,7 +55,7 @@ def get_user_t4c_repositories(
         .join(DatabaseT4CRepository.models)
         .join(DatabaseT4CModel.model)
         .join(DatabaseCapellaModel.version)
-        .where(Version.name == version_name)
+        .where(tools_models.Version.name == version_name)
     )
 
     stmt = (

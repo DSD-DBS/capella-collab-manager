@@ -44,8 +44,8 @@ class PostProjectUser(BaseModel):
 
 
 class PatchProjectUser(BaseModel):
-    role: t.Optional[ProjectUserRole]
-    permission: t.Optional[ProjectUserPermission]
+    role: ProjectUserRole | None
+    permission: ProjectUserPermission | None
     reason: str
 
 

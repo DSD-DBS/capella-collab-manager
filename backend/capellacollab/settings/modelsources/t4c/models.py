@@ -30,7 +30,7 @@ if t.TYPE_CHECKING:
 log = logging.getLogger(__name__)
 
 
-def validate_rest_api_url(value: t.Optional[str]):
+def validate_rest_api_url(value: str | None):
     if value:
         try:
             requests.Request("GET", value).prepare()
@@ -86,7 +86,7 @@ class DatabaseT4CInstance(Base):
     )
 
 
-def port_validator(value: t.Optional[int]) -> t.Optional[int]:
+def port_validator(value: int | None) -> int | None:
     if not value:
         return value
     assert 0 <= value <= 65535
@@ -121,15 +121,15 @@ class T4CInstanceBase(BaseModel):
 
 
 class FieldsT4CInstance(BaseModel):
-    license: t.Optional[str]
-    host: t.Optional[str]
-    port: t.Optional[int]
-    cdo_port: t.Optional[int]
-    usage_api: t.Optional[str]
-    rest_api: t.Optional[str]
-    username: t.Optional[str]
-    password: t.Optional[str]
-    protocol: t.Optional[Protocol]
+    license: str | None
+    host: str | None
+    port: int | None
+    cdo_port: int | None
+    usage_api: str | None
+    rest_api: str | None
+    username: str | None
+    password: str | None
+    protocol: Protocol | None
 
     # validators
     _validate_rest_api_url = pydantic.validator("rest_api", allow_reuse=True)(
@@ -149,7 +149,7 @@ class FieldsT4CInstance(BaseModel):
 
 
 class PatchT4CInstance(FieldsT4CInstance):
-    version_id: t.Optional[int]
+    version_id: int | None
 
 
 class T4CInstanceComplete(T4CInstanceBase):

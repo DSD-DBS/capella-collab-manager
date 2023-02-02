@@ -4,7 +4,6 @@
 
 import json
 import logging
-import typing as t
 import uuid
 
 import fastapi
@@ -29,7 +28,7 @@ from capellacollab.projects.toolmodels.modelsources.t4c.injectables import (
     get_existing_t4c_model,
 )
 from capellacollab.projects.users.models import ProjectUserRole
-from capellacollab.sessions.operators import OPERATOR
+from capellacollab.sessions import operators
 from capellacollab.tools.crud import get_backup_image_for_tool_version
 
 from . import crud, helper, injectables
@@ -42,7 +41,7 @@ log = logging.getLogger(__name__)
 
 @router.get(
     "",
-    response_model=t.List[Backup],
+    response_model=list[Backup],
     dependencies=[
         Depends(
             auth_injectables.ProjectRoleVerification(
@@ -92,15 +91,16 @@ def create_backup(
     except requests.RequestException:
         log.warning("Pipeline could not be created", exc_info=True)
         raise fastapi.HTTPException(
-            500,
+            503,
             {
+                "err_code": "PIPELINE_CREATION_FAILED_T4C_SERVER_UNREACHABLE",
                 "title": "Creation of the pipeline failed",
                 "reason": "We're not able to connect to the TeamForCapella server and therefore cannot prepare the backups. Please try again later or contact your administrator.",
             },
         )
 
     if body.run_nightly:
-        reference = OPERATOR.create_cronjob(
+        reference = operators.get_operator().create_cronjob(
             image=get_backup_image_for_tool_version(
                 db, capella_model.version_id
             ),
@@ -114,7 +114,7 @@ def create_backup(
             schedule="0 3 * * *",
         )
     else:
-        reference = OPERATOR._generate_id()
+        reference = operators.get_operator()._generate_id()
 
     return crud.create_pipeline(
         db=db,
@@ -157,7 +157,7 @@ def delete_pipeline(
         log.error("Error during the deletion of user %s in t4c", exc_info=True)
 
     if pipeline.run_nightly:
-        OPERATOR.delete_cronjob(pipeline.k8s_cronjob_id)
+        operators.get_operator().delete_cronjob(pipeline.k8s_cronjob_id)
 
     crud.delete_pipeline(db, pipeline)
 
@@ -180,7 +180,7 @@ def create_job(
     db: Session = Depends(get_db),
 ):
     if pipeline.run_nightly:
-        OPERATOR.trigger_cronjob(
+        operators.get_operator().trigger_cronjob(
             name=pipeline.k8s_cronjob_id,
             overwrite_environment={
                 "INCLUDE_COMMIT_HISTORY": json.dumps(
@@ -189,7 +189,7 @@ def create_job(
             },
         )
     else:
-        OPERATOR.create_job(
+        operators.get_operator().create_job(
             image=get_backup_image_for_tool_version(
                 db, capella_model.version_id
             ),
@@ -219,8 +219,16 @@ def get_logs(
     pipeline: DatabaseBackup = Depends(injectables.get_existing_pipeline),
 ):
     backup: Backup = Backup.from_orm(pipeline)
+    if not backup.lastrun:
+        raise fastapi.HTTPException(
+            status_code=404,
+            detail={
+                "err_code": "PIPELINES_NO_LAST_RUN",
+                "reason": "There is no last run available for the pipelines. Please trigger the pipeline first.",
+            },
+        )
 
-    logs = ""
-    if backup.lastrun and backup.lastrun.id:
-        logs = OPERATOR.get_job_logs(id=backup.lastrun.id)
+    logs = operators.get_operator().get_job_logs_or_events(
+        _id=backup.lastrun.id
+    )
     return helper.filter_logs(logs, [pipeline.t4c_password])

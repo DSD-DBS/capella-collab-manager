@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from __future__ import annotations
-
 import typing as t
 
 from capellacollab.config import config

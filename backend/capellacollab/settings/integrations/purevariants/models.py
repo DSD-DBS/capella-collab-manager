@@ -1,10 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from __future__ import annotations
 
 import logging
-import typing as t
 
 import pydantic
 import requests
@@ -17,7 +15,7 @@ from capellacollab.core.database import Base
 log = logging.getLogger(__name__)
 
 
-def validate_license_url(value: t.Optional[str]):
+def validate_license_url(value: str | None):
     if value:
         try:
             requests.Request("GET", value).prepare()
@@ -38,8 +36,8 @@ class DatabasePureVariantsLicenses(Base):
 
 
 class PureVariantsLicenses(BaseModel):
-    license_server_url: t.Optional[str]
-    license_key_filename: t.Optional[str]
+    license_server_url: str | None
+    license_key_filename: str | None
 
     _validate_value = pydantic.validator(
         "license_server_url", allow_reuse=True

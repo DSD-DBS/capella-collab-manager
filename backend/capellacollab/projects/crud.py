@@ -2,10 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from __future__ import annotations
-
-import typing as t
-
 from slugify import slugify
 from sqlalchemy.orm import Session
 
@@ -24,7 +20,7 @@ def get_project_by_slug(db: Session, slug: str) -> DatabaseProject:
     )
 
 
-def get_all_projects(db: Session) -> t.List[DatabaseProject]:
+def get_all_projects(db: Session) -> list[DatabaseProject]:
     return db.query(DatabaseProject).all()
 
 

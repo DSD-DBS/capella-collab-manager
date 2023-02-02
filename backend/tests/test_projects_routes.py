@@ -2,23 +2,25 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from capellacollab.projects.users.crud import add_user_to_project
-from capellacollab.projects.users.models import (
-    ProjectUserPermission,
-    ProjectUserRole,
-)
-from capellacollab.users.crud import create_user
-from capellacollab.users.models import Role
+import pytest
+from fastapi import testclient
+from sqlalchemy import orm
+
+import capellacollab.projects.models as projects_models
+import capellacollab.users.crud as users_crud
+import capellacollab.users.models as users_models
 
 
-def test_get_projects_not_authenticated(client):
+def test_get_projects_not_authenticated(client: testclient.TestClient):
     response = client.get("/api/v1/projects")
     assert response.status_code == 403
     assert response.json() == {"detail": "Not authenticated"}
 
 
-def test_get_projects_as_user(client, db, executor_name):
-    create_user(db, executor_name, Role.USER)
+def test_get_projects_as_user(
+    client: testclient.TestClient, db: orm.Session, executor_name: str
+):
+    users_crud.create_user(db, executor_name, users_models.Role.USER)
 
     response = client.get("/api/v1/projects")
 
@@ -26,16 +28,10 @@ def test_get_projects_as_user(client, db, executor_name):
     assert response.json() == []
 
 
-def test_get_projects_as_user_with_project(client, db, executor_name, project):
-    user = create_user(db, executor_name, Role.USER)
-    add_user_to_project(
-        db,
-        project=project,
-        user=user,
-        role=ProjectUserRole.MANAGER,
-        permission=ProjectUserPermission.WRITE,
-    )
-
+@pytest.mark.usefixtures("project_manager")
+def test_get_projects_as_user_with_project(
+    client: testclient.TestClient, project: projects_models.DatabaseProject
+):
     response = client.get("/api/v1/projects")
 
     assert response.status_code == 200
@@ -49,8 +45,10 @@ def test_get_projects_as_user_with_project(client, db, executor_name, project):
     ]
 
 
-def test_get_projects_as_admin(client, db, executor_name):
-    create_user(db, executor_name, Role.ADMIN)
+def test_get_projects_as_admin(
+    client: testclient.TestClient, db: orm.Session, executor_name: str
+):
+    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
 
     response = client.get("/api/v1/projects")
 

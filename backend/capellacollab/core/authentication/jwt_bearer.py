@@ -25,12 +25,10 @@ class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
         super().__init__(auto_error=auto_error)
 
-    async def __call__(
-        self, request: Request
-    ) -> t.Optional[t.Dict[str, t.Any]]:
-        credentials: t.Optional[
-            HTTPAuthorizationCredentials
-        ] = await super().__call__(request)
+    async def __call__(self, request: Request) -> dict[str, t.Any] | None:
+        credentials: HTTPAuthorizationCredentials | None = (
+            await super().__call__(request)
+        )
 
         if not credentials or credentials.scheme != "Bearer":
             if self.auto_error:
@@ -53,7 +51,7 @@ class JWTBearer(HTTPBearer):
                 users_crud.update_last_login(session, created_user)
                 events.create_user_creation_event(session, created_user)
 
-    def validate_token(self, token: str) -> t.Optional[t.Dict[str, t.Any]]:
+    def validate_token(self, token: str) -> dict[str, t.Any] | None:
         try:
             jwt_cfg = ep_main.get_jwk_cfg(token)
         except Exception:
