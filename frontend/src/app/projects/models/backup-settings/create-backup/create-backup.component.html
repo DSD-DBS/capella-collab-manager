@@ -61,14 +61,20 @@
 
   <div class="flex-space-between">
     <button mat-button [mat-dialog-close]="false">Cancel</button>
-    <button
-      mat-button
-      *ngIf="t4cAndGitModelExists"
-      (click)="createGitBackup()"
-      cdkFocusInitial
-      [disabled]="!createBackupForm.valid"
+    <span
+      matTooltip="Please select a T4C model and Git model first"
+      [matTooltipDisabled]="createBackupForm.valid"
     >
-      Create
-    </button>
+      <button
+        mat-raised-button
+        *ngIf="t4cAndGitModelExists"
+        (click)="createGitBackup()"
+        cdkFocusInitial
+        [disabled]="!createBackupForm.valid"
+        color="primary"
+      >
+        Create
+      </button>
+    </span>
   </div>
 </div>
