@@ -11,8 +11,10 @@ import {
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialogRef } from '@angular/material/dialog';
+import {
+  MatDialogRef as MatDialogRef,
+  MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import {
@@ -37,7 +39,7 @@ export class CreateBackupComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: { projectSlug: string; modelSlug: string },
     private backupService: BackupService,
-    private dialogRef: MatLegacyDialogRef<CreateBackupComponent>
+    private dialogRef: MatDialogRef<CreateBackupComponent>
   ) {}
 
   ngOnInit(): void {
