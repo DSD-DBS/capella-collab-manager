@@ -246,7 +246,7 @@ const routes: Routes = [
                   },
                   {
                     path: 'instances/:id',
-                    data: { breadcrumb: 'Edit' },
+                    data: { breadcrumb: (data: Data) => data.gitSetting?.name },
                     component: EditGitSettingsComponent,
                   },
                 ],
@@ -267,7 +267,9 @@ const routes: Routes = [
                   },
                   {
                     path: 'instance/:instance',
-                    data: { breadcrumb: 'Edit' },
+                    data: {
+                      breadcrumb: (data: Data) => data.t4cInstance?.name,
+                    },
                     component: EditT4CInstanceComponent,
                   },
                 ],

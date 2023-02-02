@@ -14,6 +14,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
+import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   BaseT4CInstance,
@@ -83,7 +84,8 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private toastService: ToastService,
-    private toolService: ToolService
+    private toolService: ToolService,
+    private breadcrumbsService: BreadcrumbsService
   ) {}
 
   ngOnInit(): void {
@@ -104,10 +106,13 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
       .pipe(filter(Boolean))
       .subscribe(this._capella_versions);
 
-    this._instance.pipe(filter(Boolean)).subscribe((instance: T4CInstance) => {
-      instance.password = '***********';
-      this.form.patchValue(instance);
-    });
+    this._instance
+      .pipe(filter(Boolean))
+      .subscribe((t4cInstance: T4CInstance) => {
+        t4cInstance.password = '***********';
+        this.form.patchValue(t4cInstance);
+        this.breadcrumbsService.updatePlaceholder({ t4cInstance });
+      });
   }
 
   enableEditing(): void {
@@ -169,5 +174,6 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.paramsSubscription?.unsubscribe();
     this._instance.next(undefined);
+    this.breadcrumbsService.updatePlaceholder({ t4cInstance: undefined });
   }
 }
