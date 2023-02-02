@@ -171,7 +171,6 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
             );
           }
         );
-        this.breadCrumbsService.updatePlaceholder({ gitModel: undefined });
 
         this.gitModelService.loadGitModelById(
           this.projectService.project!.slug,
@@ -189,6 +188,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     this.revisionsSubscription?.unsubscribe();
     this.gitModelSubscription?.unsubscribe();
     this.paramSubscription?.unsubscribe();
+    this.breadCrumbsService.updatePlaceholder({ gitModel: undefined });
   }
 
   onRevisionFocus(): void {

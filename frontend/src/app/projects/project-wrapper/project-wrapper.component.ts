@@ -53,7 +53,7 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (project: Project) => {
           this.breadcrumbsService.updatePlaceholder({ project });
-          return this.projectService._project.next(project);
+          this.projectService._project.next(project);
         },
         error: () => {
           this.projectService._project.next(undefined);
@@ -91,5 +91,6 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
     this.projectService._project.next(undefined);
     this.modelService._models.next(undefined);
     this.projectUserService.projectUser.next(undefined);
+    this.breadcrumbsService.updatePlaceholder({ project: undefined });
   }
 }

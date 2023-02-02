@@ -52,6 +52,7 @@ export class ModelWrapperComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
     this.breadcrumbSubscription?.unsubscribe();
+    this.breadcrumbService.updatePlaceholder({ model: undefined });
     this.modelService._model.next(undefined);
     this.t4cModelService._t4cModels.next(undefined);
   }
