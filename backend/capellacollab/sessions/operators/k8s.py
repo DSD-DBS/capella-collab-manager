@@ -396,11 +396,10 @@ class KubernetesOperator:
             for index, env in enumerate(
                 job_spec.template.spec.containers[0].env
             ):
-                name = env.name
                 if env.name in overwrite_environment:
                     job_spec.template.spec.containers[0].env[index] = {
-                        "name": name,
-                        "value": overwrite_environment[name],
+                        "name": env.name,
+                        "value": overwrite_environment[env.name],
                     }
 
         job = client.V1Job(
