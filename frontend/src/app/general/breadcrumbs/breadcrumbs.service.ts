@@ -30,7 +30,7 @@ export class BreadcrumbsService {
   constructor(private router: Router) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => this.updateBreadcrumbs(router));
+      .subscribe(() => this.updateBreadcrumbs());
   }
 
   public updatePlaceholder(placeholders: Data) {
@@ -38,11 +38,11 @@ export class BreadcrumbsService {
       ...this.placeholders,
       ...placeholders,
     };
-    this.updateBreadcrumbs(this.router);
+    this.updateBreadcrumbs();
   }
 
-  private updateBreadcrumbs(router: Router) {
-    const root = router.routerState.snapshot.root;
+  private updateBreadcrumbs() {
+    const root = this.router.routerState.snapshot.root;
     this._breadcrumbs.next(breadcrumbs(root, this.placeholders));
   }
 }
