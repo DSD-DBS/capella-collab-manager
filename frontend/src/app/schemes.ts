@@ -12,7 +12,6 @@ export interface Session {
   id: string;
   last_seen: string;
   type: 'persistent' | 'readonly';
-  rdp_username: string;
   rdp_password: string;
   guacamole_username: string;
   guacamole_password: string;
