@@ -132,6 +132,7 @@ class KubernetesOperator:
             tool_name=tool_name,
             version_name=version_name,
             environment=environment,
+            ports=[3389, 9118, 8000],
             persistent_workspace_claim_name=self._get_claim_name(username),
             pure_variants_secret_name=pure_variants_secret_name,
         )
@@ -159,10 +160,11 @@ class KubernetesOperator:
             tool_name=tool_name,
             version_name=version_name,
             environment=environment,
+            ports=[8888],
             persistent_workspace_claim_name=self._get_claim_name(username),
         )
 
-        # TODO: set up ingress route
+        self._create_ingress(session_parameters["id"], 8888)
 
         return session_parameters
 
@@ -185,6 +187,7 @@ class KubernetesOperator:
                 "GIT_REPOS_JSON": json.dumps(git_repos_json),
                 "RMT_PASSWORD": password,
             },
+            ports=[3389, 9118, 8000],
         )
 
     def _start_session(
@@ -195,6 +198,7 @@ class KubernetesOperator:
         tool_name: str,
         version_name: str,
         environment: dict[str, str | None],
+        ports: list[int],
         persistent_workspace_claim_name: str | None = None,
         pure_variants_secret_name: str | None = None,
     ) -> dict[str, t.Any]:
@@ -215,11 +219,14 @@ class KubernetesOperator:
             image=image,
             name=_id,
             environment=environment,
+            ports=ports,
             persistent_workspace_claim_name=persistent_workspace_claim_name,
             pure_variants_secret_name=pure_variants_secret_name,
         )
 
-        service = self._create_service(name=_id, deployment_name=_id)
+        service = self._create_service(
+            name=_id, deployment_name=_id, ports=ports
+        )
 
         log.info(
             "Launched a %s session for user %s with id %s",
@@ -227,12 +234,15 @@ class KubernetesOperator:
             username,
             _id,
         )
-        return self._export_attrs(deployment, service)
+        return self._export_attrs(deployment, service, ports)
 
     def kill_session(self, _id: str):
         log.info("Terminating session %s", _id)
 
-        # TODO: delete ingress (if any)
+        if dep_status := self._delete_ingress(_id):
+            log.info(
+                "Deleted ingress %s with status %s", _id, dep_status.status
+            )
 
         if dep_status := self._delete_deployment(name=_id):
             log.info(
@@ -474,10 +484,11 @@ class KubernetesOperator:
         self,
         deployment: client.V1Deployment,
         service: client.V1Service,
+        ports: list[int],
     ) -> dict[str, t.Any]:
         return {
             "id": deployment.to_dict()["metadata"]["name"],
-            "ports": {3389},
+            "ports": set(ports),
             "created_at": deployment.to_dict()["metadata"][
                 "creation_timestamp"
             ],
@@ -490,6 +501,7 @@ class KubernetesOperator:
         image: str,
         name: str,
         environment: dict[str, str | None],
+        ports: list[int],
         persistent_workspace_claim_name: str | None = None,
         pure_variants_secret_name: str | None = None,
     ) -> client.V1Deployment:
@@ -561,15 +573,8 @@ class KubernetesOperator:
                 name=name,
                 image=image,
                 ports=[
-                    client.V1ContainerPort(
-                        container_port=3389, protocol="TCP"
-                    ),
-                    client.V1ContainerPort(
-                        container_port=9118, protocol="TCP"
-                    ),
-                    client.V1ContainerPort(
-                        container_port=8000, protocol="TCP"
-                    ),
+                    client.V1ContainerPort(container_port=port, protocol="TCP")
+                    for port in ports
                 ],
                 env=[
                     client.V1EnvVar(name=key, value=str(value))
@@ -690,7 +695,7 @@ class KubernetesOperator:
         return self.v1_batch.create_namespaced_job(namespace, job)
 
     def _create_service(
-        self, name: str, deployment_name: str
+        self, name: str, deployment_name: str, ports: list[int]
     ) -> client.V1Service:
         service: client.V1Service = client.V1Service(
             kind="Service",
@@ -707,20 +712,54 @@ class KubernetesOperator:
             spec=client.V1ServiceSpec(
                 ports=[
                     client.V1ServicePort(
-                        name="rdp", protocol="TCP", port=3389, target_port=3389
-                    ),
-                    client.V1ServicePort(
-                        name="metrics",
+                        name=f"{port}",
                         protocol="TCP",
-                        port=9118,
-                        target_port=9118,
-                    ),
+                        port=port,
+                        target_port=port,
+                    )
+                    for port in ports
                 ],
                 selector={"app": deployment_name},
                 type="ClusterIP",
             ),
         )
         return self.v1_core.create_namespaced_service(namespace, service)
+
+    def _create_ingress(self, id, port_number: int):
+        ingress = client.V1Ingress(
+            api_version="networking.k8s.io/v1",
+            kind="Ingress",
+            metadata=client.V1ObjectMeta(
+                name=id,
+                annotations={"ingress.kubernetes.io/ssl-redirect": "false"},
+            ),
+            spec=client.V1IngressSpec(
+                rules=[
+                    client.V1IngressRule(
+                        host="localhost",
+                        http=client.V1HTTPIngressRuleValue(
+                            paths=[
+                                client.V1HTTPIngressPath(
+                                    path="/lab",
+                                    path_type="Prefix",
+                                    backend=client.V1IngressBackend(
+                                        service=client.V1IngressServiceBackend(
+                                            name=id,
+                                            port=client.V1ServiceBackendPort(
+                                                number=port_number
+                                            ),
+                                        )
+                                    ),
+                                )
+                            ]
+                        ),
+                    )
+                ]
+            ),
+        )
+        return client.NetworkingV1Api().create_namespaced_ingress(
+            namespace, ingress
+        )
 
     def _create_persistent_volume_claim(self, username: str):
         pvc: client.V1PersistentVolumeClaim = client.V1PersistentVolumeClaim(
@@ -879,6 +918,15 @@ class KubernetesOperator:
             return self.v1_core.delete_namespaced_service(name, namespace)
         except exceptions.ApiException:
             log.exception("Error deleting service with name: %s", name)
+            return None
+
+    def _delete_ingress(self, name: str) -> client.V1Status | None:
+        try:
+            return client.NetworkingV1Api().delete_namespaced_ingress(
+                name, namespace
+            )
+        except exceptions.ApiException:
+            log.exception("Error deleting ingress with name: %s", name)
             return None
 
     def _get_pod_name(self, _id: str) -> str:

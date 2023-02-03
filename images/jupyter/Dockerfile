@@ -6,7 +6,7 @@ FROM jupyter/minimal-notebook
 ARG UID=1001
 
 USER 0
-RUN useradd -l -m -u $UID techuser
+RUN useradd -l -m -u $UID -G users techuser
 RUN echo "techuser:tmp_passwd" | chpasswd
 ENV HOME=/home/techuser
 RUN chown techuser /home/techuser
