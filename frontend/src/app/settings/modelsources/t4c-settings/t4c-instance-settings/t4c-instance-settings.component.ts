@@ -18,7 +18,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatLegacySelectionList as MatSelectionList } from '@angular/material/legacy-list';
 import { tap, switchMap } from 'rxjs';
 import { T4CInstance } from 'src/app/services/settings/t4c-instance.service';

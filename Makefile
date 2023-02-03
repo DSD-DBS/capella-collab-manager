@@ -136,7 +136,7 @@ wait:
 
 provision-guacamole:
 	@echo "Waiting for guacamole container, before we can initialize the database..."
-	@kubectl get -n $(NAMESPACE) --watch pods &
+	@kubectl get --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) --watch pods &
 	@sleep 2
 	@kubectl wait --for=condition=Ready pods --timeout=$(TIMEOUT) --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole
 	@kubectl wait --for=condition=Ready pods --timeout=$(TIMEOUT) --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres

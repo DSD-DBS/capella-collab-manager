@@ -11,7 +11,7 @@ import {
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
-import { MatLegacyDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { combineLatest } from 'rxjs';
 import {
   BackupService,
@@ -34,7 +34,7 @@ export class CreateBackupComponent {
     public gitModelService: GitModelService,
     public t4cModelService: T4CModelService,
     private backupService: BackupService,
-    private dialogRef: MatLegacyDialogRef<CreateBackupComponent>,
+    private dialogRef: MatDialogRef<CreateBackupComponent>,
     private projectService: ProjectService,
     private modelService: ModelService
   ) {

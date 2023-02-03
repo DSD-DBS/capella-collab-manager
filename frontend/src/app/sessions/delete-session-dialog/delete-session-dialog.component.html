@@ -3,24 +3,26 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<h1 mat-dialog-title>Terminate Workspace</h1>
-<div mat-dialog-content>
-  <p>Do you want to terminate the following sessions?</p>
-  <ul>
-    <li *ngFor="let session of sessions">
-      ID: {{ session.id }} <br />
-      Owner: {{ session.owner.name }} <br />
-    </li>
-  </ul>
-  <p>This will force close the sessions and all unsaved work will be lost!</p>
-</div>
-<div mat-dialog-actions>
-  <button mat-button (click)="this.dialogRef.close()">No</button>
-  <button
-    mat-flat-button
-    [disabled]="deleteButton.disabled"
-    (click)="deleteAllSessions()"
-  >
-    {{ deleteButton.text }}
-  </button>
+<div class="dialog">
+  <h1>Terminate Session</h1>
+  <div>
+    <p>Do you want to terminate the following session(s)?</p>
+    <ul>
+      <li *ngFor="let session of sessions">
+        ID: {{ session.id }} <br />
+        Owner: {{ session.owner.name }} <br />
+      </li>
+    </ul>
+    <p>This will force close the sessions and all unsaved work will be lost!</p>
+  </div>
+  <div>
+    <button mat-button (click)="this.dialogRef.close()">No</button>
+    <button
+      mat-flat-button
+      [disabled]="deleteButton.disabled"
+      (click)="deleteAllSessions()"
+    >
+      {{ deleteButton.text }}
+    </button>
+  </div>
 </div>

@@ -8,10 +8,10 @@ import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
-  MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
-  MatLegacyDialog as MatDialog,
-  MatLegacyDialogRef as MatDialogRef,
-} from '@angular/material/legacy-dialog';
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { saveAs } from 'file-saver';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';

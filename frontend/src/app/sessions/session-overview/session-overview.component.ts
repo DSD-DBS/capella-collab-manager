@@ -5,7 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Session } from '../../schemes';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
 import { SessionService } from '../service/session.service';
