@@ -3,15 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { Subscription, timer } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BeautifyService } from 'src/app/services/beatify/beautify.service';
 import { Session } from '../../schemes';
-import { BeautifyService } from '../../services/beatify/beautify.service';
-import { OwnSessionService } from '../../services/own-session/own-session.service';
-import { SessionService } from '../../services/session/session.service';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
+import { SessionService } from '../service/session.service';
+import { UserSessionService } from '../service/user-session.service';
 import { GuacamoleComponent } from '../session-created/guacamole/guacamole.component';
 import { FileBrowserComponent } from './file-browser/file-browser.component';
 
@@ -20,46 +18,23 @@ import { FileBrowserComponent } from './file-browser/file-browser.component';
   templateUrl: './active-sessions.component.html',
   styleUrls: ['./active-sessions.component.css'],
 })
-export class ActiveSessionsComponent implements OnInit, OnDestroy {
-  showSpinner = false;
-  refreshSessionsSubscription: Subscription;
+export class ActiveSessionsComponent {
+  sessions?: Session[] = undefined;
 
   constructor(
-    public ownSessionService: OwnSessionService,
-    private dialog: MatDialog,
     public sessionService: SessionService,
-    public beautifyService: BeautifyService
-  ) {
-    this.refreshSessionsSubscription = timer(0, 2000)
-      .pipe(
-        map(() => {
-          this.refreshSessions();
-        })
-      )
-      .subscribe();
-  }
-
-  ngOnInit(): void {
-    this.showSpinner = true;
-  }
-
-  ngOnDestroy(): void {
-    this.refreshSessionsSubscription.unsubscribe();
-  }
-
-  refreshSessions() {
-    this.ownSessionService.refreshSessions().subscribe(() => {
-      this.showSpinner = false;
-    });
-  }
+    public beautifyService: BeautifyService,
+    public userSessionService: UserSessionService,
+    private dialog: MatDialog
+  ) {}
 
   openDeletionDialog(sessions: Session[]): void {
     const dialogRef = this.dialog.open(DeleteSessionDialogComponent, {
       data: sessions,
     });
 
-    dialogRef.afterClosed().subscribe((_) => {
-      this.refreshSessions();
+    dialogRef.afterClosed().subscribe(() => {
+      this.userSessionService.loadSessions();
     });
   }
 

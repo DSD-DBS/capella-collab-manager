@@ -90,11 +90,14 @@ import { WhitespaceUrlInterceptor } from './services/encoder/encoder.interceptor
 import { ActiveSessionsComponent } from './sessions/active-sessions/active-sessions.component';
 import { FileBrowserComponent } from './sessions/active-sessions/file-browser/file-browser.component';
 import { FileExistsDialogComponent } from './sessions/active-sessions/file-browser/file-exists-dialog/file-exists-dialog.component';
+import { CreatePersistentSessionComponent } from './sessions/create-persistent-session/create-persistent-session.component';
 import { DeleteSessionDialogComponent } from './sessions/delete-session-dialog/delete-session-dialog.component';
 import { NewReadonlyModelOptionsComponent } from './sessions/new-readonly-session-dialog/new-readonly-model-options/new-readonly-model-options.component';
 import { NewReadonlySessionDialogComponent } from './sessions/new-readonly-session-dialog/new-readonly-session-dialog.component';
 import { GuacamoleComponent } from './sessions/session-created/guacamole/guacamole.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
+import { SessionsComponent } from './sessions/sessions.component';
+import { UserSessionsWrapperComponent } from './sessions/user-sessions-wrapper/user-sessions-wrapper.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { ToolDeletionDialogComponent } from './settings/core/tools-settings/tool-details/tool-deletion-dialog/tool-deletion-dialog.component';
 import { ToolDetailsComponent } from './settings/core/tools-settings/tool-details/tool-details.component';
@@ -114,8 +117,6 @@ import { T4CRepoDeletionDialogComponent } from './settings/modelsources/t4c-sett
 import { T4CSettingsWrapperComponent } from './settings/modelsources/t4c-settings/t4c-settings-wrapper/t4c-settings-wrapper.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
-import { WorkspaceComponent } from './workspace/workspace.component';
-import { HomeComponent } from './workspaces/home.component';
 
 @NgModule({
   declarations: [
@@ -130,6 +131,7 @@ import { HomeComponent } from './workspaces/home.component';
     CreateBackupComponent,
     CreateModelBaseComponent,
     CreateModelComponent,
+    CreatePersistentSessionComponent,
     CreateProjectComponent,
     DeleteGitSettingsDialogComponent,
     DeleteSessionDialogComponent,
@@ -143,7 +145,6 @@ import { HomeComponent } from './workspaces/home.component';
     GitSettingsComponent,
     GuacamoleComponent,
     HeaderComponent,
-    HomeComponent,
     InitModelComponent,
     LegalComponent,
     LicencesComponent,
@@ -169,6 +170,7 @@ import { HomeComponent } from './workspaces/home.component';
     ProjectWrapperComponent,
     PureVariantsComponent,
     SessionOverviewComponent,
+    SessionsComponent,
     SettingsComponent,
     T4CInstanceSettingsComponent,
     T4cModelWrapperComponent,
@@ -183,10 +185,10 @@ import { HomeComponent } from './workspaces/home.component';
     ToolsSettingsComponent,
     ToolVersionComponent,
     TriggerPipelineComponent,
+    UserSessionsWrapperComponent,
     UserSettingsComponent,
     VersionComponent,
     ViewLogsDialogComponent,
-    WorkspaceComponent,
   ],
   imports: [
     AppRoutingModule,

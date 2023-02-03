@@ -23,8 +23,8 @@ import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wra
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
-import { ActiveSessionsComponent } from './sessions/active-sessions/active-sessions.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
+import { SessionsComponent } from './sessions/sessions.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { ToolDetailsComponent } from './settings/core/tools-settings/tool-details/tool-details.component';
 import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
@@ -35,7 +35,6 @@ import { GitSettingsComponent } from './settings/modelsources/git-settings/git-s
 import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/edit-t4c-instance/edit-t4c-instance.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
-import { HomeComponent } from './workspaces/home.component';
 
 const routes: Routes = [
   {
@@ -44,7 +43,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        component: HomeComponent,
+        component: SessionsComponent,
       },
       {
         path: 'projects',
@@ -159,23 +158,17 @@ const routes: Routes = [
         ],
       },
       {
-        path: 'workspaces',
-        data: { breadcrumb: 'Workspaces' },
-        component: HomeComponent,
-      },
-      {
         path: 'sessions',
         data: { breadcrumb: 'Sessions' },
         children: [
           {
+            path: '',
+            component: SessionsComponent,
+          },
+          {
             path: 'overview',
             data: { breadcrumb: 'Overview' },
             component: SessionOverviewComponent,
-          },
-          {
-            path: 'active',
-            data: { breadcrumb: 'Active' },
-            component: ActiveSessionsComponent,
           },
         ],
       },
