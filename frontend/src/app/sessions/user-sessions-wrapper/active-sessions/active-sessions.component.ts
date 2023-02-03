@@ -39,10 +39,15 @@ export class ActiveSessionsComponent {
   }
 
   openConnectDialog(session: Session): void {
-    // FixMe: determine if we have a web (jupyter) session or a Guacamole session
-    this.dialog.open(GuacamoleDialogComponent, {
-      data: session,
-    });
+    if (session.jupyter_token) {
+      window.open(
+        `/jupyter/${session.owner.name}/lab?token=${session.jupyter_token}`
+      );
+    } else {
+      this.dialog.open(GuacamoleDialogComponent, {
+        data: session,
+      });
+    }
   }
 
   uploadFileDialog(session: Session): void {

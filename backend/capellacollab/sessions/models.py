@@ -37,6 +37,7 @@ class DatabaseSession(Base):
     guacamole_username: str = sa.Column(sa.String)
     guacamole_password: str = sa.Column(sa.String)
     guacamole_connection_id: str = sa.Column(sa.String)
+    jupyter_token: str = sa.Column(sa.String)
     host: str = sa.Column(sa.String)
     type: WorkspaceType = sa.Column(sa.Enum(WorkspaceType), nullable=False)
     project_id: str = sa.Column(

@@ -147,10 +147,12 @@ class KubernetesOperator:
     ) -> dict[str, t.Any]:
         self._create_persistent_volume_claim(username)
 
+        path = f"/jupyter/{username}"
+
         environment = {
-            "JUPYTER_ENABLE_LAB": "yes",
-            # "NB_USER": username,
+            "JUPYTER_BASE_URL": path,
             "JUPYTER_TOKEN": token,
+            "JUPYTER_PORT": "8888",
         }
 
         session_parameters = self._start_session(
@@ -164,7 +166,7 @@ class KubernetesOperator:
             persistent_workspace_claim_name=self._get_claim_name(username),
         )
 
-        self._create_ingress(session_parameters["id"], 8888)
+        self._create_ingress(session_parameters["id"], path, 8888)
 
         return session_parameters
 
@@ -725,7 +727,7 @@ class KubernetesOperator:
         )
         return self.v1_core.create_namespaced_service(namespace, service)
 
-    def _create_ingress(self, id, port_number: int):
+    def _create_ingress(self, id, path: str, port_number: int):
         ingress = client.V1Ingress(
             api_version="networking.k8s.io/v1",
             kind="Ingress",
@@ -740,7 +742,7 @@ class KubernetesOperator:
                         http=client.V1HTTPIngressRuleValue(
                             paths=[
                                 client.V1HTTPIngressPath(
-                                    path="/lab",
+                                    path=path,
                                     path_type="Prefix",
                                     backend=client.V1IngressBackend(
                                         service=client.V1IngressServiceBackend(

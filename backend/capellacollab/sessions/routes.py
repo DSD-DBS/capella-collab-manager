@@ -359,12 +359,32 @@ def request_persistent_session(
     ) = determine_pure_variants_configuration(db, user, tool)
     warnings += pv_warnings
 
-    rdp_password = generate_password(length=64)
+    if any(n.name == "webapp" for n in tool.natures):
 
-    is_jupyter = True
-    is_capella = False
+        jupyter_token = generate_password(length=64)
 
-    if is_capella:
+        session = operator.start_persistent_jupyter_session(
+            username=auth_helper.get_username(token),
+            tool_name=tool.name,
+            version_name=version.name,
+            token=jupyter_token,
+            docker_image=docker_image,
+        )
+
+        response = create_database_session(
+            db,
+            schema.WorkspaceType.PERSISTENT,
+            session,
+            owner,
+            jupyter_token,
+            tool,
+            version,
+            None,
+        )
+
+    else:
+
+        rdp_password = generate_password(length=64)
 
         session = operator.start_persistent_capella_session(
             username=auth_helper.get_username(token),
@@ -388,27 +408,6 @@ def request_persistent_session(
             version,
             None,
             t4c_password,
-        )
-
-    elif is_jupyter:
-
-        session = operator.start_persistent_jupyter_session(
-            username=auth_helper.get_username(token),
-            tool_name=tool.name,
-            version_name=version.name,
-            token=rdp_password,
-            docker_image=docker_image,
-        )
-
-        response = create_database_session(
-            db,
-            schema.WorkspaceType.PERSISTENT,
-            session,
-            owner,
-            rdp_password,
-            tool,
-            version,
-            None,
         )
 
     response.warnings = warnings
@@ -464,7 +463,7 @@ def create_database_session(
     type: schema.WorkspaceType,
     session: dict[str, t.Any],
     owner: str,
-    rdp_password: str,
+    token: str,
     tool: tools_models.Tool,
     version: tools_models.Version,
     project: DatabaseProject | None,
@@ -475,7 +474,7 @@ def create_database_session(
         owner_name=owner,
         project=project,
         type=type,
-        rdp_password=rdp_password,
+        jupyter_token=token,
         **session,
     )
     return crud.create_session(db=db, session=database_model)
