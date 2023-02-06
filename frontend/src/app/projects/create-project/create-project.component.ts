@@ -19,8 +19,8 @@ import {
   CreateModelComponent,
   CreateModelStep,
 } from 'src/app/projects/models/create-model/create-model.component';
-import { ProjectService } from 'src/app/services/project/project.service';
 import { ToastService } from '../../helpers/toast/toast.service';
+import { ProjectService } from '../service/project.service';
 
 @Component({
   selector: 'app-create-project',

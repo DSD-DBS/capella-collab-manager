@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Project } from 'src/app/services/project/project.service';
 import { User } from 'src/app/services/user/user.service';
 import { ToolVersionWithTool } from 'src/app/settings/core/tools-settings/tool.service';
+import { Project } from './projects/service/project.service';
 
 export interface Session {
   created_at: string;

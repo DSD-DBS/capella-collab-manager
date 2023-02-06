@@ -17,7 +17,6 @@ import {
   Model,
   ModelService,
 } from 'src/app/projects/models/service/model.service';
-import { ProjectService } from 'src/app/services/project/project.service';
 import {
   Tool,
   ToolService,
@@ -25,6 +24,7 @@ import {
   ToolVersion,
 } from 'src/app/settings/core/tools-settings/tool.service';
 import { GitModelService } from '../../project-detail/model-overview/model-detail/git-model.service';
+import { ProjectService } from '../../service/project.service';
 
 @Component({
   selector: 'app-init-model',

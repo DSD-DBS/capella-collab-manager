@@ -9,7 +9,7 @@ import { Subscription, combineLatest, filter, map, switchMap } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
-import { ProjectService } from 'src/app/services/project/project.service';
+import { ProjectService } from '../../service/project.service';
 
 @Component({
   selector: 'app-model-wrapper',

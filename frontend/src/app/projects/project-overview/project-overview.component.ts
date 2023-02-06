@@ -5,10 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { tap } from 'rxjs';
-import {
-  ProjectService,
-  UserMetadata,
-} from 'src/app/services/project/project.service';
+import { ProjectService, UserMetadata } from '../service/project.service';
 
 @Component({
   selector: 'app-project-overview',

@@ -20,7 +20,7 @@ import {
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { ProjectService } from 'src/app/services/project/project.service';
+import { ProjectService } from 'src/app/projects/service/project.service';
 
 @Component({
   selector: 'app-create-backup',
