@@ -91,7 +91,6 @@ import { CreatePersistentSessionComponent } from './sessions/create-persistent-s
 import { DeleteSessionDialogComponent } from './sessions/delete-session-dialog/delete-session-dialog.component';
 import { NewReadonlyModelOptionsComponent } from './sessions/new-readonly-session-dialog/new-readonly-model-options/new-readonly-model-options.component';
 import { NewReadonlySessionDialogComponent } from './sessions/new-readonly-session-dialog/new-readonly-session-dialog.component';
-import { PersistentSessionComponent } from './sessions/persistent-session/persistent-session.component';
 import { GuacamoleComponent } from './sessions/session-created/guacamole/guacamole.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { SessionsComponent } from './sessions/sessions.component';
@@ -161,7 +160,6 @@ import { SettingsComponent } from './settings/settings.component';
     NewReadonlyModelOptionsComponent,
     NewReadonlySessionDialogComponent,
     NoticeComponent,
-    PersistentSessionComponent,
     ProjectDetailsComponent,
     ProjectMetadataComponent,
     ProjectOverviewComponent,
