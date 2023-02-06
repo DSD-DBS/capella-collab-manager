@@ -31,8 +31,8 @@ class GetSessionsResponse(BaseModel):
     created_at: datetime.datetime
     owner: BaseUser
     state: str
-    guacamole_username: str
-    guacamole_connection_id: str
+    guacamole_username: str | None
+    guacamole_connection_id: str | None
     warnings: list[Message] | None
     last_seen: str
     project: Project | None
