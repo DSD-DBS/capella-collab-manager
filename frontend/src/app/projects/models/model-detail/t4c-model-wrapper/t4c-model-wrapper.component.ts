@@ -47,7 +47,6 @@ export class T4cModelWrapperComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.t4cModelService._t4cModel.next(undefined);
-    this.subscription?.unsubscribe();
     this.breadCrumbsService.updatePlaceholder({ t4cModel: undefined });
   }
 }

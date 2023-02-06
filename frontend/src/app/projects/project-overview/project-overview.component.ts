@@ -4,7 +4,6 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { tap } from 'rxjs';
 import { ProjectService, UserMetadata } from '../service/project.service';
 
 @Component({

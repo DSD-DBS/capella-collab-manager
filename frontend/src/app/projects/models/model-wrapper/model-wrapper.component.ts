@@ -19,8 +19,6 @@ import { ProjectService } from '../../service/project.service';
   styleUrls: ['./model-wrapper.component.css'],
 })
 export class ModelWrapperComponent implements OnInit, OnDestroy {
-  breadcrumbSubscription?: Subscription;
-
   constructor(
     private route: ActivatedRoute,
     public modelService: ModelService,
@@ -39,13 +37,14 @@ export class ModelWrapperComponent implements OnInit, OnDestroy {
         this.modelService.loadModelbySlug(modelSlug, project?.slug!)
       );
 
-    this.modelService.model.subscribe((model) =>
-      this.breadcrumbService.updatePlaceholder({ model })
-    );
+    this.modelService.model
+      .pipe(untilDestroyed(this))
+      .subscribe((model) =>
+        this.breadcrumbService.updatePlaceholder({ model })
+      );
   }
 
   ngOnDestroy(): void {
-    this.breadcrumbSubscription?.unsubscribe();
     this.breadcrumbService.updatePlaceholder({ model: undefined });
     this.modelService.clearModel();
     this.t4cModelService._t4cModels.next(undefined);

@@ -4,8 +4,8 @@
  */
 
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
-import { asyncProjectSlugValidator } from 'src/app/helpers/validators/slug-validator';
 import {
   CreateModelComponent,
   CreateModelStep,
@@ -25,11 +25,8 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
 
   constructor(
     public projectService: ProjectService,
-    private toastService: ToastService,
-    private navBarService: NavBarService
-  ) {
-    this.navBarService.title = 'Create Project';
-  }
+    private toastService: ToastService
+  ) {}
 
   form = new FormGroup({
     name: new FormControl('', {
