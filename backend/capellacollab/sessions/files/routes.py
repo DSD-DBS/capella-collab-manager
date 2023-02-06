@@ -6,12 +6,9 @@ import io
 import logging
 import tarfile
 
-import requests
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
-from requests.auth import HTTPBasicAuth
 
-from capellacollab.config import config
 from capellacollab.sessions.injectables import get_existing_session
 from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import OPERATOR
@@ -22,15 +19,10 @@ log = logging.getLogger(__name__)
 
 
 @router.get("/", response_model=FileTree)
-def get_files(
+def list_files(
     show_hidden: bool, session: DatabaseSession = Depends(get_existing_session)
 ):
-    return requests.get(
-        "http://" + session.host + ":8000/api/v1/workspaces/files",
-        params={"show_hidden": show_hidden},
-        auth=HTTPBasicAuth("", session.rdp_password),
-        timeout=config["requests"]["timeout"],
-    ).json()
+    return OPERATOR.list_files(session.id, "/workspace", show_hidden)
 
 
 @router.post("/")

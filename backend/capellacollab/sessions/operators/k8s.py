@@ -24,6 +24,8 @@ from kubernetes.client import exceptions
 
 from capellacollab.config import config
 
+from . import helper
+
 log = logging.getLogger(__name__)
 
 external_registry: str = config["docker"]["externalRegistry"]
@@ -884,6 +886,82 @@ class KubernetesOperator:
         return self.v1_core.list_namespaced_pod(
             namespace=namespace, label_selector=label_selector
         ).items
+
+    def list_files(self, id: str, directory: str, show_hidden: bool):
+        def print_file_tree_as_json():
+            import pathlib
+
+            def get_files(dir: pathlib.PosixPath, show_hidden: bool):
+                file = {
+                    "path": dir.absolute(),
+                    "name": dir.name,
+                    "type": "directory",
+                    "children": [],
+                }
+
+                assert isinstance(file["children"], list)
+
+                for item in dir.iterdir():
+                    if not show_hidden and item.name.startswith("."):
+                        continue
+                    if item.is_dir():
+                        file["children"].append(get_files(item, show_hidden))
+                    elif item.is_file():
+                        file["children"].append(
+                            {
+                                "name": item.name,
+                                "path": str(item.absolute()),
+                                "type": "file",
+                            }
+                        )
+
+                return file
+
+            print(json.dumps(get_files(directory, show_hidden)))
+
+        source = helper.get_source_of_python_function(print_file_tree_as_json)
+        pod_name = self._get_pod_name(id)
+        try:
+            stream = kubernetes.stream.stream(
+                self.v1_core.connect_get_namespaced_pod_exec,
+                pod_name,
+                namespace=cfg["namespace"],
+                command=["python"],
+                stderr=True,
+                stdin=True,
+                stdout=True,
+                tty=False,
+                _preload_content=False,
+            )
+
+            stream.write_stdin(source)
+            stream.update(timeout=2)
+
+            stdout = ""
+            stderr = ""
+
+            if stream.peek_stdout():
+                stdout = stream.read_stdout()
+                log.debug(
+                    "Loading files of session '%s' - STDOUT: %s",
+                    pod_name,
+                    stdout,
+                )
+            if stream.peek_stderr():
+                stderr = stream.read_stderr()
+                log.debug(
+                    "Loading files of session '%s' - STDERR: %s",
+                    pod_name,
+                    stderr,
+                )
+
+        except exceptions.ApiException:
+            log.exception(
+                "Exception when copying file to the pod with id %s", id
+            )
+            raise
+
+        return json.loads(stdout)
 
     def upload_files(
         self,
