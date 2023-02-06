@@ -13,7 +13,7 @@ import {
 } from '@angular/forms';
 import {
   MatDialogRef as MatDialogRef,
-  MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
+  MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';

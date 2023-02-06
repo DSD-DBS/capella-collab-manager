@@ -5,12 +5,14 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { ProjectService } from '../service/project.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-project-wrapper',
   templateUrl: './project-wrapper.component.html',
@@ -38,9 +40,11 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
         this.projectUserService.getOwnProjectUser(projectSlug).subscribe();
       });
 
-    this.projectService.project.subscribe((project) =>
-      this.breadcrumbsService.updatePlaceholder({ project })
-    );
+    this.projectService.project
+      .pipe(untilDestroyed(this))
+      .subscribe((project) =>
+        this.breadcrumbsService.updatePlaceholder({ project })
+      );
   }
 
   ngOnDestroy(): void {
