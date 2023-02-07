@@ -15,16 +15,16 @@ import {
   ModelService,
 } from 'src/app/projects/models/service/model.service';
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { ModelOptions } from 'src/app/sessions/new-readonly-session-dialog/new-readonly-model-options/new-readonly-model-options.component';
-import { SessionService } from '../service/session.service';
+import { SessionService } from 'src/app/sessions/service/session.service';
+import { ModelOptions } from './create-readonly-model-options/create-readonly-model-options.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'new-readonly-session-dialog',
-  templateUrl: './new-readonly-session-dialog.component.html',
-  styleUrls: ['./new-readonly-session-dialog.component.css'],
+  selector: 'create-readonly-session-dialog',
+  templateUrl: './create-readonly-session-dialog.component.html',
+  styleUrls: ['./create-readonly-session-dialog.component.css'],
 })
-export class NewReadonlySessionDialogComponent implements OnInit {
+export class CreateReadonlySessionDialogComponent implements OnInit {
   constructor(
     public sessionService: SessionService,
     public modelService: ModelService,

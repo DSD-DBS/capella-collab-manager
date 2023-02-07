@@ -12,11 +12,11 @@ import { GuacamoleService } from 'src/app/services/guacamole/guacamole.service';
 import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
-  selector: 'app-guacamole',
-  templateUrl: './guacamole.component.html',
-  styleUrls: ['./guacamole.component.css'],
+  selector: 'app-guacamole-dialog',
+  templateUrl: './guacamole-dialog.component.html',
+  styleUrls: ['./guacamole-dialog.component.css'],
 })
-export class GuacamoleComponent {
+export class GuacamoleDialogComponent {
   t4cPasswordRevealed = false;
 
   constructor(
@@ -24,7 +24,7 @@ export class GuacamoleComponent {
     private localStorageService: LocalStorageService,
     private guacamoleService: GuacamoleService,
     @Inject(MAT_DIALOG_DATA) public session: Session,
-    public dialogRef: MatDialogRef<GuacamoleComponent>,
+    public dialogRef: MatDialogRef<GuacamoleDialogComponent>,
     private toastService: ToastService
   ) {}
 

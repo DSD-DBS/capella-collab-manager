@@ -7,12 +7,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Session } from 'src/app/schemes';
+import { SessionService } from 'src/app/sessions/service/session.service';
+import { UserSessionService } from 'src/app/sessions/service/user-session.service';
 import {
   ToolService,
   ToolVersion,
 } from 'src/app/settings/core/tools-settings/tool.service';
-import { SessionService } from '../service/session.service';
-import { UserSessionService } from '../service/user-session.service';
 
 @Component({
   selector: 'app-create-persistent-session',

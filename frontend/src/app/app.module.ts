@@ -84,16 +84,16 @@ import { ProjectUserSettingsComponent } from './projects/project-detail/project-
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { WhitespaceUrlInterceptor } from './services/encoder/encoder.interceptor';
-import { ActiveSessionsComponent } from './sessions/active-sessions/active-sessions.component';
-import { FileBrowserComponent } from './sessions/active-sessions/file-browser/file-browser.component';
-import { FileExistsDialogComponent } from './sessions/active-sessions/file-browser/file-exists-dialog/file-exists-dialog.component';
-import { CreatePersistentSessionComponent } from './sessions/create-persistent-session/create-persistent-session.component';
 import { DeleteSessionDialogComponent } from './sessions/delete-session-dialog/delete-session-dialog.component';
-import { NewReadonlyModelOptionsComponent } from './sessions/new-readonly-session-dialog/new-readonly-model-options/new-readonly-model-options.component';
-import { NewReadonlySessionDialogComponent } from './sessions/new-readonly-session-dialog/new-readonly-session-dialog.component';
-import { GuacamoleComponent } from './sessions/session-created/guacamole/guacamole.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { SessionsComponent } from './sessions/sessions.component';
+import { ActiveSessionsComponent } from './sessions/user-sessions-wrapper/active-sessions/active-sessions.component';
+import { GuacamoleDialogComponent } from './sessions/user-sessions-wrapper/active-sessions/connect/guacamole-dialog/guacamole-dialog.component';
+import { FileBrowserDialogComponent } from './sessions/user-sessions-wrapper/active-sessions/file-browser-dialog/file-browser-dialog.component';
+import { FileExistsDialogComponent } from './sessions/user-sessions-wrapper/active-sessions/file-browser-dialog/file-exists-dialog/file-exists-dialog.component';
+import { CreatePersistentSessionComponent } from './sessions/user-sessions-wrapper/create-session/create-persistent-session/create-persistent-session.component';
+import { CreateReadonlyModelOptionsComponent } from './sessions/user-sessions-wrapper/create-session/create-readonly-session-dialog/create-readonly-model-options/create-readonly-model-options.component';
+import { CreateReadonlySessionDialogComponent } from './sessions/user-sessions-wrapper/create-session/create-readonly-session-dialog/create-readonly-session-dialog.component';
 import { UserSessionsWrapperComponent } from './sessions/user-sessions-wrapper/user-sessions-wrapper.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { ToolDeletionDialogComponent } from './settings/core/tools-settings/tool-details/tool-deletion-dialog/tool-deletion-dialog.component';
@@ -130,17 +130,19 @@ import { SettingsComponent } from './settings/settings.component';
     CreateModelComponent,
     CreatePersistentSessionComponent,
     CreateProjectComponent,
+    CreateReadonlyModelOptionsComponent,
+    CreateReadonlySessionDialogComponent,
     DeleteGitSettingsDialogComponent,
     DeleteSessionDialogComponent,
     EditGitSettingsComponent,
     EditT4CInstanceComponent,
     EventsComponent,
-    FileBrowserComponent,
+    FileBrowserDialogComponent,
     FileExistsDialogComponent,
     FooterComponent,
     FormFieldSkeletonLoaderComponent,
     GitSettingsComponent,
-    GuacamoleComponent,
+    GuacamoleDialogComponent,
     HeaderComponent,
     InitModelComponent,
     LegalComponent,
@@ -157,8 +159,6 @@ import { SettingsComponent } from './settings/settings.component';
     ModelOverviewComponent,
     ModelRestrictionsComponent,
     ModelWrapperComponent,
-    NewReadonlyModelOptionsComponent,
-    NewReadonlySessionDialogComponent,
     NoticeComponent,
     ProjectDetailsComponent,
     ProjectMetadataComponent,

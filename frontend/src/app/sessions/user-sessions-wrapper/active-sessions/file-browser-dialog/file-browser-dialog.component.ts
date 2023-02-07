@@ -20,11 +20,11 @@ import { LoadFilesService } from 'src/app/services/load-files/load-files.service
 import { FileExistsDialogComponent } from './file-exists-dialog/file-exists-dialog.component';
 
 @Component({
-  selector: 'file-browser',
-  templateUrl: 'file-browser.component.html',
-  styleUrls: ['file-browser.component.css'],
+  selector: 'file-browser-dialog',
+  templateUrl: 'file-browser-dialog.component.html',
+  styleUrls: ['file-browser-dialog.component.css'],
 })
-export class FileBrowserComponent implements OnInit, OnDestroy {
+export class FileBrowserDialogComponent implements OnInit, OnDestroy {
   private subscription: Subscription | undefined;
   private downloadSubscription: Subscription | undefined;
 
@@ -38,7 +38,7 @@ export class FileBrowserComponent implements OnInit, OnDestroy {
   constructor(
     private loadService: LoadFilesService,
     private dialog: MatDialog,
-    public dialogRef: MatDialogRef<FileBrowserComponent>,
+    public dialogRef: MatDialogRef<FileBrowserDialogComponent>,
     private toastService: ToastService,
     @Inject(MAT_DIALOG_DATA) public session: Session
   ) {}
