@@ -20,6 +20,9 @@ nav:
           - Backups:
               - Setup a model backup: projects/models/backups/setup.md
               - Trigger a model backup: projects/models/backups/trigger.md
+          - Diagram cache:
+              - Setup diagram cache: projects/models/diagrams/setup_diagram_cache.md
+              - View diagram cache: projects/models/diagrams/view_diagram_cache.md
   - Sessions:
       - Session Types:
           - Overview: sessions/types.md
@@ -35,7 +38,7 @@ nav:
       - Files (Upload): sessions/files/files.md
       - Troubleshooting: sessions/troubleshooting.md
   - Tools:
-    - General: tools/index.md
+      - General: tools/index.md
   - User Management: users.md
   - Additional Configuration:
       - Alerts:
