@@ -511,16 +511,16 @@ def create_database_and_guacamole_session(
     )
 
     database_model = DatabaseSession(
-        tool=tool,
-        version=version,
+        guacamole_username=guacamole_username,
+        guacamole_password=guacamole_password,
+        rdp_password=rdp_password,
+        guacamole_connection_id=guacamole_identifier,
         owner_name=owner,
         project=project,
         type=type,
-        rdp_password=rdp_password,
         t4c_password=t4c_password,
-        guacamole_username=guacamole_username,
-        guacamole_password=guacamole_password,
-        guacamole_connection_id=guacamole_identifier,
+        tool=tool,
+        version=version,
         **session,
     )
     return crud.create_session(db=db, session=database_model)
