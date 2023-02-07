@@ -132,7 +132,7 @@ class KubernetesOperator:
             tool_name=tool_name,
             version_name=version_name,
             environment=environment,
-            ports=[3389, 9118, 8000],
+            ports={"rdp": 3389, "metrics": 9118, "fileservice": 8000},
             persistent_workspace_claim_name=self._get_claim_name(username),
             pure_variants_secret_name=pure_variants_secret_name,
         )
@@ -162,7 +162,7 @@ class KubernetesOperator:
             tool_name=tool_name,
             version_name=version_name,
             environment=environment,
-            ports=[8888],
+            ports={"http": 8888},
             persistent_workspace_claim_name=self._get_claim_name(username),
         )
 
@@ -189,7 +189,7 @@ class KubernetesOperator:
                 "GIT_REPOS_JSON": json.dumps(git_repos_json),
                 "RMT_PASSWORD": password,
             },
-            ports=[3389, 9118, 8000],
+            ports={"rdp": 3389, "metrics": 9118, "fileservice": 8000},
         )
 
     def _start_session(
@@ -200,7 +200,7 @@ class KubernetesOperator:
         tool_name: str,
         version_name: str,
         environment: dict[str, str | None],
-        ports: list[int],
+        ports: dict[str, int],
         persistent_workspace_claim_name: str | None = None,
         pure_variants_secret_name: str | None = None,
     ) -> dict[str, t.Any]:
@@ -486,11 +486,11 @@ class KubernetesOperator:
         self,
         deployment: client.V1Deployment,
         service: client.V1Service,
-        ports: list[int],
+        ports: dict[str, int],
     ) -> dict[str, t.Any]:
         return {
             "id": deployment.to_dict()["metadata"]["name"],
-            "ports": set(ports),
+            "ports": set(ports.values()),
             "created_at": deployment.to_dict()["metadata"][
                 "creation_timestamp"
             ],
@@ -503,7 +503,7 @@ class KubernetesOperator:
         image: str,
         name: str,
         environment: dict[str, str | None],
-        ports: list[int],
+        ports: dict[str, int],
         persistent_workspace_claim_name: str | None = None,
         pure_variants_secret_name: str | None = None,
     ) -> client.V1Deployment:
@@ -576,7 +576,7 @@ class KubernetesOperator:
                 image=image,
                 ports=[
                     client.V1ContainerPort(container_port=port, protocol="TCP")
-                    for port in ports
+                    for port in ports.values()
                 ],
                 env=[
                     client.V1EnvVar(name=key, value=str(value))
@@ -697,7 +697,7 @@ class KubernetesOperator:
         return self.v1_batch.create_namespaced_job(namespace, job)
 
     def _create_service(
-        self, name: str, deployment_name: str, ports: list[int]
+        self, name: str, deployment_name: str, ports: dict[str, int]
     ) -> client.V1Service:
         service: client.V1Service = client.V1Service(
             kind="Service",
@@ -714,12 +714,12 @@ class KubernetesOperator:
             spec=client.V1ServiceSpec(
                 ports=[
                     client.V1ServicePort(
-                        name=f"{port}",
+                        name=name,
                         protocol="TCP",
                         port=port,
                         target_port=port,
                     )
-                    for port in ports
+                    for name, port in ports.items()
                 ],
                 selector={"app": deployment_name},
                 type="ClusterIP",
