@@ -6,8 +6,8 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
+import { DeleteSessionDialogComponent } from '../../delete-session-dialog/delete-session-dialog.component';
 import { Session } from '../../schemes';
-import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
 import { SessionService } from '../service/session.service';
 import { UserSessionService } from '../service/user-session.service';
 import { GuacamoleComponent } from '../session-created/guacamole/guacamole.component';
