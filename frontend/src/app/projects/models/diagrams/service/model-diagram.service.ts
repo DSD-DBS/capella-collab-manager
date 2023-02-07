@@ -14,7 +14,7 @@ import { ModelService } from 'src/app/projects/models/service/model.service';
 export class ModelDiagramService {
   constructor(private http: HttpClient, private modelService: ModelService) {}
 
-  loadDiagramMetadata(
+  getDiagramMetadata(
     projectSlug: string,
     modelSlug: string
   ): Observable<DiagramCacheMetadata> {
@@ -23,7 +23,7 @@ export class ModelDiagramService {
     );
   }
 
-  loadDiagram(
+  getDiagram(
     projectSlug: string,
     modelSlug: string,
     diagramUUID: string

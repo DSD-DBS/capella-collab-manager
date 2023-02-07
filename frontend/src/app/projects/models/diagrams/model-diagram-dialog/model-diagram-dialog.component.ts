@@ -4,7 +4,7 @@
  */
 
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { saveAs } from 'file-saver';
 import {
   DiagramCacheMetadata,
@@ -40,23 +40,27 @@ export class ModelDiagramDialogComponent {
   constructor(
     private modelDiagramService: ModelDiagramService,
     private projectService: ProjectService,
+    private dialogRef: MatDialogRef<ModelDiagramDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { model: Model }
   ) {
     this.modelDiagramService
-      .loadDiagramMetadata(
+      .getDiagramMetadata(
         this.projectService.project!.slug,
         this.data.model.slug
       )
-      .subscribe((diagramMetadata) => (this.diagramMetadata = diagramMetadata));
+      .subscribe({
+        next: (diagramMetadata) => {
+          this.diagramMetadata = diagramMetadata;
+        },
+        error: () => {
+          this.dialogRef.close();
+        },
+      });
   }
 
   downloadDiagram(uuid: string) {
     this.modelDiagramService
-      .loadDiagram(
-        this.projectService.project!.slug,
-        this.data.model.slug,
-        uuid
-      )
+      .getDiagram(this.projectService.project!.slug, this.data.model.slug, uuid)
       .subscribe((response: Blob) => {
         saveAs(response, `${uuid}.svg`);
       });
