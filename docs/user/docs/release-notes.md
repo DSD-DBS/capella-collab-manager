@@ -44,7 +44,7 @@ logging capabilities with Grafana Loki.
 ## v2.4.0
 
 Full support for pure::variants. More information
-[here](./tools/pure_variants.md)
+[here](./settings/tools/pure_variants.md)
 
 ## v2.3.0
 
