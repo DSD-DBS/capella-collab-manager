@@ -50,7 +50,7 @@ def fixture_git_models(
     db: orm.Session, capella_model: toolmodels_models.CapellaModel
 ) -> git_models.DatabaseGitModel:
     git_model = git_models.PostGitModel(
-        path="http://example.com",
+        path="https://example.com/test/project",
         entrypoint="test/test.aird",
         revision="main",
         username="user",

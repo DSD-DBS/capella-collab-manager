@@ -100,6 +100,23 @@ def project_manager(
 
 
 @pytest.fixture
+def project_user(
+    db: orm.Session,
+    project: projects_models.DatabaseProject,
+    executor_name: str,
+) -> users_models.DatabaseUser:
+    user = users_crud.create_user(db, executor_name)
+    projects_users_crud.add_user_to_project(
+        db,
+        project=project,
+        user=user,
+        role=projects_users_models.ProjectUserRole.USER,
+        permission=projects_users_models.ProjectUserPermission.WRITE,
+    )
+    return user
+
+
+@pytest.fixture
 def client() -> testclient.TestClient:
     return testclient.TestClient(app)
 

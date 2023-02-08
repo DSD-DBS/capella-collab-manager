@@ -19,6 +19,7 @@ def get_last_job_run_id_for_git_model(
 ) -> tuple[settings_git_models.DatabaseGitInstance, str, tuple[str, str]]:
     git_instance = get_git_instance_for_git_model(db, git_model)
     check_git_instance_is_gitlab(git_instance)
+    check_git_instance_has_api_url(git_instance)
     project_id = get_project_id_by_git_url(git_model, git_instance)
     for pipeline_id in get_last_pipeline_run_ids(
         project_id, git_model, git_instance
@@ -31,9 +32,10 @@ def get_last_job_run_id_for_git_model(
     raise fastapi.HTTPException(
         status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
         detail={
+            "err_code": "NO_SUCCESSFUL_JOB",
             "reason": (
-                "There was no successful diagram cache job within the last 20 runs of the pipeline",
-                "Please contact your diagram cache administrator.",
+                f"There was no successful '{job_name}' job within the last 20 runs of the pipeline",
+                "Please contact your administrator.",
             ),
         },
     )
@@ -62,6 +64,7 @@ def get_git_instance_for_git_model(
         raise fastapi.HTTPException(
             status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
+                "err_code": "NO_MATCHING_GIT_INSTANCE_FOUND",
                 "reason": (
                     "No matching git instance was found for the primary git model.",
                     "Please contact your administrator.",
@@ -79,9 +82,10 @@ def check_git_instance_is_gitlab(
         raise fastapi.HTTPException(
             status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
+                "err_code": "INSTANCE_IS_NO_GITLAB_INSTANCE",
                 "reason": (
-                    "The used Git instance is not a Gitlab instance",
-                    "The diagram cache has only support for Gitlab instances.",
+                    "The used Git instance is not a Gitlab instance.",
+                    "Only Gitlab instances are supported.",
                 ),
             },
         )
@@ -94,6 +98,7 @@ def check_git_instance_has_api_url(
         raise fastapi.HTTPException(
             status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
+                "err_code": "GIT_INSTANCE_NO_API_ENDPOINT_DEFINED",
                 "reason": (
                     "The used Git instance has no API endpoint defined.",
                     "Please contact your administrator.",

@@ -18,7 +18,7 @@ process.
 ## Step 1: Create model
 
 This page allows to set a project name and description and a tool. The name and
-tool are required and can not be changed in the future.
+tool are required. The tool can be changed after the model creation.
 
 ## Step 2: Choose primary source
 
@@ -90,7 +90,9 @@ You have to enter the following information:
 
 ### Step 3.2 Link existing T4C repository
 
-!!! warning This step can only be executed by administrators
+<!-- prettier-ignore -->
+!!! warning
+    This step can only be executed by administrators
 
 The TeamForCapella instance has to exist before we can continue. Please select
 the TeamForCapella instance and the TeamForCapella repository. With `project`,
