@@ -6,6 +6,7 @@ docker:
   externalRegistry: "{{ .Values.docker.registry.external }}"
 
 k8s:
+  host: {{ .Values.general.host }}
   namespace: {{ .Values.backend.k8sSessionNamespace }}
   storageClassName: {{ .Values.backend.storageClassName }}
   storageAccessMode: {{ .Values.backend.storageAccessMode }}

@@ -33,6 +33,7 @@ properties:
       - storageAccessMode
       - promtail
       - namespace
+      - host
     properties:
       storageClassName:
         type: string
@@ -95,6 +96,8 @@ properties:
               - lokiPassword
               - serverPort
       namespace:
+        type: string
+      host:
         type: string
       context:
         type: string

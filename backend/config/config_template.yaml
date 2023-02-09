@@ -8,6 +8,7 @@ docker:
 k8s:
   # Only required when using operator k8s
 
+  host: localhost
   context: k3d-collab-cluster # Only required, if you'd like to use a local k3d environment
   namespace: collab-sessions
 

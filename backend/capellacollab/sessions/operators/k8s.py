@@ -35,6 +35,7 @@ external_registry: str = config["docker"]["externalRegistry"]
 
 cfg: dict[str, t.Any] = config["k8s"]
 
+host: str = cfg["host"]
 namespace: str = cfg["namespace"]
 storage_access_mode: str = cfg["storageAccessMode"]
 storage_class_name: str = cfg["storageClassName"]
@@ -775,7 +776,7 @@ class KubernetesOperator:
             spec=client.V1IngressSpec(
                 rules=[
                     client.V1IngressRule(
-                        host="localhost",
+                        host=host,
                         http=client.V1HTTPIngressRuleValue(
                             paths=[
                                 client.V1HTTPIngressPath(
@@ -808,7 +809,7 @@ class KubernetesOperator:
                 "name": id,
             },
             "spec": {
-                "host": "localhost",
+                "host": host,
                 "path": path,
                 "to": {
                     "kind": "Service",
