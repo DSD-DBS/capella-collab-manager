@@ -20,6 +20,7 @@ export type Tool = CreateTool & {
 export type ToolIntegrations = {
   t4c: boolean | null;
   pure_variants: boolean | null;
+  jupyter: boolean | null;
 };
 
 export type ToolVersion = {

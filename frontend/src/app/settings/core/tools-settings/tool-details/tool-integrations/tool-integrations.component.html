@@ -30,5 +30,16 @@
         <ng-template [ngTemplateOutlet]="pv"> </ng-template>
       </mat-checkbox>
     </p>
+    <p>
+      <ng-template #pynb> This tool is a Jupyter Notebook </ng-template>
+
+      <app-mat-checkbox-loader *ngIf="loading">
+        <ng-template [ngTemplateOutlet]="pynb"> </ng-template>
+      </app-mat-checkbox-loader>
+
+      <mat-checkbox formControlName="pynb" *ngIf="!loading">
+        <ng-template [ngTemplateOutlet]="pynb"> </ng-template>
+      </mat-checkbox>
+    </p>
   </form>
 </mat-card>

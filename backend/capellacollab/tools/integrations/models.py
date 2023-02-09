@@ -18,6 +18,7 @@ if t.TYPE_CHECKING:
 class ToolIntegrations(BaseModel):
     t4c: bool
     pure_variants: bool
+    jupyter: bool
 
     class Config:
         orm_mode = True
@@ -26,6 +27,7 @@ class ToolIntegrations(BaseModel):
 class PatchToolIntegrations(BaseModel):
     t4c: bool | None
     pure_variants: bool | None
+    jupyter: bool | None
 
 
 class DatabaseToolIntegrations(Base):
@@ -38,3 +40,4 @@ class DatabaseToolIntegrations(Base):
 
     t4c: bool = Column(Boolean, default=False)
     pure_variants: bool = Column(Boolean, default=False)
+    jupyter: bool = Column(Boolean, default=False)

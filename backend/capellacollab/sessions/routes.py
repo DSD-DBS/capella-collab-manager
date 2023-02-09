@@ -359,7 +359,7 @@ def request_persistent_session(
     ) = determine_pure_variants_configuration(db, user, tool)
     warnings += pv_warnings
 
-    if any(n.name == "webapp" for n in tool.natures):
+    if tool.integrations and tool.integrations.jupyter:
 
         jupyter_token = generate_password(length=64)
 

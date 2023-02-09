@@ -23,6 +23,8 @@ def update_integrations(
 
 
 def intialize_new_integration_table(db: Session, tool: Tool):
-    integrations = DatabaseToolIntegrations(pure_variants=False, t4c=False)
+    integrations = DatabaseToolIntegrations(
+        pure_variants=False, t4c=False, jupyter=False
+    )
     tool.integrations = integrations
     db.commit()
