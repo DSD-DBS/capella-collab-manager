@@ -488,9 +488,17 @@ class KubernetesOperator:
         service: client.V1Service,
         ports: dict[str, int],
     ) -> dict[str, t.Any]:
+
+        if "rdp" in ports:
+            port = {ports["rdp"]}
+        elif "http" in ports:
+            port = {ports["http"]}
+        else:
+            port = {ports.values()}
+
         return {
             "id": deployment.to_dict()["metadata"]["name"],
-            "ports": set(ports.values()),
+            "ports": port,
             "created_at": deployment.to_dict()["metadata"][
                 "creation_timestamp"
             ],
