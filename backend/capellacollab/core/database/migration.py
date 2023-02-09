@@ -33,6 +33,8 @@ from capellacollab.settings.modelsources.t4c.repositories import (
 )
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
+from capellacollab.tools.integrations import crud as integrations_crud
+from capellacollab.tools.integrations import models as integrations_models
 from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 from capellacollab.users.events import crud as events_crud
@@ -109,6 +111,18 @@ def create_tools(db):
     )
     tools_crud.create_tool(db, capella)
     tools_crud.create_tool(db, papyrus)
+    jupyter = tools_models.Tool(
+        name="Jupyter",
+        docker_image_template=f"{registry}/jupyter-notebook:$version",
+        docker_image_backup_template=f"{registry}/jupyter-notebook:$version",
+        readonly_docker_image_template=f"{registry}/jupyter-notebook::$version",
+    )
+    tools_crud.create_tool(db, jupyter)
+    integrations_crud.update_integrations(
+        db,
+        jupyter.integrations,
+        integrations_models.PatchToolIntegrations(jupyter=True),
+    )
 
     default_version = tools_crud.create_version(db, capella.id, "6.0.0", True)
     tools_crud.create_version(db, capella.id, "5.2.0")
@@ -116,6 +130,8 @@ def create_tools(db):
 
     tools_crud.create_version(db, papyrus.id, "6.1")
     tools_crud.create_version(db, papyrus.id, "6.0")
+
+    tools_crud.create_version(db, jupyter.id, "latest")
 
     default_nature = tools_crud.create_nature(db, capella.id, "model")
     tools_crud.create_nature(db, capella.id, "library")
