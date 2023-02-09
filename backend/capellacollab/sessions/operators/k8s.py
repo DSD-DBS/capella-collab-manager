@@ -22,6 +22,8 @@ import kubernetes.stream.stream
 import yaml
 from kubernetes import client
 from kubernetes.client import exceptions
+from openshift.dynamic import DynamicClient
+from openshift.dynamic.exceptions import ResourceNotFoundError
 
 from capellacollab.config import config
 
@@ -63,6 +65,23 @@ if _pod_security_context := cfg.get("cluster", {}).get(
     )
 
 
+def is_openshift_cluster(api_client):
+    dyn_client = DynamicClient(api_client)
+    try:
+        dyn_client.resources.get(
+            api_version="route.openshift.io/v1", kind="Route"
+        )
+        logging.info(
+            "Openshift routes detected, assuming an OpenShift cluster"
+        )
+        return True
+    except ResourceNotFoundError:
+        logging.info(
+            "No openshift routes detected, assuming normal Kubernetes cluster"
+        )
+        return False
+
+
 class FileType(enum.Enum):
     FILE = "file"
     DIRECTORY = "directory"
@@ -79,12 +98,19 @@ class File:
 class KubernetesOperator:
     def __init__(self) -> None:
         self.load_config()
+        self.client = client.ApiClient()
+        self.v1_core = client.CoreV1Api(api_client=self.client)
+        self.v1_apps = client.AppsV1Api(api_client=self.client)
+        self.v1_batch = client.BatchV1Api(api_client=self.client)
+        self._openshift = None
 
-        self.v1_core = client.CoreV1Api()
-        self.v1_apps = client.AppsV1Api()
-        self.v1_batch = client.BatchV1Api()
+    @property
+    def openshift(self):
+        if self._openshift is None:
+            self._openshift = is_openshift_cluster(self.client)
+        return self._openshift
 
-    def load_config(self):
+    def load_config(self) -> None:
         self.kubectl_arguments = []
         if cfg.get("context", None):
             self.kubectl_arguments += ["--context", cfg["context"]]
@@ -166,7 +192,10 @@ class KubernetesOperator:
             persistent_workspace_claim_name=self._get_claim_name(username),
         )
 
-        self._create_ingress(session_parameters["id"], path, 8888)
+        if self.openshift:
+            self._create_openshift_route(session_parameters["id"], path, 8888)
+        else:
+            self._create_ingress(session_parameters["id"], path, 8888)
 
         return session_parameters
 
@@ -770,6 +799,35 @@ class KubernetesOperator:
         return client.NetworkingV1Api().create_namespaced_ingress(
             namespace, ingress
         )
+
+    def _create_openshift_route(self, id, path: str, port_number: int):
+        route_dict = {
+            "kind": "Route",
+            "apiVersion": "route.openshift.io/v1",
+            "metadata": {
+                "name": id,
+            },
+            "spec": {
+                "host": "localhost",
+                "path": path,
+                "to": {
+                    "kind": "Service",
+                    "name": id,
+                },
+                "port": {
+                    "targetPort": port_number,
+                },
+                "tls": {
+                    "termination": "edge",
+                    "insecureEdgeTerminationPolicy": "Redirect",
+                },
+            },
+        }
+        dyn_client = DynamicClient(self.client)
+        v1_routes = dyn_client.resources.get(
+            api_version="route.openshift.io/v1", kind="Route"
+        )
+        return v1_routes.create(body=route_dict, namespace=namespace)
 
     def _create_persistent_volume_claim(self, username: str):
         pvc: client.V1PersistentVolumeClaim = client.V1PersistentVolumeClaim(
