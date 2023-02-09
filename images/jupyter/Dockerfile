@@ -20,24 +20,24 @@ RUN apt-get update && \
 
 ARG UID=1001
 
+COPY docker-entrypoint.sh /
+
 RUN useradd -l -m -u $UID -G users techuser && \
     echo "techuser:tmp_passwd" | chpasswd && \
     chown techuser /home/techuser && \
     mkdir /workspace && \
-    chown -R techuser /workspace
+    chown -R techuser /workspace && \
+    chmod +x /docker-entrypoint.sh
 
 RUN python3 -m pip install jupyterlab capellambse
 
 ENV HOME=/home/techuser
 ENV JUPYTER_PORT=8888
+ENV NOTEBOOKS_DIR=/workspace/notebooks
 
 EXPOSE $JUPYTER_PORT
 
 USER techuser
 WORKDIR $HOME
 
-CMD jupyter-lab --ip=0.0.0.0 \
-    --port=$JUPYTER_PORT \
-    --no-browser \
-    --ServerApp.base_url=$JUPYTER_BASE_URL \
-    --ServerApp.root_dir=/workspace/
+ENTRYPOINT "/docker-entrypoint.sh"
