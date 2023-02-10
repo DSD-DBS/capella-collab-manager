@@ -25,7 +25,7 @@ from capellacollab.projects.toolmodels.modelsources.git.models import (
 )
 from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.settings.modelsources.git.core import get_remote_refs
-from capellacollab.settings.modelsources.git.crud import get_git_settings
+from capellacollab.settings.modelsources.git.crud import get_git_instances
 from capellacollab.settings.modelsources.git.models import (
     GetRevisionsResponseModel,
 )
@@ -38,13 +38,13 @@ log = logging.getLogger(__name__)
 
 
 def verify_path_prefix(db: Session, path: str):
-    if not (git_settings := get_git_settings(db)):
+    if not (git_instances := get_git_instances(db)):
         return
 
     unquoted_path = urllib.parse.unquote(path)
     if resolved_path := Request("GET", unquoted_path).prepare().url:
-        for git_setting in git_settings:
-            unquoted_git_url = urllib.parse.unquote(git_setting.url)
+        for git_instance in git_instances:
+            unquoted_git_url = urllib.parse.unquote(git_instance.url)
             resolved_git_url = Request("GET", unquoted_git_url).prepare().url
 
             if resolved_git_url and resolved_path.startswith(resolved_git_url):

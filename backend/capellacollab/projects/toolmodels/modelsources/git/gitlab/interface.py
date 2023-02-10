@@ -49,7 +49,7 @@ def get_git_instance_for_git_model(
     """
 
     instances_sorted_by_len = sorted(
-        settings_git_crud.get_git_settings(db),
+        settings_git_crud.get_git_instances(db),
         key=lambda instance: len(instance.url),
         reverse=True,
     )

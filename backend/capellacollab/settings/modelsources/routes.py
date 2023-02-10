@@ -3,13 +3,13 @@
 
 from fastapi import APIRouter
 
-from capellacollab.settings.modelsources.git import routes as git_settings
+from capellacollab.settings.modelsources.git import routes as git_instances
 from capellacollab.settings.modelsources.t4c import routes as t4c_settings
 
 router = APIRouter()
 
 router.include_router(
-    git_settings.router,
+    git_instances.router,
     prefix="/git",
     tags=["Settings - Modelsources - Git"],
 )
