@@ -43,7 +43,7 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
       .pipe(filter(Boolean))
       .subscribe((instance: GitInstance) => {
         this.gitSettingsForm.patchValue(instance);
-        this.breadcrumbsService.updatePlaceholder({ instance });
+        this.breadcrumbsService.updatePlaceholder({ gitInstance: instance });
       });
 
     this.paramsSubscription = this.route.params.subscribe((params) => {
@@ -57,7 +57,7 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.gitSettingsSubscription?.unsubscribe();
     this.paramsSubscription?.unsubscribe();
-    this.breadcrumbsService.updatePlaceholder({ gitSetting: undefined });
+    this.breadcrumbsService.updatePlaceholder({ gitInstance: undefined });
   }
 
   editGitSettings() {
