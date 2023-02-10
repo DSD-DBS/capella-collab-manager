@@ -41,12 +41,10 @@ export class ToolDetailsComponent {
         this.validDockerImageNameValidator(),
       ]),
       readonly: new FormControl('', [
-        Validators.required,
         Validators.maxLength(4096),
         this.validDockerImageNameValidator(),
       ]),
       backup: new FormControl('', [
-        Validators.required,
         Validators.maxLength(4096),
         this.validDockerImageNameValidator(),
       ]),
