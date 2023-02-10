@@ -69,7 +69,9 @@ def get_diagram_metadata(
             },
         )
 
-    return {"diagrams": diagrams, "last_updated": last_successful_job[1]}
+    return models.DiagramCacheMetadata(
+        diagrams=diagrams, last_updated=last_successful_job[1]
+    )
 
 
 @router.get("/{diagram_uuid}", response_class=fastapi.responses.Response)
