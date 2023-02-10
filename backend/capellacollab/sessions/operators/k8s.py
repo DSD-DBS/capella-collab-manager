@@ -11,6 +11,7 @@ import logging
 import random
 import shlex
 import string
+import subprocess
 import typing as t
 from dataclasses import dataclass
 from datetime import datetime
@@ -61,37 +62,10 @@ if _pod_security_context := cfg.get("cluster", {}).get(
         _pod_security_context, client.V1PodSecurityContext.__name__
     )
 
+kubectl_arguments = []
 if cfg.get("context", None):
-    kubernetes.config.load_config(context=cfg.get("context", None))
-elif cfg.get("apiURL", None) and cfg.get("token", None):
-    kubernetes.config.load_kube_config_from_dict(
-        {
-            "apiVersion": "v1",
-            "kind": "Config",
-            "clusters": [
-                {
-                    "cluster": {
-                        "insecure-skip-tls-verify": True,
-                        "server": cfg.get("apiURL", None),
-                    },
-                    "name": "cluster",
-                }
-            ],
-            "contexts": [
-                {
-                    "context": {"cluster": "cluster", "user": "tokenuser"},
-                    "name": "cluster",
-                }
-            ],
-            "current-context": "cluster",
-            "users": [
-                {
-                    "name": "tokenuser",
-                    "user": {"token": cfg.get("token", None)},
-                }
-            ],
-        }
-    )
+    kubectl_arguments += ["--context", cfg["context"]]
+    kubernetes.config.load_config(context=cfg["context"])
 else:
     kubernetes.config.load_incluster_config()
 
@@ -889,11 +863,15 @@ class KubernetesOperator:
 
     def list_files(self, _id: str, directory: str, show_hidden: bool):
         def print_file_tree_as_json():
+            import json  # pylint: disable=redefined-outer-name,reimported
             import pathlib
+            import sys
+
+            print("Using CLI arguments: " + str(sys.argv[1:]), file=sys.stderr)
 
             def get_files(dir: pathlib.PosixPath, show_hidden: bool):
                 file = {
-                    "path": dir.absolute(),
+                    "path": str(dir.absolute()),
                     "name": dir.name,
                     "type": "directory",
                     "children": [],
@@ -917,52 +895,57 @@ class KubernetesOperator:
 
                 return file
 
-            print(json.dumps(get_files(directory, show_hidden)))
-
-        source = helper.get_source_of_python_function(print_file_tree_as_json)
-        pod_name = self._get_pod_name(id)
-        try:
-            stream = kubernetes.stream.stream(
-                self.v1_core.connect_get_namespaced_pod_exec,
-                pod_name,
-                container=_id,
-                namespace=cfg["namespace"],
-                command=["python"],
-                stderr=True,
-                stdin=True,
-                stdout=True,
-                tty=False,
-                _preload_content=False,
+            print(
+                json.dumps(
+                    get_files(
+                        pathlib.Path(sys.argv[1]), json.loads(sys.argv[2])
+                    )
+                )
             )
 
-            stream.write_stdin(source)
-            stream.update(timeout=2)
+        source = helper.get_source_of_python_function(print_file_tree_as_json)
 
-            stdout = ""
-            stderr = ""
+        pod_name = self._get_pod_name(_id)
+        # We have to use subprocess to get it running until this issue is solved:
+        # https://github.com/kubernetes/kubernetes/issues/89899
+        # Python doesn't start evaluating the code before EOF, but there is no way to close stdin
 
-            if stream.peek_stdout():
-                stdout = stream.read_stdout()
-                log.debug(
-                    "Loading files of session '%s' - STDOUT: %s",
+        try:
+            response = subprocess.run(
+                ["kubectl"]
+                + kubectl_arguments
+                + [
+                    "--namespace",
+                    namespace,
+                    "exec",
+                    "--stdin",
                     pod_name,
-                    stdout,
-                )
-            if stream.peek_stderr():
-                stderr = stream.read_stderr()
-                log.debug(
-                    "Loading files of session '%s' - STDERR: %s",
-                    pod_name,
-                    stderr,
-                )
-
-        except exceptions.ApiException:
-            log.exception(
-                "Exception when copying file to the pod with id %s", id
+                    "--container",
+                    _id,
+                    "--",
+                    "python",
+                    "-",
+                    directory,
+                    json.dumps(show_hidden),
+                ],
+                input=source.encode(),
+                capture_output=True,
+                check=True,
+            )
+        except subprocess.CalledProcessError as e:
+            log.error(
+                "Loading files of session '%s' failed - STDOUT: %s",
+                pod_name,
+                e.stdout.decode(),
+            )
+            log.error(
+                "Loading files of session '%s' failed - STDERR: %s",
+                pod_name,
+                e.stderr.decode(),
             )
             raise
 
-        return json.loads(stdout)
+        return json.loads(response.stdout)
 
     def upload_files(
         self,
@@ -987,7 +970,7 @@ class KubernetesOperator:
             )
 
             stream.write_stdin(content)
-            stream.update(timeout=1)
+            stream.update(timeout=5)
             if stream.peek_stdout():
                 log.debug(
                     "Upload into %s - STDOUT: %s", _id, stream.read_stdout()

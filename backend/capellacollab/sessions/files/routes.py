@@ -22,7 +22,16 @@ log = logging.getLogger(__name__)
 def list_files(
     show_hidden: bool, session: DatabaseSession = Depends(get_existing_session)
 ):
-    return OPERATOR.list_files(session.id, "/workspace", show_hidden)
+    try:
+        return OPERATOR.list_files(session.id, "/workspace", show_hidden)
+    except Exception:
+        log.exception("Loading of files for session %s failed", session.id)
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "reason": "Loading the files of the session failed. Is the session running?"
+            },
+        )
 
 
 @router.post("/")
