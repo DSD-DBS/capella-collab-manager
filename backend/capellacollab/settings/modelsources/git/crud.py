@@ -9,17 +9,17 @@ from capellacollab.settings.modelsources.git.models import (
 )
 
 
-def get_git_setting_by_id(
-    db: Session, git_setting_id: int
+def get_git_instance_by_id(
+    db: Session, git_instance_id: int
 ) -> DatabaseGitInstance:
     return (
         db.query(DatabaseGitInstance)
-        .filter(DatabaseGitInstance.id == git_setting_id)
+        .filter(DatabaseGitInstance.id == git_instance_id)
         .first()
     )
 
 
-def get_git_settings(db: Session) -> list[DatabaseGitInstance]:
+def get_git_instances(db: Session) -> list[DatabaseGitInstance]:
     return db.query(DatabaseGitInstance).all()
 
 
@@ -35,19 +35,19 @@ def create_git_instance(
     return git_instance
 
 
-def update_git_setting(
+def update_git_instance(
     db: Session,
-    git_setting: DatabaseGitInstance,
-    post_git_setting: PostGitInstance,
+    git_instance: DatabaseGitInstance,
+    post_git_instance: PostGitInstance,
 ) -> DatabaseGitInstance:
-    for key in post_git_setting.dict():
-        if (value := getattr(post_git_setting, key)) is not None:
-            setattr(git_setting, key, value)
+    for key in post_git_instance.dict():
+        if (value := getattr(post_git_instance, key)) is not None:
+            setattr(git_instance, key, value)
 
     db.commit()
-    return git_setting
+    return git_instance
 
 
-def delete_git_setting(db: Session, git_setting: DatabaseGitInstance):
-    db.delete(git_setting)
+def delete_git_instance(db: Session, git_instance: DatabaseGitInstance):
+    db.delete(git_instance)
     db.commit()

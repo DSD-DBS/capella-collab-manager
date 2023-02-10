@@ -9,17 +9,17 @@ from capellacollab.settings.modelsources.git import crud
 from capellacollab.settings.modelsources.git.models import DatabaseGitInstance
 
 
-def get_existing_git_setting(
-    git_setting_id: int,
+def get_existing_git_instance(
+    git_instance_id: int,
     db: Session = Depends(get_db),
 ) -> DatabaseGitInstance:
-    if git_setting := crud.get_git_setting_by_id(db, git_setting_id):
-        return git_setting
+    if git_instance := crud.get_git_instance_by_id(db, git_instance_id):
+        return git_instance
 
     raise HTTPException(
         status_code=400,
         detail={
-            "err_code": "git_setting_not_found",
-            "reason": f"The git setting ({git_setting_id}) does not exists",
+            "err_code": "git_instance_not_found",
+            "reason": f"The git setting ({git_instance_id}) does not exists",
         },
     )
