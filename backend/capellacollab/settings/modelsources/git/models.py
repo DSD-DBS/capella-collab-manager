@@ -32,7 +32,7 @@ class GitInstance(PostGitInstance):
 
 
 class DatabaseGitInstance(Base):
-    __tablename__ = "git_settings"
+    __tablename__ = "git_instances"
     id: int = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name: str = Column(String)
     url: str = Column(String)
