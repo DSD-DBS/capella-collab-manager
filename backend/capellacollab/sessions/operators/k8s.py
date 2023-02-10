@@ -887,7 +887,7 @@ class KubernetesOperator:
             namespace=namespace, label_selector=label_selector
         ).items
 
-    def list_files(self, id: str, directory: str, show_hidden: bool):
+    def list_files(self, _id: str, directory: str, show_hidden: bool):
         def print_file_tree_as_json():
             import pathlib
 
@@ -925,6 +925,7 @@ class KubernetesOperator:
             stream = kubernetes.stream.stream(
                 self.v1_core.connect_get_namespaced_pod_exec,
                 pod_name,
+                container=_id,
                 namespace=cfg["namespace"],
                 command=["python"],
                 stderr=True,
@@ -975,6 +976,7 @@ class KubernetesOperator:
             stream = kubernetes.stream.stream(
                 self.v1_core.connect_get_namespaced_pod_exec,
                 pod_name,
+                container=_id,
                 namespace=namespace,
                 command=exec_command,
                 stderr=True,
@@ -1001,8 +1003,8 @@ class KubernetesOperator:
             )
             raise
 
-    def download_file(self, id: str, filename: str) -> t.Iterable[bytes]:
-        pod_name = self._get_pod_name(id)
+    def download_file(self, _id: str, filename: str) -> t.Iterable[bytes]:
+        pod_name = self._get_pod_name(_id)
         try:
             exec_command = [
                 "bash",
@@ -1012,6 +1014,7 @@ class KubernetesOperator:
             stream = kubernetes.stream.stream(
                 self.v1_core.connect_get_namespaced_pod_exec,
                 pod_name,
+                container=_id,
                 namespace=cfg["namespace"],
                 command=exec_command,
                 stderr=True,
@@ -1031,7 +1034,7 @@ class KubernetesOperator:
 
         except kubernetes.client.exceptions.ApiException:
             log.exception(
-                "Exception when copying file to the pod with id %s", id
+                "Exception when copying file to the pod with id %s", _id
             )
             raise
 
