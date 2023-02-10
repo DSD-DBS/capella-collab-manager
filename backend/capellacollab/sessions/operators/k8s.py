@@ -191,6 +191,8 @@ class KubernetesOperator:
             environment=environment,
             ports={"http": 8888},
             persistent_workspace_claim_name=self._get_claim_name(username),
+            prometheus_path=f"{path}/metrics",
+            prometheus_port=8888,
         )
 
         if self.openshift:
@@ -233,6 +235,8 @@ class KubernetesOperator:
         ports: dict[str, int],
         persistent_workspace_claim_name: str | None = None,
         pure_variants_secret_name: str | None = None,
+        prometheus_path="/metrics",
+        prometheus_port=9118,
     ) -> dict[str, t.Any]:
         log.info("Launching a %s session for user %s", session_type, username)
 
@@ -257,7 +261,11 @@ class KubernetesOperator:
         )
 
         service = self._create_service(
-            name=_id, deployment_name=_id, ports=ports
+            name=_id,
+            deployment_name=_id,
+            ports=ports,
+            prometheus_path=prometheus_path,
+            prometheus_port=prometheus_port,
         )
 
         log.info(
@@ -735,7 +743,12 @@ class KubernetesOperator:
         return self.v1_batch.create_namespaced_job(namespace, job)
 
     def _create_service(
-        self, name: str, deployment_name: str, ports: dict[str, int]
+        self,
+        name: str,
+        deployment_name: str,
+        ports: dict[str, int],
+        prometheus_path: str,
+        prometheus_port: int,
     ) -> client.V1Service:
         service: client.V1Service = client.V1Service(
             kind="Service",
@@ -745,8 +758,8 @@ class KubernetesOperator:
                 labels={"app": name},
                 annotations={
                     "prometheus.io/scrape": "true",
-                    "prometheus.io/path": "/metrics",
-                    "prometheus.io/port": "9118",
+                    "prometheus.io/path": prometheus_path,
+                    "prometheus.io/port": f"{prometheus_port}",
                 },
             ),
             spec=client.V1ServiceSpec(
