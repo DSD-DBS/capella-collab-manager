@@ -2,14 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from __future__ import annotations
+import datetime
 
-from datetime import datetime
-
-from pydantic import BaseModel
+import pydantic
 
 
-class DiagramMetadata(BaseModel):
+class DiagramMetadata(pydantic.BaseModel):
     name: str
     uuid: str
     success: str
@@ -18,9 +16,9 @@ class DiagramMetadata(BaseModel):
         orm_mode = True
 
 
-class DiagramCacheMetadata(BaseModel):
+class DiagramCacheMetadata(pydantic.BaseModel):
     diagrams: list[DiagramMetadata]
-    last_updated: datetime
+    last_updated: datetime.datetime
 
     class Config:
         orm_mode = True

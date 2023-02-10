@@ -1,8 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from __future__ import annotations
-
 from urllib import parse
 
 import fastapi
@@ -54,25 +52,18 @@ def get_git_instance_for_git_model(
         reverse=True,
     )
 
-    matching_instance = None
-
     for instance in instances_sorted_by_len:
         if git_model.path.startswith(instance.url):
-            matching_instance = instance
-            break
-    else:
-        raise fastapi.HTTPException(
-            status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={
-                "err_code": "NO_MATCHING_GIT_INSTANCE_FOUND",
-                "reason": (
-                    "No matching git instance was found for the primary git model.",
-                    "Please contact your administrator.",
-                ),
-            },
-        )
-
-    return matching_instance
+            return instance
+    raise fastapi.HTTPException(
+        status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail={
+            "reason": (
+                "No matching git instance was found for the primary git model.",
+                "Please contact your administrator.",
+            ),
+        },
+    )
 
 
 def check_git_instance_is_gitlab(
