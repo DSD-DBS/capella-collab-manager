@@ -114,7 +114,6 @@ class KubernetesOperator:
             "T4C_LICENCE_SECRET": t4c_license_secret,
             "T4C_JSON": json.dumps(t4c_json),
             "RMT_PASSWORD": password,
-            "FILESERVICE_PASSWORD": password,
             "T4C_USERNAME": username,
         }
 
@@ -680,12 +679,6 @@ class KubernetesOperator:
                         protocol="TCP",
                         port=9118,
                         target_port=9118,
-                    ),
-                    client.V1ServicePort(
-                        name="fileservice",
-                        protocol="TCP",
-                        port=8000,
-                        target_port=8000,
                     ),
                 ],
                 selector={"app": deployment_name},
