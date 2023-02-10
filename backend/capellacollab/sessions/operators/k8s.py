@@ -193,6 +193,7 @@ class KubernetesOperator:
             persistent_workspace_claim_name=self._get_claim_name(username),
             prometheus_path=f"{path}/metrics",
             prometheus_port=8888,
+            limits="low",
         )
 
         if self.openshift:
@@ -237,6 +238,7 @@ class KubernetesOperator:
         pure_variants_secret_name: str | None = None,
         prometheus_path="/metrics",
         prometheus_port=9118,
+        limits="high",
     ) -> dict[str, t.Any]:
         log.info("Launching a %s session for user %s", session_type, username)
 
@@ -258,6 +260,7 @@ class KubernetesOperator:
             ports=ports,
             persistent_workspace_claim_name=persistent_workspace_claim_name,
             pure_variants_secret_name=pure_variants_secret_name,
+            limits=limits,
         )
 
         service = self._create_service(
@@ -552,6 +555,7 @@ class KubernetesOperator:
         ports: dict[str, int],
         persistent_workspace_claim_name: str | None = None,
         pure_variants_secret_name: str | None = None,
+        limits: str = "high",
     ) -> client.V1Deployment:
         volumes: list[client.V1Volume] = []
         session_volume_mounts: list[client.V1VolumeMount] = []
@@ -615,6 +619,18 @@ class KubernetesOperator:
                 )
             )
 
+        resources = (
+            client.V1ResourceRequirements(
+                limits={"cpu": "1", "memory": "1Gi"},
+                requests={"cpu": "0.4", "memory": "200Mi"},
+            )
+            if limits == "low"
+            else client.V1ResourceRequirements(
+                limits={"cpu": "2", "memory": "6Gi"},
+                requests={"cpu": "0.4", "memory": "1.6Gi"},
+            )
+        )
+
         containers: list[client.V1Container] = []
         containers.append(
             client.V1Container(
@@ -628,10 +644,7 @@ class KubernetesOperator:
                     client.V1EnvVar(name=key, value=str(value))
                     for key, value in environment.items()
                 ],
-                resources=client.V1ResourceRequirements(
-                    limits={"cpu": "2", "memory": "6Gi"},
-                    requests={"cpu": "0.4", "memory": "1.6Gi"},
-                ),
+                resources=resources,
                 volume_mounts=session_volume_mounts,
                 image_pull_policy=image_pull_policy,
             )
