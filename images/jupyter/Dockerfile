@@ -6,9 +6,9 @@ FROM $BASE_IMAGE
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && \
-    apt-get upgrade --yes && \
-    apt-get install --yes \
+RUN apt update && \
+    apt upgrade --yes && \
+    apt install --yes --no-install-recommends \
     gettext-base \
     locales \
     python3 \
