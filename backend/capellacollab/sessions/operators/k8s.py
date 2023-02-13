@@ -282,6 +282,11 @@ class KubernetesOperator:
     def kill_session(self, _id: str):
         log.info("Terminating session %s", _id)
 
+        if self.openshift:
+            if dep_status := self._delete_openshift_route(_id):
+                log.info(
+                    "Deleted route %s with status %s", _id, dep_status.status
+                )
         if dep_status := self._delete_ingress(_id):
             log.info(
                 "Deleted ingress %s with status %s", _id, dep_status.status
@@ -1022,6 +1027,17 @@ class KubernetesOperator:
             )
         except exceptions.ApiException:
             log.exception("Error deleting ingress with name: %s", name)
+            return None
+
+    def _delete_openshift_route(self, name: str) -> client.V1Status | None:
+        try:
+            dyn_client = DynamicClient(self.client)
+            v1_routes = dyn_client.resources.get(
+                api_version="route.openshift.io/v1", kind="Route"
+            )
+            return v1_routes.delete(name=name, namespace=namespace)
+        except exceptions.ApiException:
+            log.exception("Error deleting route with name: %s", name)
             return None
 
     def _get_pod_name(self, _id: str) -> str:
