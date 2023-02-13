@@ -18,7 +18,7 @@ RUN apt-get update && \
 
 # Install kubectl if not available in base image
 # kubectl is needed for the list files endpoint
-RUN dpkg -s kubectl || kubectl_installed="no"; \
+RUN kubectl_installed="yes"; dpkg -s kubectl || kubectl_installed="no"; \
     if [[ "$kubectl_installed" == "no" ]]; \
     then \
     curl -fsSLo /usr/share/keyrings/kubectl.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg; \
