@@ -4,8 +4,15 @@
 
 from capellacollab.sessions.operators.k8s import KubernetesOperator
 
-OPERATOR = KubernetesOperator()
+
+class OperatorLoader:
+    operator = None
+
+    @classmethod
+    def load_operator(cls):
+        cls.operator = KubernetesOperator()
+        cls.operator.load_config()
 
 
 def get_operator():
-    return OPERATOR
+    return OperatorLoader.operator

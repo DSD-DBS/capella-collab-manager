@@ -122,7 +122,7 @@ class MockOperator:
 def fixture_mockoperator(monkeypatch: pytest.MonkeyPatch):
     mockoperator = MockOperator()
     monkeypatch.setattr(
-        capellacollab.sessions.operators, "OPERATOR", mockoperator
+        capellacollab.sessions.operators, "get_operator", lambda: mockoperator
     )
     return mockoperator
 

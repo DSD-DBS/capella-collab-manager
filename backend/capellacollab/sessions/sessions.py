@@ -11,7 +11,7 @@ from requests import JSONDecodeError
 
 from capellacollab.config import config
 from capellacollab.sessions.models import DatabaseSession
-from capellacollab.sessions.operators import OPERATOR
+from capellacollab.sessions.operators import get_operator
 from capellacollab.sessions.schema import WorkspaceType
 
 log = logging.getLogger(__name__)
@@ -66,12 +66,12 @@ def _get_last_seen(idletime: int | float) -> str:
 
 
 def _determine_session_state(session: DatabaseSession) -> str:
-    state = OPERATOR.get_session_state(session.id)
+    state = get_operator().get_session_state(session.id)
 
     if session.type == WorkspaceType.READONLY:
         try:
             if state in ("Started", "BackOff"):
-                logs = OPERATOR.get_session_logs(session.id).splitlines()
+                logs = get_operator().get_session_logs(session.id).splitlines()
                 for line in logs:
                     res = re.search(r"^---(.*?)---$", line)
                     if res:

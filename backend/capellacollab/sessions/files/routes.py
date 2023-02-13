@@ -11,7 +11,7 @@ from fastapi.responses import StreamingResponse
 
 from capellacollab.sessions.injectables import get_existing_session
 from capellacollab.sessions.models import DatabaseSession
-from capellacollab.sessions.operators import OPERATOR
+from capellacollab.sessions.operators import get_operator
 from capellacollab.sessions.schema import FileTree
 
 router = APIRouter()
@@ -23,7 +23,7 @@ def list_files(
     show_hidden: bool, session: DatabaseSession = Depends(get_existing_session)
 ):
     try:
-        return OPERATOR.list_files(session.id, "/workspace", show_hidden)
+        return get_operator().list_files(session.id, "/workspace", show_hidden)
     except Exception:
         log.exception("Loading of files for session %s failed", session.id)
         raise HTTPException(
@@ -64,7 +64,7 @@ def upload_files(
     tar_bytesio.seek(0)
     tar_bytes = tar_bytesio.read()
 
-    OPERATOR.upload_files(session.id, tar_bytes)
+    get_operator().upload_files(session.id, tar_bytes)
 
     return {"message": "Upload successful"}
 
@@ -74,7 +74,7 @@ def download_file(
     filename: str, session: DatabaseSession = Depends(get_existing_session)
 ) -> StreamingResponse:
     return StreamingResponse(
-        OPERATOR.download_file(session.id, filename),
+        get_operator().download_file(session.id, filename),
         headers={
             "content-disposition": 'attachment; filename=f"{filename}.zip"',
             "content-type": "application/zip",

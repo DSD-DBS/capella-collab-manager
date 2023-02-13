@@ -98,17 +98,6 @@ properties:
         type: string
       context:
         type: string
-      apiURL:
-        type: string
-      token:
-        type: string
-    not:
-      allOf:
-        - required:
-            - context
-        - required:
-            - apiURL
-            - token
   extensions:
     type: object
     additionalProperties: false

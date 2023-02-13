@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from capellacollab.core.database import get_db
 from capellacollab.sessions.guacamole import get_admin_token
-from capellacollab.sessions.operators import OPERATOR
+from capellacollab.sessions.operators import get_operator
 
 
 class StatusResponse(BaseModel):
@@ -28,7 +28,7 @@ def get_status(db: Session = Depends(get_db)):
     return StatusResponse(
         guacamole=validate_guacamole(),
         database=validate_session(db),
-        operator=OPERATOR.validate(),
+        operator=get_operator().validate(),
     )
 
 

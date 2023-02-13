@@ -62,13 +62,6 @@ if _pod_security_context := cfg.get("cluster", {}).get(
         _pod_security_context, client.V1PodSecurityContext.__name__
     )
 
-kubectl_arguments = []
-if cfg.get("context", None):
-    kubectl_arguments += ["--context", cfg["context"]]
-    kubernetes.config.load_config(context=cfg["context"])
-else:
-    kubernetes.config.load_incluster_config()
-
 
 class FileType(enum.Enum):
     FILE = "file"
@@ -88,6 +81,16 @@ class KubernetesOperator:
         self.v1_core = client.CoreV1Api()
         self.v1_apps = client.AppsV1Api()
         self.v1_batch = client.BatchV1Api()
+
+        self.kubectl_arguments = []
+
+    def load_config(self) -> None:
+        self.kubectl_arguments = []
+        if cfg.get("context", None):
+            self.kubectl_arguments += ["--context", cfg["context"]]
+            kubernetes.config.load_config(context=cfg["context"])
+        else:
+            kubernetes.config.load_incluster_config()
 
     def validate(self) -> bool:
         try:
@@ -906,7 +909,7 @@ class KubernetesOperator:
         try:
             response = subprocess.run(
                 ["kubectl"]
-                + kubectl_arguments
+                + self.kubectl_arguments
                 + [
                     "--namespace",
                     namespace,
