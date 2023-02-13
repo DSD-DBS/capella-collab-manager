@@ -159,7 +159,7 @@ class KubernetesOperator:
             tool_name=tool_name,
             version_name=version_name,
             environment=environment,
-            ports={"rdp": 3389, "metrics": 9118, "fileservice": 8000},
+            ports={"rdp": 3389, "metrics": 9118},
             persistent_workspace_claim_name=self._get_claim_name(username),
             pure_variants_secret_name=pure_variants_secret_name,
         )
