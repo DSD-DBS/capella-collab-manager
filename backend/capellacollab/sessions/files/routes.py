@@ -6,15 +6,12 @@ import io
 import logging
 import tarfile
 
-import requests
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
-from requests.auth import HTTPBasicAuth
 
-from capellacollab.config import config
 from capellacollab.sessions.injectables import get_existing_session
 from capellacollab.sessions.models import DatabaseSession
-from capellacollab.sessions.operators import OPERATOR
+from capellacollab.sessions.operators import get_operator
 from capellacollab.sessions.schema import FileTree
 
 router = APIRouter()
@@ -22,15 +19,19 @@ log = logging.getLogger(__name__)
 
 
 @router.get("/", response_model=FileTree)
-def get_files(
+def list_files(
     show_hidden: bool, session: DatabaseSession = Depends(get_existing_session)
 ):
-    return requests.get(
-        "http://" + session.host + ":8000/api/v1/workspaces/files",
-        params={"show_hidden": show_hidden},
-        auth=HTTPBasicAuth("", session.rdp_password),
-        timeout=config["requests"]["timeout"],
-    ).json()
+    try:
+        return get_operator().list_files(session.id, "/workspace", show_hidden)
+    except Exception:
+        log.exception("Loading of files for session %s failed", session.id)
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "reason": "Loading the files of the session failed. Is the session running?"
+            },
+        )
 
 
 @router.post("/")
@@ -63,7 +64,7 @@ def upload_files(
     tar_bytesio.seek(0)
     tar_bytes = tar_bytesio.read()
 
-    OPERATOR.upload_files(session.id, tar_bytes)
+    get_operator().upload_files(session.id, tar_bytes)
 
     return {"message": "Upload successful"}
 
@@ -73,7 +74,7 @@ def download_file(
     filename: str, session: DatabaseSession = Depends(get_existing_session)
 ) -> StreamingResponse:
     return StreamingResponse(
-        OPERATOR.download_file(session.id, filename),
+        get_operator().download_file(session.id, filename),
         headers={
             "content-disposition": 'attachment; filename=f"{filename}.zip"',
             "content-type": "application/zip",

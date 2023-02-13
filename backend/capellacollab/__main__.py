@@ -22,6 +22,7 @@ from capellacollab.core.logging import (
     LogRequestsMiddleware,
 )
 from capellacollab.routes import router, status
+from capellacollab.sessions import operators
 from capellacollab.sessions.idletimeout import (
     terminate_idle_sessions_in_background,
 )
@@ -41,6 +42,8 @@ logging.basicConfig(level=config["logging"]["level"], handlers=handlers)
 
 async def startup():
     migration.migrate_db(engine, config["database"]["url"])
+    operators.load_operator()
+
     logging.getLogger("uvicorn.access").disabled = True
     logging.getLogger("uvicorn.error").disabled = True
     logging.getLogger("requests_oauthlib.oauth2_session").setLevel("INFO")

@@ -2,14 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from capellacollab.config import config
-
-# Patch k8s values in order to load the kubectl configuration properly
-if config["k8s"].get("context", None):
-    del config["k8s"]["context"]
-config["k8s"]["apiURL"] = "dummy"
-config["k8s"]["token"] = "dummy"
-
 from uuid import uuid1
 
 import fastapi

@@ -12,7 +12,7 @@ from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.sessions import util
 from capellacollab.sessions.crud import get_session_by_id
-from capellacollab.sessions.operators import OPERATOR
+from capellacollab.sessions.operators import get_operator
 
 log = logging.getLogger(__name__)
 
@@ -33,13 +33,13 @@ def terminate_idle_session():
             log.info("Terminating idle session %s", session_id)
             with database.SessionLocal() as db:
                 if session := get_session_by_id(db, session_id):
-                    util.terminate_session(db, session, OPERATOR)
+                    util.terminate_session(db, session, get_operator())
                 else:
                     log.error(
                         "Session was not found in our database. Terminating idle session %s",
                         session_id,
                     )
-                    OPERATOR.kill_session(session_id)
+                    get_operator().kill_session(session_id)
 
 
 async def terminate_idle_sessions_in_background(interval=60):
