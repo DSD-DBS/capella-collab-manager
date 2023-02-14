@@ -82,7 +82,7 @@ class KubernetesOperator:
         self.v1_apps = client.AppsV1Api()
         self.v1_batch = client.BatchV1Api()
 
-        self.kubectl_arguments = []
+        self.kubectl_arguments: list[str] = []
 
     def load_config(self) -> None:
         self.kubectl_arguments = []
@@ -91,6 +91,10 @@ class KubernetesOperator:
             kubernetes.config.load_config(context=cfg["context"])
         else:
             kubernetes.config.load_incluster_config()
+
+        self.v1_core = client.CoreV1Api()
+        self.v1_apps = client.AppsV1Api()
+        self.v1_batch = client.BatchV1Api()
 
     def validate(self) -> bool:
         try:
