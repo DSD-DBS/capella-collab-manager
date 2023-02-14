@@ -7,11 +7,11 @@ from capellacollab.sessions.operators.k8s import KubernetesOperator
 operator = None
 
 
-def load_operator():
-    global operator
-    operator = KubernetesOperator()
-    operator.load_config()
-
-
 def get_operator():
+    global operator
+
+    if not operator:
+        operator = KubernetesOperator()
+        operator.load_config()
+
     return operator
