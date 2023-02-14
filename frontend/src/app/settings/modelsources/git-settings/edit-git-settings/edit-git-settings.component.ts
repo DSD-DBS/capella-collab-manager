@@ -10,8 +10,8 @@ import { filter, Subscription } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import {
   GitInstance,
-  GitSettingsService,
-} from 'src/app/services/settings/git-settings.service';
+  GitInstancesService,
+} from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
 
 @Component({
   selector: 'app-edit-git-settings',
@@ -31,7 +31,7 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private gitSettingsService: GitSettingsService,
+    private gitSettingsService: GitInstancesService,
     private breadcrumbsService: BreadcrumbsService
   ) {}
 
@@ -39,7 +39,7 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
   private paramsSubscription?: Subscription;
 
   ngOnInit(): void {
-    this.gitSettingsSubscription = this.gitSettingsService.gitSetting
+    this.gitSettingsSubscription = this.gitSettingsService.gitInstance
       .pipe(filter(Boolean))
       .subscribe((instance: GitInstance) => {
         this.gitSettingsForm.patchValue(instance);

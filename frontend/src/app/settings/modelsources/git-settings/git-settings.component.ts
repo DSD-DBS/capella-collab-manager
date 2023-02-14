@@ -15,12 +15,12 @@ import {
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { filter, Subscription } from 'rxjs';
 import { absoluteUrlValidator } from 'src/app/helpers/validators/url-validator';
+import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
 import {
   GitInstance,
-  GitSettingsService,
+  GitInstancesService,
   GitType,
-} from 'src/app/services/settings/git-settings.service';
-import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
+} from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
 
 @Component({
   selector: 'app-git-settings',
@@ -40,13 +40,13 @@ export class GitSettingsComponent implements OnInit, OnDestroy {
   private gitSettingsSubscription?: Subscription;
 
   constructor(
-    private gitSettingsService: GitSettingsService,
+    private gitSettingsService: GitInstancesService,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>
   ) {}
 
   ngOnInit(): void {
-    this.gitSettingsService.gitSettings
+    this.gitSettingsService.gitInstances
       .pipe(filter(Boolean))
       .subscribe((gitInstances) => {
         this.availableGitSettings = gitInstances;
@@ -88,7 +88,7 @@ export class GitSettingsComponent implements OnInit, OnDestroy {
       .afterClosed()
       .subscribe((response) => {
         if (response) {
-          this.gitSettingsService.deleteGitSettings(id).subscribe();
+          this.gitSettingsService.deleteGitInstance(id).subscribe();
         }
       });
   }

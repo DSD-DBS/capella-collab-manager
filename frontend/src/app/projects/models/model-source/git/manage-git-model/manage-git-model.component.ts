@@ -45,8 +45,8 @@ import {
 } from 'src/app/services/git/git.service';
 import {
   GitInstance,
-  GitSettingsService,
-} from 'src/app/services/settings/git-settings.service';
+  GitInstancesService,
+} from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
 
 @Component({
   selector: 'app-manage-git-model',
@@ -100,7 +100,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   constructor(
     public projectService: ProjectService,
     public modelService: ModelService,
-    private gitSettingsService: GitSettingsService,
+    private gitSettingsService: GitInstancesService,
     private gitService: GitService,
     private gitModelService: GitModelService,
     private toastService: ToastService,
@@ -126,7 +126,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     );
 
     this.gitSettingsSubscription =
-      this.gitSettingsService.gitSettings.subscribe((gitSettings) => {
+      this.gitSettingsService.gitInstances.subscribe((gitSettings) => {
         this.availableGitInstances = gitSettings;
 
         if (gitSettings?.length) {

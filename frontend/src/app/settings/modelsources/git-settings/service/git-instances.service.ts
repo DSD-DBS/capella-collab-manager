@@ -11,17 +11,19 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class GitSettingsService {
+export class GitInstancesService {
   private BACKEND_URL_PREFIX =
     environment.backend_url + '/settings/modelsources/git';
 
-  private _gitSettings = new BehaviorSubject<GitInstance[] | undefined>(
+  private _gitInstances = new BehaviorSubject<GitInstance[] | undefined>(
     undefined
   );
-  private _gitSetting = new BehaviorSubject<GitInstance | undefined>(undefined);
+  private _gitInstance = new BehaviorSubject<GitInstance | undefined>(
+    undefined
+  );
 
-  readonly gitSettings = this._gitSettings.asObservable();
-  readonly gitSetting = this._gitSetting.asObservable();
+  readonly gitInstances = this._gitInstances.asObservable();
+  readonly gitInstance = this._gitInstance.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -35,7 +37,7 @@ export class GitSettingsService {
           );
         })
       )
-      .subscribe((gitSettings) => this._gitSettings.next(gitSettings));
+      .subscribe((gitSettings) => this._gitInstances.next(gitSettings));
   }
 
   transformGitInstance(
@@ -50,7 +52,7 @@ export class GitSettingsService {
   loadGitInstanceById(id: number): void {
     this.http
       .get<GitInstance>(this.BACKEND_URL_PREFIX + '/' + id)
-      .subscribe((gitSetting) => this._gitSetting.next(gitSetting));
+      .subscribe((gitSetting) => this._gitInstance.next(gitSetting));
   }
 
   createGitInstance(gitInstance: BasicGitInstance): Observable<GitInstance> {
@@ -75,7 +77,7 @@ export class GitSettingsService {
       .pipe(tap(() => this.loadGitInstances()));
   }
 
-  deleteGitSettings(id: number) {
+  deleteGitInstance(id: number) {
     return this.http
       .delete(this.BACKEND_URL_PREFIX + '/' + id)
       .pipe(tap(() => this.loadGitInstances()));
