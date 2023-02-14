@@ -59,7 +59,7 @@ import { NoticeComponent } from './general/notice/notice.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 import { ButtonSkeletonLoaderComponent } from './helpers/skeleton-loaders/button-skeleton-loader/button-skeleton-loader.component';
 import { FormFieldSkeletonLoaderComponent } from './helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
-import { MatCardOverviewLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-loader/mat-card-overview-loader.component';
+import { MatCardOverviewSkeletonLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-skeleton-loader/mat-card-overview-skeleton-loader.component';
 import { MatCheckboxLoaderComponent } from './helpers/skeleton-loaders/mat-checkbox-loader/mat-checkbox-loader.component';
 import { MatListSkeletonLoaderComponent } from './helpers/skeleton-loaders/mat-list-skeleton-loader/mat-list-skeleton-loader.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
@@ -151,7 +151,7 @@ import { SettingsComponent } from './settings/settings.component';
     LogoutRedirectComponent,
     ManageGitModelComponent,
     ManageT4CModelComponent,
-    MatCardOverviewLoaderComponent,
+    MatCardOverviewSkeletonLoaderComponent,
     MatCheckboxLoaderComponent,
     MatIconComponent,
     MatListSkeletonLoaderComponent,
