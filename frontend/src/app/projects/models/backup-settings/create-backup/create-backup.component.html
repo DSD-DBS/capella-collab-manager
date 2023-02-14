@@ -59,22 +59,16 @@
     Please add a T4C model and Git model first!
   </div>
 
-  <div class="flex-space-between">
+  <div mat-dialog-actions class="flex-space-between">
     <button mat-button [mat-dialog-close]="false">Cancel</button>
-    <span
-      matTooltip="Please select a T4C model and Git model first"
-      [matTooltipDisabled]="createBackupForm.valid"
+    <button
+      mat-button
+      *ngIf="t4cAndGitModelExists"
+      (click)="createGitBackup()"
+      cdkFocusInitial
+      [disabled]="!createBackupForm.valid"
     >
-      <button
-        mat-raised-button
-        *ngIf="t4cAndGitModelExists"
-        (click)="createGitBackup()"
-        cdkFocusInitial
-        [disabled]="!createBackupForm.valid"
-        color="primary"
-      >
-        Create
-      </button>
-    </span>
+      Create
+    </button>
   </div>
 </div>

@@ -5,6 +5,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ModelDiagramDialogComponent } from 'src/app/projects/models/diagrams/model-diagram-dialog/model-diagram-dialog.component';
 import {
   Model,
   ModelService,
@@ -52,6 +53,14 @@ export class ModelOverviewComponent implements OnInit {
   openPipelineDialog(model: Model): void {
     this.dialog.open(TriggerPipelineComponent, {
       data: { project: this.project, model: model },
+    });
+  }
+
+  openDiagramsDialog(model: Model): void {
+    this.dialog.open(ModelDiagramDialogComponent, {
+      height: '80vh',
+      width: '80vw',
+      data: { model: model },
     });
   }
 

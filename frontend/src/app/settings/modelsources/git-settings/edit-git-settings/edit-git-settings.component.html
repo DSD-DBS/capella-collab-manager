@@ -5,16 +5,16 @@
 
 <div class="wrapper">
   <div class="title">Edit Instance</div>
-
+  <br />
   <mat-card>
     <form [formGroup]="gitSettingsForm" id="add-instance-form">
-      <mat-form-field id="instance-url" appearance="fill">
+      <mat-form-field class="form-field-default" appearance="fill">
         <mat-label>Git Type</mat-label>
         <mat-select matInput formControlName="type">
           <mat-option value="General" selected
             >General Git (limited)</mat-option
           >
-          <mat-option value="GitLab" disabled>GitLab (unsupported)</mat-option>
+          <mat-option value="GitLab">Gitlab</mat-option>
           <mat-option value="GitHub" disabled>GitHub (unsupported)</mat-option>
           <mat-option value="AzureDevOps" disabled
             >Azure DevOps (unsupported)</mat-option
@@ -22,26 +22,35 @@
         </mat-select>
       </mat-form-field>
       <br />
-      <mat-form-field id="instance-url" appearance="fill">
+      <mat-form-field class="form-field-default" appearance="fill">
         <mat-label>Name</mat-label>
         <input matInput formControlName="name" />
       </mat-form-field>
       <br />
-      <mat-form-field id="instance-url" appearance="fill">
+      <mat-form-field class="form-field-default" appearance="fill">
         <mat-label>Instance base URL</mat-label>
         <input matInput formControlName="url" />
       </mat-form-field>
+      <br />
+      <mat-form-field
+        *ngIf="gitSettingsForm.controls.type.value !== 'General'"
+        class="form-field-default"
+        appearance="fill"
+      >
+        <mat-label>API URL</mat-label>
+        <input matInput formControlName="apiURL" />
+      </mat-form-field>
     </form>
-    <a mat-raised-button (click)="goBack()">
-      <mat-icon>last_page</mat-icon> Back
-    </a>
-    <button
-      [class]="'right-button'"
-      mat-flat-button
-      color="primary"
-      (click)="editGitSettings()"
-    >
-      Save changes
-    </button>
+    <div class="flex-space-between">
+      <a mat-raised-button (click)="goBack()"> Back </a>
+      <button
+        [class]="'right-button'"
+        mat-flat-button
+        color="primary"
+        (click)="editGitSettings()"
+      >
+        Save changes
+      </button>
+    </div>
   </mat-card>
 </div>

@@ -14,9 +14,9 @@
       </div>
     </mat-card>
   </a>
-  <app-mat-card-overview-loader
+  <app-mat-card-overview-skeleton-loader
     [loading]="loading"
-  ></app-mat-card-overview-loader>
+  ></app-mat-card-overview-skeleton-loader>
   <ng-container *ngIf="!loading">
     <a
       *ngFor="let project of projectService.projects"

@@ -59,8 +59,9 @@ import { NoticeComponent } from './general/notice/notice.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 import { ButtonSkeletonLoaderComponent } from './helpers/skeleton-loaders/button-skeleton-loader/button-skeleton-loader.component';
 import { FormFieldSkeletonLoaderComponent } from './helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
-import { MatCardOverviewLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-loader/mat-card-overview-loader.component';
+import { MatCardOverviewSkeletonLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-skeleton-loader/mat-card-overview-skeleton-loader.component';
 import { MatCheckboxLoaderComponent } from './helpers/skeleton-loaders/mat-checkbox-loader/mat-checkbox-loader.component';
+import { MatListSkeletonLoaderComponent } from './helpers/skeleton-loaders/mat-list-skeleton-loader/mat-list-skeleton-loader.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { CreateBackupComponent } from './projects/models/backup-settings/create-backup/create-backup.component';
 import { TriggerPipelineComponent } from './projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';
@@ -68,6 +69,7 @@ import { ViewLogsDialogComponent } from './projects/models/backup-settings/view-
 import { ChooseInitComponent } from './projects/models/choose-init/choose-init.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { CreateModelBaseComponent } from './projects/models/create-model-base/create-model-base.component';
+import { ModelDiagramDialogComponent } from './projects/models/diagrams/model-diagram-dialog/model-diagram-dialog.component';
 import { InitModelComponent } from './projects/models/init-model/init-model.component';
 import { ModelDescriptionComponent } from './projects/models/model-description/model-description.component';
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
@@ -149,11 +151,13 @@ import { SettingsComponent } from './settings/settings.component';
     LogoutRedirectComponent,
     ManageGitModelComponent,
     ManageT4CModelComponent,
-    MatCardOverviewLoaderComponent,
+    MatCardOverviewSkeletonLoaderComponent,
     MatCheckboxLoaderComponent,
     MatIconComponent,
+    MatListSkeletonLoaderComponent,
     ModelDescriptionComponent,
     ModelDetailComponent,
+    ModelDiagramDialogComponent,
     ModelOverviewComponent,
     ModelRestrictionsComponent,
     ModelWrapperComponent,

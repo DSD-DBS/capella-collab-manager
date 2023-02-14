@@ -13,14 +13,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { absoluteUrlValidator } from 'src/app/helpers/validators/url-validator';
-import {
-  GitSetting,
-  GitSettingsService,
-  GitType,
-} from 'src/app/services/settings/git-settings.service';
 import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
+import {
+  GitInstance,
+  GitInstancesService,
+  GitType,
+} from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
 
 @Component({
   selector: 'app-git-settings',
@@ -28,28 +28,31 @@ import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/
   styleUrls: ['./git-settings.component.css'],
 })
 export class GitSettingsComponent implements OnInit, OnDestroy {
-  public availableGitSettings: GitSetting[] = [];
+  public availableGitSettings: GitInstance[] = [];
 
   gitInstancesForm = new FormGroup({
     type: new FormControl('', Validators.required),
     name: new FormControl('', [Validators.required, this.nameValidator()]),
     url: new FormControl('', [Validators.required, absoluteUrlValidator()]),
+    apiURL: new FormControl('', absoluteUrlValidator()),
   });
 
   private gitSettingsSubscription?: Subscription;
 
   constructor(
-    private gitSettingsService: GitSettingsService,
+    private gitSettingsService: GitInstancesService,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>
   ) {}
 
   ngOnInit(): void {
-    this.gitSettingsService.gitSettings.subscribe((gitSettings) => {
-      this.availableGitSettings = gitSettings;
-    });
+    this.gitSettingsService.gitInstances
+      .pipe(filter(Boolean))
+      .subscribe((gitInstances) => {
+        this.availableGitSettings = gitInstances;
+      });
 
-    this.gitSettingsService.loadGitSettings();
+    this.gitSettingsService.loadGitInstances();
   }
 
   ngOnDestroy(): void {
@@ -64,9 +67,10 @@ export class GitSettingsComponent implements OnInit, OnDestroy {
       }
 
       this.gitSettingsService
-        .createGitSettings({
+        .createGitInstance({
           name: this.gitInstancesForm.value.name!,
           url: url,
+          apiURL: this.gitInstancesForm.value.apiURL!,
           type: this.gitInstancesForm.value.type as GitType,
         })
         .subscribe(() => this.gitInstancesForm.reset());
@@ -74,7 +78,7 @@ export class GitSettingsComponent implements OnInit, OnDestroy {
   }
 
   deleteGitSettings(id: number): void {
-    const toDeleteGitSetting: GitSetting = this.availableGitSettings.find(
+    const toDeleteGitSetting: GitInstance = this.availableGitSettings.find(
       (gitSetting) => gitSetting.id == id
     )!;
     this.dialog
@@ -84,7 +88,7 @@ export class GitSettingsComponent implements OnInit, OnDestroy {
       .afterClosed()
       .subscribe((response) => {
         if (response) {
-          this.gitSettingsService.deleteGitSettings(id).subscribe();
+          this.gitSettingsService.deleteGitInstance(id).subscribe();
         }
       });
   }

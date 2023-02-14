@@ -118,6 +118,15 @@
           >
             <mat-icon>remove_red_eye</mat-icon>
           </button>
+          <button
+            mat-mini-fab
+            *ngIf="model.git_models && model.tool.name === 'Capella'"
+            matTooltip="Show diagrams of model"
+            [disabled]="!getPrimaryGitModelURL(model)"
+            (click)="openDiagramsDialog(model)"
+          >
+            <mat-icon>image_search</mat-icon>
+          </button>
         </div>
       </div>
     </div>

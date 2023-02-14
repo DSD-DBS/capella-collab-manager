@@ -18,7 +18,7 @@
         <mat-slide-toggle formControlName="primary"> Primary </mat-slide-toggle>
       </fieldset>
       <div formGroupName="urls">
-        <fieldset *ngIf="availableGitInstances.length">
+        <fieldset *ngIf="availableGitInstances?.length">
           <mat-form-field appearance="fill">
             <mat-label>Base integration URL</mat-label>
             <mat-select
@@ -43,7 +43,7 @@
             <mat-label
               >Absolute URL
               {{
-                availableGitInstances.length ? "or Relative URL" : ""
+                availableGitInstances?.length ? "or Relative URL" : ""
               }}</mat-label
             >
             <input

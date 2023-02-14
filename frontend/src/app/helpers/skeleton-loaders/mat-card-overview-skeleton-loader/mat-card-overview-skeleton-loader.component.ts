@@ -6,11 +6,11 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-mat-card-overview-loader',
-  templateUrl: './mat-card-overview-loader.component.html',
-  styleUrls: ['./mat-card-overview-loader.component.css'],
+  selector: 'app-mat-card-overview-skeleton-loader',
+  templateUrl: './mat-card-overview-skeleton-loader.component.html',
+  styleUrls: ['./mat-card-overview-skeleton-loader.component.css'],
 })
-export class MatCardOverviewLoaderComponent implements OnInit {
+export class MatCardOverviewSkeletonLoaderComponent implements OnInit {
   @Input() loading = true;
   @Input() reservedCards = 1;
 

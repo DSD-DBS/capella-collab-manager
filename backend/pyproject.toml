@@ -56,6 +56,7 @@ dev = [
   "testcontainers",
   "httpx",
   "docker",
+  "responses"
 ]
 psycopg2 = [
   "psycopg2", # Need when running in a Docker container with AArch64: https://github.com/psycopg/psycopg2/issues/1360

@@ -13,5 +13,6 @@
          to a minute until you see Capella again.
 
 5. Please follow the instructions (depends on the workflow of your project)
-   1. [Git](flows/git.md)
-   2. [TeamForCapella](flows/t4c.md)
+   <!-- prettier-ignore -->
+    1. [Git](flows/git.md)
+    2. [TeamForCapella](flows/t4c.md)

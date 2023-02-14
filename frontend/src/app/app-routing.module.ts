@@ -239,7 +239,9 @@ const routes: Routes = [
                   },
                   {
                     path: 'instances/:id',
-                    data: { breadcrumb: (data: Data) => data.gitSetting?.name },
+                    data: {
+                      breadcrumb: (data: Data) => data.gitInstance?.name,
+                    },
                     component: EditGitSettingsComponent,
                   },
                 ],

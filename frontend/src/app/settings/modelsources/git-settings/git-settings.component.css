@@ -67,10 +67,6 @@ mat-card {
   margin-top: 10px;
 }
 
-#instance-url {
-  width: 405px;
-}
-
 mat-button-toggle-group {
   margin: 5px 0;
 }

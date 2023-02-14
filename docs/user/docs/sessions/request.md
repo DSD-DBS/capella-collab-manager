@@ -5,11 +5,9 @@
 
 Please follow these steps to request a session:
 
-<!-- prettier-ignore-start -->
-
 1. Navigate to the `Workspaces` tab inside the web application.
 1. Please select your preferred worspace type.
-
+   <!-- prettier-ignore -->
     !!! Question "Which type should I use?"
         Please have a look at [Session Types](types.md)
 
@@ -26,10 +24,9 @@ Please follow these steps to request a session:
 1. You should now see a success message. Please click on `Connect to Session`.
 1. The session should appear in a new tab and Capella starts automatically.
 1. Please follow the instructions (depends on the workflow of your project)
-   1. [Git](flows/git.md)
-   1. [TeamForCapella](flows/t4c.md)
-
-<!-- prettier-ignore-end -->
+   <!-- prettier-ignore -->
+    1. [Git](flows/git.md)
+    1. [TeamForCapella](flows/t4c.md)
 
 ## Automatic session termination
 

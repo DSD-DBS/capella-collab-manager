@@ -11,7 +11,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, EMPTY } from 'rxjs';
+import { Observable } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import {
   AuthService,
@@ -46,7 +46,7 @@ export class AuthInterceptor implements HttpInterceptor {
           }
         }
 
-        return EMPTY;
+        throw err;
       })
     );
   }

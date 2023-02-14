@@ -1,0 +1,51 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+<div class="dialog">
+  <div *ngIf="selectedDiagram"></div>
+  <div class="header">
+    <h2>View diagrams</h2>
+    <span
+      >Last update:
+      {{
+        (diagramMetadata?.last_updated | date: "EE, dd MMM y HH:mm:ss") ||
+          "loading..."
+      }}</span
+    >
+    <mat-form-field id="search" appearance="outline">
+      <mat-label>Search</mat-label>
+      <input
+        [(ngModel)]="search"
+        autocomplete="off"
+        matInput
+        placeholder="Diagram name or uuid"
+      />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+  <mat-list class="diagrams scrollable">
+    <div *ngIf="filteredDiagrams() === undefined">
+      <app-mat-list-skeleton-loader
+        [listNumber]="20"
+      ></app-mat-list-skeleton-loader>
+    </div>
+    <div *ngIf="filteredDiagrams()?.length === 0">
+      Your model doesn't seem to contain diagrams.
+    </div>
+    <div *ngFor="let diagram of filteredDiagrams()">
+      <div class="list-item">
+        <div class="diagram-metadata">
+          <div class="diagram-name">{{ diagram.name }}</div>
+          <div>UUID: {{ diagram.uuid }}</div>
+        </div>
+        <div class="diagram-actions">
+          <button (click)="downloadDiagram(diagram.uuid)" mat-raised-button>
+            <mat-icon>cloud_download</mat-icon>
+          </button>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+    </div>
+  </mat-list>
+</div>

@@ -10,7 +10,7 @@ from capellacollab.core.database import get_db
 from capellacollab.settings.modelsources.git import crud
 from capellacollab.settings.modelsources.git.core import get_remote_refs
 from capellacollab.settings.modelsources.git.injectables import (
-    get_existing_git_setting,
+    get_existing_git_instance,
 )
 from capellacollab.settings.modelsources.git.models import (
     DatabaseGitInstance,
@@ -24,66 +24,66 @@ from capellacollab.users.models import Role
 router = APIRouter()
 
 
-@router.get("/", response_model=list[GitInstance])
-def list_git_settings(
+@router.get("", response_model=list[GitInstance])
+def list_git_instances(
     db: Session = Depends(get_db),
 ) -> list[DatabaseGitInstance]:
-    return crud.get_git_settings(db)
+    return crud.get_git_instances(db)
 
 
 @router.get(
-    "/{git_setting_id}",
+    "/{git_instance_id}",
     response_model=GitInstance,
     dependencies=[
         Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
     ],
 )
-def get_git_setting(
-    git_setting: DatabaseGitInstance = Depends(get_existing_git_setting),
+def get_git_instance(
+    git_instance: DatabaseGitInstance = Depends(get_existing_git_instance),
 ):
-    return git_setting
+    return git_instance
 
 
 @router.post(
-    "/",
+    "",
     response_model=GitInstance,
     dependencies=[
         Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
     ],
 )
-def create_git_settings(
-    post_git_setting: PostGitInstance,
+def create_git_instance(
+    post_git_instance: PostGitInstance,
     db: Session = Depends(get_db),
 ) -> DatabaseGitInstance:
-    return crud.create_git_setting(db, post_git_setting)
+    return crud.create_git_instance(db, post_git_instance)
 
 
-@router.put(
-    "/{git_setting_id}",
+@router.patch(
+    "/{git_instance_id}",
     response_model=GitInstance,
     dependencies=[
         Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
     ],
 )
-def edit_git_settings(
-    put_git_setting: PostGitInstance,
-    db_git_setting: DatabaseGitInstance = Depends(get_existing_git_setting),
+def edit_git_instance(
+    put_git_instance: PostGitInstance,
+    db_git_instance: DatabaseGitInstance = Depends(get_existing_git_instance),
     db: Session = Depends(get_db),
 ) -> DatabaseGitInstance:
-    return crud.update_git_setting(db, db_git_setting, put_git_setting)
+    return crud.update_git_instance(db, db_git_instance, put_git_instance)
 
 
 @router.delete(
-    "/{git_setting_id}",
+    "/{git_instance_id}",
     dependencies=[
         Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
     ],
 )
-def delete_git_settings(
-    git_setting: DatabaseGitInstance = Depends(get_existing_git_setting),
+def delete_git_instances(
+    git_instance: DatabaseGitInstance = Depends(get_existing_git_instance),
     db: Session = Depends(get_db),
 ):
-    return crud.delete_git_setting(db, git_setting)
+    return crud.delete_git_instance(db, git_instance)
 
 
 # In the future, check if the HTTP QUERY method is available in fast api,
