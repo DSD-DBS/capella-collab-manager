@@ -26,7 +26,7 @@ export class ModelDiagramDialogComponent {
 
   search = '';
 
-  filteredDiagrams() {
+  filteredDiagrams(): DiagramMetadata[] | undefined {
     if (!this.diagramMetadata) {
       return undefined;
     }
