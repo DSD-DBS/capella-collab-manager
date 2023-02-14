@@ -411,6 +411,9 @@ def request_persistent_session(
         )
 
     response.warnings = warnings
+    response.state = "New"
+    response.last_seen = "UNKNOWN"
+
     return response
 
 
@@ -467,7 +470,7 @@ def create_database_session(
     tool: tools_models.Tool,
     version: tools_models.Version,
     project: DatabaseProject | None,
-):
+) -> DatabaseSession:
     database_model = DatabaseSession(
         tool=tool,
         version=version,
@@ -490,7 +493,7 @@ def create_database_and_guacamole_session(
     version: tools_models.Version,
     project: DatabaseProject | None,
     t4c_password: str | None = None,
-):
+) -> DatabaseSession:
     guacamole_username = generate_password()
     guacamole_password = generate_password(length=64)
 
