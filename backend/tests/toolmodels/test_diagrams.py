@@ -26,8 +26,8 @@ EXAMPLE_SVG = b"""
 """
 
 
-@pytest.fixture(name="git_type", params=["gitlab"])
-def fixture_git_type(request: pytest.FixtureRequest) -> str:
+@pytest.fixture(name="git_type", params=[git_models.GitType.GITLAB])
+def fixture_git_type(request: pytest.FixtureRequest) -> git_models.GitType:
     return request.param
 
 
@@ -42,24 +42,23 @@ def fixture_git_instance_api_url(
 
 @pytest.fixture(name="gitlab_instance")
 def fixture_gitlab_instance(
-    db: orm.Session, git_type: str, git_instance_api_url: str
+    db: orm.Session, git_type: git_models.GitType, git_instance_api_url: str
 ) -> git_models.DatabaseGitInstance:
-    git_type_enum = git_models.GitType.GENERAL
-    if git_type == "gitlab":
-        git_type_enum = git_models.GitType.GITLAB
-
     git_instance = git_models.DatabaseGitInstance(
         name="test",
         url="https://example.com",
         api_url=git_instance_api_url,
-        type=git_type_enum,
+        type=git_type,
     )
     return git_crud.create_git_instance(db, git_instance)
 
 
-@pytest.fixture(name="diagram_cache_job_status", params=["success"])
+@pytest.fixture(name="diagram_cache_job_status")
 def fixture_diagram_cache_job_status(request: pytest.FixtureRequest):
-    return request.param
+    if hasattr(request, "param"):
+        return request.param
+    else:
+        return "success"
 
 
 @pytest.fixture()
@@ -151,7 +150,7 @@ def test_get_diagram_metadata(
 @responses.activate
 @pytest.mark.parametrize(
     "git_type,git_instance_api_url",
-    [("git", "https://example.com/api/v4")],
+    [(git_models.GitType.GENERAL, "https://example.com/api/v4")],
 )
 @pytest.mark.usefixtures(
     "project_user",
@@ -178,7 +177,7 @@ def test_get_diagrams_fails_without_gitlab_instance(
 @responses.activate
 @pytest.mark.parametrize(
     "git_type,git_instance_api_url",
-    [("gitlab", "")],
+    [(git_models.GitType.GITLAB, "")],
 )
 @pytest.mark.usefixtures(
     "project_user",
