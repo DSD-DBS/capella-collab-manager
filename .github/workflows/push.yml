@@ -7,7 +7,7 @@ on:
     branches: ["**"]
     tags: ["v*.*.*"]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   push-images:
@@ -118,25 +118,13 @@ jobs:
           --set loki.loki.write.persistence.size="500Mi" \
           --set loki.minio.persistence.size="500Mi" \
           --set cluster.pvc.storageClassName="standard" \
+          --set cluster.imagePullSecret="github" \
           --set promtail.storageClassName="standard" \
           --set mocks.oauth=True \
           --set target=local \
           --set general.port=8080 \
           --set backend.authentication.oauth.endpoints.wellKnown="http://test-oauth-mock:8080/default/.well-known/openid-configuration" \
           ./helm
-      - name: Scale down backend deployment
-        run: |
-          kubectl scale deployment test-backend --replicas=0
-      - name: Wait for backend pods to be deleted
-        run: |
-          kubectl wait pod --selector="id=test-deployment-backend" --for=delete --timeout=2m
-      - name: Add secret to backend serviceaccount
-        run: |
-          kubectl patch deployment/test-backend \
-            -p '{"spec": {"template": {"spec": {"imagePullSecrets": [{"name": "github"}]}}}}'
-      - name: Scale up backend deployment
-        run: |
-          kubectl scale deployment test-backend --replicas=1
       - name: Wait for all containers to be ready
         run: |
           kubectl wait --all deployment --for condition=Available=True --timeout=5m
