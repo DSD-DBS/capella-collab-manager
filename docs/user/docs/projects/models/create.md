@@ -17,7 +17,7 @@ process.
 
 ## Step 1: Create model
 
-This page allows to set a project name and description and a tool. The name and
+This page allows to set a project name, description, and a tool. The name and
 tool are required. The tool can be changed after the model creation.
 
 ## Step 2: Choose primary source

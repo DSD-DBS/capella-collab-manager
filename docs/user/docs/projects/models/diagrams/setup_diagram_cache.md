@@ -22,8 +22,16 @@
 1. To set up the diagram cache, you need to add the Gitlab API URL to your
    Gitlab instance. More information
    [here](../../../settings/model-sources/git.md)
-2. Add the diagram cache to the `.gitlab-ci.yml` in the linked Git repository.
+1. Link a Gitlab repository to the model, for which you'd like to see the
+   diagram cache.
+   <!-- prettier-ignore -->
+    !!! info
+         The diagram cache integration uses the credentials, which are assigned when
+         creating the Git model integration. Limit the scopes of the used token, only
+         scope `read_api` is required.
+
+1. Add the diagram cache to the `.gitlab-ci.yml` in the linked Git repository.
    We're currently planning to provide a Gitlab CI template, but it's not ready
    yet. Contact your diagram cache administrator for more information.
-3. You're ready to go. Validate if the setup works:
+1. You're ready to go. Validate if the setup works:
    [View the diagrams](./view_diagram_cache.md)
