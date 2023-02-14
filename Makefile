@@ -58,8 +58,7 @@ t4c-client:
 	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(T4C_CLIENT_VERSIONS)" t4c/client/remote t4c/client/backup
 
 jupyter:
-	docker build -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/jupyter-notebook --build-arg UID=$(TECHUSER_UID) images/jupyter
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/jupyter-notebook
+	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(CAPELLA_VERSIONS)" jupyter
 
 docs:
 	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user
