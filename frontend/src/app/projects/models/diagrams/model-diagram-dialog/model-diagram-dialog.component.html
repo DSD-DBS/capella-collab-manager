@@ -7,7 +7,11 @@
   <div class="header">
     <h2>View diagrams</h2>
     <span
-      >Last update: {{ diagramMetadata?.last_updated || "loading..." }}</span
+      >Last update:
+      {{
+        (diagramMetadata?.last_updated | date: "EE, dd MMM y HH:mm:ss") ||
+          "loading..."
+      }}</span
     >
     <mat-form-field id="search" appearance="outline">
       <mat-label>Search</mat-label>
