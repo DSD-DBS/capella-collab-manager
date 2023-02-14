@@ -190,6 +190,10 @@ cluster:
   containers:
     # The following values are appended to each container
 
+  # Specify the name to the imagePullSecret in the namespace
+  # It is used for the backend serviceAccount
+  imagePullSecret: test
+
   namespaces:
     sessions:
       podSecurityContext: *podSecurityContext
