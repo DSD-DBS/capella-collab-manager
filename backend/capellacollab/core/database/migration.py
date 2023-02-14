@@ -114,8 +114,6 @@ def create_tools(db):
     jupyter = tools_models.Tool(
         name="Jupyter",
         docker_image_template=f"{registry}/jupyter-notebook:$version",
-        docker_image_backup_template=f"{registry}/jupyter-notebook:$version",
-        readonly_docker_image_template=f"{registry}/jupyter-notebook::$version",
     )
     tools_crud.create_tool(db, jupyter)
     integrations_crud.update_integrations(
