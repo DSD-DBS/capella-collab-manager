@@ -10,7 +10,6 @@ operator = None
 def load_operator():
     global operator
     operator = KubernetesOperator()
-    operator.load_config()
 
 
 def get_operator():
