@@ -78,13 +78,13 @@ class File:
 
 class KubernetesOperator:
     def __init__(self) -> None:
+        self.load_config()
+
         self.v1_core = client.CoreV1Api()
         self.v1_apps = client.AppsV1Api()
         self.v1_batch = client.BatchV1Api()
 
-        self.kubectl_arguments = []
-
-    def load_config(self) -> None:
+    def load_config(self):
         self.kubectl_arguments = []
         if cfg.get("context", None):
             self.kubectl_arguments += ["--context", cfg["context"]]
