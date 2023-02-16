@@ -6,14 +6,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  BehaviorSubject,
-  filter,
-  map,
-  Subscription,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { BehaviorSubject, filter, map, switchMap, tap } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
@@ -28,6 +22,7 @@ import {
   ToolVersion,
 } from 'src/app/settings/core/tools-settings/tool.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-edit-t4c-instance',
   templateUrl: './edit-t4c-instance.component.html',
@@ -35,7 +30,6 @@ import {
 })
 export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   editing: boolean = false;
-  paramsSubscription?: Subscription;
 
   existing: boolean = false;
 
@@ -89,7 +83,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.paramsSubscription = this.route.params
+    this.route.params
       .pipe(
         map((params) => params.instance),
         filter(Boolean),
@@ -97,7 +91,8 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
           this.existing = true;
           this.form.disable();
         }),
-        switchMap((instance) => this.t4cInstanceService.getInstance(instance))
+        switchMap((instance) => this.t4cInstanceService.getInstance(instance)),
+        untilDestroyed(this)
       )
       .subscribe(this._instance);
 
@@ -172,7 +167,6 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.paramsSubscription?.unsubscribe();
     this._instance.next(undefined);
     this.breadcrumbsService.updatePlaceholder({ t4cInstance: undefined });
   }

@@ -6,13 +6,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, Subscription } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import {
   GitInstance,
   GitInstancesService,
 } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-edit-git-settings',
   templateUrl: './edit-git-settings.component.html',
@@ -35,18 +37,15 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
     private breadcrumbsService: BreadcrumbsService
   ) {}
 
-  private gitSettingsSubscription?: Subscription;
-  private paramsSubscription?: Subscription;
-
   ngOnInit(): void {
-    this.gitSettingsSubscription = this.gitSettingsService.gitInstance
-      .pipe(filter(Boolean))
+    this.gitSettingsService.gitInstance
+      .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((instance: GitInstance) => {
         this.gitSettingsForm.patchValue(instance);
         this.breadcrumbsService.updatePlaceholder({ gitInstance: instance });
       });
 
-    this.paramsSubscription = this.route.params.subscribe((params) => {
+    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.id = params['id'];
       if (!!this.id) {
         this.gitSettingsService.loadGitInstanceById(this.id);
@@ -55,8 +54,6 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.gitSettingsSubscription?.unsubscribe();
-    this.paramsSubscription?.unsubscribe();
     this.breadcrumbsService.updatePlaceholder({ gitInstance: undefined });
   }
 

@@ -5,7 +5,8 @@
 
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { filter, Subscription } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   ModelRestrictions,
@@ -17,6 +18,7 @@ import {
 } from 'src/app/projects/models/service/model.service';
 import { ProjectService } from '../../service/project.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-model-restrictions',
   templateUrl: './model-restrictions.component.html',
@@ -24,7 +26,6 @@ import { ProjectService } from '../../service/project.service';
 })
 export class ModelRestrictionsComponent implements OnInit {
   loading = false;
-  modelServiceSubscription?: Subscription;
 
   private model?: Model;
   private projectSlug?: string;
@@ -45,8 +46,8 @@ export class ModelRestrictionsComponent implements OnInit {
       this.patchRestrictions();
     });
 
-    this.modelServiceSubscription = this.modelService.model
-      .pipe(filter(Boolean))
+    this.modelService.model
+      .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((model) => {
         this.model = model;
         this.updateRestrictionsForm(model.restrictions);

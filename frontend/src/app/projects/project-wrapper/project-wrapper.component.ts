@@ -6,7 +6,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subscription, map } from 'rxjs';
+import { map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
@@ -19,10 +19,6 @@ import { ProjectService } from '../service/project.service';
   styleUrls: ['./project-wrapper.component.css'],
 })
 export class ProjectWrapperComponent implements OnInit, OnDestroy {
-  projectSubscription?: Subscription;
-  modelsSubscription?: Subscription;
-  projectUserSubscription?: Subscription;
-
   constructor(
     private route: ActivatedRoute,
     public projectService: ProjectService,
@@ -33,7 +29,10 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.route.params
-      .pipe(map((params) => params.project))
+      .pipe(
+        map((params) => params.project),
+        untilDestroyed(this)
+      )
       .subscribe((projectSlug: string) => {
         this.projectService.loadProjectBySlug(projectSlug);
         this.modelService.loadModels(projectSlug);
