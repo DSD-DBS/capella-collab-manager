@@ -15,6 +15,7 @@ SHELL = /bin/bash
 .SHELLFLAGS = -euo pipefail -c
 
 export MSYS_NO_PATHCONV=1
+export DISABLE_SESSION_TIMEOUT ?= 1
 
 database:
 	docker start capella-collab-postgres || \

@@ -3,6 +3,7 @@
 
 
 import logging
+import os
 
 import uvicorn
 from fastapi import FastAPI, Request
@@ -56,7 +57,8 @@ async def shutdown():
 
 
 async def schedule_termination_of_idle_sessions():
-    await terminate_idle_sessions_in_background()
+    if os.getenv("DISABLE_SESSION_TIMEOUT", "") not in ("true", "1", "t"):
+        await terminate_idle_sessions_in_background()
 
 
 app = FastAPI(

@@ -2,15 +2,15 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from capellacollab.sessions.operators.k8s import KubernetesOperator
+import functools
 
-operator = None
+from capellacollab.sessions.operators.k8s import KubernetesOperator
 
 
 def load_operator():
-    global operator
-    operator = KubernetesOperator()
+    get_operator()
 
 
+@functools.lru_cache
 def get_operator():
-    return operator
+    return KubernetesOperator()
