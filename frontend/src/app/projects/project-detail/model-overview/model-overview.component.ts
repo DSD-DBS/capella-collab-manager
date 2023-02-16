@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { first } from 'rxjs';
 import { ModelDiagramDialogComponent } from 'src/app/projects/models/diagrams/model-diagram-dialog/model-diagram-dialog.component';
 import {
@@ -18,12 +19,15 @@ import { SessionService } from 'src/app/sessions/service/session.service';
 import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { ProjectService } from '../../service/project.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-model-overview',
   templateUrl: './model-overview.component.html',
   styleUrls: ['./model-overview.component.css'],
 })
-export class ModelOverviewComponent {
+export class ModelOverviewComponent implements OnInit {
+  projectSlug?: string;
+
   constructor(
     public modelService: ModelService,
     public sessionService: SessionService,
@@ -32,6 +36,12 @@ export class ModelOverviewComponent {
     public projectService: ProjectService,
     private dialog: MatDialog
   ) {}
+
+  ngOnInit(): void {
+    this.projectService.project
+      .pipe(untilDestroyed(this))
+      .subscribe((project) => (this.projectSlug = project?.slug));
+  }
 
   getPrimaryWorkingMode(model: Model): string {
     if (model.t4c_models.length) {
@@ -54,15 +64,7 @@ export class ModelOverviewComponent {
     this.dialog.open(ModelDiagramDialogComponent, {
       height: '80vh',
       width: '80vw',
-      data: { model: model },
-    });
-  }
-
-  openDiagramsDialog(model: Model): void {
-    this.dialog.open(ModelDiagramDialogComponent, {
-      height: '80vh',
-      width: '80vw',
-      data: { model: model },
+      data: { modelSlug: model.slug, projectSlug: this.projectSlug },
     });
   }
 
@@ -76,10 +78,8 @@ export class ModelOverviewComponent {
   }
 
   newReadonlySession(model: Model) {
-    this.projectService.project.pipe(first()).subscribe((project) => {
-      this.dialog.open(NewReadonlySessionDialogComponent, {
-        data: { projectSlug: project!.slug, model: model },
-      });
+    this.dialog.open(NewReadonlySessionDialogComponent, {
+      data: { projectSlug: this.projectSlug, model: model },
     });
   }
 }

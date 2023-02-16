@@ -3,7 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -48,12 +55,12 @@ import {
   templateUrl: './manage-git-model.component.html',
   styleUrls: ['./manage-git-model.component.css'],
 })
-export class ManageGitModelComponent implements OnInit {
+export class ManageGitModelComponent implements OnInit, OnDestroy {
   @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 
-  public availableGitInstances: Array<GitInstance> | undefined = undefined;
-  public selectedGitInstance: GitInstance | undefined = undefined;
+  public availableGitInstances?: Array<GitInstance>;
+  public selectedGitInstance?: GitInstance;
 
   private availableRevisions: Revisions | undefined = {
     branches: [],
@@ -116,39 +123,13 @@ export class ManageGitModelComponent implements OnInit {
     this.form.controls.revision.valueChanges.subscribe((value) =>
       this.filteredRevisionsByPrefix(value as string)
     );
-    this.gitSettingsService.gitSettings
+
+    this.gitSettingsService.gitInstances
       .pipe(untilDestroyed(this))
-      .subscribe((gitSettings) => {
-        this.availableGitInstances = gitSettings;
+      .subscribe((gitInstances) => {
+        this.availableGitInstances = gitInstances;
 
-  <<<<<<< HEAD
-      this.gitSettingsService.gitInstances.subscribe((gitSettings) => {
-        this.availableGitInstances = gitSettings;
-
-        if (gitSettings?.length) {
-          this.urls.baseUrl.setValidators([Validators.required]);
-          this.urls.inputUrl.setValidators([absoluteOrRelativeValidators()]);
-          this.form.controls.urls.setAsyncValidators([
-            this.resultUrlPrefixAsyncValidator(),
-          ]);
-        } else {
-          this.urls.inputUrl.addValidators([Validators.required]);
-        }
-      });
-      if (gitSettings.length) {
-        this.urls.baseUrl.setValidators([Validators.required]);
-        this.urls.inputUrl.setValidators([absoluteOrRelativeValidators()]);
-        this.form.controls.urls.setAsyncValidators([
-          this.resultUrlPrefixAsyncValidator(),
-        ]);
-      } else {
-        this.urls.inputUrl.addValidators([Validators.required]);
-      }
-    });
-
-    this.modelService.model.subscribe((model) => {
-=======
-      if (gitSettings.length) {
+        if (gitInstances?.length) {
           this.urls.baseUrl.setValidators([Validators.required]);
           this.urls.inputUrl.setValidators([absoluteOrRelativeValidators()]);
           this.form.controls.urls.setAsyncValidators([
@@ -160,8 +141,7 @@ export class ManageGitModelComponent implements OnInit {
       });
 
     this.modelService.model.pipe(untilDestroyed(this)).subscribe((model) => {
-      this.modelSlug = model?.slug!;
->>>>>>> b2ae2aac (feat: Apply new fetching approach to projects)
+      this.modelSlug = model?.slug;
       if (model?.tool.name === 'Capella') {
         this.form.controls.entrypoint.addValidators(
           Validators.pattern(/^$|\.aird$/)
@@ -343,7 +323,7 @@ export class ManageGitModelComponent implements OnInit {
             `${this.gitModel!.path} has been deleted`
           );
           this.router.navigateByUrl(
-            `/project/${this.projectSlug}/model/${this.modelSlug!}`
+            `/project/${this.projectSlug!}/model/${this.modelSlug!}`
           );
         },
         error: () => {
