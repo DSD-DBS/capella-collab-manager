@@ -30,7 +30,7 @@ import {
   SimpleProjectUserRole,
 } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { User, UserService } from 'src/app/services/user/user.service';
-import { ProjectService } from '../../service/project.service';
+import { Project, ProjectService } from '../../service/project.service';
 
 @UntilDestroy()
 @Component({
@@ -39,8 +39,7 @@ import { ProjectService } from '../../service/project.service';
   styleUrls: ['./project-user-settings.component.css'],
 })
 export class ProjectUserSettingsComponent implements OnInit, OnChanges {
-  private projectSlug?: string;
-  public projectName?: string;
+  public project?: Project;
 
   projectUsers: ProjectUser[] = [];
   search = '';
@@ -69,11 +68,8 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.projectService.project
-      .pipe(untilDestroyed(this), filter(Boolean))
-      .subscribe((project) => {
-        this.projectSlug = project!.slug;
-        this.projectName = project!.name;
-      });
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe((project) => (this.project = project));
   }
 
   ngOnChanges(_changes: SimpleChanges): void {
@@ -115,7 +111,7 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
 
   refreshProjectUsers(): void {
     this.projectUserService
-      .getProjectUsers(this.projectSlug!)
+      .getProjectUsers(this.project?.slug!)
       .subscribe((projectUsers) => {
         this.projectUsers = projectUsers;
       });
@@ -131,7 +127,7 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
       }
       this.projectUserService
         .addUserToProject(
-          this.projectSlug!,
+          this.project?.slug!,
           formValue.username as string,
           formValue.role as SimpleProjectUserRole,
           permission as string,
@@ -143,7 +139,7 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
           this.refreshProjectUsers();
           this.toastService.showSuccess(
             `User added`,
-            `User '${formValue.username}' has been added to project '${this.projectName}'`
+            `User '${formValue.username}' has been added to project '${this.project?.name}'`
           );
         });
     }
@@ -156,12 +152,12 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
     }
 
     this.projectUserService
-      .deleteUserFromProject(this.projectSlug!, user.id, reason)
+      .deleteUserFromProject(this.project?.slug!, user.id, reason)
       .subscribe(() => {
         this.refreshProjectUsers();
         this.toastService.showSuccess(
           `User removed`,
-          `User '${user.name}' has been removed from project '${this.projectName}'`
+          `User '${user.name}' has been removed from project '${this.project?.name}'`
         );
       });
   }
@@ -173,12 +169,12 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
     }
 
     this.projectUserService
-      .changeRoleOfProjectUser(this.projectSlug!, user.id, 'manager', reason)
+      .changeRoleOfProjectUser(this.project?.slug!, user.id, 'manager', reason)
       .subscribe(() => {
         this.refreshProjectUsers();
         this.toastService.showSuccess(
           `User modified`,
-          `User '${user.name}' can now manage the project '${this.projectName}'`
+          `User '${user.name}' can now manage the project '${this.project?.name}'`
         );
       });
   }
@@ -190,12 +186,12 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
     }
 
     this.projectUserService
-      .changeRoleOfProjectUser(this.projectSlug!, user.id, 'user', reason)
+      .changeRoleOfProjectUser(this.project?.slug!, user.id, 'user', reason)
       .subscribe(() => {
         this.refreshProjectUsers();
         this.toastService.showSuccess(
           `User modified`,
-          `User '${user.name}' is no longer project lead in the project '${this.projectName}'`
+          `User '${user.name}' is no longer project lead in the project '${this.project?.name}'`
         );
       });
   }
@@ -208,7 +204,7 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
 
     this.projectUserService
       .changePermissionOfProjectUser(
-        this.projectSlug!,
+        this.project?.slug!,
         user.id,
         permission,
         reason
@@ -217,7 +213,7 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
         this.refreshProjectUsers();
         this.toastService.showSuccess(
           `User modified`,
-          `User '${user.name}' has the permission '${permission}' in the project '${this.projectName}' now`
+          `User '${user.name}' has the permission '${permission}' in the project '${this.project?.name}' now`
         );
       });
   }
