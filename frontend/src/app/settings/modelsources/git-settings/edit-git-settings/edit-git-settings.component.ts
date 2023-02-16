@@ -23,7 +23,7 @@ import {
 export class EditGitSettingsComponent implements OnInit, OnDestroy {
   id: number = -1;
 
-  gitSettingsForm = new FormGroup({
+  gitInstanceForm = new FormGroup({
     type: new FormControl('', Validators.required),
     name: new FormControl('', Validators.required),
     url: new FormControl('', Validators.required),
@@ -33,22 +33,22 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private gitSettingsService: GitInstancesService,
+    private gitInstancesService: GitInstancesService,
     private breadcrumbsService: BreadcrumbsService
   ) {}
 
   ngOnInit(): void {
-    this.gitSettingsService.gitInstance
+    this.gitInstancesService.gitInstance
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((instance: GitInstance) => {
-        this.gitSettingsForm.patchValue(instance);
+        this.gitInstanceForm.patchValue(instance);
         this.breadcrumbsService.updatePlaceholder({ gitInstance: instance });
       });
 
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.id = params['id'];
       if (!!this.id) {
-        this.gitSettingsService.loadGitInstanceById(this.id);
+        this.gitInstancesService.loadGitInstanceById(this.id);
       }
     });
   }
@@ -57,10 +57,10 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
     this.breadcrumbsService.updatePlaceholder({ gitInstance: undefined });
   }
 
-  editGitSettings() {
-    this.gitSettingsService
+  editGitInstance() {
+    this.gitInstancesService
       .editGitInstance({
-        ...this.gitSettingsForm.value,
+        ...this.gitInstanceForm.value,
         id: this.id,
       } as GitInstance)
       .subscribe((_) => this.goBack());

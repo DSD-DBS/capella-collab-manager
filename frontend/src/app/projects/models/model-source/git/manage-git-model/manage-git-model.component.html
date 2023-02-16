@@ -28,9 +28,9 @@
               [value]="selectedGitInstance"
             >
               <mat-option
-                *ngFor="let gitSetting of availableGitInstances"
-                [value]="gitSetting"
-                >{{ gitSetting.url }}</mat-option
+                *ngFor="let gitInstance of availableGitInstances"
+                [value]="gitInstance"
+                >{{ gitInstance.url }}</mat-option
               >
             </mat-select>
             <mat-error *ngIf="urls.baseUrl.errors?.required">

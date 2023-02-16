@@ -30,7 +30,7 @@ import {
   styleUrls: ['./git-settings.component.css'],
 })
 export class GitSettingsComponent implements OnInit {
-  public availableGitSettings: GitInstance[] = [];
+  public availableGitInstances: GitInstance[] = [];
 
   gitInstancesForm = new FormGroup({
     type: new FormControl('', Validators.required),
@@ -40,29 +40,29 @@ export class GitSettingsComponent implements OnInit {
   });
 
   constructor(
-    private gitSettingsService: GitInstancesService,
     public dialog: MatDialog,
-    public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>
+    public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>,
+    private gitInstancesService: GitInstancesService
   ) {}
 
   ngOnInit(): void {
-    this.gitSettingsService.gitInstances
+    this.gitInstancesService.gitInstances
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((gitInstances) => {
-        this.availableGitSettings = gitInstances;
+        this.availableGitInstances = gitInstances;
       });
 
-    this.gitSettingsService.loadGitInstances();
+    this.gitInstancesService.loadGitInstances();
   }
 
-  createGitSettings(): void {
+  createGitInstance(): void {
     if (this.gitInstancesForm.valid) {
       let url = this.gitInstancesForm.value.url!;
       if (url.endsWith('/')) {
         url = url.slice(0, -1);
       }
 
-      this.gitSettingsService
+      this.gitInstancesService
         .createGitInstance({
           name: this.gitInstancesForm.value.name!,
           url: url,
@@ -73,30 +73,30 @@ export class GitSettingsComponent implements OnInit {
     }
   }
 
-  deleteGitSettings(id: number): void {
-    const toDeleteGitSetting: GitInstance = this.availableGitSettings.find(
-      (gitSetting) => gitSetting.id == id
+  deleteGitInstance(id: number): void {
+    const toDeleteGitInstance: GitInstance = this.availableGitInstances.find(
+      (gitInstance) => gitInstance.id == id
     )!;
     this.dialog
       .open(DeleteGitSettingsDialogComponent, {
-        data: toDeleteGitSetting,
+        data: toDeleteGitInstance,
       })
       .afterClosed()
       .subscribe((response) => {
         if (response) {
-          this.gitSettingsService.deleteGitInstance(id).subscribe();
+          this.gitInstancesService.deleteGitInstance(id).subscribe();
         }
       });
   }
 
   nameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const existingGitSetting = this.availableGitSettings.find(
-        (gitSetting) => gitSetting.name == control.value
+      const existingGitInstance = this.availableGitInstances.find(
+        (gitInstance) => gitInstance.name == control.value
       );
 
-      if (existingGitSetting) {
-        return { uniqueName: { value: existingGitSetting.name } };
+      if (existingGitInstance) {
+        return { uniqueName: { value: existingGitInstance.name } };
       }
       return null;
     };

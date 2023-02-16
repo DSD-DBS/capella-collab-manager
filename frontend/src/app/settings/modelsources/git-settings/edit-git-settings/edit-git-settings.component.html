@@ -7,7 +7,7 @@
   <div class="title">Edit Instance</div>
   <br />
   <mat-card>
-    <form [formGroup]="gitSettingsForm" id="add-instance-form">
+    <form [formGroup]="gitInstanceForm" id="add-instance-form">
       <mat-form-field class="form-field-default" appearance="fill">
         <mat-label>Git Type</mat-label>
         <mat-select matInput formControlName="type">
@@ -33,7 +33,7 @@
       </mat-form-field>
       <br />
       <mat-form-field
-        *ngIf="gitSettingsForm.controls.type.value !== 'General'"
+        *ngIf="gitInstanceForm.controls.type.value !== 'General'"
         class="form-field-default"
         appearance="fill"
       >
@@ -47,7 +47,7 @@
         [class]="'right-button'"
         mat-flat-button
         color="primary"
-        (click)="editGitSettings()"
+        (click)="editGitInstance()"
       >
         Save changes
       </button>

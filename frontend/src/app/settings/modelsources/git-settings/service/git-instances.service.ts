@@ -37,7 +37,7 @@ export class GitInstancesService {
           );
         })
       )
-      .subscribe((gitSettings) => this._gitInstances.next(gitSettings));
+      .subscribe((gitInstance) => this._gitInstances.next(gitInstance));
   }
 
   transformGitInstance(
@@ -52,7 +52,7 @@ export class GitInstancesService {
   loadGitInstanceById(id: number): void {
     this.http
       .get<GitInstance>(this.BACKEND_URL_PREFIX + '/' + id)
-      .subscribe((gitSetting) => this._gitInstance.next(gitSetting));
+      .subscribe((gitInstance) => this._gitInstance.next(gitInstance));
   }
 
   createGitInstance(gitInstance: BasicGitInstance): Observable<GitInstance> {

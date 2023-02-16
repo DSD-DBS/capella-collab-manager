@@ -99,7 +99,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   constructor(
     public projectService: ProjectService,
     public modelService: ModelService,
-    private gitSettingsService: GitInstancesService,
+    private gitInstancesService: GitInstancesService,
     private gitService: GitService,
     private gitModelService: GitModelService,
     private toastService: ToastService,
@@ -124,7 +124,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
       this.filteredRevisionsByPrefix(value as string)
     );
 
-    this.gitSettingsService.gitInstances
+    this.gitInstancesService.gitInstances
       .pipe(untilDestroyed(this))
       .subscribe((gitInstances) => {
         this.availableGitInstances = gitInstances;
@@ -188,7 +188,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
           });
       });
 
-    this.gitSettingsService.loadGitInstances();
+    this.gitInstancesService.loadGitInstances();
   }
 
   ngOnDestroy(): void {
@@ -244,11 +244,11 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     this.urls.inputUrl.updateValueAndValidity();
 
     if (changedInputUrl && hasAbsoluteUrlPrefix(changedInputUrl)) {
-      let longestMatchingGitSetting =
-        this.findLongestUrlMatchingGitSetting(changedInputUrl);
-      if (longestMatchingGitSetting) {
-        this.selectedGitInstance = longestMatchingGitSetting;
-        this.urls.baseUrl.setValue(longestMatchingGitSetting);
+      let longestMatchingGitInstance =
+        this.findLongestUrlMatchingGitInstance(changedInputUrl);
+      if (longestMatchingGitInstance) {
+        this.selectedGitInstance = longestMatchingGitInstance;
+        this.urls.baseUrl.setValue(longestMatchingGitInstance);
       } else if (this.availableGitInstances?.length) {
         this.selectedGitInstance = undefined;
         this.urls.baseUrl.reset();
@@ -457,21 +457,21 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     };
   }
 
-  private findLongestUrlMatchingGitSetting(
+  private findLongestUrlMatchingGitInstance(
     url: string
   ): GitInstance | undefined {
-    let longestMatchingGitSetting = undefined;
+    let longestMatchingGitInstance = undefined;
     let longestUrlLength = 0;
-    this.availableGitInstances?.forEach((gitSetting) => {
+    this.availableGitInstances?.forEach((gitInstance) => {
       if (
-        url.startsWith(gitSetting.url) &&
-        gitSetting.url.length > longestUrlLength
+        url.startsWith(gitInstance.url) &&
+        gitInstance.url.length > longestUrlLength
       ) {
-        longestMatchingGitSetting = gitSetting;
-        longestUrlLength = gitSetting.url.length;
+        longestMatchingGitInstance = gitInstance;
+        longestUrlLength = gitInstance.url.length;
       }
     });
 
-    return longestMatchingGitSetting;
+    return longestMatchingGitInstance;
   }
 }
