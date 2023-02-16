@@ -33,10 +33,8 @@ import {
 export class ProjectMetadataComponent implements OnInit, OnChanges {
   @Output() changeProject = new EventEmitter<Project>();
 
-  public canDelete: boolean = false;
-
-  public projectSlug?: string = undefined;
-  public projectName?: string = undefined;
+  canDelete: boolean = false;
+  project?: Project;
 
   constructor(
     private toastService: ToastService,
@@ -46,11 +44,8 @@ export class ProjectMetadataComponent implements OnInit, OnChanges {
     private route: ActivatedRoute
   ) {}
 
-  public form = new FormGroup({
-    name: new FormControl<string>('', {
-      validators: Validators.required,
-      asyncValidators: this.projectService.asyncSlugValidator(),
-    }),
+  form = new FormGroup({
+    name: new FormControl<string>('', Validators.required),
     description: new FormControl<string>(''),
   });
 
@@ -58,8 +53,10 @@ export class ProjectMetadataComponent implements OnInit, OnChanges {
     this.projectService.project
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((project) => {
-        this.projectSlug = project.slug;
-        this.projectName = project.name;
+        this.project = project;
+        this.form.controls.name.setAsyncValidators(
+          this.projectService.asyncSlugValidator(project)
+        );
         this.form.patchValue(project);
       });
 
@@ -69,13 +66,13 @@ export class ProjectMetadataComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(_changes: SimpleChanges): void {
-    this.projectService.loadProjectBySlug(this.projectSlug!);
+    this.projectService.loadProjectBySlug(this.project?.slug!);
   }
 
-  updateDescription() {
-    if (this.form.valid && this.projectSlug) {
+  updateProject() {
+    if (this.form.valid && this.project) {
       this.projectService
-        .updateProject(this.projectSlug, this.form.value as PatchProject)
+        .updateProject(this.project.slug, this.form.value as PatchProject)
         .subscribe((project) => {
           this.router.navigateByUrl(`/project/${project.slug}`);
           this.toastService.showSuccess(
@@ -95,7 +92,7 @@ export class ProjectMetadataComponent implements OnInit, OnChanges {
   deleteProject(): void {
     if (
       !this.canDelete ||
-      !this.projectSlug ||
+      !this.project ||
       !window.confirm(
         `Do you really want to delete this project? All assigned users will lose access to it! The project cannot be restored!`
       )
@@ -103,7 +100,7 @@ export class ProjectMetadataComponent implements OnInit, OnChanges {
       return;
     }
 
-    const projectSlug: string = this.projectSlug;
+    const projectSlug: string = this.project.slug;
 
     this.projectService.deleteProject(projectSlug).subscribe({
       next: () => {

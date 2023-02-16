@@ -86,13 +86,17 @@ export class ProjectService {
     this._project.next(undefined);
   }
 
-  asyncSlugValidator(): AsyncValidatorFn {
+  asyncSlugValidator(ignoreProject?: Project): AsyncValidatorFn {
+    let ignoreSlug = !!ignoreProject ? ignoreProject.slug : -1;
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       const projectSlug = slugify(control.value, { lower: true });
       return this.projects.pipe(
         take(1),
         map((projects) => {
-          return projects?.find((project) => project.slug === projectSlug)
+          return projects?.find(
+            (project) =>
+              project.slug === projectSlug && project.slug !== ignoreSlug
+          )
             ? { uniqueSlug: { value: projectSlug } }
             : null;
         })

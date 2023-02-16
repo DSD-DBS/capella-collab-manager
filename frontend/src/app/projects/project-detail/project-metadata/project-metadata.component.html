@@ -17,7 +17,8 @@
           <mat-error *ngIf="form.controls.name.errors?.uniqueSlug"
             >A project with a similar name already exists.</mat-error
           >
-          <mat-hint *ngIf="projectSlug !== newSlug && form.controls.name.valid"
+          <mat-hint
+            *ngIf="project?.slug !== newSlug && form.controls.name.valid"
             >If you proceed, the project slug will be changed to
             <i>{{ newSlug }}</i> - Please make sure to update all
             references.</mat-hint
@@ -33,7 +34,7 @@
             rows="3"
             style="resize: none"
             [placeholder]="
-              'This is the description of the project ' + projectName
+              'This is the description of the project ' + project?.name
             "
           ></textarea>
         </mat-form-field>
@@ -55,7 +56,7 @@
       </span>
       <button
         [disabled]="!form.valid"
-        (click)="updateDescription()"
+        (click)="updateProject()"
         mat-raised-button
         id="submit"
       >
