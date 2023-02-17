@@ -287,11 +287,11 @@ class KubernetesOperator:
                 log.info(
                     "Deleted route %s with status %s", _id, dep_status.status
                 )
-        if dep_status := self._delete_ingress(_id):
-            log.info(
-                "Deleted ingress %s with status %s", _id, dep_status.status
-            )
-
+        else:
+            if dep_status := self._delete_ingress(_id):
+                log.info(
+                    "Deleted ingress %s with status %s", _id, dep_status.status
+                )
         if dep_status := self._delete_deployment(name=_id):
             log.info(
                 "Deleted deployment %s with status %s", _id, dep_status.status
