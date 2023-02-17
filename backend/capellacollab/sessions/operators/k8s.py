@@ -22,8 +22,8 @@ import kubernetes.stream.stream
 import yaml
 from kubernetes import client
 from kubernetes.client import exceptions
-from openshift.dynamic import DynamicClient
-from openshift.dynamic.exceptions import ResourceNotFoundError
+from openshift import dynamic
+from openshift.dynamic import exceptions as dynamic_exceptions
 
 from capellacollab.config import config
 
@@ -67,7 +67,7 @@ if _pod_security_context := cfg.get("cluster", {}).get(
 
 
 def is_openshift_cluster(api_client):
-    dyn_client = DynamicClient(api_client)
+    dyn_client = dynamic.DynamicClient(api_client)
     try:
         dyn_client.resources.get(
             api_version="route.openshift.io/v1", kind="Route"
@@ -76,7 +76,7 @@ def is_openshift_cluster(api_client):
             "Openshift routes detected, assuming an OpenShift cluster"
         )
         return True
-    except ResourceNotFoundError:
+    except dynamic_exceptions.ResourceNotFoundError:
         logging.info(
             "No openshift routes detected, assuming normal Kubernetes cluster"
         )
@@ -856,7 +856,7 @@ class KubernetesOperator:
                 },
             },
         }
-        dyn_client = DynamicClient(self.client)
+        dyn_client = dynamic.DynamicClient(self.client)
         v1_routes = dyn_client.resources.get(
             api_version="route.openshift.io/v1", kind="Route"
         )
@@ -1032,7 +1032,7 @@ class KubernetesOperator:
 
     def _delete_openshift_route(self, name: str) -> client.V1Status | None:
         try:
-            dyn_client = DynamicClient(self.client)
+            dyn_client = dynamic.DynamicClient(self.client)
             v1_routes = dyn_client.resources.get(
                 api_version="route.openshift.io/v1", kind="Route"
             )
