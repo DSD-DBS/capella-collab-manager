@@ -841,6 +841,7 @@ class KubernetesOperator:
                 "name": id,
             },
             "spec": {
+                "host": host,
                 "path": path,
                 "to": {
                     "kind": "Service",

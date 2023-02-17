@@ -6,7 +6,11 @@ docker:
   externalRegistry: "{{ .Values.docker.registry.external }}"
 
 k8s:
+  {{- if eq .Values.cluster.kind "Kubernetes" }}
   host: {{ .Values.general.host }}
+  {{- else }}
+  host: sessions-{{ .Values.general.host }}
+  {{- end }}
   namespace: {{ .Values.backend.k8sSessionNamespace }}
   storageClassName: {{ .Values.backend.storageClassName }}
   storageAccessMode: {{ .Values.backend.storageAccessMode }}
