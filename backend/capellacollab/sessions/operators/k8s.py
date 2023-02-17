@@ -841,7 +841,6 @@ class KubernetesOperator:
                 "name": id,
             },
             "spec": {
-                "host": host,
                 "path": path,
                 "to": {
                     "kind": "Service",
@@ -854,6 +853,7 @@ class KubernetesOperator:
                     "termination": "edge",
                     "insecureEdgeTerminationPolicy": "Redirect",
                 },
+                "wildcardPolicy": "None",
             },
         }
         dyn_client = dynamic.DynamicClient(self.client)
