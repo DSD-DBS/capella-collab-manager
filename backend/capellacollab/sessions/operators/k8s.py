@@ -103,6 +103,7 @@ class KubernetesOperator:
         self.v1_core = client.CoreV1Api(api_client=self.client)
         self.v1_apps = client.AppsV1Api(api_client=self.client)
         self.v1_batch = client.BatchV1Api(api_client=self.client)
+        self.v1_networking = client.NetworkingV1Api(api_client=self.client)
         self._openshift = None
 
     @property
@@ -830,9 +831,7 @@ class KubernetesOperator:
                 ]
             ),
         )
-        return client.NetworkingV1Api().create_namespaced_ingress(
-            namespace, ingress
-        )
+        return self.v1_networking.create_namespaced_ingress(namespace, ingress)
 
     def _create_openshift_route(self, id, path: str, port_number: int):
         route_dict = {
@@ -1024,7 +1023,7 @@ class KubernetesOperator:
 
     def _delete_ingress(self, name: str) -> client.V1Status | None:
         try:
-            return client.NetworkingV1Api().delete_namespaced_ingress(
+            return self.v1_networking.delete_namespaced_ingress(
                 name, namespace
             )
         except exceptions.ApiException:
