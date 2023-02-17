@@ -540,7 +540,9 @@ class KubernetesOperator:
         elif "http" in ports:
             port = {ports["http"]}
         else:
-            port = {ports.values()}
+            raise ValueError(
+                "No rdp or http port defined on the deployed session"
+            )
 
         return {
             "id": deployment.to_dict()["metadata"]["name"],
