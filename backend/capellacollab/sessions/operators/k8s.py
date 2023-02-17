@@ -176,7 +176,7 @@ class KubernetesOperator:
 
         path = f"/jupyter/{username}"
 
-        environment = {
+        environment: dict[str, str | None] = {
             "JUPYTER_BASE_URL": path,
             "JUPYTER_TOKEN": token,
             "JUPYTER_PORT": "8888",
