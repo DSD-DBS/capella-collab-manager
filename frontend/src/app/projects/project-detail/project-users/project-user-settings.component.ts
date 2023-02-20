@@ -69,7 +69,15 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.projectService.project
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((project) => (this.project = project));
+      .subscribe((project) => {
+        this.project = project;
+
+        this.projectUserService
+          .getProjectUsers(project.slug)
+          .subscribe((projectUsers) => {
+            this.projectUsers = projectUsers;
+          });
+      });
   }
 
   ngOnChanges(_changes: SimpleChanges): void {
