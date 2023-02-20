@@ -24,7 +24,7 @@ def inject_attrs_in_sessions(
     for session in db_sessions:
         session.state = _determine_session_state(session)
         session.last_seen = get_last_seen(session.id)
-
+        session.session_domain = get_operator().session_domain
         sessions_list.append(session)
 
     return sessions_list

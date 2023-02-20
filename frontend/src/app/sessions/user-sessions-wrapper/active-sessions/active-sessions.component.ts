@@ -40,8 +40,14 @@ export class ActiveSessionsComponent {
 
   openConnectDialog(session: Session): void {
     if (session.jupyter_token) {
+      // Use window.location.host, so we also get the port number, if any.
+      let host =
+        !session.session_domain ||
+        session.session_domain === window.location.hostname
+          ? window.location.host
+          : session.session_domain;
       window.open(
-        `/jupyter/${session.owner.name}/lab?token=${session.jupyter_token}`
+        `://${host}/jupyter/${session.owner.name}/lab?token=${session.jupyter_token}`
       );
     } else {
       this.dialog.open(GuacamoleDialogComponent, {

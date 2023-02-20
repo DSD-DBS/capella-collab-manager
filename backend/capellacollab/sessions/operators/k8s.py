@@ -35,7 +35,6 @@ external_registry: str = config["docker"]["externalRegistry"]
 
 cfg: dict[str, t.Any] = config["k8s"]
 
-host: str = cfg["host"]
 namespace: str = cfg["namespace"]
 storage_access_mode: str = cfg["storageAccessMode"]
 storage_class_name: str = cfg["storageClassName"]
@@ -97,6 +96,8 @@ class File:
 
 
 class KubernetesOperator:
+    sessions_domain: str = cfg["sessionsDomain"]
+
     def __init__(self) -> None:
         self.load_config()
         self.client = client.ApiClient()
@@ -810,7 +811,7 @@ class KubernetesOperator:
             spec=client.V1IngressSpec(
                 rules=[
                     client.V1IngressRule(
-                        host=host,
+                        host=self.sessions_domain,
                         http=client.V1HTTPIngressRuleValue(
                             paths=[
                                 client.V1HTTPIngressPath(
@@ -841,7 +842,7 @@ class KubernetesOperator:
                 "name": id,
             },
             "spec": {
-                "host": host,
+                "host": self.sessions_domain,
                 "path": path,
                 "to": {
                     "kind": "Service",

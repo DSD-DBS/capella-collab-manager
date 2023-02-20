@@ -45,6 +45,7 @@ class GetSessionsResponse(BaseModel):
 class OwnSessionResponse(GetSessionsResponse):
     t4c_password: str | None
     jupyter_token: str | None
+    session_domain: str | None
 
 
 class PostReadonlySessionEntry(BaseModel):
