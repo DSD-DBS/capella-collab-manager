@@ -24,7 +24,11 @@ def inject_attrs_in_sessions(
     for session in db_sessions:
         session.state = _determine_session_state(session)
         session.last_seen = get_last_seen(session.id)
-        session.session_domain = get_operator().session_domain
+        session.jupyter_uri = (
+            f'{config["extensions"]["jupyter"]["publicURI"]}/{session.owner_name}/lab?token={session.jupyter_token}'
+            if session.jupyter_token
+            else ""
+        )
         sessions_list.append(session)
 
     return sessions_list

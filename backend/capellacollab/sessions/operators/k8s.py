@@ -13,6 +13,7 @@ import shlex
 import string
 import subprocess
 import typing as t
+import urllib
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -32,6 +33,9 @@ from . import helper
 log = logging.getLogger(__name__)
 
 external_registry: str = config["docker"]["externalRegistry"]
+jupyter_public_uri = urllib.parse.urlparse(
+    config["extensions"]["jupyter"]["publicURI"]
+)
 
 cfg: dict[str, t.Any] = config["k8s"]
 
@@ -96,8 +100,6 @@ class File:
 
 
 class KubernetesOperator:
-    sessions_domain: str = cfg["sessionsDomain"]
-
     def __init__(self) -> None:
         self.load_config()
         self.client = client.ApiClient()
@@ -176,7 +178,7 @@ class KubernetesOperator:
     ) -> dict[str, t.Any]:
         self._create_persistent_volume_claim(username)
 
-        path = f"/jupyter/{username}"
+        path = f"{jupyter_public_uri.path}/{username}"
 
         environment: dict[str, str | None] = {
             "JUPYTER_BASE_URL": path,
@@ -811,7 +813,7 @@ class KubernetesOperator:
             spec=client.V1IngressSpec(
                 rules=[
                     client.V1IngressRule(
-                        host=self.sessions_domain,
+                        host=jupyter_public_uri.hostname,
                         http=client.V1HTTPIngressRuleValue(
                             paths=[
                                 client.V1HTTPIngressPath(
@@ -842,7 +844,7 @@ class KubernetesOperator:
                 "name": id,
             },
             "spec": {
-                "host": self.sessions_domain,
+                "host": jupyter_public_uri.hostname,
                 "path": path,
                 "to": {
                     "kind": "Service",

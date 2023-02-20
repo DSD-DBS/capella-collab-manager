@@ -6,11 +6,6 @@ docker:
   externalRegistry: "{{ .Values.docker.registry.external }}"
 
 k8s:
-  {{- if eq .Values.cluster.kind "Kubernetes" }}
-  sessionsDomain: {{ .Values.general.host }}
-  {{- else }}
-  sessionsDomain: sessions-{{ .Values.general.host }}
-  {{- end }}
   namespace: {{ .Values.backend.k8sSessionNamespace }}
   storageClassName: {{ .Values.backend.storageClassName }}
   storageAccessMode: {{ .Values.backend.storageAccessMode }}
@@ -34,6 +29,12 @@ extensions:
 
     username: "{{ .Values.guacamole.username }}"
     password: "{{ .Values.guacamole.password }}"
+  jupyter:
+    {{- if eq .Values.cluster.kind "Kubernetes" }}
+    publicURI: {{ .Values.general.scheme }}://{{ .Values.general.host }}:{{ .Values.general.port }}/jupyter
+    {{- else }}
+    publicURI: {{ .Values.general.scheme }}://sessions-{{ .Values.general.host }}:{{ .Values.general.port }}/jupyter
+    {{- end }}
 
 authentication:
   provider: "{{ .Values.backend.authentication.provider }}"

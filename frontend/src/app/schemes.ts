@@ -16,8 +16,7 @@ export interface Session {
   guacamole_username: string;
   guacamole_password: string;
   guacamole_connection_id: string;
-  jupyter_token: string;
-  session_domain: string | undefined;
+  jupyter_uri: string | undefined;
   project: Project | undefined;
   version: ToolVersionWithTool | undefined;
   state: string;

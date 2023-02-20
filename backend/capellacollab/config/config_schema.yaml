@@ -33,7 +33,6 @@ properties:
       - storageAccessMode
       - promtail
       - namespace
-      - host
     properties:
       storageClassName:
         type: string
@@ -97,8 +96,6 @@ properties:
               - serverPort
       namespace:
         type: string
-      host:
-        type: string
       context:
         type: string
   extensions:
@@ -123,6 +120,14 @@ properties:
           username:
             type: string
           password:
+            type: string
+      jupyter:
+        type: object
+        additionalProperties: false
+        required:
+          - publicURI
+        properties:
+          publicURI:
             type: string
   authentication:
     type: object
