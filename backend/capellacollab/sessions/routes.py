@@ -220,7 +220,7 @@ def request_session(
         git_repos_json=list(models_as_json(entries_with_models)),
     )
 
-    return create_database_and_guacamole_session(
+    response = create_database_and_guacamole_session(
         db,
         schema.WorkspaceType.READONLY,
         session,
@@ -231,6 +231,9 @@ def request_session(
         project,
         None,
     )
+    response.state = "New"
+    response.last_seen = "UNKNOWN"
+    return response
 
 
 def models_as_json(
