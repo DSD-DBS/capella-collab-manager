@@ -129,7 +129,7 @@ def create_tools(db):
     tools_crud.create_version(db, papyrus.id, "6.1")
     tools_crud.create_version(db, papyrus.id, "6.0")
 
-    tools_crud.create_version(db, jupyter.id, "latest")
+    tools_crud.create_version(db, jupyter.id, "python-3.11")
 
     default_nature = tools_crud.create_nature(db, capella.id, "model")
     tools_crud.create_nature(db, capella.id, "library")

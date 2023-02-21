@@ -17,10 +17,7 @@ T4C_CLIENT_VERSIONS ?= 5.2.0
 
 TIMEOUT ?= 10m
 
-# UID which is used for the techuser in the Docker images
-TECHUSER_UID = 1004370000
-
-CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages TECHUSER_UID=$(TECHUSER_UID) PUSH_IMAGES=1 DOCKER_REGISTRY=$(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)
+CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 DOCKER_REGISTRY=$(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)
 
 # Adds support for msys
 export MSYS_NO_PATHCONV := 1
@@ -58,7 +55,7 @@ t4c-client:
 	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(T4C_CLIENT_VERSIONS)" t4c/client/remote t4c/client/backup
 
 jupyter:
-	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(CAPELLA_VERSIONS)" jupyter
+	$(CAPELLA_DOCKERIMAGES) jupyter-notebook
 
 docs:
 	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user
