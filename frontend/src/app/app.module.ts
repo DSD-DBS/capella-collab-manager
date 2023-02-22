@@ -94,8 +94,8 @@ import { GuacamoleComponent } from './sessions/session-created/guacamole/guacamo
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { SessionsComponent } from './sessions/sessions.component';
 import { CreatePersistentSessionComponent } from './sessions/user-sessions-wrapper/create-sessions/create-persistent-session/create-persistent-session.component';
+import { CreateReadonlyModelOptionsComponent } from './sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-model-options/create-readonly-model-options.component';
 import { CreateReadonlySessionDialogComponent } from './sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-session-dialog.component';
-import { NewReadonlyModelOptionsComponent } from './sessions/user-sessions-wrapper/create-sessions/create-readonly-session/new-readonly-model-options/new-readonly-model-options.component';
 import { UserSessionsWrapperComponent } from './sessions/user-sessions-wrapper/user-sessions-wrapper.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { ToolDeletionDialogComponent } from './settings/core/tools-settings/tool-details/tool-deletion-dialog/tool-deletion-dialog.component';
@@ -132,6 +132,7 @@ import { SettingsComponent } from './settings/settings.component';
     CreateModelComponent,
     CreatePersistentSessionComponent,
     CreateProjectComponent,
+    CreateReadonlyModelOptionsComponent,
     CreateReadonlySessionDialogComponent,
     DeleteGitSettingsDialogComponent,
     DeleteSessionDialogComponent,
@@ -162,7 +163,6 @@ import { SettingsComponent } from './settings/settings.component';
     ModelOverviewComponent,
     ModelRestrictionsComponent,
     ModelWrapperComponent,
-    NewReadonlyModelOptionsComponent,
     NoticeComponent,
     ProjectDetailsComponent,
     ProjectMetadataComponent,

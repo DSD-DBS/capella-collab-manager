@@ -16,7 +16,7 @@ import {
 } from 'src/app/projects/models/service/model.service';
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
-import { ModelOptions } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-readonly-session/new-readonly-model-options/new-readonly-model-options.component';
+import { ModelOptions } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-model-options/create-readonly-model-options.component';
 
 @UntilDestroy()
 @Component({

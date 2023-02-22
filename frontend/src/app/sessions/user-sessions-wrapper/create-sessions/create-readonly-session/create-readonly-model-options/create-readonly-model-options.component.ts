@@ -26,11 +26,11 @@ export type ModelOptions = {
 };
 
 @Component({
-  selector: 'new-readonly-model-options',
-  templateUrl: './new-readonly-model-options.component.html',
-  styleUrls: ['./new-readonly-model-options.component.css'],
+  selector: 'create-readonly-model-options',
+  templateUrl: './create-readonly-model-options.component.html',
+  styleUrls: ['./create-readonly-model-options.component.css'],
 })
-export class NewReadonlyModelOptionsComponent implements OnInit {
+export class CreateReadonlyModelOptionsComponent implements OnInit {
   @Input() projectSlug = '';
   @Input() modelOptions: ModelOptions | undefined;
 
