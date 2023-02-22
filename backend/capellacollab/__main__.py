@@ -3,6 +3,7 @@
 
 
 import logging
+import os
 
 import uvicorn
 from fastapi import FastAPI, Request
@@ -42,7 +43,9 @@ logging.basicConfig(level=config["logging"]["level"], handlers=handlers)
 
 async def startup():
     migration.migrate_db(engine, config["database"]["url"])
-    operators.load_operator()
+
+    # This is needed to load the Kubernetes configuration at startup
+    operators.get_operator()
 
     logging.getLogger("uvicorn.access").disabled = True
     logging.getLogger("uvicorn.error").disabled = True
@@ -56,7 +59,8 @@ async def shutdown():
 
 
 async def schedule_termination_of_idle_sessions():
-    await terminate_idle_sessions_in_background()
+    if os.getenv("DISABLE_SESSION_TIMEOUT", "") not in ("true", "1", "t"):
+        await terminate_idle_sessions_in_background()
 
 
 app = FastAPI(
