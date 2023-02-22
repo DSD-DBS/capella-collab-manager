@@ -6,20 +6,15 @@
 import {
   Component,
   EventEmitter,
-  Input,
   OnChanges,
+  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter } from 'rxjs';
 import slugify from 'slugify';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
@@ -29,22 +24,17 @@ import {
   ProjectService,
 } from '../../service/project.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-project-metadata',
   templateUrl: './project-metadata.component.html',
   styleUrls: ['./project-metadata.component.css'],
 })
-export class ProjectMetadataComponent implements OnChanges {
-  @Input() project!: Project;
+export class ProjectMetadataComponent implements OnInit, OnChanges {
   @Output() changeProject = new EventEmitter<Project>();
 
-  public form = new FormGroup({
-    name: new FormControl<string>('', [
-      Validators.required,
-      this.slugValidator(),
-    ]),
-    description: new FormControl<string>(''),
-  });
+  canDelete: boolean = false;
+  project?: Project;
 
   constructor(
     private toastService: ToastService,
@@ -54,17 +44,36 @@ export class ProjectMetadataComponent implements OnChanges {
     private route: ActivatedRoute
   ) {}
 
-  ngOnChanges(_changes: SimpleChanges): void {
-    this.projectService.list().subscribe();
-    this.form.patchValue(this.project);
+  form = new FormGroup({
+    name: new FormControl<string>('', Validators.required),
+    description: new FormControl<string>(''),
+  });
+
+  ngOnInit(): void {
+    this.projectService.project
+      .pipe(untilDestroyed(this), filter(Boolean))
+      .subscribe((project) => {
+        this.project = project;
+        this.form.controls.name.setAsyncValidators(
+          this.projectService.asyncSlugValidator(project)
+        );
+        this.form.patchValue(project);
+      });
+
+    this.modelService.models
+      .pipe(untilDestroyed(this), filter(Boolean))
+      .subscribe((models) => (this.canDelete = !models.length));
   }
 
-  updateDescription() {
-    if (this.form.valid) {
+  ngOnChanges(_changes: SimpleChanges): void {
+    this.projectService.loadProjectBySlug(this.project?.slug!);
+  }
+
+  updateProject() {
+    if (this.form.valid && this.project) {
       this.projectService
         .updateProject(this.project.slug, this.form.value as PatchProject)
         .subscribe((project) => {
-          this.projectService._project.next(project);
           this.router.navigateByUrl(`/project/${project.slug}`);
           this.toastService.showSuccess(
             'Project updated',
@@ -76,34 +85,14 @@ export class ProjectMetadataComponent implements OnChanges {
     }
   }
 
-  slugValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const slug = slugify(control.value, { lower: true });
-      if (
-        this.projectService.projects
-          ?.map((project) => project.slug)
-          .filter((slug) => slug !== this.projectService.project?.slug)
-          .includes(slug)
-      ) {
-        return { uniqueSlug: { value: slug } };
-      }
-      return null;
-    };
-  }
-
   get newSlug(): string | null {
     return this.form.value.name ? slugify(this.form.value.name) : null;
   }
 
-  get canDelete(): boolean {
-    return !this.modelService.models?.length;
-  }
-
   deleteProject(): void {
-    const project = this.project;
-
     if (
       !this.canDelete ||
+      !this.project ||
       !window.confirm(
         `Do you really want to delete this project? All assigned users will lose access to it! The project cannot be restored!`
       )
@@ -111,18 +100,20 @@ export class ProjectMetadataComponent implements OnChanges {
       return;
     }
 
-    this.projectService.deleteProject(project.slug).subscribe({
+    const projectSlug: string = this.project.slug;
+
+    this.projectService.deleteProject(projectSlug).subscribe({
       next: () => {
         this.toastService.showSuccess(
           'Project deleted',
-          `${project.name} has been deleted`
+          `${projectSlug} has been deleted`
         );
         this.router.navigate(['../../projects'], { relativeTo: this.route });
       },
       error: () => {
         this.toastService.showError(
           'Project deletion failed',
-          `${project.name} has not been deleted`
+          `${projectSlug} has not been deleted`
         );
       },
     });

@@ -21,7 +21,8 @@ import {
   AsyncValidatorFn,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, map, Observable, of, Subscription } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter, map, Observable, of } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
@@ -48,6 +49,7 @@ import {
   GitInstancesService,
 } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-manage-git-model',
   templateUrl: './manage-git-model.component.html',
@@ -57,8 +59,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 
-  public availableGitInstances: Array<GitInstance> | undefined = undefined;
-  public selectedGitInstance: GitInstance | undefined = undefined;
+  public availableGitInstances?: Array<GitInstance>;
+  public selectedGitInstance?: GitInstance;
 
   private availableRevisions: Revisions | undefined = {
     branches: [],
@@ -85,22 +87,19 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     primary: new FormControl(),
   });
 
+  private projectSlug?: string = undefined;
+  private modelSlug?: string = undefined;
+
   private gitModelId?: number;
   public gitModel?: GetGitModel;
 
   public isEditMode: boolean = false;
   public editing: boolean = false;
 
-  private gitSettingsSubscription?: Subscription;
-  private modelSubscription?: Subscription;
-  private revisionsSubscription?: Subscription;
-  private gitModelSubscription?: Subscription;
-  private paramSubscription?: Subscription;
-
   constructor(
     public projectService: ProjectService,
     public modelService: ModelService,
-    private gitSettingsService: GitInstancesService,
+    private gitInstancesService: GitInstancesService,
     private gitService: GitService,
     private gitModelService: GitModelService,
     private toastService: ToastService,
@@ -114,22 +113,23 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.revisionsSubscription = this.gitService.revisions.subscribe(
-      (revisions) => {
+    this.gitService.revisions
+      .pipe(untilDestroyed(this))
+      .subscribe((revisions) => {
         this.availableRevisions = revisions;
         this.form.controls.revision.updateValueAndValidity();
-      }
-    );
+      });
 
     this.form.controls.revision.valueChanges.subscribe((value) =>
       this.filteredRevisionsByPrefix(value as string)
     );
 
-    this.gitSettingsSubscription =
-      this.gitSettingsService.gitInstances.subscribe((gitSettings) => {
-        this.availableGitInstances = gitSettings;
+    this.gitInstancesService.gitInstances
+      .pipe(untilDestroyed(this))
+      .subscribe((gitInstances) => {
+        this.availableGitInstances = gitInstances;
 
-        if (gitSettings?.length) {
+        if (gitInstances?.length) {
           this.urls.baseUrl.setValidators([Validators.required]);
           this.urls.inputUrl.setValidators([absoluteOrRelativeValidators()]);
           this.form.controls.urls.setAsyncValidators([
@@ -140,7 +140,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.modelSubscription = this.modelService._model.subscribe((model) => {
+    this.modelService.model.pipe(untilDestroyed(this)).subscribe((model) => {
+      this.modelSlug = model?.slug;
       if (model?.tool.name === 'Capella') {
         this.form.controls.entrypoint.addValidators(
           Validators.pattern(/^$|\.aird$/)
@@ -148,46 +149,49 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.paramSubscription = this.route.params
-      .pipe(
-        filter((params) => !!params['git-model']),
-        map((params) => params['git-model'])
-      )
-      .subscribe((gitModelId) => {
-        this.isEditMode = true;
-        this.gitModelId = gitModelId;
-        this.form.disable();
+    this.projectService.project
+      .pipe(untilDestroyed(this))
+      .subscribe((project) => {
+        this.projectSlug = project?.slug;
 
-        this.gitModelSubscription = this.gitModelService.gitModel.subscribe(
-          (gitModel) => {
-            this.gitModel = gitModel;
-            this.fillFormWithGitModel(gitModel!);
-            this.breadCrumbsService.updatePlaceholder({ gitModel });
-            this.gitService.loadPrivateRevisions(
-              gitModel!.path,
-              this.projectService.project?.slug!,
-              this.modelService.model?.slug!,
+        this.route.params
+          .pipe(
+            filter((params) => !!params['git-model']),
+            map((params) => params['git-model'])
+          )
+          .subscribe((gitModelId) => {
+            this.isEditMode = true;
+            this.gitModelId = gitModelId;
+            this.form.disable();
+
+            this.gitModelService.gitModel
+              .pipe(untilDestroyed(this))
+              .subscribe((gitModel) => {
+                this.gitModel = gitModel;
+                this.fillFormWithGitModel(gitModel!);
+
+                this.breadCrumbsService.updatePlaceholder({ gitModel });
+
+                this.gitService.loadPrivateRevisions(
+                  gitModel!.path,
+                  this.projectSlug!,
+                  this.modelSlug!,
+                  gitModelId
+                );
+              });
+
+            this.gitModelService.loadGitModelById(
+              this.projectSlug!,
+              this.modelSlug!,
               gitModelId
             );
-          }
-        );
-
-        this.gitModelService.loadGitModelById(
-          this.projectService.project!.slug,
-          this.modelService.model!.slug,
-          gitModelId
-        );
+          });
       });
 
-    this.gitSettingsService.loadGitInstances();
+    this.gitInstancesService.loadGitInstances();
   }
 
   ngOnDestroy(): void {
-    this.gitSettingsSubscription?.unsubscribe();
-    this.modelSubscription?.unsubscribe();
-    this.revisionsSubscription?.unsubscribe();
-    this.gitModelSubscription?.unsubscribe();
-    this.paramSubscription?.unsubscribe();
     this.breadCrumbsService.updatePlaceholder({ gitModel: undefined });
   }
 
@@ -199,8 +203,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
       ) {
         this.gitService.loadPrivateRevisions(
           this.resultUrl,
-          this.projectService.project?.slug!,
-          this.modelService.model?.slug!,
+          this.projectSlug!,
+          this.modelSlug!,
           this.gitModelId!
         );
       } else {
@@ -240,11 +244,11 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     this.urls.inputUrl.updateValueAndValidity();
 
     if (changedInputUrl && hasAbsoluteUrlPrefix(changedInputUrl)) {
-      let longestMatchingGitSetting =
-        this.findLongestUrlMatchingGitSetting(changedInputUrl);
-      if (longestMatchingGitSetting) {
-        this.selectedGitInstance = longestMatchingGitSetting;
-        this.urls.baseUrl.setValue(longestMatchingGitSetting);
+      let longestMatchingGitInstance =
+        this.findLongestUrlMatchingGitInstance(changedInputUrl);
+      if (longestMatchingGitInstance) {
+        this.selectedGitInstance = longestMatchingGitInstance;
+        this.urls.baseUrl.setValue(longestMatchingGitInstance);
       } else if (this.availableGitInstances?.length) {
         this.selectedGitInstance = undefined;
         this.urls.baseUrl.reset();
@@ -257,8 +261,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     if (this.form.valid) {
       this.gitModelService
         .addGitSource(
-          this.projectService.project?.slug!,
-          this.modelService.model?.slug!,
+          this.projectSlug!,
+          this.modelSlug!,
           this.createGitModelFromForm()
         )
         .subscribe(() => {
@@ -278,8 +282,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
 
       this.gitModelService
         .updateGitRepository(
-          this.projectService.project?.slug!,
-          this.modelService.model?.slug!,
+          this.projectSlug!,
+          this.modelSlug!,
           this.gitModelId!,
           patchGitModel
         )
@@ -311,11 +315,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     }
 
     this.gitModelService
-      .deleteGitSource(
-        this.projectService.project?.slug!,
-        this.modelService.model?.slug!,
-        this.gitModel!
-      )
+      .deleteGitSource(this.projectSlug!, this.modelSlug!, this.gitModel!)
       .subscribe({
         next: () => {
           this.toastService.showSuccess(
@@ -323,8 +323,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
             `${this.gitModel!.path} has been deleted`
           );
           this.router.navigateByUrl(
-            `/project/${this.projectService.project?.slug!}/model/${this
-              .modelService.model?.slug!}`
+            `/project/${this.projectSlug!}/model/${this.modelSlug!}`
           );
         },
         error: () => {
@@ -411,11 +410,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
       if (!this.resultUrl) return of({ required: 'Resulting URL is required' });
 
       return this.gitModelService
-        .validatePath(
-          this.projectService.project?.slug!,
-          this.modelService.model?.slug!,
-          this.resultUrl
-        )
+        .validatePath(this.projectSlug!, this.modelSlug!, this.resultUrl)
         .pipe(
           map((prefixExists: boolean) => {
             if (prefixExists) {
@@ -462,21 +457,21 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     };
   }
 
-  private findLongestUrlMatchingGitSetting(
+  private findLongestUrlMatchingGitInstance(
     url: string
   ): GitInstance | undefined {
-    let longestMatchingGitSetting = undefined;
+    let longestMatchingGitInstance = undefined;
     let longestUrlLength = 0;
-    this.availableGitInstances?.forEach((gitSetting) => {
+    this.availableGitInstances?.forEach((gitInstance) => {
       if (
-        url.startsWith(gitSetting.url) &&
-        gitSetting.url.length > longestUrlLength
+        url.startsWith(gitInstance.url) &&
+        gitInstance.url.length > longestUrlLength
       ) {
-        longestMatchingGitSetting = gitSetting;
-        longestUrlLength = gitSetting.url.length;
+        longestMatchingGitInstance = gitInstance;
+        longestUrlLength = gitInstance.url.length;
       }
     });
 
-    return longestMatchingGitSetting;
+    return longestMatchingGitInstance;
   }
 }

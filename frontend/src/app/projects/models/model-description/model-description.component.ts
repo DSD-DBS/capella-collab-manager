@@ -6,6 +6,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, switchMap, tap } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
@@ -16,6 +17,7 @@ import {
 } from 'src/app/settings/core/tools-settings/tool.service';
 import { ProjectService } from '../../service/project.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-model-description',
   templateUrl: './model-description.component.html',
@@ -30,6 +32,11 @@ export class ModelDescriptionComponent implements OnInit {
   toolNatures?: ToolNature[];
   toolVersions?: ToolVersion[];
 
+  public canDelete: boolean = false;
+
+  private projectSlug?: string = undefined;
+  private modelSlug?: string = undefined;
+
   constructor(
     public modelService: ModelService,
     public projectService: ProjectService,
@@ -40,10 +47,16 @@ export class ModelDescriptionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.modelService._model
-      .pipe(filter(Boolean))
+    this.modelService.model
       .pipe(
+        untilDestroyed(this),
+        filter(Boolean),
         tap((model) => {
+          this.modelSlug = model.slug;
+          this.canDelete = !(
+            model.git_models.length || model.t4c_models.length
+          );
+
           this.form.patchValue({
             description: model.description,
             nature: model.nature?.id,
@@ -61,70 +74,51 @@ export class ModelDescriptionComponent implements OnInit {
         this.toolNatures = result[0];
         this.toolVersions = result[1];
       });
+
+    this.projectService.project
+      .pipe(untilDestroyed(this))
+      .subscribe((project) => (this.projectSlug = project?.slug));
   }
 
   onSubmit(): void {
-    if (
-      this.form.value &&
-      this.modelService.model &&
-      this.projectService.project
-    ) {
+    if (this.form.value && this.modelSlug && this.projectSlug) {
       this.modelService
-        .updateModelDescription(
-          this.projectService.project.slug,
-          this.modelService.model.slug,
-          {
-            description: this.form.value.description || '',
-            nature_id: this.form.value.nature || undefined,
-            version_id: this.form.value.version || undefined,
-          }
-        )
-        .pipe(
-          switchMap((_model) =>
-            this.modelService.getModels(this.projectService.project!.slug)
-          )
-        )
-        .subscribe((models) => {
-          this.modelService._models.next(models);
-          this.router.navigate(['../../..'], { relativeTo: this.route });
-        });
+        .updateModelDescription(this.projectSlug!, this.modelSlug!, {
+          description: this.form.value.description || '',
+          nature_id: this.form.value.nature || undefined,
+          version_id: this.form.value.version || undefined,
+        })
+        .subscribe(() =>
+          this.router.navigate(['../../..'], { relativeTo: this.route })
+        );
     }
   }
 
-  get canDelete(): boolean {
-    const model = this.modelService.model!;
-    return !(model.git_models.length || model.t4c_models.length);
-  }
-
   deleteModel(): void {
-    const model = this.modelService.model!;
-
     if (
       !this.canDelete ||
+      !this.modelSlug ||
       !window.confirm(`Do you really want to delete this model?`)
     ) {
       return;
     }
 
-    this.modelService
-      .deleteModel(this.projectService.project?.slug!, model)
-      .subscribe({
-        next: () => {
-          this.toastService.showSuccess(
-            'Model deleted',
-            `${model.name} has been deleted`
-          );
-          this.modelService._models.next(
-            this.modelService.models?.filter((m) => m.id !== model.id)
-          );
-          this.router.navigate(['../../..'], { relativeTo: this.route });
-        },
-        error: () => {
-          this.toastService.showError(
-            'Model deletion failed',
-            `${model.name} has not been deleted`
-          );
-        },
-      });
+    const modelSlug = this.modelSlug;
+
+    this.modelService.deleteModel(this.projectSlug!, modelSlug).subscribe({
+      next: () => {
+        this.toastService.showSuccess(
+          'Model deleted',
+          `${modelSlug} has been deleted`
+        );
+        this.router.navigate(['../../..'], { relativeTo: this.route });
+      },
+      error: () => {
+        this.toastService.showError(
+          'Model deletion failed',
+          `${modelSlug} has not been deleted`
+        );
+      },
+    });
   }
 }

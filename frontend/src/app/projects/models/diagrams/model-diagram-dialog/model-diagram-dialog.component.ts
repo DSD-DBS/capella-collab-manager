@@ -11,8 +11,6 @@ import {
   DiagramMetadata,
   ModelDiagramService,
 } from 'src/app/projects/models/diagrams/service/model-diagram.service';
-import { Model } from 'src/app/projects/models/service/model.service';
-import { ProjectService } from 'src/app/projects/service/project.service';
 
 @Component({
   selector: 'app-model-diagram-dialog',
@@ -20,9 +18,9 @@ import { ProjectService } from 'src/app/projects/service/project.service';
   styleUrls: ['./model-diagram-dialog.component.css'],
 })
 export class ModelDiagramDialogComponent {
-  diagramMetadata?: DiagramCacheMetadata = undefined;
-  selectedDiagram?: DiagramMetadata = undefined;
-  selectedDiagramContent?: string = undefined;
+  diagramMetadata?: DiagramCacheMetadata;
+  selectedDiagram?: DiagramMetadata;
+  selectedDiagramContent?: string;
 
   search = '';
 
@@ -39,15 +37,12 @@ export class ModelDiagramDialogComponent {
 
   constructor(
     private modelDiagramService: ModelDiagramService,
-    private projectService: ProjectService,
     private dialogRef: MatDialogRef<ModelDiagramDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { model: Model }
+    @Inject(MAT_DIALOG_DATA)
+    public data: { modelSlug: string; projectSlug: string }
   ) {
     this.modelDiagramService
-      .getDiagramMetadata(
-        this.projectService.project!.slug,
-        this.data.model.slug
-      )
+      .getDiagramMetadata(this.data.projectSlug, this.data.modelSlug)
       .subscribe({
         next: (diagramMetadata) => {
           this.diagramMetadata = diagramMetadata;
@@ -60,7 +55,7 @@ export class ModelDiagramDialogComponent {
 
   downloadDiagram(uuid: string) {
     this.modelDiagramService
-      .getDiagram(this.projectService.project!.slug, this.data.model.slug, uuid)
+      .getDiagram(this.data.projectSlug, this.data.modelSlug, uuid)
       .subscribe((response: Blob) => {
         saveAs(response, `${uuid}.svg`);
       });

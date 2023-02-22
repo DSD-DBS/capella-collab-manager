@@ -59,7 +59,7 @@
       (click)="removeUserFromProject(selectedUser.user)"
     >
       <mat-icon>delete</mat-icon> Remove {{ selectedUser.user.name }} from
-      {{ project.name }}
+      {{ project?.name }}
     </button>
     <button
       mat-flat-button

@@ -5,7 +5,8 @@
 
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { filter, Subscription } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   ModelRestrictions,
@@ -17,6 +18,7 @@ import {
 } from 'src/app/projects/models/service/model.service';
 import { ProjectService } from '../../service/project.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-model-restrictions',
   templateUrl: './model-restrictions.component.html',
@@ -24,7 +26,9 @@ import { ProjectService } from '../../service/project.service';
 })
 export class ModelRestrictionsComponent implements OnInit {
   loading = false;
-  modelServiceSubscription?: Subscription;
+
+  private model?: Model;
+  private projectSlug?: string;
 
   constructor(
     public projectService: ProjectService,
@@ -42,11 +46,16 @@ export class ModelRestrictionsComponent implements OnInit {
       this.patchRestrictions();
     });
 
-    this.modelServiceSubscription = this.modelService._model
-      .pipe(filter(Boolean))
-      .subscribe((model: Model) => {
+    this.modelService.model
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe((model) => {
+        this.model = model;
         this.updateRestrictionsForm(model.restrictions);
       });
+
+    this.projectService.project.subscribe(
+      (project) => (this.projectSlug = project?.slug)
+    );
   }
 
   private updateRestrictionsForm(restrictions: ModelRestrictions) {
@@ -64,7 +73,7 @@ export class ModelRestrictionsComponent implements OnInit {
 
   private patchRestrictions() {
     if (
-      JSON.stringify(this.modelService.model?.restrictions) ===
+      JSON.stringify(this.model?.restrictions) ===
       JSON.stringify(this.mapRestrictionsFormToToolModelRestrictionsObject())
     ) {
       return;
@@ -73,14 +82,12 @@ export class ModelRestrictionsComponent implements OnInit {
     this.loading = true;
     this.modelRestrictionService
       .patchModelRestrictions(
-        this.projectService.project!.slug,
-        this.modelService.model!.slug,
+        this.projectSlug!,
+        this.model!.slug,
         this.mapRestrictionsFormToToolModelRestrictionsObject()
       )
-      .subscribe((restrictions: ModelRestrictions) => {
-        const newModel = this.modelService.model;
-        newModel!.restrictions = restrictions;
-        this.modelService._model.next(newModel);
+      .subscribe(() => {
+        this.modelService.loadModelbySlug(this.projectSlug!, this.model?.slug!);
         this.loading = false;
       });
   }

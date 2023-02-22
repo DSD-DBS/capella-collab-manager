@@ -8,25 +8,29 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnDestroy,
+  OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import { ProjectService } from '../../service/project.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-create-model',
   templateUrl: './create-model.component.html',
   styleUrls: ['./create-model.component.css'],
 })
-export class CreateModelComponent implements OnDestroy {
+export class CreateModelComponent implements OnInit {
   @ViewChild('stepper') stepper!: MatStepper;
   @Input() asStepper?: boolean;
   @Input() redirectAfterCompletion: boolean = true;
   @Output() currentStep = new EventEmitter<CreateModelStep>();
+
+  private projectSlug?: string = undefined;
 
   source?: string;
   chosenModelInitOption?: string;
@@ -38,10 +42,10 @@ export class CreateModelComponent implements OnDestroy {
     private modelService: ModelService
   ) {}
 
-  ngOnDestroy(): void {
-    if (!this.detail) {
-      this.modelService._model.next(undefined);
-    }
+  ngOnInit(): void {
+    this.projectService.project
+      .pipe(untilDestroyed(this))
+      .subscribe((project) => (this.projectSlug = project?.slug));
   }
 
   onStepChange(event: StepperSelectionEvent) {
@@ -88,8 +92,8 @@ export class CreateModelComponent implements OnDestroy {
     if (options.created) {
       this.currentStep.emit('complete');
       if (this.redirectAfterCompletion) {
-        this.detail = true;
-        this.router.navigate(['/project', this.projectService.project!.slug]);
+        this.modelService.clearModel();
+        this.router.navigate(['/project', this.projectSlug!]);
       }
     } else {
       this.stepper.previous();

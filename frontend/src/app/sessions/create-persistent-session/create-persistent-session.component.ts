@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Session } from 'src/app/schemes';
 import {
   ToolService,
@@ -14,14 +14,14 @@ import {
 import { SessionService } from '../service/session.service';
 import { UserSessionService } from '../service/user-session.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-create-persistent-session',
   templateUrl: './create-persistent-session.component.html',
   styleUrls: ['./create-persistent-session.component.css'],
 })
-export class CreatePersistentSessionComponent implements OnInit, OnDestroy {
-  persistentSession?: Session = undefined;
-  private persistentSessionsSubscription?: Subscription;
+export class CreatePersistentSessionComponent implements OnInit {
+  persistentSession?: Session;
 
   versions: ToolVersion[] = [];
 
@@ -39,14 +39,9 @@ export class CreatePersistentSessionComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.toolService.getTools().subscribe();
 
-    this.persistentSessionsSubscription =
-      this.userSessionService.persistentSessions.subscribe(
-        (sessions) => (this.persistentSession = sessions?.at(0))
-      );
-  }
-
-  ngOnDestroy(): void {
-    this.persistentSessionsSubscription?.unsubscribe();
+    this.userSessionService.persistentSessions
+      .pipe(untilDestroyed(this))
+      .subscribe((sessions) => (this.persistentSession = sessions?.at(0)));
   }
 
   requestPersistentSession() {

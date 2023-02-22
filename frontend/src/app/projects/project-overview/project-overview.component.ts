@@ -4,7 +4,6 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { tap } from 'rxjs';
 import { ProjectService, UserMetadata } from '../service/project.service';
 
 @Component({
@@ -13,15 +12,10 @@ import { ProjectService, UserMetadata } from '../service/project.service';
   styleUrls: ['./project-overview.component.css'],
 })
 export class ProjectOverviewComponent implements OnInit {
-  loading = true;
-
   constructor(public projectService: ProjectService) {}
 
   ngOnInit() {
-    this.projectService
-      .list()
-      .pipe(tap(() => (this.loading = false)))
-      .subscribe();
+    this.projectService.loadProjects();
   }
 
   sumUsers(user: UserMetadata): number {

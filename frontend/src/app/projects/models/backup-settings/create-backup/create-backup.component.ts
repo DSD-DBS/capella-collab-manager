@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -11,51 +11,57 @@ import {
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import {
+  MatDialogRef as MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import {
   BackupService,
   PostPipeline,
 } from 'src/app/projects/models/backup-settings/service/backup.service';
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
-import { ModelService } from 'src/app/projects/models/service/model.service';
 import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { ProjectService } from 'src/app/projects/service/project.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-create-backup',
   templateUrl: './create-backup.component.html',
   styleUrls: ['./create-backup.component.css'],
 })
-export class CreateBackupComponent {
+export class CreateBackupComponent implements OnInit {
   t4cAndGitModelExists = false;
 
   constructor(
     public gitModelService: GitModelService,
     public t4cModelService: T4CModelService,
+    @Inject(MAT_DIALOG_DATA)
+    public data: { projectSlug: string; modelSlug: string },
     private backupService: BackupService,
-    private dialogRef: MatDialogRef<CreateBackupComponent>,
-    private projectService: ProjectService,
-    private modelService: ModelService
-  ) {
-    this.t4cModelService
-      .listT4CModels(
-        this.projectService.project!.slug,
-        this.modelService.model!.slug
-      )
-      .subscribe();
+    private dialogRef: MatDialogRef<CreateBackupComponent>
+  ) {}
 
+  ngOnInit(): void {
+    this.t4cModelService
+      .listT4CModels(this.data.projectSlug, this.data.modelSlug)
+      .subscribe();
     this.gitModelService.loadGitModels(
-      this.projectService.project!.slug,
-      this.modelService.model!.slug
+      this.data.projectSlug,
+      this.data.modelSlug
     );
 
     combineLatest([
       this.gitModelService.gitModels,
       this.t4cModelService._t4cModels.asObservable(),
-    ]).subscribe(([gitModels, t4cModels]) => {
-      this.t4cAndGitModelExists = !!(gitModels?.length && t4cModels?.length);
-    });
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        ([gitModels, t4cModels]) =>
+          (this.t4cAndGitModelExists = !!(
+            gitModels?.length && t4cModels?.length
+          ))
+      );
   }
 
   createBackupForm = new FormGroup({
@@ -87,9 +93,9 @@ export class CreateBackupComponent {
       };
       this.backupService
         .createBackup(
-          this.projectService.project!.slug,
-          this.modelService.model!.slug,
-          createBackupformValue as unknown as PostPipeline
+          this.data.projectSlug,
+          this.data.modelSlug,
+          createBackupformValue as PostPipeline
         )
         .subscribe(() => {
           this.dialogRef.close(true);

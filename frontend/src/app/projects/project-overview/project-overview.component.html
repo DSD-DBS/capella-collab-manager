@@ -15,11 +15,11 @@
     </mat-card>
   </a>
   <app-mat-card-overview-skeleton-loader
-    [loading]="loading"
+    [loading]="(projectService.projects | async) === undefined"
   ></app-mat-card-overview-skeleton-loader>
-  <ng-container *ngIf="!loading">
+  <ng-container *ngIf="projectService.projects | async">
     <a
-      *ngFor="let project of projectService.projects"
+      *ngFor="let project of (projectService.projects | async)!"
       [routerLink]="['/project', project.slug]"
     >
       <mat-card matRipple class="mat-card-overview">

@@ -4,14 +4,14 @@
  -->
 
 <div
-  *ngIf="projectService.project && modelService.model"
+  *ngIf="(projectService.project | async) && (modelService.model | async)"
   class="wrapper flex-center"
 >
   <mat-card class="section-card">
     <h2>
       Add a {{ asStepper ? "primary" : "" }} source for the model “{{
-        modelService.model.name
-      }}” of the project “{{ projectService.project.name }}”.
+        (modelService.model | async)!.name
+      }}” of the project “{{ (projectService.project | async)?.name }}”.
     </h2>
     <form [formGroup]="form">
       <fieldset *ngIf="!asStepper && isEditMode">
@@ -28,9 +28,9 @@
               [value]="selectedGitInstance"
             >
               <mat-option
-                *ngFor="let gitSetting of availableGitInstances"
-                [value]="gitSetting"
-                >{{ gitSetting.url }}</mat-option
+                *ngFor="let gitInstance of availableGitInstances"
+                [value]="gitInstance"
+                >{{ gitInstance.url }}</mat-option
               >
             </mat-select>
             <mat-error *ngIf="urls.baseUrl.errors?.required">

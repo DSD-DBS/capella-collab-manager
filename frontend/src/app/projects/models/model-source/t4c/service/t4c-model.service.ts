@@ -25,8 +25,8 @@ export class T4CModelService {
     return this._t4cModels.value;
   }
 
-  urlFactory(project_slug: string, model_slug: string): string {
-    return `${environment.backend_url}/projects/${project_slug}/models/${model_slug}/modelsources/t4c`;
+  urlFactory(projectSlug: string, modelSlug: string): string {
+    return `${environment.backend_url}/projects/${projectSlug}/models/${modelSlug}/modelsources/t4c`;
   }
 
   listT4CModels(
@@ -39,21 +39,21 @@ export class T4CModelService {
   }
 
   getT4CModel(
-    project_slug: string,
-    model_slug: string,
+    projectSlug: string,
+    modelSlug: string,
     id: number
   ): Observable<T4CModel> {
     return this.http.get<T4CModel>(
-      `${this.urlFactory(project_slug, model_slug)}/${id}`
+      `${this.urlFactory(projectSlug, modelSlug)}/${id}`
     );
   }
 
   createT4CModel(
-    project_slug: string,
-    model_slug: string,
+    projectSlug: string,
+    modelSlug: string,
     body: SubmitT4CModel
   ): Observable<T4CModel> {
-    return this.http.post<T4CModel>(this.urlFactory(project_slug, model_slug), {
+    return this.http.post<T4CModel>(this.urlFactory(projectSlug, modelSlug), {
       t4c_instance_id: body.t4cInstanceId,
       t4c_repository_id: body.t4cRepositoryId,
       name: body.name,
@@ -61,13 +61,13 @@ export class T4CModelService {
   }
 
   patchT4CModel(
-    project_slug: string,
-    model_slug: string,
+    projectSlug: string,
+    modelSlug: string,
     t4c_model_id: number,
     body: SubmitT4CModel
   ): Observable<T4CModel> {
     return this.http.patch<T4CModel>(
-      `${this.urlFactory(project_slug, model_slug)}/${t4c_model_id}`,
+      `${this.urlFactory(projectSlug, modelSlug)}/${t4c_model_id}`,
       {
         t4c_instance_id: body.t4cInstanceId,
         t4c_repository_id: body.t4cRepositoryId,

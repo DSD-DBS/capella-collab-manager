@@ -3,16 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { combineLatest, filter, map, Subscription, switchMap, tap } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { combineLatest, filter, map, switchMap, tap } from 'rxjs';
 import {
   Model,
   ModelService,
@@ -26,12 +20,13 @@ import {
 import { GitModelService } from '../../project-detail/model-overview/model-detail/git-model.service';
 import { ProjectService } from '../../service/project.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-init-model',
   templateUrl: './init-model.component.html',
   styleUrls: ['./init-model.component.css'],
 })
-export class InitModelComponent implements OnInit, OnDestroy {
+export class InitModelComponent implements OnInit {
   @Output() create = new EventEmitter<{ created: boolean }>();
   @Input() asStepper?: boolean;
 
@@ -40,7 +35,8 @@ export class InitModelComponent implements OnInit, OnDestroy {
 
   buttonDisabled: boolean = false;
 
-  private modelSubscription?: Subscription;
+  private projectSlug?: string = undefined;
+  private modelSlug?: string = undefined;
 
   constructor(
     public projectService: ProjectService,
@@ -58,10 +54,12 @@ export class InitModelComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    this.modelSubscription = this.modelService._model
-      .pipe(filter(Boolean))
+    this.modelService.model
       .pipe(
+        untilDestroyed(this),
+        filter(Boolean),
         tap((model) => {
+          this.modelSlug = model.slug;
           if (model.version) {
             this.form.controls.version.patchValue(model.version.id);
           }
@@ -81,26 +79,22 @@ export class InitModelComponent implements OnInit, OnDestroy {
         this.toolVersions = result[0];
         this.toolNatures = result[1];
       });
-  }
 
-  ngOnDestroy(): void {
-    this.modelSubscription?.unsubscribe();
+    this.projectService.project
+      .pipe(untilDestroyed(this))
+      .subscribe((project) => (this.projectSlug = project?.slug));
   }
 
   onSubmit(): void {
-    if (
-      this.form.valid &&
-      this.modelService.model &&
-      this.projectService.project
-    ) {
+    if (this.form.valid && this.modelSlug && this.projectSlug) {
       this.modelService
         .setToolDetailsForModel(
-          this.projectService.project.slug,
-          this.modelService.model.slug,
+          this.projectSlug!,
+          this.modelSlug!,
           this.form.value.version!,
           this.form.value.nature!
         )
-        .subscribe((_) => {
+        .subscribe(() => {
           this.create.emit({ created: true });
           this.buttonDisabled = true;
         });

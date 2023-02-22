@@ -4,11 +4,11 @@
  -->
 
 <div class="wrapper">
-  <div class="title" *ngIf="availableGitSettings.length">
+  <div class="title" *ngIf="availableGitInstances.length">
     Existing instances
   </div>
-  <div class="instances" *ngIf="availableGitSettings.length">
-    <mat-card *ngFor="let instance of availableGitSettings">
+  <div class="instances" *ngIf="availableGitInstances.length">
+    <mat-card *ngFor="let instance of availableGitInstances">
       <div class="mat-title">
         <div class="instance-head">
           {{ instance.name }}
@@ -21,7 +21,7 @@
           >
             <mat-icon aria-label="Edit the source">settings</mat-icon>
           </a>
-          <button mat-icon-button (click)="deleteGitSettings(instance.id)">
+          <button mat-icon-button (click)="deleteGitInstance(instance.id)">
             <mat-icon aria-label="Delete the source">delete</mat-icon>
           </button>
         </div>
@@ -88,7 +88,7 @@
   <button
     mat-raised-button
     [disabled]="!gitInstancesForm.valid"
-    (click)="createGitSettings()"
+    (click)="createGitInstance()"
   >
     Create Integration
   </button>

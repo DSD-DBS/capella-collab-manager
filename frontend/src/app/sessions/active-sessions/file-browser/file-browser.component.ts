@@ -5,7 +5,7 @@
 
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
   MAT_DIALOG_DATA,
@@ -13,7 +13,7 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { saveAs } from 'file-saver';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { PathNode, Session } from 'src/app/schemes';
 import { LoadFilesService } from 'src/app/services/load-files/load-files.service';
@@ -24,10 +24,7 @@ import { FileExistsDialogComponent } from './file-exists-dialog/file-exists-dial
   templateUrl: 'file-browser.component.html',
   styleUrls: ['file-browser.component.css'],
 })
-export class FileBrowserComponent implements OnInit, OnDestroy {
-  private subscription: Subscription | undefined;
-  private downloadSubscription: Subscription | undefined;
-
+export class FileBrowserComponent implements OnInit {
   files: Array<[File, string]> = [];
   uploadProgress: number | null = null;
   loadingFiles = false;
@@ -62,10 +59,6 @@ export class FileBrowserComponent implements OnInit, OnDestroy {
           this.loadingFiles = false;
         },
       });
-  }
-
-  ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
   }
 
   hasChild = (_: number, node: PathNode) => !!node.children;
@@ -231,51 +224,37 @@ export class FileBrowserComponent implements OnInit, OnDestroy {
     });
     formData.append('id', this.session.id);
 
-    this.subscription = this.loadService
-      .upload(this.session.id, formData)
-      .subscribe({
-        next: (event: HttpEvent<any>) => {
-          if (event.type == HttpEventType.Response) {
-            this.dialogRef.close();
-          } else if (
-            event.type == HttpEventType.UploadProgress &&
-            event.total
-          ) {
-            this.uploadProgress = Math.round(
-              100 * (event.loaded / event.total)
-            );
-          }
-        },
-        error: () => {
-          this.reset();
-        },
-      });
+    this.loadService.upload(this.session.id, formData).subscribe({
+      next: (event: HttpEvent<any>) => {
+        if (event.type == HttpEventType.Response) {
+          this.dialogRef.close();
+        } else if (event.type == HttpEventType.UploadProgress && event.total) {
+          this.uploadProgress = Math.round(100 * (event.loaded / event.total));
+        }
+      },
+      error: () => {
+        this.reset();
+      },
+    });
   }
 
   download(filename: string) {
     this.session.download_in_progress = true;
-    this.downloadSubscription = this.loadService
-      .download(this.session.id, filename)
-      .subscribe({
-        next: (response: Blob) => {
-          saveAs(
-            response,
-            `${filename
-              .replace(/^[\/\\: ]+/, '')
-              .replace(/[\/\\: ]+/g, '_')}.zip`
-          );
-          this.session.download_in_progress = false;
-        },
-        error: () => {
-          this.session.download_in_progress = false;
-        },
-      });
+    this.loadService.download(this.session.id, filename).subscribe({
+      next: (response: Blob) => {
+        saveAs(
+          response,
+          `${filename.replace(/^[\/\\: ]+/, '').replace(/[\/\\: ]+/g, '_')}.zip`
+        );
+        this.session.download_in_progress = false;
+      },
+      error: () => {
+        this.session.download_in_progress = false;
+      },
+    });
   }
 
   reset() {
-    this.subscription?.unsubscribe();
-    this.downloadSubscription?.unsubscribe();
     this.uploadProgress = null;
-    this.subscription = undefined;
   }
 }

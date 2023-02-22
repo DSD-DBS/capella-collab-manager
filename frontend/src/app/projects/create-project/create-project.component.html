@@ -66,11 +66,9 @@
     </mat-step>
 
     <mat-step label="Add team members">
-      <div *ngIf="projectService.project" class="flex-center">
+      <div *ngIf="projectService.project | async" class="flex-center">
         <div>
-          <app-project-user-settings
-            [project]="projectService.project"
-          ></app-project-user-settings>
+          <app-project-user-settings></app-project-user-settings>
           <mat-card class="mat-card-default">
             <div class="flex-space-between">
               <button
@@ -100,7 +98,10 @@
           <div class="flex-center">
             <a
               mat-flat-button
-              [routerLink]="['/project', projectService.project?.slug]"
+              [routerLink]="[
+                '/project',
+                (projectService.project | async)?.slug
+              ]"
               [color]="getColorByModelCreationStep()"
               data-testId="a-skipModelAndFinishProjectCreation"
             >
