@@ -91,8 +91,8 @@ import { GuacamoleComponent } from './sessions/session-created/guacamole/guacamo
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { SessionsComponent } from './sessions/sessions.component';
 import { ActiveSessionsComponent } from './sessions/user-sessions-wrapper/active-sessions/active-sessions.component';
-import { FileBrowserComponent } from './sessions/user-sessions-wrapper/active-sessions/file-browser/file-browser.component';
-import { FileExistsDialogComponent } from './sessions/user-sessions-wrapper/active-sessions/file-browser/file-exists-dialog/file-exists-dialog.component';
+import { FileBrowserDialogComponent } from './sessions/user-sessions-wrapper/active-sessions/file-browser-dialog/file-browser-dialog.component';
+import { FileExistsDialogComponent } from './sessions/user-sessions-wrapper/active-sessions/file-browser-dialog/file-exists-dialog/file-exists-dialog.component';
 import { CreatePersistentSessionComponent } from './sessions/user-sessions-wrapper/create-sessions/create-persistent-session/create-persistent-session.component';
 import { CreateReadonlyModelOptionsComponent } from './sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-model-options/create-readonly-model-options.component';
 import { CreateReadonlySessionDialogComponent } from './sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-session-dialog.component';
@@ -139,7 +139,7 @@ import { SettingsComponent } from './settings/settings.component';
     EditGitSettingsComponent,
     EditT4CInstanceComponent,
     EventsComponent,
-    FileBrowserComponent,
+    FileBrowserDialogComponent,
     FileExistsDialogComponent,
     FooterComponent,
     FormFieldSkeletonLoaderComponent,

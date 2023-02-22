@@ -11,7 +11,7 @@ import { DeleteSessionDialogComponent } from '../../delete-session-dialog/delete
 import { SessionService } from '../../service/session.service';
 import { UserSessionService } from '../../service/user-session.service';
 import { GuacamoleComponent } from '../../session-created/guacamole/guacamole.component';
-import { FileBrowserComponent } from './file-browser/file-browser.component';
+import { FileBrowserDialogComponent } from './file-browser-dialog/file-browser-dialog.component';
 
 @Component({
   selector: 'app-active-sessions',
@@ -45,6 +45,6 @@ export class ActiveSessionsComponent {
   }
 
   uploadFileDialog(session: Session): void {
-    this.dialog.open(FileBrowserComponent, { data: session });
+    this.dialog.open(FileBrowserDialogComponent, { data: session });
   }
 }
