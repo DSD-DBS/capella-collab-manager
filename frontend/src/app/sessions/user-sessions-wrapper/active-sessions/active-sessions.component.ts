@@ -10,8 +10,8 @@ import { BeautifyService } from 'src/app/services/beatify/beautify.service';
 import { DeleteSessionDialogComponent } from '../../delete-session-dialog/delete-session-dialog.component';
 import { SessionService } from '../../service/session.service';
 import { UserSessionService } from '../../service/user-session.service';
+import { GuacamoleComponent } from './connect/guacamole/guacamole.component';
 import { FileBrowserDialogComponent } from './file-browser-dialog/file-browser-dialog.component';
-import { GuacamoleComponent } from './session-created/guacamole/guacamole.component';
 
 @Component({
   selector: 'app-active-sessions',
