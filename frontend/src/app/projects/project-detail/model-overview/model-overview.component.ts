@@ -15,7 +15,7 @@ import {
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
-import { NewReadonlySessionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-readonly-session/new-readonly-session-dialog.component';
+import { CreateReadonlySessionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-session-dialog.component';
 import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { ProjectService } from '../../service/project.service';
 
@@ -78,7 +78,7 @@ export class ModelOverviewComponent implements OnInit {
   }
 
   newReadonlySession(model: Model) {
-    this.dialog.open(NewReadonlySessionDialogComponent, {
+    this.dialog.open(CreateReadonlySessionDialogComponent, {
       data: { projectSlug: this.projectSlug, model: model },
     });
   }

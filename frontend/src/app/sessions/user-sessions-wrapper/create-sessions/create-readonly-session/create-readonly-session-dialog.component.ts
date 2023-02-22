@@ -20,11 +20,11 @@ import { ModelOptions } from 'src/app/sessions/user-sessions-wrapper/create-sess
 
 @UntilDestroy()
 @Component({
-  selector: 'new-readonly-session-dialog',
-  templateUrl: './new-readonly-session-dialog.component.html',
-  styleUrls: ['./new-readonly-session-dialog.component.css'],
+  selector: 'create-readonly-session-dialog',
+  templateUrl: './create-readonly-session-dialog.component.html',
+  styleUrls: ['./create-readonly-session-dialog.component.css'],
 })
-export class NewReadonlySessionDialogComponent implements OnInit {
+export class CreateReadonlySessionDialogComponent implements OnInit {
   constructor(
     public sessionService: SessionService,
     public modelService: ModelService,
