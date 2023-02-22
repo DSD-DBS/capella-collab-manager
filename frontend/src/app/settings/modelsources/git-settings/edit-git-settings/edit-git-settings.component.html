@@ -25,6 +25,11 @@
       <mat-form-field class="form-field-default" appearance="fill">
         <mat-label>Name</mat-label>
         <input matInput formControlName="name" />
+        <mat-error *ngIf="gitInstanceForm.controls.name.errors?.uniqueName"
+          >A instance with the name "{{
+            gitInstanceForm.controls.name.errors?.uniqueName.value
+          }}" already exists</mat-error
+        >
       </mat-form-field>
       <br />
       <mat-form-field class="form-field-default" appearance="fill">
@@ -42,12 +47,13 @@
       </mat-form-field>
     </form>
     <div class="flex-space-between">
-      <a mat-raised-button (click)="goBack()"> Back </a>
+      <a mat-raised-button [routerLink]="'../..'"> Back </a>
       <button
         [class]="'right-button'"
         mat-flat-button
         color="primary"
         (click)="editGitInstance()"
+        [disabled]="!gitInstanceForm.valid"
       >
         Save changes
       </button>

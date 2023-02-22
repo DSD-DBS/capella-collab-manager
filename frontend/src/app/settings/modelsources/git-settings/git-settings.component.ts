@@ -4,23 +4,15 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter } from 'rxjs';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { absoluteUrlValidator } from 'src/app/helpers/validators/url-validator';
 import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
 import {
+  BasicGitInstance,
   GitInstance,
   GitInstancesService,
-  GitType,
 } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
 
 @UntilDestroy()
@@ -30,28 +22,23 @@ import {
   styleUrls: ['./git-settings.component.css'],
 })
 export class GitSettingsComponent implements OnInit {
-  public availableGitInstances: GitInstance[] = [];
+  constructor(
+    public dialog: MatDialog,
+    public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>,
+    public gitInstancesService: GitInstancesService
+  ) {}
 
   gitInstancesForm = new FormGroup({
     type: new FormControl('', Validators.required),
-    name: new FormControl('', [Validators.required, this.nameValidator()]),
+    name: new FormControl('', {
+      validators: Validators.required,
+      asyncValidators: this.gitInstancesService.asyncNameValidator(),
+    }),
     url: new FormControl('', [Validators.required, absoluteUrlValidator()]),
     apiURL: new FormControl('', absoluteUrlValidator()),
   });
 
-  constructor(
-    public dialog: MatDialog,
-    public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>,
-    private gitInstancesService: GitInstancesService
-  ) {}
-
   ngOnInit(): void {
-    this.gitInstancesService.gitInstances
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((gitInstances) => {
-        this.availableGitInstances = gitInstances;
-      });
-
     this.gitInstancesService.loadGitInstances();
   }
 
@@ -63,42 +50,20 @@ export class GitSettingsComponent implements OnInit {
       }
 
       this.gitInstancesService
-        .createGitInstance({
-          name: this.gitInstancesForm.value.name!,
-          url: url,
-          apiURL: this.gitInstancesForm.value.apiURL!,
-          type: this.gitInstancesForm.value.type as GitType,
-        })
+        .createGitInstance(this.gitInstancesForm.value as BasicGitInstance)
         .subscribe(() => this.gitInstancesForm.reset());
     }
   }
 
-  deleteGitInstance(id: number): void {
-    const toDeleteGitInstance: GitInstance = this.availableGitInstances.find(
-      (gitInstance) => gitInstance.id == id
-    )!;
-    this.dialog
-      .open(DeleteGitSettingsDialogComponent, {
-        data: toDeleteGitInstance,
-      })
-      .afterClosed()
-      .subscribe((response) => {
-        if (response) {
-          this.gitInstancesService.deleteGitInstance(id).subscribe();
-        }
-      });
-  }
+  deleteGitInstance(instance: GitInstance): void {
+    const dialogRef = this.dialog.open(DeleteGitSettingsDialogComponent, {
+      data: instance,
+    });
 
-  nameValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const existingGitInstance = this.availableGitInstances.find(
-        (gitInstance) => gitInstance.name == control.value
-      );
-
-      if (existingGitInstance) {
-        return { uniqueName: { value: existingGitInstance.name } };
+    dialogRef.afterClosed().subscribe((response) => {
+      if (response) {
+        this.gitInstancesService.deleteGitInstance(instance.id).subscribe();
       }
-      return null;
-    };
+    });
   }
 }
