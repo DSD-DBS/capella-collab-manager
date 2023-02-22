@@ -43,7 +43,9 @@ logging.basicConfig(level=config["logging"]["level"], handlers=handlers)
 
 async def startup():
     migration.migrate_db(engine, config["database"]["url"])
-    operators.load_operator()
+
+    # This is needed to load the Kubernetes configuration at startup
+    operators.get_operator()
 
     logging.getLogger("uvicorn.access").disabled = True
     logging.getLogger("uvicorn.error").disabled = True

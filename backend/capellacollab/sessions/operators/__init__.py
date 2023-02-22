@@ -7,10 +7,6 @@ import functools
 from capellacollab.sessions.operators.k8s import KubernetesOperator
 
 
-def load_operator():
-    get_operator()
-
-
 @functools.lru_cache
 def get_operator():
     return KubernetesOperator()
