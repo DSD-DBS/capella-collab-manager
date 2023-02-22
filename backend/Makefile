@@ -33,7 +33,7 @@ app:
 		source $(VENV)/Scripts/activate;
 	fi
 	export OAUTHLIB_INSECURE_TRANSPORT=1;
-	uvicorn --reload --reload-dir $$(pwd) --reload-include "*.json" --reload-include "*.py" --reload-include "*.yaml" --reload-include "*.yml" capellacollab.__main__:app
+	uvicorn --reload --reload-dir $$(pwd) --reload-include "*.py" --reload-include "*.yaml" --reload-include "*.yml" capellacollab.__main__:app
 
 
 install:
