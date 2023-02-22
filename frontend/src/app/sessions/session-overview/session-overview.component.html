@@ -59,9 +59,7 @@
     <ng-container matColumnDef="tool">
       <th mat-header-cell *matHeaderCellDef>Tool</th>
       <td mat-cell *matCellDef="let element">
-        <div *ngIf="element.type === 'readonly'">
-          {{ element.version?.tool?.name }} ({{ element.version?.name }})
-        </div>
+        {{ element.version?.tool?.name }} ({{ element.version?.name }})
       </td>
     </ng-container>
 
