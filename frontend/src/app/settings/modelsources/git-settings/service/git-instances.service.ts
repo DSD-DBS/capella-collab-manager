@@ -113,15 +113,14 @@ export type BackendBasicGitInstance = {
   type: GitType;
 };
 
-export type BasicGitInstance = {
+export type BasicGitInstance = Omit<GitInstance, 'id'>;
+
+export type GitInstance = {
+  id: number;
   name: string;
   url: string;
   apiURL?: string;
   type: GitType;
-};
-
-export type GitInstance = BasicGitInstance & {
-  id: number;
 };
 
 export type GitType = 'general' | 'gitlab' | 'github' | 'azuredevops';
