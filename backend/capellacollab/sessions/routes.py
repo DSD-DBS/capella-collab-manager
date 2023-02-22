@@ -220,7 +220,7 @@ def request_session(
         git_repos_json=list(models_as_json(entries_with_models)),
     )
 
-    response = create_database_and_guacamole_session(
+    return create_database_and_guacamole_session(
         db,
         schema.WorkspaceType.READONLY,
         session,
@@ -231,9 +231,6 @@ def request_session(
         project,
         None,
     )
-    response.state = "New"
-    response.last_seen = "UNKNOWN"
-    return response
 
 
 def models_as_json(
@@ -379,10 +376,10 @@ def request_persistent_session(
             schema.WorkspaceType.PERSISTENT,
             session,
             owner,
-            jupyter_token,
             tool,
             version,
             None,
+            jupyter_token=jupyter_token,
         )
 
     else:
@@ -414,8 +411,6 @@ def request_persistent_session(
         )
 
     response.warnings = warnings
-    response.state = "New"
-    response.last_seen = "UNKNOWN"
 
     return response
 
@@ -469,10 +464,10 @@ def create_database_session(
     type: schema.WorkspaceType,
     session: dict[str, t.Any],
     owner: str,
-    token: str,
     tool: tools_models.Tool,
     version: tools_models.Version,
     project: DatabaseProject | None,
+    **kwargs,
 ) -> DatabaseSession:
     database_model = DatabaseSession(
         tool=tool,
@@ -480,10 +475,14 @@ def create_database_session(
         owner_name=owner,
         project=project,
         type=type,
-        jupyter_token=token,
         **session,
+        **kwargs,
     )
-    return crud.create_session(db=db, session=database_model)
+    response = crud.create_session(db=db, session=database_model)
+    response.state = "New"
+    response.last_seen = "UNKNOWN"
+
+    return response
 
 
 def create_database_and_guacamole_session(
@@ -516,20 +515,20 @@ def create_database_and_guacamole_session(
         guacamole_token, guacamole_username, guacamole_identifier
     )
 
-    database_model = DatabaseSession(
+    return create_database_session(
+        db,
+        type,
+        session,
+        owner,
+        tool,
+        version,
+        project,
+        t4c_password=t4c_password,
+        rdp_password=rdp_password,
         guacamole_username=guacamole_username,
         guacamole_password=guacamole_password,
-        rdp_password=rdp_password,
         guacamole_connection_id=guacamole_identifier,
-        owner_name=owner,
-        project=project,
-        type=type,
-        t4c_password=t4c_password,
-        tool=tool,
-        version=version,
-        **session,
     )
-    return crud.create_session(db=db, session=database_model)
 
 
 @router.delete("/{session_id}", status_code=204)
