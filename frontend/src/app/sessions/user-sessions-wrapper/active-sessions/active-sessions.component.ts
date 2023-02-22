@@ -5,12 +5,12 @@
 
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Session } from 'src/app/schemes';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
-import { Session } from '../../schemes';
-import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
-import { SessionService } from '../service/session.service';
-import { UserSessionService } from '../service/user-session.service';
-import { GuacamoleComponent } from '../session-created/guacamole/guacamole.component';
+import { DeleteSessionDialogComponent } from '../../delete-session-dialog/delete-session-dialog.component';
+import { SessionService } from '../../service/session.service';
+import { UserSessionService } from '../../service/user-session.service';
+import { GuacamoleComponent } from '../../session-created/guacamole/guacamole.component';
 import { FileBrowserComponent } from './file-browser/file-browser.component';
 
 @Component({
