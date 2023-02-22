@@ -40,7 +40,7 @@ def upgrade():
         [
             {
                 "environment": "default",
-                "persistentworkspace": "/t4c/client/remote",
+                "persistentworkspace": "/capella/remote",
                 "readonlyworkspace": "/capella/readonly",
             }
         ],
