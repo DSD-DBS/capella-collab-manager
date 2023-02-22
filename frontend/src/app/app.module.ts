@@ -90,12 +90,12 @@ import { ActiveSessionsComponent } from './sessions/active-sessions/active-sessi
 import { FileBrowserComponent } from './sessions/active-sessions/file-browser/file-browser.component';
 import { FileExistsDialogComponent } from './sessions/active-sessions/file-browser/file-exists-dialog/file-exists-dialog.component';
 import { DeleteSessionDialogComponent } from './sessions/delete-session-dialog/delete-session-dialog.component';
-import { NewReadonlyModelOptionsComponent } from './sessions/new-readonly-session-dialog/new-readonly-model-options/new-readonly-model-options.component';
-import { NewReadonlySessionDialogComponent } from './sessions/new-readonly-session-dialog/new-readonly-session-dialog.component';
 import { GuacamoleComponent } from './sessions/session-created/guacamole/guacamole.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { SessionsComponent } from './sessions/sessions.component';
 import { CreatePersistentSessionComponent } from './sessions/user-sessions-wrapper/create-sessions/create-persistent-session/create-persistent-session.component';
+import { NewReadonlyModelOptionsComponent } from './sessions/user-sessions-wrapper/create-sessions/create-readonly-session/new-readonly-model-options/new-readonly-model-options.component';
+import { NewReadonlySessionDialogComponent } from './sessions/user-sessions-wrapper/create-sessions/create-readonly-session/new-readonly-session-dialog.component';
 import { UserSessionsWrapperComponent } from './sessions/user-sessions-wrapper/user-sessions-wrapper.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { ToolDeletionDialogComponent } from './settings/core/tools-settings/tool-details/tool-deletion-dialog/tool-deletion-dialog.component';

@@ -14,8 +14,8 @@ import {
 } from 'src/app/projects/models/service/model.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { NewReadonlySessionDialogComponent } from 'src/app/sessions/new-readonly-session-dialog/new-readonly-session-dialog.component';
 import { SessionService } from 'src/app/sessions/service/session.service';
+import { NewReadonlySessionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-readonly-session/new-readonly-session-dialog.component';
 import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { ProjectService } from '../../service/project.service';
 
