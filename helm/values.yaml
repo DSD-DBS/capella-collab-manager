@@ -38,8 +38,8 @@ docker:
 
     guacamole:
       # The registry needs to specified here!
-      guacamole: docker.io/guacamole/guacamole
-      guacd: docker.io/guacamole/guacd
+      guacamole: docker.io/guacamole/guacamole:1.4.0
+      guacd: docker.io/guacamole/guacd:1.4.0
 
     prometheus: /prom/prometheus
 
