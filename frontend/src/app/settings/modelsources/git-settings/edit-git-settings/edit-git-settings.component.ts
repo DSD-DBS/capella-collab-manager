@@ -4,10 +4,10 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import {
   GitInstance,
@@ -23,34 +23,44 @@ import {
 export class EditGitSettingsComponent implements OnInit, OnDestroy {
   id: number = -1;
 
-  gitInstanceForm = new FormGroup({
-    type: new FormControl('', Validators.required),
-    name: new FormControl('', Validators.required),
-    url: new FormControl('', Validators.required),
-    apiURL: new FormControl(''),
+  gitInstanceForm = this.fb.group({
+    type: ['', Validators.required],
+    name: ['', Validators.required],
+    url: ['', Validators.required],
+    apiURL: [''],
   });
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private gitInstancesService: GitInstancesService,
-    private breadcrumbsService: BreadcrumbsService
+    private breadcrumbsService: BreadcrumbsService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.gitInstancesService.gitInstance
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((instance: GitInstance) => {
+        this.gitInstanceForm.controls.name.addAsyncValidators(
+          this.gitInstancesService.asyncNameValidator(instance)
+        );
+
         this.gitInstanceForm.patchValue(instance);
         this.breadcrumbsService.updatePlaceholder({ gitInstance: instance });
       });
 
-    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.id = params['id'];
-      if (!!this.id) {
-        this.gitInstancesService.loadGitInstanceById(this.id);
-      }
-    });
+    this.route.params
+      .pipe(
+        untilDestroyed(this),
+        map((params) => parseInt(params.id))
+      )
+      .subscribe((instanceId) => {
+        this.gitInstancesService.loadGitInstanceById(instanceId);
+        this.id = instanceId;
+      });
+
+    this.gitInstancesService.loadGitInstances();
   }
 
   ngOnDestroy(): void {
@@ -63,10 +73,8 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
         ...this.gitInstanceForm.value,
         id: this.id,
       } as GitInstance)
-      .subscribe((_) => this.goBack());
-  }
-
-  goBack(): void {
-    this.router.navigateByUrl('/settings/modelsources/git');
+      .subscribe(() =>
+        this.router.navigate(['../..'], { relativeTo: this.route })
+      );
   }
 }

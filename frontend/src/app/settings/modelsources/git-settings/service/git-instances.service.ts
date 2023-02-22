@@ -5,7 +5,12 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  ValidationErrors,
+} from '@angular/forms';
+import { BehaviorSubject, map, Observable, take, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -82,6 +87,22 @@ export class GitInstancesService {
       .delete(this.BACKEND_URL_PREFIX + '/' + id)
       .pipe(tap(() => this.loadGitInstances()));
   }
+
+  asyncNameValidator(ignoreInstance?: GitInstance): AsyncValidatorFn {
+    let ignoreId = !!ignoreInstance ? ignoreInstance.id : -1;
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      return this.gitInstances.pipe(
+        take(1),
+        map((gitInstances) => {
+          const nameExists = gitInstances?.find(
+            (instance) =>
+              instance.name === control.value && instance.id != ignoreId
+          );
+          return nameExists ? { uniqueName: { value: control.value } } : null;
+        })
+      );
+    };
+  }
 }
 
 export type BackendBasicGitInstance = {
@@ -92,15 +113,14 @@ export type BackendBasicGitInstance = {
   type: GitType;
 };
 
-export type BasicGitInstance = {
+export type BasicGitInstance = Omit<GitInstance, 'id'>;
+
+export type GitInstance = {
+  id: number;
   name: string;
   url: string;
   apiURL?: string;
   type: GitType;
-};
-
-export type GitInstance = BasicGitInstance & {
-  id: number;
 };
 
 export type GitType = 'general' | 'gitlab' | 'github' | 'azuredevops';
