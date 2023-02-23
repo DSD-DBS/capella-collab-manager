@@ -1,0 +1,55 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+<div class="wrapper">
+  <h2 id="title">Readonly session</h2>
+</div>
+
+<mat-card>
+  <mat-card-content>
+    <p>Start readonly session</p>
+
+    <form [formGroup]="toolSelectionForm" (ngSubmit)="requestReadonlySession()">
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Model tool</mat-label>
+          <mat-select
+            matInput
+            formControlName="tool"
+            (selectionChange)="onToolChange($event.value)"
+          >
+            <mat-option *ngFor="let tool of toolService.tools" [value]="tool">
+              {{ tool.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Version</mat-label>
+          <mat-select formControlName="version">
+            <mat-option
+              *ngFor="let version of this.toolVersions"
+              [value]="version"
+            >
+              {{ version.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </fieldset>
+
+      <fieldset>
+        <button
+          matInput
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="!toolSelectionForm.valid"
+        >
+          Request a Readonly Session
+          <mat-icon>keyboard_arrow_right</mat-icon>
+        </button>
+      </fieldset>
+    </form>
+  </mat-card-content>
+</mat-card>
