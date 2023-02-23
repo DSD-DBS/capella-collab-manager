@@ -27,8 +27,8 @@
 
 <mat-card *ngFor="let session of userSessionService.sessions | async">
   <div class="type">
-    <h2 *ngIf="session.type === 'persistent'">Persistent workspace session</h2>
-    <h2 *ngIf="session.type === 'readonly'">Read-only session</h2>
+    <h2 *ngIf="isPersistentSession(session)">Persistent workspace session</h2>
+    <h2 *ngIf="isReadonlySession(session)">Read-only session</h2>
   </div>
   <mat-card-content class="sessionContent">
     <h3
@@ -41,8 +41,8 @@
       The session was created
       {{ beautifyService.beatifyDate(session.created_at) }}
     </p>
-    <div *ngIf="session.type === 'readonly'">
-      <span>Project: {{ session.project!.name }}</span
+    <div *ngIf="isReadonlySession(session)">
+      <span>Project: {{ session.project.name }}</span
       ><br />
       <span>
         Tool: {{ session.version!.tool.name }} ({{ session.version!.name }})

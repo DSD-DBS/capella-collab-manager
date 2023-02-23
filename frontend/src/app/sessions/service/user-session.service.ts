@@ -4,8 +4,12 @@
  */
 
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map } from 'rxjs';
-import { Session } from 'src/app/schemes';
+import { BehaviorSubject, map, filter } from 'rxjs';
+import {
+  isPersistentSession,
+  isReadonlySession,
+  Session,
+} from 'src/app/schemes';
 import { UserService } from '../../services/user/user.service';
 
 @Injectable({
@@ -18,14 +22,12 @@ export class UserSessionService {
 
   readonly sessions = this._sessions.asObservable();
   readonly readonlySessions = this.sessions.pipe(
-    map((sessions) =>
-      sessions?.filter((session) => session.type === 'readonly')
-    )
+    filter(Boolean),
+    map((sessions) => sessions.filter(isReadonlySession))
   );
   readonly persistentSessions = this.sessions.pipe(
-    map((sessions) =>
-      sessions?.filter((session) => session.type === 'persistent')
-    )
+    filter(Boolean),
+    map((sessions) => sessions.filter(isPersistentSession))
   );
 
   loadSessions(): void {
