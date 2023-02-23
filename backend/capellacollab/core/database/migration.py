@@ -16,6 +16,11 @@ from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.projects import crud as projects_crud
 from capellacollab.projects.toolmodels import crud as toolmodels_crud
+from capellacollab.projects.toolmodels import models as toolmodels_models
+from capellacollab.projects.toolmodels.modelsources.git import crud as git_crud
+from capellacollab.projects.toolmodels.modelsources.git import (
+    models as git_models,
+)
 from capellacollab.projects.toolmodels.modelsources.t4c import crud as t4c_crud
 from capellacollab.settings.modelsources.t4c import crud as settings_t4c_crud
 from capellacollab.settings.modelsources.t4c import (
@@ -74,11 +79,13 @@ def migrate_db(engine, database_url: str):
                 initialize_admin_user(session)
                 initialize_default_project(session)
 
-            if not tools_exist:
-                create_tools(session)
+                if not tools_exist:
+                    create_tools(session)
 
-            if not repositories_exist:
-                create_t4c_instance_and_repositories(session)
+                if not repositories_exist:
+                    create_t4c_instance_and_repositories(session)
+
+                create_models(session)
 
 
 def initialize_admin_user(db):
@@ -159,3 +166,33 @@ def create_t4c_instance_and_repositories(db):
             repository, default_instance, db
         )
         t4c_crud.set_repository_for_t4c_model(db, t4c_model, t4c_repository)
+
+
+def create_models(db):
+    capella_tool = tools_crud.get_tool_by_name(db, "Capella")
+
+    for version in ["5.0.0", "5.2.0", "6.0.0"]:
+        capella_model = toolmodels_crud.create_model(
+            db=db,
+            project=projects_crud.get_project_by_name(db, "default"),
+            post_model=toolmodels_models.PostCapellaModel(
+                name=f"Meldody Model Test {version}",
+                description="",
+                tool_id=capella_tool.id,
+            ),
+            tool=capella_tool,
+            version=tools_crud.get_version_by_name(db, capella_tool, version),
+            nature=tools_crud.get_nature_by_name(db, capella_tool, "model"),
+        )
+
+        git_crud.add_gitmodel_to_capellamodel(
+            db=db,
+            capella_model=capella_model,
+            post_git_model=git_models.PostGitModel(
+                path="https://github.com/DSD-DBS/py-capellambse",
+                entrypoint=f'/tests/data/melodymodel/{version[:3].replace(".", "_")}/Melody Model Test.aird',
+                revision="master",
+                username="",
+                password="",
+            ),
+        )
