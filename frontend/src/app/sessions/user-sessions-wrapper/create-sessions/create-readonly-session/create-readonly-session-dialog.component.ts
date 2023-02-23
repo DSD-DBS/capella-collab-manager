@@ -4,17 +4,13 @@
  */
 
 import { Component, Inject, OnInit } from '@angular/core';
-
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { map } from 'rxjs';
-
+import { UntilDestroy } from '@ngneat/until-destroy';
 import {
+  getPrimaryGitModel,
   Model,
-  ModelService,
 } from 'src/app/projects/models/service/model.service';
-import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { ModelOptions } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-model-options/create-readonly-model-options.component';
 
@@ -27,50 +23,41 @@ import { ModelOptions } from 'src/app/sessions/user-sessions-wrapper/create-sess
 export class CreateReadonlySessionDialogComponent implements OnInit {
   constructor(
     public sessionService: SessionService,
-    public modelService: ModelService,
+
     private router: Router,
-    @Inject(MAT_DIALOG_DATA) public data: { projectSlug: string; model: Model }
+    @Inject(MAT_DIALOG_DATA)
+    public data: {
+      projectSlug: string;
+      models: Model[];
+      modelVersionId: number;
+    }
   ) {}
 
-  private _modelOptions: ModelOptions[] = [];
-
-  get modelOptions(): ModelOptions[] {
-    return this._modelOptions;
-  }
+  modelOptions: ModelOptions[] = [];
 
   ngOnInit(): void {
-    this.modelService.models
-      .pipe(
-        untilDestroyed(this),
-        map((models) =>
-          models?.filter(
-            (model) => model.version?.id === this.data.model.version?.id
-          )
-        )
-      )
-      .subscribe((models) => {
-        this._modelOptions = [];
-        models?.forEach((model) => {
-          const primaryGitModel = getPrimaryGitModel(model);
-          if (!primaryGitModel) {
-            return;
-          }
+    let filteredModels = this.data.models.filter(
+      (model) => model.version?.id === this.data.modelVersionId
+    );
 
-          this._modelOptions.push({
-            model: model,
-            primary_git_model: primaryGitModel,
-            include: model.id === this.data.model.id,
-            revision: primaryGitModel.revision,
-            deepClone: false,
-          });
-        });
+    for (let model of filteredModels) {
+      const primaryGitModel = getPrimaryGitModel(model);
+      if (!primaryGitModel) {
+        continue;
+      }
+
+      this.modelOptions.push({
+        model: model,
+        primaryGitModel: primaryGitModel,
+        revision: primaryGitModel.revision,
+        include: false,
+        deepClone: false,
       });
-
-    this.modelService.loadModels(this.data.projectSlug);
+    }
   }
 
   requestSession(): void {
-    let included = this._modelOptions.filter((mo) => mo.include);
+    let included = this.modelOptions.filter((mo) => mo.include);
 
     if (!included) {
       return;
@@ -82,7 +69,7 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
         included.map((m) => {
           return {
             model_slug: m.model.slug,
-            git_model_id: m.primary_git_model.id,
+            git_model_id: m.primaryGitModel.id,
             revision: m.revision,
             deep_clone: m.deepClone,
           };
@@ -92,8 +79,4 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
         this.router.navigateByUrl('/');
       });
   }
-}
-
-function getPrimaryGitModel(model: Model): GetGitModel | undefined {
-  return model.git_models.find((gitModel) => gitModel.primary);
 }
