@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { tap, timer } from 'rxjs';
 import { UserSessionService } from '../service/user-session.service';
@@ -15,13 +15,15 @@ import { UserSessionService } from '../service/user-session.service';
   styleUrls: ['./user-sessions-wrapper.component.css'],
 })
 export class UserSessionsWrapperComponent implements OnInit {
+  @Input() frequency?: number;
+
   constructor(private userSessionService: UserSessionService) {}
 
   ngOnInit(): void {
-    timer(0, 2000)
+    timer(0, this.frequency || 2000)
       .pipe(
-        tap(() => this.userSessionService.loadSessions()),
-        untilDestroyed(this)
+        untilDestroyed(this),
+        tap(() => this.userSessionService.loadSessions())
       )
       .subscribe();
   }
