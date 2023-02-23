@@ -93,6 +93,7 @@ import { ActiveSessionsComponent } from './sessions/user-sessions-wrapper/active
 import { GuacamoleDialogComponent } from './sessions/user-sessions-wrapper/active-sessions/connect/guacamole-dialog/guacamole-dialog.component';
 import { FileBrowserDialogComponent } from './sessions/user-sessions-wrapper/active-sessions/file-browser-dialog/file-browser-dialog.component';
 import { FileExistsDialogComponent } from './sessions/user-sessions-wrapper/active-sessions/file-browser-dialog/file-exists-dialog/file-exists-dialog.component';
+import { CreateReadonlySessionComponent } from './sessions/user-sessions-wrapper/create-session/create-readonly-session/create-readonly-session.component';
 import { CreatePersistentSessionComponent } from './sessions/user-sessions-wrapper/create-sessions/create-persistent-session/create-persistent-session.component';
 import { CreateReadonlyModelOptionsComponent } from './sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-model-options/create-readonly-model-options.component';
 import { CreateReadonlySessionDialogComponent } from './sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-session-dialog.component';
@@ -133,6 +134,8 @@ import { SettingsComponent } from './settings/settings.component';
     CreatePersistentSessionComponent,
     CreateProjectComponent,
     CreateReadonlyModelOptionsComponent,
+    CreateReadonlySessionComponent,
+    CreateReadonlySessionComponent,
     CreateReadonlySessionDialogComponent,
     DeleteGitSettingsDialogComponent,
     DeleteSessionDialogComponent,
