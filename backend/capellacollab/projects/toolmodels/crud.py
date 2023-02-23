@@ -84,10 +84,10 @@ def get_model_by_slug(
     return model
 
 
-def create_new_model(
+def create_model(
     db: Session,
     project: DatabaseProject,
-    new_model: PostCapellaModel,
+    post_model: PostCapellaModel,
     tool: Tool,
     version: Version | None = None,
     nature: Nature | None = None,
@@ -95,9 +95,9 @@ def create_new_model(
     restrictions = DatabaseToolModelRestrictions()
 
     model = DatabaseCapellaModel(
-        name=new_model.name,
-        slug=slugify(new_model.name),
-        description=new_model.description,
+        name=post_model.name,
+        slug=slugify(post_model.name),
+        description=post_model.description,
         project=project,
         tool=tool,
         version=version,
