@@ -105,7 +105,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Branch, tag or revision</mat-label>
           <input
-            type="text"
+            (ngModelChange)="filteredRevisionsByPrefix($event)"
             matInput
             formControlName="revision"
             [matAutocomplete]="auto"
@@ -126,18 +126,18 @@
         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
           <mat-optgroup label="branch">
             <mat-option
-              *ngFor="let option of filteredRevisions.branches"
-              [value]="option"
+              *ngFor="let branch of filteredRevisions?.branches"
+              [value]="branch"
             >
-              {{ option }}
+              {{ branch }}
             </mat-option>
           </mat-optgroup>
           <mat-optgroup label="tag">
             <mat-option
-              *ngFor="let option of filteredRevisions.tags"
-              [value]="option"
+              *ngFor="let tag of filteredRevisions?.tags"
+              [value]="tag"
             >
-              {{ option }}
+              {{ tag }}
             </mat-option>
           </mat-optgroup>
         </mat-autocomplete>

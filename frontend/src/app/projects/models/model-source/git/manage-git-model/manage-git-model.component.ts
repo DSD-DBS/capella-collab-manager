@@ -12,13 +12,11 @@ import {
   Output,
 } from '@angular/core';
 import {
-  FormControl,
-  FormGroup,
   Validators,
   ValidationErrors,
-  ValidatorFn,
   AbstractControl,
   AsyncValidatorFn,
+  FormBuilder,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -62,30 +60,10 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   public availableGitInstances?: Array<GitInstance>;
   public selectedGitInstance?: GitInstance;
 
-  private availableRevisions: Revisions | undefined = {
-    branches: [],
-    tags: [],
-  };
-  public filteredRevisions: Revisions = { branches: [], tags: [] };
+  private revisions?: Revisions;
+  public filteredRevisions?: Revisions;
 
   public resultUrl: string = '';
-
-  public form = new FormGroup({
-    urls: new FormGroup({
-      baseUrl: new FormControl<GitInstance | undefined>(undefined),
-      inputUrl: new FormControl('', absoluteUrlValidator()),
-    }),
-    credentials: new FormGroup({
-      username: new FormControl({ value: '', disabled: true }),
-      password: new FormControl({ value: '', disabled: true }),
-    }),
-    revision: new FormControl({ value: '', disabled: true }, [
-      Validators.required,
-      this.existingRevisionValidator(),
-    ]),
-    entrypoint: new FormControl({ value: '/', disabled: true }),
-    primary: new FormControl(),
-  });
 
   private projectSlug?: string = undefined;
   private modelSlug?: string = undefined;
@@ -105,20 +83,43 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private breadCrumbsService: BreadcrumbsService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private fb: FormBuilder
   ) {}
+
+  public form = this.fb.group({
+    urls: this.fb.group({
+      baseUrl: this.fb.control<GitInstance | undefined>(undefined),
+      inputUrl: this.fb.control('', absoluteUrlValidator()),
+    }),
+    credentials: this.fb.group({
+      username: this.fb.control({ value: '', disabled: true }),
+      password: this.fb.control({ value: '', disabled: true }),
+    }),
+    revision: this.fb.control(
+      { value: '', disabled: true },
+      {
+        validators: Validators.required,
+        asyncValidators: this.gitService.asyncExistingRevisionValidator(),
+      }
+    ),
+    entrypoint: this.fb.control({ value: '/', disabled: true }),
+    primary: this.fb.control(false),
+  });
 
   get urls() {
     return this.form.controls.urls.controls;
   }
 
   ngOnInit(): void {
-    this.gitService.revisions
-      .pipe(untilDestroyed(this))
-      .subscribe((revisions) => {
-        this.availableRevisions = revisions;
+    this.gitService.revisions.pipe(untilDestroyed(this)).subscribe({
+      next: (revisions) => {
+        this.revisions = revisions;
+        this.filteredRevisions = revisions;
         this.form.controls.revision.updateValueAndValidity();
-      });
+      },
+      complete: () => this.gitService.clearRevision(),
+    });
 
     this.form.controls.revision.valueChanges.subscribe((value) =>
       this.filteredRevisionsByPrefix(value as string)
@@ -140,19 +141,21 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.modelService.model.pipe(untilDestroyed(this)).subscribe((model) => {
-      this.modelSlug = model?.slug;
-      if (model?.tool.name === 'Capella') {
-        this.form.controls.entrypoint.addValidators(
-          Validators.pattern(/^$|\.aird$/)
-        );
-      }
-    });
+    this.modelService.model
+      .pipe(untilDestroyed(this), filter(Boolean))
+      .subscribe((model) => {
+        this.modelSlug = model.slug;
+        if (model.tool.name === 'Capella') {
+          this.form.controls.entrypoint.addValidators(
+            Validators.pattern(/^$|\.aird$/)
+          );
+        }
+      });
 
     this.projectService.project
-      .pipe(untilDestroyed(this))
+      .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((project) => {
-        this.projectSlug = project?.slug;
+        this.projectSlug = project.slug;
 
         this.route.params
           .pipe(
@@ -165,15 +168,15 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
             this.form.disable();
 
             this.gitModelService.gitModel
-              .pipe(untilDestroyed(this))
+              .pipe(untilDestroyed(this), filter(Boolean))
               .subscribe((gitModel) => {
                 this.gitModel = gitModel;
-                this.fillFormWithGitModel(gitModel!);
+                this.fillFormWithGitModel(gitModel);
 
                 this.breadCrumbsService.updatePlaceholder({ gitModel });
 
                 this.gitService.loadPrivateRevisions(
-                  gitModel!.path,
+                  gitModel.path,
                   this.projectSlug!,
                   this.modelSlug!,
                   gitModelId
@@ -278,7 +281,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   onEditSubmit(): void {
     if (this.form.valid) {
       const patchGitModel = this.createGitModelFromForm() as PatchGitModel;
-      patchGitModel.primary = this.form.controls.primary.value;
+      patchGitModel.primary = this.form.controls.primary.value!;
 
       this.gitModelService
         .updateGitRepository(
@@ -360,30 +363,25 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     this.form.controls.primary.setValue(gitModel.primary);
   }
 
-  private filteredRevisionsByPrefix(prefix: string): void {
-    this.filteredRevisions = {
-      branches: [],
-      tags: [],
-    };
-
-    if (this.availableRevisions) {
-      this.filteredRevisions = {
-        branches: this.availableRevisions!.branches.filter((branch) =>
-          branch.startsWith(prefix)
-        ),
-        tags: this.availableRevisions!.tags.filter((tag) =>
-          tag.startsWith(prefix)
-        ),
-      };
+  filteredRevisionsByPrefix(prefix: string): void {
+    if (!this.revisions) {
+      this.filteredRevisions = undefined;
+      return;
     }
+
+    this.filteredRevisions = {
+      branches: this.revisions!.branches.filter((branch) =>
+        branch.toLowerCase().startsWith(prefix.toLowerCase())
+      ),
+      tags: this.revisions!.tags.filter((tag) =>
+        tag.toLowerCase().startsWith(prefix.toLowerCase())
+      ),
+    };
   }
 
   private resetRevisions() {
-    this.availableRevisions = undefined;
-    this.filteredRevisions = {
-      branches: [],
-      tags: [],
-    };
+    this.revisions = undefined;
+    this.filteredRevisions = undefined;
     this.form.controls.revision.setValue('');
   }
 
@@ -437,24 +435,6 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     } else {
       this.resultUrl = baseUrl + inputUrl;
     }
-  }
-
-  private existingRevisionValidator(): ValidatorFn {
-    return (controls: AbstractControl): ValidationErrors | null => {
-      let value: string = controls.value;
-      if (!value) return null;
-
-      if (
-        this.availableRevisions?.branches.includes(value) ||
-        this.availableRevisions?.tags.includes(value)
-      ) {
-        return null;
-      }
-
-      return {
-        revisionNotFoundError: `${value} does not exist on ${this.resultUrl}`,
-      };
-    };
   }
 
   private findLongestUrlMatchingGitInstance(
