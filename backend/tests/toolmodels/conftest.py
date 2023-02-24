@@ -40,7 +40,7 @@ def fixture_capella_model(
     model = toolmodels_models.PostCapellaModel(
         name="test", description="test", tool_id=capella_tool_version.tool.id
     )
-    return toolmodels_crud.create_new_model(
+    return toolmodels_crud.create_model(
         db, project, model, capella_tool_version.tool, capella_tool_version
     )
 

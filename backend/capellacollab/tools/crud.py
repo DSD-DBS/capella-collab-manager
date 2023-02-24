@@ -105,6 +105,12 @@ def get_nature_for_tool(tool_id: int, nature_id: int, db: Session) -> Nature:
     ).scalar_one()
 
 
+def get_nature_by_name(db: Session, tool: Tool, name: str) -> Nature:
+    return db.execute(
+        select(Nature).where(Nature.tool == tool).where(Nature.name == name)
+    ).scalar_one()
+
+
 def create_version(
     db: Session,
     tool_id: int,

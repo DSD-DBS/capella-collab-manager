@@ -7,30 +7,35 @@ import os
 import pathlib
 
 from alembic import command
-from alembic.config import Config
-from alembic.migration import MigrationContext
-from sqlalchemy import inspect
-from sqlalchemy.orm import sessionmaker
+from alembic import config as alembic_config
+from alembic import migration
+from sqlalchemy import orm
 
-import capellacollab.projects.crud as projects
-import capellacollab.projects.toolmodels.crud as models
-import capellacollab.projects.toolmodels.modelsources.t4c.crud as t4c_models
-import capellacollab.settings.modelsources.t4c.crud as t4c_instances
-import capellacollab.settings.modelsources.t4c.repositories.crud as t4c_repositories
-import capellacollab.tools.crud as tools
-import capellacollab.users.crud as users
-import capellacollab.users.events.crud as events
 from capellacollab.config import config
-from capellacollab.core.database import Base
-from capellacollab.settings.modelsources.t4c.models import (
-    DatabaseT4CInstance,
-    Protocol,
+from capellacollab.core import database
+from capellacollab.projects import crud as projects_crud
+from capellacollab.projects.toolmodels import crud as toolmodels_crud
+from capellacollab.projects.toolmodels import models as toolmodels_models
+from capellacollab.projects.toolmodels.modelsources.git import crud as git_crud
+from capellacollab.projects.toolmodels.modelsources.git import (
+    models as git_models,
 )
-from capellacollab.settings.modelsources.t4c.repositories.models import (
-    CreateT4CRepository,
+from capellacollab.projects.toolmodels.modelsources.t4c import crud as t4c_crud
+from capellacollab.settings.modelsources.t4c import crud as settings_t4c_crud
+from capellacollab.settings.modelsources.t4c import (
+    models as settings_t4c_models,
 )
-from capellacollab.tools.models import Tool
-from capellacollab.users.models import Role
+from capellacollab.settings.modelsources.t4c.repositories import (
+    crud as repositories_crud,
+)
+from capellacollab.settings.modelsources.t4c.repositories import (
+    models as settings_repositories_models,
+)
+from capellacollab.tools import crud as tools_crud
+from capellacollab.tools import models as tools_models
+from capellacollab.users import crud as users_crud
+from capellacollab.users import models as users_models
+from capellacollab.users.events import crud as events_crud
 
 LOGGER = logging.getLogger(__name__)
 
@@ -42,7 +47,7 @@ def migrate_db(engine, database_url: str):
 
         # Get current revision of Database. If no revision is available, initialize the database.
 
-        alembic_cfg = Config(str(root_dir / "alembic.ini"))
+        alembic_cfg = alembic_config.Config(str(root_dir / "alembic.ini"))
         alembic_cfg.set_main_option(
             "script_location", str(root_dir / "alembic")
         )
@@ -52,12 +57,10 @@ def migrate_db(engine, database_url: str):
         ] = False
 
         with engine.connect() as conn:
-            context = MigrationContext.configure(conn)
+            context = migration.MigrationContext.configure(conn)
             current_rev = context.get_current_revision()
 
-        tools_exist = inspect(engine).has_table("tools")
-        repositories_exist = inspect(engine).has_table("t4c_repositories")
-        session_maker = sessionmaker(bind=engine)
+        session_maker = orm.sessionmaker(bind=engine)
 
         with session_maker() as session:
             if current_rev:
@@ -65,77 +68,77 @@ def migrate_db(engine, database_url: str):
                 command.upgrade(alembic_cfg, "head")
             else:
                 LOGGER.info("Empty database detected.")
-                Base.metadata.create_all(bind=engine)
+                database.Base.metadata.create_all(bind=engine)
                 LOGGER.info("Database structure creation successful")
                 command.stamp(alembic_cfg, "head")
                 initialize_admin_user(session)
                 initialize_default_project(session)
 
-            if not tools_exist:
                 create_tools(session)
-
-            if not repositories_exist:
                 create_t4c_instance_and_repositories(session)
+                create_models(session)
 
 
 def initialize_admin_user(db):
     LOGGER.info("Initialized adminuser %s", config["initial"]["admin"])
-    admin_user = users.create_user(
-        db=db, username=config["initial"]["admin"], role=Role.ADMIN
+    admin_user = users_crud.create_user(
+        db=db,
+        username=config["initial"]["admin"],
+        role=users_models.Role.ADMIN,
     )
-    events.create_user_creation_event(db, admin_user)
+    events_crud.create_user_creation_event(db, admin_user)
 
 
 def initialize_default_project(db):
     LOGGER.info("Initialized project 'default'")
-    projects.create_project(db=db, name="default")
+    projects_crud.create_project(db=db, name="default")
 
 
 def create_tools(db):
     LOGGER.info("Initialized tools")
     registry = config["docker"]["registry"]
-    capella = Tool(
+    capella = tools_models.Tool(
         name="Capella",
         docker_image_template=f"{registry}/capella/remote:$version-latest",
         docker_image_backup_template=f"{registry}/t4c/client/backup:$version-latest",
         readonly_docker_image_template=f"{registry}/capella/readonly:$version-latest",
     )
-    papyrus = Tool(
+    papyrus = tools_models.Tool(
         name="Papyrus",
         docker_image_template=f"{registry}/papyrus/client/remote:$version-prod",
     )
-    tools.create_tool(db, capella)
-    tools.create_tool(db, papyrus)
+    tools_crud.create_tool(db, capella)
+    tools_crud.create_tool(db, papyrus)
 
-    default_version = tools.create_version(db, capella.id, "6.0.0", True)
-    tools.create_version(db, capella.id, "5.2.0")
-    tools.create_version(db, capella.id, "5.0.0")
+    default_version = tools_crud.create_version(db, capella.id, "6.0.0", True)
+    tools_crud.create_version(db, capella.id, "5.2.0")
+    tools_crud.create_version(db, capella.id, "5.0.0")
 
-    tools.create_version(db, papyrus.id, "6.1")
-    tools.create_version(db, papyrus.id, "6.0")
+    tools_crud.create_version(db, papyrus.id, "6.1")
+    tools_crud.create_version(db, papyrus.id, "6.0")
 
-    default_nature = tools.create_nature(db, capella.id, "model")
-    tools.create_nature(db, capella.id, "library")
+    default_nature = tools_crud.create_nature(db, capella.id, "model")
+    tools_crud.create_nature(db, capella.id, "library")
 
-    tools.create_nature(db, papyrus.id, "UML 2.5")
-    tools.create_nature(db, papyrus.id, "SysML 1.4")
-    tools.create_nature(db, papyrus.id, "SysML 1.1")
+    tools_crud.create_nature(db, papyrus.id, "UML 2.5")
+    tools_crud.create_nature(db, papyrus.id, "SysML 1.4")
+    tools_crud.create_nature(db, papyrus.id, "SysML 1.1")
 
-    for model in models.get_all_models(db):
-        models.set_tool_for_model(db, model, capella)
-        models.set_tool_details_for_model(
+    for model in toolmodels_crud.get_all_models(db):
+        toolmodels_crud.set_tool_for_model(db, model, capella)
+        toolmodels_crud.set_tool_details_for_model(
             db, model, default_version, default_nature
         )
 
 
 def create_t4c_instance_and_repositories(db):
     LOGGER.info("Initialized T4C instance and repositories")
-    tool = tools.get_tool_by_name(db, "Capella")
-    version = tools.get_version_by_name(db, tool, "5.2.0")
-    default_instance = DatabaseT4CInstance(
+    tool = tools_crud.get_tool_by_name(db, "Capella")
+    version = tools_crud.get_version_by_name(db, tool, "5.2.0")
+    default_instance = settings_t4c_models.DatabaseT4CInstance(
         name="default",
         license="placeholder",
-        protocol=Protocol.tcp,
+        protocol=settings_t4c_models.Protocol.tcp,
         host="localhost",
         port=2036,
         cdo_port=12036,
@@ -145,12 +148,42 @@ def create_t4c_instance_and_repositories(db):
         password="password",
         version=version,
     )
-    t4c_instances.create_t4c_instance(default_instance, db)
-    for t4c_model in t4c_models.get_t4c_models(db):
-        repository = CreateT4CRepository(
+    settings_t4c_crud.create_t4c_instance(default_instance, db)
+    for t4c_model in t4c_crud.get_t4c_models(db):
+        repository = settings_repositories_models.CreateT4CRepository(
             name=t4c_model.name,
         )
-        t4c_repository = t4c_repositories.create_t4c_repository(
+        t4c_repository = repositories_crud.create_t4c_repository(
             repository, default_instance, db
         )
-        t4c_models.set_repository_for_t4c_model(db, t4c_model, t4c_repository)
+        t4c_crud.set_repository_for_t4c_model(db, t4c_model, t4c_repository)
+
+
+def create_models(db):
+    capella_tool = tools_crud.get_tool_by_name(db, "Capella")
+
+    for version in ["5.0.0", "5.2.0", "6.0.0"]:
+        capella_model = toolmodels_crud.create_model(
+            db=db,
+            project=projects_crud.get_project_by_name(db, "default"),
+            post_model=toolmodels_models.PostCapellaModel(
+                name=f"Meldody Model Test {version}",
+                description="",
+                tool_id=capella_tool.id,
+            ),
+            tool=capella_tool,
+            version=tools_crud.get_version_by_name(db, capella_tool, version),
+            nature=tools_crud.get_nature_by_name(db, capella_tool, "model"),
+        )
+
+        git_crud.add_gitmodel_to_capellamodel(
+            db=db,
+            capella_model=capella_model,
+            post_git_model=git_models.PostGitModel(
+                path="https://github.com/DSD-DBS/py-capellambse",
+                entrypoint=f'/tests/data/melodymodel/{version[:3].replace(".", "_")}/Melody Model Test.aird',
+                revision="master",
+                username="",
+                password="",
+            ),
+        )

@@ -73,7 +73,7 @@ def create_new(
     tool = get_tool_by_id_or_raise(db, new_model.tool_id)
 
     try:
-        return crud.create_new_model(db, project, new_model, tool)
+        return crud.create_model(db, project, new_model, tool)
     except IntegrityError:
         raise HTTPException(
             409,
@@ -101,7 +101,6 @@ def patch_capella_model(
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ) -> DatabaseCapellaModel:
-
     version = get_version_by_id_or_raise(db, body.version_id)
     if version.tool != model.tool:
         raise HTTPException(
