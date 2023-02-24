@@ -271,7 +271,6 @@ def request_persistent_session(
     operator: KubernetesOperator = Depends(get_operator),
     token=Depends(JWTBearer()),
 ):
-    warnings: list[core_models.Message] = []
     owner = auth_helper.get_username(token)
 
     log.info("Starting persistent session for user %s", owner)
@@ -294,8 +293,70 @@ def request_persistent_session(
         tool.id, body.version_id, db
     )
 
-    docker_image = tools_crud.get_image_for_tool_version(db, version.id)
+    if tool.integrations and tool.integrations.jupyter:
+        response = start_persistent_jupyter_session(
+            db=db,
+            operator=operator,
+            owner=owner,
+            token=token,
+            tool=tool,
+            version=version,
+        )
+    else:
+        response = start_persistent_guacamole_session(
+            db=db,
+            operator=operator,
+            user=user,
+            owner=owner,
+            token=token,
+            tool=tool,
+            version=version,
+        )
 
+    return response
+
+
+def start_persistent_jupyter_session(
+    db: Session,
+    operator: KubernetesOperator,
+    owner: str,
+    token: str,
+    tool: tools_models.Tool,
+    version: tools_models.Version,
+):
+    docker_image = tools_crud.get_image_for_tool_version(db, version.id)
+    jupyter_token = generate_password(length=64)
+
+    session = operator.start_persistent_jupyter_session(
+        username=auth_helper.get_username(token),
+        tool_name=tool.name,
+        version_name=version.name,
+        token=jupyter_token,
+        docker_image=docker_image,
+    )
+
+    return create_database_session(
+        db,
+        schema.WorkspaceType.PERSISTENT,
+        session,
+        owner,
+        tool,
+        version,
+        None,
+        jupyter_token=jupyter_token,
+    )
+
+
+def start_persistent_guacamole_session(
+    db: Session,
+    operator: KubernetesOperator,
+    user: users_models.DatabaseUser,
+    owner: str,
+    token: str,
+    tool: tools_models.Tool,
+    version: tools_models.Version,
+):
+    warnings: list[core_models.Message] = []
     t4c_password = None
     t4c_json = None
     t4c_license_secret = None
@@ -357,61 +418,35 @@ def request_persistent_session(
         pure_variants_secret_name,
         pv_warnings,
     ) = determine_pure_variants_configuration(db, user, tool)
-    warnings += pv_warnings
 
-    if tool.integrations and tool.integrations.jupyter:
+    docker_image = tools_crud.get_image_for_tool_version(db, version.id)
+    rdp_password = generate_password(length=64)
 
-        jupyter_token = generate_password(length=64)
+    session = operator.start_persistent_capella_session(
+        username=auth_helper.get_username(token),
+        tool_name=tool.name,
+        version_name=version.name,
+        password=rdp_password,
+        docker_image=docker_image,
+        t4c_license_secret=t4c_license_secret,
+        t4c_json=t4c_json,
+        pure_variants_license_server=pv_license_server_url,
+        pure_variants_secret_name=pure_variants_secret_name,
+    )
 
-        session = operator.start_persistent_jupyter_session(
-            username=auth_helper.get_username(token),
-            tool_name=tool.name,
-            version_name=version.name,
-            token=jupyter_token,
-            docker_image=docker_image,
-        )
-
-        response = create_database_session(
-            db,
-            schema.WorkspaceType.PERSISTENT,
-            session,
-            owner,
-            tool,
-            version,
-            None,
-            jupyter_token=jupyter_token,
-        )
-
-    else:
-
-        rdp_password = generate_password(length=64)
-
-        session = operator.start_persistent_capella_session(
-            username=auth_helper.get_username(token),
-            tool_name=tool.name,
-            version_name=version.name,
-            password=rdp_password,
-            docker_image=docker_image,
-            t4c_license_secret=t4c_license_secret,
-            t4c_json=t4c_json,
-            pure_variants_license_server=pv_license_server_url,
-            pure_variants_secret_name=pure_variants_secret_name,
-        )
-
-        response = create_database_and_guacamole_session(
-            db,
-            schema.WorkspaceType.PERSISTENT,
-            session,
-            owner,
-            rdp_password,
-            tool,
-            version,
-            None,
-            t4c_password,
-        )
-
-    response.warnings = warnings
-
+    response = create_database_and_guacamole_session(
+        db,
+        schema.WorkspaceType.PERSISTENT,
+        session,
+        owner,
+        rdp_password,
+        tool,
+        version,
+        None,
+        t4c_password,
+    )
+    response.warnings += warnings
+    response.warnings += pv_warnings
     return response
 
 
@@ -481,7 +516,7 @@ def create_database_session(
     response = crud.create_session(db=db, session=database_model)
     response.state = "New"
     response.last_seen = "UNKNOWN"
-
+    response.warnings = []
     return response
 
 
