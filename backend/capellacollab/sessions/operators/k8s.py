@@ -808,7 +808,6 @@ class KubernetesOperator:
             kind="Ingress",
             metadata=client.V1ObjectMeta(
                 name=id,
-                annotations={"ingress.kubernetes.io/ssl-redirect": "false"},
             ),
             spec=client.V1IngressSpec(
                 rules=[
