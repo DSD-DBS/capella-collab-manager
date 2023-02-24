@@ -97,7 +97,7 @@ def create_model(
     model = DatabaseCapellaModel(
         name=post_model.name,
         slug=slugify(post_model.name),
-        description=post_model.description,
+        description=post_model.description if post_model.description else "",
         project=project,
         tool=tool,
         version=version,
