@@ -6,7 +6,6 @@ import logging
 import os
 import pathlib
 
-import sqlalchemy
 from alembic import command
 from alembic import config as alembic_config
 from alembic import migration
@@ -61,10 +60,6 @@ def migrate_db(engine, database_url: str):
             context = migration.MigrationContext.configure(conn)
             current_rev = context.get_current_revision()
 
-        tools_exist = sqlalchemy.inspect(engine).has_table("tools")
-        repositories_exist = sqlalchemy.inspect(engine).has_table(
-            "t4c_repositories"
-        )
         session_maker = orm.sessionmaker(bind=engine)
 
         with session_maker() as session:
@@ -79,12 +74,8 @@ def migrate_db(engine, database_url: str):
                 initialize_admin_user(session)
                 initialize_default_project(session)
 
-                if not tools_exist:
-                    create_tools(session)
-
-                if not repositories_exist:
-                    create_t4c_instance_and_repositories(session)
-
+                create_tools(session)
+                create_t4c_instance_and_repositories(session)
                 create_models(session)
 
 
