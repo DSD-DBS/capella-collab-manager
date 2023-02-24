@@ -13,7 +13,7 @@ PORT ?= 8080
 # List of Capella versions, e.g.: `5.0.0 5.2.0 6.0.0`
 CAPELLA_VERSIONS ?= 6.0.0
 # List of T4C versions, e.g., `5.2.0 6.0.0`
-T4C_CLIENT_VERSIONS ?= 5.2.0
+T4C_CLIENT_VERSIONS ?= 6.0.0
 
 TIMEOUT ?= 10m
 
