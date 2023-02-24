@@ -49,7 +49,7 @@ def get_t4c_instance(
 
 
 @router.post(
-    "/",
+    "",
     response_model=T4CInstance,
 )
 def create_t4c_instance(
