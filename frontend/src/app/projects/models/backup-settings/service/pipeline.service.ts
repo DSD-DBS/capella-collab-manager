@@ -13,11 +13,16 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class BackupService {
+export class PipelineService {
   constructor(private http: HttpClient) {}
 
-  pipelines = new BehaviorSubject<Pipeline[] | undefined>(undefined);
-  loading = false;
+  _pipelines = new BehaviorSubject<Pipeline[] | undefined>(undefined);
+  _pipeline = new BehaviorSubject<Pipeline | undefined>(undefined);
+
+  pipelines = this._pipelines.asObservable();
+  pipeline = this._pipeline.asObservable();
+
+  loading: boolean = false;
 
   getBackups(project: string, modelSlug: string): Observable<Pipeline[]> {
     this.loading = true;
@@ -28,9 +33,28 @@ export class BackupService {
       .pipe(
         tap((pipelines: Pipeline[]) => {
           this.loading = false;
-          this.pipelines.next(pipelines);
+          this._pipelines.next(pipelines);
         })
       );
+  }
+
+  resetPipeline() {
+    this._pipeline.next(undefined);
+  }
+
+  resetPipelines() {
+    this._pipelines.next(undefined);
+  }
+
+  getPipeline(
+    project: string,
+    modelSlug: string,
+    pipelineID: number
+  ): Observable<Pipeline> {
+    this.loading = true;
+    return this.http.get<Pipeline>(
+      `${environment.backend_url}/projects/${project}/models/${modelSlug}/backups/pipelines/${pipelineID}`
+    );
   }
 
   createBackup(
@@ -58,39 +82,10 @@ export class BackupService {
       `${environment.backend_url}/projects/${project}/models/${modelSlug}/backups/pipelines/${backupId}`
     );
   }
-
-  triggerRun(
-    project: string,
-    modelSlug: string,
-    backupId: number,
-    includeCommitHistory: boolean
-  ): Observable<PipelineJob> {
-    return this.http.post<PipelineJob>(
-      `${environment.backend_url}/projects/${project}/models/${modelSlug}/backups/pipelines/${backupId}/runs`,
-      { include_commit_history: includeCommitHistory }
-    );
-  }
-
-  getLogs(
-    project: string,
-    backupId: number,
-    modelSlug: string
-  ): Observable<string> {
-    return this.http.get<string>(
-      `${environment.backend_url}/projects/${project}/models/${modelSlug}/backups/pipelines/${backupId}/runs/latest/logs`
-    );
-  }
 }
-
-export type PipelineJob = {
-  id: string;
-  date: string;
-  state: string;
-};
 
 export type Pipeline = {
   id: number;
-  lastrun: PipelineJob;
   t4c_model: SimpleT4CModel;
   git_model: BaseGitModel;
   run_nightly: boolean;

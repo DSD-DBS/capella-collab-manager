@@ -14,7 +14,7 @@
       >
     </div>
     <div class="pipelines">
-      <div *ngFor="let pipeline of this.backupService.pipelines.value">
+      <div *ngFor="let pipeline of this.backupService.pipelines | async">
         <mat-card
           matRipple
           *ngIf="!selectedPipeline || selectedPipeline.id === pipeline.id"
@@ -59,7 +59,7 @@
     <div
       class="margin default"
       *ngIf="
-        !this.backupService.pipelines.value?.length &&
+        !(this.backupService.pipelines | async)?.length &&
         !this.backupService.loading
       "
     >
@@ -102,20 +102,19 @@
       <button
         class="margin default"
         mat-raised-button
-        (click)="viewLogs(selectedPipeline)"
-        color="primary"
-        *ngIf="selectedPipeline?.lastrun?.id"
-      >
-        View logs of last run
-      </button>
-      <button
-        class="margin default"
-        mat-raised-button
         (click)="removeBackup(selectedPipeline)"
         color="primary"
       >
         Remove pipeline
       </button>
+      <a
+        class="margin default"
+        mat-raised-button
+        (click)="openPipelineRuns(selectedPipeline)"
+        color="primary"
+      >
+        View runs
+      </a>
     </div>
   </div>
 </div>

@@ -17,7 +17,7 @@ def get_environment(
     t4cmodel: DatabaseT4CModel,
     t4c_username: str,
     t4c_password: str,
-    include_commit_history: bool,
+    include_commit_history: bool = False,
 ) -> dict[str, str]:
     return {
         "GIT_REPO_URL": gitmodel.path,

@@ -3,12 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { timer } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { BackupService } from 'src/app/projects/models/backup-settings/service/backup.service';
+import { Subscription, combineLatest } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
+import { PipelineRunService } from 'src/app/projects/models/backup-settings/pipeline-runs/service/pipeline-run.service';
+import { PipelineService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
+import { ModelService } from 'src/app/projects/models/service/model.service';
+import { ProjectService } from 'src/app/projects/service/project.service';
 
 @UntilDestroy()
 @Component({
@@ -16,35 +18,73 @@ import { BackupService } from 'src/app/projects/models/backup-settings/service/b
   templateUrl: './view-logs-dialog.component.html',
   styleUrls: ['./view-logs-dialog.component.css'],
 })
-export class ViewLogsDialogComponent implements OnInit {
+export class ViewLogsDialogComponent {
+  subscription?: Subscription = undefined;
+
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: ViewLogsData,
-    private easeBackupService: BackupService
-  ) {}
+    private modelService: ModelService,
+    private projectService: ProjectService,
+    private pipelineService: PipelineService,
+    public pipelineRunService: PipelineRunService
+  ) {
+    this.refreshLogs();
+    this.refreshEvents();
+  }
 
-  loading = true;
   logs = '';
+  events = '';
 
-  ngOnInit(): void {
-    timer(0, 5000)
+  refreshEvents(): void {
+    combineLatest([
+      this.projectService.project.pipe(filter(Boolean)),
+      this.modelService.model.pipe(filter(Boolean)),
+      this.pipelineService.pipeline.pipe(filter(Boolean)),
+      this.pipelineRunService.pipelineRun.pipe(filter(Boolean)),
+    ])
       .pipe(
-        tap(() => this.refreshLogs()),
+        switchMap(([project, model, pipeline, pipelineRun]) =>
+          this.pipelineRunService.getEvents(
+            project.slug,
+            model.slug,
+            pipeline.id,
+            pipelineRun.id
+          )
+        ),
         untilDestroyed(this)
       )
-      .subscribe();
+      .subscribe({
+        next: (res: string) => {
+          this.events = res;
+        },
+        error: () => {
+          this.events = "Couldn't fetch events";
+        },
+      });
   }
 
   refreshLogs(): void {
-    this.loading = true;
-    this.easeBackupService
-      .getLogs(this.data.projectSlug, this.data.backup_id, this.data.modelSlug)
+    combineLatest([
+      this.projectService.project.pipe(filter(Boolean)),
+      this.modelService.model.pipe(filter(Boolean)),
+      this.pipelineService.pipeline.pipe(filter(Boolean)),
+      this.pipelineRunService.pipelineRun.pipe(filter(Boolean)),
+    ])
+      .pipe(
+        switchMap(([project, model, pipeline, pipelineRun]) =>
+          this.pipelineRunService.getLogs(
+            project.slug,
+            model.slug,
+            pipeline.id,
+            pipelineRun.id
+          )
+        ),
+        untilDestroyed(this)
+      )
       .subscribe({
         next: (res: string) => {
-          this.loading = false;
           this.logs = res;
         },
         error: () => {
-          this.loading = false;
           this.logs = "Couldn't fetch logs";
         },
       });

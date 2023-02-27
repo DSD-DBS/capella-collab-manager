@@ -3,7 +3,6 @@
 
 
 import logging
-import os
 
 import fastapi
 import starlette_prometheus
@@ -11,6 +10,7 @@ import uvicorn
 from fastapi import middleware, responses
 from fastapi.middleware import cors
 
+import capellacollab.projects.toolmodels.backups.runs.interface as pipeline_runs_interface
 import capellacollab.sessions.metrics
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
@@ -50,17 +50,13 @@ async def shutdown():
     logging.getLogger("uvicorn.error").disabled = False
 
 
-async def schedule_termination_of_idle_sessions():
-    if os.getenv("DISABLE_SESSION_TIMEOUT", "") not in ("true", "1", "t"):
-        await idletimeout.terminate_idle_sessions_in_background()
-
-
 app = fastapi.FastAPI(
     title="Capella Collaboration",
     on_startup=[
         startup,
-        schedule_termination_of_idle_sessions,
+        idletimeout.terminate_idle_sessions_in_background,
         capellacollab.sessions.metrics.register,
+        pipeline_runs_interface.schedule_refresh_and_trigger_pipeline_jobs,
     ],
     middleware=[
         middleware.Middleware(

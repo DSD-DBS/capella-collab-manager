@@ -4,6 +4,7 @@
 
 import asyncio
 import logging
+import os
 
 import requests
 from starlette.concurrency import run_in_threadpool
@@ -53,7 +54,8 @@ async def terminate_idle_sessions_in_background(interval=60):
             except BaseException:
                 log.exception("Could not handle idle sessions")
 
-    asyncio.ensure_future(loop())
+    if os.getenv("DISABLE_SESSION_TIMEOUT", "") not in ("true", "1", "t"):
+        asyncio.ensure_future(loop())
 
 
 def run():

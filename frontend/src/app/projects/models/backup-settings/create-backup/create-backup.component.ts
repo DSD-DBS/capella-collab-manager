@@ -18,9 +18,9 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import {
-  BackupService,
+  PipelineService,
   PostPipeline,
-} from 'src/app/projects/models/backup-settings/service/backup.service';
+} from 'src/app/projects/models/backup-settings/service/pipeline.service';
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 
@@ -38,7 +38,7 @@ export class CreateBackupComponent implements OnInit {
     public t4cModelService: T4CModelService,
     @Inject(MAT_DIALOG_DATA)
     public data: { projectSlug: string; modelSlug: string },
-    private backupService: BackupService,
+    private backupService: PipelineService,
     private dialogRef: MatDialogRef<CreateBackupComponent>
   ) {}
 

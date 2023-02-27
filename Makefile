@@ -125,12 +125,16 @@ registry:
 create-cluster: registry
 	k3d cluster list $(CLUSTER_NAME) 2>&- || k3d cluster create $(CLUSTER_NAME) \
 		--registry-use k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
-		--port "8080:80@loadbalancer"
+		-p "8080:80@loadbalancer" \
+		-p "30000-30005:30000-30005@server:0"
 	kubectl cluster-info
 	kubectl config set-context --current --namespace=$(NAMESPACE)
 
 delete-cluster:
 	k3d cluster list $(CLUSTER_NAME) 2>&- && k3d cluster delete $(CLUSTER_NAME)
+
+delete-registry:
+	k3d registry list $(CLUSTER_REGISTRY_NAME) 2>&- && k3d registry delete $(CLUSTER_REGISTRY_NAME)
 
 wait:
 	@echo "-----------------------------------------------------------"

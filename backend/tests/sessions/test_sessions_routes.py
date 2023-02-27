@@ -187,16 +187,8 @@ class MockOperator:
         return ""
 
     @classmethod
-    def get_cronjob_last_starting_date(self, name: str) -> datetime | None:
-        return None
-
-    @classmethod
     def get_job_logs_or_events(self, _id: str) -> str:
         return ""
-
-    @classmethod
-    def trigger_cronjob(self, name: str) -> None:
-        pass
 
 
 @pytest.fixture(autouse=True, name="kubernetes")

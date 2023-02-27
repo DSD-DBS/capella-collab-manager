@@ -25,11 +25,11 @@ k8s:
       runAsNonRoot: true
 
   promtail:
-    lokiEnabled: false
-    # lokiUrl:
-    # lokiUsername:
-    # lokiPassword:
-    # serverPort:
+    lokiEnabled: True
+    lokiUrl: http://localhost:30001/loki/api/v1/push
+    lokiUsername: localLokiUser
+    lokiPassword: localLokiPassword
+    serverPort: 3101
 
 extensions:
   guacamole:

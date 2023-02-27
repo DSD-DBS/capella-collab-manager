@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import json
 import logging
 import uuid
 
@@ -30,9 +29,10 @@ from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.sessions import operators
 from capellacollab.tools import crud as tools_crud
 
-from . import crud, helper, injectables
+from . import crud, injectables
 from .core import get_environment
-from .models import Backup, CreateBackup, DatabaseBackup, Job
+from .models import Backup, CreateBackup, DatabaseBackup
+from .runs import routes as runs_routes
 
 router = fastapi.APIRouter()
 log = logging.getLogger(__name__)
@@ -54,6 +54,23 @@ def get_pipelines(
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
     return crud.get_pipelines_for_capella_model(db, model)
+
+
+@router.get(
+    "/{pipeline_id}",
+    response_model=Backup,
+    dependencies=[
+        fastapi.Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=ProjectUserRole.MANAGER
+            )
+        )
+    ],
+)
+def get_pipeline(
+    pipeline: DatabaseBackup = fastapi.Depends(injectables.get_existing_pipeline),
+):
+    return pipeline
 
 
 @router.post(
@@ -156,7 +173,7 @@ def delete_pipeline(
             pipeline.t4c_model.repository.name,
             pipeline.t4c_username,
         )
-    except requests.HTTPError:
+    except requests.RequestException:
         log.error("Error during the deletion of user %s in t4c", exc_info=True)
 
     if pipeline.run_nightly:
@@ -165,91 +182,7 @@ def delete_pipeline(
     crud.delete_pipeline(db, pipeline)
 
 
-@router.post(
-    "/{pipeline_id}/runs",
-    status_code=201,
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
-            )
-        )
-    ],
+router.include_router(
+    runs_routes.router,
+    prefix="/{pipeline_id}/runs",
 )
-def create_job(
-    body: Job,
-    pipeline: DatabaseBackup = fastapi.Depends(
-        injectables.get_existing_pipeline
-    ),
-    capella_model: DatabaseCapellaModel = fastapi.Depends(
-        get_existing_capella_model
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
-):
-    if pipeline.run_nightly:
-        operators.get_operator().trigger_cronjob(
-            name=pipeline.k8s_cronjob_id,
-            overwrite_environment={
-                "INCLUDE_COMMIT_HISTORY": json.dumps(
-                    body.include_commit_history
-                ),
-            },
-        )
-    else:
-        operators.get_operator().create_job(
-            image=get_backup_image_for_tool_version(
-                db, capella_model.version_id
-            ),
-            labels={"app.capellacollab/parent": pipeline.k8s_cronjob_id},
-            environment=get_environment(
-                pipeline.git_model,
-                pipeline.t4c_model,
-                pipeline.t4c_username,
-                pipeline.t4c_password,
-                body.include_commit_history,
-            ),
-        )
-
-
-@router.get(
-    "/{pipeline_id}/runs/latest/logs",
-    response_model=str,
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
-            )
-        )
-    ],
-)
-def get_logs(
-    pipeline: DatabaseBackup = fastapi.Depends(
-        injectables.get_existing_pipeline
-    ),
-):
-    backup: Backup = Backup.from_orm(pipeline)
-    if not backup.lastrun:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "err_code": "PIPELINES_NO_LAST_RUN",
-                "reason": "There is no last run available for the pipelines. Please trigger the pipeline first.",
-            },
-        )
-
-    logs = operators.get_operator().get_job_logs_or_events(
-        _id=backup.lastrun.id
-    )
-    return helper.filter_logs(logs, [pipeline.t4c_password])
-
-
-def get_backup_image_for_tool_version(db: orm.Session, version_id: int) -> str:
-    if version := tools_crud.get_version_by_id(db, version_id):
-        return version.tool.docker_image_backup_template.replace(
-            "$version", version.name
-        )
-
-    raise fastapi.HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail={"reason": f"The version with id {version_id} was not found."},
-    )

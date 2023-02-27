@@ -29,10 +29,12 @@ def get_existing_project(
 
 def get_existing_capella_model(
     model_slug: str,
-    project: DatabaseProject = Depends(get_existing_project),
+    project: projects_models.DatabaseProject = fastapi.Depends(
+        get_existing_project
+    ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseCapellaModel:
-    model = crud.get_model_by_slug(db, project.slug, model_slug)
+    model = crud.get_model_by_slugs(db, project.slug, model_slug)
     if not model:
         raise fastapi.HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

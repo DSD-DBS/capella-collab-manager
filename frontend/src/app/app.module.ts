@@ -63,10 +63,14 @@ import { FormFieldSkeletonLoaderComponent } from './helpers/skeleton-loaders/for
 import { MatCardOverviewSkeletonLoaderComponent } from './helpers/skeleton-loaders/mat-card-overview-skeleton-loader/mat-card-overview-skeleton-loader.component';
 import { MatCheckboxLoaderComponent } from './helpers/skeleton-loaders/mat-checkbox-loader/mat-checkbox-loader.component';
 import { MatListSkeletonLoaderComponent } from './helpers/skeleton-loaders/mat-list-skeleton-loader/mat-list-skeleton-loader.component';
+import { TextLineSkeletonLoaderComponent } from './helpers/skeleton-loaders/text-line-skeleton-loader/text-line-skeleton-loader.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { CreateBackupComponent } from './projects/models/backup-settings/create-backup/create-backup.component';
+import { JobRunOverviewComponent } from './projects/models/backup-settings/job-run-overview/job-run-overview.component';
+import { PipelineRunWrapperComponent } from './projects/models/backup-settings/pipeline-runs/wrapper/pipeline-run-wrapper/pipeline-run-wrapper.component';
 import { TriggerPipelineComponent } from './projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { ViewLogsDialogComponent } from './projects/models/backup-settings/view-logs-dialog/view-logs-dialog.component';
+import { PipelineWrapperComponent } from './projects/models/backup-settings/wrapper/pipeline-wrapper/pipeline-wrapper.component';
 import { ChooseInitComponent } from './projects/models/choose-init/choose-init.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { CreateModelBaseComponent } from './projects/models/create-model-base/create-model-base.component';
@@ -156,6 +160,7 @@ import { SettingsComponent } from './settings/settings.component';
     GuacamoleDialogComponent,
     HeaderComponent,
     InitModelComponent,
+    JobRunOverviewComponent,
     LegalComponent,
     LicencesComponent,
     LogoutComponent,
@@ -176,6 +181,8 @@ import { SettingsComponent } from './settings/settings.component';
     ModelWrapperComponent,
     NavBarMenuComponent,
     NoticeComponent,
+    PipelineRunWrapperComponent,
+    PipelineWrapperComponent,
     ProjectDetailsComponent,
     ProjectMetadataComponent,
     ProjectOverviewComponent,
@@ -190,6 +197,7 @@ import { SettingsComponent } from './settings/settings.component';
     T4CRepoDeletionDialogComponent,
     T4CSettingsComponent,
     T4CSettingsWrapperComponent,
+    TextLineSkeletonLoaderComponent,
     ToolDeletionDialogComponent,
     ToolDetailsComponent,
     ToolIntegrationsComponent,

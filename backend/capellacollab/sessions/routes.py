@@ -159,7 +159,7 @@ def request_session(
         (
             entry,
             toolmodels_injectables.get_existing_capella_model(
-                project.slug, entry.model_slug, db
+                entry.model_slug, project, db
             ),
         )
         for entry in body.models
