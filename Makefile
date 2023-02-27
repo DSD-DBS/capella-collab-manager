@@ -11,9 +11,9 @@ SESSION_NAMESPACE = collab-sessions
 PORT ?= 8080
 
 # List of Capella versions, e.g.: `5.0.0 5.2.0 6.0.0`
-CAPELLA_VERSIONS ?= 5.2.0
+CAPELLA_VERSIONS ?= 6.0.0
 # List of T4C versions, e.g., `5.2.0 6.0.0`
-T4C_CLIENT_VERSIONS ?= 5.2.0
+T4C_CLIENT_VERSIONS ?= 6.0.0
 
 TIMEOUT ?= 10m
 
@@ -29,7 +29,7 @@ export DOCKER_BUILDKIT=1
 SHELL = /bin/bash
 .SHELLFLAGS = -euo pipefail -c
 
-build: backend frontend docs guacamole
+build: backend frontend docs guacamole jupyter
 
 backend: IMAGE=capella/collab/backend
 backend:
@@ -53,6 +53,9 @@ capella:
 
 t4c-client:
 	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(T4C_CLIENT_VERSIONS)" t4c/client/remote t4c/client/backup
+
+jupyter:
+	$(CAPELLA_DOCKERIMAGES) jupyter-notebook
 
 docs:
 	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user

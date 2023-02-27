@@ -39,9 +39,13 @@ export class ActiveSessionsComponent {
   }
 
   openConnectDialog(session: Session): void {
-    this.dialog.open(GuacamoleDialogComponent, {
-      data: session,
-    });
+    if (session.jupyter_uri) {
+      window.open(session.jupyter_uri);
+    } else {
+      this.dialog.open(GuacamoleDialogComponent, {
+        data: session,
+      });
+    }
   }
 
   uploadFileDialog(session: Session): void {

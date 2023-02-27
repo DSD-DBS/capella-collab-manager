@@ -5,6 +5,10 @@
 
 [Full/ Technical Changelog](https://github.com/DSD-DBS/capella-collab-manager/releases)
 
+## v2.8.0
+
+Add support for Jupyter notebooks.
+
 ## v2.7.0
 
 Add integration for the diagram cache. The diagram cache integration allows

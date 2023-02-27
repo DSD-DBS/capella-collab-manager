@@ -185,7 +185,6 @@ To create an upgrade script automatically (this will compare the current databas
 with the models):
 
 ```sh
-cd capellacollab
 alembic revision --autogenerate -m "Commit message"
 ```
 

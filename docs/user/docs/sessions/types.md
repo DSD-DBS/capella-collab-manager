@@ -5,7 +5,7 @@
 
 You can choose two different types of workspaces:
 
-### Persistent Sessions
+### Persistent Capella/Papyrus Sessions
 
 Persistent Sessions allows you to use personal workspace within Capella. Your
 personal workspace will be stored and is part of our backup routines. However,
@@ -26,7 +26,18 @@ the T4C connection dialog.
     Only work stored in the `/workspace` folder (default workspace folder) will
     be persistent.
 
-### Readonly Sessions
+### Persistent Jupyter notebooks
+
+Jupyter notebooks allow you to programmatically explore (capella) models.
+You'll use the same shared workspace as with persistent Capella/Papyrus
+sessions. The same restrictions as with Capella sessions apply here.
+
+<!-- prettier-ignore -->
+!!! info
+    Jupyter notebooks use the same `/workspace` folder as is used with
+    Capella sessions.
+
+### Readonly Capella/Papyrus Sessions
 
 Readonly Sessions allow you to read information from models without consuming a
 licence.

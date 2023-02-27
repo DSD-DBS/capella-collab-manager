@@ -13,6 +13,7 @@ import shlex
 import string
 import subprocess
 import typing as t
+import urllib
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -22,6 +23,8 @@ import kubernetes.stream.stream
 import yaml
 from kubernetes import client
 from kubernetes.client import exceptions
+from openshift import dynamic
+from openshift.dynamic import exceptions as dynamic_exceptions
 
 from capellacollab.config import config
 
@@ -30,6 +33,9 @@ from . import helper
 log = logging.getLogger(__name__)
 
 external_registry: str = config["docker"]["externalRegistry"]
+jupyter_public_uri = urllib.parse.urlparse(
+    config["extensions"]["jupyter"]["publicURI"]
+)
 
 cfg: dict[str, t.Any] = config["k8s"]
 
@@ -63,6 +69,23 @@ if _pod_security_context := cfg.get("cluster", {}).get(
     )
 
 
+def is_openshift_cluster(api_client):
+    dyn_client = dynamic.DynamicClient(api_client)
+    try:
+        dyn_client.resources.get(
+            api_version="route.openshift.io/v1", kind="Route"
+        )
+        logging.info(
+            "Openshift routes detected, assuming an OpenShift cluster"
+        )
+        return True
+    except dynamic_exceptions.ResourceNotFoundError:
+        logging.info(
+            "No openshift routes detected, assuming normal Kubernetes cluster"
+        )
+        return False
+
+
 class FileType(enum.Enum):
     FILE = "file"
     DIRECTORY = "directory"
@@ -79,12 +102,20 @@ class File:
 class KubernetesOperator:
     def __init__(self) -> None:
         self.load_config()
+        self.client = client.ApiClient()
+        self.v1_core = client.CoreV1Api(api_client=self.client)
+        self.v1_apps = client.AppsV1Api(api_client=self.client)
+        self.v1_batch = client.BatchV1Api(api_client=self.client)
+        self.v1_networking = client.NetworkingV1Api(api_client=self.client)
+        self._openshift = None
 
-        self.v1_core = client.CoreV1Api()
-        self.v1_apps = client.AppsV1Api()
-        self.v1_batch = client.BatchV1Api()
+    @property
+    def openshift(self):
+        if self._openshift is None:
+            self._openshift = is_openshift_cluster(self.client)
+        return self._openshift
 
-    def load_config(self):
+    def load_config(self) -> None:
         self.kubectl_arguments = []
         if cfg.get("context", None):
             self.kubectl_arguments += ["--context", cfg["context"]]
@@ -99,7 +130,7 @@ class KubernetesOperator:
         except BaseException:
             return False
 
-    def start_persistent_session(
+    def start_persistent_capella_session(
         self,
         username: str,
         tool_name: str,
@@ -132,9 +163,49 @@ class KubernetesOperator:
             tool_name=tool_name,
             version_name=version_name,
             environment=environment,
+            ports={"rdp": 3389, "metrics": 9118},
             persistent_workspace_claim_name=self._get_claim_name(username),
             pure_variants_secret_name=pure_variants_secret_name,
         )
+
+    def start_persistent_jupyter_session(
+        self,
+        username: str,
+        tool_name: str,
+        version_name: str,
+        token: str,
+        docker_image: str,
+    ) -> dict[str, t.Any]:
+        self._create_persistent_volume_claim(username)
+
+        path = f"{jupyter_public_uri.path}/{username}"
+
+        environment: dict[str, str | None] = {
+            "JUPYTER_BASE_URL": path,
+            "JUPYTER_TOKEN": token,
+            "JUPYTER_PORT": "8888",
+        }
+
+        session_parameters = self._start_session(
+            image=docker_image,
+            username=username,
+            session_type="persistent",
+            tool_name=tool_name,
+            version_name=version_name,
+            environment=environment,
+            ports={"http": 8888},
+            persistent_workspace_claim_name=self._get_claim_name(username),
+            prometheus_path=f"{path}/metrics",
+            prometheus_port=8888,
+            limits="low",
+        )
+
+        if self.openshift:
+            self._create_openshift_route(session_parameters["id"], path, 8888)
+        else:
+            self._create_ingress(session_parameters["id"], path, 8888)
+
+        return session_parameters
 
     def start_readonly_session(
         self,
@@ -155,6 +226,7 @@ class KubernetesOperator:
                 "GIT_REPOS_JSON": json.dumps(git_repos_json),
                 "RMT_PASSWORD": password,
             },
+            ports={"rdp": 3389, "metrics": 9118, "fileservice": 8000},
         )
 
     def _start_session(
@@ -165,8 +237,12 @@ class KubernetesOperator:
         tool_name: str,
         version_name: str,
         environment: dict[str, str | None],
+        ports: dict[str, int],
         persistent_workspace_claim_name: str | None = None,
         pure_variants_secret_name: str | None = None,
+        prometheus_path="/metrics",
+        prometheus_port=9118,
+        limits="high",
     ) -> dict[str, t.Any]:
         log.info("Launching a %s session for user %s", session_type, username)
 
@@ -185,11 +261,19 @@ class KubernetesOperator:
             image=image,
             name=_id,
             environment=environment,
+            ports=ports,
             persistent_workspace_claim_name=persistent_workspace_claim_name,
             pure_variants_secret_name=pure_variants_secret_name,
+            limits=limits,
         )
 
-        service = self._create_service(name=_id, deployment_name=_id)
+        service = self._create_service(
+            name=_id,
+            deployment_name=_id,
+            ports=ports,
+            prometheus_path=prometheus_path,
+            prometheus_port=prometheus_port,
+        )
 
         log.info(
             "Launched a %s session for user %s with id %s",
@@ -197,11 +281,21 @@ class KubernetesOperator:
             username,
             _id,
         )
-        return self._export_attrs(deployment, service)
+        return self._export_attrs(deployment, service, ports)
 
     def kill_session(self, _id: str):
         log.info("Terminating session %s", _id)
 
+        if self.openshift:
+            if dep_status := self._delete_openshift_route(_id):
+                log.info(
+                    "Deleted route %s with status %s", _id, dep_status.status
+                )
+        else:
+            if dep_status := self._delete_ingress(_id):
+                log.info(
+                    "Deleted ingress %s with status %s", _id, dep_status.status
+                )
         if dep_status := self._delete_deployment(name=_id):
             log.info(
                 "Deleted deployment %s with status %s", _id, dep_status.status
@@ -442,10 +536,21 @@ class KubernetesOperator:
         self,
         deployment: client.V1Deployment,
         service: client.V1Service,
+        ports: dict[str, int],
     ) -> dict[str, t.Any]:
+
+        if "rdp" in ports:
+            port = {ports["rdp"]}
+        elif "http" in ports:
+            port = {ports["http"]}
+        else:
+            raise ValueError(
+                "No rdp or http port defined on the deployed session"
+            )
+
         return {
             "id": deployment.to_dict()["metadata"]["name"],
-            "ports": {3389},
+            "ports": port,
             "created_at": deployment.to_dict()["metadata"][
                 "creation_timestamp"
             ],
@@ -458,8 +563,10 @@ class KubernetesOperator:
         image: str,
         name: str,
         environment: dict[str, str | None],
+        ports: dict[str, int],
         persistent_workspace_claim_name: str | None = None,
         pure_variants_secret_name: str | None = None,
+        limits: str = "high",
     ) -> client.V1Deployment:
         volumes: list[client.V1Volume] = []
         session_volume_mounts: list[client.V1VolumeMount] = []
@@ -523,30 +630,32 @@ class KubernetesOperator:
                 )
             )
 
+        resources = (
+            client.V1ResourceRequirements(
+                limits={"cpu": "1", "memory": "1Gi"},
+                requests={"cpu": "0.4", "memory": "200Mi"},
+            )
+            if limits == "low"
+            else client.V1ResourceRequirements(
+                limits={"cpu": "2", "memory": "6Gi"},
+                requests={"cpu": "0.4", "memory": "1.6Gi"},
+            )
+        )
+
         containers: list[client.V1Container] = []
         containers.append(
             client.V1Container(
                 name=name,
                 image=image,
                 ports=[
-                    client.V1ContainerPort(
-                        container_port=3389, protocol="TCP"
-                    ),
-                    client.V1ContainerPort(
-                        container_port=9118, protocol="TCP"
-                    ),
-                    client.V1ContainerPort(
-                        container_port=8000, protocol="TCP"
-                    ),
+                    client.V1ContainerPort(container_port=port, protocol="TCP")
+                    for port in ports.values()
                 ],
                 env=[
                     client.V1EnvVar(name=key, value=str(value))
                     for key, value in environment.items()
                 ],
-                resources=client.V1ResourceRequirements(
-                    limits={"cpu": "2", "memory": "6Gi"},
-                    requests={"cpu": "0.4", "memory": "1.6Gi"},
-                ),
+                resources=resources,
                 volume_mounts=session_volume_mounts,
                 image_pull_policy=image_pull_policy,
             )
@@ -658,7 +767,12 @@ class KubernetesOperator:
         return self.v1_batch.create_namespaced_job(namespace, job)
 
     def _create_service(
-        self, name: str, deployment_name: str
+        self,
+        name: str,
+        deployment_name: str,
+        ports: dict[str, int],
+        prometheus_path: str,
+        prometheus_port: int,
     ) -> client.V1Service:
         service: client.V1Service = client.V1Service(
             kind="Service",
@@ -668,27 +782,88 @@ class KubernetesOperator:
                 labels={"app": name},
                 annotations={
                     "prometheus.io/scrape": "true",
-                    "prometheus.io/path": "/metrics",
-                    "prometheus.io/port": "9118",
+                    "prometheus.io/path": prometheus_path,
+                    "prometheus.io/port": f"{prometheus_port}",
                 },
             ),
             spec=client.V1ServiceSpec(
                 ports=[
                     client.V1ServicePort(
-                        name="rdp", protocol="TCP", port=3389, target_port=3389
-                    ),
-                    client.V1ServicePort(
-                        name="metrics",
+                        name=name,
                         protocol="TCP",
-                        port=9118,
-                        target_port=9118,
-                    ),
+                        port=port,
+                        target_port=port,
+                    )
+                    for name, port in ports.items()
                 ],
                 selector={"app": deployment_name},
                 type="ClusterIP",
             ),
         )
         return self.v1_core.create_namespaced_service(namespace, service)
+
+    def _create_ingress(self, id, path: str, port_number: int):
+        ingress = client.V1Ingress(
+            api_version="networking.k8s.io/v1",
+            kind="Ingress",
+            metadata=client.V1ObjectMeta(
+                name=id,
+            ),
+            spec=client.V1IngressSpec(
+                rules=[
+                    client.V1IngressRule(
+                        host=jupyter_public_uri.hostname,
+                        http=client.V1HTTPIngressRuleValue(
+                            paths=[
+                                client.V1HTTPIngressPath(
+                                    path=path,
+                                    path_type="Prefix",
+                                    backend=client.V1IngressBackend(
+                                        service=client.V1IngressServiceBackend(
+                                            name=id,
+                                            port=client.V1ServiceBackendPort(
+                                                number=port_number
+                                            ),
+                                        )
+                                    ),
+                                )
+                            ]
+                        ),
+                    )
+                ]
+            ),
+        )
+        return self.v1_networking.create_namespaced_ingress(namespace, ingress)
+
+    def _create_openshift_route(self, id, path: str, port_number: int):
+        route_dict = {
+            "kind": "Route",
+            "apiVersion": "route.openshift.io/v1",
+            "metadata": {
+                "name": id,
+            },
+            "spec": {
+                "host": jupyter_public_uri.hostname,
+                "path": path,
+                "to": {
+                    "kind": "Service",
+                    "name": id,
+                },
+                "port": {
+                    "targetPort": port_number,
+                },
+                "tls": {
+                    "termination": "edge",
+                    "insecureEdgeTerminationPolicy": "Redirect",
+                },
+                "wildcardPolicy": "None",
+            },
+        }
+        dyn_client = dynamic.DynamicClient(self.client)
+        v1_routes = dyn_client.resources.get(
+            api_version="route.openshift.io/v1", kind="Route"
+        )
+        return v1_routes.create(body=route_dict, namespace=namespace)
 
     def _create_persistent_volume_claim(self, username: str):
         pvc: client.V1PersistentVolumeClaim = client.V1PersistentVolumeClaim(
@@ -847,6 +1022,26 @@ class KubernetesOperator:
             return self.v1_core.delete_namespaced_service(name, namespace)
         except exceptions.ApiException:
             log.exception("Error deleting service with name: %s", name)
+            return None
+
+    def _delete_ingress(self, name: str) -> client.V1Status | None:
+        try:
+            return self.v1_networking.delete_namespaced_ingress(
+                name, namespace
+            )
+        except exceptions.ApiException:
+            log.exception("Error deleting ingress with name: %s", name)
+            return None
+
+    def _delete_openshift_route(self, name: str) -> client.V1Status | None:
+        try:
+            dyn_client = dynamic.DynamicClient(self.client)
+            v1_routes = dyn_client.resources.get(
+                api_version="route.openshift.io/v1", kind="Route"
+            )
+            return v1_routes.delete(name=name, namespace=namespace)
+        except exceptions.ApiException:
+            log.exception("Error deleting route with name: %s", name)
             return None
 
     def _get_pod_name(self, _id: str) -> str:

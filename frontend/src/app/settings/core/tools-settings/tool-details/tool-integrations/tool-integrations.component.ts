@@ -37,6 +37,7 @@ export class ToolIntegrationsComponent implements OnInit {
   public integrationsForm = new FormGroup({
     t4c: new FormControl(false),
     pv: new FormControl(false),
+    pynb: new FormControl(false),
   });
 
   ngOnInit() {
@@ -49,6 +50,7 @@ export class ToolIntegrationsComponent implements OnInit {
     this.integrationsForm.patchValue({
       t4c: integrations.t4c,
       pv: integrations.pure_variants,
+      pynb: integrations.jupyter,
     });
   }
 
@@ -56,6 +58,7 @@ export class ToolIntegrationsComponent implements OnInit {
     return {
       t4c: this.integrationsForm.controls.t4c.value,
       pure_variants: this.integrationsForm.controls.pv.value,
+      jupyter: this.integrationsForm.controls.pynb.value,
     };
   }
 

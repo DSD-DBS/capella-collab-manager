@@ -38,7 +38,9 @@ from capellacollab.tools.crud import (
     get_natures,
     get_versions,
 )
-from capellacollab.tools.models import Tool
+from capellacollab.tools.integrations.crud import update_integrations
+from capellacollab.tools.integrations.models import PatchToolIntegrations
+from capellacollab.tools.models import Tool, Version
 from capellacollab.users.crud import create_user
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import Role
@@ -91,7 +93,7 @@ class MockOperator:
     sessions = []
 
     @classmethod
-    def start_persistent_session(
+    def start_persistent_capella_session(
         cls,
         username: str,
         tool_name: str,
@@ -104,7 +106,25 @@ class MockOperator:
         pure_variants_secret_name: str = None,
     ) -> dict[str, t.Any]:
         assert docker_image
-        cls.sessions.append({"docker_image": docker_image})
+        cls.sessions.append({"docker_image": docker_image, "type": "capella"})
+        return {
+            "id": str(uuid1()),
+            "host": "test",
+            "ports": [1],
+            "created_at": datetime.now(),
+        }
+
+    @classmethod
+    def start_persistent_jupyter_session(
+        cls,
+        username: str,
+        tool_name: str,
+        version_name: str,
+        token: str,
+        docker_image: str,
+    ) -> t.Dict[str, t.Any]:
+        assert docker_image
+        cls.sessions.append({"docker_image": docker_image, "type": "jupyter"})
         return {
             "id": str(uuid1()),
             "host": "test",
@@ -369,7 +389,45 @@ def test_create_persistent_session_as_user(client, db, user, kubernetes):
     assert session
     assert session.owner_name == user.name
     assert kubernetes.sessions
+    assert kubernetes.sessions[0]["type"] == "capella"
     assert (
         kubernetes.sessions[0]["docker_image"]
         == "k3d-myregistry.localhost:12345/capella/remote:5.0.0-latest"
+    )
+
+
+def test_create_persistent_jupyter_session(client, db, user, kubernetes):
+    jupyter = create_tool(
+        db,
+        Tool(
+            name="jupyter",
+            docker_image_template="jupyter/minimal-notebook:$version",
+        ),
+    )
+    update_integrations(
+        db, jupyter.integrations, PatchToolIntegrations(jupyter=True)
+    )
+
+    jupyter_version = create_version(
+        db, name="python-3.10.8", tool_id=jupyter.id
+    )
+
+    response = client.post(
+        "/api/v1/sessions/persistent",
+        json={
+            "tool_id": jupyter.id,
+            "version_id": jupyter_version.id,
+        },
+    )
+    out = response.json()
+    session = get_session_by_id(db, out["id"])
+
+    assert response.status_code == 200
+    assert session
+    assert session.owner_name == user.name
+    assert kubernetes.sessions
+    assert kubernetes.sessions[0]["type"] == "jupyter"
+    assert (
+        kubernetes.sessions[0]["docker_image"]
+        == "jupyter/minimal-notebook:python-3.10.8"
     )

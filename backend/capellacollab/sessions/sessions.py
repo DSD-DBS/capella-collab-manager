@@ -12,7 +12,6 @@ from requests import JSONDecodeError
 from capellacollab.config import config
 from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import get_operator
-from capellacollab.sessions.schema import WorkspaceType
 
 log = logging.getLogger(__name__)
 
@@ -24,7 +23,11 @@ def inject_attrs_in_sessions(
     for session in db_sessions:
         session.state = _determine_session_state(session)
         session.last_seen = get_last_seen(session.id)
-
+        session.jupyter_uri = (
+            f'{config["extensions"]["jupyter"]["publicURI"]}/{session.owner_name}/lab?token={session.jupyter_token}'
+            if session.jupyter_token
+            else ""
+        )
         sessions_list.append(session)
 
     return sessions_list
@@ -68,14 +71,12 @@ def _get_last_seen(idletime: int | float) -> str:
 def _determine_session_state(session: DatabaseSession) -> str:
     state = get_operator().get_session_state(session.id)
 
-    if session.type == WorkspaceType.READONLY:
+    if state in ("Started", "BackOff"):
         try:
-            if state in ("Started", "BackOff"):
-                logs = get_operator().get_session_logs(session.id).splitlines()
-                for line in logs:
-                    res = re.search(r"^---(.*?)---$", line)
-                    if res:
-                        state = res.group(1)
+            logs = get_operator().get_session_logs(session.id)
+            res = re.search(r"(?s:.*)^---(.*?)---$", logs, re.MULTILINE)
+            if res:
+                return res.group(1)
         except Exception:
             log.exception("Could not parse log")
     return state

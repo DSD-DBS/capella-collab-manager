@@ -130,7 +130,7 @@ export class SessionService {
         success = true;
         break;
 
-      // Cases for readonly containers
+      // Cases for starting containers
       case 'START_LOAD_MODEL':
         text = 'Modelloading started';
         css = 'warning';

@@ -20,6 +20,7 @@ export type Tool = CreateTool & {
 export type ToolIntegrations = {
   t4c: boolean | null;
   pure_variants: boolean | null;
+  jupyter: boolean | null;
 };
 
 export type ToolVersion = {
@@ -48,8 +49,8 @@ export type ToolExtended = {
 
 export type ToolDockerimages = {
   persistent: string;
-  readonly: string;
-  backup: string;
+  readonly: string | undefined;
+  backup: string | undefined;
 };
 
 @Injectable({

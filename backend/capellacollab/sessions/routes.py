@@ -271,9 +271,6 @@ def request_persistent_session(
     operator: KubernetesOperator = Depends(get_operator),
     token=Depends(JWTBearer()),
 ):
-    warnings: list[core_models.Message] = []
-    rdp_password = generate_password(length=64)
-
     owner = auth_helper.get_username(token)
 
     log.info("Starting persistent session for user %s", owner)
@@ -296,8 +293,70 @@ def request_persistent_session(
         tool.id, body.version_id, db
     )
 
-    docker_image = tools_crud.get_image_for_tool_version(db, version.id)
+    if tool.integrations and tool.integrations.jupyter:
+        response = start_persistent_jupyter_session(
+            db=db,
+            operator=operator,
+            owner=owner,
+            token=token,
+            tool=tool,
+            version=version,
+        )
+    else:
+        response = start_persistent_guacamole_session(
+            db=db,
+            operator=operator,
+            user=user,
+            owner=owner,
+            token=token,
+            tool=tool,
+            version=version,
+        )
 
+    return response
+
+
+def start_persistent_jupyter_session(
+    db: Session,
+    operator: KubernetesOperator,
+    owner: str,
+    token: str,
+    tool: tools_models.Tool,
+    version: tools_models.Version,
+):
+    docker_image = tools_crud.get_image_for_tool_version(db, version.id)
+    jupyter_token = generate_password(length=64)
+
+    session = operator.start_persistent_jupyter_session(
+        username=auth_helper.get_username(token),
+        tool_name=tool.name,
+        version_name=version.name,
+        token=jupyter_token,
+        docker_image=docker_image,
+    )
+
+    return create_database_session(
+        db,
+        schema.WorkspaceType.PERSISTENT,
+        session,
+        owner,
+        tool,
+        version,
+        None,
+        jupyter_token=jupyter_token,
+    )
+
+
+def start_persistent_guacamole_session(
+    db: Session,
+    operator: KubernetesOperator,
+    user: users_models.DatabaseUser,
+    owner: str,
+    token: str,
+    tool: tools_models.Tool,
+    version: tools_models.Version,
+):
+    warnings: list[core_models.Message] = []
     t4c_password = None
     t4c_json = None
     t4c_license_secret = None
@@ -359,9 +418,11 @@ def request_persistent_session(
         pure_variants_secret_name,
         pv_warnings,
     ) = determine_pure_variants_configuration(db, user, tool)
-    warnings += pv_warnings
 
-    session = operator.start_persistent_session(
+    docker_image = tools_crud.get_image_for_tool_version(db, version.id)
+    rdp_password = generate_password(length=64)
+
+    session = operator.start_persistent_capella_session(
         username=auth_helper.get_username(token),
         tool_name=tool.name,
         version_name=version.name,
@@ -384,7 +445,8 @@ def request_persistent_session(
         None,
         t4c_password,
     )
-    response.warnings = warnings
+    response.warnings += warnings
+    response.warnings += pv_warnings
     return response
 
 
@@ -432,6 +494,32 @@ def determine_pure_variants_configuration(
     return (pv_license.license_server_url, "pure-variants", warnings)
 
 
+def create_database_session(
+    db: Session,
+    type: schema.WorkspaceType,
+    session: dict[str, t.Any],
+    owner: str,
+    tool: tools_models.Tool,
+    version: tools_models.Version,
+    project: DatabaseProject | None,
+    **kwargs,
+) -> DatabaseSession:
+    database_model = DatabaseSession(
+        tool=tool,
+        version=version,
+        owner_name=owner,
+        project=project,
+        type=type,
+        **session,
+        **kwargs,
+    )
+    response = crud.create_session(db=db, session=database_model)
+    response.state = "New"
+    response.last_seen = "UNKNOWN"
+    response.warnings = []
+    return response
+
+
 def create_database_and_guacamole_session(
     db: Session,
     type: schema.WorkspaceType,
@@ -440,9 +528,9 @@ def create_database_and_guacamole_session(
     rdp_password: str,
     tool: tools_models.Tool,
     version: tools_models.Version,
-    project,
+    project: DatabaseProject | None,
     t4c_password: str | None = None,
-):
+) -> DatabaseSession:
     guacamole_username = generate_password()
     guacamole_password = generate_password(length=64)
 
@@ -462,23 +550,20 @@ def create_database_and_guacamole_session(
         guacamole_token, guacamole_username, guacamole_identifier
     )
 
-    database_model = DatabaseSession(
+    return create_database_session(
+        db,
+        type,
+        session,
+        owner,
+        tool,
+        version,
+        project,
+        t4c_password=t4c_password,
+        rdp_password=rdp_password,
         guacamole_username=guacamole_username,
         guacamole_password=guacamole_password,
-        rdp_password=rdp_password,
         guacamole_connection_id=guacamole_identifier,
-        owner_name=owner,
-        project=project,
-        type=type,
-        t4c_password=t4c_password,
-        tool=tool,
-        version=version,
-        **session,
     )
-    response = crud.create_session(db=db, session=database_model)
-    response.state = "New"
-    response.last_seen = "UNKNOWN"
-    return response
 
 
 @router.delete("/{session_id}", status_code=204)
