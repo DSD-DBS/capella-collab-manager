@@ -810,6 +810,7 @@ class KubernetesOperator:
                 name=id,
             ),
             spec=client.V1IngressSpec(
+                ingress_class_name=cfg.get("ingressClassName"),
                 rules=[
                     client.V1IngressRule(
                         host=jupyter_public_uri.hostname,
@@ -830,7 +831,7 @@ class KubernetesOperator:
                             ]
                         ),
                     )
-                ]
+                ],
             ),
         )
         return self.v1_networking.create_namespaced_ingress(namespace, ingress)

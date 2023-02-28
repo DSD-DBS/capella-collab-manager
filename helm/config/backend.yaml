@@ -7,6 +7,9 @@ docker:
 
 k8s:
   namespace: {{ .Values.backend.k8sSessionNamespace }}
+  {{- if eq .Values.target "azure" }}
+  ingressClassName: nginx
+  {{- end }}
   storageClassName: {{ .Values.backend.storageClassName }}
   storageAccessMode: {{ .Values.backend.storageAccessMode }}
 
