@@ -8,9 +8,6 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     id: {{ .Release.Name }}-service-prometheus
-  annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "9118"
 spec:
   type: ClusterIP
   selector:
