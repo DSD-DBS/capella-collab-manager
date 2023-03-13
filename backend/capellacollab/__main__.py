@@ -12,6 +12,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette_prometheus import PrometheusMiddleware, metrics
 
+import capellacollab.sessions.metrics
+
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.config import config
 from capellacollab.core.database import engine, migration
@@ -64,9 +66,17 @@ async def schedule_termination_of_idle_sessions():
         await terminate_idle_sessions_in_background()
 
 
+async def register_metrics():
+    capellacollab.sessions.metrics.register()
+
+
 app = FastAPI(
     title="Capella Collaboration",
-    on_startup=[startup, schedule_termination_of_idle_sessions],
+    on_startup=[
+        startup,
+        schedule_termination_of_idle_sessions,
+        register_metrics,
+    ],
     middleware=[
         Middleware(
             CORSMiddleware,

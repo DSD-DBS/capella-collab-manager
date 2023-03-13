@@ -20,6 +20,7 @@ from datetime import datetime
 import kubernetes
 import kubernetes.config
 import kubernetes.stream.stream
+import prometheus_client
 import yaml
 from kubernetes import client
 from kubernetes.client import exceptions
@@ -31,6 +32,13 @@ from capellacollab.config import config
 from . import helper
 
 log = logging.getLogger(__name__)
+
+SESSIONS_STARTED = prometheus_client.Counter(
+    "backend_sessions_started", "", ("session_type",)
+)
+SESSIONS_KILLED = prometheus_client.Counter(
+    "backend_sessions_killed", "Sessions killed, either by user or timeout"
+)
 
 external_registry: str = config["docker"]["externalRegistry"]
 jupyter_public_uri = urllib.parse.urlparse(
@@ -281,6 +289,8 @@ class KubernetesOperator:
             username,
             _id,
         )
+        SESSIONS_STARTED.labels(session_type).inc()
+
         return self._export_attrs(deployment, service, ports)
 
     def kill_session(self, _id: str):
@@ -310,6 +320,8 @@ class KubernetesOperator:
             log.info(
                 "Deleted service %s with status %s", _id, svc_status.status
             )
+
+        SESSIONS_KILLED.inc()
 
     def get_job_state(self, job_name: str) -> str:
         return self._get_pod_state(label_selector=f"job-name={job_name}")

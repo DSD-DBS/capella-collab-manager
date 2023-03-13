@@ -52,6 +52,10 @@ def get_all_sessions(db: Session):
     return db.query(DatabaseSession).all()
 
 
+def count_sessions(db: Session):
+    return db.query(DatabaseSession).count()
+
+
 def create_session(db: Session, session: DatabaseSession):
     db.add(session)
     db.commit()
