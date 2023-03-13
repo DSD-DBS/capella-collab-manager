@@ -1059,7 +1059,7 @@ class KubernetesOperator:
     def _get_pod_name(self, _id: str) -> str:
         return self._get_pods(label_selector=f"app={_id}")[0].metadata.name
 
-    def _get_pods(self, label_selector: str) -> list[client.V1Pod]:
+    def _get_pods(self, label_selector: str | None) -> list[client.V1Pod]:
         return self.v1_core.list_namespaced_pod(
             namespace=namespace, label_selector=label_selector
         ).items
