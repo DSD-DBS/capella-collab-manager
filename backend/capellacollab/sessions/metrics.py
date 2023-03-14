@@ -30,7 +30,7 @@ class DeployedSessionsCollector:
             labels=("phase",),
         )
         operator = operators.get_operator()
-        pods = operator._get_pods(label_selector=None)
+        pods = operator.get_pods(label_selector=None)
         phases = sorted(pod.status.phase.lower() for pod in pods)
         for k, g in itertools.groupby(phases):
             metric.add_metric([k], len(list(g)))

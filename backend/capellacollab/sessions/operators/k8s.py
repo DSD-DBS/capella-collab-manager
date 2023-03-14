@@ -372,7 +372,7 @@ class KubernetesOperator:
 
     def _get_pod_state(self, label_selector: str):
         try:
-            pod = self._get_pods(label_selector=label_selector)[0]
+            pod = self.get_pods(label_selector=label_selector)[0]
             pod_name = pod.metadata.name
 
             log.debug("Received k8s pod: %s", pod_name)
@@ -399,7 +399,7 @@ class KubernetesOperator:
 
     def _get_pod_starttime(self, label_selector: str) -> datetime | None:
         try:
-            pods: list[client.V1Pod] = self._get_pods(
+            pods: list[client.V1Pod] = self.get_pods(
                 label_selector=label_selector
             )
             log.debug("Received k8s pods: %s", pods)
@@ -1057,9 +1057,9 @@ class KubernetesOperator:
             return None
 
     def _get_pod_name(self, _id: str) -> str:
-        return self._get_pods(label_selector=f"app={_id}")[0].metadata.name
+        return self.get_pods(label_selector=f"app={_id}")[0].metadata.name
 
-    def _get_pods(self, label_selector: str | None) -> list[client.V1Pod]:
+    def get_pods(self, label_selector: str | None) -> list[client.V1Pod]:
         return self.v1_core.list_namespaced_pod(
             namespace=namespace, label_selector=label_selector
         ).items
