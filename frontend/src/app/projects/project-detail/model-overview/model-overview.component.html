@@ -102,16 +102,6 @@
           >
             <mat-icon>open_in_new</mat-icon>
           </a>
-          <a
-            *ngIf="
-              model.t4c_models && projectUserService.verifyPermission('write')
-            "
-            routerLink="/sessions"
-            mat-mini-fab
-            matTooltip="Request persistent session"
-          >
-            <mat-icon>screen_share</mat-icon>
-          </a>
         </div>
       </div>
     </div>
