@@ -19,7 +19,7 @@
             formControlName="tool"
             (selectionChange)="onToolChange($event.value)"
           >
-            <mat-option *ngFor="let tool of toolService.tools" [value]="tool">
+            <mat-option *ngFor="let tool of tools" [value]="tool">
               {{ tool.name }}
             </mat-option>
           </mat-select>

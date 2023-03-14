@@ -72,6 +72,11 @@ export class CreateReadonlySessionComponent implements OnInit {
     this.toolService.getTools().subscribe();
   }
 
+  get tools(): Tool[] | undefined {
+    let toolIds = this.models?.map((m) => m.id);
+    return this.toolService.tools?.filter((t) => toolIds?.includes(t.id));
+  }
+
   requestReadonlySession(): void {
     if (this.toolSelectionForm.valid) {
       const dialogRef = this.dialog.open(CreateReadonlySessionDialogComponent, {
@@ -93,7 +98,10 @@ export class CreateReadonlySessionComponent implements OnInit {
     this.toolVersions = undefined;
 
     this.toolService.getVersionsForTool(tool.id).subscribe((toolVersions) => {
-      this.toolVersions = toolVersions;
+      let toolVersionIds = this.models?.map((m) => m.version?.id);
+      this.toolVersions = toolVersions.filter((v) =>
+        toolVersionIds?.includes(v.id)
+      );
     });
   }
 
@@ -105,8 +113,9 @@ export class CreateReadonlySessionComponent implements OnInit {
           return readOnlySessions?.find(
             (session) =>
               session.project.slug === this.projectSlug &&
-              session.version.id === this.toolSelectionForm.value.version!.id &&
-              session.version.tool.id === this.toolSelectionForm.value.tool!.id
+              session.version?.id ===
+                this.toolSelectionForm.value.version!.id &&
+              session.version?.tool.id === this.toolSelectionForm.value.tool!.id
           )
             ? {
                 uniqueReadonlySession:
