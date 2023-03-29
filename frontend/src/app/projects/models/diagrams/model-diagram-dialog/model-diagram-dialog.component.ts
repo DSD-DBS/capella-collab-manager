@@ -128,6 +128,8 @@ export class ModelDiagramDialogComponent {
     const loadingDiagram = this.diagrams[diagram.uuid];
     if (!loadingDiagram.loading) {
       this.dialog.open(ModelDiagramPreviewDialogComponent, {
+        height: '80vh',
+        width: '80vw',
         data: {
           diagram: diagram,
           content: loadingDiagram.content,

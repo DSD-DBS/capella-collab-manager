@@ -3,9 +3,17 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="dialog">
-  <h2>Diagram preview of '{{ data.diagram.name }}'</h2>
-  <span>UUID: {{ data.diagram.uuid }}</span>
-  <img class="diagram" [src]="data.content" />
-  <button mat-button mat-dialog-close>Close</button>
+<div class="dialog flex-space-between width">
+  <div class="width">
+    <h2>Diagram preview of '{{ data.diagram.name }}'</h2>
+    <span>UUID: {{ data.diagram.uuid }}</span>
+    <mat-divider id="top-divider"></mat-divider>
+  </div>
+  <div class="flex-grow width">
+    <img #diagram class="diagram" [src]="data.content" />
+  </div>
+  <div class="width">
+    <mat-divider id="bottom-divider"></mat-divider>
+    <button mat-button mat-dialog-close>Close</button>
+  </div>
 </div>
