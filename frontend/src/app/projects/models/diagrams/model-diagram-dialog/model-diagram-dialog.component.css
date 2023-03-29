@@ -77,9 +77,6 @@ button {
   flex-wrap: nowrap;
 }
 
-::ng-deep .mat-form-field-wrapper {
-  padding-bottom: 5px;
-}
 #search {
   margin-top: 10px;
   width: 100%;
