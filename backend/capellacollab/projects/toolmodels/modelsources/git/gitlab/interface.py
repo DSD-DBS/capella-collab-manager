@@ -103,13 +103,26 @@ def get_project_id_by_git_url(
     git_instance: settings_git_models.DatabaseGitInstance,
 ) -> str:
     project_name_encoded = parse.quote(
-        parse.urlparse(git_model.path).path.lstrip("/"), safe=""
+        parse.urlparse(git_model.path).path.lstrip("/").removesuffix(".git"),
+        safe="",
     )
     response = requests.get(
         f"{git_instance.api_url}/projects/{project_name_encoded}",
         headers={"PRIVATE-TOKEN": git_model.password},
         timeout=2,
     )
+    if response.status_code == 404:
+        raise fastapi.HTTPException(
+            status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "err_code": "PROJECT_NOT_FOUND",
+                "reason": (
+                    "We couldn't find the project in your Gitlab instance.",
+                    f"Please make sure that a project with the encoded name '{project_name_encoded}' does exist.",
+                ),
+            },
+        )
+
     response.raise_for_status()
 
     return response.json()["id"]
