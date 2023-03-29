@@ -23,6 +23,9 @@
       />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
+    <span *ngIf="filteredDiagrams()"
+      >{{ filteredDiagrams()?.length }} diagrams found:
+    </span>
   </div>
   <div class="masonry">
     <mat-card
@@ -93,7 +96,15 @@
       }"
     ></ngx-skeleton-loader>
   </div>
-  <div *ngIf="filteredDiagrams()?.length === 0">
+  <div *ngIf="this.diagramMetadata?.diagrams?.length === 0">
     Your model doesn't seem to contain diagrams.
+  </div>
+  <div
+    *ngIf="
+      this.diagramMetadata?.diagrams?.length !== 0 &&
+      filteredDiagrams()?.length === 0
+    "
+  >
+    No diagrams for the given filter found. Please remove your search query.
   </div>
 </div>

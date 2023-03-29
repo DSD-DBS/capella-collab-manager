@@ -55,7 +55,7 @@
 }
 
 .header {
-  height: 120px;
+  height: 150px;
 }
 
 button {
@@ -77,9 +77,13 @@ button {
   flex-wrap: nowrap;
 }
 
+::ng-deep .mat-form-field-wrapper {
+  padding-bottom: 5px;
+}
 #search {
   margin-top: 10px;
   width: 100%;
+  padding-bottom: 5px;
 }
 
 .diagram-name {
