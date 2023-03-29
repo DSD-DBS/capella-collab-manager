@@ -54,6 +54,10 @@
   margin-bottom: 15px;
 }
 
+.diagram:hover {
+  cursor: pointer;
+}
+
 .header {
   height: 150px;
 }

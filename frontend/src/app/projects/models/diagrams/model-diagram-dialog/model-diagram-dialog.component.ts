@@ -10,8 +10,16 @@ import {
   ElementRef,
   QueryList,
 } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
 import { saveAs } from 'file-saver';
+import {
+  MatDialogPreviewData,
+  ModelDiagramPreviewDialogComponent,
+} from 'src/app/projects/models/diagrams/model-diagram-preview-dialog/model-diagram-preview-dialog.component';
 import {
   DiagramCacheMetadata,
   DiagramMetadata,
@@ -46,6 +54,7 @@ export class ModelDiagramDialogComponent {
   constructor(
     private modelDiagramService: ModelDiagramService,
     private dialogRef: MatDialogRef<ModelDiagramDialogComponent>,
+    private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA)
     public data: { modelSlug: string; projectSlug: string }
   ) {
@@ -112,6 +121,18 @@ export class ModelDiagramDialogComponent {
             };
           },
         });
+    }
+  }
+
+  openModelDiagramPreviewDialog(diagram: DiagramMetadata) {
+    const loadingDiagram = this.diagrams[diagram.uuid];
+    if (!loadingDiagram.loading) {
+      this.dialog.open(ModelDiagramPreviewDialogComponent, {
+        data: {
+          diagram: diagram,
+          content: loadingDiagram.content,
+        } as MatDialogPreviewData,
+      });
     }
   }
 

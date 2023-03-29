@@ -40,6 +40,8 @@
       *ngFor="let diagram of filteredDiagrams()"
     >
       <img
+        (click)="openModelDiagramPreviewDialog(diagram)"
+        matTooltip="Open preview"
         *ngIf="diagram.success && diagrams[diagram.uuid]?.content"
         class="diagram"
         [src]="diagrams[diagram.uuid].content"

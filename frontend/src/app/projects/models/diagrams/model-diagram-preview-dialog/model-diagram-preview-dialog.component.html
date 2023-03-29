@@ -1,0 +1,11 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="dialog">
+  <h2>Diagram preview of '{{ data.diagram.name }}'</h2>
+  <span>UUID: {{ data.diagram.uuid }}</span>
+  <img class="diagram" [src]="data.content" />
+  <button mat-button mat-dialog-close>Close</button>
+</div>
