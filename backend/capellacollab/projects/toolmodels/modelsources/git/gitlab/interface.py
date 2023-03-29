@@ -111,6 +111,17 @@ def get_project_id_by_git_url(
         headers={"PRIVATE-TOKEN": git_model.password},
         timeout=2,
     )
+    if response.status_code == 403:
+        raise fastapi.HTTPException(
+            status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "err_code": "GITLAB_ACCESS_DENIED",
+                "reason": (
+                    "The registered token has not enough permissions to access the pipelines artifacts.",
+                    "Access scope 'read_api' is required. Please contact your project lead.",
+                ),
+            },
+        )
     if response.status_code == 404:
         raise fastapi.HTTPException(
             status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
