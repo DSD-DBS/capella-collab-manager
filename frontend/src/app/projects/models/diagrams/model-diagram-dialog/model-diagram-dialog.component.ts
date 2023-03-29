@@ -3,7 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, Inject } from '@angular/core';
+import {
+  Component,
+  Inject,
+  ViewChildren,
+  ElementRef,
+  QueryList,
+} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { saveAs } from 'file-saver';
 import {
@@ -19,8 +25,10 @@ import {
 })
 export class ModelDiagramDialogComponent {
   diagramMetadata?: DiagramCacheMetadata;
-  selectedDiagram?: DiagramMetadata;
-  selectedDiagramContent?: string;
+  diagrams: Diagrams = {};
+
+  @ViewChildren('diagram', { read: ElementRef })
+  diagramHTMLElements?: QueryList<ElementRef>;
 
   search = '';
 
@@ -46,11 +54,65 @@ export class ModelDiagramDialogComponent {
       .subscribe({
         next: (diagramMetadata) => {
           this.diagramMetadata = diagramMetadata;
+          this.observeVisibleDiagrams();
         },
         error: () => {
           this.dialogRef.close();
         },
       });
+  }
+
+  observeVisibleDiagrams() {
+    var observer = new IntersectionObserver(
+      (entries: IntersectionObserverEntry[], _: IntersectionObserver) => {
+        entries
+          .filter((entry) => entry.isIntersecting)
+          .filter((entry) => {
+            return entry.target.getAttribute('success') === 'true';
+          })
+          .forEach((entry) => {
+            const uuid = entry.target.id;
+            this.lazyLoadDiagram(uuid);
+          });
+      },
+      {
+        root: null,
+        threshold: 0.2,
+      }
+    );
+
+    this.diagramHTMLElements?.changes.subscribe((res) => {
+      res.forEach((diagram: ElementRef) => {
+        observer.observe(diagram.nativeElement);
+      });
+    });
+  }
+
+  lazyLoadDiagram(uuid: string) {
+    if (!this.diagrams[uuid]) {
+      this.diagrams[uuid] = { loading: true, content: undefined };
+      this.modelDiagramService
+        .getDiagram(this.data.projectSlug, this.data.modelSlug, uuid)
+        .subscribe({
+          next: (response: Blob) => {
+            var reader = new FileReader();
+            reader.readAsDataURL(response);
+            reader.onloadend = () => {
+              var base64data = reader.result;
+              this.diagrams[uuid] = {
+                loading: false,
+                content: base64data,
+              };
+            };
+          },
+          error: () => {
+            this.diagrams[uuid] = {
+              loading: false,
+              content: null,
+            };
+          },
+        });
+    }
   }
 
   downloadDiagram(uuid: string) {
@@ -61,3 +123,12 @@ export class ModelDiagramDialogComponent {
       });
   }
 }
+
+interface Diagrams {
+  [uuid: string]: Diagram;
+}
+
+type Diagram = {
+  loading: boolean;
+  content?: string | ArrayBuffer | null;
+};

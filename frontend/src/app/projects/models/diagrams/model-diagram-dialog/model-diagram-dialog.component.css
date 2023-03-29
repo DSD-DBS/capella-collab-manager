@@ -5,8 +5,53 @@
 
 .diagrams {
   height: calc(80vh - 170px);
-  width: 100%;
   word-wrap: break-word;
+}
+
+.diagram-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: calc(100% / 3 - 2 * 10px - 2 * 16px); /* 3 rows - margin - padding */
+}
+
+.uuid {
+  color: grey;
+}
+
+.loader {
+  width: calc(100% / 3 - 2 * 10px);
+  margin: 10px;
+}
+
+.diagram-error {
+  border-radius: 5px;
+  border: solid lightgray;
+  width: 100%;
+  height: 200px;
+  text-align: center;
+  padding: 15px 0;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.masonry {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.diagram-error-icon {
+  color: darkred;
+  transform: scale(2);
+}
+
+.diagram {
+  height: 200px;
+  width: 100%;
+  margin-bottom: 15px;
 }
 
 .header {
@@ -19,7 +64,11 @@ button {
 
 .diagram-metadata {
   overflow-y: hidden;
-  max-width: calc(100% - 150px);
+}
+
+.download-button {
+  width: 100%;
+  margin: 5px 0;
 }
 
 .list-item {

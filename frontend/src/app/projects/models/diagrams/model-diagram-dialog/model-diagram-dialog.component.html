@@ -3,7 +3,6 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 <div class="dialog">
-  <div *ngIf="selectedDiagram"></div>
   <div class="header">
     <h2>View diagrams</h2>
     <span
@@ -13,6 +12,7 @@
           "loading..."
       }}</span
     >
+
     <mat-form-field id="search" appearance="outline">
       <mat-label>Search</mat-label>
       <input
@@ -24,28 +24,76 @@
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
   </div>
-  <mat-list class="diagrams scrollable">
-    <div *ngIf="filteredDiagrams() === undefined">
-      <app-mat-list-skeleton-loader
-        [listNumber]="20"
-      ></app-mat-list-skeleton-loader>
-    </div>
-    <div *ngIf="filteredDiagrams()?.length === 0">
-      Your model doesn't seem to contain diagrams.
-    </div>
-    <div *ngFor="let diagram of filteredDiagrams()">
+  <div class="masonry">
+    <mat-card
+      class="diagram-card"
+      #diagram
+      [id]="diagram.uuid"
+      [attr.success]="diagram.success"
+      *ngFor="let diagram of filteredDiagrams()"
+    >
+      <img
+        *ngIf="diagram.success && diagrams[diagram.uuid]?.content"
+        class="diagram"
+        [src]="diagrams[diagram.uuid].content"
+      />
+      <ngx-skeleton-loader
+        style="width: 100%"
+        *ngIf="diagrams[diagram.uuid]?.loading"
+        [theme]="{
+          'border-radius': '5px',
+          height: '200px',
+          width: 'calc(100% - 10px)',
+          border: '1px solid white'
+        }"
+      ></ngx-skeleton-loader>
+      <div *ngIf="!diagram.success" class="diagram-error">
+        <mat-icon class="diagram-error-icon">error</mat-icon> <br />
+        Diagram export has failed. <br />Please contact your diagram cache
+        administrator.
+      </div>
+      <div
+        *ngIf="
+          diagram.success &&
+          diagrams[diagram.uuid] &&
+          diagrams[diagram.uuid].content === null
+        "
+        class="diagram-error"
+      >
+        <mat-icon class="diagram-error-icon">error</mat-icon> <br />
+        Error loading the diagram from the server. <br />Please try again later.
+        <br />
+        If the problem persists, please contact your diagram cache
+        administrator.
+      </div>
       <div class="list-item">
         <div class="diagram-metadata">
           <div class="diagram-name">{{ diagram.name }}</div>
-          <div>UUID: {{ diagram.uuid }}</div>
-        </div>
-        <div class="diagram-actions">
-          <button (click)="downloadDiagram(diagram.uuid)" mat-raised-button>
-            <mat-icon>cloud_download</mat-icon>
-          </button>
+          <div class="uuid">UUID: {{ diagram.uuid }}</div>
         </div>
       </div>
-      <mat-divider></mat-divider>
-    </div>
-  </mat-list>
+      <button
+        class="download-button"
+        (click)="downloadDiagram(diagram.uuid)"
+        mat-raised-button
+        [disabled]="!diagram.success"
+      >
+        <mat-icon>cloud_download</mat-icon> Download
+      </button>
+    </mat-card>
+  </div>
+  <div class="masonry" *ngIf="filteredDiagrams() === undefined">
+    <ngx-skeleton-loader
+      *ngFor="let _ of [0, 1, 2, 3, 4, 5]"
+      class="loader"
+      [theme]="{
+        'border-radius': '5px',
+        height: '332px',
+        border: '1px solid white'
+      }"
+    ></ngx-skeleton-loader>
+  </div>
+  <div *ngIf="filteredDiagrams()?.length === 0">
+    Your model doesn't seem to contain diagrams.
+  </div>
 </div>
