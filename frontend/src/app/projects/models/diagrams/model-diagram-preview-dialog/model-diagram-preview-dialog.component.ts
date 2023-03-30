@@ -26,11 +26,8 @@ export class ModelDiagramPreviewDialogComponent implements AfterViewInit {
   constructor(
     @Inject(MAT_DIALOG_DATA)
     public data: MatDialogPreviewData
-  ) {
-    // Panning and pinch zooming are bound automatically (unless disablePan is true).
-    // There are several available methods for zooming
-    // that can be bound on button clicks or mousewheel.
-  }
+  ) {}
+
   ngAfterViewInit(): void {
     const img = this.diagramElement!.nativeElement;
 
