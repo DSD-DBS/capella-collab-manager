@@ -35,6 +35,8 @@ export class ModelDiagramDialogComponent {
   diagramMetadata?: DiagramCacheMetadata;
   diagrams: Diagrams = {};
 
+  loaderArray = Array(60).fill(0);
+
   @ViewChildren('diagram', { read: ElementRef })
   diagramHTMLElements?: QueryList<ElementRef>;
 

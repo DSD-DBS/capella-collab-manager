@@ -93,7 +93,7 @@
   </div>
   <div class="diagrams-flexbox" *ngIf="filteredDiagrams() === undefined">
     <ngx-skeleton-loader
-      *ngFor="let _ of [0, 1, 2, 3, 4, 5]"
+      *ngFor="let _ of loaderArray"
       class="loader"
       [theme]="{
         'border-radius': '5px',
