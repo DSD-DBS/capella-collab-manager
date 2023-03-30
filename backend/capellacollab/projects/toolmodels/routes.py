@@ -17,6 +17,7 @@ from . import crud
 from .backups.routes import router as router_backups
 from .diagrams.routes import router as router_diagrams
 from .injectables import get_existing_capella_model, get_existing_project
+from .modelbadge.routes import router as router_complexity_badge
 from .models import (
     CapellaModel,
     DatabaseCapellaModel,
@@ -189,4 +190,9 @@ router.include_router(
     router_diagrams,
     prefix="/{model_slug}/diagrams",
     tags=["Projects - Models - Diagrams"],
+)
+router.include_router(
+    router_complexity_badge,
+    prefix="/{model_slug}/badges/complexity",
+    tags=["Projects - Models - Model complexity badge"],
 )
