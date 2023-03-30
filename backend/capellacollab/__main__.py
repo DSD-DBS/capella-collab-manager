@@ -66,16 +66,12 @@ async def schedule_termination_of_idle_sessions():
         await terminate_idle_sessions_in_background()
 
 
-async def register_metrics():
-    capellacollab.sessions.metrics.register()
-
-
 app = FastAPI(
     title="Capella Collaboration",
     on_startup=[
         startup,
         schedule_termination_of_idle_sessions,
-        register_metrics,
+        capellacollab.sessions.metrics.register,
     ],
     middleware=[
         Middleware(
