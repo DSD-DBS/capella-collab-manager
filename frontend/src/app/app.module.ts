@@ -135,7 +135,6 @@ import { SettingsComponent } from './settings/settings.component';
     CreateProjectComponent,
     CreateReadonlyModelOptionsComponent,
     CreateReadonlySessionComponent,
-    CreateReadonlySessionComponent,
     CreateReadonlySessionDialogComponent,
     DeleteGitSettingsDialogComponent,
     DeleteSessionDialogComponent,
