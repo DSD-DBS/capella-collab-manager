@@ -3,9 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  Component,
+  Inject,
+  ViewChildren,
+  ElementRef,
+  QueryList,
+} from '@angular/core';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
 import { saveAs } from 'file-saver';
+import {
+  MatDialogPreviewData,
+  ModelDiagramPreviewDialogComponent,
+} from 'src/app/projects/models/diagrams/model-diagram-preview-dialog/model-diagram-preview-dialog.component';
 import {
   DiagramCacheMetadata,
   DiagramMetadata,
@@ -19,8 +33,12 @@ import {
 })
 export class ModelDiagramDialogComponent {
   diagramMetadata?: DiagramCacheMetadata;
-  selectedDiagram?: DiagramMetadata;
-  selectedDiagramContent?: string;
+  diagrams: Diagrams = {};
+
+  loaderArray = Array(60).fill(0);
+
+  @ViewChildren('diagram', { read: ElementRef })
+  diagramHTMLElements?: QueryList<ElementRef>;
 
   search = '';
 
@@ -38,6 +56,7 @@ export class ModelDiagramDialogComponent {
   constructor(
     private modelDiagramService: ModelDiagramService,
     private dialogRef: MatDialogRef<ModelDiagramDialogComponent>,
+    private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA)
     public data: { modelSlug: string; projectSlug: string }
   ) {
@@ -46,11 +65,79 @@ export class ModelDiagramDialogComponent {
       .subscribe({
         next: (diagramMetadata) => {
           this.diagramMetadata = diagramMetadata;
+          this.observeVisibleDiagrams();
         },
         error: () => {
           this.dialogRef.close();
         },
       });
+  }
+
+  observeVisibleDiagrams() {
+    var observer = new IntersectionObserver(
+      (entries: IntersectionObserverEntry[], _: IntersectionObserver) => {
+        entries
+          .filter((entry) => entry.isIntersecting)
+          .filter((entry) => {
+            return entry.target.getAttribute('success') === 'true';
+          })
+          .forEach((entry) => {
+            const uuid = entry.target.id;
+            this.lazyLoadDiagram(uuid);
+          });
+      },
+      {
+        root: null,
+        threshold: 0.2,
+      }
+    );
+
+    this.diagramHTMLElements?.changes.subscribe((res) => {
+      res.forEach((diagram: ElementRef) => {
+        observer.observe(diagram.nativeElement);
+      });
+    });
+  }
+
+  lazyLoadDiagram(uuid: string) {
+    if (!this.diagrams[uuid]) {
+      this.diagrams[uuid] = { loading: true, content: undefined };
+      this.modelDiagramService
+        .getDiagram(this.data.projectSlug, this.data.modelSlug, uuid)
+        .subscribe({
+          next: (response: Blob) => {
+            var reader = new FileReader();
+            reader.readAsDataURL(response);
+            reader.onloadend = () => {
+              var base64data = reader.result;
+              this.diagrams[uuid] = {
+                loading: false,
+                content: base64data,
+              };
+            };
+          },
+          error: () => {
+            this.diagrams[uuid] = {
+              loading: false,
+              content: null,
+            };
+          },
+        });
+    }
+  }
+
+  openModelDiagramPreviewDialog(diagram: DiagramMetadata) {
+    const loadingDiagram = this.diagrams[diagram.uuid];
+    if (!loadingDiagram.loading) {
+      this.dialog.open(ModelDiagramPreviewDialogComponent, {
+        height: '80vh',
+        width: '80vw',
+        data: {
+          diagram: diagram,
+          content: loadingDiagram.content,
+        } as MatDialogPreviewData,
+      });
+    }
   }
 
   downloadDiagram(uuid: string) {
@@ -61,3 +148,12 @@ export class ModelDiagramDialogComponent {
       });
   }
 }
+
+interface Diagrams {
+  [uuid: string]: Diagram;
+}
+
+type Diagram = {
+  loading: boolean;
+  content?: string | ArrayBuffer | null;
+};

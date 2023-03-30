@@ -10,7 +10,7 @@ import pydantic
 class DiagramMetadata(pydantic.BaseModel):
     name: str
     uuid: str
-    success: str
+    success: bool
 
     class Config:
         orm_mode = True

@@ -15,3 +15,4 @@
         We'll search for a successful job run in the last 20 pipelines of
         the specific revision. If there is no successful pipeline, you won't be able
         to see diagrams.
+4. If you want to enlarge a diagram, just click on the image preview.
