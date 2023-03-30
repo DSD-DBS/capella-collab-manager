@@ -48,7 +48,10 @@
       />
       <ngx-skeleton-loader
         style="width: 100%"
-        *ngIf="diagrams[diagram.uuid]?.loading"
+        *ngIf="
+          (!diagrams[diagram.uuid] && diagram.success) ||
+          diagrams[diagram.uuid]?.loading
+        "
         [theme]="{
           'border-radius': '5px',
           height: '200px',
