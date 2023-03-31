@@ -55,7 +55,7 @@ def get_model_complexity_badge(
                 detail={
                     "err_code": "COMPLEXITY_BADGE_NOT_FOUND",
                     "reason": (
-                        "The model complexity badge integration is not configured properly.",
+                        "No model complexity badge found in the linked Git repository.",
                         "Please contact your administrator.",
                     ),
                 },

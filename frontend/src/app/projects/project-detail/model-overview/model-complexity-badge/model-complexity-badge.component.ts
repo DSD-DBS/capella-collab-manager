@@ -9,6 +9,7 @@ import { filter, map, switchMap } from 'rxjs';
 import { ErrorHandlingInterceptor } from 'src/app/general/error-handling/error-handling.interceptor';
 import { ModelComplexityBadgeService } from 'src/app/projects/project-detail/model-overview/model-complexity-badge/service/model-complexity-badge.service';
 import { ProjectService } from 'src/app/projects/service/project.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-model-complexity-badge',
@@ -23,6 +24,12 @@ export class ModelComplexityBadgeComponent implements OnChanges {
   loadingComplexityBadge: boolean = true;
 
   errorMessage?: string;
+  errorCode?: string;
+
+  constructor(
+    private modelComplexityBadgeService: ModelComplexityBadgeService,
+    private projectService: ProjectService
+  ) {}
 
   ngOnChanges(_: SimpleChanges) {
     if (this.modelSlug) {
@@ -57,12 +64,13 @@ export class ModelComplexityBadgeComponent implements OnChanges {
           this.errorMessage = ErrorHandlingInterceptor.getErrorReason(
             err.error?.detail
           );
+          this.errorCode = err.error?.detail?.err_code;
         },
       });
   }
 
-  constructor(
-    private modelComplexityBadgeService: ModelComplexityBadgeService,
-    private projectService: ProjectService
-  ) {}
+  openModelComplexityBadgeDocs() {
+    const docsURL = environment.docsURL || '/docs';
+    window.open(docsURL + '/projects/models/complexity_badge', '_blank');
+  }
 }

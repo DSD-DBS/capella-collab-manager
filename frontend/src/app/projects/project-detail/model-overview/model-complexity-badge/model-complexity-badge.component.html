@@ -4,24 +4,25 @@
  -->
 
 <div class="flex-center">
-  <!-- <div class="model-complexity-error">
-    <mat-icon class="model-complexity-error-icon">error</mat-icon>
+  <div
+    (click)="openModelComplexityBadgeDocs()"
+    class="model-complexity-error model-complexity-create"
+    *ngIf="errorCode === 'COMPLEXITY_BADGE_NOT_FOUND'"
+  >
+    <mat-icon class="model-complexity-error-icon">open_in_new</mat-icon>
     <span class="model-complexity-error-text"
       ><b>Model complexity badge not found.</b><br />Click here to learn how to
       set up the model complexity badge <br />
       for your model.</span
     >
   </div>
-  <div class="model-complexity-error">
-    <mat-icon class="model-complexity-error-icon">error</mat-icon
-    ><span class="model-complexity-error-text"
-      ><b>Model complexity badge not found.</b> <br />Please ask your project
-      lead to set it up.</span
-    >
-  </div> -->
   <div
     class="model-complexity-error"
-    *ngIf="!loadingComplexityBadge && !complexityBadge"
+    *ngIf="
+      !loadingComplexityBadge &&
+      !complexityBadge &&
+      errorCode !== 'COMPLEXITY_BADGE_NOT_FOUND'
+    "
   >
     <mat-icon class="model-complexity-error-icon">error</mat-icon>
     <span class="model-complexity-error-text"

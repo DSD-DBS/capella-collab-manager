@@ -13,12 +13,14 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+}
+
+.model-complexity-create {
   cursor: pointer;
 }
 
 .model-complexity-error-icon {
   flex-basis: 60px;
-  color: darkred;
   transform: scale(2);
 }
 
