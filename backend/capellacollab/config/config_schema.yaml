@@ -98,6 +98,8 @@ properties:
         type: string
       context:
         type: string
+      ingressClassName:
+        type: string
   extensions:
     type: object
     additionalProperties: false

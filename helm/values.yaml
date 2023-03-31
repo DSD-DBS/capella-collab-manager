@@ -198,6 +198,7 @@ cluster:
     sessions:
       podSecurityContext: *podSecurityContext
       imagePullPolicy: Always
+      # ingressClassName: nginx
 
   pvc:
     storageClassName: local-path

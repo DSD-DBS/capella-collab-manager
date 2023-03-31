@@ -7,6 +7,9 @@ docker:
 
 k8s:
   namespace: {{ .Values.backend.k8sSessionNamespace }}
+  {{- if .Values.ingressClassName }}
+  ingressClassName: {{ .Values.ingressClassName }}
+  {{- end }}
   storageClassName: {{ .Values.backend.storageClassName }}
   storageAccessMode: {{ .Values.backend.storageAccessMode }}
 
