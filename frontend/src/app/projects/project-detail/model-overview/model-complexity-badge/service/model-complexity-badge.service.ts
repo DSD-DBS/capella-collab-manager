@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { SKIP_ERROR_HANDLING } from 'src/app/general/error-handling/error-handling.interceptor';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 
 @Injectable({
@@ -23,9 +24,7 @@ export class ModelComplexityBadgeService {
         '/badges/complexity',
       {
         responseType: 'blob',
-        headers: {
-          'Skip-Frontend-Error-Handling': 'true',
-        },
+        context: new HttpContext().set(SKIP_ERROR_HANDLING, true),
       }
     );
   }
