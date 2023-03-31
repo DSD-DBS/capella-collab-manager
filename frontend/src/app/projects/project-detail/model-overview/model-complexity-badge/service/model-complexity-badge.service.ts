@@ -21,7 +21,12 @@ export class ModelComplexityBadgeService {
     return this.http.get(
       this.modelService.backendURLFactory(projectSlug, modelSlug) +
         '/badges/complexity',
-      { responseType: 'blob' }
+      {
+        responseType: 'blob',
+        headers: {
+          'Skip-Frontend-Error-Handling': 'true',
+        },
+      }
     );
   }
 }

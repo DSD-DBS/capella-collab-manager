@@ -25,8 +25,10 @@
   >
     <mat-icon class="model-complexity-error-icon">error</mat-icon>
     <span class="model-complexity-error-text"
-      ><b>Error loading the complexity badge.</b> <br />Please ask your project
-      lead or administrator for help.</span
+      ><b>Error loading the complexity badge.</b> <br />{{
+        errorMessage ||
+          "Please ask your project lead or administrator for help."
+      }}</span
     >
   </div>
   <div class="model-complexity-badge-wrapper" *ngIf="complexityBadge">

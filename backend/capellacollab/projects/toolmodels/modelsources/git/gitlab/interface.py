@@ -118,7 +118,7 @@ def get_project_id_by_git_url(
             detail={
                 "err_code": "GITLAB_ACCESS_DENIED",
                 "reason": (
-                    "The registered token has not enough permissions to access the pipelines artifacts.",
+                    "The registered token has not enough permissions to access the Gitlab API.",
                     "Access scope 'read_api' is required. Please contact your project lead.",
                 ),
             },
