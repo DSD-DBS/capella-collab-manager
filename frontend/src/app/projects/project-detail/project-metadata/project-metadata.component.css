@@ -19,3 +19,7 @@ mat-form-field {
 textarea {
   resize: none;
 }
+
+#metadata-card {
+  margin: 10px;
+}

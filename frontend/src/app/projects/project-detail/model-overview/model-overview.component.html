@@ -21,92 +21,114 @@
       </a>
     </h2>
   </div>
-  <mat-card
-    class="overview-card"
-    *ngFor="let model of modelService.models | async"
-  >
-    <div class="header">
-      <div class="header-text">
-        <div class="title">{{ model.name }}</div>
-        <span class="subtitle">
-          {{ model.tool.name }}
-          <span *ngIf="model.version"> {{ model.version.name }}</span>
-          <span *ngIf="!model.version"> (Version not specified)</span>
-        </span>
-      </div>
+  <div id="models-overview">
+    <mat-card
+      class="overview-card"
+      *ngFor="let model of modelService.models | async"
+    >
+      <div class="header">
+        <div class="header-text">
+          <div class="title">{{ model.name }}</div>
+          <span class="subtitle">
+            {{ model.tool.name }}
+            <span *ngIf="model.version"> {{ model.version.name }}</span>
+            <span *ngIf="!model.version"> (Version not specified)</span>
+          </span>
+        </div>
 
-      <div class="right">
-        <mat-card class="nature"
-          ><div>
-            <div class="model-badge-title">Nature</div>
-            <div *ngIf="model.nature">{{ model.nature.name }}</div>
-            <div *ngIf="!model.nature">Not specified</div>
-          </div></mat-card
-        >
-        <mat-card class="editingMode"
-          ><div>
-            <div class="model-badge-title">Working mode</div>
-            {{ getPrimaryWorkingMode(model) }}
-          </div></mat-card
-        >
-      </div>
-    </div>
-    <div class="content-wrapper">
-      <div class="content">
-        {{ model.description || "This model has no description." }}
-      </div>
-      <app-model-complexity-badge
-        [modelSlug]="model.slug"
-      ></app-model-complexity-badge>
-      <div class="actions">
-        <div class="left">
-          <a
-            mat-mini-fab
-            matTooltip="Configure model"
-            [routerLink]="['model', model.slug, 'metadata']"
-            *ngIf="projectUserService.verifyRole('manager')"
+        <div class="right">
+          <mat-card class="nature"
+            ><div>
+              <div class="model-badge-title">Nature</div>
+              <div *ngIf="model.nature">{{ model.nature.name }}</div>
+              <div *ngIf="!model.nature">Not specified</div>
+            </div></mat-card
           >
-            <mat-icon>settings</mat-icon>
-          </a>
-          <a
-            *ngIf="userService.user?.role === 'administrator'"
-            [routerLink]="['model', model.slug, 'restrictions']"
-            mat-mini-fab
-            matTooltip="Model restrictions"
+          <mat-card class="editingMode"
+            ><div>
+              <div class="model-badge-title">Working mode</div>
+              {{ getPrimaryWorkingMode(model) }}
+            </div></mat-card
           >
-            <mat-icon>key</mat-icon>
-          </a>
-          <a
-            mat-mini-fab
-            matTooltip="Configure model sources"
-            [routerLink]="['model', model.slug]"
-            *ngIf="projectUserService.verifyRole('manager')"
-          >
-            <mat-icon>link</mat-icon>
-          </a>
-          <a mat-mini-fab disabled matTooltip="Download model (Coming soon)">
-            <mat-icon>cloud_download</mat-icon>
-          </a>
-          <a
-            mat-mini-fab
-            matTooltip="Start synchronization"
-            (click)="openPipelineDialog(model)"
-            *ngIf="projectUserService.verifyRole('manager')"
-          >
-            <mat-icon>sync</mat-icon>
-          </a>
-          <a
-            *ngIf="model.git_models"
-            mat-mini-fab
-            [disabled]="!getPrimaryGitModelURL(model)"
-            matTooltip="Open git repository"
-            target="_blank"
-            [href]="getPrimaryGitModelURL(model)"
-          >
-            <mat-icon>open_in_new</mat-icon>
-          </a>
         </div>
       </div>
-    </div>
-  </mat-card>
+      <div class="content-wrapper">
+        <div class="content">
+          {{ model.description || "This model has no description." }}
+        </div>
+        <app-model-complexity-badge
+          [modelSlug]="model.slug"
+        ></app-model-complexity-badge>
+        <div class="actions">
+          <div class="left">
+            <a
+              mat-mini-fab
+              matTooltip="Configure model"
+              [routerLink]="['model', model.slug, 'metadata']"
+              *ngIf="projectUserService.verifyRole('manager')"
+            >
+              <mat-icon>settings</mat-icon>
+            </a>
+            <a
+              *ngIf="userService.user?.role === 'administrator'"
+              [routerLink]="['model', model.slug, 'restrictions']"
+              mat-mini-fab
+              matTooltip="Model restrictions"
+            >
+              <mat-icon>key</mat-icon>
+            </a>
+            <a
+              mat-mini-fab
+              matTooltip="Configure model sources"
+              [routerLink]="['model', model.slug]"
+              *ngIf="projectUserService.verifyRole('manager')"
+            >
+              <mat-icon>link</mat-icon>
+            </a>
+            <a mat-mini-fab disabled matTooltip="Download model (Coming soon)">
+              <mat-icon>cloud_download</mat-icon>
+            </a>
+            <a
+              mat-mini-fab
+              matTooltip="Start synchronization"
+              (click)="openPipelineDialog(model)"
+              *ngIf="projectUserService.verifyRole('manager')"
+            >
+              <mat-icon>sync</mat-icon>
+            </a>
+            <a
+              *ngIf="model.git_models"
+              mat-mini-fab
+              [disabled]="!getPrimaryGitModelURL(model)"
+              matTooltip="Open git repository"
+              target="_blank"
+              [href]="getPrimaryGitModelURL(model)"
+            >
+              <mat-icon>open_in_new</mat-icon>
+            </a>
+            <a
+              *ngIf="
+                model.t4c_models && projectUserService.verifyPermission('write')
+              "
+              routerLink="/sessions"
+              mat-mini-fab
+              matTooltip="Request persistent session"
+            >
+              <mat-icon>screen_share</mat-icon>
+            </a>
+
+            <button
+              mat-mini-fab
+              *ngIf="model.git_models && model.tool.name === 'Capella'"
+              matTooltip="Show diagrams of model"
+              [disabled]="!getPrimaryGitModelURL(model)"
+              (click)="openDiagramsDialog(model)"
+            >
+              <mat-icon>image_search</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
 </div>
