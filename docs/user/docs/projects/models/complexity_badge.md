@@ -35,4 +35,6 @@
 ## View the model complexity badge
 
 The model complexity badge is visible in the model overview in the project
-details.
+details:
+
+![Model complexity badge](./complexity_badge.png)
