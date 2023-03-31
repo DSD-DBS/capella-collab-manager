@@ -70,6 +70,7 @@ import { ChooseInitComponent } from './projects/models/choose-init/choose-init.c
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { CreateModelBaseComponent } from './projects/models/create-model-base/create-model-base.component';
 import { ModelDiagramDialogComponent } from './projects/models/diagrams/model-diagram-dialog/model-diagram-dialog.component';
+import { ModelDiagramPreviewDialogComponent } from './projects/models/diagrams/model-diagram-preview-dialog/model-diagram-preview-dialog.component';
 import { InitModelComponent } from './projects/models/init-model/init-model.component';
 import { ModelDescriptionComponent } from './projects/models/model-description/model-description.component';
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
@@ -160,6 +161,7 @@ import { SettingsComponent } from './settings/settings.component';
     ModelDescriptionComponent,
     ModelDetailComponent,
     ModelDiagramDialogComponent,
+    ModelDiagramPreviewDialogComponent,
     ModelOverviewComponent,
     ModelRestrictionsComponent,
     ModelWrapperComponent,

@@ -5,12 +5,63 @@
 
 .diagrams {
   height: calc(80vh - 170px);
-  width: 100%;
   word-wrap: break-word;
 }
 
+.diagram-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  flex-basis: calc(30% - 20px);
+}
+
+.uuid {
+  color: grey;
+}
+
+.loader {
+  margin: 10px;
+  flex-grow: 1;
+  flex-basis: calc(30% - 20px);
+}
+
+.diagram-error {
+  border-radius: 5px;
+  border: solid lightgray;
+  width: 100%;
+  height: 200px;
+  text-align: center;
+  padding: 15px 0;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.diagrams-flexbox {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.diagram-error-icon {
+  color: darkred;
+  transform: scale(2);
+}
+
+.diagram {
+  height: 200px;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.diagram:hover {
+  cursor: pointer;
+}
+
 .header {
-  height: 120px;
+  height: 150px;
 }
 
 button {
@@ -19,7 +70,11 @@ button {
 
 .diagram-metadata {
   overflow-y: hidden;
-  max-width: calc(100% - 150px);
+}
+
+.download-button {
+  width: 100%;
+  margin: 5px 0;
 }
 
 .list-item {
@@ -31,6 +86,7 @@ button {
 #search {
   margin-top: 10px;
   width: 100%;
+  padding-bottom: 5px;
 }
 
 .diagram-name {

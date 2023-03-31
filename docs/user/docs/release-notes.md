@@ -5,6 +5,13 @@
 
 [Full/ Technical Changelog](https://github.com/DSD-DBS/capella-collab-manager/releases)
 
+# v2.9.0
+
+Improves the diagram viewer experience. When loading diagrams, one can now see
+a small preview of matching diagrams. In addition, diagrams can be displayed
+directly in the browser. To do so, just click on the diagram in the overview.
+In addition, we improved the diagram loading error handling.
+
 ## v2.8.0
 
 Add support for Jupyter notebooks.
