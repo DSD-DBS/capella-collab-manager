@@ -4,6 +4,7 @@
  */
 
 import {
+  HttpErrorResponse,
   HttpEvent,
   HttpEventType,
   HttpHandler,
@@ -12,7 +13,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { getReasonPhrase } from 'http-status-codes';
-import { Observable, tap, map } from 'rxjs';
+import { Observable, tap, map, from, catchError } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 
 @Injectable({
@@ -26,6 +27,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
+      catchError(this.constructErrorDetailTransformationObservable),
       tap({
         next: (event: HttpEvent<any>) => {
           if (event.type == HttpEventType.Response) {
@@ -99,5 +101,39 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
         return event;
       })
     );
+  }
+
+  constructErrorDetailTransformationObservable(err: any): Observable<any> {
+    // https://github.com/angular/angular/issues/19888
+
+    if (err.error instanceof Blob && err.error.type === 'application/json') {
+      return from(
+        new Promise<any>((resolve, reject) => {
+          let reader = new FileReader();
+          reader.onload = (e: Event) => {
+            try {
+              const errmsg = JSON.parse((<any>e.target).result);
+              reject(
+                new HttpErrorResponse({
+                  error: errmsg,
+                  headers: err.headers,
+                  status: err.status,
+                  statusText: err.statusText,
+                  url: err.url,
+                })
+              );
+            } catch (e) {
+              reject(err);
+            }
+          };
+          reader.onerror = () => {
+            reject(err);
+          };
+          reader.readAsText(err.error);
+        })
+      );
+    }
+
+    throw err;
   }
 }

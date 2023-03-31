@@ -28,27 +28,35 @@ export class AuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     const req = this.injectAccessToken(request);
     return next.handle(req).pipe(
-      catchError((err) => {
-        if (err.status === 401) {
-          if (err.error.detail.err_code == 'token_exp') {
-            return this.refreshToken().pipe(
-              switchMap(() => {
-                const req = this.injectAccessToken(request);
-                return next.handle(req);
-              }),
-              catchError(() => {
-                this.router.navigateByUrl('/logout?reason=session-expired');
-                throw err;
-              })
-            );
-          } else {
-            this.router.navigateByUrl('/logout?reason=unauthorized');
-          }
-        }
-
-        throw err;
+      catchError((err: any) => {
+        return this.handleTokenExpired(err, request, next);
       })
     );
+  }
+
+  handleTokenExpired(
+    err: any,
+    request: HttpRequest<unknown>,
+    next: HttpHandler
+  ) {
+    if (err.status === 401) {
+      if (err.error.detail.err_code == 'token_exp') {
+        return this.refreshToken().pipe(
+          switchMap(() => {
+            const req = this.injectAccessToken(request);
+            return next.handle(req);
+          }),
+          catchError(() => {
+            this.router.navigateByUrl('/logout?reason=session-expired');
+            throw err;
+          })
+        );
+      } else {
+        this.router.navigateByUrl('/logout?reason=unauthorized');
+      }
+    }
+
+    throw err;
   }
 
   injectAccessToken(request: HttpRequest<unknown>): HttpRequest<unknown> {
