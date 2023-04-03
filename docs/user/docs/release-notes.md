@@ -5,6 +5,12 @@
 
 [Full/ Technical Changelog](https://github.com/DSD-DBS/capella-collab-manager/releases)
 
+# v2.10.0
+
+Adds a model complexity badge integration. Once set up, a model complexity
+badge can be seen in the model overview. More information
+[here](./projects/models/complexity_badge.md).
+
 # v2.9.0
 
 Improves the diagram viewer experience. When loading diagrams, one can now see

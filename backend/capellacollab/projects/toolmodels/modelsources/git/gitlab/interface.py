@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import base64
 from urllib import parse
 
 import fastapi
@@ -117,7 +118,7 @@ def get_project_id_by_git_url(
             detail={
                 "err_code": "GITLAB_ACCESS_DENIED",
                 "reason": (
-                    "The registered token has not enough permissions to access the pipelines artifacts.",
+                    "The registered token has not enough permissions to access the Gitlab API.",
                     "Access scope 'read_api' is required. Please contact your project lead.",
                 ),
             },
@@ -214,3 +215,32 @@ def get_artifact_from_job(
     )
     response.raise_for_status()
     return response
+
+
+def __get_file_from_repository(
+    project_id: str,
+    trusted_file_path: str,
+    git_model: git_models.DatabaseGitModel,
+    git_instance: settings_git_models.DatabaseGitInstance,
+) -> bytes:
+    response = requests.get(
+        f"{git_instance.api_url}/projects/{project_id}/repository/files/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(git_model.revision, safe='')}",
+        headers={"PRIVATE-TOKEN": git_model.password},
+        timeout=2,
+    )
+    response.raise_for_status()
+    return base64.b64decode(response.json()["content"])
+
+
+def get_file_from_repository(
+    db: orm.Session,
+    trusted_file_path: str,
+    git_model: git_models.DatabaseGitModel,
+) -> requests.Response:
+    git_instance = get_git_instance_for_git_model(db, git_model)
+    check_git_instance_is_gitlab(git_instance)
+    check_git_instance_has_api_url(git_instance)
+    project_id = get_project_id_by_git_url(git_model, git_instance)
+    return __get_file_from_repository(
+        project_id, trusted_file_path, git_model, git_instance
+    )

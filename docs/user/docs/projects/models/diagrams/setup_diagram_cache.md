@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Setup the diagram cache integration
+# Set up the diagram cache integration
 
 !!! warning
 
@@ -30,8 +30,9 @@
          creating the Git model integration. Limit the scopes of the used token, only
          scope `read_api` is required.
 
-1. Add the diagram cache to the `.gitlab-ci.yml` in the linked Git repository.
-   We're currently planning to provide a Gitlab CI template, but it's not ready
-   yet. Contact your diagram cache administrator for more information.
+1. Follow the
+   [Gitlab CI template instructions](https://github.com/DSD-DBS/capella-dockerimages/tree/main/ci-templates/gitlab#diagram-cache)
+   to add the complexity badge pipeline to the `.gitlab-ci.yml` of the linked
+   repository.
 1. You're ready to go. Validate if the setup works:
    [View the diagrams](./view_diagram_cache.md)

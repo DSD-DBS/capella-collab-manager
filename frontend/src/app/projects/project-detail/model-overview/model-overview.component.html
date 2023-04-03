@@ -55,6 +55,9 @@
       <div class="content">
         {{ model.description || "This model has no description." }}
       </div>
+      <app-model-complexity-badge
+        [modelSlug]="model.slug"
+      ></app-model-complexity-badge>
       <div class="actions">
         <div class="left">
           <a

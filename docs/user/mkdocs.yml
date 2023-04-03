@@ -23,6 +23,7 @@ nav:
           - Diagram cache:
               - Setup diagram cache: projects/models/diagrams/setup_diagram_cache.md
               - View diagram cache: projects/models/diagrams/view_diagram_cache.md
+          - Model complexity badge: projects/models/complexity_badge.md
   - Sessions:
       - Session Types:
           - Overview: sessions/types.md
