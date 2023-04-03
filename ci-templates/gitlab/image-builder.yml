@@ -1,0 +1,108 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+variables:
+  FRONTEND:
+    value: "1"
+    description: "Build the frontend image?"
+  BACKEND:
+    value: "1"
+    description: "Build the backend image?"
+  DOCS:
+    value: "1"
+    description: "Build the docs image?"
+  GUACAMOLE:
+    value: "0"
+    description: "Build the guacamole image?"
+  REVISION:
+    value: "main"
+    description: "Revision of Github repository"
+  DOCKER_BUILD_ARGS: "--no-cache"
+  DOCKER_BUILDKIT: "1"
+
+default:
+  image: $DOCKER_REGISTRY/base
+  tags:
+    - docker
+  before_script:
+    - export DOCKER_TAG=$(echo $REVISION | sed 's/[^a-zA-Z0-9.]/-/g')
+
+.github: &github
+  - git clone https://github.com/DSD-DBS/capella-collab-manager.git
+  - cd capella-collab-manager
+  - git checkout $REVISION
+
+.docker: &docker
+  - docker info
+  - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
+  - docker pull $BASE_IMAGE
+
+.push: &push
+  - >
+    if [ "$REVISION" = "main" ];
+    then
+      docker image tag $IMAGE:$DOCKER_TAG $IMAGE:latest;
+      docker push $IMAGE:latest;
+    fi
+  - docker push $IMAGE:$DOCKER_TAG
+
+frontend:
+  stage: build
+  rules:
+    - if: '$FRONTEND == "1"'
+      when: always
+  variables:
+    BASE_IMAGE: $DOCKER_REGISTRY/base
+    IMAGE: $DOCKER_REGISTRY/capella/collab/frontend
+  script:
+    - *github
+    - mv ../favicon.ico frontend/src
+    - mv ../environment.prod.ts frontend/src/environments
+    - npm i undici
+    - node frontend/fetch-version.ts
+    - *docker
+    - docker build $DOCKER_BUILD_ARGS -t $DOCKER_REGISTRY/capella/collab/frontend:$DOCKER_TAG --build-arg BASE_IMAGE=$BASE_IMAGE frontend
+    - *push
+
+backend:
+  stage: build
+  rules:
+    - if: '$BACKEND == "1"'
+      when: always
+  variables:
+    BASE_IMAGE: $DOCKER_REGISTRY/base
+    IMAGE: $DOCKER_REGISTRY/capella/collab/backend
+  script:
+    - *github
+    - python backend/generate_git_archival.py
+    - *docker
+    - docker build $DOCKER_BUILD_ARGS -t $DOCKER_REGISTRY/capella/collab/backend:$DOCKER_TAG --build-arg BASE_IMAGE=$BASE_IMAGE backend
+    - *push
+
+docs:
+  stage: build
+  rules:
+    - if: '$DOCS == "1"'
+      when: always
+  variables:
+    BASE_IMAGE: $DOCKER_REGISTRY/base
+    IMAGE: $DOCKER_REGISTRY/capella/collab/docs
+  script:
+    - *github
+    - *docker
+    - docker build $DOCKER_BUILD_ARGS -t $IMAGE:$DOCKER_TAG --build-arg BASE_IMAGE=$BASE_IMAGE docs/user
+    - *push
+
+guacamole:
+  stage: build
+  rules:
+    - if: '$GUACAMOLE == "1"'
+      when: always
+  variables:
+    BASE_IMAGE: guacamole/guacamole
+    IMAGE: $DOCKER_REGISTRY/capella/collab/guacamole
+  script:
+    - *github
+    - *docker
+    - docker build $DOCKER_BUILD_ARGS -t $IMAGE:$DOCKER_TAG --build-arg BASE_IMAGE=$BASE_IMAGE guacamole
+    - *push
