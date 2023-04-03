@@ -15,52 +15,7 @@ import capellacollab.settings.modelsources.git.crud as git_crud
 import capellacollab.settings.modelsources.git.models as git_models
 
 # Example model badge
-EXAMPLE_MODEL_BADGE = b"""
-<svg
-    xmlns="http://www.w3.org/2000/svg" width="536.0" height="120.0" viewBox="0 0 134 30">
-    <g font-family="sans-serif" font-size="3.2">
-        <rect fill="#FFF" stroke="#333" stroke-width="0.2" x="1" y="0" width="132" height="30" />
-        <rect fill="#FFF" stroke="#333" stroke-width="0.2" x="23.8" y="1.4" width="108" height="22" />
-        <g stroke="#555" stroke-width=".3">
-            <path fill="#ffdd87" d="M3 5.5 h1.9 V7.4 h-2 z"/>
-            <path fill="#a5c2e6" d="M3.8 6.4 h2 v1.8 h-2 z"/>
-        </g>
-        <text x="7" y="6.4">1274</text>
-        <text x="7" y="9.4">objects</text>
-        <g font-size="3.2">
-            <rect fill="#ffdd87" stroke="#333" stroke-width="0" x="24.2" y="3.4" width="103.51020408163265" height="8" />
-            <text x="25.2" y="8.4">100%</text>
-            <rect fill="#91cc84" stroke="#333" stroke-width="0" x="127.71020408163265" y="3.4" width="0.163265306122449" height="8" />
-            <rect fill="#a5c2e6" stroke="#333" stroke-width="0" x="127.87346938775511" y="3.4" width="0.163265306122449" height="8" />
-            <rect fill="#f89f9f" stroke="#333" stroke-width="0" x="128.03673469387755" y="3.4" width="0.163265306122449" height="8" />
-        </g>
-        <g stroke="#555" stroke-width=".2">
-            <path fill="#FFF" d="M2.5 15.200000000000001 h3.6 v3.1 H2.5 z"/>
-            <path fill="#a5c2e6" d="M3 15.8 h1v.7 H3z m.8 1.2h1v.7h-1z m.9-1.1h.8v.6h-.8z"/>
-            <path fill="none" d="M3.9 16.2 h.8 m-1.3.3.4.8 m1 .1.4-.9"/>
-        </g>
-        <text x="7" y="16.4">46</text>
-        <text x="7" y="19.4">diagrams</text>
-        <g font-size="3.2">
-            <rect fill="#ffdd87" stroke="#333" stroke-width="0" x="24.2" y="13.4" width="104.0" height="8" />
-            <text x="25.2" y="18.4">100%</text>
-            <rect fill="#91cc84" stroke="#333" stroke-width="0" x="128.2" y="13.4" width="0.0" height="8" />
-            <rect fill="#a5c2e6" stroke="#333" stroke-width="0" x="128.2" y="13.4" width="0.0" height="8" />
-            <rect fill="#f89f9f" stroke="#333" stroke-width="0" x="128.2" y="13.4" width="0.0" height="8" />
-        </g>
-        <g font-size="2.8" fill="#555">
-            <rect fill="#ffdd87" stroke="#333" stroke-width="0" x="3" y="25" width="5" height="3" />
-            <text x="9" y="27.6">Operational Analysis</text>
-            <rect fill="#91cc84" stroke="#333" stroke-width="0" x="37" y="25" width="5" height="3" />
-            <text x="43" y="27.6">System Analysis</text>
-            <rect fill="#a5c2e6" stroke="#333" stroke-width="0" x="67" y="25" width="5" height="3" />
-            <text x="73" y="27.6">Logical Architecture</text>
-            <rect fill="#f89f9f" stroke="#333" stroke-width="0" x="100" y="25" width="5" height="3" />
-            <text x="106" y="27.6">Physical Architecture</text>
-        </g>
-    </g>
-</svg>
-"""
+EXAMPLE_MODEL_BADGE = b"<svg>badge placeholder</svg>"
 
 
 @pytest.fixture(name="git_type", params=[git_models.GitType.GITLAB])
