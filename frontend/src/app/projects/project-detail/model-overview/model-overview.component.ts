@@ -9,13 +9,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { first } from 'rxjs';
 import { ModelDiagramDialogComponent } from 'src/app/projects/models/diagrams/model-diagram-dialog/model-diagram-dialog.component';
 import {
+  getPrimaryGitModel,
   Model,
   ModelService,
 } from 'src/app/projects/models/service/model.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
-import { CreateReadonlySessionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-session-dialog.component';
 import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { ProjectService } from '../../service/project.service';
 
@@ -69,17 +69,7 @@ export class ModelOverviewComponent implements OnInit {
   }
 
   getPrimaryGitModelURL(model: Model): string {
-    const primaryModel = model.git_models.find((gitModel) => gitModel.primary);
-    if (primaryModel) {
-      return primaryModel.path;
-    } else {
-      return '';
-    }
-  }
-
-  newReadonlySession(model: Model) {
-    this.dialog.open(CreateReadonlySessionDialogComponent, {
-      data: { projectSlug: this.projectSlug, model: model },
-    });
+    const primaryModel = getPrimaryGitModel(model);
+    return primaryModel ? primaryModel.path : '';
   }
 }

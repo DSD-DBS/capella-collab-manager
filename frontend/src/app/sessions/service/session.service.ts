@@ -28,11 +28,11 @@ export class SessionService {
   }
 
   createReadonlySession(
-    project_slug: string,
+    projectSlug: string,
     models: ReadonlyModel[]
   ): Observable<Session> {
     return this.http.post<Session>(
-      `${environment.backend_url}/projects/${project_slug}/sessions/readonly`,
+      `${environment.backend_url}/projects/${projectSlug}/sessions/readonly`,
       {
         models: models,
       }

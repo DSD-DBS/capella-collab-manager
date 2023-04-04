@@ -9,6 +9,9 @@
       <app-project-metadata></app-project-metadata>
       <mat-divider></mat-divider>
     </div>
+
+    <app-create-readonly-session></app-create-readonly-session>
+
     <app-model-overview></app-model-overview>
   </div>
   <div class="users" *ngIf="projectUserService.verifyRole('manager')">

@@ -172,3 +172,7 @@ export type PatchModel = {
   nature_id?: number;
   version_id?: number;
 };
+
+export function getPrimaryGitModel(model: Model): GetGitModel | undefined {
+  return model.git_models.find((gitModel) => gitModel.primary);
+}

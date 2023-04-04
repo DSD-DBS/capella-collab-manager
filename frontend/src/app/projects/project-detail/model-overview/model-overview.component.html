@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="models" *ngIf="modelService.models | async">
+<div class="wrapper" *ngIf="modelService.models | async">
   <div class="models-title">
     <h2>
       Models
@@ -96,9 +96,7 @@
             <mat-icon>sync</mat-icon>
           </a>
           <a
-            *ngIf="
-              model.git_models && projectUserService.verifyPermission('read')
-            "
+            *ngIf="model.git_models"
             mat-mini-fab
             [disabled]="!getPrimaryGitModelURL(model)"
             matTooltip="Open git repository"
@@ -107,37 +105,6 @@
           >
             <mat-icon>open_in_new</mat-icon>
           </a>
-          <a
-            *ngIf="
-              model.t4c_models && projectUserService.verifyPermission('write')
-            "
-            routerLink="/sessions"
-            mat-mini-fab
-            matTooltip="Request persistent session"
-          >
-            <mat-icon>screen_share</mat-icon>
-          </a>
-
-          <button
-            mat-mini-fab
-            *ngIf="
-              model.git_models && projectUserService.verifyPermission('read')
-            "
-            matTooltip="Open readonly session"
-            [disabled]="!getPrimaryGitModelURL(model)"
-            (click)="newReadonlySession(model)"
-          >
-            <mat-icon>remove_red_eye</mat-icon>
-          </button>
-          <button
-            mat-mini-fab
-            *ngIf="model.git_models && model.tool.name === 'Capella'"
-            matTooltip="Show diagrams of model"
-            [disabled]="!getPrimaryGitModelURL(model)"
-            (click)="openDiagramsDialog(model)"
-          >
-            <mat-icon>image_search</mat-icon>
-          </button>
         </div>
       </div>
     </div>

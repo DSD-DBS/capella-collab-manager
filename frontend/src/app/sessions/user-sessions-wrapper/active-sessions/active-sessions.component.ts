@@ -5,7 +5,11 @@
 
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Session } from 'src/app/schemes';
+import {
+  Session,
+  isReadonlySession,
+  isPersistentSession,
+} from 'src/app/schemes';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
 import { DeleteSessionDialogComponent } from '../../delete-session-dialog/delete-session-dialog.component';
 import { SessionService } from '../../service/session.service';
@@ -19,6 +23,9 @@ import { FileBrowserDialogComponent } from './file-browser-dialog/file-browser-d
   styleUrls: ['./active-sessions.component.css'],
 })
 export class ActiveSessionsComponent {
+  isReadonlySession = isReadonlySession;
+  isPersistentSession = isPersistentSession;
+
   sessions?: Session[] = undefined;
 
   constructor(

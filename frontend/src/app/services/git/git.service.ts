@@ -5,7 +5,12 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  ValidationErrors,
+} from '@angular/forms';
+import { BehaviorSubject, map, Observable, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 export interface Credentials {
@@ -51,27 +56,34 @@ export class GitService {
     model_slug: string,
     git_model_id: number
   ): void {
-    this.privateRevisions(
-      gitUrl,
-      project_slug,
-      model_slug,
-      git_model_id
-    ).subscribe({
-      next: (revisions) => this._revisions.next(revisions),
-      error: () => this._revisions.next(undefined),
-    });
+    this.http
+      .post<Revisions>(
+        this.BACKEND_URL_PREFIX +
+          `/projects/${project_slug}/models/${model_slug}/modelsources/git/${git_model_id}/revisions`,
+        gitUrl
+      )
+      .subscribe({
+        next: (revisions) => this._revisions.next(revisions),
+        error: () => this._revisions.next(undefined),
+      });
   }
 
-  privateRevisions(
-    gitUrl: string,
-    project_slug: string,
-    model_slug: string,
-    git_model_id: number
-  ): Observable<Revisions> {
-    return this.http.post<Revisions>(
-      this.BACKEND_URL_PREFIX +
-        `/projects/${project_slug}/models/${model_slug}/modelsources/git/${git_model_id}/revisions`,
-      gitUrl
-    );
+  clearRevision(): void {
+    this._revisions.next(undefined);
+  }
+
+  asyncExistingRevisionValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      return this.revisions.pipe(
+        take(1),
+        map((revisions) => {
+          const revision = control.value;
+          return revisions?.branches.includes(revision) ||
+            revisions?.tags.includes(revision)
+            ? null
+            : { revisionNotFoundError: `${revision} does not exist` };
+        })
+      );
+    };
   }
 }

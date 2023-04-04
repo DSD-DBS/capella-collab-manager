@@ -20,8 +20,8 @@ export class UserSessionsWrapperComponent implements OnInit {
   ngOnInit(): void {
     timer(0, 2000)
       .pipe(
-        tap(() => this.userSessionService.loadSessions()),
-        untilDestroyed(this)
+        untilDestroyed(this),
+        tap(() => this.userSessionService.loadSessions())
       )
       .subscribe();
   }
