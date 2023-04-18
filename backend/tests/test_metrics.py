@@ -29,15 +29,37 @@ def test_kubernetes_sessions_metric(monkeypatch):
 
     data = list(collector.collect())
 
-    assert data
-    assert data[0].samples
+    samples = {
+        (s.labels["workload"], s.labels["phase"]): s.value
+        for s in data[0].samples
+    }
+
+    assert samples == {
+        ("job", "running"): 1,
+        ("job", "pending"): 1,
+        ("session", "running"): 2,
+    }
 
 
 class MockOperator:
     def get_pods(self, label_selector):
         return [
-            attrdict(status=attrdict(phase="running")),
-            attrdict(status=attrdict(phase="pending")),
+            attrdict(
+                metadata=attrdict(labels=dict(workload="job")),
+                status=attrdict(phase="running"),
+            ),
+            attrdict(
+                metadata=attrdict(labels=dict(workload="job")),
+                status=attrdict(phase="pending"),
+            ),
+            attrdict(
+                metadata=attrdict(labels=dict(workload="session")),
+                status=attrdict(phase="running"),
+            ),
+            attrdict(
+                metadata=attrdict(labels=dict(workload="session")),
+                status=attrdict(phase="running"),
+            ),
         ]
 
 

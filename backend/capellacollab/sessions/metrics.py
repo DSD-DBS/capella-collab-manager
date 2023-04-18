@@ -27,13 +27,16 @@ class DeployedSessionsCollector:
         metric = prometheus_client.core.GaugeMetricFamily(
             "backend_deployed_sessions",
             "Sessions running in the sessions namespace",
-            labels=("phase",),
+            labels=("workload", "phase"),
         )
         operator = operators.get_operator()
         pods = operator.get_pods(label_selector=None)
-        phases = sorted(pod.status.phase.lower() for pod in pods)
-        for k, g in itertools.groupby(phases):
-            metric.add_metric([k], len(list(g)))
+        statuses = sorted(
+            (pod.metadata.labels.get("workload", ""), pod.status.phase.lower())
+            for pod in pods
+        )
+        for labels, g in itertools.groupby(statuses):
+            metric.add_metric(labels, len(list(g)))
         yield metric
 
 
