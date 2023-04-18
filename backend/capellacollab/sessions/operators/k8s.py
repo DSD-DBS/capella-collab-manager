@@ -446,7 +446,10 @@ class KubernetesOperator:
         self._create_cronjob(
             name=_id,
             image=image,
-            job_labels={"app.capellacollab/parent": _id},
+            job_labels={
+                "workload": "cronjob",
+                "app.capellacollab/parent": _id,
+            },
             environment=environment,
             schedule=schedule,
             timeout=timeout,
@@ -464,7 +467,7 @@ class KubernetesOperator:
         self._create_job(
             name=_id,
             image=image,
-            job_labels=labels,
+            job_labels={"workload": "job", **labels},
             environment=environment,
             timeout=timeout,
         )
@@ -703,7 +706,9 @@ class KubernetesOperator:
                 replicas=1,
                 selector=client.V1LabelSelector(match_labels={"app": name}),
                 template=client.V1PodTemplateSpec(
-                    metadata=client.V1ObjectMeta(labels={"app": name}),
+                    metadata=client.V1ObjectMeta(
+                        labels={"app": name, "workload": "session"}
+                    ),
                     spec=client.V1PodSpec(
                         security_context=pod_security_context,
                         containers=containers,
