@@ -10,6 +10,9 @@ from fastapi import FastAPI, Request
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette_prometheus import PrometheusMiddleware, metrics
+
+import capellacollab.sessions.metrics
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.config import config
@@ -65,7 +68,11 @@ async def schedule_termination_of_idle_sessions():
 
 app = FastAPI(
     title="Capella Collaboration",
-    on_startup=[startup, schedule_termination_of_idle_sessions],
+    on_startup=[
+        startup,
+        schedule_termination_of_idle_sessions,
+        capellacollab.sessions.metrics.register,
+    ],
     middleware=[
         Middleware(
             CORSMiddleware,
@@ -78,6 +85,7 @@ app = FastAPI(
         Middleware(AttachUserNameMiddleware),
         Middleware(LogExceptionMiddleware),
         Middleware(LogRequestsMiddleware),
+        Middleware(PrometheusMiddleware),
     ],
     on_shutdown=[shutdown],
 )
@@ -111,6 +119,8 @@ async def handle_exceptions(request: Request, exc: Exception):
 async def healthcheck():
     return {"status": "alive"}
 
+
+app.add_route("/metrics", metrics)
 
 app.include_router(status.router, prefix="", tags=["Status"])
 app.include_router(router, prefix="/api/v1")

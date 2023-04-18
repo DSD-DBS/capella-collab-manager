@@ -20,6 +20,7 @@ from datetime import datetime
 import kubernetes
 import kubernetes.config
 import kubernetes.stream.stream
+import prometheus_client
 import yaml
 from kubernetes import client
 from kubernetes.client import exceptions
@@ -31,6 +32,13 @@ from capellacollab.config import config
 from . import helper
 
 log = logging.getLogger(__name__)
+
+SESSIONS_STARTED = prometheus_client.Counter(
+    "backend_sessions_started", "", ("session_type",)
+)
+SESSIONS_KILLED = prometheus_client.Counter(
+    "backend_sessions_killed", "Sessions killed, either by user or timeout"
+)
 
 external_registry: str = config["docker"]["externalRegistry"]
 jupyter_public_uri = urllib.parse.urlparse(
@@ -281,6 +289,8 @@ class KubernetesOperator:
             username,
             _id,
         )
+        SESSIONS_STARTED.labels(session_type).inc()
+
         return self._export_attrs(deployment, service, ports)
 
     def kill_session(self, _id: str):
@@ -310,6 +320,8 @@ class KubernetesOperator:
             log.info(
                 "Deleted service %s with status %s", _id, svc_status.status
             )
+
+        SESSIONS_KILLED.inc()
 
     def get_job_state(self, job_name: str) -> str:
         return self._get_pod_state(label_selector=f"job-name={job_name}")
@@ -360,7 +372,7 @@ class KubernetesOperator:
 
     def _get_pod_state(self, label_selector: str):
         try:
-            pod = self._get_pods(label_selector=label_selector)[0]
+            pod = self.get_pods(label_selector=label_selector)[0]
             pod_name = pod.metadata.name
 
             log.debug("Received k8s pod: %s", pod_name)
@@ -387,7 +399,7 @@ class KubernetesOperator:
 
     def _get_pod_starttime(self, label_selector: str) -> datetime | None:
         try:
-            pods: list[client.V1Pod] = self._get_pods(
+            pods: list[client.V1Pod] = self.get_pods(
                 label_selector=label_selector
             )
             log.debug("Received k8s pods: %s", pods)
@@ -434,7 +446,10 @@ class KubernetesOperator:
         self._create_cronjob(
             name=_id,
             image=image,
-            job_labels={"app.capellacollab/parent": _id},
+            job_labels={
+                "workload": "cronjob",
+                "app.capellacollab/parent": _id,
+            },
             environment=environment,
             schedule=schedule,
             timeout=timeout,
@@ -452,7 +467,7 @@ class KubernetesOperator:
         self._create_job(
             name=_id,
             image=image,
-            job_labels=labels,
+            job_labels={"workload": "job", **labels},
             environment=environment,
             timeout=timeout,
         )
@@ -691,7 +706,9 @@ class KubernetesOperator:
                 replicas=1,
                 selector=client.V1LabelSelector(match_labels={"app": name}),
                 template=client.V1PodTemplateSpec(
-                    metadata=client.V1ObjectMeta(labels={"app": name}),
+                    metadata=client.V1ObjectMeta(
+                        labels={"app": name, "workload": "session"}
+                    ),
                     spec=client.V1PodSpec(
                         security_context=pod_security_context,
                         containers=containers,
@@ -1046,9 +1063,9 @@ class KubernetesOperator:
             return None
 
     def _get_pod_name(self, _id: str) -> str:
-        return self._get_pods(label_selector=f"app={_id}")[0].metadata.name
+        return self.get_pods(label_selector=f"app={_id}")[0].metadata.name
 
-    def _get_pods(self, label_selector: str) -> list[client.V1Pod]:
+    def get_pods(self, label_selector: str | None) -> list[client.V1Pod]:
         return self.v1_core.list_namespaced_pod(
             namespace=namespace, label_selector=label_selector
         ).items
