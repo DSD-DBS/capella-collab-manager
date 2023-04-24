@@ -11,7 +11,9 @@ dockerized).
 
 ## Managing tools
 
-!!! warning To manage tools, you have to be administrator.
+<!-- prettier-ignore -->
+!!! warning
+    To manage tools, you have to be administrator.
 
 The tool management page can be found at `Profile` > `Settings` > `Core` >
 `Tools`. It support the following:

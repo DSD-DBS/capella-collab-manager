@@ -41,6 +41,7 @@ nav:
   - Settings:
       - Tools:
           - General: settings/tools/index.md
+          - pure::variants: settings/tools/pure_variants.md
       - Model sources:
           - Git: settings/model-sources/git.md
   - User Management: users.md
