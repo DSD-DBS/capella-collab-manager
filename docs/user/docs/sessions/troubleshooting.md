@@ -17,14 +17,14 @@
 
     1. Open the Capella search
     1. Search for `Event logs` and click on the following entry:
-    1. One should now see the list of events. One can try to find an entry with
+    1. You should now see the list of events and you can try to find an entry with
        a matching timestamp.
 
 ??? question "The clipboard doesn't work anymore."
 
     This is a known bug with our used `RDP`-server `xrdp`. `xrdp` maintains so
     called `channels`, which are managed by the process `chansrv`. One channel
-    is `cliprdr`, which enables the clipboard feature. However, the `chansrv`
+    is `cliprdr`, which enables the clipboard feature. However, `chansrv`
     doesn't terminate properly on session disconnects and `chansrv` doesn't
     accept new connections. This leads to the fact that the clipboard doesn't
     work anymore after a reconnect. The bug is tracked in the
@@ -47,7 +47,7 @@
 
 ??? question "The TeamForCapella password doesn't work"
 
-    Since we have released version 2, one has to use sessions passwords. More
+    Since we have released version 2, users have to use sessions passwords. More
     information can be found [here](./flows/t4c.md).
     If you have been added to a project recently while having a running session,
     please recreate your session to get a valid session password for the models
