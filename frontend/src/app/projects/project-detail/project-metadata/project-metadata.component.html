@@ -4,43 +4,27 @@
  -->
 
 <div class="wrapper">
-  <h2 id="title">Metadata</h2>
   <mat-card id="metadata-card">
-    <form [formGroup]="form">
-      <fieldset>
-        <mat-form-field appearance="fill">
-          <mat-label>Name</mat-label>
-          <input matInput formControlName="name" />
-          <mat-error *ngIf="form.controls.name.errors?.required"
-            >The project name is required.</mat-error
-          >
-          <mat-error *ngIf="form.controls.name.errors?.uniqueSlug"
-            >A project with a similar name already exists.</mat-error
-          >
-          <mat-hint
-            *ngIf="project?.slug !== newSlug && form.controls.name.valid"
-            >If you proceed, the project slug will be changed to
-            <i>{{ newSlug }}</i> - Please make sure to update all
-            references.</mat-hint
-          >
-        </mat-form-field>
-      </fieldset>
-      <fieldset>
-        <mat-form-field appearance="fill">
-          <mat-label>Description</mat-label>
-          <textarea
-            formControlName="description"
-            matInput
-            rows="3"
-            style="resize: none"
-            [placeholder]="
-              'This is the description of the project ' + project?.name
-            "
-          ></textarea>
-        </mat-form-field>
-      </fieldset>
-    </form>
-    <div class="flex-space-between">
+    <div *ngIf="projectService.project | async">
+      <h2 id="title">{{ (projectService.project | async)!.name }}</h2>
+    </div>
+    <div *ngIf="(projectService.project | async) === undefined">
+      <ngx-skeleton-loader
+        [theme]="{
+          'border-radius': '5px',
+          height: '24px',
+          width: '50%',
+          border: '1px solid white'
+        }"
+      ></ngx-skeleton-loader>
+    </div>
+    <div id="description">
+      {{
+        (projectService.project | async)!.description ||
+          "No description available."
+      }}
+    </div>
+    <div *ngIf="projectUserService.verifyRole('manager')">
       <span
         matTooltip="The project can't be deleted since it has linked models"
         [matTooltipDisabled]="canDelete"
@@ -51,17 +35,19 @@
           mat-flat-button
           color="warn"
         >
-          Delete
+          <mat-icon class="mat-icon-position left">delete_forever</mat-icon
+          >Delete project
         </button>
       </span>
-      <button
-        [disabled]="!form.valid"
-        (click)="updateProject()"
+      <a
+        [disabled]="(projectService.project | async) === undefined"
         mat-raised-button
-        id="submit"
+        routerLink="metadata"
+        id="modify"
       >
-        Submit
-      </button>
+        <mat-icon class="mat-icon-position left">settings</mat-icon> Modify name
+        / description
+      </a>
     </div>
   </mat-card>
 </div>

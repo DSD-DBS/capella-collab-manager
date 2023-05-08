@@ -80,6 +80,7 @@ import { ChooseSourceComponent } from './projects/models/model-source/choose-sou
 import { ManageGitModelComponent } from './projects/models/model-source/git/manage-git-model/manage-git-model.component';
 import { ManageT4CModelComponent } from './projects/models/model-source/t4c/manage-t4c-model/manage-t4c-model.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
+import { EditProjectMetadataComponent } from './projects/project-detail/edit-project-metadata/edit-project-metadata.component';
 import { ModelComplexityBadgeComponent } from './projects/project-detail/model-overview/model-complexity-badge/model-complexity-badge.component';
 import { ModelOverviewComponent } from './projects/project-detail/model-overview/model-overview.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
@@ -141,6 +142,7 @@ import { SettingsComponent } from './settings/settings.component';
     DeleteGitSettingsDialogComponent,
     DeleteSessionDialogComponent,
     EditGitSettingsComponent,
+    EditProjectMetadataComponent,
     EditT4CInstanceComponent,
     EventsComponent,
     FileBrowserDialogComponent,

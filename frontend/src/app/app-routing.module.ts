@@ -6,6 +6,7 @@
 import { NgModule } from '@angular/core';
 import { Data, RouterModule, Routes } from '@angular/router';
 import { ModelRestrictionsComponent } from 'src/app/projects/models/model-restrictions/model-restrictions.component';
+import { EditProjectMetadataComponent } from 'src/app/projects/project-detail/edit-project-metadata/edit-project-metadata.component';
 import { EventsComponent } from './events/events.component';
 import { AuthComponent } from './general/auth/auth/auth.component';
 import { AuthGuardService } from './general/auth/auth-guard/auth-guard.service';
@@ -70,6 +71,13 @@ const routes: Routes = [
             path: '',
             data: { breadcrumb: (data: Data) => data.project?.name },
             component: ProjectDetailsComponent,
+          },
+          {
+            path: 'metadata',
+            data: {
+              breadcrumb: (data: Data) => `${data.project?.name} / Metadata`,
+            },
+            component: EditProjectMetadataComponent,
           },
           {
             path: 'models/create',

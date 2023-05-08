@@ -5,12 +5,9 @@
 
 <div class="flexbox" *ngIf="projectService.project | async">
   <div class="item">
-    <div *ngIf="projectUserService.verifyRole('manager')">
-      <app-project-metadata></app-project-metadata>
-    </div>
-
     <app-create-readonly-session></app-create-readonly-session>
 
+    <app-project-metadata></app-project-metadata>
     <app-model-overview></app-model-overview>
   </div>
   <div class="users" *ngIf="projectUserService.verifyRole('manager')">

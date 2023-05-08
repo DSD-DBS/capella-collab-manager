@@ -1,0 +1,59 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+<div *ngIf="projectUserService.verifyRole('manager')"></div>
+<div class="wrapper">
+  <mat-card id="metadata-card">
+    <h2 id="title">Description</h2>
+    <form [formGroup]="form">
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" />
+          <mat-error *ngIf="form.controls.name.errors?.required"
+            >The project name is required.</mat-error
+          >
+          <mat-error *ngIf="form.controls.name.errors?.uniqueSlug"
+            >A project with a similar name already exists.</mat-error
+          >
+          <mat-hint
+            *ngIf="project?.slug !== newSlug && form.controls.name.valid"
+            >If you proceed, the project slug will be changed to
+            <i>{{ newSlug }}</i> - Please make sure to update all
+            references.</mat-hint
+          >
+        </mat-form-field>
+      </fieldset>
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Description</mat-label>
+          <textarea
+            formControlName="description"
+            matInput
+            rows="3"
+            style="resize: none"
+            [placeholder]="
+              'This is the description of the project ' + project?.name
+            "
+          ></textarea>
+        </mat-form-field>
+      </fieldset>
+    </form>
+    <div class="flex-space-between">
+      <span
+        matTooltip="The project can't be deleted since it has linked models"
+        [matTooltipDisabled]="canDelete"
+      >
+      </span>
+      <button
+        [disabled]="!form.valid"
+        (click)="updateProject()"
+        mat-raised-button
+        id="submit"
+      >
+        Submit
+      </button>
+    </div>
+  </mat-card>
+</div>
