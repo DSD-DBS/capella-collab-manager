@@ -33,7 +33,8 @@ COPY .git_archival.txt /tmp/.git_archival.txt
 COPY startup.sh /opt/.startup.sh
 
 WORKDIR /tmp/backend
-RUN pip install ".[psycopg2]"
+RUN --mount=type=cache,id=capella-collaboration-backend-dependencies,target=/root/.cache/pip,sharing=locked \
+    pip install ".[psycopg2]"
 
 RUN mkdir -p /var/log/backend && \
     chmod -R 777 /var/log/backend
