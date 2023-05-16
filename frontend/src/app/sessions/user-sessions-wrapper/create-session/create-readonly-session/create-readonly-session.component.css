@@ -15,3 +15,7 @@ form .mat-form-field + .mat-form-field {
 form .mat-form-field {
   width: 196px;
 }
+
+#readonly-card {
+  margin: 10px;
+}
