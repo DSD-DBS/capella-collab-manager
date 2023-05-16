@@ -100,7 +100,7 @@
   </mat-card>
   <mat-card class="wider">
     <h2>User information</h2>
-    <div *ngIf="selectedUserHistory; else notSelected">
+    <div *ngIf="selectedUserHistory && selectedUser">
       <div>Username: {{ selectedUserHistory.name }}</div>
       <div *ngIf="selectedUserHistory.created">
         Created:
@@ -148,9 +148,20 @@
         </table>
       </div>
     </div>
-    <ng-template #notSelected>
+    <div *ngIf="!selectedUserHistory && !selectedUser">
       You must first select a user to see the user details
-    </ng-template>
+    </div>
+    <div *ngIf="!selectedUserHistory && selectedUser">
+      <ngx-skeleton-loader
+        appearance="circle"
+        [theme]="{
+          'border-radius': '5px',
+          height: '250px',
+          width: '600px',
+          border: '1px solid white'
+        }"
+      ></ngx-skeleton-loader>
+    </div>
 
     <div [hidden]="!selectedUserHistory">
       <mat-paginator
