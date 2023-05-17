@@ -17,6 +17,9 @@ nav:
       - Routes: frontend/routes.md
       - Testing: frontend/testing.md
   - Code Style: code-style.md
+  - Kubernetes:
+      - Meassure resource usage: k8s/resources.md
+
 markdown_extensions:
   - meta
   - admonition
