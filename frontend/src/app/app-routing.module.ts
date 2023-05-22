@@ -11,6 +11,7 @@ import { ViewLogsDialogComponent } from 'src/app/projects/models/backup-settings
 import { PipelineWrapperComponent } from 'src/app/projects/models/backup-settings/wrapper/pipeline-wrapper/pipeline-wrapper.component';
 import { ModelRestrictionsComponent } from 'src/app/projects/models/model-restrictions/model-restrictions.component';
 import { EditProjectMetadataComponent } from 'src/app/projects/project-detail/edit-project-metadata/edit-project-metadata.component';
+import { PipelinesOverviewComponent } from 'src/app/settings/core/pipelines-overview/pipelines-overview.component';
 import { EventsComponent } from './events/events.component';
 import { AuthComponent } from './general/auth/auth/auth.component';
 import { AuthGuardService } from './general/auth/auth-guard/auth-guard.service';
@@ -21,7 +22,7 @@ import { CreateProjectComponent } from './projects/create-project/create-project
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { ModelDescriptionComponent } from './projects/models/model-description/model-description.component';
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
-import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
+import { T4CModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
 import { ManageGitModelComponent } from './projects/models/model-source/git/manage-git-model/manage-git-model.component';
 import { ManageT4CModelComponent } from './projects/models/model-source/t4c/manage-t4c-model/manage-t4c-model.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
@@ -240,7 +241,7 @@ const routes: Routes = [
                               breadcrumb: (data: Data) =>
                                 data.t4cModel?.id || '...',
                             },
-                            component: T4cModelWrapperComponent,
+                            component: T4CModelWrapperComponent,
                             children: [
                               {
                                 path: '',
@@ -298,6 +299,11 @@ const routes: Routes = [
                 path: 'alerts',
                 data: { breadcrumb: 'alerts' },
                 component: AlertSettingsComponent,
+              },
+              {
+                path: 'pipelines',
+                data: { breadcrumb: 'pipelines' },
+                component: PipelinesOverviewComponent,
               },
               {
                 path: 'tools',

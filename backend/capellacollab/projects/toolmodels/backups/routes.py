@@ -54,7 +54,7 @@ def get_pipelines(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
-    return crud.get_pipelines_for_capella_model(db, model)
+    return crud.get_pipelines_for_tool_model(db, model)
 
 
 @router.get(

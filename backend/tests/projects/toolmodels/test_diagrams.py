@@ -222,7 +222,7 @@ def test_get_diagrams_no_diagram_cache_job_found(
     )
 
     assert response.status_code == 500
-    assert response.json()["detail"]["err_code"] == "NO_SUCCESSFUL_JOB"
+    assert response.json()["detail"]["err_code"] == "PIPELINE_JOB_NOT_FOUND"
 
 
 @responses.activate

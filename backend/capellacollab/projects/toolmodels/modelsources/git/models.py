@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+
+import enum
 import typing as t
 
 import pydantic
@@ -76,3 +78,9 @@ class DatabaseGitModel(database.Base):
             model_id=model_id,
             **new_model.dict(),
         )
+
+
+class GitModelStatus(enum.Enum):
+    ACCESSIBLE = "accessible"
+    INACCESSIBLE = "inaccessible"
+    UNSET = "unset"

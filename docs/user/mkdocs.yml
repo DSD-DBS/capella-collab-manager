@@ -44,6 +44,7 @@ nav:
       - Files (Upload): sessions/files/files.md
       - Troubleshooting: sessions/troubleshooting.md
   - Settings:
+      - Monitoring: settings/monitoring.md
       - Tools:
           - General: settings/tools/index.md
           - pure::variants: settings/tools/pure_variants.md
@@ -55,11 +56,10 @@ nav:
                   - Update a TeamForCapella based model: settings/tools/capella/teamforcapella/update.md
       - Model sources:
           - Git: settings/model-sources/git.md
-  - User Management: users.md
-  - Additional Configuration:
       - Alerts:
           - Create an alert: additional/alerts/create.md
           - Delete an alert: additional/alerts/delete.md
+  - User Management: users.md
   - Release Notes: release-notes.md
   - About: about.md
 

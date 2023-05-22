@@ -6,6 +6,7 @@ from collections import abc
 import sqlalchemy as sa
 from sqlalchemy import orm
 
+from .. import models as pipeline_models
 from . import models
 
 
@@ -60,3 +61,17 @@ def create_pipeline_run(
     db.add(pipeline_run)
     db.commit()
     return pipeline_run
+
+
+def get_last_pipeline_run_of_pipeline(
+    db: orm.Session, pipeline: pipeline_models.DatabaseBackup
+) -> models.DatabasePipelineRun | None:
+    return (
+        db.execute(
+            sa.select(models.DatabasePipelineRun)
+            .where(models.DatabasePipelineRun.pipeline == pipeline)
+            .order_by(models.DatabasePipelineRun.id.desc())
+        )
+        .scalars()
+        .first()
+    )

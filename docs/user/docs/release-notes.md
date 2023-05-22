@@ -5,6 +5,14 @@
 
 [Full/ Technical Changelog](https://github.com/DSD-DBS/capella-collab-manager/releases)
 
+# v2.13.0
+
+- Pipeline runs have been added: You can now check the status and logs of the
+  backup pipelines. Only works for manually triggered pipelines, the nightly
+  pipelines will be added in a later release.
+- Global monitoring dashboard for administrators. To identify possible failures
+  and errors in projects and models, a global monitoring dashbaord was added.
+
 # v2.12.0
 
 - Redesign of the project members section for project leads: The list shows

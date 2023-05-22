@@ -27,17 +27,31 @@ def get_pipeline_by_id(
     ).scalar_one_or_none()
 
 
-def get_pipelines_for_capella_model(
+def get_pipelines_for_tool_model(
     db: orm.Session, model: toolmodels_models.DatabaseCapellaModel
 ) -> abc.Sequence[models.DatabaseBackup]:
     return (
         db.execute(
             sa.select(models.DatabaseBackup).where(
-                models.DatabaseBackup.model_id == model.id
+                models.DatabaseBackup.model == model
             )
         )
         .scalars()
         .all()
+    )
+
+
+def get_first_pipeline_for_tool_model(
+    db: orm.Session, model: toolmodels_models.DatabaseCapellaModel
+) -> models.DatabaseBackup | None:
+    return (
+        db.execute(
+            sa.select(models.DatabaseBackup).where(
+                models.DatabaseBackup.model == model
+            )
+        )
+        .scalars()
+        .first()
     )
 
 
