@@ -7,6 +7,7 @@ import enum
 import sqlalchemy as sa
 from pydantic import BaseModel
 from sqlalchemy import orm
+from sqlalchemy.dialects import postgresql
 
 import capellacollab.users.models as users_models
 from capellacollab.core.database import Base
@@ -50,6 +51,8 @@ class DatabasePipelineRun(Base):
     trigger_time: orm.Mapped[datetime.datetime]
     logs_last_fetched_timestamp: orm.Mapped[datetime.datetime]
 
+    environment: dict[str, str] = sa.Column(postgresql.JSONB)
+
 
 class PipelineRun(BaseModel):
     id: int
@@ -57,6 +60,11 @@ class PipelineRun(BaseModel):
     triggerer: users_models.User
     trigger_time: datetime.datetime
     status: PipelineRunStatus
+    environment: dict[str, str]
 
     class Config:
         orm_mode = True
+
+
+class BackupPipelineRun(BaseModel):
+    include_commit_history: bool | None

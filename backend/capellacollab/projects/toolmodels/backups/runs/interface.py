@@ -69,7 +69,8 @@ def schedule_pending_jobs():
                         ),
                         "app.capellacollab/pipelineRunID": str(pending_run.id),
                     },
-                    environment=backups_core.get_environment(
+                    environment=pending_run.environment
+                    | backups_core.get_environment(
                         pending_run.pipeline.git_model,
                         pending_run.pipeline.t4c_model,
                         pending_run.pipeline.t4c_username,

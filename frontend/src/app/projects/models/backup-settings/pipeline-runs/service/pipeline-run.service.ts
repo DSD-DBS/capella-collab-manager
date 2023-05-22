@@ -99,7 +99,12 @@ export type PipelineRun = {
   triggerer: User;
   id: number;
   trigger_time: string;
+  environment: PipelineRunEnvironment;
 };
+
+interface PipelineRunEnvironment {
+  [key: string]: string;
+}
 
 export type PipelineRunStatus =
   | 'pending'

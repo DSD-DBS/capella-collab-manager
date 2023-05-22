@@ -35,6 +35,7 @@ router = APIRouter()
     response_model=models.PipelineRun,
 )
 def create_pipeline_run(
+    body: models.BackupPipelineRun,
     pipeline: DatabaseBackup = Depends(
         pipeline_injectables.get_existing_pipeline
     ),
@@ -43,6 +44,10 @@ def create_pipeline_run(
     ),
     db: Session = Depends(get_db),
 ) -> models.DatabasePipelineRun:
+    environment = {}
+    if body.include_commit_history:
+        environment["INCLUDE_COMMIT_HISTORY"] = "true"
+
     return crud.create_pipeline_run(
         db,
         models.DatabasePipelineRun(
@@ -50,6 +55,7 @@ def create_pipeline_run(
             pipeline=pipeline,
             triggerer=triggerer,
             trigger_time=datetime.datetime.now(),
+            environment=environment,
         ),
     )
 
