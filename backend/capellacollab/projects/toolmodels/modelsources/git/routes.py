@@ -10,9 +10,7 @@ from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.database import get_db
-from capellacollab.projects.toolmodels.backups.crud import (
-    get_pipelines_for_git_model,
-)
+from capellacollab.projects.toolmodels.backups import crud as backups_crud
 from capellacollab.projects.toolmodels.injectables import (
     get_existing_capella_model,
 )
@@ -152,7 +150,7 @@ def create_git_model(
 ) -> DatabaseGitModel:
     verify_path_prefix(db, post_git_model.path)
 
-    new_git_model = crud.add_gitmodel_to_capellamodel(
+    new_git_model = crud.add_git_model_to_capellamodel(
         db, capella_model, post_git_model
     )
     return new_git_model
@@ -172,18 +170,10 @@ def create_git_model(
 def update_git_model_by_id(
     patch_git_model: PatchGitModel,
     db_git_model: DatabaseGitModel = Depends(get_existing_git_model),
-    db_capella_model: DatabaseCapellaModel = Depends(
-        get_existing_capella_model
-    ),
     db: Session = Depends(get_db),
 ) -> DatabaseGitModel:
     verify_path_prefix(db, patch_git_model.path)
-
-    updated_git_model = crud.update_git_model(
-        db, db_capella_model, db_git_model, patch_git_model
-    )
-
-    return updated_git_model
+    return crud.update_git_model(db, db_git_model, patch_git_model)
 
 
 @router.delete(
@@ -201,7 +191,7 @@ def delete_git_model_by_id(
     db_git_model: DatabaseGitModel = Depends(get_existing_git_model),
     db: Session = Depends(get_db),
 ):
-    if get_pipelines_for_git_model(db, db_git_model):
+    if backups_crud.get_pipelines_for_git_model(db, db_git_model):
         raise HTTPException(
             status_code=409,
             detail={

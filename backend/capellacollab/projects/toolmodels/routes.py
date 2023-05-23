@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.exc import IntegrityError, NoResultFound
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication import injectables as auth_injectables
@@ -11,7 +11,8 @@ from capellacollab.core.database import get_db
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.tools import crud as tools_crud
-from capellacollab.tools.models import Nature, Tool, Version
+from capellacollab.tools import injectables as tools_injectables
+from capellacollab.tools.models import Nature, Version
 
 from . import crud
 from .backups.routes import router as router_backups
@@ -71,7 +72,9 @@ def create_new(
     project: DatabaseProject = Depends(get_existing_project),
     db: Session = Depends(get_db),
 ) -> DatabaseCapellaModel:
-    tool = get_tool_by_id_or_raise(db, new_model.tool_id)
+    tool = tools_injectables.get_existing_tool(
+        tool_id=new_model.tool_id, db=db
+    )
 
     try:
         return crud.create_model(db, project, new_model, tool)
@@ -105,8 +108,8 @@ def patch_capella_model(
     version = get_version_by_id_or_raise(db, body.version_id)
     if version.tool != model.tool:
         raise HTTPException(
-            409,
-            {
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
                 "reason": f"The tool having the version “{version.name}” (“{version.tool.name}”) does not match the tool of the model “{model.name}” (“{model.tool.name}”)."
             },
         )
@@ -114,8 +117,8 @@ def patch_capella_model(
     nature = get_nature_by_id_or_raise(db, body.nature_id)
     if nature.tool != model.tool:
         raise HTTPException(
-            409,
-            {
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
                 "reason": f"The tool having the nature “{nature.name}” (“{nature.tool.name}”) does not match the tool of the model “{model.name}” (“{model.tool.name}”)."
             },
         )
@@ -143,33 +146,24 @@ def delete_capella_model(
         crud.delete_model(db, model)
 
 
-def get_tool_by_id_or_raise(db: Session, tool_id: int) -> Tool:
-    try:
-        return tools_crud.get_tool_by_id(tool_id, db)
-    except NoResultFound:
-        raise HTTPException(
-            404,
-            {"reason": f"The tool with id {tool_id} was not found."},
-        )
-
-
 def get_version_by_id_or_raise(db: Session, version_id: int) -> Version:
-    try:
-        return tools_crud.get_version_by_id(version_id, db)
-    except NoResultFound:
-        raise HTTPException(
-            404,
-            {"reason": f"The version with id {version_id} was not found."},
-        )
+    if version := tools_crud.get_version_by_id(db, version_id):
+        return version
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail={"reason": f"The version with id {version_id} was not found."},
+    )
 
 
 def get_nature_by_id_or_raise(db: Session, nature_id: int) -> Nature:
-    try:
-        return tools_crud.get_nature_by_id(nature_id, db)
-    except NoResultFound:
-        raise HTTPException(
-            404, {"reason": f"The nature with id {nature_id} was not found."}
-        )
+    if nature := tools_crud.get_nature_by_id(db, nature_id):
+        return nature
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail={"reason": f"The nature with id {nature_id} was not found."},
+    )
 
 
 router.include_router(

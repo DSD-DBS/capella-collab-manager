@@ -30,7 +30,7 @@ def get_existing_project(
 def get_existing_capella_model(
     project_slug: str, model_slug: str, db: Session = Depends(get_db)
 ) -> DatabaseCapellaModel:
-    model = crud.get_model_by_slug(db, project_slug, model_slug)
+    model = crud.get_model_by_slugs(db, project_slug, model_slug)
     if not model:
         raise HTTPException(
             404,

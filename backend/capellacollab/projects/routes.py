@@ -3,6 +3,7 @@
 
 
 import logging
+from collections.abc import Sequence
 
 from fastapi import APIRouter, Depends, HTTPException
 from slugify import slugify
@@ -41,22 +42,18 @@ router = APIRouter(
 )
 
 
-@router.get(
-    "/",
-    response_model=list[Project],
-    tags=["Projects"],
-)
+@router.get("/", response_model=Sequence[Project], tags=["Projects"])
 def get_projects(
     user: DatabaseUser = Depends(get_own_user),
     db: Session = Depends(database.get_db),
     token=Depends(JWTBearer()),
     log: logging.LoggerAdapter = Depends(get_request_logger),
-) -> list[DatabaseProject]:
+) -> Sequence[DatabaseProject]:
     if auth_injectables.RoleVerification(
         required_role=Role.ADMIN, verify=False
     )(token, db):
         log.debug("Fetching all projects")
-        return crud.get_all_projects(db)
+        return crud.get_projects(db)
 
     projects = [association.project for association in user.projects]
     log.debug("Fetching the following projects: %s", projects)
@@ -106,9 +103,7 @@ def update_project(
 )
 def get_project_by_slug(
     db_project: DatabaseProject = Depends(get_existing_project),
-    log=Depends(get_request_logger),
 ) -> DatabaseProject:
-    log.debug(f"Getting the project {db_project.name}")
     return db_project
 
 
@@ -127,20 +122,20 @@ def create_project(
             },
         )
 
-    new_project = crud.create_project(
+    project = crud.create_project(
         db, post_project.name, post_project.description
     )
 
     if user.role != Role.ADMIN:
         users_crud.add_user_to_project(
             db,
-            new_project,
+            project,
             user,
             ProjectUserRole.MANAGER,
             ProjectUserPermission.WRITE,
         )
 
-    return new_project
+    return project
 
 
 @router.delete(
@@ -160,7 +155,7 @@ def delete_project(
             409, {"reason": "The project still has models assigned to it"}
         )
     users_crud.delete_users_from_project(db, project)
-    events_crud.delete_all_events_projects_associated_with(db, project)
+    events_crud.delete_all_events_projects_associated_with(db, project.id)
 
     crud.delete_project(db, project)
 

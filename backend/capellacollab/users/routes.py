@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from collections.abc import Sequence
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -49,7 +50,7 @@ def get_user(user: DatabaseUser = Depends(get_existing_user)) -> DatabaseUser:
         Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
     ],
 )
-def get_users(db: Session = Depends(get_db)) -> list[DatabaseUser]:
+def get_users(db: Session = Depends(get_db)) -> Sequence[DatabaseUser]:
     return crud.get_users(db)
 
 
@@ -86,7 +87,7 @@ def update_role_of_user(
     db: Session = Depends(get_db),
 ) -> DatabaseUser:
     if (role := patch_user.role) == Role.ADMIN:
-        project_crud.delete_projects_for_user(db, user)
+        project_crud.delete_projects_for_user(db, user.id)
 
     updated_user = crud.update_role_of_user(db, user, role)
 
@@ -113,8 +114,8 @@ def delete_user(
     user: DatabaseUser = Depends(get_existing_user),
     db: Session = Depends(get_db),
 ):
-    project_crud.delete_projects_for_user(db, user)
-    event_crud.delete_all_events_user_involved_in(db, user)
+    project_crud.delete_projects_for_user(db, user.id)
+    event_crud.delete_all_events_user_involved_in(db, user.id)
     crud.delete_user(db, user)
 
 

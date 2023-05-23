@@ -3,7 +3,8 @@
 
 import typing as t
 
-from fastapi import Depends
+import fastapi
+from fastapi import Depends, status
 
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
@@ -18,7 +19,14 @@ def get_own_user(
     token=Depends(JWTBearer()),
 ) -> DatabaseUser:
     username = get_username(token)
-    return crud.get_user_by_name(db, username)
+
+    if user := crud.get_user_by_name(db, username):
+        return user
+
+    raise fastapi.HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail={"reason": f"User {username} was not found"},
+    )
 
 
 def get_existing_user(
@@ -28,4 +36,11 @@ def get_existing_user(
 ) -> DatabaseUser:
     if user_id == "current":
         return get_own_user(db, token)
-    return crud.get_user_by_id(db, user_id)
+
+    if user := crud.get_user_by_id(db, user_id):
+        return user
+
+    raise fastapi.HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail={"reason": f"User with id {user_id} was not found"},
+    )

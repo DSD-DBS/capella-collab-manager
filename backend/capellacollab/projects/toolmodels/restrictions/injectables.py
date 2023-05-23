@@ -13,5 +13,5 @@ def get_model_restrictions(
     model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
     ),
-) -> models.ToolModelRestrictions:
+) -> models.DatabaseToolModelRestrictions:
     return model.restrictions

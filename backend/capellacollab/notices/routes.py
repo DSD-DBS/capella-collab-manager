@@ -23,7 +23,7 @@ router = APIRouter()
     response_model=list[NoticeResponse],
 )
 def get_notices(db: Session = Depends(get_db)):
-    return notices.get_all_notices(db)
+    return notices.get_notices(db)
 
 
 @router.get("/{notice_id}")

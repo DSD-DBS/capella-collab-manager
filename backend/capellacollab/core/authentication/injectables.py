@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import fastapi
+from fastapi import status
 
 from capellacollab.core import database
 from capellacollab.core.authentication import jwt_bearer
@@ -26,22 +27,27 @@ class RoleVerification:
         token=fastapi.Depends(jwt_bearer.JWTBearer()),
         db=fastapi.Depends(database.get_db),
     ) -> bool:
-        role = users_crud.get_user_by_name(
-            db=db, username=helper.get_username(token)
-        ).role
+        username = helper.get_username(token)
+        if not (user := users_crud.get_user_by_name(db, username)):
+            if self.verify:
+                raise fastapi.HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail={"reason": f"User {username} was not found"},
+                )
+            return False
+
         if (
-            role != users_models.Role.ADMIN
+            user.role != users_models.Role.ADMIN
             and self.required_role == users_models.Role.ADMIN
         ):
             if self.verify:
                 raise fastapi.HTTPException(
-                    status_code=403,
+                    status_code=status.HTTP_403_FORBIDDEN,
                     detail={
                         "reason": "You need to be administrator for this transaction.",
                     },
                 )
-            else:
-                return False
+            return False
         return True
 
 
@@ -69,17 +75,33 @@ class ProjectRoleVerification:
         token=fastapi.Depends(jwt_bearer.JWTBearer()),
         db=fastapi.Depends(database.get_db),
     ) -> bool:
-        user = users_crud.get_user_by_name(db, helper.get_username(token))
+        username = helper.get_username(token)
+        if not (user := users_crud.get_user_by_name(db, username)):
+            if self.verify:
+                raise fastapi.HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail={"reason": f"User {username} was not found"},
+                )
+            return False
 
         if user.role == users_models.Role.ADMIN:
             return True
 
-        project = projects_crud.get_project_by_slug(db, project_slug)
-        project_user = projects_users_crud.get_user_of_project(
+        if not (
+            project := projects_crud.get_project_by_slug(db, project_slug)
+        ):
+            if self.verify:
+                raise fastapi.HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail={
+                        "reason": f"The project {project_slug} was not found"
+                    },
+                )
+            return False
+
+        project_user = projects_users_crud.get_project_user_association(
             db, project, user
         )
-
-        # Check role
         if not project_user or self.roles.index(
             project_user.role
         ) < self.roles.index(self.required_role):
@@ -92,7 +114,6 @@ class ProjectRoleVerification:
                 )
             return False
 
-        # Check permission
         if self.required_permission:
             if (
                 project_user.permission

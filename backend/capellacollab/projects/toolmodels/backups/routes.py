@@ -8,7 +8,7 @@ import uuid
 
 import fastapi
 import requests
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repository_interface
@@ -29,7 +29,7 @@ from capellacollab.projects.toolmodels.modelsources.t4c.injectables import (
 )
 from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.sessions import operators
-from capellacollab.tools.crud import get_backup_image_for_tool_version
+from capellacollab.tools import crud as tools_crud
 
 from . import crud, helper, injectables
 from .core import get_environment
@@ -54,7 +54,7 @@ def get_pipelines(
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ):
-    return crud.get_pipelines_for_model(db, model)
+    return crud.get_pipelines_for_capella_model(db, model)
 
 
 @router.post(
@@ -232,3 +232,15 @@ def get_logs(
         _id=backup.lastrun.id
     )
     return helper.filter_logs(logs, [pipeline.t4c_password])
+
+
+def get_backup_image_for_tool_version(db: Session, version_id: int) -> str:
+    if version := tools_crud.get_version_by_id(db, version_id):
+        return version.tool.docker_image_backup_template.replace(
+            "$version", version.name
+        )
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail={"reason": f"The version with id {version_id} was not found."},
+    )

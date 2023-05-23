@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from collections.abc import Sequence
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -34,8 +36,8 @@ router = APIRouter(
 @router.get("", response_model=list[T4CInstance])
 def list_t4c_settings(
     db: Session = Depends(get_db),
-) -> list[DatabaseT4CInstance]:
-    return crud.get_all_t4c_instances(db)
+) -> Sequence[DatabaseT4CInstance]:
+    return crud.get_t4c_instances(db)
 
 
 @router.get(
@@ -59,7 +61,7 @@ def create_t4c_instance(
     version = get_version_by_id_or_raise(db, body.version_id)
     instance = DatabaseT4CInstance(**body.dict())
     instance.version = version
-    return crud.create_t4c_instance(instance, db)
+    return crud.create_t4c_instance(db, instance)
 
 
 @router.patch(
@@ -71,10 +73,7 @@ def edit_t4c_instance(
     instance: DatabaseT4CInstance = Depends(get_existing_instance),
     db: Session = Depends(get_db),
 ) -> DatabaseT4CInstance:
-    for key in body.dict():
-        if value := getattr(body, key):
-            setattr(instance, key, value)
-    return crud.update_t4c_instance(instance, db)
+    return crud.update_t4c_instance(db, instance, body)
 
 
 @router.get(
