@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import pytest
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from capellacollab.config import config
@@ -363,7 +364,11 @@ def get_events_by_user_id(
 
 def get_executed_events_by_user_id(db: Session, user_id: int):
     return (
-        db.query(DatabaseUserHistoryEvent)
-        .filter(DatabaseUserHistoryEvent.executor_id == user_id)
+        db.execute(
+            select(DatabaseUserHistoryEvent).where(
+                DatabaseUserHistoryEvent.executor_id == user_id
+            )
+        )
+        .scalars()
         .all()
     )

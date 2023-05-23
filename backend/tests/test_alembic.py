@@ -89,7 +89,7 @@ def fixture_alembic_cfg(initialized_database):
     alembic_cfg = Config(root_dir / "alembic.ini")
     alembic_cfg.set_main_option("script_location", str(root_dir / "alembic"))
     alembic_cfg.set_main_option(
-        "sqlalchemy.url", str(initialized_database.url)
+        "sqlalchemy.url", str(initialized_database.url).replace("***", "dev")
     )
     alembic_cfg.attributes["configure_logger"] = False
     yield alembic_cfg

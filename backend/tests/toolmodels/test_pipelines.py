@@ -300,8 +300,7 @@ def test_delete_pipeline(
 
     assert response.status_code == 204
 
-    with pytest.raises(sqlalchemy.exc.NoResultFound):
-        pipelines_crud.get_pipeline_by_id(db, pipeline.id)
+    assert not pipelines_crud.get_pipeline_by_id(db, pipeline.id)
 
     if run_nightly:
         assert mockoperator.cronjob_counter == -1

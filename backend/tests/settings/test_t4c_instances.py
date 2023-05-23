@@ -14,7 +14,7 @@ def test_create_t4c_instance(
     client: TestClient, db: Session, executor_name: str
 ):
     create_user(db, executor_name, Role.ADMIN)
-    tool = tools_crud.create_tool(db, tools_models.Tool(name="Test"))
+    tool = tools_crud.create_tool_with_name(db, "Test")
     version = tools_crud.create_version(db, tool.id, "test")
 
     response = client.post(
