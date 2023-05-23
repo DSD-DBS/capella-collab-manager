@@ -1,10 +1,9 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
 from capellacollab.projects.users.crud import (
     add_user_to_project,
-    get_user_of_project,
+    get_project_user_association,
 )
 from capellacollab.projects.users.models import (
     ProjectUserPermission,
@@ -30,9 +29,10 @@ def test_assign_read_write_permission_when_adding_manager(
         },
     )
 
-    project_user = get_user_of_project(db, project, user)
+    project_user = get_project_user_association(db, project, user)
 
     assert response.status_code == 200
+    assert project_user
     assert project_user.role == ProjectUserRole.MANAGER
     assert project_user.permission == ProjectUserPermission.WRITE
 
@@ -55,9 +55,10 @@ def test_assign_read_write_permission_when_changing_project_role_to_manager(
         },
     )
 
-    project_user = get_user_of_project(db, project, user)
+    project_user = get_project_user_association(db, project, user)
 
     assert response.status_code == 204
+    assert project_user
     assert project_user.role == ProjectUserRole.MANAGER
     assert project_user.permission == ProjectUserPermission.WRITE
 

@@ -27,9 +27,10 @@ from capellacollab.core.database import migration
 
 @pytest.fixture(name="postgresql", scope="session")
 def fixture_postgresql() -> engine.Engine:
-    with postgres.PostgresContainer("postgres:14.1") as _postgres:
+    with postgres.PostgresContainer(image="postgres:14.1") as _postgres:
         database_url = _postgres.get_connection_url()
-        _engine = sqlalchemy.create_engine(database_url)
+
+        _engine = sqlalchemy.create_engine(database_url.replace("***", "test"))
 
         yield _engine
 
@@ -46,7 +47,9 @@ def fixture_db(
     monkeypatch.setattr(database, "SessionLocal", session_local)
 
     delete_all_tables_if_existent(postgresql)
-    migration.migrate_db(postgresql, str(postgresql.url))
+    migration.migrate_db(
+        postgresql, str(postgresql.url).replace("***", "test")
+    )
 
     with session_local() as session:
         yield session
@@ -108,7 +111,7 @@ def project_user(
     return user
 
 
-@pytest.fixture
+@pytest.fixture()
 def client() -> testclient.TestClient:
     return testclient.TestClient(app)
 
@@ -133,15 +136,13 @@ def delete_all_tables_if_existent(_engine: sqlalchemy.engine.Engine) -> bool:
     try:
         database.Base.metadata.drop_all(_engine)
         t_alembic = sqlalchemy.Table(
-            "alembic_version",
-            sqlalchemy.MetaData(),
-            autoload=True,
-            autoload_with=_engine,
+            "alembic_version", sqlalchemy.MetaData(), autoload_with=_engine
         )
     except (sqlalchemy.exc.ProgrammingError, sqlalchemy.exc.NoSuchTableError):
         return False
 
     with _engine.connect() as session:
-        session.execute(t_alembic.delete())
+        session.execute(sqlalchemy.delete(t_alembic))
+        session.commit()
 
     return True

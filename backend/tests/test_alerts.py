@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from collections.abc import Sequence
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
@@ -8,7 +10,7 @@ from sqlalchemy.orm import Session
 from capellacollab.notices.crud import (
     create_notice,
     delete_notice,
-    get_all_notices,
+    get_notices,
 )
 from capellacollab.notices.models import (
     CreateNoticeRequest,
@@ -21,7 +23,7 @@ from capellacollab.users.models import Role
 
 @pytest.fixture(autouse=True)
 def cleanup_notices(db: Session):
-    for notice in get_all_notices(db):
+    for notice in get_notices(db):
         delete_notice(db, notice)
 
 
@@ -55,7 +57,7 @@ def test_create_alert_not_authenticated(client: TestClient):
     assert response.json() == {"detail": "Not authenticated"}
 
 
-def test_create_alert(client: TestClient, db: Session, executor_name: str):
+def test_create_alert2(client: TestClient, db: Session, executor_name: str):
     create_user(db, executor_name, Role.ADMIN)
 
     response = client.post(
@@ -65,7 +67,7 @@ def test_create_alert(client: TestClient, db: Session, executor_name: str):
 
     assert response.status_code == 200
 
-    notices: list[DatabaseNotice] = get_all_notices(db)
+    notices: Sequence[DatabaseNotice] = get_notices(db)
     assert len(notices) == 1
     assert notices[0].title == "test"
     assert notices[0].message == "test"
@@ -84,4 +86,4 @@ def test_delete_alert(client: TestClient, db: Session, executor_name: str):
     response = client.delete(f"/api/v1/notices/{alert.id}")
 
     assert response.status_code == 204
-    assert not get_all_notices(db)
+    assert not get_notices(db)
