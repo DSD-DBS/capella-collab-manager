@@ -1,35 +1,38 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import datetime
+from collections.abc import Sequence
 
-from datetime import datetime
-
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from capellacollab.users.models import DatabaseUser, Role
+from capellacollab.users import models
 
 
-def get_user_by_name(db: Session, username: str) -> DatabaseUser:
-    return db.query(DatabaseUser).filter(DatabaseUser.name == username).first()
+def get_user_by_name(db: Session, username: str) -> models.DatabaseUser | None:
+    return db.execute(
+        select(models.DatabaseUser).where(models.DatabaseUser.name == username)
+    ).scalar_one_or_none()
 
 
-def get_user_by_id(db: Session, user_id: int) -> DatabaseUser:
-    return db.query(DatabaseUser).filter(DatabaseUser.id == user_id).first()
+def get_user_by_id(db: Session, user_id: int) -> models.DatabaseUser | None:
+    return db.execute(
+        select(models.DatabaseUser).where(models.DatabaseUser.id == user_id)
+    ).scalar_one_or_none()
 
 
-def get_users(db: Session) -> list[DatabaseUser]:
-    return db.query(DatabaseUser).all()
+def get_users(db: Session) -> Sequence[models.DatabaseUser]:
+    return db.execute(select(models.DatabaseUser)).scalars().all()
 
 
 def create_user(
-    db: Session,
-    username: str,
-    role: Role = Role.USER,
-) -> DatabaseUser:
-    user = DatabaseUser(
+    db: Session, username: str, role: models.Role = models.Role.USER
+) -> models.DatabaseUser:
+    user = models.DatabaseUser(
         name=username,
         role=role,
-        created=datetime.now(),
+        created=datetime.datetime.now(),
         projects=[],
         events=[],
     )
@@ -40,23 +43,25 @@ def create_user(
 
 
 def update_role_of_user(
-    db: Session, user: DatabaseUser, role: Role
-) -> DatabaseUser:
+    db: Session, user: models.DatabaseUser, role: models.Role
+) -> models.DatabaseUser:
     user.role = role
     db.commit()
     return user
 
 
 def update_last_login(
-    db: Session, user: DatabaseUser, last_login: datetime | None = None
-) -> DatabaseUser:
+    db: Session,
+    user: models.DatabaseUser,
+    last_login: datetime.datetime | None = None,
+) -> models.DatabaseUser:
     if not last_login:
-        last_login = datetime.now()
+        last_login = datetime.datetime.now()
     user.last_login = last_login
     db.commit()
     return user
 
 
-def delete_user(db: Session, user: DatabaseUser):
+def delete_user(db: Session, user: models.DatabaseUser):
     db.delete(user)
     db.commit()

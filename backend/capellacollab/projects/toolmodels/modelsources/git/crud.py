@@ -1,99 +1,86 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import sqlalchemy
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
-from capellacollab.projects.toolmodels.modelsources.git.models import (
-    DatabaseGitModel,
-    PatchGitModel,
-    PostGitModel,
-)
+from capellacollab.projects.toolmodels.modelsources.git import models
 
 
-def get_gitmodels_of_capellamodels(
-    db: Session, model_id: int
-) -> list[DatabaseGitModel]:
-    return (
-        db.query(DatabaseGitModel)
-        .filter(DatabaseGitModel.model_id == model_id)
-        .all()
-    )
-
-
-def get_primary_gitmodel_of_capellamodel(
-    db: Session, model_id: int
-) -> DatabaseGitModel:
-    return (
-        db.query(DatabaseGitModel)
-        .filter(DatabaseGitModel.model_id == model_id)
-        .filter(DatabaseGitModel.primary)
-        .first()
-    )
-
-
-def get_gitmodel_by_id(db: Session, id: int) -> DatabaseGitModel | None:
+def get_git_model_by_id(
+    db: Session, git_model_id: int
+) -> models.DatabaseGitModel | None:
     return db.execute(
-        sqlalchemy.select(DatabaseGitModel).where(DatabaseGitModel.id == id)
+        select(models.DatabaseGitModel).where(
+            models.DatabaseGitModel.id == git_model_id
+        )
     ).scalar_one_or_none()
 
 
-def make_git_model_primary(
-    db: Session, capella_model_id: int, git_model_id: int
-) -> DatabaseGitModel:
-    primary_model = get_primary_gitmodel_of_capellamodel(db, capella_model_id)
-    primary_model.primary = False
-
-    patch_git_model = get_gitmodel_by_id(db, git_model_id)
-    patch_git_model.primary = True
-
-    db.commit()
-    return patch_git_model
+def get_primary_git_model_of_capellamodel(
+    db: Session, model_id: int
+) -> models.DatabaseGitModel | None:
+    return db.execute(
+        select(models.DatabaseGitModel)
+        .where(models.DatabaseGitModel.model_id == model_id)
+        .where(models.DatabaseGitModel.primary)
+    ).scalar_one_or_none()
 
 
-def add_gitmodel_to_capellamodel(
+def add_git_model_to_capellamodel(
     db: Session,
     capella_model: DatabaseCapellaModel,
-    post_git_model: PostGitModel,
-) -> DatabaseGitModel:
-    if len(get_gitmodels_of_capellamodels(db, capella_model.id)):
-        primary = False
-    else:
-        primary = True
-    new_model = DatabaseGitModel.from_post_git_model(
+    post_git_model: models.PostGitModel,
+) -> models.DatabaseGitModel:
+    primary = not get_primary_git_model_of_capellamodel(db, capella_model.id)
+
+    git_model = models.DatabaseGitModel.from_post_git_model(
         capella_model.id, primary, post_git_model
     )
-    db.add(new_model)
-    db.commit()
 
-    return new_model
+    db.add(git_model)
+    db.commit()
+    return git_model
+
+
+def make_git_model_primary(
+    db: Session, git_model: models.DatabaseGitModel
+) -> models.DatabaseGitModel:
+    if primary_model := get_primary_git_model_of_capellamodel(
+        db, git_model.model_id
+    ):
+        primary_model.primary = False
+
+    git_model.primary = True
+
+    db.commit()
+    return git_model
 
 
 def update_git_model(
     db: Session,
-    db_capella_model: DatabaseCapellaModel,
-    db_model: DatabaseGitModel,
-    patch_model: PatchGitModel,
-) -> DatabaseGitModel:
-    db_model.path = patch_model.path
-    db_model.entrypoint = patch_model.entrypoint
-    db_model.revision = patch_model.revision
+    git_model: models.DatabaseGitModel,
+    patch_model: models.PatchGitModel,
+) -> models.DatabaseGitModel:
+    git_model.path = patch_model.path
+    git_model.entrypoint = patch_model.entrypoint
+    git_model.revision = patch_model.revision
 
     if patch_model.password:
-        db_model.username = patch_model.username
-        db_model.password = patch_model.password
+        git_model.username = patch_model.username
+        git_model.password = patch_model.password
     elif not patch_model.username:
-        db_model.username = ""
-        db_model.password = ""
+        git_model.username = ""
+        git_model.password = ""
 
-    if patch_model.primary and not db_model.primary:
-        db_model = make_git_model_primary(db, db_capella_model.id, db_model.id)
+    if patch_model.primary and not git_model.primary:
+        git_model = make_git_model_primary(db, git_model)
 
     db.commit()
-    return db_model
+    return git_model
 
 
-def delete_git_model(db: Session, git_model: DatabaseGitModel):
+def delete_git_model(db: Session, git_model: models.DatabaseGitModel):
     db.delete(git_model)
     db.commit()

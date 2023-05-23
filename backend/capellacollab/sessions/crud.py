@@ -1,8 +1,10 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import datetime
+from collections.abc import Sequence
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from capellacollab.projects.models import DatabaseProject
@@ -11,58 +13,79 @@ from capellacollab.tools.models import Version
 from capellacollab.users.models import DatabaseUser
 
 
-def get_sessions_for_user(db: Session, username: str):
+def get_sessions(db: Session) -> Sequence[DatabaseSession]:
+    return db.execute(select(DatabaseSession)).scalars().all()
+
+
+def get_sessions_for_user(
+    db: Session, username: str
+) -> Sequence[DatabaseSession]:
     return (
-        db.query(DatabaseSession)
-        .filter(DatabaseSession.owner_name == username)
+        db.execute(
+            select(DatabaseSession).where(
+                DatabaseSession.owner_name == username
+            )
+        )
+        .scalars()
         .all()
     )
 
 
-def get_sessions_for_repository(db: Session, repository: str):
+def get_sessions_for_project(
+    db: Session, project: DatabaseProject
+) -> Sequence[DatabaseSession]:
     return (
-        db.query(DatabaseSession)
-        .filter(DatabaseSession.repository == repository)
+        db.execute(
+            select(DatabaseSession).where(
+                DatabaseSession.project_id == project.id
+            )
+        )
+        .scalars()
         .all()
     )
 
 
-def get_session_by_id(db: Session, _id: str) -> DatabaseSession | None:
+def get_session_by_id(db: Session, session_id: str) -> DatabaseSession | None:
     return db.execute(
-        select(DatabaseSession).where(DatabaseSession.id == _id)
-    ).scalar()
+        select(DatabaseSession).where(DatabaseSession.id == session_id)
+    ).scalar_one_or_none()
 
 
-def get_session_by_user_project_version(
+def exist_readonly_session_for_user_project_version(
     db: Session,
     owner: DatabaseUser,
     project: DatabaseProject,
     version: Version,
-) -> DatabaseSession | None:
+) -> bool:
     return (
-        db.query(DatabaseSession)
-        .filter(DatabaseSession.owner == owner)
-        .filter(DatabaseSession.project == project)
-        .filter(DatabaseSession.version == version)
-        .first()
+        db.execute(
+            select(DatabaseSession)
+            .where(DatabaseSession.owner == owner)
+            .where(DatabaseSession.project == project)
+            .where(DatabaseSession.version == version)
+        ).scalar_one_or_none()
+        is not None
     )
 
 
-def get_all_sessions(db: Session):
-    return db.query(DatabaseSession).all()
+def count_sessions(db: Session) -> int:
+    count = db.scalar(
+        select(func.count()).select_from(  # pylint: disable=not-callable
+            DatabaseSession
+        )
+    )
+    return count if count else 0
 
 
-def count_sessions(db: Session):
-    return db.query(DatabaseSession).count()
+def create_session(db: Session, session: DatabaseSession) -> DatabaseSession:
+    if not session.created_at:
+        session.created_at = datetime.datetime.now()
 
-
-def create_session(db: Session, session: DatabaseSession):
     db.add(session)
     db.commit()
-    db.refresh(session)
     return session
 
 
-def delete_session(db: Session, session: DatabaseSession):
+def delete_session(db: Session, session: DatabaseSession) -> None:
     db.delete(session)
     db.commit()
