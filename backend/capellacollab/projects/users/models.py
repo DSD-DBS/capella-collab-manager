@@ -6,8 +6,8 @@ import enum
 import typing as t
 
 from pydantic import BaseModel
-from sqlalchemy import Column, Enum, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from capellacollab.core.database import Base
 from capellacollab.users.models import DatabaseUser, User
@@ -52,13 +52,15 @@ class PatchProjectUser(BaseModel):
 class ProjectUserAssociation(Base):
     __tablename__ = "project_user_association"
 
-    user_id: int = Column(ForeignKey("users.id"), primary_key=True)
-    project_id: int = Column(ForeignKey("projects.id"), primary_key=True)
-    user: DatabaseUser = relationship(DatabaseUser, back_populates="projects")
-    project: "DatabaseProject" = relationship(
-        "DatabaseProject", back_populates="users"
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"), primary_key=True
     )
-    permission: ProjectUserPermission = Column(
-        Enum(ProjectUserPermission), nullable=False
+    user: Mapped[DatabaseUser] = relationship(back_populates="projects")
+
+    project_id: Mapped[int] = mapped_column(
+        ForeignKey("projects.id"), primary_key=True
     )
-    role: ProjectUserRole = Column(Enum(ProjectUserRole))
+    project: Mapped["DatabaseProject"] = relationship(back_populates="users")
+
+    permission: Mapped[ProjectUserPermission]
+    role: Mapped[ProjectUserRole]

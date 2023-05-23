@@ -5,8 +5,8 @@
 from datetime import datetime
 
 from pydantic import BaseModel, validator
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from capellacollab.core.database import Base
 from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
@@ -79,24 +79,24 @@ class Backup(BaseModel):
 
 class DatabaseBackup(Base):
     __tablename__ = "backups"
-    id: int = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    k8s_cronjob_id: str = Column(String)
-    git_model_id: int = Column(Integer, ForeignKey("git_models.id"))
-    git_model: DatabaseGitModel = relationship(
-        DatabaseGitModel,
-    )
-    t4c_model_id: int = Column(Integer, ForeignKey("t4c_models.id"))
-    t4c_model: DatabaseT4CModel = relationship(
-        DatabaseT4CModel,
+    id: Mapped[int] = mapped_column(
+        primary_key=True, index=True, autoincrement=True
     )
 
-    created_by: str = Column(String)
-    model_id: int = Column(Integer, ForeignKey("models.id"))
-    model: DatabaseCapellaModel = relationship(
-        DatabaseCapellaModel,
-    )
-    t4c_username: str = Column(String)
-    t4c_password: str = Column(String)
+    created_by: Mapped[str]
+    k8s_cronjob_id: Mapped[str]
 
-    include_commit_history: bool = Column(Boolean, nullable=False)
-    run_nightly: bool = Column(Boolean, nullable=False)
+    t4c_username: Mapped[str]
+    t4c_password: Mapped[str]
+
+    include_commit_history: Mapped[bool]
+    run_nightly: Mapped[bool]
+
+    git_model_id: Mapped[int] = mapped_column(ForeignKey("git_models.id"))
+    git_model: Mapped[DatabaseGitModel] = relationship()
+
+    t4c_model_id: Mapped[int] = mapped_column(ForeignKey("t4c_models.id"))
+    t4c_model: Mapped[DatabaseT4CModel] = relationship()
+
+    model_id: Mapped[int] = mapped_column(ForeignKey("models.id"))
+    model: Mapped[DatabaseCapellaModel] = relationship()

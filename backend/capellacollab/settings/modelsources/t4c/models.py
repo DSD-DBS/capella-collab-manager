@@ -11,15 +11,8 @@ import pydantic
 import requests
 from pydantic import BaseModel
 from requests.exceptions import RequestException
-from sqlalchemy import (
-    CheckConstraint,
-    Column,
-    Enum,
-    ForeignKey,
-    Integer,
-    String,
-)
-from sqlalchemy.orm import relationship
+from sqlalchemy import CheckConstraint, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 import capellacollab.tools.models as tools_models
 from capellacollab.core.database import Base
@@ -51,38 +44,33 @@ class Protocol(str, enum.Enum):
 
 class DatabaseT4CInstance(Base):
     __tablename__ = "t4c_instances"
-    id: int = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name: str = Column(String, nullable=False)
-    version_id: int = Column(Integer, ForeignKey("versions.id"))
-    license: str = Column(String)
-    host: str = Column(String)
-    port: int = Column(
-        Integer,
-        CheckConstraint("port >= 0 AND port <= 65535"),
-        nullable=False,
-        default=2036,
-    )
-    cdo_port: int = Column(
-        Integer,
-        CheckConstraint("cdo_port >= 0 AND cdo_port <= 65535"),
-        nullable=False,
-        default=12036,
-    )
-    usage_api: str = Column(String)
-    rest_api: str = Column(String)
-    username: str = Column(String)
-    password: str = Column(String)
-    protocol: Protocol = Column(
-        Enum(Protocol),
-        nullable=False,
-        default=Protocol.tcp,
+
+    id: Mapped[int] = mapped_column(
+        primary_key=True, index=True, autoincrement=True
     )
 
-    version: tools_models.Version = relationship(tools_models.Version)
-    repositories: list[DatabaseT4CRepository] = relationship(
-        "DatabaseT4CRepository",
-        back_populates="instance",
-        cascade="all, delete",
+    name: Mapped[str]
+
+    license: Mapped[str]
+    host: Mapped[str]
+    port: Mapped[int] = mapped_column(
+        CheckConstraint("port >= 0 AND port <= 65535"), default=2036
+    )
+    cdo_port: Mapped[int] = mapped_column(
+        CheckConstraint("cdo_port >= 0 AND cdo_port <= 65535"), default=12036
+    )
+    usage_api: Mapped[str]
+    rest_api: Mapped[str]
+    username: Mapped[str]
+    password: Mapped[str]
+
+    protocol: Mapped[Protocol] = mapped_column(default=Protocol.tcp)
+
+    version_id: Mapped[int] = mapped_column(ForeignKey("versions.id"))
+    version: Mapped[tools_models.Version] = relationship(tools_models.Version)
+
+    repositories: Mapped[list[DatabaseT4CRepository]] = relationship(
+        back_populates="instance", cascade="all, delete"
     )
 
 

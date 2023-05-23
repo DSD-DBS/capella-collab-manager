@@ -8,15 +8,8 @@ import enum
 import typing as t
 
 from pydantic import BaseModel
-from sqlalchemy import (
-    Column,
-    Enum,
-    ForeignKey,
-    Integer,
-    String,
-    UniqueConstraint,
-)
-from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from capellacollab.core.database import Base
 from capellacollab.projects.toolmodels.modelsources.git.models import GitModel
@@ -71,36 +64,35 @@ class DatabaseCapellaModel(Base):
     __tablename__ = "models"
     __table_args__ = (UniqueConstraint("project_id", "slug"),)
 
-    id = Column(Integer, primary_key=True, index=True, unique=True)
-    name = Column(String, index=True)
-    slug = Column(String, nullable=False)
-    description = Column(String)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True, unique=True)
 
-    project_id = Column(Integer, ForeignKey("projects.id"))
-    project: DatabaseProject = relationship(
-        "DatabaseProject", back_populates="models"
+    name: Mapped[str] = mapped_column(index=True)
+    slug: Mapped[str]
+    description: Mapped[str]
+
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"))
+    project: Mapped[DatabaseProject] = relationship(back_populates="models")
+
+    tool_id: Mapped[int] = mapped_column(ForeignKey(Tool.id))
+    tool: Mapped[Tool] = relationship()
+
+    version_id: Mapped[int | None] = mapped_column(ForeignKey(Version.id))
+    version: Mapped[Version] = relationship()
+
+    nature_id: Mapped[int | None] = mapped_column(ForeignKey(Nature.id))
+    nature: Mapped[Nature] = relationship()
+
+    editing_mode: Mapped[EditingMode | None]
+
+    t4c_models: Mapped[list[DatabaseT4CModel]] = relationship(
+        back_populates="model"
+    )
+    git_models: Mapped[list[DatabaseGitModel]] = relationship(
+        back_populates="model"
     )
 
-    tool_id = Column(Integer, ForeignKey(Tool.id))
-    tool: Tool = relationship(Tool)
-
-    version_id = Column(Integer, ForeignKey(Version.id))
-    version: Version = relationship(Version)
-
-    nature_id = Column(Integer, ForeignKey(Nature.id))
-    nature = relationship(Nature)
-
-    editing_mode = Column(Enum(EditingMode))
-
-    t4c_models: list[DatabaseT4CModel] = relationship(
-        "DatabaseT4CModel", back_populates="model"
-    )
-    git_models: list[DatabaseGitModel] = relationship(
-        "DatabaseGitModel", back_populates="model"
-    )
-
-    restrictions: DatabaseToolModelRestrictions = relationship(
-        "DatabaseToolModelRestrictions", back_populates="model", uselist=False
+    restrictions: Mapped[DatabaseToolModelRestrictions] = relationship(
+        back_populates="model", uselist=False
     )
 
 

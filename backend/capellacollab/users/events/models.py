@@ -2,16 +2,16 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import datetime
 import enum
-from datetime import datetime
 
 from pydantic import BaseModel
-from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from capellacollab.core.database import Base
-from capellacollab.projects.models import Project
-from capellacollab.users.models import User
+from capellacollab.projects.models import DatabaseProject, Project
+from capellacollab.users.models import DatabaseUser, User
 
 
 class EventType(enum.Enum):
@@ -32,7 +32,7 @@ class BaseHistoryEvent(BaseModel):
     user: User
     executor: User | None
     project: Project | None
-    execution_time: datetime
+    execution_time: datetime.datetime
     event_type: EventType
     reason: str | None
 
@@ -45,26 +45,29 @@ class HistoryEvent(BaseHistoryEvent):
 
 
 class UserHistory(User):
-    created: datetime | None
-    last_login: datetime | None
+    created: datetime.datetime | None
+    last_login: datetime.datetime | None
     events: list[HistoryEvent] | None
 
 
 class DatabaseUserHistoryEvent(Base):
     __tablename__ = "user_history_events"
-    id = Column(Integer, primary_key=True, index=True)
 
-    user_id = Column(Integer, ForeignKey("users.id"))
-    user = relationship(
-        "DatabaseUser", back_populates="events", foreign_keys=[user_id]
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user: Mapped["DatabaseUser"] = relationship(
+        back_populates="events", foreign_keys=[user_id]
     )
 
-    executor_id = Column(Integer, ForeignKey("users.id"))
-    executor = relationship("DatabaseUser", foreign_keys=[executor_id])
+    executor_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    executor: Mapped["DatabaseUser"] = relationship(foreign_keys=[executor_id])
 
-    project_id = Column(Integer, ForeignKey("projects.id"))
-    project = relationship("DatabaseProject", foreign_keys=[project_id])
+    project_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"))
+    project: Mapped["DatabaseProject"] = relationship(
+        foreign_keys=[project_id]
+    )
 
-    execution_time = Column(DateTime)
-    event_type = Column(Enum(EventType))
-    reason = Column(String)
+    execution_time: Mapped[datetime.datetime]
+    event_type: Mapped[EventType]
+    reason: Mapped[str | None]

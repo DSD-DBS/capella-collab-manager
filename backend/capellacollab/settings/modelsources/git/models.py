@@ -5,7 +5,7 @@
 import enum
 
 from pydantic import BaseModel
-from sqlalchemy import Column, Enum, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
 
 from capellacollab.core.database import Base
 
@@ -33,11 +33,15 @@ class GitInstance(PostGitInstance):
 
 class DatabaseGitInstance(Base):
     __tablename__ = "git_instances"
-    id: int = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name: str = Column(String)
-    url: str = Column(String)
-    api_url: str = Column(String)
-    type: GitType = Column(Enum(GitType))
+
+    id: Mapped[int] = mapped_column(
+        primary_key=True, index=True, autoincrement=True
+    )
+
+    name: Mapped[str]
+    url: Mapped[str]
+    api_url: Mapped[str | None]
+    type: Mapped[GitType]
 
 
 class GetRevisionsResponseModel(BaseModel):

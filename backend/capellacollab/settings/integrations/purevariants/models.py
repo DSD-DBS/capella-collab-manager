@@ -8,7 +8,7 @@ import pydantic
 import requests
 from pydantic import BaseModel
 from requests import RequestException
-from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
 
 from capellacollab.core.database import Base
 
@@ -30,9 +30,9 @@ def validate_license_url(value: str | None):
 class DatabasePureVariantsLicenses(Base):
     __tablename__ = "pure_variants"
 
-    id: int = Column(Integer, primary_key=True, index=True)
-    license_server_url = Column(String, nullable=True)
-    license_key_filename = Column(String, nullable=True)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    license_server_url: Mapped[str | None]
+    license_key_filename: Mapped[str | None]
 
 
 class PureVariantsLicenses(BaseModel):
