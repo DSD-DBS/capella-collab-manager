@@ -29,7 +29,3 @@ def upgrade():
             "description", sa.String(), nullable=True, server_default=""
         ),
     )
-
-
-def downgrade():
-    op.drop_column("projects", "description")

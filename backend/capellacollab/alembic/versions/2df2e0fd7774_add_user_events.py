@@ -92,12 +92,3 @@ def upgrade():
         ["id"],
         unique=False,
     )
-
-
-def downgrade():
-    op.drop_table("user_history_events")
-
-    op.execute("DROP TYPE eventtype")
-
-    op.drop_column("users", "created")
-    op.drop_column("users", "last_login")

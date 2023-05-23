@@ -25,8 +25,3 @@ def upgrade():
         "t4c_instances",
         sa.Column("protocol", protocol, server_default="tcp", nullable=False),
     )
-
-
-def downgrade():
-    op.drop_column("t4c_instances", "protocol")
-    sa.Enum(name="protocol").drop(op.get_bind(), checkfirst=False)

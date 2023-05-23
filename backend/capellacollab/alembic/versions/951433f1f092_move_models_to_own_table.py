@@ -61,8 +61,8 @@ def upgrade():
 
     # Fetch all models
     conn = op.get_bind()
-    git_models = conn.execute("SELECT * FROM git_models")
-    t4c_models = conn.execute("SELECT * FROM t4c_models")
+    git_models = conn.execute(sa.text("SELECT * FROM git_models"))
+    t4c_models = conn.execute(sa.text("SELECT * FROM t4c_models"))
 
     # Update foreign keys
     op.add_column(
@@ -93,102 +93,34 @@ def upgrade():
         project_name = model.project_name
 
         model_id = get_or_create_model(conn, project_name)
-        op.execute(f"UPDATE git_models SET model_id={model_id} WHERE id={id}")
+        op.execute(
+            sa.text(f"UPDATE git_models SET model_id={model_id} WHERE id={id}")
+        )
 
     for model in t4c_models:
         id = model.id
         project_name = model.project_name
         model_id = get_or_create_model(conn, project_name)
 
-        op.execute(f"UPDATE t4c_models SET model_id={model_id} WHERE id={id}")
-
-
-def downgrade():
-    conn = op.get_bind()
-    models = conn.execute("SELECT * FROM capella_models").fetchall()
-    git_models = conn.execute("SELECT * FROM git_models").fetchall()
-    t4c_models = conn.execute("SELECT * FROM t4c_models").fetchall()
-
-    op.add_column(
-        "t4c_models",
-        sa.Column(
-            "project_name", sa.VARCHAR(), autoincrement=False, nullable=True
-        ),
-    )
-    op.drop_constraint(
-        "t4c_models_model_id_fkey", "t4c_models", type_="foreignkey"
-    )
-    op.create_foreign_key(
-        "t4c_models_project_name_fkey",
-        "t4c_models",
-        "projects",
-        ["project_name"],
-        ["name"],
-        ondelete="CASCADE",
-    )
-    op.drop_column("t4c_models", "model_id")
-    op.add_column(
-        "git_models",
-        sa.Column(
-            "project_name", sa.VARCHAR(), autoincrement=False, nullable=True
-        ),
-    )
-    op.drop_constraint(
-        "git_models_model_id_fkey", "git_models", type_="foreignkey"
-    )
-    op.create_foreign_key(
-        "git_models_project_name_fkey",
-        "git_models",
-        "projects",
-        ["project_name"],
-        ["name"],
-        ondelete="CASCADE",
-    )
-    op.drop_column("git_models", "model_id")
-    op.drop_index(op.f("ix_capella_models_name"), table_name="capella_models")
-    op.drop_index(op.f("ix_capella_models_id"), table_name="capella_models")
-    op.drop_table("capella_models")
-
-    editing_mode = postgresql.ENUM("T4C", "GIT", name="editingmode")
-    editing_mode.drop(op.get_bind())
-
-    model_type = postgresql.ENUM("PROJECT", "LIBRARY", name="capellamodeltype")
-    model_type.drop(op.get_bind())
-
-    for git_model in git_models:
-        id = git_model.id
-        project_name = next(
-            model.project_name
-            for model in models
-            if model.id == git_model.model_id
-        )
         op.execute(
-            f"UPDATE git_models SET project_name='{project_name}' WHERE id={id}"
+            sa.text(f"UPDATE t4c_models SET model_id={model_id} WHERE id={id}")
         )
-
-    for t4c_model in t4c_models:
-        id = t4c_model.id
-        project_name = next(
-            model.project_name for model in models if model[0] == t4c_model[-1]
-        )
-        op.execute(
-            f"UPDATE t4c_models SET project_name='{project_name}' WHERE id={id}"
-        )
-
-    op.alter_column("git_models", "project_name", nullable=False)
-    op.alter_column("t4c_models", "project_name", nullable=False)
 
 
 def get_or_create_model(conn, project_name) -> int:
     models = conn.execute(
-        f"SELECT id FROM capella_models WHERE project_name='{project_name}';"
+        sa.text(
+            f"SELECT id FROM capella_models WHERE project_name='{project_name}';"
+        )
     ).fetchone()
 
     if models:
         model_id = models[0]
     else:
         model_id = conn.execute(
-            f"INSERT INTO capella_models (name, editing_mode, model_type, project_name) VALUES ('{project_name}', 'GIT', 'PROJECT', '{project_name}') RETURNING *;"
+            sa.text(
+                f"INSERT INTO capella_models (name, editing_mode, model_type, project_name) VALUES ('{project_name}', 'GIT', 'PROJECT', '{project_name}') RETURNING *;"
+            )
         ).fetchone()[0]
 
     return model_id

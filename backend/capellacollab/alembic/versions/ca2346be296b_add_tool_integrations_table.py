@@ -55,7 +55,3 @@ def upgrade():
     op.bulk_insert(
         t_tool_integrations, [{"tool_id": tool_id[0]} for tool_id in tools]
     )
-
-
-def downgrade():
-    op.drop_table("tool_integrations")

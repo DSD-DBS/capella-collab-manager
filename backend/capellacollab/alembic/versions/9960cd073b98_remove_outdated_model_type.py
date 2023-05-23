@@ -21,15 +21,3 @@ depends_on = None
 
 def upgrade():
     op.drop_column("models", "model_type")
-
-
-def downgrade():
-    op.add_column(
-        "models",
-        sa.Column(
-            "model_type",
-            postgresql.ENUM("PROJECT", "LIBRARY", name="capellamodeltype"),
-            autoincrement=False,
-            nullable=True,
-        ),
-    )

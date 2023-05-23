@@ -23,7 +23,3 @@ def upgrade():
         "tools",
         sa.Column("docker_image_backup_template", sa.String(), nullable=True),
     )
-
-
-def downgrade():
-    op.drop_column("tools", "docker_image_backup_template")

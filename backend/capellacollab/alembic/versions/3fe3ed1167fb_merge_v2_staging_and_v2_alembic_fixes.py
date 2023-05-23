@@ -18,7 +18,3 @@ depends_on = None
 
 def upgrade():
     pass
-
-
-def downgrade():
-    pass

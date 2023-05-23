@@ -38,8 +38,3 @@ def upgrade():
     op.create_index(
         op.f("ix_git_models_id"), "git_models", ["id"], unique=False
     )
-
-
-def downgrade():
-    op.drop_index(op.f("ix_git_models_id"), table_name="git_models")
-    op.drop_table("git_models")

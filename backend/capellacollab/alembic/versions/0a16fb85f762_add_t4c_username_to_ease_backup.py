@@ -23,7 +23,3 @@ def upgrade():
     op.add_column(
         "EASEBackup", sa.Column("username", sa.String(), nullable=True)
     )
-
-
-def downgrade():
-    op.drop_column("EASEBackup", "username")

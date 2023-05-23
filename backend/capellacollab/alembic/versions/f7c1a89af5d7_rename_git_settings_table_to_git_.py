@@ -22,14 +22,10 @@ depends_on = None
 def upgrade():
     op.rename_table("git_settings", "git_instances")
     op.execute(
-        "ALTER SEQUENCE git_settings_id_seq RENAME TO git_instances_id_seq"
+        sa.text(
+            "ALTER SEQUENCE git_settings_id_seq RENAME TO git_instances_id_seq"
+        )
     )
-    op.execute("ALTER INDEX git_settings_pkey RENAME TO git_instances_pkey")
-
-
-def downgrade():
-    op.rename_table("git_instances", "git_settings")
     op.execute(
-        "ALTER SEQUENCE git_instances_id_seq RENAME TO git_settings_id_seq"
+        sa.text("ALTER INDEX git_settings_pkey RENAME TO git_instances_pkey")
     )
-    op.execute("ALTER INDEX git_instances_pkey RENAME TO git_settings_pkey")

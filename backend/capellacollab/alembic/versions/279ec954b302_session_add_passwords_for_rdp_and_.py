@@ -26,8 +26,3 @@ def upgrade():
     op.add_column(
         "sessions", sa.Column("guacamole_password", sa.String(), nullable=True)
     )
-
-
-def downgrade():
-    op.drop_column("sessions", "guacamole_password")
-    op.drop_column("sessions", "rdp_password")

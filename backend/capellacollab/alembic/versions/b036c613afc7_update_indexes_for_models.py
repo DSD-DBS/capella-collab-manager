@@ -22,10 +22,3 @@ def upgrade():
     op.drop_index("ix_capella_models_name", table_name="models")
     op.create_index(op.f("ix_models_id"), "models", ["id"], unique=True)
     op.create_index(op.f("ix_models_name"), "models", ["name"], unique=False)
-
-
-def downgrade():
-    op.drop_index(op.f("ix_models_name"), table_name="models")
-    op.drop_index(op.f("ix_models_id"), table_name="models")
-    op.create_index("ix_capella_models_name", "models", ["name"], unique=False)
-    op.create_index("ix_capella_models_id", "models", ["id"], unique=False)

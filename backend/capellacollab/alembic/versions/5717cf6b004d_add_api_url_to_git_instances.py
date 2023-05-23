@@ -23,7 +23,3 @@ def upgrade():
     op.add_column(
         "git_settings", sa.Column("api_url", sa.String(), nullable=True)
     )
-
-
-def downgrade():
-    op.drop_column("git_settings", "api_url")
