@@ -6,7 +6,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { combineLatest, filter, map, switchMap, tap, timer } from 'rxjs';
+import { combineLatest, filter, map, tap, timer } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { PipelineRunService } from 'src/app/projects/models/backup-settings/pipeline-runs/service/pipeline-run.service';
 import { PipelineService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
@@ -58,18 +58,15 @@ export class PipelineRunWrapperComponent implements OnDestroy {
       this.pipelineService.pipeline.pipe(filter(Boolean)),
       this.route.params.pipe(map((params) => params.pipelineRun as number)),
     ])
-      .pipe(
-        untilDestroyed(this),
-        switchMap(([project, model, pipeline, pipelineRunID]) =>
-          this.pipelineRunService.loadPipelineRun(
-            project!.slug,
-            model!.slug,
-            pipeline!.id,
-            pipelineRunID
-          )
+      .pipe(untilDestroyed(this))
+      .subscribe(([project, model, pipeline, pipelineRunID]) =>
+        this.pipelineRunService.loadPipelineRun(
+          project!.slug,
+          model!.slug,
+          pipeline!.id,
+          pipelineRunID
         )
-      )
-      .subscribe();
+      );
   }
 
   ngOnDestroy(): void {

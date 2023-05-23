@@ -6,6 +6,7 @@ import base64
 import datetime
 
 import fastapi
+import fastapi_pagination
 from sqlalchemy import orm
 
 from capellacollab.core import database
@@ -64,14 +65,14 @@ def create_pipeline_run(
 @router.get(
     "",
     status_code=200,
-    response_model=list[models.PipelineRun],
 )
 def get_pipeline_runs(
+    db: orm.Session = fastapi.Depends(database.get_db),
     pipeline: pipeline_models.DatabaseBackup = fastapi.Depends(
         pipeline_injectables.get_existing_pipeline
     ),
-) -> list[models.DatabasePipelineRun]:
-    return pipeline.runs
+) -> fastapi_pagination.Page[models.PipelineRun]:
+    return crud.get_pipeline_runs_for_pipeline_id_paginated(db, pipeline)
 
 
 @router.get(
@@ -164,3 +165,6 @@ def get_logs(
         )
 
     return helper.filter_logs(logs, masked_values + masked_values_generated)
+
+
+fastapi_pagination.add_pagination(router)

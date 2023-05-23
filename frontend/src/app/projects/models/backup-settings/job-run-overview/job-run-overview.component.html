@@ -5,56 +5,77 @@
 
 <div>
   Please note: Nightly runs are currently not listed. Please ask your
-  administrator for the status of nightly runs.
-  <table>
-    <tr>
-      <td>
-        <h2>ID</h2>
-      </td>
-      <td>
-        <h2>Status</h2>
-      </td>
-      <td>
-        <h2>Triggerer</h2>
-      </td>
-      <td>
-        <h2>Start time</h2>
-      </td>
-      <td>
-        <h2>Custom environment / configuration</h2>
-      </td>
-    </tr>
+  administrator for the status of nightly runs. <br />
 
-    <tbody *ngIf="(pipelineRunService.pipelineRuns | async) === undefined">
-      <tr *ngFor="let run of [1, 2, 3]">
-        <td *ngFor="let column of [1, 2, 3, 4, 5]">
-          <app-text-line-skeleton-loader></app-text-line-skeleton-loader>
+  Total number of pipeline jobs:
+  {{ (this.pipelineRunService.pipelineRunPages$ | async)?.total }}
+
+  <table>
+    <thead>
+      <tr>
+        <td>
+          <h2>ID</h2>
+        </td>
+        <td>
+          <h2>Status</h2>
+        </td>
+        <td>
+          <h2>Triggerer</h2>
+        </td>
+        <td>
+          <h2>Start time</h2>
+        </td>
+        <td>
+          <h2>Custom environment / configuration</h2>
         </td>
       </tr>
-    </tbody>
+    </thead>
 
-    <tr
-      class="job-row"
-      (click)="openLogs(run.id)"
-      *ngFor="let run of pipelineRunService.pipelineRuns | async"
+    <tbody
+      [id]="idx + 1"
+      #page
+      *ngFor="
+        let pipelineRunPage of (pipelineRunService.pipelineRunPages$ | async)!
+          .pages;
+        let idx = index
+      "
     >
-      <td>
-        {{ run.id }}
-      </td>
-      <td>
-        {{ run.status }}
-      </td>
-      <td>
-        {{ run.triggerer.name }}
-      </td>
-      <td>
-        {{ run.trigger_time | date: "EE, dd MMM y HH:mm:ss" }}
-      </td>
-      <td>
-        <span *ngFor="let env of run.environment | keyvalue">
-          {{ env.key }}='{{ env.value }}'
-        </span>
-      </td>
-    </tr>
+      <ng-container
+        *ngIf="pipelineRunPage === undefined || pipelineRunPage === 'loading'"
+      >
+        <tr *ngFor="let jobRunPage of pageSizeArray">
+          <td *ngFor="let column of [1, 2, 3, 4, 5]">
+            <app-text-line-skeleton-loader
+              width="50%"
+            ></app-text-line-skeleton-loader>
+          </td>
+        </tr>
+      </ng-container>
+      <ng-container
+        *ngIf="pipelineRunPage !== undefined && pipelineRunPage !== 'loading'"
+      >
+        <ng-container *ngFor="let run of pipelineRunPage.items">
+          <tr class="job-row" (click)="openLogs(run.id)">
+            <td>
+              {{ run.id }}
+            </td>
+            <td>
+              {{ run.status }}
+            </td>
+            <td>
+              {{ run.triggerer.name }}
+            </td>
+            <td>
+              {{ run.trigger_time | date: "EE, dd MMM y HH:mm:ss" }}
+            </td>
+            <td>
+              <span *ngFor="let env of run.environment | keyvalue">
+                {{ env.key }}='{{ env.value }}'
+              </span>
+            </td>
+          </tr>
+        </ng-container>
+      </ng-container>
+    </tbody>
   </table>
 </div>

@@ -43,6 +43,7 @@ dependencies = [
   "openshift",
   "starlette-prometheus",
   "pytz",
+  "fastapi-pagination"
 ]
 
 [project.urls]
