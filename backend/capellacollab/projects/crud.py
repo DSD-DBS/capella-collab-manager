@@ -1,27 +1,23 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from collections.abc import Sequence
 
 from slugify import slugify
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from capellacollab.projects.models import DatabaseProject, PatchProject
 
 
-def get_project_by_name(db: Session, name: str) -> DatabaseProject:
-    return (
-        db.query(DatabaseProject).filter(DatabaseProject.name == name).first()
-    )
+def get_projects(db: Session) -> Sequence[DatabaseProject]:
+    return db.execute(select(DatabaseProject)).scalars().all()
 
 
-def get_project_by_slug(db: Session, slug: str) -> DatabaseProject:
-    return (
-        db.query(DatabaseProject).filter(DatabaseProject.slug == slug).first()
-    )
-
-
-def get_all_projects(db: Session) -> list[DatabaseProject]:
-    return db.query(DatabaseProject).all()
+def get_project_by_slug(db: Session, slug: str) -> DatabaseProject | None:
+    return db.execute(
+        select(DatabaseProject).where(DatabaseProject.slug == slug)
+    ).scalar_one_or_none()
 
 
 def update_project(
@@ -37,14 +33,15 @@ def update_project(
 
 
 def create_project(
-    db: Session, name: str, description: str | None = None
+    db: Session, name: str, description: str = ""
 ) -> DatabaseProject:
-    repo = DatabaseProject(
+    project = DatabaseProject(
         name=name, slug=slugify(name), description=description, users=[]
     )
-    db.add(repo)
+
+    db.add(project)
     db.commit()
-    return repo
+    return project
 
 
 def delete_project(db: Session, project: DatabaseProject) -> None:
