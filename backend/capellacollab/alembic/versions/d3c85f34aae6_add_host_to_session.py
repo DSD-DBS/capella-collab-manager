@@ -21,7 +21,3 @@ depends_on = None
 
 def upgrade():
     op.add_column("sessions", sa.Column("host", sa.String(), nullable=True))
-
-
-def downgrade():
-    op.drop_column("sessions", "host")

@@ -27,12 +27,3 @@ def upgrade():
     )
     op.create_foreign_key(None, "sessions", "versions", ["version_id"], ["id"])
     op.create_foreign_key(None, "sessions", "tools", ["tool_id"], ["id"])
-
-
-def downgrade():
-    op.drop_constraint("sessions_tool_id_fkey", "sessions", type_="foreignkey")
-    op.drop_constraint(
-        "sessions_version_id_fkey", "sessions", type_="foreignkey"
-    )
-    op.drop_column("sessions", "version_id")
-    op.drop_column("sessions", "tool_id")

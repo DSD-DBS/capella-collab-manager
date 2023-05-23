@@ -25,7 +25,3 @@ def upgrade():
             "readonly_docker_image_template", sa.String(), nullable=True
         ),
     )
-
-
-def downgrade():
-    op.drop_column("tools", "readonly_docker_image_template")

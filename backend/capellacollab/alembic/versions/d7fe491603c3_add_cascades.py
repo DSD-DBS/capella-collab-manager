@@ -64,38 +64,3 @@ def upgrade():
         ["name"],
         ondelete="CASCADE",
     )
-
-
-def downgrade():
-    op.drop_constraint(None, "projects", type_="foreignkey")
-    op.create_foreign_key(
-        "projects_repository_name_fkey",
-        "projects",
-        "repositories",
-        ["repository_name"],
-        ["name"],
-    )
-    op.drop_constraint(None, "jenkins", type_="foreignkey")
-    op.create_foreign_key(
-        "jenkins_git_model_id_fkey",
-        "jenkins",
-        "git_models",
-        ["git_model_id"],
-        ["id"],
-    )
-    op.drop_constraint(None, "git_models", type_="foreignkey")
-    op.drop_constraint(None, "git_models", type_="foreignkey")
-    op.create_foreign_key(
-        "git_models_project_id_fkey",
-        "git_models",
-        "projects",
-        ["project_id"],
-        ["id"],
-    )
-    op.create_foreign_key(
-        "git_models_repository_name_fkey",
-        "git_models",
-        "repositories",
-        ["repository_name"],
-        ["name"],
-    )

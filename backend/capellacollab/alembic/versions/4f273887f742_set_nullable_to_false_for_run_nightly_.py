@@ -33,20 +33,3 @@ def upgrade():
         nullable=False,
         existing_server_default=sa.text("true"),
     )
-
-
-def downgrade():
-    op.alter_column(
-        "backups",
-        "run_nightly",
-        existing_type=sa.BOOLEAN(),
-        nullable=True,
-        existing_server_default=sa.text("true"),
-    )
-    op.alter_column(
-        "backups",
-        "include_commit_history",
-        existing_type=sa.BOOLEAN(),
-        nullable=True,
-        existing_server_default=sa.text("false"),
-    )

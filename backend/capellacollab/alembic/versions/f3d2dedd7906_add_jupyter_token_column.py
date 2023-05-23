@@ -22,7 +22,3 @@ def upgrade():
     op.add_column(
         "sessions", sa.Column("jupyter_token", sa.String(), nullable=True)
     )
-
-
-def downgrade():
-    op.drop_column("sessions", "jupyter_token")

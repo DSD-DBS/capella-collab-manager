@@ -34,12 +34,3 @@ def upgrade():
             server_default="PERSISTENT",
         ),
     )
-
-
-def downgrade():
-    op.drop_column("sessions", "type")
-
-    workspacetype = postgresql.ENUM(
-        "PERSISTENT", "READONLY", name="workspacetype"
-    )
-    workspacetype.drop(op.get_bind())

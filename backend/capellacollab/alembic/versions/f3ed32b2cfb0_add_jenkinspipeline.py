@@ -32,8 +32,3 @@ def upgrade():
         sa.PrimaryKeyConstraint("id", "git_model_id"),
     )
     op.create_index(op.f("ix_jenkins_id"), "jenkins", ["id"], unique=False)
-
-
-def downgrade():
-    op.drop_index(op.f("ix_jenkins_id"), table_name="jenkins")
-    op.drop_table("jenkins")

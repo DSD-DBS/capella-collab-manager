@@ -20,10 +20,3 @@ depends_on = None
 
 def upgrade():
     op.drop_column("notices", "scope")
-
-
-def downgrade():
-    op.add_column(
-        "notices",
-        sa.Column("scope", sa.VARCHAR(), autoincrement=False, nullable=True),
-    )

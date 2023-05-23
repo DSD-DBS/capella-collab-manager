@@ -35,9 +35,3 @@ def upgrade():
     op.create_index(
         op.f("ix_projects_name"), "projects", ["name"], unique=True
     )
-
-
-def downgrade():
-    op.drop_index(op.f("ix_projects_name"), table_name="projects")
-    op.drop_index(op.f("ix_projects_id"), table_name="projects")
-    op.drop_table("projects")

@@ -23,32 +23,3 @@ def upgrade():
         "ix_config_dockerimages_id", table_name="config_dockerimages"
     )
     op.drop_table("config_dockerimages")
-
-
-def downgrade():
-    op.create_table(
-        "config_dockerimages",
-        sa.Column("id", sa.INTEGER(), autoincrement=True, nullable=False),
-        sa.Column(
-            "environment", sa.VARCHAR(), autoincrement=False, nullable=True
-        ),
-        sa.Column(
-            "persistentworkspace",
-            sa.VARCHAR(),
-            autoincrement=False,
-            nullable=True,
-        ),
-        sa.Column(
-            "readonlyworkspace",
-            sa.VARCHAR(),
-            autoincrement=False,
-            nullable=True,
-        ),
-        sa.PrimaryKeyConstraint("id", name="config_dockerimages_pkey"),
-    )
-    op.create_index(
-        "ix_config_dockerimages_id",
-        "config_dockerimages",
-        ["id"],
-        unique=False,
-    )

@@ -21,12 +21,3 @@ depends_on = None
 
 def upgrade():
     op.drop_column("sessions", "rdp_username")
-
-
-def downgrade():
-    op.add_column(
-        "sessions",
-        sa.Column(
-            "rdp_username", sa.VARCHAR(), autoincrement=False, nullable=True
-        ),
-    )

@@ -43,8 +43,3 @@ def upgrade():
     op.create_index(
         op.f("ix_EASEBackup_id"), "EASEBackup", ["id"], unique=False
     )
-
-
-def downgrade():
-    op.drop_index(op.f("ix_EASEBackup_id"), table_name="EASEBackup")
-    op.drop_table("EASEBackup")

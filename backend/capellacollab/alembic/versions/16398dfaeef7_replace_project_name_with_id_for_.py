@@ -29,38 +29,12 @@ def upgrade():
         type_="foreignkey",
     )
     op.get_bind().execute(
-        "UPDATE project_user_association SET project_id = id FROM projects WHERE project_user_association.projects_name = projects.name;"
+        sa.text(
+            "UPDATE project_user_association SET project_id = id FROM projects WHERE project_user_association.projects_name = projects.name;"
+        )
     )
     op.alter_column("project_user_association", "project_id", nullable=False)
     op.create_foreign_key(
         None, "project_user_association", "projects", ["project_id"], ["id"]
     )
     op.drop_column("project_user_association", "projects_name")
-
-
-def downgrade():
-    op.add_column(
-        "project_user_association",
-        sa.Column(
-            "projects_name", sa.VARCHAR(), autoincrement=False, nullable=True
-        ),
-    )
-    op.drop_constraint(
-        "project_user_association_project_id_fkey",
-        "project_user_association",
-        type_="foreignkey",
-    )
-    op.get_bind().execute(
-        "UPDATE project_user_association SET projects_name = name FROM projects WHERE project_user_association.project_id = projects.id;"
-    )
-    op.alter_column(
-        "project_user_association", "projects_name", nullable=False
-    )
-    op.create_foreign_key(
-        "project_user_association_projects_name_fkey",
-        "project_user_association",
-        "projects",
-        ["projects_name"],
-        ["name"],
-    )
-    op.drop_column("project_user_association", "project_id")

@@ -30,10 +30,3 @@ def upgrade():
         "t4c_instances",
         "(cdo_port >= 0) AND (cdo_port <= 65535)",
     )
-
-
-def downgrade():
-    op.drop_constraint(
-        "t4c_instances_cdo_port_check", "t4c_instances", "check"
-    )
-    op.drop_column("t4c_instances", "cdo_port")

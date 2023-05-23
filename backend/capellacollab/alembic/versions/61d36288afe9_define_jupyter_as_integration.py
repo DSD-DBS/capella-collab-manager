@@ -25,7 +25,3 @@ def upgrade():
             "jupyter", sa.Boolean(), nullable=False, server_default="false"
         ),
     )
-
-
-def downgrade():
-    op.drop_column("tool_integrations", "jupyter")

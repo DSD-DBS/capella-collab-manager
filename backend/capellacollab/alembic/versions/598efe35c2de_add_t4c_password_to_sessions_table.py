@@ -22,7 +22,3 @@ def upgrade():
     op.add_column(
         "sessions", sa.Column("t4c_password", sa.String(), nullable=True)
     )
-
-
-def downgrade():
-    op.drop_column("sessions", "t4c_password")

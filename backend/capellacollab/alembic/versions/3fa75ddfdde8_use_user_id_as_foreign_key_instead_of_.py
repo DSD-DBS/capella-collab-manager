@@ -27,18 +27,10 @@ def upgrade():
         None, "project_user_association", "users", ["user_id"], ["id"]
     )
 
-    t_users = sa.Table(
-        "users",
-        sa.MetaData(),
-        autoload=True,
-        autoload_with=op.get_bind(),
-    )
+    t_users = sa.Table("users", sa.MetaData(), autoload_with=op.get_bind())
 
     t_project_user_association = sa.Table(
-        "project_user_association",
-        sa.MetaData(),
-        autoload=True,
-        autoload_with=op.get_bind(),
+        "project_user_association", sa.MetaData(), autoload_with=op.get_bind()
     )
 
     users = op.get_bind().execute(sa.select(t_users))
@@ -60,41 +52,3 @@ def upgrade():
         type_="foreignkey",
     )
     op.drop_column("project_user_association", "username")
-
-
-def downgrade():
-    op.add_column(
-        "project_user_association",
-        sa.Column("username", sa.String(), nullable=True),
-    )
-    op.create_foreign_key(
-        None, "project_user_association", "users", ["username"], ["name"]
-    )
-
-    t_users = sa.Table(
-        "users",
-        sa.MetaData(),
-        autoload=True,
-        autoload_with=op.get_bind(),
-    )
-
-    t_project_user_association = sa.Table(
-        "project_user_association",
-        sa.MetaData(),
-        autoload=True,
-        autoload_with=op.get_bind(),
-    )
-
-    users = op.get_bind().execute(sa.select(t_users))
-    for user in users:
-        op.get_bind().execute(
-            sa.update(t_project_user_association)
-            .where(t_project_user_association.c.user_id == user.id)
-            .values(username=user.name)
-        )
-    op.drop_constraint(
-        "project_user_association_user_id_fkey",
-        "project_user_association",
-        type_="foreignkey",
-    )
-    op.drop_column("project_user_association", "user_id")

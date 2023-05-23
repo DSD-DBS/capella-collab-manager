@@ -30,21 +30,3 @@ def upgrade():
         None, "git_models", "repositories", ["repository_name"], ["name"]
     )
     op.drop_column("git_models", "repository_id")
-
-
-def downgrade():
-    op.add_column(
-        "git_models",
-        sa.Column(
-            "repository_id", sa.INTEGER(), autoincrement=False, nullable=True
-        ),
-    )
-    op.drop_constraint(None, "git_models", type_="foreignkey")
-    op.create_foreign_key(
-        "git_models_repository_id_fkey",
-        "git_models",
-        "repositories",
-        ["repository_id"],
-        ["id"],
-    )
-    op.drop_column("git_models", "repository_name")

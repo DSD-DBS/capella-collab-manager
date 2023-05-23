@@ -26,8 +26,3 @@ def upgrade():
     op.create_foreign_key(
         None, "git_models", "projects", ["project_name"], ["name"]
     )
-
-
-def downgrade():
-    op.drop_constraint(None, "git_models", type_="foreignkey")
-    op.drop_column("git_models", "project_name")

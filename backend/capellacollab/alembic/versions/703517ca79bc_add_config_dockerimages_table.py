@@ -45,10 +45,3 @@ def upgrade():
             }
         ],
     )
-
-
-def downgrade():
-    op.drop_index(
-        op.f("ix_config_dockerimages_id"), table_name="config_dockerimages"
-    )
-    op.drop_table("config_dockerimages")
