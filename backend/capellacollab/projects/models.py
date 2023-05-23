@@ -6,8 +6,7 @@ from __future__ import annotations
 import typing as t
 
 from pydantic import BaseModel, validator
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 # Import required for sqlalchemy
 from capellacollab.core.database import Base
@@ -84,14 +83,15 @@ class PostProjectRequest(BaseModel):
 class DatabaseProject(Base):
     __tablename__ = "projects"
 
-    id = Column(Integer, unique=True, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True)
-    slug = Column(String, unique=True, index=True, nullable=False)
-    description = Column(String)
-    users: ProjectUserAssociation = relationship(
-        "ProjectUserAssociation",
-        back_populates="project",
+    id: Mapped[int] = mapped_column(unique=True, primary_key=True, index=True)
+
+    name: Mapped[str] = mapped_column(unique=True, index=True)
+    slug: Mapped[str] = mapped_column(unique=True, index=True)
+    description: Mapped[str | None]
+
+    users: Mapped[list[ProjectUserAssociation]] = relationship(
+        back_populates="project"
     )
-    models: list[DatabaseCapellaModel] = relationship(
-        "DatabaseCapellaModel", back_populates="project"
+    models: Mapped[list[DatabaseCapellaModel]] = relationship(
+        back_populates="project"
     )

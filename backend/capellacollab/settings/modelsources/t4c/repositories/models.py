@@ -7,11 +7,10 @@ import enum
 import typing as t
 
 from pydantic import BaseModel
-from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
-from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from capellacollab.core.database import Base
-from capellacollab.core.models import ResponseModel
 from capellacollab.settings.modelsources.t4c.models import (
     DatabaseT4CInstance,
     T4CInstance,
@@ -27,22 +26,18 @@ class DatabaseT4CRepository(Base):
     __tablename__ = "t4c_repositories"
     __table_args__ = (UniqueConstraint("instance_id", "name"),)
 
-    id = Column(
-        Integer, primary_key=True, index=True, autoincrement=True, unique=True
+    id: Mapped[int] = mapped_column(
+        primary_key=True, index=True, autoincrement=True, unique=True
     )
-    name = Column(String, nullable=False)
-    instance_id = Column(
-        Integer, ForeignKey("t4c_instances.id"), nullable=False
+    name: Mapped[str]
+
+    instance_id: Mapped[int] = mapped_column(ForeignKey("t4c_instances.id"))
+    instance: Mapped[DatabaseT4CInstance] = relationship(
+        back_populates="repositories"
     )
 
-    instance: DatabaseT4CInstance = relationship(
-        "DatabaseT4CInstance", back_populates="repositories"
-    )
-
-    models: list[DatabaseT4CModel] = relationship(
-        "DatabaseT4CModel",
-        back_populates="repository",
-        cascade="all, delete",
+    models: Mapped[list[DatabaseT4CModel]] = relationship(
+        back_populates="repository", cascade="all, delete"
     )
 
 
@@ -56,10 +51,6 @@ class T4CRepositoryStatus(str, enum.Enum):
     INSTANCE_UNREACHABLE = "INSTANCE_UNREACHABLE"
     NOT_FOUND = "NOT_FOUND"
     INITIAL = "INITIAL"
-
-
-class T4CRepositories(ResponseModel):
-    payload: list[T4CRepository]
 
 
 class T4CInstanceWithRepositories(T4CInstance):
@@ -79,4 +70,3 @@ class T4CRepository(CreateT4CRepository):
 
 
 T4CInstanceWithRepositories.update_forward_refs()
-T4CRepositories.update_forward_refs()

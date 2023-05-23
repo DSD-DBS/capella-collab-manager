@@ -6,8 +6,8 @@ from __future__ import annotations
 import typing as t
 
 from pydantic import BaseModel
-from sqlalchemy import Boolean, Column, ForeignKey, Integer
-from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from capellacollab.core.database import Base
 
@@ -28,11 +28,11 @@ class ToolModelRestrictions(BaseModel):
 class DatabaseToolModelRestrictions(Base):
     __tablename__ = "model_restrictions"
 
-    id: int = Column(Integer, primary_key=True, index=True, unique=True)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True, unique=True)
 
-    model_id: int = Column(Integer, ForeignKey("models.id"))
-    model: DatabaseCapellaModel = relationship(
-        "DatabaseCapellaModel", back_populates="restrictions"
+    model_id: Mapped[int] = mapped_column(ForeignKey("models.id"))
+    model: Mapped[DatabaseCapellaModel] = relationship(
+        back_populates="restrictions"
     )
 
-    allow_pure_variants: bool = Column(Boolean, default=False, nullable=False)
+    allow_pure_variants: Mapped[bool] = mapped_column(default=False)

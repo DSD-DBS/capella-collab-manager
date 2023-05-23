@@ -7,15 +7,8 @@ from __future__ import annotations
 import typing as t
 
 from pydantic import BaseModel
-from sqlalchemy import (
-    Boolean,
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    UniqueConstraint,
-)
-from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from capellacollab.core.database import Base
 
@@ -28,17 +21,18 @@ if t.TYPE_CHECKING:
 class Tool(Base):
     __tablename__ = "tools"
 
-    id: int = Column(Integer, primary_key=True)
-    name: str = Column(String)
-    docker_image_template: str = Column(String)
-    docker_image_backup_template: str = Column(String)
-    readonly_docker_image_template = Column(String)
+    id: Mapped[int] = mapped_column(primary_key=True)
 
-    versions: list[Version] = relationship("Version", back_populates="tool")
-    natures: list[Nature] = relationship("Nature", back_populates="tool")
+    name: Mapped[str | None]
+    docker_image_template: Mapped[str]
+    docker_image_backup_template: Mapped[str | None]
+    readonly_docker_image_template: Mapped[str | None]
 
-    integrations: DatabaseToolIntegrations = relationship(
-        "DatabaseToolIntegrations", back_populates="tool", uselist=False
+    versions: Mapped[list[Version]] = relationship(back_populates="tool")
+    natures: Mapped[list[Nature]] = relationship(back_populates="tool")
+
+    integrations: Mapped[DatabaseToolIntegrations] = relationship(
+        back_populates="tool", uselist=False
     )
 
 
@@ -46,24 +40,25 @@ class Version(Base):
     __tablename__ = "versions"
     __table_args__ = (UniqueConstraint("tool_id", "name"),)
 
-    id: int = Column(Integer, primary_key=True)
-    name: str = Column(String)
-    is_recommended: bool = Column(Boolean)
-    is_deprecated: bool = Column(Boolean)
+    id: Mapped[int] = mapped_column(primary_key=True)
 
-    tool_id: int = Column(Integer, ForeignKey(Tool.id))
-    tool: Tool = relationship("Tool", back_populates="versions")
+    name: Mapped[str]
+    is_recommended: Mapped[bool]
+    is_deprecated: Mapped[bool]
+
+    tool_id: Mapped[int | None] = mapped_column(ForeignKey(Tool.id))
+    tool: Mapped[Tool] = relationship(back_populates="versions")
 
 
 class Nature(Base):
     __tablename__ = "types"
     __table_args__ = (UniqueConstraint("tool_id", "name"),)
 
-    id: int = Column(Integer, primary_key=True)
-    name: str = Column(String)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str]
 
-    tool_id: int = Column(Integer, ForeignKey(Tool.id))
-    tool: Tool = relationship("Tool", back_populates="natures")
+    tool_id: Mapped[int | None] = mapped_column(ForeignKey(Tool.id))
+    tool: Mapped[Tool] = relationship(back_populates="natures")
 
 
 class ToolBase(BaseModel):

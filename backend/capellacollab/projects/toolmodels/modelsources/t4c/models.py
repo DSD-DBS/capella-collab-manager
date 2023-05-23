@@ -6,8 +6,8 @@ from __future__ import annotations
 import typing as t
 
 from pydantic import BaseModel
-from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
-from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from capellacollab.core.database import Base
 from capellacollab.settings.modelsources.t4c.repositories.models import (
@@ -25,17 +25,19 @@ class DatabaseT4CModel(Base):
     __tablename__ = "t4c_models"
     __table_args__ = (UniqueConstraint("repository_id", "model_id", "name"),)
 
-    id: int = Column(Integer, unique=True, primary_key=True, index=True)
-    name: str = Column(String, index=True)
+    id: Mapped[int] = mapped_column(unique=True, primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(index=True)
 
-    repository_id: int = Column(Integer, ForeignKey("t4c_repositories.id"))
-    repository: DatabaseT4CRepository = relationship(
-        "DatabaseT4CRepository", back_populates="models"
+    repository_id: Mapped[int] = mapped_column(
+        ForeignKey("t4c_repositories.id")
+    )
+    repository: Mapped[DatabaseT4CRepository] = relationship(
+        back_populates="models"
     )
 
-    model_id: int = Column(Integer, ForeignKey("models.id"))
-    model: DatabaseCapellaModel = relationship(
-        "DatabaseCapellaModel", back_populates="t4c_models"
+    model_id: Mapped[int] = mapped_column(ForeignKey("models.id"))
+    model: Mapped[DatabaseCapellaModel] = relationship(
+        back_populates="t4c_models"
     )
 
 
