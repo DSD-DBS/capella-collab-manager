@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 import capellacollab.users.crud as users
@@ -58,6 +58,21 @@ def check_user_not_in_project(project: DatabaseProject, user: DatabaseUser):
         )
 
 
+def get_project_user_association_or_raise(
+    db: Session, project: DatabaseProject, user: DatabaseUser
+) -> ProjectUserAssociation:
+    if not (
+        project_user := crud.get_project_user_association(db, project, user)
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "reason": f"User {user.name} does not exist in project {project.slug}"
+            },
+        )
+    return project_user
+
+
 @router.get("/current", response_model=ProjectUser)
 def get_current_user(
     user: DatabaseUser = Depends(get_own_user),
@@ -73,7 +88,7 @@ def get_current_user(
             permission=ProjectUserPermission.WRITE,
             user=user,
         )
-    return crud.get_user_of_project(db, project, user)
+    return get_project_user_association_or_raise(db, project, user)
 
 
 @router.get(
@@ -170,7 +185,7 @@ def update_project_user(
             )
 
     if permission := patch_project_user.permission:
-        project_user = crud.get_user_of_project(db, project, user)
+        project_user = get_project_user_association_or_raise(db, project, user)
 
         if project_user.role == ProjectUserRole.MANAGER:
             raise HTTPException(

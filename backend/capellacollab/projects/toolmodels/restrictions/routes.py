@@ -2,16 +2,16 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.database import get_db
 from capellacollab.projects.users.models import ProjectUserRole
 
 from ..injectables import get_existing_capella_model
-from ..models import DatabaseCapellaModel
+from ..models import DatabaseCapellaModel, DatabaseToolModelRestrictions
+from . import crud
 from .injectables import get_model_restrictions
 from .models import ToolModelRestrictions
 
@@ -28,29 +28,29 @@ router = APIRouter(
 
 @router.get("", response_model=ToolModelRestrictions)
 def get_restrictions(
-    model: DatabaseCapellaModel = Depends(get_existing_capella_model),
-) -> ToolModelRestrictions:
-    return model
+    restrictions: DatabaseToolModelRestrictions = Depends(
+        get_model_restrictions
+    ),
+) -> DatabaseToolModelRestrictions:
+    return restrictions
 
 
 @router.patch("", response_model=ToolModelRestrictions)
 def update_restrictions(
     body: ToolModelRestrictions,
-    restrictions: DatabaseCapellaModel = Depends(get_model_restrictions),
+    restrictions: DatabaseToolModelRestrictions = Depends(
+        get_model_restrictions
+    ),
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
-) -> ToolModelRestrictions:
-    if body.allow_pure_variants:
-        if not model.tool.integrations.pure_variants:
-            raise HTTPException(
-                status_code=500,
-                detail={
-                    "reason": "The tool of this model has no pure::variants integration."
-                    "Please enable the pure::variants integration in the settings first.",
-                },
-            )
+) -> DatabaseToolModelRestrictions:
+    if body.allow_pure_variants and not model.tool.integrations.pure_variants:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "reason": "The tool of this model has no pure::variants integration."
+                "Please enable the pure::variants integration in the settings first.",
+            },
+        )
 
-    database.patch_database_with_pydantic_object(
-        db, database_object=restrictions, pydantic_object=body
-    )
-    return restrictions
+    return crud.update_model_restrictions(db, restrictions, body)

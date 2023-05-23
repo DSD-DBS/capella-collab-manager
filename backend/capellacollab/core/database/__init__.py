@@ -4,7 +4,7 @@
 
 from pydantic import BaseModel
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, declarative_base, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from capellacollab.config import config
 
@@ -13,7 +13,10 @@ engine = create_engine(
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base()
+
+class Base(DeclarativeBase):
+    pass
+
 
 ### SQL MODELS ARE IMPORTED HERE ###
 from . import models  # isort:skip # pylint: disable=unused-import
@@ -25,9 +28,8 @@ def get_db() -> Session:
 
 
 def patch_database_with_pydantic_object(
-    db: Session, database_object: Base, pydantic_object: BaseModel
+    database_object: Base, pydantic_object: BaseModel
 ):
     for key, value in pydantic_object.dict().items():
         if value is not None:
             setattr(database_object, key, value)
-    db.commit()

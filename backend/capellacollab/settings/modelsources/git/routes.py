@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+from collections.abc import Sequence
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -27,7 +29,7 @@ router = APIRouter()
 @router.get("", response_model=list[GitInstance])
 def list_git_instances(
     db: Session = Depends(get_db),
-) -> list[DatabaseGitInstance]:
+) -> Sequence[DatabaseGitInstance]:
     return crud.get_git_instances(db)
 
 

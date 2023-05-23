@@ -25,10 +25,7 @@ router = fastapi.APIRouter(
 )
 
 
-@router.get(
-    "",
-    response_model=PureVariantsLicenses | None,
-)
+@router.get("", response_model=PureVariantsLicenses | None)
 def get_license(
     db: Session = fastapi.Depends(get_db),
 ) -> DatabasePureVariantsLicenses | None:

@@ -26,7 +26,7 @@ from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
 )
-from capellacollab.projects.users.crud import ProjectUserRole
+from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.sessions import crud, guacamole, schema
 from capellacollab.sessions.files import routes as files
 from capellacollab.sessions.models import DatabaseSession
@@ -94,7 +94,7 @@ def get_current_sessions(
     if auth_injectables.RoleVerification(
         required_role=users_models.Role.ADMIN, verify=False
     )(token, db):
-        return inject_attrs_in_sessions(crud.get_all_sessions(db))
+        return inject_attrs_in_sessions(crud.get_sessions(db))
 
     if not any(
         project_user.role == ProjectUserRole.MANAGER
@@ -110,9 +110,9 @@ def get_current_sessions(
         list(
             itertools.chain.from_iterable(
                 [
-                    crud.get_sessions_for_repository(db, project)
+                    crud.get_sessions_for_project(db, project)
                     for project in [
-                        p.name
+                        p.project
                         for p in db_user.projects
                         if p.role == ProjectUserRole.MANAGER
                     ]
@@ -188,7 +188,7 @@ def request_session(
             },
         )
 
-    if crud.get_session_by_user_project_version(
+    if crud.exist_readonly_session_for_user_project_version(
         db, db_user, project, model.version
     ):
         raise HTTPException(
@@ -199,7 +199,7 @@ def request_session(
             },
         )
 
-    docker_image = tools_crud.get_readonly_image_for_version(model.version)
+    docker_image = get_readonly_image_for_version(model.version)
     if not docker_image:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -324,7 +324,7 @@ def start_persistent_jupyter_session(
     tool: tools_models.Tool,
     version: tools_models.Version,
 ):
-    docker_image = tools_crud.get_image_for_tool_version(db, version.id)
+    docker_image = get_image_for_tool_version(db, version.id)
     jupyter_token = generate_password(length=64)
 
     session = operator.start_persistent_jupyter_session(
@@ -419,7 +419,7 @@ def start_persistent_guacamole_session(
         pv_warnings,
     ) = determine_pure_variants_configuration(db, user, tool)
 
-    docker_image = tools_crud.get_image_for_tool_version(db, version.id)
+    docker_image = get_image_for_tool_version(db, version.id)
     rdp_password = generate_password(length=64)
 
     session = operator.start_persistent_capella_session(
@@ -627,4 +627,16 @@ def get_sessions_for_user(
             },
         )
 
-    return inject_attrs_in_sessions(user.sessions)
+    return [] if not user.sessions else inject_attrs_in_sessions(user.sessions)
+
+
+def get_image_for_tool_version(db: Session, version_id: int) -> str:
+    version = tools_crud.get_version_by_id_or_raise(db, version_id)
+    return version.tool.docker_image_template.replace("$version", version.name)
+
+
+def get_readonly_image_for_version(
+    version: tools_models.Version,
+) -> str | None:
+    template = version.tool.readonly_docker_image_template
+    return template.replace("$version", version.name) if template else None

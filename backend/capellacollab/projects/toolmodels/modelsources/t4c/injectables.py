@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from capellacollab.core.database import get_db
@@ -22,14 +22,14 @@ def get_existing_t4c_model(
 ) -> DatabaseT4CModel:
     if not (t4c_model := crud.get_t4c_model_by_id(db, t4c_model_id)):
         raise HTTPException(
-            404,
+            status.HTTP_404_NOT_FOUND,
             {
                 "reason": f"The TeamForCapella model with the id {t4c_model_id} was not found.",
             },
         )
     if t4c_model.model.id != capella_model.id:
         raise HTTPException(
-            404,
+            status.HTTP_404_NOT_FOUND,
             {
                 "reason": f"The TeamForCapella model with the id {t4c_model_id} doesn't belong to the model '{capella_model.slug}'.",
             },

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from capellacollab.core.database import get_db
@@ -17,7 +17,7 @@ def get_existing_user(
         return user
 
     raise HTTPException(
-        status_code=400,
+        status_code=status.HTTP_404_NOT_FOUND,
         detail={
             "err_code": "user_not_exists",
             "reason": f"The user ({user_id}) does not exists",

@@ -1,8 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from fastapi import Depends, HTTPException
-from sqlalchemy.exc import NoResultFound
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from capellacollab.core.database import get_db
@@ -20,12 +19,11 @@ def get_existing_pipeline(
     model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ) -> DatabaseBackup:
-    try:
-        return crud.get_pipeline_by_id(db, pipeline_id)
-    except NoResultFound:
+    if not (backup := crud.get_pipeline_by_id(db, pipeline_id)):
         raise HTTPException(
-            404,
+            status.HTTP_404_NOT_FOUND,
             {
                 "reason": f"The pipeline with the id {pipeline_id} of the model with th id {model.id} was not found.",
             },
         )
+    return backup

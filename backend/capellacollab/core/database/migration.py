@@ -28,9 +28,6 @@ from capellacollab.settings.modelsources.t4c import (
 from capellacollab.settings.modelsources.t4c.repositories import (
     crud as repositories_crud,
 )
-from capellacollab.settings.modelsources.t4c.repositories import (
-    models as settings_repositories_models,
-)
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
 from capellacollab.tools.integrations import crud as integrations_crud
@@ -54,9 +51,7 @@ def migrate_db(engine, database_url: str):
             "script_location", str(root_dir / "alembic")
         )
         alembic_cfg.set_main_option("sqlalchemy.url", database_url)
-        alembic_cfg.attributes[  # pylint:disable=unsupported-assignment-operation
-            "configure_logger"
-        ] = False
+        alembic_cfg.attributes["configure_logger"] = False
 
         with engine.connect() as conn:
             context = migration.MigrationContext.configure(conn)
@@ -93,7 +88,7 @@ def initialize_admin_user(db):
 
 def initialize_default_project(db):
     LOGGER.info("Initialized project 'default'")
-    projects_crud.create_project(db=db, name="default")
+    projects_crud.create_project(db=db, name="default", description="")
 
 
 def create_tools(db):
@@ -138,7 +133,7 @@ def create_tools(db):
     tools_crud.create_nature(db, papyrus.id, "SysML 1.4")
     tools_crud.create_nature(db, papyrus.id, "SysML 1.1")
 
-    for model in toolmodels_crud.get_all_models(db):
+    for model in toolmodels_crud.get_models(db):
         toolmodels_crud.set_tool_for_model(db, model, capella)
         toolmodels_crud.set_tool_details_for_model(
             db, model, default_version, default_nature
@@ -146,9 +141,10 @@ def create_tools(db):
 
 
 def create_t4c_instance_and_repositories(db):
-    LOGGER.info("Initialized T4C instance and repositories")
     tool = tools_crud.get_tool_by_name(db, "Capella")
-    version = tools_crud.get_version_by_name(db, tool, "5.2.0")
+    version = tools_crud.get_version_by_tool_id_version_name(
+        db, tool.id, "5.2.0"
+    )
     default_instance = settings_t4c_models.DatabaseT4CInstance(
         name="default",
         license="placeholder",
@@ -162,15 +158,14 @@ def create_t4c_instance_and_repositories(db):
         password="password",
         version=version,
     )
-    settings_t4c_crud.create_t4c_instance(default_instance, db)
+    settings_t4c_crud.create_t4c_instance(db, default_instance)
     for t4c_model in t4c_crud.get_t4c_models(db):
-        repository = settings_repositories_models.CreateT4CRepository(
-            name=t4c_model.name,
-        )
         t4c_repository = repositories_crud.create_t4c_repository(
-            repository, default_instance, db
+            db=db, repo_name=t4c_model.name, instance=default_instance
         )
-        t4c_crud.set_repository_for_t4c_model(db, t4c_model, t4c_repository)
+        t4c_model.repository = t4c_repository
+        db.commit()
+    LOGGER.info("Initialized T4C instance and repositories")
 
 
 def create_models(db):
@@ -179,18 +174,20 @@ def create_models(db):
     for version in ["5.0.0", "5.2.0", "6.0.0"]:
         capella_model = toolmodels_crud.create_model(
             db=db,
-            project=projects_crud.get_project_by_name(db, "default"),
+            project=projects_crud.get_project_by_slug(db, "default"),
             post_model=toolmodels_models.PostCapellaModel(
                 name=f"Meldody Model Test {version}",
                 description="",
                 tool_id=capella_tool.id,
             ),
             tool=capella_tool,
-            version=tools_crud.get_version_by_name(db, capella_tool, version),
+            version=tools_crud.get_version_by_tool_id_version_name(
+                db, capella_tool.id, version
+            ),
             nature=tools_crud.get_nature_by_name(db, capella_tool, "model"),
         )
 
-        git_crud.add_gitmodel_to_capellamodel(
+        git_crud.add_git_model_to_capellamodel(
             db=db,
             capella_model=capella_model,
             post_git_model=git_models.PostGitModel(
@@ -201,3 +198,4 @@ def create_models(db):
                 password="",
             ),
         )
+    LOGGER.info("Initialized default models")

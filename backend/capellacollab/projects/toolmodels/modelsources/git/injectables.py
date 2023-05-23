@@ -21,7 +21,7 @@ def get_existing_git_model(
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ) -> DatabaseGitModel:
-    git_model = crud.get_gitmodel_by_id(db, git_model_id)
+    git_model = crud.get_git_model_by_id(db, git_model_id)
     if git_model and git_model.model.id == capella_model.id:
         return git_model
 
@@ -38,7 +38,7 @@ def get_existing_primary_git_model(
     capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
     db: Session = Depends(get_db),
 ) -> DatabaseGitModel:
-    primary_git_model = crud.get_primary_gitmodel_of_capellamodel(
+    primary_git_model = crud.get_primary_git_model_of_capellamodel(
         db, capella_model.id
     )
 
