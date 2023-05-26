@@ -6,7 +6,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { first } from 'rxjs';
 import { ModelDiagramDialogComponent } from 'src/app/projects/models/diagrams/model-diagram-dialog/model-diagram-dialog.component';
 import {
   getPrimaryGitModel,
@@ -17,7 +16,6 @@ import { MoveModelComponent } from 'src/app/projects/project-detail/model-overvi
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
-import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { Project, ProjectService } from '../../service/project.service';
 
 @UntilDestroy()
@@ -51,14 +49,6 @@ export class ModelOverviewComponent implements OnInit {
       return 'Git';
     }
     return 'Unset';
-  }
-
-  openPipelineDialog(model: Model): void {
-    this.projectService.project$.pipe(first()).subscribe((project) => {
-      this.dialog.open(TriggerPipelineComponent, {
-        data: { projectSlug: project!.slug, modelSlug: model.slug },
-      });
-    });
   }
 
   openDiagramsDialog(model: Model): void {

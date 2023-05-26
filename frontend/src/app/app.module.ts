@@ -72,8 +72,17 @@ import { MatCardOverviewSkeletonLoaderComponent } from './helpers/skeleton-loade
 import { MatCheckboxLoaderComponent } from './helpers/skeleton-loaders/mat-checkbox-loader/mat-checkbox-loader.component';
 import { MatListSkeletonLoaderComponent } from './helpers/skeleton-loaders/mat-list-skeleton-loader/mat-list-skeleton-loader.component';
 import { TextLineSkeletonLoaderComponent } from './helpers/skeleton-loaders/text-line-skeleton-loader/text-line-skeleton-loader.component';
+import { CreatePluginComponent } from './plugins/store/create-plugin/create-plugin.component';
+import { EditPluginComponent } from './plugins/store/edit-plugin/edit-plugin.component';
+import { PluginDetailsComponent } from './plugins/store/plugin-detail/plugin-details.component';
+import { PluginStoreOverviewComponent } from './plugins/store/plugin-store-overview/plugin-store-overview.component';
+import { PluginWrapperComponent } from './plugins/store/plugin-wrapper/plugin-wrapper.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
-import { CreateBackupComponent } from './projects/models/backup-settings/create-backup/create-backup.component';
+import { CreatePipelineComponent } from './projects/models/backup-settings/create-pipeline/create-pipeline.component';
+import { PipelineEnvironmentInputComponent } from './projects/models/backup-settings/create-pipeline/pipeline-input/pipeline-environment-input/pipeline-environment-input.component';
+import { PipelineGitInputComponent } from './projects/models/backup-settings/create-pipeline/pipeline-input/pipeline-git-input/pipeline-git-input.component';
+import { PipelineT4CInputComponent } from './projects/models/backup-settings/create-pipeline/pipeline-input/pipeline-t4c-input/pipeline-t4c-input.component';
+import { PipelineTriggersComponent } from './projects/models/backup-settings/create-pipeline/pipeline-triggers/pipeline-triggers.component';
 import { JobRunOverviewComponent } from './projects/models/backup-settings/job-run-overview/job-run-overview.component';
 import { PipelineRunWrapperComponent } from './projects/models/backup-settings/pipeline-runs/wrapper/pipeline-run-wrapper/pipeline-run-wrapper.component';
 import { TriggerPipelineComponent } from './projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';
@@ -154,10 +163,11 @@ import { SettingsComponent } from './settings/settings.component';
     ChooseSourceComponent,
     ConfirmationDialogComponent,
     ConnectionDialogComponent,
-    CreateBackupComponent,
     CreateModelBaseComponent,
     CreateModelComponent,
     CreatePersistentSessionComponent,
+    CreatePipelineComponent,
+    CreatePluginComponent,
     CreateProjectComponent,
     CreateReadonlyModelOptionsComponent,
     CreateReadonlySessionComponent,
@@ -167,6 +177,7 @@ import { SettingsComponent } from './settings/settings.component';
     DeleteSessionDialogComponent,
     DisplayValueComponent,
     EditGitSettingsComponent,
+    EditPluginComponent,
     EditProjectMetadataComponent,
     EditT4CInstanceComponent,
     EventsComponent,
@@ -200,9 +211,15 @@ import { SettingsComponent } from './settings/settings.component';
     MoveModelComponent,
     NavBarMenuComponent,
     NoticeComponent,
+    PipelineEnvironmentInputComponent,
+    PipelineGitInputComponent,
     PipelineRunWrapperComponent,
     PipelinesOverviewComponent,
+    PipelineT4CInputComponent,
     PipelineWrapperComponent,
+    PluginDetailsComponent,
+    PluginStoreOverviewComponent,
+    PluginWrapperComponent,
     ProjectAuditLogComponent,
     ProjectDetailsComponent,
     ProjectMetadataComponent,
@@ -217,6 +234,7 @@ import { SettingsComponent } from './settings/settings.component';
     T4CInstanceSettingsComponent,
     T4CModelWrapperComponent,
     T4CRepoDeletionDialogComponent,
+    PipelineTriggersComponent,
     T4CSettingsComponent,
     T4CSettingsWrapperComponent,
     TextLineSkeletonLoaderComponent,

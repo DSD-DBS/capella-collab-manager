@@ -1,0 +1,53 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+{{ gitInput.description }}
+<div
+  class="my-2 rounded border bg-warning p-3 shadow"
+  *ngIf="(gitModelService.gitModels$ | async)?.length === 0"
+>
+  No Git repositories found for this model. Please link a Git repository first.
+</div>
+
+<div *ngIf="(gitModelService.gitModels$ | async) === undefined">
+  <app-mat-list-skeleton-loader></app-mat-list-skeleton-loader>
+</div>
+
+<mat-selection-list
+  class="!mt-2 rounded border border-primary !p-0 shadow"
+  [(ngModel)]="selectedGitModelIDs"
+  [multiple]="false"
+>
+  <mat-list-option
+    *ngFor="let gitModel of gitModelService.gitModels$ | async"
+    [value]="gitModel.id"
+  >
+    <div mat-line>Git model {{ gitModel.id }}</div>
+    <div mat-line>
+      URL '{{ gitModel.path }}', revision '{{ gitModel.revision }}'
+    </div>
+  </mat-list-option>
+</mat-selection-list>
+
+<div class="mt-separator border p-2">
+  The pipeline will get access to the following information of the selected Git
+  model:
+  <ul class="list-disc pl-10">
+    <li *ngFor="let mapping of gitInput?.mapping | keyvalue">
+      {{ mapping.key }}
+    </li>
+  </ul>
+  Changes in the Git model will be propagated to the pipeline.
+</div>
+
+<div class="mt-separator">
+  <button
+    [disabled]="!selectedGitModelIDs"
+    (click)="submitGitModel()"
+    mat-stroked-button
+  >
+    Submit and continue
+  </button>
+</div>

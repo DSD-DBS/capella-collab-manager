@@ -125,9 +125,9 @@
           </a>
           <a
             mat-mini-fab
-            matTooltip="Start synchronization"
+            matTooltip="Open pipelines view"
             class="!m-1.5"
-            (click)="openPipelineDialog(model)"
+            [routerLink]="['model', model.slug, 'pipelines']"
             *ngIf="
               projectUserService.verifyRole('manager') && !project?.is_archived
             "

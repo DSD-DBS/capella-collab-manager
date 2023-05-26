@@ -18,7 +18,10 @@ SessionLocal = orm.sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 class Base(orm.DeclarativeBase):
-    type_annotation_map = {dict[str, str]: postgresql.JSONB}
+    type_annotation_map = {
+        dict[str, str]: postgresql.JSONB,
+        dict[str, t.Any]: postgresql.JSONB,
+    }
 
 
 ### SQL MODELS ARE IMPORTED HERE ###

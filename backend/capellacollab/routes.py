@@ -12,6 +12,7 @@ from capellacollab.core import metadata as core_metadata
 from capellacollab.core.authentication import responses as auth_responses
 from capellacollab.health import routes as health_routes
 from capellacollab.notices import routes as notices_routes
+from capellacollab.plugins import routes as plugins_routes
 from capellacollab.projects import routes as projects_routes
 from capellacollab.sessions import routes as sessions_routes
 from capellacollab.settings import routes as settings_routes
@@ -41,6 +42,18 @@ router.include_router(
     responses=auth_responses.AUTHENTICATION_RESPONSES,
 )
 router.include_router(
+    plugins_routes.router,
+    tags=["Plugins"],
+    prefix="/plugins",
+    responses=auth_responses.AUTHENTICATION_RESPONSES,
+)
+router.include_router(
+    plugins_routes.schema_router,
+    tags=["Plugins"],
+    prefix="/plugins-schema",
+    responses=auth_responses.AUTHENTICATION_RESPONSES,
+)
+router.include_router(
     tools_routes.router,
     prefix="/tools",
     responses=auth_responses.AUTHENTICATION_RESPONSES,
@@ -67,5 +80,5 @@ ep = authentication.get_authentication_entrypoint()
 router.include_router(
     importlib.import_module(".routes", ep.module).router,
     prefix="/authentication",
-    tags=[ep.name],
+    tags=["Authentication"],
 )

@@ -12,11 +12,11 @@ from fastapi import testclient
 from sqlalchemy import orm
 
 import capellacollab.projects.models as project_models
-import capellacollab.projects.toolmodels.backups.crud as pipelines_crud
-import capellacollab.projects.toolmodels.backups.models as pipelines_models
 import capellacollab.projects.toolmodels.models as toolmodels_models
 import capellacollab.projects.toolmodels.modelsources.git.models as git_models
 import capellacollab.projects.toolmodels.modelsources.t4c.models as models_t4c_models
+import capellacollab.projects.toolmodels.pipelines.crud as pipelines_crud
+import capellacollab.projects.toolmodels.pipelines.models as pipelines_models
 import capellacollab.sessions.operators
 import capellacollab.settings.modelsources.t4c.models as t4c_models
 import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repositories_interface
@@ -63,7 +63,7 @@ def test_get_all_pipelines_of_capellamodel(
     include_commit_history: bool,
 ):
     response = client.get(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines"
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/pipelines"
     )
 
     assert response.status_code == 200
@@ -82,7 +82,7 @@ def test_create_pipeline_of_capellamodel_git_model_does_not_exist(
     client: testclient.TestClient,
 ):
     response = client.post(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines",
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/pipelines",
         json={
             "git_model_id": 0,
             "t4c_model_id": t4c_model.id,
@@ -111,7 +111,7 @@ def test_create_pipeline(
     include_commit_history: bool,
 ):
     response = client.post(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines",
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/pipelines",
         json={
             "git_model_id": git_model.id,
             "t4c_model_id": t4c_model.id,
@@ -155,7 +155,7 @@ def test_pipeline_creation_fails_if_t4c_server_not_available(
     )
 
     response = client.post(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines",
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/pipelines",
         json={
             "git_model_id": git_model.id,
             "t4c_model_id": t4c_model.id,
@@ -199,7 +199,7 @@ def test_delete_pipeline(
     )
 
     response = client.delete(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}",
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/pipelines/{pipeline.id}",
     )
 
     assert response.status_code == 204

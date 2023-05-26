@@ -39,6 +39,11 @@ export class NavBarService {
       requiredRole: 'administrator',
     },
     {
+      name: 'Plugins',
+      routerLink: ['/plugins'],
+      requiredRole: 'administrator',
+    },
+    {
       name: 'Prometheus',
       href: '/prometheus/graph',
       target: '_blank',

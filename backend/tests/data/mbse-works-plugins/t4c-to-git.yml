@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+metadata:
+  id: t4c-to-git
+  displayName: T4C to Git synchronization
+  description: |
+    Synchronize the content from a T4C repository project to a Git repository.
+
+trigger:
+  cron: "0 3 * * 2-6"
+  manual: true
+
+input:
+  - type: git
+    description: Select the Git repository to synchronize to.
+    mapping:
+      url: GIT_REPO_URL
+      username: GIT_USERNAME
+      password: GIT_PASSWORD
+      revision: GIT_REPO_BRANCH
+  - type: t4c
+    description: Select the T4C repository project to synchronize from.
+    mapping:
+      host: T4C_REPO_HOST
+      repositoryPort: T4C_REPO_PORT
+      cdoPort: T4C_CDO_PORT
+      repositoryName: T4C_REPO_NAME
+      projectName: T4C_PROJECT_NAME
+      repositoryUsername: T4C_USERNAME
+      repositoryPassword: T4C_PASSWORD
+  - type: environment
+    variables:
+      - key: LOG_LEVEL
+        type: dropdown
+        values: ["DEBUG", "INFO", "WARN", "ERROR"]
+        displayName: Log level
+        description: "Specify the log level of the script:"
+        default: INFO
+      - key: INCLUDE_COMMIT_HISTORY
+        type: boolean
+        displayName: Include commit history
+        description: >
+          Do you want to include the commit history?
+          When the commit history is included, the pipeline is significantly slower.
+          It can take multiple hours to synchronize a project with a long commit history.
+        default: false
+
+job:
+  image: $DOCKER_REGISTRY/t4c/client/backup
+  cmd:
+    - backup

@@ -1,0 +1,33 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+Please select when you'd like to run the pipeline:
+
+<form [formGroup]="formGroup">
+  <div *ngIf="pipelineTrigger?.manual">
+    <mat-checkbox formControlName="manual"
+      >Allow manual pipeline triggers</mat-checkbox
+    >
+  </div>
+  <div *ngIf="pipelineTrigger?.cron">
+    <mat-checkbox formControlName="cron"
+      >Run {{ humanFriendlyCron(pipelineTrigger!.cron!) }}</mat-checkbox
+    >
+  </div>
+</form>
+
+<!-- <div class="my-2 rounded border bg-warning p-3 shadow">
+  You have to select at least one pipeline trigger.
+</div> -->
+
+<div class="mt-separator">
+  <button
+    [disabled]="!formGroup.valid"
+    (click)="submitTriggers()"
+    mat-stroked-button
+  >
+    Submit and continue
+  </button>
+</div>

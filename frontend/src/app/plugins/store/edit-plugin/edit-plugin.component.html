@@ -1,0 +1,75 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<mat-card>
+  <form [formGroup]="editPluginForm" (ngSubmit)="onSubmit()">
+    Direct URL to a raw `mbse-works-plugin.yml`:
+    <fieldset>
+      <mat-form-field appearance="outline">
+        <mat-label>Remote URL</mat-label>
+        <input matInput formControlName="remote" />
+        <mat-error *ngIf="editPluginForm.controls.remote.errors?.required">
+          The remote URL is required.
+        </mat-error>
+      </mat-form-field>
+    </fieldset>
+    Basic authentication to fetch template. <br />
+    <div>
+      <div class="mt-2 flex gap-2">
+        <mat-form-field appearance="outline">
+          <mat-label>Username (optional)</mat-label>
+          <input matInput formControlName="username" />
+        </mat-form-field>
+        <mat-form-field id="password" appearance="outline">
+          <mat-label>Password (optional)</mat-label>
+          <input type="password" matInput formControlName="password" />
+        </mat-form-field>
+      </div>
+      <div class="flex gap-2">
+        <button
+          [disabled]="!this.peekContent || this.loadingPeekContent"
+          type="submit"
+          mat-raised-button
+          color="primary"
+        >
+          Submit & Register plugin
+        </button>
+        <button
+          type="button"
+          *ngIf="pluginDeletionPossible"
+          (click)="deletePlugin()"
+          mat-raised-button
+          color="warn"
+        >
+          Remove plugin
+        </button>
+      </div>
+    </div>
+  </form>
+</mat-card>
+<mat-card class="flex">
+  <div>
+    <div class="mb-2">Template preview (not submitted)</div>
+    <div
+      class="h-[50vh] overflow-y-scroll rounded border border-solid p-2 font-mono"
+    >
+      <pre *ngIf="this.peekContent && !this.loadingPeekContent">{{
+        this.peekContent
+      }}</pre>
+      <div *ngIf="loadingPeekContent">Loading...</div>
+      <div *ngIf="!this.peekContent && !this.loadingPeekContent">
+        Invalid YAML or invalid URL. Check your provided URL, it should link to
+        raw content of a YAML template.
+        <a
+          href="https://raw.githubusercontent.com/DSD-DBS/capella-collab-manager/main/backend/tests/data/mbse-works-plugin.yml"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-blue-700"
+          >This is an example.</a
+        >
+      </div>
+    </div>
+  </div>
+</mat-card>

@@ -38,3 +38,7 @@
 .navBar {
   min-height: 65px;
 }
+
+.mat-drawer-container {
+  background-color: white;
+}

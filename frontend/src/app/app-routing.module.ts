@@ -5,8 +5,12 @@
 
 import { NgModule } from '@angular/core';
 import { Data, RouterModule, Routes } from '@angular/router';
+import { CreatePluginComponent } from 'src/app/plugins/store/create-plugin/create-plugin.component';
+import { PluginStoreOverviewComponent } from 'src/app/plugins/store/plugin-store-overview/plugin-store-overview.component';
+import { CreatePipelineComponent } from 'src/app/projects/models/backup-settings/create-pipeline/create-pipeline.component';
 import { JobRunOverviewComponent } from 'src/app/projects/models/backup-settings/job-run-overview/job-run-overview.component';
 import { PipelineRunWrapperComponent } from 'src/app/projects/models/backup-settings/pipeline-runs/wrapper/pipeline-run-wrapper/pipeline-run-wrapper.component';
+import { TriggerPipelineComponent } from 'src/app/projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { ViewLogsDialogComponent } from 'src/app/projects/models/backup-settings/view-logs-dialog/view-logs-dialog.component';
 import { PipelineWrapperComponent } from 'src/app/projects/models/backup-settings/wrapper/pipeline-wrapper/pipeline-wrapper.component';
 import { ModelRestrictionsComponent } from 'src/app/projects/models/model-restrictions/model-restrictions.component';
@@ -20,6 +24,8 @@ import { AuthGuardService } from './general/auth/auth-guard/auth-guard.service';
 import { AuthRedirectComponent } from './general/auth/auth-redirect/auth-redirect.component';
 import { LogoutComponent } from './general/auth/logout/logout/logout.component';
 import { LogoutRedirectComponent } from './general/auth/logout/logout-redirect/logout-redirect.component';
+import { PluginDetailsComponent } from './plugins/store/plugin-detail/plugin-details.component';
+import { PluginWrapperComponent } from './plugins/store/plugin-wrapper/plugin-wrapper.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { ModelDescriptionComponent } from './projects/models/model-description/model-description.component';
@@ -77,6 +83,48 @@ const routes: Routes = [
         ],
       },
       {
+        path: 'plugins',
+        data: { breadcrumb: 'Plugins', redirect: '/plugins' },
+        children: [
+          {
+            path: '',
+            data: { breadcrumb: 'overview' },
+            component: PluginStoreOverviewComponent,
+          },
+          {
+            path: 'create',
+            data: { breadcrumb: 'create' },
+            component: CreatePluginComponent,
+          },
+        ],
+      },
+      {
+        path: 'plugin',
+        data: { breadcrumb: 'Plugins', redirect: '/plugins' },
+        children: [
+          {
+            path: ':plugin',
+            data: {
+              breadcrumb: (data: Data) =>
+                data.plugin?.content.metadata.displayName ||
+                data.plugin?.content.metadata.id,
+              redirect: (data: Data) => `/plugin/${data.plugin?.id}`,
+            },
+            component: PluginWrapperComponent,
+            children: [
+              {
+                path: '',
+                data: {
+                  breadcrumb: 'details',
+                  redirect: (data: Data) => `/plugin/${data.plugin?.id}`,
+                },
+                component: PluginDetailsComponent,
+              },
+            ],
+          },
+        ],
+      },
+      {
         path: 'project',
         data: { breadcrumb: 'Projects', redirect: '/projects' },
         children: [
@@ -118,7 +166,7 @@ const routes: Routes = [
                   {
                     path: ':model',
                     data: {
-                      breadcrumb: (data: Data) => data.model?.slug,
+                      breadcrumb: (data: Data) => data.model?.name,
                       redirect: (data: Data) =>
                         `/project/${data.project?.slug}`,
                     },
@@ -161,6 +209,35 @@ const routes: Routes = [
                         component: ModelRestrictionsComponent,
                       },
                       {
+                        path: 'pipelines',
+                        data: {
+                          breadcrumb: 'Pipelines',
+                          redirect: (data: Data) =>
+                            `/project/${data.project?.slug}/models/${data.model?.slug}/pipelines`,
+                        },
+                        children: [
+                          {
+                            path: '',
+                            data: {
+                              breadcrumb: 'Overview',
+                              redirect: (data: Data) =>
+                                `/project/${data.project?.slug}/models/${data.model?.slug}/pipelines`,
+                            },
+                            component: TriggerPipelineComponent,
+                          },
+                          {
+                            path: 'create',
+                            data: {
+                              breadcrumb: 'Create',
+                              redirect: (data: Data) =>
+                                `/project/${data.project?.slug}/models/${data.model?.slug}/pipelines/create`,
+                            },
+                            component: CreatePipelineComponent,
+                          },
+                        ],
+                      },
+
+                      {
                         path: 'pipeline',
                         data: {
                           breadcrumb: 'Pipelines',
@@ -180,14 +257,14 @@ const routes: Routes = [
                               {
                                 path: 'runs',
                                 data: {
-                                  breadcrumb: () => 'runs',
+                                  breadcrumb: 'Runs',
                                 },
                                 component: JobRunOverviewComponent,
                               },
                               {
                                 path: 'run',
                                 data: {
-                                  breadcrumb: 'runs',
+                                  breadcrumb: 'Runs',
                                   redirect: (data: Data) =>
                                     `/project/${data.project?.slug}/model/${data.model?.slug}/pipeline/${data.pipeline?.id}/runs`,
                                 },
@@ -204,7 +281,7 @@ const routes: Routes = [
                                     children: [
                                       {
                                         path: 'logs',
-                                        data: { breadcrumb: 'logs' },
+                                        data: { breadcrumb: 'Logs' },
                                         component: ViewLogsDialogComponent,
                                       },
                                     ],

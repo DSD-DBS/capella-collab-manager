@@ -15,7 +15,7 @@ from capellacollab.core.logging import loki
 from capellacollab.projects.toolmodels import (
     exceptions as toolmodels_exceptions,
 )
-from capellacollab.projects.toolmodels.backups import core as backups_core
+from capellacollab.projects.toolmodels.pipelines import core as backups_core
 from capellacollab.sessions import operators
 from capellacollab.tools import crud as tools_crud
 

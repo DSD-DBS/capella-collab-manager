@@ -24,6 +24,10 @@ from . import crud, exceptions, models
 log = logging.getLogger(__name__)
 
 
+def derive_environment_from_input() -> dict[str, str]:
+    return {}
+
+
 def get_environment(
     git_model: git_models.DatabaseGitModel,
     t4c_model: t4c_models.DatabaseT4CModel,

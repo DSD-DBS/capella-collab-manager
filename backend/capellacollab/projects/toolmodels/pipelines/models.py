@@ -60,18 +60,8 @@ class DatabaseBackup(database.Base):
     t4c_username: orm.Mapped[str]
     t4c_password: orm.Mapped[str]
 
-    include_commit_history: orm.Mapped[bool]
     run_nightly: orm.Mapped[bool]
-
-    git_model_id: orm.Mapped[int] = orm.mapped_column(
-        sa.ForeignKey("git_models.id")
-    )
-    git_model: orm.Mapped["DatabaseGitModel"] = orm.relationship()
-
-    t4c_model_id: orm.Mapped[int] = orm.mapped_column(
-        sa.ForeignKey("t4c_models.id")
-    )
-    t4c_model: orm.Mapped["DatabaseT4CModel"] = orm.relationship()
+    content: orm.Mapped[dict[str, t.Any]]
 
     model_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("models.id"))
     model: orm.Mapped["DatabaseCapellaModel"] = orm.relationship()

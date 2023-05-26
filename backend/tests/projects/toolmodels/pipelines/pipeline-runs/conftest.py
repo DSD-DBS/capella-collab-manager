@@ -6,9 +6,9 @@ import datetime
 import pytest
 from sqlalchemy import orm
 
-import capellacollab.projects.toolmodels.backups.models as pipeline_models
-import capellacollab.projects.toolmodels.backups.runs.crud as pipeline_runs_crud
-import capellacollab.projects.toolmodels.backups.runs.models as pipeline_runs_models
+import capellacollab.projects.toolmodels.pipelines.models as pipeline_models
+import capellacollab.projects.toolmodels.pipelines.runs.crud as pipeline_runs_crud
+import capellacollab.projects.toolmodels.pipelines.runs.models as pipeline_runs_models
 import capellacollab.users.models as users_models
 
 

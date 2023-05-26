@@ -1,0 +1,56 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+{{ t4cInput.description }}
+<div
+  class="my-2 rounded border bg-warning p-3 shadow"
+  *ngIf="(t4cModelService.t4cModels$ | async)?.length === 0"
+>
+  No TeamForCapella repositories/projects found for this model. Please link a
+  T4C repository/project first.
+</div>
+
+<div *ngIf="(t4cModelService.t4cModels$ | async) === undefined">
+  <app-mat-list-skeleton-loader></app-mat-list-skeleton-loader>
+</div>
+
+<mat-selection-list
+  class="!mt-2 rounded border border-primary !p-0 shadow"
+  [(ngModel)]="selectedT4CModelIDs"
+  [multiple]="false"
+>
+  <mat-list-option
+    *ngFor="let t4cModel of t4cModelService.t4cModels$ | async"
+    [value]="t4cModel.id"
+  >
+    <div mat-line>T4C model {{ t4cModel.id }}</div>
+    <div mat-line>
+      Server '{{ t4cModel.repository.instance.name }}', Repository '{{
+        t4cModel.repository.name
+      }}', Project '{{ t4cModel.name }}'
+    </div>
+  </mat-list-option>
+</mat-selection-list>
+
+<div class="mt-separator border p-2">
+  A technical user will be created for this pipeline. The technical user will
+  get access to the selected TeamForCapella repository. THe following
+  information is available for the pipeline:
+  <ul class="list-disc pl-10">
+    <li *ngFor="let mapping of t4cInput?.mapping | keyvalue">
+      {{ mapping.key }}
+    </li>
+  </ul>
+</div>
+
+<div class="mt-separator">
+  <button
+    [disabled]="!selectedT4CModelIDs"
+    (click)="submitGitModel()"
+    mat-stroked-button
+  >
+    Submit and continue
+  </button>
+</div>
