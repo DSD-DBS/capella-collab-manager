@@ -95,6 +95,7 @@ export class CreateReadonlySessionComponent implements OnInit {
 
   onToolChange(tool: Tool): void {
     this.toolSelectionForm.controls.version.enable();
+    this.toolSelectionForm.controls.version.patchValue(null);
     this.toolVersions = undefined;
 
     this.toolService.getVersionsForTool(tool.id).subscribe((toolVersions) => {
