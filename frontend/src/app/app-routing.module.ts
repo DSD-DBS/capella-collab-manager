@@ -69,13 +69,20 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            data: { breadcrumb: (data: Data) => data.project?.name },
+            data: {
+              breadcrumb: (data: Data) => data.project?.name || '...',
+              redirect: (data: Data) => `/project/${data.project?.slug}`,
+            },
             component: ProjectDetailsComponent,
           },
           {
             path: 'metadata',
             data: {
-              breadcrumb: (data: Data) => `${data.project?.name} / Metadata`,
+              breadcrumb: [(data: Data) => data.project?.name, 'Metadata'],
+              redirect: [
+                (data: Data) => `/project/${data.project?.slug}`,
+                (data: Data) => `/project/${data.project?.slug}/metadata`,
+              ],
             },
             component: EditProjectMetadataComponent,
           },

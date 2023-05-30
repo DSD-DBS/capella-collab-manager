@@ -58,21 +58,54 @@ const breadcrumbs = (
 
   const routeUrl = (parentUrl || []).concat(route.url.map((url) => url.path));
 
-  if (route.data.breadcrumb) {
-    const breadcrumb = {
-      label: expand(route.data.breadcrumb, placeholders),
-      url: route.data.redirect
-        ? expand(route.data.redirect, placeholders)
-        : '/' + routeUrl.join('/'),
-    };
-    return [breadcrumb].concat(
-      breadcrumbs(route.firstChild, placeholders, routeUrl)
-    );
+  if (route?.data?.breadcrumb) {
+    const expandedBreadcrumb = expand(route.data.breadcrumb, placeholders);
+    const expandedRedirect = route.data.redirect
+      ? expand(route.data.redirect, placeholders)
+      : '/' + routeUrl.join('/');
+
+    let breadcrumbsForRoute = [];
+    if (Array.isArray(expandedBreadcrumb)) {
+      breadcrumbsForRoute = expandedBreadcrumb.map((label, i) => {
+        return {
+          label: label,
+          url:
+            expandedRedirect instanceof Array
+              ? expandedRedirect[i] ||
+                expandedRedirect[expandedRedirect.length - 1]
+              : String(expandedRedirect),
+        };
+      });
+    } else {
+      breadcrumbsForRoute = [
+        {
+          label: String(expandedBreadcrumb),
+          url: String(expandedRedirect),
+        },
+      ];
+    }
+
+    return [
+      ...breadcrumbsForRoute,
+      ...breadcrumbs(route.firstChild, placeholders, routeUrl),
+    ];
   }
 
   return breadcrumbs(route.firstChild, placeholders, routeUrl);
 };
 
-const expand = (term: string | Function, placeholders: Data) => {
-  return typeof term === 'function' ? term(placeholders) || '...' : term;
+type PlaceholderExpander = (placeholders: Data) => string;
+
+const expand = (
+  term: string | PlaceholderExpander | Array<string | PlaceholderExpander>,
+  placeholders: Data
+): string | string[] => {
+  if (typeof term === 'function') {
+    return term(placeholders);
+  } else if (Array.isArray(term)) {
+    return term.map((item) =>
+      typeof item === 'function' ? item(placeholders) : item
+    );
+  }
+  return term;
 };
