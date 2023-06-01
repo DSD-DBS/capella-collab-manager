@@ -2,30 +2,30 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from collections.abc import Sequence
+from collections import abc
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+import sqlalchemy as sa
+from sqlalchemy import orm
 
 from capellacollab.notices import models
 
 
-def get_notices(db: Session) -> Sequence[models.DatabaseNotice]:
-    return db.execute(select(models.DatabaseNotice)).scalars().all()
+def get_notices(db: orm.Session) -> abc.Sequence[models.DatabaseNotice]:
+    return db.execute(sa.select(models.DatabaseNotice)).scalars().all()
 
 
 def get_notice_by_id(
-    db: Session, notice_id: int
+    db: orm.Session, notice_id: int
 ) -> models.DatabaseNotice | None:
     return db.execute(
-        select(models.DatabaseNotice).where(
+        sa.select(models.DatabaseNotice).where(
             models.DatabaseNotice.id == notice_id
         )
     ).scalar_one_or_none()
 
 
 def create_notice(
-    db: Session, body: models.CreateNoticeRequest
+    db: orm.Session, body: models.CreateNoticeRequest
 ) -> models.DatabaseNotice:
     notice = models.DatabaseNotice(**body.dict())
     db.add(notice)
@@ -33,6 +33,6 @@ def create_notice(
     return notice
 
 
-def delete_notice(db: Session, notice: models.DatabaseNotice) -> None:
+def delete_notice(db: orm.Session, notice: models.DatabaseNotice) -> None:
     db.delete(notice)
     db.commit()
