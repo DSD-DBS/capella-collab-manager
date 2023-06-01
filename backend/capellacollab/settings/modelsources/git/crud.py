@@ -1,36 +1,36 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from collections.abc import Sequence
+from collections import abc
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+import sqlalchemy as sa
+from sqlalchemy import orm
 
-from capellacollab.core.database import patch_database_with_pydantic_object
-from capellacollab.settings.modelsources.git.models import (
-    DatabaseGitInstance,
-    PostGitInstance,
-)
+from capellacollab.core import database
+
+from . import models
 
 
-def get_git_instances(db: Session) -> Sequence[DatabaseGitInstance]:
-    return db.execute(select(DatabaseGitInstance)).scalars().all()
+def get_git_instances(
+    db: orm.Session,
+) -> abc.Sequence[models.DatabaseGitInstance]:
+    return db.execute(sa.select(models.DatabaseGitInstance)).scalars().all()
 
 
 def get_git_instance_by_id(
-    db: Session, git_instance_id: int
-) -> DatabaseGitInstance | None:
+    db: orm.Session, git_instance_id: int
+) -> models.DatabaseGitInstance | None:
     return db.execute(
-        select(DatabaseGitInstance).where(
-            DatabaseGitInstance.id == git_instance_id
+        sa.select(models.DatabaseGitInstance).where(
+            models.DatabaseGitInstance.id == git_instance_id
         )
     ).scalar_one_or_none()
 
 
 def create_git_instance(
-    db: Session, body: PostGitInstance
-) -> DatabaseGitInstance:
-    git_instance = DatabaseGitInstance(
+    db: orm.Session, body: models.PostGitInstance
+) -> models.DatabaseGitInstance:
+    git_instance = models.DatabaseGitInstance(
         type=body.type, name=body.name, url=body.url, api_url=body.api_url
     )
 
@@ -40,18 +40,20 @@ def create_git_instance(
 
 
 def update_git_instance(
-    db: Session,
-    git_instance: DatabaseGitInstance,
-    post_git_instance: PostGitInstance,
-) -> DatabaseGitInstance:
-    patch_database_with_pydantic_object(git_instance, post_git_instance)
+    db: orm.Session,
+    git_instance: models.DatabaseGitInstance,
+    post_git_instance: models.PostGitInstance,
+) -> models.DatabaseGitInstance:
+    database.patch_database_with_pydantic_object(
+        git_instance, post_git_instance
+    )
 
     db.commit()
     return git_instance
 
 
 def delete_git_instance(
-    db: Session, git_instance: DatabaseGitInstance
+    db: orm.Session, git_instance: models.DatabaseGitInstance
 ) -> None:
     db.delete(git_instance)
     db.commit()
