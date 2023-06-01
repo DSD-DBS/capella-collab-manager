@@ -73,6 +73,9 @@ const breadcrumbs = (
   return breadcrumbs(route.firstChild, placeholders, routeUrl);
 };
 
-const expand = (term: string | Function, placeholders: Data) => {
+const expand = (
+  term: string | ((placeholders: Data) => string),
+  placeholders: Data
+) => {
   return typeof term === 'function' ? term(placeholders) || '...' : term;
 };

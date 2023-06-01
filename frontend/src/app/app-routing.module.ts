@@ -63,99 +63,128 @@ const routes: Routes = [
         ],
       },
       {
-        path: 'project/:project',
-        data: { breadcrumb: 'Projects', redirect: '/projects' },
-        component: ProjectWrapperComponent,
+        path: 'project',
+        data: { breadcrumb: 'projects', redirect: '/projects' },
         children: [
           {
-            path: '',
-            data: { breadcrumb: (data: Data) => data.project?.name },
-            component: ProjectDetailsComponent,
-          },
-          {
-            path: 'metadata',
-            data: {
-              breadcrumb: (data: Data) => `${data.project?.name} / Metadata`,
-            },
-            component: EditProjectMetadataComponent,
-          },
-          {
-            path: 'models/create',
-            data: { breadcrumb: 'New Model' },
-            component: CreateModelComponent,
-          },
-          {
-            path: 'model/:model',
+            path: ':project',
             data: {
               breadcrumb: (data: Data) => data.project?.name,
               redirect: (data: Data) => `/project/${data.project?.slug}`,
             },
-            component: ModelWrapperComponent,
+            component: ProjectWrapperComponent,
             children: [
               {
                 path: '',
                 data: {
-                  breadcrumb: (data: Data) => data.model?.name || '...',
+                  breadcrumb: 'overview',
+                  redirect: (data: Data) => `/project/${data.project?.slug}`,
                 },
-                component: ModelDetailComponent,
+                component: ProjectDetailsComponent,
               },
               {
                 path: 'metadata',
-                data: { breadcrumb: (data: Data) => data.model?.name },
-                component: ModelDescriptionComponent,
-              },
-              {
-                path: 'restrictions',
-                data: { breadcrumb: (data: Data) => data.model?.name },
-                component: ModelRestrictionsComponent,
-              },
-              {
-                path: 'git-model',
                 data: {
-                  breadcrumb: (data: Data) => data.model?.name || '...',
+                  breadcrumb: 'metadata',
                   redirect: (data: Data) =>
-                    `/project/${data.project?.slug}/model/${data.model?.slug}`,
+                    `/project/${data.project?.slug}/metadata`,
                 },
+                component: EditProjectMetadataComponent,
+              },
+              {
+                path: 'models/create',
+                data: { breadcrumb: 'new model' },
+                component: CreateModelComponent,
+              },
+              {
+                path: 'model',
+                data: {
+                  breadcrumb: 'models',
+                  redirect: (data: Data) => `/project/${data.project?.slug}`,
+                },
+
                 children: [
                   {
-                    path: 'create',
-                    data: { breadcrumb: 'New Git Model' },
-                    component: ManageGitModelComponent,
-                  },
-                  {
-                    path: ':git-model',
+                    path: ':model',
+                    component: ModelWrapperComponent,
                     data: {
-                      breadcrumb: (data: Data) =>
-                        `Integration ${data.gitModel?.id || '...'}`,
+                      breadcrumb: (data: Data) => data.model?.name,
+                      redirect: (data: Data) =>
+                        `/project/${data.project?.slug}`,
                     },
-                    component: ManageGitModelComponent,
-                  },
-                ],
-              },
-              {
-                path: 't4c-model',
-                data: {
-                  breadcrumb: (data: Data) => data.model?.name,
-                  redirect: (data: Data) =>
-                    `/project/${data.project?.slug}/model/${data.model?.slug}`,
-                },
-                children: [
-                  {
-                    path: 'create',
-                    data: { breadcrumb: 'New T4C Model' },
-                    component: ManageT4CModelComponent,
-                  },
-                  {
-                    path: ':t4c_model_id',
-                    data: {
-                      breadcrumb: (data: Data) =>
-                        `Integration ${data.t4cModel?.id || '...'}`,
-                    },
-                    component: T4cModelWrapperComponent,
+
                     children: [
                       {
                         path: '',
-                        component: ManageT4CModelComponent,
+                        data: {
+                          breadcrumb: (data: Data) => data.model?.name || '...',
+                        },
+                        component: ModelDetailComponent,
+                      },
+                      {
+                        path: 'metadata',
+                        data: { breadcrumb: 'metadata' },
+                        component: ModelDescriptionComponent,
+                      },
+                      {
+                        path: 'restrictions',
+                        data: { breadcrumb: 'restrictions' },
+                        component: ModelRestrictionsComponent,
+                      },
+                      {
+                        path: 'git-model',
+                        data: {
+                          breadcrumb: (data: Data) => data.model?.name || '...',
+                          redirect: (data: Data) =>
+                            `/project/${data.project?.slug}/model/${data.model?.slug}`,
+                        },
+                        children: [
+                          {
+                            path: 'create',
+                            data: { breadcrumb: 'New Git Model' },
+                            component: ManageGitModelComponent,
+                          },
+                          {
+                            path: ':git-model',
+                            data: {
+                              breadcrumb: (data: Data) =>
+                                `Git integration ${data.gitModel?.id || '...'}`,
+                            },
+                            component: ManageGitModelComponent,
+                          },
+                        ],
+                      },
+                      {
+                        path: 't4c-model',
+                        data: {
+                          breadcrumb: (data: Data) => data.model?.name,
+                          redirect: (data: Data) =>
+                            `/project/${data.project?.slug}/model/${data.model?.slug}`,
+                        },
+                        children: [
+                          {
+                            path: 'create',
+                            data: { breadcrumb: 'New T4C Model' },
+                            component: ManageT4CModelComponent,
+                          },
+                          {
+                            path: ':t4c_model_id',
+                            data: {
+                              breadcrumb: (data: Data) =>
+                                `T4C integration ${data.t4cModel?.id || '...'}`,
+                            },
+                            component: T4cModelWrapperComponent,
+                            children: [
+                              {
+                                path: '',
+                                data: {
+                                  breadcrumb: () => 'edit',
+                                },
+                                component: ManageT4CModelComponent,
+                              },
+                            ],
+                          },
+                        ],
                       },
                     ],
                   },
@@ -265,7 +294,7 @@ const routes: Routes = [
                   },
                   {
                     path: 'create',
-                    data: { breadcrumb: 'New' },
+                    data: { breadcrumb: 'new' },
                     component: EditT4CInstanceComponent,
                   },
                   {
@@ -285,7 +314,7 @@ const routes: Routes = [
             children: [
               {
                 path: 'pure-variants',
-                data: { breadcrumb: 'Pure::Variants' },
+                data: { breadcrumb: 'pure::variants' },
                 component: PureVariantsComponent,
               },
             ],
