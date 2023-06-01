@@ -183,6 +183,7 @@ export class UserSettingsComponent implements OnInit, AfterViewInit {
 
   onUserSelect(user: User) {
     this.selectedUser = user;
+    this.selectedUserHistory = undefined;
 
     this.userService.getUserHistory(user).subscribe({
       next: (userHistory) => {

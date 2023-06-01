@@ -8,13 +8,16 @@
 }
 
 .flexbox {
-  justify-content: space-evenly;
-}
-
-.item {
-  margin: 0 auto;
+  justify-content: space-around;
 }
 
 .users {
-  margin-left: auto;
+  flex-basis: 500px;
+}
+
+.item {
+  flex-basis: 500px;
+  flex-grow: 10;
+  display: inline-flex;
+  flex-direction: column;
 }

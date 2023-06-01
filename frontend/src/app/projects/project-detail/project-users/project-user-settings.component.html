@@ -111,7 +111,7 @@
     [formGroup]="addUserToProjectForm"
     #addUserToProjectFormDirective="ngForm"
   >
-    <mat-form-field>
+    <mat-form-field appearance="fill">
       <mat-label>Username</mat-label>
       <input matInput formControlName="username" />
       <mat-error *ngIf="username.getError('required')">
@@ -125,7 +125,7 @@
       </mat-error>
     </mat-form-field>
     <br />
-    <mat-form-field>
+    <mat-form-field appearance="fill">
       <mat-label>Role</mat-label>
       <mat-select formControlName="role">
         <mat-option
@@ -137,8 +137,10 @@
       <mat-error>You have to select a role!</mat-error>
     </mat-form-field>
     <div *ngIf="addUserToProjectForm.value.role !== 'manager'">
-      <br />
-      <mat-form-field *ngIf="addUserToProjectForm.value.role !== 'manager'">
+      <mat-form-field
+        appearance="fill"
+        *ngIf="addUserToProjectForm.value.role !== 'manager'"
+      >
         <mat-label>Permission</mat-label>
         <mat-select formControlName="permission">
           <mat-option
@@ -150,21 +152,22 @@
         <mat-error>You have to select a permission!</mat-error>
       </mat-form-field>
     </div>
-    <br />
-    <mat-form-field>
+    <mat-form-field appearance="fill">
       <mat-label>Reason</mat-label>
-      <textarea matInput formControlName="reason"></textarea>
+      <textarea rows="10" matInput formControlName="reason"></textarea>
       <mat-error *ngIf="addUserToProjectForm.controls.reason.errors?.required">
         Please enter a reason!
       </mat-error>
     </mat-form-field>
-    <button
-      (click)="addUser(addUserToProjectFormDirective)"
-      mat-flat-button
-      [disabled]="!addUserToProjectForm.valid"
-      color="primary"
-    >
-      Add user <mat-icon>keyboard_arrow_right</mat-icon>
-    </button>
+    <div class="flex-space-between">
+      <button
+        (click)="addUser(addUserToProjectFormDirective)"
+        mat-flat-button
+        [disabled]="!addUserToProjectForm.valid"
+        color="primary"
+      >
+        Add user <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
+    </div>
   </form>
 </mat-card>

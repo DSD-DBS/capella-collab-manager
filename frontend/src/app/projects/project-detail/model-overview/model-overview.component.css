@@ -23,6 +23,11 @@
   align-items: center;
 }
 
+#models-overview {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 #settings-icon {
   margin-left: 10px;
   position: relative;
