@@ -1,32 +1,34 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
-from fastapi import APIRouter, Depends
+import fastapi
 
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.projects.users.models import ProjectUserRole
+from capellacollab.projects.toolmodels.modelsources.git import (
+    routes as git_routes,
+)
+from capellacollab.projects.toolmodels.modelsources.t4c import (
+    routes as t4c_routes,
+)
+from capellacollab.projects.users import models as projects_users_models
 
-from .git.routes import router as router_sources_git
-from .t4c.routes import router as router_sources_t4c
-
-router = APIRouter(
+router = fastapi.APIRouter(
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.USER
+                required_role=projects_users_models.ProjectUserRole.USER
             )
         )
     ],
 )
 
 router.include_router(
-    router_sources_git,
+    git_routes.router,
     prefix="/git",
     tags=["Projects - Models - Git"],
 )
 router.include_router(
-    router_sources_t4c,
+    t4c_routes.router,
     prefix="/t4c",
     tags=["Projects - Models - T4C"],
 )

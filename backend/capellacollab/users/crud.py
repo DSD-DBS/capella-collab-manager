@@ -2,32 +2,38 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import datetime
-from collections.abc import Sequence
+from collections import abc
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+import sqlalchemy as sa
+from sqlalchemy import orm
 
 from capellacollab.users import models
 
 
-def get_user_by_name(db: Session, username: str) -> models.DatabaseUser | None:
+def get_user_by_name(
+    db: orm.Session, username: str
+) -> models.DatabaseUser | None:
     return db.execute(
-        select(models.DatabaseUser).where(models.DatabaseUser.name == username)
+        sa.select(models.DatabaseUser).where(
+            models.DatabaseUser.name == username
+        )
     ).scalar_one_or_none()
 
 
-def get_user_by_id(db: Session, user_id: int) -> models.DatabaseUser | None:
+def get_user_by_id(
+    db: orm.Session, user_id: int
+) -> models.DatabaseUser | None:
     return db.execute(
-        select(models.DatabaseUser).where(models.DatabaseUser.id == user_id)
+        sa.select(models.DatabaseUser).where(models.DatabaseUser.id == user_id)
     ).scalar_one_or_none()
 
 
-def get_users(db: Session) -> Sequence[models.DatabaseUser]:
-    return db.execute(select(models.DatabaseUser)).scalars().all()
+def get_users(db: orm.Session) -> abc.Sequence[models.DatabaseUser]:
+    return db.execute(sa.select(models.DatabaseUser)).scalars().all()
 
 
 def create_user(
-    db: Session, username: str, role: models.Role = models.Role.USER
+    db: orm.Session, username: str, role: models.Role = models.Role.USER
 ) -> models.DatabaseUser:
     user = models.DatabaseUser(
         name=username,
@@ -43,7 +49,7 @@ def create_user(
 
 
 def update_role_of_user(
-    db: Session, user: models.DatabaseUser, role: models.Role
+    db: orm.Session, user: models.DatabaseUser, role: models.Role
 ) -> models.DatabaseUser:
     user.role = role
     db.commit()
@@ -51,7 +57,7 @@ def update_role_of_user(
 
 
 def update_last_login(
-    db: Session,
+    db: orm.Session,
     user: models.DatabaseUser,
     last_login: datetime.datetime | None = None,
 ) -> models.DatabaseUser:
@@ -62,6 +68,6 @@ def update_last_login(
     return user
 
 
-def delete_user(db: Session, user: models.DatabaseUser):
+def delete_user(db: orm.Session, user: models.DatabaseUser):
     db.delete(user)
     db.commit()

@@ -9,15 +9,15 @@ import typing as t
 
 import pydantic
 import requests
-from pydantic import BaseModel
-from requests.exceptions import RequestException
-from sqlalchemy import CheckConstraint, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+import sqlalchemy as sa
+from sqlalchemy import orm
 
-import capellacollab.tools.models as tools_models
-from capellacollab.core.database import Base
+from capellacollab.core import database
+from capellacollab.tools import models as tools_models
 
 if t.TYPE_CHECKING:
+    from capellacollab.tools.models import Version
+
     from .repositories.models import DatabaseT4CRepository
 
 log = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ def validate_rest_api_url(value: str | None):
     if value:
         try:
             requests.Request("GET", value).prepare()
-        except RequestException:
+        except requests.RequestException:
             log.info("REST API Validation failed", exc_info=True)
             raise ValueError(
                 "The provided TeamForCapella REST API is not valid."
@@ -42,34 +42,37 @@ class Protocol(str, enum.Enum):
     wss = "wss"
 
 
-class DatabaseT4CInstance(Base):
+class DatabaseT4CInstance(database.Base):
     __tablename__ = "t4c_instances"
 
-    id: Mapped[int] = mapped_column(
+    id: orm.Mapped[int] = orm.mapped_column(
         primary_key=True, index=True, autoincrement=True
     )
 
-    name: Mapped[str]
+    name: orm.Mapped[str]
 
-    license: Mapped[str]
-    host: Mapped[str]
-    port: Mapped[int] = mapped_column(
-        CheckConstraint("port >= 0 AND port <= 65535"), default=2036
+    license: orm.Mapped[str]
+    host: orm.Mapped[str]
+    port: orm.Mapped[int] = orm.mapped_column(
+        sa.CheckConstraint("port >= 0 AND port <= 65535"), default=2036
     )
-    cdo_port: Mapped[int] = mapped_column(
-        CheckConstraint("cdo_port >= 0 AND cdo_port <= 65535"), default=12036
+    cdo_port: orm.Mapped[int] = orm.mapped_column(
+        sa.CheckConstraint("cdo_port >= 0 AND cdo_port <= 65535"),
+        default=12036,
     )
-    usage_api: Mapped[str]
-    rest_api: Mapped[str]
-    username: Mapped[str]
-    password: Mapped[str]
+    usage_api: orm.Mapped[str]
+    rest_api: orm.Mapped[str]
+    username: orm.Mapped[str]
+    password: orm.Mapped[str]
 
-    protocol: Mapped[Protocol] = mapped_column(default=Protocol.tcp)
+    protocol: orm.Mapped[Protocol] = orm.mapped_column(default=Protocol.tcp)
 
-    version_id: Mapped[int] = mapped_column(ForeignKey("versions.id"))
-    version: Mapped[tools_models.Version] = relationship(tools_models.Version)
+    version_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("versions.id")
+    )
+    version: orm.Mapped[Version] = orm.relationship()
 
-    repositories: Mapped[list[DatabaseT4CRepository]] = relationship(
+    repositories: orm.Mapped[list[DatabaseT4CRepository]] = orm.relationship(
         back_populates="instance", cascade="all, delete"
     )
 
@@ -81,7 +84,7 @@ def port_validator(value: int | None) -> int | None:
     return value
 
 
-class T4CInstanceBase(BaseModel):
+class T4CInstanceBase(pydantic.BaseModel):
     license: str
     host: str
     port: int
@@ -108,7 +111,7 @@ class T4CInstanceBase(BaseModel):
         orm_mode = True
 
 
-class FieldsT4CInstance(BaseModel):
+class FieldsT4CInstance(pydantic.BaseModel):
     license: str | None
     host: str | None
     port: int | None
@@ -149,14 +152,6 @@ class CreateT4CInstance(T4CInstanceComplete):
     password: str
 
 
-class Version(BaseModel):
-    id: int
-    name: str
-
-    class Config:
-        orm_mode = True
-
-
 class T4CInstance(T4CInstanceComplete):
     id: int
-    version: Version
+    version: tools_models.ToolVersionBase

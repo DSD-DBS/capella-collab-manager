@@ -8,13 +8,13 @@ import typing as t
 import pydantic
 from sqlalchemy import orm
 
-import capellacollab.projects.users.models as project_users_models
-
 # Import required for sqlalchemy
 from capellacollab.core import database
+from capellacollab.projects.users import models as project_users_models
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+    from capellacollab.projects.users.models import ProjectUserAssociation
 
 
 class UserMetadata(pydantic.BaseModel):
@@ -93,9 +93,9 @@ class DatabaseProject(database.Base):
     slug: orm.Mapped[str] = orm.mapped_column(unique=True, index=True)
     description: orm.Mapped[str | None]
 
-    users: orm.Mapped[
-        list[project_users_models.ProjectUserAssociation]
-    ] = orm.relationship(back_populates="project")
+    users: orm.Mapped[list[ProjectUserAssociation]] = orm.relationship(
+        back_populates="project"
+    )
     models: orm.Mapped[list[DatabaseCapellaModel]] = orm.relationship(
         back_populates="project"
     )

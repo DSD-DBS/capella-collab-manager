@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import base64
 import binascii
-import enum
 import json
 import logging
 import random
@@ -14,7 +13,6 @@ import string
 import subprocess
 import typing as t
 import urllib
-from dataclasses import dataclass
 from datetime import datetime
 
 import kubernetes
@@ -92,19 +90,6 @@ def is_openshift_cluster(api_client):
             "No openshift routes detected, assuming normal Kubernetes cluster"
         )
         return False
-
-
-class FileType(enum.Enum):
-    FILE = "file"
-    DIRECTORY = "directory"
-
-
-@dataclass
-class File:
-    path: str
-    name: str
-    type: FileType
-    children: list[File] | None = None
 
 
 class KubernetesOperator:
@@ -553,7 +538,6 @@ class KubernetesOperator:
         service: client.V1Service,
         ports: dict[str, int],
     ) -> dict[str, t.Any]:
-
         if "rdp" in ports:
             port = {ports["rdp"]}
         elif "http" in ports:

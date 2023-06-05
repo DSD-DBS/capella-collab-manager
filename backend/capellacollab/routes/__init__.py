@@ -5,57 +5,57 @@
 import importlib
 import logging
 
-from fastapi import APIRouter
+import fastapi
 
-import capellacollab.core.metadata as core_metadata
-import capellacollab.notices.routes as notices
-import capellacollab.sessions.routes as sessions
-import capellacollab.settings.routes as settings
-import capellacollab.users.routes as users
-from capellacollab.core.authentication import get_authentication_entrypoint
-from capellacollab.core.authentication.responses import (
-    AUTHENTICATION_RESPONSES,
-)
-from capellacollab.projects import routes as projects
-from capellacollab.tools import routes as tools
+from capellacollab.core import authentication
+from capellacollab.core import metadata as core_metadata
+from capellacollab.core.authentication import responses as auth_responses
+from capellacollab.notices import routes as notices_routes
+from capellacollab.projects import routes as projects_routes
+from capellacollab.sessions import routes as sessions_routes
+from capellacollab.settings import routes as settings_routes
+from capellacollab.tools import routes as tools_routes
+from capellacollab.users import routes as users_routes
 
 log = logging.getLogger(__name__)
 
 
-router = APIRouter()
+router = fastapi.APIRouter()
 router.include_router(core_metadata.router, tags=["Metadata"])
 router.include_router(
-    sessions.router,
+    sessions_routes.router,
     prefix="/sessions",
     tags=["Sessions"],
-    responses=AUTHENTICATION_RESPONSES,
+    responses=auth_responses.AUTHENTICATION_RESPONSES,
 )
 router.include_router(
-    projects.router,
+    projects_routes.router,
     prefix="/projects",
-    responses=AUTHENTICATION_RESPONSES,
+    responses=auth_responses.AUTHENTICATION_RESPONSES,
 )
 router.include_router(
-    tools.router,
+    tools_routes.router,
     prefix="/tools",
-    responses=AUTHENTICATION_RESPONSES,
+    responses=auth_responses.AUTHENTICATION_RESPONSES,
     tags=["Tools"],
 )
 router.include_router(
-    users.router,
+    users_routes.router,
     prefix="/users",
-    responses=AUTHENTICATION_RESPONSES,
+    responses=auth_responses.AUTHENTICATION_RESPONSES,
     tags=["Users"],
 )
-router.include_router(notices.router, prefix="/notices", tags=["Notices"])
 router.include_router(
-    settings.router,
+    notices_routes.router, prefix="/notices", tags=["Notices"]
+)
+router.include_router(
+    settings_routes.router,
     prefix="/settings",
-    responses=AUTHENTICATION_RESPONSES,
+    responses=auth_responses.AUTHENTICATION_RESPONSES,
 )
 
 # Load authentication routes
-ep = get_authentication_entrypoint()
+ep = authentication.get_authentication_entrypoint()
 
 router.include_router(
     importlib.import_module(".routes", ep.module).router,

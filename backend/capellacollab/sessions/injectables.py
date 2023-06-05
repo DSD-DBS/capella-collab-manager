@@ -1,38 +1,40 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from fastapi import Depends, HTTPException
-from sqlalchemy.orm import Session
+import fastapi
+from fastapi import status
+from sqlalchemy import orm
 
+from capellacollab.core import database
+from capellacollab.core.authentication import helper as auth_helper
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.authentication.helper import get_username
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.database import get_db
-from capellacollab.users.models import Role
+from capellacollab.core.authentication import jwt_bearer
+from capellacollab.users import models as users_models
 
-from . import crud
-from .models import DatabaseSession
+from . import crud, models
 
 
 def get_existing_session(
     session_id: str,
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
-) -> DatabaseSession:
+    db: orm.Session = fastapi.Depends(database.get_db),
+    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+) -> models.DatabaseSession:
     if not (session := crud.get_session_by_id(db, session_id)):
-        raise HTTPException(
-            404,
-            {"reason": f"The session with id {session_id} was not found."},
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "reason": f"The session with id {session_id} was not found."
+            },
         )
     if not (
-        session.owner_name == get_username(token)
+        session.owner_name == auth_helper.get_username(token)
         or auth_injectables.RoleVerification(
-            required_role=Role.ADMIN, verify=False
+            required_role=users_models.Role.ADMIN, verify=False
         )(token, db)
     ):
-        raise HTTPException(
-            403,
-            {
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
                 "reason": f"The session with id {session.id} does not belong to your user. Only administrators can manage other sessions!"
             },
         )

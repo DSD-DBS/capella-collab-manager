@@ -2,28 +2,29 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import datetime
-from collections.abc import Sequence
+from collections import abc
 
-from sqlalchemy import func, select
-from sqlalchemy.orm import Session
+import sqlalchemy as sa
+from sqlalchemy import orm
 
-from capellacollab.projects.models import DatabaseProject
-from capellacollab.sessions.models import DatabaseSession
-from capellacollab.tools.models import Version
-from capellacollab.users.models import DatabaseUser
+from capellacollab.projects import models as projects_models
+from capellacollab.tools import models as tools_models
+from capellacollab.users import models as users_models
+
+from . import models
 
 
-def get_sessions(db: Session) -> Sequence[DatabaseSession]:
-    return db.execute(select(DatabaseSession)).scalars().all()
+def get_sessions(db: orm.Session) -> abc.Sequence[models.DatabaseSession]:
+    return db.execute(sa.select(models.DatabaseSession)).scalars().all()
 
 
 def get_sessions_for_user(
-    db: Session, username: str
-) -> Sequence[DatabaseSession]:
+    db: orm.Session, username: str
+) -> abc.Sequence[models.DatabaseSession]:
     return (
         db.execute(
-            select(DatabaseSession).where(
-                DatabaseSession.owner_name == username
+            sa.select(models.DatabaseSession).where(
+                models.DatabaseSession.owner_name == username
             )
         )
         .scalars()
@@ -32,12 +33,12 @@ def get_sessions_for_user(
 
 
 def get_sessions_for_project(
-    db: Session, project: DatabaseProject
-) -> Sequence[DatabaseSession]:
+    db: orm.Session, project: projects_models.DatabaseProject
+) -> abc.Sequence[models.DatabaseSession]:
     return (
         db.execute(
-            select(DatabaseSession).where(
-                DatabaseSession.project_id == project.id
+            sa.select(models.DatabaseSession).where(
+                models.DatabaseSession.project_id == project.id
             )
         )
         .scalars()
@@ -45,39 +46,45 @@ def get_sessions_for_project(
     )
 
 
-def get_session_by_id(db: Session, session_id: str) -> DatabaseSession | None:
+def get_session_by_id(
+    db: orm.Session, session_id: str
+) -> models.DatabaseSession | None:
     return db.execute(
-        select(DatabaseSession).where(DatabaseSession.id == session_id)
+        sa.select(models.DatabaseSession).where(
+            models.DatabaseSession.id == session_id
+        )
     ).scalar_one_or_none()
 
 
 def exist_readonly_session_for_user_project_version(
-    db: Session,
-    owner: DatabaseUser,
-    project: DatabaseProject,
-    version: Version,
+    db: orm.Session,
+    owner: users_models.DatabaseUser,
+    project: projects_models.DatabaseProject,
+    version: tools_models.Version,
 ) -> bool:
     return (
         db.execute(
-            select(DatabaseSession)
-            .where(DatabaseSession.owner == owner)
-            .where(DatabaseSession.project == project)
-            .where(DatabaseSession.version == version)
+            sa.select(models.DatabaseSession)
+            .where(models.DatabaseSession.owner == owner)
+            .where(models.DatabaseSession.project == project)
+            .where(models.DatabaseSession.version == version)
         ).scalar_one_or_none()
         is not None
     )
 
 
-def count_sessions(db: Session) -> int:
+def count_sessions(db: orm.Session) -> int:
     count = db.scalar(
-        select(func.count()).select_from(  # pylint: disable=not-callable
-            DatabaseSession
+        sa.select(sa.func.count()).select_from(  # pylint: disable=not-callable
+            models.DatabaseSession
         )
     )
     return count if count else 0
 
 
-def create_session(db: Session, session: DatabaseSession) -> DatabaseSession:
+def create_session(
+    db: orm.Session, session: models.DatabaseSession
+) -> models.DatabaseSession:
     if not session.created_at:
         session.created_at = datetime.datetime.now()
 
@@ -86,6 +93,6 @@ def create_session(db: Session, session: DatabaseSession) -> DatabaseSession:
     return session
 
 
-def delete_session(db: Session, session: DatabaseSession) -> None:
+def delete_session(db: orm.Session, session: models.DatabaseSession) -> None:
     db.delete(session)
     db.commit()

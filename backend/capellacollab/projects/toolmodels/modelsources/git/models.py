@@ -4,8 +4,8 @@
 import typing as t
 
 import pydantic
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.sql.schema import ForeignKey
+import sqlalchemy as sa
+from sqlalchemy import orm
 
 from capellacollab.core import database
 
@@ -49,22 +49,22 @@ class GitModel(pydantic.BaseModel):
 class DatabaseGitModel(database.Base):
     __tablename__ = "git_models"
 
-    id: Mapped[int] = mapped_column(
+    id: orm.Mapped[int] = orm.mapped_column(
         primary_key=True, index=True, autoincrement=True
     )
-    name: Mapped[str]
-    path: Mapped[str]
-    entrypoint: Mapped[str]
-    revision: Mapped[str]
-    primary: Mapped[bool]
+    name: orm.Mapped[str]
+    path: orm.Mapped[str]
+    entrypoint: orm.Mapped[str]
+    revision: orm.Mapped[str]
+    primary: orm.Mapped[bool]
 
-    model_id: Mapped[int] = mapped_column(ForeignKey("models.id"))
-    model: Mapped["DatabaseCapellaModel"] = relationship(
+    model_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("models.id"))
+    model: orm.Mapped["DatabaseCapellaModel"] = orm.relationship(
         back_populates="git_models"
     )
 
-    username: Mapped[str]
-    password: Mapped[str]
+    username: orm.Mapped[str]
+    password: orm.Mapped[str]
 
     @classmethod
     def from_post_git_model(

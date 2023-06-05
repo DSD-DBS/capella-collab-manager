@@ -1,10 +1,11 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+import fastapi
+from sqlalchemy import orm
 
 import capellacollab.users.crud as users_crud
+from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
@@ -12,12 +13,11 @@ from capellacollab.core.authentication.schemas import (
     RefreshTokenRequest,
     TokenRequest,
 )
-from capellacollab.core.database import get_db
 from capellacollab.users.models import Role
 
 from .flow import get_auth_redirect_url, get_token, refresh_token
 
-router = APIRouter()
+router = fastapi.APIRouter()
 
 
 @router.get("/", name="Get redirect URL for OAuth")
@@ -26,7 +26,9 @@ async def get_redirect_url():
 
 
 @router.post("/tokens", name="Create access_token")
-async def api_get_token(body: TokenRequest, db: Session = Depends(get_db)):
+async def api_get_token(
+    body: TokenRequest, db: orm.Session = fastapi.Depends(database.get_db)
+):
     token = get_token(body.code)
 
     username = get_username(JWTBearer().validate_token(token["access_token"]))
@@ -50,8 +52,8 @@ async def logout():
 @router.get("/tokens", name="Validate the token")
 async def validate_token(
     scope: Role | None,
-    token=Depends(JWTBearer()),
-    db: Session = Depends(get_db),
+    token=fastapi.Depends(JWTBearer()),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     if scope and scope.ADMIN:
         auth_injectables.RoleVerification(required_role=Role.ADMIN)(token, db)

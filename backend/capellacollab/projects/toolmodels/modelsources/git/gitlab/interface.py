@@ -6,6 +6,7 @@ from urllib import parse
 
 import fastapi
 import requests
+from fastapi import status
 from sqlalchemy import orm
 
 import capellacollab.projects.toolmodels.modelsources.git.models as git_models
@@ -29,7 +30,7 @@ def get_last_job_run_id_for_git_model(
             return git_instance, project_id, job
 
     raise fastapi.HTTPException(
-        status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         detail={
             "err_code": "NO_SUCCESSFUL_JOB",
             "reason": (
@@ -57,7 +58,7 @@ def get_git_instance_for_git_model(
         if git_model.path.startswith(instance.url):
             return instance
     raise fastapi.HTTPException(
-        status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         detail={
             "reason": (
                 "No matching git instance was found for the primary git model.",
@@ -72,7 +73,7 @@ def check_git_instance_is_gitlab(
 ):
     if git_instance.type != settings_git_models.GitType.GITLAB:
         raise fastapi.HTTPException(
-            status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
                 "err_code": "INSTANCE_IS_NO_GITLAB_INSTANCE",
                 "reason": (
@@ -88,7 +89,7 @@ def check_git_instance_has_api_url(
 ):
     if not git_instance.api_url:
         raise fastapi.HTTPException(
-            status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
                 "err_code": "GIT_INSTANCE_NO_API_ENDPOINT_DEFINED",
                 "reason": (
@@ -114,7 +115,7 @@ def get_project_id_by_git_url(
     )
     if response.status_code == 403:
         raise fastapi.HTTPException(
-            status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
                 "err_code": "GITLAB_ACCESS_DENIED",
                 "reason": (
@@ -125,7 +126,7 @@ def get_project_id_by_git_url(
         )
     if response.status_code == 404:
         raise fastapi.HTTPException(
-            status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
                 "err_code": "PROJECT_NOT_FOUND",
                 "reason": (

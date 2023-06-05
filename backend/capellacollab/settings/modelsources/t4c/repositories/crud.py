@@ -6,12 +6,16 @@ from collections import abc
 import sqlalchemy as sa
 from sqlalchemy import orm
 
-import capellacollab.projects.models as projects_models
-import capellacollab.projects.toolmodels.models as toolmodels_models
-import capellacollab.projects.toolmodels.modelsources.t4c.models as t4c_models
-import capellacollab.settings.modelsources.t4c.models as settings_t4c_models
-import capellacollab.tools.models as tools_models
+from capellacollab.projects import models as projects_models
+from capellacollab.projects.toolmodels import models as toolmodels_models
+from capellacollab.projects.toolmodels.modelsources.t4c import (
+    models as t4c_models,
+)
 from capellacollab.projects.users import models as projects_users_models
+from capellacollab.settings.modelsources.t4c import (
+    models as settings_t4c_models,
+)
+from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 
 from . import models

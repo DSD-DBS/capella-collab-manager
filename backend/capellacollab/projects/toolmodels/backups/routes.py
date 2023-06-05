@@ -8,15 +8,14 @@ import uuid
 
 import fastapi
 import requests
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from fastapi import status
+from sqlalchemy import orm
 
 import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repository_interface
-from capellacollab.core import credentials
+from capellacollab.core import credentials, database
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.database import get_db
 from capellacollab.projects.toolmodels.injectables import (
     get_existing_capella_model,
 )
@@ -35,7 +34,7 @@ from . import crud, helper, injectables
 from .core import get_environment
 from .models import Backup, CreateBackup, DatabaseBackup, Job
 
-router = APIRouter()
+router = fastapi.APIRouter()
 log = logging.getLogger(__name__)
 
 
@@ -43,7 +42,7 @@ log = logging.getLogger(__name__)
     "",
     response_model=list[Backup],
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
                 required_role=ProjectUserRole.MANAGER
             )
@@ -51,8 +50,8 @@ log = logging.getLogger(__name__)
     ],
 )
 def get_pipelines(
-    model: DatabaseCapellaModel = Depends(get_existing_capella_model),
-    db: Session = Depends(get_db),
+    model: DatabaseCapellaModel = fastapi.Depends(get_existing_capella_model),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     return crud.get_pipelines_for_capella_model(db, model)
 
@@ -61,7 +60,7 @@ def get_pipelines(
     "",
     response_model=Backup,
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
                 required_role=ProjectUserRole.MANAGER
             )
@@ -70,9 +69,11 @@ def get_pipelines(
 )
 def create_backup(
     body: CreateBackup,
-    capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
+    capella_model: DatabaseCapellaModel = fastapi.Depends(
+        get_existing_capella_model
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
+    token=fastapi.Depends(JWTBearer()),
 ):
     git_model = get_existing_git_model(body.git_model_id, capella_model, db)
     t4c_model = get_existing_t4c_model(body.t4c_model_id, capella_model, db)
@@ -91,8 +92,8 @@ def create_backup(
     except requests.RequestException:
         log.warning("Pipeline could not be created", exc_info=True)
         raise fastapi.HTTPException(
-            503,
-            {
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail={
                 "err_code": "PIPELINE_CREATION_FAILED_T4C_SERVER_UNREACHABLE",
                 "title": "Creation of the pipeline failed",
                 "reason": "We're not able to connect to the TeamForCapella server and therefore cannot prepare the backups. Please try again later or contact your administrator.",
@@ -136,7 +137,7 @@ def create_backup(
     "/{pipeline_id}",
     status_code=204,
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
                 required_role=ProjectUserRole.MANAGER
             )
@@ -144,8 +145,10 @@ def create_backup(
     ],
 )
 def delete_pipeline(
-    pipeline: DatabaseBackup = Depends(injectables.get_existing_pipeline),
-    db: Session = Depends(get_db),
+    pipeline: DatabaseBackup = fastapi.Depends(
+        injectables.get_existing_pipeline
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     try:
         t4c_repository_interface.remove_user_from_repository(
@@ -166,7 +169,7 @@ def delete_pipeline(
     "/{pipeline_id}/runs",
     status_code=201,
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
                 required_role=ProjectUserRole.MANAGER
             )
@@ -175,9 +178,13 @@ def delete_pipeline(
 )
 def create_job(
     body: Job,
-    pipeline: DatabaseBackup = Depends(injectables.get_existing_pipeline),
-    capella_model: DatabaseCapellaModel = Depends(get_existing_capella_model),
-    db: Session = Depends(get_db),
+    pipeline: DatabaseBackup = fastapi.Depends(
+        injectables.get_existing_pipeline
+    ),
+    capella_model: DatabaseCapellaModel = fastapi.Depends(
+        get_existing_capella_model
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     if pipeline.run_nightly:
         operators.get_operator().trigger_cronjob(
@@ -208,7 +215,7 @@ def create_job(
     "/{pipeline_id}/runs/latest/logs",
     response_model=str,
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
                 required_role=ProjectUserRole.MANAGER
             )
@@ -216,12 +223,14 @@ def create_job(
     ],
 )
 def get_logs(
-    pipeline: DatabaseBackup = Depends(injectables.get_existing_pipeline),
+    pipeline: DatabaseBackup = fastapi.Depends(
+        injectables.get_existing_pipeline
+    ),
 ):
     backup: Backup = Backup.from_orm(pipeline)
     if not backup.lastrun:
         raise fastapi.HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "err_code": "PIPELINES_NO_LAST_RUN",
                 "reason": "There is no last run available for the pipelines. Please trigger the pipeline first.",
@@ -234,13 +243,13 @@ def get_logs(
     return helper.filter_logs(logs, [pipeline.t4c_password])
 
 
-def get_backup_image_for_tool_version(db: Session, version_id: int) -> str:
+def get_backup_image_for_tool_version(db: orm.Session, version_id: int) -> str:
     if version := tools_crud.get_version_by_id(db, version_id):
         return version.tool.docker_image_backup_template.replace(
             "$version", version.name
         )
 
-    raise HTTPException(
+    raise fastapi.HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail={"reason": f"The version with id {version_id} was not found."},
     )

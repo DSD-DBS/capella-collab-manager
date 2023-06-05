@@ -1,36 +1,45 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from collections import abc
 
-from collections.abc import Sequence
-
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+import fastapi
+from fastapi import status
+from sqlalchemy import orm
 
 import capellacollab.projects.toolmodels.crud as projects_models_crud
 import capellacollab.settings.modelsources.t4c.crud as settings_t4c_crud
+from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.database import get_db
-from capellacollab.tools import models
-from capellacollab.users.models import Role
+from capellacollab.tools.integrations import (
+    routes as tools_integrations_routes,
+)
+from capellacollab.users import models as users_models
 
-from . import crud, injectables
-from .integrations.routes import router as router_integrations
+from . import crud, injectables, models
 
-router = APIRouter(
+router = fastapi.APIRouter(
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.USER))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.USER
+            )
+        )
     ]
 )
 
 
 @router.get("", response_model=list[models.ToolBase])
-def get_tools(db: Session = Depends(get_db)) -> Sequence[models.Tool]:
+def get_tools(
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> abc.Sequence[models.Tool]:
     return crud.get_tools(db)
 
 
 @router.get("/{tool_id}", response_model=models.ToolBase)
-def get_tool_by_id(tool=Depends(injectables.get_existing_tool)) -> models.Tool:
+def get_tool_by_id(
+    tool=fastapi.Depends(injectables.get_existing_tool),
+) -> models.Tool:
     return tool
 
 
@@ -38,11 +47,15 @@ def get_tool_by_id(tool=Depends(injectables.get_existing_tool)) -> models.Tool:
     "",
     response_model=models.ToolNatureBase,
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
     ],
 )
 def create_tool(
-    body: models.CreateTool, db: Session = Depends(get_db)
+    body: models.CreateTool, db: orm.Session = fastapi.Depends(database.get_db)
 ) -> models.Tool:
     return crud.create_tool_with_name(db, body.name)
 
@@ -51,13 +64,17 @@ def create_tool(
     "/{tool_id}",
     response_model=models.ToolNatureBase,
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
     ],
 )
 def update_tool(
     body: models.CreateTool,
-    tool: models.Tool = Depends(injectables.get_existing_tool),
-    db: Session = Depends(get_db),
+    tool: models.Tool = fastapi.Depends(injectables.get_existing_tool),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.Tool:
     return crud.update_tool_name(db, tool, body.name)
 
@@ -66,15 +83,19 @@ def update_tool(
     "/{tool_id}",
     status_code=204,
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
     ],
 )
 def delete_tool(
-    tool: models.Tool = Depends(injectables.get_existing_tool),
-    db: Session = Depends(get_db),
+    tool: models.Tool = fastapi.Depends(injectables.get_existing_tool),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     if tool.id == 1:
-        raise HTTPException(
+        raise fastapi.HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
                 "reason": "The tool 'Capella' can not be deleted.",
@@ -87,8 +108,8 @@ def delete_tool(
 
 @router.get("/{tool_id}/versions", response_model=list[models.ToolVersionBase])
 def get_tool_versions(
-    tool_id: int, db: Session = Depends(get_db)
-) -> Sequence[models.Version]:
+    tool_id: int, db: orm.Session = fastapi.Depends(database.get_db)
+) -> abc.Sequence[models.Version]:
     return crud.get_versions_for_tool_id(db, tool_id)
 
 
@@ -96,13 +117,17 @@ def get_tool_versions(
     "/{tool_id}/versions",
     response_model=models.ToolVersionBase,
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
     ],
 )
 def create_tool_version(
     body: models.CreateToolVersion,
-    tool: models.Tool = Depends(injectables.get_existing_tool),
-    db: Session = Depends(get_db),
+    tool: models.Tool = fastapi.Depends(injectables.get_existing_tool),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.Version:
     return crud.create_version(db, tool.id, body.name)
 
@@ -111,13 +136,19 @@ def create_tool_version(
     "/{tool_id}/versions/{version_id}",
     response_model=models.ToolVersionBase,
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
     ],
 )
 def patch_tool_version(
     body: models.UpdateToolVersion,
-    version: models.Version = Depends(injectables.get_exisiting_tool_version),
-    db: Session = Depends(get_db),
+    version: models.Version = fastapi.Depends(
+        injectables.get_exisiting_tool_version
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.Version:
     return crud.update_version(db, version, body)
 
@@ -126,12 +157,18 @@ def patch_tool_version(
     "/{tool_id}/versions/{version_id}",
     status_code=204,
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
     ],
 )
 def delete_tool_version(
-    version: models.Version = Depends(injectables.get_exisiting_tool_version),
-    db: Session = Depends(get_db),
+    version: models.Version = fastapi.Depends(
+        injectables.get_exisiting_tool_version
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     raise_when_tool_version_dependency_exist(db, version)
     crud.delete_tool_version(db, version)
@@ -139,8 +176,8 @@ def delete_tool_version(
 
 @router.get("/{tool_id}/natures", response_model=list[models.ToolNatureBase])
 def get_tool_natures(
-    tool_id: int, db: Session = Depends(get_db)
-) -> Sequence[models.Nature]:
+    tool_id: int, db: orm.Session = fastapi.Depends(database.get_db)
+) -> abc.Sequence[models.Nature]:
     return crud.get_natures_by_tool_id(db, tool_id)
 
 
@@ -148,13 +185,17 @@ def get_tool_natures(
     "/{tool_id}/natures",
     response_model=models.ToolNatureBase,
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
     ],
 )
 def create_tool_nature(
     tool_id: int,
     body: models.CreateToolNature,
-    db: Session = Depends(get_db),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.Nature:
     return crud.create_nature(db, tool_id, body.name)
 
@@ -163,12 +204,18 @@ def create_tool_nature(
     "/{tool_id}/natures/{nature_id}",
     status_code=204,
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
     ],
 )
 def delete_tool_nature(
-    nature: models.Nature = Depends(injectables.get_exisiting_tool_nature),
-    db: Session = Depends(get_db),
+    nature: models.Nature = fastapi.Depends(
+        injectables.get_exisiting_tool_nature
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     raise_when_tool_nature_dependency_exist(db, nature)
     crud.delete_nature(db, nature)
@@ -178,11 +225,15 @@ def delete_tool_nature(
     "/{tool_id}/dockerimages",
     response_model=models.ToolDockerimage,
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
     ],
 )
 def get_dockerimages(
-    tool: models.Tool = Depends(injectables.get_existing_tool),
+    tool: models.Tool = fastapi.Depends(injectables.get_existing_tool),
 ) -> models.Tool:
     return tool
 
@@ -191,21 +242,29 @@ def get_dockerimages(
     "/{tool_id}/dockerimages",
     response_model=models.ToolDockerimage,
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
     ],
 )
 def update_dockerimages(
     body: models.PatchToolDockerimage,
-    tool: models.Tool = Depends(injectables.get_existing_tool),
-    db: Session = Depends(get_db),
+    tool: models.Tool = fastapi.Depends(injectables.get_existing_tool),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.Tool:
     return crud.update_tool_dockerimages(db, tool, body)
 
 
-router.include_router(router_integrations, prefix="/{tool_id}/integrations")
+router.include_router(
+    tools_integrations_routes.router, prefix="/{tool_id}/integrations"
+)
 
 
-def raise_when_tool_dependency_exist(db: Session, tool: models.Tool) -> None:
+def raise_when_tool_dependency_exist(
+    db: orm.Session, tool: models.Tool
+) -> None:
     """Search for tool occurrences in project-models
 
     Raises
@@ -226,7 +285,7 @@ def raise_when_tool_dependency_exist(db: Session, tool: models.Tool) -> None:
 
 
 def raise_when_tool_version_dependency_exist(
-    db: Session, version: models.Version
+    db: orm.Session, version: models.Version
 ) -> None:
     """Search for tool version occurrences in project-models and T4C instances
 
@@ -258,7 +317,7 @@ def raise_when_tool_version_dependency_exist(
 
 
 def raise_when_tool_nature_dependency_exist(
-    db: Session, nature: models.Nature
+    db: orm.Session, nature: models.Nature
 ) -> None:
     """Search for tool nature occurrences in project-models
 
@@ -297,7 +356,7 @@ def raise_if_dependencies_exist(
 
     if dependencies:
         dependencies_str = ", ".join(dependencies)
-        raise HTTPException(
+        raise fastapi.HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
                 "reason": [

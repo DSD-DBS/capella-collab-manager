@@ -1,94 +1,100 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from collections.abc import Sequence
+from collections import abc
 
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+import fastapi
+from sqlalchemy import orm
 
+from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.database import get_db
-from capellacollab.projects.toolmodels.routes import get_version_by_id_or_raise
-from capellacollab.sessions.schema import GetSessionUsageResponse
-from capellacollab.settings.modelsources.t4c import crud
-from capellacollab.settings.modelsources.t4c.injectables import (
-    get_existing_instance,
+from capellacollab.projects.toolmodels import routes as toolmodels_routes
+from capellacollab.sessions import models as sessions_models
+from capellacollab.settings.modelsources.t4c.repositories import (
+    routes as settings_t4c_repositories_routes,
 )
-from capellacollab.settings.modelsources.t4c.interface import get_t4c_status
-from capellacollab.settings.modelsources.t4c.models import (
-    CreateT4CInstance,
-    DatabaseT4CInstance,
-    PatchT4CInstance,
-    T4CInstance,
-)
-from capellacollab.settings.modelsources.t4c.repositories.routes import (
-    router as repositories_router,
-)
-from capellacollab.users.models import Role
+from capellacollab.users import models as users_models
 
-router = APIRouter(
+from . import crud, injectables, interface, models
+
+router = fastapi.APIRouter(
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
     ],
 )
 
 
-@router.get("", response_model=list[T4CInstance])
+@router.get("", response_model=list[models.T4CInstance])
 def list_t4c_settings(
-    db: Session = Depends(get_db),
-) -> Sequence[DatabaseT4CInstance]:
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> abc.Sequence[models.DatabaseT4CInstance]:
     return crud.get_t4c_instances(db)
 
 
 @router.get(
     "/{t4c_instance_id}",
-    response_model=T4CInstance,
+    response_model=models.T4CInstance,
 )
 def get_t4c_instance(
-    instance: DatabaseT4CInstance = Depends(get_existing_instance),
-) -> DatabaseT4CInstance:
+    instance: models.DatabaseT4CInstance = fastapi.Depends(
+        injectables.get_existing_instance
+    ),
+) -> models.DatabaseT4CInstance:
     return instance
 
 
 @router.post(
     "",
-    response_model=T4CInstance,
+    response_model=models.T4CInstance,
 )
 def create_t4c_instance(
-    body: CreateT4CInstance,
-    db: Session = Depends(get_db),
-) -> DatabaseT4CInstance:
-    version = get_version_by_id_or_raise(db, body.version_id)
-    instance = DatabaseT4CInstance(**body.dict())
+    body: models.CreateT4CInstance,
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> models.DatabaseT4CInstance:
+    version = toolmodels_routes.get_version_by_id_or_raise(db, body.version_id)
+    instance = models.DatabaseT4CInstance(**body.dict())
     instance.version = version
     return crud.create_t4c_instance(db, instance)
 
 
 @router.patch(
     "/{t4c_instance_id}",
-    response_model=T4CInstance,
+    response_model=models.T4CInstance,
 )
 def edit_t4c_instance(
-    body: PatchT4CInstance,
-    instance: DatabaseT4CInstance = Depends(get_existing_instance),
-    db: Session = Depends(get_db),
-) -> DatabaseT4CInstance:
+    body: models.PatchT4CInstance,
+    instance: models.DatabaseT4CInstance = fastapi.Depends(
+        injectables.get_existing_instance
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> models.DatabaseT4CInstance:
     return crud.update_t4c_instance(db, instance, body)
 
 
 @router.get(
     "/{t4c_instance_id}/licenses",
-    response_model=GetSessionUsageResponse,
+    response_model=sessions_models.GetSessionUsageResponse,
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
     ],
 )
 def fetch_t4c_licenses(
-    instance: DatabaseT4CInstance = Depends(get_existing_instance),
-) -> GetSessionUsageResponse:
-    return get_t4c_status(instance)
+    instance: models.DatabaseT4CInstance = fastapi.Depends(
+        injectables.get_existing_instance
+    ),
+) -> sessions_models.GetSessionUsageResponse:
+    return interface.get_t4c_status(instance)
 
 
 router.include_router(
-    repositories_router, prefix="/{t4c_instance_id}/repositories"
+    settings_t4c_repositories_routes.router,
+    prefix="/{t4c_instance_id}/repositories",
 )

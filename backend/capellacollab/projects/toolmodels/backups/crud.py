@@ -6,9 +6,9 @@ from collections import abc
 import sqlalchemy as sa
 from sqlalchemy import orm
 
-from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
-from capellacollab.projects.toolmodels.modelsources.git.models import (
-    DatabaseGitModel,
+from capellacollab.projects.toolmodels import models as toolmodels_models
+from capellacollab.projects.toolmodels.modelsources.git import (
+    models as git_models,
 )
 from capellacollab.projects.toolmodels.modelsources.t4c import (
     models as t4c_models,
@@ -28,7 +28,7 @@ def get_pipeline_by_id(
 
 
 def get_pipelines_for_capella_model(
-    db: orm.Session, model: DatabaseCapellaModel
+    db: orm.Session, model: toolmodels_models.DatabaseCapellaModel
 ) -> abc.Sequence[models.DatabaseBackup]:
     return (
         db.execute(
@@ -42,7 +42,7 @@ def get_pipelines_for_capella_model(
 
 
 def get_pipelines_for_git_model(
-    db: orm.Session, model: DatabaseGitModel
+    db: orm.Session, model: git_models.DatabaseGitModel
 ) -> abc.Sequence[models.DatabaseBackup]:
     return (
         db.execute(

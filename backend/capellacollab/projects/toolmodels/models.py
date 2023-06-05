@@ -11,22 +11,16 @@ import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
 
-from capellacollab.core.database import Base
-from capellacollab.projects.toolmodels.modelsources.git.models import GitModel
-from capellacollab.projects.toolmodels.modelsources.t4c.models import T4CModel
-from capellacollab.tools.models import (
-    Nature,
-    Tool,
-    ToolBase,
-    ToolNatureBase,
-    ToolVersionBase,
-    Version,
+from capellacollab.core import database
+from capellacollab.projects.toolmodels.modelsources.git import (
+    models as git_models,
 )
+from capellacollab.projects.toolmodels.modelsources.t4c import (
+    models as t4c_models,
+)
+from capellacollab.tools import models as tools_models
 
-from .restrictions.models import (
-    DatabaseToolModelRestrictions,
-    ToolModelRestrictions,
-)
+from .restrictions import models as restrictions_models
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.models import DatabaseProject
@@ -36,6 +30,9 @@ if t.TYPE_CHECKING:
     from capellacollab.projects.toolmodels.modelsources.t4c.models import (
         DatabaseT4CModel,
     )
+    from capellacollab.tools.models import Nature, Tool, Version
+
+    from .restrictions.models import DatabaseToolModelRestrictions
 
 
 class EditingMode(enum.Enum):
@@ -60,7 +57,7 @@ class ToolDetails(pydantic.BaseModel):
     nature_id: int
 
 
-class DatabaseCapellaModel(Base):
+class DatabaseCapellaModel(database.Base):
     __tablename__ = "models"
     __table_args__ = (sa.UniqueConstraint("project_id", "slug"),)
 
@@ -79,16 +76,16 @@ class DatabaseCapellaModel(Base):
         back_populates="models"
     )
 
-    tool_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey(Tool.id))
+    tool_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("tools.id"))
     tool: orm.Mapped[Tool] = orm.relationship()
 
     version_id: orm.Mapped[int | None] = orm.mapped_column(
-        sa.ForeignKey(Version.id)
+        sa.ForeignKey("versions.id")
     )
     version: orm.Mapped[Version] = orm.relationship()
 
     nature_id: orm.Mapped[int | None] = orm.mapped_column(
-        sa.ForeignKey(Nature.id)
+        sa.ForeignKey("types.id")
     )
     nature: orm.Mapped[Nature] = orm.relationship()
 
@@ -111,13 +108,13 @@ class CapellaModel(pydantic.BaseModel):
     slug: str
     name: str
     description: str
-    tool: ToolBase
-    version: ToolVersionBase | None
-    nature: ToolNatureBase | None
-    git_models: list[GitModel] | None
-    t4c_models: list[T4CModel] | None
+    tool: tools_models.ToolBase
+    version: tools_models.ToolVersionBase | None
+    nature: tools_models.ToolNatureBase | None
+    git_models: list[git_models.GitModel] | None
+    t4c_models: list[t4c_models.T4CModel] | None
 
-    restrictions: ToolModelRestrictions | None
+    restrictions: restrictions_models.ToolModelRestrictions | None
 
     class Config:
         orm_mode = True

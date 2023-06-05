@@ -1,20 +1,20 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from fastapi import APIRouter
-from pydantic import BaseModel
+import fastapi
+import pydantic
 
 import capellacollab
 
 
-class Metadata(BaseModel):
+class Metadata(pydantic.BaseModel):
     version: str
 
     class Config:
         orm_mode = True
 
 
-router = APIRouter()
+router = fastapi.APIRouter()
 
 
 @router.get(

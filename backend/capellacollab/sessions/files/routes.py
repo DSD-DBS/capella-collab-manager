@@ -6,28 +6,34 @@ import io
 import logging
 import tarfile
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile
-from fastapi.responses import StreamingResponse
+import fastapi
+from fastapi import responses, status
 
-from capellacollab.sessions.injectables import get_existing_session
-from capellacollab.sessions.models import DatabaseSession
-from capellacollab.sessions.operators import get_operator
-from capellacollab.sessions.schema import FileTree
+from capellacollab.sessions import injectables as sessions_injectables
+from capellacollab.sessions import models as sessions_models
+from capellacollab.sessions import operators
 
-router = APIRouter()
+from . import models
+
+router = fastapi.APIRouter()
 log = logging.getLogger(__name__)
 
 
-@router.get("/", response_model=FileTree)
+@router.get("/", response_model=models.FileTree)
 def list_files(
-    show_hidden: bool, session: DatabaseSession = Depends(get_existing_session)
+    show_hidden: bool,
+    session: sessions_models.DatabaseSession = fastapi.Depends(
+        sessions_injectables.get_existing_session
+    ),
 ):
     try:
-        return get_operator().list_files(session.id, "/workspace", show_hidden)
+        return operators.get_operator().list_files(
+            session.id, "/workspace", show_hidden
+        )
     except Exception:
         log.exception("Loading of files for session %s failed", session.id)
-        raise HTTPException(
-            status_code=500,
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
                 "reason": "Loading the files of the session failed. Is the session running?"
             },
@@ -36,8 +42,10 @@ def list_files(
 
 @router.post("/")
 def upload_files(
-    files: list[UploadFile],
-    session: DatabaseSession = Depends(get_existing_session),
+    files: list[fastapi.UploadFile],
+    session: sessions_models.DatabaseSession = fastapi.Depends(
+        sessions_injectables.get_existing_session
+    ),
 ):
     tar_bytesio = io.BytesIO()
 
@@ -46,8 +54,8 @@ def upload_files(
     ) as tar:
         size = sum(len(file.file.read()) for file in files)
         if size > 31457280:
-            raise HTTPException(
-                status_code=413,
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
                 detail={
                     "reason": "The summed file size must not exceed 30MB."
                 },
@@ -64,17 +72,20 @@ def upload_files(
     tar_bytesio.seek(0)
     tar_bytes = tar_bytesio.read()
 
-    get_operator().upload_files(session.id, tar_bytes)
+    operators.get_operator().upload_files(session.id, tar_bytes)
 
     return {"message": "Upload successful"}
 
 
-@router.get("/download", response_class=StreamingResponse)
+@router.get("/download", response_class=responses.StreamingResponse)
 def download_file(
-    filename: str, session: DatabaseSession = Depends(get_existing_session)
-) -> StreamingResponse:
-    return StreamingResponse(
-        get_operator().download_file(session.id, filename),
+    filename: str,
+    session: sessions_models.DatabaseSession = fastapi.Depends(
+        sessions_injectables.get_existing_session
+    ),
+) -> responses.StreamingResponse:
+    return responses.StreamingResponse(
+        operators.get_operator().download_file(session.id, filename),
         headers={
             "content-disposition": 'attachment; filename=f"{filename}.zip"',
             "content-type": "application/zip",

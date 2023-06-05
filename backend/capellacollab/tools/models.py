@@ -6,71 +6,76 @@ from __future__ import annotations
 
 import typing as t
 
-from pydantic import BaseModel
-from sqlalchemy import ForeignKey, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+import pydantic
+import sqlalchemy as sa
+from sqlalchemy import orm
 
-from capellacollab.core.database import Base
-
-from .integrations.models import ToolIntegrations
+from capellacollab.core import database
+from capellacollab.tools.integrations import models as integrations_models
 
 if t.TYPE_CHECKING:
     from .integrations.models import DatabaseToolIntegrations
 
 
-class Tool(Base):
+class Tool(database.Base):
     __tablename__ = "tools"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
 
-    name: Mapped[str | None]
-    docker_image_template: Mapped[str]
-    docker_image_backup_template: Mapped[str | None]
-    readonly_docker_image_template: Mapped[str | None]
+    name: orm.Mapped[str | None]
+    docker_image_template: orm.Mapped[str]
+    docker_image_backup_template: orm.Mapped[str | None]
+    readonly_docker_image_template: orm.Mapped[str | None]
 
-    versions: Mapped[list[Version]] = relationship(back_populates="tool")
-    natures: Mapped[list[Nature]] = relationship(back_populates="tool")
+    versions: orm.Mapped[list[Version]] = orm.relationship(
+        back_populates="tool"
+    )
+    natures: orm.Mapped[list[Nature]] = orm.relationship(back_populates="tool")
 
-    integrations: Mapped[DatabaseToolIntegrations] = relationship(
+    integrations: orm.Mapped[DatabaseToolIntegrations] = orm.relationship(
         back_populates="tool", uselist=False
     )
 
 
-class Version(Base):
+class Version(database.Base):
     __tablename__ = "versions"
-    __table_args__ = (UniqueConstraint("tool_id", "name"),)
+    __table_args__ = (sa.UniqueConstraint("tool_id", "name"),)
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
 
-    name: Mapped[str]
-    is_recommended: Mapped[bool]
-    is_deprecated: Mapped[bool]
+    name: orm.Mapped[str]
+    is_recommended: orm.Mapped[bool]
+    is_deprecated: orm.Mapped[bool]
 
-    tool_id: Mapped[int | None] = mapped_column(ForeignKey(Tool.id))
-    tool: Mapped[Tool] = relationship(back_populates="versions")
+    tool_id: orm.Mapped[int | None] = orm.mapped_column(
+        sa.ForeignKey("tools.id")
+    )
+    tool: orm.Mapped[Tool] = orm.relationship(back_populates="versions")
 
 
-class Nature(Base):
+class Nature(database.Base):
     __tablename__ = "types"
-    __table_args__ = (UniqueConstraint("tool_id", "name"),)
+    __table_args__ = (sa.UniqueConstraint("tool_id", "name"),)
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
+    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+    name: orm.Mapped[str]
 
-    tool_id: Mapped[int | None] = mapped_column(ForeignKey(Tool.id))
-    tool: Mapped[Tool] = relationship(back_populates="natures")
+    tool_id: orm.Mapped[int | None] = orm.mapped_column(
+        sa.ForeignKey("tools.id")
+    )
+    tool: orm.Mapped[Tool] = orm.relationship(back_populates="natures")
 
 
-class ToolBase(BaseModel):
+class ToolBase(pydantic.BaseModel):
     id: int
     name: str
-    integrations: ToolIntegrations
+    integrations: integrations_models.ToolIntegrations
 
     class Config:
         orm_mode = True
 
 
-class ToolDockerimage(BaseModel):
+class ToolDockerimage(pydantic.BaseModel):
     persistent: str
     readonly: str | None
     backup: str | None
@@ -87,27 +92,27 @@ class ToolDockerimage(BaseModel):
         orm_mode = True
 
 
-class PatchToolDockerimage(BaseModel):
+class PatchToolDockerimage(pydantic.BaseModel):
     persistent: str | None
     readonly: str | None
     backup: str | None
 
 
-class CreateToolVersion(BaseModel):
+class CreateToolVersion(pydantic.BaseModel):
     name: str
 
 
-class CreateToolNature(BaseModel):
+class CreateToolNature(pydantic.BaseModel):
     name: str
 
 
-class UpdateToolVersion(BaseModel):
+class UpdateToolVersion(pydantic.BaseModel):
     name: str | None
     is_recommended: bool | None
     is_deprecated: bool | None
 
 
-class ToolVersionBase(BaseModel):
+class ToolVersionBase(pydantic.BaseModel):
     id: int
     name: str
     is_recommended: bool
@@ -121,7 +126,7 @@ class ToolVersionWithTool(ToolVersionBase):
     tool: ToolBase
 
 
-class ToolNatureBase(BaseModel):
+class ToolNatureBase(pydantic.BaseModel):
     id: int
     name: str
 
@@ -129,5 +134,5 @@ class ToolNatureBase(BaseModel):
         orm_mode = True
 
 
-class CreateTool(BaseModel):
+class CreateTool(pydantic.BaseModel):
     name: str

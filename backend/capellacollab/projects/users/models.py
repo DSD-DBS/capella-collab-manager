@@ -5,15 +5,16 @@
 import enum
 import typing as t
 
-from pydantic import BaseModel
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+import pydantic
+import sqlalchemy as sa
+from sqlalchemy import orm
 
-from capellacollab.core.database import Base
-from capellacollab.users.models import DatabaseUser, User
+from capellacollab.core import database
+from capellacollab.users import models as users_models
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.models import DatabaseProject
+    from capellacollab.users.models import DatabaseUser
 
 
 class ProjectUserRole(enum.Enum):
@@ -27,40 +28,44 @@ class ProjectUserPermission(enum.Enum):
     WRITE = "write"
 
 
-class ProjectUser(BaseModel):
+class ProjectUser(pydantic.BaseModel):
     role: ProjectUserRole
     permission: ProjectUserPermission
-    user: User
+    user: users_models.User
 
     class Config:
         orm_mode = True
 
 
-class PostProjectUser(BaseModel):
+class PostProjectUser(pydantic.BaseModel):
     role: ProjectUserRole
     permission: ProjectUserPermission
     username: str
     reason: str
 
 
-class PatchProjectUser(BaseModel):
+class PatchProjectUser(pydantic.BaseModel):
     role: ProjectUserRole | None
     permission: ProjectUserPermission | None
     reason: str
 
 
-class ProjectUserAssociation(Base):
+class ProjectUserAssociation(database.Base):
     __tablename__ = "project_user_association"
 
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"), primary_key=True
+    user_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("users.id"), primary_key=True
     )
-    user: Mapped[DatabaseUser] = relationship(back_populates="projects")
-
-    project_id: Mapped[int] = mapped_column(
-        ForeignKey("projects.id"), primary_key=True
+    user: orm.Mapped["DatabaseUser"] = orm.relationship(
+        back_populates="projects"
     )
-    project: Mapped["DatabaseProject"] = relationship(back_populates="users")
 
-    permission: Mapped[ProjectUserPermission]
-    role: Mapped[ProjectUserRole]
+    project_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("projects.id"), primary_key=True
+    )
+    project: orm.Mapped["DatabaseProject"] = orm.relationship(
+        back_populates="users"
+    )
+
+    permission: orm.Mapped[ProjectUserPermission]
+    role: orm.Mapped[ProjectUserRole]

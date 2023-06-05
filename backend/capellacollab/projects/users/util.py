@@ -1,35 +1,36 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from sqlalchemy import orm
 
-from sqlalchemy.orm import Session
+from capellacollab.projects import models as projects_models
+from capellacollab.users import models as users_models
+from capellacollab.users.events import crud as events_crud
+from capellacollab.users.events import models as events_models
 
-import capellacollab.users.events.crud as event_crud
-from capellacollab.projects.models import DatabaseProject
-from capellacollab.projects.users.models import (
-    PostProjectUser,
-    ProjectUserPermission,
-    ProjectUserRole,
-)
-from capellacollab.users.events.models import EventType
-from capellacollab.users.models import DatabaseUser
+from . import models
 
 
 def create_add_user_to_project_events(
-    post_project_user: PostProjectUser,
-    user: DatabaseUser,
-    project: DatabaseProject,
-    executor: DatabaseUser,
-    db: Session,
+    post_project_user: models.PostProjectUser,
+    user: users_models.DatabaseUser,
+    project: projects_models.DatabaseProject,
+    executor: users_models.DatabaseUser,
+    db: orm.Session,
 ):
     reason: str = post_project_user.reason
-    project_role: ProjectUserRole = post_project_user.role
+    project_role: models.ProjectUserRole = post_project_user.role
 
-    event_crud.create_project_change_event(
-        db, user, EventType.ADDED_TO_PROJECT, executor, project, reason
+    events_crud.create_project_change_event(
+        db,
+        user,
+        events_models.EventType.ADDED_TO_PROJECT,
+        executor,
+        project,
+        reason,
     )
 
-    event_crud.create_project_change_event(
+    events_crud.create_project_change_event(
         db=db,
         user=user,
         event_type=get_project_role_event_type(post_project_user.role),
@@ -38,8 +39,8 @@ def create_add_user_to_project_events(
         reason=reason,
     )
 
-    if not project_role == ProjectUserRole.MANAGER:
-        event_crud.create_project_change_event(
+    if not project_role == models.ProjectUserRole.MANAGER:
+        events_crud.create_project_change_event(
             db=db,
             user=user,
             event_type=get_project_permission_event_type(
@@ -52,18 +53,20 @@ def create_add_user_to_project_events(
 
 
 def get_project_permission_event_type(
-    permission: ProjectUserPermission,
-) -> EventType:
+    permission: models.ProjectUserPermission,
+) -> events_models.EventType:
     return (
-        EventType.ASSIGNED_PROJECT_PERMISSION_READ_ONLY
-        if permission == ProjectUserPermission.READ
-        else EventType.ASSIGNED_PROJECT_PERMISSION_READ_WRITE
+        events_models.EventType.ASSIGNED_PROJECT_PERMISSION_READ_ONLY
+        if permission == models.ProjectUserPermission.READ
+        else events_models.EventType.ASSIGNED_PROJECT_PERMISSION_READ_WRITE
     )
 
 
-def get_project_role_event_type(role: ProjectUserRole) -> EventType:
+def get_project_role_event_type(
+    role: models.ProjectUserRole,
+) -> events_models.EventType:
     return (
-        EventType.ASSIGNED_PROJECT_ROLE_USER
-        if role == ProjectUserRole.USER
-        else EventType.ASSIGNED_PROJECT_ROLE_MANAGER
+        events_models.EventType.ASSIGNED_PROJECT_ROLE_USER
+        if role == models.ProjectUserRole.USER
+        else events_models.EventType.ASSIGNED_PROJECT_ROLE_MANAGER
     )
