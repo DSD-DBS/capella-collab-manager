@@ -21,11 +21,12 @@ def get_existing_pipeline(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseBackup:
-    if not (backup := crud.get_pipeline_by_id(db, pipeline_id)):
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "reason": f"The pipeline with the id {pipeline_id} of the model with th id {model.id} was not found.",
-            },
-        )
-    return backup
+    if backup := crud.get_pipeline_by_id(db, pipeline_id):
+        return backup
+
+    raise fastapi.HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail={
+            "reason": f"The pipeline with the id {pipeline_id} of the model with th id {model.id} was not found.",
+        },
+    )

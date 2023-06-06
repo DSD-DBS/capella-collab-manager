@@ -225,22 +225,18 @@ def sync_db_with_server_repositories(
     db_repos_names = set(db_repos_dict.keys())
     server_repos_names = set(server_repos_dict.keys())
 
-    exist_db_and_server_repo_names = server_repos_names & db_repos_names
-    exist_db_not_server_repo_names = db_repos_names - server_repos_names
-    exist_server_not_db_repo_names = server_repos_names - db_repos_names
-
-    # Set db status to current server repo status
-    for repo_name in exist_db_and_server_repo_names:
+    db_and_server_repo_names = server_repos_names & db_repos_names
+    for repo_name in db_and_server_repo_names:
         db_repos_dict[repo_name].status = server_repos_dict[repo_name][
             "status"
         ]
 
-    # Set db status to NOT_FOUND
-    for repo_name in exist_db_not_server_repo_names:
+    db_not_server_repo_names = db_repos_names - server_repos_names
+    for repo_name in db_not_server_repo_names:
         db_repos_dict[repo_name].status = models.T4CRepositoryStatus.NOT_FOUND
 
-    # Create db repo for not known ones
-    for repo_name in exist_server_not_db_repo_names:
+    server_not_db_repo_names = server_repos_names - db_repos_names
+    for repo_name in server_not_db_repo_names:
         repo = models.T4CRepository.from_orm(
             crud.create_t4c_repository(
                 db=db, repo_name=repo_name, instance=instance

@@ -160,15 +160,14 @@ def create_t4c_instance_and_repositories(db):
     )
     settings_t4c_crud.create_t4c_instance(db, default_instance)
     for t4c_model in t4c_crud.get_t4c_models(db):
-        t4c_repository = repositories_crud.create_t4c_repository(
+        t4c_model.repository = repositories_crud.create_t4c_repository(
             db=db, repo_name=t4c_model.name, instance=default_instance
         )
-        t4c_model.repository = t4c_repository
         db.commit()
     LOGGER.info("Initialized T4C instance and repositories")
 
 
-def create_models(db):
+def create_models(db: orm.Session):
     capella_tool = tools_crud.get_tool_by_name(db, "Capella")
 
     for version in ["5.0.0", "5.2.0", "6.0.0"]:
