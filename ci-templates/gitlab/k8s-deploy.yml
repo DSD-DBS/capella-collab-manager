@@ -14,6 +14,7 @@ variables:
 
 # TODO Adjust with new structure
 .decrypt: &decrypt
+  - apt-get install -y jq
   - cd ${TARGET}
   - gpg --import ${PRIVATE_GPG_PATH}
   - sops -d secret.values.yaml > ../plain.values.yaml
