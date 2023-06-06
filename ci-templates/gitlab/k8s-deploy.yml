@@ -1,0 +1,98 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+variables:
+  GRAFANA_HELM_CHART: https://grafana.github.io/helm-charts/
+  PRIVATE_GPG_PATH: /secrets/private.gpg
+  TARGET:
+    value: "staging"
+    description: "Specify the target (staging/production)"
+  REVISION:
+    value: "main"
+    description: "Revision of the Github repository (capella-collab-manager)"
+
+
+# TODO Adjust with new structure
+.decrypt: &decrypt
+  - cd ${TARGET}
+  - gpg --import ${PRIVATE_GPG_PATH}
+  - sops -d secret.values.yaml > ../plain.values.yaml
+  - sops -d secret.k8s.json > ../plain.k8s.json
+  - cd ..
+  # Remove _unencrypted suffix from plain.k8s.json
+  - |
+    python3 <<EOF
+    import json
+    import pathlib
+    import typing as t
+
+    def strip_suffix(data: t.Any):
+        if isinstance(data, dict):
+            return {key.replace('_unencrypted', ''): strip_suffix(value) for key, value in data.items()}
+        elif isinstance(data, list):
+            return [strip_suffix(element) for element in data]
+        else:
+            return data
+
+    path = pathlib.Path("plain.k8s.json")
+    data = json.loads(path.read_text())
+    path.write_text(json.dumps(strip_suffix(data), indent=4))
+    EOF
+
+.prepare: &prepare
+    - *decrypt
+    - git clone https://github.com/DSD-DBS/capella-collab-manager
+    - cd capella-collab-manager
+    - git checkout ${REVISION}
+    - sed -i "s|https://grafana.github.io/helm-charts/|${GRAFANA_HELM_CHART}|g" ./helm/Chart.yaml
+
+.kubernetes: &kubernetes
+    - NAMESPACE=$(cat plain.k8s.json | jq -r ".kubernetes.namespace")
+    - kubectl config set-cluster cluster --server=$(cat plain.k8s.json | jq -r ".kubernetes.server")
+    - >
+      kubectl config set-context context \
+        --namespace=${NAMESPACE} \
+        --user=$(cat plain.k8s.json | jq -r ".kubernetes.username") \
+        --cluster=cluster
+    - >
+      kubectl config set-credentials \
+        $(cat plain.k8s.json | jq -r ".kubernetes.username") \
+        --token=$(cat plain.k8s.json | jq -r ".kubernetes.token")
+    - kubectl config use-context context
+
+.helm-deploy: &helm-deploy
+    - RELEASE=$(cat plain.k8s.json | jq -r ".kubernetes.release")
+    - DOCKER_TAG=$(echo $REVISION | sed 's/[^a-zA-Z0-9.]/-/g')
+    - helm repo add grafana-helm-remote ${GRAFANA_HELM_CHART}
+    - >
+      helm upgrade ${RELEASE} \
+        --dependency-update \
+        --namespace ${NAMESPACE} \
+        --set docker.images.frontend=/capella/collab/frontend:{DOCKER_TAG} \
+        --set docker.images.backend=/capella/collab/backend:{DOCKER_TAG} \
+        --set docker.images.docs=/capella/collab/docs:{DOCKER_TAG} \
+        --set docker.images.guacamole.guacamole=${DOCKER_REGISTRY}/capella/collab/guacamole:${DOCKER_TAG} \
+        -f values.yaml \
+        -f ../${TARGET}/general.values.yaml \
+        -f ../plain.values.yaml helm
+    - >
+      kubectl rollout restart \
+        --namespace ${NAMESPACE} \
+        deployment ${RELEASE}-backend
+    - >
+      kubectl rollout restart \
+        --namespace ${$NAMESPACE} \
+        deployment ${RELEASE}-frontend
+    - >
+      kubectl rollout restart
+        --namespace ${$NAMESPACE} \
+        deployment ${RELEASE}-docs
+
+deploy:
+  stage: deploy
+  image: ${DOCKER_REGISTRY}/base
+  environment: ${TARGET}
+  script:
+    - *prepare
+    - *kubernetes
+    - *helm-deploy
