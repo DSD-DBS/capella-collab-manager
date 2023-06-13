@@ -1,10 +1,11 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import datetime
+from collections import abc
 
-from datetime import datetime
-
-from sqlalchemy.orm import Session
+import sqlalchemy as sa
+from sqlalchemy import orm
 
 from capellacollab.projects import models as projects_models
 from capellacollab.users import models as users_models
@@ -12,7 +13,7 @@ from capellacollab.users.events import models
 
 
 def create_event(
-    db: Session,
+    db: orm.Session,
     user: users_models.DatabaseUser,
     event_type: models.EventType,
     executor: users_models.DatabaseUser | None = None,
@@ -27,7 +28,7 @@ def create_event(
     event = models.DatabaseUserHistoryEvent(
         user_id=user.id,
         event_type=event_type,
-        execution_time=datetime.now(),
+        execution_time=datetime.datetime.now(),
         executor_id=executor.id if executor else None,
         project_id=project.id if project else None,
         reason=reason,
@@ -39,7 +40,7 @@ def create_event(
 
 
 def create_user_creation_event(
-    db: Session,
+    db: orm.Session,
     user: users_models.DatabaseUser,
     executor: users_models.DatabaseUser | None = None,
     reason: str | None = None,
@@ -54,7 +55,7 @@ def create_user_creation_event(
 
 
 def create_role_change_event(
-    db: Session,
+    db: orm.Session,
     user: users_models.DatabaseUser,
     event_type: models.EventType,
     executor: users_models.DatabaseUser,
@@ -74,7 +75,7 @@ def create_role_change_event(
 
 
 def create_project_change_event(
-    db: Session,
+    db: orm.Session,
     user: users_models.DatabaseUser,
     event_type: models.EventType,
     executor: users_models.DatabaseUser,
@@ -99,24 +100,32 @@ def create_project_change_event(
     )
 
 
-def get_events(db: Session) -> list[models.DatabaseUserHistoryEvent]:
-    return db.query(models.DatabaseUserHistoryEvent).all()
+def get_events(
+    db: orm.Session,
+) -> abc.Sequence[models.DatabaseUserHistoryEvent]:
+    return (
+        db.execute(sa.select(models.DatabaseUserHistoryEvent)).scalars().all()
+    )
 
 
-def delete_all_events_user_involved_in(
-    db: Session, user: users_models.DatabaseUser
-):
-    db.query(models.DatabaseUserHistoryEvent).filter(
-        (models.DatabaseUserHistoryEvent.user_id == user.id)
-        | (models.DatabaseUserHistoryEvent.executor_id == user.id)
-    ).delete()
+def delete_all_events_user_involved_in(db: orm.Session, user_id: int):
+    db.execute(
+        sa.delete(models.DatabaseUserHistoryEvent).where(
+            sa.or_(
+                models.DatabaseUserHistoryEvent.user_id == user_id,
+                models.DatabaseUserHistoryEvent.executor_id == user_id,
+            )
+        )
+    )
     db.commit()
 
 
 def delete_all_events_projects_associated_with(
-    db: Session, project: projects_models.DatabaseProject
+    db: orm.Session, project_id: int
 ):
-    db.query(models.DatabaseUserHistoryEvent).filter(
-        models.DatabaseUserHistoryEvent.project_id == project.id
-    ).delete()
+    db.execute(
+        sa.delete(models.DatabaseUserHistoryEvent).where(
+            models.DatabaseUserHistoryEvent.project_id == project_id
+        )
+    )
     db.commit()

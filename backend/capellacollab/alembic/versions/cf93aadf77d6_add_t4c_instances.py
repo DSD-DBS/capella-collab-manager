@@ -42,8 +42,3 @@ def upgrade():
     op.create_index(
         op.f("ix_t4c_instances_id"), "t4c_instances", ["id"], unique=False
     )
-
-
-def downgrade():
-    op.drop_index(op.f("ix_t4c_instances_id"), table_name="t4c_instances")
-    op.drop_table("t4c_instances")

@@ -1,35 +1,37 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from collections import abc
 
-from slugify import slugify
-from sqlalchemy.orm import Session
+import slugify
+import sqlalchemy as sa
+from sqlalchemy import orm
 
-from capellacollab.projects.models import DatabaseProject, PatchProject
-
-
-def get_project_by_name(db: Session, name: str) -> DatabaseProject:
-    return (
-        db.query(DatabaseProject).filter(DatabaseProject.name == name).first()
-    )
+from . import models
 
 
-def get_project_by_slug(db: Session, slug: str) -> DatabaseProject:
-    return (
-        db.query(DatabaseProject).filter(DatabaseProject.slug == slug).first()
-    )
+def get_projects(db: orm.Session) -> abc.Sequence[models.DatabaseProject]:
+    return db.execute(sa.select(models.DatabaseProject)).scalars().all()
 
 
-def get_all_projects(db: Session) -> list[DatabaseProject]:
-    return db.query(DatabaseProject).all()
+def get_project_by_slug(
+    db: orm.Session, slug: str
+) -> models.DatabaseProject | None:
+    return db.execute(
+        sa.select(models.DatabaseProject).where(
+            models.DatabaseProject.slug == slug
+        )
+    ).scalar_one_or_none()
 
 
 def update_project(
-    db: Session, project: DatabaseProject, patch_project: PatchProject
-) -> DatabaseProject:
+    db: orm.Session,
+    project: models.DatabaseProject,
+    patch_project: models.PatchProject,
+) -> models.DatabaseProject:
     if patch_project.name:
         project.name = patch_project.name
-        project.slug = slugify(patch_project.name)
+        project.slug = slugify.slugify(patch_project.name)
     if patch_project.description:
         project.description = patch_project.description
     db.commit()
@@ -37,16 +39,20 @@ def update_project(
 
 
 def create_project(
-    db: Session, name: str, description: str | None = None
-) -> DatabaseProject:
-    repo = DatabaseProject(
-        name=name, slug=slugify(name), description=description, users=[]
+    db: orm.Session, name: str, description: str = ""
+) -> models.DatabaseProject:
+    project = models.DatabaseProject(
+        name=name,
+        slug=slugify.slugify(name),
+        description=description,
+        users=[],
     )
-    db.add(repo)
+
+    db.add(project)
     db.commit()
-    return repo
+    return project
 
 
-def delete_project(db: Session, project: DatabaseProject) -> None:
+def delete_project(db: orm.Session, project: models.DatabaseProject) -> None:
     db.delete(project)
     db.commit()

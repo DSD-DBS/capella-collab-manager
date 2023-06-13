@@ -26,7 +26,3 @@ def upgrade():
         sa.Column("license_key_filename", sa.String(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
-
-
-def downgrade():
-    op.drop_table("pure_variants")

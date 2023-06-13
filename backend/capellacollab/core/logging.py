@@ -3,21 +3,21 @@
 
 
 import logging
-import logging.handlers
 import os
 import pathlib
 import random
 import string
 import typing as t
+from logging import handlers
 
-from fastapi import Request, Response
+import fastapi
 from starlette.middleware import base
 
-from capellacollab.config import config
-from capellacollab.core.authentication.helper import get_username
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab import config
+from capellacollab.core.authentication import helper as auth_helper
+from capellacollab.core.authentication import jwt_bearer
 
-LOGGING_LEVEL = config["logging"]["level"]
+LOGGING_LEVEL = config.config["logging"]["level"]
 
 
 class CustomFormatter(logging.Formatter):
@@ -37,9 +37,7 @@ class CustomFormatter(logging.Formatter):
         return self._default_formatter.format(record)
 
 
-class CustomTimedRotatingFileHandler(
-    logging.handlers.TimedRotatingFileHandler
-):
+class CustomTimedRotatingFileHandler(handlers.TimedRotatingFileHandler):
     def __init__(self, filename: str | os.PathLike):
         pathlib.Path(filename).parent.mkdir(exist_ok=True)
         super().__init__(filename, when="D", backupCount=1, delay=True)
@@ -47,7 +45,7 @@ class CustomTimedRotatingFileHandler(
 
 class AttachTraceIdMiddleware(base.BaseHTTPMiddleware):
     async def dispatch(
-        self, request: Request, call_next: base.RequestResponseEndpoint
+        self, request: fastapi.Request, call_next: base.RequestResponseEndpoint
     ):
         request.state.trace_id = "".join(
             random.choices(string.ascii_uppercase + string.digits, k=10)
@@ -58,11 +56,11 @@ class AttachTraceIdMiddleware(base.BaseHTTPMiddleware):
 
 class AttachUserNameMiddleware(base.BaseHTTPMiddleware):
     async def dispatch(
-        self, request: Request, call_next: base.RequestResponseEndpoint
+        self, request: fastapi.Request, call_next: base.RequestResponseEndpoint
     ):
         username = "anonymous"
-        if token := await JWTBearer(auto_error=False)(request):
-            username = get_username(token)
+        if token := await jwt_bearer.JWTBearer(auto_error=False)(request):
+            username = auth_helper.get_username(token)
 
         request.state.user_name = username
 
@@ -71,7 +69,7 @@ class AttachUserNameMiddleware(base.BaseHTTPMiddleware):
 
 class LogExceptionMiddleware(base.BaseHTTPMiddleware):
     async def dispatch(
-        self, request: Request, call_next: base.RequestResponseEndpoint
+        self, request: fastapi.Request, call_next: base.RequestResponseEndpoint
     ):
         try:
             return await call_next(request)
@@ -82,10 +80,10 @@ class LogExceptionMiddleware(base.BaseHTTPMiddleware):
 
 class LogRequestsMiddleware(base.BaseHTTPMiddleware):
     async def dispatch(
-        self, request: Request, call_next: base.RequestResponseEndpoint
+        self, request: fastapi.Request, call_next: base.RequestResponseEndpoint
     ):
         get_request_logger(request).debug("request started")
-        response: Response = await call_next(request)
+        response: fastapi.Response = await call_next(request)
         get_request_logger(request).debug(
             "request finished", {"status_code": response.status_code}
         )
@@ -112,7 +110,7 @@ class LogAdapter(logging.LoggerAdapter):
         return (msg, kwargs)
 
 
-def _get_log_args(request: Request) -> dict[str, t.Any]:
+def _get_log_args(request: fastapi.Request) -> dict[str, t.Any]:
     log_args = {}
     if client := request.client:
         log_args["client"] = client.host + ":" + str(client.port)
@@ -124,7 +122,7 @@ def _get_log_args(request: Request) -> dict[str, t.Any]:
     }
 
 
-def get_request_logger(request: Request) -> logging.LoggerAdapter:
+def get_request_logger(request: fastapi.Request) -> logging.LoggerAdapter:
     logger: logging.Logger = logging.getLogger("capellacollab.request")
     logger.addFilter(HealthcheckFilter())
     logger.setLevel(LOGGING_LEVEL)

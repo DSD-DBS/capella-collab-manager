@@ -60,8 +60,3 @@ def upgrade():
             )
         )
     op.alter_column("projects", "slug", nullable=False)
-
-
-def downgrade():
-    op.drop_index(op.f("ix_projects_slug"), table_name="projects")
-    op.drop_column("projects", "slug")

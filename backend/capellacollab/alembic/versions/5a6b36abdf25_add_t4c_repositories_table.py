@@ -40,11 +40,3 @@ def upgrade():
     op.create_index(
         "ix_t4c_repositories_id", "t4c_repositories", ["id"], unique=True
     )
-
-
-def downgrade():
-    op.drop_constraint(
-        "t4c_repositories_instance_id_name_key", table_name="t4c_repositories"
-    )
-    op.drop_index("ix_t4c_repositories_id", table_name="t4c_repositories")
-    op.drop_table("t4c_repositories")

@@ -36,7 +36,7 @@ dependencies = [
   "python-jose",
   "python-multipart",
   "requests_oauthlib",
-  "sqlalchemy<2.0.0",
+  "sqlalchemy>=2.0.0",
   "uvicorn[standard]",
   "python-slugify[unidecode]",
   "jsonschema",
@@ -58,7 +58,8 @@ dev = [
   "testcontainers",
   "httpx",
   "docker",
-  "responses"
+  "responses",
+  "sqlalchemy[mypy]",
 ]
 psycopg2 = [
   "psycopg2", # Need when running in a Docker container with AArch64: https://github.com/psycopg/psycopg2/issues/1360

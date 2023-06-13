@@ -3,11 +3,10 @@
 
 import enum
 
-from pydantic import BaseModel
-from sqlalchemy.sql.schema import Column
-from sqlalchemy.sql.sqltypes import Enum, Integer, String
+import pydantic
+from sqlalchemy import orm
 
-from capellacollab.core.database import Base
+from capellacollab.core import database
 
 
 class NoticeLevel(enum.Enum):
@@ -20,7 +19,7 @@ class NoticeLevel(enum.Enum):
     ALERT = "alert"
 
 
-class CreateNoticeRequest(BaseModel):
+class CreateNoticeRequest(pydantic.BaseModel):
     level: NoticeLevel
     title: str
     message: str
@@ -33,10 +32,10 @@ class NoticeResponse(CreateNoticeRequest):
     id: int
 
 
-class DatabaseNotice(Base):
+class DatabaseNotice(database.Base):
     __tablename__ = "notices"
 
-    id: int = Column(Integer, primary_key=True, index=True)
-    title: str = Column(String)
-    message: str = Column(String)
-    level: NoticeLevel = Column(Enum(NoticeLevel))
+    id: orm.Mapped[int] = orm.mapped_column(primary_key=True, index=True)
+    title: orm.Mapped[str]
+    message: orm.Mapped[str]
+    level: orm.Mapped[NoticeLevel]

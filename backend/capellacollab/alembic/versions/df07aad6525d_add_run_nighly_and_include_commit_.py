@@ -34,8 +34,3 @@ def upgrade():
             "run_nightly", sa.Boolean(), nullable=True, server_default="true"
         ),
     )
-
-
-def downgrade():
-    op.drop_column("backups", "run_nightly")
-    op.drop_column("backups", "include_commit_history")

@@ -1,20 +1,24 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from fastapi import APIRouter
+import fastapi
 
-from capellacollab.settings.modelsources.git import routes as git_instances
-from capellacollab.settings.modelsources.t4c import routes as t4c_settings
+from capellacollab.settings.modelsources.git import (
+    routes as settings_git_routes,
+)
+from capellacollab.settings.modelsources.t4c import (
+    routes as settings_t4c_routes,
+)
 
-router = APIRouter()
+router = fastapi.APIRouter()
 
 router.include_router(
-    git_instances.router,
+    settings_git_routes.router,
     prefix="/git",
     tags=["Settings - Modelsources - Git"],
 )
 router.include_router(
-    t4c_settings.router,
+    settings_t4c_routes.router,
     prefix="/t4c",
     tags=["Settings - Modelsources - T4C"],
 )

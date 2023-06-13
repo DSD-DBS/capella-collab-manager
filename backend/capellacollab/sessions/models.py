@@ -5,45 +5,124 @@
 from __future__ import annotations
 
 import datetime
+import enum
 import typing as t
 
+import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
 
-from capellacollab.core.database import Base
-from capellacollab.sessions.schema import WorkspaceType
-from capellacollab.tools.models import Tool, Version
+from capellacollab.core import database
+from capellacollab.core import models as core_models
+from capellacollab.projects import models as projects_models
+from capellacollab.tools import models as tools_models
+from capellacollab.users import models as users_models
 
 if t.TYPE_CHECKING:
-    import capellacollab.projects.models as projects_models
-    import capellacollab.users.models as users_models
+    from capellacollab.tools.models import Tool, Version
+    from capellacollab.users.models import DatabaseUser
 
 
-class DatabaseSession(Base):
+class WorkspaceType(enum.Enum):
+    PERSISTENT = "persistent"
+    READONLY = "readonly"
+
+
+class GetSessionsResponse(pydantic.BaseModel):
+    id: str
+    type: WorkspaceType
+    created_at: datetime.datetime
+    owner: users_models.BaseUser
+    state: str
+    guacamole_username: str | None
+    guacamole_connection_id: str | None
+    warnings: list[core_models.Message] | None
+    last_seen: str
+    project: projects_models.Project | None
+    version: tools_models.ToolVersionWithTool | None
+
+    class Config:
+        orm_mode = True
+
+
+class OwnSessionResponse(GetSessionsResponse):
+    t4c_password: str | None
+    jupyter_uri: str | None
+
+
+class PostReadonlySessionEntry(pydantic.BaseModel):
+    model_slug: str
+    git_model_id: int
+    revision: str
+    deep_clone: bool
+
+
+class PostReadonlySessionRequest(pydantic.BaseModel):
+    models: list[PostReadonlySessionEntry]
+
+    class Config:
+        orm_mode = True
+
+
+class PostPersistentSessionRequest(pydantic.BaseModel):
+    tool_id: int
+    version_id: int
+
+    class Config:
+        orm_mode = True
+
+
+class GetSessionUsageResponse(pydantic.BaseModel):
+    free: int
+    total: int
+
+    class Config:
+        orm_mode = True
+
+
+class GuacamoleAuthentication(pydantic.BaseModel):
+    token: str
+    url: str
+
+    class Config:
+        orm_mode = True
+
+
+class DatabaseSession(database.Base):
     __tablename__ = "sessions"
 
-    id: str = sa.Column(sa.String, primary_key=True, index=True)
-    owner_name: str = sa.Column(sa.String, sa.ForeignKey("users.name"))
-    owner: users_models.DatabaseUser = orm.relationship("DatabaseUser")
-    tool_id: int = sa.Column(sa.Integer, sa.ForeignKey(Tool.id))
-    tool: Tool = orm.relationship(Tool)
+    id: orm.Mapped[str] = orm.mapped_column(primary_key=True, index=True)
 
-    version_id: int = sa.Column(sa.Integer, sa.ForeignKey(Version.id))
-    version: Version = orm.relationship(Version)
-    ports: list[int] = sa.Column(sa.ARRAY(sa.Integer))
-    created_at: datetime.datetime = sa.Column(sa.TIMESTAMP)
-    t4c_password: str = sa.Column(sa.String, nullable=True)
-    rdp_password: str = sa.Column(sa.String)
-    guacamole_username: str = sa.Column(sa.String)
-    guacamole_password: str = sa.Column(sa.String)
-    guacamole_connection_id: str = sa.Column(sa.String)
-    jupyter_token: str = sa.Column(sa.String)
-    host: str = sa.Column(sa.String)
-    type: WorkspaceType = sa.Column(sa.Enum(WorkspaceType), nullable=False)
-    project_id: str = sa.Column(
-        sa.Integer, sa.ForeignKey("projects.id"), nullable=True
+    ports: orm.Mapped[list[int]] = orm.mapped_column(sa.ARRAY(sa.Integer))
+    created_at: orm.Mapped[datetime.datetime]
+
+    t4c_password: orm.Mapped[str | None]
+
+    rdp_password: orm.Mapped[str | None]
+    guacamole_username: orm.Mapped[str | None]
+    guacamole_password: orm.Mapped[str | None]
+    guacamole_connection_id: orm.Mapped[str | None]
+
+    jupyter_token: orm.Mapped[str | None]
+
+    host: orm.Mapped[str]
+    type: orm.Mapped[WorkspaceType]
+    mac: orm.Mapped[str]
+
+    owner_name: orm.Mapped[str] = orm.mapped_column(
+        sa.ForeignKey("users.name")
     )
-    project: projects_models.DatabaseProject = orm.relationship(
-        "DatabaseProject"
+    owner: orm.Mapped[users_models.DatabaseUser] = orm.relationship()
+
+    tool_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("tools.id"))
+    tool: orm.Mapped[Tool] = orm.relationship()
+
+    version_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("versions.id")
     )
-    mac: str = sa.Column(sa.String)
+    version: orm.Mapped[Version] = orm.relationship()
+
+    project_id: orm.Mapped[str | None] = orm.mapped_column(
+        sa.ForeignKey("projects.id")
+    )
+    project: orm.Mapped[projects_models.DatabaseProject] = orm.relationship()

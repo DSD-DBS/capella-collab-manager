@@ -6,47 +6,44 @@ from __future__ import annotations
 import enum
 import typing as t
 
-from pydantic import BaseModel
-from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
-from sqlalchemy.orm import relationship
+import pydantic
+import sqlalchemy as sa
+from sqlalchemy import orm
 
-from capellacollab.core.database import Base
-from capellacollab.core.models import ResponseModel
-from capellacollab.settings.modelsources.t4c.models import (
-    DatabaseT4CInstance,
-    T4CInstance,
-)
+from capellacollab.core import database
+from capellacollab.settings.modelsources.t4c import models as t4c_models
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.toolmodels.modelsources.t4c.models import (
         DatabaseT4CModel,
     )
+    from capellacollab.settings.modelsources.t4c.models import (
+        DatabaseT4CInstance,
+    )
 
 
-class DatabaseT4CRepository(Base):
+class DatabaseT4CRepository(database.Base):
     __tablename__ = "t4c_repositories"
-    __table_args__ = (UniqueConstraint("instance_id", "name"),)
+    __table_args__ = (sa.UniqueConstraint("instance_id", "name"),)
 
-    id = Column(
-        Integer, primary_key=True, index=True, autoincrement=True, unique=True
+    id: orm.Mapped[int] = orm.mapped_column(
+        primary_key=True, index=True, autoincrement=True, unique=True
     )
-    name = Column(String, nullable=False)
-    instance_id = Column(
-        Integer, ForeignKey("t4c_instances.id"), nullable=False
+    name: orm.Mapped[str]
+
+    instance_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("t4c_instances.id")
+    )
+    instance: orm.Mapped[DatabaseT4CInstance] = orm.relationship(
+        back_populates="repositories"
     )
 
-    instance: DatabaseT4CInstance = relationship(
-        "DatabaseT4CInstance", back_populates="repositories"
-    )
-
-    models: list[DatabaseT4CModel] = relationship(
-        "DatabaseT4CModel",
-        back_populates="repository",
-        cascade="all, delete",
+    models: orm.Mapped[list[DatabaseT4CModel]] = orm.relationship(
+        back_populates="repository", cascade="all, delete"
     )
 
 
-class CreateT4CRepository(BaseModel):
+class CreateT4CRepository(pydantic.BaseModel):
     name: str
 
 
@@ -58,11 +55,7 @@ class T4CRepositoryStatus(str, enum.Enum):
     INITIAL = "INITIAL"
 
 
-class T4CRepositories(ResponseModel):
-    payload: list[T4CRepository]
-
-
-class T4CInstanceWithRepositories(T4CInstance):
+class T4CInstanceWithRepositories(t4c_models.T4CInstance):
     repositories: list[T4CRepository]
 
     class Config:
@@ -71,12 +64,8 @@ class T4CInstanceWithRepositories(T4CInstance):
 
 class T4CRepository(CreateT4CRepository):
     id: int
-    instance: T4CInstance
+    instance: t4c_models.T4CInstance
     status: T4CRepositoryStatus | None
 
     class Config:
         orm_mode = True
-
-
-T4CInstanceWithRepositories.update_forward_refs()
-T4CRepositories.update_forward_refs()

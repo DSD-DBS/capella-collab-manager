@@ -14,7 +14,7 @@ from capellacollab.projects.crud import create_project
 from capellacollab.projects.toolmodels.crud import create_model
 from capellacollab.projects.toolmodels.models import PostCapellaModel
 from capellacollab.projects.toolmodels.modelsources.git.crud import (
-    add_gitmodel_to_capellamodel,
+    add_git_model_to_capellamodel,
 )
 from capellacollab.projects.toolmodels.modelsources.git.models import (
     PostGitModel,
@@ -24,16 +24,16 @@ from capellacollab.projects.users.models import (
     ProjectUserPermission,
     ProjectUserRole,
 )
+from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.crud import (
     create_session,
     get_session_by_id,
     get_sessions_for_user,
 )
-from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import get_operator
-from capellacollab.sessions.schema import WorkspaceType
 from capellacollab.tools.crud import (
     create_tool,
+    create_tool_with_name,
     create_version,
     get_natures,
     get_versions,
@@ -112,6 +112,7 @@ class MockOperator:
             "host": "test",
             "ports": [1],
             "created_at": datetime.now(),
+            "mac": "-",
         }
 
     @classmethod
@@ -130,6 +131,7 @@ class MockOperator:
             "host": "test",
             "ports": [1],
             "created_at": datetime.now(),
+            "mac": "-",
         }
 
     @classmethod
@@ -150,6 +152,7 @@ class MockOperator:
             "host": "test",
             "ports": [1],
             "created_at": datetime.now(),
+            "mac": "-",
         }
 
     @classmethod
@@ -268,7 +271,7 @@ def test_create_readonly_session_as_user(client, db, user, kubernetes):
 
 
 def test_no_readonly_session_as_user(client, db, user, kubernetes):
-    tool = create_tool(db, Tool(name="Test"))
+    tool = create_tool_with_name(db, "Test")
     version = create_version(db, tool.id, "test")
 
     model, git_model = setup_git_model_for_user(db, user, version)
@@ -346,7 +349,7 @@ def setup_git_model_for_user(db, user, version):
         nature=nature,
     )
     git_path = str(uuid1())
-    git_model = add_gitmodel_to_capellamodel(
+    git_model = add_git_model_to_capellamodel(
         db,
         model,
         PostGitModel(
@@ -357,13 +360,16 @@ def setup_git_model_for_user(db, user, version):
 
 
 def setup_active_readonly_session(db, user, project, version):
-    database_model = DatabaseSession(
+    database_model = sessions_models.DatabaseSession(
         id=str(uuid1()),
-        type=WorkspaceType.READONLY,
+        type=sessions_models.WorkspaceType.READONLY,
         owner=user,
         project=project,
         tool=version.tool,
         version=version,
+        host="test",
+        mac="-",
+        ports=[1],
     )
     return create_session(db=db, session=database_model)
 

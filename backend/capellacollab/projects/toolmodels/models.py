@@ -7,33 +7,20 @@ from __future__ import annotations
 import enum
 import typing as t
 
-from pydantic import BaseModel
-from sqlalchemy import (
-    Column,
-    Enum,
-    ForeignKey,
-    Integer,
-    String,
-    UniqueConstraint,
-)
-from sqlalchemy.orm import relationship
+import pydantic
+import sqlalchemy as sa
+from sqlalchemy import orm
 
-from capellacollab.core.database import Base
-from capellacollab.projects.toolmodels.modelsources.git.models import GitModel
-from capellacollab.projects.toolmodels.modelsources.t4c.models import T4CModel
-from capellacollab.tools.models import (
-    Nature,
-    Tool,
-    ToolBase,
-    ToolNatureBase,
-    ToolVersionBase,
-    Version,
+from capellacollab.core import database
+from capellacollab.projects.toolmodels.modelsources.git import (
+    models as git_models,
 )
+from capellacollab.projects.toolmodels.modelsources.t4c import (
+    models as t4c_models,
+)
+from capellacollab.tools import models as tools_models
 
-from .restrictions.models import (
-    DatabaseToolModelRestrictions,
-    ToolModelRestrictions,
-)
+from .restrictions import models as restrictions_models
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.models import DatabaseProject
@@ -43,6 +30,9 @@ if t.TYPE_CHECKING:
     from capellacollab.projects.toolmodels.modelsources.t4c.models import (
         DatabaseT4CModel,
     )
+    from capellacollab.tools.models import Nature, Tool, Version
+
+    from .restrictions.models import DatabaseToolModelRestrictions
 
 
 class EditingMode(enum.Enum):
@@ -50,72 +40,81 @@ class EditingMode(enum.Enum):
     GIT = "git"
 
 
-class PostCapellaModel(BaseModel):
+class PostCapellaModel(pydantic.BaseModel):
     name: str
     description: str | None
     tool_id: int
 
 
-class PatchCapellaModel(BaseModel):
+class PatchCapellaModel(pydantic.BaseModel):
     description: str | None
     version_id: int
     nature_id: int
 
 
-class ToolDetails(BaseModel):
+class ToolDetails(pydantic.BaseModel):
     version_id: int
     nature_id: int
 
 
-class DatabaseCapellaModel(Base):
+class DatabaseCapellaModel(database.Base):
     __tablename__ = "models"
-    __table_args__ = (UniqueConstraint("project_id", "slug"),)
+    __table_args__ = (sa.UniqueConstraint("project_id", "slug"),)
 
-    id = Column(Integer, primary_key=True, index=True, unique=True)
-    name = Column(String, index=True)
-    slug = Column(String, nullable=False)
-    description = Column(String)
-
-    project_id = Column(Integer, ForeignKey("projects.id"))
-    project: DatabaseProject = relationship(
-        "DatabaseProject", back_populates="models"
+    id: orm.Mapped[int] = orm.mapped_column(
+        primary_key=True, index=True, unique=True
     )
 
-    tool_id = Column(Integer, ForeignKey(Tool.id))
-    tool: Tool = relationship(Tool)
+    name: orm.Mapped[str] = orm.mapped_column(index=True)
+    slug: orm.Mapped[str]
+    description: orm.Mapped[str]
 
-    version_id = Column(Integer, ForeignKey(Version.id))
-    version: Version = relationship(Version)
-
-    nature_id = Column(Integer, ForeignKey(Nature.id))
-    nature = relationship(Nature)
-
-    editing_mode = Column(Enum(EditingMode))
-
-    t4c_models: list[DatabaseT4CModel] = relationship(
-        "DatabaseT4CModel", back_populates="model"
+    project_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("projects.id")
     )
-    git_models: list[DatabaseGitModel] = relationship(
-        "DatabaseGitModel", back_populates="model"
+    project: orm.Mapped[DatabaseProject] = orm.relationship(
+        back_populates="models"
     )
 
-    restrictions: DatabaseToolModelRestrictions = relationship(
-        "DatabaseToolModelRestrictions", back_populates="model", uselist=False
+    tool_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("tools.id"))
+    tool: orm.Mapped[Tool] = orm.relationship()
+
+    version_id: orm.Mapped[int | None] = orm.mapped_column(
+        sa.ForeignKey("versions.id")
+    )
+    version: orm.Mapped[Version] = orm.relationship()
+
+    nature_id: orm.Mapped[int | None] = orm.mapped_column(
+        sa.ForeignKey("types.id")
+    )
+    nature: orm.Mapped[Nature] = orm.relationship()
+
+    editing_mode: orm.Mapped[EditingMode | None]
+
+    t4c_models: orm.Mapped[list[DatabaseT4CModel]] = orm.relationship(
+        back_populates="model"
+    )
+    git_models: orm.Mapped[list[DatabaseGitModel]] = orm.relationship(
+        back_populates="model"
+    )
+
+    restrictions: orm.Mapped[DatabaseToolModelRestrictions] = orm.relationship(
+        back_populates="model", uselist=False
     )
 
 
-class CapellaModel(BaseModel):
+class CapellaModel(pydantic.BaseModel):
     id: int
     slug: str
     name: str
     description: str
-    tool: ToolBase
-    version: ToolVersionBase | None
-    nature: ToolNatureBase | None
-    git_models: list[GitModel] | None
-    t4c_models: list[T4CModel] | None
+    tool: tools_models.ToolBase
+    version: tools_models.ToolVersionBase | None
+    nature: tools_models.ToolNatureBase | None
+    git_models: list[git_models.GitModel] | None
+    t4c_models: list[t4c_models.T4CModel] | None
 
-    restrictions: ToolModelRestrictions | None
+    restrictions: restrictions_models.ToolModelRestrictions | None
 
     class Config:
         orm_mode = True

@@ -1,132 +1,151 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import fastapi
+from fastapi import status
+from sqlalchemy import orm
 
-from fastapi import APIRouter, Body, Depends, HTTPException
-from sqlalchemy.orm import Session
-
-import capellacollab.users.crud as users
-import capellacollab.users.events.crud as event_crud
+from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.database import get_db
-from capellacollab.projects.models import DatabaseProject
-from capellacollab.projects.toolmodels.injectables import get_existing_project
-from capellacollab.projects.users.models import (
-    PatchProjectUser,
-    PostProjectUser,
-    ProjectUser,
-    ProjectUserAssociation,
-    ProjectUserPermission,
-    ProjectUserRole,
+from capellacollab.core.authentication import jwt_bearer
+from capellacollab.projects import models as projects_models
+from capellacollab.projects.toolmodels import (
+    injectables as toolmodels_injectables,
 )
-from capellacollab.projects.users.util import (
-    create_add_user_to_project_events,
-    get_project_permission_event_type,
-    get_project_role_event_type,
-)
-from capellacollab.users.events.models import EventType
-from capellacollab.users.injectables import get_own_user
-from capellacollab.users.models import DatabaseUser, Role, User
+from capellacollab.users import crud as users_crud
+from capellacollab.users import injectables as users_injectables
+from capellacollab.users import models as users_models
+from capellacollab.users.events import crud as events_crud
+from capellacollab.users.events import models as events_models
 
-from . import crud
-from .injectables import get_existing_user
+from . import crud, injectables, models, util
 
-router = APIRouter()
+router = fastapi.APIRouter()
 
 
-def check_user_not_admin(user: DatabaseUser) -> bool:
+def check_user_not_admin(user: users_models.DatabaseUser) -> bool:
     """
     Administrators have access to all projects.
     We have to prevent that they get roles in projects.
     """
-    if user.role == Role.ADMIN:
-        raise HTTPException(
-            status_code=403,
+    if user.role == users_models.Role.ADMIN:
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
             detail={"reason": "You are not allowed to edit this user."},
         )
     return True
 
 
-def check_user_not_in_project(project: DatabaseProject, user: DatabaseUser):
+def check_user_not_in_project(
+    project: projects_models.DatabaseProject, user: users_models.DatabaseUser
+):
     if user in project.users:
-        raise HTTPException(
-            status_code=409,
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
             detail={
                 "reason": "The user already exists in this project.",
             },
         )
 
 
-@router.get("/current", response_model=ProjectUser)
+def get_project_user_association_or_raise(
+    db: orm.Session,
+    project: projects_models.DatabaseProject,
+    user: users_models.DatabaseUser,
+) -> models.ProjectUserAssociation:
+    if not (
+        project_user := crud.get_project_user_association(db, project, user)
+    ):
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "reason": f"User {user.name} does not exist in project {project.slug}"
+            },
+        )
+    return project_user
+
+
+@router.get("/current", response_model=models.ProjectUser)
 def get_current_user(
-    user: DatabaseUser = Depends(get_own_user),
-    project: DatabaseProject = Depends(get_existing_project),
-    db: Session = Depends(get_db),
-    token: JWTBearer = Depends(JWTBearer()),
-) -> ProjectUserAssociation | ProjectUser:
+    user: users_models.DatabaseUser = fastapi.Depends(
+        users_injectables.get_own_user
+    ),
+    project: projects_models.DatabaseProject = fastapi.Depends(
+        toolmodels_injectables.get_existing_project
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
+    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+) -> models.ProjectUserAssociation | models.ProjectUser:
     if auth_injectables.RoleVerification(
-        required_role=Role.ADMIN, verify=False
+        required_role=users_models.Role.ADMIN, verify=False
     )(token, db):
-        return ProjectUser(
-            role=ProjectUserRole.ADMIN,
-            permission=ProjectUserPermission.WRITE,
+        return models.ProjectUser(
+            role=models.ProjectUserRole.ADMIN,
+            permission=models.ProjectUserPermission.WRITE,
             user=user,
         )
-    return crud.get_user_of_project(db, project, user)
+    return get_project_user_association_or_raise(db, project, user)
 
 
 @router.get(
     "/",
-    response_model=list[ProjectUser],
+    response_model=list[models.ProjectUser],
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
+                required_role=models.ProjectUserRole.MANAGER
             )
         )
     ],
 )
 def get_users_for_project(
-    project: DatabaseProject = Depends(get_existing_project),
-) -> User:
+    project: projects_models.DatabaseProject = fastapi.Depends(
+        toolmodels_injectables.get_existing_project
+    ),
+) -> list[models.ProjectUserAssociation]:
     return project.users
 
 
 @router.post(
     "/",
-    response_model=ProjectUser,
+    response_model=models.ProjectUser,
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
+                required_role=models.ProjectUserRole.MANAGER
             )
         )
     ],
 )
 def add_user_to_project(
-    post_project_user: PostProjectUser,
-    project: DatabaseProject = Depends(get_existing_project),
-    own_user: DatabaseUser = Depends(get_own_user),
-    db: Session = Depends(get_db),
-) -> ProjectUserAssociation:
-    if not (user := users.get_user_by_name(db, post_project_user.username)):
-        raise HTTPException(
-            404,
-            {
+    post_project_user: models.PostProjectUser,
+    project: projects_models.DatabaseProject = fastapi.Depends(
+        toolmodels_injectables.get_existing_project
+    ),
+    own_user: users_models.DatabaseUser = fastapi.Depends(
+        users_injectables.get_own_user
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> models.ProjectUserAssociation:
+    if not (
+        user := users_crud.get_user_by_name(db, post_project_user.username)
+    ):
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
                 "reason": f"The user with username “{post_project_user.username}” does not exist"
             },
         )
     check_user_not_admin(user)
     check_user_not_in_project(project, user)
 
-    if post_project_user.role == ProjectUserRole.MANAGER:
-        post_project_user.permission = ProjectUserPermission.WRITE
+    if post_project_user.role == models.ProjectUserRole.MANAGER:
+        post_project_user.permission = models.ProjectUserPermission.WRITE
 
     association = crud.add_user_to_project(
         db, project, user, post_project_user.role, post_project_user.permission
     )
-    create_add_user_to_project_events(
+    util.create_add_user_to_project_events(
         post_project_user, user, project, own_user, db
     )
 
@@ -137,44 +156,50 @@ def add_user_to_project(
     "/{user_id}",
     status_code=204,
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
+                required_role=models.ProjectUserRole.MANAGER
             )
         )
     ],
 )
 def update_project_user(
-    patch_project_user: PatchProjectUser,
-    user: DatabaseUser = Depends(get_existing_user),
-    project: DatabaseProject = Depends(get_existing_project),
-    own_user: DatabaseUser = Depends(get_own_user),
-    db: Session = Depends(get_db),
+    patch_project_user: models.PatchProjectUser,
+    user: users_models.DatabaseUser = fastapi.Depends(
+        injectables.get_existing_user
+    ),
+    project: projects_models.DatabaseProject = fastapi.Depends(
+        toolmodels_injectables.get_existing_project
+    ),
+    own_user: users_models.DatabaseUser = fastapi.Depends(
+        users_injectables.get_own_user
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     check_user_not_admin(user)
     if role := patch_project_user.role:
         crud.change_role_of_user_in_project(db, project, user, role)
 
-        event_crud.create_project_change_event(
+        events_crud.create_project_change_event(
             db=db,
             user=user,
-            event_type=get_project_role_event_type(role),
+            event_type=util.get_project_role_event_type(role),
             executor=own_user,
             project=project,
             reason=patch_project_user.reason,
         )
 
-        if role == ProjectUserRole.MANAGER:
+        if role == models.ProjectUserRole.MANAGER:
             crud.change_permission_of_user_in_project(
-                db, project, user, ProjectUserPermission.WRITE
+                db, project, user, models.ProjectUserPermission.WRITE
             )
 
     if permission := patch_project_user.permission:
-        project_user = crud.get_user_of_project(db, project, user)
+        project_user = get_project_user_association_or_raise(db, project, user)
 
-        if project_user.role == ProjectUserRole.MANAGER:
-            raise HTTPException(
-                status_code=403,
+        if project_user.role == models.ProjectUserRole.MANAGER:
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
                 detail={
                     "reason": "You are not allowed to set the permission of project leads!"
                 },
@@ -183,10 +208,10 @@ def update_project_user(
             db, project, user, permission
         )
 
-        event_crud.create_project_change_event(
+        events_crud.create_project_change_event(
             db=db,
             user=user,
-            event_type=get_project_permission_event_type(permission),
+            event_type=util.get_project_permission_event_type(permission),
             executor=own_user,
             project=project,
             reason=patch_project_user.reason,
@@ -197,23 +222,34 @@ def update_project_user(
     "/{user_id}",
     status_code=204,
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
+                required_role=models.ProjectUserRole.MANAGER
             )
         )
     ],
 )
 def remove_user_from_project(
-    reason: str = Body(),
-    project: DatabaseProject = Depends(get_existing_project),
-    user: DatabaseUser = Depends(get_existing_user),
-    own_user: DatabaseUser = Depends(get_own_user),
-    db: Session = Depends(get_db),
+    reason: str = fastapi.Body(),
+    project: projects_models.DatabaseProject = fastapi.Depends(
+        toolmodels_injectables.get_existing_project
+    ),
+    user: users_models.DatabaseUser = fastapi.Depends(
+        injectables.get_existing_user
+    ),
+    own_user: users_models.DatabaseUser = fastapi.Depends(
+        users_injectables.get_own_user
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     check_user_not_admin(user)
 
     crud.delete_user_from_project(db, project, user)
-    event_crud.create_project_change_event(
-        db, user, EventType.REMOVED_FROM_PROJECT, own_user, project, reason
+    events_crud.create_project_change_event(
+        db,
+        user,
+        events_models.EventType.REMOVED_FROM_PROJECT,
+        own_user,
+        project,
+        reason,
     )

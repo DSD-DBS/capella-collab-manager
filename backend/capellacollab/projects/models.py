@@ -5,38 +5,36 @@ from __future__ import annotations
 
 import typing as t
 
-from pydantic import BaseModel, validator
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
+import pydantic
+from sqlalchemy import orm
 
 # Import required for sqlalchemy
-from capellacollab.core.database import Base
-from capellacollab.projects.users.models import (
-    ProjectUserAssociation,
-    ProjectUserPermission,
-    ProjectUserRole,
-)
+from capellacollab.core import database
+from capellacollab.projects.users import models as project_users_models
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+    from capellacollab.projects.users.models import ProjectUserAssociation
 
 
-class UserMetadata(BaseModel):
+class UserMetadata(pydantic.BaseModel):
     leads: int
     contributors: int
     subscribers: int
 
 
-class Project(BaseModel):
+class Project(pydantic.BaseModel):
     name: str
     slug: str
     description: str | None
     users: UserMetadata
 
-    @validator("users", pre=True)
+    @pydantic.validator("users", pre=True)
     @classmethod
     def transform_users(
-        cls, users: UserMetadata | list[ProjectUserAssociation]
+        cls,
+        users: UserMetadata
+        | list[project_users_models.ProjectUserAssociation],
     ):
         if isinstance(users, UserMetadata):
             return users
@@ -46,23 +44,26 @@ class Project(BaseModel):
                 [
                     user
                     for user in users
-                    if user.role == ProjectUserRole.MANAGER
+                    if user.role
+                    == project_users_models.ProjectUserRole.MANAGER
                 ]
             ),
             contributors=len(
                 [
                     user
                     for user in users
-                    if user.role == ProjectUserRole.USER
-                    and user.permission == ProjectUserPermission.WRITE
+                    if user.role == project_users_models.ProjectUserRole.USER
+                    and user.permission
+                    == project_users_models.ProjectUserPermission.WRITE
                 ]
             ),
             subscribers=len(
                 [
                     user
                     for user in users
-                    if user.role == ProjectUserRole.USER
-                    and user.permission == ProjectUserPermission.READ
+                    if user.role == project_users_models.ProjectUserRole.USER
+                    and user.permission
+                    == project_users_models.ProjectUserPermission.READ
                 ]
             ),
         )
@@ -71,27 +72,30 @@ class Project(BaseModel):
         orm_mode = True
 
 
-class PatchProject(BaseModel):
+class PatchProject(pydantic.BaseModel):
     name: str | None
     description: str | None
 
 
-class PostProjectRequest(BaseModel):
+class PostProjectRequest(pydantic.BaseModel):
     name: str
     description: str | None
 
 
-class DatabaseProject(Base):
+class DatabaseProject(database.Base):
     __tablename__ = "projects"
 
-    id = Column(Integer, unique=True, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True)
-    slug = Column(String, unique=True, index=True, nullable=False)
-    description = Column(String)
-    users: ProjectUserAssociation = relationship(
-        "ProjectUserAssociation",
-        back_populates="project",
+    id: orm.Mapped[int] = orm.mapped_column(
+        unique=True, primary_key=True, index=True
     )
-    models: list[DatabaseCapellaModel] = relationship(
-        "DatabaseCapellaModel", back_populates="project"
+
+    name: orm.Mapped[str] = orm.mapped_column(unique=True, index=True)
+    slug: orm.Mapped[str] = orm.mapped_column(unique=True, index=True)
+    description: orm.Mapped[str | None]
+
+    users: orm.Mapped[list[ProjectUserAssociation]] = orm.relationship(
+        back_populates="project"
+    )
+    models: orm.Mapped[list[DatabaseCapellaModel]] = orm.relationship(
+        back_populates="project"
     )

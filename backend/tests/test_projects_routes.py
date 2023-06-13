@@ -39,7 +39,7 @@ def test_get_projects_as_user_with_project(
         {
             "name": project.name,
             "slug": project.slug,
-            "description": None,
+            "description": "",
             "users": {"leads": 1, "contributors": 0, "subscribers": 0},
         }
     ]
@@ -56,6 +56,6 @@ def test_get_projects_as_admin(
     assert {
         "name": "default",
         "slug": "default",
-        "description": None,
+        "description": "",
         "users": {"leads": 0, "contributors": 0, "subscribers": 0},
     } in response.json()

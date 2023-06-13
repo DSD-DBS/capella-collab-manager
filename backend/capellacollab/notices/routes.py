@@ -1,12 +1,12 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+import fastapi
+from sqlalchemy import orm
 
 import capellacollab.notices.crud as notices
+from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.database import get_db
 from capellacollab.notices.injectables import get_existing_notice
 from capellacollab.notices.models import (
     CreateNoticeRequest,
@@ -15,20 +15,20 @@ from capellacollab.notices.models import (
 )
 from capellacollab.users.models import Role
 
-router = APIRouter()
+router = fastapi.APIRouter()
 
 
 @router.get(
     "",
     response_model=list[NoticeResponse],
 )
-def get_notices(db: Session = Depends(get_db)):
-    return notices.get_all_notices(db)
+def get_notices(db: orm.Session = fastapi.Depends(database.get_db)):
+    return notices.get_notices(db)
 
 
 @router.get("/{notice_id}")
 def get_notice_by_id(
-    notice: DatabaseNotice = Depends(get_existing_notice),
+    notice: DatabaseNotice = fastapi.Depends(get_existing_notice),
 ):
     return notice
 
@@ -36,12 +36,14 @@ def get_notice_by_id(
 @router.post(
     "",
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(required_role=Role.ADMIN)
+        )
     ],
 )
 def create_notice(
     post_notice: CreateNoticeRequest,
-    db: Session = Depends(get_db),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     return notices.create_notice(db, post_notice)
 
@@ -50,11 +52,13 @@ def create_notice(
     "/{notice_id}",
     status_code=204,
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(required_role=Role.ADMIN)
+        )
     ],
 )
 def delete_notice(
-    notice: DatabaseNotice = Depends(get_existing_notice),
-    db: Session = Depends(get_db),
+    notice: DatabaseNotice = fastapi.Depends(get_existing_notice),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     notices.delete_notice(db, notice)

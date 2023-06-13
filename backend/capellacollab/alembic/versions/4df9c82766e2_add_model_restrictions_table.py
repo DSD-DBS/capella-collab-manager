@@ -59,10 +59,3 @@ def upgrade():
         t_model_restrictions,
         [{"model_id": model_id[0]} for model_id in models],
     )
-
-
-def downgrade():
-    op.drop_index(
-        op.f("ix_model_restrictions_id"), table_name="model_restrictions"
-    )
-    op.drop_table("model_restrictions")

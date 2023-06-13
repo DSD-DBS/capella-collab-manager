@@ -9,22 +9,15 @@ import typing as t
 
 import pydantic
 import requests
-from pydantic import BaseModel
-from requests.exceptions import RequestException
-from sqlalchemy import (
-    CheckConstraint,
-    Column,
-    Enum,
-    ForeignKey,
-    Integer,
-    String,
-)
-from sqlalchemy.orm import relationship
+import sqlalchemy as sa
+from sqlalchemy import orm
 
-import capellacollab.tools.models as tools_models
-from capellacollab.core.database import Base
+from capellacollab.core import database
+from capellacollab.tools import models as tools_models
 
 if t.TYPE_CHECKING:
+    from capellacollab.tools.models import Version
+
     from .repositories.models import DatabaseT4CRepository
 
 log = logging.getLogger(__name__)
@@ -34,7 +27,7 @@ def validate_rest_api_url(value: str | None):
     if value:
         try:
             requests.Request("GET", value).prepare()
-        except RequestException:
+        except requests.RequestException:
             log.info("REST API Validation failed", exc_info=True)
             raise ValueError(
                 "The provided TeamForCapella REST API is not valid."
@@ -49,40 +42,38 @@ class Protocol(str, enum.Enum):
     wss = "wss"
 
 
-class DatabaseT4CInstance(Base):
+class DatabaseT4CInstance(database.Base):
     __tablename__ = "t4c_instances"
-    id: int = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name: str = Column(String, nullable=False)
-    version_id: int = Column(Integer, ForeignKey("versions.id"))
-    license: str = Column(String)
-    host: str = Column(String)
-    port: int = Column(
-        Integer,
-        CheckConstraint("port >= 0 AND port <= 65535"),
-        nullable=False,
-        default=2036,
-    )
-    cdo_port: int = Column(
-        Integer,
-        CheckConstraint("cdo_port >= 0 AND cdo_port <= 65535"),
-        nullable=False,
-        default=12036,
-    )
-    usage_api: str = Column(String)
-    rest_api: str = Column(String)
-    username: str = Column(String)
-    password: str = Column(String)
-    protocol: Protocol = Column(
-        Enum(Protocol),
-        nullable=False,
-        default=Protocol.tcp,
+
+    id: orm.Mapped[int] = orm.mapped_column(
+        primary_key=True, index=True, autoincrement=True
     )
 
-    version: tools_models.Version = relationship(tools_models.Version)
-    repositories: list[DatabaseT4CRepository] = relationship(
-        "DatabaseT4CRepository",
-        back_populates="instance",
-        cascade="all, delete",
+    name: orm.Mapped[str]
+
+    license: orm.Mapped[str]
+    host: orm.Mapped[str]
+    port: orm.Mapped[int] = orm.mapped_column(
+        sa.CheckConstraint("port >= 0 AND port <= 65535"), default=2036
+    )
+    cdo_port: orm.Mapped[int] = orm.mapped_column(
+        sa.CheckConstraint("cdo_port >= 0 AND cdo_port <= 65535"),
+        default=12036,
+    )
+    usage_api: orm.Mapped[str]
+    rest_api: orm.Mapped[str]
+    username: orm.Mapped[str]
+    password: orm.Mapped[str]
+
+    protocol: orm.Mapped[Protocol] = orm.mapped_column(default=Protocol.tcp)
+
+    version_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("versions.id")
+    )
+    version: orm.Mapped[Version] = orm.relationship()
+
+    repositories: orm.Mapped[list[DatabaseT4CRepository]] = orm.relationship(
+        back_populates="instance", cascade="all, delete"
     )
 
 
@@ -93,7 +84,7 @@ def port_validator(value: int | None) -> int | None:
     return value
 
 
-class T4CInstanceBase(BaseModel):
+class T4CInstanceBase(pydantic.BaseModel):
     license: str
     host: str
     port: int
@@ -120,7 +111,7 @@ class T4CInstanceBase(BaseModel):
         orm_mode = True
 
 
-class FieldsT4CInstance(BaseModel):
+class FieldsT4CInstance(pydantic.BaseModel):
     license: str | None
     host: str | None
     port: int | None
@@ -161,14 +152,6 @@ class CreateT4CInstance(T4CInstanceComplete):
     password: str
 
 
-class Version(BaseModel):
-    id: int
-    name: str
-
-    class Config:
-        orm_mode = True
-
-
 class T4CInstance(T4CInstanceComplete):
     id: int
-    version: Version
+    version: tools_models.ToolVersionBase

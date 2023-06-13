@@ -34,23 +34,3 @@ def upgrade():
         "git_models_project_id_fkey", "git_models", type_="foreignkey"
     )
     op.drop_column("git_models", "project_id")
-
-
-def downgrade():
-    op.add_column(
-        "git_models",
-        sa.Column(
-            "project_id", sa.INTEGER(), autoincrement=False, nullable=True
-        ),
-    )
-    op.create_foreign_key(
-        "git_models_project_id_fkey",
-        "git_models",
-        "projects",
-        ["project_id"],
-        ["id"],
-        ondelete="CASCADE",
-    )
-    op.drop_column("git_models", "password")
-    op.drop_column("git_models", "username")
-    op.drop_column("EASEBackup", "reference")

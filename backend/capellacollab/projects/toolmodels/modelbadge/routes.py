@@ -18,13 +18,13 @@ from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects.toolmodels.modelsources.git.gitlab import (
     interface as gitlab_interface,
 )
-from capellacollab.projects.users import models as user_models
+from capellacollab.projects.users import models as projects_users_models
 
 router = fastapi.APIRouter(
     dependencies=[
         fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
-                required_role=user_models.ProjectUserRole.USER
+                required_role=projects_users_models.ProjectUserRole.USER
             )
         )
     ],

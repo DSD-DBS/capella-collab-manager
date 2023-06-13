@@ -1,74 +1,110 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from collections import abc
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+import sqlalchemy as sa
+from sqlalchemy import orm
 
-import capellacollab.tools.models as tools_models
-from capellacollab.projects.models import DatabaseProject
-from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
-from capellacollab.projects.toolmodels.modelsources.t4c.models import (
-    DatabaseT4CModel,
+from capellacollab.projects import models as projects_models
+from capellacollab.projects.toolmodels import models as toolmodels_models
+from capellacollab.projects.toolmodels.modelsources.t4c import (
+    models as t4c_models,
 )
-from capellacollab.projects.users.models import (
-    ProjectUserAssociation,
-    ProjectUserPermission,
+from capellacollab.projects.users import models as projects_users_models
+from capellacollab.settings.modelsources.t4c import (
+    models as settings_t4c_models,
 )
-from capellacollab.settings.modelsources.t4c.models import DatabaseT4CInstance
-from capellacollab.settings.modelsources.t4c.repositories.models import (
-    CreateT4CRepository,
-    DatabaseT4CRepository,
-)
-from capellacollab.users.models import DatabaseUser, Role
+from capellacollab.tools import models as tools_models
+from capellacollab.users import models as users_models
+
+from . import models
 
 
-def get_t4c_repository(_id: int, db: Session) -> DatabaseT4CRepository:
+def get_t4c_repository_by_id(
+    db: orm.Session, repo_id: int
+) -> models.DatabaseT4CRepository | None:
     return db.execute(
-        select(DatabaseT4CRepository).where(DatabaseT4CRepository.id == _id)
-    ).scalar()
+        sa.select(models.DatabaseT4CRepository).where(
+            models.DatabaseT4CRepository.id == repo_id
+        )
+    ).scalar_one_or_none()
+
+
+def exist_repo_for_name_and_instance(
+    db: orm.Session,
+    repo_name: str,
+    instance: settings_t4c_models.DatabaseT4CInstance,
+) -> bool:
+    return (
+        db.execute(
+            sa.select(models.DatabaseT4CRepository)
+            .where(models.DatabaseT4CRepository.name == repo_name)
+            .where(models.DatabaseT4CRepository.instance_id == instance.id)
+        ).scalar_one_or_none()
+        is not None
+    )
+
+
+def get_user_t4c_repositories(
+    db: orm.Session, version_name: str, user: users_models.DatabaseUser
+) -> abc.Sequence[models.DatabaseT4CRepository]:
+    if user.role == users_models.Role.ADMIN:
+        return _get_admin_t4c_repositories(db, version_name)
+    return _get_user_write_t4c_repositories(db, version_name, user)
 
 
 def create_t4c_repository(
-    repository: CreateT4CRepository, instance: DatabaseT4CInstance, db: Session
-):
-    repository = DatabaseT4CRepository(name=repository.name)
-    repository.instance = instance
+    db: orm.Session,
+    repo_name: str,
+    instance: settings_t4c_models.DatabaseT4CInstance,
+) -> models.DatabaseT4CRepository:
+    repository = models.DatabaseT4CRepository(
+        name=repo_name, instance=instance
+    )
+
     db.add(repository)
     db.commit()
-    db.refresh(repository)
     return repository
 
 
 def delete_4c_repository(
-    repository: DatabaseT4CRepository, db: Session
+    db: orm.Session, repository: models.DatabaseT4CRepository
 ) -> None:
     db.delete(repository)
     db.commit()
 
 
-def get_user_t4c_repositories(
-    db: Session, version_name: str, user: DatabaseUser
-) -> list[DatabaseT4CRepository]:
-    admin_stmt = (
-        select(DatabaseT4CRepository)
-        .join(DatabaseT4CRepository.models)
-        .join(DatabaseT4CModel.model)
-        .join(DatabaseCapellaModel.version)
+def _get_user_write_t4c_repositories(
+    db: orm.Session, version_name: str, user: users_models.DatabaseUser
+) -> abc.Sequence[models.DatabaseT4CRepository]:
+    stmt = (
+        sa.select(models.DatabaseT4CRepository)
+        .join(models.DatabaseT4CRepository.models)
+        .join(t4c_models.DatabaseT4CModel.model)
+        .join(toolmodels_models.DatabaseCapellaModel.version)
+        .where(tools_models.Version.name == version_name)
+        .join(toolmodels_models.DatabaseCapellaModel.project)
+        .join(projects_models.DatabaseProject.users)
+        .where(
+            projects_users_models.ProjectUserAssociation.permission
+            == projects_users_models.ProjectUserPermission.WRITE
+        )
+        .where(projects_users_models.ProjectUserAssociation.user == user)
+    )
+
+    return db.execute(stmt).scalars().all()
+
+
+def _get_admin_t4c_repositories(
+    db: orm.Session, version_name: str
+) -> abc.Sequence[models.DatabaseT4CRepository]:
+    stmt = (
+        sa.select(models.DatabaseT4CRepository)
+        .join(models.DatabaseT4CRepository.models)
+        .join(t4c_models.DatabaseT4CModel.model)
+        .join(toolmodels_models.DatabaseCapellaModel.version)
         .where(tools_models.Version.name == version_name)
     )
 
-    stmt = (
-        admin_stmt.join(DatabaseCapellaModel.project)
-        .join(DatabaseProject.users)
-        .where(
-            ProjectUserAssociation.permission == ProjectUserPermission.WRITE
-        )
-        .where(ProjectUserAssociation.user == user)
-    )
-
-    return (
-        db.execute(admin_stmt if user.role == Role.ADMIN else stmt)
-        .scalars()
-        .all()
-    )
+    return db.execute(stmt).scalars().all()

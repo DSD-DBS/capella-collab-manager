@@ -34,16 +34,9 @@ def upgrade():
             nullable=True,
         ),
     )
-    op.execute("UPDATE repository_user_association SET permission='WRITE'")
+    op.execute(
+        sa.text("UPDATE repository_user_association SET permission='WRITE'")
+    )
     op.alter_column(
         "repository_user_association", "permission", nullable=False
     )
-
-
-def downgrade():
-    op.drop_column("repository_user_association", "permission")
-
-    repositoryuserpermission = postgresql.ENUM(
-        "READ", "WRITE", name="repositoryuserpermission"
-    )
-    repositoryuserpermission.drop(op.get_bind())

@@ -89,7 +89,7 @@ def fixture_alembic_cfg(initialized_database):
     alembic_cfg = Config(root_dir / "alembic.ini")
     alembic_cfg.set_main_option("script_location", str(root_dir / "alembic"))
     alembic_cfg.set_main_option(
-        "sqlalchemy.url", str(initialized_database.url)
+        "sqlalchemy.url", str(initialized_database.url).replace("***", "dev")
     )
     alembic_cfg.attributes["configure_logger"] = False
     yield alembic_cfg
@@ -99,10 +99,7 @@ def test_init_database(
     initialized_database, alembic_cfg, alembic_revision: str
 ):
     # Update database to HEAD
-    migration.migrate_db(initialized_database, str(initialized_database.url))
-
-    # Downgrade database to alembic_revision
-    command.downgrade(alembic_cfg, alembic_revision)
-
-    # And migrate to HEAD again
-    migration.migrate_db(initialized_database, str(initialized_database.url))
+    migration.migrate_db(
+        initialized_database,
+        str(initialized_database.url).replace("***", "dev"),
+    )

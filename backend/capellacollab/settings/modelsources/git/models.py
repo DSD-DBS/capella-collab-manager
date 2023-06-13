@@ -4,10 +4,10 @@
 
 import enum
 
-from pydantic import BaseModel
-from sqlalchemy import Column, Enum, Integer, String
+import pydantic
+from sqlalchemy import orm
 
-from capellacollab.core.database import Base
+from capellacollab.core import database
 
 
 class GitType(enum.Enum):
@@ -17,7 +17,7 @@ class GitType(enum.Enum):
     AZUREDEVOPS = "AzureDevOps"
 
 
-class PostGitInstance(BaseModel):
+class PostGitInstance(pydantic.BaseModel):
     type: GitType
     name: str
     url: str
@@ -31,26 +31,30 @@ class GitInstance(PostGitInstance):
     id: int
 
 
-class DatabaseGitInstance(Base):
+class DatabaseGitInstance(database.Base):
     __tablename__ = "git_instances"
-    id: int = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name: str = Column(String)
-    url: str = Column(String)
-    api_url: str = Column(String)
-    type: GitType = Column(Enum(GitType))
+
+    id: orm.Mapped[int] = orm.mapped_column(
+        primary_key=True, index=True, autoincrement=True
+    )
+
+    name: orm.Mapped[str]
+    url: orm.Mapped[str]
+    api_url: orm.Mapped[str | None]
+    type: orm.Mapped[GitType]
 
 
-class GetRevisionsResponseModel(BaseModel):
+class GetRevisionsResponseModel(pydantic.BaseModel):
     branches: list[str]
     tags: list[str]
     default: str | None
 
 
-class GitCredentials(BaseModel):
+class GitCredentials(pydantic.BaseModel):
     username: str
     password: str
 
 
-class GetRevisionModel(BaseModel):
+class GetRevisionModel(pydantic.BaseModel):
     url: str
     credentials: GitCredentials

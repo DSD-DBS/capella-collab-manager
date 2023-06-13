@@ -24,16 +24,3 @@ def upgrade():
     )
     op.create_foreign_key(None, "sessions", "projects", ["project_id"], ["id"])
     op.drop_column("sessions", "repository")
-
-
-def downgrade():
-    op.add_column(
-        "sessions",
-        sa.Column(
-            "repository", sa.VARCHAR(), autoincrement=False, nullable=True
-        ),
-    )
-    op.drop_constraint(
-        "sessions_project_id_fkey", "sessions", type_="foreignkey"
-    )
-    op.drop_column("sessions", "project_id")

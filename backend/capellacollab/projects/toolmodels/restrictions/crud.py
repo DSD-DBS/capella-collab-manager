@@ -8,14 +8,14 @@ from capellacollab.core import database
 from . import models
 
 
-def update_integrations(
+def update_model_restrictions(
     db: orm.Session,
-    integrations: models.DatabaseToolIntegrations,
-    patch_integrations: models.PatchToolIntegrations,
-) -> models.DatabaseToolIntegrations:
+    restrictions: models.DatabaseToolModelRestrictions,
+    patch_restrictions: models.ToolModelRestrictions,
+) -> models.DatabaseToolModelRestrictions:
     database.patch_database_with_pydantic_object(
-        integrations, patch_integrations
+        restrictions, patch_restrictions
     )
 
     db.commit()
-    return integrations
+    return restrictions

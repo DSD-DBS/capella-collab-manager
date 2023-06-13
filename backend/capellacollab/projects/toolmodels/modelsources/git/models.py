@@ -1,18 +1,16 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
 import typing as t
 
 import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
-from sqlalchemy.sql.schema import ForeignKey
 
 from capellacollab.core import database
 
 if t.TYPE_CHECKING:
-    import capellacollab.projects.toolmodels.models as toolmodels_models
+    from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 
 
 class PostGitModel(pydantic.BaseModel):
@@ -50,20 +48,23 @@ class GitModel(pydantic.BaseModel):
 
 class DatabaseGitModel(database.Base):
     __tablename__ = "git_models"
-    id: int = sa.Column(
-        sa.Integer, primary_key=True, index=True, autoincrement=True
+
+    id: orm.Mapped[int] = orm.mapped_column(
+        primary_key=True, index=True, autoincrement=True
     )
-    name: str = sa.Column(sa.String)
-    path: str = sa.Column(sa.String)
-    entrypoint: str = sa.Column(sa.String)
-    revision: str = sa.Column(sa.String)
-    primary: bool = sa.Column(sa.Boolean)
-    model_id: int = sa.Column(sa.Integer, ForeignKey("models.id"))
-    model: "toolmodels_models.DatabaseCapellaModel" = orm.relationship(
-        "DatabaseCapellaModel", back_populates="git_models"
+    name: orm.Mapped[str]
+    path: orm.Mapped[str]
+    entrypoint: orm.Mapped[str]
+    revision: orm.Mapped[str]
+    primary: orm.Mapped[bool]
+
+    model_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("models.id"))
+    model: orm.Mapped["DatabaseCapellaModel"] = orm.relationship(
+        back_populates="git_models"
     )
-    username: str = sa.Column(sa.String)
-    password: str = sa.Column(sa.String)
+
+    username: orm.Mapped[str]
+    password: orm.Mapped[str]
 
     @classmethod
     def from_post_git_model(

@@ -21,8 +21,3 @@ depends_on = None
 
 def upgrade():
     op.drop_index("ix_projects_name", table_name="projects")
-
-
-def downgrade():
-    op.drop_index(op.f("ix_projects_name"), table_name="projects")
-    op.create_index("ix_projects_name", "projects", ["name"], unique=False)
