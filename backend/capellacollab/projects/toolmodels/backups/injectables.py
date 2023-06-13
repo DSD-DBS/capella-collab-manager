@@ -1,29 +1,32 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from fastapi import Depends, HTTPException, status
-from sqlalchemy.orm import Session
+import fastapi
+from fastapi import status
+from sqlalchemy import orm
 
-from capellacollab.core.database import get_db
-from capellacollab.projects.toolmodels.backups.models import DatabaseBackup
-from capellacollab.projects.toolmodels.injectables import (
-    get_existing_capella_model,
+from capellacollab.core import database
+from capellacollab.projects.toolmodels import (
+    injectables as toolmodels_injectables,
 )
-from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+from capellacollab.projects.toolmodels import models as toolmodels_models
 
-from . import crud
+from . import crud, models
 
 
 def get_existing_pipeline(
     pipeline_id: int,
-    model: DatabaseCapellaModel = Depends(get_existing_capella_model),
-    db: Session = Depends(get_db),
-) -> DatabaseBackup:
-    if not (backup := crud.get_pipeline_by_id(db, pipeline_id)):
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND,
-            {
-                "reason": f"The pipeline with the id {pipeline_id} of the model with th id {model.id} was not found.",
-            },
-        )
-    return backup
+    model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
+        toolmodels_injectables.get_existing_capella_model
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> models.DatabaseBackup:
+    if backup := crud.get_pipeline_by_id(db, pipeline_id):
+        return backup
+
+    raise fastapi.HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail={
+            "reason": f"The pipeline with the id {pipeline_id} of the model with th id {model.id} was not found.",
+        },
+    )

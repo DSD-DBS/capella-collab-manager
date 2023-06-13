@@ -1,38 +1,40 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from collections import abc
 
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+import fastapi
+from sqlalchemy import orm
 
+from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.database import get_db
-from capellacollab.users.events.models import (
-    DatabaseUserHistoryEvent,
-    HistoryEvent,
-    UserHistory,
-)
-from capellacollab.users.injectables import get_existing_user
-from capellacollab.users.models import DatabaseUser, Role
+from capellacollab.users import injectables as users_injectables
+from capellacollab.users import models as users_model
 
-from . import crud
+from . import crud, models
 
-router = APIRouter(
+router = fastapi.APIRouter(
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_model.Role.ADMIN
+            )
+        )
     ]
 )
 
 
-@router.get("/history/events", response_model=list[HistoryEvent])
+@router.get("/history/events", response_model=list[models.HistoryEvent])
 def get_events(
-    db: Session = Depends(get_db),
-) -> list[DatabaseUserHistoryEvent]:
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> abc.Sequence[models.DatabaseUserHistoryEvent]:
     return crud.get_events(db)
 
 
-@router.get("/{user_id}/history/", response_model=UserHistory)
+@router.get("/{user_id}/history/", response_model=models.UserHistory)
 def get_user_history(
-    user: DatabaseUser = Depends(get_existing_user),
-) -> DatabaseUser:
+    user: users_model.DatabaseUser = fastapi.Depends(
+        users_injectables.get_existing_user
+    ),
+) -> users_model.DatabaseUser:
     return user

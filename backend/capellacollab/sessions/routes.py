@@ -7,17 +7,18 @@ import json
 import logging
 import typing as t
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from requests.exceptions import RequestException
-from sqlalchemy.orm import Session
+import fastapi
+import requests
+from fastapi import status
+from sqlalchemy import orm
 
 from capellacollab.config import config
+from capellacollab.core import database
 from capellacollab.core import models as core_models
 from capellacollab.core.authentication import helper as auth_helper
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.credentials import generate_password
-from capellacollab.core.database import get_db
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.toolmodels import (
     injectables as toolmodels_injectables,
@@ -27,7 +28,6 @@ from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
 )
 from capellacollab.projects.users.models import ProjectUserRole
-from capellacollab.sessions import crud, guacamole, schema
 from capellacollab.sessions.files import routes as files
 from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import get_operator
@@ -48,11 +48,11 @@ from capellacollab.tools import models as tools_models
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 
-from . import injectables, util
+from . import crud, guacamole, injectables, models, util
 
-router = APIRouter(
+router = fastapi.APIRouter(
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.RoleVerification(
                 required_role=users_models.Role.USER
             )
@@ -60,9 +60,9 @@ router = APIRouter(
     ]
 )
 
-project_router = APIRouter(
+project_router = fastapi.APIRouter(
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.RoleVerification(
                 required_role=users_models.Role.USER
             )
@@ -70,9 +70,9 @@ project_router = APIRouter(
     ]
 )
 
-users_router = APIRouter(
+users_router = fastapi.APIRouter(
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.RoleVerification(
                 required_role=users_models.Role.USER
             )
@@ -83,13 +83,13 @@ users_router = APIRouter(
 log = logging.getLogger(__name__)
 
 
-@router.get("/", response_model=list[schema.GetSessionsResponse])
+@router.get("/", response_model=list[models.GetSessionsResponse])
 def get_current_sessions(
-    db_user: users_models.DatabaseUser = Depends(
+    db_user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
     ),
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
+    db: orm.Session = fastapi.Depends(database.get_db),
+    token=fastapi.Depends(JWTBearer()),
 ):
     if auth_injectables.RoleVerification(
         required_role=users_models.Role.ADMIN, verify=False
@@ -100,8 +100,8 @@ def get_current_sessions(
         project_user.role == ProjectUserRole.MANAGER
         for project_user in db_user.projects
     ):
-        raise HTTPException(
-            status_code=403,
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
             detail={
                 "reason": "You have to be project lead for at least one repository.",
             },
@@ -124,9 +124,9 @@ def get_current_sessions(
 
 @project_router.post(
     "/readonly",
-    response_model=schema.GetSessionsResponse,
+    response_model=models.GetSessionsResponse,
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
                 required_role=ProjectUserRole.USER
             )
@@ -134,20 +134,20 @@ def get_current_sessions(
     ],
 )
 def request_session(
-    body: schema.PostReadonlySessionRequest,
-    db_user: users_models.DatabaseUser = Depends(
+    body: models.PostReadonlySessionRequest,
+    db_user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
     ),
-    project: DatabaseProject = Depends(
+    project: DatabaseProject = fastapi.Depends(
         toolmodels_injectables.get_existing_project
     ),
-    operator: KubernetesOperator = Depends(get_operator),
-    db: Session = Depends(get_db),
+    operator: KubernetesOperator = fastapi.Depends(get_operator),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     log.info("Starting persistent session creation for user %s", db_user.name)
 
     if not body.models:
-        raise HTTPException(
+        raise fastapi.HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
                 "err_code": "NO_MODELS",
@@ -170,7 +170,7 @@ def request_session(
         if not any(
             gm for gm in model.git_models if gm.id == entry.git_model_id
         ):
-            raise HTTPException(
+            raise fastapi.HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={
                     "err_code": "GIT_MODEL_NOT_FOUND",
@@ -180,7 +180,7 @@ def request_session(
 
     model = entries_with_models[0][1]
     if not model.version:
-        raise HTTPException(
+        raise fastapi.HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
                 "err_code": "VERSION_NOT_CONFIGURED",
@@ -191,7 +191,7 @@ def request_session(
     if crud.exist_readonly_session_for_user_project_version(
         db, db_user, project, model.version
     ):
-        raise HTTPException(
+        raise fastapi.HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
                 "err_code": "EXISTING_SESSION",
@@ -201,7 +201,7 @@ def request_session(
 
     docker_image = get_readonly_image_for_version(model.version)
     if not docker_image:
-        raise HTTPException(
+        raise fastapi.HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
                 "err_code": "IMAGE_NOT_FOUND",
@@ -222,7 +222,7 @@ def request_session(
 
     return create_database_and_guacamole_session(
         db,
-        schema.WorkspaceType.READONLY,
+        models.WorkspaceType.READONLY,
         session,
         db_user.name,
         rdp_password,
@@ -234,9 +234,11 @@ def request_session(
 
 
 def models_as_json(
-    models: list[tuple[schema.PostReadonlySessionEntry, DatabaseCapellaModel]]
+    session_model_list: list[
+        tuple[models.PostReadonlySessionEntry, DatabaseCapellaModel]
+    ]
 ):
-    for entry, model in models:
+    for entry, model in session_model_list:
         if not (
             git_model := next(
                 (gm for gm in model.git_models if gm.id == entry.git_model_id),
@@ -263,13 +265,15 @@ def git_model_as_json(
     return d
 
 
-@router.post("/persistent", response_model=schema.GetSessionsResponse)
+@router.post("/persistent", response_model=models.GetSessionsResponse)
 def request_persistent_session(
-    body: schema.PostPersistentSessionRequest,
-    user: users_models.DatabaseUser = Depends(users_injectables.get_own_user),
-    db: Session = Depends(get_db),
-    operator: KubernetesOperator = Depends(get_operator),
-    token=Depends(JWTBearer()),
+    body: models.PostPersistentSessionRequest,
+    user: users_models.DatabaseUser = fastapi.Depends(
+        users_injectables.get_own_user
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
+    operator: KubernetesOperator = fastapi.Depends(get_operator),
+    token=fastapi.Depends(JWTBearer()),
 ):
     owner = auth_helper.get_username(token)
 
@@ -277,10 +281,10 @@ def request_persistent_session(
 
     existing_user_sessions = crud.get_sessions_for_user(db, owner)
 
-    if schema.WorkspaceType.PERSISTENT in [
+    if models.WorkspaceType.PERSISTENT in [
         session.type for session in existing_user_sessions
     ]:
-        raise HTTPException(
+        raise fastapi.HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
                 "err_code": "EXISTING_SESSION",
@@ -317,7 +321,7 @@ def request_persistent_session(
 
 
 def start_persistent_jupyter_session(
-    db: Session,
+    db: orm.Session,
     operator: KubernetesOperator,
     owner: str,
     token: str,
@@ -337,7 +341,7 @@ def start_persistent_jupyter_session(
 
     return create_database_session(
         db,
-        schema.WorkspaceType.PERSISTENT,
+        models.WorkspaceType.PERSISTENT,
         session,
         owner,
         tool,
@@ -348,7 +352,7 @@ def start_persistent_jupyter_session(
 
 
 def start_persistent_guacamole_session(
-    db: Session,
+    db: orm.Session,
     operator: KubernetesOperator,
     user: users_models.DatabaseUser,
     owner: str,
@@ -396,7 +400,7 @@ def start_persistent_guacamole_session(
                         required_role=users_models.Role.ADMIN, verify=False
                     )(token, db),
                 )
-            except RequestException:
+            except requests.RequestException:
                 warnings.append(
                     core_models.Message(
                         reason=(
@@ -436,7 +440,7 @@ def start_persistent_guacamole_session(
 
     response = create_database_and_guacamole_session(
         db,
-        schema.WorkspaceType.PERSISTENT,
+        models.WorkspaceType.PERSISTENT,
         session,
         owner,
         rdp_password,
@@ -451,7 +455,7 @@ def start_persistent_guacamole_session(
 
 
 def determine_pure_variants_configuration(
-    db: Session, user: users_models.DatabaseUser, tool: tools_models.Tool
+    db: orm.Session, user: users_models.DatabaseUser, tool: tools_models.Tool
 ) -> tuple[str | None, str | None, list[core_models.Message]]:
     warnings: list[core_models.Message] = []
     if not tool.integrations.pure_variants:
@@ -495,8 +499,8 @@ def determine_pure_variants_configuration(
 
 
 def create_database_session(
-    db: Session,
-    type: schema.WorkspaceType,
+    db: orm.Session,
+    type: models.WorkspaceType,
     session: dict[str, t.Any],
     owner: str,
     tool: tools_models.Tool,
@@ -521,8 +525,8 @@ def create_database_session(
 
 
 def create_database_and_guacamole_session(
-    db: Session,
-    type: schema.WorkspaceType,
+    db: orm.Session,
+    type: models.WorkspaceType,
     session: dict[str, t.Any],
     owner: str,
     rdp_password: str,
@@ -568,24 +572,28 @@ def create_database_and_guacamole_session(
 
 @router.delete("/{session_id}", status_code=204)
 def end_session(
-    session: DatabaseSession = Depends(injectables.get_existing_session),
-    db: Session = Depends(get_db),
-    operator: KubernetesOperator = Depends(get_operator),
+    session: DatabaseSession = fastapi.Depends(
+        injectables.get_existing_session
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
+    operator: KubernetesOperator = fastapi.Depends(get_operator),
 ):
     util.terminate_session(db, session, operator)
 
 
 @router.post(
     "/{session_id}/guacamole-tokens",
-    response_model=schema.GuacamoleAuthentication,
+    response_model=models.GuacamoleAuthentication,
 )
 def create_guacamole_token(
-    session: DatabaseSession = Depends(injectables.get_existing_session),
-    token=Depends(JWTBearer()),
+    session: DatabaseSession = fastapi.Depends(
+        injectables.get_existing_session
+    ),
+    token=fastapi.Depends(JWTBearer()),
 ):
     if session.owner_name != auth_helper.get_username(token):
-        raise HTTPException(
-            status_code=403,
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
             detail={
                 "reason": "The owner of the session does not match with your username."
             },
@@ -594,7 +602,7 @@ def create_guacamole_token(
     token = guacamole.get_token(
         session.guacamole_username, session.guacamole_password
     )
-    return schema.GuacamoleAuthentication(
+    return models.GuacamoleAuthentication(
         token=json.dumps(token),
         url=config["extensions"]["guacamole"]["publicURI"] + "/#/",
     )
@@ -604,23 +612,23 @@ router.include_router(router=files.router, prefix="/{session_id}/files")
 
 
 @users_router.get(
-    "/{user_id}/sessions", response_model=list[schema.OwnSessionResponse]
+    "/{user_id}/sessions", response_model=list[models.OwnSessionResponse]
 )
 def get_sessions_for_user(
-    user: users_models.DatabaseUser = Depends(
+    user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_existing_user
     ),
-    current_user: users_models.DatabaseUser = Depends(
+    current_user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
     ),
-    db: Session = Depends(get_db),
-    token=Depends(JWTBearer()),
+    db: orm.Session = fastapi.Depends(database.get_db),
+    token=fastapi.Depends(JWTBearer()),
 ):
     if user != current_user and not auth_injectables.RoleVerification(
         required_role=users_models.Role.ADMIN, verify=False
     )(token, db):
-        raise HTTPException(
-            status_code=403,
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
             detail={
                 "reason": "You can only see your own sessions.",
                 "technical": "If you are a project lead or administrator, please use the /sessions endpoint",
@@ -630,7 +638,7 @@ def get_sessions_for_user(
     return [] if not user.sessions else inject_attrs_in_sessions(user.sessions)
 
 
-def get_image_for_tool_version(db: Session, version_id: int) -> str:
+def get_image_for_tool_version(db: orm.Session, version_id: int) -> str:
     version = tools_crud.get_version_by_id_or_raise(db, version_id)
     return version.tool.docker_image_template.replace("$version", version.name)
 

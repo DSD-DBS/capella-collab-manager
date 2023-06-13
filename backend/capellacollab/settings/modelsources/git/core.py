@@ -7,9 +7,10 @@ import os
 import pathlib
 import subprocess
 
-from fastapi import HTTPException
+import fastapi
+from fastapi import status
 
-from .models import GetRevisionsResponseModel
+from . import models
 
 log = logging.getLogger(__name__)
 
@@ -32,8 +33,8 @@ def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
             }
         )
         if e.returncode == 128:
-            raise HTTPException(
-                status_code=500,
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail={
                     "err_code": "no_git_model_credentials",
                     "reason": "There was an error accessing the model. Please ask your project lead for more information. In most cases, the credentials need to be updated.",
@@ -46,9 +47,9 @@ def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
 
 def get_remote_refs(
     url: str, username: str, password: str, default=None
-) -> GetRevisionsResponseModel:
-    remote_refs: GetRevisionsResponseModel = GetRevisionsResponseModel(
-        branches=[], tags=[]
+) -> models.GetRevisionsResponseModel:
+    remote_refs: models.GetRevisionsResponseModel = (
+        models.GetRevisionsResponseModel(branches=[], tags=[])
     )
 
     git_env = {

@@ -1,17 +1,21 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
 import datetime
 import enum
+import typing as t
 
-from pydantic import BaseModel
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+import pydantic
+import sqlalchemy as sa
+from sqlalchemy import orm
 
-from capellacollab.core.database import Base
-from capellacollab.projects.models import DatabaseProject, Project
-from capellacollab.users.models import DatabaseUser, User
+from capellacollab.core import database
+from capellacollab.projects import models as projects_models
+from capellacollab.users import models as users_models
+
+if t.TYPE_CHECKING:
+    from capellacollab.projects.models import DatabaseProject
+    from capellacollab.users.models import DatabaseUser
 
 
 class EventType(enum.Enum):
@@ -28,10 +32,10 @@ class EventType(enum.Enum):
     ASSIGNED_ROLE_USER = "AssignedRoleUser"
 
 
-class BaseHistoryEvent(BaseModel):
-    user: User
-    executor: User | None
-    project: Project | None
+class BaseHistoryEvent(pydantic.BaseModel):
+    user: users_models.User
+    executor: users_models.User | None
+    project: projects_models.Project | None
     execution_time: datetime.datetime
     event_type: EventType
     reason: str | None
@@ -44,30 +48,36 @@ class HistoryEvent(BaseHistoryEvent):
     id: str
 
 
-class UserHistory(User):
+class UserHistory(users_models.User):
     created: datetime.datetime | None
     last_login: datetime.datetime | None
     events: list[HistoryEvent] | None
 
 
-class DatabaseUserHistoryEvent(Base):
+class DatabaseUserHistoryEvent(database.Base):
     __tablename__ = "user_history_events"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    id: orm.Mapped[int] = orm.mapped_column(primary_key=True, index=True)
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    user: Mapped["DatabaseUser"] = relationship(
+    user_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("users.id"))
+    user: orm.Mapped["DatabaseUser"] = orm.relationship(
         back_populates="events", foreign_keys=[user_id]
     )
 
-    executor_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
-    executor: Mapped["DatabaseUser"] = relationship(foreign_keys=[executor_id])
+    executor_id: orm.Mapped[int | None] = orm.mapped_column(
+        sa.ForeignKey("users.id")
+    )
+    executor: orm.Mapped["DatabaseUser"] = orm.relationship(
+        foreign_keys=[executor_id]
+    )
 
-    project_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"))
-    project: Mapped["DatabaseProject"] = relationship(
+    project_id: orm.Mapped[int | None] = orm.mapped_column(
+        sa.ForeignKey("projects.id")
+    )
+    project: orm.Mapped["DatabaseProject"] = orm.relationship(
         foreign_keys=[project_id]
     )
 
-    execution_time: Mapped[datetime.datetime]
-    event_type: Mapped[EventType]
-    reason: Mapped[str | None]
+    execution_time: orm.Mapped[datetime.datetime]
+    event_type: orm.Mapped[EventType]
+    reason: orm.Mapped[str | None]

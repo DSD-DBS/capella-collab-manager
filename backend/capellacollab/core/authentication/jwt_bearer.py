@@ -5,14 +5,14 @@ import importlib
 import logging
 import typing as t
 
-from fastapi import HTTPException, Request
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+import fastapi
+from fastapi import security, status
 from jose import jwt
 
 import capellacollab.users.crud as users_crud
-import capellacollab.users.events.crud as events
-from capellacollab.core.authentication.helper import get_username
-from capellacollab.core.database import SessionLocal
+import capellacollab.users.events.crud as events_crud
+from capellacollab.core import database
+from capellacollab.core.authentication import helper as auth_helper
 
 from . import get_authentication_entrypoint
 
@@ -21,19 +21,21 @@ ep = get_authentication_entrypoint()
 ep_main = importlib.import_module(".__main__", ep.module)
 
 
-class JWTBearer(HTTPBearer):
+class JWTBearer(security.HTTPBearer):
     def __init__(self, auto_error: bool = True):
         super().__init__(auto_error=auto_error)
 
-    async def __call__(self, request: Request) -> dict[str, t.Any] | None:
-        credentials: HTTPAuthorizationCredentials | None = (
+    async def __call__(
+        self, request: fastapi.Request
+    ) -> dict[str, t.Any] | None:
+        credentials: security.HTTPAuthorizationCredentials | None = (
             await super().__call__(request)
         )
 
         if not credentials or credentials.scheme != "Bearer":
             if self.auto_error:
-                raise HTTPException(
-                    status_code=401,
+                raise fastapi.HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Not authenticated",
                     headers={"WWW-Authenticate": "Bearer"},
                 )
@@ -44,20 +46,20 @@ class JWTBearer(HTTPBearer):
         return None
 
     def initialize_user(self, token_decoded: dict[str, str]):
-        with SessionLocal() as session:
-            username: str = get_username(token_decoded)
+        with database.SessionLocal() as session:
+            username: str = auth_helper.get_username(token_decoded)
             if not users_crud.get_user_by_name(session, username):
                 created_user = users_crud.create_user(session, username)
                 users_crud.update_last_login(session, created_user)
-                events.create_user_creation_event(session, created_user)
+                events_crud.create_user_creation_event(session, created_user)
 
     def validate_token(self, token: str) -> dict[str, t.Any] | None:
         try:
             jwt_cfg = ep_main.get_jwk_cfg(token)
         except Exception:
             if self.auto_error:
-                raise HTTPException(
-                    status_code=401,
+                raise fastapi.HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
                     detail={
                         "err_code": "TOKEN_INVALID",
                         "reason": "The used token is not valid.",
@@ -68,8 +70,8 @@ class JWTBearer(HTTPBearer):
             return jwt.decode(token, **jwt_cfg)
         except jwt.ExpiredSignatureError:
             if self.auto_error:
-                raise HTTPException(
-                    status_code=401,
+                raise fastapi.HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
                     detail={
                         "err_code": "token_exp",
                         "reason": "The Signature of the token is expired. Please request a new access token.",
@@ -78,8 +80,8 @@ class JWTBearer(HTTPBearer):
             return None
         except (jwt.JWTError, jwt.JWTClaimsError):
             if self.auto_error:
-                raise HTTPException(
-                    status_code=401,
+                raise fastapi.HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
                     detail={
                         "technical": "The validation of your access token failed. Please contact your administrator.",
                     },

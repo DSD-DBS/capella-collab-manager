@@ -4,21 +4,21 @@
 import typing as t
 
 import fastapi
-from fastapi import Depends, status
+from fastapi import status
+from sqlalchemy import orm
 
-from capellacollab.core.authentication.helper import get_username
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.database import get_db
-from capellacollab.users.models import DatabaseUser
+from capellacollab.core import database
+from capellacollab.core.authentication import helper as auth_helper
+from capellacollab.core.authentication import jwt_bearer
 
-from . import crud
+from . import crud, models
 
 
 def get_own_user(
-    db=Depends(get_db),
-    token=Depends(JWTBearer()),
-) -> DatabaseUser:
-    username = get_username(token)
+    db: orm.Session = fastapi.Depends(database.get_db),
+    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+) -> models.DatabaseUser:
+    username = auth_helper.get_username(token)
 
     if user := crud.get_user_by_name(db, username):
         return user
@@ -31,9 +31,9 @@ def get_own_user(
 
 def get_existing_user(
     user_id: int | t.Literal["current"],
-    db=Depends(get_db),
-    token=Depends(JWTBearer()),
-) -> DatabaseUser:
+    db=fastapi.Depends(database.get_db),
+    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+) -> models.DatabaseUser:
     if user_id == "current":
         return get_own_user(db, token)
 

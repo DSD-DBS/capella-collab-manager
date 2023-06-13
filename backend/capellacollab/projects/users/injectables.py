@@ -1,22 +1,23 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from fastapi import Depends, HTTPException, status
-from sqlalchemy.orm import Session
+import fastapi
+from fastapi import status
+from sqlalchemy import orm
 
-from capellacollab.core.database import get_db
-from capellacollab.users import crud
-from capellacollab.users.models import DatabaseUser
+from capellacollab.core import database
+from capellacollab.users import crud as users_crud
+from capellacollab.users import models as users_models
 
 
 def get_existing_user(
     user_id: int,
-    db: Session = Depends(get_db),
-) -> DatabaseUser:
-    if user := crud.get_user_by_id(db, user_id):
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> users_models.DatabaseUser:
+    if user := users_crud.get_user_by_id(db, user_id):
         return user
 
-    raise HTTPException(
+    raise fastapi.HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail={
             "err_code": "user_not_exists",

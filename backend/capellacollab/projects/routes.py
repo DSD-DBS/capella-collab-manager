@@ -3,54 +3,58 @@
 
 
 import logging
-from collections.abc import Sequence
+from collections import abc
 
-from fastapi import APIRouter, Depends, HTTPException
-from slugify import slugify
-from sqlalchemy.orm import Session
+import fastapi
+import slugify
+from fastapi import status
+from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import logging as core_logging
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.logging import get_request_logger
-from capellacollab.projects import crud
-from capellacollab.projects.models import (
-    DatabaseProject,
-    PatchProject,
-    PostProjectRequest,
-    Project,
+from capellacollab.core.authentication import jwt_bearer
+from capellacollab.projects.toolmodels import (
+    injectables as toolmodels_injectables,
 )
-from capellacollab.projects.toolmodels.injectables import get_existing_project
-from capellacollab.projects.users import crud as users_crud
-from capellacollab.projects.users.models import (
-    ProjectUserPermission,
-    ProjectUserRole,
-)
-from capellacollab.sessions.routes import project_router as router_sessions
+from capellacollab.projects.toolmodels import routes as toolmodels_routes
+from capellacollab.projects.users import crud as projects_users_crud
+from capellacollab.projects.users import models as projects_users_models
+from capellacollab.projects.users import routes as projects_users_routes
+from capellacollab.sessions import routes as session_routes
+from capellacollab.users import injectables as users_injectables
+from capellacollab.users import models as users_models
 from capellacollab.users.events import crud as events_crud
-from capellacollab.users.injectables import get_own_user
-from capellacollab.users.models import DatabaseUser, Role
 
-from .toolmodels.routes import router as router_models
-from .users.routes import router as router_users
+from . import crud, models
 
 logger = logging.getLogger(__name__)
-router = APIRouter(
+router = fastapi.APIRouter(
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.USER))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.USER
+            )
+        )
     ]
 )
 
 
-@router.get("/", response_model=Sequence[Project], tags=["Projects"])
+@router.get(
+    "/", response_model=abc.Sequence[models.Project], tags=["Projects"]
+)
 def get_projects(
-    user: DatabaseUser = Depends(get_own_user),
-    db: Session = Depends(database.get_db),
-    token=Depends(JWTBearer()),
-    log: logging.LoggerAdapter = Depends(get_request_logger),
-) -> Sequence[DatabaseProject]:
+    user: users_models.DatabaseUser = fastapi.Depends(
+        users_injectables.get_own_user
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
+    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+    log: logging.LoggerAdapter = fastapi.Depends(
+        core_logging.get_request_logger
+    ),
+) -> abc.Sequence[models.DatabaseProject]:
     if auth_injectables.RoleVerification(
-        required_role=Role.ADMIN, verify=False
+        required_role=users_models.Role.ADMIN, verify=False
     )(token, db):
         log.debug("Fetching all projects")
         return crud.get_projects(db)
@@ -62,26 +66,28 @@ def get_projects(
 
 @router.patch(
     "/{project_slug}",
-    response_model=Project,
+    response_model=models.Project,
     tags=["Projects"],
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
+                required_role=projects_users_models.ProjectUserRole.MANAGER
             )
         )
     ],
 )
 def update_project(
-    patch_project: PatchProject,
-    project: DatabaseProject = Depends(get_existing_project),
-    db: Session = Depends(database.get_db),
-) -> DatabaseProject:
-    new_slug = slugify(patch_project.name)
+    patch_project: models.PatchProject,
+    project: models.DatabaseProject = fastapi.Depends(
+        toolmodels_injectables.get_existing_project
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> models.DatabaseProject:
+    new_slug = slugify.slugify(patch_project.name)
     if crud.get_project_by_slug(db, new_slug) and project.slug != new_slug:
-        raise HTTPException(
-            409,
-            {
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            details={
                 "reason": "A project with a similar name already exists.",
                 "technical": "Slug already used",
             },
@@ -91,32 +97,36 @@ def update_project(
 
 @router.get(
     "/{project_slug}",
-    response_model=Project,
+    response_model=models.Project,
     tags=["Projects"],
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.USER
+                required_role=projects_users_models.ProjectUserRole.USER
             )
         )
     ],
 )
 def get_project_by_slug(
-    db_project: DatabaseProject = Depends(get_existing_project),
-) -> DatabaseProject:
+    db_project: models.DatabaseProject = fastapi.Depends(
+        toolmodels_injectables.get_existing_project
+    ),
+) -> models.DatabaseProject:
     return db_project
 
 
-@router.post("/", response_model=Project, tags=["Projects"])
+@router.post("/", response_model=models.Project, tags=["Projects"])
 def create_project(
-    post_project: PostProjectRequest,
-    user: DatabaseUser = Depends(get_own_user),
-    db: Session = Depends(database.get_db),
-) -> DatabaseProject:
-    if crud.get_project_by_slug(db, slugify(post_project.name)):
-        raise HTTPException(
-            409,
-            {
+    post_project: models.PostProjectRequest,
+    user: users_models.DatabaseUser = fastapi.Depends(
+        users_injectables.get_own_user
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> models.DatabaseProject:
+    if crud.get_project_by_slug(db, slugify.slugify(post_project.name)):
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
                 "reason": "A project with a similar name already exists.",
                 "technical": "Slug already used",
             },
@@ -126,13 +136,13 @@ def create_project(
         db, post_project.name, post_project.description
     )
 
-    if user.role != Role.ADMIN:
-        users_crud.add_user_to_project(
+    if user.role != users_models.Role.ADMIN:
+        projects_users_crud.add_user_to_project(
             db,
             project,
             user,
-            ProjectUserRole.MANAGER,
-            ProjectUserPermission.WRITE,
+            projects_users_models.ProjectUserRole.MANAGER,
+            projects_users_models.ProjectUserPermission.WRITE,
         )
 
     return project
@@ -143,31 +153,42 @@ def create_project(
     tags=["Projects"],
     status_code=204,
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
     ],
 )
 def delete_project(
-    project: DatabaseProject = Depends(get_existing_project),
-    db: Session = Depends(database.get_db),
+    project: models.DatabaseProject = fastapi.Depends(
+        toolmodels_injectables.get_existing_project
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     if project.models:
-        raise HTTPException(
-            409, {"reason": "The project still has models assigned to it"}
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={"reason": "The project still has models assigned to it"},
         )
-    users_crud.delete_users_from_project(db, project)
+    projects_users_crud.delete_users_from_project(db, project)
     events_crud.delete_all_events_projects_associated_with(db, project.id)
 
     crud.delete_project(db, project)
 
 
 router.include_router(
-    router_users, tags=["Projects"], prefix="/{project_slug}/users"
+    projects_users_routes.router,
+    tags=["Projects"],
+    prefix="/{project_slug}/users",
 )
 router.include_router(
-    router_models, prefix="/{project_slug}/models", tags=["Projects - Models"]
+    toolmodels_routes.router,
+    prefix="/{project_slug}/models",
+    tags=["Projects - Models"],
 )
 router.include_router(
-    router_sessions,
+    session_routes.project_router,
     prefix="/{project_slug}/sessions",
     tags=["Projects - Sessions"],
 )

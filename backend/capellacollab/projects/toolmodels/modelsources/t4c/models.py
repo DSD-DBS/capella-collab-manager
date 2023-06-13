@@ -5,13 +5,13 @@ from __future__ import annotations
 
 import typing as t
 
-from pydantic import BaseModel
-from sqlalchemy import ForeignKey, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+import pydantic
+import sqlalchemy as sa
+from sqlalchemy import orm
 
-from capellacollab.core.database import Base
-from capellacollab.settings.modelsources.t4c.repositories.models import (
-    T4CRepository,
+from capellacollab.core import database
+from capellacollab.settings.modelsources.t4c.repositories import (
+    models as repositories_models,
 )
 
 if t.TYPE_CHECKING:
@@ -21,33 +21,37 @@ if t.TYPE_CHECKING:
     )
 
 
-class DatabaseT4CModel(Base):
+class DatabaseT4CModel(database.Base):
     __tablename__ = "t4c_models"
-    __table_args__ = (UniqueConstraint("repository_id", "model_id", "name"),)
-
-    id: Mapped[int] = mapped_column(unique=True, primary_key=True, index=True)
-    name: Mapped[str] = mapped_column(index=True)
-
-    repository_id: Mapped[int] = mapped_column(
-        ForeignKey("t4c_repositories.id")
+    __table_args__ = (
+        sa.UniqueConstraint("repository_id", "model_id", "name"),
     )
-    repository: Mapped[DatabaseT4CRepository] = relationship(
+
+    id: orm.Mapped[int] = orm.mapped_column(
+        unique=True, primary_key=True, index=True
+    )
+    name: orm.Mapped[str] = orm.mapped_column(index=True)
+
+    repository_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("t4c_repositories.id")
+    )
+    repository: orm.Mapped[DatabaseT4CRepository] = orm.relationship(
         back_populates="models"
     )
 
-    model_id: Mapped[int] = mapped_column(ForeignKey("models.id"))
-    model: Mapped[DatabaseCapellaModel] = relationship(
+    model_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("models.id"))
+    model: orm.Mapped[DatabaseCapellaModel] = orm.relationship(
         back_populates="t4c_models"
     )
 
 
-class SubmitT4CModel(BaseModel):
+class SubmitT4CModel(pydantic.BaseModel):
     name: str
     t4c_instance_id: int
     t4c_repository_id: int
 
 
-class SimpleT4CModel(BaseModel):
+class SimpleT4CModel(pydantic.BaseModel):
     project_name: str
     repository_name: str
     instance_name: str
@@ -64,16 +68,16 @@ class SimpleT4CModel(BaseModel):
         )
 
 
-class T4CModel(BaseModel):
+class T4CModel(pydantic.BaseModel):
     id: int
     name: str
-    repository: T4CRepository
+    repository: repositories_models.T4CRepository
 
     class Config:
         orm_mode = True
 
 
-class T4CRepositoryWithModels(T4CRepository):
+class T4CRepositoryWithModels(repositories_models.T4CRepository):
     models: list[T4CModel]
 
     class Config:

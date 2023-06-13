@@ -6,11 +6,9 @@ import logging
 
 import pydantic
 import requests
-from pydantic import BaseModel
-from requests import RequestException
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import orm
 
-from capellacollab.core.database import Base
+from capellacollab.core import database
 
 log = logging.getLogger(__name__)
 
@@ -19,7 +17,7 @@ def validate_license_url(value: str | None):
     if value:
         try:
             requests.Request("GET", value).prepare()
-        except RequestException:
+        except requests.RequestException:
             log.info("Floating license validation failed", exc_info=True)
             raise ValueError(
                 "The provided floating license server is not valid."
@@ -27,15 +25,15 @@ def validate_license_url(value: str | None):
     return value
 
 
-class DatabasePureVariantsLicenses(Base):
+class DatabasePureVariantsLicenses(database.Base):
     __tablename__ = "pure_variants"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    license_server_url: Mapped[str | None]
-    license_key_filename: Mapped[str | None]
+    id: orm.Mapped[int] = orm.mapped_column(primary_key=True, index=True)
+    license_server_url: orm.Mapped[str | None]
+    license_key_filename: orm.Mapped[str | None]
 
 
-class PureVariantsLicenses(BaseModel):
+class PureVariantsLicenses(pydantic.BaseModel):
     license_server_url: str | None
     license_key_filename: str | None
 

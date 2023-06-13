@@ -2,47 +2,43 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from fastapi import APIRouter, Depends
-from pydantic import BaseModel
-from sqlalchemy.orm import Session
+import fastapi
+import pydantic
+from sqlalchemy import orm
 
-from capellacollab.core.database import get_db
-from capellacollab.sessions.guacamole import get_admin_token
-from capellacollab.sessions.operators import get_operator
+from capellacollab.core import database
+from capellacollab.sessions import guacamole, operators
 
 
-class StatusResponse(BaseModel):
+class StatusResponse(pydantic.BaseModel):
     guacamole: bool
     database: bool
     operator: bool
 
 
-router = APIRouter()
+router = fastapi.APIRouter()
 
 
-@router.get(
-    "/status",
-    response_model=StatusResponse,
-)
-def get_status(db: Session = Depends(get_db)):
+@router.get("/status", response_model=StatusResponse)
+def get_status(db: orm.Session = fastapi.Depends(database.get_db)):
     return StatusResponse(
         guacamole=validate_guacamole(),
         database=validate_session(db),
-        operator=get_operator().validate(),
+        operator=operators.get_operator().validate(),
     )
 
 
 def validate_guacamole() -> bool:
     try:
-        get_admin_token()
+        guacamole.get_admin_token()
         return True
     except BaseException:
         return False
 
 
-def validate_session(session: Session) -> bool:
+def validate_session(db: orm.Session) -> bool:
     try:
-        session.connection()
+        db.connection()
         return True
     except BaseException:
         return False

@@ -1,23 +1,28 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from fastapi import APIRouter, Depends
+import fastapi
 
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.users.models import Role
+from capellacollab.settings.integrations.purevariants import (
+    routes as purevariants_routes,
+)
+from capellacollab.settings.modelsources import routes as modelsources_routes
+from capellacollab.users import models as users_models
 
-from .integrations.purevariants import routes as purevariants
-from .modelsources import routes as modelsources
-
-router = APIRouter(
+router = fastapi.APIRouter(
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.USER))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.USER
+            )
+        )
     ]
 )
 router.include_router(
-    modelsources.router,
+    modelsources_routes.router,
     prefix="/modelsources",
 )
 router.include_router(
-    purevariants.router, prefix="/integrations/pure-variants"
+    purevariants_routes.router, prefix="/integrations/pure-variants"
 )

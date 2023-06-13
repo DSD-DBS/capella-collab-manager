@@ -1,32 +1,32 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+import fastapi
+from sqlalchemy import orm
 
+from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.database import get_db
 from capellacollab.tools import injectables
 from capellacollab.tools.models import Tool
-from capellacollab.users.models import Role
+from capellacollab.users import models as users_model
 
-from . import crud
-from .models import PatchToolIntegrations, ToolIntegrations
+from . import crud, models
 
-router = APIRouter(
+router = fastapi.APIRouter(
     dependencies=[
-        Depends(auth_injectables.RoleVerification(required_role=Role.ADMIN))
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_model.Role.ADMIN
+            )
+        )
     ]
 )
 
 
-@router.put(
-    "",
-    response_model=ToolIntegrations,
-)
+@router.put("", response_model=models.ToolIntegrations)
 def update_integrations(
-    body: PatchToolIntegrations,
-    tool: "Tool" = Depends(injectables.get_existing_tool),
-    db: Session = Depends(get_db),
-) -> ToolIntegrations:
+    body: models.PatchToolIntegrations,
+    tool: "Tool" = fastapi.Depends(injectables.get_existing_tool),
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> models.DatabaseToolIntegrations:
     return crud.update_integrations(db, tool.integrations, body)

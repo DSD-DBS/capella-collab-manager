@@ -5,41 +5,30 @@
 import logging
 import os
 
+import fastapi
+import starlette_prometheus
 import uvicorn
-from fastapi import FastAPI, Request
-from fastapi.middleware import Middleware
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from starlette_prometheus import PrometheusMiddleware, metrics
+from fastapi import middleware, responses
+from fastapi.middleware import cors
 
 import capellacollab.sessions.metrics
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.config import config
+from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
-from capellacollab.core.logging import (
-    AttachTraceIdMiddleware,
-    AttachUserNameMiddleware,
-    CustomFormatter,
-    CustomTimedRotatingFileHandler,
-    LogExceptionMiddleware,
-    LogRequestsMiddleware,
-)
 from capellacollab.routes import router, status
-from capellacollab.sessions import operators
-from capellacollab.sessions.idletimeout import (
-    terminate_idle_sessions_in_background,
-)
+from capellacollab.sessions import idletimeout, operators
 
 handlers: list[logging.Handler] = [
     logging.StreamHandler(),
-    CustomTimedRotatingFileHandler(
+    core_logging.CustomTimedRotatingFileHandler(
         str(config["logging"]["logPath"]) + "backend.log"
     ),
 ]
 
 for handler in handlers:
-    handler.setFormatter(CustomFormatter())
+    handler.setFormatter(core_logging.CustomFormatter())
 
 logging.basicConfig(level=config["logging"]["level"], handlers=handlers)
 
@@ -63,10 +52,10 @@ async def shutdown():
 
 async def schedule_termination_of_idle_sessions():
     if os.getenv("DISABLE_SESSION_TIMEOUT", "") not in ("true", "1", "t"):
-        await terminate_idle_sessions_in_background()
+        await idletimeout.terminate_idle_sessions_in_background()
 
 
-app = FastAPI(
+app = fastapi.FastAPI(
     title="Capella Collaboration",
     on_startup=[
         startup,
@@ -74,32 +63,32 @@ app = FastAPI(
         capellacollab.sessions.metrics.register,
     ],
     middleware=[
-        Middleware(
-            CORSMiddleware,
+        middleware.Middleware(
+            cors.CORSMiddleware,
             allow_origins=["*"],
             allow_credentials=True,
             allow_methods=["POST", "GET", "OPTIONS", "DELETE", "PUT", "PATCH"],
             allow_headers=["*"],
         ),
-        Middleware(AttachTraceIdMiddleware),
-        Middleware(AttachUserNameMiddleware),
-        Middleware(LogExceptionMiddleware),
-        Middleware(LogRequestsMiddleware),
-        Middleware(PrometheusMiddleware),
+        middleware.Middleware(core_logging.AttachTraceIdMiddleware),
+        middleware.Middleware(core_logging.AttachUserNameMiddleware),
+        middleware.Middleware(core_logging.LogExceptionMiddleware),
+        middleware.Middleware(core_logging.LogRequestsMiddleware),
+        middleware.Middleware(starlette_prometheus.PrometheusMiddleware),
     ],
     on_shutdown=[shutdown],
 )
 
 
 @app.exception_handler(500)
-async def handle_exceptions(request: Request, exc: Exception):
+async def handle_exceptions(request: fastapi.Request, exc: Exception):
     # pylint: disable=unused-argument
     """
     A custom exception handler is required, otherwise no CORS headers are included
     in the case of exceptions.
     https://github.com/encode/starlette/issues/1175
     """
-    cors = CORSMiddleware(
+    cors_middleware = cors.CORSMiddleware(
         app=app,
         allow_origins=["*"],
         allow_credentials=True,
@@ -107,10 +96,10 @@ async def handle_exceptions(request: Request, exc: Exception):
         allow_headers=["*"],
     )
 
-    response = JSONResponse(
+    response = responses.JSONResponse(
         status_code=500, content={"body": "Internal Server Error"}
     )
-    response.headers.update(cors.simple_headers)
+    response.headers.update(cors_middleware.simple_headers)
 
     return response
 
@@ -120,7 +109,7 @@ async def healthcheck():
     return {"status": "alive"}
 
 
-app.add_route("/metrics", metrics)
+app.add_route("/metrics", starlette_prometheus.metrics)
 
 app.include_router(status.router, prefix="", tags=["Status"])
 app.include_router(router, prefix="/api/v1")

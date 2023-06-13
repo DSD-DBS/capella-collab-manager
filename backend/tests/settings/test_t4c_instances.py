@@ -1,19 +1,18 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from fastapi.testclient import TestClient
-from sqlalchemy.orm import Session
+from fastapi import testclient
+from sqlalchemy import orm
 
 from capellacollab.tools import crud as tools_crud
-from capellacollab.tools import models as tools_models
-from capellacollab.users.crud import create_user
-from capellacollab.users.models import Role
+from capellacollab.users import crud as users_crud
+from capellacollab.users import models as users_models
 
 
 def test_create_t4c_instance(
-    client: TestClient, db: Session, executor_name: str
+    client: testclient.TestClient, db: orm.Session, executor_name: str
 ):
-    create_user(db, executor_name, Role.ADMIN)
+    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
     tool = tools_crud.create_tool_with_name(db, "Test")
     version = tools_crud.create_version(db, tool.id, "test")
 

@@ -1,29 +1,29 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from collections.abc import Sequence
+from collections import abc
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+import sqlalchemy as sa
+from sqlalchemy import orm
 
-from capellacollab.core.database import patch_database_with_pydantic_object
-from capellacollab.settings.modelsources.t4c.models import (
-    DatabaseT4CInstance,
-    PatchT4CInstance,
-)
+from capellacollab.core import database
+
+from . import models
 
 
-def get_t4c_instances(db: Session) -> Sequence[DatabaseT4CInstance]:
-    return db.execute(select(DatabaseT4CInstance)).scalars().all()
+def get_t4c_instances(
+    db: orm.Session,
+) -> abc.Sequence[models.DatabaseT4CInstance]:
+    return db.execute(sa.select(models.DatabaseT4CInstance)).scalars().all()
 
 
 def get_t4c_instances_by_version(
-    db: Session, version_id: int
-) -> Sequence[DatabaseT4CInstance]:
+    db: orm.Session, version_id: int
+) -> abc.Sequence[models.DatabaseT4CInstance]:
     return (
         db.execute(
-            select(DatabaseT4CInstance).where(
-                DatabaseT4CInstance.version_id == version_id
+            sa.select(models.DatabaseT4CInstance).where(
+                models.DatabaseT4CInstance.version_id == version_id
             )
         )
         .scalars()
@@ -32,29 +32,29 @@ def get_t4c_instances_by_version(
 
 
 def get_t4c_instance_by_id(
-    db: Session, instance_id: int
-) -> DatabaseT4CInstance | None:
+    db: orm.Session, instance_id: int
+) -> models.DatabaseT4CInstance | None:
     return db.execute(
-        select(DatabaseT4CInstance).where(
-            DatabaseT4CInstance.id == instance_id
+        sa.select(models.DatabaseT4CInstance).where(
+            models.DatabaseT4CInstance.id == instance_id
         )
     ).scalar_one_or_none()
 
 
 def create_t4c_instance(
-    db: Session, instance: DatabaseT4CInstance
-) -> DatabaseT4CInstance:
+    db: orm.Session, instance: models.DatabaseT4CInstance
+) -> models.DatabaseT4CInstance:
     db.add(instance)
     db.commit()
     return instance
 
 
 def update_t4c_instance(
-    db: Session,
-    instance: DatabaseT4CInstance,
-    patch_t4c_instance: PatchT4CInstance,
+    db: orm.Session,
+    instance: models.DatabaseT4CInstance,
+    patch_t4c_instance: models.PatchT4CInstance,
 ):
-    patch_database_with_pydantic_object(instance, patch_t4c_instance)
+    database.patch_database_with_pydantic_object(instance, patch_t4c_instance)
 
     db.commit()
     return instance

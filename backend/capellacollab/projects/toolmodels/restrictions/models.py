@@ -5,17 +5,17 @@ from __future__ import annotations
 
 import typing as t
 
-from pydantic import BaseModel
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+import pydantic
+import sqlalchemy as sa
+from sqlalchemy import orm
 
-from capellacollab.core.database import Base
+from capellacollab.core import database
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
 
 
-class ToolModelRestrictions(BaseModel):
+class ToolModelRestrictions(pydantic.BaseModel):
     # If true, access to the specific resource is granted for a model.
     # If false, the access is not allowed.
 
@@ -25,14 +25,16 @@ class ToolModelRestrictions(BaseModel):
         orm_mode = True
 
 
-class DatabaseToolModelRestrictions(Base):
+class DatabaseToolModelRestrictions(database.Base):
     __tablename__ = "model_restrictions"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True, unique=True)
+    id: orm.Mapped[int] = orm.mapped_column(
+        primary_key=True, index=True, unique=True
+    )
 
-    model_id: Mapped[int] = mapped_column(ForeignKey("models.id"))
-    model: Mapped[DatabaseCapellaModel] = relationship(
+    model_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("models.id"))
+    model: orm.Mapped[DatabaseCapellaModel] = orm.relationship(
         back_populates="restrictions"
     )
 
-    allow_pure_variants: Mapped[bool] = mapped_column(default=False)
+    allow_pure_variants: orm.Mapped[bool] = orm.mapped_column(default=False)

@@ -5,13 +5,14 @@
 import secrets
 from functools import lru_cache
 
+import fastapi
 from cachetools import TTLCache
-from fastapi import APIRouter, Depends
 from msal import ConfidentialClientApplication
-from sqlalchemy.orm import Session
+from sqlalchemy import orm
 
 import capellacollab.users.crud as users_crud
 from capellacollab.config import config
+from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
@@ -19,10 +20,9 @@ from capellacollab.core.authentication.schemas import (
     RefreshTokenRequest,
     TokenRequest,
 )
-from capellacollab.core.database import get_db
 from capellacollab.users.models import Role
 
-router = APIRouter()
+router = fastapi.APIRouter()
 cfg = config["authentication"]["azure"]
 
 
@@ -52,7 +52,9 @@ async def get_redirect_url():
 
 
 @router.post("/tokens", name="Create access_token")
-async def api_get_token(body: TokenRequest, db: Session = Depends(get_db)):
+async def api_get_token(
+    body: TokenRequest, db: orm.Session = fastapi.Depends(database.get_db)
+):
     auth_data = global_session_data[body.state]
     del global_session_data[body.state]
     token = ad_session().acquire_token_by_auth_code_flow(
@@ -82,7 +84,7 @@ async def api_refresh_token(body: RefreshTokenRequest):
 
 
 @router.delete("/tokens", name="Invalidate the token (log out)")
-async def logout(jwt_decoded=Depends(JWTBearer())):
+async def logout(jwt_decoded=fastapi.Depends(JWTBearer())):
     for account in ad_session().get_accounts():
         if account["username"] == jwt_decoded["preferred_username"]:
             return ad_session().remove_account(account)
@@ -92,8 +94,8 @@ async def logout(jwt_decoded=Depends(JWTBearer())):
 @router.get("/tokens", name="Validate the token")
 async def validate_token(
     scope: Role | None,
-    token=Depends(JWTBearer()),
-    db=Depends(get_db),
+    token=fastapi.Depends(JWTBearer()),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     if scope and scope.ADMIN:
         auth_injectables.RoleVerification(required_role=Role.ADMIN)(token, db)

@@ -2,22 +2,22 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+import sqlalchemy as sa
+from sqlalchemy import orm
 
 from capellacollab.settings.integrations.purevariants import models
 
 
 def get_pure_variants_configuration(
-    db: Session,
+    db: orm.Session,
 ) -> models.DatabasePureVariantsLicenses | None:
     return db.execute(
-        select(models.DatabasePureVariantsLicenses)
+        sa.select(models.DatabasePureVariantsLicenses)
     ).scalar_one_or_none()
 
 
 def set_license_server_configuration(
-    db: Session, value: str
+    db: orm.Session, value: str
 ) -> models.DatabasePureVariantsLicenses:
     if pv_license := get_pure_variants_configuration(db):
         pv_license.license_server_url = value
@@ -31,7 +31,7 @@ def set_license_server_configuration(
 
 
 def set_license_key_filename(
-    db: Session, value: str | None
+    db: orm.Session, value: str | None
 ) -> models.DatabasePureVariantsLicenses:
     if pv_license := get_pure_variants_configuration(db):
         pv_license.license_key_filename = value

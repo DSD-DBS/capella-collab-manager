@@ -24,14 +24,13 @@ from capellacollab.projects.users.models import (
     ProjectUserPermission,
     ProjectUserRole,
 )
+from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.crud import (
     create_session,
     get_session_by_id,
     get_sessions_for_user,
 )
-from capellacollab.sessions.models import DatabaseSession
 from capellacollab.sessions.operators import get_operator
-from capellacollab.sessions.schema import WorkspaceType
 from capellacollab.tools.crud import (
     create_tool,
     create_tool_with_name,
@@ -361,9 +360,9 @@ def setup_git_model_for_user(db, user, version):
 
 
 def setup_active_readonly_session(db, user, project, version):
-    database_model = DatabaseSession(
+    database_model = sessions_models.DatabaseSession(
         id=str(uuid1()),
-        type=WorkspaceType.READONLY,
+        type=sessions_models.WorkspaceType.READONLY,
         owner=user,
         project=project,
         tool=version.tool,

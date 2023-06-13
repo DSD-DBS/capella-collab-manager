@@ -1,51 +1,53 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import fastapi
+from fastapi import status
+from sqlalchemy import orm
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-
+from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.database import get_db
-from capellacollab.projects.users.models import ProjectUserRole
+from capellacollab.projects.toolmodels import (
+    injectables as toolmodels_injectables,
+)
+from capellacollab.projects.toolmodels import models as toolmodels_models
+from capellacollab.projects.users import models as projects_users_models
 
-from ..injectables import get_existing_capella_model
-from ..models import DatabaseCapellaModel, DatabaseToolModelRestrictions
-from . import crud
-from .injectables import get_model_restrictions
-from .models import ToolModelRestrictions
+from . import crud, injectables, models
 
-router = APIRouter(
+router = fastapi.APIRouter(
     dependencies=[
-        Depends(
+        fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.ADMIN
+                required_role=projects_users_models.ProjectUserRole.ADMIN
             )
         )
     ],
 )
 
 
-@router.get("", response_model=ToolModelRestrictions)
+@router.get("", response_model=models.ToolModelRestrictions)
 def get_restrictions(
-    restrictions: DatabaseToolModelRestrictions = Depends(
-        get_model_restrictions
+    restrictions: models.DatabaseToolModelRestrictions = fastapi.Depends(
+        injectables.get_model_restrictions
     ),
-) -> DatabaseToolModelRestrictions:
+) -> models.DatabaseToolModelRestrictions:
     return restrictions
 
 
-@router.patch("", response_model=ToolModelRestrictions)
+@router.patch("", response_model=models.ToolModelRestrictions)
 def update_restrictions(
-    body: ToolModelRestrictions,
-    restrictions: DatabaseToolModelRestrictions = Depends(
-        get_model_restrictions
+    body: models.ToolModelRestrictions,
+    restrictions: models.DatabaseToolModelRestrictions = fastapi.Depends(
+        injectables.get_model_restrictions
     ),
-    model: DatabaseCapellaModel = Depends(get_existing_capella_model),
-    db: Session = Depends(get_db),
-) -> DatabaseToolModelRestrictions:
+    model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
+        toolmodels_injectables.get_existing_capella_model
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> models.DatabaseToolModelRestrictions:
     if body.allow_pure_variants and not model.tool.integrations.pure_variants:
-        raise HTTPException(
+        raise fastapi.HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
                 "reason": "The tool of this model has no pure::variants integration."
