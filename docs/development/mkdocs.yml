@@ -19,6 +19,7 @@ nav:
   - Code Style: code-style.md
   - Kubernetes:
       - Meassure resource usage: k8s/resources.md
+  - Release Notes Process: release-notes.md
 
 markdown_extensions:
   - meta
