@@ -21,3 +21,12 @@
   display: inline-flex;
   flex-direction: column;
 }
+
+.metadata-item {
+  flex-basis: 50%;
+}
+
+.metadata-flexbox {
+  display: flex;
+  align-items: stretch;
+}
