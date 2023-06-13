@@ -75,6 +75,10 @@ variables:
     - kubectl rollout restart deployment ${RELEASE}-frontend
     - kubectl rollout restart deployment ${RELEASE}-docs
 
+    - kubectl rollout status --timeout=5m deployment ${RELEASE}-backend
+    - kubectl rollout status --timeout=5m deployment ${RELEASE}-frontend
+    - kubectl rollout status --timeout=5m deployment ${RELEASE}-docs
+
 deploy:
   stage: deploy
   image: ${DOCKER_REGISTRY}/base

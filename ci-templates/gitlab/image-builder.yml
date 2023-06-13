@@ -48,7 +48,7 @@ default:
   - >
     cat ../plain.docker.json | \
       jq -r ".password" | \
-      docker loging \
+      docker login \
         -u $(cat ../plain.docker.json | jq -r ".username_unencrypted") \
         --password-stdin \
         ${DOCKER_REGISTRY}
