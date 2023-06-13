@@ -22,6 +22,10 @@ textarea {
 
 #metadata-card {
   margin: 10px;
+  height: calc(100% - 32px - 20px - 32px - 10px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 #description {
