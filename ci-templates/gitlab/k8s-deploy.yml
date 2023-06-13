@@ -14,11 +14,9 @@ variables:
 
 .decrypt: &decrypt
   - apt-get install -y jq
-  - cd ${TARGET}
   - gpg --import ${PRIVATE_GPG_PATH}
-  - sops -d secret.values.yaml > ../plain.values.yaml
-  - sops -d secret.k8s.json > ../plain.k8s.json
-  - cd ..
+  - sops -d ${TARGET}/secret.values.yaml > plain.values.yaml
+  - sops -d ${TARGET}/secret.k8s.json > plain.k8s.json
   # Remove _unencrypted suffix from plain.k8s.json
   - |
     python3 <<EOF
@@ -44,7 +42,7 @@ variables:
     - git clone https://github.com/DSD-DBS/capella-collab-manager
     - cd capella-collab-manager
     - git checkout ${REVISION}
-    - sed -i "s|https://grafana.github.io/helm-charts/|${GRAFANA_HELM_CHART}|g" ./helm/Chart.yaml
+    - sed -i "s#https://grafana.github.io/helm-charts/#${GRAFANA_HELM_CHART}#g" ./helm/Chart.yaml
 
 .kubernetes: &kubernetes
     - NAMESPACE=$(cat ../plain.k8s.json | jq -r ".namespace")
@@ -71,21 +69,11 @@ variables:
         --set docker.images.frontend=/capella/collab/frontend:${DOCKER_TAG} \
         --set docker.images.backend=/capella/collab/backend:${DOCKER_TAG} \
         --set docker.images.docs=/capella/collab/docs:${DOCKER_TAG} \
-        --set docker.images.guacamole.guacamole=${DOCKER_REGISTRY}/capella/collab/guacamole:${DOCKER_TAG} \
         -f ../${TARGET}/general.values.yaml \
         -f ../plain.values.yaml helm
-    - >
-      kubectl rollout restart \
-        --namespace ${NAMESPACE} \
-        deployment ${RELEASE}-backend
-    - >
-      kubectl rollout restart \
-        --namespace ${NAMESPACE} \
-        deployment ${RELEASE}-frontend
-    - >
-      kubectl rollout restart \
-        --namespace ${NAMESPACE} \
-        deployment ${RELEASE}-docs
+    - kubectl rollout restart deployment ${RELEASE}-backend
+    - kubectl rollout restart deployment ${RELEASE}-frontend
+    - kubectl rollout restart deployment ${RELEASE}-docs
 
 deploy:
   stage: deploy

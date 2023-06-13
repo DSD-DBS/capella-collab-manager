@@ -20,6 +20,10 @@ variables:
     description: "Revision of Github repository"
   TARGET:
     value: staging
+  FRONTEND_IMAGE_NAME: "capella/collab/frontend"
+  BACKEND_IMAGE_NAME: "capella/collab/backend"
+  DOCS_IMAGE_NAME: "capella/collab/docs"
+  GUACAMOLE_IMAGE_NAME: "capella/collab/guacamole"
   DOCKER_BUILD_ARGS: "--no-cache"
   DOCKER_BUILDKIT: "1"
 
@@ -27,54 +31,42 @@ default:
   image: $DOCKER_REGISTRY/base
   tags:
     - docker
-  before_script:
-    - export DOCKER_TAG=$(echo ${REVISION} | sed 's/[^a-zA-Z0-9.]/-/g')
 
 .decrypt: &decrypt
   - apt-get install -y jq
-  - cd ${TARGET}
   - gpg --import ${PRIVATE_GPG_PATH}
-  - sops -d secret.docker.json > ../plain.docker.json
-  - cd ..
-  # Remove _unencrypted suffix from plain.k8s.json
-  - |
-    python3 <<EOF
-    import json
-    import pathlib
-    import typing as t
-
-    def strip_suffix(data: t.Any):
-        if isinstance(data, dict):
-            return {key.replace('_unencrypted', ''): strip_suffix(value) for key, value in data.items()}
-        elif isinstance(data, list):
-            return [strip_suffix(element) for element in data]
-        else:
-            return data
-
-    path = pathlib.Path("plain.docker.json")
-    data = json.loads(path.read_text())
-    path.write_text(json.dumps(strip_suffix(data), indent=4))
-    EOF
-  - DOCKER_REGISTRY=$(cat plain.docker.json | jq -r ".registry")
+  - sops -d ${TARGET}/secret.docker.json > plain.docker.json
+  - DOCKER_REGISTRY=$(cat plain.docker.json | jq -r ".registry_unencrypted")
 
 .github: &github
   - git clone https://github.com/DSD-DBS/capella-collab-manager.git
   - cd capella-collab-manager
-  - git checkout $REVISION
+  - git checkout ${REVISION}
 
 .docker: &docker
   - docker info
-  - cat ../plain.docker.json | jq -r ".password" | docker login -u $(cat ../plain.docker.json | jq -r ".username") --password-stdin $DOCKER_REGISTRY
+  - >
+    cat ../plain.docker.json | \
+      jq -r ".password" | \
+      docker loging \
+        -u $(cat ../plain.docker.json | jq -r ".username_unencrypted") \
+        --password-stdin \
+        ${DOCKER_REGISTRY}
   - docker pull $BASE_IMAGE
 
 .push: &push
   - >
-    if [ "$REVISION" = "main" ];
+    if [ "${REVISION}" = "main" ];
     then
-      docker image tag $IMAGE:$DOCKER_TAG $IMAGE:latest;
-      docker push $IMAGE:latest;
+      docker image tag ${IMAGE}:${DOCKER_TAG} ${IMAGE}:latest;
+      docker push ${IMAGE}:latest;
     fi
-  - docker push $IMAGE:$DOCKER_TAG
+  - docker push ${IMAGE}:${DOCKER_TAG}
+
+.prepare: &prepare
+  - *decrypt
+  - DOCKER_TAG=$(echo ${REVISION} | sed 's/[^a-zA-Z0-9.]/-/g')
+  - *github
 
 frontend:
   stage: build
@@ -82,16 +74,14 @@ frontend:
     - if: '$FRONTEND == "1"'
       when: always
   script:
-    - *decrypt
+    - *prepare
+    - IMAGE=${DOCKER_REGISTRY}/${FRONTEND_IMAGE_NAME:?}
     - BASE_IMAGE=${DOCKER_REGISTRY}/base
-    - IMAGE=${DOCKER_REGISTRY}/capella/collab/frontend
-    - DOCKER_TAG=$(echo ${REVISION} | sed 's/[^a-zA-Z0-9.]/-/g')
-    - *github
+    - *docker
     - mv ../favicon.ico frontend/src
     - mv ../environment.prod.ts frontend/src/environments
     - npm i undici
     - node frontend/fetch-version.ts
-    - *docker
     - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} frontend
     - *push
 
@@ -101,13 +91,11 @@ backend:
     - if: '$BACKEND == "1"'
       when: always
   script:
-    - *decrypt
+    - *prepare
+    - IMAGE=${DOCKER_REGISTRY}/${BACKEND_IMAGE_NAME:?}
     - BASE_IMAGE=${DOCKER_REGISTRY}/base
-    - IMAGE=${DOCKER_REGISTRY}/capella/collab/backend
-    - DOCKER_TAG=$(echo ${REVISION} | sed 's/[^a-zA-Z0-9.]/-/g')
-    - *github
-    - python backend/generate_git_archival.py
     - *docker
+    - python backend/generate_git_archival.py
     - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} backend
     - *push
 
@@ -117,11 +105,9 @@ docs:
     - if: '$DOCS == "1"'
       when: always
   script:
-    - *decrypt
+    - *prepare
+    - IMAGE=${DOCKER_REGISTRY}/${DOCS_IMAGE_NAME:?}
     - BASE_IMAGE=${DOCKER_REGISTRY}/base
-    - IMAGE=${DOCKER_REGISTRY}/capella/collab/docs
-    - DOCKER_TAG=$(echo ${REVISION} | sed 's/[^a-zA-Z0-9.]/-/g')
-    - *github
     - *docker
     - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} docs/user
     - *push
@@ -132,11 +118,9 @@ guacamole:
     - if: '$GUACAMOLE == "1"'
       when: always
   script:
-    - *decrypt
+    - *prepare
+    - IMAGE=${DOCKER_REGISTRY}/${GUACAMOLE_IMAGE_NAME:?}
     - BASE_IMAGE=guacamole/guacamole
-    - IMAGE=${DOCKER_REGISTRY}/capella/collab/guacamole
-    - DOCKER_TAG=$(echo ${REVISION} | sed 's/[^a-zA-Z0-9.]/-/g')
-    - *github
     - *docker
     - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} guacamole
     - *push
