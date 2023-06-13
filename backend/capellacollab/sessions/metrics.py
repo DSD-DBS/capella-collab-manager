@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import itertools
+import os
 import typing as t
 
 import prometheus_client
@@ -41,5 +42,6 @@ class DeployedSessionsCollector:
 
 
 def register() -> None:
-    prometheus_client.REGISTRY.register(DatabaseSessionsCollector())
-    prometheus_client.REGISTRY.register(DeployedSessionsCollector())
+    if os.getenv("DISABLE_SESSION_COLLECTOR", "") not in ("true", "1", "t"):
+        prometheus_client.REGISTRY.register(DatabaseSessionsCollector())
+        prometheus_client.REGISTRY.register(DeployedSessionsCollector())
