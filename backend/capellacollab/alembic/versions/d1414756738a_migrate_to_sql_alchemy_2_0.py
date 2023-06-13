@@ -236,6 +236,10 @@ def upgrade():
         nullable=False,
     )
 
+    op.get_bind().execute(
+        sa.text("DELETE FROM tool_integrations WHERE tool_id IS NULL")
+    )
+
     op.alter_column(
         "tool_integrations",
         "tool_id",
