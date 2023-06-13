@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 variables:
+  PRIVATE_GPG_PATH: /secrets/private.gpg
   FRONTEND:
     value: "1"
     description: "Build the frontend image?"
@@ -12,11 +13,17 @@ variables:
     value: "1"
     description: "Build the docs image?"
   GUACAMOLE:
-    value: "0"
+    value: "1"
     description: "Build the guacamole image?"
   REVISION:
     value: "main"
     description: "Revision of Github repository"
+  TARGET:
+    value: staging
+  FRONTEND_IMAGE_NAME: "capella/collab/frontend"
+  BACKEND_IMAGE_NAME: "capella/collab/backend"
+  DOCS_IMAGE_NAME: "capella/collab/docs"
+  GUACAMOLE_IMAGE_NAME: "capella/collab/guacamole"
   DOCKER_BUILD_ARGS: "--no-cache"
   DOCKER_BUILDKIT: "1"
 
@@ -24,44 +31,58 @@ default:
   image: $DOCKER_REGISTRY/base
   tags:
     - docker
-  before_script:
-    - export DOCKER_TAG=$(echo $REVISION | sed 's/[^a-zA-Z0-9.]/-/g')
+
+.decrypt: &decrypt
+  - apt-get install -y jq
+  - gpg --import ${PRIVATE_GPG_PATH}
+  - sops -d ${TARGET}/secret.docker.json > plain.docker.json
+  - DOCKER_REGISTRY=$(cat plain.docker.json | jq -r ".registry_unencrypted")
 
 .github: &github
   - git clone https://github.com/DSD-DBS/capella-collab-manager.git
   - cd capella-collab-manager
-  - git checkout $REVISION
+  - git checkout ${REVISION}
 
 .docker: &docker
   - docker info
-  - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
+  - >
+    cat ../plain.docker.json | \
+      jq -r ".password" | \
+      docker login \
+        -u $(cat ../plain.docker.json | jq -r ".username_unencrypted") \
+        --password-stdin \
+        ${DOCKER_REGISTRY}
   - docker pull $BASE_IMAGE
 
 .push: &push
   - >
-    if [ "$REVISION" = "main" ];
+    if [ "${REVISION}" = "main" ];
     then
-      docker image tag $IMAGE:$DOCKER_TAG $IMAGE:latest;
-      docker push $IMAGE:latest;
+      docker image tag ${IMAGE}:${DOCKER_TAG} ${IMAGE}:latest;
+      docker push ${IMAGE}:latest;
     fi
-  - docker push $IMAGE:$DOCKER_TAG
+  - docker push ${IMAGE}:${DOCKER_TAG}
+
+.prepare: &prepare
+  - *decrypt
+  - DOCKER_TAG=$(echo ${REVISION} | sed 's/[^a-zA-Z0-9.]/-/g')
+  - *github
 
 frontend:
   stage: build
   rules:
     - if: '$FRONTEND == "1"'
       when: always
-  variables:
-    BASE_IMAGE: $DOCKER_REGISTRY/base
-    IMAGE: $DOCKER_REGISTRY/capella/collab/frontend
   script:
-    - *github
+    - *prepare
+    - IMAGE=${DOCKER_REGISTRY}/${FRONTEND_IMAGE_NAME:?}
+    - BASE_IMAGE=${DOCKER_REGISTRY}/base
+    - *docker
     - mv ../favicon.ico frontend/src
     - mv ../environment.prod.ts frontend/src/environments
     - npm i undici
     - node frontend/fetch-version.ts
-    - *docker
-    - docker build $DOCKER_BUILD_ARGS -t $DOCKER_REGISTRY/capella/collab/frontend:$DOCKER_TAG --build-arg BASE_IMAGE=$BASE_IMAGE frontend
+    - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} frontend
     - *push
 
 backend:
@@ -69,14 +90,13 @@ backend:
   rules:
     - if: '$BACKEND == "1"'
       when: always
-  variables:
-    BASE_IMAGE: $DOCKER_REGISTRY/base
-    IMAGE: $DOCKER_REGISTRY/capella/collab/backend
   script:
-    - *github
-    - python backend/generate_git_archival.py
+    - *prepare
+    - IMAGE=${DOCKER_REGISTRY}/${BACKEND_IMAGE_NAME:?}
+    - BASE_IMAGE=${DOCKER_REGISTRY}/base
     - *docker
-    - docker build $DOCKER_BUILD_ARGS -t $DOCKER_REGISTRY/capella/collab/backend:$DOCKER_TAG --build-arg BASE_IMAGE=$BASE_IMAGE backend
+    - python backend/generate_git_archival.py
+    - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} backend
     - *push
 
 docs:
@@ -84,13 +104,12 @@ docs:
   rules:
     - if: '$DOCS == "1"'
       when: always
-  variables:
-    BASE_IMAGE: $DOCKER_REGISTRY/base
-    IMAGE: $DOCKER_REGISTRY/capella/collab/docs
   script:
-    - *github
+    - *prepare
+    - IMAGE=${DOCKER_REGISTRY}/${DOCS_IMAGE_NAME:?}
+    - BASE_IMAGE=${DOCKER_REGISTRY}/base
     - *docker
-    - docker build $DOCKER_BUILD_ARGS -t $IMAGE:$DOCKER_TAG --build-arg BASE_IMAGE=$BASE_IMAGE docs/user
+    - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} docs/user
     - *push
 
 guacamole:
@@ -98,11 +117,10 @@ guacamole:
   rules:
     - if: '$GUACAMOLE == "1"'
       when: always
-  variables:
-    BASE_IMAGE: guacamole/guacamole
-    IMAGE: $DOCKER_REGISTRY/capella/collab/guacamole
   script:
-    - *github
+    - *prepare
+    - IMAGE=${DOCKER_REGISTRY}/${GUACAMOLE_IMAGE_NAME:?}
+    - BASE_IMAGE=guacamole/guacamole
     - *docker
-    - docker build $DOCKER_BUILD_ARGS -t $IMAGE:$DOCKER_TAG --build-arg BASE_IMAGE=$BASE_IMAGE guacamole
+    - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} guacamole
     - *push
