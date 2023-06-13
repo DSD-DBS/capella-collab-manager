@@ -17,9 +17,14 @@ nav:
       - Roles: projects/roles.md
       - Models:
           - Create a model: projects/models/create.md
+          - Update a model to a newer version: projects/models/update.md
+          - Update model metadata: projects/models/metadata.md
+          - Model sources:
+              - TeamForCapella: projects/models/sources/t4c.md
           - Backups:
               - Setup a model backup: projects/models/backups/setup.md
               - Trigger a model backup: projects/models/backups/trigger.md
+              - Remove a model backup: projects/models/backups/remove.md
           - Diagram cache:
               - Setup diagram cache: projects/models/diagrams/setup_diagram_cache.md
               - View diagram cache: projects/models/diagrams/view_diagram_cache.md
@@ -42,6 +47,12 @@ nav:
       - Tools:
           - General: settings/tools/index.md
           - pure::variants: settings/tools/pure_variants.md
+          - Capella:
+              - TeamForCapella:
+                  - Import a model from TeamForCapella: settings/tools/capella/teamforcapella/import/import-from-t4c.md
+                  - Export a model to TeamForCapella: settings/tools/capella/teamforcapella/export/export-to-t4c.md
+                  - TeamForCapella repository management: settings/tools/capella/teamforcapella/repository-management.md
+                  - Update a TeamForCapella based model: settings/tools/capella/teamforcapella/update.md
       - Model sources:
           - Git: settings/model-sources/git.md
   - User Management: users.md
