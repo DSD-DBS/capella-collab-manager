@@ -54,6 +54,8 @@ spec:
             - name: OAUTHLIB_INSECURE_TRANSPORT
               value: "1"
           {{ end }}
+            - name: DEVELOPMENT_MODE
+              value: "{{ .Values.development }}"
             - name: no_proxy_additional
               value: "{{ .Values.proxy.no_proxy }}"
           livenessProbe:

@@ -15,6 +15,8 @@ CAPELLA_VERSIONS ?= 6.0.0
 # List of T4C versions, e.g., `5.2.0 6.0.0`
 T4C_CLIENT_VERSIONS ?= 6.0.0
 
+DEVELOPMENT_MODE ?= 0
+
 TIMEOUT ?= 10m
 
 CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 DOCKER_REGISTRY=$(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)
@@ -83,6 +85,7 @@ helm-deploy:
 		--set mocks.oauth=True \
 		--set target=local \
 		--set general.port=8080 \
+		--set development=$(DEVELOPMENT_MODE) \
 		--set backend.k8sSessionNamespace="$(SESSION_NAMESPACE)" \
 		--set backend.authentication.oauth.redirectURI="http://localhost:$(PORT)/oauth2/callback" \
 		--set backend.authentication.oauth.endpoints.wellKnown="http://$(RELEASE)-oauth-mock:8080/default/.well-known/openid-configuration" \
