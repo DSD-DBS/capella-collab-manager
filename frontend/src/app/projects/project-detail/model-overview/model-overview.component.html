@@ -3,25 +3,40 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div *ngIf="modelService.models | async">
+<div>
   <div class="models-title">
-    <h2>
-      Models
-      <a
-        mat-button
-        [routerLink]="[
-          '/project',
-          (projectService.project | async)!.slug,
-          'models',
-          'create'
-        ]"
-        *ngIf="projectUserService.verifyRole('manager')"
-      >
-        <mat-icon id="add-icon">add</mat-icon>
-      </a>
-    </h2>
+    <h2>Models</h2>
+    <a
+      mat-stroked-button
+      [routerLink]="[
+        '/project',
+        (projectService.project | async)?.slug,
+        'models',
+        'create'
+      ]"
+      id="add-model-button"
+      *ngIf="projectUserService.verifyRole('manager')"
+      matTooltip="Add a new model"
+    >
+      <mat-icon id="add-icon">add</mat-icon>
+    </a>
   </div>
   <div class="flex flex-wrap">
+    <div class="flex" *ngIf="(modelService.models | async) === undefined">
+      <div *ngFor="let card of [0, 1, 2]">
+        <ngx-skeleton-loader
+          appearance="circle"
+          [theme]="{
+            'border-radius': '5px',
+            height: '280px',
+            width: '500px',
+            margin: '10px',
+            border: '1px solid white'
+          }"
+        ></ngx-skeleton-loader>
+      </div>
+    </div>
+
     <mat-card
       class="overview-card"
       *ngFor="let model of modelService.models | async"

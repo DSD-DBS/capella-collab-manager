@@ -15,32 +15,49 @@
         [formGroup]="toolSelectionForm"
         (ngSubmit)="requestReadonlySession()"
       >
-        <fieldset class="flex flex-wrap">
-          <mat-form-field appearance="fill">
-            <mat-label>Model tool</mat-label>
-            <mat-select
-              matInput
-              formControlName="tool"
-              (selectionChange)="onToolChange($event.value)"
-            >
-              <mat-option *ngFor="let tool of tools" [value]="tool">
-                {{ tool.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="fill">
-            <mat-label>Version</mat-label>
-            <mat-select formControlName="version">
-              <mat-option
-                *ngFor="let version of this.toolVersions"
-                [value]="version"
+        <div class="flex skeleton-loader gap-2" *ngIf="tools === undefined">
+          <div class="flex-1" *ngFor="let menu of [0, 1]">
+            <ngx-skeleton-loader
+              appearance="circle"
+              [theme]="{
+                'border-radius': '5px',
+                height: '52px',
+                padding: '0',
+                margin: '0 0 18px 0',
+                width: '100%',
+                border: '1px solid white'
+              }"
+            ></ngx-skeleton-loader>
+          </div>
+        </div>
+        <div [hidden]="tools === undefined">
+          <fieldset class="flex flex-wrap gap-2">
+            <mat-form-field appearance="fill">
+              <mat-label>Model tool</mat-label>
+              <mat-select
+                matInput
+                formControlName="tool"
+                (selectionChange)="onToolChange($event.value)"
               >
-                {{ version.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </fieldset>
+                <mat-option *ngFor="let tool of tools" [value]="tool">
+                  {{ tool.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Version</mat-label>
+              <mat-select formControlName="version">
+                <mat-option
+                  *ngFor="let version of this.toolVersions"
+                  [value]="version"
+                >
+                  {{ version.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </fieldset>
+        </div>
 
         <fieldset>
           <button

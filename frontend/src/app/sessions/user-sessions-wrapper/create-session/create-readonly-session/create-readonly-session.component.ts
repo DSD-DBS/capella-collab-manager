@@ -73,8 +73,11 @@ export class CreateReadonlySessionComponent implements OnInit {
   }
 
   get tools(): Tool[] | undefined {
-    const toolIds = this.models?.map((m) => m.tool.id);
-    return this.toolService.tools?.filter((t) => toolIds?.includes(t.id));
+    if (this.models === undefined || this.toolService.tools === undefined) {
+      return undefined;
+    }
+    const toolIds = this.models.map((m) => m.tool.id);
+    return this.toolService.tools.filter((t) => toolIds?.includes(t.id));
   }
 
   requestReadonlySession(): void {

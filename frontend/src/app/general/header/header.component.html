@@ -37,17 +37,13 @@
   <div>
     <div class="hidden xl:flex xl:right-aligned gap-2">
       <div>
-        <div class="margin"></div>
-        <span id="github">
-          <a
-            class="github-button"
-            href="https://github.com/DSD-DBS/capella-collab-manager/issues"
-            data-color-scheme="no-preference: light; light: light; dark: dark;"
-            data-size="large"
-            aria-label="Issue DSD-DBS/capella-collab-manager on GitHub"
-            >Open Issue on Github</a
-          >
-        </span>
+        <a
+          mat-raised-button
+          color="primary"
+          href="https://github.com/DSD-DBS/capella-collab-manager/issues"
+          target="_blank"
+          >Open Issue on Github <mat-icon>open_in_new</mat-icon>
+        </a>
       </div>
       <mat-menu #profileMenu="matMenu">
         <a

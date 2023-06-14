@@ -5,10 +5,7 @@
 
 <div class="dialog">
   <h2>Add user</h2>
-  <form
-    [formGroup]="addUserToProjectForm"
-    #addUserToProjectFormDirective="ngForm"
-  >
+  <form [formGroup]="addUserToProjectForm">
     <mat-form-field appearance="fill">
       <mat-label>Username</mat-label>
       <input matInput formControlName="username" />
@@ -58,11 +55,7 @@
       </mat-error>
     </mat-form-field>
     <div class="flex-space-between">
-      <button
-        (click)="addUser(addUserToProjectFormDirective)"
-        mat-flat-button
-        color="primary"
-      >
+      <button (click)="addUser()" mat-flat-button color="primary">
         Add user <mat-icon>keyboard_arrow_right</mat-icon>
       </button>
     </div>

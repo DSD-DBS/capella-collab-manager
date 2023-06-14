@@ -17,7 +17,12 @@ export class ProjectUserService {
   constructor(
     private http: HttpClient,
     private projectService: ProjectService
-  ) {}
+  ) {
+    this.resetProjectUserOnProjectReset();
+    this.resetProjectUsersOnProjectReset();
+    this.loadProjectUsersOnProjectChange();
+    this.loadProjectUserOnProjectChange();
+  }
   BACKEND_URL_PREFIX = environment.backend_url + '/projects/';
 
   PERMISSIONS = { read: 'read only', write: 'read & write' };
@@ -29,6 +34,28 @@ export class ProjectUserService {
 
   _projectUsers = new BehaviorSubject<ProjectUser[] | undefined>(undefined);
   projectUsers = this._projectUsers.asObservable();
+
+  resetProjectUserOnProjectReset() {
+    this.projectService.project
+      .pipe(
+        filter((project) => project === undefined),
+        tap(() => {
+          this._projectUser.next(undefined);
+        })
+      )
+      .subscribe();
+  }
+
+  resetProjectUsersOnProjectReset() {
+    this.projectService.project
+      .pipe(
+        filter((project) => project === undefined),
+        tap(() => {
+          this._projectUsers.next(undefined);
+        })
+      )
+      .subscribe();
+  }
 
   verifyRole(requiredRole: ProjectUserRole): boolean {
     if (!this._projectUser.value) {
@@ -52,28 +79,37 @@ export class ProjectUserService {
     );
   }
 
-  getOwnProjectUser(projectSlug: string): Observable<ProjectUser> {
-    return this.http
-      .get<ProjectUser>(
-        this.BACKEND_URL_PREFIX + projectSlug + '/users/current'
+  loadProjectUserOnProjectChange(): void {
+    this._projectUser.next(undefined);
+    this.projectService.project
+      .pipe(
+        filter(Boolean),
+        switchMap((project) =>
+          this.http.get<ProjectUser>(
+            this.BACKEND_URL_PREFIX + project.slug + '/users/current'
+          )
+        )
       )
       .pipe(
         tap((projectUser) => {
           this._projectUser.next(projectUser);
         })
-      );
+      )
+      .subscribe();
   }
 
-  loadProjectUsers(): void {
+  loadProjectUsersOnProjectChange(): void {
     this._projectUsers.next(undefined);
-    this.projectService.project
+    this.projectService.project.pipe(filter(Boolean)).subscribe((project) => {
+      this.loadProjectUsers(project.slug);
+    });
+  }
+
+  loadProjectUsers(projectSlug: string): void {
+    this._projectUsers.next(undefined);
+    this.http
+      .get<ProjectUser[]>(this.BACKEND_URL_PREFIX + projectSlug + '/users')
       .pipe(
-        filter(Boolean),
-        switchMap((project) =>
-          this.http.get<ProjectUser[]>(
-            this.BACKEND_URL_PREFIX + project!.slug + '/users'
-          )
-        ),
         tap((projectUsers) => {
           this._projectUsers.next(projectUsers);
         })
@@ -82,28 +118,38 @@ export class ProjectUserService {
   }
 
   addUserToProject(
-    project_slug: string,
+    projectSlug: string,
     username: string,
     role: SimpleProjectUserRole,
     permission: string,
     reason: string
   ): Observable<ProjectUser> {
-    return this.http.post<ProjectUser>(
-      this.BACKEND_URL_PREFIX + project_slug + '/users',
-      { username, role, permission, reason }
-    );
+    return this.http
+      .post<ProjectUser>(this.BACKEND_URL_PREFIX + projectSlug + '/users', {
+        username,
+        role,
+        permission,
+        reason,
+      })
+      .pipe(
+        tap(() => {
+          this.loadProjectUsers(projectSlug);
+        })
+      );
   }
 
   changeRoleOfProjectUser(
-    project_slug: string,
+    projectSlug: string,
     userID: number,
     role: SimpleProjectUserRole,
     reason: string
   ): Observable<null> {
-    return this.http.patch<null>(
-      this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
-      { role, reason }
-    );
+    return this.http
+      .patch<null>(this.BACKEND_URL_PREFIX + projectSlug + '/users/' + userID, {
+        role,
+        reason,
+      })
+      .pipe(tap(() => this.loadProjectUsers(projectSlug)));
   }
 
   updatePasswordOfUser(

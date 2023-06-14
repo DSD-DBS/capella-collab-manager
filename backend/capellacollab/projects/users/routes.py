@@ -89,7 +89,7 @@ def get_current_user(
 
 
 @router.get(
-    "/",
+    "",
     response_model=list[models.ProjectUser],
     dependencies=[
         fastapi.Depends(
@@ -116,7 +116,7 @@ def get_users_for_project(
 
 
 @router.post(
-    "/",
+    "",
     response_model=models.ProjectUser,
     dependencies=[
         fastapi.Depends(

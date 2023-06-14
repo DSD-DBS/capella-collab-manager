@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs';
@@ -23,7 +23,7 @@ import { Project, ProjectService } from '../../service/project.service';
   templateUrl: './project-user-settings.component.html',
   styleUrls: ['./project-user-settings.component.css'],
 })
-export class ProjectUserSettingsComponent implements OnInit, OnChanges {
+export class ProjectUserSettingsComponent implements OnInit {
   public project?: Project;
 
   search = '';
@@ -41,13 +41,7 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((project) => {
         this.project = project;
-
-        this.projectUserService.loadProjectUsers();
       });
-  }
-
-  ngOnChanges(_changes: SimpleChanges): void {
-    this.projectUserService.loadProjectUsers();
   }
 
   removeUserFromProject(user: User): void {
@@ -59,7 +53,7 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
     this.projectUserService
       .deleteUserFromProject(this.project.slug, user.id, reason)
       .subscribe(() => {
-        this.projectUserService.loadProjectUsers();
+        this.projectUserService.loadProjectUsers(this.project!.slug);
         this.toastService.showSuccess(
           `User removed`,
           `User '${user.name}' has been removed from project '${this.project?.name}'`
@@ -76,7 +70,6 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
     this.projectUserService
       .changeRoleOfProjectUser(this.project.slug, user.id, 'manager', reason)
       .subscribe(() => {
-        this.projectUserService.loadProjectUsers();
         this.toastService.showSuccess(
           `User modified`,
           `User '${user.name}' can now manage the project '${this.project?.name}'`
@@ -93,7 +86,6 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
     this.projectUserService
       .changeRoleOfProjectUser(this.project.slug, user.id, 'user', reason)
       .subscribe(() => {
-        this.projectUserService.loadProjectUsers();
         this.toastService.showSuccess(
           `User modified`,
           `User '${user.name}' is no longer project lead in the project '${this.project?.name}'`
@@ -115,7 +107,7 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
         reason
       )
       .subscribe(() => {
-        this.projectUserService.loadProjectUsers();
+        this.projectUserService.loadProjectUsers(this.project!.slug);
         this.toastService.showSuccess(
           `User modified`,
           `User '${user.name}' has the permission '${permission}' in the project '${this.project?.name}' now`
