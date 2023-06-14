@@ -21,7 +21,7 @@ export class ModelComplexityBadgeComponent implements OnChanges {
   @Input() modelSlug?: string;
 
   complexityBadge?: string | ArrayBuffer | null;
-  loadingComplexityBadge: boolean = true;
+  loadingComplexityBadge = true;
 
   errorMessage?: string;
   errorCode?: string;

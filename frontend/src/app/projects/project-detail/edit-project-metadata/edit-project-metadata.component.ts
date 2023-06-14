@@ -5,7 +5,7 @@
 
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs';
 import slugify from 'slugify';
@@ -24,15 +24,14 @@ import {
   styleUrls: ['./edit-project-metadata.component.css'],
 })
 export class EditProjectMetadataComponent implements OnInit, OnChanges {
-  canDelete: boolean = false;
+  canDelete = false;
   project?: Project;
 
   constructor(
     private toastService: ToastService,
     private projectService: ProjectService,
     public projectUserService: ProjectUserService,
-    private router: Router,
-    private route: ActivatedRoute
+    private router: Router
   ) {}
 
   form = new FormGroup({
@@ -53,7 +52,9 @@ export class EditProjectMetadataComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(_changes: SimpleChanges): void {
-    this.projectService.loadProjectBySlug(this.project?.slug!);
+    if (this.project) {
+      this.projectService.loadProjectBySlug(this.project.slug);
+    }
   }
 
   updateProject() {

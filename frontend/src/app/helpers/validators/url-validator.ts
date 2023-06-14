@@ -7,7 +7,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 export function absoluteUrlValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    let value: string = control.value;
+    const value: string = control.value;
     if (!value) return null;
 
     if (!hasAbsoluteUrlPrefix(value)) {
@@ -19,7 +19,7 @@ export function absoluteUrlValidator(): ValidatorFn {
 
 export function absoluteOrRelativeValidators(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    let value: string = control.value;
+    const value: string = control.value;
     if (!value) return null;
 
     if (!(hasAbsoluteUrlPrefix(value) || hasRelativePathPrefix(value))) {

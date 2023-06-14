@@ -27,7 +27,7 @@ import { ProjectService } from '../../service/project.service';
 export class CreateModelComponent implements OnInit {
   @ViewChild('stepper') stepper!: MatStepper;
   @Input() asStepper?: boolean;
-  @Input() redirectAfterCompletion: boolean = true;
+  @Input() redirectAfterCompletion = true;
   @Output() currentStep = new EventEmitter<CreateModelStep>();
 
   private projectSlug?: string = undefined;

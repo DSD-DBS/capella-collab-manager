@@ -66,7 +66,7 @@ export class FileBrowserDialogComponent implements OnInit {
   addFiles(files: FileList | null, path: string, parentNode: PathNode): void {
     if (files) {
       for (const file of Array.from(files)) {
-        var name = file.name.replace(/\s/g, '_');
+        const name = file.name.replace(/\s/g, '_');
         if (this.checkIfFileExists(parentNode, name)) {
           const fileExistsDialog = this.dialog.open(FileExistsDialogComponent, {
             data: name,

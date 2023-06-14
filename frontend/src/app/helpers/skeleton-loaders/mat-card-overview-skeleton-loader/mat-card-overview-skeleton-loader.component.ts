@@ -21,8 +21,6 @@ export class MatCardOverviewSkeletonLoaderComponent implements OnInit {
     this._cardNumbersArray = [...Array(value).keys()];
   }
 
-  constructor() {}
-
   ngOnInit(): void {
     this.resize(window.innerWidth, window.innerHeight);
   }

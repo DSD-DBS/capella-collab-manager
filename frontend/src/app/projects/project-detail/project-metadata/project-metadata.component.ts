@@ -20,7 +20,7 @@ import { Project, ProjectService } from '../../service/project.service';
 })
 export class ProjectMetadataComponent {
   project?: Project;
-  canDelete: boolean = false;
+  canDelete = false;
 
   constructor(
     public projectService: ProjectService,

@@ -74,7 +74,7 @@ export class ModelDiagramDialogComponent {
   }
 
   observeVisibleDiagrams() {
-    var observer = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries: IntersectionObserverEntry[], _: IntersectionObserver) => {
         entries
           .filter((entry) => entry.isIntersecting)
@@ -106,10 +106,10 @@ export class ModelDiagramDialogComponent {
         .getDiagram(this.data.projectSlug, this.data.modelSlug, uuid)
         .subscribe({
           next: (response: Blob) => {
-            var reader = new FileReader();
+            const reader = new FileReader();
             reader.readAsDataURL(response);
             reader.onloadend = () => {
-              var base64data = reader.result;
+              const base64data = reader.result;
               this.diagrams[uuid] = {
                 loading: false,
                 content: base64data,

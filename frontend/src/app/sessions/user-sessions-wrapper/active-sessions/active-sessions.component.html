@@ -42,7 +42,7 @@
       {{ beautifyService.beatifyDate(session.created_at) }}
     </p>
     <div *ngIf="isReadonlySession(session)">
-      <span>Project: {{ session.project.name }}</span
+      <span>Project: {{ session.project?.name }}</span
       ><br />
       <span>
         Tool: {{ session.version!.tool.name }} ({{ session.version!.name }})

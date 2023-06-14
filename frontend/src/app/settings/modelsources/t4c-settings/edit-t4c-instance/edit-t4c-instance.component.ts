@@ -29,9 +29,8 @@ import {
   styleUrls: ['./edit-t4c-instance.component.css'],
 })
 export class EditT4CInstanceComponent implements OnInit, OnDestroy {
-  editing: boolean = false;
-
-  existing: boolean = false;
+  editing = false;
+  existing = false;
 
   _instance = new BehaviorSubject<T4CInstance | undefined>(undefined);
   get instance() {

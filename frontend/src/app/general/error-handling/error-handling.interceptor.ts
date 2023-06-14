@@ -41,7 +41,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
           if (event.type == HttpEventType.Response) {
             const body = event.body;
             if (body?.errors) {
-              for (let error of body.errors) {
+              for (const error of body.errors) {
                 if (error.reason && Array.isArray(error.reason)) {
                   error.reason = error.reason.join(' ');
                 }
@@ -52,7 +52,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
               }
             }
             if (body?.warnings) {
-              for (let warning of body.warnings) {
+              for (const warning of body.warnings) {
                 if (warning.reason && Array.isArray(warning.reason)) {
                   warning.reason = warning.reason.join(' ');
                 }
@@ -74,10 +74,10 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
           }
 
           if (err.error && err.error.detail) {
-            let detail = err.error.detail;
+            const detail = err.error.detail;
             if (Array.isArray(detail)) {
               // Pydantic errors
-              for (let error of detail) {
+              for (const error of detail) {
                 this.toastService.showError(
                   getReasonPhrase(err.status),
                   error.msg
@@ -129,7 +129,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
     if (err.error instanceof Blob && err.error.type === 'application/json') {
       return from(
         new Promise<any>((resolve, reject) => {
-          let reader = new FileReader();
+          const reader = new FileReader();
           reader.onload = (e: Event) => {
             try {
               const errmsg = JSON.parse((<any>e.target).result);

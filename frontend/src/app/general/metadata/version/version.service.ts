@@ -25,7 +25,7 @@ export class VersionService {
 
   public version: Version | undefined;
   public oldVersion: string | undefined;
-  public changedVersion: boolean = false;
+  public changedVersion = false;
 
   loadVersion(): void {
     if (!this.version) {

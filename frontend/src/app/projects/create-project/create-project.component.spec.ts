@@ -77,7 +77,7 @@ describe('CreateProjectComponent', () => {
       return of(mockProjects);
     },
     createProject(project: PatchProject): Observable<Project> {
-      let projectToCreate: Project = {
+      const projectToCreate: Project = {
         name: project.name!,
         description: project.description!,
         slug: project.name!,
@@ -210,7 +210,7 @@ describe('CreateProjectComponent', () => {
   });
 
   it('renders routerLink to /projects', () => {
-    let cancelEl: HTMLElement = findElByTestId(
+    const cancelEl: HTMLElement = findElByTestId(
       fixture,
       'a-cancel'
     ).nativeElement;
@@ -226,7 +226,7 @@ describe('CreateProjectComponent', () => {
     click(fixture, 'button-skipAddMembers');
     fixture.detectChanges();
 
-    let skipEl: HTMLElement = findElByTestId(
+    const skipEl: HTMLElement = findElByTestId(
       fixture,
       'a-skipModelAndFinishProjectCreation'
     ).nativeElement;
