@@ -91,13 +91,13 @@ helm-deploy:
 
 open:
 	@export URL=http://localhost:8080; \
-	if [ "Windows_NT" = "$(OS)" ]; \
+	if [ "Windows_NT" = "$(OS)" ] && command -v start > /dev/null; \
 	then \
 		start "$$URL"; \
-	elif [ "$(shell uname -s)" = "Linux" ]; \
+	elif [ "$(shell uname -s)" = "Linux" ] && command -v xdg-open > /dev/null; \
 	then \
 		xdg-open "$$URL"; \
-	elif [ "$(shell uname -s)" = "Darwin" ]; \
+	elif [ "$(shell uname -s)" = "Darwin" ] && command -v open > /dev/null; \
 	then \
 		open "$$URL"; \
 	fi
