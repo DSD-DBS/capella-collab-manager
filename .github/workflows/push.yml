@@ -41,14 +41,10 @@ jobs:
         if: ${{ matrix.name == 'backend' }}
         run: |
           python backend/generate_git_archival.py
-      - uses: actions/setup-node@v3
-        if: ${{ matrix.name == 'frontend' }}
-        with:
-          node-version: 18
       - name: Fetch version
         if: ${{ matrix.name == 'frontend' }}
         run: |
-          node frontend/fetch-version.ts
+          python frontend/fetch-version.py
       - name: Prepare environment.prod.ts
         if: ${{ matrix.name == 'frontend' }}
         run: |

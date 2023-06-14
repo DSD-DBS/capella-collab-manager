@@ -52,6 +52,7 @@ To deploy the application you need:
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) >= 1.24 (Stargazer)
 - [helm](https://helm.sh/docs/intro/install/) >= 3.9.X
 - [Make](https://www.gnu.org/software/make/manual/make.html) >= 3.82, recommended 4.X
+- [Python](https://www.python.org/downloads/) >= 3.10
 
 If you'd like to run it locally, these tools are additionally required:
 

@@ -4,10 +4,10 @@ name: tests
 
 on:
   push:
-    branches: ['**']
+    branches: ["**"]
     tags: ["v*.*.*"]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   backend:
@@ -45,7 +45,7 @@ jobs:
       - name: Fetch version
         working-directory: frontend
         run: |
-          node fetch-version.ts
+          python fetch-version.py
       - name: Install dependencies
         working-directory: frontend
         run: |

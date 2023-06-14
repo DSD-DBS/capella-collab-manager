@@ -39,7 +39,7 @@ backend:
 
 frontend: IMAGE=capella/collab/frontend
 frontend:
-	node frontend/fetch-version.ts
+	python frontend/fetch-version.py
 	docker build --build-arg CONFIGURATION=local -t $(IMAGE) -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE) frontend
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE)
 
