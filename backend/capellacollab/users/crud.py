@@ -32,6 +32,18 @@ def get_users(db: orm.Session) -> abc.Sequence[models.DatabaseUser]:
     return db.execute(sa.select(models.DatabaseUser)).scalars().all()
 
 
+def get_admin_users(db: orm.Session) -> abc.Sequence[models.DatabaseUser]:
+    return (
+        db.execute(
+            sa.select(models.DatabaseUser).where(
+                models.DatabaseUser.role == models.Role.ADMIN
+            )
+        )
+        .scalars()
+        .all()
+    )
+
+
 def create_user(
     db: orm.Session, username: str, role: models.Role = models.Role.USER
 ) -> models.DatabaseUser:

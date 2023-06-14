@@ -1,0 +1,70 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="dialog">
+  <h2>Add user</h2>
+  <form
+    [formGroup]="addUserToProjectForm"
+    #addUserToProjectFormDirective="ngForm"
+  >
+    <mat-form-field appearance="fill">
+      <mat-label>Username</mat-label>
+      <input matInput formControlName="username" />
+      <mat-error *ngIf="username.getError('required')">
+        Please enter a username!
+      </mat-error>
+      <mat-error *ngIf="username.getError('lowerCaseError')">
+        Usernames can only contain lowercase letters!
+      </mat-error>
+      <mat-error *ngIf="username.getError('userAlreadyInProjectError')">
+        The user is already a member of this project!
+      </mat-error>
+    </mat-form-field>
+    <br />
+    <mat-form-field appearance="fill">
+      <mat-label>Role</mat-label>
+      <mat-select formControlName="role">
+        <mat-option
+          *ngFor="let role of projectUserService.ROLES | keyvalue"
+          [value]="role.key"
+          >{{ role.value }}</mat-option
+        >
+      </mat-select>
+      <mat-error>You have to select a role!</mat-error>
+    </mat-form-field>
+    <div *ngIf="addUserToProjectForm.value.role !== 'manager'">
+      <mat-form-field
+        appearance="fill"
+        *ngIf="addUserToProjectForm.value.role !== 'manager'"
+      >
+        <mat-label>Permission</mat-label>
+        <mat-select formControlName="permission">
+          <mat-option
+            *ngFor="let permission of projectUserService.PERMISSIONS | keyvalue"
+            [value]="permission.key"
+            >{{ permission.value }}</mat-option
+          >
+        </mat-select>
+        <mat-error>You have to select a permission!</mat-error>
+      </mat-form-field>
+    </div>
+    <mat-form-field appearance="fill">
+      <mat-label>Reason</mat-label>
+      <textarea rows="10" matInput formControlName="reason"></textarea>
+      <mat-error *ngIf="addUserToProjectForm.controls.reason.errors?.required">
+        Please enter a reason!
+      </mat-error>
+    </mat-form-field>
+    <div class="flex-space-between">
+      <button
+        (click)="addUser(addUserToProjectFormDirective)"
+        mat-flat-button
+        color="primary"
+      >
+        Add user <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
+    </div>
+  </form>
+</div>

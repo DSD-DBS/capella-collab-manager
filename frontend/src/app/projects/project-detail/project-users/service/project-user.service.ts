@@ -5,7 +5,8 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, filter, switchMap, tap } from 'rxjs';
+import { ProjectService } from 'src/app/projects/service/project.service';
 import { User } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
 
@@ -13,34 +14,41 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class ProjectUserService {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private projectService: ProjectService
+  ) {}
   BACKEND_URL_PREFIX = environment.backend_url + '/projects/';
 
-  PERMISSIONS = { read: 'Read only', write: 'Read/Write' };
+  PERMISSIONS = { read: 'read only', write: 'read & write' };
   ROLES = { user: 'User', manager: 'Manager' };
   ADVANCED_ROLES = { administrator: 'Administrator', ...this.ROLES };
 
-  projectUser = new BehaviorSubject<ProjectUser | undefined>(undefined);
+  _projectUser = new BehaviorSubject<ProjectUser | undefined>(undefined);
+  projectUser = this._projectUser.asObservable();
+
+  _projectUsers = new BehaviorSubject<ProjectUser[] | undefined>(undefined);
+  projectUsers = this._projectUsers.asObservable();
 
   verifyRole(requiredRole: ProjectUserRole): boolean {
-    if (!this.projectUser.value) {
+    if (!this._projectUser.value) {
       return false;
     }
 
     const roles = ['user', 'manager', 'administrator'];
     return (
-      roles.indexOf(requiredRole) <= roles.indexOf(this.projectUser.value.role)
+      roles.indexOf(requiredRole) <= roles.indexOf(this._projectUser.value.role)
     );
   }
 
   verifyPermission(requiredPermission: ProjectUserPermission): boolean {
-    if (!this.projectUser.value) {
+    if (!this._projectUser.value) {
       return false;
     }
     const permissions = ['read', 'write'];
     return (
       permissions.indexOf(requiredPermission) <=
-      permissions.indexOf(this.projectUser.value.permission)
+      permissions.indexOf(this._projectUser.value.permission)
     );
   }
 
@@ -51,15 +59,26 @@ export class ProjectUserService {
       )
       .pipe(
         tap((projectUser) => {
-          this.projectUser.next(projectUser);
+          this._projectUser.next(projectUser);
         })
       );
   }
 
-  getProjectUsers(project_slug: string): Observable<ProjectUser[]> {
-    return this.http.get<ProjectUser[]>(
-      this.BACKEND_URL_PREFIX + project_slug + '/users'
-    );
+  loadProjectUsers(): void {
+    this._projectUsers.next(undefined);
+    this.projectService.project
+      .pipe(
+        filter(Boolean),
+        switchMap((project) =>
+          this.http.get<ProjectUser[]>(
+            this.BACKEND_URL_PREFIX + project!.slug + '/users'
+          )
+        ),
+        tap((projectUsers) => {
+          this._projectUsers.next(projectUsers);
+        })
+      )
+      .subscribe();
   }
 
   addUserToProject(
