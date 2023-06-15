@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper" *ngIf="modelService.models | async">
+<div *ngIf="modelService.models | async">
   <div class="models-title">
     <h2>
       Models
@@ -21,7 +21,7 @@
       </a>
     </h2>
   </div>
-  <div id="models-overview">
+  <div class="flex flex-wrap">
     <mat-card
       class="overview-card"
       *ngFor="let model of modelService.models | async"

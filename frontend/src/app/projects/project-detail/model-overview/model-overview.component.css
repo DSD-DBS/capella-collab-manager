@@ -23,11 +23,6 @@
   align-items: center;
 }
 
-#models-overview {
-  display: flex;
-  flex-wrap: wrap;
-}
-
 #settings-icon {
   margin-left: 10px;
   position: relative;
@@ -92,10 +87,6 @@
 #add > .content {
   text-align: center;
   margin: auto;
-}
-
-.flexbox {
-  display: flex;
 }
 
 .content-wrapper {

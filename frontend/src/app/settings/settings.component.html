@@ -4,7 +4,7 @@
  -->
 
 <div class="title">Core functionality</div>
-<div class="options-list">
+<div class="flex">
   <a [routerLink]="['/settings/core/users']">
     <mat-card matRipple>
       <div class="subtitle">Manage users</div>
@@ -13,7 +13,7 @@
   </a>
   <a [routerLink]="['/settings/core/alerts']">
     <mat-card matRipple>
-      <div class="subtitle">Maintenance and alerts</div>
+      <div class="subtitle">Announcements</div>
       <app-mat-icon size="50px">add_alert</app-mat-icon>
     </mat-card>
   </a>
@@ -26,7 +26,7 @@
 </div>
 
 <div class="title">Model sources</div>
-<div class="options-list">
+<div class="flex">
   <a [routerLink]="['/settings/modelsources/git']">
     <mat-card matRipple>
       <div class="subtitle">Git</div>
@@ -45,7 +45,7 @@
 </div>
 
 <div class="title">Integrations</div>
-<div class="options-list">
+<div class="flex">
   <a [routerLink]="['/settings/integrations/pure-variants']">
     <mat-card matRipple>
       <div class="subtitle">pure::variants</div>

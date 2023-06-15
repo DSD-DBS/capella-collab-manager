@@ -44,11 +44,6 @@
   min-height: 10px;
 }
 
-.flexbox {
-  justify-content: space-between;
-  display: flex;
-}
-
 .upload_button {
   margin-left: 20px;
 }

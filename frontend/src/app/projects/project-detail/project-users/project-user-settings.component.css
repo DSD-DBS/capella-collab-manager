@@ -3,13 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#manage-users {
-  width: 400px;
-  padding: 16px 0 0 16px;
-  width: 400px;
-  max-width: 85vw;
-}
-
 .user-selection {
   height: 40vh;
 }
@@ -18,20 +11,17 @@ button {
   display: block;
 }
 
-#search-wrapper {
-  padding-right: 16px;
-}
-
 #search {
   padding-bottom: -20px;
   margin-bottom: -20px;
-  width: 400px;
-  max-width: 85vw;
+  padding-right: 16px;
 }
 
 mat-card {
   width: 400px;
   max-width: 85vw;
+  padding-bottom: 0;
+  padding-right: 0;
 }
 
 .scrollable {

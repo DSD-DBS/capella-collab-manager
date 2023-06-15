@@ -3,11 +3,11 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flex-center">
+<div>
   <h1>Persistent workspace session</h1>
 </div>
 
-<mat-card class="persistent-session">
+<mat-card>
   <mat-card-content>
     <p>
       Sessions with persistent workspaces will store all the changes you make on
@@ -19,7 +19,7 @@
       [formGroup]="toolSelectionForm"
       (ngSubmit)="requestPersistentSession()"
     >
-      <fieldset class="flexbox form-flex">
+      <fieldset class="flex gap-2">
         <mat-form-field appearance="fill">
           <mat-label>Model tool</mat-label>
           <mat-select

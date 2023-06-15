@@ -8,7 +8,7 @@
   *ngIf="(projectService.project | async) && (modelService.model | async)"
 >
   <h1 class="title">Git Models</h1>
-  <div class="flexbox">
+  <div class="flex">
     <a [routerLink]="['git-model', 'create']">
       <mat-card matRipple class="mat-card-overview new">
         <div class="content">
@@ -51,7 +51,7 @@
     </a>
   </div>
   <h1 class="title">T4C Models</h1>
-  <div class="flexbox">
+  <div class="flex">
     <a [routerLink]="['t4c-model', 'create']">
       <mat-card matRipple class="mat-card-overview new">
         <div class="content">

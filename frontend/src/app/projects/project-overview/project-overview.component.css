@@ -3,12 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-.footer {
-  color: grey;
-  text-align: end;
-  padding: 5px;
-}
-
 app-mat-card-overview-skeleton-loader {
   display: contents;
 }
