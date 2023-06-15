@@ -6,11 +6,5 @@
 .footer {
   text-align: center;
   margin: auto;
-  width: 100%;
   color: grey;
-}
-
-#tc {
-  color: var(--primary-color);
-  cursor: pointer;
 }

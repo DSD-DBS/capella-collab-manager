@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { UserService } from '../../services/user/user.service';
 
@@ -15,6 +16,30 @@ import { UserService } from '../../services/user/user.service';
 export class HeaderComponent {
   constructor(
     public authService: AuthService,
-    public userService: UserService
+    public userService: UserService,
+    public navBarService: NavBarService
   ) {}
+
+  isSmallScreen = false;
+
+  ngOnInit(): void {
+    this.createGithubButton();
+    this.updateScreenSize();
+  }
+
+  createGithubButton(): void {
+    const githubButtonScript = document.createElement('script');
+    githubButtonScript.type = 'text/javascript';
+    githubButtonScript.src = 'https://buttons.github.io/buttons.js';
+    document.head.appendChild(githubButtonScript);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.updateScreenSize();
+  }
+
+  updateScreenSize() {
+    this.isSmallScreen = window.innerWidth < 1300;
+  }
 }

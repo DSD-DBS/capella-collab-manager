@@ -38,6 +38,7 @@
 .overview-card {
   width: fit-content;
   width: 500px;
+  max-width: 85vw;
   min-height: 200px;
   user-select: none;
   display: flex;

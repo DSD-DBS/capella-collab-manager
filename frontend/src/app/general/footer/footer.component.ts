@@ -6,7 +6,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
-import { TermsConditionsComponent } from './terms-conditions/terms-conditions.component';
 
 @Component({
   selector: 'app-footer',
@@ -17,8 +16,4 @@ export class FooterComponent {
   constructor(public dialog: MatDialog) {}
 
   provider = environment.provider;
-
-  openTC(): void {
-    this.dialog.open(TermsConditionsComponent);
-  }
 }

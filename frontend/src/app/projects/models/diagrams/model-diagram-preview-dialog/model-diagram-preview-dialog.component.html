@@ -3,8 +3,8 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="dialog flex-space-between width">
-  <div class="width">
+<div class="flex-dialog flex-space-between width">
+  <div class="padding">
     <h2>Diagram preview of '{{ data.diagram.name }}'</h2>
     <span>UUID: {{ data.diagram.uuid }}</span>
     <mat-divider id="top-divider"></mat-divider>
@@ -14,6 +14,6 @@
   </div>
   <div class="width">
     <mat-divider id="bottom-divider"></mat-divider>
-    <button mat-button mat-dialog-close>Close</button>
+    <button class="width" mat-button mat-dialog-close>Close</button>
   </div>
 </div>

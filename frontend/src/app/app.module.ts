@@ -32,6 +32,7 @@ import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/mat
 import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -52,9 +53,9 @@ import { BreadcrumbsComponent } from './general/breadcrumbs/breadcrumbs.componen
 import { ErrorHandlingInterceptor } from './general/error-handling/error-handling.interceptor';
 import { FooterComponent } from './general/footer/footer.component';
 import { LegalComponent } from './general/footer/legal/legal.component';
-import { TermsConditionsComponent } from './general/footer/terms-conditions/terms-conditions.component';
 import { HeaderComponent } from './general/header/header.component';
 import { VersionComponent } from './general/metadata/version/version.component';
+import { NavBarMenuComponent } from './general/nav-bar-menu/nav-bar-menu.component';
 import { NoticeComponent } from './general/notice/notice.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 import { ButtonSkeletonLoaderComponent } from './helpers/skeleton-loaders/button-skeleton-loader/button-skeleton-loader.component';
@@ -173,6 +174,7 @@ import { SettingsComponent } from './settings/settings.component';
     ModelOverviewComponent,
     ModelRestrictionsComponent,
     ModelWrapperComponent,
+    NavBarMenuComponent,
     NoticeComponent,
     ProjectDetailsComponent,
     ProjectMetadataComponent,
@@ -188,7 +190,6 @@ import { SettingsComponent } from './settings/settings.component';
     T4CRepoDeletionDialogComponent,
     T4CSettingsComponent,
     T4CSettingsWrapperComponent,
-    TermsConditionsComponent,
     ToolDeletionDialogComponent,
     ToolDetailsComponent,
     ToolIntegrationsComponent,
@@ -229,6 +230,7 @@ import { SettingsComponent } from './settings/settings.component';
     MatRadioModule,
     MatRippleModule,
     MatSelectModule,
+    MatSidenavModule,
     MatSlideToggleModule,
     MatSortModule,
     MatStepperModule,

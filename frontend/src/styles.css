@@ -142,6 +142,10 @@ h1 {
   align-items: center;
 }
 
+.flex-space-around {
+  justify-content: space-around;
+}
+
 .flex-space-between button:only-child {
   margin-left: auto;
   flex-direction: row-reverse !important;
@@ -263,6 +267,7 @@ Angular Material Card Styles
   padding: 0 !important;
   width: fit-content;
   width: 400px;
+  max-width: 85vw;
   height: 250px;
   user-select: none;
 }
