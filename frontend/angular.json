@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "t4cclient": {
+    "capellacollab": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/t4cclient",
+            "outputPath": "dist/capellacollab",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -90,13 +90,13 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "t4cclient:build:production"
+              "browserTarget": "capellacollab:build:production"
             },
             "development": {
-              "browserTarget": "t4cclient:build:development"
+              "browserTarget": "capellacollab:build:development"
             },
             "playwright": {
-              "browserTarget": "t4cclient:build:development"
+              "browserTarget": "capellacollab:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -104,7 +104,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "t4cclient:build"
+            "browserTarget": "capellacollab:build"
           }
         },
         "test": {
