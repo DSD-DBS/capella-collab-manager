@@ -17,12 +17,6 @@ h1 {
   margin: 10px;
 }
 
-.flexbox {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-}
-
 button {
   margin-top: 5px;
   display: block;

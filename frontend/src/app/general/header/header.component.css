@@ -28,15 +28,6 @@
   margin-left: 20px;
 }
 
-.flexbox {
-  display: flex;
-  align-items: center;
-}
-
-.flexbox > a {
-  margin: 5px;
-}
-
 #profile {
   margin-left: 20px;
   margin-right: 15px;

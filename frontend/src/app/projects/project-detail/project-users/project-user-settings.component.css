@@ -16,12 +16,6 @@ button {
   display: block;
 }
 
-#search {
-  padding-bottom: 0px;
-  width: 400px;
-  max-width: 85vw;
-}
-
 mat-card {
   width: 400px;
   max-width: 85vw;

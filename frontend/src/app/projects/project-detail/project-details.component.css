@@ -7,32 +7,6 @@
   margin-left: 10px;
 }
 
-.flexbox {
-  justify-content: space-around;
-}
-
-.users {
-  flex-basis: 500px;
-}
-
-.item {
-  flex-basis: 500px;
-  flex-grow: 10;
-  display: inline-flex;
-  flex-direction: column;
-}
-
 .metadata-item {
   flex-basis: 50%;
-}
-
-.metadata-flexbox {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
-}
-
-app-project-metadata,
-app-create-readonly-session {
-  margin: auto;
 }

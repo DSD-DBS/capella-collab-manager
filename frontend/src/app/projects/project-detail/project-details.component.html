@@ -3,17 +3,18 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flexbox" *ngIf="projectService.project | async">
-  <div class="item">
-    <div class="metadata-flexbox">
-      <app-project-metadata class="metadata-item"></app-project-metadata>
-      <app-create-readonly-session
-        class="metadata-item"
-      ></app-create-readonly-session>
+<div
+  class="flex flex-wrap justify-between"
+  *ngIf="projectService.project | async"
+>
+  <div class="basis-1 grow">
+    <div class="flex flex-wrap">
+      <app-project-metadata class="flex-1"></app-project-metadata>
+      <app-create-readonly-session class="flex-1"></app-create-readonly-session>
     </div>
     <app-model-overview></app-model-overview>
   </div>
-  <div class="users" *ngIf="projectUserService.verifyRole('manager')">
+  <div class="basis-500" *ngIf="projectUserService.verifyRole('manager')">
     <app-project-user-settings></app-project-user-settings>
   </div>
 </div>

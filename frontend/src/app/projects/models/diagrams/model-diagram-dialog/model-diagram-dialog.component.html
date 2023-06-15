@@ -31,7 +31,7 @@
       >{{ filteredDiagrams()?.length }} diagram(s) found:
     </span>
   </div>
-  <div class="diagrams-flexbox">
+  <div class="flex flex-wrap">
     <mat-card
       class="diagram-card"
       #diagram
@@ -94,7 +94,7 @@
       </button>
     </mat-card>
   </div>
-  <div class="diagrams-flexbox" *ngIf="filteredDiagrams() === undefined">
+  <div class="flex flex-wrap" *ngIf="filteredDiagrams() === undefined">
     <ngx-skeleton-loader
       *ngFor="let _ of loaderArray"
       class="loader"

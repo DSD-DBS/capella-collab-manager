@@ -40,11 +40,6 @@
   align-items: center;
 }
 
-.diagrams-flexbox {
-  display: flex;
-  flex-wrap: wrap;
-}
-
 .diagram-error-icon {
   color: darkred;
   transform: scale(2);
