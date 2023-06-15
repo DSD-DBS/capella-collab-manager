@@ -28,5 +28,11 @@
 
 .metadata-flexbox {
   display: flex;
+  flex-wrap: wrap;
   align-items: stretch;
+}
+
+app-project-metadata,
+app-create-readonly-session {
+  margin: auto;
 }

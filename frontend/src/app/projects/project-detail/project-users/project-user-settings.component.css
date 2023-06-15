@@ -4,7 +4,8 @@
  */
 
 #manage-users {
-  min-width: 400px;
+  width: 400px;
+  max-width: 85vw;
 }
 
 .user-selection {
@@ -18,10 +19,12 @@ button {
 #search {
   padding-bottom: 0px;
   width: 400px;
+  max-width: 85vw;
 }
 
 mat-card {
   width: 400px;
+  max-width: 85vw;
 }
 
 .scrollable {

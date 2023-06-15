@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
+import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
 import { PageLayoutService } from './page-layout/page-layout.service';
 
 @Component({
@@ -11,6 +13,15 @@ import { PageLayoutService } from './page-layout/page-layout.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent {
-  constructor(public pageLayoutService: PageLayoutService) {}
+export class AppComponent implements AfterViewInit {
+  constructor(
+    public pageLayoutService: PageLayoutService,
+    private navBarService: NavBarService
+  ) {}
+
+  @ViewChild('sidenav') private sidenav?: MatSidenav;
+
+  ngAfterViewInit(): void {
+    this.navBarService.sidenav = this.sidenav;
+  }
 }
