@@ -118,8 +118,12 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
   }
 
   refreshProjectUsers(): void {
+    if (!this.project) {
+      return;
+    }
+
     this.projectUserService
-      .getProjectUsers(this.project?.slug!)
+      .getProjectUsers(this.project.slug)
       .subscribe((projectUsers) => {
         this.projectUsers = projectUsers;
       });
@@ -127,6 +131,10 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
 
   addUser(formDirective: FormGroupDirective): void {
     if (this.addUserToProjectForm.valid) {
+      if (!this.project) {
+        return;
+      }
+
       const formValue = this.addUserToProjectForm.value;
 
       let permission = formValue.permission;
@@ -135,7 +143,7 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
       }
       this.projectUserService
         .addUserToProject(
-          this.project?.slug!,
+          this.project.slug,
           formValue.username as string,
           formValue.role as SimpleProjectUserRole,
           permission as string,
@@ -155,12 +163,12 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
 
   removeUserFromProject(user: User): void {
     const reason = this.getReason();
-    if (!reason) {
+    if (!reason || !this.project) {
       return;
     }
 
     this.projectUserService
-      .deleteUserFromProject(this.project?.slug!, user.id, reason)
+      .deleteUserFromProject(this.project.slug, user.id, reason)
       .subscribe(() => {
         this.refreshProjectUsers();
         this.toastService.showSuccess(
@@ -172,12 +180,12 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
 
   upgradeUserToProjectManager(user: User): void {
     const reason = this.getReason();
-    if (!reason) {
+    if (!reason || !this.project) {
       return;
     }
 
     this.projectUserService
-      .changeRoleOfProjectUser(this.project?.slug!, user.id, 'manager', reason)
+      .changeRoleOfProjectUser(this.project.slug, user.id, 'manager', reason)
       .subscribe(() => {
         this.refreshProjectUsers();
         this.toastService.showSuccess(
@@ -189,12 +197,12 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
 
   downgradeUserToUserRole(user: User): void {
     const reason = this.getReason();
-    if (!reason) {
+    if (!reason || !this.project) {
       return;
     }
 
     this.projectUserService
-      .changeRoleOfProjectUser(this.project?.slug!, user.id, 'user', reason)
+      .changeRoleOfProjectUser(this.project.slug, user.id, 'user', reason)
       .subscribe(() => {
         this.refreshProjectUsers();
         this.toastService.showSuccess(
@@ -206,13 +214,13 @@ export class ProjectUserSettingsComponent implements OnInit, OnChanges {
 
   setUserPermission(user: User, permission: ProjectUserPermission): void {
     const reason = this.getReason();
-    if (!reason) {
+    if (!reason || !this.project) {
       return;
     }
 
     this.projectUserService
       .changePermissionOfProjectUser(
-        this.project?.slug!,
+        this.project.slug,
         user.id,
         permission,
         reason

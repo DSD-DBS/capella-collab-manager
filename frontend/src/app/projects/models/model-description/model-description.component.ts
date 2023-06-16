@@ -32,7 +32,7 @@ export class ModelDescriptionComponent implements OnInit {
   toolNatures?: ToolNature[];
   toolVersions?: ToolVersion[];
 
-  public canDelete: boolean = false;
+  public canDelete = false;
 
   private projectSlug?: string = undefined;
   private modelSlug?: string = undefined;

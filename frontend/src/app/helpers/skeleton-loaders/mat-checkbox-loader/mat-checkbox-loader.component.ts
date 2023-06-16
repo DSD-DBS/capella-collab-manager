@@ -10,6 +10,4 @@ import { Component } from '@angular/core';
   templateUrl: './mat-checkbox-loader.component.html',
   styleUrls: ['./mat-checkbox-loader.component.css'],
 })
-export class MatCheckboxLoaderComponent {
-  constructor() {}
-}
+export class MatCheckboxLoaderComponent {}

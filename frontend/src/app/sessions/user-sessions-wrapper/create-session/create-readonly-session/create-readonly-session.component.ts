@@ -73,7 +73,7 @@ export class CreateReadonlySessionComponent implements OnInit {
   }
 
   get tools(): Tool[] | undefined {
-    let toolIds = this.models?.map((m) => m.tool.id);
+    const toolIds = this.models?.map((m) => m.tool.id);
     return this.toolService.tools?.filter((t) => toolIds?.includes(t.id));
   }
 
@@ -99,7 +99,7 @@ export class CreateReadonlySessionComponent implements OnInit {
     this.toolVersions = undefined;
 
     this.toolService.getVersionsForTool(tool.id).subscribe((toolVersions) => {
-      let toolVersionIds = this.models?.map((m) => m.version?.id);
+      const toolVersionIds = this.models?.map((m) => m.version?.id);
       this.toolVersions = toolVersions.filter((v) =>
         toolVersionIds?.includes(v.id)
       );
@@ -113,7 +113,7 @@ export class CreateReadonlySessionComponent implements OnInit {
         map((readOnlySessions) => {
           return readOnlySessions?.find(
             (session) =>
-              session.project.slug === this.projectSlug &&
+              session.project?.slug === this.projectSlug &&
               session.version?.id ===
                 this.toolSelectionForm.value.version!.id &&
               session.version?.tool.id === this.toolSelectionForm.value.tool!.id

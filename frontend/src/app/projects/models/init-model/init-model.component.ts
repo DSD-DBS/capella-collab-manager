@@ -33,7 +33,7 @@ export class InitModelComponent implements OnInit {
   toolVersions: ToolVersion[] = [];
   toolNatures: ToolNature[] = [];
 
-  buttonDisabled: boolean = false;
+  buttonDisabled = false;
 
   private projectSlug?: string = undefined;
   private modelSlug?: string = undefined;

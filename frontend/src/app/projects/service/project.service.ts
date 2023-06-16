@@ -87,7 +87,7 @@ export class ProjectService {
   }
 
   asyncSlugValidator(ignoreProject?: Project): AsyncValidatorFn {
-    let ignoreSlug = !!ignoreProject ? ignoreProject.slug : -1;
+    const ignoreSlug = !!ignoreProject ? ignoreProject.slug : -1;
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       const projectSlug = slugify(control.value, { lower: true });
       return this.projects.pipe(

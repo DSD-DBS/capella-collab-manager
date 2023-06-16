@@ -14,6 +14,4 @@ import { environment } from 'src/environments/environment';
 export class LegalComponent {
   imprint = environment.imprint;
   privacy = environment.privacy;
-
-  constructor() {}
 }

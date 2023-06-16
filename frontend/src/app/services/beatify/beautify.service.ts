@@ -9,8 +9,6 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class BeautifyService {
-  constructor() {}
-
   beatifyDate(date: string): string {
     const newDate = new Date(date);
     const now = new Date();

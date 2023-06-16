@@ -12,11 +12,9 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class MatIconComponent implements OnInit {
   @Input() position: MatIconPosition = null;
-  @Input() size: string = '24px';
+  @Input() size = '24px';
 
   style = {};
-
-  constructor() {}
 
   ngOnInit(): void {
     this.style = {

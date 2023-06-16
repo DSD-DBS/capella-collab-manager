@@ -87,7 +87,7 @@ export class ModelRestrictionsComponent implements OnInit {
         this.mapRestrictionsFormToToolModelRestrictionsObject()
       )
       .subscribe(() => {
-        this.modelService.loadModelbySlug(this.projectSlug!, this.model?.slug!);
+        this.modelService.loadModelbySlug(this.projectSlug!, this.model!.slug!);
         this.loading = false;
       });
   }

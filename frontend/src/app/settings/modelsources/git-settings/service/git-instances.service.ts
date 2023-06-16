@@ -48,7 +48,7 @@ export class GitInstancesService {
   transformGitInstance(
     backendGitInstance: BackendBasicGitInstance
   ): GitInstance {
-    let gitInstance = JSON.parse(JSON.stringify(backendGitInstance));
+    const gitInstance = JSON.parse(JSON.stringify(backendGitInstance));
 
     gitInstance.apiURL = gitInstance.api_url;
     return gitInstance;
@@ -89,7 +89,7 @@ export class GitInstancesService {
   }
 
   asyncNameValidator(ignoreInstance?: GitInstance): AsyncValidatorFn {
-    let ignoreId = !!ignoreInstance ? ignoreInstance.id : -1;
+    const ignoreId = !!ignoreInstance ? ignoreInstance.id : -1;
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       return this.gitInstances.pipe(
         take(1),

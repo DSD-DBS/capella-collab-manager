@@ -10,6 +10,4 @@ import { Component } from '@angular/core';
   templateUrl: './terms-conditions.component.html',
   styleUrls: ['./terms-conditions.component.css'],
 })
-export class TermsConditionsComponent {
-  constructor() {}
-}
+export class TermsConditionsComponent {}

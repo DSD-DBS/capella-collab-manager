@@ -119,12 +119,12 @@ export class AuthService {
       .subscribe();
   }
 
-  cacheCurrentPath(path: String) {
+  cacheCurrentPath(path: string) {
     this.localStorageService.setValue('current_path', path);
   }
 
   getCurrentPath() {
-    let path = this.localStorageService.getValue('current_path');
+    const path = this.localStorageService.getValue('current_path');
     this.cacheCurrentPath('');
     return path || '/';
   }

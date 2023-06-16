@@ -6,7 +6,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { combineLatest, map } from 'rxjs';
+import { combineLatest, filter, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
@@ -30,11 +30,11 @@ export class ModelWrapperComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     combineLatest([
       this.route.params.pipe(map((params) => params.model as string)),
-      this.projectService.project,
+      this.projectService.project.pipe(filter(Boolean)),
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([modelSlug, project]) =>
-        this.modelService.loadModelbySlug(modelSlug, project?.slug!)
+        this.modelService.loadModelbySlug(modelSlug, project.slug)
       );
 
     this.modelService.model

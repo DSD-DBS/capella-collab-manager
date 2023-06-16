@@ -36,11 +36,11 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
   modelOptions: ModelOptions[] = [];
 
   ngOnInit(): void {
-    let filteredModels = this.data.models.filter(
+    const filteredModels = this.data.models.filter(
       (model) => model.version?.id === this.data.modelVersionId
     );
 
-    for (let model of filteredModels) {
+    for (const model of filteredModels) {
       const primaryGitModel = getPrimaryGitModel(model);
       if (!primaryGitModel) {
         continue;
@@ -57,7 +57,7 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
   }
 
   requestSession(): void {
-    let included = this.modelOptions.filter((mo) => mo.include);
+    const included = this.modelOptions.filter((mo) => mo.include);
 
     if (!included) {
       return;

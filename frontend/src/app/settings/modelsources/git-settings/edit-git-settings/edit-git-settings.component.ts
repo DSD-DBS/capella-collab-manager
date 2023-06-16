@@ -21,7 +21,7 @@ import {
   styleUrls: ['./edit-git-settings.component.css'],
 })
 export class EditGitSettingsComponent implements OnInit, OnDestroy {
-  id: number = -1;
+  id = -1;
 
   gitInstanceForm = this.fb.group({
     type: ['', Validators.required],

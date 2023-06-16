@@ -11,7 +11,5 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./button-skeleton-loader.component.css'],
 })
 export class ButtonSkeletonLoaderComponent {
-  constructor() {}
-
   @Input() loading = true;
 }

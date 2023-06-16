@@ -14,8 +14,8 @@ import { BackendMetadata, VersionService } from './version.service';
   styleUrls: ['./version.component.css'],
 })
 export class VersionComponent implements OnInit {
-  backend: string = '-';
-  frontend: string = '-';
+  backend = '-';
+  frontend = '-';
   env: string = environment.environment || 'not specified';
 
   constructor(

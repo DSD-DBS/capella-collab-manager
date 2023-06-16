@@ -4,3 +4,5 @@
 /dist
 /tmp
 /out-tsc
+
+**/*.spec.ts

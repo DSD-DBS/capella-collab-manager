@@ -63,7 +63,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   private revisions?: Revisions;
   public filteredRevisions?: Revisions;
 
-  public resultUrl: string = '';
+  public resultUrl = '';
 
   private projectSlug?: string = undefined;
   private modelSlug?: string = undefined;
@@ -71,8 +71,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   private gitModelId?: number;
   public gitModel?: GetGitModel;
 
-  public isEditMode: boolean = false;
-  public editing: boolean = false;
+  public isEditMode = false;
+  public editing = false;
 
   constructor(
     public projectService: ProjectService,
@@ -220,8 +220,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   }
 
   onBaseIntegrationUrlSelect(value: GitInstance): void {
-    let inputUrlControl = this.urls.inputUrl;
-    let inputUrl = inputUrlControl.value;
+    const inputUrlControl = this.urls.inputUrl;
+    const inputUrl = inputUrlControl.value;
 
     if (inputUrl && !hasRelativePathPrefix(inputUrl)) {
       inputUrlControl.reset();
@@ -247,7 +247,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     this.urls.inputUrl.updateValueAndValidity();
 
     if (changedInputUrl && hasAbsoluteUrlPrefix(changedInputUrl)) {
-      let longestMatchingGitInstance =
+      const longestMatchingGitInstance =
         this.findLongestUrlMatchingGitInstance(changedInputUrl);
       if (longestMatchingGitInstance) {
         this.selectedGitInstance = longestMatchingGitInstance;
@@ -343,8 +343,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
       path: this.resultUrl,
       revision: this.form.value.revision!,
       entrypoint: this.form.value.entrypoint!,
-      username: this.form.value.credentials?.username!,
-      password: this.form.value.credentials?.password!,
+      username: this.form.value.credentials!.username!,
+      password: this.form.value.credentials!.password!,
     };
   }
 
@@ -427,8 +427,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   }
 
   private updateResultUrl() {
-    let baseUrl = this.selectedGitInstance?.url || '';
-    let inputUrl = this.urls.inputUrl.value!;
+    const baseUrl = this.selectedGitInstance?.url || '';
+    const inputUrl = this.urls.inputUrl.value!;
 
     if (hasAbsoluteUrlPrefix(inputUrl)) {
       this.resultUrl = inputUrl;
