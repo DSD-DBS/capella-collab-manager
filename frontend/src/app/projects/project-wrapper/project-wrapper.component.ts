@@ -50,7 +50,7 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
     this.projectService.clearProject();
     this.modelService.clearModel();
     this.modelService.clearModels();
-    this.projectUserService.projectUser.next(undefined);
+    this.projectUserService._projectUser.next(undefined);
     this.breadcrumbsService.updatePlaceholder({ project: undefined });
   }
 }
