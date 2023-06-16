@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth/auth.service';
 import { UserService } from '../../services/user/user.service';
 
@@ -12,20 +12,9 @@ import { UserService } from '../../services/user/user.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   constructor(
     public authService: AuthService,
     public userService: UserService
   ) {}
-
-  ngOnInit(): void {
-    this.createGithubButton();
-  }
-
-  createGithubButton(): void {
-    const githubButtonScript = document.createElement('script');
-    githubButtonScript.type = 'text/javascript';
-    githubButtonScript.src = 'https://buttons.github.io/buttons.js';
-    document.head.appendChild(githubButtonScript);
-  }
 }
