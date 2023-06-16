@@ -34,13 +34,11 @@ def get_t4c_instances_by_version(
 def get_t4c_instance_by_id(
     db: orm.Session, instance_id: int
 ) -> models.DatabaseT4CInstance | None:
-    t4c_instance = db.execute(
+    return db.execute(
         sa.select(models.DatabaseT4CInstance).where(
             models.DatabaseT4CInstance.id == instance_id
         )
     ).scalar_one_or_none()
-    db.refresh(t4c_instance)
-    return t4c_instance
 
 
 def create_t4c_instance(
@@ -59,6 +57,5 @@ def update_t4c_instance(
     database.patch_database_with_pydantic_object(instance, patch_t4c_instance)
 
     db.commit()
-    db.refresh(instance)
 
     return instance
