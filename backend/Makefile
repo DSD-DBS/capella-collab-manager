@@ -37,6 +37,11 @@ app:
 	export OAUTHLIB_INSECURE_TRANSPORT=1;
 	uvicorn --reload --reload-dir $$(pwd) --reload-include "*.py" --reload-include "*.yaml" --reload-include "*.yml" capellacollab.__main__:app
 
+coverage:
+	pytest \
+		--cov-report term \
+		--cov-report html \
+		tests/
 
 install:
 	python generate_git_archival.py
