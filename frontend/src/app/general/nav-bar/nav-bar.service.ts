@@ -31,7 +31,7 @@ export class NavBarService {
     {
       name: 'Session overview',
       routerLink: ['/sessions', 'overview'],
-      requiredRole: 'user',
+      requiredRole: 'administrator',
     },
     {
       name: 'Prometheus',
