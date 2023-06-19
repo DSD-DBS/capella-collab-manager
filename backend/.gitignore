@@ -12,3 +12,6 @@ config/*
 build
 .git_archival.txt
 logs
+
+htmlcov
+.coverage

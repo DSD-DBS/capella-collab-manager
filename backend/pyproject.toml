@@ -60,6 +60,7 @@ dev = [
   "docker",
   "responses",
   "sqlalchemy[mypy]",
+  "pytest-cov",
 ]
 psycopg2 = [
   "psycopg2", # Need when running in a Docker container with AArch64: https://github.com/psycopg/psycopg2/issues/1360
@@ -71,7 +72,25 @@ azure = "capellacollab.core.authentication.provider.azure"
 
 [tool.black]
 line-length = 79
-target-version = ["py39"]
+target-version = ["py311"]
+
+[tool.coverage.run]
+source = [ "capellacollab" ]
+branch = true
+command_line = "-m pytest"
+omit = [
+  "tests/*",
+  "capellacollab/alembic/*"
+]
+
+[tool.coverage.report]
+exclude_also = [
+  'if t\.TYPE_CHECKING:',
+  'class .*\bt\.Protocol\):',
+  '@abc\.abstractmethod',
+  '@t\.overload',
+]
+skip_covered = true
 
 [tool.isort]
 profile = 'black'

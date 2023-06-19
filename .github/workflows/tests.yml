@@ -30,7 +30,7 @@ jobs:
       - name: Run pytest
         working-directory: backend
         run: |
-          pytest
+          pytest --cov-report term tests/
   frontend:
     runs-on: ubuntu-latest
     name: Run frontend karma tests
