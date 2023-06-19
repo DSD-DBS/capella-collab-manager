@@ -81,7 +81,7 @@ frontend:
     - mv ../favicon.ico frontend/src
     - mv ../environment.prod.ts frontend/src/environments
     - npm i undici
-    - node frontend/fetch-version.ts
+    - python frontend/fetch-version.py
     - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} frontend
     - *push
 

@@ -1,0 +1,13 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.dialog {
+  width: 70vw;
+  max-width: 500px;
+}
+
+mat-form-field {
+  width: 100%;
+}

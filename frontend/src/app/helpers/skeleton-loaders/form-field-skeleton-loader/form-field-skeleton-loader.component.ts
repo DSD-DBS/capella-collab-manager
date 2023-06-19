@@ -11,7 +11,5 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./form-field-skeleton-loader.component.css'],
 })
 export class FormFieldSkeletonLoaderComponent {
-  constructor() {}
-
   @Input() loading = true;
 }

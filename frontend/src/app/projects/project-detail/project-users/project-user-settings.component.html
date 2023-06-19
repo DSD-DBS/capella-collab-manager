@@ -3,171 +3,124 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<mat-card id="manage-users">
-  <h2>Manage users</h2>
-  <mat-form-field id="search" appearance="outline">
-    <mat-label>Search</mat-label>
-    <input
-      [(ngModel)]="search"
-      autocomplete="off"
-      matInput
-      placeholder="Username"
-    />
-    <mat-icon matSuffix>search</mat-icon>
-  </mat-form-field>
-  <mat-selection-list
-    #users
-    [multiple]="false"
-    class="scrollable simple-scroll"
-  >
-    <div mat-subheader>Managers</div>
-    <mat-list-option
-      *ngFor="let user of getProjectUsersByRole('manager')"
-      [value]="user"
-    >
-      <mat-icon mat-list-icon>account_circle</mat-icon>
-      <div mat-line>{{ user.user.name }}</div>
-      <div mat-line>
-        {{ projectUserService.ADVANCED_ROLES[user.role] }},
-        {{ projectUserService.PERMISSIONS[user.permission] }}
+<div>
+  <div id="manage-users-header">
+    <div class="flexbox flex-space-between">
+      <h2>Project members</h2>
+      <div class="flexbox">
+        <button
+          id="add-user"
+          (click)="openAddUserDialog()"
+          mat-stroked-button
+          matTooltip="Add a new user"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
       </div>
-    </mat-list-option>
-    <div mat-subheader>Users</div>
-    <mat-list-option
-      *ngFor="let user of getProjectUsersByRole('user')"
-      [value]="user"
-    >
-      <mat-icon mat-list-icon>account_circle</mat-icon>
-      <div mat-line>{{ user.user.name }}</div>
-      <div mat-line>
-        {{ projectUserService.ADVANCED_ROLES[user.role] }},
-        {{ projectUserService.PERMISSIONS[user.permission] }}
-      </div>
-    </mat-list-option>
-  </mat-selection-list>
-
-  <div
-    *ngIf="
-      users.selectedOptions.selected.length &&
-      userService.getUserName() !== selectedUser.user.name
-    "
-  >
-    <button
-      mat-flat-button
-      color="primary"
-      *ngIf="['user', 'manager'].includes(selectedUser.role)"
-      (click)="removeUserFromProject(selectedUser.user)"
-    >
-      <mat-icon>delete</mat-icon> Remove {{ selectedUser.user.name }} from
-      {{ project?.name }}
-    </button>
-    <button
-      mat-flat-button
-      color="primary"
-      *ngIf="'user' === selectedUser.role"
-      (click)="upgradeUserToProjectManager(selectedUser.user)"
-    >
-      <mat-icon>arrow_upward</mat-icon>
-      Upgrade
-      {{ selectedUser.user.name }} to project manager
-    </button>
-    <button
-      mat-flat-button
-      color="primary"
-      *ngIf="'manager' === selectedUser.role"
-      (click)="downgradeUserToUserRole(selectedUser.user)"
-    >
-      <mat-icon>arrow_downward</mat-icon>
-      Downgrade
-      {{ selectedUser.user.name }} to User
-    </button>
-    <div *ngIf="'manager' !== selectedUser.role">
-      <button
-        mat-flat-button
-        color="primary"
-        *ngIf="'read' === selectedUser.permission"
-        (click)="setUserPermission(selectedUser.user, 'write')"
-      >
-        <mat-icon>folder_shared</mat-icon>
-        Set permission of User
-        {{ selectedUser.user.name }} to Read/Write
-      </button>
-      <button
-        mat-flat-button
-        color="primary"
-        *ngIf="'write' === selectedUser.permission"
-        (click)="setUserPermission(selectedUser.user, 'read')"
-      >
-        <mat-icon>folder_open</mat-icon>
-        Set permission of User
-        {{ selectedUser.user.name }} to Read only
-      </button>
     </div>
   </div>
-</mat-card>
-<mat-card>
-  <h2>Add user</h2>
-  <form
-    [formGroup]="addUserToProjectForm"
-    #addUserToProjectFormDirective="ngForm"
-  >
-    <mat-form-field appearance="fill">
-      <mat-label>Username</mat-label>
-      <input matInput formControlName="username" />
-      <mat-error *ngIf="username.getError('required')">
-        Please enter a username!
-      </mat-error>
-      <mat-error *ngIf="username.getError('lowerCaseError')">
-        Usernames can only contain lowercase letters!
-      </mat-error>
-      <mat-error *ngIf="username.getError('userAlreadyInProjectError')">
-        The user is already a member of this project!
-      </mat-error>
-    </mat-form-field>
-    <br />
-    <mat-form-field appearance="fill">
-      <mat-label>Role</mat-label>
-      <mat-select formControlName="role">
-        <mat-option
-          *ngFor="let role of projectUserService.ROLES | keyvalue"
-          [value]="role.key"
-          >{{ role.value }}</mat-option
-        >
-      </mat-select>
-      <mat-error>You have to select a role!</mat-error>
-    </mat-form-field>
-    <div *ngIf="addUserToProjectForm.value.role !== 'manager'">
-      <mat-form-field
-        appearance="fill"
-        *ngIf="addUserToProjectForm.value.role !== 'manager'"
-      >
-        <mat-label>Permission</mat-label>
-        <mat-select formControlName="permission">
-          <mat-option
-            *ngFor="let permission of projectUserService.PERMISSIONS | keyvalue"
-            [value]="permission.key"
-            >{{ permission.value }}</mat-option
-          >
-        </mat-select>
-        <mat-error>You have to select a permission!</mat-error>
+  <mat-card id="manage-users">
+    <div id="search-wrapper">
+      <mat-form-field id="search" appearance="outline">
+        <mat-label>Search</mat-label>
+        <input
+          [(ngModel)]="search"
+          autocomplete="off"
+          matInput
+          placeholder="Username"
+        />
+        <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
     </div>
-    <mat-form-field appearance="fill">
-      <mat-label>Reason</mat-label>
-      <textarea rows="10" matInput formControlName="reason"></textarea>
-      <mat-error *ngIf="addUserToProjectForm.controls.reason.errors?.required">
-        Please enter a reason!
-      </mat-error>
-    </mat-form-field>
-    <div class="flex-space-between">
-      <button
-        (click)="addUser(addUserToProjectFormDirective)"
-        mat-flat-button
-        [disabled]="!addUserToProjectForm.valid"
-        color="primary"
-      >
-        Add user <mat-icon>keyboard_arrow_right</mat-icon>
-      </button>
+    <div class="scrollable">
+      <div *ngFor="let role of ['manager', 'user', 'administrator']">
+        <div class="roleTitle">{{ capitalizeFirstLetter(role) }}</div>
+        <div
+          class="user"
+          *ngFor="
+            let user of getProjectUsersByRole(
+              projectUserService.projectUsers | async,
+              role
+            )
+          "
+        >
+          <div class="flexbox">
+            <mat-icon class="accountCircle" mat-list-icon
+              >account_circle</mat-icon
+            >
+            <div>
+              <div class="username">{{ user.user.name }}</div>
+              <div class="userrole">
+                {{ projectUserService.ADVANCED_ROLES[user.role] }},
+                {{ projectUserService.PERMISSIONS[user.permission] }}
+              </div>
+            </div>
+          </div>
+          <div class="flexbox useractions">
+            <button
+              mat-icon-button
+              color="error"
+              *ngIf="['user', 'manager'].includes(user.role)"
+              (click)="removeUserFromProject(user.user)"
+              matTooltip="Remove user from project"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              color="primary"
+              *ngIf="'user' === user.role"
+              (click)="upgradeUserToProjectManager(user.user)"
+              matTooltip="Upgrade user to project manager"
+            >
+              <mat-icon>arrow_upward</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="primary"
+              *ngIf="'manager' === user.role"
+              (click)="downgradeUserToUserRole(user.user)"
+              matTooltip="Downgrade user to simple user"
+            >
+              <mat-icon>arrow_downward</mat-icon>
+            </button>
+            <div *ngIf="'manager' !== user.role">
+              <button
+                mat-icon-button
+                color="primary"
+                *ngIf="'read' === user.permission"
+                (click)="setUserPermission(user.user, 'write')"
+                matTooltip="Set permission of user to read/write"
+              >
+                <mat-icon>folder_shared</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                color="primary"
+                *ngIf="
+                  'write' === user.permission && user.role !== 'administrator'
+                "
+                (click)="setUserPermission(user.user, 'read')"
+                matTooltip="Set permission of user to read only"
+              >
+                <mat-icon>folder_open</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="(projectUserService.projectUsers | async) === undefined">
+          <ngx-skeleton-loader
+            appearance="circle"
+            [theme]="{
+              'border-radius': '5px',
+              height: '125px',
+              width: '375px',
+              border: '1px solid white'
+            }"
+          ></ngx-skeleton-loader>
+        </div>
+      </div>
     </div>
-  </form>
-</mat-card>
+  </mat-card>
+</div>

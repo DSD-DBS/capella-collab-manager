@@ -5,7 +5,7 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { combineLatest } from 'rxjs';
+import { combineLatest, filter } from 'rxjs';
 import {
   T4CModel,
   T4CModelService,
@@ -39,14 +39,17 @@ export class ModelDetailComponent implements OnInit, OnDestroy {
       .pipe(untilDestroyed(this))
       .subscribe((gitModels) => (this.gitModels = gitModels));
 
-    combineLatest([this.projectService.project, this.modelService.model])
+    combineLatest([
+      this.projectService.project.pipe(filter(Boolean)),
+      this.modelService.model.pipe(filter(Boolean)),
+    ])
       .pipe(untilDestroyed(this))
       .subscribe(([project, model]) => {
         this.t4cModelService
-          .listT4CModels(project?.slug!, model?.slug!)
+          .listT4CModels(project.slug, model.slug)
           .subscribe((models) => (this.t4cModels = models));
 
-        this.gitModelService.loadGitModels(project?.slug!, model?.slug!);
+        this.gitModelService.loadGitModels(project.slug, model.slug);
       });
   }
 

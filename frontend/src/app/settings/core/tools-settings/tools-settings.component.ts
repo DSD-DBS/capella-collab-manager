@@ -23,7 +23,7 @@ export class ToolsSettingsComponent {
   constructor(public toolService: ToolService) {
     this.tools = {};
     this.toolService.getTools().subscribe(() => {
-      for (let tool of this.toolService.tools!.map((tool) => tool.id)) {
+      for (const tool of this.toolService.tools!.map((tool) => tool.id)) {
         combineLatest([
           this.toolService.getNaturesForTool(tool),
           this.toolService.getVersionsForTool(tool),

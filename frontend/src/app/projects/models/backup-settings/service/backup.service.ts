@@ -17,7 +17,7 @@ export class BackupService {
   constructor(private http: HttpClient) {}
 
   pipelines = new BehaviorSubject<Pipeline[] | undefined>(undefined);
-  loading: boolean = false;
+  loading = false;
 
   getBackups(project: string, modelSlug: string): Observable<Pipeline[]> {
     this.loading = true;

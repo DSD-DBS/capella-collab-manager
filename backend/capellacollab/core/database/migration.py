@@ -94,18 +94,38 @@ def initialize_default_project(db):
 def create_tools(db):
     LOGGER.info("Initialized tools")
     registry = config["docker"]["registry"]
-    capella = tools_models.Tool(
-        name="Capella",
-        docker_image_template=f"{registry}/capella/remote:$version-latest",
-        docker_image_backup_template=f"{registry}/t4c/client/backup:$version-latest",
-        readonly_docker_image_template=f"{registry}/capella/readonly:$version-latest",
-    )
-    papyrus = tools_models.Tool(
-        name="Papyrus",
-        docker_image_template=f"{registry}/papyrus/client/remote:$version-prod",
-    )
+    if os.getenv("DEVELOPMENT_MODE", "").lower() in ("1", "true", "t"):
+        capella = tools_models.Tool(
+            name="Capella",
+            docker_image_template=f"{registry}/capella/remote:$version-latest",
+            docker_image_backup_template=f"{registry}/t4c/client/backup:$version-latest",
+            readonly_docker_image_template=f"{registry}/capella/readonly:$version-latest",
+        )
+
+        papyrus = tools_models.Tool(
+            name="Papyrus",
+            docker_image_template=f"{registry}/papyrus/client/remote:$version-prod",
+        )
+        tools_crud.create_tool(db, papyrus)
+
+        tools_crud.create_version(db, papyrus.id, "6.1")
+        tools_crud.create_version(db, papyrus.id, "6.0")
+
+        tools_crud.create_nature(db, papyrus.id, "UML 2.5")
+        tools_crud.create_nature(db, papyrus.id, "SysML 1.4")
+        tools_crud.create_nature(db, papyrus.id, "SysML 1.1")
+
+    else:
+        # Use public Github images per default
+        capella = tools_models.Tool(
+            name="Capella",
+            docker_image_template="ghcr.io/dsd-dbs/capella-dockerimages/capella/remote:$version-selected-dropins-main",
+            docker_image_backup_template="",
+            readonly_docker_image_template="ghcr.io/dsd-dbs/capella-dockerimages/capella/readonly:$version-selected-dropins-main",
+        )
+
     tools_crud.create_tool(db, capella)
-    tools_crud.create_tool(db, papyrus)
+
     jupyter = tools_models.Tool(
         name="Jupyter",
         docker_image_template=f"{registry}/jupyter-notebook:$version",
@@ -121,17 +141,10 @@ def create_tools(db):
     tools_crud.create_version(db, capella.id, "5.2.0")
     tools_crud.create_version(db, capella.id, "5.0.0")
 
-    tools_crud.create_version(db, papyrus.id, "6.1")
-    tools_crud.create_version(db, papyrus.id, "6.0")
-
     tools_crud.create_version(db, jupyter.id, "python-3.11")
 
     default_nature = tools_crud.create_nature(db, capella.id, "model")
     tools_crud.create_nature(db, capella.id, "library")
-
-    tools_crud.create_nature(db, papyrus.id, "UML 2.5")
-    tools_crud.create_nature(db, papyrus.id, "SysML 1.4")
-    tools_crud.create_nature(db, papyrus.id, "SysML 1.1")
 
     for model in toolmodels_crud.get_models(db):
         toolmodels_crud.set_tool_for_model(db, model, capella)

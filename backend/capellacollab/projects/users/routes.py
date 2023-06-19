@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import fastapi
+import pydantic
 from fastapi import status
 from sqlalchemy import orm
 
@@ -102,8 +103,16 @@ def get_users_for_project(
     project: projects_models.DatabaseProject = fastapi.Depends(
         toolmodels_injectables.get_existing_project
     ),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ) -> list[models.ProjectUserAssociation]:
-    return project.users
+    return pydantic.parse_obj_as(list[models.ProjectUser], project.users) + [
+        models.ProjectUser(
+            role=models.ProjectUserRole.ADMIN,
+            permission=models.ProjectUserPermission.WRITE,
+            user=user,
+        )
+        for user in users_crud.get_admin_users(db)
+    ]
 
 
 @router.post(

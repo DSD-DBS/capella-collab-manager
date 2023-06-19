@@ -173,6 +173,12 @@ guacamole:
 # Never use 'local' in production!
 target: other
 
+# Activate the development mode.
+# NEVER use this in production, it will make your application unsafe.
+# The development mode changes the following options:
+# - Initialize Papyrus and use local images per default (instead of the public Github images)
+development: false
+
 # Specify if you'd like to use the oauth mock
 # Never set mocks.oauth to True in production!
 mocks:

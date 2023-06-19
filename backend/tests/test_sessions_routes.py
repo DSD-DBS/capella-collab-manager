@@ -7,6 +7,7 @@ from datetime import datetime
 from uuid import uuid1
 
 import pytest
+from fastapi import testclient
 
 import capellacollab.sessions.guacamole
 from capellacollab.__main__ import app
@@ -198,8 +199,8 @@ class MockOperator:
         pass
 
 
-@pytest.fixture(autouse=True)
-def kubernetes():
+@pytest.fixture(autouse=True, name="kubernetes")
+def fixture_kubernetes():
     mock = MockOperator()
     mock.sessions.clear()
 
@@ -211,8 +212,8 @@ def kubernetes():
     del app.dependency_overrides[get_operator]
 
 
-@pytest.fixture()
-def user(db, executor_name):
+@pytest.fixture(name="user")
+def fixture_user(db, executor_name):
     user = create_user(db, executor_name, Role.USER)
 
     def get_mock_own_user():
@@ -229,8 +230,10 @@ def test_get_sessions_not_authenticated(client):
     assert response.json() == {"detail": "Not authenticated"}
 
 
-def test_create_readonly_session_as_user(client, db, user, kubernetes):
-    tool, version = next(
+def test_create_readonly_session_as_user(
+    client: testclient.TestClient, db, user, kubernetes
+):
+    _, version = next(
         (v.tool, v)
         for v in get_versions(db)
         if v.tool.name == "Capella" and v.name == "5.0.0"
@@ -260,10 +263,7 @@ def test_create_readonly_session_as_user(client, db, user, kubernetes):
     assert session
     assert session.owner_name == user.name
     assert kubernetes.sessions
-    assert (
-        kubernetes.sessions[0]["docker_image"]
-        == "k3d-myregistry.localhost:12345/capella/readonly:5.0.0-latest"
-    )
+    assert "/capella/readonly:5.0.0" in kubernetes.sessions[0]["docker_image"]
     assert (
         kubernetes.sessions[0]["git_repos_json"][0]["url"]
         == model.git_models[0].path
@@ -374,7 +374,12 @@ def setup_active_readonly_session(db, user, project, version):
     return create_session(db=db, session=database_model)
 
 
-def test_create_persistent_session_as_user(client, db, user, kubernetes):
+def test_create_persistent_session_as_user(
+    client: testclient.TestClient,
+    db,
+    user,
+    kubernetes,
+):
     tool, version = next(
         (v.tool, v)
         for v in get_versions(db)
@@ -396,10 +401,8 @@ def test_create_persistent_session_as_user(client, db, user, kubernetes):
     assert session.owner_name == user.name
     assert kubernetes.sessions
     assert kubernetes.sessions[0]["type"] == "capella"
-    assert (
-        kubernetes.sessions[0]["docker_image"]
-        == "k3d-myregistry.localhost:12345/capella/remote:5.0.0-latest"
-    )
+
+    assert "/capella/remote:5.0.0" in kubernetes.sessions[0]["docker_image"]
 
 
 def test_create_persistent_jupyter_session(client, db, user, kubernetes):

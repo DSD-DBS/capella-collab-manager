@@ -25,8 +25,6 @@ export interface Session {
   download_in_progress: boolean;
 }
 
-export interface PersistentSession extends Session {}
-
 export interface ReadonlySession extends Session {
   project: Project;
 }
@@ -37,9 +35,7 @@ export const isReadonlySession = (
   return session.type === 'readonly';
 };
 
-export const isPersistentSession = (
-  session: Session
-): session is PersistentSession => {
+export const isPersistentSession = (session: Session): session is Session => {
   return session.type === 'persistent';
 };
 

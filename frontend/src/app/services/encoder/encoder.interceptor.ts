@@ -15,8 +15,6 @@ import { Observable } from 'rxjs';
 // The HTTPClient removes trailing whitespaces in usernames by default, but they exist.
 @Injectable()
 export class WhitespaceUrlInterceptor implements HttpInterceptor {
-  constructor() {}
-
   intercept(
     request: HttpRequest<unknown>,
     next: HttpHandler

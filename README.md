@@ -11,34 +11,45 @@
 ![tests](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/tests.yml/badge.svg)
 ![push](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/push.yml/badge.svg)
 
-A web platform for collaboration on [Capella](https://www.eclipse.org/capella/)
-(MBSE) projects
+A web platform for collaboration on MBSE and [Capella](https://www.eclipse.org/capella/) projects.
 
 **Copyright 2021 - 2023 [DB Netz AG](https://fahrweg.dbnetze.com/),
 licensed under Apache 2.0 License (see full text [here](./LICENSES/Apache-2.0.txt))**
 
-Turn your local Capella experience into a browser-based collaboration platform for
+Turn your local MBSE and Capella experience into a browser-based collaboration platform for
 model-based projects. Designed to enable co-working across multiple organizations.
 Here are some of the key features:
 
-- Run Capella in a browser
-- Supports both git and [Team for Capella](https://www.obeosoft.com/en/team-for-capella)
+- Run MBSE related tools (Capella, Papyrus, Eclipse, pure::variants, Jupyter, etc.) in a browser
+- Supports both Git and [Team for Capella](https://www.obeosoft.com/en/team-for-capella)
   co-working models
-- Single sign on (SSO) via [OAuth2](https://oauth.net/2/)
+- Single sign-on (SSO) via [OAuth2](https://oauth.net/2/)
 - No need to install or maintain local Capella clients - clients are made on demand in
   an underlaying [Kubernetes](https://kubernetes.io/) cluster
 - Access to projects and models is self-managed by project leads, model owners or
   delegates
-- Within a project a user could have read or read/ write access. Read-only users don't
-  consume licenses in Team for Capella projects
-- Integration with git repository management for backup and workflow automation around
-  the models
+- Within a project a user could have read or read & write access. Read-only users don't
+  consume licenses in Team for Capella projects.
+- Integration with Git repository management for backup and workflow automation around
+  the models.
+- Diagram cache integration: Display Capella diagrams in the browser within seconds.
+- Model badge integration: Each model displays an automatically generated model complexity badge.
+- Automatic "garbage collection": Unused sessions are terminated to free up resources and reduce cost.
+- Jupyter integration to talk to Capella models from the workspace and to automate tasks.
 
-We have more exciting features on our roadmap, for instance:
+In addition, we have integrated commercial products:
 
-- an integration of templates
-- a planning and release management for model-derived artifacts like documents,
-  interface definitions, spreadsheets, etc.
+- [Team for Capella](https://www.obeosoft.com/en/team-for-capella):
+
+  - Automatic repository monitoring
+  - UI to create and delete models
+  - Automatic license injection into sessions.
+  - Nightly synchronization from TeamForCapella repositories to Git repositories
+  - Automatic access management via session tokens.
+
+- [pure::variants](https://www.pure-systems.com/purevariants)
+  - Automatic license injection
+  - Access to licenses is self-managed by project leads
 
 ## Getting started
 
@@ -52,11 +63,12 @@ To deploy the application you need:
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) >= 1.24 (Stargazer)
 - [helm](https://helm.sh/docs/intro/install/) >= 3.9.X
 - [Make](https://www.gnu.org/software/make/manual/make.html) >= 3.82, recommended 4.X
+- [Python](https://www.python.org/downloads/) >= 3.10
 
 If you'd like to run it locally, these tools are additionally required:
 
 - [k3d](https://k3d.io/) - a lightweight k8s cluster simulator
-- `nss-myhostname` to access local container registry
+- On some systems: `nss-myhostname` to access the local container registry
   (on Ubuntu you can get it via `sudo apt install libnss-myhostname`)
 
 When you have all that installed you can do the following:
@@ -67,25 +79,48 @@ cd capella-collab-manager
 
 # Create a local k3d cluster
 make create-cluster
-
-# Deploy the application (choose one of the two options)
-# WITHOUT TeamForCapella session support
-make deploy
-
-# WITH TeamForCapella session support
-make deploy-t4c
 ```
+
+Then, choose one of the three options and run the
+corresponding command:
+
+1. Fetch Capella images from Github (without initial TeamForCapella support)
+
+   ```zsh
+   make build helm-deploy open rollout
+   ```
+
+2. Build Capella images locally (without initial TeamForCapella support) \
+   To reduce the build time, the default configutation only builds images for Capella 6.0.0.
+   If you want to build more images for different versions, set the environment variable `CAPELLA_VERSIONS`
+   with a space-separated list of semantic Capella versions.
+
+   ```
+   export CAPELLA_VERSIONS="6.0.0 6.1.0"
+   ```
+
+   Then, run the following command:
+
+   ```
+   DEVELOPMENT_MODE=1 make deploy
+   ```
+
+3. Build Capella and TeamForCapella images locally (with initial TeamForCapella support)
+
+   Read and execute the preparation in the Capella Docker images documentation: [TeamForCapella client base](https://dsd-dbs.github.io/capella-dockerimages/capella/t4c/base/#preparation).
+
+   Then, run the following command:
+
+   ```
+   DEVELOPMENT_MODE=1 make deploy-t4c
+   ```
 
 It can take a long time to run, but shouldn't take more than 5 minutes.
 Please wait until all services are in the "Running" state.
 
-If all goes well, you should find Capella-collab-manager running on [http://localhost:8080/](http://localhost:8080/).
+If all goes well, you should find Capella Collaboration Manager running on <http://localhost:8080/>.
 
-To reduce the build time, the default configutation only builds a Capella 5.2.0 image. You can modify the `Makefile`
-if you want to build multiple versions.
-By default the TeamForCapella images are configured. You can change those in the Settings section of the website.
-
-If you want to see the individual services in the Kubernetes dashboard, you can run the following command:
+If you want to see the individual services in the web-based Kubernetes dashboard, you can run the following command:
 
 ```zsh
 make dashboard
@@ -93,10 +128,11 @@ make dashboard
 
 If something goes wrong, please open an issue on Github.
 
-To clean up the environment run:
+To clean up the environment, run:
 
 ```zsh
 make delete-cluster
+k3d registry delete k3d-myregistry.localhost
 ```
 
 #### Starting a session
@@ -119,7 +155,7 @@ running in a few minutes.
    A session can scale up until it reaches 2 Kubernetes CPU cores and 6Gi of memory.
 
 1. The setup requires at least one Docker container registry, which has to be accessible from the cluster.
-   All images need to be pushed to the registry.
+   All images have to be pushed to the registry before continuing.
 
 1. Copy `helm/values.yaml` to `deployments/yourinstance.values.yaml` and
    set all required values in the `deployments/yourinstance.values.yaml` configuration file.
@@ -165,10 +201,6 @@ running in a few minutes.
    ```zsh
    kubectl delete namespace <sessions-namespace>
    ```
-
-### Team for Capella integration
-
-For environments where TeamForCapella (commercial product of Obeo) is available it is possible to integrate such service with this management app. The integration requires the TeamForCapella backend to have the REST API feature enabled (in 5.0 it was still experimental). The TeamForCapella client then gets "baked" into the t4c-remote session image, however without the license secret. License secret is injected into container at runtime. Additionally, monitoring of available / consumed licenses is available but reqires the license server to be run with monitoring feature enabled.
 
 ## How it works
 

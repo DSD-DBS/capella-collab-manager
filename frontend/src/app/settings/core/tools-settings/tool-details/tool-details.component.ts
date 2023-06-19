@@ -26,8 +26,8 @@ import { ToolDeletionDialogComponent } from './tool-deletion-dialog/tool-deletio
   styleUrls: ['./tool-details.component.css'],
 })
 export class ToolDetailsComponent {
-  editing: boolean = false;
-  existing: boolean = false;
+  editing = false;
+  existing = false;
 
   selectedTool?: Tool;
   dockerimages?: ToolDockerimages;

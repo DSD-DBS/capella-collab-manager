@@ -5,30 +5,68 @@
 
 #manage-users {
   min-width: 400px;
-}
-
-.user-selection {
-  height: 40vh;
+  padding: 16px 0 0 16px;
 }
 
 button {
   display: block;
 }
 
-#search {
-  padding-bottom: 0px;
-  width: 400px;
+#search-wrapper {
+  padding-right: 16px;
 }
 
-mat-card {
-  width: 400px;
+#search {
+  padding-bottom: -20px;
+  margin-bottom: -20px;
+  width: 100%;
 }
 
 .scrollable {
-  max-height: 40vh;
+  max-height: 50vh;
   overflow-y: scroll;
 }
 
 mat-form-field {
   width: 100%;
+}
+
+.user {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 5px;
+}
+
+.roleTitle {
+  color: darkgrey;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.accountCircle {
+  font-size: 30px;
+  height: 30px;
+  width: 30px;
+  margin: auto 15px auto 0;
+}
+
+.username {
+  font-size: 1.25em;
+}
+
+.userrole {
+  color: grey;
+}
+
+.useractions > button {
+  margin: 0 px;
+}
+
+#add-user {
+  margin-left: 5px;
+}
+
+#manage-users-header {
+  margin-right: 10px;
 }

@@ -14,8 +14,6 @@ export class PageLayoutService {
   showNotice = true;
   showLegal = true;
 
-  constructor() {}
-
   disableAll() {
     this.showHeader = false;
     this.showFooter = false;

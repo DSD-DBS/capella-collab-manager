@@ -10,6 +10,4 @@ import { Component } from '@angular/core';
   templateUrl: './sessions.component.html',
   styleUrls: ['./sessions.component.css'],
 })
-export class SessionsComponent {
-  constructor() {}
-}
+export class SessionsComponent {}
