@@ -4,55 +4,38 @@
  -->
 
 <div id="toolbar">
-  <button
-    mat-icon-button
-    *ngIf="isSmallScreen"
-    color="primary"
-    (click)="navBarService.toggle()"
-    aria-label="Toggle navigation menu"
-  >
-    <mat-icon>menu</mat-icon>
-  </button>
+  <div class="xl:hidden">
+    <button
+      mat-icon-button
+      color="primary"
+      (click)="navBarService.toggle()"
+      aria-label="Toggle navigation menu"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
   <div class="primaryText" id="title">
     <div id="maintitle">Capella Collaboration Manager</div>
     <div id="subtitle"><app-breadcrumbs></app-breadcrumbs></div>
   </div>
-  <div class="flex gap-2" *ngIf="!isSmallScreen">
-    <a mat-raised-button color="primary" routerLink="/projects">Projects</a>
-    <a mat-raised-button color="primary" routerLink="">Sessions</a>
-    <a
-      color="primary"
-      id="overview"
-      mat-raised-button
-      *ngIf="userService.user?.role === 'administrator'"
-      [routerLink]="['/sessions', 'overview']"
+  <div class="hidden gap-2 xl:flex">
+    <div
+      *ngFor="let item of navBarService.navBarItems"
+      [routerLink]="item.routerLink"
     >
-      Overview
-    </a>
-    <a
-      color="primary"
-      mat-raised-button
-      *ngIf="userService.user?.role === 'administrator'"
-      href="/prometheus/graph"
-      target="_blank"
-    >
-      Prometheus <mat-icon>open_in_new</mat-icon>
-    </a>
-    <a
-      color="primary"
-      mat-raised-button
-      *ngIf="userService.user?.role === 'administrator'"
-      href="/grafana/"
-      target="_blank"
-    >
-      Grafana <mat-icon>open_in_new</mat-icon>
-    </a>
-    <a color="primary" mat-raised-button href="/docs/" target="_blank">
-      Documentation <mat-icon>open_in_new</mat-icon>
-    </a>
+      <a
+        mat-raised-button
+        color="primary"
+        *ngIf="userService.validateUserRole(item.requiredRole)"
+        [attr.href]="item.href"
+        [attr.target]="item.target"
+      >
+        {{ item.name }} <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+      </a>
+    </div>
   </div>
   <div>
-    <div class="right-aligned" *ngIf="!isSmallScreen">
+    <div class="hidden xl:flex xl:right-aligned gap-2">
       <div>
         <div class="margin"></div>
         <span id="github">

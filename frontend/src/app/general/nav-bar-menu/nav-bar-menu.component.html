@@ -4,45 +4,23 @@
  -->
 
 <mat-list>
-  <a mat-list-item (click)="navBarService.toggle()" routerLink="/projects"
-    >Projects</a
-  >
-  <mat-divider></mat-divider>
-  <a mat-list-item (click)="navBarService.toggle()" routerLink="">Sessions</a>
-  <mat-divider></mat-divider>
-  <a
-    mat-list-item
-    (click)="navBarService.toggle()"
-    *ngIf="userService.user?.role === 'administrator'"
-    [routerLink]="['/sessions', 'overview']"
-    >Session overview</a
-  >
-  <mat-divider></mat-divider>
-  <a
-    mat-list-item
-    (click)="navBarService.toggle()"
-    *ngIf="userService.user?.role === 'administrator'"
-    href="/prometheus/graph"
-    target="_blank"
-    >Prometheus <mat-icon class="open-in-new">open_in_new</mat-icon></a
-  >
-  <mat-divider></mat-divider>
-  <a
-    mat-list-item
-    (click)="navBarService.toggle()"
-    *ngIf="userService.user?.role === 'administrator'"
-    href="/grafana/"
-    target="_blank"
-    >Grafana <mat-icon class="open-in-new">open_in_new</mat-icon></a
-  >
-  <mat-divider></mat-divider>
-  <a
-    mat-list-item
-    (click)="navBarService.toggle()"
-    href="/docs/"
-    target="_blank"
-    >Documentation <mat-icon class="open-in-new">open_in_new</mat-icon></a
-  >
+  <div *ngFor="let item of navBarService.navBarItems">
+    <div [routerLink]="item.routerLink">
+      <a
+        mat-list-item
+        (click)="navBarService.toggle()"
+        *ngIf="userService.validateUserRole(item.requiredRole)"
+        [attr.href]="item.href"
+        [attr.target]="item.target"
+      >
+        {{ item.name }}
+        <mat-icon class="open-in-new" *ngIf="item.icon">{{
+          item.icon
+        }}</mat-icon>
+      </a>
+    </div>
+    <mat-divider></mat-divider>
+  </div>
   <mat-divider></mat-divider>
   <a
     mat-list-item
