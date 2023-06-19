@@ -65,12 +65,43 @@ Python code. The key differences are:
 - Prefer `t.NamedTuple` over `collections.namedtuple`, because the former uses
   a more convenient `class ...:` syntax and also supports type annotations.
 
-### Naming Conventions
+### Conventions
 
-#### Database Models
+#### Imports
 
-All SQLAlchemy models should have `Database` as a prefix, e.g., `DatabaseProject` or
-`DatbaseUser`.
+1.  Always use `from x import y` or `from x import y as z` when importing modules.
+    The only exception is when you are importing a high-level package or module,
+    such as `import fastapi`
+
+1.  Given that we often have identical file names across our modules and submodules,
+    adhering to the Google style guide can lead to naming conflicts during imports.
+    To address this, we distinguish between the following two cases:
+
+    1. _Importing a module from the current directory_: In this case, we
+       do not need to rename the module and can use it as is. For instance,
+       if we are in `capellacollab.projects.toolsmodels`, we can simply import
+       the `crud` and `model` modules like this: `from . import crud, model`.
+
+    2. _Importing a module from a different directory_: In this scenario,
+       we must add an `as xy` suffix to avoid naming conflicts with the first case.
+       We follow this pattern:
+
+       `from capellacollab.extensions.<extension> import submodule as <extension>_<submodule>`
+
+       For example, if we are in `capellacollab.sessions` and want to import `crud`
+       from `capellacollab.projects.toolsmodels`, we would do it like this:
+
+       `from capellacollab.projects.toolmodels import crud as toolmodels_crud`
+
+1.  Only use relative imports up to one level above the current one. This means you
+    should use `from . import y` for the current module and `from .. import y as z`
+    for one level above. For all other imports beyond this level, use the full path
+    as described in 3.
+
+#### Naming conventions
+
+- All SQLAlchemy models should have `Database` as a prefix, e.g.,
+  `DatabaseProject` or `DatabaseUser`.
 
 ## Frontend
 
