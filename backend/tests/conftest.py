@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import os
 from uuid import uuid1
 
 import fastapi
@@ -147,8 +146,3 @@ def delete_all_tables_if_existent(_engine: sqlalchemy.engine.Engine) -> bool:
         session.commit()
 
     return True
-
-
-@pytest.fixture()
-def development_mode() -> bool:
-    return os.getenv("DEVELOPMENT_MODE", "").lower() in ("true", "1", "t")

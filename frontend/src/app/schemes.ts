@@ -29,13 +29,15 @@ export interface ReadonlySession extends Session {
   project: Project;
 }
 
-export function isReadonlySession(session: Session): boolean {
+export const isReadonlySession = (
+  session: Session
+): session is ReadonlySession => {
   return session.type === 'readonly';
-}
+};
 
-export function isPersistentSession(session: Session): boolean {
+export const isPersistentSession = (session: Session): session is Session => {
   return session.type === 'persistent';
-}
+};
 
 export interface PathNode {
   path: string;

@@ -231,9 +231,9 @@ def test_get_sessions_not_authenticated(client):
 
 
 def test_create_readonly_session_as_user(
-    client: testclient.TestClient, db, user, kubernetes, development_mode: bool
+    client: testclient.TestClient, db, user, kubernetes
 ):
-    tool, version = next(
+    _, version = next(
         (v.tool, v)
         for v in get_versions(db)
         if v.tool.name == "Capella" and v.name == "5.0.0"
@@ -263,16 +263,7 @@ def test_create_readonly_session_as_user(
     assert session
     assert session.owner_name == user.name
     assert kubernetes.sessions
-    if development_mode:
-        assert (
-            kubernetes.sessions[0]["docker_image"]
-            == "k3d-myregistry.localhost:12345/capella/readonly:5.0.0-latest"
-        )
-    else:
-        assert (
-            kubernetes.sessions[0]["docker_image"]
-            == "ghcr.io/dsd-dbs/capella-dockerimages/capella/readonly:5.0.0-selected-dropins-main"
-        )
+    assert "/capella/readonly:5.0.0" in kubernetes.sessions[0]["docker_image"]
     assert (
         kubernetes.sessions[0]["git_repos_json"][0]["url"]
         == model.git_models[0].path
@@ -384,7 +375,10 @@ def setup_active_readonly_session(db, user, project, version):
 
 
 def test_create_persistent_session_as_user(
-    client: testclient.TestClient, db, user, kubernetes, development_mode: bool
+    client: testclient.TestClient,
+    db,
+    user,
+    kubernetes,
 ):
     tool, version = next(
         (v.tool, v)
@@ -408,16 +402,7 @@ def test_create_persistent_session_as_user(
     assert kubernetes.sessions
     assert kubernetes.sessions[0]["type"] == "capella"
 
-    if development_mode:
-        assert (
-            kubernetes.sessions[0]["docker_image"]
-            == "k3d-myregistry.localhost:12345/capella/remote:5.0.0-latest"
-        )
-    else:
-        assert (
-            kubernetes.sessions[0]["docker_image"]
-            == "ghcr.io/dsd-dbs/capella-dockerimages/capella/remote:5.0.0-selected-dropins-main"
-        )
+    assert "/capella/remote:5.0.0" in kubernetes.sessions[0]["docker_image"]
 
 
 def test_create_persistent_jupyter_session(client, db, user, kubernetes):

@@ -96,13 +96,13 @@ corresponding command:
    with a space-separated list of semantic Capella versions.
 
    ```
-   export CAPELLA_VERSIONS=6.0.0 6.1.0
+   export CAPELLA_VERSIONS="6.0.0 6.1.0"
    ```
 
    Then, run the following command:
 
    ```
-   DEVELOPMENT_MODE=1 make deploy-t4c
+   DEVELOPMENT_MODE=1 make deploy
    ```
 
 3. Build Capella and TeamForCapella images locally (with initial TeamForCapella support)
@@ -112,7 +112,7 @@ corresponding command:
    Then, run the following command:
 
    ```
-   DEVELOPMENT_MODE=1 make deploy
+   DEVELOPMENT_MODE=1 make deploy-t4c
    ```
 
 It can take a long time to run, but shouldn't take more than 5 minutes.

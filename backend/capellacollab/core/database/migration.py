@@ -94,7 +94,7 @@ def initialize_default_project(db):
 def create_tools(db):
     LOGGER.info("Initialized tools")
     registry = config["docker"]["registry"]
-    if os.getenv("DEVELOMENT_MODE", "").lower() in ("1", "true", "t"):
+    if os.getenv("DEVELOPMENT_MODE", "").lower() in ("1", "true", "t"):
         capella = tools_models.Tool(
             name="Capella",
             docker_image_template=f"{registry}/capella/remote:$version-latest",
