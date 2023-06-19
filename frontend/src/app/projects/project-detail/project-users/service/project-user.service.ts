@@ -5,7 +5,14 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, filter, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  combineLatest,
+  filter,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { ProjectService } from 'src/app/projects/service/project.service';
 import { User } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
@@ -100,9 +107,20 @@ export class ProjectUserService {
 
   loadProjectUsersOnProjectChange(): void {
     this._projectUsers.next(undefined);
-    this.projectService.project.pipe(filter(Boolean)).subscribe((project) => {
-      this.loadProjectUsers(project.slug);
-    });
+    combineLatest([
+      this.projectService.project.pipe(filter(Boolean)),
+      this.projectUser.pipe(
+        filter(
+          (projectUser) =>
+            projectUser?.role === 'manager' ||
+            projectUser?.role === 'administrator'
+        )
+      ),
+    ])
+      .pipe(filter(Boolean))
+      .subscribe(([project, _]) => {
+        this.loadProjectUsers(project.slug);
+      });
   }
 
   loadProjectUsers(projectSlug: string): void {
