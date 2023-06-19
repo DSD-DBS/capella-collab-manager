@@ -28,10 +28,6 @@
   flex-basis: calc(100% - 60px);
 }
 
-.model-complexity-badge-wrapper {
-  text-align: center;
-}
-
 .model-complexity-badge-loader {
   width: 100%;
   text-align: center;

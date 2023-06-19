@@ -20,11 +20,25 @@
           }"
         ></ngx-skeleton-loader>
       </div>
-      <div class="grow" id="description">
+      <div
+        *ngIf="(projectService.project | async) !== undefined"
+        class="grow"
+        id="description"
+      >
         {{
           (projectService.project | async)!.description ||
             "No description available."
         }}
+      </div>
+      <div *ngIf="(projectService.project | async) === undefined">
+        <ngx-skeleton-loader
+          [theme]="{
+            'border-radius': '5px',
+            height: '100px',
+            width: '80%',
+            border: '1px solid white'
+          }"
+        ></ngx-skeleton-loader>
       </div>
     </div>
     <div

@@ -9,7 +9,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
-import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { ProjectService } from '../service/project.service';
 
 @UntilDestroy()
@@ -23,7 +22,6 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     public projectService: ProjectService,
     public modelService: ModelService,
-    private projectUserService: ProjectUserService,
     private breadcrumbsService: BreadcrumbsService
   ) {}
 
@@ -36,7 +34,6 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
       .subscribe((projectSlug: string) => {
         this.projectService.loadProjectBySlug(projectSlug);
         this.modelService.loadModels(projectSlug);
-        this.projectUserService.getOwnProjectUser(projectSlug).subscribe();
       });
 
     this.projectService.project
@@ -50,7 +47,8 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
     this.projectService.clearProject();
     this.modelService.clearModel();
     this.modelService.clearModels();
-    this.projectUserService._projectUser.next(undefined);
-    this.breadcrumbsService.updatePlaceholder({ project: undefined });
+    this.breadcrumbsService.updatePlaceholder({
+      project: undefined,
+    });
   }
 }

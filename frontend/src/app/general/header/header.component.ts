@@ -19,15 +19,4 @@ export class HeaderComponent {
     public userService: UserService,
     public navBarService: NavBarService
   ) {}
-
-  ngOnInit(): void {
-    this.createGithubButton();
-  }
-
-  createGithubButton(): void {
-    const githubButtonScript = document.createElement('script');
-    githubButtonScript.type = 'text/javascript';
-    githubButtonScript.src = 'https://buttons.github.io/buttons.js';
-    document.head.appendChild(githubButtonScript);
-  }
 }

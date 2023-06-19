@@ -142,3 +142,7 @@ a {
   margin: 0;
   line-height: 1;
 }
+
+#add-model-button {
+  margin-left: 15px;
+}

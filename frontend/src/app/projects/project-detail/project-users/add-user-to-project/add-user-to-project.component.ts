@@ -4,7 +4,6 @@
  */
 
 import { Component } from '@angular/core';
-import { FormGroupDirective } from '@angular/forms';
 import {
   AbstractControl,
   AsyncValidatorFn,
@@ -85,15 +84,13 @@ export class AddUserToProjectComponent {
     };
   }
 
-  addUser(formDirective: FormGroupDirective): void {
+  addUser(): void {
     this.projectService.project.pipe(filter(Boolean)).subscribe((project) => {
       if (this.addUserToProjectForm.valid) {
         const formValue = this.addUserToProjectForm.value;
 
-        let permission = formValue.permission;
-        if (formValue.role == 'manager') {
-          permission = 'write';
-        }
+        const permission =
+          formValue.role === 'manager' ? 'write' : formValue.permission;
         this.projectUserService
           .addUserToProject(
             project.slug,
@@ -103,9 +100,7 @@ export class AddUserToProjectComponent {
             formValue.reason as string
           )
           .subscribe(() => {
-            formDirective.resetForm();
             this.addUserToProjectForm.reset();
-            this.projectUserService.loadProjectUsers();
             this.toastService.showSuccess(
               `User added`,
               `User '${formValue.username}' has been added to project '${project?.name}'`
