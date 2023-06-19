@@ -3,12 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-.flexbox {
-  display: flex;
-  align-items: top;
-  justify-content: space-around;
-}
-
 #welcome-card {
   margin-top: 10px;
   text-align: center;

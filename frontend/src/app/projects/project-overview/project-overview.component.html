@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flexbox">
+<div class="flex flex-wrap">
   <a routerLink="/projects/create">
     <mat-card matRipple class="mat-card-overview new">
       <div class="content">
@@ -24,17 +24,19 @@
     >
       <mat-card matRipple class="mat-card-overview">
         <div class="header">{{ project.name }}</div>
-        <div class="content">
-          <div *ngIf="project.description; else elseBlock">
-            {{ project.description }}
+        <div class="p-3">
+          <div>
+            <div *ngIf="project.description; else elseBlock">
+              {{ project.description }}
+            </div>
+            <ng-template #elseBlock>No description provided.</ng-template>
           </div>
-          <ng-template #elseBlock>No description provided.</ng-template>
-        </div>
-        <div class="footer">
-          {{ project.users.leads }} project lead(s),
-          {{ project.users.contributors }} contributor(s),
-          {{ project.users.subscribers }}
-          subscriber(s)
+          <div class="fixed bottom-2 right-2 text-right text-stone-500">
+            {{ project.users.leads }} project lead(s),
+            {{ project.users.contributors }} contributor(s),
+            {{ project.users.subscribers }}
+            subscriber(s)
+          </div>
         </div>
       </mat-card>
     </a>

@@ -45,10 +45,11 @@ const routes: Routes = [
       {
         path: '',
         component: SessionsComponent,
+        data: { breadcrumb: 'sessions' },
       },
       {
         path: 'projects',
-        data: { breadcrumb: 'Projects' },
+        data: { breadcrumb: 'projects' },
         children: [
           {
             path: '',

@@ -3,11 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-.flexbox.space-around {
-  display: flex;
-  justify-content: space-around;
-}
-
 mat-form-field {
   width: 400px;
+  max-width: 85vw;
 }

@@ -15,7 +15,7 @@
         [formGroup]="toolSelectionForm"
         (ngSubmit)="requestReadonlySession()"
       >
-        <fieldset>
+        <fieldset class="flex flex-wrap">
           <mat-form-field appearance="fill">
             <mat-label>Model tool</mat-label>
             <mat-select
@@ -50,7 +50,7 @@
             type="submit"
             [disabled]="!toolSelectionForm.valid"
           >
-            Request a Readonly Session
+            Request a read-only session
             <mat-icon>keyboard_arrow_right</mat-icon>
           </button>
         </fieldset>
@@ -58,7 +58,7 @@
       <p>
         <small
           >Alternatively, open a
-          <a routerLink="/sessions">Persistent workspace session</a>.</small
+          <a routerLink="/sessions">persistent workspace session</a>.</small
         >
       </p>
     </mat-card-content>

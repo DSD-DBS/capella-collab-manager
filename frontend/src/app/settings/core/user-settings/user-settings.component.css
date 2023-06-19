@@ -30,12 +30,6 @@ h1 {
   margin: 10px;
 }
 
-.flexbox {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-}
-
 #manage-users {
   min-width: 400px;
 }

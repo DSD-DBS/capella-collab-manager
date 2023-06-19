@@ -1,0 +1,57 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<mat-list>
+  <div *ngFor="let item of navBarService.navBarItems">
+    <div [routerLink]="item.routerLink">
+      <a
+        mat-list-item
+        (click)="navBarService.toggle()"
+        *ngIf="userService.validateUserRole(item.requiredRole)"
+        [attr.href]="item.href"
+        [attr.target]="item.target"
+      >
+        {{ item.name }}
+        <mat-icon class="open-in-new" *ngIf="item.icon">{{
+          item.icon
+        }}</mat-icon>
+      </a>
+    </div>
+    <mat-divider></mat-divider>
+  </div>
+  <mat-divider></mat-divider>
+  <a
+    mat-list-item
+    (click)="navBarService.toggle()"
+    href="https://github.com/DSD-DBS/capella-collab-manager/issues"
+    target="_blank"
+    >Create issue on Github
+    <mat-icon class="open-in-new">open_in_new</mat-icon></a
+  >
+  <mat-divider></mat-divider>
+  <a
+    mat-list-item
+    (click)="navBarService.toggle()"
+    *ngIf="userService.user?.role === 'administrator'"
+    routerLink="settings"
+    >Settings</a
+  >
+  <mat-divider></mat-divider>
+  <a
+    mat-list-item
+    (click)="navBarService.toggle()"
+    *ngIf="userService.user?.role === 'administrator'"
+    routerLink="events"
+    >Events</a
+  >
+  <mat-divider></mat-divider>
+  <a
+    mat-list-item
+    (click)="navBarService.toggle()"
+    *ngIf="userService.user?.role === 'administrator'"
+    routerLink="logout/redirect"
+    >Log out</a
+  >
+</mat-list>

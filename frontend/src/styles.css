@@ -5,6 +5,10 @@
 
 /* You can add global styles to this file, and also import other style files */
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html,
 body {
   height: 100%;
@@ -114,39 +118,6 @@ h1 {
   margin: 10px;
 }
 
-/* Flexbox rules */
-
-.flexbox {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  flex-wrap: wrap;
-}
-
-.flex-center,
-.flexbox.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.flexbox.center-horizontally {
-  display: flex;
-  justify-content: center;
-}
-
-.flex-space-between {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-  align-items: center;
-}
-
-.flex-space-between button:only-child {
-  margin-left: auto;
-  flex-direction: row-reverse !important;
-}
-
 button {
   margin: 5px;
 }
@@ -215,21 +186,6 @@ mat-card.default {
   flex-shrink: 0.5;
 }
 
-.options-list {
-  display: flex;
-  flex-direction: row;
-  padding-bottom: 2rem;
-}
-
-.options-list > button {
-  font-size: 16px;
-  width: 24ch;
-  height: calc(2.4rem + 12px + 5rem + 2rem);
-  display: flex;
-  flex-direction: row;
-  padding: 1rem 2ch;
-}
-
 .button-content-wrapper {
   display: flex;
   flex-direction: column;
@@ -263,6 +219,7 @@ Angular Material Card Styles
   padding: 0 !important;
   width: fit-content;
   width: 400px;
+  max-width: 85vw;
   height: 250px;
   user-select: none;
 }

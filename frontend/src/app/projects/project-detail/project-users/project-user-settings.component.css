@@ -3,23 +3,25 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#manage-users {
-  min-width: 400px;
-  padding: 16px 0 0 16px;
+.user-selection {
+  height: 40vh;
 }
 
 button {
   display: block;
 }
 
-#search-wrapper {
-  padding-right: 16px;
-}
-
 #search {
   padding-bottom: -20px;
   margin-bottom: -20px;
-  width: 100%;
+  padding-right: 16px;
+}
+
+mat-card {
+  width: 400px;
+  max-width: 85vw;
+  padding-bottom: 0;
+  padding-right: 0;
 }
 
 .scrollable {

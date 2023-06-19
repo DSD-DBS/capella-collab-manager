@@ -85,6 +85,18 @@ export class UserService {
       reason,
     });
   }
+
+  validateUserRole(requiredRole: UserRole): boolean {
+    if (this.user === undefined) {
+      return false;
+    }
+
+    if (requiredRole === 'administrator' && this.user.role === 'user') {
+      return false;
+    }
+
+    return true;
+  }
 }
 
 export interface User {
