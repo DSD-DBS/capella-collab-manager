@@ -55,17 +55,17 @@ class T4CRepositoryStatus(str, enum.Enum):
     INITIAL = "INITIAL"
 
 
-class T4CInstanceWithRepositories(t4c_models.T4CInstance):
-    repositories: list[T4CRepository]
+class T4CRepository(CreateT4CRepository):
+    id: int
+    instance: t4c_models.T4CInstance
+    status: T4CRepositoryStatus | None
 
     class Config:
         orm_mode = True
 
 
-class T4CRepository(CreateT4CRepository):
-    id: int
-    instance: t4c_models.T4CInstance
-    status: T4CRepositoryStatus | None
+class T4CInstanceWithRepositories(t4c_models.T4CInstance):
+    repositories: list[T4CRepository]
 
     class Config:
         orm_mode = True

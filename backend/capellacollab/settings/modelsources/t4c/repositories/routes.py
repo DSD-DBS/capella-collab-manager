@@ -242,7 +242,7 @@ def sync_db_with_server_repositories(
                 db=db, repo_name=repo_name, instance=instance
             )
         )
-        repo.status = server_repos_dict[repo]["status"]
+        repo.status = server_repos_dict[repo.name]["status"]
         db_repos_dict[repo_name] = repo
 
     return sorted(db_repos_dict.values(), key=lambda repo: repo.id)

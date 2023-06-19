@@ -21,6 +21,7 @@ import capellacollab.projects.users.models as projects_users_models
 import capellacollab.users.crud as users_crud
 import capellacollab.users.models as users_models
 from capellacollab.__main__ import app
+from capellacollab.core import database
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import migration
 
@@ -52,6 +53,12 @@ def fixture_db(
     )
 
     with session_local() as session:
+
+        def mock_get_db() -> orm.Session:
+            return session
+
+        app.dependency_overrides[database.get_db] = mock_get_db
+
         yield session
 
 

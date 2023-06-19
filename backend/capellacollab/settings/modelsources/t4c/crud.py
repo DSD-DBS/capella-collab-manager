@@ -57,4 +57,5 @@ def update_t4c_instance(
     database.patch_database_with_pydantic_object(instance, patch_t4c_instance)
 
     db.commit()
+
     return instance

@@ -111,7 +111,8 @@ class T4CInstanceBase(pydantic.BaseModel):
         orm_mode = True
 
 
-class FieldsT4CInstance(pydantic.BaseModel):
+class PatchT4CInstance(pydantic.BaseModel):
+    name: str | None
     license: str | None
     host: str | None
     port: int | None
@@ -121,6 +122,7 @@ class FieldsT4CInstance(pydantic.BaseModel):
     username: str | None
     password: str | None
     protocol: Protocol | None
+    version_id: int | None
 
     # validators
     _validate_rest_api_url = pydantic.validator("rest_api", allow_reuse=True)(
@@ -137,10 +139,6 @@ class FieldsT4CInstance(pydantic.BaseModel):
 
     class Config:
         orm_mode = True
-
-
-class PatchT4CInstance(FieldsT4CInstance):
-    version_id: int | None
 
 
 class T4CInstanceComplete(T4CInstanceBase):
