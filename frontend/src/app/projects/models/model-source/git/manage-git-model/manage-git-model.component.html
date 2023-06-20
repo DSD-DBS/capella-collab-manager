@@ -7,12 +7,7 @@
   *ngIf="(projectService.project | async) && (modelService.model | async)"
   class="wrapper flex-center"
 >
-  <mat-card class="section-card">
-    <h2>
-      Add a {{ asStepper ? "primary" : "" }} source for the model “{{
-        (modelService.model | async)!.name
-      }}” of the project “{{ (projectService.project | async)?.name }}”.
-    </h2>
+  <mat-card>
     <form [formGroup]="form">
       <fieldset *ngIf="!asStepper && isEditMode">
         <mat-slide-toggle formControlName="primary"> Primary </mat-slide-toggle>
@@ -86,12 +81,11 @@
         </div>
       </div>
       <div formGroupName="credentials">
-        <fieldset>
+        <fieldset class="flex flex-wrap gap-2">
           <mat-form-field appearance="fill">
             <mat-label>Git username</mat-label>
             <input matInput formControlName="username" />
           </mat-form-field>
-          <div class="field-separator"></div>
           <mat-form-field appearance="fill">
             <mat-label>Git password or token</mat-label>
             <input matInput formControlName="password" type="password" />
@@ -155,10 +149,10 @@
         </mat-form-field>
       </fieldset>
     </form>
-    <div *ngIf="asStepper; else notFromStepper" class="flex-space-between">
+    <div *ngIf="asStepper; else notFromStepper" class="flex justify-between">
       <button mat-button (click)="create.emit(false)">
         <mat-icon class="mat-icon-position">arrow_back</mat-icon>
-        Choose primary source
+        Back
       </button>
 
       <button
@@ -174,7 +168,7 @@
     </div>
     <ng-template #notFromStepper>
       <ng-container *ngIf="!isEditMode; else editGitModel">
-        <div class="flex-space-between">
+        <div class="flex justify-between">
           <a mat-button [routerLink]="['../..']">
             <mat-icon class="mat-icon-position">arrow_back</mat-icon>
             Cancel
@@ -195,7 +189,7 @@
     </ng-template>
     <ng-template #editGitModel>
       <div *ngIf="editing">
-        <div class="flex-space-between">
+        <div class="flex justify-between">
           <button mat-raised-button color="warn" (click)="cancelEditing()">
             Cancel
           </button>
@@ -212,7 +206,7 @@
         </div>
       </div>
       <div *ngIf="!editing">
-        <div class="flex-space-between">
+        <div class="flex justify-between">
           <a mat-button [routerLink]="['../..']">
             <mat-icon class="mat-icon-position">arrow_back</mat-icon>
             Back

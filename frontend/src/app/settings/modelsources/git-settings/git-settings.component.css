@@ -11,13 +11,10 @@
   margin: 20px;
 }
 
-.instances {
-  display: flex;
-}
-
 mat-card {
   width: fit-content;
   width: 400px;
+  max-width: 85vw;
   height: 150px;
   user-select: none;
 }

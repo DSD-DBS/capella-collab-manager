@@ -3,12 +3,12 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="space-evenly">
+<div class="flex flex-wrap">
   <div>
     <mat-card>
       <h2 *ngIf="!existing">Add a Team4Capella instance</h2>
       <form [formGroup]="form" (ngSubmit)="submit()">
-        <fieldset>
+        <fieldset class="flex flex-wrap gap-2">
           <mat-form-field appearance="fill">
             <mat-label>Name</mat-label>
             <input matInput formControlName="name" />
@@ -16,7 +16,6 @@
               The name is required.
             </mat-error>
           </mat-form-field>
-          <div class="field-separator"></div>
           <mat-form-field appearance="fill">
             <mat-label>Capella version</mat-label>
             <mat-select formControlName="version_id">
@@ -45,7 +44,7 @@
             </mat-error>
           </mat-form-field>
         </fieldset>
-        <fieldset>
+        <fieldset class="flex flex-wrap gap-2">
           <mat-form-field id="protocol" appearance="fill">
             <mat-label>Protocol</mat-label>
             <mat-select formControlName="protocol">
@@ -56,13 +55,12 @@
               >
             </mat-select>
           </mat-form-field>
-          <div class="field-separator"></div>
           <mat-form-field id="host" appearance="fill">
             <mat-label>Host</mat-label>
             <input matInput formControlName="host" />
           </mat-form-field>
         </fieldset>
-        <fieldset>
+        <fieldset class="flex flex-wrap gap-2">
           <mat-form-field appearance="fill">
             <mat-label>Port</mat-label>
             <input matInput inputmode="numeric" formControlName="port" />
@@ -80,7 +78,6 @@
               The port is required.
             </mat-error>
           </mat-form-field>
-          <div class="field-separator"></div>
           <mat-form-field appearance="fill">
             <mat-label>CDO port</mat-label>
             <input matInput inputmode="numeric" formControlName="cdo_port" />
@@ -100,7 +97,7 @@
             </mat-error>
           </mat-form-field>
         </fieldset>
-        <fieldset>
+        <fieldset class="flex flex-wrap gap-2">
           <mat-form-field appearance="fill">
             <mat-label>License server API</mat-label>
             <input matInput formControlName="usage_api" />
@@ -111,7 +108,6 @@
               The license server API is required.
             </mat-error>
           </mat-form-field>
-          <div class="field-separator"></div>
           <mat-form-field appearance="fill">
             <mat-label>Experimental REST API</mat-label>
             <input matInput formControlName="rest_api" />
@@ -123,7 +119,7 @@
             </mat-error>
           </mat-form-field>
         </fieldset>
-        <fieldset>
+        <fieldset class="flex flex-wrap gap-2">
           <mat-form-field appearance="fill">
             <mat-label>Username</mat-label>
             <input matInput autocomplete="off" formControlName="username" />
@@ -131,7 +127,6 @@
               The username is required.
             </mat-error>
           </mat-form-field>
-          <div class="field-separator"></div>
           <mat-form-field appearance="fill">
             <mat-label>Password</mat-label>
             <input
@@ -148,13 +143,13 @@
             >
           </mat-form-field>
         </fieldset>
-        <div *ngIf="editing" class="flex-space-between">
+        <div *ngIf="editing" class="flex justify-between">
           <button mat-flat-button color="warn" (click)="cancelEditing()">
             Cancel
           </button>
           <button mat-flat-button type="submit" color="primary">Submit</button>
         </div>
-        <div *ngIf="!editing && existing" class="flex-space-between">
+        <div *ngIf="!editing && existing" class="flex justify-between">
           <a mat-button [routerLink]="['../..']">
             <mat-icon class="mat-icon-position">arrow_back</mat-icon>
             Back
@@ -177,7 +172,7 @@
     </mat-card>
   </div>
 
-  <div>
+  <div class="flex flex-col flex-wrap">
     <app-licences *ngIf="this.instance" [instance]="instance"></app-licences>
     <app-t4c-instance-settings
       *ngIf="this.instance"

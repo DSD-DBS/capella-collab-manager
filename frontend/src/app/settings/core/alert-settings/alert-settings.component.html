@@ -5,25 +5,26 @@
 
 <mat-card>
   <h2>Create new alert</h2>
-  <form [formGroup]="createAlertForm">
-    <mat-form-field appearance="fill" id="title-form-field">
-      <mat-label>Title</mat-label>
-      <input matInput formControlName="title" />
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Level</mat-label>
-      <mat-select formControlName="level">
-        <mat-option
-          *ngFor="let noticeLevel of noticeService.noticeLevels"
-          [value]="noticeLevel"
-        >
-          {{ noticeLevel }}
-        </mat-option>
-      </mat-select>
-      <mat-error>Please select a level!</mat-error>
-    </mat-form-field>
-    <br />
-    <mat-form-field appearance="fill" id="notice-description">
+  <form [formGroup]="createAlertForm" class="flex flex-wrap">
+    <div class="flex flow-col flex-wrap gap-2">
+      <mat-form-field class="form-field" appearance="fill">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" />
+      </mat-form-field>
+      <mat-form-field class="form-field" appearance="fill">
+        <mat-label>Level</mat-label>
+        <mat-select formControlName="level">
+          <mat-option
+            *ngFor="let noticeLevel of noticeService.noticeLevels"
+            [value]="noticeLevel"
+          >
+            {{ noticeLevel }}
+          </mat-option>
+        </mat-select>
+        <mat-error>Please select a level!</mat-error>
+      </mat-form-field>
+    </div>
+    <mat-form-field appearance="fill" class="w-full">
       <mat-label>Description</mat-label>
       <textarea matInput formControlName="message"></textarea
       ><mat-error *ngIf="message.getError('titleOrDescriptionAvailable')"

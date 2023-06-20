@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 <mat-card class="default">
-  <div class="flex-space-between">
+  <div class="flex justify-between">
     <mat-card-title><h2>Tool Versions</h2></mat-card-title>
   </div>
   <form [formGroup]="toolVersionForm" #formDirective="ngForm">
@@ -49,7 +49,7 @@
   <div *ngIf="toolVersionList.selectedOptions.selected.length">
     <hr />
     <div class="field-separator"></div>
-    <div class="flex-space-between">
+    <div class="flex justify-between">
       <div>
         <form [formGroup]="toolVersionMetadataForm" *ngIf="!loadingMetadata">
           <mat-checkbox formControlName="isDeprecated"

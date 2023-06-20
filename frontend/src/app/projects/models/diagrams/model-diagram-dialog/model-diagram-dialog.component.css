@@ -49,6 +49,7 @@
   height: 200px;
   width: 100%;
   margin-bottom: 15px;
+  touch-action: auto !important;
 }
 
 .diagram:hover {

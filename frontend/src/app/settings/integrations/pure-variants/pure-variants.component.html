@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flex-center">
+<div class="flex justify-center flex-wrap">
   <mat-card class="section-card">
     <h2>pure::variants configuration</h2>
     <form
@@ -28,7 +28,7 @@
           </mat-form-field>
         </fieldset>
       </div>
-      <div class="flex-space-between">
+      <div class="flex justify-between">
         <button
           mat-raised-button
           color="primary"
@@ -39,7 +39,7 @@
         </button>
       </div>
     </form>
-    <hr />
+    <hr class="my-3" />
     <form
       (submit)="onLicenseFileUploadSubmit()"
       [formGroup]="licenseKeyUploadForm"
@@ -71,7 +71,7 @@
           *ngIf="
             configuration?.license_key_filename === null && !loadingLicenseKey
           "
-          class="flex-space-between"
+          class="flex justify-between"
         >
           <div>
             <button
@@ -91,7 +91,7 @@
             /><br />
             Selected file: {{ selectedFile || "No file selected" }}
           </div>
-          <div class="flex-space-between">
+          <div class="flex justify-between">
             <button
               mat-raised-button
               color="primary"

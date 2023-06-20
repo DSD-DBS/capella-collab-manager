@@ -14,12 +14,15 @@
 
 #protocol {
   width: 6em;
+  max-width: 85vw;
 }
 
 #host {
   width: 15em;
+  max-width: 85vw;
 }
 
 #port {
   width: 8em;
+  max-width: 85vw;
 }
