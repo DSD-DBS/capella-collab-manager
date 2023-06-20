@@ -4,21 +4,21 @@
  -->
 
 <div class="title">Core functionality</div>
-<div class="flex">
+<div class="flex flex-wrap">
   <a [routerLink]="['/settings/core/users']">
-    <mat-card matRipple>
+    <mat-card class="option-card" matRipple>
       <div class="subtitle">Manage users</div>
       <app-mat-icon size="50px">supervised_user_circle</app-mat-icon>
     </mat-card>
   </a>
   <a [routerLink]="['/settings/core/alerts']">
-    <mat-card matRipple>
+    <mat-card class="option-card" matRipple>
       <div class="subtitle">Announcements</div>
       <app-mat-icon size="50px">add_alert</app-mat-icon>
     </mat-card>
   </a>
   <a [routerLink]="['/settings/core/tools']">
-    <mat-card matRipple>
+    <mat-card class="option-card" matRipple>
       <div class="subtitle">Tools</div>
       <app-mat-icon size="50px">build</app-mat-icon>
     </mat-card>
@@ -26,18 +26,20 @@
 </div>
 
 <div class="title">Model sources</div>
-<div class="flex">
-  <a [routerLink]="['/settings/modelsources/git']">
-    <mat-card matRipple>
+<div class="flex flex-wrap">
+  <a class="flex" [routerLink]="['/settings/modelsources/git']">
+    <mat-card class="option-card" matRipple>
       <div class="subtitle">Git</div>
-      <img
-        id="git"
-        src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"
-      />
+      <div class="flex justify-center">
+        <img
+          id="git"
+          src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"
+        />
+      </div>
     </mat-card>
   </a>
   <a [routerLink]="['/settings/modelsources/t4c']">
-    <mat-card matRipple>
+    <mat-card class="option-card" matRipple>
       <div class="subtitle">Team For Capella</div>
       <app-mat-icon size="50px">people</app-mat-icon>
     </mat-card>
@@ -45,9 +47,9 @@
 </div>
 
 <div class="title">Integrations</div>
-<div class="flex">
+<div class="flex flex-wrap">
   <a [routerLink]="['/settings/integrations/pure-variants']">
-    <mat-card matRipple>
+    <mat-card class="option-card" matRipple>
       <div class="subtitle">pure::variants</div>
       <app-mat-icon size="50px">people</app-mat-icon>
     </mat-card>

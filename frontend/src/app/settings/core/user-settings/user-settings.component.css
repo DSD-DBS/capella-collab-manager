@@ -31,7 +31,8 @@ h1 {
 }
 
 #manage-users {
-  min-width: 400px;
+  width: 400px;
+  max-width: 85vw;
 }
 
 button {
@@ -45,7 +46,7 @@ button {
 
 #search {
   padding-bottom: 0px;
-  width: 400px;
+  width: 100%;
 }
 
 .scrollable {
@@ -57,6 +58,6 @@ button {
   width: 400px;
 }
 
-.flex-space-between {
+.flex justify-between {
   align-items: center;
 }

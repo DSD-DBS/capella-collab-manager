@@ -22,14 +22,7 @@ button {
   display: block;
 }
 
-#handle-alerts {
-  max-width: 633px;
-}
-
-#notice-description {
-  width: 623px;
-}
-
-#title-form-field {
-  width: 410px;
+.form-field {
+  width: 400px;
+  max-width: 85vw;
 }

@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper flex-center">
+<div class="wrapper flex flex-center">
   <mat-card *ngIf="modelService.model | async">
     <mat-card-title>{{ (modelService.model | async)!.name }}</mat-card-title>
     <form (submit)="onSubmit()" [formGroup]="form">
@@ -47,11 +47,11 @@
         </mat-form-field>
       </fieldset>
       <br />
-      <div class="flex-space-between">
-        <a mat-button [routerLink]="'../../..'"
+      <div class="flex justify-between">
+        <a mat-button routerLink="../../.."
           ><mat-icon>arrow_back</mat-icon>Back</a
         >
-        <div>
+        <div class="flex flex-wrap gap-2">
           <span
             matTooltip="The model can't be deleted since it has linked Git and/or T4C models."
             [matTooltipDisabled]="canDelete"

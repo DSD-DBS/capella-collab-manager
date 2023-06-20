@@ -4,13 +4,9 @@
  -->
 
 <div class="flex-center">
-  <mat-card class="section-card" *ngIf="projectService.project | async">
-    <form
-      id="create-model-base-form"
-      [formGroup]="form"
-      (ngSubmit)="onSubmit()"
-    >
-      <fieldset>
+  <mat-card *ngIf="projectService.project | async">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <fieldset class="flex flex-wrap">
         <mat-form-field appearance="fill">
           <mat-label>Model name</mat-label>
           <input matInput formControlName="name" />
@@ -49,7 +45,7 @@
           </mat-error>
         </mat-form-field>
       </fieldset>
-      <div class="flex-space-between">
+      <div class="flex justify-between">
         <button
           mat-raised-button
           color="primary"

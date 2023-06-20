@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flex">
+<div class="flex flex-wrap">
   <mat-card id="manage-users">
     <h2>Manage users</h2>
     <mat-form-field id="search" appearance="outline">
@@ -82,7 +82,7 @@
     <br />
     However, there may be cases where you want to create the user before the
     first login. <br />
-    <form [formGroup]="createUserFormGroup" class="flex-space-between">
+    <form [formGroup]="createUserFormGroup" class="flex justify-between">
       <mat-form-field>
         <mat-label>Username</mat-label>
         <input matInput formControlName="username" />

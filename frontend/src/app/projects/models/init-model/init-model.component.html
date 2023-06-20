@@ -3,10 +3,10 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper flex-center">
-  <mat-card class="section-card" *ngIf="modelService.model | async">
-    <form id="new-model-form" [formGroup]="form">
-      <fieldset>
+<div class="wrapper flex flex-center">
+  <mat-card *ngIf="modelService.model | async">
+    <form [formGroup]="form">
+      <fieldset class="flex flex-wrap gap-2">
         <mat-form-field appearance="fill">
           <mat-label>Modelling tool</mat-label>
           <input
@@ -15,7 +15,6 @@
             disabled
           />
         </mat-form-field>
-        <div class="field-separator"></div>
         <mat-form-field appearance="fill">
           <mat-label>Version</mat-label>
           <mat-select formControlName="version" id="version-selector">
@@ -44,7 +43,7 @@
         </mat-form-field>
       </fieldset>
     </form>
-    <div class="flex-space-between">
+    <div class="flex justify-between">
       <button mat-button (click)="create.emit({ created: false })">
         <mat-icon class="mat-icon-position left">arrow_back</mat-icon>
         Choose initialization

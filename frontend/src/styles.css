@@ -196,16 +196,6 @@ mat-card.default {
   margin: auto;
 }
 
-.option-title {
-  text-align: center;
-  display: inline-block;
-  white-space: break-spaces;
-  overflow: hidden;
-  line-height: 1.2rem;
-  height: 2.4rem;
-  width: 20ch;
-}
-
 /*
 Angular Material Card Styles
 */
@@ -267,4 +257,36 @@ Angular Material Card Styles
 
 .form-field-default {
   width: 405px;
+  max-width: 85vw;
+}
+
+/*
+Option cards
+*/
+
+.option-card {
+  width: 200px;
+  max-width: 85vw;
+  margin: 20px;
+  padding: 20px;
+  font-size: 1.5em;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.option-card:hover {
+  cursor: pointer;
+  background-color: var(--hover-color);
+}
+
+.option-title {
+  text-align: center;
+  display: inline-block;
+  white-space: break-spaces;
+  overflow: hidden;
+  line-height: 1.2rem;
+  height: 2.4rem;
+  width: 20ch;
 }
