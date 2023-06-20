@@ -7,14 +7,13 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { BehaviorSubject, filter, map, switchMap, tap } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   BaseT4CInstance,
   NewT4CInstance,
   Protocol,
-  T4CInstance,
   T4CInstanceService,
 } from 'src/app/services/settings/t4c-instance.service';
 import {
@@ -32,15 +31,8 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   editing = false;
   existing = false;
 
-  _instance = new BehaviorSubject<T4CInstance | undefined>(undefined);
-  get instance() {
-    return this._instance.value;
-  }
-
-  _capella_versions = new BehaviorSubject<ToolVersion[]>([]);
-  get capella_versions() {
-    return this._capella_versions.value;
-  }
+  instanceId?: number;
+  capella_versions?: ToolVersion[];
 
   public form = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -73,7 +65,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   });
 
   constructor(
-    private t4cInstanceService: T4CInstanceService,
+    public t4cInstanceService: T4CInstanceService,
     private route: ActivatedRoute,
     private router: Router,
     private toastService: ToastService,
@@ -85,28 +77,30 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
     this.route.params
       .pipe(
         map((params) => params.instance),
-        filter(Boolean),
-        tap(() => {
-          this.existing = true;
-          this.form.disable();
-        }),
-        switchMap((instance) => this.t4cInstanceService.getInstance(instance)),
-        untilDestroyed(this)
+        filter(Boolean)
       )
-      .subscribe(this._instance);
+      .subscribe((instanceId) => {
+        this.existing = true;
+        this.form.disable();
 
-    this.toolService
-      .getVersionsForTool(1)
-      .pipe(filter(Boolean))
-      .subscribe(this._capella_versions);
+        this.instanceId = instanceId;
+        this.t4cInstanceService.loadInstance(instanceId);
+      });
 
-    this._instance
-      .pipe(filter(Boolean))
-      .subscribe((t4cInstance: T4CInstance) => {
+    this.t4cInstanceService.t4cInstance
+      .pipe(untilDestroyed(this), filter(Boolean))
+      .subscribe((t4cInstance) => {
         t4cInstance.password = '***********';
         this.form.patchValue(t4cInstance);
         this.breadcrumbsService.updatePlaceholder({ t4cInstance });
       });
+
+    this.toolService
+      .getVersionsForTool(1)
+      .pipe(filter(Boolean))
+      .subscribe(
+        (capella_versions) => (this.capella_versions = capella_versions)
+      );
   }
 
   enableEditing(): void {
@@ -122,7 +116,10 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   cancelEditing(): void {
     this.editing = false;
     this.form.disable();
-    this.form.patchValue(this.instance as NewT4CInstance);
+
+    if (this.instanceId) {
+      this.t4cInstanceService.loadInstance(this.instanceId);
+    }
   }
 
   create(): void {
@@ -134,7 +131,6 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
             'Instance created',
             `The instance “${instance.name}” was created.`
           );
-          this._instance.next(instance);
           this.router.navigate(['..', 'instance', instance.id], {
             relativeTo: this.route,
           });
@@ -143,9 +139,9 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   }
 
   update(): void {
-    if (this.form.valid) {
+    if (this.form.valid && this.instanceId) {
       this.t4cInstanceService
-        .updateInstance(this.instance!.id, this.form.value as BaseT4CInstance)
+        .updateInstance(this.instanceId, this.form.value as BaseT4CInstance)
         .subscribe((instance) => {
           this.editing = false;
           this.form.disable();
@@ -166,7 +162,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._instance.next(undefined);
+    this.t4cInstanceService.reset();
     this.breadcrumbsService.updatePlaceholder({ t4cInstance: undefined });
   }
 }

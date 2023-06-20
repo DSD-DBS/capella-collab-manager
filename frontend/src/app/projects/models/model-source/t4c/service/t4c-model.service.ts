@@ -5,7 +5,12 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  ValidationErrors,
+} from '@angular/forms';
+import { BehaviorSubject, Observable, map, take, tap } from 'rxjs';
 import { T4CRepository } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 import { environment } from 'src/environments/environment';
 
@@ -15,37 +20,32 @@ import { environment } from 'src/environments/environment';
 export class T4CModelService {
   constructor(private http: HttpClient) {}
 
-  _t4cModel = new BehaviorSubject<T4CModel | undefined>(undefined);
-  get t4cModel() {
-    return this._t4cModel.value;
-  }
+  private _t4cModel = new BehaviorSubject<T4CModel | undefined>(undefined);
+  readonly t4cModel = this._t4cModel.asObservable();
 
-  _t4cModels = new BehaviorSubject<T4CModel[] | undefined>(undefined);
-  get t4cModels() {
-    return this._t4cModels.value;
-  }
+  private _t4cModels = new BehaviorSubject<T4CModel[] | undefined>(undefined);
+  readonly t4cModels = this._t4cModels.asObservable();
 
   urlFactory(projectSlug: string, modelSlug: string): string {
     return `${environment.backend_url}/projects/${projectSlug}/models/${modelSlug}/modelsources/t4c`;
   }
 
-  listT4CModels(
-    project_slug: string,
-    model_slug: string
-  ): Observable<T4CModel[]> {
-    return this.http
-      .get<T4CModel[]>(this.urlFactory(project_slug, model_slug))
-      .pipe(tap((models) => this._t4cModels.next(models)));
+  loadT4CModels(projectSlug: string, modelSlug: string): void {
+    this.http
+      .get<T4CModel[]>(this.urlFactory(projectSlug, modelSlug))
+      .subscribe({
+        next: (models) => this._t4cModels.next(models),
+        error: () => this._t4cModels.next(undefined),
+      });
   }
 
-  getT4CModel(
-    projectSlug: string,
-    modelSlug: string,
-    id: number
-  ): Observable<T4CModel> {
-    return this.http.get<T4CModel>(
-      `${this.urlFactory(projectSlug, modelSlug)}/${id}`
-    );
+  loadT4CModel(projectSlug: string, modelSlug: string, id: number): void {
+    this.http
+      .get<T4CModel>(`${this.urlFactory(projectSlug, modelSlug)}/${id}`)
+      .subscribe({
+        next: (model) => this._t4cModel.next(model),
+        error: () => this._t4cModel.next(undefined),
+      });
   }
 
   createT4CModel(
@@ -53,11 +53,14 @@ export class T4CModelService {
     modelSlug: string,
     body: SubmitT4CModel
   ): Observable<T4CModel> {
-    return this.http.post<T4CModel>(this.urlFactory(projectSlug, modelSlug), {
-      t4c_instance_id: body.t4cInstanceId,
-      t4c_repository_id: body.t4cRepositoryId,
-      name: body.name,
-    });
+    return this.http
+      .post<T4CModel>(this.urlFactory(projectSlug, modelSlug), body)
+      .pipe(
+        tap((model) => {
+          this._t4cModel.next(model);
+          this.loadT4CModels(projectSlug, modelSlug);
+        })
+      );
   }
 
   patchT4CModel(
@@ -66,14 +69,17 @@ export class T4CModelService {
     t4c_model_id: number,
     body: SubmitT4CModel
   ): Observable<T4CModel> {
-    return this.http.patch<T4CModel>(
-      `${this.urlFactory(projectSlug, modelSlug)}/${t4c_model_id}`,
-      {
-        t4c_instance_id: body.t4cInstanceId,
-        t4c_repository_id: body.t4cRepositoryId,
-        name: body.name,
-      }
-    );
+    return this.http
+      .patch<T4CModel>(
+        `${this.urlFactory(projectSlug, modelSlug)}/${t4c_model_id}`,
+        body
+      )
+      .pipe(
+        tap((model) => {
+          this._t4cModel.next(model);
+          this.loadT4CModels(projectSlug, modelSlug);
+        })
+      );
   }
 
   unlinkT4CModel(
@@ -81,20 +87,45 @@ export class T4CModelService {
     modelSlug: string,
     t4cModelId: number
   ): Observable<void> {
-    return this.http.delete<void>(
-      `${this.urlFactory(projectSlug, modelSlug)}/${t4cModelId}`
-    );
+    return this.http
+      .delete<void>(`${this.urlFactory(projectSlug, modelSlug)}/${t4cModelId}`)
+      .pipe(
+        tap(() => {
+          this._t4cModel.next(undefined);
+          this.loadT4CModels(projectSlug, modelSlug);
+        })
+      );
   }
 
-  clear() {
+  reset() {
     this._t4cModels.next(undefined);
     this._t4cModel.next(undefined);
+  }
+
+  asyncNameValidator(
+    instanceId: number,
+    repositoryId: number
+  ): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      return this.t4cModels.pipe(
+        take(1),
+        map((t4cModels) => {
+          const nameExists = t4cModels?.find(
+            (model) =>
+              model.repository.id === repositoryId &&
+              model.repository.instance.id === instanceId &&
+              model.name === control.value
+          );
+          return nameExists ? { uniqueName: { value: control.value } } : null;
+        })
+      );
+    };
   }
 }
 
 export type SubmitT4CModel = {
-  t4cInstanceId: number;
-  t4cRepositoryId: number;
+  t4c_instance_id: number;
+  t4c_repository_id: number;
   name: string;
 };
 

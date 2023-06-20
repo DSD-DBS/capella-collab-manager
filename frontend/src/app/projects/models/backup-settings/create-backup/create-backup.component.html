@@ -11,7 +11,7 @@
         Please select a T4C model:
         <mat-selection-list formControlName="t4cmodel" [multiple]="false">
           <mat-list-option
-            *ngFor="let t4cModel of t4cModelService.t4cModels"
+            *ngFor="let t4cModel of t4cModelService.t4cModels | async"
             [value]="t4cModel.id"
           >
             <div mat-line>TeamForCapella model '{{ t4cModel.name }}'</div>

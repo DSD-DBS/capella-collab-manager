@@ -11,16 +11,9 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatLegacySelectionList as MatSelectionList } from '@angular/material/legacy-list';
-import { tap, switchMap } from 'rxjs';
+import { MatSelectionList } from '@angular/material/list';
 import { T4CInstance } from 'src/app/services/settings/t4c-instance.service';
 import {
   CreateT4CRepository,
@@ -45,147 +38,62 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
 
   ngOnChanges(_changes: SimpleChanges): void {
     if (this.instance) {
-      this.t4cRepoService
-        .getT4CRepositories(this.instance.id)
-        .subscribe((repositories) => {
-          this.t4cRepoService._repositories.next(repositories);
-        });
+      this.t4cRepoService.loadRepositories(this.instance.id);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.t4cRepoService.reset();
   }
 
   @ViewChild('repositoryList') repositoryList!: MatSelectionList;
 
   form = new FormGroup({
-    name: new FormControl('', [
-      Validators.required,
-      this.uniqueNameValidator.bind(this),
-      Validators.pattern(/^[-a-zA-Z0-9_]+$/),
-    ]),
+    name: new FormControl('', {
+      validators: [Validators.required, Validators.pattern(/^[-a-zA-Z0-9_]+$/)],
+      asyncValidators: this.t4cRepoService.asyncNameValidator(),
+    }),
   });
-
-  uniqueNameValidator(control: AbstractControl): ValidationErrors | null {
-    return this.t4cRepoService.repositories
-      .map((repo) => repo.name)
-      .includes(control.value)
-      ? { projectExistsError: true }
-      : null;
-  }
-
-  refreshRepositories(): void {
-    this.t4cRepoService._repositories.next(
-      this.t4cRepoService.repositories.map((repo) => ({
-        ...repo,
-        status: 'LOADING',
-      }))
-    );
-    this.t4cRepoService
-      .getT4CRepositories(this.instance!.id)
-      .subscribe((repositories) => {
-        this.t4cRepoService._repositories.next(repositories);
-      });
-  }
 
   createRepository(): void {
     if (this.form.valid) {
-      this.form.disable();
-
       this.t4cRepoService
-        .createT4CRepository(
+        .createRepository(
           this.instance!.id,
           this.form.value as CreateT4CRepository
         )
-        .pipe(
-          tap({
-            next: (repository) => {
-              this.form.reset();
-              this.t4cRepoService._repositories.next([
-                ...this.t4cRepoService.repositories,
-                { ...repository, status: 'LOADING' },
-              ]);
-            },
-            complete: () => {
-              this.form.enable();
-            },
-          }),
-          switchMap(() =>
-            this.t4cRepoService.getT4CRepositories(this.instance!.id)
-          )
-        )
-        .subscribe((repositories) => {
-          this.t4cRepoService._repositories.next(repositories);
-        });
+        .subscribe(() => this.form.reset());
     }
   }
 
-  removeRepository(project: T4CRepository): void {
-    const dialogRef = this.dialog.open(T4CRepoDeletionDialogComponent, {
-      data: project,
-    });
-
-    dialogRef.afterClosed().subscribe((val) => {
-      if (val) {
-        this.t4cRepoService
-          .getT4CRepositories(this.instance!.id)
-          .subscribe((repositories) => {
-            this.t4cRepoService._repositories.next(repositories);
-          });
-      }
+  deleteRepository(repository: T4CRepository): void {
+    this.dialog.open(T4CRepoDeletionDialogComponent, {
+      data: repository,
     });
   }
 
   startRepository(repository: T4CServerRepository): void {
     this.repositoryList.selectedOptions.clear();
-    repository.status = 'LOADING';
     this.t4cRepoService
       .startRepository(repository.instance.id, repository.id)
-      .pipe(
-        tap(() => (repository.status = 'ONLINE')),
-        switchMap(() =>
-          this.t4cRepoService.getT4CRepositories(this.instance!.id)
-        )
-      )
-      .subscribe((repositories) => {
-        this.t4cRepoService._repositories.next(repositories);
-      });
+      .subscribe();
   }
 
   stopRepository(repository: T4CServerRepository): void {
     this.repositoryList.selectedOptions.clear();
-    repository.status = 'LOADING';
     this.t4cRepoService
       .stopRepository(repository.instance.id, repository.id)
-      .pipe(
-        tap(() => (repository.status = 'OFFLINE')),
-        switchMap(() =>
-          this.t4cRepoService.getT4CRepositories(this.instance!.id)
-        )
-      )
-      .subscribe((repositories) => {
-        this.t4cRepoService._repositories.next(repositories);
-      });
+      .subscribe();
   }
 
   recreateRepository(repository: T4CServerRepository): void {
     this.repositoryList.selectedOptions.clear();
-    repository.status = 'LOADING';
     this.t4cRepoService
       .recreateRepository(repository.instance.id, repository.id)
-      .pipe(
-        tap(() => (repository.status = 'ONLINE')),
-        switchMap(() =>
-          this.t4cRepoService.getT4CRepositories(this.instance!.id)
-        )
-      )
-      .subscribe((repositories) => {
-        this.t4cRepoService._repositories.next(repositories);
-      });
+      .subscribe();
   }
 
   get selectedRepository(): T4CRepository & T4CServerRepository {
     return this.repositoryList.selectedOptions.selected[0].value;
-  }
-
-  ngOnDestroy(): void {
-    this.t4cRepoService._repositories.next([]);
   }
 }

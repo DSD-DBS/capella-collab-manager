@@ -43,9 +43,11 @@ export class CreateBackupComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.t4cModelService
-      .listT4CModels(this.data.projectSlug, this.data.modelSlug)
-      .subscribe();
+    this.t4cModelService.loadT4CModels(
+      this.data.projectSlug,
+      this.data.modelSlug
+    );
+
     this.gitModelService.loadGitModels(
       this.data.projectSlug,
       this.data.modelSlug
@@ -53,7 +55,7 @@ export class CreateBackupComponent implements OnInit {
 
     combineLatest([
       this.gitModelService.gitModels,
-      this.t4cModelService._t4cModels.asObservable(),
+      this.t4cModelService.t4cModels,
     ])
       .pipe(untilDestroyed(this))
       .subscribe(

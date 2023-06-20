@@ -27,7 +27,11 @@
               </mat-option>
             </mat-select>
             <mat-hint
-              *ngIf="instance && instance.version.id !== form.value.version_id"
+              *ngIf="
+                (t4cInstanceService.t4cInstance | async) !== undefined &&
+                (t4cInstanceService.t4cInstance | async)!.version.id !==
+                  form.value.version_id
+              "
               >Models are not auto-migrated on version change.</mat-hint
             >
             <mat-error *ngIf="form.controls.version_id.errors?.required">
@@ -172,11 +176,13 @@
     </mat-card>
   </div>
 
-  <div class="flex flex-col flex-wrap">
-    <app-licences *ngIf="this.instance" [instance]="instance"></app-licences>
+  <div
+    class="flex flex-col flex-wrap"
+    *ngIf="(t4cInstanceService.t4cInstance | async) !== undefined"
+  >
+    <app-licences [instance]="instance"></app-licences>
     <app-t4c-instance-settings
-      *ngIf="this.instance"
-      [instance]="instance"
+      [instance]="(t4cInstanceService.t4cInstance | async)!"
     ></app-t4c-instance-settings>
   </div>
 </div>
