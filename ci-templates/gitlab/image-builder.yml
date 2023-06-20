@@ -26,6 +26,7 @@ variables:
   GUACAMOLE_IMAGE_NAME: "capella/collab/guacamole"
   DOCKER_BUILD_ARGS: "--no-cache"
   DOCKER_BUILDKIT: "1"
+  BASE_IMAGE: "debian:bullseye"
 
 default:
   image: $DOCKER_REGISTRY/base
@@ -76,7 +77,6 @@ frontend:
   script:
     - *prepare
     - IMAGE=${DOCKER_REGISTRY}/${FRONTEND_IMAGE_NAME:?}
-    - BASE_IMAGE=${DOCKER_REGISTRY}/base
     - *docker
     - mv ../favicon.ico frontend/src
     - mv ../environment.prod.ts frontend/src/environments
@@ -93,7 +93,6 @@ backend:
   script:
     - *prepare
     - IMAGE=${DOCKER_REGISTRY}/${BACKEND_IMAGE_NAME:?}
-    - BASE_IMAGE=${DOCKER_REGISTRY}/base
     - *docker
     - python backend/generate_git_archival.py
     - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} backend
@@ -107,7 +106,6 @@ docs:
   script:
     - *prepare
     - IMAGE=${DOCKER_REGISTRY}/${DOCS_IMAGE_NAME:?}
-    - BASE_IMAGE=${DOCKER_REGISTRY}/base
     - *docker
     - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} docs/user
     - *push
@@ -120,7 +118,6 @@ guacamole:
   script:
     - *prepare
     - IMAGE=${DOCKER_REGISTRY}/${GUACAMOLE_IMAGE_NAME:?}
-    - BASE_IMAGE=guacamole/guacamole
     - *docker
-    - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} guacamole
+    - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=guacamole/guacamole guacamole
     - *push
