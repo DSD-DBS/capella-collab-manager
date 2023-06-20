@@ -25,7 +25,7 @@ from capellacollab.projects.toolmodels.modelsources.git.injectables import (
 from capellacollab.projects.toolmodels.modelsources.t4c.injectables import (
     get_existing_t4c_model,
 )
-from capellacollab.projects.users.models import ProjectUserRole
+from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import operators
 from capellacollab.tools import crud as tools_crud
 
@@ -34,20 +34,21 @@ from .core import get_environment
 from .models import Backup, CreateBackup, DatabaseBackup
 from .runs import routes as runs_routes
 
-router = fastapi.APIRouter()
+router = fastapi.APIRouter(
+    dependencies=[
+        fastapi.Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=projects_users_models.ProjectUserRole.MANAGER
+            )
+        )
+    ]
+)
 log = logging.getLogger(__name__)
 
 
 @router.get(
     "",
     response_model=list[Backup],
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
-            )
-        )
-    ],
 )
 def get_pipelines(
     model: DatabaseCapellaModel = fastapi.Depends(get_existing_capella_model),
@@ -59,16 +60,11 @@ def get_pipelines(
 @router.get(
     "/{pipeline_id}",
     response_model=Backup,
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
-            )
-        )
-    ],
 )
 def get_pipeline(
-    pipeline: DatabaseBackup = fastapi.Depends(injectables.get_existing_pipeline),
+    pipeline: DatabaseBackup = fastapi.Depends(
+        injectables.get_existing_pipeline
+    ),
 ):
     return pipeline
 
@@ -76,13 +72,6 @@ def get_pipeline(
 @router.post(
     "",
     response_model=Backup,
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
-            )
-        )
-    ],
 )
 def create_backup(
     body: CreateBackup,
@@ -119,7 +108,7 @@ def create_backup(
 
     if body.run_nightly:
         reference = operators.get_operator().create_cronjob(
-            image=get_backup_image_for_tool_version(
+            image=tools_crud.get_backup_image_for_tool_version(
                 db, capella_model.version_id
             ),
             environment=get_environment(
@@ -153,13 +142,6 @@ def create_backup(
 @router.delete(
     "/{pipeline_id}",
     status_code=204,
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
-            )
-        )
-    ],
 )
 def delete_pipeline(
     pipeline: DatabaseBackup = fastapi.Depends(

@@ -28,6 +28,7 @@ h2 {
 
 .dialog {
   padding: 20px;
+  max-height: 90vh;
 }
 
 table {

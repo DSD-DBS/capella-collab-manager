@@ -25,7 +25,7 @@
       </td>
     </tr>
 
-    <tbody *ngIf="jobRuns === undefined">
+    <tbody *ngIf="(pipelineRunService.pipelineRuns | async) === undefined">
       <tr *ngFor="let run of [1, 2, 3]">
         <td *ngFor="let column of [1, 2, 3, 4, 5]">
           <app-text-line-skeleton-loader></app-text-line-skeleton-loader>
@@ -33,7 +33,11 @@
       </tr>
     </tbody>
 
-    <tr class="job-row" (click)="openLogs(run.id)" *ngFor="let run of jobRuns">
+    <tr
+      class="job-row"
+      (click)="openLogs(run.id)"
+      *ngFor="let run of pipelineRunService.pipelineRuns | async"
+    >
       <td>
         {{ run.id }}
       </td>

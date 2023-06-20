@@ -10,7 +10,7 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   PipelineRun,
@@ -42,16 +42,15 @@ export class TriggerPipelineComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: { projectSlug: string; modelSlug: string },
     public dialog: MatDialog,
-    public backupService: PipelineService,
+    public pipelineService: PipelineService,
     private pipelineRunService: PipelineRunService,
     public sessionService: SessionService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.backupService
-      .getBackups(this.data.projectSlug, this.data.modelSlug)
+    this.pipelineService
+      .loadPipelines(this.data.projectSlug, this.data.modelSlug)
       .subscribe();
   }
 
@@ -94,9 +93,9 @@ export class TriggerPipelineComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  removeBackup(backup: Pipeline): void {
-    this.backupService
-      .removeBackup(this.data.projectSlug, this.data.modelSlug, backup.id)
+  removePipeline(backup: Pipeline): void {
+    this.pipelineService
+      .removePipeline(this.data.projectSlug, this.data.modelSlug, backup.id)
       .subscribe(() => {
         this.toastService.showSuccess(
           'Backup pipeline deleted',
@@ -130,7 +129,7 @@ export class TriggerPipelineComponent implements OnInit {
     });
   }
 
-  createNewBackup(): void {
+  createPipeline(): void {
     const dialogRef = this.dialog.open(CreateBackupComponent, {
       data: {
         projectSlug: this.data.projectSlug,
@@ -140,8 +139,8 @@ export class TriggerPipelineComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((success) => {
       if (success) {
-        this.backupService
-          .getBackups(this.data.projectSlug, this.data.modelSlug)
+        this.pipelineService
+          .loadPipelines(this.data.projectSlug, this.data.modelSlug)
           .subscribe();
       }
     });

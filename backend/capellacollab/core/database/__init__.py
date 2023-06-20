@@ -5,6 +5,7 @@
 import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
+from sqlalchemy.dialects import postgresql
 
 from capellacollab.config import config
 
@@ -15,7 +16,7 @@ SessionLocal = orm.sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 class Base(orm.DeclarativeBase):
-    pass
+    type_annotation_map = {dict[str, str]: postgresql.JSONB}
 
 
 ### SQL MODELS ARE IMPORTED HERE ###

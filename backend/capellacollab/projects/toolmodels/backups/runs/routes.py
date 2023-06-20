@@ -5,13 +5,14 @@
 import base64
 import datetime
 
+import fastapi
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.database import get_db
 from capellacollab.core.logging import loki
-from capellacollab.projects.users.models import ProjectUserRole
+from capellacollab.projects.users import models as projects_users_models
 from capellacollab.users import injectables as user_injectables
 from capellacollab.users import models as user_models
 
@@ -19,19 +20,20 @@ from .. import injectables as pipeline_injectables
 from ..models import DatabaseBackup
 from . import crud, helper, injectables, models
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[
+        fastapi.Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=projects_users_models.ProjectUserRole.MANAGER
+            )
+        )
+    ]
+)
 
 
 @router.post(
     "",
     status_code=200,
-    dependencies=[
-        Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
-            )
-        )
-    ],
     response_model=models.PipelineRun,
 )
 def create_pipeline_run(
@@ -63,13 +65,6 @@ def create_pipeline_run(
 @router.get(
     "",
     status_code=200,
-    dependencies=[
-        Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
-            )
-        )
-    ],
     response_model=list[models.PipelineRun],
 )
 def get_pipeline_runs(
@@ -83,13 +78,6 @@ def get_pipeline_runs(
 @router.get(
     "/{pipeline_run_id}",
     status_code=200,
-    dependencies=[
-        Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
-            )
-        )
-    ],
     response_model=models.PipelineRun,
 )
 def get_pipeline_run(
@@ -103,13 +91,6 @@ def get_pipeline_run(
 @router.get(
     "/{pipeline_run_id}/events",
     response_model=str,
-    dependencies=[
-        Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
-            )
-        )
-    ],
 )
 def get_events(
     pipeline_run: models.DatabasePipelineRun = Depends(
@@ -124,30 +105,30 @@ def get_events(
     if not event_logs:
         return ""
 
-    event_logs = "\n".join(
+    return "\n".join(
         [
-            datetime.datetime.fromtimestamp(
-                int(logline[0]) / 10**9
-            ).strftime("%Y-%m-%d %H:%M:%S")
+            _transform_unix_nanoseconds_to_human_readable_format(
+                int(logline[0])
+            )
             + ": "
             + logline[1]
             for logentry in event_logs
             for logline in logentry["values"]
         ]
     )
-    return event_logs
+
+
+def _transform_unix_nanoseconds_to_human_readable_format(
+    nanoseonds: int,
+) -> str:
+    return datetime.datetime.fromtimestamp(int(nanoseonds) / 10**9).strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
 
 
 @router.get(
     "/{pipeline_run_id}/logs",
     response_model=str,
-    dependencies=[
-        Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
-            )
-        )
-    ],
 )
 def get_logs(
     pipeline_run: models.DatabasePipelineRun = Depends(

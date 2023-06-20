@@ -5,6 +5,7 @@ import datetime
 import json
 import logging
 import logging.handlers
+import typing as t
 
 import requests
 from requests import auth
@@ -15,9 +16,12 @@ LOGGING_LEVEL = config["logging"]["level"]
 PROMTAIL_CONFIGURATION: dict[str, str] = config["k8s"]["promtail"]
 
 
-def push_logs_to_loki(
-    entries: list[dict[str, datetime.datetime | str]], labels
-):
+class LogEntry(t.TypedDict):
+    line: str
+    timestamp: datetime.datetime
+
+
+def push_logs_to_loki(entries: list[LogEntry], labels):
     # Convert the streams and labels into the Loki log format
     log_data = json.dumps(
         {

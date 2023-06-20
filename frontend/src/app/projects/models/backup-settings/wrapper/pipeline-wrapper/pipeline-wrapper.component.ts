@@ -55,17 +55,14 @@ export class PipelineWrapperComponent implements OnInit, OnDestroy {
       .pipe(
         untilDestroyed(this),
         switchMap(([project, model, pipelineID]) =>
-          this.pipelineService.getPipeline(
+          this.pipelineService.loadPipeline(
             project!.slug,
             model!.slug,
             pipelineID
           )
         )
       )
-      .subscribe((pipeline) => {
-        this.breadcrumbsService.updatePlaceholder({ pipeline });
-        this.pipelineService._pipeline.next(pipeline);
-      });
+      .subscribe();
   }
 
   ngOnDestroy(): void {

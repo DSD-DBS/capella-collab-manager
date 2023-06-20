@@ -38,7 +38,7 @@ export class CreateBackupComponent implements OnInit {
     public t4cModelService: T4CModelService,
     @Inject(MAT_DIALOG_DATA)
     public data: { projectSlug: string; modelSlug: string },
-    private backupService: PipelineService,
+    private pipelineService: PipelineService,
     private dialogRef: MatDialogRef<CreateBackupComponent>
   ) {}
 
@@ -91,8 +91,8 @@ export class CreateBackupComponent implements OnInit {
         includeCommitHistory: formValue.configuration!.includeCommitHistory!,
         runNightly: formValue.configuration!.runNightly!,
       };
-      this.backupService
-        .createBackup(
+      this.pipelineService
+        .createPipeline(
           this.data.projectSlug,
           this.data.modelSlug,
           createBackupformValue as PostPipeline

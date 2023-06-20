@@ -12,5 +12,5 @@ import { Component, Input } from '@angular/core';
 })
 export class TextLineSkeletonLoaderComponent {
   @Input()
-  width: string = '20%';
+  width = '20%';
 }

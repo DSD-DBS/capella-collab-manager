@@ -5,7 +5,7 @@
 
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subscription, combineLatest } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { PipelineRunService } from 'src/app/projects/models/backup-settings/pipeline-runs/service/pipeline-run.service';
 import { PipelineService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
@@ -19,8 +19,6 @@ import { ProjectService } from 'src/app/projects/service/project.service';
   styleUrls: ['./view-logs-dialog.component.css'],
 })
 export class ViewLogsDialogComponent {
-  subscription?: Subscription = undefined;
-
   constructor(
     private modelService: ModelService,
     private projectService: ProjectService,
@@ -42,6 +40,7 @@ export class ViewLogsDialogComponent {
       this.pipelineRunService.pipelineRun.pipe(filter(Boolean)),
     ])
       .pipe(
+        untilDestroyed(this),
         switchMap(([project, model, pipeline, pipelineRun]) =>
           this.pipelineRunService.getEvents(
             project.slug,
@@ -49,8 +48,7 @@ export class ViewLogsDialogComponent {
             pipeline.id,
             pipelineRun.id
           )
-        ),
-        untilDestroyed(this)
+        )
       )
       .subscribe({
         next: (res: string) => {
@@ -70,6 +68,7 @@ export class ViewLogsDialogComponent {
       this.pipelineRunService.pipelineRun.pipe(filter(Boolean)),
     ])
       .pipe(
+        untilDestroyed(this),
         switchMap(([project, model, pipeline, pipelineRun]) =>
           this.pipelineRunService.getLogs(
             project.slug,
@@ -77,8 +76,7 @@ export class ViewLogsDialogComponent {
             pipeline.id,
             pipelineRun.id
           )
-        ),
-        untilDestroyed(this)
+        )
       )
       .subscribe({
         next: (res: string) => {

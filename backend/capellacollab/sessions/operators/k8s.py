@@ -470,7 +470,6 @@ class KubernetesOperator:
             log.exception("Error deleting cronjob with name: %s", _id)
 
     def delete_job(self, name: str):
-        print("HELLO WORLD!")
         log.info("Deleting job '%s' in cluster", name)
         try:
             self.v1_batch.delete_namespaced_job(

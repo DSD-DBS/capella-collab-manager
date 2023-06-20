@@ -111,10 +111,8 @@ def get_events(
 def delete_all_events_user_involved_in(db: orm.Session, user_id: int):
     db.execute(
         sa.delete(models.DatabaseUserHistoryEvent).where(
-            sa.or_(
-                models.DatabaseUserHistoryEvent.user_id == user_id,
-                models.DatabaseUserHistoryEvent.executor_id == user_id,
-            )
+            (models.DatabaseUserHistoryEvent.user_id == user_id)
+            | (models.DatabaseUserHistoryEvent.executor_id == user_id)
         )
     )
     db.commit()

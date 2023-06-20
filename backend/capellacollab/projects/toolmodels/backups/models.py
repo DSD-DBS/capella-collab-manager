@@ -22,17 +22,11 @@ from capellacollab.projects.toolmodels.modelsources.t4c import (
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
-
-    from .runs import models as runs_models
-
-if t.TYPE_CHECKING:
-    from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
-    from capellacollab.projects.toolmodels.modelsources.git.models import (
-        DatabaseGitModel,
-    )
     from capellacollab.projects.toolmodels.modelsources.t4c.models import (
         DatabaseT4CModel,
     )
+
+    from .runs import models as runs_models
 
 
 class CreateBackup(pydantic.BaseModel):

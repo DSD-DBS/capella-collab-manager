@@ -9,7 +9,7 @@ from sqlalchemy import exc, orm
 from capellacollab.core.database import patch_database_with_pydantic_object
 from capellacollab.tools.integrations import models as integrations_models
 
-from . import models
+from . import exceptions, models
 
 
 def get_tools(db: orm.Session) -> abc.Sequence[models.Tool]:
@@ -208,3 +208,12 @@ def create_nature(db: orm.Session, tool_id: int, name: str) -> models.Nature:
 def delete_nature(db: orm.Session, nature: models.Nature) -> None:
     db.delete(nature)
     db.commit()
+
+
+def get_backup_image_for_tool_version(db: orm.Session, version_id: int) -> str:
+    if version := get_version_by_id(db, version_id):
+        return version.tool.docker_image_backup_template.replace(
+            "$version", version.name
+        )
+
+    raise exceptions.ToolVersionNotFoundError(version_id)

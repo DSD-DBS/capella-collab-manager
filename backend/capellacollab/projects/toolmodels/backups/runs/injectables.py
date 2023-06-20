@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 import capellacollab.projects.toolmodels.backups.injectables as backups_injectables
@@ -22,15 +22,15 @@ def get_existing_pipeline_run(
     if pipeline_run := crud.get_pipeline_run_by_id(db, pipeline_run_id):
         if pipeline_run.pipeline.id != pipeline.id:
             raise HTTPException(
-                401,
-                {
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={
                     "reason": f"The pipeline run with the id {pipeline_run.id} does not belong to the pipeline with id {pipeline.id}.",
                 },
             )
         return pipeline_run
     raise HTTPException(
-        404,
-        {
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail={
             "reason": f"The pipeline run with the id {pipeline_run_id} was not found.",
         },
     )

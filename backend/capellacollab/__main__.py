@@ -19,6 +19,7 @@ from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
 from capellacollab.routes import router, status
 from capellacollab.sessions import idletimeout, operators
+from capellacollab.tools import exceptions as tools_exceptions
 
 handlers: list[logging.Handler] = [
     logging.StreamHandler(),
@@ -109,6 +110,13 @@ app.add_route("/metrics", starlette_prometheus.metrics)
 
 app.include_router(status.router, prefix="", tags=["Status"])
 app.include_router(router, prefix="/api/v1")
+
+
+def register_exceptions():
+    tools_exceptions.register_exceptions(app)
+
+
+register_exceptions()
 
 if __name__ == "__main__":
     uvicorn.run(app)

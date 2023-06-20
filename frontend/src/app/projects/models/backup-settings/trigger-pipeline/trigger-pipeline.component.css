@@ -19,7 +19,3 @@
 .pipelines {
   max-height: 80vh;
 }
-
-.mat-dialog {
-  min-width: 800px;
-}

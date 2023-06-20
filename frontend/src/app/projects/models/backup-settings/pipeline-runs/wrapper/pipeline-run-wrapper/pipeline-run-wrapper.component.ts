@@ -61,7 +61,7 @@ export class PipelineRunWrapperComponent implements OnDestroy {
       .pipe(
         untilDestroyed(this),
         switchMap(([project, model, pipeline, pipelineRunID]) =>
-          this.pipelineRunService.getPipelineRun(
+          this.pipelineRunService.loadPipelineRun(
             project!.slug,
             model!.slug,
             pipeline!.id,
@@ -69,10 +69,7 @@ export class PipelineRunWrapperComponent implements OnDestroy {
           )
         )
       )
-      .subscribe((pipelineRun) => {
-        this.breadcrumbsService.updatePlaceholder({ pipelineRun });
-        this.pipelineRunService._pipelineRun.next(pipelineRun);
-      });
+      .subscribe();
   }
 
   ngOnDestroy(): void {

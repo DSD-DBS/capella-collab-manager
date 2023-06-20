@@ -7,7 +7,6 @@ import enum
 import sqlalchemy as sa
 from pydantic import BaseModel
 from sqlalchemy import orm
-from sqlalchemy.dialects import postgresql
 
 import capellacollab.users.models as users_models
 from capellacollab.core.database import Base
@@ -30,9 +29,9 @@ class DatabasePipelineRun(Base):
     id: orm.Mapped[int] = orm.mapped_column(
         primary_key=True, index=True, autoincrement=True
     )
-    reference_id: orm.Mapped[str]
+    reference_id: orm.Mapped[str | None]
 
-    status = orm.Mapped[PipelineRunStatus]
+    status: orm.Mapped[PipelineRunStatus]
 
     pipeline_id: orm.Mapped[int] = orm.mapped_column(
         sa.ForeignKey("backups.id")
@@ -49,9 +48,9 @@ class DatabasePipelineRun(Base):
     )
 
     trigger_time: orm.Mapped[datetime.datetime]
-    logs_last_fetched_timestamp: orm.Mapped[datetime.datetime]
+    logs_last_fetched_timestamp: orm.Mapped[datetime.datetime | None]
 
-    environment: dict[str, str] = sa.Column(postgresql.JSONB)
+    environment: orm.Mapped[dict[str, str]]
 
 
 class PipelineRun(BaseModel):
