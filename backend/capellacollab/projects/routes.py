@@ -14,9 +14,8 @@ from capellacollab.core import database
 from capellacollab.core import logging as core_logging
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication import jwt_bearer
-from capellacollab.projects.toolmodels import (
-    injectables as toolmodels_injectables,
-)
+from capellacollab.projects import injectables as projects_injectables
+from capellacollab.projects.events import routes as projects_events_routes
 from capellacollab.projects.toolmodels import routes as toolmodels_routes
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.projects.users import models as projects_users_models
@@ -79,7 +78,7 @@ def get_projects(
 def update_project(
     patch_project: models.PatchProject,
     project: models.DatabaseProject = fastapi.Depends(
-        toolmodels_injectables.get_existing_project
+        projects_injectables.get_existing_project
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseProject:
@@ -109,7 +108,7 @@ def update_project(
 )
 def get_project_by_slug(
     db_project: models.DatabaseProject = fastapi.Depends(
-        toolmodels_injectables.get_existing_project
+        projects_injectables.get_existing_project
     ),
 ) -> models.DatabaseProject:
     return db_project
@@ -162,7 +161,7 @@ def create_project(
 )
 def delete_project(
     project: models.DatabaseProject = fastapi.Depends(
-        toolmodels_injectables.get_existing_project
+        projects_injectables.get_existing_project
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
@@ -191,4 +190,9 @@ router.include_router(
     session_routes.project_router,
     prefix="/{project_slug}/sessions",
     tags=["Projects - Sessions"],
+)
+router.include_router(
+    projects_events_routes.router,
+    prefix="/{project_slug}/events",
+    tags=["Projects - Events"],
 )

@@ -45,29 +45,7 @@ export class EventsComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.historyEventDataSource.paginator = this.paginator;
     this.historyEventDataSource.sortingDataAccessor =
-      this.customSortingDataAccessor;
+      this.eventService.customSortingDataAccessor;
     this.historyEventDataSource.sort = this.sort;
-  }
-
-  private customSortingDataAccessor(
-    data: HistoryEvent,
-    sortHeaderId: string
-  ): string | number {
-    switch (sortHeaderId) {
-      case 'eventType':
-        return data.event_type;
-      case 'userName':
-        return data.user.name;
-      case 'executorName':
-        return data.executor ? data.executor.name : 'System';
-      case 'executionTime':
-        return data.execution_time;
-      case 'projectName':
-        return data.project ? data.project.name : '';
-      case 'reason':
-        return data.reason;
-      default:
-        return '';
-    }
   }
 }

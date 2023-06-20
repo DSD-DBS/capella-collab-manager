@@ -7,7 +7,14 @@
   <div id="manage-users-header">
     <div class="flex justify-between">
       <h2>Project members</h2>
-      <div>
+      <div class="flex flex-wrap gap-2">
+        <button
+          (click)="openAuditLogDialog()"
+          mat-stroked-button
+          matTooltip="Auditing and access log"
+        >
+          <mat-icon>assignment</mat-icon>
+        </button>
         <button
           id="add-user"
           (click)="openAddUserDialog()"

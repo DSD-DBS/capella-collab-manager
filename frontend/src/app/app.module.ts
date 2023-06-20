@@ -91,6 +91,7 @@ import { ModelOverviewComponent } from './projects/project-detail/model-overview
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { ProjectMetadataComponent } from './projects/project-detail/project-metadata/project-metadata.component';
 import { AddUserToProjectComponent } from './projects/project-detail/project-users/add-user-to-project/add-user-to-project.component';
+import { ProjectAuditLogComponent } from './projects/project-detail/project-users/project-audit-log/project-audit-log.component';
 import { ProjectUserSettingsComponent } from './projects/project-detail/project-users/project-user-settings.component';
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
@@ -185,6 +186,7 @@ import { SettingsComponent } from './settings/settings.component';
     PipelineRunWrapperComponent,
     PipelinesOverviewComponent,
     PipelineWrapperComponent,
+    ProjectAuditLogComponent,
     ProjectDetailsComponent,
     ProjectMetadataComponent,
     ProjectOverviewComponent,

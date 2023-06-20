@@ -6,9 +6,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter } from 'rxjs';
+import { filter, take } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { AddUserToProjectComponent } from 'src/app/projects/project-detail/project-users/add-user-to-project/add-user-to-project.component';
+import { ProjectAuditLogComponent } from 'src/app/projects/project-detail/project-users/project-audit-log/project-audit-log.component';
 import {
   ProjectUser,
   ProjectUserPermission,
@@ -144,5 +145,15 @@ export class ProjectUserSettingsComponent implements OnInit {
 
   openAddUserDialog() {
     this.matDialog.open(AddUserToProjectComponent);
+  }
+
+  openAuditLogDialog() {
+    this.projectService.project.pipe(take(1)).subscribe((project) => {
+      this.matDialog.open(ProjectAuditLogComponent, {
+        data: {
+          projectSlug: project?.slug,
+        },
+      });
+    });
   }
 }

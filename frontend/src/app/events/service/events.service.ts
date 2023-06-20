@@ -26,6 +26,28 @@ export class EventsService {
       .get<HistoryEvent[]>(this.BACKEND_URL_PREFIX + 'history/events')
       .subscribe((events) => this._historyEvents.next(events));
   }
+
+  customSortingDataAccessor(
+    data: HistoryEvent,
+    sortHeaderId: string
+  ): string | number {
+    switch (sortHeaderId) {
+      case 'eventType':
+        return data.event_type;
+      case 'userName':
+        return data.user.name;
+      case 'executorName':
+        return data.executor ? data.executor.name : 'System';
+      case 'executionTime':
+        return data.execution_time;
+      case 'projectName':
+        return data.project ? data.project.name : '';
+      case 'reason':
+        return data.reason;
+      default:
+        return '';
+    }
+  }
 }
 
 export type HistoryEvent = {

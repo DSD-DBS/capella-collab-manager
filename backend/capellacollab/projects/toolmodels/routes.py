@@ -7,6 +7,7 @@ from sqlalchemy import exc, orm
 
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.tools import crud as tools_crud
@@ -16,7 +17,7 @@ from capellacollab.tools import models as tools_models
 from . import crud
 from .backups.routes import router as router_backups
 from .diagrams.routes import router as router_diagrams
-from .injectables import get_existing_capella_model, get_existing_project
+from .injectables import get_existing_capella_model
 from .modelbadge.routes import router as router_complexity_badge
 from .models import (
     CapellaModel,
@@ -40,7 +41,9 @@ router = fastapi.APIRouter(
 
 @router.get("/", response_model=list[CapellaModel], tags=["Projects - Models"])
 def get_models(
-    project: DatabaseProject = fastapi.Depends(get_existing_project),
+    project: DatabaseProject = fastapi.Depends(
+        projects_injectables.get_existing_project
+    ),
 ) -> list[DatabaseCapellaModel]:
     return project.models
 
@@ -68,7 +71,9 @@ def get_model_by_slug(
 )
 def create_new(
     new_model: PostCapellaModel,
-    project: DatabaseProject = fastapi.Depends(get_existing_project),
+    project: DatabaseProject = fastapi.Depends(
+        projects_injectables.get_existing_project
+    ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> DatabaseCapellaModel:
     tool = tools_injectables.get_existing_tool(
