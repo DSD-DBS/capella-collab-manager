@@ -35,6 +35,7 @@ logging.basicConfig(level=config["logging"]["level"], handlers=handlers)
 
 async def startup():
     migration.migrate_db(engine, config["database"]["url"])
+    logging.info("Migrations done - Server is running")
 
     # This is needed to load the Kubernetes configuration at startup
     operators.get_operator()

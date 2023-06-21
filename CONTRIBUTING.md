@@ -18,7 +18,7 @@ your code follows our style guidelines outlined below.
 ## General
 
 This project consists of several services. Here is the architecture of the services:
-![Capella Collab Manager architecture](doc/architecture.png)
+![Capella Collab Manager architecture](docs/architecture.png)
 
 To get an overview of the services, it is also worth taking a look at the Helm Chart,
 which can be found in the `helm` folder.
@@ -68,14 +68,9 @@ We use OAuth2 as authentication protocol for our application. Therefore we need 
 OAuth2 server. For local development, we have an OAuth mock that needs to be started
 first.
 
+Do not use the OAuth mock in production!
+
 First of all, navigate to the `mocks/oauth` directory.
-
-You can handle the SSL-support in two different ways:
-
-### Option 1: Use insecure connections
-
-This is the default and recommended option for local development.
-Do not use it in production!
 
 1. Run the OAuth2-Mock-Server with:
 
@@ -85,25 +80,6 @@ Do not use it in production!
 
 2. Verify that the server runs, e.g., by navigating to
    [Well Known](http://localhost:8083/default/.well-known/openid-configuration)
-
-### Option 2: Create a self signed certificate
-
-1. We require the files `projectroot/certs/localhost.cert` and `projectroot/certs/localhost.p12`.
-   You can easily create them with
-
-   ```sh
-   make ssl
-   ```
-
-2. Import the certificate to your local certificate store.
-3. Run the OAuth2-Mock-Server with:
-
-   ```sh
-   make start-ssl
-   ```
-
-4. Verify that the server runs, e.g. by navigating to
-   [Well Known](https://localhost:8083/default/.well-known/openid-configuration)
 
 ## Backend
 
@@ -132,7 +108,7 @@ Run the following steps:
    run the following commands:
 
    ```sh
-   python3 -m venv .venv
+   python -m venv .venv
    source .venv/bin/activate
    pip install -U pip setuptools
    pip install -e '.[dev]'
@@ -142,7 +118,7 @@ Run the following steps:
    directory.
    Please copy the file `config_template.yaml` to `config.yaml` and adjust the values.
 
-   _Hint_: If you already have the k8d cluster running and the if you have the
+   _Hint_: If you already have the k8d cluster running and if you have the
    application deployed, then no configuration values need to be adjusted.
 
    _Hint_: You can run `python -m capellacollab.config.diff` after each update to check if your config is up to date.
@@ -255,7 +231,6 @@ Run the following steps:
 1. Optional: If you like to use your custom favicon, please copy it to `src/favicon.ico`
 1. Optional: If you like to use your custom theme, replace the file `src/custom-theme.scss`.
    You can generate custom themes [here](http://mcg.mbitson.com/)
-1. Copy the file `src/environments/environment.ts` to `src/environments/environment.dev.ts` and adjust the values.
 1. Run the frontend with:
 
    ```sh
@@ -281,7 +256,7 @@ Run the following steps:
    run the following commands:
 
    ```zsh
-   python3 -m venv .venv
+   python -m venv .venv
    source .venv/bin/activate
    pip install -U pip setuptools
    ```
