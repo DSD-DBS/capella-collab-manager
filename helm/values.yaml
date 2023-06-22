@@ -47,7 +47,7 @@ docker:
     grafana: /grafana/grafana
 
     mocks:
-      oauth: ghcr.io/navikt/mock-oauth2-server:0.4.4
+      oauth: ghcr.io/navikt/mock-oauth2-server:0.5.8
 
 general:
   # Base URL on which the service listens
