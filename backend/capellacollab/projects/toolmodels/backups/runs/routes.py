@@ -6,21 +6,20 @@ import base64
 import datetime
 
 import fastapi
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy import orm
 
+from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.database import get_db
 from capellacollab.core.logging import loki
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.users import injectables as user_injectables
 from capellacollab.users import models as user_models
 
 from .. import injectables as pipeline_injectables
-from ..models import DatabaseBackup
+from .. import models as pipeline_models
 from . import crud, helper, injectables, models
 
-router = APIRouter(
+router = fastapi.APIRouter(
     dependencies=[
         fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
@@ -38,13 +37,13 @@ router = APIRouter(
 )
 def create_pipeline_run(
     body: models.BackupPipelineRun,
-    pipeline: DatabaseBackup = Depends(
+    pipeline: pipeline_models.DatabaseBackup = fastapi.Depends(
         pipeline_injectables.get_existing_pipeline
     ),
-    triggerer: user_models.DatabaseUser = Depends(
+    triggerer: user_models.DatabaseUser = fastapi.Depends(
         user_injectables.get_own_user
     ),
-    db: Session = Depends(get_db),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabasePipelineRun:
     environment = {}
     if body.include_commit_history:
@@ -68,7 +67,7 @@ def create_pipeline_run(
     response_model=list[models.PipelineRun],
 )
 def get_pipeline_runs(
-    pipeline: DatabaseBackup = Depends(
+    pipeline: pipeline_models.DatabaseBackup = fastapi.Depends(
         pipeline_injectables.get_existing_pipeline
     ),
 ) -> list[models.DatabasePipelineRun]:
@@ -81,7 +80,7 @@ def get_pipeline_runs(
     response_model=models.PipelineRun,
 )
 def get_pipeline_run(
-    pipeline_run: DatabaseBackup = Depends(
+    pipeline_run: pipeline_models.DatabaseBackup = fastapi.Depends(
         injectables.get_existing_pipeline_run
     ),
 ) -> list[models.DatabasePipelineRun]:
@@ -93,7 +92,7 @@ def get_pipeline_run(
     response_model=str,
 )
 def get_events(
-    pipeline_run: models.DatabasePipelineRun = Depends(
+    pipeline_run: models.DatabasePipelineRun = fastapi.Depends(
         injectables.get_existing_pipeline_run
     ),
 ):
@@ -131,7 +130,7 @@ def _transform_unix_nanoseconds_to_human_readable_format(
     response_model=str,
 )
 def get_logs(
-    pipeline_run: models.DatabasePipelineRun = Depends(
+    pipeline_run: models.DatabasePipelineRun = fastapi.Depends(
         injectables.get_existing_pipeline_run
     ),
 ):

@@ -7,14 +7,10 @@ import typing as t
 import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
-from sqlalchemy.orm import relationship
 
 from capellacollab.core import database
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
-)
-from capellacollab.projects.toolmodels.modelsources.git.models import (
-    DatabaseGitModel,
 )
 from capellacollab.projects.toolmodels.modelsources.t4c import (
     models as t4c_models,
@@ -22,6 +18,9 @@ from capellacollab.projects.toolmodels.modelsources.t4c import (
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+    from capellacollab.projects.toolmodels.modelsources.git.models import (
+        DatabaseGitModel,
+    )
     from capellacollab.projects.toolmodels.modelsources.t4c.models import (
         DatabaseT4CModel,
     )
@@ -90,6 +89,6 @@ class DatabaseBackup(database.Base):
     model_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("models.id"))
     model: orm.Mapped["DatabaseCapellaModel"] = orm.relationship()
 
-    runs: orm.Mapped[list["runs_models.DatabasePipelineRun"]] = relationship(
-        "DatabasePipelineRun", back_populates="pipeline"
-    )
+    runs: orm.Mapped[
+        list["runs_models.DatabasePipelineRun"]
+    ] = orm.relationship("DatabasePipelineRun", back_populates="pipeline")

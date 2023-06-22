@@ -3,28 +3,28 @@
 
 from collections import abc
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+import sqlalchemy as sa
+from sqlalchemy import orm
 
 from . import models
 
 
 def get_pipeline_run_by_id(
-    db: Session, run_id: int
+    db: orm.Session, run_id: int
 ) -> models.DatabasePipelineRun | None:
     return db.execute(
-        select(models.DatabasePipelineRun).where(
+        sa.select(models.DatabasePipelineRun).where(
             models.DatabasePipelineRun.id == run_id
         )
     ).scalar_one_or_none()
 
 
 def get_pipelines_runs_by_status(
-    db: Session, status: models.PipelineRunStatus
+    db: orm.Session, status: models.PipelineRunStatus
 ) -> abc.Sequence[models.DatabasePipelineRun]:
     return (
         db.execute(
-            select(models.DatabasePipelineRun).where(
+            sa.select(models.DatabasePipelineRun).where(
                 models.DatabasePipelineRun.status == status
             )
         )
@@ -34,11 +34,11 @@ def get_pipelines_runs_by_status(
 
 
 def get_scheduled_or_running_pipelines(
-    db: Session,
+    db: orm.Session,
 ) -> abc.Sequence[models.DatabasePipelineRun]:
     return (
         db.execute(
-            select(models.DatabasePipelineRun).where(
+            sa.select(models.DatabasePipelineRun).where(
                 (
                     models.DatabasePipelineRun.status
                     == models.PipelineRunStatus.RUNNING
@@ -55,7 +55,7 @@ def get_scheduled_or_running_pipelines(
 
 
 def create_pipeline_run(
-    db: Session, pipeline_run: models.DatabasePipelineRun
+    db: orm.Session, pipeline_run: models.DatabasePipelineRun
 ) -> models.DatabasePipelineRun:
     db.add(pipeline_run)
     db.commit()

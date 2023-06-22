@@ -9,7 +9,7 @@ import pytz
 from kubernetes import client as k8s_client
 from kubernetes.client import exceptions as k8s_exceptions
 from sqlalchemy import orm
-from starlette.concurrency import run_in_threadpool
+from starlette import concurrency as starlette_concurrency
 
 from capellacollab.core import database
 from capellacollab.core.logging import loki
@@ -27,7 +27,9 @@ async def schedule_refresh_and_trigger_pipeline_jobs(interval=5):
         while True:
             try:
                 await asyncio.sleep(interval)
-                await run_in_threadpool(_refresh_and_trigger_pipeline_jobs)
+                await starlette_concurrency.run_in_threadpool(
+                    _refresh_and_trigger_pipeline_jobs
+                )
             except asyncio.exceptions.CancelledError:
                 return
             except BaseException:

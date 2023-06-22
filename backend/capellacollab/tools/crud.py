@@ -6,7 +6,7 @@ from collections import abc
 import sqlalchemy as sa
 from sqlalchemy import exc, orm
 
-from capellacollab.core.database import patch_database_with_pydantic_object
+from capellacollab.core import database
 from capellacollab.tools.integrations import models as integrations_models
 
 from . import exceptions, models
@@ -127,7 +127,7 @@ def update_version(
     version: models.Version,
     patch_version: models.UpdateToolVersion,
 ) -> models.Version:
-    patch_database_with_pydantic_object(version, patch_version)
+    database.patch_database_with_pydantic_object(version, patch_version)
 
     db.commit()
     return version

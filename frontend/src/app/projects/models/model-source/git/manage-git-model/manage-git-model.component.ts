@@ -272,7 +272,9 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
           if (this.asStepper) {
             this.create.emit(true);
           } else {
-            this.router.navigate(['../..'], { relativeTo: this.route });
+            this.router.navigate(['../../model-sources'], {
+              relativeTo: this.route,
+            });
           }
         });
     }
@@ -291,7 +293,9 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
           patchGitModel
         )
         .subscribe(() =>
-          this.router.navigate(['../..'], { relativeTo: this.route })
+          this.router.navigate(['../../model-sources'], {
+            relativeTo: this.route,
+          })
         );
     }
   }

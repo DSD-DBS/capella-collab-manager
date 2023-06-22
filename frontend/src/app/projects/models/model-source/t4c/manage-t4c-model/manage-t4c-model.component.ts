@@ -181,7 +181,9 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
           if (this.asStepper) {
             this.create.emit(true);
           } else {
-            this.router.navigate(['../..'], { relativeTo: this.route });
+            this.router.navigate(['../../model-sources'], {
+              relativeTo: this.route,
+            });
           }
           this.toastService.showSuccess(
             'TeamForCapella repository successfully linked',

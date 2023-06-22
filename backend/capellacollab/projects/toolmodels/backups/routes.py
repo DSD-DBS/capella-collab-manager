@@ -12,26 +12,24 @@ from sqlalchemy import orm
 
 import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repository_interface
 from capellacollab.core import credentials, database
+from capellacollab.core.authentication import helper as auth_helper
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.authentication.helper import get_username
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.authentication import jwt_bearer
+from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.injectables import (
     get_existing_capella_model,
 )
-from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
-from capellacollab.projects.toolmodels.modelsources.git.injectables import (
-    get_existing_git_model,
+from capellacollab.projects.toolmodels.modelsources.git import (
+    injectables as git_injectables,
 )
-from capellacollab.projects.toolmodels.modelsources.t4c.injectables import (
-    get_existing_t4c_model,
+from capellacollab.projects.toolmodels.modelsources.t4c import (
+    injectables as t4c_injectables,
 )
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import operators
 from capellacollab.tools import crud as tools_crud
 
-from . import crud, injectables
-from .core import get_environment
-from .models import Backup, CreateBackup, DatabaseBackup
+from . import core, crud, injectables, models
 from .runs import routes as runs_routes
 
 router = fastapi.APIRouter(
@@ -48,10 +46,12 @@ log = logging.getLogger(__name__)
 
 @router.get(
     "",
-    response_model=list[Backup],
+    response_model=list[models.Backup],
 )
 def get_pipelines(
-    model: DatabaseCapellaModel = fastapi.Depends(get_existing_capella_model),
+    model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
+        get_existing_capella_model
+    ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
     return crud.get_pipelines_for_capella_model(db, model)
@@ -59,10 +59,10 @@ def get_pipelines(
 
 @router.get(
     "/{pipeline_id}",
-    response_model=Backup,
+    response_model=models.Backup,
 )
 def get_pipeline(
-    pipeline: DatabaseBackup = fastapi.Depends(
+    pipeline: models.DatabaseBackup = fastapi.Depends(
         injectables.get_existing_pipeline
     ),
 ):
@@ -71,18 +71,22 @@ def get_pipeline(
 
 @router.post(
     "",
-    response_model=Backup,
+    response_model=models.Backup,
 )
 def create_backup(
-    body: CreateBackup,
-    capella_model: DatabaseCapellaModel = fastapi.Depends(
+    body: models.CreateBackup,
+    capella_model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
         get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    token=fastapi.Depends(JWTBearer()),
+    token=fastapi.Depends(jwt_bearer.JWTBearer()),
 ):
-    git_model = get_existing_git_model(body.git_model_id, capella_model, db)
-    t4c_model = get_existing_t4c_model(body.t4c_model_id, capella_model, db)
+    git_model = git_injectables.get_existing_git_model(
+        body.git_model_id, capella_model, db
+    )
+    t4c_model = t4c_injectables.get_existing_t4c_model(
+        body.t4c_model_id, capella_model, db
+    )
 
     username = "techuser-" + str(uuid.uuid4())
     password = credentials.generate_password()
@@ -111,7 +115,7 @@ def create_backup(
             image=tools_crud.get_backup_image_for_tool_version(
                 db, capella_model.version_id
             ),
-            environment=get_environment(
+            environment=core.get_environment(
                 git_model,
                 t4c_model,
                 username,
@@ -125,11 +129,11 @@ def create_backup(
 
     return crud.create_pipeline(
         db=db,
-        pipeline=DatabaseBackup(
+        pipeline=models.DatabaseBackup(
             k8s_cronjob_id=reference,
             git_model=git_model,
             t4c_model=t4c_model,
-            created_by=get_username(token),
+            created_by=auth_helper.get_username(token),
             model=capella_model,
             t4c_username=username,
             t4c_password=password,
@@ -144,7 +148,7 @@ def create_backup(
     status_code=204,
 )
 def delete_pipeline(
-    pipeline: DatabaseBackup = fastapi.Depends(
+    pipeline: models.DatabaseBackup = fastapi.Depends(
         injectables.get_existing_pipeline
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
