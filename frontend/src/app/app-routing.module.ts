@@ -5,6 +5,10 @@
 
 import { NgModule } from '@angular/core';
 import { Data, RouterModule, Routes } from '@angular/router';
+import { JobRunOverviewComponent } from 'src/app/projects/models/backup-settings/job-run-overview/job-run-overview.component';
+import { PipelineRunWrapperComponent } from 'src/app/projects/models/backup-settings/pipeline-runs/wrapper/pipeline-run-wrapper/pipeline-run-wrapper.component';
+import { ViewLogsDialogComponent } from 'src/app/projects/models/backup-settings/view-logs-dialog/view-logs-dialog.component';
+import { PipelineWrapperComponent } from 'src/app/projects/models/backup-settings/wrapper/pipeline-wrapper/pipeline-wrapper.component';
 import { ModelRestrictionsComponent } from 'src/app/projects/models/model-restrictions/model-restrictions.component';
 import { EditProjectMetadataComponent } from 'src/app/projects/project-detail/edit-project-metadata/edit-project-metadata.component';
 import { EventsComponent } from './events/events.component';
@@ -138,6 +142,61 @@ const routes: Routes = [
                         path: 'restrictions',
                         data: { breadcrumb: 'restrictions' },
                         component: ModelRestrictionsComponent,
+                      },
+                      {
+                        path: 'pipeline',
+                        data: {
+                          breadcrumb: 'pipelines',
+                          redirect: (data: Data) =>
+                            `/project/${data.project?.slug}`,
+                        },
+                        children: [
+                          {
+                            path: ':pipeline',
+                            data: {
+                              breadcrumb: (data: Data) => data.pipeline?.id,
+                              redirect: (data: Data) =>
+                                `/project/${data.project?.slug}/model/${data.model?.slug}/pipeline/${data.pipeline?.id}/runs`,
+                            },
+                            component: PipelineWrapperComponent,
+                            children: [
+                              {
+                                path: 'runs',
+                                data: {
+                                  breadcrumb: () => 'runs',
+                                },
+                                component: JobRunOverviewComponent,
+                              },
+                              {
+                                path: 'run',
+                                data: {
+                                  breadcrumb: 'runs',
+                                  redirect: (data: Data) =>
+                                    `/project/${data.project?.slug}/model/${data.model?.slug}/pipeline/${data.pipeline?.id}/runs`,
+                                },
+                                children: [
+                                  {
+                                    path: ':pipelineRun',
+                                    component: PipelineRunWrapperComponent,
+                                    data: {
+                                      breadcrumb: (data: Data) =>
+                                        data.pipelineRun?.id,
+                                      redirect: (data: Data) =>
+                                        `/project/${data.project?.slug}/model/${data.model?.slug}/pipeline/${data.pipeline?.id}/run/${data.pipelineRun?.id}/logs`,
+                                    },
+                                    children: [
+                                      {
+                                        path: 'logs',
+                                        data: { breadcrumb: 'logs' },
+                                        component: ViewLogsDialogComponent,
+                                      },
+                                    ],
+                                  },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
                       },
                       {
                         path: 'git-model',

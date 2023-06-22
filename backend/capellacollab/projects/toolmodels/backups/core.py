@@ -4,20 +4,20 @@
 
 import json
 
-from capellacollab.projects.toolmodels.modelsources.git.models import (
-    DatabaseGitModel,
+from capellacollab.projects.toolmodels.modelsources.git import (
+    models as git_models,
 )
-from capellacollab.projects.toolmodels.modelsources.t4c.models import (
-    DatabaseT4CModel,
+from capellacollab.projects.toolmodels.modelsources.t4c import (
+    models as t4c_models,
 )
 
 
 def get_environment(
-    gitmodel: DatabaseGitModel,
-    t4cmodel: DatabaseT4CModel,
+    gitmodel: git_models.DatabaseGitModel,
+    t4cmodel: t4c_models.DatabaseT4CModel,
     t4c_username: str,
     t4c_password: str,
-    include_commit_history: bool,
+    include_commit_history: bool = False,
 ) -> dict[str, str]:
     return {
         "GIT_REPO_URL": gitmodel.path,

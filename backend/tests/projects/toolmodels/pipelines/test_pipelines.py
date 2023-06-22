@@ -23,69 +23,8 @@ import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_rep
 from capellacollab.core import credentials
 
 
-@pytest.fixture(name="run_nightly", params=[True, False])
-def fixture_run_nightly(
-    request: pytest.FixtureRequest,
-):
-    return request.param
-
-
-@pytest.fixture(name="include_commit_history", params=[True, False])
-def fixture_include_commit_history(
-    request: pytest.FixtureRequest,
-):
-    return request.param
-
-
-@pytest.fixture(name="pipeline")
-def fixture_pipeline(
-    db: orm.Session,
-    capella_model: toolmodels_models.CapellaModel,
-    git_model: git_models.DatabaseGitModel,
-    t4c_model: models_t4c_models.T4CModel,
-    executor_name: str,
-    run_nightly: bool,
-    include_commit_history: bool,
-) -> pipelines_models.DatabaseBackup:
-    pipeline = pipelines_models.DatabaseBackup(
-        k8s_cronjob_id="unavailable",
-        git_model=git_model,
-        t4c_model=t4c_model,
-        created_by=executor_name,
-        model=capella_model,
-        t4c_username="no",
-        t4c_password="no",
-        include_commit_history=include_commit_history,
-        run_nightly=run_nightly,
-    )
-    return pipelines_crud.create_pipeline(db, pipeline)
-
-
-@pytest.fixture(name="mock_add_user_to_repository")
-def fixture_mock_add_user_to_repository(monkeypatch: pytest.MonkeyPatch):
-    def mock_add_user_to_repository(
-        instance: t4c_models.DatabaseT4CInstance,
-        repository_name: str,
-        username: str,
-        password: str = credentials.generate_password(),
-        is_admin: bool = False,
-    ):
-        return {}
-
-    monkeypatch.setattr(
-        t4c_repositories_interface,
-        "add_user_to_repository",
-        mock_add_user_to_repository,
-    )
-
-
 class MockOperator:
     cronjob_counter = 0
-    triggered_cronjob_counter = 0
-    job_counter = 0
-
-    def get_cronjob_last_run_by_label(self, label_key: str, label_value: str):
-        return None
 
     def create_cronjob(
         self,
@@ -95,19 +34,6 @@ class MockOperator:
         timeout=18000,
     ) -> str:
         self.cronjob_counter += 1
-        return self._generate_id()
-
-    def trigger_cronjob(self, name: str, overwrite_environment=None) -> None:
-        self.triggered_cronjob_counter += 1
-
-    def create_job(
-        self,
-        image: str,
-        labels: dict[str, str],
-        environment: dict[str, str | None],
-        timeout: int = 18000,
-    ) -> str:
-        self.job_counter += 1
         return self._generate_id()
 
     def _generate_id(self) -> str:
@@ -171,7 +97,7 @@ def test_create_pipeline_of_capellamodel_git_model_does_not_exist(
 
 
 @pytest.mark.usefixtures(
-    "project_manager", "mockoperator", "mock_add_user_to_repository"
+    "project_manager", "mockoperator", "mock_add_user_to_t4c_repository"
 )
 def test_create_pipeline(
     db: orm.Session,
@@ -198,29 +124,6 @@ def test_create_pipeline(
     assert db_pipeline is not None
     assert db_pipeline.run_nightly == run_nightly
     assert db_pipeline.include_commit_history == include_commit_history
-
-
-@pytest.mark.usefixtures("project_manager", "mock_add_user_to_repository")
-def test_trigger_pipeline(
-    project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
-    client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
-    run_nightly: bool,
-    mockoperator: MockOperator,
-):
-    response = client.post(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs",
-        json={
-            "include_commit_history": "False",
-        },
-    )
-
-    assert response.status_code == 201
-    if run_nightly:
-        assert mockoperator.triggered_cronjob_counter == 1
-    else:
-        assert mockoperator.job_counter == 1
 
 
 @pytest.mark.usefixtures(
@@ -304,21 +207,3 @@ def test_delete_pipeline(
 
     if run_nightly:
         assert mockoperator.cronjob_counter == -1
-
-
-@pytest.mark.usefixtures(
-    "project_manager",
-    "mockoperator",
-)
-def test_pipeline_job_get_logs_no_last_run(
-    project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
-    client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
-):
-    response = client.get(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs/latest/logs",
-    )
-
-    assert response.status_code == 404
-    assert response.json()["detail"]["err_code"] == "PIPELINES_NO_LAST_RUN"

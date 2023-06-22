@@ -3,7 +3,6 @@
 
 
 import logging
-import os
 
 import fastapi
 import starlette_prometheus
@@ -11,6 +10,7 @@ import uvicorn
 from fastapi import middleware, responses
 from fastapi.middleware import cors
 
+import capellacollab.projects.toolmodels.backups.runs.interface as pipeline_runs_interface
 import capellacollab.sessions.metrics
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
@@ -19,6 +19,7 @@ from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
 from capellacollab.routes import router, status
 from capellacollab.sessions import idletimeout, operators
+from capellacollab.tools import exceptions as tools_exceptions
 
 handlers: list[logging.Handler] = [
     logging.StreamHandler(),
@@ -51,17 +52,13 @@ async def shutdown():
     logging.getLogger("uvicorn.error").disabled = False
 
 
-async def schedule_termination_of_idle_sessions():
-    if os.getenv("DISABLE_SESSION_TIMEOUT", "") not in ("true", "1", "t"):
-        await idletimeout.terminate_idle_sessions_in_background()
-
-
 app = fastapi.FastAPI(
     title="Capella Collaboration",
     on_startup=[
         startup,
-        schedule_termination_of_idle_sessions,
+        idletimeout.terminate_idle_sessions_in_background,
         capellacollab.sessions.metrics.register,
+        pipeline_runs_interface.schedule_refresh_and_trigger_pipeline_jobs,
     ],
     middleware=[
         middleware.Middleware(
@@ -114,6 +111,13 @@ app.add_route("/metrics", starlette_prometheus.metrics)
 
 app.include_router(status.router, prefix="", tags=["Status"])
 app.include_router(router, prefix="/api/v1")
+
+
+def register_exceptions():
+    tools_exceptions.register_exceptions(app)
+
+
+register_exceptions()
 
 if __name__ == "__main__":
     uvicorn.run(app)

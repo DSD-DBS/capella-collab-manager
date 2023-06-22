@@ -308,6 +308,12 @@ class KubernetesOperator:
 
         SESSIONS_KILLED.inc()
 
+    def get_jobs(self) -> list[client.V1Job]:
+        return self.v1_batch.list_namespaced_job(namespace=namespace).items
+
+    def get_job_by_name(self, name: str) -> client.V1Job:
+        return self.v1_batch.read_namespaced_job(name, namespace=namespace)
+
     def get_job_state(self, job_name: str) -> str:
         return self._get_pod_state(label_selector=f"job-name={job_name}")
 
@@ -315,13 +321,6 @@ class KubernetesOperator:
         if job_name := self._get_last_job_name_of_cronjob(name):
             return self._get_pod_state(label_selector=f"job-name={job_name}")
         return "NoJob"
-
-    def get_cronjob_last_starting_date(self, name: str) -> datetime | None:
-        if job_name := self._get_last_job_name_of_cronjob(name):
-            return self._get_pod_starttime(
-                label_selector=f"job-name={job_name}"
-            )
-        return None
 
     def get_job_starting_date(self, job_name: str) -> datetime | None:
         return self._get_pod_starttime(label_selector=f"job-name={job_name}")
@@ -387,7 +386,6 @@ class KubernetesOperator:
             pods: list[client.V1Pod] = self.get_pods(
                 label_selector=label_selector
             )
-            log.debug("Received k8s pods: %s", pods)
 
             return pods[0].status.start_time
         except Exception:
@@ -401,24 +399,29 @@ class KubernetesOperator:
             namespace=namespace,
         )
 
-    def get_job_logs_or_events(self, _id: str) -> str:
+    def get_job_logs(self, name: str) -> str | None:
+        pod_name = self.get_pod_name_from_job_name(name)
         try:
             if pod_log := self.v1_core.read_namespaced_pod_log(
-                name=_id, namespace=namespace
+                name=pod_name,
+                namespace=namespace,
+                pretty=True,
+                timestamps=True,
             ):
                 return pod_log
         except Exception:
-            pass
+            log.exception(
+                "Failed fetching logs from Kubernetes", exc_info=True
+            )
+        return None
 
-        return "\n".join(
-            [
-                item.reason + ": " + item.message
-                for item in self.v1_core.list_namespaced_event(
-                    namespace=namespace,
-                    field_selector=f"involvedObject.name={_id}",
-                ).items
-            ]
-        )
+    def get_events_for_involved_object(
+        self, name: str
+    ) -> list[client.CoreV1Event]:
+        return self.v1_core.list_namespaced_event(
+            namespace=namespace,
+            field_selector=f"involvedObject.name={name}",
+        ).items
 
     def create_cronjob(
         self,
@@ -458,45 +461,6 @@ class KubernetesOperator:
         )
         return _id
 
-    def trigger_cronjob(self, name: str, overwrite_environment=None) -> None:
-        cronjob = self.v1_batch.read_namespaced_cron_job(
-            namespace=namespace, name=name
-        )
-
-        job_spec = cronjob.spec.job_template.spec
-        if overwrite_environment:
-            for index, env in enumerate(
-                job_spec.template.spec.containers[0].env
-            ):
-                if env.name in overwrite_environment:
-                    job_spec.template.spec.containers[0].env[index] = {
-                        "name": env.name,
-                        "value": overwrite_environment[env.name],
-                    }
-
-        job = client.V1Job(
-            api_version="batch/v1",
-            kind="Job",
-            metadata=client.models.V1ObjectMeta(
-                name=self._generate_id(),
-                # This annotation is added by kubectl, probably best to add it ourselves as well
-                annotations={"cronjob.kubernetes.io/instantiate": "manual"},
-                owner_references=[
-                    {
-                        "apiVersion": "batch/v1",
-                        "blockOwnerDeletion": None,
-                        "controller": None,
-                        "kind": "CronJob",
-                        "name": name,
-                        "uid": cronjob.metadata.uid,
-                    }
-                ],
-                labels={"app.capellacollab/parent": name},
-            ),
-            spec=job_spec,
-        )
-        self.v1_batch.create_namespaced_job(namespace=namespace, body=job)
-
     def delete_cronjob(self, _id: str):
         try:
             self.v1_batch.delete_namespaced_cron_job(
@@ -505,16 +469,24 @@ class KubernetesOperator:
         except exceptions.ApiException:
             log.exception("Error deleting cronjob with name: %s", _id)
 
-    def get_cronjob_last_run(self, name: str) -> str | None:
-        if job_name := self._get_last_job_name_of_cronjob(name):
-            return self._get_pod_id(label_selector=f"job-name={job_name}")
-        return None
+    def delete_job(self, name: str):
+        log.info("Deleting job '%s' in cluster", name)
+        try:
+            self.v1_batch.delete_namespaced_job(
+                namespace=namespace, name=name, propagation_policy="Background"
+            )
+        except exceptions.ApiException:
+            log.error("Error deleting job with name: %s", name)
 
-    def get_cronjob_last_run_by_label(
-        self, label_key: str, label_value: str
-    ) -> str | None:
-        if job_name := self._get_last_job_by_label(label_key, label_value):
-            return self._get_pod_id(label_selector=f"job-name={job_name}")
+    def get_pod_name_from_job_name(self, job_name: str) -> str | None:
+        return self._get_pod_id(label_selector=f"job-name={job_name}")
+
+    def get_pod_for_job(self, job_name: str) -> client.V1Pod:
+        pods = self.v1_core.list_namespaced_pod(
+            namespace=namespace, label_selector=f"job-name={job_name}"
+        )
+        if len(pods.items) == 1:
+            return pods.items[0]
         return None
 
     def _get_pod_id(self, label_selector: str) -> str:
@@ -522,11 +494,10 @@ class KubernetesOperator:
             pods = self.v1_core.list_namespaced_pod(
                 namespace=namespace, label_selector=label_selector
             ).to_dict()
-            log.debug("Received k8s pods: %s", pods)
 
             return pods["items"][0]["metadata"]["name"]
         except Exception:
-            log.exception("Error fetching the last run id")
+            log.exception("Error fetching the Pod ID")
             return ""
 
     def _generate_id(self) -> str:
@@ -913,7 +884,6 @@ class KubernetesOperator:
                 image_pull_policy=image_pull_policy,
             )
         ]
-
         return client.V1JobSpec(
             template=client.V1PodTemplateSpec(
                 metadata=client.V1ObjectMeta(labels=job_labels),
@@ -923,6 +893,7 @@ class KubernetesOperator:
                     restart_policy="Never",
                 ),
             ),
+            ttl_seconds_after_finished=3600,  # Keep job for one hour, we'll handle the deletion on our own.
             backoff_limit=0,
             active_deadline_seconds=timeout,
         )

@@ -6,7 +6,7 @@
 <div class="dialog">
   <h1>Create a new backup pipeline</h1>
   <form [formGroup]="createBackupForm" *ngIf="t4cAndGitModelExists">
-    <div>
+    <div class="flex flex-row items-center flex-wrap">
       <mat-card>
         Please select a T4C model:
         <mat-selection-list formControlName="t4cmodel" [multiple]="false">
@@ -49,10 +49,6 @@
         >Include commit history</mat-checkbox
       >
     </form>
-
-    <br />Please note that the configuration is laid down. <br />If the
-    Teamforcapella or Git configuration changes, the nightly backup must be
-    re-generated.
   </form>
 
   <div *ngIf="!t4cAndGitModelExists">

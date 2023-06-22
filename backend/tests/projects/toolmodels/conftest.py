@@ -3,7 +3,6 @@
 
 
 import pytest
-from fastapi import testclient
 from sqlalchemy import orm
 
 import capellacollab.projects.models as project_models
@@ -14,10 +13,13 @@ import capellacollab.projects.toolmodels.modelsources.git.models as git_models
 import capellacollab.projects.toolmodels.modelsources.t4c.crud as models_t4c_crud
 import capellacollab.projects.toolmodels.modelsources.t4c.models as models_t4c_models
 import capellacollab.settings.modelsources.t4c.crud as settings_t4c_crud
+import capellacollab.settings.modelsources.t4c.models as t4c_models
 import capellacollab.settings.modelsources.t4c.repositories.crud as settings_t4c_repositories_crud
+import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repositories_interface
 import capellacollab.settings.modelsources.t4c.repositories.models as settings_t4c_repositories_models
 import capellacollab.tools.crud as tools_crud
 import capellacollab.tools.models as tools_models
+from capellacollab.core import credentials
 
 
 @pytest.fixture(name="capella_tool_version", params=["6.0.0"])
@@ -76,4 +78,22 @@ def fixture_t4c_model(
 ) -> models_t4c_models.DatabaseT4CModel:
     return models_t4c_crud.create_t4c_model(
         db, capella_model, t4c_repository, "default"
+    )
+
+
+@pytest.fixture(name="mock_add_user_to_t4c_repository")
+def fixture_mock_add_user_to_t4c_repository(monkeypatch: pytest.MonkeyPatch):
+    def mock_add_user_to_repository(
+        instance: t4c_models.DatabaseT4CInstance,
+        repository_name: str,
+        username: str,
+        password: str = credentials.generate_password(),
+        is_admin: bool = False,
+    ):
+        return {}
+
+    monkeypatch.setattr(
+        t4c_repositories_interface,
+        "add_user_to_repository",
+        mock_add_user_to_repository,
     )

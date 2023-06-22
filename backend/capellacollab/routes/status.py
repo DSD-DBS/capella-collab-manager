@@ -23,7 +23,7 @@ router = fastapi.APIRouter()
 def get_status(db: orm.Session = fastapi.Depends(database.get_db)):
     return StatusResponse(
         guacamole=validate_guacamole(),
-        database=validate_session(db),
+        database=validate_database_session(db),
         operator=operators.get_operator().validate(),
     )
 
@@ -36,7 +36,7 @@ def validate_guacamole() -> bool:
         return False
 
 
-def validate_session(db: orm.Session) -> bool:
+def validate_database_session(db: orm.Session) -> bool:
     try:
         db.connection()
         return True

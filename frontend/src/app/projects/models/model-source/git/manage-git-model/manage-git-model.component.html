@@ -169,7 +169,7 @@
     <ng-template #notFromStepper>
       <ng-container *ngIf="!isEditMode; else editGitModel">
         <div class="flex justify-between">
-          <a mat-button [routerLink]="['../..']">
+          <a mat-button [routerLink]="['../../model-sources']">
             <mat-icon class="mat-icon-position">arrow_back</mat-icon>
             Cancel
           </a>
@@ -207,7 +207,7 @@
       </div>
       <div *ngIf="!editing">
         <div class="flex justify-between">
-          <a mat-button [routerLink]="['../..']">
+          <a mat-button [routerLink]="['../../model-sources']">
             <mat-icon class="mat-icon-position">arrow_back</mat-icon>
             Back
           </a>

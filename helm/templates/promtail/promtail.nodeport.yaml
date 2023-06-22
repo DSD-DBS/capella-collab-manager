@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+# Expose Grafana Loki API on development systems for direct access
+
+{{ if eq .Values.target "local" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-loki-nodeport
+  labels:
+    id: {{ .Release.Name }}-service-loki-nodeport
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/component: gateway
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/name: loki
+  ports:
+  - name: http
+    nodePort: 30001
+    port: 80
+    protocol: TCP
+    targetPort: http
+{{ end }}

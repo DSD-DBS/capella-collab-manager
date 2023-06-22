@@ -10,10 +10,15 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import {
+  PipelineRun,
+  PipelineRunService,
+} from 'src/app/projects/models/backup-settings/pipeline-runs/service/pipeline-run.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { CreateBackupComponent } from '../create-backup/create-backup.component';
-import { BackupService, Pipeline } from '../service/backup.service';
+import { PipelineService, Pipeline } from '../service/pipeline.service';
 import {
   ViewLogsDialogComponent,
   ViewLogsData,
@@ -37,13 +42,15 @@ export class TriggerPipelineComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: { projectSlug: string; modelSlug: string },
     public dialog: MatDialog,
-    public backupService: BackupService,
-    public sessionService: SessionService
+    public pipelineService: PipelineService,
+    private pipelineRunService: PipelineRunService,
+    public sessionService: SessionService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.backupService
-      .getBackups(this.data.projectSlug, this.data.modelSlug)
+    this.pipelineService
+      .loadPipelines(this.data.projectSlug, this.data.modelSlug)
       .subscribe();
   }
 
@@ -52,19 +59,26 @@ export class TriggerPipelineComponent implements OnInit {
   }
 
   runPipeline() {
-    this.backupService
+    this.pipelineRunService
       .triggerRun(
         this.data.projectSlug,
         this.data.modelSlug,
         this.selectedPipeline!.id,
         this.configurationForm.value.includeHistory!
       )
-      .subscribe(() => {
-        this.toastService.showSuccess(
-          'Pipeline triggered',
-          'You can check the current status in the pipeline settings.'
-        );
+      .subscribe((pipelineRun: PipelineRun) => {
         this.closeDialog();
+        this.router.navigate([
+          'project',
+          this.data.projectSlug,
+          'model',
+          this.data.modelSlug,
+          'pipeline',
+          this.selectedPipeline!.id,
+          'run',
+          pipelineRun.id,
+          'logs',
+        ]);
       });
   }
 
@@ -79,9 +93,9 @@ export class TriggerPipelineComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  removeBackup(backup: Pipeline): void {
-    this.backupService
-      .removeBackup(this.data.projectSlug, this.data.modelSlug, backup.id)
+  removePipeline(backup: Pipeline): void {
+    this.pipelineService
+      .removePipeline(this.data.projectSlug, this.data.modelSlug, backup.id)
       .subscribe(() => {
         this.toastService.showSuccess(
           'Backup pipeline deleted',
@@ -91,18 +105,31 @@ export class TriggerPipelineComponent implements OnInit {
       });
   }
 
+  openPipelineRuns(backup: Pipeline): void {
+    this.closeDialog();
+    this.router.navigate([
+      'project',
+      this.data.projectSlug,
+      'model',
+      this.data.modelSlug,
+      'pipeline',
+      backup.id,
+      'runs',
+    ]);
+  }
+
   viewLogs(backup: Pipeline): void {
     this.dialog.open(ViewLogsDialogComponent, {
       data: {
         projectSlug: this.data.projectSlug,
         modelSlug: this.data.modelSlug,
-        job_id: backup.lastrun.id,
+        job_id: 'backup.lastrun.id',
         backup_id: backup.id,
       } as ViewLogsData,
     });
   }
 
-  createNewBackup(): void {
+  createPipeline(): void {
     const dialogRef = this.dialog.open(CreateBackupComponent, {
       data: {
         projectSlug: this.data.projectSlug,
@@ -112,8 +139,8 @@ export class TriggerPipelineComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((success) => {
       if (success) {
-        this.backupService
-          .getBackups(this.data.projectSlug, this.data.modelSlug)
+        this.pipelineService
+          .loadPipelines(this.data.projectSlug, this.data.modelSlug)
           .subscribe();
       }
     });

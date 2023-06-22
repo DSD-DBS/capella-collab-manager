@@ -3,25 +3,26 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="mat-dialog dialog">
+<div class="dialog">
   <div>
-    <div *ngIf="!selectedPipeline" class="flex justify-between margin default">
+    <div *ngIf="!selectedPipeline" class="flex justify-between">
       <span
         >Please select the pipeline you'd like to execute or to see the logs:
       </span>
-      <a mat-icon-button (click)="createNewBackup()"
+      <a mat-icon-button (click)="createPipeline()"
         ><mat-icon>add_circle</mat-icon></a
       >
     </div>
     <div class="pipelines">
-      <div *ngFor="let pipeline of this.backupService.pipelines.value">
+      <div *ngFor="let pipeline of this.pipelineService.pipelines | async">
         <mat-card
           matRipple
           *ngIf="!selectedPipeline || selectedPipeline.id === pipeline.id"
           (click)="selectPipeline(pipeline)"
           class="pipeline-card"
-          ><span class="text-center"><b>Backup</b> (ID: {{ pipeline.id }})</span
-          ><br />
+        >
+          <span class="text-center"><b>Backup</b> (ID: {{ pipeline.id }})</span>
+          <br />
           <span *ngIf="pipeline.run_nightly"
             >Runs nightly at 3am
             <span *ngIf="pipeline.include_commit_history"
@@ -35,7 +36,7 @@
             >Runs only with manual trigger</span
           >
           <hr />
-          <div class="flex justify-between">
+          <div class="flex justify-between flex-wrap gap-y-1">
             <span style="flex-basis: 45%"
               ><b>TeamForCapella</b> <br />
               Instance <i>{{ pipeline.t4c_model.instance_name }}</i
@@ -45,33 +46,30 @@
             ><span style="flex-basis: 10%"
               ><mat-icon class="mat-icon-position top">arrow_forward</mat-icon>
             </span>
-            <span style="flex-basis: 45%"
-              ><b>Git</b> <br />
+            <span style="flex-basis: 45%">
+              <b>Git</b> <br />
               URL: <i>{{ pipeline.git_model.path }}</i
               >, <br />revision: <i>{{ pipeline.git_model.revision }}</i
               >, <br />entrypoint:
               <i>{{ pipeline.git_model.entrypoint }}</i>
             </span>
-          </div></mat-card
-        >
+          </div>
+        </mat-card>
       </div>
     </div>
     <div
       class="margin default"
-      *ngIf="
-        !this.backupService.pipelines.value?.length &&
-        !this.backupService.loading
-      "
+      *ngIf="(this.pipelineService.pipelines | async)?.length === 0"
     >
       No pipelines found. Please create a new pipeline.
     </div>
 
-    <div class="margin default">
+    <div>
       <form *ngIf="selectedPipeline" [formGroup]="configurationForm">
         <hr />
         <h3>Run the pipeline</h3>
 
-        <div class="flex justify-between">
+        <div class="flex flex-wrap justify-between">
           <div>
             Please select the following configuration options: <br />
             <mat-checkbox formControlName="includeHistory"
@@ -83,39 +81,32 @@
             {{ estimateTime() }}
           </div>
 
-          <button
-            class="margin default"
-            mat-raised-button
-            (click)="runPipeline()"
-            color="primary"
-          >
+          <button mat-raised-button (click)="runPipeline()" color="primary">
             Run pipeline
           </button>
         </div>
       </form>
     </div>
 
-    <div class="margin default" *ngIf="selectedPipeline">
+    <div *ngIf="selectedPipeline">
       <hr />
       <h3>Additional actions</h3>
-
-      <button
-        class="margin default"
-        mat-raised-button
-        (click)="viewLogs(selectedPipeline)"
-        color="primary"
-        *ngIf="selectedPipeline?.lastrun?.id"
-      >
-        View logs of last run
-      </button>
-      <button
-        class="margin default"
-        mat-raised-button
-        (click)="removeBackup(selectedPipeline)"
-        color="primary"
-      >
-        Remove pipeline
-      </button>
+      <div class="flex flex-row flex-wrap gap-2">
+        <button
+          mat-raised-button
+          (click)="removePipeline(selectedPipeline)"
+          color="primary"
+        >
+          Remove pipeline
+        </button>
+        <a
+          mat-raised-button
+          (click)="openPipelineRuns(selectedPipeline)"
+          color="primary"
+        >
+          View runs
+        </a>
+      </div>
     </div>
   </div>
 </div>
