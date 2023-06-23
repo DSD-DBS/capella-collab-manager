@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Export a Capella model your persistent workspace to a TeamForCapella server
+# Export a Capella model from your persistent workspace to a TeamForCapella server
 
 <!-- prettier-ignore -->
 !!! warning
