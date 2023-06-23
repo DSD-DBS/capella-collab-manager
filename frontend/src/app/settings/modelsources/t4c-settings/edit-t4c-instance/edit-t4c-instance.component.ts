@@ -87,7 +87,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
         this.t4cInstanceService.loadInstance(instanceId);
       });
 
-    this.t4cInstanceService.t4cInstance
+    this.t4cInstanceService.t4cInstance$
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((t4cInstance) => {
         t4cInstance.password = '***********';

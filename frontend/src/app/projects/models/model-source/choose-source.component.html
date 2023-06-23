@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div *ngIf="(projectService.project | async) && (modelService.model | async)">
+<div *ngIf="(projectService.project$ | async) && (modelService.model$ | async)">
   <h2 class="title text-center">Git sources</h2>
   <div class="flex justify-center flex-wrap">
     <a (click)="modelSourceSelection.emit('git-add')">
@@ -21,7 +21,7 @@
 
   <div
     *ngIf="
-      (modelService.model | async)!.tool?.integrations?.t4c &&
+      (modelService.model$ | async)!.tool?.integrations?.t4c &&
       userService.user?.role === 'administrator'
     "
   >

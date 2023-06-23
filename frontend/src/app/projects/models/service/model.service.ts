@@ -33,8 +33,8 @@ export class ModelService {
   private _model = new BehaviorSubject<Model | undefined>(undefined);
   private _models = new BehaviorSubject<Model[] | undefined>(undefined);
 
-  readonly model = this._model.asObservable();
-  readonly models = this._models.asObservable();
+  public readonly model$ = this._model.asObservable();
+  public readonly models$ = this._models.asObservable();
 
   backendURLFactory(projectSlug: string, modelSlug: string) {
     return `${this.base_url}${projectSlug}/models/${modelSlug}`;
@@ -135,7 +135,7 @@ export class ModelService {
   asyncSlugValidator(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       const modelSlug = slugify(control.value, { lower: true });
-      return this.models.pipe(
+      return this.models$.pipe(
         take(1),
         map((models) => {
           return models?.find((model) => model.slug === modelSlug)

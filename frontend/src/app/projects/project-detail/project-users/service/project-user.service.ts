@@ -36,14 +36,18 @@ export class ProjectUserService {
   ROLES = { user: 'User', manager: 'Manager' };
   ADVANCED_ROLES = { administrator: 'Administrator', ...this.ROLES };
 
-  _projectUser = new BehaviorSubject<ProjectUser | undefined>(undefined);
-  projectUser = this._projectUser.asObservable();
+  private _projectUser = new BehaviorSubject<ProjectUser | undefined>(
+    undefined
+  );
+  public readonly projectUser$ = this._projectUser.asObservable();
 
-  _projectUsers = new BehaviorSubject<ProjectUser[] | undefined>(undefined);
-  projectUsers = this._projectUsers.asObservable();
+  private _projectUsers = new BehaviorSubject<ProjectUser[] | undefined>(
+    undefined
+  );
+  public readonly projectUsers$ = this._projectUsers.asObservable();
 
   resetProjectUserOnProjectReset() {
-    this.projectService.project
+    this.projectService.project$
       .pipe(
         filter((project) => project === undefined),
         tap(() => {
@@ -54,7 +58,7 @@ export class ProjectUserService {
   }
 
   resetProjectUsersOnProjectReset() {
-    this.projectService.project
+    this.projectService.project$
       .pipe(
         filter((project) => project === undefined),
         tap(() => {
@@ -88,7 +92,7 @@ export class ProjectUserService {
 
   loadProjectUserOnProjectChange(): void {
     this._projectUser.next(undefined);
-    this.projectService.project
+    this.projectService.project$
       .pipe(
         filter(Boolean),
         switchMap((project) =>
@@ -108,8 +112,8 @@ export class ProjectUserService {
   loadProjectUsersOnProjectChange(): void {
     this._projectUsers.next(undefined);
     combineLatest([
-      this.projectService.project.pipe(filter(Boolean)),
-      this.projectUser.pipe(
+      this.projectService.project$.pipe(filter(Boolean)),
+      this.projectUser$.pipe(
         filter(
           (projectUser) =>
             projectUser?.role === 'manager' ||

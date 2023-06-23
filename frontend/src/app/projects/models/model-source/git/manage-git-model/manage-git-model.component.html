@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div *ngIf="(projectService.project | async) && (modelService.model | async)">
+<div *ngIf="(projectService.project$ | async) && (modelService.model$ | async)">
   <mat-card class="w-fit">
     <form [formGroup]="form">
       <div formGroupName="urls">

@@ -20,11 +20,11 @@ export class PipelineService {
     private breadcrumbsService: BreadcrumbsService
   ) {}
 
-  _pipelines = new BehaviorSubject<Pipeline[] | undefined>(undefined);
-  _pipeline = new BehaviorSubject<Pipeline | undefined>(undefined);
+  private _pipelines = new BehaviorSubject<Pipeline[] | undefined>(undefined);
+  private _pipeline = new BehaviorSubject<Pipeline | undefined>(undefined);
 
-  pipelines = this._pipelines.asObservable();
-  pipeline = this._pipeline.asObservable();
+  public readonly pipelines$ = this._pipelines.asObservable();
+  public readonly pipeline$ = this._pipeline.asObservable();
 
   urlFactory(projectSlug: string, modelSlug: string): string {
     return `${environment.backend_url}/projects/${projectSlug}/models/${modelSlug}/backups/pipelines`;

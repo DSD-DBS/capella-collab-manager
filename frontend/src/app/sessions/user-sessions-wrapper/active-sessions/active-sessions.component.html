@@ -8,7 +8,7 @@
 </div>
 
 <ngx-skeleton-loader
-  *ngIf="(userSessionService.sessions | async) === undefined"
+  *ngIf="(userSessionService.sessions$ | async) === undefined"
   appearance="circle"
   [theme]="{
     'border-radius': '5px',
@@ -18,14 +18,14 @@
   }"
 ></ngx-skeleton-loader>
 
-<mat-card *ngIf="(userSessionService.sessions | async)?.length === 0">
+<mat-card *ngIf="(userSessionService.sessions$ | async)?.length === 0">
   <h2>No active sessions</h2>
   <div class="content">
     No active sessions for your user are found in our system. <br />
   </div>
 </mat-card>
 
-<mat-card *ngFor="let session of userSessionService.sessions | async">
+<mat-card *ngFor="let session of userSessionService.sessions$ | async">
   <div class="type">
     <h2 *ngIf="isPersistentSession(session)">Persistent workspace session</h2>
     <h2 *ngIf="isReadonlySession(session)">Read-only session</h2>

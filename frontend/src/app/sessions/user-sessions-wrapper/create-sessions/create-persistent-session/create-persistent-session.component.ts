@@ -39,7 +39,7 @@ export class CreatePersistentSessionComponent implements OnInit {
   ngOnInit(): void {
     this.toolService.getTools().subscribe();
 
-    this.userSessionService.persistentSessions
+    this.userSessionService.persistentSessions$
       .pipe(untilDestroyed(this))
       .subscribe((sessions) => (this.persistentSession = sessions?.at(0)));
   }

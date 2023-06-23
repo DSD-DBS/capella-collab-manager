@@ -67,11 +67,11 @@ describe('CreateProjectComponent', () => {
     _project: new BehaviorSubject<Project | undefined>(undefined),
     _projects: new BehaviorSubject<Project[] | undefined>(undefined),
 
-    get project(): Observable<Project | undefined> {
+    get project$(): Observable<Project | undefined> {
       return this._project.asObservable();
     },
 
-    get projects(): Observable<Project[] | undefined> {
+    get projects$(): Observable<Project[] | undefined> {
       return this._projects.asObservable();
     },
 
@@ -98,7 +98,7 @@ describe('CreateProjectComponent', () => {
         control: AbstractControl
       ): Observable<ValidationErrors | null> => {
         const projectSlug = slugify(control.value, { lower: true });
-        return this.projects.pipe(
+        return this.projects$.pipe(
           take(1),
           map((projects) => {
             return projects?.find((project) => project.slug === projectSlug)

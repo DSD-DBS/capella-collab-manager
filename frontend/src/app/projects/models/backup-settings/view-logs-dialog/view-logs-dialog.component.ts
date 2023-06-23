@@ -34,9 +34,9 @@ export class ViewLogsDialogComponent {
 
   refreshEvents(): void {
     combineLatest([
-      this.projectService.project.pipe(filter(Boolean)),
-      this.modelService.model.pipe(filter(Boolean)),
-      this.pipelineService.pipeline.pipe(filter(Boolean)),
+      this.projectService.project$.pipe(filter(Boolean)),
+      this.modelService.model$.pipe(filter(Boolean)),
+      this.pipelineService.pipeline$.pipe(filter(Boolean)),
       this.pipelineRunService.pipelineRun$.pipe(filter(Boolean)),
     ])
       .pipe(
@@ -62,9 +62,9 @@ export class ViewLogsDialogComponent {
 
   refreshLogs(): void {
     combineLatest([
-      this.projectService.project.pipe(filter(Boolean)),
-      this.modelService.model.pipe(filter(Boolean)),
-      this.pipelineService.pipeline.pipe(filter(Boolean)),
+      this.projectService.project$.pipe(filter(Boolean)),
+      this.modelService.model$.pipe(filter(Boolean)),
+      this.pipelineService.pipeline$.pipe(filter(Boolean)),
       this.pipelineRunService.pipelineRun$.pipe(filter(Boolean)),
     ])
       .pipe(

@@ -47,7 +47,7 @@ export class ModelDescriptionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.modelService.model
+    this.modelService.model$
       .pipe(
         untilDestroyed(this),
         filter(Boolean),
@@ -75,7 +75,7 @@ export class ModelDescriptionComponent implements OnInit {
         this.toolVersions = result[1];
       });
 
-    this.projectService.project
+    this.projectService.project$
       .pipe(untilDestroyed(this))
       .subscribe((project) => (this.projectSlug = project?.slug));
   }

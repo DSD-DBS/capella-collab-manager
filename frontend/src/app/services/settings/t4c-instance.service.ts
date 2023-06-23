@@ -51,12 +51,12 @@ export class T4CInstanceService {
   private _t4cInstances = new BehaviorSubject<T4CInstance[] | undefined>(
     undefined
   );
-  readonly t4cInstances = this._t4cInstances.asObservable();
+  public readonly t4cInstances$ = this._t4cInstances.asObservable();
 
   private _t4cInstance = new BehaviorSubject<T4CInstance | undefined>(
     undefined
   );
-  readonly t4cInstance = this._t4cInstance.asObservable();
+  public readonly t4cInstance$ = this._t4cInstance.asObservable();
 
   loadInstances(): void {
     this.http.get<T4CInstance[]>(this.baseUrl).subscribe({

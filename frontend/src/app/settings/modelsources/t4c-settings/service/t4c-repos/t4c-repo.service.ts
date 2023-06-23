@@ -29,7 +29,7 @@ export class T4CRepoService {
     T4CServerRepository[] | undefined
   >(undefined);
 
-  readonly repositories = this._repositories.asObservable();
+  public readonly repositories$ = this._repositories.asObservable();
 
   urlFactory(instanceId: number, repositoryId: number): string {
     return `${this.t4cInstanceService.urlFactory(
@@ -100,7 +100,7 @@ export class T4CRepoService {
 
   asyncNameValidator(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
-      return this.repositories.pipe(
+      return this.repositories$.pipe(
         take(1),
         map((t4cRepositories) => {
           const nameExists = t4cRepositories?.find(

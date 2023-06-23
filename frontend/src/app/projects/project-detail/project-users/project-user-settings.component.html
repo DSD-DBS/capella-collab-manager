@@ -44,7 +44,7 @@
           class="user"
           *ngFor="
             let user of getProjectUsersByRole(
-              projectUserService.projectUsers | async,
+              projectUserService.projectUsers$ | async,
               role
             )
           "
@@ -114,7 +114,7 @@
             </div>
           </div>
         </div>
-        <div *ngIf="(projectUserService.projectUsers | async) === undefined">
+        <div *ngIf="(projectUserService.projectUsers$ | async) === undefined">
           <ngx-skeleton-loader
             appearance="circle"
             [theme]="{

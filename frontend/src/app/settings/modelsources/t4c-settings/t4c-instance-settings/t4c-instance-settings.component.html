@@ -34,7 +34,7 @@
         class="flex justify-between my-[10px] mx-[5px]"
         *ngFor="
           let repository of getFilteredRepositories(
-            t4cRepoService.repositories | async
+            t4cRepoService.repositories$ | async
           )
         "
       >

@@ -39,7 +39,7 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.gitInstancesService.gitInstance
+    this.gitInstancesService.gitInstance$
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((instance: GitInstance) => {
         this.gitInstanceForm.controls.name.addAsyncValidators(

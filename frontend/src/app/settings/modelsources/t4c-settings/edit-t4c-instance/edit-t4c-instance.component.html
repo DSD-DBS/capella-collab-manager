@@ -28,8 +28,8 @@
             </mat-select>
             <mat-hint
               *ngIf="
-                (t4cInstanceService.t4cInstance | async) !== undefined &&
-                (t4cInstanceService.t4cInstance | async)!.version.id !==
+                (t4cInstanceService.t4cInstance$ | async) !== undefined &&
+                (t4cInstanceService.t4cInstance$ | async)!.version.id !==
                   form.value.version_id
               "
               >Models are not auto-migrated on version change.</mat-hint
@@ -197,13 +197,13 @@
 
   <div
     class="flex flex-col flex-wrap"
-    *ngIf="(t4cInstanceService.t4cInstance | async) !== undefined"
+    *ngIf="(t4cInstanceService.t4cInstance$ | async) !== undefined"
   >
     <app-licences
-      [instance]="(t4cInstanceService.t4cInstance | async)!"
+      [instance]="(t4cInstanceService.t4cInstance$ | async)!"
     ></app-licences>
     <app-t4c-instance-settings
-      [instance]="(t4cInstanceService.t4cInstance | async)!"
+      [instance]="(t4cInstanceService.t4cInstance$ | async)!"
     ></app-t4c-instance-settings>
   </div>
 </div>

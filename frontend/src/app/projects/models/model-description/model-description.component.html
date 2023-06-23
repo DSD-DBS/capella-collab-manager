@@ -4,8 +4,8 @@
  -->
 
 <div class="wrapper flex flex-center">
-  <mat-card *ngIf="modelService.model | async" class="basis-1 grow">
-    <mat-card-title>{{ (modelService.model | async)!.name }}</mat-card-title>
+  <mat-card *ngIf="modelService.model$ | async" class="basis-1 grow">
+    <mat-card-title>{{ (modelService.model$ | async)!.name }}</mat-card-title>
     <form (submit)="onSubmit()" [formGroup]="form">
       <fieldset>
         <mat-form-field appearance="fill">

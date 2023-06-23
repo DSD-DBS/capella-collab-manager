@@ -29,7 +29,7 @@ export class PipelineWrapperComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Reset pipeline runs on pipeline change
-    this.modelService.model.pipe(
+    this.modelService.model$.pipe(
       filter((model) => model === undefined),
       tap(() => {
         this.pipelineService.resetPipeline();
@@ -45,8 +45,8 @@ export class PipelineWrapperComponent implements OnInit, OnDestroy {
       });
 
     combineLatest([
-      this.projectService.project.pipe(filter(Boolean)),
-      this.modelService.model.pipe(filter(Boolean)),
+      this.projectService.project$.pipe(filter(Boolean)),
+      this.modelService.model$.pipe(filter(Boolean)),
       this.route.params.pipe(
         map((params) => params.pipeline as number),
         filter(Boolean)

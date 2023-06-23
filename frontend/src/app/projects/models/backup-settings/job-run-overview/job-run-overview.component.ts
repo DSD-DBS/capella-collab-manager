@@ -43,9 +43,9 @@ export class JobRunOverviewComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     combineLatest([
-      this.projectService.project.pipe(filter(Boolean)),
-      this.modelService.model.pipe(filter(Boolean)),
-      this.pipelineService.pipeline.pipe(filter(Boolean)),
+      this.projectService.project$.pipe(filter(Boolean)),
+      this.modelService.model$.pipe(filter(Boolean)),
+      this.pipelineService.pipeline$.pipe(filter(Boolean)),
     ]).subscribe(([project, model, pipeline]) => {
       this.pipelineRunService.loadPipelineRuns(
         project.slug,
@@ -59,9 +59,9 @@ export class JobRunOverviewComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     combineLatest([
-      this.projectService.project.pipe(filter(Boolean)),
-      this.modelService.model.pipe(filter(Boolean)),
-      this.pipelineService.pipeline.pipe(filter(Boolean)),
+      this.projectService.project$.pipe(filter(Boolean)),
+      this.modelService.model$.pipe(filter(Boolean)),
+      this.pipelineService.pipeline$.pipe(filter(Boolean)),
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([project, model, pipeline]) => {

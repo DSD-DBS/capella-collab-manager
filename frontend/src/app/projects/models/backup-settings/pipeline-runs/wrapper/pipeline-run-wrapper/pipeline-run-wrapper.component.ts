@@ -30,7 +30,7 @@ export class PipelineRunWrapperComponent implements OnDestroy {
   ) {
     // Reset pipeline runs on pipeline or pipelineRunID change
     combineLatest([
-      this.pipelineService.pipeline.pipe(
+      this.pipelineService.pipeline$.pipe(
         filter((pipeline) => pipeline === undefined)
       ),
       this.route.params.pipe(
@@ -53,9 +53,9 @@ export class PipelineRunWrapperComponent implements OnDestroy {
 
   updatePipelineRun() {
     combineLatest([
-      this.projectService.project.pipe(filter(Boolean)),
-      this.modelService.model.pipe(filter(Boolean)),
-      this.pipelineService.pipeline.pipe(filter(Boolean)),
+      this.projectService.project$.pipe(filter(Boolean)),
+      this.modelService.model$.pipe(filter(Boolean)),
+      this.pipelineService.pipeline$.pipe(filter(Boolean)),
       this.route.params.pipe(map((params) => params.pipelineRun as number)),
     ])
       .pipe(untilDestroyed(this))

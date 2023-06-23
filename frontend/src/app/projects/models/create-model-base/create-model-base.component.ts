@@ -56,7 +56,7 @@ export class CreateModelBaseComponent implements OnInit {
     this.toolService.getTools().subscribe();
     this.modelService.clearModel();
 
-    this.projectService.project
+    this.projectService.project$
       .pipe(untilDestroyed(this))
       .subscribe((project) => (this.projectSlug = project?.slug));
   }

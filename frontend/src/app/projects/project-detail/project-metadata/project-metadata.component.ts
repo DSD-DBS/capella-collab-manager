@@ -32,13 +32,13 @@ export class ProjectMetadataComponent {
   ) {}
 
   ngOnInit(): void {
-    this.projectService.project
+    this.projectService.project$
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((project) => {
         this.project = project;
       });
 
-    this.modelService.models
+    this.modelService.models$
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((models) => (this.canDelete = !models.length));
   }

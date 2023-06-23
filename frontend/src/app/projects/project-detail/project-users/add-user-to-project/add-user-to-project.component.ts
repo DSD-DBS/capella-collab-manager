@@ -50,7 +50,7 @@ export class AddUserToProjectComponent {
 
   asyncUserAlreadyInProjectValidator(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
-      return this.projectUserService.projectUsers.pipe(
+      return this.projectUserService.projectUsers$.pipe(
         take(1),
         map((projectUsers) => {
           if (
@@ -85,7 +85,7 @@ export class AddUserToProjectComponent {
   }
 
   addUser(): void {
-    this.projectService.project.pipe(filter(Boolean)).subscribe((project) => {
+    this.projectService.project$.pipe(filter(Boolean)).subscribe((project) => {
       if (this.addUserToProjectForm.valid) {
         const formValue = this.addUserToProjectForm.value;
 

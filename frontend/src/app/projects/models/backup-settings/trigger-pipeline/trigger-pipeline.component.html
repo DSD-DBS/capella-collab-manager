@@ -14,7 +14,7 @@
       >
     </div>
     <div class="pipelines">
-      <div *ngFor="let pipeline of this.pipelineService.pipelines | async">
+      <div *ngFor="let pipeline of this.pipelineService.pipelines$ | async">
         <mat-card
           matRipple
           *ngIf="!selectedPipeline || selectedPipeline.id === pipeline.id"
@@ -59,7 +59,7 @@
     </div>
     <div
       class="margin default"
-      *ngIf="(this.pipelineService.pipelines | async)?.length === 0"
+      *ngIf="(this.pipelineService.pipelines$ | async)?.length === 0"
     >
       No pipelines found. Please create a new pipeline.
     </div>

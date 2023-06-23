@@ -27,8 +27,8 @@ export class ModelDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     combineLatest([
-      this.projectService.project.pipe(filter(Boolean)),
-      this.modelService.model.pipe(filter(Boolean)),
+      this.projectService.project$.pipe(filter(Boolean)),
+      this.modelService.model$.pipe(filter(Boolean)),
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([project, model]) => {

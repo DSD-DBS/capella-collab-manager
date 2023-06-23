@@ -95,14 +95,14 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.t4cRepositoryService.repositories
+    this.t4cRepositoryService.repositories$
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((repositories) => {
         this.t4cRepositories = repositories;
         this.form.controls.t4cRepositoryId.enable({ emitEvent: false });
       });
 
-    this.t4cModelService.t4cModel
+    this.t4cModelService.t4cModel$
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((t4cModel) => {
         this.t4cModel = t4cModel;
@@ -119,8 +119,8 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
     this.t4cInstanceService.loadInstances();
 
     combineLatest([
-      this.projectService.project.pipe(filter(Boolean)),
-      this.modelService.model.pipe(filter(Boolean)),
+      this.projectService.project$.pipe(filter(Boolean)),
+      this.modelService.model$.pipe(filter(Boolean)),
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([project, model]) => {
@@ -129,7 +129,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
         this.t4cModelService.loadT4CModels(project.slug, model.slug);
       });
 
-    this.t4cRepositoryService.repositories
+    this.t4cRepositoryService.repositories$
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe(() =>
         this.form.controls.t4cRepositoryId.enable({

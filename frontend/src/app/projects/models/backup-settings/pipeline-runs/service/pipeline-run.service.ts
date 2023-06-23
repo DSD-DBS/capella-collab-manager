@@ -60,7 +60,7 @@ export class PipelineRunService {
   }
 
   resetPipelineRunsOnPipelineChange() {
-    this.pipelineService.pipeline.subscribe(() => {
+    this.pipelineService.pipeline$.subscribe(() => {
       this.resetPipelineRuns();
     });
   }

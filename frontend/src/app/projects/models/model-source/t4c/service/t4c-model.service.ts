@@ -21,10 +21,10 @@ export class T4CModelService {
   constructor(private http: HttpClient) {}
 
   private _t4cModel = new BehaviorSubject<T4CModel | undefined>(undefined);
-  readonly t4cModel = this._t4cModel.asObservable();
+  public readonly t4cModel$ = this._t4cModel.asObservable();
 
   private _t4cModels = new BehaviorSubject<T4CModel[] | undefined>(undefined);
-  readonly t4cModels = this._t4cModels.asObservable();
+  public readonly t4cModels$ = this._t4cModels.asObservable();
 
   urlFactory(projectSlug: string, modelSlug: string): string {
     return `${environment.backend_url}/projects/${projectSlug}/models/${modelSlug}/modelsources/t4c`;
@@ -107,7 +107,7 @@ export class T4CModelService {
     repositoryId: number
   ): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
-      return this.t4cModels.pipe(
+      return this.t4cModels$.pipe(
         take(1),
         map((t4cModels) => {
           const nameExists = t4cModels?.find(
