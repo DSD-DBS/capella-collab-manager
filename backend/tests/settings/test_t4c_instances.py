@@ -106,6 +106,31 @@ def test_patch_t4c_instance(
     assert t4c_instance.host == "localhost"
 
 
+def test_update_t4c_instance_password_empty_string(
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
+    t4c_server: t4c_models.DatabaseT4CInstance,
+):
+    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+
+    expected_password = t4c_server.password
+
+    response = client.patch(
+        f"/api/v1/settings/modelsources/t4c/{t4c_server.id}",
+        json={
+            "password": "",
+        },
+    )
+
+    updated_t4c_server = t4c_crud.get_t4c_instance_by_id(
+        db, response.json()["id"]
+    )
+
+    assert updated_t4c_server
+    assert updated_t4c_server.password == expected_password
+
+
 @responses.activate
 def test_get_t4c_license_usage(
     client: testclient.TestClient,
