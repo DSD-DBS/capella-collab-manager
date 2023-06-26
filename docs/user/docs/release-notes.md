@@ -5,6 +5,20 @@
 
 [Full/ Technical Changelog](https://github.com/DSD-DBS/capella-collab-manager/releases)
 
+# v2.12.0
+
+- Redesign of the project members section for project leads: The list shows
+  global administrators now. Action-buttons are available inline.
+- Add support for mobile devices and smaller screens. This is handy if you want
+  to manage project members, view the diagram cache or the model badge. If you
+  really want to, you can actually run Capella or Papyrus on a smartphone.
+
+# v2.11.0
+
+- Redesign of the project detail page: The read-only sessions are moved from
+  the models to the project overview.
+- Documentation for the `pure::variants` integration was added
+
 # v2.10.0
 
 Adds a model complexity badge integration. Once set up, a model complexity

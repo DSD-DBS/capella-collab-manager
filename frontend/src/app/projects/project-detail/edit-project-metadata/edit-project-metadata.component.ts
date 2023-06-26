@@ -74,6 +74,8 @@ export class EditProjectMetadataComponent implements OnInit, OnChanges {
   }
 
   get newSlug(): string | null {
-    return this.form.value.name ? slugify(this.form.value.name) : null;
+    return this.form.value.name
+      ? slugify(this.form.value.name, { lower: true })
+      : null;
   }
 }
