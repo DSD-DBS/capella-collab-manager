@@ -122,6 +122,7 @@ def create_backup(
                 password,
                 body.include_commit_history,
             ),
+            command="backup",
             schedule="0 3 * * *",
         )
     else:

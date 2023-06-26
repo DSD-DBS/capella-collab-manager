@@ -29,6 +29,7 @@ class MockOperator:
     def create_cronjob(
         self,
         image: str,
+        command: str,
         environment: dict[str, str | None],
         schedule="* * * * *",
         timeout=18000,

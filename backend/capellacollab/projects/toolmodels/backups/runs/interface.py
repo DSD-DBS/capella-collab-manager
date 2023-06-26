@@ -57,6 +57,7 @@ def _schedule_pending_jobs():
                     image=tools_crud.get_backup_image_for_tool_version(
                         db, pending_run.pipeline.model.version_id
                     ),
+                    command="backup",
                     labels={
                         "app.capellacollab/projectSlug": pending_run.pipeline.model.project.slug,
                         "app.capellacollab/projectID": str(
