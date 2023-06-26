@@ -54,6 +54,8 @@ def update_t4c_instance(
     instance: models.DatabaseT4CInstance,
     patch_t4c_instance: models.PatchT4CInstance,
 ):
+    if patch_t4c_instance.password == "":
+        patch_t4c_instance.password = None
     database.patch_database_with_pydantic_object(instance, patch_t4c_instance)
 
     db.commit()

@@ -31,10 +31,10 @@
     <app-mat-card-overview-skeleton-loader
       [rows]="1"
       [reservedCards]="2"
-      [loading]="gitModels === undefined"
+      [loading]="(gitModelService.gitModels | async) === undefined"
     ></app-mat-card-overview-skeleton-loader>
     <a
-      *ngFor="let gitModel of gitModels"
+      *ngFor="let gitModel of gitModelService.gitModels | async"
       [routerLink]="['..', 'git-model', gitModel.id]"
     >
       <mat-card matRipple class="mat-card-overview">
@@ -72,7 +72,7 @@
       </div>
     </mat-card>
     <a
-      *ngFor="let t4cModel of t4cModels"
+      *ngFor="let t4cModel of t4cModelService.t4cModels | async"
       [routerLink]="['..', 't4c-model', t4cModel.id]"
     >
       <mat-card matRipple class="mat-card-overview">
@@ -87,7 +87,7 @@
     <app-mat-card-overview-skeleton-loader
       [rows]="1"
       [reservedCards]="2"
-      [loading]="t4cModels === undefined"
+      [loading]="(t4cModelService.t4cModels | async) === undefined"
     ></app-mat-card-overview-skeleton-loader>
   </div>
 </div>
