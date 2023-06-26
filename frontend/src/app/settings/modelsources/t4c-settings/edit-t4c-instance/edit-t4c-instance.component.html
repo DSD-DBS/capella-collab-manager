@@ -154,10 +154,6 @@
           <button mat-flat-button type="submit" color="primary">Submit</button>
         </div>
         <div *ngIf="!editing && existing" class="flex justify-between">
-          <a mat-button [routerLink]="['../..']">
-            <mat-icon class="mat-icon-position">arrow_back</mat-icon>
-            Back
-          </a>
           <button mat-flat-button color="primary" (click)="enableEditing()">
             Edit
           </button>
