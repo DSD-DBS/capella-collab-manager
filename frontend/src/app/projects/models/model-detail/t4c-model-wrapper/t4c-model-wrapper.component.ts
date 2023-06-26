@@ -32,9 +32,11 @@ export class T4cModelWrapperComponent implements OnInit, OnDestroy {
       this.projectService.project.pipe(filter(Boolean)),
       this.modelService.model.pipe(filter(Boolean)),
       this.route.params.pipe(map((params) => parseInt(params.t4c_model_id))),
-    ]).subscribe(([project, model, t4cModelId]) =>
-      this.t4cModelService.loadT4CModel(project.slug, model.slug, t4cModelId)
-    );
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe(([project, model, t4cModelId]) =>
+        this.t4cModelService.loadT4CModel(project.slug, model.slug, t4cModelId)
+      );
 
     this.t4cModelService.t4cModel
       .pipe(untilDestroyed(this))

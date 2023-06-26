@@ -32,7 +32,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   existing = false;
 
   instanceId?: number;
-  capella_versions?: ToolVersion[];
+  capellaVersions?: ToolVersion[];
 
   public form = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -98,9 +98,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
     this.toolService
       .getVersionsForTool(1)
       .pipe(filter(Boolean))
-      .subscribe(
-        (capella_versions) => (this.capella_versions = capella_versions)
-      );
+      .subscribe((capellaVersions) => (this.capellaVersions = capellaVersions));
   }
 
   enableEditing(): void {

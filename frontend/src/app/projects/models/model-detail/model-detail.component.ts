@@ -38,7 +38,7 @@ export class ModelDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.gitModelService.clear();
+    this.gitModelService.reset();
     this.t4cModelService.reset();
   }
 }

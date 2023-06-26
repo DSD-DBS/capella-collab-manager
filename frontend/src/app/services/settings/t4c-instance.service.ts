@@ -41,7 +41,11 @@ export type T4CInstance = NewT4CInstance & {
 export class T4CInstanceService {
   constructor(private http: HttpClient) {}
 
-  base_url = `${environment.backend_url}/settings/modelsources/t4c`;
+  baseUrl = `${environment.backend_url}/settings/modelsources/t4c`;
+
+  urlFactory(instanceId: number): string {
+    return `${this.baseUrl}/${instanceId}`;
+  }
 
   private _t4cInstances = new BehaviorSubject<T4CInstance[] | undefined>(
     undefined
@@ -54,21 +58,21 @@ export class T4CInstanceService {
   readonly t4cInstance = this._t4cInstance.asObservable();
 
   loadInstances(): void {
-    this.http.get<T4CInstance[]>(this.base_url).subscribe({
+    this.http.get<T4CInstance[]>(this.baseUrl).subscribe({
       next: (instances) => this._t4cInstances.next(instances),
       error: () => this._t4cInstances.next(undefined),
     });
   }
 
-  loadInstance(id: number): void {
-    this.http.get<T4CInstance>(this.base_url + '/' + id).subscribe({
+  loadInstance(instanceId: number): void {
+    this.http.get<T4CInstance>(this.urlFactory(instanceId)).subscribe({
       next: (instance) => this._t4cInstance.next(instance),
       error: () => this._t4cInstance.next(undefined),
     });
   }
 
   createInstance(instance: NewT4CInstance): Observable<T4CInstance> {
-    return this.http.post<T4CInstance>(this.base_url, instance).pipe(
+    return this.http.post<T4CInstance>(this.baseUrl, instance).pipe(
       tap((instance) => {
         this._t4cInstance.next(instance);
         this.loadInstances();
@@ -77,11 +81,11 @@ export class T4CInstanceService {
   }
 
   updateInstance(
-    id: number,
+    instanceId: number,
     instance: BaseT4CInstance
   ): Observable<T4CInstance> {
     return this.http
-      .patch<T4CInstance>(this.base_url + '/' + id, instance)
+      .patch<T4CInstance>(this.urlFactory(instanceId), instance)
       .pipe(
         tap((instance) => {
           this._t4cInstance.next(instance);
@@ -95,9 +99,9 @@ export class T4CInstanceService {
     this._t4cInstances.next(undefined);
   }
 
-  getLicenses(t4cInstanceId: number): Observable<SessionUsage> {
+  getLicenses(instanceId: number): Observable<SessionUsage> {
     return this.http.get<SessionUsage>(
-      `${this.base_url}/${t4cInstanceId}/licenses`
+      `${this.urlFactory(instanceId)}/licenses`
     );
   }
 }

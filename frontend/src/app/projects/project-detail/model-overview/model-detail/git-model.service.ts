@@ -109,7 +109,7 @@ export class GitModelService {
     );
   }
 
-  clear() {
+  reset() {
     this._gitModels.next(undefined);
     this._gitModel.next(undefined);
   }

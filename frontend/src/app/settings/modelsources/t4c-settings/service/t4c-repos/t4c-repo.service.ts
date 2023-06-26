@@ -11,14 +11,19 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { BehaviorSubject, Observable, map, take, tap } from 'rxjs';
-import { T4CInstance } from 'src/app/services/settings/t4c-instance.service';
-import { environment } from 'src/environments/environment';
+import {
+  T4CInstance,
+  T4CInstanceService,
+} from 'src/app/services/settings/t4c-instance.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class T4CRepoService {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private t4cInstanceService: T4CInstanceService
+  ) {}
 
   private _repositories = new BehaviorSubject<
     T4CServerRepository[] | undefined
@@ -26,79 +31,69 @@ export class T4CRepoService {
 
   readonly repositories = this._repositories.asObservable();
 
-  backendURLFactory(instance_id: number): string {
-    return `${environment.backend_url}/settings/modelsources/t4c/${instance_id}/repositories/`;
+  urlFactory(instanceId: number, repositoryId: number): string {
+    return `${this.t4cInstanceService.urlFactory(instanceId)}/${repositoryId}`;
   }
 
-  loadRepositories(instance_id: number): void {
+  loadRepositories(instanceId: number): void {
     this.http
-      .get<T4CServerRepository[]>(this.backendURLFactory(instance_id))
+      .get<T4CServerRepository[]>(
+        `${this.t4cInstanceService.urlFactory(instanceId)}/repositories/`
+      )
       .subscribe({
         next: (repositories) => this._repositories.next(repositories),
         error: () => this._repositories.next(undefined),
       });
   }
 
-  refreshRepositories(instance_id: number): void {
+  refreshRepositories(instanceId: number): void {
     const updateRepositories = this._repositories.value?.map((repository) => {
       return { ...repository, status: 'LOADING' } as T4CServerRepository;
     });
     this._repositories.next(updateRepositories);
-    this.loadRepositories(instance_id);
+    this.loadRepositories(instanceId);
   }
 
   createRepository(
-    instance_id: number,
+    instanceId: number,
     repository: CreateT4CRepository
   ): Observable<T4CRepository> {
     return this.http
-      .post<T4CRepository>(this.backendURLFactory(instance_id), repository)
-      .pipe(tap(() => this.loadRepositories(instance_id)));
+      .post<T4CRepository>(
+        `${this.t4cInstanceService.urlFactory(instanceId)}/repositories/`,
+        repository
+      )
+      .pipe(tap(() => this.loadRepositories(instanceId)));
   }
 
-  startRepository(
-    instance_id: number,
-    repository_id: number
-  ): Observable<null> {
-    this.publishRepositoriesWithChangedStatus(repository_id, 'LOADING');
+  startRepository(instanceId: number, repositoryId: number): Observable<null> {
+    this.publishRepositoriesWithChangedStatus(repositoryId, 'LOADING');
     return this.http
-      .post<null>(
-        `${this.backendURLFactory(instance_id)}${repository_id}/start/`,
-        {}
-      )
-      .pipe(tap(() => this.loadRepositories(instance_id)));
+      .post<null>(`${this.urlFactory(instanceId, repositoryId)}/start/`, {})
+      .pipe(tap(() => this.loadRepositories(instanceId)));
   }
 
-  stopRepository(instance_id: number, repository_id: number): Observable<null> {
-    this.publishRepositoriesWithChangedStatus(repository_id, 'LOADING');
+  stopRepository(instanceId: number, repositoryId: number): Observable<null> {
+    this.publishRepositoriesWithChangedStatus(repositoryId, 'LOADING');
     return this.http
-      .post<null>(
-        `${this.backendURLFactory(instance_id)}${repository_id}/stop/`,
-        {}
-      )
-      .pipe(tap(() => this.loadRepositories(instance_id)));
+      .post<null>(`${this.urlFactory(instanceId, repositoryId)}/stop/`, {})
+      .pipe(tap(() => this.loadRepositories(instanceId)));
   }
 
   recreateRepository(
-    instance_id: number,
-    repository_id: number
+    instanceId: number,
+    repositoryId: number
   ): Observable<null> {
-    this.publishRepositoriesWithChangedStatus(repository_id, 'LOADING');
+    this.publishRepositoriesWithChangedStatus(repositoryId, 'LOADING');
     return this.http
-      .post<null>(
-        `${this.backendURLFactory(instance_id)}${repository_id}/recreate/`,
-        {}
-      )
-      .pipe(tap(() => this.loadRepositories(instance_id)));
+      .post<null>(`${this.urlFactory(instanceId, repositoryId)}/recreate/`, {})
+      .pipe(tap(() => this.loadRepositories(instanceId)));
   }
 
-  deleteRepository(
-    instance_id: number,
-    repository_id: number
-  ): Observable<null> {
+  deleteRepository(instanceId: number, repositoryId: number): Observable<null> {
     return this.http
-      .delete<null>(`${this.backendURLFactory(instance_id)}${repository_id}/`)
-      .pipe(tap(() => this.loadRepositories(instance_id)));
+      .delete<null>(`${this.urlFactory(instanceId, repositoryId)}/`)
+      .pipe(tap(() => this.loadRepositories(instanceId)));
   }
 
   asyncNameValidator(): AsyncValidatorFn {
@@ -120,13 +115,13 @@ export class T4CRepoService {
   }
 
   private publishRepositoriesWithChangedStatus(
-    repository_id: number,
+    repositoryId: number,
     status: string
   ): void {
     const currentRepositories = this._repositories.value;
 
     const updatedRepositories = currentRepositories?.map((repository) => {
-      if (repository.id === repository_id) {
+      if (repository.id === repositoryId) {
         return { ...repository, status: status } as T4CServerRepository;
       }
       return repository;

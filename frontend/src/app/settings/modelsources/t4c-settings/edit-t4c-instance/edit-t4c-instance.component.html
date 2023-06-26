@@ -20,7 +20,7 @@
             <mat-label>Capella version</mat-label>
             <mat-select formControlName="version_id">
               <mat-option
-                *ngFor="let version of capella_versions"
+                *ngFor="let version of capellaVersions"
                 [value]="version.id"
               >
                 {{ version.name }}
@@ -180,7 +180,9 @@
     class="flex flex-col flex-wrap"
     *ngIf="(t4cInstanceService.t4cInstance | async) !== undefined"
   >
-    <app-licences [instance]="instance"></app-licences>
+    <app-licences
+      [instance]="(t4cInstanceService.t4cInstance | async)!"
+    ></app-licences>
     <app-t4c-instance-settings
       [instance]="(t4cInstanceService.t4cInstance | async)!"
     ></app-t4c-instance-settings>
