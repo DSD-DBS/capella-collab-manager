@@ -3,9 +3,11 @@
 
 from collections import abc
 
+import fastapi_pagination.ext.sqlalchemy
 import sqlalchemy as sa
 from sqlalchemy import orm
 
+from .. import models as pipeline_models
 from . import models
 
 
@@ -51,6 +53,17 @@ def get_scheduled_or_running_pipelines(
         )
         .scalars()
         .all()
+    )
+
+
+def get_pipeline_runs_for_pipeline_id_paginated(
+    db: orm.Session, pipeline: pipeline_models.DatabaseBackup
+) -> fastapi_pagination.Page[models.PipelineRun]:
+    return fastapi_pagination.ext.sqlalchemy.paginate(
+        db,
+        sa.select(models.DatabasePipelineRun)
+        .where(models.DatabasePipelineRun.pipeline == pipeline)
+        .order_by(models.DatabasePipelineRun.id.desc()),
     )
 
 

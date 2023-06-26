@@ -5,6 +5,7 @@
 import logging
 
 import fastapi
+import fastapi_pagination
 import starlette_prometheus
 import uvicorn
 from fastapi import middleware, responses
@@ -76,6 +77,8 @@ app = fastapi.FastAPI(
     ],
     on_shutdown=[shutdown],
 )
+
+fastapi_pagination.add_pagination(app)
 
 
 @app.exception_handler(500)

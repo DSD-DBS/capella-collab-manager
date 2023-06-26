@@ -6,9 +6,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { PipelineService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
+import { Page, PageWrapper } from 'src/app/schemes';
 import { User } from 'src/app/services/user/user.service';
 
 @Injectable({
@@ -24,11 +25,24 @@ export class PipelineRunService {
     this.resetPipelineRunsOnPipelineChange();
   }
 
-  _pipelineRun = new BehaviorSubject<PipelineRun | undefined>(undefined);
-  pipelineRun = this._pipelineRun.asObservable();
+  private _pipelineRun = new BehaviorSubject<PipelineRun | undefined>(
+    undefined
+  );
+  public readonly pipelineRun$ = this._pipelineRun.asObservable();
 
-  _pipelineRuns = new BehaviorSubject<PipelineRun[] | undefined>(undefined);
-  pipelineRuns = this._pipelineRuns.asObservable();
+  private _pipelineRunPages = new BehaviorSubject<PageWrapper<PipelineRun>>({
+    pages: [],
+    total: undefined,
+  });
+  public readonly pipelineRunPages$ = this._pipelineRunPages.asObservable();
+
+  getPipelineRunPage(
+    pageNumber: number
+  ): Observable<Page<PipelineRun> | undefined | 'loading'> {
+    return this._pipelineRunPages.pipe(
+      map((pipelineRunPages) => pipelineRunPages.pages[pageNumber - 1])
+    );
+  }
 
   urlFactory(
     projectSlug: string,
@@ -52,7 +66,16 @@ export class PipelineRunService {
   }
 
   resetPipelineRuns() {
-    this._pipelineRuns.next(undefined);
+    this._pipelineRunPages.next({
+      pages: [],
+      total: undefined,
+    });
+  }
+
+  setPipelineRunPageStatusToLoading(page: number) {
+    const pipelineRunPages = this._pipelineRunPages.getValue();
+    pipelineRunPages.pages[page - 1] = 'loading';
+    this._pipelineRunPages.next(pipelineRunPages);
   }
 
   triggerRun(
@@ -72,8 +95,8 @@ export class PipelineRunService {
     modelSlug: string,
     pipelineID: number,
     pipelineRunID: number
-  ): Observable<PipelineRun> {
-    return this.http
+  ): void {
+    this.http
       .get<PipelineRun>(
         `${this.urlFactory(
           projectSlug,
@@ -81,26 +104,62 @@ export class PipelineRunService {
           pipelineID
         )}/${pipelineRunID}`
       )
-      .pipe(
-        tap((pipelineRun) => {
-          this._pipelineRun.next(pipelineRun);
-          this.breadcrumbsService.updatePlaceholder({ pipelineRun });
-        })
-      );
+      .subscribe((pipelineRun) => {
+        this._pipelineRun.next(pipelineRun);
+        this.breadcrumbsService.updatePlaceholder({ pipelineRun });
+      });
   }
 
   loadPipelineRuns(
     projectSlug: string,
     modelSlug: string,
-    pipelineID: number
-  ): Observable<PipelineRun[]> {
-    return this.http
-      .get<PipelineRun[]>(this.urlFactory(projectSlug, modelSlug, pipelineID))
-      .pipe(
-        tap((pipelineRuns) => {
-          this._pipelineRuns.next(pipelineRuns);
-        })
+    pipelineID: number,
+    page: number,
+    size: number
+  ): void {
+    if (this._pipelineRunPages.getValue().pages[page - 1] !== undefined) {
+      // Skip if already loaded or currently loading
+      return;
+    }
+
+    this.setPipelineRunPageStatusToLoading(page);
+
+    this.http
+      .get<Page<PipelineRun>>(
+        `${this.urlFactory(
+          projectSlug,
+          modelSlug,
+          pipelineID
+        )}?page=${page}&size=${size}`
+      )
+      .subscribe((pipelineRuns) => {
+        const pipelineRunPages = this._pipelineRunPages.getValue();
+        pipelineRunPages.pages[page - 1] = pipelineRuns;
+
+        this.initalizePipelineRunWrapper(pipelineRunPages);
+
+        this._pipelineRunPages.next(pipelineRunPages);
+      });
+  }
+
+  private initalizePipelineRunWrapper(pageWrapper: PageWrapper<PipelineRun>) {
+    if (pageWrapper.total !== undefined) {
+      // Do nothing, is already initialized
+      return;
+    }
+
+    const firstPage = pageWrapper.pages[0];
+    if (firstPage === undefined || firstPage === 'loading') {
+      throw new TypeError(
+        'first page is undefined or loading, but should be of type Page<PipelineRun>.'
       );
+    }
+
+    // Set the correct length for the array
+    pageWrapper.pages = Array.from(
+      { length: firstPage.pages },
+      (_, i) => pageWrapper.pages[i]
+    );
   }
 
   getLogs(

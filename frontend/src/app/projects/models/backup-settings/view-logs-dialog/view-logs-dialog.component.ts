@@ -37,7 +37,7 @@ export class ViewLogsDialogComponent {
       this.projectService.project.pipe(filter(Boolean)),
       this.modelService.model.pipe(filter(Boolean)),
       this.pipelineService.pipeline.pipe(filter(Boolean)),
-      this.pipelineRunService.pipelineRun.pipe(filter(Boolean)),
+      this.pipelineRunService.pipelineRun$.pipe(filter(Boolean)),
     ])
       .pipe(
         untilDestroyed(this),
@@ -65,7 +65,7 @@ export class ViewLogsDialogComponent {
       this.projectService.project.pipe(filter(Boolean)),
       this.modelService.model.pipe(filter(Boolean)),
       this.pipelineService.pipeline.pipe(filter(Boolean)),
-      this.pipelineRunService.pipelineRun.pipe(filter(Boolean)),
+      this.pipelineRunService.pipelineRun$.pipe(filter(Boolean)),
     ])
       .pipe(
         untilDestroyed(this),

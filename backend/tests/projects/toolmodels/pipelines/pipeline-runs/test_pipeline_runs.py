@@ -85,12 +85,12 @@ def test_get_pipeline_runs(
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
 ):
     response = client.get(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs",
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs?page=1&size=50",
     )
 
     assert response.status_code == 200
-    assert len(response.json()) == 1
-    assert response.json()[0]["id"] == pipeline_run.id
+    assert len(response.json()["items"]) == 1
+    assert response.json()["items"][0]["id"] == pipeline_run.id
 
 
 def test_get_pipeline_run(

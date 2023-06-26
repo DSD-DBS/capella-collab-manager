@@ -46,3 +46,16 @@ export interface PathNode {
   isNew: boolean;
   children: PathNode[] | null;
 }
+
+export interface Page<T> {
+  items: T[];
+  total: number;
+  page: number;
+  size: number;
+  pages: number;
+}
+
+export interface PageWrapper<T> {
+  pages: (Page<T> | undefined | 'loading')[];
+  total: number | undefined;
+}
