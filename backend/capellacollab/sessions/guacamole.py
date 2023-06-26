@@ -140,3 +140,11 @@ def create_connection(
 
     r.raise_for_status()
     return r.json()
+
+
+def validate_guacamole() -> bool:
+    try:
+        get_admin_token()
+        return True
+    except BaseException:
+        return False

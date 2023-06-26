@@ -18,7 +18,7 @@ import { ProjectService } from 'src/app/projects/service/project.service';
   templateUrl: './t4c-model-wrapper.component.html',
   styleUrls: ['./t4c-model-wrapper.component.css'],
 })
-export class T4cModelWrapperComponent implements OnInit, OnDestroy {
+export class T4CModelWrapperComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     public projectService: ProjectService,

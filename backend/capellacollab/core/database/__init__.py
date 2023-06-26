@@ -34,3 +34,11 @@ def patch_database_with_pydantic_object(
     for key, value in pydantic_object.dict().items():
         if value is not None:
             setattr(database_object, key, value)
+
+
+def validate_database_session(db: orm.Session) -> bool:
+    try:
+        db.connection()
+        return True
+    except BaseException:
+        return False

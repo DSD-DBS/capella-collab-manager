@@ -26,7 +26,8 @@ def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
     except subprocess.CalledProcessError as e:
         log.debug(
             {
-                "msg": "Exit code 128 during cloning of the repository " + url,
+                "msg": "Exit code 128 during ls_remote of the repository "
+                + url,
                 "stdout": e.stdout,
                 "stderr": e.stderr,
                 "exitcode": e.returncode,
@@ -55,7 +56,9 @@ def get_remote_refs(
     git_env = {
         "GIT_USERNAME": username or "",
         "GIT_PASSWORD": password or "",
-        "GIT_ASKPASS": str(pathlib.Path(__file__).parents[0] / "askpass.py"),
+        "GIT_ASKPASS": str(
+            (pathlib.Path(__file__).parents[0] / "askpass.py").absolute()
+        ),
     }
     for ref in ls_remote(url, git_env):
         (_, ref) = ref.split("\t")

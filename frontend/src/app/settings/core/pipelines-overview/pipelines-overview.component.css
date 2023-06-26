@@ -1,0 +1,42 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.error {
+  color: darkred;
+  background-color: white;
+}
+
+.success {
+  color: darkgreen;
+  background-color: white;
+}
+
+.warning {
+  color: darkorange;
+  background-color: white;
+}
+
+#search-input {
+  font-family: "Courier New";
+}
+
+.project-card {
+  width: 250px;
+  max-width: 85vw;
+
+  height: calc(100% - 2 * 10px);
+}
+
+.models-card {
+  width: 400px;
+  max-width: 85vw;
+
+  height: calc(100% - 2 * 10px);
+}
+
+.title {
+  font-size: 1.25em;
+  font-weight: bold;
+}

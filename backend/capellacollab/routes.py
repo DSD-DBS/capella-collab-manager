@@ -10,6 +10,7 @@ import fastapi
 from capellacollab.core import authentication
 from capellacollab.core import metadata as core_metadata
 from capellacollab.core.authentication import responses as auth_responses
+from capellacollab.health import routes as health_routes
 from capellacollab.notices import routes as notices_routes
 from capellacollab.projects import routes as projects_routes
 from capellacollab.sessions import routes as sessions_routes
@@ -21,6 +22,12 @@ log = logging.getLogger(__name__)
 
 
 router = fastapi.APIRouter()
+router.include_router(
+    health_routes.router,
+    prefix="/health",
+    responses=auth_responses.AUTHENTICATION_RESPONSES,
+    tags=["Health"],
+)
 router.include_router(core_metadata.router, tags=["Metadata"])
 router.include_router(
     sessions_routes.router,

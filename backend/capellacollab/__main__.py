@@ -18,7 +18,7 @@ import capellacollab.sessions.metrics
 from capellacollab.config import config
 from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
-from capellacollab.routes import router, status
+from capellacollab.routes import router
 from capellacollab.sessions import idletimeout, operators
 from capellacollab.tools import exceptions as tools_exceptions
 
@@ -111,8 +111,6 @@ async def healthcheck():
 
 
 app.add_route("/metrics", starlette_prometheus.metrics)
-
-app.include_router(status.router, prefix="", tags=["Status"])
 app.include_router(router, prefix="/api/v1")
 
 

@@ -32,9 +32,9 @@ def get_last_job_run_id_for_git_model(
     raise fastapi.HTTPException(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         detail={
-            "err_code": "NO_SUCCESSFUL_JOB",
+            "err_code": "PIPELINE_JOB_NOT_FOUND",
             "reason": (
-                f"There was no successful '{job_name}' job within the last 20 runs of the pipeline",
+                f"There was no job with the name '{job_name}' within the last 20 runs of the pipeline",
                 "Please contact your administrator.",
             ),
         },
@@ -60,6 +60,7 @@ def get_git_instance_for_git_model(
     raise fastapi.HTTPException(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         detail={
+            "err_code": "NO_MATCHING_GIT_INSTANCE",
             "reason": (
                 "No matching git instance was found for the primary git model.",
                 "Please contact your administrator.",
@@ -163,6 +164,7 @@ def get_job_id_for_job_name(
     git_model: git_models.DatabaseGitModel,
     git_instance: settings_git_models.DatabaseGitInstance,
 ) -> tuple[str, str] | None:
+    """Search for a job by name in a pipeline"""
     response = requests.get(
         f"{git_instance.api_url}/projects/{project_id}/pipelines/{pipeline_id}/jobs",
         headers={"PRIVATE-TOKEN": git_model.password},
@@ -174,6 +176,17 @@ def get_job_id_for_job_name(
         if job["name"] == job_name:
             if job["status"] == "success":
                 return job["id"], job["started_at"]
+            if job["status"] == "failed":
+                raise fastapi.HTTPException(
+                    status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail={
+                        "err_code": "FAILED_JOB_FOUND",
+                        "reason": (
+                            f"The last job with the name '{job_name}' has failed.",
+                            "Please contact your administrator.",
+                        ),
+                    },
+                )
 
     return None
 

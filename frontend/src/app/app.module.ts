@@ -79,7 +79,7 @@ import { ModelDiagramPreviewDialogComponent } from './projects/models/diagrams/m
 import { InitModelComponent } from './projects/models/init-model/init-model.component';
 import { ModelDescriptionComponent } from './projects/models/model-description/model-description.component';
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
-import { T4cModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
+import { T4CModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
 import { ModelRestrictionsComponent } from './projects/models/model-restrictions/model-restrictions.component';
 import { ChooseSourceComponent } from './projects/models/model-source/choose-source.component';
 import { ManageGitModelComponent } from './projects/models/model-source/git/manage-git-model/manage-git-model.component';
@@ -108,6 +108,7 @@ import { CreateReadonlyModelOptionsComponent } from './sessions/user-sessions-wr
 import { CreateReadonlySessionDialogComponent } from './sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-session-dialog.component';
 import { UserSessionsWrapperComponent } from './sessions/user-sessions-wrapper/user-sessions-wrapper.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
+import { PipelinesOverviewComponent } from './settings/core/pipelines-overview/pipelines-overview.component';
 import { ToolDeletionDialogComponent } from './settings/core/tools-settings/tool-details/tool-deletion-dialog/tool-deletion-dialog.component';
 import { ToolDetailsComponent } from './settings/core/tools-settings/tool-details/tool-details.component';
 import { ToolIntegrationsComponent } from './settings/core/tools-settings/tool-details/tool-integrations/tool-integrations.component';
@@ -182,6 +183,7 @@ import { SettingsComponent } from './settings/settings.component';
     NavBarMenuComponent,
     NoticeComponent,
     PipelineRunWrapperComponent,
+    PipelinesOverviewComponent,
     PipelineWrapperComponent,
     ProjectDetailsComponent,
     ProjectMetadataComponent,
@@ -193,7 +195,7 @@ import { SettingsComponent } from './settings/settings.component';
     SessionsComponent,
     SettingsComponent,
     T4CInstanceSettingsComponent,
-    T4cModelWrapperComponent,
+    T4CModelWrapperComponent,
     T4CRepoDeletionDialogComponent,
     T4CSettingsComponent,
     T4CSettingsWrapperComponent,
