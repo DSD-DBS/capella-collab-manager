@@ -31,6 +31,8 @@ import { T4CRepoDeletionDialogComponent } from './t4c-repo-deletion-dialog/t4c-r
 export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
   @Input() instance?: T4CInstance;
 
+  search = '';
+
   constructor(
     public t4cRepoService: T4CRepoService,
     private dialog: MatDialog
@@ -55,6 +57,18 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
     }),
   });
 
+  getFilteredRepositories(
+    repositories: T4CServerRepository[] | undefined | null
+  ): T4CServerRepository[] | undefined {
+    if (repositories === undefined || repositories === null) {
+      return undefined;
+    }
+
+    return repositories.filter((repository) =>
+      repository.name.toLowerCase().includes(this.search.toLowerCase())
+    );
+  }
+
   createRepository(): void {
     if (this.form.valid) {
       this.t4cRepoService
@@ -73,27 +87,20 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
   }
 
   startRepository(repository: T4CServerRepository): void {
-    this.repositoryList.selectedOptions.clear();
     this.t4cRepoService
       .startRepository(repository.instance.id, repository.id)
       .subscribe();
   }
 
   stopRepository(repository: T4CServerRepository): void {
-    this.repositoryList.selectedOptions.clear();
     this.t4cRepoService
       .stopRepository(repository.instance.id, repository.id)
       .subscribe();
   }
 
   recreateRepository(repository: T4CServerRepository): void {
-    this.repositoryList.selectedOptions.clear();
     this.t4cRepoService
       .recreateRepository(repository.instance.id, repository.id)
       .subscribe();
-  }
-
-  get selectedRepository(): T4CRepository & T4CServerRepository {
-    return this.repositoryList.selectedOptions.selected[0].value;
   }
 }
