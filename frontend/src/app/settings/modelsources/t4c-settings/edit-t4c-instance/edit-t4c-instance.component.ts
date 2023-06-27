@@ -40,18 +40,9 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
     license: new FormControl('', Validators.required),
     protocol: new FormControl<Protocol>('tcp', Validators.required),
     host: new FormControl('', Validators.required),
-    port: new FormControl(2036, [
-      Validators.required,
-      Validators.pattern(/^\d*$/),
-      Validators.min(0),
-      Validators.max(65535),
-    ]),
-    cdo_port: new FormControl(12036, [
-      Validators.required,
-      Validators.pattern(/^\d*$/),
-      Validators.min(0),
-      Validators.max(65535),
-    ]),
+    port: this.createPortControl(2036, true),
+    cdo_port: this.createPortControl(12036, true),
+    http_port: this.createPortControl(null, false),
     usage_api: new FormControl('', [
       Validators.required,
       Validators.pattern(/^https?:\/\//),
@@ -63,6 +54,18 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
     username: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required]),
   });
+
+  private createPortControl(
+    defaultValue: number | null,
+    isRequired = true
+  ): FormControl {
+    return new FormControl(defaultValue, [
+      ...(isRequired ? [Validators.required] : []),
+      Validators.pattern(/^\d*$/),
+      Validators.min(0),
+      Validators.max(65535),
+    ]);
+  }
 
   constructor(
     public t4cInstanceService: T4CInstanceService,

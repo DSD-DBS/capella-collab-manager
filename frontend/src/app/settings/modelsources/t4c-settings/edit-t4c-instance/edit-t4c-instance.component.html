@@ -64,8 +64,9 @@
             <input matInput formControlName="host" />
           </mat-form-field>
         </fieldset>
+
         <fieldset class="flex flex-wrap gap-2">
-          <mat-form-field appearance="fill">
+          <mat-form-field appearance="fill" class="w-[124px]">
             <mat-label>Port</mat-label>
             <input matInput inputmode="numeric" formControlName="port" />
             <mat-error
@@ -82,7 +83,8 @@
               The port is required.
             </mat-error>
           </mat-form-field>
-          <mat-form-field appearance="fill">
+
+          <mat-form-field appearance="fill" class="w-[124px]">
             <mat-label>CDO port</mat-label>
             <input matInput inputmode="numeric" formControlName="cdo_port" />
             <mat-error
@@ -98,6 +100,22 @@
             </mat-error>
             <mat-error *ngIf="form.controls.cdo_port.errors?.required">
               The CDO port is required.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="w-[124px]">
+            <mat-label>Http Port</mat-label>
+            <input matInput inputmode="numeric" formControlName="http_port" />
+            <mat-error
+              *ngIf="
+                form.controls.http_port.errors?.min ||
+                form.controls.http_port.errors?.max
+              "
+            >
+              Valid ports are between 0 and 65535.
+            </mat-error>
+            <mat-error *ngIf="form.controls.http_port.errors?.pattern">
+              We only support numerical ports :(
             </mat-error>
           </mat-form-field>
         </fieldset>
@@ -148,7 +166,12 @@
           </mat-form-field>
         </fieldset>
         <div *ngIf="editing" class="flex justify-between">
-          <button mat-flat-button color="warn" (click)="cancelEditing()">
+          <button
+            mat-flat-button
+            type="button"
+            color="warn"
+            (click)="cancelEditing()"
+          >
             Cancel
           </button>
           <button mat-flat-button type="submit" color="primary">Submit</button>
@@ -162,7 +185,7 @@
             Edit
           </button>
         </div>
-        <div *ngIf="!existing" id="submit-button-wrapper">
+        <div *ngIf="!existing" class="text-right">
           <button
             mat-flat-button
             color="primary"

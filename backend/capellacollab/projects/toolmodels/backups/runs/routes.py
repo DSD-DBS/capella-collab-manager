@@ -155,7 +155,10 @@ def get_logs(
         ]
     )
 
-    masked_values = [pipeline_run.pipeline.t4c_password]
+    masked_values = [
+        pipeline_run.pipeline.t4c_password,
+        pipeline_run.pipeline.t4c_model.repository.instance.password,
+    ]
     masked_values_generated = []
 
     # Also mask derivated, e.g. base64 encoded credentials

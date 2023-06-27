@@ -2,27 +2,3 @@
  * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
-#submit-button-wrapper {
-  text-align: right;
-}
-
-.space-evenly {
-  display: flex;
-  justify-content: space-evenly;
-}
-
-#protocol {
-  width: 6em;
-  max-width: 85vw;
-}
-
-#host {
-  width: 15em;
-  max-width: 85vw;
-}
-
-#port {
-  width: 8em;
-  max-width: 85vw;
-}

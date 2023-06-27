@@ -16,6 +16,7 @@ export type BaseT4CInstance = {
   host: string;
   port: number;
   cdo_port: number;
+  http_port?: number;
   usage_api: string;
   rest_api: string;
   username: string;
