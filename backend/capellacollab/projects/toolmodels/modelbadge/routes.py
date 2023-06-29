@@ -16,8 +16,8 @@ import capellacollab.projects.toolmodels.modelsources.git.models as git_models
 from capellacollab.core import database
 from capellacollab.core import logging as log
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.projects.toolmodels.modelsources.git.gitlab import (
-    interface as gitlab_interface,
+from capellacollab.projects.toolmodels.modelsources.git import (
+    interface as git_interface,
 )
 from capellacollab.projects.users import models as projects_users_models
 
@@ -42,7 +42,7 @@ async def get_model_complexity_badge(
 ):
     try:
         return fastapi.responses.Response(
-            content=await gitlab_interface.get_file_from_repository(
+            content=await git_interface.get_file_from_repository(
                 db,
                 "model-complexity-badge.svg",
                 git_model,

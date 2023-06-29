@@ -81,10 +81,7 @@ async def check_git_instance_is_gitlab(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
                 "err_code": "INSTANCE_IS_NO_GITLAB_INSTANCE",
-                "reason": (
-                    "The used Git instance is not a Gitlab instance.",
-                    "Only Gitlab instances are supported.",
-                ),
+                "reason": ("The used Git instance is not a Gitlab instance.",),
             },
         )
 
