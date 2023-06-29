@@ -97,7 +97,7 @@ def mock_gitlab_model_badge_file_api_not_found():
     "git_model",
     "mock_gitlab_rest_api",
 )
-def test_get_model_badge_fails_without_gitlab_instance(
+def test_get_model_badge_fails_without_git_instance(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.CapellaModel,
     client: testclient.TestClient,
@@ -108,8 +108,7 @@ def test_get_model_badge_fails_without_gitlab_instance(
 
     assert response.status_code == 500
     assert (
-        response.json()["detail"]["err_code"]
-        == "INSTANCE_IS_NO_GITLAB_INSTANCE"
+        response.json()["detail"]["err_code"] == "INSTANCE_IS_NO_GIT_INSTANCE"
     )
 
 

@@ -26,13 +26,14 @@ def get_file_from_repository(
     git_instance: settings_git_models.DatabaseGitInstance,
 ) -> bytes:
     public_response = requests.get(
-        f"{git_instance.api_url}/repos/{project_id}/contents/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(git_model.revision, safe='')}"
+        f"{git_instance.api_url}/repos{project_id}/contents/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(git_model.revision, safe='')}",
+        timeout=2,
     )
     if public_response.ok:
         response = public_response
     else:
         response = requests.get(
-            f"{git_instance.api_url}/repos/{project_id}/contents/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(git_model.revision, safe='')}",
+            f"{git_instance.api_url}/repos{project_id}/contents/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(git_model.revision, safe='')}",
             headers={
                 "Authorization": f"token {git_model.password}",
                 "X-GitHub-Api-Version": "2022-11-28",

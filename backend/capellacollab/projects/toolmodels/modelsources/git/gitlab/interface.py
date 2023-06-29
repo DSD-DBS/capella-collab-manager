@@ -225,7 +225,7 @@ def get_artifact_from_job(
     return response
 
 
-def __get_file_from_repository(
+def get_file_from_repository(
     project_id: str,
     trusted_file_path: str,
     git_model: git_models.DatabaseGitModel,

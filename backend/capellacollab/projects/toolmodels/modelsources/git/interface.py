@@ -81,7 +81,7 @@ def get_file_from_repository(
         project_id = gitlab_interface.get_project_id_by_git_url(
             git_model, git_instance
         )
-        return gitlab_interface.__get_file_from_repository(
+        return gitlab_interface.get_file_from_repository(
             project_id, trusted_file_path, git_model, git_instance
         )
     elif git_instance_is_github(git_instance):
