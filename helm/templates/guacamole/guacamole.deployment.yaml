@@ -45,22 +45,22 @@ spec:
             - name: GUACD_HOSTNAME
               value: {{ .Release.Name }}-guacamole-guacd
           {{ if .Values.database.guacamole.deploy }}
-            - name: POSTGRES_DATABASE
+            - name: POSTGRESQL_DATABASE
               value: "guacamole"
-            - name: POSTGRES_HOSTNAME
+            - name: POSTGRESQL_HOSTNAME
               value: {{ .Release.Name }}-guacamole-postgres
-            - name: POSTGRES_PASSWORD
+            - name: POSTGRESQL_PASSWORD
               value: {{ .Values.database.guacamole.internal.password }}
-            - name: POSTGRES_USER
+            - name: POSTGRESQL_USER
               value: guacamole
           {{ else }}
-            - name: POSTGRES_DATABASE
+            - name: POSTGRESQL_DATABASE
               value: {{ .Values.database.guacamole.external.database }}
-            - name: POSTGRES_HOSTNAME
+            - name: POSTGRESQL_HOSTNAME
               value: {{ .Values.database.guacamole.external.hostname }}
-            - name: POSTGRES_PASSWORD
+            - name: POSTGRESQL_PASSWORD
               value: {{ .Values.database.guacamole.external.password }}
-            - name: POSTGRES_USER
+            - name: POSTGRESQL_USER
               value: {{ .Values.database.guacamole.external.username }}
             - name: POSTGRESQL_SSL_MODE
               value: require
