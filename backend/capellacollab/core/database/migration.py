@@ -98,7 +98,7 @@ def create_tools(db):
         capella = tools_models.Tool(
             name="Capella",
             docker_image_template=f"{registry}/capella/remote:$version-latest",
-            docker_image_backup_template=f"{registry}/t4c/client/backup:$version-latest",
+            docker_image_backup_template=f"{registry}/t4c/client/base:$version-latest",
             readonly_docker_image_template=f"{registry}/capella/readonly:$version-latest",
         )
 

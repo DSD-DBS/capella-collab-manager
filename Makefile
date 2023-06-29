@@ -54,7 +54,7 @@ capella:
 	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(CAPELLA_VERSIONS)" capella/remote capella/readonly
 
 t4c-client:
-	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(T4C_CLIENT_VERSIONS)" t4c/client/remote t4c/client/backup
+	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(T4C_CLIENT_VERSIONS)" t4c/client/remote
 
 jupyter:
 	$(CAPELLA_DOCKERIMAGES) jupyter-notebook

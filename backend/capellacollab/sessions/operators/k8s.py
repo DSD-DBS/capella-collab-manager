@@ -426,6 +426,7 @@ class KubernetesOperator:
     def create_cronjob(
         self,
         image: str,
+        command: str,
         environment: dict[str, str | None],
         schedule="* * * * *",
         timeout=18000,
@@ -439,6 +440,7 @@ class KubernetesOperator:
                 "app.capellacollab/parent": _id,
             },
             environment=environment,
+            args=[command],
             schedule=schedule,
             timeout=timeout,
         )
@@ -447,6 +449,7 @@ class KubernetesOperator:
     def create_job(
         self,
         image: str,
+        command: str,
         labels: dict[str, str],
         environment: dict[str, str | None],
         timeout: int = 18000,
@@ -457,6 +460,7 @@ class KubernetesOperator:
             image=image,
             job_labels={"workload": "job", **labels},
             environment=environment,
+            args=[command],
             timeout=timeout,
         )
         return _id
@@ -701,6 +705,7 @@ class KubernetesOperator:
         image: str,
         job_labels: dict[str, str],
         environment: dict[str, str | None],
+        args: list[str] | None = None,
         schedule: str = "* * * * *",
         timeout: int = 18000,
     ) -> client.V1CronJob:
@@ -713,7 +718,12 @@ class KubernetesOperator:
                 job_template=client.V1JobTemplateSpec(
                     metadata=client.V1ObjectMeta(labels=job_labels),
                     spec=self._create_job_spec(
-                        name, image, job_labels, environment, timeout
+                        name=name,
+                        image=image,
+                        job_labels=job_labels,
+                        environment=environment,
+                        args=args,
+                        timeout=timeout,
                     ),
                 ),
             ),
@@ -733,7 +743,12 @@ class KubernetesOperator:
             api_version="batch/v1",
             metadata=client.V1ObjectMeta(name=name),
             spec=self._create_job_spec(
-                name, image, job_labels, environment, timeout
+                name=name,
+                image=image,
+                job_labels=job_labels,
+                environment=environment,
+                args=args,
+                timeout=timeout,
             ),
         )
         return self.v1_batch.create_namespaced_job(namespace, job)
@@ -867,12 +882,14 @@ class KubernetesOperator:
         image: str,
         job_labels: dict[str, str],
         environment: dict[str, str | None],
+        args: list[str] | None = None,
         timeout: int = 18000,
     ) -> client.V1JobSpec:
         containers: list[client.V1Container] = [
             client.V1Container(
                 name=name,
                 image=image,
+                args=args,
                 env=[
                     client.V1EnvVar(name=key, value=str(value))
                     for key, value in environment.items()

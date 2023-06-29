@@ -170,7 +170,11 @@ class MockOperator:
 
     @classmethod
     def create_cronjob(
-        self, image: str, environment: dict[str, str], schedule="* * * * *"
+        self,
+        image: str,
+        command: str,
+        environment: dict[str, str],
+        schedule="* * * * *",
     ) -> str:
         return ""
 
