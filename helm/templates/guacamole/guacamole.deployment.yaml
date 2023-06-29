@@ -108,7 +108,7 @@ spec:
           {{ end }}
         {{ if .Values.loki.enabled }}
         - name: promtail
-          image: {{ .Values.docker.registry.external -}}{{- .Values.docker.images.promtail }}
+          image: {{ .Values.docker.registry.external -}}/grafana/promtail
           args:
             - "--config.file=/etc/promtail/promtail.yaml"
             - "-log-config-reverse-order"

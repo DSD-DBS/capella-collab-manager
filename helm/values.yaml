@@ -41,11 +41,6 @@ docker:
       guacamole: docker.io/guacamole/guacamole:1.5.0
       guacd: docker.io/guacamole/guacd:1.5.0
 
-    prometheus: /prom/prometheus
-
-    promtail: /grafana/promtail
-    grafana: /grafana/grafana
-
     mocks:
       oauth: ghcr.io/navikt/mock-oauth2-server:0.5.8
 

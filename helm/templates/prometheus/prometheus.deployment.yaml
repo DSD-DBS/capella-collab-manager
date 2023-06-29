@@ -26,7 +26,7 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: prometheus
-          image: {{ .Values.docker.registry.external }}{{ .Values.docker.images.prometheus }}
+          image: {{ .Values.docker.registry.external }}/prom/prometheus
           args:
             - "--storage.tsdb.retention.time=12h"
             - "--config.file=/etc/prometheus/prometheus.yml"
