@@ -5,7 +5,9 @@
 
 <div [formGroup]="form">
   <h2>
-    <mat-checkbox formControlName="include">{{ model.name }}</mat-checkbox>
+    <mat-checkbox formControlName="include">{{
+      modelOptions.model.name
+    }}</mat-checkbox>
   </h2>
   <fieldset *ngIf="form.controls.include.value">
     <mat-form-field appearance="fill">
@@ -19,12 +21,7 @@
       <mat-error *ngIf="form.controls.revision.errors?.required">
         A revision is required
       </mat-error>
-      <mat-error
-        *ngIf="
-          form.controls.revision.errors?.revisionNotFoundError &&
-          form.controls.revision.value
-        "
-      >
+      <mat-error *ngIf="form.controls.revision.errors?.revisionNotFoundError">
         {{ form.controls.revision.errors?.revisionNotFoundError }}
       </mat-error>
     </mat-form-field>

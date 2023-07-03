@@ -9,6 +9,7 @@ import {
   AbstractControl,
   AsyncValidatorFn,
   ValidationErrors,
+  ValidatorFn,
 } from '@angular/forms';
 import { BehaviorSubject, map, Observable, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -50,22 +51,34 @@ export class GitService {
       });
   }
 
+  getPrivateRevision(
+    gitUrl: string,
+    project_slug: string,
+    model_slug: string,
+    git_model_id: number
+  ): Observable<Revisions> {
+    return this.http.post<Revisions>(
+      this.BACKEND_URL_PREFIX +
+        `/projects/${project_slug}/models/${model_slug}/modelsources/git/${git_model_id}/revisions`,
+      gitUrl
+    );
+  }
+
   loadPrivateRevisions(
     gitUrl: string,
     project_slug: string,
     model_slug: string,
     git_model_id: number
   ): void {
-    this.http
-      .post<Revisions>(
-        this.BACKEND_URL_PREFIX +
-          `/projects/${project_slug}/models/${model_slug}/modelsources/git/${git_model_id}/revisions`,
-        gitUrl
-      )
-      .subscribe({
-        next: (revisions) => this._revisions.next(revisions),
-        error: () => this._revisions.next(undefined),
-      });
+    this.getPrivateRevision(
+      gitUrl,
+      project_slug,
+      model_slug,
+      git_model_id
+    ).subscribe({
+      next: (revisions) => this._revisions.next(revisions),
+      error: () => this._revisions.next(undefined),
+    });
   }
 
   clearRevision(): void {
@@ -86,4 +99,17 @@ export class GitService {
       );
     };
   }
+}
+
+export function existingRevisionValidator(revisions: Revisions): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const revision = control.value;
+
+    const isInBranches = revisions.branches.includes(revision);
+    const isInTags = revisions.tags.includes(revision);
+
+    return !(isInBranches || isInTags)
+      ? { revisionNotFoundError: `${revision} does not exist` }
+      : null;
+  };
 }

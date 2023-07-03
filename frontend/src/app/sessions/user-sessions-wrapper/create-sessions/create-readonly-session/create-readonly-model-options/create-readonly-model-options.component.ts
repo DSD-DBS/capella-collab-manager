@@ -5,14 +5,14 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs';
-import {
-  getPrimaryGitModel,
-  Model,
-} from 'src/app/projects/models/service/model.service';
+import { Model } from 'src/app/projects/models/service/model.service';
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { Revisions, GitService } from 'src/app/services/git/git.service';
+import {
+  Revisions,
+  GitService,
+  existingRevisionValidator,
+} from 'src/app/services/git/git.service';
 
 export type ModelOptions = {
   model: Model;
@@ -22,7 +22,6 @@ export type ModelOptions = {
   deepClone: boolean;
 };
 
-@UntilDestroy()
 @Component({
   selector: 'create-readonly-model-options',
   templateUrl: './create-readonly-model-options.component.html',
@@ -34,28 +33,16 @@ export class CreateReadonlyModelOptionsComponent implements OnInit {
 
   constructor(private gitService: GitService, private fb: FormBuilder) {}
 
-  private revision?: Revisions;
+  private revisions?: Revisions;
   public filteredRevisions?: Revisions;
 
   public form = this.fb.group({
-    include: this.fb.control(true),
-    revision: this.fb.control('', {
-      validators: Validators.required,
-      asyncValidators: this.gitService.asyncExistingRevisionValidator(),
-    }),
-    deepClone: this.fb.control(false),
+    include: [true],
+    revision: this.fb.control('', Validators.required),
+    deepClone: [false],
   });
 
-  get model(): Model {
-    return this.modelOptions!.model;
-  }
-
   ngOnInit(): void {
-    const primaryGitModel = getPrimaryGitModel(this.model);
-    if (!primaryGitModel) {
-      return;
-    }
-
     this.form.controls.deepClone.setValue(this.modelOptions.deepClone);
     this.form.controls.include.setValue(this.modelOptions.include);
 
@@ -67,39 +54,37 @@ export class CreateReadonlyModelOptionsComponent implements OnInit {
       this.modelOptions.include = value || false;
     });
 
-    this.gitService.revisions
-      .pipe(untilDestroyed(this), filter(Boolean))
-      .subscribe({
-        next: (revisions) => {
-          this.revision = revisions;
-          this.filteredRevisions = revisions;
+    this.gitService
+      .getPrivateRevision(
+        this.modelOptions.primaryGitModel.path,
+        this.projectSlug,
+        this.modelOptions.model.slug,
+        this.modelOptions.primaryGitModel.id
+      )
+      .pipe(filter(Boolean))
+      .subscribe((revisions) => {
+        this.revisions = revisions;
+        this.filteredRevisions = revisions;
 
-          this.form.controls.revision.enable();
-          this.form.controls.revision.setValue(primaryGitModel?.revision || '');
-          this.form.controls.revision.updateValueAndValidity();
-        },
-        complete: () => this.gitService.clearRevision(),
+        const revisionControl = this.form.controls.revision;
+
+        revisionControl.addValidators(existingRevisionValidator(revisions));
+        revisionControl.setValue(this.modelOptions.primaryGitModel.revision);
+        revisionControl.updateValueAndValidity();
       });
-
-    this.gitService.loadPrivateRevisions(
-      primaryGitModel.path,
-      this.projectSlug,
-      this.model.slug,
-      primaryGitModel.id
-    );
   }
 
   filterRevisionsByPrefix(prefix: string): void {
-    if (!this.revision) {
+    if (!this.revisions) {
       this.filteredRevisions = undefined;
       return;
     }
 
     this.filteredRevisions = {
-      branches: this.revision!.branches.filter((branch) =>
+      branches: this.revisions!.branches.filter((branch) =>
         branch.toLowerCase().startsWith(prefix.toLowerCase())
       ),
-      tags: this.revision!.tags.filter((tag) =>
+      tags: this.revisions!.tags.filter((tag) =>
         tag.toLowerCase().startsWith(prefix.toLowerCase())
       ),
     };
