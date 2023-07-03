@@ -736,6 +736,7 @@ class KubernetesOperator:
         image: str,
         job_labels: dict[str, str],
         environment: dict[str, str | None],
+        args: list[str] | None = None,
         timeout=18000,
     ) -> client.V1Job:
         job: client.V1Job = client.V1Job(
