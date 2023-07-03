@@ -3,6 +3,7 @@
 
 import datetime
 import time
+from unittest import mock
 
 import pytest
 from fastapi import testclient
@@ -13,7 +14,16 @@ import capellacollab.projects.toolmodels.backups.models as pipelines_models
 import capellacollab.projects.toolmodels.backups.runs.crud as pipeline_runs_crud
 import capellacollab.projects.toolmodels.backups.runs.models as pipeline_runs_models
 import capellacollab.projects.toolmodels.models as toolmodels_models
+from capellacollab.__main__ import app
 from capellacollab.core.logging import loki
+from capellacollab.projects.toolmodels.backups.runs import (
+    injectables as runs_injectables,
+)
+from capellacollab.projects.toolmodels.backups.runs import (
+    models as runs_models,
+)
+from capellacollab.users import crud as users_crud
+from capellacollab.users import models as users_models
 
 
 @pytest.fixture(name="unix_time_in_ns")
@@ -137,3 +147,70 @@ def def_get_logs(
 
     assert response.status_code == 200
     assert b"test3" in response.content
+
+
+@pytest.fixture(name="mock_pipeline_run")
+def fixture_mock_pipeline_run():
+    mock_pipeline_run = mock.MagicMock(spec=runs_models.DatabasePipelineRun)
+
+    # Assign the values you want the mock object to return
+    mock_pipeline_run.id = "mock_id"
+    mock_pipeline_run.reference_id = "mock_reference_id"
+    mock_pipeline_run.trigger_time = "mock_time"
+
+    # These values will be masked
+    mock_pipeline_run.pipeline.t4c_password = "secret_pipeline_t4c_password"
+    mock_pipeline_run.pipeline.t4c_model.repository.instance.password = (
+        "secret_t4c_instance_password"
+    )
+
+    return mock_pipeline_run
+
+
+@pytest.fixture(name="override_get_existing_pipeline_run_dependency")
+def fixture_override_get_existing_pipeline_run_dependency(
+    mock_pipeline_run: mock.Mock,
+):
+    def get_mock_existing_pipeline_run() -> runs_models.DatabasePipelineRun:
+        return mock_pipeline_run
+
+    app.dependency_overrides[
+        runs_injectables.get_existing_pipeline_run
+    ] = get_mock_existing_pipeline_run
+
+    yield
+
+    app.dependency_overrides.pop(
+        runs_injectables.get_existing_pipeline_run, None
+    )
+
+
+@mock.patch("capellacollab.core.logging.loki.fetch_logs_from_loki")
+@pytest.mark.usefixtures("override_get_existing_pipeline_run_dependency")
+def test_mask_logs(
+    mock_fetch_logs: mock.Mock,
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
+):
+    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+
+    mock_fetch_logs.return_value = [
+        {
+            "values": [
+                (
+                    1618181583458797952,
+                    "This is a log entry containing a secret_pipeline_t4c_password and secret_t4c_instance_password",
+                )
+            ]
+        }
+    ]
+
+    response = client.get(
+        "/api/v1/projects/1/models/1/backups/pipelines/1/runs/1/logs"
+    )
+
+    logs = response.json()
+
+    assert "secret_pipeline_t4c_password" not in logs
+    assert "secret_t4c_instance_password" not in logs

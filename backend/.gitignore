@@ -12,6 +12,7 @@ config/*
 build
 .git_archival.txt
 logs
+backend.log*
 
 htmlcov
 .coverage

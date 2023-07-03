@@ -81,10 +81,11 @@ def get_pipeline_runs(
     response_model=models.PipelineRun,
 )
 def get_pipeline_run(
-    pipeline_run: pipeline_models.DatabaseBackup = fastapi.Depends(
+    pipeline_run: models.DatabasePipelineRun = fastapi.Depends(
         injectables.get_existing_pipeline_run
     ),
-) -> list[models.DatabasePipelineRun]:
+) -> models.DatabasePipelineRun:
+    print(pipeline_run.status)
     return pipeline_run
 
 
