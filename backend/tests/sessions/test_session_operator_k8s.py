@@ -4,6 +4,7 @@
 import base64
 import os
 
+import kubernetes.config
 import pytest
 
 if not os.getenv("CI"):
@@ -61,3 +62,19 @@ class MockStream:
 
     def read_stdout(self, timeout=None):
         return self._blocks.pop(0)
+
+
+def test_create_job(monkeypatch):
+    monkeypatch.setattr(kubernetes.config, "load_config", lambda **_: None)
+    operator = KubernetesOperator()
+    monkeypatch.setattr(
+        operator.v1_batch, "create_namespaced_job", lambda namespace, job: None
+    )
+    result = operator.create_job(
+        image="fakeimage",
+        command="fakecmd",
+        labels={"key": "value"},
+        environment={"ENVVAR": "value"},
+    )
+
+    assert result
