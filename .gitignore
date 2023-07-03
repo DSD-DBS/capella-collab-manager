@@ -14,6 +14,5 @@ certs/*
 /node_modules
 .idea
 .vscode
-/backend/log/*
 /helm/charts/*
 /logs/*

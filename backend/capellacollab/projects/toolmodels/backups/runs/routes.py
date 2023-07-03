@@ -81,10 +81,11 @@ def get_pipeline_runs(
     response_model=models.PipelineRun,
 )
 def get_pipeline_run(
-    pipeline_run: pipeline_models.DatabaseBackup = fastapi.Depends(
+    pipeline_run: models.DatabasePipelineRun = fastapi.Depends(
         injectables.get_existing_pipeline_run
     ),
-) -> list[models.DatabasePipelineRun]:
+) -> models.DatabasePipelineRun:
+    print(pipeline_run.status)
     return pipeline_run
 
 
@@ -126,10 +127,7 @@ def _transform_unix_nanoseconds_to_human_readable_format(
     )
 
 
-@router.get(
-    "/{pipeline_run_id}/logs",
-    response_model=str,
-)
+@router.get("/{pipeline_run_id}/logs", response_model=str)
 def get_logs(
     pipeline_run: models.DatabasePipelineRun = fastapi.Depends(
         injectables.get_existing_pipeline_run
@@ -155,7 +153,10 @@ def get_logs(
         ]
     )
 
-    masked_values = [pipeline_run.pipeline.t4c_password]
+    masked_values = [
+        pipeline_run.pipeline.t4c_password,
+        pipeline_run.pipeline.t4c_model.repository.instance.password,
+    ]
     masked_values_generated = []
 
     # Also mask derivated, e.g. base64 encoded credentials

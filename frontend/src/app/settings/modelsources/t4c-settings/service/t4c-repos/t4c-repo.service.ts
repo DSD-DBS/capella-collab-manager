@@ -32,7 +32,9 @@ export class T4CRepoService {
   readonly repositories = this._repositories.asObservable();
 
   urlFactory(instanceId: number, repositoryId: number): string {
-    return `${this.t4cInstanceService.urlFactory(instanceId)}/${repositoryId}`;
+    return `${this.t4cInstanceService.urlFactory(
+      instanceId
+    )}/repositories/${repositoryId}`;
   }
 
   loadRepositories(instanceId: number): void {

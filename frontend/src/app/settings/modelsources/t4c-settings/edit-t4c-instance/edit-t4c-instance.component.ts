@@ -34,24 +34,24 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   instanceId?: number;
   capellaVersions?: ToolVersion[];
 
+  portValidators = [
+    Validators.pattern(/^\d*$/),
+    Validators.min(0),
+    Validators.max(65535),
+  ];
+
   public form = new FormGroup({
     name: new FormControl('', Validators.required),
     version_id: new FormControl(-1, Validators.required),
     license: new FormControl('', Validators.required),
     protocol: new FormControl<Protocol>('tcp', Validators.required),
     host: new FormControl('', Validators.required),
-    port: new FormControl(2036, [
-      Validators.required,
-      Validators.pattern(/^\d*$/),
-      Validators.min(0),
-      Validators.max(65535),
-    ]),
+    port: new FormControl(2036, [Validators.required, ...this.portValidators]),
     cdo_port: new FormControl(12036, [
       Validators.required,
-      Validators.pattern(/^\d*$/),
-      Validators.min(0),
-      Validators.max(65535),
+      ...this.portValidators,
     ]),
+    http_port: new FormControl<number | null>(null, this.portValidators),
     usage_api: new FormControl('', [
       Validators.required,
       Validators.pattern(/^https?:\/\//),

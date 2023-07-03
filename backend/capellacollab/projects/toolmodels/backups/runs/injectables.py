@@ -11,7 +11,7 @@ from capellacollab.projects.toolmodels.backups import (
 )
 from capellacollab.projects.toolmodels.backups import models as backups_models
 
-from . import crud
+from . import crud, models
 
 
 def get_existing_pipeline_run(
@@ -20,7 +20,7 @@ def get_existing_pipeline_run(
         backups_injectables.get_existing_pipeline
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> backups_models.DatabaseBackup:
+) -> models.DatabasePipelineRun:
     if pipeline_run := crud.get_pipeline_run_by_id(db, pipeline_run_id):
         if pipeline_run.pipeline.id != pipeline.id:
             raise fastapi.HTTPException(

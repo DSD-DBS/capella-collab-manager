@@ -60,6 +60,9 @@ class DatabaseT4CInstance(database.Base):
         sa.CheckConstraint("cdo_port >= 0 AND cdo_port <= 65535"),
         default=12036,
     )
+    http_port: orm.Mapped[int | None] = orm.mapped_column(
+        sa.CheckConstraint("http_port >= 0 AND http_port <= 65535"),
+    )
     usage_api: orm.Mapped[str]
     rest_api: orm.Mapped[str]
     username: orm.Mapped[str]
@@ -89,6 +92,7 @@ class T4CInstanceBase(pydantic.BaseModel):
     host: str
     port: int
     cdo_port: int
+    http_port: int | None
     usage_api: str
     rest_api: str
     username: str
@@ -107,6 +111,10 @@ class T4CInstanceBase(pydantic.BaseModel):
         port_validator
     )
 
+    _validate_http_port = pydantic.validator("http_port", allow_reuse=True)(
+        port_validator
+    )
+
     class Config:
         orm_mode = True
 
@@ -117,6 +125,7 @@ class PatchT4CInstance(pydantic.BaseModel):
     host: str | None
     port: int | None
     cdo_port: int | None
+    http_port: int | None
     usage_api: str | None
     rest_api: str | None
     username: str | None
@@ -134,6 +143,10 @@ class PatchT4CInstance(pydantic.BaseModel):
     )
 
     _validate_cdo_port = pydantic.validator("cdo_port", allow_reuse=True)(
+        port_validator
+    )
+
+    _validate_http_port = pydantic.validator("http_port", allow_reuse=True)(
         port_validator
     )
 
