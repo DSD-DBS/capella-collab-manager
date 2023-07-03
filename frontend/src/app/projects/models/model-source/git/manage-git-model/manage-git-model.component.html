@@ -150,11 +150,6 @@
       </fieldset>
     </form>
     <div *ngIf="asStepper; else notFromStepper" class="flex justify-between">
-      <button mat-button (click)="create.emit(false)">
-        <mat-icon class="mat-icon-position">arrow_back</mat-icon>
-        Back
-      </button>
-
       <button
         mat-raised-button
         color="primary"
@@ -207,11 +202,6 @@
       </div>
       <div *ngIf="!editing">
         <div class="flex justify-between">
-          <a mat-button [routerLink]="['../../model-sources']">
-            <mat-icon class="mat-icon-position">arrow_back</mat-icon>
-            Back
-          </a>
-
           <div>
             <button mat-raised-button color="warn" (click)="unlinkGitModel()">
               Unlink

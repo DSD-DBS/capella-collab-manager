@@ -4,7 +4,7 @@
  -->
 
 <div class="wrapper flex flex-center">
-  <mat-card *ngIf="modelService.model | async">
+  <mat-card *ngIf="modelService.model | async" class="basis-1 grow">
     <mat-card-title>{{ (modelService.model | async)!.name }}</mat-card-title>
     <form (submit)="onSubmit()" [formGroup]="form">
       <fieldset>
@@ -48,28 +48,21 @@
       </fieldset>
       <br />
       <div class="flex justify-between">
-        <a mat-button routerLink="../../.."
-          ><mat-icon>arrow_back</mat-icon>Back</a
+        <span
+          matTooltip="The model can't be deleted since it has linked Git and/or T4C models."
+          [matTooltipDisabled]="canDelete"
         >
-        <div class="flex flex-wrap gap-2">
-          <span
-            matTooltip="The model can't be deleted since it has linked Git and/or T4C models."
-            [matTooltipDisabled]="canDelete"
+          <button
+            mat-flat-button
+            color="warn"
+            (click)="deleteModel()"
+            [disabled]="!canDelete"
+            type="button"
           >
-            <button
-              mat-flat-button
-              color="warn"
-              (click)="deleteModel()"
-              [disabled]="!canDelete"
-              type="button"
-            >
-              Delete
-            </button>
-          </span>
-          <button mat-flat-button color="primary" type="submit">
-            Update model
+            Delete
           </button>
-        </div>
+        </span>
+        <button mat-flat-button color="primary" type="submit">Submit</button>
       </div>
     </form>
   </mat-card>
