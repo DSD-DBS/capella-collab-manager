@@ -7,11 +7,10 @@ import os
 import kubernetes.config
 import pytest
 
-if not os.getenv("CI"):
-    from capellacollab.sessions.operators.k8s import (
-        KubernetesOperator,
-        lazy_b64decode,
-    )
+from capellacollab.sessions.operators.k8s import (
+    KubernetesOperator,
+    lazy_b64decode,
+)
 
 hello = base64.b64encode(b"hello")  # aGVsbG8=
 
