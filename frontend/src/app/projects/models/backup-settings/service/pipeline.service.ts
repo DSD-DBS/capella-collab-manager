@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
@@ -84,10 +84,12 @@ export class PipelineService {
   removePipeline(
     projectSlug: string,
     modelSlug: string,
-    pipelineID: number
+    pipelineID: number,
+    force: boolean
   ): Observable<void> {
     return this.http.delete<void>(
-      `${this.urlFactory(projectSlug, modelSlug)}/${pipelineID}`
+      `${this.urlFactory(projectSlug, modelSlug)}/${pipelineID}`,
+      { params: new HttpParams().set('force', String(force)) }
     );
   }
 }

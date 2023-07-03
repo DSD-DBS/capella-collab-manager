@@ -91,7 +91,7 @@
     <div *ngIf="selectedPipeline">
       <hr />
       <h3>Additional actions</h3>
-      <div class="flex flex-row flex-wrap gap-2">
+      <div class="flex flex-row flex-wrap items-center gap-2">
         <button
           mat-raised-button
           (click)="removePipeline(selectedPipeline)"
@@ -106,6 +106,14 @@
         >
           View runs
         </a>
+        <mat-slide-toggle
+          *ngIf="userService.validateUserRole('administrator')"
+          [(ngModel)]="force"
+          aria-label="Toggle button"
+          matTooltip="Delete pipeline even if t4c instance not unreachable"
+        >
+          Force Deletion
+        </mat-slide-toggle>
       </div>
     </div>
   </div>

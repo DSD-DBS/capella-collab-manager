@@ -28,6 +28,7 @@ from capellacollab.projects.toolmodels.modelsources.t4c import (
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import operators
 from capellacollab.tools import crud as tools_crud
+from capellacollab.users import models as users_models
 
 from . import core, crud, injectables, models
 from .runs import routes as runs_routes
@@ -144,6 +145,8 @@ def delete_pipeline(
         injectables.get_existing_pipeline
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
+    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+    force: bool = False,
 ):
     try:
         t4c_repository_interface.remove_user_from_repository(
@@ -157,14 +160,21 @@ def delete_pipeline(
             pipeline.t4c_username,
             exc_info=True,
         )
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail={
-                "err_code": "PIPELINE_DELETION_FAILED_T4C_SERVER_UNREACHABLE",
-                "title": "Deletion of the pipeline failed",
-                "reason": "We're not able to connect to the TeamForCapella server and therefore cannot delete the pipeline. Please try again later or contact your administrator.",
-            },
-        )
+
+        if not (
+            force
+            and auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN, verify=False
+            )(token=token, db=db)
+        ):
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail={
+                    "err_code": "PIPELINE_DELETION_FAILED_T4C_SERVER_UNREACHABLE",
+                    "title": "Deletion of the pipeline failed",
+                    "reason": "We're not able to connect to the TeamForCapella server and therefore cannot delete the pipeline. Please try again later or contact your administrator.",
+                },
+            )
 
     if pipeline.run_nightly:
         operators.get_operator().delete_cronjob(pipeline.k8s_cronjob_id)

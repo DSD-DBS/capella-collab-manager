@@ -16,6 +16,7 @@ import {
   PipelineRun,
   PipelineRunService,
 } from 'src/app/projects/models/backup-settings/pipeline-runs/service/pipeline-run.service';
+import { UserService } from 'src/app/services/user/user.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { CreateBackupComponent } from '../create-backup/create-backup.component';
 import { PipelineService, Pipeline } from '../service/pipeline.service';
@@ -32,6 +33,8 @@ import {
 export class TriggerPipelineComponent implements OnInit {
   selectedPipeline?: Pipeline = undefined;
 
+  force = false;
+
   configurationForm = new FormGroup({
     includeHistory: new FormControl(false),
   });
@@ -45,10 +48,13 @@ export class TriggerPipelineComponent implements OnInit {
     public pipelineService: PipelineService,
     private pipelineRunService: PipelineRunService,
     public sessionService: SessionService,
+    public userService: UserService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.userService.updateOwnUser();
+
     this.pipelineService
       .loadPipelines(this.data.projectSlug, this.data.modelSlug)
       .subscribe();
@@ -95,7 +101,12 @@ export class TriggerPipelineComponent implements OnInit {
 
   removePipeline(backup: Pipeline): void {
     this.pipelineService
-      .removePipeline(this.data.projectSlug, this.data.modelSlug, backup.id)
+      .removePipeline(
+        this.data.projectSlug,
+        this.data.modelSlug,
+        backup.id,
+        this.force
+      )
       .subscribe(() => {
         this.toastService.showSuccess(
           'Backup pipeline deleted',
