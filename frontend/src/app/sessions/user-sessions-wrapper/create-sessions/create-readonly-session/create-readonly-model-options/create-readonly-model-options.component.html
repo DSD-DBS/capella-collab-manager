@@ -5,7 +5,9 @@
 
 <div [formGroup]="form">
   <h2>
-    <mat-checkbox formControlName="include">{{ model.name }}</mat-checkbox>
+    <mat-checkbox formControlName="include">{{
+      modelOptions.model.name
+    }}</mat-checkbox>
   </h2>
   <fieldset *ngIf="form.controls.include.value">
     <mat-form-field appearance="fill">
