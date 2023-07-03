@@ -211,9 +211,35 @@ def delete_nature(db: orm.Session, nature: models.Nature) -> None:
 
 
 def get_backup_image_for_tool_version(db: orm.Session, version_id: int) -> str:
-    if version := get_version_by_id(db, version_id):
-        return version.tool.docker_image_backup_template.replace(
-            "$version", version.name
+    """
+    Retrieve the backup image template for a specific tool version and replace the placeholder with the tool's version name.
+
+    The function first checks if the provided version_id corresponds to an existing tool version in the database.
+    If not, it raises a ToolVersionNotFoundError. Then, it retrieves the tool's backup image template.
+    If the backup image template does not exist, it raises a ToolImageNotFoundError.
+
+    Finally, it replaces the placeholder "$version" in the backup image template with the actual version name and returns it.
+
+    Args:
+        db (orm.Session): The database session to use for database operations.
+        version_id (int): The ID of the tool version for which to get the backup image.
+
+    Returns:
+        str: The backup image name for the specified tool version. The "$version" placeholder in the template
+             is replaced with the actual version name.
+
+    Raises:
+        ToolVersionNotFoundError: If a tool version with the specified version_id does not exist.
+        ToolImageNotFoundError: If the tool corresponding to the version does not have an associated backup image template.
+    """
+    if not (version := get_version_by_id(db, version_id)):
+        raise exceptions.ToolVersionNotFoundError(version_id)
+
+    backup_image_template = version.tool.docker_image_backup_template
+
+    if not backup_image_template:
+        raise exceptions.ToolImageNotFoundError(
+            tool_id=version.tool.id, image_name="backup"
         )
 
-    raise exceptions.ToolVersionNotFoundError(version_id)
+    return backup_image_template.replace("$version", version.name)
