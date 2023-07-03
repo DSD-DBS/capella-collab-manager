@@ -936,7 +936,7 @@ class KubernetesOperator:
                         },
                         "clients": [
                             {
-                                "url": cfg["promtail"]["lokiUrl"],
+                                "url": cfg["promtail"]["lokiUrl"] + "/push",
                                 "basic_auth": {
                                     "username": cfg["promtail"][
                                         "lokiUsername"
