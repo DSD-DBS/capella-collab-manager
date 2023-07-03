@@ -8,7 +8,6 @@ import logging
 import pytz
 from kubernetes import client as k8s_client
 from kubernetes.client import exceptions as k8s_exceptions
-from sqlalchemy import orm
 from starlette import concurrency as starlette_concurrency
 
 from capellacollab.core import database
@@ -256,23 +255,9 @@ def _update_status_of_job(
         run.status = current_status
 
 
-def _reap_unknown_jobs_in_cluster(db: orm.Session):
-    log.debug("Searching for unknown jobs in cluster to reap")
-    active_pipeline_references = {
-        run.reference_id for run in crud.get_scheduled_or_running_pipelines(db)
-    }
-    job_names = {
-        job.metadata.name for job in operators.get_operator().get_jobs()
-    }
-    for job_name in job_names - active_pipeline_references:
-        log.warning("Reap unknown job '%s'", job_name)
-        operators.get_operator().delete_job(job_name)
-
-
 def _refresh_and_trigger_pipeline_jobs():
     _schedule_pending_jobs()
     with database.SessionLocal() as db:
-        _reap_unknown_jobs_in_cluster(db)
         for run in crud.get_scheduled_or_running_pipelines(db):
             try:
                 _search_and_kill_timed_out_jobs(run)
