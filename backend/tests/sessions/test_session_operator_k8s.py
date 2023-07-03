@@ -78,3 +78,20 @@ def test_create_job(monkeypatch):
     )
 
     assert result
+
+
+def test_create_cronjob(monkeypatch):
+    monkeypatch.setattr(kubernetes.config, "load_config", lambda **_: None)
+    operator = KubernetesOperator()
+    monkeypatch.setattr(
+        operator.v1_batch,
+        "create_namespaced_cron_job",
+        lambda namespace, job: None,
+    )
+    result = operator.create_cronjob(
+        image="fakeimage",
+        command="fakecmd",
+        environment={"ENVVAR": "value"},
+    )
+
+    assert result
