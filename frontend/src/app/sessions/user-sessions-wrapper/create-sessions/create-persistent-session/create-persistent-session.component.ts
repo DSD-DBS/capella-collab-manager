@@ -27,7 +27,7 @@ export class CreatePersistentSessionComponent implements OnInit {
 
   public toolSelectionForm = new FormGroup({
     toolId: new FormControl(null, Validators.required),
-    versionId: new FormControl(null, Validators.required),
+    versionId: new FormControl<number | null>(null, Validators.required),
   });
 
   constructor(
@@ -63,6 +63,11 @@ export class CreatePersistentSessionComponent implements OnInit {
       .getVersionsForTool(toolId)
       .subscribe((res: ToolVersion[]) => {
         this.versions = res;
+        if (res.length) {
+          this.toolSelectionForm.controls.versionId.setValue(
+            (res.filter((value) => value.is_recommended).at(0) || res[0]).id
+          );
+        }
       });
   }
 }
