@@ -44,10 +44,7 @@ router = fastapi.APIRouter(
 log = logging.getLogger(__name__)
 
 
-@router.get(
-    "",
-    response_model=list[models.Backup],
-)
+@router.get("", response_model=list[models.Backup])
 def get_pipelines(
     model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
         get_existing_capella_model
@@ -69,10 +66,7 @@ def get_pipeline(
     return pipeline
 
 
-@router.post(
-    "",
-    response_model=models.Backup,
-)
+@router.post("", response_model=models.Backup)
 def create_backup(
     body: models.CreateBackup,
     capella_model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
@@ -106,7 +100,7 @@ def create_backup(
             detail={
                 "err_code": "PIPELINE_CREATION_FAILED_T4C_SERVER_UNREACHABLE",
                 "title": "Creation of the pipeline failed",
-                "reason": "We're not able to connect to the TeamForCapella server and therefore cannot prepare the backups. Please try again later or contact your administrator.",
+                "reason": "We're not able to connect to the TeamForCapella server and therefore cannot prepare the pipeline. Please try again later or contact your administrator.",
             },
         )
 
@@ -144,10 +138,7 @@ def create_backup(
     )
 
 
-@router.delete(
-    "/{pipeline_id}",
-    status_code=204,
-)
+@router.delete("/{pipeline_id}", status_code=204)
 def delete_pipeline(
     pipeline: models.DatabaseBackup = fastapi.Depends(
         injectables.get_existing_pipeline
@@ -161,7 +152,19 @@ def delete_pipeline(
             pipeline.t4c_username,
         )
     except requests.RequestException:
-        log.error("Error during the deletion of user %s in t4c", exc_info=True)
+        log.error(
+            "Error during the deletion of user %s in t4c",
+            pipeline.t4c_username,
+            exc_info=True,
+        )
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail={
+                "err_code": "PIPELINE_DELETION_FAILED_T4C_SERVER_UNREACHABLE",
+                "title": "Deletion of the pipeline failed",
+                "reason": "We're not able to connect to the TeamForCapella server and therefore cannot delete the pipeline. Please try again later or contact your administrator.",
+            },
+        )
 
     if pipeline.run_nightly:
         operators.get_operator().delete_cronjob(pipeline.k8s_cronjob_id)
