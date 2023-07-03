@@ -21,7 +21,12 @@
       <mat-error *ngIf="form.controls.revision.errors?.required">
         A revision is required
       </mat-error>
-      <mat-error *ngIf="form.controls.revision.errors?.revisionNotFoundError">
+      <mat-error
+        *ngIf="
+          form.controls.revision.errors?.revisionNotFoundError &&
+          form.controls.revision.value
+        "
+      >
         {{ form.controls.revision.errors?.revisionNotFoundError }}
       </mat-error>
     </mat-form-field>

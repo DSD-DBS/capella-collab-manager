@@ -53,28 +53,28 @@ export class GitService {
 
   getPrivateRevision(
     gitUrl: string,
-    project_slug: string,
-    model_slug: string,
-    git_model_id: number
+    projectSlug: string,
+    modelSlug: string,
+    gitModelId: number
   ): Observable<Revisions> {
     return this.http.post<Revisions>(
       this.BACKEND_URL_PREFIX +
-        `/projects/${project_slug}/models/${model_slug}/modelsources/git/${git_model_id}/revisions`,
+        `/projects/${projectSlug}/models/${modelSlug}/modelsources/git/${gitModelId}/revisions`,
       gitUrl
     );
   }
 
   loadPrivateRevisions(
     gitUrl: string,
-    project_slug: string,
-    model_slug: string,
-    git_model_id: number
+    projectSlug: string,
+    modelSlug: string,
+    gitModelId: number
   ): void {
     this.getPrivateRevision(
       gitUrl,
-      project_slug,
-      model_slug,
-      git_model_id
+      projectSlug,
+      modelSlug,
+      gitModelId
     ).subscribe({
       next: (revisions) => this._revisions.next(revisions),
       error: () => this._revisions.next(undefined),
