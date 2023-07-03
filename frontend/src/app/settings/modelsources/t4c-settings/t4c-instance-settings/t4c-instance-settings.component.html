@@ -4,7 +4,7 @@
  -->
 
 <div>
-  <div class="flex justify-between mr-[10px]">
+  <div class="flex justify-between mr-2.5">
     <h2>Repositories</h2>
     <button
       mat-stroked-button
@@ -15,36 +15,9 @@
     </button>
   </div>
 
-  <mat-card>
-    <form [formGroup]="form">
-      <div class="flex items-center">
-        <mat-form-field class="mb-[-1.25em]" appearance="fill">
-          <mat-label>Repository name</mat-label>
-          <input matInput formControlName="name" />
-          <mat-error *ngIf="form.controls.name.errors?.required"
-            >Please enter a name</mat-error
-          >
-          <mat-error *ngIf="form.controls.name.errors?.projectExistsError"
-            >Name already used</mat-error
-          >
-          <mat-error *ngIf="form.controls.name.errors?.pattern"
-            >The following characters are allowed: A-Z, a-z, 0-9, _, -
-          </mat-error>
-        </mat-form-field>
-        <div class="field-separator"></div>
-        <button
-          mat-stroked-button
-          color="primary"
-          [disabled]="!form.valid"
-          (click)="createRepository()"
-        >
-          <mat-icon>add</mat-icon>
-        </button>
-      </div>
-    </form>
-
-    <div class="mt-[1.25em] mb-[-1.25em]">
-      <mat-form-field id="search" appearance="outline">
+  <mat-card class="w-full md:w-96">
+    <div>
+      <mat-form-field class="w-full" appearance="outline">
         <mat-label>Search</mat-label>
         <input
           [(ngModel)]="search"
@@ -90,7 +63,7 @@
           </div>
 
           <div>
-            <div class="text-xl">
+            <div class="text-lg break-all">
               {{ repository.name }}
             </div>
             <div>
@@ -115,7 +88,7 @@
             (click)="startRepository(repository)"
             matTooltip="Start repository"
           >
-            <mat-icon class="text-[#5CB85C]">power_settings_new</mat-icon>
+            <mat-icon class="text-green-500">power_settings_new</mat-icon>
           </button>
 
           <button
@@ -140,5 +113,32 @@
         </div>
       </div>
     </div>
+
+    <form [formGroup]="form">
+      <div class="flex items-center justify-between w-full pt-[18px] gap-8">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Repository name</mat-label>
+          <input matInput formControlName="name" />
+          <mat-error *ngIf="form.controls.name.errors?.required"
+            >Please enter a name</mat-error
+          >
+          <mat-error *ngIf="form.controls.name.errors?.uniqueName"
+            >Repository already exists</mat-error
+          >
+          <mat-error *ngIf="form.controls.name.errors?.pattern"
+            >The following characters are allowed: A-Z, a-z, 0-9, _, -
+          </mat-error>
+        </mat-form-field>
+        <button
+          class="relative bottom-[7.5px]"
+          mat-stroked-button
+          color="primary"
+          [disabled]="!form.valid"
+          (click)="createRepository()"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </form>
   </mat-card>
 </div>

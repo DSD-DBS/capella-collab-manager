@@ -127,10 +127,7 @@ def _transform_unix_nanoseconds_to_human_readable_format(
     )
 
 
-@router.get(
-    "/{pipeline_run_id}/logs",
-    response_model=str,
-)
+@router.get("/{pipeline_run_id}/logs", response_model=str)
 def get_logs(
     pipeline_run: models.DatabasePipelineRun = fastapi.Depends(
         injectables.get_existing_pipeline_run

@@ -35,13 +35,13 @@ def get_environment(
     }
 
     if http_port := t4c_model.repository.instance.http_port:
-        env = env | {
+        env |= {
             "HTTP_LOGIN": t4c_model.repository.instance.username,
             "HTTP_PASSWORD": t4c_model.repository.instance.password,
             "HTTP_PORT": str(http_port),
         }
     else:
-        env = env | {
+        env |= env | {
             "T4C_CDO_PORT": str(t4c_model.repository.instance.cdo_port)
         }
 
