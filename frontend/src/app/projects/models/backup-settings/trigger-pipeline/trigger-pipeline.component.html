@@ -109,10 +109,10 @@
         <mat-slide-toggle
           *ngIf="userService.validateUserRole('administrator')"
           [(ngModel)]="force"
-          aria-label="Toggle button"
-          matTooltip="Delete pipeline even if t4c instance not unreachable"
+          aria-label="Force deletion of pipeline"
+          matTooltip="Delete pipeline even if T4C instance not reachable"
         >
-          Force Deletion
+          Force deletion
         </mat-slide-toggle>
       </div>
     </div>

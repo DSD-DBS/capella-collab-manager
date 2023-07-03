@@ -53,8 +53,6 @@ export class TriggerPipelineComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.userService.updateOwnUser();
-
     this.pipelineService
       .loadPipelines(this.data.projectSlug, this.data.modelSlug)
       .subscribe();

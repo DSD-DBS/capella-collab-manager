@@ -38,7 +38,7 @@ async def tool_image_not_found_exception_handler(
         fastapi.HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
-                "reason": f"The tool with id {exc.tool_id} does not have an {exc.image_name} image."
+                "reason": f"The tool with id {exc.tool_id} doesn't have a {exc.image_name} image."
             },
         ),
     )
