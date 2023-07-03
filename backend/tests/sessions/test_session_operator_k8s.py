@@ -12,10 +12,15 @@ from capellacollab.sessions.operators.k8s import (
     lazy_b64decode,
 )
 
+
+@pytest.fixture(autouse=True)
+def mock_k8s_load_config(monkeypatch):
+    monkeypatch.setattr(kubernetes.config, "load_config", lambda **_: None)
+
+
 hello = base64.b64encode(b"hello")  # aGVsbG8=
 
 
-@pytest.mark.skip
 def test_lazy_b64_decode():
     assert as_text(lazy_b64decode([hello])) == "hello"
     assert (
@@ -31,14 +36,13 @@ def test_lazy_b64_decode():
     )
 
 
-@pytest.mark.skip
 def test_download_file(monkeypatch):
     mock_stream = MockStream([hello.decode("utf-8")])
     monkeypatch.setattr(
         "kubernetes.stream.stream", lambda *a, **ka: mock_stream
     )
     monkeypatch.setattr(
-        "t4cclient.sessions.operators.k8s.KubernetesOperator._get_pod_name",
+        "capellacollab.sessions.operators.k8s.KubernetesOperator._get_pod_name",
         lambda *a: "",
     )
 
@@ -64,7 +68,7 @@ class MockStream:
 
 
 def test_create_job(monkeypatch):
-    monkeypatch.setattr(kubernetes.config, "load_config", lambda **_: None)
+    monkeypatch.setattr("kubernetes.config.load_config", lambda **_: None)
     operator = KubernetesOperator()
     monkeypatch.setattr(
         operator.v1_batch, "create_namespaced_job", lambda namespace, job: None
@@ -80,7 +84,6 @@ def test_create_job(monkeypatch):
 
 
 def test_create_cronjob(monkeypatch):
-    monkeypatch.setattr(kubernetes.config, "load_config", lambda **_: None)
     operator = KubernetesOperator()
     monkeypatch.setattr(
         operator.v1_batch,
