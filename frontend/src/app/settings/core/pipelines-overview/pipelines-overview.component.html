@@ -78,10 +78,29 @@
 
 <h2>Models monitoring</h2>
 
+<div>
+  <div class="mb-2">
+    The models monitoring is not refreshed automatically. You can trigger an
+    update via the refresh button or for each model individually.
+  </div>
+  <div class="flex flex-wrap gap-2">
+    <button
+      color="warn"
+      mat-stroked-button
+      matTooltip="This can take up to 10 minutes."
+    >
+      <mat-icon class="mat-icon-position">hourglass_empty</mat-icon> Reset cache
+      and regenerate results
+    </button>
+    <button mat-stroked-button>
+      <mat-icon class="mat-icon-position">sync</mat-icon> Fetch current status
+      from cache
+    </button>
+  </div>
+</div>
+
 <div class="flex flex-wrap items-stretch">
   <div *ngIf="toolmodelStatuses === undefined">
-    Loading the monitoring overview can take up a minute.
-    <br />
     <ngx-skeleton-loader
       count="7"
       appearance="circle"
@@ -96,13 +115,29 @@
   </div>
   <div *ngFor="let modelStatus of toolmodelStatuses">
     <mat-card class="models-card">
-      <b>Project</b> <br />
-      <span class="title">{{ modelStatus.project_slug }}</span>
-      <br />
-      <b>Model</b> <br />
-      <span class="title">{{ modelStatus.model_slug }}</span>
-      <br />
-
+      <div class="flex justify-between">
+        <div>
+          <b>Project</b> <br />
+          <span class="title">{{ modelStatus.project_slug }}</span>
+          <br />
+          <b>Model</b> <br />
+          <span class="title">{{ modelStatus.model_slug }}</span
+          ><br />
+        </div>
+        <div class="flex flex-col">
+          <div class="text-right">
+            Last update: <br />
+            loading...
+          </div>
+          <button
+            color="warn"
+            mat-stroked-button
+            matTooltip="Reset cache and regenerate results for the model."
+          >
+            <mat-icon class="mat-icon-position">hourglass_empty</mat-icon>
+          </button>
+        </div>
+      </div>
       <div>
         <!-- git model status -->
         <div
