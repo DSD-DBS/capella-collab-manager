@@ -39,10 +39,12 @@ def get_environment(
             "HTTP_LOGIN": t4c_model.repository.instance.username,
             "HTTP_PASSWORD": t4c_model.repository.instance.password,
             "HTTP_PORT": str(http_port),
+            "CONNECTION_TYPE": "http",
         }
     else:
         env |= env | {
-            "T4C_CDO_PORT": str(t4c_model.repository.instance.cdo_port)
+            "T4C_CDO_PORT": str(t4c_model.repository.instance.cdo_port),
+            "CONNECTION_TYPE": "telnet",
         }
 
     return env
