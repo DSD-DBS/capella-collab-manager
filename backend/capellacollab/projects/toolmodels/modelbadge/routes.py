@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import logging
 
+import aiohttp.web
 import fastapi
 import requests
 from fastapi import status
@@ -32,7 +33,7 @@ router = fastapi.APIRouter(
 
 
 @router.get("", response_class=fastapi.responses.Response)
-def get_model_complexity_badge(
+async def get_model_complexity_badge(
     git_model: git_models.DatabaseGitModel = fastapi.Depends(
         git_injectables.get_existing_primary_git_model
     ),
@@ -41,26 +42,14 @@ def get_model_complexity_badge(
 ):
     try:
         return fastapi.responses.Response(
-            content=gitlab_interface.get_file_from_repository(
+            content=await gitlab_interface.get_file_from_repository(
                 db,
                 "model-complexity-badge.svg",
                 git_model,
             ),
             media_type="image/svg+xml",
         )
-    except requests.exceptions.HTTPError as err:
-        if err.response.status_code == 404:
-            raise fastapi.HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail={
-                    "err_code": "COMPLEXITY_BADGE_NOT_FOUND",
-                    "reason": (
-                        "No model complexity badge found in the linked Git repository.",
-                        "Please contact your administrator.",
-                    ),
-                },
-            )
-
+    except (aiohttp.web.HTTPException, requests.exceptions.HTTPError):
         logger.info("Failed fetching model complexity badge", exc_info=True)
         raise fastapi.HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

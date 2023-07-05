@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import asyncio
 import collections.abc as cabc
 import logging
 import os
@@ -15,12 +16,13 @@ from . import models
 log = logging.getLogger(__name__)
 
 
-def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
+async def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
     try:
-        proc = subprocess.run(
-            ["git", "ls-remote", url],
-            capture_output=True,
-            check=True,
+        proc = await asyncio.create_subprocess_exec(
+            "git",
+            "ls-remote",
+            url,
+            stdout=asyncio.subprocess.PIPE,
             env=os.environ | env,
         )
     except subprocess.CalledProcessError as e:
@@ -43,10 +45,11 @@ def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
             )
         else:
             raise e
-    return proc.stdout.decode().strip().splitlines()
+    stdout, _ = await proc.communicate()
+    return stdout.decode().strip().splitlines()
 
 
-def get_remote_refs(
+async def get_remote_refs(
     url: str, username: str, password: str, default=None
 ) -> models.GetRevisionsResponseModel:
     remote_refs: models.GetRevisionsResponseModel = (
@@ -60,7 +63,7 @@ def get_remote_refs(
             (pathlib.Path(__file__).parents[0] / "askpass.py").absolute()
         ),
     }
-    for ref in ls_remote(url, git_env):
+    for ref in await ls_remote(url, git_env):
         (_, ref) = ref.split("\t")
         if "^" in ref:
             continue

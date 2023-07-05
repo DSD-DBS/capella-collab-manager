@@ -4,6 +4,7 @@
 
 import pytest
 import responses
+from aioresponses import aioresponses
 from fastapi import testclient
 from sqlalchemy import orm
 
@@ -63,38 +64,41 @@ def fixture_diagram_cache_job_status(request: pytest.FixtureRequest):
 
 @pytest.fixture()
 def mock_gitlab_rest_api(diagram_cache_job_status: str):
-    responses.get(
-        "https://example.com/api/v4/projects/test%2Fproject",
-        status=200,
-        json={"id": "10000"},
-    )
-
-    pipeline_ids = ["12345", "12346"]
-    responses.get(
-        "https://example.com/api/v4/projects/10000/pipelines?ref=main&per_page=20",
-        status=200,
-        json=[{"id": _id} for _id in pipeline_ids],
-    )
-
-    for _id in pipeline_ids:
-        responses.get(
-            f"https://example.com/api/v4/projects/10000/pipelines/{_id}/jobs",
+    with aioresponses() as mocked:
+        mocked.get(
+            "https://example.com/api/v4/projects/test%2Fproject",
             status=200,
-            json=[
-                {
-                    "name": "test",
-                    "status": "failure",
-                    "started_at": "2023-02-04T02:55:17.788000+00:00",
-                    "id": "00001",
-                },
-                {
-                    "name": "update_capella_diagram_cache",
-                    "status": diagram_cache_job_status,
-                    "started_at": "2023-02-04T02:55:17.788000+00:00",
-                    "id": "00002",
-                },
-            ],
+            payload={"id": "10000"},
         )
+
+        pipeline_ids = ["12345", "12346"]
+        mocked.get(
+            "https://example.com/api/v4/projects/10000/pipelines?ref=main&per_page=20",
+            status=200,
+            payload=[{"id": _id} for _id in pipeline_ids],
+        )
+
+        for _id in pipeline_ids:
+            mocked.get(
+                f"https://example.com/api/v4/projects/10000/pipelines/{_id}/jobs",
+                status=200,
+                payload=[
+                    {
+                        "name": "test",
+                        "status": "failure",
+                        "started_at": "2023-02-04T02:55:17.788000+00:00",
+                        "id": "00001",
+                    },
+                    {
+                        "name": "update_capella_diagram_cache",
+                        "status": diagram_cache_job_status,
+                        "started_at": "2023-02-04T02:55:17.788000+00:00",
+                        "id": "00002",
+                    },
+                ],
+            )
+
+        yield mocked
 
 
 @pytest.fixture

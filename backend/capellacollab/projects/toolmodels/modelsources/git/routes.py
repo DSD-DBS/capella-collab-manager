@@ -109,12 +109,12 @@ def get_git_model_by_id(
         )
     ],
 )
-def get_revisions_of_primary_git_model(
+async def get_revisions_of_primary_git_model(
     primary_git_model: DatabaseGitModel = fastapi.Depends(
         get_existing_primary_git_model
     ),
 ) -> GetRevisionsResponseModel:
-    return get_remote_refs(
+    return await get_remote_refs(
         primary_git_model.path,
         primary_git_model.username,
         primary_git_model.password,
@@ -133,11 +133,11 @@ def get_revisions_of_primary_git_model(
         )
     ],
 )
-def get_revisions_with_model_credentials(
+async def get_revisions_with_model_credentials(
     url: str = fastapi.Body(),
     git_model: DatabaseGitModel = fastapi.Depends(get_existing_git_model),
 ):
-    return get_remote_refs(url, git_model.username, git_model.password)
+    return await get_remote_refs(url, git_model.username, git_model.password)
 
 
 @router.post(
