@@ -8,22 +8,20 @@ import aiohttp
 import fastapi
 import requests
 from fastapi import status
-from sqlalchemy import orm
 
 import capellacollab.projects.toolmodels.modelsources.git.models as git_models
-import capellacollab.settings.modelsources.git.crud as settings_git_crud
 import capellacollab.settings.modelsources.git.models as settings_git_models
 
 from . import exceptions
 
 
 async def get_last_job_run_id_for_git_model(
-    db: orm.Session, job_name: str, git_model: git_models.DatabaseGitModel
+    job_name: str,
+    git_model: git_models.DatabaseGitModel,
+    git_instance: settings_git_models.DatabaseGitInstance,
 ) -> tuple[settings_git_models.DatabaseGitInstance, str, tuple[str, str]]:
-    git_instance = await get_git_instance_for_git_model(db, git_model)
     await check_git_instance_is_gitlab(git_instance)
     await check_git_instance_has_api_url(git_instance)
-
     project_id = await get_project_id_by_git_url(git_model, git_instance)
     for pipeline_id in await get_last_pipeline_run_ids(
         project_id, git_model, git_instance
@@ -39,34 +37,6 @@ async def get_last_job_run_id_for_git_model(
             "err_code": "PIPELINE_JOB_NOT_FOUND",
             "reason": (
                 f"There was no job with the name '{job_name}' within the last 20 runs of the pipeline",
-                "Please contact your administrator.",
-            ),
-        },
-    )
-
-
-async def get_git_instance_for_git_model(
-    db: orm.Session, git_model: git_models.DatabaseGitModel
-) -> settings_git_models.DatabaseGitInstance:
-    """Get the corresponding git instance for a git model
-    The git instance is selected via the longest common prefix match.
-    """
-
-    instances_sorted_by_len = sorted(
-        settings_git_crud.get_git_instances(db),
-        key=lambda instance: len(instance.url),
-        reverse=True,
-    )
-
-    for instance in instances_sorted_by_len:
-        if git_model.path.startswith(instance.url):
-            return instance
-    raise fastapi.HTTPException(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        detail={
-            "err_code": "NO_MATCHING_GIT_INSTANCE",
-            "reason": (
-                "No matching git instance was found for the primary git model.",
                 "Please contact your administrator.",
             ),
         },
@@ -226,11 +196,11 @@ def get_artifact_from_job(
 
 
 def get_file_from_repository(
-    project_id: str,
     trusted_file_path: str,
     git_model: git_models.DatabaseGitModel,
     git_instance: settings_git_models.DatabaseGitInstance,
 ) -> bytes:
+    project_id = get_project_id_by_git_url(git_model, git_instance)
     response = requests.get(
         f"{git_instance.api_url}/projects/{project_id}/repository/files/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(git_model.revision, safe='')}",
         headers={"PRIVATE-TOKEN": git_model.password},

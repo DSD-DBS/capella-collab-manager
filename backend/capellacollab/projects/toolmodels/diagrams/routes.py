@@ -17,8 +17,8 @@ from capellacollab.core import database
 from capellacollab.core import logging as log
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects.toolmodels.diagrams import models
-from capellacollab.projects.toolmodels.modelsources.git.gitlab import (
-    interface as gitlab_interface,
+from capellacollab.projects.toolmodels.modelsources.git import (
+    interface as git_interface,
 )
 from capellacollab.projects.users import models as projects_users_models
 
@@ -45,12 +45,12 @@ async def get_diagram_metadata(
         git_instance,
         project_id,
         last_successful_job,
-    ) = await gitlab_interface.get_last_job_run_id_for_git_model(
+    ) = await git_interface.get_last_job_run_id_for_git_model(
         db, "update_capella_diagram_cache", git_model
     )
 
     try:
-        diagrams = gitlab_interface.get_artifact_from_job_as_json(
+        diagrams = git_interface.get_artifact_from_job_as_json(
             project_id,
             last_successful_job[0],
             "diagram_cache/index.json",
@@ -87,12 +87,12 @@ async def get_diagram(
         git_instance,
         project_id,
         last_successful_job,
-    ) = await gitlab_interface.get_last_job_run_id_for_git_model(
+    ) = await git_interface.get_last_job_run_id_for_git_model(
         db, "update_capella_diagram_cache", git_model
     )
 
     try:
-        diagram = gitlab_interface.get_artifact_from_job_as_content(
+        diagram = git_interface.get_artifact_from_job_as_content(
             project_id,
             last_successful_job[0],
             f"diagram_cache/{parse.quote(diagram_uuid, safe='')}.svg",

@@ -173,8 +173,7 @@ def test_get_diagrams_fails_without_gitlab_instance(
 
     assert response.status_code == 500
     assert (
-        response.json()["detail"]["err_code"]
-        == "INSTANCE_IS_NO_GITLAB_INSTANCE"
+        response.json()["detail"]["err_code"] == "INSTANCE_IS_NO_GIT_INSTANCE"
     )
 
 
