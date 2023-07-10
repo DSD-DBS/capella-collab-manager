@@ -176,54 +176,62 @@ def delete_tool_version(
 
 def get_nature_for_tool(
     db: orm.Session, tool_id: int, nature_id: int
-) -> models.Nature | None:
+) -> models.DatabaseNature | None:
     return db.execute(
-        sa.select(models.Nature)
-        .where(models.Nature.id == nature_id)
-        .where(models.Nature.tool_id == tool_id)
+        sa.select(models.DatabaseNature)
+        .where(models.DatabaseNature.id == nature_id)
+        .where(models.DatabaseNature.tool_id == tool_id)
     ).scalar_one_or_none()
 
 
 def get_nature_by_name(
     db: orm.Session, tool: models.DatabaseTool, name: str
-) -> models.Nature | None:
+) -> models.DatabaseNature | None:
     return db.execute(
-        sa.select(models.Nature)
-        .where(models.Nature.tool == tool)
-        .where(models.Nature.name == name)
+        sa.select(models.DatabaseNature)
+        .where(models.DatabaseNature.tool == tool)
+        .where(models.DatabaseNature.name == name)
     ).scalar_one_or_none()
 
 
-def get_natures(db: orm.Session) -> abc.Sequence[models.Nature]:
-    return db.execute(sa.select(models.Nature)).scalars().all()
+def get_natures(db: orm.Session) -> abc.Sequence[models.DatabaseNature]:
+    return db.execute(sa.select(models.DatabaseNature)).scalars().all()
 
 
-def get_nature_by_id(db: orm.Session, nature_id: int) -> models.Nature | None:
+def get_nature_by_id(
+    db: orm.Session, nature_id: int
+) -> models.DatabaseNature | None:
     return db.execute(
-        sa.select(models.Nature).where(models.Nature.id == nature_id)
+        sa.select(models.DatabaseNature).where(
+            models.DatabaseNature.id == nature_id
+        )
     ).scalar_one_or_none()
 
 
 def get_natures_by_tool_id(
     db: orm.Session, tool_id: int
-) -> abc.Sequence[models.Nature]:
+) -> abc.Sequence[models.DatabaseNature]:
     return (
         db.execute(
-            sa.select(models.Nature).where(models.Nature.tool_id == tool_id)
+            sa.select(models.DatabaseNature).where(
+                models.DatabaseNature.tool_id == tool_id
+            )
         )
         .scalars()
         .all()
     )
 
 
-def create_nature(db: orm.Session, tool_id: int, name: str) -> models.Nature:
-    nature = models.Nature(name=name, tool_id=tool_id)
+def create_nature(
+    db: orm.Session, tool_id: int, name: str
+) -> models.DatabaseNature:
+    nature = models.DatabaseNature(name=name, tool_id=tool_id)
     db.add(nature)
     db.commit()
     return nature
 
 
-def delete_nature(db: orm.Session, nature: models.Nature) -> None:
+def delete_nature(db: orm.Session, nature: models.DatabaseNature) -> None:
     db.delete(nature)
     db.commit()
 

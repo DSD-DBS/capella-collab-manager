@@ -48,7 +48,7 @@ def get_exisiting_tool_nature(
     tool_id: int,
     nature_id: int,
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.Nature:
+) -> models.DatabaseNature:
     if nature := crud.get_nature_for_tool(db, tool_id, nature_id):
         return nature
 

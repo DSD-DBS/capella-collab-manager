@@ -30,7 +30,9 @@ class DatabaseTool(database.Base):
     versions: orm.Mapped[list[DatabaseVersion]] = orm.relationship(
         back_populates="tool"
     )
-    natures: orm.Mapped[list[Nature]] = orm.relationship(back_populates="tool")
+    natures: orm.Mapped[list[DatabaseNature]] = orm.relationship(
+        back_populates="tool"
+    )
 
     integrations: orm.Mapped[DatabaseToolIntegrations] = orm.relationship(
         back_populates="tool", uselist=False
@@ -55,7 +57,7 @@ class DatabaseVersion(database.Base):
     )
 
 
-class Nature(database.Base):
+class DatabaseNature(database.Base):
     __tablename__ = "types"
     __table_args__ = (sa.UniqueConstraint("tool_id", "name"),)
 

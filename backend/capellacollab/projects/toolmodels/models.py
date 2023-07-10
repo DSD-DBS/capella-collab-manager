@@ -31,9 +31,9 @@ if t.TYPE_CHECKING:
         DatabaseT4CModel,
     )
     from capellacollab.tools.models import (
+        DatabaseNature,
         DatabaseTool,
         DatabaseVersion,
-        Nature,
     )
 
     from .restrictions.models import DatabaseToolModelRestrictions
@@ -91,7 +91,7 @@ class DatabaseCapellaModel(database.Base):
     nature_id: orm.Mapped[int | None] = orm.mapped_column(
         sa.ForeignKey("types.id")
     )
-    nature: orm.Mapped[Nature] = orm.relationship()
+    nature: orm.Mapped[DatabaseNature] = orm.relationship()
 
     editing_mode: orm.Mapped[EditingMode | None]
 

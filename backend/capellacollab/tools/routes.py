@@ -177,7 +177,7 @@ def delete_tool_version(
 @router.get("/{tool_id}/natures", response_model=list[models.ToolNatureBase])
 def get_tool_natures(
     tool_id: int, db: orm.Session = fastapi.Depends(database.get_db)
-) -> abc.Sequence[models.Nature]:
+) -> abc.Sequence[models.DatabaseNature]:
     return crud.get_natures_by_tool_id(db, tool_id)
 
 
@@ -196,7 +196,7 @@ def create_tool_nature(
     tool_id: int,
     body: models.CreateToolNature,
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.Nature:
+) -> models.DatabaseNature:
     return crud.create_nature(db, tool_id, body.name)
 
 
@@ -212,7 +212,7 @@ def create_tool_nature(
     ],
 )
 def delete_tool_nature(
-    nature: models.Nature = fastapi.Depends(
+    nature: models.DatabaseNature = fastapi.Depends(
         injectables.get_exisiting_tool_nature
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -317,7 +317,7 @@ def raise_when_tool_version_dependency_exist(
 
 
 def raise_when_tool_nature_dependency_exist(
-    db: orm.Session, nature: models.Nature
+    db: orm.Session, nature: models.DatabaseNature
 ) -> None:
     """Search for tool nature occurrences in project-models
 

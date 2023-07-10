@@ -159,7 +159,7 @@ def get_version_by_id_or_raise(
 
 def get_nature_by_id_or_raise(
     db: orm.Session, nature_id: int
-) -> tools_models.Nature:
+) -> tools_models.DatabaseNature:
     if nature := tools_crud.get_nature_by_id(db, nature_id):
         return nature
 
