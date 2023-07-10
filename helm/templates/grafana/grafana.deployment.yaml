@@ -27,7 +27,7 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: grafana
-          image: {{ .Values.docker.registry.external -}}/grafana/grafana:9.5.5
+          image: {{ .Values.docker.registry.external }}/grafana/grafana:10.0.1
           ports:
             - containerPort: 3000
           resources:

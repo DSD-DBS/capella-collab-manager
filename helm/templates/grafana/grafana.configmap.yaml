@@ -27,7 +27,7 @@ data:
 
     [server]
     root_url = http://localhost:8080/grafana/
-    serve_from_sub_path = true
+    serve_from_sub_path = false
 
     [auth.proxy]
     enabled = true
