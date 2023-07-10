@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import os
 from uuid import uuid1
 
 import fastapi
@@ -24,6 +25,8 @@ from capellacollab.__main__ import app
 from capellacollab.core import database
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import migration
+
+os.environ["DEVELOPMENT_MODE"] = "1"
 
 
 @pytest.fixture(name="postgresql", scope="session")

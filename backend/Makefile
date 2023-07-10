@@ -17,6 +17,7 @@ SHELL = /bin/bash
 export MSYS_NO_PATHCONV=1
 export DISABLE_SESSION_TIMEOUT ?= 1
 export DISABLE_SESSION_COLLECTOR ?= 1
+export DEVELOPMENT_MODE ?= 1
 
 database:
 	docker start capella-collab-postgres || \
