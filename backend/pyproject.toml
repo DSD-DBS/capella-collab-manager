@@ -27,7 +27,7 @@ dependencies = [
   "alembic==1.10.4",
   "appdirs",
   "cachetools",
-  "fastapi>=0.89.1",
+  "fastapi<0.100.0",
   "kubernetes",
   "msal",
   "psycopg2-binary",
@@ -43,7 +43,7 @@ dependencies = [
   "openshift",
   "starlette-prometheus",
   "pytz",
-  "fastapi-pagination"
+  "fastapi-pagination",
 ]
 
 [project.urls]
@@ -77,13 +77,10 @@ line-length = 79
 target-version = ["py311"]
 
 [tool.coverage.run]
-source = [ "capellacollab" ]
+source = ["capellacollab"]
 branch = true
 command_line = "-m pytest"
-omit = [
-  "tests/*",
-  "capellacollab/alembic/*"
-]
+omit = ["tests/*", "capellacollab/alembic/*"]
 
 [tool.coverage.report]
 exclude_also = [
