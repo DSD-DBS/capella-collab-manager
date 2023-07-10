@@ -60,7 +60,7 @@ def exist_readonly_session_for_user_project_version(
     db: orm.Session,
     owner: users_models.DatabaseUser,
     project: projects_models.DatabaseProject,
-    version: tools_models.Version,
+    version: tools_models.DatabaseVersion,
 ) -> bool:
     return (
         db.execute(

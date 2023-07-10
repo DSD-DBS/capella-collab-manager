@@ -13,7 +13,7 @@ from capellacollab.users import models as users_models
 
 
 @pytest.fixture(name="test_tool_version")
-def fixture_test_tool_version(db: orm.Session) -> tools_models.Version:
+def fixture_test_tool_version(db: orm.Session) -> tools_models.DatabaseVersion:
     tool = tools_crud.create_tool_with_name(db, "Test")
     return tools_crud.create_version(db, tool.id, "test")
 
@@ -28,7 +28,7 @@ def fixture_admin_user(
 @pytest.fixture(name="t4c_server")
 def fixture_t4c_server(
     db: orm.Session,
-    test_tool_version: tools_models.Version,
+    test_tool_version: tools_models.DatabaseVersion,
 ) -> t4c_models.DatabaseT4CInstance:
     server = t4c_models.DatabaseT4CInstance(
         name="test server",

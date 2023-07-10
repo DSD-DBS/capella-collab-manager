@@ -29,7 +29,7 @@ def get_exisiting_tool_version(
     tool_id: int,
     version_id: int,
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.Version:
+) -> models.DatabaseVersion:
     if version := crud.get_version_by_version_and_tool_id(
         db, tool_id, version_id
     ):

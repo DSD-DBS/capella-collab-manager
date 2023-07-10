@@ -326,7 +326,7 @@ def start_persistent_jupyter_session(
     owner: str,
     token: str,
     tool: tools_models.DatabaseTool,
-    version: tools_models.Version,
+    version: tools_models.DatabaseVersion,
 ):
     docker_image = get_image_for_tool_version(db, version.id)
     jupyter_token = generate_password(length=64)
@@ -358,7 +358,7 @@ def start_persistent_guacamole_session(
     owner: str,
     token: str,
     tool: tools_models.DatabaseTool,
-    version: tools_models.Version,
+    version: tools_models.DatabaseVersion,
 ):
     warnings: list[core_models.Message] = []
     t4c_password = None
@@ -508,7 +508,7 @@ def create_database_session(
     session: dict[str, t.Any],
     owner: str,
     tool: tools_models.DatabaseTool,
-    version: tools_models.Version,
+    version: tools_models.DatabaseVersion,
     project: DatabaseProject | None,
     **kwargs,
 ) -> DatabaseSession:
@@ -535,7 +535,7 @@ def create_database_and_guacamole_session(
     owner: str,
     rdp_password: str,
     tool: tools_models.DatabaseTool,
-    version: tools_models.Version,
+    version: tools_models.DatabaseVersion,
     project: DatabaseProject | None,
     t4c_password: str | None = None,
 ) -> DatabaseSession:
@@ -648,7 +648,7 @@ def get_image_for_tool_version(db: orm.Session, version_id: int) -> str:
 
 
 def get_readonly_image_for_version(
-    version: tools_models.Version,
+    version: tools_models.DatabaseVersion,
 ) -> str | None:
     template = version.tool.readonly_docker_image_template
     return template.replace("$version", version.name) if template else None

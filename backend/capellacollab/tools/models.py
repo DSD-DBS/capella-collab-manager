@@ -27,7 +27,7 @@ class DatabaseTool(database.Base):
     docker_image_backup_template: orm.Mapped[str | None]
     readonly_docker_image_template: orm.Mapped[str | None]
 
-    versions: orm.Mapped[list[Version]] = orm.relationship(
+    versions: orm.Mapped[list[DatabaseVersion]] = orm.relationship(
         back_populates="tool"
     )
     natures: orm.Mapped[list[Nature]] = orm.relationship(back_populates="tool")
@@ -37,7 +37,7 @@ class DatabaseTool(database.Base):
     )
 
 
-class Version(database.Base):
+class DatabaseVersion(database.Base):
     __tablename__ = "versions"
     __table_args__ = (sa.UniqueConstraint("tool_id", "name"),)
 

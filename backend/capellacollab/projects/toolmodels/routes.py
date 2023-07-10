@@ -11,7 +11,7 @@ from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.users.models import ProjectUserRole
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import injectables as tools_injectables
-from capellacollab.tools.models import Nature, Version
+from capellacollab.tools import models as tools_models
 
 from . import crud
 from .backups.routes import router as router_backups
@@ -145,7 +145,9 @@ def delete_capella_model(
         crud.delete_model(db, model)
 
 
-def get_version_by_id_or_raise(db: orm.Session, version_id: int) -> Version:
+def get_version_by_id_or_raise(
+    db: orm.Session, version_id: int
+) -> tools_models.DatabaseVersion:
     if version := tools_crud.get_version_by_id(db, version_id):
         return version
 
@@ -155,7 +157,9 @@ def get_version_by_id_or_raise(db: orm.Session, version_id: int) -> Version:
     )
 
 
-def get_nature_by_id_or_raise(db: orm.Session, nature_id: int) -> Nature:
+def get_nature_by_id_or_raise(
+    db: orm.Session, nature_id: int
+) -> tools_models.Nature:
     if nature := tools_crud.get_nature_by_id(db, nature_id):
         return nature
 

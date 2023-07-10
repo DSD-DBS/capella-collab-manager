@@ -19,7 +19,7 @@ from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 
 if t.TYPE_CHECKING:
-    from capellacollab.tools.models import DatabaseTool, Version
+    from capellacollab.tools.models import DatabaseTool, DatabaseVersion
     from capellacollab.users.models import DatabaseUser
 
 
@@ -120,7 +120,7 @@ class DatabaseSession(database.Base):
     version_id: orm.Mapped[int] = orm.mapped_column(
         sa.ForeignKey("versions.id")
     )
-    version: orm.Mapped[Version] = orm.relationship()
+    version: orm.Mapped[DatabaseVersion] = orm.relationship()
 
     project_id: orm.Mapped[str | None] = orm.mapped_column(
         sa.ForeignKey("projects.id")

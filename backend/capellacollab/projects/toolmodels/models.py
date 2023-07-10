@@ -30,7 +30,11 @@ if t.TYPE_CHECKING:
     from capellacollab.projects.toolmodels.modelsources.t4c.models import (
         DatabaseT4CModel,
     )
-    from capellacollab.tools.models import DatabaseTool, Nature, Version
+    from capellacollab.tools.models import (
+        DatabaseTool,
+        DatabaseVersion,
+        Nature,
+    )
 
     from .restrictions.models import DatabaseToolModelRestrictions
 
@@ -82,7 +86,7 @@ class DatabaseCapellaModel(database.Base):
     version_id: orm.Mapped[int | None] = orm.mapped_column(
         sa.ForeignKey("versions.id")
     )
-    version: orm.Mapped[Version] = orm.relationship()
+    version: orm.Mapped[DatabaseVersion] = orm.relationship()
 
     nature_id: orm.Mapped[int | None] = orm.mapped_column(
         sa.ForeignKey("types.id")

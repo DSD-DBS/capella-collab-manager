@@ -16,7 +16,7 @@ from capellacollab.core import database
 from capellacollab.tools import models as tools_models
 
 if t.TYPE_CHECKING:
-    from capellacollab.tools.models import Version
+    from capellacollab.tools.models import DatabaseVersion
 
     from .repositories.models import DatabaseT4CRepository
 
@@ -73,7 +73,7 @@ class DatabaseT4CInstance(database.Base):
     version_id: orm.Mapped[int] = orm.mapped_column(
         sa.ForeignKey("versions.id")
     )
-    version: orm.Mapped[Version] = orm.relationship()
+    version: orm.Mapped[DatabaseVersion] = orm.relationship()
 
     repositories: orm.Mapped[list[DatabaseT4CRepository]] = orm.relationship(
         back_populates="instance", cascade="all, delete"

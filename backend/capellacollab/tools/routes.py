@@ -109,7 +109,7 @@ def delete_tool(
 @router.get("/{tool_id}/versions", response_model=list[models.ToolVersionBase])
 def get_tool_versions(
     tool_id: int, db: orm.Session = fastapi.Depends(database.get_db)
-) -> abc.Sequence[models.Version]:
+) -> abc.Sequence[models.DatabaseVersion]:
     return crud.get_versions_for_tool_id(db, tool_id)
 
 
@@ -128,7 +128,7 @@ def create_tool_version(
     body: models.CreateToolVersion,
     tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.Version:
+) -> models.DatabaseVersion:
     return crud.create_version(db, tool.id, body.name)
 
 
@@ -145,11 +145,11 @@ def create_tool_version(
 )
 def patch_tool_version(
     body: models.UpdateToolVersion,
-    version: models.Version = fastapi.Depends(
+    version: models.DatabaseVersion = fastapi.Depends(
         injectables.get_exisiting_tool_version
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.Version:
+) -> models.DatabaseVersion:
     return crud.update_version(db, version, body)
 
 
@@ -165,7 +165,7 @@ def patch_tool_version(
     ],
 )
 def delete_tool_version(
-    version: models.Version = fastapi.Depends(
+    version: models.DatabaseVersion = fastapi.Depends(
         injectables.get_exisiting_tool_version
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -285,7 +285,7 @@ def raise_when_tool_dependency_exist(
 
 
 def raise_when_tool_version_dependency_exist(
-    db: orm.Session, version: models.Version
+    db: orm.Session, version: models.DatabaseVersion
 ) -> None:
     """Search for tool version occurrences in project-models and T4C instances
 

@@ -80,7 +80,7 @@ def create_model(
     project: projects_model.DatabaseProject,
     post_model: models.PostCapellaModel,
     tool: tools_models.DatabaseTool,
-    version: tools_models.Version | None = None,
+    version: tools_models.DatabaseVersion | None = None,
     nature: tools_models.Nature | None = None,
 ) -> models.DatabaseCapellaModel:
     model = models.DatabaseCapellaModel(
@@ -111,7 +111,7 @@ def set_tool_for_model(
 def set_tool_details_for_model(
     db: orm.Session,
     model: models.DatabaseCapellaModel,
-    version: tools_models.Version,
+    version: tools_models.DatabaseVersion,
     nature: tools_models.Nature,
 ) -> models.DatabaseCapellaModel:
     model.version = version
@@ -124,7 +124,7 @@ def update_model(
     db: orm.Session,
     model: models.DatabaseCapellaModel,
     description: str | None,
-    version: tools_models.Version,
+    version: tools_models.DatabaseVersion,
     nature: tools_models.Nature,
 ) -> models.DatabaseCapellaModel:
     model.version = version
