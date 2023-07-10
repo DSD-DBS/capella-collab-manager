@@ -39,13 +39,17 @@ def update_project(
 
 
 def create_project(
-    db: orm.Session, name: str, description: str = ""
+    db: orm.Session,
+    name: str,
+    description: str = "",
+    visibility=models.Visibility.PRIVATE,
 ) -> models.DatabaseProject:
     project = models.DatabaseProject(
         name=name,
         slug=slugify.slugify(name),
         description=description,
         users=[],
+        visibility=visibility,
     )
 
     db.add(project)

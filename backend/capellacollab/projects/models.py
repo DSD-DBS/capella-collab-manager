@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import enum
 import typing as t
 
 import pydantic
@@ -82,6 +83,11 @@ class PostProjectRequest(pydantic.BaseModel):
     description: str | None
 
 
+class Visibility(enum.Enum):
+    PRIVATE = "private"
+    INTERNAL = "internal"
+
+
 class DatabaseProject(database.Base):
     __tablename__ = "projects"
 
@@ -92,6 +98,7 @@ class DatabaseProject(database.Base):
     name: orm.Mapped[str] = orm.mapped_column(unique=True, index=True)
     slug: orm.Mapped[str] = orm.mapped_column(unique=True, index=True)
     description: orm.Mapped[str | None]
+    visibility: orm.Mapped[Visibility]
 
     users: orm.Mapped[list[ProjectUserAssociation]] = orm.relationship(
         back_populates="project"
