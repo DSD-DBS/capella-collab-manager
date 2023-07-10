@@ -79,7 +79,7 @@ def create_model(
     db: orm.Session,
     project: projects_model.DatabaseProject,
     post_model: models.PostCapellaModel,
-    tool: tools_models.Tool,
+    tool: tools_models.DatabaseTool,
     version: tools_models.Version | None = None,
     nature: tools_models.Nature | None = None,
 ) -> models.DatabaseCapellaModel:
@@ -101,7 +101,7 @@ def create_model(
 def set_tool_for_model(
     db: orm.Session,
     model: models.DatabaseCapellaModel,
-    tool: tools_models.Tool,
+    tool: tools_models.DatabaseTool,
 ) -> models.DatabaseCapellaModel:
     model.tool = tool
     db.commit()

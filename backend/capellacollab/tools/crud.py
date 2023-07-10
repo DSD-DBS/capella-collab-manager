@@ -12,23 +12,31 @@ from capellacollab.tools.integrations import models as integrations_models
 from . import exceptions, models
 
 
-def get_tools(db: orm.Session) -> abc.Sequence[models.Tool]:
-    return db.execute(sa.select(models.Tool)).scalars().all()
+def get_tools(db: orm.Session) -> abc.Sequence[models.DatabaseTool]:
+    return db.execute(sa.select(models.DatabaseTool)).scalars().all()
 
 
-def get_tool_by_id(db: orm.Session, tool_id: int) -> models.Tool | None:
+def get_tool_by_id(
+    db: orm.Session, tool_id: int
+) -> models.DatabaseTool | None:
     return db.execute(
-        sa.select(models.Tool).where(models.Tool.id == tool_id)
+        sa.select(models.DatabaseTool).where(models.DatabaseTool.id == tool_id)
     ).scalar_one_or_none()
 
 
-def get_tool_by_name(db: orm.Session, tool_name: str) -> models.Tool | None:
+def get_tool_by_name(
+    db: orm.Session, tool_name: str
+) -> models.DatabaseTool | None:
     return db.execute(
-        sa.select(models.Tool).where(models.Tool.name == tool_name)
+        sa.select(models.DatabaseTool).where(
+            models.DatabaseTool.name == tool_name
+        )
     ).scalar_one_or_none()
 
 
-def create_tool(db: orm.Session, tool: models.Tool) -> models.Tool:
+def create_tool(
+    db: orm.Session, tool: models.DatabaseTool
+) -> models.DatabaseTool:
     tool.integrations = integrations_models.DatabaseToolIntegrations(
         pure_variants=False, t4c=False, jupyter=False
     )
@@ -37,23 +45,27 @@ def create_tool(db: orm.Session, tool: models.Tool) -> models.Tool:
     return tool
 
 
-def create_tool_with_name(db: orm.Session, tool_name: str) -> models.Tool:
+def create_tool_with_name(
+    db: orm.Session, tool_name: str
+) -> models.DatabaseTool:
     return create_tool(
-        db, tool=models.Tool(name=tool_name, docker_image_template="")
+        db, tool=models.DatabaseTool(name=tool_name, docker_image_template="")
     )
 
 
 def update_tool_name(
-    db: orm.Session, tool: models.Tool, tool_name: str
-) -> models.Tool:
+    db: orm.Session, tool: models.DatabaseTool, tool_name: str
+) -> models.DatabaseTool:
     tool.name = tool_name
     db.commit()
     return tool
 
 
 def update_tool_dockerimages(
-    db: orm.Session, tool: models.Tool, patch_tool: models.PatchToolDockerimage
-) -> models.Tool:
+    db: orm.Session,
+    tool: models.DatabaseTool,
+    patch_tool: models.PatchToolDockerimage,
+) -> models.DatabaseTool:
     if patch_tool.persistent:
         tool.docker_image_template = patch_tool.persistent
     if patch_tool.readonly:
@@ -64,7 +76,7 @@ def update_tool_dockerimages(
     return tool
 
 
-def delete_tool(db: orm.Session, tool: models.Tool) -> None:
+def delete_tool(db: orm.Session, tool: models.DatabaseTool) -> None:
     db.delete(tool)
     db.commit()
 
@@ -167,7 +179,7 @@ def get_nature_for_tool(
 
 
 def get_nature_by_name(
-    db: orm.Session, tool: models.Tool, name: str
+    db: orm.Session, tool: models.DatabaseTool, name: str
 ) -> models.Nature | None:
     return db.execute(
         sa.select(models.Nature)

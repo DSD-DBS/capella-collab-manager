@@ -17,7 +17,7 @@ if t.TYPE_CHECKING:
     from .integrations.models import DatabaseToolIntegrations
 
 
-class Tool(database.Base):
+class DatabaseTool(database.Base):
     __tablename__ = "tools"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
@@ -50,7 +50,9 @@ class Version(database.Base):
     tool_id: orm.Mapped[int | None] = orm.mapped_column(
         sa.ForeignKey("tools.id")
     )
-    tool: orm.Mapped[Tool] = orm.relationship(back_populates="versions")
+    tool: orm.Mapped[DatabaseTool] = orm.relationship(
+        back_populates="versions"
+    )
 
 
 class Nature(database.Base):
@@ -63,7 +65,7 @@ class Nature(database.Base):
     tool_id: orm.Mapped[int | None] = orm.mapped_column(
         sa.ForeignKey("tools.id")
     )
-    tool: orm.Mapped[Tool] = orm.relationship(back_populates="natures")
+    tool: orm.Mapped[DatabaseTool] = orm.relationship(back_populates="natures")
 
 
 class ToolBase(pydantic.BaseModel):
@@ -81,7 +83,7 @@ class ToolDockerimage(pydantic.BaseModel):
     backup: str | None
 
     @classmethod
-    def from_orm(cls, obj: Tool) -> ToolDockerimage:
+    def from_orm(cls, obj: DatabaseTool) -> ToolDockerimage:
         return ToolDockerimage(
             persistent=obj.docker_image_template,
             readonly=obj.readonly_docker_image_template,

@@ -32,14 +32,14 @@ router = fastapi.APIRouter(
 @router.get("", response_model=list[models.ToolBase])
 def get_tools(
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> abc.Sequence[models.Tool]:
+) -> abc.Sequence[models.DatabaseTool]:
     return crud.get_tools(db)
 
 
 @router.get("/{tool_id}", response_model=models.ToolBase)
 def get_tool_by_id(
     tool=fastapi.Depends(injectables.get_existing_tool),
-) -> models.Tool:
+) -> models.DatabaseTool:
     return tool
 
 
@@ -56,7 +56,7 @@ def get_tool_by_id(
 )
 def create_tool(
     body: models.CreateTool, db: orm.Session = fastapi.Depends(database.get_db)
-) -> models.Tool:
+) -> models.DatabaseTool:
     return crud.create_tool_with_name(db, body.name)
 
 
@@ -73,9 +73,9 @@ def create_tool(
 )
 def update_tool(
     body: models.CreateTool,
-    tool: models.Tool = fastapi.Depends(injectables.get_existing_tool),
+    tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.Tool:
+) -> models.DatabaseTool:
     return crud.update_tool_name(db, tool, body.name)
 
 
@@ -91,7 +91,7 @@ def update_tool(
     ],
 )
 def delete_tool(
-    tool: models.Tool = fastapi.Depends(injectables.get_existing_tool),
+    tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
     if tool.id == 1:
@@ -126,7 +126,7 @@ def get_tool_versions(
 )
 def create_tool_version(
     body: models.CreateToolVersion,
-    tool: models.Tool = fastapi.Depends(injectables.get_existing_tool),
+    tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.Version:
     return crud.create_version(db, tool.id, body.name)
@@ -233,8 +233,8 @@ def delete_tool_nature(
     ],
 )
 def get_dockerimages(
-    tool: models.Tool = fastapi.Depends(injectables.get_existing_tool),
-) -> models.Tool:
+    tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
+) -> models.DatabaseTool:
     return tool
 
 
@@ -251,9 +251,9 @@ def get_dockerimages(
 )
 def update_dockerimages(
     body: models.PatchToolDockerimage,
-    tool: models.Tool = fastapi.Depends(injectables.get_existing_tool),
+    tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.Tool:
+) -> models.DatabaseTool:
     return crud.update_tool_dockerimages(db, tool, body)
 
 
@@ -263,7 +263,7 @@ router.include_router(
 
 
 def raise_when_tool_dependency_exist(
-    db: orm.Session, tool: models.Tool
+    db: orm.Session, tool: models.DatabaseTool
 ) -> None:
     """Search for tool occurrences in project-models
 

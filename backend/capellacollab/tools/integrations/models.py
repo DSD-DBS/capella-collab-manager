@@ -12,7 +12,7 @@ from sqlalchemy import orm
 from capellacollab.core import database
 
 if t.TYPE_CHECKING:
-    from capellacollab.tools.models import Tool
+    from capellacollab.tools.models import DatabaseTool
 
 
 class ToolIntegrations(pydantic.BaseModel):
@@ -36,7 +36,9 @@ class DatabaseToolIntegrations(database.Base):
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
 
     tool_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("tools.id"))
-    tool: orm.Mapped[Tool] = orm.relationship(back_populates="integrations")
+    tool: orm.Mapped[DatabaseTool] = orm.relationship(
+        back_populates="integrations"
+    )
 
     t4c: orm.Mapped[bool] = orm.mapped_column(default=False)
     pure_variants: orm.Mapped[bool] = orm.mapped_column(default=False)

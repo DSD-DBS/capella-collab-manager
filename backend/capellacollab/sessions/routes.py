@@ -325,7 +325,7 @@ def start_persistent_jupyter_session(
     operator: KubernetesOperator,
     owner: str,
     token: str,
-    tool: tools_models.Tool,
+    tool: tools_models.DatabaseTool,
     version: tools_models.Version,
 ):
     docker_image = get_image_for_tool_version(db, version.id)
@@ -357,7 +357,7 @@ def start_persistent_guacamole_session(
     user: users_models.DatabaseUser,
     owner: str,
     token: str,
-    tool: tools_models.Tool,
+    tool: tools_models.DatabaseTool,
     version: tools_models.Version,
 ):
     warnings: list[core_models.Message] = []
@@ -457,7 +457,9 @@ def start_persistent_guacamole_session(
 
 
 def determine_pure_variants_configuration(
-    db: orm.Session, user: users_models.DatabaseUser, tool: tools_models.Tool
+    db: orm.Session,
+    user: users_models.DatabaseUser,
+    tool: tools_models.DatabaseTool,
 ) -> tuple[str | None, str | None, list[core_models.Message]]:
     warnings: list[core_models.Message] = []
     if not tool.integrations.pure_variants:
@@ -505,7 +507,7 @@ def create_database_session(
     type: models.WorkspaceType,
     session: dict[str, t.Any],
     owner: str,
-    tool: tools_models.Tool,
+    tool: tools_models.DatabaseTool,
     version: tools_models.Version,
     project: DatabaseProject | None,
     **kwargs,
@@ -532,7 +534,7 @@ def create_database_and_guacamole_session(
     session: dict[str, t.Any],
     owner: str,
     rdp_password: str,
-    tool: tools_models.Tool,
+    tool: tools_models.DatabaseTool,
     version: tools_models.Version,
     project: DatabaseProject | None,
     t4c_password: str | None = None,

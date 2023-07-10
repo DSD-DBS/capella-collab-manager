@@ -12,7 +12,7 @@ from . import crud, models
 
 def get_existing_tool(
     tool_id: int, db: orm.Session = fastapi.Depends(database.get_db)
-) -> models.Tool:
+) -> models.DatabaseTool:
     if tool := crud.get_tool_by_id(db, tool_id):
         return tool
 

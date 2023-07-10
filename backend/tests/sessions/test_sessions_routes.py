@@ -32,6 +32,7 @@ from capellacollab.sessions.crud import (
     get_sessions_for_user,
 )
 from capellacollab.sessions.operators import get_operator
+from capellacollab.tools import models as tools_models
 from capellacollab.tools.crud import (
     create_tool,
     create_tool_with_name,
@@ -41,7 +42,6 @@ from capellacollab.tools.crud import (
 )
 from capellacollab.tools.integrations.crud import update_integrations
 from capellacollab.tools.integrations.models import PatchToolIntegrations
-from capellacollab.tools.models import Tool, Version
 from capellacollab.users.crud import create_user
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import Role
@@ -404,7 +404,7 @@ def test_create_persistent_session_as_user(
 def test_create_persistent_jupyter_session(client, db, user, kubernetes):
     jupyter = create_tool(
         db,
-        Tool(
+        tools_models.DatabaseTool(
             name="jupyter",
             docker_image_template="jupyter/minimal-notebook:$version",
         ),
