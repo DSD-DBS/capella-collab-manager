@@ -17,7 +17,7 @@ from capellacollab.users import models as users_models
 def test_create_t4c_instance(
     client: testclient.TestClient,
     db: orm.Session,
-    test_tool_version: tools_models.Version,
+    test_tool_version: tools_models.DatabaseVersion,
 ):
     response = client.post(
         "/api/v1/settings/modelsources/t4c",

@@ -26,7 +26,7 @@ from capellacollab.core import credentials
 def fixture_capella_tool_version(
     db: orm.Session,
     request: pytest.FixtureRequest,
-) -> tools_models.Version:
+) -> tools_models.DatabaseVersion:
     return tools_crud.get_version_by_tool_id_version_name(
         db, tools_crud.get_tool_by_name(db, "Capella").id, request.param
     )
@@ -36,7 +36,7 @@ def fixture_capella_tool_version(
 def fixture_capella_model(
     db: orm.Session,
     project: project_models.DatabaseProject,
-    capella_tool_version: tools_models.Version,
+    capella_tool_version: tools_models.DatabaseVersion,
 ) -> toolmodels_models.DatabaseCapellaModel:
     model = toolmodels_models.PostCapellaModel(
         name="test", description="test", tool_id=capella_tool_version.tool.id

@@ -325,8 +325,8 @@ def start_persistent_jupyter_session(
     operator: KubernetesOperator,
     owner: str,
     token: str,
-    tool: tools_models.Tool,
-    version: tools_models.Version,
+    tool: tools_models.DatabaseTool,
+    version: tools_models.DatabaseVersion,
 ):
     docker_image = get_image_for_tool_version(db, version.id)
     jupyter_token = generate_password(length=64)
@@ -357,8 +357,8 @@ def start_persistent_guacamole_session(
     user: users_models.DatabaseUser,
     owner: str,
     token: str,
-    tool: tools_models.Tool,
-    version: tools_models.Version,
+    tool: tools_models.DatabaseTool,
+    version: tools_models.DatabaseVersion,
 ):
     warnings: list[core_models.Message] = []
     t4c_password = None
@@ -457,7 +457,9 @@ def start_persistent_guacamole_session(
 
 
 def determine_pure_variants_configuration(
-    db: orm.Session, user: users_models.DatabaseUser, tool: tools_models.Tool
+    db: orm.Session,
+    user: users_models.DatabaseUser,
+    tool: tools_models.DatabaseTool,
 ) -> tuple[str | None, str | None, list[core_models.Message]]:
     warnings: list[core_models.Message] = []
     if not tool.integrations.pure_variants:
@@ -505,8 +507,8 @@ def create_database_session(
     type: models.WorkspaceType,
     session: dict[str, t.Any],
     owner: str,
-    tool: tools_models.Tool,
-    version: tools_models.Version,
+    tool: tools_models.DatabaseTool,
+    version: tools_models.DatabaseVersion,
     project: DatabaseProject | None,
     **kwargs,
 ) -> DatabaseSession:
@@ -532,8 +534,8 @@ def create_database_and_guacamole_session(
     session: dict[str, t.Any],
     owner: str,
     rdp_password: str,
-    tool: tools_models.Tool,
-    version: tools_models.Version,
+    tool: tools_models.DatabaseTool,
+    version: tools_models.DatabaseVersion,
     project: DatabaseProject | None,
     t4c_password: str | None = None,
 ) -> DatabaseSession:
@@ -646,7 +648,7 @@ def get_image_for_tool_version(db: orm.Session, version_id: int) -> str:
 
 
 def get_readonly_image_for_version(
-    version: tools_models.Version,
+    version: tools_models.DatabaseVersion,
 ) -> str | None:
     template = version.tool.readonly_docker_image_template
     return template.replace("$version", version.name) if template else None

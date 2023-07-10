@@ -12,7 +12,7 @@ from . import crud, models
 
 def get_existing_tool(
     tool_id: int, db: orm.Session = fastapi.Depends(database.get_db)
-) -> models.Tool:
+) -> models.DatabaseTool:
     if tool := crud.get_tool_by_id(db, tool_id):
         return tool
 
@@ -29,7 +29,7 @@ def get_exisiting_tool_version(
     tool_id: int,
     version_id: int,
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.Version:
+) -> models.DatabaseVersion:
     if version := crud.get_version_by_version_and_tool_id(
         db, tool_id, version_id
     ):
@@ -48,7 +48,7 @@ def get_exisiting_tool_nature(
     tool_id: int,
     nature_id: int,
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.Nature:
+) -> models.DatabaseNature:
     if nature := crud.get_nature_for_tool(db, tool_id, nature_id):
         return nature
 

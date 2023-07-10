@@ -95,14 +95,14 @@ def create_tools(db):
     LOGGER.info("Initialized tools")
     registry = config["docker"]["registry"]
     if os.getenv("DEVELOPMENT_MODE", "").lower() in ("1", "true", "t"):
-        capella = tools_models.Tool(
+        capella = tools_models.DatabaseTool(
             name="Capella",
             docker_image_template=f"{registry}/capella/remote:$version-latest",
             docker_image_backup_template=f"{registry}/t4c/client/base:$version-latest",
             readonly_docker_image_template=f"{registry}/capella/readonly:$version-latest",
         )
 
-        papyrus = tools_models.Tool(
+        papyrus = tools_models.DatabaseTool(
             name="Papyrus",
             docker_image_template=f"{registry}/papyrus/client/remote:$version-prod",
         )
@@ -117,7 +117,7 @@ def create_tools(db):
 
     else:
         # Use public Github images per default
-        capella = tools_models.Tool(
+        capella = tools_models.DatabaseTool(
             name="Capella",
             docker_image_template="ghcr.io/dsd-dbs/capella-dockerimages/capella/remote:$version-selected-dropins-main",
             docker_image_backup_template="",
@@ -126,7 +126,7 @@ def create_tools(db):
 
     tools_crud.create_tool(db, capella)
 
-    jupyter = tools_models.Tool(
+    jupyter = tools_models.DatabaseTool(
         name="Jupyter",
         docker_image_template=f"{registry}/jupyter-notebook:$version",
     )
