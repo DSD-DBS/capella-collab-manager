@@ -9,6 +9,7 @@ from fastapi import status
 from capellacollab.core import database
 from capellacollab.core.authentication import jwt_bearer
 from capellacollab.projects import crud as projects_crud
+from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.users import crud as users_crud
@@ -98,6 +99,9 @@ class ProjectRoleVerification:
                     },
                 )
             return False
+
+        if project.visibility == projects_models.Visibility.INTERNAL:
+            return True
 
         project_user = projects_users_crud.get_project_user_association(
             db, project, user

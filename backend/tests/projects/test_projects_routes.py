@@ -8,6 +8,8 @@ from sqlalchemy import orm
 
 import capellacollab.projects.crud as projects_crud
 import capellacollab.projects.models as projects_models
+import capellacollab.projects.users.crud as projects_users_crud
+import capellacollab.projects.users.models as projects_users_models
 import capellacollab.users.crud as users_crud
 import capellacollab.users.models as users_models
 
@@ -66,6 +68,75 @@ def test_get_projects_as_admin(
         "visibility": "internal",
         "users": {"leads": 0, "contributors": 0, "subscribers": 0},
     } in response.json()
+
+
+def test_get_internal_projects_as_user(
+    client: testclient.TestClient, db: orm.Session, executor_name: str
+):
+    users_crud.create_user(db, executor_name, users_models.Role.USER)
+
+    response = client.get("/api/v1/projects")
+
+    assert response.status_code == 200
+    assert {
+        "name": "default",
+        "slug": "default",
+        "description": "",
+        "visibility": "internal",
+        "users": {"leads": 0, "contributors": 0, "subscribers": 0},
+    } in response.json()
+
+
+def test_get_internal_projects_as_user_without_duplicates(
+    client: testclient.TestClient, db: orm.Session, executor_name: str
+):
+    user = users_crud.create_user(db, executor_name, users_models.Role.USER)
+    project = projects_crud.create_project(
+        db, "test project", visibility=projects_models.Visibility.INTERNAL
+    )
+    projects_users_crud.add_user_to_project(
+        db,
+        project,
+        user,
+        projects_users_models.ProjectUserRole.USER,
+        projects_users_models.ProjectUserPermission.WRITE,
+    )
+
+    response = client.get("/api/v1/projects")
+
+    assert response.status_code == 200
+    assert {
+        "name": "default",
+        "slug": "default",
+        "description": "",
+        "visibility": "internal",
+        "users": {"leads": 0, "contributors": 0, "subscribers": 0},
+    } in response.json()
+    assert {
+        "name": "test project",
+        "slug": "test-project",
+        "description": "",
+        "visibility": "internal",
+        "users": {"leads": 0, "contributors": 1, "subscribers": 0},
+    } in response.json()
+    assert len(response.json()) == 2
+
+
+def test_get_internal_default_project_as_user(
+    client: testclient.TestClient, db: orm.Session, executor_name: str
+):
+    users_crud.create_user(db, executor_name, users_models.Role.USER)
+
+    response = client.get("/api/v1/projects/default")
+
+    assert response.status_code == 200
+    assert {
+        "name": "default",
+        "slug": "default",
+        "description": "",
+        "visibility": "internal",
+        "users": {"leads": 0, "contributors": 0, "subscribers": 0},
+    } == response.json()
 
 
 def test_create_private_project_as_admin(

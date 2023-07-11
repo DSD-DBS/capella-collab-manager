@@ -14,6 +14,20 @@ def get_projects(db: orm.Session) -> abc.Sequence[models.DatabaseProject]:
     return db.execute(sa.select(models.DatabaseProject)).scalars().all()
 
 
+def get_internal_projects(
+    db: orm.Session,
+) -> abc.Sequence[models.DatabaseProject]:
+    return (
+        db.execute(
+            sa.select(models.DatabaseProject).where(
+                models.DatabaseProject.visibility == models.Visibility.INTERNAL
+            )
+        )
+        .scalars()
+        .all()
+    )
+
+
 def get_project_by_slug(
     db: orm.Session, slug: str
 ) -> models.DatabaseProject | None:
