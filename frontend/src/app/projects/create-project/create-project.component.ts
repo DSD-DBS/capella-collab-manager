@@ -34,6 +34,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
       asyncValidators: this.projectService.asyncSlugValidator(),
     }),
     description: new FormControl(''),
+    visibility: new FormControl('private'),
   });
 
   ngOnInit(): void {
@@ -50,7 +51,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
         .createProject({
           name: this.form.value.name!,
           description: this.form.value.description!,
-          visibility: 'private',
+          visibility: this.form.value.visibility!,
         })
         .subscribe((project) => {
           this.toastService.showSuccess(
