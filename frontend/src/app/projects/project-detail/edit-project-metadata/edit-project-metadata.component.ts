@@ -37,6 +37,7 @@ export class EditProjectMetadataComponent implements OnInit, OnChanges {
   form = new FormGroup({
     name: new FormControl<string>('', Validators.required),
     description: new FormControl<string>(''),
+    visibility: new FormControl(''),
   });
 
   ngOnInit(): void {

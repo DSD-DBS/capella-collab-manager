@@ -39,6 +39,21 @@
           ></textarea>
         </mat-form-field>
       </fieldset>
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Visibility</mat-label>
+          <mat-select matInput formControlName="visibility" required>
+            <mat-option value="internal">
+              Internal - all logged in users can see the project and have read
+              access on its models.
+            </mat-option>
+            <mat-option value="private">
+              Private - users need to be explicitly granted access to see the
+              project.
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </fieldset>
     </form>
     <div class="flex justify-between">
       <span

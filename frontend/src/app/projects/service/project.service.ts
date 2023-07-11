@@ -114,6 +114,7 @@ export type UserMetadata = {
 export type PatchProject = {
   name?: string;
   description?: string;
+  visibility?: string;
 };
 
 export type Project = Required<PatchProject> & {
