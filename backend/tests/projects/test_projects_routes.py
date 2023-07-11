@@ -18,7 +18,7 @@ def test_get_projects_not_authenticated(client: testclient.TestClient):
     assert response.json() == {"detail": "Not authenticated"}
 
 
-def test_get_projects_as_user(
+def test_get_projects_as_user_only_shows_default_internal_project(
     client: testclient.TestClient, db: orm.Session, executor_name: str
 ):
     users_crud.create_user(db, executor_name, users_models.Role.USER)
@@ -26,7 +26,13 @@ def test_get_projects_as_user(
     response = client.get("/api/v1/projects")
 
     assert response.status_code == 200
-    assert response.json() == []
+    assert {
+        "name": "default",
+        "slug": "default",
+        "description": "",
+        "visibility": "internal",
+        "users": {"leads": 0, "contributors": 0, "subscribers": 0},
+    } in response.json()
 
 
 @pytest.mark.usefixtures("project_manager")
@@ -36,15 +42,13 @@ def test_get_projects_as_user_with_project(
     response = client.get("/api/v1/projects")
 
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "name": project.name,
-            "slug": project.slug,
-            "description": "",
-            "visibility": "private",
-            "users": {"leads": 1, "contributors": 0, "subscribers": 0},
-        }
-    ]
+    assert {
+        "name": project.name,
+        "slug": project.slug,
+        "description": "",
+        "visibility": "private",
+        "users": {"leads": 1, "contributors": 0, "subscribers": 0},
+    } in response.json()
 
 
 def test_get_projects_as_admin(
@@ -59,7 +63,7 @@ def test_get_projects_as_admin(
         "name": "default",
         "slug": "default",
         "description": "",
-        "visibility": "private",
+        "visibility": "internal",
         "users": {"leads": 0, "contributors": 0, "subscribers": 0},
     } in response.json()
 

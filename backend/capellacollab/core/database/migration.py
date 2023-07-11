@@ -14,6 +14,7 @@ from sqlalchemy import orm
 from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.projects import crud as projects_crud
+from capellacollab.projects import models as project_models
 from capellacollab.projects.toolmodels import crud as toolmodels_crud
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.modelsources.git import crud as git_crud
@@ -88,7 +89,12 @@ def initialize_admin_user(db):
 
 def initialize_default_project(db):
     LOGGER.info("Initialized project 'default'")
-    projects_crud.create_project(db=db, name="default", description="")
+    projects_crud.create_project(
+        db=db,
+        name="default",
+        description="",
+        visibility=project_models.Visibility.INTERNAL,
+    )
 
 
 def create_tools(db):
