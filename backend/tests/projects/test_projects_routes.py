@@ -6,6 +6,7 @@ import pytest
 from fastapi import testclient
 from sqlalchemy import orm
 
+import capellacollab.projects.crud as projects_crud
 import capellacollab.projects.models as projects_models
 import capellacollab.users.crud as users_crud
 import capellacollab.users.models as users_models
@@ -59,3 +60,50 @@ def test_get_projects_as_admin(
         "description": "",
         "users": {"leads": 0, "contributors": 0, "subscribers": 0},
     } in response.json()
+
+
+def test_create_projects_as_admin(
+    client: testclient.TestClient, db: orm.Session, executor_name: str
+):
+    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+
+    response = client.post(
+        "/api/v1/projects/",
+        json={
+            "name": "test project",
+            "description": "",
+        },
+    )
+
+    assert response.status_code == 200
+    print(response.json())
+    assert {
+        "name": "test project",
+        "slug": "test-project",
+        "description": "",
+        "users": {"leads": 0, "contributors": 0, "subscribers": 0},
+    } == response.json()
+
+
+def test_update_projects_as_admin(
+    client: testclient.TestClient, db: orm.Session, executor_name: str
+):
+    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    projects_crud.create_project(db, "new project")
+
+    response = client.patch(
+        "/api/v1/projects/new-project",
+        json={
+            "name": "test project",
+            "description": "",
+        },
+    )
+
+    assert response.status_code == 200
+    print(response.json())
+    assert {
+        "name": "test project",
+        "slug": "test-project",
+        "description": "",
+        "users": {"leads": 0, "contributors": 0, "subscribers": 0},
+    } == response.json()
