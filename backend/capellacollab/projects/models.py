@@ -24,10 +24,16 @@ class UserMetadata(pydantic.BaseModel):
     subscribers: int
 
 
+class Visibility(enum.Enum):
+    PRIVATE = "private"
+    INTERNAL = "internal"
+
+
 class Project(pydantic.BaseModel):
     name: str
     slug: str
     description: str | None
+    visibility: Visibility
     users: UserMetadata
 
     @pydantic.validator("users", pre=True)
@@ -76,16 +82,13 @@ class Project(pydantic.BaseModel):
 class PatchProject(pydantic.BaseModel):
     name: str | None
     description: str | None
+    visibility: Visibility | None
 
 
 class PostProjectRequest(pydantic.BaseModel):
     name: str
     description: str | None
-
-
-class Visibility(enum.Enum):
-    PRIVATE = "private"
-    INTERNAL = "internal"
+    visibility: Visibility = Visibility.PRIVATE
 
 
 class DatabaseProject(database.Base):

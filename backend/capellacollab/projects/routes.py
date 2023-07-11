@@ -133,7 +133,10 @@ def create_project(
         )
 
     project = crud.create_project(
-        db, post_project.name, post_project.description
+        db,
+        post_project.name,
+        post_project.description,
+        post_project.visibility,
     )
 
     if user.role != users_models.Role.ADMIN:

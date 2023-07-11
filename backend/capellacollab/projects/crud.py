@@ -34,6 +34,8 @@ def update_project(
         project.slug = slugify.slugify(patch_project.name)
     if patch_project.description:
         project.description = patch_project.description
+    if patch_project.visibility:
+        project.visibility = patch_project.visibility
     db.commit()
     return project
 
@@ -42,7 +44,7 @@ def create_project(
     db: orm.Session,
     name: str,
     description: str = "",
-    visibility=models.Visibility.PRIVATE,
+    visibility: models.Visibility = models.Visibility.PRIVATE,
 ) -> models.DatabaseProject:
     project = models.DatabaseProject(
         name=name,

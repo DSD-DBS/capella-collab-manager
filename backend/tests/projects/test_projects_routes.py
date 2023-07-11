@@ -41,6 +41,7 @@ def test_get_projects_as_user_with_project(
             "name": project.name,
             "slug": project.slug,
             "description": "",
+            "visibility": "private",
             "users": {"leads": 1, "contributors": 0, "subscribers": 0},
         }
     ]
@@ -58,11 +59,12 @@ def test_get_projects_as_admin(
         "name": "default",
         "slug": "default",
         "description": "",
+        "visibility": "private",
         "users": {"leads": 0, "contributors": 0, "subscribers": 0},
     } in response.json()
 
 
-def test_create_projects_as_admin(
+def test_create_private_project_as_admin(
     client: testclient.TestClient, db: orm.Session, executor_name: str
 ):
     users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
@@ -81,11 +83,37 @@ def test_create_projects_as_admin(
         "name": "test project",
         "slug": "test-project",
         "description": "",
+        "visibility": "private",
         "users": {"leads": 0, "contributors": 0, "subscribers": 0},
     } == response.json()
 
 
-def test_update_projects_as_admin(
+def test_create_internal_project_as_admin(
+    client: testclient.TestClient, db: orm.Session, executor_name: str
+):
+    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+
+    response = client.post(
+        "/api/v1/projects/",
+        json={
+            "name": "test project",
+            "description": "",
+            "visibility": "internal",
+        },
+    )
+
+    assert response.status_code == 200
+    print(response.json())
+    assert {
+        "name": "test project",
+        "slug": "test-project",
+        "description": "",
+        "visibility": "internal",
+        "users": {"leads": 0, "contributors": 0, "subscribers": 0},
+    } == response.json()
+
+
+def test_update_project_as_admin(
     client: testclient.TestClient, db: orm.Session, executor_name: str
 ):
     users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
@@ -96,6 +124,7 @@ def test_update_projects_as_admin(
         json={
             "name": "test project",
             "description": "",
+            "visibility": "internal",
         },
     )
 
@@ -105,5 +134,6 @@ def test_update_projects_as_admin(
         "name": "test project",
         "slug": "test-project",
         "description": "",
+        "visibility": "internal",
         "users": {"leads": 0, "contributors": 0, "subscribers": 0},
     } == response.json()
