@@ -15,6 +15,7 @@ import {
 import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
 import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatStepperModule } from '@angular/material/stepper';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -32,6 +33,7 @@ import {
   PatchProject,
   Project,
   ProjectService,
+  ProjectVisibility,
 } from '../service/project.service';
 import { CreateProjectComponent } from './create-project.component';
 
@@ -40,6 +42,7 @@ const mockProjects: Project[] = [
     name: 'existing-test-project-name',
     slug: 'existing-test-project-name',
     description: 'existing-test-project-description',
+    visibility: 'private',
     users: {
       leads: 1,
       contributors: 0,
@@ -81,6 +84,7 @@ describe('CreateProjectComponent', () => {
         name: project.name!,
         description: project.description!,
         slug: project.name!,
+        visibility: project.visibility!,
         users: { leads: 1, contributors: 0, subscribers: 0 },
       };
       this._project.next(projectToCreate);
@@ -104,6 +108,12 @@ describe('CreateProjectComponent', () => {
         );
       };
     },
+    getProjectVisibilityDescription(visibility: ProjectVisibility): string {
+      return ProjectVisibility[visibility];
+    },
+    getAvailableVisibilities(): ProjectVisibility[] {
+      return Object.keys(ProjectVisibility) as ProjectVisibility[];
+    },
   };
 
   beforeEach(async () => {
@@ -120,6 +130,7 @@ describe('CreateProjectComponent', () => {
         MatInputModule,
         MatStepperModule,
         MatCardModule,
+        MatRadioModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
       ],
@@ -160,6 +171,7 @@ describe('CreateProjectComponent', () => {
     expect(fakeProjectService.createProject).toHaveBeenCalledOnceWith({
       name: testProjectName,
       description: '',
+      visibility: 'private',
     });
     expect(fakeToastService.showSuccess).toHaveBeenCalledTimes(1);
   });
@@ -177,6 +189,7 @@ describe('CreateProjectComponent', () => {
     expect(fakeProjectService.createProject).toHaveBeenCalledOnceWith({
       name: testProjectName,
       description: testProjectDescription,
+      visibility: 'private',
     });
     expect(fakeToastService.showSuccess).toHaveBeenCalledTimes(1);
   });
