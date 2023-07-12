@@ -40,6 +40,7 @@ const mockProjects: Project[] = [
     name: 'existing-test-project-name',
     slug: 'existing-test-project-name',
     description: 'existing-test-project-description',
+    visibility: 'private',
     users: {
       leads: 1,
       contributors: 0,
@@ -81,6 +82,7 @@ describe('CreateProjectComponent', () => {
         name: project.name!,
         description: project.description!,
         slug: project.name!,
+        visibility: project.visibility!,
         users: { leads: 1, contributors: 0, subscribers: 0 },
       };
       this._project.next(projectToCreate);
