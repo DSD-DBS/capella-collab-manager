@@ -26,12 +26,12 @@ import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-m
 import { MatLegacyPaginatorModule as MatPaginatorModule } from '@angular/material/legacy-paginator';
 import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar';
 import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
-import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio';
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
 import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle';
 import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';

@@ -38,19 +38,28 @@
               </mat-form-field>
             </fieldset>
             <fieldset>
-              <mat-form-field appearance="fill">
-                <mat-label>Visibility</mat-label>
-                <mat-select matInput formControlName="visibility" required>
-                  <mat-option value="internal">
-                    Internal - all logged in users can see the project and have
-                    read access on its models.
-                  </mat-option>
-                  <mat-option value="private">
-                    Private - users need to be explicitly granted access to see
-                    the project.
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <fieldset>
+                <div class="flex flex-col">
+                  <span>Project visibility:</span>
+                  <mat-radio-group
+                    formControlName="visibility"
+                    class="flex flex-col"
+                  >
+                    <mat-radio-button
+                      *ngFor="
+                        let visibility of projectService.getAvailableVisibilities()
+                      "
+                      [value]="visibility"
+                    >
+                      {{
+                        projectService.getProjectVisibilityDescription(
+                          visibility
+                        )
+                      }}
+                    </mat-radio-button>
+                  </mat-radio-group>
+                </div>
+              </fieldset>
             </fieldset>
             <div class="flex justify-between">
               <a
