@@ -123,20 +123,6 @@ Run the following steps:
 
    _Hint_: You can run `python -m capellacollab.config.diff` after each update to check if your config is up to date.
 
-1. This step is only **necessary, if you use the self signed certificate** option for the oauth mock.
-
-   If you don't have the certificate in your local certificate store, please execute the following command:
-
-   ```sh
-   export REQUESTS_CA_BUNDLE=$(pwd)/../certs/localhost.crt
-   ```
-
-   You need to adjust the option `authentication.oauth.endpoints.wellKnown` in the `config.yaml` to the following value:
-
-   ```text
-   https://localhost:8083/default/.well-known/openid-configuration
-   ```
-
 1. To begin the development a PostgreSQL database is required. To run the database and
    start the backend run:
 
