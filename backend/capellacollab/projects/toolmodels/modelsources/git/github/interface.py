@@ -130,9 +130,9 @@ def get_artifact_from_job(
         timeout=2,
     )
     response.raise_for_status()
-    artifact_id = response.json()["artifacts"]["id"]
+    artifact_id = response.json()["artifacts"][0]["id"]
 
-    if response.json()["artifacts"]["expired"] == "true":
+    if response.json()["artifacts"][0]["expired"] == "true":
         raise fastapi.HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
