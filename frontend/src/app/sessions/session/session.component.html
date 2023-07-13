@@ -6,7 +6,7 @@
 <div class="flex flex-col" *ngIf="!selectedSessions.length">
   <span
     >Please select the sessions that you'd like to open in the session
-    viewer</span
+    viewer:</span
   >
   <mat-checkbox [value]="session.id" *ngFor="let session of cachedSessions"
     >{{ session.id }} ({{ session.version?.tool?.name }}
@@ -15,19 +15,37 @@
   <button mat-button (click)="selectSessions()">Open session viewer</button>
 </div>
 <div class="w-full height" *ngIf="selectedSessions.length" class="flex">
-  <div class="w-full height" *ngFor="let session of selectedSessions" cdkDrag>
+  <div
+    class="w-full height active:z-30"
+    [ngClass]="session.focused ? 'z-20' : 'z-10'"
+    (click)="focusSession(session)"
+    *ngFor="let session of selectedSessions"
+    cdkDrag
+  >
     <div
-      class="flex gap-2 bg-slate-200 rounded-t p-2 cursor-grab active:cursor-grabbing"
+      class="flex gap-2 rounded-t p-2 cursor-grab active:cursor-grabbing items-center justify-between"
+      [ngClass]="session.focused ? 'bg-slate-100' : 'bg-slate-300'"
       cdkDragHandle
     >
-      <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
-        <path
-          d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
-        ></path>
-        <path d="M0 0h24v24H0z" fill="none"></path>
-      </svg>
-      {{ session.version?.tool?.name }} {{ session.version?.name }}
+      <div class="flex items-center gap-2">
+        <mat-icon>control_camera</mat-icon>
+
+        {{ session.version?.tool?.name }} {{ session.version?.name }}
+      </div>
+      <div *ngIf="session.focused" class="flex items-center gap-2">
+        <span>Focused</span><mat-icon>phonelink</mat-icon>
+      </div>
+      <div *ngIf="!session.focused" class="flex items-center gap-2">
+        <span>Not focused</span>
+        <mat-icon>phonelink_off</mat-icon>
+      </div>
     </div>
-    <iframe class="w-full height" [src]="session.safeResourceURL"> </iframe>
+    <iframe
+      [id]="'session-' + session.id"
+      class="w-full height"
+      [src]="session.safeResourceURL"
+      allow="clipboard-read; clipboard-write"
+    >
+    </iframe>
   </div>
 </div>

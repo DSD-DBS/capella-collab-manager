@@ -25,6 +25,7 @@ export interface Session {
   t4c_password: string;
   download_in_progress: boolean;
   safeResourceURL?: SafeResourceUrl;
+  focused: boolean;
 }
 
 export interface ReadonlySession extends Session {
