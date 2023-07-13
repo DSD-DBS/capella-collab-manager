@@ -6,6 +6,7 @@ import base64
 
 import pytest
 import responses
+from aioresponses import aioresponses
 from fastapi import testclient
 from sqlalchemy import orm
 
@@ -47,11 +48,13 @@ def fixture_gitlab_instance(
 
 @pytest.fixture()
 def mock_gitlab_rest_api():
-    responses.get(
-        "https://example.com/api/v4/projects/test%2Fproject",
-        status=200,
-        json={"id": "10000"},
-    )
+    with aioresponses() as mocked:
+        mocked.get(
+            "https://example.com/api/v4/projects/test%2Fproject",
+            status=200,
+            payload={"id": "10000"},
+        )
+        yield mocked
 
 
 @pytest.fixture
@@ -155,9 +158,7 @@ def test_get_model_badge_not_found(
     )
 
     assert response.status_code == 404
-    assert (
-        response.json()["detail"]["err_code"] == "COMPLEXITY_BADGE_NOT_FOUND"
-    )
+    assert response.json()["detail"]["err_code"] == "FILE_NOT_FOUND"
 
 
 @responses.activate

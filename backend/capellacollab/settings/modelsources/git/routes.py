@@ -104,11 +104,11 @@ def delete_git_instances(
 # and if so, use it instead of POST
 # (https://www.ietf.org/archive/id/draft-ietf-httpbis-safe-method-w-body-02.html)
 @router.post("/revisions", response_model=models.GetRevisionsResponseModel)
-def get_revisions(
+async def get_revisions(
     body: models.GetRevisionModel,
 ) -> models.GetRevisionsResponseModel:
     url = body.url
     username = body.credentials.username
     password = body.credentials.password
 
-    return settings_git_core.get_remote_refs(url, username, password)
+    return await settings_git_core.get_remote_refs(url, username, password)

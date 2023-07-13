@@ -11,7 +11,7 @@ from ... import models as toolmodels_models
 from . import crud, models
 
 
-def check_primary_git_repository(
+async def check_primary_git_repository(
     db: orm.Session,
     model: toolmodels_models.DatabaseCapellaModel,
     log: logging.LoggerAdapter,
@@ -21,7 +21,7 @@ def check_primary_git_repository(
         return models.GitModelStatus.UNSET
 
     try:
-        git_core.get_remote_refs(
+        await git_core.get_remote_refs(
             primary_repo.path,
             primary_repo.username,
             primary_repo.password,

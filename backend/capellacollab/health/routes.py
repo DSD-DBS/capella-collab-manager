@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import asyncio
 import logging
 
 import fastapi
@@ -46,31 +47,51 @@ def general_status(db: orm.Session = fastapi.Depends(database.get_db)):
         )
     ],
 )
-def model_status(
+async def model_status(
     db: orm.Session = fastapi.Depends(database.get_db),
     logger: logging.LoggerAdapter = fastapi.Depends(
         core_logging.get_request_logger
     ),
 ):
+    toolmodels = toolmodels_crud.get_models(db)
+    tasks_per_model = {
+        model.id: {
+            "primary_git_repository_status": asyncio.create_task(
+                git_validation.check_primary_git_repository(db, model, logger)
+            ),
+            "model_badge_status": asyncio.create_task(
+                modelbadge_validation.check_model_badge_health(
+                    db, model, logger
+                )
+            ),
+            "diagram_cache_status": asyncio.create_task(
+                diagrams_validation.check_diagram_cache_health(
+                    db, model, logger
+                )
+            ),
+        }
+        for model in toolmodels
+    }
+
     return [
         models.ToolmodelStatus(
             project_slug=model.project.slug,
             model_slug=model.slug,
             warnings=toolmodels_validation.calculate_model_warnings(model),
-            primary_git_repository_status=git_validation.check_primary_git_repository(
-                db, model, logger
-            ),
             pipeline_status=pipelines_validation.check_last_pipeline_run_status(
                 db, model
             ),
-            model_badge_status=modelbadge_validation.check_model_badge_health(
-                db, model
-            ),
-            diagram_cache_status=diagrams_validation.check_diagram_cache_health(
-                db, model
-            ),
+            primary_git_repository_status=await tasks_per_model[model.id][
+                "primary_git_repository_status"
+            ],
+            diagram_cache_status=await tasks_per_model[model.id][
+                "diagram_cache_status"
+            ],
+            model_badge_status=await tasks_per_model[model.id][
+                "model_badge_status"
+            ],
         )
-        for model in toolmodels_crud.get_models(db)
+        for model in toolmodels
     ]
 
 

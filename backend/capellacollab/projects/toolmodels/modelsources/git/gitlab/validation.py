@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import logging
+
 import fastapi
 from sqlalchemy import orm
 
@@ -11,10 +13,11 @@ import capellacollab.projects.toolmodels.modelsources.git.gitlab.interface as gi
 from . import models
 
 
-def check_pipeline_health(
+async def check_pipeline_health(
     db: orm.Session,
     model: toolmodels_models.DatabaseCapellaModel,
     job_name: str,
+    logger: logging.LoggerAdapter,
 ) -> models.ModelArtifactStatus:
     primary_git_model = git_crud.get_primary_git_model_of_capellamodel(
         db, model.id
@@ -23,7 +26,7 @@ def check_pipeline_health(
         return models.ModelArtifactStatus.UNCONFIGURED
 
     try:
-        gitlab_interface.get_last_job_run_id_for_git_model(
+        await gitlab_interface.get_last_job_run_id_for_git_model(
             db, job_name, primary_git_model
         )
     except fastapi.HTTPException as e:
@@ -35,6 +38,7 @@ def check_pipeline_health(
                 | "GITLAB_ACCESS_DENIED"
                 | "PROJECT_NOT_FOUND"
             ):
+                print(e.detail.get("err_code", ""))
                 return models.ModelArtifactStatus.FAILURE
             case "INSTANCE_IS_NO_GITLAB_INSTANCE":
                 return models.ModelArtifactStatus.UNSUPPORTED
@@ -43,6 +47,10 @@ def check_pipeline_health(
             case _:
                 return models.ModelArtifactStatus.FAILURE
     except:  # pylint: disable=bare-except
+        logger.error(
+            f"Failed to fetch artifacts for model '{model.slug}' and job '{job_name}'",
+            exc_info=True,
+        )
         return models.ModelArtifactStatus.FAILURE
 
     return models.ModelArtifactStatus.SUCCESS

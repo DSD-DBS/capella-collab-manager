@@ -34,7 +34,7 @@ router = fastapi.APIRouter(
 
 
 @router.get("", response_model=models.DiagramCacheMetadata)
-def get_diagram_metadata(
+async def get_diagram_metadata(
     git_model: git_models.DatabaseGitModel = fastapi.Depends(
         git_injectables.get_existing_primary_git_model
     ),
@@ -45,7 +45,7 @@ def get_diagram_metadata(
         git_instance,
         project_id,
         last_successful_job,
-    ) = gitlab_interface.get_last_job_run_id_for_git_model(
+    ) = await gitlab_interface.get_last_job_run_id_for_git_model(
         db, "update_capella_diagram_cache", git_model
     )
 
@@ -75,7 +75,7 @@ def get_diagram_metadata(
 
 
 @router.get("/{diagram_uuid}", response_class=fastapi.responses.Response)
-def get_diagram(
+async def get_diagram(
     diagram_uuid: str,
     git_model: git_models.DatabaseGitModel = fastapi.Depends(
         git_injectables.get_existing_primary_git_model
@@ -87,7 +87,7 @@ def get_diagram(
         git_instance,
         project_id,
         last_successful_job,
-    ) = gitlab_interface.get_last_job_run_id_for_git_model(
+    ) = await gitlab_interface.get_last_job_run_id_for_git_model(
         db, "update_capella_diagram_cache", git_model
     )
 

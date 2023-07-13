@@ -7,7 +7,7 @@
   <div
     (click)="openModelComplexityBadgeDocs()"
     class="model-complexity-error model-complexity-create"
-    *ngIf="errorCode === 'COMPLEXITY_BADGE_NOT_FOUND'"
+    *ngIf="errorCode === 'FILE_NOT_FOUND'"
   >
     <mat-icon class="model-complexity-error-icon">open_in_new</mat-icon>
     <span class="model-complexity-error-text"
@@ -21,7 +21,7 @@
     *ngIf="
       !loadingComplexityBadge &&
       !complexityBadge &&
-      errorCode !== 'COMPLEXITY_BADGE_NOT_FOUND'
+      errorCode !== 'FILE_NOT_FOUND'
     "
   >
     <mat-icon class="model-complexity-error-icon">error</mat-icon>

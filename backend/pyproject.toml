@@ -44,6 +44,7 @@ dependencies = [
   "starlette-prometheus",
   "pytz",
   "fastapi-pagination",
+  "aiohttp"
 ]
 
 [project.urls]
@@ -63,6 +64,7 @@ dev = [
   "responses",
   "sqlalchemy[mypy]",
   "pytest-cov",
+  "aioresponses"
 ]
 psycopg2 = [
   "psycopg2", # Need when running in a Docker container with AArch64: https://github.com/psycopg/psycopg2/issues/1360
