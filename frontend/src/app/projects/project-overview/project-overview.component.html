@@ -32,10 +32,19 @@
             <ng-template #elseBlock>No description provided.</ng-template>
           </div>
           <div class="fixed bottom-2 right-2 text-right text-stone-500">
-            {{ project.users.leads }} project lead(s),
-            {{ project.users.contributors }} contributor(s),
-            {{ project.users.subscribers }}
-            subscriber(s)
+            <div>
+              {{
+                project.visibility === "internal"
+                  ? "Internal project"
+                  : "Private project"
+              }}
+            </div>
+            <div>
+              {{ project.users.leads }} project lead(s),
+              {{ project.users.contributors }} contributor(s),
+              {{ project.users.subscribers }}
+              subscriber(s)
+            </div>
           </div>
         </div>
       </mat-card>

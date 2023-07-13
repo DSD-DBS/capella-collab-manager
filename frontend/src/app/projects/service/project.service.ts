@@ -103,6 +103,14 @@ export class ProjectService {
       );
     };
   }
+
+  getProjectVisibilityDescription(visibility: ProjectVisibility): string {
+    return ProjectVisibility[visibility];
+  }
+
+  getAvailableVisibilities(): ProjectVisibility[] {
+    return Object.keys(ProjectVisibility) as ProjectVisibility[];
+  }
 }
 
 export type UserMetadata = {
@@ -114,9 +122,19 @@ export type UserMetadata = {
 export type PatchProject = {
   name?: string;
   description?: string;
+  visibility?: ProjectVisibility;
 };
+
+export type ProjectVisibility = 'internal' | 'private';
 
 export type Project = Required<PatchProject> & {
   slug: string;
   users: UserMetadata;
+};
+
+export const ProjectVisibility = {
+  internal:
+    'Internal - all logged in users can see the project and have read access on its models.',
+  private:
+    'Private - users need to be explicitly granted access to see the project.',
 };

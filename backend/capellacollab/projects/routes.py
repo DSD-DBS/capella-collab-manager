@@ -59,7 +59,12 @@ def get_projects(
         log.debug("Fetching all projects")
         return crud.get_projects(db)
 
-    projects = [association.project for association in user.projects]
+    projects = [
+        association.project
+        for association in user.projects
+        if not association.project.visibility == models.Visibility.INTERNAL
+    ] + crud.get_internal_projects(db)
+
     log.debug("Fetching the following projects: %s", projects)
     return projects
 
@@ -133,7 +138,10 @@ def create_project(
         )
 
     project = crud.create_project(
-        db, post_project.name, post_project.description
+        db,
+        post_project.name,
+        post_project.description,
+        post_project.visibility,
     )
 
     if user.role != users_models.Role.ADMIN:

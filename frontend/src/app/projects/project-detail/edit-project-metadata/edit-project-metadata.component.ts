@@ -28,15 +28,16 @@ export class EditProjectMetadataComponent implements OnInit, OnChanges {
   project?: Project;
 
   constructor(
-    private toastService: ToastService,
-    private projectService: ProjectService,
+    public projectService: ProjectService,
     public projectUserService: ProjectUserService,
+    private toastService: ToastService,
     private router: Router
   ) {}
 
   form = new FormGroup({
     name: new FormControl<string>('', Validators.required),
     description: new FormControl<string>(''),
+    visibility: new FormControl(''),
   });
 
   ngOnInit(): void {

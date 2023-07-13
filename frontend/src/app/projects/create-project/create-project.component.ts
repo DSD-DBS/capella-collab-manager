@@ -11,7 +11,7 @@ import {
   CreateModelStep,
 } from 'src/app/projects/models/create-model/create-model.component';
 import { ToastService } from '../../helpers/toast/toast.service';
-import { ProjectService } from '../service/project.service';
+import { ProjectService, ProjectVisibility } from '../service/project.service';
 
 @Component({
   selector: 'app-create-project',
@@ -34,6 +34,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
       asyncValidators: this.projectService.asyncSlugValidator(),
     }),
     description: new FormControl(''),
+    visibility: new FormControl('private'),
   });
 
   ngOnInit(): void {
@@ -50,6 +51,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
         .createProject({
           name: this.form.value.name!,
           description: this.form.value.description!,
+          visibility: this.form.value.visibility! as ProjectVisibility,
         })
         .subscribe((project) => {
           this.toastService.showSuccess(
