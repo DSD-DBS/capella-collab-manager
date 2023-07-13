@@ -27,7 +27,7 @@ dependencies = [
   "alembic==1.10.4",
   "appdirs",
   "cachetools",
-  "fastapi<0.100.0",
+  "fastapi<0.101.0",
   "kubernetes",
   "msal",
   "psycopg2-binary",
