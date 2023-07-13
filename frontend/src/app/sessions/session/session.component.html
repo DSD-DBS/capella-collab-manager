@@ -1,0 +1,33 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="flex flex-col" *ngIf="!selectedSessions.length">
+  <span
+    >Please select the sessions that you'd like to open in the session
+    viewer</span
+  >
+  <mat-checkbox [value]="session.id" *ngFor="let session of cachedSessions"
+    >{{ session.id }} ({{ session.version?.tool?.name }}
+    {{ session.version?.name }})</mat-checkbox
+  >
+  <button mat-button (click)="selectSessions()">Open session viewer</button>
+</div>
+<div class="w-full height" *ngIf="selectedSessions.length" class="flex">
+  <div class="w-full height" *ngFor="let session of selectedSessions" cdkDrag>
+    <div
+      class="flex gap-2 bg-slate-200 rounded-t p-2 cursor-grab active:cursor-grabbing"
+      cdkDragHandle
+    >
+      <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+        <path
+          d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+        ></path>
+        <path d="M0 0h24v24H0z" fill="none"></path>
+      </svg>
+      {{ session.version?.tool?.name }} {{ session.version?.name }}
+    </div>
+    <iframe class="w-full height" [src]="session.safeResourceURL"> </iframe>
+  </div>
+</div>

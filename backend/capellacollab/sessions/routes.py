@@ -280,19 +280,6 @@ def request_persistent_session(
 
     log.info("Starting persistent session for user %s", owner)
 
-    existing_user_sessions = crud.get_sessions_for_user(db, owner)
-
-    if models.WorkspaceType.PERSISTENT in [
-        session.type for session in existing_user_sessions
-    ]:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "err_code": "EXISTING_SESSION",
-                "reason": "You already have a open persistent session. Please navigate to 'Active Sessions' to connect",
-            },
-        )
-
     tool = tools_injectables.get_existing_tool(body.tool_id, db)
     version = tools_injectables.get_exisiting_tool_version(
         tool.id, body.version_id, db

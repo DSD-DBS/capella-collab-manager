@@ -44,10 +44,10 @@
     <div *ngIf="isReadonlySession(session)">
       <span>Project: {{ session.project.name }}</span
       ><br />
-      <span>
-        Tool: {{ session.version!.tool.name }} ({{ session.version!.name }})
-      </span>
     </div>
+    <span>
+      Tool: {{ session.version!.tool.name }} ({{ session.version!.name }})
+    </span>
 
     <mat-card *ngIf="session.download_in_progress">
       <mat-card-content>

@@ -4,6 +4,8 @@
  */
 
 import { ClipboardModule } from '@angular/cdk/clipboard';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+
 import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
@@ -97,6 +99,7 @@ import { ProjectOverviewComponent } from './projects/project-overview/project-ov
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { WhitespaceUrlInterceptor } from './services/encoder/encoder.interceptor';
 import { DeleteSessionDialogComponent } from './sessions/delete-session-dialog/delete-session-dialog.component';
+import { SessionComponent } from './sessions/session/session.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { SessionsComponent } from './sessions/sessions.component';
 import { ActiveSessionsComponent } from './sessions/user-sessions-wrapper/active-sessions/active-sessions.component';
@@ -193,6 +196,7 @@ import { SettingsComponent } from './settings/settings.component';
     ProjectUserSettingsComponent,
     ProjectWrapperComponent,
     PureVariantsComponent,
+    SessionComponent,
     SessionOverviewComponent,
     SessionsComponent,
     SettingsComponent,
@@ -221,6 +225,7 @@ import { SettingsComponent } from './settings/settings.component';
     ClipboardModule,
     CommonModule,
     CookieModule.withOptions(),
+    DragDropModule,
     FormsModule,
     HttpClientModule,
     MatAutocompleteModule,
@@ -250,8 +255,8 @@ import { SettingsComponent } from './settings/settings.component';
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
-    MatTreeModule,
     NgxSkeletonLoaderModule.forRoot(),
+    MatTreeModule,
     OverlayModule,
     ReactiveFormsModule,
     ToastrModule.forRoot({
