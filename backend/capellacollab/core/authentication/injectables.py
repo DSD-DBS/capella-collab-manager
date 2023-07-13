@@ -100,7 +100,13 @@ class ProjectRoleVerification:
                 )
             return False
 
-        if project.visibility == projects_models.Visibility.INTERNAL:
+        if (
+            project.visibility == projects_models.Visibility.INTERNAL
+            and self.required_role
+            == projects_users_models.ProjectUserRole.USER
+            and self.required_permission
+            in (None, projects_users_models.ProjectUserPermission.READ)
+        ):
             return True
 
         project_user = projects_users_crud.get_project_user_association(
