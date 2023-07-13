@@ -153,7 +153,6 @@ def test_create_private_project_as_admin(
     )
 
     assert response.status_code == 200
-    print(response.json())
     assert {
         "name": "test project",
         "slug": "test-project",
@@ -178,7 +177,6 @@ def test_create_internal_project_as_admin(
     )
 
     assert response.status_code == 200
-    print(response.json())
     assert {
         "name": "test project",
         "slug": "test-project",
@@ -204,7 +202,6 @@ def test_update_project_as_admin(
     )
 
     assert response.status_code == 200
-    print(response.json())
     assert {
         "name": "test project",
         "slug": "test-project",
