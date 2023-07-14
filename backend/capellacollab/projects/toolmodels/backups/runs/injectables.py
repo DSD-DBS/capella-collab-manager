@@ -24,7 +24,7 @@ def get_existing_pipeline_run(
     if pipeline_run := crud.get_pipeline_run_by_id(db, pipeline_run_id):
         if pipeline_run.pipeline.id != pipeline.id:
             raise fastapi.HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
+                status_code=status.HTTP_403_FORBIDDEN,
                 detail={
                     "reason": f"The pipeline run with the id {pipeline_run.id} does not belong to the pipeline with id {pipeline.id}.",
                 },
