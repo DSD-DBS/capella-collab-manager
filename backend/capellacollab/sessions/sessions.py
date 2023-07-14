@@ -65,7 +65,7 @@ def _get_last_seen(idletime: int | float) -> str:
     if (idlehours := idletime / 60) > 1:
         return f"{round(idlehours, 2)} hrs ago"
 
-    return f"{idletime} mins ago"
+    return f"{idletime:0f} mins ago"
 
 
 def _determine_session_state(session: DatabaseSession) -> str:
