@@ -8,6 +8,7 @@
     <thead>
       <tr class="font-semibold text-base">
         <td>Event type</td>
+        <td>User</td>
         <td>Executor name</td>
         <td>Execution time</td>
         <td>Project slug</td>
@@ -38,6 +39,9 @@
           <tr>
             <td>
               {{ run.event_type }}
+            </td>
+            <td>
+              {{ run.user.name || "system" }}
             </td>
             <td>
               {{ run.executor?.name || "system" }}
