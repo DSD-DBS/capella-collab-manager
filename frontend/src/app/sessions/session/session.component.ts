@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { take } from 'rxjs';
 import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
@@ -19,6 +19,7 @@ import { UserSessionService } from 'src/app/sessions/service/user-session.servic
 export class SessionComponent implements OnInit {
   cachedSessions: Session[] = [];
   selectedSessions: Session[] = [];
+  private debounceTimer: any;
 
   draggingActive = false;
 
@@ -61,6 +62,7 @@ export class SessionComponent implements OnInit {
             this.domSanitizer.bypassSecurityTrustResourceUrl(
               session.jupyter_uri
             );
+          session.reloadToResize = false;
           this.selectedSessions.push(session);
         } else {
           this.guacamoleService
@@ -69,6 +71,7 @@ export class SessionComponent implements OnInit {
               this.localStorageService.setValue('GUAC_AUTH', res.token);
               session.safeResourceURL =
                 this.domSanitizer.bypassSecurityTrustResourceUrl(res.url);
+              session.reloadToResize = true;
               this.selectedSessions.push(session);
             });
         }
@@ -86,5 +89,32 @@ export class SessionComponent implements OnInit {
 
   dragStop() {
     this.draggingActive = false;
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    clearTimeout(this.debounceTimer);
+
+    this.debounceTimer = setTimeout(() => {
+      Array.from(document.getElementsByTagName('iframe')).forEach((iframe) => {
+        const session = this.selectedSessions.find(
+          (session) => 'session-' + session.id === iframe.id
+        );
+
+        if (session?.reloadToResize) {
+          this.reloadIFrame(iframe);
+        }
+      });
+    }, 250);
+  }
+
+  reloadIFrame(iframe: HTMLIFrameElement) {
+    const src = iframe.src;
+
+    iframe.removeAttribute('src');
+
+    setTimeout(() => {
+      iframe.src = src;
+    }, 100);
   }
 }

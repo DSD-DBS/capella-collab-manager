@@ -26,6 +26,7 @@ export interface Session {
   download_in_progress: boolean;
   safeResourceURL?: SafeResourceUrl;
   focused: boolean;
+  reloadToResize: boolean;
 }
 
 export interface ReadonlySession extends Session {
