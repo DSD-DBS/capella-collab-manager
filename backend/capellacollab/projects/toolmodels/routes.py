@@ -129,7 +129,7 @@ def patch_tool_model(
     version = get_version_by_id_or_raise(db, body.version_id)
     if version.tool != model.tool:
         raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "reason": f"The tool having the version “{version.name}” (“{version.tool.name}”) does not match the tool of the model “{model.name}” (“{model.tool.name}”)."
             },
@@ -138,7 +138,7 @@ def patch_tool_model(
     nature = get_nature_by_id_or_raise(db, body.nature_id)
     if nature.tool != model.tool:
         raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "reason": f"The tool having the nature “{nature.name}” (“{nature.tool.name}”) does not match the tool of the model “{model.name}” (“{model.tool.name}”)."
             },
