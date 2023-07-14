@@ -20,6 +20,8 @@ export class SessionComponent implements OnInit {
   cachedSessions: Session[] = [];
   selectedSessions: Session[] = [];
 
+  draggingActive = false;
+
   constructor(
     public userSessionService: UserSessionService,
     private guacamoleService: GuacamoleService,
@@ -76,5 +78,13 @@ export class SessionComponent implements OnInit {
 
   focusSession(session: Session) {
     document.getElementById('session-' + session.id)?.focus();
+  }
+
+  dragStart() {
+    this.draggingActive = true;
+  }
+
+  dragStop() {
+    this.draggingActive = false;
   }
 }

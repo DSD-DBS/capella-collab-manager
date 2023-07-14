@@ -21,6 +21,8 @@
     (click)="focusSession(session)"
     *ngFor="let session of selectedSessions"
     cdkDrag
+    (cdkDragStarted)="dragStart()"
+    (cdkDragEnded)="dragStop()"
   >
     <div
       class="flex gap-2 rounded-t p-2 cursor-grab active:cursor-grabbing items-center justify-between"
@@ -40,12 +42,18 @@
         <mat-icon>phonelink_off</mat-icon>
       </div>
     </div>
-    <iframe
-      [id]="'session-' + session.id"
-      class="w-full height"
-      [src]="session.safeResourceURL"
-      allow="clipboard-read; clipboard-write"
-    >
-    </iframe>
+    <div class="iframe-container">
+      <div
+        [ngClass]="session.focused ? '' : 'iframe-overlay opacity-10 bg-black'"
+      ></div>
+      <div [ngClass]="draggingActive ? 'iframe-overlay' : ''"></div>
+      <iframe
+        [id]="'session-' + session.id"
+        class="w-full height"
+        [src]="session.safeResourceURL"
+        allow="clipboard-read; clipboard-write"
+      >
+      </iframe>
+    </div>
   </div>
 </div>
