@@ -30,7 +30,7 @@ def get_existing_git_model(
         return git_model
 
     raise fastapi.HTTPException(
-        status_code=status.HTTP_400_BAD_REQUEST,
+        status_code=status.HTTP_404_NOT_FOUND,
         detail={
             "err_code": "GIT_MODEL_NOT_EXISTING",
             "reason": f"The git model ({git_model_id}) does not exists on the capella model for the project",
@@ -52,7 +52,7 @@ def get_existing_primary_git_model(
         return primary_git_model
 
     raise fastapi.HTTPException(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        status_code=status.HTTP_404_NOT_FOUND,
         detail={
             "err_code": "no_git_model",
             "reason": "No git model is assigned to your project. Please ask a project lead to assign a git model.",
