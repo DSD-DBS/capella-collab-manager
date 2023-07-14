@@ -10,6 +10,7 @@ import { filter, take } from 'rxjs';
 import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { Session } from 'src/app/schemes';
 import { GuacamoleService } from 'src/app/services/guacamole/guacamole.service';
+import { SessionService } from 'src/app/sessions/service/session.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
 
 @Component({
@@ -26,6 +27,7 @@ export class SessionComponent implements OnInit {
 
   constructor(
     public userSessionService: UserSessionService,
+    public sessionService: SessionService,
     private guacamoleService: GuacamoleService,
     private localStorageService: LocalStorageService,
     private domSanitizer: DomSanitizer

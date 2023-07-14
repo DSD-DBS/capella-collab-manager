@@ -26,6 +26,10 @@
   </div>
   <div class="flex flex-col" *ngIf="cachedSessions && cachedSessions.length">
     <mat-checkbox
+      class="w-fit"
+      [disabled]="!sessionService.beautifyState(session.state).success"
+      matTooltip="Please wait until the session is running. You can check the status in the 'Sessions' tab."
+      [matTooltipDisabled]="sessionService.beautifyState(session.state).success"
       [value]="session.id"
       (change)="changeSessionSelection($event, session)"
       *ngFor="let session of cachedSessions"
