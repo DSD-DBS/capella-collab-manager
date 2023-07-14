@@ -99,7 +99,7 @@ def delete_tool(
         raise fastapi.HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
-                "reason": "The tool 'Capella' can not be deleted.",
+                "reason": "The tool 'Capella' cannot be deleted.",
             },
         )
 
