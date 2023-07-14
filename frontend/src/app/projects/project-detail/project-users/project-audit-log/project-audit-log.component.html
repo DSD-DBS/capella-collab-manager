@@ -1,0 +1,59 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="dialog">
+  <table>
+    <thead>
+      <tr class="font-semibold text-base">
+        <td>Event type</td>
+        <td>Executor name</td>
+        <td>Execution time</td>
+        <td>Project slug</td>
+        <td>Reason</td>
+      </tr>
+    </thead>
+
+    <tbody
+      [id]="idx + 1"
+      #page
+      *ngFor="
+        let event of (projectAuditLogService.projectHistoryEventsPages$
+          | async)!.pages;
+        let idx = index
+      "
+    >
+      <ng-container *ngIf="event === undefined || event === 'loading'">
+        <tr *ngFor="let jobRunPage of pageSizeArray">
+          <td *ngFor="let column of [1, 2, 3, 4, 5]">
+            <app-text-line-skeleton-loader
+              width="80%"
+            ></app-text-line-skeleton-loader>
+          </td>
+        </tr>
+      </ng-container>
+      <ng-container *ngIf="event !== undefined && event !== 'loading'">
+        <ng-container *ngFor="let run of event.items">
+          <tr>
+            <td>
+              {{ run.event_type }}
+            </td>
+            <td>
+              {{ run.executor?.name || "system" }}
+            </td>
+            <td>
+              {{ run.execution_time | date: "EE, dd MMM y HH:mm:ss" }}
+            </td>
+            <td>
+              {{ run.project?.slug }}
+            </td>
+            <td>
+              {{ run.reason }}
+            </td>
+          </tr>
+        </ng-container>
+      </ng-container>
+    </tbody>
+  </table>
+</div>

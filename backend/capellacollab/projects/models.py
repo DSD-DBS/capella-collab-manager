@@ -43,7 +43,7 @@ class Project(pydantic.BaseModel):
         users: UserMetadata
         | list[project_users_models.ProjectUserAssociation],
     ):
-        if isinstance(users, UserMetadata):
+        if isinstance(users, (UserMetadata, dict)):
             return users
 
         return UserMetadata(

@@ -19,6 +19,7 @@ from capellacollab.core.authentication import helper as auth_helper
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.credentials import generate_password
+from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects.models import DatabaseProject
 from capellacollab.projects.toolmodels import (
     injectables as toolmodels_injectables,
@@ -139,7 +140,7 @@ def request_session(
         users_injectables.get_own_user
     ),
     project: DatabaseProject = fastapi.Depends(
-        toolmodels_injectables.get_existing_project
+        projects_injectables.get_existing_project
     ),
     operator: KubernetesOperator = fastapi.Depends(get_operator),
     db: orm.Session = fastapi.Depends(database.get_db),

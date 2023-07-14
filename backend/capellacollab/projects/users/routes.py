@@ -9,10 +9,8 @@ from sqlalchemy import orm
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication import jwt_bearer
+from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
-from capellacollab.projects.toolmodels import (
-    injectables as toolmodels_injectables,
-)
 from capellacollab.users import crud as users_crud
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
@@ -72,7 +70,7 @@ def get_current_user(
         users_injectables.get_own_user
     ),
     project: projects_models.DatabaseProject = fastapi.Depends(
-        toolmodels_injectables.get_existing_project
+        projects_injectables.get_existing_project
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
     token=fastapi.Depends(jwt_bearer.JWTBearer()),
@@ -101,7 +99,7 @@ def get_current_user(
 )
 def get_users_for_project(
     project: projects_models.DatabaseProject = fastapi.Depends(
-        toolmodels_injectables.get_existing_project
+        projects_injectables.get_existing_project
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> list[models.ProjectUserAssociation]:
@@ -129,7 +127,7 @@ def get_users_for_project(
 def add_user_to_project(
     post_project_user: models.PostProjectUser,
     project: projects_models.DatabaseProject = fastapi.Depends(
-        toolmodels_injectables.get_existing_project
+        projects_injectables.get_existing_project
     ),
     own_user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
@@ -178,7 +176,7 @@ def update_project_user(
         injectables.get_existing_user
     ),
     project: projects_models.DatabaseProject = fastapi.Depends(
-        toolmodels_injectables.get_existing_project
+        projects_injectables.get_existing_project
     ),
     own_user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
@@ -241,7 +239,7 @@ def update_project_user(
 def remove_user_from_project(
     reason: str = fastapi.Body(),
     project: projects_models.DatabaseProject = fastapi.Depends(
-        toolmodels_injectables.get_existing_project
+        projects_injectables.get_existing_project
     ),
     user: users_models.DatabaseUser = fastapi.Depends(
         injectables.get_existing_user
