@@ -26,7 +26,7 @@ def get_t4c_status(
         )
     except requests.Timeout:
         raise fastapi.HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "reason": "The connection to the license server timed out.",
                 "technical": "The license server API timed out.",
@@ -35,7 +35,7 @@ def get_t4c_status(
         )
     except requests.ConnectionError:
         raise fastapi.HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "reason": "The connection to the license server failed.",
                 "technical": "We failed to connect to the license server API.",
@@ -46,7 +46,7 @@ def get_t4c_status(
     # This API endpoint returns 404 on success -> We have to handle the error here manually
     if r.status_code != 404 and not r.ok:
         raise fastapi.HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "reason": "Internal server error in the license server.",
                 "technical": "The license server API returned an error.",
@@ -59,7 +59,7 @@ def get_t4c_status(
 
         if cur_status.get("message", "") == "No last status available.":
             raise fastapi.HTTPException(
-                status_code=status.HTTP_502_BAD_GATEWAY,
+                status_code=status.HTTP_404_NOT_FOUND,
                 detail={
                     "reason": "No status is available. This can happen during and after license server restarts.",
                     "technical": "The license server API returned no status.",
@@ -71,7 +71,7 @@ def get_t4c_status(
             return sessions_models.GetSessionUsageResponse(**cur_status)
     except KeyError:
         raise fastapi.HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "reason": "No status in response from license server.",
                 "technical": "The license server response has no status.",
