@@ -100,6 +100,20 @@ properties:
         type: string
       ingressClassName:
         type: string
+  general:
+    type: object
+    additionalProperties: false
+    required:
+      - host
+      - port
+      - scheme
+    properties:
+      host:
+        type: string
+      port:
+        potypert: string
+      scheme:
+        type: string
   extensions:
     type: object
     additionalProperties: false
