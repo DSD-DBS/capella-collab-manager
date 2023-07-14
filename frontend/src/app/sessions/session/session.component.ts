@@ -4,8 +4,9 @@
  */
 
 import { Component, HostListener, OnInit } from '@angular/core';
+import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
 import { DomSanitizer } from '@angular/platform-browser';
-import { take } from 'rxjs';
+import { filter, take } from 'rxjs';
 import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { Session } from 'src/app/schemes';
 import { GuacamoleService } from 'src/app/services/guacamole/guacamole.service';
@@ -17,7 +18,7 @@ import { UserSessionService } from 'src/app/sessions/service/user-session.servic
   styleUrls: ['./session.component.css'],
 })
 export class SessionComponent implements OnInit {
-  cachedSessions: Session[] = [];
+  cachedSessions?: CachedSession[] = undefined;
   selectedSessions: Session[] = [];
   private debounceTimer: any;
 
@@ -32,7 +33,34 @@ export class SessionComponent implements OnInit {
     this.userSessionService.loadSessions();
   }
 
+  get checkedSessions(): undefined | CachedSession[] {
+    return this.cachedSessions?.filter((session) => session.checked);
+  }
+
+  changeSessionSelection(event: MatCheckboxChange, session: CachedSession) {
+    session.checked = event.checked;
+  }
+
   ngOnInit(): void {
+    this.initializeCachedSessions();
+    this.handleEventsToDetermineFocus();
+  }
+
+  initializeCachedSessions() {
+    this.userSessionService.sessions$
+      .pipe(
+        filter((sessions) => sessions !== undefined),
+        take(1)
+      )
+      .subscribe((sessions) => {
+        this.cachedSessions = sessions?.map((session) => {
+          (session as CachedSession).checked = false;
+          return session;
+        });
+      });
+  }
+
+  handleEventsToDetermineFocus() {
     window.focus();
     window.addEventListener('blur', () => {
       const focusedSession = this.selectedSessions.find(
@@ -54,27 +82,21 @@ export class SessionComponent implements OnInit {
   }
 
   selectSessions() {
-    this.userSessionService.sessions$.pipe(take(1)).subscribe((sessions) => {
-      for (const session of sessions!) {
-        session.focused = false;
-        if (session.jupyter_uri) {
+    this.checkedSessions?.forEach((session) => {
+      session.focused = false;
+      if (session.jupyter_uri) {
+        session.safeResourceURL =
+          this.domSanitizer.bypassSecurityTrustResourceUrl(session.jupyter_uri);
+        session.reloadToResize = false;
+        this.selectedSessions.push(session);
+      } else {
+        this.guacamoleService.getGucamoleToken(session?.id).subscribe((res) => {
+          this.localStorageService.setValue('GUAC_AUTH', res.token);
           session.safeResourceURL =
-            this.domSanitizer.bypassSecurityTrustResourceUrl(
-              session.jupyter_uri
-            );
-          session.reloadToResize = false;
+            this.domSanitizer.bypassSecurityTrustResourceUrl(res.url);
+          session.reloadToResize = true;
           this.selectedSessions.push(session);
-        } else {
-          this.guacamoleService
-            .getGucamoleToken(session?.id)
-            .subscribe((res) => {
-              this.localStorageService.setValue('GUAC_AUTH', res.token);
-              session.safeResourceURL =
-                this.domSanitizer.bypassSecurityTrustResourceUrl(res.url);
-              session.reloadToResize = true;
-              this.selectedSessions.push(session);
-            });
-        }
+        });
       }
     });
   }
@@ -118,3 +140,7 @@ export class SessionComponent implements OnInit {
     }, 100);
   }
 }
+
+type CachedSession = Session & {
+  checked?: boolean;
+};

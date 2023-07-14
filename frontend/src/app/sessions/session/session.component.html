@@ -3,18 +3,59 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flex flex-col" *ngIf="!selectedSessions.length">
+<div *ngIf="!selectedSessions.length">
   <span
     >Please select the sessions that you'd like to open in the session
     viewer:</span
   >
-  <mat-checkbox [value]="session.id" *ngFor="let session of cachedSessions"
-    >{{ session.id }} ({{ session.version?.tool?.name }}
-    {{ session.version?.name }})</mat-checkbox
-  >
-  <button mat-button (click)="selectSessions()">Open session viewer</button>
+  <div *ngIf="cachedSessions && !cachedSessions.length">
+    No sessions found. Please create a session in the 'Sessions' tab first.
+  </div>
+  <div *ngIf="cachedSessions === undefined">
+    <ngx-skeleton-loader
+      *ngFor="let _ of [0, 1, 2, 3]"
+      appearance="circle"
+      [theme]="{
+        'border-radius': '5px',
+        height: '24px',
+        width: '80%',
+        border: '1px solid white',
+        margin: '0'
+      }"
+    ></ngx-skeleton-loader>
+  </div>
+  <div class="flex flex-col" *ngIf="cachedSessions && cachedSessions.length">
+    <mat-checkbox
+      [value]="session.id"
+      (change)="changeSessionSelection($event, session)"
+      *ngFor="let session of cachedSessions"
+      >{{ session.version?.tool?.name }} {{ session.version?.name }},
+      {{ session.type
+      }}<span *ngIf="session.type === 'readonly'">
+        (project {{ session.project!.name }})</span
+      >, created at {{ session.created_at | date: "EE, dd MMM y HH:mm:ss" }}
+    </mat-checkbox>
+  </div>
+  <div class="border-2 p-2 mt-2 rounded w-fit">
+    Please note: We're not technically preventing that you select two Guacamole
+    sessions (for example two Capella sessions), <br />but the Guacamole server
+    will not let you connect to the sessions. We're working on making this
+    possible.
+  </div>
+  <div class="mt-2">
+    <button
+      mat-raised-button
+      (click)="selectSessions()"
+      [disabled]="checkedSessions === undefined || !checkedSessions.length"
+      class="flex"
+    >
+      Open session viewer
+      <mat-icon class="mat-icon-position">navigate_next</mat-icon>
+    </button>
+  </div>
 </div>
-<div class="w-full height" *ngIf="selectedSessions.length" class="flex">
+
+<div class="w-full height flex gap-2" *ngIf="selectedSessions.length">
   <div
     class="w-full height active:z-30"
     [ngClass]="session.focused ? 'z-20' : 'z-10'"
@@ -31,8 +72,13 @@
     >
       <div class="flex items-center gap-2">
         <mat-icon>control_camera</mat-icon>
-
-        {{ session.version?.tool?.name }} {{ session.version?.name }}
+        <span>
+          {{ session.version?.tool?.name }} {{ session.version?.name }},
+          {{ session.type }}
+          <span *ngIf="session.type === 'readonly'"
+            >(project {{ session.project!.name }})</span
+          >
+        </span>
       </div>
       <div *ngIf="session.focused" class="flex items-center gap-2">
         <span>Focused</span><mat-icon>phonelink</mat-icon>
