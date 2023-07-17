@@ -6,10 +6,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
-import {
-  EventsService,
-  HistoryEvent,
-} from 'src/app/events/service/events.service';
+import { HistoryEvent } from 'src/app/events/service/events.service';
+import { ProjectService } from 'src/app/projects/service/project.service';
 import { Page, PageWrapper } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
 
@@ -26,7 +24,18 @@ export class ProjectAuditLogService {
   readonly projectHistoryEventsPages$ =
     this._projectHistoryEventPages.asObservable();
 
-  constructor(private http: HttpClient, private eventService: EventsService) {}
+  constructor(
+    private http: HttpClient,
+    private projectService: ProjectService
+  ) {
+    this.resetProjectAuditLogOnPipelineChange();
+  }
+
+  resetProjectAuditLogOnPipelineChange() {
+    this.projectService.project.subscribe(() => {
+      this.resetProjectHistoryEvents();
+    });
+  }
 
   getProjectHistoryEventPage(
     pageNumber: number
@@ -72,6 +81,13 @@ export class ProjectAuditLogService {
 
         this._projectHistoryEventPages.next(projectHistoryEventPages);
       });
+  }
+
+  resetProjectHistoryEvents(): void {
+    this._projectHistoryEventPages.next({
+      pages: [],
+      total: undefined,
+    });
   }
 
   private initalizeProjectHistoryEventWrapper(
