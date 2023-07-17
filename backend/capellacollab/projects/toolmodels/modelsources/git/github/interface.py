@@ -4,8 +4,6 @@
 import base64
 import io
 import json
-import shutil
-import tempfile
 import typing as t
 import zipfile
 from urllib import parse
@@ -14,184 +12,162 @@ import fastapi
 import requests
 from fastapi import status
 
-import capellacollab.projects.toolmodels.modelsources.git.models as git_models
-import capellacollab.settings.modelsources.git.models as settings_git_models
+from capellacollab.config import config
+from capellacollab.projects.toolmodels.modelsources.git.interface_class import (
+    GitInterface,
+    JobIDAtributes,
+)
+
+from .. import exceptions
 
 
-def get_project_id_by_git_url(
-    git_model: git_models.DatabaseGitModel,
-    git_instance: settings_git_models.DatabaseGitInstance,
-) -> str:
-    # Project ID contains /{owner}/{repo_name}
-    del git_instance  # unused
-    return parse.urlparse(git_model.path).path
+class GithubInterface(GitInterface):
+    def get_headers(self, password: str) -> dict:
+        return {
+            "Authorization": f"token {password}",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "Accept": "application/vnd.github+json",
+        }
 
+    async def get_project_id_by_git_url(
+        self,
+    ) -> str:
+        # Project ID has the format '/{owner}/{repo_name}'
+        return parse.urlparse(self.git_model.path).path
 
-def get_last_job_run_id_for_git_model(
-    job_name: str,
-    git_model: git_models.DatabaseGitModel,
-    git_instance: settings_git_models.DatabaseGitInstance,
-) -> tuple[settings_git_models.DatabaseGitInstance, str, tuple[str, str]]:
-    project_id = get_project_id_by_git_url(git_model, git_instance)
-    for job in get_last_pipeline_runs(project_id, git_model):
-        if job["name"] == job_name:
-            if job["conclusion"] == "success":
-                return git_instance, project_id, (job["id"], job["created_at"])
-            if job["conclusion"] == "failure" or job["expired"] == "False":
-                raise fastapi.HTTPException(
-                    status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail={
-                        "err_code": "FAILED_JOB_FOUND",
-                        "reason": (
-                            f"The last job with the name '{job_name}' on your branch has failed.",
-                            "Please contact your administrator.",
-                        ),
-                    },
-                )
-    raise fastapi.HTTPException(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        detail={
-            "err_code": "PIPELINE_JOB_NOT_FOUND",
-            "reason": (
-                f"There was no job with the name '{job_name}' within the last 20 runs of the pipeline on your branch",
-                "Please contact your administrator.",
-            ),
-        },
-    )
+    async def get_last_job_run_id_for_git_model(
+        self,
+        job_name: str,
+    ) -> JobIDAtributes:
+        project_id = await self.get_project_id_by_git_url()
+        for job in self.get_last_pipeline_runs(project_id):
+            if job["name"] == job_name:
+                if job["conclusion"] == "success":
+                    return JobIDAtributes(
+                        project_id,
+                        (job["id"], job["created_at"]),
+                    )
+                if job["conclusion"] == "failure" or job["expired"] == "False":
+                    raise exceptions.GitPipelineFailedJobFoundError(job_name)
+        raise exceptions.GitPipelineJobNotFoundError(job_name=job_name)
 
+    def get_last_pipeline_runs(
+        self,
+        project_id: str,
+    ) -> t.Any:
+        if not self.git_model.password:
+            response = requests.get(
+                f"https://api.github.com/repos{project_id}/actions/runs?branch={parse.quote(self.git_model.revision, safe='')}&per_page=20",
+                timeout=config["requests"]["timeout"],
+            )
+        else:
+            response = requests.get(
+                f"https://api.github.com/repos{project_id}/actions/runs?branch={parse.quote(self.git_model.revision, safe='')}&per_page=20",
+                headers=self.get_headers(self.git_model.password),
+                timeout=config["requests"]["timeout"],
+            )
+        response.raise_for_status()
+        return response.json()["workflow_runs"]
 
-def get_last_pipeline_runs(
-    project_id: str,
-    git_model: git_models.DatabaseGitModel,
-) -> t.Any:
-    response = requests.get(
-        f"https://api.github.com/repos{project_id}/actions/runs?branch={parse.quote(git_model.revision, safe='')}&per_page=20",
-        timeout=2,
-    )
-
-    if not response.ok:
-        response = requests.get(
-            f"https://api.github.com/repos{project_id}/actions/runs?branch={parse.quote(git_model.revision, safe='')}&per_page=20",
-            headers={
-                "Authorization": f"token {git_model.password}",
-                "X-GitHub-Api-Version": "2022-11-28",
-                "Accept": "application/vnd.github+json",
-            },
-            timeout=2,
-        )
-    response.raise_for_status()
-    return response.json()["workflow_runs"]
-
-
-def get_artifact_from_job_as_content(
-    project_id: str,
-    job_id: str,
-    trusted_path_to_artifact: str,
-    git_model: git_models.DatabaseGitModel,
-    git_instance: settings_git_models.DatabaseGitInstance,
-) -> bytes:
-    return get_artifact_from_job(
-        project_id, job_id, trusted_path_to_artifact, git_model, git_instance
-    ).encode()
-
-
-def get_artifact_from_job_as_json(
-    project_id: str,
-    job_id: str,
-    trusted_path_to_artifact: str,
-    git_model: git_models.DatabaseGitModel,
-    git_instance: settings_git_models.DatabaseGitInstance,
-) -> dict:
-    return json.loads(
-        get_artifact_from_job(
+    def get_artifact_from_job_as_content(
+        self,
+        project_id: str,
+        job_id: str,
+        trusted_path_to_artifact: str,
+    ) -> bytes:
+        return self.get_artifact_from_job(
             project_id,
             job_id,
             trusted_path_to_artifact,
-            git_model,
-            git_instance,
+        ).encode()
+
+    def get_artifact_from_job_as_json(
+        self,
+        project_id: str,
+        job_id: str,
+        trusted_path_to_artifact: str,
+    ) -> dict:
+        return json.loads(
+            self.get_artifact_from_job(
+                project_id,
+                job_id,
+                trusted_path_to_artifact,
+            )
         )
-    )
 
-
-def get_artifact_from_job(
-    project_id: str,
-    job_id: str,
-    trusted_path_to_artifact: str,
-    git_model: git_models.DatabaseGitModel,
-    git_instance: settings_git_models.DatabaseGitInstance,
-) -> str:
-    response = requests.get(
-        f"{git_instance.api_url}/repos{project_id}/actions/runs/{job_id}/artifacts",
-        headers={
-            "Authorization": f"token {git_model.password}",
-            "X-GitHub-Api-Version": "2022-11-28",
-            "Accept": "application/vnd.github+json",
-        },
-        timeout=2,
-    )
-    response.raise_for_status()
-    artifact_id = response.json()["artifacts"][0]["id"]
-
-    if response.json()["artifacts"][0]["expired"] == "true":
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={
-                "err_code": "ARTIFACT_EXPIRED",
-                "reason": (
-                    "The latest artifact you are requesting expired. Please rerun your pipline and contact your administrator."
-                ),
-            },
-        )
-    artifact_response = requests.get(
-        f"{git_instance.api_url}/repos{project_id}/actions/artifacts/{artifact_id}/zip",
-        headers={
-            "Authorization": f"token {git_model.password}",
-            "X-GitHub-Api-Version": "2022-11-28",
-            "Accept": "application/vnd.github+json",
-        },
-        timeout=2,
-    )
-    artifact_response.raise_for_status()
-
-    return get_file_content(artifact_response, trusted_path_to_artifact)
-
-
-def get_file_content(
-    response: requests.Response, trusted_file_path: str
-) -> str:
-    with zipfile.ZipFile(io.BytesIO(response.content)) as zip_ref:
-        temp_dir = tempfile.mkdtemp()
-        zip_ref.extractall(temp_dir)
-        with open(
-            temp_dir + "/" + trusted_file_path.split("/")[-1],
-            encoding="utf-8",
-        ) as file:
-            content = file.read()
-        shutil.rmtree(temp_dir)
-        return content
-
-
-def get_file_from_repository(
-    trusted_file_path: str,
-    git_model: git_models.DatabaseGitModel,
-    git_instance: settings_git_models.DatabaseGitInstance,
-) -> bytes:
-    project_id = get_project_id_by_git_url(git_model, git_instance)
-    public_response = requests.get(
-        f"{git_instance.api_url}/repos{project_id}/contents/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(git_model.revision, safe='')}",
-        timeout=2,
-    )
-    if public_response.ok:
-        response = public_response
-    else:
+    def get_artifact_from_job(
+        self,
+        project_id: str,
+        job_id: str,
+        trusted_path_to_artifact: str,
+    ) -> str:
         response = requests.get(
-            f"{git_instance.api_url}/repos{project_id}/contents/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(git_model.revision, safe='')}",
-            headers={
-                "Authorization": f"token {git_model.password}",
-                "X-GitHub-Api-Version": "2022-11-28",
-                "Accept": "application/vnd.github+json",
-            },
-            timeout=2,
+            f"{self.git_instance.api_url}/repos{project_id}/actions/runs/{job_id}/artifacts",
+            headers=self.get_headers(self.git_model.password),
+            timeout=config["requests"]["timeout"],
         )
-    response.raise_for_status()
-    return base64.b64decode(response.json()["content"])
+        response.raise_for_status()
+        artifact_id = response.json()["artifacts"][0]["id"]
+
+        if response.json()["artifacts"][0]["expired"] == "true":
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail={
+                    "err_code": "ARTIFACT_EXPIRED",
+                    "reason": (
+                        "The latest artifact you are requesting expired. Please rerun your pipline and contact your administrator."
+                    ),
+                },
+            )
+        artifact_response = requests.get(
+            f"{self.git_instance.api_url}/repos{project_id}/actions/artifacts/{artifact_id}/zip",
+            headers=self.get_headers(self.git_model.password),
+            timeout=config["requests"]["timeout"],
+        )
+        artifact_response.raise_for_status()
+
+        return self.get_file_content(
+            artifact_response, trusted_path_to_artifact
+        )
+
+    def get_file_content(
+        self, response: requests.Response, trusted_file_path: str
+    ) -> str:
+        with zipfile.ZipFile(io.BytesIO(response.content)) as zip_file:
+            file_list = zip_file.namelist()
+            file_index = file_list.index(trusted_file_path.split("/")[-1])
+
+            with zip_file.open(file_list[file_index], "r") as file:
+                return file.read().decode()
+
+    async def get_file_from_repository(
+        self,
+        trusted_file_path: str,
+    ) -> bytes:
+        """
+        If a repository is public but the permissions are not set correctly, you might be able to download the file without authentication
+        but get an error when trying to load it authenticated.
+
+        For that purpose first we try to reach it without authentication and only if that fails try to get the file authenticated.
+        """
+        self.check_git_instance_has_api_url()
+        project_id = await self.get_project_id_by_git_url()
+
+        response = requests.get(
+            f"{self.git_instance.api_url}/repos{project_id}/contents/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(self.git_model.revision, safe='')}",
+            timeout=config["requests"]["timeout"],
+        )
+
+        if not response.ok and self.git_model.password:
+            response = requests.get(
+                f"{self.git_instance.api_url}/repos{project_id}/contents/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(self.git_model.revision, safe='')}",
+                headers=self.get_headers(self.git_model.password),
+                timeout=config["requests"]["timeout"],
+            )
+
+        if response.status_code == 404:
+            raise exceptions.GitRepositoryFileNotFoundError(
+                filename=trusted_file_path
+            )
+        response.raise_for_status()
+        return base64.b64decode(response.json()["content"])

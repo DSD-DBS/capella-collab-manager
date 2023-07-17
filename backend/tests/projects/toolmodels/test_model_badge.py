@@ -19,7 +19,10 @@ import capellacollab.settings.modelsources.git.models as git_models
 EXAMPLE_MODEL_BADGE = b"<svg>badge placeholder</svg>"
 
 
-@pytest.fixture(name="git_type", params=[git_models.GitType.GITLAB])
+@pytest.fixture(
+    name="git_type",
+    params=[git_models.GitType.GITLAB],
+)
 def fixture_git_type(request: pytest.FixtureRequest) -> git_models.GitType:
     return request.param
 
@@ -107,9 +110,7 @@ def test_get_model_badge_fails_without_git_instance(
     )
 
     assert response.status_code == 500
-    assert (
-        response.json()["detail"]["err_code"] == "INSTANCE_IS_NO_GIT_INSTANCE"
-    )
+    assert response.json()["detail"]["err_code"] == "GIT_INSTANCE_UNSUPPORTED"
 
 
 @responses.activate

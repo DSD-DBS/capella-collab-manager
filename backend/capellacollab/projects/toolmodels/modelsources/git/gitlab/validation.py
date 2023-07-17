@@ -27,7 +27,7 @@ async def check_pipeline_health(
 
     try:
         await gitlab_interface.get_last_job_run_id_for_git_model(
-            db, job_name, primary_git_model
+            job_name, primary_git_model
         )
     except fastapi.HTTPException as e:
         match e.detail.get("err_code", ""):

@@ -41,21 +41,18 @@ async def get_diagram_metadata(
     db: orm.Session = fastapi.Depends(database.get_db),
     logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
 ):
+    interface_class = git_interface.get_git_class(db, git_model)
     (
-        git_instance,
         project_id,
         last_successful_job,
-    ) = await git_interface.get_last_job_run_id_for_git_model(
-        db, "update_capella_diagram_cache", git_model
+    ) = await interface_class.get_last_job_run_id_for_git_model(
+        "update_capella_diagram_cache"
     )
-
     try:
-        diagrams = git_interface.get_artifact_from_job_as_json(
+        diagrams = interface_class.get_artifact_from_job_as_json(
             project_id,
             last_successful_job[0],
             "diagram_cache/index.json",
-            git_model,
-            git_instance,
         )
     except requests.exceptions.HTTPError:
         logger.info("Failed fetching diagram metadata", exc_info=True)
@@ -83,21 +80,19 @@ async def get_diagram(
     db: orm.Session = fastapi.Depends(database.get_db),
     logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
 ):
+    interface_class = git_interface.get_git_class(db, git_model)
     (
-        git_instance,
         project_id,
         last_successful_job,
-    ) = await git_interface.get_last_job_run_id_for_git_model(
-        db, "update_capella_diagram_cache", git_model
+    ) = await interface_class.get_last_job_run_id_for_git_model(
+        "update_capella_diagram_cache"
     )
 
     try:
-        diagram = git_interface.get_artifact_from_job_as_content(
+        diagram = interface_class.get_artifact_from_job_as_content(
             project_id,
             last_successful_job[0],
             f"diagram_cache/{parse.quote(diagram_uuid, safe='')}.svg",
-            git_model,
-            git_instance,
         )
     except requests.exceptions.HTTPError:
         logger.info("Failed fetching diagram", exc_info=True)

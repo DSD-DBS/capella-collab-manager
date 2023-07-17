@@ -14,6 +14,16 @@ class GitInstanceAPIEndpointNotFoundError(Exception):
     pass
 
 
+class GitPipelineJobNotFoundError(Exception):
+    def __init__(self, job_name: str) -> None:
+        self.job_name = job_name
+
+
+class GitPipelineFailedJobFoundError(Exception):
+    def __init__(self, job_name: str) -> None:
+        self.job_name = job_name
+
+
 async def git_repository_file_not_found_handler(
     request: fastapi.Request, exc: GitRepositoryFileNotFoundError
 ) -> fastapi.Response:
@@ -50,6 +60,42 @@ async def git_instance_api_endpoint_not_found_handler(
     )
 
 
+async def git_pipeline_job_not_found_handler(
+    request: fastapi.Request, exc: GitPipelineJobNotFoundError
+) -> fastapi.Response:
+    return await exception_handlers.http_exception_handler(
+        request,
+        fastapi.HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "err_code": "PIPELINE_JOB_NOT_FOUND",
+                "reason": (
+                    f"There was no job with the name '{exc.job_name}' within the last 20 runs of the pipeline",
+                    "Please contact your administrator.",
+                ),
+            },
+        ),
+    )
+
+
+async def git_pipeline_failed_job_found_handler(
+    request: fastapi.Request, exc: GitPipelineFailedJobFoundError
+) -> fastapi.Response:
+    return await exception_handlers.http_exception_handler(
+        request,
+        fastapi.HTTPException(
+            status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "err_code": "FAILED_JOB_FOUND",
+                "reason": (
+                    f"The last job with the name '{exc.job_name}' has failed.",
+                    "Please contact your administrator.",
+                ),
+            },
+        ),
+    )
+
+
 def register_exceptions(app: fastapi.FastAPI):
     app.add_exception_handler(
         GitRepositoryFileNotFoundError,
@@ -58,4 +104,14 @@ def register_exceptions(app: fastapi.FastAPI):
     app.add_exception_handler(
         GitInstanceAPIEndpointNotFoundError,
         git_instance_api_endpoint_not_found_handler,
+    )
+
+    app.add_exception_handler(
+        GitPipelineJobNotFoundError,
+        git_pipeline_job_not_found_handler,
+    )
+
+    app.add_exception_handler(
+        GitPipelineFailedJobFoundError,
+        git_pipeline_failed_job_found_handler,
     )

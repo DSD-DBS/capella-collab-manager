@@ -41,11 +41,10 @@ async def get_model_complexity_badge(
     logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
 ):
     try:
+        interface_class = git_interface.get_git_class(db, git_model)
         return fastapi.responses.Response(
-            content=await git_interface.get_file_from_repository(
-                db,
+            content=await interface_class.get_file_from_repository(
                 "model-complexity-badge.svg",
-                git_model,
             ),
             media_type="image/svg+xml",
         )
