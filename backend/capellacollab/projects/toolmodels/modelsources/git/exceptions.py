@@ -62,7 +62,7 @@ async def git_instance_api_endpoint_not_found_handler(
     return await exception_handlers.http_exception_handler(
         request,
         fastapi.HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "err_code": "GIT_INSTANCE_NO_API_ENDPOINT_DEFINED",
                 "reason": (
@@ -98,7 +98,7 @@ async def git_pipeline_job_failed_handler(
     return await exception_handlers.http_exception_handler(
         request,
         fastapi.HTTPException(
-            status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=fastapi.status.HTTP_400_BAD_REQUEST,
             detail={
                 "err_code": "FAILED_JOB_FOUND",
                 "reason": (

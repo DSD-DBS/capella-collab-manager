@@ -128,7 +128,7 @@ def test_get_diagrams_fails_without_git_instance(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams",
     )
 
-    assert response.status_code == 500
+    assert response.status_code == 422
     assert response.json()["detail"]["err_code"] == "GIT_INSTANCE_UNSUPPORTED"
 
 
@@ -151,7 +151,7 @@ def test_get_diagrams_fails_without_api_endpoint(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams",
     )
 
-    assert response.status_code == 500
+    assert response.status_code == 422
     assert (
         response.json()["detail"]["err_code"]
         == "GIT_INSTANCE_NO_API_ENDPOINT_DEFINED"
@@ -181,7 +181,7 @@ def test_get_diagrams_no_diagram_cache_job_found(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams",
     )
 
-    assert response.status_code == 500
+    assert response.status_code == 400
     assert response.json()["detail"]["err_code"] == "FAILED_JOB_FOUND"
 
 

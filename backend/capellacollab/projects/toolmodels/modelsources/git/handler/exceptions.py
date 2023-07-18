@@ -22,7 +22,7 @@ async def git_instance_unsupported_handler(
     return await exception_handlers.http_exception_handler(
         request,
         fastapi.HTTPException(
-            status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "err_code": "GIT_INSTANCE_UNSUPPORTED",
                 "reason": (
@@ -39,7 +39,7 @@ async def no_matching_git_instance_handler(
     return await exception_handlers.http_exception_handler(
         request,
         fastapi.HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_409_CONFLICT,
             detail={
                 "err_code": "NO_MATCHING_GIT_INSTANCE",
                 "reason": (

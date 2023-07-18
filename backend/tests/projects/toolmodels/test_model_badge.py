@@ -126,7 +126,7 @@ def test_model_has_no_git_instance(
     response = client.get(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/badges/complexity",
     )
-    assert response.status_code == 500
+    assert response.status_code == 409
     assert response.json()["detail"]["err_code"] == "NO_MATCHING_GIT_INSTANCE"
 
 
@@ -144,7 +144,7 @@ def test_get_model_badge_fails_with_unsupported_git_instance(
     response = client.get(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/badges/complexity",
     )
-    assert response.status_code == 500
+    assert response.status_code == 422
     assert response.json()["detail"]["err_code"] == "GIT_INSTANCE_UNSUPPORTED"
 
 
@@ -166,7 +166,7 @@ def test_get_model_badge_fails_without_api_endpoint(
     response = client.get(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/badges/complexity",
     )
-    assert response.status_code == 500
+    assert response.status_code == 422
     assert (
         response.json()["detail"]["err_code"]
         == "GIT_INSTANCE_NO_API_ENDPOINT_DEFINED"
