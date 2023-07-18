@@ -119,7 +119,6 @@ def test_http_exception_when_updating_permission_of_manager(
     }
 
 
-@pytest.mark.usefixtures("unique_username")
 def test_current_user_rights_for_internal_project(
     db: orm.Session,
     client: testclient.TestClient,
@@ -144,7 +143,6 @@ def test_current_user_rights_for_internal_project(
     assert response.json()["permission"] == "read"
 
 
-@pytest.mark.usefixtures("unique_username")
 def test_no_user_rights_on_internal_permissions(
     db: orm.Session,
     client: testclient.TestClient,
