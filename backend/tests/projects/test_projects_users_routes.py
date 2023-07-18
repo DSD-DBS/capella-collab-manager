@@ -1,84 +1,112 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from capellacollab.projects.crud import update_project
-from capellacollab.projects.models import PatchProject, Visibility
-from capellacollab.projects.users.crud import (
-    add_user_to_project,
-    get_project_user_association,
-)
-from capellacollab.projects.users.models import (
-    ProjectUserPermission,
-    ProjectUserRole,
-)
-from capellacollab.users.crud import create_user
-from capellacollab.users.models import Role
+import pytest
+from fastapi import testclient
+from sqlalchemy import orm
+
+from capellacollab.projects import crud as projects_crud
+from capellacollab.projects import models as projects_models
+from capellacollab.projects.users import crud as projects_users_crud
+from capellacollab.projects.users import models as projects_users_models
+from capellacollab.users import crud as users_crud
+from capellacollab.users import models as users_models
 
 
 def test_assign_read_write_permission_when_adding_manager(
-    db, client, executor_name, unique_username, project
+    db: orm.Session,
+    client: testclient.TestClient,
+    executor_name: str,
+    unique_username: str,
+    project: projects_models.DatabaseProject,
 ):
-    create_user(db, executor_name, Role.ADMIN)
-    user = create_user(db, unique_username, Role.USER)
+    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
 
     response = client.post(
         f"/api/v1/projects/{project.slug}/users/",
         json={
-            "role": ProjectUserRole.MANAGER.value,
-            "permission": ProjectUserPermission.READ.value,
+            "role": projects_users_models.ProjectUserRole.MANAGER.value,
+            "permission": projects_users_models.ProjectUserPermission.READ.value,
             "username": user.name,
             "reason": "",
         },
     )
 
-    project_user = get_project_user_association(db, project, user)
+    project_user = projects_users_crud.get_project_user_association(
+        db, project, user
+    )
 
     assert response.status_code == 200
     assert project_user
-    assert project_user.role == ProjectUserRole.MANAGER
-    assert project_user.permission == ProjectUserPermission.WRITE
+    assert project_user.role == projects_users_models.ProjectUserRole.MANAGER
+    assert (
+        project_user.permission
+        == projects_users_models.ProjectUserPermission.WRITE
+    )
 
 
 def test_assign_read_write_permission_when_changing_project_role_to_manager(
-    db, client, executor_name, unique_username, project
+    db: orm.Session,
+    client: testclient.TestClient,
+    executor_name: str,
+    unique_username: str,
+    project: projects_models.DatabaseProject,
 ):
-    create_user(db, executor_name, Role.ADMIN)
-    user = create_user(db, unique_username, Role.USER)
+    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
 
-    add_user_to_project(
-        db, project, user, ProjectUserRole.USER, ProjectUserPermission.READ
+    projects_users_crud.add_user_to_project(
+        db,
+        project,
+        user,
+        projects_users_models.ProjectUserRole.USER,
+        projects_users_models.ProjectUserPermission.READ,
     )
 
     response = client.patch(
         f"/api/v1/projects/{project.slug}/users/{user.id}",
         json={
-            "role": ProjectUserRole.MANAGER.value,
+            "role": projects_users_models.ProjectUserRole.MANAGER.value,
             "reason": "",
         },
     )
 
-    project_user = get_project_user_association(db, project, user)
+    project_user = projects_users_crud.get_project_user_association(
+        db, project, user
+    )
 
     assert response.status_code == 204
     assert project_user
-    assert project_user.role == ProjectUserRole.MANAGER
-    assert project_user.permission == ProjectUserPermission.WRITE
+    assert project_user.role == projects_users_models.ProjectUserRole.MANAGER
+    assert (
+        project_user.permission
+        == projects_users_models.ProjectUserPermission.WRITE
+    )
 
 
 def test_http_exception_when_updating_permission_of_manager(
-    db, client, executor_name, unique_username, project
+    db: orm.Session,
+    client: testclient.TestClient,
+    executor_name: str,
+    unique_username: str,
+    project: projects_models.DatabaseProject,
 ):
-    create_user(db, executor_name, Role.ADMIN)
-    user = create_user(db, unique_username, Role.USER)
+    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
 
-    add_user_to_project(
-        db, project, user, ProjectUserRole.MANAGER, ProjectUserPermission.WRITE
+    projects_users_crud.add_user_to_project(
+        db,
+        project,
+        user,
+        projects_users_models.ProjectUserRole.MANAGER,
+        projects_users_models.ProjectUserPermission.WRITE,
     )
 
     response = client.patch(
         f"/api/v1/projects/{project.slug}/users/{user.id}",
         json={
-            "permission": ProjectUserPermission.READ.value,
+            "permission": projects_users_models.ProjectUserPermission.READ.value,
             "reason": "",
         },
     )
@@ -91,11 +119,21 @@ def test_http_exception_when_updating_permission_of_manager(
     }
 
 
+@pytest.mark.usefixtures("unique_username")
 def test_current_user_rights_for_internal_project(
-    db, client, executor_name, unique_username, project
+    db: orm.Session,
+    client: testclient.TestClient,
+    executor_name: str,
+    project: projects_models.DatabaseProject,
 ):
-    update_project(db, project, PatchProject(visibility=Visibility.INTERNAL))
-    create_user(db, executor_name, Role.USER)
+    projects_crud.update_project(
+        db,
+        project,
+        projects_models.PatchProject(
+            visibility=projects_models.Visibility.INTERNAL
+        ),
+    )
+    users_crud.create_user(db, executor_name, users_models.Role.USER)
 
     response = client.get(
         f"/api/v1/projects/{project.slug}/users/current",
@@ -106,11 +144,21 @@ def test_current_user_rights_for_internal_project(
     assert response.json()["permission"] == "read"
 
 
+@pytest.mark.usefixtures("unique_username")
 def test_no_user_rights_on_internal_permissions(
-    db, client, executor_name, unique_username, project
+    db: orm.Session,
+    client: testclient.TestClient,
+    executor_name: str,
+    project: projects_models.DatabaseProject,
 ):
-    update_project(db, project, PatchProject(visibility=Visibility.PRIVATE))
-    create_user(db, executor_name, Role.USER)
+    projects_crud.update_project(
+        db,
+        project,
+        projects_models.PatchProject(
+            visibility=projects_models.Visibility.PRIVATE
+        ),
+    )
+    users_crud.create_user(db, executor_name, users_models.Role.USER)
 
     response = client.get(
         f"/api/v1/projects/{project.slug}/users/current",
