@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from capellacollab.projects.crud import update_project
+from capellacollab.projects.models import PatchProject, Visibility
 from capellacollab.projects.users.crud import (
     add_user_to_project,
     get_project_user_association,
@@ -87,3 +89,33 @@ def test_http_exception_when_updating_permission_of_manager(
             "reason": "You are not allowed to set the permission of project leads!"
         }
     }
+
+
+def test_current_user_rights_for_internal_project(
+    db, client, executor_name, unique_username, project
+):
+    update_project(db, project, PatchProject(visibility=Visibility.INTERNAL))
+    create_user(db, executor_name, Role.USER)
+
+    response = client.get(
+        f"/api/v1/projects/{project.slug}/users/current",
+    )
+
+    assert response.status_code == 200
+    assert response.json()["role"] == "user"
+    assert response.json()["permission"] == "read"
+
+
+def test_no_user_rights_on_internal_permissions(
+    db, client, executor_name, unique_username, project
+):
+    update_project(db, project, PatchProject(visibility=Visibility.PRIVATE))
+    create_user(db, executor_name, Role.USER)
+
+    response = client.get(
+        f"/api/v1/projects/{project.slug}/users/current",
+    )
+
+    assert response.status_code == 404
+    assert "detail" in response.json()
+    assert "reason" in response.json()["detail"]

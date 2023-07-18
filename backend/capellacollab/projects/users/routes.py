@@ -51,17 +51,23 @@ def get_project_user_association_or_raise(
     db: orm.Session,
     project: projects_models.DatabaseProject,
     user: users_models.DatabaseUser,
-) -> models.ProjectUserAssociation:
-    if not (
-        project_user := crud.get_project_user_association(db, project, user)
-    ):
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "reason": f"User {user.name} does not exist in project {project.slug}"
-            },
+) -> models.ProjectUserAssociation | models.ProjectUser:
+    if project_user := crud.get_project_user_association(db, project, user):
+        return project_user
+
+    if project.visibility == projects_models.Visibility.INTERNAL:
+        return models.ProjectUser(
+            role=models.ProjectUserRole.USER,
+            permission=models.ProjectUserPermission.READ,
+            user=user,
         )
-    return project_user
+
+    raise fastapi.HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail={
+            "reason": f"User {user.name} does not exist in project {project.slug}"
+        },
+    )
 
 
 @router.get("/current", response_model=models.ProjectUser)
