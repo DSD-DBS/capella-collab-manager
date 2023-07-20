@@ -48,13 +48,13 @@ def get_git_instance_for_git_model(
         key=lambda instance: len(instance.url),
         reverse=True,
     )
-
     for instance in instances_sorted_by_len:
         if git_model.path.startswith(instance.url):
             return instance
     raise fastapi.HTTPException(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         detail={
+            "err_code": "NO_MATCHING_GIT_INSTANCE",
             "reason": (
                 "No matching git instance was found for the primary git model.",
                 "Please contact your administrator.",

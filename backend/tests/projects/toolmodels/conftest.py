@@ -8,10 +8,12 @@ from sqlalchemy import orm
 import capellacollab.projects.models as project_models
 import capellacollab.projects.toolmodels.crud as toolmodels_crud
 import capellacollab.projects.toolmodels.models as toolmodels_models
-import capellacollab.projects.toolmodels.modelsources.git.crud as git_crud
-import capellacollab.projects.toolmodels.modelsources.git.models as git_models
+import capellacollab.projects.toolmodels.modelsources.git.crud as project_git_crud
+import capellacollab.projects.toolmodels.modelsources.git.models as project_git_models
 import capellacollab.projects.toolmodels.modelsources.t4c.crud as models_t4c_crud
 import capellacollab.projects.toolmodels.modelsources.t4c.models as models_t4c_models
+import capellacollab.settings.modelsources.git.crud as git_crud
+import capellacollab.settings.modelsources.git.models as git_models
 import capellacollab.settings.modelsources.t4c.crud as settings_t4c_crud
 import capellacollab.settings.modelsources.t4c.models as t4c_models
 import capellacollab.settings.modelsources.t4c.repositories.crud as settings_t4c_repositories_crud
@@ -46,18 +48,50 @@ def fixture_capella_model(
     )
 
 
+@pytest.fixture(
+    name="git_type",
+    params=[git_models.GitType.GITLAB],
+)
+def fixture_git_type(request: pytest.FixtureRequest) -> git_models.GitType:
+    return request.param
+
+
+@pytest.fixture(
+    name="git_instance_api_url", params=["https://example.com/api/v4"]
+)
+def fixture_git_instance_api_url(
+    request: pytest.FixtureRequest,
+) -> str:
+    return request.param
+
+
+@pytest.fixture(name="git_instance")
+def fixture_git_instance(
+    db: orm.Session, git_type: git_models.GitType, git_instance_api_url: str
+) -> git_models.DatabaseGitInstance:
+    git_instance = git_models.DatabaseGitInstance(
+        name="test",
+        url="https://example.com/test/project",
+        api_url=git_instance_api_url,
+        type=git_type,
+    )
+    return git_crud.create_git_instance(db, git_instance)
+
+
 @pytest.fixture(name="git_model")
 def fixture_git_models(
     db: orm.Session, capella_model: toolmodels_models.DatabaseCapellaModel
-) -> git_models.DatabaseGitModel:
-    git_model = git_models.PostGitModel(
+) -> project_git_models.DatabaseGitModel:
+    git_model = project_git_models.PostGitModel(
         path="https://example.com/test/project",
         entrypoint="test/test.aird",
         revision="main",
         username="user",
         password="password",
     )
-    return git_crud.add_git_model_to_capellamodel(db, capella_model, git_model)
+    return project_git_crud.add_git_model_to_capellamodel(
+        db, capella_model, git_model
+    )
 
 
 @pytest.fixture(name="t4c_repository")

@@ -39,6 +39,7 @@ class GithubInterface(GitInterface):
         self,
         job_name: str,
     ) -> JobIDAtributes:
+        self.check_git_instance_has_api_url()
         project_id = await self.get_project_id_by_git_url()
         for job in self.get_last_pipeline_runs(project_id):
             if job["name"] == job_name:
@@ -57,12 +58,12 @@ class GithubInterface(GitInterface):
     ) -> t.Any:
         if not self.git_model.password:
             response = requests.get(
-                f"https://api.github.com/repos{project_id}/actions/runs?branch={parse.quote(self.git_model.revision, safe='')}&per_page=20",
+                f"{self.git_instance.api_url}/repos{project_id}/actions/runs?branch={parse.quote(self.git_model.revision, safe='')}&per_page=20",
                 timeout=config["requests"]["timeout"],
             )
         else:
             response = requests.get(
-                f"https://api.github.com/repos{project_id}/actions/runs?branch={parse.quote(self.git_model.revision, safe='')}&per_page=20",
+                f"{self.git_instance.api_url}/repos{project_id}/actions/runs?branch={parse.quote(self.git_model.revision, safe='')}&per_page=20",
                 headers=self.get_headers(self.git_model.password),
                 timeout=config["requests"]["timeout"],
             )
@@ -152,7 +153,6 @@ class GithubInterface(GitInterface):
         """
         self.check_git_instance_has_api_url()
         project_id = await self.get_project_id_by_git_url()
-
         response = requests.get(
             f"{self.git_instance.api_url}/repos{project_id}/contents/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(self.git_model.revision, safe='')}",
             timeout=config["requests"]["timeout"],

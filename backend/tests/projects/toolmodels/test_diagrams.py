@@ -2,6 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import base64
+import io
+import zipfile
+
 import pytest
 import responses
 from aioresponses import aioresponses
@@ -10,7 +14,6 @@ from sqlalchemy import orm
 
 import capellacollab.projects.models as project_models
 import capellacollab.projects.toolmodels.models as toolmodels_models
-import capellacollab.settings.modelsources.git.crud as git_crud
 import capellacollab.settings.modelsources.git.models as git_models
 
 EXAMPLE_SVG = b"""
@@ -27,116 +30,145 @@ EXAMPLE_SVG = b"""
 """
 
 
-@pytest.fixture(name="git_type", params=[git_models.GitType.GITLAB])
-def fixture_git_type(request: pytest.FixtureRequest) -> git_models.GitType:
-    return request.param
-
-
-@pytest.fixture(
-    name="git_instance_api_url", params=["https://example.com/api/v4"]
-)
-def fixture_git_instance_api_url(
-    request: pytest.FixtureRequest,
-) -> str:
-    return request.param
-
-
-@pytest.fixture(name="gitlab_instance")
-def fixture_gitlab_instance(
-    db: orm.Session, git_type: git_models.GitType, git_instance_api_url: str
-) -> git_models.DatabaseGitInstance:
-    git_instance = git_models.DatabaseGitInstance(
-        name="test",
-        url="https://example.com",
-        api_url=git_instance_api_url,
-        type=git_type,
-    )
-    return git_crud.create_git_instance(db, git_instance)
-
-
-@pytest.fixture(name="diagram_cache_job_status")
+@pytest.fixture(name="diagram_cache_job_status", params=["success"])
 def fixture_diagram_cache_job_status(request: pytest.FixtureRequest):
-    if hasattr(request, "param"):
-        return request.param
-    else:
-        return "success"
+    return request.param
 
 
-@pytest.fixture()
-def mock_gitlab_rest_api(diagram_cache_job_status: str):
-    with aioresponses() as mocked:
-        mocked.get(
-            "https://example.com/api/v4/projects/test%2Fproject",
-            status=200,
-            payload={"id": "10000"},
-        )
+@pytest.fixture(name="mock_git_rest_api")
+def fixture_mock_git_rest_api(
+    diagram_cache_job_status: str, git_type: git_models.GitType
+):
+    pipeline_ids = ["12345", "12346"]
+    match git_type:
+        case git_models.GitType.GITLAB:
+            with aioresponses() as mocked:
+                mocked.get(
+                    "https://example.com/api/v4/projects/test%2Fproject",
+                    status=200,
+                    payload={"id": "10000"},
+                )
 
-        pipeline_ids = ["12345", "12346"]
-        mocked.get(
-            "https://example.com/api/v4/projects/10000/pipelines?ref=main&per_page=20",
-            status=200,
-            payload=[{"id": _id} for _id in pipeline_ids],
-        )
+                mocked.get(
+                    "https://example.com/api/v4/projects/10000/pipelines?ref=main&per_page=20",
+                    status=200,
+                    payload=[{"id": _id} for _id in pipeline_ids],
+                )
 
-        for _id in pipeline_ids:
-            mocked.get(
-                f"https://example.com/api/v4/projects/10000/pipelines/{_id}/jobs",
+                for _id in pipeline_ids:
+                    mocked.get(
+                        f"https://example.com/api/v4/projects/10000/pipelines/{_id}/jobs",
+                        status=200,
+                        payload=[
+                            {
+                                "name": "test",
+                                "status": "failure",
+                                "started_at": "2023-02-04T02:55:17.788000+00:00",
+                                "id": "00001",
+                            },
+                            {
+                                "name": "update_capella_diagram_cache",
+                                "status": diagram_cache_job_status,
+                                "started_at": "2023-02-04T02:55:17.788000+00:00",
+                                "id": "00002",
+                            },
+                        ],
+                    )
+
+                yield mocked
+        case git_models.GitType.GITHUB:
+            artifact_id = 12347
+            responses.get(
+                "https://example.com/api/v4/repos/test/project/actions/runs?branch=main&per_page=20",
                 status=200,
-                payload=[
-                    {
-                        "name": "test",
-                        "status": "failure",
-                        "started_at": "2023-02-04T02:55:17.788000+00:00",
-                        "id": "00001",
-                    },
-                    {
-                        "name": "update_capella_diagram_cache",
-                        "status": diagram_cache_job_status,
-                        "started_at": "2023-02-04T02:55:17.788000+00:00",
-                        "id": "00002",
-                    },
-                ],
+                json={
+                    "workflow_runs": [
+                        {
+                            "id": _id,
+                            "name": "update_capella_diagram_cache",
+                            "conclusion": diagram_cache_job_status,
+                            "created_at": "2050-07-23T09:30:47Z",
+                        }
+                        for _id in pipeline_ids
+                    ],
+                },
+            )
+            responses.get(
+                f"https://example.com/api/v4/repos/test/project/actions/runs/{pipeline_ids[0]}/artifacts",
+                status=200,
+                json={"artifacts": [{"id": artifact_id, "expired": "false"}]},
+            )
+            yield responses
+
+
+def get_diagram_cache_index():
+    return [
+        {
+            "name": "Diagram 1",
+            "uuid": "_c90e4Hdf2d2UosmJBo0GTw",
+            "success": "true",
+        },
+        {
+            "name": "Diagram 2",
+            "uuid": "_VjvUMasdf2e2wVuAPh3ezQ",
+            "success": "true",
+        },
+    ]
+
+
+def get_zipfile():
+    byte_io = io.BytesIO()
+    with zipfile.ZipFile(byte_io, "w") as zf:
+        zf.writestr(
+            "index.json", str(get_diagram_cache_index()).replace("'", '"')
+        )
+        zf.writestr("_c90e4Hdf2d2UosmJBo0GTw.svg", EXAMPLE_SVG)
+    byte_io.seek(0)
+    return byte_io.read()
+
+
+@pytest.fixture(name="mock_git_diagram_cache_index_api")
+def fixture_mock_git_diagram_cache_index_api(git_type: git_models.GitType):
+    match git_type:
+        case git_models.GitType.GITLAB:
+            responses.get(
+                "https://example.com/api/v4/projects/10000/jobs/00002/artifacts/diagram_cache/index.json",
+                status=200,
+                json=get_diagram_cache_index(),
+            )
+        case git_models.GitType.GITHUB:
+            responses.get(
+                f"https://example.com/api/v4/repos/test/project/actions/artifacts/12347/zip",
+                status=200,
+                body=get_zipfile(),
+                content_type="application/zip",
             )
 
-        yield mocked
 
-
-@pytest.fixture
-def mock_gitlab_diagram_cache_index_api():
-    responses.get(
-        "https://example.com/api/v4/projects/10000/jobs/00002/artifacts/diagram_cache/index.json",
-        status=200,
-        json=[
-            {
-                "name": "Diagram 1",
-                "uuid": "_c90e4Hdf2d2UosmJBo0GTw",
-                "success": True,
-            },
-            {
-                "name": "Diagram 2",
-                "uuid": "_VjvUMasdf2e2wVuAPh3ezQ",
-                "success": True,
-            },
-        ],
-    )
-
-
-@pytest.fixture
-def mock_gitlab_diagram_cache_svg():
-    responses.get(
-        "https://example.com/api/v4/projects/10000/jobs/00002/artifacts/diagram_cache/_c90e4Hdf2d2UosmJBo0GTw.svg",
-        status=200,
-        body=EXAMPLE_SVG,
-    )
+@pytest.fixture(name="mock_git_diagram_cache_svg")
+def fixture_mock_gitlab_diagram_cache_svg(git_type: git_models.GitType):
+    match git_type:
+        case git_models.GitType.GITLAB:
+            responses.get(
+                "https://example.com/api/v4/projects/10000/jobs/00002/artifacts/diagram_cache/_c90e4Hdf2d2UosmJBo0GTw.svg",
+                status=200,
+                body=EXAMPLE_SVG,
+            )
+        case git_models.GitType.GITHUB:
+            # fixture mock_git_diagram_cache_index_api already provides all that is needed
+            pass
 
 
 @responses.activate
+@pytest.mark.parametrize(
+    "git_type", [git_models.GitType.GITLAB, git_models.GitType.GITHUB]
+)
 @pytest.mark.usefixtures(
     "project_user",
-    "gitlab_instance",
+    "git_instance",
     "git_model",
-    "mock_gitlab_rest_api",
-    "mock_gitlab_diagram_cache_index_api",
+    "mock_git_rest_api",
+    "mock_git_diagram_cache_index_api",
 )
 def test_get_diagram_metadata(
     project: project_models.DatabaseProject,
@@ -146,7 +178,6 @@ def test_get_diagram_metadata(
     response = client.get(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams",
     )
-
     assert response.status_code == 200
     assert len(response.json()) == 2
 
@@ -158,11 +189,10 @@ def test_get_diagram_metadata(
 )
 @pytest.mark.usefixtures(
     "project_user",
-    "gitlab_instance",
+    "git_instance",
     "git_model",
-    "mock_gitlab_rest_api",
 )
-def test_get_diagrams_fails_without_gitlab_instance(
+def test_get_diagrams_fails_without_git_instance(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.CapellaModel,
     client: testclient.TestClient,
@@ -178,13 +208,12 @@ def test_get_diagrams_fails_without_gitlab_instance(
 @responses.activate
 @pytest.mark.parametrize(
     "git_type,git_instance_api_url",
-    [(git_models.GitType.GITLAB, "")],
+    [(git_models.GitType.GITLAB, ""), (git_models.GitType.GITHUB, "")],
 )
 @pytest.mark.usefixtures(
     "project_user",
-    "gitlab_instance",
+    "git_instance",
     "git_model",
-    "mock_gitlab_rest_api",
 )
 def test_get_diagrams_fails_without_api_endpoint(
     project: project_models.DatabaseProject,
@@ -204,14 +233,17 @@ def test_get_diagrams_fails_without_api_endpoint(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "diagram_cache_job_status",
-    ["failure"],
+    "git_type,diagram_cache_job_status",
+    [
+        (git_models.GitType.GITLAB, "failed"),
+        (git_models.GitType.GITHUB, "failure"),
+    ],
 )
 @pytest.mark.usefixtures(
     "project_user",
-    "gitlab_instance",
+    "git_instance",
     "git_model",
-    "mock_gitlab_rest_api",
+    "mock_git_rest_api",
 )
 def test_get_diagrams_no_diagram_cache_job_found(
     project: project_models.DatabaseProject,
@@ -223,18 +255,22 @@ def test_get_diagrams_no_diagram_cache_job_found(
     )
 
     assert response.status_code == 500
-    assert response.json()["detail"]["err_code"] == "PIPELINE_JOB_NOT_FOUND"
+    assert response.json()["detail"]["err_code"] == "FAILED_JOB_FOUND"
 
 
 @responses.activate
+@pytest.mark.parametrize(
+    "git_type", [git_models.GitType.GITLAB, git_models.GitType.GITHUB]
+)
 @pytest.mark.usefixtures(
     "project_user",
-    "gitlab_instance",
+    "git_instance",
     "git_model",
-    "mock_gitlab_rest_api",
-    "mock_gitlab_diagram_cache_svg",
+    "mock_git_rest_api",
+    "mock_git_diagram_cache_index_api",
+    "mock_git_diagram_cache_svg",
 )
-@pytest.mark.usefixtures("project_user", "gitlab_instance", "git_model")
+@pytest.mark.usefixtures("project_user", "git_instance", "git_model")
 def test_get_single_diagram(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.CapellaModel,
