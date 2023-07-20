@@ -145,7 +145,7 @@ def request_session(
     operator: KubernetesOperator = fastapi.Depends(get_operator),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
-    log.info("Starting persistent session creation for user %s", db_user.name)
+    log.info("Starting read-only session creation for user %s", db_user.name)
 
     if not body.models:
         raise fastapi.HTTPException(
@@ -284,6 +284,41 @@ def request_persistent_session(
     version = tools_injectables.get_exisiting_tool_version(
         tool.id, body.version_id, db
     )
+
+    existing_user_sessions = crud.get_sessions_for_user(db, owner)
+
+    # This is a temporary workaround until we can define a proper locking of workspaces
+    # Currently, all tools share one workspace. Eclipse based tools lock the workspace.
+    # We can only run one Eclipse-based tool at a time.
+    # Status tracked in https://github.com/DSD-DBS/capella-collab-manager/issues/847
+    if tool.name == "Jupyter":
+        # Check if there is already an Jupyter session running.
+        if "Jupyter" in [
+            session.tool.name for session in existing_user_sessions
+        ]:
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={
+                    "err_code": "EXISTING_SESSION",
+                    "reason": "You already have a Jupyter session. Please navigate to 'Active Sessions' to connect.",
+                },
+            )
+    else:
+        if models.WorkspaceType.PERSISTENT in [
+            session.type
+            for session in existing_user_sessions
+            if session.tool.name != "Jupyter"
+        ]:
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={
+                    "err_code": "EXISTING_SESSION",
+                    "reason": (
+                        "You already have a open persistent Eclipse-based session.",
+                        "Currently, we can only run one Eclipse-based session at a time.",
+                    ),
+                },
+            )
 
     if tool.integrations and tool.integrations.jupyter:
         response = start_persistent_jupyter_session(
