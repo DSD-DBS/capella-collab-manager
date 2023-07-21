@@ -14,9 +14,9 @@ data:
       - name: Inactivity
         rules:
           - record: idletime_minutes
-            expr: (time() - max_over_time(timestamp(sum by (app) (increase(http_request_duration_seconds_count[2m])) > 4.5)[1d:5m])) / 60
+            expr: (time() - (max by (app) (http_request_duration_seconds_created)) or on (app) max_over_time(timestamp(sum by (app) (increase(http_request_duration_seconds_count[2m])) > 4.5)[{{ .Values.sessions.timeout }}m:2m])) / 60
           - alert: Inactive session
-            expr: idletime_minutes > {{ .Values.sessions.timeout }}
+            expr: idletime_minutes >= {{ .Values.sessions.timeout }}
             for: 1m
             annotations:
               summary: High Idletime
