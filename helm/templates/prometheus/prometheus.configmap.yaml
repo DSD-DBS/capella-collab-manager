@@ -13,6 +13,8 @@ data:
     groups:
       - name: Inactivity
         rules:
+            # This metric adds idle times for jupyter notebooks. pynb does not support an activity metric out of the box.
+            # We check if the request count is over 4 (scrape interval is 30s). If so, we assume activity.
           - record: idletime_minutes
             expr: (time() - (max by (app) (http_request_duration_seconds_created)) or on (app) max_over_time(timestamp(sum by (app) (increase(http_request_duration_seconds_count[2m])) > 4.5)[{{ .Values.sessions.timeout }}m:2m])) / 60
           - alert: Inactive session
