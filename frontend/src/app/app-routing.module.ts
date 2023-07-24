@@ -126,7 +126,7 @@ const routes: Routes = [
 
                     children: [
                       {
-                        path: 'model-sources',
+                        path: 'modelsources',
                         data: {
                           breadcrumb: 'model sources',
                           redirect: (data: Data) =>

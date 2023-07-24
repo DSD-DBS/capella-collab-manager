@@ -176,13 +176,13 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
           if (this.asStepper) {
             this.create.emit(true);
           } else {
-            this.router.navigate(['../../model-sources'], {
+            this.router.navigate(['../../modelsources'], {
               relativeTo: this.route,
             });
           }
           this.toastService.showSuccess(
             'TeamForCapella repository successfully linked',
-            ''
+            `A new TeamForCapella repository was linked to the model '${this.modelSlug}'`
           );
         });
     }
@@ -200,17 +200,18 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             this.toastService.showSuccess(
-              'T4C model deleted',
-              `${t4cModelName} has been deleted`
+              'TeamForCapella project unlinked',
+              `The TeamForCapella repository with the name '${t4cModelName}' has been unlinked`
             );
             this.router.navigateByUrl(
-              `/project/${this.projectSlug!}/model/${this.modelSlug!}`
+              `/project/${this.projectSlug!}/model/${this
+                .modelSlug!}/modelsources`
             );
           },
           error: () => {
-            this.toastService.showError(
-              'T4C model deletion failed',
-              `${t4cModelName} has not been deleted`
+            this.toastService.showSuccess(
+              'TeamForCapella project unlinking failed',
+              `The TeamForCapella repository with the name '${t4cModelName}' has not been unlinked`
             );
           },
         });

@@ -3,15 +3,9 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div
-  *ngIf="(projectService.project | async) && (modelService.model | async)"
-  class="wrapper flex-center"
->
-  <mat-card>
+<div *ngIf="(projectService.project | async) && (modelService.model | async)">
+  <mat-card class="w-fit">
     <form [formGroup]="form">
-      <fieldset *ngIf="!asStepper && isEditMode">
-        <mat-slide-toggle formControlName="primary"> Primary </mat-slide-toggle>
-      </fieldset>
       <div formGroupName="urls">
         <fieldset *ngIf="availableGitInstances?.length">
           <mat-form-field appearance="fill">
@@ -148,6 +142,11 @@
           </mat-error>
         </mat-form-field>
       </fieldset>
+      <fieldset class="mb-5" *ngIf="!asStepper && isEditMode">
+        <mat-slide-toggle formControlName="primary">
+          Primary Git repository</mat-slide-toggle
+        >
+      </fieldset>
     </form>
     <div *ngIf="asStepper; else notFromStepper" class="flex justify-between">
       <button
@@ -164,7 +163,7 @@
     <ng-template #notFromStepper>
       <ng-container *ngIf="!isEditMode; else editGitModel">
         <div class="flex justify-between">
-          <a mat-button [routerLink]="['../../model-sources']">
+          <a mat-button [routerLink]="['../../modelsources']">
             <mat-icon class="mat-icon-position">arrow_back</mat-icon>
             Cancel
           </a>
@@ -185,9 +184,7 @@
     <ng-template #editGitModel>
       <div *ngIf="editing">
         <div class="flex justify-between">
-          <button mat-raised-button color="warn" (click)="cancelEditing()">
-            Cancel
-          </button>
+          <button mat-raised-button (click)="cancelEditing()">Cancel</button>
 
           <button
             mat-raised-button
@@ -201,16 +198,14 @@
         </div>
       </div>
       <div *ngIf="!editing">
-        <div class="flex justify-between">
-          <div>
-            <button mat-raised-button color="warn" (click)="unlinkGitModel()">
-              Unlink
-            </button>
+        <div class="flex justify-between wrap">
+          <button mat-raised-button color="warn" (click)="unlinkGitModel()">
+            Unlink
+          </button>
 
-            <button mat-raised-button color="primary" (click)="enableEditing()">
-              Edit
-            </button>
-          </div>
+          <button mat-raised-button color="primary" (click)="enableEditing()">
+            Edit
+          </button>
         </div>
       </div>
     </ng-template>

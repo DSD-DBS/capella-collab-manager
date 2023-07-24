@@ -272,7 +272,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
           if (this.asStepper) {
             this.create.emit(true);
           } else {
-            this.router.navigate(['../../model-sources'], {
+            this.router.navigate(['../../modelsources'], {
               relativeTo: this.route,
             });
           }
@@ -293,7 +293,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
           patchGitModel
         )
         .subscribe(() =>
-          this.router.navigate(['../../model-sources'], {
+          this.router.navigate(['../../modelsources'], {
             relativeTo: this.route,
           })
         );
@@ -326,17 +326,18 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.toastService.showSuccess(
-            'Git model deleted',
-            `${this.gitModel!.path} has been deleted`
+            'Git repository unlinked',
+            `The Git repository '${this.gitModel!.path}' has been unlinked`
           );
           this.router.navigateByUrl(
-            `/project/${this.projectSlug!}/model/${this.modelSlug!}`
+            `/project/${this.projectSlug!}/model/${this
+              .modelSlug!}/modelsources`
           );
         },
         error: () => {
           this.toastService.showError(
-            'Git model deletion failed',
-            `${this.gitModel!.path} has not been deleted`
+            'Git repository unlinking failed',
+            `The Git repository '${this.gitModel!.path}' has not been unlinked`
           );
         },
       });
