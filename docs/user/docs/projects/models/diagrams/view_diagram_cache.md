@@ -13,6 +13,6 @@
    <!-- prettier-ignore -->
     !!! note
         We'll search for a successful job run in the last 20 pipelines of
-        the specific revision. If there is no successful pipeline or on Github your artifacts have expired, you won't be able
+        the specific revision. If there is no successful pipeline (using Gitlab or Github) or your artifacts have expired (using Github), you won't be able
         to see diagrams.
 4. If you want to enlarge a diagram, just click on the image preview.

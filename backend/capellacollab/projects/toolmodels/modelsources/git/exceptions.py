@@ -19,9 +19,13 @@ class GitPipelineJobNotFoundError(Exception):
         self.job_name = job_name
 
 
-class GitPipelineFailedJobFoundError(Exception):
+class GitPipelineJobFailedError(Exception):
     def __init__(self, job_name: str) -> None:
         self.job_name = job_name
+
+
+class GithubArtifactExpiredError(Exception):
+    pass
 
 
 async def git_repository_file_not_found_handler(
@@ -78,8 +82,8 @@ async def git_pipeline_job_not_found_handler(
     )
 
 
-async def git_pipeline_failed_job_found_handler(
-    request: fastapi.Request, exc: GitPipelineFailedJobFoundError
+async def git_pipeline_job_failed_handler(
+    request: fastapi.Request, exc: GitPipelineJobFailedError
 ) -> fastapi.Response:
     return await exception_handlers.http_exception_handler(
         request,
@@ -90,6 +94,23 @@ async def git_pipeline_failed_job_found_handler(
                 "reason": (
                     f"The last job with the name '{exc.job_name}' has failed.",
                     "Please contact your administrator.",
+                ),
+            },
+        ),
+    )
+
+
+async def github_artifact_expired_handler(
+    request: fastapi.Request, _: GithubArtifactExpiredError
+) -> fastapi.Response:
+    return await exception_handlers.http_exception_handler(
+        request,
+        fastapi.HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "err_code": "ARTIFACT_EXPIRED",
+                "reason": (
+                    "The latest artifact you are requesting expired. Please rerun your pipline and contact your administrator."
                 ),
             },
         ),
@@ -112,6 +133,6 @@ def register_exceptions(app: fastapi.FastAPI):
     )
 
     app.add_exception_handler(
-        GitPipelineFailedJobFoundError,
-        git_pipeline_failed_job_found_handler,
+        GitPipelineJobFailedError,
+        git_pipeline_job_failed_handler,
     )

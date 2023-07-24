@@ -15,6 +15,7 @@ from capellacollab.projects.toolmodels.modelsources.git.models import (
 )
 
 from . import crud
+from .handler import factory, handler
 
 
 def get_existing_git_model(
@@ -57,3 +58,12 @@ def get_existing_primary_git_model(
             "reason": "No git model is assigned to your project. Please ask a project lead to assign a git model.",
         },
     )
+
+
+def get_git_handler(
+    git_model: DatabaseGitModel = fastapi.Depends(
+        get_existing_primary_git_model
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> handler.GitHandler:
+    return factory.GitHandlerFactory.create_git_handler(db, git_model)

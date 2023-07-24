@@ -27,7 +27,7 @@
 
           Gitlab: Limit the scope of the used token, only scope `read_api` is required.
 
-          Github: You can limit the scope of the used token to "read".
+          Github:  If you are using a fine-grained personal access token you need the repository permission for the scope "content" as `read_only`.
 
 1.  Follow the
     [Gitlab CI template instructions](https://github.com/DSD-DBS/py-capellambse/tree/master/ci-templates/gitlab#model-badge)

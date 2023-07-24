@@ -8,7 +8,7 @@ from sqlalchemy import orm
 
 import capellacollab.projects.toolmodels.models as toolmodels_models
 import capellacollab.projects.toolmodels.modelsources.git.crud as git_crud
-import capellacollab.projects.toolmodels.modelsources.git.gitlab.interface as gitlab_interface
+import capellacollab.projects.toolmodels.modelsources.git.gitlab.handler as gitlab_interface
 
 from . import models
 

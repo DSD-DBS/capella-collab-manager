@@ -10,7 +10,6 @@ import pytest
 import responses
 from aioresponses import aioresponses
 from fastapi import testclient
-from sqlalchemy import orm
 
 import capellacollab.projects.models as project_models
 import capellacollab.projects.toolmodels.models as toolmodels_models

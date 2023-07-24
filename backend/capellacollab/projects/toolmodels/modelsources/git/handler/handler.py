@@ -9,14 +9,14 @@ import requests
 import capellacollab.projects.toolmodels.modelsources.git.models as git_models
 import capellacollab.settings.modelsources.git.models as settings_git_models
 
-from . import exceptions
+from .. import exceptions
 
-JobIDAtributes = collections.namedtuple(
-    "JobIDAtributes", ["projectID", "jobIDandDatetuple"]
+JobIdAttributes = collections.namedtuple(
+    "JobIdAttributes", ["projectId", "jobIdAndDateTuple"]
 )
 
 
-class GitInterface:
+class GitHandler:
     def __init__(
         self,
         git_model: git_models.DatabaseGitModel,
@@ -24,6 +24,7 @@ class GitInterface:
     ) -> None:
         self.git_model = git_model
         self.git_instance = git_instance
+        self.check_git_instance_has_api_url()
 
     def check_git_instance_has_api_url(self):
         if not self.git_instance.api_url:

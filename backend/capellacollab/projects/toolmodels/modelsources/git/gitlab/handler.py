@@ -10,18 +10,13 @@ import requests
 from fastapi import status
 
 from capellacollab.config import config
-from capellacollab.projects.toolmodels.modelsources.git.interface_class import (
-    GitInterface,
-    JobIDAtributes,
-)
 
-from .. import exceptions
+from .. import exceptions as git_exceptions
+from ..handler import handler
 
 
-class GitlabInterface(GitInterface):
-    async def get_project_id_by_git_url(
-        self,
-    ) -> str:
+class GitlabHandler(handler.GitHandler):
+    async def get_project_id_by_git_url(self) -> str:
         project_name_encoded = parse.quote(
             parse.urlparse(self.git_model.path)
             .path.lstrip("/")
@@ -63,8 +58,7 @@ class GitlabInterface(GitInterface):
     async def get_last_job_run_id_for_git_model(
         self,
         job_name: str,
-    ) -> JobIDAtributes:
-        self.check_git_instance_has_api_url()
+    ) -> handler.JobIdAttributes:
         project_id = await self.get_project_id_by_git_url()
         for pipeline_id in await self.__get_last_pipeline_run_ids(project_id):
             if job := await self.__get_job_id_for_job_name(
@@ -72,9 +66,9 @@ class GitlabInterface(GitInterface):
                 pipeline_id,
                 job_name,
             ):
-                return JobIDAtributes(project_id, job)
+                return handler.JobIdAttributes(project_id, job)
 
-        raise exceptions.GitPipelineJobNotFoundError(job_name=job_name)
+        raise git_exceptions.GitPipelineJobNotFoundError(job_name=job_name)
 
     async def __get_last_pipeline_run_ids(
         self,
@@ -110,7 +104,7 @@ class GitlabInterface(GitInterface):
                         if job["status"] == "success":
                             return job["id"], job["started_at"]
                         if job["status"] == "failed":
-                            raise exceptions.GitPipelineFailedJobFoundError(
+                            raise git_exceptions.GitPipelineJobFailedError(
                                 job_name
                             )
 
@@ -158,7 +152,6 @@ class GitlabInterface(GitInterface):
         self,
         trusted_file_path: str,
     ) -> bytes:
-        self.check_git_instance_has_api_url()
         project_id = await self.get_project_id_by_git_url()
         response = requests.get(
             f"{self.git_instance.api_url}/projects/{project_id}/repository/files/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(self.git_model.revision, safe='')}",
@@ -166,7 +159,7 @@ class GitlabInterface(GitInterface):
             timeout=config["requests"]["timeout"],
         )
         if response.status_code == 404:
-            raise exceptions.GitRepositoryFileNotFoundError(
+            raise git_exceptions.GitRepositoryFileNotFoundError(
                 filename=trusted_file_path
             )
 

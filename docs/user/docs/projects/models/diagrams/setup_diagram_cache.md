@@ -26,7 +26,7 @@
     !!! info
          The diagram cache integration uses the credentials, which are assigned when
          creating the Git model integration. Limit the scopes of the used token, only
-         scope `read_api` (Gitlab) and `read`(Github) is required.
+         scope `read_api` (Gitlab) and `read-only` for the "actions" scope of the repository permissions (Github, Personal Access Token) is required.
 
 1. Follow the
    [Gitlab CI template instructions](https://github.com/DSD-DBS/capella-dockerimages/tree/main/ci-templates/gitlab#diagram-cache)

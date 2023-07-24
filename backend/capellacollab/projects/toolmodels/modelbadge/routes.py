@@ -9,16 +9,11 @@ import aiohttp.web
 import fastapi
 import requests
 from fastapi import status
-from sqlalchemy import orm
 
 import capellacollab.projects.toolmodels.modelsources.git.injectables as git_injectables
-import capellacollab.projects.toolmodels.modelsources.git.models as git_models
-from capellacollab.core import database
 from capellacollab.core import logging as log
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.projects.toolmodels.modelsources.git import (
-    interface as git_interface,
-)
+from capellacollab.projects.toolmodels.modelsources.git.handler import handler
 from capellacollab.projects.users import models as projects_users_models
 
 router = fastapi.APIRouter(
@@ -34,16 +29,14 @@ router = fastapi.APIRouter(
 
 @router.get("", response_class=fastapi.responses.Response)
 async def get_model_complexity_badge(
-    git_model: git_models.DatabaseGitModel = fastapi.Depends(
-        git_injectables.get_existing_primary_git_model
+    git_handler: handler.GitHandler = fastapi.Depends(
+        git_injectables.get_git_handler
     ),
-    db: orm.Session = fastapi.Depends(database.get_db),
     logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
 ):
     try:
-        interface_class = git_interface.get_git_class(db, git_model)
         return fastapi.responses.Response(
-            content=await interface_class.get_file_from_repository(
+            content=await git_handler.get_file_from_repository(
                 "model-complexity-badge.svg",
             ),
             media_type="image/svg+xml",
