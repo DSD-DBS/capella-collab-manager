@@ -4,6 +4,8 @@
 ARG BASE_IMAGE=node:18
 FROM $BASE_IMAGE as build
 
+USER root
+
 ARG CONFIGURATION=production
 RUN npm install -g npm@latest
 

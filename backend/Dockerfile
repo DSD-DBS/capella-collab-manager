@@ -7,6 +7,8 @@ FROM $BASE_IMAGE
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 ENV SHELL=/bin/bash
 
+USER root
+
 RUN apt-get update && \
     apt-get upgrade --yes && \
     apt-get install --yes \
