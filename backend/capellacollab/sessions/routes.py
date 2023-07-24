@@ -471,7 +471,7 @@ def determine_pure_variants_configuration(
             model
             for association in user.projects
             for model in association.project.models
-            if model.restrictions.allow_pure_variants
+            if model.restrictions and model.restrictions.allow_pure_variants
         ]
         and user.role == users_models.Role.USER
     ):
