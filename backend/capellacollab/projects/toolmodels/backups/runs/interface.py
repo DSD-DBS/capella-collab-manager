@@ -113,8 +113,10 @@ def _transform_kubernetes_event_to_loki_entry(
 ) -> loki.LogEntry:
     # Transform UTC from kubernetes to local timezone
     timestamp = (
-        _transform_utc_to_local_timestamp(event.last_timestamp)
-        if event.last_timestamp
+        _transform_utc_to_local_timestamp(
+            event.last_timestamp or event.event_time
+        )
+        if event.last_timestamp or event.event_time
         else datetime.datetime.now()
     )
     return loki.LogEntry(
