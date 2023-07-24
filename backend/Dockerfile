@@ -18,16 +18,14 @@ RUN apt-get update && \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+ARG KUBECTL_APT_REMOTE=https://apt.kubernetes.io/
+
 # Install kubectl if not available in base image
 # kubectl is needed for the list files endpoint
-RUN kubectl_installed="yes"; dpkg -s kubectl || kubectl_installed="no"; \
-    if [[ "$kubectl_installed" == "no" ]]; \
-    then \
-    mkdir -p /etc/apt/keyrings; \
-    curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://dl.k8s.io/apt/doc/apt-key.gpg; \
-    echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list; \
-    apt-get update && apt-get install -y kubectl && rm -rf /var/lib/apt/lists/*; \
-    fi
+RUN mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] $KUBECTL_APT_REMOTE kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list && \
+    apt-get update && apt-get install -y kubectl && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8000
 COPY . /tmp/backend
