@@ -18,6 +18,9 @@ import capellacollab.sessions.metrics
 from capellacollab.config import config
 from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
+from capellacollab.projects.toolmodels.backups import (
+    exceptions as projects_toolmodels_backups_exceptions,
+)
 from capellacollab.projects.toolmodels.modelsources.git import (
     exceptions as git_exceptions,
 )
@@ -128,6 +131,7 @@ def register_exceptions():
     git_exceptions.register_exceptions(app)
     gitlab_exceptions.register_exceptions(app)
     git_handler_exceptions.register_exceptions(app)
+    projects_toolmodels_backups_exceptions.register_exceptions(app)
 
 
 register_exceptions()

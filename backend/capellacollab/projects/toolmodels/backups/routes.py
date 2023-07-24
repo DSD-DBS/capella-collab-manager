@@ -7,7 +7,6 @@ import uuid
 
 import fastapi
 import requests
-from fastapi import status
 from sqlalchemy import orm
 
 import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repository_interface
@@ -30,7 +29,7 @@ from capellacollab.sessions import operators
 from capellacollab.tools import crud as tools_crud
 from capellacollab.users import models as users_models
 
-from . import core, crud, injectables, models
+from . import core, crud, exceptions, injectables, models
 from .runs import routes as runs_routes
 
 router = fastapi.APIRouter(
@@ -96,13 +95,8 @@ def create_backup(
         )
     except requests.RequestException:
         log.warning("Pipeline could not be created", exc_info=True)
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail={
-                "err_code": "PIPELINE_CREATION_FAILED_T4C_SERVER_UNREACHABLE",
-                "title": "Creation of the pipeline failed",
-                "reason": "We're not able to connect to the TeamForCapella server and therefore cannot prepare the pipeline. Please try again later or contact your administrator.",
-            },
+        raise exceptions.PipelineOperationFailedT4CServerUnreachable(
+            exceptions.PipelineOperation.CREATE
         )
 
     if body.run_nightly:
@@ -167,13 +161,8 @@ def delete_pipeline(
                 required_role=users_models.Role.ADMIN, verify=False
             )(token=token, db=db)
         ):
-            raise fastapi.HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail={
-                    "err_code": "PIPELINE_DELETION_FAILED_T4C_SERVER_UNREACHABLE",
-                    "title": "Deletion of the pipeline failed",
-                    "reason": "We're not able to connect to the TeamForCapella server and therefore cannot delete the pipeline. Please try again later or contact your administrator.",
-                },
+            raise exceptions.PipelineOperationFailedT4CServerUnreachable(
+                exceptions.PipelineOperation.DELETE
             )
 
     if pipeline.run_nightly:
