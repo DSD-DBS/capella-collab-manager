@@ -84,3 +84,10 @@ class GitModelStatus(enum.Enum):
     ACCESSIBLE = "accessible"
     INACCESSIBLE = "inaccessible"
     UNSET = "unset"
+
+
+class ModelArtifactStatus(enum.Enum):
+    SUCCESS = "success"
+    FAILURE = "failure"
+    UNCONFIGURED = "unconfigured"
+    UNSUPPORTED = "unsupported"
