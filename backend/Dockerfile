@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-ARG BASE_IMAGE=python:3.11-bookworm
+ARG BASE_IMAGE=debian:bookworm-slim
 FROM $BASE_IMAGE
 
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
@@ -16,6 +16,10 @@ RUN apt-get update && \
     unzip \
     libpq-dev \
     curl \
+    python3 \
+    python3-pip \
+    python3-venv \
+    gnupg \
     && rm -rf /var/lib/apt/lists/*
 
 ARG KUBECTL_APT_REMOTE=https://apt.kubernetes.io/
@@ -31,6 +35,14 @@ EXPOSE 8000
 COPY . /tmp/backend
 COPY .git_archival.txt /tmp/.git_archival.txt
 COPY startup.sh /opt/.startup.sh
+
+# Activate venv
+RUN ln -s $(which python3.11) /usr/bin/python && \
+    ln -sf $(which python3.11) /usr/bin/python3 && \
+    python -m venv /opt/.venv
+ENV _OLD_VIRTUAL_PATH="$PATH"
+ENV VIRTUAL_ENV=/opt/.venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 WORKDIR /tmp/backend
 RUN --mount=type=cache,id=capella-collaboration-backend-dependencies,target=/root/.cache/pip,sharing=locked \
