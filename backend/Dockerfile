@@ -20,6 +20,7 @@ RUN apt-get update && \
     python3-pip \
     python3-venv \
     gnupg \
+    git-lfs \
     && rm -rf /var/lib/apt/lists/*
 
 ARG KUBECTL_APT_REMOTE=https://apt.kubernetes.io/
