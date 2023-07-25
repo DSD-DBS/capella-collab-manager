@@ -5,7 +5,7 @@
 
 [Full/ Technical Changelog](https://github.com/DSD-DBS/capella-collab-manager/releases)
 
-# v2.13.1
+# v2.16.0
 
 - Github integration added: You can now get the capella diagram cache and model
   complexity badge from a Github repository. Therefore, the model complexity
