@@ -110,7 +110,8 @@ async def github_artifact_expired_handler(
             detail={
                 "err_code": "ARTIFACT_EXPIRED",
                 "reason": (
-                    "The latest artifact you are requesting expired. Please rerun your pipline and contact your administrator."
+                    "The last artifact you requested has expired.",
+                    "Please rerun your pipeline or contact your administrator.",
                 ),
             },
         ),
@@ -126,12 +127,10 @@ def register_exceptions(app: fastapi.FastAPI):
         GitInstanceAPIEndpointNotFoundError,
         git_instance_api_endpoint_not_found_handler,
     )
-
     app.add_exception_handler(
         GitPipelineJobNotFoundError,
         git_pipeline_job_not_found_handler,
     )
-
     app.add_exception_handler(
         GitPipelineJobFailedError,
         git_pipeline_job_failed_handler,

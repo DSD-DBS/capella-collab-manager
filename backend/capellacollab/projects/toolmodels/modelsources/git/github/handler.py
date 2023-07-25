@@ -59,6 +59,15 @@ class GithubHandler(handler.GitHandler):
             trusted_path_to_artifact,
         ).encode()
 
+    def __get_file_from_repository(
+        self, project_id: str, trusted_file_path: str, headers: dict = None
+    ) -> requests.Response:
+        return requests.get(
+            f"{self.git_instance.api_url}/repos{project_id}/contents/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(self.git_model.revision, safe='')}",
+            timeout=config["requests"]["timeout"],
+            headers=headers,
+        )
+
     async def get_file_from_repository(
         self,
         trusted_file_path: str,
@@ -70,16 +79,15 @@ class GithubHandler(handler.GitHandler):
         For that purpose first we try to reach it without authentication and only if that fails try to get the file authenticated.
         """
         project_id = await self.get_project_id_by_git_url()
-        response = requests.get(
-            f"{self.git_instance.api_url}/repos{project_id}/contents/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(self.git_model.revision, safe='')}",
-            timeout=config["requests"]["timeout"],
+        response = self.__get_file_from_repository(
+            project_id, trusted_file_path
         )
 
         if not response.ok and self.git_model.password:
-            response = requests.get(
-                f"{self.git_instance.api_url}/repos{project_id}/contents/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(self.git_model.revision, safe='')}",
+            response = self.__get_file_from_repository(
+                project_id,
+                trusted_file_path,
                 headers=self.__get_headers(self.git_model.password),
-                timeout=config["requests"]["timeout"],
             )
 
         if response.status_code == 404:
@@ -146,8 +154,8 @@ class GithubHandler(handler.GitHandler):
             or matched_jobs[0]["expired"] == "True"
         ):
             raise git_exceptions.GitPipelineJobFailedError(job_name)
-        else:
-            return None
+
+        return None
 
     def __get_lastest_artifact_metadata(self, project_id: str, job_id: str):
         response = requests.get(
