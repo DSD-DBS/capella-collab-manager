@@ -30,14 +30,14 @@ export class ModelWrapperComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     combineLatest([
       this.route.params.pipe(map((params) => params.model as string)),
-      this.projectService.project.pipe(filter(Boolean)),
+      this.projectService.project$.pipe(filter(Boolean)),
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([modelSlug, project]) =>
         this.modelService.loadModelbySlug(modelSlug, project.slug)
       );
 
-    this.modelService.model
+    this.modelService.model$
       .pipe(untilDestroyed(this))
       .subscribe((model) =>
         this.breadcrumbService.updatePlaceholder({ model })

@@ -54,7 +54,7 @@ export class InitModelComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.modelService.model
+    this.modelService.model$
       .pipe(
         untilDestroyed(this),
         filter(Boolean),
@@ -80,7 +80,7 @@ export class InitModelComponent implements OnInit {
         this.toolNatures = result[1];
       });
 
-    this.projectService.project
+    this.projectService.project$
       .pipe(untilDestroyed(this))
       .subscribe((project) => (this.projectSlug = project?.slug));
   }

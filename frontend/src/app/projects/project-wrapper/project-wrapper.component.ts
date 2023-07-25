@@ -36,7 +36,7 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
         this.modelService.loadModels(projectSlug);
       });
 
-    this.projectService.project
+    this.projectService.project$
       .pipe(untilDestroyed(this))
       .subscribe((project) =>
         this.breadcrumbsService.updatePlaceholder({ project })

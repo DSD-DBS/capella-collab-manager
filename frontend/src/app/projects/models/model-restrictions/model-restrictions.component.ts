@@ -46,14 +46,14 @@ export class ModelRestrictionsComponent implements OnInit {
       this.patchRestrictions();
     });
 
-    this.modelService.model
+    this.modelService.model$
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((model) => {
         this.model = model;
         this.updateRestrictionsForm(model.restrictions);
       });
 
-    this.projectService.project.subscribe(
+    this.projectService.project$.subscribe(
       (project) => (this.projectSlug = project?.slug)
     );
   }

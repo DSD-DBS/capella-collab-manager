@@ -43,7 +43,7 @@ export class CreateModelComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.projectService.project
+    this.projectService.project$
       .pipe(untilDestroyed(this))
       .subscribe((project) => (this.projectSlug = project?.slug));
   }

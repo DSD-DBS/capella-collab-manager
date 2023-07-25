@@ -4,14 +4,14 @@
  -->
 
 <div class="wrapper flex flex-center">
-  <mat-card *ngIf="modelService.model | async">
+  <mat-card *ngIf="modelService.model$ | async">
     <form [formGroup]="form">
       <fieldset class="flex flex-wrap gap-2">
         <mat-form-field appearance="fill">
           <mat-label>Modelling tool</mat-label>
           <input
             matInput
-            [value]="(modelService.model | async)!.tool.name"
+            [value]="(modelService.model$ | async)!.tool.name"
             disabled
           />
         </mat-form-field>

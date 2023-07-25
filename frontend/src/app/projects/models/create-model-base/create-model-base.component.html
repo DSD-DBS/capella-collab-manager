@@ -4,7 +4,7 @@
  -->
 
 <div class="flex-center">
-  <mat-card *ngIf="projectService.project | async">
+  <mat-card *ngIf="projectService.project$ | async">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <fieldset class="flex flex-wrap">
         <mat-form-field appearance="fill">

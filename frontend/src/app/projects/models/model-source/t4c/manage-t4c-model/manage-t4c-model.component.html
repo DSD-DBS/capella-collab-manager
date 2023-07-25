@@ -4,25 +4,25 @@
  -->
 
 <div
-  *ngIf="(projectService.project | async) && (modelService.model | async)"
+  *ngIf="(projectService.project$ | async) && (modelService.model$ | async)"
   class="wrapper flex-center"
 >
   <mat-card class="section-card">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <fieldset>
         <app-form-field-skeleton-loader
-          *ngIf="(t4cInstanceService.t4cInstances | async) === undefined"
+          *ngIf="(t4cInstanceService.t4cInstances$ | async) === undefined"
         >
         </app-form-field-skeleton-loader>
 
         <mat-form-field
-          *ngIf="(t4cInstanceService.t4cInstances | async) !== undefined"
+          *ngIf="(t4cInstanceService.t4cInstances$ | async) !== undefined"
           appearance="fill"
         >
           <mat-label>Instance</mat-label>
           <mat-select formControlName="t4cInstanceId">
             <mat-option
-              *ngFor="let instance of t4cInstanceService.t4cInstances | async"
+              *ngFor="let instance of t4cInstanceService.t4cInstances$ | async"
               [value]="instance.id"
             >
               {{ instance.name }}
@@ -35,18 +35,18 @@
       </fieldset>
       <fieldset>
         <app-form-field-skeleton-loader
-          *ngIf="(t4cInstanceService.t4cInstances | async) === undefined"
+          *ngIf="(t4cInstanceService.t4cInstances$ | async) === undefined"
         >
         </app-form-field-skeleton-loader>
         <mat-form-field
-          *ngIf="(t4cInstanceService.t4cInstances | async) !== undefined"
+          *ngIf="(t4cInstanceService.t4cInstances$ | async) !== undefined"
           appearance="fill"
         >
           <mat-label>Repository</mat-label>
           <mat-select formControlName="t4cRepositoryId">
             <mat-option
               *ngFor="
-                let repository of t4cRepositoryService.repositories | async
+                let repository of t4cRepositoryService.repositories$ | async
               "
               [value]="repository.id"
             >

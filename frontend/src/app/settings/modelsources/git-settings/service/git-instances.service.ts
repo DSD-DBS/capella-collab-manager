@@ -27,8 +27,8 @@ export class GitInstancesService {
     undefined
   );
 
-  readonly gitInstances = this._gitInstances.asObservable();
-  readonly gitInstance = this._gitInstance.asObservable();
+  public readonly gitInstances$ = this._gitInstances.asObservable();
+  public readonly gitInstance$ = this._gitInstance.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -91,7 +91,7 @@ export class GitInstancesService {
   asyncNameValidator(ignoreInstance?: GitInstance): AsyncValidatorFn {
     const ignoreId = !!ignoreInstance ? ignoreInstance.id : -1;
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
-      return this.gitInstances.pipe(
+      return this.gitInstances$.pipe(
         take(1),
         map((gitInstances) => {
           const nameExists = gitInstances?.find(

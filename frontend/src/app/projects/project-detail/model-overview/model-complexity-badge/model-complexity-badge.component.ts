@@ -38,7 +38,7 @@ export class ModelComplexityBadgeComponent implements OnChanges {
   }
 
   loadModelComplexityBadge() {
-    this.projectService.project
+    this.projectService.project$
       .pipe(
         untilDestroyed(this),
         filter(Boolean),

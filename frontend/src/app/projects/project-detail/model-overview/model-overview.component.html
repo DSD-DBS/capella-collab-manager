@@ -10,7 +10,7 @@
       mat-stroked-button
       [routerLink]="[
         '/project',
-        (projectService.project | async)?.slug,
+        (projectService.project$ | async)?.slug,
         'models',
         'create'
       ]"
@@ -22,7 +22,7 @@
     </a>
   </div>
   <div class="flex flex-wrap">
-    <div class="flex" *ngIf="(modelService.models | async) === undefined">
+    <div class="flex" *ngIf="(modelService.models$ | async) === undefined">
       <div *ngFor="let card of [0, 1, 2]">
         <ngx-skeleton-loader
           appearance="circle"
@@ -39,7 +39,7 @@
 
     <mat-card
       class="overview-card"
-      *ngFor="let model of modelService.models | async"
+      *ngFor="let model of modelService.models$ | async"
     >
       <div class="header">
         <div class="header-text">

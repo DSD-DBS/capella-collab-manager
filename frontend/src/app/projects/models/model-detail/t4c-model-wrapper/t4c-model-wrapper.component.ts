@@ -29,8 +29,8 @@ export class T4CModelWrapperComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     combineLatest([
-      this.projectService.project.pipe(filter(Boolean)),
-      this.modelService.model.pipe(filter(Boolean)),
+      this.projectService.project$.pipe(filter(Boolean)),
+      this.modelService.model$.pipe(filter(Boolean)),
       this.route.params.pipe(map((params) => parseInt(params.t4c_model_id))),
     ])
       .pipe(untilDestroyed(this))
@@ -38,7 +38,7 @@ export class T4CModelWrapperComponent implements OnInit, OnDestroy {
         this.t4cModelService.loadT4CModel(project.slug, model.slug, t4cModelId)
       );
 
-    this.t4cModelService.t4cModel
+    this.t4cModelService.t4cModel$
       .pipe(untilDestroyed(this))
       .subscribe((t4cModel) =>
         this.breadCrumbsService.updatePlaceholder({ t4cModel })

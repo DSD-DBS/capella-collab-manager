@@ -16,7 +16,7 @@
   </a>
 
   <a
-    *ngFor="let instance of t4cInstanceService.t4cInstances | async"
+    *ngFor="let instance of t4cInstanceService.t4cInstances$ | async"
     [routerLink]="['instance', instance.id]"
   >
     <mat-card matRipple class="mat-card-overview">

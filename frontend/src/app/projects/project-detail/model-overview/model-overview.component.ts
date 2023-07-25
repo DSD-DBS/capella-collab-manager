@@ -38,7 +38,7 @@ export class ModelOverviewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.projectService.project
+    this.projectService.project$
       .pipe(untilDestroyed(this))
       .subscribe((project) => (this.projectSlug = project?.slug));
   }
@@ -53,7 +53,7 @@ export class ModelOverviewComponent implements OnInit {
   }
 
   openPipelineDialog(model: Model): void {
-    this.projectService.project.pipe(first()).subscribe((project) => {
+    this.projectService.project$.pipe(first()).subscribe((project) => {
       this.dialog.open(TriggerPipelineComponent, {
         data: { projectSlug: project!.slug, modelSlug: model.slug },
       });

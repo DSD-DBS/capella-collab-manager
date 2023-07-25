@@ -54,8 +54,8 @@ export class CreateBackupComponent implements OnInit {
     );
 
     combineLatest([
-      this.gitModelService.gitModels,
-      this.t4cModelService.t4cModels,
+      this.gitModelService.gitModels$,
+      this.t4cModelService.t4cModels$,
     ])
       .pipe(untilDestroyed(this))
       .subscribe(

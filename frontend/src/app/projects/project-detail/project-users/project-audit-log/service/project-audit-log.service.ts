@@ -21,7 +21,8 @@ export class ProjectAuditLogService {
     pages: [],
     total: undefined,
   });
-  readonly projectHistoryEventsPages$ =
+
+  public readonly projectHistoryEventsPages$ =
     this._projectHistoryEventPages.asObservable();
 
   constructor(
@@ -32,7 +33,7 @@ export class ProjectAuditLogService {
   }
 
   resetProjectAuditLogOnPipelineChange() {
-    this.projectService.project.subscribe(() => {
+    this.projectService.project$.subscribe(() => {
       this.resetProjectHistoryEvents();
     });
   }

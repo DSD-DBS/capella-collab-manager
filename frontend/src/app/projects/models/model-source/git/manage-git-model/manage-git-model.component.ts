@@ -112,7 +112,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.gitService.revisions.pipe(untilDestroyed(this)).subscribe({
+    this.gitService.revisions$.pipe(untilDestroyed(this)).subscribe({
       next: (revisions) => {
         this.revisions = revisions;
         this.filteredRevisions = revisions;
@@ -125,7 +125,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
       this.filteredRevisionsByPrefix(value as string)
     );
 
-    this.gitInstancesService.gitInstances
+    this.gitInstancesService.gitInstances$
       .pipe(untilDestroyed(this))
       .subscribe((gitInstances) => {
         this.availableGitInstances = gitInstances;
@@ -141,7 +141,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.modelService.model
+    this.modelService.model$
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((model) => {
         this.modelSlug = model.slug;
@@ -152,7 +152,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.projectService.project
+    this.projectService.project$
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((project) => {
         this.projectSlug = project.slug;
@@ -167,7 +167,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
             this.gitModelId = gitModelId;
             this.form.disable();
 
-            this.gitModelService.gitModel
+            this.gitModelService.gitModel$
               .pipe(untilDestroyed(this), filter(Boolean))
               .subscribe((gitModel) => {
                 this.gitModel = gitModel;

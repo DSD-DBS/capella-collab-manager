@@ -38,7 +38,7 @@ export class ProjectUserSettingsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.projectService.project
+    this.projectService.project$
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((project) => {
         this.project = project;
@@ -148,7 +148,7 @@ export class ProjectUserSettingsComponent implements OnInit {
   }
 
   openAuditLogDialog() {
-    this.projectService.project.pipe(take(1)).subscribe((project) => {
+    this.projectService.project$.pipe(take(1)).subscribe((project) => {
       this.matDialog.open(ProjectAuditLogComponent, {
         data: {
           projectSlug: project?.slug,

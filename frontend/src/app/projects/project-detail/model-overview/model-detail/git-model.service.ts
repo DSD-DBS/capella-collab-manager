@@ -21,8 +21,8 @@ export class GitModelService {
     undefined
   );
 
-  readonly gitModel = this._gitModel.asObservable();
-  readonly gitModels = this._gitModels.asObservable();
+  public readonly gitModel$ = this._gitModel.asObservable();
+  public readonly gitModels$ = this._gitModels.asObservable();
 
   loadGitModels(project_slug: string, model_slug: string): void {
     this.http

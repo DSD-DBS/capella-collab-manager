@@ -60,11 +60,11 @@ export class CreateReadonlySessionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.modelService.models
+    this.modelService.models$
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((models) => (this.models = models));
 
-    this.projectService.project
+    this.projectService.project$
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((project) => (this.projectSlug = project.slug));
 
@@ -111,7 +111,7 @@ export class CreateReadonlySessionComponent implements OnInit {
 
   asyncReadonlyValidator(): AsyncValidatorFn {
     return (_: AbstractControl): Observable<ValidationErrors | null> => {
-      return this.userSessionService.readonlySessions.pipe(
+      return this.userSessionService.readonlySessions$.pipe(
         take(1),
         map((readOnlySessions) => {
           return readOnlySessions?.find(

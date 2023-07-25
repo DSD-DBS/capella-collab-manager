@@ -20,12 +20,12 @@ export class UserSessionService {
 
   private _sessions = new BehaviorSubject<Session[] | undefined>(undefined);
 
-  readonly sessions = this._sessions.asObservable();
-  readonly readonlySessions = this.sessions.pipe(
+  public readonly sessions$ = this._sessions.asObservable();
+  public readonly readonlySessions$ = this.sessions$.pipe(
     filter(Boolean),
     map((sessions) => sessions.filter(isReadonlySession))
   );
-  readonly persistentSessions = this.sessions.pipe(
+  public readonly persistentSessions$ = this.sessions$.pipe(
     filter(Boolean),
     map((sessions) => sessions.filter(isPersistentSession))
   );

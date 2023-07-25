@@ -25,8 +25,8 @@ export class ProjectService {
   private _project = new BehaviorSubject<Project | undefined>(undefined);
   private _projects = new BehaviorSubject<Project[] | undefined>(undefined);
 
-  readonly project = this._project.asObservable();
-  readonly projects = this._projects.asObservable();
+  public readonly project$ = this._project.asObservable();
+  public readonly projects$ = this._projects.asObservable();
 
   loadProjects(): void {
     this.http.get<Project[]>(this.BACKEND_URL_PREFIX).subscribe({
@@ -90,7 +90,7 @@ export class ProjectService {
     const ignoreSlug = !!ignoreProject ? ignoreProject.slug : -1;
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       const projectSlug = slugify(control.value, { lower: true });
-      return this.projects.pipe(
+      return this.projects$.pipe(
         take(1),
         map((projects) => {
           return projects?.find(

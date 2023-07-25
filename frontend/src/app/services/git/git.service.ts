@@ -32,7 +32,7 @@ export class GitService {
 
   private _revisions = new BehaviorSubject<Revisions | undefined>(undefined);
 
-  readonly revisions = this._revisions.asObservable();
+  public readonly revisions$ = this._revisions.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -87,7 +87,7 @@ export class GitService {
 
   asyncExistingRevisionValidator(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
-      return this.revisions.pipe(
+      return this.revisions$.pipe(
         take(1),
         map((revisions) => {
           const revision = control.value;
