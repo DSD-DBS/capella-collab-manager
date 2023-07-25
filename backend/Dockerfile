@@ -46,7 +46,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 WORKDIR /tmp/backend
 RUN --mount=type=cache,id=capella-collaboration-backend-dependencies,target=/root/.cache/pip,sharing=locked \
-    pip install ".[psycopg2]"
+    pip install .
 
 RUN mkdir -p /var/log/backend && \
     chmod -R 777 /var/log/backend

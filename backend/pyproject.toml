@@ -66,9 +66,6 @@ dev = [
   "pytest-cov",
   "aioresponses"
 ]
-psycopg2 = [
-  "psycopg2", # Need when running in a Docker container with AArch64: https://github.com/psycopg/psycopg2/issues/1360
-]
 
 [project.entry-points."capellacollab.authentication.providers"]
 oauth = "capellacollab.core.authentication.provider.oauth"
