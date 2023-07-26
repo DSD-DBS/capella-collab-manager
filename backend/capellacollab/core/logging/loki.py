@@ -12,6 +12,8 @@ from requests import auth
 
 from capellacollab.config import config
 
+from . import exceptions
+
 LOGGING_LEVEL = config["logging"]["level"]
 PROMTAIL_CONFIGURATION: dict[str, str] = config["k8s"]["promtail"]
 
@@ -83,6 +85,10 @@ def fetch_logs_from_loki(
             ),
             timeout=10,
         )
+
+        if response.status_code == 429:
+            raise exceptions.TooManyOutStandingRequests
+
         response.raise_for_status()
         logs = response.json()
         return logs["data"]["result"]
