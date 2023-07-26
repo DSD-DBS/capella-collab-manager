@@ -1,11 +1,13 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-ARG BASE_IMAGE=python:3.11-bookworm
+ARG BASE_IMAGE=debian:bookworm-slim
 FROM $BASE_IMAGE
 
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 ENV SHELL=/bin/bash
+
+USER root
 
 RUN apt-get update && \
     apt-get upgrade --yes && \
@@ -14,27 +16,38 @@ RUN apt-get update && \
     unzip \
     libpq-dev \
     curl \
+    python3 \
+    python3-pip \
+    python3-venv \
+    gnupg \
+    git-lfs \
     && rm -rf /var/lib/apt/lists/*
+
+ARG KUBECTL_APT_REMOTE=https://apt.kubernetes.io/
 
 # Install kubectl if not available in base image
 # kubectl is needed for the list files endpoint
-RUN kubectl_installed="yes"; dpkg -s kubectl || kubectl_installed="no"; \
-    if [[ "$kubectl_installed" == "no" ]]; \
-    then \
-    mkdir -p /etc/apt/keyrings; \
-    curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://dl.k8s.io/apt/doc/apt-key.gpg; \
-    echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list; \
-    apt-get update && apt-get install -y kubectl && rm -rf /var/lib/apt/lists/*; \
-    fi
+RUN mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] $KUBECTL_APT_REMOTE kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list && \
+    apt-get update && apt-get install -y kubectl && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8000
 COPY . /tmp/backend
 COPY .git_archival.txt /tmp/.git_archival.txt
 COPY startup.sh /opt/.startup.sh
 
+# Activate venv
+RUN ln -s $(which python3.11) /usr/bin/python && \
+    ln -sf $(which python3.11) /usr/bin/python3 && \
+    python -m venv /opt/.venv
+ENV _OLD_VIRTUAL_PATH="$PATH"
+ENV VIRTUAL_ENV=/opt/.venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
 WORKDIR /tmp/backend
 RUN --mount=type=cache,id=capella-collaboration-backend-dependencies,target=/root/.cache/pip,sharing=locked \
-    pip install ".[psycopg2]"
+    pip install .
 
 RUN mkdir -p /var/log/backend && \
     chmod -R 777 /var/log/backend

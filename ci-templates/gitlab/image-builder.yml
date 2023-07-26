@@ -26,7 +26,8 @@ variables:
   GUACAMOLE_IMAGE_NAME: "capella/collab/guacamole"
   DOCKER_BUILD_ARGS: "--no-cache"
   DOCKER_BUILDKIT: "1"
-  BASE_IMAGE: "debian:bullseye"
+  BASE_IMAGE: "debian:bookworm"
+  KUBECTL_APT_REMOTE: "https://apt.kubernetes.io/"
 
 default:
   image: $DOCKER_REGISTRY/base
@@ -82,7 +83,11 @@ frontend:
     - mv ../environment.prod.ts frontend/src/environments
     - npm i undici
     - python frontend/fetch-version.py
-    - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} frontend
+    - >
+      docker build ${DOCKER_BUILD_ARGS} \
+        -t ${IMAGE}:${DOCKER_TAG} \
+        --build-arg BASE_IMAGE=${BASE_IMAGE} \
+        frontend
     - *push
 
 backend:
@@ -95,7 +100,13 @@ backend:
     - IMAGE=${DOCKER_REGISTRY}/${BACKEND_IMAGE_NAME:?}
     - *docker
     - python backend/generate_git_archival.py
-    - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} backend
+    - >
+      docker build \
+        ${DOCKER_BUILD_ARGS} \
+        -t ${IMAGE}:${DOCKER_TAG} \
+        --build-arg BASE_IMAGE=${BASE_IMAGE} \
+        --build-arg KUBECTL_APT_REMOTE="${KUBECTL_APT_REMOTE}" \
+        backend
     - *push
 
 docs:
@@ -107,7 +118,12 @@ docs:
     - *prepare
     - IMAGE=${DOCKER_REGISTRY}/${DOCS_IMAGE_NAME:?}
     - *docker
-    - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=${BASE_IMAGE} docs/user
+    - >
+      docker build \
+        ${DOCKER_BUILD_ARGS} \
+        -t ${IMAGE}:${DOCKER_TAG} \
+        --build-arg BASE_IMAGE=${BASE_IMAGE} \
+        docs/user
     - *push
 
 guacamole:
@@ -119,5 +135,10 @@ guacamole:
     - *prepare
     - IMAGE=${DOCKER_REGISTRY}/${GUACAMOLE_IMAGE_NAME:?}
     - *docker
-    - docker build ${DOCKER_BUILD_ARGS} -t ${IMAGE}:${DOCKER_TAG} --build-arg BASE_IMAGE=guacamole/guacamole guacamole
+    - >
+      docker build \
+        ${DOCKER_BUILD_ARGS} \
+        -t ${IMAGE}:${DOCKER_TAG} \
+        --build-arg BASE_IMAGE=guacamole/guacamole \
+        guacamole
     - *push
