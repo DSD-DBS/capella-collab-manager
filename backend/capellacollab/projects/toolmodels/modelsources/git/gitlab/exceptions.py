@@ -1,49 +1,53 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import dataclasses
+
 import fastapi
 from fastapi import exception_handlers, status
 
-
-class GitRepositoryFileNotFoundError(Exception):
-    def __init__(self, filename: str):
-        self.filename = filename
+from .. import exceptions as git_exceptions
 
 
-class GitInstanceAPIEndpointNotFoundError(Exception):
+class GitlabAccessDeniedError(git_exceptions.AccessDeniedError):
     pass
 
 
-async def git_repository_file_not_found_handler(
-    request: fastapi.Request, exc: GitRepositoryFileNotFoundError
-) -> fastapi.Response:
-    return await exception_handlers.http_exception_handler(
-        request,
-        fastapi.HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "err_code": "FILE_NOT_FOUND",
-                "reason": (
-                    f"No file with the name '{exc.filename}' found in the linked Git repository."
-                    "Please contact your administrator.",
-                ),
-            },
-        ),
-    )
+@dataclasses.dataclass
+class GitlabProjectNotFoundError(git_exceptions.RepositoryNotFoundError):
+    project_name: str
 
 
-async def git_instance_api_endpoint_not_found_handler(
-    request: fastapi.Request, _: GitInstanceAPIEndpointNotFoundError
+async def gitlab_access_denied_handler(
+    request: fastapi.Request, _: GitlabAccessDeniedError
 ) -> fastapi.Response:
     return await exception_handlers.http_exception_handler(
         request,
         fastapi.HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
-                "err_code": "GIT_INSTANCE_NO_API_ENDPOINT_DEFINED",
+                "err_code": "GITLAB_ACCESS_DENIED",
                 "reason": (
-                    "The used Git instance has no API endpoint defined.",
-                    "Please contact your administrator.",
+                    "The registered token has not enough permissions to access the Gitlab API.",
+                    "Access scope 'read_api' is required. Please contact your project lead.",
+                ),
+            },
+        ),
+    )
+
+
+async def gitlab_project_not_found_handler(
+    request: fastapi.Request, exc: GitlabProjectNotFoundError
+) -> fastapi.Response:
+    return await exception_handlers.http_exception_handler(
+        request,
+        fastapi.HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "err_code": "PROJECT_NOT_FOUND",
+                "reason": (
+                    "We couldn't find the project in your Gitlab instance.",
+                    f"Please make sure that a project with the encoded name '{exc.project_name}' does exist.",
                 ),
             },
         ),
@@ -52,10 +56,11 @@ async def git_instance_api_endpoint_not_found_handler(
 
 def register_exceptions(app: fastapi.FastAPI):
     app.add_exception_handler(
-        GitRepositoryFileNotFoundError,
-        git_repository_file_not_found_handler,
+        GitlabAccessDeniedError,
+        gitlab_access_denied_handler,
     )
+
     app.add_exception_handler(
-        GitInstanceAPIEndpointNotFoundError,
-        git_instance_api_endpoint_not_found_handler,
+        GitlabProjectNotFoundError,
+        gitlab_project_not_found_handler,
     )

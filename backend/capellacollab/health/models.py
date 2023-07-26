@@ -9,9 +9,6 @@ from capellacollab.projects.toolmodels.backups.runs import (
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
 )
-from capellacollab.projects.toolmodels.modelsources.git.gitlab import (
-    models as gitlab_models,
-)
 
 
 class StatusResponse(pydantic.BaseModel):
@@ -27,8 +24,8 @@ class ToolmodelStatus(pydantic.BaseModel):
     warnings: list[str]
     primary_git_repository_status: git_models.GitModelStatus
     pipeline_status: pipeline_run_models.PipelineRunStatus | None
-    model_badge_status: gitlab_models.ModelArtifactStatus
-    diagram_cache_status: gitlab_models.ModelArtifactStatus
+    model_badge_status: git_models.ModelArtifactStatus
+    diagram_cache_status: git_models.ModelArtifactStatus
 
 
 class ProjectStatus(pydantic.BaseModel):

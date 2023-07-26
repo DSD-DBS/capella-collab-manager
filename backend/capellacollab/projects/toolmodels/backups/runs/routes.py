@@ -85,7 +85,6 @@ def get_pipeline_run(
         injectables.get_existing_pipeline_run
     ),
 ) -> models.DatabasePipelineRun:
-    print(pipeline_run.status)
     return pipeline_run
 
 

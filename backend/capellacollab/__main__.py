@@ -18,8 +18,14 @@ import capellacollab.sessions.metrics
 from capellacollab.config import config
 from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
+from capellacollab.projects.toolmodels.modelsources.git import (
+    exceptions as git_exceptions,
+)
 from capellacollab.projects.toolmodels.modelsources.git.gitlab import (
     exceptions as gitlab_exceptions,
+)
+from capellacollab.projects.toolmodels.modelsources.git.handler import (
+    exceptions as git_handler_exceptions,
 )
 from capellacollab.routes import router
 from capellacollab.sessions import idletimeout, operators
@@ -119,7 +125,9 @@ app.include_router(router, prefix="/api/v1")
 
 def register_exceptions():
     tools_exceptions.register_exceptions(app)
+    git_exceptions.register_exceptions(app)
     gitlab_exceptions.register_exceptions(app)
+    git_handler_exceptions.register_exceptions(app)
 
 
 register_exceptions()
