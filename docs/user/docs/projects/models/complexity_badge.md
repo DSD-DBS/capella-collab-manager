@@ -17,26 +17,26 @@
 
 1.  To set up the model complexity badge, you need to add the Git API URL to
     your Git instance. More information
-    [here](../../settings/model-sources/git.md)
+    [here](../../settings/model-sources/git.md).
 1.  Link a Git repository to the model, for which you'd like to see the model
     complexity badge.
+
     <!-- prettier-ignore -->
-     !!! info
-         If the Github repository is public no token is required for the model complexity badge.
-         For private Github and in general for Gitlab repositories model complexity badge integration uses the credentials, which are assigned during linking the Git repository.
+    !!! info
+         If the Github repository is public, no token is required for the model complexity badge.
+         For private Github repositories and for Gitlab repositories the model complexity badge integration uses the credentials,
+         which are assigned during linking the Git repository.
 
-          Gitlab: Limit the scope of the used token, only scope `read_api` is required.
+          - Gitlab: Limit the scope of the used token, only scope `read_api` is required.
+          - Github: If you are using a fine-grained personal access token, add the repository permission for the scope "content" with access `Read-only`.
 
-          Github:  If you are using a fine-grained personal access token you need the repository permission for the scope "content" as `read_only`.
-
-1.  Follow the
-    [Gitlab CI template instructions](https://github.com/DSD-DBS/py-capellambse/tree/master/ci-templates/gitlab#model-badge)
-    to add the complexity badge pipeline to the `.gitlab-ci.yml` of the linked
-    repository.
+1.  Follow the CI template instructions
+    ([Gitlab](https://github.com/DSD-DBS/py-capellambse/tree/master/ci-templates/gitlab#model-badge))
+    to add the complexity badge pipeline to the linked repository.
 
 ## View the model complexity badge
 
 The model complexity badge is visible in the model overview in the project
 details:
 
-![Model complexity badge](./complexity_badge.png)
+![Model complexity badge](./complexity_badge.png){:style="width:400px"}

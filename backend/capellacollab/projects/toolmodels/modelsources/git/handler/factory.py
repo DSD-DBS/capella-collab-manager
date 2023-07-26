@@ -23,20 +23,21 @@ class GitHandlerFactory:
         git_instance = GitHandlerFactory.get_git_instance_for_git_model(
             db, git_model
         )
-        if git_instance.type == settings_git_models.GitType.GITLAB:
-            return gitlab_handler.GitlabHandler(git_model, git_instance)
-        elif git_instance.type == settings_git_models.GitType.GITHUB:
-            return github_handler.GithubHandler(git_model, git_instance)
-        else:
-            raise fastapi.HTTPException(
-                status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail={
-                    "err_code": "GIT_INSTANCE_UNSUPPORTED",
-                    "reason": (
-                        "The used Git instance is neither a Gitlab nor a Github instance.",
-                    ),
-                },
-            )
+        match git_instance.type:
+            case settings_git_models.GitType.GITLAB:
+                return gitlab_handler.GitlabHandler(git_model, git_instance)
+            case settings_git_models.GitType.GITHUB:
+                return github_handler.GithubHandler(git_model, git_instance)
+            case _:
+                raise fastapi.HTTPException(
+                    status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail={
+                        "err_code": "GIT_INSTANCE_UNSUPPORTED",
+                        "reason": (
+                            "The used Git instance is neither a Gitlab nor a Github instance.",
+                        ),
+                    },
+                )
 
     @staticmethod
     def get_git_instance_for_git_model(
