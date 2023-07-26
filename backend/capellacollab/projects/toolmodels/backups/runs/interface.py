@@ -202,11 +202,34 @@ def _search_and_kill_timed_out_jobs(run: models.DatabasePipelineRun):
         < datetime.datetime.now().astimezone() - datetime.timedelta(minutes=60)
     ):
         log.info("Timing out job with ID %s", run.id)
-        run.status = models.PipelineRunStatus.TIMEOUT
-        try:
-            operators.get_operator().delete_job(name=run.reference_id)
-        except Exception:
-            log.error("Failed to delete timed out job.")
+        _terminate_job(run, models.PipelineRunStatus.TIMEOUT)
+
+
+def _terminate_job(
+    run: models.DatabasePipelineRun, updated_status: models.PipelineRunStatus
+):
+    run.status = updated_status
+    run.end_time = datetime.datetime.now()
+    # Fetch logs and events one last time before killing
+    try:
+        _fetch_logs_of_jobs(run)
+        _fetch_events_of_jobs(run)
+    except Exception:
+        pass
+
+    try:
+        operators.get_operator().delete_job(name=run.reference_id)
+    except Exception:
+        log.exception(
+            "Failed to delete job from Kubernetes cluster.",
+            extra={
+                "reference_id": run.reference_id,
+                "run_id": run.id,
+                "pipeline_id": run.pipeline.id,
+                "model_slug": run.pipeline.model.slug,
+                "project_slug": run.pipeline.model.project.slug,
+            },
+        )
 
 
 def _map_k8s_to_internal_status(
@@ -252,9 +275,22 @@ def _update_status_of_job(
         run.status = models.PipelineRunStatus.UNKNOWN
         return
     current_status = _map_k8s_to_internal_status(job)
+
+    if _job_is_finished(current_status):
+        _terminate_job(run, current_status)
+        return
+
     if current_status != run.status:
         log.debug("Update status of pipeline %s to %s", run.id, run.status)
         run.status = current_status
+
+
+def _job_is_finished(status: models.PipelineRunStatus):
+    return status in (
+        models.PipelineRunStatus.FAILURE,
+        models.PipelineRunStatus.SUCCESS,
+        models.PipelineRunStatus.UNKNOWN,
+    )
 
 
 def _refresh_and_trigger_pipeline_jobs():
