@@ -5,14 +5,13 @@ import base64
 from urllib import parse
 
 import aiohttp
-import fastapi
 import requests
-from fastapi import status
 
 from capellacollab.config import config
 
 from .. import exceptions as git_exceptions
 from ..handler import handler
+from . import exceptions
 
 
 class GitlabHandler(handler.GitHandler):
@@ -30,26 +29,10 @@ class GitlabHandler(handler.GitHandler):
                 timeout=config["requests"]["timeout"],
             ) as response:
                 if response.status == 403:
-                    raise fastapi.HTTPException(
-                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail={
-                            "err_code": "GITLAB_ACCESS_DENIED",
-                            "reason": (
-                                "The registered token has not enough permissions to access the Gitlab API.",
-                                "Access scope 'read_api' is required. Please contact your project lead.",
-                            ),
-                        },
-                    )
+                    raise exceptions.GitlabAccessDeniedError
                 if response.status == 404:
-                    raise fastapi.HTTPException(
-                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail={
-                            "err_code": "PROJECT_NOT_FOUND",
-                            "reason": (
-                                "We couldn't find the project in your Gitlab instance.",
-                                f"Please make sure that a project with the encoded name '{project_name_encoded}' does exist.",
-                            ),
-                        },
+                    raise exceptions.GitlabProjectNotFoundError(
+                        project_name=project_name_encoded
                     )
 
                 response.raise_for_status()

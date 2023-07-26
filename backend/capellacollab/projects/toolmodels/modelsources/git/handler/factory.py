@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import fastapi
-from fastapi import status
 from sqlalchemy import orm
 
 import capellacollab.projects.toolmodels.modelsources.git.models as git_models
@@ -12,7 +10,7 @@ import capellacollab.settings.modelsources.git.models as settings_git_models
 
 from ..github import handler as github_handler
 from ..gitlab import handler as gitlab_handler
-from . import handler
+from . import exceptions, handler
 
 
 class GitHandlerFactory:
@@ -29,14 +27,8 @@ class GitHandlerFactory:
             case settings_git_models.GitType.GITHUB:
                 return github_handler.GithubHandler(git_model, git_instance)
             case _:
-                raise fastapi.HTTPException(
-                    status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail={
-                        "err_code": "GIT_INSTANCE_UNSUPPORTED",
-                        "reason": (
-                            "The used Git instance is neither a Gitlab nor a Github instance.",
-                        ),
-                    },
+                raise exceptions.GitInstanceUnsupportedError(
+                    instance_name=git_instance.type
                 )
 
     @staticmethod
@@ -55,13 +47,4 @@ class GitHandlerFactory:
         for instance in instances_sorted_by_len:
             if git_model.path.startswith(instance.url):
                 return instance
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={
-                "err_code": "NO_MATCHING_GIT_INSTANCE",
-                "reason": (
-                    "No matching git instance was found for the primary git model.",
-                    "Please contact your administrator.",
-                ),
-            },
-        )
+        raise exceptions.NoMatchingGitInstanceError

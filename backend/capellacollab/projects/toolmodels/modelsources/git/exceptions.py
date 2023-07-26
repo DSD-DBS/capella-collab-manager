@@ -1,27 +1,37 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import dataclasses
+
 import fastapi
 from fastapi import exception_handlers, status
 
 
+class AccessDeniedError(Exception):
+    pass
+
+
+class RepositoryNotFoundError(Exception):
+    pass
+
+
+@dataclasses.dataclass
 class GitRepositoryFileNotFoundError(Exception):
-    def __init__(self, filename: str):
-        self.filename = filename
+    filename: str
 
 
 class GitInstanceAPIEndpointNotFoundError(Exception):
     pass
 
 
+@dataclasses.dataclass
 class GitPipelineJobNotFoundError(Exception):
-    def __init__(self, job_name: str) -> None:
-        self.job_name = job_name
+    job_name: str
 
 
+@dataclasses.dataclass
 class GitPipelineJobFailedError(Exception):
-    def __init__(self, job_name: str) -> None:
-        self.job_name = job_name
+    job_name: str
 
 
 class GithubArtifactExpiredError(Exception):
