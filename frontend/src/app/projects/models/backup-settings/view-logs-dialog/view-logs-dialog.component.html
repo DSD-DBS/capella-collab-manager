@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper dialog" *ngIf="pipelineRunService.pipelineRun$ | async">
+<div *ngIf="pipelineRunService.pipelineRun$ | async">
   <div class="header">
     <h1>
       Logs for pipeline run
@@ -11,7 +11,7 @@
     </h1>
   </div>
 
-  <div class="content">
+  <div>
     <h2>Status</h2>
     <div>
       The current pipeline status is '{{
@@ -19,9 +19,10 @@
       }}'
     </div>
     <h2>Events</h2>
-    <div [innerText]="events"></div>
+    <pre><span [innerText]="events"></span></pre>
+
     <h2>Logs</h2>
-    <div [innerText]="logs"></div>
+    <pre><span [innerText]="logs"></span></pre>
     <div
       *ngIf="
         pipelineRunService.pipelineRunIsNotReady(

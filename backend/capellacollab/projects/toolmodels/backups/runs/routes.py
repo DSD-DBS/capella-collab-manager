@@ -147,7 +147,7 @@ def get_logs(
     logs = loki.fetch_logs_from_loki(
         query=f'{{pipeline_run_id="{pipeline_run.id}", job_name="{pipeline_run.reference_id}", log_type="logs"}}',
         start_time=pipeline_run.trigger_time,
-        end_time=datetime.datetime.now().astimezone(),
+        end_time=_determine_end_time_from_pipeline_run(pipeline_run),
     )
     if not logs:
         return ""
