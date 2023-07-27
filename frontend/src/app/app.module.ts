@@ -128,6 +128,7 @@ import { T4CRepoDeletionDialogComponent } from './settings/modelsources/t4c-sett
 import { T4CSettingsWrapperComponent } from './settings/modelsources/t4c-settings/t4c-settings-wrapper/t4c-settings-wrapper.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
+import { WorkspaceOverviewComponent } from './workspaces/workspace-overview/workspace-overview.component';
 
 @NgModule({
   declarations: [
@@ -213,6 +214,7 @@ import { SettingsComponent } from './settings/settings.component';
     UserSettingsComponent,
     VersionComponent,
     ViewLogsDialogComponent,
+    WorkspaceOverviewComponent,
   ],
   imports: [
     AppRoutingModule,

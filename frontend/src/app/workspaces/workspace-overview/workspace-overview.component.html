@@ -1,0 +1,134 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<mat-form-field class="w-full" id="search" appearance="outline">
+  <mat-label>Search by username</mat-label>
+  <input
+    [(ngModel)]="search"
+    autocomplete="off"
+    matInput
+    placeholder="johndoe"
+  />
+  <mat-icon matSuffix>search</mat-icon>
+</mat-form-field>
+
+<div class="flex items-center gap-2">
+  <div class="border-2 p-2 my-2 rounded w-fit">
+    <div class="flex justify-between">
+      <div>Total number of workspaces</div>
+      <div>20</div>
+    </div>
+    <hr />
+    <div class="flex justify-between">
+      <div>Currently used space</div>
+      <div>200GB</div>
+    </div>
+    <hr />
+    <div class="flex justify-between">
+      <div>Currently available maximum space</div>
+      <div>1TB</div>
+    </div>
+
+    <mat-slide-toggle class="mt-2"
+      >Include workspaces from other users</mat-slide-toggle
+    >
+  </div>
+</div>
+
+<div class="flex">
+  <mat-card *ngFor="let workspace of [1, 2, 3]" class="w-[500px]">
+    <h2>Workspace {{ workspace }}</h2>
+    <div>Username: testuser</div>
+    <div>Used for the tools: Capella 5.0.0, 5.2.0, 6.0.0</div>
+    <div>Currently in use by theses sessions: xyz</div>
+    <div>10GB of 20GB used</div>
+    <hr class="my-2" />
+    We found the following models in your workspace:
+    <div *ngFor="let model of [0, 1, 2]">
+      <mat-card class="mx-0">
+        Path in your workspace: workspace/test/test.aird<br />
+
+        <div
+          class="border-2 p-2 my-2 rounded w-full flex gap-2 items-center"
+          *ngIf="model === 1"
+        >
+          <div class="text-orange-600">
+            <mat-icon>help_outline</mat-icon>
+          </div>
+          <div>
+            <div>
+              We couldn't match this item to a toolmodel in the Collaboration
+              Manager. Please consider creating a project & model for it. If the
+              model already exists, you can link it here:
+            </div>
+            <button class="mt-2" mat-stroked-button>
+              Link workspace item to tool model
+            </button>
+          </div>
+        </div>
+        <div
+          class="border-2 p-2 my-2 rounded w-full flex gap-2 items-center"
+          *ngIf="model === 0"
+        >
+          <div>
+            <mat-icon>open_in_new</mat-icon>
+          </div>
+          <div>
+            <div>
+              Linked to project <b>test</b> and model <b>coffee-machine</b>.
+              <br />
+              Detected tool is <b>Capella 5.0.0</b>.
+            </div>
+            The detected model is wrong? Please unlink it manually: <br />
+            <button class="mt-2" mat-stroked-button>Unlink model</button>
+          </div>
+        </div>
+        <div
+          class="border-2 p-2 my-2 rounded w-full flex gap-2 items-center"
+          *ngIf="model === 0"
+        >
+          <div class="text-red-600">
+            <mat-icon>cloud_download</mat-icon>
+          </div>
+          <div>
+            <div class="mb-1">
+              We've identified that your model is not up-to-date with the
+              remote. Please pull the latest changes.
+            </div>
+            <button mat-stroked-button>Pull changes</button>
+          </div>
+        </div>
+        <div
+          class="border-2 p-2 my-2 rounded w-full flex gap-2 items-center"
+          *ngIf="model === 2"
+        >
+          <div class="text-red-600">
+            <mat-icon>cloud_upload</mat-icon>
+          </div>
+          <div>
+            <div class="mb-1">
+              We've identified uncommited or unpushed changes for this model.
+              Make sure to always push. You can directly push the change here:
+            </div>
+            <button mat-stroked-button>Push changes</button>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <hr class="my-2" />
+    <div class="flex gap-2">
+      <button mat-stroked-button color="warn">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button mat-stroked-button color="primary">
+        <mat-icon>folder_open</mat-icon>
+      </button>
+      <button mat-stroked-button color="primary">
+        <mat-icon>storage</mat-icon>
+      </button>
+    </div>
+  </mat-card>
+</div>

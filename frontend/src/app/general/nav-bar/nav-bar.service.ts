@@ -29,6 +29,11 @@ export class NavBarService {
       requiredRole: 'user',
     },
     {
+      name: 'Workspaces',
+      routerLink: ['/workspaces'],
+      requiredRole: 'user',
+    },
+    {
       name: 'Session overview',
       routerLink: ['/sessions', 'overview'],
       requiredRole: 'administrator',

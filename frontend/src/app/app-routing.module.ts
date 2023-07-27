@@ -41,6 +41,7 @@ import { GitSettingsComponent } from './settings/modelsources/git-settings/git-s
 import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/edit-t4c-instance/edit-t4c-instance.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
+import { WorkspaceOverviewComponent } from 'src/app/workspaces/workspace-overview/workspace-overview.component';
 
 const routes: Routes = [
   {
@@ -276,6 +277,11 @@ const routes: Routes = [
             component: SessionOverviewComponent,
           },
         ],
+      },
+      {
+        path: 'workspaces',
+        data: { breadcrumb: 'Workspaces' },
+        component: WorkspaceOverviewComponent,
       },
       {
         path: 'settings',
