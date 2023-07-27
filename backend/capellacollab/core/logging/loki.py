@@ -68,6 +68,7 @@ def fetch_logs_from_loki(
     # Prepare the query parameters
     params = {
         "query": query,
+        "limit": 5000,
         "start": int(start_time.timestamp()),  # Convert to milliseconds
         "end": int(end_time.timestamp()),  # Convert to milliseconds
         "direction": "forward",
