@@ -6,7 +6,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
+import { filter, switchMap, take, tap } from 'rxjs/operators';
 import { PipelineRunService } from 'src/app/projects/models/backup-settings/pipeline-runs/service/pipeline-run.service';
 import { PipelineService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
@@ -29,26 +29,31 @@ export class ViewLogsDialogComponent {
     this.refreshEvents();
   }
 
-  logs = '';
-  events = '';
+  logs?: string = undefined;
+  events?: string = undefined;
 
   refreshEvents(): void {
     combineLatest([
-      this.projectService.project$.pipe(filter(Boolean)),
-      this.modelService.model$.pipe(filter(Boolean)),
-      this.pipelineService.pipeline$.pipe(filter(Boolean)),
+      this.projectService.project$.pipe(filter(Boolean), take(1)),
+      this.modelService.model$.pipe(filter(Boolean), take(1)),
+      this.pipelineService.pipeline$.pipe(filter(Boolean), take(1)),
       this.pipelineRunService.pipelineRun$.pipe(filter(Boolean)),
     ])
       .pipe(
         untilDestroyed(this),
-        switchMap(([project, model, pipeline, pipelineRun]) =>
-          this.pipelineRunService.getEvents(
+        filter(
+          ([_project, _model, _pipeline, pipelineRun]) =>
+            this.logs === undefined ||
+            !this.pipelineRunService.pipelineRunIsFinished(pipelineRun.status)
+        ),
+        switchMap(([project, model, pipeline, pipelineRun]) => {
+          return this.pipelineRunService.getEvents(
             project.slug,
             model.slug,
             pipeline.id,
             pipelineRun.id
-          )
-        )
+          );
+        })
       )
       .subscribe({
         next: (res: string) => {
@@ -69,6 +74,11 @@ export class ViewLogsDialogComponent {
     ])
       .pipe(
         untilDestroyed(this),
+        filter(
+          ([_project, _model, _pipeline, pipelineRun]) =>
+            this.logs === undefined ||
+            !this.pipelineRunService.pipelineRunIsFinished(pipelineRun.status)
+        ),
         switchMap(([project, model, pipeline, pipelineRun]) =>
           this.pipelineRunService.getLogs(
             project.slug,

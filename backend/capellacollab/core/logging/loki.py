@@ -83,7 +83,7 @@ def fetch_logs_from_loki(
                 PROMTAIL_CONFIGURATION["lokiUsername"],
                 PROMTAIL_CONFIGURATION["lokiPassword"],
             ),
-            timeout=10,
+            timeout=5,
         )
 
         if response.status_code == 429:
