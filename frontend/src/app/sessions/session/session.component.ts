@@ -21,7 +21,7 @@ import { UserSessionService } from 'src/app/sessions/service/user-session.servic
 export class SessionComponent implements OnInit {
   cachedSessions?: CachedSession[] = undefined;
   selectedSessions: Session[] = [];
-  private debounceTimer: any;
+  private debounceTimer?: number;
 
   draggingActive = false;
 
@@ -117,9 +117,9 @@ export class SessionComponent implements OnInit {
 
   @HostListener('window:resize', ['$event'])
   onResize() {
-    clearTimeout(this.debounceTimer);
+    window.clearTimeout(this.debounceTimer);
 
-    this.debounceTimer = setTimeout(() => {
+    this.debounceTimer = window.setTimeout(() => {
       Array.from(document.getElementsByTagName('iframe')).forEach((iframe) => {
         const session = this.selectedSessions.find(
           (session) => 'session-' + session.id === iframe.id

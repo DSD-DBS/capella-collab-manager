@@ -49,8 +49,8 @@ export class SessionService {
     });
   }
 
-  deleteSession(id: string): Observable<any> {
-    return this.http.delete<any>(this.BACKEND_URL_PREFIX + id);
+  deleteSession(id: string): Observable<null> {
+    return this.http.delete<null>(this.BACKEND_URL_PREFIX + id);
   }
 
   beautifyState(state: string | undefined): SessionState {

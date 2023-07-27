@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PathNode } from 'src/app/schemes';
@@ -17,11 +17,15 @@ export class LoadFilesService {
 
   constructor(private http: HttpClient) {}
 
-  upload(id: string, files: FormData): Observable<any> {
-    return this.http.post<any>(this.BACKEND_URL_PREFIX + id + '/files', files, {
-      reportProgress: true,
-      observe: 'events',
-    });
+  upload(id: string, files: FormData): Observable<HttpEvent<UploadResponse>> {
+    return this.http.post<UploadResponse>(
+      this.BACKEND_URL_PREFIX + id + '/files',
+      files,
+      {
+        reportProgress: true,
+        observe: 'events',
+      }
+    );
   }
 
   getCurrentFiles(id: string, showHiddenFiles: boolean): Observable<PathNode> {
@@ -37,3 +41,7 @@ export class LoadFilesService {
     });
   }
 }
+
+export type UploadResponse = {
+  message: string;
+};

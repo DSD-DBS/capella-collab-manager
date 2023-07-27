@@ -34,6 +34,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError(this.constructErrorDetailTransformationObservable),
       tap({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         next: (event: HttpEvent<any>) => {
           if (this.isErrorHandlingSkipped(request)) {
             return;
@@ -104,6 +105,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
         },
       }),
       // If the body has a payload attribute, map to the attribute
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       map((event: HttpEvent<any>) => {
         if (event.type == HttpEventType.Response) {
           if (event.body?.payload) {
@@ -123,23 +125,27 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
     return detail.reason || '';
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructErrorDetailTransformationObservable(err: any): Observable<any> {
     // https://github.com/angular/angular/issues/19888
 
     if (err.error instanceof Blob && err.error.type === 'application/json') {
       return from(
-        new Promise<any>((resolve, reject) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        new Promise<any>((_resolve, reject) => {
           const reader = new FileReader();
           reader.onload = (e: Event) => {
             try {
-              const errmsg = JSON.parse((<any>e.target).result);
+              const errmsg = JSON.parse(
+                (<FileReaderEventTarget>e.target).result
+              );
               reject(
                 new HttpErrorResponse({
                   error: errmsg,
                   headers: err.headers,
                   status: err.status,
                   statusText: err.statusText,
-                  url: err.url,
+                  url: err.url || undefined,
                 })
               );
             } catch (e) {
@@ -157,6 +163,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
     throw err;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private isErrorHandlingSkipped(request: HttpRequest<any>) {
     return request.context.get(SKIP_ERROR_HANDLING);
   }
@@ -168,3 +175,13 @@ export type ErrorDetail = {
   reason?: string | string[];
   technical?: string;
 };
+
+export type PayloadWrapper = {
+  warnings: ErrorDetail[];
+  errors: ErrorDetail[];
+  payload: unknown;
+};
+
+interface FileReaderEventTarget extends EventTarget {
+  result: string;
+}

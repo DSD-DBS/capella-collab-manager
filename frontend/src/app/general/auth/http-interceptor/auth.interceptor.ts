@@ -4,6 +4,7 @@
  */
 
 import {
+  HttpErrorResponse,
   HttpEvent,
   HttpHandler,
   HttpInterceptor,
@@ -28,14 +29,14 @@ export class AuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     const req = this.injectAccessToken(request);
     return next.handle(req).pipe(
-      catchError((err: any) => {
+      catchError((err: HttpErrorResponse) => {
         return this.handleTokenExpired(err, request, next);
       })
     );
   }
 
   handleTokenExpired(
-    err: any,
+    err: HttpErrorResponse,
     request: HttpRequest<unknown>,
     next: HttpHandler
   ) {
