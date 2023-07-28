@@ -102,7 +102,7 @@ class GithubHandler(handler.GitHandler):
         project_id: str,
     ) -> t.Any:
         headers = None
-        if not self.git_model.password:
+        if self.git_model.password:
             headers = self.__get_headers(self.git_model.password)
 
         response = requests.get(
