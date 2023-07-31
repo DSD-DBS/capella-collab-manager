@@ -9,7 +9,8 @@ import prometheus_client
 import prometheus_client.core
 
 from capellacollab.core import database
-from capellacollab.sessions import crud, operators
+
+from . import crud, operators
 
 
 class DatabaseSessionsCollector:

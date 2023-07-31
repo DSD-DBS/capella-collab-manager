@@ -10,7 +10,6 @@ from capellacollab.sessions.idletimeout import terminate_idle_session
 
 @pytest.fixture(autouse=True)
 def mock_config(monkeypatch):
-
     monkeypatch.setattr(
         capellacollab.sessions.idletimeout,
         "config",
@@ -54,7 +53,7 @@ def test_idle_sessions(monkeypatch):
         lambda *args, **kwargs: MockResponse({"metric": {"app": session_id}}),
     )
     monkeypatch.setattr(
-        capellacollab.sessions.idletimeout,
+        capellacollab.sessions.operators,
         "get_operator",
         lambda: operator,
     )

@@ -5,11 +5,11 @@
 import uuid
 
 import requests
-from requests.auth import HTTPBasicAuth
-from requests.exceptions import HTTPError
+from requests import auth as requests_auth
+from requests import exceptions as requests_exceptions
 
 from capellacollab.config import config
-from capellacollab.core.credentials import generate_password
+from capellacollab.core import credentials
 
 cfg = config["extensions"]["guacamole"]
 GUACAMOLE_PREFIX = cfg["baseURI"] + "/api/session/data/postgresql"
@@ -27,14 +27,14 @@ class GuacamoleError(Exception):
 def get_admin_token() -> str:
     r = requests.post(
         cfg["baseURI"] + "/api/tokens",
-        auth=HTTPBasicAuth(cfg["username"], cfg["password"]),
+        auth=requests_auth.HTTPBasicAuth(cfg["username"], cfg["password"]),
         headers=headers,
         timeout=config["requests"]["timeout"],
         proxies=proxies,
     )
     try:
         r.raise_for_status()
-    except HTTPError as e:
+    except requests_exceptions.HTTPError as e:
         status = e.response.status_code
         if status == 404:
             raise GuacamoleError(
@@ -52,7 +52,7 @@ def get_admin_token() -> str:
 def get_token(username: str, password: str) -> str:
     r = requests.post(
         cfg["baseURI"] + "/api/tokens",
-        auth=HTTPBasicAuth(username, password),
+        auth=requests_auth.HTTPBasicAuth(username, password),
         headers=headers,
         timeout=config["requests"]["timeout"],
         proxies=proxies,
@@ -63,8 +63,8 @@ def get_token(username: str, password: str) -> str:
 
 def create_user(
     token: str,
-    username: str = generate_password(10),
-    password: str = generate_password(128),
+    username: str = credentials.generate_password(10),
+    password: str = credentials.generate_password(128),
 ) -> None:
     r = requests.post(
         GUACAMOLE_PREFIX + "/users?token=" + token,

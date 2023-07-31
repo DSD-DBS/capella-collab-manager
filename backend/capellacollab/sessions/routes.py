@@ -12,28 +12,23 @@ import requests
 from fastapi import status
 from sqlalchemy import orm
 
-from capellacollab.config import config
-from capellacollab.core import database
+from capellacollab import config
+from capellacollab.core import credentials, database
 from capellacollab.core import models as core_models
 from capellacollab.core.authentication import helper as auth_helper
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
-from capellacollab.core.credentials import generate_password
+from capellacollab.core.authentication import jwt_bearer
 from capellacollab.projects import injectables as projects_injectables
-from capellacollab.projects.models import DatabaseProject
+from capellacollab.projects import models as projects_models
 from capellacollab.projects.toolmodels import (
     injectables as toolmodels_injectables,
 )
-from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
 )
-from capellacollab.projects.users.models import ProjectUserRole
-from capellacollab.sessions.files import routes as files
-from capellacollab.sessions.models import DatabaseSession
-from capellacollab.sessions.operators import get_operator
-from capellacollab.sessions.operators.k8s import KubernetesOperator
-from capellacollab.sessions.sessions import inject_attrs_in_sessions
+from capellacollab.projects.users import models as projects_users_models
+from capellacollab.sessions.files import routes as files_routes
 from capellacollab.settings.integrations.purevariants import (
     crud as purevariants_crud,
 )
@@ -49,7 +44,8 @@ from capellacollab.tools import models as tools_models
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 
-from . import crud, guacamole, injectables, models, util
+from . import crud, guacamole, injectables, models, operators, sessions, util
+from .operators import k8s
 
 router = fastapi.APIRouter(
     dependencies=[
@@ -90,15 +86,15 @@ def get_current_sessions(
         users_injectables.get_own_user
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    token=fastapi.Depends(JWTBearer()),
+    token=fastapi.Depends(jwt_bearer.JWTBearer()),
 ):
     if auth_injectables.RoleVerification(
         required_role=users_models.Role.ADMIN, verify=False
     )(token, db):
-        return inject_attrs_in_sessions(crud.get_sessions(db))
+        return sessions.inject_attrs_in_sessions(crud.get_sessions(db))
 
     if not any(
-        project_user.role == ProjectUserRole.MANAGER
+        project_user.role == projects_users_models.ProjectUserRole.MANAGER
         for project_user in db_user.projects
     ):
         raise fastapi.HTTPException(
@@ -107,7 +103,7 @@ def get_current_sessions(
                 "reason": "You have to be project lead for at least one repository.",
             },
         )
-    return inject_attrs_in_sessions(
+    return sessions.inject_attrs_in_sessions(
         list(
             itertools.chain.from_iterable(
                 [
@@ -115,7 +111,8 @@ def get_current_sessions(
                     for project in [
                         p.project
                         for p in db_user.projects
-                        if p.role == ProjectUserRole.MANAGER
+                        if p.role
+                        == projects_users_models.ProjectUserRole.MANAGER
                     ]
                 ]
             )
@@ -129,7 +126,7 @@ def get_current_sessions(
     dependencies=[
         fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.USER
+                required_role=projects_users_models.ProjectUserRole.USER
             )
         )
     ],
@@ -139,10 +136,10 @@ def request_session(
     db_user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
     ),
-    project: DatabaseProject = fastapi.Depends(
+    project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),
-    operator: KubernetesOperator = fastapi.Depends(get_operator),
+    operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
     log.info("Starting persistent session creation for user %s", db_user.name)
@@ -210,7 +207,7 @@ def request_session(
             },
         )
 
-    rdp_password = generate_password(length=64)
+    rdp_password = credentials.generate_password(length=64)
 
     session = operator.start_readonly_session(
         username=db_user.name,
@@ -236,7 +233,10 @@ def request_session(
 
 def models_as_json(
     session_model_list: list[
-        tuple[models.PostReadonlySessionEntry, DatabaseCapellaModel]
+        tuple[
+            models.PostReadonlySessionEntry,
+            toolmodels_models.DatabaseCapellaModel,
+        ]
     ]
 ):
     for entry, model in session_model_list:
@@ -273,8 +273,8 @@ def request_persistent_session(
         users_injectables.get_own_user
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    operator: KubernetesOperator = fastapi.Depends(get_operator),
-    token=fastapi.Depends(JWTBearer()),
+    operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
+    token=fastapi.Depends(jwt_bearer.JWTBearer()),
 ):
     owner = auth_helper.get_username(token)
 
@@ -323,14 +323,14 @@ def request_persistent_session(
 
 def start_persistent_jupyter_session(
     db: orm.Session,
-    operator: KubernetesOperator,
+    operator: k8s.KubernetesOperator,
     owner: str,
     token: str,
     tool: tools_models.DatabaseTool,
     version: tools_models.DatabaseVersion,
 ):
     docker_image = get_image_for_tool_version(db, version.id)
-    jupyter_token = generate_password(length=64)
+    jupyter_token = credentials.generate_password(length=64)
 
     session = operator.start_persistent_jupyter_session(
         username=auth_helper.get_username(token),
@@ -354,7 +354,7 @@ def start_persistent_jupyter_session(
 
 def start_persistent_guacamole_session(
     db: orm.Session,
-    operator: KubernetesOperator,
+    operator: k8s.KubernetesOperator,
     user: users_models.DatabaseUser,
     owner: str,
     token: str,
@@ -391,7 +391,7 @@ def start_persistent_guacamole_session(
             t4c_repositories[0].instance.license if t4c_repositories else None
         )
 
-        t4c_password = generate_password()
+        t4c_password = credentials.generate_password()
         for repository in t4c_repositories:
             try:
                 repo_interface.add_user_to_repository(
@@ -427,7 +427,7 @@ def start_persistent_guacamole_session(
     ) = determine_pure_variants_configuration(db, user, tool)
 
     docker_image = get_image_for_tool_version(db, version.id)
-    rdp_password = generate_password(length=64)
+    rdp_password = credentials.generate_password(length=64)
 
     session = operator.start_persistent_capella_session(
         username=auth_helper.get_username(token),
@@ -510,10 +510,10 @@ def create_database_session(
     owner: str,
     tool: tools_models.DatabaseTool,
     version: tools_models.DatabaseVersion,
-    project: DatabaseProject | None,
+    project: projects_models.DatabaseProject | None,
     **kwargs,
-) -> DatabaseSession:
-    database_model = DatabaseSession(
+) -> models.DatabaseSession:
+    database_model = models.DatabaseSession(
         tool=tool,
         version=version,
         owner_name=owner,
@@ -537,11 +537,11 @@ def create_database_and_guacamole_session(
     rdp_password: str,
     tool: tools_models.DatabaseTool,
     version: tools_models.DatabaseVersion,
-    project: DatabaseProject | None,
+    project: projects_models.DatabaseProject | None,
     t4c_password: str | None = None,
-) -> DatabaseSession:
-    guacamole_username = generate_password()
-    guacamole_password = generate_password(length=64)
+) -> models.DatabaseSession:
+    guacamole_username = credentials.generate_password()
+    guacamole_password = credentials.generate_password(length=64)
 
     guacamole_token = guacamole.get_admin_token()
     guacamole.create_user(
@@ -577,11 +577,11 @@ def create_database_and_guacamole_session(
 
 @router.delete("/{session_id}", status_code=204)
 def end_session(
-    session: DatabaseSession = fastapi.Depends(
+    session: models.DatabaseSession = fastapi.Depends(
         injectables.get_existing_session
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    operator: KubernetesOperator = fastapi.Depends(get_operator),
+    operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
 ):
     util.terminate_session(db, session, operator)
 
@@ -591,10 +591,10 @@ def end_session(
     response_model=models.GuacamoleAuthentication,
 )
 def create_guacamole_token(
-    session: DatabaseSession = fastapi.Depends(
+    session: models.DatabaseSession = fastapi.Depends(
         injectables.get_existing_session
     ),
-    token=fastapi.Depends(JWTBearer()),
+    token=fastapi.Depends(jwt_bearer.JWTBearer()),
 ):
     if session.owner_name != auth_helper.get_username(token):
         raise fastapi.HTTPException(
@@ -609,11 +609,11 @@ def create_guacamole_token(
     )
     return models.GuacamoleAuthentication(
         token=json.dumps(token),
-        url=config["extensions"]["guacamole"]["publicURI"] + "/#/",
+        url=config.config["extensions"]["guacamole"]["publicURI"] + "/#/",
     )
 
 
-router.include_router(router=files.router, prefix="/{session_id}/files")
+router.include_router(router=files_routes.router, prefix="/{session_id}/files")
 
 
 @users_router.get(
@@ -627,7 +627,7 @@ def get_sessions_for_user(
         users_injectables.get_own_user
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    token=fastapi.Depends(JWTBearer()),
+    token=fastapi.Depends(jwt_bearer.JWTBearer()),
 ):
     if user != current_user and not auth_injectables.RoleVerification(
         required_role=users_models.Role.ADMIN, verify=False
@@ -640,7 +640,11 @@ def get_sessions_for_user(
             },
         )
 
-    return [] if not user.sessions else inject_attrs_in_sessions(user.sessions)
+    return (
+        []
+        if not user.sessions
+        else sessions.inject_attrs_in_sessions(user.sessions)
+    )
 
 
 def get_image_for_tool_version(db: orm.Session, version_id: int) -> str:
