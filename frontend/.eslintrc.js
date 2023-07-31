@@ -53,14 +53,6 @@ module.exports = {
             caughtErrorsIgnorePattern: "^_",
           },
         ],
-        "@typescript-eslint/no-restricted-imports": [
-          "error",
-          {
-            name: "no-relative-imports",
-            patterns: ["../../../*"],
-            message: "Please use absolute imports instead",
-          },
-        ],
         "unused-imports/no-unused-imports": "error",
         "no-console": ["error", { allow: ["error"] }],
         "deprecation/deprecation": "warn",

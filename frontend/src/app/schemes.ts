@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { SafeResourceUrl } from '@angular/platform-browser';
 import { User } from 'src/app/services/user/user.service';
 import { ToolVersionWithTool } from 'src/app/settings/core/tools-settings/tool.service';
 import { Project } from './projects/service/project.service';
@@ -23,6 +24,9 @@ export interface Session {
   owner: User;
   t4c_password: string;
   download_in_progress: boolean;
+  safeResourceURL?: SafeResourceUrl;
+  focused: boolean;
+  reloadToResize: boolean;
 }
 
 export interface ReadonlySession extends Session {

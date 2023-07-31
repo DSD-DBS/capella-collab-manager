@@ -20,62 +20,78 @@
 
 <mat-card *ngIf="(userSessionService.sessions$ | async)?.length === 0">
   <h2>No active sessions</h2>
-  <div class="content">
-    No active sessions for your user are found in our system. <br />
-  </div>
+  <div>No active sessions for your user are found in our system. <br /></div>
 </mat-card>
 
-<mat-card *ngFor="let session of userSessionService.sessions$ | async">
-  <div class="type">
-    <h2 *ngIf="isPersistentSession(session)">Persistent workspace session</h2>
-    <h2 *ngIf="isReadonlySession(session)">Read-only session</h2>
-  </div>
-  <mat-card-content class="sessionContent">
-    <h3
-      class="state"
-      [ngClass]="sessionService.beautifyState(session.state).css"
-    >
-      {{ sessionService.beautifyState(session.state).text }}
-    </h3>
-    <p id="creationTime">
-      The session was created
-      {{ beautifyService.beatifyDate(session.created_at) }}
-    </p>
-    <div *ngIf="isReadonlySession(session)">
-      <span>Project: {{ session.project.name }}</span
-      ><br />
+<div *ngIf="(userSessionService.sessions$ | async)?.length">
+  <a
+    class="w-card max-w-[85vw]"
+    matInput
+    mat-stroked-button
+    color="primary"
+    type="submit"
+    routerLink="/session"
+  >
+    <span> Open internal session viewer </span>
+    <mat-icon>keyboard_arrow_right</mat-icon>
+  </a>
+
+  <mat-card *ngFor="let session of userSessionService.sessions$ | async">
+    <div class="type">
+      <h2 *ngIf="isPersistentSession(session)">Persistent workspace session</h2>
+      <h2 *ngIf="isReadonlySession(session)">Read-only session</h2>
+    </div>
+    <mat-card-content class="sessionContent">
+      <h3
+        class="state"
+        [ngClass]="sessionService.beautifyState(session.state).css"
+      >
+        {{ sessionService.beautifyState(session.state).text }}
+      </h3>
+      <p id="creationTime">
+        The session was created
+        {{ beautifyService.beatifyDate(session.created_at) }}
+      </p>
+      <div *ngIf="isReadonlySession(session)">
+        <span>Project: {{ session.project.name }}</span
+        ><br />
+      </div>
       <span>
         Tool: {{ session.version!.tool.name }} ({{ session.version!.name }})
       </span>
-    </div>
 
-    <mat-card *ngIf="session.download_in_progress">
-      <mat-card-content>
-        <p>Your download is being prepared…</p>
-        <p>Depending on the model size, this can take a few minutes.</p>
-        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      </mat-card-content>
-    </mat-card>
-  </mat-card-content>
-  <div class="flex justify-between">
-    <button mat-button color="primary" (click)="openDeletionDialog([session])">
-      Terminate
-    </button>
-    <button
-      mat-button
-      color="primary"
-      (click)="openConnectDialog(session)"
-      [disabled]="!sessionService.beautifyState(session.state).success"
-    >
-      Connect
-    </button>
-    <button
-      mat-button
-      color="primary"
-      (click)="uploadFileDialog(session)"
-      [disabled]="!sessionService.beautifyState(session.state).success"
-    >
-      File browser
-    </button>
-  </div>
-</mat-card>
+      <mat-card *ngIf="session.download_in_progress">
+        <mat-card-content>
+          <p>Your download is being prepared…</p>
+          <p>Depending on the model size, this can take a few minutes.</p>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </mat-card-content>
+      </mat-card>
+    </mat-card-content>
+    <div class="flex justify-between">
+      <button
+        mat-button
+        color="primary"
+        (click)="openDeletionDialog([session])"
+      >
+        Terminate
+      </button>
+      <button
+        mat-button
+        color="primary"
+        (click)="openConnectDialog(session)"
+        [disabled]="!sessionService.beautifyState(session.state).success"
+      >
+        Connect
+      </button>
+      <button
+        mat-button
+        color="primary"
+        (click)="uploadFileDialog(session)"
+        [disabled]="!sessionService.beautifyState(session.state).success"
+      >
+        File browser
+      </button>
+    </div>
+  </mat-card>
+</div>

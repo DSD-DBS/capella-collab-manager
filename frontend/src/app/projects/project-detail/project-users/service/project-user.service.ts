@@ -174,24 +174,13 @@ export class ProjectUserService {
       .pipe(tap(() => this.loadProjectUsers(projectSlug)));
   }
 
-  updatePasswordOfUser(
-    project_slug: string,
-    userID: number,
-    password: string
-  ): Observable<void> {
-    return this.http.patch<any>(
-      this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
-      { password }
-    );
-  }
-
   changePermissionOfProjectUser(
     project_slug: string,
     userID: number,
     permission: ProjectUserPermission,
     reason: string
   ): Observable<null> {
-    return this.http.patch<any>(
+    return this.http.patch<null>(
       this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
       { permission, reason }
     );

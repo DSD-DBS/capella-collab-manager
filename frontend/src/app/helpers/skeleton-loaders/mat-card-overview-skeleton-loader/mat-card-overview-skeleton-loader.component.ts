@@ -26,8 +26,11 @@ export class MatCardOverviewSkeletonLoaderComponent implements OnInit {
   }
 
   @HostListener('window:resize', ['$event'])
-  onresize(event: any) {
-    this.resize(event.target.innerWidth, event.target.innerHeight);
+  onresize(event: Event) {
+    if (event.target) {
+      const target = event.target as Window;
+      this.resize(target.innerWidth, target.innerHeight);
+    }
   }
 
   resize(width: number, height: number) {
