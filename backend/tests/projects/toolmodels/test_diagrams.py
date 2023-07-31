@@ -8,7 +8,6 @@ import zipfile
 
 import pytest
 import responses
-from aioresponses import aioresponses
 from fastapi import testclient
 
 import capellacollab.projects.models as project_models
@@ -27,77 +26,6 @@ EXAMPLE_SVG = b"""
     />
 </svg>
 """
-
-
-@pytest.fixture(name="diagram_cache_job_status", params=["success"])
-def fixture_diagram_cache_job_status(request: pytest.FixtureRequest):
-    return request.param
-
-
-@pytest.fixture(name="mock_git_rest_api")
-def fixture_mock_git_rest_api(
-    diagram_cache_job_status: str, git_type: git_models.GitType
-):
-    pipeline_ids = ["12345", "12346"]
-    match git_type:
-        case git_models.GitType.GITLAB:
-            with aioresponses() as mocked:
-                mocked.get(
-                    "https://example.com/api/v4/projects/test%2Fproject",
-                    status=200,
-                    payload={"id": "10000"},
-                )
-
-                mocked.get(
-                    "https://example.com/api/v4/projects/10000/pipelines?ref=main&per_page=20",
-                    status=200,
-                    payload=[{"id": _id} for _id in pipeline_ids],
-                )
-
-                for _id in pipeline_ids:
-                    mocked.get(
-                        f"https://example.com/api/v4/projects/10000/pipelines/{_id}/jobs",
-                        status=200,
-                        payload=[
-                            {
-                                "name": "test",
-                                "status": "failure",
-                                "started_at": "2023-02-04T02:55:17.788000+00:00",
-                                "id": "00001",
-                            },
-                            {
-                                "name": "update_capella_diagram_cache",
-                                "status": diagram_cache_job_status,
-                                "started_at": "2023-02-04T02:55:17.788000+00:00",
-                                "id": "00002",
-                            },
-                        ],
-                    )
-
-                yield mocked
-        case git_models.GitType.GITHUB:
-            artifact_id = 12347
-            responses.get(
-                "https://example.com/api/v4/repos/test/project/actions/runs?branch=main&per_page=20",
-                status=200,
-                json={
-                    "workflow_runs": [
-                        {
-                            "id": _id,
-                            "name": "update_capella_diagram_cache",
-                            "conclusion": diagram_cache_job_status,
-                            "created_at": "2050-07-23T09:30:47Z",
-                        }
-                        for _id in pipeline_ids
-                    ],
-                },
-            )
-            responses.get(
-                f"https://example.com/api/v4/repos/test/project/actions/runs/{pipeline_ids[0]}/artifacts",
-                status=200,
-                json={"artifacts": [{"id": artifact_id, "expired": "false"}]},
-            )
-            yield responses
 
 
 def get_diagram_cache_index():
@@ -166,7 +94,7 @@ def fixture_mock_gitlab_diagram_cache_svg(git_type: git_models.GitType):
     "project_user",
     "git_instance",
     "git_model",
-    "mock_git_rest_api",
+    "mock_git_rest_api_for_artifacts",
     "mock_git_diagram_cache_index_api",
 )
 def test_get_diagram_metadata(
@@ -232,7 +160,7 @@ def test_get_diagrams_fails_without_api_endpoint(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,diagram_cache_job_status",
+    "git_type,job_status",
     [
         (git_models.GitType.GITLAB, "failed"),
         (git_models.GitType.GITHUB, "failure"),
@@ -242,7 +170,7 @@ def test_get_diagrams_fails_without_api_endpoint(
     "project_user",
     "git_instance",
     "git_model",
-    "mock_git_rest_api",
+    "mock_git_rest_api_for_artifacts",
 )
 def test_get_diagrams_no_diagram_cache_job_found(
     project: project_models.DatabaseProject,
@@ -265,7 +193,7 @@ def test_get_diagrams_no_diagram_cache_job_found(
     "project_user",
     "git_instance",
     "git_model",
-    "mock_git_rest_api",
+    "mock_git_rest_api_for_artifacts",
     "mock_git_diagram_cache_index_api",
     "mock_git_diagram_cache_svg",
 )

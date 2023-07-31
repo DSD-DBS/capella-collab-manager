@@ -3,6 +3,8 @@
 
 
 import pytest
+import responses
+from aioresponses import aioresponses
 from sqlalchemy import orm
 
 import capellacollab.projects.models as project_models
@@ -92,6 +94,82 @@ def fixture_git_models(
     return project_git_crud.add_git_model_to_capellamodel(
         db, capella_model, git_model
     )
+
+
+@pytest.fixture(name="job_status", params=["success"])
+def fixture_job_status(request: pytest.FixtureRequest):
+    return request.param
+
+
+@pytest.fixture(name="job_name", params=["update_capella_diagram_cache"])
+def fixture_job_name(request: pytest.FixtureRequest):
+    return request.param
+
+
+@pytest.fixture(name="mock_git_rest_api_for_artifacts")
+def fixture_mock_git_rest_api_for_artifacts(
+    job_status: str, git_type: git_models.GitType, job_name: str
+):
+    pipeline_ids = ["12345", "12346"]
+    match git_type:
+        case git_models.GitType.GITLAB:
+            with aioresponses() as mocked:
+                mocked.get(
+                    "https://example.com/api/v4/projects/test%2Fproject",
+                    status=200,
+                    payload={"id": "10000"},
+                )
+
+                mocked.get(
+                    "https://example.com/api/v4/projects/10000/pipelines?ref=main&per_page=20",
+                    status=200,
+                    payload=[{"id": _id} for _id in pipeline_ids],
+                )
+
+                for _id in pipeline_ids:
+                    mocked.get(
+                        f"https://example.com/api/v4/projects/10000/pipelines/{_id}/jobs",
+                        status=200,
+                        payload=[
+                            {
+                                "name": "test",
+                                "status": "failure",
+                                "started_at": "2023-02-04T02:55:17.788000+00:00",
+                                "id": "00001",
+                            },
+                            {
+                                "name": job_name,
+                                "status": job_status,
+                                "started_at": "2023-02-04T02:55:17.788000+00:00",
+                                "id": "00002",
+                            },
+                        ],
+                    )
+
+                yield mocked
+        case git_models.GitType.GITHUB:
+            artifact_id = 12347
+            responses.get(
+                "https://example.com/api/v4/repos/test/project/actions/runs?branch=main&per_page=20",
+                status=200,
+                json={
+                    "workflow_runs": [
+                        {
+                            "id": _id,
+                            "name": job_name,
+                            "conclusion": job_status,
+                            "created_at": "2050-07-23T09:30:47Z",
+                        }
+                        for _id in pipeline_ids
+                    ],
+                },
+            )
+            responses.get(
+                f"https://example.com/api/v4/repos/test/project/actions/runs/{pipeline_ids[0]}/artifacts",
+                status=200,
+                json={"artifacts": [{"id": artifact_id, "expired": "false"}]},
+            )
+            yield responses
 
 
 @pytest.fixture(name="t4c_repository")

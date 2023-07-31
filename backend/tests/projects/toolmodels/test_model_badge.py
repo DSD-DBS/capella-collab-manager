@@ -3,12 +3,13 @@
 
 
 import base64
+import io
+import zipfile
 
 import pytest
 import responses
 from aioresponses import aioresponses
 from fastapi import testclient
-from sqlalchemy import orm
 
 import capellacollab.projects.models as project_models
 import capellacollab.projects.toolmodels.models as toolmodels_models
@@ -18,8 +19,8 @@ import capellacollab.settings.modelsources.git.models as git_models
 EXAMPLE_MODEL_BADGE = b"<svg>badge placeholder</svg>"
 
 
-@pytest.fixture()
-def mock_git_rest_api(git_type: git_models.GitType):
+@pytest.fixture(name="mock_git_rest_api")
+def fixture_mock_git_rest_api(git_type: git_models.GitType):
     match git_type:
         case git_models.GitType.GITHUB:
             responses.get("https://api.example.com/", status=200)
@@ -35,7 +36,7 @@ def mock_git_rest_api(git_type: git_models.GitType):
 
 
 @pytest.fixture(name="mock_git_model_badge_file_api")
-def mock_git_model_badge_file_api(git_type: git_models.GitType):
+def fixture_mock_git_model_badge_file_api(git_type: git_models.GitType):
     match git_type:
         case git_models.GitType.GITLAB:
             responses.get(
@@ -84,6 +85,34 @@ def fixture_mock_git_model_badge_file_api_not_found(
             responses.get(
                 "https://example.com/api/v4/repos/test/project/contents/model-complexity-badge.svg?ref=main",
                 status=404,
+            )
+
+
+def get_zipfile():
+    byte_io = io.BytesIO()
+    with zipfile.ZipFile(byte_io, "w") as zf:
+        zf.writestr("model-complexity-badge.svg", EXAMPLE_MODEL_BADGE)
+    byte_io.seek(0)
+    return byte_io.read()
+
+
+@pytest.fixture(name="mock_get_model_badge_from_artifacts_api")
+def fixture_mock_get_model_badge_from_artifacts_api(
+    git_type: git_models.GitType,
+):
+    match git_type:
+        case git_models.GitType.GITLAB:
+            responses.get(
+                "https://example.com/api/v4/projects/10000/jobs/00002/artifacts/model-complexity-badge.svg",
+                status=200,
+                body=EXAMPLE_MODEL_BADGE,
+            )
+        case git_models.GitType.GITHUB:
+            responses.get(
+                f"https://example.com/api/v4/repos/test/project/actions/artifacts/12347/zip",
+                status=200,
+                body=get_zipfile(),
+                content_type="application/zip",
             )
 
 
@@ -154,31 +183,6 @@ def test_get_model_badge_fails_without_api_endpoint(
     "git_instance",
     "git_model",
     "mock_git_rest_api",
-    "mock_git_model_badge_file_api_not_found",
-)
-def test_get_model_badge_not_found(
-    project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
-    client: testclient.TestClient,
-):
-    response = client.get(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/badges/complexity",
-    )
-
-    assert response.status_code == 404
-    assert response.json()["detail"]["err_code"] == "FILE_NOT_FOUND"
-
-
-@responses.activate
-@pytest.mark.parametrize(
-    "git_type",
-    [(git_models.GitType.GITLAB), (git_models.GitType.GITHUB)],
-)
-@pytest.mark.usefixtures(
-    "project_user",
-    "git_instance",
-    "git_model",
-    "mock_git_rest_api",
     "mock_git_model_badge_file_api",
 )
 def test_get_model_badge(
@@ -190,5 +194,33 @@ def test_get_model_badge(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/badges/complexity",
     )
 
+    assert response.status_code == 200
+    assert response.content == EXAMPLE_MODEL_BADGE
+
+
+@responses.activate
+@pytest.mark.parametrize(
+    "git_type,job_name",
+    [
+        (git_models.GitType.GITLAB, "generate-model-badge"),
+        (git_models.GitType.GITHUB, "generate-model-badge"),
+    ],
+)
+@pytest.mark.usefixtures(
+    "project_user",
+    "git_instance",
+    "git_model",
+    "mock_git_rest_api_for_artifacts",
+    "mock_git_model_badge_file_api_not_found",
+    "mock_get_model_badge_from_artifacts_api",
+)
+def test_get_model_badge_from_artifacts(
+    project: project_models.DatabaseProject,
+    capella_model: toolmodels_models.CapellaModel,
+    client: testclient.TestClient,
+):
+    response = client.get(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/badges/complexity",
+    )
     assert response.status_code == 200
     assert response.content == EXAMPLE_MODEL_BADGE

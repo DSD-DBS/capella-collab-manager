@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import base64
-import typing as t
 from urllib import parse
 
 import aiohttp
@@ -40,7 +39,7 @@ class GitlabHandler(handler.GitHandler):
                 return (await response.json())["id"]
 
     async def get_last_job_run_id_for_git_model(
-        self, job_name: str, project_id: t.Optional[str] = None
+        self, job_name: str, project_id: str | None = None
     ) -> handler.JobIdAttributes:
         if not project_id:
             project_id = await self.get_project_id_by_git_url()
@@ -134,14 +133,17 @@ class GitlabHandler(handler.GitHandler):
 
     async def get_file_from_repository(
         self, project_id: str, trusted_file_path: str
-    ) -> tuple[requests.Response, bytes | None]:
+    ) -> bytes:
         response = requests.get(
             f"{self.git_instance.api_url}/projects/{project_id}/repository/files/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(self.git_model.revision, safe='')}",
             headers={"PRIVATE-TOKEN": self.git_model.password},
             timeout=config["requests"]["timeout"],
         )
-        if response.ok:
-            answer = (response, base64.b64decode(response.json()["content"]))
-        else:
-            answer = (response, None)
-        return answer
+
+        if response.status_code == 404:
+            raise git_exceptions.GitRepositoryFileNotFoundError(
+                filename=trusted_file_path
+            )
+        response.raise_for_status()
+
+        return base64.b64decode(response.json()["content"])

@@ -1,9 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import abc
 import collections
-import typing as t
-from abc import abstractmethod
 
 import requests
 
@@ -31,17 +30,17 @@ class GitHandler:
         if not self.git_instance.api_url:
             raise exceptions.GitInstanceAPIEndpointNotFoundError()
 
-    @abstractmethod
+    @abc.abstractmethod
     async def get_project_id_by_git_url(self) -> str:
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     async def get_last_job_run_id_for_git_model(
-        self, job_name: str, project_id: t.Optional[str]
-    ) -> tuple[str, tuple[str, str]]:
+        self, job_name: str, project_id: str | None
+    ) -> JobIdAttributes:
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def get_artifact_from_job_as_json(
         self,
         project_id: str,
@@ -50,7 +49,7 @@ class GitHandler:
     ) -> dict:
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def get_artifact_from_job_as_content(
         self,
         project_id: str,
@@ -59,31 +58,30 @@ class GitHandler:
     ) -> bytes:
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     async def get_file_from_repository(
         self, project_id: str, trusted_file_path: str
-    ) -> (requests.Response, bytes):
+    ) -> bytes:
         pass
 
     async def get_file_from_repository_or_artifacts(
         self, trusted_file_path: str, job_name: str | None
     ) -> bytes:
         project_id = await self.get_project_id_by_git_url()
-        response, file = await self.get_file_from_repository(
-            project_id, trusted_file_path
-        )
-        if file:
-            return file
+        try:
+            return await self.get_file_from_repository(
+                project_id, trusted_file_path
+            )
+        except (requests.HTTPError, exceptions.GitRepositoryFileNotFoundError):
+            pass
         if job_name:
-            _, job_attributes = await self.get_last_job_run_id_for_git_model(
+            (_, (job_id, _),) = await self.get_last_job_run_id_for_git_model(
                 job_name, project_id
             )
             return self.get_artifact_from_job_as_content(
-                project_id, job_attributes[0], trusted_file_path
+                project_id, job_id, trusted_file_path
             )
-        if response.status_code == 404:
-            raise exceptions.GitRepositoryFileNotFoundError(
-                filename=trusted_file_path
-            )
-        response.raise_for_status()
-        return None
+
+        raise exceptions.GitRepositoryFileNotFoundError(
+            filename=trusted_file_path
+        )
