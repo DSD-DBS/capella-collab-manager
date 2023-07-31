@@ -45,7 +45,6 @@ export class SessionComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeCachedSessions();
-    this.handleEventsToDetermineFocus();
   }
 
   initializeCachedSessions() {
@@ -60,27 +59,6 @@ export class SessionComponent implements OnInit {
           return session;
         });
       });
-  }
-
-  handleEventsToDetermineFocus() {
-    window.focus();
-    window.addEventListener('blur', () => {
-      const focusedSession = this.selectedSessions.find(
-        (session) => 'session-' + session.id === document.activeElement?.id
-      );
-      if (!focusedSession) {
-        return;
-      }
-
-      document.getElementById('session-' + focusedSession.id)?.focus();
-      focusedSession.focused = true;
-
-      this.selectedSessions
-        .filter((session) => session !== focusedSession)
-        .map((session) => {
-          session.focused = false;
-        });
-    });
   }
 
   selectSessions() {
@@ -104,7 +82,18 @@ export class SessionComponent implements OnInit {
   }
 
   focusSession(session: Session) {
+    this.unfocusSession(session);
+
     document.getElementById('session-' + session.id)?.focus();
+    session.focused = true;
+  }
+
+  unfocusSession(focusedSession: Session) {
+    this.selectedSessions
+      .filter((session) => session !== focusedSession)
+      .map((session) => {
+        session.focused = false;
+      });
   }
 
   dragStart() {
