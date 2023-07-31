@@ -7,6 +7,7 @@ import {
   Component,
   Inject,
   ViewChildren,
+  ViewChild,
   ElementRef,
   QueryList,
 } from '@angular/core';
@@ -25,6 +26,8 @@ import {
   DiagramMetadata,
   ModelDiagramService,
 } from 'src/app/projects/models/diagrams/service/model-diagram.service';
+import { ModelService } from 'src/app/projects/models/service/model.service';
+import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'app-model-diagram-dialog',
@@ -34,13 +37,20 @@ import {
 export class ModelDiagramDialogComponent {
   diagramMetadata?: DiagramCacheMetadata;
   diagrams: Diagrams = {};
-
+  username?: string;
+  passwordValue?: string;
+  path?: string;
   loaderArray = Array(60).fill(0);
 
   @ViewChildren('diagram', { read: ElementRef })
   diagramHTMLElements?: QueryList<ElementRef>;
 
   search = '';
+
+  @ViewChild('codeBlock') codeBlock!: ElementRef;
+  get codeBlockContent(): string {
+    return this.codeBlock?.nativeElement.textContent || '';
+  }
 
   filteredDiagrams(): DiagramMetadata[] | undefined {
     if (!this.diagramMetadata) {
@@ -55,10 +65,12 @@ export class ModelDiagramDialogComponent {
 
   constructor(
     private modelDiagramService: ModelDiagramService,
+    private userService: UserService,
+    private modelService: ModelService,
     private dialogRef: MatDialogRef<ModelDiagramDialogComponent>,
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA)
-    public data: { modelSlug: string; projectSlug: string; path: string }
+    public data: { modelSlug: string; projectSlug: string }
   ) {
     this.modelDiagramService
       .getDiagramMetadata(this.data.projectSlug, this.data.modelSlug)
@@ -71,6 +83,14 @@ export class ModelDiagramDialogComponent {
           this.dialogRef.close();
         },
       });
+
+    this.userService
+      .getCurrentUser()
+      .subscribe((user) => (this.username = user.name));
+    this.path = this.modelService.backendURLFactory(
+      data.projectSlug,
+      data.modelSlug
+    );
   }
 
   observeVisibleDiagrams() {
@@ -146,6 +166,12 @@ export class ModelDiagramDialogComponent {
       .subscribe((response: Blob) => {
         saveAs(response, `${uuid}.svg`);
       });
+  }
+
+  async insertToken() {
+    this.userService
+      .createToken()
+      .subscribe((token) => (this.passwordValue = token.replaceAll('"', '')));
   }
 }
 

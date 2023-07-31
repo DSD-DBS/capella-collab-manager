@@ -82,7 +82,6 @@ def get_current_user(
     db: orm.Session = fastapi.Depends(database.get_db),
     token=fastapi.Depends(jwt_bearer.JWTBearer()),
 ) -> models.ProjectUserAssociation | models.ProjectUser:
-    # breakpoint()
     if auth_injectables.RoleVerification(
         required_role=users_models.Role.ADMIN, verify=False
     )(token, db):

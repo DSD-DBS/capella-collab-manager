@@ -50,7 +50,6 @@ def get_projects(
         core_logging.get_request_logger
     ),
 ) -> abc.Sequence[models.DatabaseProject]:
-    # breakpoint()
     if auth_injectables.RoleVerification(
         required_role=users_models.Role.ADMIN, verify=False
     )(token, db):

@@ -67,10 +67,6 @@ export class ModelOverviewComponent implements OnInit {
       data: {
         modelSlug: model.slug,
         projectSlug: this.projectSlug,
-        path: this.modelService.backendURLFactory(
-          this.projectSlug ? this.projectSlug : '',
-          model.slug
-        ),
       },
     });
   }

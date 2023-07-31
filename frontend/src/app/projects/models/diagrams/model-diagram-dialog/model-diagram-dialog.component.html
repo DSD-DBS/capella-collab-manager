@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 <div class="dialog">
-  <div class="header">
+  <div>
     <h2>View diagrams</h2>
     <span
       >Last update:
@@ -13,21 +13,41 @@
       }}</span
     >
 
-    <br /><mat-expansion-panel>
+    <br /><mat-expansion-panel color="bg-slate-400">
       <mat-expansion-panel-header>
         <mat-panel-title>
           Learn how to use the diagram cache with capellambse!
         </mat-panel-title>
       </mat-expansion-panel-header>
-      ><code>
-        capellambse.models.Melodymodel( model=path,
-        diagram_cache=&#123;&quot;path&quot;: &quot;{{
-          data.path + "/diagrams/%s"
-        }}&quot;,
-        &quot;username&quot;: &quot;,myvalue&quot;
-        &quot;password&quot;: &quot;,myvalue&quot;&#125;)
-      </code></mat-expansion-panel
-    >
+      <div class="relative flex flex-col">
+        <pre><code #codeBlock>
+        capellambse.model.MelodyModel(
+          path="path to the model on your machine",
+          diagram_cache=&#123;
+            &quot;path&quot;: &quot;{{ this.path + "/diagrams/%s"}}&quot;,
+            &quot;username&quot;: &quot;{{ username }}&quot;,
+            &quot;password&quot;: &quot;{{ passwordValue !== undefined ? passwordValue : 'You can insert your project token here using the "Insert token" button. This will invalidate any old token for your user' }}&quot;,
+            &#125;)
+      </code></pre>
+        <button
+          class="absolute top-10 right-10 text-white border-none cursor-pointer shadow-none pt-5 pr-10 pb-5 pl-10"
+          [cdkCopyToClipboard]="this.codeBlockContent"
+          color="bg-transparent"
+          mat-raised-button
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+        <button
+          class="self-end mt-auto text-white"
+          (click)="insertToken()"
+          [disabled]="passwordValue"
+          color="primary"
+          mat-raised-button
+        >
+          Insert token
+        </button>
+      </div>
+    </mat-expansion-panel>
 
     <mat-form-field
       style="margin-bottom: -1.25em"

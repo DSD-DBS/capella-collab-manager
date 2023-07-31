@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import json
 import logging
 import os
 
@@ -60,8 +59,8 @@ async def startup():
     # This is needed to load the Kubernetes configuration at startup
     operators.get_operator()
 
-    logging.getLogger("uvicorn.access").disabled = False
-    logging.getLogger("uvicorn.error").disabled = False
+    logging.getLogger("uvicorn.access").disabled = True
+    logging.getLogger("uvicorn.error").disabled = True
     logging.getLogger("requests_oauthlib.oauth2_session").setLevel("INFO")
     logging.getLogger("kubernetes.client.rest").setLevel("INFO")
 
@@ -121,23 +120,6 @@ async def handle_exceptions(request: fastapi.Request, exc: Exception):
     response.headers.update(cors_middleware.simple_headers)
 
     return response
-
-
-@app.exception_handler(fastapi.exceptions.RequestValidationError)
-async def validation_exception_handler(
-    request: fastapi.Request, exc: fastapi.exceptions.RequestValidationError
-):
-
-    exc_str = f"{exc}".replace("\n", " ").replace("   ", " ")
-    # or logger.error(f'{exc}')
-    logging.getLogger().error(request, exc_str)
-    content = json.dumps(
-        {"status_code": 10422, "message": exc_str, "data": None}
-    )
-    return fastapi.Response(
-        content=content,
-        status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY,
-    )
 
 
 @app.get("/healthcheck", tags=["Healthcheck"])

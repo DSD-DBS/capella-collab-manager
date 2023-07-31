@@ -97,6 +97,13 @@ export class UserService {
 
     return true;
   }
+
+  createToken(): Observable<string> {
+    return this.http.post<string>(
+      this.BACKEND_URL_PREFIX + `current/token`,
+      {}
+    );
+  }
 }
 
 export interface User {

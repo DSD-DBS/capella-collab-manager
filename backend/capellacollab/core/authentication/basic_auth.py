@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import datetime
+import logging
 
 import fastapi
 from fastapi import security, status
@@ -10,9 +11,11 @@ from capellacollab.core import database
 from capellacollab.users import crud as user_crud
 from capellacollab.users.tokens import crud as token_crud
 
+logger = logging.getLogger(__name__)
+
 
 class HTTPBasicAuth(security.HTTPBasic):
-    async def __call__(
+    async def __call__(  # type: ignore
         self, request: fastapi.Request
     ) -> security.HTTPBasicCredentials | None:
         credentials: security.HTTPBasicCredentials | None = (
@@ -31,6 +34,7 @@ class HTTPBasicAuth(security.HTTPBasic):
             user = user_crud.get_user_by_name(session, credentials.username)
             token_data = token_crud.get_token(session, credentials.password)
             if not token_data or not user or token_data.user_id != user.id:
+                logger.error("Token invalid for user %s", credentials.username)
                 raise fastapi.HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail={
@@ -39,7 +43,10 @@ class HTTPBasicAuth(security.HTTPBasic):
                     },
                     headers={"WWW-Authenticate": "Basic"},
                 )
-            if token_data.expiration_date < datetime.datetime.now():
+            if token_data.expiration_date < datetime.date.today():
+                logger.error(
+                    "Token expoired for user %s", credentials.username
+                )
                 raise fastapi.HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail={

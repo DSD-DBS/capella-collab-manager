@@ -140,7 +140,7 @@ def project_user(
 
 @pytest.fixture()
 def client() -> testclient.TestClient:
-    return testclient.TestClient(app)
+    return testclient.TestClient(app, headers={"Authorization": "bearer"})
 
 
 def delete_all_tables_if_existent(_engine: sqlalchemy.engine.Engine) -> bool:

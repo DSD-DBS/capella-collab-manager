@@ -4,14 +4,11 @@
 
 import typing as t
 
-from fastapi import security
-
 from capellacollab.config import config
 
 
-def get_username(token: dict[str, t.Any]) -> str:
-    print(token)
-    try:
+def get_username(token: dict[str, t.Any], is_bearer: bool = True) -> str:
+    if is_bearer:
         return token[config["authentication"]["jwt"]["usernameClaim"]].strip()
-    except:
-        return token.username
+    else:
+        return token["username"]

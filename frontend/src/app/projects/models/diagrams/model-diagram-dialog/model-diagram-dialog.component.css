@@ -26,6 +26,25 @@
   flex-basis: calc(30% - 20px);
 }
 
+.copy-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  background-color: transparent;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.insert-button {
+  align-self: flex-end;
+  margin-top: auto;
+  color: white;
+}
+
 .diagram-error {
   border-radius: 5px;
   border: solid lightgray;
@@ -54,10 +73,6 @@
 
 .diagram:hover {
   cursor: pointer;
-}
-
-.header {
-  height: 150px;
 }
 
 button {

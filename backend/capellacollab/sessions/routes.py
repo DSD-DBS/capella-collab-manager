@@ -27,7 +27,6 @@ from capellacollab.projects.toolmodels.modelsources.git import (
 )
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import hooks
-from capellacollab.sessions import hooks
 from capellacollab.sessions.files import routes as files_routes
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import injectables as tools_injectables
@@ -208,10 +207,7 @@ def request_readonly_session(
 
     session = operator.start_session(
         image=docker_image,
-    session = operator.start_session(
-        image=docker_image,
         username=db_user.name,
-        session_type="readonly",
         session_type="readonly",
         tool_name=model.tool.name,
         version_name=model.version.name,
@@ -222,25 +218,9 @@ def request_readonly_session(
             "RMT_PASSWORD": rdp_password,
         },
         ports={"rdp": 3389, "metrics": 9118, "fileservice": 8000},
-        environment={
-            "GIT_REPOS_JSON": json.dumps(
-                list(models_as_json(entries_with_models))
-            ),
-            "RMT_PASSWORD": rdp_password,
-        },
-        ports={"rdp": 3389, "metrics": 9118, "fileservice": 8000},
     )
 
     return create_database_and_guacamole_session(
-        db=db,
-        type=models.WorkspaceType.READONLY,
-        session=session,
-        owner=db_user.name,
-        rdp_password=rdp_password,
-        tool=model.tool,
-        version=model.version,
-        project=project,
-        environment={},
         db=db,
         type=models.WorkspaceType.READONLY,
         session=session,
@@ -395,56 +375,12 @@ def raise_if_conflicting_persistent_sessions(
                 },
             )
 
-    pvc_name = workspace.create_persistent_workspace(operator, user.name)
-
-    environment: dict[str, str] = {}
-    warnings: list[core_models.Message] = []
-
-    for hook in hooks.get_activated_integration_hooks(tool):
-        hook_env, hook_warnings = hook.configuration_hook(
-            db=db, user=user, tool_version=version, tool=tool, token=token
-        )
-        environment |= hook_env
-        warnings += hook_warnings
-
-    if tool.integrations and tool.integrations.jupyter:
-        response = start_persistent_jupyter_session(
-            db=db,
-            operator=operator,
-            owner=owner,
-            tool=tool,
-            version=version,
-            persistent_workspace_claim_name=pvc_name,
-            environment=environment,
-        )
-    else:
-        response = start_persistent_guacamole_session(
-            db=db,
-            operator=operator,
-            user=user,
-            owner=owner,
-            tool=tool,
-            version=version,
-            persistent_workspace_claim_name=pvc_name,
-            environment=environment,
-        )
-
-    for hook in hooks.get_activated_integration_hooks(tool):
-        hook.post_session_creation_hook(
-            session_id=response.id, operator=operator, user=user
-        )
-
-    response.warnings = warnings
-
-    return response
-
 
 def start_persistent_jupyter_session(
     db: orm.Session,
     operator: k8s.KubernetesOperator,
     owner: str,
     tool: tools_models.DatabaseTool,
-    environment: dict[str, str],
     environment: dict[str, str],
     version: tools_models.DatabaseVersion,
     persistent_workspace_claim_name: str,
@@ -465,14 +401,6 @@ def start_persistent_jupyter_session(
     )
 
     return create_database_session(
-        db=db,
-        type=models.WorkspaceType.PERSISTENT,
-        session=session,
-        owner=owner,
-        tool=tool,
-        version=version,
-        project=None,
-        environment=environment,
         db=db,
         type=models.WorkspaceType.PERSISTENT,
         session=session,
@@ -503,32 +431,14 @@ def start_persistent_guacamole_session(
         image=docker_image,
         username=user.name,
         session_type="persistent",
-    environment = environment | {"RMT_PASSWORD": rdp_password}
-
-    session = operator.start_session(
-        image=docker_image,
-        username=user.name,
-        session_type="persistent",
         tool_name=tool.name,
         version_name=version.name,
-        environment=environment,
-        ports={"rdp": 3389, "metrics": 9118},
-        persistent_workspace_claim_name=persistent_workspace_claim_name,
         environment=environment,
         ports={"rdp": 3389, "metrics": 9118},
         persistent_workspace_claim_name=persistent_workspace_claim_name,
     )
 
     response = create_database_and_guacamole_session(
-        db=db,
-        type=models.WorkspaceType.PERSISTENT,
-        session=session,
-        owner=owner,
-        rdp_password=rdp_password,
-        tool=tool,
-        version=version,
-        project=None,
-        environment=environment,
         db=db,
         type=models.WorkspaceType.PERSISTENT,
         session=session,
@@ -607,7 +517,6 @@ def create_database_and_guacamole_session(
         version,
         project,
         environment=environment,
-        environment=environment,
         rdp_password=rdp_password,
         guacamole_username=guacamole_username,
         guacamole_password=guacamole_password,
@@ -617,7 +526,6 @@ def create_database_and_guacamole_session(
 
 @router.delete("/{session_id}", status_code=204)
 def end_session(
-    db: orm.Session = fastapi.Depends(database.get_db),
     db: orm.Session = fastapi.Depends(database.get_db),
     session: models.DatabaseSession = fastapi.Depends(
         injectables.get_existing_session

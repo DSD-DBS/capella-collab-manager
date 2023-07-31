@@ -4,7 +4,7 @@
 """Add basic auth token table
 
 Revision ID: 4227879f6660
-Revises: 90abdec3827e
+Revises: 4c58f4db4f54
 Create Date: 2023-07-31 18:35:22.698407
 
 """
@@ -13,7 +13,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "4227879f6660"
-down_revision = "d0cbf2813066"
+down_revision = "4c58f4db4f54"
 branch_labels = None
 depends_on = None
 
@@ -40,7 +40,3 @@ def upgrade():
         unique=False,
     )
     # ### end Alembic commands ###
-
-
-def downgrade():
-    op.drop_table("basic_auth_token")
