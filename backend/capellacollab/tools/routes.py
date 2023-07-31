@@ -34,6 +34,7 @@ router = fastapi.APIRouter(
 def get_tools(
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> abc.Sequence[models.DatabaseTool]:
+    # breakpoint()
     return crud.get_tools(db)
 
 

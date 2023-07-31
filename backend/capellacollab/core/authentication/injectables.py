@@ -3,19 +3,37 @@
 
 from __future__ import annotations
 
+import typing as t
+
 import fastapi
 from fastapi import status
+from fastapi.security import http as fastapi_http
+from fastapi.security import utils as fastapi_utils
 
 from capellacollab.core import database
-from capellacollab.core.authentication import jwt_bearer
+from capellacollab.core.authentication import basic_auth, jwt_bearer
 from capellacollab.projects import crud as projects_crud
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.users import crud as users_crud
+from capellacollab.users import injectables as user_injectables
 from capellacollab.users import models as users_models
 
 from . import helper
+
+
+async def verify_token(request: fastapi.Request):
+    scheme, _ = fastapi_utils.get_authorization_scheme_param(
+        request.headers.get("Authorization")
+    )
+
+    match scheme:
+        case "bearer":
+            return await get_username(jwt_bearer.JWTBearer()(request))
+        # case "basic":
+        #     return await basic_auth.HTTPBasicAuth()(request)
+    return None
 
 
 class RoleVerification:
@@ -25,10 +43,12 @@ class RoleVerification:
 
     def __call__(
         self,
-        token=fastapi.Depends(jwt_bearer.JWTBearer()),
+        token=fastapi.Depends(verify_token),
         db=fastapi.Depends(database.get_db),
     ) -> bool:
+        print("------------here---------")
         username = helper.get_username(token)
+        # breakpoint()
         if not (user := users_crud.get_user_by_name(db, username)):
             if self.verify:
                 raise fastapi.HTTPException(
@@ -36,7 +56,7 @@ class RoleVerification:
                     detail={"reason": f"User {username} was not found"},
                 )
             return False
-
+        # breakpoint()
         if (
             user.role != users_models.Role.ADMIN
             and self.required_role == users_models.Role.ADMIN
@@ -49,7 +69,19 @@ class RoleVerification:
                     },
                 )
             return False
+        # breakpoint()
         return True
+
+
+async def get_username(request: fastapi.Request):
+    base_class = fastapi_http.HTTPBase(scheme="basic")
+    authorization = await base_class(request)
+    match authorization.scheme.lower():
+        case "bearer":
+            token = await jwt_bearer.JWTBearer()(request)
+        case "basic":
+            token = await fastapi_http.HTTPBasic()(request)
+    return helper.get_username(token)
 
 
 class ProjectRoleVerification:
@@ -73,10 +105,9 @@ class ProjectRoleVerification:
     def __call__(
         self,
         project_slug: str,
-        token=fastapi.Depends(jwt_bearer.JWTBearer()),
+        username=fastapi.Depends(get_username),
         db=fastapi.Depends(database.get_db),
     ) -> bool:
-        username = helper.get_username(token)
         if not (user := users_crud.get_user_by_name(db, username)):
             if self.verify:
                 raise fastapi.HTTPException(
@@ -99,7 +130,7 @@ class ProjectRoleVerification:
                     },
                 )
             return False
-
+        print("line 134")
         if (
             project.visibility == projects_models.Visibility.INTERNAL
             and self.required_role
@@ -108,7 +139,7 @@ class ProjectRoleVerification:
             in (None, projects_users_models.ProjectUserPermission.READ)
         ):
             return True
-
+        print(f"-------- {project} ---------- {user} ")
         project_user = projects_users_crud.get_project_user_association(
             db, project, user
         )

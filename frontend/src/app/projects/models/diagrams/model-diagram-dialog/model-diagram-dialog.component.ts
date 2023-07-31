@@ -58,7 +58,7 @@ export class ModelDiagramDialogComponent {
     private dialogRef: MatDialogRef<ModelDiagramDialogComponent>,
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA)
-    public data: { modelSlug: string; projectSlug: string }
+    public data: { modelSlug: string; projectSlug: string; path: string }
   ) {
     this.modelDiagramService
       .getDiagramMetadata(this.data.projectSlug, this.data.modelSlug)

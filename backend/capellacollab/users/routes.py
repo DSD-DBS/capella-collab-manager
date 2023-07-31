@@ -15,6 +15,7 @@ from capellacollab.users.events import models as events_models
 from capellacollab.users.events import routes as events_routes
 
 from . import crud, injectables, models
+from .tokens import routes as token_routes
 
 router = fastapi.APIRouter(
     dependencies=[
@@ -135,3 +136,4 @@ def delete_user(
 
 router.include_router(session_routes.users_router, tags=["Users - Sessions"])
 router.include_router(events_routes.router, tags=["Users - History"])
+router.include_router(token_routes.router, tags=["Users - Token"])

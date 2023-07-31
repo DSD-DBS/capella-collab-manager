@@ -31,7 +31,6 @@ class JWTBearer(security.HTTPBearer):
         credentials: security.HTTPAuthorizationCredentials | None = (
             await super().__call__(request)
         )
-
         if not credentials or credentials.scheme != "Bearer":
             if self.auto_error:
                 raise fastapi.HTTPException(

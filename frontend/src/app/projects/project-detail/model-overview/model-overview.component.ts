@@ -64,7 +64,14 @@ export class ModelOverviewComponent implements OnInit {
     this.dialog.open(ModelDiagramDialogComponent, {
       height: '80vh',
       width: '80vw',
-      data: { modelSlug: model.slug, projectSlug: this.projectSlug },
+      data: {
+        modelSlug: model.slug,
+        projectSlug: this.projectSlug,
+        path: this.modelService.backendURLFactory(
+          this.projectSlug ? this.projectSlug : '',
+          model.slug
+        ),
+      },
     });
   }
 
