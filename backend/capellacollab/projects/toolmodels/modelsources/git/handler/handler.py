@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import collections
+import typing as t
 from abc import abstractmethod
 
 import requests
@@ -36,8 +37,7 @@ class GitHandler:
 
     @abstractmethod
     async def get_last_job_run_id_for_git_model(
-        self,
-        job_name: str,
+        self, job_name: str, project_id: t.Optional[str]
     ) -> tuple[str, tuple[str, str]]:
         pass
 
@@ -61,7 +61,29 @@ class GitHandler:
 
     @abstractmethod
     async def get_file_from_repository(
-        self,
-        trusted_file_path: str,
-    ) -> requests.Response:
+        self, project_id: str, trusted_file_path: str
+    ) -> (requests.Response, bytes):
         pass
+
+    async def get_file_from_repository_or_artifacts(
+        self, trusted_file_path: str, job_name: str | None
+    ) -> bytes:
+        project_id = await self.get_project_id_by_git_url()
+        response, file = await self.get_file_from_repository(
+            project_id, trusted_file_path
+        )
+        if file:
+            return file
+        if job_name:
+            _, job_attributes = await self.get_last_job_run_id_for_git_model(
+                job_name, project_id
+            )
+            return self.get_artifact_from_job_as_content(
+                project_id, job_attributes[0], trusted_file_path
+            )
+        if response.status_code == 404:
+            raise exceptions.GitRepositoryFileNotFoundError(
+                filename=trusted_file_path
+            )
+        response.raise_for_status()
+        return None

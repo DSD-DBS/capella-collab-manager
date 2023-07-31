@@ -36,8 +36,8 @@ async def get_model_complexity_badge(
 ):
     try:
         return fastapi.responses.Response(
-            content=await git_handler.get_file_from_repository(
-                "model-complexity-badge.svg",
+            content=await git_handler.get_file_from_repository_or_artifacts(
+                "model-complexity-badge.svg", "generate-model-badge"
             ),
             media_type="image/svg+xml",
         )
