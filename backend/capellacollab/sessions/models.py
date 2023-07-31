@@ -112,7 +112,7 @@ class DatabaseSession(database.Base):
     owner_name: orm.Mapped[str] = orm.mapped_column(
         sa.ForeignKey("users.name")
     )
-    owner: orm.Mapped[users_models.DatabaseUser] = orm.relationship()
+    owner: orm.Mapped[DatabaseUser] = orm.relationship()
 
     tool_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("tools.id"))
     tool: orm.Mapped[DatabaseTool] = orm.relationship()

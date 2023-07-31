@@ -7,17 +7,16 @@ import re
 import typing as t
 
 import requests
-from requests import JSONDecodeError
 
 from capellacollab.config import config
-from capellacollab.sessions.models import DatabaseSession
-from capellacollab.sessions.operators import get_operator
+
+from . import models, operators
 
 log = logging.getLogger(__name__)
 
 
 def inject_attrs_in_sessions(
-    db_sessions: list[DatabaseSession],
+    db_sessions: list[models.DatabaseSession],
 ) -> list[dict[str, t.Any]]:
     sessions_list = []
     for session in db_sessions:
@@ -47,7 +46,7 @@ def get_last_seen(sid: str) -> str:
             if sid == session["metric"]["app"]:
                 return _get_last_seen(float(session["value"][1]))
         log.exception("No session was found.")
-    except JSONDecodeError as error:
+    except requests.JSONDecodeError as error:
         log.exception("Prometheus service not available: %s", error.args[0])
     except requests.ConnectionError as error:
         log.exception("ConnectionError: %s", error.args[0])
@@ -68,12 +67,12 @@ def _get_last_seen(idletime: int | float) -> str:
     return f"{idletime:.0f} mins ago"
 
 
-def _determine_session_state(session: DatabaseSession) -> str:
-    state = get_operator().get_session_state(session.id)
+def _determine_session_state(session: models.DatabaseSession) -> str:
+    state = operators.get_operator().get_session_state(session.id)
 
     if state in ("Started", "BackOff"):
         try:
-            logs = get_operator().get_session_logs(session.id)
+            logs = operators.get_operator().get_session_logs(session.id)
             res = re.search(r"(?s:.*)^---(.*?)---$", logs, re.MULTILINE)
             if res:
                 return res.group(1)

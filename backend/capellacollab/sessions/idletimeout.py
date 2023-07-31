@@ -7,13 +7,12 @@ import logging
 import os
 
 import requests
-from starlette.concurrency import run_in_threadpool
+from starlette import concurrency
 
 from capellacollab.config import config
 from capellacollab.core import database
-from capellacollab.sessions import util
-from capellacollab.sessions.crud import get_session_by_id
-from capellacollab.sessions.operators import get_operator
+
+from . import crud, operators, util
 
 log = logging.getLogger(__name__)
 
@@ -33,14 +32,16 @@ def terminate_idle_session():
         if session_id := metric.get("metric", {}).get("app"):
             log.info("Terminating idle session %s", session_id)
             with database.SessionLocal() as db:
-                if session := get_session_by_id(db, session_id):
-                    util.terminate_session(db, session, get_operator())
+                if session := crud.get_session_by_id(db, session_id):
+                    util.terminate_session(
+                        db, session, operators.get_operator()
+                    )
                 else:
                     log.error(
                         "Session was not found in our database. Terminating idle session %s",
                         session_id,
                     )
-                    get_operator().kill_session(session_id)
+                    operators.get_operator().kill_session(session_id)
 
 
 async def terminate_idle_sessions_in_background(interval=60):
@@ -48,7 +49,7 @@ async def terminate_idle_sessions_in_background(interval=60):
         while True:
             try:
                 await asyncio.sleep(interval)
-                await run_in_threadpool(terminate_idle_session)
+                await concurrency.run_in_threadpool(terminate_idle_session)
             except asyncio.exceptions.CancelledError:
                 return
             except BaseException:
