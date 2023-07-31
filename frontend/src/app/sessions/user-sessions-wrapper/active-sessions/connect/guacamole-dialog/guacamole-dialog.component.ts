@@ -32,7 +32,7 @@ export class GuacamoleDialogComponent {
 
   redirectToGuacamole(): void {
     this.guacamoleService
-      .getGucamoleToken(this.session?.id || '')
+      .getGucamoleToken(this.session?.id)
       .subscribe((res) => {
         this.localStorageService.setValue('GUAC_AUTH', res.token);
         window.open(res.url);

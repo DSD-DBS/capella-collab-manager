@@ -52,7 +52,7 @@ export class VersionService {
   }
 
   clickedOnVersionNotes() {
-    this.localStorageService.setValue('version', this.version?.git.tag);
+    this.localStorageService.setValue('version', this.version!.git.tag);
     this.changedVersion = false;
   }
 

@@ -25,6 +25,11 @@ k8s:
     lokiPassword: {{ .Values.definitions.loki.password }}
     serverPort: 3101
 
+general:
+  host: "{{ .Values.general.host }}"
+  port: "{{ .Values.general.port }}"
+  scheme: "{{ .Values.general.scheme }}"
+
 extensions:
   guacamole:
     baseURI: "http://{{ .Release.Name }}-guacamole-guacamole:8080/guacamole"

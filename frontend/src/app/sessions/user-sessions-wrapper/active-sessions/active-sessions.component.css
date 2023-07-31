@@ -22,6 +22,7 @@
 .mat-card {
   width: 400px;
   max-width: 85vw;
+  margin: 10px 0;
 }
 
 .mat-card-content h3 {

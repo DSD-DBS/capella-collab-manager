@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-This service is provided by DB Netz AG. Copyright 2022 DB Netz AG.
+This service is provided by DB Netz AG.
 
 We'd love to see your bug reports and improvement suggestions! Please give us
 your feedback.
