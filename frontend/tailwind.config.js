@@ -7,7 +7,20 @@
 module.exports = {
   content: ["./src/**/*.{html,ts}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: "var(--primary-color)",
+        error: "var(--error-color)",
+        warning: "var(--warning-color)",
+        success: "var(--success-color)",
+        hover: "var(--hover-color)",
+      },
+      spacing: {
+        button: "0.5rem",
+        separator: "0.5rem",
+        card: "400px",
+      },
+    },
   },
   plugins: [],
 };

@@ -179,7 +179,7 @@ class KubernetesOperator:
             "JUPYTER_BASE_URL": path,
             "JUPYTER_TOKEN": token,
             "JUPYTER_PORT": "8888",
-            "HOST": f"{general_conf.get('scheme')}://{general_conf.get('host')}:{general_conf.get('port')}",
+            "CSP_ORIGIN_HOST": f"{general_conf.get('scheme')}://{general_conf.get('host')}:{general_conf.get('port')}",
         }
 
         session_parameters = self._start_session(
