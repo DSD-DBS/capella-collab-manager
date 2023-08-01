@@ -22,10 +22,10 @@ class GithubHandler(handler.GitHandler):
         return parse.urlparse(self.git_model.path).path
 
     async def get_last_job_run_id_for_git_model(
-        self,
-        job_name: str,
+        self, job_name: str, project_id: str | None = None
     ) -> handler.JobIdAttributes:
-        project_id = await self.get_project_id_by_git_url()
+        if not project_id:
+            project_id = await self.get_project_id_by_git_url()
         jobs = self.get_last_pipeline_runs(project_id)
         latest_job = self.__get_latest_successful_job(jobs, job_name)
         return handler.JobIdAttributes(
@@ -69,8 +69,7 @@ class GithubHandler(handler.GitHandler):
         )
 
     async def get_file_from_repository(
-        self,
-        trusted_file_path: str,
+        self, project_id: str, trusted_file_path: str
     ) -> bytes:
         """
         If a repository is public but the permissions are not set correctly, you might be able to download the file without authentication
@@ -78,7 +77,6 @@ class GithubHandler(handler.GitHandler):
 
         For that purpose first we try to reach it without authentication and only if that fails try to get the file authenticated.
         """
-        project_id = await self.get_project_id_by_git_url()
         response = self.__get_file_from_repository(
             project_id, trusted_file_path
         )
@@ -95,6 +93,7 @@ class GithubHandler(handler.GitHandler):
                 filename=trusted_file_path
             )
         response.raise_for_status()
+
         return base64.b64decode(response.json()["content"])
 
     def get_last_pipeline_runs(
