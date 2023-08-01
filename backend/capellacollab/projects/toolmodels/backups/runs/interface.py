@@ -10,6 +10,7 @@ from kubernetes import client as k8s_client
 from kubernetes.client import exceptions as k8s_exceptions
 from starlette import concurrency as starlette_concurrency
 
+from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.core.logging import loki
 from capellacollab.projects.toolmodels.backups import core as backups_core
@@ -19,6 +20,8 @@ from capellacollab.tools import crud as tools_crud
 from . import crud, models
 
 log = logging.getLogger(__name__)
+
+PIPELINES_TIMEOUT = config.get("pipelines", {}).get("timeout", 60)
 
 
 async def schedule_refresh_and_trigger_pipeline_jobs(interval=5):
@@ -125,7 +128,7 @@ def _transform_kubernetes_event_to_loki_entry(
     )
 
 
-def _fetch_events_of_jobs(run: models.DatabasePipelineRun):
+def _fetch_events_of_job_run(run: models.DatabasePipelineRun):
     log.debug("Fetch events of job %s", run.id)
     operator = operators.get_operator()
     try:
@@ -162,7 +165,7 @@ def _fetch_events_of_jobs(run: models.DatabasePipelineRun):
     run.logs_last_fetched_timestamp = datetime.datetime.now().astimezone()
 
 
-def _fetch_logs_of_jobs(run: models.DatabasePipelineRun):
+def _fetch_logs_of_job_runs(run: models.DatabasePipelineRun):
     log.debug("Fetch logs of job %s", run.id)
     operator = operators.get_operator()
     try:
@@ -196,26 +199,8 @@ def _fetch_logs_of_jobs(run: models.DatabasePipelineRun):
     run.logs_last_fetched_timestamp = datetime.datetime.now().astimezone()
 
 
-def _search_and_kill_timed_out_jobs(run: models.DatabasePipelineRun):
-    if (
-        run.trigger_time.astimezone()
-        < datetime.datetime.now().astimezone() - datetime.timedelta(minutes=60)
-    ):
-        log.info("Timing out job with ID %s", run.id)
-        _terminate_job(run, models.PipelineRunStatus.TIMEOUT)
-
-
-def _terminate_job(
-    run: models.DatabasePipelineRun, updated_status: models.PipelineRunStatus
-):
-    run.status = updated_status
+def _terminate_job(run: models.DatabasePipelineRun):
     run.end_time = datetime.datetime.now()
-    # Fetch logs and events one last time before killing
-    try:
-        _fetch_logs_of_jobs(run)
-        _fetch_events_of_jobs(run)
-    except Exception:
-        pass
 
     try:
         operators.get_operator().delete_job(name=run.reference_id)
@@ -262,10 +247,18 @@ def _map_k8s_to_internal_status(
     return models.PipelineRunStatus.UNKNOWN
 
 
-def _update_status_of_job(
+def _update_status_of_job_run(
     run: models.DatabasePipelineRun,
 ):
     log.debug("Update status of pipeline", extra={"run_id": run.id})
+    if (
+        run.trigger_time.astimezone()
+        < datetime.datetime.now().astimezone()
+        - datetime.timedelta(minutes=PIPELINES_TIMEOUT)
+    ):
+        run.status = models.PipelineRunStatus.TIMEOUT
+        return
+
     try:
         job = operators.get_operator().get_job_by_name(run.reference_id)
     except k8s_exceptions.ApiException:
@@ -274,11 +267,8 @@ def _update_status_of_job(
         )
         run.status = models.PipelineRunStatus.UNKNOWN
         return
-    current_status = _map_k8s_to_internal_status(job)
 
-    if _job_is_finished(current_status):
-        _terminate_job(run, current_status)
-        return
+    current_status = _map_k8s_to_internal_status(job)
 
     if current_status != run.status:
         log.debug("Update status of pipeline %s to %s", run.id, run.status)
@@ -290,6 +280,7 @@ def _job_is_finished(status: models.PipelineRunStatus):
         models.PipelineRunStatus.FAILURE,
         models.PipelineRunStatus.SUCCESS,
         models.PipelineRunStatus.UNKNOWN,
+        models.PipelineRunStatus.TIMEOUT,
     )
 
 
@@ -298,12 +289,7 @@ def _refresh_and_trigger_pipeline_jobs():
     with database.SessionLocal() as db:
         for run in crud.get_scheduled_or_running_pipelines(db):
             try:
-                _search_and_kill_timed_out_jobs(run)
-            except:  # pylint: disable=bare-except
-                log.error("Failed timeout of jobs", exc_info=True)
-
-            try:
-                _update_status_of_job(run)
+                _update_status_of_job_run(run)
             except:  # pylint: disable=bare-except
                 log.error(
                     "Failed updating the status of running and scheduled jobs",
@@ -311,7 +297,7 @@ def _refresh_and_trigger_pipeline_jobs():
                 )
 
             try:
-                _fetch_events_of_jobs(run)
+                _fetch_events_of_job_run(run)
             except:  # pylint: disable=bare-except
                 log.error(
                     "Failed fetching events of jobs",
@@ -319,10 +305,14 @@ def _refresh_and_trigger_pipeline_jobs():
                 )
 
             try:
-                _fetch_logs_of_jobs(run)
+                _fetch_logs_of_job_runs(run)
             except:  # pylint: disable=bare-except
                 log.error(
                     "Failed fetching logs of jobs",
                     exc_info=True,
                 )
+
+            if _job_is_finished(run.status):
+                _terminate_job(run)
+
             db.commit()

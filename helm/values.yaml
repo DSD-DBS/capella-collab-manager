@@ -54,6 +54,10 @@ sessions:
   # Session timeout in minutes for unused and idle sessions
   timeout: 90
 
+pipelines:
+  # Pipeline timeout in minutes
+  timeout: 60
+
 database:
   # Database Configuration for Guacamole
   guacamole:

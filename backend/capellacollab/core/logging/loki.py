@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import datetime
+import http
 import json
 import logging
 import logging.handlers
@@ -87,7 +88,7 @@ def fetch_logs_from_loki(
             timeout=5,
         )
 
-        if response.status_code == 429:
+        if response.status_code == http.HTTPStatus.TOO_MANY_REQUESTS:
             raise exceptions.TooManyOutStandingRequests
 
         response.raise_for_status()

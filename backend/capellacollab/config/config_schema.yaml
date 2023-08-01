@@ -302,3 +302,9 @@ properties:
     properties:
       timeout:
         type: number
+  pipelines:
+    type: object
+    additionalProperties: false
+    properties:
+      timeout:
+        type: number

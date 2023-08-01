@@ -18,7 +18,7 @@ from capellacollab.users import models as user_models
 
 from .. import injectables as pipeline_injectables
 from .. import models as pipeline_models
-from . import crud, helper, injectables, models
+from . import crud, helper, injectables, interface, models
 
 router = fastapi.APIRouter(
     dependencies=[
@@ -122,8 +122,8 @@ def _determine_end_time_from_pipeline_run(
     pipeline_run: models.DatabasePipelineRun,
 ) -> datetime.datetime:
     max_pipeline_run_duration = datetime.timedelta(
-        minutes=65
-    )  # Pipelines are timed out after 60 minutes + 5 minutes tolerance
+        minutes=interface.PIPELINES_TIMEOUT + 5
+    )  # Add 5 minutes tolerance to pipeline timeout
     return min(
         pipeline_run.trigger_time + max_pipeline_run_duration,
         pipeline_run.end_time or datetime.datetime.now(),
