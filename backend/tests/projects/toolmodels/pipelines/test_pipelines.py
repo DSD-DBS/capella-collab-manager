@@ -167,7 +167,7 @@ def test_pipeline_creation_fails_if_t4c_server_not_available(
     assert response.status_code == 503
     assert (
         response.json()["detail"]["err_code"]
-        == "PIPELINE_CREATION_FAILED_T4C_SERVER_UNREACHABLE"
+        == "PIPELINE_OPERATION_FAILED_T4C_SERVER_UNREACHABLE"
     )
 
 

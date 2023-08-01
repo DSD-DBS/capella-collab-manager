@@ -89,6 +89,8 @@ database:
   url: "{{ .Values.database.backend.external.uri }}"
   {{ end }}
 
+pipelines:
+  timeout: {{ .Values.pipelines.timeout }}
 
 initial:
   admin: "{{ .Values.database.backend.initialAdmin }}"

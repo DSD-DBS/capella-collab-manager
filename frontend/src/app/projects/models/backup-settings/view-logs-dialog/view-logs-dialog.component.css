@@ -20,3 +20,7 @@
   flex-direction: row;
   justify-content: space-between;
 }
+
+pre {
+  white-space: pre-wrap;
+}

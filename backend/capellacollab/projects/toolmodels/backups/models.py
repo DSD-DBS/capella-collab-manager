@@ -91,4 +91,8 @@ class DatabaseBackup(database.Base):
 
     runs: orm.Mapped[
         list["runs_models.DatabasePipelineRun"]
-    ] = orm.relationship("DatabasePipelineRun", back_populates="pipeline")
+    ] = orm.relationship(
+        "DatabasePipelineRun",
+        back_populates="pipeline",
+        cascade="all, delete-orphan",
+    )

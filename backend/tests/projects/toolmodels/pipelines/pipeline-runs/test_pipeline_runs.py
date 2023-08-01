@@ -156,7 +156,10 @@ def fixture_mock_pipeline_run():
     # Assign the values you want the mock object to return
     mock_pipeline_run.id = "mock_id"
     mock_pipeline_run.reference_id = "mock_reference_id"
-    mock_pipeline_run.trigger_time = "mock_time"
+    mock_pipeline_run.trigger_time = (
+        datetime.datetime.now() - datetime.timedelta(minutes=1)
+    )
+    mock_pipeline_run.end_time = datetime.datetime.now()
 
     # These values will be masked
     mock_pipeline_run.pipeline.t4c_password = "secret_pipeline_t4c_password"

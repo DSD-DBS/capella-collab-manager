@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import datetime
+import http
 import json
 import logging
 import logging.handlers
@@ -11,6 +12,8 @@ import requests
 from requests import auth
 
 from capellacollab.config import config
+
+from . import exceptions
 
 LOGGING_LEVEL = config["logging"]["level"]
 PROMTAIL_CONFIGURATION: dict[str, str] = config["k8s"]["promtail"]
@@ -66,6 +69,7 @@ def fetch_logs_from_loki(
     # Prepare the query parameters
     params = {
         "query": query,
+        "limit": 5000,
         "start": int(start_time.timestamp()),  # Convert to milliseconds
         "end": int(end_time.timestamp()),  # Convert to milliseconds
         "direction": "forward",
@@ -81,8 +85,12 @@ def fetch_logs_from_loki(
                 PROMTAIL_CONFIGURATION["lokiUsername"],
                 PROMTAIL_CONFIGURATION["lokiPassword"],
             ),
-            timeout=10,
+            timeout=5,
         )
+
+        if response.status_code == http.HTTPStatus.TOO_MANY_REQUESTS:
+            raise exceptions.TooManyOutStandingRequests
+
         response.raise_for_status()
         logs = response.json()
         return logs["data"]["result"]

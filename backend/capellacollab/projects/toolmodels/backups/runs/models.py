@@ -48,6 +48,7 @@ class DatabasePipelineRun(Base):
     )
 
     trigger_time: orm.Mapped[datetime.datetime]
+    end_time: orm.Mapped[datetime.datetime | None]
     logs_last_fetched_timestamp: orm.Mapped[datetime.datetime | None]
 
     environment: orm.Mapped[dict[str, str]]

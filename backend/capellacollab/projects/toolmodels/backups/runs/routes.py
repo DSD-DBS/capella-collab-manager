@@ -18,7 +18,7 @@ from capellacollab.users import models as user_models
 
 from .. import injectables as pipeline_injectables
 from .. import models as pipeline_models
-from . import crud, helper, injectables, models
+from . import crud, helper, injectables, interface, models
 
 router = fastapi.APIRouter(
     dependencies=[
@@ -100,7 +100,7 @@ def get_events(
     event_logs = loki.fetch_logs_from_loki(
         query=f'{{pipeline_run_id="{pipeline_run.id}", job_name="{pipeline_run.reference_id}", log_type="events"}}',
         start_time=pipeline_run.trigger_time,
-        end_time=datetime.datetime.now().astimezone(),
+        end_time=_determine_end_time_from_pipeline_run(pipeline_run),
     )
     if not event_logs:
         return ""
@@ -115,6 +115,18 @@ def get_events(
             for logentry in event_logs
             for logline in logentry["values"]
         ]
+    )
+
+
+def _determine_end_time_from_pipeline_run(
+    pipeline_run: models.DatabasePipelineRun,
+) -> datetime.datetime:
+    max_pipeline_run_duration = datetime.timedelta(
+        minutes=interface.PIPELINES_TIMEOUT + 5
+    )  # Add 5 minutes tolerance to pipeline timeout
+    return min(
+        pipeline_run.trigger_time + max_pipeline_run_duration,
+        pipeline_run.end_time or datetime.datetime.now(),
     )
 
 
@@ -135,7 +147,7 @@ def get_logs(
     logs = loki.fetch_logs_from_loki(
         query=f'{{pipeline_run_id="{pipeline_run.id}", job_name="{pipeline_run.reference_id}", log_type="logs"}}',
         start_time=pipeline_run.trigger_time,
-        end_time=datetime.datetime.now().astimezone(),
+        end_time=_determine_end_time_from_pipeline_run(pipeline_run),
     )
     if not logs:
         return ""

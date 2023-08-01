@@ -81,6 +81,9 @@ authentication:
   #   audience: tbd
   #   redirectURI: http://localhost:4200/oauth2/callback
 
+pipelines:
+  timeout: 60
+
 database:
   url: postgresql://dev:dev@localhost:5432/dev
 

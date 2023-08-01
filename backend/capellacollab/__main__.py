@@ -3,6 +3,7 @@
 
 
 import logging
+import os
 
 import fastapi
 import fastapi_pagination
@@ -18,6 +19,10 @@ import capellacollab.sessions.metrics
 from capellacollab.config import config
 from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
+from capellacollab.core.logging import exceptions as logging_exceptions
+from capellacollab.projects.toolmodels.backups import (
+    exceptions as backups_exceptions,
+)
 from capellacollab.projects.toolmodels.modelsources.git import (
     exceptions as git_exceptions,
 )
@@ -128,9 +133,20 @@ def register_exceptions():
     git_exceptions.register_exceptions(app)
     gitlab_exceptions.register_exceptions(app)
     git_handler_exceptions.register_exceptions(app)
+    backups_exceptions.register_exceptions(app)
+    logging_exceptions.register_exceptions(app)
 
 
 register_exceptions()
 
 if __name__ == "__main__":
-    uvicorn.run(app)
+    if os.getenv("FASTAPI_AUTO_RELOAD", "").lower() in ("1", "true", "t"):
+        logging.getLogger("watchfiles.main").setLevel(logging.WARNING)
+        uvicorn.run(
+            "capellacollab.__main__:app",
+            reload=True,
+            reload_dirs=["capellacollab"],
+            reload_includes=["*.py", "*.yaml", "*.yml"],
+        )
+    else:
+        uvicorn.run(app)
