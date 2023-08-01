@@ -140,5 +140,8 @@ guacamole:
         ${DOCKER_BUILD_ARGS} \
         -t ${IMAGE}:${DOCKER_TAG} \
         --build-arg BASE_IMAGE=guacamole/guacamole \
+        --build-arg DEBIAN_SLIM_BASE_IMAGE=$DEBIAN_SLIM_BASE_IMAGE \
         guacamole
     - *push
+  variables:
+    DEBIAN_SLIM_BASE_IMAGE: "debian:bookworm-slim"
