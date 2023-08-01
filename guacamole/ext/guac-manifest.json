@@ -1,0 +1,7 @@
+{
+  "guacamoleVersion": "1.5.2",
+
+  "name": "Capella Collaboration Manager extension",
+  "namespace": "capellacollab",
+  "translations": ["translations/en.json"]
+}
