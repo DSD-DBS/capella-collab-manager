@@ -10,6 +10,7 @@ from sqlalchemy import orm
 import capellacollab.projects.toolmodels.crud as projects_models_crud
 import capellacollab.settings.modelsources.t4c.crud as settings_t4c_crud
 from capellacollab.core import database
+from capellacollab.core import exceptions as core_exceptions
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.tools.integrations import (
     routes as tools_integrations_routes,
@@ -313,7 +314,11 @@ def raise_when_tool_version_dependency_exist(
         for model in version_models
     )
 
-    raise_if_dependencies_exist(dependencies, version.name, "version")
+    raise core_exceptions.ExistingDependenciesError(
+        entity_name=version.name,
+        entity_type="version",
+        dependencies=dependencies,
+    )
 
 
 def raise_when_tool_nature_dependency_exist(
@@ -336,31 +341,8 @@ def raise_when_tool_nature_dependency_exist(
         for model in nature_models
     )
 
-    raise_if_dependencies_exist(dependencies, nature.name, "nature")
-
-
-def raise_if_dependencies_exist(
-    dependencies: list[str], entity_name: str, entity_type: str
-) -> None:
-    """Raise HTTPException if there are any dependencies.
-
-    Parameters
-    ----------
-    dependencies : list[str]
-        List of dependency descriptions
-    entity_name : str
-        Name of the entity with dependencies
-    entity_type : str
-        Type of the entity with dependencies
-    """
-
-    if dependencies:
-        dependencies_str = ", ".join(dependencies)
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "reason": [
-                    f"The {entity_type} '{entity_name}' can not be deleted. Please remove the following dependencies first: {dependencies_str}"
-                ]
-            },
-        )
+    raise core_exceptions.ExistingDependenciesError(
+        entity_name=nature.name,
+        entity_type="nature",
+        dependencies=dependencies,
+    )
