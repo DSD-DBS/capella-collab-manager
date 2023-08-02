@@ -35,4 +35,14 @@
       </a>
     </div>
   </div>
+
+  <h2 class="title text-center">Other</h2>
+  <div class="flex justify-center flex-wrap">
+    <a (click)="modelSourceSelection.emit('skip')">
+      <mat-card class="option-card">
+        <p class="subtitle">Skip this step</p>
+        <app-mat-icon size="50px">skip_next</app-mat-icon>
+      </mat-card>
+    </a>
+  </div>
 </div>

@@ -67,6 +67,10 @@ export class CreateModelComponent implements OnInit {
 
   onSourceClick(value: string): void {
     this.stepper.steps.get(1)!.completed = true;
+    if (value === 'skip') {
+      this.stepper.next();
+      this.stepper.steps.get(2)!.completed = true;
+    }
     this.source = value;
     this.stepper.next();
   }
