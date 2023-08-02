@@ -5,6 +5,7 @@
 
 import { Component } from '@angular/core';
 import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
+import { AuthService } from 'src/app/services/auth/auth.service';
 import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
@@ -14,6 +15,7 @@ import { UserService } from 'src/app/services/user/user.service';
 })
 export class NavBarMenuComponent {
   constructor(
+    public authService: AuthService,
     public navBarService: NavBarService,
     public userService: UserService
   ) {}
