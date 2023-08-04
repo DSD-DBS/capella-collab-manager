@@ -1,11 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: CC0-1.0
-
 * text=auto
-
 *.{cmd,[cC][mM][dD]} text eol=crlf
 *.{bat,[bB][aA][tT]} text eol=crlf
-
 *.{sh,py} text eol=lf
-
 .git_archival.txt  export-subst
+*.mp4 filter=lfs diff=lfs merge=lfs -text

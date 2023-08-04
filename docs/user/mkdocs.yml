@@ -43,6 +43,8 @@ nav:
           - TeamForCapella: sessions/flows/t4c.md
       - Files (Upload): sessions/files/files.md
       - Troubleshooting: sessions/troubleshooting.md
+      - Jupyter:
+          - Collaboration: sessions/jupyter/collaboration.md
   - Settings:
       - Monitoring: settings/monitoring.md
       - Tools:
@@ -81,4 +83,4 @@ markdown_extensions:
 extra:
   generator: false
 
-copyright: Copyright &copy; 2022 DB Netz AG
+copyright: Copyright &copy; 2022-2023 DB Netz AG
