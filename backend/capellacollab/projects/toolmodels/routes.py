@@ -6,6 +6,7 @@ from fastapi import status
 from sqlalchemy import exc, orm
 
 from capellacollab.core import database
+from capellacollab.core import exceptions as core_exceptions
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects.models import DatabaseProject
@@ -146,8 +147,24 @@ def delete_capella_model(
     model: DatabaseCapellaModel = fastapi.Depends(get_existing_capella_model),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
-    if not (model.git_models or model.t4c_models):
+    dependencies = []
+
+    if model.git_models:
+        dependencies.append(
+            f"{len(model.git_models)} linked Git repositor{'y' if len(model.git_models) == 1 else 'ies'}"
+        )
+
+    if model.t4c_models:
+        dependencies.append(
+            f"{len(model.t4c_models)} linked T4C repositor{'y' if len(model.t4c_models) == 1 else 'ies'}"
+        )
+
+    if not dependencies:
         crud.delete_model(db, model)
+    else:
+        raise core_exceptions.ExistingDependenciesError(
+            model.name, f"{model.tool.name} model", dependencies
+        )
 
 
 def get_version_by_id_or_raise(
