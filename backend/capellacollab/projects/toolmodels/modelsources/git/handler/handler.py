@@ -2,7 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import abc
-import collections
+import datetime
+import json
+import typing as t
 
 import requests
 
@@ -10,10 +12,6 @@ import capellacollab.projects.toolmodels.modelsources.git.models as git_models
 import capellacollab.settings.modelsources.git.models as settings_git_models
 
 from .. import exceptions
-
-JobIdAttributes = collections.namedtuple(
-    "JobIdAttributes", ["projectId", "jobIdAndDateTuple"]
-)
 
 
 class GitHandler:
@@ -37,7 +35,7 @@ class GitHandler:
     @abc.abstractmethod
     async def get_last_job_run_id_for_git_model(
         self, job_name: str, project_id: str | None
-    ) -> JobIdAttributes:
+    ) -> tuple[str, str]:
         pass
 
     @abc.abstractmethod
@@ -60,28 +58,60 @@ class GitHandler:
 
     @abc.abstractmethod
     async def get_file_from_repository(
-        self, project_id: str, trusted_file_path: str
+        self,
+        project_id: str,
+        trusted_file_path: str,
+        revision: str | None = None,
     ) -> bytes:
         pass
 
+    @abc.abstractmethod
+    def get_last_updated_for_file_path(
+        self, project_id: str, file_path: str, revision: str | None
+    ) -> datetime.datetime | None:
+        pass
+
+    async def get_file_from_repository_or_artifacts_as_json(
+        self,
+        trusted_file_path: str,
+        job_name: str,
+        revision: str | None = None,
+    ) -> tuple[datetime.datetime, dict[str, t.Any]]:
+        (
+            last_updated,
+            result,
+        ) = await self.get_file_from_repository_or_artifacts(
+            trusted_file_path, job_name, revision
+        )
+        return (last_updated, json.loads(result.decode("utf-8")))
+
     async def get_file_from_repository_or_artifacts(
-        self, trusted_file_path: str, job_name: str | None
-    ) -> bytes:
+        self,
+        trusted_file_path: str,
+        job_name: str,
+        revision: str | None = None,
+    ) -> tuple[t.Any, bytes]:
         project_id = await self.get_project_id_by_git_url()
         try:
-            return await self.get_file_from_repository(
-                project_id, trusted_file_path
+            return (
+                self.get_last_updated_for_file_path(
+                    project_id,
+                    trusted_file_path,
+                    revision=revision,
+                ),
+                await self.get_file_from_repository(
+                    project_id, trusted_file_path, revision
+                ),
             )
         except (requests.HTTPError, exceptions.GitRepositoryFileNotFoundError):
             pass
-        if job_name:
-            (_, (job_id, _),) = await self.get_last_job_run_id_for_git_model(
-                job_name, project_id
-            )
-            return self.get_artifact_from_job_as_content(
-                project_id, job_id, trusted_file_path
-            )
 
-        raise exceptions.GitRepositoryFileNotFoundError(
-            filename=trusted_file_path
+        job_id, last_updated = await self.get_last_job_run_id_for_git_model(
+            job_name, project_id
+        )
+        return (
+            last_updated,
+            self.get_artifact_from_job_as_content(
+                project_id, job_id, trusted_file_path
+            ),
         )

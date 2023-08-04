@@ -9,7 +9,7 @@
 
     Please note the following limitations:
 
-       - The diagram cache is only available for your own Gitlab and Github projects. You can not use it if you have no permissions for a Github repository even though the pipeline might be up to date and the project is public.
+       - The diagram cache is only available for your own Gitlab and Github projects. You can also use it for public projects if the diagram cache gets pushed to the repository.
        - You need a pipeline in the Git repository of the model, which serves the diagrams via
          [job artifacts Gitlab](https://docs.gitlab.com/ee/ci/pipelines/job_artifacts.html)
          or [job artifacts Github](https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts)
@@ -18,6 +18,8 @@
 
          - `diagram_cache/index.json`
          - `diagram_cache/{uuid}.svg` for each diagram
+
+         In addition, the job can push the diagram cache to a branch diagram-cache/<branch-name>.
 
     - One pipeline in the linked Git repository should not contain more than 20 jobs.
 

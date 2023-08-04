@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import base64
+import datetime
 from urllib import parse
 
 import aiohttp
@@ -40,7 +41,7 @@ class GitlabHandler(handler.GitHandler):
 
     async def get_last_job_run_id_for_git_model(
         self, job_name: str, project_id: str | None = None
-    ) -> handler.JobIdAttributes:
+    ) -> tuple[str, str]:
         if not project_id:
             project_id = await self.get_project_id_by_git_url()
         for pipeline_id in await self.__get_last_pipeline_run_ids(project_id):
@@ -49,9 +50,24 @@ class GitlabHandler(handler.GitHandler):
                 pipeline_id,
                 job_name,
             ):
-                return handler.JobIdAttributes(project_id, job)
+                return job
 
         raise git_exceptions.GitPipelineJobNotFoundError(job_name=job_name)
+
+    def get_last_updated_for_file_path(
+        self, project_id: str, file_path: str, revision: str | None
+    ) -> datetime.datetime | None:
+        response = requests.get(
+            f"{self.git_instance.api_url}/projects/{project_id}/repository/commits?ref_name={revision or self.git_model.revision}&path={file_path}",
+            headers={"PRIVATE-TOKEN": self.git_model.password},
+            timeout=config["requests"]["timeout"],
+        )
+        response.raise_for_status()
+        if len(response.json()) == 0:
+            raise git_exceptions.GitRepositoryFileNotFoundError(
+                filename=file_path
+            )
+        return response.json()[0]["authored_date"]
 
     async def __get_last_pipeline_run_ids(
         self,
@@ -132,10 +148,14 @@ class GitlabHandler(handler.GitHandler):
         return response
 
     async def get_file_from_repository(
-        self, project_id: str, trusted_file_path: str
+        self,
+        project_id: str,
+        trusted_file_path: str,
+        revision: str | None = None,
     ) -> bytes:
+        branch = revision if revision else self.git_model.revision
         response = requests.get(
-            f"{self.git_instance.api_url}/projects/{project_id}/repository/files/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(self.git_model.revision, safe='')}",
+            f"{self.git_instance.api_url}/projects/{project_id}/repository/files/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(branch, safe='')}",
             headers={"PRIVATE-TOKEN": self.git_model.password},
             timeout=config["requests"]["timeout"],
         )
