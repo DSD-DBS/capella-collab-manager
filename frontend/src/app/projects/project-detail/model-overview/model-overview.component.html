@@ -72,6 +72,7 @@
           {{ model.description || "This model has no description." }}
         </div>
         <app-model-complexity-badge
+          *ngIf="model.tool.name === 'Capella'"
           [modelSlug]="model.slug"
         ></app-model-complexity-badge>
         <div class="actions">
