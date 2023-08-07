@@ -36,6 +36,7 @@ from capellacollab.projects.toolmodels.modelsources.git.handler import (
 from capellacollab.routes import router
 from capellacollab.sessions import idletimeout, operators
 from capellacollab.tools import exceptions as tools_exceptions
+from capellacollab.users import exceptions as users_exceptions
 
 handlers: list[logging.Handler] = [
     logging.StreamHandler(),
@@ -137,6 +138,7 @@ def register_exceptions():
     backups_exceptions.register_exceptions(app)
     logging_exceptions.register_exceptions(app)
     core_exceptions.register_exceptions(app)
+    users_exceptions.register_exceptions(app)
 
 
 register_exceptions()
