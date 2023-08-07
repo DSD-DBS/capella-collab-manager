@@ -80,6 +80,7 @@ def _schedule_pending_jobs():
                         pending_run.pipeline.t4c_model,
                         pending_run.pipeline.t4c_username,
                         pending_run.pipeline.t4c_password,
+                        pending_run.pipeline.include_commit_history,
                     ),
                 )
                 pending_run.reference_id = job_name
