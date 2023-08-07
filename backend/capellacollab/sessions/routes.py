@@ -8,7 +8,6 @@ import logging
 import typing as t
 
 import fastapi
-import requests
 from fastapi import status
 from sqlalchemy import orm
 
@@ -28,16 +27,8 @@ from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
 )
 from capellacollab.projects.users import models as projects_users_models
+from capellacollab.sessions import hooks
 from capellacollab.sessions.files import routes as files_routes
-from capellacollab.settings.integrations.purevariants import (
-    crud as purevariants_crud,
-)
-from capellacollab.settings.modelsources.t4c.repositories import (
-    crud as repo_crud,
-)
-from capellacollab.settings.modelsources.t4c.repositories import (
-    interface as repo_interface,
-)
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
@@ -218,25 +209,31 @@ def request_session(
 
     rdp_password = credentials.generate_password(length=64)
 
-    session = operator.start_readonly_session(
+    session = operator.start_session(
+        image=docker_image,
         username=db_user.name,
+        session_type="readonly",
         tool_name=model.tool.name,
         version_name=model.version.name,
-        password=rdp_password,
-        docker_image=docker_image,
-        git_repos_json=list(models_as_json(entries_with_models)),
+        environment={
+            "GIT_REPOS_JSON": json.dumps(
+                list(models_as_json(entries_with_models))
+            ),
+            "RMT_PASSWORD": rdp_password,
+        },
+        ports={"rdp": 3389, "metrics": 9118, "fileservice": 8000},
     )
 
     return create_database_and_guacamole_session(
-        db,
-        models.WorkspaceType.READONLY,
-        session,
-        db_user.name,
-        rdp_password,
-        model.tool,
-        model.version,
-        project,
-        None,
+        db=db,
+        type=models.WorkspaceType.READONLY,
+        session=session,
+        owner=db_user.name,
+        rdp_password=rdp_password,
+        tool=model.tool,
+        version=model.version,
+        project=project,
+        environment={},
     )
 
 
@@ -331,15 +328,25 @@ def request_persistent_session(
 
     pvc_name = workspace.create_persistent_workspace(operator, user.name)
 
+    environment: dict[str, str] = {}
+    warnings: list[core_models.Message] = []
+
+    for hook in hooks.get_activated_integration_hooks(tool):
+        hook_env, hook_warnings = hook.configuration_hook(
+            db=db, user=user, tool_version=version, tool=tool, token=token
+        )
+        environment |= hook_env
+        warnings += hook_warnings
+
     if tool.integrations and tool.integrations.jupyter:
         response = start_persistent_jupyter_session(
             db=db,
             operator=operator,
             owner=owner,
-            token=token,
             tool=tool,
             version=version,
             persistent_workspace_claim_name=pvc_name,
+            environment=environment,
         )
     else:
         response = start_persistent_guacamole_session(
@@ -347,11 +354,18 @@ def request_persistent_session(
             operator=operator,
             user=user,
             owner=owner,
-            token=token,
             tool=tool,
             version=version,
             persistent_workspace_claim_name=pvc_name,
+            environment=environment,
         )
+
+    for hook in hooks.get_activated_integration_hooks(tool):
+        hook.post_session_creation_hook(
+            session_id=response.id, operator=operator, user=user
+        )
+
+    response.warnings = warnings
 
     return response
 
@@ -360,32 +374,36 @@ def start_persistent_jupyter_session(
     db: orm.Session,
     operator: k8s.KubernetesOperator,
     owner: str,
-    token: str,
     tool: tools_models.DatabaseTool,
+    environment: dict[str, str],
     version: tools_models.DatabaseVersion,
     persistent_workspace_claim_name: str,
 ):
     docker_image = get_image_for_tool_version(db, version.id)
-    jupyter_token = credentials.generate_password(length=64)
 
-    session = operator.start_persistent_jupyter_session(
-        username=auth_helper.get_username(token),
+    session = operator.start_session(
+        image=docker_image,
+        username=owner,
+        session_type="persistent",
         tool_name=tool.name,
         version_name=version.name,
-        token=jupyter_token,
-        docker_image=docker_image,
+        environment=environment,
+        ports={"http": 8888},
         persistent_workspace_claim_name=persistent_workspace_claim_name,
+        prometheus_path=f"{environment.get('JUPYTER_BASE_URL')}/metrics",
+        prometheus_port=8888,
+        limits="low",
     )
 
     return create_database_session(
-        db,
-        models.WorkspaceType.PERSISTENT,
-        session,
-        owner,
-        tool,
-        version,
-        None,
-        jupyter_token=jupyter_token,
+        db=db,
+        type=models.WorkspaceType.PERSISTENT,
+        session=session,
+        owner=owner,
+        tool=tool,
+        version=version,
+        project=None,
+        environment=environment,
     )
 
 
@@ -394,152 +412,39 @@ def start_persistent_guacamole_session(
     operator: k8s.KubernetesOperator,
     user: users_models.DatabaseUser,
     owner: str,
-    token: str,
     tool: tools_models.DatabaseTool,
     version: tools_models.DatabaseVersion,
     persistent_workspace_claim_name: str,
+    environment: dict[str, str],
 ):
-    warnings: list[core_models.Message] = []
-    t4c_password = None
-    t4c_json = None
-    t4c_license_secret = None
-
-    if tool.integrations.t4c:
-        # When using a different tool with TeamForCapella support (e.g. Capella + pure::variants),
-        # the version ID doesn't match the version from the T4C integration.
-        # We have to find the matching Capella version by name.
-        t4c_repositories = repo_crud.get_user_t4c_repositories(
-            db, version.name, user
-        )
-
-        t4c_json = [
-            {
-                "repository": repository.name,
-                "protocol": repository.instance.protocol,
-                "port": repository.instance.http_port
-                if repository.instance.protocol == "ws"
-                else repository.instance.port,
-                "host": repository.instance.host,
-                "instance": repository.instance.name,
-            }
-            for repository in t4c_repositories
-        ]
-
-        t4c_license_secret = (
-            t4c_repositories[0].instance.license if t4c_repositories else None
-        )
-
-        t4c_password = credentials.generate_password()
-        for repository in t4c_repositories:
-            try:
-                repo_interface.add_user_to_repository(
-                    repository.instance,
-                    repository.name,
-                    username=owner,
-                    password=t4c_password,
-                    is_admin=auth_injectables.RoleVerification(
-                        required_role=users_models.Role.ADMIN, verify=False
-                    )(token, db),
-                )
-            except requests.RequestException:
-                warnings.append(
-                    core_models.Message(
-                        reason=(
-                            f"The creation of your user in the repository '{repository.name}' of the the instance '{repository.instance.name}' failed.",
-                            "Most likely this is due to a downtime of the corresponding TeamForCapella server.",
-                            "If you don't need access to the repository you can still use the session.",
-                        )
-                    )
-                )
-                log.warning(
-                    "Could not add user to t4c repository '%s' of instance '%s'",
-                    repository.name,
-                    repository.instance.name,
-                    exc_info=True,
-                )
-
-    (
-        pv_license_server_url,
-        pure_variants_secret_name,
-        pv_warnings,
-    ) = determine_pure_variants_configuration(db, user, tool)
-
     docker_image = get_image_for_tool_version(db, version.id)
     rdp_password = credentials.generate_password(length=64)
 
-    session = operator.start_persistent_capella_session(
-        username=auth_helper.get_username(token),
+    environment = environment | {"RMT_PASSWORD": rdp_password}
+
+    session = operator.start_session(
+        image=docker_image,
+        username=user.name,
+        session_type="persistent",
         tool_name=tool.name,
         version_name=version.name,
-        password=rdp_password,
-        docker_image=docker_image,
-        t4c_license_secret=t4c_license_secret,
-        t4c_json=t4c_json,
-        pure_variants_license_server=pv_license_server_url,
-        pure_variants_secret_name=pure_variants_secret_name,
+        environment=environment,
+        ports={"rdp": 3389, "metrics": 9118},
         persistent_workspace_claim_name=persistent_workspace_claim_name,
     )
 
     response = create_database_and_guacamole_session(
-        db,
-        models.WorkspaceType.PERSISTENT,
-        session,
-        owner,
-        rdp_password,
-        tool,
-        version,
-        None,
-        t4c_password,
+        db=db,
+        type=models.WorkspaceType.PERSISTENT,
+        session=session,
+        owner=owner,
+        rdp_password=rdp_password,
+        tool=tool,
+        version=version,
+        project=None,
+        environment=environment,
     )
-    response.warnings += warnings
-    response.warnings += pv_warnings
     return response
-
-
-def determine_pure_variants_configuration(
-    db: orm.Session,
-    user: users_models.DatabaseUser,
-    tool: tools_models.DatabaseTool,
-) -> tuple[str | None, str | None, list[core_models.Message]]:
-    warnings: list[core_models.Message] = []
-    if not tool.integrations.pure_variants:
-        return (None, None, warnings)
-
-    if (
-        not [
-            model
-            for association in user.projects
-            for model in association.project.models
-            if model.restrictions and model.restrictions.allow_pure_variants
-        ]
-        and user.role == users_models.Role.USER
-    ):
-        warnings.append(
-            core_models.Message(
-                reason=(
-                    "You are trying to create a persistent session with a pure::variants integration.",
-                    "We were not able to find a model with a pure::variants integration.",
-                    "Your session will not be connected to the pure::variants license server.",
-                )
-            )
-        )
-        return (None, None, warnings)
-
-    if not (
-        pv_license := purevariants_crud.get_pure_variants_configuration(db)
-    ):
-        warnings.append(
-            core_models.Message(
-                reason=(
-                    "You are trying to create a persistent session with a pure::variants integration.",
-                    "We were not able to find a valid license server URL in our database.",
-                    "Your session will not be connected to the pure::variants license server.",
-                )
-            )
-        )
-        return (None, None, warnings)
-
-    return (pv_license.license_server_url, "pure-variants", warnings)
 
 
 def create_database_session(
@@ -577,7 +482,7 @@ def create_database_and_guacamole_session(
     tool: tools_models.DatabaseTool,
     version: tools_models.DatabaseVersion,
     project: projects_models.DatabaseProject | None,
-    t4c_password: str | None = None,
+    environment: dict[str, str],
 ) -> models.DatabaseSession:
     guacamole_username = credentials.generate_password()
     guacamole_password = credentials.generate_password(length=64)
@@ -606,7 +511,7 @@ def create_database_and_guacamole_session(
         tool,
         version,
         project,
-        t4c_password=t4c_password,
+        environment=environment,
         rdp_password=rdp_password,
         guacamole_username=guacamole_username,
         guacamole_password=guacamole_password,
@@ -616,10 +521,10 @@ def create_database_and_guacamole_session(
 
 @router.delete("/{session_id}", status_code=204)
 def end_session(
+    db: orm.Session = fastapi.Depends(database.get_db),
     session: models.DatabaseSession = fastapi.Depends(
         injectables.get_existing_session
     ),
-    db: orm.Session = fastapi.Depends(database.get_db),
     operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
 ):
     util.terminate_session(db, session, operator)
