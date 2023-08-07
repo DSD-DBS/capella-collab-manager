@@ -103,6 +103,7 @@ class MockOperator:
         docker_image: str,
         t4c_license_secret: str | None,
         t4c_json: list[dict[str, str | int]] | None,
+        persistent_workspace_claim_name: str,
         pure_variants_license_server: str = None,
         pure_variants_secret_name: str = None,
     ) -> dict[str, t.Any]:
@@ -122,6 +123,7 @@ class MockOperator:
         username: str,
         tool_name: str,
         version_name: str,
+        persistent_workspace_claim_name: str,
         token: str,
         docker_image: str,
     ) -> t.Dict[str, t.Any]:
@@ -193,6 +195,12 @@ class MockOperator:
     @classmethod
     def get_job_logs_or_events(self, _id: str) -> str:
         return ""
+
+    @classmethod
+    def create_persistent_volume(
+        self, name: str, size: str, labels: dict[str, str] = None
+    ):
+        return
 
 
 @pytest.fixture(autouse=True, name="kubernetes")

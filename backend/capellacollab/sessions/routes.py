@@ -44,7 +44,16 @@ from capellacollab.tools import models as tools_models
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 
-from . import crud, guacamole, injectables, models, operators, sessions, util
+from . import (
+    crud,
+    guacamole,
+    injectables,
+    models,
+    operators,
+    sessions,
+    util,
+    workspace,
+)
 from .operators import k8s
 
 router = fastapi.APIRouter(
@@ -320,6 +329,8 @@ def request_persistent_session(
                 },
             )
 
+    pvc_name = workspace.create_persistent_workspace(operator, user.name)
+
     if tool.integrations and tool.integrations.jupyter:
         response = start_persistent_jupyter_session(
             db=db,
@@ -328,6 +339,7 @@ def request_persistent_session(
             token=token,
             tool=tool,
             version=version,
+            persistent_workspace_claim_name=pvc_name,
         )
     else:
         response = start_persistent_guacamole_session(
@@ -338,6 +350,7 @@ def request_persistent_session(
             token=token,
             tool=tool,
             version=version,
+            persistent_workspace_claim_name=pvc_name,
         )
 
     return response
@@ -350,6 +363,7 @@ def start_persistent_jupyter_session(
     token: str,
     tool: tools_models.DatabaseTool,
     version: tools_models.DatabaseVersion,
+    persistent_workspace_claim_name: str,
 ):
     docker_image = get_image_for_tool_version(db, version.id)
     jupyter_token = credentials.generate_password(length=64)
@@ -360,6 +374,7 @@ def start_persistent_jupyter_session(
         version_name=version.name,
         token=jupyter_token,
         docker_image=docker_image,
+        persistent_workspace_claim_name=persistent_workspace_claim_name,
     )
 
     return create_database_session(
@@ -382,6 +397,7 @@ def start_persistent_guacamole_session(
     token: str,
     tool: tools_models.DatabaseTool,
     version: tools_models.DatabaseVersion,
+    persistent_workspace_claim_name: str,
 ):
     warnings: list[core_models.Message] = []
     t4c_password = None
@@ -461,6 +477,7 @@ def start_persistent_guacamole_session(
         t4c_json=t4c_json,
         pure_variants_license_server=pv_license_server_url,
         pure_variants_secret_name=pure_variants_secret_name,
+        persistent_workspace_claim_name=persistent_workspace_claim_name,
     )
 
     response = create_database_and_guacamole_session(

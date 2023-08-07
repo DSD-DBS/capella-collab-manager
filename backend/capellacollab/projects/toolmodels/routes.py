@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import uuid
+
 import fastapi
 from fastapi import status
 from sqlalchemy import exc, orm
@@ -15,7 +17,7 @@ from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
 
-from . import crud, injectables, models
+from . import crud, injectables, models, workspace
 from .backups import routes as backups_routes
 from .diagrams import routes as diagrams_routes
 from .modelbadge import routes as complexity_badge_routes
@@ -69,7 +71,7 @@ def get_model_by_slug(
     ],
     tags=["Projects - Models"],
 )
-def create_new(
+def create_new_tool_model(
     new_model: models.PostCapellaModel,
     project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
@@ -80,8 +82,14 @@ def create_new(
         tool_id=new_model.tool_id, db=db
     )
 
+    configuration = {}
+    if tool.integrations.jupyter:
+        configuration["workspace"] = str(uuid.uuid4())
+
     try:
-        return crud.create_model(db, project, new_model, tool)
+        model = crud.create_model(
+            db, project, new_model, tool, configuration=configuration
+        )
     except exc.IntegrityError:
         raise fastapi.HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -90,6 +98,13 @@ def create_new(
                 "technical": "Slug already used",
             },
         )
+
+    if tool.integrations.jupyter:
+        workspace.create_shared_workspace(
+            configuration["workspace"], project, model, "2Gi"
+        )
+
+    return model
 
 
 @router.patch(
@@ -104,7 +119,7 @@ def create_new(
     ],
     tags=["Projects - Models"],
 )
-def patch_capella_model(
+def patch_tool_model(
     body: models.PatchCapellaModel,
     model: models.DatabaseCapellaModel = fastapi.Depends(
         injectables.get_existing_capella_model
@@ -144,7 +159,7 @@ def patch_capella_model(
     ],
     tags=["Projects - Models"],
 )
-def delete_capella_model(
+def delete_tool_model(
     model: models.DatabaseCapellaModel = fastapi.Depends(
         injectables.get_existing_capella_model
     ),
@@ -162,12 +177,19 @@ def delete_capella_model(
             f"{len(model.t4c_models)} linked T4C repositor{'y' if len(model.t4c_models) == 1 else 'ies'}"
         )
 
-    if not dependencies:
-        crud.delete_model(db, model)
-    else:
+    if dependencies:
         raise core_exceptions.ExistingDependenciesError(
             model.name, f"{model.tool.name} model", dependencies
         )
+
+    if (
+        model.tool.integrations.jupyter
+        and model.configuration
+        and "workspace" in model.configuration
+    ):
+        workspace.delete_shared_workspace(model.configuration["workspace"])
+
+    crud.delete_model(db, model)
 
 
 def get_version_by_id_or_raise(

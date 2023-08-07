@@ -73,6 +73,8 @@ class DatabaseCapellaModel(database.Base):
     slug: orm.Mapped[str]
     description: orm.Mapped[str]
 
+    configuration: orm.Mapped[dict[str, str] | None]
+
     project_id: orm.Mapped[int] = orm.mapped_column(
         sa.ForeignKey("projects.id")
     )
