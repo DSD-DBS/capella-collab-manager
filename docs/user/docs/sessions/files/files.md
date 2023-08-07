@@ -18,10 +18,10 @@
 
    ![Upload dialog](upload-dialog.png)
 
-    !!! hint
-        To upload images into hidden directories, e.g., the workspace
-        metadata, one has to expand these directories by clicking
-        `Show hidden files`
+!!! info
+    To upload images into hidden directories, e.g., the workspace
+    metadata, one has to expand these directories by clicking
+    `Show hidden files`
 
 1. Expand the directories until you find the directories where you want to
    upload your file to. Click the upload button next to the directory name.
