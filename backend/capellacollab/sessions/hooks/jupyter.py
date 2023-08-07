@@ -11,7 +11,6 @@ from capellacollab.core import models as core_models
 from capellacollab.sessions import operators
 from capellacollab.users import models as users_models
 
-from .. import models as sessions_models
 from . import interface
 
 log = logging.getLogger(__name__)
@@ -61,14 +60,6 @@ class JupyterIntegration(interface.HookRegistration):
             path=self._determine_base_url(user.name),
             port=8888,
         )
-
-    def pre_session_termination_hook(
-        self,
-        operator: operators.KubernetesOperator,
-        session: sessions_models.DatabaseSession,
-        **kwargs,
-    ):
-        operator.delete_public_route(session_id=session.id)
 
     def _determine_base_url(self, username: str):
         return f"{self._jupyter_public_uri.path}/{username}"

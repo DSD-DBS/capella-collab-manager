@@ -11,6 +11,7 @@ from sqlalchemy import orm
 from capellacollab.core import credentials
 from capellacollab.core import models as core_models
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.sessions import operators
 from capellacollab.settings.modelsources.t4c.repositories import (
     crud as repo_crud,
 )
@@ -107,11 +108,16 @@ class T4CIntegration(interface.HookRegistration):
     def pre_session_termination_hook(
         self,
         db: orm.Session,
+        operator: operators.KubernetesOperator,
         session: sessions_models.DatabaseSession,
         **kwargs,
     ):
-        if session.type == sessions_models.WorkspaceType.PERSISTENT:
+        if (
+            session.tool.integrations.t4c
+            and session.type == sessions_models.WorkspaceType.PERSISTENT
+        ):
             self._revoke_session_tokens(db, session)
+        operator.delete_public_route(session_id=session.id)
 
     def _revoke_session_tokens(
         self,

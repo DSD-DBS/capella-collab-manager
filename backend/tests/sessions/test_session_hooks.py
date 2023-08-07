@@ -151,12 +151,6 @@ def test_session_creation_hook_is_called(
         lambda *args, **kwargs: sessions_models.DatabaseSession(id="test"),
     )
 
-    monkeypatch.setattr(
-        sessions_routes,
-        "get_image_for_tool_version",
-        lambda *args, **kwargs: "placeholder",
-    )
-
     sessions_routes.request_persistent_session(
         sessions_models.PostPersistentSessionRequest(tool_id=0, version_id=0),
         user,
