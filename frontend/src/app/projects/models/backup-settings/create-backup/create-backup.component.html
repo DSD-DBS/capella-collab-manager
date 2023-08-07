@@ -55,10 +55,13 @@
     Please add a T4C model and Git model first!
   </div>
 
-  <div mat-dialog-actions class="flex justify-between">
-    <button mat-button [mat-dialog-close]="false">Cancel</button>
+  <div class="mt-button gap-button flex justify-between">
+    <button mat-stroked-button class="w-full" [mat-dialog-close]="false">
+      Cancel
+    </button>
     <button
-      mat-button
+      mat-raised-button
+      color="primary"
       *ngIf="t4cAndGitModelExists"
       (click)="createGitBackup()"
       cdkFocusInitial
