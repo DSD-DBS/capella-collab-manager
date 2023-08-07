@@ -19,7 +19,7 @@ router = fastapi.APIRouter()
 log = logging.getLogger(__name__)
 
 
-@router.get("/", response_model=models.FileTree)
+@router.get("", response_model=models.FileTree)
 def list_files(
     show_hidden: bool,
     session: sessions_models.DatabaseSession = fastapi.Depends(
@@ -40,7 +40,7 @@ def list_files(
         )
 
 
-@router.post("/")
+@router.post("")
 def upload_files(
     files: list[fastapi.UploadFile],
     session: sessions_models.DatabaseSession = fastapi.Depends(
