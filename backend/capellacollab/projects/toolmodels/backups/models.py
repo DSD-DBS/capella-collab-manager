@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import datetime
 import typing as t
 
 import pydantic
@@ -36,16 +35,6 @@ class CreateBackup(pydantic.BaseModel):
 
     class Config:
         orm_mode = True
-
-
-class BackupJob(pydantic.BaseModel):
-    id: str
-    date: datetime.datetime | None
-    state: str
-
-
-class Job(pydantic.BaseModel):
-    include_commit_history: bool
 
 
 class Backup(pydantic.BaseModel):

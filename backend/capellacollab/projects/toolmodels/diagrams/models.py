@@ -6,6 +6,8 @@ import datetime
 
 import pydantic
 
+from capellacollab.core import pydantic as core_pydantic
+
 
 class DiagramMetadata(pydantic.BaseModel):
     name: str
@@ -19,6 +21,10 @@ class DiagramMetadata(pydantic.BaseModel):
 class DiagramCacheMetadata(pydantic.BaseModel):
     diagrams: list[DiagramMetadata]
     last_updated: datetime.datetime
+
+    _validate_last_updated = pydantic.validator(
+        "last_updated", allow_reuse=True
+    )(core_pydantic.datetime_serializer)
 
     class Config:
         orm_mode = True

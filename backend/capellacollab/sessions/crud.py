@@ -86,7 +86,7 @@ def create_session(
     db: orm.Session, session: models.DatabaseSession
 ) -> models.DatabaseSession:
     if not session.created_at:
-        session.created_at = datetime.datetime.now()
+        session.created_at = datetime.datetime.now(datetime.UTC)
 
     db.add(session)
     db.commit()

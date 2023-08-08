@@ -50,7 +50,7 @@ def create_user(
     user = models.DatabaseUser(
         name=username,
         role=role,
-        created=datetime.datetime.now(),
+        created=datetime.datetime.now(datetime.UTC),
         projects=[],
         events=[],
     )
@@ -74,7 +74,7 @@ def update_last_login(
     last_login: datetime.datetime | None = None,
 ) -> models.DatabaseUser:
     if not last_login:
-        last_login = datetime.datetime.now()
+        last_login = datetime.datetime.now(datetime.UTC)
     user.last_login = last_login
     db.commit()
     return user

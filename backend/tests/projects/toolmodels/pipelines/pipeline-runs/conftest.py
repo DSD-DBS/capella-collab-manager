@@ -23,7 +23,7 @@ def fixture_pipeline_run(
         status=pipeline_runs_models.PipelineRunStatus.PENDING,
         pipeline=pipeline,
         triggerer=project_manager,
-        trigger_time=datetime.datetime.now(),
+        trigger_time=datetime.datetime.now(datetime.UTC),
         logs_last_fetched_timestamp=None,
         environment={},
     )

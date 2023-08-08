@@ -14,6 +14,7 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core import models as core_models
+from capellacollab.core import pydantic as core_pydantic
 from capellacollab.projects import models as projects_models
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
@@ -40,6 +41,10 @@ class GetSessionsResponse(pydantic.BaseModel):
     last_seen: str
     project: projects_models.Project | None
     version: tools_models.ToolVersionWithTool | None
+
+    _validate_created_at = pydantic.validator("created_at", allow_reuse=True)(
+        core_pydantic.datetime_serializer
+    )
 
     class Config:
         orm_mode = True

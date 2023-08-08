@@ -28,7 +28,7 @@ def create_event(
     event = models.DatabaseUserHistoryEvent(
         user_id=user.id,
         event_type=event_type,
-        execution_time=datetime.datetime.now(),
+        execution_time=datetime.datetime.now(datetime.UTC),
         executor_id=executor.id if executor else None,
         project_id=project.id if project else None,
         reason=reason,
