@@ -9,11 +9,11 @@ from sqlalchemy import exc, orm
 
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.projects.toolmodels import (
+    injectables as toolmodels_injectables,
+)
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.backups import crud as backups_crud
-from capellacollab.projects.toolmodels.injectables import (
-    get_existing_capella_model,
-)
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.settings.modelsources.t4c import (
     injectables as settings_t4c_injecatbles,
@@ -42,7 +42,7 @@ router = fastapi.APIRouter(
 )
 def list_t4c_models(
     model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
-        get_existing_capella_model
+        toolmodels_injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> abc.Sequence[models.DatabaseT4CModel]:
@@ -75,7 +75,7 @@ def get_t4c_model(
 def create_t4c_model(
     body: models.SubmitT4CModel,
     model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
-        get_existing_capella_model
+        toolmodels_injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
