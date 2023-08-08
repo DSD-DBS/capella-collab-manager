@@ -148,6 +148,7 @@ def create_tools(db):
     tools_crud.create_version(db, capella.id, "5.0.0")
 
     tools_crud.create_version(db, jupyter.id, "python-3.11")
+    tools_crud.create_nature(db, jupyter.id, "notebooks")
 
     default_nature = tools_crud.create_nature(db, capella.id, "model")
     tools_crud.create_nature(db, capella.id, "library")
