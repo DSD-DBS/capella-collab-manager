@@ -39,9 +39,7 @@ router = fastapi.APIRouter(
 )
 
 
-@router.get(
-    "/", response_model=abc.Sequence[models.Project], tags=["Projects"]
-)
+@router.get("", response_model=abc.Sequence[models.Project], tags=["Projects"])
 def get_projects(
     user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
@@ -119,7 +117,7 @@ def get_project_by_slug(
     return db_project
 
 
-@router.post("/", response_model=models.Project, tags=["Projects"])
+@router.post("", response_model=models.Project, tags=["Projects"])
 def create_project(
     post_project: models.PostProjectRequest,
     user: users_models.DatabaseUser = fastapi.Depends(

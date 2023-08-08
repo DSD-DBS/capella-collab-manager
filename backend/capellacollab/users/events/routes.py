@@ -31,7 +31,7 @@ def get_events(
     return crud.get_events(db)
 
 
-@router.get("/{user_id}/history/", response_model=models.UserHistory)
+@router.get("/{user_id}/history", response_model=models.UserHistory)
 def get_user_history(
     user: users_model.DatabaseUser = fastapi.Depends(
         users_injectables.get_existing_user

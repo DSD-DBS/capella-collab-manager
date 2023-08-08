@@ -40,7 +40,7 @@ router = fastapi.APIRouter(
 )
 
 
-@router.get("/", response_model=list[CapellaModel], tags=["Projects - Models"])
+@router.get("", response_model=list[CapellaModel], tags=["Projects - Models"])
 def get_models(
     project: DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
@@ -59,7 +59,7 @@ def get_model_by_slug(
 
 
 @router.post(
-    "/",
+    "",
     response_model=CapellaModel,
     dependencies=[
         fastapi.Depends(
