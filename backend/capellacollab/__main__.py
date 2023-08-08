@@ -17,6 +17,7 @@ import capellacollab.sessions.metrics
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.config import config
+from capellacollab.core import exceptions as core_exceptions
 from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
 from capellacollab.core.logging import exceptions as logging_exceptions
@@ -135,6 +136,7 @@ def register_exceptions():
     git_handler_exceptions.register_exceptions(app)
     backups_exceptions.register_exceptions(app)
     logging_exceptions.register_exceptions(app)
+    core_exceptions.register_exceptions(app)
 
 
 register_exceptions()
