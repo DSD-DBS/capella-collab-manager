@@ -80,7 +80,7 @@ users_router = fastapi.APIRouter(
 log = logging.getLogger(__name__)
 
 
-@router.get("/", response_model=list[models.GetSessionsResponse])
+@router.get("", response_model=list[models.GetSessionsResponse])
 def get_current_sessions(
     db_user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user

@@ -48,7 +48,7 @@ def get_user(
 
 
 @router.get(
-    "/",
+    "",
     response_model=list[models.User],
     dependencies=[
         fastapi.Depends(
@@ -63,7 +63,7 @@ def get_users(
 
 
 @router.post(
-    "/",
+    "",
     response_model=models.User,
     dependencies=[
         fastapi.Depends(

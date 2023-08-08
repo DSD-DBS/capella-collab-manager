@@ -28,7 +28,7 @@ T4CRepositoriesResponseModel: t.TypeAlias = core_models.PayloadResponseModel[
 ]
 
 
-@router.get("/", response_model=T4CRepositoriesResponseModel)
+@router.get("", response_model=T4CRepositoriesResponseModel)
 def list_t4c_repositories(
     db: orm.Session = fastapi.Depends(database.get_db),
     instance: settings_t4c_models.DatabaseT4CInstance = fastapi.Depends(
@@ -67,7 +67,7 @@ def list_t4c_repositories(
     return T4CRepositoriesResponseModel(payload=repositories)
 
 
-@router.post("/", response_model=models.T4CRepository)
+@router.post("", response_model=models.T4CRepository)
 def create_t4c_repository(
     body: models.CreateT4CRepository,
     db: orm.Session = fastapi.Depends(database.get_db),

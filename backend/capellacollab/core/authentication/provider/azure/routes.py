@@ -39,7 +39,7 @@ def ad_session():
 global_session_data = TTLCache(maxsize=128, ttl=3600)
 
 
-@router.get("/", name="Get redirect URL for azure authentication")
+@router.get("", name="Get redirect URL for azure authentication")
 async def get_redirect_url():
     state = secrets.token_hex(32)
     assert state not in global_session_data

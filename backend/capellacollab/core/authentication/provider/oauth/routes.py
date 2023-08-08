@@ -20,7 +20,7 @@ from .flow import get_auth_redirect_url, get_token, refresh_token
 router = fastapi.APIRouter()
 
 
-@router.get("/", name="Get redirect URL for OAuth")
+@router.get("", name="Get redirect URL for OAuth")
 async def get_redirect_url():
     return get_auth_redirect_url()
 
