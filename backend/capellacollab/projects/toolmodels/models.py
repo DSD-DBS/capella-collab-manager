@@ -44,13 +44,13 @@ class EditingMode(enum.Enum):
     GIT = "git"
 
 
-class PostCapellaModel(pydantic.BaseModel):
+class PostToolModel(pydantic.BaseModel):
     name: str
     description: str | None
     tool_id: int
 
 
-class PatchCapellaModel(pydantic.BaseModel):
+class PatchToolModel(pydantic.BaseModel):
     description: str | None
     version_id: int
     nature_id: int
@@ -61,7 +61,7 @@ class ToolDetails(pydantic.BaseModel):
     nature_id: int
 
 
-class DatabaseCapellaModel(database.Base):
+class DatabaseToolModel(database.Base):
     __tablename__ = "models"
     __table_args__ = (sa.UniqueConstraint("project_id", "slug"),)
 
@@ -109,7 +109,7 @@ class DatabaseCapellaModel(database.Base):
     )
 
 
-class CapellaModel(pydantic.BaseModel):
+class ToolModel(pydantic.BaseModel):
     id: int
     slug: str
     name: str

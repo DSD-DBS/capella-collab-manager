@@ -33,32 +33,32 @@ router = fastapi.APIRouter(
 
 
 @router.get(
-    "/", response_model=list[models.CapellaModel], tags=["Projects - Models"]
+    "/", response_model=list[models.ToolModel], tags=["Projects - Models"]
 )
 def get_models(
     project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),
-) -> list[models.DatabaseCapellaModel]:
+) -> list[models.DatabaseToolModel]:
     return project.models
 
 
 @router.get(
     "/{model_slug}",
-    response_model=models.CapellaModel,
+    response_model=models.ToolModel,
     tags=["Projects - Models"],
 )
 def get_model_by_slug(
-    model: models.DatabaseCapellaModel = fastapi.Depends(
-        injectables.get_existing_capella_model
+    model: models.DatabaseToolModel = fastapi.Depends(
+        injectables.get_existing_tool_model
     ),
-) -> models.DatabaseCapellaModel:
+) -> models.DatabaseToolModel:
     return model
 
 
 @router.post(
     "/",
-    response_model=models.CapellaModel,
+    response_model=models.ToolModel,
     dependencies=[
         fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
@@ -68,13 +68,13 @@ def get_model_by_slug(
     ],
     tags=["Projects - Models"],
 )
-def create_new(
-    new_model: models.PostCapellaModel,
+def create_new_tool_model(
+    new_model: models.PostToolModel,
     project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.DatabaseCapellaModel:
+) -> models.DatabaseToolModel:
     tool = tools_injectables.get_existing_tool(
         tool_id=new_model.tool_id, db=db
     )
@@ -93,7 +93,7 @@ def create_new(
 
 @router.patch(
     "/{model_slug}",
-    response_model=models.CapellaModel,
+    response_model=models.ToolModel,
     dependencies=[
         fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
@@ -103,13 +103,13 @@ def create_new(
     ],
     tags=["Projects - Models"],
 )
-def patch_capella_model(
-    body: models.PatchCapellaModel,
-    model: models.DatabaseCapellaModel = fastapi.Depends(
-        injectables.get_existing_capella_model
+def patch_tool_model(
+    body: models.PatchToolModel,
+    model: models.DatabaseToolModel = fastapi.Depends(
+        injectables.get_existing_tool_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.DatabaseCapellaModel:
+) -> models.DatabaseToolModel:
     version = get_version_by_id_or_raise(db, body.version_id)
     if version.tool != model.tool:
         raise fastapi.HTTPException(
@@ -143,9 +143,9 @@ def patch_capella_model(
     ],
     tags=["Projects - Models"],
 )
-def delete_capella_model(
-    model: models.DatabaseCapellaModel = fastapi.Depends(
-        injectables.get_existing_capella_model
+def delete_tool_model(
+    model: models.DatabaseToolModel = fastapi.Depends(
+        injectables.get_existing_tool_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):

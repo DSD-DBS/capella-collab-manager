@@ -99,7 +99,7 @@ def fixture_mock_gitlab_diagram_cache_svg(git_type: git_models.GitType):
 )
 def test_get_diagram_metadata(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
 ):
     response = client.get(
@@ -121,7 +121,7 @@ def test_get_diagram_metadata(
 )
 def test_get_diagrams_fails_without_git_instance(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
 ):
     response = client.get(
@@ -144,7 +144,7 @@ def test_get_diagrams_fails_without_git_instance(
 )
 def test_get_diagrams_fails_without_api_endpoint(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
 ):
     response = client.get(
@@ -174,7 +174,7 @@ def test_get_diagrams_fails_without_api_endpoint(
 )
 def test_get_diagrams_no_diagram_cache_job_found(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
 ):
     response = client.get(
@@ -200,7 +200,7 @@ def test_get_diagrams_no_diagram_cache_job_found(
 @pytest.mark.usefixtures("project_user", "git_instance", "git_model")
 def test_get_single_diagram(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
 ):
     response = client.get(

@@ -30,7 +30,7 @@ def get_primary_git_model_of_capellamodel(
 
 def add_git_model_to_capellamodel(
     db: orm.Session,
-    capella_model: toolsmodels_models.DatabaseCapellaModel,
+    capella_model: toolsmodels_models.DatabaseToolModel,
     post_git_model: models.PostGitModel,
 ) -> models.DatabaseGitModel:
     primary = not get_primary_git_model_of_capellamodel(db, capella_model.id)

@@ -53,7 +53,7 @@ def fixture_patch_loki(monkeypatch: pytest.MonkeyPatch, unix_time_in_ns: int):
 def test_create_pipeline_run(
     db: orm.Session,
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
     pipeline: pipelines_models.DatabaseBackup,
 ):
@@ -72,7 +72,7 @@ def test_create_pipeline_run(
 @pytest.mark.usefixtures("project_manager")
 def test_create_pipeline_run_with_custom_environment(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
     pipeline: pipelines_models.DatabaseBackup,
 ):
@@ -89,7 +89,7 @@ def test_create_pipeline_run_with_custom_environment(
 
 def test_get_pipeline_runs(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
     pipeline: pipelines_models.DatabaseBackup,
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
@@ -105,7 +105,7 @@ def test_get_pipeline_runs(
 
 def test_get_pipeline_run(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
     pipeline: pipelines_models.DatabaseBackup,
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
@@ -121,7 +121,7 @@ def test_get_pipeline_run(
 @pytest.mark.usefixtures("patch_loki")
 def test_get_events(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
     pipeline: pipelines_models.DatabaseBackup,
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
@@ -136,7 +136,7 @@ def test_get_events(
 @pytest.mark.usefixtures("patch_loki")
 def def_get_logs(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
     pipeline: pipelines_models.DatabaseBackup,
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,

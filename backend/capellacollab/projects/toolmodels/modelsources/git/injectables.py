@@ -20,8 +20,8 @@ from .handler import factory, handler
 
 def get_existing_git_model(
     git_model_id: int,
-    capella_model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
-        toolmodels_injectables.get_existing_capella_model
+    capella_model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
+        toolmodels_injectables.get_existing_tool_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> git_models.DatabaseGitModel:
@@ -39,8 +39,8 @@ def get_existing_git_model(
 
 
 def get_existing_primary_git_model(
-    capella_model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
-        toolmodels_injectables.get_existing_capella_model
+    capella_model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
+        toolmodels_injectables.get_existing_tool_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> git_models.DatabaseGitModel:

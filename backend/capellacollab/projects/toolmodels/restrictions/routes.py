@@ -41,8 +41,8 @@ def update_restrictions(
     restrictions: models.DatabaseToolModelRestrictions = fastapi.Depends(
         injectables.get_model_restrictions
     ),
-    model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
-        toolmodels_injectables.get_existing_capella_model
+    model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
+        toolmodels_injectables.get_existing_tool_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseToolModelRestrictions:

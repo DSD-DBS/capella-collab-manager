@@ -156,7 +156,7 @@ def request_session(
     entries_with_models = [
         (
             entry,
-            toolmodels_injectables.get_existing_capella_model(
+            toolmodels_injectables.get_existing_tool_model(
                 entry.model_slug, project, db
             ),
         )
@@ -235,7 +235,7 @@ def models_as_json(
     session_model_list: list[
         tuple[
             models.PostReadonlySessionEntry,
-            toolmodels_models.DatabaseCapellaModel,
+            toolmodels_models.DatabaseToolModel,
         ]
     ]
 ):

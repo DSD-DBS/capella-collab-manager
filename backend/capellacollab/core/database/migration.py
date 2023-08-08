@@ -193,7 +193,7 @@ def create_models(db: orm.Session):
         capella_model = toolmodels_crud.create_model(
             db=db,
             project=projects_crud.get_project_by_slug(db, "default"),
-            post_model=toolmodels_models.PostCapellaModel(
+            post_model=toolmodels_models.PostToolModel(
                 name=f"Meldody Model Test {version}",
                 description="",
                 tool_id=capella_tool.id,

@@ -10,8 +10,8 @@ from . import models
 
 
 def get_model_restrictions(
-    model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
-        toolmodels_injectables.get_existing_capella_model
+    model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
+        toolmodels_injectables.get_existing_tool_model
     ),
 ) -> models.DatabaseToolModelRestrictions:
     return model.restrictions

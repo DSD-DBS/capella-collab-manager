@@ -12,13 +12,13 @@ from capellacollab.projects import models as projects_models
 from . import crud, models
 
 
-def get_existing_capella_model(
+def get_existing_tool_model(
     model_slug: str,
     project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.DatabaseCapellaModel:
+) -> models.DatabaseToolModel:
     model = crud.get_model_by_slugs(db, project.slug, model_slug)
     if not model:
         raise fastapi.HTTPException(

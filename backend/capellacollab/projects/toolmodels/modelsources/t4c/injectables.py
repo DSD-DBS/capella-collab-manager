@@ -16,8 +16,8 @@ from . import crud, models
 
 def get_existing_t4c_model(
     t4c_model_id: int,
-    capella_model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
-        toolmodels_injectables.get_existing_capella_model
+    capella_model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
+        toolmodels_injectables.get_existing_tool_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseT4CModel:

@@ -17,7 +17,7 @@ from capellacollab.projects.toolmodels.modelsources.t4c import (
 )
 
 if t.TYPE_CHECKING:
-    from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+    from capellacollab.projects.toolmodels.models import DatabaseToolModel
     from capellacollab.projects.toolmodels.modelsources.git.models import (
         DatabaseGitModel,
     )
@@ -87,7 +87,7 @@ class DatabaseBackup(database.Base):
     t4c_model: orm.Mapped["DatabaseT4CModel"] = orm.relationship()
 
     model_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("models.id"))
-    model: orm.Mapped["DatabaseCapellaModel"] = orm.relationship()
+    model: orm.Mapped["DatabaseToolModel"] = orm.relationship()
 
     runs: orm.Mapped[
         list["runs_models.DatabasePipelineRun"]

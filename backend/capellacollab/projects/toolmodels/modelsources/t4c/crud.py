@@ -29,7 +29,7 @@ def get_t4c_models(db: orm.Session) -> abc.Sequence[models.DatabaseT4CModel]:
 
 
 def get_t4c_models_for_tool_model(
-    db: orm.Session, model: toolmodels_models.DatabaseCapellaModel
+    db: orm.Session, model: toolmodels_models.DatabaseToolModel
 ) -> abc.Sequence[models.DatabaseT4CModel]:
     return (
         db.execute(
@@ -44,7 +44,7 @@ def get_t4c_models_for_tool_model(
 
 def create_t4c_model(
     db: orm.Session,
-    model: toolmodels_models.DatabaseCapellaModel,
+    model: toolmodels_models.DatabaseToolModel,
     repository: repositories_models.DatabaseT4CRepository,
     name: str,
 ) -> models.DatabaseT4CModel:

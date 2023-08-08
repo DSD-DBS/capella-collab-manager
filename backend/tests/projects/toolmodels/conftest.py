@@ -41,8 +41,8 @@ def fixture_capella_model(
     db: orm.Session,
     project: project_models.DatabaseProject,
     capella_tool_version: tools_models.DatabaseVersion,
-) -> toolmodels_models.DatabaseCapellaModel:
-    model = toolmodels_models.PostCapellaModel(
+) -> toolmodels_models.DatabaseToolModel:
+    model = toolmodels_models.PostToolModel(
         name="test", description="test", tool_id=capella_tool_version.tool.id
     )
     return toolmodels_crud.create_model(
@@ -82,7 +82,7 @@ def fixture_git_instance(
 
 @pytest.fixture(name="git_model")
 def fixture_git_models(
-    db: orm.Session, capella_model: toolmodels_models.DatabaseCapellaModel
+    db: orm.Session, capella_model: toolmodels_models.DatabaseToolModel
 ) -> project_git_models.DatabaseGitModel:
     git_model = project_git_models.PostGitModel(
         path="https://example.com/test/project",
@@ -185,7 +185,7 @@ def fixture_t4c_repository(
 @pytest.fixture(name="t4c_model")
 def fixture_t4c_model(
     db: orm.Session,
-    capella_model: toolmodels_models.DatabaseCapellaModel,
+    capella_model: toolmodels_models.DatabaseToolModel,
     t4c_repository: settings_t4c_repositories_models.DatabaseT4CRepository,
 ) -> models_t4c_models.DatabaseT4CModel:
     return models_t4c_crud.create_t4c_model(

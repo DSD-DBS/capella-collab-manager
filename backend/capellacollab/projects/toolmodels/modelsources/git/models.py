@@ -12,7 +12,7 @@ from sqlalchemy import orm
 from capellacollab.core import database
 
 if t.TYPE_CHECKING:
-    from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+    from capellacollab.projects.toolmodels.models import DatabaseToolModel
 
 
 class PostGitModel(pydantic.BaseModel):
@@ -61,7 +61,7 @@ class DatabaseGitModel(database.Base):
     primary: orm.Mapped[bool]
 
     model_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("models.id"))
-    model: orm.Mapped["DatabaseCapellaModel"] = orm.relationship(
+    model: orm.Mapped["DatabaseToolModel"] = orm.relationship(
         back_populates="git_models"
     )
 
