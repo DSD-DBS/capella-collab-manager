@@ -8,7 +8,7 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.settings.modelsources.git import core as settings_git_core
+from capellacollab.settings.modelsources.git import core as git_core
 from capellacollab.users import models as users_models
 
 from . import crud, injectables, models
@@ -111,4 +111,4 @@ async def get_revisions(
     username = body.credentials.username
     password = body.credentials.password
 
-    return await settings_git_core.get_remote_refs(url, username, password)
+    return await git_core.get_remote_refs(url, username, password)
