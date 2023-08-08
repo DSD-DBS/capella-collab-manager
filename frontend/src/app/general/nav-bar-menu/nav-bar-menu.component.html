@@ -50,8 +50,10 @@
   <a
     mat-list-item
     (click)="navBarService.toggle()"
-    *ngIf="userService.user?.role === 'administrator'"
     routerLink="logout/redirect"
-    >Log out</a
+    [queryParams]="{ reason: 'logout' }"
+    *ngIf="authService.isLoggedIn()"
   >
+    Log out <mat-icon class="ml-2.5">logout</mat-icon>
+  </a>
 </mat-list>
