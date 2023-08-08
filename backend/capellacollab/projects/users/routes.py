@@ -12,6 +12,7 @@ from capellacollab.core.authentication import jwt_bearer
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
 from capellacollab.users import crud as users_crud
+from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 from capellacollab.users.events import crud as events_crud
@@ -143,11 +144,8 @@ def add_user_to_project(
     if not (
         user := users_crud.get_user_by_name(db, post_project_user.username)
     ):
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "reason": f"The user with username “{post_project_user.username}” does not exist"
-            },
+        raise users_exceptions.UserNotFoundError(
+            username=post_project_user.username
         )
     check_user_not_admin(user)
     check_user_not_in_project(project, user)

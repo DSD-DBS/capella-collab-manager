@@ -4,14 +4,13 @@
 import typing as t
 
 import fastapi
-from fastapi import status
 from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core.authentication import helper as auth_helper
 from capellacollab.core.authentication import jwt_bearer
 
-from . import crud, models
+from . import crud, exceptions, models
 
 
 def get_own_user(
@@ -23,10 +22,7 @@ def get_own_user(
     if user := crud.get_user_by_name(db, username):
         return user
 
-    raise fastapi.HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail={"reason": f"User {username} was not found"},
-    )
+    raise exceptions.UserNotFoundError(username=username)
 
 
 def get_existing_user(
@@ -40,7 +36,4 @@ def get_existing_user(
     if user := crud.get_user_by_id(db, user_id):
         return user
 
-    raise fastapi.HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail={"reason": f"User with id {user_id} was not found"},
-    )
+    raise exceptions.UserNotFoundError(user_id=user_id)
