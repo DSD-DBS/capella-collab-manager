@@ -14,10 +14,10 @@ from capellacollab.core import credentials, database
 from capellacollab.core.authentication import helper as auth_helper
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication import jwt_bearer
-from capellacollab.projects.toolmodels import models as toolmodels_models
-from capellacollab.projects.toolmodels.injectables import (
-    get_existing_capella_model,
+from capellacollab.projects.toolmodels import (
+    injectables as toolmodels_injectables,
 )
+from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.modelsources.git import (
     injectables as git_injectables,
 )
@@ -47,7 +47,7 @@ log = logging.getLogger(__name__)
 @router.get("", response_model=list[models.Backup])
 def get_pipelines(
     model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
-        get_existing_capella_model
+        toolmodels_injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
@@ -70,7 +70,7 @@ def get_pipeline(
 def create_backup(
     body: models.CreateBackup,
     capella_model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
-        get_existing_capella_model
+        toolmodels_injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
     token=fastapi.Depends(jwt_bearer.JWTBearer()),

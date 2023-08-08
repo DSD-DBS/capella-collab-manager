@@ -9,74 +9,73 @@ from capellacollab.core import database
 from capellacollab.core import exceptions as core_exceptions
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects import injectables as projects_injectables
-from capellacollab.projects.models import DatabaseProject
-from capellacollab.projects.users.models import ProjectUserRole
+from capellacollab.projects import models as projects_models
+from capellacollab.projects.users import models as projects_users_models
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
 
-from . import crud
-from .backups.routes import router as router_backups
-from .diagrams.routes import router as router_diagrams
-from .injectables import get_existing_capella_model
-from .modelbadge.routes import router as router_complexity_badge
-from .models import (
-    CapellaModel,
-    DatabaseCapellaModel,
-    PatchCapellaModel,
-    PostCapellaModel,
-)
-from .modelsources.routes import router as router_modelsources
-from .restrictions.routes import router as router_restrictions
+from . import crud, injectables, models
+from .backups import routes as backups_routes
+from .diagrams import routes as diagrams_routes
+from .modelbadge import routes as complexity_badge_routes
+from .modelsources import routes as modelsources_routes
+from .restrictions import routes as restrictions_routes
 
 router = fastapi.APIRouter(
     dependencies=[
         fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.USER
+                required_role=projects_users_models.ProjectUserRole.USER
             )
         )
     ],
 )
 
 
-@router.get("", response_model=list[CapellaModel], tags=["Projects - Models"])
+@router.get(
+    "", response_model=list[models.CapellaModel], tags=["Projects - Models"]
+)
 def get_models(
-    project: DatabaseProject = fastapi.Depends(
+    project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),
-) -> list[DatabaseCapellaModel]:
+) -> list[models.DatabaseCapellaModel]:
     return project.models
 
 
 @router.get(
-    "/{model_slug}", response_model=CapellaModel, tags=["Projects - Models"]
+    "/{model_slug}",
+    response_model=models.CapellaModel,
+    tags=["Projects - Models"],
 )
 def get_model_by_slug(
-    model: DatabaseCapellaModel = fastapi.Depends(get_existing_capella_model),
-) -> DatabaseCapellaModel:
+    model: models.DatabaseCapellaModel = fastapi.Depends(
+        injectables.get_existing_capella_model
+    ),
+) -> models.DatabaseCapellaModel:
     return model
 
 
 @router.post(
     "",
-    response_model=CapellaModel,
+    response_model=models.CapellaModel,
     dependencies=[
         fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
+                required_role=projects_users_models.ProjectUserRole.MANAGER
             )
         )
     ],
     tags=["Projects - Models"],
 )
 def create_new(
-    new_model: PostCapellaModel,
-    project: DatabaseProject = fastapi.Depends(
+    new_model: models.PostCapellaModel,
+    project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> DatabaseCapellaModel:
+) -> models.DatabaseCapellaModel:
     tool = tools_injectables.get_existing_tool(
         tool_id=new_model.tool_id, db=db
     )
@@ -95,21 +94,23 @@ def create_new(
 
 @router.patch(
     "/{model_slug}",
-    response_model=CapellaModel,
+    response_model=models.CapellaModel,
     dependencies=[
         fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
+                required_role=projects_users_models.ProjectUserRole.MANAGER
             )
         )
     ],
     tags=["Projects - Models"],
 )
 def patch_capella_model(
-    body: PatchCapellaModel,
-    model: DatabaseCapellaModel = fastapi.Depends(get_existing_capella_model),
+    body: models.PatchCapellaModel,
+    model: models.DatabaseCapellaModel = fastapi.Depends(
+        injectables.get_existing_capella_model
+    ),
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> DatabaseCapellaModel:
+) -> models.DatabaseCapellaModel:
     version = get_version_by_id_or_raise(db, body.version_id)
     if version.tool != model.tool:
         raise fastapi.HTTPException(
@@ -137,14 +138,16 @@ def patch_capella_model(
     dependencies=[
         fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
-                required_role=ProjectUserRole.MANAGER
+                required_role=projects_users_models.ProjectUserRole.MANAGER
             )
         )
     ],
     tags=["Projects - Models"],
 )
 def delete_capella_model(
-    model: DatabaseCapellaModel = fastapi.Depends(get_existing_capella_model),
+    model: models.DatabaseCapellaModel = fastapi.Depends(
+        injectables.get_existing_capella_model
+    ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
     dependencies = []
@@ -192,26 +195,26 @@ def get_nature_by_id_or_raise(
 
 
 router.include_router(
-    router_modelsources,
+    modelsources_routes.router,
     prefix="/{model_slug}/modelsources",
 )
 router.include_router(
-    router_backups,
+    backups_routes.router,
     prefix="/{model_slug}/backups/pipelines",
     tags=["Projects - Models - Backups"],
 )
 router.include_router(
-    router_restrictions,
+    restrictions_routes.router,
     prefix="/{model_slug}/restrictions",
     tags=["Projects - Models - Restrictions"],
 )
 router.include_router(
-    router_diagrams,
+    diagrams_routes.router,
     prefix="/{model_slug}/diagrams",
     tags=["Projects - Models - Diagrams"],
 )
 router.include_router(
-    router_complexity_badge,
+    complexity_badge_routes.router,
     prefix="/{model_slug}/badges/complexity",
     tags=["Projects - Models - Model complexity badge"],
 )
