@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import base64
 import binascii
+import http
 import json
 import logging
 import random
@@ -131,12 +132,11 @@ class KubernetesOperator:
         password: str,
         docker_image: str,
         t4c_license_secret: str | None,
+        persistent_workspace_claim_name: str,
         t4c_json: list[dict[str, str | int]] | None,
         pure_variants_license_server: str | None = None,
         pure_variants_secret_name: str | None = None,
     ) -> dict[str, t.Any]:
-        self._create_persistent_volume_claim(username)
-
         environment = {
             "T4C_LICENCE_SECRET": t4c_license_secret,
             "T4C_JSON": json.dumps(t4c_json),
@@ -157,7 +157,7 @@ class KubernetesOperator:
             version_name=version_name,
             environment=environment,
             ports={"rdp": 3389, "metrics": 9118},
-            persistent_workspace_claim_name=self._get_claim_name(username),
+            persistent_workspace_claim_name=persistent_workspace_claim_name,
             pure_variants_secret_name=pure_variants_secret_name,
         )
 
@@ -168,10 +168,9 @@ class KubernetesOperator:
         version_name: str,
         token: str,
         docker_image: str,
+        persistent_workspace_claim_name: str,
     ) -> dict[str, t.Any]:
         general_conf: dict = config["general"]
-
-        self._create_persistent_volume_claim(username)
 
         path = f"{jupyter_public_uri.path}/{username}"
 
@@ -190,7 +189,7 @@ class KubernetesOperator:
             version_name=version_name,
             environment=environment,
             ports={"http": 8888},
-            persistent_workspace_claim_name=self._get_claim_name(username),
+            persistent_workspace_claim_name=persistent_workspace_claim_name,
             prometheus_path=f"{path}/metrics",
             prometheus_port=8888,
             limits="low",
@@ -857,16 +856,18 @@ class KubernetesOperator:
         )
         return v1_routes.create(body=route_dict, namespace=namespace)
 
-    def _create_persistent_volume_claim(self, username: str):
+    def create_persistent_volume(
+        self, name: str, size: str, labels: dict[str, str] = None
+    ):
         pvc: client.V1PersistentVolumeClaim = client.V1PersistentVolumeClaim(
             kind="PersistentVolumeClaim",
             api_version="v1",
-            metadata=client.V1ObjectMeta(name=self._get_claim_name(username)),
+            metadata=client.V1ObjectMeta(name=name, labels=labels),
             spec=client.V1PersistentVolumeClaimSpec(
                 access_modes=[storage_access_mode],
                 storage_class_name=storage_class_name,
                 resources=client.V1ResourceRequirements(
-                    requests={"storage": "20Gi"}
+                    requests={"storage": size}
                 ),
             ),
         )
@@ -876,7 +877,20 @@ class KubernetesOperator:
                 namespace, pvc
             )
         except exceptions.ApiException as e:
+            # Persistent volume already exists
             if e.status == 409:
+                return
+            raise
+
+    def delete_persistent_volume(self, name: str):
+        try:
+            self.v1_core.delete_namespaced_persistent_volume_claim(
+                name=name, namespace=namespace
+            )
+        except exceptions.ApiException as e:
+            # Persistent volume doesn't exist or was already deleted
+            # Nothing to do
+            if e.status == http.HTTPStatus.NOT_FOUND:
                 return
             raise
 
@@ -983,12 +997,6 @@ class KubernetesOperator:
             },
         )
         return self.v1_core.create_namespaced_config_map(namespace, config_map)
-
-    def _get_claim_name(self, username: str) -> str:
-        return (
-            "persistent-session-"
-            + username.replace("@", "-at-").replace(".", "-dot-").lower()
-        )
 
     def _delete_deployment(self, name: str) -> client.V1Status | None:
         try:

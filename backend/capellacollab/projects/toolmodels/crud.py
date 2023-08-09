@@ -82,6 +82,7 @@ def create_model(
     tool: tools_models.DatabaseTool,
     version: tools_models.DatabaseVersion | None = None,
     nature: tools_models.DatabaseNature | None = None,
+    configuration: dict[str, str] | None = None,
 ) -> models.DatabaseCapellaModel:
     model = models.DatabaseCapellaModel(
         name=post_model.name,
@@ -92,6 +93,7 @@ def create_model(
         version=version,
         nature=nature,
         restrictions=restrictions_models.DatabaseToolModelRestrictions(),
+        configuration=configuration,
     )
     db.add(model)
     db.commit()
