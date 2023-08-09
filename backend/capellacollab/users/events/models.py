@@ -10,6 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 from capellacollab.projects import models as projects_models
 from capellacollab.users import models as users_models
 
@@ -40,6 +41,10 @@ class BaseHistoryEvent(pydantic.BaseModel):
     event_type: EventType
     reason: str | None
 
+    _validate_execution_time = pydantic.validator(
+        "execution_time", allow_reuse=True
+    )(core_pydantic.datetime_serializer)
+
     class Config:
         orm_mode = True
 
@@ -52,6 +57,13 @@ class UserHistory(users_models.User):
     created: datetime.datetime | None
     last_login: datetime.datetime | None
     events: list[HistoryEvent] | None
+
+    _validate_created = pydantic.validator("created", allow_reuse=True)(
+        core_pydantic.datetime_serializer
+    )
+    _validate_last_login = pydantic.validator("last_login", allow_reuse=True)(
+        core_pydantic.datetime_serializer
+    )
 
 
 class DatabaseUserHistoryEvent(database.Base):

@@ -56,7 +56,7 @@ def create_pipeline_run(
             status=models.PipelineRunStatus.PENDING,
             pipeline=pipeline,
             triggerer=triggerer,
-            trigger_time=datetime.datetime.now(),
+            trigger_time=datetime.datetime.now(datetime.UTC),
             environment=environment,
         ),
     )
@@ -125,8 +125,11 @@ def _determine_end_time_from_pipeline_run(
         minutes=interface.PIPELINES_TIMEOUT + 5
     )  # Add 5 minutes tolerance to pipeline timeout
     return min(
-        pipeline_run.trigger_time + max_pipeline_run_duration,
-        pipeline_run.end_time or datetime.datetime.now(),
+        pipeline_run.trigger_time.replace(tzinfo=datetime.UTC)
+        + max_pipeline_run_duration,
+        (pipeline_run.end_time or datetime.datetime.now(datetime.UTC)).replace(
+            tzinfo=datetime.UTC
+        ),
     )
 
 

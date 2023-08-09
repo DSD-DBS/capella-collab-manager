@@ -42,7 +42,6 @@ dependencies = [
   "jsonschema",
   "openshift",
   "starlette-prometheus",
-  "pytz",
   "fastapi-pagination",
   "aiohttp"
 ]

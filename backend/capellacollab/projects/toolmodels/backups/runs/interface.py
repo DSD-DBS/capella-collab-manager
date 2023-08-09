@@ -5,7 +5,6 @@ import asyncio
 import datetime
 import logging
 
-import pytz
 from kubernetes import client as k8s_client
 from kubernetes.client import exceptions as k8s_exceptions
 from starlette import concurrency as starlette_concurrency
@@ -93,35 +92,22 @@ def _schedule_pending_jobs():
             db.commit()
 
 
-def _transform_utc_to_local_timestamp(
-    timestamp: datetime.datetime,
-) -> datetime.datetime:
-    return timestamp.replace(tzinfo=pytz.UTC).astimezone()
-
-
 def _transform_kubernetes_logline_to_loki_entry(
     line: str,
 ) -> loki.LogEntry:
-    datetime_without_nanoseconds = line.split()[0][:-11]
-    timestamp = datetime.datetime.strptime(
-        datetime_without_nanoseconds, "%Y-%m-%dT%H:%M:%S"
+    return loki.LogEntry(
+        timestamp=datetime.datetime.fromisoformat(line.split()[0]),
+        line=line[31:],
     )
-
-    # Transform UTC from kubernetes to local timezone
-    timestamp = _transform_utc_to_local_timestamp(timestamp)
-    return loki.LogEntry(timestamp=timestamp, line=line[31:])
 
 
 def _transform_kubernetes_event_to_loki_entry(
     event: k8s_client.CoreV1Event,
 ) -> loki.LogEntry:
-    # Transform UTC from kubernetes to local timezone
     timestamp = (
-        _transform_utc_to_local_timestamp(
-            event.last_timestamp or event.event_time
-        )
-        if event.last_timestamp or event.event_time
-        else datetime.datetime.now()
+        event.last_timestamp
+        or event.event_time
+        or datetime.datetime.now(datetime.UTC)
     )
     return loki.LogEntry(
         timestamp=timestamp,
@@ -163,7 +149,7 @@ def _fetch_events_of_job_run(run: models.DatabasePipelineRun):
         loki.push_logs_to_loki(event_entries, labels)
     except Exception:
         log.exception("Failed pushing logs to loki", exc_info=True)
-    run.logs_last_fetched_timestamp = datetime.datetime.now().astimezone()
+    run.logs_last_fetched_timestamp = datetime.datetime.now(datetime.UTC)
 
 
 def _fetch_logs_of_job_runs(run: models.DatabasePipelineRun):
@@ -197,11 +183,11 @@ def _fetch_logs_of_job_runs(run: models.DatabasePipelineRun):
         loki.push_logs_to_loki(log_entries, labels)
     except Exception:
         log.exception("Failed pushing logs to loki", exc_info=True)
-    run.logs_last_fetched_timestamp = datetime.datetime.now().astimezone()
+    run.logs_last_fetched_timestamp = datetime.datetime.now(datetime.UTC)
 
 
 def _terminate_job(run: models.DatabasePipelineRun):
-    run.end_time = datetime.datetime.now()
+    run.end_time = datetime.datetime.now(datetime.UTC)
 
     try:
         operators.get_operator().delete_job(name=run.reference_id)
@@ -252,11 +238,9 @@ def _update_status_of_job_run(
     run: models.DatabasePipelineRun,
 ):
     log.debug("Update status of pipeline", extra={"run_id": run.id})
-    if (
-        run.trigger_time.astimezone()
-        < datetime.datetime.now().astimezone()
-        - datetime.timedelta(minutes=PIPELINES_TIMEOUT)
-    ):
+    if run.trigger_time.replace(tzinfo=datetime.UTC) < datetime.datetime.now(
+        datetime.UTC
+    ) - datetime.timedelta(minutes=PIPELINES_TIMEOUT):
         run.status = models.PipelineRunStatus.TIMEOUT
         return
 
