@@ -291,40 +291,7 @@ def request_persistent_session(
         tool.id, body.version_id, db
     )
 
-    existing_user_sessions = crud.get_sessions_for_user(db, owner)
-
-    # This is a temporary workaround until we can define a proper locking of workspaces
-    # Currently, all tools share one workspace. Eclipse based tools lock the workspace.
-    # We can only run one Eclipse-based tool at a time.
-    # Status tracked in https://github.com/DSD-DBS/capella-collab-manager/issues/847
-    if tool.name == "Jupyter":
-        # Check if there is already an Jupyter session running.
-        if "Jupyter" in [
-            session.tool.name for session in existing_user_sessions
-        ]:
-            raise fastapi.HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail={
-                    "err_code": "EXISTING_SESSION",
-                    "reason": "You already have a Jupyter session. Please navigate to 'Active Sessions' to connect.",
-                },
-            )
-    else:
-        if models.WorkspaceType.PERSISTENT in [
-            session.type
-            for session in existing_user_sessions
-            if session.tool.name != "Jupyter"
-        ]:
-            raise fastapi.HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail={
-                    "err_code": "EXISTING_SESSION",
-                    "reason": (
-                        "You already have a open persistent Eclipse-based session.",
-                        "Currently, we can only run one Eclipse-based session at a time.",
-                    ),
-                },
-            )
+    raise_if_conflicting_persistent_sessions(tool, user)
 
     pvc_name = workspace.create_persistent_workspace(operator, user.name)
 
@@ -368,6 +335,47 @@ def request_persistent_session(
     response.warnings = warnings
 
     return response
+
+
+def raise_if_conflicting_persistent_sessions(
+    tool: tools_models.DatabaseTool,
+    user: users_models.DatabaseUser,
+) -> None:
+    existing_user_sessions = user.sessions
+
+    # This is a temporary workaround until we can define a proper locking of workspaces
+    # Currently, all tools share one workspace. Eclipse based tools lock the workspace.
+    # We can only run one Eclipse-based tool at a time.
+    # Status tracked in https://github.com/DSD-DBS/capella-collab-manager/issues/847
+    if tool.integrations.jupyter:
+        # Check if there is already an Jupyter session running.
+        if True in [
+            session.tool.integrations.jupyter
+            for session in existing_user_sessions
+        ]:
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={
+                    "err_code": "EXISTING_SESSION",
+                    "reason": "You already have a Jupyter session. Please navigate to 'Active Sessions' to connect.",
+                },
+            )
+    else:
+        if models.WorkspaceType.PERSISTENT in [
+            session.type
+            for session in existing_user_sessions
+            if session.tool.name != "Jupyter"
+        ]:
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={
+                    "err_code": "EXISTING_SESSION",
+                    "reason": (
+                        "You already have a open persistent Eclipse-based session.",
+                        "Currently, we can only run one Eclipse-based session at a time.",
+                    ),
+                },
+            )
 
 
 def start_persistent_jupyter_session(
