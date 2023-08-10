@@ -19,6 +19,7 @@ module.exports = {
         button: "0.5rem",
         separator: "0.5rem",
         card: "400px",
+        "m-card": "1rem",
       },
     },
   },

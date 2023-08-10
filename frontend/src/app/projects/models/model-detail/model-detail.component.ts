@@ -9,6 +9,7 @@ import { combineLatest, filter } from 'rxjs';
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
+import { UserService } from 'src/app/services/user/user.service';
 import { ProjectService } from '../../service/project.service';
 
 @UntilDestroy()
@@ -22,7 +23,8 @@ export class ModelDetailComponent implements OnInit, OnDestroy {
     public projectService: ProjectService,
     public modelService: ModelService,
     public gitModelService: GitModelService,
-    public t4cModelService: T4CModelService
+    public t4cModelService: T4CModelService,
+    public userService: UserService
   ) {}
 
   ngOnInit(): void {
