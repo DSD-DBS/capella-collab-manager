@@ -14,7 +14,6 @@ from sqlalchemy import orm
 from capellacollab import config
 from capellacollab.core import credentials, database
 from capellacollab.core import models as core_models
-from capellacollab.core.authentication import helper as auth_helper
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication import jwt_bearer
 from capellacollab.projects import injectables as projects_injectables
@@ -282,9 +281,7 @@ def request_persistent_session(
     operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
     token=fastapi.Depends(jwt_bearer.JWTBearer()),
 ):
-    owner = auth_helper.get_username(token)
-
-    log.info("Starting persistent session for user %s", owner)
+    log.info("Starting persistent session for user %s", user.name)
 
     tool = tools_injectables.get_existing_tool(body.tool_id, db)
     version = tools_injectables.get_exisiting_tool_version(
@@ -309,7 +306,7 @@ def request_persistent_session(
         response = start_persistent_jupyter_session(
             db=db,
             operator=operator,
-            owner=owner,
+            owner=user.name,
             tool=tool,
             version=version,
             persistent_workspace_claim_name=pvc_name,
@@ -320,7 +317,7 @@ def request_persistent_session(
             db=db,
             operator=operator,
             user=user,
-            owner=owner,
+            owner=user.name,
             tool=tool,
             version=version,
             persistent_workspace_claim_name=pvc_name,
@@ -546,9 +543,11 @@ def create_guacamole_token(
     session: models.DatabaseSession = fastapi.Depends(
         injectables.get_existing_session
     ),
-    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+    user: users_models.DatabaseUser = fastapi.Depends(
+        users_injectables.get_own_user
+    ),
 ):
-    if session.owner_name != auth_helper.get_username(token):
+    if session.owner_name != user.name:
         raise fastapi.HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
