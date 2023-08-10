@@ -25,6 +25,9 @@ from capellacollab.__main__ import app
 from capellacollab.core import database
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import migration
+from capellacollab.users import crud as users_crud
+from capellacollab.users import injectables as users_injectables
+from capellacollab.users import models as users_models
 
 os.environ["DEVELOPMENT_MODE"] = "1"
 
@@ -80,6 +83,20 @@ def fixture_executor_name(monkeypatch: pytest.MonkeyPatch) -> str:
 @pytest.fixture(name="unique_username")
 def fixture_unique_username() -> str:
     return str(uuid1())
+
+
+@pytest.fixture(name="user")
+def fixture_user(db, executor_name):
+    user = users_crud.create_user(db, executor_name, users_models.Role.USER)
+
+    def get_mock_own_user():
+        return user
+
+    app.dependency_overrides[
+        users_injectables.get_own_user
+    ] = get_mock_own_user
+    yield user
+    del app.dependency_overrides[users_injectables.get_own_user]
 
 
 @pytest.fixture(name="project")

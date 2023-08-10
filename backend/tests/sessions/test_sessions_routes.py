@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import json
 import typing as t
 from datetime import datetime
 from uuid import uuid1
@@ -93,110 +94,42 @@ def guacamole(monkeypatch):
 class MockOperator:
     sessions = []
 
-    @classmethod
-    def start_persistent_capella_session(
-        cls,
+    def start_session(
+        self,
+        image: str,
         username: str,
+        session_type: str,
         tool_name: str,
         version_name: str,
-        password: str,
-        docker_image: str,
-        t4c_license_secret: str | None,
-        t4c_json: list[dict[str, str | int]] | None,
-        persistent_workspace_claim_name: str,
-        pure_variants_license_server: str = None,
-        pure_variants_secret_name: str = None,
+        environment: dict[str, str | None],
+        ports: dict[str, int],
+        persistent_workspace_claim_name: str | None = None,
+        prometheus_path="/metrics",
+        prometheus_port=9118,
+        limits="high",
     ) -> dict[str, t.Any]:
-        assert docker_image
-        cls.sessions.append({"docker_image": docker_image, "type": "capella"})
-        return {
-            "id": str(uuid1()),
-            "host": "test",
-            "ports": [1],
-            "created_at": datetime.now(),
-            "mac": "-",
-        }
-
-    @classmethod
-    def start_persistent_jupyter_session(
-        cls,
-        username: str,
-        tool_name: str,
-        version_name: str,
-        persistent_workspace_claim_name: str,
-        token: str,
-        docker_image: str,
-    ) -> t.Dict[str, t.Any]:
-        assert docker_image
-        cls.sessions.append({"docker_image": docker_image, "type": "jupyter"})
-        return {
-            "id": str(uuid1()),
-            "host": "test",
-            "ports": [1],
-            "created_at": datetime.now(),
-            "mac": "-",
-        }
-
-    @classmethod
-    def start_readonly_session(
-        cls,
-        username: str,
-        tool_name: str,
-        version_name: str,
-        password: str,
-        docker_image: str,
-        git_repos_json: list[dict[str, str | int]],
-    ) -> dict[str, t.Any]:
-        cls.sessions.append(
-            {"docker_image": docker_image, "git_repos_json": git_repos_json}
+        assert image
+        self.sessions.append(
+            {"docker_image": image, "environment": environment}
         )
         return {
             "id": str(uuid1()),
             "host": "test",
             "ports": [1],
             "created_at": datetime.now(),
-            "mac": "-",
         }
 
-    @classmethod
+    def create_public_route(
+        self, session_id: str, host: str, path: str, port: int
+    ):
+        pass
+
     def get_session_state(self, id: str) -> str:
         return ""
 
-    @classmethod
     def kill_session(self, id: str) -> None:
         pass
 
-    @classmethod
-    def get_session_logs(self, id: str) -> str:
-        return ""
-
-    @classmethod
-    def create_cronjob(
-        self,
-        image: str,
-        command: str,
-        environment: dict[str, str],
-        schedule="* * * * *",
-    ) -> str:
-        return ""
-
-    @classmethod
-    def delete_cronjob(self, id: str) -> None:
-        return None
-
-    @classmethod
-    def get_cronjob_last_run(self, id: str) -> str:
-        return ""
-
-    @classmethod
-    def get_cronjob_last_state(self, name: str) -> str:
-        return ""
-
-    @classmethod
-    def get_job_logs_or_events(self, _id: str) -> str:
-        return ""
-
-    @classmethod
     def create_persistent_volume(
         self, name: str, size: str, labels: dict[str, str] = None
     ):
@@ -269,7 +202,9 @@ def test_create_readonly_session_as_user(
     assert kubernetes.sessions
     assert "/capella/readonly:5.0.0" in kubernetes.sessions[0]["docker_image"]
     assert (
-        kubernetes.sessions[0]["git_repos_json"][0]["url"]
+        json.loads(kubernetes.sessions[0]["environment"]["GIT_REPOS_JSON"])[0][
+            "url"
+        ]
         == model.git_models[0].path
     )
 
@@ -372,7 +307,6 @@ def setup_active_readonly_session(db, user, project, version):
         tool=version.tool,
         version=version,
         host="test",
-        mac="-",
         ports=[1],
     )
     return create_session(db=db, session=database_model)
@@ -404,7 +338,6 @@ def test_create_persistent_session_as_user(
     assert session
     assert session.owner_name == user.name
     assert kubernetes.sessions
-    assert kubernetes.sessions[0]["type"] == "capella"
 
     assert "/capella/remote:5.0.0" in kubernetes.sessions[0]["docker_image"]
 
@@ -439,7 +372,6 @@ def test_create_persistent_jupyter_session(client, db, user, kubernetes):
     assert session
     assert session.owner_name == user.name
     assert kubernetes.sessions
-    assert kubernetes.sessions[0]["type"] == "jupyter"
     assert (
         kubernetes.sessions[0]["docker_image"]
         == "jupyter/minimal-notebook:python-3.10.8"

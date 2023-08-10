@@ -101,18 +101,13 @@ class DatabaseSession(database.Base):
     ports: orm.Mapped[list[int]] = orm.mapped_column(sa.ARRAY(sa.Integer))
     created_at: orm.Mapped[datetime.datetime]
 
-    t4c_password: orm.Mapped[str | None]
-
     rdp_password: orm.Mapped[str | None]
     guacamole_username: orm.Mapped[str | None]
     guacamole_password: orm.Mapped[str | None]
     guacamole_connection_id: orm.Mapped[str | None]
 
-    jupyter_token: orm.Mapped[str | None]
-
     host: orm.Mapped[str]
     type: orm.Mapped[WorkspaceType]
-    mac: orm.Mapped[str]
 
     owner_name: orm.Mapped[str] = orm.mapped_column(
         sa.ForeignKey("users.name")
@@ -131,3 +126,5 @@ class DatabaseSession(database.Base):
         sa.ForeignKey("projects.id")
     )
     project: orm.Mapped[projects_models.DatabaseProject] = orm.relationship()
+
+    environment: orm.Mapped[dict[str, str] | None]

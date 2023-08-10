@@ -13,8 +13,6 @@ import shlex
 import string
 import subprocess
 import typing as t
-import urllib
-from datetime import datetime
 
 import kubernetes
 import kubernetes.config
@@ -40,9 +38,6 @@ SESSIONS_KILLED = prometheus_client.Counter(
 )
 
 external_registry: str = config["docker"]["externalRegistry"]
-jupyter_public_uri = urllib.parse.urlparse(
-    config["extensions"]["jupyter"]["publicURI"]
-)
 
 cfg: dict[str, t.Any] = config["k8s"]
 
@@ -124,107 +119,31 @@ class KubernetesOperator:
         except BaseException:
             return False
 
-    def start_persistent_capella_session(
-        self,
-        username: str,
-        tool_name: str,
-        version_name: str,
-        password: str,
-        docker_image: str,
-        t4c_license_secret: str | None,
-        persistent_workspace_claim_name: str,
-        t4c_json: list[dict[str, str | int]] | None,
-        pure_variants_license_server: str | None = None,
-        pure_variants_secret_name: str | None = None,
-    ) -> dict[str, t.Any]:
-        environment = {
-            "T4C_LICENCE_SECRET": t4c_license_secret,
-            "T4C_JSON": json.dumps(t4c_json),
-            "RMT_PASSWORD": password,
-            "T4C_USERNAME": username,
-        }
-
-        if pure_variants_license_server:
-            environment[
-                "PURE_VARIANTS_LICENSE_SERVER"
-            ] = pure_variants_license_server
-
-        return self._start_session(
-            image=docker_image,
-            username=username,
-            session_type="persistent",
-            tool_name=tool_name,
-            version_name=version_name,
-            environment=environment,
-            ports={"rdp": 3389, "metrics": 9118},
-            persistent_workspace_claim_name=persistent_workspace_claim_name,
-            pure_variants_secret_name=pure_variants_secret_name,
-        )
-
-    def start_persistent_jupyter_session(
-        self,
-        username: str,
-        tool_name: str,
-        version_name: str,
-        token: str,
-        docker_image: str,
-        persistent_workspace_claim_name: str,
-    ) -> dict[str, t.Any]:
-        general_conf: dict = config["general"]
-
-        path = f"{jupyter_public_uri.path}/{username}"
-
-        environment: dict[str, str | None] = {
-            "JUPYTER_BASE_URL": path,
-            "JUPYTER_TOKEN": token,
-            "JUPYTER_PORT": "8888",
-            "CSP_ORIGIN_HOST": f"{general_conf.get('scheme')}://{general_conf.get('host')}:{general_conf.get('port')}",
-        }
-
-        session_parameters = self._start_session(
-            image=docker_image,
-            username=username,
-            session_type="persistent",
-            tool_name=tool_name,
-            version_name=version_name,
-            environment=environment,
-            ports={"http": 8888},
-            persistent_workspace_claim_name=persistent_workspace_claim_name,
-            prometheus_path=f"{path}/metrics",
-            prometheus_port=8888,
-            limits="low",
-        )
-
+    def create_public_route(
+        self, session_id: str, host: str, path: str, port: int
+    ):
         if self.openshift:
-            self._create_openshift_route(session_parameters["id"], path, 8888)
+            self._create_openshift_route(session_id, host, path, port)
         else:
-            self._create_ingress(session_parameters["id"], path, 8888)
+            self._create_ingress(session_id, host, path, port)
 
-        return session_parameters
+    def delete_public_route(self, session_id: str):
+        if self.openshift:
+            if dep_status := self._delete_openshift_route(session_id):
+                log.info(
+                    "Deleted route %s with status %s",
+                    session_id,
+                    dep_status.status,
+                )
+        else:
+            if dep_status := self._delete_ingress(session_id):
+                log.info(
+                    "Deleted ingress %s with status %s",
+                    session_id,
+                    dep_status.status,
+                )
 
-    def start_readonly_session(
-        self,
-        username: str,
-        tool_name: str,
-        version_name: str,
-        password: str,
-        docker_image: str,
-        git_repos_json: list[dict[str, str | int]],
-    ) -> dict[str, t.Any]:
-        return self._start_session(
-            image=docker_image,
-            username=username,
-            session_type="readonly",
-            tool_name=tool_name,
-            version_name=version_name,
-            environment={
-                "GIT_REPOS_JSON": json.dumps(git_repos_json),
-                "RMT_PASSWORD": password,
-            },
-            ports={"rdp": 3389, "metrics": 9118, "fileservice": 8000},
-        )
-
-    def _start_session(
+    def start_session(
         self,
         image: str,
         username: str,
@@ -234,7 +153,6 @@ class KubernetesOperator:
         environment: dict[str, str | None],
         ports: dict[str, int],
         persistent_workspace_claim_name: str | None = None,
-        pure_variants_secret_name: str | None = None,
         prometheus_path="/metrics",
         prometheus_port=9118,
         limits="high",
@@ -258,7 +176,6 @@ class KubernetesOperator:
             environment=environment,
             ports=ports,
             persistent_workspace_claim_name=persistent_workspace_claim_name,
-            pure_variants_secret_name=pure_variants_secret_name,
             limits=limits,
         )
 
@@ -283,16 +200,6 @@ class KubernetesOperator:
     def kill_session(self, _id: str):
         log.info("Terminating session %s", _id)
 
-        if self.openshift:
-            if dep_status := self._delete_openshift_route(_id):
-                log.info(
-                    "Deleted route %s with status %s", _id, dep_status.status
-                )
-        else:
-            if dep_status := self._delete_ingress(_id):
-                log.info(
-                    "Deleted ingress %s with status %s", _id, dep_status.status
-                )
         if dep_status := self._delete_deployment(name=_id):
             log.info(
                 "Deleted deployment %s with status %s", _id, dep_status.status
@@ -310,48 +217,8 @@ class KubernetesOperator:
 
         SESSIONS_KILLED.inc()
 
-    def get_jobs(self) -> list[client.V1Job]:
-        return self.v1_batch.list_namespaced_job(namespace=namespace).items
-
     def get_job_by_name(self, name: str) -> client.V1Job:
         return self.v1_batch.read_namespaced_job(name, namespace=namespace)
-
-    def get_job_state(self, job_name: str) -> str:
-        return self._get_pod_state(label_selector=f"job-name={job_name}")
-
-    def get_cronjob_last_state(self, name: str) -> str:
-        if job_name := self._get_last_job_name_of_cronjob(name):
-            return self._get_pod_state(label_selector=f"job-name={job_name}")
-        return "NoJob"
-
-    def get_job_starting_date(self, job_name: str) -> datetime | None:
-        return self._get_pod_starttime(label_selector=f"job-name={job_name}")
-
-    def _get_last_job_name_of_cronjob(self, name: str) -> str | None:
-        jobs = [
-            item
-            for item in self.v1_batch.list_namespaced_job(
-                namespace=namespace
-            ).items
-            if item.metadata.owner_references
-            and item.metadata.owner_references[0].name == name
-        ]
-
-        if jobs:
-            return jobs[-1].metadata.name
-        return None
-
-    def _get_last_job_by_label(
-        self, label_key: str, label_value: str
-    ) -> str | None:
-        jobs = self.v1_batch.list_namespaced_job(
-            namespace=namespace,
-            label_selector=f"{label_key}={label_value}",
-        ).items
-
-        if jobs:
-            return jobs[-1].metadata.name
-        return None
 
     def get_session_state(self, _id: str) -> str:
         return self._get_pod_state(label_selector=f"app={_id}")
@@ -382,17 +249,6 @@ class KubernetesOperator:
             log.exception("Error getting the session state")
 
         return "unknown"
-
-    def _get_pod_starttime(self, label_selector: str) -> datetime | None:
-        try:
-            pods: list[client.V1Pod] = self.get_pods(
-                label_selector=label_selector
-            )
-
-            return pods[0].status.start_time
-        except Exception:
-            log.exception("Error fetching the starting_time")
-            return None
 
     def get_session_logs(self, _id: str) -> str:
         return self.v1_core.read_namespaced_pod_log(
@@ -530,7 +386,6 @@ class KubernetesOperator:
             "created_at": deployment.to_dict()["metadata"][
                 "creation_timestamp"
             ],
-            "mac": "-",
             "host": service.to_dict()["metadata"]["name"] + "." + namespace,
         }
 
@@ -541,7 +396,6 @@ class KubernetesOperator:
         environment: dict[str, str | None],
         ports: dict[str, int],
         persistent_workspace_claim_name: str | None = None,
-        pure_variants_secret_name: str | None = None,
         limits: str = "high",
     ) -> client.V1Deployment:
         volumes: list[client.V1Volume] = []
@@ -588,7 +442,10 @@ class KubernetesOperator:
                 )
             )
 
-        if pure_variants_secret_name:
+        # TODO: This should be moved to a configuration hook once it supports volumes. # pylint: disable=fixme
+        if pure_variants_secret_name := environment.get(
+            "PURE_VARIANTS_SECRET"
+        ):
             session_volume_mounts.append(
                 client.V1VolumeMount(
                     name="pure-variants",
@@ -792,7 +649,7 @@ class KubernetesOperator:
         )
         return self.v1_core.create_namespaced_service(namespace, service)
 
-    def _create_ingress(self, id, path: str, port_number: int):
+    def _create_ingress(self, id, host: str, path: str, port_number: int):
         ingress = client.V1Ingress(
             api_version="networking.k8s.io/v1",
             kind="Ingress",
@@ -803,7 +660,7 @@ class KubernetesOperator:
                 ingress_class_name=cfg.get("ingressClassName"),
                 rules=[
                     client.V1IngressRule(
-                        host=jupyter_public_uri.hostname,
+                        host=host,
                         http=client.V1HTTPIngressRuleValue(
                             paths=[
                                 client.V1HTTPIngressPath(
@@ -826,7 +683,9 @@ class KubernetesOperator:
         )
         return self.v1_networking.create_namespaced_ingress(namespace, ingress)
 
-    def _create_openshift_route(self, id, path: str, port_number: int):
+    def _create_openshift_route(
+        self, id, host: str, path: str, port_number: int
+    ):
         route_dict = {
             "kind": "Route",
             "apiVersion": "route.openshift.io/v1",
@@ -834,7 +693,7 @@ class KubernetesOperator:
                 "name": id,
             },
             "spec": {
-                "host": jupyter_public_uri.hostname,
+                "host": host,
                 "path": path,
                 "to": {
                     "kind": "Service",

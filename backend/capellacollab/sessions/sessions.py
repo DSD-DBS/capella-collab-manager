@@ -22,11 +22,8 @@ def inject_attrs_in_sessions(
     for session in db_sessions:
         session.state = _determine_session_state(session)
         session.last_seen = get_last_seen(session.id)
-        session.jupyter_uri = (
-            f'{config["extensions"]["jupyter"]["publicURI"]}/{session.owner_name}/lab?token={session.jupyter_token}'
-            if session.jupyter_token
-            else ""
-        )
+        session.jupyter_uri = session.environment.get("JUPYTER_URI")
+        session.t4c_password = session.environment.get("T4C_PASSWORD")
         sessions_list.append(session)
 
     return sessions_list
