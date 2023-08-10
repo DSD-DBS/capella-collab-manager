@@ -131,7 +131,7 @@ def get_current_sessions(
         )
     ],
 )
-def request_session(
+def request_readonly_session(
     body: models.PostReadonlySessionRequest,
     db_user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
