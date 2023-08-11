@@ -80,11 +80,11 @@ async def git_pipeline_job_not_found_handler(
     return await exception_handlers.http_exception_handler(
         request,
         fastapi.HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "err_code": "PIPELINE_JOB_NOT_FOUND",
                 "reason": (
-                    f"There was no job with the name '{exc.job_name}' within the last 20 runs of the pipeline",
+                    f"There was no job with the name '{exc.job_name}' in the last 20 runs of the pipeline",
                     "Please contact your administrator.",
                 ),
             },
@@ -116,7 +116,7 @@ async def github_artifact_expired_handler(
     return await exception_handlers.http_exception_handler(
         request,
         fastapi.HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_409_CONFLICT,
             detail={
                 "err_code": "ARTIFACT_EXPIRED",
                 "reason": (
