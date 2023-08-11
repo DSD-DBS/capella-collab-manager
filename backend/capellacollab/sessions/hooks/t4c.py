@@ -110,10 +110,7 @@ class T4CIntegration(interface.HookRegistration):
         session: sessions_models.DatabaseSession,
         **kwargs,
     ):
-        if (
-            session.tool.integrations.t4c
-            and session.type == sessions_models.WorkspaceType.PERSISTENT
-        ):
+        if session.type == sessions_models.WorkspaceType.PERSISTENT:
             self._revoke_session_tokens(db, session)
 
     def _revoke_session_tokens(
