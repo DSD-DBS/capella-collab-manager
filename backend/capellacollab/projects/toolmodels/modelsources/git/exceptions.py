@@ -116,7 +116,7 @@ async def github_artifact_expired_handler(
     return await exception_handlers.http_exception_handler(
         request,
         fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "err_code": "ARTIFACT_EXPIRED",
                 "reason": (

@@ -33,7 +33,7 @@ def list_files(
     except Exception:
         log.exception("Loading of files for session %s failed", session.id)
         raise fastapi.HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "reason": "Loading the files of the session failed. Is the session running?"
             },

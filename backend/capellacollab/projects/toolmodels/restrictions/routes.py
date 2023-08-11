@@ -48,7 +48,7 @@ def update_restrictions(
 ) -> models.DatabaseToolModelRestrictions:
     if body.allow_pure_variants and not model.tool.integrations.pure_variants:
         raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail={
                 "reason": "The tool of this model has no pure::variants integration."
                 "Please enable the pure::variants integration in the settings first.",

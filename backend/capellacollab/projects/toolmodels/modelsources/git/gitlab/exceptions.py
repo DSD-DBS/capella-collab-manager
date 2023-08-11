@@ -42,7 +42,7 @@ async def gitlab_project_not_found_handler(
     return await exception_handlers.http_exception_handler(
         request,
         fastapi.HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "err_code": "PROJECT_NOT_FOUND",
                 "reason": (

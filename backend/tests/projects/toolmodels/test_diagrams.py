@@ -128,7 +128,7 @@ def test_get_diagrams_fails_without_git_instance(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams",
     )
 
-    assert response.status_code == 422
+    assert response.status_code == 400
     assert response.json()["detail"]["err_code"] == "GIT_INSTANCE_UNSUPPORTED"
 
 
