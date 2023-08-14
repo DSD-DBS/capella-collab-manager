@@ -26,7 +26,7 @@ class HookRegistration(metaclass=abc.ABCMeta):
     ) -> tuple[dict[str, str], list[core_models.Message]]:
         """Hook to determine session configuration
 
-        This hook is executed before session creation.
+        This hook is executed before the creation of persistent sessions.
 
         Parameters
         ----------
@@ -59,7 +59,8 @@ class HookRegistration(metaclass=abc.ABCMeta):
     ):
         """Hook executed after session creation
 
-        This hook is executed after the session was created by the operator.
+        This hook is executed after a persistent session was created
+        by the operator.
 
         Parameters
         ----------
@@ -80,7 +81,8 @@ class HookRegistration(metaclass=abc.ABCMeta):
     ):
         """Hook executed directly before session termination
 
-        This hook is executed after the session was terminated by the operator.
+        This hook is executed before a read-only or persistent session
+        is terminated by the operator.
 
         Parameters
         ----------
@@ -89,5 +91,5 @@ class HookRegistration(metaclass=abc.ABCMeta):
         operator : operators.KubernetesOperator
             Operator, which is used to spawn the session
         session : sessions_models.DatabaseSession
-            Session which was terminated
+            Session which is to be terminated
         """
