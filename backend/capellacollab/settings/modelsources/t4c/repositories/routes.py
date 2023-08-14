@@ -120,7 +120,7 @@ def delete_t4c_repository(
         interface.delete_repository(instance, repository.name)
     except (fastapi.HTTPException, requests.RequestException) as e:
         log.error("Repository deletion failed partially", exc_info=True)
-        response.status_code = status.HTTP_207_MULTI_STATUS
+        response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
 
         if isinstance(e, fastapi.HTTPException):
             reason: tuple[str, ...] = (

@@ -37,7 +37,7 @@ async def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
         )
         if e.returncode == 128:
             raise fastapi.HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail={
                     "err_code": "no_git_model_credentials",
                     "reason": "There was an error accessing the model. Please ask your project lead for more information. In most cases, the credentials need to be updated.",

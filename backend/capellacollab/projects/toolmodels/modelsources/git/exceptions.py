@@ -62,7 +62,7 @@ async def git_instance_api_endpoint_not_found_handler(
     return await exception_handlers.http_exception_handler(
         request,
         fastapi.HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "err_code": "GIT_INSTANCE_NO_API_ENDPOINT_DEFINED",
                 "reason": (
@@ -80,11 +80,11 @@ async def git_pipeline_job_not_found_handler(
     return await exception_handlers.http_exception_handler(
         request,
         fastapi.HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "err_code": "PIPELINE_JOB_NOT_FOUND",
                 "reason": (
-                    f"There was no job with the name '{exc.job_name}' within the last 20 runs of the pipeline",
+                    f"There was no job with the name '{exc.job_name}' in the last 20 runs of the pipeline",
                     "Please contact your administrator.",
                 ),
             },
@@ -98,7 +98,7 @@ async def git_pipeline_job_failed_handler(
     return await exception_handlers.http_exception_handler(
         request,
         fastapi.HTTPException(
-            status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=fastapi.status.HTTP_400_BAD_REQUEST,
             detail={
                 "err_code": "FAILED_JOB_FOUND",
                 "reason": (
@@ -116,7 +116,7 @@ async def github_artifact_expired_handler(
     return await exception_handlers.http_exception_handler(
         request,
         fastapi.HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "err_code": "ARTIFACT_EXPIRED",
                 "reason": (

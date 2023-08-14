@@ -23,7 +23,7 @@ async def pipeline_creation_failed_t4c_server_unreachable_handler(
     return await exception_handlers.http_exception_handler(
         request,
         fastapi.HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "err_code": "PIPELINE_OPERATION_FAILED_T4C_SERVER_UNREACHABLE",
                 "title": f"The '{exc.operation.value}' operation on the pipeline failed",

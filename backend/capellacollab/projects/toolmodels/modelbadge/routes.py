@@ -44,7 +44,7 @@ async def get_model_complexity_badge(
     except (aiohttp.web.HTTPException, requests.exceptions.HTTPError):
         logger.info("Failed fetching model complexity badge", exc_info=True)
         raise fastapi.HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "reason": (
                     "The model complexity badge integration is not configured properly.",

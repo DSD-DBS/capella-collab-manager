@@ -52,7 +52,7 @@ async def get_diagram_metadata(
     except requests.exceptions.HTTPError:
         logger.info("Failed fetching diagram metadata", exc_info=True)
         raise fastapi.HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "reason": (
                     "The diagram cache is not configured properly.",
@@ -90,7 +90,7 @@ async def get_diagram(
     except requests.exceptions.HTTPError:
         logger.info("Failed fetching diagram", exc_info=True)
         raise fastapi.HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "reason": (
                     "The diagram cache is not configured properly.",

@@ -18,7 +18,7 @@ def get_existing_git_instance(
         return git_instance
 
     raise fastapi.HTTPException(
-        status_code=status.HTTP_400_BAD_REQUEST,
+        status_code=status.HTTP_404_NOT_FOUND,
         detail={
             "err_code": "git_instance_not_found",
             "reason": f"The git setting ({git_instance_id}) does not exists",
