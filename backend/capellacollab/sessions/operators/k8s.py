@@ -26,7 +26,7 @@ from openshift.dynamic import exceptions as dynamic_exceptions
 
 from capellacollab.config import config
 
-from . import helper
+from . import helper, models
 
 log = logging.getLogger(__name__)
 
@@ -152,7 +152,7 @@ class KubernetesOperator:
         version_name: str,
         environment: dict[str, str | None],
         ports: dict[str, int],
-        persistent_workspace_claim_name: str | None = None,
+        volumes: list[models.Volume],
         prometheus_path="/metrics",
         prometheus_port=9118,
         limits="high",
@@ -175,7 +175,7 @@ class KubernetesOperator:
             name=_id,
             environment=environment,
             ports=ports,
-            persistent_workspace_claim_name=persistent_workspace_claim_name,
+            volumes=volumes,
             limits=limits,
         )
 
@@ -389,38 +389,58 @@ class KubernetesOperator:
             "host": service.to_dict()["metadata"]["name"] + "." + namespace,
         }
 
+    def _map_volumes_to_k8s_volumes(
+        self,
+        volumes: list[models.Volume],
+    ) -> tuple[list[client.V1Volume], list[client.V1VolumeMount]]:
+        k8s_volumes: list[client.V1Volume] = []
+        k8s_volume_mounts: list[client.V1VolumeMount] = []
+
+        for volume in volumes:
+            k8s_volumes.append(self._map_volume_to_k8s_volume(volume))
+
+            k8s_volume_mounts.append(
+                client.V1VolumeMount(
+                    name=volume.name,
+                    mount_path=str(volume.container_path),
+                    read_only=volume.read_only,
+                )
+            )
+
+        return k8s_volumes, k8s_volume_mounts
+
+    def _map_volume_to_k8s_volume(self, volume: models.Volume):
+        if isinstance(volume, models.PersistentVolume):
+            return client.V1Volume(
+                name=volume.name,
+                persistent_volume_claim=client.V1PersistentVolumeClaimVolumeSource(
+                    claim_name=volume.volume_name
+                ),
+            )
+
+        if isinstance(volume, models.EmptyVolume):
+            return client.V1Volume(
+                name=volume.name,
+                empty_dir=client.V1EmptyDirVolumeSource(),
+            )
+
+        raise KeyError(
+            f"The Kubernetes operator encountered an unsupported session volume type '{type(volume)}'"
+        )
+
     def _create_deployment(
         self,
         image: str,
         name: str,
         environment: dict[str, str | None],
         ports: dict[str, int],
-        persistent_workspace_claim_name: str | None = None,
+        volumes: list[models.Volume],
         limits: str = "high",
     ) -> client.V1Deployment:
-        volumes: list[client.V1Volume] = []
-        session_volume_mounts: list[client.V1VolumeMount] = []
-        promtail_volume_mounts: list[client.V1VolumeMount] = []
-
-        if persistent_workspace_claim_name:
-            volumes.append(
-                client.V1Volume(
-                    name="workspace",
-                    persistent_volume_claim=client.V1PersistentVolumeClaimVolumeSource(
-                        claim_name=persistent_workspace_claim_name
-                    ),
-                )
-            )
-        else:
-            volumes.append(
-                client.V1Volume(
-                    name="workspace", empty_dir=client.V1EmptyDirVolumeSource()
-                )
-            )
-
-        session_volume_mounts.append(
-            client.V1VolumeMount(name="workspace", mount_path="/workspace")
+        k8s_volumes, k8s_volume_mounts = self._map_volumes_to_k8s_volumes(
+            volumes
         )
+        promtail_volume_mounts: list[client.V1VolumeMount] = []
 
         if loki_enabled:
             promtail_volume_mounts.append(
@@ -429,7 +449,7 @@ class KubernetesOperator:
                 )
             )
 
-            volumes.append(
+            k8s_volumes.append(
                 client.V1Volume(
                     name="prom-config",
                     config_map=client.V1ConfigMapVolumeSource(name=name),
@@ -446,7 +466,7 @@ class KubernetesOperator:
         if pure_variants_secret_name := environment.get(
             "PURE_VARIANTS_SECRET"
         ):
-            session_volume_mounts.append(
+            k8s_volume_mounts.append(
                 client.V1VolumeMount(
                     name="pure-variants",
                     mount_path="/inputs/pure-variants",
@@ -454,7 +474,7 @@ class KubernetesOperator:
                 )
             )
 
-            volumes.append(
+            k8s_volumes.append(
                 client.V1Volume(
                     name="pure-variants",
                     secret=client.V1SecretVolumeSource(
@@ -489,7 +509,7 @@ class KubernetesOperator:
                     for key, value in environment.items()
                 ],
                 resources=resources,
-                volume_mounts=session_volume_mounts,
+                volume_mounts=k8s_volume_mounts,
                 image_pull_policy=image_pull_policy,
             )
         )
@@ -530,7 +550,7 @@ class KubernetesOperator:
                     spec=client.V1PodSpec(
                         security_context=pod_security_context,
                         containers=containers,
-                        volumes=volumes,
+                        volumes=k8s_volumes,
                         restart_policy="Always",
                     ),
                 ),

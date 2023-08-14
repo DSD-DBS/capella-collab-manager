@@ -11,6 +11,7 @@ from sqlalchemy import orm
 from capellacollab.core import credentials
 from capellacollab.core import models as core_models
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.sessions.operators import models as operators_models
 from capellacollab.settings.modelsources.t4c.repositories import (
     crud as repo_crud,
 )
@@ -41,7 +42,11 @@ class T4CIntegration(interface.HookRegistration):
         tool_version: tools_models.DatabaseVersion,
         token: dict[str, t.Any],
         **kwargs,
-    ) -> tuple[T4CConfigEnvironment, list[core_models.Message]]:
+    ) -> tuple[
+        T4CConfigEnvironment,
+        list[operators_models.Volume],
+        list[core_models.Message],
+    ]:
         environment = {}
         warnings: list[core_models.Message] = []
 
@@ -102,7 +107,7 @@ class T4CIntegration(interface.HookRegistration):
                     exc_info=True,
                 )
 
-        return environment, warnings
+        return environment, [], warnings
 
     def pre_session_termination_hook(
         self,

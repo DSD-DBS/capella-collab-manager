@@ -46,7 +46,7 @@ class TestSessionHook(hooks_interface.HookRegistration):
         **kwargs,
     ) -> tuple[dict[str, str], list[core_models.Message]]:
         self.configuration_hook_counter += 1
-        return {}, []
+        return {}, [], []
 
     def post_session_creation_hook(
         self,

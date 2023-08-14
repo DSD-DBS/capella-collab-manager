@@ -9,6 +9,7 @@ from capellacollab.config import config
 from capellacollab.core import credentials
 from capellacollab.core import models as core_models
 from capellacollab.sessions import operators
+from capellacollab.sessions.operators import models as operators_models
 from capellacollab.users import models as users_models
 
 from .. import models as sessions_models
@@ -35,7 +36,11 @@ class JupyterIntegration(interface.HookRegistration):
         self,
         user: users_models.DatabaseUser,
         **kwargs,
-    ) -> tuple[JupyterConfigEnvironment, list[core_models.Message]]:
+    ) -> tuple[
+        JupyterConfigEnvironment,
+        list[operators_models.Volume],
+        list[core_models.Message],
+    ]:
         jupyter_token = credentials.generate_password(length=64)
 
         environment = {
@@ -46,7 +51,7 @@ class JupyterIntegration(interface.HookRegistration):
             "CSP_ORIGIN_HOST": f"{self._general_conf.get('scheme')}://{self._general_conf.get('host')}:{self._general_conf.get('port')}",
         }
 
-        return environment, []
+        return environment, [], []
 
     def post_session_creation_hook(
         self,
