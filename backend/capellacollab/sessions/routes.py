@@ -450,8 +450,6 @@ def start_persistent_jupyter_session(
     persistent_workspace_claim_name: str,
     docker_image: str,
 ):
-    docker_image = get_image_for_tool_version(db, version.id)
-
     session = operator.start_session(
         image=docker_image,
         username=owner,
@@ -495,8 +493,8 @@ def start_persistent_guacamole_session(
     version: tools_models.DatabaseVersion,
     persistent_workspace_claim_name: str,
     environment: dict[str, str],
+    docker_image: str,
 ):
-    docker_image = get_image_for_tool_version(db, version.id)
     rdp_password = credentials.generate_password(length=64)
 
     environment = environment | {"RMT_PASSWORD": rdp_password}
