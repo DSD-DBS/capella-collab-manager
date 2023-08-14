@@ -253,10 +253,6 @@ Angular Material Card Styles
   font-size: 1.5em;
 }
 
-.monospace {
-  font-family: monospace;
-}
-
 .mat-dialog {
   min-width: 800px;
 }
