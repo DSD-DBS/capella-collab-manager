@@ -302,6 +302,8 @@ def request_persistent_session(
         environment |= hook_env
         warnings += hook_warnings
 
+    docker_image = get_image_for_tool_version(db, version.id)
+
     if tool.integrations and tool.integrations.jupyter:
         response = start_persistent_jupyter_session(
             db=db,
@@ -311,6 +313,7 @@ def request_persistent_session(
             version=version,
             persistent_workspace_claim_name=pvc_name,
             environment=environment,
+            docker_image=docker_image,
         )
     else:
         response = start_persistent_guacamole_session(
@@ -322,6 +325,7 @@ def request_persistent_session(
             version=version,
             persistent_workspace_claim_name=pvc_name,
             environment=environment,
+            docker_image=docker_image,
         )
 
     for hook in hooks.get_activated_integration_hooks(tool):
@@ -383,9 +387,8 @@ def start_persistent_jupyter_session(
     environment: dict[str, str],
     version: tools_models.DatabaseVersion,
     persistent_workspace_claim_name: str,
+    docker_image: str,
 ):
-    docker_image = get_image_for_tool_version(db, version.id)
-
     session = operator.start_session(
         image=docker_image,
         username=owner,
@@ -421,8 +424,8 @@ def start_persistent_guacamole_session(
     version: tools_models.DatabaseVersion,
     persistent_workspace_claim_name: str,
     environment: dict[str, str],
+    docker_image: str,
 ):
-    docker_image = get_image_for_tool_version(db, version.id)
     rdp_password = credentials.generate_password(length=64)
 
     environment = environment | {"RMT_PASSWORD": rdp_password}
