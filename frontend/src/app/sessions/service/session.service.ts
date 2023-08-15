@@ -119,6 +119,12 @@ export class SessionService {
         css = 'warning';
         break;
 
+      // OpenShift specific
+      case 'AddedInterface':
+        text = 'Preparation of the session';
+        css = 'warning';
+        break;
+
       // Pod phases (that are not handled before)
       case 'Pending':
         text = 'Your session is scheduled';
