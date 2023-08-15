@@ -2,14 +2,22 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import pathlib
 import typing as t
 from urllib import parse as urllib_parse
+
+from sqlalchemy import orm
 
 from capellacollab.config import config
 from capellacollab.core import credentials
 from capellacollab.core import models as core_models
+from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.projects.toolmodels import crud as toolmodels_crud
+from capellacollab.projects.toolmodels import models as toolmodels_models
+from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import operators
 from capellacollab.sessions.operators import models as operators_models
+from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 
 from .. import models as sessions_models
@@ -22,6 +30,7 @@ class JupyterConfigEnvironment(t.TypedDict):
     JUPYTER_BASE_URL: str
     JUPYTER_TOKEN: str
     JUPYTER_PORT: str
+    JUPYTER_URI: str
     CSP_ORIGIN_HOST: str
 
 
@@ -34,7 +43,10 @@ class JupyterIntegration(interface.HookRegistration):
 
     def configuration_hook(
         self,
+        db: orm.Session,
         user: users_models.DatabaseUser,
+        tool: tools_models.DatabaseTool,
+        token: dict[str, t.Any],
         **kwargs,
     ) -> tuple[
         JupyterConfigEnvironment,
@@ -43,7 +55,7 @@ class JupyterIntegration(interface.HookRegistration):
     ]:
         jupyter_token = credentials.generate_password(length=64)
 
-        environment = {
+        environment: JupyterConfigEnvironment = {
             "JUPYTER_TOKEN": jupyter_token,
             "JUPYTER_BASE_URL": self._determine_base_url(user.name),
             "JUPYTER_PORT": "8888",
@@ -51,7 +63,9 @@ class JupyterIntegration(interface.HookRegistration):
             "CSP_ORIGIN_HOST": f"{self._general_conf.get('scheme')}://{self._general_conf.get('host')}:{self._general_conf.get('port')}",
         }
 
-        return environment, [], []
+        volumes = self._get_project_share_volume_mounts(db, token, tool)
+
+        return environment, volumes, []
 
     def post_session_creation_hook(
         self,
@@ -77,3 +91,60 @@ class JupyterIntegration(interface.HookRegistration):
 
     def _determine_base_url(self, username: str):
         return f"{self._jupyter_public_uri.path}/{username}"
+
+    def _get_project_share_volume_mounts(
+        self,
+        db: orm.Session,
+        token: dict[str, t.Any],
+        tool: tools_models.DatabaseTool,
+    ) -> list[operators_models.PersistentVolume]:
+        volumes = []
+
+        accessible_models_with_workspace_configuration = [
+            model
+            for model in toolmodels_crud.get_models_by_tool(db, tool.id)
+            if model.configuration
+            and "workspace" in model.configuration
+            and self._is_project_member(model, token, db)
+        ]
+
+        for model in accessible_models_with_workspace_configuration:
+            assert model.configuration
+            volumes.append(
+                operators_models.PersistentVolume(
+                    name=model.configuration["workspace"],
+                    read_only=not self._has_project_write_access(
+                        model, token, db
+                    ),
+                    container_path=pathlib.PurePosixPath("/shared")
+                    / model.project.slug
+                    / model.slug,
+                    volume_name="shared-workspace-"
+                    + model.configuration["workspace"],
+                )
+            )
+
+        return volumes
+
+    def _is_project_member(
+        self,
+        model: toolmodels_models.DatabaseCapellaModel,
+        token: dict[str, t.Any],
+        db: orm.Session,
+    ) -> bool:
+        return auth_injectables.ProjectRoleVerification(
+            required_role=projects_users_models.ProjectUserRole.USER,
+            verify=False,
+        )(model.project.slug, token, db)
+
+    def _has_project_write_access(
+        self,
+        model: toolmodels_models.DatabaseCapellaModel,
+        token: dict[str, t.Any],
+        db: orm.Session,
+    ) -> bool:
+        return auth_injectables.ProjectRoleVerification(
+            required_role=projects_users_models.ProjectUserRole.USER,
+            required_permission=projects_users_models.ProjectUserPermission.WRITE,
+            verify=False,
+        )(model.project.slug, token, db)
