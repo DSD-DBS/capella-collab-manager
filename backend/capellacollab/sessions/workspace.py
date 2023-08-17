@@ -5,10 +5,11 @@ from .operators import k8s
 
 
 def _get_volume_name(username: str) -> str:
-    return (
-        "persistent-session-"
-        + username.replace("@", "-at-").replace(".", "-dot-").lower()
-    )
+    return "persistent-session-" + _normalize_username(username)
+
+
+def _normalize_username(username: str) -> str:
+    return username.replace("@", "-at-").replace(".", "-dot-").lower()
 
 
 def create_persistent_workspace(
@@ -19,7 +20,7 @@ def create_persistent_workspace(
         _get_volume_name(username),
         "20Gi",
         labels={
-            "capellacollab/username": username,
+            "capellacollab/username": _normalize_username(username),
         },
     )
     return persistent_workspace_name
