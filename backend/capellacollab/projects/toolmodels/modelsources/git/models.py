@@ -75,7 +75,7 @@ class DatabaseGitModel(database.Base):
             name="",
             primary=primary,
             model_id=model_id,
-            **new_model.dict(),
+            **new_model.model_dump(),
         )
 
 

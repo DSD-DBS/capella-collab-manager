@@ -27,7 +27,7 @@ def get_notice_by_id(
 def create_notice(
     db: orm.Session, body: models.CreateNoticeRequest
 ) -> models.DatabaseNotice:
-    notice = models.DatabaseNotice(**body.dict())
+    notice = models.DatabaseNotice(**body.model_dump())
     db.add(notice)
     db.commit()
     return notice

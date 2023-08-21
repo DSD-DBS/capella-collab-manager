@@ -56,7 +56,7 @@ def create_t4c_instance(
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseT4CInstance:
     version = toolmodels_routes.get_version_by_id_or_raise(db, body.version_id)
-    instance = models.DatabaseT4CInstance(**body.dict())
+    instance = models.DatabaseT4CInstance(**body.model_dump())
     instance.version = version
     return crud.create_t4c_instance(db, instance)
 
