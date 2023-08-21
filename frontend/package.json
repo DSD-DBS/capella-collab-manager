@@ -50,7 +50,7 @@
     "@angular-eslint/template-parser": "16.1.0",
     "@angular/cli": "~16.2.0",
     "@angular/compiler-cli": "~16.2.0",
-    "@playwright/test": "^1.36.2",
+    "@playwright/test": "^1.37.1",
     "@types/file-saver": "^2.0.5",
     "@types/jasmine": "~4.3.5",
     "@types/node": "^20.4.9",
