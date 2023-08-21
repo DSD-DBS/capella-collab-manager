@@ -4,7 +4,6 @@
 import typing as t
 
 import pydantic
-from pydantic import generics
 
 T = t.TypeVar("T")
 
@@ -21,5 +20,5 @@ class ResponseModel(pydantic.BaseModel):
     errors: list[Message] | None = None
 
 
-class PayloadResponseModel(ResponseModel, generics.GenericModel, t.Generic[T]):
+class PayloadResponseModel(ResponseModel, t.Generic[T]):
     payload: T

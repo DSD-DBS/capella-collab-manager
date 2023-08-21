@@ -18,13 +18,12 @@ class GitType(enum.Enum):
 
 
 class PostGitInstance(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     type: GitType
     name: str
     url: str
     api_url: str | None
-
-    class Config:
-        orm_mode = True
 
 
 class GitInstance(PostGitInstance):

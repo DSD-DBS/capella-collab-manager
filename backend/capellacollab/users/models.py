@@ -24,11 +24,10 @@ class Role(enum.Enum):
 
 
 class BaseUser(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     name: str
     role: Role
-
-    class Config:
-        orm_mode = True
 
 
 class User(BaseUser):

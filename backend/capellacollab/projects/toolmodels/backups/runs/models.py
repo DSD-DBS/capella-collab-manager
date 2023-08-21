@@ -67,15 +67,14 @@ class DatabasePipelineRun(Base):
 
 
 class PipelineRun(BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     id: int
     reference_id: str | None
     triggerer: users_models.User
     trigger_time: datetime.datetime
     status: PipelineRunStatus
     environment: dict[str, str]
-
-    class Config:
-        orm_mode = True
 
 
 class BackupPipelineRun(BaseModel):

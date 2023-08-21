@@ -29,12 +29,11 @@ class ProjectUserPermission(enum.Enum):
 
 
 class ProjectUser(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     role: ProjectUserRole
     permission: ProjectUserPermission
     user: users_models.User
-
-    class Config:
-        orm_mode = True
 
 
 class PostProjectUser(pydantic.BaseModel):

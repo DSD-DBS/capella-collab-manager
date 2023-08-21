@@ -71,15 +71,16 @@ class DatabaseNature(database.Base):
 
 
 class ToolBase(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     id: int
     name: str
     integrations: integrations_models.ToolIntegrations
 
-    class Config:
-        orm_mode = True
-
 
 class ToolDockerimage(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     persistent: str
     readonly: str | None
     backup: str | None
@@ -91,9 +92,6 @@ class ToolDockerimage(pydantic.BaseModel):
             readonly=obj.readonly_docker_image_template,
             backup=obj.docker_image_backup_template,
         )
-
-    class Config:
-        orm_mode = True
 
 
 class PatchToolDockerimage(pydantic.BaseModel):
@@ -117,13 +115,12 @@ class UpdateToolVersion(pydantic.BaseModel):
 
 
 class ToolVersionBase(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     id: int
     name: str
     is_recommended: bool
     is_deprecated: bool
-
-    class Config:
-        orm_mode = True
 
 
 class ToolVersionWithTool(ToolVersionBase):
@@ -131,11 +128,10 @@ class ToolVersionWithTool(ToolVersionBase):
 
 
 class ToolNatureBase(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     id: int
     name: str
-
-    class Config:
-        orm_mode = True
 
 
 class CreateTool(pydantic.BaseModel):

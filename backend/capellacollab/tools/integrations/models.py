@@ -16,12 +16,11 @@ if t.TYPE_CHECKING:
 
 
 class ToolIntegrations(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     t4c: bool
     pure_variants: bool
     jupyter: bool
-
-    class Config:
-        orm_mode = True
 
 
 class PatchToolIntegrations(pydantic.BaseModel):

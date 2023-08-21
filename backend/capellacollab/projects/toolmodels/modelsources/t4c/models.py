@@ -52,12 +52,11 @@ class SubmitT4CModel(pydantic.BaseModel):
 
 
 class SimpleT4CModel(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     project_name: str
     repository_name: str
     instance_name: str
-
-    class Config:
-        orm_mode = True
 
     @classmethod
     def from_orm(cls, obj: DatabaseT4CModel) -> SimpleT4CModel:
@@ -69,16 +68,14 @@ class SimpleT4CModel(pydantic.BaseModel):
 
 
 class T4CModel(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     id: int
     name: str
     repository: repositories_models.T4CRepository
 
-    class Config:
-        orm_mode = True
-
 
 class T4CRepositoryWithModels(repositories_models.T4CRepository):
-    models: list[T4CModel]
+    model_config = pydantic.ConfigDict(from_attributes=True)
 
-    class Config:
-        orm_mode = True
+    models: list[T4CModel]

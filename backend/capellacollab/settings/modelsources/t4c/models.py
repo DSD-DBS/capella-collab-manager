@@ -88,6 +88,8 @@ def port_validator(value: int | None) -> int | None:
 
 
 class T4CInstanceBase(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     license: str
     host: str
     port: int
@@ -115,11 +117,10 @@ class T4CInstanceBase(pydantic.BaseModel):
         port_validator
     )
 
-    class Config:
-        orm_mode = True
-
 
 class PatchT4CInstance(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     name: str | None
     license: str | None
     host: str | None
@@ -149,9 +150,6 @@ class PatchT4CInstance(pydantic.BaseModel):
     _validate_http_port = pydantic.validator("http_port", allow_reuse=True)(
         port_validator
     )
-
-    class Config:
-        orm_mode = True
 
 
 class T4CInstanceComplete(T4CInstanceBase):

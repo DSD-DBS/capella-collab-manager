@@ -34,6 +34,8 @@ class EventType(enum.Enum):
 
 
 class BaseHistoryEvent(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     user: users_models.User
     executor: users_models.User | None
     project: projects_models.Project | None
@@ -44,9 +46,6 @@ class BaseHistoryEvent(pydantic.BaseModel):
     _validate_execution_time = pydantic.validator(
         "execution_time", allow_reuse=True
     )(core_pydantic.datetime_serializer)
-
-    class Config:
-        orm_mode = True
 
 
 class HistoryEvent(BaseHistoryEvent):

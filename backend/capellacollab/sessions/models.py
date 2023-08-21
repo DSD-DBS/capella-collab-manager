@@ -30,6 +30,8 @@ class WorkspaceType(enum.Enum):
 
 
 class GetSessionsResponse(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     id: str
     type: WorkspaceType
     created_at: datetime.datetime
@@ -46,9 +48,6 @@ class GetSessionsResponse(pydantic.BaseModel):
         core_pydantic.datetime_serializer
     )
 
-    class Config:
-        orm_mode = True
-
 
 class OwnSessionResponse(GetSessionsResponse):
     t4c_password: str | None
@@ -63,34 +62,30 @@ class PostReadonlySessionEntry(pydantic.BaseModel):
 
 
 class PostReadonlySessionRequest(pydantic.BaseModel):
-    models: list[PostReadonlySessionEntry]
+    model_config = pydantic.ConfigDict(from_attributes=True)
 
-    class Config:
-        orm_mode = True
+    models: list[PostReadonlySessionEntry]
 
 
 class PostPersistentSessionRequest(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     tool_id: int
     version_id: int
 
-    class Config:
-        orm_mode = True
-
 
 class GetSessionUsageResponse(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     free: int
     total: int
 
-    class Config:
-        orm_mode = True
-
 
 class GuacamoleAuthentication(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     token: str
     url: str
-
-    class Config:
-        orm_mode = True
 
 
 class DatabaseSession(database.Base):

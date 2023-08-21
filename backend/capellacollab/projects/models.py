@@ -30,6 +30,8 @@ class Visibility(enum.Enum):
 
 
 class Project(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     name: str
     slug: str
     description: str | None
@@ -74,9 +76,6 @@ class Project(pydantic.BaseModel):
                 ]
             ),
         )
-
-    class Config:
-        orm_mode = True
 
 
 class PatchProject(pydantic.BaseModel):

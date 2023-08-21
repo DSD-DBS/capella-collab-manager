@@ -28,6 +28,8 @@ class PatchGitModel(PostGitModel):
 
 
 class GitModel(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     id: int
     name: str
     path: str
@@ -43,9 +45,6 @@ class GitModel(pydantic.BaseModel):
         if isinstance(passw, bool):
             return passw
         return passw is not None and len(passw) > 0
-
-    class Config:
-        orm_mode = True
 
 
 class DatabaseGitModel(database.Base):

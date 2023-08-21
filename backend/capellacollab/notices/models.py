@@ -20,12 +20,11 @@ class NoticeLevel(enum.Enum):
 
 
 class CreateNoticeRequest(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     level: NoticeLevel
     title: str
     message: str
-
-    class Config:
-        orm_mode = True
 
 
 class NoticeResponse(CreateNoticeRequest):

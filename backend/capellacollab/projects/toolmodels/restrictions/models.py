@@ -16,13 +16,12 @@ if t.TYPE_CHECKING:
 
 
 class ToolModelRestrictions(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     # If true, access to the specific resource is granted for a model.
     # If false, the access is not allowed.
 
     allow_pure_variants: bool
-
-    class Config:
-        orm_mode = True
 
 
 class DatabaseToolModelRestrictions(database.Base):

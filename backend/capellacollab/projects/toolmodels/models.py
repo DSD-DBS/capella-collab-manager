@@ -112,6 +112,8 @@ class DatabaseCapellaModel(database.Base):
 
 
 class CapellaModel(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     id: int
     slug: str
     name: str
@@ -123,6 +125,3 @@ class CapellaModel(pydantic.BaseModel):
     t4c_models: list[t4c_models.T4CModel] | None
 
     restrictions: restrictions_models.ToolModelRestrictions | None
-
-    class Config:
-        orm_mode = True
