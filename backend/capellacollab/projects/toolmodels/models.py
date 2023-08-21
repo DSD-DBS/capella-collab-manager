@@ -12,12 +12,10 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.projects.toolmodels.modelsources.git import (
-    models as git_models,
-)
-from capellacollab.projects.toolmodels.modelsources.t4c import (
-    models as t4c_models,
-)
+
+# Importing the modules here does not work as it produces a pydantic error for the CapellaModel
+from capellacollab.projects.toolmodels.modelsources.git.models import GitModel
+from capellacollab.projects.toolmodels.modelsources.t4c.models import T4CModel
 from capellacollab.tools import models as tools_models
 
 from .restrictions import models as restrictions_models
@@ -46,12 +44,12 @@ class EditingMode(enum.Enum):
 
 class PostCapellaModel(pydantic.BaseModel):
     name: str
-    description: str | None
+    description: str | None = None
     tool_id: int
 
 
 class PatchCapellaModel(pydantic.BaseModel):
-    description: str | None
+    description: str | None = None
     version_id: int
     nature_id: int
 
@@ -119,9 +117,9 @@ class CapellaModel(pydantic.BaseModel):
     name: str
     description: str
     tool: tools_models.ToolBase
-    version: tools_models.ToolVersionBase | None
-    nature: tools_models.ToolNatureBase | None
-    git_models: list[git_models.GitModel] | None
-    t4c_models: list[t4c_models.T4CModel] | None
+    version: tools_models.ToolVersionBase | None = None
+    nature: tools_models.ToolNatureBase | None = None
+    git_models: list[GitModel] | None = None
+    t4c_models: list[T4CModel] | None = None
 
-    restrictions: restrictions_models.ToolModelRestrictions | None
+    restrictions: restrictions_models.ToolModelRestrictions | None = None

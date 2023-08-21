@@ -94,7 +94,7 @@ class T4CInstanceBase(pydantic.BaseModel):
     host: str
     port: int
     cdo_port: int
-    http_port: int | None
+    http_port: int | None = None
     usage_api: str
     rest_api: str
     username: str
@@ -121,18 +121,18 @@ class T4CInstanceBase(pydantic.BaseModel):
 class PatchT4CInstance(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(from_attributes=True)
 
-    name: str | None
-    license: str | None
-    host: str | None
-    port: int | None
-    cdo_port: int | None
-    http_port: int | None
-    usage_api: str | None
-    rest_api: str | None
-    username: str | None
-    password: str | None
-    protocol: Protocol | None
-    version_id: int | None
+    name: str | None = None
+    license: str | None = None
+    host: str | None = None
+    port: int | None = None
+    cdo_port: int | None = None
+    http_port: int | None = None
+    usage_api: str | None = None
+    rest_api: str | None = None
+    username: str | None = None
+    password: str | None = None
+    protocol: Protocol | None = None
+    version_id: int | None = None
 
     # validators
     _validate_rest_api_url = pydantic.validator("rest_api", allow_reuse=True)(

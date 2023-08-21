@@ -37,11 +37,11 @@ class BaseHistoryEvent(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(from_attributes=True)
 
     user: users_models.User
-    executor: users_models.User | None
-    project: projects_models.Project | None
+    executor: users_models.User | None = None
+    project: projects_models.Project | None = None
     execution_time: datetime.datetime
     event_type: EventType
-    reason: str | None
+    reason: str | None = None
 
     _validate_execution_time = pydantic.validator(
         "execution_time", allow_reuse=True
@@ -53,9 +53,9 @@ class HistoryEvent(BaseHistoryEvent):
 
 
 class UserHistory(users_models.User):
-    created: datetime.datetime | None
-    last_login: datetime.datetime | None
-    events: list[HistoryEvent] | None
+    created: datetime.datetime | None = None
+    last_login: datetime.datetime | None = None
+    events: list[HistoryEvent] | None = None
 
     _validate_created = pydantic.validator("created", allow_reuse=True)(
         core_pydantic.datetime_serializer

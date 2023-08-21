@@ -23,7 +23,7 @@ class ToolmodelStatus(pydantic.BaseModel):
 
     warnings: list[str]
     primary_git_repository_status: git_models.GitModelStatus
-    pipeline_status: pipeline_run_models.PipelineRunStatus | None
+    pipeline_status: pipeline_run_models.PipelineRunStatus | None = None
     model_badge_status: git_models.ModelArtifactStatus
     diagram_cache_status: git_models.ModelArtifactStatus
 

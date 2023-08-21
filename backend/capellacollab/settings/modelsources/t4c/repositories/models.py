@@ -60,7 +60,7 @@ class T4CRepository(CreateT4CRepository):
 
     id: int
     instance: t4c_models.T4CInstance
-    status: T4CRepositoryStatus | None
+    status: T4CRepositoryStatus | None = None
 
 
 class T4CInstanceWithRepositories(t4c_models.T4CInstance):

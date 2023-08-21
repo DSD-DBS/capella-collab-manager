@@ -37,12 +37,12 @@ class GetSessionsResponse(pydantic.BaseModel):
     created_at: datetime.datetime
     owner: users_models.BaseUser
     state: str
-    guacamole_username: str | None
-    guacamole_connection_id: str | None
-    warnings: list[core_models.Message] | None
+    guacamole_username: str | None = None
+    guacamole_connection_id: str | None = None
+    warnings: list[core_models.Message] | None = None
     last_seen: str
-    project: projects_models.Project | None
-    version: tools_models.ToolVersionWithTool | None
+    project: projects_models.Project | None = None
+    version: tools_models.ToolVersionWithTool | None = None
 
     _validate_created_at = pydantic.validator("created_at", allow_reuse=True)(
         core_pydantic.datetime_serializer
@@ -50,8 +50,8 @@ class GetSessionsResponse(pydantic.BaseModel):
 
 
 class OwnSessionResponse(GetSessionsResponse):
-    t4c_password: str | None
-    jupyter_uri: str | None
+    t4c_password: str | None = None
+    jupyter_uri: str | None = None
 
 
 class PostReadonlySessionEntry(pydantic.BaseModel):

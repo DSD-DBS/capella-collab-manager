@@ -24,9 +24,9 @@ class ToolIntegrations(pydantic.BaseModel):
 
 
 class PatchToolIntegrations(pydantic.BaseModel):
-    t4c: bool | None
-    pure_variants: bool | None
-    jupyter: bool | None
+    t4c: bool | None = None
+    pure_variants: bool | None = None
+    jupyter: bool | None = None
 
 
 class DatabaseToolIntegrations(database.Base):

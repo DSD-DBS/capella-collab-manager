@@ -6,7 +6,6 @@ import enum
 
 import pydantic
 import sqlalchemy as sa
-from pydantic import BaseModel
 from sqlalchemy import orm
 
 import capellacollab.users.models as users_models
@@ -66,16 +65,16 @@ class DatabasePipelineRun(Base):
     environment: orm.Mapped[dict[str, str]]
 
 
-class PipelineRun(BaseModel):
+class PipelineRun(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(from_attributes=True)
 
     id: int
-    reference_id: str | None
+    reference_id: str | None = None
     triggerer: users_models.User
     trigger_time: datetime.datetime
     status: PipelineRunStatus
     environment: dict[str, str]
 
 
-class BackupPipelineRun(BaseModel):
-    include_commit_history: bool | None
+class BackupPipelineRun(pydantic.BaseModel):
+    include_commit_history: bool | None = None

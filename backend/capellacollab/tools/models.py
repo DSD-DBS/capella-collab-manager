@@ -82,8 +82,8 @@ class ToolDockerimage(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(from_attributes=True)
 
     persistent: str
-    readonly: str | None
-    backup: str | None
+    readonly: str | None = None
+    backup: str | None = None
 
     @classmethod
     def from_orm(cls, obj: DatabaseTool) -> ToolDockerimage:
@@ -95,9 +95,9 @@ class ToolDockerimage(pydantic.BaseModel):
 
 
 class PatchToolDockerimage(pydantic.BaseModel):
-    persistent: str | None
-    readonly: str | None
-    backup: str | None
+    persistent: str | None = None
+    readonly: str | None = None
+    backup: str | None = None
 
 
 class CreateToolVersion(pydantic.BaseModel):
@@ -109,9 +109,9 @@ class CreateToolNature(pydantic.BaseModel):
 
 
 class UpdateToolVersion(pydantic.BaseModel):
-    name: str | None
-    is_recommended: bool | None
-    is_deprecated: bool | None
+    name: str | None = None
+    is_recommended: bool | None = None
+    is_deprecated: bool | None = None
 
 
 class ToolVersionBase(pydantic.BaseModel):

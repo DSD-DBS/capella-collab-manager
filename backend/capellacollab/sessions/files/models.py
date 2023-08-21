@@ -19,4 +19,4 @@ class FileTree(pydantic.BaseModel):
     path: str
     name: str
     type: FileType
-    children: list[FileTree] | None
+    children: list[FileTree] | None = None

@@ -23,7 +23,7 @@ class PostGitInstance(pydantic.BaseModel):
     type: GitType
     name: str
     url: str
-    api_url: str | None
+    api_url: str | None = None
 
 
 class GitInstance(PostGitInstance):
@@ -46,7 +46,7 @@ class DatabaseGitInstance(database.Base):
 class GetRevisionsResponseModel(pydantic.BaseModel):
     branches: list[str]
     tags: list[str]
-    default: str | None
+    default: str | None = None
 
 
 class GitCredentials(pydantic.BaseModel):

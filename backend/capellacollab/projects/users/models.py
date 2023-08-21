@@ -44,8 +44,8 @@ class PostProjectUser(pydantic.BaseModel):
 
 
 class PatchProjectUser(pydantic.BaseModel):
-    role: ProjectUserRole | None
-    permission: ProjectUserPermission | None
+    role: ProjectUserRole | None = None
+    permission: ProjectUserPermission | None = None
     reason: str
 
 

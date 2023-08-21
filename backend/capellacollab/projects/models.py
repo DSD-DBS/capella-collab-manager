@@ -34,7 +34,7 @@ class Project(pydantic.BaseModel):
 
     name: str
     slug: str
-    description: str | None
+    description: str | None = None
     visibility: Visibility
     users: UserMetadata
 
@@ -79,14 +79,14 @@ class Project(pydantic.BaseModel):
 
 
 class PatchProject(pydantic.BaseModel):
-    name: str | None
-    description: str | None
-    visibility: Visibility | None
+    name: str | None = None
+    description: str | None = None
+    visibility: Visibility | None = None
 
 
 class PostProjectRequest(pydantic.BaseModel):
     name: str
-    description: str | None
+    description: str | None = None
     visibility: Visibility = Visibility.PRIVATE
 
 
