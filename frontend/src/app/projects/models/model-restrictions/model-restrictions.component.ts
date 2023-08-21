@@ -11,6 +11,7 @@ import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   ModelRestrictions,
   ModelRestrictionsService,
+  areRestrictionsEqual,
 } from 'src/app/projects/models/model-restrictions/service/model-restrictions.service';
 import {
   Model,
@@ -64,31 +65,32 @@ export class ModelRestrictionsComponent implements OnInit {
     });
   }
 
-  private mapRestrictionsFormToToolModelRestrictionsObject(): ModelRestrictions {
-    return {
-      allow_pure_variants:
-        this.restrictionsForm.controls.pureVariants.value || false,
-    };
-  }
-
   private patchRestrictions() {
-    if (
-      JSON.stringify(this.model?.restrictions) ===
-      JSON.stringify(this.mapRestrictionsFormToToolModelRestrictionsObject())
-    ) {
+    if (this.model === undefined || this.projectSlug === undefined) {
+      return;
+    }
+
+    const projectSlug = this.projectSlug;
+    const modelSlug = this.model.slug;
+    const restrictions = this.mapRestrictionsFormToModelRestrictions();
+
+    if (areRestrictionsEqual(this.model.restrictions, restrictions)) {
       return;
     }
 
     this.loading = true;
     this.modelRestrictionService
-      .patchModelRestrictions(
-        this.projectSlug!,
-        this.model!.slug,
-        this.mapRestrictionsFormToToolModelRestrictionsObject()
-      )
+      .patchModelRestrictions(projectSlug, modelSlug, restrictions)
       .subscribe(() => {
-        this.modelService.loadModelbySlug(this.projectSlug!, this.model!.slug!);
+        this.modelService.loadModelbySlug(modelSlug, projectSlug);
         this.loading = false;
       });
+  }
+
+  private mapRestrictionsFormToModelRestrictions(): ModelRestrictions {
+    return {
+      allow_pure_variants:
+        this.restrictionsForm.controls.pureVariants.value || false,
+    };
   }
 }
