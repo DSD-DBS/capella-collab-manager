@@ -39,12 +39,14 @@ class GitModel(pydantic.BaseModel):
     username: str
     password: bool
 
-    @pydantic.validator("password", pre=True)
+    @pydantic.field_validator("password", mode="before")
     @classmethod
-    def transform_password(cls, passw: str | bool) -> bool:
-        if isinstance(passw, bool):
-            return passw
-        return passw is not None and len(passw) > 0
+    def transform_password(cls, data: t.Any) -> t.Any:
+        if isinstance(data, bool):
+            return data
+        elif isinstance(data, str):
+            return data is not None and len(data) > 0
+        return data
 
 
 class DatabaseGitModel(database.Base):

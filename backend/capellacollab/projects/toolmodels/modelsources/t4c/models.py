@@ -58,13 +58,16 @@ class SimpleT4CModel(pydantic.BaseModel):
     repository_name: str
     instance_name: str
 
+    @pydantic.model_validator(mode="before")
     @classmethod
-    def from_orm(cls, obj: DatabaseT4CModel) -> SimpleT4CModel:
-        return SimpleT4CModel(
-            project_name=obj.name,
-            repository_name=obj.repository.name,
-            instance_name=obj.repository.instance.name,
-        )
+    def transform_database_t4c_model(cls, data: t.Any) -> t.Any:
+        if isinstance(data, DatabaseT4CModel):
+            return SimpleT4CModel(
+                project_name=data.name,
+                repository_name=data.repository.name,
+                instance_name=data.repository.instance.name,
+            )
+        return data
 
 
 class T4CModel(pydantic.BaseModel):

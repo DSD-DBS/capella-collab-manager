@@ -23,6 +23,6 @@ class DiagramCacheMetadata(pydantic.BaseModel):
     diagrams: list[DiagramMetadata]
     last_updated: datetime.datetime
 
-    _validate_last_updated = pydantic.validator(
-        "last_updated", allow_reuse=True
-    )(core_pydantic.datetime_serializer)
+    _validate_last_updated = pydantic.field_serializer("last_updated")(
+        core_pydantic.datetime_serializer
+    )

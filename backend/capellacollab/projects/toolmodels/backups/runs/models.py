@@ -52,16 +52,6 @@ class DatabasePipelineRun(Base):
     end_time: orm.Mapped[datetime.datetime | None]
     logs_last_fetched_timestamp: orm.Mapped[datetime.datetime | None]
 
-    _validate_trigger_time = pydantic.validator(
-        "trigger_time", allow_reuse=True
-    )(core_pydantic.datetime_serializer)
-    _validate_end_time = pydantic.validator("end_time", allow_reuse=True)(
-        core_pydantic.datetime_serializer
-    )
-    _validate_logs_last_fetched_timestamp = pydantic.validator(
-        "logs_last_fetched_timestamp", allow_reuse=True
-    )(core_pydantic.datetime_serializer)
-
     environment: orm.Mapped[dict[str, str]]
 
 
@@ -74,6 +64,10 @@ class PipelineRun(pydantic.BaseModel):
     trigger_time: datetime.datetime
     status: PipelineRunStatus
     environment: dict[str, str]
+
+    _validate_trigger_time = pydantic.field_validator("trigger_time")(
+        core_pydantic.datetime_serializer
+    )
 
 
 class BackupPipelineRun(pydantic.BaseModel):

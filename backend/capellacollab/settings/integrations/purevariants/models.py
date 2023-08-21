@@ -39,6 +39,6 @@ class PureVariantsLicenses(pydantic.BaseModel):
     license_server_url: str | None = None
     license_key_filename: str | None = None
 
-    _validate_value = pydantic.validator(
-        "license_server_url", allow_reuse=True
-    )(validate_license_url)
+    _validate_value = pydantic.field_validator("license_server_url")(
+        validate_license_url
+    )

@@ -31,7 +31,7 @@ class BaseUser(pydantic.BaseModel):
 
 
 class User(BaseUser):
-    id: str
+    id: int
 
 
 class PatchUserRoleRequest(pydantic.BaseModel):

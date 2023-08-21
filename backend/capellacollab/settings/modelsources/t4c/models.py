@@ -100,22 +100,12 @@ class T4CInstanceBase(pydantic.BaseModel):
     username: str
     protocol: Protocol
 
-    # validators
-    _validate_rest_api_url = pydantic.validator("rest_api", allow_reuse=True)(
+    _validate_rest_api_url = pydantic.field_validator("rest_api")(
         validate_rest_api_url
     )
-
-    _validate_port = pydantic.validator("port", allow_reuse=True)(
-        port_validator
-    )
-
-    _validate_cdo_port = pydantic.validator("cdo_port", allow_reuse=True)(
-        port_validator
-    )
-
-    _validate_http_port = pydantic.validator("http_port", allow_reuse=True)(
-        port_validator
-    )
+    _validate_port = pydantic.field_validator("port")(port_validator)
+    _validate_cdo_port = pydantic.field_validator("cdo_port")(port_validator)
+    _validate_http_port = pydantic.field_validator("http_port")(port_validator)
 
 
 class PatchT4CInstance(pydantic.BaseModel):
@@ -134,22 +124,12 @@ class PatchT4CInstance(pydantic.BaseModel):
     protocol: Protocol | None = None
     version_id: int | None = None
 
-    # validators
-    _validate_rest_api_url = pydantic.validator("rest_api", allow_reuse=True)(
+    _validate_rest_api_url = pydantic.field_validator("rest_api")(
         validate_rest_api_url
     )
-
-    _validate_port = pydantic.validator("port", allow_reuse=True)(
-        port_validator
-    )
-
-    _validate_cdo_port = pydantic.validator("cdo_port", allow_reuse=True)(
-        port_validator
-    )
-
-    _validate_http_port = pydantic.validator("http_port", allow_reuse=True)(
-        port_validator
-    )
+    _validate_port = pydantic.field_validator("port")(port_validator)
+    _validate_cdo_port = pydantic.field_validator("cdo_port")(port_validator)
+    _validate_http_port = pydantic.field_validator("http_port")(port_validator)
 
 
 class T4CInstanceComplete(T4CInstanceBase):

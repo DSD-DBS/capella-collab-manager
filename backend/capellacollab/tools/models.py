@@ -81,17 +81,15 @@ class ToolBase(pydantic.BaseModel):
 class ToolDockerimage(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(from_attributes=True)
 
-    persistent: str
-    readonly: str | None = None
-    backup: str | None = None
-
-    @classmethod
-    def from_orm(cls, obj: DatabaseTool) -> ToolDockerimage:
-        return ToolDockerimage(
-            persistent=obj.docker_image_template,
-            readonly=obj.readonly_docker_image_template,
-            backup=obj.docker_image_backup_template,
-        )
+    persistent: str = pydantic.Field(
+        ..., validation_alias="docker_image_template"
+    )
+    readonly: str | None = pydantic.Field(
+        None, validation_alias="readonly_docker_image_template"
+    )
+    backup: str | None = pydantic.Field(
+        None, validation_alias="docker_image_backup_template"
+    )
 
 
 class PatchToolDockerimage(pydantic.BaseModel):
