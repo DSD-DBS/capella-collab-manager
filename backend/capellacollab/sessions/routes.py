@@ -36,6 +36,7 @@ from capellacollab.users import models as users_models
 
 from . import (
     crud,
+    exceptions,
     guacamole,
     injectables,
     models,
@@ -198,12 +199,8 @@ def request_readonly_session(
 
     docker_image = get_readonly_image_for_version(model.version)
     if not docker_image:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "err_code": "IMAGE_NOT_FOUND",
-                "reason": "The tool has no read-only support. Please contact an admininistrator",
-            },
+        raise exceptions.UnsupportedSessionTypeError(
+            model.version.tool, models.WorkspaceType.READONLY
         )
 
     rdp_password = credentials.generate_password(length=64)

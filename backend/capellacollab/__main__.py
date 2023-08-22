@@ -34,6 +34,7 @@ from capellacollab.projects.toolmodels.modelsources.git.handler import (
     exceptions as git_handler_exceptions,
 )
 from capellacollab.routes import router
+from capellacollab.sessions import exceptions as sessions_exceptions
 from capellacollab.sessions import idletimeout, operators
 from capellacollab.tools import exceptions as tools_exceptions
 from capellacollab.users import exceptions as users_exceptions
@@ -139,6 +140,7 @@ def register_exceptions():
     logging_exceptions.register_exceptions(app)
     core_exceptions.register_exceptions(app)
     users_exceptions.register_exceptions(app)
+    sessions_exceptions.register_exceptions(app)
 
 
 register_exceptions()
