@@ -43,7 +43,7 @@ class BaseHistoryEvent(pydantic.BaseModel):
     event_type: EventType
     reason: str | None = None
 
-    _validate_execution_time = pydantic.field_validator("execution_time")(
+    _validate_execution_time = pydantic.field_serializer("execution_time")(
         core_pydantic.datetime_serializer
     )
 
@@ -57,10 +57,10 @@ class UserHistory(users_models.User):
     last_login: datetime.datetime | None = None
     events: list[HistoryEvent] | None = None
 
-    _validate_created = pydantic.field_validator("created")(
+    _validate_created = pydantic.field_serializer("created")(
         core_pydantic.datetime_serializer
     )
-    _validate_last_login = pydantic.field_validator("last_login")(
+    _validate_last_login = pydantic.field_serializer("last_login")(
         core_pydantic.datetime_serializer
     )
 

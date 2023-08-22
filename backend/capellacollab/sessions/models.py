@@ -44,7 +44,7 @@ class GetSessionsResponse(pydantic.BaseModel):
     project: projects_models.Project | None = None
     version: tools_models.ToolVersionWithTool | None = None
 
-    _validate_created_at = pydantic.field_validator("created_at")(
+    _validate_created_at = pydantic.field_serializer("created_at")(
         core_pydantic.datetime_serializer
     )
 

@@ -65,7 +65,7 @@ class PipelineRun(pydantic.BaseModel):
     status: PipelineRunStatus
     environment: dict[str, str]
 
-    _validate_trigger_time = pydantic.field_validator("trigger_time")(
+    _validate_trigger_time = pydantic.field_serializer("trigger_time")(
         core_pydantic.datetime_serializer
     )
 

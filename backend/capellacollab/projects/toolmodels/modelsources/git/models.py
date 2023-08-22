@@ -27,26 +27,16 @@ class PatchGitModel(PostGitModel):
     primary: bool
 
 
-class GitModel(pydantic.BaseModel):
+class GitModel(PostGitModel):
     model_config = pydantic.ConfigDict(from_attributes=True)
 
     id: int
     name: str
-    path: str
-    entrypoint: str
-    revision: str
     primary: bool
-    username: str
-    password: bool
 
-    @pydantic.field_validator("password", mode="before")
-    @classmethod
-    def transform_password(cls, data: t.Any) -> t.Any:
-        if isinstance(data, bool):
-            return data
-        elif isinstance(data, str):
-            return data is not None and len(data) > 0
-        return data
+    @pydantic.field_serializer("password")
+    def transform_password(self, data: str) -> bool:
+        return data is not None and len(data) > 0
 
 
 class DatabaseGitModel(database.Base):
