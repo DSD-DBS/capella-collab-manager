@@ -1,6 +1,9 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import asyncio
+import typing as t
+
 import pydantic
 
 from capellacollab.projects.toolmodels.backups.runs import (
@@ -33,3 +36,9 @@ class ToolmodelStatus(pydantic.BaseModel):
 class ProjectStatus(pydantic.BaseModel):
     project_slug: str
     warnings: list[str]
+
+
+class ToolModelStatusTasks(t.TypedDict):
+    primary_git_repository_status: asyncio.Task[git_models.GitModelStatus]
+    model_badge_status: asyncio.Task[git_models.ModelArtifactStatus]
+    diagram_cache_status: asyncio.Task[git_models.ModelArtifactStatus]

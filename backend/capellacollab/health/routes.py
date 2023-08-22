@@ -20,6 +20,7 @@ import capellacollab.projects.toolmodels.validation as toolmodels_validation
 import capellacollab.projects.validation as projects_validation
 import capellacollab.users.models as users_models
 from capellacollab.core import database
+from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.sessions import guacamole, operators
 
 from . import models
@@ -54,22 +55,9 @@ async def model_status(
     ),
 ):
     toolmodels = toolmodels_crud.get_models(db)
+
     tasks_per_model = {
-        model.id: {
-            "primary_git_repository_status": asyncio.create_task(
-                git_validation.check_primary_git_repository(db, model, logger)
-            ),
-            "model_badge_status": asyncio.create_task(
-                modelbadge_validation.check_model_badge_health(
-                    db, model, logger
-                )
-            ),
-            "diagram_cache_status": asyncio.create_task(
-                diagrams_validation.check_diagram_cache_health(
-                    db, model, logger
-                )
-            ),
-        }
+        model.id: _create_tool_model_status_tasks(db, logger, model)
         for model in toolmodels
     }
 
@@ -114,3 +102,21 @@ def project_status(db: orm.Session = fastapi.Depends(database.get_db)):
         )
         for project in projects_crud.get_projects(db)
     ]
+
+
+def _create_tool_model_status_tasks(
+    db: orm.Session,
+    logger: logging.LoggerAdapter,
+    model: toolmodels_models.DatabaseCapellaModel,
+) -> models.ToolModelStatusTasks:
+    return models.ToolModelStatusTasks(
+        primary_git_repository_status=asyncio.create_task(
+            git_validation.check_primary_git_repository(db, model, logger)
+        ),
+        model_badge_status=asyncio.create_task(
+            modelbadge_validation.check_model_badge_health(db, model, logger)
+        ),
+        diagram_cache_status=asyncio.create_task(
+            diagrams_validation.check_diagram_cache_health(db, model, logger)
+        ),
+    )
