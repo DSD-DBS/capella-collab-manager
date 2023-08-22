@@ -6,7 +6,6 @@ import enum
 
 import pydantic
 import sqlalchemy as sa
-from pydantic import BaseModel
 from sqlalchemy import orm
 
 import capellacollab.users.models as users_models
@@ -53,30 +52,23 @@ class DatabasePipelineRun(Base):
     end_time: orm.Mapped[datetime.datetime | None]
     logs_last_fetched_timestamp: orm.Mapped[datetime.datetime | None]
 
-    _validate_trigger_time = pydantic.validator(
-        "trigger_time", allow_reuse=True
-    )(core_pydantic.datetime_serializer)
-    _validate_end_time = pydantic.validator("end_time", allow_reuse=True)(
-        core_pydantic.datetime_serializer
-    )
-    _validate_logs_last_fetched_timestamp = pydantic.validator(
-        "logs_last_fetched_timestamp", allow_reuse=True
-    )(core_pydantic.datetime_serializer)
-
     environment: orm.Mapped[dict[str, str]]
 
 
-class PipelineRun(BaseModel):
+class PipelineRun(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     id: int
-    reference_id: str | None
+    reference_id: str | None = None
     triggerer: users_models.User
     trigger_time: datetime.datetime
     status: PipelineRunStatus
     environment: dict[str, str]
 
-    class Config:
-        orm_mode = True
+    _validate_trigger_time = pydantic.field_serializer("trigger_time")(
+        core_pydantic.datetime_serializer
+    )
 
 
-class BackupPipelineRun(BaseModel):
-    include_commit_history: bool | None
+class BackupPipelineRun(pydantic.BaseModel):
+    include_commit_history: bool | None = None

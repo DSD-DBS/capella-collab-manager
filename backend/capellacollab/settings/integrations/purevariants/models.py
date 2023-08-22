@@ -34,12 +34,11 @@ class DatabasePureVariantsLicenses(database.Base):
 
 
 class PureVariantsLicenses(pydantic.BaseModel):
-    license_server_url: str | None
-    license_key_filename: str | None
+    model_config = pydantic.ConfigDict(from_attributes=True)
 
-    _validate_value = pydantic.validator(
-        "license_server_url", allow_reuse=True
-    )(validate_license_url)
+    license_server_url: str | None = None
+    license_key_filename: str | None = None
 
-    class Config:
-        orm_mode = True
+    _validate_value = pydantic.field_validator("license_server_url")(
+        validate_license_url
+    )

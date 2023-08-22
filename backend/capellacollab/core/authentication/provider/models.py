@@ -12,8 +12,8 @@ class JSONWebKey(pydantic.BaseModel):
     n: str
     e: str
     kid: str
-    x5t: str | None
-    x5c: list[str] | None
+    x5t: str | None = None
+    x5c: list[str] | None = None
 
 
 class JSONWebKeySet(pydantic.BaseModel):

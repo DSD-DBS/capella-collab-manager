@@ -27,11 +27,11 @@ dependencies = [
   "alembic==1.10.4",
   "appdirs",
   "cachetools",
-  "fastapi<0.100.0",
+  "fastapi>=0.101.0",
   "kubernetes",
   "msal",
   "psycopg2-binary",
-  "pydantic",
+  "pydantic>=2.0.0",
   "python-dateutil",
   "python-jose",
   "python-multipart",
@@ -42,8 +42,8 @@ dependencies = [
   "jsonschema",
   "openshift",
   "starlette-prometheus",
-  "fastapi-pagination",
-  "aiohttp"
+  "fastapi-pagination>=0.12.5",
+  "aiohttp",
 ]
 
 [project.urls]
@@ -63,7 +63,7 @@ dev = [
   "responses",
   "sqlalchemy[mypy]",
   "pytest-cov",
-  "aioresponses"
+  "aioresponses",
 ]
 
 [project.entry-points."capellacollab.authentication.providers"]

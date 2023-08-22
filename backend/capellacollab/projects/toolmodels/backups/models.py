@@ -28,26 +28,24 @@ if t.TYPE_CHECKING:
 
 
 class CreateBackup(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     git_model_id: int
     t4c_model_id: int
     include_commit_history: bool
     run_nightly: bool
 
-    class Config:
-        orm_mode = True
-
 
 class Backup(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     id: int
-    k8s_cronjob_id: str | None
+    k8s_cronjob_id: str | None = None
 
     t4c_model: t4c_models.SimpleT4CModel
     git_model: git_models.GitModel
     run_nightly: bool
     include_commit_history: bool
-
-    class Config:
-        orm_mode = True
 
 
 class DatabaseBackup(database.Base):

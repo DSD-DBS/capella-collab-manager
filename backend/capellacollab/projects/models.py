@@ -30,64 +30,65 @@ class Visibility(enum.Enum):
 
 
 class Project(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     name: str
     slug: str
-    description: str | None
+    description: str | None = None
     visibility: Visibility
     users: UserMetadata
 
-    @pydantic.validator("users", pre=True)
+    @pydantic.field_validator("users", mode="before")
     @classmethod
-    def transform_users(
-        cls,
-        users: UserMetadata
-        | list[project_users_models.ProjectUserAssociation],
-    ):
-        if isinstance(users, (UserMetadata, dict)):
-            return users
+    def transform_users(cls, data: t.Any):
+        if isinstance(data, UserMetadata):
+            return data
 
-        return UserMetadata(
-            leads=len(
-                [
-                    user
-                    for user in users
-                    if user.role
-                    == project_users_models.ProjectUserRole.MANAGER
-                ]
-            ),
-            contributors=len(
-                [
-                    user
-                    for user in users
-                    if user.role == project_users_models.ProjectUserRole.USER
-                    and user.permission
-                    == project_users_models.ProjectUserPermission.WRITE
-                ]
-            ),
-            subscribers=len(
-                [
-                    user
-                    for user in users
-                    if user.role == project_users_models.ProjectUserRole.USER
-                    and user.permission
-                    == project_users_models.ProjectUserPermission.READ
-                ]
-            ),
-        )
+        if isinstance(data, list):
+            # Assumption: If it is a list, all entries are of type ProjectUserAssociation
+            return UserMetadata(
+                leads=len(
+                    [
+                        user
+                        for user in data
+                        if user.role
+                        == project_users_models.ProjectUserRole.MANAGER
+                    ]
+                ),
+                contributors=len(
+                    [
+                        user
+                        for user in data
+                        if user.role
+                        == project_users_models.ProjectUserRole.USER
+                        and user.permission
+                        == project_users_models.ProjectUserPermission.WRITE
+                    ]
+                ),
+                subscribers=len(
+                    [
+                        user
+                        for user in data
+                        if user.role
+                        == project_users_models.ProjectUserRole.USER
+                        and user.permission
+                        == project_users_models.ProjectUserPermission.READ
+                    ]
+                ),
+            )
 
-    class Config:
-        orm_mode = True
+        return data
 
 
 class PatchProject(pydantic.BaseModel):
-    name: str | None
-    description: str | None
-    visibility: Visibility | None
+    name: str | None = None
+    description: str | None = None
+    visibility: Visibility | None = None
 
 
 class PostProjectRequest(pydantic.BaseModel):
     name: str
-    description: str | None
+    description: str | None = None
     visibility: Visibility = Visibility.PRIVATE
 
 

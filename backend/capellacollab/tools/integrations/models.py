@@ -16,18 +16,17 @@ if t.TYPE_CHECKING:
 
 
 class ToolIntegrations(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     t4c: bool
     pure_variants: bool
     jupyter: bool
 
-    class Config:
-        orm_mode = True
-
 
 class PatchToolIntegrations(pydantic.BaseModel):
-    t4c: bool | None
-    pure_variants: bool | None
-    jupyter: bool | None
+    t4c: bool | None = None
+    pure_variants: bool | None = None
+    jupyter: bool | None = None
 
 
 class DatabaseToolIntegrations(database.Base):

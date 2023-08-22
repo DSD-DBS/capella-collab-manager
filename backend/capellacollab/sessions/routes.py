@@ -157,7 +157,7 @@ def request_readonly_session(
         (
             entry,
             toolmodels_injectables.get_existing_capella_model(
-                entry.model_slug, project, db
+                entry.toolmodel_slug, project, db
             ),
         )
         for entry in body.models

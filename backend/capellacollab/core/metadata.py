@@ -8,10 +8,9 @@ import capellacollab
 
 
 class Metadata(pydantic.BaseModel):
-    version: str
+    model_config = pydantic.ConfigDict(from_attributes=True)
 
-    class Config:
-        orm_mode = True
+    version: str
 
 
 router = fastapi.APIRouter()

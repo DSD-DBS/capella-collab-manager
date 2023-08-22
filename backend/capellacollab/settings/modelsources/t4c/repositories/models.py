@@ -56,16 +56,14 @@ class T4CRepositoryStatus(str, enum.Enum):
 
 
 class T4CRepository(CreateT4CRepository):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     id: int
     instance: t4c_models.T4CInstance
-    status: T4CRepositoryStatus | None
-
-    class Config:
-        orm_mode = True
+    status: T4CRepositoryStatus | None = None
 
 
 class T4CInstanceWithRepositories(t4c_models.T4CInstance):
-    repositories: list[T4CRepository]
+    model_config = pydantic.ConfigDict(from_attributes=True)
 
-    class Config:
-        orm_mode = True
+    repositories: list[T4CRepository]

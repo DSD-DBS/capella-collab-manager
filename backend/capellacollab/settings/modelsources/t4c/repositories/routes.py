@@ -35,7 +35,7 @@ def list_t4c_repositories(
         settings_t4c_injectables.get_existing_instance
     ),
 ) -> T4CRepositoriesResponseModel:
-    repositories = models.T4CInstanceWithRepositories.from_orm(
+    repositories = models.T4CInstanceWithRepositories.model_validate(
         instance
     ).repositories
 
@@ -83,7 +83,7 @@ def create_t4c_repository(
             },
         )
 
-    repo = models.T4CRepository.from_orm(
+    repo = models.T4CRepository.model_validate(
         crud.create_t4c_repository(
             db=db, repo_name=body.name, instance=instance
         )
@@ -237,7 +237,7 @@ def sync_db_with_server_repositories(
 
     server_not_db_repo_names = server_repos_names - db_repos_names
     for repo_name in server_not_db_repo_names:
-        repo = models.T4CRepository.from_orm(
+        repo = models.T4CRepository.model_validate(
             crud.create_t4c_repository(
                 db=db, repo_name=repo_name, instance=instance
             )

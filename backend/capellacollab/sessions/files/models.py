@@ -14,10 +14,9 @@ class FileType(enum.Enum):
 
 
 class FileTree(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     path: str
     name: str
     type: FileType
-    children: list[FileTree] | None
-
-    class Config:
-        orm_mode = True
+    children: list[FileTree] | None = None

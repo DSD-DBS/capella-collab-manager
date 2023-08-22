@@ -109,12 +109,14 @@ def get_users_for_project(
         projects_injectables.get_existing_project
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> list[models.ProjectUserAssociation]:
-    return pydantic.parse_obj_as(list[models.ProjectUser], project.users) + [
+) -> list[models.ProjectUser]:
+    return pydantic.TypeAdapter(list[models.ProjectUser]).validate_python(
+        project.users
+    ) + [
         models.ProjectUser(
             role=models.ProjectUserRole.ADMIN,
             permission=models.ProjectUserPermission.WRITE,
-            user=user,
+            user=users_models.User.model_validate(user),
         )
         for user in users_crud.get_admin_users(db)
     ]

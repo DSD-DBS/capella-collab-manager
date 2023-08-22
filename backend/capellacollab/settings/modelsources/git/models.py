@@ -18,13 +18,12 @@ class GitType(enum.Enum):
 
 
 class PostGitInstance(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     type: GitType
     name: str
     url: str
-    api_url: str | None
-
-    class Config:
-        orm_mode = True
+    api_url: str | None = None
 
 
 class GitInstance(PostGitInstance):
@@ -47,7 +46,7 @@ class DatabaseGitInstance(database.Base):
 class GetRevisionsResponseModel(pydantic.BaseModel):
     branches: list[str]
     tags: list[str]
-    default: str | None
+    default: str | None = None
 
 
 class GitCredentials(pydantic.BaseModel):

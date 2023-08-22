@@ -31,7 +31,7 @@ def get_db() -> orm.Session:
 def patch_database_with_pydantic_object(
     database_object: Base, pydantic_object: pydantic.BaseModel
 ):
-    for key, value in pydantic_object.dict().items():
+    for key, value in pydantic_object.model_dump().items():
         if value is not None:
             setattr(database_object, key, value)
 

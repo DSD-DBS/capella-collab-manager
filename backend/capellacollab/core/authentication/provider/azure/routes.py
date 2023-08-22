@@ -58,7 +58,7 @@ async def api_get_token(
     auth_data = global_session_data[body.state]
     del global_session_data[body.state]
     token = ad_session().acquire_token_by_auth_code_flow(
-        auth_data, body.dict(), scopes=[]
+        auth_data, body.model_dump(), scopes=[]
     )
     access_token = token["id_token"]
 

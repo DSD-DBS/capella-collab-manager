@@ -30,67 +30,62 @@ class WorkspaceType(enum.Enum):
 
 
 class GetSessionsResponse(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     id: str
     type: WorkspaceType
     created_at: datetime.datetime
     owner: users_models.BaseUser
     state: str
-    guacamole_username: str | None
-    guacamole_connection_id: str | None
-    warnings: list[core_models.Message] | None
+    guacamole_username: str | None = None
+    guacamole_connection_id: str | None = None
+    warnings: list[core_models.Message] | None = None
     last_seen: str
-    project: projects_models.Project | None
-    version: tools_models.ToolVersionWithTool | None
+    project: projects_models.Project | None = None
+    version: tools_models.ToolVersionWithTool | None = None
 
-    _validate_created_at = pydantic.validator("created_at", allow_reuse=True)(
+    _validate_created_at = pydantic.field_serializer("created_at")(
         core_pydantic.datetime_serializer
     )
 
-    class Config:
-        orm_mode = True
-
 
 class OwnSessionResponse(GetSessionsResponse):
-    t4c_password: str | None
-    jupyter_uri: str | None
+    t4c_password: str | None = None
+    jupyter_uri: str | None = None
 
 
 class PostReadonlySessionEntry(pydantic.BaseModel):
-    model_slug: str
+    toolmodel_slug: str = pydantic.Field(alias="model_slug")
     git_model_id: int
     revision: str
     deep_clone: bool
 
 
 class PostReadonlySessionRequest(pydantic.BaseModel):
-    models: list[PostReadonlySessionEntry]
+    model_config = pydantic.ConfigDict(from_attributes=True)
 
-    class Config:
-        orm_mode = True
+    models: list[PostReadonlySessionEntry]
 
 
 class PostPersistentSessionRequest(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     tool_id: int
     version_id: int
 
-    class Config:
-        orm_mode = True
-
 
 class GetSessionUsageResponse(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     free: int
     total: int
 
-    class Config:
-        orm_mode = True
-
 
 class GuacamoleAuthentication(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     token: str
     url: str
-
-    class Config:
-        orm_mode = True
 
 
 class DatabaseSession(database.Base):

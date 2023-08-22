@@ -71,35 +71,31 @@ class DatabaseNature(database.Base):
 
 
 class ToolBase(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     id: int
     name: str
     integrations: integrations_models.ToolIntegrations
 
-    class Config:
-        orm_mode = True
-
 
 class ToolDockerimage(pydantic.BaseModel):
-    persistent: str
-    readonly: str | None
-    backup: str | None
+    model_config = pydantic.ConfigDict(from_attributes=True)
 
-    @classmethod
-    def from_orm(cls, obj: DatabaseTool) -> ToolDockerimage:
-        return ToolDockerimage(
-            persistent=obj.docker_image_template,
-            readonly=obj.readonly_docker_image_template,
-            backup=obj.docker_image_backup_template,
-        )
-
-    class Config:
-        orm_mode = True
+    persistent: str = pydantic.Field(
+        ..., validation_alias="docker_image_template"
+    )
+    readonly: str | None = pydantic.Field(
+        None, validation_alias="readonly_docker_image_template"
+    )
+    backup: str | None = pydantic.Field(
+        None, validation_alias="docker_image_backup_template"
+    )
 
 
 class PatchToolDockerimage(pydantic.BaseModel):
-    persistent: str | None
-    readonly: str | None
-    backup: str | None
+    persistent: str | None = None
+    readonly: str | None = None
+    backup: str | None = None
 
 
 class CreateToolVersion(pydantic.BaseModel):
@@ -111,19 +107,18 @@ class CreateToolNature(pydantic.BaseModel):
 
 
 class UpdateToolVersion(pydantic.BaseModel):
-    name: str | None
-    is_recommended: bool | None
-    is_deprecated: bool | None
+    name: str | None = None
+    is_recommended: bool | None = None
+    is_deprecated: bool | None = None
 
 
 class ToolVersionBase(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     id: int
     name: str
     is_recommended: bool
     is_deprecated: bool
-
-    class Config:
-        orm_mode = True
 
 
 class ToolVersionWithTool(ToolVersionBase):
@@ -131,11 +126,10 @@ class ToolVersionWithTool(ToolVersionBase):
 
 
 class ToolNatureBase(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
     id: int
     name: str
-
-    class Config:
-        orm_mode = True
 
 
 class CreateTool(pydantic.BaseModel):
