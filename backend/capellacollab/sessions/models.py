@@ -55,7 +55,7 @@ class OwnSessionResponse(GetSessionsResponse):
 
 
 class PostReadonlySessionEntry(pydantic.BaseModel):
-    model_slug: str
+    toolmodel_slug: str = pydantic.Field(alias="model_slug")
     git_model_id: int
     revision: str
     deep_clone: bool

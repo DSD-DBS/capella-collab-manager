@@ -19,12 +19,14 @@ class StatusResponse(pydantic.BaseModel):
 
 class ToolmodelStatus(pydantic.BaseModel):
     project_slug: str
-    model_slug: str
+    toolmodel_slug: str = pydantic.Field(alias="model_slug")
 
     warnings: list[str]
     primary_git_repository_status: git_models.GitModelStatus
     pipeline_status: pipeline_run_models.PipelineRunStatus | None = None
-    model_badge_status: git_models.ModelArtifactStatus
+    toolmodel_badge_status: git_models.ModelArtifactStatus = pydantic.Field(
+        alias="model_badge_status"
+    )
     diagram_cache_status: git_models.ModelArtifactStatus
 
 
