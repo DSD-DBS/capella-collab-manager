@@ -51,16 +51,16 @@ const routes: Routes = [
       {
         path: '',
         component: SessionsComponent,
-        data: { breadcrumb: 'sessions' },
+        data: { breadcrumb: 'Sessions' },
       },
       {
         path: 'session',
         component: SessionComponent,
-        data: { breadcrumb: 'session' },
+        data: { breadcrumb: 'Session Viewer' },
       },
       {
         path: 'projects',
-        data: { breadcrumb: 'projects' },
+        data: { breadcrumb: 'Projects' },
         children: [
           {
             path: '',
@@ -69,14 +69,14 @@ const routes: Routes = [
           },
           {
             path: 'create',
-            data: { breadcrumb: 'create' },
+            data: { breadcrumb: 'Create Project' },
             component: CreateProjectComponent,
           },
         ],
       },
       {
         path: 'project',
-        data: { breadcrumb: 'projects', redirect: '/projects' },
+        data: { breadcrumb: 'Projects', redirect: '/projects' },
         children: [
           {
             path: ':project',
@@ -88,16 +88,13 @@ const routes: Routes = [
             children: [
               {
                 path: '',
-                data: {
-                  breadcrumb: 'overview',
-                  redirect: (data: Data) => `/project/${data.project?.slug}`,
-                },
+                data: { breadcrumb: undefined },
                 component: ProjectDetailsComponent,
               },
               {
                 path: 'metadata',
                 data: {
-                  breadcrumb: 'metadata',
+                  breadcrumb: 'Configure Project',
                   redirect: (data: Data) =>
                     `/project/${data.project?.slug}/metadata`,
                 },
@@ -105,36 +102,31 @@ const routes: Routes = [
               },
               {
                 path: 'models',
-                data: { breadcrumb: 'models' },
                 children: [
                   {
                     path: 'create',
-                    data: { breadcrumb: 'create' },
+                    data: { breadcrumb: 'Create Model' },
                     component: CreateModelComponent,
                   },
                 ],
               },
               {
                 path: 'model',
-                data: {
-                  breadcrumb: 'models',
-                  redirect: (data: Data) => `/project/${data.project?.slug}`,
-                },
                 children: [
                   {
                     path: ':model',
-                    component: ModelWrapperComponent,
                     data: {
-                      breadcrumb: (data: Data) => data.model?.name,
+                      breadcrumb: (data: Data) => data.model?.slug,
                       redirect: (data: Data) =>
                         `/project/${data.project?.slug}`,
                     },
+                    component: ModelWrapperComponent,
 
                     children: [
                       {
                         path: 'modelsources',
                         data: {
-                          breadcrumb: 'model sources',
+                          breadcrumb: 'Model Sources',
                           redirect: (data: Data) =>
                             `/project/${data.project?.slug}/model/${data.model?.slug}/modelsources`,
                         },
@@ -142,20 +134,28 @@ const routes: Routes = [
                       },
                       {
                         path: 'metadata',
-                        data: { breadcrumb: 'metadata' },
+                        data: {
+                          breadcrumb: 'Configure Model',
+                          redirect: (data: Data) =>
+                            `/project/${data.project?.slug}/model/${data.model?.slug}/metadata`,
+                        },
                         component: ModelDescriptionComponent,
                       },
                       {
                         path: 'restrictions',
-                        data: { breadcrumb: 'restrictions' },
+                        data: {
+                          breadcrumb: 'Restrictions',
+                          redirect: (data: Data) =>
+                            `/project/${data.project?.slug}/model/${data.model?.slug}/restrictions`,
+                        },
                         component: ModelRestrictionsComponent,
                       },
                       {
                         path: 'pipeline',
                         data: {
-                          breadcrumb: 'pipelines',
+                          breadcrumb: 'Pipelines',
                           redirect: (data: Data) =>
-                            `/project/${data.project?.slug}`,
+                            `/project/${data.project?.slug}/model/${data.model?.slug}/pipeline/${data.pipeline?.id}/runs`,
                         },
                         children: [
                           {
@@ -208,14 +208,18 @@ const routes: Routes = [
                       {
                         path: 'git-model',
                         data: {
-                          breadcrumb: 'git models',
+                          breadcrumb: 'Model Sources',
                           redirect: (data: Data) =>
-                            `/project/${data.project?.slug}/model/${data.model?.slug}`,
+                            `/project/${data.project?.slug}/model/${data.model?.slug}/modelsources`,
                         },
                         children: [
                           {
                             path: 'create',
-                            data: { breadcrumb: 'create' },
+                            data: {
+                              breadcrumb: 'Create Git Model',
+                              redirect: (data: Data) =>
+                                `/project/${data.project?.slug}/model/${data.model?.slug}/git-model/create`,
+                            },
                             component: ManageGitModelComponent,
                           },
                           {
@@ -223,6 +227,10 @@ const routes: Routes = [
                             data: {
                               breadcrumb: (data: Data) =>
                                 data.gitModel?.id || '...',
+                              redirect: (data: Data) =>
+                                data.gitModel?.id
+                                  ? `/project/${data.project?.slug}/model/${data.model?.slug}/git-model/${data.gitModel?.id}`
+                                  : undefined,
                             },
                             component: ManageGitModelComponent,
                           },
@@ -231,14 +239,18 @@ const routes: Routes = [
                       {
                         path: 't4c-model',
                         data: {
-                          breadcrumb: 't4c models',
+                          breadcrumb: 'Model Sources',
                           redirect: (data: Data) =>
-                            `/project/${data.project?.slug}/model/${data.model?.slug}`,
+                            `/project/${data.project?.slug}/model/${data.model?.slug}/modelsources`,
                         },
                         children: [
                           {
                             path: 'create',
-                            data: { breadcrumb: 'create' },
+                            data: {
+                              breadcrumb: 'Create T4C Model',
+                              redirect: (data: Data) =>
+                                `/project/${data.project?.slug}/model/${data.model?.slug}/t4c-model/create`,
+                            },
                             component: ManageT4CModelComponent,
                           },
                           {
@@ -246,14 +258,15 @@ const routes: Routes = [
                             data: {
                               breadcrumb: (data: Data) =>
                                 data.t4cModel?.id || '...',
+                              redirect: (data: Data) =>
+                                data.t4cModel?.id
+                                  ? `/project/${data.project?.slug}/model/${data.model?.slug}/t4c-model/${data.t4cModel?.id}`
+                                  : undefined,
                             },
                             component: T4CModelWrapperComponent,
                             children: [
                               {
                                 path: '',
-                                data: {
-                                  breadcrumb: () => 'edit',
-                                },
                                 component: ManageT4CModelComponent,
                               },
                             ],
@@ -270,7 +283,6 @@ const routes: Routes = [
       },
       {
         path: 'sessions',
-        data: { breadcrumb: 'sessions' },
         children: [
           {
             path: '',
@@ -278,14 +290,14 @@ const routes: Routes = [
           },
           {
             path: 'overview',
-            data: { breadcrumb: 'overview' },
+            data: { breadcrumb: 'Session Overview' },
             component: SessionOverviewComponent,
           },
         ],
       },
       {
         path: 'settings',
-        data: { breadcrumb: 'settings' },
+        data: { breadcrumb: 'Settings' },
         children: [
           {
             path: '',
@@ -298,22 +310,22 @@ const routes: Routes = [
             children: [
               {
                 path: 'users',
-                data: { breadcrumb: 'users' },
+                data: { breadcrumb: 'Users' },
                 component: UserSettingsComponent,
               },
               {
                 path: 'alerts',
-                data: { breadcrumb: 'alerts' },
+                data: { breadcrumb: 'Alerts' },
                 component: AlertSettingsComponent,
               },
               {
                 path: 'pipelines',
-                data: { breadcrumb: 'pipelines' },
+                data: { breadcrumb: 'Pipelines' },
                 component: PipelinesOverviewComponent,
               },
               {
                 path: 'tools',
-                data: { breadcrumb: 'tools' },
+                data: { breadcrumb: 'Tools' },
                 children: [
                   {
                     path: '',
@@ -322,18 +334,24 @@ const routes: Routes = [
                   },
                   {
                     path: 'create',
-                    data: { breadcrumb: 'create' },
+                    data: { breadcrumb: 'Create Tool' },
                     component: ToolDetailsComponent,
                   },
                 ],
               },
               {
                 path: 'tool/:toolID',
-                data: { breadcrumb: 'tool', redirect: '/settings/core/tools' },
+                data: { breadcrumb: 'Tools', redirect: '/settings/core/tools' },
                 children: [
                   {
                     path: '',
-                    data: { breadcrumb: (data: Data) => data.tool?.name },
+                    data: {
+                      breadcrumb: (data: Data) => data.tool?.name || '...',
+                      redirect: (data: Data) =>
+                        data.tool?.id
+                          ? `/settings/core/tools/${data.tool?.id}`
+                          : undefined,
+                    },
                     component: ToolDetailsComponent,
                   },
                 ],
@@ -346,7 +364,7 @@ const routes: Routes = [
             children: [
               {
                 path: 'git',
-                data: { breadcrumb: 'git' },
+                data: { breadcrumb: 'Git Instances' },
                 children: [
                   {
                     path: '',
@@ -364,7 +382,7 @@ const routes: Routes = [
               },
               {
                 path: 't4c',
-                data: { breadcrumb: 'T4C' },
+                data: { breadcrumb: 'T4C Instances' },
                 children: [
                   {
                     path: '',
@@ -402,7 +420,7 @@ const routes: Routes = [
       },
       {
         path: 'events',
-        data: { breadcrumb: 'events' },
+        data: { breadcrumb: 'Events' },
         component: EventsComponent,
       },
     ],
