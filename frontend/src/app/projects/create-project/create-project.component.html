@@ -101,7 +101,13 @@
                 (click)="stepper.next()"
                 data-testId="button-skipAddMembers"
               >
-                Skip
+                <ng-container
+                  *ngIf="
+                    projectUserService.nonAdminProjectUsers$ | async as users
+                  "
+                >
+                  {{ !users || users.length === 0 ? "skip" : "continue" }}
+                </ng-container>
                 <mat-icon class="mat-icon-position right"
                   >arrow_forward</mat-icon
                 >

@@ -11,6 +11,7 @@ import {
   CreateModelStep,
 } from 'src/app/projects/models/create-model/create-model.component';
 import { ToastService } from '../../helpers/toast/toast.service';
+import { ProjectUserService } from '../project-detail/project-users/service/project-user.service';
 import { ProjectService, ProjectVisibility } from '../service/project.service';
 
 @Component({
@@ -25,6 +26,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
 
   constructor(
     public projectService: ProjectService,
+    public projectUserService: ProjectUserService,
     private toastService: ToastService
   ) {}
 
