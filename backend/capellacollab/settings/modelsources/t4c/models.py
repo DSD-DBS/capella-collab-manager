@@ -79,6 +79,8 @@ class DatabaseT4CInstance(database.Base):
         back_populates="instance", cascade="all, delete"
     )
 
+    is_archived: orm.Mapped[bool] = orm.mapped_column(default=False)
+
 
 def port_validator(value: int | None) -> int | None:
     if not value:
@@ -123,6 +125,7 @@ class PatchT4CInstance(pydantic.BaseModel):
     password: str | None = None
     protocol: Protocol | None = None
     version_id: int | None = None
+    is_archived: bool | None = None
 
     _validate_rest_api_url = pydantic.field_validator("rest_api")(
         validate_rest_api_url
@@ -138,9 +141,11 @@ class T4CInstanceComplete(T4CInstanceBase):
 
 
 class CreateT4CInstance(T4CInstanceComplete):
+    is_archived: bool | None = None
     password: str
 
 
 class T4CInstance(T4CInstanceComplete):
     id: int
     version: tools_models.ToolVersionBase
+    is_archived: bool

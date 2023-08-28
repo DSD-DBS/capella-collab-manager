@@ -23,7 +23,7 @@ from capellacollab.users import models as users_models
 def test_list_t4c_repositories(
     client: testclient.TestClient,
     db: orm.Session,
-    t4c_server: t4c_models.DatabaseT4CInstance,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
     responses.get(
         "http://localhost:8080/api/v1.0/repositories",
@@ -41,10 +41,10 @@ def test_list_t4c_repositories(
         },
     )
 
-    t4c_repositories_crud.create_t4c_repository(db, "test4", t4c_server)
-    t4c_repositories_crud.create_t4c_repository(db, "test5", t4c_server)
+    t4c_repositories_crud.create_t4c_repository(db, "test4", t4c_instance)
+    t4c_repositories_crud.create_t4c_repository(db, "test5", t4c_instance)
     response = client.get(
-        f"/api/v1/settings/modelsources/t4c/{t4c_server.id}/repositories",
+        f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}/repositories",
     )
 
     assert response.status_code == 200

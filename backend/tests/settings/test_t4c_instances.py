@@ -7,6 +7,12 @@ from fastapi import status, testclient
 from sqlalchemy import orm
 
 from capellacollab.settings.modelsources.t4c import crud as t4c_crud
+from capellacollab.settings.modelsources.t4c import (
+    exceptions as settings_t4c_exceptions,
+)
+from capellacollab.settings.modelsources.t4c import (
+    injectables as settings_t4c_injectables,
+)
 from capellacollab.settings.modelsources.t4c import models as t4c_models
 from capellacollab.tools import models as tools_models
 from capellacollab.users import crud as users_crud
@@ -45,7 +51,7 @@ def test_create_t4c_instance(
     assert t4c_instance.name == "Test integration"
 
 
-@pytest.mark.usefixtures("t4c_server")
+@pytest.mark.usefixtures("t4c_instance")
 def test_get_t4c_instances(
     client: testclient.TestClient, db: orm.Session, executor_name: str
 ):
@@ -67,12 +73,12 @@ def test_get_t4c_instance(
     client: testclient.TestClient,
     db: orm.Session,
     executor_name: str,
-    t4c_server: t4c_models.DatabaseT4CInstance,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
     users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
 
     response = client.get(
-        f"/api/v1/settings/modelsources/t4c/{t4c_server.id}",
+        f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}",
     )
 
     assert response.json()["name"] == "test server"
@@ -85,50 +91,125 @@ def test_patch_t4c_instance(
     client: testclient.TestClient,
     db: orm.Session,
     executor_name: str,
-    t4c_server: t4c_models.DatabaseT4CInstance,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
     users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
 
     response = client.patch(
-        f"/api/v1/settings/modelsources/t4c/{t4c_server.id}",
+        f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}",
         json={
             "name": "Patched test integration",
         },
     )
 
-    t4c_instance = t4c_crud.get_t4c_instance_by_id(db, response.json()["id"])
-    assert t4c_instance
+    updated_t4c_instance = t4c_crud.get_t4c_instance_by_id(
+        db, response.json()["id"]
+    )
+    assert updated_t4c_instance
+
+    assert response.status_code == 200
 
     assert response.json()["name"] == "Patched test integration"
-    assert t4c_instance.name == "Patched test integration"
+    assert updated_t4c_instance.name == "Patched test integration"
 
     assert response.json()["host"] == "localhost"
-    assert t4c_instance.host == "localhost"
+    assert updated_t4c_instance.host == "localhost"
+
+
+def test_patch_archived_t4c_instance_error(
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
+):
+    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+
+    t4c_crud.update_t4c_instance(
+        db, t4c_instance, t4c_models.PatchT4CInstance(is_archived=True)
+    )
+
+    response = client.patch(
+        f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}",
+        json={
+            "name": "Patched test integration",
+        },
+    )
+
+    assert response.status_code == 400
+
+
+def test_unarchive_t4c_instance(
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
+):
+    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+
+    t4c_crud.update_t4c_instance(
+        db, t4c_instance, t4c_models.PatchT4CInstance(is_archived=True)
+    )
+
+    assert t4c_instance.is_archived
+
+    response = client.patch(
+        f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}",
+        json={
+            "is_archived": False,
+        },
+    )
+
+    assert response.status_code == 200
+
+    updated_t4c_instance = t4c_crud.get_t4c_instance_by_id(
+        db, response.json()["id"]
+    )
+    assert updated_t4c_instance
+
+    assert not response.json()["is_archived"]
+    assert not updated_t4c_instance.is_archived
+
+
+def test_injectables_raise_when_archived_instance(
+    db: orm.Session,
+    executor_name: str,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
+):
+    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+
+    t4c_crud.update_t4c_instance(
+        db, t4c_instance, t4c_models.PatchT4CInstance(is_archived=True)
+    )
+
+    with pytest.raises(settings_t4c_exceptions.T4CInstanceIsArchivedError):
+        settings_t4c_injectables.get_existing_unarchived_instance(
+            t4c_instance.id, db
+        )
 
 
 def test_update_t4c_instance_password_empty_string(
     client: testclient.TestClient,
     db: orm.Session,
     executor_name: str,
-    t4c_server: t4c_models.DatabaseT4CInstance,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
     users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
 
-    expected_password = t4c_server.password
+    expected_password = t4c_instance.password
 
     response = client.patch(
-        f"/api/v1/settings/modelsources/t4c/{t4c_server.id}",
+        f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}",
         json={
             "password": "",
         },
     )
 
-    updated_t4c_server = t4c_crud.get_t4c_instance_by_id(
+    updated_t4c_instance = t4c_crud.get_t4c_instance_by_id(
         db, response.json()["id"]
     )
 
-    assert updated_t4c_server
-    assert updated_t4c_server.password == expected_password
+    assert updated_t4c_instance
+    assert updated_t4c_instance.password == expected_password
 
 
 @responses.activate
@@ -136,7 +217,7 @@ def test_get_t4c_license_usage(
     client: testclient.TestClient,
     db: orm.Session,
     executor_name: str,
-    t4c_server: t4c_models.DatabaseT4CInstance,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
     users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
     responses.get(
@@ -146,7 +227,7 @@ def test_get_t4c_license_usage(
     )
 
     response = client.get(
-        f"/api/v1/settings/modelsources/t4c/{t4c_server.id}/licenses",
+        f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}/licenses",
     )
 
     assert response.status_code == 200
@@ -159,7 +240,7 @@ def test_get_t4c_license_usage_no_status(
     client: testclient.TestClient,
     db: orm.Session,
     executor_name: str,
-    t4c_server: t4c_models.DatabaseT4CInstance,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
     users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
     responses.get(
@@ -169,7 +250,7 @@ def test_get_t4c_license_usage_no_status(
     )
 
     response = client.get(
-        f"/api/v1/settings/modelsources/t4c/{t4c_server.id}/licenses",
+        f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}/licenses",
     )
 
     assert response.status_code == 404

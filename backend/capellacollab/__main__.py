@@ -39,6 +39,9 @@ from capellacollab.projects.toolmodels.modelsources.git.handler import (
 from capellacollab.routes import router
 from capellacollab.sessions import exceptions as sessions_exceptions
 from capellacollab.sessions import idletimeout, operators
+from capellacollab.settings.modelsources.t4c import (
+    exceptions as settings_t4c_exceptions,
+)
 from capellacollab.tools import exceptions as tools_exceptions
 from capellacollab.users import exceptions as users_exceptions
 
@@ -145,6 +148,7 @@ def register_exceptions():
     core_exceptions.register_exceptions(app)
     users_exceptions.register_exceptions(app)
     sessions_exceptions.register_exceptions(app)
+    settings_t4c_exceptions.register_exceptions(app)
 
 
 register_exceptions()

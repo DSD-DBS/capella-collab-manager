@@ -22,6 +22,7 @@ export type BaseT4CInstance = {
   username: string;
   password: string;
   protocol: Protocol;
+  is_archived: boolean;
 };
 
 export type NewT4CInstance = BaseT4CInstance & {

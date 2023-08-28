@@ -15,7 +15,7 @@ from capellacollab.settings.modelsources.t4c.repositories import (
 )
 from capellacollab.users import models as users_models
 
-from . import crud, injectables, interface, models
+from . import crud, exceptions, injectables, interface, models
 
 router = fastapi.APIRouter(
     dependencies=[
@@ -72,6 +72,9 @@ def edit_t4c_instance(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseT4CInstance:
+    if instance.is_archived and (body.is_archived is None or body.is_archived):
+        raise exceptions.T4CInstanceIsArchivedError(instance.id)
+
     return crud.update_t4c_instance(db, instance, body)
 
 
