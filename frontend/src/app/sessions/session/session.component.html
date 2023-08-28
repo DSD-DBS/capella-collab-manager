@@ -11,6 +11,7 @@
   <div *ngIf="cachedSessions && !cachedSessions.length">
     No sessions found. Please create a session in the 'Sessions' tab first.
   </div>
+
   <div *ngIf="cachedSessions === undefined">
     <ngx-skeleton-loader
       *ngFor="let _ of [0, 1, 2, 3]"
@@ -24,6 +25,7 @@
       }"
     ></ngx-skeleton-loader>
   </div>
+
   <div class="flex flex-col" *ngIf="cachedSessions && cachedSessions.length">
     <mat-checkbox
       class="w-fit"
@@ -40,6 +42,7 @@
       >, created at {{ session.created_at | date: "EE, dd MMM y HH:mm:ss" }}
     </mat-checkbox>
   </div>
+
   <div class="border-2 p-2 mt-2 rounded w-fit">
     Please note: We're not technically preventing that you select two
     Eclipse-based sessions (for example two Capella sessions), <br />but the
@@ -59,10 +62,15 @@
   </div>
 </div>
 
-<div class="w-full height flex gap-2" *ngIf="selectedSessions.length">
+<div class="flex gap-0.5" *ngIf="selectedSessions.length">
   <div
-    class="w-full height active:z-30"
-    [ngClass]="session.focused ? 'z-20' : 'z-10'"
+    class="flex flex-col w-full active:z-30"
+    [ngClass]="{
+      'z-20': session.focused,
+      'z-10': !session.focused,
+      height: (fullscreenService.isFullscreen$ | async) === false,
+      'h-screen': fullscreenService.isFullscreen$ | async
+    }"
     (click)="focusSession(session)"
     *ngFor="let session of selectedSessions"
     cdkDrag
@@ -70,7 +78,7 @@
     (cdkDragEnded)="dragStop()"
   >
     <div
-      class="flex gap-2 rounded-t p-2 cursor-grab active:cursor-grabbing items-center justify-between"
+      class="flex gap-2 p-1 rounded-t cursor-grab active:cursor-grabbing items-center justify-between"
       [ngClass]="session.focused ? 'bg-slate-100' : 'bg-slate-300'"
       cdkDragHandle
     >
@@ -92,18 +100,34 @@
         <mat-icon>phonelink_off</mat-icon>
       </div>
     </div>
-    <div class="iframe-container">
+
+    <div class="relative grow">
       <div
         [ngClass]="session.focused ? '' : 'iframe-overlay opacity-10 bg-black'"
       ></div>
       <div [ngClass]="draggingActive ? 'iframe-overlay' : ''"></div>
       <iframe
         [id]="'session-' + session.id"
-        class="w-full height"
         [src]="session.safeResourceURL"
+        class="w-full h-full"
         allow="clipboard-read; clipboard-write"
       >
       </iframe>
     </div>
   </div>
+</div>
+
+<div class="fixed bottom-4 right-4 z-50">
+  <button
+    mat-fab
+    color="primary"
+    (click)="fullscreenService.toggleFullscreen()"
+  >
+    <mat-icon *ngIf="(fullscreenService.isFullscreen$ | async) === false"
+      >fullscreen</mat-icon
+    >
+    <mat-icon *ngIf="fullscreenService.isFullscreen$ | async"
+      >fullscreen_exit</mat-icon
+    >
+  </button>
 </div>

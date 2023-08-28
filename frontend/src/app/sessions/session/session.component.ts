@@ -6,10 +6,12 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
 import { DomSanitizer } from '@angular/platform-browser';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, take } from 'rxjs';
 import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { Session } from 'src/app/schemes';
 import { GuacamoleService } from 'src/app/services/guacamole/guacamole.service';
+import { FullscreenService } from 'src/app/sessions/service/fullscreen.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
 
@@ -18,6 +20,7 @@ import { UserSessionService } from 'src/app/sessions/service/user-session.servic
   templateUrl: './session.component.html',
   styleUrls: ['./session.component.css'],
 })
+@UntilDestroy()
 export class SessionComponent implements OnInit {
   cachedSessions?: CachedSession[] = undefined;
   selectedSessions: Session[] = [];
@@ -28,6 +31,7 @@ export class SessionComponent implements OnInit {
   constructor(
     public userSessionService: UserSessionService,
     public sessionService: SessionService,
+    public fullscreenService: FullscreenService,
     private guacamoleService: GuacamoleService,
     private localStorageService: LocalStorageService,
     private domSanitizer: DomSanitizer
@@ -45,6 +49,10 @@ export class SessionComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeCachedSessions();
+
+    this.fullscreenService.isFullscreen$
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.resizeSessions());
   }
 
   initializeCachedSessions() {
@@ -109,16 +117,20 @@ export class SessionComponent implements OnInit {
     window.clearTimeout(this.debounceTimer);
 
     this.debounceTimer = window.setTimeout(() => {
-      Array.from(document.getElementsByTagName('iframe')).forEach((iframe) => {
-        const session = this.selectedSessions.find(
-          (session) => 'session-' + session.id === iframe.id
-        );
-
-        if (session?.reloadToResize) {
-          this.reloadIFrame(iframe);
-        }
-      });
+      this.resizeSessions();
     }, 250);
+  }
+
+  resizeSessions() {
+    Array.from(document.getElementsByTagName('iframe')).forEach((iframe) => {
+      const session = this.selectedSessions.find(
+        (session) => 'session-' + session.id === iframe.id
+      );
+
+      if (session?.reloadToResize) {
+        this.reloadIFrame(iframe);
+      }
+    });
   }
 
   reloadIFrame(iframe: HTMLIFrameElement) {
