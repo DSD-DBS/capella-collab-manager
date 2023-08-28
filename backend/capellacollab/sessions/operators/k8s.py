@@ -231,13 +231,16 @@ class KubernetesOperator:
             log.debug("Received k8s pod: %s", pod_name)
             log.debug("Fetching k8s events for pod: %s", pod_name)
 
-            events = self.v1_core.list_namespaced_event(
+            events: list[
+                client.CoreV1Event
+            ] = self.v1_core.list_namespaced_event(
                 namespace=namespace,
                 field_selector=f"involvedObject.name={pod_name}",
-            )
+            ).items
 
-            if events.items:
-                return events.items[-1].reason
+            events = list(filter(self._is_non_promtail_event, events))
+            if events:
+                return events[-1].reason
 
             # Fallback if no event is available
             return pod.status.phase
@@ -249,6 +252,12 @@ class KubernetesOperator:
             log.exception("Error getting the session state")
 
         return "unknown"
+
+    def _is_non_promtail_event(self, event: client.CoreV1Event) -> bool:
+        if not (event.involved_object and event.involved_object.field_path):
+            return True
+
+        return "spec.containers{promtail}" != event.involved_object.field_path
 
     def get_session_logs(self, _id: str) -> str:
         return self.v1_core.read_namespaced_pod_log(
