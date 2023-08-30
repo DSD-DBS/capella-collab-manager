@@ -2,20 +2,19 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import base64
 import io
 import zipfile
 
 import pytest
 import responses
 from fastapi import testclient
+from lxml import etree
 
 import capellacollab.projects.models as project_models
 import capellacollab.projects.toolmodels.models as toolmodels_models
 import capellacollab.settings.modelsources.git.models as git_models
 
 EXAMPLE_SVG = b"""
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
@@ -209,3 +208,33 @@ def test_get_single_diagram(
 
     assert response.status_code == 200
     assert response.content == EXAMPLE_SVG
+
+
+@responses.activate
+@pytest.mark.parametrize(
+    "git_type", [git_models.GitType.GITLAB, git_models.GitType.GITHUB]
+)
+@pytest.mark.usefixtures(
+    "project_user",
+    "git_instance",
+    "git_model",
+    "mock_git_rest_api_for_artifacts",
+    "mock_git_diagram_cache_index_api",
+    "mock_git_diagram_cache_svg",
+)
+@pytest.mark.usefixtures("project_user", "git_instance", "git_model")
+def test_get_single_diagram_with_background(
+    project: project_models.DatabaseProject,
+    capella_model: toolmodels_models.CapellaModel,
+    client: testclient.TestClient,
+):
+    response = client.get(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams/_c90e4Hdf2d2UosmJBo0GTw?background=green",
+    )
+
+    assert response.status_code == 200
+    root = etree.fromstring(response.content)
+    background = root.find(
+        ".//{http://www.w3.org/2000/svg}rect[@fill='green']"
+    )
+    assert background is not None

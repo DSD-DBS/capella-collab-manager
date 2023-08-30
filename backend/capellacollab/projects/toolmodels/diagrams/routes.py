@@ -19,6 +19,8 @@ from capellacollab.projects.toolmodels.modelsources.git.handler import (
 )
 from capellacollab.projects.users import models as projects_users_models
 
+from . import helper
+
 router = fastapi.APIRouter(
     dependencies=[
         fastapi.Depends(
@@ -73,6 +75,7 @@ async def get_diagram(
         git_injectables.get_git_handler
     ),
     logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
+    background: str = "",
 ):
     (
         project_id,
@@ -87,6 +90,8 @@ async def get_diagram(
             last_successful_job[0],
             f"diagram_cache/{parse.quote(diagram_uuid, safe='')}.svg",
         )
+        if background:
+            diagram = helper.set_background_color(diagram, background)
     except requests.exceptions.HTTPError:
         logger.info("Failed fetching diagram", exc_info=True)
         raise fastapi.HTTPException(
