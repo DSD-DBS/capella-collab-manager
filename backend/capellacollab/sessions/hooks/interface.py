@@ -8,6 +8,7 @@ from sqlalchemy import orm
 
 from capellacollab.core import models as core_models
 from capellacollab.sessions import operators
+from capellacollab.sessions.operators import models as operators_models
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 
@@ -15,15 +16,35 @@ from .. import models as sessions_models
 
 
 class HookRegistration(metaclass=abc.ABCMeta):
+    """Interface for session hooks
+
+    Notes
+    -----
+    Session hooks have to registered in `capellacollab.sessions.hooks.__init__`
+
+    When implementing a specific hook, do not expect positional arguments.
+    The hooks are called with keyword arguments only.
+    Therefore, unused arguments can be safely ignored via kwargs.
+
+    Unnecessary hooks don't have to implemented and are skipped automatically.
+    That's why the hooks in this interface are not abstract methods.
+    """
+
+    # pylint: disable=unused-argument
     def configuration_hook(
         self,
         db: orm.Session,
+        operator: operators.KubernetesOperator,
         user: users_models.DatabaseUser,
         tool_version: tools_models.DatabaseVersion,
         tool: tools_models.DatabaseTool,
         token: dict[str, t.Any],
         **kwargs,
-    ) -> tuple[dict[str, str], list[core_models.Message]]:
+    ) -> tuple[
+        dict[str, str],
+        list[operators_models.Volume],
+        list[core_models.Message],
+    ]:
         """Hook to determine session configuration
 
         This hook is executed before the creation of persistent sessions.
@@ -32,6 +53,8 @@ class HookRegistration(metaclass=abc.ABCMeta):
         ----------
         db : sqlalchemy.orm.Session
             Database session. Can be used to access the database
+        operator : operators.KubernetesOperator
+            Operator, which is used to spawn the session
         user : users_models.DatabaseUser
             User who has requested the session
         tool : tools_models.DatabaseTool
@@ -46,9 +69,13 @@ class HookRegistration(metaclass=abc.ABCMeta):
         -------
         environment : dict[str, str]
             Environment variables to be injected into the session.
+        volumes : list[operators_models.Volume]
+            List of volumes to be mounted into the session.
         warnings : list[core_models.Message]
             List of warnings to be displayed to the user.
         """
+
+        return {}, [], []
 
     def post_session_creation_hook(
         self,

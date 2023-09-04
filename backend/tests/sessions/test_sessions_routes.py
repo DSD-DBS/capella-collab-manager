@@ -33,6 +33,7 @@ from capellacollab.sessions.crud import (
     get_sessions_for_user,
 )
 from capellacollab.sessions.operators import get_operator
+from capellacollab.sessions.operators import models as operators_models
 from capellacollab.tools import models as tools_models
 from capellacollab.tools.crud import (
     create_tool,
@@ -101,6 +102,7 @@ class MockOperator:
         session_type: str,
         tool_name: str,
         version_name: str,
+        volumes: list[operators_models.Volume],
         environment: dict[str, str | None],
         ports: dict[str, int],
         persistent_workspace_claim_name: str | None = None,

@@ -5,6 +5,7 @@
 import itertools
 import json
 import logging
+import pathlib
 import typing as t
 
 import fastapi
@@ -43,9 +44,9 @@ from . import (
     operators,
     sessions,
     util,
-    workspace,
 )
 from .operators import k8s
+from .operators import models as operators_models
 
 router = fastapi.APIRouter(
     dependencies=[
@@ -211,6 +212,13 @@ def request_readonly_session(
         session_type="readonly",
         tool_name=model.tool.name,
         version_name=model.version.name,
+        volumes=[
+            operators_models.EmptyVolume(
+                name="workspace",
+                read_only=False,
+                container_path=pathlib.PurePosixPath("/workspace"),
+            )
+        ],
         environment={
             "GIT_REPOS_JSON": json.dumps(
                 list(models_as_json(entries_with_models))
@@ -287,16 +295,21 @@ def request_persistent_session(
 
     raise_if_conflicting_persistent_sessions(tool, user)
 
-    pvc_name = workspace.create_persistent_workspace(operator, user.name)
-
     environment: dict[str, str] = {}
+    volumes: list[operators_models.Volume] = []
     warnings: list[core_models.Message] = []
 
     for hook in hooks.get_activated_integration_hooks(tool):
-        hook_env, hook_warnings = hook.configuration_hook(
-            db=db, user=user, tool_version=version, tool=tool, token=token
+        hook_env, hook_volumes, hook_warnings = hook.configuration_hook(
+            db=db,
+            user=user,
+            tool_version=version,
+            tool=tool,
+            token=token,
+            operator=operator,
         )
         environment |= hook_env
+        volumes += hook_volumes
         warnings += hook_warnings
 
     docker_image = get_image_for_tool_version(db, version.id)
@@ -308,7 +321,7 @@ def request_persistent_session(
             owner=user.name,
             tool=tool,
             version=version,
-            persistent_workspace_claim_name=pvc_name,
+            volumes=volumes,
             environment=environment,
             docker_image=docker_image,
         )
@@ -320,7 +333,7 @@ def request_persistent_session(
             owner=user.name,
             tool=tool,
             version=version,
-            persistent_workspace_claim_name=pvc_name,
+            volumes=volumes,
             environment=environment,
             docker_image=docker_image,
         )
@@ -383,8 +396,8 @@ def start_persistent_jupyter_session(
     tool: tools_models.DatabaseTool,
     environment: dict[str, str],
     version: tools_models.DatabaseVersion,
-    persistent_workspace_claim_name: str,
     docker_image: str,
+    volumes: list[operators_models.Volume],
 ):
     session = operator.start_session(
         image=docker_image,
@@ -394,7 +407,7 @@ def start_persistent_jupyter_session(
         version_name=version.name,
         environment=environment,
         ports={"http": 8888},
-        persistent_workspace_claim_name=persistent_workspace_claim_name,
+        volumes=volumes,
         prometheus_path=f"{environment.get('JUPYTER_BASE_URL')}/metrics",
         prometheus_port=8888,
         limits="low",
@@ -419,7 +432,7 @@ def start_persistent_guacamole_session(
     owner: str,
     tool: tools_models.DatabaseTool,
     version: tools_models.DatabaseVersion,
-    persistent_workspace_claim_name: str,
+    volumes: list[operators_models.Volume],
     environment: dict[str, str],
     docker_image: str,
 ):
@@ -435,7 +448,7 @@ def start_persistent_guacamole_session(
         version_name=version.name,
         environment=environment,
         ports={"rdp": 3389, "metrics": 9118},
-        persistent_workspace_claim_name=persistent_workspace_claim_name,
+        volumes=volumes,
     )
 
     response = create_database_and_guacamole_session(
