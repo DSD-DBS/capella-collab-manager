@@ -146,9 +146,10 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
       .subscribe((model) => {
         this.modelSlug = model.slug;
         if (model.tool.name === 'Capella') {
-          this.form.controls.entrypoint.addValidators(
-            Validators.pattern(/^$|\.aird$/)
-          );
+          this.form.controls.entrypoint.addValidators([
+            Validators.pattern(/^$|\.aird$/),
+            Validators.required,
+          ]);
         }
       });
 
