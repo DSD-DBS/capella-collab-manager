@@ -36,6 +36,7 @@ import {
   ProjectVisibility,
 } from '../service/project.service';
 import { CreateProjectComponent } from './create-project.component';
+import { ProjectUserService } from '../project-detail/project-users/service/project-user.service';
 
 const mockProjects: Project[] = [
   {
@@ -61,6 +62,17 @@ describe('CreateProjectComponent', () => {
 
   const fakeToastService: Pick<ToastService, 'showSuccess'> = {
     showSuccess(): void {},
+  };
+
+  const fakeProjectUserService = {
+    get nonAdminProjectUsers$(): Observable<any> {
+      return of(undefined);
+    },
+
+    resetProjectUserOnProjectReset(): void {},
+    resetProjectUsersOnProjectReset(): void {},
+    loadProjectUsersOnProjectChange(): void {},
+    loadProjectUserOnProjectChange(): void {},
   };
 
   const fakeProjectService = {
@@ -121,6 +133,7 @@ describe('CreateProjectComponent', () => {
       providers: [
         { provide: ProjectService, useValue: fakeProjectService },
         { provide: ToastService, useValue: fakeToastService },
+        { provide: ProjectUserService, useValue: fakeProjectUserService },
         { provide: Location, useClass: SpyLocation },
       ],
       declarations: [CreateProjectComponent],
