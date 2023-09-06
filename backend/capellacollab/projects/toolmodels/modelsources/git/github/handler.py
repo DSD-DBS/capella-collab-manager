@@ -126,7 +126,7 @@ class GithubHandler(handler.GitHandler):
         job_id: str,
         trusted_path_to_artifact: str,
     ) -> str:
-        artifact = self.__get_lastest_artifact_metadata(project_id, job_id)
+        artifact = self.__get_latest_artifact_metadata(project_id, job_id)
         artifact_id = artifact["id"]
         artifact_response = requests.get(
             f"{self.git_instance.api_url}/repos/{project_id}/actions/artifacts/{artifact_id}/zip",
@@ -182,7 +182,7 @@ class GithubHandler(handler.GitHandler):
 
         return None
 
-    def __get_lastest_artifact_metadata(self, project_id: str, job_id: str):
+    def __get_latest_artifact_metadata(self, project_id: str, job_id: str):
         response = requests.get(
             f"{self.git_instance.api_url}/repos/{project_id}/actions/runs/{job_id}/artifacts",
             headers=self.__get_headers(self.git_model.password),
