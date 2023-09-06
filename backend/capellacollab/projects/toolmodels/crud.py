@@ -84,6 +84,8 @@ def create_model(
     nature: tools_models.DatabaseNature | None = None,
     configuration: dict[str, str] | None = None,
 ) -> models.DatabaseCapellaModel:
+    restrictions = restrictions_models.DatabaseToolModelRestrictions()
+
     model = models.DatabaseCapellaModel(
         name=post_model.name,
         slug=slugify.slugify(post_model.name),
@@ -92,9 +94,10 @@ def create_model(
         tool=tool,
         version=version,
         nature=nature,
-        restrictions=restrictions_models.DatabaseToolModelRestrictions(),
+        restrictions=restrictions,
         configuration=configuration,
     )
+    db.add(restrictions)
     db.add(model)
     db.commit()
     return model

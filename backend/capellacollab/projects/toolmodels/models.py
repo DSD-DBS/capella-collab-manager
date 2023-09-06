@@ -102,9 +102,7 @@ class DatabaseCapellaModel(database.Base):
         back_populates="model"
     )
 
-    restrictions: orm.Mapped[
-        DatabaseToolModelRestrictions | None
-    ] = orm.relationship(
+    restrictions: orm.Mapped[DatabaseToolModelRestrictions] = orm.relationship(
         back_populates="model", uselist=False, cascade="delete"
     )
 

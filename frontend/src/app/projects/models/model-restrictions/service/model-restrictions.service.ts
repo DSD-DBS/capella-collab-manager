@@ -26,6 +26,13 @@ export class ModelRestrictionsService {
   }
 }
 
+export function areRestrictionsEqual(
+  a: ModelRestrictions,
+  b: ModelRestrictions
+): boolean {
+  return a.allow_pure_variants === b.allow_pure_variants;
+}
+
 export type ModelRestrictions = {
   allow_pure_variants: boolean;
 };
