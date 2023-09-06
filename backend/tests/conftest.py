@@ -73,7 +73,7 @@ def fixture_executor_name(monkeypatch: pytest.MonkeyPatch) -> str:
     name = str(uuid1())
 
     async def bearer_passthrough(self, request: fastapi.Request):
-        return {"sub": name}
+        return name, None
 
     monkeypatch.setattr(JWTBearer, "__call__", bearer_passthrough)
 
@@ -88,6 +88,20 @@ def fixture_unique_username() -> str:
 @pytest.fixture(name="user")
 def fixture_user(db, executor_name):
     user = users_crud.create_user(db, executor_name, users_models.Role.USER)
+
+    def get_mock_own_user():
+        return user
+
+    app.dependency_overrides[
+        users_injectables.get_own_user
+    ] = get_mock_own_user
+    yield user
+    del app.dependency_overrides[users_injectables.get_own_user]
+
+
+@pytest.fixture(name="unauthenticated_user")
+def fixture_unauthenticated_user(db):
+    user = users_crud.create_user(db, str(uuid1()), users_models.Role.USER)
 
     def get_mock_own_user():
         return user
@@ -140,7 +154,7 @@ def project_user(
 
 @pytest.fixture()
 def client() -> testclient.TestClient:
-    return testclient.TestClient(app)
+    return testclient.TestClient(app, headers={"Authorization": "bearer"})
 
 
 def delete_all_tables_if_existent(_engine: sqlalchemy.engine.Engine) -> bool:

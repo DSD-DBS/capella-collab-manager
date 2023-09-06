@@ -1,0 +1,78 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="mb-10 items-center">
+  <h2>Basic Authentication Token</h2>
+</div>
+<div class="input-container mb-10">
+  <div class="items-center">
+    <input
+      matInput
+      type="text"
+      [(ngModel)]="tokenDescription"
+      placeholder="Token description"
+      class="mr-10"
+    />
+    <button
+      class="self-end mt-auto text-white"
+      (click)="createNewToken(tokenDescription)"
+      [disabled]="!tokenDescription"
+      color="primary"
+      mat-raised-button
+    >
+      Create Token
+    </button>
+  </div>
+  <div *ngIf="password" class="mb-10">
+    <mat-card>
+      Generated Token:
+      <span
+        class="font-mono border cursor-copy mr-1"
+        [cdkCopyToClipboard]="password"
+        (click)="showClipboardMessage()"
+      >
+        <span [ngClass]="{ blur: !passwordRevealed }">{{
+          password
+        }}</span></span
+      >
+      <button
+        *ngIf="!passwordRevealed"
+        (click)="this.passwordRevealed = true"
+        mat-mini-fab
+        matTooltip="Show token"
+      >
+        <mat-icon> blur_off</mat-icon>
+      </button>
+      <button
+        *ngIf="passwordRevealed"
+        (click)="this.passwordRevealed = false"
+        mat-mini-fab
+        matTooltip="Hide token"
+      >
+        <mat-icon> blur_on</mat-icon>
+      </button>
+      <div class="text-red-600 mt-2">
+        Make sure you save the token - you won't be able to access it again.
+      </div></mat-card
+    >
+  </div>
+  <h2>Token overview</h2>
+  <ng-container *ngIf="tokenService.tokens$ | async">
+    <mat-card *ngFor="let token of tokenService.tokens$ | async">
+      <mat-card-content>
+        Description: {{ token.description }} <br />
+        Expiration date: {{ token.expiration_date | date }}
+        <div *ngIf="isTokenExpired(token.expiration_date)">
+          <mat-icon color="warn" class="align-middle">warning</mat-icon>
+          <span class="align-middle text-red-600">This token has expired!</span>
+        </div>
+      </mat-card-content>
+      <button (click)="deleteToken(token)" mat-raised-button>
+        <mat-icon color="warn" class="align-middle">delete</mat-icon>
+        <span class="align-middle">Revoke token</span>
+      </button>
+    </mat-card>
+  </ng-container>
+</div>

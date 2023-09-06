@@ -16,7 +16,6 @@ from capellacollab import config
 from capellacollab.core import credentials, database
 from capellacollab.core import models as core_models
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.authentication import jwt_bearer
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.toolmodels import (
@@ -87,11 +86,11 @@ def get_current_sessions(
         users_injectables.get_own_user
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+    username=fastapi.Depends(auth_injectables.get_username),
 ):
     if auth_injectables.RoleVerification(
         required_role=users_models.Role.ADMIN, verify=False
-    )(token, db):
+    )(username, db):
         return sessions.inject_attrs_in_sessions(crud.get_sessions(db))
 
     if not any(
@@ -284,7 +283,7 @@ def request_persistent_session(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
     operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
-    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+    username=fastapi.Depends(auth_injectables.get_username),
 ):
     log.info("Starting persistent session for user %s", user.name)
 
@@ -305,7 +304,7 @@ def request_persistent_session(
             user=user,
             tool_version=version,
             tool=tool,
-            token=token,
+            username=username,
             operator=operator,
         )
         environment |= hook_env
@@ -605,11 +604,11 @@ def get_sessions_for_user(
         users_injectables.get_own_user
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+    username=fastapi.Depends(auth_injectables.get_username),
 ):
     if user != current_user and not auth_injectables.RoleVerification(
         required_role=users_models.Role.ADMIN, verify=False
-    )(token, db):
+    )(username, db):
         raise fastapi.HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={

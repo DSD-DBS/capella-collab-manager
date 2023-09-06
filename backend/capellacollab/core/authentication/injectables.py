@@ -3,11 +3,13 @@
 
 from __future__ import annotations
 
+import logging
+
 import fastapi
 from fastapi import status
 
 from capellacollab.core import database
-from capellacollab.core.authentication import jwt_bearer
+from capellacollab.core.authentication import basic_auth, jwt_bearer
 from capellacollab.projects import crud as projects_crud
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
@@ -15,7 +17,42 @@ from capellacollab.projects.users import models as projects_users_models
 from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
-from . import helper
+logger = logging.getLogger(__name__)
+
+
+async def get_username(
+    basic: tuple[str | None, fastapi.HTTPException | None] = fastapi.Depends(
+        basic_auth.HTTPBasicAuth(auto_error=False)
+    ),
+    jwt: tuple[str | None, fastapi.HTTPException | None] = fastapi.Depends(
+        jwt_bearer.JWTBearer(auto_error=False)
+    ),
+) -> str:
+    jwt_username, jwt_error = jwt
+    if jwt_username:
+        return jwt_username
+
+    basic_username, basic_error = basic
+    if basic_username:
+        return basic_username
+
+    if jwt_error:
+        raise jwt_error
+    if basic_error:
+        raise basic_error
+
+    raise fastapi.HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Token is none and username cannot be derived",
+        headers={"WWW-Authenticate": "Bearer, Basic"},
+    )
+
+
+async def get_username_not_injectable(request: fastapi.Request):
+    basic = await basic_auth.HTTPBasicAuth(auto_error=False)(request)
+    jwt = await jwt_bearer.JWTBearer(auto_error=False)(request)
+
+    return await get_username(basic=basic, jwt=jwt)
 
 
 class RoleVerification:
@@ -25,10 +62,9 @@ class RoleVerification:
 
     def __call__(
         self,
-        token=fastapi.Depends(jwt_bearer.JWTBearer()),
+        username=fastapi.Depends(get_username),
         db=fastapi.Depends(database.get_db),
     ) -> bool:
-        username = helper.get_username(token)
         if not (user := users_crud.get_user_by_name(db, username)):
             if self.verify:
                 raise fastapi.HTTPException(
@@ -73,10 +109,9 @@ class ProjectRoleVerification:
     def __call__(
         self,
         project_slug: str,
-        token=fastapi.Depends(jwt_bearer.JWTBearer()),
+        username=fastapi.Depends(get_username),
         db=fastapi.Depends(database.get_db),
     ) -> bool:
-        username = helper.get_username(token)
         if not (user := users_crud.get_user_by_name(db, username)):
             if self.verify:
                 raise fastapi.HTTPException(

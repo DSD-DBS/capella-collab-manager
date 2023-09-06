@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import abc
-import typing as t
 
 from sqlalchemy import orm
 
@@ -38,7 +37,7 @@ class HookRegistration(metaclass=abc.ABCMeta):
         user: users_models.DatabaseUser,
         tool_version: tools_models.DatabaseVersion,
         tool: tools_models.DatabaseTool,
-        token: dict[str, t.Any],
+        username: str,
         **kwargs,
     ) -> tuple[
         dict[str, str],

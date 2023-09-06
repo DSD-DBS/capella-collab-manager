@@ -10,6 +10,7 @@ theme:
 nav:
   - Introduction: index.md
   - Installation: installation.md
+  - Authentication: tokens.md
   - Projects:
       - Get access to a project: projects/access.md
       - Add a user to a project: projects/add-user.md

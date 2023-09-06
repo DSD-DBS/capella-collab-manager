@@ -12,7 +12,6 @@ from sqlalchemy import orm
 from capellacollab.core import database
 from capellacollab.core import logging as core_logging
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.authentication import jwt_bearer
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects.events import routes as projects_events_routes
 from capellacollab.projects.toolmodels import routes as toolmodels_routes
@@ -44,14 +43,14 @@ def get_projects(
         users_injectables.get_own_user
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+    username=fastapi.Depends(auth_injectables.get_username),
     log: logging.LoggerAdapter = fastapi.Depends(
         core_logging.get_request_logger
     ),
 ) -> list[models.DatabaseProject]:
     if auth_injectables.RoleVerification(
         required_role=users_models.Role.ADMIN, verify=False
-    )(token, db):
+    )(username, db):
         log.debug("Fetching all projects")
         return list(crud.get_projects(db))
 

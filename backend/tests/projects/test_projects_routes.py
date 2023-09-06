@@ -16,7 +16,7 @@ import capellacollab.users.models as users_models
 
 def test_get_projects_not_authenticated(client: testclient.TestClient):
     response = client.get("/api/v1/projects")
-    assert response.status_code == 403
+    assert response.status_code == 401
     assert response.json() == {"detail": "Not authenticated"}
 
 

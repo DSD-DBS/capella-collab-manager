@@ -13,6 +13,7 @@ from capellacollab.sessions import routes as session_routes
 from capellacollab.users.events import crud as events_crud
 from capellacollab.users.events import models as events_models
 from capellacollab.users.events import routes as events_routes
+from capellacollab.users.tokens import routes as tokens_routes
 
 from . import crud, injectables, models
 
@@ -135,3 +136,4 @@ def delete_user(
 
 router.include_router(session_routes.users_router, tags=["Users - Sessions"])
 router.include_router(events_routes.router, tags=["Users - History"])
+router.include_router(tokens_routes.router, tags=["Users - Token"])

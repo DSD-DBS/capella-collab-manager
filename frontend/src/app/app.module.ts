@@ -44,6 +44,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CookieModule } from 'ngx-cookie';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ToastrModule } from 'ngx-toastr';
+import { BasicAuthTokenComponent } from 'src/app/general/auth/basic-auth-token/basic-auth-token.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { EventsComponent } from './events/events.component';
@@ -140,6 +141,7 @@ import { SettingsComponent } from './settings/settings.component';
     AlertSettingsComponent,
     AppComponent,
     AuthComponent,
+    BasicAuthTokenComponent,
     BreadcrumbsComponent,
     ButtonSkeletonLoaderComponent,
     ChooseInitComponent,

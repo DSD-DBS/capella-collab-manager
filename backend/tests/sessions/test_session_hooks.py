@@ -42,7 +42,7 @@ class TestSessionHook(hooks_interface.HookRegistration):
         user: users_models.DatabaseUser,
         tool_version: tools_models.DatabaseVersion,
         tool: tools_models.DatabaseTool,
-        token: dict[str, t.Any],
+        username: str,
         **kwargs,
     ) -> tuple[dict[str, str], list[core_models.Message]]:
         self.configuration_hook_counter += 1
@@ -162,7 +162,7 @@ def test_session_creation_hook_is_called(
         user,
         db,
         mockoperator,
-        {"sub": "testuser"},
+        "testuser",
     )
 
     assert session_hook.configuration_hook_counter == 1

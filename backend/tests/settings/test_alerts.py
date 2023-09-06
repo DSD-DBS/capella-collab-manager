@@ -47,7 +47,7 @@ def test_create_alert_not_authenticated(client: TestClient):
         json={"title": "test", "message": "test", "level": "success"},
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 401
     assert response.json() == {"detail": "Not authenticated"}
 
 

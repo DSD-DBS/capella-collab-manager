@@ -40,7 +40,7 @@ class T4CIntegration(interface.HookRegistration):
         db: orm.Session,
         user: users_models.DatabaseUser,
         tool_version: tools_models.DatabaseVersion,
-        token: dict[str, t.Any],
+        username: str,
         **kwargs,
     ) -> tuple[
         T4CConfigEnvironment,
@@ -91,7 +91,7 @@ class T4CIntegration(interface.HookRegistration):
                     password=environment["T4C_PASSWORD"],
                     is_admin=auth_injectables.RoleVerification(
                         required_role=users_models.Role.ADMIN, verify=False
-                    )(token, db),
+                    )(username, db),
                 )
             except requests.RequestException:
                 warnings.append(

@@ -14,8 +14,7 @@ import fastapi
 from starlette.middleware import base
 
 from capellacollab import config
-from capellacollab.core.authentication import helper as auth_helper
-from capellacollab.core.authentication import jwt_bearer
+from capellacollab.core.authentication import injectables as auth_injectables
 
 LOGGING_LEVEL = config.config["logging"]["level"]
 
@@ -58,9 +57,12 @@ class AttachUserNameMiddleware(base.BaseHTTPMiddleware):
     async def dispatch(
         self, request: fastapi.Request, call_next: base.RequestResponseEndpoint
     ):
-        username = "anonymous"
-        if token := await jwt_bearer.JWTBearer(auto_error=False)(request):
-            username = auth_helper.get_username(token)
+        try:
+            username = await auth_injectables.get_username_not_injectable(
+                request
+            )
+        except fastapi.HTTPException:
+            username = "anonymous"
 
         request.state.user_name = username
 

@@ -21,3 +21,4 @@ import capellacollab.tools.integrations.models
 import capellacollab.tools.models
 import capellacollab.users.events.models
 import capellacollab.users.models
+import capellacollab.users.tokens
