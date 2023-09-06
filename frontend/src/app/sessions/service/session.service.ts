@@ -62,11 +62,11 @@ export class SessionService {
     let success = false;
     switch (state) {
       case 'Created':
-        text = 'Created session';
+        text = 'Session created';
         css = 'warning';
         break;
       case 'Started':
-        text = 'Started session';
+        text = 'Session started';
         css = 'success';
         success = true;
         break;
