@@ -175,8 +175,17 @@ def test_get_model_badge_fails_without_api_endpoint(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type",
-    [(git_models.GitType.GITLAB), (git_models.GitType.GITHUB)],
+    "git_type,git_query_params",
+    [
+        (
+            git_models.GitType.GITLAB,
+            [{"path": "model-complexity-badge.svg", "ref_name": "main"}],
+        ),
+        (
+            git_models.GitType.GITHUB,
+            [{"path": "model-complexity-badge.svg", "sha": "main"}],
+        ),
+    ],
 )
 @pytest.mark.usefixtures(
     "project_user",
@@ -184,6 +193,7 @@ def test_get_model_badge_fails_without_api_endpoint(
     "git_model",
     "mock_git_rest_api",
     "mock_git_model_badge_file_api",
+    "mock_git_get_commit_information_api",
 )
 def test_get_model_badge(
     project: project_models.DatabaseProject,
@@ -200,10 +210,18 @@ def test_get_model_badge(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,job_name",
+    "git_type,job_name,git_query_params",
     [
-        (git_models.GitType.GITLAB, "generate-model-badge"),
-        (git_models.GitType.GITHUB, "generate-model-badge"),
+        (
+            git_models.GitType.GITLAB,
+            "generate-model-badge",
+            [{"path": "model-complexity-badge.svg", "ref_name": "main"}],
+        ),
+        (
+            git_models.GitType.GITHUB,
+            "generate-model-badge",
+            [{"path": "model-complexity-badge.svg", "sha": "main"}],
+        ),
     ],
 )
 @pytest.mark.usefixtures(
@@ -213,6 +231,7 @@ def test_get_model_badge(
     "mock_git_rest_api_for_artifacts",
     "mock_git_model_badge_file_api_not_found",
     "mock_get_model_badge_from_artifacts_api",
+    "mock_git_get_commit_information_api",
 )
 def test_get_model_badge_from_artifacts(
     project: project_models.DatabaseProject,

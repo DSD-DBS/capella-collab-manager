@@ -2,6 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import json
+import re
+import typing as t
+
 import pytest
 import responses
 from aioresponses import aioresponses
@@ -55,6 +59,11 @@ def fixture_capella_model(
     params=[git_models.GitType.GITLAB],
 )
 def fixture_git_type(request: pytest.FixtureRequest) -> git_models.GitType:
+    return request.param
+
+
+@pytest.fixture(name="git_response_status", params=[200])
+def fixture_git_response_status(request: pytest.FixtureRequest) -> int:
     return request.param
 
 
@@ -170,6 +179,89 @@ def fixture_mock_git_rest_api_for_artifacts(
                 json={"artifacts": [{"id": artifact_id, "expired": "false"}]},
             )
             yield responses
+
+
+@pytest.fixture(name="git_query_params")
+def fixture_git_query_params(request: pytest.FixtureRequest) -> t.List[dict]:
+    return request.param
+
+
+def github_commit_api_callback(request):
+    response_body = [
+        {
+            "sha": "43bf21488c5cc309af0ec635a8698b8509379527",
+            "commit": {
+                "author": {
+                    "name": "test-name",
+                    "email": "test-email",
+                    "date": "2050-06-26T13:46:21Z",
+                },
+                "committer": {
+                    "name": "test-name",
+                    "email": "test-email",
+                    "date": "2050-07-03T09:50:57Z",
+                },
+                "message": "test: Test commit message",
+            },
+        }
+    ]
+    return (200, {}, json.dumps(response_body))
+
+
+@pytest.fixture(name="mock_git_get_commit_information_api")
+def fixture_mock_git_get_commit_information_api(
+    request: pytest.FixtureRequest,
+    git_type: git_models.GitType,
+    git_response_status: int,
+    git_query_params: t.List[dict],
+):
+    match git_type:
+        case git_models.GitType.GITLAB:
+            for params in git_query_params:
+                responses.get(
+                    "https://example.com/api/v4/projects/10000/repository/commits",
+                    status=git_response_status,
+                    json=[
+                        {
+                            "id": "ee85bc253111b7a8ca2ce5aa26b8f5f36325f48a",
+                            "created_at": "2050-04-11T10:09:59.000+02:00",
+                            "title": "test: Test commit message",
+                            "message": "test: Test commit message\n",
+                            "author_name": "test-name",
+                            "author_email": "test-email",
+                            "authored_date": "2050-04-11T10:09:59.000+02:00",
+                            "committer_name": "test-name",
+                            "committer_email": "test-email",
+                            "committed_date": "2050-04-11T10:09:59.000+02:00",
+                        }
+                    ],
+                    match=[responses.matchers.query_param_matcher(params)],
+                )
+        case git_models.GitType.GITHUB:
+            for params in git_query_params:
+                responses.get(
+                    "https://example.com/api/v4/repos/test/project/commits",
+                    status=git_response_status,
+                    json=[
+                        {
+                            "sha": "43bf21488c5cc309af0ec635a8698b8509379527",
+                            "commit": {
+                                "author": {
+                                    "name": "test-name",
+                                    "email": "test-email",
+                                    "date": "2050-06-26T13:46:21Z",
+                                },
+                                "committer": {
+                                    "name": "test-name",
+                                    "email": "test-email",
+                                    "date": "2050-07-03T09:50:57Z",
+                                },
+                                "message": "test: Test commit message",
+                            },
+                        }
+                    ],
+                    match=[responses.matchers.query_param_matcher(params)],
+                )
 
 
 @pytest.fixture(name="t4c_repository")
