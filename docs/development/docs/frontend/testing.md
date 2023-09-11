@@ -5,6 +5,12 @@
 
 # Frontend Testing
 
+**Note:** While frontend testing is valuable, the process of writing and maintaining
+such tests can be challenging and time-consuming in certain instances. Therefore,
+our team does not require frontend tests for every component or service.
+Please ensure that ".spec" files are only included if they have active tests.
+Before writing tests, consider the overhead and weigh it against the potential benefits.
+
 ## Unit & Integration testing
 
 ### Technologies
