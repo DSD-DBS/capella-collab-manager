@@ -23,6 +23,7 @@ config_fallback_locations: list[pathlib.Path] = [
     pathlib.Path(__file__).parents[2] / "config" / "config_template.yaml",
 ]
 
+
 # https://gist.github.com/pypt/94d747fe5180851196eb?permalink_comment_id=4015118#gistcomment-4015118
 class UniqueKeyLoader(yaml.SafeLoader):
     def construct_mapping(self, node, deep=False):
