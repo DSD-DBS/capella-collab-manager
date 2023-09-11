@@ -7,7 +7,6 @@ from capellacollab.sessions import metrics, operators
 
 
 def test_metrics_endpoint(client: testclient.TestClient):
-
     response = client.get("/metrics")
 
     assert response.status_code == 200

@@ -142,7 +142,6 @@ class GithubHandler(handler.GitHandler):
     def get_last_updated_for_file_path(
         self, project_id: str, file_path: str, revision: str | None
     ) -> datetime.datetime | None:
-
         response = requests.get(
             f"{self.git_instance.api_url}/repos/{project_id}/commits?path={file_path}&sha={revision or self.git_model.revision}",
             headers=self.__get_headers(self.git_model.password)
