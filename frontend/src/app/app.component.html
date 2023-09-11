@@ -8,14 +8,29 @@
     <app-nav-bar-menu></app-nav-bar-menu>
   </mat-drawer>
   <mat-drawer-content class="overall-wrapper">
-    <div class="navBar">
+    <div
+      class="navBar"
+      *ngIf="(fullscreenService.isFullscreen$ | async) === false"
+    >
       <app-header *ngIf="pageLayoutService.showHeader"></app-header>
     </div>
-    <div class="wrapper">
-      <app-notice *ngIf="pageLayoutService.showNotice"></app-notice>
+    <div
+      [ngClass]="{
+        wrapper: (fullscreenService.isFullscreen$ | async) === false
+      }"
+    >
+      <app-notice
+        *ngIf="
+          (fullscreenService.isFullscreen$ | async) === false &&
+          pageLayoutService.showNotice
+        "
+      ></app-notice>
       <router-outlet></router-outlet>
     </div>
-    <div class="footer">
+    <div
+      class="footer"
+      *ngIf="(fullscreenService.isFullscreen$ | async) === false"
+    >
       <app-version id="left"></app-version>
       <div id="middle">
         <app-footer

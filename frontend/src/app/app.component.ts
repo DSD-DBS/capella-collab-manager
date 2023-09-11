@@ -7,6 +7,7 @@ import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
 import { PageLayoutService } from './page-layout/page-layout.service';
+import { FullscreenService } from './sessions/service/fullscreen.service';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +17,7 @@ import { PageLayoutService } from './page-layout/page-layout.service';
 export class AppComponent implements AfterViewInit {
   constructor(
     public pageLayoutService: PageLayoutService,
+    public fullscreenService: FullscreenService,
     private navBarService: NavBarService
   ) {}
 
