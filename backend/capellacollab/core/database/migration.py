@@ -140,7 +140,9 @@ def create_tools(db):
     integrations_crud.update_integrations(
         db,
         jupyter.integrations,
-        integrations_models.PatchToolIntegrations(jupyter=True),
+        integrations_models.PatchToolIntegrations(
+            jupyter=True, t4c=False, pure_variants=False
+        ),
     )
 
     default_version = tools_crud.create_version(db, capella.id, "6.0.0", True)
