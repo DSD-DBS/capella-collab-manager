@@ -120,16 +120,16 @@ repos:
     hooks:
       - id: eslint
         additional_dependencies:
-          - "eslint@^8.46.0"
-          - "@angular-eslint/eslint-plugin@16.1.1"
-          - "@angular-eslint/eslint-plugin-template@16.1.1"
-          - "@angular-eslint/template-parser@16.1.1"
+          - "eslint@^8.49.0"
+          - "@angular-eslint/eslint-plugin@16.1.2"
+          - "@angular-eslint/eslint-plugin-template@16.1.2"
+          - "@angular-eslint/template-parser@16.1.2"
           - "eslint-config-prettier@^9.0.0"
           - "eslint-plugin-import@^2.28.1"
-          - "@typescript-eslint/eslint-plugin@^6.4.1"
-          - "@typescript-eslint/parser@^6.5.0"
+          - "@typescript-eslint/eslint-plugin@^6.7.0"
+          - "@typescript-eslint/parser@^6.7.0"
           - "eslint-plugin-unused-imports@^3.0.0"
-          - "eslint-plugin-deprecation@^1.5.0"
+          - "eslint-plugin-deprecation@^2.0.0"
         args: ["--fix"]
         types: []
         exclude: '.+\.spec(-helper)?\.ts$'
