@@ -11,8 +11,8 @@ import { filter, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
-  BaseT4CInstance,
   NewT4CInstance,
+  PatchT4CInstance,
   Protocol,
   T4CInstanceService,
 } from 'src/app/services/settings/t4c-instance.service';
@@ -33,6 +33,8 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
 
   instanceId?: number;
   capellaVersions?: ToolVersion[];
+
+  isArchived?: boolean;
 
   portValidators = [
     Validators.pattern(/^\d*$/),
@@ -91,6 +93,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((t4cInstance) => {
         t4cInstance.password = '***********';
+        this.isArchived = t4cInstance.is_archived;
         this.form.patchValue(t4cInstance);
         this.breadcrumbsService.updatePlaceholder({ t4cInstance });
       });
@@ -139,13 +142,31 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   update(): void {
     if (this.form.valid && this.instanceId) {
       this.t4cInstanceService
-        .updateInstance(this.instanceId, this.form.value as BaseT4CInstance)
+        .updateInstance(this.instanceId, this.form.value as PatchT4CInstance)
         .subscribe((instance) => {
           this.editing = false;
           this.form.disable();
           this.toastService.showSuccess(
             'Instance updated',
             `The instance “${instance.name}” was updated.`
+          );
+        });
+    }
+  }
+
+  toggleArchive(): void {
+    if (this.instanceId) {
+      this.t4cInstanceService
+        .updateInstance(this.instanceId, {
+          is_archived: !this.isArchived,
+        })
+        .subscribe((instance) => {
+          this.isArchived = instance.is_archived;
+          this.toastService.showSuccess(
+            'Instance updated',
+            `The instance “${instance.name}” is now ${
+              this.isArchived ? 'archived' : 'unarchived'
+            }.`
           );
         });
     }

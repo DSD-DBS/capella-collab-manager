@@ -19,7 +19,11 @@
     *ngFor="let instance of t4cInstanceService.t4cInstances$ | async"
     [routerLink]="['instance', instance.id]"
   >
-    <mat-card matRipple class="mat-card-overview">
+    <mat-card
+      matRipple
+      class="mat-card-overview"
+      [ngClass]="{ 'bg-gray-300': instance.is_archived }"
+    >
       <div class="header">{{ instance.name }}</div>
       <div class="content">
         <mat-icon class="aligned">tag</mat-icon> <b> Capella version:</b>
@@ -27,6 +31,13 @@
         <br />
         <mat-icon class="aligned">link</mat-icon><b> Host:</b>
         {{ instance.protocol }}://{{ instance.host }}:{{ instance.port }}
+      </div>
+
+      <div
+        *ngIf="instance.is_archived"
+        class="fixed bottom-2 right-2 text-right text-stone-500"
+      >
+        Archived
       </div>
     </mat-card>
   </a>

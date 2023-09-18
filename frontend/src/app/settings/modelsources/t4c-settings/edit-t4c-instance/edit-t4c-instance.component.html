@@ -176,9 +176,27 @@
           </button>
           <button mat-flat-button type="submit" color="primary">Submit</button>
         </div>
-        <div *ngIf="!editing && existing" class="flex justify-between">
-          <button mat-flat-button color="primary" (click)="enableEditing()">
-            Edit
+        <div
+          *ngIf="
+            !editing &&
+            existing &&
+            (t4cInstanceService.t4cInstance$ | async) !== undefined
+          "
+          class="flex justify-between"
+        >
+          <div *ngIf="!isArchived; else archivePlaceholder">
+            <button mat-flat-button color="primary" (click)="enableEditing()">
+              Edit
+            </button>
+          </div>
+          <ng-template #archivePlaceholder>
+            <div class="grow"></div>
+          </ng-template>
+          <button mat-flat-button color="primary" (click)="toggleArchive()">
+            <mat-icon class="mat-icon-position left">{{
+              this.isArchived ? "unarchive" : "archive"
+            }}</mat-icon>
+            {{ this.isArchived ? "Unarchive" : "Archive" }}
           </button>
         </div>
         <div *ngIf="!existing" class="text-right">
