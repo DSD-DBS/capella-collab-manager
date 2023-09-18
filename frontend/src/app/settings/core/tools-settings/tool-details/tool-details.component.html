@@ -94,7 +94,12 @@
         </div>
         <br />
         <div *ngIf="editing" class="flex justify-between">
-          <button mat-flat-button color="warn" (click)="cancelEditing()">
+          <button
+            mat-flat-button
+            type="button"
+            color="warn"
+            (click)="cancelEditing()"
+          >
             Cancel
           </button>
           <button mat-flat-button type="submit" color="primary">Submit</button>
