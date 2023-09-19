@@ -40,7 +40,7 @@ sessions. The same restrictions as with Capella sessions apply here.
 ### Readonly Capella/Papyrus Sessions
 
 Readonly Sessions allow you to read information from models without consuming a
-licence.
+license.
 
 <!-- prettier-ignore -->
 !!! warning
