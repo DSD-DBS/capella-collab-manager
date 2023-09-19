@@ -51,6 +51,7 @@ nav:
           - General: settings/tools/index.md
           - pure::variants: settings/tools/pure_variants.md
           - Capella:
+              - Co-working methods: settings/tools/capella/t4c-git-compare.md
               - TeamForCapella:
                   - Import a model from TeamForCapella: settings/tools/capella/teamforcapella/import/import-from-t4c.md
                   - Export a model to TeamForCapella: settings/tools/capella/teamforcapella/export/export-to-t4c.md
@@ -73,9 +74,11 @@ markdown_extensions:
   - admonition
   - pymdownx.details
   - pymdownx.superfences
+  - pymdownx.extra
   - abbr
   - pymdownx.snippets
   - attr_list
+  - footnotes
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
