@@ -41,7 +41,7 @@ class JupyterIntegration(interface.HookRegistration):
         )
         self._general_conf = config["general"]
 
-    def configuration_hook(
+    def configuration_hook(  # type: ignore[override]
         self,
         db: orm.Session,
         user: users_models.DatabaseUser,
@@ -65,7 +65,7 @@ class JupyterIntegration(interface.HookRegistration):
 
         volumes = self._get_project_share_volume_mounts(db, token, tool)
 
-        return environment, volumes, []
+        return environment, volumes, []  # type: ignore[return-value]
 
     def post_session_creation_hook(
         self,
@@ -76,12 +76,12 @@ class JupyterIntegration(interface.HookRegistration):
     ):
         operator.create_public_route(
             session_id=session_id,
-            host=self._jupyter_public_uri.hostname,
+            host=self._jupyter_public_uri.hostname or "",
             path=self._determine_base_url(user.name),
             port=8888,
         )
 
-    def pre_session_termination_hook(
+    def pre_session_termination_hook(  # type: ignore
         self,
         operator: operators.KubernetesOperator,
         session: sessions_models.DatabaseSession,

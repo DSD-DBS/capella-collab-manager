@@ -14,6 +14,8 @@ import requests
 from capellacollab.config import config
 from capellacollab.core.authentication.provider import models
 
+from .. import models as provider_models
+
 log = logging.getLogger(__name__)
 cfg = config["authentication"]["oauth"]
 
@@ -35,7 +37,7 @@ class _KeyStore:
         self.get_jwks_uri = get_jwks_uri
         self.jwks_uri = ""
         self.algorithms = algorithms
-        self.public_keys: dict[t.Any, t.Any] = {}
+        self.public_keys: dict[str, provider_models.JSONWebKey] = {}
         self.key_refresh_interval = key_refresh_interval
         self.public_keys_last_refreshed: float = 0
 
@@ -62,7 +64,7 @@ class _KeyStore:
 
     def key_for_token(
         self, token: str, *, in_retry: int = 0
-    ) -> dict[str, t.Any]:
+    ) -> provider_models.JSONWebKey:
         # Before we do anything, the validation keys may need to be refreshed.
         # If so, refresh them.
         if self.keys_need_refresh():

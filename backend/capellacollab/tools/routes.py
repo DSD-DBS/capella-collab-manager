@@ -282,7 +282,12 @@ def raise_when_tool_dependency_exist(
         for model in tool_models
     )
 
-    raise_if_dependencies_exist(dependencies, tool.name, "tool")
+    if dependencies:
+        raise core_exceptions.ExistingDependenciesError(
+            entity_name=tool.name,
+            entity_type="tool",
+            dependencies=dependencies,
+        )
 
 
 def raise_when_tool_version_dependency_exist(
@@ -314,11 +319,12 @@ def raise_when_tool_version_dependency_exist(
         for model in version_models
     )
 
-    raise core_exceptions.ExistingDependenciesError(
-        entity_name=version.name,
-        entity_type="version",
-        dependencies=dependencies,
-    )
+    if dependencies:
+        raise core_exceptions.ExistingDependenciesError(
+            entity_name=version.name,
+            entity_type="version",
+            dependencies=dependencies,
+        )
 
 
 def raise_when_tool_nature_dependency_exist(
@@ -341,8 +347,9 @@ def raise_when_tool_nature_dependency_exist(
         for model in nature_models
     )
 
-    raise core_exceptions.ExistingDependenciesError(
-        entity_name=nature.name,
-        entity_type="nature",
-        dependencies=dependencies,
-    )
+    if dependencies:
+        raise core_exceptions.ExistingDependenciesError(
+            entity_name=nature.name,
+            entity_type="nature",
+            dependencies=dependencies,
+        )

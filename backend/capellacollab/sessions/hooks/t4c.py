@@ -35,7 +35,7 @@ class T4CConfigEnvironment(t.TypedDict):
 
 
 class T4CIntegration(interface.HookRegistration):
-    def configuration_hook(
+    def configuration_hook(  # type: ignore
         self,
         db: orm.Session,
         user: users_models.DatabaseUser,
@@ -47,7 +47,6 @@ class T4CIntegration(interface.HookRegistration):
         list[operators_models.Volume],
         list[core_models.Message],
     ]:
-        environment = {}
         warnings: list[core_models.Message] = []
 
         # When using a different tool with TeamForCapella support (e.g., Capella + pure::variants),
@@ -57,7 +56,7 @@ class T4CIntegration(interface.HookRegistration):
             db, tool_version.name, user
         )
 
-        environment["T4C_JSON"] = json.dumps(
+        t4c_json = json.dumps(
             [
                 {
                     "repository": repository.name,
@@ -72,12 +71,16 @@ class T4CIntegration(interface.HookRegistration):
             ]
         )
 
-        environment["T4C_LICENCE_SECRET"] = (
-            t4c_repositories[0].instance.license if t4c_repositories else None
+        t4c_licence_secret = (
+            t4c_repositories[0].instance.license if t4c_repositories else ""
         )
 
-        environment["T4C_USERNAME"] = user.name
-        environment["T4C_PASSWORD"] = credentials.generate_password()
+        environment = T4CConfigEnvironment(
+            T4C_LICENCE_SECRET=t4c_licence_secret,
+            T4C_JSON=t4c_json,
+            T4C_USERNAME=user.name,
+            T4C_PASSWORD=credentials.generate_password(),
+        )
 
         for repository in t4c_repositories:
             try:
@@ -109,7 +112,7 @@ class T4CIntegration(interface.HookRegistration):
 
         return environment, [], warnings
 
-    def pre_session_termination_hook(
+    def pre_session_termination_hook(  # type: ignore
         self,
         db: orm.Session,
         session: sessions_models.DatabaseSession,

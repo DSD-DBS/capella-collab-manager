@@ -150,7 +150,7 @@ class KubernetesOperator:
         session_type: str,
         tool_name: str,
         version_name: str,
-        environment: dict[str, str | None],
+        environment: dict[str, str],
         ports: dict[str, int],
         volumes: list[models.Volume],
         prometheus_path="/metrics",
@@ -441,7 +441,7 @@ class KubernetesOperator:
         self,
         image: str,
         name: str,
-        environment: dict[str, str | None],
+        environment: dict[str, str],
         ports: dict[str, int],
         volumes: list[models.Volume],
         limits: str = "high",
@@ -745,7 +745,7 @@ class KubernetesOperator:
         return v1_routes.create(body=route_dict, namespace=namespace)
 
     def create_persistent_volume(
-        self, name: str, size: str, labels: dict[str, str] = None
+        self, name: str, size: str, labels: dict[str, str] | None = None
     ):
         pvc: client.V1PersistentVolumeClaim = client.V1PersistentVolumeClaim(
             kind="PersistentVolumeClaim",
@@ -950,7 +950,7 @@ class KubernetesOperator:
 
             print("Using CLI arguments: " + str(sys.argv[1:]), file=sys.stderr)
 
-            def get_files(dir: pathlib.PosixPath, show_hidden: bool):
+            def get_files(dir: pathlib.Path, show_hidden: bool):
                 file = {
                     "path": str(dir.absolute()),
                     "name": dir.name,

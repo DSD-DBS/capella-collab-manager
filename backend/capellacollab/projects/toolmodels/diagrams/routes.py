@@ -40,7 +40,7 @@ async def get_diagram_metadata(
     try:
         (
             last_updated,
-            diagrams,
+            diagram_metadata_entries,
         ) = await handler.get_file_from_repository_or_artifacts_as_json(
             "diagram_cache/index.json",
             "update_capella_diagram_cache",
@@ -57,8 +57,13 @@ async def get_diagram_metadata(
                 ),
             },
         )
+
     return models.DiagramCacheMetadata(
-        diagrams=diagrams, last_updated=last_updated
+        diagrams=[
+            models.DiagramMetadata.model_validate(diagram_metadata)
+            for diagram_metadata in diagram_metadata_entries
+        ],
+        last_updated=last_updated,
     )
 
 

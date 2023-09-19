@@ -27,6 +27,7 @@ dependencies = [
   "alembic==1.10.4",
   "appdirs",
   "cachetools",
+  "capellambse==0.5.35.dev4",
   "fastapi>=0.101.0",
   "kubernetes",
   "msal",
@@ -100,6 +101,7 @@ show_error_codes = true
 warn_redundant_casts = true
 warn_unreachable = true
 python_version = "3.11"
+exclude = "capellacollab/alembic"
 
 [[tool.mypy.overrides]]
 module = ["tests.*"]
@@ -109,7 +111,26 @@ allow_untyped_defs = true
 [[tool.mypy.overrides]]
 # Untyped third party libraries
 module = [
-  # ...
+  "capellambse.*",
+  "kubernetes.*",
+  "prometheus_client.*",
+  "openshift.*",
+  "deepdiff.*",
+  "appdirs.*",
+  "jsonschema.*",
+  "requests.*",
+  "jose.*",
+  "slugify.*",
+  "cachetools.*",
+  "requests_oauthlib.*",
+  "msal.*",
+  "yaml.*",
+  "fastapi_pagination.*",
+  "aiohttp.*",
+  "starlette_prometheus.*",
+  "uvicorn.*",
+  "alembic.*",
+  "jwt.*",
 ]
 ignore_missing_imports = true
 

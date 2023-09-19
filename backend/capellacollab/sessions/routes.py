@@ -263,7 +263,7 @@ def models_as_json(
 def git_model_as_json(
     git_model: git_models.DatabaseGitModel, deep_clone: bool
 ) -> dict[str, str | int]:
-    d = {
+    d: dict[str, str | int] = {
         "url": git_model.path,
         "revision": git_model.revision,
         "depth": 0 if deep_clone else 1,
@@ -474,21 +474,27 @@ def create_database_session(
     version: tools_models.DatabaseVersion,
     project: projects_models.DatabaseProject | None,
     **kwargs,
-) -> models.DatabaseSession:
-    database_model = models.DatabaseSession(
-        tool=tool,
-        version=version,
-        owner_name=owner,
-        project=project,
-        type=type,
-        **session,
-        **kwargs,
+) -> models.GetSessionsResponse:
+    db_session = crud.create_session(
+        db,
+        models.DatabaseSession(
+            tool=tool,
+            version=version,
+            owner_name=owner,
+            project=project,
+            type=type,
+            **session,
+            **kwargs,
+        ),
     )
-    response = crud.create_session(db=db, session=database_model)
-    response.state = "New"
-    response.last_seen = "UNKNOWN"
-    response.warnings = []
-    return response
+
+    session_dict = models.Session.model_validate(db_session).model_dump()
+
+    session_dict["state"] = "New"
+    session_dict["last_seen"] = "UNKNOWN"
+    session_dict["warnings"] = []
+
+    return models.GetSessionsResponse.model_validate(session_dict)
 
 
 def create_database_and_guacamole_session(
@@ -501,7 +507,7 @@ def create_database_and_guacamole_session(
     version: tools_models.DatabaseVersion,
     project: projects_models.DatabaseProject | None,
     environment: dict[str, str],
-) -> models.DatabaseSession:
+) -> models.GetSessionsResponse:
     guacamole_username = credentials.generate_password()
     guacamole_password = credentials.generate_password(length=64)
 
@@ -568,6 +574,14 @@ def create_guacamole_token(
             },
         )
 
+    if not (session.guacamole_username and session.guacamole_password):
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "reason": "The session does not contain a guacamole username or password"
+            },
+        )
+
     token = guacamole.get_token(
         session.guacamole_username, session.guacamole_password
     )
@@ -581,7 +595,7 @@ router.include_router(router=files_routes.router, prefix="/{session_id}/files")
 
 
 @users_router.get(
-    "/{user_id}/sessions", response_model=list[models.OwnSessionResponse]
+    "/{user_id}/sessions", response_model=list[models.GetSessionsResponse]
 )
 def get_sessions_for_user(
     user: users_models.DatabaseUser = fastapi.Depends(

@@ -162,6 +162,8 @@ def create_tools(db):
 
 def create_t4c_instance_and_repositories(db):
     tool = tools_crud.get_tool_by_name(db, "Capella")
+    assert tool
+
     version = tools_crud.get_version_by_tool_id_version_name(
         db, tool.id, "5.2.0"
     )
@@ -189,13 +191,17 @@ def create_t4c_instance_and_repositories(db):
 
 def create_models(db: orm.Session):
     capella_tool = tools_crud.get_tool_by_name(db, "Capella")
+    assert capella_tool
+
+    default_project = projects_crud.get_project_by_slug(db, "default")
+    assert default_project
 
     for version in ["5.0.0", "5.2.0", "6.0.0"]:
         capella_model = toolmodels_crud.create_model(
             db=db,
-            project=projects_crud.get_project_by_slug(db, "default"),
+            project=default_project,
             post_model=toolmodels_models.PostCapellaModel(
-                name=f"Meldody Model Test {version}",
+                name=f"Melody Model Test {version}",
                 description="",
                 tool_id=capella_tool.id,
             ),

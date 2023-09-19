@@ -22,7 +22,7 @@ class DatabaseTool(database.Base):
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
 
-    name: orm.Mapped[str | None]
+    name: orm.Mapped[str]
     docker_image_template: orm.Mapped[str]
     docker_image_backup_template: orm.Mapped[str | None]
     readonly_docker_image_template: orm.Mapped[str | None]

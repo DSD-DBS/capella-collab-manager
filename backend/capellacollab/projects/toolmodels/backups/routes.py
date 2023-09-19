@@ -29,6 +29,7 @@ from capellacollab.sessions import operators
 from capellacollab.tools import crud as tools_crud
 from capellacollab.users import models as users_models
 
+from .. import exceptions as toolmodels_exceptions
 from . import core, crud, exceptions, injectables, models
 from .runs import routes as runs_routes
 
@@ -100,6 +101,9 @@ def create_backup(
         )
 
     if body.run_nightly:
+        if not capella_model.version_id:
+            raise toolmodels_exceptions.VersionIdNotSetError(capella_model.id)
+
         reference = operators.get_operator().create_cronjob(
             image=tools_crud.get_backup_image_for_tool_version(
                 db, capella_model.version_id

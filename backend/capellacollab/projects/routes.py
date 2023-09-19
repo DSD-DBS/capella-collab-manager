@@ -3,7 +3,6 @@
 
 
 import logging
-from collections import abc
 
 import fastapi
 import slugify
@@ -39,7 +38,7 @@ router = fastapi.APIRouter(
 )
 
 
-@router.get("", response_model=abc.Sequence[models.Project], tags=["Projects"])
+@router.get("", response_model=list[models.Project], tags=["Projects"])
 def get_projects(
     user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
@@ -49,18 +48,19 @@ def get_projects(
     log: logging.LoggerAdapter = fastapi.Depends(
         core_logging.get_request_logger
     ),
-) -> abc.Sequence[models.DatabaseProject]:
+) -> list[models.DatabaseProject]:
     if auth_injectables.RoleVerification(
         required_role=users_models.Role.ADMIN, verify=False
     )(token, db):
         log.debug("Fetching all projects")
-        return crud.get_projects(db)
+        return list(crud.get_projects(db))
 
     projects = [
         association.project
         for association in user.projects
         if not association.project.visibility == models.Visibility.INTERNAL
-    ] + crud.get_internal_projects(db)
+    ]
+    projects.extend(crud.get_internal_projects(db))
 
     log.debug("Fetching the following projects: %s", projects)
     return projects
@@ -89,7 +89,7 @@ def update_project(
     if crud.get_project_by_slug(db, new_slug) and project.slug != new_slug:
         raise fastapi.HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            details={
+            detail={
                 "reason": "A project with a similar name already exists.",
                 "technical": "Slug already used",
             },
@@ -137,7 +137,7 @@ def create_project(
     project = crud.create_project(
         db,
         post_project.name,
-        post_project.description,
+        post_project.description or "",
         post_project.visibility,
     )
 

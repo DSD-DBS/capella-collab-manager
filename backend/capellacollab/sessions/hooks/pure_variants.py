@@ -25,7 +25,7 @@ class PureVariantsConfigEnvironment(t.TypedDict):
 
 
 class PureVariantsIntegration(interface.HookRegistration):
-    def configuration_hook(
+    def configuration_hook(  # type: ignore
         self,
         db: orm.Session,
         user: users_models.DatabaseUser,
