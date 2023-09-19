@@ -8,9 +8,9 @@
 <!-- prettier-ignore-start -->
 
 1. To get started with a persistent session, you have to naviate to
-   `Workspaces`.
+   `Sessions`.
 2. Please select the tool and the version you'd like to work with:
-    ![Request a persistent session](screenshots/request-session.png)
+    ![Request a persistent workspace](screenshots/request-session.png)
 3. You should see your session listed under `Active sessions` on the right.
     ![Active sessions](screenshots/active-sessions.png)
 

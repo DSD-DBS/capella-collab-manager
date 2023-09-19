@@ -8,9 +8,9 @@
 If you have read-only project access, or you simply want to check the model
 without risk of editing, you may start a read-only session.
 
-To do so, select the project from the project overview and the model from the
-project details where you want to start a read-only session, and click on the
-`eye`-button.
+To do so, select the project from the project overview and select the modeling
+tool and version from the `Read-only session` section. Next, select the models
+you want to load in your read-only session.
 
 Starting read-only session may take a bit of time, depending on the size of the
 model and the current load. After the request, the application will fetch the
