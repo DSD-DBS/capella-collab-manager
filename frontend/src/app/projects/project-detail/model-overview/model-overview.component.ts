@@ -62,8 +62,15 @@ export class ModelOverviewComponent implements OnInit {
 
   openDiagramsDialog(model: Model): void {
     this.dialog.open(ModelDiagramDialogComponent, {
-      height: '80vh',
-      width: '80vw',
+      maxWidth: '100vw',
+      panelClass: [
+        'md:w-[85vw]',
+        'md:h-[85vw]',
+        'md:max-h-[85vh]',
+        'max-h-full',
+        'w-full',
+        'h-full',
+      ],
       data: { modelSlug: model.slug, projectSlug: this.projectSlug },
     });
   }
