@@ -13,7 +13,7 @@
 <!-- prettier-ignore -->
 !!! info
     If you want to update a Capella model, please follow the Capella specific instructions instead:
-    [Update a TeamForCapella based Capella model](../../settings/tools/capella/teamforcapella/update.md)
+    [Update a TeamForCapella based Capella model](../../tools/capella/teamforcapella/update.md)
 
 1. Open a new persistent session with the old version of your tool.
 1. Load the model with the old version into your persistent workspace.

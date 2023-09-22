@@ -19,9 +19,8 @@
    select `Capella Project to Remote Repository` and confirm with `Next`:
    ![Capella Project to Remote Repository](./capella-project-to-repository.png)
 1. Select the repository from the dropdown menu. Click on the `Test connection`
-   button and enter your [session token](../../../../../sessions/flows/t4c.md).
-   Click on `Next`.
-   ![Select repository for export](./export-repository-selection.png)
+   button and enter your [session token](/sessions/flows/t4c.md). Click on
+   `Next`. ![Select repository for export](./export-repository-selection.png)
 1. Select the overwrite strategy. If the project doesn't exist on the server
    yet, choose `Replace`. Otherwise, select `Merge`.
    ![Overwrite strategy](./select-overwrite-strategy.png)

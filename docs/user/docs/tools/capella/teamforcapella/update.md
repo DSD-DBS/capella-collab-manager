@@ -16,16 +16,16 @@
    [Import a model from TeamForCapella](./import/import-from-t4c.md)
 1. Terminate the session.
 1. Remove existing backups from TeamForCapella:
-   [Remove a (nightly) backup](../../../../projects/models/backups/remove.md)
+   [Remove a (nightly) backup](/projects/models/backups/remove.md)
 1. Add a new repository in the TeamForCapella settings:
    [Add a new TeamForCapella repository](./repository-management.md#add-a-new-teamforcapella-repository)
 1. Unlink the old TeamForCapella repository (old Capella version) from your
    model:
-   [Unlink a TeamForCapella repository](../../../../projects/models/sources/t4c.md#unlink-a-teamforcapella-repository-from-a-project-model)
+   [Unlink a TeamForCapella repository](/projects/models/sources/t4c.md#unlink-a-teamforcapella-repository-from-a-project-model)
 1. Link the new TeamForCapella repository (new Capella version) to your model:
-   [Link a TeamForCapella repository](../../../../projects/models/sources/t4c.md#link-a-teamforcapella-repository-to-a-project-model)
+   [Link a TeamForCapella repository](/projects/models/sources/t4c.md#link-a-teamforcapella-repository-to-a-project-model)
 1. Update the model version to the newer Capella version:
-   [Change model metadata](../../../../projects/models/metadata.md)
+   [Change model metadata](/projects/models/metadata.md)
 1. Create a new session with the new Capella version.
 1. In your persistent workspace, execute the following steps:
    <!-- prettier-ignore -->
@@ -40,4 +40,4 @@
    from TeamForCapella:
    [Export a model to TeamForCapella](./export/export-to-t4c.md)
 1. Recreate the backup from TeamForCapella:
-   [Set up a TeamForCapella backup](../../../../projects/models/backups/setup.md)
+   [Set up a TeamForCapella backup](/projects/models/backups/setup.md)

@@ -7,7 +7,7 @@
 
 <!-- prettier-ignore-start -->
 
-1. To get started with a persistent session, you have to naviate to
+1. To get started with a persistent session, you have to navigate to
    `Sessions`.
 2. Please select the tool and the version you'd like to work with:
     ![Request a persistent workspace](screenshots/request-session.png)
@@ -29,7 +29,7 @@
 
 5. When Capella is loaded you can start working.
 
-    !!! info "Do you need access to a TeamForCapella model"
+    !!! info "Do you need access to a TeamForCapella model?"
         Please continue with the [Connect to a `TeamForCapella` repository guide](../flows/t4c.md).
 
 <!-- prettier-ignore-end -->

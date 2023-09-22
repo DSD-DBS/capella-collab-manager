@@ -6,9 +6,6 @@ theme:
   name: material
 nav:
   - Introduction: index.md
-  - Getting Started:
-      - Overview: getting-started/overview.md
-      - Introduction to Capella: getting-started/capella-intro.md
   - Projects:
       - Get access to a project: projects/access.md
       - Add a user to a project: projects/add-user.md
@@ -41,7 +38,7 @@ nav:
       - Flows:
           - Git: sessions/flows/git.md
           - TeamForCapella: sessions/flows/t4c.md
-      - Files (Upload): sessions/files/files.md
+      - Files browser: sessions/files/files.md
       - Troubleshooting: sessions/troubleshooting.md
       - Jupyter:
           - Collaboration: sessions/jupyter/collaboration.md
@@ -50,19 +47,20 @@ nav:
       - Tools:
           - General: settings/tools/index.md
           - pure::variants: settings/tools/pure_variants.md
-          - Capella:
-              - Co-working methods: settings/tools/capella/t4c-git-compare.md
-              - TeamForCapella:
-                  - Import a model from TeamForCapella: settings/tools/capella/teamforcapella/import/import-from-t4c.md
-                  - Export a model to TeamForCapella: settings/tools/capella/teamforcapella/export/export-to-t4c.md
-                  - TeamForCapella repository management: settings/tools/capella/teamforcapella/repository-management.md
-                  - Update a TeamForCapella based model: settings/tools/capella/teamforcapella/update.md
       - Model sources:
           - Git: settings/model-sources/git.md
       - Alerts:
           - Create an alert: additional/alerts/create.md
           - Delete an alert: additional/alerts/delete.md
-  - User Management: users.md
+  - Tools:
+      - Capella:
+          - Introduction: tools/capella/introduction.md
+          - Co-working methods: tools/capella/t4c-git-compare.md
+          - TeamForCapella:
+              - Import a model from TeamForCapella: tools/capella/teamforcapella/import/import-from-t4c.md
+              - Export a model to TeamForCapella: tools/capella/teamforcapella/export/export-to-t4c.md
+              - TeamForCapella repository management: tools/capella/teamforcapella/repository-management.md
+              - Update a TeamForCapella based model: tools/capella/teamforcapella/update.md
   - Release Notes: release-notes.md
   - About: about.md
 
@@ -82,6 +80,8 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
 
 extra:
   generator: false

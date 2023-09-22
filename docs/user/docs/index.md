@@ -7,64 +7,33 @@
 
 Welcome onboard of the Modeling Collaboration Manager. This platform helps you
 co-work on architectures using tools like
-[Capella](https://www.eclipse.org/capella/) and
-[Papyrus](https://www.eclipse.org/papyrus/).
+[Capella](https://www.eclipse.org/capella/),
+[Papyrus](https://www.eclipse.org/papyrus/),
+[pure::variants](https://www.pure-systems.com/purevariants) and
+[Jupyter](https://jupyter.org/) in combination with
+[py-capellambse](https://github.com/DSD-DBS/py-capellambse).
 
 This platform wraps the modeling tools to create an environment where users can
-work directly in the project context without having to install or configure the
-tool. It also takes care of housekeeping for the modeling projects themselves.
-For example, a automatic backup from
-[TeamForCapella](https://www.obeosoft.com/en/team-for-capella) to any Git
-repository can be set up.
-
-## Ways of co-working on a Modeling Project
-
-In the context of Capella the platform supports 2 main ways of co-working:
-
-<!-- prettier-ignore-start -->
-
-- **Git-only** - the modeling team uses a git repository to work on the model.
-  The team may use git branches to work on features or capabilities in parallel
-  and a main branch is used for integration and release-tagging. This way of
-  working gives the modeling leads / change control board great control over
-  what contents make it to the model that is used for releases (of things like
-  design documentation). On the downside this co-working method is fairly
-  complicated and requires skilled modeling leadership for challenges like
-  merge conflict resolution and fragmentation management (a way to break up
-  model into smaller files to reduce density of merge conflicts).
-- **Git + TeamForCapella** - with this approach the modeling team can co-work
-  with a very high degree of concurrency and stay away from the difficulties of
-  merge conflict resolution. On the downside it is much harder to control what
-  makes it into the model as there is no barrier except for maybe a modeling
-  process that would stop a person from making changes that are not allowed.
-  Yet there are a few ways around that limitation. For teams with basic or no
-  experience in modeling and git this is probably the best way to start
-  co-woking. Git is still used for nightly backup of the model and
-  release-tagging.
-
-    !!! info "Info: TeamForCapella license required"
-        For this co-working method to be enabled you need a valid
-        TeamForCapella license and TeamForCapella server installed and
-        integrated with Collab-Manager.
-
-<!-- prettier-ignore-end -->
+can work directly in the project context without having to install or configure
+the tool. It also takes care of the housekeeping of the modeling projects
+themselves. And that's not all: We also offer project access management and
+since the site is completely responsive it is also usable on smartphones.
 
 ## Automations and model-derived products
 
-As you can see, git is quite in the middle of the modeling lifecycle. We also
-use its automation means (pre and post-commit handlers, CI/CD) to automate a
-number of housekeeping activities:
+Git is quite in the middle of the modeling lifecycle. We also use its
+automation means (CI/CD) to automate a number of housekeeping activities:
 
-- Automated model-modifications: this includes range of services like
+- Automated model-modifications: This includes range of services like
   human-friendly element ID assignment, change control and versioning of
-  elements, hyperlinked object title update in descriptions, maintenance of
+  elements, hyperlinked object title update in descriptions and maintenance of
   model-derived requirements (req-bot).
 - Derived product generation and distribution: generation and publication of
   model-derived documents and other artifacts (like software interfaces,
   configurations); caching of diagrams for faster display in linked pages and
   web-viewer; computation of model metrics for modeling progress dashboards;
-  creation of a human-friendly change summary; spell-checking; synchronization
-  with tools like [Simulink](https://mathworks.com/products/simulink.html),
+  spell-checking; synchronization with tools like
+  [Simulink](https://mathworks.com/products/simulink.html),
   [Polarion](https://polarion.plm.automation.siemens.com/),
   [Codebeamer](https://codebeamer.com/),
   [Confluence](https://www.atlassian.com/software/confluence) or even
@@ -78,7 +47,7 @@ to get these configured.
 Now that you have some understanding of the modeling setup and ways of working
 we can look into how you can actually work in this environment.
 
-## Working with Capella in Collaboration Manager
+## Working with Capella in the Collaboration Manager
 
 Capella is not a web native tool, however it runs on Linux - so we can use
 open-source technologies to deliver it to you via browser. We constructed a
@@ -87,12 +56,11 @@ and all the plugins you may need, added [Xrdp](http://xrdp.org/) to allow
 remote connection and [Apache Guacamole](https://guacamole.apache.org/) to
 stream that connection to your browser. We call instances of those containers
 **Sessions**. To make this platform scalable and allow people co-work
-comfortable we use [Kubernetes](https://kubernetes.io/) to run the **Session**
-containers - which in Kubernetes terms are called **Pod**s. Collaboration
-Manager uses Kubernetes to start Sessions. Kubernetes is able to scale the
-cluster to accomodate the active sessions, making it run at reasonable costs in
-both public and private cloud environments (but of course one could run it in a
-VM).
+comfortably we use [Kubernetes](https://kubernetes.io/) to run the **Session**
+containers - which in Kubernetes terms are called **Pod**s. Kubernetes is able
+to scale the cluster to accomodate the active sessions, making it run at
+reasonable costs in both public and private cloud environments (but of course
+one could run it in a VM).
 
 There are currently 2 session types supported:
 
@@ -106,6 +74,11 @@ There are currently 2 session types supported:
   mounted to the Session pod and linked to Capella as the workspace. This
   enables you to work on projects locally, via git or TeamForCapella as
   persistent workspace keeps "state" even after the session is closed.
+
+We do currently support two different working modes: `TeamForCapella` and
+`Git`. If you want to get more information about it, we have prepared a
+comparison here:
+[Ways of co-working on a Capella project](./tools/capella/t4c-git-compare.md)
 
 ## User Roles
 
@@ -124,9 +97,6 @@ There are 3 roles you can have in a project context:
 - **Model manager** - can do same as both users above but also can invite or
   remove users from the managed projects and control their access rights.
 
-You can find more details about
-[how to request a session here](sessions/request.md).
-
 You may also [learn more about the roles model here](projects/roles.md).
 
 ## Next steps
@@ -144,7 +114,7 @@ it yet or can't find the project you need see
 At this point you may want to continue to one of the detailed getting-started
 sections:
 
-- [General introduction to Capella and first steps](getting-started/capella-intro.md)
+- [General introduction to Capella and first steps](tools/capella/introduction.md)
 - [Getting started with a read-only session](sessions/types/read-only.md)
 - [Getting started with a TeamForCapella-based project](sessions/types/persistent.md)
 - Getting started with a git-only project (not yet documented, contact your
