@@ -44,6 +44,7 @@ dependencies = [
   "fastapi-pagination>=0.12.5",
   "aiohttp",
   "argon2-cffi",
+  "typer",
 ]
 
 [project.urls]
