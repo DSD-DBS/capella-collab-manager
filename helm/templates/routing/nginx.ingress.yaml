@@ -13,9 +13,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
 spec:
-  {{ if ne .Values.target "local" }}
-  ingressClassName: nginx
-  {{ end }}
+  ingressClassName: {{ .Values.cluster.ingressClassName }}
   rules:
     - host: {{ .Values.general.host }}
       http:

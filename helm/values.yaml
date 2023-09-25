@@ -199,6 +199,8 @@ cluster:
   # It is used for the backend serviceAccount
   imagePullSecret: test
 
+  ingressClassName: nginx
+
   namespaces:
     sessions:
       podSecurityContext: *podSecurityContext
