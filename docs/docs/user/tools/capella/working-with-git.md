@@ -30,9 +30,9 @@ Destination" opens. This shows where your work is going to be stored locally.
 
  <!-- prettier-ignore -->
 
-    !!! info
-        Tick the box: "Import all existing Eclipse projects after clone
-        finishes" importing the cloned repository into your eclipse workspace
+!!! info
+    Tick the box: "Import all existing Eclipse projects after clone
+    finishes" importing the cloned repository into your eclipse workspace
 
 ![Step 3: Local Destination](working-with-git/local-destination.png)
 
@@ -119,7 +119,7 @@ you can solve via the merge tool.
 
 If this is not the case you have to open the reset view.
 
-![Step 8: Open Reset View](working-with-git/open-reset-view.png)
+![Step 8: Open Reset View](working-with-git/open-reset-view.png){:style="width:500px"}
 
 Then select hard reset of your local branch:
 
@@ -156,3 +156,13 @@ automatically or not:
     1. Redo your work. We recommend using a new session for that.
     1. Open a service request or contact the operations team in order to try to
       get your changes merged manually.
+
+In order to publish your changes and to share them with your team click:
+"Commit and Push" (1). If you have not configured that before you are now asked
+to "Configure upstream for push and pull" and the selected default of "Merge"
+can just be kept. You might now be asked to enter a user and a password for the
+remote repository in order to push your changes there. Having done that you can
+click "Push".
+
+Now your changes are saved at the remote repository where they are not lost and
+your collegues can see them.
