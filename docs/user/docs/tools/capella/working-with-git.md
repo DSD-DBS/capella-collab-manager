@@ -30,8 +30,9 @@ Destination" opens. This shows where your work is going to be stored locally.
 
  <!-- prettier-ignore -->
 
-!!! info Tick the box: "Import all existing Eclipse projects after clone
-finishes" importing the cloned repository into your eclipse workspace
+    !!! info
+        Tick the box: "Import all existing Eclipse projects after clone
+        finishes" importing the cloned repository into your eclipse workspace
 
 ![Step 3: Local Destination](working-with-git/local-destination.png)
 
@@ -97,12 +98,61 @@ changes (2).
 
 ![Step 7: Search for View](working-with-git/staged-changes.png)
 
-In order to publish your changes and to share them with your team rather click:
-"Commit and Push" (1). If you have not configured that before you are now asked
-to "Configure upstream for push and pull" and the selected default of "Merge"
-can just be kept. You might now be asked to enter a user and a password for the
-remote repository in order to push your changes there. Having done that you can
-click "Push".
+If you already committed your changes you can right click on the Project >
+"Team" > "Push to Origin" in order to push your changes to the remote.
+
+If you have not commited yet and want to publish your changes and to share them
+with your team rather click: "Commit and Push" (1). If you have not configured
+that before you are now asked to "Configure upstream for push and pull" and the
+selected default of "Merge" can just be kept. You might now be asked to enter a
+user and a password for the remote repository in order to push your changes
+there. Having done that you can click "Push".
 
 Now your changes are saved at the remote repository where they are not lost and
 your collegues can see them.
+
+## Merge Conflicts
+
+Commit your changes as described above. Pull from the remote (e.g. right click
+on the project > "Team" > "Pull"). This might result in merge conflicts which
+you can solve via the merge tool.
+
+If this is not the case you have to open the reset view.
+
+![Step 8: Open Reset View](working-with-git/open-reset-view.png)
+
+Then select hard reset of your local branch:
+
+![Step 9: Git Reset Hard](working-with-git/reset-hard-view.png)
+
+If you committed your changes earlier, and select your local main branch as
+described, your local files will be reset to the state they were in after your
+**last local commit**. This way, you drop the changes from the server locally,
+but keep your changes. Removing the changes from the server in your local main
+branch is not a problem, because they are still present in the remote main
+branch on the git server.
+
+You should now be able to see the project again with all changes, you
+performed. Now you should push your local changes to a new branch. To do so,
+right click on the project > "Team" > "Push branch 'main'...". In the view
+"Push to branch in remote" you should enter an intermediate branch name like
+“merge-branch-name” (1) and remove the “configure upstream push and pull” (2)
+option.
+
+![Step 10: Git Create Intermediate Branch](working-with-git/create-merge-branch.png)
+
+After pushing your changes to the remote Git repository, open the remote
+project on Gitlab or Github. Then open a Merge request (Gitlab) or Pull request
+(Github) respectively and try merging your "merge-branch-name" branch into main
+(or the branch you wanted to push on before).
+
+You will now see whether the Merge request/ Pull request can be merged
+automatically or not:
+
+<!-- prettier-ignore -->
+1. It can be merged automatically: Go for it and merge it. To continue working
+   on the model, we recommend using a new clean session of Capella.
+1. It can’t be merged automatically: You have now two options:
+    1. Redo your work. We recommend using a new session for that.
+    1. Open a service request or contact the operations team in order to try to
+      get your changes merged manually.
