@@ -30,7 +30,7 @@ spec:
               path: /
               port: http
           resources:
-            {{ if eq .Values.target "local" }}
+            {{ if .Values.development }}
             limits:
               cpu: "0.2"
               memory: 20Mi

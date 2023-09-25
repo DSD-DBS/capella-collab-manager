@@ -117,7 +117,7 @@ jobs:
           --set cluster.imagePullSecret="github" \
           --set promtail.storageClassName="standard" \
           --set mocks.oauth=True \
-          --set target=local \
+          --set development=True \
           --set general.port=8080 \
           --set backend.authentication.oauth.endpoints.wellKnown="http://test-oauth-mock:8080/default/.well-known/openid-configuration" \
           ./helm

@@ -63,7 +63,7 @@ spec:
             initialDelaySeconds: 45
             timeoutSeconds: 2
           resources:
-            {{ if eq .Values.target "local" }}
+            {{ if .Values.development }}
             limits:
               cpu: "0.15"
               memory: 100Mi

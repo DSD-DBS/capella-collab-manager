@@ -168,10 +168,6 @@ guacamole:
 ### KUBERNETES RELATED CONFIGURATION ###
 ########################################
 
-# target: local | azure | other
-# Never use 'local' in production!
-target: other
-
 # Activate the development mode.
 # NEVER use this in production, it will make your application unsafe.
 # The development mode changes the following options:

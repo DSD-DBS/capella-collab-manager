@@ -68,7 +68,7 @@ spec:
               path: /healthcheck
               port: http
           resources:
-            {{ if eq .Values.target "local" }}
+            {{ if .Values.development }}
             limits:
               cpu: "0.25"
               memory: 150Mi
@@ -105,7 +105,7 @@ spec:
               containerPort: 3101
               protocol: TCP
           resources:
-            {{ if eq .Values.target "local" }}
+            {{ if .Values.development }}
             limits:
               cpu: "0.1"
               memory: 50Mi

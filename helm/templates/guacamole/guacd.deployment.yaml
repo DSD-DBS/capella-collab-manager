@@ -55,7 +55,7 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 20
           resources:
-            {{ if eq .Values.target "local" }}
+            {{ if .Values.development }}
             limits:
               cpu: "0.2"
               memory: 100Mi
@@ -89,7 +89,7 @@ spec:
               containerPort: 3101
               protocol: TCP
           resources:
-            {{ if eq .Values.target "local" }}
+            {{ if .Values.development }}
             limits:
               cpu: "0.1"
               memory: 50Mi
