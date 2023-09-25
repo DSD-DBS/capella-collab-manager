@@ -1,0 +1,61 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div
+  *ngIf="(projectService.project$ | async) && (modelService.model$ | async)"
+  class="wrapper flex-center"
+>
+  <mat-card class="section-card">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <app-form-field-skeleton-loader
+        *ngIf="(t4cInstanceService.t4cInstances$ | async) === undefined"
+      >
+      </app-form-field-skeleton-loader>
+
+      <fieldset>
+        <mat-form-field
+          *ngIf="(t4cInstanceService.t4cInstances$ | async) !== undefined"
+          appearance="fill"
+        >
+          <mat-label>Instance</mat-label>
+          <mat-select formControlName="t4cInstanceId">
+            <mat-option
+              *ngFor="let instance of t4cInstanceService.t4cInstances$ | async"
+              [value]="instance.id"
+            >
+              {{ instance.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </fieldset>
+
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Repository</mat-label>
+          <input matInput formControlName="t4cRepositoryName" />
+          <mat-error *ngIf="t4cRepositoryNameControl.errors?.uniqueName"
+            >Repository already exists</mat-error
+          >
+        </mat-form-field>
+      </fieldset>
+
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Project</mat-label>
+          <input matInput formControlName="t4cProjectName" />
+        </mat-form-field>
+      </fieldset>
+
+      <button
+        mat-flat-button
+        [disabled]="!form.valid"
+        type="submit"
+        color="primary"
+      >
+        Save reference
+      </button>
+    </form>
+  </mat-card>
+</div>
