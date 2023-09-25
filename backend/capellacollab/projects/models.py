@@ -37,6 +37,7 @@ class Project(pydantic.BaseModel):
     description: str | None = None
     visibility: Visibility
     users: UserMetadata
+    is_archived: bool
 
     @pydantic.field_validator("users", mode="before")
     @classmethod
@@ -84,6 +85,7 @@ class PatchProject(pydantic.BaseModel):
     name: str | None = None
     description: str | None = None
     visibility: Visibility | None = None
+    is_archived: bool | None = None
 
 
 class PostProjectRequest(pydantic.BaseModel):
@@ -110,3 +112,5 @@ class DatabaseProject(database.Base):
     models: orm.Mapped[list[DatabaseCapellaModel]] = orm.relationship(
         back_populates="project"
     )
+
+    is_archived: orm.Mapped[bool] = orm.mapped_column(default=False)
