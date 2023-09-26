@@ -6,7 +6,7 @@ import kubernetes.config
 import pytest
 from websocket import ABNF
 
-from capellacollab.cli.ws import backup, volumes
+from capellacollab.cli.ws import backup, ls, volumes
 
 
 @pytest.fixture(autouse=True)
@@ -47,6 +47,18 @@ def test_workspace_volumes(monkeypatch, capsys):
     volumes(namespace="default")
 
     assert "my-volume" in capsys.readouterr().out
+
+
+def test_ls_workspace(monkeypatch, tmp_path, capsys):
+    mock_stream = MockWSClient([b"\01hello"])
+    monkeypatch.setattr(
+        "kubernetes.stream.stream", lambda *a, **ka: mock_stream
+    )
+    monkeypatch.setattr("select.select", lambda *a: (1, None, None))
+
+    ls("my-volume-name", namespace="my-namespace")
+
+    assert "hello" in capsys.readouterr().out
 
 
 def test_backup_workspace(monkeypatch, tmp_path):
