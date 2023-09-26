@@ -86,6 +86,7 @@ helm-deploy:
 		--set target=local \
 		--set general.port=8080 \
 		--set development=$(DEVELOPMENT_MODE) \
+		--set cluster.ingressClassName=traefik \
 		--set backend.k8sSessionNamespace="$(SESSION_NAMESPACE)" \
 		--set backend.authentication.oauth.redirectURI="http://localhost:$(PORT)/oauth2/callback" \
 		--set backend.authentication.oauth.endpoints.wellKnown="http://$(RELEASE)-oauth-mock:8080/default/.well-known/openid-configuration" \
