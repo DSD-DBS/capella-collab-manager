@@ -50,6 +50,7 @@ in the future.
     3. If you don't have any external registry available and TeamForCapella support is required, enable the registry:
         ```zsh
         microk8s enable registry
+        export DOCKER_REGISTRY=localhost:32000
         ```
     4. Copy the `kubectl` configuration to the host, so that `helm` can pick it up:
         ```zsh
@@ -78,7 +79,7 @@ Each session requires a minimum of 0.4 Kubernetes CPU cores and 1.6Gi of
 memory. A session can scale up until it reaches 2 Kubernetes CPU cores and 6Gi
 of memory.
 
-## Step 2: Set up the required namespaces (optional)
+## Step 3: Set up the required namespaces (optional)
 
 The Collaboration Manager requires two different namespaces. For security and
 overview reasons, they are separated:
@@ -113,7 +114,7 @@ overview reasons, they are separated:
     kubectl config set-context --current --namespace=collab-manager
     ```
 
-## Step 3: Install helm
+## Step 4: Install helm
 
 Follow the official instructions to install Helm:
 [Installing helm](https://helm.sh/docs/intro/install/)
@@ -124,7 +125,7 @@ Verify that `helm` is working by executing the command:
 helm version
 ```
 
-## Step 4: Clone the Github repository
+## Step 5: Clone the Github repository
 
 Navigate to a persistent location on your server, e.g. `/opt`. Then clone the
 Github repository by running:
@@ -133,7 +134,7 @@ Github repository by running:
 git clone https://github.com/DSD-DBS/capella-collab-manager.git
 ```
 
-## Step 5: Configure the environment / Create the `values.yaml`
+## Step 6: Configure the environment / Create the `values.yaml`
 
 Copy the
 [`values.yaml`](https://github.com/DSD-DBS/capella-collab-manager/blob/main/helm/values.yaml)
@@ -141,9 +142,15 @@ to a persistent and secure location on your server or deploment environment.
 The `local` directory in the Collaboration Manager is gitignored. We recommend
 to put the custom `values.yaml` in this directory.
 
+Make sure to set restrictive permissions on the `values.yaml`:
+
+```zsh
+chmod 600 values.yaml
+```
+
 Adjust all values according to your needs.
 
-## Step 6: Install the application in the cluster
+## Step 7: Install the application in the cluster
 
 Run the following commands in the root directory of the repository:
 
@@ -156,7 +163,7 @@ helm upgrade --install \
     ./helm
 ```
 
-## Step 7: Initialize the Guacamole database
+## Step 8: Initialize the Guacamole database
 
 The Guacamole database is not initialized per default, it has do be done
 manually. Run the following command to initialize the PostgreSQL database:
@@ -166,7 +173,7 @@ kubectl exec --container prod-guacamole-guacamole deployment/prod-guacamole-guac
     kubectl exec -i deployment/prod-guacamole-postgres -- psql -U guacamole guacamole
 ```
 
-## Step 8: Check the application status
+## Step 9: Check the application status
 
 Run `kubectl get pods` to see the status of all components. Once all containers
 are running, verify the installation state by running:
@@ -182,3 +189,49 @@ It should return the following JSON:
 ```
 
 If a value is false, check the backend logs for more information.
+
+## Step 10: Add TeamForCapella support
+
+<!-- prettier-ignore -->
+!!! info "TeamForCapella server required"
+    The setup of the TeamForCapella server and license server itself will
+    not be part of this tutorial. To process, you'll need to have a running and
+    reachable TeamForCapella server.
+
+<!-- prettier-ignore -->
+!!! info "Container registry required"
+    For the TeamForCapella support, you'll need to build own Docker images. In order to use this in the cluster, an external or internal container registry is required.
+
+<!-- prettier-ignore -->
+1. Install [GNU make](https://www.gnu.org/software/make/manual/make.html) >=
+   3.82
+1. Navigate to the root of the capella-collab-manager repository.
+1. Clone the capella-dockerimages repository:
+   ```zsh
+   git clone https://github.com/DSD-DBS/capella-dockerimages
+   ```
+1. Prepare the `capella/base` and `t4c/client/base` images according to the
+   Capella Docker images documentation (Only the preparation section is
+   needed):
+
+    - [`capella/base`](https://dsd-dbs.github.io/capella-dockerimages/capella/base/#preparation)
+    - [`t4c/client/base`](https://dsd-dbs.github.io/capella-dockerimages/capella/t4c/base/#preparation)
+
+1. Set the following environment variables:
+
+    ```zsh
+    export PUSH_IMAGES=1 # Auto-push images to the container registry after build
+    export DOCKER_REGISTRY=<your-registry> # Location of your remote or local container registry
+    export CAPELLA_BUILD_TYPE=offline # Don't download Capella during each build
+    export CAPELLA_VERSIONS="5.2.0 6.0.0 6.1.0" # Space separated list of Capella versions to build
+    ```
+
+1. Then, build the `t4c/client/remote` images (the one that we'll use in the
+   Collaboration Manager):
+
+    ```zsh
+    make t4c/client/remote
+    ```
+
+1. In the Collaboration Manager UI, change the docker image of the tool to
+   `<registry>/t4c/client/remote:<capella-version>-latest`
