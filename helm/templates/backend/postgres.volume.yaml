@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 {{ if .Values.database.backend.deploy }}
-{{ if ne .Values.target "local" }}
+{{ if not .Values.development }}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:

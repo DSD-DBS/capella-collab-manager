@@ -83,7 +83,6 @@ helm-deploy:
 		--set docker.registry.internal=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
 		--set docker.images.guacamole.guacamole=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/guacamole \
 		--set mocks.oauth=True \
-		--set target=local \
 		--set general.port=8080 \
 		--set development=$(DEVELOPMENT_MODE) \
 		--set cluster.ingressClassName=traefik \
