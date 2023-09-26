@@ -144,43 +144,7 @@ running in a few minutes.
 
 ### Deployment
 
-### Install/Upgrade on a cluster
-
-1. Ensure your `kubectl` configuration points to the right cluster
-1. Make sure that your cluster has enough resources.
-   The minimum required resources are 3 [Kubernetes CPU cores](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu)
-   and around 2,5GiB of memory for the management platform.
-   Depending on the load, the instance can scale up and is limited to 10 Kubernetes CPU cores cores and ~8GiB of memory.
-
-   Each session requires a minimum of 0.4 Kubernetes CPU cores and 1.6Gi of memory.
-   A session can scale up until it reaches 2 Kubernetes CPU cores and 6Gi of memory.
-
-1. The setup requires at least one Docker container registry, which has to be accessible from the cluster.
-   All images have to be pushed to the registry before continuing.
-
-1. Copy `helm/values.yaml` to `deployments/yourinstance.values.yaml` and
-   set all required values in the `deployments/yourinstance.values.yaml` configuration file.
-
-   If you're upgrading the instance, please make sure to compare the changes in the `values.yaml` before continuing.
-
-1. If it doesn't exist yet, create namespace for the sessions in your kubernetes cluster:
-
-   ```sh
-   kubectl create namespace <sessions-namespace>
-   ```
-
-1. Run the following command to deploy to your kubernetes cluster:
-
-   ```sh
-   helm upgrade --install production -n <namespace> -f deployments/yourinstance.values.yaml helm
-   ```
-
-1. Set up the database for guacamole: [Initializing the PostgreSQL database](https://guacamole.apache.org/doc/gug/guacamole-docker.html#initializing-the-postgresql-database)
-1. Verify the status of all pods with
-
-   ```zsh
-   kubectl -n <namespace> get pods
-   ```
+The Installation Guide has been moved to the [general documentation](https://capella-collaboration-manager.readthedocs.io/en/latest/installation/).
 
 ### Uninstall the environment
 

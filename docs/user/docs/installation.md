@@ -66,6 +66,18 @@ in the future.
 
     We are constantly working on expanding our documentation. This installation method is currently not documented. If it is relevant, please feel free to contact us at set@deutschebahn.com.
 
+## Step 2: Validate the available resources
+
+The minimum required resources are 3
+[Kubernetes CPU cores](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu)
+and around 2,5GiB of memory for the management platform. Depending on the load,
+the instance can scale up and is limited to 10 Kubernetes CPU cores cores and
+~8GiB of memory.
+
+Each session requires a minimum of 0.4 Kubernetes CPU cores and 1.6Gi of
+memory. A session can scale up until it reaches 2 Kubernetes CPU cores and 6Gi
+of memory.
+
 ## Step 2: Set up the required namespaces (optional)
 
 The Collaboration Manager requires two different namespaces. For security and
