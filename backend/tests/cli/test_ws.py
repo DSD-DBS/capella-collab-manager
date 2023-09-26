@@ -1,12 +1,14 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import tarfile
+
 import kubernetes.client
 import kubernetes.config
 import pytest
 from websocket import ABNF
 
-from capellacollab.cli.ws import backup, ls, volumes
+from capellacollab.cli.ws import backup, ls, restore, volumes
 
 
 @pytest.fixture(autouse=True)
@@ -73,11 +75,27 @@ def test_backup_workspace(monkeypatch, tmp_path):
     assert (tmp_path / "my-volume-name.tar.gz").exists()
 
 
+def test_restore_workspace(monkeypatch, tmp_path, capsys):
+    mock_stream = MockWSClient([])
+    monkeypatch.setattr(
+        "kubernetes.stream.stream", lambda *a, **ka: mock_stream
+    )
+
+    tar_path = tmp_path / "backup.tar.gz"
+    with tarfile.open(tar_path, "w:gz") as tar:
+        tar.add("tests")
+
+    restore("my-volume-name", tar_path)
+
+    assert mock_stream.written_data
+
+
 class MockWSClient:
     def __init__(self, blocks):
         self._blocks = blocks
         self._connected = True
         self.sock = self
+        self.written_data = []
 
     @property
     def connected(self):
@@ -95,6 +113,18 @@ class MockWSClient:
         else:
             self._connected = False
             return ABNF.OPCODE_CLOSE, None
+
+    def update(self, timeout=0):
+        pass
+
+    def peek_stdout(self):
+        return None
+
+    def peek_stderr(self):
+        return None
+
+    def write_stdin(self, data):
+        self.written_data.append(data)
 
 
 class Frame:

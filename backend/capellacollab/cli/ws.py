@@ -14,7 +14,7 @@ from websocket import ABNF
 
 app = typer.Typer()
 
-mount_path = "/workspace"
+MOUNT_PATH = "/workspace"
 
 
 @app.command()
@@ -33,7 +33,7 @@ def ls(volume_name: str, path: str = "/workspace", namespace: str = None):
     config.load_kube_config()
     v1 = client.CoreV1Api()
 
-    with pod_for_volume(volume_name, namespace, mount_path, v1) as pod_name:
+    with pod_for_volume(volume_name, namespace, MOUNT_PATH, v1) as pod_name:
         for data in stream_tar_from_pod(pod_name, namespace, ["ls", path], v1):
             sys.stdout.write(data.decode("utf-8", "replace"))
 
@@ -47,19 +47,37 @@ def backup(volume_name: str, namespace: str = None, out: Path = None):
 
     targz = out / f"{volume_name}.tar.gz"
 
-    with pod_for_volume(volume_name, namespace, mount_path, v1) as pod_name:
+    with pod_for_volume(volume_name, namespace, MOUNT_PATH, v1) as pod_name:
         print(f"Downloading workspace volume to '{targz}'")
 
         with targz.open("wb") as outfile:
             for data in stream_tar_from_pod(
-                pod_name, namespace, ["tar", "zcf", "-", mount_path], v1
+                pod_name, namespace, ["tar", "zcf", "-", MOUNT_PATH], v1
             ):
                 outfile.write(data)
 
 
+@app.command()
+def restore(volume_name: str, tarfile: Path, namespace: str = None):
+    config.load_kube_config()
+    v1 = client.CoreV1Api()
+
+    with pod_for_volume(
+        volume_name, namespace, MOUNT_PATH, v1, read_only=False
+    ) as pod_name:
+        print(f"Restoring workspace volume to '{volume_name}'")
+
+        with tarfile.open("rb") as infile:
+            stream_tar_to_pod(pod_name, namespace, infile, v1)
+
+
 @contextlib.contextmanager
 def pod_for_volume(
-    volume_name: str, namespace: str, mount_path: str, v1: client.CoreV1Api
+    volume_name: str,
+    namespace: str,
+    mount_path: str,
+    v1: client.CoreV1Api,
+    read_only=True,
 ):
     name = f"ws-download-{volume_name}-{uuid.uuid1()}"[:63]
 
@@ -72,14 +90,14 @@ def pod_for_volume(
                 client.V1VolumeMount(
                     name="vol",
                     mount_path=mount_path,
-                    read_only=True,
+                    read_only=read_only,
                 )
             ],
             image_pull_policy="Always",
         )
     ]
 
-    volumes = [
+    volumes_ = [
         client.V1Volume(
             name="vol",
             persistent_volume_claim=client.V1PersistentVolumeClaimVolumeSource(
@@ -94,7 +112,7 @@ def pod_for_volume(
         metadata=client.V1ObjectMeta(name=name),
         spec=client.V1PodSpec(
             containers=containers,
-            volumes=volumes,
+            volumes=volumes_,
             restart_policy="Never",
         ),
     )
@@ -152,6 +170,32 @@ def stream_tar_from_pod(pod_name, namespace, command, v1):
                 print(err.decode("utf-8", "replace"))
             if closed:
                 break
+    finally:
+        exec_stream.close()
+
+
+def stream_tar_to_pod(pod_name, namespace, infile, v1):
+    exec_stream = stream.stream(
+        v1.connect_get_namespaced_pod_exec,
+        pod_name,
+        namespace,
+        command=["tar", "zxf", "-", "-C", "/"],
+        # command=["cat"],
+        stderr=True,
+        stdin=True,
+        stdout=True,
+        tty=False,
+        _preload_content=False,
+    )
+
+    try:
+        while data := infile.read(4096):
+            exec_stream.write_stdin(data)
+            exec_stream.update(timeout=5)
+            if exec_stream.peek_stdout():
+                print("STDOUT: %s", exec_stream.read_stdout())
+            if exec_stream.peek_stderr():
+                print("STDERR: %s", exec_stream.read_stderr())
     finally:
         exec_stream.close()
 
