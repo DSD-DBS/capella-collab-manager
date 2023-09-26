@@ -3,6 +3,7 @@
 
 import contextlib
 import select
+import sys
 import time
 import uuid
 from pathlib import Path
@@ -13,9 +14,11 @@ from websocket import ABNF
 
 app = typer.Typer()
 
+mount_path = "/workspace"
+
 
 @app.command()
-def ls(namespace: str = None):
+def volumes(namespace: str = None):
     config.load_kube_config()
     core_api = client.CoreV1Api()
 
@@ -26,10 +29,19 @@ def ls(namespace: str = None):
 
 
 @app.command()
+def ls(volume_name: str, path: str = "/workspace", namespace: str = None):
+    config.load_kube_config()
+    v1 = client.CoreV1Api()
+
+    with pod_for_volume(volume_name, namespace, mount_path, v1) as pod_name:
+        for data in stream_tar_from_pod(pod_name, namespace, ["ls", path], v1):
+            sys.stdout.write(data.decode("utf-8", "replace"))
+
+
+@app.command()
 def backup(volume_name: str, namespace: str = None, out: Path = None):
     config.load_kube_config()
     v1 = client.CoreV1Api()
-    mount_path = "/workspace"
     if not out:
         out = Path.cwd()
 
@@ -40,7 +52,7 @@ def backup(volume_name: str, namespace: str = None, out: Path = None):
 
         with targz.open("wb") as outfile:
             for data in stream_tar_from_pod(
-                pod_name, namespace, mount_path, v1
+                pod_name, namespace, ["tar", "zcf", "-", mount_path], v1
             ):
                 outfile.write(data)
 
@@ -117,12 +129,12 @@ def is_pod_ready(pod_name, namespace, v1):
         return False
 
 
-def stream_tar_from_pod(pod_name, namespace, source_path, v1):
+def stream_tar_from_pod(pod_name, namespace, command, v1):
     exec_stream = stream.stream(
         v1.connect_get_namespaced_pod_exec,
         pod_name,
         namespace,
-        command=["tar", "zcf", "-", source_path],
+        command=command,
         stderr=True,
         stdin=True,
         stdout=True,
@@ -150,7 +162,7 @@ class WSFileManager:
     def __init__(self, ws_client):
         self.ws_client = ws_client
 
-    def read_bytes(self, timeout=0):
+    def read_bytes(self, timeout=0) -> bytes:
         stdout_bytes = None
         stderr_bytes = None
 

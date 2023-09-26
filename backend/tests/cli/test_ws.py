@@ -6,7 +6,7 @@ import kubernetes.config
 import pytest
 from websocket import ABNF
 
-from capellacollab.cli.ws import backup, ls
+from capellacollab.cli.ws import backup, volumes
 
 
 @pytest.fixture(autouse=True)
@@ -32,7 +32,7 @@ def mock_core_v1_api(monkeypatch):
     )
 
 
-def test_ls_workspace(monkeypatch, capsys):
+def test_workspace_volumes(monkeypatch, capsys):
     monkeypatch.setattr(
         "kubernetes.client.CoreV1Api.list_namespaced_persistent_volume_claim",
         lambda self, namespace, watch: kubernetes.client.V1PersistentVolumeClaimList(
@@ -44,7 +44,7 @@ def test_ls_workspace(monkeypatch, capsys):
         ),
     )
 
-    ls(namespace="default")
+    volumes(namespace="default")
 
     assert "my-volume" in capsys.readouterr().out
 
