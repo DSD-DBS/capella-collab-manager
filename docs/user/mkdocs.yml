@@ -4,8 +4,12 @@
 site_name: Capella Collaboration Manager Documentation
 theme:
   name: material
+  features:
+    - content.code.copy
+
 nav:
   - Introduction: index.md
+  - Installation: installation.md
   - Projects:
       - Get access to a project: projects/access.md
       - Add a user to a project: projects/add-user.md
