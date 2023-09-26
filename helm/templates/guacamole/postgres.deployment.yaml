@@ -25,11 +25,9 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/guacamole" "/postgres.configmap.yaml") . | sha256sum }}
     spec:
       volumes:
-        {{ if ne .Values.target "local" }}
         - name: {{ .Release.Name }}-data
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-volume-guacamole-postgres
-        {{ end }}
         - name: {{ .Release.Name }}-initsql
           configMap:
             name: {{ .Release.Name }}-guacamole-postgres
@@ -81,10 +79,8 @@ spec:
               cpu: "1"
             {{ end }}
           volumeMounts:
-            {{ if ne .Values.target "local" }}
             - name: {{ .Release.Name }}-data
               mountPath: /var/lib/postgresql/data
-            {{ end }}
             - name: {{ .Release.Name }}-initsql
               mountPath: /docker-entrypoint-initdb.d
           {{ if .Values.cluster.containers }}

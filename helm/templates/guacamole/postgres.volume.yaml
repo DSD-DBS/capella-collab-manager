@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 {{ if .Values.database.guacamole.deploy }}
-{{ if ne .Values.target "local" }}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -18,5 +17,4 @@ spec:
     requests:
       storage: 1Gi
   storageClassName: {{ .Values.cluster.pvc.storageClassName }}
-{{ end }}
 {{ end }}
