@@ -182,6 +182,8 @@ mocks:
 cluster:
   kind: Kubernetes # Kubernetes | OpenShift
 
+  ingressNamespace:
+
   podSecurityContext: &podSecurityContext
     runAsUser: 1004370000
     runAsGroup: 1004370000

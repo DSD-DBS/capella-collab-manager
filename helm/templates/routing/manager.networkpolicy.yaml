@@ -1,29 +1,27 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-kind: NetworkPolicy
-apiVersion: networking.k8s.io/v1
-metadata:
-  name: {{ $.Release.Name }}-allow-from-{{ .Release.Namespace }}-namespace
-  namespace: {{ .Values.backend.k8sSessionNamespace }}
-spec:
-  podSelector: {}
-  ingress:
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ .Release.Namespace }}
-  policyTypes:
-    - Ingress
 {{- if .Values.cluster.ingressNamespace }}
----
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
   name: default-deny
-  namespace: {{ .Values.backend.k8sSessionNamespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   podSelector: {}
+  policyTypes:
+    - Ingress
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-from-same-namespace
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector: {}
+  ingress:
+    - from:
+        - podSelector: {}
   policyTypes:
     - Ingress
 ---
@@ -31,7 +29,7 @@ kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
   name: allow-from-ingress-namespace
-  namespace: {{ .Values.backend.k8sSessionNamespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   podSelector: {}
   ingress:
