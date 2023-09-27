@@ -43,7 +43,7 @@ in the future.
 
     2. Enable all required add-ons:
         ```zsh
-        microk8s enable hostpath-storage # For workspace storage
+        microk8s enable hostpath-storage # For persistent storage
         microk8s enable rbac # For role-based access control
         microk8s enable ingress # For load balancing
         ```
@@ -58,6 +58,13 @@ in the future.
         microk8s config > $HOME/.kube/config
         chmod 600 $HOME/.kube/config # Nobody else should be able to read the configuration
         ```
+    5. Optional, but recommended: Set up a NFS for workspaces and Juypter file-shares.
+        The default `hostpath-storage` of microK8S doesn't enforce the specified capacity on PVCs.
+        This can be exploited by a user uploading so much data to their workspace that
+        the server goes out of disk storage.
+
+        Please follow the official instructions: <https://microk8s.io/docs/nfs> <br />
+        Make sure to update the storageClass in the `values.yaml` in step 6 to `nfs-csi`.
 
 === "k3d"
 
@@ -239,6 +246,7 @@ If a value is false, check the backend logs for more information.
     export DOCKER_REGISTRY=<your-registry> # Location of your remote or local container registry
     export CAPELLA_BUILD_TYPE=offline # Don't download Capella during each build
     export CAPELLA_VERSIONS="5.2.0 6.0.0 6.1.0" # Space separated list of Capella versions to build
+    export CAPELLA_DROPINS="" # Command separated list of dropins
     ```
 
 1. Then, build the `t4c/client/remote` images (the one that we'll use in the
