@@ -173,6 +173,21 @@ kubectl exec --container prod-guacamole-guacamole deployment/prod-guacamole-guac
     kubectl exec -i deployment/prod-guacamole-postgres -- psql -U guacamole guacamole
 ```
 
+After the initialization, the Guacamole password defaults to `guacadmin`. We
+have to change it to a more secure password:
+
+1. Open <http://localhost:8080/guacamole/> and login with `guacadmin` /
+   `guacadmin`.
+1. Click on the `guacadmin` user at the top-right corner of the screen, then
+   select "Settings".
+1. Select the tab "Preferences"
+1. In the "Change password" section, enter `guacadmin` as current password.
+   Generate a secure password and enter it for "New password" and confirm it.
+   Then, click "Update password"
+1. Log out and verify that the combination `guacadmin` / `guacadmin` no longer
+   works.
+1. Update the key `guacamole.password` in the `values.yaml` and repeat step 7.
+
 ## Step 9: Check the application status
 
 Run `kubectl get pods` to see the status of all components. Once all containers
