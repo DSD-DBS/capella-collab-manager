@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Install the Collaboration Manager
+# Installation of the Collaboration Manager
 
 This guide will help you set up the Capella Collaboration Manager on a
 Kubernetes cluster. The setup of the basic installation is straightforward, but
@@ -24,15 +24,15 @@ You can use an existing cloud service to create a Kubernetes cluster. We have
 running production deployments on Microsoft AKS and Amazon EKS. The application
 is designed in such a way that no cluster scope is necessary. All operations
 run at the namespace level, so it even runs in shared OpenShift clusters. But
-even if you simply have a Linux server at your disposal, this is no obstacle.
-Setting up a cluster is easier than you think.
+also if you simply have a Linux server at your disposal, this is no obstacle.
 
 If you already have a running cluster, have `kubectl` up and running and can
 reach the cluster, then you can skip this step.
 
 We provide instructions for some environments. If you set up the application in
-a different environment, we would be happy to receive a PR to help other users
-in the future.
+a different environment, please document the installation and obstacles that
+you find and we would be happy to receive a PR to help other users in the
+future.
 
 === "microK8s"
 
@@ -63,16 +63,34 @@ in the future.
         This can be exploited by a user uploading so much data to their workspace that
         the server goes out of disk storage.
 
-        Please follow the official instructions: <https://microk8s.io/docs/nfs> <br />
-        Make sure to update the storageClass in the `values.yaml` in step 6 to `nfs-csi`.
+        Please follow the official instructions: <https://microk8s.io/docs/nfs>.
+
+        Make sure to update the `backend.storageClassName` in the `values.yaml` in step 6 to `nfs-csi`.
+        All new Jupyter file-shares and personal workspaces will use the new storage class then.
+
+        !!! warning "User mapping for non-root containers"
+            If you want to run the session containers as non-root, you can set the `runAsUser` value in the `podSecurityContext` of the values.yaml.
+            In the default configuration, `runAsUser` is set to `1004370000`.
+
+            Unfortunately our setup NFS does not respect the `fsGroup` option. Therefore, all volumes are mounted with `nobody:nogroup` per default.
+            This will lead to permission errors and crashing session containers.
+
+            To fix it, change the `/etc/exports` file and modify the options for the create file-share to:
+            ```
+            (rw,sync,no_subtree_check,all_squash,anonuid=<user-id-of-session-containers>,anongid=0)
+            ```
+
+            Replace `<user-id-of-session-containers>` with the value of the `runAsUser` value of the Kubernetes Pod security context.
+
+            Then, apply the new configuration by running `exportfs -ra`.
 
 === "k3d"
 
-    We are constantly working on expanding our documentation. This installation method is currently not documented. If it is relevant, please feel free to contact us at set@deutschebahn.com.
+    We are constantly working on expanding our documentation. This installation method is currently not documented. If it is relevant, please feel free to contact us at set@deutschebahn.com or open an issue in this repository.
 
 === "OpenShift"
 
-    We are constantly working on expanding our documentation. This installation method is currently not documented. If it is relevant, please feel free to contact us at set@deutschebahn.com.
+    We are constantly working on expanding our documentation. This installation method is currently not documented. If it is relevant, please feel free to contact us at set@deutschebahn.com  or open an issue in this repository.
 
 ## Step 2: Validate the available resources
 
@@ -172,12 +190,12 @@ helm upgrade --install \
 
 ## Step 8: Initialize the Guacamole database
 
-The Guacamole database is not initialized per default, it has do be done
-manually. Run the following command to initialize the PostgreSQL database:
+The Guacamole database is not initialized automatically. Run the following
+command to initialize the PostgreSQL database:
 
 ```zsh
-kubectl exec --container prod-guacamole-guacamole deployment/prod-guacamole-guacamole -- /opt/guacamole/bin/initdb.sh --postgresql | \
-    kubectl exec -i deployment/prod-guacamole-postgres -- psql -U guacamole guacamole
+kubectl exec --container <release-name>-guacamole-guacamole deployment/<release-name>-guacamole-guacamole -- /opt/guacamole/bin/initdb.sh --postgresql | \
+    kubectl exec -i deployment/<release-name>-guacamole-postgres -- psql -U guacamole guacamole
 ```
 
 After the initialization, the Guacamole password defaults to `guacadmin`. We

@@ -144,7 +144,7 @@ running in a few minutes.
 
 ### Deployment
 
-The Installation Guide has been moved to the [general documentation](https://capella-collaboration-manager.readthedocs.io/en/latest/installation/).
+You can find the installation guide for deployment in the [general documentation](https://capella-collaboration-manager.readthedocs.io/en/latest/installation/).
 
 ### Uninstall the environment
 
