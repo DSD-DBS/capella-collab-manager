@@ -111,7 +111,7 @@ properties:
       host:
         type: string
       port:
-        type: string
+        type: ["number", "string"]
       scheme:
         type: string
       metadata:
