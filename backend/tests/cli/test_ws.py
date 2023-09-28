@@ -32,6 +32,10 @@ def mock_core_v1_api(monkeypatch):
             status=kubernetes.client.V1PodStatus(phase="Running")
         ),
     )
+    monkeypatch.setattr(
+        "kubernetes.client.CoreV1Api.create_namespaced_persistent_volume_claim",
+        lambda self, ns, vpc: None,
+    )
 
 
 def test_workspace_volumes(monkeypatch, capsys):

@@ -58,9 +58,19 @@ def backup(volume_name: str, namespace: str = None, out: Path = None):
 
 
 @app.command()
-def restore(volume_name: str, tarfile: Path, namespace: str = None):
+def restore(
+    volume_name: str,
+    tarfile: Path,
+    namespace: str = None,
+    access_modes: str = "ReadWriteMany",
+    storage_class_name: str = "persistent-sessions-csi",
+):
     config.load_kube_config()
     v1 = client.CoreV1Api()
+
+    create_persistent_volume(
+        volume_name, namespace, access_modes, storage_class_name, v1
+    )
 
     with pod_for_volume(
         volume_name, namespace, MOUNT_PATH, v1, read_only=False
@@ -126,6 +136,44 @@ def pod_for_volume(
     yield name
 
     v1.delete_namespaced_pod(name, namespace)
+
+
+def create_persistent_volume(
+    name: str, namespace: str, access_modes: str, storage_class_name: str, v1
+):
+    """Rebuild a PVC, according to the config defined in
+    `capellacollab/sessions/hooks/persistent_workspace.py`.
+    """
+
+    prefix = "persistent-session-"
+    username = name[len(prefix) :] if name.startswith(prefix) else name
+
+    pvc = client.V1PersistentVolumeClaim(
+        kind="PersistentVolumeClaim",
+        api_version="v1",
+        metadata=client.V1ObjectMeta(
+            name=name,
+            labels={
+                "capellacollab/username": username,
+            },
+        ),
+        spec=client.V1PersistentVolumeClaimSpec(
+            access_modes=[access_modes],
+            storage_class_name=storage_class_name,
+            resources=client.V1ResourceRequirements(
+                requests={"storage": "20Gi"}
+            ),
+        ),
+    )
+
+    try:
+        v1.create_namespaced_persistent_volume_claim(namespace, pvc)
+    except client.exceptions.ApiException as e:
+        # Persistent volume already exists
+        if e.status == 409:
+            print(f"Using existing volume {name}")
+            return
+        raise
 
 
 def get_current_namespace():
