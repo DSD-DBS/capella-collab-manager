@@ -5,7 +5,7 @@
 
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { environment } from 'src/environments/environment';
+import { MetadataService } from 'src/app/general/metadata/version/version.service';
 
 @Component({
   selector: 'app-footer',
@@ -13,7 +13,8 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./footer.component.css'],
 })
 export class FooterComponent {
-  constructor(public dialog: MatDialog) {}
-
-  provider = environment.provider;
+  constructor(
+    public dialog: MatDialog,
+    public metadataService: MetadataService
+  ) {}
 }

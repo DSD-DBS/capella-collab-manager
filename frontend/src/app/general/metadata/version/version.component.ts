@@ -3,31 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { environment } from 'src/environments/environment';
-import { BackendMetadata, VersionService } from './version.service';
+import { MetadataService } from './version.service';
 
 @Component({
   selector: 'app-version',
   templateUrl: './version.component.html',
   styleUrls: ['./version.component.css'],
 })
-export class VersionComponent implements OnInit {
-  backend = '-';
-  frontend = '-';
-  env: string = environment.environment || 'not specified';
-
+export class VersionComponent {
   constructor(
-    public versionService: VersionService,
+    public metadataService: MetadataService,
     public dialog: MatDialog
   ) {}
-
-  ngOnInit(): void {
-    this.versionService
-      .loadBackendMetadata()
-      .subscribe((metadata: BackendMetadata) => {
-        this.backend = `v${metadata.version}`;
-      });
-  }
 }

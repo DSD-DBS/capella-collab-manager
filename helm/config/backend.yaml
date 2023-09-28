@@ -30,6 +30,9 @@ general:
   port: "{{ .Values.general.port }}"
   scheme: "{{ .Values.general.scheme }}"
 
+  metadata:
+    {{- toYaml .Values.general.metadata | nindent 4 }}
+
 extensions:
   guacamole:
     baseURI: "http://{{ .Release.Name }}-guacamole-guacamole:8080/guacamole"

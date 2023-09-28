@@ -7,21 +7,23 @@
   <a
     href="/docs/release-notes/"
     target="_blank"
-    (click)="versionService.clickedOnVersionNotes()"
+    (click)="metadataService.clickedOnVersionNotes()"
   >
     <div
       class="version"
-      *ngIf="versionService.changedVersion && versionService.version"
+      *ngIf="metadataService.changedVersion && metadataService.version"
     >
-      New version. What's new? (<span *ngIf="versionService.oldVersion"
-        >{{ versionService.oldVersion }}
+      New version. What's new? (<span *ngIf="metadataService.oldVersion"
+        >{{ metadataService.oldVersion }}
         <mat-icon class="mat-icon-position top left"
           >arrow_right_alt</mat-icon
         ></span
-      >{{ versionService.version.git.tag }})
+      >{{ metadataService.version.git.tag }})
     </div>
-    Environment: {{ env }} <br />
-    Frontend version: {{ versionService.version?.git?.version }} <br />
-    Backend version: {{ backend }}
+    Environment:
+    {{ (metadataService.backendMetadata | async)?.environment || "-" }} <br />
+    Frontend version: {{ metadataService.version?.git?.version }} <br />
+    Backend version:
+    {{ (metadataService.backendMetadata | async)?.version || "-" }}
   </a>
 </div>

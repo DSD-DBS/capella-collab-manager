@@ -25,7 +25,8 @@
   </mat-card>
   <div id="oauth-login">
     <button mat-flat-button color="primary" (click)="webSSO()">
-      Login with {{ authProvider }}
+      Login with
+      {{ (metadataService.backendMetadata | async)?.authentication_provider }}
     </button>
     <br />
   </div>
