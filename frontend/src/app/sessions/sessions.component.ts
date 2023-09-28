@@ -8,6 +8,5 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-sesssions',
   templateUrl: './sessions.component.html',
-  styleUrls: ['./sessions.component.css'],
 })
 export class SessionsComponent {}
