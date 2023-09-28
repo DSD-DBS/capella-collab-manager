@@ -7,5 +7,4 @@ export const environment = {
   production: true,
   backend_url: '/api/v1',
   docsURL: '/docs',
-  usernameAttribute: 'sub',
 };

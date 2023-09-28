@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Buffer } from 'buffer';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie';
@@ -37,16 +36,6 @@ export class AuthService {
 
   get accessToken(): string {
     return this._accessToken;
-  }
-
-  get userName(): string {
-    if (!this.isLoggedIn()) {
-      return '';
-    }
-
-    return JSON.parse(
-      Buffer.from(this._accessToken.split('.')[1], 'base64').toString()
-    )[environment.usernameAttribute].trim();
   }
 
   getRedirectURL(): Observable<GetRedirectURLResponse> {
