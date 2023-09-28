@@ -64,6 +64,7 @@ def restore(
     namespace: str = None,
     access_modes: str = "ReadWriteMany",
     storage_class_name: str = "persistent-sessions-csi",
+    user_id: str = None,
 ):
     config.load_kube_config()
     v1 = client.CoreV1Api()
@@ -79,6 +80,13 @@ def restore(
 
         with tarfile.open("rb") as infile:
             stream_tar_to_pod(pod_name, namespace, infile, v1)
+
+        adjust_directory_permissions(
+            pod_name,
+            namespace,
+            v1,
+            user_id,
+        )
 
 
 @contextlib.contextmanager
@@ -174,6 +182,39 @@ def create_persistent_volume(
             print(f"Using existing volume {name}")
             return
         raise
+
+
+def adjust_directory_permissions(
+    pod_name: str,
+    namespace: str,
+    v1: client.CoreV1Api,
+    user_id: str,
+    directory: str = "/workspace",
+):
+    resp = stream.stream(
+        v1.connect_get_namespaced_pod_exec,
+        pod_name,
+        namespace,
+        command=[
+            "chown",
+            "-R",
+            f"{user_id}",
+            directory,
+        ],
+        stderr=True,
+        stdin=False,
+        stdout=True,
+        tty=False,
+        _preload_content=False,
+    )
+
+    # Output the result
+    while resp.is_open():
+        resp.update(timeout=1)
+        if resp.peek_stdout():
+            print(f"STDOUT: {resp.read_stdout()}")
+        if resp.peek_stderr():
+            print(f"STDERR: {resp.read_stderr()}")
 
 
 def get_current_namespace():
