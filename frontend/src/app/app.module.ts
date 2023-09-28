@@ -95,6 +95,7 @@ import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wra
 import { EditProjectMetadataComponent } from './projects/project-detail/edit-project-metadata/edit-project-metadata.component';
 import { ModelComplexityBadgeComponent } from './projects/project-detail/model-overview/model-complexity-badge/model-complexity-badge.component';
 import { ModelOverviewComponent } from './projects/project-detail/model-overview/model-overview.component';
+import { MoveModelComponent } from './projects/project-detail/model-overview/move-model/move-model.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { ProjectMetadataComponent } from './projects/project-detail/project-metadata/project-metadata.component';
 import { AddUserToProjectDialogComponent } from './projects/project-detail/project-users/add-user-to-project/add-user-to-project.component';
@@ -192,6 +193,7 @@ import { SettingsComponent } from './settings/settings.component';
     ModelOverviewComponent,
     ModelRestrictionsComponent,
     ModelWrapperComponent,
+    MoveModelComponent,
     NavBarMenuComponent,
     NoticeComponent,
     PipelineRunWrapperComponent,

@@ -42,6 +42,7 @@ router = fastapi.APIRouter(
 
 @router.get("", response_model=list[models.Project], tags=["Projects"])
 def get_projects(
+    minimum_role: projects_users_models.ProjectUserRole | None = None,
     user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
     ),
@@ -57,12 +58,21 @@ def get_projects(
         log.debug("Fetching all projects")
         return list(crud.get_projects(db))
 
-    projects = [
-        association.project
-        for association in user.projects
-        if not association.project.visibility == models.Visibility.INTERNAL
-    ]
-    projects.extend(crud.get_internal_projects(db))
+    if not minimum_role:
+        projects = [
+            association.project
+            for association in user.projects
+            if not association.project.visibility == models.Visibility.INTERNAL
+        ]
+        projects.extend(crud.get_internal_projects(db))
+    else:
+        projects = [
+            association.project
+            for association in user.projects
+            if auth_injectables.ProjectRoleVerification(
+                minimum_role, verify=False
+            )(association.project.slug, username, db)
+        ]
 
     log.debug("Fetching the following projects: %s", projects)
     return projects

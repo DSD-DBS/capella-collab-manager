@@ -17,6 +17,8 @@ from capellacollab.projects.users import models as projects_users_models
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
+from capellacollab.users import injectables as users_injectables
+from capellacollab.users import models as users_models
 
 from . import crud, injectables, models, workspace
 from .backups import routes as backups_routes
@@ -129,6 +131,9 @@ def patch_tool_model(
         injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
+    user: users_models.DatabaseUser = fastapi.Depends(
+        users_injectables.get_own_user
+    ),
 ) -> models.DatabaseCapellaModel:
     if body.name:
         new_slug = slugify.slugify(body.name)
@@ -143,8 +148,12 @@ def patch_tool_model(
                 },
             )
 
-    version = get_version_by_id_or_raise(db, body.version_id)
-    if version.tool != model.tool:
+    version = (
+        get_version_by_id_or_raise(db, body.version_id)
+        if body.version_id
+        else model.version
+    )
+    if body.version_id and version.tool != model.tool:
         raise fastapi.HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
@@ -152,8 +161,12 @@ def patch_tool_model(
             },
         )
 
-    nature = get_nature_by_id_or_raise(db, body.nature_id)
-    if nature.tool != model.tool:
+    nature = (
+        get_nature_by_id_or_raise(db, body.nature_id)
+        if body.nature_id
+        else model.nature
+    )
+    if body.nature_id is not None and nature.tool != model.tool:
         raise fastapi.HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
@@ -161,8 +174,16 @@ def patch_tool_model(
             },
         )
 
+    if body.project_slug:
+        new_project = determine_new_project_to_move_model(
+            body.project_slug, db, user
+        )
+        raise_if_model_exists_in_project(model, new_project)
+    else:
+        new_project = model.project
+
     return crud.update_model(
-        db, model, body.description, body.name, version, nature
+        db, model, body.description, body.name, version, nature, new_project
     )
 
 
@@ -233,6 +254,44 @@ def get_nature_by_id_or_raise(
         status_code=status.HTTP_404_NOT_FOUND,
         detail={"reason": f"The nature with id {nature_id} was not found."},
     )
+
+
+def determine_new_project_to_move_model(
+    project_slug: str, db: orm.Session, user: users_models.DatabaseUser
+) -> projects_models.DatabaseProject:
+    new_project = projects_injectables.get_existing_project(project_slug, db)
+    success = user.role == users_models.Role.ADMIN
+    for association in user.projects:
+        if association.project_id == new_project.id:
+            if (
+                not association.role
+                == projects_users_models.ProjectUserRole.MANAGER
+            ):
+                break
+            else:
+                success = True
+
+    if not success:
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "reason": f"Requesting user does not have permission to move toolmodel to {new_project.slug}"
+            },
+        )
+    return new_project
+
+
+def raise_if_model_exists_in_project(
+    model: models.DatabaseCapellaModel,
+    project: projects_models.DatabaseProject,
+):
+    if model.slug in [model.slug for model in project.models]:
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "reason": f"Model with name {model.name} already exists in project {project.slug}"
+            },
+        )
 
 
 router.include_router(

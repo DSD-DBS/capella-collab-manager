@@ -275,3 +275,34 @@ def test_delete_pipeline_called_when_archiving_project(
         mock_delete_pipeline.assert_called_once_with(
             db, mock_pipeline, mock.ANY, True
         )
+
+
+@pytest.mark.usefixtures("project_user")
+def test_get_project_per_role_user(client: testclient.TestClient):
+    response = client.get("/api/v1/projects/?minimum_role=user")
+    assert response.status_code == 200
+    assert len(response.json()) > 0
+
+
+@pytest.mark.usefixtures("project_user")
+def test_get_project_per_role_manager_as_user(client: testclient.TestClient):
+    response = client.get("/api/v1/projects/?minimum_role=manager")
+    assert response.status_code == 200
+    assert len(response.json()) == 0
+
+
+@pytest.mark.usefixtures("project_manager")
+def test_get_project_per_role_manager(client: testclient.TestClient):
+    response = client.get("/api/v1/projects/?minimum_role=manager")
+    assert response.status_code == 200
+    assert len(response.json()) > 0
+
+
+def test_get_project_per_role_admin(
+    client: testclient.TestClient, executor_name: str, db: orm.Session
+):
+    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+
+    response = client.get("/api/v1/projects/?minimum_role=administrator")
+    assert response.status_code == 200
+    assert len(response.json()) > 0

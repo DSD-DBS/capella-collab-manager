@@ -132,9 +132,11 @@ def update_model(
     name: str | None,
     version: tools_models.DatabaseVersion,
     nature: tools_models.DatabaseNature,
+    project: projects_model.DatabaseProject,
 ) -> models.DatabaseCapellaModel:
     model.version = version
     model.nature = nature
+    model.project = project
     if description:
         model.description = description
     if name:

@@ -105,6 +105,15 @@
           >
             <mat-icon>key</mat-icon>
           </a>
+          <button
+            mat-mini-fab
+            matTooltip="Move model to different project"
+            class="!m-1.5"
+            (click)="openMoveToProjectDialog(model)"
+            *ngIf="projectUserService.verifyRole('manager')"
+          >
+            <mat-icon>drive_file_move</mat-icon>
+          </button>
           <a
             mat-mini-fab
             matTooltip="Configure model sources"

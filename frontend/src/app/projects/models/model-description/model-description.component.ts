@@ -92,7 +92,7 @@ export class ModelDescriptionComponent implements OnInit {
   onSubmit(): void {
     if (this.form.value && this.modelSlug && this.projectSlug) {
       this.modelService
-        .updateModelDescription(this.projectSlug, this.modelSlug, {
+        .updateModel(this.projectSlug, this.modelSlug, {
           name: this.form.value.name || undefined,
           description: this.form.value.description || '',
           nature_id: this.form.value.nature || undefined,
