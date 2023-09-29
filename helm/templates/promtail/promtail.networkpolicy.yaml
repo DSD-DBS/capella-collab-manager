@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 {{ if .Values.loki.enabled }}
-{{ if eq .Values.cluster.kind "OpenShift" }}
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
@@ -20,5 +19,4 @@ spec:
               kubernetes.io/metadata.name: {{ .Values.backend.k8sSessionNamespace }}
   policyTypes:
     - Ingress
-{{ end }}
 {{ end }}
