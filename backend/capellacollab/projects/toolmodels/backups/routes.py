@@ -25,7 +25,6 @@ from capellacollab.projects.toolmodels.modelsources.t4c import (
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import operators
 from capellacollab.tools import crud as tools_crud
-from capellacollab.users import models as users_models
 
 from .. import exceptions as toolmodels_exceptions
 from . import core, crud, exceptions, injectables, models
@@ -144,33 +143,7 @@ def delete_pipeline(
     username: str = fastapi.Depends(auth_injectables.get_username),
     force: bool = False,
 ):
-    try:
-        t4c_repository_interface.remove_user_from_repository(
-            pipeline.t4c_model.repository.instance,
-            pipeline.t4c_model.repository.name,
-            pipeline.t4c_username,
-        )
-    except requests.RequestException:
-        log.error(
-            "Error during the deletion of user %s in t4c",
-            pipeline.t4c_username,
-            exc_info=True,
-        )
-
-        if not (
-            force
-            and auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN, verify=False
-            )(username=username, db=db)
-        ):
-            raise exceptions.PipelineOperationFailedT4CServerUnreachable(
-                exceptions.PipelineOperation.DELETE
-            )
-
-    if pipeline.run_nightly:
-        operators.get_operator().delete_cronjob(pipeline.k8s_cronjob_id)
-
-    crud.delete_pipeline(db, pipeline)
+    core.delete_pipeline(db, pipeline, username, force)
 
 
 router.include_router(

@@ -14,6 +14,7 @@ module.exports = {
         warning: "var(--warning-color)",
         success: "var(--success-color)",
         hover: "var(--hover-color)",
+        archived: "#D1D5DB",
       },
       spacing: {
         button: "0.5rem",

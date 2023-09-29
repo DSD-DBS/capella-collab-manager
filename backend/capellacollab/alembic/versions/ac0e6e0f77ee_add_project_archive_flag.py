@@ -4,7 +4,7 @@
 """Add project archive flag
 
 Revision ID: ac0e6e0f77ee
-Revises: d8cf851562cd
+Revises: 1a4208c18909
 Create Date: 2023-09-25 16:08:07.115693
 
 """
@@ -13,7 +13,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "ac0e6e0f77ee"
-down_revision = "d8cf851562cd"
+down_revision = "1a4208c18909"
 branch_labels = None
 depends_on = None
 

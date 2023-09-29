@@ -1,0 +1,40 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="dialog" id="custom-dialog">
+  <form (submit)="onSubmit()">
+    <h2>{{ data.title }}</h2>
+    <p>{{ data.text }}</p>
+    <p *ngIf="data.requiredInput">
+      Please type in <span class="font-bold">{{ data.requiredInput }}</span> to
+      confirm the action:
+    </p>
+    <mat-form-field
+      class="w-full"
+      appearance="outline"
+      *ngIf="data.requiredInput"
+    >
+      <input
+        matInput
+        [(ngModel)]="inputText"
+        name="inputText"
+        placeholder="Type here..."
+      />
+    </mat-form-field>
+    <div class="flex justify-between">
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="onCancelClick()"
+      >
+        Cancel
+      </button>
+      <button mat-flat-button color="warn" [disabled]="!isSubmitAllowed()">
+        Confirm
+      </button>
+    </div>
+  </form>
+</div>

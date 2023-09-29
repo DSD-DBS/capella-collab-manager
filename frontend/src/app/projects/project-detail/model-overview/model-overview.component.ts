@@ -17,7 +17,7 @@ import { ProjectUserService } from 'src/app/projects/project-detail/project-user
 import { UserService } from 'src/app/services/user/user.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
-import { ProjectService } from '../../service/project.service';
+import { Project, ProjectService } from '../../service/project.service';
 
 @UntilDestroy()
 @Component({
@@ -26,7 +26,7 @@ import { ProjectService } from '../../service/project.service';
   styleUrls: ['./model-overview.component.css'],
 })
 export class ModelOverviewComponent implements OnInit {
-  projectSlug?: string;
+  project?: Project;
 
   constructor(
     public modelService: ModelService,
@@ -40,7 +40,7 @@ export class ModelOverviewComponent implements OnInit {
   ngOnInit(): void {
     this.projectService.project$
       .pipe(untilDestroyed(this))
-      .subscribe((project) => (this.projectSlug = project?.slug));
+      .subscribe((project) => (this.project = project));
   }
 
   getPrimaryWorkingMode(model: Model): string {
@@ -71,7 +71,7 @@ export class ModelOverviewComponent implements OnInit {
         'w-full',
         'h-full',
       ],
-      data: { modelSlug: model.slug, projectSlug: this.projectSlug },
+      data: { modelSlug: model.slug, projectSlug: this.project?.slug },
     });
   }
 
