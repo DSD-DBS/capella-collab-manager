@@ -4,7 +4,7 @@
  -->
 
 <div>
-  <div id="manage-users-header">
+  <div class="mr-2.5">
     <div class="flex justify-between">
       <h2>Project members</h2>
       <div class="flex flex-wrap gap-2">
@@ -16,7 +16,6 @@
           <mat-icon>assignment</mat-icon>
         </button>
         <button
-          id="add-user"
           (click)="openAddUserDialog()"
           mat-stroked-button
           matTooltip="Add a new user"
@@ -26,8 +25,8 @@
       </div>
     </div>
   </div>
-  <mat-card>
-    <mat-form-field id="search" appearance="outline">
+  <mat-card class="w-[400px] max-w-[85vw] !pb-0.5 pr-0">
+    <mat-form-field class="w-full pr-4 mb-[-20px]" appearance="outline">
       <mat-label>Search</mat-label>
       <input
         [(ngModel)]="search"
@@ -37,11 +36,13 @@
       />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
-    <div class="scrollable">
+    <div class="overflow-y-scroll max-h-[50vh]">
       <div *ngFor="let role of ['manager', 'user', 'administrator']">
-        <div class="roleTitle">{{ capitalizeFirstLetter(role) }}</div>
+        <div class="text-gray-400 text-lg font-bold mt-2.5">
+          {{ capitalizeFirstLetter(role) }}
+        </div>
         <div
-          class="user"
+          class="flex justify-between my-2.5 mx-1.5"
           *ngFor="
             let user of getProjectUsersByRole(
               projectUserService.projectUsers$ | async,
@@ -50,18 +51,20 @@
           "
         >
           <div class="flex">
-            <mat-icon class="accountCircle" mat-list-icon
-              >account_circle</mat-icon
-            >
+            <div class="flex items-center mr-4 ml-0">
+              <mat-icon class="text-3xl !h-8 !w-8 my-auto" mat-list-icon
+                >account_circle</mat-icon
+              >
+            </div>
             <div>
-              <div class="username">{{ user.user.name }}</div>
-              <div class="userrole">
+              <div class="text-[1.25em] break-all">{{ user.user.name }}</div>
+              <div class="text-gray-500">
                 {{ projectUserService.ADVANCED_ROLES[user.role] }},
                 {{ projectUserService.PERMISSIONS[user.permission] }}
               </div>
             </div>
           </div>
-          <div class="flex useractions">
+          <div class="flex items-center ml-1 mr-0">
             <button
               mat-icon-button
               color="error"

@@ -22,7 +22,6 @@ import { Project, ProjectService } from '../../service/project.service';
 @Component({
   selector: 'app-project-user-settings',
   templateUrl: './project-user-settings.component.html',
-  styleUrls: ['./project-user-settings.component.css'],
 })
 export class ProjectUserSettingsComponent implements OnInit {
   public project?: Project;
