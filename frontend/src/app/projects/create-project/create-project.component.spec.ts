@@ -49,6 +49,7 @@ const mockProjects: Project[] = [
       contributors: 0,
       subscribers: 0,
     },
+    is_archived: false,
   },
 ];
 
@@ -98,6 +99,7 @@ describe('CreateProjectComponent', () => {
         slug: project.name!,
         visibility: project.visibility!,
         users: { leads: 1, contributors: 0, subscribers: 0 },
+        is_archived: false,
       };
       this._project.next(projectToCreate);
       return of(projectToCreate);

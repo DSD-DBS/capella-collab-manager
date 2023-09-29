@@ -46,7 +46,7 @@ def update_project(
     patch_project: models.PatchProject,
 ) -> models.DatabaseProject:
     if patch_project.name:
-        patch_project.name = slugify.slugify(patch_project.name)
+        project.slug = slugify.slugify(patch_project.name)
 
     database.patch_database_with_pydantic_object(project, patch_project)
 
