@@ -7,16 +7,4 @@ export const environment = {
   production: true,
   backend_url: '/api/v1',
   docsURL: '/docs',
-  privacy: 'https://example.com/privacy',
-  imprint: 'https://example.com/imprint',
-  provider: 'PROVIDER',
-  authentication: 'OAuth mock',
-  usernameAttribute: 'sub',
-  environment: 'production',
-  integrations: {
-    modelsources: {
-      t4c: true,
-      git: true,
-    },
-  },
 };

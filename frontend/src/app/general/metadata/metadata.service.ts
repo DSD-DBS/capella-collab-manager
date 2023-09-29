@@ -6,7 +6,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { compare } from 'semver';
 import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { environment } from 'src/environments/environment';
@@ -14,18 +14,24 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class VersionService {
+export class MetadataService {
   constructor(
     private httpClient: HttpClient,
     private localStorageService: LocalStorageService,
     public dialog: MatDialog
   ) {
     this.loadVersion();
+    this.loadBackendMetadata().subscribe();
   }
 
   public version: Version | undefined;
   public oldVersion: string | undefined;
   public changedVersion = false;
+
+  private _backendMetadata = new BehaviorSubject<BackendMetadata | undefined>(
+    undefined
+  );
+  readonly backendMetadata = this._backendMetadata.asObservable();
 
   loadVersion(): void {
     if (!this.version) {
@@ -39,9 +45,11 @@ export class VersionService {
   }
 
   loadBackendMetadata(): Observable<BackendMetadata> {
-    return this.httpClient.get<BackendMetadata>(
-      environment.backend_url + '/metadata'
-    );
+    return this.httpClient
+      .get<BackendMetadata>(environment.backend_url + '/metadata')
+      .pipe(
+        tap((metadata: BackendMetadata) => this._backendMetadata.next(metadata))
+      );
   }
 
   determinateChangedVersion() {
@@ -93,5 +101,9 @@ export interface Version {
 
 export interface BackendMetadata {
   version: string;
-  tag: string;
+  privacy_policy_url: string;
+  imprint_url: string;
+  provider: string;
+  authentication_provider: string;
+  environment: string;
 }

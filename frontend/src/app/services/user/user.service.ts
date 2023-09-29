@@ -59,10 +59,6 @@ export class UserService {
     return this.http.get<User[]>(this.BACKEND_URL_PREFIX);
   }
 
-  getUserName(): string {
-    return this.authService.userName;
-  }
-
   getOwnActiveSessions(): Observable<Array<Session>> {
     return this.http.get<Session[]>(
       this.BACKEND_URL_PREFIX + 'current/sessions'

@@ -111,9 +111,22 @@ properties:
       host:
         type: string
       port:
-        potypert: string
+        type: ["number", "string"]
       scheme:
         type: string
+      metadata:
+        type: object
+        properties:
+          privacyPolicyURL:
+            type: string
+          imprintURL:
+            type: string
+          provider:
+            type: string
+          authenticationProvider:
+            type: string
+          environment:
+            type: string
   extensions:
     type: object
     additionalProperties: false

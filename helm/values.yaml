@@ -50,6 +50,13 @@ general:
   port: 80
   scheme: http
 
+  metadata:
+    privacyPolicyURL: https://example.com/privacy
+    imprintURL: https://example.com/imprint
+    provider: Systems Engineering Toolchain team
+    authenticationProvider: OAuth2
+    environment: development
+
 sessions:
   # Session timeout in minutes for unused and idle sessions
   timeout: 90

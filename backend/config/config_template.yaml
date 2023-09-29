@@ -36,6 +36,13 @@ general:
   port: 4200
   scheme: http
 
+  metadata:
+    privacyPolicyURL: https://example.com/privacy
+    imprintURL: https://example.com/imprint
+    provider: Systems Engineering Toolchain team
+    authenticationProvider: OAuth2
+    environment: development
+
 extensions:
   guacamole:
     baseURI: http://localhost:8080/guacamole

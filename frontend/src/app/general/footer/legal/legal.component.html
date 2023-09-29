@@ -4,6 +4,17 @@
  -->
 
 <div class="wrapper">
-  <a id="tc" target="_blank" [href]="imprint">Imprint</a> &nbsp;
-  <a id="tc" target="_blank" [href]="privacy">Privacy statement</a>
+  <a
+    id="tc"
+    target="_blank"
+    [href]="(metadataService.backendMetadata | async)?.imprint_url"
+    >Imprint</a
+  >
+  &nbsp;
+  <a
+    id="tc"
+    target="_blank"
+    [href]="(metadataService.backendMetadata | async)?.privacy_policy_url"
+    >Privacy statement</a
+  >
 </div>

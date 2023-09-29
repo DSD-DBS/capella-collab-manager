@@ -48,7 +48,7 @@
         color="primary"
         *ngIf="
           selectedUser.role === 'administrator' &&
-          selectedUser.name !== userService.getUserName()
+          selectedUser.id !== userService.user?.id
         "
         (click)="downgradeToUser(selectedUser)"
       >

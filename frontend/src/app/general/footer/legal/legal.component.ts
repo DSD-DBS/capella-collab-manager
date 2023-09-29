@@ -4,7 +4,7 @@
  */
 
 import { Component } from '@angular/core';
-import { environment } from 'src/environments/environment';
+import { MetadataService } from 'src/app/general/metadata/metadata.service';
 
 @Component({
   selector: 'app-legal',
@@ -12,6 +12,5 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./legal.component.css'],
 })
 export class LegalComponent {
-  imprint = environment.imprint;
-  privacy = environment.privacy;
+  constructor(public metadataService: MetadataService) {}
 }

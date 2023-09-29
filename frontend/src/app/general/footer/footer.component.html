@@ -6,5 +6,9 @@
 <div class="footer">
   Platform for co-working on architectural projects using ARCADIA / Capella
   <br />
-  Provided by {{ provider }},
+  Provided by
+  {{
+    (metadataService.backendMetadata | async)?.provider ||
+      "Systems Engineering Toolchain team"
+  }},
 </div>
