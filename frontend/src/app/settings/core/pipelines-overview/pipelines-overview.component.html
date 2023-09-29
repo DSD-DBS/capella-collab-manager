@@ -62,8 +62,13 @@
   <div *ngFor="let projectStatus of projectStatuses">
     <mat-card class="project-card">
       <b>Project</b> <br />
-      <span class="title">{{ projectStatus.project_slug }}</span
-      ><br />
+      <a
+        target="_blank"
+        [href]="'project/' + projectStatus.project_slug"
+        class="title flex gap-1 mb-1"
+        >{{ projectStatus.project_slug }}
+        <mat-icon inline>open_in_new</mat-icon></a
+      >
       <div *ngFor="let warning of projectStatus.warnings" class="warning">
         <mat-icon class="mat-icon-position top">warning</mat-icon>
         {{ warning }}
@@ -97,12 +102,25 @@
   <div *ngFor="let modelStatus of toolmodelStatuses">
     <mat-card class="models-card">
       <b>Project</b> <br />
-      <span class="title">{{ modelStatus.project_slug }}</span>
-      <br />
+      <a
+        target="_blank"
+        [href]="'project/' + modelStatus.project_slug"
+        class="title flex gap-1 mb-1"
+        >{{ modelStatus.project_slug }}
+        <mat-icon inline>open_in_new</mat-icon></a
+      >
       <b>Model</b> <br />
-      <span class="title">{{ modelStatus.model_slug }}</span>
-      <br />
-
+      <a
+        target="_blank"
+        [href]="
+          'project/' +
+          modelStatus.project_slug +
+          '/model/' +
+          modelStatus.model_slug
+        "
+        class="title flex gap-1 mb-1"
+        >{{ modelStatus.model_slug }} <mat-icon inline>open_in_new</mat-icon></a
+      >
       <div>
         <!-- git model status -->
         <div
