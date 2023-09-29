@@ -12,7 +12,3 @@
 .wrapper a {
   color: inherit;
 }
-
-.version {
-  color: var(--error-color);
-}
