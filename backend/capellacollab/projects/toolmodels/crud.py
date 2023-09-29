@@ -129,6 +129,7 @@ def update_model(
     db: orm.Session,
     model: models.DatabaseCapellaModel,
     description: str | None,
+    name: str | None,
     version: tools_models.DatabaseVersion,
     nature: tools_models.DatabaseNature,
 ) -> models.DatabaseCapellaModel:
@@ -136,6 +137,9 @@ def update_model(
     model.nature = nature
     if description:
         model.description = description
+    if name:
+        model.name = name
+        model.slug = slugify.slugify(name)
     db.commit()
     return model
 

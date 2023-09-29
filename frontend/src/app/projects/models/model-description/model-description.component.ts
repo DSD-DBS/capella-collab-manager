@@ -25,6 +25,7 @@ import { ProjectService } from '../../service/project.service';
 })
 export class ModelDescriptionComponent implements OnInit {
   form = new FormGroup({
+    name: new FormControl<string>(''),
     description: new FormControl<string>(''),
     nature: new FormControl<number>(-1),
     version: new FormControl<number>(-1),
@@ -57,7 +58,12 @@ export class ModelDescriptionComponent implements OnInit {
             model.git_models.length || model.t4c_models.length
           );
 
+          this.form.controls.name.setAsyncValidators(
+            this.modelService.asyncSlugValidator(model),
+          );
+
           this.form.patchValue({
+            name: model.name,
             description: model.description,
             nature: model.nature?.id,
             version: model.version?.id,
@@ -83,14 +89,21 @@ export class ModelDescriptionComponent implements OnInit {
   onSubmit(): void {
     if (this.form.value && this.modelSlug && this.projectSlug) {
       this.modelService
-        .updateModelDescription(this.projectSlug!, this.modelSlug!, {
+        .updateModelDescription(this.projectSlug, this.modelSlug, {
+          name: this.form.value.name || undefined,
           description: this.form.value.description || '',
           nature_id: this.form.value.nature || undefined,
           version_id: this.form.value.version || undefined,
         })
-        .subscribe(() =>
-          this.router.navigate(['../../..'], { relativeTo: this.route }),
-        );
+        .subscribe({
+          next: () => {
+            this.toastService.showSuccess(
+              'Model updated',
+              `${this.modelSlug} has been updated`,
+            );
+            this.router.navigate(['../../..'], { relativeTo: this.route });
+          },
+        });
     }
   }
 

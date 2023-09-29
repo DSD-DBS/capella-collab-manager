@@ -49,6 +49,7 @@ class PostCapellaModel(pydantic.BaseModel):
 
 
 class PatchCapellaModel(pydantic.BaseModel):
+    name: str | None = None
     description: str | None = None
     version_id: int
     nature_id: int

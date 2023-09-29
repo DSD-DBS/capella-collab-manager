@@ -108,7 +108,6 @@ export class ModelService {
             this.loadModels(projectSlug);
             this._model.next(model);
           },
-          error: () => this._model.next(undefined),
         }),
       );
   }
@@ -132,13 +131,16 @@ export class ModelService {
     this._models.next(undefined);
   }
 
-  asyncSlugValidator(): AsyncValidatorFn {
+  asyncSlugValidator(ignoreModel?: Model): AsyncValidatorFn {
+    const ignoreSlug = !!ignoreModel ? ignoreModel.slug : -1;
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       const modelSlug = slugify(control.value, { lower: true });
       return this.models$.pipe(
         take(1),
         map((models) => {
-          return models?.find((model) => model.slug === modelSlug)
+          return models?.find(
+            (model) => model.slug === modelSlug && model.slug !== ignoreSlug,
+          )
             ? { uniqueSlug: { value: modelSlug } }
             : null;
         }),
@@ -168,6 +170,7 @@ export type Model = {
 };
 
 export type PatchModel = {
+  name?: string;
   description?: string;
   nature_id?: number;
   version_id?: number;
