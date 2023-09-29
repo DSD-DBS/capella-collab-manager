@@ -121,8 +121,16 @@ const routes: Routes = [
                         `/project/${data.project?.slug}`,
                     },
                     component: ModelWrapperComponent,
-
                     children: [
+                      {
+                        path: '',
+                        data: {
+                          breadcrumb: 'Configure Model',
+                          redirect: (data: Data) =>
+                            `/project/${data.project?.slug}/model/${data.model?.slug}/metadata`,
+                        },
+                        component: ModelDescriptionComponent,
+                      },
                       {
                         path: 'modelsources',
                         data: {
