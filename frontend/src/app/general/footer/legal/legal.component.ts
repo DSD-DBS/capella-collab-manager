@@ -4,7 +4,7 @@
  */
 
 import { Component } from '@angular/core';
-import { MetadataService } from 'src/app/general/metadata/version/version.service';
+import { MetadataService } from 'src/app/general/metadata/metadata.service';
 
 @Component({
   selector: 'app-legal',

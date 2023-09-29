@@ -5,7 +5,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { MetadataService } from 'src/app/general/metadata/version/version.service';
+import { MetadataService } from 'src/app/general/metadata/metadata.service';
 import { PageLayoutService } from 'src/app/page-layout/page-layout.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 

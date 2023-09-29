@@ -5,7 +5,7 @@
 
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MetadataService } from './version.service';
+import { MetadataService } from '../metadata.service';
 
 @Component({
   selector: 'app-version',
