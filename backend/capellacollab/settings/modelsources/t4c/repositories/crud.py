@@ -85,6 +85,7 @@ def _get_user_write_t4c_repositories(
         .join(toolmodels_models.DatabaseCapellaModel.version)
         .where(tools_models.DatabaseVersion.name == version_name)
         .join(toolmodels_models.DatabaseCapellaModel.project)
+        .where(projects_models.DatabaseProject.is_archived.is_(False))
         .join(projects_models.DatabaseProject.users)
         .where(
             projects_users_models.ProjectUserAssociation.permission
@@ -105,6 +106,8 @@ def _get_admin_t4c_repositories(
         .join(t4c_models.DatabaseT4CModel.model)
         .join(toolmodels_models.DatabaseCapellaModel.version)
         .where(tools_models.DatabaseVersion.name == version_name)
+        .join(toolmodels_models.DatabaseCapellaModel.project)
+        .where(projects_models.DatabaseProject.is_archived.is_(False))
     )
 
     return db.execute(stmt).scalars().all()
