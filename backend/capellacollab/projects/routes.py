@@ -84,15 +84,17 @@ def update_project(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseProject:
-    new_slug = slugify.slugify(patch_project.name)
-    if crud.get_project_by_slug(db, new_slug) and project.slug != new_slug:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "reason": "A project with a similar name already exists.",
-                "technical": "Slug already used",
-            },
-        )
+    if patch_project.name:
+        new_slug = slugify.slugify(patch_project.name)
+
+        if project.slug != new_slug and crud.get_project_by_slug(db, new_slug):
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={
+                    "reason": "A project with a similar name already exists.",
+                    "technical": "Slug already used",
+                },
+            )
     return crud.update_project(db, project, patch_project)
 
 
