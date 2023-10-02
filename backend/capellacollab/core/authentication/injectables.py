@@ -3,10 +3,13 @@
 
 from __future__ import annotations
 
+import dataclasses
 import logging
 
 import fastapi
 from fastapi import status
+from fastapi.openapi import models as openapi_models
+from fastapi.security import base as security_base
 
 from capellacollab.core import database
 from capellacollab.core.authentication import basic_auth, jwt_bearer
@@ -20,14 +23,57 @@ from capellacollab.users import models as users_models
 logger = logging.getLogger(__name__)
 
 
+class OpenAPIFakeBase(security_base.SecurityBase):
+    """Fake class to display the authentication methods in the OpenAPI docs
+
+    fastAPI uses DependencyInjection together with the SecurityBase class
+    to determine which authentication methods are available.
+    More information in fastapi/dependencies/utils::get_sub_dependant
+    """
+
+    def __init__(self) -> None:
+        pass
+
+    def __call__(self) -> None:
+        pass
+
+    def __hash__(self) -> int:
+        return hash(self.__class__.__name__)
+
+
+@dataclasses.dataclass()
+class OpenAPIPersonalAccessToken(OpenAPIFakeBase):
+    """Displays the personal access token as authentication method in the OpenAPI docs"""
+
+    model = openapi_models.HTTPBase(
+        scheme="basic",
+        description="Can be used to authenticate with an personal access token",
+    )
+    scheme_name = "PersonalAccessToken"
+
+    __hash__ = OpenAPIFakeBase.__hash__
+
+
+@dataclasses.dataclass()
+class OpenAPIBearerToken(OpenAPIFakeBase):
+    """Displays the JWT Bearer token as authentication method in the OpenAPI docs"""
+
+    model = openapi_models.HTTPBase(
+        scheme="bearer",
+    )
+    scheme_name = "JWTBearer"
+
+    __hash__ = OpenAPIFakeBase.__hash__
+
+
 async def get_username(
-    basic: tuple[str | None, fastapi.HTTPException | None] = fastapi.Depends(
-        basic_auth.HTTPBasicAuth(auto_error=False)
-    ),
-    jwt: tuple[str | None, fastapi.HTTPException | None] = fastapi.Depends(
-        jwt_bearer.JWTBearer(auto_error=False)
-    ),
-) -> str:
+    request: fastapi.Request,
+    _unused1=fastapi.Depends(OpenAPIPersonalAccessToken()),
+    _unused2=fastapi.Depends(OpenAPIBearerToken()),
+):
+    basic = await basic_auth.HTTPBasicAuth(auto_error=False)(request)
+    jwt = await jwt_bearer.JWTBearer(auto_error=False)(request)
+
     jwt_username, jwt_error = jwt
     if jwt_username:
         return jwt_username
@@ -46,13 +92,6 @@ async def get_username(
         detail="Token is none and username cannot be derived",
         headers={"WWW-Authenticate": "Bearer, Basic"},
     )
-
-
-async def get_username_not_injectable(request: fastapi.Request):
-    basic = await basic_auth.HTTPBasicAuth(auto_error=False)(request)
-    jwt = await jwt_bearer.JWTBearer(auto_error=False)(request)
-
-    return await get_username(basic=basic, jwt=jwt)
 
 
 class RoleVerification:

@@ -58,9 +58,7 @@ class AttachUserNameMiddleware(base.BaseHTTPMiddleware):
         self, request: fastapi.Request, call_next: base.RequestResponseEndpoint
     ):
         try:
-            username = await auth_injectables.get_username_not_injectable(
-                request
-            )
+            username = await auth_injectables.get_username(request)
         except fastapi.HTTPException:
             username = "anonymous"
 
