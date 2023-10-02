@@ -29,6 +29,7 @@ general:
   host: "{{ .Values.general.host }}"
   port: "{{ .Values.general.port }}"
   scheme: "{{ .Values.general.scheme }}"
+  wildcardHost: {{ .Values.general.wildcardHost }}
 
   metadata:
     {{- toYaml .Values.general.metadata | nindent 4 }}

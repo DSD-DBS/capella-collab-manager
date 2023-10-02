@@ -120,12 +120,33 @@ class KubernetesOperator:
             return False
 
     def create_public_route(
-        self, session_id: str, host: str, path: str, port: int
+        self,
+        session_id: str,
+        host: str,
+        path: str,
+        port: int,
+        wildcard_host: bool | None = False,
     ):
+        """Create a public route for the session
+
+        Parameters
+        ==========
+        session_id: str
+            The database ID of the session
+        host: str
+            The host to use for the route
+        path: str
+            The path to use for the route
+        port: int
+            The port to use for the route
+        wildcard_host: bool
+            Whether to use a wildcard host or not (serve on all hosts),
+            not supported for OpenShift
+        """
         if self.openshift:
             self._create_openshift_route(session_id, host, path, port)
         else:
-            self._create_ingress(session_id, host, path, port)
+            self._create_ingress(session_id, host, path, port, wildcard_host)
 
     def delete_public_route(self, session_id: str):
         if self.openshift:
@@ -678,7 +699,14 @@ class KubernetesOperator:
         )
         return self.v1_core.create_namespaced_service(namespace, service)
 
-    def _create_ingress(self, id, host: str, path: str, port_number: int):
+    def _create_ingress(
+        self,
+        id,
+        host: str,
+        path: str,
+        port_number: int,
+        wildcard_host: bool | None = False,
+    ):
         ingress = client.V1Ingress(
             api_version="networking.k8s.io/v1",
             kind="Ingress",
@@ -689,7 +717,7 @@ class KubernetesOperator:
                 ingress_class_name=cfg.get("ingressClassName"),
                 rules=[
                     client.V1IngressRule(
-                        host=host,
+                        host=None if wildcard_host else host,
                         http=client.V1HTTPIngressRuleValue(
                             paths=[
                                 client.V1HTTPIngressPath(

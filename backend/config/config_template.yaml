@@ -35,6 +35,7 @@ general:
   host: localhost
   port: 4200
   scheme: http
+  wildcardHost: False
 
   metadata:
     privacyPolicyURL: https://example.com/privacy
