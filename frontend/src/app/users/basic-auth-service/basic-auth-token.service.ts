@@ -12,9 +12,7 @@ import { environment } from 'src/environments/environment';
 })
 export class TokenService {
   constructor(private http: HttpClient) {}
-  private readonly _tokens = new BehaviorSubject<Token[] | undefined>(
-    undefined
-  );
+  private _tokens = new BehaviorSubject<Token[] | undefined>(undefined);
 
   readonly tokens$ = this._tokens.asObservable();
 
@@ -27,21 +25,27 @@ export class TokenService {
       });
   }
 
-  createToken(tokenDescription: string): Observable<string> {
-    const password = this.http
-      .post<string>(
-        environment.backend_url + `/users/current/token`,
-        tokenDescription
+  createToken(
+    description: string,
+    expiration_date: Date,
+    source: string
+  ): Observable<CreateTokenResponse> {
+    return this.http
+      .post<CreateTokenResponse>(
+        environment.backend_url + `/users/current/tokens`,
+        {
+          description,
+          expiration_date,
+          source,
+        }
       )
       .pipe(tap(() => this.loadTokens()));
-
-    return password;
   }
 
-  deleteToken(token: Token): Observable<string> {
+  deleteToken(token: Token): Observable<void> {
     return this.http
-      .delete<string>(
-        environment.backend_url + `/users/current/token/${token.id}`
+      .delete<void>(
+        environment.backend_url + `/users/current/tokens/${token.id}`
       )
       .pipe(tap(() => this.loadTokens()));
   }
@@ -50,5 +54,10 @@ export class TokenService {
 export type Token = {
   description: string;
   expiration_date: string;
+  source: string;
   id: number;
+};
+
+export type CreateTokenResponse = Token & {
+  password: string;
 };

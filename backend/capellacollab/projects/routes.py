@@ -43,7 +43,7 @@ def get_projects(
         users_injectables.get_own_user
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    username=fastapi.Depends(auth_injectables.get_username),
+    username: str = fastapi.Depends(auth_injectables.get_username),
     log: logging.LoggerAdapter = fastapi.Depends(
         core_logging.get_request_logger
     ),

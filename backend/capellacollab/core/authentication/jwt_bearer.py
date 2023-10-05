@@ -27,31 +27,29 @@ class JWTBearer(security.HTTPBearer):
 
     async def __call__(  # type: ignore
         self, request: fastapi.Request
-    ) -> tuple[str | None, fastapi.HTTPException | None]:
+    ) -> str | None:
         credentials: security.HTTPAuthorizationCredentials | None = (
             await super().__call__(request)
         )
 
         if not credentials or credentials.scheme != "Bearer":
-            error = fastapi.HTTPException(
+            if self.auto_error:
+                raise fastapi.HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Not authenticated",
+                    headers={"WWW-Authenticate": "Bearer, Basic"},
+                )
+            return None
+        if token_decoded := self.validate_token(credentials.credentials):
+            self.initialize_user(token_decoded)
+            return self.get_username(token_decoded)
+        if self.auto_error:
+            raise fastapi.HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Not authenticated",
                 headers={"WWW-Authenticate": "Bearer, Basic"},
             )
-            if self.auto_error:
-                raise error
-            return None, error
-        if token_decoded := self.validate_token(credentials.credentials):
-            self.initialize_user(token_decoded)
-            return self.get_username(token_decoded), None
-        error = fastapi.HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated",
-            headers={"WWW-Authenticate": "Bearer, Basic"},
-        )
-        if self.auto_error:
-            raise error
-        return None, error
+        return None
 
     def get_username(self, token_decoded: dict[str, str]) -> str:
         return token_decoded[
@@ -74,7 +72,7 @@ class JWTBearer(security.HTTPBearer):
                 raise fastapi.HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail={
-                        "err_code": "TOKEN_INVALID",
+                        "err_code": "JWT_TOKEN_INVALID",
                         "reason": "The used token is not valid.",
                     },
                 ) from None

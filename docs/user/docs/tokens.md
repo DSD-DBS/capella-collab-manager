@@ -3,53 +3,59 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Token Authentication
+# Authentication with Personal Access Tokens (PAT)
 
 To authenticate against the API you can either use a Bearer token (which the
-browser usually uses) or authenticate with a longer lived basic authentication
-token which can be used e.g. in scripts.
+browser usually uses) or authenticate with a longer lived personal access token
+(PAT) which can be used e.g. in scripts.
 
-## Token Creation
+## PAT Creation
 
-To create a Token you can go to Profile > Token and insert a short description
-to create a token.
-
- <!-- prettier-ignore -->
-
-!!! info The password which is generated can only be copied. Make sure you save
-it - you won't be able to access it again
-
-## Token Scope
-
-Basic authentication token have the same scope as the bearer token.
+To create a personal access token (PAT) you can go to Profile > Token and
+insert a short description and pick a date until when the token should be
+valid.
 
 <!-- prettier-ignore -->
-!!! warning
-    As currently Basic Authentication token have the same scope as you logged in your browser they can act as your user. Please do not share the password and if the information gets lost please revoke the token as soon as possible.
+!!! info
+    The password which is generated can only be copied once. Make sure you save
+    it - you won't be able to access it again
 
-## Revoke a Token
+## PAT Scope
+
+Personal access token have almost (not for requesting oauth or azure tokens)
+the same scope as the user who created it. It is therefore important that you
+never pass on the token and treat it responsibly. If you feel that the token
+has been lost, revoke it immediately and inform the Systems Engineering
+Toolchain team.
+
+## Revoke a PAT
 
 In order to revoke a token go to Profile > Token. There you can see a list of
-all tokens that belong to your user. Clicking on the trash symbol you can
-delete a token which will no longer be valid to authenticate.
+all tokens that belong to your user. By clicking on the trash symbol, you can
+delete a token, which will no longer be valid for authentication.
 
-## Token Usage
+## PAT Usage
 
-The token created is a basic authentication token. There are different ways to
+The token created is a personal access token. There are different ways to
 authenticate with that against the Collaboration Manager API. One example is:
 
 ```zsh
-curl --basic -u yourUsername:yourPassword https://baseurl/api/v1/users/current/tokens
+curl --basic -u <username>:<token> https://<baseURL>/api/v1/users/current/tokens
 ```
 
-or to work with the diagram cache
+or to work with the diagram cache of Capellambse. Capellambse is an
+implementation of the capella modelling tool using python and lets you read and
+write models. For more information have a look at the
+[documentation](https://dsd-dbs.github.io/py-capellambse/) or the
+[github repository](https://github.com/DSD-DBS/py-capellambse).
 
 ```python
 capellambse.model.MelodyModel(
-          path="path to the model on your machine",
-          diagram_cache={
-            "path": "https://baseurl/api/projects/[yourProjectSlug]/[yourModelName]/diagrams/%s",
-            "username": "yourUsername",
-            "password": "yourPassword",
-          })
+  path="path to the model on your machine",
+  diagram_cache={
+    "path": "https://<baseURL>/api/projects/[yourProjectSlug]/[yourModelSlug]/diagrams/%s",
+    "username": "<username>",
+    "password": "<token>",
+  }
+)
 ```

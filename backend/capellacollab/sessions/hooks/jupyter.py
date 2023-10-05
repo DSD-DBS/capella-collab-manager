@@ -46,7 +46,6 @@ class JupyterIntegration(interface.HookRegistration):
         db: orm.Session,
         user: users_models.DatabaseUser,
         tool: tools_models.DatabaseTool,
-        username: str,
         **kwargs,
     ) -> tuple[
         JupyterConfigEnvironment,
@@ -63,7 +62,7 @@ class JupyterIntegration(interface.HookRegistration):
             "CSP_ORIGIN_HOST": f"{self._general_conf.get('scheme')}://{self._general_conf.get('host')}:{self._general_conf.get('port')}",
         }
 
-        volumes = self._get_project_share_volume_mounts(db, username, tool)
+        volumes = self._get_project_share_volume_mounts(db, user.name, tool)
 
         return environment, volumes, []  # type: ignore[return-value]
 

@@ -5,7 +5,6 @@
 
 import { NgModule } from '@angular/core';
 import { Data, RouterModule, Routes } from '@angular/router';
-import { BasicAuthTokenComponent } from 'src/app/general/auth/basic-auth-token/basic-auth-token.component';
 import { JobRunOverviewComponent } from 'src/app/projects/models/backup-settings/job-run-overview/job-run-overview.component';
 import { PipelineRunWrapperComponent } from 'src/app/projects/models/backup-settings/pipeline-runs/wrapper/pipeline-run-wrapper/pipeline-run-wrapper.component';
 import { ViewLogsDialogComponent } from 'src/app/projects/models/backup-settings/view-logs-dialog/view-logs-dialog.component';
@@ -14,6 +13,7 @@ import { ModelRestrictionsComponent } from 'src/app/projects/models/model-restri
 import { EditProjectMetadataComponent } from 'src/app/projects/project-detail/edit-project-metadata/edit-project-metadata.component';
 import { SessionComponent } from 'src/app/sessions/session/session.component';
 import { PipelinesOverviewComponent } from 'src/app/settings/core/pipelines-overview/pipelines-overview.component';
+import { BasicAuthTokenComponent } from 'src/app/users/basic-auth-token/basic-auth-token.component';
 import { EventsComponent } from './events/events.component';
 import { AuthComponent } from './general/auth/auth/auth.component';
 import { AuthGuardService } from './general/auth/auth-guard/auth-guard.service';
@@ -444,7 +444,7 @@ const routes: Routes = [
       },
       {
         path: 'tokens',
-        data: { breadcrumb: 'tokens' },
+        data: { breadcrumb: 'Tokens' },
         component: BasicAuthTokenComponent,
       },
     ],

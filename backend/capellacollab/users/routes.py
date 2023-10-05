@@ -136,4 +136,6 @@ def delete_user(
 
 router.include_router(session_routes.users_router, tags=["Users - Sessions"])
 router.include_router(events_routes.router, tags=["Users - History"])
-router.include_router(tokens_routes.router, tags=["Users - Token"])
+router.include_router(
+    tokens_routes.router, prefix="/current/tokens", tags=["Users - Token"]
+)

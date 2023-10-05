@@ -131,6 +131,7 @@ module = [
   "uvicorn.*",
   "alembic.*",
   "jwt.*",
+  "argon2.*",
 ]
 ignore_missing_imports = true
 

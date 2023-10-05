@@ -72,7 +72,7 @@ def create_backup(
         toolmodels_injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    username=fastapi.Depends(auth_injectables.get_username),
+    username: str = fastapi.Depends(auth_injectables.get_username),
 ):
     git_model = git_injectables.get_existing_git_model(
         body.git_model_id, capella_model, db
@@ -141,7 +141,7 @@ def delete_pipeline(
         injectables.get_existing_pipeline
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    username=fastapi.Depends(auth_injectables.get_username),
+    username: str = fastapi.Depends(auth_injectables.get_username),
     force: bool = False,
 ):
     try:

@@ -10,6 +10,8 @@ import fastapi
 from fastapi import status
 from fastapi.openapi import models as openapi_models
 from fastapi.security import base as security_base
+from fastapi.security import utils as security_utils
+from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core.authentication import basic_auth, jwt_bearer
@@ -70,28 +72,24 @@ async def get_username(
     request: fastapi.Request,
     _unused1=fastapi.Depends(OpenAPIPersonalAccessToken()),
     _unused2=fastapi.Depends(OpenAPIBearerToken()),
-):
-    basic = await basic_auth.HTTPBasicAuth(auto_error=False)(request)
-    jwt = await jwt_bearer.JWTBearer(auto_error=False)(request)
+) -> str:
+    authorization = request.headers.get("Authorization")
+    scheme, _ = security_utils.get_authorization_scheme_param(authorization)
+    username = None
+    match scheme.lower():
+        case "basic":
+            username = await basic_auth.HTTPBasicAuth()(request)
+        case "bearer":
+            username = await jwt_bearer.JWTBearer()(request)
+        case _:
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token is none and username cannot be derived",
+                headers={"WWW-Authenticate": "Bearer, Basic"},
+            )
 
-    jwt_username, jwt_error = jwt
-    if jwt_username:
-        return jwt_username
-
-    basic_username, basic_error = basic
-    if basic_username:
-        return basic_username
-
-    if jwt_error:
-        raise jwt_error
-    if basic_error:
-        raise basic_error
-
-    raise fastapi.HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Token is none and username cannot be derived",
-        headers={"WWW-Authenticate": "Bearer, Basic"},
-    )
+    assert username
+    return username
 
 
 class RoleVerification:
@@ -101,8 +99,8 @@ class RoleVerification:
 
     def __call__(
         self,
-        username=fastapi.Depends(get_username),
-        db=fastapi.Depends(database.get_db),
+        username: str = fastapi.Depends(get_username),
+        db: orm.Session = fastapi.Depends(database.get_db),
     ) -> bool:
         if not (user := users_crud.get_user_by_name(db, username)):
             if self.verify:
@@ -148,8 +146,8 @@ class ProjectRoleVerification:
     def __call__(
         self,
         project_slug: str,
-        username=fastapi.Depends(get_username),
-        db=fastapi.Depends(database.get_db),
+        username: str = fastapi.Depends(get_username),
+        db: orm.Session = fastapi.Depends(database.get_db),
     ) -> bool:
         if not (user := users_crud.get_user_by_name(db, username)):
             if self.verify:

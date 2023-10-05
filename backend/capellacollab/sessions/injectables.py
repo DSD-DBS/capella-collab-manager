@@ -15,7 +15,7 @@ from . import crud, models
 def get_existing_session(
     session_id: str,
     db: orm.Session = fastapi.Depends(database.get_db),
-    username=fastapi.Depends(auth_injectables.get_username),
+    username: str = fastapi.Depends(auth_injectables.get_username),
 ) -> models.DatabaseSession:
     if not (session := crud.get_session_by_id(db, session_id)):
         raise fastapi.HTTPException(

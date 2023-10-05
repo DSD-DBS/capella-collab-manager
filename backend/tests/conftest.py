@@ -73,7 +73,7 @@ def fixture_executor_name(monkeypatch: pytest.MonkeyPatch) -> str:
     name = str(uuid1())
 
     async def bearer_passthrough(self, request: fastapi.Request):
-        return name, None
+        return name
 
     monkeypatch.setattr(JWTBearer, "__call__", bearer_passthrough)
 
@@ -88,20 +88,6 @@ def fixture_unique_username() -> str:
 @pytest.fixture(name="user")
 def fixture_user(db, executor_name):
     user = users_crud.create_user(db, executor_name, users_models.Role.USER)
-
-    def get_mock_own_user():
-        return user
-
-    app.dependency_overrides[
-        users_injectables.get_own_user
-    ] = get_mock_own_user
-    yield user
-    del app.dependency_overrides[users_injectables.get_own_user]
-
-
-@pytest.fixture(name="unauthenticated_user")
-def fixture_unauthenticated_user(db):
-    user = users_crud.create_user(db, str(uuid1()), users_models.Role.USER)
 
     def get_mock_own_user():
         return user

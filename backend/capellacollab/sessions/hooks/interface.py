@@ -37,7 +37,6 @@ class HookRegistration(metaclass=abc.ABCMeta):
         user: users_models.DatabaseUser,
         tool_version: tools_models.DatabaseVersion,
         tool: tools_models.DatabaseTool,
-        username: str,
         **kwargs,
     ) -> tuple[
         dict[str, str],

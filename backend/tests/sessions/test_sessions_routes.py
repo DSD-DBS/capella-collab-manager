@@ -165,7 +165,7 @@ def fixture_user(db, executor_name):
 
 def test_get_sessions_not_authenticated(client):
     response = client.get("/api/v1/sessions")
-    assert response.status_code == 401
+    assert response.status_code == 403
     assert response.json() == {"detail": "Not authenticated"}
 
 
