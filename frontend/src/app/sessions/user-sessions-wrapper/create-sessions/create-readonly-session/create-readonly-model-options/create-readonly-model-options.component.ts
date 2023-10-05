@@ -53,6 +53,10 @@ export class CreateReadonlyModelOptionsComponent implements OnInit {
     this.form.controls.include.valueChanges.subscribe((value) => {
       this.modelOptions.include = value || false;
     });
+    this.form.controls.revision.valueChanges.subscribe((value) => {
+      this.modelOptions.revision =
+        value || this.modelOptions.primaryGitModel.revision;
+    });
 
     this.gitService
       .getPrivateRevision(
