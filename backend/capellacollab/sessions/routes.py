@@ -256,15 +256,15 @@ def models_as_json(
             )
         ):
             continue
-        yield git_model_as_json(git_model, entry.deep_clone)
+        yield git_model_as_json(git_model, entry.revision, entry.deep_clone)
 
 
 def git_model_as_json(
-    git_model: git_models.DatabaseGitModel, deep_clone: bool
+    git_model: git_models.DatabaseGitModel, revision: str, deep_clone: bool
 ) -> dict[str, str | int]:
     d: dict[str, str | int] = {
         "url": git_model.path,
-        "revision": git_model.revision,
+        "revision": revision,
         "depth": 0 if deep_clone else 1,
         "entrypoint": git_model.entrypoint,
         "nature": git_model.model.nature.name,

@@ -344,6 +344,49 @@ def test_create_persistent_session_as_user(
     assert "/capella/remote:5.0.0" in kubernetes.sessions[0]["docker_image"]
 
 
+def test_create_read_only_session_as_user(
+    client: testclient.TestClient,
+    db,
+    user,
+    kubernetes,
+):
+    version = next(
+        v
+        for v in get_versions(db)
+        if v.tool.name == "Capella" and v.name == "6.0.0"
+    )
+
+    model, git_model = setup_git_model_for_user(db, user, version)
+
+    response = client.post(
+        f"/api/v1/projects/{model.project.slug}/sessions/readonly",
+        json={
+            "models": [
+                {
+                    "model_slug": model.slug,
+                    "git_model_id": git_model.id,
+                    "revision": "test-branch",
+                    "deep_clone": False,
+                }
+            ]
+        },
+    )
+    out = response.json()
+    print(out)
+    session = get_session_by_id(db, out["id"])
+
+    assert response.status_code == 200
+    assert session
+    assert session.owner_name == user.name
+    assert kubernetes.sessions
+
+    assert "/capella/readonly:6.0.0" in kubernetes.sessions[0]["docker_image"]
+    assert (
+        '"revision": "test-branch"'
+        in kubernetes.sessions[0]["environment"]["GIT_REPOS_JSON"]
+    )
+
+
 def test_create_persistent_jupyter_session(client, db, user, kubernetes):
     jupyter = create_tool(
         db,
