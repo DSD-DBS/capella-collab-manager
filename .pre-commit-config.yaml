@@ -120,14 +120,14 @@ repos:
     hooks:
       - id: eslint
         additional_dependencies:
-          - "eslint@^8.49.0"
+          - "eslint@^8.50.0"
           - "@angular-eslint/eslint-plugin@16.2.0"
           - "@angular-eslint/eslint-plugin-template@16.2.0"
           - "@angular-eslint/template-parser@16.2.0"
           - "eslint-config-prettier@^9.0.0"
           - "eslint-plugin-import@^2.28.1"
-          - "@typescript-eslint/eslint-plugin@^6.7.2"
-          - "@typescript-eslint/parser@^6.7.2"
+          - "@typescript-eslint/eslint-plugin@^6.7.4"
+          - "@typescript-eslint/parser@^6.7.4"
           - "eslint-plugin-unused-imports@^3.0.0"
           - "eslint-plugin-deprecation@^2.0.0"
         args: ["--fix"]
