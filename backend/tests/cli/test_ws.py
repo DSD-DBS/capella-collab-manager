@@ -89,7 +89,7 @@ def test_restore_workspace(monkeypatch, tmp_path, capsys):
     with tarfile.open(tar_path, "w:gz") as tar:
         tar.add("tests")
 
-    restore("my-volume-name", tar_path)
+    restore("my-volume-name", tar_path, "default")
 
     assert mock_stream.written_data
 

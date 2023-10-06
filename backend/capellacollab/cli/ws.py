@@ -7,6 +7,7 @@ import sys
 import time
 import uuid
 from pathlib import Path
+from typing import Annotated
 
 import typer
 from kubernetes import client, config, stream
@@ -17,20 +18,45 @@ app = typer.Typer()
 MOUNT_PATH = "/workspace"
 
 
-@app.command()
-def volumes(namespace: str = None):
+@app.callback()
+def init_kube():
     config.load_kube_config()
+
+
+def get_current_namespace():
+    try:
+        _, active_context = config.list_kube_config_contexts()
+        return active_context["context"]["namespace"]
+    except KeyError:
+        return "default"
+
+
+NamespaceOption = typer.Option(
+    "--namespace",
+    "-n",
+    help="Kubernetes namespace",
+    default_factory=get_current_namespace,
+)
+
+
+@app.command()
+def volumes(namespace: Annotated[str, NamespaceOption]):
+    """List all Persistent Volume Claims in a kubernetes namespace."""
     core_api = client.CoreV1Api()
 
     for item in core_api.list_namespaced_persistent_volume_claim(
-        namespace=namespace or get_current_namespace(), watch=False
+        namespace=namespace, watch=False
     ).items:
         print(item.metadata.name)
 
 
 @app.command()
-def ls(volume_name: str, path: str = "/workspace", namespace: str = None):
-    config.load_kube_config()
+def ls(
+    volume_name: str,
+    namespace: Annotated[str, NamespaceOption],
+    path: str = MOUNT_PATH,
+):
+    """List all files on a path in a Kubernetes Persistent Volume."""
     v1 = client.CoreV1Api()
 
     with pod_for_volume(volume_name, namespace, MOUNT_PATH, v1) as pod_name:
@@ -39,12 +65,13 @@ def ls(volume_name: str, path: str = "/workspace", namespace: str = None):
 
 
 @app.command()
-def backup(volume_name: str, namespace: str = None, out: Path = None):
-    config.load_kube_config()
+def backup(
+    volume_name: str,
+    namespace: Annotated[str, NamespaceOption],
+    out: Path = Path.cwd(),
+):
+    """Create a backup of all content in a Kubernetes Persistent Volume."""
     v1 = client.CoreV1Api()
-    if not out:
-        out = Path.cwd()
-
     targz = out / f"{volume_name}.tar.gz"
 
     with pod_for_volume(volume_name, namespace, MOUNT_PATH, v1) as pod_name:
@@ -60,17 +87,25 @@ def backup(volume_name: str, namespace: str = None, out: Path = None):
 @app.command()
 def restore(
     volume_name: str,
-    tarfile: Path,
-    namespace: str = None,
-    access_modes: str = "ReadWriteMany",
+    tarfile: Annotated[Path, typer.Argument(exists=True)],
+    namespace: Annotated[str, NamespaceOption],
+    access_mode: str = "ReadWriteMany",
     storage_class_name: str = "persistent-sessions-csi",
     user_id: str = None,
 ):
-    config.load_kube_config()
+    """Restore a backup to a Kubernetes Persistent Volume.
+
+    If the volume does not exist, it is created. Note that
+    `access-mode` and `storage-class-name` should match settings
+    for your cluster.
+
+    Optionally a `user-id` can be provided. All files then be owned
+    by this user id.
+    """
     v1 = client.CoreV1Api()
 
     create_persistent_volume(
-        volume_name, namespace, access_modes, storage_class_name, v1
+        volume_name, namespace, access_mode, storage_class_name, v1
     )
 
     with pod_for_volume(
@@ -147,7 +182,7 @@ def pod_for_volume(
 
 
 def create_persistent_volume(
-    name: str, namespace: str, access_modes: str, storage_class_name: str, v1
+    name: str, namespace: str, access_mode: str, storage_class_name: str, v1
 ):
     """Rebuild a PVC, according to the config defined in
     `capellacollab/sessions/hooks/persistent_workspace.py`.
@@ -166,7 +201,7 @@ def create_persistent_volume(
             },
         ),
         spec=client.V1PersistentVolumeClaimSpec(
-            access_modes=[access_modes],
+            access_modes=[access_mode],
             storage_class_name=storage_class_name,
             resources=client.V1ResourceRequirements(
                 requests={"storage": "20Gi"}
@@ -189,7 +224,7 @@ def adjust_directory_permissions(
     namespace: str,
     v1: client.CoreV1Api,
     user_id: str,
-    directory: str = "/workspace",
+    directory: str = MOUNT_PATH,
 ):
     resp = stream.stream(
         v1.connect_get_namespaced_pod_exec,
@@ -215,14 +250,6 @@ def adjust_directory_permissions(
             print(f"STDOUT: {resp.read_stdout()}")
         if resp.peek_stderr():
             print(f"STDERR: {resp.read_stderr()}")
-
-
-def get_current_namespace():
-    try:
-        _, active_context = config.list_kube_config_contexts()
-        return active_context["context"]["namespace"]
-    except KeyError:
-        return "default"
 
 
 def is_pod_ready(pod_name, namespace, v1):
