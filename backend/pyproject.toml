@@ -27,7 +27,6 @@ dependencies = [
   "alembic==1.10.4",
   "appdirs",
   "cachetools",
-  "capellambse==0.5.35.dev4",
   "fastapi>=0.101.0",
   "kubernetes",
   "msal",
@@ -53,6 +52,7 @@ Homepage = "https://github.com/DSD-DBS/capella-collab-manager"
 [project.optional-dependencies]
 dev = [
   "black",
+  "capellambse==0.5.35.dev4",
   "deepdiff",
   "isort",
   "mypy",
@@ -111,7 +111,6 @@ allow_untyped_defs = true
 [[tool.mypy.overrides]]
 # Untyped third party libraries
 module = [
-  "capellambse.*",
   "kubernetes.*",
   "prometheus_client.*",
   "openshift.*",

@@ -1,18 +1,22 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
+
 import abc
 import datetime
 import json
 import typing as t
 
 import requests
-from capellambse import diagram_cache
 
 import capellacollab.projects.toolmodels.modelsources.git.models as git_models
 import capellacollab.settings.modelsources.git.models as settings_git_models
 
 from .. import exceptions
+
+if t.TYPE_CHECKING:
+    from capellambse import diagram_cache
 
 
 class GitHandler:
