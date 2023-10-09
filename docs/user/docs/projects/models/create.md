@@ -7,7 +7,7 @@
 
 We offer a guided process to create models in a project. To create a model, you
 have to be at least [project lead](../../projects/roles.md). If you're coming
-from project creation, you're ready to go. Otherwise, please naviate to the
+from project creation, you're ready to go. Otherwise, please navigate to the
 _Projects_ tab of the navigation bar, open the project in which you want to
 create a model, and click on the “+” icon.
 

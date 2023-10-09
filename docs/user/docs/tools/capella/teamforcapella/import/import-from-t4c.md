@@ -19,7 +19,7 @@
    confirm with `Next`.
    ![Import project from remote repository](./project-from-remote-repository.png)
 1. Select the repository from the dropdown menu. Click on the `Test connection`
-   button and enter your [session token](../../../../../sessions/flows/t4c.md).
+   button and enter your [session token](/sessions/flows/t4c.md).
    ![Select repository for import](./import-repository-selection.png)
 1. Click on `Next` .
    <!-- prettier-ignore -->
