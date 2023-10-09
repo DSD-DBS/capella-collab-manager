@@ -163,7 +163,7 @@ git clone https://github.com/DSD-DBS/capella-collab-manager.git
 
 Copy the
 [`values.yaml`](https://github.com/DSD-DBS/capella-collab-manager/blob/main/helm/values.yaml)
-to a persistent and secure location on your server or deploment environment.
+to a persistent and secure location on your server or deployment environment.
 The `local` directory in the Collaboration Manager is gitignored. We recommend
 to put the custom `values.yaml` in this directory.
 
