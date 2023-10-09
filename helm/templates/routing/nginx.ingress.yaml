@@ -15,8 +15,7 @@ metadata:
 spec:
   ingressClassName: {{ .Values.cluster.ingressClassName }}
   rules:
-    - host: {{ .Values.general.host }}
-      http:
+    - http:
         paths:
           - path: /
             pathType: Prefix
@@ -69,4 +68,7 @@ spec:
                 port:
                   number: 8080
           {{ end }}
+      {{ if not .Values.general.wildcardHost }}
+      host: {{ .Values.general.host }}
+      {{ end }}
 {{ end }}

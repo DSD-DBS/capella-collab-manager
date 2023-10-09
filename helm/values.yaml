@@ -50,6 +50,11 @@ general:
   port: 80
   scheme: http
 
+  # The application will serve on all hostnames (wildcardHost set to True).
+  # The default behavior is to only serve on the configured host (wildcardHost set to False).
+  # This option has no effect when using OpenShift.
+  wildcardHost: False
+
   metadata:
     privacyPolicyURL: https://example.com/privacy
     imprintURL: https://example.com/imprint

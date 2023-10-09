@@ -114,6 +114,8 @@ properties:
         type: ["number", "string"]
       scheme:
         type: string
+      wildcardHost:
+        type: boolean
       metadata:
         type: object
         properties:

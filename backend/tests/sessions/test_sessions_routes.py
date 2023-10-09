@@ -122,7 +122,12 @@ class MockOperator:
         }
 
     def create_public_route(
-        self, session_id: str, host: str, path: str, port: int
+        self,
+        session_id: str,
+        host: str,
+        path: str,
+        port: int,
+        wildcard_host: bool | None = False,
     ):
         pass
 
