@@ -9,12 +9,7 @@
     <a (click)="modelSourceSelection.emit('git-add')">
       <mat-card class="option-card">
         <p class="subtitle">Use existing repository</p>
-        <div class="flex justify-center">
-          <img
-            class="git"
-            src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"
-          />
-        </div>
+        <app-mat-icon size="50px">link</app-mat-icon>
       </mat-card>
     </a>
   </div>
@@ -27,10 +22,16 @@
   >
     <h2 class="title text-center">Team4Capella sources</h2>
     <div class="flex justify-center flex-wrap">
-      <a (click)="modelSourceSelection.emit('t4c-add')">
+      <a (click)="modelSourceSelection.emit('t4c-existing')">
         <mat-card class="option-card">
           <p class="subtitle">Use existing repository</p>
           <app-mat-icon size="50px">link</app-mat-icon>
+        </mat-card>
+      </a>
+      <a (click)="modelSourceSelection.emit('t4c-new')">
+        <mat-card class="option-card">
+          <p class="subtitle">Create new repository</p>
+          <app-mat-icon size="50px">add_circle_outline</app-mat-icon>
         </mat-card>
       </a>
     </div>

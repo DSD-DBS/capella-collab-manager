@@ -14,7 +14,7 @@
         <div class="content">
           Use existing repository <br />
           <div class="icon">
-            <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
+            <app-mat-icon size="70px">link</app-mat-icon>
           </div>
         </div>
       </mat-card>
@@ -51,10 +51,21 @@
   >
     <h1 class="!m-separator">TeamForCapella repositories</h1>
     <div class="flex flex-wrap">
-      <a class="m-m-card" [routerLink]="['..', 't4c-model', 'create']">
+      <a class="m-m-card" [routerLink]="['..', 't4c-model', 'create-existing']">
         <mat-card matRipple class="m-0 mat-card-overview new">
           <div class="content">
             Use existing repository <br />
+            <div class="icon">
+              <app-mat-icon size="70px">link</app-mat-icon>
+            </div>
+          </div>
+        </mat-card>
+      </a>
+
+      <a class="m-m-card" [routerLink]="['..', 't4c-model', 'create-new']">
+        <mat-card matRipple class="m-0 mat-card-overview new">
+          <div class="content">
+            Create new repository <br />
             <div class="icon">
               <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
             </div>

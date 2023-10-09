@@ -25,6 +25,7 @@ import { ModelDescriptionComponent } from './projects/models/model-description/m
 import { ModelDetailComponent } from './projects/models/model-detail/model-detail.component';
 import { T4CModelWrapperComponent } from './projects/models/model-detail/t4c-model-wrapper/t4c-model-wrapper.component';
 import { ManageGitModelComponent } from './projects/models/model-source/git/manage-git-model/manage-git-model.component';
+import { CreateT4cModelNewRepositoryComponent } from './projects/models/model-source/t4c/create-t4c-model-new-repository/create-t4c-model-new-repository.component';
 import { ManageT4CModelComponent } from './projects/models/model-source/t4c/manage-t4c-model/manage-t4c-model.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
@@ -253,13 +254,22 @@ const routes: Routes = [
                         },
                         children: [
                           {
-                            path: 'create',
+                            path: 'create-existing',
                             data: {
                               breadcrumb: 'Create T4C Model',
                               redirect: (data: Data) =>
-                                `/project/${data.project?.slug}/model/${data.model?.slug}/t4c-model/create`,
+                                `/project/${data.project?.slug}/model/${data.model?.slug}/t4c-model/create-existing`,
                             },
                             component: ManageT4CModelComponent,
+                          },
+                          {
+                            path: 'create-new',
+                            data: {
+                              breadcrumb: 'Create T4C Model',
+                              redirect: (data: Data) =>
+                                `/project/${data.project?.slug}/model/${data.model?.slug}/t4c-model/create-new`,
+                            },
+                            component: CreateT4cModelNewRepositoryComponent,
                           },
                           {
                             path: ':t4c_model_id',

@@ -30,10 +30,15 @@
           (create)="afterSourceCreated($event)"
         ></app-manage-git-model>
         <app-manage-t4c-model
-          *ngSwitchCase="'t4c-add'"
+          *ngSwitchCase="'t4c-existing'"
           [asStepper]="true"
           (create)="afterSourceCreated($event)"
         ></app-manage-t4c-model>
+        <app-create-t4c-model-new-repository
+          *ngSwitchCase="'t4c-new'"
+          [asStepper]="true"
+          (create)="afterSourceCreated($event)"
+        ></app-create-t4c-model-new-repository>
       </div>
     </mat-step>
 

@@ -85,6 +85,7 @@ import { T4CModelWrapperComponent } from './projects/models/model-detail/t4c-mod
 import { ModelRestrictionsComponent } from './projects/models/model-restrictions/model-restrictions.component';
 import { ChooseSourceComponent } from './projects/models/model-source/choose-source.component';
 import { ManageGitModelComponent } from './projects/models/model-source/git/manage-git-model/manage-git-model.component';
+import { CreateT4cModelNewRepositoryComponent } from './projects/models/model-source/t4c/create-t4c-model-new-repository/create-t4c-model-new-repository.component';
 import { ManageT4CModelComponent } from './projects/models/model-source/t4c/manage-t4c-model/manage-t4c-model.component';
 import { ModelWrapperComponent } from './projects/models/model-wrapper/model-wrapper.component';
 import { EditProjectMetadataComponent } from './projects/project-detail/edit-project-metadata/edit-project-metadata.component';
@@ -151,6 +152,7 @@ import { SettingsComponent } from './settings/settings.component';
     CreateReadonlyModelOptionsComponent,
     CreateReadonlySessionComponent,
     CreateReadonlySessionDialogComponent,
+    CreateT4cModelNewRepositoryComponent,
     DeleteGitSettingsDialogComponent,
     DeleteSessionDialogComponent,
     EditGitSettingsComponent,
