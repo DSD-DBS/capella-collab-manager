@@ -22,7 +22,7 @@ class PersistentWorkspaceHook(interface.HookRegistration):
     Is responsible for mounting the persistent workspace into persistent sessions.
     """
 
-    def configuration_hook(
+    def configuration_hook(  # type: ignore
         self,
         operator: operators.KubernetesOperator,
         user: users_models.DatabaseUser,

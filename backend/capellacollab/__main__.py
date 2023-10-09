@@ -21,6 +21,9 @@ from capellacollab.core import exceptions as core_exceptions
 from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
 from capellacollab.core.logging import exceptions as logging_exceptions
+from capellacollab.projects.toolmodels import (
+    exceptions as toolmodels_exceptions,
+)
 from capellacollab.projects.toolmodels.backups import (
     exceptions as backups_exceptions,
 )
@@ -133,6 +136,7 @@ app.include_router(router, prefix="/api/v1")
 
 def register_exceptions():
     tools_exceptions.register_exceptions(app)
+    toolmodels_exceptions.register_exceptions(app)
     git_exceptions.register_exceptions(app)
     gitlab_exceptions.register_exceptions(app)
     git_handler_exceptions.register_exceptions(app)

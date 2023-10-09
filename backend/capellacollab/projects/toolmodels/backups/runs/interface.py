@@ -12,6 +12,9 @@ from starlette import concurrency as starlette_concurrency
 from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.core.logging import loki
+from capellacollab.projects.toolmodels import (
+    exceptions as toolmodels_exceptions,
+)
 from capellacollab.projects.toolmodels.backups import core as backups_core
 from capellacollab.sessions import operators
 from capellacollab.tools import crud as tools_crud
@@ -54,20 +57,21 @@ def _schedule_pending_jobs():
                 pending_run.pipeline.model.slug,
             )
             try:
+                model = pending_run.pipeline.model
+
+                if not model.version_id:
+                    raise toolmodels_exceptions.VersionIdNotSetError(model.id)
+
                 job_name = operators.get_operator().create_job(
                     image=tools_crud.get_backup_image_for_tool_version(
-                        db, pending_run.pipeline.model.version_id
+                        db, model.version_id
                     ),
                     command="backup",
                     labels={
-                        "app.capellacollab/projectSlug": pending_run.pipeline.model.project.slug,
-                        "app.capellacollab/projectID": str(
-                            pending_run.pipeline.model.project.id
-                        ),
-                        "app.capellacollab/modelSlug": pending_run.pipeline.model.slug,
-                        "app.capellacollab/modelID": str(
-                            pending_run.pipeline.model.id
-                        ),
+                        "app.capellacollab/projectSlug": model.project.slug,
+                        "app.capellacollab/projectID": str(model.project.id),
+                        "app.capellacollab/modelSlug": model.slug,
+                        "app.capellacollab/modelID": str(model.id),
                         "app.capellacollab/pipelineID": str(
                             pending_run.pipeline.id
                         ),

@@ -1,10 +1,9 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
 import logging
 import re
-import typing as t
+from collections import abc
 
 import requests
 
@@ -16,15 +15,26 @@ log = logging.getLogger(__name__)
 
 
 def inject_attrs_in_sessions(
-    db_sessions: list[models.DatabaseSession],
-) -> list[dict[str, t.Any]]:
+    db_sessions: abc.Sequence[models.DatabaseSession],
+) -> list[models.GetSessionsResponse]:
     sessions_list = []
     for session in db_sessions:
-        session.state = _determine_session_state(session)
-        session.last_seen = get_last_seen(session.id)
-        session.jupyter_uri = session.environment.get("JUPYTER_URI")
-        session.t4c_password = session.environment.get("T4C_PASSWORD")
-        sessions_list.append(session)
+        session_dict = models.Session.model_validate(session).model_dump()
+
+        session_dict["state"] = _determine_session_state(session)
+        session_dict["last_seen"] = get_last_seen(session.id)
+
+        if session.environment:
+            session_dict["jupyter_uri"] = session.environment.get(
+                "JUPYTER_URI"
+            )
+            session_dict["t4c_password"] = session.environment.get(
+                "T4C_PASSWORD"
+            )
+
+        sessions_list.append(
+            models.GetSessionsResponse.model_validate(session_dict)
+        )
 
     return sessions_list
 

@@ -44,6 +44,18 @@ repos:
       - id: isort
         entry: bash -c "cd backend && isort ."
         types: [python]
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.5.1
+    hooks:
+      - id: mypy
+        types_or: [python, spec]
+        files: "^backend/capellacollab"
+        exclude: "^backend/capellacollab/alembic/"
+        args: [--config-file=./backend/pyproject.toml]
+        additional_dependencies:
+          - fastapi
+          - pydantic
+          - sqlalchemy
   - repo: local
     hooks:
       - id: pylint

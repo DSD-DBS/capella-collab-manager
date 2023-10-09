@@ -28,7 +28,7 @@ class GitHandlerFactory:
                 return github_handler.GithubHandler(git_model, git_instance)
             case _:
                 raise exceptions.GitInstanceUnsupportedError(
-                    instance_name=git_instance.type
+                    instance_name=str(git_instance.type)
                 )
 
     @staticmethod

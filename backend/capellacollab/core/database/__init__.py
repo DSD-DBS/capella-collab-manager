@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
 
 import pydantic
 import sqlalchemy as sa
@@ -23,7 +24,7 @@ class Base(orm.DeclarativeBase):
 from . import models  # isort:skip # pylint: disable=unused-import
 
 
-def get_db() -> orm.Session:
+def get_db() -> t.Iterator[orm.Session]:
     with SessionLocal() as session:
         yield session
 

@@ -7,6 +7,7 @@ import json
 import typing as t
 
 import requests
+from capellambse import diagram_cache
 
 import capellacollab.projects.toolmodels.modelsources.git.models as git_models
 import capellacollab.settings.modelsources.git.models as settings_git_models
@@ -34,7 +35,7 @@ class GitHandler:
 
     @abc.abstractmethod
     async def get_last_job_run_id_for_git_model(
-        self, job_name: str, project_id: str | None
+        self, job_name: str, project_id: str | None = None
     ) -> tuple[str, str]:
         pass
 
@@ -76,7 +77,7 @@ class GitHandler:
         trusted_file_path: str,
         job_name: str,
         revision: str | None = None,
-    ) -> tuple[datetime.datetime, dict[str, t.Any]]:
+    ) -> tuple[datetime.datetime, list[diagram_cache.IndexEntry]]:
         (
             last_updated,
             result,

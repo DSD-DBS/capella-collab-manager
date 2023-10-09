@@ -12,11 +12,8 @@ import requests
 from jose import jwt
 
 from capellacollab.config import config
-from capellacollab.core.authentication.provider.models import (
-    InvalidTokenError,
-    JSONWebKeySet,
-    KeyIDNotFoundError,
-)
+
+from .. import models as provider_models
 
 log = logging.getLogger(__name__)
 cfg = config["authentication"]["azure"]
@@ -38,7 +35,7 @@ class _KeyStore:
 
         self.jwks_uri = jwks_uri
         self.algorithms = algorithms
-        self.public_keys: dict[t.Any, t.Any] = {}
+        self.public_keys: dict[str, provider_models.JSONWebKey] = {}
         self.key_refresh_interval = key_refresh_interval
         self.public_keys_last_refreshed: float = 0
         self.refresh_keys()
@@ -56,7 +53,7 @@ class _KeyStore:
         except Exception:
             log.error("Could not retrieve JWKS data from %s", self.jwks_uri)
             return
-        jwks = JSONWebKeySet.parse_raw(resp.text)
+        jwks = provider_models.JSONWebKeySet.parse_raw(resp.text)
         self.public_keys_last_refreshed = time.time()
         self.public_keys.clear()
         for key in jwks.keys:
@@ -64,7 +61,7 @@ class _KeyStore:
 
     def key_for_token(
         self, token: str, *, in_retry: int = 0
-    ) -> dict[str, t.Any]:
+    ) -> provider_models.JSONWebKey:
         # Before we do anything, the validation keys may need to be refreshed.
         # If so, refresh them.
         if self.keys_need_refresh():
@@ -75,7 +72,9 @@ class _KeyStore:
         try:
             unverified_claims = jwt.get_unverified_header(token)
         except Exception:
-            raise InvalidTokenError("Unable to parse key ID from token")
+            raise provider_models.InvalidTokenError(
+                "Unable to parse key ID from token"
+            )
 
         # See if we have the key identified by this key ID.
         try:
@@ -85,7 +84,7 @@ class _KeyStore:
             # haven't refreshed keys yet), then try to refresh the keys and try
             # again.
             if in_retry:
-                raise KeyIDNotFoundError()
+                raise provider_models.KeyIDNotFoundError()
             self.refresh_keys()
             return self.key_for_token(token, in_retry=1)
 

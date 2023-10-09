@@ -61,7 +61,7 @@ class GithubHandler(handler.GitHandler):
         self,
         project_id: str,
         trusted_file_path: str,
-        revision: str | None = None,
+        revision: str,
         headers: dict[str, str] | None = None,
     ) -> requests.Response:
         return requests.get(
@@ -179,7 +179,9 @@ class GithubHandler(handler.GitHandler):
         ):
             raise git_exceptions.GitPipelineJobFailedError(job_name)
 
-        return None
+        raise git_exceptions.GitPipelineJobUnknownStateError(
+            job_name, matched_jobs[0]["conclusion"]
+        )
 
     def __get_latest_artifact_metadata(self, project_id: str, job_id: str):
         response = requests.get(

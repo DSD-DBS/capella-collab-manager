@@ -10,16 +10,12 @@ from capellacollab.core import pydantic as core_pydantic
 
 
 class DiagramMetadata(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
     name: str
     uuid: str
     success: bool
 
 
 class DiagramCacheMetadata(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
     diagrams: list[DiagramMetadata]
     last_updated: datetime.datetime
 

@@ -34,6 +34,12 @@ class GitPipelineJobFailedError(Exception):
     job_name: str
 
 
+@dataclasses.dataclass
+class GitPipelineJobUnknownStateError(Exception):
+    job_name: str
+    state: str
+
+
 class GithubArtifactExpiredError(Exception):
     pass
 
@@ -110,6 +116,24 @@ async def git_pipeline_job_failed_handler(
     )
 
 
+async def unknown_state_handler(
+    request: fastapi.Request, exc: GitPipelineJobUnknownStateError
+) -> fastapi.Response:
+    return await exception_handlers.http_exception_handler(
+        request,
+        fastapi.HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "err_code": "UNKNOWN_STATE_ERROR",
+                "reason": (
+                    f"Job '{exc.job_name}' has an unhandled or unknown state: '{exc.state}'",
+                    "Please contact your administrator.",
+                ),
+            },
+        ),
+    )
+
+
 async def github_artifact_expired_handler(
     request: fastapi.Request, _: GithubArtifactExpiredError
 ) -> fastapi.Response:
@@ -140,6 +164,9 @@ def register_exceptions(app: fastapi.FastAPI):
     app.add_exception_handler(
         GitPipelineJobNotFoundError,
         git_pipeline_job_not_found_handler,
+    )
+    app.add_exception_handler(
+        GitPipelineJobUnknownStateError, unknown_state_handler
     )
     app.add_exception_handler(
         GitPipelineJobFailedError,

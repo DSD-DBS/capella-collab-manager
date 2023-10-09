@@ -60,7 +60,7 @@ def get_project_user_association_or_raise(
         return models.ProjectUser(
             role=models.ProjectUserRole.USER,
             permission=models.ProjectUserPermission.READ,
-            user=user,
+            user=users_models.User.model_validate(user),
         )
 
     raise fastapi.HTTPException(
@@ -88,7 +88,7 @@ def get_current_user(
         return models.ProjectUser(
             role=models.ProjectUserRole.ADMIN,
             permission=models.ProjectUserPermission.WRITE,
-            user=user,
+            user=users_models.User.model_validate(user),
         )
     return get_project_user_association_or_raise(db, project, user)
 

@@ -62,7 +62,10 @@ async def api_get_token(
     )
     access_token = token["id_token"]
 
-    username = get_username(JWTBearer().validate_token(access_token))
+    validated_token = JWTBearer().validate_token(access_token)
+    assert validated_token
+
+    username = get_username(validated_token)
 
     if user := users_crud.get_user_by_name(db, username):
         users_crud.update_last_login(db, user)

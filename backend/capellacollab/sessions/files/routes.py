@@ -63,6 +63,8 @@ def upload_files(
 
         for file in files:
             file.file.seek(0)
+
+            assert file.filename
             file.filename = file.filename.replace(" ", "_")
             tar.addfile(
                 tar.gettarinfo(arcname=file.filename, fileobj=file.file),

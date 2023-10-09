@@ -29,18 +29,17 @@ class WorkspaceType(enum.Enum):
     READONLY = "readonly"
 
 
-class GetSessionsResponse(pydantic.BaseModel):
+class Session(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(from_attributes=True)
 
     id: str
     type: WorkspaceType
     created_at: datetime.datetime
     owner: users_models.BaseUser
-    state: str
+
     guacamole_username: str | None = None
     guacamole_connection_id: str | None = None
-    warnings: list[core_models.Message] | None = None
-    last_seen: str
+
     project: projects_models.Project | None = None
     version: tools_models.ToolVersionWithTool | None = None
 
@@ -49,7 +48,11 @@ class GetSessionsResponse(pydantic.BaseModel):
     )
 
 
-class OwnSessionResponse(GetSessionsResponse):
+class GetSessionsResponse(Session):
+    state: str
+    warnings: list[core_models.Message] | None = None
+    last_seen: str
+
     t4c_password: str | None = None
     jupyter_uri: str | None = None
 

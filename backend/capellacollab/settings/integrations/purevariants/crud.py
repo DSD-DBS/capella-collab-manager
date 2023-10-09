@@ -17,7 +17,7 @@ def get_pure_variants_configuration(
 
 
 def set_license_server_configuration(
-    db: orm.Session, value: str
+    db: orm.Session, value: str | None
 ) -> models.DatabasePureVariantsLicenses:
     if pv_license := get_pure_variants_configuration(db):
         pv_license.license_server_url = value
