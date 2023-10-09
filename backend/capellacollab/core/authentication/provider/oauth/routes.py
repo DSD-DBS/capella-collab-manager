@@ -30,7 +30,7 @@ async def api_get_token(
     body: TokenRequest, db: orm.Session = fastapi.Depends(database.get_db)
 ):
     token = get_token(body.code)
-    access_token = token["id_token"]
+    access_token = token["access_token"]
 
     validated_token = JWTBearer().validate_token(access_token)
     assert validated_token
