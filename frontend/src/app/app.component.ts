@@ -18,7 +18,7 @@ export class AppComponent implements AfterViewInit {
   constructor(
     public pageLayoutService: PageLayoutService,
     public fullscreenService: FullscreenService,
-    private navBarService: NavBarService
+    private navBarService: NavBarService,
   ) {}
 
   @ViewChild('sidenav') private sidenav?: MatSidenav;

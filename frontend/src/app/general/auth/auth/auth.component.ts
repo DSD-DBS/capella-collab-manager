@@ -28,7 +28,7 @@ export class AuthComponent implements OnInit {
     public metadataService: MetadataService,
     private authService: AuthService,
     private pageLayoutService: PageLayoutService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
     this.pageLayoutService.disableAll();
   }

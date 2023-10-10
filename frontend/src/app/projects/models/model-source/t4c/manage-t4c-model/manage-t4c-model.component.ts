@@ -58,14 +58,14 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
     public t4cModelService: T4CModelService,
     private router: Router,
     private route: ActivatedRoute,
-    private toastService: ToastService
+    private toastService: ToastService,
   ) {}
 
   public form = new FormGroup({
     t4cInstanceId: new FormControl<number | null>(null, Validators.required),
     t4cRepositoryId: new FormControl<number | null>(
       { value: null, disabled: true },
-      Validators.required
+      Validators.required,
     ),
     name: new FormControl({ value: '', disabled: true }, Validators.required),
   });
@@ -82,13 +82,13 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
       .pipe(filter(Boolean))
       .subscribe((repositoryId) => {
         this.selectedRepository = this.t4cRepositories?.find(
-          (repository) => repository.id === repositoryId
+          (repository) => repository.id === repositoryId,
         );
 
         const instanceId = this.form.value.t4cInstanceId;
         if (instanceId) {
           this.form.controls.name.setAsyncValidators(
-            this.t4cModelService.asyncNameValidator(instanceId, repositoryId)
+            this.t4cModelService.asyncNameValidator(instanceId, repositoryId),
           );
           this.form.controls.name.setValue('');
           this.form.controls.name.enable();
@@ -108,7 +108,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
         this.t4cModel = t4cModel;
 
         this.form.controls.t4cInstanceId.patchValue(
-          t4cModel.repository.instance.id
+          t4cModel.repository.instance.id,
         );
         this.form.controls.t4cRepositoryId.patchValue(t4cModel.repository.id);
         this.form.controls.name.patchValue(t4cModel.name);
@@ -134,7 +134,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
       .subscribe(() =>
         this.form.controls.t4cRepositoryId.enable({
           emitEvent: false,
-        })
+        }),
       );
   }
 
@@ -161,12 +161,12 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
           this.projectSlug,
           this.modelSlug,
           this.t4cModel.id,
-          submitModel
+          submitModel,
         )
         .subscribe(() => {
           this.toastService.showSuccess(
             'TeamForCapella repository link successfully updated',
-            ''
+            '',
           );
         });
     } else {
@@ -182,7 +182,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
           }
           this.toastService.showSuccess(
             'TeamForCapella repository successfully linked',
-            `A new TeamForCapella repository was linked to the model '${this.modelSlug}'`
+            `A new TeamForCapella repository was linked to the model '${this.modelSlug}'`,
           );
         });
     }
@@ -201,17 +201,17 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
           next: () => {
             this.toastService.showSuccess(
               'TeamForCapella project unlinked',
-              `The TeamForCapella repository with the name '${t4cModelName}' has been unlinked`
+              `The TeamForCapella repository with the name '${t4cModelName}' has been unlinked`,
             );
             this.router.navigateByUrl(
               `/project/${this.projectSlug!}/model/${this
-                .modelSlug!}/modelsources`
+                .modelSlug!}/modelsources`,
             );
           },
           error: () => {
             this.toastService.showSuccess(
               'TeamForCapella project unlinking failed',
-              `The TeamForCapella repository with the name '${t4cModelName}' has not been unlinked`
+              `The TeamForCapella repository with the name '${t4cModelName}' has not been unlinked`,
             );
           },
         });

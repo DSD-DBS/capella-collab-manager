@@ -15,6 +15,6 @@ import { MetadataService } from 'src/app/general/metadata/metadata.service';
 export class FooterComponent {
   constructor(
     public dialog: MatDialog,
-    public metadataService: MetadataService
+    public metadataService: MetadataService,
   ) {}
 }

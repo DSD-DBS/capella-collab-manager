@@ -40,7 +40,7 @@ export class FileBrowserDialogComponent implements OnInit {
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<FileBrowserDialogComponent>,
     private toastService: ToastService,
-    @Inject(MAT_DIALOG_DATA) public session: Session
+    @Inject(MAT_DIALOG_DATA) public session: Session,
   ) {}
 
   showHiddenFiles = new FormControl(false);
@@ -164,7 +164,7 @@ export class FileBrowserDialogComponent implements OnInit {
   _findNode(
     parentNode: PathNode,
     searchedName: string,
-    prefix: string
+    prefix: string,
   ): [PathNode, number] | null {
     if (parentNode.children!) {
       for (let i = 0; i < parentNode.children.length; i++) {
@@ -217,7 +217,7 @@ export class FileBrowserDialogComponent implements OnInit {
     if (size > 31457280) {
       this.toastService.showError(
         'File too large!',
-        'The file size must not exceed 30MB!'
+        'The file size must not exceed 30MB!',
       );
       return;
     }
@@ -247,7 +247,9 @@ export class FileBrowserDialogComponent implements OnInit {
       next: (response: Blob) => {
         saveAs(
           response,
-          `${filename.replace(/^[\/\\: ]+/, '').replace(/[\/\\: ]+/g, '_')}.zip`
+          `${filename
+            .replace(/^[\/\\: ]+/, '')
+            .replace(/[\/\\: ]+/g, '_')}.zip`,
         );
         this.session.download_in_progress = false;
       },

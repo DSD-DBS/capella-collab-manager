@@ -15,6 +15,6 @@ import { MetadataService } from '../metadata.service';
 export class VersionComponent {
   constructor(
     public metadataService: MetadataService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
   ) {}
 }

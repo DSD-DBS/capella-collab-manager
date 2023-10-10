@@ -29,7 +29,7 @@ export class EventsComponent implements OnInit, AfterViewInit {
 
   historyEventData: HistoryEvent[] = [];
   historyEventDataSource = new MatTableDataSource<HistoryEvent>(
-    this.historyEventData
+    this.historyEventData,
   );
 
   constructor(private eventService: EventsService) {}

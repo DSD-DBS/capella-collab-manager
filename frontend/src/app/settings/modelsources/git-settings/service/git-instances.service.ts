@@ -21,10 +21,10 @@ export class GitInstancesService {
     environment.backend_url + '/settings/modelsources/git';
 
   private _gitInstances = new BehaviorSubject<GitInstance[] | undefined>(
-    undefined
+    undefined,
   );
   private _gitInstance = new BehaviorSubject<GitInstance | undefined>(
-    undefined
+    undefined,
   );
 
   public readonly gitInstances$ = this._gitInstances.asObservable();
@@ -38,15 +38,15 @@ export class GitInstancesService {
       .pipe(
         map((backendGitInstances) => {
           return backendGitInstances.map((backendGitInstance) =>
-            this.transformGitInstance(backendGitInstance)
+            this.transformGitInstance(backendGitInstance),
           );
-        })
+        }),
       )
       .subscribe((gitInstance) => this._gitInstances.next(gitInstance));
   }
 
   transformGitInstance(
-    backendGitInstance: BackendBasicGitInstance
+    backendGitInstance: BackendBasicGitInstance,
   ): GitInstance {
     const gitInstance = JSON.parse(JSON.stringify(backendGitInstance));
 
@@ -96,10 +96,10 @@ export class GitInstancesService {
         map((gitInstances) => {
           const nameExists = gitInstances?.find(
             (instance) =>
-              instance.name === control.value && instance.id != ignoreId
+              instance.name === control.value && instance.id != ignoreId,
           );
           return nameExists ? { uniqueName: { value: control.value } } : null;
-        })
+        }),
       );
     };
   }

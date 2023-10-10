@@ -28,13 +28,13 @@ export class BasicAuthTokenComponent implements OnInit {
   constructor(
     public tokenService: TokenService,
     private toastService: ToastService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
   ) {
     this.minDate = this.getTomorrow();
     this.maxDate = new Date(
       this.minDate.getFullYear() + 1,
       this.minDate.getMonth(),
-      this.minDate.getDate()
+      this.minDate.getDate(),
     );
   }
 
@@ -54,7 +54,7 @@ export class BasicAuthTokenComponent implements OnInit {
         .createToken(
           this.tokenForm.value.description!,
           this.tokenForm.value.date!,
-          'Token-overview'
+          'Token-overview',
         )
         .subscribe((token) => {
           this.password = token.password;
@@ -67,7 +67,7 @@ export class BasicAuthTokenComponent implements OnInit {
     this.tokenService.deleteToken(token).subscribe();
     this.toastService.showSuccess(
       'Token deleted',
-      `The token ${token.description} was successfully deleted!`
+      `The token ${token.description} was successfully deleted!`,
     );
   }
 
@@ -78,7 +78,7 @@ export class BasicAuthTokenComponent implements OnInit {
   showClipboardMessage(): void {
     this.toastService.showSuccess(
       'Token copied',
-      'The token was copied to your clipboard.'
+      'The token was copied to your clipboard.',
     );
   }
 }

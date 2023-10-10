@@ -78,7 +78,7 @@ export class ToolIntegrationsComponent implements OnInit {
     this.toolService
       .patchToolIntegrations(
         this._tool!.id,
-        this.mapIntegrationFormToPatchToolIntegrationObject()
+        this.mapIntegrationFormToPatchToolIntegrationObject(),
       )
       .subscribe((integrations: ToolIntegrations) => {
         this._tool!.integrations = integrations;

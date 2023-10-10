@@ -18,7 +18,7 @@ export class MetadataService {
   constructor(
     private httpClient: HttpClient,
     private localStorageService: LocalStorageService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
   ) {
     this.loadVersion();
     this.loadBackendMetadata().subscribe();
@@ -29,7 +29,7 @@ export class MetadataService {
   public changedVersion = false;
 
   private _backendMetadata = new BehaviorSubject<BackendMetadata | undefined>(
-    undefined
+    undefined,
   );
   readonly backendMetadata = this._backendMetadata.asObservable();
 
@@ -48,7 +48,9 @@ export class MetadataService {
     return this.httpClient
       .get<BackendMetadata>(environment.backend_url + '/metadata')
       .pipe(
-        tap((metadata: BackendMetadata) => this._backendMetadata.next(metadata))
+        tap((metadata: BackendMetadata) =>
+          this._backendMetadata.next(metadata),
+        ),
       );
   }
 

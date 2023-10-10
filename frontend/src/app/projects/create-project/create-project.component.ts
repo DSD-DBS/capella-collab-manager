@@ -27,7 +27,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   constructor(
     public projectService: ProjectService,
     public projectUserService: ProjectUserService,
-    private toastService: ToastService
+    private toastService: ToastService,
   ) {}
 
   form = new FormGroup({
@@ -58,7 +58,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
         .subscribe((project) => {
           this.toastService.showSuccess(
             `The project “${project.name}” was successfuly created.`,
-            'Project created'
+            'Project created',
           );
           stepper.steps.get(0)!.completed = true;
           stepper.next();

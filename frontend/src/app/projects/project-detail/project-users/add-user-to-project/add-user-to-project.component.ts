@@ -38,14 +38,14 @@ export class AddUserToProjectDialogComponent {
       permission: new FormControl(''),
       reason: new FormControl('', Validators.required),
     },
-    this.permissionRequiredValidator()
+    this.permissionRequiredValidator(),
   );
 
   constructor(
     public projectUserService: ProjectUserService,
     private toastService: ToastService,
     private matDialogRef: MatDialogRef<AddUserToProjectDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { project: Project }
+    @Inject(MAT_DIALOG_DATA) public data: { project: Project },
   ) {}
 
   asyncUserAlreadyInProjectValidator(): AsyncValidatorFn {
@@ -59,7 +59,7 @@ export class AddUserToProjectDialogComponent {
             return { userAlreadyInProjectError: true };
           }
           return null;
-        })
+        }),
       );
     };
   }
@@ -96,13 +96,13 @@ export class AddUserToProjectDialogComponent {
           formValue.username as string,
           formValue.role as SimpleProjectUserRole,
           permission as string,
-          formValue.reason as string
+          formValue.reason as string,
         )
         .subscribe(() => {
           this.addUserToProjectForm.reset();
           this.toastService.showSuccess(
             `User added`,
-            `User '${formValue.username}' has been added to project '${this.data.project.name}'`
+            `User '${formValue.username}' has been added to project '${this.data.project.name}'`,
           );
           this.matDialogRef.close();
         });

@@ -18,7 +18,7 @@ export class GitModelService {
 
   private _gitModel = new Subject<GetGitModel | undefined>();
   private _gitModels = new BehaviorSubject<GetGitModel[] | undefined>(
-    undefined
+    undefined,
   );
 
   public readonly gitModel$ = this._gitModel.asObservable();
@@ -28,7 +28,7 @@ export class GitModelService {
     this.http
       .get<Array<GetGitModel>>(
         this.BACKEND_URL_PREFIX +
-          `/projects/${project_slug}/models/${model_slug}/modelsources/git`
+          `/projects/${project_slug}/models/${model_slug}/modelsources/git`,
       )
       .subscribe((gitModels) => this._gitModels.next(gitModels));
   }
@@ -36,12 +36,12 @@ export class GitModelService {
   loadGitModelById(
     projectSlug: string,
     modelSlug: string,
-    gitModelId: number
+    gitModelId: number,
   ): void {
     this.http
       .get<GetGitModel>(
         this.BACKEND_URL_PREFIX +
-          `/projects/${projectSlug}/models/${modelSlug}/modelsources/git/${gitModelId}`
+          `/projects/${projectSlug}/models/${modelSlug}/modelsources/git/${gitModelId}`,
       )
       .subscribe((gitModel) => this._gitModel.next(gitModel));
   }
@@ -50,62 +50,62 @@ export class GitModelService {
     projectSlug: string,
     modelSlug: string,
     gitModelId: number,
-    gitModel: PatchGitModel
+    gitModel: PatchGitModel,
   ): Observable<GetGitModel> {
     return this.http
       .put<GetGitModel>(
         this.BACKEND_URL_PREFIX +
           `/projects/${projectSlug}/models/${modelSlug}/modelsources/git/${gitModelId}`,
-        gitModel
+        gitModel,
       )
       .pipe(
         tap((gitModel) => {
           this.loadGitModels(projectSlug, modelSlug);
           this._gitModel.next(gitModel);
-        })
+        }),
       );
   }
 
   makeGitInstancePrimary(
     projectSlug: string,
     modelSlug: string,
-    gitModelId: number
+    gitModelId: number,
   ): Observable<GetGitModel> {
     return this.http
       .patch<GetGitModel>(
         this.BACKEND_URL_PREFIX +
           `/projects/${projectSlug}/models/${modelSlug}/modelsources/git/${gitModelId}`,
-        true
+        true,
       )
       .pipe(
         tap((gitModel) => {
           this.loadGitModels(projectSlug, modelSlug);
           this._gitModel.next(gitModel);
-        })
+        }),
       );
   }
 
   addGitSource(
     project_slug: string,
     model_slug: string,
-    source: CreateGitModel
+    source: CreateGitModel,
   ): Observable<GetGitModel> {
     return this.http.post<GetGitModel>(
       this.BACKEND_URL_PREFIX +
         `/projects/${project_slug}/models/${model_slug}/modelsources/git`,
-      source
+      source,
     );
   }
 
   validatePath(
     projectSlug: string,
     modelSlug: string,
-    path: string
+    path: string,
   ): Observable<boolean> {
     return this.http.post<boolean>(
       this.BACKEND_URL_PREFIX +
         `/projects/${projectSlug}/models/${modelSlug}/modelsources/git/validate/path`,
-      path
+      path,
     );
   }
 
@@ -117,11 +117,11 @@ export class GitModelService {
   deleteGitSource(
     projectSlug: string,
     modelSlug: string,
-    source: GetGitModel
+    source: GetGitModel,
   ): Observable<void> {
     return this.http.delete<void>(
       environment.backend_url +
-        `/projects/${projectSlug}/models/${modelSlug}/modelsources/git/${source.id}`
+        `/projects/${projectSlug}/models/${modelSlug}/modelsources/git/${source.id}`,
     );
   }
 }

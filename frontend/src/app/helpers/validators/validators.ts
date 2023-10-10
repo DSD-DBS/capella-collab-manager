@@ -17,7 +17,7 @@ export function lowerCaseValidator(): ValidatorFn {
 export function regExpValidator(
   ruleRegExp: RegExp,
   value: string,
-  errors: ValidationErrors
+  errors: ValidationErrors,
 ): ValidationErrors | null {
   if (!ruleRegExp.test(value)) {
     return errors;

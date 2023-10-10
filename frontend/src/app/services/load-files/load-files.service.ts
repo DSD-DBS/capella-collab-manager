@@ -24,13 +24,13 @@ export class LoadFilesService {
       {
         reportProgress: true,
         observe: 'events',
-      }
+      },
     );
   }
 
   getCurrentFiles(id: string, showHiddenFiles: boolean): Observable<PathNode> {
     return this.http.get<PathNode>(
-      this.BACKEND_URL_PREFIX + id + '/files?show_hidden=' + showHiddenFiles
+      this.BACKEND_URL_PREFIX + id + '/files?show_hidden=' + showHiddenFiles,
     );
   }
 

@@ -39,18 +39,18 @@ export class CreateBackupComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: { projectSlug: string; modelSlug: string },
     private pipelineService: PipelineService,
-    private dialogRef: MatDialogRef<CreateBackupComponent>
+    private dialogRef: MatDialogRef<CreateBackupComponent>,
   ) {}
 
   ngOnInit(): void {
     this.t4cModelService.loadT4CModels(
       this.data.projectSlug,
-      this.data.modelSlug
+      this.data.modelSlug,
     );
 
     this.gitModelService.loadGitModels(
       this.data.projectSlug,
-      this.data.modelSlug
+      this.data.modelSlug,
     );
 
     combineLatest([
@@ -62,7 +62,7 @@ export class CreateBackupComponent implements OnInit {
         ([gitModels, t4cModels]) =>
           (this.t4cAndGitModelExists = !!(
             gitModels?.length && t4cModels?.length
-          ))
+          )),
       );
   }
 
@@ -97,7 +97,7 @@ export class CreateBackupComponent implements OnInit {
         .createPipeline(
           this.data.projectSlug,
           this.data.modelSlug,
-          createBackupformValue as PostPipeline
+          createBackupformValue as PostPipeline,
         )
         .subscribe(() => {
           this.dialogRef.close(true);

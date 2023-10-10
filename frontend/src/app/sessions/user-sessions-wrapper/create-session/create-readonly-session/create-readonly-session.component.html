@@ -15,7 +15,7 @@
         [formGroup]="toolSelectionForm"
         (ngSubmit)="requestReadonlySession()"
       >
-        <div class="flex skeleton-loader gap-2" *ngIf="tools === undefined">
+        <div class="skeleton-loader flex gap-2" *ngIf="tools === undefined">
           <div class="flex-1" *ngFor="let menu of [0, 1]">
             <ngx-skeleton-loader
               appearance="circle"

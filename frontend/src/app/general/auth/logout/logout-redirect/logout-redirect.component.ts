@@ -13,7 +13,10 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   styleUrls: ['./logout-redirect.component.css'],
 })
 export class LogoutRedirectComponent implements OnInit {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.authService.logOut();

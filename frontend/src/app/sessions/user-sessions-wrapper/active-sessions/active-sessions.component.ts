@@ -32,7 +32,7 @@ export class ActiveSessionsComponent {
     public sessionService: SessionService,
     public beautifyService: BeautifyService,
     public userSessionService: UserSessionService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {}
 
   openDeletionDialog(sessions: Session[]): void {

@@ -17,18 +17,18 @@ export class ModelRestrictionsService {
   patchModelRestrictions(
     projectSlug: string,
     modelSlug: string,
-    modelRestrictions: ModelRestrictions
+    modelRestrictions: ModelRestrictions,
   ): Observable<ModelRestrictions> {
     return this.http.patch<ModelRestrictions>(
       `${environment.backend_url}/projects/${projectSlug}/models/${modelSlug}/restrictions`,
-      modelRestrictions
+      modelRestrictions,
     );
   }
 }
 
 export function areRestrictionsEqual(
   a: ModelRestrictions,
-  b: ModelRestrictions
+  b: ModelRestrictions,
 ): boolean {
   return a.allow_pure_variants === b.allow_pure_variants;
 }

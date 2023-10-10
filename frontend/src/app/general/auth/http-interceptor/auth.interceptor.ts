@@ -21,24 +21,27 @@ import {
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+  ) {}
 
   intercept(
     request: HttpRequest<unknown>,
-    next: HttpHandler
+    next: HttpHandler,
   ): Observable<HttpEvent<unknown>> {
     const req = this.injectAccessToken(request);
     return next.handle(req).pipe(
       catchError((err: HttpErrorResponse) => {
         return this.handleTokenExpired(err, request, next);
-      })
+      }),
     );
   }
 
   handleTokenExpired(
     err: HttpErrorResponse,
     request: HttpRequest<unknown>,
-    next: HttpHandler
+    next: HttpHandler,
   ) {
     if (err.status === 401) {
       if (err.error.detail.err_code == 'token_exp') {
@@ -50,7 +53,7 @@ export class AuthInterceptor implements HttpInterceptor {
           catchError(() => {
             this.router.navigateByUrl('/logout?reason=session-expired');
             throw err;
-          })
+          }),
         );
       } else {
         this.router.navigateByUrl('/logout?reason=unauthorized');

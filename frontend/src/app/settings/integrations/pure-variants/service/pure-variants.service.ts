@@ -27,17 +27,17 @@ export class PureVariantsService {
   }
 
   uploadLicenseServerFile(
-    formData: FormData
+    formData: FormData,
   ): Observable<PureVariantsConfiguration> {
     return this.http.post<PureVariantsConfiguration>(
       this.baseUrl + '/license-keys',
-      formData
+      formData,
     );
   }
 
   deleteLicenseServerFile(): Observable<PureVariantsConfiguration> {
     return this.http.delete<PureVariantsConfiguration>(
-      this.baseUrl + '/license-keys/0'
+      this.baseUrl + '/license-keys/0',
     );
   }
 }

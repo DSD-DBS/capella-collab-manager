@@ -30,14 +30,14 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
       projectSlug: string;
       models: Model[];
       modelVersionId: number;
-    }
+    },
   ) {}
 
   modelOptions: ModelOptions[] = [];
 
   ngOnInit(): void {
     const filteredModels = this.data.models.filter(
-      (model) => model.version?.id === this.data.modelVersionId
+      (model) => model.version?.id === this.data.modelVersionId,
     );
 
     for (const model of filteredModels) {
@@ -73,7 +73,7 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
             revision: m.revision,
             deep_clone: m.deepClone,
           };
-        })
+        }),
       )
       .subscribe(() => {
         this.router.navigateByUrl('/');

@@ -15,6 +15,6 @@ import { ProjectService } from '../service/project.service';
 export class ProjectDetailsComponent {
   constructor(
     public projectService: ProjectService,
-    public projectUserService: ProjectUserService
+    public projectUserService: ProjectUserService,
   ) {}
 }

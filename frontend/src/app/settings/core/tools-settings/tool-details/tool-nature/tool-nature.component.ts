@@ -69,7 +69,7 @@ export class ToolNatureComponent {
       this.toolService
         .createNatureForTool(
           this._tool!.id,
-          this.toolNatureForm.controls.name.value!
+          this.toolNatureForm.controls.name.value!,
         )
         .pipe(
           tap(() => {
@@ -77,7 +77,7 @@ export class ToolNatureComponent {
           }),
           finalize(() => {
             this.toolNatureForm.enable();
-          })
+          }),
         )
         .subscribe((nature: ToolNature) => {
           this.toolNatures.push(nature);
@@ -90,7 +90,7 @@ export class ToolNatureComponent {
       .deleteNatureForTool(this._tool!.id, toolNature)
       .subscribe(() => {
         this.toolNatures = this.toolNatures.filter(
-          (nature) => nature.id !== toolNature.id
+          (nature) => nature.id !== toolNature.id,
         );
       });
   }

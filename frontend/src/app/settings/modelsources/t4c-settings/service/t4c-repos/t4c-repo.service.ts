@@ -22,7 +22,7 @@ import {
 export class T4CRepoService {
   constructor(
     private http: HttpClient,
-    private t4cInstanceService: T4CInstanceService
+    private t4cInstanceService: T4CInstanceService,
   ) {}
 
   private _repositories = new BehaviorSubject<
@@ -33,14 +33,14 @@ export class T4CRepoService {
 
   urlFactory(instanceId: number, repositoryId: number): string {
     return `${this.t4cInstanceService.urlFactory(
-      instanceId
+      instanceId,
     )}/repositories/${repositoryId}`;
   }
 
   loadRepositories(instanceId: number): void {
     this.http
       .get<T4CServerRepository[]>(
-        `${this.t4cInstanceService.urlFactory(instanceId)}/repositories/`
+        `${this.t4cInstanceService.urlFactory(instanceId)}/repositories/`,
       )
       .subscribe({
         next: (repositories) => this._repositories.next(repositories),
@@ -58,12 +58,12 @@ export class T4CRepoService {
 
   createRepository(
     instanceId: number,
-    repository: CreateT4CRepository
+    repository: CreateT4CRepository,
   ): Observable<T4CRepository> {
     return this.http
       .post<T4CRepository>(
         `${this.t4cInstanceService.urlFactory(instanceId)}/repositories/`,
-        repository
+        repository,
       )
       .pipe(tap(() => this.loadRepositories(instanceId)));
   }
@@ -84,7 +84,7 @@ export class T4CRepoService {
 
   recreateRepository(
     instanceId: number,
-    repositoryId: number
+    repositoryId: number,
   ): Observable<null> {
     this.publishRepositoriesWithChangedStatus(repositoryId, 'LOADING');
     return this.http
@@ -104,10 +104,10 @@ export class T4CRepoService {
         take(1),
         map((t4cRepositories) => {
           const nameExists = t4cRepositories?.find(
-            (instance) => instance.name === control.value
+            (instance) => instance.name === control.value,
           );
           return nameExists ? { uniqueName: { value: control.value } } : null;
-        })
+        }),
       );
     };
   }
@@ -118,7 +118,7 @@ export class T4CRepoService {
 
   private publishRepositoriesWithChangedStatus(
     repositoryId: number,
-    status: string
+    status: string,
   ): void {
     const currentRepositories = this._repositories.value;
 

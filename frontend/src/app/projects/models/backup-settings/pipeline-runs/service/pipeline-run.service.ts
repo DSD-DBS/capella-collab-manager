@@ -20,13 +20,13 @@ export class PipelineRunService {
   constructor(
     private http: HttpClient,
     private pipelineService: PipelineService,
-    private breadcrumbsService: BreadcrumbsService
+    private breadcrumbsService: BreadcrumbsService,
   ) {
     this.resetPipelineRunsOnPipelineChange();
   }
 
   private _pipelineRun = new BehaviorSubject<PipelineRun | undefined>(
-    undefined
+    undefined,
   );
   public readonly pipelineRun$ = this._pipelineRun.asObservable();
 
@@ -37,21 +37,21 @@ export class PipelineRunService {
   public readonly pipelineRunPages$ = this._pipelineRunPages.asObservable();
 
   getPipelineRunPage(
-    pageNumber: number
+    pageNumber: number,
   ): Observable<Page<PipelineRun> | undefined | 'loading'> {
     return this._pipelineRunPages.pipe(
-      map((pipelineRunPages) => pipelineRunPages.pages[pageNumber - 1])
+      map((pipelineRunPages) => pipelineRunPages.pages[pageNumber - 1]),
     );
   }
 
   urlFactory(
     projectSlug: string,
     modelSlug: string,
-    pipelineID: number
+    pipelineID: number,
   ): string {
     return `${this.pipelineService.urlFactory(
       projectSlug,
-      modelSlug
+      modelSlug,
     )}/${pipelineID}/runs`;
   }
 
@@ -82,11 +82,11 @@ export class PipelineRunService {
     projectSlug: string,
     modelSlug: string,
     pipelineID: number,
-    includeCommitHistory: boolean
+    includeCommitHistory: boolean,
   ): Observable<PipelineRun> {
     return this.http.post<PipelineRun>(
       this.urlFactory(projectSlug, modelSlug, pipelineID),
-      { include_commit_history: includeCommitHistory }
+      { include_commit_history: includeCommitHistory },
     );
   }
 
@@ -94,15 +94,15 @@ export class PipelineRunService {
     projectSlug: string,
     modelSlug: string,
     pipelineID: number,
-    pipelineRunID: number
+    pipelineRunID: number,
   ): void {
     this.http
       .get<PipelineRun>(
         `${this.urlFactory(
           projectSlug,
           modelSlug,
-          pipelineID
-        )}/${pipelineRunID}`
+          pipelineID,
+        )}/${pipelineRunID}`,
       )
       .subscribe((pipelineRun) => {
         this._pipelineRun.next(pipelineRun);
@@ -115,7 +115,7 @@ export class PipelineRunService {
     modelSlug: string,
     pipelineID: number,
     page: number,
-    size: number
+    size: number,
   ): void {
     if (this._pipelineRunPages.getValue().pages[page - 1] !== undefined) {
       // Skip if already loaded or currently loading
@@ -129,8 +129,8 @@ export class PipelineRunService {
         `${this.urlFactory(
           projectSlug,
           modelSlug,
-          pipelineID
-        )}?page=${page}&size=${size}`
+          pipelineID,
+        )}?page=${page}&size=${size}`,
       )
       .subscribe((pipelineRuns) => {
         const pipelineRunPages = this._pipelineRunPages.getValue();
@@ -151,14 +151,14 @@ export class PipelineRunService {
     const firstPage = pageWrapper.pages[0];
     if (firstPage === undefined || firstPage === 'loading') {
       throw new TypeError(
-        'first page is undefined or loading, but should be of type Page<PipelineRun>.'
+        'first page is undefined or loading, but should be of type Page<PipelineRun>.',
       );
     }
 
     // Set the correct length for the array
     pageWrapper.pages = Array.from(
       { length: firstPage.pages },
-      (_, i) => pageWrapper.pages[i]
+      (_, i) => pageWrapper.pages[i],
     );
   }
 
@@ -166,14 +166,14 @@ export class PipelineRunService {
     projectSlug: string,
     modelSlug: string,
     pipelineID: number,
-    pipelineRunID: number
+    pipelineRunID: number,
   ): Observable<string> {
     return this.http.get<string>(
       `${this.urlFactory(
         projectSlug,
         modelSlug,
-        pipelineID
-      )}/${pipelineRunID}/logs`
+        pipelineID,
+      )}/${pipelineRunID}/logs`,
     );
   }
 
@@ -181,14 +181,14 @@ export class PipelineRunService {
     projectSlug: string,
     modelSlug: string,
     pipelineID: number,
-    pipelineRunID: number
+    pipelineRunID: number,
   ): Observable<string> {
     return this.http.get<string>(
       `${this.urlFactory(
         projectSlug,
         modelSlug,
-        pipelineID
-      )}/${pipelineRunID}/events`
+        pipelineID,
+      )}/${pipelineRunID}/events`,
     );
   }
 

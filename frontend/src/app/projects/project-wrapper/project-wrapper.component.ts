@@ -22,14 +22,14 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     public projectService: ProjectService,
     public modelService: ModelService,
-    private breadcrumbsService: BreadcrumbsService
+    private breadcrumbsService: BreadcrumbsService,
   ) {}
 
   ngOnInit(): void {
     this.route.params
       .pipe(
         map((params) => params.project),
-        untilDestroyed(this)
+        untilDestroyed(this),
       )
       .subscribe((projectSlug: string) => {
         this.projectService.loadProjectBySlug(projectSlug);
@@ -39,7 +39,7 @@ export class ProjectWrapperComponent implements OnInit, OnDestroy {
     this.projectService.project$
       .pipe(untilDestroyed(this))
       .subscribe((project) =>
-        this.breadcrumbsService.updatePlaceholder({ project })
+        this.breadcrumbsService.updatePlaceholder({ project }),
       );
   }
 

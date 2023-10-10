@@ -4,7 +4,7 @@
  -->
 
 <div>
-  <div class="flex justify-between mr-2.5">
+  <div class="mr-2.5 flex justify-between">
     <h2>Repositories</h2>
     <button
       mat-stroked-button
@@ -31,7 +31,7 @@
 
     <div class="max-h-[50vh] overflow-y-scroll">
       <div
-        class="flex justify-between my-[10px] mx-[5px]"
+        class="mx-[5px] my-[10px] flex justify-between"
         *ngFor="
           let repository of getFilteredRepositories(
             t4cRepoService.repositories$ | async
@@ -39,7 +39,7 @@
         "
       >
         <div class="flex">
-          <div class="h-[30px] w-[30px] mr-[15px] ml-[0px] my-auto">
+          <div class="my-auto ml-[0px] mr-[15px] h-[30px] w-[30px]">
             <mat-icon mat-list-icon *ngIf="repository.status === 'LOADING'"
               >sync</mat-icon
             >
@@ -63,7 +63,7 @@
           </div>
 
           <div>
-            <div class="text-lg break-all">
+            <div class="break-all text-lg">
               {{ repository.name }}
             </div>
             <div>
@@ -72,7 +72,7 @@
             </div>
           </div>
         </div>
-        <div class="flex flex-row my-auto">
+        <div class="my-auto flex flex-row">
           <button
             mat-icon-button
             color="error"
@@ -115,7 +115,7 @@
     </div>
 
     <form [formGroup]="form">
-      <div class="flex items-center justify-between w-full pt-[18px] gap-8">
+      <div class="flex w-full items-center justify-between gap-8 pt-[18px]">
         <mat-form-field appearance="fill" class="w-full">
           <mat-label>Repository name</mat-label>
           <input matInput formControlName="name" />

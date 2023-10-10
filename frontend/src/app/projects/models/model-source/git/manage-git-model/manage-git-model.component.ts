@@ -84,7 +84,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     private breadCrumbsService: BreadcrumbsService,
     private router: Router,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {}
 
   public form = this.fb.group({
@@ -101,7 +101,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
       {
         validators: Validators.required,
         asyncValidators: this.gitService.asyncExistingRevisionValidator(),
-      }
+      },
     ),
     entrypoint: this.fb.control({ value: '/', disabled: true }),
     primary: this.fb.control(false),
@@ -122,7 +122,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     });
 
     this.form.controls.revision.valueChanges.subscribe((value) =>
-      this.filteredRevisionsByPrefix(value as string)
+      this.filteredRevisionsByPrefix(value as string),
     );
 
     this.gitInstancesService.gitInstances$
@@ -161,7 +161,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
         this.route.params
           .pipe(
             filter((params) => !!params['git-model']),
-            map((params) => params['git-model'])
+            map((params) => params['git-model']),
           )
           .subscribe((gitModelId) => {
             this.isEditMode = true;
@@ -180,14 +180,14 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
                   gitModel.path,
                   this.projectSlug!,
                   this.modelSlug!,
-                  gitModelId
+                  gitModelId,
                 );
               });
 
             this.gitModelService.loadGitModelById(
               this.projectSlug!,
               this.modelSlug!,
-              gitModelId
+              gitModelId,
             );
           });
       });
@@ -209,12 +209,12 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
           this.resultUrl,
           this.projectSlug!,
           this.modelSlug!,
-          this.gitModelId!
+          this.gitModelId!,
         );
       } else {
         this.gitService.loadRevisions(
           this.resultUrl,
-          this.form.value.credentials as Credentials
+          this.form.value.credentials as Credentials,
         );
       }
     }
@@ -267,7 +267,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
         .addGitSource(
           this.projectSlug!,
           this.modelSlug!,
-          this.createGitModelFromForm()
+          this.createGitModelFromForm(),
         )
         .subscribe(() => {
           if (this.asStepper) {
@@ -291,12 +291,12 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
           this.projectSlug!,
           this.modelSlug!,
           this.gitModelId!,
-          patchGitModel
+          patchGitModel,
         )
         .subscribe(() =>
           this.router.navigate(['../../modelsources'], {
             relativeTo: this.route,
-          })
+          }),
         );
     }
   }
@@ -328,17 +328,17 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
         next: () => {
           this.toastService.showSuccess(
             'Git repository unlinked',
-            `The Git repository '${this.gitModel!.path}' has been unlinked`
+            `The Git repository '${this.gitModel!.path}' has been unlinked`,
           );
           this.router.navigateByUrl(
             `/project/${this.projectSlug!}/model/${this
-              .modelSlug!}/modelsources`
+              .modelSlug!}/modelsources`,
           );
         },
         error: () => {
           this.toastService.showError(
             'Git repository unlinking failed',
-            `The Git repository '${this.gitModel!.path}' has not been unlinked`
+            `The Git repository '${this.gitModel!.path}' has not been unlinked`,
           );
         },
       });
@@ -377,10 +377,10 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
 
     this.filteredRevisions = {
       branches: this.revisions!.branches.filter((branch) =>
-        branch.toLowerCase().startsWith(prefix.toLowerCase())
+        branch.toLowerCase().startsWith(prefix.toLowerCase()),
       ),
       tags: this.revisions!.tags.filter((tag) =>
-        tag.toLowerCase().startsWith(prefix.toLowerCase())
+        tag.toLowerCase().startsWith(prefix.toLowerCase()),
       ),
     };
   }
@@ -427,7 +427,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
               urlPrefixError:
                 "The resolved URL doesn't match with one of the allowed git instances",
             };
-          })
+          }),
         );
     };
   }
@@ -444,7 +444,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   }
 
   private findLongestUrlMatchingGitInstance(
-    url: string
+    url: string,
   ): GitInstance | undefined {
     let longestMatchingGitInstance = undefined;
     let longestUrlLength = 0;

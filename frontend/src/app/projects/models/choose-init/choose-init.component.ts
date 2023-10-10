@@ -17,6 +17,6 @@ export class ChooseInitComponent {
 
   constructor(
     public projectService: ProjectService,
-    public modelService: ModelService
+    public modelService: ModelService,
   ) {}
 }

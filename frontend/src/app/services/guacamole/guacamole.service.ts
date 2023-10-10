@@ -17,7 +17,7 @@ export class GuacamoleService {
   getGucamoleToken(session_id: string): Observable<GuacamoleAuthentication> {
     return this.http.post<GuacamoleAuthentication>(
       environment.backend_url + '/sessions/' + session_id + '/guacamole-tokens',
-      null
+      null,
     );
   }
 }

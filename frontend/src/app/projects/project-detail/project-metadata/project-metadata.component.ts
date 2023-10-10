@@ -35,7 +35,7 @@ export class ProjectMetadataComponent {
     private toastService: ToastService,
     private router: Router,
     private route: ActivatedRoute,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -53,7 +53,7 @@ export class ProjectMetadataComponent {
       !this.canDelete ||
       !this.project ||
       !window.confirm(
-        `Do you really want to delete this project? All assigned users will lose access to it! The project cannot be restored!`
+        `Do you really want to delete this project? All assigned users will lose access to it! The project cannot be restored!`,
       )
     ) {
       return;
@@ -65,14 +65,14 @@ export class ProjectMetadataComponent {
       next: () => {
         this.toastService.showSuccess(
           'Project deleted',
-          `${projectSlug} has been deleted`
+          `${projectSlug} has been deleted`,
         );
         this.router.navigate(['../../projects'], { relativeTo: this.route });
       },
       error: () =>
         this.toastService.showError(
           'Project deletion failed',
-          `${projectSlug} has not been deleted`
+          `${projectSlug} has not been deleted`,
         ),
     });
   }
@@ -109,8 +109,8 @@ export class ProjectMetadataComponent {
           'Project updated',
           `The project ${project.slug} is now ${
             is_archived ? 'archived' : 'unarchived'
-          }`
-        )
+          }`,
+        ),
       );
   }
 }

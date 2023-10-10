@@ -35,7 +35,7 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private gitInstancesService: GitInstancesService,
     private breadcrumbsService: BreadcrumbsService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {}
 
   ngOnInit(): void {
@@ -43,7 +43,7 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((instance: GitInstance) => {
         this.gitInstanceForm.controls.name.addAsyncValidators(
-          this.gitInstancesService.asyncNameValidator(instance)
+          this.gitInstancesService.asyncNameValidator(instance),
         );
 
         this.gitInstanceForm.patchValue(instance);
@@ -53,7 +53,7 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
     this.route.params
       .pipe(
         untilDestroyed(this),
-        map((params) => parseInt(params.id))
+        map((params) => parseInt(params.id)),
       )
       .subscribe((instanceId) => {
         this.gitInstancesService.loadGitInstanceById(instanceId);
@@ -74,7 +74,7 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
         id: this.id,
       } as GitInstance)
       .subscribe(() =>
-        this.router.navigate(['../..'], { relativeTo: this.route })
+        this.router.navigate(['../..'], { relativeTo: this.route }),
       );
   }
 }

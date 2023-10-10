@@ -47,11 +47,11 @@
     </div>
 
     <mat-card
-      class="flex flex-col w-[500px] max-w-[85vw] min-h-[200px] select-none"
+      class="flex min-h-[200px] w-[500px] max-w-[85vw] select-none flex-col"
       *ngFor="let model of modelService.models$ | async"
     >
       <div
-        class="flex justify-between items-center bg-primary text-white rounded-t p-2.5"
+        class="flex items-center justify-between rounded-t bg-primary p-2.5 text-white"
       >
         <div class="ml-2.5">
           <div class="text-xl">{{ model.name }}</div>
@@ -62,15 +62,15 @@
           </span>
         </div>
 
-        <div class="flex mr-1">
-          <mat-card class="flex items-center mx-1 bg-green-800 text-white">
+        <div class="mr-1 flex">
+          <mat-card class="mx-1 flex items-center bg-green-800 text-white">
             <div class="mx-2 text-center">
               <div class="text-xs">Nature</div>
               <div *ngIf="model.nature">{{ model.nature.name }}</div>
               <div *ngIf="!model.nature">Not specified</div>
             </div>
           </mat-card>
-          <mat-card class="flex items-center mx-1 bg-red-800 text-white">
+          <mat-card class="mx-1 flex items-center bg-red-800 text-white">
             <div class="mx-2 text-center">
               <div class="text-xs">Working mode</div>
               {{ getPrimaryWorkingMode(model) }}
@@ -78,7 +78,7 @@
           </mat-card>
         </div>
       </div>
-      <div class="flex flex-col grow justify-between">
+      <div class="flex grow flex-col justify-between">
         <div class="m-2.5">
           {{ model.description || "This model has no description." }}
         </div>

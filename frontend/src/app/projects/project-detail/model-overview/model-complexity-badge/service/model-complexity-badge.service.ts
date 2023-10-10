@@ -13,11 +13,14 @@ import { ModelService } from 'src/app/projects/models/service/model.service';
   providedIn: 'root',
 })
 export class ModelComplexityBadgeService {
-  constructor(private http: HttpClient, private modelService: ModelService) {}
+  constructor(
+    private http: HttpClient,
+    private modelService: ModelService,
+  ) {}
 
   getModelComplexityBadge(
     projectSlug: string,
-    modelSlug: string
+    modelSlug: string,
   ): Observable<Blob> {
     return this.http.get(
       this.modelService.backendURLFactory(projectSlug, modelSlug) +
@@ -25,7 +28,7 @@ export class ModelComplexityBadgeService {
       {
         responseType: 'blob',
         context: new HttpContext().set(SKIP_ERROR_HANDLING, true),
-      }
+      },
     );
   }
 }

@@ -33,7 +33,7 @@ export class CreatePersistentSessionComponent implements OnInit {
   constructor(
     public toolService: ToolService,
     private sessionService: SessionService,
-    private userSessionService: UserSessionService
+    private userSessionService: UserSessionService,
   ) {}
 
   ngOnInit(): void {
@@ -52,7 +52,7 @@ export class CreatePersistentSessionComponent implements OnInit {
     this.sessionService
       .createPersistentSession(
         this.toolSelectionForm.controls.toolId.value!,
-        this.toolSelectionForm.controls.versionId.value!
+        this.toolSelectionForm.controls.versionId.value!,
       )
       .subscribe(() => this.userSessionService.loadSessions());
   }
@@ -65,7 +65,7 @@ export class CreatePersistentSessionComponent implements OnInit {
         this.versions = res;
         if (res.length) {
           this.toolSelectionForm.controls.versionId.setValue(
-            (res.filter((value) => value.is_recommended).at(0) || res[0]).id
+            (res.filter((value) => value.is_recommended).at(0) || res[0]).id,
           );
         }
       });

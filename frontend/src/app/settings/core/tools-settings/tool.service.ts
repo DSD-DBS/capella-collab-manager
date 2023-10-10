@@ -74,7 +74,7 @@ export class ToolService {
     return this.http.get<Tool[]>(this.baseURL).pipe(
       tap((tools: Tool[]) => {
         this._tools.next(tools);
-      })
+      }),
     );
   }
 
@@ -105,23 +105,23 @@ export class ToolService {
   patchToolVersion(
     toolId: number,
     versionId: number,
-    updatedToolVersion: PatchToolVersion
+    updatedToolVersion: PatchToolVersion,
   ) {
     return this.http.patch<ToolVersion>(
       `${this.baseURL}/${toolId}/versions/${versionId}`,
       {
         is_recommended: updatedToolVersion.isRecommended,
         is_deprecated: updatedToolVersion.isDeprecated,
-      }
+      },
     );
   }
 
   deleteVersionForTool(
     toolId: number,
-    toolVersion: ToolVersion
+    toolVersion: ToolVersion,
   ): Observable<void> {
     return this.http.delete<void>(
-      `${this.baseURL}/${toolId}/versions/${toolVersion.id}`
+      `${this.baseURL}/${toolId}/versions/${toolVersion.id}`,
     );
   }
 
@@ -137,36 +137,36 @@ export class ToolService {
 
   deleteNatureForTool(
     toolId: number,
-    toolNature: ToolNature
+    toolNature: ToolNature,
   ): Observable<void> {
     return this.http.delete<void>(
-      `${this.baseURL}/${toolId}/natures/${toolNature.id}`
+      `${this.baseURL}/${toolId}/natures/${toolNature.id}`,
     );
   }
 
   getDockerimagesForTool(toolId: number): Observable<ToolDockerimages> {
     return this.http.get<ToolDockerimages>(
-      `${this.baseURL}/${toolId}/dockerimages`
+      `${this.baseURL}/${toolId}/dockerimages`,
     );
   }
 
   updateDockerimagesForTool(
     toolId: number,
-    dockerimages: ToolDockerimages
+    dockerimages: ToolDockerimages,
   ): Observable<ToolDockerimages> {
     return this.http.put<ToolDockerimages>(
       `${this.baseURL}/${toolId}/dockerimages`,
-      dockerimages
+      dockerimages,
     );
   }
 
   patchToolIntegrations(
     toolId: number,
-    toolIntegrations: ToolIntegrations
+    toolIntegrations: ToolIntegrations,
   ): Observable<ToolIntegrations> {
     return this.http.put<ToolIntegrations>(
       `${this.baseURL}/${toolId}/integrations`,
-      toolIntegrations
+      toolIntegrations,
     );
   }
 }

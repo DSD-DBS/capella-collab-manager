@@ -30,7 +30,7 @@ export class AlertSettingsComponent {
       message: new FormControl(''),
       level: new FormControl('', Validators.required),
     },
-    this.titleOrDescriptionRequired()
+    this.titleOrDescriptionRequired(),
   );
 
   get message(): FormControl {
@@ -39,7 +39,7 @@ export class AlertSettingsComponent {
 
   constructor(
     public noticeService: NoticeService,
-    private toastService: ToastService
+    private toastService: ToastService,
   ) {}
 
   titleOrDescriptionRequired(): ValidatorFn {
@@ -62,13 +62,13 @@ export class AlertSettingsComponent {
             this.noticeService.refreshNotices();
             this.toastService.showSuccess(
               'Alert created',
-              this.createAlertForm.value.title as string
+              this.createAlertForm.value.title as string,
             );
           },
           error: () => {
             this.toastService.showError(
               'Creation of alert failed',
-              'Please try again'
+              'Please try again',
             );
           },
         });
@@ -84,7 +84,7 @@ export class AlertSettingsComponent {
       error: () => {
         this.toastService.showSuccess(
           'Deletion of alert failed',
-          'Please try again'
+          'Please try again',
         );
       },
     });

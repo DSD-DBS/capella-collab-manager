@@ -5,10 +5,10 @@
 
 <div *ngIf="(projectService.project$ | async) && (modelService.model$ | async)">
   <h2 class="title text-center">Git sources</h2>
-  <div class="flex justify-center flex-wrap">
+  <div class="flex flex-wrap justify-center">
     <a (click)="modelSourceSelection.emit('git-add')">
       <mat-card class="option-card">
-        <p class="subtitle">Use existing repository</p>
+        <p>Use existing repository</p>
         <app-mat-icon size="50px">link</app-mat-icon>
       </mat-card>
     </a>
@@ -21,16 +21,16 @@
     "
   >
     <h2 class="title text-center">Team4Capella sources</h2>
-    <div class="flex justify-center flex-wrap">
+    <div class="flex flex-wrap justify-center">
       <a (click)="modelSourceSelection.emit('t4c-existing')">
         <mat-card class="option-card">
-          <p class="subtitle">Use existing repository</p>
+          <p>Use existing repository</p>
           <app-mat-icon size="50px">link</app-mat-icon>
         </mat-card>
       </a>
       <a (click)="modelSourceSelection.emit('t4c-new')">
         <mat-card class="option-card">
-          <p class="subtitle">Create new repository</p>
+          <p>Create new repository</p>
           <app-mat-icon size="50px">add_circle_outline</app-mat-icon>
         </mat-card>
       </a>
@@ -38,10 +38,10 @@
   </div>
 
   <h2 class="title text-center">Other</h2>
-  <div class="flex justify-center flex-wrap">
+  <div class="flex flex-wrap justify-center">
     <a (click)="modelSourceSelection.emit('skip')">
       <mat-card class="option-card">
-        <p class="subtitle">Skip this step</p>
+        <p>Skip this step</p>
         <app-mat-icon size="50px">skip_next</app-mat-icon>
       </mat-card>
     </a>

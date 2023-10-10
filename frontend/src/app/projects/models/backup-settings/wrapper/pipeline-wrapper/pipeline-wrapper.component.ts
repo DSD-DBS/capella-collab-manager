@@ -24,7 +24,7 @@ export class PipelineWrapperComponent implements OnInit, OnDestroy {
     private modelService: ModelService,
     private projectService: ProjectService,
     private route: ActivatedRoute,
-    private breadcrumbsService: BreadcrumbsService
+    private breadcrumbsService: BreadcrumbsService,
   ) {}
 
   ngOnInit(): void {
@@ -35,7 +35,7 @@ export class PipelineWrapperComponent implements OnInit, OnDestroy {
         this.pipelineService.resetPipeline();
         this.pipelineService.resetPipelines();
         return;
-      })
+      }),
     );
 
     this.route.params
@@ -49,7 +49,7 @@ export class PipelineWrapperComponent implements OnInit, OnDestroy {
       this.modelService.model$.pipe(filter(Boolean)),
       this.route.params.pipe(
         map((params) => params.pipeline as number),
-        filter(Boolean)
+        filter(Boolean),
       ),
     ])
       .pipe(
@@ -58,9 +58,9 @@ export class PipelineWrapperComponent implements OnInit, OnDestroy {
           this.pipelineService.loadPipeline(
             project!.slug,
             model!.slug,
-            pipelineID
-          )
-        )
+            pipelineID,
+          ),
+        ),
       )
       .subscribe();
   }

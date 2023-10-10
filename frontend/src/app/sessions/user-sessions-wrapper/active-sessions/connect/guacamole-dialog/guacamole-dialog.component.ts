@@ -27,7 +27,7 @@ export class GuacamoleDialogComponent {
     private guacamoleService: GuacamoleService,
     @Inject(MAT_DIALOG_DATA) public session: Session,
     public dialogRef: MatDialogRef<GuacamoleDialogComponent>,
-    private toastService: ToastService
+    private toastService: ToastService,
   ) {}
 
   redirectToGuacamole(): void {
@@ -42,7 +42,7 @@ export class GuacamoleDialogComponent {
   showClipboardMessage(): void {
     this.toastService.showSuccess(
       'Session token copied',
-      'The session token was copied to your clipboard.'
+      'The session token was copied to your clipboard.',
     );
   }
 }

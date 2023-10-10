@@ -19,7 +19,10 @@ export class UserService {
 
   BACKEND_URL_PREFIX = environment.backend_url + '/users/';
 
-  constructor(private http: HttpClient, private authService: AuthService) {
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+  ) {
     this.updateOwnUser();
   }
 
@@ -34,7 +37,7 @@ export class UserService {
   createUser(
     username: string,
     role: UserRole,
-    reason: string
+    reason: string,
   ): Observable<User> {
     return this.http.post<User>(this.BACKEND_URL_PREFIX, {
       name: username,
@@ -61,20 +64,20 @@ export class UserService {
 
   getOwnActiveSessions(): Observable<Array<Session>> {
     return this.http.get<Session[]>(
-      this.BACKEND_URL_PREFIX + 'current/sessions'
+      this.BACKEND_URL_PREFIX + 'current/sessions',
     );
   }
 
   getUserHistory(user: User): Observable<UserHistory> {
     return this.http.get<UserHistory>(
-      this.BACKEND_URL_PREFIX + user.id + '/history'
+      this.BACKEND_URL_PREFIX + user.id + '/history',
     );
   }
 
   updateRoleOfUser(
     user: User,
     role: UserRole,
-    reason: string
+    reason: string,
   ): Observable<User> {
     return this.http.patch<User>(this.BACKEND_URL_PREFIX + user.id + '/roles', {
       role,

@@ -17,7 +17,7 @@ import { environment } from 'src/environments/environment';
 export class PipelineService {
   constructor(
     private http: HttpClient,
-    private breadcrumbsService: BreadcrumbsService
+    private breadcrumbsService: BreadcrumbsService,
   ) {}
 
   private _pipelines = new BehaviorSubject<Pipeline[] | undefined>(undefined);
@@ -32,7 +32,7 @@ export class PipelineService {
 
   loadPipelines(
     projectSlug: string,
-    modelSlug: string
+    modelSlug: string,
   ): Observable<Pipeline[]> {
     this._pipelines.next(undefined);
     return this.http
@@ -40,7 +40,7 @@ export class PipelineService {
       .pipe(
         tap((pipelines: Pipeline[]) => {
           this._pipelines.next(pipelines);
-        })
+        }),
       );
   }
 
@@ -55,7 +55,7 @@ export class PipelineService {
   loadPipeline(
     projectSlug: string,
     modelSlug: string,
-    pipelineID: number
+    pipelineID: number,
   ): Observable<Pipeline> {
     this._pipeline.next(undefined);
     return this.http
@@ -64,14 +64,14 @@ export class PipelineService {
         tap((pipeline) => {
           this._pipeline.next(pipeline);
           this.breadcrumbsService.updatePlaceholder({ pipeline });
-        })
+        }),
       );
   }
 
   createPipeline(
     projectSlug: string,
     modelSlug: string,
-    body: PostPipeline
+    body: PostPipeline,
   ): Observable<Pipeline> {
     return this.http.post<Pipeline>(this.urlFactory(projectSlug, modelSlug), {
       git_model_id: body.gitmodelId,
@@ -85,11 +85,11 @@ export class PipelineService {
     projectSlug: string,
     modelSlug: string,
     pipelineID: number,
-    force: boolean
+    force: boolean,
   ): Observable<void> {
     return this.http.delete<void>(
       `${this.urlFactory(projectSlug, modelSlug)}/${pipelineID}`,
-      { params: new HttpParams().set('force', String(force)) }
+      { params: new HttpParams().set('force', String(force)) },
     );
   }
 }

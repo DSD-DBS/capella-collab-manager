@@ -17,7 +17,7 @@ import { Observable } from 'rxjs';
 export class WhitespaceUrlInterceptor implements HttpInterceptor {
   intercept(
     request: HttpRequest<unknown>,
-    next: HttpHandler
+    next: HttpHandler,
   ): Observable<HttpEvent<unknown>> {
     const url = request.url.replace(' ', '%20');
     return next.handle(request.clone({ url }));

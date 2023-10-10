@@ -33,7 +33,7 @@ export class ProjectUserSettingsComponent implements OnInit {
     public userService: UserService,
     private toastService: ToastService,
     private projectService: ProjectService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -56,7 +56,7 @@ export class ProjectUserSettingsComponent implements OnInit {
         this.projectUserService.loadProjectUsers(this.project!.slug);
         this.toastService.showSuccess(
           `User removed`,
-          `User '${user.name}' has been removed from project '${this.project?.name}'`
+          `User '${user.name}' has been removed from project '${this.project?.name}'`,
         );
       });
   }
@@ -72,7 +72,7 @@ export class ProjectUserSettingsComponent implements OnInit {
       .subscribe(() => {
         this.toastService.showSuccess(
           `User modified`,
-          `User '${user.name}' can now manage the project '${this.project?.name}'`
+          `User '${user.name}' can now manage the project '${this.project?.name}'`,
         );
       });
   }
@@ -88,7 +88,7 @@ export class ProjectUserSettingsComponent implements OnInit {
       .subscribe(() => {
         this.toastService.showSuccess(
           `User modified`,
-          `User '${user.name}' is no longer project lead in the project '${this.project?.name}'`
+          `User '${user.name}' is no longer project lead in the project '${this.project?.name}'`,
         );
       });
   }
@@ -104,13 +104,13 @@ export class ProjectUserSettingsComponent implements OnInit {
         this.project.slug,
         user.id,
         permission,
-        reason
+        reason,
       )
       .subscribe(() => {
         this.projectUserService.loadProjectUsers(this.project!.slug);
         this.toastService.showSuccess(
           `User modified`,
-          `User '${user.name}' has the permission '${permission}' in the project '${this.project?.name}' now`
+          `User '${user.name}' has the permission '${permission}' in the project '${this.project?.name}' now`,
         );
       });
   }
@@ -126,7 +126,7 @@ export class ProjectUserSettingsComponent implements OnInit {
 
   getProjectUsersByRole(
     projectUsers: ProjectUser[] | undefined | null,
-    role: string
+    role: string,
   ): ProjectUser[] | undefined {
     if (projectUsers === undefined || projectUsers === null) {
       return undefined;
@@ -134,7 +134,7 @@ export class ProjectUserSettingsComponent implements OnInit {
     return projectUsers?.filter(
       (pUser) =>
         pUser.role == role &&
-        pUser.user.name.toLowerCase().includes(this.search.toLowerCase())
+        pUser.user.name.toLowerCase().includes(this.search.toLowerCase()),
     );
   }
 

@@ -39,7 +39,7 @@ export class CreateModelComponent implements OnInit {
   constructor(
     private router: Router,
     private projectService: ProjectService,
-    private modelService: ModelService
+    private modelService: ModelService,
   ) {}
 
   ngOnInit(): void {

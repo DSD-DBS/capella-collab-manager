@@ -109,7 +109,7 @@ describe('CreateProjectComponent', () => {
     },
     asyncSlugValidator(): AsyncValidatorFn {
       return (
-        control: AbstractControl
+        control: AbstractControl,
       ): Observable<ValidationErrors | null> => {
         const projectSlug = slugify(control.value, { lower: true });
         return this.projects$.pipe(
@@ -118,7 +118,7 @@ describe('CreateProjectComponent', () => {
             return projects?.find((project) => project.slug === projectSlug)
               ? { uniqueSlug: { value: projectSlug } }
               : null;
-          })
+          }),
         );
       };
     },
@@ -169,7 +169,7 @@ describe('CreateProjectComponent', () => {
 
     const createButton: HTMLButtonElement = findElByTestId(
       fixture,
-      'button-create-project'
+      'button-create-project',
     ).nativeElement;
     expect(createButton.disabled).toBeTruthy();
   });
@@ -217,7 +217,7 @@ describe('CreateProjectComponent', () => {
 
     const appProjectUserSettingComponent = findComponent(
       fixture,
-      'app-project-user-settings'
+      'app-project-user-settings',
     );
 
     expect(appProjectUserSettingComponent).toBeTruthy();
@@ -240,7 +240,7 @@ describe('CreateProjectComponent', () => {
   it('renders routerLink to /projects', () => {
     const cancelEl: HTMLElement = findElByTestId(
       fixture,
-      'a-cancel'
+      'a-cancel',
     ).nativeElement;
 
     expect(cancelEl.getAttribute('href')).toEqual('/projects');
@@ -256,7 +256,7 @@ describe('CreateProjectComponent', () => {
 
     const skipEl: HTMLElement = findElByTestId(
       fixture,
-      'a-skipModelAndFinishProjectCreation'
+      'a-skipModelAndFinishProjectCreation',
     ).nativeElement;
 
     expect(skipEl.getAttribute('href')).toEqual(`/project/${testProjectSlug}`);

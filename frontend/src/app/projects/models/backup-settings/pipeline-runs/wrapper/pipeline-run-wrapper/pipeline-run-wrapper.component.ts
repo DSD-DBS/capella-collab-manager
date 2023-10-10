@@ -26,15 +26,15 @@ export class PipelineRunWrapperComponent implements OnDestroy {
     private modelService: ModelService,
     private projectService: ProjectService,
     private route: ActivatedRoute,
-    private breadcrumbsService: BreadcrumbsService
+    private breadcrumbsService: BreadcrumbsService,
   ) {
     // Reset pipeline runs on pipeline or pipelineRunID change
     combineLatest([
       this.pipelineService.pipeline$.pipe(
-        filter((pipeline) => pipeline === undefined)
+        filter((pipeline) => pipeline === undefined),
       ),
       this.route.params.pipe(
-        filter((params) => params?.pipelineRun === undefined)
+        filter((params) => params?.pipelineRun === undefined),
       ),
     ]).subscribe(() => {
       this.pipelineRunService.resetPipelineRun();
@@ -49,10 +49,10 @@ export class PipelineRunWrapperComponent implements OnDestroy {
             !(
               pipelineRun &&
               this.pipelineRunService.pipelineRunIsFinished(pipelineRun.status)
-            )
+            ),
         ),
         tap(() => this.updatePipelineRun()),
-        untilDestroyed(this)
+        untilDestroyed(this),
       )
       .subscribe();
   }
@@ -70,8 +70,8 @@ export class PipelineRunWrapperComponent implements OnDestroy {
           project.slug,
           model.slug,
           pipeline.id,
-          pipelineRunID
-        )
+          pipelineRunID,
+        ),
       );
   }
 

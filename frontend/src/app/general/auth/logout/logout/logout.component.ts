@@ -18,7 +18,7 @@ export class LogoutComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private pageLayoutService: PageLayoutService
+    private pageLayoutService: PageLayoutService,
   ) {
     this.pageLayoutService.disableAll();
   }

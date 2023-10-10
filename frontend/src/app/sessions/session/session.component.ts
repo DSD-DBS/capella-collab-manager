@@ -34,7 +34,7 @@ export class SessionComponent implements OnInit {
     public fullscreenService: FullscreenService,
     private guacamoleService: GuacamoleService,
     private localStorageService: LocalStorageService,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
   ) {
     this.userSessionService.loadSessions();
   }
@@ -59,7 +59,7 @@ export class SessionComponent implements OnInit {
     this.userSessionService.sessions$
       .pipe(
         filter((sessions) => sessions !== undefined),
-        take(1)
+        take(1),
       )
       .subscribe((sessions) => {
         this.cachedSessions = sessions?.map((session) => {
@@ -124,7 +124,7 @@ export class SessionComponent implements OnInit {
   resizeSessions() {
     Array.from(document.getElementsByTagName('iframe')).forEach((iframe) => {
       const session = this.selectedSessions.find(
-        (session) => 'session-' + session.id === iframe.id
+        (session) => 'session-' + session.id === iframe.id,
       );
 
       if (session?.reloadToResize) {

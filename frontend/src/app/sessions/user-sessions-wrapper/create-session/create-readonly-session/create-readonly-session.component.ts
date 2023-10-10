@@ -44,10 +44,10 @@ export class CreateReadonlySessionComponent implements OnInit {
       tool: this.fb.control<Tool | null>(null, Validators.required),
       version: this.fb.control<ToolVersion | null>(
         { value: null, disabled: true },
-        Validators.required
+        Validators.required,
       ),
     },
-    { asyncValidators: this.asyncReadonlyValidator() }
+    { asyncValidators: this.asyncReadonlyValidator() },
   );
 
   constructor(
@@ -56,7 +56,7 @@ export class CreateReadonlySessionComponent implements OnInit {
     private projectService: ProjectService,
     private modelService: ModelService,
     private dialog: MatDialog,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {}
 
   ngOnInit(): void {
@@ -103,8 +103,8 @@ export class CreateReadonlySessionComponent implements OnInit {
 
     this.toolService.getVersionsForTool(tool.id).subscribe((toolVersions) => {
       const toolVersionIds = this.models?.map((m) => m.version?.id);
-      this.toolVersions = toolVersions.filter((v) =>
-        toolVersionIds?.includes(v.id)
+      this.toolVersions = toolVersions.filter(
+        (v) => toolVersionIds?.includes(v.id),
       );
     });
   }
@@ -119,14 +119,15 @@ export class CreateReadonlySessionComponent implements OnInit {
               session.project?.slug === this.projectSlug &&
               session.version?.id ===
                 this.toolSelectionForm.value.version!.id &&
-              session.version?.tool.id === this.toolSelectionForm.value.tool!.id
+              session.version?.tool.id ===
+                this.toolSelectionForm.value.tool!.id,
           )
             ? {
                 uniqueReadonlySession:
                   'Readonly session with these settings already exists',
               }
             : null;
-        })
+        }),
       );
     };
   }

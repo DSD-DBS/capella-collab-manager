@@ -31,7 +31,7 @@ export class T4CRepoDeletionDialogComponent {
   constructor(
     private repoService: T4CRepoService,
     public dialogRef: MatDialogRef<T4CRepoDeletionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public repo: T4CRepository
+    @Inject(MAT_DIALOG_DATA) public repo: T4CRepository,
   ) {}
 
   remoteRepository(): void {

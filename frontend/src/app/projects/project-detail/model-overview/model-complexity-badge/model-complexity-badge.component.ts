@@ -28,7 +28,7 @@ export class ModelComplexityBadgeComponent implements OnChanges {
 
   constructor(
     private modelComplexityBadgeService: ModelComplexityBadgeService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
   ) {}
 
   ngOnChanges(_: SimpleChanges) {
@@ -46,9 +46,9 @@ export class ModelComplexityBadgeComponent implements OnChanges {
         switchMap((projectSlug: string) => {
           return this.modelComplexityBadgeService.getModelComplexityBadge(
             projectSlug,
-            this.modelSlug!
+            this.modelSlug!,
           );
-        })
+        }),
       )
       .subscribe({
         next: (response: Blob) => {
@@ -62,7 +62,7 @@ export class ModelComplexityBadgeComponent implements OnChanges {
         error: (err) => {
           this.loadingComplexityBadge = false;
           this.errorMessage = ErrorHandlingInterceptor.getErrorReason(
-            err.error?.detail
+            err.error?.detail,
           );
           this.errorCode = err.error?.detail?.err_code;
         },

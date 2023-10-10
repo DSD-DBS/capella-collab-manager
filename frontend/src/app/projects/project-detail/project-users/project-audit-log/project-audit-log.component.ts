@@ -30,14 +30,14 @@ export class ProjectAuditLogComponent {
   constructor(
     public projectAuditLogService: ProjectAuditLogService,
     @Inject(MAT_DIALOG_DATA)
-    private data: { projectSlug: string }
+    private data: { projectSlug: string },
   ) {}
 
   ngOnInit() {
     this.projectAuditLogService.loadProjectHistoryEvents(
       this.data.projectSlug,
       1,
-      this.pageSize
+      this.pageSize,
     );
   }
 
@@ -55,14 +55,14 @@ export class ProjectAuditLogComponent {
             this.projectAuditLogService.loadProjectHistoryEvents(
               projectSlug,
               parseInt(entry.target.id),
-              this.pageSize
+              this.pageSize,
             );
           });
       },
       {
         root: null,
         threshold: 0.1,
-      }
+      },
     );
 
     this.pageElements?.changes.subscribe((res) => {

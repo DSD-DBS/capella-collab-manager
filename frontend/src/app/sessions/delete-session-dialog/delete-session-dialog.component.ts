@@ -17,7 +17,7 @@ export class DeleteSessionDialogComponent {
   constructor(
     private sessionService: SessionService,
     public dialogRef: MatDialogRef<DeleteSessionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public sessions: Session[]
+    @Inject(MAT_DIALOG_DATA) public sessions: Session[],
   ) {}
 
   deleteButton = {

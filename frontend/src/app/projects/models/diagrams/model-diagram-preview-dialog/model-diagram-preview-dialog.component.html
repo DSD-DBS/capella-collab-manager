@@ -3,13 +3,13 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flex flex-col justify-between w-full h-full">
+<div class="flex h-full w-full flex-col justify-between">
   <div class="p-2">
     <h2>Diagram preview of '{{ data.diagram.name }}'</h2>
     <span>UUID: {{ data.diagram.uuid }}</span>
     <mat-divider id="top-divider"></mat-divider>
   </div>
-  <div class="grow w-full">
+  <div class="w-full grow">
     <img #diagram class="h-full w-full" [src]="data.content" />
   </div>
   <div class="w-full">

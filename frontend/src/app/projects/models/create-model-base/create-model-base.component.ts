@@ -49,7 +49,7 @@ export class CreateModelBaseComponent implements OnInit {
     private modelService: ModelService,
     public projectService: ProjectService,
     public toolService: ToolService,
-    private toastService: ToastService
+    private toastService: ToastService,
   ) {}
 
   ngOnInit(): void {
@@ -73,7 +73,7 @@ export class CreateModelBaseComponent implements OnInit {
           next: (model) => {
             this.toastService.showSuccess(
               'Model created',
-              `The model with name ${model!.name} has been created`
+              `The model with name ${model!.name} has been created`,
             );
             this.create.emit();
           },

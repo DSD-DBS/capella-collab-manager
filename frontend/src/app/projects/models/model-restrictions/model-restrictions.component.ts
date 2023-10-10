@@ -35,7 +35,7 @@ export class ModelRestrictionsComponent implements OnInit {
     public projectService: ProjectService,
     public modelService: ModelService,
     public toastService: ToastService,
-    private modelRestrictionService: ModelRestrictionsService
+    private modelRestrictionService: ModelRestrictionsService,
   ) {}
 
   restrictionsForm = new FormGroup({
@@ -55,7 +55,7 @@ export class ModelRestrictionsComponent implements OnInit {
       });
 
     this.projectService.project$.subscribe(
-      (project) => (this.projectSlug = project?.slug)
+      (project) => (this.projectSlug = project?.slug),
     );
   }
 

@@ -17,6 +17,6 @@ export class HeaderComponent {
   constructor(
     public authService: AuthService,
     public userService: UserService,
-    public navBarService: NavBarService
+    public navBarService: NavBarService,
   ) {}
 }

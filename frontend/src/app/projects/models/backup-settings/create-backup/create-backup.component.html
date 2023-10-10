@@ -6,7 +6,7 @@
 <div class="dialog">
   <h1>Create a new backup pipeline</h1>
   <form [formGroup]="createBackupForm" *ngIf="t4cAndGitModelExists">
-    <div class="flex flex-row items-center flex-wrap">
+    <div class="flex flex-row flex-wrap items-center">
       <mat-card>
         Please select a T4C model:
         <mat-selection-list formControlName="t4cmodel" [multiple]="false">
@@ -55,7 +55,7 @@
     Please add a T4C model and Git model first!
   </div>
 
-  <div class="mt-button gap-button flex justify-between">
+  <div class="mt-button flex justify-between gap-button">
     <button mat-stroked-button class="w-full" [mat-dialog-close]="false">
       Cancel
     </button>

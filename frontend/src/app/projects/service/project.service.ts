@@ -50,13 +50,13 @@ export class ProjectService {
           this._project.next(project);
         },
         error: () => this._project.next(undefined),
-      })
+      }),
     );
   }
 
   updateProject(
     project_slug: string,
-    project: PatchProject
+    project: PatchProject,
   ): Observable<Project> {
     return this.http
       .patch<Project>(`${this.BACKEND_URL_PREFIX}/${project_slug}`, project)
@@ -67,7 +67,7 @@ export class ProjectService {
             this._project.next(project);
           },
           error: () => this._project.next(undefined),
-        })
+        }),
       );
   }
 
@@ -78,7 +78,7 @@ export class ProjectService {
         tap(() => {
           this.loadProjects();
           this._project.next(undefined);
-        })
+        }),
       );
   }
 
@@ -95,11 +95,11 @@ export class ProjectService {
         map((projects) => {
           return projects?.find(
             (project) =>
-              project.slug === projectSlug && project.slug !== ignoreSlug
+              project.slug === projectSlug && project.slug !== ignoreSlug,
           )
             ? { uniqueSlug: { value: projectSlug } }
             : null;
-        })
+        }),
       );
     };
   }

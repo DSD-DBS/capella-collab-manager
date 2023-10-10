@@ -3,8 +3,8 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper flex flex-center">
-  <mat-card *ngIf="modelService.model$ | async" class="basis-1 grow">
+<div class="wrapper flex-center flex">
+  <mat-card *ngIf="modelService.model$ | async" class="grow basis-1">
     <mat-card-title>{{ (modelService.model$ | async)!.name }}</mat-card-title>
     <form (submit)="onSubmit()" [formGroup]="form">
       <fieldset>

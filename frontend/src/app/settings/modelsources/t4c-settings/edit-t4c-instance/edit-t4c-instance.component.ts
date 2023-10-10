@@ -72,14 +72,14 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
     private router: Router,
     private toastService: ToastService,
     private toolService: ToolService,
-    private breadcrumbsService: BreadcrumbsService
+    private breadcrumbsService: BreadcrumbsService,
   ) {}
 
   ngOnInit(): void {
     this.route.params
       .pipe(
         map((params) => params.instance),
-        filter(Boolean)
+        filter(Boolean),
       )
       .subscribe((instanceId) => {
         this.existing = true;
@@ -130,7 +130,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
         .subscribe((instance) => {
           this.toastService.showSuccess(
             'Instance created',
-            `The instance “${instance.name}” was created.`
+            `The instance “${instance.name}” was created.`,
           );
           this.router.navigate(['..', 'instance', instance.id], {
             relativeTo: this.route,
@@ -148,7 +148,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
           this.form.disable();
           this.toastService.showSuccess(
             'Instance updated',
-            `The instance “${instance.name}” was updated.`
+            `The instance “${instance.name}” was updated.`,
           );
         });
     }
@@ -166,7 +166,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
             'Instance updated',
             `The instance “${instance.name}” is now ${
               this.isArchived ? 'archived' : 'unarchived'
-            }.`
+            }.`,
           );
         });
     }

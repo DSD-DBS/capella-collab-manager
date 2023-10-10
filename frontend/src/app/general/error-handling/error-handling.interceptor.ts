@@ -29,7 +29,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
 
   intercept(
     request: HttpRequest<unknown>,
-    next: HttpHandler
+    next: HttpHandler,
   ): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
       catchError(this.constructErrorDetailTransformationObservable),
@@ -48,7 +48,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
                 }
                 this.toastService.showError(
                   error.title || '',
-                  error.reason || ''
+                  error.reason || '',
                 );
               }
             }
@@ -59,7 +59,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
                 }
                 this.toastService.showWarning(
                   warning.title || '',
-                  warning.reason || ''
+                  warning.reason || '',
                 );
               }
             }
@@ -81,25 +81,25 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
               for (const error of detail) {
                 this.toastService.showError(
                   getReasonPhrase(err.status),
-                  error.msg
+                  error.msg,
                 );
               }
             } else if (detail.reason) {
               // User defined error
               this.toastService.showError(
                 'An error occurred!',
-                ErrorHandlingInterceptor.getErrorReason(detail)
+                ErrorHandlingInterceptor.getErrorReason(detail),
               );
             }
           } else if (err.status === 0) {
             this.toastService.showError(
               'Backend not reachable',
-              'Please check your internet connection and refresh the page!'
+              'Please check your internet connection and refresh the page!',
             );
           } else {
             this.toastService.showError(
               'An error occurred!',
-              'Please try again!'
+              'Please try again!',
             );
           }
         },
@@ -113,7 +113,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
           }
         }
         return event;
-      })
+      }),
     );
   }
 
@@ -137,7 +137,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
           reader.onload = (e: Event) => {
             try {
               const errmsg = JSON.parse(
-                (<FileReaderEventTarget>e.target).result
+                (<FileReaderEventTarget>e.target).result,
               );
               reject(
                 new HttpErrorResponse({
@@ -146,7 +146,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
                   status: err.status,
                   statusText: err.statusText,
                   url: err.url || undefined,
-                })
+                }),
               );
             } catch (e) {
               reject(err);
@@ -156,7 +156,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
             reject(err);
           };
           reader.readAsText(err.error);
-        })
+        }),
       );
     }
 

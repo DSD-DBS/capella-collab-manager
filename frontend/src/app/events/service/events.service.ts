@@ -29,7 +29,7 @@ export class EventsService {
 
   customSortingDataAccessor(
     data: HistoryEvent,
-    sortHeaderId: string
+    sortHeaderId: string,
   ): string | number {
     switch (sortHeaderId) {
       case 'eventType':

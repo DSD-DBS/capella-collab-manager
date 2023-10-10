@@ -16,7 +16,7 @@ export class ToolDeletionDialogComponent {
   constructor(
     private toolService: ToolService,
     public dialogRef: MatDialogRef<ToolDeletionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public tool: Tool
+    @Inject(MAT_DIALOG_DATA) public tool: Tool,
   ) {}
 
   deleteTool(): void {
