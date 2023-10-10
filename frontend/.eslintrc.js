@@ -4,6 +4,18 @@
  */
 
 module.exports = {
+  settings: {
+    tailwindcss: {
+      config: "frontend/tailwind.config.js",
+      cssFiles: [
+        "frontend/**/*.css",
+        "!**/node_modules",
+        "!**/.*",
+        "!**/dist",
+        "!**/build",
+      ],
+    },
+  },
   overrides: [
     {
       files: ["*.ts"],
@@ -27,15 +39,6 @@ module.exports = {
             style: "camelCase",
           },
         ],
-        /* Find a proper naming strategy
-        "@angular-eslint/component-selector": [
-          "error",
-          {
-            type: "element",
-            prefix: "app",
-            style: "kebab-case",
-          },
-        ], */
         "import/order": [
           "error",
           {
@@ -60,8 +63,18 @@ module.exports = {
     },
     {
       files: ["*.html"],
-      extends: ["plugin:@angular-eslint/template/recommended"],
-      rules: {},
+      extends: [
+        "plugin:@angular-eslint/template/recommended",
+        "plugin:tailwindcss/recommended",
+      ],
+      parser: "@angular-eslint/template-parser",
+      rules: {
+        "tailwindcss/classnames-order": "off",
+        "tailwindcss/no-custom-classname": "error",
+        "tailwindcss/enforces-negative-arbitrary-values": "error",
+        "tailwindcss/enforces-shorthand": "error",
+        "tailwindcss/no-contradicting-classname": "error",
+      },
     },
   ],
 };

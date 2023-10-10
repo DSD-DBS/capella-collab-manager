@@ -11,7 +11,7 @@
     </div>
     <app-model-overview></app-model-overview>
   </div>
-  <div class="basis-500" *ngIf="projectUserService.verifyRole('manager')">
+  <div *ngIf="projectUserService.verifyRole('manager')">
     <app-project-user-settings></app-project-user-settings>
   </div>
 </div>

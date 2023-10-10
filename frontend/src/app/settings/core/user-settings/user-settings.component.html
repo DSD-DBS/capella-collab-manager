@@ -19,7 +19,9 @@
     <mat-selection-list
       #userSelectionList
       [multiple]="false"
-      class="scrollable simple-scroll"
+      [class]="
+        'scrollable simple-scroll' // eslint-disable-line tailwindcss/no-custom-classname
+      "
       (selectionChange)="onUserSelect($event.options[0].value)"
     >
       <div mat-subheader>Administrators</div>

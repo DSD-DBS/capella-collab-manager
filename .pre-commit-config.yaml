@@ -143,6 +143,7 @@ repos:
           - "@typescript-eslint/parser@^6.7.4"
           - "eslint-plugin-unused-imports@^3.0.0"
           - "eslint-plugin-deprecation@^2.0.0"
+          - "eslint-plugin-tailwindcss@^3.13.0"
         args: ["--fix"]
         types: []
         exclude: '.+\.spec(-helper)?\.ts$'

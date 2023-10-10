@@ -37,7 +37,7 @@
   </a>
 
   <mat-card *ngFor="let session of userSessionService.sessions$ | async">
-    <div class="type">
+    <div>
       <h2 *ngIf="isPersistentSession(session)">Persistent workspace session</h2>
       <h2 *ngIf="isReadonlySession(session)">Read-only session</h2>
     </div>
