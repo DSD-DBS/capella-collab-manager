@@ -10,7 +10,7 @@ dynamic = ["version"]
 
 name = "capellacollab-backend"
 readme = "README.md"
-requires-python = ">=3.11, <3.12"
+requires-python = ">=3.11, <3.13"
 license = { text = "Apache-2.0" }
 authors = [{ name = "DB Netz AG" }]
 keywords = []
@@ -19,8 +19,7 @@ classifiers = [
   "License :: OSI Approved :: Apache Software License",
   "Natural Language :: English",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python",
 ]
 dependencies = [
   "PyYAML",
