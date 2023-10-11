@@ -24,7 +24,7 @@ classifiers = [
 ]
 dependencies = [
   "PyYAML",
-  "alembic==1.10.4",
+  "alembic==1.12.0",
   "appdirs",
   "cachetools",
   "fastapi>=0.101.0",
