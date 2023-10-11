@@ -8,7 +8,6 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.authentication import jwt_bearer
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
 from capellacollab.users import crud as users_crud
@@ -80,11 +79,11 @@ def get_current_user(
         projects_injectables.get_existing_project
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+    username: str = fastapi.Depends(auth_injectables.get_username),
 ) -> models.ProjectUserAssociation | models.ProjectUser:
     if auth_injectables.RoleVerification(
         required_role=users_models.Role.ADMIN, verify=False
-    )(token, db):
+    )(username, db):
         return models.ProjectUser(
             role=models.ProjectUserRole.ADMIN,
             permission=models.ProjectUserPermission.WRITE,

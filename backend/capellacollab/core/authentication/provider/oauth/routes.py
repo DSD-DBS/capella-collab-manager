@@ -7,7 +7,6 @@ from sqlalchemy import orm
 import capellacollab.users.crud as users_crud
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.authentication.helper import get_username
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.authentication.schemas import (
     RefreshTokenRequest,
@@ -35,7 +34,7 @@ async def api_get_token(
     validated_token = JWTBearer().validate_token(access_token)
     assert validated_token
 
-    username = get_username(validated_token)
+    username = JWTBearer().get_username(validated_token)
 
     if user := users_crud.get_user_by_name(db, username):
         users_crud.update_last_login(db, user)
@@ -56,9 +55,12 @@ async def logout():
 @router.get("/tokens", name="Validate the token")
 async def validate_token(
     scope: Role | None,
-    token=fastapi.Depends(JWTBearer()),
+    jwt_information=fastapi.Depends(JWTBearer()),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
+    username, _ = jwt_information
     if scope and scope.ADMIN:
-        auth_injectables.RoleVerification(required_role=Role.ADMIN)(token, db)
-    return token
+        auth_injectables.RoleVerification(required_role=Role.ADMIN)(
+            username, db
+        )
+    return username

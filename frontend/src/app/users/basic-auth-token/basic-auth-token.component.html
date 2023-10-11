@@ -1,0 +1,108 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div>
+  <h2 class="!mb-2">Personal Access Tokens</h2>
+  To create a Personal Access Token please choose an expiration date and provide
+  a short description.
+  <form [formGroup]="tokenForm" (ngSubmit)="createToken()">
+    <mat-form-field appearance="outline" class="my-2 w-9/12">
+      <mat-label>Token description</mat-label>
+      <textarea
+        matInput
+        placeholder="Please shortly describe the purpose of the token"
+        formControlName="description"
+      ></textarea>
+      <mat-hint
+        ><strong
+          >Note: The created token has the same permissions as you have when
+          being logged in.</strong
+        ></mat-hint
+      >
+    </mat-form-field>
+    <div class="flex">
+      <mat-form-field class="mr-10">
+        <mat-label>Choose an expiration date</mat-label>
+        <input
+          matInput
+          [min]="minDate"
+          [max]="maxDate"
+          [matDatepicker]="picker"
+          formControlName="date"
+        />
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <button
+      class="!my-2 text-white"
+      color="primary"
+      mat-raised-button
+      [disabled]="!tokenForm.valid"
+    >
+      Create Token
+    </button>
+  </form>
+  <div *ngIf="password" class="mb-10">
+    <mat-card class="!ml-0">
+      Generated Token:
+      <span class="font-mono border mr-1">
+        <span [ngClass]="{ blur: !passwordRevealed }">{{
+          password
+        }}</span></span
+      >
+      <button
+        *ngIf="!passwordRevealed"
+        (click)="this.passwordRevealed = true"
+        mat-mini-fab
+        matTooltip="Show password"
+        class="!mx-1"
+      >
+        <mat-icon>blur_off</mat-icon>
+      </button>
+      <button
+        *ngIf="passwordRevealed"
+        (click)="this.passwordRevealed = false"
+        mat-mini-fab
+        matTooltip="Hide password"
+        class="!mx-1"
+      >
+        <mat-icon>blur_on</mat-icon>
+      </button>
+      <button
+        [cdkCopyToClipboard]="password"
+        mat-mini-fab
+        matTooltip="Copy password to Clipboard"
+        (click)="showClipboardMessage()"
+        class="!mx-1"
+      >
+        <mat-icon>content_copy</mat-icon>
+      </button>
+      <div class="text-red-600 mt-2">
+        Make sure you save the token - you won't be able to access it again.
+      </div></mat-card
+    >
+  </div>
+  <h2>Token overview</h2>
+  <ng-container *ngIf="(tokenService.tokens$ | async)?.length; else elseBlock">
+    <mat-card *ngFor="let token of tokenService.tokens$ | async" class="!ml-0">
+      <mat-card-content>
+        Description: {{ token.description }} <br />
+        Expiration date: {{ token.expiration_date | date }} <br />
+        Creation location: {{ token.source }}
+        <div *ngIf="isTokenExpired(token.expiration_date)">
+          <mat-icon color="warn" class="align-middle">warning</mat-icon>
+          <span class="text-red-600">This token has expired!</span>
+        </div>
+      </mat-card-content>
+      <button (click)="deleteToken(token)" mat-raised-button>
+        <mat-icon color="warn" class="align-middle">delete</mat-icon>
+        <span>Revoke token</span>
+      </button>
+    </mat-card>
+  </ng-container>
+  <ng-template #elseBlock>No token created for your user yet.</ng-template>
+</div>

@@ -73,7 +73,7 @@ def fixture_executor_name(monkeypatch: pytest.MonkeyPatch) -> str:
     name = str(uuid1())
 
     async def bearer_passthrough(self, request: fastapi.Request):
-        return {"sub": name}
+        return name
 
     monkeypatch.setattr(JWTBearer, "__call__", bearer_passthrough)
 
@@ -140,7 +140,7 @@ def project_user(
 
 @pytest.fixture()
 def client() -> testclient.TestClient:
-    return testclient.TestClient(app)
+    return testclient.TestClient(app, headers={"Authorization": "bearer"})
 
 
 def delete_all_tables_if_existent(_engine: sqlalchemy.engine.Engine) -> bool:

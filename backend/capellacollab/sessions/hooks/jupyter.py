@@ -46,7 +46,6 @@ class JupyterIntegration(interface.HookRegistration):
         db: orm.Session,
         user: users_models.DatabaseUser,
         tool: tools_models.DatabaseTool,
-        token: dict[str, t.Any],
         **kwargs,
     ) -> tuple[
         JupyterConfigEnvironment,
@@ -63,7 +62,7 @@ class JupyterIntegration(interface.HookRegistration):
             "CSP_ORIGIN_HOST": f"{self._general_conf.get('scheme')}://{self._general_conf.get('host')}:{self._general_conf.get('port')}",
         }
 
-        volumes = self._get_project_share_volume_mounts(db, token, tool)
+        volumes = self._get_project_share_volume_mounts(db, user.name, tool)
 
         return environment, volumes, []  # type: ignore[return-value]
 
@@ -95,7 +94,7 @@ class JupyterIntegration(interface.HookRegistration):
     def _get_project_share_volume_mounts(
         self,
         db: orm.Session,
-        token: dict[str, t.Any],
+        username: str,
         tool: tools_models.DatabaseTool,
     ) -> list[operators_models.PersistentVolume]:
         volumes = []
@@ -105,7 +104,7 @@ class JupyterIntegration(interface.HookRegistration):
             for model in toolmodels_crud.get_models_by_tool(db, tool.id)
             if model.configuration
             and "workspace" in model.configuration
-            and self._is_project_member(model, token, db)
+            and self._is_project_member(model, username, db)
         ]
 
         for model in accessible_models_with_workspace_configuration:
@@ -114,7 +113,7 @@ class JupyterIntegration(interface.HookRegistration):
                 operators_models.PersistentVolume(
                     name=model.configuration["workspace"],
                     read_only=not self._has_project_write_access(
-                        model, token, db
+                        model, username, db
                     ),
                     container_path=pathlib.PurePosixPath("/shared")
                     / model.project.slug
@@ -129,22 +128,22 @@ class JupyterIntegration(interface.HookRegistration):
     def _is_project_member(
         self,
         model: toolmodels_models.DatabaseCapellaModel,
-        token: dict[str, t.Any],
+        username: str,
         db: orm.Session,
     ) -> bool:
         return auth_injectables.ProjectRoleVerification(
             required_role=projects_users_models.ProjectUserRole.USER,
             verify=False,
-        )(model.project.slug, token, db)
+        )(model.project.slug, username, db)
 
     def _has_project_write_access(
         self,
         model: toolmodels_models.DatabaseCapellaModel,
-        token: dict[str, t.Any],
+        username: str,
         db: orm.Session,
     ) -> bool:
         return auth_injectables.ProjectRoleVerification(
             required_role=projects_users_models.ProjectUserRole.USER,
             required_permission=projects_users_models.ProjectUserPermission.WRITE,
             verify=False,
-        )(model.project.slug, token, db)
+        )(model.project.slug, username, db)

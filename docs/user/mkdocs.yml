@@ -67,6 +67,7 @@ nav:
               - Update a TeamForCapella based model: tools/capella/teamforcapella/update.md
           - Git:
               - Working with Git: tools/capella/working-with-git.md
+  - Authentication: tokens.md
   - Release Notes: release-notes.md
   - About: about.md
 

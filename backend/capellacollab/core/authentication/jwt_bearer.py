@@ -11,8 +11,8 @@ from jose import jwt
 
 import capellacollab.users.crud as users_crud
 import capellacollab.users.events.crud as events_crud
+from capellacollab.config import config
 from capellacollab.core import database
-from capellacollab.core.authentication import helper as auth_helper
 
 from . import get_authentication_entrypoint
 
@@ -27,7 +27,7 @@ class JWTBearer(security.HTTPBearer):
 
     async def __call__(  # type: ignore
         self, request: fastapi.Request
-    ) -> dict[str, t.Any] | None:
+    ) -> str | None:
         credentials: security.HTTPAuthorizationCredentials | None = (
             await super().__call__(request)
         )
@@ -37,17 +37,28 @@ class JWTBearer(security.HTTPBearer):
                 raise fastapi.HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Not authenticated",
-                    headers={"WWW-Authenticate": "Bearer"},
+                    headers={"WWW-Authenticate": "Bearer, Basic"},
                 )
             return None
         if token_decoded := self.validate_token(credentials.credentials):
             self.initialize_user(token_decoded)
-            return token_decoded
+            return self.get_username(token_decoded)
+        if self.auto_error:
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Not authenticated",
+                headers={"WWW-Authenticate": "Bearer, Basic"},
+            )
         return None
+
+    def get_username(self, token_decoded: dict[str, str]) -> str:
+        return token_decoded[
+            config["authentication"]["jwt"]["usernameClaim"]
+        ].strip()
 
     def initialize_user(self, token_decoded: dict[str, str]):
         with database.SessionLocal() as session:
-            username: str = auth_helper.get_username(token_decoded)
+            username: str = self.get_username(token_decoded)
             if not users_crud.get_user_by_name(session, username):
                 created_user = users_crud.create_user(session, username)
                 users_crud.update_last_login(session, created_user)
@@ -61,7 +72,7 @@ class JWTBearer(security.HTTPBearer):
                 raise fastapi.HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail={
-                        "err_code": "TOKEN_INVALID",
+                        "err_code": "JWT_TOKEN_INVALID",
                         "reason": "The used token is not valid.",
                     },
                 ) from None

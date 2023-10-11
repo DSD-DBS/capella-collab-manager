@@ -6,9 +6,7 @@ from fastapi import status
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core.authentication import helper as auth_helper
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.authentication import jwt_bearer
 from capellacollab.users import models as users_models
 
 from . import crud, models
@@ -17,7 +15,7 @@ from . import crud, models
 def get_existing_session(
     session_id: str,
     db: orm.Session = fastapi.Depends(database.get_db),
-    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+    username: str = fastapi.Depends(auth_injectables.get_username),
 ) -> models.DatabaseSession:
     if not (session := crud.get_session_by_id(db, session_id)):
         raise fastapi.HTTPException(
@@ -27,10 +25,10 @@ def get_existing_session(
             },
         )
     if not (
-        session.owner_name == auth_helper.get_username(token)
+        session.owner_name == username
         or auth_injectables.RoleVerification(
             required_role=users_models.Role.ADMIN, verify=False
-        )(token, db)
+        )(username, db)
     ):
         raise fastapi.HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

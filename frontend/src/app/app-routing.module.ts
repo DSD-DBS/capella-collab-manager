@@ -13,6 +13,7 @@ import { ModelRestrictionsComponent } from 'src/app/projects/models/model-restri
 import { EditProjectMetadataComponent } from 'src/app/projects/project-detail/edit-project-metadata/edit-project-metadata.component';
 import { SessionComponent } from 'src/app/sessions/session/session.component';
 import { PipelinesOverviewComponent } from 'src/app/settings/core/pipelines-overview/pipelines-overview.component';
+import { BasicAuthTokenComponent } from 'src/app/users/basic-auth-token/basic-auth-token.component';
 import { EventsComponent } from './events/events.component';
 import { AuthComponent } from './general/auth/auth/auth.component';
 import { AuthGuardService } from './general/auth/auth-guard/auth-guard.service';
@@ -440,6 +441,11 @@ const routes: Routes = [
         path: 'events',
         data: { breadcrumb: 'Events' },
         component: EventsComponent,
+      },
+      {
+        path: 'tokens',
+        data: { breadcrumb: 'Tokens' },
+        component: BasicAuthTokenComponent,
       },
     ],
   },

@@ -3,11 +3,18 @@
 
 from __future__ import annotations
 
+import dataclasses
+import logging
+
 import fastapi
 from fastapi import status
+from fastapi.openapi import models as openapi_models
+from fastapi.security import base as security_base
+from fastapi.security import utils as security_utils
+from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core.authentication import jwt_bearer
+from capellacollab.core.authentication import basic_auth, jwt_bearer
 from capellacollab.projects import crud as projects_crud
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
@@ -15,7 +22,74 @@ from capellacollab.projects.users import models as projects_users_models
 from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
-from . import helper
+logger = logging.getLogger(__name__)
+
+
+class OpenAPIFakeBase(security_base.SecurityBase):
+    """Fake class to display the authentication methods in the OpenAPI docs
+
+    fastAPI uses DependencyInjection together with the SecurityBase class
+    to determine which authentication methods are available.
+    More information in fastapi/dependencies/utils::get_sub_dependant
+    """
+
+    def __init__(self) -> None:
+        pass
+
+    def __call__(self) -> None:
+        pass
+
+    def __hash__(self) -> int:
+        return hash(self.__class__.__name__)
+
+
+@dataclasses.dataclass()
+class OpenAPIPersonalAccessToken(OpenAPIFakeBase):
+    """Displays the personal access token as authentication method in the OpenAPI docs"""
+
+    model = openapi_models.HTTPBase(
+        scheme="basic",
+        description="Can be used to authenticate with an personal access token",
+    )
+    scheme_name = "PersonalAccessToken"
+
+    __hash__ = OpenAPIFakeBase.__hash__
+
+
+@dataclasses.dataclass()
+class OpenAPIBearerToken(OpenAPIFakeBase):
+    """Displays the JWT Bearer token as authentication method in the OpenAPI docs"""
+
+    model = openapi_models.HTTPBase(
+        scheme="bearer",
+    )
+    scheme_name = "JWTBearer"
+
+    __hash__ = OpenAPIFakeBase.__hash__
+
+
+async def get_username(
+    request: fastapi.Request,
+    _unused1=fastapi.Depends(OpenAPIPersonalAccessToken()),
+    _unused2=fastapi.Depends(OpenAPIBearerToken()),
+) -> str:
+    authorization = request.headers.get("Authorization")
+    scheme, _ = security_utils.get_authorization_scheme_param(authorization)
+    username = None
+    match scheme.lower():
+        case "basic":
+            username = await basic_auth.HTTPBasicAuth()(request)
+        case "bearer":
+            username = await jwt_bearer.JWTBearer()(request)
+        case _:
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token is none and username cannot be derived",
+                headers={"WWW-Authenticate": "Bearer, Basic"},
+            )
+
+    assert username
+    return username
 
 
 class RoleVerification:
@@ -25,10 +99,9 @@ class RoleVerification:
 
     def __call__(
         self,
-        token=fastapi.Depends(jwt_bearer.JWTBearer()),
-        db=fastapi.Depends(database.get_db),
+        username: str = fastapi.Depends(get_username),
+        db: orm.Session = fastapi.Depends(database.get_db),
     ) -> bool:
-        username = helper.get_username(token)
         if not (user := users_crud.get_user_by_name(db, username)):
             if self.verify:
                 raise fastapi.HTTPException(
@@ -73,10 +146,9 @@ class ProjectRoleVerification:
     def __call__(
         self,
         project_slug: str,
-        token=fastapi.Depends(jwt_bearer.JWTBearer()),
-        db=fastapi.Depends(database.get_db),
+        username: str = fastapi.Depends(get_username),
+        db: orm.Session = fastapi.Depends(database.get_db),
     ) -> bool:
-        username = helper.get_username(token)
         if not (user := users_crud.get_user_by_name(db, username)):
             if self.verify:
                 raise fastapi.HTTPException(

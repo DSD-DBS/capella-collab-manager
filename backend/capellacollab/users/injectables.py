@@ -7,18 +7,15 @@ import fastapi
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core.authentication import helper as auth_helper
-from capellacollab.core.authentication import jwt_bearer
+from capellacollab.core.authentication import injectables as auth_injectables
 
 from . import crud, exceptions, models
 
 
 def get_own_user(
     db: orm.Session = fastapi.Depends(database.get_db),
-    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+    username: str = fastapi.Depends(auth_injectables.get_username),
 ) -> models.DatabaseUser:
-    username = auth_helper.get_username(token)
-
     if user := crud.get_user_by_name(db, username):
         return user
 
@@ -28,10 +25,10 @@ def get_own_user(
 def get_existing_user(
     user_id: int | t.Literal["current"],
     db=fastapi.Depends(database.get_db),
-    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+    username: str = fastapi.Depends(auth_injectables.get_username),
 ) -> models.DatabaseUser:
     if user_id == "current":
-        return get_own_user(db, token)
+        return get_own_user(db, username)
 
     if user := crud.get_user_by_id(db, user_id):
         return user

@@ -11,9 +11,7 @@ from sqlalchemy import orm
 
 import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repository_interface
 from capellacollab.core import credentials, database
-from capellacollab.core.authentication import helper as auth_helper
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.authentication import jwt_bearer
 from capellacollab.projects.toolmodels import (
     injectables as toolmodels_injectables,
 )
@@ -74,7 +72,7 @@ def create_backup(
         toolmodels_injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+    username: str = fastapi.Depends(auth_injectables.get_username),
 ):
     git_model = git_injectables.get_existing_git_model(
         body.git_model_id, capella_model, db
@@ -127,7 +125,7 @@ def create_backup(
             k8s_cronjob_id=reference,
             git_model=git_model,
             t4c_model=t4c_model,
-            created_by=auth_helper.get_username(token),
+            created_by=username,
             model=capella_model,
             t4c_username=username,
             t4c_password=password,
@@ -143,7 +141,7 @@ def delete_pipeline(
         injectables.get_existing_pipeline
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    token=fastapi.Depends(jwt_bearer.JWTBearer()),
+    username: str = fastapi.Depends(auth_injectables.get_username),
     force: bool = False,
 ):
     try:
@@ -163,7 +161,7 @@ def delete_pipeline(
             force
             and auth_injectables.RoleVerification(
                 required_role=users_models.Role.ADMIN, verify=False
-            )(token=token, db=db)
+            )(username=username, db=db)
         ):
             raise exceptions.PipelineOperationFailedT4CServerUnreachable(
                 exceptions.PipelineOperation.DELETE

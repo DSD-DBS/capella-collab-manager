@@ -16,6 +16,7 @@ if t.TYPE_CHECKING:
     from capellacollab.projects.users.models import ProjectUserAssociation
     from capellacollab.sessions.models import DatabaseSession
     from capellacollab.users.events.models import DatabaseUserHistoryEvent
+    from capellacollab.users.tokens.models import DatabaseUserToken
 
 
 class Role(enum.Enum):
@@ -63,4 +64,8 @@ class DatabaseUser(database.Base):
     )
     events: orm.Mapped[list[DatabaseUserHistoryEvent]] = orm.relationship(
         back_populates="user", foreign_keys="DatabaseUserHistoryEvent.user_id"
+    )
+
+    tokens: orm.Mapped[list[DatabaseUserToken]] = orm.relationship(
+        back_populates="user", cascade="all, delete-orphan"
     )
