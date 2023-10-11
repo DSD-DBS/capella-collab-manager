@@ -22,11 +22,10 @@ valid.
 
 ## PAT Scope
 
-Personal access token have almost (not for requesting oauth or azure tokens)
-the same scope as the user who created it. It is therefore important that you
-never pass on the token and treat it responsibly. If you feel that the token
-has been lost, revoke it immediately and inform the Systems Engineering
-Toolchain team.
+Personal access token have the same scope as the user who created it. It is
+therefore important that you never pass on the token and treat it responsibly.
+If you feel that the token has been lost, revoke it immediately and inform the
+Systems Engineering Toolchain team.
 
 ## Revoke a PAT
 
@@ -40,22 +39,5 @@ The token created is a personal access token. There are different ways to
 authenticate with that against the Collaboration Manager API. One example is:
 
 ```zsh
-curl --basic -u <username>:<token> https://<baseURL>/api/v1/users/current/tokens
-```
-
-or to work with the diagram cache of Capellambse. Capellambse is an
-implementation of the capella modelling tool using python and lets you read and
-write models. For more information have a look at the
-[documentation](https://dsd-dbs.github.io/py-capellambse/) or the
-[github repository](https://github.com/DSD-DBS/py-capellambse).
-
-```python
-capellambse.model.MelodyModel(
-  path="path to the model on your machine",
-  diagram_cache={
-    "path": "https://<baseURL>/api/projects/[yourProjectSlug]/[yourModelSlug]/diagrams/%s",
-    "username": "<username>",
-    "password": "<token>",
-  }
-)
+curl -u [username]:[token] https://[baseURL]/api/v1/projects
 ```
