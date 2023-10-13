@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
+
 import contextlib
 import select
 import sys
@@ -11,7 +13,7 @@ from typing import Annotated
 
 import typer
 from kubernetes import client, config, stream
-from websocket import ABNF
+from websocket import ABNF  # type: ignore[import]
 
 app = typer.Typer()
 
@@ -91,7 +93,7 @@ def restore(
     namespace: Annotated[str, NamespaceOption],
     access_mode: str = "ReadWriteMany",
     storage_class_name: str = "persistent-sessions-csi",
-    user_id: str = None,
+    user_id: str | None = None,
 ):
     """Restore a backup to a Kubernetes Persistent Volume.
 
@@ -223,7 +225,7 @@ def adjust_directory_permissions(
     pod_name: str,
     namespace: str,
     v1: client.CoreV1Api,
-    user_id: str,
+    user_id: str | None,
     directory: str = MOUNT_PATH,
 ):
     resp = stream.stream(
@@ -322,7 +324,7 @@ class WSFileManager:
     def __init__(self, ws_client):
         self.ws_client = ws_client
 
-    def read_bytes(self, timeout=0) -> bytes:
+    def read_bytes(self, timeout=0) -> tuple[bytes | None, bytes | None, bool]:
         stdout_bytes = None
         stderr_bytes = None
 
