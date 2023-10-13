@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
@@ -13,21 +13,21 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
-import { Observable, filter, map, take } from 'rxjs';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Observable, map, take } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   ProjectUserService,
   SimpleProjectUserRole,
 } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import { ProjectService } from 'src/app/projects/service/project.service';
+import { Project } from 'src/app/projects/service/project.service';
 
 @Component({
   selector: 'app-add-user-to-project',
   templateUrl: './add-user-to-project.component.html',
   styleUrls: ['./add-user-to-project.component.css'],
 })
-export class AddUserToProjectComponent {
+export class AddUserToProjectDialogComponent {
   addUserToProjectForm = new FormGroup(
     {
       username: new FormControl('', {
@@ -43,9 +43,9 @@ export class AddUserToProjectComponent {
 
   constructor(
     public projectUserService: ProjectUserService,
-    private projectService: ProjectService,
     private toastService: ToastService,
-    private matDialogRef: MatDialogRef<AddUserToProjectComponent>
+    private matDialogRef: MatDialogRef<AddUserToProjectDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { project: Project }
   ) {}
 
   asyncUserAlreadyInProjectValidator(): AsyncValidatorFn {
@@ -85,29 +85,27 @@ export class AddUserToProjectComponent {
   }
 
   addUser(): void {
-    this.projectService.project$.pipe(filter(Boolean)).subscribe((project) => {
-      if (this.addUserToProjectForm.valid) {
-        const formValue = this.addUserToProjectForm.value;
+    if (this.addUserToProjectForm.valid) {
+      const formValue = this.addUserToProjectForm.value;
 
-        const permission =
-          formValue.role === 'manager' ? 'write' : formValue.permission;
-        this.projectUserService
-          .addUserToProject(
-            project.slug,
-            formValue.username as string,
-            formValue.role as SimpleProjectUserRole,
-            permission as string,
-            formValue.reason as string
-          )
-          .subscribe(() => {
-            this.addUserToProjectForm.reset();
-            this.toastService.showSuccess(
-              `User added`,
-              `User '${formValue.username}' has been added to project '${project?.name}'`
-            );
-            this.matDialogRef.close();
-          });
-      }
-    });
+      const permission =
+        formValue.role === 'manager' ? 'write' : formValue.permission;
+      this.projectUserService
+        .addUserToProject(
+          this.data.project.slug,
+          formValue.username as string,
+          formValue.role as SimpleProjectUserRole,
+          permission as string,
+          formValue.reason as string
+        )
+        .subscribe(() => {
+          this.addUserToProjectForm.reset();
+          this.toastService.showSuccess(
+            `User added`,
+            `User '${formValue.username}' has been added to project '${this.data.project.name}'`
+          );
+          this.matDialogRef.close();
+        });
+    }
   }
 }

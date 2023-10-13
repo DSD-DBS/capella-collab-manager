@@ -7,6 +7,8 @@ import slugify
 import sqlalchemy as sa
 from sqlalchemy import orm
 
+from capellacollab.core import database
+
 from . import models
 
 
@@ -44,12 +46,10 @@ def update_project(
     patch_project: models.PatchProject,
 ) -> models.DatabaseProject:
     if patch_project.name:
-        project.name = patch_project.name
         project.slug = slugify.slugify(patch_project.name)
-    if patch_project.description:
-        project.description = patch_project.description
-    if patch_project.visibility:
-        project.visibility = patch_project.visibility
+
+    database.patch_database_with_pydantic_object(project, patch_project)
+
     db.commit()
     return project
 

@@ -42,7 +42,7 @@ export class ProjectService {
     });
   }
 
-  createProject(project: Required<PatchProject>): Observable<Project> {
+  createProject(project: PostProject): Observable<Project> {
     return this.http.post<Project>(this.BACKEND_URL_PREFIX, project).pipe(
       tap({
         next: (project) => {
@@ -119,10 +119,14 @@ export type UserMetadata = {
   subscribers: number;
 };
 
-export type PatchProject = {
-  name?: string;
-  description?: string;
-  visibility?: ProjectVisibility;
+export type PostProject = {
+  name: string;
+  description: string;
+  visibility: ProjectVisibility;
+};
+
+export type PatchProject = Partial<PostProject> & {
+  is_archived?: boolean;
 };
 
 export type ProjectVisibility = 'internal' | 'private';

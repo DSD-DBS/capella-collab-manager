@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, take } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { AddUserToProjectComponent } from 'src/app/projects/project-detail/project-users/add-user-to-project/add-user-to-project.component';
+import { AddUserToProjectDialogComponent } from 'src/app/projects/project-detail/project-users/add-user-to-project/add-user-to-project.component';
 import { ProjectAuditLogComponent } from 'src/app/projects/project-detail/project-users/project-audit-log/project-audit-log.component';
 import {
   ProjectUser,
@@ -143,7 +143,9 @@ export class ProjectUserSettingsComponent implements OnInit {
   }
 
   openAddUserDialog() {
-    this.matDialog.open(AddUserToProjectComponent);
+    this.matDialog.open(AddUserToProjectDialogComponent, {
+      data: { project: this.project },
+    });
   }
 
   openAuditLogDialog() {

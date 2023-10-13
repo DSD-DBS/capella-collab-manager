@@ -15,6 +15,9 @@ from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects.events import routes as projects_events_routes
 from capellacollab.projects.toolmodels import routes as toolmodels_routes
+from capellacollab.projects.toolmodels.backups import core as backups_core
+from capellacollab.projects.toolmodels.backups import crud as backups_crud
+from capellacollab.projects.toolmodels.backups import models as backups_models
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.projects.users import routes as projects_users_routes
@@ -82,17 +85,22 @@ def update_project(
     project: models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),
+    username: str = fastapi.Depends(auth_injectables.get_username),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseProject:
-    new_slug = slugify.slugify(patch_project.name)
-    if crud.get_project_by_slug(db, new_slug) and project.slug != new_slug:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "reason": "A project with a similar name already exists.",
-                "technical": "Slug already used",
-            },
-        )
+    if patch_project.name:
+        new_slug = slugify.slugify(patch_project.name)
+
+        if project.slug != new_slug and crud.get_project_by_slug(db, new_slug):
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={
+                    "reason": "A project with a similar name already exists.",
+                    "technical": "Slug already used",
+                },
+            )
+    if patch_project.is_archived:
+        _delete_all_pipelines_for_project(db, project, username)
     return crud.update_project(db, project, patch_project)
 
 
@@ -179,6 +187,18 @@ def delete_project(
     events_crud.delete_all_events_projects_associated_with(db, project.id)
 
     crud.delete_project(db, project)
+
+
+def _delete_all_pipelines_for_project(
+    db: orm.Session, project: models.DatabaseProject, username: str
+):
+    pipelines: list[backups_models.DatabaseBackup] = []
+    for model in project.models:
+        pipelines.extend(backups_crud.get_pipelines_for_tool_model(db, model))
+    print(project.models)
+    print(pipelines)
+    for pipeline in pipelines:
+        backups_core.delete_pipeline(db, pipeline, username, True)
 
 
 router.include_router(

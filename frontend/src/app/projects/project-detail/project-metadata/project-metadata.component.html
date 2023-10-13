@@ -59,6 +59,10 @@
           >Delete project
         </button>
       </span>
+      <a mat-raised-button (click)="toggleArchive()">
+        <mat-icon class="mat-icon-position left">archive</mat-icon>
+        {{ project?.is_archived ? "Unarchive" : "Archive" }}
+      </a>
       <a
         [disabled]="(projectService.project$ | async) === undefined"
         mat-raised-button

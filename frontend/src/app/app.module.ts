@@ -55,6 +55,7 @@ import { AuthInterceptor } from './general/auth/http-interceptor/auth.intercepto
 import { LogoutComponent } from './general/auth/logout/logout/logout.component';
 import { LogoutRedirectComponent } from './general/auth/logout/logout-redirect/logout-redirect.component';
 import { BreadcrumbsComponent } from './general/breadcrumbs/breadcrumbs.component';
+import { ConfirmationDialogComponent } from './general/confirmation-dialog/confirmation-dialog.component';
 import { ErrorHandlingInterceptor } from './general/error-handling/error-handling.interceptor';
 import { FooterComponent } from './general/footer/footer.component';
 import { LegalComponent } from './general/footer/legal/legal.component';
@@ -96,7 +97,7 @@ import { ModelComplexityBadgeComponent } from './projects/project-detail/model-o
 import { ModelOverviewComponent } from './projects/project-detail/model-overview/model-overview.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { ProjectMetadataComponent } from './projects/project-detail/project-metadata/project-metadata.component';
-import { AddUserToProjectComponent } from './projects/project-detail/project-users/add-user-to-project/add-user-to-project.component';
+import { AddUserToProjectDialogComponent } from './projects/project-detail/project-users/add-user-to-project/add-user-to-project.component';
 import { ProjectAuditLogComponent } from './projects/project-detail/project-users/project-audit-log/project-audit-log.component';
 import { ProjectUserSettingsComponent } from './projects/project-detail/project-users/project-user-settings.component';
 import { ProjectOverviewComponent } from './projects/project-overview/project-overview.component';
@@ -139,7 +140,7 @@ import { SettingsComponent } from './settings/settings.component';
 @NgModule({
   declarations: [
     ActiveSessionsComponent,
-    AddUserToProjectComponent,
+    AddUserToProjectDialogComponent,
     AlertSettingsComponent,
     AppComponent,
     AuthComponent,
@@ -148,6 +149,7 @@ import { SettingsComponent } from './settings/settings.component';
     ButtonSkeletonLoaderComponent,
     ChooseInitComponent,
     ChooseSourceComponent,
+    ConfirmationDialogComponent,
     CreateBackupComponent,
     CreateModelBaseComponent,
     CreateModelComponent,

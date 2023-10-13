@@ -4,7 +4,7 @@
 """Add archive flag
 
 Revision ID: f7bf9456cfc9
-Revises: 1a4208c18909
+Revises: c9f30ccd4650
 Create Date: 2023-08-28 08:57:22.931913
 
 """
@@ -13,7 +13,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "f7bf9456cfc9"
-down_revision = "1a4208c18909"
+down_revision = "c9f30ccd4650"
 branch_labels = None
 depends_on = None
 
