@@ -5,7 +5,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 export type Protocol = 'tcp' | 'ssl' | 'ws' | 'wss';
@@ -22,7 +22,10 @@ export type BaseT4CInstance = {
   username: string;
   password: string;
   protocol: Protocol;
+  is_archived: boolean;
 };
+
+export type PatchT4CInstance = Partial<BaseT4CInstance>;
 
 export type NewT4CInstance = BaseT4CInstance & {
   name: string;
@@ -58,6 +61,12 @@ export class T4CInstanceService {
   );
   public readonly t4cInstance$ = this._t4cInstance.asObservable();
 
+  public readonly unarchivedT4cInstances$ = this._t4cInstances.pipe(
+    map((t4cInstances) =>
+      t4cInstances?.filter((t4cInstance) => !t4cInstance.is_archived)
+    )
+  );
+
   loadInstances(): void {
     this.http.get<T4CInstance[]>(this.baseUrl).subscribe({
       next: (instances) => this._t4cInstances.next(instances),
@@ -83,7 +92,7 @@ export class T4CInstanceService {
 
   updateInstance(
     instanceId: number,
-    instance: BaseT4CInstance
+    instance: PatchT4CInstance
   ): Observable<T4CInstance> {
     return this.http
       .patch<T4CInstance>(this.urlFactory(instanceId), instance)

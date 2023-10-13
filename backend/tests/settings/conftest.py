@@ -25,8 +25,8 @@ def fixture_admin_user(
     return users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
 
 
-@pytest.fixture(name="t4c_server")
-def fixture_t4c_server(
+@pytest.fixture(name="t4c_instance")
+def fixture_t4c_instance(
     db: orm.Session,
     test_tool_version: tools_models.DatabaseVersion,
 ) -> t4c_models.DatabaseT4CInstance:

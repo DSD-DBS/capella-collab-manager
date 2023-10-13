@@ -7,7 +7,7 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 
-from . import crud, models
+from . import crud, exceptions, models
 
 
 def get_existing_instance(
@@ -22,3 +22,13 @@ def get_existing_instance(
             "reason": f"The t4c instance with the id {t4c_instance_id} does not exist.",
         },
     )
+
+
+def get_existing_unarchived_instance(
+    t4c_instance_id: int, db: orm.Session = fastapi.Depends(database.get_db)
+):
+    t4c_instance = get_existing_instance(t4c_instance_id, db)
+    if t4c_instance.is_archived:
+        raise exceptions.T4CInstanceIsArchivedError(t4c_instance.id)
+
+    return t4c_instance

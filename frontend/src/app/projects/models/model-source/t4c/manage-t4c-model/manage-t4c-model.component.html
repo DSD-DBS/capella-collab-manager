@@ -24,6 +24,10 @@
             <mat-option
               *ngFor="let instance of t4cInstanceService.t4cInstances$ | async"
               [value]="instance.id"
+              [disabled]="instance.is_archived"
+              [matTooltip]="
+                instance.is_archived ? 'This instance is archived' : ''
+              "
             >
               {{ instance.name }}
             </mat-option>

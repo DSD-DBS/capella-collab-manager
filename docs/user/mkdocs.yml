@@ -53,6 +53,7 @@ nav:
           - pure::variants: settings/tools/pure_variants.md
       - Model sources:
           - Git: settings/model-sources/git.md
+          - T4C: settings/model-sources/t4c.md
       - Alerts:
           - Create an alert: additional/alerts/create.md
           - Delete an alert: additional/alerts/delete.md
@@ -92,5 +93,7 @@ markdown_extensions:
 
 extra:
   generator: false
+
+dev_addr: 127.0.0.1:8081
 
 copyright: Copyright &copy; 2022-2023 DB Netz AG

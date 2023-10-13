@@ -79,7 +79,7 @@ def create_t4c_model(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
-    instance = settings_t4c_injecatbles.get_existing_instance(
+    instance = settings_t4c_injecatbles.get_existing_unarchived_instance(
         body.t4c_instance_id, db
     )
     repository = (
