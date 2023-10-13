@@ -34,12 +34,19 @@ class JupyterConfigEnvironment(t.TypedDict):
     CSP_ORIGIN_HOST: str
 
 
+class GeneralConfigEnvironment(t.TypedDict):
+    scheme: str
+    host: str
+    port: str
+    wildcardHost: t.NotRequired[bool | None]
+
+
 class JupyterIntegration(interface.HookRegistration):
     def __init__(self):
         self._jupyter_public_uri: urllib_parse.ParseResult = (
             urllib_parse.urlparse(config["extensions"]["jupyter"]["publicURI"])
         )
-        self._general_conf = config["general"]
+        self._general_conf: GeneralConfigEnvironment = config["general"]
 
     def configuration_hook(  # type: ignore[override]
         self,
@@ -73,11 +80,13 @@ class JupyterIntegration(interface.HookRegistration):
         user: users_models.DatabaseUser,
         **kwargs,
     ):
+        assert self._jupyter_public_uri.hostname
         operator.create_public_route(
             session_id=session_id,
             host=self._jupyter_public_uri.hostname or "",
             path=self._determine_base_url(user.name),
             port=8888,
+            wildcard_host=self._general_conf.get("wildcardHost", False),
         )
 
     def pre_session_termination_hook(  # type: ignore
