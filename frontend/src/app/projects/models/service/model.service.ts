@@ -66,7 +66,7 @@ export class ModelService {
             this._model.next(model);
           },
           error: () => this._model.next(undefined),
-        })
+        }),
       );
   }
 
@@ -74,7 +74,7 @@ export class ModelService {
     projectSlug: string,
     modelSlug: string,
     version_id: number,
-    nature_id: number
+    nature_id: number,
   ): Observable<Model> {
     return this.http
       .patch<Model>(`${this.base_url}${projectSlug}/models/${modelSlug}/`, {
@@ -88,19 +88,19 @@ export class ModelService {
             this._model.next(model);
           },
           error: () => this._model.next(undefined),
-        })
+        }),
       );
   }
 
   updateModelDescription(
     projectSlug: string,
     modelSlug: string,
-    patchModel: PatchModel
+    patchModel: PatchModel,
   ): Observable<Model> {
     return this.http
       .patch<Model>(
         `${this.base_url}${projectSlug}/models/${modelSlug}/`,
-        patchModel
+        patchModel,
       )
       .pipe(
         tap({
@@ -109,7 +109,7 @@ export class ModelService {
             this._model.next(model);
           },
           error: () => this._model.next(undefined),
-        })
+        }),
       );
   }
 
@@ -120,7 +120,7 @@ export class ModelService {
         tap(() => {
           this.loadModels(projectSlug);
           this._model.next(undefined);
-        })
+        }),
       );
   }
 
@@ -141,7 +141,7 @@ export class ModelService {
           return models?.find((model) => model.slug === modelSlug)
             ? { uniqueSlug: { value: modelSlug } }
             : null;
-        })
+        }),
       );
     };
   }

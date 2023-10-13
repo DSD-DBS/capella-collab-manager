@@ -40,7 +40,7 @@ export class ToolsSettingsComponent {
   }
 
   mapToolVersionOrNatureToName(
-    versionOrNature: ToolVersion[] | ToolNature[]
+    versionOrNature: ToolVersion[] | ToolNature[],
   ): string[] {
     return versionOrNature.map((elem) => elem.name);
   }

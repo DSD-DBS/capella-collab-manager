@@ -49,7 +49,7 @@ export class ModelDiagramDialogComponent {
     return this.diagramMetadata.diagrams.filter(
       (diagram: DiagramMetadata) =>
         diagram.name.toLowerCase().includes(this.search.toLowerCase()) ||
-        diagram.uuid.toLowerCase().includes(this.search.toLowerCase())
+        diagram.uuid.toLowerCase().includes(this.search.toLowerCase()),
     );
   }
 
@@ -58,7 +58,7 @@ export class ModelDiagramDialogComponent {
     private dialogRef: MatDialogRef<ModelDiagramDialogComponent>,
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA)
-    public data: { modelSlug: string; projectSlug: string }
+    public data: { modelSlug: string; projectSlug: string },
   ) {
     this.modelDiagramService
       .getDiagramMetadata(this.data.projectSlug, this.data.modelSlug)
@@ -89,7 +89,7 @@ export class ModelDiagramDialogComponent {
       {
         root: null,
         threshold: 0.2,
-      }
+      },
     );
 
     this.diagramHTMLElements?.changes.subscribe((res) => {

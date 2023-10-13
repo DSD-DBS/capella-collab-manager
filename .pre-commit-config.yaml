@@ -3,9 +3,10 @@
 
 default_install_hook_types: [commit-msg, pre-commit]
 default_stages: [commit, merge-commit]
+minimum_pre_commit_version: 3.2.0
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: check-added-large-files
       - id: check-builtin-literals
@@ -68,12 +69,16 @@ repos:
         files: "^backend/capellacollab"
         exclude: "^backend/capellacollab/alembic/"
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v2.7.1
+    rev: v3.0.3
     hooks:
       - id: prettier
         types_or: [ts, css, html, markdown]
+        files: "^frontend"
+        additional_dependencies:
+          - "prettier@^3.0.3"
+          - "prettier-plugin-tailwindcss@^0.5.5"
   - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.4.2
+    rev: v1.5.4
     hooks:
       - id: insert-license
         name: Insert license headers (shell-style comments)
@@ -125,11 +130,11 @@ repos:
           - --comment-style
           - "..|  |"
   - repo: https://github.com/fsfe/reuse-tool
-    rev: v1.1.0
+    rev: v2.1.0
     hooks:
       - id: reuse
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.33.0
+    rev: v8.51.0
     hooks:
       - id: eslint
         additional_dependencies:
@@ -143,16 +148,17 @@ repos:
           - "@typescript-eslint/parser@^6.7.4"
           - "eslint-plugin-unused-imports@^3.0.0"
           - "eslint-plugin-deprecation@^2.0.0"
+          - "eslint-plugin-tailwindcss@^3.13.0"
         args: ["--fix"]
         types: []
         exclude: '.+\.spec(-helper)?\.ts$'
         types_or: ["html", "ts"]
   - repo: https://github.com/qoomon/git-conventional-commits
-    rev: v2.5.0
+    rev: v2.6.5
     hooks:
       - id: conventional-commits
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
+    rev: v3.15.0
     hooks:
       - id: pyupgrade
         args: ["--py311-plus"]

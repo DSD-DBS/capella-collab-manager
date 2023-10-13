@@ -19,7 +19,7 @@
     sessions" overview. <br />
     <div *ngIf="session?.t4c_password">
       <span
-        class="font-mono border cursor-copy"
+        class="cursor-copy border font-mono"
         [cdkCopyToClipboard]="session!.t4c_password"
         (click)="showClipboardMessage()"
       >

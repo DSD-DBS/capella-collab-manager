@@ -28,7 +28,7 @@ export class TokenService {
   createToken(
     description: string,
     expiration_date: Date,
-    source: string
+    source: string,
   ): Observable<CreateTokenResponse> {
     return this.http
       .post<CreateTokenResponse>(
@@ -37,7 +37,7 @@ export class TokenService {
           description,
           expiration_date,
           source,
-        }
+        },
       )
       .pipe(tap(() => this.loadTokens()));
   }
@@ -45,7 +45,7 @@ export class TokenService {
   deleteToken(token: Token): Observable<void> {
     return this.http
       .delete<void>(
-        environment.backend_url + `/users/current/tokens/${token.id}`
+        environment.backend_url + `/users/current/tokens/${token.id}`,
       )
       .pipe(tap(() => this.loadTokens()));
   }

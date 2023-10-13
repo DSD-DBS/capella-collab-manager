@@ -43,7 +43,7 @@
     </mat-checkbox>
   </div>
 
-  <div class="border-2 p-2 mt-2 rounded w-fit">
+  <div class="mt-2 w-fit rounded border-2 p-2">
     Please note: We're not technically preventing that you select two
     Eclipse-based sessions (for example two Capella sessions), <br />but the
     server will not let you connect to the sessions. We're working on making
@@ -64,7 +64,7 @@
 
 <div class="flex gap-0.5" *ngIf="selectedSessions.length">
   <div
-    class="flex flex-col w-full active:z-30"
+    class="flex w-full flex-col active:z-30"
     [ngClass]="{
       'z-20': session.focused,
       'z-10': !session.focused,
@@ -78,7 +78,7 @@
     (cdkDragEnded)="dragStop()"
   >
     <div
-      class="flex gap-2 p-1 rounded-t cursor-grab active:cursor-grabbing items-center justify-between"
+      class="flex cursor-grab items-center justify-between gap-2 rounded-t p-1 active:cursor-grabbing"
       [ngClass]="session.focused ? 'bg-slate-100' : 'bg-slate-300'"
       cdkDragHandle
     >
@@ -103,13 +103,13 @@
 
     <div class="relative grow">
       <div
-        [ngClass]="session.focused ? '' : 'iframe-overlay opacity-10 bg-black'"
+        [ngClass]="session.focused ? '' : 'iframe-overlay bg-black opacity-10'"
       ></div>
       <div [ngClass]="draggingActive ? 'iframe-overlay' : ''"></div>
       <iframe
         [id]="'session-' + session.id"
         [src]="session.safeResourceURL"
-        class="w-full h-full"
+        class="h-full w-full"
         allow="clipboard-read; clipboard-write"
       >
       </iframe>

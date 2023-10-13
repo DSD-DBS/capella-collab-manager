@@ -24,7 +24,7 @@ export class T4CModelWrapperComponent implements OnInit, OnDestroy {
     public projectService: ProjectService,
     public modelService: ModelService,
     private t4cModelService: T4CModelService,
-    private breadCrumbsService: BreadcrumbsService
+    private breadCrumbsService: BreadcrumbsService,
   ) {}
 
   ngOnInit(): void {
@@ -35,13 +35,13 @@ export class T4CModelWrapperComponent implements OnInit, OnDestroy {
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([project, model, t4cModelId]) =>
-        this.t4cModelService.loadT4CModel(project.slug, model.slug, t4cModelId)
+        this.t4cModelService.loadT4CModel(project.slug, model.slug, t4cModelId),
       );
 
     this.t4cModelService.t4cModel$
       .pipe(untilDestroyed(this))
       .subscribe((t4cModel) =>
-        this.breadCrumbsService.updatePlaceholder({ t4cModel })
+        this.breadCrumbsService.updatePlaceholder({ t4cModel }),
       );
   }
 

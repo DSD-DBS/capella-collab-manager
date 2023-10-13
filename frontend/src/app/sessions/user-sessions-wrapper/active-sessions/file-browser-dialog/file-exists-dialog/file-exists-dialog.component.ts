@@ -14,6 +14,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export class FileExistsDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<FileExistsDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public filename: string
+    @Inject(MAT_DIALOG_DATA) public filename: string,
   ) {}
 }

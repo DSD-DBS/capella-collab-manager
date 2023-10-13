@@ -57,7 +57,7 @@ export class ToolDetailsComponent {
     private toastService: ToastService,
     private breadcrumbsService: BreadcrumbsService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {
     this.toolService.getTools().subscribe();
 
@@ -79,7 +79,7 @@ export class ToolDetailsComponent {
           return tools?.find((tool: Tool) => {
             return tool.id == toolID;
           });
-        })
+        }),
       )
       .subscribe({
         next: (tool) => {
@@ -140,7 +140,7 @@ export class ToolDetailsComponent {
           tap((tool) => {
             this.toastService.showSuccess(
               'Tool created',
-              `The tool with name ${tool.name} was created.`
+              `The tool with name ${tool.name} was created.`,
             );
 
             this.selectedTool = tool;
@@ -148,15 +148,15 @@ export class ToolDetailsComponent {
           switchMap((tool) => {
             return this.toolService.updateDockerimagesForTool(
               tool.id,
-              this.form.controls.dockerimages.value as ToolDockerimages
+              this.form.controls.dockerimages.value as ToolDockerimages,
             );
           }),
           tap((_) => {
             this.toastService.showSuccess(
               'Docker images updated',
-              `The Docker images for the tool '${name}' were updated.`
+              `The Docker images for the tool '${name}' were updated.`,
             );
-          })
+          }),
         )
         .subscribe(() => {
           this.router.navigate(['../..', 'tool', this.selectedTool?.id], {
@@ -174,9 +174,9 @@ export class ToolDetailsComponent {
           tap((tool) => {
             this.toastService.showSuccess(
               'Tool updated',
-              `The tool name changed from '${this.selectedTool?.name}' to '${tool.name}'.`
+              `The tool name changed from '${this.selectedTool?.name}' to '${tool.name}'.`,
             );
-          })
+          }),
         )
         .subscribe((tool) => {
           this.selectedTool = tool;
@@ -185,19 +185,19 @@ export class ToolDetailsComponent {
       this.toolService
         .updateDockerimagesForTool(
           this.selectedTool!.id,
-          this.form.controls.dockerimages.value as ToolDockerimages
+          this.form.controls.dockerimages.value as ToolDockerimages,
         )
         .pipe(
           tap((dockerimages) => {
             this.dockerimages = dockerimages;
-          })
+          }),
         )
         .subscribe((_) => {
           this.toastService.showSuccess(
             'Docker images for Tool updated',
             `The Docker images for the tool with id ${
               this.selectedTool!.id
-            } were updated.`
+            } were updated.`,
           );
           this.cancelEditing();
         });
@@ -217,7 +217,7 @@ export class ToolDetailsComponent {
         });
         this.toastService.showSuccess(
           'Tool deleted',
-          `The tool '${this.selectedTool?.name}' was deleted successfully`
+          `The tool '${this.selectedTool?.name}' was deleted successfully`,
         );
       });
   }

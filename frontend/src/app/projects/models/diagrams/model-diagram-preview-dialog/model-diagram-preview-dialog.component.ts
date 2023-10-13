@@ -25,7 +25,7 @@ export class ModelDiagramPreviewDialogComponent implements AfterViewInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
-    public data: MatDialogPreviewData
+    public data: MatDialogPreviewData,
   ) {}
 
   ngAfterViewInit(): void {

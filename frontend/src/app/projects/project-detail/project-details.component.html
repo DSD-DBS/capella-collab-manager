@@ -4,14 +4,14 @@
  -->
 
 <div class="flex flex-wrap justify-between">
-  <div class="basis-1 grow">
+  <div class="grow basis-1">
     <div class="flex flex-wrap items-stretch">
       <app-project-metadata class="flex-1"></app-project-metadata>
       <app-create-readonly-session class="flex-1"></app-create-readonly-session>
     </div>
     <app-model-overview></app-model-overview>
   </div>
-  <div class="basis-500" *ngIf="projectUserService.verifyRole('manager')">
+  <div *ngIf="projectUserService.verifyRole('manager')">
     <app-project-user-settings></app-project-user-settings>
   </div>
 </div>

@@ -35,7 +35,7 @@ export class PipelinesOverviewComponent implements OnInit {
     this.monitoringService
       .fetchModelHealth()
       .subscribe(
-        (toolmodelStatuses) => (this.toolmodelStatuses = toolmodelStatuses)
+        (toolmodelStatuses) => (this.toolmodelStatuses = toolmodelStatuses),
       );
   }
 }

@@ -23,11 +23,11 @@ export class UserSessionService {
   public readonly sessions$ = this._sessions.asObservable();
   public readonly readonlySessions$ = this.sessions$.pipe(
     filter(Boolean),
-    map((sessions) => sessions.filter(isReadonlySession))
+    map((sessions) => sessions.filter(isReadonlySession)),
   );
   public readonly persistentSessions$ = this.sessions$.pipe(
     filter(Boolean),
-    map((sessions) => sessions.filter(isPersistentSession))
+    map((sessions) => sessions.filter(isPersistentSession)),
   );
 
   loadSessions(): void {

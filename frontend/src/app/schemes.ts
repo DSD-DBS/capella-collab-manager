@@ -34,7 +34,7 @@ export interface ReadonlySession extends Session {
 }
 
 export const isReadonlySession = (
-  session: Session
+  session: Session,
 ): session is ReadonlySession => {
   return session.type === 'readonly';
 };

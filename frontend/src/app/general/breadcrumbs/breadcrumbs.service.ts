@@ -50,7 +50,7 @@ export class BreadcrumbsService {
 const breadcrumbs = (
   route: ActivatedRouteSnapshot | null,
   placeholders: Data,
-  parentUrl?: string[]
+  parentUrl?: string[],
 ): Breadcrumb[] => {
   if (!route) {
     return [];
@@ -66,7 +66,7 @@ const breadcrumbs = (
         : '/' + routeUrl.join('/'),
     };
     return [breadcrumb].concat(
-      breadcrumbs(route.firstChild, placeholders, routeUrl)
+      breadcrumbs(route.firstChild, placeholders, routeUrl),
     );
   }
 
@@ -75,7 +75,7 @@ const breadcrumbs = (
 
 const expand = (
   term: string | ((placeholders: Data) => string),
-  placeholders: Data
+  placeholders: Data,
 ) => {
   return typeof term === 'function' ? term(placeholders) || '...' : term;
 };

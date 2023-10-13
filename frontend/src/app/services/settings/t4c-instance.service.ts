@@ -52,19 +52,20 @@ export class T4CInstanceService {
   }
 
   private _t4cInstances = new BehaviorSubject<T4CInstance[] | undefined>(
-    undefined
+    undefined,
   );
   public readonly t4cInstances$ = this._t4cInstances.asObservable();
 
   private _t4cInstance = new BehaviorSubject<T4CInstance | undefined>(
-    undefined
+    undefined,
   );
   public readonly t4cInstance$ = this._t4cInstance.asObservable();
 
   public readonly unarchivedT4cInstances$ = this._t4cInstances.pipe(
-    map((t4cInstances) =>
-      t4cInstances?.filter((t4cInstance) => !t4cInstance.is_archived)
-    )
+    map(
+      (t4cInstances) =>
+        t4cInstances?.filter((t4cInstance) => !t4cInstance.is_archived),
+    ),
   );
 
   loadInstances(): void {
@@ -86,13 +87,13 @@ export class T4CInstanceService {
       tap((instance) => {
         this._t4cInstance.next(instance);
         this.loadInstances();
-      })
+      }),
     );
   }
 
   updateInstance(
     instanceId: number,
-    instance: PatchT4CInstance
+    instance: PatchT4CInstance,
   ): Observable<T4CInstance> {
     return this.http
       .patch<T4CInstance>(this.urlFactory(instanceId), instance)
@@ -100,7 +101,7 @@ export class T4CInstanceService {
         tap((instance) => {
           this._t4cInstance.next(instance);
           this.loadInstances();
-        })
+        }),
       );
   }
 
@@ -111,7 +112,7 @@ export class T4CInstanceService {
 
   getLicenses(instanceId: number): Observable<SessionUsage> {
     return this.http.get<SessionUsage>(
-      `${this.urlFactory(instanceId)}/licenses`
+      `${this.urlFactory(instanceId)}/licenses`,
     );
   }
 }

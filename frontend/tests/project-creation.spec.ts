@@ -13,7 +13,7 @@ const frontendUrl = config.frontend_url;
 
 test('test the full project creation workflow', async ({ page }) => {
   const testProjectName = `test-project-name-${Math.trunc(
-    Math.random() * 1000
+    Math.random() * 1000,
   )}`;
   const testProjectDescription = 'test-project-description';
 
@@ -51,15 +51,15 @@ test('test the full project creation workflow', async ({ page }) => {
 
   await expect(genInfoMatStepHeaderLocator).toHaveAttribute(
     'aria-selected',
-    'true'
+    'true',
   );
   await expect(addTeamMemMatStepHeaderLocator).toHaveAttribute(
     'aria-disabled',
-    'true'
+    'true',
   );
   await expect(addModelsMatStepHeaderLocator).toHaveAttribute(
     'aria-disabled',
-    'true'
+    'true',
   );
 
   await page
@@ -74,30 +74,30 @@ test('test the full project creation workflow', async ({ page }) => {
 
   await expect(genInfoMatStepHeaderLocator).toHaveAttribute(
     'aria-selected',
-    'false'
+    'false',
   );
   await expect(addTeamMemMatStepHeaderLocator).toHaveAttribute(
     'aria-selected',
-    'true'
+    'true',
   );
   await expect(addModelsMatStepHeaderLocator).toHaveAttribute(
     'aria-disabled',
-    'true'
+    'true',
   );
 
   await page.locator('button', { hasText: 'Skip' }).click();
 
   await expect(genInfoMatStepHeaderLocator).toHaveAttribute(
     'aria-selected',
-    'false'
+    'false',
   );
   await expect(addTeamMemMatStepHeaderLocator).toHaveAttribute(
     'aria-selected',
-    'false'
+    'false',
   );
   await expect(addModelsMatStepHeaderLocator).toHaveAttribute(
     'aria-selected',
-    'true'
+    'true',
   );
 
   await page
@@ -109,6 +109,6 @@ test('test the full project creation workflow', async ({ page }) => {
   await expect(page).toHaveURL(frontendUrl + '/projects');
 
   await expect(
-    page.locator(`//a[@href='/project/${testProjectName}']`)
+    page.locator(`//a[@href='/project/${testProjectName}']`),
   ).toBeVisible();
 });

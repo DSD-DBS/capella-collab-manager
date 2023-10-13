@@ -24,7 +24,7 @@ export class ModelDetailComponent implements OnInit, OnDestroy {
     public modelService: ModelService,
     public gitModelService: GitModelService,
     public t4cModelService: T4CModelService,
-    public userService: UserService
+    public userService: UserService,
   ) {}
 
   ngOnInit(): void {

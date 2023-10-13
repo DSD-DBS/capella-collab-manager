@@ -25,7 +25,7 @@ export class GitSettingsComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>,
-    public gitInstancesService: GitInstancesService
+    public gitInstancesService: GitInstancesService,
   ) {}
 
   gitInstancesForm = new FormGroup({

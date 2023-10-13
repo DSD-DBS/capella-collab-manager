@@ -24,7 +24,7 @@ import { environment } from 'src/environments/environment';
 export class ProjectUserService {
   constructor(
     private http: HttpClient,
-    private projectService: ProjectService
+    private projectService: ProjectService,
   ) {
     this.resetProjectUserOnProjectReset();
     this.resetProjectUsersOnProjectReset();
@@ -38,23 +38,24 @@ export class ProjectUserService {
   ADVANCED_ROLES = { administrator: 'Administrator', ...this.ROLES };
 
   private _projectUser = new BehaviorSubject<ProjectUser | undefined>(
-    undefined
+    undefined,
   );
   public readonly projectUser$ = this._projectUser.asObservable();
 
   private _projectUsers = new BehaviorSubject<ProjectUser[] | undefined>(
-    undefined
+    undefined,
   );
   public readonly projectUsers$ = this._projectUsers.asObservable();
 
   public readonly nonAdminProjectUsers$ = this._projectUsers
     .asObservable()
     .pipe(
-      map((projectUsers) =>
-        projectUsers?.filter(
-          (projectUser) => projectUser.role !== 'administrator'
-        )
-      )
+      map(
+        (projectUsers) =>
+          projectUsers?.filter(
+            (projectUser) => projectUser.role !== 'administrator',
+          ),
+      ),
     );
 
   resetProjectUserOnProjectReset() {
@@ -63,7 +64,7 @@ export class ProjectUserService {
         filter((project) => project === undefined),
         tap(() => {
           this._projectUser.next(undefined);
-        })
+        }),
       )
       .subscribe();
   }
@@ -74,7 +75,7 @@ export class ProjectUserService {
         filter((project) => project === undefined),
         tap(() => {
           this._projectUsers.next(undefined);
-        })
+        }),
       )
       .subscribe();
   }
@@ -108,14 +109,14 @@ export class ProjectUserService {
         filter(Boolean),
         switchMap((project) =>
           this.http.get<ProjectUser>(
-            this.BACKEND_URL_PREFIX + project.slug + '/users/current'
-          )
-        )
+            this.BACKEND_URL_PREFIX + project.slug + '/users/current',
+          ),
+        ),
       )
       .pipe(
         tap((projectUser) => {
           this._projectUser.next(projectUser);
-        })
+        }),
       )
       .subscribe();
   }
@@ -128,8 +129,8 @@ export class ProjectUserService {
         filter(
           (projectUser) =>
             projectUser?.role === 'manager' ||
-            projectUser?.role === 'administrator'
-        )
+            projectUser?.role === 'administrator',
+        ),
       ),
     ])
       .pipe(filter(Boolean))
@@ -145,7 +146,7 @@ export class ProjectUserService {
       .pipe(
         tap((projectUsers) => {
           this._projectUsers.next(projectUsers);
-        })
+        }),
       )
       .subscribe();
   }
@@ -155,7 +156,7 @@ export class ProjectUserService {
     username: string,
     role: SimpleProjectUserRole,
     permission: string,
-    reason: string
+    reason: string,
   ): Observable<ProjectUser> {
     return this.http
       .post<ProjectUser>(this.BACKEND_URL_PREFIX + projectSlug + '/users', {
@@ -167,7 +168,7 @@ export class ProjectUserService {
       .pipe(
         tap(() => {
           this.loadProjectUsers(projectSlug);
-        })
+        }),
       );
   }
 
@@ -175,7 +176,7 @@ export class ProjectUserService {
     projectSlug: string,
     userID: number,
     role: SimpleProjectUserRole,
-    reason: string
+    reason: string,
   ): Observable<null> {
     return this.http
       .patch<null>(this.BACKEND_URL_PREFIX + projectSlug + '/users/' + userID, {
@@ -189,22 +190,22 @@ export class ProjectUserService {
     project_slug: string,
     userID: number,
     permission: ProjectUserPermission,
-    reason: string
+    reason: string,
   ): Observable<null> {
     return this.http.patch<null>(
       this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
-      { permission, reason }
+      { permission, reason },
     );
   }
 
   deleteUserFromProject(
     project_slug: string,
     userID: number,
-    reason: string
+    reason: string,
   ): Observable<void> {
     return this.http.delete<void>(
       this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
-      { body: reason }
+      { body: reason },
     );
   }
 }

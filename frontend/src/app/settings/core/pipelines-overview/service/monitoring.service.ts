@@ -16,19 +16,19 @@ export class MonitoringService {
   constructor(private httpClient: HttpClient) {}
   fetchGeneralHealth(): Observable<GeneralHealth> {
     return this.httpClient.get<GeneralHealth>(
-      `${environment.backend_url}/health/general`
+      `${environment.backend_url}/health/general`,
     );
   }
 
   fetchModelHealth(): Observable<ToolmodelStatus[]> {
     return this.httpClient.get<ToolmodelStatus[]>(
-      `${environment.backend_url}/health/models`
+      `${environment.backend_url}/health/models`,
     );
   }
 
   fetchProjectHealth(): Observable<ProjectStatus[]> {
     return this.httpClient.get<ProjectStatus[]>(
-      `${environment.backend_url}/health/projects`
+      `${environment.backend_url}/health/projects`,
     );
   }
 }

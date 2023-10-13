@@ -49,7 +49,7 @@ export class TriggerPipelineComponent implements OnInit {
     private pipelineRunService: PipelineRunService,
     public sessionService: SessionService,
     public userService: UserService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -68,7 +68,7 @@ export class TriggerPipelineComponent implements OnInit {
         this.data.projectSlug,
         this.data.modelSlug,
         this.selectedPipeline!.id,
-        this.configurationForm.value.includeHistory!
+        this.configurationForm.value.includeHistory!,
       )
       .subscribe((pipelineRun: PipelineRun) => {
         this.closeDialog();
@@ -103,12 +103,12 @@ export class TriggerPipelineComponent implements OnInit {
         this.data.projectSlug,
         this.data.modelSlug,
         backup.id,
-        this.force
+        this.force,
       )
       .subscribe(() => {
         this.toastService.showSuccess(
           'Backup pipeline deleted',
-          `The pipeline with the ID ${backup.id} has been deleted`
+          `The pipeline with the ID ${backup.id} has been deleted`,
         );
         this.closeDialog();
       });

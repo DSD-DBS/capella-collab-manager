@@ -34,7 +34,7 @@ export class ModelOverviewComponent implements OnInit {
     public projectUserService: ProjectUserService,
     public userService: UserService,
     public projectService: ProjectService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {

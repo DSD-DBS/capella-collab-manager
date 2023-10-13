@@ -51,7 +51,7 @@ export class T4CModelService {
   createT4CModel(
     projectSlug: string,
     modelSlug: string,
-    body: SubmitT4CModel
+    body: SubmitT4CModel,
   ): Observable<T4CModel> {
     return this.http
       .post<T4CModel>(this.urlFactory(projectSlug, modelSlug), body)
@@ -59,7 +59,7 @@ export class T4CModelService {
         tap((model) => {
           this._t4cModel.next(model);
           this.loadT4CModels(projectSlug, modelSlug);
-        })
+        }),
       );
   }
 
@@ -67,25 +67,25 @@ export class T4CModelService {
     projectSlug: string,
     modelSlug: string,
     t4c_model_id: number,
-    body: SubmitT4CModel
+    body: SubmitT4CModel,
   ): Observable<T4CModel> {
     return this.http
       .patch<T4CModel>(
         `${this.urlFactory(projectSlug, modelSlug)}/${t4c_model_id}`,
-        body
+        body,
       )
       .pipe(
         tap((model) => {
           this._t4cModel.next(model);
           this.loadT4CModels(projectSlug, modelSlug);
-        })
+        }),
       );
   }
 
   unlinkT4CModel(
     projectSlug: string,
     modelSlug: string,
-    t4cModelId: number
+    t4cModelId: number,
   ): Observable<void> {
     return this.http
       .delete<void>(`${this.urlFactory(projectSlug, modelSlug)}/${t4cModelId}`)
@@ -93,7 +93,7 @@ export class T4CModelService {
         tap(() => {
           this._t4cModel.next(undefined);
           this.loadT4CModels(projectSlug, modelSlug);
-        })
+        }),
       );
   }
 
@@ -104,7 +104,7 @@ export class T4CModelService {
 
   asyncNameValidator(
     instanceId: number,
-    repositoryId: number
+    repositoryId: number,
   ): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       return this.t4cModels$.pipe(
@@ -114,10 +114,10 @@ export class T4CModelService {
             (model) =>
               model.repository.id === repositoryId &&
               model.repository.instance.id === instanceId &&
-              model.name === control.value
+              model.name === control.value,
           );
           return nameExists ? { uniqueName: { value: control.value } } : null;
-        })
+        }),
       );
     };
   }

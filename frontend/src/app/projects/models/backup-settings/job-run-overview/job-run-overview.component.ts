@@ -38,7 +38,7 @@ export class JobRunOverviewComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute,
     private projectService: ProjectService,
     private modelService: ModelService,
-    private pipelineService: PipelineService
+    private pipelineService: PipelineService,
   ) {}
 
   ngOnInit() {
@@ -52,7 +52,7 @@ export class JobRunOverviewComponent implements OnInit, AfterViewInit {
         model.slug,
         pipeline.id,
         1,
-        this.pageSize
+        this.pageSize,
       );
     });
   }
@@ -78,7 +78,7 @@ export class JobRunOverviewComponent implements OnInit, AfterViewInit {
   observeVisibleJobs(
     projectSlug: string,
     modelSlug: string,
-    pipelineID: number
+    pipelineID: number,
   ) {
     const observer = new IntersectionObserver(
       (entries: IntersectionObserverEntry[], _: IntersectionObserver) => {
@@ -91,14 +91,14 @@ export class JobRunOverviewComponent implements OnInit, AfterViewInit {
               modelSlug,
               pipelineID,
               parseInt(entry.target.id),
-              this.pageSize
+              this.pageSize,
             );
           });
       },
       {
         root: null,
         threshold: 0.1,
-      }
+      },
     );
 
     this.pageElements?.changes.subscribe((res) => {

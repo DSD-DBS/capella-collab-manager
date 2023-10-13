@@ -18,7 +18,7 @@ export class AuthRedirectComponent implements OnInit {
     private route: ActivatedRoute,
     private authService: AuthService,
     private userService: UserService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -30,7 +30,7 @@ export class AuthRedirectComponent implements OnInit {
             .map((key) =>
               ['error', 'error_description', 'error_uri'].includes(key)
                 ? [key, params[key]].join('=')
-                : ''
+                : '',
             )
             .join('&');
         this.router.navigateByUrl(redirect_url);

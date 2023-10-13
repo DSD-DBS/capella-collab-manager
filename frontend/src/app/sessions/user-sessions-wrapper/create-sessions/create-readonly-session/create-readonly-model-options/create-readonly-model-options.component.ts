@@ -31,7 +31,10 @@ export class CreateReadonlyModelOptionsComponent implements OnInit {
   @Input() projectSlug!: string;
   @Input() modelOptions!: ModelOptions;
 
-  constructor(private gitService: GitService, private fb: FormBuilder) {}
+  constructor(
+    private gitService: GitService,
+    private fb: FormBuilder,
+  ) {}
 
   private revisions?: Revisions;
   public filteredRevisions?: Revisions;
@@ -63,7 +66,7 @@ export class CreateReadonlyModelOptionsComponent implements OnInit {
         this.modelOptions.primaryGitModel.path,
         this.projectSlug,
         this.modelOptions.model.slug,
-        this.modelOptions.primaryGitModel.id
+        this.modelOptions.primaryGitModel.id,
       )
       .pipe(filter(Boolean))
       .subscribe((revisions) => {
@@ -86,10 +89,10 @@ export class CreateReadonlyModelOptionsComponent implements OnInit {
 
     this.filteredRevisions = {
       branches: this.revisions!.branches.filter((branch) =>
-        branch.toLowerCase().startsWith(prefix.toLowerCase())
+        branch.toLowerCase().startsWith(prefix.toLowerCase()),
       ),
       tags: this.revisions!.tags.filter((tag) =>
-        tag.toLowerCase().startsWith(prefix.toLowerCase())
+        tag.toLowerCase().startsWith(prefix.toLowerCase()),
       ),
     };
   }

@@ -21,7 +21,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private localStorageService: LocalStorageService,
-    private cookieService: CookieService
+    private cookieService: CookieService,
   ) {
     this._accessToken = '';
     this._refreshToken = '';
@@ -40,7 +40,7 @@ export class AuthService {
 
   getRedirectURL(): Observable<GetRedirectURLResponse> {
     return this.http.get<GetRedirectURLResponse>(
-      environment.backend_url + '/authentication'
+      environment.backend_url + '/authentication',
     );
   }
 
@@ -50,7 +50,7 @@ export class AuthService {
       {
         code,
         state,
-      }
+      },
     );
   }
 
@@ -58,12 +58,12 @@ export class AuthService {
     return this.http
       .put<PostTokenResponse>(
         environment.backend_url + '/authentication/tokens',
-        { refresh_token: this._refreshToken }
+        { refresh_token: this._refreshToken },
       )
       .pipe(
         tap({
           next: (res) => this.logIn(res.access_token, res.refresh_token),
-        })
+        }),
       );
   }
 

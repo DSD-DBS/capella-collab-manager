@@ -17,6 +17,6 @@ export class NavBarMenuComponent {
   constructor(
     public authService: AuthService,
     public navBarService: NavBarService,
-    public userService: UserService
+    public userService: UserService,
   ) {}
 }

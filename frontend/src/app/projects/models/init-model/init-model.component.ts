@@ -42,13 +42,13 @@ export class InitModelComponent implements OnInit {
     public projectService: ProjectService,
     public modelService: ModelService,
     public gitModelService: GitModelService,
-    public toolService: ToolService
+    public toolService: ToolService,
   ) {}
 
   public form = new FormGroup({
     version: new FormControl<number | undefined>(
       undefined,
-      Validators.required
+      Validators.required,
     ),
     nature: new FormControl<number | undefined>(undefined, Validators.required),
   });
@@ -72,8 +72,8 @@ export class InitModelComponent implements OnInit {
           combineLatest([
             this.toolService.getVersionsForTool(tool.id),
             this.toolService.getNaturesForTool(tool.id),
-          ])
-        )
+          ]),
+        ),
       )
       .subscribe((result: [ToolVersion[], ToolNature[]]) => {
         this.toolVersions = result[0];
@@ -92,7 +92,7 @@ export class InitModelComponent implements OnInit {
           this.projectSlug!,
           this.modelSlug!,
           this.form.value.version!,
-          this.form.value.nature!
+          this.form.value.nature!,
         )
         .subscribe(() => {
           this.create.emit({ created: true });

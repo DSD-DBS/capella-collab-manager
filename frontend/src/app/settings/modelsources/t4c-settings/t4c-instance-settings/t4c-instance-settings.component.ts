@@ -35,7 +35,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
 
   constructor(
     public t4cRepoService: T4CRepoService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {}
 
   ngOnChanges(_changes: SimpleChanges): void {
@@ -58,14 +58,14 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
   });
 
   getFilteredRepositories(
-    repositories: T4CServerRepository[] | undefined | null
+    repositories: T4CServerRepository[] | undefined | null,
   ): T4CServerRepository[] | undefined {
     if (repositories === undefined || repositories === null) {
       return undefined;
     }
 
     return repositories.filter((repository) =>
-      repository.name.toLowerCase().includes(this.search.toLowerCase())
+      repository.name.toLowerCase().includes(this.search.toLowerCase()),
     );
   }
 
@@ -74,7 +74,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
       this.t4cRepoService
         .createRepository(
           this.instance!.id,
-          this.form.value as CreateT4CRepository
+          this.form.value as CreateT4CRepository,
         )
         .subscribe(() => this.form.reset());
     }

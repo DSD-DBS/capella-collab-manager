@@ -65,7 +65,7 @@
       <a
         target="_blank"
         [href]="'project/' + projectStatus.project_slug"
-        class="title flex gap-1 mb-1"
+        class="title mb-1 flex gap-1"
         >{{ projectStatus.project_slug }}
         <mat-icon inline>open_in_new</mat-icon></a
       >
@@ -73,7 +73,7 @@
         <mat-icon class="mat-icon-position top">warning</mat-icon>
         {{ warning }}
       </div>
-      <div *ngIf="!projectStatus.warnings.length" class="succuess">
+      <div *ngIf="!projectStatus.warnings.length" class="success">
         <mat-icon class="mat-icon-position top">check</mat-icon>
         All checks were successful.
       </div>
@@ -105,7 +105,7 @@
       <a
         target="_blank"
         [href]="'project/' + modelStatus.project_slug"
-        class="title flex gap-1 mb-1"
+        class="title mb-1 flex gap-1"
         >{{ modelStatus.project_slug }}
         <mat-icon inline>open_in_new</mat-icon></a
       >
@@ -118,7 +118,7 @@
           '/model/' +
           modelStatus.model_slug
         "
-        class="title flex gap-1 mb-1"
+        class="title mb-1 flex gap-1"
         >{{ modelStatus.model_slug }} <mat-icon inline>open_in_new</mat-icon></a
       >
       <div>

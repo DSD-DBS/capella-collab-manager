@@ -43,7 +43,7 @@ export class ModelDescriptionComponent implements OnInit {
     public toolService: ToolService,
     public toastService: ToastService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
@@ -68,7 +68,7 @@ export class ModelDescriptionComponent implements OnInit {
             this.toolService.getNaturesForTool(model.tool.id),
             this.toolService.getVersionsForTool(model.tool.id),
           ]);
-        })
+        }),
       )
       .subscribe((result: [ToolNature[], ToolVersion[]]) => {
         this.toolNatures = result[0];
@@ -89,7 +89,7 @@ export class ModelDescriptionComponent implements OnInit {
           version_id: this.form.value.version || undefined,
         })
         .subscribe(() =>
-          this.router.navigate(['../../..'], { relativeTo: this.route })
+          this.router.navigate(['../../..'], { relativeTo: this.route }),
         );
     }
   }
@@ -109,14 +109,14 @@ export class ModelDescriptionComponent implements OnInit {
       next: () => {
         this.toastService.showSuccess(
           'Model deleted',
-          `${modelSlug} has been deleted`
+          `${modelSlug} has been deleted`,
         );
         this.router.navigate(['../../..'], { relativeTo: this.route });
       },
       error: () => {
         this.toastService.showError(
           'Model deletion failed',
-          `${modelSlug} has not been deleted`
+          `${modelSlug} has not been deleted`,
         );
       },
     });

@@ -19,6 +19,6 @@ export class ChooseSourceComponent {
   constructor(
     public projectService: ProjectService,
     public modelService: ModelService,
-    public userService: UserService
+    public userService: UserService,
   ) {}
 }

@@ -6,16 +6,11 @@
 <div class="dialog">
   <h1>File browser</h1>
 
-  <mat-progress-bar
-    class="progress-bar"
-    mode="indeterminate"
-    *ngIf="loadingFiles"
-  >
+  <mat-progress-bar mode="indeterminate" *ngIf="loadingFiles">
   </mat-progress-bar>
   <div class="progress">
     <div>
       <mat-progress-bar
-        class="progress-bar"
         color="primary"
         [mode]="uploadProgress === 100 ? 'indeterminate' : 'determinate'"
         [value]="uploadProgress"
@@ -24,9 +19,7 @@
       </mat-progress-bar>
     </div>
     <button mat-button>
-      <mat-icon class="cancel-upload" (click)="reset()" *ngIf="uploadProgress"
-        >cancel
-      </mat-icon>
+      <mat-icon (click)="reset()" *ngIf="uploadProgress">cancel </mat-icon>
     </button>
   </div>
 

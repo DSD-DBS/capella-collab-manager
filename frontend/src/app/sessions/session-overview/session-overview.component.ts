@@ -18,7 +18,7 @@ import { SessionService } from '../service/session.service';
 export class SessionOverviewComponent implements OnInit {
   constructor(
     private sessionService: SessionService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {}
 
   deletionFormGroup = new FormGroup({});
@@ -54,7 +54,7 @@ export class SessionOverviewComponent implements OnInit {
 
   openDeletionDialog(): void {
     const sessions: Session[] = this.sessions.filter(
-      (session: Session) => this.deletionFormGroup.get(session.id)?.value
+      (session: Session) => this.deletionFormGroup.get(session.id)?.value,
     );
 
     const dialogRef = this.dialog.open(DeleteSessionDialogComponent, {

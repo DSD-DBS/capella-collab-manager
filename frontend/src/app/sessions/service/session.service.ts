@@ -29,19 +29,19 @@ export class SessionService {
 
   createReadonlySession(
     projectSlug: string,
-    models: ReadonlyModel[]
+    models: ReadonlyModel[],
   ): Observable<Session> {
     return this.http.post<Session>(
       `${environment.backend_url}/projects/${projectSlug}/sessions/readonly`,
       {
         models: models,
-      }
+      },
     );
   }
 
   createPersistentSession(
     toolId: number,
-    versionId: number
+    versionId: number,
   ): Observable<Session> {
     return this.http.post<Session>(`${this.BACKEND_URL_PREFIX}persistent`, {
       tool_id: toolId,

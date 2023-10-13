@@ -5,7 +5,7 @@
 
 <div class="dialog">
   <div>
-    <div *ngIf="!selectedPipeline" class="flex gap-5 justify-between">
+    <div *ngIf="!selectedPipeline" class="flex justify-between gap-5">
       <span
         >Please select the pipeline you'd like to execute or to see the logs:
       </span>
@@ -36,7 +36,7 @@
             >Runs only with manual trigger</span
           >
           <hr />
-          <div class="flex justify-between flex-wrap gap-y-1">
+          <div class="flex flex-wrap justify-between gap-y-1">
             <span style="flex-basis: 45%"
               ><b>TeamForCapella</b> <br />
               Instance <i>{{ pipeline.t4c_model.instance_name }}</i
@@ -69,7 +69,7 @@
         <hr />
         <h3>Run the pipeline</h3>
 
-        <div class="flex flex-wrap gap-2 justify-between items-start">
+        <div class="flex flex-wrap items-start justify-between gap-2">
           <div>
             Please select the following configuration options: <br />
             <mat-checkbox formControlName="includeHistory"

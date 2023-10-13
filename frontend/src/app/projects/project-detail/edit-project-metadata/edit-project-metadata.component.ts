@@ -31,7 +31,7 @@ export class EditProjectMetadataComponent implements OnInit, OnChanges {
     public projectService: ProjectService,
     public projectUserService: ProjectUserService,
     private toastService: ToastService,
-    private router: Router
+    private router: Router,
   ) {}
 
   form = new FormGroup({
@@ -46,7 +46,7 @@ export class EditProjectMetadataComponent implements OnInit, OnChanges {
       .subscribe((project) => {
         this.project = project;
         this.form.controls.name.setAsyncValidators(
-          this.projectService.asyncSlugValidator(project)
+          this.projectService.asyncSlugValidator(project),
         );
         this.form.patchValue(project);
       });
@@ -68,7 +68,7 @@ export class EditProjectMetadataComponent implements OnInit, OnChanges {
             'Project updated',
             `The new name is: '${project.name}' and the new description is '${
               project.description || ''
-            }'`
+            }'`,
           );
         });
     }

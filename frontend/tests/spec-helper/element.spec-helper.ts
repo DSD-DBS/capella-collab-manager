@@ -9,14 +9,14 @@ import { By } from '@angular/platform-browser';
 
 export function findElByTestId<T>(
   fixture: ComponentFixture<T>,
-  testId: string
+  testId: string,
 ): DebugElement {
   return fixture.debugElement.query(By.css(`[data-testId="${testId}"]`));
 }
 
 export function findComponent<T>(
   fixture: ComponentFixture<T>,
-  selector: string
+  selector: string,
 ): DebugElement {
   return fixture.debugElement.query(By.css(selector));
 }
@@ -44,7 +44,7 @@ export function makeClickEvent(target: EventTarget): Partial<MouseEvent> {
 export function expectText<T>(
   fixture: ComponentFixture<T>,
   testId: string,
-  expectedText: string
+  expectedText: string,
 ): void {
   const element = findElByTestId(fixture, testId);
   const actualText = element.nativeElement.text;
@@ -54,14 +54,14 @@ export function expectText<T>(
 export function setFieldValue<T>(
   fixture: ComponentFixture<T>,
   testId: string,
-  value: string
+  value: string,
 ): void {
   setElementValue(findElByTestId(fixture, testId).nativeElement, value);
 }
 
 export function setElementValue(
   element: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
-  value: string
+  value: string,
 ): void {
   element.value = value;
   const event = new Event('input', { bubbles: true, cancelable: false });

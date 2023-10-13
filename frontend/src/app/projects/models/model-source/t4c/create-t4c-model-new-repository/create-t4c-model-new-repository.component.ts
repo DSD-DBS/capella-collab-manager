@@ -36,7 +36,7 @@ export class CreateT4cModelNewRepositoryComponent implements OnInit {
     private t4cRepoService: T4CRepoService,
     private router: Router,
     private route: ActivatedRoute,
-    private toastService: ToastService
+    private toastService: ToastService,
   ) {}
 
   public form = new FormGroup({
@@ -44,11 +44,11 @@ export class CreateT4cModelNewRepositoryComponent implements OnInit {
     t4cRepositoryName: new FormControl<string | null>(
       { value: null, disabled: true },
       Validators.required,
-      this.t4cRepoService.asyncNameValidator()
+      this.t4cRepoService.asyncNameValidator(),
     ),
     t4cProjectName: new FormControl<string | null>(
       { value: null, disabled: true },
-      Validators.required
+      Validators.required,
     ),
   });
 
@@ -84,7 +84,7 @@ export class CreateT4cModelNewRepositoryComponent implements OnInit {
           this.t4cProjectNameControl.setValue(null);
           this.t4cProjectNameControl.enable();
         }
-      }
+      },
     );
 
     this.t4cRepositoryNameControl.valueChanges.subscribe((value) => {
@@ -111,8 +111,8 @@ export class CreateT4cModelNewRepositoryComponent implements OnInit {
               t4c_instance_id: t4cInstanceId,
               t4c_repository_id: repository.id,
               name: t4cProjectName,
-            })
-          )
+            }),
+          ),
         )
         .subscribe(() => {
           if (this.asStepper) {
@@ -124,7 +124,7 @@ export class CreateT4cModelNewRepositoryComponent implements OnInit {
           }
           this.toastService.showSuccess(
             'TeamForCapella repository successfully created and linked',
-            `A new TeamForCapella repository was created and linked to the model '${this.modelSlug}'`
+            `A new TeamForCapella repository was created and linked to the model '${this.modelSlug}'`,
           );
         });
     }

@@ -23,7 +23,7 @@ export class ViewLogsDialogComponent {
     private modelService: ModelService,
     private projectService: ProjectService,
     private pipelineService: PipelineService,
-    public pipelineRunService: PipelineRunService
+    public pipelineRunService: PipelineRunService,
   ) {
     this.refreshLogs();
     this.refreshEvents();
@@ -46,9 +46,9 @@ export class ViewLogsDialogComponent {
             project.slug,
             model.slug,
             pipeline.id,
-            pipelineRun.id
+            pipelineRun.id,
           );
-        })
+        }),
       )
       .subscribe({
         next: (res: string) => (this.events = res),
@@ -70,9 +70,9 @@ export class ViewLogsDialogComponent {
             project.slug,
             model.slug,
             pipeline.id,
-            pipelineRun.id
-          )
-        )
+            pipelineRun.id,
+          ),
+        ),
       )
       .subscribe({
         next: (res: string) => (this.logs = res),

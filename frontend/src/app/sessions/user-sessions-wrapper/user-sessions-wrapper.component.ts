@@ -21,7 +21,7 @@ export class UserSessionsWrapperComponent implements OnInit {
     timer(0, 2000)
       .pipe(
         untilDestroyed(this),
-        tap(() => this.userSessionService.loadSessions())
+        tap(() => this.userSessionService.loadSessions()),
       )
       .subscribe();
   }

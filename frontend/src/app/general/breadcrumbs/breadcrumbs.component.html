@@ -6,7 +6,7 @@
 <ul class="break-all">
   /
   <li *ngFor="let breadcrumb of breadcrumbService.breadcrumbs | async">
-    <a class="rounded-lg hover:bg-zinc-300 p-1" [routerLink]="breadcrumb.url">{{
+    <a class="rounded-lg p-1 hover:bg-zinc-300" [routerLink]="breadcrumb.url">{{
       breadcrumb.label
     }}</a>
   </li>

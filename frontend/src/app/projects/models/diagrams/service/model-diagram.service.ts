@@ -12,27 +12,30 @@ import { ModelService } from 'src/app/projects/models/service/model.service';
   providedIn: 'root',
 })
 export class ModelDiagramService {
-  constructor(private http: HttpClient, private modelService: ModelService) {}
+  constructor(
+    private http: HttpClient,
+    private modelService: ModelService,
+  ) {}
 
   getDiagramMetadata(
     projectSlug: string,
-    modelSlug: string
+    modelSlug: string,
   ): Observable<DiagramCacheMetadata> {
     return this.http.get<DiagramCacheMetadata>(
-      this.modelService.backendURLFactory(projectSlug, modelSlug) + '/diagrams'
+      this.modelService.backendURLFactory(projectSlug, modelSlug) + '/diagrams',
     );
   }
 
   getDiagram(
     projectSlug: string,
     modelSlug: string,
-    diagramUUID: string
+    diagramUUID: string,
   ): Observable<Blob> {
     return this.http.get(
       this.modelService.backendURLFactory(projectSlug, modelSlug) +
         '/diagrams/' +
         diagramUUID,
-      { responseType: 'blob' }
+      { responseType: 'blob' },
     );
   }
 }

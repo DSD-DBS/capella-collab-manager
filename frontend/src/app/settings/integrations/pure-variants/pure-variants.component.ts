@@ -25,7 +25,7 @@ export class PureVariantsComponent implements OnInit {
   licenseServerConfigurationForm = new FormGroup({
     licenseServerURL: new FormControl<string>(
       '',
-      Validators.pattern(/^https?:\/\//)
+      Validators.pattern(/^https?:\/\//),
     ),
   });
 
@@ -53,7 +53,7 @@ export class PureVariantsComponent implements OnInit {
 
   constructor(
     private pureVariantsService: PureVariantsService,
-    private toastService: ToastService
+    private toastService: ToastService,
   ) {}
 
   ngOnInit(): void {
@@ -61,11 +61,11 @@ export class PureVariantsComponent implements OnInit {
       .getLicenseServerConfiguration()
       .pipe(
         tap((res: PureVariantsConfiguration) => (this.configuration = res)),
-        filter(Boolean)
+        filter(Boolean),
       )
       .subscribe((res: PureVariantsConfiguration) => {
         this.licenseServerConfigurationForm.controls.licenseServerURL.patchValue(
-          res.license_server_url || ''
+          res.license_server_url || '',
         );
       });
   }
@@ -74,21 +74,21 @@ export class PureVariantsComponent implements OnInit {
     this.loading = true;
     this.pureVariantsService
       .setLicenseServerURL(
-        this.licenseServerConfigurationForm.value.licenseServerURL!
+        this.licenseServerConfigurationForm.value.licenseServerURL!,
       )
       .pipe(
         finalize(() => {
           this.loading = false;
-        })
+        }),
       )
       .subscribe((res) => {
         this.configuration = res;
         this.toastService.showSuccess(
           'pure::variants configuration changed',
-          `The floating license server was updated to "${res.license_server_url}"`
+          `The floating license server was updated to "${res.license_server_url}"`,
         );
         this.licenseServerConfigurationForm.controls.licenseServerURL.patchValue(
-          res.license_server_url!
+          res.license_server_url!,
         );
       });
   }
@@ -100,7 +100,7 @@ export class PureVariantsComponent implements OnInit {
     formData.append(
       'file',
       this.licenseKeyUploadForm.controls.licenseFile.value!,
-      this.selectedFile!
+      this.selectedFile!,
     );
 
     this.pureVariantsService
@@ -108,13 +108,13 @@ export class PureVariantsComponent implements OnInit {
       .pipe(
         finalize(() => {
           this.loadingLicenseKey = false;
-        })
+        }),
       )
       .subscribe((res) => {
         this.configuration = res;
         this.toastService.showSuccess(
           'pure::variants license key upload successful',
-          `The license key will be injected in all future sessions which are linked to the pure::variants server`
+          `The license key will be injected in all future sessions which are linked to the pure::variants server`,
         );
       });
   }
@@ -125,11 +125,11 @@ export class PureVariantsComponent implements OnInit {
       .deleteLicenseServerFile()
       .pipe(
         switchMap(() =>
-          this.pureVariantsService.getLicenseServerConfiguration()
+          this.pureVariantsService.getLicenseServerConfiguration(),
         ),
         finalize(() => {
           this.loadingLicenseKey = false;
-        })
+        }),
       )
       .subscribe((res: PureVariantsConfiguration) => {
         this.configuration = res;

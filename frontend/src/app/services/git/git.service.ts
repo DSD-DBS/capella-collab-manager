@@ -43,7 +43,7 @@ export class GitService {
         {
           credentials: credentials,
           url: gitUrl,
-        }
+        },
       )
       .subscribe({
         next: (revisions) => this._revisions.next(revisions),
@@ -55,12 +55,12 @@ export class GitService {
     gitUrl: string,
     projectSlug: string,
     modelSlug: string,
-    gitModelId: number
+    gitModelId: number,
   ): Observable<Revisions> {
     return this.http.post<Revisions>(
       this.BACKEND_URL_PREFIX +
         `/projects/${projectSlug}/models/${modelSlug}/modelsources/git/${gitModelId}/revisions`,
-      gitUrl
+      gitUrl,
     );
   }
 
@@ -68,13 +68,13 @@ export class GitService {
     gitUrl: string,
     projectSlug: string,
     modelSlug: string,
-    gitModelId: number
+    gitModelId: number,
   ): void {
     this.getPrivateRevision(
       gitUrl,
       projectSlug,
       modelSlug,
-      gitModelId
+      gitModelId,
     ).subscribe({
       next: (revisions) => this._revisions.next(revisions),
       error: () => this._revisions.next(undefined),
@@ -95,7 +95,7 @@ export class GitService {
             revisions?.tags.includes(revision)
             ? null
             : { revisionNotFoundError: `${revision} does not exist` };
-        })
+        }),
       );
     };
   }

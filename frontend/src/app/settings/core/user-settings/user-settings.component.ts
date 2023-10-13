@@ -56,7 +56,7 @@ export class UserSettingsComponent implements OnInit, AfterViewInit {
   constructor(
     public userService: UserService,
     public projectUserService: ProjectUserService,
-    private toastService: ToastService
+    private toastService: ToastService,
   ) {}
 
   ngOnInit(): void {
@@ -93,7 +93,7 @@ export class UserSettingsComponent implements OnInit, AfterViewInit {
         next: () => {
           this.toastService.showSuccess(
             'User created',
-            `The user ${username} has been created.`
+            `The user ${username} has been created.`,
           );
           this.getUsers();
         },
@@ -111,14 +111,14 @@ export class UserSettingsComponent implements OnInit, AfterViewInit {
       next: () => {
         this.toastService.showSuccess(
           'Role of user updated',
-          user.name + ' has now the role administrator'
+          user.name + ' has now the role administrator',
         );
         this.getUsers();
       },
       error: () => {
         this.toastService.showError(
           'Update of role failed',
-          'The role of ' + user.name + ' has not been updated'
+          'The role of ' + user.name + ' has not been updated',
         );
       },
     });
@@ -134,14 +134,14 @@ export class UserSettingsComponent implements OnInit, AfterViewInit {
       next: () => {
         this.toastService.showSuccess(
           'Role of user updated',
-          user.name + ' has now the role user'
+          user.name + ' has now the role user',
         );
         this.getUsers();
       },
       error: () => {
         this.toastService.showError(
           'Update of role failed',
-          'The role of ' + user.name + ' has not been updated'
+          'The role of ' + user.name + ' has not been updated',
         );
       },
     });
@@ -152,14 +152,14 @@ export class UserSettingsComponent implements OnInit, AfterViewInit {
       next: () => {
         this.toastService.showSuccess(
           'User deleted',
-          user.name + ' has been deleted'
+          user.name + ' has been deleted',
         );
         this.getUsers();
       },
       error: () => {
         this.toastService.showError(
           'User deletion failed',
-          user.name + ' has not been deleted'
+          user.name + ' has not been deleted',
         );
       },
     });
@@ -177,7 +177,7 @@ export class UserSettingsComponent implements OnInit, AfterViewInit {
     return this.users.filter(
       (user) =>
         user.role == role &&
-        user.name.toLowerCase().includes(this.search.toLowerCase())
+        user.name.toLowerCase().includes(this.search.toLowerCase()),
     );
   }
 

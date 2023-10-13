@@ -88,16 +88,16 @@ export class ToolVersionComponent implements OnInit {
           return this.toolService.patchToolVersion(
             this._tool!.id,
             this.selectedToolVersion!.id,
-            this.toolVersionMetadataForm.value as PatchToolVersion
+            this.toolVersionMetadataForm.value as PatchToolVersion,
           );
         }),
         tap(() => {
           this.loadingMetadata = false;
-        })
+        }),
       )
       .subscribe((res) => {
         const index = this.toolVersions.findIndex(
-          (version) => version.id === res.id
+          (version) => version.id === res.id,
         );
         this.toolVersions[index] = res;
         this.selectedToolVersion = res;
@@ -119,7 +119,7 @@ export class ToolVersionComponent implements OnInit {
       this.toolService
         .createVersionForTool(
           this._tool!.id,
-          this.toolVersionForm.controls.name.value!
+          this.toolVersionForm.controls.name.value!,
         )
         .pipe(
           tap(() => {
@@ -127,7 +127,7 @@ export class ToolVersionComponent implements OnInit {
           }),
           finalize(() => {
             this.toolVersionForm.enable();
-          })
+          }),
         )
         .subscribe((version: ToolVersion) => {
           this.toolVersions.push(version);
@@ -140,7 +140,7 @@ export class ToolVersionComponent implements OnInit {
       .deleteVersionForTool(this._tool!.id, toolVersion)
       .subscribe(() => {
         this.toolVersions = this.toolVersions.filter(
-          (version) => version.id !== toolVersion.id
+          (version) => version.id !== toolVersion.id,
         );
       });
   }
