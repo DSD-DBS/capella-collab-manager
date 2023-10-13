@@ -64,6 +64,7 @@ nav:
               - Import a model from TeamForCapella: tools/capella/teamforcapella/import/import-from-t4c.md
               - Export a model to TeamForCapella: tools/capella/teamforcapella/export/export-to-t4c.md
               - TeamForCapella repository management: tools/capella/teamforcapella/repository-management.md
+              - TeamForCapella Project Management: tools/capella/teamforcapella/project-management/project-management.md
               - Update a TeamForCapella based model: tools/capella/teamforcapella/update.md
           - Git:
               - Working with Git: tools/capella/working-with-git.md
