@@ -13,6 +13,14 @@ updates:
     directory: "/frontend"
     schedule:
       interval: "weekly"
+    groups:
+      angular:
+        patterns:
+        - "@angular*"
+        update-types:
+        - "major"
+        - "minor"
+        - "patch"
   # Capella Dockerimages
   - package-ecosystem: "gitsubmodule"
     directory: "/"
