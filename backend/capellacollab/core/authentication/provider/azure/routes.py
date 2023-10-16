@@ -14,7 +14,7 @@ import capellacollab.users.crud as users_crud
 from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.authentication import jwt_bearer
 from capellacollab.core.authentication.schemas import (
     RefreshTokenRequest,
     TokenRequest,
@@ -61,10 +61,10 @@ async def api_get_token(
     )
     access_token = token["id_token"]
 
-    validated_token = JWTBearer().validate_token(access_token)
+    validated_token = jwt_bearer.JWTBearer().validate_token(access_token)
     assert validated_token
 
-    username = JWTBearer().get_username(validated_token)
+    username = jwt_bearer.JWTBearer().get_username(validated_token)
 
     if user := users_crud.get_user_by_name(db, username):
         users_crud.update_last_login(db, user)
@@ -86,8 +86,7 @@ async def api_refresh_token(body: RefreshTokenRequest):
 
 
 @router.delete("/tokens", name="Invalidate the token (log out)")
-async def logout(jwt_decoded=fastapi.Depends(JWTBearer())):
-    username, _ = jwt_decoded
+async def logout(username: str = fastapi.Depends(jwt_bearer.JWTBearer())):
     for account in ad_session().get_accounts():
         if account["username"] == username:
             return ad_session().remove_account(account)
@@ -97,10 +96,9 @@ async def logout(jwt_decoded=fastapi.Depends(JWTBearer())):
 @router.get("/tokens", name="Validate the token")
 async def validate_token(
     scope: Role | None,
-    jwt_information=fastapi.Depends(JWTBearer()),
+    username: str = fastapi.Depends(jwt_bearer.JWTBearer()),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
-    username, _ = jwt_information
     if scope and scope.ADMIN:
         auth_injectables.RoleVerification(required_role=Role.ADMIN)(
             username, db
