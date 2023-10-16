@@ -270,14 +270,21 @@ loki:
     # Minimum 2 is required
     replicas: 2
 
-    # We don't want to limit to specific noeds
+    # We don't want to limit to specific nodes
     affinity: ""
     resources: *resourcesLoki
   write:
     # Minimum 2 is required
     replicas: 2
 
-    # We don't want to limit to specific noeds
+    # We don't want to limit to specific nodes
+    affinity: ""
+    resources: *resourcesLoki
+  backend:
+    # Minimum 2 is required
+    replicas: 2
+
+    # We don't want to limit to specific nodes
     affinity: ""
     resources: *resourcesLoki
   serviceAccount:
