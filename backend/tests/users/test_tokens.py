@@ -13,7 +13,6 @@ from fastapi import testclient
 from capellacollab.__main__ import app
 from capellacollab.core.authentication.basic_auth import HTTPBasicAuth
 from capellacollab.users import models as users_models
-from capellacollab.users.tokens import models as tokens_models
 
 POST_TOKEN = {
     "expiration_date": str(datetime.datetime.now()),
