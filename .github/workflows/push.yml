@@ -110,9 +110,7 @@ jobs:
           --set docker.images.backend="/backend:$TAG" \
           --set docker.images.guacamole.guacamole="ghcr.io/dsd-dbs/capella-collab-manager/guacamole:$TAG" \
           --set docker.images.docs="/docs:$TAG" \
-          --set loki.loki.read.persistence.size="500Mi" \
-          --set loki.loki.write.persistence.size="500Mi" \
-          --set loki.minio.persistence.size="500Mi" \
+          --set loki.enabled=False \
           --set cluster.pvc.storageClassName="standard" \
           --set cluster.imagePullSecret="github" \
           --set promtail.storageClassName="standard" \
