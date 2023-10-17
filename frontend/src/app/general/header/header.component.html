@@ -55,6 +55,13 @@
         </div>
         <mat-menu #profileMenu="matMenu">
           <a
+            class="profileMenuButton"
+            mat-menu-item
+            [routerLink]="['user', userService.user?.id]"
+          >
+            Profile <mat-icon>account_circle</mat-icon>
+          </a>
+          <a
             *ngIf="userService.user?.role === 'administrator'"
             class="profileMenuButton"
             mat-menu-item
@@ -90,7 +97,7 @@
           mat-raised-button
           [matMenuTriggerFor]="profileMenu"
         >
-          Profile <mat-icon>account_circle</mat-icon>
+          Menu <mat-icon>menu</mat-icon>
         </button>
       </div>
     </div>

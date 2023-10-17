@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -13,9 +13,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { HistoryEvent } from 'src/app/events/service/events.service';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import {
   InputDialogComponent,
@@ -25,7 +22,6 @@ import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import {
   User,
-  UserHistory,
   UserRole,
   UserService,
 } from 'src/app/services/user/user.service';
@@ -35,22 +31,10 @@ import {
   templateUrl: './user-settings.component.html',
   styleUrls: ['./user-settings.component.css'],
 })
-export class UserSettingsComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
-  displayedColumns: string[] = [
-    'eventType',
-    'executorName',
-    'executionTime',
-    'projectName',
-    'reason',
-  ];
-
+export class UserSettingsComponent implements OnInit {
   users: User[] = [];
   search = '';
   selectedUser?: User;
-  selectedUserHistory?: UserHistory;
-
-  historyEventDataSource = new MatTableDataSource<HistoryEvent>([]);
 
   createUserFormGroup = new FormGroup({
     username: new FormControl('', [
@@ -68,10 +52,6 @@ export class UserSettingsComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getUsers();
-  }
-
-  ngAfterViewInit(): void {
-    this.historyEventDataSource.paginator = this.paginator;
   }
 
   get username(): FormControl {
@@ -190,7 +170,6 @@ export class UserSettingsComponent implements OnInit, AfterViewInit {
   getUsers() {
     this.userService.getUsers().subscribe((users: User[]) => {
       this.selectedUser = undefined;
-      this.selectedUserHistory = undefined;
       this.users = users;
     });
   }
@@ -205,14 +184,5 @@ export class UserSettingsComponent implements OnInit, AfterViewInit {
 
   onUserSelect(user: User) {
     this.selectedUser = user;
-    this.selectedUserHistory = undefined;
-
-    this.userService.getUserHistory(user).subscribe({
-      next: (userHistory) => {
-        this.selectedUserHistory = userHistory;
-        this.historyEventDataSource.data = userHistory.events;
-        this.historyEventDataSource.paginator = this.paginator;
-      },
-    });
   }
 }

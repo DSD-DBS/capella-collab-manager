@@ -142,6 +142,7 @@ import { T4CRepoDeletionDialogComponent } from './settings/modelsources/t4c-sett
 import { T4CSettingsWrapperComponent } from './settings/modelsources/t4c-settings/t4c-settings-wrapper/t4c-settings-wrapper.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
+import { UsersProfileComponent } from './users/users-profile/users-profile.component';
 
 @NgModule({
   declarations: [
@@ -235,6 +236,7 @@ import { SettingsComponent } from './settings/settings.component';
     TriggerPipelineComponent,
     UserSessionsWrapperComponent,
     UserSettingsComponent,
+    UsersProfileComponent,
     VersionComponent,
     ViewLogsDialogComponent,
   ],

@@ -4,6 +4,7 @@
 from collections import abc
 
 import fastapi
+from fastapi import status
 from sqlalchemy import orm
 
 from capellacollab.core import database
@@ -17,14 +18,24 @@ router = fastapi.APIRouter(
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(
-                required_role=users_model.Role.ADMIN
+                required_role=users_model.Role.USER
             )
         )
     ]
 )
 
 
-@router.get("/history/events", response_model=list[models.HistoryEvent])
+@router.get(
+    "/history/events",
+    response_model=list[models.HistoryEvent],
+    dependencies=[
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_model.Role.ADMIN
+            )
+        )
+    ],
+)
 def get_events(
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> abc.Sequence[models.DatabaseUserHistoryEvent]:
@@ -33,8 +44,21 @@ def get_events(
 
 @router.get("/{user_id}/history", response_model=models.UserHistory)
 def get_user_history(
+    own_user: users_model.DatabaseUser = fastapi.Depends(
+        users_injectables.get_own_user
+    ),
     user: users_model.DatabaseUser = fastapi.Depends(
         users_injectables.get_existing_user
     ),
 ) -> users_model.DatabaseUser:
-    return user
+    if own_user.id == user.id or auth_injectables.RoleVerification(
+        required_role=users_model.Role.ADMIN, verify=False
+    ):
+        return user
+    else:
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "reason": "You need to be administrator for this transaction.",
+            },
+        )

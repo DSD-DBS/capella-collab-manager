@@ -5,7 +5,7 @@
 
 <div class="flex flex-wrap">
   <mat-card id="manage-users">
-    <h2>Manage users</h2>
+    <h2>Manage Users</h2>
     <mat-form-field id="search" appearance="outline">
       <mat-label>Search</mat-label>
       <input
@@ -22,26 +22,57 @@
       [class]="
         'scrollable simple-scroll' // eslint-disable-line tailwindcss/no-custom-classname
       "
-      (selectionChange)="onUserSelect($event.options[0].value)"
     >
       <div mat-subheader>Administrators</div>
-      <mat-list-option
+      <div
         *ngFor="let user of getUsersByRole('administrator')"
-        [value]="user"
+        class="mx-1.5 my-2.5 flex justify-between"
       >
-        <mat-icon mat-list-icon>account_circle</mat-icon>
-        <div mat-line>{{ user.name }}</div>
-        <div mat-line>{{ projectUserService.ADVANCED_ROLES[user.role] }}</div>
-      </mat-list-option>
+        <a [routerLink]="['/user', user.id]" class="flex items-center">
+          <mat-icon mat-list-icon>account_circle</mat-icon>
+          <div class="ml-5">
+            <div mat-line>{{ user.name }}</div>
+            <div mat-line class="text-gray-500">
+              {{ projectUserService.ADVANCED_ROLES[user.role] }}
+            </div>
+          </div>
+        </a>
+      </div>
       <div mat-subheader>Users</div>
-      <mat-list-option
+      <div
         *ngFor="let user of getUsersByRole('user')"
-        [value]="user"
+        class="mx-1.5 my-2.5 flex justify-between"
       >
-        <mat-icon mat-list-icon>account_circle</mat-icon>
-        <div mat-line>{{ user.name }}</div>
-        <div mat-line>{{ projectUserService.ADVANCED_ROLES[user.role] }}</div>
-      </mat-list-option>
+        <a [routerLink]="['/user', user.id]" class="flex items-center">
+          <mat-icon mat-list-icon>account_circle</mat-icon>
+          <div class="ml-5">
+            <div mat-line>{{ user.name }}</div>
+            <div mat-line class="text-gray-500">
+              {{ projectUserService.ADVANCED_ROLES[user.role] }}
+            </div>
+          </div>
+        </a>
+        <div class="ml-1 mr-0 flex items-center">
+          <button
+            mat-icon-button
+            color="error"
+            *ngIf="['user'].includes(user.role)"
+            (click)="deleteUser(user)"
+            matTooltip="Permamently delete user"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="upgradeToAdministrator(user)"
+            matTooltip="Upgrade user to administrator"
+          >
+            <mat-icon>arrow_upward</mat-icon>
+          </button>
+        </div>
+      </div>
     </mat-selection-list>
 
     <div *ngIf="selectedUser">
@@ -99,79 +130,5 @@
         Create User <mat-icon>keyboard_arrow_right</mat-icon>
       </button>
     </form>
-  </mat-card>
-  <mat-card class="wider">
-    <h2>User information</h2>
-    <div *ngIf="selectedUserHistory && selectedUser">
-      <div>Username: {{ selectedUserHistory.name }}</div>
-      <div *ngIf="selectedUserHistory.created">
-        Created:
-        {{ selectedUserHistory.created | date: "EE, dd MMM y HH:mm:ss" }}
-      </div>
-      <div *ngIf="selectedUserHistory.last_login">
-        Last login:
-        {{ selectedUserHistory.last_login | date: "EE, dd MMM y HH:mm:ss" }}
-      </div>
-      <div>
-        <table mat-table [dataSource]="historyEventDataSource">
-          <ng-container matColumnDef="eventType">
-            <th mat-header-cell *matHeaderCellDef>Event Type</th>
-            <td mat-cell *matCellDef="let event">{{ event.event_type }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="executorName">
-            <th mat-header-cell *matHeaderCellDef>Executor Name</th>
-            <td mat-cell *matCellDef="let event">
-              {{ event.executor?.name || "System" }}
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="executionTime">
-            <th mat-header-cell *matHeaderCellDef>Execution Time</th>
-            <td mat-cell *matCellDef="let event">
-              {{ event.execution_time | date: "EE, dd MMM y HH:mm:ss" }}
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="projectName">
-            <th mat-header-cell *matHeaderCellDef>Project Slug</th>
-            <td mat-cell *matCellDef="let event">
-              {{ event.project?.name || "" }}
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="reason">
-            <th mat-header-cell *matHeaderCellDef>Reason</th>
-            <td mat-cell *matCellDef="let event">{{ event.reason }}</td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-        </table>
-      </div>
-    </div>
-    <div *ngIf="!selectedUserHistory && !selectedUser">
-      You must first select a user to see the user details
-    </div>
-    <div *ngIf="!selectedUserHistory && selectedUser">
-      <ngx-skeleton-loader
-        appearance="circle"
-        [theme]="{
-          'border-radius': '5px',
-          height: '250px',
-          width: '600px',
-          border: '1px solid white'
-        }"
-      ></ngx-skeleton-loader>
-    </div>
-
-    <div [hidden]="!selectedUserHistory">
-      <mat-paginator
-        [pageSizeOptions]="[5, 10, 20]"
-        showFirstLastButtons
-        aria-label="Select page of periodic elements"
-      >
-      </mat-paginator>
-    </div>
   </mat-card>
 </div>

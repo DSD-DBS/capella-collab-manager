@@ -45,7 +45,7 @@
   </mat-card>
 </div>
 
-<h2>Projects monitoring</h2>
+<h2>Projects Monitoring</h2>
 <div class="flex flex-wrap items-stretch">
   <ngx-skeleton-loader
     *ngIf="projectStatuses === undefined"
@@ -60,8 +60,8 @@
     }"
   ></ngx-skeleton-loader>
   <div *ngFor="let projectStatus of projectStatuses">
-    <mat-card class="project-card">
-      <b>Project</b> <br />
+    <mat-card class="project-card rounded-md shadow-md">
+      <b class="px-1">Project</b> <br />
       <a
         target="_blank"
         [href]="'project/' + projectStatus.project_slug"
