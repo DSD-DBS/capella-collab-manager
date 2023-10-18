@@ -157,8 +157,8 @@ provision-guacamole:
 	kubectl exec -i --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) deployment/$(RELEASE)-guacamole-postgres -- psql -U guacamole guacamole
 	@echo "Guacamole database initialized sucessfully.";
 
-# Execute with `make -j3 dev`
-dev: dev-oauth-mock dev-frontend dev-backend
+# Execute with `make -j4 dev`
+dev: dev-oauth-mock dev-frontend dev-backend dev-docs
 
 dev-frontend:
 	$(MAKE) -C frontend dev
@@ -168,6 +168,9 @@ dev-backend:
 
 dev-oauth-mock:
 	$(MAKE) -C mocks/oauth start
+
+dev-docs:
+	$(MAKE) -C docs serve
 
 backend-logs:
 	kubectl logs -f -n $(NAMESPACE) -l id=$(RELEASE)-deployment-backend

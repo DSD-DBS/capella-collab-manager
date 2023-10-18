@@ -144,32 +144,9 @@ running in a few minutes.
 
 ### Deployment
 
-You can find the installation guide for deployment in the [general documentation](https://capella-collaboration-manager.readthedocs.io/en/latest/installation/).
-
-### Uninstall the environment
-
-1. If you want to uninstall the management portal, you can run the following comment:
-
-   ```sh
-   helm uninstall production -n <namespace> helm
-   ```
-
-1. The previous command doesn't clean the sessions namespace.
-   Please clean it manually by running (this does also remove all persistent workspaces!):
-
-   ```zsh
-   kubectl -n <sessions-namespace> delete all --all
-   ```
-
-   or just delete the namespace:
-
-   ```zsh
-   kubectl delete namespace <sessions-namespace>
-   ```
+You can find the installation guide for the deployment in the [general documentation](https://capella-collaboration-manager.readthedocs.io/en/latest/installation/).
 
 ## How it works
-
-![Capella Collab Manager architecture](docs/architecture.png)
 
 The Capella Collaboration Manager consists of a couple of components:
 
@@ -177,6 +154,8 @@ The Capella Collaboration Manager consists of a couple of components:
 - A backend service - for managing projects, users and sessions
 - [Guacamole](https://guacamole.apache.org/), to expose the sessions via the browser
 - Databases, for state persistence
+- Prometheus for session monitoring
+- Grafana Loki for logs management
 
 External software can also be linked. These parts can be installed separately:
 
