@@ -2,3 +2,4 @@
 	path = capella-dockerimages
 	url = ../capella-dockerimages
 	branch = main
+	ignore = dirty
