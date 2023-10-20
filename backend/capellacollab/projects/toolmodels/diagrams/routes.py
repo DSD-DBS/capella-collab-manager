@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import logging
+import pathlib
 from urllib import parse
 
 import fastapi
@@ -67,14 +68,24 @@ async def get_diagram_metadata(
     )
 
 
-@router.get("/{diagram_uuid}", response_class=fastapi.responses.Response)
+@router.get(
+    "/{diagram_uuid_or_filename}", response_class=fastapi.responses.Response
+)
 async def get_diagram(
-    diagram_uuid: str,
+    diagram_uuid_or_filename: str,
     handler: git_handler.GitHandler = fastapi.Depends(
         git_injectables.get_git_handler
     ),
     logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
 ):
+    fileextension = pathlib.PurePosixPath(diagram_uuid_or_filename).suffix
+    if fileextension and fileextension.lower() != ".svg":
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"reason": f"File extension {fileextension} not supported"},
+        )
+
+    diagram_uuid = pathlib.PurePosixPath(diagram_uuid_or_filename).stem
     try:
         _, diagram = await handler.get_file_from_repository_or_artifacts(
             f"diagram_cache/{parse.quote(diagram_uuid, safe='')}.svg",

@@ -386,6 +386,121 @@ def test_get_single_diagram_from_artifacts(
 
 @responses.activate
 @pytest.mark.parametrize(
+    "git_type,git_response_status,git_query_params",
+    [
+        (
+            git_models.GitType.GITLAB,
+            404,
+            [
+                {
+                    "path": "diagram_cache/index.json",
+                    "ref_name": "diagram-cache/main",
+                },
+                {
+                    "path": "diagram_cache/_c90e4Hdf2d2UosmJBo0GTw.svg",
+                    "ref_name": "diagram-cache/main",
+                },
+            ],
+        ),
+        (
+            git_models.GitType.GITHUB,
+            404,
+            [
+                {
+                    "path": "diagram_cache/index.json",
+                    "sha": "diagram-cache/main",
+                },
+                {
+                    "path": "diagram_cache/_c90e4Hdf2d2UosmJBo0GTw.svg",
+                    "sha": "diagram-cache/main",
+                },
+            ],
+        ),
+    ],
+)
+@pytest.mark.usefixtures(
+    "project_user",
+    "git_instance",
+    "git_model",
+    "mock_git_diagram_cache_from_repo_api",
+    "mock_git_rest_api_for_artifacts",
+    "mock_git_diagram_cache_index_api",
+    "mock_git_diagram_cache_svg",
+    "mock_git_get_commit_information_api",
+)
+@pytest.mark.usefixtures("project_user", "git_instance", "git_model")
+def test_get_single_diagram_from_artifacts_with_file_ending(
+    project: project_models.DatabaseProject,
+    capella_model: toolmodels_models.CapellaModel,
+    client: testclient.TestClient,
+):
+    response = client.get(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams/_c90e4Hdf2d2UosmJBo0GTw.svg",
+    )
+
+    assert response.status_code == 200
+    assert response.content == EXAMPLE_SVG
+
+
+@responses.activate
+@pytest.mark.parametrize(
+    "git_type,git_response_status,git_query_params",
+    [
+        (
+            git_models.GitType.GITLAB,
+            404,
+            [
+                {
+                    "path": "diagram_cache/index.json",
+                    "ref_name": "diagram-cache/main",
+                },
+                {
+                    "path": "diagram_cache/_c90e4Hdf2d2UosmJBo0GTw.svg",
+                    "ref_name": "diagram-cache/main",
+                },
+            ],
+        ),
+        (
+            git_models.GitType.GITHUB,
+            404,
+            [
+                {
+                    "path": "diagram_cache/index.json",
+                    "sha": "diagram-cache/main",
+                },
+                {
+                    "path": "diagram_cache/_c90e4Hdf2d2UosmJBo0GTw.svg",
+                    "sha": "diagram-cache/main",
+                },
+            ],
+        ),
+    ],
+)
+@pytest.mark.usefixtures(
+    "project_user",
+    "git_instance",
+    "git_model",
+    "mock_git_diagram_cache_from_repo_api",
+    "mock_git_rest_api_for_artifacts",
+    "mock_git_diagram_cache_index_api",
+    "mock_git_diagram_cache_svg",
+    "mock_git_get_commit_information_api",
+)
+@pytest.mark.usefixtures("project_user", "git_instance", "git_model")
+def test_get_single_diagram_from_artifacts_with_wrong_file_ending(
+    project: project_models.DatabaseProject,
+    capella_model: toolmodels_models.CapellaModel,
+    client: testclient.TestClient,
+):
+    response = client.get(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams/_c90e4Hdf2d2UosmJBo0GTw.png",
+    )
+
+    assert response.status_code == 400
+
+
+@responses.activate
+@pytest.mark.parametrize(
     "git_type,git_query_params",
     [
         (
