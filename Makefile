@@ -60,7 +60,7 @@ jupyter:
 	$(CAPELLA_DOCKERIMAGES) jupyter-notebook
 
 docs:
-	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs/user
+	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs
 
 deploy: build capella helm-deploy open rollout
