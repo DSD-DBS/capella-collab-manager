@@ -27,7 +27,7 @@ jobs:
             context: ./guacamole
           - name: docs
             image: ghcr.io/dsd-dbs/capella-collab-manager/docs
-            context: ./docs/user
+            context: ./docs
     steps:
       - name: Checkout repository
         if: ${{ matrix.name != 'frontend' && matrix.name != 'backend' }}
