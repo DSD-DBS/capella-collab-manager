@@ -30,9 +30,9 @@ Destination" opens. This shows where your work is going to be stored locally.
 
  <!-- prettier-ignore -->
 
-    !!! info
-        Tick the box: "Import all existing Eclipse projects after clone
-        finishes" importing the cloned repository into your eclipse workspace
+!!! info
+    Tick the box: "Import all existing Eclipse projects after clone
+    finishes" importing the cloned repository into your eclipse workspace
 
 ![Step 3: Local Destination](working-with-git/local-destination.png)
 
@@ -111,15 +111,134 @@ there. Having done that you can click "Push".
 Now your changes are saved at the remote repository where they are not lost and
 your collegues can see them.
 
+## Diff and Merge Models
+
+<!-- prettier-ignore -->
+!!! warning
+    If you have to merge due to a merge conflict do not commit unless all conflicts highlighted are solved.
+
+If the merge tool is not opening on its own due to a merge conflict you can
+also diff two models on your own in order to check which changes were made.
+
+Therefore, select both `.aird`-files (e.g. with control click). Then right
+click on one of the files and select "Compare with" > "Each other as model".
+
+![Open compare View](working-with-git/start-compare-view.png)
+
+In the image you can see the
+[coffee machine model](https://github.com/DSD-DBS/coffee-machine) imported
+twice with different changes made to each model in order to compare them.
+
+In the View "Define the comparison operation to perform" it is important to
+choose the **correct** order of which model is the source and which one is the
+target. In that case we are taking the changes in the source to apply them to
+the target, and are going to change the target model.
+
+<!-- prettier-ignore -->
+!!! warning
+    Make sure to select the correct direction of merging in order to modify the
+    correct model.
+
+![Configure Merge Direction](working-with-git/configure-merge-direction.png)
+
+In the example we want to merge our changes from Left (coffee-machine model on
+working branch) into Right (coffee machine model on main branch)(1).
+
+Afterwards click "Configure" (2) to make further configurations.
+
+Choose the option "Transfer of elements between models created independently".
+Then click "Show advanced settings >>" to configure the matching process
+between elements. Thus, click the now appeared tab "Matching".
+
+Usually the UUIDs of the objects in your model should be stable. So ticking the
+Absolute criteria "Technical IDs" and "Property IDs" should be sufficient.
+Especially for if you know that there could be changes in diagrams you might
+also want to tick "Diagrams: Match shapes according to represented elements"
+and "Diagrams: Match remaining shapes according to type" as in Diagrams IDs
+might change just by opening them. If nothing else helps choose "Names" and
+click "Use labels as names" to match but labels easily change.
+
+![Configure Matching Strategie](working-with-git/configure-merge-matching.png)
+
+Afterwards, click "Ok" and "Finish".
+
+Then you get into the merge view. Marked with the lock you can see which model
+is going to be modified. They are also labeled as source and target where the
+source is from which we are taking the changes and the target is the model that
+gets modified.
+
+![Explain Merge View](working-with-git/explain-merge-view.png)
+
+The colors highlight what change was made and will be applied to the target if
+you apply the change: _blue: create, red: delete, purple: modify_.
+
+If there are any objects that are overarching you have to merge them seperately
+as they can not be merged in the seperate layers.
+
+### Merge Model Elements
+
+In the synthesis view you can see the number of changes that happened. If you
+click on a specific change you can see in the Details (1) and also marked in
+blue on both models what changed and possibly how the current status in both
+models is. Then you can right click on the change in the synthesis view and
+click "Apply change(s)" (2) and you can click "Ok" then. Afterwards make sure
+to Ctrl+S or File > Save to save the change made.
+
+<!-- prettier-ignore -->
+!!! warning
+    If any of your changes depend on common objects independent of layers make sure
+    to also apply those changes in order to create a working modification of the
+    model.
+
+If you have also changes in diagrams you should migrate them as well in the
+same session.
+
+### Merge Diagrams
+
+Diagrams are stored in the `.aird` file. There the application of changes
+happens similar. You can have a look into the multiple stages to see the what
+exactly changed in the diagrams and you can very detailed choose the changes
+that you want to apply.
+
+If you have also changes in the model content you should merge both in the same
+session.
+
 ## Merge Conflicts
 
 Commit your changes as described above. Pull from the remote (e.g. right click
 on the project > "Team" > "Pull"). This might result in merge conflicts which
 you can solve via the merge tool.
 
-If this is not the case you have to open the reset view.
+### Merging with the Merge Tool
 
-![Step 8: Open Reset View](working-with-git/open-reset-view.png)
+In the above description we made sure to decide which model is our target and
+is going to be modified while the changes would be taken from the source model.
+In the case of a merge conflict we have changes in both models at the same
+position and it is not possible to automatically decide which change to keep
+and which to overwrite because possibly both are reasonable changes. Thus you
+as a user have to decide which changes to keep. In the following we are
+describing how you can pick the changes that you later want to see in the
+model.
+
+![Decide Side of Change](working-with-git/merge-decide-side.png)
+
+With the butttons above the details of the made changes enable us to decide the
+change from which model to take and which change to discard.
+
+If the number of changes is overwhelming you can filter them by different
+criteria (2). In the category "Three-way" you can tick "filtered" for the
+changes that for the moment you prefer not to see and to tackle to apply the
+changes one after another.
+
+Make sure to resolve all conflicts before commiting! After merging reopen the
+model and look especially into layouting as capella might be a bit
+opportunistic in merging layouts.
+
+### Merging if Merge Tool is not possible
+
+If merging with the merge tool is not possible you have to open the reset view.
+
+![Step 8: Open Reset View](working-with-git/open-reset-view.png){:style="width:500px"}
 
 Then select hard reset of your local branch:
 
@@ -156,3 +275,13 @@ automatically or not:
     1. Redo your work. We recommend using a new session for that.
     1. Open a service request or contact the operations team in order to try to
       get your changes merged manually.
+
+In order to publish your changes and to share them with your team click:
+"Commit and Push" (1). If you have not configured that before you are now asked
+to "Configure upstream for push and pull" and the selected default of "Merge"
+can just be kept. You might now be asked to enter a user and a password for the
+remote repository in order to push your changes there. Having done that you can
+click "Push".
+
+Now your changes are saved at the remote repository where they are not lost and
+your collegues can see them.
