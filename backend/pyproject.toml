@@ -52,7 +52,7 @@ Homepage = "https://github.com/DSD-DBS/capella-collab-manager"
 [project.optional-dependencies]
 dev = [
   "black",
-  "capellambse==0.5.35.dev4",
+  "capellambse==0.5.35",
   "deepdiff",
   "isort",
   "mypy",
