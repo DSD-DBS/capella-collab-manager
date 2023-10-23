@@ -287,6 +287,13 @@ loki:
     # We don't want to limit to specific nodes
     affinity: ""
     resources: *resourcesLoki
+  sidecar:
+    rules:
+      enabled: False
+  rbac:
+    pspEnabled: False
+    sccEnabled: False
+    namespaced: True
   serviceAccount:
     # ServiceAccount doesn't work in OpenShift
     create: False
