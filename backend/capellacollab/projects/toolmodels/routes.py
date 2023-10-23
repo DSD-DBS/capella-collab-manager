@@ -4,6 +4,7 @@
 import uuid
 
 import fastapi
+import slugify
 from fastapi import status
 from sqlalchemy import exc, orm
 
@@ -121,11 +122,27 @@ def create_new_tool_model(
 )
 def patch_tool_model(
     body: models.PatchCapellaModel,
+    project: projects_models.DatabaseProject = fastapi.Depends(
+        projects_injectables.get_existing_project
+    ),
     model: models.DatabaseCapellaModel = fastapi.Depends(
         injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseCapellaModel:
+    if body.name:
+        new_slug = slugify.slugify(body.name)
+
+        if model.slug != new_slug and crud.get_model_by_slugs(
+            db, project.slug, new_slug
+        ):
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={
+                    "reason": "A model with a similar name already exists."
+                },
+            )
+
     version = get_version_by_id_or_raise(db, body.version_id)
     if version.tool != model.tool:
         raise fastapi.HTTPException(
@@ -144,7 +161,9 @@ def patch_tool_model(
             },
         )
 
-    return crud.update_model(db, model, body.description, version, nature)
+    return crud.update_model(
+        db, model, body.description, body.name, version, nature
+    )
 
 
 @router.delete(

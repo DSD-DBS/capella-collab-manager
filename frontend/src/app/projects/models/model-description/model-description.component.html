@@ -9,6 +9,17 @@
     <form (submit)="onSubmit()" [formGroup]="form">
       <fieldset>
         <mat-form-field appearance="fill">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" />
+
+          <mat-error *ngIf="form.controls.name.errors?.uniqueSlug"
+            >A model with a similar name already exists.</mat-error
+          >
+        </mat-form-field>
+      </fieldset>
+
+      <fieldset>
+        <mat-form-field appearance="fill">
           <mat-label>Description</mat-label>
           <textarea
             formControlName="description"
@@ -62,7 +73,14 @@
             Delete
           </button>
         </span>
-        <button mat-flat-button color="primary" type="submit">Submit</button>
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="!form.valid"
+        >
+          Submit
+        </button>
       </div>
     </form>
   </mat-card>

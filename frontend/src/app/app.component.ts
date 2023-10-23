@@ -5,6 +5,7 @@
 
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
+import slugify from 'slugify';
 import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
 import { PageLayoutService } from './page-layout/page-layout.service';
 import { FullscreenService } from './sessions/service/fullscreen.service';
@@ -19,7 +20,9 @@ export class AppComponent implements AfterViewInit {
     public pageLayoutService: PageLayoutService,
     public fullscreenService: FullscreenService,
     private navBarService: NavBarService,
-  ) {}
+  ) {
+    slugify.extend({ '.': '-' });
+  }
 
   @ViewChild('sidenav') private sidenav?: MatSidenav;
 
