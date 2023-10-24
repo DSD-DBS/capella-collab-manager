@@ -5,9 +5,11 @@
 
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, switchMap, tap } from 'rxjs';
+import { ConfirmationDialogComponent } from 'src/app/general/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import {
@@ -45,6 +47,7 @@ export class ModelDescriptionComponent implements OnInit {
     public toastService: ToastService,
     private router: Router,
     private route: ActivatedRoute,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -108,30 +111,31 @@ export class ModelDescriptionComponent implements OnInit {
   }
 
   deleteModel(): void {
-    if (
-      !this.canDelete ||
-      !this.modelSlug ||
-      !window.confirm(`Do you really want to delete this model?`)
-    ) {
+    if (!(this.canDelete && this.modelSlug)) {
       return;
     }
 
-    const modelSlug = this.modelSlug;
+    const modelSlug = this.modelSlug!;
 
-    this.modelService.deleteModel(this.projectSlug!, modelSlug).subscribe({
-      next: () => {
-        this.toastService.showSuccess(
-          'Model deleted',
-          `${modelSlug} has been deleted`,
-        );
-        this.router.navigate(['../../..'], { relativeTo: this.route });
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Delete Model',
+        text: 'Do you really want to delete this model?',
       },
-      error: () => {
-        this.toastService.showError(
-          'Model deletion failed',
-          `${modelSlug} has not been deleted`,
-        );
-      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.modelService.deleteModel(this.projectSlug!, modelSlug).subscribe({
+          next: () => {
+            this.toastService.showSuccess(
+              'Model deleted',
+              `${modelSlug} has been deleted`,
+            );
+            this.router.navigate(['../../..'], { relativeTo: this.route });
+          },
+        });
+      }
     });
   }
 }
