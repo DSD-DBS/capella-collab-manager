@@ -120,6 +120,14 @@ export class ProjectService {
   getAvailableVisibilities(): ProjectVisibility[] {
     return Object.keys(ProjectVisibility) as ProjectVisibility[];
   }
+
+  getProjectTypeDescription(type: ProjectType): string {
+    return ProjectTypes[type];
+  }
+
+  getAvailableProjectTypes(): ProjectType[] {
+    return Object.keys(ProjectTypes) as ProjectType[];
+  }
 }
 
 export type UserMetadata = {
@@ -140,6 +148,8 @@ export type PatchProject = Partial<PostProject> & {
 
 export type ProjectVisibility = 'internal' | 'private';
 
+export type ProjectType = 'general' | 'training';
+
 export type Project = Required<PatchProject> & {
   slug: string;
   users: UserMetadata;
@@ -148,4 +158,9 @@ export type Project = Required<PatchProject> & {
 export const ProjectVisibility = {
   internal: 'Internal (viewable by all logged in users)',
   private: 'Private (only viewable by project members)',
+};
+
+export const ProjectTypes = {
+  general: 'General - a project that contains multiple related models.',
+  training: 'Training - this project contains training material.',
 };

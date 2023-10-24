@@ -91,6 +91,7 @@ class PatchProject(pydantic.BaseModel):
     name: str | None = None
     description: str | None = None
     visibility: Visibility | None = None
+    type: ProjectType | None = None
     is_archived: bool | None = None
 
 

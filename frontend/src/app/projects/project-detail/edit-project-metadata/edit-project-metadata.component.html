@@ -54,6 +54,21 @@
           </mat-radio-group>
         </div>
       </fieldset>
+      <fieldset>
+        <div class="flex flex-col">
+          <h3>Project type</h3>
+          <mat-radio-group formControlName="type" class="flex flex-col">
+            <mat-radio-button
+              *ngFor="
+                let projectType of projectService.getAvailableProjectTypes()
+              "
+              [value]="projectType"
+            >
+              {{ projectService.getProjectTypeDescription(projectType) }}
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </fieldset>
     </form>
     <div class="flex justify-between">
       <span
