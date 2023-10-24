@@ -54,6 +54,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
           name: this.form.value.name!,
           description: this.form.value.description!,
           visibility: this.form.value.visibility! as ProjectVisibility,
+          type: 'general',
         })
         .subscribe((project) => {
           this.toastService.showSuccess(

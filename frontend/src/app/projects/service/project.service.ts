@@ -140,6 +140,7 @@ export type PostProject = {
   name: string;
   description: string;
   visibility: ProjectVisibility;
+  type: ProjectType;
 };
 
 export type PatchProject = Partial<PostProject> & {
