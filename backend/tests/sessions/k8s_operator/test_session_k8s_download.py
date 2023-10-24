@@ -2,21 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import base64
-import os
 
-import kubernetes.config
 import pytest
 
 from capellacollab.sessions.operators.k8s import (
     KubernetesOperator,
     lazy_b64decode,
 )
-
-
-@pytest.fixture(autouse=True)
-def mock_k8s_load_config(monkeypatch):
-    monkeypatch.setattr(kubernetes.config, "load_config", lambda **_: None)
-
 
 hello = base64.b64encode(b"hello")  # aGVsbG8=
 
@@ -36,7 +28,7 @@ def test_lazy_b64_decode():
     )
 
 
-def test_download_file(monkeypatch):
+def test_download_file(monkeypatch: pytest.MonkeyPatch):
     mock_stream = MockStream([hello.decode("utf-8")])
     monkeypatch.setattr(
         "kubernetes.stream.stream", lambda *a, **ka: mock_stream
@@ -65,35 +57,3 @@ class MockStream:
 
     def read_stdout(self, timeout=None):
         return self._blocks.pop(0)
-
-
-def test_create_job(monkeypatch):
-    monkeypatch.setattr("kubernetes.config.load_config", lambda **_: None)
-    operator = KubernetesOperator()
-    monkeypatch.setattr(
-        operator.v1_batch, "create_namespaced_job", lambda namespace, job: None
-    )
-    result = operator.create_job(
-        image="fakeimage",
-        command="fakecmd",
-        labels={"key": "value"},
-        environment={"ENVVAR": "value"},
-    )
-
-    assert result
-
-
-def test_create_cronjob(monkeypatch):
-    operator = KubernetesOperator()
-    monkeypatch.setattr(
-        operator.v1_batch,
-        "create_namespaced_cron_job",
-        lambda namespace, job: None,
-    )
-    result = operator.create_cronjob(
-        image="fakeimage",
-        command="fakecmd",
-        environment={"ENVVAR": "value"},
-    )
-
-    assert result

@@ -96,6 +96,7 @@ class KubernetesOperator:
         self.v1_apps = client.AppsV1Api(api_client=self.client)
         self.v1_batch = client.BatchV1Api(api_client=self.client)
         self.v1_networking = client.NetworkingV1Api(api_client=self.client)
+        self.v1_policy = client.PolicyV1Api(api_client=self.client)
         self._openshift = None
 
     @property
@@ -200,6 +201,11 @@ class KubernetesOperator:
             limits=limits,
         )
 
+        self._create_disruption_budget(
+            name=_id,
+            deployment_name=_id,
+        )
+
         service = self._create_service(
             name=_id,
             deployment_name=_id,
@@ -224,6 +230,13 @@ class KubernetesOperator:
         if dep_status := self._delete_deployment(name=_id):
             log.info(
                 "Deleted deployment %s with status %s", _id, dep_status.status
+            )
+
+        if disrupt_status := self._delete_disruptionbudget(name=_id):
+            log.info(
+                "Deleted Pod discruption budget %s with status %s",
+                _id,
+                disrupt_status.status,
             )
 
         if loki_enabled and (conf_status := self._delete_config_map(name=_id)):
@@ -572,6 +585,7 @@ class KubernetesOperator:
             metadata=client.V1ObjectMeta(name=name),
             spec=client.V1DeploymentSpec(
                 replicas=1,
+                strategy=client.V1DeploymentStrategy(type="Recreate"),
                 selector=client.V1LabelSelector(match_labels={"app": name}),
                 template=client.V1PodTemplateSpec(
                     metadata=client.V1ObjectMeta(
@@ -662,6 +676,41 @@ class KubernetesOperator:
             ),
         )
         return self.v1_batch.create_namespaced_job(namespace, job)
+
+    def _create_disruption_budget(
+        self,
+        name: str,
+        deployment_name: str,
+    ) -> client.V1PodDisruptionBudget:
+        """Disallow any pod discription for the deployment
+
+        If the deployment uses the recreate strategy together with
+        this budget, the cluster operator shall consult the administrator before
+        termination of the deployment.
+
+        More information:
+        https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+        """
+
+        discruption_budget: client.V1PodDisruptionBudget = (
+            client.V1PodDisruptionBudget(
+                kind="PodDisruptionBudget",
+                api_version="policy/v1",
+                metadata=client.V1ObjectMeta(
+                    name=name,
+                    labels={"app": name},
+                ),
+                spec=client.V1PodDisruptionBudgetSpec(
+                    max_unavailable=0,
+                    selector=client.V1LabelSelector(
+                        match_labels={"app": deployment_name}
+                    ),
+                ),
+            )
+        )
+        return self.v1_policy.create_namespaced_pod_disruption_budget(
+            namespace, discruption_budget
+        )
 
     def _create_service(
         self,
@@ -940,6 +989,21 @@ class KubernetesOperator:
             return self.v1_core.delete_namespaced_service(name, namespace)
         except exceptions.ApiException:
             log.exception("Error deleting service with name: %s", name)
+            return None
+
+    def _delete_disruptionbudget(self, name: str) -> client.V1Status | None:
+        try:
+            return self.v1_policy.delete_namespaced_pod_disruption_budget(
+                name, namespace
+            )
+        except exceptions.ApiException as e:
+            # Pod disruption budge doesn't exist or was already deleted
+            # Nothing to do
+            if not e.status == http.HTTPStatus.NOT_FOUND:
+                log.exception(
+                    "Error deleting discruptionbudget with name: %s", name
+                )
+
             return None
 
     def _delete_ingress(self, name: str) -> client.V1Status | None:

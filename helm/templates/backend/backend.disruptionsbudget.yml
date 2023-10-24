@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Release.Name }}-backend
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      id: {{ .Release.Name }}-deployment-backend
