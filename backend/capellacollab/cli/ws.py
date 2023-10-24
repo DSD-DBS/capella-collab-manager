@@ -174,9 +174,11 @@ def pod_for_volume(
 
     v1.create_namespaced_pod(namespace, pod)
 
-    while not is_pod_ready(name, namespace, v1):
+    timeout = 300  # seconds
+    while not is_pod_ready(name, namespace, v1) and timeout > 0:
         print("Waiting for pod to come online...")
         time.sleep(2)
+        timeout -= 2
 
     yield name
 
