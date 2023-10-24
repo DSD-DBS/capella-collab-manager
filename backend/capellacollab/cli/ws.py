@@ -4,16 +4,16 @@
 from __future__ import annotations
 
 import contextlib
+import pathlib
 import select
 import sys
 import time
+import typing as t
 import uuid
-from pathlib import Path
-from typing import Annotated
 
 import typer
+import websocket  # type: ignore[import]
 from kubernetes import client, config, stream
-from websocket import ABNF  # type: ignore[import]
 
 app = typer.Typer()
 
@@ -42,7 +42,7 @@ NamespaceOption = typer.Option(
 
 
 @app.command()
-def volumes(namespace: Annotated[str, NamespaceOption]):
+def volumes(namespace: t.Annotated[str, NamespaceOption]):
     """List all Persistent Volume Claims in a kubernetes namespace."""
     core_api = client.CoreV1Api()
 
@@ -55,7 +55,7 @@ def volumes(namespace: Annotated[str, NamespaceOption]):
 @app.command()
 def ls(
     volume_name: str,
-    namespace: Annotated[str, NamespaceOption],
+    namespace: t.Annotated[str, NamespaceOption],
     path: str = MOUNT_PATH,
 ):
     """List all files on a path in a Kubernetes Persistent Volume."""
@@ -69,8 +69,8 @@ def ls(
 @app.command()
 def backup(
     volume_name: str,
-    namespace: Annotated[str, NamespaceOption],
-    out: Path = Path.cwd(),
+    namespace: t.Annotated[str, NamespaceOption],
+    out: pathlib.Path = pathlib.Path.cwd(),
 ):
     """Create a backup of all content in a Kubernetes Persistent Volume."""
     v1 = client.CoreV1Api()
@@ -89,8 +89,8 @@ def backup(
 @app.command()
 def restore(
     volume_name: str,
-    tarfile: Annotated[Path, typer.Argument(exists=True)],
-    namespace: Annotated[str, NamespaceOption],
+    tarfile: t.Annotated[pathlib.Path, typer.Argument(exists=True)],
+    namespace: t.Annotated[str, NamespaceOption],
     access_mode: str = "ReadWriteMany",
     storage_class_name: str = "persistent-sessions-csi",
     user_id: str | None = None,
@@ -340,9 +340,12 @@ class WSFileManager:
             return stdout_bytes, stderr_bytes, not self.ws_client._connected
 
         op_code, frame = self.ws_client.sock.recv_data_frame(True)
-        if op_code == ABNF.OPCODE_CLOSE:
+        if op_code == websocket.ABNF.OPCODE_CLOSE:
             self.ws_client._connected = False
-        elif op_code in (ABNF.OPCODE_BINARY, ABNF.OPCODE_TEXT):
+        elif op_code in (
+            websocket.ABNF.OPCODE_BINARY,
+            websocket.ABNF.OPCODE_TEXT,
+        ):
             data = frame.data
             if len(data) > 1:
                 channel = data[0]
