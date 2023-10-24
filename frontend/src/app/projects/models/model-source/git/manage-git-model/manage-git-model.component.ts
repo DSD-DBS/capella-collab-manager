@@ -18,10 +18,12 @@ import {
   AsyncValidatorFn,
   FormBuilder,
 } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map, Observable, of } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
+import { ConfirmationDialogComponent } from 'src/app/general/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   absoluteOrRelativeValidators,
@@ -85,6 +87,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
+    private dialog: MatDialog,
   ) {}
 
   public form = this.fb.group({
@@ -318,30 +321,31 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   }
 
   unlinkGitModel(): void {
-    if (!window.confirm(`Do you really want to unlink this Git model?`)) {
-      return;
-    }
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Unlink Git Model',
+        text: 'Do you really want to unlink this Git model?',
+      },
+    });
 
-    this.gitModelService
-      .deleteGitSource(this.projectSlug!, this.modelSlug!, this.gitModel!)
-      .subscribe({
-        next: () => {
-          this.toastService.showSuccess(
-            'Git repository unlinked',
-            `The Git repository '${this.gitModel!.path}' has been unlinked`,
-          );
-          this.router.navigateByUrl(
-            `/project/${this.projectSlug!}/model/${this
-              .modelSlug!}/modelsources`,
-          );
-        },
-        error: () => {
-          this.toastService.showError(
-            'Git repository unlinking failed',
-            `The Git repository '${this.gitModel!.path}' has not been unlinked`,
-          );
-        },
-      });
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.gitModelService
+          .deleteGitSource(this.projectSlug!, this.modelSlug!, this.gitModel!)
+          .subscribe({
+            next: () => {
+              this.toastService.showSuccess(
+                'Git repository unlinked',
+                `The Git repository '${this.gitModel!.path}' has been unlinked`,
+              );
+              this.router.navigateByUrl(
+                `/project/${this.projectSlug!}/model/${this
+                  .modelSlug!}/modelsources`,
+              );
+            },
+          });
+      }
+    });
   }
 
   private createGitModelFromForm(): CreateGitModel {

@@ -12,9 +12,11 @@ import {
   Output,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter } from 'rxjs';
+import { ConfirmationDialogComponent } from 'src/app/general/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   SubmitT4CModel,
@@ -59,6 +61,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private toastService: ToastService,
+    private dialog: MatDialog,
   ) {}
 
   public form = new FormGroup({
@@ -189,32 +192,37 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
   }
 
   unlinkT4CModel() {
-    if (!window.confirm(`Do you really want to unlink this T4C model?`)) {
+    if (!(this.projectSlug && this.modelSlug && this.t4cModel)) {
       return;
     }
 
-    if (this.projectSlug && this.modelSlug && this.t4cModel) {
-      const t4cModelName = this.t4cModel.name;
-      this.t4cModelService
-        .unlinkT4CModel(this.projectSlug, this.modelSlug, this.t4cModel.id)
-        .subscribe({
-          next: () => {
-            this.toastService.showSuccess(
-              'TeamForCapella project unlinked',
-              `The TeamForCapella repository with the name '${t4cModelName}' has been unlinked`,
-            );
-            this.router.navigateByUrl(
-              `/project/${this.projectSlug!}/model/${this
-                .modelSlug!}/modelsources`,
-            );
-          },
-          error: () => {
-            this.toastService.showSuccess(
-              'TeamForCapella project unlinking failed',
-              `The TeamForCapella repository with the name '${t4cModelName}' has not been unlinked`,
-            );
-          },
-        });
-    }
+    const projectSlug = this.projectSlug!;
+    const modelSlug = this.modelSlug!;
+    const t4cModel = this.t4cModel!;
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Unlink T4C Model',
+        text: 'Do you really want to unlink this T4C model?',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.t4cModelService
+          .unlinkT4CModel(projectSlug, modelSlug, t4cModel.id)
+          .subscribe({
+            next: () => {
+              this.toastService.showSuccess(
+                'TeamForCapella project unlinked',
+                `The TeamForCapella repository with the name '${t4cModel.name}' has been unlinked`,
+              );
+              this.router.navigateByUrl(
+                `/project/${projectSlug!}/model/${modelSlug}/modelsources`,
+              );
+            },
+          });
+      }
+    });
   }
 }

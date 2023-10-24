@@ -49,31 +49,33 @@ export class ProjectMetadataComponent {
   }
 
   deleteProject(): void {
-    if (
-      !this.canDelete ||
-      !this.project ||
-      !window.confirm(
-        `Do you really want to delete this project? All assigned users will lose access to it! The project cannot be restored!`,
-      )
-    ) {
+    if (!(this.canDelete && this.project)) {
       return;
     }
 
-    const projectSlug: string = this.project.slug;
+    const projectSlug = this.project.slug;
 
-    this.projectService.deleteProject(projectSlug).subscribe({
-      next: () => {
-        this.toastService.showSuccess(
-          'Project deleted',
-          `${projectSlug} has been deleted`,
-        );
-        this.router.navigate(['../../projects'], { relativeTo: this.route });
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Delete Project',
+        text: 'Do you really want to delete this project? All assigned users will lose access to it! The project cannot be restored!',
       },
-      error: () =>
-        this.toastService.showError(
-          'Project deletion failed',
-          `${projectSlug} has not been deleted`,
-        ),
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.projectService.deleteProject(projectSlug).subscribe({
+          next: () => {
+            this.toastService.showSuccess(
+              'Project deleted',
+              `${projectSlug} has been deleted`,
+            );
+            this.router.navigate(['../../projects'], {
+              relativeTo: this.route,
+            });
+          },
+        });
+      }
     });
   }
 
