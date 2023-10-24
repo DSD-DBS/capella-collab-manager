@@ -34,7 +34,7 @@ export class ConfirmationDialogComponent implements OnInit {
     }
   }
 
-  onCancelClick(): void {
+  onCancel(): void {
     this.dialogRef.close(false);
   }
 

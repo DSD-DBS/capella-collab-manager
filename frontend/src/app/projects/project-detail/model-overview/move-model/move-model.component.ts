@@ -10,7 +10,7 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { Observable, map } from 'rxjs';
-import { ConfirmationDialogComponent } from 'src/app/general/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   Model,

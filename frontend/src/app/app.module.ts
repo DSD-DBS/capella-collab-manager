@@ -64,6 +64,7 @@ import { VersionComponent } from './general/metadata/version/version.component';
 import { NavBarMenuComponent } from './general/nav-bar-menu/nav-bar-menu.component';
 import { NoticeComponent } from './general/notice/notice.component';
 import { DisplayValueComponent } from './helpers/display-value/display-value.component';
+import { InputDialogComponent } from './helpers/input-dialog/input-dialog.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 import { ButtonSkeletonLoaderComponent } from './helpers/skeleton-loaders/button-skeleton-loader/button-skeleton-loader.component';
 import { FormFieldSkeletonLoaderComponent } from './helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
@@ -176,6 +177,7 @@ import { SettingsComponent } from './settings/settings.component';
     GitSettingsComponent,
     HeaderComponent,
     InitModelComponent,
+    InputDialogComponent,
     JobRunOverviewComponent,
     LegalComponent,
     LicencesComponent,

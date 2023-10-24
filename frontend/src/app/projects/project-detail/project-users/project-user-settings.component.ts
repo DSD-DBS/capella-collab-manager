@@ -7,6 +7,10 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, take } from 'rxjs';
+import {
+  InputDialogComponent,
+  InputDialogResult,
+} from 'src/app/helpers/input-dialog/input-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { AddUserToProjectDialogComponent } from 'src/app/projects/project-detail/project-users/add-user-to-project/add-user-to-project.component';
 import { ProjectAuditLogComponent } from 'src/app/projects/project-detail/project-users/project-audit-log/project-audit-log.component';
@@ -33,7 +37,7 @@ export class ProjectUserSettingsComponent implements OnInit {
     public userService: UserService,
     private toastService: ToastService,
     private projectService: ProjectService,
-    private matDialog: MatDialog,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -45,83 +49,132 @@ export class ProjectUserSettingsComponent implements OnInit {
   }
 
   removeUserFromProject(user: User): void {
-    const reason = this.getReason();
-    if (!reason || !this.project) {
+    if (!this.project) {
       return;
     }
 
-    this.projectUserService
-      .deleteUserFromProject(this.project.slug, user.id, reason)
-      .subscribe(() => {
-        this.projectUserService.loadProjectUsers(this.project!.slug);
-        this.toastService.showSuccess(
-          `User removed`,
-          `User '${user.name}' has been removed from project '${this.project?.name}'`,
-        );
-      });
+    const projectName = this.project.name;
+    const projectSlug = this.project.slug;
+
+    const dialogRef = this.dialog.open(InputDialogComponent, {
+      data: {
+        title: 'Remove User from Project',
+        text: `Do you really want to remove '${user.name}' from the project '${projectName}')? Please provide a reason.`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: InputDialogResult) => {
+      if (result.success && result.text) {
+        this.projectUserService
+          .deleteUserFromProject(projectSlug, user.id, result.text)
+          .subscribe({
+            next: () => {
+              this.projectUserService.loadProjectUsers(projectSlug);
+              this.toastService.showSuccess(
+                `User removed`,
+                `User '${user.name}' has been removed from project '${projectName}'`,
+              );
+            },
+          });
+      }
+    });
   }
 
   upgradeUserToProjectManager(user: User): void {
-    const reason = this.getReason();
-    if (!reason || !this.project) {
+    if (!this.project) {
       return;
     }
 
-    this.projectUserService
-      .changeRoleOfProjectUser(this.project.slug, user.id, 'manager', reason)
-      .subscribe(() => {
-        this.toastService.showSuccess(
-          `User modified`,
-          `User '${user.name}' can now manage the project '${this.project?.name}'`,
-        );
-      });
+    const projectName = this.project.name;
+    const projectSlug = this.project.slug;
+
+    const dialogRef = this.dialog.open(InputDialogComponent, {
+      data: {
+        title: 'Upgrade to Project Manager Role',
+        text: `Do you really want to upgrade '${user.name}' to Project Manager in the project '${projectName}'? Please provide a reason.`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: InputDialogResult) => {
+      if (result.success && result.text) {
+        this.projectUserService
+          .changeRoleOfProjectUser(projectSlug, user.id, 'manager', result.text)
+          .subscribe({
+            next: () =>
+              this.toastService.showSuccess(
+                `User modified`,
+                `User '${user.name}' can now manage the project '${projectName}'`,
+              ),
+          });
+      }
+    });
   }
 
   downgradeUserToUserRole(user: User): void {
-    const reason = this.getReason();
-    if (!reason || !this.project) {
+    if (!this.project) {
       return;
     }
 
-    this.projectUserService
-      .changeRoleOfProjectUser(this.project.slug, user.id, 'user', reason)
-      .subscribe(() => {
-        this.toastService.showSuccess(
-          `User modified`,
-          `User '${user.name}' is no longer project lead in the project '${this.project?.name}'`,
-        );
-      });
+    const projectName = this.project.name;
+    const projectSlug = this.project.slug;
+
+    const dialogRef = this.dialog.open(InputDialogComponent, {
+      data: {
+        title: "Downgrade to 'User' Role",
+        text: `Do you really want to downgrade '${user.name}' to 'User' in the project '${projectName}'? Please provide a reason.`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: InputDialogResult) => {
+      if (result.success && result.text) {
+        this.projectUserService
+          .changeRoleOfProjectUser(projectSlug, user.id, 'user', result.text)
+          .subscribe({
+            next: () =>
+              this.toastService.showSuccess(
+                `User modified`,
+                `User '${user.name}' is no longer project lead in the project '${projectName}'`,
+              ),
+          });
+      }
+    });
   }
 
   setUserPermission(user: User, permission: ProjectUserPermission): void {
-    const reason = this.getReason();
-    if (!reason || !this.project) {
+    if (!this.project) {
       return;
     }
 
-    this.projectUserService
-      .changePermissionOfProjectUser(
-        this.project.slug,
-        user.id,
-        permission,
-        reason,
-      )
-      .subscribe(() => {
-        this.projectUserService.loadProjectUsers(this.project!.slug);
-        this.toastService.showSuccess(
-          `User modified`,
-          `User '${user.name}' has the permission '${permission}' in the project '${this.project?.name}' now`,
-        );
-      });
-  }
+    const projectName = this.project.name;
+    const projectSlug = this.project.slug;
 
-  getReason(): string | undefined {
-    const reason = window.prompt('Please enter a reason!');
-    if (!reason) {
-      this.toastService.showError('Reason missing', 'You must enter a reason!');
-      return;
-    }
-    return reason;
+    const dialogRef = this.dialog.open(InputDialogComponent, {
+      data: {
+        title: 'Modify Permission',
+        text: `Do you really want to set the permission of '${user.name}' to '${permission}' in the project '${projectName}'? Please provide a reason.`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: InputDialogResult) => {
+      if (result.success && result.text) {
+        this.projectUserService
+          .changePermissionOfProjectUser(
+            projectSlug,
+            user.id,
+            permission,
+            result.text,
+          )
+          .subscribe({
+            next: () => {
+              this.projectUserService.loadProjectUsers(projectSlug);
+              this.toastService.showSuccess(
+                `User modified`,
+                `User '${user.name}' has the permission '${permission}' in the project '${projectName}' now`,
+              );
+            },
+          });
+      }
+    });
   }
 
   getProjectUsersByRole(
@@ -143,14 +196,14 @@ export class ProjectUserSettingsComponent implements OnInit {
   }
 
   openAddUserDialog() {
-    this.matDialog.open(AddUserToProjectDialogComponent, {
+    this.dialog.open(AddUserToProjectDialogComponent, {
       data: { project: this.project },
     });
   }
 
   openAuditLogDialog() {
     this.projectService.project$.pipe(take(1)).subscribe((project) => {
-      this.matDialog.open(ProjectAuditLogComponent, {
+      this.dialog.open(ProjectAuditLogComponent, {
         data: {
           projectSlug: project?.slug,
         },
