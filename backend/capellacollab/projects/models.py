@@ -29,6 +29,11 @@ class Visibility(enum.Enum):
     INTERNAL = "internal"
 
 
+class ProjectType(enum.Enum):
+    GENERAL = "general"
+    TRAINING = "training"
+
+
 class Project(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(from_attributes=True)
 
@@ -36,6 +41,7 @@ class Project(pydantic.BaseModel):
     slug: str
     description: str | None = None
     visibility: Visibility
+    type: ProjectType = ProjectType.GENERAL
     users: UserMetadata
     is_archived: bool
 
@@ -105,6 +111,7 @@ class DatabaseProject(database.Base):
     slug: orm.Mapped[str] = orm.mapped_column(unique=True, index=True)
     description: orm.Mapped[str | None]
     visibility: orm.Mapped[Visibility]
+    type: orm.Mapped[ProjectType]
 
     users: orm.Mapped[list[ProjectUserAssociation]] = orm.relationship(
         back_populates="project"

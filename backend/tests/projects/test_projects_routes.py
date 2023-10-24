@@ -37,6 +37,7 @@ def test_get_internal_default_project_as_user(
         "slug": "default",
         "description": "",
         "visibility": "internal",
+        "type": "general",
         "users": {"leads": 0, "contributors": 0, "subscribers": 0},
         "is_archived": False,
     } == response.json()
@@ -223,6 +224,7 @@ def fixture_mock_project():
     project.slug = "mock-project"
     project.description = "Mock Description"
     project.visibility = "private"
+    project.type = "general"
     project.users.leads = 0
     project.users.contributors = 0
     project.users.subscribers = 0
