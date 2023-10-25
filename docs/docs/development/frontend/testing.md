@@ -11,7 +11,7 @@ our team does not require frontend tests for every component or service.
 Please ensure that ".spec" files are only included if they have active tests.
 Before writing tests, consider the overhead and weigh it against the potential benefits.
 
-## Unit & Integration testing
+## Unit & Integration Testing
 
 ### Technologies
 
@@ -19,14 +19,14 @@ Before writing tests, consider the overhead and weigh it against the potential b
 - [Karma] is used as test runner
 - We use [istanbul] to measure and visualize the code coverage
 
-### Additional sources
+### Additional Sources
 
 - [Official angular testing guide]
 - Recommended: [Detailed angular testing guide]
 
 ### General
 
-#### Robust component tests
+#### Robust Component Tests
 
 When testing components, we must query the elements needed for the test.
 To ensure that even if the element type or attributes changes, the element
@@ -39,14 +39,14 @@ where the prefix usually describes the general contex (e.g., whether it is
 an input, button, textfield, etc.) and the following description specifies the
 usage of it (e.g., createProject).
 
-#### Element helper functions
+#### Element Helper Functions
 
 Usually testing components consists of querying elements, applying changes
 to them, triggering events on them, and then comparing the results with the
 expected results. To reduce repetition and increase readability, one should
 use existing helper functions or create new ones if none exist.
 
-### Executing tests
+### Executing Tests
 
 To execute the integration tests, one needs to run `make test`. However, in some
 cases it is not possible to correctly set the `CHROME_BIN` that is needed to generate
@@ -68,13 +68,13 @@ and line coverage) are output to the console. To also see what exactly is
 covered and what is missing, one can open the `index.html` file in the
 `/frontend/test-results/istanbul-coverage` folder.
 
-## End-to-End testing
+## End-to-End Testing
 
 ### Technologies
 
 - We use [playwright] for E2E testing
 
-### Test generation
+### Test Generation
 
 Playwright supports the generation of E2E tests by interacting
 with the frontend and recording each action and input. This can be started
@@ -86,7 +86,7 @@ one should only use the resulting test as a base and adjust it accordingly.
 For example, check selectors and adjust them to make them more robust,
 or add more expectations as needed.
 
-### Executing tests
+### Executing Tests
 
 To run the E2E tests, one must first make sure that a backend is running.
 If that is the case, one can run `npx playwright test` to start

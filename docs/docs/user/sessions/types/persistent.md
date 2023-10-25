@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Getting started with a persistent session
+# Getting Started with a Persistent Session
 
 <!-- prettier-ignore-start -->
 

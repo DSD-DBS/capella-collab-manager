@@ -21,7 +21,7 @@ extension
 
 The different components are explained in the following section.
 
-## Extension modules
+## Extension Modules
 
 ### `__init__.py`
 

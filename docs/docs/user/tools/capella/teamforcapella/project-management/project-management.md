@@ -10,7 +10,7 @@ cover the management of T4C repositories. For the management of T4C
 repositories, refer to the
 [TeamForCapella repository management](../repository-management.md) guide.
 
-## Create a new TeamForCapella project
+## Create a new TeamForCapella Project
 
 1. Make sure that you have a T4C repository available. If not, refer to the
    [TeamForCapella repository management](../repository-management.md) guide.
@@ -18,7 +18,7 @@ repositories, refer to the
    T4C repository. For more information, refer to the
    [TeamForCapella project export](../export/export-to-t4c.md) guide.
 
-## Delete a TeamForCapella project
+## Delete a TeamForCapella Project
 
 !!! warning
 

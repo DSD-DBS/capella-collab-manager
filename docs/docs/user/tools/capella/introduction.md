@@ -24,7 +24,7 @@ You may find more Capella - related videos on the official channel:
 Also you can try out this
 [Capella Tutorial](https://esd.sutd.edu.sg/40014-capella-tutorial/index.html)
 
-## More advanced topics
+## More Advanced Topics
 
 Methods for Modeling System of Systems with Capella:
 
@@ -33,7 +33,7 @@ Methods for Modeling System of Systems with Capella:
 If you'd like to learn how Capella works you may want to read through our
 [guide for meta-model exploration](https://dsd-dbs.github.io/py-capellambse/start/how-to-explore-capella-mm.html)
 
-## Deriving model-based products
+## Deriving Model-based Products
 
 You may prototype-derived products using Python (Jupyter) and
 [py-capellambse](https://github.com/DSD-DBS/py-capellambse). It contains a few

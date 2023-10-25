@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Pipeline and model modifier monitoring
+# Pipeline and Model Modifier Monitoring
 
 <!-- prettier-ignore -->
 !!! info

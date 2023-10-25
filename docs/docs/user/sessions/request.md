@@ -21,7 +21,7 @@ Please follow these steps to request a session:
 1. Wait for your read-only session to become ready and open it with the
    `Connect` button.
 
-## Automatic session termination
+## Automatic Session Termination
 
 When your session is inactive for a long time (default 90 minutes), your
 session is terminated. A session is considered inactive when there is no user

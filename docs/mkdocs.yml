@@ -98,6 +98,7 @@ nav:
           - Customization: development/frontend/customize.md
       - Kubernetes:
           - Meassure resource usage: development/k8s/resources.md
+      - Documentation: development/docs.md
   - Release Notes: release-notes.md
 
 repo_url: https://github.com/DSD-DBS/capella-collab-manager

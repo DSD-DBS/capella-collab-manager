@@ -8,7 +8,7 @@
 Some screenshot tools use the clipboard and keyboard shortcuts. This sometimes
 does not work in the Capella Collaboration Manager.
 
-## Technical background
+## Technical Background
 
 Some keyboard combinations are directly mapped into the containers where
 Capella is running. This allows to use these keyboard combinations for actions
@@ -22,7 +22,7 @@ the clipboard of the host system.
 
 ## Solution
 
-### Snipping tool
+### Snipping Tool
 
 The Snipping tool (Windows) should just work.
 

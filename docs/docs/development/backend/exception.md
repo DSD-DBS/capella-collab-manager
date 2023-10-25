@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Exception handling
+# Exception Handling
 
 Various errors can occur in the backend,
 which must be made understandable to the end user and the developers

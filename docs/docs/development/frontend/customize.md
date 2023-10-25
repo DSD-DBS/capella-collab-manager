@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Customize the frontend
+# Customize the Frontend
 
 You can customize the frontend by using a custom theme and a custom favicon:
 

@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Image builder (Gitlab CI/CD)
+# Image Builder (Gitlab CI/CD)
 
 The image builder template builds the following images and pushes them to any
 Docker registry:
@@ -50,7 +50,7 @@ please refer to the
 [image-builder](https://github.com/DSD-DBS/capella-collab-manager/blob/main/ci-templates/gitlab/image-builder.yml)
 Gitlab template.
 
-### Docker SOPS file
+### Docker SOPS File
 
 We make use of [Mozilla SOPS](https://github.com/mozilla/sops) files to store
 secrets used in the image builder template. Therefore you need to have a

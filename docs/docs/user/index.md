@@ -19,7 +19,7 @@ the tool. It also takes care of the housekeeping of the modeling projects
 themselves. And that's not all: We also offer project access management and
 since the site is completely responsive it is also usable on smartphones.
 
-## Automations and model-derived products
+## Automations and Model-derived Products
 
 Git is quite in the middle of the modeling lifecycle. We also use its
 automation means (CI/CD) to automate a number of housekeeping activities:
@@ -99,7 +99,7 @@ There are 3 roles you can have in a project context:
 
 You may also [learn more about the roles model here](projects/roles.md).
 
-## Next steps
+## Next Steps
 
 If you like to start a new project and work on it via Collab Manager - please
 follow this guide: [project onboarding guideline](projects/create.md) to
@@ -120,7 +120,7 @@ sections:
 - Getting started with a git-only project (not yet documented, contact your
   toolchain team for onboarding)
 
-## Missing information / need support
+## Missing Information / Need Support
 
 !!! warning "Important"
 

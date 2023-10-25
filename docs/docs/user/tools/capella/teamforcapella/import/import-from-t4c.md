@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Import a Capella model from a TeamForCapella server into your persistent workspace
+# Import a Capella Model from a TeamForCapella Server into your Persistent Workspace
 
 <!-- prettier-ignore -->
 !!! warning

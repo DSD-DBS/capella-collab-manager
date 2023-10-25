@@ -3,9 +3,9 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Manage T4C instances
+# Manage T4C Instances
 
-## Define a T4C instance
+## Define a T4C Instance
 
 1.  Please navigate to `Profile` > `Settings`
 1.  Select `T4C` bewlow `Model sources`
@@ -25,7 +25,7 @@
     with the REST API
     1. **Password**: Password corresponding to username
 
-## Archive a T4C instance
+## Archive a T4C Instance
 
 1.  Please navigate to `Profile` > `Settings`
 1.  Select `T4C` bewlow `Model sources`

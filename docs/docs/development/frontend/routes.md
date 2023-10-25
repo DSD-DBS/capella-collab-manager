@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Frontend routes
+# Frontend Routes
 
 For consistency, we have a strict structure for our frontend route URIs.
 The structure is based on REST, but not completely the same due to the limitations of the unavailable request methods.

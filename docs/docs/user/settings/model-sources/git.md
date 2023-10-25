@@ -3,18 +3,18 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Manage Git instances
+# Manage Git Instances
 
 With Git instances, administrators can restrict the location of Git
 repositories.
 
-## No Git instance defined
+## No Git Instance Defined
 
 When you don't want to define Git instances, users can use any location for
 their repositories. Some features, which require a specific instance, e.g.,
 Gitlab, are not available.
 
-## Define a Git instance
+## Define a Git Instance
 
 1. Please navigate to `Profile` > `Settings`
 1. Select `Git` below `Model sources`
@@ -37,7 +37,7 @@ Gitlab, are not available.
     New repositories have to match at least one instance. Otherwise,
     they can not be added as model source to models.
 
-## Matching between models and instances
+## Matching between Models and Instances
 
 Models are matched with instances with a longest prefix match of the URL.
 

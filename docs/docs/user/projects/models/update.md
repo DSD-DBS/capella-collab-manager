@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Update a model to a newer version
+# Update a Model to a Newer Version
 
 <!-- prettier-ignore -->
 !!! warning

@@ -31,7 +31,7 @@ In addition you can adjust the following variables when running a pipeline:
 - `REVISION`: The revision of the capella collab manager repository you want to
   use
 
-### Docker and Kubernetes sops files
+### Docker and Kubernetes SOPS Files
 
 For the `k8s-deploy.yml` you need to have some secret sops files in place.
 First of all, you need a `secret.docker.json` file as described
@@ -57,7 +57,7 @@ the `_unencrypted` suffix in the variable names).
 Please delete the plain text files containing secrets directly after encrypting
 them.
 
-## Gitlab repository tree
+## Gitlab Repository Tree
 
 The tree inside of your Gitlab repository should look like:
 

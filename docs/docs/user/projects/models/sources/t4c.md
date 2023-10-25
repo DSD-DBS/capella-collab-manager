@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Manage the TeamForCapella project integration
+# Manage the TeamForCapella Project Integration
 
 <!-- prettier-ignore -->
 !!! warning
@@ -13,7 +13,7 @@
 For all actions, you need to navigate to `Projects`, and select the model
 sources button for the model. <br /> ![Model sources](./open-modelsources.png)
 
-## Link a TeamForCapella repository to a project model
+## Link a TeamForCapella Repository to a Project Model
 
 1. Click on `Use existing repository` in the `T4C Models` section.
 1. Select the TeamForCapella instance, the repository and enter a project name.
@@ -27,7 +27,7 @@ sources button for the model. <br /> ![Model sources](./open-modelsources.png)
         will get access to the repository during the next session start.
         The session token will not be updated for existing/open sessions.
 
-## Unlink a TeamForCapella repository from a project model
+## Unlink a TeamForCapella Repository from a Project Model
 
 1. Select the TeamForCapella reference/integration from the list.
 1. Click on `Unlink` and confirm.

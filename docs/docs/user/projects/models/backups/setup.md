@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Set up a backup for a TeamForCapella model
+# Set up a Backup for a TeamForCapella Model
 
 <!-- prettier-ignore -->
 !!! warning

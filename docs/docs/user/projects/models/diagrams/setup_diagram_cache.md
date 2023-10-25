@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Set up the diagram cache integration
+# Set up the Diagram Cache Integration
 
 !!! warning
 

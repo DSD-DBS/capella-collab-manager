@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Connect to a TeamForCapella repository
+# Connect to a TeamForCapella Repository
 
 <!-- prettier-ignore -->
 !!! Info
