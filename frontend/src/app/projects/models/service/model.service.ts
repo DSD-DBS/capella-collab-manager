@@ -92,7 +92,7 @@ export class ModelService {
       );
   }
 
-  updateModelDescription(
+  updateModel(
     projectSlug: string,
     modelSlug: string,
     patchModel: PatchModel,
@@ -147,6 +147,23 @@ export class ModelService {
       );
     };
   }
+
+  moveModelToProject(
+    projectSlug: string,
+    modelSlug: string,
+    project_slug: string,
+  ): Observable<Model> {
+    return this.http
+      .patch<Model>(`${this.backendURLFactory(projectSlug, modelSlug)}/move`, {
+        project_slug,
+      })
+      .pipe(
+        tap(() => {
+          this.loadModels(projectSlug);
+          this._model.next(undefined);
+        }),
+      );
+  }
 }
 
 export type NewModel = {
@@ -174,6 +191,7 @@ export type PatchModel = {
   description?: string;
   nature_id?: number;
   version_id?: number;
+  project_slug?: string;
 };
 
 export function getPrimaryGitModel(model: Model): GetGitModel | undefined {

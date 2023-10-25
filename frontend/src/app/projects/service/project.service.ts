@@ -35,6 +35,15 @@ export class ProjectService {
     });
   }
 
+  loadProjectsForRole(role: string): void {
+    this.http
+      .get<Project[]>(`${this.BACKEND_URL_PREFIX}/?minimum_role=${role}`)
+      .subscribe({
+        next: (projects) => this._projects.next(projects),
+        error: () => this._projects.next(undefined),
+      });
+  }
+
   loadProjectBySlug(slug: string): void {
     this.http.get<Project>(`${this.BACKEND_URL_PREFIX}/${slug}`).subscribe({
       next: (project) => this._project.next(project),

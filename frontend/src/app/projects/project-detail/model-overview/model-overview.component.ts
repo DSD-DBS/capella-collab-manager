@@ -13,6 +13,7 @@ import {
   Model,
   ModelService,
 } from 'src/app/projects/models/service/model.service';
+import { MoveModelComponent } from 'src/app/projects/project-detail/model-overview/move-model/move-model.component';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
@@ -78,5 +79,13 @@ export class ModelOverviewComponent implements OnInit {
   getPrimaryGitModelURL(model: Model): string {
     const primaryModel = getPrimaryGitModel(model);
     return primaryModel ? primaryModel.path : '';
+  }
+
+  openMoveToProjectDialog(model: Model): void {
+    this.dialog.open(MoveModelComponent, {
+      maxWidth: '100vw',
+      maxHeight: '200vw',
+      data: { projectSlug: this.project?.slug, model: model },
+    });
   }
 }
