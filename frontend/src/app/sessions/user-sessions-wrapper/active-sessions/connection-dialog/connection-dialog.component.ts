@@ -12,21 +12,21 @@ import { GuacamoleService } from 'src/app/services/guacamole/guacamole.service';
 import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
-  selector: 'app-guacamole-dialog',
-  templateUrl: './guacamole-dialog.component.html',
-  styleUrls: ['./guacamole-dialog.component.css'],
+  selector: 'app-connection-dialog',
+  templateUrl: './connection-dialog.component.html',
+  styleUrls: ['./connection-dialog.component.css'],
 })
-export class GuacamoleDialogComponent {
+export class ConnectionDialogComponent {
   isPersistentSession = isPersistentSession;
 
-  t4cPasswordRevealed = false;
+  nativeClient = false;
 
   constructor(
     public userService: UserService,
     private localStorageService: LocalStorageService,
     private guacamoleService: GuacamoleService,
     @Inject(MAT_DIALOG_DATA) public session: Session,
-    public dialogRef: MatDialogRef<GuacamoleDialogComponent>,
+    public dialogRef: MatDialogRef<ConnectionDialogComponent>,
     private toastService: ToastService,
   ) {}
 
@@ -39,10 +39,7 @@ export class GuacamoleDialogComponent {
       });
   }
 
-  showClipboardMessage(): void {
-    this.toastService.showSuccess(
-      'Session token copied',
-      'The session token was copied to your clipboard.',
-    );
+  requestNativeClient(): void {
+    this.nativeClient = true;
   }
 }
