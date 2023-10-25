@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# View diagrams via the diagram cache integration
+# View Diagrams via the Diagram Cache Integration
 
 1. Navigate to your project in the project overview.
 2. In the model overview, select the diagrams button:

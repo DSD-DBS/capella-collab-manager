@@ -52,9 +52,9 @@ In addition, we have integrated commercial products:
   - Automatic license injection
   - Access to licenses is self-managed by project leads
 
-## Getting started
+## Getting Started
 
-### Running locally with k3d
+### Running Locally with k3d
 
 #### Prerequisites
 
@@ -78,7 +78,7 @@ When you have all that installed you can do the following:
 git clone --recurse-submodules https://github.com/DSD-DBS/capella-collab-manager.git
 cd capella-collab-manager
 
-# Create a local k3d cluster
+# Create a Local k3d Cluster
 make create-cluster
 ```
 
@@ -136,7 +136,7 @@ make delete-cluster
 k3d registry delete k3d-myregistry.localhost
 ```
 
-#### Starting a session
+#### Starting a Session
 
 Once the cluster is installed and all services are running (`kubectl get pods`), you can
 get started. Follow our [Getting started guide](docs/getting_started/getting_started.md) and be up and
@@ -146,7 +146,7 @@ running in a few minutes.
 
 You can find the installation guide for the deployment in the [general documentation](https://capella-collaboration-manager.readthedocs.io/en/latest/installation/).
 
-## How it works
+## How it Works
 
 The Capella Collaboration Manager consists of a couple of components:
 

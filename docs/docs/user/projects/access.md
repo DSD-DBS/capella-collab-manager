@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# How do I get access to a project?
+# How do I Get Access to a Project?
 
 Please ask a [project lead](roles.md) of the specific project for access. The
 project lead can add you as user to the project. After you've been added, you

@@ -3,9 +3,9 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Model complexity badge integration
+# Model Complexity Badge Integration
 
-## Set up the complexity badge
+## Set up the Complexity Badge
 
 !!! warning
 
@@ -37,7 +37,7 @@
 
     to add the complexity badge pipeline to the linked repository.
 
-## View the model complexity badge
+## View the Model Complexity Badge
 
 The model complexity badge is visible in the model overview in the project
 details:

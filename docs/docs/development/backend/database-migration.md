@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Create database migrations scripts
+# Create Database Migration Scripts
 
 To create an upgrade script automatically (this will compare the current
 database state with the models):

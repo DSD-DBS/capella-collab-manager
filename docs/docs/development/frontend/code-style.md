@@ -7,12 +7,12 @@
 
 ### Crud Functions
 
-#### Creating resource
+#### Creating Resource
 
 For creating a resource one should use `create` as a prefix followed by the
 resource one wants to create (e.g., `createProject(...): Observable<Project>`)
 
-#### Retriving resources
+#### Retriving Resources
 
 In general, one should use `get` as prefix for a function that retrieves and
 returns resources. In case, one wants to get a list of alls resources use

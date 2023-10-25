@@ -100,7 +100,7 @@ Python code. The key differences are:
     `from .. import y as z` for one level above. For all other imports beyond
     this level, use the full path as described in 3.
 
-### Naming conventions
+### Naming Conventions
 
 - All SQLAlchemy models should have `Database` as a prefix, e.g.,
   `DatabaseProject` or `DatabaseUser`.

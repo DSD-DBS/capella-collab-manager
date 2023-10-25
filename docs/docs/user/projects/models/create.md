@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Create a _Collaboration Manager_ model
+# Create a _Collaboration Manager_ Model
 
 We offer a guided process to create models in a project. To create a model, you
 have to be at least [project lead](../../projects/roles.md). If you're coming
@@ -15,12 +15,12 @@ The creation can be interrupted at any step, however an unfinished model will
 lack some essential features, so it’s recommended to go through the whole
 process.
 
-## Step 1: Create model
+## Step 1: Create Model
 
 This page allows to set a project name, description, and a tool. The name and
 tool are required. The tool can be changed after the model creation.
 
-## Step 2: Choose primary source
+## Step 2: Choose Primary Source
 
 On this page, you can select the type of source. Right now, we offer the
 following options:
@@ -39,13 +39,13 @@ following options:
    abort the process here and continue with the help of an administrator later
    on.
 
-## Step 3: Add source
+## Step 3: Add Source
 
 If you chose option 1 or 2 in the last step, please read the
 `Link existing Git repository` part of this step. If you chose option 3 or 4,
 you can should read the `Link existing T4C repository` part.
 
-### Step 3.1 Link existing Git repository
+### Step 3.1 Link Existing Git Repository
 
 It is important for this step to have an existing Git repository which is
 reachable from inside your environment.
@@ -88,7 +88,7 @@ You have to enter the following information:
 
 <!-- prettier-ignore-end -->
 
-### Step 3.2 Link existing T4C repository
+### Step 3.2 Link Existing T4C Repository
 
 <!-- prettier-ignore -->
 !!! warning
@@ -99,7 +99,7 @@ the TeamForCapella instance and the TeamForCapella repository. With `project`,
 you can specify the name of the model in Capella. We recommend using the same
 name for the repository and project.
 
-## Step 4: Choose initialisation
+## Step 4: Choose Initialisation
 
 Please choose `Create empty model`. This has no effect on the existing
 TeamForCapella content. More options will follow in the future.

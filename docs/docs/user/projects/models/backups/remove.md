@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Remove a (nightly) backup
+# Remove a (Nightly) Backup
 
 <!-- prettier-ignore -->
 !!! warning

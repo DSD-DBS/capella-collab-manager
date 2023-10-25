@@ -8,7 +8,7 @@
     You need to have the Administrator or Project Lead role for a
     project to perform the following steps.
 
-## Add user to project
+## Add User to Project
 
 1.  Select your project in the project overview.
 2.  On the right side you should now see user management options:
@@ -22,7 +22,7 @@
 
        ![Add user](add-user/add-user.png)
 
-## Modify role or permissions of user
+## Modify Role or Permissions of User
 
 <!-- prettier-ignore-start -->
 

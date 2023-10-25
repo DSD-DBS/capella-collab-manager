@@ -26,7 +26,7 @@ the T4C connection dialog.
     Only work stored in the `/workspace` folder (default workspace folder) will
     be persistent.
 
-### Persistent Jupyter notebooks
+### Persistent Jupyter Notebooks
 
 Jupyter notebooks allow you to programmatically explore (capella) models.
 You'll use the same shared workspace as with persistent Capella/Papyrus

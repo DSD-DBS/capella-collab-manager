@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# How to update a Capella model to a higher version (in TeamForCapella)
+# How to Update a Capella Model to a Higher Version (in TeamForCapella)
 
 <!-- prettier-ignore -->
 !!! warning

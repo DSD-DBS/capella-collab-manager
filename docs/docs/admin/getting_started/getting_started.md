@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Getting started
+# Getting Started
 
 This guide describes the steps to get started with the Capella Collaboration
 Manager.
@@ -40,7 +40,7 @@ workspace will be shown in your browser.
 
 ![Capella welcome screen](img/collab-step-5.png)
 
-## What's next
+## What's Next
 
 This introduction only scratches the surface of what's possible with the
 Collaboration Manager.

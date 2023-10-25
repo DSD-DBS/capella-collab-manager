@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# TeamForCapella repository management
+# TeamForCapella Repository Management
 
 <!-- prettier-ignore -->
 !!! info
@@ -14,20 +14,20 @@ For all actions, you have to navigate to `Profile` > `Settings` >
 side, you should see a card with the name `Manage T4C repositories`. In this
 card, you can see all existing repositories with their status.
 
-## Add a new TeamForCapella repository
+## Add a new TeamForCapella Repository
 
 1. Enter the name of the repository in the `Repository name` field.
 1. Click on `Add T4C repository`
 1. The status should be `INITIAL`. Please wait until the status changes to
    `ONLINE`
 
-## Start/Stop a TeamForCapella repository
+## Start/Stop a TeamForCapella Repository
 
 1. Select the repository from the list
 1. Click the `Start repository` or `Stop repository` button on the bottom
    right.
 
-## Remove a TeamForCapella repository
+## Remove a TeamForCapella Repository
 
 <!-- prettier-ignore -->
 !!! danger

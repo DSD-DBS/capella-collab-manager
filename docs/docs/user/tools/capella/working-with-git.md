@@ -59,7 +59,7 @@ In order to make the changes visible in your project tree and to see on which
 branch you are currently working on right click on the project name > "Close
 Project" and then open the project again.
 
-## Prepare to Commit - Stage changes
+## Prepare to Commit - Stage Changes
 
 In Git staged changes are saved changes that we mark to use in our next commit.
 
@@ -234,7 +234,7 @@ Make sure to resolve all conflicts before commiting! After merging reopen the
 model and look especially into layouting as capella might be a bit
 opportunistic in merging layouts.
 
-### Merging if Merge Tool is not possible
+### Merging if Merge Tool is not Possible
 
 If merging with the merge tool is not possible you have to open the reset view.
 

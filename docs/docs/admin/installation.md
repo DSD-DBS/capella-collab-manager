@@ -14,7 +14,7 @@ During development, we also took into account that the application can be
 installed in highly restricted environments. An internet connection is not
 necessarily required.
 
-## Step 1: Set up a Kubernetes cluster
+## Step 1: Set up a Kubernetes Cluster
 
 Kubernetes allows us to make operations as simple as possible later on. Updates
 can be fully automated. In addition, Kubernetes allows us to ensure a secure
@@ -92,7 +92,7 @@ future.
 
     We are constantly working on expanding our documentation. This installation method is currently not documented. If it is relevant, please feel free to contact us at set@deutschebahn.com  or open an issue in this repository.
 
-## Step 2: Validate the available resources
+## Step 2: Validate the Available Resources
 
 The minimum required resources are 3
 [Kubernetes CPU cores](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu)
@@ -104,7 +104,7 @@ Each session requires a minimum of 0.4 Kubernetes CPU cores and 1.6Gi of
 memory. A session can scale up until it reaches 2 Kubernetes CPU cores and 6Gi
 of memory.
 
-## Step 3: Set up the required namespaces (optional)
+## Step 3: Set up the Required Namespaces (Optional)
 
 The Collaboration Manager requires two different namespaces. For security and
 overview reasons, they are separated:
@@ -150,7 +150,7 @@ Verify that `helm` is working by executing the command:
 helm version
 ```
 
-## Step 5: Clone the Github repository
+## Step 5: Clone the Github Repository
 
 Navigate to a persistent location on your server, e.g. `/opt`. Then clone the
 Github repository by running:
@@ -159,7 +159,7 @@ Github repository by running:
 git clone https://github.com/DSD-DBS/capella-collab-manager.git
 ```
 
-## Step 6: Configure the environment / Create the `values.yaml`
+## Step 6: Configure the Environment / Create the `values.yaml`
 
 Copy the
 [`values.yaml`](https://github.com/DSD-DBS/capella-collab-manager/blob/main/helm/values.yaml)
@@ -175,7 +175,7 @@ chmod 600 values.yaml
 
 Adjust all values according to your needs.
 
-## Step 7: Install the application in the cluster
+## Step 7: Install the Application in the Cluster
 
 Run the following commands in the root directory of the repository:
 
@@ -188,7 +188,7 @@ helm upgrade --install \
     ./helm
 ```
 
-## Step 8: Initialize the Guacamole database
+## Step 8: Initialize the Guacamole Database
 
 The Guacamole database is not initialized automatically. Run the following
 command to initialize the PostgreSQL database:
@@ -213,7 +213,7 @@ have to change it to a more secure password:
    works.
 1. Update the key `guacamole.password` in the `values.yaml` and repeat step 7.
 
-## Step 9: Check the application status
+## Step 9: Check the Application Status
 
 Run `kubectl get pods` to see the status of all components. Once all containers
 are running, verify the installation state by running:
@@ -230,7 +230,7 @@ It should return the following JSON:
 
 If a value is false, check the backend logs for more information.
 
-## Step 10: Add TeamForCapella support
+## Step 10: Add TeamForCapella Support
 
 <!-- prettier-ignore -->
 !!! info "TeamForCapella server required"

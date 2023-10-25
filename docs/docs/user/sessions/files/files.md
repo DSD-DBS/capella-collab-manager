@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Browse, upload and download files
+# Browse, Upload and Download Files
 
 <!-- prettier-ignore-start -->
 

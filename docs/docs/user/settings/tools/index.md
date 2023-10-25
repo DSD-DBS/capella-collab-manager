@@ -3,13 +3,13 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Tools management
+# Tools Management
 
 Starting with `v2.0.0`, there is a support for general tools. This allows the
 use of many different `Eclipse` based tools (and even more tools if they are
 dockerized).
 
-## Managing tools
+## Managing Tools
 
 <!-- prettier-ignore -->
 !!! warning

@@ -3,9 +3,9 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Ways of co-working on a Capella project
+# Ways of Co-working on a Capella Project
 
-## Quick comparision
+## Quick Comparision
 
 <table markdown="1">
   <tr>
@@ -85,7 +85,7 @@
     practice this proves to be too time-consuming, as many changes become
     confusing very quickly.
 
-## Some general words
+## Some General Words
 
 <!-- prettier-ignore-start -->
 

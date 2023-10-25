@@ -3,12 +3,15 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-## Authentication via personal access token (requires a running frontend)
+## Authentication via Personal Access Token (Requires a Running Frontend)
 
 Find more information about authentication with personal access tokens in the
 user documentation: [Authentication](../../user/tokens.md)
 
-## Authentication without application frontend
+As soon as you have a PAT (Personal Access Token) you can authenticate without
+the application frontend.
+
+## Authentication without Application Frontend
 
 Request the `auth_url`
 

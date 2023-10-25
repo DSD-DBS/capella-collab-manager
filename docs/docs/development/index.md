@@ -15,7 +15,7 @@ go ahead and
 to contribute code. In order to reduce the burden on our maintainers, please
 make sure that your code follows our style guidelines.
 
-## Setup of a local Development Environment
+## Setup of a Local Development Environment
 
 In addition to the
 [local k8s deployment](https://github.com/DSD-DBS/capella-collab-manager#running-locally-with-k3d),
@@ -31,7 +31,7 @@ reloading of the frontend and backend.
 - `npm` package manager
 - [`Angular CLI`](https://angular.io/cli#installing-angular-cli)
 
-### Backend configuration
+### Backend Configuration
 
 The backend uses various configuration settings. You can find them in the
 `config` directory. Please copy the file `config_template.yaml` to
@@ -43,7 +43,7 @@ application deployed, then no configuration values need to be adjusted.
 _Hint_: You can run `python -m capellacollab.config.diff` after each update to
 check if your config is up to date.
 
-### Get started
+### Getting Started
 
 To get started, run the following command in the root of the repository for the
 initial setup (only required once):
@@ -67,7 +67,7 @@ If everything went well, the frontend and backend should be running now:
 - [Backend API documentation](http://localhost:8000/docs)
 - [Capella Collaboration Manager Documentation](http://localhost:8081)
 
-## General notes
+## General Notes
 
 ### REST APIs
 

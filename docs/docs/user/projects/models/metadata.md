@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Update model metadata (version and nature)
+# Update Model Metadata (Version and Nature)
 
 1. Navigate to `Projects` and select the project.
 1. In the model overview and select the :material-cog: icon on model you'd like
