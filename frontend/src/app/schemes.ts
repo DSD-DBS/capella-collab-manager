@@ -5,6 +5,7 @@
 
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { User } from 'src/app/services/user/user.service';
+import { SessionRoute } from 'src/app/sessions/service/session.service';
 import { ToolVersionWithTool } from 'src/app/settings/core/tools-settings/tool.service';
 import { Project } from './projects/service/project.service';
 
@@ -13,6 +14,7 @@ export interface Session {
   id: string;
   last_seen: string;
   type: 'persistent' | 'readonly';
+  route?: SessionRoute;
   rdp_password: string;
   guacamole_username: string;
   guacamole_password: string;

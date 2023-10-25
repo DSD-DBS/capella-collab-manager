@@ -28,6 +28,7 @@ from capellacollab.projects.toolmodels.modelsources.git import (
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import hooks
 from capellacollab.sessions.files import routes as files_routes
+from capellacollab.sessions.rdp_routes import routes as rdp_routes
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
@@ -591,6 +592,7 @@ def create_guacamole_token(
 
 
 router.include_router(router=files_routes.router, prefix="/{session_id}/files")
+router.include_router(router=rdp_routes.router, prefix="/{session_id}/routes")
 
 
 @users_router.get(

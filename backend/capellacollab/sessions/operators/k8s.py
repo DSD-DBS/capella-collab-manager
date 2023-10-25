@@ -663,25 +663,40 @@ class KubernetesOperator:
         )
         return self.v1_batch.create_namespaced_job(namespace, job)
 
+    def get_external_hostname_or_ip_from_service(
+        self, name: str
+    ) -> str | None:
+        ingress = self._get_service(name).status.load_balancer.ingress[0]
+        return ingress.hostname or ingress.ip
+
+    def get_node_port_from_service(self, name: str) -> str | None:
+        return str(self._get_service(name).spec.ports[0].nodePort)
+
     def _create_service(
         self,
         name: str,
         deployment_name: str,
         ports: dict[str, int],
-        prometheus_path: str,
-        prometheus_port: int,
+        prometheus_path: str | None = None,
+        prometheus_port: int | None = None,
+        public: bool = False,
     ) -> client.V1Service:
+        annotations = {}
+        # FIXME: Add annotations for public routes
+        if prometheus_path and prometheus_port:
+            annotations |= {
+                "prometheus.io/scrape": "true",
+                "prometheus.io/path": prometheus_path,
+                "prometheus.io/port": f"{prometheus_port}",
+            }
+
         service: client.V1Service = client.V1Service(
             kind="Service",
             api_version="v1",
             metadata=client.V1ObjectMeta(
                 name=name,
                 labels={"app": name},
-                annotations={
-                    "prometheus.io/scrape": "true",
-                    "prometheus.io/path": prometheus_path,
-                    "prometheus.io/port": f"{prometheus_port}",
-                },
+                annotations=annotations,
             ),
             spec=client.V1ServiceSpec(
                 ports=[
@@ -694,10 +709,16 @@ class KubernetesOperator:
                     for name, port in ports.items()
                 ],
                 selector={"app": deployment_name},
-                type="ClusterIP",
+                type="LoadBalancer" if public else "ClusterIP",
             ),
         )
         return self.v1_core.create_namespaced_service(namespace, service)
+
+    def _get_service(
+        self,
+        name: str,
+    ) -> client.V1Service:
+        return self.v1_core.read_namespaced_service(name, namespace)
 
     def _create_ingress(
         self,

@@ -76,6 +76,8 @@ nav:
   - Administrator documentation:
       - Index: admin/index.md
       - Installation: admin/installation.md
+      - Configuration:
+          - Enable direct RDP support: admin/configuration/activate-rdp.md
       - Uninstallation: admin/uninstallation.md
       - Getting started: admin/getting_started/getting_started.md
       - CI templates:

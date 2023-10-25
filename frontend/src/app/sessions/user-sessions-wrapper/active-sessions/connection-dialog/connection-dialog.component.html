@@ -33,11 +33,56 @@
 
 <div class="m-m-card">
   <div class="mb-1 text-base font-bold">Connect to the session</div>
-  Please click on this button to connect to the server: <br />
-  <div class="mt-2">
-    <button mat-flat-button color="primary" (click)="redirectToGuacamole()">
-      Connect to Session
+  Please choose if you want to connect via the browser or via a native RDP
+  client to the session.
+  <div class="mt-2 flex gap-2">
+    <button mat-raised-button color="primary" (click)="redirectToGuacamole()">
+      Connect via browser <mat-icon>open_in_new</mat-icon>
     </button>
+    <button mat-raised-button color="primary" (click)="requestNativeClient()">
+      Connect via native client <mat-icon>arrow_downward</mat-icon>
+    </button>
+  </div>
+</div>
+<div *ngIf="nativeClient">
+  <hr />
+  <div
+    *ngIf="!sessionRoute?.host && !failedPublicRouteRequest"
+    class="m-m-card flex items-center justify-between"
+  >
+    <div>
+      <div class="mb-1 text-base font-bold">Wait for a public route</div>
+      We have requested a public route to your session. <br />Once the route is
+      available the status will be updated here. <br />This can take up to one
+      minute.
+    </div>
+    <mat-spinner [diameter]="50"></mat-spinner>
+  </div>
+  <hr />
+  <div
+    *ngIf="failedPublicRouteRequest"
+    class="m-m-card flex items-center justify-between text-error"
+  >
+    <div>
+      <div class="mb-1 text-base font-bold">Couldn't request public route</div>
+      We were unable to request a public route for your session. <br />Please
+      connect via the browser to your session or try again.
+    </div>
+    <mat-icon class="mr-5 scale-150">sms_failed</mat-icon>
+  </div>
+  <hr />
+  <div class="m-m-card" *ngIf="sessionRoute?.host">
+    <div class="mb-1 text-base font-bold">Open the native client</div>
+    When you click on this button, your browser will ask you to open the native
+    client. <br />
+    Please confirm the dialog. If it does not work, you can also connect
+    manually with the following data:
+
+    <app-display-value
+      [value]="sessionRoute?.host"
+      [blurValue]="false"
+      valueName="RDP Hostname"
+    ></app-display-value>
   </div>
 </div>
 <hr />
@@ -48,9 +93,4 @@
   After opening the session, {{ session.version?.tool?.name }}
   {{ session.version?.name }} starts automatically. This can take up to one
   minute.
-</div>
-<div>
-  <button mat-stroked-button class="w-full" (click)="this.dialogRef.close()">
-    Close
-  </button>
 </div>

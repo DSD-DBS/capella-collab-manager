@@ -9,6 +9,7 @@ import tarfile
 import fastapi
 from fastapi import responses, status
 
+from capellacollab.core import logging as core_logging
 from capellacollab.sessions import injectables as sessions_injectables
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions import operators
@@ -16,7 +17,6 @@ from capellacollab.sessions import operators
 from . import models
 
 router = fastapi.APIRouter()
-log = logging.getLogger(__name__)
 
 
 @router.get("", response_model=models.FileTree)
@@ -24,6 +24,9 @@ def list_files(
     show_hidden: bool,
     session: sessions_models.DatabaseSession = fastapi.Depends(
         sessions_injectables.get_existing_session
+    ),
+    log: logging.LoggerAdapter = fastapi.Depends(
+        core_logging.get_request_logger
     ),
 ):
     try:

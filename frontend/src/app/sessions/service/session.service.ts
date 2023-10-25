@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { SKIP_ERROR_HANDLING } from 'src/app/general/error-handling/error-handling.interceptor';
 import { Session } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
 
@@ -21,7 +22,7 @@ export type ReadonlyModel = {
 })
 export class SessionService {
   constructor(private http: HttpClient) {}
-  BACKEND_URL_PREFIX = environment.backend_url + '/sessions/';
+  BACKEND_URL_PREFIX = environment.backend_url + '/sessions';
 
   getCurrentSessions(): Observable<Session[]> {
     return this.http.get<Session[]>(this.BACKEND_URL_PREFIX);
@@ -43,14 +44,31 @@ export class SessionService {
     toolId: number,
     versionId: number,
   ): Observable<Session> {
-    return this.http.post<Session>(`${this.BACKEND_URL_PREFIX}persistent`, {
+    return this.http.post<Session>(`${this.BACKEND_URL_PREFIX}/persistent`, {
       tool_id: toolId,
       version_id: versionId,
     });
   }
 
+  requestPublicSessionRoute(sessionID: string): Observable<SessionRoute> {
+    // Error handling should happen in component
+    return this.http.post<SessionRoute>(
+      `${this.BACKEND_URL_PREFIX}/${sessionID}/routes`,
+      undefined,
+      { context: new HttpContext().set(SKIP_ERROR_HANDLING, true) },
+    );
+  }
+
+  getPublicSessionRoute(sessionID: string): Observable<SessionRoute[]> {
+    // Error handling should happen in component
+    return this.http.get<SessionRoute[]>(
+      `${this.BACKEND_URL_PREFIX}/${sessionID}/routes`,
+      { context: new HttpContext().set(SKIP_ERROR_HANDLING, true) },
+    );
+  }
+
   deleteSession(id: string): Observable<null> {
-    return this.http.delete<null>(this.BACKEND_URL_PREFIX + id);
+    return this.http.delete<null>(this.BACKEND_URL_PREFIX + '/' + id);
   }
 
   beautifyState(state: string | undefined): SessionState {
@@ -185,4 +203,10 @@ export interface SessionState {
   text: string;
   css: string;
   success: boolean;
+}
+
+export interface SessionRoute {
+  host: string;
+  username: string;
+  password: string;
 }

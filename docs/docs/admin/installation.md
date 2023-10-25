@@ -274,5 +274,7 @@ If a value is false, check the backend logs for more information.
     make t4c/client/remote
     ```
 
-1. In the Collaboration Manager UI, change the docker image of the tool to
-   `<registry>/t4c/client/remote:<capella-version>-latest`
+1. In the Collaboration Manager UI, navigate to "Menu" > "Settings" > "Tools",
+    select the tool and modify the "persistent workspace" image to
+   `<registry>/t4c/client/remote:<capella-version>-latest`.
+   In addition, enable the TeamForCapella integration by ticking the checkbox: `This tool is used with a TeamForCapella integration`.
