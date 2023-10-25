@@ -9,7 +9,7 @@
   "
 >
   <div class="m-m-card">
-    <div class="title">TeamForCapella session token</div>
+    <div class="mb-1 text-base font-bold">TeamForCapella session token</div>
     If you'd like to connect to TeamForCapella while working with Capella,
     <br />
     please copy your session token and enter it when prompted in your Capella
@@ -18,32 +18,11 @@
     You can always return to this dialog by clicking on "Connect" in the "Active
     sessions" overview. <br />
     <div *ngIf="session?.t4c_password">
-      <span
-        class="cursor-copy border font-mono"
-        [cdkCopyToClipboard]="session!.t4c_password"
-        (click)="showClipboardMessage()"
-      >
-        <span [ngClass]="{ blur: !t4cPasswordRevealed }">{{
-          session!.t4c_password
-        }}</span></span
-      >
-
-      <button
-        *ngIf="!t4cPasswordRevealed"
-        (click)="this.t4cPasswordRevealed = true"
-        mat-mini-fab
-        matTooltip="Show session token"
-      >
-        <mat-icon> blur_off</mat-icon>
-      </button>
-      <button
-        *ngIf="t4cPasswordRevealed"
-        (click)="this.t4cPasswordRevealed = false"
-        mat-mini-fab
-        matTooltip="Hide session token"
-      >
-        <mat-icon> blur_on</mat-icon>
-      </button>
+      <app-display-value
+        [value]="session!.t4c_password"
+        [blurValue]="true"
+        valueName="TeamForCapella token"
+      ></app-display-value>
     </div>
     <div *ngIf="!session?.t4c_password">
       No session token was generated for your session.
@@ -53,15 +32,19 @@
 </div>
 
 <div class="m-m-card">
-  <div class="title">Connect to the session</div>
+  <div class="mb-1 text-base font-bold">Connect to the session</div>
   Please click on this button to connect to the server: <br />
-  <button mat-flat-button color="primary" (click)="redirectToGuacamole()">
-    Connect to Session
-  </button>
+  <div class="mt-2">
+    <button mat-flat-button color="primary" (click)="redirectToGuacamole()">
+      Connect to Session
+    </button>
+  </div>
 </div>
 <hr />
 <div class="m-m-card">
-  <div class="title">Wait for {{ session.version?.tool?.name }}</div>
+  <div class="mb-1 text-base font-bold">
+    Wait for {{ session.version?.tool?.name }}
+  </div>
   After opening the session, {{ session.version?.tool?.name }}
   {{ session.version?.name }} starts automatically. This can take up to one
   minute.

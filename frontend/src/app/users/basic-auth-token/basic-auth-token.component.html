@@ -49,38 +49,11 @@
   <div *ngIf="password" class="mb-10">
     <mat-card class="!ml-0">
       Generated Token:
-      <span class="mr-1 border font-mono">
-        <span [ngClass]="{ blur: !passwordRevealed }">{{
-          password
-        }}</span></span
-      >
-      <button
-        *ngIf="!passwordRevealed"
-        (click)="this.passwordRevealed = true"
-        mat-mini-fab
-        matTooltip="Show password"
-        class="!mx-1"
-      >
-        <mat-icon>blur_off</mat-icon>
-      </button>
-      <button
-        *ngIf="passwordRevealed"
-        (click)="this.passwordRevealed = false"
-        mat-mini-fab
-        matTooltip="Hide password"
-        class="!mx-1"
-      >
-        <mat-icon>blur_on</mat-icon>
-      </button>
-      <button
-        [cdkCopyToClipboard]="password"
-        mat-mini-fab
-        matTooltip="Copy password to Clipboard"
-        (click)="showClipboardMessage()"
-        class="!mx-1"
-      >
-        <mat-icon>content_copy</mat-icon>
-      </button>
+      <app-display-value
+        [value]="password"
+        [blurValue]="true"
+        valueName="session token"
+      ></app-display-value>
       <div class="mt-2 text-red-600">
         Make sure you save the token - you won't be able to access it again.
       </div></mat-card

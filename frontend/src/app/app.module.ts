@@ -63,6 +63,7 @@ import { HeaderComponent } from './general/header/header.component';
 import { VersionComponent } from './general/metadata/version/version.component';
 import { NavBarMenuComponent } from './general/nav-bar-menu/nav-bar-menu.component';
 import { NoticeComponent } from './general/notice/notice.component';
+import { DisplayValueComponent } from './helpers/display-value/display-value.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 import { ButtonSkeletonLoaderComponent } from './helpers/skeleton-loaders/button-skeleton-loader/button-skeleton-loader.component';
 import { FormFieldSkeletonLoaderComponent } from './helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
@@ -108,7 +109,7 @@ import { SessionComponent } from './sessions/session/session.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { SessionsComponent } from './sessions/sessions.component';
 import { ActiveSessionsComponent } from './sessions/user-sessions-wrapper/active-sessions/active-sessions.component';
-import { GuacamoleDialogComponent } from './sessions/user-sessions-wrapper/active-sessions/connect/guacamole-dialog/guacamole-dialog.component';
+import { ConnectionDialogComponent } from './sessions/user-sessions-wrapper/active-sessions/connection-dialog/connection-dialog.component';
 import { FileBrowserDialogComponent } from './sessions/user-sessions-wrapper/active-sessions/file-browser-dialog/file-browser-dialog.component';
 import { FileExistsDialogComponent } from './sessions/user-sessions-wrapper/active-sessions/file-browser-dialog/file-exists-dialog/file-exists-dialog.component';
 import { CreateReadonlySessionComponent } from './sessions/user-sessions-wrapper/create-session/create-readonly-session/create-readonly-session.component';
@@ -150,6 +151,7 @@ import { SettingsComponent } from './settings/settings.component';
     ChooseInitComponent,
     ChooseSourceComponent,
     ConfirmationDialogComponent,
+    ConnectionDialogComponent,
     CreateBackupComponent,
     CreateModelBaseComponent,
     CreateModelComponent,
@@ -161,6 +163,7 @@ import { SettingsComponent } from './settings/settings.component';
     CreateT4cModelNewRepositoryComponent,
     DeleteGitSettingsDialogComponent,
     DeleteSessionDialogComponent,
+    DisplayValueComponent,
     EditGitSettingsComponent,
     EditProjectMetadataComponent,
     EditT4CInstanceComponent,
@@ -170,7 +173,6 @@ import { SettingsComponent } from './settings/settings.component';
     FooterComponent,
     FormFieldSkeletonLoaderComponent,
     GitSettingsComponent,
-    GuacamoleDialogComponent,
     HeaderComponent,
     InitModelComponent,
     JobRunOverviewComponent,

@@ -11,10 +11,10 @@ import {
   isPersistentSession,
 } from 'src/app/schemes';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
+import { ConnectionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/connection-dialog/connection-dialog.component';
 import { DeleteSessionDialogComponent } from '../../delete-session-dialog/delete-session-dialog.component';
 import { SessionService } from '../../service/session.service';
 import { UserSessionService } from '../../service/user-session.service';
-import { GuacamoleDialogComponent } from './connect/guacamole-dialog/guacamole-dialog.component';
 import { FileBrowserDialogComponent } from './file-browser-dialog/file-browser-dialog.component';
 
 @Component({
@@ -49,7 +49,7 @@ export class ActiveSessionsComponent {
     if (session.jupyter_uri) {
       window.open(session.jupyter_uri);
     } else {
-      this.dialog.open(GuacamoleDialogComponent, {
+      this.dialog.open(ConnectionDialogComponent, {
         data: session,
       });
     }

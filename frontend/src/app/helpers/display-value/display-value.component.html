@@ -1,0 +1,37 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="mt-2 flex items-center">
+  <span class="mr-2 gap-1 rounded border p-2 font-mono">
+    <span [ngClass]="{ blur: !valueRevealed && blurValue }">{{
+      value
+    }}</span></span
+  >
+  <button
+    *ngIf="blurValue && !valueRevealed"
+    (click)="valueRevealed = true"
+    matTooltip="Show value"
+    class="flex"
+  >
+    <mat-icon>blur_off</mat-icon>
+  </button>
+  <button
+    *ngIf="blurValue && valueRevealed"
+    (click)="valueRevealed = false"
+    matTooltip="Hide value"
+    class="flex"
+  >
+    <mat-icon>blur_on</mat-icon>
+  </button>
+  <button
+    *ngIf="value"
+    [cdkCopyToClipboard]="value!"
+    matTooltip="Copy value to clipboard"
+    (click)="showClipboardMessage()"
+    class="flex"
+  >
+    <mat-icon>content_copy</mat-icon>
+  </button>
+</div>
