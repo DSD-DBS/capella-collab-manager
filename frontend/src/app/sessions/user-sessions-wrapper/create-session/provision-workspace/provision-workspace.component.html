@@ -1,0 +1,33 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+<div class="wrapper">
+  <h2 id="title">Provision workspace</h2>
+  <mat-card id="readonly-card">
+    <mat-card-content>
+      <p>Load the models in a training environment.</p>
+
+      <form [formGroup]="provisionForm" (ngSubmit)="requestSessions()">
+        <fieldset *ngIf="projectType !== 'training'">
+          <mat-slide-toggle formControlName="persistentWorkspace">
+            Use a persistent workspace</mat-slide-toggle
+          >
+        </fieldset>
+
+        <fieldset class="mt-4">
+          <button
+            matInput
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="!projectSlug || !models"
+          >
+            Start this training
+            <mat-icon>keyboard_arrow_right</mat-icon>
+          </button>
+        </fieldset>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

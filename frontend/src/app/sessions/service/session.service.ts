@@ -6,6 +6,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Model } from 'src/app/projects/models/service/model.service';
 import { Session } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
 
@@ -47,6 +48,20 @@ export class SessionService {
       tool_id: toolId,
       version_id: versionId,
     });
+  }
+
+  provisionWorkspace(
+    projectSlug: string,
+    models: Model[],
+    persistentWorkspace: boolean,
+  ): Observable<Session[]> {
+    return this.http.post<Session[]>(
+      `${environment.backend_url}/projects/${projectSlug}/sessions/provision`,
+      {
+        models: models,
+        persistent_workspace: persistentWorkspace,
+      },
+    );
   }
 
   deleteSession(id: string): Observable<null> {
