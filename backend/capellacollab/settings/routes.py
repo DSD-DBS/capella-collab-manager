@@ -4,6 +4,7 @@
 import fastapi
 
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.settings.configuration import routes as configuration_routes
 from capellacollab.settings.integrations.purevariants import (
     routes as purevariants_routes,
 )
@@ -19,10 +20,16 @@ router = fastapi.APIRouter(
         )
     ]
 )
+router_without_authentication = fastapi.APIRouter()
+
 router.include_router(
     modelsources_routes.router,
     prefix="/modelsources",
 )
 router.include_router(
     purevariants_routes.router, prefix="/integrations/pure-variants"
+)
+router.include_router(configuration_routes.router, prefix="/configurations")
+router_without_authentication.include_router(
+    configuration_routes.schema_router, prefix="/configurations"
 )

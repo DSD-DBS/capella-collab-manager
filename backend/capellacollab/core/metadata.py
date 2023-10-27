@@ -5,9 +5,13 @@ import typing as t
 
 import fastapi
 import pydantic
+from sqlalchemy import orm
 
 import capellacollab
 from capellacollab.config import config
+from capellacollab.core import database
+from capellacollab.settings.configuration import core as config_core
+from capellacollab.settings.configuration import models as config_models
 
 
 class Metadata(pydantic.BaseModel):
@@ -28,22 +32,22 @@ class Metadata(pydantic.BaseModel):
 router = fastapi.APIRouter()
 
 general_cfg: dict[str, t.Any] = config["general"]
-metadata_cfg: dict[str, str | None] = general_cfg.get("metadata", {})
 
 
 @router.get(
     "/metadata",
     response_model=Metadata,
 )
-def get_metadata():
-    return Metadata(
-        version=capellacollab.__version__,
-        privacy_policy_url=metadata_cfg.get("privacyPolicyURL"),
-        imprint_url=metadata_cfg.get("imprintURL"),
-        provider=metadata_cfg.get("provider"),
-        authentication_provider=metadata_cfg.get("authenticationProvider"),
-        environment=metadata_cfg.get("environment"),
-        host=general_cfg.get("host"),
-        port=str(general_cfg.get("port")),
-        protocol=general_cfg.get("scheme"),
+def get_metadata(db: orm.Session = fastapi.Depends(database.get_db)):
+    cfg = config_core.get_config(db, "global")
+    assert isinstance(cfg, config_models.GlobalConfiguration)
+
+    return Metadata.model_validate(
+        cfg.metadata.model_dump()
+        | {
+            "version": capellacollab.__version__,
+            "host": general_cfg.get("host"),
+            "port": str(general_cfg.get("port")),
+            "protocol": general_cfg.get("scheme"),
+        }
     )

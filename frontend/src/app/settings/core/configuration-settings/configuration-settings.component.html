@@ -1,0 +1,15 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div id="editor" class="h-[70vh] min-h-[200px]"></div>
+<div class="m-2 flex gap-2">
+  <button mat-stroked-button (click)="submitValue()" color="primary">
+    <span>Save</span>
+    <mat-icon class="ml-2">save</mat-icon>
+  </button>
+  <button mat-stroked-button (click)="resetValue()" color="warn">
+    <span>Reset</span> <mat-icon class="ml-2">clear</mat-icon>
+  </button>
+</div>

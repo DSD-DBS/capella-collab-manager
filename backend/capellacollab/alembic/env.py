@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
-from logging.config import fileConfig
 
 os.environ["ALEMBIC_CONTEXT"] = "1"
 

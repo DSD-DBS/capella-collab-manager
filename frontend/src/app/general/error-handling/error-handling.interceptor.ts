@@ -72,9 +72,13 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
             if (Array.isArray(detail)) {
               // Pydantic errors
               for (const error of detail) {
+                let message = error.msg;
+                if (error.loc) {
+                  message = 'Field ' + error.loc.join(' > ') + ', ' + message;
+                }
                 this.toastService.showError(
                   getReasonPhrase(err.status),
-                  error.msg,
+                  message,
                 );
               }
             } else if (detail.reason) {

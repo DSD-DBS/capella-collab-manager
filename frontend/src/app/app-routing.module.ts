@@ -12,6 +12,7 @@ import { PipelineWrapperComponent } from 'src/app/projects/models/backup-setting
 import { ModelRestrictionsComponent } from 'src/app/projects/models/model-restrictions/model-restrictions.component';
 import { EditProjectMetadataComponent } from 'src/app/projects/project-detail/edit-project-metadata/edit-project-metadata.component';
 import { SessionComponent } from 'src/app/sessions/session/session.component';
+import { ConfigurationSettingsComponent } from 'src/app/settings/core/configuration-settings/configuration-settings.component';
 import { PipelinesOverviewComponent } from 'src/app/settings/core/pipelines-overview/pipelines-overview.component';
 import { BasicAuthTokenComponent } from 'src/app/users/basic-auth-token/basic-auth-token.component';
 import { UsersProfileComponent } from 'src/app/users/users-profile/users-profile.component';
@@ -376,6 +377,11 @@ const routes: Routes = [
                     component: ToolDetailsComponent,
                   },
                 ],
+              },
+              {
+                path: 'configuration',
+                data: { breadcrumb: 'Configuration' },
+                component: ConfigurationSettingsComponent,
               },
             ],
           },
