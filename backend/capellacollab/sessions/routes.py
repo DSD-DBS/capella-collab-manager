@@ -542,6 +542,127 @@ def create_database_and_guacamole_session(
     )
 
 
+@project_router.post(
+    "/provision",
+    response_model=list[models.GetSessionsResponse],
+    dependencies=[
+        fastapi.Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=projects_users_models.ProjectUserRole.USER
+            )
+        )
+    ],
+)
+def request_provision_workspace(
+    body: models.PostProvisionWorkspaceRequest,
+    db_user: users_models.DatabaseUser = fastapi.Depends(
+        users_injectables.get_own_user
+    ),
+    project: projects_models.DatabaseProject = fastapi.Depends(
+        projects_injectables.get_existing_project
+    ),
+    operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
+    db: orm.Session = fastapi.Depends(database.get_db),
+):
+    log.info("Provisioning workspace for user %s", db_user.name)
+
+    if not body.models:
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "err_code": "NO_MODELS",
+                "reason": "No models have been provided in this request for a read-only session.",
+            },
+        )
+
+    models_ = [
+        toolmodels_injectables.get_existing_capella_model(
+            m.toolmodel_slug, project, db
+        )
+        for m in body.models
+    ]
+
+    # Check if we already have running sessions for this project
+    if any(
+        crud.exist_readonly_session_for_user_project_version(
+            db, db_user, project, m.version
+        )
+        for m in models_
+    ):
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "err_code": "EXISTING_SESSION",
+                "reason": f"You already have a session for {project.name}. Close the existing session(s) before starting a new one.",
+            },
+        )
+
+    grouped_models = group_models_by_tool_version(models_)
+
+    launched_sessions = []
+    for model_group in grouped_models:
+        model = model_group[0]
+
+        # Start sessions for each tool and tell it to load models, same as readonly sessions
+        docker_image = get_readonly_image_for_version(model.version)
+        if not docker_image:
+            raise exceptions.UnsupportedSessionTypeError(
+                model.version.tool, models.WorkspaceType.READONLY
+            )
+
+        rdp_password = credentials.generate_password(length=64)
+
+        session = operator.start_session(
+            image=docker_image,
+            username=db_user.name,
+            session_type="readonly",
+            tool_name=model.tool.name,
+            version_name=model.version.name,
+            volumes=[
+                operators_models.EmptyVolume(
+                    name="workspace",
+                    read_only=False,
+                    container_path=pathlib.PurePosixPath("/workspace"),
+                )
+            ],
+            environment={
+                "GIT_REPOS_JSON": json.dumps(
+                    list(
+                        git_model_as_json(m, revision="main", deep_clone=False)
+                        for m in grouped_models
+                    )
+                ),
+                "RMT_PASSWORD": rdp_password,
+            },
+            ports={"rdp": 3389, "metrics": 9118, "fileservice": 8000},
+        )
+
+        launched_sessions.append(
+            create_database_and_guacamole_session(
+                db=db,
+                type=models.WorkspaceType.READONLY,
+                session=session,
+                owner=db_user.name,
+                rdp_password=rdp_password,
+                tool=model.tool,
+                version=model.version,
+                project=project,
+                environment={},
+            )
+        )
+
+    return launched_sessions
+
+
+def group_models_by_tool_version(models_):
+    return list(
+        list(model_iter)
+        for _version_id, model_iter in itertools.groupby(
+            models_, key=lambda m: m.version.id
+        )
+    )
+
+
 @router.delete("/{session_id}", status_code=204)
 def end_session(
     db: orm.Session = fastapi.Depends(database.get_db),

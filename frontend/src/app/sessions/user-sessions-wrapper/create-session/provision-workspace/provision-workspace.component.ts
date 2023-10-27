@@ -58,7 +58,15 @@ export class ProvisionWorkspaceComponent implements OnInit {
   requestSessions(): void {
     if (this.projectSlug && this.models) {
       this.sessionService
-        .provisionWorkspace(this.projectSlug, this.models, true)
+        .provisionWorkspace(
+          this.projectSlug,
+          this.models.map((m) => {
+            return {
+              model_slug: m.slug,
+            };
+          }),
+          true,
+        )
         .subscribe(() => {
           this.router.navigateByUrl('/');
         });

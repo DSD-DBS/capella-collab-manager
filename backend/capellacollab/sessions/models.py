@@ -77,6 +77,17 @@ class PostPersistentSessionRequest(pydantic.BaseModel):
     version_id: int
 
 
+class PostProvisionWorkspaceEntry(pydantic.BaseModel):
+    toolmodel_slug: str = pydantic.Field(alias="model_slug")
+
+
+class PostProvisionWorkspaceRequest(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
+    models: list[PostProvisionWorkspaceEntry]
+    persistent_workspace: bool
+
+
 class GetSessionUsageResponse(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(from_attributes=True)
 

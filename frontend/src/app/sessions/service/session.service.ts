@@ -6,7 +6,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Model } from 'src/app/projects/models/service/model.service';
 import { Session } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
 
@@ -15,6 +14,10 @@ export type ReadonlyModel = {
   git_model_id: number;
   revision: string;
   deep_clone: boolean;
+};
+
+export type ProvisionModel = {
+  model_slug: string;
 };
 
 @Injectable({
@@ -52,7 +55,7 @@ export class SessionService {
 
   provisionWorkspace(
     projectSlug: string,
-    models: Model[],
+    models: ProvisionModel[],
     persistentWorkspace: boolean,
   ): Observable<Session[]> {
     return this.http.post<Session[]>(

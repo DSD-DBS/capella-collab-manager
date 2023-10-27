@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import itertools
 import json
 import typing as t
 from datetime import datetime
@@ -14,7 +15,10 @@ import capellacollab.sessions.guacamole
 from capellacollab.__main__ import app
 from capellacollab.projects.crud import create_project
 from capellacollab.projects.toolmodels.crud import create_model
-from capellacollab.projects.toolmodels.models import PostCapellaModel
+from capellacollab.projects.toolmodels.models import (
+    DatabaseCapellaModel,
+    PostCapellaModel,
+)
 from capellacollab.projects.toolmodels.modelsources.git.crud import (
     add_git_model_to_capellamodel,
 )
@@ -27,6 +31,7 @@ from capellacollab.projects.users.models import (
     ProjectUserRole,
 )
 from capellacollab.sessions import models as sessions_models
+from capellacollab.sessions import routes as sessions_routes
 from capellacollab.sessions.crud import (
     create_session,
     get_session_by_id,
@@ -44,6 +49,7 @@ from capellacollab.tools.crud import (
 )
 from capellacollab.tools.integrations.crud import update_integrations
 from capellacollab.tools.integrations.models import PatchToolIntegrations
+from capellacollab.tools.models import DatabaseVersion
 from capellacollab.users.crud import create_user
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import Role
@@ -426,3 +432,27 @@ def test_create_persistent_jupyter_session(client, db, user, kubernetes):
         kubernetes.sessions[0]["docker_image"]
         == "jupyter/minimal-notebook:python-3.10.8"
     )
+
+
+def test_group_models_by_tool_version():
+    first_tool = DatabaseVersion(id=1)
+    second_tool = DatabaseVersion(id=2)
+
+    models = [
+        DatabaseCapellaModel(
+            name="first",
+            version=first_tool,
+        ),
+        DatabaseCapellaModel(
+            name="second-1",
+            version=second_tool,
+        ),
+        DatabaseCapellaModel(
+            name="second-2",
+            version=second_tool,
+        ),
+    ]
+
+    models_by_tool = sessions_routes.group_models_by_tool_version(models)
+
+    assert models_by_tool == [[models[0]], [models[1], models[2]]]
