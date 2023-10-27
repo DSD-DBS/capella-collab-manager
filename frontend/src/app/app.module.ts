@@ -119,6 +119,7 @@ import { CreateReadonlyModelOptionsComponent } from './sessions/user-sessions-wr
 import { CreateReadonlySessionDialogComponent } from './sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-session-dialog.component';
 import { UserSessionsWrapperComponent } from './sessions/user-sessions-wrapper/user-sessions-wrapper.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
+import { ConfigurationSettingsComponent } from './settings/core/configuration-settings/configuration-settings.component';
 import { PipelinesOverviewComponent } from './settings/core/pipelines-overview/pipelines-overview.component';
 import { ToolDeletionDialogComponent } from './settings/core/tools-settings/tool-details/tool-deletion-dialog/tool-deletion-dialog.component';
 import { ToolDetailsComponent } from './settings/core/tools-settings/tool-details/tool-details.component';
@@ -151,6 +152,7 @@ import { SettingsComponent } from './settings/settings.component';
     ButtonSkeletonLoaderComponent,
     ChooseInitComponent,
     ChooseSourceComponent,
+    ConfigurationSettingsComponent,
     ConfirmationDialogComponent,
     ConnectionDialogComponent,
     CreateBackupComponent,

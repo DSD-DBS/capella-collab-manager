@@ -15,8 +15,14 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "customWebpackConfig": {
+              "path": "./webpack.config.ts",
+              "mergeRules": {
+                "externals": "replace"
+              }
+            },
             "outputPath": "dist/capellacollab",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -24,6 +30,7 @@
             "tsConfig": "tsconfig.app.json",
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
+              "node_modules/monaco-editor/min/vs/editor/editor.main.css",
               "src/custom-theme.scss",
               "src/styles.css",
               "node_modules/ngx-toastr/toastr.css"
@@ -87,7 +94,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
             "production": {
               "browserTarget": "capellacollab:build:production"
@@ -115,7 +122,10 @@
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.css"],
+            "styles": [
+              "node_modules/monaco-editor/min/vs/editor/editor.main.css",
+              "src/styles.css"
+            ],
             "fileReplacements": [
               {
                 "replace": "src/environments/environment.ts",

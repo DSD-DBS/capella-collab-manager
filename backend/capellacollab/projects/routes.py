@@ -28,7 +28,6 @@ from capellacollab.users.events import crud as events_crud
 
 from . import crud, models
 
-logger = logging.getLogger(__name__)
 router = fastapi.APIRouter(
     dependencies=[
         fastapi.Depends(

@@ -38,3 +38,7 @@
 .navBar {
   min-height: 65px;
 }
+
+router-outlet {
+  height: 100%;
+}

@@ -14,6 +14,7 @@ import capellacollab.projects.toolmodels.modelsources.t4c.models
 import capellacollab.projects.toolmodels.restrictions.models
 import capellacollab.projects.users.models
 import capellacollab.sessions.models
+import capellacollab.settings.configuration.models
 import capellacollab.settings.integrations.purevariants.models
 import capellacollab.settings.modelsources.git.models
 import capellacollab.settings.modelsources.t4c.models
@@ -22,3 +23,4 @@ import capellacollab.tools.models
 import capellacollab.users.events.models
 import capellacollab.users.models
 import capellacollab.users.tokens
+import capellacollab.users.tokens.models
