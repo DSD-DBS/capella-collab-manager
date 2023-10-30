@@ -92,3 +92,8 @@ button {
 mat-divider {
   margin: 10px 0;
 }
+
+pre > code > i {
+  white-space: pre;
+  font-style: normal;
+}

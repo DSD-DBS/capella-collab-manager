@@ -25,6 +25,9 @@ import {
   DiagramMetadata,
   ModelDiagramService,
 } from 'src/app/projects/models/diagrams/service/model-diagram.service';
+import { ModelService } from 'src/app/projects/models/service/model.service';
+import { UserService } from 'src/app/services/user/user.service';
+import { TokenService } from 'src/app/users/basic-auth-service/basic-auth-token.service';
 
 @Component({
   selector: 'app-model-diagram-dialog',
@@ -34,6 +37,9 @@ import {
 export class ModelDiagramDialogComponent {
   diagramMetadata?: DiagramCacheMetadata;
   diagrams: Diagrams = {};
+  username?: string;
+  passwordValue?: string;
+  path?: string;
 
   loaderArray = Array(60).fill(0);
 
@@ -55,6 +61,9 @@ export class ModelDiagramDialogComponent {
 
   constructor(
     private modelDiagramService: ModelDiagramService,
+    private userService: UserService,
+    private modelService: ModelService,
+    private tokenService: TokenService,
     private dialogRef: MatDialogRef<ModelDiagramDialogComponent>,
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA)
@@ -71,6 +80,27 @@ export class ModelDiagramDialogComponent {
           this.dialogRef.close();
         },
       });
+
+    this.userService
+      .getCurrentUser()
+      .subscribe((user) => (this.username = user.name));
+    this.path = this.modelService.backendURLFactory(
+      data.projectSlug,
+      data.modelSlug,
+    );
+  }
+
+  get codeBlockContent(): string {
+    return `model = capellambse.MelodyModel(
+      path="path to the aird file of the model on your machine",
+      diagram_cache={
+        "path": "http://localhost:8000/api/v1/projects/coffee-machine/models/coffee-machine/diagrams/%s",
+        "username": "${this.username}",
+        "password": "${
+          this.passwordValue ? this.passwordValue : 'yourPassword'
+        }",
+      }
+    )`;
   }
 
   observeVisibleDiagrams() {
@@ -154,6 +184,18 @@ export class ModelDiagramDialogComponent {
       .subscribe((response: Blob) => {
         saveAs(response, `${uuid}.svg`);
       });
+  }
+
+  async insertToken() {
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 30);
+    this.tokenService
+      .createToken(
+        'Created in diagram cache dialog',
+        expirationDate,
+        'Diagram-cache',
+      )
+      .subscribe((token) => (this.passwordValue = token.password));
   }
 }
 
