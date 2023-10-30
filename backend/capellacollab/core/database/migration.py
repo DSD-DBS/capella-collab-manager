@@ -22,6 +22,10 @@ from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
 )
 from capellacollab.projects.toolmodels.modelsources.t4c import crud as t4c_crud
+from capellacollab.settings.modelsources.git import crud as modelssources_crud
+from capellacollab.settings.modelsources.git import (
+    models as modelssources_models,
+)
 from capellacollab.settings.modelsources.t4c import crud as settings_t4c_crud
 from capellacollab.settings.modelsources.t4c import (
     models as settings_t4c_models,
@@ -71,10 +75,13 @@ def migrate_db(engine, database_url: str):
                 command.stamp(alembic_cfg, "head")
                 initialize_admin_user(session)
                 initialize_default_project(session)
+                initialize_coffee_machine_project(session)
 
                 create_tools(session)
                 create_t4c_instance_and_repositories(session)
-                create_models(session)
+                create_github_instance(session)
+                create_default_models(session)
+                create_coffee_machine_model(session)
 
 
 def initialize_admin_user(db):
@@ -92,6 +99,16 @@ def initialize_default_project(db):
     projects_crud.create_project(
         db=db,
         name="default",
+        description="",
+        visibility=project_models.Visibility.INTERNAL,
+    )
+
+
+def initialize_coffee_machine_project(db):
+    LOGGER.info("Initialize project 'Coffee Machine'")
+    projects_crud.create_project(
+        db=db,
+        name="Coffee Machine",
         description="",
         visibility=project_models.Visibility.INTERNAL,
     )
@@ -189,7 +206,19 @@ def create_t4c_instance_and_repositories(db):
     LOGGER.info("Initialized T4C instance and repositories")
 
 
-def create_models(db: orm.Session):
+def create_github_instance(db: orm.Session):
+    modelssources_crud.create_git_instance(
+        db=db,
+        body=modelssources_models.PostGitInstance(
+            type=modelssources_models.GitType.GITHUB,
+            name="Github",
+            url="https://github.com",
+            api_url="https://api.github.com",
+        ),
+    )
+
+
+def create_default_models(db: orm.Session):
     capella_tool = tools_crud.get_tool_by_name(db, "Capella")
     assert capella_tool
 
@@ -224,3 +253,41 @@ def create_models(db: orm.Session):
             ),
         )
     LOGGER.info("Initialized default models")
+
+
+def create_coffee_machine_model(db: orm.Session):
+    capella_tool = tools_crud.get_tool_by_name(db, "Capella")
+    assert capella_tool
+
+    coffee_machine_project = projects_crud.get_project_by_slug(
+        db, "coffee-machine"
+    )
+    assert coffee_machine_project
+
+    capella_model = toolmodels_crud.create_model(
+        db=db,
+        project=coffee_machine_project,
+        post_model=toolmodels_models.PostCapellaModel(
+            name="Coffee Machine",
+            description="An open source model of a coffee machine",
+            tool_id=capella_tool.id,
+        ),
+        tool=capella_tool,
+        version=tools_crud.get_version_by_tool_id_version_name(
+            db, capella_tool.id, "6.0.0"
+        ),
+        nature=tools_crud.get_nature_by_name(db, capella_tool, "model"),
+    )
+
+    git_crud.add_git_model_to_capellamodel(
+        db=db,
+        capella_model=capella_model,
+        post_git_model=git_models.PostGitModel(
+            path="https://github.com/DSD-DBS/coffee-machine",
+            entrypoint="coffee-machine-demo.aird",
+            revision="main",
+            username="",
+            password="",
+        ),
+    )
+    LOGGER.info("Initialized coffee machine model")
