@@ -3,8 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-We use some different libraries in the backend.
-Here is a quick overview.
+We use some different libraries in the backend. Here is a quick overview.
 
 ## FastAPI
 

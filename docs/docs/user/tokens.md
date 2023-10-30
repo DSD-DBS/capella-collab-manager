@@ -42,9 +42,9 @@ authenticate with that against the Collaboration Manager API. One example is:
 curl -u [username]:[token] https://[baseURL]/api/v1/projects
 ```
 
-Another example is working with the diagram cache of py-capellambse.
-The implementation of the capella modelling tool `capellambse` uses Python and lets you read and
-write models. For more information have a look at the
+Another example is working with the diagram cache of py-capellambse. The
+implementation of the capella modelling tool `capellambse` uses Python and lets
+you read and write models. For more information have a look at the
 [documentation](https://dsd-dbs.github.io/py-capellambse/) or the
 [Github repository](https://github.com/DSD-DBS/py-capellambse).
 
@@ -59,4 +59,5 @@ model = capellambse.model.MelodyModel(
 )
 ```
 
-Having created a model like that you can e.g. with `model.diagrams[0]` get the first diagram.
+Having created a model like that you can e.g. with `model.diagrams[0]` get the
+first diagram.
