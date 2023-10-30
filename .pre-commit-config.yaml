@@ -57,7 +57,7 @@ repos:
           - fastapi
           - pydantic
           - sqlalchemy
-          - capellambse==0.5.35.dev4
+          - capellambse==0.5.36
   - repo: local
     hooks:
       - id: pylint
