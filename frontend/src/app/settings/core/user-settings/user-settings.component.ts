@@ -16,7 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { HistoryEvent } from 'src/app/events/service/events.service';
-import { ConfirmationDialogComponent } from 'src/app/general/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import {
   InputDialogComponent,
   InputDialogResult,
