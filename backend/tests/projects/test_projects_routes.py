@@ -53,7 +53,7 @@ def test_get_projects_as_user_only_shows_default_internal_project(
 
     data = response.json()
 
-    assert len(data) == 1
+    assert len(data) == 2
     assert data[0]["slug"] == "default"
     assert data[0]["visibility"] == "internal"
 
@@ -68,7 +68,7 @@ def test_get_projects_as_user_with_project(
 
     data = response.json()
 
-    assert len(data) == 2
+    assert len(data) == 3
     assert data[0]["slug"] == project.slug
     assert data[0]["visibility"] == "private"
 
@@ -87,9 +87,9 @@ def test_get_projects_as_admin(
 
     data = response.json()
 
-    assert len(data) == 2
-    assert data[1]["slug"] == project.slug
-    assert data[1]["visibility"] == "private"
+    assert len(data) == 3
+    assert data[2]["slug"] == project.slug
+    assert data[2]["visibility"] == "private"
 
 
 def test_get_internal_projects_as_user(
@@ -106,9 +106,9 @@ def test_get_internal_projects_as_user(
 
     data = response.json()
 
-    assert len(data) == 2
-    assert data[1]["slug"] == project.slug
-    assert data[1]["visibility"] == "internal"
+    assert len(data) == 3
+    assert data[2]["slug"] == project.slug
+    assert data[2]["visibility"] == "internal"
 
 
 def test_get_internal_projects_as_user_without_duplicates(
@@ -132,15 +132,15 @@ def test_get_internal_projects_as_user_without_duplicates(
 
     data = response.json()
 
-    assert len(data) == 2
+    assert len(data) == 3
 
     assert data[0]["slug"] == "default"
     assert data[0]["visibility"] == "internal"
     assert data[0]["users"]["contributors"] == 0
 
-    assert data[1]["slug"] == project.slug
-    assert data[1]["visibility"] == "internal"
-    assert data[1]["users"]["contributors"] == 1
+    assert data[2]["slug"] == project.slug
+    assert data[2]["visibility"] == "internal"
+    assert data[2]["users"]["contributors"] == 1
 
 
 def test_create_private_project_as_admin(
