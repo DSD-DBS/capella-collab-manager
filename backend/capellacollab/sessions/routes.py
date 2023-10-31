@@ -612,10 +612,14 @@ def request_provision_workspace(
 
         rdp_password = credentials.generate_password(length=64)
 
+        git_model = next((gm for gm in model.git_models if gm.primary), None)
+        if not git_model:
+            raise exceptions.MissingPrimaryGitModelError(model)
+
         session = operator.start_session(
             image=docker_image,
             username=db_user.name,
-            session_type="readonly",
+            session_type="provision",
             tool_name=model.tool.name,
             version_name=model.version.name,
             volumes=[
@@ -628,8 +632,12 @@ def request_provision_workspace(
             environment={
                 "GIT_REPOS_JSON": json.dumps(
                     list(
-                        git_model_as_json(m, revision="main", deep_clone=False)
-                        for m in grouped_models
+                        git_model_as_json(
+                            git_model=git_model,
+                            revision="main",
+                            deep_clone=False,
+                        )
+                        for m in model_group
                     )
                 ),
                 "RMT_PASSWORD": rdp_password,
@@ -654,7 +662,9 @@ def request_provision_workspace(
     return launched_sessions
 
 
-def group_models_by_tool_version(models_):
+def group_models_by_tool_version(
+    models_: list[toolmodels_models.DatabaseCapellaModel],
+) -> list[list[toolmodels_models.DatabaseCapellaModel]]:
     return list(
         list(model_iter)
         for _version_id, model_iter in itertools.groupby(

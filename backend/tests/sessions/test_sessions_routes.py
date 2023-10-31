@@ -282,7 +282,6 @@ def test_one_readonly_sessions_as_user_per_tool_version(
 
 def setup_git_model_for_user(db, user, version):
     project = create_project(db, name=str(uuid1()))
-    nature = get_natures(db)[0]
     add_user_to_project(
         db,
         project,
@@ -290,6 +289,11 @@ def setup_git_model_for_user(db, user, version):
         ProjectUserRole.USER,
         ProjectUserPermission.READ,
     )
+    return setup_model(db, project, version)
+
+
+def setup_model(db, project, version):
+    nature = get_natures(db)[0]
     model = create_model(
         db,
         project,
@@ -456,3 +460,54 @@ def test_group_models_by_tool_version():
     models_by_tool = sessions_routes.group_models_by_tool_version(models)
 
     assert models_by_tool == [[models[0]], [models[1], models[2]]]
+
+
+def test_provision_sessions_as_user(
+    client: testclient.TestClient,
+    db,
+    user,
+    kubernetes,
+):
+    capella_version = next(
+        v
+        for v in get_versions(db)
+        if v.tool.name == "Capella" and v.name == "6.0.0"
+    )
+
+    jupyter_version = next(
+        v for v in get_versions(db) if v.tool.name == "Jupyter"
+    )
+
+    capella_model, capella_git_model = setup_git_model_for_user(
+        db, user, capella_version
+    )
+    jupyter_model, jupyter_git_model = setup_model(
+        db, capella_model.project, jupyter_version
+    )
+
+    response = client.post(
+        f"/api/v1/projects/{capella_model.project.slug}/sessions/provision",
+        json={
+            "models": [
+                {
+                    "model_slug": capella_model.slug,
+                },
+                {
+                    "model_slug": jupyter_model.slug,
+                },
+            ],
+            "persistent_workspace": True,
+        },
+    )
+    sessions = response.json()
+    print(sessions)
+
+    assert response.status_code == 200
+    assert len(sessions) == 2
+    session = get_session_by_id(db, sessions[0]["id"])
+
+    assert "/capella/readonly:6.0.0" in kubernetes.sessions[0]["docker_image"]
+    assert (
+        '"revision": "main"'
+        in kubernetes.sessions[0]["environment"]["GIT_REPOS_JSON"]
+    )
