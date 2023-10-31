@@ -976,7 +976,9 @@ class KubernetesOperator:
             import pathlib
             import sys
 
-            print("Using CLI arguments: " + str(sys.argv[1:]), file=sys.stderr)
+            print(  # pylint: disable=bad-builtin
+                "Using CLI arguments: " + str(sys.argv[1:]), file=sys.stderr
+            )
 
             def get_files(dir: pathlib.Path, show_hidden: bool):
                 file = {
@@ -1004,7 +1006,7 @@ class KubernetesOperator:
 
                 return file
 
-            print(
+            print(  # pylint: disable=bad-builtin
                 json.dumps(
                     get_files(
                         pathlib.Path(sys.argv[1]), json.loads(sys.argv[2])
