@@ -58,6 +58,7 @@ repos:
           - pydantic
           - sqlalchemy
           - capellambse==0.5.36
+          - typer
   - repo: local
     hooks:
       - id: pylint
