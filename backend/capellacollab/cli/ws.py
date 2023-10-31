@@ -9,7 +9,6 @@ import select
 import sys
 import time
 import typing as t
-import uuid
 
 import typer
 import websocket  # type: ignore[import]
@@ -134,7 +133,7 @@ def pod_for_volume(
     v1: client.CoreV1Api,
     read_only=True,
 ):
-    name = f"ws-download-{volume_name}-{uuid.uuid1()}"[:63]
+    name = volume_name
 
     containers = [
         client.V1Container(
