@@ -3,14 +3,15 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-To find out which resources are used in the cluster, you can install a
-the tool [`kube-capacity`](https://github.com/robscott/kube-capacity):
+To find out which resources are used in the cluster, you can install a the tool
+[`kube-capacity`](https://github.com/robscott/kube-capacity):
 
 ```zsh
 kubectl krew install resource-capacity
 ```
 
-When the installation is complete, you can see an overview over the resources in your namespace:
+When the installation is complete, you can see an overview over the resources
+in your namespace:
 
 ```zsh
 kubectl resource-capacity -n <NAMESPACE> --sort cpu.limit --util --pods

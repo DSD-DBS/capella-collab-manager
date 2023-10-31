@@ -16,24 +16,24 @@ nav:
   - User documentation:
       - Introduction: user/index.md
       - Projects:
-          - Get access to a project: user/projects/access.md
-          - Add a user to a project: user/projects/add-user.md
-          - Request a new project: user/projects/create.md
+          - Get Access to a Project: user/projects/access.md
+          - Add a User to a Project: user/projects/add-user.md
+          - Request a New Project: user/projects/create.md
           - Roles: user/projects/roles.md
           - Models:
-              - Create a model: user/projects/models/create.md
-              - Update a model to a newer version: user/projects/models/update.md
-              - Update model metadata: user/projects/models/metadata.md
-              - Model sources:
+              - Create a Model: user/projects/models/create.md
+              - Update a Model to a Newer Version: user/projects/models/update.md
+              - Update Model Metadata: user/projects/models/metadata.md
+              - Model Sources:
                   - TeamForCapella: user/projects/models/sources/t4c.md
               - Backups:
-                  - Setup a model backup: user/projects/models/backups/setup.md
-                  - Trigger a model backup: user/projects/models/backups/trigger.md
-                  - Remove a model backup: user/projects/models/backups/remove.md
+                  - Setup a Model Backup: user/projects/models/backups/setup.md
+                  - Trigger a Model Backup: user/projects/models/backups/trigger.md
+                  - Remove a Model Backup: user/projects/models/backups/remove.md
               - Diagram cache:
-                  - Setup diagram cache: user/projects/models/diagrams/setup_diagram_cache.md
-                  - View diagram cache: user/projects/models/diagrams/view_diagram_cache.md
-              - Model complexity badge: user/projects/models/complexity_badge.md
+                  - Setup Diagram Cache: user/projects/models/diagrams/setup_diagram_cache.md
+                  - View Diagram Cache: user/projects/models/diagrams/view_diagram_cache.md
+              - Model Complexity Badge: user/projects/models/complexity_badge.md
       - Sessions:
           - Session Types:
               - Overview: user/sessions/types.md
@@ -46,7 +46,7 @@ nav:
           - Flows:
               - Git: user/sessions/flows/git.md
               - TeamForCapella: user/sessions/flows/t4c.md
-          - Files browser: user/sessions/files/files.md
+          - Files Browser: user/sessions/files/files.md
           - Troubleshooting: user/sessions/troubleshooting.md
           - Jupyter:
               - Collaboration: user/sessions/jupyter/collaboration.md
@@ -59,21 +59,21 @@ nav:
               - Git: user/settings/model-sources/git.md
               - T4C: user/settings/model-sources/t4c.md
           - Alerts:
-              - Create an alert: user/alerts/create.md
+              - Create an Alert: user/alerts/create.md
       - Tools:
           - Capella:
               - Introduction: user/tools/capella/introduction.md
-              - Co-working methods: user/tools/capella/t4c-git-compare.md
+              - Co-working Methods: user/tools/capella/t4c-git-compare.md
               - TeamForCapella:
-                  - Import a model from TeamForCapella: user/tools/capella/teamforcapella/import/import-from-t4c.md
-                  - Export a model to TeamForCapella: user/tools/capella/teamforcapella/export/export-to-t4c.md
-                  - TeamForCapella repository management: user/tools/capella/teamforcapella/repository-management.md
+                  - Import a Model from TeamForCapella: user/tools/capella/teamforcapella/import/import-from-t4c.md
+                  - Export a Model to TeamForCapella: user/tools/capella/teamforcapella/export/export-to-t4c.md
+                  - TeamForCapella Repository Management: user/tools/capella/teamforcapella/repository-management.md
                   - TeamForCapella Project Management: user/tools/capella/teamforcapella/project-management/project-management.md
-                  - Update a TeamForCapella based model: user/tools/capella/teamforcapella/update.md
+                  - Update a TeamForCapella-based Model: user/tools/capella/teamforcapella/update.md
               - Git:
                   - Working with Git: user/tools/capella/working-with-git.md
       - Authentication: user/tokens.md
-  - Administrator documentation:
+  - Administrator Documentation:
       - Index: admin/index.md
       - Installation: admin/installation.md
       - Uninstallation: admin/uninstallation.md
@@ -82,22 +82,22 @@ nav:
           - Gitlab CI/CD:
               - Image builder: admin/ci-templates/gitlab/image-builder.md
               - Kubernetes deployment: admin/ci-templates/gitlab/k8s-deploy.md
-  - Developer documentation:
+  - Developer Documentation:
       - Home: development/index.md
       - Backend:
           - Code Style: development/backend/code-style.md
-          - Technology overview: development/backend/technology.md
-          - Extension modules: development/backend/extensions.md
-          - Exception handling: development/backend/exception.md
+          - Technology Overview: development/backend/technology.md
+          - Extension Modules: development/backend/extensions.md
+          - Exception Handling: development/backend/exception.md
           - API Authentication: development/backend/authentication.md
-          - Database migration: development/backend/database-migration.md
+          - Database Migration: development/backend/database-migration.md
       - Frontend:
           - Code Style: development/frontend/code-style.md
           - Routes: development/frontend/routes.md
           - Testing: development/frontend/testing.md
           - Customization: development/frontend/customize.md
       - Kubernetes:
-          - Meassure resource usage: development/k8s/resources.md
+          - Measure Resource Usage: development/k8s/resources.md
       - Documentation: development/docs.md
   - Release Notes: release-notes.md
 

@@ -28,8 +28,7 @@ clicking "Next" the "Branch Selection" opens. Here you can pick a branch on
 which you want to work. After clicking "Next" another time, the view "Local
 Destination" opens. This shows where your work is going to be stored locally.
 
- <!-- prettier-ignore -->
-
+<!-- prettier-ignore -->
 !!! info
     Tick the box: "Import all existing Eclipse projects after clone
     finishes" importing the cloned repository into your eclipse workspace
