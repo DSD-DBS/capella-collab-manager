@@ -107,6 +107,7 @@ import { ProjectOverviewComponent } from './projects/project-overview/project-ov
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { WhitespaceUrlInterceptor } from './services/encoder/encoder.interceptor';
 import { DeleteSessionDialogComponent } from './sessions/delete-session-dialog/delete-session-dialog.component';
+import { FloatingWindowManagerComponent } from './sessions/session/floating-window-manager/floating-window-manager.component';
 import { SessionComponent } from './sessions/session/session.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { SessionsComponent } from './sessions/sessions.component';
@@ -172,6 +173,7 @@ import { SettingsComponent } from './settings/settings.component';
     EventsComponent,
     FileBrowserDialogComponent,
     FileExistsDialogComponent,
+    FloatingWindowManagerComponent,
     FooterComponent,
     FormFieldSkeletonLoaderComponent,
     GitSettingsComponent,

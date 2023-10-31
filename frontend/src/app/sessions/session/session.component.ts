@@ -3,10 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
 import { DomSanitizer } from '@angular/platform-browser';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, take } from 'rxjs';
 import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { Session } from 'src/app/schemes';
@@ -18,15 +17,12 @@ import { UserSessionService } from 'src/app/sessions/service/user-session.servic
 @Component({
   selector: 'app-session',
   templateUrl: './session.component.html',
-  styleUrls: ['./session.component.css'],
 })
-@UntilDestroy()
 export class SessionComponent implements OnInit {
   cachedSessions?: CachedSession[] = undefined;
-  selectedSessions: Session[] = [];
-  private debounceTimer?: number;
 
-  draggingActive = false;
+  selectedSessions: Session[] = [];
+  selectedWindowType: string = 'floating';
 
   constructor(
     public userSessionService: UserSessionService,
@@ -43,16 +39,20 @@ export class SessionComponent implements OnInit {
     return this.cachedSessions?.filter((session) => session.checked);
   }
 
+  get isTailingWindow(): boolean {
+    return this.selectedWindowType === 'tailing';
+  }
+
+  get isFloatingWindow() {
+    return this.selectedWindowType === 'floating';
+  }
+
   changeSessionSelection(event: MatCheckboxChange, session: CachedSession) {
     session.checked = event.checked;
   }
 
   ngOnInit(): void {
     this.initializeCachedSessions();
-
-    this.fullscreenService.isFullscreen$
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.resizeSessions());
   }
 
   initializeCachedSessions() {
@@ -87,60 +87,6 @@ export class SessionComponent implements OnInit {
         });
       }
     });
-  }
-
-  focusSession(session: Session) {
-    this.unfocusSession(session);
-
-    document.getElementById('session-' + session.id)?.focus();
-    session.focused = true;
-  }
-
-  unfocusSession(focusedSession: Session) {
-    this.selectedSessions
-      .filter((session) => session !== focusedSession)
-      .map((session) => {
-        session.focused = false;
-      });
-  }
-
-  dragStart() {
-    this.draggingActive = true;
-  }
-
-  dragStop() {
-    this.draggingActive = false;
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    window.clearTimeout(this.debounceTimer);
-
-    this.debounceTimer = window.setTimeout(() => {
-      this.resizeSessions();
-    }, 250);
-  }
-
-  resizeSessions() {
-    Array.from(document.getElementsByTagName('iframe')).forEach((iframe) => {
-      const session = this.selectedSessions.find(
-        (session) => 'session-' + session.id === iframe.id,
-      );
-
-      if (session?.reloadToResize) {
-        this.reloadIFrame(iframe);
-      }
-    });
-  }
-
-  reloadIFrame(iframe: HTMLIFrameElement) {
-    const src = iframe.src;
-
-    iframe.removeAttribute('src');
-
-    setTimeout(() => {
-      iframe.src = src;
-    }, 100);
   }
 }
 

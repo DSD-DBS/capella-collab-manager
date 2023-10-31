@@ -50,6 +50,13 @@
     this possible.
   </div>
   <div class="mt-2">
+    <mat-radio-group [(ngModel)]="selectedWindowType">
+      <mat-radio-button value="floating">Floating window</mat-radio-button>
+      <mat-radio-button value="tailing">Tailing window</mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+  <div class="mt-2">
     <button
       mat-raised-button
       (click)="selectSessions()"
@@ -62,60 +69,10 @@
   </div>
 </div>
 
-<div class="flex gap-0.5" *ngIf="selectedSessions.length">
-  <div
-    class="flex w-full flex-col active:z-30"
-    [ngClass]="{
-      'z-20': session.focused,
-      'z-10': !session.focused,
-      height: (fullscreenService.isFullscreen$ | async) === false,
-      'h-screen': fullscreenService.isFullscreen$ | async
-    }"
-    (click)="focusSession(session)"
-    *ngFor="let session of selectedSessions"
-    cdkDrag
-    (cdkDragStarted)="dragStart()"
-    (cdkDragEnded)="dragStop()"
-  >
-    <div
-      class="flex cursor-grab items-center justify-between gap-2 rounded-t p-1 active:cursor-grabbing"
-      [ngClass]="session.focused ? 'bg-slate-100' : 'bg-slate-300'"
-      cdkDragHandle
-    >
-      <div class="flex items-center gap-2">
-        <mat-icon>control_camera</mat-icon>
-        <span>
-          {{ session.version?.tool?.name }} {{ session.version?.name }},
-          {{ session.type }}
-          <span *ngIf="session.type === 'readonly'"
-            >(project {{ session.project!.name }})</span
-          >
-        </span>
-      </div>
-      <div *ngIf="session.focused" class="flex items-center gap-2">
-        <span>Focused</span><mat-icon>phonelink</mat-icon>
-      </div>
-      <div *ngIf="!session.focused" class="flex items-center gap-2">
-        <span>Not focused</span>
-        <mat-icon>phonelink_off</mat-icon>
-      </div>
-    </div>
-
-    <div class="relative grow">
-      <div
-        [ngClass]="session.focused ? '' : 'iframe-overlay bg-black opacity-10'"
-      ></div>
-      <div [ngClass]="draggingActive ? 'iframe-overlay' : ''"></div>
-      <iframe
-        [id]="'session-' + session.id"
-        [src]="session.safeResourceURL"
-        class="h-full w-full"
-        allow="clipboard-read; clipboard-write"
-      >
-      </iframe>
-    </div>
-  </div>
-</div>
+<app-floating-window-manager
+  *ngIf="selectedSessions.length"
+  [sessions]="selectedSessions"
+></app-floating-window-manager>
 
 <div class="fixed bottom-4 right-4 z-50">
   <button
