@@ -3,11 +3,15 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div *ngIf="!selectedSessions.length">
-  <span
-    >Please select the sessions that you'd like to open in the session
-    viewer:</span
-  >
+<div
+  *ngIf="
+    (sessionViewerService.sessions$ | async) === undefined ||
+    (sessionViewerService.sessions$ | async)?.length === 0
+  "
+>
+  <span>
+    Please select the sessions that you'd like to open in the session viewer:
+  </span>
   <div *ngIf="cachedSessions && !cachedSessions.length">
     No sessions found. Please create a session in the 'Sessions' tab first.
   </div>
@@ -33,7 +37,7 @@
       matTooltip="Please wait until the session is running. You can check the status in the 'Sessions' tab."
       [matTooltipDisabled]="sessionService.beautifyState(session.state).success"
       [value]="session.id"
-      (change)="changeSessionSelection($event, session)"
+      [(ngModel)]="session.checked"
       *ngFor="let session of cachedSessions"
       >{{ session.version?.tool?.name }} {{ session.version?.name }},
       {{ session.type
@@ -51,8 +55,10 @@
   </div>
   <div class="mt-2">
     <mat-radio-group [(ngModel)]="selectedWindowType">
-      <mat-radio-button value="floating">Floating window</mat-radio-button>
-      <mat-radio-button value="tailing">Tailing window</mat-radio-button>
+      <mat-radio-button value="floating">
+        Floating window manager
+      </mat-radio-button>
+      <mat-radio-button value="tiling">Tiling window manager</mat-radio-button>
     </mat-radio-group>
   </div>
 
@@ -69,22 +75,36 @@
   </div>
 </div>
 
-<app-floating-window-manager
-  *ngIf="selectedSessions.length"
-  [sessions]="selectedSessions"
-></app-floating-window-manager>
-
-<div class="fixed bottom-4 right-4 z-50">
-  <button
-    mat-fab
-    color="primary"
-    (click)="fullscreenService.toggleFullscreen()"
+<ng-container *ngIf="sessionViewerService.sessions$ | async as viewerSessions">
+  <div
+    class="select-none"
+    *ngIf="viewerSessions.length"
+    [ngClass]="{
+      height: (fullscreenService.isFullscreen$ | async) === false,
+      'h-screen': fullscreenService.isFullscreen$ | async
+    }"
   >
-    <mat-icon *ngIf="(fullscreenService.isFullscreen$ | async) === false"
-      >fullscreen</mat-icon
+    <app-floating-window-manager
+      *ngIf="isFloatingWindowManager; else tilingWindow"
+    />
+
+    <ng-template #tilingWindow>
+      <app-tiling-window-manager *ngIf="isTilingWindowManager" />
+    </ng-template>
+  </div>
+
+  <div class="fixed bottom-4 right-4 z-50">
+    <button
+      mat-fab
+      color="primary"
+      (click)="fullscreenService.toggleFullscreen()"
     >
-    <mat-icon *ngIf="fullscreenService.isFullscreen$ | async"
-      >fullscreen_exit</mat-icon
-    >
-  </button>
-</div>
+      <mat-icon *ngIf="(fullscreenService.isFullscreen$ | async) === false">
+        fullscreen
+      </mat-icon>
+      <mat-icon *ngIf="fullscreenService.isFullscreen$ | async">
+        fullscreen_exit
+      </mat-icon>
+    </button>
+  </div>
+</ng-container>

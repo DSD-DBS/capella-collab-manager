@@ -108,7 +108,9 @@ import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrap
 import { WhitespaceUrlInterceptor } from './services/encoder/encoder.interceptor';
 import { DeleteSessionDialogComponent } from './sessions/delete-session-dialog/delete-session-dialog.component';
 import { FloatingWindowManagerComponent } from './sessions/session/floating-window-manager/floating-window-manager.component';
+import { SessionIFrameComponent } from './sessions/session/session-iframe/session-iframe.component';
 import { SessionComponent } from './sessions/session/session.component';
+import { TilingWindowManagerComponent } from './sessions/session/tiling-window-manager/tiling-window-manager.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { SessionsComponent } from './sessions/sessions.component';
 import { ActiveSessionsComponent } from './sessions/user-sessions-wrapper/active-sessions/active-sessions.component';
@@ -213,6 +215,7 @@ import { SettingsComponent } from './settings/settings.component';
     ProjectWrapperComponent,
     PureVariantsComponent,
     SessionComponent,
+    SessionIFrameComponent,
     SessionOverviewComponent,
     SessionsComponent,
     SettingsComponent,
@@ -222,6 +225,7 @@ import { SettingsComponent } from './settings/settings.component';
     T4CSettingsComponent,
     T4CSettingsWrapperComponent,
     TextLineSkeletonLoaderComponent,
+    TilingWindowManagerComponent,
     ToolDeletionDialogComponent,
     ToolDetailsComponent,
     ToolIntegrationsComponent,

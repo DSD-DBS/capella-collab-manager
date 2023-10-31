@@ -1,0 +1,25 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="relative grow">
+  <div
+    *ngIf="!session.focused"
+    class="iframe-overlay bg-black opacity-10"
+  ></div>
+  <iframe
+    [title]="
+      (session.version?.tool?.name ?? 'unknown tool name') +
+      '-' +
+      (session.version?.tool?.name ?? 'unknown tool name') +
+      '-' +
+      session.type
+    "
+    [id]="'session-' + session.id"
+    [src]="session.safeResourceURL"
+    class="h-full w-full"
+    allow="clipboard-read; clipboard-write"
+  >
+  </iframe>
+</div>

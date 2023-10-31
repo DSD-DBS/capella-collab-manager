@@ -3,56 +3,57 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnInit } from '@angular/core';
-import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, take } from 'rxjs';
-import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { Session } from 'src/app/schemes';
-import { GuacamoleService } from 'src/app/services/guacamole/guacamole.service';
 import { FullscreenService } from 'src/app/sessions/service/fullscreen.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
+import { SessionViewerService } from './session-viewer.service';
 
 @Component({
   selector: 'app-session',
   templateUrl: './session.component.html',
+  styleUrls: ['./session.component.css'],
 })
-export class SessionComponent implements OnInit {
+@UntilDestroy()
+export class SessionComponent implements OnInit, OnDestroy {
   cachedSessions?: CachedSession[] = undefined;
 
-  selectedSessions: Session[] = [];
   selectedWindowType: string = 'floating';
 
   constructor(
     public userSessionService: UserSessionService,
     public sessionService: SessionService,
+    public sessionViewerService: SessionViewerService,
     public fullscreenService: FullscreenService,
-    private guacamoleService: GuacamoleService,
-    private localStorageService: LocalStorageService,
-    private domSanitizer: DomSanitizer,
   ) {
     this.userSessionService.loadSessions();
+
+    this.fullscreenService.isFullscreen$
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.sessionViewerService.resizeSessions());
   }
 
   get checkedSessions(): undefined | CachedSession[] {
     return this.cachedSessions?.filter((session) => session.checked);
   }
 
-  get isTailingWindow(): boolean {
-    return this.selectedWindowType === 'tailing';
+  get isTilingWindowManager(): boolean {
+    return this.selectedWindowType === 'tiling';
   }
 
-  get isFloatingWindow() {
+  get isFloatingWindowManager(): boolean {
     return this.selectedWindowType === 'floating';
-  }
-
-  changeSessionSelection(event: MatCheckboxChange, session: CachedSession) {
-    session.checked = event.checked;
   }
 
   ngOnInit(): void {
     this.initializeCachedSessions();
+  }
+
+  ngOnDestroy(): void {
+    this.sessionViewerService.clearSessions();
   }
 
   initializeCachedSessions() {
@@ -71,20 +72,10 @@ export class SessionComponent implements OnInit {
 
   selectSessions() {
     this.checkedSessions?.forEach((session) => {
-      session.focused = false;
       if (session.jupyter_uri) {
-        session.safeResourceURL =
-          this.domSanitizer.bypassSecurityTrustResourceUrl(session.jupyter_uri);
-        session.reloadToResize = false;
-        this.selectedSessions.push(session);
+        this.sessionViewerService.pushJupyterSession(session);
       } else {
-        this.guacamoleService.getGucamoleToken(session?.id).subscribe((res) => {
-          this.localStorageService.setValue('GUAC_AUTH', res.token);
-          session.safeResourceURL =
-            this.domSanitizer.bypassSecurityTrustResourceUrl(res.url);
-          session.reloadToResize = true;
-          this.selectedSessions.push(session);
-        });
+        this.sessionViewerService.pushGuacamoleSession(session);
       }
     });
   }
