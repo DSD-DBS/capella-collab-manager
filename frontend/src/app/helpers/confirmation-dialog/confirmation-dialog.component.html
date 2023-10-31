@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="dialog" id="custom-dialog">
+<div class="dialog">
   <form (submit)="onSubmit()">
     <h2>{{ data.title }}</h2>
     <p>{{ data.text }}</p>
@@ -28,7 +28,7 @@
         mat-flat-button
         color="primary"
         type="button"
-        (click)="onCancelClick()"
+        (click)="onCancel()"
       >
         Cancel
       </button>

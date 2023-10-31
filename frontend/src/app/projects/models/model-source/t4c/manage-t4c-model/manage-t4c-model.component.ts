@@ -16,7 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter } from 'rxjs';
-import { ConfirmationDialogComponent } from 'src/app/general/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   SubmitT4CModel,

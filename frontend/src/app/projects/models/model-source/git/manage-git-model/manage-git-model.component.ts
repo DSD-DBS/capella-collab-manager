@@ -23,7 +23,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map, Observable, of } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
-import { ConfirmationDialogComponent } from 'src/app/general/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   absoluteOrRelativeValidators,

@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs';
-import { ConfirmationDialogComponent } from 'src/app/general/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';

@@ -55,7 +55,6 @@ import { AuthInterceptor } from './general/auth/http-interceptor/auth.intercepto
 import { LogoutComponent } from './general/auth/logout/logout/logout.component';
 import { LogoutRedirectComponent } from './general/auth/logout/logout-redirect/logout-redirect.component';
 import { BreadcrumbsComponent } from './general/breadcrumbs/breadcrumbs.component';
-import { ConfirmationDialogComponent } from './general/confirmation-dialog/confirmation-dialog.component';
 import { ErrorHandlingInterceptor } from './general/error-handling/error-handling.interceptor';
 import { FooterComponent } from './general/footer/footer.component';
 import { LegalComponent } from './general/footer/legal/legal.component';
@@ -63,7 +62,9 @@ import { HeaderComponent } from './general/header/header.component';
 import { VersionComponent } from './general/metadata/version/version.component';
 import { NavBarMenuComponent } from './general/nav-bar-menu/nav-bar-menu.component';
 import { NoticeComponent } from './general/notice/notice.component';
+import { ConfirmationDialogComponent } from './helpers/confirmation-dialog/confirmation-dialog.component';
 import { DisplayValueComponent } from './helpers/display-value/display-value.component';
+import { InputDialogComponent } from './helpers/input-dialog/input-dialog.component';
 import { MatIconComponent } from './helpers/mat-icon/mat-icon.component';
 import { ButtonSkeletonLoaderComponent } from './helpers/skeleton-loaders/button-skeleton-loader/button-skeleton-loader.component';
 import { FormFieldSkeletonLoaderComponent } from './helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
@@ -176,6 +177,7 @@ import { SettingsComponent } from './settings/settings.component';
     GitSettingsComponent,
     HeaderComponent,
     InitModelComponent,
+    InputDialogComponent,
     JobRunOverviewComponent,
     LegalComponent,
     LicencesComponent,

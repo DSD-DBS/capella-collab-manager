@@ -12,9 +12,15 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { HistoryEvent } from 'src/app/events/service/events.service';
+import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
+import {
+  InputDialogComponent,
+  InputDialogResult,
+} from 'src/app/helpers/input-dialog/input-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import {
@@ -57,6 +63,7 @@ export class UserSettingsComponent implements OnInit, AfterViewInit {
     public userService: UserService,
     public projectUserService: ProjectUserService,
     private toastService: ToastService,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -81,87 +88,102 @@ export class UserSettingsComponent implements OnInit, AfterViewInit {
   }
 
   createUser() {
-    const reason = this.getReason();
-    if (!reason) {
+    if (!this.createUserFormGroup.valid) {
       return;
     }
 
-    if (this.createUserFormGroup.valid) {
-      const username = this.createUserFormGroup.value.username!;
+    const username = this.createUserFormGroup.value.username!;
 
-      this.userService.createUser(username, 'user', reason).subscribe({
-        next: () => {
-          this.toastService.showSuccess(
-            'User created',
-            `The user ${username} has been created.`,
-          );
-          this.getUsers();
-        },
-      });
-    }
+    const dialogRef = this.dialog.open(InputDialogComponent, {
+      data: {
+        title: 'Create User',
+        text: `Do you really want to create the user '${username}? Please provide a reason.'`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: InputDialogResult) => {
+      if (result.success && result.text) {
+        this.userService.createUser(username, 'user', result.text).subscribe({
+          next: () => {
+            this.toastService.showSuccess(
+              'User created',
+              `The user ${username} has been created.`,
+            );
+            this.getUsers();
+          },
+        });
+      }
+    });
   }
 
   upgradeToAdministrator(user: User) {
-    const reason = this.getReason();
-    if (!reason) {
-      return;
-    }
+    const dialogRef = this.dialog.open(InputDialogComponent, {
+      data: {
+        title: 'Upgrade to Administrator Role',
+        text: `Do you really want to upgrade ${user.name} to Administrator? Please provide a reason.'`,
+      },
+    });
 
-    this.userService.updateRoleOfUser(user, 'administrator', reason).subscribe({
-      next: () => {
-        this.toastService.showSuccess(
-          'Role of user updated',
-          user.name + ' has now the role administrator',
-        );
-        this.getUsers();
-      },
-      error: () => {
-        this.toastService.showError(
-          'Update of role failed',
-          'The role of ' + user.name + ' has not been updated',
-        );
-      },
+    dialogRef.afterClosed().subscribe((result: InputDialogResult) => {
+      if (result.success && result.text) {
+        this.userService
+          .updateRoleOfUser(user, 'administrator', result.text)
+          .subscribe({
+            next: () => {
+              this.toastService.showSuccess(
+                'Role of user updated',
+                user.name + ' has now the role administrator',
+              );
+              this.getUsers();
+            },
+          });
+      }
     });
   }
 
   downgradeToUser(user: User) {
-    const reason = this.getReason();
-    if (!reason) {
-      return;
-    }
+    const dialogRef = this.dialog.open(InputDialogComponent, {
+      data: {
+        title: 'Downgrade to User Role',
+        text: `Do you really want to downgrade ${user.name} to User? Please provide a reason.'`,
+      },
+    });
 
-    this.userService.updateRoleOfUser(user, 'user', reason).subscribe({
-      next: () => {
-        this.toastService.showSuccess(
-          'Role of user updated',
-          user.name + ' has now the role user',
-        );
-        this.getUsers();
-      },
-      error: () => {
-        this.toastService.showError(
-          'Update of role failed',
-          'The role of ' + user.name + ' has not been updated',
-        );
-      },
+    dialogRef.afterClosed().subscribe((result: InputDialogResult) => {
+      if (result.success && result.text) {
+        this.userService.updateRoleOfUser(user, 'user', result.text).subscribe({
+          next: () => {
+            this.toastService.showSuccess(
+              'Role of user updated',
+              user.name + ' has now the role user',
+            );
+            this.getUsers();
+          },
+        });
+      }
     });
   }
 
   deleteUser(user: User) {
-    this.userService.deleteUser(user).subscribe({
-      next: () => {
-        this.toastService.showSuccess(
-          'User deleted',
-          user.name + ' has been deleted',
-        );
-        this.getUsers();
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Delete User',
+        text: `Do you really want to delete the user ${user.name}?`,
       },
-      error: () => {
-        this.toastService.showError(
-          'User deletion failed',
-          user.name + ' has not been deleted',
-        );
-      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.userService.deleteUser(user).subscribe({
+          next: () => {
+            this.toastService.showSuccess(
+              'User deleted',
+              user.name + ' has been deleted',
+            );
+            this.getUsers();
+          },
+        });
+      }
     });
   }
 
@@ -192,14 +214,5 @@ export class UserSettingsComponent implements OnInit, AfterViewInit {
         this.historyEventDataSource.paginator = this.paginator;
       },
     });
-  }
-
-  getReason(): string | undefined {
-    const reason = window.prompt('Please enter a reason!');
-    if (!reason) {
-      this.toastService.showError('Reason missing', 'You must enter a reason!');
-      return;
-    }
-    return reason;
   }
 }
