@@ -132,6 +132,7 @@ module = [
   "alembic.*",
   "jwt.*",
   "argon2.*",
+  "websocket.*"
 ]
 ignore_missing_imports = true
 
