@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+# pylint: disable=bad-builtin
+
 from __future__ import annotations
 
 import contextlib
@@ -11,7 +13,7 @@ import time
 import typing as t
 
 import typer
-import websocket  # type: ignore[import]
+import websocket
 from kubernetes import client, config, stream
 
 app = typer.Typer()
