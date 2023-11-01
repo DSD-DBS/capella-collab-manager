@@ -151,6 +151,9 @@ add-ignore = [
   "D213", # Multi-line docstring summary should start at the second line
 ]
 
+[tool.pylint]
+bad-functions = ["print"]
+
 [tool.pylint.messages_control]
 disable = [
   "broad-except",
@@ -221,6 +224,7 @@ extension-pkg-whitelist = "pydantic" # https://github.com/pydantic/pydantic/issu
 
 [tool.pylint.master]
 init-import = "yes"
+load-plugins = "pylint.extensions.bad_builtin"
 
 [tool.pylint.similarities]
 min-similarity-lines = 6

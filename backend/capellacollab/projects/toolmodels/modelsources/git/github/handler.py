@@ -109,9 +109,6 @@ class GithubHandler(handler.GitHandler):
         headers = None
         if self.git_model.password:
             headers = self.__get_headers(self.git_model.password)
-        print(
-            f"{self.git_instance.api_url}/repos/{project_id}/actions/runs?branch={parse.quote(self.git_model.revision, safe='')}&per_page=20"
-        )
         response = requests.get(
             f"{self.git_instance.api_url}/repos/{project_id}/actions/runs?branch={parse.quote(self.git_model.revision, safe='')}&per_page=20",
             headers=headers,
