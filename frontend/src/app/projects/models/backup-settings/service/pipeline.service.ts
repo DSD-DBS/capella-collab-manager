@@ -27,7 +27,7 @@ export class PipelineService {
   public readonly pipeline$ = this._pipeline.asObservable();
 
   urlFactory(projectSlug: string, modelSlug: string): string {
-    return `${environment.backend_url}/projects/${projectSlug}/models/${modelSlug}/backups/pipelines`;
+    return `${environment.backend_url}/projects/${projectSlug}/models/${modelSlug}/pipelines`;
   }
 
   loadPipelines(

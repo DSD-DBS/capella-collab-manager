@@ -6,11 +6,11 @@ import typing as t
 
 import pydantic
 
-from capellacollab.projects.toolmodels.backups.runs import (
-    models as pipeline_run_models,
-)
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
+)
+from capellacollab.projects.toolmodels.pipelines.runs import (
+    models as pipeline_run_models,
 )
 
 

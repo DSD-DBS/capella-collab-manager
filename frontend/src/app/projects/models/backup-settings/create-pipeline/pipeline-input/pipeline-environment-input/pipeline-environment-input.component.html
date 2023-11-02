@@ -1,0 +1,33 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div *ngFor="let variable of environmentInput?.variables">
+  <div class="mb-1">{{ variable.description }}</div>
+  <form [formGroup]="form">
+    <div *ngIf="variable.type === 'boolean'">
+      <mat-checkbox [formControlName]="variable.key">{{
+        variable.displayName
+      }}</mat-checkbox>
+    </div>
+    <div *ngIf="variable.type === 'dropdown'">
+      <mat-form-field appearance="fill">
+        <mat-label>{{ variable.displayName }}</mat-label>
+        <mat-select [formControlName]="variable.key">
+          <mat-option *ngFor="let value of variable.values" [value]="value">
+            {{ value }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <hr class="mb-2 mt-0" />
+    </div>
+  </form>
+</div>
+
+<div class="mt-2">
+  <button (click)="submitInput()" mat-stroked-button>
+    Submit and continue
+  </button>
+</div>

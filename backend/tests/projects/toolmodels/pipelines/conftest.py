@@ -5,15 +5,15 @@ import pytest
 from sqlalchemy import orm
 
 from capellacollab.projects.toolmodels import models as toolmodels_models
-from capellacollab.projects.toolmodels.backups import crud as pipelines_crud
-from capellacollab.projects.toolmodels.backups import (
-    models as pipelines_models,
-)
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
 )
 from capellacollab.projects.toolmodels.modelsources.t4c import (
     models as t4c_models,
+)
+from capellacollab.projects.toolmodels.pipelines import crud as pipelines_crud
+from capellacollab.projects.toolmodels.pipelines import (
+    models as pipelines_models,
 )
 
 

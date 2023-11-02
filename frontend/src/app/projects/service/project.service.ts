@@ -20,7 +20,7 @@ import { environment } from 'src/environments/environment';
 export class ProjectService {
   BACKEND_URL_PREFIX = environment.backend_url + '/projects';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {} // Also load all projects?
 
   private _project = new BehaviorSubject<Project | undefined>(undefined);
   private _projects = new BehaviorSubject<Project[] | undefined>(undefined);

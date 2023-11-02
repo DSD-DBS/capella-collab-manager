@@ -24,5 +24,7 @@ router.include_router(
     prefix="/modelsources",
 )
 router.include_router(
-    purevariants_routes.router, prefix="/integrations/pure-variants"
+    purevariants_routes.router,
+    tags=["Settings - Integrations"],
+    prefix="/integrations/pure-variants",
 )

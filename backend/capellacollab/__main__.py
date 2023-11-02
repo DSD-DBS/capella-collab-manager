@@ -9,10 +9,10 @@ import fastapi
 import fastapi_pagination
 import starlette_prometheus
 import uvicorn
-from fastapi import middleware, responses
+from fastapi import middleware, responses, staticfiles
 from fastapi.middleware import cors
 
-import capellacollab.projects.toolmodels.backups.runs.interface as pipeline_runs_interface
+import capellacollab.projects.toolmodels.pipelines.runs.interface as pipeline_runs_interface
 import capellacollab.sessions.metrics
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
@@ -21,11 +21,9 @@ from capellacollab.core import exceptions as core_exceptions
 from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
 from capellacollab.core.logging import exceptions as logging_exceptions
+from capellacollab.plugins import schema as pipeline_schema
 from capellacollab.projects.toolmodels import (
     exceptions as toolmodels_exceptions,
-)
-from capellacollab.projects.toolmodels.backups import (
-    exceptions as backups_exceptions,
 )
 from capellacollab.projects.toolmodels.modelsources.git import (
     exceptions as git_exceptions,
@@ -35,6 +33,9 @@ from capellacollab.projects.toolmodels.modelsources.git.gitlab import (
 )
 from capellacollab.projects.toolmodels.modelsources.git.handler import (
     exceptions as git_handler_exceptions,
+)
+from capellacollab.projects.toolmodels.pipelines import (
+    exceptions as backups_exceptions,
 )
 from capellacollab.routes import router
 from capellacollab.sessions import exceptions as sessions_exceptions
@@ -66,7 +67,7 @@ async def startup():
     operators.get_operator()
 
     logging.getLogger("uvicorn.access").disabled = True
-    logging.getLogger("uvicorn.error").disabled = True
+    logging.getLogger("uvicorn.error").disabled = False
     logging.getLogger("requests_oauthlib.oauth2_session").setLevel("INFO")
     logging.getLogger("kubernetes.client.rest").setLevel("INFO")
 
@@ -83,6 +84,7 @@ app = fastapi.FastAPI(
         idletimeout.terminate_idle_sessions_in_background,
         capellacollab.sessions.metrics.register,
         pipeline_runs_interface.schedule_refresh_and_trigger_pipeline_jobs,
+        pipeline_schema.generate_schema_documentation,
     ],
     middleware=[
         middleware.Middleware(
@@ -98,7 +100,7 @@ app = fastapi.FastAPI(
         middleware.Middleware(core_logging.LogRequestsMiddleware),
         middleware.Middleware(starlette_prometheus.PrometheusMiddleware),
     ],
-    on_shutdown=[shutdown],
+    on_shutdown=[shutdown, pipeline_schema.cleanup_documentation_directory],
 )
 
 fastapi_pagination.add_pagination(app)
@@ -135,6 +137,7 @@ async def healthcheck():
 
 app.add_route("/metrics", starlette_prometheus.metrics)
 app.include_router(router, prefix="/api/v1")
+pipeline_schema.mount_schema_documentation(app)
 
 
 def register_exceptions():

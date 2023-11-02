@@ -13,7 +13,7 @@ from capellacollab.projects.toolmodels import (
     injectables as toolmodels_injectables,
 )
 from capellacollab.projects.toolmodels import models as toolmodels_models
-from capellacollab.projects.toolmodels.backups import crud as backups_crud
+from capellacollab.projects.toolmodels.pipelines import crud as backups_crud
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.settings.modelsources.t4c import (
     injectables as settings_t4c_injecatbles,

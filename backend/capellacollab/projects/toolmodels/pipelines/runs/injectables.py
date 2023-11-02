@@ -6,10 +6,12 @@ from fastapi import status
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.projects.toolmodels.backups import (
+from capellacollab.projects.toolmodels.pipelines import (
     injectables as backups_injectables,
 )
-from capellacollab.projects.toolmodels.backups import models as backups_models
+from capellacollab.projects.toolmodels.pipelines import (
+    models as backups_models,
+)
 
 from . import crud, models
 

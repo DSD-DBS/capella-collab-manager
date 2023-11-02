@@ -3,118 +3,117 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="dialog">
-  <div>
-    <div *ngIf="!selectedPipeline" class="flex justify-between gap-5">
-      <span
-        >Please select the pipeline you'd like to execute or to see the logs:
-      </span>
-      <a mat-icon-button (click)="createPipeline()"
-        ><mat-icon>add_circle</mat-icon></a
-      >
-    </div>
-    <div class="pipelines">
-      <div *ngFor="let pipeline of this.pipelineService.pipelines$ | async">
-        <mat-card
-          matRipple
-          *ngIf="!selectedPipeline || selectedPipeline.id === pipeline.id"
-          (click)="selectPipeline(pipeline)"
-          class="pipeline-card"
-        >
-          <span class="text-center"><b>Backup</b> (ID: {{ pipeline.id }})</span>
-          <br />
-          <span *ngIf="pipeline.run_nightly"
-            >Runs nightly at 3am
-            <span *ngIf="pipeline.include_commit_history"
-              >with commit history</span
-            ><span *ngIf="!pipeline.include_commit_history"
-              >without commit history</span
-            >
-            or with manual trigger
-          </span>
-          <span *ngIf="!pipeline.run_nightly"
-            >Runs only with manual trigger</span
-          >
-          <hr />
-          <div class="flex flex-wrap justify-between gap-y-1">
-            <span style="flex-basis: 45%"
-              ><b>TeamForCapella</b> <br />
-              Instance <i>{{ pipeline.t4c_model.instance_name }}</i
-              >, <br />Repository <i>{{ pipeline.t4c_model.repository_name }}</i
-              >, <br />Project:
-              <i>{{ pipeline.t4c_model.project_name }}</i> </span
-            ><span style="flex-basis: 10%"
-              ><mat-icon class="mat-icon-position top">arrow_forward</mat-icon>
-            </span>
-            <span style="flex-basis: 45%">
-              <b>Git</b> <br />
-              URL: <i>{{ pipeline.git_model.path }}</i
-              >, <br />revision: <i>{{ pipeline.git_model.revision }}</i
-              >, <br />entrypoint:
-              <i>{{ pipeline.git_model.entrypoint }}</i>
-            </span>
-          </div>
-        </mat-card>
-      </div>
-    </div>
-    <div
-      class="my-2"
-      *ngIf="(this.pipelineService.pipelines$ | async)?.length === 0"
+<div class="my-2 rounded border bg-warning p-3 shadow">
+  This feature is currently in the experimental phase. There are breaking
+  changes and bugs to be expected.
+</div>
+
+<div *ngIf="!selectedPipeline" class="flex items-center justify-between gap-5">
+  <span>
+    Please select the pipeline you'd like to execute or to see the logs:
+  </span>
+  <button
+    mat-stroked-button
+    routerLink="create"
+    matTooltip="Add a new pipeline"
+  >
+    <mat-icon>add</mat-icon>
+  </button>
+</div>
+<div class="pipelines">
+  <div *ngIf="!(this.pipelineService.pipelines$ | async)"></div>
+  <div *ngFor="let pipeline of this.pipelineService.pipelines$ | async">
+    <mat-card
+      matRipple
+      *ngIf="!selectedPipeline || selectedPipeline.id === pipeline.id"
+      (click)="selectPipeline(pipeline)"
+      class="pipeline-card"
     >
-      No pipelines found. Please create a new pipeline.
-    </div>
-
-    <div>
-      <form *ngIf="selectedPipeline" [formGroup]="configurationForm">
-        <hr />
-        <h3>Run the pipeline</h3>
-
-        <div class="flex flex-wrap items-start justify-between gap-2">
-          <div>
-            Please select the following configuration options: <br />
-            <mat-checkbox formControlName="includeHistory"
-              >Include commit history</mat-checkbox
-            >
-            <br /><br />
-            Current estimate of the duration (according to the selected
-            configuration):
-            {{ estimateTime() }}
-          </div>
-
-          <button mat-raised-button (click)="runPipeline()" color="primary">
-            Run pipeline
-          </button>
-        </div>
-      </form>
-    </div>
-
-    <div *ngIf="selectedPipeline">
+      <span class="text-center"><b>Backup</b> (ID: {{ pipeline.id }})</span>
+      <br />
+      <span *ngIf="pipeline.run_nightly"
+        >Runs nightly at 3am
+        <span *ngIf="pipeline.include_commit_history">with commit history</span
+        ><span *ngIf="!pipeline.include_commit_history"
+          >without commit history</span
+        >
+        or with manual trigger
+      </span>
+      <span *ngIf="!pipeline.run_nightly">Runs only with manual trigger</span>
       <hr />
-      <h3>Additional actions</h3>
-      <div class="flex flex-row flex-wrap items-center gap-2">
-        <button
-          mat-raised-button
-          (click)="removePipeline(selectedPipeline)"
-          color="primary"
-        >
-          Remove pipeline
-        </button>
-        <a
-          mat-raised-button
-          (click)="openPipelineRuns(selectedPipeline)"
-          color="primary"
-        >
-          View runs
-        </a>
-        <mat-slide-toggle
-          *ngIf="userService.validateUserRole('administrator')"
-          [(ngModel)]="force"
-          aria-label="Force deletion of pipeline"
-          matTooltip="Delete pipeline even if T4C instance not reachable"
-        >
-          Force deletion
-        </mat-slide-toggle>
+      <div class="flex flex-wrap justify-between gap-y-1">
+        <span style="flex-basis: 45%"
+          ><b>TeamForCapella</b> <br />
+          Instance <i>{{ pipeline.t4c_model.instance_name }}</i
+          >, <br />Repository <i>{{ pipeline.t4c_model.repository_name }}</i
+          >, <br />Project: <i>{{ pipeline.t4c_model.project_name }}</i> </span
+        ><span style="flex-basis: 10%"
+          ><mat-icon class="mat-icon-position top">arrow_forward</mat-icon>
+        </span>
+        <span style="flex-basis: 45%">
+          <b>Git</b> <br />
+          URL: <i>{{ pipeline.git_model.path }}</i
+          >, <br />revision: <i>{{ pipeline.git_model.revision }}</i
+          >, <br />entrypoint:
+          <i>{{ pipeline.git_model.entrypoint }}</i>
+        </span>
       </div>
+    </mat-card>
+  </div>
+</div>
+<div
+  class="my-2"
+  *ngIf="(this.pipelineService.pipelines$ | async)?.length === 0"
+>
+  No pipelines found. Please create a new pipeline.
+</div>
+
+<div>
+  <form *ngIf="selectedPipeline" [formGroup]="configurationForm">
+    <hr />
+    <h3>Run the pipeline</h3>
+
+    <div class="flex flex-wrap items-start justify-between gap-2">
+      <div>
+        Please select the following configuration options: <br />
+        <mat-checkbox formControlName="includeHistory"
+          >Include commit history</mat-checkbox
+        >
+        <br />
+      </div>
+
+      <button mat-raised-button (click)="runPipeline()" color="primary">
+        Run pipeline
+      </button>
     </div>
+  </form>
+</div>
+
+<div *ngIf="selectedPipeline">
+  <hr />
+  <h3>Additional actions</h3>
+  <div class="flex flex-row flex-wrap items-center gap-2">
+    <button
+      mat-raised-button
+      (click)="removePipeline(selectedPipeline)"
+      color="primary"
+    >
+      Remove pipeline
+    </button>
+    <a
+      mat-raised-button
+      (click)="openPipelineRuns(selectedPipeline)"
+      color="primary"
+    >
+      View runs
+    </a>
+    <mat-slide-toggle
+      *ngIf="userService.validateUserRole('administrator')"
+      [(ngModel)]="force"
+      aria-label="Force deletion of pipeline"
+      matTooltip="Delete pipeline even if T4C instance not reachable"
+    >
+      Force deletion
+    </mat-slide-toggle>
   </div>
 </div>

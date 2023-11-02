@@ -11,11 +11,11 @@ from sqlalchemy import orm
 import capellacollab.core.authentication.injectables as auth_injectables
 import capellacollab.core.logging as core_logging
 import capellacollab.projects.crud as projects_crud
-import capellacollab.projects.toolmodels.backups.validation as pipelines_validation
 import capellacollab.projects.toolmodels.crud as toolmodels_crud
 import capellacollab.projects.toolmodels.diagrams.validation as diagrams_validation
 import capellacollab.projects.toolmodels.modelbadge.validation as modelbadge_validation
 import capellacollab.projects.toolmodels.modelsources.git.validation as git_validation
+import capellacollab.projects.toolmodels.pipelines.validation as pipelines_validation
 import capellacollab.projects.toolmodels.validation as toolmodels_validation
 import capellacollab.projects.validation as projects_validation
 import capellacollab.users.models as users_models

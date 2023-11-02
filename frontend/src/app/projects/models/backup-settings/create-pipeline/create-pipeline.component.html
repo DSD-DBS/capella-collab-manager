@@ -1,0 +1,210 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<mat-card
+  class="w-full bg-primary text-center text-white"
+  *ngIf="selectedPlugin"
+  >Selected plugin: <br />
+  <b>
+    {{
+      selectedPlugin.content?.metadata?.displayName ||
+        selectedPlugin.content?.metadata?.id
+    }}
+  </b>
+</mat-card>
+<mat-horizontal-stepper linear #stepper>
+  <mat-step [editable]="false" [completed]="false">
+    <h2>Welcome to the pipeline setup agent!</h2>
+    We'll guide you through the steps to set up a model modifier or model
+    derivative pipeline. The steps are:
+    <ol class="list-decimal pl-10">
+      <li>Select a plugin from our plugin store.</li>
+      <li>
+        If the selected plugin needs input values, they have to be configured in
+        the seconds step.
+      </li>
+      <li>Configure the trigger rules. When should the job run?</li>
+      <li>
+        In the last step, you can review the job configuration and submit it.
+      </li>
+    </ol>
+
+    <form>
+      <ng-template matStepLabel>Introduction</ng-template>
+      <div class="mt-3">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="stepNext(stepper)"
+          class="w-[46em]"
+        >
+          <span> Get started </span>
+          <mat-icon>arrow_right_alt</mat-icon>
+        </button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [editable]="false" [completed]="false">
+    <div
+      class="my-2 rounded border bg-warning p-3 shadow"
+      *ngIf="
+        (pluginStoreService.plugins | async)! !== undefined &&
+        (pluginStoreService.plugins | async)!.length === 0
+      "
+    >
+      There are no plugins registered in the plugins store. Please contact your
+      administrator.
+    </div>
+    <div class="flex flex-wrap">
+      <app-mat-card-overview-skeleton-loader
+        [loading]="(pluginStoreService.plugins | async) === undefined"
+      ></app-mat-card-overview-skeleton-loader>
+      <ng-container *ngIf="pluginStoreService.plugins | async">
+        <div
+          *ngFor="let plugin of (pluginStoreService.plugins | async)!"
+          class="m-1 flex w-[400px] flex-col justify-between gap-3 rounded !p-0 shadow"
+        >
+          <div>
+            <div class="header px-4 py-2.5 text-lg">
+              {{
+                plugin.content?.metadata?.displayName ||
+                  "No display name provided in template"
+              }}
+            </div>
+            <div class="p-3">
+              {{
+                plugin.content?.metadata?.description ||
+                  "No description provided."
+              }}
+              <hr class="my-2" />
+              <div>
+                <a
+                  [href]="plugin.remote"
+                  target="_blank"
+                  class="flex items-center text-blue-800"
+                >
+                  <div>Template source</div>
+                  <mat-icon class="scale-75">open_in_new</mat-icon>
+                </a>
+              </div>
+              <b>Requires:</b>
+              <div *ngIf="!plugin.content?.input">
+                No input values required.
+              </div>
+              <ul class="list-disc pl-10">
+                <li
+                  *ngFor="
+                    let inputType of cleanInputTypes(
+                      plugin.content?.input || []
+                    )
+                  "
+                >
+                  {{ mapInputToDisplayName(inputType) }}
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="flex justify-between gap-2 p-3">
+            <div
+              matTooltip="No documentation available for this plugin."
+              [matTooltipDisabled]="plugin.content?.metadata?.documentationURL"
+            >
+              <button
+                mat-stroked-button
+                [disabled]="!plugin.content?.metadata?.documentationURL"
+                class="flex items-center"
+              >
+                <span>Documentation</span
+                ><mat-icon class="ml-2">help_outline</mat-icon>
+              </button>
+            </div>
+            <button
+              mat-stroked-button
+              (click)="selectPlugin(stepper, plugin)"
+              class="flex items-center"
+            >
+              Select <mat-icon>play_arrow</mat-icon>
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <form>
+      <ng-template matStepLabel>Plugin selection</ng-template>
+    </form>
+  </mat-step>
+  <mat-step [editable]="false" [completed]="false">
+    <div *ngIf="!selectedPlugin?.content?.input">
+      <div>This plugin doesn't require any additional input values.</div>
+      <div class="my-3">
+        <button mat-stroked-button (click)="stepNext(stepper)">
+          Skip configuration
+        </button>
+      </div>
+    </div>
+    <form>
+      <ng-template matStepLabel>Configuration</ng-template>
+      <mat-horizontal-stepper
+        *ngIf="selectedPlugin?.content?.input"
+        [linear]="true"
+        #configurationStepper
+      >
+        <mat-step
+          *ngFor="let input of selectedPlugin?.content?.input"
+          [editable]="false"
+          [completed]="false"
+        >
+          <form>
+            <ng-template matStepLabel>{{
+              mapInputToDisplayName(input.type)
+            }}</ng-template>
+            <app-pipeline-git-input
+              (inputFinished)="
+                receivedInput(stepper, configurationStepper, $event)
+              "
+              [input]="input"
+              *ngIf="input.type === 'git'"
+            ></app-pipeline-git-input>
+            <app-pipeline-t4c-input
+              (inputFinished)="
+                receivedInput(stepper, configurationStepper, $event)
+              "
+              [input]="input"
+              *ngIf="input.type === 't4c'"
+            ></app-pipeline-t4c-input>
+            <app-pipeline-environment-input
+              [input]="input"
+              (inputFinished)="
+                receivedInput(stepper, configurationStepper, $event)
+              "
+              *ngIf="input.type === 'environment'"
+            ></app-pipeline-environment-input>
+          </form>
+        </mat-step>
+      </mat-horizontal-stepper>
+    </form>
+  </mat-step>
+  <mat-step [editable]="false" [completed]="false">
+    <form>
+      <ng-template matStepLabel>Triggers</ng-template>
+    </form>
+    <app-pipeline-triggers
+      [pipelineTrigger]="selectedPlugin?.content?.trigger"
+      (triggersFinished)="receivedTrigger(stepper, $event)"
+    ></app-pipeline-triggers>
+  </mat-step>
+  <mat-step [editable]="false" [completed]="false">
+    <form>
+      <ng-template matStepLabel>Review & confirmation</ng-template>
+      The following information will be transmitted:
+
+      <pre>{{ prettifyYAML(requestBody) }}</pre>
+
+      <div class="my-3">
+        <button mat-stroked-button>Confirm & register pipeline</button>
+      </div>
+    </form>
+  </mat-step>
+</mat-horizontal-stepper>

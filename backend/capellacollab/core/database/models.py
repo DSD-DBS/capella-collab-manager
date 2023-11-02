@@ -5,12 +5,13 @@
 # These import statements of the models are required and should not be removed! (SQLAlchemy will not load the models otherwise)
 
 import capellacollab.notices.models
+import capellacollab.plugins.models
 import capellacollab.projects.models
-import capellacollab.projects.toolmodels.backups.models
-import capellacollab.projects.toolmodels.backups.runs.models
 import capellacollab.projects.toolmodels.models
 import capellacollab.projects.toolmodels.modelsources.git.models
 import capellacollab.projects.toolmodels.modelsources.t4c.models
+import capellacollab.projects.toolmodels.pipelines.models
+import capellacollab.projects.toolmodels.pipelines.runs.models
 import capellacollab.projects.toolmodels.restrictions.models
 import capellacollab.projects.users.models
 import capellacollab.sessions.models

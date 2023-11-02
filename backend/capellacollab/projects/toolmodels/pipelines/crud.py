@@ -61,7 +61,7 @@ def get_pipelines_for_git_model(
     return (
         db.execute(
             sa.select(models.DatabaseBackup).where(
-                models.DatabaseBackup.git_model_id == model.id
+                models.DatabaseBackup.git_model_id == model.id  # type: ignore # FIXME: git_model_id doesn't exist anymore
             )
         )
         .scalars()
@@ -75,7 +75,7 @@ def get_pipelines_for_t4c_model(
     return (
         db.execute(
             sa.select(models.DatabaseBackup).where(
-                models.DatabaseBackup.t4c_model_id == t4c_model.id
+                models.DatabaseBackup.t4c_model_id == t4c_model.id  # type: ignore # FIXME: git_model_id doesn't exist anymore
             )
         )
         .scalars()

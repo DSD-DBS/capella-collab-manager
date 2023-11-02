@@ -10,16 +10,16 @@ from fastapi import testclient
 from sqlalchemy import orm
 
 import capellacollab.projects.models as project_models
-import capellacollab.projects.toolmodels.backups.models as pipelines_models
-import capellacollab.projects.toolmodels.backups.runs.crud as pipeline_runs_crud
-import capellacollab.projects.toolmodels.backups.runs.models as pipeline_runs_models
 import capellacollab.projects.toolmodels.models as toolmodels_models
+import capellacollab.projects.toolmodels.pipelines.models as pipelines_models
+import capellacollab.projects.toolmodels.pipelines.runs.crud as pipeline_runs_crud
+import capellacollab.projects.toolmodels.pipelines.runs.models as pipeline_runs_models
 from capellacollab.__main__ import app
 from capellacollab.core.logging import loki
-from capellacollab.projects.toolmodels.backups.runs import (
+from capellacollab.projects.toolmodels.pipelines.runs import (
     injectables as runs_injectables,
 )
-from capellacollab.projects.toolmodels.backups.runs import (
+from capellacollab.projects.toolmodels.pipelines.runs import (
     models as runs_models,
 )
 from capellacollab.users import crud as users_crud
@@ -58,7 +58,7 @@ def test_create_pipeline_run(
     pipeline: pipelines_models.DatabaseBackup,
 ):
     response = client.post(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs",
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/pipelines/{pipeline.id}/runs",
         json={},
     )
 
@@ -77,7 +77,7 @@ def test_create_pipeline_run_with_custom_environment(
     pipeline: pipelines_models.DatabaseBackup,
 ):
     response = client.post(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs",
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/pipelines/{pipeline.id}/runs",
         json={
             "include_commit_history": True,
         },
@@ -95,7 +95,7 @@ def test_get_pipeline_runs(
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
 ):
     response = client.get(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs?page=1&size=50",
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/pipelines/{pipeline.id}/runs?page=1&size=50",
     )
 
     assert response.status_code == 200
@@ -111,7 +111,7 @@ def test_get_pipeline_run(
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
 ):
     response = client.get(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs/{pipeline_run.id}",
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/pipelines/{pipeline.id}/runs/{pipeline_run.id}",
     )
 
     assert response.status_code == 200
@@ -127,7 +127,7 @@ def test_get_events(
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
 ):
     response = client.get(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs/{pipeline_run.id}/events",
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/pipelines/{pipeline.id}/runs/{pipeline_run.id}/events",
     )
     assert response.status_code == 200
     assert b"test3" in response.content
@@ -142,7 +142,7 @@ def def_get_logs(
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
 ):
     response = client.get(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs/{pipeline_run.id}/logs",
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/pipelines/{pipeline.id}/runs/{pipeline_run.id}/logs",
     )
 
     assert response.status_code == 200
@@ -210,7 +210,7 @@ def test_mask_logs(
     ]
 
     response = client.get(
-        "/api/v1/projects/1/models/1/backups/pipelines/1/runs/1/logs"
+        "/api/v1/projects/1/models/1/pipelines/1/runs/1/logs"
     )
 
     logs = response.json()

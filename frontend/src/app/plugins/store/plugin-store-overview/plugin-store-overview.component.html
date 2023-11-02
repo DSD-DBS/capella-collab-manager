@@ -1,0 +1,43 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="flex flex-wrap">
+  <a routerLink="/plugins/create">
+    <mat-card matRipple class="mat-card-overview new">
+      <div class="content">
+        Register new plugin <br />
+        <div class="icon">
+          <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
+        </div>
+      </div>
+    </mat-card>
+  </a>
+  <app-mat-card-overview-skeleton-loader
+    [loading]="(pluginStoreService.plugins | async) === undefined"
+  ></app-mat-card-overview-skeleton-loader>
+  <ng-container *ngIf="pluginStoreService.plugins | async">
+    <a
+      *ngFor="let plugin of (pluginStoreService.plugins | async)!"
+      [routerLink]="['/plugin', plugin.id]"
+    >
+      <mat-card matRipple class="mat-card-overview">
+        <div class="header">
+          {{
+            plugin.content?.metadata?.id || "No identifier provided in template"
+          }}
+          (ID {{ plugin.id }})
+        </div>
+        <div class="content">
+          <div>
+            {{
+              plugin.content?.metadata?.description ||
+                "No description provided."
+            }}
+          </div>
+        </div>
+      </mat-card>
+    </a>
+  </ng-container>
+</div>

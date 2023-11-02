@@ -68,3 +68,9 @@ load: clear
 
 save:
 	docker run -i -e PGPASSWORD=$(DB_PASSWORD) --network host --entrypoint="pg_dump" postgres:latest -h 'localhost' -p $(DB_PORT) -U '$(DB_USER)' $(DB_NAME) > $(DATABASE_SAVE_DIR)/$(shell date +"%FT%T").sql
+
+plugin-schema:
+	$(VENV)/bin/pip show json-schema-for-humans > /dev/null || $(VENV)/bin/pip install json-schema-for-humans
+	$(VENV)/bin/python -c 'import pathlib; import json; from capellacollab.plugins import models; pathlib.Path("plugin_schema.yml").write_text(json.dumps(models.PluginContent.model_json_schema()))'
+	mkdir -p plugin_schema
+	$(VENV)/bin/generate-schema-doc plugin_schema.yml plugin_schema/plugin_schema.html

@@ -21,10 +21,10 @@ from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 
 from . import crud, injectables, models, workspace
-from .backups import routes as backups_routes
 from .diagrams import routes as diagrams_routes
 from .modelbadge import routes as complexity_badge_routes
 from .modelsources import routes as modelsources_routes
+from .pipelines import routes as pipelines_routes
 from .restrictions import routes as restrictions_routes
 
 router = fastapi.APIRouter(
@@ -299,9 +299,9 @@ router.include_router(
     prefix="/{model_slug}/modelsources",
 )
 router.include_router(
-    backups_routes.router,
-    prefix="/{model_slug}/backups/pipelines",
-    tags=["Projects - Models - Backups"],
+    pipelines_routes.router,
+    prefix="/{model_slug}/pipelines",
+    tags=["Projects - Models - Pipelines"],
 )
 router.include_router(
     restrictions_routes.router,

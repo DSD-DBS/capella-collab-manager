@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-License-Identifier: Apache-2.0
+
+metadata:
+  id: hello-world
+  displayName: Hello world
+  description: |
+    Run the "Hello world" Docker container.
+
+trigger:
+  manual: true
+
+job:
+  image: hello-world

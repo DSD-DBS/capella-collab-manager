@@ -45,6 +45,7 @@ dependencies = [
   "aiohttp",
   "argon2-cffi",
   "typer",
+  "croniter",
 ]
 
 [project.urls]
@@ -133,6 +134,8 @@ module = [
   "jwt.*",
   "argon2.*",
   "websocket.*"
+  "croniter.*",
+  "json_schema_for_humans.*",
 ]
 ignore_missing_imports = true
 
