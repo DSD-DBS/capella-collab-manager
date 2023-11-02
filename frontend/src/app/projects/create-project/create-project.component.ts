@@ -69,7 +69,6 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
 
   getColorByModelCreationStep(): string {
     switch (this.modelCreationStep) {
-      case 'create-model':
       case 'complete':
         return 'primary';
       default:

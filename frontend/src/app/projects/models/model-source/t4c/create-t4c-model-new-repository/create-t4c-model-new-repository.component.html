@@ -5,9 +5,9 @@
 
 <div
   *ngIf="(projectService.project$ | async) && (modelService.model$ | async)"
-  class="wrapper flex-center"
+  class="wrapper flex justify-center"
 >
-  <mat-card class="section-card">
+  <mat-card class="w-[350px] sm:min-w-[420px]">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <app-form-field-skeleton-loader
         *ngIf="(t4cInstanceService.t4cInstances$ | async) === undefined"
@@ -48,14 +48,17 @@
         </mat-form-field>
       </fieldset>
 
-      <button
-        mat-flat-button
-        [disabled]="!form.valid"
-        type="submit"
-        color="primary"
-      >
-        Save reference
-      </button>
+      <div class="flex justify-end">
+        <button
+          mat-flat-button
+          [disabled]="!form.valid"
+          type="submit"
+          color="primary"
+        >
+          Save reference
+          <mat-icon class="mat-icon-position right">navigate_next</mat-icon>
+        </button>
+      </div>
     </form>
   </mat-card>
 </div>

@@ -3,11 +3,14 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div *ngIf="(projectService.project$ | async) && (modelService.model$ | async)">
-  <mat-card class="w-fit">
+<div
+  class="flex justify-center"
+  *ngIf="(projectService.project$ | async) && (modelService.model$ | async)"
+>
+  <mat-card class="w-[350px] sm:min-w-[420px]">
     <form [formGroup]="form">
       <div formGroupName="urls">
-        <fieldset *ngIf="availableGitInstances?.length">
+        <div *ngIf="availableGitInstances?.length">
           <mat-form-field appearance="fill">
             <mat-label>Base integration URL</mat-label>
             <mat-select
@@ -26,9 +29,9 @@
               A base integration URL is required
             </mat-error>
           </mat-form-field>
-        </fieldset>
-        <fieldset>
-          <mat-form-field appearance="fill">
+        </div>
+        <div>
+          <mat-form-field class="w-full" appearance="fill">
             <mat-label
               >Absolute URL
               {{
@@ -48,7 +51,7 @@
               {{ urls.inputUrl.errors?.urlSchemeError }}
             </mat-error>
           </mat-form-field>
-        </fieldset>
+        </div>
         <div>
           <mat-card>
             <mat-card-subtitle>Resulting URL*</mat-card-subtitle>
@@ -75,22 +78,22 @@
         </div>
       </div>
       <div formGroupName="credentials">
-        <fieldset class="flex flex-wrap gap-2">
-          <mat-form-field appearance="fill">
+        <div class="flex flex-wrap justify-between">
+          <mat-form-field class="w-full" appearance="fill">
             <mat-label>Git username</mat-label>
             <input matInput formControlName="username" />
           </mat-form-field>
-          <mat-form-field appearance="fill">
+          <mat-form-field class="w-full" appearance="fill">
             <mat-label>Git password or token</mat-label>
             <input matInput formControlName="password" type="password" />
             <mat-hint *ngIf="isEditMode">
               If empty password gets not updated
             </mat-hint>
           </mat-form-field>
-        </fieldset>
+        </div>
       </div>
-      <fieldset>
-        <mat-form-field appearance="fill">
+      <div>
+        <mat-form-field class="w-full" appearance="fill">
           <mat-label>Branch, tag or revision</mat-label>
           <input
             (ngModelChange)="filteredRevisionsByPrefix($event)"
@@ -129,9 +132,9 @@
             </mat-option>
           </mat-optgroup>
         </mat-autocomplete>
-      </fieldset>
-      <fieldset>
-        <mat-form-field appearance="fill">
+      </div>
+      <div>
+        <mat-form-field class="w-full" appearance="fill">
           <mat-label>Entry point</mat-label>
           <input type="text" matInput formControlName="entrypoint" />
           <mat-error *ngIf="form.controls.entrypoint.errors?.required">
@@ -141,33 +144,31 @@
             Entrypoint must end with ".aird" in case of a capella model
           </mat-error>
         </mat-form-field>
-      </fieldset>
-      <fieldset class="mb-5" *ngIf="!asStepper && isEditMode">
+      </div>
+      <div class="mb-5" *ngIf="!asStepper && isEditMode">
         <mat-slide-toggle formControlName="primary">
           Primary Git repository</mat-slide-toggle
         >
-      </fieldset>
-    </form>
-    <div *ngIf="asStepper; else notFromStepper" class="flex justify-between">
-      <button
-        mat-raised-button
-        color="primary"
-        [disabled]="!form.valid"
-        type="submit"
-        (click)="onCreateSubmit()"
-      >
-        Add source
-        <mat-icon class="mat-icon-position">arrow_forward</mat-icon>
-      </button>
-    </div>
-    <ng-template #notFromStepper>
-      <ng-container *ngIf="!isEditMode; else editGitModel">
-        <div class="flex justify-between">
-          <a mat-button [routerLink]="['../../modelsources']">
-            <mat-icon class="mat-icon-position">arrow_back</mat-icon>
-            Cancel
-          </a>
-
+      </div>
+      <div *ngIf="asStepper; else notFromStepper" class="flex justify-between">
+        <div></div>
+        <button
+          mat-raised-button
+          color="primary"
+          [disabled]="!form.valid"
+          type="submit"
+          (click)="onCreateSubmit()"
+        >
+          Add source
+          <mat-icon class="mat-icon-position right">navigate_next</mat-icon>
+        </button>
+      </div>
+      <ng-template #notFromStepper>
+        <ng-container
+          class="flex justify-between"
+          *ngIf="!isEditMode; else editGitModel"
+        >
+          <div></div>
           <button
             mat-raised-button
             color="primary"
@@ -178,12 +179,10 @@
             Add source
             <mat-icon class="mat-icon-position">arrow_forward</mat-icon>
           </button>
-        </div>
-      </ng-container>
-    </ng-template>
-    <ng-template #editGitModel>
-      <div *ngIf="editing">
-        <div class="flex justify-between">
+        </ng-container>
+      </ng-template>
+      <ng-template #editGitModel>
+        <div class="flex justify-between" *ngIf="editing">
           <button mat-raised-button (click)="cancelEditing()">Cancel</button>
 
           <button
@@ -196,18 +195,25 @@
             Apply changes
           </button>
         </div>
-      </div>
-      <div *ngIf="!editing">
-        <div class="flex flex-wrap justify-between">
-          <button mat-raised-button color="warn" (click)="unlinkGitModel()">
-            Unlink
-          </button>
-
-          <button mat-raised-button color="primary" (click)="enableEditing()">
-            Edit
-          </button>
+        <div *ngIf="!editing">
+          <div class="flex justify-between">
+            <div></div>
+            <div>
+              <button mat-raised-button color="warn" (click)="unlinkGitModel()">
+                Unlink
+              </button>
+              &nbsp;&nbsp;
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="enableEditing()"
+              >
+                Edit
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-    </ng-template>
+      </ng-template>
+    </form>
   </mat-card>
 </div>

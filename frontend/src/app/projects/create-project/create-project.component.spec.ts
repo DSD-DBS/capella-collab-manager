@@ -29,6 +29,7 @@ import {
 } from 'src/../tests/spec-helper/element.spec-helper';
 
 import { ToastService } from '../../helpers/toast/toast.service';
+import { ProjectUserService } from '../project-detail/project-users/service/project-user.service';
 import {
   PatchProject,
   Project,
@@ -36,7 +37,6 @@ import {
   ProjectVisibility,
 } from '../service/project.service';
 import { CreateProjectComponent } from './create-project.component';
-import { ProjectUserService } from '../project-detail/project-users/service/project-user.service';
 
 const mockProjects: Project[] = [
   {
@@ -235,15 +235,6 @@ describe('CreateProjectComponent', () => {
     const appCreateModelComponent = findComponent(fixture, 'app-create-model');
 
     expect(appCreateModelComponent).toBeTruthy();
-  });
-
-  it('renders routerLink to /projects', () => {
-    const cancelEl: HTMLElement = findElByTestId(
-      fixture,
-      'a-cancel',
-    ).nativeElement;
-
-    expect(cancelEl.getAttribute('href')).toEqual('/projects');
   });
 
   it('gets redirected to project/:projectName after clicking on finish', () => {

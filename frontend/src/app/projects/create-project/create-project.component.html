@@ -3,14 +3,22 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper">
-  <mat-horizontal-stepper linear #stepper>
-    <mat-step completed="false" label="General information">
-      <div class="flex-center">
-        <mat-card class="section-card">
+<div class="wrapper flex justify-center">
+  <mat-horizontal-stepper
+    class="flex max-w-[360px] rounded-md shadow-md sm:max-w-[710px]"
+    linear
+    #stepper
+  >
+    <mat-step completed="false">
+      <ng-template matStepLabel>
+        <div class="hidden sm:inline">Create new project</div>
+      </ng-template>
+      <h3 class="flex justify-center sm:hidden">Create new project</h3>
+      <div class="flex justify-center">
+        <mat-card class="w-[350px] sm:min-w-[420px]">
           <form [formGroup]="form">
-            <fieldset>
-              <mat-form-field appearance="fill">
+            <div>
+              <mat-form-field appearance="fill" class="form-field-default">
                 <mat-label>Name</mat-label>
                 <input
                   matInput
@@ -26,9 +34,9 @@
                   A project name is required.
                 </mat-error>
               </mat-form-field>
-            </fieldset>
-            <fieldset>
-              <mat-form-field appearance="fill">
+            </div>
+            <div>
+              <mat-form-field appearance="fill" class="form-field-default">
                 <mat-label>Description</mat-label>
                 <textarea
                   matInput
@@ -36,67 +44,65 @@
                   data-testId="textarea-description"
                 ></textarea>
               </mat-form-field>
-            </fieldset>
+            </div>
             <fieldset>
-              <fieldset>
-                <div class="flex flex-col">
-                  <h3>Project visibility</h3>
-                  <mat-radio-group
-                    formControlName="visibility"
-                    class="flex flex-col"
-                  >
-                    <mat-radio-button
-                      *ngFor="
-                        let visibility of projectService.getAvailableVisibilities()
-                      "
-                      [value]="visibility"
-                    >
-                      {{
-                        projectService.getProjectVisibilityDescription(
-                          visibility
-                        )
-                      }}
-                    </mat-radio-button>
-                  </mat-radio-group>
-                </div>
-              </fieldset>
-            </fieldset>
-            <div class="flex justify-between">
-              <a
-                routerLink="/projects"
-                mat-button
-                matStepperPrevious
-                data-testId="a-cancel"
-              >
-                <mat-icon class="mat-icon-position left">arrow_back</mat-icon
-                >Cancel</a
-              >
-              <button
-                mat-flat-button
-                color="primary"
-                [disabled]="!form.valid"
-                (click)="createProject(stepper)"
-                data-testId="button-create-project"
-              >
-                Create project
-                <mat-icon class="mat-icon-position right"
-                  >arrow_forward</mat-icon
+              <div class="flex flex-col">
+                <legend>Project visibility</legend>
+                <mat-radio-group
+                  formControlName="visibility"
+                  class="flex flex-col"
                 >
-              </button>
+                  <mat-radio-button
+                    *ngFor="
+                      let visibility of projectService.getAvailableVisibilities()
+                    "
+                    [value]="visibility"
+                  >
+                    {{
+                      projectService.getProjectVisibilityDescription(visibility)
+                    }}
+                  </mat-radio-button>
+                </mat-radio-group>
+              </div>
+            </fieldset>
+            <div></div>
+            <div class="mt-[10px] flex justify-between">
+              <div></div>
+              <div>
+                <button
+                  mat-flat-button
+                  color="primary"
+                  [disabled]="!form.valid"
+                  (click)="createProject(stepper)"
+                  data-testId="button-create-project"
+                >
+                  Create project
+                  <mat-icon class="mat-icon-position right"
+                    >navigate_next</mat-icon
+                  >
+                </button>
+              </div>
             </div>
           </form>
         </mat-card>
       </div>
     </mat-step>
 
-    <mat-step label="Add team members">
-      <div *ngIf="projectService.project$ | async" class="flex-center">
-        <div>
-          <app-project-user-settings></app-project-user-settings>
-          <mat-card>
-            <div class="flex justify-between">
-              <button
-                mat-flat-button
+    <mat-step>
+      <ng-template matStepLabel>
+        <div class="hidden sm:inline">(Optional) Add team members</div>
+      </ng-template>
+      <h3 class="flex justify-center sm:hidden">(Optional) Add team members</h3>
+      <div *ngIf="projectService.project$ | async" class="flex justify-center">
+        <app-project-user-settings></app-project-user-settings>
+      </div>
+      <div *ngIf="projectService.project$ | async">
+        <div class="flex justify-between">
+          <div></div>
+          <div>
+            <div class="flex w-[312px] justify-end sm:w-[420px]">
+              <a
+                mat-button
                 color="primary"
                 (click)="stepper.next()"
                 data-testId="button-skipAddMembers"
@@ -106,28 +112,41 @@
                     projectUserService.nonAdminProjectUsers$ | async as users
                   "
                 >
-                  {{ !users || users.length === 0 ? "skip" : "continue" }}
+                  {{
+                    !users || users.length === 0 ? "Skip for now" : "Continue"
+                  }}
                 </ng-container>
                 <mat-icon class="mat-icon-position right"
-                  >arrow_forward</mat-icon
+                  >navigate_next</mat-icon
                 >
-              </button>
+              </a>
             </div>
-          </mat-card>
+          </div>
+          <div></div>
         </div>
       </div>
     </mat-step>
-    <mat-step label="Add models">
-      <app-create-model
-        (currentStep)="modelCreationStep = $event"
-        [redirectAfterCompletion]="false"
-        #model_creator
-      ></app-create-model>
-      <div class="flex-center">
-        <mat-card class="section-card">
-          <div class="flex-center">
+
+    <mat-step>
+      <ng-template matStepLabel>
+        <div class="hidden sm:inline">(Optional) Add model</div>
+      </ng-template>
+      <h3 class="flex justify-center pb-[5px] sm:hidden sm:pb-0">
+        (Optional) Add model
+      </h3>
+      <div class="flex justify-center">
+        <app-create-model
+          (currentStep)="modelCreationStep = $event"
+          [redirectAfterCompletion]="false"
+          #model_creator
+        ></app-create-model>
+      </div>
+      <div class="flex justify-between">
+        <div class="flex"></div>
+        <div class="flex">
+          <div class="mt-[-23px] flex w-[295px] justify-end sm:w-[420px]">
             <a
-              mat-flat-button
+              mat-button
               [routerLink]="[
                 '/project',
                 (projectService.project$ | async)?.slug
@@ -136,7 +155,7 @@
               data-testId="a-skipModelAndFinishProjectCreation"
             >
               <span *ngIf="modelCreationStep === 'create-model'">
-                Skip model creation and finish project creation
+                Abort model creation and finish
               </span>
               <span
                 *ngIf="
@@ -144,7 +163,7 @@
                   modelCreationStep !== 'complete'
                 "
               >
-                Abort model initialization and finish project creation
+                Abort model creation and finish
               </span>
               <span *ngIf="modelCreationStep === 'complete'">
                 Finish project creation
@@ -152,7 +171,8 @@
               <mat-icon class="mat-icon-position right">check</mat-icon>
             </a>
           </div>
-        </mat-card>
+        </div>
+        <div class="flex"></div>
       </div>
     </mat-step>
   </mat-horizontal-stepper>

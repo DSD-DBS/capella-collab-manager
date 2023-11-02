@@ -103,6 +103,10 @@ export class CreateModelComponent implements OnInit {
       this.stepper.previous();
     }
   }
+
+  hasRoute(route: string) {
+    return this.router.url.includes(route);
+  }
 }
 
 export type CreateModelStep =
