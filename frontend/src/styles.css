@@ -252,8 +252,6 @@ Option cards
 .option-card {
   width: 200px;
   max-width: 85vw;
-  margin: 20px;
-  padding: 20px;
   font-size: 1.5em;
   text-align: center;
   display: flex;

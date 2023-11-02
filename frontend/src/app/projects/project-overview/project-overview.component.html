@@ -4,8 +4,8 @@
  -->
 
 <div class="flex flex-wrap">
-  <a routerLink="/projects/create">
-    <mat-card matRipple class="mat-card-overview new">
+  <a routerLink="/projects/create" class="m-2.5">
+    <mat-card matRipple class="mat-card-overview new m-0">
       <div class="content">
         Add new project <br />
         <div class="icon">
@@ -19,13 +19,14 @@
   ></app-mat-card-overview-skeleton-loader>
   <ng-container *ngIf="projectService.projects$ | async">
     <a
+      class="m-2.5"
       *ngFor="let project of (projectService.projects$ | async)!"
       [routerLink]="['/project', project.slug]"
     >
       <mat-card
         [ngClass]="{ 'bg-archived': project.is_archived }"
         matRipple
-        class="mat-card-overview"
+        class="mat-card-overview m-0"
       >
         <div class="header">{{ project.name }}</div>
         <div class="p-3">
