@@ -528,8 +528,8 @@ class KubernetesOperator:
 
         resources = (
             client.V1ResourceRequirements(
-                limits={"cpu": "1", "memory": "1Gi"},
-                requests={"cpu": "0.4", "memory": "200Mi"},
+                limits={"cpu": "2", "memory": "3Gi"},
+                requests={"cpu": "1", "memory": "500Mi"},
             )
             if limits == "low"
             else client.V1ResourceRequirements(
