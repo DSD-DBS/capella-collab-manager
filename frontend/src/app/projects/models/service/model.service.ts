@@ -10,7 +10,7 @@ import {
   AsyncValidatorFn,
   ValidationErrors,
 } from '@angular/forms';
-import { BehaviorSubject, map, Observable, take, tap } from 'rxjs';
+import { BehaviorSubject, forkJoin, map, Observable, take, tap } from 'rxjs';
 import slugify from 'slugify';
 import { ModelRestrictions } from 'src/app/projects/models/model-restrictions/service/model-restrictions.service';
 import { T4CModel } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
@@ -92,24 +92,48 @@ export class ModelService {
       );
   }
 
+  private applyModelPatch(
+    projectSlug: string,
+    modelSlug: string,
+    patchData: PatchModel,
+  ): Observable<Model> {
+    return this.http.patch<Model>(
+      `${this.base_url}${projectSlug}/models/${modelSlug}/`,
+      patchData,
+    );
+  }
+
   updateModel(
     projectSlug: string,
     modelSlug: string,
     patchModel: PatchModel,
   ): Observable<Model> {
-    return this.http
-      .patch<Model>(
-        `${this.base_url}${projectSlug}/models/${modelSlug}/`,
-        patchModel,
-      )
-      .pipe(
-        tap({
-          next: (model) => {
-            this.loadModels(projectSlug);
-            this._model.next(model);
-          },
-        }),
-      );
+    return this.applyModelPatch(projectSlug, modelSlug, patchModel).pipe(
+      tap({
+        next: (model) => {
+          this.loadModels(projectSlug);
+          this._model.next(model);
+        },
+      }),
+    );
+  }
+
+  updateModels(
+    projectSlug: string,
+    modelUpdates: { modelSlug: string; patchModel: PatchModel }[],
+  ): Observable<Model[]> {
+    const updateObservables = modelUpdates.map(({ modelSlug, patchModel }) =>
+      this.applyModelPatch(projectSlug, modelSlug, patchModel),
+    );
+
+    return forkJoin(updateObservables).pipe(
+      tap({
+        next: (models: Model[]) => {
+          this.loadModels(projectSlug);
+          this._model.next(models[models.length - 1]);
+        },
+      }),
+    );
   }
 
   deleteModel(projectSlug: string, modelSlug: string): Observable<void> {
@@ -184,6 +208,7 @@ export type Model = {
   t4c_models: T4CModel[];
   git_models: GetGitModel[];
   restrictions: ModelRestrictions;
+  display_order: number;
 };
 
 export type PatchModel = {
@@ -192,6 +217,7 @@ export type PatchModel = {
   nature_id?: number;
   version_id?: number;
   project_slug?: string;
+  display_order?: number;
 };
 
 export function getPrimaryGitModel(model: Model): GetGitModel | undefined {

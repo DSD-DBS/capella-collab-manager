@@ -98,6 +98,7 @@ import { EditProjectMetadataComponent } from './projects/project-detail/edit-pro
 import { ModelComplexityBadgeComponent } from './projects/project-detail/model-overview/model-complexity-badge/model-complexity-badge.component';
 import { ModelOverviewComponent } from './projects/project-detail/model-overview/model-overview.component';
 import { MoveModelComponent } from './projects/project-detail/model-overview/move-model/move-model.component';
+import { ReorderModelsDialogComponent } from './projects/project-detail/model-overview/reorder-models-dialog/reorder-models-dialog.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { ProjectMetadataComponent } from './projects/project-detail/project-metadata/project-metadata.component';
 import { AddUserToProjectDialogComponent } from './projects/project-detail/project-users/add-user-to-project/add-user-to-project.component';
@@ -215,6 +216,7 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
     ProjectUserSettingsComponent,
     ProjectWrapperComponent,
     PureVariantsComponent,
+    ReorderModelsDialogComponent,
     SessionComponent,
     SessionIFrameComponent,
     SessionOverviewComponent,

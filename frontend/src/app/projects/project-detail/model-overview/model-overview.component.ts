@@ -6,7 +6,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { first } from 'rxjs';
+import { first, filter } from 'rxjs';
 import { ModelDiagramDialogComponent } from 'src/app/projects/models/diagrams/model-diagram-dialog/model-diagram-dialog.component';
 import {
   getPrimaryGitModel,
@@ -14,6 +14,7 @@ import {
   ModelService,
 } from 'src/app/projects/models/service/model.service';
 import { MoveModelComponent } from 'src/app/projects/project-detail/model-overview/move-model/move-model.component';
+import { ReorderModelsDialogComponent } from 'src/app/projects/project-detail/model-overview/reorder-models-dialog/reorder-models-dialog.component';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
@@ -28,6 +29,7 @@ import { Project, ProjectService } from '../../service/project.service';
 })
 export class ModelOverviewComponent implements OnInit {
   project?: Project;
+  models?: Model[];
 
   constructor(
     public modelService: ModelService,
@@ -42,6 +44,17 @@ export class ModelOverviewComponent implements OnInit {
     this.projectService.project$
       .pipe(untilDestroyed(this))
       .subscribe((project) => (this.project = project));
+
+    this.modelService.models$
+      .pipe(untilDestroyed(this), filter(Boolean))
+      .subscribe((models) => {
+        this.models = models.sort((a, b) => {
+          if (a.display_order && b.display_order) {
+            return a.display_order - b.display_order;
+          }
+          return b.id - a.id;
+        });
+      });
   }
 
   getPrimaryWorkingMode(model: Model): string {
@@ -87,5 +100,13 @@ export class ModelOverviewComponent implements OnInit {
       maxHeight: '200vw',
       data: { projectSlug: this.project?.slug, model: model },
     });
+  }
+
+  openReorderModelsDialog(models: Model[]): void {
+    if (this.project) {
+      this.dialog.open(ReorderModelsDialogComponent, {
+        data: { projectSlug: this.project.slug, models: models },
+      });
+    }
   }
 }
