@@ -99,12 +99,7 @@ the TeamForCapella instance and the TeamForCapella repository. With `project`,
 you can specify the name of the model in Capella. We recommend using the same
 name for the repository and project.
 
-## Step 4: Choose Initialisation
-
-Please choose `Create empty model`. This has no effect on the existing
-TeamForCapella content. More options will follow in the future.
-
-## Step 5: Metadata
+## Step 4: Metadata
 
 This is an important step. Here, you can select the version and the model
 nature of your tool. If you don't select any version, the functionality will be

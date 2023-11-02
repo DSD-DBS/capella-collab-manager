@@ -115,11 +115,6 @@ button.success {
   color: white;
 }
 
-mat-card {
-  width: fit-content;
-  margin: 10px;
-}
-
 h1 {
   margin: 10px;
 }
@@ -172,20 +167,8 @@ fieldset > :not(.field-separator) {
   flex-grow: 1;
 }
 
-.text-center {
-  text-align: center;
-}
-
-mat-card.default {
-  width: 400px;
-}
-
 .margin.default {
   margin: 10px;
-}
-
-.section-card {
-  width: var(--section-card-width);
 }
 
 .version-selector {
@@ -258,7 +241,7 @@ Angular Material Card Styles
 }
 
 .form-field-default {
-  width: 405px;
+  width: 100%;
   max-width: 85vw;
 }
 
@@ -291,4 +274,13 @@ Option cards
   line-height: 1.2rem;
   height: 2.4rem;
   width: 20ch;
+}
+
+@media (max-width: 640px) {
+  .mat-stepper-horizontal-line {
+    width: 100%;
+  }
+  .mat-horizontal-stepper-header-container {
+    height: 50px;
+  }
 }

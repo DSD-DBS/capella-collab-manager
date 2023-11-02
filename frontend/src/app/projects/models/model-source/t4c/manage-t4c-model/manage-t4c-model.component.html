@@ -5,9 +5,9 @@
 
 <div
   *ngIf="(projectService.project$ | async) && (modelService.model$ | async)"
-  class="wrapper flex-center"
+  class="wrapper flex justify-center"
 >
-  <mat-card class="section-card">
+  <mat-card class="w-[350px] sm:min-w-[420px]">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <fieldset>
         <app-form-field-skeleton-loader
@@ -82,11 +82,7 @@
         </mat-autocomplete>
       </fieldset>
 
-      <div class="flex justify-between">
-        <button *ngIf="asStepper" mat-button (click)="create.emit(false)">
-          <mat-icon class="mat-icon-position">arrow_back</mat-icon>
-          Choose primary source
-        </button>
+      <div class="flex justify-end">
         <button
           *ngIf="t4cModel !== undefined"
           (click)="unlinkT4CModel()"
@@ -107,6 +103,7 @@
           color="primary"
         >
           Save reference
+          <mat-icon class="mat-icon-position right">navigate_next</mat-icon>
         </button>
       </div>
     </form>

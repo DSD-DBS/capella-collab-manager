@@ -3,56 +3,74 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper">
+<div class="wrapper flex justify-center">
   <mat-horizontal-stepper
+    class="flex max-w-[360px] sm:max-w-[710px]"
+    [ngClass]="hasRoute('models/create') ? 'rounded-md shadow-md' : ''"
     (selectionChange)="onStepChange($event)"
     linear
     #stepper
   >
-    <mat-step completed="false" label="Create model">
-      <app-create-model-base
-        [asStepper]="asStepper"
-        (create)="afterModelCreated()"
-      ></app-create-model-base>
-    </mat-step>
+    <div class="flex justify-center">
+      <mat-step completed="false">
+        <ng-template matStepLabel>
+          <div class="hidden sm:inline">Create model</div>
+        </ng-template>
+        <h3 class="flex justify-center sm:hidden">Create model</h3>
 
-    <mat-step completed="false" label="Choose primary source">
-      <app-choose-source
-        (modelSourceSelection)="onSourceClick($event)"
-      ></app-choose-source>
-    </mat-step>
+        <app-create-model-base
+          [asStepper]="asStepper"
+          (create)="afterModelCreated()"
+        ></app-create-model-base>
+      </mat-step>
 
-    <mat-step label="Add source">
-      <div [ngSwitch]="source">
-        <app-manage-git-model
-          *ngSwitchCase="'git-add'"
-          [asStepper]="true"
-          (create)="afterSourceCreated($event)"
-        ></app-manage-git-model>
-        <app-manage-t4c-model
-          *ngSwitchCase="'t4c-existing'"
-          [asStepper]="true"
-          (create)="afterSourceCreated($event)"
-        ></app-manage-t4c-model>
-        <app-create-t4c-model-new-repository
-          *ngSwitchCase="'t4c-new'"
-          [asStepper]="true"
-          (create)="afterSourceCreated($event)"
-        ></app-create-t4c-model-new-repository>
-      </div>
-    </mat-step>
+      <mat-step completed="false">
+        <ng-template matStepLabel>
+          <div class="hidden sm:inline">Choose source</div>
+        </ng-template>
+        <h3 class="flex justify-center sm:hidden">Choose source</h3>
 
-    <mat-step label="Choose initialization">
-      <app-choose-init
-        (modelInitSelection)="onInitClick($event)"
-      ></app-choose-init>
-    </mat-step>
+        <app-choose-source
+          (modelSourceSelection)="onSourceClick($event)"
+        ></app-choose-source>
+      </mat-step>
 
-    <mat-step label="Metadata">
-      <app-init-model
-        [asStepper]="asStepper"
-        (create)="afterModelInitialized($event)"
-      ></app-init-model>
-    </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>
+          <div class="hidden sm:inline">Link source</div>
+        </ng-template>
+        <h3 class="flex justify-center sm:hidden">Link source</h3>
+
+        <div [ngSwitch]="source">
+          <app-manage-git-model
+            *ngSwitchCase="'git-add'"
+            [asStepper]="true"
+            (create)="afterSourceCreated($event)"
+          ></app-manage-git-model>
+          <app-manage-t4c-model
+            *ngSwitchCase="'t4c-existing'"
+            [asStepper]="true"
+            (create)="afterSourceCreated($event)"
+          ></app-manage-t4c-model>
+          <app-create-t4c-model-new-repository
+            *ngSwitchCase="'t4c-new'"
+            [asStepper]="true"
+            (create)="afterSourceCreated($event)"
+          ></app-create-t4c-model-new-repository>
+        </div>
+      </mat-step>
+
+      <mat-step>
+        <ng-template matStepLabel>
+          <div class="hidden sm:inline">Configure model</div>
+        </ng-template>
+        <h3 class="flex justify-center sm:hidden">Configure model</h3>
+
+        <app-init-model
+          [asStepper]="asStepper"
+          (create)="afterModelInitialized($event)"
+        ></app-init-model>
+      </mat-step>
+    </div>
   </mat-horizontal-stepper>
 </div>

@@ -5,6 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, take } from 'rxjs';
 import {
@@ -38,6 +39,7 @@ export class ProjectUserSettingsComponent implements OnInit {
     private toastService: ToastService,
     private projectService: ProjectService,
     private dialog: MatDialog,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -209,5 +211,9 @@ export class ProjectUserSettingsComponent implements OnInit {
         },
       });
     });
+  }
+
+  hasRoute(route: string) {
+    return this.router.url.includes(route);
   }
 }

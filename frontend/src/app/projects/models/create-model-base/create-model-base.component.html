@@ -3,11 +3,14 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flex-center">
-  <mat-card *ngIf="projectService.project$ | async">
+<div class="flex justify-center">
+  <mat-card
+    class="w-[350px] md:min-w-[420px]"
+    *ngIf="projectService.project$ | async"
+  >
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <fieldset class="flex flex-wrap">
-        <mat-form-field appearance="fill">
+      <div class="m-0 flex w-auto items-center px-0">
+        <mat-form-field class="w-full" appearance="fill">
           <mat-label>Model name</mat-label>
           <input matInput formControlName="name" />
           <mat-error *ngIf="form.controls.name.errors?.required">
@@ -19,15 +22,15 @@
             }}” already exists.
           </mat-error>
         </mat-form-field>
-      </fieldset>
-      <fieldset>
-        <mat-form-field appearance="fill">
+      </div>
+      <div class="m-0 flex w-auto items-center px-0">
+        <mat-form-field class="w-full" appearance="fill">
           <mat-label>Model description</mat-label>
           <textarea rows="3" matInput formControlName="description"> </textarea>
         </mat-form-field>
-      </fieldset>
-      <fieldset>
-        <mat-form-field appearance="fill">
+      </div>
+      <div class="m-0 flex w-auto items-center px-0">
+        <mat-form-field class="w-full" appearance="fill">
           <mat-label>Model tool</mat-label>
           <mat-select matInput formControlName="toolID">
             <mat-option
@@ -44,8 +47,8 @@
             Please select a valid tool.
           </mat-error>
         </mat-form-field>
-      </fieldset>
-      <div class="flex justify-between">
+      </div>
+      <div class="flex justify-end">
         <button
           mat-raised-button
           color="primary"
@@ -53,7 +56,7 @@
           [disabled]="!form.valid"
         >
           Create model
-          <mat-icon class="mat-icon-position right">arrow_forward</mat-icon>
+          <mat-icon class="mat-icon-position right">navigate_next</mat-icon>
         </button>
       </div>
     </form>

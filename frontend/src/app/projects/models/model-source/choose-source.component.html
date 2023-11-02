@@ -2,48 +2,57 @@
  ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
+<!-- New -->
 
-<div *ngIf="(projectService.project$ | async) && (modelService.model$ | async)">
-  <h2 class="title text-center">Git sources</h2>
-  <div class="flex flex-wrap justify-center">
-    <a (click)="modelSourceSelection.emit('git-add')">
-      <mat-card class="option-card">
-        <p>Use existing repository</p>
-        <app-mat-icon size="50px">link</app-mat-icon>
-      </mat-card>
-    </a>
-  </div>
-
-  <div
-    *ngIf="
-      (modelService.model$ | async)!.tool?.integrations?.t4c &&
-      userService.user?.role === 'administrator'
-    "
+<div class="flex justify-center">
+  <mat-card
+    class="w-[350px] sm:min-w-[420px]"
+    *ngIf="projectService.project$ | async"
   >
-    <h2 class="title text-center">Team4Capella sources</h2>
-    <div class="flex flex-wrap justify-center">
-      <a (click)="modelSourceSelection.emit('t4c-existing')">
-        <mat-card class="option-card">
-          <p>Use existing repository</p>
-          <app-mat-icon size="50px">link</app-mat-icon>
-        </mat-card>
-      </a>
-      <a (click)="modelSourceSelection.emit('t4c-new')">
-        <mat-card class="option-card">
-          <p>Create new repository</p>
-          <app-mat-icon size="50px">add_circle_outline</app-mat-icon>
-        </mat-card>
-      </a>
-    </div>
-  </div>
+    <div
+      *ngIf="(projectService.project$ | async) && (modelService.model$ | async)"
+    >
+      <div>
+        <h3>Git sources</h3>
+        <mat-divider></mat-divider>
+        <div class="my-[10px]">
+          <a mat-button (click)="modelSourceSelection.emit('git-add')">
+            <span> Use existing repository </span>
+            <mat-icon class="mat-icon-position right">navigate_next</mat-icon>
+          </a>
+        </div>
+      </div>
 
-  <h2 class="title text-center">Other</h2>
-  <div class="flex flex-wrap justify-center">
-    <a (click)="modelSourceSelection.emit('skip')">
-      <mat-card class="option-card">
-        <p>Skip this step</p>
-        <app-mat-icon size="50px">skip_next</app-mat-icon>
-      </mat-card>
-    </a>
-  </div>
+      <div
+        *ngIf="
+          (modelService.model$ | async)!.tool?.integrations?.t4c &&
+          userService.user?.role === 'administrator'
+        "
+      >
+        <h3>Team4Capella sources</h3>
+        <mat-divider></mat-divider>
+        <div class="my-[10px]">
+          <a mat-button (click)="modelSourceSelection.emit('t4c-existing')">
+            <span> Use existing repository </span>
+            <mat-icon class="mat-icon-position right">navigate_next</mat-icon>
+          </a>
+        </div>
+        <div class="my-[10px]">
+          <a mat-button (click)="modelSourceSelection.emit('t4c-new')">
+            <span> Create new repository </span>
+            <mat-icon class="mat-icon-position right">navigate_next</mat-icon>
+          </a>
+        </div>
+      </div>
+
+      <h3>Other</h3>
+      <mat-divider></mat-divider>
+      <div class="my-[10px]">
+        <a mat-button (click)="modelSourceSelection.emit('skip')">
+          <span> Add model source later </span>
+          <mat-icon class="mat-icon-position right">navigate_next</mat-icon>
+        </a>
+      </div>
+    </div>
+  </mat-card>
 </div>

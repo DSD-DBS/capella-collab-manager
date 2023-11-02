@@ -3,59 +3,53 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper flex-center flex">
-  <mat-card *ngIf="modelService.model$ | async">
+<div class="wrapper flex justify-center">
+  <mat-card
+    class="w-[350px] sm:min-w-[420px]"
+    *ngIf="modelService.model$ | async"
+  >
     <form [formGroup]="form">
-      <fieldset class="flex flex-wrap gap-2">
-        <mat-form-field appearance="fill">
-          <mat-label>Modelling tool</mat-label>
-          <input
-            matInput
-            [value]="(modelService.model$ | async)!.tool.name"
-            disabled
-          />
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Version</mat-label>
-          <mat-select formControlName="version" id="version-selector">
-            <mat-option
-              *ngFor="let version of this.toolVersions"
-              [value]="version.id"
-            >
-              {{ version.name }}
-              <span *ngIf="version.is_recommended"> (recommended)</span>
-              <span *ngIf="version.is_deprecated"> (deprecated)</span>
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </fieldset>
-      <fieldset>
-        <mat-form-field appearance="fill">
-          <mat-label>Model nature</mat-label>
-          <mat-select formControlName="nature">
-            <mat-option
-              *ngFor="let nature of this.toolNatures"
-              [value]="nature.id"
-            >
-              {{ nature.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </fieldset>
+      <mat-form-field class="w-full" appearance="fill">
+        <mat-label>Modelling tool</mat-label>
+        <input
+          matInput
+          [value]="(modelService.model$ | async)!.tool.name"
+          disabled
+        />
+      </mat-form-field>
+      <mat-form-field class="w-full" appearance="fill">
+        <mat-label>Version</mat-label>
+        <mat-select formControlName="version" id="version-selector">
+          <mat-option
+            *ngFor="let version of this.toolVersions"
+            [value]="version.id"
+          >
+            {{ version.name }}
+            <span *ngIf="version.is_recommended"> (recommended)</span>
+            <span *ngIf="version.is_deprecated"> (deprecated)</span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="w-full" appearance="fill">
+        <mat-label>Model nature</mat-label>
+        <mat-select formControlName="nature">
+          <mat-option
+            *ngFor="let nature of this.toolNatures"
+            [value]="nature.id"
+          >
+            {{ nature.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </form>
-    <div class="flex justify-between">
-      <button mat-button (click)="create.emit({ created: false })">
-        <mat-icon class="mat-icon-position left">arrow_back</mat-icon>
-        Choose initialization
-      </button>
+    <div class="flex justify-end">
       <button
         mat-raised-button
         color="primary"
         [disabled]="!form.valid || buttonDisabled"
         (click)="onSubmit()"
       >
-        Finish
-        <mat-icon class="mat-icon-position right">arrow_forward</mat-icon>
+        Save model
       </button>
     </div>
   </mat-card>

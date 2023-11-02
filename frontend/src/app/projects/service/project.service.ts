@@ -146,8 +146,6 @@ export type Project = Required<PatchProject> & {
 };
 
 export const ProjectVisibility = {
-  internal:
-    'Internal - all logged in users can see the project and have read access on its models.',
-  private:
-    'Private - users need to be explicitly granted access to see the project.',
+  internal: 'Internal (viewable by all logged in users)',
+  private: 'Private (only viewable by project members)',
 };
