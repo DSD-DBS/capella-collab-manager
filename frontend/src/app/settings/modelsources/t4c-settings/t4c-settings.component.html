@@ -4,8 +4,8 @@
  -->
 
 <article class="flex flex-wrap">
-  <a [routerLink]="['create']">
-    <mat-card matRipple class="mat-card-overview new">
+  <a [routerLink]="['create']" class="m-2.5">
+    <mat-card matRipple class="mat-card-overview new m-0">
       <div class="content">
         Add an instance <br />
         <div class="icon">
@@ -18,10 +18,11 @@
   <a
     *ngFor="let instance of t4cInstanceService.t4cInstances$ | async"
     [routerLink]="['instance', instance.id]"
+    class="m-2.5"
   >
     <mat-card
       matRipple
-      class="mat-card-overview"
+      class="mat-card-overview m-0"
       [ngClass]="{ 'bg-gray-300': instance.is_archived }"
     >
       <div class="header">{{ instance.name }}</div>

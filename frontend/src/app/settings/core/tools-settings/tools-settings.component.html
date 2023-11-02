@@ -4,8 +4,8 @@
  -->
 
 <article class="flex flex-wrap">
-  <a [routerLink]="['create']">
-    <mat-card matRipple class="mat-card-overview new">
+  <a [routerLink]="['create']" class="m-2.5">
+    <mat-card matRipple class="mat-card-overview new m-0">
       <div class="content">
         Add a tool <br />
         <div class="icon">
@@ -18,8 +18,9 @@
   <a
     *ngFor="let tool of toolService.tools"
     [routerLink]="['..', 'tool', tool.id]"
+    class="m-2.5"
   >
-    <mat-card matRipple class="mat-card-overview">
+    <mat-card matRipple class="mat-card-overview m-0">
       <div class="header">{{ tool.name }}</div>
       <div class="content" *ngIf="tools[tool.id]">
         <mat-icon class="mat-icon-position top">history</mat-icon>
