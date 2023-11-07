@@ -632,7 +632,7 @@ def request_provision_workspace(
                 ]
             ),
             "RMT_PASSWORD": rdp_password,
-            "WORKSPACE_DIR": f"/workspace/projects/{project.slug}/{tool.name}/{model.version.name}",
+            "WORKSPACE_DIR": f"/workspace/projects/{project.slug}/{tool.slug}/{model.version.slug}",
         }
         volumes: list[operators_models.Volume] = []
         warnings: list[core_models.Message] = []
