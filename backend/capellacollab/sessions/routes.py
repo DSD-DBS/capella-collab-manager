@@ -397,11 +397,12 @@ def start_persistent_jupyter_session(
     version: tools_models.DatabaseVersion,
     docker_image: str,
     volumes: list[operators_models.Volume],
+    session_type="persistent",
 ):
     session = operator.start_session(
         image=docker_image,
         username=owner,
-        session_type="persistent",
+        session_type=session_type,
         tool_name=tool.name,
         version_name=version.name,
         environment=environment,
@@ -434,6 +435,7 @@ def start_persistent_guacamole_session(
     volumes: list[operators_models.Volume],
     environment: dict[str, str],
     docker_image: str,
+    session_type="persistent",
 ):
     rdp_password = credentials.generate_password(length=64)
 
@@ -442,7 +444,7 @@ def start_persistent_guacamole_session(
     session = operator.start_session(
         image=docker_image,
         username=user.name,
-        session_type="persistent",
+        session_type=session_type,
         tool_name=tool.name,
         version_name=version.name,
         environment=environment,
@@ -555,16 +557,17 @@ def create_database_and_guacamole_session(
 )
 def request_provision_workspace(
     body: models.PostProvisionWorkspaceRequest,
-    db_user: users_models.DatabaseUser = fastapi.Depends(
+    user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
     ),
+    username: str = fastapi.Depends(auth_injectables.get_username),
     project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),
     operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
-    log.info("Provisioning workspace for user %s", db_user.name)
+    log.info("Provisioning workspace for user %s", user.name)
 
     if not body.models:
         raise fastapi.HTTPException(
@@ -585,7 +588,7 @@ def request_provision_workspace(
     # Check if we already have running sessions for this project
     if any(
         crud.exist_readonly_session_for_user_project_version(
-            db, db_user, project, m.version
+            db, user, project, m.version
         )
         for m in models_
     ):
@@ -602,62 +605,83 @@ def request_provision_workspace(
     launched_sessions = []
     for model_group in grouped_models:
         model = model_group[0]
+        tool = model.version.tool
 
         # Start sessions for each tool and tell it to load models, same as readonly sessions
         docker_image = get_readonly_image_for_version(model.version)
         if not docker_image:
             raise exceptions.UnsupportedSessionTypeError(
-                model.version.tool, models.WorkspaceType.READONLY
+                tool, models.WorkspaceType.READONLY
             )
-
-        rdp_password = credentials.generate_password(length=64)
 
         git_model = next((gm for gm in model.git_models if gm.primary), None)
         if not git_model:
             raise exceptions.MissingPrimaryGitModelError(model)
 
-        session = operator.start_session(
-            image=docker_image,
-            username=db_user.name,
-            session_type="provision",
-            tool_name=model.tool.name,
-            version_name=model.version.name,
-            volumes=[
-                operators_models.EmptyVolume(
-                    name="workspace",
-                    read_only=False,
-                    container_path=pathlib.PurePosixPath("/workspace"),
-                )
-            ],
-            environment={
-                "GIT_REPOS_JSON": json.dumps(
-                    list(
-                        git_model_as_json(
-                            git_model=git_model,
-                            revision="main",
-                            deep_clone=False,
-                        )
-                        for m in model_group
-                    )
-                ),
-                "RMT_PASSWORD": rdp_password,
-            },
-            ports={"rdp": 3389, "metrics": 9118, "fileservice": 8000},
-        )
+        rdp_password = credentials.generate_password(length=64)
 
-        launched_sessions.append(
-            create_database_and_guacamole_session(
+        environment: dict[str, str] = {
+            "GIT_REPOS_JSON": json.dumps(
+                [
+                    git_model_as_json(
+                        git_model=git_model,
+                        revision=git_model.revision,
+                        deep_clone=False,
+                    )
+                    for m in model_group
+                ]
+            ),
+            "RMT_PASSWORD": rdp_password,
+            "WORKSPACE_DIR": f"/workspace/projects/{project.slug}/{tool.name}/{model.version.name}",
+        }
+        volumes: list[operators_models.Volume] = []
+        warnings: list[core_models.Message] = []
+
+        for hook in hooks.get_activated_integration_hooks(tool):
+            hook_env, hook_volumes, hook_warnings = hook.configuration_hook(
                 db=db,
-                type=models.WorkspaceType.READONLY,
-                session=session,
-                owner=db_user.name,
-                rdp_password=rdp_password,
-                tool=model.tool,
-                version=model.version,
-                project=project,
-                environment={},
+                user=user,
+                tool_version=model.version,
+                tool=tool,
+                username=username,
+                operator=operator,
             )
-        )
+            environment |= hook_env
+            volumes += hook_volumes
+            warnings += hook_warnings
+
+        if tool.integrations and tool.integrations.jupyter:
+            response = start_persistent_jupyter_session(
+                db=db,
+                operator=operator,
+                owner=user.name,
+                tool=tool,
+                version=model.version,
+                volumes=volumes,
+                environment=environment,
+                docker_image=docker_image,
+                session_type="readonly",
+            )
+        else:
+            response = start_persistent_guacamole_session(
+                db=db,
+                operator=operator,
+                user=user,
+                owner=user.name,
+                tool=tool,
+                version=model.version,
+                volumes=volumes,
+                environment=environment,
+                docker_image=docker_image,
+                session_type="readonly",
+            )
+
+        for hook in hooks.get_activated_integration_hooks(tool):
+            hook.post_session_creation_hook(
+                session_id=response.id, operator=operator, user=user
+            )
+
+        launched_sessions.append(response)
 
     return launched_sessions
 
