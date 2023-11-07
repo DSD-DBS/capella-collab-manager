@@ -43,8 +43,13 @@ export class CreateT4cModelNewRepositoryComponent implements OnInit {
     t4cInstanceId: new FormControl<number | null>(null, Validators.required),
     t4cRepositoryName: new FormControl<string | null>(
       { value: null, disabled: true },
-      Validators.required,
-      this.t4cRepoService.asyncNameValidator(),
+      {
+        validators: [
+          Validators.required,
+          Validators.pattern(/^[-a-zA-Z0-9_]+$/),
+        ],
+        asyncValidators: this.t4cRepoService.asyncNameValidator(),
+      },
     ),
     t4cProjectName: new FormControl<string | null>(
       { value: null, disabled: true },
