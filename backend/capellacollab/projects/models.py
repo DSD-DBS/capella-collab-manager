@@ -41,7 +41,7 @@ class Project(pydantic.BaseModel):
     slug: str
     description: str | None = None
     visibility: Visibility
-    type: ProjectType = ProjectType.GENERAL
+    type: ProjectType
     users: UserMetadata
     is_archived: bool
 
