@@ -21,19 +21,25 @@
     </div>
 
     <div class="hidden gap-2 xl:flex">
-      <div
-        *ngFor="let item of navBarService.navBarItems"
-        [routerLink]="item.routerLink"
-      >
-        <a
-          mat-raised-button
-          color="primary"
-          *ngIf="userService.validateUserRole(item.requiredRole)"
-          [attr.href]="item.href"
-          [attr.target]="item.target"
-        >
-          {{ item.name }} <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
-        </a>
+      <div *ngFor="let item of navBarService.navBarItems">
+        <ng-container *ngIf="userService.validateUserRole(item.requiredRole)">
+          <ng-container *ngIf="item.href; else router">
+            <a
+              mat-raised-button
+              color="primary"
+              [attr.href]="item.href"
+              [attr.target]="item.target"
+            >
+              {{ item.name }}
+              <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+            </a>
+          </ng-container>
+          <ng-template #router>
+            <a mat-raised-button color="primary" [routerLink]="item.routerLink">
+              {{ item.name }}
+            </a>
+          </ng-template>
+        </ng-container>
       </div>
     </div>
     <div>
