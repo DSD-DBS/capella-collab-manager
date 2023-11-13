@@ -44,7 +44,9 @@ class DatabaseT4CRepository(database.Base):
 
 
 class CreateT4CRepository(pydantic.BaseModel):
-    name: str
+    name: str = pydantic.Field(
+        pattern="^[-a-zA-Z0-9_]+$", examples=["testrepo"]
+    )
 
 
 class T4CRepositoryStatus(str, enum.Enum):
