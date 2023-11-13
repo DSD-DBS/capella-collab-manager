@@ -24,7 +24,8 @@ depends_on = None
 def upgrade():
     for table_name in ("tools", "versions"):
         op.add_column(
-            table_name, sa.Column("slug", sa.String(), nullable=True)
+            table_name,
+            sa.Column("slug", sa.String(), unique=True, nullable=True),
         )
 
         connection = op.get_bind()

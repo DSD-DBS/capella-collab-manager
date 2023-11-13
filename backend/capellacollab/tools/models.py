@@ -23,7 +23,7 @@ class DatabaseTool(database.Base):
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
 
     name: orm.Mapped[str]
-    slug: orm.Mapped[str]
+    slug: orm.Mapped[str] = orm.mapped_column(nullable=False)
     docker_image_template: orm.Mapped[str]
     docker_image_backup_template: orm.Mapped[str | None]
     readonly_docker_image_template: orm.Mapped[str | None]
@@ -47,7 +47,7 @@ class DatabaseVersion(database.Base):
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
 
     name: orm.Mapped[str]
-    slug: orm.Mapped[str]
+    slug: orm.Mapped[str] = orm.mapped_column(nullable=False)
     is_recommended: orm.Mapped[bool]
     is_deprecated: orm.Mapped[bool]
 
