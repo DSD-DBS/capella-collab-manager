@@ -9,11 +9,11 @@
       <app-project-metadata class="flex-1"></app-project-metadata>
       <app-create-readonly-session
         class="flex-1"
-        *ngIf="projectType === 'general'"
+        *ngIf="(projectService.project$ | async)?.type === 'general'"
       ></app-create-readonly-session>
       <app-provision-workspace
         class="flex-1"
-        *ngIf="projectType === 'training'"
+        *ngIf="(projectService.project$ | async)?.type === 'training'"
       ></app-provision-workspace>
     </div>
     <app-model-overview></app-model-overview>
