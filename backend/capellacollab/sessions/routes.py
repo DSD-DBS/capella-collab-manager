@@ -560,7 +560,6 @@ def request_provision_workspace(
     user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
     ),
-    username: str = fastapi.Depends(auth_injectables.get_username),
     project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),
@@ -652,7 +651,7 @@ def request_provision_workspace(
                 user=user,
                 tool_version=model.version,
                 tool=tool,
-                username=username,
+                username=user.name,
                 operator=operator,
             )
             environment |= hook_env
