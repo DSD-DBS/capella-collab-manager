@@ -500,7 +500,6 @@ def test_provision_sessions_as_user(
         },
     )
     sessions = response.json()
-    print(sessions)
 
     assert response.status_code == 200
     assert len(sessions) == 2
