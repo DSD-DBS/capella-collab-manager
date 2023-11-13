@@ -6,7 +6,6 @@ import dataclasses
 import fastapi
 from fastapi import exception_handlers, status
 
-from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.sessions import models as sessions_models
 from capellacollab.tools import models as tools_models
 
