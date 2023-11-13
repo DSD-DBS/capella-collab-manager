@@ -82,8 +82,6 @@ class PostProvisionWorkspaceEntry(pydantic.BaseModel):
 
 
 class PostProvisionWorkspaceRequest(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
     models: list[PostProvisionWorkspaceEntry]
     persistent_workspace: bool
 
