@@ -20,7 +20,6 @@ import { UserSessionService } from 'src/app/sessions/service/user-session.servic
 @Component({
   selector: 'app-provision-workspace',
   templateUrl: './provision-workspace.component.html',
-  styleUrls: ['./provision-workspace.component.css'],
 })
 export class ProvisionWorkspaceComponent implements OnInit {
   projectSlug?: string;
