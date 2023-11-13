@@ -57,7 +57,7 @@ initial setup (only required once):
 Then, run the following command to start the dev environment:
 
 ```zsh
-make -j4 dev
+make dev
 ```
 
 If everything went well, the frontend and backend should be running now:
