@@ -283,7 +283,6 @@ def request_persistent_session(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
     operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
-    username: str = fastapi.Depends(auth_injectables.get_username),
 ):
     log.info("Starting persistent session for user %s", user.name)
 
@@ -294,6 +293,12 @@ def request_persistent_session(
 
     raise_if_conflicting_persistent_sessions(tool, user)
 
+    response = start_persistent_session(user, tool, version, operator, db)
+
+    return response
+
+
+def start_persistent_session(user, tool, version, operator, db):
     environment: dict[str, str] = {}
     volumes: list[operators_models.Volume] = []
     warnings: list[core_models.Message] = []
@@ -304,7 +309,7 @@ def request_persistent_session(
             user=user,
             tool_version=version,
             tool=tool,
-            username=username,
+            username=user.name,
             operator=operator,
         )
         environment |= hook_env

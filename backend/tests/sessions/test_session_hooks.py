@@ -162,7 +162,6 @@ def test_session_creation_hook_is_called(
         user,
         db,
         mockoperator,
-        "testuser",
     )
 
     assert session_hook.configuration_hook_counter == 1
