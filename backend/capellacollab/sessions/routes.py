@@ -632,11 +632,13 @@ def request_provision_workspace(
             "GIT_REPOS_JSON": json.dumps(
                 [
                     git_model_as_json(
-                        git_model=m.git_model,
-                        revision=m.git_model.revision,
+                        git_model=git_model,
+                        revision=git_model.revision,
                         deep_clone=False,
                     )
                     for m in model_group
+                    for git_model in m.git_models
+                    if git_model.primary
                 ]
             ),
             "RMT_PASSWORD": rdp_password,
