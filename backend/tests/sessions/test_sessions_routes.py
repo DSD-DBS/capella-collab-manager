@@ -309,7 +309,11 @@ def setup_model(db, project, version):
         db,
         model,
         PostGitModel(
-            path=git_path, entrypoint="", revision="", username="", password=""
+            path=git_path,
+            entrypoint="",
+            revision="main",
+            username="",
+            password="",
         ),
     )
     return model, git_model

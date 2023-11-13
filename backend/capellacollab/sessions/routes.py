@@ -293,61 +293,16 @@ def request_persistent_session(
 
     raise_if_conflicting_persistent_sessions(tool, user)
 
-    response = start_persistent_session(user, tool, version, operator, db)
-
-    return response
-
-
-def start_persistent_session(user, tool, version, operator, db):
-    environment: dict[str, str] = {}
-    volumes: list[operators_models.Volume] = []
-    warnings: list[core_models.Message] = []
-
-    for hook in hooks.get_activated_integration_hooks(tool):
-        hook_env, hook_volumes, hook_warnings = hook.configuration_hook(
-            db=db,
-            user=user,
-            tool_version=version,
-            tool=tool,
-            username=user.name,
-            operator=operator,
-        )
-        environment |= hook_env
-        volumes += hook_volumes
-        warnings += hook_warnings
-
     docker_image = get_image_for_tool_version(db, version.id)
-
-    if tool.integrations and tool.integrations.jupyter:
-        response = start_persistent_jupyter_session(
-            db=db,
-            operator=operator,
-            owner=user.name,
-            tool=tool,
-            version=version,
-            volumes=volumes,
-            environment=environment,
-            docker_image=docker_image,
-        )
-    else:
-        response = start_persistent_guacamole_session(
-            db=db,
-            operator=operator,
-            user=user,
-            owner=user.name,
-            tool=tool,
-            version=version,
-            volumes=volumes,
-            environment=environment,
-            docker_image=docker_image,
-        )
-
-    for hook in hooks.get_activated_integration_hooks(tool):
-        hook.post_session_creation_hook(
-            session_id=response.id, operator=operator, user=user
-        )
-
-    response.warnings = warnings
+    response = start_persistent_session(
+        db=db,
+        user=user,
+        tool=tool,
+        version=version,
+        operator=operator,
+        docker_image=docker_image,
+        environment={},
+    )
 
     return response
 
@@ -391,6 +346,68 @@ def raise_if_conflicting_persistent_sessions(
                     ),
                 },
             )
+
+
+def start_persistent_session(
+    db,
+    user,
+    tool,
+    version,
+    operator,
+    docker_image,
+    environment,
+    session_type="persistent",
+):
+    volumes: list[operators_models.Volume] = []
+    warnings: list[core_models.Message] = []
+
+    for hook in hooks.get_activated_integration_hooks(tool):
+        hook_env, hook_volumes, hook_warnings = hook.configuration_hook(
+            db=db,
+            user=user,
+            tool_version=version,
+            tool=tool,
+            username=user.name,
+            operator=operator,
+        )
+        environment |= hook_env
+        volumes += hook_volumes
+        warnings += hook_warnings
+
+    if tool.integrations and tool.integrations.jupyter:
+        response = start_persistent_jupyter_session(
+            db=db,
+            operator=operator,
+            owner=user.name,
+            tool=tool,
+            version=version,
+            volumes=volumes,
+            environment=environment,
+            docker_image=docker_image,
+            session_type=session_type,
+        )
+    else:
+        response = start_persistent_guacamole_session(
+            db=db,
+            operator=operator,
+            user=user,
+            owner=user.name,
+            tool=tool,
+            version=version,
+            volumes=volumes,
+            environment=environment,
+            docker_image=docker_image,
+            session_type=session_type,
+        )
+
+    for hook in hooks.get_activated_integration_hooks(tool):
+        hook.post_session_creation_hook(
+            session_id=response.id, operator=operator, user=user
+        )
+
+    response.warnings = warnings
+
+    return response
 
 
 def start_persistent_jupyter_session(
@@ -609,7 +626,6 @@ def request_provision_workspace(
     launched_sessions = []
     for model_group in grouped_models:
         model = model_group[0]
-        tool = model.version.tool
         warnings: list[core_models.Message] = []
 
         # Start sessions for each tool and tell it to load models, same as readonly sessions
@@ -631,72 +647,19 @@ def request_provision_workspace(
             )
             continue
 
-        rdp_password = credentials.generate_password(length=64)
+        environment = create_environment(model_group)
+        response = start_persistent_session(
+            db=db,
+            user=user,
+            tool=model.version.tool,
+            version=model.version,
+            operator=operator,
+            docker_image=docker_image,
+            environment=environment,
+            session_type="readonly",
+        )
+        response.warnings += warnings
 
-        environment: dict[str, str] = {
-            "GIT_REPOS_JSON": json.dumps(
-                [
-                    git_model_as_json(
-                        git_model=git_model,
-                        revision=git_model.revision,
-                        deep_clone=False,
-                    )
-                    for m in model_group
-                    for git_model in m.git_models
-                    if git_model.primary
-                ]
-            ),
-            "RMT_PASSWORD": rdp_password,
-            "WORKSPACE_DIR": f"/workspace/projects/{project.slug}/{tool.slug}/{model.version.slug}",
-        }
-
-        volumes: list[operators_models.Volume] = []
-
-        for hook in hooks.get_activated_integration_hooks(tool):
-            hook_env, hook_volumes, hook_warnings = hook.configuration_hook(
-                db=db,
-                user=user,
-                tool_version=model.version,
-                tool=tool,
-                username=user.name,
-                operator=operator,
-            )
-            environment |= hook_env
-            volumes += hook_volumes
-            warnings += hook_warnings
-
-        if tool.integrations and tool.integrations.jupyter:
-            response = start_persistent_jupyter_session(
-                db=db,
-                operator=operator,
-                owner=user.name,
-                tool=tool,
-                version=model.version,
-                volumes=volumes,
-                environment=environment,
-                docker_image=docker_image,
-                session_type="readonly",
-            )
-        else:
-            response = start_persistent_guacamole_session(
-                db=db,
-                operator=operator,
-                user=user,
-                owner=user.name,
-                tool=tool,
-                version=model.version,
-                volumes=volumes,
-                environment=environment,
-                docker_image=docker_image,
-                session_type="readonly",
-            )
-
-        for hook in hooks.get_activated_integration_hooks(tool):
-            hook.post_session_creation_hook(
-                session_id=response.id, operator=operator, user=user
-            )
-
-        response.warnings = warnings
         launched_sessions.append(response)
 
     return launched_sessions
@@ -711,6 +674,30 @@ def group_models_by_tool_version(
             models_, key=lambda m: m.version.id
         )
     )
+
+
+def create_environment(
+    model_group: list[toolmodels_models.DatabaseCapellaModel],
+) -> dict[str, str]:
+    model = model_group[0]
+    rdp_password = credentials.generate_password(length=64)
+
+    return {
+        "GIT_REPOS_JSON": json.dumps(
+            [
+                git_model_as_json(
+                    git_model=git_model,
+                    revision=git_model.revision,
+                    deep_clone=False,
+                )
+                for m in model_group
+                for git_model in m.git_models
+                if git_model.primary
+            ]
+        ),
+        "RMT_PASSWORD": rdp_password,
+        "WORKSPACE_DIR": f"/workspace/projects/{model.project.slug}/{model.version.tool.slug}/{model.version.slug}",
+    }
 
 
 @router.delete("/{session_id}", status_code=204)
