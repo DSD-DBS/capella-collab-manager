@@ -478,10 +478,10 @@ def test_provision_sessions_as_user(
         v for v in get_versions(db) if v.tool.name == "Jupyter"
     )
 
-    capella_model, capella_git_model = setup_git_model_for_user(
+    capella_model, _capella_git_model = setup_git_model_for_user(
         db, user, capella_version
     )
-    jupyter_model, jupyter_git_model = setup_model(
+    jupyter_model, _jupyter_git_model = setup_model(
         db, capella_model.project, jupyter_version
     )
 
@@ -503,8 +503,6 @@ def test_provision_sessions_as_user(
 
     assert response.status_code == 200
     assert len(sessions) == 2
-    session = get_session_by_id(db, sessions[0]["id"])
-
     assert "/capella/readonly:6.0.0" in kubernetes.sessions[0]["docker_image"]
     assert (
         '"revision": "main"'

@@ -606,17 +606,26 @@ def request_provision_workspace(
     for model_group in grouped_models:
         model = model_group[0]
         tool = model.version.tool
+        warnings: list[core_models.Message] = []
 
         # Start sessions for each tool and tell it to load models, same as readonly sessions
         docker_image = get_readonly_image_for_version(model.version)
         if not docker_image:
-            raise exceptions.UnsupportedSessionTypeError(
-                tool, models.WorkspaceType.READONLY
+            warnings.append(
+                core_models.Message(
+                    reason=f"No readonly docker image defined for model {model.name}"
+                )
             )
+            continue
 
         git_model = next((gm for gm in model.git_models if gm.primary), None)
         if not git_model:
-            raise exceptions.MissingPrimaryGitModelError(model)
+            warnings.append(
+                core_models.Message(
+                    reason=f"No primary git model defined for model {model.name}"
+                )
+            )
+            continue
 
         rdp_password = credentials.generate_password(length=64)
 
@@ -624,8 +633,8 @@ def request_provision_workspace(
             "GIT_REPOS_JSON": json.dumps(
                 [
                     git_model_as_json(
-                        git_model=git_model,
-                        revision=git_model.revision,
+                        git_model=m.git_model,
+                        revision=m.git_model.revision,
                         deep_clone=False,
                     )
                     for m in model_group
@@ -634,8 +643,8 @@ def request_provision_workspace(
             "RMT_PASSWORD": rdp_password,
             "WORKSPACE_DIR": f"/workspace/projects/{project.slug}/{tool.slug}/{model.version.slug}",
         }
+
         volumes: list[operators_models.Volume] = []
-        warnings: list[core_models.Message] = []
 
         for hook in hooks.get_activated_integration_hooks(tool):
             hook_env, hook_volumes, hook_warnings = hook.configuration_hook(
@@ -681,6 +690,7 @@ def request_provision_workspace(
                 session_id=response.id, operator=operator, user=user
             )
 
+        response.warnings = warnings
         launched_sessions.append(response)
 
     return launched_sessions
