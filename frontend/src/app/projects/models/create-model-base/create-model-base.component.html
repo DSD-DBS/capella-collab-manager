@@ -4,8 +4,8 @@
  -->
 
 <div class="flex justify-center">
-  <mat-card
-    class="w-[350px] md:min-w-[420px]"
+  <div
+    class="collab-card w-[350px] md:min-w-[420px]"
     *ngIf="projectService.project$ | async"
   >
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -60,5 +60,5 @@
         </button>
       </div>
     </form>
-  </mat-card>
+  </div>
 </div>

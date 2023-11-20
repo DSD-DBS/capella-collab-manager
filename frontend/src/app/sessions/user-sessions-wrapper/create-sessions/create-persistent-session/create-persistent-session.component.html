@@ -3,12 +3,10 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div>
-  <h1>Persistent workspace session</h1>
-</div>
+<h1>Persistent Workspace Session</h1>
 
-<mat-card>
-  <mat-card-content>
+<div class="collab-card">
+  <div>
     <p>
       Sessions with persistent workspaces will store all the changes you make on
       models. Additionally, newly created models will be stored in your personal
@@ -60,10 +58,12 @@
 
       <fieldset>
         <button matInput mat-flat-button color="primary" type="submit">
-          Request a persistent workspace
-          <mat-icon>keyboard_arrow_right</mat-icon>
+          <div class="flex items-center">
+            Request a persistent workspace
+            <mat-icon>keyboard_arrow_right</mat-icon>
+          </div>
         </button>
       </fieldset>
     </form>
-  </mat-card-content>
-</mat-card>
+  </div>
+</div>

@@ -6,12 +6,12 @@
 <div *ngIf="!hasRoute('projects/create')" class="mr-2.5">
   <div class="ml-[20px] flex justify-between">
     <div>
-      <h2>Project members</h2>
+      <h2>Project Members</h2>
     </div>
     <div class="flex flex-wrap gap-2"></div>
   </div>
 </div>
-<mat-card class="w-[312px] max-w-[350px] sm:min-w-[420px]">
+<div class="collab-card w-[312px] max-w-[350px] sm:min-w-[420px]">
   <div class="my-[10px]" *ngIf="!hasRoute('projects/create')">
     <button
       class="flex items-center justify-between"
@@ -23,8 +23,8 @@
     </button>
   </div>
 
-  <h3>New members</h3>
-  <mat-divider [inset]="true"></mat-divider>
+  <h3 class="pl-1">New members</h3>
+  <mat-divider></mat-divider>
   <div class="my-[10px]">
     <button
       class="flex items-center justify-between"
@@ -32,25 +32,23 @@
       mat-stroked-button
     >
       <mat-icon>add</mat-icon>
-      <span> Add user </span>
+      <span> Add User </span>
     </button>
   </div>
 
-  <h3>Current members</h3>
-  <mat-divider [inset]="true"></mat-divider>
-  <mat-form-field class="mb-[-20px] mt-[10px] w-full pr-4" appearance="outline">
+  <h3 class="pl-1">Current members</h3>
+  <mat-divider></mat-divider>
+  <mat-form-field
+    class="mb-[-20px] mt-[10px] w-full pl-1 pr-4"
+    appearance="outline"
+  >
     <mat-label>Search</mat-label>
-    <input
-      [(ngModel)]="search"
-      autocomplete="off"
-      matInput
-      placeholder="Username"
-    />
+    <input [(ngModel)]="search" matInput placeholder="Username" class="mr-2" />
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
   <div class="max-h-[50vh] overflow-y-scroll">
     <div *ngFor="let role of ['manager', 'user', 'administrator']">
-      <div class="mt-2.5 text-lg font-bold text-gray-400">
+      <div class="mt-2.5 pl-1 text-lg font-bold text-gray-400">
         {{ capitalizeFirstLetter(role) }}
       </div>
       <div
@@ -79,7 +77,7 @@
         <div class="ml-1 mr-0 flex items-center">
           <button
             mat-icon-button
-            color="error"
+            color="warn"
             *ngIf="['user', 'manager'].includes(user.role)"
             (click)="removeUserFromProject(user.user)"
             matTooltip="Remove user from project"
@@ -142,4 +140,4 @@
       </div>
     </div>
   </div>
-</mat-card>
+</div>

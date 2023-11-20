@@ -5,7 +5,7 @@
 
 <div class="flex flex-wrap">
   <div>
-    <mat-card>
+    <div class="collab-card">
       <h2 *ngIf="!existing">Add a Team4Capella instance</h2>
       <form [formGroup]="form" (ngSubmit)="submit()">
         <fieldset class="flex flex-wrap gap-2">
@@ -213,7 +213,7 @@
           </button>
         </div>
       </form>
-    </mat-card>
+    </div>
   </div>
 
   <div

@@ -4,8 +4,8 @@
  -->
 
 <div class="wrapper flex justify-center">
-  <mat-card
-    class="w-[350px] sm:min-w-[420px]"
+  <div
+    class="collab-card w-[350px] sm:min-w-[420px]"
     *ngIf="modelService.model$ | async"
   >
     <form [formGroup]="form">
@@ -52,5 +52,5 @@
         Save model
       </button>
     </div>
-  </mat-card>
+  </div>
 </div>

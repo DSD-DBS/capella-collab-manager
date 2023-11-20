@@ -4,8 +4,8 @@
  -->
 
 <div class="flex h-full flex-col">
-  <h2 id="title">Project information</h2>
-  <mat-card class="!flex grow flex-col justify-between">
+  <h2 id="title">Project Information</h2>
+  <div class="collab-card !flex grow flex-col justify-between">
     <div class="flex flex-col">
       <div class="break-all" *ngIf="projectService.project$ | async">
         <h2 id="title">{{ (projectService.project$ | async)!.name }}</h2>
@@ -42,7 +42,7 @@
       </div>
     </div>
     <div
-      class="flex flex-wrap gap-2"
+      class="flex flex-wrap items-center gap-2"
       *ngIf="projectUserService.verifyRole('manager')"
     >
       <span
@@ -73,5 +73,5 @@
         project
       </a>
     </div>
-  </mat-card>
+  </div>
 </div>

@@ -8,29 +8,27 @@
 
   <mat-progress-bar mode="indeterminate" *ngIf="loadingFiles">
   </mat-progress-bar>
-  <div class="progress">
+  <div class="progress" *ngIf="uploadProgress">
     <div>
       <mat-progress-bar
-        color="primary"
         [mode]="uploadProgress === 100 ? 'indeterminate' : 'determinate'"
         [value]="uploadProgress"
-        *ngIf="uploadProgress"
       >
       </mat-progress-bar>
     </div>
     <button mat-button>
-      <mat-icon (click)="reset()" *ngIf="uploadProgress">cancel </mat-icon>
+      <mat-icon (click)="reset()" *ngIf="uploadProgress">Cancel </mat-icon>
     </button>
   </div>
 
-  <mat-card *ngIf="session.download_in_progress">
-    <mat-card-content>
+  <div *ngIf="session.download_in_progress" class="collab-card">
+    <div>
       <p>Your download is being prepared…</p>
-    </mat-card-content>
-    <mat-card-footer>
+    </div>
+    <div>
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    </mat-card-footer>
-  </mat-card>
+    </div>
+  </div>
 
   <mat-checkbox
     *ngIf="!loadingFiles"

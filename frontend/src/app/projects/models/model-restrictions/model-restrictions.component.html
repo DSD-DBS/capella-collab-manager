@@ -4,8 +4,8 @@
  -->
 
 <div class="wrapper flex-center">
-  <mat-card *ngIf="modelService.model$ | async">
-    <mat-card-title>Restrictions for models</mat-card-title>
+  <div class="collab-card" *ngIf="modelService.model$ | async">
+    <h2>Restrictions for models</h2>
     <form
       *ngIf="(modelService.model$ | async)!.tool.integrations.pure_variants"
       [formGroup]="restrictionsForm"
@@ -27,5 +27,5 @@
       This model has no restrictions. Please check the documentation for more
       information.
     </div>
-  </mat-card>
+  </div>
 </div>

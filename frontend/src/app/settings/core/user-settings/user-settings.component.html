@@ -4,8 +4,9 @@
  -->
 
 <div class="flex flex-wrap">
-  <mat-card id="manage-users">
+  <div class="collab-card" id="manage-users">
     <h2>Manage Users</h2>
+
     <mat-form-field id="search" appearance="outline">
       <mat-label>Search</mat-label>
       <input
@@ -16,6 +17,7 @@
       />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
+
     <mat-selection-list
       #userSelectionList
       [multiple]="false"
@@ -29,15 +31,16 @@
         class="mx-1.5 my-2.5 flex justify-between"
       >
         <a [routerLink]="['/user', user.id]" class="flex items-center">
-          <mat-icon mat-list-icon>account_circle</mat-icon>
-          <div class="ml-5">
-            <div mat-line>{{ user.name }}</div>
-            <div mat-line class="text-gray-500">
+          <mat-icon mat-list-icon class="text-center">account_circle</mat-icon>
+          <div class="ml-2">
+            <div mat-line class="text-xs">{{ user.name }}</div>
+            <div mat-line class="text-xs text-gray-500">
               {{ projectUserService.ADVANCED_ROLES[user.role] }}
             </div>
           </div>
         </a>
       </div>
+      >
       <div mat-subheader>Users</div>
       <div
         *ngFor="let user of getUsersByRole('user')"
@@ -73,62 +76,68 @@
           </button>
         </div>
       </div>
-    </mat-selection-list>
 
-    <div *ngIf="selectedUser">
-      <button
-        mat-flat-button
-        color="primary"
-        *ngIf="
-          selectedUser.role === 'administrator' &&
-          selectedUser.id !== userService.user?.id
-        "
-        (click)="downgradeToUser(selectedUser)"
-      >
-        <mat-icon>arrow_downward</mat-icon>
-        Downgrade {{ selectedUser.name }} to User
-      </button>
-      <button
-        mat-flat-button
-        color="primary"
-        (click)="upgradeToAdministrator(selectedUser)"
-        *ngIf="selectedUser.role === 'user'"
-      >
-        <mat-icon>arrow_upward</mat-icon>
-        Upgrade
-        {{ selectedUser.name }} to Administrator
-      </button>
-      <button
-        mat-flat-button
-        color="primary"
-        (click)="deleteUser(selectedUser)"
-        *ngIf="selectedUser.role === 'user'"
-      >
-        <mat-icon>delete</mat-icon>
-        Delete {{ selectedUser.name }}
-      </button>
-    </div>
-  </mat-card>
-  <mat-card class="default">
-    <h2>Create User</h2>
-    In general, users are created automatically when logging in the first time.
-    <br />
-    However, there may be cases where you want to create the user before the
-    first login. <br />
-    <form [formGroup]="createUserFormGroup" class="flex justify-between">
-      <mat-form-field>
-        <mat-label>Username</mat-label>
-        <input matInput formControlName="username" />
-        <mat-error *ngIf="username.getError('required')"
-          >Please enter a username!</mat-error
+      <div *ngIf="selectedUser">
+        <button
+          mat-flat-button
+          color="primary"
+          *ngIf="
+            selectedUser.role === 'administrator' &&
+            selectedUser.id !== userService.user?.id
+          "
+          (click)="downgradeToUser(selectedUser)"
         >
-        <mat-error *ngIf="username.getError('userAlreadyExists')"
-          >The username does already exist!</mat-error
+          <mat-icon>arrow_downward</mat-icon>
+          Downgrade {{ selectedUser.name }} to User
+        </button>
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="upgradeToAdministrator(selectedUser)"
+          *ngIf="selectedUser.role === 'user'"
         >
-      </mat-form-field>
-      <button mat-flat-button (click)="createUser()" color="primary">
-        Create User <mat-icon>keyboard_arrow_right</mat-icon>
-      </button>
-    </form>
-  </mat-card>
+          <mat-icon>arrow_upward</mat-icon>
+          Upgrade
+          {{ selectedUser.name }} to Administrator
+        </button>
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="deleteUser(selectedUser)"
+          *ngIf="selectedUser.role === 'user'"
+        >
+          <mat-icon>delete</mat-icon>
+          Delete {{ selectedUser.name }}
+        </button>
+      </div>
+      <div class="default collab-card h-1/4">
+        <h2>Create User</h2>
+        In general, users are created automatically when logging in the first
+        time.
+        <br />
+        However, there may be cases where you want to create the user before the
+        first login. <br />
+        <form [formGroup]="createUserFormGroup" class="flex justify-between">
+          <mat-form-field>
+            <mat-label>Username</mat-label>
+            <input matInput formControlName="username" />
+            <mat-error *ngIf="username.getError('required')"
+              >Please enter a username!</mat-error
+            >
+            <mat-error *ngIf="username.getError('userAlreadyExists')"
+              >The username does already exist!</mat-error
+            >
+          </mat-form-field>
+          <button
+            mat-flat-button
+            (click)="createUser()"
+            color="primary"
+            class="text-xs"
+          >
+            Create User <mat-icon>keyboard_arrow_right</mat-icon>
+          </button>
+        </form>
+      </div>
+    </mat-selection-list>
+  </div>
 </div>

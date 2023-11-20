@@ -4,8 +4,8 @@
  -->
 
 <div *ngFor="let notice of noticeService.notices">
-  <mat-card [class]="notice.level">
+  <div [class]="notice.level" class="collab-card" style="width: inherit">
     <h3 [innerHTML]="notice.title"></h3>
     <p [innerHTML]="notice.message"></p>
-  </mat-card>
+  </div>
 </div>

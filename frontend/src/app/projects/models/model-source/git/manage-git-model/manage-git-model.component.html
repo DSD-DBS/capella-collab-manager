@@ -7,7 +7,7 @@
   class="flex justify-center"
   *ngIf="(projectService.project$ | async) && (modelService.model$ | async)"
 >
-  <mat-card class="w-[350px] sm:min-w-[420px]">
+  <div class="collab-card w-[350px] sm:min-w-[420px]">
     <form [formGroup]="form">
       <div formGroupName="urls">
         <div *ngIf="availableGitInstances?.length">
@@ -53,17 +53,16 @@
           </mat-form-field>
         </div>
         <div>
-          <mat-card>
-            <mat-card-subtitle>Resulting URL*</mat-card-subtitle>
-            <mat-card-content>
-              <div class="no-text-overflow">
-                <mat-icon
-                  class="mat-icon-position top"
-                  fontIcon="info"
-                ></mat-icon>
-                {{ resultUrl }}
-              </div>
-            </mat-card-content>
+          <div class="collab-card">
+            <h2>Resulting URL*</h2>
+
+            <div class="no-text-overflow">
+              <mat-icon
+                class="mat-icon-position top"
+                fontIcon="info"
+              ></mat-icon>
+              {{ resultUrl }}
+            </div>
             <mat-error
               class="error"
               *ngIf="
@@ -74,7 +73,7 @@
               The resolved URL doesn't match with one of the allowed git
               instances
             </mat-error>
-          </mat-card>
+          </div>
         </div>
       </div>
       <div formGroupName="credentials">
@@ -215,5 +214,5 @@
         </div>
       </ng-template>
     </form>
-  </mat-card>
+  </div>
 </div>

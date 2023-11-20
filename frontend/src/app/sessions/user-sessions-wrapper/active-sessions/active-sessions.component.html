@@ -18,10 +18,13 @@
   }"
 ></ngx-skeleton-loader>
 
-<mat-card *ngIf="(userSessionService.sessions$ | async)?.length === 0">
-  <h2>No active sessions</h2>
+<div
+  *ngIf="(userSessionService.sessions$ | async)?.length === 0"
+  class="mat-card collab-card"
+>
+  <h2 class="text-lg">No active sessions</h2>
   <div>No active sessions for your user are found in our system. <br /></div>
-</mat-card>
+</div>
 
 <div *ngIf="(userSessionService.sessions$ | async)?.length">
   <a
@@ -36,14 +39,17 @@
     <mat-icon>keyboard_arrow_right</mat-icon>
   </a>
 
-  <mat-card *ngFor="let session of userSessionService.sessions$ | async">
+  <div
+    *ngFor="let session of userSessionService.sessions$ | async"
+    class="mat-card collab-card"
+  >
     <div>
       <h2 *ngIf="isPersistentSession(session)">Persistent workspace session</h2>
       <h2 *ngIf="isReadonlySession(session)">Read-only session</h2>
     </div>
-    <mat-card-content class="sessionContent">
+    <div class="sessionContent">
       <h3
-        class="state"
+        class="state text-center"
         [ngClass]="sessionService.beautifyState(session.state).css"
       >
         {{ sessionService.beautifyState(session.state).text }}
@@ -60,14 +66,14 @@
         Tool: {{ session.version!.tool.name }} ({{ session.version!.name }})
       </span>
 
-      <mat-card *ngIf="session.download_in_progress">
+      <div *ngIf="session.download_in_progress" class="mat-card collab-card">
         <mat-card-content>
           <p>Your download is being prepared…</p>
           <p>Depending on the model size, this can take a few minutes.</p>
           <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </mat-card-content>
-      </mat-card>
-    </mat-card-content>
+      </div>
+    </div>
     <div class="flex justify-between">
       <button
         mat-button
@@ -93,5 +99,5 @@
         File browser
       </button>
     </div>
-  </mat-card>
+  </div>
 </div>

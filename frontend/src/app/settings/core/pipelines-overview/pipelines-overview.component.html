@@ -17,7 +17,7 @@
       margin: '10px'
     }"
   ></ngx-skeleton-loader>
-  <mat-card *ngIf="generalHealth">
+  <div class="collab-card" *ngIf="generalHealth">
     <div *ngIf="generalHealth.guacamole" class="success">
       <mat-icon class="mat-icon-position top">check</mat-icon> Guacamole is
       alive
@@ -42,7 +42,7 @@
       <mat-icon class="mat-icon-position top">error</mat-icon> The Kubernetes
       operator is not alive
     </div>
-  </mat-card>
+  </div>
 </div>
 
 <h2>Projects Monitoring</h2>
@@ -60,7 +60,7 @@
     }"
   ></ngx-skeleton-loader>
   <div *ngFor="let projectStatus of projectStatuses">
-    <mat-card class="project-card rounded-md shadow-md">
+    <div class="project-card collab-card rounded-md shadow-md">
       <b class="px-1">Project</b> <br />
       <a
         target="_blank"
@@ -77,7 +77,7 @@
         <mat-icon class="mat-icon-position top">check</mat-icon>
         All checks were successful.
       </div>
-    </mat-card>
+    </div>
   </div>
 </div>
 
@@ -100,7 +100,7 @@
     ></ngx-skeleton-loader>
   </div>
   <div *ngFor="let modelStatus of toolmodelStatuses">
-    <mat-card class="models-card">
+    <div class="models-card collab-card">
       <b>Project</b> <br />
       <a
         target="_blank"
@@ -231,6 +231,6 @@
           {{ warning }}
         </div>
       </div>
-    </mat-card>
+    </div>
   </div>
 </div>

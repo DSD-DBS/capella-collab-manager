@@ -5,14 +5,14 @@
 
 <article class="flex flex-wrap">
   <a [routerLink]="['create']" class="m-2.5">
-    <mat-card matRipple class="mat-card-overview new m-0">
+    <div matRipple class="mat-card-overview new collab-card !m-0">
       <div class="content">
-        Add a tool <br />
+        Add a Tool <br />
         <div class="icon">
           <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
         </div>
       </div>
-    </mat-card>
+    </div>
   </a>
 
   <a
@@ -20,7 +20,7 @@
     [routerLink]="['..', 'tool', tool.id]"
     class="m-2.5"
   >
-    <mat-card matRipple class="mat-card-overview m-0">
+    <div matRipple class="mat-card-overview collab-card !m-0">
       <div class="header">{{ tool.name }}</div>
       <div class="content" *ngIf="tools[tool.id]">
         <mat-icon class="mat-icon-position top">history</mat-icon>
@@ -33,6 +33,6 @@
         ><b> Available types:</b>
         {{ mapToolVersionOrNatureToName(tools[tool.id]["natures"]).join(", ") }}
       </div>
-    </mat-card>
+    </div>
   </a>
 </article>

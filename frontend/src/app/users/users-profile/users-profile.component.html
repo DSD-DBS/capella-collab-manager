@@ -19,7 +19,7 @@
   </div>
 </div>
 <div *ngIf="userService.user?.role === 'administrator'">
-  <mat-card class="w-fit max-w-[95vw]">
+  <div class="collab-card w-fit max-w-[95vw]">
     <h2>User information</h2>
     This section is only visible to administrators.
     <div *ngIf="user?.last_login">
@@ -91,7 +91,7 @@
       >
       </mat-paginator>
     </div>
-  </mat-card>
+  </div>
 </div>
 <div class="flex items-start">
   <div class="ml-4 mt-5 grow">
@@ -103,12 +103,12 @@
           <ng-container
             *ngIf="(commonProjects$ | async)?.length; else elseBlock"
           >
-            <mat-card
+            <div
               *ngFor="let project of commonProjects$ | async"
-              class="!ml-0 cursor-pointer"
+              class="collab-card !ml-0 cursor-pointer"
               [routerLink]="['/project', project.slug]"
             >
-              <mat-card-content>
+              <div>
                 <b class="line-clamp-1">{{ project.name }}</b
                 ><br />
                 @if (project.description) {
@@ -120,8 +120,8 @@
                     >No description provided</i
                   >
                 }
-              </mat-card-content>
-            </mat-card>
+              </div>
+            </div>
           </ng-container>
           <ng-template #elseBlock class="col-span-2"
             ><br />You do not have any common projects.</ng-template

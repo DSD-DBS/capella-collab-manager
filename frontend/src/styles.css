@@ -4,13 +4,21 @@
  */
 
 /* You can add global styles to this file, and also import other style files */
+
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+* {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
 html,
 body {
   height: 100%;
+  font-size: small;
 }
 
 html {
@@ -28,6 +36,7 @@ a {
 
 h2 {
   margin: 0px !important;
+  font-size: medium;
 }
 
 .dialog {
@@ -116,6 +125,7 @@ button.success {
 
 h1 {
   margin: 10px;
+  font-size: large;
 }
 
 button {
@@ -185,6 +195,14 @@ fieldset > :not(.field-separator) {
 }
 
 /*
+Own collab manager card styles
+*/
+
+.collab-card {
+  @apply rounded-md p-3 shadow-md;
+}
+
+/*
 Angular Material Card Styles
 */
 
@@ -241,6 +259,11 @@ Angular Material Card Styles
 .form-field-default {
   width: 100%;
   max-width: 85vw;
+}
+
+/* Added due to vertical line in mat-form-field - for more information read: https://github.com/tailwindlabs/tailwindcss/discussions/9993 */
+.mdc-notched-outline__notch {
+  border-right: none !important;
 }
 
 /*

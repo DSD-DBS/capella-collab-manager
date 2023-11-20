@@ -2,10 +2,9 @@
  ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
-<mat-card class="default">
-  <div class="flex justify-between">
-    <mat-card-title><h2>Tool Versions</h2></mat-card-title>
-  </div>
+<div class="default collab-card">
+  <h2 class="text-xl">Tool Versions</h2>
+
   <form [formGroup]="toolVersionForm" #formDirective="ngForm">
     <mat-form-field appearance="fill">
       <mat-label>Version name</mat-label>
@@ -74,4 +73,4 @@
       </button>
     </div>
   </div>
-</mat-card>
+</div>

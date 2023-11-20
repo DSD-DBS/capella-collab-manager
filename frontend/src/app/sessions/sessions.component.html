@@ -3,14 +3,16 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<mat-card class="m-2.5 mb-12 bg-[#010035] text-center text-white">
+<div class="collab-card m-2.5 mb-12 bg-[#010035] text-center text-white">
   <span id="welcome">Welcome to the</span>
-  <h1>Capella Collaboration Manager</h1>
-</mat-card>
+  <h1 class="!text-3xl">Capella Collaboration Manager</h1>
+</div>
 
 <app-user-sessions-wrapper>
-  <div class="flex flex-wrap justify-around gap-5">
-    <app-create-persistent-session></app-create-persistent-session>
-    <app-active-sessions></app-active-sessions>
+  <div class="flex flex-wrap justify-around">
+    <app-create-persistent-session
+      class="w-[450px]"
+    ></app-create-persistent-session>
+    <app-active-sessions class="w-[450px]"></app-active-sessions>
   </div>
 </app-user-sessions-wrapper>

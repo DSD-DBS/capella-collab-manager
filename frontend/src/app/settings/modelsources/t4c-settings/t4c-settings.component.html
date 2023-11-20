@@ -5,14 +5,14 @@
 
 <article class="flex flex-wrap">
   <a [routerLink]="['create']" class="m-2.5">
-    <mat-card matRipple class="mat-card-overview new m-0">
+    <div matRipple class="mat-card-overview new collab-card m-0">
       <div class="content">
         Add an instance <br />
         <div class="icon">
           <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
         </div>
       </div>
-    </mat-card>
+    </div>
   </a>
 
   <a
@@ -20,9 +20,9 @@
     [routerLink]="['instance', instance.id]"
     class="m-2.5"
   >
-    <mat-card
+    <div
       matRipple
-      class="mat-card-overview m-0"
+      class="mat-card-overview collab-card m-0"
       [ngClass]="{ 'bg-gray-300': instance.is_archived }"
     >
       <div class="header">{{ instance.name }}</div>
@@ -40,6 +40,6 @@
       >
         Archived
       </div>
-    </mat-card>
+    </div>
   </a>
 </article>

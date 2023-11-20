@@ -10,14 +10,14 @@
   <h1 class="!m-separator">Git repositories</h1>
   <div class="flex flex-wrap">
     <a class="m-m-card" [routerLink]="['..', 'git-model', 'create']">
-      <mat-card matRipple class="mat-card-overview new m-0">
+      <div matRipple class="mat-card-overview new collab-card">
         <div class="content">
           Use existing repository <br />
           <div class="icon">
             <app-mat-icon size="70px">link</app-mat-icon>
           </div>
         </div>
-      </mat-card>
+      </div>
     </a>
 
     <app-mat-card-overview-skeleton-loader
@@ -30,7 +30,7 @@
       *ngFor="let gitModel of gitModelService.gitModels$ | async"
       [routerLink]="['..', 'git-model', gitModel.id]"
     >
-      <mat-card matRipple class="mat-card-overview m-0">
+      <div matRipple class="mat-card-overview collab-card">
         <div class="header">Integration {{ gitModel.id }}</div>
         <div class="content">
           <div>Path: {{ gitModel.path }}</div>
@@ -40,7 +40,7 @@
           <div>Username: {{ gitModel.username }}</div>
           <div>Password set: {{ gitModel.password ? "True" : "False" }}</div>
         </div>
-      </mat-card>
+      </div>
     </a>
   </div>
   <div
@@ -52,25 +52,25 @@
     <h1 class="!m-separator">TeamForCapella repositories</h1>
     <div class="flex flex-wrap">
       <a class="m-m-card" [routerLink]="['..', 't4c-model', 'create-existing']">
-        <mat-card matRipple class="mat-card-overview new m-0">
+        <div matRipple class="mat-card-overview new collab-card">
           <div class="content">
             Use existing repository <br />
             <div class="icon">
               <app-mat-icon size="70px">link</app-mat-icon>
             </div>
           </div>
-        </mat-card>
+        </div>
       </a>
 
       <a class="m-m-card" [routerLink]="['..', 't4c-model', 'create-new']">
-        <mat-card matRipple class="mat-card-overview new m-0">
+        <div matRipple class="mat-card-overview new collab-card">
           <div class="content">
             Create new repository <br />
             <div class="icon">
               <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
             </div>
           </div>
-        </mat-card>
+        </div>
       </a>
 
       <a
@@ -78,14 +78,14 @@
         *ngFor="let t4cModel of t4cModelService.t4cModels$ | async"
         [routerLink]="['..', 't4c-model', t4cModel.id]"
       >
-        <mat-card matRipple class="mat-card-overview m-0">
+        <div matRipple class="mat-card-overview collab-card">
           <div class="header">Integration {{ t4cModel.id }}</div>
           <div class="content">
             <div>Instance: {{ t4cModel.repository.instance.name }}</div>
             <div>Repository: {{ t4cModel.repository.name }}</div>
             <div>T4C model name: {{ t4cModel.name }}</div>
           </div>
-        </mat-card>
+        </div>
       </a>
       <app-mat-card-overview-skeleton-loader
         [rows]="1"

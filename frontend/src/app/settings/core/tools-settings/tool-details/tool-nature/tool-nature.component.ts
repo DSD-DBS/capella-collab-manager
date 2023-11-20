@@ -12,7 +12,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { MatLegacySelectionList as MatSelectionList } from '@angular/material/legacy-list';
+import { MatSelectionList } from '@angular/material/list';
 import { finalize, tap } from 'rxjs';
 import { Tool, ToolService, ToolNature } from '../../tool.service';
 

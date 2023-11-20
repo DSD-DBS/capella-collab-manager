@@ -7,7 +7,7 @@
   *ngIf="(projectService.project$ | async) && (modelService.model$ | async)"
   class="wrapper flex justify-center"
 >
-  <mat-card class="w-[350px] sm:min-w-[420px]">
+  <div class="collab-card w-[350px] sm:min-w-[420px]">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <fieldset>
         <app-form-field-skeleton-loader
@@ -107,5 +107,5 @@
         </button>
       </div>
     </form>
-  </mat-card>
+  </div>
 </div>

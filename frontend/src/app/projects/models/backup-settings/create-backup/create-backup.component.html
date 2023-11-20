@@ -7,7 +7,7 @@
   <h1>Create a new backup pipeline</h1>
   <form [formGroup]="createBackupForm" *ngIf="t4cAndGitModelExists">
     <div class="flex flex-row flex-wrap items-center">
-      <mat-card>
+      <div class="collab-card">
         Please select a T4C model:
         <mat-selection-list formControlName="t4cmodel" [multiple]="false">
           <mat-list-option
@@ -22,9 +22,9 @@
             </div>
           </mat-list-option>
         </mat-selection-list>
-      </mat-card>
+      </div>
       <mat-icon>arrow_right_alt</mat-icon>
-      <mat-card>
+      <div class="collab-card">
         Please select a Git model:
         <mat-selection-list formControlName="gitmodel" [multiple]="false">
           <mat-list-option
@@ -37,7 +37,7 @@
             </div>
           </mat-list-option>
         </mat-selection-list>
-      </mat-card>
+      </div>
     </div>
     <hr />
     <div>Please specify the configuration for your backup job:</div>
