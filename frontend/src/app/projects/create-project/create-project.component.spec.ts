@@ -35,6 +35,7 @@ import {
   Project,
   ProjectService,
   ProjectVisibility,
+  ProjectVisibilityDescriptions,
 } from '../service/project.service';
 import { CreateProjectComponent } from './create-project.component';
 
@@ -125,10 +126,10 @@ describe('CreateProjectComponent', () => {
       };
     },
     getProjectVisibilityDescription(visibility: ProjectVisibility): string {
-      return ProjectVisibility[visibility];
+      return ProjectVisibilityDescriptions[visibility];
     },
     getAvailableVisibilities(): ProjectVisibility[] {
-      return Object.keys(ProjectVisibility) as ProjectVisibility[];
+      return Object.keys(ProjectVisibilityDescriptions) as ProjectVisibility[];
     },
   };
 
