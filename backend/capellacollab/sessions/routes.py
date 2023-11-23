@@ -590,37 +590,7 @@ def request_provision_workspace(
 ):
     log.info("Provisioning workspace for user %s", user.name)
 
-    if not body.models:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={
-                "err_code": "NO_MODELS",
-                "reason": "No models have been provided in this request for a read-only session.",
-            },
-        )
-
-    models_ = [
-        toolmodels_injectables.get_existing_capella_model(
-            m.toolmodel_slug, project, db
-        )
-        for m in body.models
-    ]
-
-    # Check if we already have running sessions for this project
-    if any(
-        crud.exist_readonly_session_for_user_project_version(
-            db, user, project, m.version
-        )
-        for m in models_
-    ):
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "err_code": "EXISTING_SESSION",
-                "reason": f"You already have a session for {project.name}. Close the existing session(s) before starting a new one.",
-            },
-        )
-
+    models_ = get_and_validate_models(body, user, project, db)
     grouped_models = group_models_by_tool_version(models_)
 
     launched_sessions = []
@@ -663,6 +633,45 @@ def request_provision_workspace(
         launched_sessions.append(response)
 
     return launched_sessions
+
+
+def get_and_validate_models(
+    body: models.PostProvisionWorkspaceRequest,
+    user: users_models.DatabaseUser,
+    project: projects_models.DatabaseProject,
+    db: orm.Session,
+) -> list[toolmodels_models.DatabaseCapellaModel]:
+    if not body.models:
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "err_code": "NO_MODELS",
+                "reason": "No models have been provided in this request for a read-only session.",
+            },
+        )
+
+    models_ = [
+        toolmodels_injectables.get_existing_capella_model(
+            m.toolmodel_slug, project, db
+        )
+        for m in body.models
+    ]
+
+    if any(
+        crud.exist_readonly_session_for_user_project_version(
+            db, user, project, m.version
+        )
+        for m in models_
+    ):
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "err_code": "EXISTING_SESSION",
+                "reason": f"You already have a session for {project.name}. Close the existing session(s) before starting a new one.",
+            },
+        )
+
+    return models_
 
 
 def group_models_by_tool_version(
