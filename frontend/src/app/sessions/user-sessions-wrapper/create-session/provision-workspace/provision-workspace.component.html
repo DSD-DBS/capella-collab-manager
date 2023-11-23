@@ -21,7 +21,7 @@
             mat-flat-button
             color="primary"
             type="submit"
-            [disabled]="!projectSlug || !models"
+            [disabled]="!projectSlug || !models || sessionsRequested"
           >
             Start this training
             <mat-icon>keyboard_arrow_right</mat-icon>

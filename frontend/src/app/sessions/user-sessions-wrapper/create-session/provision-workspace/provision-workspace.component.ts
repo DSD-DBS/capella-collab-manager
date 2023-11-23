@@ -30,6 +30,8 @@ export class ProvisionWorkspaceComponent implements OnInit {
     persistentWorkspace: this.fb.control(false),
   });
 
+  public sessionsRequested = false;
+
   constructor(
     private userSessionService: UserSessionService,
     private projectService: ProjectService,
@@ -56,6 +58,7 @@ export class ProvisionWorkspaceComponent implements OnInit {
 
   requestSessions(): void {
     if (this.projectSlug && this.models) {
+      this.sessionsRequested = true;
       this.sessionService
         .provisionWorkspace(
           this.projectSlug,
