@@ -3,9 +3,8 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<!-- prettier-ignore-start -->
-
 ??? question "My Capella crashed. What should I do?"
+
     Capella can crash for many different reasons. Many issues are issues with
     Eclipse Capella itself, so we try to escalate issues there. Bugs can be
     reported to the Eclipse Capella team directly in the
@@ -53,4 +52,11 @@
     please recreate your session to get a valid session password for the models
     of the required project.
 
-<!-- prettier-ignore-end -->
+<!-- prettier-ignore -->
+??? question "I can't use the `Control` key for the secondary/right-click on macOS"
+
+    Please use an external mouse or use the trackpad gesture (click with two
+    fingers on the trackpad).
+
+    The sessions run on Linux and the `Control` key can't be mapped properly
+    via the remote desktop protocol.
