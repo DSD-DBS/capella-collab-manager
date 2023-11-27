@@ -3,6 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-.height {
-  height: calc(100vh - 2vh - 65px - 110px);
+.iframe-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  z-index: 40;
 }

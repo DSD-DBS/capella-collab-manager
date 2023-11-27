@@ -3,11 +3,15 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div *ngIf="!selectedSessions.length">
-  <span
-    >Please select the sessions that you'd like to open in the session
-    viewer:</span
-  >
+<div
+  *ngIf="
+    (sessionViewerService.sessions$ | async) === undefined ||
+    (sessionViewerService.sessions$ | async)?.length === 0
+  "
+>
+  <span>
+    Please select the sessions that you'd like to open in the session viewer:
+  </span>
   <div *ngIf="cachedSessions && !cachedSessions.length">
     No sessions found. Please create a session in the 'Sessions' tab first.
   </div>
@@ -33,7 +37,7 @@
       matTooltip="Please wait until the session is running. You can check the status in the 'Sessions' tab."
       [matTooltipDisabled]="sessionService.beautifyState(session.state).success"
       [value]="session.id"
-      (change)="changeSessionSelection($event, session)"
+      [(ngModel)]="session.checked"
       *ngFor="let session of cachedSessions"
       >{{ session.version?.tool?.name }} {{ session.version?.name }},
       {{ session.type
@@ -50,6 +54,15 @@
     this possible.
   </div>
   <div class="mt-2">
+    <mat-radio-group [(ngModel)]="selectedWindowType">
+      <mat-radio-button value="floating">
+        Floating window manager
+      </mat-radio-button>
+      <mat-radio-button value="tiling">Tiling window manager</mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+  <div class="mt-2">
     <button
       mat-raised-button
       (click)="selectSessions()"
@@ -62,72 +75,36 @@
   </div>
 </div>
 
-<div class="flex gap-0.5" *ngIf="selectedSessions.length">
+<ng-container *ngIf="sessionViewerService.sessions$ | async as viewerSessions">
   <div
-    class="flex w-full flex-col active:z-30"
+    class="select-none"
+    *ngIf="viewerSessions.length"
     [ngClass]="{
-      'z-20': session.focused,
-      'z-10': !session.focused,
       height: (fullscreenService.isFullscreen$ | async) === false,
       'h-screen': fullscreenService.isFullscreen$ | async
     }"
-    (click)="focusSession(session)"
-    *ngFor="let session of selectedSessions"
-    cdkDrag
-    (cdkDragStarted)="dragStart()"
-    (cdkDragEnded)="dragStop()"
   >
-    <div
-      class="flex cursor-grab items-center justify-between gap-2 rounded-t p-1 active:cursor-grabbing"
-      [ngClass]="session.focused ? 'bg-slate-100' : 'bg-slate-300'"
-      cdkDragHandle
-    >
-      <div class="flex items-center gap-2">
-        <mat-icon>control_camera</mat-icon>
-        <span>
-          {{ session.version?.tool?.name }} {{ session.version?.name }},
-          {{ session.type }}
-          <span *ngIf="session.type === 'readonly'"
-            >(project {{ session.project!.name }})</span
-          >
-        </span>
-      </div>
-      <div *ngIf="session.focused" class="flex items-center gap-2">
-        <span>Focused</span><mat-icon>phonelink</mat-icon>
-      </div>
-      <div *ngIf="!session.focused" class="flex items-center gap-2">
-        <span>Not focused</span>
-        <mat-icon>phonelink_off</mat-icon>
-      </div>
-    </div>
+    <app-floating-window-manager
+      *ngIf="isFloatingWindowManager; else tilingWindow"
+    />
 
-    <div class="relative grow">
-      <div
-        [ngClass]="session.focused ? '' : 'iframe-overlay bg-black opacity-10'"
-      ></div>
-      <div [ngClass]="draggingActive ? 'iframe-overlay' : ''"></div>
-      <iframe
-        [id]="'session-' + session.id"
-        [src]="session.safeResourceURL"
-        class="h-full w-full"
-        allow="clipboard-read; clipboard-write"
-      >
-      </iframe>
-    </div>
+    <ng-template #tilingWindow>
+      <app-tiling-window-manager *ngIf="isTilingWindowManager" />
+    </ng-template>
   </div>
-</div>
 
-<div class="fixed bottom-4 right-4 z-50">
-  <button
-    mat-fab
-    color="primary"
-    (click)="fullscreenService.toggleFullscreen()"
-  >
-    <mat-icon *ngIf="(fullscreenService.isFullscreen$ | async) === false"
-      >fullscreen</mat-icon
+  <div class="fixed bottom-4 right-4 z-50">
+    <button
+      mat-fab
+      color="primary"
+      (click)="fullscreenService.toggleFullscreen()"
     >
-    <mat-icon *ngIf="fullscreenService.isFullscreen$ | async"
-      >fullscreen_exit</mat-icon
-    >
-  </button>
-</div>
+      <mat-icon *ngIf="(fullscreenService.isFullscreen$ | async) === false">
+        fullscreen
+      </mat-icon>
+      <mat-icon *ngIf="fullscreenService.isFullscreen$ | async">
+        fullscreen_exit
+      </mat-icon>
+    </button>
+  </div>
+</ng-container>

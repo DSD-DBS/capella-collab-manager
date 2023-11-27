@@ -3,17 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, HostListener, OnInit } from '@angular/core';
-import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, take } from 'rxjs';
-import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { Session } from 'src/app/schemes';
-import { GuacamoleService } from 'src/app/services/guacamole/guacamole.service';
 import { FullscreenService } from 'src/app/sessions/service/fullscreen.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
+import { SessionViewerService } from './session-viewer.service';
 
 @Component({
   selector: 'app-session',
@@ -21,38 +18,42 @@ import { UserSessionService } from 'src/app/sessions/service/user-session.servic
   styleUrls: ['./session.component.css'],
 })
 @UntilDestroy()
-export class SessionComponent implements OnInit {
+export class SessionComponent implements OnInit, OnDestroy {
   cachedSessions?: CachedSession[] = undefined;
-  selectedSessions: Session[] = [];
-  private debounceTimer?: number;
 
-  draggingActive = false;
+  selectedWindowType: string = 'floating';
 
   constructor(
     public userSessionService: UserSessionService,
     public sessionService: SessionService,
+    public sessionViewerService: SessionViewerService,
     public fullscreenService: FullscreenService,
-    private guacamoleService: GuacamoleService,
-    private localStorageService: LocalStorageService,
-    private domSanitizer: DomSanitizer,
   ) {
     this.userSessionService.loadSessions();
+
+    this.fullscreenService.isFullscreen$
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.sessionViewerService.resizeSessions());
   }
 
   get checkedSessions(): undefined | CachedSession[] {
     return this.cachedSessions?.filter((session) => session.checked);
   }
 
-  changeSessionSelection(event: MatCheckboxChange, session: CachedSession) {
-    session.checked = event.checked;
+  get isTilingWindowManager(): boolean {
+    return this.selectedWindowType === 'tiling';
+  }
+
+  get isFloatingWindowManager(): boolean {
+    return this.selectedWindowType === 'floating';
   }
 
   ngOnInit(): void {
     this.initializeCachedSessions();
+  }
 
-    this.fullscreenService.isFullscreen$
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.resizeSessions());
+  ngOnDestroy(): void {
+    this.sessionViewerService.clearSessions();
   }
 
   initializeCachedSessions() {
@@ -71,76 +72,12 @@ export class SessionComponent implements OnInit {
 
   selectSessions() {
     this.checkedSessions?.forEach((session) => {
-      session.focused = false;
       if (session.jupyter_uri) {
-        session.safeResourceURL =
-          this.domSanitizer.bypassSecurityTrustResourceUrl(session.jupyter_uri);
-        session.reloadToResize = false;
-        this.selectedSessions.push(session);
+        this.sessionViewerService.pushJupyterSession(session);
       } else {
-        this.guacamoleService.getGucamoleToken(session?.id).subscribe((res) => {
-          this.localStorageService.setValue('GUAC_AUTH', res.token);
-          session.safeResourceURL =
-            this.domSanitizer.bypassSecurityTrustResourceUrl(res.url);
-          session.reloadToResize = true;
-          this.selectedSessions.push(session);
-        });
+        this.sessionViewerService.pushGuacamoleSession(session);
       }
     });
-  }
-
-  focusSession(session: Session) {
-    this.unfocusSession(session);
-
-    document.getElementById('session-' + session.id)?.focus();
-    session.focused = true;
-  }
-
-  unfocusSession(focusedSession: Session) {
-    this.selectedSessions
-      .filter((session) => session !== focusedSession)
-      .map((session) => {
-        session.focused = false;
-      });
-  }
-
-  dragStart() {
-    this.draggingActive = true;
-  }
-
-  dragStop() {
-    this.draggingActive = false;
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    window.clearTimeout(this.debounceTimer);
-
-    this.debounceTimer = window.setTimeout(() => {
-      this.resizeSessions();
-    }, 250);
-  }
-
-  resizeSessions() {
-    Array.from(document.getElementsByTagName('iframe')).forEach((iframe) => {
-      const session = this.selectedSessions.find(
-        (session) => 'session-' + session.id === iframe.id,
-      );
-
-      if (session?.reloadToResize) {
-        this.reloadIFrame(iframe);
-      }
-    });
-  }
-
-  reloadIFrame(iframe: HTMLIFrameElement) {
-    const src = iframe.src;
-
-    iframe.removeAttribute('src');
-
-    setTimeout(() => {
-      iframe.src = src;
-    }, 100);
   }
 }
 
