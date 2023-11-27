@@ -7,7 +7,7 @@
   <mat-card id="metadata-card">
     <h2 id="title">Description</h2>
     <form [formGroup]="form">
-      <fieldset>
+      <div>
         <mat-form-field appearance="fill">
           <mat-label>Name</mat-label>
           <input matInput formControlName="name" />
@@ -24,8 +24,8 @@
             references.</mat-hint
           >
         </mat-form-field>
-      </fieldset>
-      <fieldset>
+      </div>
+      <div>
         <mat-form-field appearance="fill">
           <mat-label>Description</mat-label>
           <textarea
@@ -38,8 +38,8 @@
             "
           ></textarea>
         </mat-form-field>
-      </fieldset>
-      <fieldset>
+      </div>
+      <div>
         <div class="flex flex-col">
           <h3>Project visibility</h3>
           <mat-radio-group formControlName="visibility" class="flex flex-col">
@@ -53,8 +53,8 @@
             </mat-radio-button>
           </mat-radio-group>
         </div>
-      </fieldset>
-      <fieldset>
+      </div>
+      <div>
         <div class="flex flex-col">
           <h3>Project type</h3>
           <mat-radio-group formControlName="type" class="flex flex-col">
@@ -68,7 +68,7 @@
             </mat-radio-button>
           </mat-radio-group>
         </div>
-      </fieldset>
+      </div>
     </form>
     <div class="flex justify-between">
       <span
