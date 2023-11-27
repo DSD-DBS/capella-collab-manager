@@ -31,7 +31,7 @@ Methods for Modeling System of Systems with Capella:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/WCC_iHyChKQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 If you'd like to learn how Capella works you may want to read through our
-[guide for meta-model exploration](https://dsd-dbs.github.io/py-capellambse/start/how-to-explore-capella-mm.html)
+[guide for meta-model exploration](https://dsd-dbs.github.io/py-capellambse/development/how-to-explore-capella-mm.html)
 
 ## Deriving Model-based Products
 

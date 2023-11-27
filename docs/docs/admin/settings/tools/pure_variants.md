@@ -17,7 +17,7 @@
 
 <!-- prettier-ignore -->
 !!! warning
-    The setup can only be performed by administrators. If you want to get access as user, please refer to [Get access to the `pure::variants` license as user](#get-access-to-the-purevariants-license-as-user)
+    The setup can only be performed by administrators. If a user wants to get access, please refer to [Get access to the `pure::variants` license as user](#get-access-to-the-purevariants-license-as-user)
 
 ### Set License Server URL and Upload `license.lic`
 

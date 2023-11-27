@@ -22,7 +22,6 @@ nav:
           - Roles: user/projects/roles.md
           - Models:
               - Create a Model: user/projects/models/create.md
-              - Update a Model to a Newer Version: user/projects/models/update.md
               - Update Model Metadata: user/projects/models/metadata.md
               - Model Sources:
                   - TeamForCapella: user/projects/models/sources/t4c.md
@@ -50,19 +49,10 @@ nav:
           - Troubleshooting: user/sessions/troubleshooting.md
           - Jupyter:
               - Collaboration: user/sessions/jupyter/collaboration.md
-      - Settings:
-          - Monitoring: user/settings/monitoring.md
-          - Tools:
-              - General: user/settings/tools/index.md
-              - pure::variants: user/settings/tools/pure_variants.md
-          - Model sources:
-              - Git: user/settings/model-sources/git.md
-              - T4C: user/settings/model-sources/t4c.md
-          - Alerts:
-              - Create an Alert: user/alerts/create.md
       - Tools:
           - Capella:
               - Introduction: user/tools/capella/introduction.md
+              - Update a Capella Model to a Newer Version: user/tools/capella/update.md
               - Co-working Methods: user/tools/capella/t4c-git-compare.md
               - TeamForCapella:
                   - Import a Model from TeamForCapella: user/tools/capella/teamforcapella/import/import-from-t4c.md
@@ -78,6 +68,16 @@ nav:
       - Installation: admin/installation.md
       - Uninstallation: admin/uninstallation.md
       - Getting started: admin/getting_started/getting_started.md
+      - Settings:
+          - Monitoring: admin/settings/monitoring.md
+          - Tools:
+              - General: admin/settings/tools/index.md
+              - pure::variants: admin/settings/tools/pure_variants.md
+          - Model sources:
+              - Git: admin/settings/model-sources/git.md
+              - T4C: admin/settings/model-sources/t4c.md
+          - Alerts:
+              - Create an Alert: admin/alerts/create.md
       - CI templates:
           - Gitlab CI/CD:
               - Image builder: admin/ci-templates/gitlab/image-builder.md

@@ -101,6 +101,12 @@ name for the repository and project.
 
 ## Step 4: Metadata
 
-This is an important step. Here, you can select the version and the model
-nature of your tool. If you don't select any version, the functionality will be
-restricted. You will not be able to setup backups or create read-only sessions.
+This is an important step.
+
+Here, you can select the version and the model nature of your tool. If you
+don't select any version, the functionality will be restricted. You will not be
+able to setup backups or create read-only sessions.
+
+If suitable for your project, select one of the latest versions of Capella.
+Older versions may be removed in the future. Make sure your model is up to date
+and in case you update it in time.
