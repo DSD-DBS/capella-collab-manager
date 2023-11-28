@@ -59,6 +59,7 @@ export class TilingWindowManagerComponent implements OnInit {
   }
 
   onMouseDown(event: MouseEvent, index: number): void {
+    this.sessionViewerService.disableAllSessions();
     const leftSession = this.getSessionByIndex(index);
     const rightSession = this.getSessionByIndex(index + 1);
 
@@ -91,6 +92,8 @@ export class TilingWindowManagerComponent implements OnInit {
   @HostListener('window:mouseup')
   onMouseUp(): void {
     if (this.isValidResizeState(this.resizeState)) {
+      // Only trigger if resize is active
+      this.sessionViewerService.enableAllSessions();
       this.resizeState = {};
       this.sessionViewerService.resizeSessions();
     }

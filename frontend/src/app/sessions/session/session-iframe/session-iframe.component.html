@@ -10,16 +10,19 @@
   ></div>
   <iframe
     [title]="
-      (session.version?.tool?.name ?? 'unknown tool name') +
-      '-' +
-      (session.version?.tool?.name ?? 'unknown tool name') +
-      '-' +
+      (session.version?.tool?.name ?? 'Unknown tool') +
+      ', version' +
+      (session.version?.name ?? 'unknown version') +
+      ', ' +
       session.type
     "
     [id]="'session-' + session.id"
     [src]="session.safeResourceURL"
     class="h-full w-full"
     allow="clipboard-read; clipboard-write"
+    [ngClass]="{
+      'pointer-events-none': session.disabled
+    }"
   >
   </iframe>
 </div>
