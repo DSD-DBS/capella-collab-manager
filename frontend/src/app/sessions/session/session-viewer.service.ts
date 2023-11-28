@@ -74,6 +74,24 @@ export class SessionViewerService {
     this._sessions.next(updatedSessions);
   }
 
+  disableAllSessions(): void {
+    this._sessions.next(
+      this._sessions.value?.map((curSession) => ({
+        ...curSession,
+        disabled: true,
+      })),
+    );
+  }
+
+  enableAllSessions(): void {
+    this._sessions.next(
+      this._sessions.value?.map((curSession) => ({
+        ...curSession,
+        disabled: false,
+      })),
+    );
+  }
+
   resizeSessions(): void {
     document.querySelectorAll('iframe').forEach((iframe) => {
       const session = this._sessions.value?.find(
@@ -137,4 +155,5 @@ export type ViewerSession = Session & {
   focused: boolean;
   reloadToResize: boolean;
   fullscreen: boolean;
+  disabled: boolean;
 };

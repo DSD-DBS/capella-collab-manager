@@ -14,8 +14,6 @@ import { SessionViewerService, ViewerSession } from '../session-viewer.service';
 })
 @UntilDestroy()
 export class FloatingWindowManagerComponent implements OnInit {
-  draggingActive = false;
-
   constructor(public sessionViewerService: SessionViewerService) {}
 
   ngOnInit(): void {
@@ -25,11 +23,11 @@ export class FloatingWindowManagerComponent implements OnInit {
   }
 
   dragStart(): void {
-    this.draggingActive = true;
+    this.sessionViewerService.disableAllSessions();
   }
 
   dragStop(): void {
-    this.draggingActive = false;
+    this.sessionViewerService.enableAllSessions();
   }
 
   trackBySessionId(_: number, session: ViewerSession): string {
