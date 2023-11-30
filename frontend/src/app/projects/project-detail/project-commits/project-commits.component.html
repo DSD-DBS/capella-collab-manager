@@ -1,0 +1,29 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="flex h-full flex-col">
+  <h2>Commits</h2>
+  <mat-card class="max-w-[400px]">
+    <mat-card-content>
+      <mat-list>
+        @for (model of modelService.models$ | async; track model.name) {
+          <h3 matSubheader>{{ model.name }}</h3>
+          <h4 matLine class="overflow-hidden text-ellipsis">
+            {{ model.git_models | json }}
+          </h4>
+          <mat-divider></mat-divider>
+
+          <mat-list-item>
+            <h4 matLine class="overflow-hidden text-ellipsis">COMMIT TITLE</h4>
+            <p matLine class="overflow-hidden text-ellipsis">
+              <a class="text-blue-600" href="/user?userId=1">AUTHOR</a>
+              on DATE
+            </p>
+          </mat-list-item>
+        }
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+</div>

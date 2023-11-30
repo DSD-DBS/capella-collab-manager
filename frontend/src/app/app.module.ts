@@ -98,6 +98,7 @@ import { EditProjectMetadataComponent } from './projects/project-detail/edit-pro
 import { ModelComplexityBadgeComponent } from './projects/project-detail/model-overview/model-complexity-badge/model-complexity-badge.component';
 import { ModelOverviewComponent } from './projects/project-detail/model-overview/model-overview.component';
 import { MoveModelComponent } from './projects/project-detail/model-overview/move-model/move-model.component';
+import { ProjectCommitsComponent } from './projects/project-detail/project-commits/project-commits.component';
 import { ProjectDetailsComponent } from './projects/project-detail/project-details.component';
 import { ProjectMetadataComponent } from './projects/project-detail/project-metadata/project-metadata.component';
 import { AddUserToProjectDialogComponent } from './projects/project-detail/project-users/add-user-to-project/add-user-to-project.component';
@@ -208,6 +209,7 @@ import { SettingsComponent } from './settings/settings.component';
     PipelinesOverviewComponent,
     PipelineWrapperComponent,
     ProjectAuditLogComponent,
+    ProjectCommitsComponent,
     ProjectDetailsComponent,
     ProjectMetadataComponent,
     ProjectOverviewComponent,
