@@ -5,9 +5,22 @@
 
 <div class="flex h-full flex-col">
   <h2>Commits</h2>
-  <mat-card>
+  <mat-card class="max-w-[400px]">
     <mat-card-content>
-      <p>Look at this progress!</p>
+      <mat-list>
+        @for (model of modelService.models$ | async; track model.name) {
+          <h3 matSubheader>{{ model.name }}</h3>
+          <mat-divider></mat-divider>
+
+          <mat-list-item>
+            <h4 matLine class="overflow-hidden text-ellipsis">COMMIT TITLE</h4>
+            <p matLine class="overflow-hidden text-ellipsis">
+              <a class="text-blue-600" href="/user?userId=1">AUTHOR</a>
+              on DATE
+            </p>
+          </mat-list-item>
+        }
+      </mat-list>
     </mat-card-content>
   </mat-card>
 </div>
