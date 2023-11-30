@@ -10,6 +10,9 @@
       <mat-list>
         @for (model of modelService.models$ | async; track model.name) {
           <h3 matSubheader>{{ model.name }}</h3>
+          <h4 matLine class="overflow-hidden text-ellipsis">
+            {{ model.git_models | json }}
+          </h4>
           <mat-divider></mat-divider>
 
           <mat-list-item>
