@@ -23,7 +23,7 @@ classifiers = [
 ]
 dependencies = [
   "PyYAML",
-  "alembic==1.12.1",
+  "alembic==1.13.0",
   "appdirs",
   "cachetools",
   "fastapi>=0.101.0",
