@@ -3,10 +3,10 @@
 
 from sqlalchemy import orm
 
+from capellacollab.events import crud as events_crud
+from capellacollab.events import models as events_models
 from capellacollab.projects import models as projects_models
 from capellacollab.users import models as users_models
-from capellacollab.users.events import crud as events_crud
-from capellacollab.users.events import models as events_models
 
 from . import models
 

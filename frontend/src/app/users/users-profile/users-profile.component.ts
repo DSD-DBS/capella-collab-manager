@@ -18,11 +18,7 @@ import { BehaviorSubject, filter, map } from 'rxjs';
 import { HistoryEvent } from 'src/app/events/service/events.service';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { Project } from 'src/app/projects/service/project.service';
-import {
-  User,
-  UserHistory,
-  UserService,
-} from 'src/app/services/user/user.service';
+import { User, UserService } from 'src/app/services/user/user.service';
 
 @UntilDestroy()
 @Component({
@@ -41,10 +37,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   user: User | undefined;
-  userId: number | undefined;
   commonProjects = new BehaviorSubject<Project[] | undefined>(undefined);
-  joinedString: string | undefined;
-  userHistory?: UserHistory;
+  userEvents?: HistoryEvent[];
 
   historyEventDataSource = new MatTableDataSource<HistoryEvent>([]);
 
@@ -57,49 +51,33 @@ export class UsersProfileComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.userService.updateOwnUser();
     this.route.params
       .pipe(
         filter((params) => params['userId']),
         map((params) => params['userId']),
       )
       .subscribe((userId: number) => {
-        this.userId = +userId;
-        if (this.userId) {
-          this.userService.getUserById(this.userId).subscribe((user) => {
-            this.user = user;
-            this.breadcrumbsService.updatePlaceholder({ user: user });
-            if (this.userId !== this.userService.user?.id) {
-              this.userService.loadCommonProjects(this.userId!).subscribe({
-                next: (projects) => this.commonProjects.next(projects),
-                error: () => this.commonProjects.next(undefined),
-              });
-            }
-            this.userService
-              .getUserHistory(this.userId!)
-              .subscribe((history) => {
-                if (history.created) {
-                  this.joinedString = `Joined the collaboration manager in ${new Date(
-                    history.created,
-                  )
-                    ?.getFullYear()
-                    ?.toString()}`;
-                } else {
-                  this.joinedString = '';
-                }
-              });
-          });
-        }
+        this.userService.getUserById(userId).subscribe((user) => {
+          this.user = user;
+          this.breadcrumbsService.updatePlaceholder({ user: user });
+          if (userId !== this.userService.user?.id) {
+            this.userService.loadCommonProjects(userId).subscribe({
+              next: (projects) => this.commonProjects.next(projects),
+              error: () => this.commonProjects.next(undefined),
+            });
+          }
+
+          if (this.userService.user?.role === 'administrator') {
+            this.userService.getUserEvents(userId).subscribe({
+              next: (userEvents) => {
+                this.userEvents = userEvents;
+                this.historyEventDataSource.data = userEvents;
+                this.historyEventDataSource.paginator = this.paginator;
+              },
+            });
+          }
+        });
       });
-    if (this.userService.user?.role === 'administrator') {
-      this.userService.getUserHistory(this.userService.user?.id).subscribe({
-        next: (userHistory) => {
-          this.userHistory = userHistory;
-          this.historyEventDataSource.data = userHistory.events;
-          this.historyEventDataSource.paginator = this.paginator;
-        },
-      });
-    }
   }
 
   ngAfterViewInit(): void {

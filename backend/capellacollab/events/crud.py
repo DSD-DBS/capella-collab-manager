@@ -9,7 +9,8 @@ from sqlalchemy import orm
 
 from capellacollab.projects import models as projects_models
 from capellacollab.users import models as users_models
-from capellacollab.users.events import models
+
+from . import models
 
 
 def create_event(

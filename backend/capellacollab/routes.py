@@ -10,6 +10,7 @@ import fastapi
 from capellacollab.core import authentication
 from capellacollab.core import metadata as core_metadata
 from capellacollab.core.authentication import responses as auth_responses
+from capellacollab.events import routes as events_router
 from capellacollab.health import routes as health_routes
 from capellacollab.notices import routes as notices_routes
 from capellacollab.projects import routes as projects_routes
@@ -51,6 +52,12 @@ router.include_router(
     prefix="/users",
     responses=auth_responses.AUTHENTICATION_RESPONSES,
     tags=["Users"],
+)
+router.include_router(
+    events_router.router,
+    prefix="/events",
+    responses=auth_responses.AUTHENTICATION_RESPONSES,
+    tags=["Events"],
 )
 router.include_router(
     notices_routes.router, prefix="/notices", tags=["Notices"]

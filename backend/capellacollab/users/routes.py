@@ -11,13 +11,14 @@ from sqlalchemy import orm
 from capellacollab.core import database
 from capellacollab.core import logging as core_logging
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.events import crud as events_crud
+from capellacollab.events import models as events_models
 from capellacollab.projects import crud as projects_crud
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.sessions import routes as session_routes
-from capellacollab.users.events import crud as events_crud
-from capellacollab.users.events import models as events_models
-from capellacollab.users.events import routes as events_routes
+from capellacollab.users import injectables as users_injectables
+from capellacollab.users import models as users_models
 from capellacollab.users.tokens import routes as tokens_routes
 
 from . import crud, injectables, models
@@ -40,7 +41,6 @@ def get_current_user(
 
 @router.get("/{user_id}", response_model=models.User)
 def get_user(
-    own_username: str = fastapi.Depends(auth_injectables.get_username),
     own_user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
     user: models.DatabaseUser = fastapi.Depends(injectables.get_existing_user),
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -50,7 +50,7 @@ def get_user(
         or len(get_common_projects_for_users(own_user, user, db)) > 0
         or auth_injectables.RoleVerification(
             required_role=models.Role.ADMIN, verify=False
-        )(own_username, db)
+        )(own_user.name, db)
     ):
         return user
     else:
@@ -170,6 +170,25 @@ def delete_user(
     crud.delete_user(db, user)
 
 
+@router.get(
+    "/{user_id}/events",
+    response_model=list[events_models.HistoryEvent],
+    dependencies=[
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
+    ],
+)
+def get_user_history(
+    user: users_models.DatabaseUser = fastapi.Depends(
+        users_injectables.get_existing_user
+    ),
+) -> list[events_models.DatabaseUserHistoryEvent]:
+    return user.events
+
+
 def get_common_projects_for_users(
     user_one: models.DatabaseUser,
     user_two: models.DatabaseUser,
@@ -192,7 +211,6 @@ def get_projects_for_user(
 
 
 router.include_router(session_routes.users_router, tags=["Users - Sessions"])
-router.include_router(events_routes.router, tags=["Users - History"])
 router.include_router(
     tokens_routes.router, prefix="/current/tokens", tags=["Users - Token"]
 )

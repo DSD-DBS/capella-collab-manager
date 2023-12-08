@@ -14,8 +14,6 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class EventsService {
-  BACKEND_URL_PREFIX = environment.backend_url + '/users/';
-
   private _historyEvents = new BehaviorSubject<HistoryEvent[]>([]);
   readonly historyEvents = this._historyEvents.asObservable();
 
@@ -23,7 +21,7 @@ export class EventsService {
 
   loadHistoryEvents(): void {
     this.http
-      .get<HistoryEvent[]>(this.BACKEND_URL_PREFIX + 'history/events')
+      .get<HistoryEvent[]>(`${environment.backend_url}/events`)
       .subscribe((events) => this._historyEvents.next(events));
   }
 

@@ -73,9 +73,9 @@ export class UserService {
     );
   }
 
-  getUserHistory(userId: number): Observable<UserHistory> {
-    return this.http.get<UserHistory>(
-      this.BACKEND_URL_PREFIX + userId + '/history',
+  getUserEvents(userId: number): Observable<HistoryEvent[]> {
+    return this.http.get<HistoryEvent[]>(
+      this.BACKEND_URL_PREFIX + userId + '/events',
     );
   }
 
@@ -113,12 +113,8 @@ export interface User {
   id: number;
   name: string;
   role: UserRole;
+  created: string;
+  last_login: string;
 }
 
 export type UserRole = 'user' | 'administrator';
-
-export interface UserHistory extends User {
-  created: string;
-  last_login: string;
-  events: HistoryEvent[];
-}

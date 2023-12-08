@@ -8,14 +8,14 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.events import crud as events_crud
+from capellacollab.events import models as events_models
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
 from capellacollab.users import crud as users_crud
 from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
-from capellacollab.users.events import crud as events_crud
-from capellacollab.users.events import models as events_models
 
 from . import crud, injectables, models, util
 

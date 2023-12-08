@@ -11,11 +11,12 @@ import pydantic
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 
 if t.TYPE_CHECKING:
+    from capellacollab.events.models import DatabaseUserHistoryEvent
     from capellacollab.projects.users.models import ProjectUserAssociation
     from capellacollab.sessions.models import DatabaseSession
-    from capellacollab.users.events.models import DatabaseUserHistoryEvent
     from capellacollab.users.tokens.models import DatabaseUserToken
 
 
@@ -33,6 +34,15 @@ class BaseUser(pydantic.BaseModel):
 
 class User(BaseUser):
     id: int
+    created: datetime.datetime | None = None
+    last_login: datetime.datetime | None = None
+
+    _validate_created = pydantic.field_serializer("created")(
+        core_pydantic.datetime_serializer
+    )
+    _validate_last_login = pydantic.field_serializer("last_login")(
+        core_pydantic.datetime_serializer
+    )
 
 
 class PatchUserRoleRequest(pydantic.BaseModel):

@@ -52,19 +52,6 @@ class HistoryEvent(BaseHistoryEvent):
     id: int
 
 
-class UserHistory(users_models.User):
-    created: datetime.datetime | None = None
-    last_login: datetime.datetime | None = None
-    events: list[HistoryEvent] | None = None
-
-    _validate_created = pydantic.field_serializer("created")(
-        core_pydantic.datetime_serializer
-    )
-    _validate_last_login = pydantic.field_serializer("last_login")(
-        core_pydantic.datetime_serializer
-    )
-
-
 class DatabaseUserHistoryEvent(database.Base):
     __tablename__ = "user_history_events"
 
