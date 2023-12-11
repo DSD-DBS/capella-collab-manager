@@ -138,11 +138,11 @@ repos:
     hooks:
       - id: eslint
         additional_dependencies:
-          - "eslint@^8.54.0"
-          - "@angular-eslint/eslint-plugin@17.1.0"
-          - "@angular-eslint/eslint-plugin-template@17.1.0"
-          - "@angular-eslint/template-parser@17.1.0"
-          - "eslint-config-prettier@^9.0.0"
+          - "eslint@^8.55.0"
+          - "@angular-eslint/eslint-plugin@17.1.1"
+          - "@angular-eslint/eslint-plugin-template@17.1.1"
+          - "@angular-eslint/template-parser@17.1.1"
+          - "eslint-config-prettier@^9.1.0"
           - "eslint-plugin-import@^2.29.0"
           - "@typescript-eslint/eslint-plugin@^6.12.0"
           - "@typescript-eslint/parser@^6.12.0"
