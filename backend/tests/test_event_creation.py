@@ -6,17 +6,17 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab import config
+from capellacollab.events import models as events_models
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.users import crud as users_crud
-from capellacollab.users import models as users_model
-from capellacollab.users.events import models as events_models
+from capellacollab.users import models as users_models
 
 reason: str = "TestReason"
 
 
 def test_create_admin_user_by_system(db):
-    user: users_model.DatabaseUser = users_crud.get_user_by_name(
+    user: users_models.DatabaseUser = users_crud.get_user_by_name(
         db, config.config["initial"]["admin"]
     )
 
@@ -37,7 +37,7 @@ def test_create_admin_user_by_system(db):
 
 def test_create_user_created_event(client, db, executor_name, unique_username):
     executor = users_crud.create_user(
-        db, executor_name, users_model.Role.ADMIN
+        db, executor_name, users_models.Role.ADMIN
     )
 
     response = client.post(
@@ -61,7 +61,7 @@ def test_create_user_created_event(client, db, executor_name, unique_username):
 
 def test_user_deleted_cleanup(client, db, executor_name, unique_username):
     executor = users_crud.create_user(
-        db, executor_name, users_model.Role.ADMIN
+        db, executor_name, users_models.Role.ADMIN
     )
 
     response = client.post(
@@ -85,13 +85,13 @@ def test_user_deleted_cleanup(client, db, executor_name, unique_username):
     "initial_role,target_role,expected_event_type",
     [
         (
-            users_model.Role.USER,
-            users_model.Role.ADMIN,
+            users_models.Role.USER,
+            users_models.Role.ADMIN,
             events_models.EventType.ASSIGNED_ROLE_ADMIN,
         ),
         (
-            users_model.Role.ADMIN,
-            users_model.Role.USER,
+            users_models.Role.ADMIN,
+            users_models.Role.USER,
             events_models.EventType.ASSIGNED_ROLE_USER,
         ),
     ],
@@ -106,7 +106,7 @@ def test_create_assign_user_role_event(
     expected_event_type,
 ):
     executor = users_crud.create_user(
-        db, executor_name, users_model.Role.ADMIN
+        db, executor_name, users_models.Role.ADMIN
     )
     user = users_crud.create_user(db, unique_username, initial_role)
 
@@ -152,9 +152,9 @@ def test_create_user_added_to_project_event(
     expected_permission_event_type,
 ):
     executor = users_crud.create_user(
-        db, executor_name, users_model.Role.ADMIN
+        db, executor_name, users_models.Role.ADMIN
     )
-    user = users_crud.create_user(db, unique_username, users_model.Role.USER)
+    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
 
     response = client.post(
         f"/api/v1/projects/{project.slug}/users/",
@@ -191,9 +191,9 @@ def test_create_user_removed_from_project_event(
     client, db, executor_name, unique_username, project
 ):
     executor = users_crud.create_user(
-        db, executor_name, users_model.Role.ADMIN
+        db, executor_name, users_models.Role.ADMIN
     )
-    user = users_crud.create_user(db, unique_username, users_model.Role.USER)
+    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
 
     projects_users_crud.add_user_to_project(
         db,
@@ -228,9 +228,9 @@ def test_create_manager_added_to_project_event(
     client, db, executor_name, unique_username, project
 ):
     executor = users_crud.create_user(
-        db, executor_name, users_model.Role.ADMIN
+        db, executor_name, users_models.Role.ADMIN
     )
-    user = users_crud.create_user(db, unique_username, users_model.Role.USER)
+    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
 
     response = client.post(
         f"/api/v1/projects/{project.slug}/users/",
@@ -287,9 +287,9 @@ def test_create_user_permission_change_event(
     expected_permission_event_type,
 ):
     executor = users_crud.create_user(
-        db, executor_name, users_model.Role.ADMIN
+        db, executor_name, users_models.Role.ADMIN
     )
-    user = users_crud.create_user(db, unique_username, users_model.Role.USER)
+    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
 
     projects_users_crud.add_user_to_project(
         db,
@@ -347,9 +347,9 @@ def test_create_user_role_change_event(
     expected_role_event_type,
 ):
     executor = users_crud.create_user(
-        db, executor_name, users_model.Role.ADMIN
+        db, executor_name, users_models.Role.ADMIN
     )
-    user = users_crud.create_user(db, unique_username, users_model.Role.USER)
+    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
 
     projects_users_crud.add_user_to_project(
         db,

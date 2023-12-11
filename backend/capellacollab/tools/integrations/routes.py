@@ -6,7 +6,7 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.users import models as users_model
+from capellacollab.users import models as users_models
 
 from .. import injectables as tools_injectables
 from .. import models as tools_models
@@ -16,7 +16,7 @@ router = fastapi.APIRouter(
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(
-                required_role=users_model.Role.ADMIN
+                required_role=users_models.Role.ADMIN
             )
         )
     ]

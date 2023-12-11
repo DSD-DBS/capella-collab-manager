@@ -1,18 +1,24 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import logging
 from collections import abc
 
 import fastapi
+from fastapi import status
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import logging as core_logging
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.events import crud as events_crud
+from capellacollab.events import models as events_models
+from capellacollab.projects import crud as projects_crud
+from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.sessions import routes as session_routes
-from capellacollab.users.events import crud as events_crud
-from capellacollab.users.events import models as events_models
-from capellacollab.users.events import routes as events_routes
+from capellacollab.users import injectables as users_injectables
+from capellacollab.users import models as users_models
 from capellacollab.users.tokens import routes as tokens_routes
 
 from . import crud, injectables, models
@@ -33,19 +39,27 @@ def get_current_user(
     return user
 
 
-@router.get(
-    "/{user_id}",
-    response_model=models.User,
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.RoleVerification(required_role=models.Role.ADMIN)
-        )
-    ],
-)
+@router.get("/{user_id}", response_model=models.User)
 def get_user(
+    own_user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
     user: models.DatabaseUser = fastapi.Depends(injectables.get_existing_user),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseUser:
-    return user
+    if (
+        user.id == own_user.id
+        or len(get_common_projects_for_users(own_user, user, db)) > 0
+        or auth_injectables.RoleVerification(
+            required_role=models.Role.ADMIN, verify=False
+        )(own_user.name, db)
+    ):
+        return user
+    else:
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "reason": "You have to have at least one project in common to get this information.",
+            },
+        )
 
 
 @router.get(
@@ -82,6 +96,28 @@ def create_user(
         db=db, user=created_user, executor=own_user, reason=post_user.reason
     )
     return created_user
+
+
+@router.get(
+    "/{user_id}/common-projects",
+    response_model=list[projects_models.Project],
+    tags=["Projects"],
+)
+def get_common_projects(
+    user_for_common_projects: models.DatabaseUser = fastapi.Depends(
+        injectables.get_existing_user
+    ),
+    user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
+    db: orm.Session = fastapi.Depends(database.get_db),
+    log: logging.LoggerAdapter = fastapi.Depends(
+        core_logging.get_request_logger
+    ),
+) -> set[projects_models.DatabaseProject]:
+    projects = get_common_projects_for_users(
+        user, user_for_common_projects, db
+    )
+    log.info("Fetching the following projects: %s", projects)
+    return projects
 
 
 @router.patch(
@@ -134,8 +170,47 @@ def delete_user(
     crud.delete_user(db, user)
 
 
+@router.get(
+    "/{user_id}/events",
+    response_model=list[events_models.HistoryEvent],
+    dependencies=[
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
+    ],
+)
+def get_user_history(
+    user: users_models.DatabaseUser = fastapi.Depends(
+        users_injectables.get_existing_user
+    ),
+) -> list[events_models.DatabaseUserHistoryEvent]:
+    return user.events
+
+
+def get_common_projects_for_users(
+    user_one: models.DatabaseUser,
+    user_two: models.DatabaseUser,
+    db: orm.Session,
+) -> set[projects_models.DatabaseProject]:
+    first_user_projects = get_projects_for_user(user_one, db)
+    second_user_projects = get_projects_for_user(user_two, db)
+
+    projects = set(first_user_projects).intersection(set(second_user_projects))
+    return projects
+
+
+def get_projects_for_user(
+    user: models.DatabaseUser, db: orm.Session
+) -> list[projects_models.DatabaseProject]:
+    if user.role != models.Role.ADMIN:
+        return [association.project for association in user.projects]
+    else:
+        return list(projects_crud.get_projects(db))
+
+
 router.include_router(session_routes.users_router, tags=["Users - Sessions"])
-router.include_router(events_routes.router, tags=["Users - History"])
 router.include_router(
     tokens_routes.router, prefix="/current/tokens", tags=["Users - Token"]
 )

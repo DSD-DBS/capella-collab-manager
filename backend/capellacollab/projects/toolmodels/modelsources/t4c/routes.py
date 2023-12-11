@@ -21,7 +21,7 @@ from capellacollab.settings.modelsources.t4c import (
 from capellacollab.settings.modelsources.t4c.repositories import (
     injectables as settings_t4c_repositories_injectables,
 )
-from capellacollab.users import models as users_model
+from capellacollab.users import models as users_models
 
 from . import crud, injectables, models
 
@@ -67,7 +67,7 @@ def get_t4c_model(
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(
-                required_role=users_model.Role.ADMIN
+                required_role=users_models.Role.ADMIN
             )
         )
     ],
@@ -102,7 +102,7 @@ def create_t4c_model(
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(
-                required_role=users_model.Role.ADMIN
+                required_role=users_models.Role.ADMIN
             )
         )
     ],

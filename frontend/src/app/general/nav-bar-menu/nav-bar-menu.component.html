@@ -44,6 +44,14 @@
   <a
     mat-list-item
     (click)="navBarService.toggle()"
+    [routerLink]="['user', userService.user?.id]"
+  >
+    Profile
+  </a>
+  <mat-divider></mat-divider>
+  <a
+    mat-list-item
+    (click)="navBarService.toggle()"
     *ngIf="userService.user?.role === 'administrator'"
     routerLink="settings"
     >Settings</a

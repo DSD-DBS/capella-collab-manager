@@ -12,6 +12,7 @@ from sqlalchemy import orm
 from capellacollab.core import database
 from capellacollab.core import logging as core_logging
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.events import crud as events_crud
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects.events import routes as projects_events_routes
 from capellacollab.projects.toolmodels import routes as toolmodels_routes
@@ -24,7 +25,6 @@ from capellacollab.projects.users import routes as projects_users_routes
 from capellacollab.sessions import routes as session_routes
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
-from capellacollab.users.events import crud as events_crud
 
 from . import crud, models
 

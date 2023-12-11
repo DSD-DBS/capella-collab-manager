@@ -13,6 +13,7 @@ from sqlalchemy import orm
 
 from capellacollab.config import config
 from capellacollab.core import database
+from capellacollab.events import crud as events_crud
 from capellacollab.projects import crud as projects_crud
 from capellacollab.projects import models as project_models
 from capellacollab.projects.toolmodels import crud as toolmodels_crud
@@ -39,7 +40,6 @@ from capellacollab.tools.integrations import crud as integrations_crud
 from capellacollab.tools.integrations import models as integrations_models
 from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
-from capellacollab.users.events import crud as events_crud
 
 LOGGER = logging.getLogger(__name__)
 

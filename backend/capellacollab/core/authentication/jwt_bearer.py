@@ -10,9 +10,9 @@ from fastapi import security, status
 from jose import jwt
 
 import capellacollab.users.crud as users_crud
-import capellacollab.users.events.crud as events_crud
 from capellacollab.config import config
 from capellacollab.core import database
+from capellacollab.events import crud as events_crud
 
 from . import get_authentication_entrypoint
 

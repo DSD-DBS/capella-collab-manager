@@ -1,0 +1,133 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+<div class="flex items-start">
+  <div class="mx-10">
+    <img
+      src="/assets/profile.svg"
+      alt="Dummy profile picture"
+      class="max-h-28"
+    />
+  </div>
+  <div class="flex flex-col">
+    <h2>Profile of {{ user?.name }}</h2>
+    <div *ngIf="user?.created">
+      Joined the Capella Collaboration Manager in
+      {{ user?.created | date: "y" }}
+    </div>
+  </div>
+</div>
+<div *ngIf="userService.user?.role === 'administrator'">
+  <mat-card class="w-fit max-w-[95vw]">
+    <h2>User information</h2>
+    This section is only visible to administrators.
+    <div *ngIf="user?.last_login">
+      Last login:
+      {{ user?.last_login | date: "EE, dd MMM y HH:mm:ss" }}
+    </div>
+    <div *ngIf="userEvents">
+      <div>
+        <table mat-table [dataSource]="historyEventDataSource">
+          <caption>
+            Events related to the user
+          </caption>
+          <ng-container matColumnDef="eventType">
+            <th mat-header-cell *matHeaderCellDef>Event Type</th>
+            <td mat-cell *matCellDef="let event">{{ event.event_type }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="executorName">
+            <th mat-header-cell *matHeaderCellDef>Executor Name</th>
+            <td mat-cell *matCellDef="let event">
+              {{ event.executor?.name || "System" }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="executionTime">
+            <th mat-header-cell *matHeaderCellDef>Execution Time</th>
+            <td mat-cell *matCellDef="let event">
+              {{ event.execution_time | date: "EE, dd MMM y HH:mm:ss" }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="projectName">
+            <th mat-header-cell *matHeaderCellDef>Project Slug</th>
+            <td mat-cell *matCellDef="let event">
+              {{ event.project?.name || "" }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="reason">
+            <th mat-header-cell *matHeaderCellDef>Reason</th>
+            <td mat-cell *matCellDef="let event">{{ event.reason }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    </div>
+    <div *ngIf="!userEvents">
+      <ngx-skeleton-loader
+        appearance="circle"
+        [theme]="{
+          'border-radius': '5px',
+          height: '250px',
+          width: '600px',
+          'max-width': '85vw',
+          margin: 0,
+          'margin-top': '5px',
+          border: '1px solid white'
+        }"
+      ></ngx-skeleton-loader>
+    </div>
+
+    <div [hidden]="!userEvents">
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 20]"
+        showFirstLastButtons
+        aria-label="Select page of events"
+      >
+      </mat-paginator>
+    </div>
+  </mat-card>
+</div>
+<div class="flex items-start">
+  <div class="ml-4 mt-5 grow">
+    <div *ngIf="user?.id && user?.id !== userService.user?.id">
+      <div>
+        <h3>Common Projects</h3>
+        <mat-divider></mat-divider>
+        <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <ng-container
+            *ngIf="(commonProjects$ | async)?.length; else elseBlock"
+          >
+            <mat-card
+              *ngFor="let project of commonProjects$ | async"
+              class="!ml-0 cursor-pointer"
+              [routerLink]="['/project', project.slug]"
+            >
+              <mat-card-content>
+                <b class="line-clamp-1">{{ project.name }}</b
+                ><br />
+                @if (project.description) {
+                  <span class="line-clamp-3 md:line-clamp-5">{{
+                    project.description
+                  }}</span>
+                } @else {
+                  <i class="line-clamp-3 md:line-clamp-5"
+                    >No description provided</i
+                  >
+                }
+              </mat-card-content>
+            </mat-card>
+          </ng-container>
+          <ng-template #elseBlock class="col-span-2"
+            ><br />You do not have any common projects.</ng-template
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

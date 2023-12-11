@@ -14,6 +14,7 @@ import { EditProjectMetadataComponent } from 'src/app/projects/project-detail/ed
 import { SessionComponent } from 'src/app/sessions/session/session.component';
 import { PipelinesOverviewComponent } from 'src/app/settings/core/pipelines-overview/pipelines-overview.component';
 import { BasicAuthTokenComponent } from 'src/app/users/basic-auth-token/basic-auth-token.component';
+import { UsersProfileComponent } from 'src/app/users/users-profile/users-profile.component';
 import { EventsComponent } from './events/events.component';
 import { AuthComponent } from './general/auth/auth/auth.component';
 import { AuthGuardService } from './general/auth/auth-guard/auth-guard.service';
@@ -441,6 +442,11 @@ const routes: Routes = [
         path: 'events',
         data: { breadcrumb: 'Events' },
         component: EventsComponent,
+      },
+      {
+        path: 'user/:userId',
+        data: { breadcrumb: (data: Data) => data?.user?.name || 'User' },
+        component: UsersProfileComponent,
       },
       {
         path: 'tokens',

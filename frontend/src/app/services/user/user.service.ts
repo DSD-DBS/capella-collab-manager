@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HistoryEvent } from 'src/app/events/service/events.service';
+import { Project } from 'src/app/projects/service/project.service';
 import { Session } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../auth/auth.service';
@@ -50,6 +51,10 @@ export class UserService {
     return this.http.get<User>(this.BACKEND_URL_PREFIX + user.id);
   }
 
+  getUserById(userId: number): Observable<User> {
+    return this.http.get<User>(this.BACKEND_URL_PREFIX + userId);
+  }
+
   getCurrentUser(): Observable<User> {
     return this.http.get<User>(this.BACKEND_URL_PREFIX + 'current');
   }
@@ -68,9 +73,9 @@ export class UserService {
     );
   }
 
-  getUserHistory(user: User): Observable<UserHistory> {
-    return this.http.get<UserHistory>(
-      this.BACKEND_URL_PREFIX + user.id + '/history',
+  getUserEvents(userId: number): Observable<HistoryEvent[]> {
+    return this.http.get<HistoryEvent[]>(
+      this.BACKEND_URL_PREFIX + userId + '/events',
     );
   }
 
@@ -96,18 +101,20 @@ export class UserService {
 
     return true;
   }
+
+  loadCommonProjects(userId: number): Observable<Project[]> {
+    return this.http.get<Project[]>(
+      `${this.BACKEND_URL_PREFIX}${userId}/common-projects`,
+    );
+  }
 }
 
 export interface User {
   id: number;
   name: string;
   role: UserRole;
+  created: string;
+  last_login: string;
 }
 
 export type UserRole = 'user' | 'administrator';
-
-export interface UserHistory extends User {
-  created: string;
-  last_login: string;
-  events: HistoryEvent[];
-}

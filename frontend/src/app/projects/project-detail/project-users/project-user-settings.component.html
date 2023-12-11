@@ -62,7 +62,7 @@
           )
         "
       >
-        <div class="flex">
+        <a class="flex" [routerLink]="['/user', user.user.id]">
           <div class="ml-0 mr-4 flex items-center">
             <mat-icon class="my-auto !h-8 !w-8 text-3xl" mat-list-icon
               >account_circle</mat-icon
@@ -75,7 +75,7 @@
               {{ projectUserService.PERMISSIONS[user.permission] }}
             </div>
           </div>
-        </div>
+        </a>
         <div class="ml-1 mr-0 flex items-center">
           <button
             mat-icon-button
