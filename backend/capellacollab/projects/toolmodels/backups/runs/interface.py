@@ -144,8 +144,8 @@ def _fetch_events_of_job_run(run: models.DatabasePipelineRun):
     ]
 
     labels = {
-        "job_name": run.reference_id,
-        "pipeline_run_id": run.id,
+        "job_name": run.reference_id or "",
+        "pipeline_run_id": str(run.id),
         "log_type": "events",
     }
 
@@ -178,8 +178,8 @@ def _fetch_logs_of_job_runs(run: models.DatabasePipelineRun):
     ]
 
     labels = {
-        "job_name": run.reference_id,
-        "pipeline_run_id": run.id,
+        "job_name": run.reference_id or "",
+        "pipeline_run_id": str(run.id),
         "log_type": "logs",
     }
 
