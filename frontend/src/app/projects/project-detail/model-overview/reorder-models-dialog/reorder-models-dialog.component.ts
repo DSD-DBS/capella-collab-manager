@@ -27,14 +27,18 @@ export class ReorderModelsDialogComponent {
     private toastService: ToastService,
     @Inject(MAT_DIALOG_DATA)
     public data: { projectSlug: string; models: Model[] },
-  ) {}
+  ) {
+    this.models = [...data.models];
+  }
+
+  models: Model[];
 
   drop(event: CdkDragDrop<Model[]>): void {
-    moveItemInArray(this.data.models, event.previousIndex, event.currentIndex);
+    moveItemInArray(this.models, event.previousIndex, event.currentIndex);
   }
 
   async reorderModels() {
-    const modelsToPatch = this.data.models.map((model, index) => {
+    const modelsToPatch = this.models.map((model, index) => {
       return {
         modelSlug: model.slug,
         patchModel: { display_order: index + 1 },

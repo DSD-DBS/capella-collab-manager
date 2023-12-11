@@ -17,7 +17,7 @@
     (cdkDropListDropped)="drop($event)"
     class="my-[15px] rounded border border-solid"
   >
-    @for (model of data.models; track model.id) {
+    @for (model of models; track model.id) {
       <div
         cdkDrag
         class="flex cursor-move items-center border-b border-solid bg-white"
