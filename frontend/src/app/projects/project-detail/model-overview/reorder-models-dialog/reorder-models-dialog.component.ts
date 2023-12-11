@@ -15,6 +15,10 @@ import {} from 'src/app/projects/service/project.service';
 @Component({
   selector: 'app-reorder-models',
   templateUrl: './reorder-models-dialog.component.html',
+  styles: [
+    '.cdk-drag-placeholder { opacity: 0; }',
+    '.cdk-drag-animating { transition: transform 250ms cubic-bezier(0, 0, 0.2, 1); }',
+  ],
 })
 export class ReorderModelsDialogComponent {
   constructor(
