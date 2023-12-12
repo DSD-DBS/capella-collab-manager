@@ -183,7 +183,14 @@ def patch_tool_model(
         new_project = model.project
 
     return crud.update_model(
-        db, model, body.description, body.name, version, nature, new_project
+        db,
+        model,
+        body.description,
+        body.name,
+        version,
+        nature,
+        new_project,
+        body.display_order,
     )
 
 

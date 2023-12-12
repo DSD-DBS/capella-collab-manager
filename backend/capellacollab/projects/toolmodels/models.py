@@ -54,6 +54,7 @@ class PatchCapellaModel(pydantic.BaseModel):
     version_id: int | None = None
     nature_id: int | None = None
     project_slug: str | None = None
+    display_order: int | None = None
 
 
 class ToolDetails(pydantic.BaseModel):
@@ -72,6 +73,7 @@ class DatabaseCapellaModel(database.Base):
     name: orm.Mapped[str] = orm.mapped_column(index=True)
     slug: orm.Mapped[str]
     description: orm.Mapped[str]
+    display_order: orm.Mapped[int | None]
 
     configuration: orm.Mapped[dict[str, str] | None]
 
@@ -116,6 +118,7 @@ class CapellaModel(pydantic.BaseModel):
     slug: str
     name: str
     description: str
+    display_order: int | None
     tool: tools_models.ToolBase
     version: tools_models.ToolVersionBase | None = None
     nature: tools_models.ToolNatureBase | None = None

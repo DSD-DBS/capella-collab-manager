@@ -1,0 +1,42 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="w-full p-[20px] md:max-w-[500px]">
+  <h2>Reorder models</h2>
+  <div>
+    Drag and drop models in the order you would like them to appear in the
+    project overview, then press save.
+    <span class="font-medium">All members of a project team</span> will see the
+    updated order.
+  </div>
+
+  <div
+    cdkDropList
+    (cdkDropListDropped)="drop($event)"
+    class="my-[15px] rounded border border-solid"
+  >
+    @for (model of models; track model.id) {
+      <div
+        cdkDrag
+        class="flex cursor-move items-center border-b border-solid bg-white"
+      >
+        <span class="ml-[10px]">
+          <mat-icon class="mt-[10px] text-sm">reorder</mat-icon>
+        </span>
+        <span class="mr-[10px] truncate">
+          <span>{{ model.name }} ({{ model.tool.name }}</span>
+          <span *ngIf="model.version"> - {{ model.version.name }}</span>
+          <span>)</span>
+        </span>
+      </div>
+    }
+  </div>
+
+  <div class="flex justify-end">
+    <button mat-flat-button color="primary" (click)="reorderModels()" class="">
+      Save order
+    </button>
+  </div>
+</div>

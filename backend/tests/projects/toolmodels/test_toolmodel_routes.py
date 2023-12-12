@@ -86,3 +86,21 @@ def test_rename_toolmodel_where_name_already_exists(
         assert response.status_code == 409
         assert "A model with a similar name already exists" in response.text
         mock_get_model_by_slugs.assert_called_once()
+
+
+def test_update_toolmodel_order_successful(
+    capella_model: toolmodels_models.DatabaseCapellaModel,
+    project: projects_models.DatabaseProject,
+    client: testclient.TestClient,
+    executor_name: str,
+    db: orm.Session,
+):
+    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+
+    response = client.patch(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}",
+        json={"display_order": 1},
+    )
+
+    assert response.status_code == 200
+    assert "1" in response.text

@@ -6,29 +6,40 @@
 <div>
   <div class="flex items-center">
     <h2>Models</h2>
-    <a
-      mat-stroked-button
-      class="!ml-4"
-      [routerLink]="
-        project?.is_archived
-          ? null
-          : [
-              '/project',
-              (projectService.project$ | async)?.slug,
-              'models',
-              'create'
-            ]
-      "
-      *ngIf="projectUserService.verifyRole('manager')"
-      [matTooltip]="
-        project?.is_archived
-          ? 'You cannot add a model to an archived project'
-          : 'Add a new model'
-      "
-      [disabled]="project?.is_archived"
-    >
-      <mat-icon id="add-icon">add</mat-icon>
-    </a>
+    @if (projectUserService.verifyRole("manager")) {
+      <a
+        mat-stroked-button
+        class="!ml-4"
+        [routerLink]="
+          project?.is_archived
+            ? null
+            : [
+                '/project',
+                (projectService.project$ | async)?.slug,
+                'models',
+                'create'
+              ]
+        "
+        [matTooltip]="
+          project?.is_archived
+            ? 'You cannot add a model to an archived project'
+            : 'Add a new model'
+        "
+        [disabled]="project?.is_archived"
+      >
+        <mat-icon id="add-icon">add</mat-icon>
+      </a>
+      @if (models !== undefined && models.length > 1) {
+        <button
+          mat-stroked-button
+          matTooltip="Reorder models"
+          class="!ml-4"
+          (click)="openReorderModelsDialog(models)"
+        >
+          <mat-icon>list</mat-icon>
+        </button>
+      }
+    }
   </div>
   <div class="flex flex-wrap">
     <div class="flex" *ngIf="(modelService.models$ | async) === undefined">
@@ -45,7 +56,6 @@
         ></ngx-skeleton-loader>
       </div>
     </div>
-
     <mat-card
       class="flex min-h-[200px] w-[500px] max-w-[85vw] select-none flex-col"
       *ngFor="let model of modelService.models$ | async"

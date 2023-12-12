@@ -83,6 +83,7 @@ def create_model(
     version: tools_models.DatabaseVersion | None = None,
     nature: tools_models.DatabaseNature | None = None,
     configuration: dict[str, str] | None = None,
+    display_order: int | None = None,
 ) -> models.DatabaseCapellaModel:
     restrictions = restrictions_models.DatabaseToolModelRestrictions()
 
@@ -96,6 +97,7 @@ def create_model(
         nature=nature,
         restrictions=restrictions,
         configuration=configuration,
+        display_order=display_order,
     )
     db.add(restrictions)
     db.add(model)
@@ -133,6 +135,7 @@ def update_model(
     version: tools_models.DatabaseVersion,
     nature: tools_models.DatabaseNature,
     project: projects_model.DatabaseProject,
+    display_order: int | None,
 ) -> models.DatabaseCapellaModel:
     model.version = version
     model.nature = nature
@@ -142,6 +145,8 @@ def update_model(
     if name:
         model.name = name
         model.slug = slugify.slugify(name)
+    if display_order:
+        model.display_order = display_order
     db.commit()
     return model
 
