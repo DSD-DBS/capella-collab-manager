@@ -1,8 +1,12 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import dataclasses
+
 import fastapi
 from fastapi import exception_handlers, status
+
+from capellacollab.core import exceptions as core_exceptions
 
 
 class T4CInstanceIsArchivedError(Exception):
@@ -24,7 +28,19 @@ async def t4c_instance_is_archived_exception_handler(
     )
 
 
+@dataclasses.dataclass
+class T4CInstanceWithNameAlreadyExistsError(
+    core_exceptions.ResourceAlreadyExistsError
+):
+    def __init__(self):
+        super().__init__(resource_name="T4C Instance", identifier_name="name")
+
+
 def register_exceptions(app: fastapi.FastAPI):
     app.add_exception_handler(
         T4CInstanceIsArchivedError, t4c_instance_is_archived_exception_handler
+    )
+    app.add_exception_handler(
+        T4CInstanceWithNameAlreadyExistsError,
+        core_exceptions.resource_already_exists_exception_handler,
     )

@@ -55,6 +55,9 @@ def create_t4c_instance(
     body: models.CreateT4CInstance,
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseT4CInstance:
+    if crud.get_t4c_instance_by_name(db, body.name):
+        raise exceptions.T4CInstanceWithNameAlreadyExistsError()
+
     version = toolmodels_routes.get_version_by_id_or_raise(db, body.version_id)
     instance = models.DatabaseT4CInstance(**body.model_dump())
     instance.version = version
@@ -74,6 +77,12 @@ def edit_t4c_instance(
 ) -> models.DatabaseT4CInstance:
     if instance.is_archived and (body.is_archived is None or body.is_archived):
         raise exceptions.T4CInstanceIsArchivedError(instance.id)
+    if (
+        body.name
+        and body.name != instance.name
+        and crud.get_t4c_instance_by_name(db, body.name)
+    ):
+        raise exceptions.T4CInstanceWithNameAlreadyExistsError()
 
     return crud.update_t4c_instance(db, instance, body)
 

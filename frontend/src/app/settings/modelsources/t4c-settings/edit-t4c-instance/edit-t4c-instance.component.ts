@@ -43,7 +43,10 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   ];
 
   public form = new FormGroup({
-    name: new FormControl('', Validators.required),
+    name: new FormControl('', {
+      validators: Validators.required,
+      asyncValidators: this.t4cInstanceService.asyncNameValidator(),
+    }),
     version_id: new FormControl(-1, Validators.required),
     license: new FormControl('', Validators.required),
     protocol: new FormControl<Protocol>('tcp', Validators.required),
@@ -95,6 +98,9 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
         t4cInstance.password = '***********';
         this.isArchived = t4cInstance.is_archived;
         this.form.patchValue(t4cInstance);
+        this.form.controls.name.setAsyncValidators(
+          this.t4cInstanceService.asyncNameValidator(t4cInstance),
+        );
         this.breadcrumbsService.updatePlaceholder({ t4cInstance });
       });
 
@@ -181,7 +187,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.t4cInstanceService.reset();
+    this.t4cInstanceService.resetT4CInstance();
     this.breadcrumbsService.updatePlaceholder({ t4cInstance: undefined });
   }
 }

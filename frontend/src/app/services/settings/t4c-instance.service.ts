@@ -5,7 +5,12 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  ValidationErrors,
+} from '@angular/forms';
+import { BehaviorSubject, Observable, map, take, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 export type Protocol = 'tcp' | 'ssl' | 'ws' | 'wss';
@@ -105,8 +110,12 @@ export class T4CInstanceService {
       );
   }
 
-  reset(): void {
+  resetT4CInstance(): void {
     this._t4cInstance.next(undefined);
+  }
+
+  reset(): void {
+    this.resetT4CInstance();
     this._t4cInstances.next(undefined);
   }
 
@@ -114,6 +123,25 @@ export class T4CInstanceService {
     return this.http.get<SessionUsage>(
       `${this.urlFactory(instanceId)}/licenses`,
     );
+  }
+
+  asyncNameValidator(ignoreInstance?: T4CInstance): AsyncValidatorFn {
+    const ignoreInstanceId = ignoreInstance ? ignoreInstance.id : -1;
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      const instanceName = control.value;
+      return this.t4cInstances$.pipe(
+        take(1),
+        map((instances) => {
+          return instances?.find(
+            (instance) =>
+              instance.name === instanceName &&
+              instance.id !== ignoreInstanceId,
+          )
+            ? { uniqueName: { value: instanceName } }
+            : null;
+        }),
+      );
+    };
   }
 }
 

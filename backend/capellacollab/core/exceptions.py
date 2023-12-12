@@ -31,6 +31,27 @@ async def existing_dependencies_exception_handler(
     )
 
 
+@dataclasses.dataclass
+class ResourceAlreadyExistsError(Exception):
+    resource_name: str
+    identifier_name: str
+
+
+async def resource_already_exists_exception_handler(
+    request: fastapi.Request, exc: ResourceAlreadyExistsError
+):
+    return await exception_handlers.http_exception_handler(
+        request,
+        fastapi.HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "reason": f"A {exc.resource_name} with a similar {exc.identifier_name} already exists.",
+                "technical": f"{exc.identifier_name} already used",
+            },
+        ),
+    )
+
+
 def register_exceptions(app: fastapi.FastAPI):
     app.add_exception_handler(
         ExistingDependenciesError, existing_dependencies_exception_handler
