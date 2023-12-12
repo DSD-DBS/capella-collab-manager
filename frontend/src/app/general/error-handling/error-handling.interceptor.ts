@@ -52,16 +52,9 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
                 );
               }
             }
-            if (body?.warnings) {
-              for (const warning of body.warnings) {
-                if (warning.reason && Array.isArray(warning.reason)) {
-                  warning.reason = warning.reason.join(' ');
-                }
-                this.toastService.showWarning(
-                  warning.title || '',
-                  warning.reason || '',
-                );
-              }
+            const warnings = body?.warnings;
+            if (warnings) {
+              this.displayWarningInToaster(warnings);
             }
           }
         },
@@ -97,10 +90,15 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
               'Please check your internet connection and refresh the page!',
             );
           } else {
-            this.toastService.showError(
-              'An error occurred!',
-              'Please try again!',
-            );
+            const warnings = err.error?.warnings;
+            if (warnings) {
+              this.displayWarningInToaster(warnings);
+            } else {
+              this.toastService.showError(
+                'An error occurred!',
+                'Please try again!',
+              );
+            }
           }
         },
       }),
@@ -161,6 +159,15 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
     }
 
     throw err;
+  }
+
+  private displayWarningInToaster(warnings: ErrorDetail[]): void {
+    for (const warning of warnings) {
+      if (warning.reason && Array.isArray(warning.reason)) {
+        warning.reason = warning.reason.join(' ');
+      }
+      this.toastService.showWarning(warning.title || '', warning.reason || '');
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

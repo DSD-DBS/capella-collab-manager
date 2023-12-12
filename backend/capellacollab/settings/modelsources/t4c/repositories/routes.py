@@ -252,11 +252,12 @@ def create_single_warning_response_model(
     title: str, reason: str | tuple[str, ...], technical: str
 ) -> core_models.ResponseModel:
     return core_models.ResponseModel(
+        errors=[],
         warnings=[
             core_models.Message(
                 title=title,
                 reason=reason,
                 technical=technical,
             )
-        ]
+        ],
     )
