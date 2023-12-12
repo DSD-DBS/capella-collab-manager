@@ -12,6 +12,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { finalize } from 'rxjs';
 import {
   T4CRepoService,
   T4CRepository,
@@ -34,13 +35,17 @@ export class T4CRepoDeletionDialogComponent {
     @Inject(MAT_DIALOG_DATA) public repo: T4CRepository,
   ) {}
 
-  remoteRepository(): void {
+  removeRepository(): void {
     if (this.repositoryNameForm.valid) {
       this.repoService
         .deleteRepository(this.repo.instance.id, this.repo.id)
-        .subscribe(() => {
-          this.dialogRef.close(true);
-        });
+        .pipe(
+          finalize(() => {
+            this.repoService.loadRepositories(this.repo.instance.id);
+            this.dialogRef.close(true);
+          }),
+        )
+        .subscribe();
     }
   }
 
