@@ -3,175 +3,125 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 <div class="dialog">
-  <div class="header relative">
-    <h2>View diagrams</h2>
-    <span
-      >Last update:
-      {{
-        (diagramMetadata?.last_updated | date: "EE, dd MMM y HH:mm:ss") ||
-          "loading..."
-      }}</span
+  <h2>View diagrams</h2>
+  <div class="mb-2">
+    Last update:
+    {{
+      (diagramMetadata?.last_updated | date: "EE, dd MMM y HH:mm:ss") ||
+        "loading..."
+    }}
+  </div>
+
+  <app-model-diagram-code-block
+    [project]="data.project"
+    [model]="data.model"
+  ></app-model-diagram-code-block>
+
+  <mat-form-field
+    style="margin-bottom: -1.25em"
+    id="search"
+    appearance="outline"
+  >
+    <mat-label>Search</mat-label>
+    <input
+      [(ngModel)]="search"
+      autocomplete="off"
+      matInput
+      placeholder="Diagram name or uuid"
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+  <span *ngIf="filteredDiagrams()"
+    >{{ filteredDiagrams()?.length }} diagram(s) found:
+  </span>
+  <div class="flex flex-wrap">
+    <mat-card
+      class="diagram-card"
+      #diagram
+      [id]="diagram.uuid"
+      [attr.success]="diagram.success"
+      *ngFor="let diagram of filteredDiagrams()"
     >
-
-    <br />
-    <div>
-      <mat-expansion-panel color="bg-slate-400">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Learn how to use the diagram cache with capellambse!
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        You can also access the diagrams via our Python library
-        <i>capellambse</i>. Follow the installation instructions on
-        <a href="https://github.com/DSD-DBS/py-capellambse#installation"
-          >[Github]</a
-        >
-        and then use the code snippet. To authenticate, you have to insert a
-        personal access token. The token has the same scope as your user. Be
-        careful with it.
-        <div class="relative flex flex-col">
-          <pre class="whitespace-pre-line pb-2"><code #codeBlock>
-        <i>model = capellambse.MelodyModel(</i>
-        <i>  path="path to the aird file of the model on your machine",</i>
-        <i>  diagram_cache=&#123;</i>
-        <i>    &quot;path&quot;: &quot;{{ this.path + "/diagrams/%s"}}&quot;,</i>
-        <i>    &quot;username&quot;: &quot;{{ username }}&quot;,</i>
-        <i>    &quot;password&quot;: &quot;{{ passwordValue !== undefined ? passwordValue : 'You can insert your project token here using the "Insert token" button. The inserted token is valid for 30 days.' }}&quot;,</i>
-        <i>    &#125;</i>
-        <i>  )</i>
-      </code></pre>
-          <div class="flex">
-            <button
-              class="mt-auto self-end"
-              [cdkCopyToClipboard]="this.codeBlockContent"
-              matTooltip="Copy codeblock to clipboard"
-              color="bg-transparent"
-              mat-raised-button
-            >
-              <mat-icon>content_copy</mat-icon>
-            </button>
-            <button
-              class="mt-auto self-end text-white"
-              (click)="insertToken()"
-              [disabled]="passwordValue"
-              matTooltip="Insert new personal access token for your user"
-              color="primary"
-              mat-raised-button
-            >
-              Insert token
-            </button>
-          </div>
-        </div>
-      </mat-expansion-panel>
-
-      <mat-form-field
-        style="margin-bottom: -1.25em"
-        id="search"
-        appearance="outline"
-      >
-        <mat-label>Search</mat-label>
-        <input
-          [(ngModel)]="search"
-          autocomplete="off"
-          matInput
-          placeholder="Diagram name or uuid"
-        />
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
-      <span *ngIf="filteredDiagrams()"
-        >{{ filteredDiagrams()?.length }} diagram(s) found:
-      </span>
-    </div>
-    <div class="flex flex-wrap">
-      <mat-card
-        class="diagram-card"
-        #diagram
-        [id]="diagram.uuid"
-        [attr.success]="diagram.success"
-        *ngFor="let diagram of filteredDiagrams()"
-      >
-        <img
-          (click)="openModelDiagramPreviewDialog(diagram)"
-          matTooltip="Open preview"
-          *ngIf="diagram.success && diagrams[diagram.uuid]?.content"
-          class="diagram"
-          [src]="diagrams[diagram.uuid].content"
-        />
-        <ngx-skeleton-loader
-          style="width: 100%"
-          *ngIf="
-            (!diagrams[diagram.uuid] && diagram.success) ||
-            diagrams[diagram.uuid]?.loading
-          "
-          [theme]="{
-            'border-radius': '5px',
-            height: '200px',
-            width: 'calc(100% - 10px)',
-            border: '1px solid white'
-          }"
-        ></ngx-skeleton-loader>
-        <div *ngIf="!diagram.success" class="diagram-error">
-          <mat-icon class="diagram-error-icon">error</mat-icon> <br />
-          Diagram export has failed. <br />Please contact your diagram cache
-          administrator.
-        </div>
-        <div
-          *ngIf="
-            diagram.success &&
-            diagrams[diagram.uuid] &&
-            diagrams[diagram.uuid].content === null
-          "
-          class="diagram-error"
-        >
-          <mat-icon class="diagram-error-icon">error</mat-icon> <br />
-          Error loading the diagram from the server. <br />Please try again
-          later.
-          <br />
-          If the problem persists, please contact your diagram cache
-          administrator.
-        </div>
-        <div class="list-item">
-          <div class="diagram-metadata">
-            <div class="diagram-name">{{ diagram.name }}</div>
-            <div class="uuid">UUID: {{ diagram.uuid }}</div>
-          </div>
-        </div>
-        <button
-          class="download-button"
-          (click)="downloadDiagram(diagram.uuid)"
-          mat-raised-button
-          [disabled]="!diagram.success"
-        >
-          <mat-icon>cloud_download</mat-icon> Download
-        </button>
-      </mat-card>
-    </div>
-    <div class="flex flex-wrap" *ngIf="filteredDiagrams() === undefined">
+      <img
+        (click)="openModelDiagramPreviewDialog(diagram)"
+        matTooltip="Open preview"
+        *ngIf="diagram.success && diagrams[diagram.uuid]?.content"
+        class="diagram"
+        [src]="diagrams[diagram.uuid].content"
+      />
       <ngx-skeleton-loader
-        *ngFor="let _ of loaderArray"
-        class="loader"
+        style="width: 100%"
+        *ngIf="
+          (!diagrams[diagram.uuid] && diagram.success) ||
+          diagrams[diagram.uuid]?.loading
+        "
         [theme]="{
           'border-radius': '5px',
-          height: '332px',
-          'min-width': '208px',
+          height: '200px',
+          width: 'calc(100% - 10px)',
           border: '1px solid white'
         }"
       ></ngx-skeleton-loader>
-    </div>
-    <div *ngIf="this.diagramMetadata?.diagrams?.length === 0">
-      Your model doesn't seem to contain diagrams.
-    </div>
-    <div
-      *ngIf="
-        this.diagramMetadata?.diagrams?.length !== 0 &&
-        filteredDiagrams()?.length === 0
-      "
-    >
-      No diagrams for the given filter found. Please remove your search query.
-    </div>
-    <div class="sticky bottom-0 w-full bg-white md:hidden">
-      <mat-divider id="bottom-divider"></mat-divider>
-      <button class="w-full" mat-button mat-dialog-close>Close</button>
-    </div>
+      <div *ngIf="!diagram.success" class="diagram-error">
+        <mat-icon class="diagram-error-icon">error</mat-icon> <br />
+        Diagram export has failed. <br />Please contact your diagram cache
+        administrator.
+      </div>
+      <div
+        *ngIf="
+          diagram.success &&
+          diagrams[diagram.uuid] &&
+          diagrams[diagram.uuid].content === null
+        "
+        class="diagram-error"
+      >
+        <mat-icon class="diagram-error-icon">error</mat-icon> <br />
+        Error loading the diagram from the server. <br />Please try again later.
+        <br />
+        If the problem persists, please contact your diagram cache
+        administrator.
+      </div>
+      <div class="list-item">
+        <div class="diagram-metadata">
+          <div class="diagram-name">{{ diagram.name }}</div>
+          <div class="uuid">UUID: {{ diagram.uuid }}</div>
+        </div>
+      </div>
+      <button
+        class="download-button"
+        (click)="downloadDiagram(diagram.uuid)"
+        mat-raised-button
+        [disabled]="!diagram.success"
+      >
+        <mat-icon>cloud_download</mat-icon> Download
+      </button>
+    </mat-card>
+  </div>
+  <div class="flex flex-wrap" *ngIf="filteredDiagrams() === undefined">
+    <ngx-skeleton-loader
+      *ngFor="let _ of loaderArray"
+      class="loader"
+      [theme]="{
+        'border-radius': '5px',
+        height: '332px',
+        'min-width': '208px',
+        border: '1px solid white'
+      }"
+    ></ngx-skeleton-loader>
+  </div>
+  <div *ngIf="this.diagramMetadata?.diagrams?.length === 0">
+    Your model doesn't seem to contain diagrams.
+  </div>
+  <div
+    *ngIf="
+      this.diagramMetadata?.diagrams?.length !== 0 &&
+      filteredDiagrams()?.length === 0
+    "
+  >
+    No diagrams for the given filter found. Please remove your search query.
+  </div>
+  <div class="sticky bottom-0 w-full bg-white md:hidden">
+    <mat-divider id="bottom-divider"></mat-divider>
+    <button class="w-full" mat-button mat-dialog-close>Close</button>
   </div>
 </div>

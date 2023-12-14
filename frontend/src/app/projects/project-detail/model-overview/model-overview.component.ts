@@ -85,7 +85,7 @@ export class ModelOverviewComponent implements OnInit {
         'w-full',
         'h-full',
       ],
-      data: { modelSlug: model.slug, projectSlug: this.project?.slug },
+      data: { model: model, project: this.project },
     });
   }
 

@@ -12,8 +12,8 @@ import {
 } from '@angular/core';
 import {
   MatDialog,
-  MatDialogRef,
   MAT_DIALOG_DATA,
+  MatDialogRef,
 } from '@angular/material/dialog';
 import { saveAs } from 'file-saver';
 import {
@@ -25,9 +25,8 @@ import {
   DiagramMetadata,
   ModelDiagramService,
 } from 'src/app/projects/models/diagrams/service/model-diagram.service';
-import { ModelService } from 'src/app/projects/models/service/model.service';
-import { UserService } from 'src/app/services/user/user.service';
-import { TokenService } from 'src/app/users/basic-auth-service/basic-auth-token.service';
+import { Model } from 'src/app/projects/models/service/model.service';
+import { Project } from 'src/app/projects/service/project.service';
 
 @Component({
   selector: 'app-model-diagram-dialog',
@@ -37,9 +36,6 @@ import { TokenService } from 'src/app/users/basic-auth-service/basic-auth-token.
 export class ModelDiagramDialogComponent {
   diagramMetadata?: DiagramCacheMetadata;
   diagrams: Diagrams = {};
-  username?: string;
-  passwordValue?: string;
-  path?: string;
 
   loaderArray = Array(60).fill(0);
 
@@ -61,16 +57,13 @@ export class ModelDiagramDialogComponent {
 
   constructor(
     private modelDiagramService: ModelDiagramService,
-    private userService: UserService,
-    private modelService: ModelService,
-    private tokenService: TokenService,
-    private dialogRef: MatDialogRef<ModelDiagramDialogComponent>,
     private dialog: MatDialog,
+    private dialogRef: MatDialogRef<ModelDiagramDialogComponent>,
     @Inject(MAT_DIALOG_DATA)
-    public data: { modelSlug: string; projectSlug: string },
+    public data: { model: Model; project: Project },
   ) {
     this.modelDiagramService
-      .getDiagramMetadata(this.data.projectSlug, this.data.modelSlug)
+      .getDiagramMetadata(this.data.project.slug, this.data.model.slug)
       .subscribe({
         next: (diagramMetadata) => {
           this.diagramMetadata = diagramMetadata;
@@ -80,27 +73,6 @@ export class ModelDiagramDialogComponent {
           this.dialogRef.close();
         },
       });
-
-    this.userService
-      .getCurrentUser()
-      .subscribe((user) => (this.username = user.name));
-    this.path = this.modelService.backendURLFactory(
-      data.projectSlug,
-      data.modelSlug,
-    );
-  }
-
-  get codeBlockContent(): string {
-    return `model = capellambse.MelodyModel(
-      path="path to the aird file of the model on your machine",
-      diagram_cache={
-        "path": "http://localhost:8000/api/v1/projects/coffee-machine/models/coffee-machine/diagrams/%s",
-        "username": "${this.username}",
-        "password": "${
-          this.passwordValue ? this.passwordValue : 'yourPassword'
-        }",
-      }
-    )`;
   }
 
   observeVisibleDiagrams() {
@@ -133,7 +105,7 @@ export class ModelDiagramDialogComponent {
     if (!this.diagrams[uuid]) {
       this.diagrams[uuid] = { loading: true, content: undefined };
       this.modelDiagramService
-        .getDiagram(this.data.projectSlug, this.data.modelSlug, uuid)
+        .getDiagram(this.data.project.slug, this.data.model.slug, uuid)
         .subscribe({
           next: (response: Blob) => {
             const reader = new FileReader();
@@ -180,22 +152,10 @@ export class ModelDiagramDialogComponent {
 
   downloadDiagram(uuid: string) {
     this.modelDiagramService
-      .getDiagram(this.data.projectSlug, this.data.modelSlug, uuid)
+      .getDiagram(this.data.project.slug, this.data.model.slug, uuid)
       .subscribe((response: Blob) => {
         saveAs(response, `${uuid}.svg`);
       });
-  }
-
-  async insertToken() {
-    const expirationDate = new Date();
-    expirationDate.setDate(expirationDate.getDate() + 30);
-    this.tokenService
-      .createToken(
-        'Created in diagram cache dialog',
-        expirationDate,
-        'Diagram-cache',
-      )
-      .subscribe((token) => (this.passwordValue = token.password));
   }
 }
 
