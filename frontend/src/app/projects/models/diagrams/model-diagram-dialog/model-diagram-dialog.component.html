@@ -17,11 +17,7 @@
     [model]="data.model"
   ></app-model-diagram-code-block>
 
-  <mat-form-field
-    style="margin-bottom: -1.25em"
-    id="search"
-    appearance="outline"
-  >
+  <mat-form-field class="mb-[-1.25em] mt-2 w-full pb-1" appearance="outline">
     <mat-label>Search</mat-label>
     <input
       [(ngModel)]="search"
@@ -36,7 +32,7 @@
   </span>
   <div class="flex flex-wrap">
     <mat-card
-      class="diagram-card"
+      class="flex grow basis-[calc(30%-20px)] flex-col justify-between"
       #diagram
       [id]="diagram.uuid"
       [attr.success]="diagram.success"
@@ -46,24 +42,26 @@
         (click)="openModelDiagramPreviewDialog(diagram)"
         matTooltip="Open preview"
         *ngIf="diagram.success && diagrams[diagram.uuid]?.content"
-        class="diagram"
+        class="mb-2 h-[200px] w-full !touch-auto hover:cursor-pointer"
         [src]="diagrams[diagram.uuid].content"
       />
       <ngx-skeleton-loader
-        style="width: 100%"
+        class="mb-2 w-full"
         *ngIf="
           (!diagrams[diagram.uuid] && diagram.success) ||
           diagrams[diagram.uuid]?.loading
         "
         [theme]="{
           'border-radius': '5px',
+          margin: 0,
+          padding: 0,
           height: '200px',
           width: 'calc(100% - 10px)',
           border: '1px solid white'
         }"
       ></ngx-skeleton-loader>
       <div *ngIf="!diagram.success" class="diagram-error">
-        <mat-icon class="diagram-error-icon">error</mat-icon> <br />
+        <mat-icon class="scale-[2] text-red-900">error</mat-icon> <br />
         Diagram export has failed. <br />Please contact your diagram cache
         administrator.
       </div>
@@ -75,20 +73,20 @@
         "
         class="diagram-error"
       >
-        <mat-icon class="diagram-error-icon">error</mat-icon> <br />
+        <mat-icon>error</mat-icon> <br />
         Error loading the diagram from the server. <br />Please try again later.
         <br />
         If the problem persists, please contact your diagram cache
         administrator.
       </div>
-      <div class="list-item">
-        <div class="diagram-metadata">
-          <div class="diagram-name">{{ diagram.name }}</div>
-          <div class="uuid">UUID: {{ diagram.uuid }}</div>
+      <div class="mb-2 flex flex-nowrap justify-between">
+        <div class="overflow-y-hidden">
+          <div class="text-lg">{{ diagram.name }}</div>
+          <div class="text-gray-700">UUID: {{ diagram.uuid }}</div>
         </div>
       </div>
       <button
-        class="download-button"
+        class="my-[5px] w-full"
         (click)="downloadDiagram(diagram.uuid)"
         mat-raised-button
         [disabled]="!diagram.success"
@@ -100,7 +98,7 @@
   <div class="flex flex-wrap" *ngIf="filteredDiagrams() === undefined">
     <ngx-skeleton-loader
       *ngFor="let _ of loaderArray"
-      class="loader"
+      class="m-2 grow basis-[calc(30%-20px)]"
       [theme]="{
         'border-radius': '5px',
         height: '332px',
@@ -121,7 +119,7 @@
     No diagrams for the given filter found. Please remove your search query.
   </div>
   <div class="sticky bottom-0 w-full bg-white md:hidden">
-    <mat-divider id="bottom-divider"></mat-divider>
+    <mat-divider class="my-2"></mat-divider>
     <button class="w-full" mat-button mat-dialog-close>Close</button>
   </div>
 </div>

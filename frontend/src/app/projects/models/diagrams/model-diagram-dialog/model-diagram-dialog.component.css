@@ -3,29 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-.diagrams {
-  height: calc(80vh - 170px);
-  word-wrap: break-word;
-}
-
-.diagram-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  flex-grow: 1;
-  flex-basis: calc(30% - 20px);
-}
-
-.uuid {
-  color: grey;
-}
-
-.loader {
-  margin: 10px;
-  flex-grow: 1;
-  flex-basis: calc(30% - 20px);
-}
-
 .diagram-error {
   border-radius: 5px;
   border: solid lightgray;
@@ -38,53 +15,4 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-
-.diagram-error-icon {
-  color: darkred;
-  transform: scale(2);
-}
-
-.diagram {
-  height: 200px;
-  width: 100%;
-  margin-bottom: 15px;
-  touch-action: auto !important;
-}
-
-.diagram:hover {
-  cursor: pointer;
-}
-
-button {
-  margin-right: 5px;
-}
-
-.diagram-metadata {
-  overflow-y: hidden;
-}
-
-.download-button {
-  width: 100%;
-  margin: 5px 0;
-}
-
-.list-item {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-}
-
-#search {
-  margin-top: 10px;
-  width: 100%;
-  padding-bottom: 5px;
-}
-
-.diagram-name {
-  font-size: 1.25em;
-}
-
-mat-divider {
-  margin: 10px 0;
 }
