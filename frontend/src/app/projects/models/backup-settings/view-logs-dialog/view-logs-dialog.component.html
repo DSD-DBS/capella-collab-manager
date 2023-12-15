@@ -4,7 +4,7 @@
  -->
 
 <div *ngIf="pipelineRunService.pipelineRun$ | async">
-  <div class="header">
+  <div class="flex flex-row justify-between">
     <h1>
       Logs for pipeline run
       {{ (pipelineRunService.pipelineRun$ | async)?.id }}

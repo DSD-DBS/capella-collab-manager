@@ -15,12 +15,6 @@
   max-height: 80vh;
 }
 
-.header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
 pre {
   white-space: pre-wrap;
 }

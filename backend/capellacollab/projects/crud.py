@@ -59,6 +59,7 @@ def create_project(
     name: str,
     description: str = "",
     visibility: models.Visibility = models.Visibility.PRIVATE,
+    type: models.ProjectType = models.ProjectType.GENERAL,
 ) -> models.DatabaseProject:
     project = models.DatabaseProject(
         name=name,
@@ -66,6 +67,7 @@ def create_project(
         description=description,
         users=[],
         visibility=visibility,
+        type=type,
     )
 
     db.add(project)

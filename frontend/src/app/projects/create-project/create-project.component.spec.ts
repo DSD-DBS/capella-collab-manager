@@ -35,6 +35,7 @@ import {
   Project,
   ProjectService,
   ProjectVisibility,
+  ProjectVisibilityDescriptions,
 } from '../service/project.service';
 import { CreateProjectComponent } from './create-project.component';
 
@@ -44,6 +45,7 @@ const mockProjects: Project[] = [
     slug: 'existing-test-project-name',
     description: 'existing-test-project-description',
     visibility: 'private',
+    type: 'general',
     users: {
       leads: 1,
       contributors: 0,
@@ -98,6 +100,7 @@ describe('CreateProjectComponent', () => {
         description: project.description!,
         slug: project.name!,
         visibility: project.visibility!,
+        type: project.type!,
         users: { leads: 1, contributors: 0, subscribers: 0 },
         is_archived: false,
       };
@@ -123,10 +126,10 @@ describe('CreateProjectComponent', () => {
       };
     },
     getProjectVisibilityDescription(visibility: ProjectVisibility): string {
-      return ProjectVisibility[visibility];
+      return ProjectVisibilityDescriptions[visibility];
     },
     getAvailableVisibilities(): ProjectVisibility[] {
-      return Object.keys(ProjectVisibility) as ProjectVisibility[];
+      return Object.keys(ProjectVisibilityDescriptions) as ProjectVisibility[];
     },
   };
 
@@ -187,6 +190,7 @@ describe('CreateProjectComponent', () => {
       name: testProjectName,
       description: '',
       visibility: 'private',
+      type: 'general',
     });
     expect(fakeToastService.showSuccess).toHaveBeenCalledTimes(1);
   });
@@ -205,6 +209,7 @@ describe('CreateProjectComponent', () => {
       name: testProjectName,
       description: testProjectDescription,
       visibility: 'private',
+      type: 'general',
     });
     expect(fakeToastService.showSuccess).toHaveBeenCalledTimes(1);
   });

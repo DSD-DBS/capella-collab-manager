@@ -139,7 +139,9 @@
             class="!m-1.5"
             (click)="openPipelineDialog(model)"
             *ngIf="
-              projectUserService.verifyRole('manager') && !project?.is_archived
+              projectUserService.verifyRole('manager') &&
+              !project?.is_archived &&
+              project?.type !== 'training'
             "
           >
             <mat-icon>sync</mat-icon>
@@ -162,6 +164,7 @@
             routerLink="/sessions"
             *ngIf="
               !project?.is_archived &&
+              project?.type !== 'training' &&
               model.t4c_models &&
               projectUserService.verifyPermission('write')
             "
