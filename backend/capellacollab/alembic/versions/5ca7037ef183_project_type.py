@@ -4,7 +4,7 @@
 """Project type
 
 Revision ID: 5ca7037ef183
-Revises: ac0e6e0f77ee
+Revises: 0e2028f83156
 Create Date: 2023-10-24 14:21:07.128985
 
 """
@@ -13,7 +13,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "5ca7037ef183"
-down_revision = "ac0e6e0f77ee"
+down_revision = "0e2028f83156"
 branch_labels = None
 depends_on = None
 
