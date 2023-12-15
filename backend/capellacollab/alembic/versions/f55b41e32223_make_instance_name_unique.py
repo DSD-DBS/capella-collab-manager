@@ -4,7 +4,7 @@
 """make instance name unique
 
 Revision ID: f55b41e32223
-Revises: 0e2028f83156
+Revises: 5ca7037ef183
 Create Date: 2023-12-12 18:01:35.967370
 
 """
@@ -13,7 +13,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "f55b41e32223"
-down_revision = "0e2028f83156"
+down_revision = "5ca7037ef183"
 branch_labels = None
 depends_on = None
 
