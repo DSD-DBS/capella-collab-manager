@@ -49,7 +49,7 @@ class DatabaseT4CInstance(database.Base):
         primary_key=True, index=True, autoincrement=True
     )
 
-    name: orm.Mapped[str]
+    name: orm.Mapped[str] = orm.mapped_column(unique=True)
 
     license: orm.Mapped[str]
     host: orm.Mapped[str]

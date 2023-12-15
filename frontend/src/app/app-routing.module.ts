@@ -43,6 +43,7 @@ import { PureVariantsComponent } from './settings/integrations/pure-variants/pur
 import { EditGitSettingsComponent } from './settings/modelsources/git-settings/edit-git-settings/edit-git-settings.component';
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
 import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/edit-t4c-instance/edit-t4c-instance.component';
+import { T4CSettingsWrapperComponent } from './settings/modelsources/t4c-settings/t4c-settings-wrapper/t4c-settings-wrapper.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
 
@@ -403,6 +404,7 @@ const routes: Routes = [
               {
                 path: 't4c',
                 data: { breadcrumb: 'T4C Instances' },
+                component: T4CSettingsWrapperComponent,
                 children: [
                   {
                     path: '',

@@ -51,6 +51,40 @@ def test_create_t4c_instance(
     assert t4c_instance.name == "Test integration"
 
 
+@pytest.mark.usefixtures("admin_user")
+def test_create_t4c_instance_already_existing_name(
+    client: testclient.TestClient,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
+    test_tool_version: tools_models.DatabaseVersion,
+):
+    response = client.post(
+        "/api/v1/settings/modelsources/t4c",
+        json={
+            "name": t4c_instance.name,
+            "license": "test",
+            "host": "test",
+            "port": 2036,
+            "cdo_port": 12036,
+            "usage_api": "http://localhost:8086",
+            "rest_api": "http://localhost:8080",
+            "username": "admin",
+            "protocol": "tcp",
+            "version_id": test_tool_version.id,
+            "password": "secret-password",
+        },
+    )
+
+    assert response.status_code == 409
+
+    detail = response.json()["detail"]
+
+    assert (
+        "A T4C Instance with a similar name already exists."
+        in detail["reason"]
+    )
+    assert "name already used" in detail["technical"]
+
+
 @pytest.mark.usefixtures("t4c_instance")
 def test_get_t4c_instances(
     client: testclient.TestClient, db: orm.Session, executor_name: str
@@ -168,6 +202,50 @@ def test_unarchive_t4c_instance(
 
     assert not response.json()["is_archived"]
     assert not updated_t4c_instance.is_archived
+
+
+@pytest.mark.usefixtures("admin_user")
+def test_patch_t4c_instance_already_existing_name(
+    client: testclient.TestClient,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
+    test_tool_version: tools_models.DatabaseVersion,
+):
+    instance_name_1 = t4c_instance.name
+    instance_name_2 = instance_name_1 + "-2"
+
+    client.post(
+        "/api/v1/settings/modelsources/t4c",
+        json={
+            "name": instance_name_2,
+            "license": "test",
+            "host": "test",
+            "port": 2036,
+            "cdo_port": 12036,
+            "usage_api": "http://localhost:8086",
+            "rest_api": "http://localhost:8080",
+            "username": "admin",
+            "protocol": "tcp",
+            "version_id": test_tool_version.id,
+            "password": "secret-password",
+        },
+    )
+
+    response = client.patch(
+        f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}",
+        json={
+            "name": instance_name_2,
+        },
+    )
+
+    assert response.status_code == 409
+
+    detail = response.json()["detail"]
+
+    assert (
+        "A T4C Instance with a similar name already exists."
+        in detail["reason"]
+    )
+    assert "name already used" in detail["technical"]
 
 
 def test_injectables_raise_when_archived_instance(

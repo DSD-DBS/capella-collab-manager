@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { T4CInstanceService } from 'src/app/services/settings/t4c-instance.service';
 
 @Component({
@@ -11,14 +11,6 @@ import { T4CInstanceService } from 'src/app/services/settings/t4c-instance.servi
   templateUrl: './t4c-settings.component.html',
   styleUrls: ['./t4c-settings.component.css'],
 })
-export class T4CSettingsComponent implements OnInit, OnDestroy {
+export class T4CSettingsComponent {
   constructor(public t4cInstanceService: T4CInstanceService) {}
-
-  ngOnInit(): void {
-    this.t4cInstanceService.loadInstances();
-  }
-
-  ngOnDestroy(): void {
-    this.t4cInstanceService.reset();
-  }
 }

@@ -41,6 +41,16 @@ def get_t4c_instance_by_id(
     ).scalar_one_or_none()
 
 
+def get_t4c_instance_by_name(
+    db: orm.Session, instance_name: str
+) -> models.DatabaseT4CInstance | None:
+    return db.execute(
+        sa.select(models.DatabaseT4CInstance).where(
+            models.DatabaseT4CInstance.name == instance_name
+        )
+    ).scalar_one_or_none()
+
+
 def create_t4c_instance(
     db: orm.Session, instance: models.DatabaseT4CInstance
 ) -> models.DatabaseT4CInstance:

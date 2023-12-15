@@ -144,7 +144,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.t4cModelService.reset();
     this.t4cRepositoryService.reset();
-    this.t4cInstanceService.reset();
+    this.t4cInstanceService.resetT4CInstance();
   }
 
   onSubmit() {
