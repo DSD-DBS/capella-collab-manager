@@ -33,7 +33,7 @@ k8s:
 
 general:
   host: localhost
-  port: 4200
+  port: 8000
   scheme: http
   wildcardHost: False
 

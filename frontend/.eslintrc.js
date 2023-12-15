@@ -70,7 +70,12 @@ module.exports = {
       parser: "@angular-eslint/template-parser",
       rules: {
         "tailwindcss/classnames-order": "off",
-        "tailwindcss/no-custom-classname": "error",
+        "tailwindcss/no-custom-classname": [
+          "error",
+          {
+            whitelist: ["language-python"],
+          },
+        ],
         "tailwindcss/enforces-negative-arbitrary-values": "error",
         "tailwindcss/enforces-shorthand": "error",
         "tailwindcss/no-contradicting-classname": "error",

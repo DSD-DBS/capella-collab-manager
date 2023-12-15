@@ -46,6 +46,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CookieModule } from 'ngx-cookie';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ToastrModule } from 'ngx-toastr';
+import {
+  HighlightPipeTransform,
+  ModelDiagramCodeBlockComponent,
+} from 'src/app/projects/models/diagrams/model-diagram-dialog/model-diagram-code-block/model-diagram-code-block.component';
 import { BasicAuthTokenComponent } from 'src/app/users/basic-auth-token/basic-auth-token.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -182,6 +186,7 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
     FormFieldSkeletonLoaderComponent,
     GitSettingsComponent,
     HeaderComponent,
+    HighlightPipeTransform,
     InitModelComponent,
     InputDialogComponent,
     JobRunOverviewComponent,
@@ -198,6 +203,7 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
     ModelComplexityBadgeComponent,
     ModelDescriptionComponent,
     ModelDetailComponent,
+    ModelDiagramCodeBlockComponent,
     ModelDiagramDialogComponent,
     ModelDiagramPreviewDialogComponent,
     ModelOverviewComponent,

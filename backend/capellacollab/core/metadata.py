@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
+
 import fastapi
 import pydantic
 
@@ -18,9 +20,15 @@ class Metadata(pydantic.BaseModel):
     authentication_provider: str | None
     environment: str | None
 
+    host: str | None
+    port: str | None
+    protocol: str | None
+
 
 router = fastapi.APIRouter()
-cfg: dict[str, str | None] = config["general"].get("metadata", {})
+
+general_cfg: dict[str, t.Any] = config["general"]
+metadata_cfg: dict[str, str | None] = general_cfg.get("metadata", {})
 
 
 @router.get(
@@ -30,9 +38,12 @@ cfg: dict[str, str | None] = config["general"].get("metadata", {})
 def get_metadata():
     return Metadata(
         version=capellacollab.__version__,
-        privacy_policy_url=cfg.get("privacyPolicyURL"),
-        imprint_url=cfg.get("imprintURL"),
-        provider=cfg.get("provider"),
-        authentication_provider=cfg.get("authenticationProvider"),
-        environment=cfg.get("environment"),
+        privacy_policy_url=metadata_cfg.get("privacyPolicyURL"),
+        imprint_url=metadata_cfg.get("imprintURL"),
+        provider=metadata_cfg.get("provider"),
+        authentication_provider=metadata_cfg.get("authenticationProvider"),
+        environment=metadata_cfg.get("environment"),
+        host=general_cfg.get("host"),
+        port=str(general_cfg.get("port")),
+        protocol=general_cfg.get("scheme"),
     )

@@ -1,0 +1,54 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<mat-expansion-panel color="bg-slate-400">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      Learn how to use the diagram cache with capellambse!
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <div class="mt-2">
+    You can also access the diagrams via our Python library
+    <i>capellambse</i>. Follow the installation instructions on
+    <a
+      target="_blank"
+      rel="noopener"
+      class="text-url"
+      href="https://github.com/DSD-DBS/py-capellambse#installation"
+      >Github<span class="align-middle"
+        ><mat-icon class="scale-75">open_in_new</mat-icon></span
+      >
+    </a>
+    and then use the code snippet. To authenticate, you have to insert a
+    personal access token. The token has the same scope as your user. Be careful
+    with it. You can revoke the token in the settings.
+  </div>
+  <pre><code
+    class="language-python my-2 rounded-md border shadow"
+    [innerHTML]="this.codeBlockContent | hightlight: 'python'"
+  ></code></pre>
+  <div class="flex flex-wrap gap-2">
+    <button
+      class="mt-auto self-end"
+      [cdkCopyToClipboard]="this.codeBlockContent"
+      matTooltip="Copy codeblock to clipboard"
+      color="bg-transparent"
+      mat-raised-button
+      (click)="showClipboardMessage()"
+    >
+      <mat-icon>content_copy</mat-icon>
+    </button>
+    <button
+      class="mt-auto self-end text-white"
+      (click)="insertToken()"
+      [disabled]="passwordValue"
+      matTooltip="Insert new personal access token for your user"
+      color="primary"
+      mat-raised-button
+    >
+      Insert token
+    </button>
+  </div>
+</mat-expansion-panel>

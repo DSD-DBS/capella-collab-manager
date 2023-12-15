@@ -108,4 +108,8 @@ export interface BackendMetadata {
   provider: string;
   authentication_provider: string;
   environment: string;
+
+  host: string;
+  port: string;
+  protocol: string;
 }
