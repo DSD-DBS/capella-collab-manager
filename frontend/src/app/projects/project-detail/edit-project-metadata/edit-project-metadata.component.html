@@ -5,10 +5,9 @@
 <div *ngIf="projectUserService.verifyRole('manager')"></div>
 <div class="wrapper">
   <mat-card id="metadata-card">
-    <h2 id="title">Description</h2>
     <form [formGroup]="form">
       <div>
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="fill" class="w-full max-w-lg">
           <mat-label>Name</mat-label>
           <input matInput formControlName="name" />
           <mat-error *ngIf="form.controls.name.errors?.required"
@@ -26,7 +25,7 @@
         </mat-form-field>
       </div>
       <div>
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="fill" class="w-full max-w-lg">
           <mat-label>Description</mat-label>
           <textarea
             formControlName="description"
