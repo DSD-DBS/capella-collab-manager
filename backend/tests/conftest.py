@@ -32,37 +32,47 @@ os.environ["DEVELOPMENT_MODE"] = "1"
 
 
 @pytest.fixture(name="postgresql", scope="session")
-def fixture_postgresql() -> t.Generator[engine.Engine, None, None]:
+def fixture_postgreql_engine() -> t.Generator[engine.Engine, None, None]:
     with postgres.PostgresContainer(image="postgres:14.1") as _postgres:
         database_url = _postgres.get_connection_url()
 
-        _engine = sqlalchemy.create_engine(database_url.replace("***", "test"))
+        with pytest.MonkeyPatch.context() as monkeypatch:
+            _engine = sqlalchemy.create_engine(
+                database_url.replace("***", "test")
+            )
 
-        yield _engine
+            session_local = orm.sessionmaker(
+                autocommit=False, autoflush=False, bind=_engine
+            )
+
+            monkeypatch.setattr(database, "engine", _engine)
+            monkeypatch.setattr(database, "SessionLocal", session_local)
+
+            migration.migrate_db(
+                _engine, str(_engine.url).replace("***", "test")
+            )
+
+            yield _engine
 
 
 @pytest.fixture(name="db")
 def fixture_db(
     postgresql: engine.Engine, monkeypatch: pytest.MonkeyPatch
 ) -> t.Generator[orm.Session, None, None]:
-    session_local = orm.sessionmaker(
+    with orm.sessionmaker(
         autocommit=False, autoflush=False, bind=postgresql
-    )
-
-    monkeypatch.setattr(database, "engine", postgresql)
-    monkeypatch.setattr(database, "SessionLocal", session_local)
-
-    delete_all_tables_if_existent(postgresql)
-    migration.migrate_db(
-        postgresql, str(postgresql.url).replace("***", "test")
-    )
-
-    with session_local() as session:
+    )() as session:
 
         def mock_get_db() -> orm.Session:
             return session
 
         app.dependency_overrides[database.get_db] = mock_get_db
+
+        def commit(*args, **kwargs):
+            session.flush()
+            session.expire_all()
+
+        monkeypatch.setattr(session, "commit", commit)
 
         yield session
 

@@ -76,7 +76,9 @@ def test_create_and_delete_token(
     response = client.post("/api/v1/users/current/tokens", json=POST_TOKEN)
     assert response.status_code == 200
 
-    response = client.delete("/api/v1/users/current/tokens/1")
+    token_id = response.json()["id"]
+
+    response = client.delete(f"/api/v1/users/current/tokens/{token_id}")
     assert response.status_code == 204
 
 
@@ -91,7 +93,9 @@ def test_token_lifecycle(
     response_string = response.content.decode("utf-8")
     assert len(json.loads(response_string)) == 1
 
-    response = client.delete("/api/v1/users/current/tokens/1")
+    token_id = response.json()[0]["id"]
+
+    response = client.delete(f"/api/v1/users/current/tokens/{token_id}")
     assert response.status_code == 204
 
     response = client.get("/api/v1/users/current/tokens")
