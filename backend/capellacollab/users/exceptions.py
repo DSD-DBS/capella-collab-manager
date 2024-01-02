@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
 import dataclasses
@@ -30,5 +30,5 @@ async def user_not_found_exception_handler(
 
 def register_exceptions(app: fastapi.FastAPI):
     app.add_exception_handler(
-        UserNotFoundError, user_not_found_exception_handler
+        UserNotFoundError, user_not_found_exception_handler  # type: ignore[arg-type]
     )

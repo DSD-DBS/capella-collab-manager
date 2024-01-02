@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
 import fastapi
@@ -46,8 +46,8 @@ async def tool_image_not_found_exception_handler(
 
 def register_exceptions(app: fastapi.FastAPI):
     app.add_exception_handler(
-        ToolVersionNotFoundError, tool_version_not_found_exception_handler
+        ToolVersionNotFoundError, tool_version_not_found_exception_handler  # type: ignore[arg-type]
     )
     app.add_exception_handler(
-        ToolImageNotFoundError, tool_image_not_found_exception_handler
+        ToolImageNotFoundError, tool_image_not_found_exception_handler  # type: ignore[arg-type]
     )

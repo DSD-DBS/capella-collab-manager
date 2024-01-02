@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
 import dataclasses
@@ -38,9 +38,9 @@ class T4CInstanceWithNameAlreadyExistsError(
 
 def register_exceptions(app: fastapi.FastAPI):
     app.add_exception_handler(
-        T4CInstanceIsArchivedError, t4c_instance_is_archived_exception_handler
+        T4CInstanceIsArchivedError, t4c_instance_is_archived_exception_handler  # type: ignore[arg-type]
     )
     app.add_exception_handler(
         T4CInstanceWithNameAlreadyExistsError,
-        core_exceptions.resource_already_exists_exception_handler,
+        core_exceptions.resource_already_exists_exception_handler,  # type: ignore[arg-type]
     )
