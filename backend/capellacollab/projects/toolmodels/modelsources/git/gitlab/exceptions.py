@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
 import dataclasses
@@ -57,10 +57,10 @@ async def gitlab_project_not_found_handler(
 def register_exceptions(app: fastapi.FastAPI):
     app.add_exception_handler(
         GitlabAccessDeniedError,
-        gitlab_access_denied_handler,
+        gitlab_access_denied_handler,  # type: ignore[arg-type]
     )
 
     app.add_exception_handler(
         GitlabProjectNotFoundError,
-        gitlab_project_not_found_handler,
+        gitlab_project_not_found_handler,  # type: ignore[arg-type]
     )

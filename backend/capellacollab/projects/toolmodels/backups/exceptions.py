@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
 import enum
@@ -39,5 +39,5 @@ async def pipeline_creation_failed_t4c_server_unreachable_handler(
 def register_exceptions(app: fastapi.FastAPI):
     app.add_exception_handler(
         PipelineOperationFailedT4CServerUnreachable,
-        pipeline_creation_failed_t4c_server_unreachable_handler,
+        pipeline_creation_failed_t4c_server_unreachable_handler,  # type: ignore[arg-type]
     )

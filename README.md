@@ -1,5 +1,5 @@
 <!--
- ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
@@ -14,7 +14,7 @@
 
 A web platform for collaboration on MBSE and [Capella](https://www.eclipse.org/capella/) projects.
 
-**Copyright 2021 - 2023 [DB Netz AG](https://fahrweg.dbnetze.com/),
+**Copyright 2021 - 2024 [DB InfraGO AG](https://fahrweg.dbinfrago.com/fahrweg-de),
 licensed under Apache 2.0 License (see full text [here](./LICENSES/Apache-2.0.txt))**
 
 Turn your local MBSE and Capella experience into a browser-based collaboration platform for

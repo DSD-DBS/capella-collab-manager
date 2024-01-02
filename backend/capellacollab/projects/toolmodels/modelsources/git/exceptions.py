@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
 import dataclasses
@@ -155,20 +155,20 @@ async def github_artifact_expired_handler(
 def register_exceptions(app: fastapi.FastAPI):
     app.add_exception_handler(
         GitRepositoryFileNotFoundError,
-        git_repository_file_not_found_handler,
+        git_repository_file_not_found_handler,  # type: ignore[arg-type]
     )
     app.add_exception_handler(
         GitInstanceAPIEndpointNotFoundError,
-        git_instance_api_endpoint_not_found_handler,
+        git_instance_api_endpoint_not_found_handler,  # type: ignore[arg-type]
     )
     app.add_exception_handler(
         GitPipelineJobNotFoundError,
-        git_pipeline_job_not_found_handler,
+        git_pipeline_job_not_found_handler,  # type: ignore[arg-type]
     )
     app.add_exception_handler(
-        GitPipelineJobUnknownStateError, unknown_state_handler
+        GitPipelineJobUnknownStateError, unknown_state_handler  # type: ignore[arg-type]
     )
     app.add_exception_handler(
         GitPipelineJobFailedError,
-        git_pipeline_job_failed_handler,
+        git_pipeline_job_failed_handler,  # type: ignore[arg-type]
     )

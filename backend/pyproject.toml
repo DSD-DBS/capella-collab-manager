@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
 [build-system]
@@ -12,7 +12,7 @@ name = "capellacollab-backend"
 readme = "README.md"
 requires-python = ">=3.11, <3.13"
 license = { text = "Apache-2.0" }
-authors = [{ name = "DB Netz AG" }]
+authors = [{ name = "DB InfraGO AG" }]
 keywords = []
 classifiers = [
   "Development Status :: 5 - Production/Stable",
