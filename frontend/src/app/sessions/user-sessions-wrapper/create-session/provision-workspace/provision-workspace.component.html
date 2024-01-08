@@ -15,18 +15,17 @@
           >
         </fieldset>
 
-        <fieldset class="mt-4">
-          <button
-            matInput
-            mat-flat-button
-            color="primary"
-            type="submit"
-            [disabled]="!projectSlug || !models || sessionsRequested"
-          >
-            Start this training
-            <mat-icon>keyboard_arrow_right</mat-icon>
-          </button>
-        </fieldset>
+        <button
+          matInput
+          mat-flat-button
+          class="w-full"
+          color="primary"
+          type="submit"
+          [disabled]="!projectSlug || !models || sessionsRequested"
+        >
+          Start this training
+          <mat-icon>keyboard_arrow_right</mat-icon>
+        </button>
       </form>
     </mat-card-content>
   </mat-card>
