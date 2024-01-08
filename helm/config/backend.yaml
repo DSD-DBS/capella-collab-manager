@@ -104,4 +104,4 @@ logging:
   logPath: /var/log/backend/
 
 requests:
-  timeout: 2
+  timeout: 5
