@@ -9,11 +9,11 @@
       <p>Load the models in a training environment.</p>
 
       <form [formGroup]="provisionForm" (ngSubmit)="requestSessions()">
-        <fieldset *ngIf="projectType !== 'training'">
+        <div class="mb-4" *ngIf="projectType !== 'training'">
           <mat-slide-toggle formControlName="persistentWorkspace">
             Use a persistent workspace</mat-slide-toggle
           >
-        </fieldset>
+        </div>
 
         <button
           matInput
