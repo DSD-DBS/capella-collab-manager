@@ -67,9 +67,8 @@ export class T4CInstanceService {
   public readonly t4cInstance$ = this._t4cInstance.asObservable();
 
   public readonly unarchivedT4cInstances$ = this._t4cInstances.pipe(
-    map(
-      (t4cInstances) =>
-        t4cInstances?.filter((t4cInstance) => !t4cInstance.is_archived),
+    map((t4cInstances) =>
+      t4cInstances?.filter((t4cInstance) => !t4cInstance.is_archived),
     ),
   );
 
