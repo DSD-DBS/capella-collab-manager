@@ -1,4 +1,9 @@
 <!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<!--
  ~ SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
@@ -9,7 +14,7 @@
       <p>Load the models in a training environment.</p>
 
       <form [formGroup]="provisionForm" (ngSubmit)="requestSessions()">
-        <div class="mb-4" *ngIf="projectType !== 'training'">
+        <div class="mb-4" *ngIf="project?.type !== 'training'">
           <mat-slide-toggle formControlName="persistentWorkspace">
             Use a persistent workspace</mat-slide-toggle
           >
@@ -21,7 +26,7 @@
           class="w-full"
           color="primary"
           type="submit"
-          [disabled]="!projectSlug || !models || sessionsRequested"
+          [disabled]="!project?.slug || !models || sessionsRequested"
         >
           Start this training
           <mat-icon>keyboard_arrow_right</mat-icon>

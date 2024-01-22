@@ -1,4 +1,9 @@
 /*
+ * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
  * SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-collab-manager contributors
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -12,7 +17,10 @@ import {
   Model,
   ModelService,
 } from 'src/app/projects/models/service/model.service';
-import { ProjectService } from 'src/app/projects/service/project.service';
+import {
+  Project,
+  ProjectService,
+} from 'src/app/projects/service/project.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
 
@@ -22,8 +30,7 @@ import { UserSessionService } from 'src/app/sessions/service/user-session.servic
   templateUrl: './provision-workspace.component.html',
 })
 export class ProvisionWorkspaceComponent implements OnInit {
-  projectSlug?: string;
-  projectType?: string;
+  project?: Project;
   models?: Model[];
 
   public provisionForm = this.fb.group({
@@ -49,19 +56,18 @@ export class ProvisionWorkspaceComponent implements OnInit {
     this.projectService.project$
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((project) => {
-        this.projectType = project.type;
-        this.projectSlug = project.slug;
+        this.project = project;
       });
 
     this.userSessionService.loadSessions();
   }
 
   requestSessions(): void {
-    if (this.projectSlug && this.models) {
+    if (this.project?.slug && this.models) {
       this.sessionsRequested = true;
       this.sessionService
         .provisionWorkspace(
-          this.projectSlug,
+          this.project?.slug,
           this.models.map((m) => {
             return {
               model_slug: m.slug,
