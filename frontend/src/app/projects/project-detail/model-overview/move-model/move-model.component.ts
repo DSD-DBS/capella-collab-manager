@@ -41,9 +41,8 @@ export class MoveModelComponent {
   ) {
     this.projectService.loadProjectsForRole('manager');
     this.filteredProjects$ = projectService.projects$.pipe(
-      map(
-        (projects) =>
-          projects?.filter((project) => project.slug !== data.projectSlug),
+      map((projects) =>
+        projects?.filter((project) => project.slug !== data.projectSlug),
       ),
     );
   }
@@ -85,11 +84,10 @@ export class MoveModelComponent {
       return this.filteredProjects$;
     }
     return this.filteredProjects$.pipe(
-      map(
-        (projects) =>
-          projects?.filter((project) =>
-            project.slug.toLowerCase().includes(this.search.toLowerCase()),
-          ),
+      map((projects) =>
+        projects?.filter((project) =>
+          project.slug.toLowerCase().includes(this.search.toLowerCase()),
+        ),
       ),
     );
   }

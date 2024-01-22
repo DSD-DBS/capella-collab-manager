@@ -50,11 +50,10 @@ export class ProjectUserService {
   public readonly nonAdminProjectUsers$ = this._projectUsers
     .asObservable()
     .pipe(
-      map(
-        (projectUsers) =>
-          projectUsers?.filter(
-            (projectUser) => projectUser.role !== 'administrator',
-          ),
+      map((projectUsers) =>
+        projectUsers?.filter(
+          (projectUser) => projectUser.role !== 'administrator',
+        ),
       ),
     );
 

@@ -70,9 +70,9 @@ export class ProjectAuditLogService {
     this.setProjectEventPageStatusToLoading(page);
 
     this.http
-      .get<Page<HistoryEvent>>(
-        `${environment.backend_url}/projects/${projectSlug}/events?page=${page}&size=${size}`,
-      )
+      .get<
+        Page<HistoryEvent>
+      >(`${environment.backend_url}/projects/${projectSlug}/events?page=${page}&size=${size}`)
       .subscribe((projectEvents) => {
         const projectHistoryEventPages =
           this._projectHistoryEventPages.getValue();

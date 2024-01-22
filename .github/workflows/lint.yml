@@ -15,7 +15,7 @@ jobs:
     name: Validate helm chart with linter and kubernetes yaml schemas
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install helm
         uses: azure/setup-helm@v3
       - name: Install go
@@ -36,8 +36,8 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           cache: pip
           cache-dependency-path: ./backend/pyproject.toml
