@@ -7,30 +7,37 @@
 
 <!-- prettier-ignore -->
 !!! Info
-    Please [request a persistent session](../request.md) before you continue
-    with the instructions here.
+    Connecting to a T4C model in that way will open a connection and automatically
+    write changes back to the T4C model. If you do not want to write changes back you can follow
+    [the import T4C model](../../tools/capella/teamforcapella/import/import-from-t4c.md)
+    tutorial
 
 To access a TeamForCapella based model you first need read/write access from a
 model lead (usually this role is allocated to lead architects / area owners).
 
+<!-- prettier-ignore -->
+!!! Info
+    Please [request a persistent session](../request.md) before you continue
+    with the instructions here.
+
 <!-- prettier-ignore-start -->
 
 1. During the session creation, you perhaps already noticed the TeamForCapella
-   session passwords. If you've already closed the dialog, please reopen it by
+   session token. If you've already closed the dialog, please reopen it by
    clicking `Connect` for your desired session under `Active Sessions`.
    Whenever you create a session, we select all TeamForCapella models with the
    same Capella version that you have access to. For those repositories, we
-   create a session password and register it with `TeamForCapella`. The access
-   is revoked after session termination. Please copy the session password (you
+   create a session token and register it with `TeamForCapella`. The access
+   is revoked after session termination. Please copy the session token (you
    can just click on the text to copy it):
 
-    ![Session password](screenshots/session-password.png)
+    ![Session password](screenshots/session-token.png)
 
 1. When Capella is finally loaded you navigate to `File` > `New` > `Other`.
 
     ![Open Connection dialog](screenshots/step_1.png)
 
-1. Expand `Team for Capella` and select `Connect to remote model`:
+1. Expand `Team for Capella` and select `Capella Connected Project`:
 
     ![Connect to remote model](screenshots/step_2.png)
 
