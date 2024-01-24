@@ -26,10 +26,9 @@ export class GitModelService {
 
   loadGitModels(project_slug: string, model_slug: string): void {
     this.http
-      .get<Array<GetGitModel>>(
-        this.BACKEND_URL_PREFIX +
-          `/projects/${project_slug}/models/${model_slug}/modelsources/git`,
-      )
+      .get<
+        Array<GetGitModel>
+      >(this.BACKEND_URL_PREFIX + `/projects/${project_slug}/models/${model_slug}/modelsources/git`)
       .subscribe((gitModels) => this._gitModels.next(gitModels));
   }
 

@@ -39,9 +39,9 @@ export class T4CRepoService {
 
   loadRepositories(instanceId: number): void {
     this.http
-      .get<T4CServerRepository[]>(
-        `${this.t4cInstanceService.urlFactory(instanceId)}/repositories/`,
-      )
+      .get<
+        T4CServerRepository[]
+      >(`${this.t4cInstanceService.urlFactory(instanceId)}/repositories/`)
       .subscribe({
         next: (repositories) => this._repositories.next(repositories),
         error: () => this._repositories.next(undefined),

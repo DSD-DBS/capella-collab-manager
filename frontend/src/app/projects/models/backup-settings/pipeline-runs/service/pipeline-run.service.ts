@@ -125,13 +125,9 @@ export class PipelineRunService {
     this.setPipelineRunPageStatusToLoading(page);
 
     this.http
-      .get<Page<PipelineRun>>(
-        `${this.urlFactory(
-          projectSlug,
-          modelSlug,
-          pipelineID,
-        )}?page=${page}&size=${size}`,
-      )
+      .get<
+        Page<PipelineRun>
+      >(`${this.urlFactory(projectSlug, modelSlug, pipelineID)}?page=${page}&size=${size}`)
       .subscribe((pipelineRuns) => {
         const pipelineRunPages = this._pipelineRunPages.getValue();
         pipelineRunPages.pages[page - 1] = pipelineRuns;
