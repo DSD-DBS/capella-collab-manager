@@ -103,8 +103,8 @@ export class CreateReadonlySessionComponent implements OnInit {
 
     this.toolService.getVersionsForTool(tool.id).subscribe((toolVersions) => {
       const toolVersionIds = this.models?.map((m) => m.version?.id);
-      this.toolVersions = toolVersions.filter(
-        (v) => toolVersionIds?.includes(v.id),
+      this.toolVersions = toolVersions.filter((v) =>
+        toolVersionIds?.includes(v.id),
       );
     });
   }
