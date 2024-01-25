@@ -1,10 +1,10 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: CC0-1.0
 
-name: Development documentation
+name: documentation
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v2
         with:
-          python-version: "3.11"
+          python-version: '3.11'
       - run: pip install mkdocs-material
-      - run: mkdocs gh-deploy --force
+      - run: mkdocs gh-deploy --strict --force
         working-directory: ./docs
