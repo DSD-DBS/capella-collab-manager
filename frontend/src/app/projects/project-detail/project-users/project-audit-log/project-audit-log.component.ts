@@ -4,9 +4,11 @@
  */
 
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   Inject,
+  OnInit,
   QueryList,
   ViewChildren,
 } from '@angular/core';
@@ -20,7 +22,7 @@ import { ProjectAuditLogService } from 'src/app/projects/project-detail/project-
   styleUrls: ['./project-audit-log.component.css'],
 })
 @UntilDestroy()
-export class ProjectAuditLogComponent {
+export class ProjectAuditLogComponent implements OnInit, AfterViewInit {
   pageSize = 25;
   pageSizeArray = [...Array(this.pageSize).keys()];
 
