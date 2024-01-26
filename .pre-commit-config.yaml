@@ -153,10 +153,11 @@ repos:
         types: []
         exclude: '.+\.spec(-helper)?\.ts$'
         types_or: ["html", "ts"]
-  - repo: https://github.com/qoomon/git-conventional-commits
-    rev: v2.6.7
+  - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
+    rev: v9.11.0
     hooks:
-      - id: conventional-commits
+      - id: commitlint
+        stages: [commit-msg]
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.15.0
     hooks:
