@@ -19,9 +19,9 @@ repos:
       - id: check-toml
       - id: check-vcs-permalinks
       - id: check-xml
-        exclude: "backend/t4cclient/extensions/backups/jenkins/config.xml"
+        exclude: 'backend/t4cclient/extensions/backups/jenkins/config.xml'
       - id: check-yaml
-        exclude: "helm/|mkdocs.yml"
+        exclude: 'helm/|mkdocs.yml'
       - id: debug-statements
       - id: destroyed-symlinks
       - id: end-of-file-fixer
@@ -31,14 +31,14 @@ repos:
     rev: 23.12.1
     hooks:
       - id: black
-        files: "^backend/"
+        files: '^backend/'
         args:
-          - "--config"
-          - "backend/pyproject.toml"
+          - '--config'
+          - 'backend/pyproject.toml'
         types: [python]
       - id: black
         types: [python]
-        exclude: "^backend/"
+        exclude: '^backend/'
   - repo: https://github.com/PyCQA/isort
     rev: 5.13.2
     hooks:
@@ -50,8 +50,8 @@ repos:
     hooks:
       - id: mypy
         types_or: [python, spec]
-        files: "^backend/capellacollab"
-        exclude: "^backend/capellacollab/alembic/"
+        files: '^backend/capellacollab'
+        exclude: '^backend/capellacollab/alembic/'
         args: [--config-file=./backend/pyproject.toml]
         additional_dependencies:
           - fastapi
@@ -67,16 +67,16 @@ repos:
         args: [--rcfile=./backend/pyproject.toml]
         language: system
         types: [python]
-        files: "^backend/capellacollab"
-        exclude: "^backend/capellacollab/alembic/"
+        files: '^backend/capellacollab'
+        exclude: '^backend/capellacollab/alembic/'
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v3.1.0
     hooks:
       - id: prettier
         types_or: [ts, css, html, markdown]
         additional_dependencies:
-          - "prettier@^3.0.3"
-          - "prettier-plugin-tailwindcss@^0.5.5"
+          - 'prettier@^3.0.3'
+          - 'prettier-plugin-tailwindcss@^0.5.5'
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.5.4
     hooks:
@@ -89,7 +89,7 @@ repos:
           - --license-filepath
           - LICENSES/.license_header_apache.txt
           - --comment-style
-          - "#"
+          - '#'
       - id: insert-license
         name: Insert license headers (shell-style comments)
         files: '(?:^|/)(?:codeql-analysis.yml|dependabot.yml|\.(?:pre-commit-config.yaml|browserslistrc|editorconfig|(?:git|helm|docker)ignore))$'
@@ -98,7 +98,7 @@ repos:
           - --license-filepath
           - LICENSES/.license_header_cc0.txt
           - --comment-style
-          - "#"
+          - '#'
       - id: insert-license
         name: Insert license headers (XML-style comments)
         files: '\.(?:html|md|xml)$'
@@ -108,7 +108,7 @@ repos:
           - --license-filepath
           - LICENSES/.license_header_apache.txt
           - --comment-style
-          - "<!--| ~| -->"
+          - '<!--| ~| -->'
       - id: insert-license
         name: Insert license headers (C-style comments)
         files: '\.(?:s?css|js|ts)$'
@@ -118,7 +118,7 @@ repos:
           - --license-filepath
           - LICENSES/.license_header_apache.txt
           - --comment-style
-          - "/*| *| */"
+          - '/*| *| */'
       - id: insert-license
         name: Insert license headers (reST comments)
         files: '\.rst$'
@@ -128,7 +128,7 @@ repos:
           - --license-filepath
           - LICENSES/.license_header_apache.txtcomemnt
           - --comment-style
-          - "..|  |"
+          - '..|  |'
   - repo: https://github.com/fsfe/reuse-tool
     rev: v3.0.1
     hooks:
@@ -138,28 +138,30 @@ repos:
     hooks:
       - id: eslint
         additional_dependencies:
-          - "eslint@^8.56.0"
-          - "@angular-eslint/eslint-plugin@17.2.1"
-          - "@angular-eslint/eslint-plugin-template@17.2.1"
-          - "@angular-eslint/template-parser@17.2.1"
-          - "eslint-config-prettier@^9.1.0"
-          - "eslint-plugin-import@^2.29.1"
-          - "@typescript-eslint/eslint-plugin@^6.19.1"
-          - "@typescript-eslint/parser@^6.19.1"
-          - "eslint-plugin-unused-imports@^3.0.0"
-          - "eslint-plugin-deprecation@^2.0.0"
-          - "eslint-plugin-tailwindcss@^3.14.1"
-        args: ["--fix"]
+          - 'eslint@^8.56.0'
+          - '@angular-eslint/eslint-plugin@17.2.1'
+          - '@angular-eslint/eslint-plugin-template@17.2.1'
+          - '@angular-eslint/template-parser@17.2.1'
+          - 'eslint-config-prettier@^9.1.0'
+          - 'eslint-plugin-import@^2.29.1'
+          - '@typescript-eslint/eslint-plugin@^6.19.1'
+          - '@typescript-eslint/parser@^6.19.1'
+          - 'eslint-plugin-unused-imports@^3.0.0'
+          - 'eslint-plugin-deprecation@^2.0.0'
+          - 'eslint-plugin-tailwindcss@^3.14.1'
+        args: ['--fix']
         types: []
         exclude: '.+\.spec(-helper)?\.ts$'
-        types_or: ["html", "ts"]
+        types_or: ['html', 'ts']
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
     rev: v9.11.0
     hooks:
       - id: commitlint
         stages: [commit-msg]
+        additional_dependencies:
+          - '@commitlint/config-conventional'
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.15.0
     hooks:
       - id: pyupgrade
-        args: ["--py311-plus"]
+        args: ['--py311-plus']
