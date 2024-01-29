@@ -10,6 +10,12 @@
     To import a Capella model into your persistent workspace, you need
     at least the `Read/Write`-permission in the project.
 
+<!-- prettier-ignore -->
+!!! info
+    This imports a model into your workspace and changes are not automatically saved
+    back to the T4C repository. If you want to save changes directly back to the server
+    use [this](../../../../sessions/flows/t4c.md) documentation.
+
 1. Open a persistent session with the corresponding Capella version.
 1. Wait until Capella has started.
 1. Click on `File` > `Import...`. <br />
