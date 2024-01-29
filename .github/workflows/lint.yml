@@ -19,7 +19,7 @@ jobs:
       - name: Install helm
         uses: azure/setup-helm@v3
       - name: Install go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
       - name: Install kubeconform
         run: |
           go install github.com/yannh/kubeconform/cmd/kubeconform@latest
