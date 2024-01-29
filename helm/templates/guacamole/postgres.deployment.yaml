@@ -54,12 +54,12 @@ spec:
               protocol: TCP
           readinessProbe:
             exec:
-              command: ["psql", "-W", "{{ .Values.database.guacamole.internal.password }}", "-U", "guacamole", "-d", "guacamole", "-c", "SELECT 1"]
+              command: ["psql", "-w", "-U", "guacamole", "-d", "guacamole", "-c", "SELECT 1"]
             initialDelaySeconds: 15
             timeoutSeconds: 2
           livenessProbe:
             exec:
-              command: ["psql", "-W", "{{ .Values.database.guacamole.internal.password }}", "-U", "guacamole", "-d", "guacamole", "-c", "SELECT 1"]
+              command: ["psql", "-w", "-U", "guacamole", "-d", "guacamole", "-c", "SELECT 1"]
             initialDelaySeconds: 45
             timeoutSeconds: 2
           resources:
