@@ -17,7 +17,7 @@
 
 1.  To set up the model complexity badge, you need to add the Git API URL to
     your Git instance. More information
-    [here](../../settings/model-sources/git.md).
+    [here](../../../admin/settings/model-sources/git.md).
 1.  Link a Git repository to the model, for which you'd like to see the model
     complexity badge.
 

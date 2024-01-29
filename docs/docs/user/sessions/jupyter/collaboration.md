@@ -28,14 +28,6 @@ connect to your sessions, follow these steps:
 6. **Share the Link**: Distribute the link to all users who should have access.
    They will be able to open your notebooks and concurrently edit them.
 
-#### Instructional Video
-
-Here's a video that visually guides you through these steps:
-
-<video controls>
-  <source src="../jupyter-collaboration.mp4" type="video/mp4">
-</video>
-
 ## Collaboration on Project Level
 
 If you need a shared workspace for notebooks at the project level, you can
