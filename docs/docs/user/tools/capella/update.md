@@ -19,12 +19,12 @@
 1. Import the model into your workspace.
 1. Terminate the session.
 1. Update the model version to the newer Capella version:
-   [Change model metadata](metadata.md)
+   [Change model metadata](../../projects/models/metadata.md)
 1. Create a new session with the new Capella version.
 1. In your persistent workspace loaded, execute the following steps:
    <!-- prettier-ignore -->
     1. Right click on the model in your workspace.
     1. Select `Migration` and `Migrate Project toward current version`
        ![Migrate Capella model](../../tools/capella/teamforcapella/migrate-capella-model.png)
-    1. A backup is  required.
+    1. A backup is  recommended.
        ![Disable backup option](../../tools/capella/teamforcapella/backup-migration.png)

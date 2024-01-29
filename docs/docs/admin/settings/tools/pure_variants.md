@@ -50,7 +50,7 @@
 
 1. Open the project perspective of a selected project.
 1. If you don't have model with the `pure::variants` tool yet,
-   [create one](../../projects/models/create.md).
+   [create one](../../../user/projects/models/create.md).
 1. Click on the model restrictions icon: <br />
    ![Model restrictions](./model_restrictions.png){:style="width:400px"}
 1. Enable `Allow the usage of pure::variants`. <br />
@@ -62,5 +62,5 @@
 
 You have to get access to a project with at least one `pure::variants`
 whitelisted model. More information:
-[Get access to a project](../../projects/access.md). If you need a new
+[Get access to a project](../../../user/projects/access.md). If you need a new
 `pure::variants` whitelisted model, please ask your administrator.
