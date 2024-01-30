@@ -50,6 +50,7 @@ import {
   HighlightPipeTransform,
   ModelDiagramCodeBlockComponent,
 } from 'src/app/projects/models/diagrams/model-diagram-dialog/model-diagram-code-block/model-diagram-code-block.component';
+import { PolarionSettingsComponent } from 'src/app/settings/modelsources/polarion-settings/polarion-settings.component';
 import { BasicAuthTokenComponent } from 'src/app/users/basic-auth-token/basic-auth-token.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -215,6 +216,7 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
     PipelineRunWrapperComponent,
     PipelinesOverviewComponent,
     PipelineWrapperComponent,
+    PolarionSettingsComponent,
     ProjectAuditLogComponent,
     ProjectDetailsComponent,
     ProjectMetadataComponent,

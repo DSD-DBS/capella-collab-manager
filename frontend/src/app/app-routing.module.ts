@@ -13,6 +13,8 @@ import { ModelRestrictionsComponent } from 'src/app/projects/models/model-restri
 import { EditProjectMetadataComponent } from 'src/app/projects/project-detail/edit-project-metadata/edit-project-metadata.component';
 import { SessionComponent } from 'src/app/sessions/session/session.component';
 import { PipelinesOverviewComponent } from 'src/app/settings/core/pipelines-overview/pipelines-overview.component';
+import { EditPolarionSettingsComponent } from 'src/app/settings/modelsources/polarion-settings/edit-polarion-settings/edit-polarion-settings.component';
+import { PolarionSettingsComponent } from 'src/app/settings/modelsources/polarion-settings/polarion-settings.component';
 import { BasicAuthTokenComponent } from 'src/app/users/basic-auth-token/basic-auth-token.component';
 import { UsersProfileComponent } from 'src/app/users/users-profile/users-profile.component';
 import { EventsComponent } from './events/events.component';
@@ -422,6 +424,24 @@ const routes: Routes = [
                       breadcrumb: (data: Data) => data.t4cInstance?.name,
                     },
                     component: EditT4CInstanceComponent,
+                  },
+                ],
+              },
+              {
+                path: 'polarion',
+                data: { breadcrumb: 'Polarion Instances' },
+                children: [
+                  {
+                    path: '',
+                    data: { breadcrumb: undefined },
+                    component: PolarionSettingsComponent,
+                  },
+                  {
+                    path: 'instances/:id',
+                    data: {
+                      breadcrumb: (data: Data) => data.polarionInstance?.name,
+                    },
+                    component: EditPolarionSettingsComponent,
                   },
                 ],
               },
