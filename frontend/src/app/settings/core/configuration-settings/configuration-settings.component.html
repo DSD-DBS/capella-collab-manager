@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<app-editor #editor (submitted)="submitValue($event)" />
+<app-editor height="70vh" #editor (submitted)="submitValue($event)" />
 <div class="m-2 flex gap-2">
   <button mat-stroked-button (click)="editor.submitValue()" color="primary">
     <span>Save</span>

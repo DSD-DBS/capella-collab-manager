@@ -19,7 +19,6 @@ import capellacollab.settings.configuration.models
 import capellacollab.settings.integrations.purevariants.models
 import capellacollab.settings.modelsources.git.models
 import capellacollab.settings.modelsources.t4c.models
-import capellacollab.tools.integrations.models
 import capellacollab.tools.models
 import capellacollab.users.models
 import capellacollab.users.tokens.models

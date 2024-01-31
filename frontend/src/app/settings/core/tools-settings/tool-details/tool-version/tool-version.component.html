@@ -2,75 +2,73 @@
  ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
-<div class="default collab-card">
-  <h2 class="text-xl">Tool Versions</h2>
+<div class="collab-card w-wide-card max-w-max-card">
+  <span class="text-lg"><b>Tool Versions</b></span>
+  <app-api-documentation
+    class="pb-3"
+    tag="Tools"
+    hyperlink="create_tool_version_api_v1_tools__tool_id__versions_post"
+  ></app-api-documentation>
+  <mat-tab-group #tabGroup>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="mr-1">add_box</mat-icon>
+        Add version
+      </ng-template>
+      <app-editor
+        #editorRef
+        context="new"
+        height="calc(500px - 48px)"
+        (submitted)="submittedNewToolVersion($event)"
+      />
+      <div class="mt-2 flex flex-wrap justify-around gap-2">
+        <button (click)="submitValue('new')" mat-stroked-button color="primary">
+          <span>Create</span>
+          <mat-icon class="ml-2">add_box</mat-icon>
+        </button>
+        <button (click)="resetValue('new')" mat-stroked-button>
+          <span>Reset</span> <mat-icon class="ml-2">clear</mat-icon>
+        </button>
+      </div>
+    </mat-tab>
 
-  <form [formGroup]="toolVersionForm" #formDirective="ngForm">
-    <mat-form-field appearance="fill">
-      <mat-label>Version name</mat-label>
-      <input matInput formControlName="name" />
-      <mat-error *ngIf="toolVersionForm.controls.name.errors?.required"
-        >Please enter a version name</mat-error
-      >
-      <mat-error *ngIf="toolVersionForm.controls.name.errors?.toolVersionExists"
-        >Version name is already used</mat-error
-      >
-    </mat-form-field>
-    <div class="field-separator"></div>
-    <button
-      mat-flat-button
-      color="primary"
-      [disabled]="!toolVersionForm.valid"
-      (click)="createToolVersion()"
-    >
-      Add Tool version
-    </button>
-  </form>
-  <mat-selection-list
-    #toolVersionList
-    [multiple]="false"
-    class="user-selection"
-    (selectionChange)="onSelectionChange($event)"
-  >
-    <mat-list-option
-      *ngFor="let toolVersion of this.toolVersions"
-      [value]="toolVersion"
-      [selected]="isToolVersionSelected(toolVersion)"
-    >
-      <mat-icon mat-list-icon>history</mat-icon>
-      <div>
-        <div mat-line>{{ toolVersion.name }}</div>
-        <div mat-line *ngIf="toolVersion.is_deprecated">deprecated</div>
-        <div mat-line *ngIf="toolVersion.is_recommended">recommended</div>
-      </div>
-    </mat-list-option>
-  </mat-selection-list>
-  <div *ngIf="toolVersionList.selectedOptions.selected.length">
-    <hr />
-    <div class="field-separator"></div>
-    <div class="flex justify-between">
-      <div>
-        <form [formGroup]="toolVersionMetadataForm" *ngIf="!loadingMetadata">
-          <mat-checkbox formControlName="isDeprecated"
-            >Is deprecated</mat-checkbox
+    @if (toolVersions === undefined) {
+      <mat-tab label="Loading..."></mat-tab>
+    }
+
+    @for (version of toolVersions; track version.id) {
+      <mat-tab [label]="version.name">
+        <app-editor
+          #editorRef
+          (submitted)="submittedValue(version, $event)"
+          [context]="version.id.toString()"
+          height="calc(500px - 48px)"
+          [value]="version"
+        />
+        <div class="mt-2 flex flex-wrap justify-around gap-2">
+          <button
+            mat-stroked-button
+            (click)="submitValue(version.id.toString())"
+            color="primary"
           >
-          <br />
-          <mat-checkbox formControlName="isRecommended"
-            >Is recommended</mat-checkbox
+            <span>Save</span>
+            <mat-icon class="ml-2">save</mat-icon>
+          </button>
+          <button
+            mat-stroked-button
+            (click)="resetValue(version.id.toString())"
           >
-        </form>
-      </div>
-      <div *ngIf="loadingMetadata" class="spinner">
-        <mat-spinner [diameter]="20"></mat-spinner>
-      </div>
-      <button
-        mat-flat-button
-        color="warn"
-        (click)="removeToolVersion(selectedToolVersion!)"
-      >
-        <mat-icon>delete</mat-icon> Remove version
-        {{ selectedToolVersion!.name }}
-      </button>
-    </div>
-  </div>
+            <span>Reset</span> <mat-icon class="ml-2">clear</mat-icon>
+          </button>
+          <button
+            mat-stroked-button
+            (click)="removeToolVersion(version)"
+            color="warn"
+          >
+            <span>Delete version</span> <mat-icon class="ml-2">delete</mat-icon>
+          </button>
+        </div>
+      </mat-tab>
+    }
+  </mat-tab-group>
 </div>

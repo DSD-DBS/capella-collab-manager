@@ -149,7 +149,7 @@ def request_readonly_session(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
                 "err_code": "NO_MODELS",
-                "reason": "No models have been provided in this request for a read-only session.",
+                "reason": "No models have been provided in the request for a read-only session.",
             },
         )
 
@@ -193,7 +193,10 @@ def request_readonly_session(
             status_code=status.HTTP_409_CONFLICT,
             detail={
                 "err_code": "EXISTING_SESSION",
-                "reason": f"You already have a read-only session for {project.name}/{model.tool.name} and tool {model.tool.name}/{model.version.name}. Close the existing session before starting a new one.",
+                "reason": (
+                    f"You already have a read-only session for {project.name}/{model.tool.name} and tool {model.tool.name}/{model.version.name}. "
+                    "Close the existing session before starting a new one."
+                ),
             },
         )
 
@@ -314,8 +317,12 @@ def request_persistent_session(
         warnings += hook_warnings
 
     docker_image = get_image_for_tool_version(db, version.id)
+    if not docker_image:
+        raise exceptions.UnsupportedSessionTypeError(
+            tool, models.WorkspaceType.PERSISTENT
+        )
 
-    if tool.integrations and tool.integrations.jupyter:
+    if tool.integrations.jupyter:
         response = start_persistent_jupyter_session(
             db=db,
             operator=operator,
@@ -358,7 +365,7 @@ def raise_if_conflicting_persistent_sessions(
     # Currently, all tools share one workspace. Eclipse based tools lock the workspace.
     # We can only run one Eclipse-based tool at a time.
     # Status tracked in https://github.com/DSD-DBS/capella-collab-manager/issues/847
-    if tool.integrations and tool.integrations.jupyter:
+    if tool.integrations.jupyter:
         # Check if there is already an Jupyter session running.
         if True in [
             session.tool.integrations.jupyter
@@ -640,13 +647,14 @@ def get_sessions_for_user(
     )
 
 
-def get_image_for_tool_version(db: orm.Session, version_id: int) -> str:
+def get_image_for_tool_version(db: orm.Session, version_id: int) -> str | None:
     version = tools_crud.get_version_by_id_or_raise(db, version_id)
-    return version.tool.docker_image_template.replace("$version", version.name)
+    template = version.config.sessions.persistent.image
+    return template.format(version=version.name) if template else None
 
 
 def get_readonly_image_for_version(
     version: tools_models.DatabaseVersion,
 ) -> str | None:
-    template = version.tool.readonly_docker_image_template
-    return template.replace("$version", version.name) if template else None
+    template = version.config.sessions.read_only.image
+    return template.format(version=version.name) if template else None

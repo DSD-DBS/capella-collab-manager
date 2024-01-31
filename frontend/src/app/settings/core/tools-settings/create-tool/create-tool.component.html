@@ -1,0 +1,22 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="flex flex-wrap">
+  <mat-card class="flex w-[400px] max-w-max-card flex-col justify-between">
+    <div>
+      <h2>Common</h2>
+      <app-editor height="500px" (submitted)="submitValue($event)" #editor />
+    </div>
+    <div class="mt-2 flex flex-wrap justify-around gap-2">
+      <button mat-stroked-button (click)="editor.submitValue()" color="primary">
+        <span>Create</span>
+        <mat-icon class="ml-2">add_box</mat-icon>
+      </button>
+      <button mat-stroked-button (click)="editor.resetValue()">
+        <span>Reset</span> <mat-icon class="ml-2">clear</mat-icon>
+      </button>
+    </div>
+  </mat-card>
+</div>

@@ -3,127 +3,32 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flex flex-wrap">
-  <div>
-    <div class="collab-card">
-      <h2 class="text-xl">Metadata</h2>
-      <form [formGroup]="form" (ngSubmit)="submit()">
-        <mat-form-field appearance="fill">
-          <mat-label>Name</mat-label>
-          <input formControlName="name" matInput placeholder="Capella" />
-          <mat-error
-            *ngIf="
-              form.controls.dockerimages.controls.persistent.errors
-                ?.validDockerImageNameInvalid
-            "
-            >A name for the tool is required!</mat-error
-          >
-        </mat-form-field>
-        <hr />
-        <div class="flex flex-col" formGroupName="dockerimages">
-          Here you can specify the used Docker images: <br /><br />
-          <mat-form-field appearance="fill">
-            <mat-label>Persistent workspaces</mat-label>
-            <input
-              formControlName="persistent"
-              matInput
-              placeholder="docker.io/tool/persistent:$version"
-            />
-            <mat-error
-              *ngIf="
-                form.controls.dockerimages.controls.persistent.errors?.required
-              "
-              >You have to provide a persistent docker image!</mat-error
-            >
-            <mat-error
-              *ngIf="
-                form.controls.dockerimages.controls.persistent.errors?.maxLength
-              "
-              >The maximal allowed length is 4096!</mat-error
-            >
-            <mat-error
-              *ngIf="
-                form.controls.dockerimages.controls.persistent.errors
-                  ?.validDockerImageNameInvalid
-              "
-              >The input is not a valid docker image name!</mat-error
-            >
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>Read-only workspaces (optional)</mat-label>
-            <input
-              matInput
-              formControlName="readonly"
-              placeholder="docker.io/tool/readonly:$version"
-            />
-            <mat-error
-              *ngIf="
-                form.controls.dockerimages.controls.readonly.errors?.maxLength
-              "
-              >The maximal allowed length is 4096!</mat-error
-            >
-            <mat-error
-              *ngIf="
-                form.controls.dockerimages.controls.readonly.errors
-                  ?.validDockerImageNameInvalid
-              "
-              >The input is not a valid docker image name!</mat-error
-            >
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>Backup image (optional)</mat-label>
-            <input
-              formControlName="backup"
-              matInput
-              placeholder="docker.io/tool/backup:$version-latest"
-            />
-            <mat-error
-              *ngIf="
-                form.controls.dockerimages.controls.backup.errors?.maxLength
-              "
-              >The maximal allowed length is 4096!</mat-error
-            >
-            <mat-error
-              *ngIf="
-                form.controls.dockerimages.controls.backup.errors
-                  ?.validDockerImageNameInvalid
-              "
-              >The input is not a valid docker image name!</mat-error
-            >
-          </mat-form-field>
-        </div>
-        <br />
-        <div *ngIf="editing" class="flex justify-between">
-          <button
-            mat-flat-button
-            type="button"
-            color="warn"
-            (click)="cancelEditing()"
-          >
-            Cancel
-          </button>
-          <button mat-flat-button type="submit" color="primary">Submit</button>
-        </div>
-        <div *ngIf="!editing && existing" class="flex justify-between">
-          <button mat-flat-button (click)="enableEditing()">Edit</button>
-          <button mat-raised-button color="warn" (click)="deleteTool()">
-            Delete
-          </button>
-        </div>
-        <div *ngIf="!existing">
-          <button
-            mat-flat-button
-            color="primary"
-            type="submit"
-            [disabled]="!form.valid"
-          >
-            Create
-          </button>
-        </div>
-      </form>
+<div class="flex flex-wrap gap-2">
+  <div
+    class="collab-card flex w-[400px] max-w-max-card flex-col justify-between"
+  >
+    <div>
+      <div class="text-lg"><b>Common</b></div>
+      <app-api-documentation
+        class="pb-3"
+        tag="Tools"
+        hyperlink="create_tool_api_v1_tools_post"
+      ></app-api-documentation>
+      <app-editor height="500px" (submitted)="submitValue($event)" #editor />
     </div>
-    <app-tool-integrations [tool]="selectedTool"></app-tool-integrations>
+    <div class="mt-2 flex flex-wrap justify-around gap-2">
+      <button mat-stroked-button (click)="editor.submitValue()" color="primary">
+        <span>Save</span>
+        <mat-icon class="ml-2">save</mat-icon>
+      </button>
+      <button mat-stroked-button (click)="editor.resetValue()">
+        <span>Reset</span> <mat-icon class="ml-2">clear</mat-icon>
+      </button>
+      <button mat-stroked-button (click)="deleteTool()" color="warn">
+        <span>Delete tool</span> <mat-icon class="ml-2">delete</mat-icon>
+      </button>
+    </div>
   </div>
-  <app-tool-version *ngIf="existing" [tool]="selectedTool"> </app-tool-version>
-  <app-tool-nature *ngIf="existing" [tool]="selectedTool"></app-tool-nature>
+  <app-tool-version [tool]="selectedTool"> </app-tool-version>
+  <app-tool-nature [tool]="selectedTool"></app-tool-nature>
 </div>

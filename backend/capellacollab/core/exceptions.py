@@ -56,3 +56,6 @@ def register_exceptions(app: fastapi.FastAPI):
     app.add_exception_handler(
         ExistingDependenciesError, existing_dependencies_exception_handler  # type: ignore[arg-type]
     )
+    app.add_exception_handler(
+        ResourceAlreadyExistsError, resource_already_exists_exception_handler  # type: ignore[arg-type]
+    )

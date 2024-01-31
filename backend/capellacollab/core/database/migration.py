@@ -36,8 +36,6 @@ from capellacollab.settings.modelsources.t4c.repositories import (
 )
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
-from capellacollab.tools.integrations import crud as integrations_crud
-from capellacollab.tools.integrations import models as integrations_models
 from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
@@ -114,68 +112,141 @@ def initialize_coffee_machine_project(db: orm.Session):
     )
 
 
-def create_tools(db: orm.Session):
-    LOGGER.info("Initialized tools")
-    registry = config["docker"]["registry"]
-    if os.getenv("DEVELOPMENT_MODE", "").lower() in ("1", "true", "t"):
-        capella = tools_models.DatabaseTool(
-            name="Capella",
-            docker_image_template=f"{registry}/capella/remote:$version-latest",
-            docker_image_backup_template=f"{registry}/t4c/client/base:$version-latest",
-            readonly_docker_image_template=f"{registry}/capella/readonly:$version-latest",
+def create_capella_tool(
+    db: orm.Session, registry: str, development_mode: bool
+):
+    capella = tools_models.CreateTool(
+        name="Capella",
+        integrations=tools_models.ToolIntegrations(
+            t4c=True, pure_variants=False, jupyter=False
+        ),
+    )
+    capella_database = tools_crud.create_tool(db, capella)
+
+    for capella_version_name in ("5.0.0", "5.2.0", "6.0.0", "6.1.0"):
+        if development_mode:
+            docker_tag = f"{capella_version_name}-latest"
+        else:
+            docker_tag = f"{capella_version_name}-selected-dropins-main"
+
+        capella_version = tools_models.CreateToolVersion(
+            name=capella_version_name,
+            config=tools_models.ToolVersionConfiguration(
+                is_recommended=capella_version_name == "6.1.0",
+                is_deprecated=capella_version_name == "5.0.0",
+                sessions=tools_models.SessionToolConfiguration(
+                    persistent=tools_models.PersistentSessionToolConfiguration(
+                        image=(f"{registry}/capella/remote:{docker_tag}"),
+                    ),
+                    read_only=tools_models.ReadOnlySessionToolConfiguration(
+                        image=f"{registry}/capella/readonly:{docker_tag}"
+                    ),
+                ),
+                backups=tools_models.ToolBackupConfiguration(
+                    image=f"{registry}/t4c/client/base:{docker_tag}"
+                ),
+            ),
+        )
+        tools_crud.create_version(
+            db,
+            capella_database,
+            capella_version,
         )
 
-        papyrus = tools_models.DatabaseTool(
-            name="Papyrus",
-            docker_image_template=f"{registry}/papyrus/client/remote:$version-prod",
+    tools_crud.create_nature(db, capella_database, "model")
+    tools_crud.create_nature(db, capella_database, "library")
+
+
+def create_papyrus_tool(db: orm.Session, registry: str):
+    papyrus = tools_models.CreateTool(
+        name="Papyrus",
+        integrations=tools_models.ToolIntegrations(
+            t4c=False, pure_variants=False, jupyter=False
+        ),
+    )
+    papyrus_database = tools_crud.create_tool(db, papyrus)
+
+    for papyrus_version_name in ("6.0", "6.1"):
+        papyrus_version = tools_models.CreateToolVersion(
+            name=papyrus_version_name,
+            config=tools_models.ToolVersionConfiguration(
+                is_recommended=False,
+                is_deprecated=False,
+                sessions=tools_models.SessionToolConfiguration(
+                    persistent=tools_models.PersistentSessionToolConfiguration(
+                        image=(
+                            f"{registry}/capella/remote:{papyrus_version_name}-latest"
+                        ),
+                    ),
+                    read_only=tools_models.ReadOnlySessionToolConfiguration(
+                        image=None
+                    ),
+                ),
+                backups=tools_models.ToolBackupConfiguration(image=None),
+            ),
         )
-        tools_crud.create_tool(db, papyrus)
 
-        tools_crud.create_version(db, papyrus, "6.1")
-        tools_crud.create_version(db, papyrus, "6.0")
-
-        tools_crud.create_nature(db, papyrus, "UML 2.5")
-        tools_crud.create_nature(db, papyrus, "SysML 1.4")
-        tools_crud.create_nature(db, papyrus, "SysML 1.1")
-
-    else:
-        # Use public Github images per default
-        capella = tools_models.DatabaseTool(
-            name="Capella",
-            docker_image_template="ghcr.io/dsd-dbs/capella-dockerimages/capella/remote:$version-selected-dropins-main",
-            docker_image_backup_template="",
-            readonly_docker_image_template="ghcr.io/dsd-dbs/capella-dockerimages/capella/readonly:$version-selected-dropins-main",
+        tools_crud.create_version(
+            db,
+            papyrus_database,
+            papyrus_version,
         )
 
-    tools_crud.create_tool(db, capella)
+    tools_crud.create_nature(db, papyrus_database, "UML 2.5")
+    tools_crud.create_nature(db, papyrus_database, "SysML 1.4")
+    tools_crud.create_nature(db, papyrus_database, "SysML 1.1")
 
-    jupyter = tools_models.DatabaseTool(
+
+def create_jupyter_tool(db: orm.Session, registry: str):
+    jupyter = tools_models.CreateTool(
         name="Jupyter",
-        docker_image_template=f"{registry}/jupyter-notebook:$version",
+        integrations=tools_models.ToolIntegrations(jupyter=True),
     )
-    tools_crud.create_tool(db, jupyter)
-    assert jupyter.integrations
-    integrations_crud.update_integrations(
+    jupyter_database = tools_crud.create_tool(db, jupyter)
+
+    tools_crud.create_version(
         db,
-        jupyter.integrations,
-        integrations_models.PatchToolIntegrations(jupyter=True),
+        jupyter_database,
+        tools_models.CreateToolVersion(
+            name="python-3.11",
+            config=tools_models.ToolVersionConfiguration(
+                is_recommended=False,
+                is_deprecated=False,
+                sessions=tools_models.SessionToolConfiguration(
+                    persistent=tools_models.PersistentSessionToolConfiguration(
+                        image=(f"{registry}/jupyter-notebook:python-3.11"),
+                    ),
+                    read_only=tools_models.ReadOnlySessionToolConfiguration(
+                        image=None
+                    ),
+                ),
+                backups=tools_models.ToolBackupConfiguration(image=None),
+            ),
+        ),
     )
 
-    default_version = tools_crud.create_version(db, capella, "6.0.0", True)
-    tools_crud.create_version(db, capella, "5.2.0")
-    tools_crud.create_version(db, capella, "5.0.0")
+    tools_crud.create_nature(db, jupyter_database, "notebooks")
 
-    tools_crud.create_version(db, jupyter, "python-3.11")
-    tools_crud.create_nature(db, jupyter, "notebooks")
 
-    default_nature = tools_crud.create_nature(db, capella, "model")
-    tools_crud.create_nature(db, capella, "library")
+def create_tools(db: orm.Session):
+    development_mode = os.getenv("DEVELOPMENT_MODE", "").lower() in (
+        "1",
+        "true",
+        "t",
+    )
 
-    for model in toolmodels_crud.get_models(db):
-        toolmodels_crud.set_tool_for_model(db, model, capella)
-        toolmodels_crud.set_tool_details_for_model(
-            db, model, default_version, default_nature
-        )
+    if development_mode:
+        registry = config["docker"]["registry"]
+    else:
+        registry = "ghcr.io/dsd-dbs/capella-dockerimages"
+
+    create_capella_tool(db, registry, development_mode)
+
+    if development_mode:
+        create_papyrus_tool(db, registry)
+        create_jupyter_tool(db, registry)
+
+    LOGGER.info("Initialized tools")
 
 
 def create_t4c_instance_and_repositories(db):
