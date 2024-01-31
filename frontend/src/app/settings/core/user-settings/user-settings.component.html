@@ -3,11 +3,11 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flex flex-wrap">
-  <div class="collab-card" id="manage-users">
-    <h2>Manage Users</h2>
+<div class="flex flex-wrap gap-5">
+  <div class="collab-card mb-[10px]" id="manage-users">
+    <h2 class="text-xl font-medium">Manage Users</h2>
 
-    <mat-form-field id="search" appearance="outline">
+    <mat-form-field class="mt-[5px]" id="search" appearance="outline">
       <mat-label>Search</mat-label>
       <input
         [(ngModel)]="search"
@@ -40,7 +40,7 @@
           </div>
         </a>
       </div>
-      >
+
       <div mat-subheader>Users</div>
       <div
         *ngFor="let user of getUsersByRole('user')"
@@ -57,16 +57,18 @@
         </a>
         <div class="ml-1 mr-0 flex items-center">
           <button
+            class="!mx-0 !h-[40px] !w-[40px] !px-0"
             mat-icon-button
             color="error"
             *ngIf="['user'].includes(user.role)"
             (click)="deleteUser(user)"
             matTooltip="Permamently delete user"
           >
-            <mat-icon>delete</mat-icon>
+            <mat-icon color="warn">delete</mat-icon>
           </button>
 
           <button
+            class="!mx-0 !h-[40px] !w-[40px] !px-0"
             mat-icon-button
             color="primary"
             (click)="upgradeToAdministrator(user)"
@@ -79,6 +81,7 @@
 
       <div *ngIf="selectedUser">
         <button
+          class="!mx-0 !h-[40px] !w-[40px] !px-0"
           mat-flat-button
           color="primary"
           *ngIf="
@@ -91,6 +94,7 @@
           Downgrade {{ selectedUser.name }} to User
         </button>
         <button
+          class="!mx-0 !h-[40px] !w-[40px] !px-0"
           mat-flat-button
           color="primary"
           (click)="upgradeToAdministrator(selectedUser)"
@@ -101,43 +105,46 @@
           {{ selectedUser.name }} to Administrator
         </button>
         <button
+          class="!mx-0 !h-[40px] !w-[40px] !px-0"
           mat-flat-button
           color="primary"
           (click)="deleteUser(selectedUser)"
           *ngIf="selectedUser.role === 'user'"
         >
-          <mat-icon>delete</mat-icon>
+          <mat-icon color="warn">delete</mat-icon>
           Delete {{ selectedUser.name }}
         </button>
       </div>
-      <div class="default collab-card h-1/4">
-        <h2>Create User</h2>
-        In general, users are created automatically when logging in the first
-        time.
-        <br />
-        However, there may be cases where you want to create the user before the
-        first login. <br />
-        <form [formGroup]="createUserFormGroup" class="flex justify-between">
-          <mat-form-field>
-            <mat-label>Username</mat-label>
-            <input matInput formControlName="username" />
-            <mat-error *ngIf="username.getError('required')"
-              >Please enter a username!</mat-error
-            >
-            <mat-error *ngIf="username.getError('userAlreadyExists')"
-              >The username does already exist!</mat-error
-            >
-          </mat-form-field>
-          <button
-            mat-flat-button
-            (click)="createUser()"
-            color="primary"
-            class="text-xs"
-          >
-            Create User <mat-icon>keyboard_arrow_right</mat-icon>
-          </button>
-        </form>
-      </div>
     </mat-selection-list>
+  </div>
+  <div class="default collab-card h-1/4">
+    <h2 class="text-xl font-medium">Create User</h2>
+    In general, users are created automatically when logging in the first time.
+    <br />
+    However, there may be cases where you want to create the user before the
+    first login. <br />
+    <form [formGroup]="createUserFormGroup" class="flex justify-between">
+      <mat-form-field>
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="username" />
+        <mat-error *ngIf="username.getError('required')"
+          >Please enter a username!</mat-error
+        >
+        <mat-error *ngIf="username.getError('userAlreadyExists')"
+          >The username does already exist!</mat-error
+        >
+      </mat-form-field>
+      <button
+        mat-flat-button
+        (click)="createUser()"
+        color="primary"
+        class="!h-[50px] !text-lg"
+      >
+        Create User
+        <mat-icon class="text-lg" iconPositionEnd
+          >keyboard_arrow_right</mat-icon
+        >
+      </button>
+    </form>
   </div>
 </div>

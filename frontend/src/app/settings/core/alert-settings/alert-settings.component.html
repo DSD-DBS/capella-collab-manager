@@ -4,7 +4,7 @@
  -->
 
 <div class="collab-card">
-  <h2>Create new Alert</h2>
+  <h2 class="text-xl font-medium">Create new Alert</h2>
 
   <form [formGroup]="createAlertForm" class="flex flex-wrap">
     <div class="flex flex-wrap gap-2">
@@ -38,7 +38,7 @@
   </form>
 </div>
 <div class="collab-card" id="handle-alerts">
-  <h2>Handle alerts</h2>
+  <h2 class="text-xl font-medium">Handle alerts</h2>
   <mat-accordion>
     <mat-expansion-panel *ngFor="let notice of noticeService.notices">
       <mat-expansion-panel-header class="expansion-panel">

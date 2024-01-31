@@ -4,8 +4,8 @@
  -->
 
 <div *ngFor="let notice of noticeService.notices">
-  <div [class]="notice.level" class="collab-card" style="width: inherit">
-    <h3 [innerHTML]="notice.title"></h3>
-    <p [innerHTML]="notice.message"></p>
+  <div [class]="notice.level" class="collab-card mb-2" style="width: inherit">
+    <h3 class="text-[16px]" [innerHTML]="notice.title"></h3>
+    <p class="text-[14px]" [innerHTML]="notice.message"></p>
   </div>
 </div>

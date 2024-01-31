@@ -36,7 +36,10 @@
         </div>
         <div class="p-3">
           <div>
-            <div *ngIf="project.description; else elseBlock">
+            <div
+              class="line-clamp-4"
+              *ngIf="project.description; else elseBlock"
+            >
               {{ project.description }}
             </div>
             <ng-template #elseBlock>No description provided.</ng-template>

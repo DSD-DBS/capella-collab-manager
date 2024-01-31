@@ -6,9 +6,9 @@
 <div class="wrapper">
   <div *ngIf="(this.gitInstancesService.gitInstances$ | async)?.length">
     <div class="title">Existing instances</div>
-    <div class="flex flex-wrap">
+    <div class="flex flex-wrap gap-5">
       <div
-        class="collab-card"
+        class="collab-card mb-5 !p-0"
         *ngFor="let instance of this.gitInstancesService.gitInstances$ | async"
       >
         <div class="mat-title">

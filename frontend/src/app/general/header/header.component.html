@@ -20,6 +20,8 @@
       Capella Collaboration Manager
     </div>
 
+    <div class="xl:hidden"></div>
+
     <div class="hidden gap-2 xl:flex">
       @for (item of navBarService.navBarItems; track item.name) {
         @if (userService.validateUserRole(item.requiredRole)) {
@@ -29,17 +31,19 @@
               color="primary"
               [attr.href]="item.href"
               [attr.target]="item.target"
-              class="text-xs"
+              class=""
             >
               {{ item.name }}
-              <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+              <mat-icon iconPositionEnd *ngIf="item.icon">{{
+                item.icon
+              }}</mat-icon>
             </a>
           } @else {
             <a
               mat-raised-button
               color="primary"
               [routerLink]="item.routerLink"
-              class="text-xs"
+              class=""
             >
               {{ item.name }}
             </a>
@@ -53,13 +57,13 @@
         color="primary"
         href="https://github.com/DSD-DBS/capella-collab-manager/issues"
         target="_blank"
-        class="ml-2 text-xs"
-        >Open Issue on Github <mat-icon>open_in_new</mat-icon>
+        class="ml-2"
+        >Open Issue on Github <mat-icon iconPositionEnd>open_in_new</mat-icon>
       </a>
 
       <mat-menu #profileMenu="matMenu" class="flex items-center">
         <a
-          class="px-[15px] text-left text-xs"
+          class="px-[15px] text-left"
           mat-menu-item
           [routerLink]="['user', userService.user?.id]"
         >
@@ -67,7 +71,7 @@
         </a>
         <a
           *ngIf="userService.user?.role === 'administrator'"
-          class="px-[15px] text-left text-xs"
+          class="px-[15px] text-left"
           mat-menu-item
           routerLink="settings"
         >
@@ -75,22 +79,18 @@
         </a>
         <a
           *ngIf="userService.user?.role === 'administrator'"
-          class="px-[15px] text-left text-xs"
+          class="px-[15px] text-left"
           mat-menu-item
           routerLink="events"
         >
           Events <mat-icon>event_note</mat-icon>
         </a>
 
-        <a
-          class="px-[15px] text-left text-xs"
-          mat-menu-item
-          routerLink="tokens"
-        >
+        <a class="px-[15px] text-left" mat-menu-item routerLink="tokens">
           Tokens <mat-icon>key</mat-icon>
         </a>
         <a
-          class="px-[15px] text-left text-xs"
+          class="px-[15px] text-left"
           mat-menu-item
           routerLink="logout/redirect"
           [queryParams]="{ reason: 'logout' }"
@@ -101,12 +101,12 @@
       </mat-menu>
 
       <button
-        class="!mx-5 text-xs"
+        class="!mr-5"
         color="primary"
         mat-raised-button
         [matMenuTriggerFor]="profileMenu"
       >
-        Menu <mat-icon>menu</mat-icon>
+        Menu <mat-icon iconPositionEnd>menu</mat-icon>
       </button>
     </div>
   </div>

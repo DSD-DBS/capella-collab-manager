@@ -3,11 +3,11 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<h1>Persistent Workspace Session</h1>
+<h1 class="text-2xl">Persistent Workspace Session</h1>
 
 <div class="collab-card">
   <div>
-    <p>
+    <p class="mb-5 text-sm">
       Sessions with persistent workspaces will store all the changes you make on
       models. Additionally, newly created models will be stored in your personal
       workspace.
@@ -17,7 +17,7 @@
       [formGroup]="toolSelectionForm"
       (ngSubmit)="requestPersistentSession()"
     >
-      <fieldset class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap sm:flex-nowrap sm:justify-between sm:gap-2">
         <mat-form-field appearance="fill">
           <mat-label>Model tool</mat-label>
           <mat-select
@@ -54,16 +54,16 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-      </fieldset>
+      </div>
 
-      <fieldset>
+      <div>
         <button matInput mat-flat-button color="primary" type="submit">
           <div class="flex items-center">
             Request a persistent workspace
             <mat-icon>keyboard_arrow_right</mat-icon>
           </div>
         </button>
-      </fieldset>
+      </div>
     </form>
   </div>
 </div>

@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<h2>General monitoring</h2>
+<h2 class="!mb-[10px] text-xl font-medium">General monitoring</h2>
 <div class="flex flex-wrap">
   <ngx-skeleton-loader
     *ngIf="generalHealth === undefined"
@@ -17,7 +17,7 @@
       margin: '10px'
     }"
   ></ngx-skeleton-loader>
-  <div class="collab-card" *ngIf="generalHealth">
+  <div class="collab-card !mb-[15px] !ml-[10px]" *ngIf="generalHealth">
     <div *ngIf="generalHealth.guacamole" class="success">
       <mat-icon class="mat-icon-position top">check</mat-icon> Guacamole is
       alive
@@ -45,8 +45,8 @@
   </div>
 </div>
 
-<h2>Projects Monitoring</h2>
-<div class="flex flex-wrap items-stretch">
+<h2 class="!mb-[10px] text-xl font-medium">Projects Monitoring</h2>
+<div class="flex flex-wrap items-stretch gap-5">
   <ngx-skeleton-loader
     *ngIf="projectStatuses === undefined"
     count="4"
@@ -60,7 +60,9 @@
     }"
   ></ngx-skeleton-loader>
   <div *ngFor="let projectStatus of projectStatuses">
-    <div class="project-card collab-card rounded-md shadow-md">
+    <div
+      class="project-card collab-card !mb-[15px] !ml-[10px] rounded-md shadow-md"
+    >
       <b class="px-1">Project</b> <br />
       <a
         target="_blank"
@@ -81,9 +83,9 @@
   </div>
 </div>
 
-<h2>Models monitoring</h2>
+<h2 class="!mb-[10px] text-xl font-medium">Models monitoring</h2>
 
-<div class="flex flex-wrap items-stretch">
+<div class="flex flex-wrap items-stretch gap-5">
   <div *ngIf="toolmodelStatuses === undefined">
     Loading the monitoring overview can take up a minute.
     <br />
@@ -100,7 +102,7 @@
     ></ngx-skeleton-loader>
   </div>
   <div *ngFor="let modelStatus of toolmodelStatuses">
-    <div class="models-card collab-card">
+    <div class="models-card collab-card !mb-[15px] !ml-[10px]">
       <b>Project</b> <br />
       <a
         target="_blank"

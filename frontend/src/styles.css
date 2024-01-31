@@ -18,7 +18,7 @@
 html,
 body {
   height: 100%;
-  font-size: small;
+  font-size: 100%;
 }
 
 html {
@@ -51,9 +51,9 @@ table {
   width: 100%;
 }
 
-.scrollable {
+/* .scrollable {
   overflow-y: scroll;
-}
+} */
 
 /* All global variables are defined here */
 :root {
@@ -264,6 +264,24 @@ Angular Material Card Styles
 /* Added due to vertical line in mat-form-field - for more information read: https://github.com/tailwindlabs/tailwindcss/discussions/9993 */
 .mdc-notched-outline__notch {
   border-right: none !important;
+}
+
+.mdc-button {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: normal !important;
+  text-wrap: nowrap;
+}
+
+.mdc-radio__inner-circle,
+.mdc-radio__outer-circle {
+  border-color: black !important;
+}
+
+.mdc-radio__background::after,
+.mdc-radio__background::before,
+.mat-mdc-radio-button.mat-mdc-radio-checked .mat-ripple-element {
+  background-color: black !important;
 }
 
 /*

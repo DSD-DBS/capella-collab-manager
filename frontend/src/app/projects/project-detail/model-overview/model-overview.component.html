@@ -5,7 +5,8 @@
 
 <div>
   <div class="mt-1.5 flex items-center">
-    <h2>Models</h2>
+    <h2 class="text-xl font-medium">Models</h2>
+    <h2 class="text-xl font-medium">Models</h2>
     @if (projectUserService.verifyRole("manager")) {
       <a
         mat-stroked-button
@@ -61,10 +62,12 @@
     </div>
 
     <div
-      class="collab-card mx-2 flex min-h-[200px] w-[500px] max-w-[85vw] select-none flex-col p-2"
+      class="collab-card m-[10px] flex min-h-[200px] w-[500px] max-w-[85vw] select-none flex-col !p-0"
       *ngFor="let model of modelService.models$ | async"
     >
-      <div class="flex justify-between rounded-t bg-primary p-2.5 text-white">
+      <div
+        class="flex justify-between rounded-t bg-primary p-2.5 align-middle text-white"
+      >
         <div class="ml-2.5">
           <div class="select-text text-xl" style="word-break: break-word">
             {{ model.name }}
@@ -76,20 +79,26 @@
           </span>
         </div>
 
-        <div class="m-px flex">
+        <div class="flex items-center align-middle">
           <div
-            class="collab-card mr-1 flex items-center !bg-green-800 text-white"
+            class="collab-card mx-[4px] flex h-[50px] items-center !bg-green-800 !p-0 text-white"
           >
-            <div class="text-center">
+            <div class="mx-[8px] text-center">
               <div class="text-xs">Nature</div>
-              <div *ngIf="model.nature">{{ model.nature.name }}</div>
-              <div *ngIf="!model.nature">Not specified</div>
+              <div *ngIf="model.nature" class="text-sm">
+                {{ model.nature.name }}
+              </div>
+              <div *ngIf="!model.nature" class="text-sm">Not specified</div>
             </div>
           </div>
-          <div class="collab-card flex items-center !bg-red-800 text-white">
-            <div class="text-center">
-              <div class="text-xs">Working mode</div>
-              {{ getPrimaryWorkingMode(model) }}
+          <div
+            class="collab-card mx-[4px] flex h-[50px] items-center !bg-red-800 !p-0 text-white"
+          >
+            <div class="mx-[8px] text-center">
+              <div class="text-nowrap text-xs">Working mode</div>
+              <div class="text-sm">
+                {{ getPrimaryWorkingMode(model) }}
+              </div>
             </div>
           </div>
         </div>

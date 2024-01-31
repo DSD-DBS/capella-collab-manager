@@ -4,7 +4,7 @@
  -->
 
 <div class="flex-center">
-  <h1>Active Sessions</h1>
+  <h1 class="text-2xl">Active Sessions</h1>
 </div>
 
 <ngx-skeleton-loader
@@ -20,15 +20,17 @@
 
 <div
   *ngIf="(userSessionService.sessions$ | async)?.length === 0"
-  class="mat-card collab-card"
+  class="mat-card collab-card w-full"
 >
-  <h2 class="text-lg">No active sessions</h2>
-  <div>No active sessions for your user are found in our system. <br /></div>
+  <h2 class="mb-3 text-xl font-medium">No active sessions</h2>
+  <div class="text-sm">
+    No active sessions for your user are found in our system. <br />
+  </div>
 </div>
 
 <div *ngIf="(userSessionService.sessions$ | async)?.length">
   <a
-    class="w-card max-w-[85vw]"
+    class="w-full max-w-[85vw]"
     matInput
     mat-stroked-button
     color="primary"
@@ -41,7 +43,7 @@
 
   <div
     *ngFor="let session of userSessionService.sessions$ | async"
-    class="mat-card collab-card"
+    class="collab-card"
   >
     <div>
       <h2 *ngIf="isPersistentSession(session)">Persistent workspace session</h2>

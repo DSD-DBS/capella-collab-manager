@@ -19,12 +19,6 @@
   background-color: var(--primary-color);
 }
 
-.mat-card {
-  width: 400px;
-  max-width: 85vw;
-  margin: 10px 0;
-}
-
 .sessionContent {
   margin-bottom: 5px;
 }

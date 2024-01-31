@@ -5,7 +5,7 @@
 
 <div>
   <div class="ml-2 mt-2 flex justify-between">
-    <h2>Repositories</h2>
+    <h2 class="text-xl font-medium">Repositories</h2>
     <button
       mat-stroked-button
       [disabled]="!instance"
@@ -41,7 +41,7 @@
         "
       >
         <div class="flex">
-          <div class="my-auto ml-[0px] mr-[15px] size-[30px]">
+          <div class="my-auto ml-[0px] mr-[15px]">
             <mat-icon mat-list-icon *ngIf="repository.status === 'LOADING'"
               >sync</mat-icon
             >
