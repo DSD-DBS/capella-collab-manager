@@ -46,6 +46,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CookieModule } from 'ngx-cookie';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ToastrModule } from 'ngx-toastr';
+import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import {
   HighlightPipeTransform,
   ModelDiagramCodeBlockComponent,
@@ -178,6 +179,7 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
     DeleteSessionDialogComponent,
     DisplayValueComponent,
     EditGitSettingsComponent,
+    EditorComponent,
     EditProjectMetadataComponent,
     EditT4CInstanceComponent,
     EventsComponent,

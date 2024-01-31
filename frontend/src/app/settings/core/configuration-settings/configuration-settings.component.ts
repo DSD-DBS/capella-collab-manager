@@ -3,95 +3,42 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, HostListener, NgZone } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
-import * as monaco from 'monaco-editor';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
+import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ConfigurationSettingsService } from 'src/app/settings/core/configuration-settings/configuration-settings.service';
-import { stringify, parse, YAMLParseError } from 'yaml';
+
 @Component({
   selector: 'app-configuration-settings',
   templateUrl: './configuration-settings.component.html',
 })
-export class ConfigurationSettingsComponent {
-  private editor?: monaco.editor.IStandaloneCodeEditor = undefined;
-
-  intialValue = 'Loading...';
+export class ConfigurationSettingsComponent implements OnInit {
+  @ViewChild(EditorComponent) editor: EditorComponent | undefined;
 
   constructor(
-    private ngZone: NgZone,
     private configurationSettingsService: ConfigurationSettingsService,
     private toastService: ToastService,
     private metadataService: MetadataService,
   ) {}
 
-  ngOnInit() {
-    this.ngZone.runOutsideAngular(() => {
-      this.initMonaco();
-    });
-
+  ngOnInit(): void {
     this.fetchConfiguration();
-  }
-
-  ngOnDestroy() {
-    if (this.editor) {
-      this.editor.dispose();
-    }
-  }
-
-  private initMonaco() {
-    const configModel = monaco.editor.createModel(this.intialValue, 'yaml');
-
-    this.editor = monaco.editor.create(document.getElementById('editor')!, {
-      value: 'Loading...',
-      language: 'yaml',
-      scrollBeyondLastLine: false,
-      model: configModel,
-      automaticLayout: true,
-    });
   }
 
   fetchConfiguration() {
     this.configurationSettingsService
       .getConfigurationSettings('global')
       .subscribe((data) => {
-        const yaml = stringify(data, { indent: 4 });
-        this.intialValue = yaml;
-        this.editor?.setValue(yaml);
+        this.editor!.value = data;
       });
   }
 
-  resetValue() {
-    this.editor?.setValue(this.intialValue);
-  }
-
-  submitValue() {
-    if (!this.editor?.getValue()) {
-      this.toastService.showError(
-        'Configuration is empty',
-        "The configuration editor doesn't contain any content. Make sure to enter a valid YAML configuration.",
-      );
-      return;
-    }
-    let jsonValue = '';
-
-    try {
-      jsonValue = parse(this.editor?.getValue());
-    } catch (e) {
-      if (e instanceof YAMLParseError) {
-        this.toastService.showError('YAML parsing error', e.message);
-      } else {
-        this.toastService.showError(
-          'YAML parsing error',
-          'Unknown error. Please check the console for more information.',
-        );
-      }
-      return;
-    }
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  submitValue(value: any) {
     this.configurationSettingsService
-      .putConfigurationSettings('global', jsonValue)
+      .putConfigurationSettings('global', value)
       .subscribe({
         next: () => {
           this.toastService.showSuccess(
@@ -102,14 +49,5 @@ export class ConfigurationSettingsComponent {
           this.metadataService.loadBackendMetadata().subscribe();
         },
       });
-  }
-
-  @HostListener('document:keydown', ['$event'])
-  saveHandler(event: KeyboardEvent) {
-    if ((event.metaKey || event.ctrlKey) && event.key === 's') {
-      event.preventDefault();
-      event.stopPropagation();
-      this.submitValue();
-    }
   }
 }
