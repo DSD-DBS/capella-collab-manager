@@ -30,8 +30,6 @@ from capellacollab.sessions.operators import k8s
 from capellacollab.sessions.operators import models as operators_models
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
-from capellacollab.tools.integrations import crud as integrations_crud
-from capellacollab.tools.integrations import models as integrations_models
 from capellacollab.users import crud as users_crud
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
@@ -225,8 +223,21 @@ def test_no_readonly_session_as_user(
     user: users_models.DatabaseUser,
     kubernetes: MockOperator,
 ):
-    tool = tools_crud.create_tool_with_name(db, "Test")
-    version = tools_crud.create_version(db, tool, "test")
+    tool = tools_crud.create_tool(db, tools_models.CreateTool(name="Test"))
+    version = tools_crud.create_version(
+        db,
+        tool,
+        tools_models.CreateToolVersion(
+            name="test",
+            config=tools_models.ToolVersionConfiguration(
+                sessions=tools_models.SessionToolConfiguration(
+                    read_only=tools_models.ReadOnlySessionToolConfiguration(
+                        image=None
+                    )
+                )
+            ),
+        ),
+    )
 
     model, git_model = setup_git_model_for_user(db, user, version)
 
@@ -421,20 +432,27 @@ def test_create_persistent_jupyter_session(
 ):
     jupyter = tools_crud.create_tool(
         db,
-        tools_models.DatabaseTool(
+        tools_models.CreateTool(
             name="jupyter",
-            docker_image_template="jupyter/minimal-notebook:$version",
+            integrations=tools_models.ToolIntegrations(
+                t4c=False, pure_variants=False, jupyter=True
+            ),
         ),
-    )
-    assert jupyter.integrations
-    integrations_crud.update_integrations(
-        db,
-        jupyter.integrations,
-        integrations_models.PatchToolIntegrations(jupyter=True),
     )
 
     jupyter_version = tools_crud.create_version(
-        db, name="python-3.10.8", tool=jupyter
+        db,
+        jupyter,
+        tools_models.CreateToolVersion(
+            name="python-3.10.8",
+            config=tools_models.ToolVersionConfiguration(
+                sessions=tools_models.SessionToolConfiguration(
+                    persistent=tools_models.PersistentSessionToolConfiguration(
+                        image="jupyter/minimal-notebook:{version}"
+                    )
+                )
+            ),
+        ),
     )
 
     response = client.post(

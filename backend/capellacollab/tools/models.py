@@ -4,17 +4,40 @@
 
 from __future__ import annotations
 
-import typing as t
-
 import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.tools.integrations import models as integrations_models
+from capellacollab.core.database import decorator
 
-if t.TYPE_CHECKING:
-    from .integrations.models import DatabaseToolIntegrations
+DOCKER_IMAGE_PATTERN = r"^[a-zA-Z0-9][a-zA-Z0-9_\-/.:${}]*$"
+
+
+class ToolIntegrations(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True, extra="forbid")
+
+    t4c: bool = pydantic.Field(
+        default=False,
+        description=(
+            "Enables support for TeamForCapella. "
+            "If enabled, TeamForCapella repositories will be shown as model sources for corresponding models. "
+            "Also, session tokens are created for corresponding sessions. "
+            "Please refer to the documentation for more details. "
+        ),
+    )
+    pure_variants: bool = pydantic.Field(
+        default=False,
+        description=(
+            "Enables support for pure::variants. "
+            "If enabled and the restrictions are met, pure::variants license secrets & information will be mounted to containers. "
+            "Please refer to the documentation for more details. "
+        ),
+    )
+    jupyter: bool = pydantic.Field(
+        default=False,
+        description="Activate if the used tool is Jupyter. ",
+    )
 
 
 class DatabaseTool(database.Base):
@@ -23,20 +46,9 @@ class DatabaseTool(database.Base):
     id: orm.Mapped[int] = orm.mapped_column(init=False, primary_key=True)
 
     name: orm.Mapped[str]
-    docker_image_template: orm.Mapped[str]
-    docker_image_backup_template: orm.Mapped[str | None] = orm.mapped_column(
-        default=None
-    )
-    readonly_docker_image_template: orm.Mapped[str | None] = orm.mapped_column(
-        default=None
-    )
 
-    integrations: orm.Mapped[DatabaseToolIntegrations | None] = (
-        orm.relationship(
-            default=None,
-            back_populates="tool",
-            uselist=False,
-        )
+    integrations: orm.Mapped[ToolIntegrations] = orm.mapped_column(
+        decorator.PydanticDecorator(ToolIntegrations), nullable=False
     )
 
     versions: orm.Mapped[list[DatabaseVersion]] = orm.relationship(
@@ -47,6 +59,87 @@ class DatabaseTool(database.Base):
     )
 
 
+class ReadOnlySessionToolConfiguration(pydantic.BaseModel):
+    image: str | None = pydantic.Field(
+        default="docker.io/hello-world:latest",
+        pattern=DOCKER_IMAGE_PATTERN,
+        examples=[
+            "docker.io/hello-world:latest",
+            "ghcr.io/dsd-dbs/capella-dockerimages/capella/readonly:{version}-main",
+        ],
+        description=(
+            "Docker image, which is used for read-only sessions. "
+            "If set to None, read-only session support will be disabled for this tool version. "
+            "You can use '{version}' in the image, which will be replaced with the version name of the tool. "
+            "Always use tags to prevent breaking updates. "
+        ),
+    )
+
+
+class PersistentSessionToolConfiguration(pydantic.BaseModel):
+    image: str | None = pydantic.Field(
+        default="docker.io/hello-world:latest",
+        pattern=DOCKER_IMAGE_PATTERN,
+        examples=[
+            "docker.io/hello-world:latest",
+            "ghcr.io/dsd-dbs/capella-dockerimages/capella/remote:{version}-main",
+        ],
+        description=(
+            "Docker image, which is used for persistent sessions. "
+            "If set to None, persistent session support will be disabled for this tool version. "
+            "You can use '{version}' in the image, which will be replaced with the version name of the tool. "
+            "Always use tags to prevent breaking updates. "
+        ),
+    )
+
+
+class ToolBackupConfiguration(pydantic.BaseModel):
+    image: str | None = pydantic.Field(
+        default="docker.io/hello-world:latest",
+        pattern=DOCKER_IMAGE_PATTERN,
+        examples=[
+            "docker.io/hello-world:latest",
+            "ghcr.io/dsd-dbs/capella-dockerimages/capella/base:{version}-main",
+        ],
+        description=(
+            "Docker image, which is used for backup pipelines. "
+            "If set to None, it will no longer be possible to create or spawn a backup pipelines for this tool version. "
+            "You can use '{version}' in the image, which will be replaced with the version name of the tool. "
+            "Always use tags to prevent breaking updates. "
+        ),
+    )
+
+
+class SessionToolConfiguration(pydantic.BaseModel):
+    persistent: PersistentSessionToolConfiguration = pydantic.Field(
+        default=PersistentSessionToolConfiguration()
+    )
+    read_only: ReadOnlySessionToolConfiguration = pydantic.Field(
+        default=ReadOnlySessionToolConfiguration()
+    )
+
+
+class ToolVersionConfiguration(pydantic.BaseModel):
+    is_recommended: bool = pydantic.Field(
+        default=False,
+        description="Version will be displayed as recommended.",
+    )
+    is_deprecated: bool = pydantic.Field(
+        default=False,
+        description="Version will be displayed as deprecated.",
+    )
+
+    sessions: SessionToolConfiguration = pydantic.Field(
+        default=SessionToolConfiguration(),
+        description="Configuration for sessions.",
+    )
+
+    backups: ToolBackupConfiguration = pydantic.Field(
+        default=ToolBackupConfiguration(),
+        description="Configuration for the backup pipelines.",
+    )
+
+
 class DatabaseVersion(database.Base):
     __tablename__ = "versions"
     __table_args__ = (sa.UniqueConstraint("tool_id", "name"),)
@@ -54,8 +147,10 @@ class DatabaseVersion(database.Base):
     id: orm.Mapped[int] = orm.mapped_column(init=False, primary_key=True)
 
     name: orm.Mapped[str]
-    is_recommended: orm.Mapped[bool]
-    is_deprecated: orm.Mapped[bool]
+
+    config: orm.Mapped[ToolVersionConfiguration] = orm.mapped_column(
+        decorator.PydanticDecorator(ToolVersionConfiguration)
+    )
 
     tool_id: orm.Mapped[int | None] = orm.mapped_column(
         sa.ForeignKey("tools.id"),
@@ -79,55 +174,49 @@ class DatabaseNature(database.Base):
     tool: orm.Mapped[DatabaseTool] = orm.relationship(back_populates="natures")
 
 
-class ToolBase(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
+class CreateTool(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True, extra="forbid")
 
-    id: int
+    name: str = pydantic.Field(default="", min_length=2, max_length=30)
+    integrations: ToolIntegrations = pydantic.Field(default=ToolIntegrations())
+
+
+class ToolBase(CreateTool, decorator.PydanticDatabaseModel):
+    pass
+
+
+class ToolConfiguration(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True, extra="forbid")
+
     name: str
-    integrations: integrations_models.ToolIntegrations
 
+    versions: list[ToolVersionBase]
+    natures: list[ToolNatureBase]
 
-class ToolDockerimage(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
+    integrations: ToolIntegrations
 
-    persistent: str = pydantic.Field(
-        ..., validation_alias="docker_image_template"
-    )
-    readonly: str | None = pydantic.Field(
-        None, validation_alias="readonly_docker_image_template"
-    )
-    backup: str | None = pydantic.Field(
-        None, validation_alias="docker_image_backup_template"
-    )
-
-
-class PatchToolDockerimage(pydantic.BaseModel):
-    persistent: str | None = None
-    readonly: str | None = None
-    backup: str | None = None
-
-
-class CreateToolVersion(pydantic.BaseModel):
-    name: str
+    sessions: None
+    backups: None
 
 
 class CreateToolNature(pydantic.BaseModel):
-    name: str
+    model_config = pydantic.ConfigDict(from_attributes=True, extra="forbid")
+
+    name: str = pydantic.Field(default="", min_length=2, max_length=30)
 
 
-class UpdateToolVersion(pydantic.BaseModel):
-    name: str | None = None
-    is_recommended: bool | None = None
-    is_deprecated: bool | None = None
+class CreateToolVersion(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True, extra="forbid")
+
+    name: str = pydantic.Field(default="", min_length=2, max_length=30)
+
+    config: ToolVersionConfiguration = pydantic.Field(
+        default=ToolVersionConfiguration()
+    )
 
 
-class ToolVersionBase(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
-    id: int
-    name: str
-    is_recommended: bool
-    is_deprecated: bool
+class ToolVersionBase(CreateToolVersion, decorator.PydanticDatabaseModel):
+    pass
 
 
 class ToolVersionWithTool(ToolVersionBase):
@@ -138,8 +227,4 @@ class ToolNatureBase(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(from_attributes=True)
 
     id: int
-    name: str
-
-
-class CreateTool(pydantic.BaseModel):
     name: str

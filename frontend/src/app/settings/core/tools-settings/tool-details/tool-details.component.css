@@ -2,8 +2,3 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
-mat-form-field {
-  width: 400px;
-  max-width: 85vw;
-}

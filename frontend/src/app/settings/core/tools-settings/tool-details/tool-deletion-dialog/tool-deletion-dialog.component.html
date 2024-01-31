@@ -15,8 +15,12 @@
     <p><b>The deletion cannot be undone!</b></p>
   </div>
   Please remove all models with this tool before deletion. <br />
-  <div class="flex justify-between">
-    <button type="button" mat-button (click)="this.dialogRef.close(false)">
+  <div class="mt-2 flex justify-between">
+    <button
+      type="button"
+      mat-stroked-button
+      (click)="this.dialogRef.close(false)"
+    >
       Cancel
     </button>
     <button mat-flat-button type="submit" (click)="deleteTool()" color="warn">

@@ -4,40 +4,49 @@
  */
 
 import {
+  AfterViewInit,
   Component,
+  ElementRef,
   EventEmitter,
   HostListener,
   Input,
   NgZone,
-  OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
 
 import * as monaco from 'monaco-editor';
-import { MetadataService } from 'src/app/general/metadata/metadata.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { ConfigurationSettingsService } from 'src/app/settings/core/configuration-settings/configuration-settings.service';
+import { v4 as uuidv4 } from 'uuid';
 import { stringify, parse, YAMLParseError } from 'yaml';
 
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
 })
-export class EditorComponent implements OnInit {
+export class EditorComponent implements AfterViewInit {
+  @Input()
+  height = '400px';
+
+  @Input()
+  // Helps to identify the editor in the DOM
+  context = uuidv4();
+
   private editor?: monaco.editor.IStandaloneCodeEditor = undefined;
   intialValue = 'Loading...';
+
+  @ViewChild('editorRef') editorRef: ElementRef | undefined;
 
   @Output()
   submitted = new EventEmitter();
 
   constructor(
     private ngZone: NgZone,
-    private configurationSettingsService: ConfigurationSettingsService,
     private toastService: ToastService,
-    private metadataService: MetadataService,
+    private el: ElementRef,
   ) {}
 
-  ngOnInit() {
+  ngAfterViewInit(): void {
     this.ngZone.runOutsideAngular(() => {
       this.initMonaco();
     });
@@ -56,17 +65,28 @@ export class EditorComponent implements OnInit {
   }
 
   submitValue() {
-    if (!this.editor?.getValue()) {
+    const editorValue = this.editor?.getValue();
+
+    if (!editorValue) {
       this.toastService.showError(
         'Configuration is empty',
         "The configuration editor doesn't contain any content. Make sure to enter a valid YAML configuration.",
       );
       return;
     }
+
+    if (editorValue === 'Loading...') {
+      this.toastService.showError(
+        'Configuration is still loading',
+        'The configuration editor is still loading. Please wait a moment.',
+      );
+      return;
+    }
+
     let jsonValue = '';
 
     try {
-      jsonValue = parse(this.editor?.getValue());
+      jsonValue = parse(editorValue);
     } catch (e) {
       if (e instanceof YAMLParseError) {
         this.toastService.showError('YAML parsing error', e.message);
@@ -85,9 +105,11 @@ export class EditorComponent implements OnInit {
   private initMonaco() {
     const configModel = monaco.editor.createModel(this.intialValue, 'yaml');
 
-    this.editor = monaco.editor.create(document.getElementById('editor')!, {
+    this.editor = monaco.editor.create(this.editorRef?.nativeElement, {
       value: 'Loading...',
       language: 'yaml',
+      minimap: { enabled: false },
+      overviewRulerBorder: false,
       scrollBeyondLastLine: false,
       model: configModel,
       automaticLayout: true,
@@ -96,10 +118,12 @@ export class EditorComponent implements OnInit {
 
   @HostListener('document:keydown', ['$event'])
   saveHandler(event: KeyboardEvent) {
-    if ((event.metaKey || event.ctrlKey) && event.key === 's') {
-      event.preventDefault();
-      event.stopPropagation();
-      this.submitValue();
+    if (this.el.nativeElement.contains(event.target)) {
+      if ((event.metaKey || event.ctrlKey) && event.key === 's') {
+        event.preventDefault();
+        event.stopPropagation();
+        this.submitValue();
+      }
     }
   }
 }

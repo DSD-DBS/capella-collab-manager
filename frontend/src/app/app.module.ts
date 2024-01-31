@@ -46,11 +46,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CookieModule } from 'ngx-cookie';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ToastrModule } from 'ngx-toastr';
+import { ApiDocumentationComponent } from 'src/app/general/api-documentation/api-documentation.component';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import {
   HighlightPipeTransform,
   ModelDiagramCodeBlockComponent,
 } from 'src/app/projects/models/diagrams/model-diagram-dialog/model-diagram-code-block/model-diagram-code-block.component';
+import { CreateToolComponent } from 'src/app/settings/core/tools-settings/create-tool/create-tool.component';
 import { BasicAuthTokenComponent } from 'src/app/users/basic-auth-token/basic-auth-token.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -156,6 +158,7 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
     ActiveSessionsComponent,
     AddUserToProjectDialogComponent,
     AlertSettingsComponent,
+    ApiDocumentationComponent,
     AppComponent,
     AuthComponent,
     BasicAuthTokenComponent,
@@ -175,6 +178,7 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
     CreateReadonlySessionComponent,
     CreateReadonlySessionDialogComponent,
     CreateT4cModelNewRepositoryComponent,
+    CreateToolComponent,
     DeleteGitSettingsDialogComponent,
     DeleteSessionDialogComponent,
     DisplayValueComponent,

@@ -86,7 +86,7 @@ def create_new_tool_model(
     )
 
     configuration = {}
-    if tool.integrations and tool.integrations.jupyter:
+    if tool.integrations.jupyter:
         configuration["workspace"] = str(uuid.uuid4())
 
     try:
@@ -102,7 +102,7 @@ def create_new_tool_model(
             },
         )
 
-    if tool.integrations and tool.integrations.jupyter:
+    if tool.integrations.jupyter:
         workspace.create_shared_workspace(
             configuration["workspace"], project, model, "2Gi"
         )

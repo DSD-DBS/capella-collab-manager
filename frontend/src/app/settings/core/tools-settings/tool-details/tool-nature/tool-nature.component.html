@@ -2,52 +2,72 @@
  ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
-<div class="default collab-card">
-  <h2 class="text-xl">Tool Natures</h2>
-  <form [formGroup]="toolNatureForm" #formDirective="ngForm">
-    <mat-form-field appearance="fill">
-      <mat-label>Nature name</mat-label>
-      <input matInput formControlName="name" />
-      <mat-error *ngIf="toolNatureForm.controls.name.errors?.required"
-        >Please enter a tool nature name</mat-error
-      >
-      <mat-error *ngIf="toolNatureForm.controls.name.errors?.toolNaureExists"
-        >Nature name is already used</mat-error
-      >
-    </mat-form-field>
-    <div class="field-separator"></div>
-    <button
-      mat-flat-button
-      color="primary"
-      [disabled]="!toolNatureForm.valid"
-      (click)="createToolNature()"
-    >
-      Add Tool Nature
-    </button>
-  </form>
-  <mat-selection-list #toolNatureList [multiple]="false" class="user-selection">
-    <mat-list-option
-      *ngFor="let toolNature of this.toolNatures"
-      [value]="toolNature"
-    >
-      <mat-icon mat-list-icon>extension</mat-icon>
-      <div>
-        <div mat-line>{{ toolNature.name }}</div>
-      </div>
-    </mat-list-option>
-  </mat-selection-list>
-  <div *ngIf="toolNatureList.selectedOptions.selected.length">
-    <hr />
-    <div class="field-separator"></div>
-    <div class="flex justify-between">
-      <button
-        mat-flat-button
-        color="warn"
-        (click)="removeToolNature(selectedToolNature)"
-      >
-        <mat-icon>delete</mat-icon> Remove tool nature
-        {{ selectedToolNature.name }}
-      </button>
-    </div>
+<div class="collab-card w-card max-w-max-card">
+  <h2 class="text-lg font-medium">Tool Natures</h2>
+  <div class="mb-3">
+    <app-api-documentation
+      tag="Tools"
+      hyperlink="create_tool_nature_api_v1_tools__tool_id__natures_post"
+    ></app-api-documentation>
   </div>
+  <mat-tab-group #tabGroup>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="mr-1">add_box</mat-icon>
+        Add nature
+      </ng-template>
+      <app-editor
+        #editorRef
+        context="new"
+        height="calc(500px - 48px)"
+        (submitted)="submittedNewToolNature($event)"
+      />
+      <div class="mt-2 flex flex-wrap justify-between gap-2">
+        <div class="w-dummy-button"></div>
+        <button (click)="resetValue('new')" mat-stroked-button>
+          <span>Reset</span> <mat-icon class="ml-2">refresh</mat-icon>
+        </button>
+        <button (click)="submitValue('new')" mat-stroked-button color="primary">
+          <span>Create</span>
+          <mat-icon class="ml-2">add_box</mat-icon>
+        </button>
+      </div>
+    </mat-tab>
+
+    @if (toolNatures === undefined) {
+      <mat-tab label="Loading..."></mat-tab>
+    }
+
+    @for (nature of toolNatures; track nature.id) {
+      <mat-tab [label]="nature.name">
+        <app-editor
+          #editorRef
+          (submitted)="submittedValue(nature, $event)"
+          [context]="nature.id.toString()"
+          height="calc(500px - 48px)"
+          [value]="nature"
+        />
+        <div class="mt-2 flex flex-wrap justify-between gap-2">
+          <button
+            mat-stroked-button
+            (click)="removeToolNature(nature)"
+            color="warn"
+          >
+            <span>Delete nature</span> <mat-icon class="ml-2">delete</mat-icon>
+          </button>
+          <button mat-stroked-button (click)="resetValue(nature.id.toString())">
+            <span>Reset</span> <mat-icon class="ml-2">refresh</mat-icon>
+          </button>
+          <button
+            mat-stroked-button
+            (click)="submitValue(nature.id.toString())"
+            color="primary"
+          >
+            <span>Save</span>
+            <mat-icon class="ml-2">save</mat-icon>
+          </button>
+        </div>
+      </mat-tab>
+    }
+  </mat-tab-group>
 </div>

@@ -21,7 +21,6 @@ from capellacollab.sessions.operators import k8s
 from capellacollab.sessions.operators import models as operators_models
 from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
-from capellacollab.tools.integrations import models as tools_integration_models
 from capellacollab.users import models as users_models
 
 
@@ -111,14 +110,8 @@ def fixture_tool(
     monkeypatch: pytest.MonkeyPatch,
 ) -> tools_models.DatabaseTool:
     tool = tools_models.DatabaseTool(
-        name="test",
-        docker_image_template="test",
+        name="test", integrations=tools_models.ToolIntegrations()
     )
-
-    mock_integration = tools_integration_models.DatabaseToolIntegrations(
-        tool=tool
-    )
-    tool.integrations = mock_integration
 
     # pylint: disable=unused-argument
     def mock_get_existing_tool(*args, **kwargs) -> tools_models.DatabaseTool:
@@ -135,7 +128,7 @@ def fixture_tool_version(
     monkeypatch: pytest.MonkeyPatch, tool: tools_models.DatabaseTool
 ) -> tools_models.DatabaseVersion:
     version = tools_models.DatabaseVersion(
-        name="test", is_recommended=False, is_deprecated=False, tool=tool
+        name="test", tool=tool, config=tools_models.ToolVersionConfiguration()
     )
 
     # pylint: disable=unused-argument

@@ -3,21 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { Component, ViewChild } from '@angular/core';
+
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, filter, map, mergeMap, of, switchMap, tap } from 'rxjs';
+import { filter, map, mergeMap, tap } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
+import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Tool, ToolDockerimages, ToolService } from '../tool.service';
+import { Tool, ToolService } from '../tool.service';
 import { ToolDeletionDialogComponent } from './tool-deletion-dialog/tool-deletion-dialog.component';
 
 @Component({
@@ -26,30 +20,9 @@ import { ToolDeletionDialogComponent } from './tool-deletion-dialog/tool-deletio
   styleUrls: ['./tool-details.component.css'],
 })
 export class ToolDetailsComponent {
-  editing = false;
-  existing = false;
+  @ViewChild(EditorComponent) editor: EditorComponent | undefined;
 
   selectedTool?: Tool;
-  dockerimages?: ToolDockerimages;
-
-  public form = new FormGroup({
-    name: new FormControl('', Validators.required),
-    dockerimages: new FormGroup({
-      persistent: new FormControl('', [
-        Validators.required,
-        Validators.maxLength(4096),
-        this.validDockerImageNameValidator(),
-      ]),
-      readonly: new FormControl('', [
-        Validators.maxLength(4096),
-        this.validDockerImageNameValidator(),
-      ]),
-      backup: new FormControl('', [
-        Validators.maxLength(4096),
-        this.validDockerImageNameValidator(),
-      ]),
-    }),
-  });
 
   constructor(
     private route: ActivatedRoute,
@@ -65,143 +38,35 @@ export class ToolDetailsComponent {
       .pipe(
         map((params) => params.toolID),
         filter((toolID) => toolID !== undefined),
-        mergeMap((toolID) => {
-          return combineLatest([
-            of(toolID),
-            this.toolService._tools,
-            this.toolService.getDockerimagesForTool(toolID),
-          ]);
-        }),
-        tap(([_toolID, _tools, dockerimages]) => {
-          this.dockerimages = dockerimages;
-        }),
-        map(([toolID, tools, _dockerimages]) => {
-          return tools?.find((tool: Tool) => {
-            return tool.id == toolID;
-          });
-        }),
+        mergeMap((toolID) => this.toolService.getToolByID(toolID)),
       )
       .subscribe({
         next: (tool) => {
           this.breadcrumbsService.updatePlaceholder({ tool });
-          this.existing = true;
           this.selectedTool = tool;
-          this.updateForm();
+          this.editor!.value = this.selectedTool;
         },
       });
   }
 
-  enableEditing(): void {
-    this.editing = true;
-    this.form.enable();
-  }
-
-  cancelEditing(): void {
-    this.editing = false;
-    this.form.disable();
-  }
-
-  updateForm(): void {
-    this.form.patchValue({
-      name: this.selectedTool?.name,
-      dockerimages: this.dockerimages,
-    });
-    this.cancelEditing();
-  }
-
-  validDockerImageNameValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      /*
-        Name components may contain lowercase letters, digits and separators.
-        A separator is defined as a period, one or two underscores, or one or more dashes.
-        A name component may not start or end with a separator.
-
-        https://docs.docker.com/engine/reference/commandline/tag/#extended-description
-
-        In addition, we allow $ (to use the $version syntax) and : for the tag.
-      */
-      if (
-        control.value &&
-        !/^[a-zA-Z0-9][a-zA-Z0-9_\-/\.:\$]*$/.test(control.value)
-      ) {
-        return { validDockerImageNameInvalid: true };
-      }
-      return {};
-    };
-  }
-
-  create(): void {
-    if (this.form.valid) {
-      const name = this.form.controls.name.value!;
-
-      this.toolService
-        .createTool(name)
-        .pipe(
-          tap((tool) => {
-            this.toastService.showSuccess(
-              'Tool created',
-              `The tool with name ${tool.name} was created.`,
-            );
-
-            this.selectedTool = tool;
-          }),
-          switchMap((tool) => {
-            return this.toolService.updateDockerimagesForTool(
-              tool.id,
-              this.form.controls.dockerimages.value as ToolDockerimages,
-            );
-          }),
-          tap((_) => {
-            this.toastService.showSuccess(
-              'Docker images updated',
-              `The Docker images for the tool '${name}' were updated.`,
-            );
-          }),
-        )
-        .subscribe(() => {
-          this.router.navigate(['../..', 'tool', this.selectedTool?.id], {
-            relativeTo: this.route,
-          });
-        });
-    }
-  }
-
-  update(): void {
-    if (this.form.valid) {
-      this.toolService
-        .updateTool(this.selectedTool!.id, this.form.controls.name.value!)
-        .pipe(
-          tap((tool) => {
-            this.toastService.showSuccess(
-              'Tool updated',
-              `The tool name changed from '${this.selectedTool?.name}' to '${tool.name}'.`,
-            );
-          }),
-        )
-        .subscribe((tool) => {
-          this.selectedTool = tool;
-        });
-
-      this.toolService
-        .updateDockerimagesForTool(
-          this.selectedTool!.id,
-          this.form.controls.dockerimages.value as ToolDockerimages,
-        )
-        .pipe(
-          tap((dockerimages) => {
-            this.dockerimages = dockerimages;
-          }),
-        )
-        .subscribe((_) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  submitValue(value: any): void {
+    delete value.id;
+    this.toolService
+      .updateTool(this.selectedTool!.id, value)
+      .pipe(
+        tap((tool) => {
           this.toastService.showSuccess(
-            'Docker images for Tool updated',
-            `The Docker images for the tool with id ${
-              this.selectedTool!.id
-            } were updated.`,
+            'Tool updated',
+            `The configuration of the tool '${tool.name}' has been updated successfully.`,
           );
-          this.cancelEditing();
-        });
-    }
+          this.editor!.value = tool;
+          this.breadcrumbsService.updatePlaceholder({ tool });
+        }),
+      )
+      .subscribe((tool) => {
+        this.selectedTool = tool;
+      });
   }
 
   deleteTool(): void {
@@ -220,13 +85,5 @@ export class ToolDetailsComponent {
           `The tool '${this.selectedTool?.name}' was deleted successfully`,
         );
       });
-  }
-
-  submit(): void {
-    if (this.existing) {
-      this.update();
-    } else {
-      this.create();
-    }
   }
 }

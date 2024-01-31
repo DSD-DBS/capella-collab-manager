@@ -41,8 +41,9 @@
     "semver": "^7.6.0",
     "slugify": "^1.6.6",
     "tslib": "^2.6.2",
-    "zone.js": "~0.14.3",
-    "yaml": "^2.3.4"
+    "uuid": "^9.0.1",
+    "yaml": "^2.3.4",
+    "zone.js": "~0.14.3"
   },
   "devDependencies": {
     "@angular-builders/custom-webpack": "^17.0.0",
@@ -58,11 +59,12 @@
     "@types/file-saver": "^2.0.7",
     "@types/jasmine": "~5.1.4",
     "@types/node": "^20.11.17",
+    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^7.0.1",
     "@typescript-eslint/parser": "^7.0.1",
     "autoprefixer": "^10.4.17",
-    "eslint": "^8.56.0",
     "css-loader": "^6.10.0",
+    "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-deprecation": "^2.0.0",
     "eslint-plugin-import": "^2.29.1",

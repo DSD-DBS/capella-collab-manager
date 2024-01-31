@@ -4,7 +4,6 @@
 from collections import abc
 
 import fastapi
-from fastapi import status
 from sqlalchemy import orm
 
 import capellacollab.projects.toolmodels.crud as projects_models_crud
@@ -12,9 +11,6 @@ import capellacollab.settings.modelsources.t4c.crud as settings_t4c_crud
 from capellacollab.core import database
 from capellacollab.core import exceptions as core_exceptions
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.tools.integrations import (
-    routes as tools_integrations_routes,
-)
 from capellacollab.users import models as users_models
 
 from . import crud, injectables, models
@@ -37,6 +33,11 @@ def get_tools(
     return crud.get_tools(db)
 
 
+@router.get("/default")
+def get_default_tool() -> models.CreateTool:
+    return models.CreateTool()
+
+
 @router.get("/{tool_id}", response_model=models.ToolBase)
 def get_tool_by_id(
     tool=fastapi.Depends(injectables.get_existing_tool),
@@ -46,7 +47,7 @@ def get_tool_by_id(
 
 @router.post(
     "",
-    response_model=models.ToolNatureBase,
+    response_model=models.ToolBase,
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(
@@ -58,12 +59,19 @@ def get_tool_by_id(
 def create_tool(
     body: models.CreateTool, db: orm.Session = fastapi.Depends(database.get_db)
 ) -> models.DatabaseTool:
-    return crud.create_tool_with_name(db, body.name)
+    """
+    Creates a new tool, which can be used for tool models in projects and for
+    sessions.
+
+    To use this route, the user role `administrator` is required.
+    """
+
+    return crud.create_tool(db, body)
 
 
 @router.put(
     "/{tool_id}",
-    response_model=models.ToolNatureBase,
+    response_model=models.ToolBase,
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(
@@ -77,7 +85,7 @@ def update_tool(
     tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseTool:
-    return crud.update_tool_name(db, tool, body.name)
+    return crud.update_tool(db, tool, body)
 
 
 @router.delete(
@@ -95,23 +103,21 @@ def delete_tool(
     tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
-    if tool.id == 1:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail={
-                "reason": "The tool 'Capella' cannot be deleted.",
-            },
-        )
-
     raise_when_tool_dependency_exist(db, tool)
     crud.delete_tool(db, tool)
 
 
 @router.get("/{tool_id}/versions", response_model=list[models.ToolVersionBase])
 def get_tool_versions(
-    tool_id: int, db: orm.Session = fastapi.Depends(database.get_db)
+    tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ) -> abc.Sequence[models.DatabaseVersion]:
-    return crud.get_versions_for_tool_id(db, tool_id)
+    return crud.get_versions_for_tool_id(db, tool.id)
+
+
+@router.get("/{tool_id}/versions/default")
+def get_default_tool_version() -> models.CreateToolVersion:
+    return models.CreateToolVersion()
 
 
 @router.post(
@@ -130,10 +136,14 @@ def create_tool_version(
     tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseVersion:
-    return crud.create_version(db, tool, body.name)
+    if crud.get_version_by_tool_id_version_name(db, tool.id, body.name):
+        raise core_exceptions.ResourceAlreadyExistsError(
+            "tool version", "name"
+        )
+    return crud.create_version(db, tool, body)
 
 
-@router.patch(
+@router.put(
     "/{tool_id}/versions/{version_id}",
     response_model=models.ToolVersionBase,
     dependencies=[
@@ -144,13 +154,21 @@ def create_tool_version(
         )
     ],
 )
-def patch_tool_version(
-    body: models.UpdateToolVersion,
+def update_tool_version(
+    body: models.CreateToolVersion,
+    tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     version: models.DatabaseVersion = fastapi.Depends(
         injectables.get_exisiting_tool_version
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseVersion:
+    existing_version = crud.get_version_by_tool_id_version_name(
+        db, tool.id, body.name
+    )
+    if existing_version and existing_version.id != version.id:
+        raise core_exceptions.ResourceAlreadyExistsError(
+            "tool version", "name"
+        )
     return crud.update_version(db, version, body)
 
 
@@ -177,9 +195,15 @@ def delete_tool_version(
 
 @router.get("/{tool_id}/natures", response_model=list[models.ToolNatureBase])
 def get_tool_natures(
-    tool_id: int, db: orm.Session = fastapi.Depends(database.get_db)
+    tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ) -> abc.Sequence[models.DatabaseNature]:
-    return crud.get_natures_by_tool_id(db, tool_id)
+    return crud.get_natures_by_tool_id(db, tool.id)
+
+
+@router.get("/{tool_id}/natures/default")
+def get_default_tool_nature() -> models.CreateToolNature:
+    return models.CreateToolNature()
 
 
 @router.post(
@@ -198,7 +222,34 @@ def create_tool_nature(
     tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseNature:
+    if crud.get_nature_by_name(db, tool, body.name):
+        raise core_exceptions.ResourceAlreadyExistsError("tool nature", "name")
     return crud.create_nature(db, tool, body.name)
+
+
+@router.put(
+    "/{tool_id}/natures/{nature_id}",
+    response_model=models.ToolNatureBase,
+    dependencies=[
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
+    ],
+)
+def update_tool_nature(
+    body: models.CreateToolNature,
+    tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
+    nature: models.DatabaseNature = fastapi.Depends(
+        injectables.get_exisiting_tool_nature
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> models.DatabaseNature:
+    existing_nature = crud.get_nature_by_name(db, tool, body.name)
+    if existing_nature and existing_nature.id != nature.id:
+        raise core_exceptions.ResourceAlreadyExistsError("tool nature", "name")
+    return crud.update_nature(db, nature, body)
 
 
 @router.delete(
@@ -220,47 +271,6 @@ def delete_tool_nature(
 ):
     raise_when_tool_nature_dependency_exist(db, nature)
     crud.delete_nature(db, nature)
-
-
-@router.get(
-    "/{tool_id}/dockerimages",
-    response_model=models.ToolDockerimage,
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
-        )
-    ],
-)
-def get_dockerimages(
-    tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
-) -> models.DatabaseTool:
-    return tool
-
-
-@router.put(
-    "/{tool_id}/dockerimages",
-    response_model=models.ToolDockerimage,
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
-        )
-    ],
-)
-def update_dockerimages(
-    body: models.PatchToolDockerimage,
-    tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
-    db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.DatabaseTool:
-    return crud.update_tool_dockerimages(db, tool, body)
-
-
-router.include_router(
-    tools_integrations_routes.router, prefix="/{tool_id}/integrations"
-)
 
 
 def raise_when_tool_dependency_exist(

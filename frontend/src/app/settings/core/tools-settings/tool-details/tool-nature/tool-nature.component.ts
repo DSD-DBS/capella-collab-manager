@@ -3,25 +3,31 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, Input, ViewChild } from '@angular/core';
 import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
-import { MatSelectionList } from '@angular/material/list';
-import { finalize, tap } from 'rxjs';
-import { Tool, ToolService, ToolNature } from '../../tool.service';
+  AfterViewInit,
+  Component,
+  Input,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
+
+import { MatTabGroup } from '@angular/material/tabs';
+import { EditorComponent } from 'src/app/helpers/editor/editor.component';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
+import {
+  Tool,
+  ToolService,
+  ToolNature,
+  CreateToolNature,
+} from '../../tool.service';
 
 @Component({
   selector: 'app-tool-nature',
   templateUrl: './tool-nature.component.html',
   styleUrls: ['./tool-nature.component.css'],
 })
-export class ToolNatureComponent {
+export class ToolNatureComponent implements AfterViewInit {
   _tool?: Tool = undefined;
 
   @Input()
@@ -29,7 +35,7 @@ export class ToolNatureComponent {
     if (this._tool && this._tool.id === value?.id) return;
 
     this._tool = value;
-    this.toolNatures = [];
+    this.toolNatures = undefined;
 
     this.toolService
       .getNaturesForTool(this._tool!.id)
@@ -37,59 +43,79 @@ export class ToolNatureComponent {
         this.toolNatures = natures;
       });
   }
-  toolNatures: ToolNature[] = [];
 
-  constructor(private toolService: ToolService) {}
+  @ViewChildren('editorRef') editorRefs: QueryList<EditorComponent> | undefined;
 
-  @ViewChild('toolNatureList') toolNatureList!: MatSelectionList;
+  @ViewChild('tabGroup', { static: false }) tabGroup: MatTabGroup | undefined;
 
-  get selectedToolNature() {
-    return this.toolNatureList.selectedOptions.selected[0].value;
+  toolNatures: ToolNature[] | undefined = undefined;
+
+  constructor(
+    private toolService: ToolService,
+    private toastService: ToastService,
+  ) {}
+
+  ngAfterViewInit(): void {
+    this.toolService.getDefaultNature().subscribe((nature) => {
+      this.getEditorForContext('new')!.value = nature;
+    });
   }
 
-  toolNatureForm = new FormGroup({
-    name: new FormControl('', [
-      Validators.required,
-      this.uniqueNameValidator(),
-    ]),
-  });
-
-  uniqueNameValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      return this.toolNatures.find((nature) => nature.name == control.value)
-        ? { toolVersionExists: true }
-        : null;
-    };
+  getEditorForContext(context: string) {
+    return this.editorRefs?.find((editor) => editor.context === context);
   }
 
-  createToolNature(): void {
-    if (this.toolNatureForm.valid) {
-      this.toolNatureForm.disable();
+  resetValue(context: string) {
+    this.getEditorForContext(context)?.resetValue();
+  }
 
-      this.toolService
-        .createNatureForTool(
-          this._tool!.id,
-          this.toolNatureForm.controls.name.value!,
-        )
-        .pipe(
-          tap(() => {
-            this.toolNatureForm.reset();
-          }),
-          finalize(() => {
-            this.toolNatureForm.enable();
-          }),
-        )
-        .subscribe((nature: ToolNature) => {
-          this.toolNatures.push(nature);
-        });
-    }
+  submitValue(context: string) {
+    this.getEditorForContext(context)?.submitValue();
+  }
+
+  submittedValue(toolNature: ToolNature, value: ToolNature) {
+    const { id, ...valueWithoutID } = value; // eslint-disable-line @typescript-eslint/no-unused-vars
+    this.toolService
+      .updateToolNature(this._tool!.id, toolNature.id, valueWithoutID)
+      .subscribe((toolNature: ToolNature) => {
+        this.toastService.showSuccess(
+          'Tool nature updated',
+          `Successfully updated nature '${toolNature.name}' for tool '${this._tool!.name}'`,
+        );
+        const natureIdx = this.toolNatures?.findIndex(
+          (v) => v.id === toolNature.id,
+        );
+
+        this.toolNatures![natureIdx!] = toolNature;
+        this.getEditorForContext(toolNature.id.toString())!.value = toolNature;
+      });
+  }
+
+  submittedNewToolNature(value: CreateToolNature) {
+    this.toolService
+      .createNatureForTool(this._tool!.id, value)
+      .subscribe((toolNature: ToolNature) => {
+        this.toastService.showSuccess(
+          'Tool nature created',
+          `Successfully created nature '${toolNature.name}' for tool '${this._tool!.name}'`,
+        );
+        this.toolNatures!.push(toolNature);
+        this.getEditorForContext('new')!.resetValue();
+        this.jumpToLastTab();
+      });
+  }
+
+  private jumpToLastTab() {
+    if (!this.tabGroup || !(this.tabGroup instanceof MatTabGroup)) return;
+
+    this.tabGroup.selectedIndex = this.tabGroup._tabs.length;
   }
 
   removeToolNature(toolNature: ToolNature): void {
     this.toolService
       .deleteNatureForTool(this._tool!.id, toolNature)
       .subscribe(() => {
-        this.toolNatures = this.toolNatures.filter(
+        this.toolNatures = this.toolNatures!.filter(
           (nature) => nature.id !== toolNature.id,
         );
       });
