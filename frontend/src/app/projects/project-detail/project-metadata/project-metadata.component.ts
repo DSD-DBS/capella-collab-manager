@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -24,7 +24,7 @@ import {
   templateUrl: './project-metadata.component.html',
   styleUrls: ['./project-metadata.component.css'],
 })
-export class ProjectMetadataComponent {
+export class ProjectMetadataComponent implements OnInit {
   project?: Project;
   canDelete = false;
 

@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import itertools
 import json
 import typing as t
 from datetime import datetime
@@ -14,7 +15,10 @@ import capellacollab.sessions.guacamole
 from capellacollab.__main__ import app
 from capellacollab.projects.crud import create_project
 from capellacollab.projects.toolmodels.crud import create_model
-from capellacollab.projects.toolmodels.models import PostCapellaModel
+from capellacollab.projects.toolmodels.models import (
+    DatabaseCapellaModel,
+    PostCapellaModel,
+)
 from capellacollab.projects.toolmodels.modelsources.git.crud import (
     add_git_model_to_capellamodel,
 )
@@ -27,6 +31,7 @@ from capellacollab.projects.users.models import (
     ProjectUserRole,
 )
 from capellacollab.sessions import models as sessions_models
+from capellacollab.sessions import routes as sessions_routes
 from capellacollab.sessions.crud import (
     create_session,
     get_session_by_id,
@@ -44,6 +49,7 @@ from capellacollab.tools.crud import (
 )
 from capellacollab.tools.integrations.crud import update_integrations
 from capellacollab.tools.integrations.models import PatchToolIntegrations
+from capellacollab.tools.models import DatabaseVersion
 from capellacollab.users.crud import create_user
 from capellacollab.users.injectables import get_own_user
 from capellacollab.users.models import Role
@@ -276,7 +282,6 @@ def test_one_readonly_sessions_as_user_per_tool_version(
 
 def setup_git_model_for_user(db, user, version):
     project = create_project(db, name=str(uuid1()))
-    nature = get_natures(db)[0]
     add_user_to_project(
         db,
         project,
@@ -284,6 +289,11 @@ def setup_git_model_for_user(db, user, version):
         ProjectUserRole.USER,
         ProjectUserPermission.READ,
     )
+    return setup_model(db, project, version)
+
+
+def setup_model(db, project, version):
+    nature = get_natures(db)[0]
     model = create_model(
         db,
         project,
@@ -299,7 +309,11 @@ def setup_git_model_for_user(db, user, version):
         db,
         model,
         PostGitModel(
-            path=git_path, entrypoint="", revision="", username="", password=""
+            path=git_path,
+            entrypoint="",
+            revision="main",
+            username="",
+            password="",
         ),
     )
     return model, git_model
@@ -425,4 +439,76 @@ def test_create_persistent_jupyter_session(client, db, user, kubernetes):
     assert (
         kubernetes.sessions[0]["docker_image"]
         == "jupyter/minimal-notebook:python-3.10.8"
+    )
+
+
+def test_group_models_by_tool_version():
+    first_tool = DatabaseVersion(id=1)
+    second_tool = DatabaseVersion(id=2)
+
+    models = [
+        DatabaseCapellaModel(
+            name="first",
+            version=first_tool,
+        ),
+        DatabaseCapellaModel(
+            name="second-1",
+            version=second_tool,
+        ),
+        DatabaseCapellaModel(
+            name="second-2",
+            version=second_tool,
+        ),
+    ]
+
+    models_by_tool = sessions_routes.group_models_by_tool_version(models)
+
+    assert models_by_tool == [[models[0]], [models[1], models[2]]]
+
+
+def test_provision_sessions_as_user(
+    client: testclient.TestClient,
+    db,
+    user,
+    kubernetes,
+):
+    capella_version = next(
+        v
+        for v in get_versions(db)
+        if v.tool.name == "Capella" and v.name == "6.0.0"
+    )
+
+    jupyter_version = next(
+        v for v in get_versions(db) if v.tool.name == "Jupyter"
+    )
+
+    capella_model, _capella_git_model = setup_git_model_for_user(
+        db, user, capella_version
+    )
+    jupyter_model, _jupyter_git_model = setup_model(
+        db, capella_model.project, jupyter_version
+    )
+
+    response = client.post(
+        f"/api/v1/projects/{capella_model.project.slug}/sessions/provision",
+        json={
+            "models": [
+                {
+                    "model_slug": capella_model.slug,
+                },
+                {
+                    "model_slug": jupyter_model.slug,
+                },
+            ],
+            "persistent_workspace": True,
+        },
+    )
+    sessions = response.json()
+
+    assert response.status_code == 200
+    assert len(sessions) == 2
+    assert "/capella/readonly:6.0.0" in kubernetes.sessions[0]["docker_image"]
+    assert (
+        '"revision": "main"'
+        in kubernetes.sessions[0]["environment"]["GIT_REPOS_JSON"]
     )

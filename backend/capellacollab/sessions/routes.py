@@ -283,7 +283,6 @@ def request_persistent_session(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
     operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
-    username: str = fastapi.Depends(auth_injectables.get_username),
 ):
     log.info("Starting persistent session for user %s", user.name)
 
@@ -294,55 +293,16 @@ def request_persistent_session(
 
     raise_if_conflicting_persistent_sessions(tool, user)
 
-    environment: dict[str, str] = {}
-    volumes: list[operators_models.Volume] = []
-    warnings: list[core_models.Message] = []
-
-    for hook in hooks.get_activated_integration_hooks(tool):
-        hook_env, hook_volumes, hook_warnings = hook.configuration_hook(
-            db=db,
-            user=user,
-            tool_version=version,
-            tool=tool,
-            username=username,
-            operator=operator,
-        )
-        environment |= hook_env
-        volumes += hook_volumes
-        warnings += hook_warnings
-
     docker_image = get_image_for_tool_version(db, version.id)
-
-    if tool.integrations and tool.integrations.jupyter:
-        response = start_persistent_jupyter_session(
-            db=db,
-            operator=operator,
-            owner=user.name,
-            tool=tool,
-            version=version,
-            volumes=volumes,
-            environment=environment,
-            docker_image=docker_image,
-        )
-    else:
-        response = start_persistent_guacamole_session(
-            db=db,
-            operator=operator,
-            user=user,
-            owner=user.name,
-            tool=tool,
-            version=version,
-            volumes=volumes,
-            environment=environment,
-            docker_image=docker_image,
-        )
-
-    for hook in hooks.get_activated_integration_hooks(tool):
-        hook.post_session_creation_hook(
-            session_id=response.id, operator=operator, user=user
-        )
-
-    response.warnings = warnings
+    response = start_persistent_session(
+        db=db,
+        user=user,
+        tool=tool,
+        version=version,
+        operator=operator,
+        docker_image=docker_image,
+        environment={},
+    )
 
     return response
 
@@ -388,6 +348,68 @@ def raise_if_conflicting_persistent_sessions(
             )
 
 
+def start_persistent_session(
+    db,
+    user,
+    tool,
+    version,
+    operator,
+    docker_image,
+    environment,
+    session_type="persistent",
+):
+    volumes: list[operators_models.Volume] = []
+    warnings: list[core_models.Message] = []
+
+    for hook in hooks.get_activated_integration_hooks(tool):
+        hook_env, hook_volumes, hook_warnings = hook.configuration_hook(
+            db=db,
+            user=user,
+            tool_version=version,
+            tool=tool,
+            username=user.name,
+            operator=operator,
+        )
+        environment |= hook_env
+        volumes += hook_volumes
+        warnings += hook_warnings
+
+    if tool.integrations and tool.integrations.jupyter:
+        response = start_persistent_jupyter_session(
+            db=db,
+            operator=operator,
+            owner=user.name,
+            tool=tool,
+            version=version,
+            volumes=volumes,
+            environment=environment,
+            docker_image=docker_image,
+            session_type=session_type,
+        )
+    else:
+        response = start_persistent_guacamole_session(
+            db=db,
+            operator=operator,
+            user=user,
+            owner=user.name,
+            tool=tool,
+            version=version,
+            volumes=volumes,
+            environment=environment,
+            docker_image=docker_image,
+            session_type=session_type,
+        )
+
+    for hook in hooks.get_activated_integration_hooks(tool):
+        hook.post_session_creation_hook(
+            session_id=response.id, operator=operator, user=user
+        )
+
+    response.warnings = warnings
+
+    return response
+
+
 def start_persistent_jupyter_session(
     db: orm.Session,
     operator: k8s.KubernetesOperator,
@@ -397,11 +419,12 @@ def start_persistent_jupyter_session(
     version: tools_models.DatabaseVersion,
     docker_image: str,
     volumes: list[operators_models.Volume],
+    session_type="persistent",
 ):
     session = operator.start_session(
         image=docker_image,
         username=owner,
-        session_type="persistent",
+        session_type=session_type,
         tool_name=tool.name,
         version_name=version.name,
         environment=environment,
@@ -434,6 +457,7 @@ def start_persistent_guacamole_session(
     volumes: list[operators_models.Volume],
     environment: dict[str, str],
     docker_image: str,
+    session_type="persistent",
 ):
     rdp_password = credentials.generate_password(length=64)
 
@@ -442,7 +466,7 @@ def start_persistent_guacamole_session(
     session = operator.start_session(
         image=docker_image,
         username=user.name,
-        session_type="persistent",
+        session_type=session_type,
         tool_name=tool.name,
         version_name=version.name,
         environment=environment,
@@ -540,6 +564,149 @@ def create_database_and_guacamole_session(
         guacamole_password=guacamole_password,
         guacamole_connection_id=guacamole_identifier,
     )
+
+
+@project_router.post(
+    "/provision",
+    response_model=list[models.GetSessionsResponse],
+    dependencies=[
+        fastapi.Depends(
+            auth_injectables.ProjectRoleVerification(
+                required_role=projects_users_models.ProjectUserRole.USER
+            )
+        )
+    ],
+)
+def request_provision_workspace(
+    body: models.PostProvisionWorkspaceRequest,
+    user: users_models.DatabaseUser = fastapi.Depends(
+        users_injectables.get_own_user
+    ),
+    project: projects_models.DatabaseProject = fastapi.Depends(
+        projects_injectables.get_existing_project
+    ),
+    operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
+    db: orm.Session = fastapi.Depends(database.get_db),
+):
+    log.info("Provisioning workspace for user %s", user.name)
+
+    models_ = get_and_validate_models(body, user, project, db)
+    grouped_models = group_models_by_tool_version(models_)
+
+    launched_sessions = []
+    for model_group in grouped_models:
+        model = model_group[0]
+        warnings: list[core_models.Message] = []
+
+        # Start sessions for each tool and tell it to load models, same as readonly sessions
+        docker_image = get_readonly_image_for_version(model.version)
+        if not docker_image:
+            warnings.append(
+                core_models.Message(
+                    reason=f"No readonly docker image defined for model {model.name}"
+                )
+            )
+            continue
+
+        git_model = next((gm for gm in model.git_models if gm.primary), None)
+        if not git_model:
+            warnings.append(
+                core_models.Message(
+                    reason=f"No primary git model defined for model {model.name}"
+                )
+            )
+            continue
+
+        environment = create_environment(model_group)
+        response = start_persistent_session(
+            db=db,
+            user=user,
+            tool=model.version.tool,
+            version=model.version,
+            operator=operator,
+            docker_image=docker_image,
+            environment=environment,
+            session_type="readonly",
+        )
+        response.warnings += warnings
+
+        launched_sessions.append(response)
+
+    return launched_sessions
+
+
+def get_and_validate_models(
+    body: models.PostProvisionWorkspaceRequest,
+    user: users_models.DatabaseUser,
+    project: projects_models.DatabaseProject,
+    db: orm.Session,
+) -> list[toolmodels_models.DatabaseCapellaModel]:
+    if not body.models:
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "err_code": "NO_MODELS",
+                "reason": "No models have been provided in this request for a read-only session.",
+            },
+        )
+
+    models_ = [
+        toolmodels_injectables.get_existing_capella_model(
+            m.toolmodel_slug, project, db
+        )
+        for m in body.models
+    ]
+
+    if any(
+        crud.exist_readonly_session_for_user_project_version(
+            db, user, project, m.version
+        )
+        for m in models_
+    ):
+        raise fastapi.HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "err_code": "EXISTING_SESSION",
+                "reason": f"You already have a session for {project.name}. Close the existing session(s) before starting a new one.",
+            },
+        )
+
+    return models_
+
+
+def group_models_by_tool_version(
+    models_: list[toolmodels_models.DatabaseCapellaModel],
+) -> list[list[toolmodels_models.DatabaseCapellaModel]]:
+    return list(
+        list(model_iter)
+        for _version_id, model_iter in itertools.groupby(
+            models_, key=lambda m: m.version.id
+        )
+    )
+
+
+def create_environment(
+    model_group: list[toolmodels_models.DatabaseCapellaModel],
+) -> dict[str, str]:
+    model = model_group[0]
+    rdp_password = credentials.generate_password(length=64)
+
+    return {
+        "GIT_REPOS_JSON": json.dumps(
+            [
+                git_model_as_json(
+                    git_model=git_model,
+                    revision=git_model.revision,
+                    deep_clone=False,
+                )
+                for m in model_group
+                for git_model in m.git_models
+                if git_model.primary
+            ]
+        ),
+        "RMT_PASSWORD": rdp_password,
+        "WORKSPACE_DIR": f"/workspace/projects/{model.project.slug}/{model.version.tool.slug}/{model.version.slug}",
+    }
 
 
 @router.delete("/{session_id}", status_code=204)

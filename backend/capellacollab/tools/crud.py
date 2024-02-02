@@ -4,6 +4,7 @@
 from collections import abc
 
 import sqlalchemy as sa
+from slugify import slugify
 from sqlalchemy import exc, orm
 
 from capellacollab.core import database
@@ -37,6 +38,7 @@ def get_tool_by_name(
 def create_tool(
     db: orm.Session, tool: models.DatabaseTool
 ) -> models.DatabaseTool:
+    tool.slug = slugify(tool.name)
     tool.integrations = integrations_models.DatabaseToolIntegrations(
         pure_variants=False, t4c=False, jupyter=False
     )
@@ -161,6 +163,7 @@ def create_version(
         is_recommended=is_recommended,
         is_deprecated=is_deprecated,
         tool_id=tool_id,
+        slug=slugify(name),
     )
     db.add(version)
     db.commit()

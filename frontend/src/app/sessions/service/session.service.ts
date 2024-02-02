@@ -16,6 +16,10 @@ export type ReadonlyModel = {
   deep_clone: boolean;
 };
 
+export type ProvisionModel = {
+  model_slug: string;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -47,6 +51,20 @@ export class SessionService {
       tool_id: toolId,
       version_id: versionId,
     });
+  }
+
+  provisionWorkspace(
+    projectSlug: string,
+    models: ProvisionModel[],
+    persistentWorkspace: boolean,
+  ): Observable<Session[]> {
+    return this.http.post<Session[]>(
+      `${environment.backend_url}/projects/${projectSlug}/sessions/provision`,
+      {
+        models: models,
+        persistent_workspace: persistentWorkspace,
+      },
+    );
   }
 
   deleteSession(id: string): Observable<null> {

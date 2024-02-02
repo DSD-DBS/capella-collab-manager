@@ -4,6 +4,7 @@
  */
 
 import { Component } from '@angular/core';
+
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { ProjectService } from '../service/project.service';
 
