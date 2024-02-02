@@ -28,7 +28,6 @@ from capellacollab.users import models as users_models
 
 from . import crud, models
 
-logger = logging.getLogger(__name__)
 router = fastapi.APIRouter(
     dependencies=[
         fastapi.Depends(

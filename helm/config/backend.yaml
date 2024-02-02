@@ -31,9 +31,6 @@ general:
   scheme: "{{ .Values.general.scheme }}"
   wildcardHost: {{ .Values.general.wildcardHost }}
 
-  metadata:
-    {{- toYaml .Values.general.metadata | nindent 4 }}
-
 extensions:
   guacamole:
     baseURI: "http://{{ .Release.Name }}-guacamole-guacamole:8080/guacamole"

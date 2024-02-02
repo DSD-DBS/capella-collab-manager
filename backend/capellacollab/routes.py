@@ -67,6 +67,10 @@ router.include_router(
     prefix="/settings",
     responses=auth_responses.AUTHENTICATION_RESPONSES,
 )
+router.include_router(
+    settings_routes.router_without_authentication,
+    prefix="/settings",
+)
 
 # Load authentication routes
 ep = authentication.get_authentication_entrypoint()

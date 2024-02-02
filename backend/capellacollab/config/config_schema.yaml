@@ -116,19 +116,6 @@ properties:
         type: string
       wildcardHost:
         type: boolean
-      metadata:
-        type: object
-        properties:
-          privacyPolicyURL:
-            type: string
-          imprintURL:
-            type: string
-          provider:
-            type: string
-          authenticationProvider:
-            type: string
-          environment:
-            type: string
   extensions:
     type: object
     additionalProperties: false
