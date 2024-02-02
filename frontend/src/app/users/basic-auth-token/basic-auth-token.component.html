@@ -4,11 +4,11 @@
  -->
 
 <div>
-  <h2 class="!mb-2">Personal Access Tokens</h2>
+  <h2 class="!mb-2 text-xl font-medium">Personal Access Tokens</h2>
   To create a Personal Access Token please choose an expiration date and provide
   a short description.
   <form [formGroup]="tokenForm" (ngSubmit)="createToken()">
-    <mat-form-field appearance="outline" class="my-2 w-9/12">
+    <mat-form-field appearance="outline" class="mb-10 mt-2 w-9/12">
       <mat-label>Token description</mat-label>
       <textarea
         matInput
@@ -46,8 +46,8 @@
       Create Token
     </button>
   </form>
-  <div *ngIf="password" class="mb-10">
-    <mat-card class="!ml-0">
+  @if (password) {
+    <div class="collab-card !ml-0">
       Generated Token:
       <app-display-value
         [value]="password"
@@ -56,26 +56,30 @@
       ></app-display-value>
       <div class="mt-2 text-red-600">
         Make sure you save the token - you won't be able to access it again.
-      </div></mat-card
-    >
-  </div>
-  <h2>Token overview</h2>
-  <ng-container *ngIf="(tokenService.tokens$ | async)?.length; else elseBlock">
-    <mat-card *ngFor="let token of tokenService.tokens$ | async" class="!ml-0">
-      <mat-card-content>
-        Description: {{ token.description }} <br />
-        Expiration date: {{ token.expiration_date | date }} <br />
-        Creation location: {{ token.source }}
-        <div *ngIf="isTokenExpired(token.expiration_date)">
-          <mat-icon color="warn" class="align-middle">warning</mat-icon>
-          <span class="text-red-600">This token has expired!</span>
+      </div>
+    </div>
+  }
+
+  <h2 class="text-xl font-medium">Token overview</h2>
+  @if ((tokenService.tokens$ | async)?.length) {
+    @for (token of tokenService.tokens$ | async; track token) {
+      <div class="collab-card !ml-0">
+        <div>
+          Description: {{ token.description }} <br />
+          Expiration date: {{ token.expiration_date | date }} <br />
+          Creation location: {{ token.source }}
+          @if (isTokenExpired(token.expiration_date)) {
+            <mat-icon color="warn" class="align-middle">warning</mat-icon>
+            <span class="text-red-600">This token has expired!</span>
+          }
         </div>
-      </mat-card-content>
-      <button (click)="deleteToken(token)" mat-raised-button>
-        <mat-icon color="warn" class="align-middle">delete</mat-icon>
-        <span>Revoke token</span>
-      </button>
-    </mat-card>
-  </ng-container>
-  <ng-template #elseBlock>No token created for your user yet.</ng-template>
+        <button (click)="deleteToken(token)" mat-raised-button>
+          <mat-icon color="warn" class="align-middle">delete</mat-icon>
+          <span>Revoke token</span>
+        </button>
+      </div>
+    }
+  } @else {
+    No token created for your user yet.
+  }
 </div>

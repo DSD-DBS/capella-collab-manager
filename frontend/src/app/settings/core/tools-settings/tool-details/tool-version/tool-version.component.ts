@@ -12,7 +12,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { MatLegacySelectionListChange as MatSelectionListChange } from '@angular/material/legacy-list';
+import { MatSelectionListChange } from '@angular/material/list';
 import { finalize, switchMap, tap } from 'rxjs';
 import {
   PatchToolVersion,

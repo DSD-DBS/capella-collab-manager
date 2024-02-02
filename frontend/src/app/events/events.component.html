@@ -4,7 +4,7 @@
  -->
 
 <div>
-  <mat-card class="wider">
+  <div class="collab-card w-full">
     <table mat-table matSort [dataSource]="historyEventDataSource">
       <ng-container matColumnDef="eventType">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Event Type</th>
@@ -55,5 +55,5 @@
       aria-label="Select page of periodic elements"
     >
     </mat-paginator>
-  </mat-card>
+  </div>
 </div>

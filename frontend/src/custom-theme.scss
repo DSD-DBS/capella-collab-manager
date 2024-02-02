@@ -5,17 +5,6 @@
 
 @use "@angular/material" as mat;
 
-// TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
-//  The following line adds:
-//    1. Default typography styles for all components
-//    2. Styles for typography hierarchy classes (e.g. .mat-headline-1)
-//  If you specify typography styles for the components you use elsewhere, you should delete this line.
-//  If you don't need the default component typographies but still want the hierarchy styles,
-//  you can delete this line and instead use:
-//    `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
-@include mat.all-legacy-component-typographies();
-@include mat.legacy-core();
-
 $primary-palette: (
   50: #e8eaf6,
   100: #c5cbe9,
@@ -59,7 +48,6 @@ $theme: mat.define-light-theme(
   )
 );
 
-@include mat.all-legacy-component-themes($theme);
 
 /* width */
 .simple-scroll::-webkit-scrollbar {

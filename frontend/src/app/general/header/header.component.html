@@ -20,86 +20,94 @@
       Capella Collaboration Manager
     </div>
 
+    <div class="xl:hidden"></div>
+
     <div class="hidden gap-2 xl:flex">
-      <div *ngFor="let item of navBarService.navBarItems">
-        <ng-container *ngIf="userService.validateUserRole(item.requiredRole)">
-          <ng-container *ngIf="item.href; else router">
+      @for (item of navBarService.navBarItems; track item.name) {
+        @if (userService.validateUserRole(item.requiredRole)) {
+          @if (item.href) {
             <a
               mat-raised-button
               color="primary"
               [attr.href]="item.href"
               [attr.target]="item.target"
+              class=""
             >
               {{ item.name }}
-              <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+              <mat-icon iconPositionEnd *ngIf="item.icon">{{
+                item.icon
+              }}</mat-icon>
             </a>
-          </ng-container>
-          <ng-template #router>
-            <a mat-raised-button color="primary" [routerLink]="item.routerLink">
+          } @else {
+            <a
+              mat-raised-button
+              color="primary"
+              [routerLink]="item.routerLink"
+              class=""
+            >
               {{ item.name }}
             </a>
-          </ng-template>
-        </ng-container>
-      </div>
+          }
+        }
+      }
     </div>
-    <div>
-      <div class="hidden gap-2 xl:flex">
-        <div>
-          <a
-            mat-raised-button
-            color="primary"
-            href="https://github.com/DSD-DBS/capella-collab-manager/issues"
-            target="_blank"
-            >Open Issue on Github <mat-icon>open_in_new</mat-icon>
-          </a>
-        </div>
-        <mat-menu #profileMenu="matMenu">
-          <a
-            class="profileMenuButton"
-            mat-menu-item
-            [routerLink]="['user', userService.user?.id]"
-          >
-            Profile <mat-icon>account_circle</mat-icon>
-          </a>
-          <a
-            *ngIf="userService.user?.role === 'administrator'"
-            class="profileMenuButton"
-            mat-menu-item
-            routerLink="settings"
-          >
-            Settings <mat-icon>settings</mat-icon>
-          </a>
-          <a
-            *ngIf="userService.user?.role === 'administrator'"
-            class="profileMenuButton"
-            mat-menu-item
-            routerLink="events"
-          >
-            Events <mat-icon>event_note</mat-icon>
-          </a>
-          <a class="profileMenuButton" mat-menu-item routerLink="tokens">
-            Tokens <mat-icon>key</mat-icon>
-          </a>
-          <a
-            class="profileMenuButton"
-            mat-menu-item
-            routerLink="logout/redirect"
-            [queryParams]="{ reason: 'logout' }"
-            *ngIf="authService.isLoggedIn()"
-          >
-            Log out <mat-icon>logout</mat-icon>
-          </a>
-        </mat-menu>
+    <div class="hidden items-center xl:flex">
+      <a
+        mat-raised-button
+        color="primary"
+        href="https://github.com/DSD-DBS/capella-collab-manager/issues"
+        target="_blank"
+        class="ml-2"
+        >Open Issue on Github <mat-icon iconPositionEnd>open_in_new</mat-icon>
+      </a>
 
-        <button
-          class="!mx-5"
-          color="primary"
-          mat-raised-button
-          [matMenuTriggerFor]="profileMenu"
+      <mat-menu #profileMenu="matMenu" class="flex items-center">
+        <a
+          class="px-[15px] text-left"
+          mat-menu-item
+          [routerLink]="['user', userService.user?.id]"
         >
-          Menu <mat-icon>menu</mat-icon>
-        </button>
-      </div>
+          Profile <mat-icon>account_circle</mat-icon>
+        </a>
+        <a
+          *ngIf="userService.user?.role === 'administrator'"
+          class="px-[15px] text-left"
+          mat-menu-item
+          routerLink="settings"
+        >
+          Settings <mat-icon>settings</mat-icon>
+        </a>
+        <a
+          *ngIf="userService.user?.role === 'administrator'"
+          class="px-[15px] text-left"
+          mat-menu-item
+          routerLink="events"
+        >
+          Events <mat-icon>event_note</mat-icon>
+        </a>
+
+        <a class="px-[15px] text-left" mat-menu-item routerLink="tokens">
+          Tokens <mat-icon>key</mat-icon>
+        </a>
+        <a
+          class="px-[15px] text-left"
+          mat-menu-item
+          routerLink="logout/redirect"
+          [queryParams]="{ reason: 'logout' }"
+          *ngIf="authService.isLoggedIn()"
+        >
+          Log out <mat-icon>logout</mat-icon>
+        </a>
+      </mat-menu>
+
+      <button
+        class="!mr-5"
+        color="primary"
+        mat-raised-button
+        [matMenuTriggerFor]="profileMenu"
+      >
+        Menu <mat-icon iconPositionEnd>menu</mat-icon>
+      </button>
     </div>
   </div>
 

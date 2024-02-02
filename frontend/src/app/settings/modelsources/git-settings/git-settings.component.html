@@ -6,8 +6,9 @@
 <div class="wrapper">
   <div *ngIf="(this.gitInstancesService.gitInstances$ | async)?.length">
     <div class="title">Existing instances</div>
-    <div class="flex flex-wrap">
-      <mat-card
+    <div class="flex flex-wrap gap-5">
+      <div
+        class="collab-card mb-5 !p-0"
         *ngFor="let instance of this.gitInstancesService.gitInstances$ | async"
       >
         <div class="mat-title">
@@ -32,7 +33,7 @@
           <a href="{{ instance.url }}">{{ instance.url }}</a> <br />
           <span *ngIf="instance.apiURL">API URL: {{ instance.apiURL }}</span>
         </div>
-      </mat-card>
+      </div>
     </div>
   </div>
   <br />

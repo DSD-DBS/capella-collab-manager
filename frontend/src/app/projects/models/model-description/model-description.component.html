@@ -4,8 +4,8 @@
  -->
 
 <div class="wrapper flex-center flex">
-  <mat-card *ngIf="modelService.model$ | async" class="grow basis-1">
-    <mat-card-title>{{ (modelService.model$ | async)!.name }}</mat-card-title>
+  <div *ngIf="modelService.model$ | async" class="collab-card grow basis-1">
+    <h2>{{ (modelService.model$ | async)!.name }}</h2>
     <form (submit)="onSubmit()" [formGroup]="form">
       <fieldset>
         <mat-form-field appearance="fill">
@@ -83,5 +83,5 @@
         </button>
       </div>
     </form>
-  </mat-card>
+  </div>
 </div>

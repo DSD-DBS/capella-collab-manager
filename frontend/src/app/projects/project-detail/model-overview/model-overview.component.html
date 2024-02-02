@@ -4,8 +4,9 @@
  -->
 
 <div>
-  <div class="flex items-center">
-    <h2>Models</h2>
+  <div class="mt-1.5 flex items-center">
+    <h2 class="text-xl font-medium">Models</h2>
+    <h2 class="text-xl font-medium">Models</h2>
     @if (projectUserService.verifyRole("manager")) {
       <a
         mat-stroked-button
@@ -26,8 +27,9 @@
             : 'Add a new model'
         "
         [disabled]="project?.is_archived"
-      >
-        <mat-icon id="add-icon">add</mat-icon>
+        ><div class="flex items-center">
+          <mat-icon id="add-icon">add</mat-icon>
+        </div>
       </a>
       @if (models !== undefined && models.length > 1) {
         <button
@@ -36,7 +38,9 @@
           class="!ml-4"
           (click)="openReorderModelsDialog(models)"
         >
-          <mat-icon>list</mat-icon>
+          <div class="flex items-center">
+            <mat-icon>list</mat-icon>
+          </div>
         </button>
       }
     }
@@ -56,40 +60,51 @@
         ></ngx-skeleton-loader>
       </div>
     </div>
-    <mat-card
-      class="flex min-h-[200px] w-[500px] max-w-[85vw] select-none flex-col"
+
+    <div
+      class="collab-card m-[10px] flex min-h-[200px] w-[500px] max-w-[85vw] select-none flex-col !p-0"
       *ngFor="let model of modelService.models$ | async"
     >
       <div
-        class="flex items-center justify-between rounded-t bg-primary p-2.5 text-white"
+        class="flex justify-between rounded-t bg-primary p-2.5 align-middle text-white"
       >
         <div class="ml-2.5">
-          <div class="text-xl">{{ model.name }}</div>
-          <span class="text-base">
+          <div class="select-text text-xl" style="word-break: break-word">
+            {{ model.name }}
+          </div>
+          <span class="select-text text-base">
             {{ model.tool.name }}
             <span *ngIf="model.version"> {{ model.version.name }}</span>
             <span *ngIf="!model.version"> (Version not specified)</span>
           </span>
         </div>
 
-        <div class="mr-1 flex">
-          <mat-card class="mx-1 flex items-center bg-green-800 text-white">
-            <div class="mx-2 text-center">
+        <div class="flex items-center align-middle">
+          <div
+            class="collab-card mx-[4px] flex h-[50px] items-center !bg-green-800 !p-0 text-white"
+          >
+            <div class="mx-[8px] text-center">
               <div class="text-xs">Nature</div>
-              <div *ngIf="model.nature">{{ model.nature.name }}</div>
-              <div *ngIf="!model.nature">Not specified</div>
+              <div *ngIf="model.nature" class="text-sm">
+                {{ model.nature.name }}
+              </div>
+              <div *ngIf="!model.nature" class="text-sm">Not specified</div>
             </div>
-          </mat-card>
-          <mat-card class="mx-1 flex items-center bg-red-800 text-white">
-            <div class="mx-2 text-center">
-              <div class="text-xs">Working mode</div>
-              {{ getPrimaryWorkingMode(model) }}
+          </div>
+          <div
+            class="collab-card mx-[4px] flex h-[50px] items-center !bg-red-800 !p-0 text-white"
+          >
+            <div class="mx-[8px] text-center">
+              <div class="text-nowrap text-xs">Working mode</div>
+              <div class="text-sm">
+                {{ getPrimaryWorkingMode(model) }}
+              </div>
             </div>
-          </mat-card>
+          </div>
         </div>
       </div>
       <div class="flex grow flex-col justify-between">
-        <div class="m-2.5">
+        <div class="m-2.5 select-text">
           {{ model.description || "This model has no description." }}
         </div>
         <app-model-complexity-badge
@@ -99,6 +114,7 @@
         <div class="m-2.5">
           <a
             mat-mini-fab
+            color="primary"
             matTooltip="Configure model"
             class="!m-1.5"
             [routerLink]="['model', model.slug, 'metadata']"
@@ -108,6 +124,7 @@
           </a>
           <a
             mat-mini-fab
+            color="primary"
             matTooltip="Model restrictions"
             class="!m-1.5"
             [routerLink]="['model', model.slug, 'restrictions']"
@@ -117,6 +134,7 @@
           </a>
           <button
             mat-mini-fab
+            color="primary"
             matTooltip="Move model to different project"
             class="!m-1.5"
             (click)="openMoveToProjectDialog(model)"
@@ -126,6 +144,7 @@
           </button>
           <a
             mat-mini-fab
+            color="primary"
             matTooltip="Configure model sources"
             class="!m-1.5"
             [routerLink]="['model', model.slug, 'modelsources']"
@@ -135,6 +154,7 @@
           </a>
           <a
             mat-mini-fab
+            color="primary"
             matTooltip="Start synchronization"
             class="!m-1.5"
             (click)="openPipelineDialog(model)"
@@ -148,6 +168,7 @@
           </a>
           <a
             mat-mini-fab
+            color="primary"
             matTooltip="Open git repository"
             class="!m-1.5"
             target="_blank"
@@ -159,6 +180,7 @@
           </a>
           <a
             mat-mini-fab
+            color="primary"
             matTooltip="Request persistent session"
             class="!m-1.5"
             routerLink="/sessions"
@@ -174,6 +196,7 @@
 
           <button
             mat-mini-fab
+            color="primary"
             matTooltip="Show diagrams of model"
             class="!m-1.5"
             [disabled]="!getPrimaryGitModelURL(model)"
@@ -184,6 +207,6 @@
           </button>
         </div>
       </div>
-    </mat-card>
+    </div>
   </div>
 </div>

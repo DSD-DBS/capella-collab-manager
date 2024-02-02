@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-.open-in-new {
-  margin-left: 10px;
+.mat-icon {
+  margin-left: 5px;
+  vertical-align: bottom;
 }

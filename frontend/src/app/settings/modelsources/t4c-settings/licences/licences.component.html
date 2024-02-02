@@ -3,8 +3,8 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<mat-card>
-  <h2>License server status</h2>
+<div class="collab-card">
+  <h2 class="text-xl font-medium">License Server Status</h2>
   <div *ngIf="sessionUsage">
     Used licences: {{ sessionUsage.total - sessionUsage.free }}/{{
       sessionUsage.total
@@ -13,4 +13,4 @@
   <div class="error" *ngIf="errorMessage">
     {{ errorMessage }}
   </div>
-</mat-card>
+</div>

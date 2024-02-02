@@ -6,41 +6,41 @@
 <div class="m-2.5 text-2xl">Core functionality</div>
 <div class="flex flex-wrap">
   <a class="m-2.5" [routerLink]="['/settings/core/users']">
-    <mat-card class="option-card m-0" matRipple>
-      <div>Manage users</div>
+    <div class="option-card collab-card mx-0" matRipple>
+      <div>Manage Users</div>
       <app-mat-icon size="50px">supervised_user_circle</app-mat-icon>
-    </mat-card>
+    </div>
   </a>
   <a class="m-2.5" [routerLink]="['/settings/core/alerts']">
-    <mat-card class="option-card m-0" matRipple>
+    <div class="option-card collab-card mx-0" matRipple>
       <div>Announcements</div>
       <app-mat-icon size="50px">add_alert</app-mat-icon>
-    </mat-card>
+    </div>
   </a>
   <a class="m-2.5" [routerLink]="['/settings/core/tools']">
-    <mat-card class="option-card m-0" matRipple>
+    <div class="option-card collab-card mx-0" matRipple>
       <div>Tools</div>
       <app-mat-icon size="50px">build</app-mat-icon>
-    </mat-card>
+    </div>
   </a>
   <a class="m-2.5" [routerLink]="['/settings/core/pipelines']">
-    <mat-card class="option-card m-0" matRipple>
+    <div class="option-card collab-card mx-0" matRipple>
       <div>Monitoring</div>
       <app-mat-icon size="50px">sync</app-mat-icon>
-    </mat-card>
+    </div>
   </a>
-  <a [routerLink]="['/settings/core/configuration']">
-    <mat-card class="option-card" matRipple>
+  <a class="m-2.5" [routerLink]="['/settings/core/configuration']">
+    <div class="option-card collab-card mx-0" matRipple>
       <div>Configuration</div>
       <app-mat-icon size="50px">settings</app-mat-icon>
-    </mat-card>
+    </div>
   </a>
 </div>
 
 <div class="m-2.5 text-2xl">Model sources</div>
 <div class="flex flex-wrap">
   <a class="m-2.5 flex" [routerLink]="['/settings/modelsources/git']">
-    <mat-card class="option-card m-0" matRipple>
+    <div class="option-card collab-card mx-0" matRipple>
       <div>Git</div>
       <div class="flex justify-center">
         <img
@@ -49,22 +49,22 @@
           src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"
         />
       </div>
-    </mat-card>
+    </div>
   </a>
   <a class="m-2.5" [routerLink]="['/settings/modelsources/t4c']">
-    <mat-card class="option-card m-0" matRipple>
+    <div class="option-card collab-card mx-0" matRipple>
       <div>Team For Capella</div>
       <app-mat-icon size="50px">people</app-mat-icon>
-    </mat-card>
+    </div>
   </a>
 </div>
 
 <div class="m-2.5 text-2xl">Integrations</div>
 <div class="flex flex-wrap">
   <a class="m-2.5" [routerLink]="['/settings/integrations/pure-variants']">
-    <mat-card class="option-card m-0" matRipple>
+    <div class="option-card collab-card mx-0" matRipple>
       <div>pure::variants</div>
       <app-mat-icon size="50px">people</app-mat-icon>
-    </mat-card>
+    </div>
   </a>
 </div>

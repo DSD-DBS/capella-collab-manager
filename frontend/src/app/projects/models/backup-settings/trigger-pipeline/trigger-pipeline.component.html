@@ -15,11 +15,11 @@
     </div>
     <div class="pipelines">
       <div *ngFor="let pipeline of this.pipelineService.pipelines$ | async">
-        <mat-card
+        <div
           matRipple
           *ngIf="!selectedPipeline || selectedPipeline.id === pipeline.id"
           (click)="selectPipeline(pipeline)"
-          class="pipeline-card"
+          class="pipeline-card collab-card"
         >
           <span class="text-center"><b>Backup</b> (ID: {{ pipeline.id }})</span>
           <br />
@@ -54,7 +54,7 @@
               <i>{{ pipeline.git_model.entrypoint }}</i>
             </span>
           </div>
-        </mat-card>
+        </div>
       </div>
     </div>
     <div

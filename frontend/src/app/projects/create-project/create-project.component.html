@@ -15,7 +15,7 @@
       </ng-template>
       <h3 class="flex justify-center sm:hidden">Create new project</h3>
       <div class="flex justify-center">
-        <mat-card class="w-[350px] sm:min-w-[420px]">
+        <div class="collab-card w-[350px] sm:min-w-[420px]">
           <form [formGroup]="form">
             <div>
               <mat-form-field appearance="fill" class="form-field-default">
@@ -77,14 +77,14 @@
                   data-testId="button-create-project"
                 >
                   Create project
-                  <mat-icon class="mat-icon-position right"
+                  <mat-icon iconPositionEnd class="mat-icon-position right"
                     >navigate_next</mat-icon
                   >
                 </button>
               </div>
             </div>
           </form>
-        </mat-card>
+        </div>
       </div>
     </mat-step>
 
@@ -102,6 +102,7 @@
           <div>
             <div class="flex w-[312px] justify-end sm:w-[420px]">
               <a
+                class="mt-[5px]"
                 mat-button
                 color="primary"
                 (click)="stepper.next()"
@@ -116,7 +117,7 @@
                     !users || users.length === 0 ? "Skip for now" : "Continue"
                   }}
                 </ng-container>
-                <mat-icon class="mat-icon-position right"
+                <mat-icon iconPositionEnd class="mat-icon-position right"
                   >navigate_next</mat-icon
                 >
               </a>
@@ -146,6 +147,7 @@
         <div class="flex">
           <div class="mt-[-23px] flex w-[295px] justify-end sm:w-[420px]">
             <a
+              class="mt-[5px]"
               mat-button
               [routerLink]="[
                 '/project',
@@ -168,7 +170,9 @@
               <span *ngIf="modelCreationStep === 'complete'">
                 Finish project creation
               </span>
-              <mat-icon class="mat-icon-position right">check</mat-icon>
+              <mat-icon iconPositionEnd class="mat-icon-position right"
+                >check</mat-icon
+              >
             </a>
           </div>
         </div>

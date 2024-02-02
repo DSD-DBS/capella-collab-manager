@@ -6,12 +6,12 @@
 <div *ngIf="!hasRoute('projects/create')" class="mr-2.5">
   <div class="ml-[20px] flex justify-between">
     <div>
-      <h2>Project members</h2>
+      <h2 class="text-xl font-medium">Project Members</h2>
     </div>
     <div class="flex flex-wrap gap-2"></div>
   </div>
 </div>
-<mat-card class="w-[312px] max-w-[350px] sm:min-w-[420px]">
+<div class="collab-card w-[312px] max-w-[350px] sm:min-w-[420px]">
   <div class="my-[10px]" *ngIf="!hasRoute('projects/create')">
     <button
       class="flex items-center justify-between"
@@ -23,8 +23,8 @@
     </button>
   </div>
 
-  <h3>New members</h3>
-  <mat-divider [inset]="true"></mat-divider>
+  <h3 class="pl-1">New members</h3>
+  <mat-divider></mat-divider>
   <div class="my-[10px]">
     <button
       class="flex items-center justify-between"
@@ -32,25 +32,23 @@
       mat-stroked-button
     >
       <mat-icon>add</mat-icon>
-      <span> Add user </span>
+      <span> Add User </span>
     </button>
   </div>
 
-  <h3>Current members</h3>
-  <mat-divider [inset]="true"></mat-divider>
-  <mat-form-field class="mb-[-20px] mt-[10px] w-full pr-4" appearance="outline">
+  <h3 class="pl-1">Current members</h3>
+  <mat-divider></mat-divider>
+  <mat-form-field
+    class="mb-[-20px] mt-[10px] w-full pl-1 pr-4"
+    appearance="outline"
+  >
     <mat-label>Search</mat-label>
-    <input
-      [(ngModel)]="search"
-      autocomplete="off"
-      matInput
-      placeholder="Username"
-    />
+    <input [(ngModel)]="search" matInput placeholder="Username" class="mr-2" />
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
   <div class="max-h-[50vh] overflow-y-scroll">
     <div *ngFor="let role of ['manager', 'user', 'administrator']">
-      <div class="mt-2.5 text-lg font-bold text-gray-400">
+      <div class="mt-2.5 pl-1 text-lg font-bold text-gray-400">
         {{ capitalizeFirstLetter(role) }}
       </div>
       <div
@@ -69,8 +67,8 @@
             >
           </div>
           <div>
-            <div class="break-all text-[1.25em]">{{ user.user.name }}</div>
-            <div class="text-gray-500">
+            <div class="break-all text-[17.5px]">{{ user.user.name }}</div>
+            <div class="text-[14px] text-gray-500">
               {{ projectUserService.ADVANCED_ROLES[user.role] }},
               {{ projectUserService.PERMISSIONS[user.permission] }}
             </div>
@@ -79,10 +77,11 @@
         <div class="ml-1 mr-0 flex items-center">
           <button
             mat-icon-button
-            color="error"
+            color="warn"
             *ngIf="['user', 'manager'].includes(user.role)"
             (click)="removeUserFromProject(user.user)"
             matTooltip="Remove user from project"
+            class="!mx-0 !h-[40px] !w-[40px] !px-0"
           >
             <mat-icon>delete</mat-icon>
           </button>
@@ -93,6 +92,7 @@
             *ngIf="'user' === user.role"
             (click)="upgradeUserToProjectManager(user.user)"
             matTooltip="Upgrade user to project manager"
+            class="!mx-0 !h-[40px] !w-[40px] !px-0"
           >
             <mat-icon>arrow_upward</mat-icon>
           </button>
@@ -112,6 +112,7 @@
               *ngIf="'read' === user.permission"
               (click)="setUserPermission(user.user, 'write')"
               matTooltip="Set permission of user to read/write"
+              class="!mx-0 !h-[40px] !w-[40px] !px-0"
             >
               <mat-icon>folder_shared</mat-icon>
             </button>
@@ -123,6 +124,7 @@
               "
               (click)="setUserPermission(user.user, 'read')"
               matTooltip="Set permission of user to read only"
+              class="!mx-0 !h-[40px] !w-[40px] !px-0"
             >
               <mat-icon>folder_open</mat-icon>
             </button>
@@ -142,4 +144,4 @@
       </div>
     </div>
   </div>
-</mat-card>
+</div>

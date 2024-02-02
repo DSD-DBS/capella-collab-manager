@@ -5,14 +5,14 @@
 
 <div class="flex flex-wrap">
   <a routerLink="/projects/create" class="m-2.5">
-    <mat-card matRipple class="mat-card-overview new m-0">
-      <div class="content">
-        Add new project <br />
+    <div matRipple class="mat-card-overview new collab-card !m-0">
+      <div class="content flex flex-col items-center justify-center">
+        Add New Project <br />
         <div class="icon">
           <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
         </div>
       </div>
-    </mat-card>
+    </div>
   </a>
   <app-mat-card-overview-skeleton-loader
     [loading]="(projectService.projects$ | async) === undefined"
@@ -23,10 +23,10 @@
       *ngFor="let project of (projectService.projects$ | async)!"
       [routerLink]="['/project', project.slug]"
     >
-      <mat-card
+      <div
         [ngClass]="{ 'bg-archived': project.is_archived }"
         matRipple
-        class="mat-card-overview m-0"
+        class="mat-card-overview collab-card !m-0"
       >
         <div class="header flex-row">
           <mat-icon class="mr-1" *ngIf="project.type === 'training'"
@@ -36,7 +36,10 @@
         </div>
         <div class="p-3">
           <div>
-            <div *ngIf="project.description; else elseBlock">
+            <div
+              class="line-clamp-4"
+              *ngIf="project.description; else elseBlock"
+            >
               {{ project.description }}
             </div>
             <ng-template #elseBlock>No description provided.</ng-template>
@@ -58,7 +61,7 @@
             <div *ngIf="project.is_archived">Archived</div>
           </div>
         </div>
-      </mat-card>
+      </div>
     </a>
   </ng-container>
 </div>

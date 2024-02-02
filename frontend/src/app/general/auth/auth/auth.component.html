@@ -10,7 +10,7 @@
     This service enables co-working on Capella MBSE projects. <br />
     To continue to the service you need an invite from an existing user. <br />
   </div>
-  <mat-card *ngIf="params.has('error')" id="oauth-error">
+  <div *ngIf="params.has('error')" id="oauth-error" class="collab-card">
     <p>
       The OAuth2 server raised the following error:<br />
       <b>{{ params.get("error") }}</b>
@@ -22,7 +22,7 @@
       More informations:
       <a href="{{ params.get('error_uri') }}">{{ params.get("error_uri") }}</a>
     </p>
-  </mat-card>
+  </div>
   <div id="oauth-login">
     <button mat-flat-button color="primary" (click)="webSSO()">
       Login with

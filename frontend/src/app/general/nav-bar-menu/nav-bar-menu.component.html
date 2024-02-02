@@ -8,15 +8,14 @@
     <ng-container *ngIf="userService.validateUserRole(item.requiredRole)">
       <ng-container *ngIf="item.href; else router">
         <a
+          class="items-center"
           mat-list-item
           (click)="navBarService.toggle()"
           [attr.href]="item.href"
           [attr.target]="item.target"
         >
           {{ item.name }}
-          <mat-icon class="open-in-new" *ngIf="item.icon">{{
-            item.icon
-          }}</mat-icon>
+          <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
         </a>
       </ng-container>
       <ng-template #router>
@@ -37,8 +36,7 @@
     (click)="navBarService.toggle()"
     href="https://github.com/DSD-DBS/capella-collab-manager/issues"
     target="_blank"
-    >Create issue on Github
-    <mat-icon class="open-in-new">open_in_new</mat-icon></a
+    >Open issue on Github <mat-icon>open_in_new</mat-icon></a
   >
   <mat-divider></mat-divider>
   <a
