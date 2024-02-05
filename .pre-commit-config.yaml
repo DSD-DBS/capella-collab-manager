@@ -151,6 +151,7 @@ repos:
           - 'eslint-plugin-tailwindcss@^3.14.1'
         args: ['--fix']
         types: []
+        files: '^frontend/'
         exclude: '.+\.spec(-helper)?\.ts$'
         types_or: ['html', 'ts']
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook

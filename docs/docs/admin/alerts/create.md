@@ -3,16 +3,12 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<!-- prettier-ignore -->
-!!! Warning "Usage restricted"
-    You need to be administrator to use this feature.
-
 Alerts can be used to inform users about changes, news or maintenance work. The
 alerts are displayed to each user.
 
 <!-- prettier-ignore-start -->
 
-1. Please navigate to `Profile` → `Settings`
+1. Navigate to `Menu` → `Settings`
 2. Fill in all required fields in the `Create an alert` form.
     ![Create an alert](create.png)
 

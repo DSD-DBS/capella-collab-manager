@@ -16,5 +16,5 @@ Your project manager can find more information here:
 You can verify access by navigating to `Projects`. You should see the project
 now: ![Project overview](access/project-overview.png) If you want to verify if
 the persistent session with the TeamForCapella access works, you can follow the
-[TeamForCapella workflow](../sessions/flows/t4c.md). The model should be listed
-in the connection dialog.
+[TeamForCapella workflow](../tools/capella/teamforcapella/connect/connect-to-t4c.md).
+The model should be listed in the connection dialog.

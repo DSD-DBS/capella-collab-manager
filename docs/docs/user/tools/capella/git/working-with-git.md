@@ -15,11 +15,11 @@ that collegues can see and review them.
 First open the View _Git Repository_ by clicking on the magnifying glass (1) in
 the right corner.
 
-![Step 1: Open View Search](working-with-git/search-view.png)
+![Step 1: Open View Search](screenshots/search-view.png)
 
 Searching looks like:
 
-![Step 2: Search for View](working-with-git/search-git-repository-view.png)
+![Step 2: Search for View](screenshots/search-git-repository-view.png)
 
 When clicking "Clone a Git repository" a view "Source Git Repository" to enter
 the repository url opens. Enter here the URL of the _Remote_ of your repository
@@ -33,7 +33,7 @@ Destination" opens. This shows where your work is going to be stored locally.
     Tick the box: "Import all existing Eclipse projects after clone
     finishes" importing the cloned repository into your eclipse workspace
 
-![Step 3: Local Destination](working-with-git/local-destination.png)
+![Step 3: Local Destination](screenshots/local-destination.png)
 
 Then you can click finish. Your repository from the _Remote_ is now cloned
 locally.
@@ -47,12 +47,12 @@ new one).
 Either you right click on the project name in the lower right corner, go to
 "Switch to" and then e.g. "New Branch"
 
-![Step 4: Search for View](working-with-git/switch-branch-v1.png)
+![Step 4: Search for View](screenshots/switch-branch-v1.png)
 
 or you can right click on the project name in the project tree and then click
 "Team"> "Switch to" > "New Branch".
 
-![Step 5: Search for View](working-with-git/switch-branch-v2.png)
+![Step 5: Search for View](screenshots/switch-branch-v2.png)
 
 In order to make the changes visible in your project tree and to see on which
 branch you are currently working on right click on the project name > "Close
@@ -68,7 +68,7 @@ changes that you made in the file tree on the left indicated by ">" (2). If
 there are no (un-)staged changes you did not make a change compared to the last
 state that Git already has saved in commits.
 
-![Step 6: Search for View](working-with-git/unstaged-changes.png)
+![Step 6: Search for View](screenshots/unstaged-changes.png)
 
 In the _Git Staging_ View mark the unstaged files that you want to stage and
 drag them with your mouse to the "Staged Changes" area. Then reload (3) the
@@ -95,7 +95,7 @@ changes (2).
 !!! info
     The commit is now made locally. In order to publish it and share it with other you have to push it to the *Remote*!
 
-![Step 7: Search for View](working-with-git/staged-changes.png)
+![Step 7: Search for View](screenshots/staged-changes.png)
 
 If you already committed your changes you can right click on the Project >
 "Team" > "Push to Origin" in order to push your changes to the remote.
@@ -122,7 +122,7 @@ also diff two models on your own in order to check which changes were made.
 Therefore, select both `.aird`-files (e.g. with control click). Then right
 click on one of the files and select "Compare with" > "Each other as model".
 
-![Open compare View](working-with-git/start-compare-view.png)
+![Open compare View](screenshots/start-compare-view.png)
 
 In the image you can see the
 [coffee machine model](https://github.com/DSD-DBS/coffee-machine) imported
@@ -138,7 +138,7 @@ the target, and are going to change the target model.
     Make sure to select the correct direction of merging in order to modify the
     correct model.
 
-![Configure Merge Direction](working-with-git/configure-merge-direction.png)
+![Configure Merge Direction](screenshots/configure-merge-direction.png)
 
 In the example we want to merge our changes from Left (coffee-machine model on
 working branch) into Right (coffee machine model on main branch)(1).
@@ -157,7 +157,7 @@ and "Diagrams: Match remaining shapes according to type" as in Diagrams IDs
 might change just by opening them. If nothing else helps choose "Names" and
 click "Use labels as names" to match but labels easily change.
 
-![Configure Matching Strategie](working-with-git/configure-merge-matching.png)
+![Configure Matching Strategie](screenshots/configure-merge-matching.png)
 
 Afterwards, click "Ok" and "Finish".
 
@@ -166,7 +166,7 @@ is going to be modified. They are also labeled as source and target where the
 source is from which we are taking the changes and the target is the model that
 gets modified.
 
-![Explain Merge View](working-with-git/explain-merge-view.png)
+![Explain Merge View](screenshots/explain-merge-view.png)
 
 The colors highlight what change was made and will be applied to the target if
 you apply the change: _blue: create, red: delete, purple: modify_.
@@ -219,7 +219,7 @@ as a user have to decide which changes to keep. In the following we are
 describing how you can pick the changes that you later want to see in the
 model.
 
-![Decide Side of Change](working-with-git/merge-decide-side.png)
+![Decide Side of Change](screenshots/merge-decide-side.png)
 
 With the butttons above the details of the made changes enable us to decide the
 change from which model to take and which change to discard.
@@ -237,11 +237,11 @@ opportunistic in merging layouts.
 
 If merging with the merge tool is not possible you have to open the reset view.
 
-![Step 8: Open Reset View](working-with-git/open-reset-view.png){:style="width:500px"}
+![Step 8: Open Reset View](screenshots/open-reset-view.png){:style="width:500px"}
 
 Then select hard reset of your local branch:
 
-![Step 9: Git Reset Hard](working-with-git/reset-hard-view.png)
+![Step 9: Git Reset Hard](screenshots/reset-hard-view.png)
 
 If you committed your changes earlier, and select your local main branch as
 described, your local files will be reset to the state they were in after your
@@ -257,7 +257,7 @@ right click on the project > "Team" > "Push branch 'main'...". In the view
 “merge-branch-name” (1) and remove the “configure upstream push and pull” (2)
 option.
 
-![Step 10: Git Create Intermediate Branch](working-with-git/create-merge-branch.png)
+![Step 10: Git Create Intermediate Branch](screenshots/create-merge-branch.png)
 
 After pushing your changes to the remote Git repository, open the remote
 project on Gitlab or Github. Then open a Merge request (Gitlab) or Pull request

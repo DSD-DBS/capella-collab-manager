@@ -14,5 +14,5 @@
 
 5. Please follow the instructions (depends on the workflow of your project)
    <!-- prettier-ignore -->
-    1. [Git](flows/git.md)
-    2. [TeamForCapella](flows/t4c.md)
+    1. [Git](../tools/capella/git/working-with-git.md)
+    2. [TeamForCapella](../tools/capella/teamforcapella/connect/connect-to-t4c.md)

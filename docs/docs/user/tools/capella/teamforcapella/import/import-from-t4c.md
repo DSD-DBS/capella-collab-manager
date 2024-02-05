@@ -14,7 +14,7 @@
 !!! info
     This imports a model into your workspace and changes are not automatically saved
     back to the T4C repository. If you want to save changes directly back to the server
-    use [this](../../../../sessions/flows/t4c.md) documentation.
+    use [this](../connect/connect-to-t4c.md) documentation.
 
 1. Open a persistent session with the corresponding Capella version.
 1. Wait until Capella has started.
@@ -25,7 +25,7 @@
    confirm with `Next`.
    ![Import project from remote repository](./project-from-remote-repository.png)
 1. Select the repository from the dropdown menu. Click on the `Test connection`
-   button and enter your [session token](../../../../sessions/flows/t4c.md).
+   button and enter your [session token](../connect/connect-to-t4c.md).
    ![Select repository for import](./import-repository-selection.png)
 1. Click on `Next` .
    <!-- prettier-ignore -->

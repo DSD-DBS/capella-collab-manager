@@ -15,6 +15,11 @@ go ahead and
 to contribute code. In order to reduce the burden on our maintainers, please
 make sure that your code follows our style guidelines.
 
+!!! info
+
+    The "Developer Documentation" focuses on the development of the Collaboration Manager itself.
+    If you want to use our API to automate tasks, refer to the [API documentation](../api/index.md) instead.
+
 ## Setup of a Local Development Environment
 
 In addition to the
