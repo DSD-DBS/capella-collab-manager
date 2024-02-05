@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 <div class="dialog">
-  <h2>View diagrams</h2>
+  <h2 class="mb-5 text-xl font-medium">View diagrams</h2>
   <div class="mb-2">
     Last update:
     {{
@@ -32,7 +32,7 @@
   </span>
   <div class="flex flex-wrap">
     <div
-      class="collab-card !flex grow basis-[calc(30%-20px)] flex-col justify-between"
+      class="collab-card !flex grow basis-[calc(30%-20px)] flex-col justify-between gap-5"
       #diagram
       [id]="diagram.uuid"
       [attr.success]="diagram.success"

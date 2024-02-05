@@ -18,7 +18,7 @@
       (ngSubmit)="requestPersistentSession()"
     >
       <div class="flex flex-wrap sm:flex-nowrap sm:justify-between sm:gap-2">
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="fill" class="w-full">
           <mat-label>Model tool</mat-label>
           <mat-select
             matInput
@@ -35,7 +35,7 @@
           <mat-error> Please select a valid tool. </mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="fill" class="w-full">
           <mat-label>Version</mat-label>
           <mat-select
             formControlName="versionId"
@@ -57,7 +57,13 @@
       </div>
 
       <div>
-        <button matInput mat-flat-button color="primary" type="submit">
+        <button
+          matInput
+          mat-flat-button
+          color="primary"
+          type="submit"
+          class="w-full"
+        >
           <div class="flex items-center">
             Request a persistent workspace
             <mat-icon>keyboard_arrow_right</mat-icon>

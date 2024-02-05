@@ -11,10 +11,6 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-}
-
 html,
 body {
   height: 100%;
@@ -50,10 +46,6 @@ table {
   border-spacing: 2px;
   width: 100%;
 }
-
-/* .scrollable {
-  overflow-y: scroll;
-} */
 
 /* All global variables are defined here */
 :root {

@@ -52,7 +52,7 @@
         {{ capitalizeFirstLetter(role) }}
       </div>
       <div
-        class="mx-1.5 my-2.5 flex justify-between"
+        class="mx-1.5 my-2.5 flex items-center justify-between"
         *ngFor="
           let user of getProjectUsersByRole(
             projectUserService.projectUsers$ | async,
@@ -81,7 +81,7 @@
             *ngIf="['user', 'manager'].includes(user.role)"
             (click)="removeUserFromProject(user.user)"
             matTooltip="Remove user from project"
-            class="!mx-0 !h-[40px] !w-[40px] !px-0"
+            class="!mx-0 !px-0 text-sm"
           >
             <mat-icon>delete</mat-icon>
           </button>
@@ -92,7 +92,7 @@
             *ngIf="'user' === user.role"
             (click)="upgradeUserToProjectManager(user.user)"
             matTooltip="Upgrade user to project manager"
-            class="!mx-0 !h-[40px] !w-[40px] !px-0"
+            class="!mx-0 !px-0 text-sm"
           >
             <mat-icon>arrow_upward</mat-icon>
           </button>
@@ -102,6 +102,7 @@
             *ngIf="'manager' === user.role"
             (click)="downgradeUserToUserRole(user.user)"
             matTooltip="Downgrade user to simple user"
+            class="!mx-0 !px-0 text-sm"
           >
             <mat-icon>arrow_downward</mat-icon>
           </button>
@@ -112,7 +113,7 @@
               *ngIf="'read' === user.permission"
               (click)="setUserPermission(user.user, 'write')"
               matTooltip="Set permission of user to read/write"
-              class="!mx-0 !h-[40px] !w-[40px] !px-0"
+              class="!mx-0 !px-0 text-sm"
             >
               <mat-icon>folder_shared</mat-icon>
             </button>
@@ -124,7 +125,7 @@
               "
               (click)="setUserPermission(user.user, 'read')"
               matTooltip="Set permission of user to read only"
-              class="!mx-0 !h-[40px] !w-[40px] !px-0"
+              class="!mx-0 !px-0 text-sm"
             >
               <mat-icon>folder_open</mat-icon>
             </button>
