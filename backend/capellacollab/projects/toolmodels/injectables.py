@@ -24,8 +24,8 @@ def get_existing_capella_model(
         raise fastapi.HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
-                "reason": f"The model having the name {model_slug} of the project {project.slug} was not found.",
-                "technical": f"No model with {model_slug} found in the project {project.slug}.",
+                "reason": f"The model with the slug '{model_slug}' of the project '{project.name}' was not found.",
+                "technical": f"No model with slug '{model_slug}' found in the project with slug '{project.slug}'.",
             },
         )
     return model

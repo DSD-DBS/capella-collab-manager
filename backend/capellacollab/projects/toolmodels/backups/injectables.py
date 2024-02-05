@@ -27,6 +27,6 @@ def get_existing_pipeline(
     raise fastapi.HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail={
-            "reason": f"The pipeline with the id {pipeline_id} of the model with th id {model.id} was not found.",
+            "reason": f"The pipeline with the ID {pipeline_id} of the model with the name '{model.name}' was not found.",
         },
     )

@@ -45,8 +45,9 @@ def verify_path_prefix(db: orm.Session, path: str):
     raise fastapi.HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail={
-            "err_code": "no_git_instance_with_prefix_found",
-            "reason": "There exist no git instance having the resolved path as prefix. Please check whether you correctly selected a git instance.",
+            "err_code": "NO_GIT_INSTANCE_WITH_PREFIX_FOUND",
+            "reason": "We couldn't find a matching Git instance. Please that your system administrator allows the given URL.",
+            "technical": f"There is no Git instance, which has a prefix of the path '{path}' as URL.",
         },
     )
 

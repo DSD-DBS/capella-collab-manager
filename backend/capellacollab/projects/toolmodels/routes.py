@@ -97,8 +97,8 @@ def create_new_tool_model(
         raise fastapi.HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
-                "reason": "A model with a similar name already exists.",
-                "technical": "Slug already used",
+                "reason": f"A model with the name {new_model.name} already exists.",
+                "technical": f"The slug '{slugify.slugify(new_model.name)}' is already used",
             },
         )
 
@@ -144,7 +144,8 @@ def patch_tool_model(
             raise fastapi.HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail={
-                    "reason": "A model with a similar name already exists."
+                    "reason": "A model with a similar name already exists.",
+                    "technical": "Slug already used",
                 },
             )
 
@@ -157,7 +158,7 @@ def patch_tool_model(
         raise fastapi.HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
-                "reason": f"The tool having the version “{version.name}” (“{version.tool.name}”) does not match the tool of the model “{model.name}” (“{model.tool.name}”)."
+                "reason": f"The tool '{version.tool.name}' derived from the version '{version.name}' does not match the tool '{model.tool.name}' of the model '{model.name}'."
             },
         )
 
@@ -170,7 +171,7 @@ def patch_tool_model(
         raise fastapi.HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
-                "reason": f"The tool having the nature “{nature.name}” (“{nature.tool.name}”) does not match the tool of the model “{model.name}” (“{model.tool.name}”)."
+                "reason": f"The tool '{nature.tool.name}' derived from the nature '{nature.name}' does not match the tool '{model.tool.name}' of the model '{model.name}'."
             },
         )
 
