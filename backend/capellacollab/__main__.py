@@ -128,7 +128,7 @@ async def handle_exceptions(request: fastapi.Request, exc: Exception):
     return response
 
 
-@app.get("/healthcheck", tags=["Healthcheck"])
+@app.get("/healthcheck", tags=["Healthcheck"], include_in_schema=False)
 async def healthcheck():
     return {"status": "alive"}
 

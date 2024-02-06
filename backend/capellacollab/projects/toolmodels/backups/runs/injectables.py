@@ -26,13 +26,13 @@ def get_existing_pipeline_run(
             raise fastapi.HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail={
-                    "reason": f"The pipeline run with the id {pipeline_run.id} does not belong to the pipeline with id {pipeline.id}.",
+                    "reason": f"The pipeline run with the ID {pipeline_run.id} does not belong to the pipeline with ID {pipeline.id}.",
                 },
             )
         return pipeline_run
     raise fastapi.HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail={
-            "reason": f"The pipeline run with the id {pipeline_run_id} was not found.",
+            "reason": f"The pipeline run with the ID {pipeline_run_id} was not found.",
         },
     )

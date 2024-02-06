@@ -18,8 +18,8 @@ def get_existing_project(
         raise fastapi.HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
-                "reason": f"The project having the name {project_slug} was not found.",
-                "technical": f"No project with {project_slug} found.",
+                "reason": f"The project with the slug '{project_slug}' was not found.",
+                "technical": f"No project with slug '{project_slug}' found.",
             },
         )
     return project
