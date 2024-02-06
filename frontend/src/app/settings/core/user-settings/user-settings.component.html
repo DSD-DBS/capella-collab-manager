@@ -33,8 +33,8 @@
         <a [routerLink]="['/user', user.id]" class="flex items-center">
           <mat-icon mat-list-icon class="text-center">account_circle</mat-icon>
           <div class="ml-2">
-            <div mat-line class="text-xs">{{ user.name }}</div>
-            <div mat-line class="text-xs text-gray-500">
+            <div mat-line>{{ user.name }}</div>
+            <div mat-line class="text-gray-500">
               {{ projectUserService.ADVANCED_ROLES[user.role] }}
             </div>
           </div>

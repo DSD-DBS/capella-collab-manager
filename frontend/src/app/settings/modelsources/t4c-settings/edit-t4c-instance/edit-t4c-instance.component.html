@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flex flex-wrap">
+<div class="flex flex-wrap gap-5">
   <div>
     <div class="collab-card">
       <h2 *ngIf="!existing" class="text-xl font-medium">
@@ -219,7 +219,7 @@
   </div>
 
   <div
-    class="flex flex-col flex-wrap"
+    class="flex flex-col flex-wrap gap-5"
     *ngIf="(t4cInstanceService.t4cInstance$ | async) !== undefined"
   >
     <app-licences

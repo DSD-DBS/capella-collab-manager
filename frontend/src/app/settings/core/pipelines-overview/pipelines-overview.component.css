@@ -5,21 +5,17 @@
 
 .error {
   color: darkred;
-  background-color: white;
+  background-color: transparent;
 }
 
 .success {
   color: darkgreen;
-  background-color: white;
+  background-color: transparent;
 }
 
 .warning {
   color: darkorange;
-  background-color: white;
-}
-
-#search-input {
-  font-family: "Courier New";
+  background-color: transparent;
 }
 
 .project-card {

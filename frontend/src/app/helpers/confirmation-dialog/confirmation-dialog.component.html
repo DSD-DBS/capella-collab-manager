@@ -5,7 +5,7 @@
 
 <div class="dialog">
   <form (submit)="onSubmit()">
-    <h2>{{ data.title }}</h2>
+    <h2 class="mb-5 text-xl font-medium">{{ data.title }}</h2>
     <p>{{ data.text }}</p>
     <p *ngIf="data.requiredInput">
       Please type in <span class="font-bold">{{ data.requiredInput }}</span> to
