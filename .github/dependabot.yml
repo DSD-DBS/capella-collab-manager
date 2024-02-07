@@ -4,30 +4,30 @@
 version: 2
 updates:
   # Backend
-  - package-ecosystem: "pip"
-    directory: "/backend"
+  - package-ecosystem: 'pip'
+    directory: '/backend'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
   # Frontend
-  - package-ecosystem: "npm"
-    directory: "/frontend"
+  - package-ecosystem: 'npm'
+    directory: '/frontend'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     groups:
       angular:
         patterns:
-          - "@angular*"
+          - '@angular*'
         update-types:
-          - "major"
-          - "minor"
-          - "patch"
+          - 'major'
+          - 'minor'
+          - 'patch'
   # Capella Dockerimages
-  - package-ecosystem: "gitsubmodule"
-    directory: "/"
+  - package-ecosystem: 'gitsubmodule'
+    directory: '/'
     schedule:
-      interval: "daily"
+      interval: 'daily'
   # Github Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "daily"
+      interval: 'daily'

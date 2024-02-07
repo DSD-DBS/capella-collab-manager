@@ -111,7 +111,7 @@ properties:
       host:
         type: string
       port:
-        type: ["number", "string"]
+        type: ['number', 'string']
       scheme:
         type: string
       wildcardHost:
@@ -177,21 +177,21 @@ properties:
                   tokenIssuance:
                     type:
                       - string
-                      - "null"
+                      - 'null'
                   authorization:
                     type:
                       - string
-                      - "null"
+                      - 'null'
                   wellKnown:
                     type:
                       - string
-                      - "null"
+                      - 'null'
               audience:
                 type: string
               scopes:
                 type:
                   - array
-                  - "null"
+                  - 'null'
                 items:
                   type: string
                   enum:
@@ -208,7 +208,7 @@ properties:
                   secret:
                     type:
                       - string
-                      - "null"
+                      - 'null'
               redirectURI:
                 type: string
           jwt:

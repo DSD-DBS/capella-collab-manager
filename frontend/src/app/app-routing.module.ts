@@ -363,7 +363,10 @@ const routes: Routes = [
               },
               {
                 path: 'tool/:toolID',
-                data: { breadcrumb: 'Tools', redirect: '/settings/core/tools' },
+                data: {
+                  breadcrumb: 'Tools',
+                  redirect: '/settings/core/tools',
+                },
                 children: [
                   {
                     path: '',

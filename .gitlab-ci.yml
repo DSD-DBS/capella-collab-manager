@@ -8,19 +8,19 @@ staging:
     - when: manual
   variables:
     TARGET: staging
-    REVISION: "$CI_COMMIT_REF_NAME"
-    DOCKER_BUILD_ARGS: "" # Enable Docker build cache
+    REVISION: '$CI_COMMIT_REF_NAME'
+    DOCKER_BUILD_ARGS: '' # Enable Docker build cache
   trigger:
-    project: "$DEPLOYMENT_GITLAB_REPOSITORY"
+    project: '$DEPLOYMENT_GITLAB_REPOSITORY'
     strategy: depend
 
 production:
   rules:
     # For tags, build for the production environment
-    - if: "$CI_COMMIT_TAG != null"
+    - if: '$CI_COMMIT_TAG != null'
   variables:
     TARGET: production
-    REVISION: "$CI_COMMIT_REF_NAME"
+    REVISION: '$CI_COMMIT_REF_NAME'
   trigger:
-    project: "$DEPLOYMENT_GITLAB_REPOSITORY"
+    project: '$DEPLOYMENT_GITLAB_REPOSITORY'
     strategy: depend
