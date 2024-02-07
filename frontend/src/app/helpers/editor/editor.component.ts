@@ -9,6 +9,7 @@ import {
   HostListener,
   Input,
   NgZone,
+  OnInit,
   Output,
 } from '@angular/core';
 
@@ -22,7 +23,7 @@ import { stringify, parse, YAMLParseError } from 'yaml';
   selector: 'app-editor',
   templateUrl: './editor.component.html',
 })
-export class EditorComponent {
+export class EditorComponent implements OnInit {
   private editor?: monaco.editor.IStandaloneCodeEditor = undefined;
   intialValue = 'Loading...';
 
