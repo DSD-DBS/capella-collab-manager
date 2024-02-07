@@ -28,31 +28,36 @@ class PipelineRunStatus(enum.Enum):
 class DatabasePipelineRun(Base):
     __tablename__ = "pipeline_run"
     id: orm.Mapped[int] = orm.mapped_column(
-        primary_key=True, index=True, autoincrement=True
+        init=False, primary_key=True, index=True, autoincrement=True
     )
-    reference_id: orm.Mapped[str | None]
 
     status: orm.Mapped[PipelineRunStatus]
 
     pipeline_id: orm.Mapped[int] = orm.mapped_column(
-        sa.ForeignKey("backups.id")
+        sa.ForeignKey("backups.id"), init=False
     )
     pipeline: orm.Mapped[pipeline_models.DatabaseBackup] = orm.relationship(
         pipeline_models.DatabaseBackup
     )
 
     triggerer_id: orm.Mapped[str] = orm.mapped_column(
-        sa.ForeignKey("users.id")
+        sa.ForeignKey("users.id"), init=False
     )
     triggerer: orm.Mapped[users_models.DatabaseUser] = orm.relationship(
         users_models.DatabaseUser
     )
 
     trigger_time: orm.Mapped[datetime.datetime]
-    end_time: orm.Mapped[datetime.datetime | None]
-    logs_last_fetched_timestamp: orm.Mapped[datetime.datetime | None]
 
     environment: orm.Mapped[dict[str, str]]
+
+    reference_id: orm.Mapped[str | None] = orm.mapped_column(default=None)
+    end_time: orm.Mapped[datetime.datetime | None] = orm.mapped_column(
+        default=None
+    )
+    logs_last_fetched_timestamp: orm.Mapped[
+        datetime.datetime | None
+    ] = orm.mapped_column(default=None)
 
 
 class PipelineRun(pydantic.BaseModel):

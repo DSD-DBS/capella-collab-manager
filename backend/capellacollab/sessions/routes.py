@@ -231,7 +231,7 @@ def request_readonly_session(
         db=db,
         type=models.WorkspaceType.READONLY,
         session=session,
-        owner=db_user.name,
+        owner=db_user,
         rdp_password=rdp_password,
         tool=model.tool,
         version=model.version,
@@ -244,7 +244,7 @@ def models_as_json(
     session_model_list: list[
         tuple[
             models.PostReadonlySessionEntry,
-            toolmodels_models.DatabaseCapellaModel,
+            toolmodels_models.DatabaseToolModel,
         ]
     ]
 ):
@@ -267,7 +267,9 @@ def git_model_as_json(
         "revision": revision,
         "depth": 0 if deep_clone else 1,
         "entrypoint": git_model.entrypoint,
-        "nature": git_model.model.nature.name,
+        "nature": (
+            git_model.model.nature.name if git_model.model.nature else ""
+        ),
     }
     if git_model.username:
         d["username"] = git_model.username
@@ -317,7 +319,7 @@ def request_persistent_session(
         response = start_persistent_jupyter_session(
             db=db,
             operator=operator,
-            owner=user.name,
+            owner=user,
             tool=tool,
             version=version,
             volumes=volumes,
@@ -329,7 +331,6 @@ def request_persistent_session(
             db=db,
             operator=operator,
             user=user,
-            owner=user.name,
             tool=tool,
             version=version,
             volumes=volumes,
@@ -357,11 +358,12 @@ def raise_if_conflicting_persistent_sessions(
     # Currently, all tools share one workspace. Eclipse based tools lock the workspace.
     # We can only run one Eclipse-based tool at a time.
     # Status tracked in https://github.com/DSD-DBS/capella-collab-manager/issues/847
-    if tool.integrations.jupyter:
+    if tool.integrations and tool.integrations.jupyter:
         # Check if there is already an Jupyter session running.
         if True in [
             session.tool.integrations.jupyter
             for session in existing_user_sessions
+            if session.tool.integrations
         ]:
             raise fastapi.HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
@@ -391,7 +393,7 @@ def raise_if_conflicting_persistent_sessions(
 def start_persistent_jupyter_session(
     db: orm.Session,
     operator: k8s.KubernetesOperator,
-    owner: str,
+    owner: users_models.DatabaseUser,
     tool: tools_models.DatabaseTool,
     environment: dict[str, str],
     version: tools_models.DatabaseVersion,
@@ -400,7 +402,7 @@ def start_persistent_jupyter_session(
 ):
     session = operator.start_session(
         image=docker_image,
-        username=owner,
+        username=owner.name,
         session_type="persistent",
         tool_name=tool.name,
         version_name=version.name,
@@ -428,7 +430,6 @@ def start_persistent_guacamole_session(
     db: orm.Session,
     operator: k8s.KubernetesOperator,
     user: users_models.DatabaseUser,
-    owner: str,
     tool: tools_models.DatabaseTool,
     version: tools_models.DatabaseVersion,
     volumes: list[operators_models.Volume],
@@ -454,7 +455,7 @@ def start_persistent_guacamole_session(
         db=db,
         type=models.WorkspaceType.PERSISTENT,
         session=session,
-        owner=owner,
+        owner=user,
         rdp_password=rdp_password,
         tool=tool,
         version=version,
@@ -464,26 +465,39 @@ def start_persistent_guacamole_session(
     return response
 
 
+class RDPConnectionInformation(t.NamedTuple):
+    rdp_password: str
+    guacamole_username: str
+    guacamole_password: str
+    guacamole_connection_id: str
+
+
 def create_database_session(
     db: orm.Session,
     type: models.WorkspaceType,
-    session: dict[str, t.Any],
-    owner: str,
+    session: k8s.Session,
+    owner: users_models.DatabaseUser,
     tool: tools_models.DatabaseTool,
     version: tools_models.DatabaseVersion,
     project: projects_models.DatabaseProject | None,
-    **kwargs,
+    environment: dict[str, str],
+    rdp_connection_information: RDPConnectionInformation | None = None,
 ) -> models.GetSessionsResponse:
     db_session = crud.create_session(
         db,
         models.DatabaseSession(
             tool=tool,
             version=version,
-            owner_name=owner,
+            owner=owner,
             project=project,
             type=type,
-            **session,
-            **kwargs,
+            environment=environment,
+            **session._asdict(),
+            **(
+                rdp_connection_information._asdict()
+                if rdp_connection_information
+                else {}
+            ),
         ),
     )
 
@@ -499,8 +513,8 @@ def create_database_session(
 def create_database_and_guacamole_session(
     db: orm.Session,
     type: models.WorkspaceType,
-    session: dict[str, t.Any],
-    owner: str,
+    session: k8s.Session,
+    owner: users_models.DatabaseUser,
     rdp_password: str,
     tool: tools_models.DatabaseTool,
     version: tools_models.DatabaseVersion,
@@ -518,8 +532,8 @@ def create_database_and_guacamole_session(
     guacamole_identifier = guacamole.create_connection(
         guacamole_token,
         rdp_password,
-        session["host"],
-        list(session["ports"])[0],
+        session.host,
+        list(session.ports)[0],
     )["identifier"]
 
     guacamole.assign_user_to_connection(
@@ -535,10 +549,12 @@ def create_database_and_guacamole_session(
         version,
         project,
         environment=environment,
-        rdp_password=rdp_password,
-        guacamole_username=guacamole_username,
-        guacamole_password=guacamole_password,
-        guacamole_connection_id=guacamole_identifier,
+        rdp_connection_information=RDPConnectionInformation(
+            guacamole_username=guacamole_username,
+            guacamole_password=guacamole_password,
+            guacamole_connection_id=guacamole_identifier,
+            rdp_password=rdp_password,
+        ),
     )
 
 

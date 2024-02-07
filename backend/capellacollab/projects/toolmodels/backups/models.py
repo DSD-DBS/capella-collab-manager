@@ -16,7 +16,7 @@ from capellacollab.projects.toolmodels.modelsources.t4c import (
 )
 
 if t.TYPE_CHECKING:
-    from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+    from capellacollab.projects.toolmodels.models import DatabaseToolModel
     from capellacollab.projects.toolmodels.modelsources.git.models import (
         DatabaseGitModel,
     )
@@ -51,7 +51,7 @@ class Backup(pydantic.BaseModel):
 class DatabaseBackup(database.Base):
     __tablename__ = "backups"
     id: orm.Mapped[int] = orm.mapped_column(
-        primary_key=True, index=True, autoincrement=True
+        init=False, primary_key=True, index=True, autoincrement=True
     )
 
     created_by: orm.Mapped[str]
@@ -64,17 +64,19 @@ class DatabaseBackup(database.Base):
     run_nightly: orm.Mapped[bool]
 
     git_model_id: orm.Mapped[int] = orm.mapped_column(
-        sa.ForeignKey("git_models.id")
+        sa.ForeignKey("git_models.id"), init=False
     )
     git_model: orm.Mapped["DatabaseGitModel"] = orm.relationship()
 
     t4c_model_id: orm.Mapped[int] = orm.mapped_column(
-        sa.ForeignKey("t4c_models.id")
+        sa.ForeignKey("t4c_models.id"), init=False
     )
     t4c_model: orm.Mapped["DatabaseT4CModel"] = orm.relationship()
 
-    model_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("models.id"))
-    model: orm.Mapped["DatabaseCapellaModel"] = orm.relationship()
+    model_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("models.id"), init=False
+    )
+    model: orm.Mapped["DatabaseToolModel"] = orm.relationship()
 
     runs: orm.Mapped[
         list["runs_models.DatabasePipelineRun"]
@@ -82,4 +84,5 @@ class DatabaseBackup(database.Base):
         "DatabasePipelineRun",
         back_populates="pipeline",
         cascade="all, delete-orphan",
+        default_factory=list,
     )

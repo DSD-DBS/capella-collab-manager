@@ -12,7 +12,7 @@ from sqlalchemy import orm
 from capellacollab.core import database
 
 if t.TYPE_CHECKING:
-    from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+    from capellacollab.projects.toolmodels.models import DatabaseToolModel
 
 
 class PostGitModel(pydantic.BaseModel):
@@ -43,7 +43,7 @@ class DatabaseGitModel(database.Base):
     __tablename__ = "git_models"
 
     id: orm.Mapped[int] = orm.mapped_column(
-        primary_key=True, index=True, autoincrement=True
+        init=False, primary_key=True, index=True, autoincrement=True
     )
     name: orm.Mapped[str]
     path: orm.Mapped[str]
@@ -51,8 +51,10 @@ class DatabaseGitModel(database.Base):
     revision: orm.Mapped[str]
     primary: orm.Mapped[bool]
 
-    model_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("models.id"))
-    model: orm.Mapped["DatabaseCapellaModel"] = orm.relationship(
+    model_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("models.id"), init=False
+    )
+    model: orm.Mapped["DatabaseToolModel"] = orm.relationship(
         back_populates="git_models"
     )
 
@@ -61,12 +63,12 @@ class DatabaseGitModel(database.Base):
 
     @classmethod
     def from_post_git_model(
-        cls, model_id: int, primary: bool, new_model: PostGitModel
+        cls, model: "DatabaseToolModel", primary: bool, new_model: PostGitModel
     ):
         return cls(
             name="",
             primary=primary,
-            model_id=model_id,
+            model=model,
             **new_model.model_dump(),
         )
 

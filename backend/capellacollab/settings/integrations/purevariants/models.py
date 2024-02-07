@@ -28,7 +28,9 @@ def validate_license_url(value: str | None):
 class DatabasePureVariantsLicenses(database.Base):
     __tablename__ = "pure_variants"
 
-    id: orm.Mapped[int] = orm.mapped_column(primary_key=True, index=True)
+    id: orm.Mapped[int] = orm.mapped_column(
+        init=False, primary_key=True, index=True
+    )
     license_server_url: orm.Mapped[str | None]
     license_key_filename: orm.Mapped[str | None]
 

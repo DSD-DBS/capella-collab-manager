@@ -41,7 +41,7 @@ router = fastapi.APIRouter(
     response_model=list[models.T4CModel],
 )
 def list_t4c_models(
-    model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
+    model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -74,7 +74,7 @@ def get_t4c_model(
 )
 def create_t4c_model(
     body: models.SubmitT4CModel,
-    model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
+    model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),

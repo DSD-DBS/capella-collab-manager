@@ -44,7 +44,7 @@ log = logging.getLogger(__name__)
 
 @router.get("", response_model=list[models.Backup])
 def get_pipelines(
-    model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
+    model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -67,7 +67,7 @@ def get_pipeline(
 @router.post("", response_model=models.Backup)
 def create_backup(
     body: models.CreateBackup,
-    capella_model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
+    capella_model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),

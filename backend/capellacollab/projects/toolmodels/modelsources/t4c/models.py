@@ -15,7 +15,7 @@ from capellacollab.settings.modelsources.t4c.repositories import (
 )
 
 if t.TYPE_CHECKING:
-    from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+    from capellacollab.projects.toolmodels.models import DatabaseToolModel
     from capellacollab.settings.modelsources.t4c.repositories.models import (
         DatabaseT4CRepository,
     )
@@ -28,19 +28,21 @@ class DatabaseT4CModel(database.Base):
     )
 
     id: orm.Mapped[int] = orm.mapped_column(
-        unique=True, primary_key=True, index=True
+        init=False, unique=True, primary_key=True, index=True
     )
     name: orm.Mapped[str] = orm.mapped_column(index=True)
 
     repository_id: orm.Mapped[int] = orm.mapped_column(
-        sa.ForeignKey("t4c_repositories.id")
+        sa.ForeignKey("t4c_repositories.id"), init=False
     )
     repository: orm.Mapped[DatabaseT4CRepository] = orm.relationship(
         back_populates="models"
     )
 
-    model_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("models.id"))
-    model: orm.Mapped[DatabaseCapellaModel] = orm.relationship(
+    model_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("models.id"), init=False
+    )
+    model: orm.Mapped[DatabaseToolModel] = orm.relationship(
         back_populates="t4c_models"
     )
 

@@ -12,7 +12,7 @@ import capellacollab.projects.toolmodels.modelsources.git.validation as git_vali
 
 async def check_model_badge_health(
     db: orm.Session,
-    model: toolmodels_models.DatabaseCapellaModel,
+    model: toolmodels_models.DatabaseToolModel,
     logger: logging.LoggerAdapter,
 ) -> git_models.ModelArtifactStatus:
     return await git_validation.check_pipeline_health(

@@ -14,7 +14,7 @@ from capellacollab.core import database
 from capellacollab.projects.users import models as project_users_models
 
 if t.TYPE_CHECKING:
-    from capellacollab.projects.toolmodels.models import DatabaseCapellaModel
+    from capellacollab.projects.toolmodels.models import DatabaseToolModel
     from capellacollab.projects.users.models import ProjectUserAssociation
 
 
@@ -105,20 +105,25 @@ class DatabaseProject(database.Base):
     __tablename__ = "projects"
 
     id: orm.Mapped[int] = orm.mapped_column(
-        unique=True, primary_key=True, index=True
+        init=False, unique=True, primary_key=True, index=True
     )
 
     name: orm.Mapped[str] = orm.mapped_column(unique=True, index=True)
     slug: orm.Mapped[str] = orm.mapped_column(unique=True, index=True)
-    description: orm.Mapped[str | None]
-    visibility: orm.Mapped[Visibility]
-    type: orm.Mapped[ProjectType]
+
+    description: orm.Mapped[str | None] = orm.mapped_column(default=None)
+    visibility: orm.Mapped[Visibility] = orm.mapped_column(
+        default=Visibility.PRIVATE
+    )
+    type: orm.Mapped[ProjectType] = orm.mapped_column(
+        default=ProjectType.GENERAL
+    )
 
     users: orm.Mapped[list[ProjectUserAssociation]] = orm.relationship(
-        back_populates="project"
+        default_factory=list, back_populates="project"
     )
-    models: orm.Mapped[list[DatabaseCapellaModel]] = orm.relationship(
-        back_populates="project"
+    models: orm.Mapped[list[DatabaseToolModel]] = orm.relationship(
+        default_factory=list, back_populates="project"
     )
 
     is_archived: orm.Mapped[bool] = orm.mapped_column(default=False)

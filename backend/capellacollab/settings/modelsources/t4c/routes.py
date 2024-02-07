@@ -59,7 +59,10 @@ def create_t4c_instance(
         raise exceptions.T4CInstanceWithNameAlreadyExistsError()
 
     version = toolmodels_routes.get_version_by_id_or_raise(db, body.version_id)
-    instance = models.DatabaseT4CInstance(**body.model_dump())
+    body_dump = body.model_dump()
+    del body_dump["version_id"]
+
+    instance = models.DatabaseT4CInstance(version=version, **body_dump)
     instance.version = version
     return crud.create_t4c_instance(db, instance)
 

@@ -34,7 +34,7 @@ def create_token_for_user(
 ) -> models.UserTokenWithPassword:
     token, password = crud.create_token(
         db,
-        user.id,
+        user,
         post_token.description,
         post_token.expiration_date,
         post_token.source,

@@ -38,9 +38,11 @@ class DatabaseUserToken(database.Base):
     __tablename__ = "basic_auth_token"
 
     id: orm.Mapped[int] = orm.mapped_column(
-        primary_key=True, index=True, autoincrement=True
+        init=False, primary_key=True, index=True, autoincrement=True
     )
-    user_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("users.id"))
+    user_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("users.id"), init=False
+    )
     user: orm.Mapped["DatabaseUser"] = orm.relationship(
         back_populates="tokens", foreign_keys=[user_id]
     )

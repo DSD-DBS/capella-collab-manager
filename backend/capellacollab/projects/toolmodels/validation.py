@@ -5,7 +5,7 @@ from . import models
 
 
 def calculate_model_warnings(
-    model: models.DatabaseCapellaModel,
+    model: models.DatabaseToolModel,
 ) -> list[str]:
     warnings = []
     if not model.nature:

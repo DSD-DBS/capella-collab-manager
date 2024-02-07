@@ -82,7 +82,7 @@ class PureVariantsIntegration(interface.HookRegistration):
 
     def _model_allows_pure_variants(
         self,
-        model: toolmodels_models.DatabaseCapellaModel,
+        model: toolmodels_models.DatabaseToolModel,
     ):
         return model.restrictions and model.restrictions.allow_pure_variants
 

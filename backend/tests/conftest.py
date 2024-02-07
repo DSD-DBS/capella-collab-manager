@@ -15,25 +15,24 @@ from testcontainers import postgres
 
 from capellacollab.core import database  # isort: split
 
+import typing as t
+
 import capellacollab.projects.crud as projects_crud
 import capellacollab.projects.models as projects_models
 import capellacollab.projects.users.crud as projects_users_crud
 import capellacollab.projects.users.models as projects_users_models
-import capellacollab.users.crud as users_crud
 import capellacollab.users.models as users_models
 from capellacollab.__main__ import app
-from capellacollab.core import database
 from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.core.database import migration
 from capellacollab.users import crud as users_crud
 from capellacollab.users import injectables as users_injectables
-from capellacollab.users import models as users_models
 
 os.environ["DEVELOPMENT_MODE"] = "1"
 
 
 @pytest.fixture(name="postgresql", scope="session")
-def fixture_postgresql() -> engine.Engine:
+def fixture_postgresql() -> t.Generator[engine.Engine, None, None]:
     with postgres.PostgresContainer(image="postgres:14.1") as _postgres:
         database_url = _postgres.get_connection_url()
 
@@ -45,7 +44,7 @@ def fixture_postgresql() -> engine.Engine:
 @pytest.fixture(name="db")
 def fixture_db(
     postgresql: engine.Engine, monkeypatch: pytest.MonkeyPatch
-) -> orm.Session:
+) -> t.Generator[orm.Session, None, None]:
     session_local = orm.sessionmaker(
         autocommit=False, autoflush=False, bind=postgresql
     )
@@ -72,6 +71,7 @@ def fixture_db(
 def fixture_executor_name(monkeypatch: pytest.MonkeyPatch) -> str:
     name = str(uuid1())
 
+    # pylint: disable=unused-argument
     async def bearer_passthrough(self, request: fastapi.Request):
         return name
 
@@ -88,7 +88,7 @@ def fixture_unique_username() -> str:
 @pytest.fixture(name="admin")
 def fixture_admin(
     db: orm.Session, executor_name: str
-) -> users_models.DatabaseUser:
+) -> t.Generator[users_models.DatabaseUser, None, None]:
     admin = users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
 
     def get_mock_own_user():
@@ -104,7 +104,7 @@ def fixture_admin(
 @pytest.fixture(name="user")
 def fixture_user(
     db: orm.Session, executor_name: str
-) -> users_models.DatabaseUser:
+) -> t.Generator[users_models.DatabaseUser, None, None]:
     user = users_crud.create_user(db, executor_name, users_models.Role.USER)
 
     def get_mock_own_user():

@@ -32,9 +32,11 @@ class PatchToolIntegrations(pydantic.BaseModel):
 class DatabaseToolIntegrations(database.Base):
     __tablename__ = "tool_integrations"
 
-    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+    id: orm.Mapped[int] = orm.mapped_column(init=False, primary_key=True)
 
-    tool_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("tools.id"))
+    tool_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("tools.id"), init=False
+    )
     tool: orm.Mapped[DatabaseTool] = orm.relationship(
         back_populates="integrations"
     )

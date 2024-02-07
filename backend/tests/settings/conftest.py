@@ -15,7 +15,7 @@ from capellacollab.users import models as users_models
 @pytest.fixture(name="test_tool_version")
 def fixture_test_tool_version(db: orm.Session) -> tools_models.DatabaseVersion:
     tool = tools_crud.create_tool_with_name(db, "Test")
-    return tools_crud.create_version(db, tool.id, "test")
+    return tools_crud.create_version(db, tool, "test")
 
 
 @pytest.fixture(name="admin_user")

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import base64
 import binascii
+import datetime
 import http
 import json
 import logging
@@ -86,6 +87,13 @@ def is_openshift_cluster(api_client):
             "No openshift routes detected, assuming normal Kubernetes cluster"
         )
         return False
+
+
+class Session(t.NamedTuple):
+    id: str
+    ports: set[int]
+    created_at: datetime.datetime
+    host: str
 
 
 class KubernetesOperator:
@@ -178,7 +186,7 @@ class KubernetesOperator:
         prometheus_path="/metrics",
         prometheus_port=9118,
         limits="high",
-    ) -> dict[str, t.Any]:
+    ) -> Session:
         log.info("Launching a %s session for user %s", session_type, username)
 
         _id = self._generate_id()
@@ -413,7 +421,7 @@ class KubernetesOperator:
         deployment: client.V1Deployment,
         service: client.V1Service,
         ports: dict[str, int],
-    ) -> dict[str, t.Any]:
+    ) -> Session:
         if "rdp" in ports:
             port = {ports["rdp"]}
         elif "http" in ports:
@@ -423,14 +431,12 @@ class KubernetesOperator:
                 "No rdp or http port defined on the deployed session"
             )
 
-        return {
-            "id": deployment.to_dict()["metadata"]["name"],
-            "ports": port,
-            "created_at": deployment.to_dict()["metadata"][
-                "creation_timestamp"
-            ],
-            "host": service.to_dict()["metadata"]["name"] + "." + namespace,
-        }
+        return Session(
+            id=deployment.to_dict()["metadata"]["name"],
+            ports=port,
+            created_at=deployment.to_dict()["metadata"]["creation_timestamp"],
+            host=service.to_dict()["metadata"]["name"] + "." + namespace,
+        )
 
     def _map_volumes_to_k8s_volumes(
         self,

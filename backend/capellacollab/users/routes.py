@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import logging
 from collections import abc
 
 import fastapi
@@ -9,7 +8,6 @@ from fastapi import status
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core import logging as core_logging
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.events import crud as events_crud
 from capellacollab.events import models as events_models
@@ -47,7 +45,8 @@ def get_user(
 ) -> models.DatabaseUser:
     if (
         user.id == own_user.id
-        or len(get_common_projects_for_users(own_user, user, db)) > 0
+        or len(projects_crud.get_common_projects_for_users(db, own_user, user))
+        > 0
         or auth_injectables.RoleVerification(
             required_role=models.Role.ADMIN, verify=False
         )(own_user.name, db)
@@ -110,15 +109,16 @@ def get_common_projects(
     ),
     user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
     db: orm.Session = fastapi.Depends(database.get_db),
-    log: logging.LoggerAdapter = fastapi.Depends(
-        core_logging.get_request_logger
-    ),
-) -> set[projects_models.DatabaseProject]:
-    projects = get_common_projects_for_users(
-        user, user_for_common_projects, db
+) -> list[projects_models.DatabaseProject]:
+    if user.role == models.Role.ADMIN:
+        return [
+            association.project
+            for association in user_for_common_projects.projects
+        ]
+    projects = projects_crud.get_common_projects_for_users(
+        db, user, user_for_common_projects
     )
-    log.info("Fetching the following projects: %s", projects)
-    return projects
+    return list(projects)
 
 
 @router.patch(
@@ -188,18 +188,6 @@ def get_user_history(
     ),
 ) -> list[events_models.DatabaseUserHistoryEvent]:
     return user.events
-
-
-def get_common_projects_for_users(
-    user_one: models.DatabaseUser,
-    user_two: models.DatabaseUser,
-    db: orm.Session,
-) -> set[projects_models.DatabaseProject]:
-    first_user_projects = get_projects_for_user(user_one, db)
-    second_user_projects = get_projects_for_user(user_two, db)
-
-    projects = set(first_user_projects).intersection(set(second_user_projects))
-    return projects
 
 
 def get_projects_for_user(

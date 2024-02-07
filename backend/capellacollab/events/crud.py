@@ -26,14 +26,16 @@ def create_event(
         raise ValueError(
             f"Event type must of one of the following: {allowed_types}"
         )
+
     event = models.DatabaseUserHistoryEvent(
-        user_id=user.id,
+        user=user,
         event_type=event_type,
         execution_time=datetime.datetime.now(datetime.UTC),
-        executor_id=executor.id if executor else None,
-        project_id=project.id if project else None,
+        executor=executor,
+        project=project,
         reason=reason,
     )
+
     db.add(event)
     db.commit()
 

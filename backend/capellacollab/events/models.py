@@ -3,7 +3,6 @@
 
 import datetime
 import enum
-import typing as t
 
 import pydantic
 import sqlalchemy as sa
@@ -13,10 +12,6 @@ from capellacollab.core import database
 from capellacollab.core import pydantic as core_pydantic
 from capellacollab.projects import models as projects_models
 from capellacollab.users import models as users_models
-
-if t.TYPE_CHECKING:
-    from capellacollab.projects.models import DatabaseProject
-    from capellacollab.users.models import DatabaseUser
 
 
 class EventType(enum.Enum):
@@ -55,27 +50,37 @@ class HistoryEvent(BaseHistoryEvent):
 class DatabaseUserHistoryEvent(database.Base):
     __tablename__ = "user_history_events"
 
-    id: orm.Mapped[int] = orm.mapped_column(primary_key=True, index=True)
+    id: orm.Mapped[int] = orm.mapped_column(
+        init=False, primary_key=True, index=True
+    )
 
-    user_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("users.id"))
-    user: orm.Mapped["DatabaseUser"] = orm.relationship(
+    user_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("users.id"),
+        init=False,
+    )
+    user: orm.Mapped[users_models.DatabaseUser] = orm.relationship(
         back_populates="events", foreign_keys=[user_id]
     )
 
+    event_type: orm.Mapped[EventType]
+    reason: orm.Mapped[str | None] = orm.mapped_column(default=None)
+
     executor_id: orm.Mapped[int | None] = orm.mapped_column(
-        sa.ForeignKey("users.id")
+        sa.ForeignKey("users.id"),
+        init=False,
     )
-    executor: orm.Mapped["DatabaseUser"] = orm.relationship(
-        foreign_keys=[executor_id]
+    executor: orm.Mapped[users_models.DatabaseUser | None] = orm.relationship(
+        default=None, foreign_keys=[executor_id]
     )
 
     project_id: orm.Mapped[int | None] = orm.mapped_column(
-        sa.ForeignKey("projects.id")
+        sa.ForeignKey("projects.id"),
+        init=False,
     )
-    project: orm.Mapped["DatabaseProject"] = orm.relationship(
-        foreign_keys=[project_id]
-    )
+    project: orm.Mapped[
+        projects_models.DatabaseProject | None
+    ] = orm.relationship(default=None, foreign_keys=[project_id])
 
-    execution_time: orm.Mapped[datetime.datetime]
-    event_type: orm.Mapped[EventType]
-    reason: orm.Mapped[str | None]
+    execution_time: orm.Mapped[datetime.datetime] = orm.mapped_column(
+        default=datetime.datetime.now(datetime.UTC)
+    )
