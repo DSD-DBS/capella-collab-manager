@@ -16,7 +16,7 @@ Gitlab, are not available.
 
 ## Define a Git Instance
 
-1. Please navigate to `Profile` > `Settings`
+1. Please navigate to `Menu` > `Settings`
 1. Select `Git` below `Model sources`
 1. You can see all existing instances (if any). To add a new integration,
    please use the form below "Add new integration". You have to enter the

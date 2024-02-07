@@ -24,12 +24,12 @@
 
     !!! info
         You can find your TeamForCapella session password in the connection
-        dialog. Please follow the [`TeamForCapella` guide](../flows/t4c.md)
+        dialog. Please follow the [`TeamForCapella` guide](../..//tools/capella/teamforcapella/connect/connect-to-t4c.md)
         for more information.
 
 5. When Capella is loaded you can start working.
 
     !!! info "Do you need access to a TeamForCapella model?"
-        Please continue with the [Connect to a `TeamForCapella` repository guide](../flows/t4c.md).
+        Please continue with the [Connect to a `TeamForCapella` repository guide](../../tools/capella/teamforcapella/connect/connect-to-t4c.md).
 
 <!-- prettier-ignore-end -->

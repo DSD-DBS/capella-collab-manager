@@ -5,14 +5,10 @@
 
 # TeamForCapella Repository Management
 
-<!-- prettier-ignore -->
-!!! info
-    TeamForCapella repositories can only be managed by administrators.
-
-For all actions, you have to navigate to `Profile` > `Settings` >
-`TeamForCapella` (below `Model sources`). Select your instance. On the right
-side, you should see a card with the name `Manage T4C repositories`. In this
-card, you can see all existing repositories with their status.
+For all actions, you have to navigate to `Menu` > `Settings` > `TeamForCapella`
+(below `Model sources`). Select your instance. On the right side, you should
+see a card with the name `Manage T4C repositories`. In this card, you can see
+all existing repositories with their status.
 
 ## Add a new TeamForCapella Repository
 

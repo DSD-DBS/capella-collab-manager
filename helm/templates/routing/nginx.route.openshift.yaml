@@ -3,7 +3,7 @@
 
 {{- if eq .Values.cluster.kind "OpenShift" }}
 {{ $frontend := dict "path" "/" "service" "frontend" "targetPort" "http" }}
-{{ $backend := dict "path" "/api/v1" "service" "nginx-clusterip" "targetPort" "http" }}
+{{ $backend := dict "path" "/api" "service" "nginx-clusterip" "targetPort" "http" }}
 {{ $docs := dict "path" "/docs" "service" "docs" "targetPort" "http" }}
 {{ $guacamole := dict "path" "/guacamole" "service" "guacamole-guacamole" "targetPort" "http" }}
 {{ $prometheus := dict "path" "/prometheus" "service" "prometheus-nginx" "targetPort" "promui" }}

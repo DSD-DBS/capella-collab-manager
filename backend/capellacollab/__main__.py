@@ -45,6 +45,8 @@ from capellacollab.settings.modelsources.t4c import (
 from capellacollab.tools import exceptions as tools_exceptions
 from capellacollab.users import exceptions as users_exceptions
 
+from . import __version__
+
 handlers: list[logging.Handler] = [
     logging.StreamHandler(),
     core_logging.CustomTimedRotatingFileHandler(
@@ -78,6 +80,7 @@ async def shutdown():
 
 app = fastapi.FastAPI(
     title="Capella Collaboration",
+    version=__version__,
     on_startup=[
         startup,
         idletimeout.terminate_idle_sessions_in_background,
@@ -99,7 +102,19 @@ app = fastapi.FastAPI(
         middleware.Middleware(starlette_prometheus.PrometheusMiddleware),
     ],
     on_shutdown=[shutdown],
+    openapi_url="/api/docs/openapi.json",
+    docs_url="/api/docs/swagger",
+    redoc_url="/api/docs/redoc",
 )
+
+
+@app.get(
+    "/docs", response_class=responses.RedirectResponse, include_in_schema=False
+)
+def redirect_docs():
+    """Redirect `/docs` to new SwaggerUI documentation location."""
+    return responses.RedirectResponse("/api/docs/swagger")
+
 
 fastapi_pagination.add_pagination(app)
 

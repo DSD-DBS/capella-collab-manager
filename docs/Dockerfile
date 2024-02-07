@@ -6,12 +6,12 @@ FROM $BASE_IMAGE as build
 
 USER root
 
-RUN pip install -U pip && \
-    pip install mkdocs-material
+RUN pip install -U pip
 
 COPY ./ /opt/docs
 WORKDIR /opt/docs
-RUN mkdocs build
+
+RUN pip install -r requirements.txt && mkdocs build
 
 FROM nginxinc/nginx-unprivileged:latest
 

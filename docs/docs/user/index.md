@@ -115,10 +115,9 @@ At this point you may want to continue to one of the detailed getting-started
 sections:
 
 - [General introduction to Capella and first steps](tools/capella/introduction.md)
-- [Getting started with a read-only session](sessions/types/read-only.md)
-- [Getting started with a TeamForCapella-based project](sessions/types/persistent.md)
-- Getting started with a git-only project (not yet documented, contact your
-  toolchain team for onboarding)
+- [Getting started with a Read-only Session](sessions/types/read-only.md)
+- [Getting started with a TeamForCapella-based Project](sessions/types/persistent.md)
+- [Getting started with a Git-based Project](tools/capella/git/working-with-git.md)
 
 ## Missing Information / Need Support
 

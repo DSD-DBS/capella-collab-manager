@@ -3,15 +3,20 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-## Authentication via Personal Access Token (Requires a Running Frontend)
+The are two ways to authenticate against the backend in a development
+environment. The first is to use a personal access token (PAT) and the second
+is to use a bearer token.
+
+## Personal Access Tokens
+
+!!! note
+
+    To create a personal access token you need a running frontend.
 
 Find more information about authentication with personal access tokens in the
-user documentation: [Authentication](../../user/tokens.md)
+user documentation: [Authentication](../../api/index.md)
 
-As soon as you have a PAT (Personal Access Token) you can authenticate without
-the application frontend.
-
-## Authentication without Application Frontend
+## Bearer Token
 
 Request the `auth_url`
 

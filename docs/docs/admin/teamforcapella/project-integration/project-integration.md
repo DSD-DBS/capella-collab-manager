@@ -5,13 +5,9 @@
 
 # Manage the TeamForCapella Project Integration
 
-<!-- prettier-ignore -->
-!!! warning
-    The TeamForCapella project integration can only be managed by administrators.
-    If you need help, contact your administrator.
-
 For all actions, you need to navigate to `Projects`, and select the model
-sources button for the model. <br /> ![Model sources](./open-modelsources.png)
+sources button for the model. <br />
+![Model sources](./screenshots/open-modelsources.png)
 
 ## Link a TeamForCapella Repository to a Project Model
 

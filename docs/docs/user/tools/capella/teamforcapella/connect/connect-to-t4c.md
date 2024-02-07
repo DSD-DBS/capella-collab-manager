@@ -9,7 +9,7 @@
 !!! Info
     Connecting to a T4C model in that way will open a connection and automatically
     write changes back to the T4C model. If you do not want to write changes back you can follow
-    [the import T4C model](../../tools/capella/teamforcapella/import/import-from-t4c.md)
+    [the import T4C model](../import/import-from-t4c.md)
     tutorial
 
 To access a TeamForCapella based model you first need read/write access from a
@@ -17,7 +17,7 @@ model lead (usually this role is allocated to lead architects / area owners).
 
 <!-- prettier-ignore -->
 !!! Info
-    Please [request a persistent session](../request.md) before you continue
+    Please [request a persistent session](../../../../sessions/request.md) before you continue
     with the instructions here.
 
 <!-- prettier-ignore-start -->
