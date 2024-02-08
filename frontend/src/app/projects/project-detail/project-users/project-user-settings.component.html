@@ -4,15 +4,10 @@
  -->
 
 <div *ngIf="!hasRoute('projects/create')" class="mr-2.5">
-  <div class="ml-[20px] flex justify-between">
-    <div>
-      <h2 class="text-xl font-medium">Project Members</h2>
-    </div>
-    <div class="flex flex-wrap gap-2"></div>
-  </div>
+  <h2 class="text-xl font-medium">Project Members</h2>
 </div>
 <div class="collab-card w-[312px] max-w-[350px] sm:min-w-[420px]">
-  <div class="my-[10px]" *ngIf="!hasRoute('projects/create')">
+  <div *ngIf="!hasRoute('projects/create')">
     <button
       class="flex items-center justify-between"
       (click)="openAuditLogDialog()"
