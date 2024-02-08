@@ -43,9 +43,6 @@ async def schedule_refresh_and_trigger_pipeline_jobs(interval=5):
 
 
 def _schedule_pending_jobs():
-    log.debug(
-        "Scheduling jobs for pipelines in kubernetes cluster",
-    )
     with database.SessionLocal() as db:
         for pending_run in crud.get_pipelines_runs_by_status(
             db, models.PipelineRunStatus.PENDING
