@@ -57,7 +57,8 @@ def get_user(
         raise fastapi.HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
-                "reason": "You have to have at least one project in common to get this information.",
+                "err_code": "NO_PROJECTS_IN_COMMON",
+                "reason": "You need at least one project in common to access the user profile of another user.",
             },
         )
 
