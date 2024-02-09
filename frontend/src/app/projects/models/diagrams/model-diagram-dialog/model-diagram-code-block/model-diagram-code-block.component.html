@@ -31,14 +31,13 @@
   ></code></pre>
   <div class="flex flex-wrap gap-2">
     <button
-      class="mt-auto self-end"
       [cdkCopyToClipboard]="this.codeBlockContent"
       matTooltip="Copy codeblock to clipboard"
       color="bg-transparent"
       mat-raised-button
       (click)="showClipboardMessage()"
     >
-      <mat-icon>content_copy</mat-icon>
+      <mat-icon class="m-0">content_copy</mat-icon>
     </button>
     <button
       class="mt-auto self-end text-white"

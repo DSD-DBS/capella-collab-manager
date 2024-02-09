@@ -28,10 +28,12 @@
       <div mat-subheader>Administrators</div>
       <div
         *ngFor="let user of getUsersByRole('administrator')"
-        class="mx-1.5 my-2.5 flex justify-between"
+        class="mx-1.5 my-2.5 flex items-center justify-between"
       >
         <a [routerLink]="['/user', user.id]" class="flex items-center">
-          <mat-icon mat-list-icon class="text-center">account_circle</mat-icon>
+          <mat-icon mat-list-icon class="min-w-[24px] text-center"
+            >account_circle</mat-icon
+          >
           <div class="ml-2">
             <div mat-line>{{ user.name }}</div>
             <div mat-line class="text-gray-500">
@@ -47,8 +49,10 @@
         class="mx-1.5 my-2.5 flex justify-between"
       >
         <a [routerLink]="['/user', user.id]" class="flex items-center">
-          <mat-icon mat-list-icon>account_circle</mat-icon>
-          <div class="ml-5">
+          <mat-icon mat-list-icon class="min-w-[24px] text-center"
+            >account_circle</mat-icon
+          >
+          <div class="ml-2">
             <div mat-line>{{ user.name }}</div>
             <div mat-line class="text-gray-500">
               {{ projectUserService.ADVANCED_ROLES[user.role] }}
@@ -57,9 +61,9 @@
         </a>
         <div class="ml-1 mr-0 flex items-center">
           <button
-            class="!mx-0 !h-[40px] !w-[40px] !px-0"
+            class="mx-0 px-0"
             mat-icon-button
-            color="error"
+            color="warn"
             *ngIf="['user'].includes(user.role)"
             (click)="deleteUser(user)"
             matTooltip="Permamently delete user"
@@ -68,7 +72,7 @@
           </button>
 
           <button
-            class="!mx-0 !h-[40px] !w-[40px] !px-0"
+            class="mx-0 px-0"
             mat-icon-button
             color="primary"
             (click)="upgradeToAdministrator(user)"

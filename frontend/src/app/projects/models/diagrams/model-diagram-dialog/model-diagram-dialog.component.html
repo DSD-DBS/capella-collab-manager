@@ -30,9 +30,9 @@
   <span *ngIf="filteredDiagrams()"
     >{{ filteredDiagrams()?.length }} diagram(s) found:
   </span>
-  <div class="flex flex-wrap">
+  <div class="flex flex-wrap gap-5">
     <div
-      class="collab-card !flex grow basis-[calc(30%-20px)] flex-col justify-between gap-5"
+      class="collab-card !flex grow basis-[calc(30%-20px)] flex-col justify-between"
       #diagram
       [id]="diagram.uuid"
       [attr.success]="diagram.success"
@@ -56,7 +56,7 @@
           margin: 0,
           padding: 0,
           height: '200px',
-          width: 'calc(100% - 10px)',
+          width: '100%',
           border: '1px solid white'
         }"
       ></ngx-skeleton-loader>
@@ -86,7 +86,7 @@
         </div>
       </div>
       <button
-        class="my-[5px] w-full"
+        class="mx-0 my-[5px] w-full"
         (click)="downloadDiagram(diagram.uuid)"
         mat-raised-button
         [disabled]="!diagram.success"
