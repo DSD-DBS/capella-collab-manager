@@ -276,6 +276,11 @@ Angular Material Card Styles
   background-color: black !important;
 }
 
+/* https://github.com/angular/components/issues/26176 */
+.mat-mdc-button-touch-target {
+  display: none;
+}
+
 /*
 Option cards
 */
