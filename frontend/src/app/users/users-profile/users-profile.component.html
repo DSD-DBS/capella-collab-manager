@@ -100,9 +100,9 @@
         <h3>Common Projects</h3>
         <mat-divider></mat-divider>
         <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <ng-container
-            *ngIf="(commonProjects$ | async)?.length; else elseBlock"
-          >
+          @if ((commonProjects$ | async) === undefined) {
+            <span>Loading...</span>
+          } @else if ((commonProjects$ | async)?.length !== 0) {
             <div
               *ngFor="let project of commonProjects$ | async"
               class="collab-card !ml-0 cursor-pointer"
@@ -122,10 +122,9 @@
                 }
               </div>
             </div>
-          </ng-container>
-          <ng-template #elseBlock class="col-span-2"
-            ><br />You do not have any common projects.</ng-template
-          >
+          } @else {
+            You do not have any common projects.
+          }
         </div>
       </div>
     </div>
