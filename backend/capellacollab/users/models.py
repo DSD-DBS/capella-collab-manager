@@ -7,7 +7,7 @@ import datetime
 import enum
 import typing as t
 
-import pydantic
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 from sqlalchemy import orm
 
 from capellacollab.core import database
@@ -25,35 +25,64 @@ class Role(enum.Enum):
     ADMIN = "administrator"
 
 
-class BaseUser(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
+class BaseUser(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
 
-    name: str
-    role: Role
+    name: str = Field(
+        description="The name of a user", examples=["John Doe"], max_length=50
+    )
+    role: Role = Field(
+        description="The application-level role of a user", examples=["user"]
+    )
 
 
 class User(BaseUser):
     id: int
-    created: datetime.datetime | None = None
-    last_login: datetime.datetime | None = None
+    created: datetime.datetime | None = Field(
+        default=None,
+        description="The time a user was created",
+        examples=["2021-01-01T12:00:00Z"],
+    )
+    last_login: datetime.datetime | None = Field(
+        default=None,
+        description="The time a user last logged in",
+        examples=["2021-01-01T12:00:00Z"],
+    )
 
-    _validate_created = pydantic.field_serializer("created")(
+    _validate_created = field_serializer("created")(
         core_pydantic.datetime_serializer
     )
-    _validate_last_login = pydantic.field_serializer("last_login")(
+    _validate_last_login = field_serializer("last_login")(
         core_pydantic.datetime_serializer
     )
 
 
-class PatchUserRoleRequest(pydantic.BaseModel):
-    role: Role
-    reason: str
+class PatchUserRoleRequest(BaseModel):
+    role: Role = Field(
+        description="The application-level role of a user provided for patching",
+        examples=["admin"],
+    )
+    reason: str = Field(
+        description="The rationale provided for patching a user's role",
+        examples=["User transfered to support team"],
+    )
 
 
-class PostUser(pydantic.BaseModel):
-    name: str
-    role: Role
-    reason: str
+class PostUser(BaseModel):
+    name: str = Field(
+        description="The name of a user provided at creation",
+        examples=["superuser@hotmail.com"],
+        max_length=50,
+    )
+    role: Role = Field(
+        description="The application-level role of a user provided at creation",
+        examples=["admin"],
+    )
+    reason: str = Field(
+        description="The rationale provided for creating a user",
+        examples=["New hire"],
+        max_length=255,
+    )
 
 
 class DatabaseUser(database.Base):

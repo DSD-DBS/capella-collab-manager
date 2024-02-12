@@ -3,7 +3,7 @@
 
 import enum
 
-import pydantic
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import orm
 
 from capellacollab.core import database
@@ -19,12 +19,23 @@ class NoticeLevel(enum.Enum):
     ALERT = "alert"
 
 
-class CreateNoticeRequest(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
+class CreateNoticeRequest(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
 
-    level: NoticeLevel
-    title: str
-    message: str
+    level: NoticeLevel = Field(
+        description="The severity or indication level of a notice",
+        examples=["info"],
+    )
+    title: str = Field(
+        description="The title of a notice",
+        examples=["Planned Maintenance 13.09.2021"],
+    )
+    message: str = Field(
+        description="The message body of a notice",
+        examples=[
+            "The site will be unavailable from 7:00 until 14:00 on 13.09.2021."
+        ],
+    )
 
 
 class NoticeResponse(CreateNoticeRequest):

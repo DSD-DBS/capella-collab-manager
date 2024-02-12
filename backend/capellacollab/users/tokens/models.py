@@ -3,8 +3,8 @@
 import datetime
 import typing as t
 
-import pydantic
 import sqlalchemy as sa
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import orm
 
 from capellacollab.core import database
@@ -13,24 +13,41 @@ if t.TYPE_CHECKING:
     from capellacollab.users.models import DatabaseUser
 
 
-class UserToken(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
+class UserToken(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
 
-    id: int
-    user_id: int
-    hash: str
-    expiration_date: datetime.date
-    description: str
+    id: int = Field(description="The ID of the token")
+    user_id: int = Field(description="The user ID of the token creator")
+    hash: str = Field(
+        description="The automatically generated hash of the token"
+    )
+    expiration_date: datetime.date = Field(
+        description="The user-provided expiration date of the token",
+        examples=["2022-01-01"],
+    )
+    description: str = Field(
+        description="The user-provided description of the token",
+        examples=["Weekly automations"],
+    )
     source: str
 
 
 class UserTokenWithPassword(UserToken):
-    password: str
+    password: str = Field(
+        description="The static token password generated at token creation",
+        examples=["collabmanager_1234567890"],
+    )
 
 
-class PostToken(pydantic.BaseModel):
-    expiration_date: datetime.datetime
-    description: str
+class PostToken(BaseModel):
+    expiration_date: datetime.datetime = Field(
+        description="The expiration date of the token provided at creation",
+        examples=["2022-01-01"],
+    )
+    description: str = Field(
+        description="The description of the token provided at creation",
+        examples=["Weekly automations"],
+    )
     source: str
 
 

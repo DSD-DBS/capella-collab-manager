@@ -7,8 +7,8 @@ from __future__ import annotations
 import enum
 import typing as t
 
-import pydantic
 import sqlalchemy as sa
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import orm
 
 from capellacollab.core import database
@@ -42,22 +42,56 @@ class EditingMode(enum.Enum):
     GIT = "git"
 
 
-class PostCapellaModel(pydantic.BaseModel):
-    name: str
-    description: str | None = None
-    tool_id: int
+class PostCapellaModel(BaseModel):
+    name: str = Field(
+        description="The name of a model provided at creation",
+        examples=["Coffee Machine"],
+        max_length=255,
+    )
+    description: str | None = Field(
+        default=None,
+        description="The description of a model provided at creation",
+        examples=["A model of a coffee machine."],
+        max_length=1500,
+    )
+    tool_id: int = Field(
+        description="The model tool ID for a model provided at creation",
+    )
 
 
-class PatchCapellaModel(pydantic.BaseModel):
-    name: str | None = None
-    description: str | None = None
-    version_id: int | None = None
-    nature_id: int | None = None
-    project_slug: str | None = None
-    display_order: int | None = None
+class PatchCapellaModel(BaseModel):
+    name: str | None = Field(
+        default=None,
+        description="An optional new name for a model provided for patching",
+        examples=["Espresso Machine"],
+        max_length=255,
+    )
+    description: str | None = Field(
+        default=None,
+        description="An optional new description for a model provided for patching",
+        examples=["A model of an espresso machine."],
+        max_length=1500,
+    )
+    version_id: int | None = Field(
+        default=None,
+        description="An optional model version ID for a model provided for patching",
+    )
+    nature_id: int | None = Field(
+        default=None,
+        description="An optional nature ID for a model provided for patching",
+    )
+    project_slug: str | None = Field(
+        default=None,
+        description="An optional project slug for a model for patching, derived from the model name provided by the model update request",
+        examples=["espresso-machine"],
+    )
+    display_order: int | None = Field(
+        default=None,
+        description="An optional display order index for a model in the Project Overview provided for patching",
+    )
 
 
-class ToolDetails(pydantic.BaseModel):
+class ToolDetails(BaseModel):
     version_id: int
     nature_id: int
 
@@ -111,18 +145,43 @@ class DatabaseCapellaModel(database.Base):
     )
 
 
-class CapellaModel(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
+class CapellaModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
 
-    id: int
-    slug: str
-    name: str
-    description: str
-    display_order: int | None
-    tool: tools_models.ToolBase
-    version: tools_models.ToolVersionBase | None = None
-    nature: tools_models.ToolNatureBase | None = None
-    git_models: list[GitModel] | None = None
-    t4c_models: list[T4CModel] | None = None
+    id: int = Field(description="The unique ID of a model", examples=[1])
+    slug: str = Field(
+        description="The unique slug of a model", examples=["coffee-machine"]
+    )
+    name: str = Field(
+        description="The name of a model",
+        examples=["Coffee Machine"],
+        max_length=255,
+    )
+    description: str = Field(
+        description="The description of a model",
+        examples=["A model of a coffee machine."],
+        max_length=1500,
+    )
+    display_order: int | None = Field(
+        description="The display order index of a model in the Project Overview",
+    )
+    tool: tools_models.ToolBase = Field(
+        description="The id, name, and tool integrations of a tool"
+    )
+    version: tools_models.ToolVersionBase | None = Field(
+        default=None,
+        description="The id, name, and recommended or deprecated states of a tool version",
+    )
+    nature: tools_models.ToolNatureBase | None = Field(
+        default=None, description="The id and name of the model's tool nature"
+    )
+    git_models: list[GitModel] | None = Field(
+        default=None,
+        description="A list of git models associated with the model",
+    )
+    t4c_models: list[T4CModel] | None = Field(
+        default=None,
+        description="A list of T4C models associated with the model",
+    )
 
     restrictions: restrictions_models.ToolModelRestrictions | None = None

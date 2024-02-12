@@ -5,8 +5,8 @@ from __future__ import annotations
 
 import typing as t
 
-import pydantic
 import sqlalchemy as sa
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import orm
 
 from capellacollab.core import database
@@ -15,18 +15,31 @@ if t.TYPE_CHECKING:
     from capellacollab.tools.models import DatabaseTool
 
 
-class ToolIntegrations(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
+class ToolIntegrations(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
 
-    t4c: bool
-    pure_variants: bool
-    jupyter: bool
+    t4c: bool = Field(description="Status of the tool integration with T4C")
+    pure_variants: bool = Field(
+        description="Status of the tool integration with Pure Variants"
+    )
+    jupyter: bool = Field(
+        description="Status of the tool integration with Jupyter"
+    )
 
 
-class PatchToolIntegrations(pydantic.BaseModel):
-    t4c: bool | None = None
-    pure_variants: bool | None = None
-    jupyter: bool | None = None
+class PatchToolIntegrations(BaseModel):
+    t4c: bool | None = Field(
+        default=None,
+        description="Indicator of whether the tool is integrated with T4C provided for patching",
+    )
+    pure_variants: bool | None = Field(
+        default=None,
+        description="Indicator of whether the tool is integrated with Pure Variants for patching",
+    )
+    jupyter: bool | None = Field(
+        default=None,
+        description="Indicator of whether the tool is integrated with Jupyter for patching",
+    )
 
 
 class DatabaseToolIntegrations(database.Base):

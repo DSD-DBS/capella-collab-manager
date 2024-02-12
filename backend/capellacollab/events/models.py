@@ -5,8 +5,8 @@ import datetime
 import enum
 import typing as t
 
-import pydantic
 import sqlalchemy as sa
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 from sqlalchemy import orm
 
 from capellacollab.core import database
@@ -33,17 +33,38 @@ class EventType(enum.Enum):
     ASSIGNED_ROLE_USER = "AssignedRoleUser"
 
 
-class BaseHistoryEvent(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
+class BaseHistoryEvent(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
 
-    user: users_models.User
-    executor: users_models.User | None = None
-    project: projects_models.Project | None = None
-    execution_time: datetime.datetime
-    event_type: EventType
-    reason: str | None = None
+    user: users_models.User = Field(
+        description="The user affected by an event",
+        examples=[{"id": 2, "name": "John Doe", "role": "user"}],
+    )
+    executor: users_models.User | None = Field(
+        default=None,
+        description="The user who executed an event",
+        examples=[{"id": 1, "name": "Joe Manager", "role": "admin"}],
+    )
+    project: projects_models.Project | None = Field(
+        default=None,
+        description="The project affected by an event",
+        examples=[{"id": 1, "name": "Project A"}],
+    )
+    execution_time: datetime.datetime = Field(
+        default=None,
+        description="The time an event was executed",
+        examples=["2021-01-01T12:00:00Z"],
+    )
+    event_type: EventType = Field(
+        description="The type of event executed", examples=["CreatedUser"]
+    )
+    reason: str | None = Field(
+        description="The rationale provided by the executor of an event",
+        examples=["New hire"],
+        max_length=255,
+    )
 
-    _validate_execution_time = pydantic.field_serializer("execution_time")(
+    _validate_execution_time = field_serializer("execution_time")(
         core_pydantic.datetime_serializer
     )
 
