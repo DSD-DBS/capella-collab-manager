@@ -94,35 +94,46 @@ class GuacamoleAuthentication(pydantic.BaseModel):
 class DatabaseSession(database.Base):
     __tablename__ = "sessions"
 
+    # Since the sessions are not persistent, we use a UUID as the primary key
     id: orm.Mapped[str] = orm.mapped_column(primary_key=True, index=True)
 
     ports: orm.Mapped[list[int]] = orm.mapped_column(sa.ARRAY(sa.Integer))
     created_at: orm.Mapped[datetime.datetime]
 
-    rdp_password: orm.Mapped[str | None]
-    guacamole_username: orm.Mapped[str | None]
-    guacamole_password: orm.Mapped[str | None]
-    guacamole_connection_id: orm.Mapped[str | None]
-
     host: orm.Mapped[str]
     type: orm.Mapped[WorkspaceType]
 
     owner_name: orm.Mapped[str] = orm.mapped_column(
-        sa.ForeignKey("users.name")
+        sa.ForeignKey("users.name"), init=False
     )
     owner: orm.Mapped[DatabaseUser] = orm.relationship()
 
-    tool_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey("tools.id"))
+    tool_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("tools.id"), init=False
+    )
     tool: orm.Mapped[DatabaseTool] = orm.relationship()
 
     version_id: orm.Mapped[int] = orm.mapped_column(
-        sa.ForeignKey("versions.id")
+        sa.ForeignKey("versions.id"), init=False
     )
     version: orm.Mapped[DatabaseVersion] = orm.relationship()
 
     project_id: orm.Mapped[str | None] = orm.mapped_column(
-        sa.ForeignKey("projects.id")
+        sa.ForeignKey("projects.id"), init=False
     )
-    project: orm.Mapped[projects_models.DatabaseProject] = orm.relationship()
+    project: orm.Mapped[
+        projects_models.DatabaseProject | None
+    ] = orm.relationship()
 
     environment: orm.Mapped[dict[str, str] | None]
+
+    rdp_password: orm.Mapped[str | None] = orm.mapped_column(default=None)
+    guacamole_username: orm.Mapped[str | None] = orm.mapped_column(
+        default=None
+    )
+    guacamole_password: orm.Mapped[str | None] = orm.mapped_column(
+        default=None
+    )
+    guacamole_connection_id: orm.Mapped[str | None] = orm.mapped_column(
+        default=None
+    )

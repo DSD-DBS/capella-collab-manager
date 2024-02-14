@@ -130,7 +130,7 @@ def create_tool_version(
     tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseVersion:
-    return crud.create_version(db, tool.id, body.name)
+    return crud.create_version(db, tool, body.name)
 
 
 @router.patch(
@@ -194,11 +194,11 @@ def get_tool_natures(
     ],
 )
 def create_tool_nature(
-    tool_id: int,
     body: models.CreateToolNature,
+    tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseNature:
-    return crud.create_nature(db, tool_id, body.name)
+    return crud.create_nature(db, tool, body.name)
 
 
 @router.delete(

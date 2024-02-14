@@ -27,19 +27,25 @@ class DatabaseT4CRepository(database.Base):
     __table_args__ = (sa.UniqueConstraint("instance_id", "name"),)
 
     id: orm.Mapped[int] = orm.mapped_column(
-        primary_key=True, index=True, autoincrement=True, unique=True
+        init=False,
+        primary_key=True,
+        index=True,
+        autoincrement=True,
+        unique=True,
     )
     name: orm.Mapped[str]
 
     instance_id: orm.Mapped[int] = orm.mapped_column(
-        sa.ForeignKey("t4c_instances.id")
+        sa.ForeignKey("t4c_instances.id"), init=False
     )
     instance: orm.Mapped[DatabaseT4CInstance] = orm.relationship(
         back_populates="repositories"
     )
 
     models: orm.Mapped[list[DatabaseT4CModel]] = orm.relationship(
-        back_populates="repository", cascade="all, delete"
+        back_populates="repository",
+        cascade="all, delete",
+        default_factory=list,
     )
 
 

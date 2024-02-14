@@ -34,7 +34,7 @@ class DatabaseGitInstance(database.Base):
     __tablename__ = "git_instances"
 
     id: orm.Mapped[int] = orm.mapped_column(
-        primary_key=True, index=True, autoincrement=True
+        init=False, primary_key=True, index=True, autoincrement=True
     )
 
     name: orm.Mapped[str]

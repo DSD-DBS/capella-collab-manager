@@ -136,7 +136,7 @@ class JupyterIntegration(interface.HookRegistration):
 
     def _is_project_member(
         self,
-        model: toolmodels_models.DatabaseCapellaModel,
+        model: toolmodels_models.DatabaseToolModel,
         username: str,
         db: orm.Session,
     ) -> bool:
@@ -147,7 +147,7 @@ class JupyterIntegration(interface.HookRegistration):
 
     def _has_project_write_access(
         self,
-        model: toolmodels_models.DatabaseCapellaModel,
+        model: toolmodels_models.DatabaseToolModel,
         username: str,
         db: orm.Session,
     ) -> bool:

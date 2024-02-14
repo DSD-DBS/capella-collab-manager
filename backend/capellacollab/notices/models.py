@@ -34,7 +34,9 @@ class NoticeResponse(CreateNoticeRequest):
 class DatabaseNotice(database.Base):
     __tablename__ = "notices"
 
-    id: orm.Mapped[int] = orm.mapped_column(primary_key=True, index=True)
+    id: orm.Mapped[int] = orm.mapped_column(
+        init=False, primary_key=True, index=True
+    )
     title: orm.Mapped[str]
     message: orm.Mapped[str]
     level: orm.Mapped[NoticeLevel]

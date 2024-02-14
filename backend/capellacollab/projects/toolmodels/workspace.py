@@ -10,7 +10,7 @@ from . import models
 def create_shared_workspace(
     name: str,
     project: projects_models.DatabaseProject,
-    model: models.DatabaseCapellaModel,
+    model: models.DatabaseToolModel,
     size: str,
 ):
     operators.get_operator().create_persistent_volume(

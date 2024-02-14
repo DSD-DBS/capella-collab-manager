@@ -84,7 +84,7 @@ def migrate_db(engine, database_url: str):
                 create_coffee_machine_model(session)
 
 
-def initialize_admin_user(db):
+def initialize_admin_user(db: orm.Session):
     LOGGER.info("Initialized adminuser %s", config["initial"]["admin"])
     admin_user = users_crud.create_user(
         db=db,
@@ -94,7 +94,7 @@ def initialize_admin_user(db):
     events_crud.create_user_creation_event(db, admin_user)
 
 
-def initialize_default_project(db):
+def initialize_default_project(db: orm.Session):
     LOGGER.info("Initialized project 'default'")
     projects_crud.create_project(
         db=db,
@@ -104,7 +104,7 @@ def initialize_default_project(db):
     )
 
 
-def initialize_coffee_machine_project(db):
+def initialize_coffee_machine_project(db: orm.Session):
     LOGGER.info("Initialize project 'Coffee Machine'")
     projects_crud.create_project(
         db=db,
@@ -114,7 +114,7 @@ def initialize_coffee_machine_project(db):
     )
 
 
-def create_tools(db):
+def create_tools(db: orm.Session):
     LOGGER.info("Initialized tools")
     registry = config["docker"]["registry"]
     if os.getenv("DEVELOPMENT_MODE", "").lower() in ("1", "true", "t"):
@@ -131,12 +131,12 @@ def create_tools(db):
         )
         tools_crud.create_tool(db, papyrus)
 
-        tools_crud.create_version(db, papyrus.id, "6.1")
-        tools_crud.create_version(db, papyrus.id, "6.0")
+        tools_crud.create_version(db, papyrus, "6.1")
+        tools_crud.create_version(db, papyrus, "6.0")
 
-        tools_crud.create_nature(db, papyrus.id, "UML 2.5")
-        tools_crud.create_nature(db, papyrus.id, "SysML 1.4")
-        tools_crud.create_nature(db, papyrus.id, "SysML 1.1")
+        tools_crud.create_nature(db, papyrus, "UML 2.5")
+        tools_crud.create_nature(db, papyrus, "SysML 1.4")
+        tools_crud.create_nature(db, papyrus, "SysML 1.1")
 
     else:
         # Use public Github images per default
@@ -154,21 +154,22 @@ def create_tools(db):
         docker_image_template=f"{registry}/jupyter-notebook:$version",
     )
     tools_crud.create_tool(db, jupyter)
+    assert jupyter.integrations
     integrations_crud.update_integrations(
         db,
         jupyter.integrations,
         integrations_models.PatchToolIntegrations(jupyter=True),
     )
 
-    default_version = tools_crud.create_version(db, capella.id, "6.0.0", True)
-    tools_crud.create_version(db, capella.id, "5.2.0")
-    tools_crud.create_version(db, capella.id, "5.0.0")
+    default_version = tools_crud.create_version(db, capella, "6.0.0", True)
+    tools_crud.create_version(db, capella, "5.2.0")
+    tools_crud.create_version(db, capella, "5.0.0")
 
-    tools_crud.create_version(db, jupyter.id, "python-3.11")
-    tools_crud.create_nature(db, jupyter.id, "notebooks")
+    tools_crud.create_version(db, jupyter, "python-3.11")
+    tools_crud.create_nature(db, jupyter, "notebooks")
 
-    default_nature = tools_crud.create_nature(db, capella.id, "model")
-    tools_crud.create_nature(db, capella.id, "library")
+    default_nature = tools_crud.create_nature(db, capella, "model")
+    tools_crud.create_nature(db, capella, "library")
 
     for model in toolmodels_crud.get_models(db):
         toolmodels_crud.set_tool_for_model(db, model, capella)
@@ -184,6 +185,7 @@ def create_t4c_instance_and_repositories(db):
     version = tools_crud.get_version_by_tool_id_version_name(
         db, tool.id, "5.2.0"
     )
+    assert version
     default_instance = settings_t4c_models.DatabaseT4CInstance(
         name="default",
         license="placeholder",

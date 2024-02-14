@@ -107,7 +107,7 @@ def project_status(db: orm.Session = fastapi.Depends(database.get_db)):
 def _create_tool_model_status_tasks(
     db: orm.Session,
     logger: logging.LoggerAdapter,
-    model: toolmodels_models.DatabaseCapellaModel,
+    model: toolmodels_models.DatabaseToolModel,
 ) -> models.ToolModelStatusTasks:
     return models.ToolModelStatusTasks(
         primary_git_repository_status=asyncio.create_task(

@@ -8,6 +8,8 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.projects.users import models as project_users_models
+from capellacollab.users import models as users_models
 
 from . import models
 
@@ -38,6 +40,34 @@ def get_project_by_slug(
             models.DatabaseProject.slug == slug
         )
     ).scalar_one_or_none()
+
+
+def get_common_projects_for_users(
+    db: orm.Session,
+    user1: users_models.DatabaseUser,
+    user2: users_models.DatabaseUser,
+) -> abc.Sequence[models.DatabaseProject]:
+    user1_table = orm.aliased(project_users_models.ProjectUserAssociation)
+    user2_table = orm.aliased(project_users_models.ProjectUserAssociation)
+
+    return (
+        db.execute(
+            sa.select(models.DatabaseProject)
+            .join(
+                user1_table,
+                models.DatabaseProject.id == user1_table.project_id,
+            )
+            .join(
+                user2_table,
+                models.DatabaseProject.id == user2_table.project_id,
+            )
+            .where(user1_table.user_id == user1.id)
+            .where(user2_table.user_id == user2.id)
+            .distinct()
+        )
+        .scalars()
+        .all()
+    )
 
 
 def update_project(

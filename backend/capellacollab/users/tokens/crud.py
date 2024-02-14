@@ -9,23 +9,24 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import credentials
+from capellacollab.users import models as users_models
 
 from . import models
 
 
 def create_token(
     db: orm.Session,
-    user_id: int,
+    user: users_models.DatabaseUser,
     description: str,
     expiration_date: datetime.date | None,
-    source: str | None,
+    source: str,
 ) -> tuple[models.DatabaseUserToken, str]:
     password = "collabmanager_" + credentials.generate_password(32)
     ph = argon2.PasswordHasher()
     if not expiration_date:
         expiration_date = datetime.date.today() + datetime.timedelta(days=30)
     db_token = models.DatabaseUserToken(
-        user_id=user_id,
+        user=user,
         hash=ph.hash(password),
         expiration_date=expiration_date,
         description=description,

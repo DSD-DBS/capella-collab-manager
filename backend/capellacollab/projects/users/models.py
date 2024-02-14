@@ -53,14 +53,14 @@ class ProjectUserAssociation(database.Base):
     __tablename__ = "project_user_association"
 
     user_id: orm.Mapped[int] = orm.mapped_column(
-        sa.ForeignKey("users.id"), primary_key=True
+        sa.ForeignKey("users.id"), primary_key=True, init=False
     )
     user: orm.Mapped["DatabaseUser"] = orm.relationship(
         back_populates="projects"
     )
 
     project_id: orm.Mapped[int] = orm.mapped_column(
-        sa.ForeignKey("projects.id"), primary_key=True
+        sa.ForeignKey("projects.id"), primary_key=True, init=False
     )
     project: orm.Mapped["DatabaseProject"] = orm.relationship(
         back_populates="users"

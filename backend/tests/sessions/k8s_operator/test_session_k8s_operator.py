@@ -73,7 +73,7 @@ def test_start_session(monkeypatch: pytest.MonkeyPatch):
     assert service_counter == 1
     assert disruption_budget_counter == 1
 
-    assert session["id"] == "testname"
+    assert session.id == "testname"
 
 
 def test_kill_session(monkeypatch: pytest.MonkeyPatch):

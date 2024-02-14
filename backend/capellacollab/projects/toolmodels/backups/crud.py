@@ -28,7 +28,7 @@ def get_pipeline_by_id(
 
 
 def get_pipelines_for_tool_model(
-    db: orm.Session, model: toolmodels_models.DatabaseCapellaModel
+    db: orm.Session, model: toolmodels_models.DatabaseToolModel
 ) -> abc.Sequence[models.DatabaseBackup]:
     return (
         db.execute(
@@ -42,7 +42,7 @@ def get_pipelines_for_tool_model(
 
 
 def get_first_pipeline_for_tool_model(
-    db: orm.Session, model: toolmodels_models.DatabaseCapellaModel
+    db: orm.Session, model: toolmodels_models.DatabaseToolModel
 ) -> models.DatabaseBackup | None:
     return (
         db.execute(

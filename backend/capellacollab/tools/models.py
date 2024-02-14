@@ -20,22 +20,30 @@ if t.TYPE_CHECKING:
 class DatabaseTool(database.Base):
     __tablename__ = "tools"
 
-    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+    id: orm.Mapped[int] = orm.mapped_column(init=False, primary_key=True)
 
     name: orm.Mapped[str]
     docker_image_template: orm.Mapped[str]
-    docker_image_backup_template: orm.Mapped[str | None]
-    readonly_docker_image_template: orm.Mapped[str | None]
+    docker_image_backup_template: orm.Mapped[str | None] = orm.mapped_column(
+        default=None
+    )
+    readonly_docker_image_template: orm.Mapped[str | None] = orm.mapped_column(
+        default=None
+    )
+
+    integrations: orm.Mapped[
+        DatabaseToolIntegrations | None
+    ] = orm.relationship(
+        default=None,
+        back_populates="tool",
+        uselist=False,
+    )
 
     versions: orm.Mapped[list[DatabaseVersion]] = orm.relationship(
-        back_populates="tool"
+        default_factory=list, back_populates="tool"
     )
     natures: orm.Mapped[list[DatabaseNature]] = orm.relationship(
-        back_populates="tool"
-    )
-
-    integrations: orm.Mapped[DatabaseToolIntegrations] = orm.relationship(
-        back_populates="tool", uselist=False
+        default_factory=list, back_populates="tool"
     )
 
 
@@ -43,14 +51,15 @@ class DatabaseVersion(database.Base):
     __tablename__ = "versions"
     __table_args__ = (sa.UniqueConstraint("tool_id", "name"),)
 
-    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+    id: orm.Mapped[int] = orm.mapped_column(init=False, primary_key=True)
 
     name: orm.Mapped[str]
     is_recommended: orm.Mapped[bool]
     is_deprecated: orm.Mapped[bool]
 
     tool_id: orm.Mapped[int | None] = orm.mapped_column(
-        sa.ForeignKey("tools.id")
+        sa.ForeignKey("tools.id"),
+        init=False,
     )
     tool: orm.Mapped[DatabaseTool] = orm.relationship(
         back_populates="versions"
@@ -61,11 +70,11 @@ class DatabaseNature(database.Base):
     __tablename__ = "types"
     __table_args__ = (sa.UniqueConstraint("tool_id", "name"),)
 
-    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+    id: orm.Mapped[int] = orm.mapped_column(init=False, primary_key=True)
     name: orm.Mapped[str]
 
     tool_id: orm.Mapped[int | None] = orm.mapped_column(
-        sa.ForeignKey("tools.id")
+        sa.ForeignKey("tools.id"), init=False
     )
     tool: orm.Mapped[DatabaseTool] = orm.relationship(back_populates="natures")
 

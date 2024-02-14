@@ -15,7 +15,7 @@ from .handler import factory
 
 async def check_primary_git_repository(
     db: orm.Session,
-    model: toolmodels_models.DatabaseCapellaModel,
+    model: toolmodels_models.DatabaseToolModel,
     log: logging.LoggerAdapter,
 ) -> models.GitModelStatus:
     primary_repo = crud.get_primary_git_model_of_capellamodel(db, model.id)
@@ -43,7 +43,7 @@ async def check_primary_git_repository(
 
 async def check_pipeline_health(
     db: orm.Session,
-    model: toolmodels_models.DatabaseCapellaModel,
+    model: toolmodels_models.DatabaseToolModel,
     job_name: str,
     logger: logging.LoggerAdapter,
 ) -> models.ModelArtifactStatus:

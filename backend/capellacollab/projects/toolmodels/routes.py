@@ -45,7 +45,7 @@ def get_models(
     project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),
-) -> list[models.DatabaseCapellaModel]:
+) -> list[models.DatabaseToolModel]:
     return project.models
 
 
@@ -55,10 +55,10 @@ def get_models(
     tags=["Projects - Models"],
 )
 def get_model_by_slug(
-    model: models.DatabaseCapellaModel = fastapi.Depends(
+    model: models.DatabaseToolModel = fastapi.Depends(
         injectables.get_existing_capella_model
     ),
-) -> models.DatabaseCapellaModel:
+) -> models.DatabaseToolModel:
     return model
 
 
@@ -80,13 +80,13 @@ def create_new_tool_model(
         projects_injectables.get_existing_project
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.DatabaseCapellaModel:
+) -> models.DatabaseToolModel:
     tool = tools_injectables.get_existing_tool(
         tool_id=new_model.tool_id, db=db
     )
 
     configuration = {}
-    if tool.integrations.jupyter:
+    if tool.integrations and tool.integrations.jupyter:
         configuration["workspace"] = str(uuid.uuid4())
 
     try:
@@ -102,7 +102,7 @@ def create_new_tool_model(
             },
         )
 
-    if tool.integrations.jupyter:
+    if tool.integrations and tool.integrations.jupyter:
         workspace.create_shared_workspace(
             configuration["workspace"], project, model, "2Gi"
         )
@@ -127,14 +127,14 @@ def patch_tool_model(
     project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),
-    model: models.DatabaseCapellaModel = fastapi.Depends(
+    model: models.DatabaseToolModel = fastapi.Depends(
         injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
     user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
     ),
-) -> models.DatabaseCapellaModel:
+) -> models.DatabaseToolModel:
     if body.name:
         new_slug = slugify.slugify(body.name)
 
@@ -154,7 +154,7 @@ def patch_tool_model(
         if body.version_id
         else model.version
     )
-    if body.version_id and version.tool != model.tool:
+    if version and body.version_id and version.tool != model.tool:
         raise fastapi.HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
@@ -167,7 +167,7 @@ def patch_tool_model(
         if body.nature_id
         else model.nature
     )
-    if body.nature_id is not None and nature.tool != model.tool:
+    if nature and body.nature_id and nature.tool != model.tool:
         raise fastapi.HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
@@ -208,7 +208,7 @@ def patch_tool_model(
     tags=["Projects - Models"],
 )
 def delete_tool_model(
-    model: models.DatabaseCapellaModel = fastapi.Depends(
+    model: models.DatabaseToolModel = fastapi.Depends(
         injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -231,7 +231,8 @@ def delete_tool_model(
         )
 
     if (
-        model.tool.integrations.jupyter
+        model.tool.integrations
+        and model.tool.integrations.jupyter
         and model.configuration
         and "workspace" in model.configuration
     ):
@@ -290,7 +291,7 @@ def determine_new_project_to_move_model(
 
 
 def raise_if_model_exists_in_project(
-    model: models.DatabaseCapellaModel,
+    model: models.DatabaseToolModel,
     project: projects_models.DatabaseProject,
 ):
     if model.slug in [model.slug for model in project.models]:

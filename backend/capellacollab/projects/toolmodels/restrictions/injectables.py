@@ -10,8 +10,10 @@ from . import models
 
 
 def get_model_restrictions(
-    model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
+    model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
     ),
-) -> models.DatabaseToolModelRestrictions:
-    return model.restrictions
+) -> models.DatabaseToolModelRestrictions | None:
+    restrictions = model.restrictions
+    assert restrictions  # restrictions are only None for a short time during creation
+    return restrictions

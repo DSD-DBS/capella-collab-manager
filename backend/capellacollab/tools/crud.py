@@ -38,7 +38,7 @@ def create_tool(
     db: orm.Session, tool: models.DatabaseTool
 ) -> models.DatabaseTool:
     tool.integrations = integrations_models.DatabaseToolIntegrations(
-        pure_variants=False, t4c=False, jupyter=False
+        tool=tool, pure_variants=False, t4c=False, jupyter=False
     )
     db.add(tool)
     db.commit()
@@ -151,7 +151,7 @@ def update_version(
 
 def create_version(
     db: orm.Session,
-    tool_id: int,
+    tool: models.DatabaseTool,
     name: str,
     is_recommended: bool = False,
     is_deprecated: bool = False,
@@ -160,7 +160,7 @@ def create_version(
         name=name,
         is_recommended=is_recommended,
         is_deprecated=is_deprecated,
-        tool_id=tool_id,
+        tool=tool,
     )
     db.add(version)
     db.commit()
@@ -223,9 +223,9 @@ def get_natures_by_tool_id(
 
 
 def create_nature(
-    db: orm.Session, tool_id: int, name: str
+    db: orm.Session, tool: models.DatabaseTool, name: str
 ) -> models.DatabaseNature:
-    nature = models.DatabaseNature(name=name, tool_id=tool_id)
+    nature = models.DatabaseNature(name=name, tool=tool)
     db.add(nature)
     db.commit()
     return nature

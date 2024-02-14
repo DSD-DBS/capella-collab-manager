@@ -43,7 +43,7 @@ def fixture_override_dependency():
 
 
 def test_rename_toolmodel_successful(
-    capella_model: toolmodels_models.DatabaseCapellaModel,
+    capella_model: toolmodels_models.DatabaseToolModel,
     project: projects_models.DatabaseProject,
     client: testclient.TestClient,
     executor_name: str,
@@ -89,7 +89,7 @@ def test_rename_toolmodel_where_name_already_exists(
 
 
 def test_update_toolmodel_order_successful(
-    capella_model: toolmodels_models.DatabaseCapellaModel,
+    capella_model: toolmodels_models.DatabaseToolModel,
     project: projects_models.DatabaseProject,
     client: testclient.TestClient,
     executor_name: str,

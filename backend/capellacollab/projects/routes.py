@@ -73,7 +73,6 @@ def get_projects(
             )(association.project.slug, username, db)
         ]
 
-    log.debug("Fetching the following projects: %s", projects)
     return projects
 
 

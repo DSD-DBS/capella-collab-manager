@@ -31,4 +31,5 @@ def update_integrations(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseToolIntegrations:
+    assert tool.integrations
     return crud.update_integrations(db, tool.integrations, body)

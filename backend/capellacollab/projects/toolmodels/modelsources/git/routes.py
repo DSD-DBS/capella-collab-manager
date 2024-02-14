@@ -66,7 +66,7 @@ def validate_path(
 
 @router.get("", response_model=list[models.GitModel])
 def get_git_models(
-    capella_model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
+    capella_model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
     ),
 ) -> list[models.DatabaseGitModel]:
@@ -151,7 +151,7 @@ async def get_revisions_with_model_credentials(
 )
 def create_git_model(
     post_git_model: models.PostGitModel,
-    capella_model: toolmodels_models.DatabaseCapellaModel = fastapi.Depends(
+    capella_model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),

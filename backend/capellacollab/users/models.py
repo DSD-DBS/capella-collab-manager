@@ -59,23 +59,34 @@ class PostUser(pydantic.BaseModel):
 class DatabaseUser(database.Base):
     __tablename__ = "users"
 
-    id: orm.Mapped[int] = orm.mapped_column(primary_key=True, index=True)
+    id: orm.Mapped[int] = orm.mapped_column(
+        init=False, primary_key=True, index=True
+    )
 
     name: orm.Mapped[str] = orm.mapped_column(unique=True, index=True)
     role: orm.Mapped[Role]
-    created: orm.Mapped[datetime.datetime | None]
-    last_login: orm.Mapped[datetime.datetime | None]
+    created: orm.Mapped[datetime.datetime | None] = orm.mapped_column(
+        default=datetime.datetime.now(datetime.UTC)
+    )
 
     projects: orm.Mapped[list[ProjectUserAssociation]] = orm.relationship(
-        back_populates="user"
+        default_factory=list, back_populates="user"
     )
     sessions: orm.Mapped[list[DatabaseSession]] = orm.relationship(
-        back_populates="owner"
+        default_factory=list, back_populates="owner"
     )
     events: orm.Mapped[list[DatabaseUserHistoryEvent]] = orm.relationship(
-        back_populates="user", foreign_keys="DatabaseUserHistoryEvent.user_id"
+        default_factory=list,
+        back_populates="user",
+        foreign_keys="DatabaseUserHistoryEvent.user_id",
     )
 
     tokens: orm.Mapped[list[DatabaseUserToken]] = orm.relationship(
-        back_populates="user", cascade="all, delete-orphan"
+        default_factory=list,
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+
+    last_login: orm.Mapped[datetime.datetime | None] = orm.mapped_column(
+        default=None
     )

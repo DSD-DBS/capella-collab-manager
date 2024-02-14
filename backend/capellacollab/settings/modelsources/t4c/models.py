@@ -46,38 +46,41 @@ class DatabaseT4CInstance(database.Base):
     __tablename__ = "t4c_instances"
 
     id: orm.Mapped[int] = orm.mapped_column(
-        primary_key=True, index=True, autoincrement=True
+        init=False, primary_key=True, index=True, autoincrement=True
     )
 
     name: orm.Mapped[str] = orm.mapped_column(unique=True)
 
     license: orm.Mapped[str]
     host: orm.Mapped[str]
-    port: orm.Mapped[int] = orm.mapped_column(
-        sa.CheckConstraint("port >= 0 AND port <= 65535"), default=2036
-    )
-    cdo_port: orm.Mapped[int] = orm.mapped_column(
-        sa.CheckConstraint("cdo_port >= 0 AND cdo_port <= 65535"),
-        default=12036,
-    )
-    http_port: orm.Mapped[int | None] = orm.mapped_column(
-        sa.CheckConstraint("http_port >= 0 AND http_port <= 65535"),
-    )
+
     usage_api: orm.Mapped[str]
     rest_api: orm.Mapped[str]
     username: orm.Mapped[str]
     password: orm.Mapped[str]
 
-    protocol: orm.Mapped[Protocol] = orm.mapped_column(default=Protocol.tcp)
-
     version_id: orm.Mapped[int] = orm.mapped_column(
-        sa.ForeignKey("versions.id")
+        sa.ForeignKey("versions.id"), init=False
     )
     version: orm.Mapped[DatabaseVersion] = orm.relationship()
 
     repositories: orm.Mapped[list[DatabaseT4CRepository]] = orm.relationship(
-        back_populates="instance", cascade="all, delete"
+        default_factory=list, back_populates="instance", cascade="all, delete"
     )
+
+    port: orm.Mapped[int] = orm.mapped_column(
+        sa.CheckConstraint("port >= 0 AND port <= 65535"), default=2036
+    )
+
+    http_port: orm.Mapped[int | None] = orm.mapped_column(
+        sa.CheckConstraint("http_port >= 0 AND http_port <= 65535"),
+        default=None,
+    )
+    cdo_port: orm.Mapped[int] = orm.mapped_column(
+        sa.CheckConstraint("cdo_port >= 0 AND cdo_port <= 65535"),
+        default=12036,
+    )
+    protocol: orm.Mapped[Protocol] = orm.mapped_column(default=Protocol.tcp)
 
     is_archived: orm.Mapped[bool] = orm.mapped_column(default=False)
 
