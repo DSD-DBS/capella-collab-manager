@@ -58,7 +58,7 @@ module.exports = {
         ],
         "unused-imports/no-unused-imports": "error",
         "no-console": ["error", { allow: ["error"] }],
-        "deprecation/deprecation": "warn",
+        "deprecation/deprecation": "error",
         "@angular-eslint/use-lifecycle-interface": "error",
       },
     },
