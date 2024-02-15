@@ -63,7 +63,7 @@
     <div
       class="project-card collab-card !mb-[15px] !ml-[10px] rounded-md shadow-md"
     >
-      <b class="px-1">Project</b> <br />
+      <b>Project</b><br />
       <a
         target="_blank"
         [href]="'project/' + projectStatus.project_slug"
@@ -87,7 +87,7 @@
 
 <div class="flex flex-wrap items-stretch gap-5">
   <div *ngIf="toolmodelStatuses === undefined">
-    Loading the monitoring overview can take up a minute.
+    Loading the monitoring overview can take up to one minute.
     <br />
     <ngx-skeleton-loader
       count="7"
