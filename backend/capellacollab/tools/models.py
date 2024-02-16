@@ -31,12 +31,12 @@ class DatabaseTool(database.Base):
         default=None
     )
 
-    integrations: orm.Mapped[
-        DatabaseToolIntegrations | None
-    ] = orm.relationship(
-        default=None,
-        back_populates="tool",
-        uselist=False,
+    integrations: orm.Mapped[DatabaseToolIntegrations | None] = (
+        orm.relationship(
+            default=None,
+            back_populates="tool",
+            uselist=False,
+        )
     )
 
     versions: orm.Mapped[list[DatabaseVersion]] = orm.relationship(

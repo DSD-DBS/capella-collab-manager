@@ -94,9 +94,9 @@ def fixture_admin(
     def get_mock_own_user():
         return admin
 
-    app.dependency_overrides[
-        users_injectables.get_own_user
-    ] = get_mock_own_user
+    app.dependency_overrides[users_injectables.get_own_user] = (
+        get_mock_own_user
+    )
     yield admin
     del app.dependency_overrides[users_injectables.get_own_user]
 
@@ -110,9 +110,9 @@ def fixture_user(
     def get_mock_own_user():
         return user
 
-    app.dependency_overrides[
-        users_injectables.get_own_user
-    ] = get_mock_own_user
+    app.dependency_overrides[users_injectables.get_own_user] = (
+        get_mock_own_user
+    )
     yield user
     del app.dependency_overrides[users_injectables.get_own_user]
 

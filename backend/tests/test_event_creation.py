@@ -20,9 +20,9 @@ def test_create_admin_user_by_system(db):
         db, config.config["initial"]["admin"]
     )
 
-    events: list[
-        events_models.DatabaseUserHistoryEvent
-    ] = get_events_by_user_id(db, user.id)
+    events: list[events_models.DatabaseUserHistoryEvent] = (
+        get_events_by_user_id(db, user.id)
+    )
 
     assert len(events) == 1
 

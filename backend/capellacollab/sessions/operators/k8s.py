@@ -273,12 +273,12 @@ class KubernetesOperator:
             log.debug("Received k8s pod: %s", pod_name)
             log.debug("Fetching k8s events for pod: %s", pod_name)
 
-            events: list[
-                client.CoreV1Event
-            ] = self.v1_core.list_namespaced_event(
-                namespace=namespace,
-                field_selector=f"involvedObject.name={pod_name}",
-            ).items
+            events: list[client.CoreV1Event] = (
+                self.v1_core.list_namespaced_event(
+                    namespace=namespace,
+                    field_selector=f"involvedObject.name={pod_name}",
+                ).items
+            )
 
             events = list(filter(self._is_non_promtail_event, events))
             if events:

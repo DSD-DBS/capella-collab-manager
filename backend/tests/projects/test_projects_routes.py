@@ -237,9 +237,9 @@ def fixture_override_dependency(mock_project):
     def override_get_existing_project():
         return mock_project
 
-    app.dependency_overrides[
-        projects_injectables.get_existing_project
-    ] = override_get_existing_project
+    app.dependency_overrides[projects_injectables.get_existing_project] = (
+        override_get_existing_project
+    )
     yield
     del app.dependency_overrides[projects_injectables.get_existing_project]
 
@@ -257,13 +257,16 @@ def test_delete_pipeline_called_when_archiving_project(
     users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
     mock_project.models = [mock_model]
 
-    with mock.patch(
-        "capellacollab.projects.routes.backups_core.delete_pipeline",
-        autospec=True,
-    ) as mock_delete_pipeline, mock.patch(
-        "capellacollab.projects.routes.backups_crud.get_pipelines_for_tool_model",
-        autospec=True,
-    ) as mock_get_pipelines_for_tool_model:
+    with (
+        mock.patch(
+            "capellacollab.projects.routes.backups_core.delete_pipeline",
+            autospec=True,
+        ) as mock_delete_pipeline,
+        mock.patch(
+            "capellacollab.projects.routes.backups_crud.get_pipelines_for_tool_model",
+            autospec=True,
+        ) as mock_get_pipelines_for_tool_model,
+    ):
         mock_get_pipelines_for_tool_model.return_value = [mock_pipeline]
 
         response = client.patch(

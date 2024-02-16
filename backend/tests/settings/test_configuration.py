@@ -110,9 +110,9 @@ def test_metadata_is_updated(
     def get_mock_own_user():
         return admin
 
-    app.dependency_overrides[
-        users_injectables.get_own_user
-    ] = get_mock_own_user
+    app.dependency_overrides[users_injectables.get_own_user] = (
+        get_mock_own_user
+    )
 
     response = client.put(
         "/api/v1/settings/configurations/global",
