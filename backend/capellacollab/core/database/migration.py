@@ -201,6 +201,12 @@ def create_jupyter_tool(db: orm.Session, registry: str):
     jupyter = tools_models.CreateTool(
         name="Jupyter",
         integrations=tools_models.ToolIntegrations(jupyter=True),
+        resources=tools_models.Resources(
+            cpu=tools_models.CPUResources(requests=1, limits=2),
+            memory=tools_models.MemoryResources(
+                requests="500Mi", limits="3Gi"
+            ),
+        ),
     )
     jupyter_database = tools_crud.create_tool(db, jupyter)
 

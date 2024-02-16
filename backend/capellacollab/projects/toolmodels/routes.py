@@ -231,8 +231,7 @@ def delete_tool_model(
         )
 
     if (
-        model.tool.integrations
-        and model.tool.integrations.jupyter
+        model.tool.integrations.jupyter
         and model.configuration
         and "workspace" in model.configuration
     ):

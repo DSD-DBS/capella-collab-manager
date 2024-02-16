@@ -10,6 +10,7 @@ from sqlalchemy import orm
 
 import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repository_interface
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
 )
@@ -22,6 +23,17 @@ from capellacollab.users import models as users_models
 from . import crud, exceptions, models
 
 log = logging.getLogger(__name__)
+
+
+def get_pipeline_labels(
+    model: toolmodels_models.DatabaseToolModel,
+) -> dict[str, str]:
+    return {
+        "app.capellacollab/projectSlug": model.project.slug,
+        "app.capellacollab/projectID": str(model.project.id),
+        "app.capellacollab/modelSlug": model.slug,
+        "app.capellacollab/modelID": str(model.id),
+    }
 
 
 def get_environment(

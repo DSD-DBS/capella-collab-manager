@@ -37,7 +37,9 @@ def create_tool(
     db: orm.Session, tool: models.CreateTool
 ) -> models.DatabaseTool:
     database_tool = tools_models.DatabaseTool(
-        name=tool.name, integrations=tool.integrations
+        name=tool.name,
+        integrations=tool.integrations,
+        resources=tool.resources,
     )
     db.add(database_tool)
     db.commit()

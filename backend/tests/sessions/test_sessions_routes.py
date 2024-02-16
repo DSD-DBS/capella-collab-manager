@@ -89,15 +89,14 @@ class MockOperator:
         self,
         image: str,
         username: str,
-        session_type: str,
-        tool_name: str,
-        version_name: str,
+        session_type: sessions_models.WorkspaceType,
+        tool: tools_models.DatabaseTool,
+        version: tools_models.DatabaseVersion,
         environment: dict[str, str],
         ports: dict[str, int],
         volumes: list[operators_models.Volume],
         prometheus_path="/metrics",
         prometheus_port=9118,
-        limits="high",
     ) -> k8s.Session:
         assert image
         self.sessions.append(
