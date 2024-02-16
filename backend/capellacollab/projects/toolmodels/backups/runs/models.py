@@ -55,9 +55,9 @@ class DatabasePipelineRun(Base):
     end_time: orm.Mapped[datetime.datetime | None] = orm.mapped_column(
         default=None
     )
-    logs_last_fetched_timestamp: orm.Mapped[
-        datetime.datetime | None
-    ] = orm.mapped_column(default=None)
+    logs_last_fetched_timestamp: orm.Mapped[datetime.datetime | None] = (
+        orm.mapped_column(default=None)
+    )
 
 
 class PipelineRun(pydantic.BaseModel):

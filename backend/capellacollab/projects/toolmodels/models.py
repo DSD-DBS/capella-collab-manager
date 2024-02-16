@@ -112,13 +112,13 @@ class DatabaseToolModel(database.Base):
         default_factory=list, back_populates="model"
     )
 
-    restrictions: orm.Mapped[
-        DatabaseToolModelRestrictions | None
-    ] = orm.relationship(
-        back_populates="model",
-        uselist=False,
-        cascade="delete",
-        default=None,
+    restrictions: orm.Mapped[DatabaseToolModelRestrictions | None] = (
+        orm.relationship(
+            back_populates="model",
+            uselist=False,
+            cascade="delete",
+            default=None,
+        )
     )
 
 

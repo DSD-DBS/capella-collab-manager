@@ -61,9 +61,11 @@ class T4CIntegration(interface.HookRegistration):
                 {
                     "repository": repository.name,
                     "protocol": repository.instance.protocol,
-                    "port": repository.instance.http_port
-                    if repository.instance.protocol == "ws"
-                    else repository.instance.port,
+                    "port": (
+                        repository.instance.http_port
+                        if repository.instance.protocol == "ws"
+                        else repository.instance.port
+                    ),
                     "host": repository.instance.host,
                     "instance": repository.instance.name,
                 }

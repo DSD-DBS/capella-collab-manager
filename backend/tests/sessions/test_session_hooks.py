@@ -99,9 +99,9 @@ def fixture_mockoperator() -> t.Generator[MockOperator, None, None]:
     def get_mock_operator():
         return mock
 
-    __main__.app.dependency_overrides[
-        operators.get_operator
-    ] = get_mock_operator
+    __main__.app.dependency_overrides[operators.get_operator] = (
+        get_mock_operator
+    )
     yield mock
     del __main__.app.dependency_overrides[operators.get_operator]
 

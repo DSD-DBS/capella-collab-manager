@@ -136,8 +136,9 @@ class ProjectRoleVerification:
         self,
         required_role: projects_users_models.ProjectUserRole,
         verify: bool = True,
-        required_permission: projects_users_models.ProjectUserPermission
-        | None = None,
+        required_permission: (
+            projects_users_models.ProjectUserPermission | None
+        ) = None,
     ):
         self.required_role = required_role
         self.verify = verify

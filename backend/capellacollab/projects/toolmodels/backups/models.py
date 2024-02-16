@@ -78,11 +78,11 @@ class DatabaseBackup(database.Base):
     )
     model: orm.Mapped["DatabaseToolModel"] = orm.relationship()
 
-    runs: orm.Mapped[
-        list["runs_models.DatabasePipelineRun"]
-    ] = orm.relationship(
-        "DatabasePipelineRun",
-        back_populates="pipeline",
-        cascade="all, delete-orphan",
-        default_factory=list,
+    runs: orm.Mapped[list["runs_models.DatabasePipelineRun"]] = (
+        orm.relationship(
+            "DatabasePipelineRun",
+            back_populates="pipeline",
+            cascade="all, delete-orphan",
+            default_factory=list,
+        )
     )

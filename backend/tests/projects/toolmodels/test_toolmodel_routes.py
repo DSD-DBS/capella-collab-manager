@@ -27,9 +27,9 @@ def fixture_override_dependency():
     mock_model.slug = "any-slug"
     mock_model.tool = mock.Mock(name="tool")
 
-    app.dependency_overrides[
-        projects_injectables.get_existing_project
-    ] = lambda: mock_project
+    app.dependency_overrides[projects_injectables.get_existing_project] = (
+        lambda: mock_project
+    )
     app.dependency_overrides[
         toolmodels_injectables.get_existing_capella_model
     ] = lambda: mock_model

@@ -63,9 +63,9 @@ def test_create_alert2(
 
     assert response.status_code == 200
 
-    notices: abc.Sequence[
-        notices_models.DatabaseNotice
-    ] = notices_crud.get_notices(db)
+    notices: abc.Sequence[notices_models.DatabaseNotice] = (
+        notices_crud.get_notices(db)
+    )
     assert len(notices) == 1
     assert notices[0].title == "test"
     assert notices[0].message == "test"

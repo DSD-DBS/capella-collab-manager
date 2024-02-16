@@ -141,9 +141,11 @@ class GithubHandler(handler.GitHandler):
     ) -> datetime.datetime | None:
         response = requests.get(
             f"{self.git_instance.api_url}/repos/{project_id}/commits?path={file_path}&sha={revision or self.git_model.revision}",
-            headers=self.__get_headers(self.git_model.password)
-            if self.git_model.password
-            else None,
+            headers=(
+                self.__get_headers(self.git_model.password)
+                if self.git_model.password
+                else None
+            ),
             timeout=config["requests"]["timeout"],
         )
         response.raise_for_status()

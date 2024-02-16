@@ -121,9 +121,9 @@ class DatabaseSession(database.Base):
     project_id: orm.Mapped[str | None] = orm.mapped_column(
         sa.ForeignKey("projects.id"), init=False
     )
-    project: orm.Mapped[
-        projects_models.DatabaseProject | None
-    ] = orm.relationship()
+    project: orm.Mapped[projects_models.DatabaseProject | None] = (
+        orm.relationship()
+    )
 
     environment: orm.Mapped[dict[str, str] | None]
 

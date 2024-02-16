@@ -177,9 +177,9 @@ def fixture_override_get_existing_pipeline_run_dependency(
     def get_mock_existing_pipeline_run() -> runs_models.DatabasePipelineRun:
         return mock_pipeline_run
 
-    app.dependency_overrides[
-        runs_injectables.get_existing_pipeline_run
-    ] = get_mock_existing_pipeline_run
+    app.dependency_overrides[runs_injectables.get_existing_pipeline_run] = (
+        get_mock_existing_pipeline_run
+    )
 
     yield
 

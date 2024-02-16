@@ -77,9 +77,9 @@ class DatabaseUserHistoryEvent(database.Base):
         sa.ForeignKey("projects.id"),
         init=False,
     )
-    project: orm.Mapped[
-        projects_models.DatabaseProject | None
-    ] = orm.relationship(default=None, foreign_keys=[project_id])
+    project: orm.Mapped[projects_models.DatabaseProject | None] = (
+        orm.relationship(default=None, foreign_keys=[project_id])
+    )
 
     execution_time: orm.Mapped[datetime.datetime] = orm.mapped_column(
         default=datetime.datetime.now(datetime.UTC)

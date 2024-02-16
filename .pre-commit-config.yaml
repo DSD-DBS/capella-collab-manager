@@ -28,7 +28,7 @@ repos:
       - id: fix-byte-order-marker
       - id: trailing-whitespace
   - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 23.12.1
+    rev: 24.2.0
     hooks:
       - id: black
         files: '^backend/'
@@ -78,7 +78,7 @@ repos:
           - 'prettier@^3.0.3'
           - 'prettier-plugin-tailwindcss@^0.5.5'
   - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.5.4
+    rev: v1.5.5
     hooks:
       - id: insert-license
         name: Insert license headers (shell-style comments)
