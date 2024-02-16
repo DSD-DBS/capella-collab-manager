@@ -28,7 +28,10 @@
   </div>
 </div>
 
-<div *ngIf="(userSessionService.sessions$ | async)?.length">
+<div
+  class="flex flex-col gap-2"
+  *ngIf="(userSessionService.sessions$ | async)?.length"
+>
   <a
     class="w-full max-w-[85vw]"
     matInput
