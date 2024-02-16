@@ -21,7 +21,8 @@ import capellacollab.projects.validation as projects_validation
 import capellacollab.users.models as users_models
 from capellacollab.core import database
 from capellacollab.projects.toolmodels import models as toolmodels_models
-from capellacollab.sessions import guacamole, operators
+from capellacollab.sessions import operators
+from capellacollab.sessions.hooks import guacamole
 
 from . import models
 
@@ -31,7 +32,7 @@ router = fastapi.APIRouter()
 @router.get("/general", response_model=models.StatusResponse)
 def general_status(db: orm.Session = fastapi.Depends(database.get_db)):
     return models.StatusResponse(
-        guacamole=guacamole.validate_guacamole(),
+        guacamole=guacamole.GuacamoleIntegration.validate_guacamole(),
         database=database.validate_database_session(db),
         operator=operators.get_operator().validate(),
     )

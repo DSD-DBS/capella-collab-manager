@@ -3,7 +3,6 @@
 
 
 import json
-import re
 import typing as t
 
 import pytest
@@ -11,11 +10,7 @@ import responses
 from aioresponses import aioresponses
 from sqlalchemy import orm
 
-import capellacollab.projects.models as project_models
-import capellacollab.projects.toolmodels.crud as toolmodels_crud
 import capellacollab.projects.toolmodels.models as toolmodels_models
-import capellacollab.projects.toolmodels.modelsources.git.crud as project_git_crud
-import capellacollab.projects.toolmodels.modelsources.git.models as project_git_models
 import capellacollab.projects.toolmodels.modelsources.t4c.crud as models_t4c_crud
 import capellacollab.projects.toolmodels.modelsources.t4c.models as models_t4c_models
 import capellacollab.settings.modelsources.git.crud as git_crud
@@ -25,33 +20,7 @@ import capellacollab.settings.modelsources.t4c.models as t4c_models
 import capellacollab.settings.modelsources.t4c.repositories.crud as settings_t4c_repositories_crud
 import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repositories_interface
 import capellacollab.settings.modelsources.t4c.repositories.models as settings_t4c_repositories_models
-import capellacollab.tools.crud as tools_crud
-import capellacollab.tools.models as tools_models
 from capellacollab.core import credentials
-
-
-@pytest.fixture(name="capella_tool_version", params=["6.0.0"])
-def fixture_capella_tool_version(
-    db: orm.Session,
-    request: pytest.FixtureRequest,
-) -> tools_models.DatabaseVersion:
-    return tools_crud.get_version_by_tool_id_version_name(
-        db, tools_crud.get_tool_by_name(db, "Capella").id, request.param
-    )
-
-
-@pytest.fixture(name="capella_model")
-def fixture_capella_model(
-    db: orm.Session,
-    project: project_models.DatabaseProject,
-    capella_tool_version: tools_models.DatabaseVersion,
-) -> toolmodels_models.DatabaseToolModel:
-    model = toolmodels_models.PostCapellaModel(
-        name="test", description="test", tool_id=capella_tool_version.tool.id
-    )
-    return toolmodels_crud.create_model(
-        db, project, model, capella_tool_version.tool, capella_tool_version
-    )
 
 
 @pytest.fixture(
@@ -87,22 +56,6 @@ def fixture_git_instance(
         type=git_type,
     )
     return git_crud.create_git_instance(db, git_instance)
-
-
-@pytest.fixture(name="git_model")
-def fixture_git_models(
-    db: orm.Session, capella_model: toolmodels_models.DatabaseToolModel
-) -> project_git_models.DatabaseGitModel:
-    git_model = project_git_models.PostGitModel(
-        path="https://example.com/test/project",
-        entrypoint="test/test.aird",
-        revision="main",
-        username="user",
-        password="password",
-    )
-    return project_git_crud.add_git_model_to_capellamodel(
-        db, capella_model, git_model
-    )
 
 
 @pytest.fixture(name="job_status", params=["success"])

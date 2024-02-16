@@ -4,7 +4,7 @@
 from collections import abc
 
 import sqlalchemy as sa
-from sqlalchemy import exc, orm
+from sqlalchemy import orm
 
 from capellacollab.tools import models as tools_models
 
@@ -39,7 +39,7 @@ def create_tool(
     database_tool = tools_models.DatabaseTool(
         name=tool.name,
         integrations=tool.integrations,
-        resources=tool.resources,
+        config=tool.config,
     )
     db.add(database_tool)
     db.commit()
@@ -51,6 +51,7 @@ def update_tool(
 ) -> models.DatabaseTool:
     tool.name = updated_tool.name
     tool.integrations = updated_tool.integrations
+    tool.config = updated_tool.config
     db.commit()
     return tool
 
@@ -78,23 +79,14 @@ def get_versions_for_tool_id(
     )
 
 
-def get_version_by_id_or_raise(
+def get_version_by_id(
     db: orm.Session, version_id: int
-) -> models.DatabaseVersion:
+) -> models.DatabaseVersion | None:
     return db.execute(
         sa.select(models.DatabaseVersion).where(
             models.DatabaseVersion.id == version_id
         )
-    ).scalar_one()
-
-
-def get_version_by_id(
-    db: orm.Session, version_id: int
-) -> models.DatabaseVersion | None:
-    try:
-        return get_version_by_id_or_raise(db, version_id)
-    except exc.NoResultFound:
-        return None
+    ).scalar_one_or_none()
 
 
 def get_version_by_version_and_tool_id(

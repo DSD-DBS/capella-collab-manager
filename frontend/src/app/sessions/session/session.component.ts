@@ -6,9 +6,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, take } from 'rxjs';
-import { Session } from 'src/app/schemes';
 import { FullscreenService } from 'src/app/sessions/service/fullscreen.service';
-import { SessionService } from 'src/app/sessions/service/session.service';
+import {
+  Session,
+  SessionService,
+} from 'src/app/sessions/service/session.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
 import { SessionViewerService } from './session-viewer.service';
 
@@ -72,11 +74,11 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   selectSessions() {
     this.checkedSessions?.forEach((session) => {
-      if (session.jupyter_uri) {
-        this.sessionViewerService.pushJupyterSession(session);
-      } else {
-        this.sessionViewerService.pushGuacamoleSession(session);
-      }
+      this.sessionService
+        .getSessionConnectionInformation(session.id)
+        .subscribe((connectionInfo) => {
+          this.sessionViewerService.pushSession(session, connectionInfo);
+        });
     });
   }
 }

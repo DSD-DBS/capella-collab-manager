@@ -6,10 +6,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Session } from 'src/app/schemes';
-import { SessionService } from 'src/app/sessions/service/session.service';
+import {
+  Session,
+  SessionService,
+} from 'src/app/sessions/service/session.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
 import {
+  ConnectionMethod,
+  Tool,
   ToolService,
   ToolVersion,
 } from 'src/app/settings/core/tools-settings/tool.service';
@@ -23,11 +27,18 @@ import {
 export class CreatePersistentSessionComponent implements OnInit {
   persistentSession?: Session;
 
+  selectedTool?: Tool;
   versions: ToolVersion[] = [];
+
+  requestInProgress = false;
 
   public toolSelectionForm = new FormGroup({
     toolId: new FormControl(null, Validators.required),
     versionId: new FormControl<number | null>(null, Validators.required),
+    connectionMethodId: new FormControl<string | undefined>(
+      undefined,
+      Validators.required,
+    ),
   });
 
   constructor(
@@ -49,12 +60,43 @@ export class CreatePersistentSessionComponent implements OnInit {
       return;
     }
 
+    this.requestInProgress = true;
+
     this.sessionService
-      .createPersistentSession(
+      .createSession(
         this.toolSelectionForm.controls.toolId.value!,
         this.toolSelectionForm.controls.versionId.value!,
+        this.toolSelectionForm.controls.connectionMethodId.value!,
+        'persistent',
+        [],
       )
-      .subscribe(() => this.userSessionService.loadSessions());
+      .subscribe({
+        next: () => {
+          this.userSessionService.loadSessions();
+          this.requestInProgress = false;
+        },
+        error: () => {
+          this.requestInProgress = false;
+        },
+      });
+  }
+
+  toolSelectionChange(toolId: number) {
+    this.getVersionsForTool(toolId);
+    this.selectedTool = this.toolService.tools?.find(
+      (tool) => tool.id == toolId,
+    );
+    this.toolSelectionForm.controls.connectionMethodId.setValue(
+      this.selectedTool?.config.connection.methods[0].id,
+    );
+  }
+
+  getSelectedConnectionMethod(): ConnectionMethod | undefined {
+    if (!this.selectedTool) return undefined;
+    return this.selectedTool.config.connection.methods.find(
+      (method) =>
+        method.id === this.toolSelectionForm.controls.connectionMethodId.value,
+    )!;
   }
 
   getVersionsForTool(toolId: number): void {
@@ -65,7 +107,7 @@ export class CreatePersistentSessionComponent implements OnInit {
         this.versions = res;
         if (res.length) {
           this.toolSelectionForm.controls.versionId.setValue(
-            (res.filter((value) => value.is_recommended).at(0) || res[0]).id,
+            (res.find((version) => version.config.is_recommended) || res[0]).id,
           );
         }
       });

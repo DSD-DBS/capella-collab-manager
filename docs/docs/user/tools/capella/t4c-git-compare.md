@@ -7,7 +7,7 @@
 
 ## Quick Comparision
 
-<table markdown="1">
+<table markdown="span">
   <tr>
     <th></th>
     <th>Git</th>
@@ -28,16 +28,15 @@
     <td>Resolution of merge conflicts can be challenging.</td>
     <td>No merge conflicts when one workstream is used. For multiple workstreams, the resolution of merge conflicts can be challenging.</td>
   </tr>
-  <tr markdown="1">
-  <!-- This formatting is required, otherwise mkdocs breaks -->
-  <td><b>License</b></td>
-  <td markdown="1">No license needed[^1]</td>
-  <td markdown="1">TeamForCapella license required[^2]</td>
+  <tr markdown="span">
+    <td><b>License</b></td>
+    <td>No license needed[^1]</td>
+    <td>TeamForCapella license required[^2]</td>
   </tr>
-  <tr markdown="1">
-  <td><b>Complexity</b></td>
-  <td markdown="1">Git knowledge is required[^3]</td>
-  <td>Easy to use</td>
+  <tr markdown="span">
+    <td><b>Complexity</b></td>
+    <td>Git knowledge is required[^3]</td>
+    <td>Easy to use</td>
   </tr>
   <tr>
     <td><b>Stability</b></td>
@@ -54,10 +53,10 @@
     <td>Possible via CI/CD in the Git repository.</td>
     <td>Possible via TeamForCapella &rarr; Git synchronisation (runs on a nightly basis).</td>
   </tr>
-  <tr markdown="1">
-  <td><b>Change control</b></td>
-  <td markdown="1">Reviews are possible via merge requests[^4]</td>
-  <td>Change control is nearly impossible, no barriers.</td>
+  <tr markdown="span">
+    <td><b>Change control</b></td>
+    <td>Reviews are possible via merge requests[^4]</td>
+    <td>Change control is nearly impossible, no barriers.</td>
   </tr>
   <tr>
     <td><b>Release tagging</b></td>

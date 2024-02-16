@@ -8,9 +8,8 @@
 <div class="collab-card">
   <div>
     <p class="mb-5 text-sm">
-      Sessions with persistent workspaces will store all the changes you make on
-      models. Additionally, newly created models will be stored in your personal
-      workspace.
+      Sessions with a persistent workspace save all the changes you make to
+      models.
     </p>
 
     <form
@@ -23,7 +22,7 @@
           <mat-select
             matInput
             formControlName="toolId"
-            (selectionChange)="getVersionsForTool($event.value)"
+            (selectionChange)="toolSelectionChange($event.value)"
           >
             <mat-option
               *ngFor="let tool of toolService.tools"
@@ -49,12 +48,39 @@
               [value]="version.id"
             >
               {{ version.name }}
-              <span *ngIf="version.is_recommended"> (recommended)</span>
-              <span *ngIf="version.is_deprecated"> (deprecated)</span>
+              <span *ngIf="version.config.is_recommended"> (recommended)</span>
+              <span *ngIf="version.config.is_deprecated"> (deprecated)</span>
             </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
+
+      @if (
+        this.selectedTool && selectedTool.config.connection.methods.length > 1
+      ) {
+        <div class="mb-2">
+          <span class="text-sm">Connection method:</span> <br />
+          <mat-radio-group
+            class="flex gap-2"
+            formControlName="connectionMethodId"
+          >
+            @for (
+              connectionMethod of selectedTool.config.connection.methods;
+              track connectionMethod.id
+            ) {
+              <mat-radio-button [value]="connectionMethod.id">{{
+                connectionMethod.name
+              }}</mat-radio-button>
+            }
+          </mat-radio-group>
+        </div>
+
+        @if (this.getSelectedConnectionMethod()?.description) {
+          <div class="mb-2 border p-2 text-sm shadow">
+            {{ getSelectedConnectionMethod()?.description }}
+          </div>
+        }
+      }
 
       <div class="flex justify-center">
         <button
@@ -62,8 +88,9 @@
           mat-flat-button
           color="primary"
           type="submit"
+          [disabled]="requestInProgress"
         >
-          Request a persistent workspace
+          Request a session with a persistent workspace
           <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
         </button>
       </div>

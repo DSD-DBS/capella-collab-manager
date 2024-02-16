@@ -7,15 +7,16 @@ from fastapi import status
 from requests import auth as requests_auth
 
 from capellacollab import config
-from capellacollab.sessions import models as sessions_models
 from capellacollab.settings.modelsources.t4c import (
     models as settings_t4c_models,
 )
 
+from . import models
+
 
 def get_t4c_status(
     instance: settings_t4c_models.DatabaseT4CInstance,
-) -> sessions_models.GetSessionUsageResponse:
+) -> models.GetSessionUsageResponse:
     try:
         r = requests.get(
             f"{instance.usage_api}/status/json",
@@ -68,7 +69,7 @@ def get_t4c_status(
             )
 
         if "used" in cur_status:
-            return sessions_models.GetSessionUsageResponse(**cur_status)
+            return models.GetSessionUsageResponse(**cur_status)
     except KeyError:
         raise fastapi.HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,

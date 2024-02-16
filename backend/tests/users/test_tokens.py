@@ -15,7 +15,7 @@ from capellacollab.core.authentication.basic_auth import HTTPBasicAuth
 from capellacollab.users import models as users_models
 
 POST_TOKEN = {
-    "expiration_date": str(datetime.datetime.now()),
+    "expiration_date": str(datetime.date.today()),
     "description": "test_token",
     "source": "test source",
 }

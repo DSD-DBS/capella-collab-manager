@@ -5,7 +5,8 @@
 
 <div
   *ngIf="
-    isPersistentSession(session) && session.version?.tool?.integrations?.t4c
+    isPersistentSessionAlias(session) &&
+    session.version?.tool?.integrations?.t4c
   "
 >
   <div class="m-m-card">
@@ -17,14 +18,14 @@
     <br />
     You can always return to this dialog by clicking on "Connect" in the "Active
     sessions" overview. <br />
-    <div *ngIf="session?.t4c_password">
+    <div *ngIf="connectionInfo?.t4c_token">
       <app-display-value
-        [value]="session!.t4c_password"
+        [value]="connectionInfo?.t4c_token"
         [blurValue]="true"
         valueName="TeamForCapella token"
       ></app-display-value>
     </div>
-    <div *ngIf="!session?.t4c_password">
+    <div *ngIf="!connectionInfo?.t4c_token">
       No session token was generated for your session.
     </div>
   </div>
@@ -35,7 +36,7 @@
   <div class="mb-1 text-base font-bold">Connect to the session</div>
   Please click on this button to connect to the server: <br />
   <div class="mt-2">
-    <button mat-flat-button color="primary" (click)="redirectToGuacamole()">
+    <button mat-flat-button color="primary" (click)="redirectToSession()">
       Connect to Session
     </button>
   </div>

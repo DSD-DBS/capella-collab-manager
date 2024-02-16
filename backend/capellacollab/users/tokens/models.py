@@ -29,7 +29,7 @@ class UserTokenWithPassword(UserToken):
 
 
 class PostToken(pydantic.BaseModel):
-    expiration_date: datetime.datetime
+    expiration_date: datetime.date
     description: str
     source: str
 

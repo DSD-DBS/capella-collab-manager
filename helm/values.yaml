@@ -47,8 +47,16 @@ docker:
 general:
   # Base URL on which the service listens
   host: localhost
-  port: 80
-  scheme: http
+
+  # In the local development setup, use the following values:
+  # - HTTP: 8080
+  # - HTTPS: 443
+  port: 443
+
+  # In the local development setup, use the following values:
+  # - HTTP: http
+  # - HTTPS: https
+  scheme: https
 
   # The application will serve on all hostnames (wildcardHost set to True).
   # The default behavior is to only serve on the configured host (wildcardHost set to False).
@@ -128,9 +136,12 @@ backend:
       endpoints:
         wellKnown: http://dev-oauth-mock:8080/default/.well-known/openid-configuration
         # Override endpoint that issues JWT Tokens
-        tokenIssuance: ""
+        tokenIssuance: ''
         # Override endpoint that authorizes the User
-        authorization: http://localhost:8080/default/authorize
+        # In the local development setup, use the following values:
+        # - HTTP: http://localhost:8080/default/authorize
+        # - HTTPS: https://localhost/default/authorize
+        authorization: https://localhost/default/authorize
 
       audience: default
 
@@ -147,7 +158,10 @@ backend:
         # OAUTH2 Client Secret
         secret: tbd
 
-      redirectURI: http://localhost:8080/oauth2/callback
+      # In the local development setup, use the following values:
+      # - HTTP: http://localhost:8080/oauth2/callback
+      # - HTTPS: https://localhost/oauth2/callback
+      redirectURI: https://localhost/oauth2/callback
 
     azure:
       # Only required when using provider oauth
@@ -213,6 +227,10 @@ cluster:
   pvc:
     storageClassName: local-path
 
+  dns:
+    service: kube-dns # dns-default for OpenShift
+    namespace: kube-system # openshift-dns for OpenShift
+
 # Specify the NO_PROXY environment for the backend
 # Leave it empty if not needed
 proxy:
@@ -252,33 +270,33 @@ loki:
       password: *lokiPassword
     resources: &resourcesLoki
       limits:
-        cpu: "1"
+        cpu: '1'
         memory: 500Mi
       requests:
-        cpu: "0.03"
+        cpu: '0.03'
         memory: 5Mi
-    affinity: ""
+    affinity: ''
     podSecurityContext: *podSecurityContext
   read:
     # Minimum 2 is required
     replicas: 2
 
     # We don't want to limit to specific nodes
-    affinity: ""
+    affinity: ''
     resources: *resourcesLoki
   write:
     # Minimum 2 is required
     replicas: 2
 
     # We don't want to limit to specific nodes
-    affinity: ""
+    affinity: ''
     resources: *resourcesLoki
   backend:
     # Minimum 2 is required
     replicas: 2
 
     # We don't want to limit to specific nodes
-    affinity: ""
+    affinity: ''
     resources: *resourcesLoki
   sidecar:
     rules:
@@ -316,10 +334,10 @@ loki:
       enabled: False
     resources: &resourcesMinio
       limits:
-        cpu: "0.5"
+        cpu: '0.5'
         memory: 500Mi
       requests:
-        cpu: "0.03"
+        cpu: '0.03'
         memory: 5Mi
     makePolicyJob: &minioJob
       resources: *resourcesMinio

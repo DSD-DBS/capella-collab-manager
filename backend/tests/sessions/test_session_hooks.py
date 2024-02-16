@@ -2,23 +2,21 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import datetime
+import logging
 import typing as t
-import uuid
 
 import pytest
 from sqlalchemy import orm
 
 from capellacollab import __main__
-from capellacollab.core import models as core_models
-from capellacollab.projects import models as projects_models
 from capellacollab.sessions import crud as sessions_crud
 from capellacollab.sessions import hooks as sessions_hooks
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions import operators
 from capellacollab.sessions import routes as sessions_routes
+from capellacollab.sessions import util as sessions_util
 from capellacollab.sessions.hooks import interface as hooks_interface
 from capellacollab.sessions.operators import k8s
-from capellacollab.sessions.operators import models as operators_models
 from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
@@ -27,7 +25,9 @@ from capellacollab.users import models as users_models
 class MockOperator:
     # pylint: disable=unused-argument
     def start_session(self, *args, **kwargs) -> k8s.Session:
-        return k8s.Session("test", {1}, datetime.datetime.now(), "test")
+        return k8s.Session(
+            id="test", port=1, created_at=datetime.datetime.now(), host="test"
+        )
 
     def kill_session(self, *args, **kwargs) -> None:
         pass
@@ -39,7 +39,8 @@ class MockOperator:
 
 class TestSessionHook(hooks_interface.HookRegistration):
     configuration_hook_counter = 0
-    post_creation_hook_counter = 0
+    post_session_creation_hook_counter = 0
+    session_connection_hook_counter = 0
     post_termination_hook_counter = 0
 
     def configuration_hook(
@@ -47,34 +48,50 @@ class TestSessionHook(hooks_interface.HookRegistration):
         db: orm.Session,
         operator: operators.KubernetesOperator,
         user: users_models.DatabaseUser,
-        tool_version: tools_models.DatabaseVersion,
         tool: tools_models.DatabaseTool,
+        tool_version: tools_models.DatabaseVersion,
+        session_type: sessions_models.SessionType,
+        connection_method: tools_models.ToolSessionConnectionMethod,
+        provisioning: list[sessions_models.SessionProvisioningRequest],
         **kwargs,
-    ) -> tuple[
-        dict[str, str],
-        list[operators_models.Volume],
-        list[core_models.Message],
-    ]:
+    ) -> hooks_interface.ConfigurationHookResult:
         self.configuration_hook_counter += 1
-        return {}, [], []
+        return hooks_interface.ConfigurationHookResult()
 
     def post_session_creation_hook(
         self,
         session_id: str,
+        session: k8s.Session,
+        db_session: sessions_models.DatabaseSession,
         operator: operators.KubernetesOperator,
         user: users_models.DatabaseUser,
+        connection_method: tools_models.ToolSessionConnectionMethod,
         **kwargs,
-    ):
-        self.post_creation_hook_counter += 1
+    ) -> hooks_interface.PostSessionCreationHookResult:
+        self.post_session_creation_hook_counter += 1
+        return hooks_interface.PostSessionCreationHookResult()
+
+    def session_connection_hook(
+        self,
+        db: orm.Session,
+        db_session: sessions_models.DatabaseSession,
+        connection_method: tools_models.ToolSessionConnectionMethod,
+        logger: logging.LoggerAdapter,
+        **kwargs,
+    ) -> hooks_interface.SessionConnectionHookResult:
+        self.session_connection_hook_counter += 1
+        return hooks_interface.SessionConnectionHookResult()
 
     def pre_session_termination_hook(
         self,
         db: orm.Session,
         operator: operators.KubernetesOperator,
         session: sessions_models.DatabaseSession,
+        connection_method: tools_models.ToolSessionConnectionMethod,
         **kwargs,
-    ):
+    ) -> hooks_interface.PreSessionTerminationHookResult:
         self.post_termination_hook_counter += 1
+        return hooks_interface.PreSessionTerminationHookResult()
 
 
 @pytest.fixture(autouse=True, name="session_hook")
@@ -105,24 +122,6 @@ def fixture_mockoperator() -> t.Generator[MockOperator, None, None]:
     del __main__.app.dependency_overrides[operators.get_operator]
 
 
-@pytest.fixture(autouse=True, name="tool")
-def fixture_tool(
-    monkeypatch: pytest.MonkeyPatch,
-) -> tools_models.DatabaseTool:
-    tool = tools_models.DatabaseTool(
-        name="test", integrations=tools_models.ToolIntegrations()
-    )
-
-    # pylint: disable=unused-argument
-    def mock_get_existing_tool(*args, **kwargs) -> tools_models.DatabaseTool:
-        return tool
-
-    monkeypatch.setattr(
-        tools_injectables, "get_existing_tool", mock_get_existing_tool
-    )
-    return tool
-
-
 @pytest.fixture(autouse=True, name="tool_version")
 def fixture_tool_version(
     monkeypatch: pytest.MonkeyPatch, tool: tools_models.DatabaseTool
@@ -132,76 +131,73 @@ def fixture_tool_version(
     )
 
     # pylint: disable=unused-argument
-    def get_exisiting_tool_version(
+    def get_existing_tool_version(
         *args, **kwargs
     ) -> tools_models.DatabaseVersion:
         return version
 
     monkeypatch.setattr(
         tools_injectables,
-        "get_exisiting_tool_version",
-        get_exisiting_tool_version,
+        "get_existing_tool_version",
+        get_existing_tool_version,
     )
     return version
 
 
-@pytest.fixture(name="session")
-def fixture_session(
-    user: users_models.DatabaseUser,
-    tool: tools_models.DatabaseTool,
-    tool_version: tools_models.DatabaseVersion,
-    project: projects_models.DatabaseProject,
-) -> sessions_models.DatabaseSession:
-    return sessions_models.DatabaseSession(
-        str(uuid.uuid1()),
-        ports=[1],
-        created_at=datetime.datetime.now(),
-        host="",
-        type=sessions_models.WorkspaceType.PERSISTENT,
-        environment={},
-        rdp_password="",
-        guacamole_username="",
-        owner=user,
-        tool=tool,
-        version=tool_version,
-        project=project,
-    )
-
-
-@pytest.mark.usefixtures("tool")
-def test_session_creation_hook_is_called(
+@pytest.mark.usefixtures("mock_session_injection")
+def test_hook_calls_during_session_request(
     monkeypatch: pytest.MonkeyPatch,
     db: orm.Session,
     user: users_models.DatabaseUser,
     mockoperator: MockOperator,
     session_hook: TestSessionHook,
-    session: sessions_models.DatabaseSession,
+    tool: tools_models.DatabaseTool,
 ):
-    monkeypatch.setattr(
-        sessions_routes,
-        "start_persistent_guacamole_session",
-        lambda *args, **kwargs: session,
-    )
+    """Test that the relevant session hooks are called
+    during a session request.
+
+    In the request session route, the configuration hook and
+    the post session creation hook are called.
+    """
 
     monkeypatch.setattr(
-        sessions_routes,
-        "get_image_for_tool_version",
+        sessions_util,
+        "get_docker_image",
         lambda *args, **kwargs: "placeholder",
     )
 
-    sessions_routes.request_persistent_session(
-        sessions_models.PostPersistentSessionRequest(tool_id=0, version_id=0),
+    sessions_routes.request_session(
+        sessions_models.PostSessionRequest(
+            tool_id=0,
+            version_id=0,
+            session_type=sessions_models.SessionType.PERSISTENT,
+            connection_method_id=tool.config.connection.methods[0].id,
+            provisioning=[],
+        ),
         user,
         db,
         mockoperator,  # type: ignore
-        "testuser",
+        logging.getLogger("test"),
     )
 
     assert session_hook.configuration_hook_counter == 1
-    assert session_hook.post_creation_hook_counter == 1
+    assert session_hook.post_session_creation_hook_counter == 1
+    assert session_hook.session_connection_hook_counter == 0
+    assert session_hook.post_termination_hook_counter == 0
 
 
-def test_pre_termination_hook_is_called(
+def test_hook_call_during_session_connection(
+    db: orm.Session,
+    session: sessions_models.DatabaseSession,
+):
+    """Test that the session hook is called when connecting to a session"""
+
+    sessions_routes.get_session_connection_information(
+        db, session, session.owner, logging.getLogger("test")
+    )
+
+
+def test_hook_calls_during_session_termination(
     monkeypatch: pytest.MonkeyPatch,
     mockoperator: MockOperator,
     db: orm.Session,

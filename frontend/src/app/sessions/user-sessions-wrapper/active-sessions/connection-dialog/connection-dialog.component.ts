@@ -5,11 +5,14 @@
 
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Session, isPersistentSession } from 'src/app/schemes';
-import { GuacamoleService } from 'src/app/services/guacamole/guacamole.service';
 import { UserService } from 'src/app/services/user/user.service';
+import {
+  Session,
+  SessionConnectionInformation,
+  SessionService,
+  isPersistentSession,
+} from 'src/app/sessions/service/session.service';
 
 @Component({
   selector: 'app-connection-dialog',
@@ -17,29 +20,40 @@ import { UserService } from 'src/app/services/user/user.service';
   styleUrls: ['./connection-dialog.component.css'],
 })
 export class ConnectionDialogComponent {
-  isPersistentSession = isPersistentSession;
+  isPersistentSessionAlias = isPersistentSession;
 
-  nativeClient = false;
+  connectionInfo?: SessionConnectionInformation = undefined;
 
   constructor(
     public userService: UserService,
-    private localStorageService: LocalStorageService,
-    private guacamoleService: GuacamoleService,
+    private sessionService: SessionService,
     @Inject(MAT_DIALOG_DATA) public session: Session,
     public dialogRef: MatDialogRef<ConnectionDialogComponent>,
     private toastService: ToastService,
-  ) {}
-
-  redirectToGuacamole(): void {
-    this.guacamoleService
-      .getGucamoleToken(this.session?.id)
-      .subscribe((res) => {
-        this.localStorageService.setValue('GUAC_AUTH', res.token);
-        window.open(res.url);
+  ) {
+    this.sessionService
+      .getSessionConnectionInformation(this.session.id)
+      .subscribe((connectionInfo) => {
+        this.connectionInfo = connectionInfo;
       });
   }
 
-  requestNativeClient(): void {
-    this.nativeClient = true;
+  redirectToSession(): void {
+    if (!this.connectionInfo) {
+      this.toastService.showError(
+        'Session connection information is not available yet.',
+        'Try again later.',
+      );
+      return;
+    }
+    this.sessionService.setConnectionInformation(this.connectionInfo!);
+    if (this.connectionInfo.redirect_url) {
+      window.open(this.connectionInfo!.redirect_url);
+    } else {
+      this.toastService.showError(
+        "Couldn't connect to session.",
+        'No redirect URL was found. Please contact your administrator.',
+      );
+    }
   }
 }

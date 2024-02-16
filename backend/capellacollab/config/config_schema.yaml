@@ -139,14 +139,6 @@ properties:
             type: string
           password:
             type: string
-      jupyter:
-        type: object
-        additionalProperties: false
-        required:
-          - publicURI
-        properties:
-          publicURI:
-            type: string
   authentication:
     type: object
     required:

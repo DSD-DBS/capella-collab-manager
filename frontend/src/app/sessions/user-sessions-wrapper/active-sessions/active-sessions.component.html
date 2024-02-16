@@ -24,7 +24,7 @@
 >
   <h2 class="mb-3 text-xl font-medium">No active sessions</h2>
   <div class="text-sm">
-    No active sessions for your user are found in our system. <br />
+    There are no active sessions for your user in our system. <br />
   </div>
 </div>
 
@@ -49,8 +49,12 @@
     class="collab-card"
   >
     <div>
-      <h2 *ngIf="isPersistentSession(session)">Persistent workspace session</h2>
-      <h2 *ngIf="isReadonlySession(session)">Read-only session</h2>
+      <b>
+        <h2 *ngIf="isPersistentSession(session)">
+          Persistent workspace session
+        </h2>
+        <h2 *ngIf="isReadonlySession(session)">Read-only session</h2>
+      </b>
     </div>
     <div class="sessionContent">
       <h3
@@ -63,12 +67,10 @@
         The session was created
         {{ beautifyService.beatifyDate(session.created_at) }}
       </p>
-      <div *ngIf="isReadonlySession(session)">
-        <span>Project: {{ session.project.name }}</span
-        ><br />
-      </div>
       <span>
         Tool: {{ session.version!.tool.name }} ({{ session.version!.name }})
+        <br />
+        Connection Method: {{ session.connection_method?.name }}
       </span>
 
       <div *ngIf="session.download_in_progress" class="mat-card collab-card">

@@ -37,8 +37,8 @@
               [value]="version.id"
             >
               {{ version.name }}
-              <span *ngIf="version.is_recommended"> (recommended)</span>
-              <span *ngIf="version.is_deprecated"> (deprecated)</span>
+              <span *ngIf="version.config.is_recommended"> (recommended)</span>
+              <span *ngIf="version.config.is_deprecated"> (deprecated)</span>
             </mat-option>
           </mat-select>
         </mat-form-field>

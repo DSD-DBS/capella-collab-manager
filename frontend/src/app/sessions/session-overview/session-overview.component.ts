@@ -6,14 +6,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Session } from '../../schemes';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
-import { SessionService } from '../service/session.service';
+import { Session, SessionService } from '../service/session.service';
 
 @Component({
   selector: 'app-session-overview',
   templateUrl: './session-overview.component.html',
-  styleUrls: ['./session-overview.component.css'],
 })
 export class SessionOverviewComponent implements OnInit {
   constructor(
@@ -30,10 +28,10 @@ export class SessionOverviewComponent implements OnInit {
     'user',
     'created_at',
     'state',
-    'guacamole_user',
     'last_seen',
-    'project',
     'tool',
+    'connection_method',
+    'type',
   ];
 
   ngOnInit(): void {

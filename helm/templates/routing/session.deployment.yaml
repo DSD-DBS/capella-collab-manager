@@ -1,0 +1,64 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-session-nginx
+  labels:
+    id: {{ .Release.Name }}-deployment-session-nginx
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/routing/session.configmap.yaml") . | sha256sum }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      id: {{ .Release.Name }}-deployment-session-nginx
+  template:
+    metadata:
+      labels:
+        id: {{ .Release.Name }}-deployment-session-nginx
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/routing/session.configmap.yaml") . | sha256sum }}
+    spec:
+      automountServiceAccountToken: false
+      volumes:
+        - name: {{ .Release.Name }}-session-nginx
+          configMap:
+            name: {{ .Release.Name }}-session-nginx
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
+      containers:
+        - name: {{ .Release.Name }}-session-nginx
+          image: {{ .Values.docker.registry.external }}/nginxinc/nginx-unprivileged
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            {{ if .Values.development }}
+            limits:
+              cpu: "0.1"
+              memory: 50Mi
+              ephemeral-storage: "2Gi"
+            requests:
+              cpu: "0.05"
+              memory: 5Mi
+            {{ else }}
+            limits:
+              cpu: "1"
+              memory: 100Mi
+              ephemeral-storage: "5Gi"
+            requests:
+              cpu: "0.25"
+              memory: 50Mi
+            {{ end }}
+          volumeMounts:
+            - name: {{ .Release.Name }}-session-nginx
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+            - name: {{ .Release.Name }}-session-nginx
+              mountPath: /usr/share/nginx/html/502.html
+              subPath: 502.html
+          {{ if .Values.cluster.containers }}
+          {{- toYaml .Values.cluster.containers | nindent 10 }}
+          {{ end }}

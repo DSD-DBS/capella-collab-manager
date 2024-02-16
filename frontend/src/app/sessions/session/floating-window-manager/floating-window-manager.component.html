@@ -27,9 +27,6 @@
           <span>
             {{ session.version?.tool?.name }} {{ session.version?.name }},
             {{ session.type }}
-            <span *ngIf="session.type === 'readonly'">
-              (project {{ session.project!.name }})
-            </span>
           </span>
         </div>
 

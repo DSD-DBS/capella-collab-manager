@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HistoryEvent } from 'src/app/events/service/events.service';
 import { Project } from 'src/app/projects/service/project.service';
-import { Session } from 'src/app/schemes';
+import { Session } from 'src/app/sessions/service/session.service';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../auth/auth.service';
 

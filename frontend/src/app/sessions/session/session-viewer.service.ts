@@ -6,17 +6,18 @@
 import { Injectable } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { BehaviorSubject, map } from 'rxjs';
-import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
-import { Session } from 'src/app/schemes';
-import { GuacamoleService } from 'src/app/services/guacamole/guacamole.service';
+import {
+  Session,
+  SessionConnectionInformation,
+  SessionService,
+} from 'src/app/sessions/service/session.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SessionViewerService {
   constructor(
-    private guacamoleService: GuacamoleService,
-    private localStorageService: LocalStorageService,
+    private sessionService: SessionService,
     private domSanitizer: DomSanitizer,
   ) {}
 
@@ -31,36 +32,26 @@ export class SessionViewerService {
     }),
   );
 
-  pushJupyterSession(session: Session): void {
-    if (session.jupyter_uri) {
-      const viewerSession = session as ViewerSession;
-
-      viewerSession.focused = false;
-      viewerSession.safeResourceURL =
-        this.domSanitizer.bypassSecurityTrustResourceUrl(session.jupyter_uri);
-      viewerSession.reloadToResize = false;
-
-      this.insertViewerSession(viewerSession);
-    }
-  }
-
-  pushGuacamoleSession(session: Session): void {
+  pushSession(
+    session: Session,
+    connectionInfo: SessionConnectionInformation,
+  ): void {
     const viewerSession = session as ViewerSession;
 
-    this.guacamoleService.getGucamoleToken(session.id).subscribe({
-      next: (guacamoleAuthInfo) => {
-        this.localStorageService.setValue('GUAC_AUTH', guacamoleAuthInfo.token);
+    this.sessionService.setConnectionInformation(connectionInfo);
+    viewerSession.focused = false;
+    viewerSession.safeResourceURL =
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        connectionInfo.redirect_url,
+      );
 
-        viewerSession.focused = false;
-        viewerSession.safeResourceURL =
-          this.domSanitizer.bypassSecurityTrustResourceUrl(
-            guacamoleAuthInfo.url,
-          );
-        viewerSession.reloadToResize = true;
+    if (session.connection_method?.type === 'guacamole') {
+      viewerSession.reloadToResize = true;
+    } else {
+      viewerSession.reloadToResize = false;
+    }
 
-        this.insertViewerSession(viewerSession);
-      },
-    });
+    this.insertViewerSession(viewerSession);
   }
 
   focusSession(session: Session): void {

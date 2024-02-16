@@ -37,11 +37,13 @@ export class ToolNatureComponent implements AfterViewInit {
     this._tool = value;
     this.toolNatures = undefined;
 
-    this.toolService
-      .getNaturesForTool(this._tool!.id)
-      .subscribe((natures: ToolNature[]) => {
-        this.toolNatures = natures;
-      });
+    if (this._tool !== undefined) {
+      this.toolService
+        .getNaturesForTool(this._tool.id)
+        .subscribe((natures: ToolNature[]) => {
+          this.toolNatures = natures;
+        });
+    }
   }
 
   @ViewChildren('editorRef') editorRefs: QueryList<EditorComponent> | undefined;

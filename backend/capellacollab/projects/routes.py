@@ -22,7 +22,6 @@ from capellacollab.projects.toolmodels.backups import models as backups_models
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.projects.users import routes as projects_users_routes
-from capellacollab.sessions import routes as session_routes
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 
@@ -216,11 +215,6 @@ router.include_router(
     toolmodels_routes.router,
     prefix="/{project_slug}/models",
     tags=["Projects - Models"],
-)
-router.include_router(
-    session_routes.project_router,
-    prefix="/{project_slug}/sessions",
-    tags=["Projects - Sessions"],
 )
 router.include_router(
     projects_events_routes.router,

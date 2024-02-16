@@ -3,44 +3,22 @@
 
 import logging
 import re
-from collections import abc
 
 import requests
 
+from capellacollab import core
 from capellacollab.config import config
 
-from . import models, operators
+from . import operators
 
 log = logging.getLogger(__name__)
 
 
-def inject_attrs_in_sessions(
-    db_sessions: abc.Sequence[models.DatabaseSession],
-) -> list[models.GetSessionsResponse]:
-    sessions_list = []
-    for session in db_sessions:
-        session_dict = models.Session.model_validate(session).model_dump()
-
-        session_dict["state"] = _determine_session_state(session)
-        session_dict["last_seen"] = get_last_seen(session.id)
-
-        if session.environment:
-            session_dict["jupyter_uri"] = session.environment.get(
-                "JUPYTER_URI"
-            )
-            session_dict["t4c_password"] = session.environment.get(
-                "T4C_PASSWORD"
-            )
-
-        sessions_list.append(
-            models.GetSessionsResponse.model_validate(session_dict)
-        )
-
-    return sessions_list
-
-
 def get_last_seen(sid: str) -> str:
     """Return project session last seen activity"""
+    if core.DEVELOPMENT_MODE:
+        return "Disabled in development mode"
+
     url = config["prometheus"]["url"]
     url += "/".join(("api", "v1", "query?query=idletime_minutes"))
     try:
@@ -74,12 +52,12 @@ def _get_last_seen(idletime: int | float) -> str:
     return f"{idletime:.0f} mins ago"
 
 
-def _determine_session_state(session: models.DatabaseSession) -> str:
-    state = operators.get_operator().get_session_state(session.id)
+def determine_session_state(session_id: str) -> str:
+    state = operators.get_operator().get_session_state(session_id)
 
     if state in ("Started", "BackOff"):
         try:
-            logs = operators.get_operator().get_session_logs(session.id)
+            logs = operators.get_operator().get_session_logs(session_id)
             res = re.search(r"(?s:.*)^---(.*?)---$", logs, re.MULTILINE)
             if res:
                 return res.group(1)

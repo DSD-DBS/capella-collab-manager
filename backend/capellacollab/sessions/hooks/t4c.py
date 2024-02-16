@@ -11,7 +11,6 @@ from sqlalchemy import orm
 from capellacollab.core import credentials
 from capellacollab.core import models as core_models
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.sessions.operators import models as operators_models
 from capellacollab.settings.modelsources.t4c.repositories import (
     crud as repo_crud,
 )
@@ -41,12 +40,13 @@ class T4CIntegration(interface.HookRegistration):
         user: users_models.DatabaseUser,
         tool_version: tools_models.DatabaseVersion,
         username: str,
+        session_type: sessions_models.SessionType,
         **kwargs,
-    ) -> tuple[
-        T4CConfigEnvironment,
-        list[operators_models.Volume],
-        list[core_models.Message],
-    ]:
+    ) -> interface.ConfigurationHookResult:
+        if session_type != sessions_models.SessionType.PERSISTENT:
+            # Skip non-persistent sessions, no T4C integration needed.
+            return interface.ConfigurationHookResult()
+
         warnings: list[core_models.Message] = []
 
         # When using a different tool with TeamForCapella support (e.g., Capella + pure::variants),
@@ -112,7 +112,9 @@ class T4CIntegration(interface.HookRegistration):
                     exc_info=True,
                 )
 
-        return environment, [], warnings
+        return interface.ConfigurationHookResult(
+            environment=environment, warnings=warnings
+        )
 
     def pre_session_termination_hook(  # type: ignore
         self,
@@ -120,8 +122,20 @@ class T4CIntegration(interface.HookRegistration):
         session: sessions_models.DatabaseSession,
         **kwargs,
     ):
-        if session.type == sessions_models.WorkspaceType.PERSISTENT:
+        if session.type == sessions_models.SessionType.PERSISTENT:
             self._revoke_session_tokens(db, session)
+
+    def session_connection_hook(  # type: ignore[override]
+        self,
+        db_session: sessions_models.DatabaseSession,
+        **kwargs,
+    ) -> interface.SessionConnectionHookResult:
+        if db_session.type != sessions_models.SessionType.PERSISTENT:
+            return interface.SessionConnectionHookResult()
+
+        return interface.SessionConnectionHookResult(
+            t4c_token=db_session.environment.get("T4C_PASSWORD")
+        )
 
     def _revoke_session_tokens(
         self,

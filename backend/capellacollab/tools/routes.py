@@ -158,7 +158,7 @@ def update_tool_version(
     body: models.CreateToolVersion,
     tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     version: models.DatabaseVersion = fastapi.Depends(
-        injectables.get_exisiting_tool_version
+        injectables.get_existing_tool_version
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseVersion:
@@ -185,7 +185,7 @@ def update_tool_version(
 )
 def delete_tool_version(
     version: models.DatabaseVersion = fastapi.Depends(
-        injectables.get_exisiting_tool_version
+        injectables.get_existing_tool_version
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
@@ -242,7 +242,7 @@ def update_tool_nature(
     body: models.CreateToolNature,
     tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     nature: models.DatabaseNature = fastapi.Depends(
-        injectables.get_exisiting_tool_nature
+        injectables.get_existing_tool_nature
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseNature:
@@ -265,7 +265,7 @@ def update_tool_nature(
 )
 def delete_tool_nature(
     nature: models.DatabaseNature = fastapi.Depends(
-        injectables.get_exisiting_tool_nature
+        injectables.get_existing_tool_nature
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):

@@ -39,9 +39,11 @@
                 formControlName="tool"
                 (selectionChange)="onToolChange($event.value)"
               >
-                <mat-option *ngFor="let tool of tools" [value]="tool">
-                  {{ tool.name }}
-                </mat-option>
+                @for (tool of tools; track tool.id) {
+                  <mat-option [value]="tool">
+                    {{ tool.name }}
+                  </mat-option>
+                }
               </mat-select>
             </mat-form-field>
 

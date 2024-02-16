@@ -4,7 +4,7 @@
 import pathlib
 import typing as t
 
-from capellacollab.core import models as core_models
+from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions import operators
 from capellacollab.sessions.operators import models as operators_models
 from capellacollab.users import models as users_models
@@ -26,12 +26,13 @@ class PersistentWorkspaceHook(interface.HookRegistration):
         self,
         operator: operators.KubernetesOperator,
         user: users_models.DatabaseUser,
+        session_type: sessions_models.SessionType,
         **kwargs,
-    ) -> tuple[
-        PersistentWorkspacEnvironment,
-        list[operators_models.Volume],
-        list[core_models.Message],
-    ]:
+    ) -> interface.ConfigurationHookResult:
+        if session_type == sessions_models.SessionType.READONLY:
+            # Skip read-only sessions, no persistent workspace needed.
+            return interface.ConfigurationHookResult()
+
         volume_name = self._create_persistent_workspace(operator, user.name)
         volume = operators_models.PersistentVolume(
             name="workspace",
@@ -40,10 +41,8 @@ class PersistentWorkspaceHook(interface.HookRegistration):
             volume_name=volume_name,
         )
 
-        return (
-            {},
-            [volume],
-            [],
+        return interface.ConfigurationHookResult(
+            volumes=[volume],
         )
 
     def _get_volume_name(self, username: str) -> str:

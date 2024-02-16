@@ -6,7 +6,7 @@
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PathNode } from 'src/app/schemes';
+import { PathNode } from 'src/app/sessions/service/session.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

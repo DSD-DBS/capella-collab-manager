@@ -33,17 +33,17 @@
   <div class="flex flex-col" *ngIf="cachedSessions && cachedSessions.length">
     <mat-checkbox
       class="w-fit"
+      color="primary"
       [disabled]="!sessionService.beautifyState(session.state).success"
       matTooltip="Please wait until the session is running. You can check the status in the 'Sessions' tab."
       [matTooltipDisabled]="sessionService.beautifyState(session.state).success"
       [value]="session.id"
       [(ngModel)]="session.checked"
       *ngFor="let session of cachedSessions"
-      >{{ session.version?.tool?.name }} {{ session.version?.name }},
-      {{ session.type
-      }}<span *ngIf="session.type === 'readonly'">
-        (project {{ session.project!.name }})</span
-      >, created at {{ session.created_at | date: "EE, dd MMM y HH:mm:ss" }}
+    >
+      {{ session.version?.tool?.name }} {{ session.version?.name }},
+      {{ session.type }}, created at
+      {{ session.created_at | date: "EE, dd MMM y HH:mm:ss" }}
     </mat-checkbox>
   </div>
 

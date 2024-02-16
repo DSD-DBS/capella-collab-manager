@@ -4,6 +4,9 @@
 
 from __future__ import annotations
 
+import typing as t
+import uuid
+
 import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
@@ -12,6 +15,83 @@ from capellacollab.core import database
 from capellacollab.core.database import decorator
 
 DOCKER_IMAGE_PATTERN = r"^[a-zA-Z0-9][a-zA-Z0-9_\-/.:${}]*$"
+
+
+class SessionPorts(pydantic.BaseModel):
+    metrics: int = pydantic.Field(
+        default=9118,
+        description="Port of the metrics endpoint in the container.",
+    )
+
+
+class RDPPorts(SessionPorts):
+    rdp: int = pydantic.Field(
+        default=3389, description="Port of the RDP server in the container."
+    )
+
+
+class HTTPPorts(SessionPorts):
+    http: int = pydantic.Field(
+        default=8080, description="Port of the HTTP server in the container."
+    )
+
+
+def uuid_factory() -> str:
+    return str(uuid.uuid4())
+
+
+class ToolSessionConnectionMethod(pydantic.BaseModel):
+    id: str = pydantic.Field(default_factory=uuid_factory)
+    type: str
+    name: str = pydantic.Field(default="default")
+    description: str = pydantic.Field(default="")
+    ports: SessionPorts
+    environment: dict[str, str] = pydantic.Field(
+        default={},
+        description=(
+            "Connection method specific environment variables. "
+            "Check the global environment field for more information. "
+        ),
+    )
+
+
+class GuacamoleConnectionMethod(ToolSessionConnectionMethod):
+    type: t.Literal["guacamole"] = "guacamole"
+    ports: RDPPorts = pydantic.Field(default=RDPPorts())
+
+
+class HTTPConnectionMethod(ToolSessionConnectionMethod):
+    type: t.Literal["http"] = "http"
+    redirect_url: str = pydantic.Field(default="http://localhost:8080")
+    ports: HTTPPorts = pydantic.Field(default=HTTPPorts())
+    cookies: dict[str, str] = pydantic.Field(
+        default={},
+        description=(
+            "Cookies, which are required to connect to the session. "
+        ),
+    )
+
+
+class ToolSessionConnection(pydantic.BaseModel):
+    methods: list[GuacamoleConnectionMethod | HTTPConnectionMethod] = (
+        pydantic.Field(
+            default=[GuacamoleConnectionMethod(), HTTPConnectionMethod()],
+            min_length=1,
+            max_length=10,
+        )
+    )
+
+    @pydantic.field_validator("methods")
+    @classmethod
+    def check_uniqueness_of_method_identifier(
+        cls, value: list[HTTPConnectionMethod]
+    ) -> list[HTTPConnectionMethod]:
+        ids = [method.id for method in value]
+        if len(ids) != len(set(ids)):
+            raise ValueError(
+                "Identifiers of connection methods must be unique."
+            )
+        return value
 
 
 class ToolIntegrations(pydantic.BaseModel):
@@ -105,6 +185,37 @@ class Resources(pydantic.BaseModel):
     )
 
 
+class PrometheusConfiguration(pydantic.BaseModel):
+    path: str = pydantic.Field(default="/prometheus")
+
+
+class SessionMonitoring(pydantic.BaseModel):
+    prometheus: PrometheusConfiguration = pydantic.Field(
+        default=PrometheusConfiguration(),
+        description="Configuration for monitoring and garbage collection.",
+    )
+
+
+class ToolSessionConfiguration(pydantic.BaseModel):
+    resources: Resources = pydantic.Field(default=Resources())
+    environment: dict[str, str] = pydantic.Field(
+        default={"RMT_PASSWORD": "{CAPELLACOLLAB_SESSION_TOKEN}"},
+        description=(
+            "Environment variables, which are mounted into session containers. "
+            "You can use f-strings to reference other environment variables in the value. "
+        ),
+        examples=[
+            {
+                "MY_TOOL_USERNAME_WITH_PREFIX": "test_{CAPELLACOLLAB_SESSION_REQUESTER_USERNAME}",
+            }
+        ],
+    )
+    connection: ToolSessionConnection = pydantic.Field(
+        default=ToolSessionConnection()
+    )
+    monitoring: SessionMonitoring = pydantic.Field(default=SessionMonitoring())
+
+
 class DatabaseTool(database.Base):
     __tablename__ = "tools"
 
@@ -118,10 +229,10 @@ class DatabaseTool(database.Base):
         default_factory=ToolIntegrations,
     )
 
-    resources: orm.Mapped[Resources] = orm.mapped_column(
-        decorator.PydanticDecorator(Resources),
+    config: orm.Mapped[ToolSessionConfiguration] = orm.mapped_column(
+        decorator.PydanticDecorator(ToolSessionConfiguration),
         nullable=False,
-        default_factory=Resources,
+        default_factory=ToolSessionConfiguration,
     )
 
     versions: orm.Mapped[list[DatabaseVersion]] = orm.relationship(
@@ -253,7 +364,9 @@ class CreateTool(pydantic.BaseModel):
 
     name: str = pydantic.Field(default="", min_length=2, max_length=30)
     integrations: ToolIntegrations = pydantic.Field(default=ToolIntegrations())
-    resources: Resources = pydantic.Field(default=Resources())
+    config: ToolSessionConfiguration = pydantic.Field(
+        default=ToolSessionConfiguration()
+    )
 
 
 class ToolBase(CreateTool, decorator.PydanticDatabaseModel):

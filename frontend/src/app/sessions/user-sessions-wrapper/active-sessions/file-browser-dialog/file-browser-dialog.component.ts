@@ -15,11 +15,11 @@ import {
 import { saveAs } from 'file-saver';
 import { BehaviorSubject } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { PathNode, Session } from 'src/app/schemes';
 import {
   LoadFilesService,
   UploadResponse,
 } from 'src/app/services/load-files/load-files.service';
+import { PathNode, Session } from 'src/app/sessions/service/session.service';
 import { FileExistsDialogComponent } from './file-exists-dialog/file-exists-dialog.component';
 
 @Component({

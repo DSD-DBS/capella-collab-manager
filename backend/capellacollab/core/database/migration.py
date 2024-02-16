@@ -11,6 +11,7 @@ from alembic import config as alembic_config
 from alembic import migration
 from sqlalchemy import orm
 
+from capellacollab import core
 from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.events import crud as events_crud
@@ -112,19 +113,72 @@ def initialize_coffee_machine_project(db: orm.Session):
     )
 
 
-def create_capella_tool(
-    db: orm.Session, registry: str, development_mode: bool
+def get_eclipse_session_configuration() -> (
+    tools_models.ToolSessionConfiguration
 ):
+    """Returns the session configuration for Eclipse based tools
+    in the Capella Dockerimages repository.
+    """
+    return tools_models.ToolSessionConfiguration(
+        resources=tools_models.Resources(
+            cpu=tools_models.CPUResources(requests=0.4, limits=2),
+            memory=tools_models.MemoryResources(
+                requests="1.6Gi", limits="6Gi"
+            ),
+        ),
+        environment={"RMT_PASSWORD": "{CAPELLACOLLAB_SESSION_TOKEN}"},
+        connection=tools_models.ToolSessionConnection(
+            methods=[
+                tools_models.GuacamoleConnectionMethod(
+                    name="Classic (Guacamole)",
+                    description=(
+                        "Old connection method using Guacamole. "
+                        "If it has worked fine previously, keep using it. "
+                        "In case of issues, try the Xpra connection method."
+                    ),
+                    ports=tools_models.RDPPorts(metrics=9118, rdp=3389),
+                    environment={"CONNECTION_METHOD": "xrdp"},
+                ),
+                tools_models.HTTPConnectionMethod(
+                    name="Experimental (Xpra)",
+                    description=(
+                        "Experimental connection method using Xpra. "
+                        "It's intended for those users who have issues with the Guacamole connection method."
+                    ),
+                    ports=tools_models.HTTPPorts(http=10000, metrics=9118),
+                    environment={
+                        "CONNECTION_METHOD": "xpra",
+                        "XPRA_SUBPATH": "{CAPELLACOLLAB_SESSIONS_BASE_PATH}",
+                        "XPRA_CSP_ORIGIN_HOST": (
+                            "http://localhost:4200"
+                            if core.DEVELOPMENT_MODE
+                            else "{CAPELLACOLLAB_ORIGIN_BASE_URL}"
+                        ),
+                    },
+                    redirect_url="{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}{CAPELLACOLLAB_SESSIONS_BASE_PATH}/?floating_menu=0&path={CAPELLACOLLAB_SESSIONS_BASE_PATH}/",
+                    cookies={
+                        "token": "{CAPELLACOLLAB_SESSION_TOKEN}",
+                    },
+                ),
+            ]
+        ),
+    )
+
+
+def create_capella_tool(
+    db: orm.Session, registry: str
+) -> tools_models.DatabaseTool:
     capella = tools_models.CreateTool(
         name="Capella",
         integrations=tools_models.ToolIntegrations(
             t4c=True, pure_variants=False, jupyter=False
         ),
+        config=get_eclipse_session_configuration(),
     )
     capella_database = tools_crud.create_tool(db, capella)
 
     for capella_version_name in ("5.0.0", "5.2.0", "6.0.0", "6.1.0"):
-        if development_mode:
+        if core.DEVELOPMENT_MODE:
             docker_tag = f"{capella_version_name}-latest"
         else:
             docker_tag = f"{capella_version_name}-selected-dropins-main"
@@ -156,13 +210,18 @@ def create_capella_tool(
     tools_crud.create_nature(db, capella_database, "model")
     tools_crud.create_nature(db, capella_database, "library")
 
+    return capella_database
 
-def create_papyrus_tool(db: orm.Session, registry: str):
+
+def create_papyrus_tool(
+    db: orm.Session, registry: str
+) -> tools_models.DatabaseTool:
     papyrus = tools_models.CreateTool(
         name="Papyrus",
         integrations=tools_models.ToolIntegrations(
             t4c=False, pure_variants=False, jupyter=False
         ),
+        config=get_eclipse_session_configuration(),
     )
     papyrus_database = tools_crud.create_tool(db, papyrus)
 
@@ -196,15 +255,46 @@ def create_papyrus_tool(db: orm.Session, registry: str):
     tools_crud.create_nature(db, papyrus_database, "SysML 1.4")
     tools_crud.create_nature(db, papyrus_database, "SysML 1.1")
 
+    return papyrus_database
 
-def create_jupyter_tool(db: orm.Session, registry: str):
+
+def create_jupyter_tool(
+    db: orm.Session, registry: str
+) -> tools_models.DatabaseTool:
     jupyter = tools_models.CreateTool(
         name="Jupyter",
         integrations=tools_models.ToolIntegrations(jupyter=True),
-        resources=tools_models.Resources(
-            cpu=tools_models.CPUResources(requests=1, limits=2),
-            memory=tools_models.MemoryResources(
-                requests="500Mi", limits="3Gi"
+        config=tools_models.ToolSessionConfiguration(
+            resources=tools_models.Resources(
+                cpu=tools_models.CPUResources(requests=1, limits=2),
+                memory=tools_models.MemoryResources(
+                    requests="500Mi", limits="3Gi"
+                ),
+            ),
+            environment={
+                "JUPYTER_PORT": "8888",
+                "JUPYTER_TOKEN": "{CAPELLACOLLAB_SESSION_TOKEN}",
+                "CSP_ORIGIN_HOST": (
+                    "http://localhost:4200"
+                    if core.DEVELOPMENT_MODE
+                    else "{CAPELLACOLLAB_ORIGIN_BASE_URL}"
+                ),
+                "JUPYTER_BASE_URL": "{CAPELLACOLLAB_SESSIONS_BASE_PATH}",
+            },
+            connection=tools_models.ToolSessionConnection(
+                methods=[
+                    tools_models.HTTPConnectionMethod(
+                        name="Direct Jupyter connection (Browser)",
+                        description="The only available connection method for Jupyter.",
+                        ports=tools_models.HTTPPorts(http=8888, metrics=9118),
+                        redirect_url="{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}{CAPELLACOLLAB_SESSIONS_BASE_PATH}/lab?token={CAPELLACOLLAB_SESSION_TOKEN}",
+                    ),
+                ]
+            ),
+            monitoring=tools_models.SessionMonitoring(
+                prometheus=tools_models.PrometheusConfiguration(
+                    path="/prometheus"
+                )
             ),
         ),
     )
@@ -233,22 +323,18 @@ def create_jupyter_tool(db: orm.Session, registry: str):
 
     tools_crud.create_nature(db, jupyter_database, "notebooks")
 
+    return jupyter_database
+
 
 def create_tools(db: orm.Session):
-    development_mode = os.getenv("DEVELOPMENT_MODE", "").lower() in (
-        "1",
-        "true",
-        "t",
-    )
-
-    if development_mode:
+    if core.DEVELOPMENT_MODE:
         registry = config["docker"]["registry"]
     else:
         registry = "ghcr.io/dsd-dbs/capella-dockerimages"
 
-    create_capella_tool(db, registry, development_mode)
+    create_capella_tool(db, registry)
 
-    if development_mode:
+    if core.DEVELOPMENT_MODE:
         create_papyrus_tool(db, registry)
         create_jupyter_tool(db, registry)
 

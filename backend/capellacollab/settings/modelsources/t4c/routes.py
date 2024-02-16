@@ -8,11 +8,11 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.projects.toolmodels import routes as toolmodels_routes
-from capellacollab.sessions import models as sessions_models
 from capellacollab.settings.modelsources.t4c.repositories import (
     routes as settings_t4c_repositories_routes,
 )
+from capellacollab.tools import crud as tools_crud
+from capellacollab.tools import exceptions as tools_exceptions
 from capellacollab.users import models as users_models
 
 from . import crud, exceptions, injectables, interface, models
@@ -58,7 +58,8 @@ def create_t4c_instance(
     if crud.get_t4c_instance_by_name(db, body.name):
         raise exceptions.T4CInstanceWithNameAlreadyExistsError()
 
-    version = toolmodels_routes.get_version_by_id_or_raise(db, body.version_id)
+    if not (version := tools_crud.get_version_by_id(db, body.version_id)):
+        raise tools_exceptions.ToolVersionNotFoundError(body.version_id)
     body_dump = body.model_dump()
     del body_dump["version_id"]
 
@@ -92,7 +93,7 @@ def edit_t4c_instance(
 
 @router.get(
     "/{t4c_instance_id}/licenses",
-    response_model=sessions_models.GetSessionUsageResponse,
+    response_model=models.GetSessionUsageResponse,
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(
@@ -105,7 +106,7 @@ def fetch_t4c_licenses(
     instance: models.DatabaseT4CInstance = fastapi.Depends(
         injectables.get_existing_instance
     ),
-) -> sessions_models.GetSessionUsageResponse:
+) -> models.GetSessionUsageResponse:
     return interface.get_t4c_status(instance)
 
 

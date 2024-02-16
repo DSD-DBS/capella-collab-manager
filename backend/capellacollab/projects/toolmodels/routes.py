@@ -15,6 +15,7 @@ from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.tools import crud as tools_crud
+from capellacollab.tools import exceptions as tools_exceptions
 from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
 from capellacollab.users import injectables as users_injectables
@@ -84,7 +85,6 @@ def create_new_tool_model(
     tool = tools_injectables.get_existing_tool(
         tool_id=new_model.tool_id, db=db
     )
-
     configuration = {}
     if tool.integrations.jupyter:
         configuration["workspace"] = str(uuid.uuid4())
@@ -149,11 +149,12 @@ def patch_tool_model(
                 },
             )
 
-    version = (
-        get_version_by_id_or_raise(db, body.version_id)
-        if body.version_id
-        else model.version
-    )
+    if body.version_id:
+        if not (version := tools_crud.get_version_by_id(db, body.version_id)):
+            raise tools_exceptions.ToolVersionNotFoundError(body.version_id)
+    else:
+        version = model.version
+
     if version and body.version_id and version.tool != model.tool:
         raise fastapi.HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -238,18 +239,6 @@ def delete_tool_model(
         workspace.delete_shared_workspace(model.configuration["workspace"])
 
     crud.delete_model(db, model)
-
-
-def get_version_by_id_or_raise(
-    db: orm.Session, version_id: int
-) -> tools_models.DatabaseVersion:
-    if version := tools_crud.get_version_by_id(db, version_id):
-        return version
-
-    raise fastapi.HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail={"reason": f"The version with id {version_id} was not found."},
-    )
 
 
 def get_nature_by_id_or_raise(

@@ -38,12 +38,6 @@ extensions:
 
     username: "{{ .Values.guacamole.username }}"
     password: "{{ .Values.guacamole.password }}"
-  jupyter:
-    {{- if eq .Values.cluster.kind "Kubernetes" }}
-    publicURI: {{ .Values.general.scheme }}://{{ .Values.general.host }}:{{ .Values.general.port }}/jupyter
-    {{- else }}
-    publicURI: {{ .Values.general.scheme }}://sessions-{{ .Values.general.host }}:{{ .Values.general.port }}/jupyter
-    {{- end }}
 
 authentication:
   provider: "{{ .Values.backend.authentication.provider }}"

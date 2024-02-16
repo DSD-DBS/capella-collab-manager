@@ -1,0 +1,74 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-session-nginx
+  namespace: {{ .Release.Namespace }}
+  labels:
+    id: {{ .Release.Name }}-configmap-session-nginx
+data:
+  nginx.conf: |-
+    pid /tmp/nginx.pid;
+
+    events{}
+    http {
+        # These options are needed to run as non-root
+        client_body_temp_path /tmp/client_temp;
+        proxy_temp_path       /tmp/proxy_temp_path;
+        fastcgi_temp_path     /tmp/fastcgi_temp;
+        uwsgi_temp_path       /tmp/uwsgi_temp;
+        scgi_temp_path        /tmp/scgi_temp;
+
+        server {
+            listen 8080 default_server;
+            server_name _;
+
+            root /usr/share/nginx/html;
+            error_page 502 /502.html;
+
+            resolver {{ .Values.cluster.dns.service }}.{{ .Values.cluster.dns.namespace }}.svc.cluster.local;
+
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host $host;
+            # proxy_set_header X-Real-IP $remote_addr;
+            # proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            # proxy_set_header X-Forwarded-Proto $scheme;
+
+            proxy_buffering off;
+
+            location ~ ^/session/([a-z]+)/(.*)$ {
+              proxy_pass http://$1.{{ .Values.backend.k8sSessionNamespace }}.svc.cluster.local:80/session/$1/$2$is_args$args;
+            }
+
+            location ~ ^/session/([a-z]+) {
+              proxy_pass http://$1.{{ .Values.backend.k8sSessionNamespace }}.svc.cluster.local:80/session/$1$is_args$args;
+            }
+        }
+    }
+  502.html: |-
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+          }
+        </style>
+      </head>
+      <body>
+        <h2>Session is not reachable - 502 Bad Gateway</h2>
+
+        <div>Please wait a few seconds and try to reconnect.</div>
+        <div>
+          If it doesn't work, check the status of the session in the Capella
+          Collaboration Manager.
+        </div>
+        <div>
+          If this error is persistent, please contact your system administrator.
+        </div>
+      </body>
+    </html>

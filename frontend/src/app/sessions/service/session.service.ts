@@ -5,9 +5,59 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { CookieService } from 'ngx-cookie';
 import { Observable } from 'rxjs';
-import { Session } from 'src/app/schemes';
+import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
+import { Project } from 'src/app/projects/service/project.service';
+import { User } from 'src/app/services/user/user.service';
+import {
+  ConnectionMethod,
+  ToolVersionWithTool,
+} from 'src/app/settings/core/tools-settings/tool.service';
 import { environment } from 'src/environments/environment';
+
+export interface Session {
+  created_at: string;
+  id: string;
+  last_seen: string;
+  type: 'persistent' | 'readonly';
+  project: Project | undefined;
+  version: ToolVersionWithTool | undefined;
+  state: string;
+  owner: User;
+
+  download_in_progress: boolean;
+  connection_method: ConnectionMethod | undefined;
+}
+export interface LocalStorage {
+  [id: string]: string;
+}
+
+export interface Cookies {
+  [id: string]: string;
+}
+
+export interface ReadonlySession extends Session {
+  project: Project;
+}
+
+export const isReadonlySession = (
+  session: Session,
+): session is ReadonlySession => {
+  return session.type === 'readonly';
+};
+
+export const isPersistentSession = (session: Session): session is Session => {
+  return session.type === 'persistent';
+};
+
+export interface PathNode {
+  path: string;
+  name: string;
+  type: 'file' | 'directory';
+  isNew: boolean;
+  children: PathNode[] | null;
+}
 
 export type ReadonlyModel = {
   model_slug: string;
@@ -16,41 +66,78 @@ export type ReadonlyModel = {
   deep_clone: boolean;
 };
 
+export type SessionConnectionInformation = {
+  local_storage: LocalStorage;
+  cookies: Cookies;
+  t4c_token: string;
+  redirect_url: string;
+};
+
 @Injectable({
   providedIn: 'root',
 })
 export class SessionService {
-  constructor(private http: HttpClient) {}
-  BACKEND_URL_PREFIX = environment.backend_url + '/sessions/';
+  constructor(
+    private http: HttpClient,
+    private localStorageService: LocalStorageService,
+    private cookieService: CookieService,
+  ) {}
+  BACKEND_URL_PREFIX = environment.backend_url + '/sessions';
 
   getCurrentSessions(): Observable<Session[]> {
     return this.http.get<Session[]>(this.BACKEND_URL_PREFIX);
   }
 
-  createReadonlySession(
-    projectSlug: string,
-    models: ReadonlyModel[],
-  ): Observable<Session> {
-    return this.http.post<Session>(
-      `${environment.backend_url}/projects/${projectSlug}/sessions/readonly`,
-      {
-        models: models,
-      },
-    );
-  }
-
-  createPersistentSession(
+  createSession(
     toolId: number,
     versionId: number,
+    connectionMethodId: string,
+    session_type: 'persistent' | 'readonly',
+    models: ReadonlyModel[],
   ): Observable<Session> {
-    return this.http.post<Session>(`${this.BACKEND_URL_PREFIX}persistent`, {
+    return this.http.post<Session>(`${this.BACKEND_URL_PREFIX}`, {
       tool_id: toolId,
       version_id: versionId,
+      connection_method_id: connectionMethodId,
+      session_type: session_type,
+      provisioning: models,
     });
   }
 
+  getSessionConnectionInformation(
+    sessionId: string,
+  ): Observable<SessionConnectionInformation> {
+    return this.http.get<SessionConnectionInformation>(
+      `${this.BACKEND_URL_PREFIX}/${sessionId}/connection`,
+    );
+  }
+
   deleteSession(id: string): Observable<null> {
-    return this.http.delete<null>(this.BACKEND_URL_PREFIX + id);
+    return this.http.delete<null>(`${this.BACKEND_URL_PREFIX}/${id}`);
+  }
+
+  setConnectionInformation(
+    connectionInformation: SessionConnectionInformation,
+  ): void {
+    this.setLocalStorage(connectionInformation);
+    this.setCookies(connectionInformation);
+  }
+
+  setLocalStorage(connectionInformation: SessionConnectionInformation): void {
+    const localStorage = connectionInformation.local_storage;
+    for (const key in localStorage) {
+      this.localStorageService.setValue(key, localStorage[key]);
+    }
+  }
+
+  setCookies(connectionInformation: SessionConnectionInformation): void {
+    const cookies = connectionInformation.cookies;
+    for (const key in cookies) {
+      this.cookieService.put(key, cookies[key], {
+        path: new URL(connectionInformation.redirect_url).pathname,
+        sameSite: 'strict',
+      });
+    }
   }
 
   beautifyState(state: string | undefined): SessionState {

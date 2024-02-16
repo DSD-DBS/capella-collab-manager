@@ -36,11 +36,13 @@ export class ToolVersionComponent implements AfterViewInit {
     this._tool = value;
     this.toolVersions = undefined;
 
-    this.toolService
-      .getVersionsForTool(this._tool!.id)
-      .subscribe((versions: ToolVersion[]) => {
-        this.toolVersions = versions;
-      });
+    if (this._tool !== undefined) {
+      this.toolService
+        .getVersionsForTool(this._tool.id)
+        .subscribe((versions: ToolVersion[]) => {
+          this.toolVersions = versions;
+        });
+    }
   }
 
   @ViewChildren('editorRef') editorRefs: QueryList<EditorComponent> | undefined;

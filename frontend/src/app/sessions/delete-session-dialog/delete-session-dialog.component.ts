@@ -6,8 +6,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
-import { Session } from '../../schemes';
-import { SessionService } from '../service/session.service';
+import { Session, SessionService } from '../service/session.service';
 
 @Component({
   templateUrl: './delete-session-dialog.component.html',

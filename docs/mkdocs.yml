@@ -81,7 +81,9 @@ nav:
               - Link a TeamForCapella Repository: admin/teamforcapella/project-integration/project-integration.md
               - Update a TeamForCapella-based Model: admin/teamforcapella/migration/update.md
           - pure::variants: admin/settings/tools/pure_variants.md
-      - Tools: admin/settings/tools/index.md
+      - Tools:
+          - General: admin/settings/tools/index.md
+          - Configuration: admin/tools/configuration.md
       - Alerts: admin/alerts/create.md
       - Monitoring: admin/settings/monitoring.md
       - CI templates:

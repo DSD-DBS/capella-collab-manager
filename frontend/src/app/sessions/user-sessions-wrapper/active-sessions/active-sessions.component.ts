@@ -5,15 +5,15 @@
 
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import {
-  Session,
-  isReadonlySession,
-  isPersistentSession,
-} from 'src/app/schemes';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
 import { ConnectionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/connection-dialog/connection-dialog.component';
 import { DeleteSessionDialogComponent } from '../../delete-session-dialog/delete-session-dialog.component';
-import { SessionService } from '../../service/session.service';
+import {
+  Session,
+  SessionService,
+  isPersistentSession,
+  isReadonlySession,
+} from '../../service/session.service';
 import { UserSessionService } from '../../service/user-session.service';
 import { FileBrowserDialogComponent } from './file-browser-dialog/file-browser-dialog.component';
 
@@ -46,13 +46,9 @@ export class ActiveSessionsComponent {
   }
 
   openConnectDialog(session: Session): void {
-    if (session.jupyter_uri) {
-      window.open(session.jupyter_uri);
-    } else {
-      this.dialog.open(ConnectionDialogComponent, {
-        data: session,
-      });
-    }
+    this.dialog.open(ConnectionDialogComponent, {
+      data: session,
+    });
   }
 
   uploadFileDialog(session: Session): void {

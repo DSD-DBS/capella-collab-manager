@@ -3,7 +3,17 @@
 
 from capellacollab.tools import models as tools_models
 
-from . import interface, jupyter, persistent_workspace, pure_variants, t4c
+from . import (
+    guacamole,
+    http,
+    interface,
+    jupyter,
+    persistent_workspace,
+    provisioning,
+    pure_variants,
+    read_only_workspace,
+    t4c,
+)
 
 REGISTERED_HOOKS: dict[str, interface.HookRegistration] = {
     "jupyter": jupyter.JupyterIntegration(),
@@ -13,6 +23,10 @@ REGISTERED_HOOKS: dict[str, interface.HookRegistration] = {
 
 REGISTER_HOOKS_AUTO_USE: dict[str, interface.HookRegistration] = {
     "persistent_workspace": persistent_workspace.PersistentWorkspaceHook(),
+    "guacamole": guacamole.GuacamoleIntegration(),
+    "http": http.HTTPIntegration(),
+    "read_only_hook": read_only_workspace.ReadOnlyWorkspaceHook(),
+    "provisioning": provisioning.ProvisionWorkspaceHook(),
 }
 
 
