@@ -19,6 +19,7 @@ from capellacollab.projects.toolmodels.backups import core as backups_core
 from capellacollab.sessions import operators
 from capellacollab.tools import crud as tools_crud
 
+from .. import core as pipelines_core
 from . import crud, models
 
 log = logging.getLogger(__name__)
@@ -64,11 +65,8 @@ def _schedule_pending_jobs():
                         db, model.version_id
                     ),
                     command="backup",
-                    labels={
-                        "app.capellacollab/projectSlug": model.project.slug,
-                        "app.capellacollab/projectID": str(model.project.id),
-                        "app.capellacollab/modelSlug": model.slug,
-                        "app.capellacollab/modelID": str(model.id),
+                    labels=pipelines_core.get_pipeline_labels(model)
+                    | {
                         "app.capellacollab/pipelineID": str(
                             pending_run.pipeline.id
                         ),

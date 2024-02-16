@@ -40,6 +40,71 @@ class ToolIntegrations(pydantic.BaseModel):
     )
 
 
+RESOURCES_DOCS = (
+    "To find the right value, you can use the Kubernetes dashboard to monitor the resource usage of the tool. "
+    "Refer to the Kubernetes documentation for more details: "
+    "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits"
+)
+
+
+class CPUResources(pydantic.BaseModel):
+    requests: float = pydantic.Field(
+        default=0.4,
+        description=(
+            "Each session gets at least the specified amount of physical or virtual CPU cores. "
+            "An inaccurate value can lead to higher costs. " + RESOURCES_DOCS
+        ),
+        le=4,
+        gt=0,
+        examples=[0.5, 2],
+    )
+    limits: float = pydantic.Field(
+        default=2,
+        description=(
+            "Each session can not consume more than the specified amount of physical or virtual CPU cores. "
+            "A high value can lead to high costs, while a low value can lead to performance issues. "
+            + RESOURCES_DOCS
+        ),
+        le=8,
+        gt=0,
+        examples=[0.8, 3],
+    )
+
+
+class MemoryResources(pydantic.BaseModel):
+    requests: str = pydantic.Field(
+        default="1.6Gi",
+        description=(
+            "Each session gets at least the specified amount of memory. "
+            "An inaccurate value can lead to higher costs. " + RESOURCES_DOCS
+        ),
+        examples=["100Mi", "1.6Gi", "2Gi"],
+    )
+    limits: str = pydantic.Field(
+        default="6Gi",
+        description=(
+            "Each session is limited to the specified amount of memory. "
+            "If the session exceeds the limit, it will be terminated and recreated automatically. "
+            "A high value can lead to high costs, while a low value can lead unwanted session termination and potential data loss. "
+            + RESOURCES_DOCS
+        ),
+        examples=["200Mi", "6Gi", "10Gi"],
+    )
+
+
+class Resources(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True, extra="forbid")
+
+    cpu: CPUResources = pydantic.Field(
+        default=CPUResources(),
+        description="Configuration about the number of CPU cores that sessions can use.",
+    )
+    memory: MemoryResources = pydantic.Field(
+        default=MemoryResources(),
+        description="Configuration about the amount of memory that sessions can use.",
+    )
+
+
 class DatabaseTool(database.Base):
     __tablename__ = "tools"
 
@@ -48,7 +113,15 @@ class DatabaseTool(database.Base):
     name: orm.Mapped[str]
 
     integrations: orm.Mapped[ToolIntegrations] = orm.mapped_column(
-        decorator.PydanticDecorator(ToolIntegrations), nullable=False
+        decorator.PydanticDecorator(ToolIntegrations),
+        nullable=False,
+        default_factory=ToolIntegrations,
+    )
+
+    resources: orm.Mapped[Resources] = orm.mapped_column(
+        decorator.PydanticDecorator(Resources),
+        nullable=False,
+        default_factory=Resources,
     )
 
     versions: orm.Mapped[list[DatabaseVersion]] = orm.relationship(
@@ -148,16 +221,17 @@ class DatabaseVersion(database.Base):
 
     name: orm.Mapped[str]
 
-    config: orm.Mapped[ToolVersionConfiguration] = orm.mapped_column(
-        decorator.PydanticDecorator(ToolVersionConfiguration)
-    )
-
     tool_id: orm.Mapped[int | None] = orm.mapped_column(
         sa.ForeignKey("tools.id"),
         init=False,
     )
     tool: orm.Mapped[DatabaseTool] = orm.relationship(
         back_populates="versions"
+    )
+
+    config: orm.Mapped[ToolVersionConfiguration] = orm.mapped_column(
+        decorator.PydanticDecorator(ToolVersionConfiguration),
+        default_factory=ToolVersionConfiguration,
     )
 
 
@@ -179,6 +253,7 @@ class CreateTool(pydantic.BaseModel):
 
     name: str = pydantic.Field(default="", min_length=2, max_length=30)
     integrations: ToolIntegrations = pydantic.Field(default=ToolIntegrations())
+    resources: Resources = pydantic.Field(default=Resources())
 
 
 class ToolBase(CreateTool, decorator.PydanticDatabaseModel):

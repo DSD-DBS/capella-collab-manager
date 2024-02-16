@@ -8,7 +8,9 @@ import pytest
 from kubernetes import client
 from kubernetes.client import exceptions
 
+from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.operators import k8s
+from capellacollab.tools import models as tools_models
 
 
 def test_start_session(monkeypatch: pytest.MonkeyPatch):
@@ -58,12 +60,13 @@ def test_start_session(monkeypatch: pytest.MonkeyPatch):
         create_namespaced_pod_disruption_budget,
     )
 
+    tool = tools_models.DatabaseTool(name="testtool")
     session = operator.start_session(
         image="hello-world",
         username="testuser",
-        session_type="persistent",
-        tool_name="test tool",
-        version_name="test version",
+        session_type=sessions_models.WorkspaceType.PERSISTENT,
+        tool=tool,
+        version=tools_models.DatabaseVersion(name="testversion", tool=tool),
         environment={},
         ports={"rdp": 3389},
         volumes=[],
@@ -111,6 +114,7 @@ def test_create_job(monkeypatch: pytest.MonkeyPatch):
         command="fakecmd",
         labels={"key": "value"},
         environment={"ENVVAR": "value"},
+        tool_resources=tools_models.Resources(),
     )
 
     assert result
@@ -127,6 +131,8 @@ def test_create_cronjob(monkeypatch: pytest.MonkeyPatch):
         image="fakeimage",
         command="fakecmd",
         environment={"ENVVAR": "value"},
+        labels={},
+        tool_resources=tools_models.Resources(),
     )
 
     assert result
