@@ -6,6 +6,7 @@
 import { Injectable } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { UserRole } from 'src/app/services/user/user.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -40,21 +41,21 @@ export class NavBarService {
     },
     {
       name: 'Prometheus',
-      href: '/prometheus/graph',
+      href: environment.prometheus_url,
       target: '_blank',
       icon: 'open_in_new',
       requiredRole: 'administrator',
     },
     {
       name: 'Grafana',
-      href: '/grafana/',
+      href: environment.grafana_url,
       target: '_blank',
       icon: 'open_in_new',
       requiredRole: 'administrator',
     },
     {
       name: 'Documentation',
-      href: '/docs/',
+      href: environment.docs_url,
       target: '_blank',
       icon: 'open_in_new',
       requiredRole: 'user',
