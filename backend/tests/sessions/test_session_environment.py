@@ -6,6 +6,7 @@ import logging
 import pytest
 
 from capellacollab import config
+from capellacollab.config import models as config_models
 from capellacollab.sessions import crud as sessions_crud
 from capellacollab.sessions import hooks as sessions_hooks
 from capellacollab.sessions import models as sessions_models
@@ -102,14 +103,12 @@ def fixture_patch_irrelevant_request_session_calls(
         sessions_crud, "update_session_config", lambda *args, **kwargs: None
     )
 
-    monkeypatch.setitem(
+    monkeypatch.setattr(
         config.config,
         "general",
-        {
-            "host": "localhost",
-            "port": 8080,
-            "scheme": "http",
-        },
+        config_models.GeneralConfig(
+            host="localhost", port=8080, scheme="http"
+        ),
     )
 
 

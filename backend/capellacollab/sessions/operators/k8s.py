@@ -24,6 +24,7 @@ from kubernetes import client
 from kubernetes.client import exceptions
 
 from capellacollab.config import config
+from capellacollab.config import models as config_models
 from capellacollab.sessions import models as sessions_models
 from capellacollab.tools import models as tools_models
 
@@ -38,37 +39,17 @@ SESSIONS_KILLED = prometheus_client.Counter(
     "backend_sessions_killed", "Sessions killed, either by user or timeout"
 )
 
-external_registry: str = config["docker"]["externalRegistry"]
+cfg: config_models.K8sConfig = config.k8s
 
-cfg: dict[str, t.Any] = config["k8s"]
+namespace: str = cfg.namespace
+loki_enabled: bool = cfg.promtail.loki_enabled
 
-namespace: str = cfg["namespace"]
-storage_access_mode: str = cfg["storageAccessMode"]
-storage_class_name: str = cfg["storageClassName"]
-
-loki_enabled: bool = cfg["promtail"]["lokiEnabled"]
-
-
-def deserialize_kubernetes_resource(content: t.Any, resource: str):
-    # This is needed as "workaround" for the deserialize function
-    class FakeKubeResponse:
-        def __init__(self, obj):
-            self.data = json.dumps(obj)
-
-    return client.ApiClient().deserialize(FakeKubeResponse(content), resource)
-
-
-# Resolve securityContext and pullPolicy
-image_pull_policy: str = cfg.get("cluster", {}).get(
-    "imagePullPolicy", "Always"
-)
+image_pull_policy: str = cfg.cluster.image_pull_policy
 
 pod_security_context = None
-if _pod_security_context := cfg.get("cluster", {}).get(
-    "podSecurityContext", None
-):
-    pod_security_context = deserialize_kubernetes_resource(
-        _pod_security_context, client.V1PodSecurityContext.__name__
+if _pod_security_context := cfg.cluster.pod_security_context:
+    pod_security_context = client.V1PodSecurityContext(
+        **_pod_security_context.__dict__
     )
 
 
@@ -91,9 +72,9 @@ class KubernetesOperator:
 
     def load_config(self) -> None:
         self.kubectl_arguments = []
-        if cfg.get("context", None):
-            self.kubectl_arguments += ["--context", cfg["context"]]
-            kubernetes.config.load_config(context=cfg["context"])
+        if cfg.context:
+            self.kubectl_arguments += ["--context", cfg.context]
+            kubernetes.config.load_config(context=cfg.context)
         else:
             kubernetes.config.load_incluster_config()
 
@@ -521,7 +502,7 @@ class KubernetesOperator:
             containers.append(
                 client.V1Container(
                     name="promtail",
-                    image=f"{external_registry}/grafana/promtail",
+                    image=f"{config.docker.external_registry}/grafana/promtail",
                     args=[
                         "--config.file=/etc/promtail/promtail.yaml",
                         "-log-config-reverse-order",
@@ -581,7 +562,7 @@ class KubernetesOperator:
 
         if overwrite:
             self.delete_secret(name)
-        return self.v1_core.create_namespaced_secret(cfg["namespace"], secret)
+        return self.v1_core.create_namespaced_secret(cfg.namespace, secret)
 
     def _create_disruption_budget(
         self,
@@ -662,8 +643,8 @@ class KubernetesOperator:
             api_version="v1",
             metadata=client.V1ObjectMeta(name=name, labels=labels),
             spec=client.V1PersistentVolumeClaimSpec(
-                access_modes=[storage_access_mode],
-                storage_class_name=storage_class_name,
+                access_modes=[cfg.storage_access_mode],
+                storage_class_name=cfg.storage_class_name,
                 resources=client.V1ResourceRequirements(
                     requests={"storage": size}
                 ),
@@ -756,18 +737,14 @@ class KubernetesOperator:
                 "promtail.yaml": yaml.dump(
                     {
                         "server": {
-                            "http_listen_port": cfg["promtail"]["serverPort"],
+                            "http_listen_port": cfg.promtail.server_port,
                         },
                         "clients": [
                             {
-                                "url": cfg["promtail"]["lokiUrl"] + "/push",
+                                "url": cfg.promtail.loki_url + "/push",
                                 "basic_auth": {
-                                    "username": cfg["promtail"][
-                                        "lokiUsername"
-                                    ],
-                                    "password": cfg["promtail"][
-                                        "lokiPassword"
-                                    ],
+                                    "username": cfg.promtail.loki_username,
+                                    "password": cfg.promtail.loki_password,
                                 },
                             }
                         ],
@@ -995,7 +972,7 @@ class KubernetesOperator:
                 self.v1_core.connect_get_namespaced_pod_exec,
                 pod_name,
                 container=_id,
-                namespace=cfg["namespace"],
+                namespace=cfg.namespace,
                 command=exec_command,
                 stderr=True,
                 stdin=False,

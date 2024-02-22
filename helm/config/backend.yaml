@@ -20,7 +20,7 @@ k8s:
 
   promtail:
     lokiEnabled: {{ .Values.loki.enabled }}
-    lokiUrl: http://loki-gateway.{{- .Release.Namespace -}}.svc.cluster.local/loki/api/v1
+    lokiURL: http://loki-gateway.{{- .Release.Namespace -}}.svc.cluster.local/loki/api/v1
     lokiUsername: {{ .Values.definitions.loki.username }}
     lokiPassword: {{ .Values.definitions.loki.password }}
     serverPort: 3101
@@ -29,7 +29,6 @@ general:
   host: "{{ .Values.general.host }}"
   port: "{{ .Values.general.port }}"
   scheme: "{{ .Values.general.scheme }}"
-  wildcardHost: {{ .Values.general.wildcardHost }}
 
 extensions:
   guacamole:
@@ -70,8 +69,6 @@ authentication:
     client:
       id: "{{ .Values.backend.authentication.azure.client.id }}"
       secret: "{{ .Values.backend.authentication.azure.client.secret }}"
-
-    redirectURI: "{{ .Values.backend.authentication.azure.redirectURI }}"
   {{ end }}
 
 prometheus:

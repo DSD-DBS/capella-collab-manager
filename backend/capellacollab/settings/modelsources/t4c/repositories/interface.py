@@ -128,7 +128,7 @@ def make_request(
         method,
         url,
         auth=auth.HTTPBasicAuth(instance.username, instance.password),
-        timeout=config["requests"]["timeout"],
+        timeout=config.requests.timeout,
         **kwargs,
     )
 

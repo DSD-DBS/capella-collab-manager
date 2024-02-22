@@ -52,20 +52,20 @@ stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(core_logging.CustomFormatter())
 
 timed_rotating_file_handler = core_logging.CustomTimedRotatingFileHandler(
-    str(config["logging"]["logPath"]) + "backend.log"
+    str(config.logging.log_path) + "backend.log"
 )
 timed_rotating_file_handler.setFormatter(
     core_logging.CustomFormatter(colored_output=False)
 )
 
 logging.basicConfig(
-    level=config["logging"]["level"],
+    level=config.logging.level,
     handlers=[stream_handler, timed_rotating_file_handler],
 )
 
 
 async def startup():
-    migration.migrate_db(engine, config["database"]["url"])
+    migration.migrate_db(engine, config.database.url)
     logging.info("Migrations done - Server is running")
 
     # This is needed to load the Kubernetes configuration at startup

@@ -2,9 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
-import typing as t
 
-from capellacollab.config import config
 from capellacollab.core import models as core_models
 from capellacollab.tools import models as tools_models
 
@@ -13,17 +11,7 @@ from .. import util as sessions_util
 from . import interface
 
 
-class GeneralConfigEnvironment(t.TypedDict):
-    scheme: str
-    host: str
-    port: str
-    wildcardHost: t.NotRequired[bool | None]
-
-
 class HTTPIntegration(interface.HookRegistration):
-    def __init__(self):
-        self._general_conf: GeneralConfigEnvironment = config["general"]
-
     def session_connection_hook(  # type: ignore[override]
         self,
         db_session: sessions_models.DatabaseSession,

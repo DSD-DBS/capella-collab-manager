@@ -23,7 +23,7 @@ def get_t4c_status(
             auth=requests_auth.HTTPBasicAuth(
                 instance.username, instance.password
             ),
-            timeout=config.config["requests"]["timeout"],
+            timeout=config.config.requests.timeout,
         )
     except requests.Timeout:
         raise fastapi.HTTPException(

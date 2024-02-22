@@ -24,7 +24,7 @@ from . import crud, models
 
 log = logging.getLogger(__name__)
 
-PIPELINES_TIMEOUT = config.get("pipelines", {}).get("timeout", 60)
+PIPELINES_TIMEOUT = config.pipelines.timeout
 
 
 async def schedule_refresh_and_trigger_pipeline_jobs(interval=5):

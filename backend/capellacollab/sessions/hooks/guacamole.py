@@ -32,7 +32,7 @@ class GuacamoleConfig(t.TypedDict):
 
 
 class GuacamoleIntegration(interface.HookRegistration):
-    _baseURI = config["extensions"]["guacamole"]["baseURI"]
+    _baseURI = config.extensions.guacamole.base_uri
     _prefix = f"{_baseURI}/api/session/data/postgresql"
     _headers = {"Content-Type": "application/x-www-form-urlencoded"}
     _proxies = {
@@ -99,8 +99,7 @@ class GuacamoleIntegration(interface.HookRegistration):
         )
         return interface.SessionConnectionHookResult(
             local_storage={"GUAC_AUTH": json.dumps(token)},
-            redirect_url=config["extensions"]["guacamole"]["publicURI"]
-            + "/#/",
+            redirect_url=config.extensions.guacamole.public_uri + "/#/",
         )
 
     def pre_session_termination_hook(  # type: ignore[override]
@@ -129,11 +128,11 @@ class GuacamoleIntegration(interface.HookRegistration):
         r = requests.post(
             f"{cls._baseURI}/api/tokens",
             auth=requests_auth.HTTPBasicAuth(
-                config["extensions"]["guacamole"]["username"],
-                config["extensions"]["guacamole"]["password"],
+                config.extensions.guacamole.username,
+                config.extensions.guacamole.password,
             ),
             headers=cls._headers,
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
             proxies=cls._proxies,
         )
         try:
@@ -158,7 +157,7 @@ class GuacamoleIntegration(interface.HookRegistration):
             f"{cls._baseURI}/api/tokens",
             auth=requests_auth.HTTPBasicAuth(username, password),
             headers=cls._headers,
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
             proxies=cls._proxies,
         )
         r.raise_for_status()
@@ -178,7 +177,7 @@ class GuacamoleIntegration(interface.HookRegistration):
                 "password": password,
                 "attributes": {},
             },
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
             proxies=cls._proxies,
         )
         r.raise_for_status()
@@ -197,7 +196,7 @@ class GuacamoleIntegration(interface.HookRegistration):
                     "value": "READ",
                 }
             ],
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
             proxies=cls._proxies,
         )
         r.raise_for_status()
@@ -206,7 +205,7 @@ class GuacamoleIntegration(interface.HookRegistration):
     def _delete_user(cls, token: str, username: str):
         r = requests.delete(
             f"{cls._prefix}/users/{username}?token={token}",
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
             proxies=cls._proxies,
         )
         try:
@@ -224,7 +223,7 @@ class GuacamoleIntegration(interface.HookRegistration):
     def _delete_connection(cls, token: str, connection_name: str):
         r = requests.delete(
             f"{cls._prefix}/connections/{connection_name}?token={token}",
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
             proxies=cls._proxies,
         )
         try:
@@ -262,7 +261,7 @@ class GuacamoleIntegration(interface.HookRegistration):
                 },
                 "attributes": {},
             },
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
             proxies=cls._proxies,
         )
 

@@ -11,16 +11,14 @@ import yaml
 from . import exceptions
 
 log = logging.getLogger(__name__)
+CONFIG_FILE_NAME = "config.yaml"
 
 config_locations: list[pathlib.Path] = [
-    pathlib.Path(__file__).parents[2] / "config" / "config.yaml",
+    pathlib.Path(__file__).parents[0] / CONFIG_FILE_NAME,
+    pathlib.Path(__file__).parents[2] / "config" / CONFIG_FILE_NAME,
     pathlib.Path(appdirs.user_config_dir("capellacollab", "db"))
-    / "config.yaml",
-    pathlib.Path("/etc/capellacollab") / "config.yaml",
-]
-
-config_fallback_locations: list[pathlib.Path] = [
-    pathlib.Path(__file__).parents[2] / "config" / "config_template.yaml",
+    / CONFIG_FILE_NAME,
+    pathlib.Path("/etc/capellacollab") / CONFIG_FILE_NAME,
 ]
 
 
@@ -38,28 +36,27 @@ class UniqueKeyLoader(yaml.SafeLoader):
         return super().construct_mapping(node, deep)
 
 
+def does_config_exist() -> bool:
+    for loc in config_locations:
+        if loc.exists():
+            return True
+
+    return False
+
+
 def load_yaml() -> dict:
     log.debug("Searching for configuration files...")
     for loc in config_locations:
         if loc.exists():
-            log.info("Loading configuration file at location %s", str(loc))
-            return yaml.load(loc.open(), UniqueKeyLoader)
+            log.info(
+                "Loading configuration file at location %s",
+                str(loc.absolute()),
+            )
+            with loc.open(encoding="utf-8") as f:
+                return yaml.load(f, UniqueKeyLoader)
         else:
             log.debug(
                 "Didn't find a configuration file at location %s", str(loc)
             )
 
-    for loc in config_fallback_locations:
-        if loc.exists():
-            log.warning(
-                "Loading fallback configuration file at location %s", str(loc)
-            )
-            return yaml.safe_load(loc.open())
-
     raise FileNotFoundError("config.yaml")
-
-
-def load_config_schema() -> dict:
-    return yaml.safe_load(
-        (pathlib.Path(__file__).parents[0] / "config_schema.yaml").read_bytes()
-    )

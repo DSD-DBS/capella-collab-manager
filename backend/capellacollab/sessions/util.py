@@ -4,11 +4,10 @@
 import logging
 import random
 import string
-import typing as t
 
 from sqlalchemy import orm
 
-from capellacollab import config
+from capellacollab.config import config
 from capellacollab.core import credentials
 from capellacollab.core import models as core_models
 from capellacollab.sessions import hooks
@@ -52,8 +51,6 @@ def get_environment(
     connection_method: tools_models.ToolSessionConnectionMethod,
     session_id: str,
 ) -> models.SessionEnvironment:
-    general_cfg: dict[str, t.Any] = config.config["general"]
-
     if isinstance(connection_method, tools_models.HTTPConnectionMethod):
         container_port = connection_method.ports.http
     elif isinstance(connection_method, tools_models.GuacamoleConnectionMethod):
@@ -69,10 +66,10 @@ def get_environment(
         "CAPELLACOLLAB_SESSION_REQUESTER_USERNAME": user.name,
         "CAPELLACOLLAB_SESSIONS_BASE_PATH": f"/session/{session_id}",
         "CAPELLACOLLAB_SESSION_CONNECTION_METHOD_TYPE": connection_method.type,
-        "CAPELLACOLLAB_ORIGIN_BASE_URL": f"{general_cfg.get('scheme')}://{general_cfg.get('host')}:{general_cfg.get('port')}",
-        "CAPELLACOLLAB_SESSIONS_SCHEME": general_cfg["scheme"],
-        "CAPELLACOLLAB_SESSIONS_HOST": general_cfg["host"],
-        "CAPELLACOLLAB_SESSIONS_PORT": str(general_cfg["port"]),
+        "CAPELLACOLLAB_ORIGIN_BASE_URL": f"{config.general.scheme}://{config.general.host}:{config.general.port}",
+        "CAPELLACOLLAB_SESSIONS_SCHEME": config.general.scheme,
+        "CAPELLACOLLAB_SESSIONS_HOST": config.general.host,
+        "CAPELLACOLLAB_SESSIONS_PORT": str(config.general.port),
         "CAPELLACOLLAB_SESSION_CONTAINER_PORT": str(container_port),
     }
 

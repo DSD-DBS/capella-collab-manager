@@ -89,6 +89,12 @@ def test_update_general_configuration(client: testclient.TestClient):
         },
     )
 
+    assert response.status_code == 200
+    assert (
+        response.json()["metadata"]["provider"]
+        == "Still the best team in the world!"
+    )
+
 
 @pytest.mark.usefixtures("admin")
 def test_update_general_configuration_additional_properties_fails(

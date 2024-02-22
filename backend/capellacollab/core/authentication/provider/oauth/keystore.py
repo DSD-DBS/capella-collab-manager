@@ -12,12 +12,16 @@ import jwt
 import requests
 
 from capellacollab.config import config
+from capellacollab.config import models as config_models
 from capellacollab.core.authentication.provider import models
 
 from .. import models as provider_models
 
 log = logging.getLogger(__name__)
-cfg = config["authentication"]["oauth"]
+assert isinstance(
+    config.authentication, config_models.OAuthAuthenticationConfig
+)
+cfg = config.authentication.oauth
 
 
 # Copied and adapted from https://github.com/marpaia/jwks/blob/master/jwks/jwks.py:
@@ -50,9 +54,7 @@ class _KeyStore:
         if not self.jwks_uri:
             self.jwks_uri = self.get_jwks_uri()
         try:
-            resp = requests.get(
-                self.jwks_uri, timeout=config["requests"]["timeout"]
-            )
+            resp = requests.get(self.jwks_uri, timeout=config.requests.timeout)
         except Exception:
             log.error("Could not retrieve JWKS data from %s", self.jwks_uri)
             return
@@ -90,10 +92,10 @@ class _KeyStore:
             return self.key_for_token(token, in_retry=1)
 
 
-def _get_jwks_uri(wellknown_endpoint=cfg["endpoints"]["wellKnown"]):
+def _get_jwks_uri(wellknown_endpoint=cfg.endpoints.well_known):
     openid_config = requests.get(
         wellknown_endpoint,
-        timeout=config["requests"]["timeout"],
+        timeout=config.requests.timeout,
     ).json()
     return openid_config["jwks_uri"]
 

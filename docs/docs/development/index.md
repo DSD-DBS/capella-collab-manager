@@ -39,14 +39,11 @@ reloading of the frontend and backend.
 ### Backend Configuration
 
 The backend uses various configuration settings. You can find them in the
-`config` directory. Please copy the file `config_template.yaml` to
-`config.yaml` and adjust the values.
+`backend/config` directory. A `config.yaml` with default values will be
+generated the first time you run the application.
 
 _Hint_: If you already have the k8d cluster running and if you have the
 application deployed, then no configuration values need to be adjusted.
-
-_Hint_: You can run `python -m capellacollab.config.diff` after each update to
-check if your config is up to date.
 
 ### Getting Started
 
