@@ -191,7 +191,7 @@ Own collab manager card styles
 */
 
 .collab-card {
-  @apply rounded-md p-3 shadow-md;
+  @apply rounded-md bg-white p-3 shadow-md;
 }
 
 /*
@@ -278,7 +278,11 @@ Angular Material Card Styles
 
 /* https://github.com/angular/components/issues/26176 */
 .mat-mdc-button-touch-target {
-  display: none;
+  @apply hidden;
+}
+
+.mat-mdc-tab {
+  @apply !tracking-normal;
 }
 
 /*

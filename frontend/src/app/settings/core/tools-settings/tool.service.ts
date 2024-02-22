@@ -10,12 +10,12 @@ import { environment } from 'src/environments/environment';
 
 export type CreateTool = {
   name: string;
-};
-
-export type Tool = CreateTool & {
-  id: number;
   integrations: ToolIntegrations;
 };
+
+export type Tool = {
+  id: number;
+} & CreateTool;
 
 export type ToolIntegrations = {
   t4c: boolean | null;
@@ -23,24 +23,25 @@ export type ToolIntegrations = {
   jupyter: boolean | null;
 };
 
-export type ToolVersion = {
-  id: number;
+export type CreateToolVersion = {
   name: string;
   is_recommended: boolean;
   is_deprecated: boolean;
 };
 
+export type ToolVersion = {
+  id: number;
+} & CreateToolVersion;
+
 export type ToolVersionWithTool = ToolVersion & { tool: Tool };
 
-export type PatchToolVersion = {
-  isRecommended: boolean;
-  isDeprecated: boolean;
+export type CreateToolNature = {
+  name: string;
 };
 
-export interface ToolNature {
+export type ToolNature = {
   id: number;
-  name: string;
-}
+} & CreateToolNature;
 
 export type ToolExtended = {
   natures: ToolNature[];
@@ -78,14 +79,20 @@ export class ToolService {
     );
   }
 
-  createTool(name: string): Observable<Tool> {
-    return this.http.post<Tool>(this.baseURL, { name });
+  getToolByID(id: string): Observable<Tool> {
+    return this.http.get<Tool>(`${this.baseURL}/${id}`);
   }
 
-  updateTool(toolId: number, toolName: string): Observable<Tool> {
-    return this.http.put<Tool>(`${this.baseURL}/${toolId}`, {
-      name: toolName,
-    });
+  getDefaultTool(): Observable<CreateTool> {
+    return this.http.get<CreateTool>(`${this.baseURL}/default`);
+  }
+
+  createTool(tool: CreateTool): Observable<Tool> {
+    return this.http.post<Tool>(this.baseURL, tool);
+  }
+
+  updateTool(toolId: number, value: Tool): Observable<Tool> {
+    return this.http.put<Tool>(`${this.baseURL}/${toolId}`, value);
   }
 
   deleteTool(tool_id: number): Observable<void> {
@@ -96,23 +103,28 @@ export class ToolService {
     return this.http.get<ToolVersion[]>(`${this.baseURL}/${toolId}/versions`);
   }
 
-  createVersionForTool(toolId: number, name: string): Observable<ToolVersion> {
-    return this.http.post<ToolVersion>(`${this.baseURL}/${toolId}/versions`, {
-      name,
-    });
+  getDefaultVersion(): Observable<ToolVersion> {
+    return this.http.get<ToolVersion>(`${this.baseURL}/-/versions/default`);
   }
 
-  patchToolVersion(
+  createVersionForTool(
+    toolId: number,
+    toolVersion: CreateToolVersion,
+  ): Observable<ToolVersion> {
+    return this.http.post<ToolVersion>(
+      `${this.baseURL}/${toolId}/versions`,
+      toolVersion,
+    );
+  }
+
+  updateToolVersion(
     toolId: number,
     versionId: number,
-    updatedToolVersion: PatchToolVersion,
+    updatedToolVersion: CreateToolVersion,
   ) {
-    return this.http.patch<ToolVersion>(
+    return this.http.put<ToolVersion>(
       `${this.baseURL}/${toolId}/versions/${versionId}`,
-      {
-        is_recommended: updatedToolVersion.isRecommended,
-        is_deprecated: updatedToolVersion.isDeprecated,
-      },
+      updatedToolVersion,
     );
   }
 
@@ -129,10 +141,29 @@ export class ToolService {
     return this.http.get<ToolVersion[]>(`${this.baseURL}/${toolId}/natures`);
   }
 
-  createNatureForTool(toolId: number, name: string): Observable<ToolNature> {
-    return this.http.post<ToolNature>(`${this.baseURL}/${toolId}/natures`, {
-      name,
-    });
+  getDefaultNature(): Observable<ToolVersion> {
+    return this.http.get<ToolVersion>(`${this.baseURL}/-/natures/default`);
+  }
+
+  createNatureForTool(
+    toolId: number,
+    toolNature: CreateToolNature,
+  ): Observable<ToolNature> {
+    return this.http.post<ToolNature>(
+      `${this.baseURL}/${toolId}/natures`,
+      toolNature,
+    );
+  }
+
+  updateToolNature(
+    toolId: number,
+    natureID: number,
+    updatedToolNature: CreateToolNature,
+  ) {
+    return this.http.put<ToolVersion>(
+      `${this.baseURL}/${toolId}/natures/${natureID}`,
+      updatedToolNature,
+    );
   }
 
   deleteNatureForTool(
@@ -141,22 +172,6 @@ export class ToolService {
   ): Observable<void> {
     return this.http.delete<void>(
       `${this.baseURL}/${toolId}/natures/${toolNature.id}`,
-    );
-  }
-
-  getDockerimagesForTool(toolId: number): Observable<ToolDockerimages> {
-    return this.http.get<ToolDockerimages>(
-      `${this.baseURL}/${toolId}/dockerimages`,
-    );
-  }
-
-  updateDockerimagesForTool(
-    toolId: number,
-    dockerimages: ToolDockerimages,
-  ): Observable<ToolDockerimages> {
-    return this.http.put<ToolDockerimages>(
-      `${this.baseURL}/${toolId}/dockerimages`,
-      dockerimages,
     );
   }
 

@@ -35,7 +35,15 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              {
+                "glob": "codicon.ttf",
+                "input": "./node_modules/monaco-editor/min/vs/base/browser/ui/codicons/codicon/",
+                "output": "/"
+              }
+            ],
             "styles": [
               "node_modules/monaco-editor/min/vs/editor/editor.main.css",
               "src/custom-theme.scss",
@@ -129,7 +137,15 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              {
+                "glob": "codicon.ttf",
+                "input": "./node_modules/monaco-editor/min/vs/base/browser/ui/codicons/codicon/",
+                "output": "/"
+              }
+            ],
             "styles": [
               "node_modules/monaco-editor/min/vs/editor/editor.main.css",
               "src/styles.css"

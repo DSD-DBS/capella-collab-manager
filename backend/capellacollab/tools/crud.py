@@ -6,8 +6,7 @@ from collections import abc
 import sqlalchemy as sa
 from sqlalchemy import exc, orm
 
-from capellacollab.core import database
-from capellacollab.tools.integrations import models as integrations_models
+from capellacollab.tools import models as tools_models
 
 from . import exceptions, models
 
@@ -35,43 +34,21 @@ def get_tool_by_name(
 
 
 def create_tool(
-    db: orm.Session, tool: models.DatabaseTool
+    db: orm.Session, tool: models.CreateTool
 ) -> models.DatabaseTool:
-    tool.integrations = integrations_models.DatabaseToolIntegrations(
-        tool=tool, pure_variants=False, t4c=False, jupyter=False
+    database_tool = tools_models.DatabaseTool(
+        name=tool.name, integrations=tool.integrations
     )
-    db.add(tool)
+    db.add(database_tool)
     db.commit()
-    return tool
+    return database_tool
 
 
-def create_tool_with_name(
-    db: orm.Session, tool_name: str
+def update_tool(
+    db: orm.Session, tool: models.DatabaseTool, updated_tool: models.CreateTool
 ) -> models.DatabaseTool:
-    return create_tool(
-        db, tool=models.DatabaseTool(name=tool_name, docker_image_template="")
-    )
-
-
-def update_tool_name(
-    db: orm.Session, tool: models.DatabaseTool, tool_name: str
-) -> models.DatabaseTool:
-    tool.name = tool_name
-    db.commit()
-    return tool
-
-
-def update_tool_dockerimages(
-    db: orm.Session,
-    tool: models.DatabaseTool,
-    patch_tool: models.PatchToolDockerimage,
-) -> models.DatabaseTool:
-    if patch_tool.persistent:
-        tool.docker_image_template = patch_tool.persistent
-    if patch_tool.readonly:
-        tool.readonly_docker_image_template = patch_tool.readonly
-    if patch_tool.backup:
-        tool.docker_image_backup_template = patch_tool.backup
+    tool.name = updated_tool.name
+    tool.integrations = updated_tool.integrations
     db.commit()
     return tool
 
@@ -141,9 +118,10 @@ def get_version_by_tool_id_version_name(
 def update_version(
     db: orm.Session,
     version: models.DatabaseVersion,
-    patch_version: models.UpdateToolVersion,
+    updated_version: models.CreateToolVersion,
 ) -> models.DatabaseVersion:
-    database.patch_database_with_pydantic_object(version, patch_version)
+    version.name = updated_version.name
+    version.config = updated_version.config
 
     db.commit()
     return version
@@ -152,14 +130,11 @@ def update_version(
 def create_version(
     db: orm.Session,
     tool: models.DatabaseTool,
-    name: str,
-    is_recommended: bool = False,
-    is_deprecated: bool = False,
+    tool_version: models.CreateToolVersion,
 ) -> models.DatabaseVersion:
     version = models.DatabaseVersion(
-        name=name,
-        is_recommended=is_recommended,
-        is_deprecated=is_deprecated,
+        name=tool_version.name,
+        config=tool_version.config,
         tool=tool,
     )
     db.add(version)
@@ -222,6 +197,17 @@ def get_natures_by_tool_id(
     )
 
 
+def update_nature(
+    db: orm.Session,
+    nature: models.DatabaseNature,
+    updated_version: models.CreateToolNature,
+) -> models.DatabaseNature:
+    nature.name = updated_version.name
+
+    db.commit()
+    return nature
+
+
 def create_nature(
     db: orm.Session, tool: models.DatabaseTool, name: str
 ) -> models.DatabaseNature:
@@ -261,11 +247,11 @@ def get_backup_image_for_tool_version(db: orm.Session, version_id: int) -> str:
     if not (version := get_version_by_id(db, version_id)):
         raise exceptions.ToolVersionNotFoundError(version_id)
 
-    backup_image_template = version.tool.docker_image_backup_template
+    backup_image_template = version.config.backups.image
 
     if not backup_image_template:
         raise exceptions.ToolImageNotFoundError(
             tool_id=version.tool.id, image_name="backup"
         )
 
-    return backup_image_template.replace("$version", version.name)
+    return backup_image_template.format(version=version.name)

@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, Input, OnInit } from '@angular/core';
 import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
-import { MatSelectionListChange } from '@angular/material/list';
-import { finalize, switchMap, tap } from 'rxjs';
+  AfterViewInit,
+  Component,
+  Input,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
+import { MatTabGroup } from '@angular/material/tabs';
+import { EditorComponent } from 'src/app/helpers/editor/editor.component';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
-  PatchToolVersion,
+  CreateToolVersion,
   Tool,
   ToolService,
   ToolVersion,
@@ -26,7 +26,7 @@ import {
   templateUrl: './tool-version.component.html',
   styleUrls: ['./tool-version.component.css'],
 })
-export class ToolVersionComponent implements OnInit {
+export class ToolVersionComponent implements AfterViewInit {
   _tool?: Tool = undefined;
 
   @Input()
@@ -34,7 +34,7 @@ export class ToolVersionComponent implements OnInit {
     if (this._tool && this._tool.id === value?.id) return;
 
     this._tool = value;
-    this.toolVersions = [];
+    this.toolVersions = undefined;
 
     this.toolService
       .getVersionsForTool(this._tool!.id)
@@ -43,103 +43,79 @@ export class ToolVersionComponent implements OnInit {
       });
   }
 
-  toolVersions: ToolVersion[] = [];
+  @ViewChildren('editorRef') editorRefs: QueryList<EditorComponent> | undefined;
 
-  constructor(private toolService: ToolService) {}
+  @ViewChild('tabGroup', { static: false }) tabGroup: MatTabGroup | undefined;
 
-  loadingMetadata = false;
-  toolVersionForm = new FormGroup({
-    name: new FormControl('', [
-      Validators.required,
-      this.uniqueNameValidator(),
-    ]),
-  });
+  toolVersions: ToolVersion[] | undefined = undefined;
 
-  toolVersionMetadataForm = new FormGroup({
-    isDeprecated: new FormControl(false),
-    isRecommended: new FormControl(false),
-  });
+  constructor(
+    private toolService: ToolService,
+    private toastService: ToastService,
+  ) {}
 
-  selectedToolVersion: ToolVersion | undefined = undefined;
-
-  isToolVersionSelected(toolVersion: ToolVersion) {
-    return toolVersion.id === this.selectedToolVersion?.id;
-  }
-
-  onSelectionChange(event: MatSelectionListChange) {
-    this.selectedToolVersion = event.options[0].value;
-    this.toolVersionMetadataForm.patchValue({
-      isDeprecated: this.selectedToolVersion?.is_deprecated,
-      isRecommended: this.selectedToolVersion?.is_recommended,
+  ngAfterViewInit(): void {
+    this.toolService.getDefaultVersion().subscribe((version) => {
+      this.getEditorForContext('new')!.value = version;
     });
   }
 
-  ngOnInit(): void {
-    this.onToolVersionMetadataFormChanges();
+  getEditorForContext(context: string) {
+    return this.editorRefs?.find((editor) => editor.context === context);
   }
 
-  onToolVersionMetadataFormChanges(): void {
-    this.toolVersionMetadataForm.valueChanges
-      .pipe(
-        tap(() => {
-          this.loadingMetadata = true;
-        }),
-        switchMap(() => {
-          return this.toolService.patchToolVersion(
-            this._tool!.id,
-            this.selectedToolVersion!.id,
-            this.toolVersionMetadataForm.value as PatchToolVersion,
-          );
-        }),
-        tap(() => {
-          this.loadingMetadata = false;
-        }),
-      )
-      .subscribe((res) => {
-        const index = this.toolVersions.findIndex(
-          (version) => version.id === res.id,
+  resetValue(context: string) {
+    this.getEditorForContext(context)?.resetValue();
+  }
+
+  submitValue(context: string) {
+    this.getEditorForContext(context)?.submitValue();
+  }
+
+  submittedValue(toolVersion: ToolVersion, value: ToolVersion) {
+    const { id, ...valueWithoutID } = value; // eslint-disable-line @typescript-eslint/no-unused-vars
+    this.toolService
+      .updateToolVersion(this._tool!.id, toolVersion.id, valueWithoutID)
+      .subscribe((toolVersion: ToolVersion) => {
+        this.toastService.showSuccess(
+          'Tool version updated',
+          `Successfully updated version '${toolVersion.name}' for tool '${this._tool!.name}'`,
         );
-        this.toolVersions[index] = res;
-        this.selectedToolVersion = res;
+        const versionIdx = this.toolVersions?.findIndex(
+          (v) => v.id === toolVersion.id,
+        );
+
+        this.toolVersions![versionIdx!] = toolVersion;
+        this.getEditorForContext(toolVersion.id.toString())!.value =
+          toolVersion;
       });
   }
 
-  uniqueNameValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      return this.toolVersions.find((version) => version.name == control.value)
-        ? { toolVersionExists: true }
-        : null;
-    };
+  submittedNewToolVersion(value: CreateToolVersion) {
+    this.toolService
+      .createVersionForTool(this._tool!.id, value)
+      .subscribe((toolVersion: ToolVersion) => {
+        this.toastService.showSuccess(
+          'Tool version created',
+          `Successfully created version '${toolVersion.name}' for tool '${this._tool!.name}'`,
+        );
+        this.toolVersions!.push(toolVersion);
+        this.getEditorForContext('new')!.resetValue();
+        this.jumpToLastTab();
+      });
   }
 
-  createToolVersion(): void {
-    if (this.toolVersionForm.valid) {
-      this.toolVersionForm.disable();
+  private jumpToLastTab() {
+    if (!this.tabGroup || !(this.tabGroup instanceof MatTabGroup)) return;
 
-      this.toolService
-        .createVersionForTool(
-          this._tool!.id,
-          this.toolVersionForm.controls.name.value!,
-        )
-        .pipe(
-          tap(() => {
-            this.toolVersionForm.reset();
-          }),
-          finalize(() => {
-            this.toolVersionForm.enable();
-          }),
-        )
-        .subscribe((version: ToolVersion) => {
-          this.toolVersions.push(version);
-        });
-    }
+    this.tabGroup.selectedIndex = this.tabGroup._tabs.length;
   }
 
   removeToolVersion(toolVersion: ToolVersion): void {
     this.toolService
       .deleteVersionForTool(this._tool!.id, toolVersion)
       .subscribe(() => {
-        this.toolVersions = this.toolVersions.filter(
+        this.toolVersions = this.toolVersions!.filter(
           (version) => version.id !== toolVersion.id,
         );
       });

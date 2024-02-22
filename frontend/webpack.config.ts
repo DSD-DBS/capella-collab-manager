@@ -12,7 +12,7 @@ export default (config: webpack.Configuration) => {
       languages: ['yaml'],
     }),
   );
-  // Exclude monaco-editor existing css loader
+  // Exclude monaco-editor from existing Angular CSS loader
   const cssRuleIdx = config?.module?.rules?.findIndex(
     (rule: false | '' | 0 | webpack.RuleSetRule | '...' | null | undefined) =>
       (rule as webpack.RuleSetRule).test?.toString().includes(':css'),
@@ -25,11 +25,21 @@ export default (config: webpack.Configuration) => {
     {
       test: /\.css$/,
       include: /node_modules\/monaco-editor/,
-      use: ['style-loader', 'css-loader'],
+      use: [
+        'style-loader',
+        {
+          loader: 'css-loader',
+          options: {
+            // https://github.com/webpack/webpack-dev-server/issues/1815#issuecomment-1181720815
+            url: false,
+          },
+        },
+      ],
     },
     {
       test: /\.ttf$/,
-      use: ['file-loader'],
+      include: /node_modules\/monaco-editor/,
+      type: 'asset/resource',
     },
   );
   return config;

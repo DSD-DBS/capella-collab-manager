@@ -15,6 +15,7 @@ import { EditProjectMetadataComponent } from 'src/app/projects/project-detail/ed
 import { SessionComponent } from 'src/app/sessions/session/session.component';
 import { ConfigurationSettingsComponent } from 'src/app/settings/core/configuration-settings/configuration-settings.component';
 import { PipelinesOverviewComponent } from 'src/app/settings/core/pipelines-overview/pipelines-overview.component';
+import { CreateToolComponent } from 'src/app/settings/core/tools-settings/create-tool/create-tool.component';
 import { BasicAuthTokenComponent } from 'src/app/users/basic-auth-token/basic-auth-token.component';
 import { UsersProfileComponent } from 'src/app/users/users-profile/users-profile.component';
 import { EventsComponent } from './events/events.component';
@@ -357,7 +358,7 @@ const routes: Routes = [
                   {
                     path: 'create',
                     data: { breadcrumb: 'Create Tool' },
-                    component: ToolDetailsComponent,
+                    component: CreateToolComponent,
                   },
                 ],
               },

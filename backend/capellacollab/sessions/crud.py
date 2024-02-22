@@ -75,9 +75,7 @@ def exist_readonly_session_for_user_project_version(
 
 def count_sessions(db: orm.Session) -> int:
     count = db.scalar(
-        sa.select(sa.func.count()).select_from(  # pylint: disable=not-callable
-            models.DatabaseSession
-        )
+        sa.select(sa.func.count()).select_from(models.DatabaseSession)
     )
     return count if count else 0
 
