@@ -1,34 +1,19 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import dataclasses
+from fastapi import status
 
-import fastapi
-from fastapi import exception_handlers, status
-
-
-@dataclasses.dataclass
-class UserNotFoundError(Exception):
-    username: str | None = None
-    user_id: int | None = None
+from capellacollab.core import exceptions as core_exceptions
 
 
-async def user_not_found_exception_handler(
-    request: fastapi.Request, exc: UserNotFoundError
-) -> fastapi.Response:
-    return await exception_handlers.http_exception_handler(
-        request,
-        fastapi.HTTPException(
+class UserNotFoundError(core_exceptions.BaseError):
+
+    def __init__(
+        self, username: str | None = None, user_id: int | None = None
+    ):
+        super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "title": "User not found",
-                "reason": f"The user '{exc.username or exc.user_id}' doesn't exist.",
-            },
-        ),
-    )
-
-
-def register_exceptions(app: fastapi.FastAPI):
-    app.add_exception_handler(
-        UserNotFoundError, user_not_found_exception_handler  # type: ignore[arg-type]
-    )
+            title="User not found",
+            reason=f"The user '{username or user_id}' doesn't exist.",
+            err_code="USER_NOT_FOUND",
+        )

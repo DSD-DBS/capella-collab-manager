@@ -1,30 +1,17 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import fastapi
-from fastapi import exception_handlers, status
+from fastapi import status
+
+from capellacollab.core import exceptions as core_exceptions
 
 
-class VersionIdNotSetError(Exception):
+class VersionIdNotSetError(core_exceptions.BaseError):
     def __init__(self, toolmodel_id: int):
         self.toolmodel_id = toolmodel_id
-
-
-async def version_id_not_set_exception_handler(
-    request: fastapi.Request, exc: VersionIdNotSetError
-) -> fastapi.Response:
-    return await exception_handlers.http_exception_handler(
-        request,
-        fastapi.HTTPException(
+        super().__init__(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail={
-                "reason": f"The toolmodel with id {exc.toolmodel_id} does not have a version set."
-            },
-        ),
-    )
-
-
-def register_exceptions(app: fastapi.FastAPI):
-    app.add_exception_handler(
-        VersionIdNotSetError, version_id_not_set_exception_handler  # type: ignore[arg-type]
-    )
+            title="Toolmodel version not set",
+            reason=f"The toolmodel with id {toolmodel_id} does not have a version set.",
+            err_code="VERSION_ID_NOT_SET",
+        )

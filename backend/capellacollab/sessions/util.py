@@ -90,7 +90,7 @@ def raise_if_conflicting_sessions(
         version.id,
         workspace_type,
     ) in existing_tool_version_workspace_combinations:
-        raise exceptions.ConflictingSessionError(tool, version, workspace_type)
+        raise exceptions.ConflictingSessionError(tool, version)
 
 
 def resolve_environment_variables(

@@ -1,174 +1,103 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import dataclasses
+import abc
 
-import fastapi
-from fastapi import exception_handlers, status
+from fastapi import status
+
+from capellacollab.core import exceptions as core_exceptions
 
 
-class AccessDeniedError(Exception):
+class AccessDeniedError(core_exceptions.BaseError, metaclass=abc.ABCMeta):
     pass
 
 
-class RepositoryNotFoundError(Exception):
+class RepositoryNotFoundError(
+    core_exceptions.BaseError, metaclass=abc.ABCMeta
+):
     pass
 
 
-@dataclasses.dataclass
-class GitRepositoryFileNotFoundError(Exception):
+class GitRepositoryFileNotFoundError(core_exceptions.BaseError):
     filename: str
 
+    def __init__(self, filename: str):
+        self.filename = filename
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            title="File not found",
+            reason=(
+                f"No file with the name '{filename}' found in the linked Git repository. "
+                "Please contact your administrator."
+            ),
+            err_code="FILE_NOT_FOUND",
+        )
 
-class GitInstanceAPIEndpointNotFoundError(Exception):
-    pass
+
+class GitInstanceAPIEndpointNotFoundError(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            title="Git instance API endpoint not found",
+            reason=(
+                "The used Git instance has no API endpoint defined. "
+                "Please contact your administrator."
+            ),
+            err_code="GIT_INSTANCE_NO_API_ENDPOINT_DEFINED",
+        )
 
 
-@dataclasses.dataclass
-class GitPipelineJobNotFoundError(Exception):
+class GitPipelineJobNotFoundError(core_exceptions.BaseError):
     job_name: str
 
+    def __init__(self, job_name: str):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            title="Job not found",
+            reason=(
+                f"There was no job with the name '{job_name}' in the last 20 runs of the pipeline. "
+                "Please contact your administrator."
+            ),
+            err_code="PIPELINE_JOB_NOT_FOUND",
+        )
 
-@dataclasses.dataclass
-class GitPipelineJobFailedError(Exception):
-    job_name: str
+
+class GitPipelineJobFailedError(core_exceptions.BaseError):
+    def __init__(self, job_name: str):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="Failed job found",
+            reason=f"The last job with the name '{job_name}' has failed.",
+            err_code="FAILED_JOB_FOUND",
+        )
 
 
-@dataclasses.dataclass
-class GitPipelineJobUnknownStateError(Exception):
+class GitPipelineJobUnknownStateError(core_exceptions.BaseError):
     job_name: str
     state: str
 
-
-class GithubArtifactExpiredError(Exception):
-    pass
-
-
-async def git_repository_file_not_found_handler(
-    request: fastapi.Request, exc: GitRepositoryFileNotFoundError
-) -> fastapi.Response:
-    return await exception_handlers.http_exception_handler(
-        request,
-        fastapi.HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "err_code": "FILE_NOT_FOUND",
-                "reason": (
-                    f"No file with the name '{exc.filename}' found in the linked Git repository."
-                    "Please contact your administrator.",
-                ),
-            },
-        ),
-    )
-
-
-async def git_instance_api_endpoint_not_found_handler(
-    request: fastapi.Request, _: GitInstanceAPIEndpointNotFoundError
-) -> fastapi.Response:
-    return await exception_handlers.http_exception_handler(
-        request,
-        fastapi.HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail={
-                "err_code": "GIT_INSTANCE_NO_API_ENDPOINT_DEFINED",
-                "reason": (
-                    "The used Git instance has no API endpoint defined.",
-                    "Please contact your administrator.",
-                ),
-            },
-        ),
-    )
-
-
-async def git_pipeline_job_not_found_handler(
-    request: fastapi.Request, exc: GitPipelineJobNotFoundError
-) -> fastapi.Response:
-    return await exception_handlers.http_exception_handler(
-        request,
-        fastapi.HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "err_code": "PIPELINE_JOB_NOT_FOUND",
-                "reason": (
-                    f"There was no job with the name '{exc.job_name}' in the last 20 runs of the pipeline",
-                    "Please contact your administrator.",
-                ),
-            },
-        ),
-    )
-
-
-async def git_pipeline_job_failed_handler(
-    request: fastapi.Request, exc: GitPipelineJobFailedError
-) -> fastapi.Response:
-    return await exception_handlers.http_exception_handler(
-        request,
-        fastapi.HTTPException(
-            status_code=fastapi.status.HTTP_400_BAD_REQUEST,
-            detail={
-                "err_code": "FAILED_JOB_FOUND",
-                "reason": (
-                    f"The last job with the name '{exc.job_name}' has failed.",
-                    "Please contact your administrator.",
-                ),
-            },
-        ),
-    )
-
-
-async def unknown_state_handler(
-    request: fastapi.Request, exc: GitPipelineJobUnknownStateError
-) -> fastapi.Response:
-    return await exception_handlers.http_exception_handler(
-        request,
-        fastapi.HTTPException(
+    def __init__(self, job_name: str, state: str):
+        self.job_name = job_name
+        self.state = state
+        super().__init__(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail={
-                "err_code": "UNKNOWN_STATE_ERROR",
-                "reason": (
-                    f"Job '{exc.job_name}' has an unhandled or unknown state: '{exc.state}'",
-                    "Please contact your administrator.",
-                ),
-            },
-        ),
-    )
+            title="Unknown job state",
+            reason=(
+                f"Job '{job_name}' has an unhandled or unknown state: '{state}'. "
+                "Please contact your administrator."
+            ),
+            err_code="UNKNOWN_STATE_ERROR",
+        )
 
 
-async def github_artifact_expired_handler(
-    request: fastapi.Request, _: GithubArtifactExpiredError
-) -> fastapi.Response:
-    return await exception_handlers.http_exception_handler(
-        request,
-        fastapi.HTTPException(
+class GithubArtifactExpiredError(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "err_code": "ARTIFACT_EXPIRED",
-                "reason": (
-                    "The last artifact you requested has expired.",
-                    "Please rerun your pipeline or contact your administrator.",
-                ),
-            },
-        ),
-    )
-
-
-def register_exceptions(app: fastapi.FastAPI):
-    app.add_exception_handler(
-        GitRepositoryFileNotFoundError,
-        git_repository_file_not_found_handler,  # type: ignore[arg-type]
-    )
-    app.add_exception_handler(
-        GitInstanceAPIEndpointNotFoundError,
-        git_instance_api_endpoint_not_found_handler,  # type: ignore[arg-type]
-    )
-    app.add_exception_handler(
-        GitPipelineJobNotFoundError,
-        git_pipeline_job_not_found_handler,  # type: ignore[arg-type]
-    )
-    app.add_exception_handler(
-        GitPipelineJobUnknownStateError, unknown_state_handler  # type: ignore[arg-type]
-    )
-    app.add_exception_handler(
-        GitPipelineJobFailedError,
-        git_pipeline_job_failed_handler,  # type: ignore[arg-type]
-    )
+            title="Artifact expired",
+            reason=(
+                "The last artifact you requested has expired. "
+                "Please rerun your pipeline or contact your administrator."
+            ),
+            err_code="ARTIFACT_EXPIRED",
+        )

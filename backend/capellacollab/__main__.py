@@ -9,7 +9,7 @@ import fastapi
 import fastapi_pagination
 import starlette_prometheus
 import uvicorn
-from fastapi import middleware, responses
+from fastapi import exception_handlers, middleware, responses
 from fastapi.middleware import cors
 
 import capellacollab.projects.toolmodels.backups.runs.interface as pipeline_runs_interface
@@ -21,30 +21,8 @@ from capellacollab.config import config
 from capellacollab.core import exceptions as core_exceptions
 from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
-from capellacollab.core.logging import exceptions as logging_exceptions
-from capellacollab.projects.toolmodels import (
-    exceptions as toolmodels_exceptions,
-)
-from capellacollab.projects.toolmodels.backups import (
-    exceptions as backups_exceptions,
-)
-from capellacollab.projects.toolmodels.modelsources.git import (
-    exceptions as git_exceptions,
-)
-from capellacollab.projects.toolmodels.modelsources.git.gitlab import (
-    exceptions as gitlab_exceptions,
-)
-from capellacollab.projects.toolmodels.modelsources.git.handler import (
-    exceptions as git_handler_exceptions,
-)
 from capellacollab.routes import router
-from capellacollab.sessions import exceptions as sessions_exceptions
 from capellacollab.sessions import idletimeout, operators
-from capellacollab.settings.modelsources.t4c import (
-    exceptions as settings_t4c_exceptions,
-)
-from capellacollab.tools import exceptions as tools_exceptions
-from capellacollab.users import exceptions as users_exceptions
 
 from . import __version__
 
@@ -156,18 +134,25 @@ app.add_route("/metrics", starlette_prometheus.metrics)
 app.include_router(router, prefix="/api/v1")
 
 
+async def exception_handler(
+    request: fastapi.Request, exc: core_exceptions.BaseError
+) -> fastapi.Response:
+    return await exception_handlers.http_exception_handler(
+        request,
+        fastapi.HTTPException(
+            status_code=exc.status_code,
+            detail={
+                "title": exc.title,
+                "reason": exc.reason,
+                "err_code": exc.err_code,
+            },
+        ),
+    )
+
+
 def register_exceptions():
-    tools_exceptions.register_exceptions(app)
-    toolmodels_exceptions.register_exceptions(app)
-    git_exceptions.register_exceptions(app)
-    gitlab_exceptions.register_exceptions(app)
-    git_handler_exceptions.register_exceptions(app)
-    backups_exceptions.register_exceptions(app)
-    logging_exceptions.register_exceptions(app)
-    core_exceptions.register_exceptions(app)
-    users_exceptions.register_exceptions(app)
-    sessions_exceptions.register_exceptions(app)
-    settings_t4c_exceptions.register_exceptions(app)
+    for exc in core_exceptions.BaseError.__subclasses__():
+        app.add_exception_handler(exc, exception_handler)  # type: ignore[arg-type]
 
 
 register_exceptions()

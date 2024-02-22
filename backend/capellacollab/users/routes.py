@@ -37,7 +37,10 @@ def get_current_user(
     return user
 
 
-@router.get("/{user_id}", response_model=models.User)
+@router.get(
+    "/{user_id}",
+    response_model=models.User,
+)
 def get_user(
     own_user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
     user: models.DatabaseUser = fastapi.Depends(injectables.get_existing_user),
