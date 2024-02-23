@@ -4,30 +4,30 @@
 variables:
   PRIVATE_GPG_PATH: /secrets/private.gpg
   FRONTEND:
-    value: "1"
-    description: "Build the frontend image?"
+    value: '1'
+    description: 'Build the frontend image?'
   BACKEND:
-    value: "1"
-    description: "Build the backend image?"
+    value: '1'
+    description: 'Build the backend image?'
   DOCS:
-    value: "1"
-    description: "Build the docs image?"
+    value: '1'
+    description: 'Build the docs image?'
   GUACAMOLE:
-    value: "1"
-    description: "Build the guacamole image?"
+    value: '1'
+    description: 'Build the guacamole image?'
   REVISION:
-    value: "main"
-    description: "Revision of Github repository"
+    value: 'main'
+    description: 'Revision of Github repository'
   TARGET:
     value: staging
-  FRONTEND_IMAGE_NAME: "capella/collab/frontend"
-  BACKEND_IMAGE_NAME: "capella/collab/backend"
-  DOCS_IMAGE_NAME: "capella/collab/docs"
-  GUACAMOLE_IMAGE_NAME: "capella/collab/guacamole"
-  DOCKER_BUILD_ARGS: "--no-cache"
-  DOCKER_BUILDKIT: "1"
-  BASE_IMAGE: "debian:bookworm"
-  KUBECTL_APT_REMOTE: "https://apt.kubernetes.io/"
+  FRONTEND_IMAGE_NAME: 'capella/collab/frontend'
+  BACKEND_IMAGE_NAME: 'capella/collab/backend'
+  DOCS_IMAGE_NAME: 'capella/collab/docs'
+  GUACAMOLE_IMAGE_NAME: 'capella/collab/guacamole'
+  DOCKER_BUILD_ARGS: '--no-cache'
+  DOCKER_BUILDKIT: '1'
+  BASE_IMAGE: 'debian:bookworm'
+  KUBECTL_APT_REMOTE: 'https://apt.kubernetes.io/'
 
 default:
   image: $DOCKER_REGISTRY/base
@@ -58,8 +58,7 @@ default:
 
 .push: &push
   - >
-    if [ "${REVISION}" = "main" ];
-    then
+    if [ "${REVISION}" = "main" ]; then
       docker image tag ${IMAGE}:${DOCKER_TAG} ${IMAGE}:latest;
       docker push ${IMAGE}:latest;
     fi
@@ -80,7 +79,6 @@ frontend:
     - IMAGE=${DOCKER_REGISTRY}/${FRONTEND_IMAGE_NAME:?}
     - *docker
     - mv ../favicon.ico frontend/src
-    - mv ../environment.prod.ts frontend/src/environments
     - npm i undici
     - python frontend/fetch-version.py
     - >
@@ -144,4 +142,4 @@ guacamole:
         guacamole
     - *push
   variables:
-    DEBIAN_SLIM_BASE_IMAGE: "debian:bookworm-slim"
+    DEBIAN_SLIM_BASE_IMAGE: 'debian:bookworm-slim'

@@ -45,10 +45,6 @@ jobs:
         if: ${{ matrix.name == 'frontend' }}
         run: |
           python frontend/fetch-version.py
-      - name: Prepare environment.prod.ts
-        if: ${{ matrix.name == 'frontend' }}
-        run: |
-          cp frontend/src/environments/environment.ts frontend/src/environments/environment.prod.ts
       - name: Login to github container registry
         uses: docker/login-action@v3
         with:
