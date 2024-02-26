@@ -137,17 +137,17 @@ repos:
     hooks:
       - id: eslint
         additional_dependencies:
-          - 'eslint@^8.56.0'
+          - 'eslint@^8.57.0'
           - '@angular-eslint/eslint-plugin@17.2.1'
           - '@angular-eslint/eslint-plugin-template@17.2.1'
           - '@angular-eslint/template-parser@17.2.1'
           - 'eslint-config-prettier@^9.1.0'
           - 'eslint-plugin-import@^2.29.1'
-          - '@typescript-eslint/eslint-plugin@^7.0.1'
-          - '@typescript-eslint/parser@^7.0.1'
+          - '@typescript-eslint/eslint-plugin@^7.0.2'
+          - '@typescript-eslint/parser@^7.0.2'
           - 'eslint-plugin-unused-imports@^3.1.0'
           - 'eslint-plugin-deprecation@^2.0.0'
-          - 'eslint-plugin-tailwindcss@^3.14.2'
+          - 'eslint-plugin-tailwindcss@^3.14.3'
         args: ['--fix']
         types: []
         files: '^frontend/'
