@@ -64,7 +64,6 @@ The tree inside of your Gitlab repository should look like:
 ```zsh
 ├── .gitlab-ci.yml
 ├── .sops.yaml
-├── environment.prod.ts
 ├── favicon.ico
 ├── target1
 │   ├── general.values.yaml
