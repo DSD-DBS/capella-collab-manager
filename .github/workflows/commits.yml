@@ -15,7 +15,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install commitlint
-        run: npm install -g @commitlint/cli @commitlint/config-conventional
+        run: npm install @commitlint/cli @commitlint/config-conventional
       - name: Validate commit messages
         id: conventional-commits
         env:
@@ -25,7 +25,7 @@ jobs:
           delim="_EOF_$(uuidgen)"
           echo "validation-result<<$delim" >> "$GITHUB_OUTPUT"
           r=0
-          commitlint --from "$SHA_FROM" --to "$SHA_TO" >> "$GITHUB_OUTPUT" 2>&1 || r=$?
+          npx commitlint --from "$SHA_FROM" --to "$SHA_TO" >> "$GITHUB_OUTPUT" 2>&1 || r=$?
           echo "$delim" >> "$GITHUB_OUTPUT"
           exit $r
       - name: Post comment if validation failed
