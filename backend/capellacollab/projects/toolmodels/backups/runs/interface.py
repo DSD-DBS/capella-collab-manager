@@ -85,7 +85,7 @@ def _schedule_pending_jobs():
                 )
                 pending_run.reference_id = job_name
                 pending_run.status = models.PipelineRunStatus.SCHEDULED
-            except:  # pylint: disable=bare-except
+            except Exception:
                 log.error(
                     "Scheduling of job run with id %s failed", exc_info=True
                 )
@@ -276,7 +276,7 @@ def _refresh_and_trigger_pipeline_jobs():
         for run in crud.get_scheduled_or_running_pipelines(db):
             try:
                 _update_status_of_job_run(run)
-            except:  # pylint: disable=bare-except
+            except Exception:
                 log.error(
                     "Failed updating the status of running and scheduled jobs",
                     exc_info=True,
@@ -284,7 +284,7 @@ def _refresh_and_trigger_pipeline_jobs():
 
             try:
                 _fetch_events_of_job_run(run)
-            except:  # pylint: disable=bare-except
+            except Exception:
                 log.error(
                     "Failed fetching events of jobs",
                     exc_info=True,
@@ -292,7 +292,7 @@ def _refresh_and_trigger_pipeline_jobs():
 
             try:
                 _fetch_logs_of_job_runs(run)
-            except:  # pylint: disable=bare-except
+            except Exception:
                 log.error(
                     "Failed fetching logs of jobs",
                     exc_info=True,

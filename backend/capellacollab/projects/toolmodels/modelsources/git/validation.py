@@ -29,7 +29,7 @@ async def check_primary_git_repository(
             primary_repo.password,
             default=primary_repo.revision,
         )
-    except:  # pylint: disable=bare-except
+    except Exception:
         log.debug(
             "Failed to access git model for model with slug '%s' and id %d",
             model.slug,
@@ -62,7 +62,7 @@ async def check_pipeline_health(
         return models.ModelArtifactStatus.UNCONFIGURED
     except handler_exceptions.GitInstanceUnsupportedError:
         return models.ModelArtifactStatus.UNSUPPORTED
-    except:  # pylint: disable=bare-except
+    except Exception:
         logger.error(
             f"Failed to fetch artifacts for model '{model.slug}' and job '{job_name}'",
             exc_info=True,
