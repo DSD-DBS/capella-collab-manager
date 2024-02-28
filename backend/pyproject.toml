@@ -39,7 +39,6 @@ dependencies = [
   "uvicorn[standard]",
   "python-slugify[unidecode]",
   "jsonschema",
-  "openshift",
   "starlette-prometheus",
   "fastapi-pagination>=0.12.5,<=0.12.17",
   "aiohttp",
@@ -114,7 +113,6 @@ allow_untyped_defs = true
 module = [
   "kubernetes.*",
   "prometheus_client.*",
-  "openshift.*",
   "deepdiff.*",
   "appdirs.*",
   "jsonschema.*",

@@ -109,9 +109,9 @@ class MockOperator:
             created_at=datetime.datetime.now(),
         )
 
-    def create_public_route(
+    def create_ingress(
         self,
-        session_id: str,
+        name: str,
         host: str,
         path: str,
         port: int,
