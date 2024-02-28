@@ -90,7 +90,7 @@ future.
 
 === "OpenShift"
 
-    We are constantly working on expanding our documentation. This installation method is currently not documented. If it is relevant, please feel free to contact us at set@deutschebahn.com  or open an issue in this repository.
+    We are constantly working on expanding our documentation. This installation method is currently not documented. If it is relevant, please feel free to contact us at set@deutschebahn.com or open an issue in this repository.
 
 ## Step 2: Validate the Available Resources
 
