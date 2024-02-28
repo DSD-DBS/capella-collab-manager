@@ -290,7 +290,7 @@ def test_update_t4c_instance_password_empty_string(
     assert updated_t4c_instance.password == expected_password
 
 
-@responses.activate
+@pytest.mark.usefixtures("mock_license_server")
 def test_get_t4c_license_usage(
     client: testclient.TestClient,
     db: orm.Session,
@@ -298,12 +298,6 @@ def test_get_t4c_license_usage(
     t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
     users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
-    responses.get(
-        "http://localhost:8086/status/json",
-        status=status.HTTP_200_OK,
-        json={"status": {"used": 1, "free": 19, "total": 20}},
-    )
-
     response = client.get(
         f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}/licenses",
     )
