@@ -13,7 +13,8 @@ from fastapi import middleware, responses
 from fastapi.middleware import cors
 
 import capellacollab.projects.toolmodels.backups.runs.interface as pipeline_runs_interface
-import capellacollab.sessions.metrics
+import capellacollab.sessions.metrics as sessions_metrics
+import capellacollab.settings.modelsources.t4c.metrics as t4c_metrics
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.config import config
@@ -84,7 +85,8 @@ app = fastapi.FastAPI(
     on_startup=[
         startup,
         idletimeout.terminate_idle_sessions_in_background,
-        capellacollab.sessions.metrics.register,
+        sessions_metrics.register,
+        t4c_metrics.register,
         pipeline_runs_interface.schedule_refresh_and_trigger_pipeline_jobs,
     ],
     middleware=[
