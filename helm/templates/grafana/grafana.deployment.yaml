@@ -54,8 +54,10 @@ spec:
               mountPath: /var/lib/grafana
             - name: datasources
               mountPath: /etc/grafana/provisioning/datasources
-            - name: dashboards
+            - name: dashboards-config
               mountPath: /etc/grafana/provisioning/dashboards
+            - name: dashboards
+              mountPath: /etc/dashboards
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
@@ -72,12 +74,15 @@ spec:
             items:
               - key: datasources.yaml
                 path: datasources.yaml
-        - name: dashboards
+        - name: dashboards-config
           configMap:
             name: {{ .Release.Name }}-grafana
             items:
               - key: dashboards.yaml
                 path: dashboards.yaml
+        - name: dashboards
+          configMap:
+            name: {{ .Release.Name }}-grafana-dashboards
         - name: storage
           persistentVolumeClaim:
             claimName: {{ .Release.Name -}}-grafana

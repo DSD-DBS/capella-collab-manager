@@ -54,4 +54,18 @@ data:
         version: 1
         editable: true
   dashboards.yaml: |
+    apiVersion: 1
+
+    providers:
+      - name: 'Provisioned dashboards'
+        orgId: 1
+        folder: 'Provisioned dashboards'
+        folderUid: ''
+        type: file
+        disableDeletion: true
+        updateIntervalSeconds: 10
+        allowUiUpdates: false
+        options:
+          path: /etc/dashboards
+          foldersFromFilesStructure: false
 {{ end }}
