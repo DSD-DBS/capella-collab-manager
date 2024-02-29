@@ -61,4 +61,5 @@ spec:
             defaultMode: 420
             name: {{ .Release.Name }}-prometheus
         - name: prometheus-storage-volume
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name -}}-prometheus
