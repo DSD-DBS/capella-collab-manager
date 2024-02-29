@@ -31,9 +31,16 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ .Release.Name }}-nginx-clusterip
+                name: {{ .Release.Name }}-backend
                 port:
-                  number: 80
+                  name: http
+          - path: /metrics
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-backend
+                port:
+                  name: http
           - path: /docs
             pathType: Prefix
             backend:
