@@ -72,7 +72,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Install helm
-        uses: azure/setup-helm@v3
+        uses: azure/setup-helm@v4
       - name: Extract metadata for Docker
         id: tag
         run: |
