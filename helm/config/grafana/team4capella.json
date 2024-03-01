@@ -392,7 +392,8 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-GrYlRd"
+            "mode": "continuous-GrYlRd",
+            "seriesBy": "last"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -402,7 +403,7 @@
             "barAlignment": 0,
             "drawStyle": "line",
             "fillOpacity": 0,
-            "gradientMode": "none",
+            "gradientMode": "scheme",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -523,7 +524,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "",
+  "refresh": false,
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -538,6 +539,6 @@
   "timezone": "",
   "title": "TeamForCapella",
   "uid": "a63682e2-2f98-4dde-a7fe-c3658b9dc0e9",
-  "version": 38,
+  "version": 39,
   "weekStart": ""
 }
