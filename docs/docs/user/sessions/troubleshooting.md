@@ -3,6 +3,24 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
+??? question "My session window doesn't scale properly"
+
+    If you use a direct session connection via Guacamole, the window doesn't scale
+    automatically after browser resizing. You can manually trigger a resize by
+    pressing the "Refresh" button in your browser.
+
+    Alternatively, you can use our internal session viewer, which comes with
+    automatic scaling out of the box.
+
+??? question "The session requests takes a long time"
+
+    If a session takes a few minutes to start, it means that you've reached a
+    new node that doesn't have the requested tool installed (for load balancing reasons,
+    we distribute the sessions across different servers). This can happen after
+    updates on our end (e.g. when the tool configuration or dependencies are updated)
+    or updates from the cluster operator. In both cases, we pull a new Docker image
+    (which can be understood as a reinstallation of the tool) on demand.
+
 ??? question "My Capella crashed. What should I do?"
 
     Capella can crash for many different reasons. Many issues are issues with
