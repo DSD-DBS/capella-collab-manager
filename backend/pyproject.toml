@@ -41,7 +41,7 @@ dependencies = [
   "jsonschema",
   "openshift",
   "starlette-prometheus",
-  "fastapi-pagination>=0.12.5",
+  "fastapi-pagination>=0.12.5,<=0.12.17",
   "aiohttp",
   "argon2-cffi",
   "typer",
