@@ -24,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -106,6 +105,7 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
+            "axisSoftMin": 0,
             "barAlignment": 0,
             "drawStyle": "line",
             "fillOpacity": 0,
@@ -131,6 +131,7 @@
               "mode": "off"
             }
           },
+          "decimals": 0,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -200,6 +201,7 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
+            "axisSoftMin": -1,
             "barAlignment": 0,
             "drawStyle": "line",
             "fillOpacity": 0,
@@ -295,6 +297,6 @@
   "timezone": "",
   "title": "Active sessions",
   "uid": "0kK_I7T4k",
-  "version": 6,
+  "version": 1,
   "weekStart": ""
 }

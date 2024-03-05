@@ -18,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 4,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -524,7 +523,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": false,
+  "refresh": "",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -539,6 +538,6 @@
   "timezone": "",
   "title": "TeamForCapella",
   "uid": "a63682e2-2f98-4dde-a7fe-c3658b9dc0e9",
-  "version": 39,
+  "version": 1,
   "weekStart": ""
 }
