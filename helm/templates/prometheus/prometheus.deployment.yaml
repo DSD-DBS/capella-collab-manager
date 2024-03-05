@@ -28,7 +28,7 @@ spec:
         - name: prometheus
           image: {{ .Values.docker.registry.external }}/prom/prometheus
           args:
-            - "--storage.tsdb.retention.time=12h"
+            - "--storage.tsdb.retention.time=1y"
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus/"
             - "--web.external-url=http://{{ .Release.Name }}-prometheus-server/prometheus/"
@@ -61,4 +61,5 @@ spec:
             defaultMode: 420
             name: {{ .Release.Name }}-prometheus
         - name: prometheus-storage-volume
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name -}}-prometheus
