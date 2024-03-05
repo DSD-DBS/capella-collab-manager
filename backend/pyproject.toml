@@ -40,7 +40,7 @@ dependencies = [
   "python-slugify[unidecode]",
   "jsonschema",
   "starlette-prometheus",
-  "fastapi-pagination>=0.12.5,<=0.12.17",
+  "fastapi-pagination>=0.12.19",
   "aiohttp",
   "argon2-cffi",
   "typer",
