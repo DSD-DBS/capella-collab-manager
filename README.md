@@ -61,6 +61,11 @@ In addition, we have integrated commercial products:
   - Automatic license injection
   - Access to licenses is self-managed by project leads
 
+We've prepared a small video, where we showcase the diagram cache feature and
+show how you can use Capella and Jupyter in split view in the browser:
+
+https://github.com/DSD-DBS/capella-collab-manager/assets/23395732/01c5dc34-7792-4858-a87a-3205927b3d00
+
 ## Getting Started
 
 ### Running Locally with k3d
