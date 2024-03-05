@@ -26,6 +26,8 @@ from openshift import dynamic
 from openshift.dynamic import exceptions as dynamic_exceptions
 
 from capellacollab.config import config
+from capellacollab.sessions import models as sessions_models
+from capellacollab.tools import models as tools_models
 
 from . import helper, models
 
@@ -177,17 +179,18 @@ class KubernetesOperator:
         self,
         image: str,
         username: str,
-        session_type: str,
-        tool_name: str,
-        version_name: str,
+        session_type: sessions_models.WorkspaceType,
+        tool: tools_models.DatabaseTool,
+        version: tools_models.DatabaseVersion,
         environment: dict[str, str],
         ports: dict[str, int],
         volumes: list[models.Volume],
         prometheus_path="/metrics",
         prometheus_port=9118,
-        limits="high",
     ) -> Session:
-        log.info("Launching a %s session for user %s", session_type, username)
+        log.info(
+            "Launching a %s session for user %s", session_type.value, username
+        )
 
         _id = self._generate_id()
 
@@ -195,9 +198,9 @@ class KubernetesOperator:
             self._create_promtail_configmap(
                 name=_id,
                 username=username,
-                session_type=session_type,
-                tool_name=tool_name,
-                version_name=version_name,
+                session_type=session_type.value,
+                tool_name=tool.name,
+                version_name=version.name,
             )
 
         deployment = self._create_deployment(
@@ -206,7 +209,7 @@ class KubernetesOperator:
             environment=environment,
             ports=ports,
             volumes=volumes,
-            limits=limits,
+            tool_resources=tool.resources,
         )
 
         self._create_disruption_budget(
@@ -336,23 +339,39 @@ class KubernetesOperator:
         self,
         image: str,
         command: str,
+        labels: dict[str, str],
+        tool_resources: tools_models.Resources,
         environment: dict[str, str | None],
         schedule="* * * * *",
         timeout=18000,
     ) -> str:
         _id = self._generate_id()
-        self._create_cronjob(
-            name=_id,
-            image=image,
-            job_labels={
-                "workload": "cronjob",
-                "app.capellacollab/parent": _id,
-            },
-            environment=environment,
-            args=[command],
-            schedule=schedule,
-            timeout=timeout,
+
+        cronjob: client.V1CronJob = client.V1CronJob(
+            kind="CronJob",
+            api_version="batch/v1",
+            metadata=client.V1ObjectMeta(name=_id),
+            spec=client.V1CronJobSpec(
+                schedule=schedule,
+                job_template=client.V1JobTemplateSpec(
+                    metadata=client.V1ObjectMeta(labels=labels),
+                    spec=self._create_job_spec(
+                        name=_id,
+                        image=image,
+                        job_labels=labels
+                        | {
+                            "workload": "cronjob",
+                            "app.capellacollab/parent": _id,
+                        },
+                        environment=environment,
+                        tool_resources=tool_resources,
+                        args=[command],
+                        timeout=timeout,
+                    ),
+                ),
+            ),
         )
+        self.v1_batch.create_namespaced_cron_job(namespace, cronjob)
         return _id
 
     def create_job(
@@ -361,17 +380,26 @@ class KubernetesOperator:
         command: str,
         labels: dict[str, str],
         environment: dict[str, str | None],
+        tool_resources: tools_models.Resources,
         timeout: int = 18000,
     ) -> str:
         _id = self._generate_id()
-        self._create_job(
-            name=_id,
-            image=image,
-            job_labels={"workload": "job", **labels},
-            environment=environment,
-            args=[command],
-            timeout=timeout,
+
+        job: client.V1Job = client.V1Job(
+            kind="Job",
+            api_version="batch/v1",
+            metadata=client.V1ObjectMeta(name=_id),
+            spec=self._create_job_spec(
+                name=_id,
+                image=image,
+                job_labels={"workload": "job", **labels},
+                environment=environment,
+                tool_resources=tool_resources,
+                args=[command],
+                timeout=timeout,
+            ),
         )
+        self.v1_batch.create_namespaced_job(namespace, job)
         return _id
 
     def delete_cronjob(self, _id: str):
@@ -484,7 +512,7 @@ class KubernetesOperator:
         environment: dict[str, str],
         ports: dict[str, int],
         volumes: list[models.Volume],
-        limits: str = "high",
+        tool_resources: tools_models.Resources,
     ) -> client.V1Deployment:
         k8s_volumes, k8s_volume_mounts = self._map_volumes_to_k8s_volumes(
             volumes
@@ -532,16 +560,15 @@ class KubernetesOperator:
                 )
             )
 
-        resources = (
-            client.V1ResourceRequirements(
-                limits={"cpu": "2", "memory": "3Gi"},
-                requests={"cpu": "1", "memory": "500Mi"},
-            )
-            if limits == "low"
-            else client.V1ResourceRequirements(
-                limits={"cpu": "2", "memory": "6Gi"},
-                requests={"cpu": "0.4", "memory": "1.6Gi"},
-            )
+        resources = client.V1ResourceRequirements(
+            limits={
+                "cpu": tool_resources.cpu.limits,
+                "memory": tool_resources.memory.limits,
+            },
+            requests={
+                "cpu": tool_resources.cpu.requests,
+                "memory": tool_resources.memory.requests,
+            },
         )
 
         containers: list[client.V1Container] = []
@@ -627,61 +654,6 @@ class KubernetesOperator:
         if overwrite:
             self.delete_secret(name)
         return self.v1_core.create_namespaced_secret(cfg["namespace"], secret)
-
-    def _create_cronjob(
-        self,
-        name: str,
-        image: str,
-        job_labels: dict[str, str],
-        environment: dict[str, str | None],
-        args: list[str] | None = None,
-        schedule: str = "* * * * *",
-        timeout: int = 18000,
-    ) -> client.V1CronJob:
-        cron_job: client.V1CronJob = client.V1CronJob(
-            kind="CronJob",
-            api_version="batch/v1",
-            metadata=client.V1ObjectMeta(name=name),
-            spec=client.V1CronJobSpec(
-                schedule=schedule,
-                job_template=client.V1JobTemplateSpec(
-                    metadata=client.V1ObjectMeta(labels=job_labels),
-                    spec=self._create_job_spec(
-                        name=name,
-                        image=image,
-                        job_labels=job_labels,
-                        environment=environment,
-                        args=args,
-                        timeout=timeout,
-                    ),
-                ),
-            ),
-        )
-        return self.v1_batch.create_namespaced_cron_job(namespace, cron_job)
-
-    def _create_job(
-        self,
-        name: str,
-        image: str,
-        job_labels: dict[str, str],
-        environment: dict[str, str | None],
-        args: list[str] | None = None,
-        timeout=18000,
-    ) -> client.V1Job:
-        job: client.V1Job = client.V1Job(
-            kind="Job",
-            api_version="batch/v1",
-            metadata=client.V1ObjectMeta(name=name),
-            spec=self._create_job_spec(
-                name=name,
-                image=image,
-                job_labels=job_labels,
-                environment=environment,
-                args=args,
-                timeout=timeout,
-            ),
-        )
-        return self.v1_batch.create_namespaced_job(namespace, job)
 
     def _create_disruption_budget(
         self,
@@ -871,9 +843,21 @@ class KubernetesOperator:
         image: str,
         job_labels: dict[str, str],
         environment: dict[str, str | None],
+        tool_resources: tools_models.Resources,
         args: list[str] | None = None,
         timeout: int = 18000,
     ) -> client.V1JobSpec:
+        resources = client.V1ResourceRequirements(
+            limits={
+                "cpu": tool_resources.cpu.limits,
+                "memory": tool_resources.memory.limits,
+            },
+            requests={
+                "cpu": tool_resources.cpu.requests,
+                "memory": tool_resources.memory.requests,
+            },
+        )
+
         containers: list[client.V1Container] = [
             client.V1Container(
                 name=name,
@@ -883,10 +867,7 @@ class KubernetesOperator:
                     client.V1EnvVar(name=key, value=str(value))
                     for key, value in environment.items()
                 ],
-                resources=client.V1ResourceRequirements(
-                    limits={"cpu": "2", "memory": "6Gi"},
-                    requests={"cpu": "0.4", "memory": "1.6Gi"},
-                ),
+                resources=resources,
                 image_pull_policy=image_pull_policy,
             )
         ]

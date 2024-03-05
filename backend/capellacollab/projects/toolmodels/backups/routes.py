@@ -67,17 +67,17 @@ def get_pipeline(
 @router.post("", response_model=models.Backup)
 def create_backup(
     body: models.CreateBackup,
-    capella_model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
+    toolmodel: toolmodels_models.DatabaseToolModel = fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
     username: str = fastapi.Depends(auth_injectables.get_username),
 ):
     git_model = git_injectables.get_existing_git_model(
-        body.git_model_id, capella_model, db
+        body.git_model_id, toolmodel, db
     )
     t4c_model = t4c_injectables.get_existing_t4c_model(
-        body.t4c_model_id, capella_model, db
+        body.t4c_model_id, toolmodel, db
     )
 
     username = "techuser-" + str(uuid.uuid4())
@@ -98,12 +98,12 @@ def create_backup(
         )
 
     if body.run_nightly:
-        if not capella_model.version_id:
-            raise toolmodels_exceptions.VersionIdNotSetError(capella_model.id)
+        if not toolmodel.version_id:
+            raise toolmodels_exceptions.VersionIdNotSetError(toolmodel.id)
 
         reference = operators.get_operator().create_cronjob(
             image=tools_crud.get_backup_image_for_tool_version(
-                db, capella_model.version_id
+                db, toolmodel.version_id
             ),
             environment=core.get_environment(
                 git_model,
@@ -112,6 +112,8 @@ def create_backup(
                 password,
                 body.include_commit_history,
             ),
+            labels=core.get_pipeline_labels(toolmodel),
+            tool_resources=toolmodel.tool.resources,
             command="backup",
             schedule="0 3 * * *",
         )
@@ -125,7 +127,7 @@ def create_backup(
             git_model=git_model,
             t4c_model=t4c_model,
             created_by=username,
-            model=capella_model,
+            model=toolmodel,
             t4c_username=username,
             t4c_password=password,
             include_commit_history=body.include_commit_history,

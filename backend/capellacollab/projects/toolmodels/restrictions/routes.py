@@ -46,11 +46,7 @@ def update_restrictions(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseToolModelRestrictions:
-    if (
-        body.allow_pure_variants
-        and model.tool.integrations
-        and not model.tool.integrations.pure_variants
-    ):
+    if body.allow_pure_variants and not model.tool.integrations.pure_variants:
         raise fastapi.HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={

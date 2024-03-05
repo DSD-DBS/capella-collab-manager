@@ -211,9 +211,9 @@ def request_readonly_session(
     session = operator.start_session(
         image=docker_image,
         username=db_user.name,
-        session_type="readonly",
-        tool_name=model.tool.name,
-        version_name=model.version.name,
+        session_type=models.WorkspaceType.READONLY,
+        tool=model.tool,
+        version=model.version,
         volumes=[
             operators_models.EmptyVolume(
                 name="workspace",
@@ -410,15 +410,14 @@ def start_persistent_jupyter_session(
     session = operator.start_session(
         image=docker_image,
         username=owner.name,
-        session_type="persistent",
-        tool_name=tool.name,
-        version_name=version.name,
+        session_type=models.WorkspaceType.PERSISTENT,
+        tool=tool,
+        version=version,
         environment=environment,
         ports={"http": 8888},
         volumes=volumes,
         prometheus_path=f"{environment.get('JUPYTER_BASE_URL')}/metrics",
         prometheus_port=8888,
-        limits="low",
     )
 
     return create_database_session(
@@ -450,9 +449,9 @@ def start_persistent_guacamole_session(
     session = operator.start_session(
         image=docker_image,
         username=user.name,
-        session_type="persistent",
-        tool_name=tool.name,
-        version_name=version.name,
+        session_type=models.WorkspaceType.PERSISTENT,
+        tool=tool,
+        version=version,
         environment=environment,
         ports={"rdp": 3389, "metrics": 9118},
         volumes=volumes,
