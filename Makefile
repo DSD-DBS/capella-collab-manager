@@ -63,12 +63,12 @@ docs:
 	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs
 
-deploy: build capella helm-deploy open rollout
+deploy: build capella helm-deploy rollout open
 
 # Deploy with full T4C client support:
-deploy-t4c: build t4c-client helm-deploy open rollout
+deploy-t4c: build t4c-client helm-deploy rollout open
 
-deploy-without-build: helm-deploy open rollout
+deploy-without-build: helm-deploy rollout open
 
 helm-deploy:
 	@k3d cluster list $(CLUSTER_NAME) >/dev/null || $(MAKE) create-cluster
@@ -112,10 +112,15 @@ clear-backend-db:
 	$(MAKE) helm-deploy
 
 rollout:
-	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-backend
-	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-frontend
-	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-docs
-	kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-guacamole-guacamole
+	DEPLOYMENTS="backend frontend docs guacamole-guacamole"
+
+	for deployment in $$DEPLOYMENTS; do \
+		kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-$$deployment; \
+	done
+
+	for deployment in $$DEPLOYMENTS; do \
+		kubectl --context k3d-$(CLUSTER_NAME) rollout status --timeout=5m deployment $(RELEASE)-$$deployment; \
+	done
 
 undeploy:
 	kubectl --context k3d-$(CLUSTER_NAME) delete namespace $(SESSION_NAMESPACE) $(NAMESPACE)
