@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+{{ if .Values.loki.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-grafana-dashboards
+  namespace: {{ .Release.Namespace }}
+  labels:
+    id: {{ .Release.Name }}-configmap-grafana-dashboards
+data:
+{{ (.Files.Glob "config/grafana/*.json").AsConfig | indent 2 }}
+{{ end }}
