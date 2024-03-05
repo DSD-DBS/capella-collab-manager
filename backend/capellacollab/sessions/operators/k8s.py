@@ -22,8 +22,6 @@ import prometheus_client
 import yaml
 from kubernetes import client
 from kubernetes.client import exceptions
-from openshift import dynamic
-from openshift.dynamic import exceptions as dynamic_exceptions
 
 from capellacollab.config import config
 from capellacollab.sessions import models as sessions_models
@@ -74,23 +72,6 @@ if _pod_security_context := cfg.get("cluster", {}).get(
     )
 
 
-def is_openshift_cluster(api_client):
-    dyn_client = dynamic.DynamicClient(api_client)
-    try:
-        dyn_client.resources.get(
-            api_version="route.openshift.io/v1", kind="Route"
-        )
-        logging.info(
-            "Openshift routes detected, assuming an OpenShift cluster"
-        )
-        return True
-    except dynamic_exceptions.ResourceNotFoundError:
-        logging.info(
-            "No openshift routes detected, assuming normal Kubernetes cluster"
-        )
-        return False
-
-
 class Session(t.NamedTuple):
     id: str
     ports: set[int]
@@ -107,13 +88,6 @@ class KubernetesOperator:
         self.v1_batch = client.BatchV1Api(api_client=self.client)
         self.v1_networking = client.NetworkingV1Api(api_client=self.client)
         self.v1_policy = client.PolicyV1Api(api_client=self.client)
-        self._openshift = None
-
-    @property
-    def openshift(self):
-        if self._openshift is None:
-            self._openshift = is_openshift_cluster(self.client)
-        return self._openshift
 
     def load_config(self) -> None:
         self.kubectl_arguments = []
@@ -129,51 +103,6 @@ class KubernetesOperator:
             return True
         except BaseException:
             return False
-
-    def create_public_route(
-        self,
-        session_id: str,
-        host: str,
-        path: str,
-        port: int,
-        wildcard_host: bool | None = False,
-    ):
-        """Create a public route for the session
-
-        Parameters
-        ==========
-        session_id: str
-            The database ID of the session
-        host: str
-            The host to use for the route
-        path: str
-            The path to use for the route
-        port: int
-            The port to use for the route
-        wildcard_host: bool
-            Whether to use a wildcard host or not (serve on all hosts),
-            not supported for OpenShift
-        """
-        if self.openshift:
-            self._create_openshift_route(session_id, host, path, port)
-        else:
-            self._create_ingress(session_id, host, path, port, wildcard_host)
-
-    def delete_public_route(self, session_id: str):
-        if self.openshift:
-            if dep_status := self._delete_openshift_route(session_id):
-                log.info(
-                    "Deleted route %s with status %s",
-                    session_id,
-                    dep_status.status,
-                )
-        else:
-            if dep_status := self._delete_ingress(session_id):
-                log.info(
-                    "Deleted ingress %s with status %s",
-                    session_id,
-                    dep_status.status,
-                )
 
     def start_session(
         self,
@@ -726,19 +655,23 @@ class KubernetesOperator:
         )
         return self.v1_core.create_namespaced_service(namespace, service)
 
-    def _create_ingress(
+    def create_ingress(
         self,
-        id,
+        name: str,
         host: str,
         path: str,
-        port_number: int,
+        port: int,
         wildcard_host: bool | None = False,
     ):
         ingress = client.V1Ingress(
             api_version="networking.k8s.io/v1",
             kind="Ingress",
             metadata=client.V1ObjectMeta(
-                name=id,
+                name=name,
+                annotations={
+                    "route.openshift.io/insecureEdgeTerminationPolicy": "Redirect",
+                    "route.openshift.io/termination": "edge",
+                },
             ),
             spec=client.V1IngressSpec(
                 ingress_class_name=cfg.get("ingressClassName"),
@@ -752,9 +685,9 @@ class KubernetesOperator:
                                     path_type="Prefix",
                                     backend=client.V1IngressBackend(
                                         service=client.V1IngressServiceBackend(
-                                            name=id,
+                                            name=name,
                                             port=client.V1ServiceBackendPort(
-                                                number=port_number
+                                                number=port
                                             ),
                                         )
                                     ),
@@ -766,38 +699,6 @@ class KubernetesOperator:
             ),
         )
         return self.v1_networking.create_namespaced_ingress(namespace, ingress)
-
-    def _create_openshift_route(
-        self, id, host: str, path: str, port_number: int
-    ):
-        route_dict = {
-            "kind": "Route",
-            "apiVersion": "route.openshift.io/v1",
-            "metadata": {
-                "name": id,
-            },
-            "spec": {
-                "host": host,
-                "path": path,
-                "to": {
-                    "kind": "Service",
-                    "name": id,
-                },
-                "port": {
-                    "targetPort": port_number,
-                },
-                "tls": {
-                    "termination": "edge",
-                    "insecureEdgeTerminationPolicy": "Redirect",
-                },
-                "wildcardPolicy": "None",
-            },
-        }
-        dyn_client = dynamic.DynamicClient(self.client)
-        v1_routes = dyn_client.resources.get(
-            api_version="route.openshift.io/v1", kind="Route"
-        )
-        return v1_routes.create(body=route_dict, namespace=namespace)
 
     def create_persistent_volume(
         self, name: str, size: str, labels: dict[str, str] | None = None
@@ -993,24 +894,19 @@ class KubernetesOperator:
 
             return None
 
-    def _delete_ingress(self, name: str) -> client.V1Status | None:
+    def delete_ingress(self, name: str) -> client.V1Status | None:
         try:
-            return self.v1_networking.delete_namespaced_ingress(
+            status = self.v1_networking.delete_namespaced_ingress(
                 name, namespace
             )
+            log.info(
+                "Deleted ingress %s with status %s",
+                name,
+                status.status,
+            )
+            return status
         except exceptions.ApiException:
             log.exception("Error deleting ingress with name: %s", name)
-            return None
-
-    def _delete_openshift_route(self, name: str) -> client.V1Status | None:
-        try:
-            dyn_client = dynamic.DynamicClient(self.client)
-            v1_routes = dyn_client.resources.get(
-                api_version="route.openshift.io/v1", kind="Route"
-            )
-            return v1_routes.delete(name=name, namespace=namespace)
-        except exceptions.ApiException:
-            log.exception("Error deleting route with name: %s", name)
             return None
 
     def _get_pod_name(self, _id: str) -> str:

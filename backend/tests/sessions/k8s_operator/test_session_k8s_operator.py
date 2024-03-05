@@ -104,6 +104,40 @@ def test_kill_session(monkeypatch: pytest.MonkeyPatch):
     operator.kill_session("testname")
 
 
+def test_create_public_route(monkeypatch: pytest.MonkeyPatch):
+    operator = k8s.KubernetesOperator()
+    monkeypatch.setattr(k8s, "loki_enabled", False)
+
+    monkeypatch.setattr(
+        operator.v1_networking,
+        "create_namespaced_ingress",
+        lambda namespace, name: client.V1Status(),
+    )
+
+    operator.create_ingress(
+        "testname",
+        "test.localhost",
+        "/session/testname",
+        80,
+        wildcard_host=False,
+    )
+
+
+def test_delete_public_route(monkeypatch: pytest.MonkeyPatch):
+    operator = k8s.KubernetesOperator()
+    monkeypatch.setattr(k8s, "loki_enabled", False)
+
+    monkeypatch.setattr(
+        operator.v1_networking,
+        "delete_namespaced_ingress",
+        lambda namespace, name: client.V1Status(),
+    )
+
+    operator.delete_ingress(
+        "testname",
+    )
+
+
 def test_create_job(monkeypatch: pytest.MonkeyPatch):
     operator = k8s.KubernetesOperator()
     monkeypatch.setattr(

@@ -81,8 +81,8 @@ class JupyterIntegration(interface.HookRegistration):
         **kwargs,
     ):
         assert self._jupyter_public_uri.hostname
-        operator.create_public_route(
-            session_id=session_id,
+        operator.create_ingress(
+            name=session_id,
             host=self._jupyter_public_uri.hostname or "",
             path=self._determine_base_url(user.name),
             port=8888,
@@ -95,7 +95,7 @@ class JupyterIntegration(interface.HookRegistration):
         session: sessions_models.DatabaseSession,
         **kwargs,
     ):
-        operator.delete_public_route(session_id=session.id)
+        operator.delete_ingress(name=session.id)
 
     def _determine_base_url(self, username: str):
         return f"{self._jupyter_public_uri.path}/{username}"

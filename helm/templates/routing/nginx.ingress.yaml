@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-{{- if eq .Values.cluster.kind "Kubernetes" }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -12,6 +11,10 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    {{- if eq .Values.cluster.kind "OpenShift" }}
+    route.openshift.io/insecureEdgeTerminationPolicy: Redirect
+    route.openshift.io/termination: edge
+    {{ end }}
 spec:
   ingressClassName: {{ .Values.cluster.ingressClassName }}
   rules:
@@ -71,4 +74,3 @@ spec:
       {{ if not .Values.general.wildcardHost }}
       host: {{ .Values.general.host }}
       {{ end }}
-{{ end }}
