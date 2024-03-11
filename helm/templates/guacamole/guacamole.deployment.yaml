@@ -21,6 +21,7 @@ spec:
       annotations:
         checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
     spec:
+      automountServiceAccountToken: false
       volumes:
         {{ if .Values.loki.enabled }}
         - name: unused

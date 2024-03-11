@@ -17,6 +17,7 @@ spec:
       labels:
         id: {{ .Release.Name }}-deployment-docs
     spec:
+      automountServiceAccountToken: false
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-docs

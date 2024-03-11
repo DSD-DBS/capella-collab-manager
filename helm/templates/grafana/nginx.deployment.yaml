@@ -22,6 +22,7 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/grafana/nginx.configmap.yaml") . | sha256sum }}
     spec:
+      automountServiceAccountToken: false
       volumes:
         - name: {{ .Release.Name }}-grafana-nginx
           configMap:
