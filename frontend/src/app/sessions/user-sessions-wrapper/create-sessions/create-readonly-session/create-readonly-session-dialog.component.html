@@ -4,23 +4,66 @@
  -->
 
 <div class="dialog">
-  <form (ngSubmit)="requestSession()">
-    <h2>Open Readonly Session</h2>
-    <p>
-      Select the models and revisions you want to load in a readonly session.
+  <form [formGroup]="form" (ngSubmit)="requestSession()">
+    <h2>Open read-only Session</h2>
+
+    @if (
+      modelOptions.length &&
+      modelOptions[0].model.tool.config.connection.methods.length > 1
+    ) {
+      <div class="mb-2">
+        <p class="text-sm">
+          Select the connection method for your read-only session:
+        </p>
+        <mat-radio-group
+          class="flex gap-2"
+          formControlName="connectionMethodId"
+        >
+          @for (
+            connectionMethod of modelOptions[0].model.tool.config.connection
+              .methods;
+            track connectionMethod.id
+          ) {
+            <mat-radio-button [value]="connectionMethod.id">{{
+              connectionMethod.name
+            }}</mat-radio-button>
+          }
+        </mat-radio-group>
+      </div>
+
+      @if (this.getSelectedConnectionMethod().description) {
+        <div class="mb-2 border p-2 text-sm shadow">
+          {{ getSelectedConnectionMethod().description }}
+        </div>
+      }
+    }
+
+    <p class="text-sm">
+      Select the models and revisions you want to load in a readonly session:
     </p>
-    <div>
-      <div *ngFor="let options of modelOptions">
+    @if (modelOptions.length > 0) {
+      @for (options of modelOptions; track options) {
         <create-readonly-model-options
           [projectSlug]="data.projectSlug"
           [modelOptions]="options"
         >
         </create-readonly-model-options>
+        <hr class="m-2" />
+      }
+    } @else {
+      <div class="my-1 border p-2 text-sm shadow">
+        No models have read-only session support. Please contact your
+        administrator or project lead.
       </div>
-    </div>
+    }
     <div class="flex justify-between">
-      <button mat-flat-button mat-dialog-close>Cancel</button>
-      <button mat-flat-button mat-dialog-close color="primary" type="submit">
+      <button mat-flat-button mat-dialog-close type="button">Cancel</button>
+      <button
+        mat-flat-button
+        [disabled]="this.selectedModelOptions().length === 0 || loading"
+        color="primary"
+        type="submit"
+      >
         Start Session
       </button>
     </div>

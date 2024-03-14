@@ -55,7 +55,7 @@ export class NavBarService {
     },
     {
       name: 'Documentation',
-      href: environment.docs_url,
+      href: environment.docs_url + '/',
       target: '_blank',
       icon: 'open_in_new',
       requiredRole: 'user',

@@ -113,7 +113,7 @@ def create_backup(
                 body.include_commit_history,
             ),
             labels=core.get_pipeline_labels(toolmodel),
-            tool_resources=toolmodel.tool.resources,
+            tool_resources=toolmodel.tool.config.resources,
             command="backup",
             schedule="0 3 * * *",
         )

@@ -31,8 +31,7 @@ a {
 }
 
 h2 {
-  margin: 0px !important;
-  font-size: medium;
+  @apply !m-0 text-xl;
 }
 
 .dialog {
@@ -116,12 +115,7 @@ button.success {
 }
 
 h1 {
-  margin: 10px;
   font-size: large;
-}
-
-button {
-  margin: 5px;
 }
 
 mat-spinner {
@@ -278,7 +272,7 @@ Angular Material Card Styles
 
 /* https://github.com/angular/components/issues/26176 */
 .mat-mdc-button-touch-target {
-  @apply hidden;
+  @apply !hidden;
 }
 
 .mat-mdc-tab {

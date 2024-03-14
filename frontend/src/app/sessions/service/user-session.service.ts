@@ -6,10 +6,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, filter } from 'rxjs';
 import {
+  Session,
   isPersistentSession,
   isReadonlySession,
-  Session,
-} from 'src/app/schemes';
+} from 'src/app/sessions/service/session.service';
 import { UserService } from '../../services/user/user.service';
 
 @Injectable({

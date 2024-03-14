@@ -13,6 +13,7 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 from capellacollab.tools import models as tools_models
 
 if t.TYPE_CHECKING:
@@ -33,6 +34,11 @@ def validate_rest_api_url(value: str | None):
                 "The provided TeamForCapella REST API is not valid."
             )
     return value
+
+
+class GetSessionUsageResponse(core_pydantic.BaseModel):
+    free: int
+    total: int
 
 
 class Protocol(str, enum.Enum):

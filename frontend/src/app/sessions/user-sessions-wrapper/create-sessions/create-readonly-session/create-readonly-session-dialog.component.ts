@@ -3,16 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { DialogRef } from '@angular/cdk/dialog';
 import { Component, Inject, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   getPrimaryGitModel,
   Model,
 } from 'src/app/projects/models/service/model.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { ModelOptions } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-model-options/create-readonly-model-options.component';
+import { ConnectionMethod } from 'src/app/settings/core/tools-settings/tool.service';
 
 @UntilDestroy()
 @Component({
@@ -23,15 +27,25 @@ import { ModelOptions } from 'src/app/sessions/user-sessions-wrapper/create-sess
 export class CreateReadonlySessionDialogComponent implements OnInit {
   constructor(
     public sessionService: SessionService,
-
-    private router: Router,
     @Inject(MAT_DIALOG_DATA)
     public data: {
       projectSlug: string;
       models: Model[];
       modelVersionId: number;
     },
+    private router: Router,
+    private toastService: ToastService,
+    private dialog: DialogRef<CreateReadonlySessionDialogComponent>,
   ) {}
+
+  form = new FormGroup({
+    connectionMethodId: new FormControl<string | undefined>(
+      undefined,
+      Validators.required,
+    ),
+  });
+
+  loading = false;
 
   modelOptions: ModelOptions[] = [];
 
@@ -54,20 +68,39 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
         deepClone: false,
       });
     }
+
+    if (this.modelOptions.length) {
+      this.form.controls.connectionMethodId.setValue(
+        this.modelOptions[0].model.tool.config.connection.methods[0].id,
+      );
+    }
+  }
+
+  selectedModelOptions(): ModelOptions[] {
+    return this.modelOptions.filter((mo) => mo.include);
   }
 
   requestSession(): void {
-    const included = this.modelOptions.filter((mo) => mo.include);
+    this.loading = true;
+    const included = this.selectedModelOptions();
 
-    if (!included) {
+    if (included.length === 0) {
+      this.toastService.showError(
+        '',
+        'Select at least one model to include in the session.',
+      );
       return;
     }
 
     this.sessionService
-      .createReadonlySession(
-        this.data.projectSlug,
+      .createSession(
+        this.modelOptions[0].model.tool.id,
+        this.modelOptions[0].model.version!.id,
+        this.form.controls.connectionMethodId.value!,
+        'readonly',
         included.map((m) => {
           return {
+            project_slug: this.data.projectSlug,
             model_slug: m.model.slug,
             git_model_id: m.primaryGitModel.id,
             revision: m.revision,
@@ -75,8 +108,20 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
           };
         }),
       )
-      .subscribe(() => {
-        this.router.navigateByUrl('/');
+      .subscribe({
+        next: () => {
+          this.dialog.close();
+          this.router.navigateByUrl('/');
+        },
+        error: () => {
+          this.loading = false;
+        },
       });
+  }
+
+  getSelectedConnectionMethod(): ConnectionMethod {
+    return this.modelOptions[0].model.tool.config.connection.methods.find(
+      (method) => method.id === this.form.controls.connectionMethodId.value,
+    )!;
   }
 }

@@ -3,22 +3,16 @@
 
 import pytest
 import responses
-from fastapi import status, testclient
+from fastapi import testclient
 from sqlalchemy import orm
 
-from capellacollab.settings.modelsources.t4c import crud as t4c_crud
 from capellacollab.settings.modelsources.t4c import models as t4c_models
 from capellacollab.settings.modelsources.t4c.repositories import (
     crud as t4c_repositories_crud,
 )
-from capellacollab.settings.modelsources.t4c.repositories import (
-    models as t4c_repositories_models,
-)
-from capellacollab.users import crud as users_crud
-from capellacollab.users import models as users_models
 
 
-@responses.activate()
+@responses.activate
 @pytest.mark.usefixtures("admin_user")
 def test_list_t4c_repositories(
     client: testclient.TestClient,

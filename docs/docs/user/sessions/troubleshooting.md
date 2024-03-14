@@ -21,6 +21,10 @@
     or updates from the cluster operator. In both cases, we pull a new Docker image
     (which can be understood as a reinstallation of the tool) on demand.
 
+??? question "I've minimized my window in Xpra and can't get it back"
+
+    Just refresh the page in the browser. The window should appear again.
+
 ??? question "My Capella crashed. What should I do?"
 
     Capella can crash for many different reasons. Many issues are issues with

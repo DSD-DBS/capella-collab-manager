@@ -6,6 +6,7 @@ from fastapi import testclient
 from sqlalchemy import orm
 
 import capellacollab.sessions.operators
+from capellacollab.core.database import migration as database_migration
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.toolmodels import crud as toolmodels_crud
 from capellacollab.projects.toolmodels import models as toolmodels_models
@@ -28,7 +29,9 @@ class MockOperator:
 
 @pytest.fixture(name="jupyter_tool")
 def fixture_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
-    return tools_crud.get_tool_by_name(db, "Jupyter")
+    return database_migration.create_jupyter_tool(
+        db, "localhost:invalid-registry"
+    )
 
 
 @pytest.fixture(name="jupyter_model")

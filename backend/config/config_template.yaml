@@ -45,9 +45,6 @@ extensions:
     username: guacadmin
     password: guacadmin
 
-  jupyter:
-    publicURI: http://localhost:8080/jupyter
-
 authentication:
   provider: oauth # oauth | azure
   jwt:

@@ -72,9 +72,9 @@ if _pod_security_context := cfg.get("cluster", {}).get(
     )
 
 
-class Session(t.NamedTuple):
+class Session(t.TypedDict):
     id: str
-    ports: set[int]
+    port: int
     created_at: datetime.datetime
     host: str
 
@@ -106,9 +106,10 @@ class KubernetesOperator:
 
     def start_session(
         self,
+        session_id: str,
         image: str,
         username: str,
-        session_type: sessions_models.WorkspaceType,
+        session_type: sessions_models.SessionType,
         tool: tools_models.DatabaseTool,
         version: tools_models.DatabaseVersion,
         environment: dict[str, str],
@@ -121,11 +122,9 @@ class KubernetesOperator:
             "Launching a %s session for user %s", session_type.value, username
         )
 
-        _id = self._generate_id()
-
         if loki_enabled:
             self._create_promtail_configmap(
-                name=_id,
+                name=session_id,
                 username=username,
                 session_type=session_type.value,
                 tool_name=tool.name,
@@ -134,21 +133,21 @@ class KubernetesOperator:
 
         deployment = self._create_deployment(
             image=image,
-            name=_id,
+            name=session_id,
             environment=environment,
             ports=ports,
             volumes=volumes,
-            tool_resources=tool.resources,
+            tool_resources=tool.config.resources,
         )
 
         self._create_disruption_budget(
-            name=_id,
-            deployment_name=_id,
+            name=session_id,
+            deployment_name=session_id,
         )
 
         service = self._create_service(
-            name=_id,
-            deployment_name=_id,
+            name=session_id,
+            deployment_name=session_id,
             ports=ports,
             prometheus_path=prometheus_path,
             prometheus_port=prometheus_port,
@@ -158,7 +157,7 @@ class KubernetesOperator:
             "Launched a %s session for user %s with id %s",
             session_type,
             username,
-            _id,
+            session_id,
         )
         SESSIONS_STARTED.labels(session_type).inc()
 
@@ -380,9 +379,9 @@ class KubernetesOperator:
         ports: dict[str, int],
     ) -> Session:
         if "rdp" in ports:
-            port = {ports["rdp"]}
+            port = ports["rdp"]
         elif "http" in ports:
-            port = {ports["http"]}
+            port = ports["http"]
         else:
             raise ValueError(
                 "No rdp or http port defined on the deployed session"
@@ -390,7 +389,7 @@ class KubernetesOperator:
 
         return Session(
             id=deployment.to_dict()["metadata"]["name"],
-            ports=port,
+            port=port,
             created_at=deployment.to_dict()["metadata"]["creation_timestamp"],
             host=service.to_dict()["metadata"]["name"] + "." + namespace,
         )
@@ -644,7 +643,7 @@ class KubernetesOperator:
                     client.V1ServicePort(
                         name=name,
                         protocol="TCP",
-                        port=port,
+                        port=80 if name == "http" else port,
                         target_port=port,
                     )
                     for name, port in ports.items()
@@ -654,51 +653,6 @@ class KubernetesOperator:
             ),
         )
         return self.v1_core.create_namespaced_service(namespace, service)
-
-    def create_ingress(
-        self,
-        name: str,
-        host: str,
-        path: str,
-        port: int,
-        wildcard_host: bool | None = False,
-    ):
-        ingress = client.V1Ingress(
-            api_version="networking.k8s.io/v1",
-            kind="Ingress",
-            metadata=client.V1ObjectMeta(
-                name=name,
-                annotations={
-                    "route.openshift.io/insecureEdgeTerminationPolicy": "Redirect",
-                    "route.openshift.io/termination": "edge",
-                },
-            ),
-            spec=client.V1IngressSpec(
-                ingress_class_name=cfg.get("ingressClassName"),
-                rules=[
-                    client.V1IngressRule(
-                        host=None if wildcard_host else host,
-                        http=client.V1HTTPIngressRuleValue(
-                            paths=[
-                                client.V1HTTPIngressPath(
-                                    path=path,
-                                    path_type="Prefix",
-                                    backend=client.V1IngressBackend(
-                                        service=client.V1IngressServiceBackend(
-                                            name=name,
-                                            port=client.V1ServiceBackendPort(
-                                                number=port
-                                            ),
-                                        )
-                                    ),
-                                )
-                            ]
-                        ),
-                    )
-                ],
-            ),
-        )
-        return self.v1_networking.create_namespaced_ingress(namespace, ingress)
 
     def create_persistent_volume(
         self, name: str, size: str, labels: dict[str, str] | None = None
@@ -892,21 +846,6 @@ class KubernetesOperator:
                     "Error deleting discruptionbudget with name: %s", name
                 )
 
-            return None
-
-    def delete_ingress(self, name: str) -> client.V1Status | None:
-        try:
-            status = self.v1_networking.delete_namespaced_ingress(
-                name, namespace
-            )
-            log.info(
-                "Deleted ingress %s with status %s",
-                name,
-                status.status,
-            )
-            return status
-        except exceptions.ApiException:
-            log.exception("Error deleting ingress with name: %s", name)
             return None
 
     def _get_pod_name(self, _id: str) -> str:

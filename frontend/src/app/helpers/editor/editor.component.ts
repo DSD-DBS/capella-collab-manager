@@ -29,6 +29,9 @@ export class EditorComponent implements AfterViewInit {
   height = '400px';
 
   @Input()
+  lineWidth = 55;
+
+  @Input()
   // Helps to identify the editor in the DOM
   context = uuidv4();
 
@@ -55,7 +58,7 @@ export class EditorComponent implements AfterViewInit {
   @Input()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   set value(data: any) {
-    const yaml = stringify(data, { indent: 4 });
+    const yaml = stringify(data, { indent: 2, lineWidth: this.lineWidth });
     this.intialValue = yaml;
     this.editor?.setValue(yaml);
   }
@@ -113,6 +116,7 @@ export class EditorComponent implements AfterViewInit {
       scrollBeyondLastLine: false,
       model: configModel,
       automaticLayout: true,
+      tabSize: 2,
     });
   }
 

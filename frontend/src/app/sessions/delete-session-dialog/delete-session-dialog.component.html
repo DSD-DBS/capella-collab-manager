@@ -4,23 +4,28 @@
  -->
 
 <div class="dialog">
-  <h1>Terminate Session</h1>
+  <h1 class="text-lg font-bold">Terminate Session</h1>
   <div>
     <p>Do you want to terminate the following session(s)?</p>
-    <ul>
-      <li *ngFor="let session of sessions">
+    <hr />
+    <div *ngFor="let session of sessions">
+      <div class="my-2">
         ID: {{ session.id }} <br />
         Owner: {{ session.owner.name }} <br />
-      </li>
-    </ul>
-    <p>This will force close the sessions and all unsaved work will be lost!</p>
+      </div>
+      <hr />
+    </div>
+    <div class="my-2">
+      This will force close the sessions and all unsaved work will be lost!
+    </div>
   </div>
-  <div>
-    <button mat-button (click)="this.dialogRef.close()">No</button>
+  <div class="flex justify-between">
+    <button mat-stroked-button (click)="this.dialogRef.close()">No</button>
     <button
-      mat-flat-button
+      mat-stroked-button
       [disabled]="deleteButton.disabled"
       (click)="deleteAllSessions()"
+      color="primary"
     >
       {{ deleteButton.text }}
     </button>

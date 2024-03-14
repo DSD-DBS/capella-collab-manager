@@ -8,7 +8,7 @@ from sqlalchemy import orm
 
 from capellacollab.core import models as core_models
 from capellacollab.projects.toolmodels import models as toolmodels_models
-from capellacollab.sessions.operators import models as operators_models
+from capellacollab.sessions import models as sessions_models
 from capellacollab.settings.integrations.purevariants import (
     crud as purevariants_crud,
 )
@@ -29,12 +29,13 @@ class PureVariantsIntegration(interface.HookRegistration):
         self,
         db: orm.Session,
         user: users_models.DatabaseUser,
+        session_type: sessions_models.SessionType,
         **kwargs,
-    ) -> tuple[
-        PureVariantsConfigEnvironment,
-        list[operators_models.Volume],
-        list[core_models.Message],
-    ]:
+    ) -> interface.ConfigurationHookResult:
+        if session_type == sessions_models.SessionType.READONLY:
+            # Skip read-only sessions, no pure::variants integration supported.
+            return interface.ConfigurationHookResult()
+
         if (
             not self._user_has_project_with_pure_variants_model(user)
             and user.role == users_models.Role.USER
@@ -49,10 +50,8 @@ class PureVariantsIntegration(interface.HookRegistration):
                 )
             ]
 
-            return (
-                {},
-                [],
-                warnings,
+            return interface.ConfigurationHookResult(
+                warnings=warnings,
             )
 
         pv_license = purevariants_crud.get_pure_variants_configuration(db)
@@ -67,17 +66,17 @@ class PureVariantsIntegration(interface.HookRegistration):
                 )
             ]
 
-            return {}, [], warnings
+            return interface.ConfigurationHookResult(
+                warnings=warnings,
+            )
 
         pure_variants_environment: PureVariantsConfigEnvironment = {
             "PURE_VARIANTS_LICENSE_SERVER": pv_license.license_server_url,
             "PURE_VARIANTS_SECRET": "pure-variants",
         }
 
-        return (
-            pure_variants_environment,
-            [],
-            [],
+        return interface.ConfigurationHookResult(
+            environment=pure_variants_environment,
         )
 
     def _model_allows_pure_variants(

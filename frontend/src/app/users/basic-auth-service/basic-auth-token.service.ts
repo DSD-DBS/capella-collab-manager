@@ -35,7 +35,7 @@ export class TokenService {
         environment.backend_url + `/users/current/tokens`,
         {
           description,
-          expiration_date,
+          expiration_date: expiration_date.toISOString().substring(0, 10),
           source,
         },
       )

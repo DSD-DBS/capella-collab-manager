@@ -3,6 +3,8 @@
 
 import datetime
 
+import pydantic
+
 
 def datetime_serializer(
     dt: datetime.datetime | None,
@@ -10,3 +12,7 @@ def datetime_serializer(
     if dt:
         return dt.replace(tzinfo=datetime.UTC)
     return None
+
+
+class BaseModel(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(from_attributes=True)

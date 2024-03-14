@@ -25,7 +25,7 @@ def get_existing_tool(
     )
 
 
-def get_exisiting_tool_version(
+def get_existing_tool_version(
     tool_id: int,
     version_id: int,
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -44,7 +44,7 @@ def get_exisiting_tool_version(
     )
 
 
-def get_exisiting_tool_nature(
+def get_existing_tool_nature(
     tool_id: int,
     nature_id: int,
     db: orm.Session = fastapi.Depends(database.get_db),

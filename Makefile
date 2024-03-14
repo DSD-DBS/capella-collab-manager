@@ -8,7 +8,6 @@ REGISTRY_PORT = 12345
 RELEASE = dev
 NAMESPACE = collab-manager
 SESSION_NAMESPACE = collab-sessions
-PORT ?= 8080
 
 # List of Capella versions, e.g.: `5.0.0 5.2.0 6.0.0`
 CAPELLA_VERSIONS ?= 6.0.0
@@ -73,7 +72,7 @@ deploy-without-build: helm-deploy rollout open
 helm-deploy:
 	@k3d cluster list $(CLUSTER_NAME) >/dev/null || $(MAKE) create-cluster
 	@kubectl create namespace $(SESSION_NAMESPACE) 2> /dev/null || true
-	@helm dependency update ./helm
+	@echo "Start helm upgrade..."
 	@helm upgrade --install \
 		--kube-context k3d-$(CLUSTER_NAME) \
 		--create-namespace \
@@ -83,18 +82,15 @@ helm-deploy:
 		--set docker.registry.internal=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
 		--set docker.images.guacamole.guacamole=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/guacamole \
 		--set mocks.oauth=True \
-		--set general.port=8080 \
 		--set development=$(DEVELOPMENT_MODE) \
 		--set cluster.ingressClassName=traefik \
 		--set cluster.ingressNamespace=kube-system \
 		--set backend.k8sSessionNamespace="$(SESSION_NAMESPACE)" \
-		--set backend.authentication.oauth.redirectURI="http://localhost:$(PORT)/oauth2/callback" \
-		--set backend.authentication.oauth.endpoints.wellKnown="http://$(RELEASE)-oauth-mock:8080/default/.well-known/openid-configuration" \
 		$(RELEASE) ./helm
 	$(MAKE) provision-guacamole wait
 
 open:
-	@export URL=http://localhost:8080; \
+	@export URL=$$(helm show values helm --jsonpath '{.general.scheme}://{.general.host}:{.general.port}'); \
 	if [ "Windows_NT" = "$(OS)" ] && command -v start > /dev/null; \
 	then \
 		start "$$URL"; \
@@ -133,6 +129,7 @@ create-cluster: registry
 	k3d cluster list $(CLUSTER_NAME) 2>&- || k3d cluster create $(CLUSTER_NAME) \
 		--registry-use k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
 		-p "8080:80@loadbalancer" \
+		-p "443:443@loadbalancer" \
 		-p "30000-30005:30000-30005@server:0"
 	kubectl cluster-info
 	kubectl config set-context --current --namespace=$(NAMESPACE)

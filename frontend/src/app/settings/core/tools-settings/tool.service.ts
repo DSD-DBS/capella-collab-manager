@@ -8,9 +8,25 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
+export type ConnectionMethod = {
+  id: string;
+  name: string;
+  description?: string;
+  type: 'http' | 'guacamole';
+};
+
+export type ToolSessionConnectionConfiguration = {
+  methods: ConnectionMethod[];
+};
+
+export type ToolSessionConfiguration = {
+  connection: ToolSessionConnectionConfiguration;
+};
+
 export type CreateTool = {
   name: string;
   integrations: ToolIntegrations;
+  config: ToolSessionConfiguration;
 };
 
 export type Tool = {
@@ -25,6 +41,10 @@ export type ToolIntegrations = {
 
 export type CreateToolVersion = {
   name: string;
+  config: ToolVersionConfig;
+};
+
+export type ToolVersionConfig = {
   is_recommended: boolean;
   is_deprecated: boolean;
 };
