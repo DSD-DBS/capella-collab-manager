@@ -29,7 +29,6 @@ import {
 @Component({
   selector: 'app-user-settings',
   templateUrl: './user-settings.component.html',
-  styleUrls: ['./user-settings.component.css'],
 })
 export class UserSettingsComponent implements OnInit {
   users: User[] = [];
@@ -77,7 +76,7 @@ export class UserSettingsComponent implements OnInit {
     const dialogRef = this.dialog.open(InputDialogComponent, {
       data: {
         title: 'Create User',
-        text: `Do you really want to create the user '${username}? Please provide a reason.'`,
+        text: `Please provide a reason why you want to create the user '${username}.' manually.`,
       },
     });
 
@@ -100,7 +99,7 @@ export class UserSettingsComponent implements OnInit {
     const dialogRef = this.dialog.open(InputDialogComponent, {
       data: {
         title: 'Upgrade to Administrator Role',
-        text: `Do you really want to upgrade ${user.name} to Administrator? Please provide a reason.'`,
+        text: `Please provide a reason to upgrade the user '${user.name}' to the role administrator.`,
       },
     });
 
@@ -125,7 +124,7 @@ export class UserSettingsComponent implements OnInit {
     const dialogRef = this.dialog.open(InputDialogComponent, {
       data: {
         title: 'Downgrade to User Role',
-        text: `Do you really want to downgrade ${user.name} to User? Please provide a reason.'`,
+        text: `Please provide a reason to downgrade the user '${user.name}' to the role user.`,
       },
     });
 
@@ -169,7 +168,6 @@ export class UserSettingsComponent implements OnInit {
 
   getUsers() {
     this.userService.getUsers().subscribe((users: User[]) => {
-      this.selectedUser = undefined;
       this.users = users;
     });
   }
@@ -180,9 +178,5 @@ export class UserSettingsComponent implements OnInit {
         user.role == role &&
         user.name.toLowerCase().includes(this.search.toLowerCase()),
     );
-  }
-
-  onUserSelect(user: User) {
-    this.selectedUser = user;
   }
 }

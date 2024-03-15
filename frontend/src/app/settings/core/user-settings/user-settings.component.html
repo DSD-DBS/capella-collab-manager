@@ -4,10 +4,10 @@
  -->
 
 <div class="flex flex-wrap gap-5">
-  <div class="collab-card mb-[10px]" id="manage-users">
+  <div class="collab-card mb-[10px] w-card max-w-[85vw]">
     <h2 class="text-xl font-medium">Manage Users</h2>
 
-    <mat-form-field class="mt-[5px]" id="search" appearance="outline">
+    <mat-form-field class="mt-[5px] w-full pb-0" appearance="outline">
       <mat-label>Search</mat-label>
       <input
         [(ngModel)]="search"
@@ -18,117 +18,90 @@
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
 
-    <mat-selection-list
-      #userSelectionList
-      [multiple]="false"
+    <div
       [class]="
-        'scrollable simple-scroll' // eslint-disable-line tailwindcss/no-custom-classname
+        'simple-scroll' // eslint-disable-line tailwindcss/no-custom-classname,
+        'max-h-[40vh] overflow-auto'
       "
     >
       <div mat-subheader>Administrators</div>
-      <div
-        *ngFor="let user of getUsersByRole('administrator')"
-        class="mx-1.5 my-2.5 flex items-center justify-between"
-      >
-        <a [routerLink]="['/user', user.id]" class="flex items-center">
-          <mat-icon mat-list-icon class="min-w-[24px] text-center"
-            >account_circle</mat-icon
-          >
-          <div class="ml-2">
-            <div mat-line>{{ user.name }}</div>
-            <div mat-line class="text-gray-500">
-              {{ projectUserService.ADVANCED_ROLES[user.role] }}
+
+      @for (user of getUsersByRole("administrator"); track user.id) {
+        <div class="mx-1.5 my-2.5 flex items-center justify-between">
+          <a [routerLink]="['/user', user.id]" class="flex items-center">
+            <mat-icon mat-list-icon class="min-w-[24px] text-center"
+              >account_circle</mat-icon
+            >
+            <div class="ml-2">
+              <div mat-line>{{ user.name }}</div>
+              <div mat-line class="text-gray-500">
+                {{ projectUserService.ADVANCED_ROLES[user.role] }}
+              </div>
             </div>
-          </div>
-        </a>
-      </div>
+          </a>
+
+          @if (user.id !== userService.user?.id) {
+            <button
+              class="mx-0 px-0"
+              mat-icon-button
+              color="primary"
+              (click)="downgradeToUser(user)"
+              matTooltip="Downgrade user to normal user"
+            >
+              <mat-icon>arrow_downward</mat-icon>
+            </button>
+          }
+        </div>
+      }
 
       <div mat-subheader>Users</div>
-      <div
-        *ngFor="let user of getUsersByRole('user')"
-        class="mx-1.5 my-2.5 flex justify-between"
-      >
-        <a [routerLink]="['/user', user.id]" class="flex items-center">
-          <mat-icon mat-list-icon class="min-w-[24px] text-center"
-            >account_circle</mat-icon
-          >
-          <div class="ml-2">
-            <div mat-line>{{ user.name }}</div>
-            <div mat-line class="text-gray-500">
-              {{ projectUserService.ADVANCED_ROLES[user.role] }}
+
+      @for (user of getUsersByRole("user"); track user.id) {
+        <div class="mx-1.5 my-2.5 flex justify-between">
+          <a [routerLink]="['/user', user.id]" class="flex items-center">
+            <mat-icon mat-list-icon class="min-w-[24px] text-center"
+              >account_circle</mat-icon
+            >
+            <div class="ml-2">
+              <div mat-line>{{ user.name }}</div>
+              <div mat-line class="text-gray-500">
+                {{ projectUserService.ADVANCED_ROLES[user.role] }}
+              </div>
             </div>
+          </a>
+          <div class="ml-1 mr-0 flex items-center">
+            <button
+              class="mx-0 px-0"
+              mat-icon-button
+              color="warn"
+              *ngIf="['user'].includes(user.role)"
+              (click)="deleteUser(user)"
+              matTooltip="Permamently delete user"
+            >
+              <mat-icon color="warn">delete</mat-icon>
+            </button>
+
+            <button
+              class="mx-0 px-0"
+              mat-icon-button
+              color="primary"
+              (click)="upgradeToAdministrator(user)"
+              matTooltip="Upgrade user to administrator"
+            >
+              <mat-icon>arrow_upward</mat-icon>
+            </button>
           </div>
-        </a>
-        <div class="ml-1 mr-0 flex items-center">
-          <button
-            class="mx-0 px-0"
-            mat-icon-button
-            color="warn"
-            *ngIf="['user'].includes(user.role)"
-            (click)="deleteUser(user)"
-            matTooltip="Permamently delete user"
-          >
-            <mat-icon color="warn">delete</mat-icon>
-          </button>
-
-          <button
-            class="mx-0 px-0"
-            mat-icon-button
-            color="primary"
-            (click)="upgradeToAdministrator(user)"
-            matTooltip="Upgrade user to administrator"
-          >
-            <mat-icon>arrow_upward</mat-icon>
-          </button>
         </div>
-      </div>
-
-      <div *ngIf="selectedUser">
-        <button
-          class="!mx-0 !h-[40px] !w-[40px] !px-0"
-          mat-flat-button
-          color="primary"
-          *ngIf="
-            selectedUser.role === 'administrator' &&
-            selectedUser.id !== userService.user?.id
-          "
-          (click)="downgradeToUser(selectedUser)"
-        >
-          <mat-icon>arrow_downward</mat-icon>
-          Downgrade {{ selectedUser.name }} to User
-        </button>
-        <button
-          class="!mx-0 !h-[40px] !w-[40px] !px-0"
-          mat-flat-button
-          color="primary"
-          (click)="upgradeToAdministrator(selectedUser)"
-          *ngIf="selectedUser.role === 'user'"
-        >
-          <mat-icon>arrow_upward</mat-icon>
-          Upgrade
-          {{ selectedUser.name }} to Administrator
-        </button>
-        <button
-          class="!mx-0 !h-[40px] !w-[40px] !px-0"
-          mat-flat-button
-          color="primary"
-          (click)="deleteUser(selectedUser)"
-          *ngIf="selectedUser.role === 'user'"
-        >
-          <mat-icon color="warn">delete</mat-icon>
-          Delete {{ selectedUser.name }}
-        </button>
-      </div>
-    </mat-selection-list>
+      }
+    </div>
   </div>
-  <div class="default collab-card h-1/4">
+
+  <div class="collab-card h-1/4 w-card">
     <h2 class="text-xl font-medium">Create User</h2>
     In general, users are created automatically when logging in the first time.
-    <br />
-    However, there may be cases where you want to create the user before the
-    first login. <br />
-    <form [formGroup]="createUserFormGroup" class="flex justify-between">
-      <mat-form-field>
+    If you want to create the user before the first login, use this form. <br />
+    <form [formGroup]="createUserFormGroup">
+      <mat-form-field class="mt-3 w-full">
         <mat-label>Username</mat-label>
         <input matInput formControlName="username" />
         <mat-error *ngIf="username.getError('required')"
@@ -138,16 +111,15 @@
           >The username does already exist!</mat-error
         >
       </mat-form-field>
+      <br />
       <button
+        class="w-full"
         mat-flat-button
         (click)="createUser()"
         color="primary"
-        class="!h-[50px] !text-lg"
       >
         Create User
-        <mat-icon class="text-lg" iconPositionEnd
-          >keyboard_arrow_right</mat-icon
-        >
+        <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
       </button>
     </form>
   </div>

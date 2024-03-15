@@ -8,22 +8,15 @@
     <h2>{{ data.title }}</h2>
     <p>{{ data.text }}</p>
 
-    <mat-form-field class="w-full" appearance="fill">
+    <mat-form-field class="my-2 w-full" appearance="fill">
       <mat-label>Reason</mat-label>
       <textarea rows="6" matInput formControlName="result"></textarea>
       <mat-error *ngIf="form.controls.result.errors?.required">
-        Please enter something or click on cancel!
+        Please provide a reason.
       </mat-error>
     </mat-form-field>
     <div class="flex justify-between">
-      <button
-        mat-flat-button
-        color="primary"
-        type="button"
-        (click)="onCancel()"
-      >
-        Cancel
-      </button>
+      <button mat-flat-button type="button" (click)="onCancel()">Cancel</button>
       <button
         mat-flat-button
         color="primary"
