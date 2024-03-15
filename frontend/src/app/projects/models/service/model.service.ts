@@ -26,7 +26,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class ModelService {
-  base_url = environment.backend_url + '/projects/';
+  base_url = environment.backend_url + '/projects';
 
   constructor(private http: HttpClient) {}
 
@@ -37,11 +37,11 @@ export class ModelService {
   public readonly models$ = this._models.asObservable();
 
   backendURLFactory(projectSlug: string, modelSlug: string) {
-    return `${this.base_url}${projectSlug}/models/${modelSlug}`;
+    return `${this.base_url}/${projectSlug}/models/${modelSlug}`;
   }
 
   loadModels(projectSlug: string): void {
-    this.http.get<Model[]>(`${this.base_url}${projectSlug}/models`).subscribe({
+    this.http.get<Model[]>(`${this.base_url}/${projectSlug}/models`).subscribe({
       next: (models) => this._models.next(models),
       error: () => this._models.next(undefined),
     });
@@ -49,7 +49,7 @@ export class ModelService {
 
   loadModelbySlug(modelSlug: string, projectSlug: string): void {
     this.http
-      .get<Model>(`${this.base_url}${projectSlug}/models/${modelSlug}/`)
+      .get<Model>(`${this.base_url}/${projectSlug}/models/${modelSlug}`)
       .subscribe({
         next: (model) => this._model.next(model),
         error: () => this._model.next(undefined),
@@ -58,7 +58,7 @@ export class ModelService {
 
   createModel(projectSlug: string, model: NewModel): Observable<Model> {
     return this.http
-      .post<Model>(`${this.base_url}${projectSlug}/models`, model)
+      .post<Model>(`${this.base_url}/${projectSlug}/models`, model)
       .pipe(
         tap({
           next: (model) => {
@@ -77,7 +77,7 @@ export class ModelService {
     nature_id: number,
   ): Observable<Model> {
     return this.http
-      .patch<Model>(`${this.base_url}${projectSlug}/models/${modelSlug}/`, {
+      .patch<Model>(`${this.base_url}/${projectSlug}/models/${modelSlug}`, {
         version_id,
         nature_id,
       })
@@ -98,7 +98,7 @@ export class ModelService {
     patchData: PatchModel,
   ): Observable<Model> {
     return this.http.patch<Model>(
-      `${this.base_url}${projectSlug}/models/${modelSlug}/`,
+      `${this.base_url}/${projectSlug}/models/${modelSlug}`,
       patchData,
     );
   }
@@ -138,7 +138,7 @@ export class ModelService {
 
   deleteModel(projectSlug: string, modelSlug: string): Observable<void> {
     return this.http
-      .delete<void>(`${this.base_url}${projectSlug}/models/${modelSlug}`)
+      .delete<void>(`${this.base_url}/${projectSlug}/models/${modelSlug}`)
       .pipe(
         tap(() => {
           this.loadModels(projectSlug);
