@@ -52,6 +52,7 @@ import {
   HighlightPipeTransform,
   ModelDiagramCodeBlockComponent,
 } from 'src/app/projects/models/diagrams/model-diagram-dialog/model-diagram-code-block/model-diagram-code-block.component';
+import { CreateSessionHistoryComponent } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-session-history/create-session-history.component';
 import { CreateToolComponent } from 'src/app/settings/core/tools-settings/create-tool/create-tool.component';
 import { BasicAuthTokenComponent } from 'src/app/users/basic-auth-token/basic-auth-token.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -262,6 +263,7 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
     BrowserModule,
     ClipboardModule,
     CommonModule,
+    CreateSessionHistoryComponent,
     CookieModule.withOptions(),
     DragDropModule,
     FormsModule,
@@ -294,11 +296,10 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
-    MatTooltipModule,
     NgxSkeletonLoaderModule.forRoot(),
+    MatTooltipModule,
     MatTreeModule,
     OverlayModule,
-    ReactiveFormsModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-left',
       timeOut: 10000,
@@ -309,6 +310,7 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
       resetTimeoutOnDuplicate: true,
       includeTitleDuplicates: true,
     }),
+    ReactiveFormsModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

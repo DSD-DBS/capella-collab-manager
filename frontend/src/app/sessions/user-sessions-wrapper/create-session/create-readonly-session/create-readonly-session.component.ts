@@ -101,12 +101,14 @@ export class CreateReadonlySessionComponent implements OnInit {
     this.toolSelectionForm.controls.version.patchValue(null);
     this.toolVersions = undefined;
 
-    this.toolService.getVersionsForTool(tool.id).subscribe((toolVersions) => {
-      const toolVersionIds = this.models?.map((m) => m.version?.id);
-      this.toolVersions = toolVersions.filter((v) =>
-        toolVersionIds?.includes(v.id),
-      );
-    });
+    this.toolService
+      .getVersionsForTool(tool.id, false)
+      .subscribe((toolVersions) => {
+        const toolVersionIds = this.models?.map((m) => m.version?.id);
+        this.toolVersions = toolVersions.filter((v) =>
+          toolVersionIds?.includes(v.id),
+        );
+      });
   }
 
   asyncReadonlyValidator(): AsyncValidatorFn {
