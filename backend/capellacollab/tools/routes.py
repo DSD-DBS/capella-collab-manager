@@ -143,6 +143,18 @@ def create_tool_version(
     return crud.create_version(db, tool, body)
 
 
+@router.get(
+    "/{tool_id}/versions/{version_id}",
+    response_model=models.ToolVersionBase,
+)
+def get_tool_version(
+    version: models.DatabaseVersion = fastapi.Depends(
+        injectables.get_existing_tool_version
+    ),
+) -> models.DatabaseVersion:
+    return version
+
+
 @router.put(
     "/{tool_id}/versions/{version_id}",
     response_model=models.ToolVersionBase,
@@ -225,6 +237,18 @@ def create_tool_nature(
     if crud.get_nature_by_name(db, tool, body.name):
         raise core_exceptions.ResourceAlreadyExistsError("tool nature", "name")
     return crud.create_nature(db, tool, body.name)
+
+
+@router.get(
+    "/{tool_id}/natures/{nature_id}",
+    response_model=models.ToolNatureBase,
+)
+def get_tool_nature(
+    nature: models.DatabaseNature = fastapi.Depends(
+        injectables.get_existing_tool_nature
+    ),
+) -> models.DatabaseNature:
+    return nature
 
 
 @router.put(

@@ -26,7 +26,7 @@
           >
             <mat-option
               *ngFor="let tool of toolService.tools"
-              value="{{ tool.id }}"
+              [value]="tool.id"
             >
               {{ tool.name }}
             </mat-option>
@@ -89,5 +89,9 @@
         </button>
       </div>
     </form>
+  </div>
+
+  <div class="mt-2">
+    <app-create-session-history></app-create-session-history>
   </div>
 </div>

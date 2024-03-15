@@ -11,6 +11,7 @@ import { importProvidersFrom } from '@angular/core';
 import { applicationConfig } from '@storybook/angular';
 import { ToastrModule } from 'ngx-toastr';
 import { RouterModule } from '@angular/router';
+import { CookieModule } from 'ngx-cookie';
 
 setCompodocJson(docJson);
 
@@ -26,8 +27,8 @@ const preview: Preview = {
   decorators: [
     applicationConfig({
       providers: [
-        importProvidersFrom(HttpClientModule),
         importProvidersFrom(
+          HttpClientModule,
           ToastrModule.forRoot({
             positionClass: 'toast-bottom-left',
             timeOut: 10000,
@@ -38,8 +39,9 @@ const preview: Preview = {
             resetTimeoutOnDuplicate: true,
             includeTitleDuplicates: true,
           }),
+          CookieModule.withOptions(),
+          RouterModule.forRoot([]),
         ),
-        importProvidersFrom(RouterModule.forRoot([])),
       ],
     }),
   ],

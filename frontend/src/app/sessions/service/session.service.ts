@@ -6,10 +6,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { Project } from 'src/app/projects/service/project.service';
 import { User } from 'src/app/services/user/user.service';
+import { SessionHistoryService } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-session-history/session-history.service';
 import {
   ConnectionMethod,
   ToolVersionWithTool,
@@ -81,6 +82,7 @@ export class SessionService {
     private http: HttpClient,
     private localStorageService: LocalStorageService,
     private cookieService: CookieService,
+    private sessionHistoryService: SessionHistoryService,
   ) {}
   BACKEND_URL_PREFIX = environment.backend_url + '/sessions';
 
@@ -95,13 +97,26 @@ export class SessionService {
     session_type: 'persistent' | 'readonly',
     models: ReadonlyModel[],
   ): Observable<Session> {
-    return this.http.post<Session>(`${this.BACKEND_URL_PREFIX}`, {
-      tool_id: toolId,
-      version_id: versionId,
-      connection_method_id: connectionMethodId,
-      session_type: session_type,
-      provisioning: models,
-    });
+    return this.http
+      .post<Session>(`${this.BACKEND_URL_PREFIX}`, {
+        tool_id: toolId,
+        version_id: versionId,
+        connection_method_id: connectionMethodId,
+        session_type: session_type,
+        provisioning: models,
+      })
+      .pipe(
+        tap((session) => {
+          if (isPersistentSession(session)) {
+            this.sessionHistoryService.addSessionRequestToHistory({
+              toolId,
+              versionId,
+              connectionMethodId,
+              lastRequested: new Date(),
+            });
+          }
+        }),
+      );
   }
 
   getSessionConnectionInformation(
