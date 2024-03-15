@@ -18,7 +18,7 @@ import { AuthService } from '../auth/auth.service';
 export class UserService {
   user: User | undefined = undefined;
 
-  BACKEND_URL_PREFIX = environment.backend_url + '/users/';
+  BACKEND_URL_PREFIX = environment.backend_url + '/users';
 
   constructor(
     private http: HttpClient,
@@ -48,19 +48,19 @@ export class UserService {
   }
 
   getUser(user: User): Observable<User> {
-    return this.http.get<User>(this.BACKEND_URL_PREFIX + user.id);
+    return this.http.get<User>(`${this.BACKEND_URL_PREFIX}/${user.id}`);
   }
 
   getUserById(userId: number): Observable<User> {
-    return this.http.get<User>(this.BACKEND_URL_PREFIX + userId);
+    return this.http.get<User>(`${this.BACKEND_URL_PREFIX}/${userId}`);
   }
 
   getCurrentUser(): Observable<User> {
-    return this.http.get<User>(this.BACKEND_URL_PREFIX + 'current');
+    return this.http.get<User>(`${this.BACKEND_URL_PREFIX}/current`);
   }
 
   deleteUser(user: User): Observable<void> {
-    return this.http.delete<void>(this.BACKEND_URL_PREFIX + user.id);
+    return this.http.delete<void>(`${this.BACKEND_URL_PREFIX}/${user.id}`);
   }
 
   getUsers(): Observable<User[]> {
@@ -69,13 +69,13 @@ export class UserService {
 
   getOwnActiveSessions(): Observable<Array<Session>> {
     return this.http.get<Session[]>(
-      this.BACKEND_URL_PREFIX + 'current/sessions',
+      `${this.BACKEND_URL_PREFIX}/current/sessions`,
     );
   }
 
   getUserEvents(userId: number): Observable<HistoryEvent[]> {
     return this.http.get<HistoryEvent[]>(
-      this.BACKEND_URL_PREFIX + userId + '/events',
+      `${this.BACKEND_URL_PREFIX}/${userId}/events`,
     );
   }
 
@@ -84,10 +84,13 @@ export class UserService {
     role: UserRole,
     reason: string,
   ): Observable<User> {
-    return this.http.patch<User>(this.BACKEND_URL_PREFIX + user.id + '/roles', {
-      role,
-      reason,
-    });
+    return this.http.patch<User>(
+      `${this.BACKEND_URL_PREFIX}/${user.id}/roles`,
+      {
+        role,
+        reason,
+      },
+    );
   }
 
   validateUserRole(requiredRole: UserRole): boolean {
@@ -104,7 +107,7 @@ export class UserService {
 
   loadCommonProjects(userId: number): Observable<Project[]> {
     return this.http.get<Project[]>(
-      `${this.BACKEND_URL_PREFIX}${userId}/common-projects`,
+      `${this.BACKEND_URL_PREFIX}/${userId}/common-projects`,
     );
   }
 }

@@ -13,13 +13,13 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class LoadFilesService {
-  BACKEND_URL_PREFIX = environment.backend_url + '/sessions/';
+  BACKEND_URL_PREFIX = environment.backend_url + '/sessions';
 
   constructor(private http: HttpClient) {}
 
   upload(id: string, files: FormData): Observable<HttpEvent<UploadResponse>> {
     return this.http.post<UploadResponse>(
-      this.BACKEND_URL_PREFIX + id + '/files',
+      `${this.BACKEND_URL_PREFIX}/${id}/files`,
       files,
       {
         reportProgress: true,
@@ -30,12 +30,12 @@ export class LoadFilesService {
 
   getCurrentFiles(id: string, showHiddenFiles: boolean): Observable<PathNode> {
     return this.http.get<PathNode>(
-      this.BACKEND_URL_PREFIX + id + '/files?show_hidden=' + showHiddenFiles,
+      `${this.BACKEND_URL_PREFIX}/${id}/files?show_hidden=${showHiddenFiles}`,
     );
   }
 
   download(id: string, filename: string): Observable<Blob> {
-    return this.http.get(`${this.BACKEND_URL_PREFIX}${id}/files/download`, {
+    return this.http.get(`${this.BACKEND_URL_PREFIX}/${id}/files/download`, {
       params: { filename: filename },
       responseType: 'blob',
     });

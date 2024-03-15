@@ -41,7 +41,7 @@ export class T4CRepoService {
     this.http
       .get<
         T4CServerRepository[]
-      >(`${this.t4cInstanceService.urlFactory(instanceId)}/repositories/`)
+      >(`${this.t4cInstanceService.urlFactory(instanceId)}/repositories`)
       .subscribe({
         next: (repositories) => this._repositories.next(repositories),
         error: () => this._repositories.next(undefined),
@@ -62,7 +62,7 @@ export class T4CRepoService {
   ): Observable<T4CRepository> {
     return this.http
       .post<T4CRepository>(
-        `${this.t4cInstanceService.urlFactory(instanceId)}/repositories/`,
+        `${this.t4cInstanceService.urlFactory(instanceId)}/repositories`,
         repository,
       )
       .pipe(tap(() => this.loadRepositories(instanceId)));
@@ -71,14 +71,14 @@ export class T4CRepoService {
   startRepository(instanceId: number, repositoryId: number): Observable<null> {
     this.publishRepositoriesWithChangedStatus(repositoryId, 'LOADING');
     return this.http
-      .post<null>(`${this.urlFactory(instanceId, repositoryId)}/start/`, {})
+      .post<null>(`${this.urlFactory(instanceId, repositoryId)}/start`, {})
       .pipe(tap(() => this.loadRepositories(instanceId)));
   }
 
   stopRepository(instanceId: number, repositoryId: number): Observable<null> {
     this.publishRepositoriesWithChangedStatus(repositoryId, 'LOADING');
     return this.http
-      .post<null>(`${this.urlFactory(instanceId, repositoryId)}/stop/`, {})
+      .post<null>(`${this.urlFactory(instanceId, repositoryId)}/stop`, {})
       .pipe(tap(() => this.loadRepositories(instanceId)));
   }
 
@@ -88,13 +88,13 @@ export class T4CRepoService {
   ): Observable<null> {
     this.publishRepositoriesWithChangedStatus(repositoryId, 'LOADING');
     return this.http
-      .post<null>(`${this.urlFactory(instanceId, repositoryId)}/recreate/`, {})
+      .post<null>(`${this.urlFactory(instanceId, repositoryId)}/recreate`, {})
       .pipe(tap(() => this.loadRepositories(instanceId)));
   }
 
   deleteRepository(instanceId: number, repositoryId: number): Observable<null> {
     return this.http
-      .delete<null>(`${this.urlFactory(instanceId, repositoryId)}/`)
+      .delete<null>(`${this.urlFactory(instanceId, repositoryId)}`)
       .pipe(tap(() => this.loadRepositories(instanceId)));
   }
 

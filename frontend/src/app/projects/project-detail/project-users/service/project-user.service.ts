@@ -31,7 +31,7 @@ export class ProjectUserService {
     this.loadProjectUsersOnProjectChange();
     this.loadProjectUserOnProjectChange();
   }
-  BACKEND_URL_PREFIX = environment.backend_url + '/projects/';
+  BACKEND_URL_PREFIX = environment.backend_url + '/projects';
 
   PERMISSIONS = { read: 'read only', write: 'read & write' };
   ROLES = { user: 'User', manager: 'Manager' };
@@ -108,7 +108,7 @@ export class ProjectUserService {
         filter(Boolean),
         switchMap((project) =>
           this.http.get<ProjectUser>(
-            this.BACKEND_URL_PREFIX + project.slug + '/users/current',
+            `${this.BACKEND_URL_PREFIX}/${project.slug}/users/current`,
           ),
         ),
       )
@@ -141,7 +141,7 @@ export class ProjectUserService {
   loadProjectUsers(projectSlug: string): void {
     this._projectUsers.next(undefined);
     this.http
-      .get<ProjectUser[]>(this.BACKEND_URL_PREFIX + projectSlug + '/users')
+      .get<ProjectUser[]>(`${this.BACKEND_URL_PREFIX}/${projectSlug}/users`)
       .pipe(
         tap((projectUsers) => {
           this._projectUsers.next(projectUsers);
@@ -158,7 +158,7 @@ export class ProjectUserService {
     reason: string,
   ): Observable<ProjectUser> {
     return this.http
-      .post<ProjectUser>(this.BACKEND_URL_PREFIX + projectSlug + '/users', {
+      .post<ProjectUser>(`${this.BACKEND_URL_PREFIX}/${projectSlug}/users`, {
         username,
         role,
         permission,
@@ -178,32 +178,35 @@ export class ProjectUserService {
     reason: string,
   ): Observable<null> {
     return this.http
-      .patch<null>(this.BACKEND_URL_PREFIX + projectSlug + '/users/' + userID, {
-        role,
-        reason,
-      })
+      .patch<null>(
+        `${this.BACKEND_URL_PREFIX}/${projectSlug}/users/${userID}`,
+        {
+          role,
+          reason,
+        },
+      )
       .pipe(tap(() => this.loadProjectUsers(projectSlug)));
   }
 
   changePermissionOfProjectUser(
-    project_slug: string,
+    projectSlug: string,
     userID: number,
     permission: ProjectUserPermission,
     reason: string,
   ): Observable<null> {
     return this.http.patch<null>(
-      this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
+      `${this.BACKEND_URL_PREFIX}/${projectSlug}/users/${userID}`,
       { permission, reason },
     );
   }
 
   deleteUserFromProject(
-    project_slug: string,
+    projectSlug: string,
     userID: number,
     reason: string,
   ): Observable<void> {
     return this.http.delete<void>(
-      this.BACKEND_URL_PREFIX + project_slug + '/users/' + userID,
+      `${this.BACKEND_URL_PREFIX}/${projectSlug}/users/${userID}`,
       { body: reason },
     );
   }
