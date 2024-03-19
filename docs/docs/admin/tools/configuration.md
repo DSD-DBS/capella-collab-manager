@@ -15,11 +15,9 @@ requirements:
 - The Docker image has to be deployed to a Docker registry, which is accessible
   from the Collaboration Manager server environment.
 - The tool must be exposed via RDP or HTTP/HTTPS.
-- The tool must implement simple means of authentication. The accepted methods
-  depend on the used connection method: <br /> **RPD**: Username/Password
-  authentication via the RDP protocol. <br /> **HTTP**: Token via query
-  parameter, local storage, basic authentication or cookies, more information
-  [here](#authentication).
+- If the tool is exposed via RDP, it must accept basic authentication. For
+  HTTP-based tools, authentication is handled automatically via
+  pre-authentication.
 - The container must expose a `/metrics` endpoint with an `idletime_minutes`
   gauge metric in the OpenMetrics format, which returns the time in minutes
   since the last user interaction. The metric is used to determine if the
@@ -280,37 +278,10 @@ connection:
 
 ##### Authentication
 
-We support different authentication methods for web-based tools. It's important
-that the tool implements an authentication layer, otherwise users will be able
-to connect to other sessions.
-
-In general, we recommend to use a token based authentication approach. We
-already generate a token for each session, which is available in the container
-as `CAPELLACOLLAB_SESSION_TOKEN` environment variable.
-
-To pass the token to the tool, you can use the following methods:
-
-- **Cookies**: This is the recommended option. To use cookies for
-  authentication, add a key/value pair to the `cookies` dictionary. The tool
-  has to verify that the cookie value matches the token.
-- **Token in the URL**: To pass the token as query parameter, edit the
-  `redirect_url` and append `?token={CAPELLACOLLAB_SESSION_TOKEN}`. The tool is
-  responsible to remove the token from the URL to prevent session hijacking
-  attacks.
-- **HTTP Basic Authentication**: If the tool only supports basic
-  authentication, you can pass the token in the URL. Change the `redirect_url`
-  to the format `https://username:{CAPELLACOLLAB_SESSION_TOKEN}@host.tld`. This
-  option is hightly discouraged since some browsers have dropped support for it
-  and other browsers will follow. Chrome has already removed support for basic
-  authentication in subresources[^1], which means that the session viewer will
-  not work. Also, it's vulnarable to session hijacking attacks when the user
-  shares the URL.
-- **Local storage**: To use cookies for authentication, add a key/value pair to
-  the `local_storage` dictionary. Since the local storage is not shared between
-  different ports on the same domain, sessions with the local storage method
-  can't be used in the local non-cluster development environment.
-
-[^1]: <https://chromestatus.com/feature/5669008342777856>
+Since version 3.1.0 of the Collaboration Manager, it is no longer necessary for
+the tool itself to handle the authentication. Instead, the Collaboration
+Manager automatically authenticates all users via pre-authentication with
+session tokens.
 
 ## Configuration examples
 

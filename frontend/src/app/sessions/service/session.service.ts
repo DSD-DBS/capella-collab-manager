@@ -117,10 +117,11 @@ export class SessionService {
   }
 
   setConnectionInformation(
+    session: Session,
     connectionInformation: SessionConnectionInformation,
   ): void {
     this.setLocalStorage(connectionInformation);
-    this.setCookies(connectionInformation);
+    this.setCookies(session, connectionInformation);
   }
 
   setLocalStorage(connectionInformation: SessionConnectionInformation): void {
@@ -130,11 +131,14 @@ export class SessionService {
     }
   }
 
-  setCookies(connectionInformation: SessionConnectionInformation): void {
+  setCookies(
+    session: Session,
+    connectionInformation: SessionConnectionInformation,
+  ): void {
     const cookies = connectionInformation.cookies;
     for (const key in cookies) {
       this.cookieService.put(key, cookies[key], {
-        path: new URL(connectionInformation.redirect_url).pathname,
+        path: `/session/${session.id}`,
         sameSite: 'strict',
       });
     }

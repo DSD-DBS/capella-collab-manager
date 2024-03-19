@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import hmac
 import logging
 import typing as t
 
@@ -33,6 +34,8 @@ router = fastapi.APIRouter(
         )
     ]
 )
+
+router_without_authentication = fastapi.APIRouter()
 
 users_router = fastapi.APIRouter(
     dependencies=[
@@ -248,6 +251,29 @@ def get_session_connection_information(
         ),
         warnings=warnings,
     )
+
+
+@router_without_authentication.post(
+    "/{session_id}/tokens/validate",
+)
+def validate_session_token(
+    session_id: str,
+    ccm_session_token: t.Annotated[str, fastapi.Cookie()],
+    db: orm.Session = fastapi.Depends(database.get_db),
+):
+    """Validate that the passed session token is valid for the given session."""
+    session = crud.get_session_by_id(db, session_id)
+
+    if session is None:
+        return fastapi.Response(status_code=status.HTTP_401_UNAUTHORIZED)
+
+    if hmac.compare_digest(
+        ccm_session_token,
+        session.environment["CAPELLACOLLAB_SESSION_TOKEN"],
+    ):
+        return fastapi.Response(status_code=status.HTTP_204_NO_CONTENT)
+
+    return fastapi.Response(status_code=status.HTTP_403_FORBIDDEN)
 
 
 @router.delete("/{session_id}", status_code=204)

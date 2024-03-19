@@ -26,7 +26,7 @@ def fixture_session(
         str(uuid.uuid1()),
         created_at=datetime.datetime.now(),
         type=sessions_models.SessionType.PERSISTENT,
-        environment={},
+        environment={"CAPELLACOLLAB_SESSION_TOKEN": "thisisarandomtoken"},
         owner=user,
         tool=tool,
         version=tool_version,

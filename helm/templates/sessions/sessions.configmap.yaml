@@ -34,18 +34,27 @@ data:
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection "upgrade";
             proxy_set_header Host $host;
-            # proxy_set_header X-Real-IP $remote_addr;
-            # proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            # proxy_set_header X-Forwarded-Proto $scheme;
 
             proxy_buffering off;
 
             location ~ ^/session/([a-z]+)/(.*)$ {
-              proxy_pass http://$1.{{ .Values.backend.k8sSessionNamespace }}.svc.cluster.local:80/session/$1/$2$is_args$args;
+              set $ccm_session_id $1;
+              auth_request /auth;
+              proxy_pass http://$ccm_session_id.{{ .Values.backend.k8sSessionNamespace }}.svc.cluster.local:80/session/$ccm_session_id/$2$is_args$args;
             }
 
             location ~ ^/session/([a-z]+) {
-              proxy_pass http://$1.{{ .Values.backend.k8sSessionNamespace }}.svc.cluster.local:80/session/$1$is_args$args;
+              set $ccm_session_id $1;
+              auth_request /auth;
+              proxy_pass http://$ccm_session_id.{{ .Values.backend.k8sSessionNamespace }}.svc.cluster.local:80/session/$ccm_session_id$is_args$args;
+            }
+
+            location /auth {
+                proxy_method POST;
+                proxy_pass_request_body off;
+                proxy_pass_request_headers off;
+                proxy_set_header Cookie $http_cookie;
+                proxy_pass http://{{ .Release.Name }}-backend.{{ .Release.Namespace }}.svc.cluster.local:80/api/v1/sessions/$ccm_session_id/tokens/validate?token=$cookie_session_token;
             }
         }
     }

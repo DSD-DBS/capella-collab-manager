@@ -174,3 +174,50 @@ def test_create_session_without_provisioning(
     assert session
     assert session.owner_name == user.name
     assert kubernetes.sessions
+
+
+def test_validate_session_token_with_invalid_session(
+    client: testclient.TestClient,
+):
+    """Test that it's not possible to see if a session is running with an invalid token"""
+
+    response = client.post(
+        "/api/v1/sessions/unknownsession/tokens/validate",
+        cookies={
+            "ccm_session_token": "invalid",
+        },
+    )
+
+    assert response.status_code == 401
+
+
+def test_validate_session_token_with_invalid_token(
+    client: testclient.TestClient,
+    session: sessions_models.DatabaseSession,
+):
+    """Test that an invalid token is declined during validation"""
+
+    response = client.post(
+        f"/api/v1/sessions/{session.id}/tokens/validate",
+        cookies={"ccm_session_token": "invalid"},
+    )
+
+    assert response.status_code == 403
+
+
+def test_validate_session_token_with_valid_token(
+    client: testclient.TestClient,
+    session: sessions_models.DatabaseSession,
+):
+    """Test that a valid session tokens also validates correctly"""
+
+    response = client.post(
+        f"/api/v1/sessions/{session.id}/tokens/validate",
+        cookies={
+            "ccm_session_token": session.environment[
+                "CAPELLACOLLAB_SESSION_TOKEN"
+            ],
+        },
+    )
+
+    assert response.is_success
