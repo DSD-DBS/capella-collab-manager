@@ -25,22 +25,6 @@
 
     Just refresh the page in the browser. The window should appear again.
 
-??? question "My Capella crashed. What should I do?"
-
-    Capella can crash for many different reasons. Many issues are issues with
-    Eclipse Capella itself, so we try to escalate issues there. Bugs can be
-    reported to the Eclipse Capella team directly in the
-    [Github repository](https://github.com/eclipse/capella/issues).
-
-    Administrators can see the logs of all sessions to identify the issues
-    remotely. However, the session owner can also see the events in the UI.
-    In your session, please follow these steps:
-
-    1. Open the Capella search
-    1. Search for `Event logs` and click on the following entry:
-    1. You should now see the list of events and you can try to find an entry with
-       a matching timestamp.
-
 ??? question "The clipboard doesn't work anymore."
 
     This is a known bug with our used `RDP`-server `xrdp`. `xrdp` maintains so
