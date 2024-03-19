@@ -206,7 +206,7 @@ def test_create_user_removed_from_project_event(
     response = client.request(
         "DELETE",
         f"/api/v1/projects/{project.slug}/users/{user.id}",
-        data=reason,
+        content=reason,
         headers={"Content-Type": "text/plain"},
     )
 
