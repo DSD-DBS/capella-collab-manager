@@ -8,13 +8,14 @@
   <div>
     <p>Do you want to terminate the following session(s)?</p>
     <hr />
-    <div *ngFor="let session of sessions">
+    @for (session of sessions; track session.id) {
       <div class="my-2">
         ID: {{ session.id }} <br />
         Owner: {{ session.owner.name }} <br />
+        Tool: {{ session.version!.tool.name }} ({{ session.version!.name }})
       </div>
       <hr />
-    </div>
+    }
     <div class="my-2">
       This will force close the sessions and all unsaved work will be lost!
     </div>
