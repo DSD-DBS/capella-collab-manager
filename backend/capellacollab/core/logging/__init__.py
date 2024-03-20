@@ -20,20 +20,40 @@ LOGGING_LEVEL = config.config["logging"]["level"]
 
 
 class CustomFormatter(logging.Formatter):
-    def __init__(self):
-        self._request_formatters = logging.Formatter(
-            'time="%(asctime)s" level=%(levelname)s function=%(funcName)s %(message)s'
-        )
-        self._default_formatter = logging.Formatter(
-            'time="%(asctime)s" level=%(levelname)s name=%(name)s function=%(funcName)s message="%(message)s"'
-        )
+    _colors = {
+        logging.DEBUG: "\x1b[37;40m",  # white
+        logging.INFO: "\x1b[34;40m",  # blue
+        logging.WARNING: "\x1b[93;40m",  # yellow
+        logging.ERROR: "\x1b[31;40m",  # red
+        logging.CRITICAL: "\x1b[31;40m",  # red
+        "reset": "\x1b[0m",
+    }
+
+    def __init__(self, colored_output: bool = True) -> None:
         super().__init__()
+        self.colored_output = colored_output
 
     def format(self, record):
+        log_format = 'time="%(asctime)s" level=%(levelname)s '
         if record.name == "capellacollab.request":
-            return self._request_formatters.format(record)
+            log_format += "function=%(funcName)s %(message)s"
+        else:
+            log_format += (
+                'name=%(name)s function=%(funcName)s message="%(message)s"'
+            )
 
-        return self._default_formatter.format(record)
+        if self.colored_output:
+            log_format = (
+                self._colors[record.levelno]
+                + log_format
+                + self._colors["reset"]
+            )
+
+        formatter = logging.Formatter(
+            log_format, datefmt="%Y-%m-%dT%H:%M:%S%z"
+        )
+
+        return formatter.format(record)
 
 
 class CustomTimedRotatingFileHandler(handlers.TimedRotatingFileHandler):

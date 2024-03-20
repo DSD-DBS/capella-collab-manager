@@ -48,17 +48,20 @@ from capellacollab.users import exceptions as users_exceptions
 
 from . import __version__
 
-handlers: list[logging.Handler] = [
-    logging.StreamHandler(),
-    core_logging.CustomTimedRotatingFileHandler(
-        str(config["logging"]["logPath"]) + "backend.log"
-    ),
-]
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(core_logging.CustomFormatter())
 
-for handler in handlers:
-    handler.setFormatter(core_logging.CustomFormatter())
+timed_rotating_file_handler = core_logging.CustomTimedRotatingFileHandler(
+    str(config["logging"]["logPath"]) + "backend.log"
+)
+timed_rotating_file_handler.setFormatter(
+    core_logging.CustomFormatter(colored_output=False)
+)
 
-logging.basicConfig(level=config["logging"]["level"], handlers=handlers)
+logging.basicConfig(
+    level=config["logging"]["level"],
+    handlers=[stream_handler, timed_rotating_file_handler],
+)
 
 
 async def startup():

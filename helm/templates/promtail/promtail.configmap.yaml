@@ -20,7 +20,7 @@ data:
       - job_name: system
         pipeline_stages:
           - multiline:
-              firstline: '^time=\"\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2},\d{3}\"'
+              firstline: '^time='
         static_configs:
           - targets:
               - localhost
