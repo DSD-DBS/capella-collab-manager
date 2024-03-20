@@ -10,7 +10,6 @@ import { Session, SessionService } from '../service/session.service';
 
 @Component({
   templateUrl: './delete-session-dialog.component.html',
-  styleUrls: ['./delete-session-dialog.component.css'],
 })
 export class DeleteSessionDialogComponent {
   constructor(
