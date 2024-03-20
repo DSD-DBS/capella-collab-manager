@@ -396,23 +396,31 @@ class KubernetesOperator:
         return k8s_volumes, k8s_volume_mounts
 
     def _map_volume_to_k8s_volume(self, volume: models.Volume):
-        if isinstance(volume, models.PersistentVolume):
-            return client.V1Volume(
-                name=volume.name,
-                persistent_volume_claim=client.V1PersistentVolumeClaimVolumeSource(
-                    claim_name=volume.volume_name
-                ),
-            )
-
-        if isinstance(volume, models.EmptyVolume):
-            return client.V1Volume(
-                name=volume.name,
-                empty_dir=client.V1EmptyDirVolumeSource(),
-            )
-
-        raise KeyError(
-            f"The Kubernetes operator encountered an unsupported session volume type '{type(volume)}'"
-        )
+        match volume:
+            case models.PersistentVolume():
+                return client.V1Volume(
+                    name=volume.name,
+                    persistent_volume_claim=client.V1PersistentVolumeClaimVolumeSource(
+                        claim_name=volume.volume_name
+                    ),
+                )
+            case models.EmptyVolume():
+                return client.V1Volume(
+                    name=volume.name,
+                    empty_dir=client.V1EmptyDirVolumeSource(),
+                )
+            case models.SecretReferenceVolume():
+                return client.V1Volume(
+                    name=volume.name,
+                    secret=client.V1SecretVolumeSource(
+                        secret_name=volume.secret_name,
+                        optional=volume.optional,
+                    ),
+                )
+            case _:
+                raise KeyError(
+                    f"The Kubernetes operator encountered an unsupported session volume type '{type(volume)}'"
+                )
 
     def _create_deployment(
         self,
@@ -445,27 +453,6 @@ class KubernetesOperator:
             promtail_volume_mounts.append(
                 client.V1VolumeMount(
                     name="prom-config", mount_path="/etc/promtail"
-                )
-            )
-
-        # TODO: This should be moved to a configuration hook once it supports volumes. # pylint: disable=fixme
-        if pure_variants_secret_name := environment.get(
-            "PURE_VARIANTS_SECRET"
-        ):
-            k8s_volume_mounts.append(
-                client.V1VolumeMount(
-                    name="pure-variants",
-                    mount_path="/inputs/pure-variants",
-                    read_only=True,
-                )
-            )
-
-            k8s_volumes.append(
-                client.V1Volume(
-                    name="pure-variants",
-                    secret=client.V1SecretVolumeSource(
-                        secret_name=pure_variants_secret_name, optional=True
-                    ),
                 )
             )
 
