@@ -16,8 +16,8 @@
     remotely. In addition, the session owner can also see the events in the UI.
     In your session, please follow these steps:
 
-    1. Open the Capella search
-    1. Search for `Event logs` and click on the following entry:
+    1. Open the Capella search via the search icon.
+    1. Search for `Event Logs (General)` and open the view.
     1. You should now see the list of events and you can try to find an entry with
        a matching timestamp.
 

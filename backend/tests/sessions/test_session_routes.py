@@ -21,6 +21,7 @@ from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions import operators
 from capellacollab.sessions.operators import k8s
 from capellacollab.tools import models as tools_models
+from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
 
@@ -221,3 +222,63 @@ def test_validate_session_token_with_valid_token(
     )
 
     assert response.is_success
+
+
+def test_get_all_sessions(
+    db: orm.Session,
+    client: testclient.TestClient,
+    admin: users_models.DatabaseUser,
+    tool: tools_models.DatabaseTool,
+    tool_version: tools_models.DatabaseVersion,
+):
+    session = sessions_models.DatabaseSession(
+        str(uuid.uuid1()),
+        created_at=datetime.datetime.now(),
+        type=sessions_models.SessionType.READONLY,
+        environment={},
+        owner=admin,
+        tool=tool,
+        version=tool_version,
+        connection_method_id=tool.config.connection.methods[0].id,
+    )
+    sessions_crud.create_session(db, session)
+
+    response = client.get("/api/v1/sessions")
+    assert response.is_success
+    assert len(response.json()) == 1
+
+
+def test_own_sessions(
+    db: orm.Session,
+    client: testclient.TestClient,
+    user: users_models.DatabaseUser,
+    tool: tools_models.DatabaseTool,
+    session: sessions_models.DatabaseSession,
+    tool_version: tools_models.DatabaseVersion,
+):
+    another_user = users_crud.create_user(
+        db, "other-user", users_models.Role.USER
+    )
+
+    session_of_other_user = sessions_models.DatabaseSession(
+        str(uuid.uuid1()),
+        created_at=datetime.datetime.now(),
+        type=sessions_models.SessionType.PERSISTENT,
+        environment={},
+        owner=another_user,
+        tool=tool,
+        version=tool_version,
+        connection_method_id=tool.config.connection.methods[0].id,
+    )
+    sessions_crud.create_session(db, session_of_other_user)
+
+    response = client.get(f"/api/v1/users/{user.id}/sessions")
+
+    assert response.is_success
+    assert len(response.json()) == 1
+    assert response.json()[0]["owner"]["id"] == user.id
+    assert response.json()[0]["id"] == session.id
+
+    # Check that environment and config are not exposed
+    assert "environment" not in response.json()[0]
+    assert "config" not in response.json()[0]
