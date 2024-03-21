@@ -59,6 +59,7 @@ nav:
               - Export a Model to TeamForCapella: user/tools/capella/teamforcapella/export/export-to-t4c.md
           - Git:
               - Working with Git: user/tools/capella/git/working-with-git.md
+          - Troubleshooting: user/tools/capella/troubleshooting.md
       - Jupyter:
           - Collaboration: user/sessions/jupyter/collaboration.md
   - API documentation:
