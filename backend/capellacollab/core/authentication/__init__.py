@@ -11,9 +11,9 @@ def get_authentication_entrypoint():
     try:
         ep = next(
             i
-            for i in metadata.entry_points()[
-                "capellacollab.authentication.providers"
-            ]
+            for i in metadata.entry_points().select(
+                group="capellacollab.authentication.providers"
+            )
             if i.name == config["authentication"]["provider"]
         )
         return ep

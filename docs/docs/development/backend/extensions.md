@@ -78,7 +78,7 @@ The `routes` and `models` components are then imported in the code: For
 example, to include the routers, we use the following code:
 
 ```py title="routes.py"
-eps = metadata.entry_points()["capellacollab.extensions"]
+eps = metadata.entry_points().select(group="capellacollab.extensions")
 for ep in eps:
     log.info("Add routes of extension %s", ep.name)
     router.include_router(
