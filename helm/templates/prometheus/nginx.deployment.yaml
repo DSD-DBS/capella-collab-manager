@@ -21,6 +21,7 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/prometheus/nginx.configmap.yaml") . | sha256sum }}
     spec:
+      automountServiceAccountToken: false
       volumes:
         - name: {{ .Release.Name }}-prometheus-nginx
           configMap:

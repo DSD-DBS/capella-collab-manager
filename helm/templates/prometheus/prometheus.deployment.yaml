@@ -22,6 +22,7 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/prometheus/prometheus.configmap.yaml") . | sha256sum }}
     spec:
+      automountServiceAccountToken: false
       serviceAccountName: {{ .Release.Name }}-prometheus
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:

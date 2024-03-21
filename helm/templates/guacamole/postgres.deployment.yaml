@@ -24,6 +24,7 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/guacamole" "/postgres.configmap.yaml") . | sha256sum }}
     spec:
+      automountServiceAccountToken: false
       volumes:
         - name: {{ .Release.Name }}-data
           persistentVolumeClaim:

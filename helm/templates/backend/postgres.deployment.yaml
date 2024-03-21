@@ -20,6 +20,7 @@ spec:
       labels:
         id: {{ .Release.Name }}-deployment-backend-postgres
     spec:
+      automountServiceAccountToken: false
       {{ if not .Values.development }}
       volumes:
         - name: {{ .Release.Name }}-data
