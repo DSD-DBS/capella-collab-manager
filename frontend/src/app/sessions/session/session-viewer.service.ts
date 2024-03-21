@@ -38,7 +38,7 @@ export class SessionViewerService {
   ): void {
     const viewerSession = session as ViewerSession;
 
-    this.sessionService.setConnectionInformation(connectionInfo);
+    this.sessionService.setConnectionInformation(session, connectionInfo);
     viewerSession.focused = false;
     viewerSession.safeResourceURL =
       this.domSanitizer.bypassSecurityTrustResourceUrl(

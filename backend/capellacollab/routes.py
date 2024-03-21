@@ -37,6 +37,11 @@ router.include_router(
     responses=auth_responses.AUTHENTICATION_RESPONSES,
 )
 router.include_router(
+    sessions_routes.router_without_authentication,
+    prefix="/sessions",
+    tags=["Sessions"],
+)
+router.include_router(
     projects_routes.router,
     prefix="/projects",
     responses=auth_responses.AUTHENTICATION_RESPONSES,
