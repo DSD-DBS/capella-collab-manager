@@ -60,32 +60,3 @@ The `routes` module should include all fastAPI routes.
 
 Other submodules can of course be created and are usually also useful if logic
 needs to be implemented.
-
-## Entrypoints
-
-Core modules are directly imported in the code. However, for modules that
-change frequently or should be interchangeable, we use [Python entrypoints].
-
-A entrypoint can be defined in the `pyproject.toml` file:
-
-```py title="pyproject.toml"
-[project.entry-points."capellacollab.extensions"]
-extension1 = "path.to.extension1"
-extension2 = "path.to.extension2"
-```
-
-The `routes` and `models` components are then imported in the code: For
-example, to include the routers, we use the following code:
-
-```py title="routes.py"
-eps = metadata.entry_points().select(group="capellacollab.extensions")
-for ep in eps:
-    log.info("Add routes of extension %s", ep.name)
-    router.include_router(
-        importlib.import_module(".routes", ep.module).router,
-        prefix="/{project}/extensions/" + ep.name,
-        tags=[ep.name],
-    )
-```
-
-[python entrypoints]: https://docs.python.org/3/library/importlib.metadata.html
