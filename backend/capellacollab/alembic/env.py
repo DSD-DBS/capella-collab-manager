@@ -16,7 +16,7 @@ from capellacollab.config import config as cfg
 # access to the values within the .ini file in use.
 config = context.config
 
-logging.basicConfig(level=cfg["logging"]["level"])
+logging.basicConfig(level=cfg.logging.level)
 if os.getenv("ALEMBIC_CONFIGURE_LOGGER", "true") != "false":
     logging.getLogger("capellacollab").setLevel("WARNING")
 
@@ -25,7 +25,7 @@ log = logging.getLogger("alembic.database")
 # this will overwrite the ini-file sqlalchemy.url path
 # with the path given in the config of the main code
 if not config.get_main_option("sqlalchemy.url"):
-    config.set_main_option("sqlalchemy.url", cfg["database"]["url"])
+    config.set_main_option("sqlalchemy.url", cfg.database.url)
 
 # Import models
 

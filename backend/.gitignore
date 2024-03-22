@@ -3,7 +3,6 @@
 
 .idea
 config/*
-!config/config_template.yaml
 .history
 **/__pycache__/
 .vscode

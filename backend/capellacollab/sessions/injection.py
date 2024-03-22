@@ -19,12 +19,12 @@ def get_last_seen(sid: str) -> str:
     if core.DEVELOPMENT_MODE:
         return "Disabled in development mode"
 
-    url = config["prometheus"]["url"]
+    url = config.prometheus.url
     url += "/".join(("api", "v1", "query?query=idletime_minutes"))
     try:
         response = requests.get(
             url,
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
         )
         response.raise_for_status()
         for session in response.json()["data"]["result"]:

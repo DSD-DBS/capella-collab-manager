@@ -52,9 +52,7 @@ class JWTBearer(security.HTTPBearer):
         return None
 
     def get_username(self, token_decoded: dict[str, str]) -> str:
-        return token_decoded[
-            config["authentication"]["jwt"]["usernameClaim"]
-        ].strip()
+        return token_decoded[config.authentication.jwt.username_claim].strip()
 
     def initialize_user(self, token_decoded: dict[str, str]):
         with database.SessionLocal() as session:

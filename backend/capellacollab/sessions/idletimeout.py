@@ -18,11 +18,11 @@ log = logging.getLogger(__name__)
 
 
 def terminate_idle_session():
-    url = config["prometheus"]["url"]
+    url = config.prometheus.url
     url += "/".join(("api", "v1", 'query?query=ALERTS{alertstate="firing"}'))
     response = requests.get(
         url,
-        timeout=config["requests"]["timeout"],
+        timeout=config.requests.timeout,
     )
     log.debug("Requested alerts %d", response.status_code)
     if response.status_code != 200:
@@ -60,7 +60,7 @@ async def terminate_idle_sessions_in_background(interval=60):
 
 
 def run():
-    logging.basicConfig(level=config["logging"]["level"])
+    logging.basicConfig(level=config.logging.level)
     terminate_idle_session()
 
 

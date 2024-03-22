@@ -66,7 +66,7 @@ class GithubHandler(handler.GitHandler):
     ) -> requests.Response:
         return requests.get(
             f"{self.git_instance.api_url}/repos/{project_id}/contents/{parse.quote(trusted_file_path)}?ref={parse.quote(revision, safe='')}",
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
             headers=headers,
         )
 
@@ -112,7 +112,7 @@ class GithubHandler(handler.GitHandler):
         response = requests.get(
             f"{self.git_instance.api_url}/repos/{project_id}/actions/runs?branch={parse.quote(self.git_model.revision, safe='')}&per_page=20",
             headers=headers,
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
         )
         response.raise_for_status()
         return response.json()["workflow_runs"]
@@ -128,7 +128,7 @@ class GithubHandler(handler.GitHandler):
         artifact_response = requests.get(
             f"{self.git_instance.api_url}/repos/{project_id}/actions/artifacts/{artifact_id}/zip",
             headers=self.__get_headers(self.git_model.password),
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
         )
         artifact_response.raise_for_status()
 
@@ -146,7 +146,7 @@ class GithubHandler(handler.GitHandler):
                 if self.git_model.password
                 else None
             ),
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
         )
         response.raise_for_status()
         if len(response.json()) == 0:
@@ -186,7 +186,7 @@ class GithubHandler(handler.GitHandler):
         response = requests.get(
             f"{self.git_instance.api_url}/repos/{project_id}/actions/runs/{job_id}/artifacts",
             headers=self.__get_headers(self.git_model.password),
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
         )
         response.raise_for_status()
         artifact = response.json()["artifacts"][0]

@@ -14,11 +14,10 @@ def get_authentication_entrypoint():
             for i in metadata.entry_points().select(
                 group="capellacollab.authentication.providers"
             )
-            if i.name == config["authentication"]["provider"]
+            if i.name == config.authentication.provider
         )
         return ep
     except StopIteration:
         raise ValueError(
-            "Unknown authentication provider "
-            + config["authentication"]["provider"]
+            "Unknown authentication provider " + config.authentication.provider
         ) from None

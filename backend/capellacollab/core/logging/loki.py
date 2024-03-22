@@ -12,11 +12,12 @@ import requests
 from requests import auth
 
 from capellacollab.config import config
+from capellacollab.config import models as config_models
 
 from . import exceptions
 
-LOGGING_LEVEL = config["logging"]["level"]
-PROMTAIL_CONFIGURATION: dict[str, str] = config["k8s"]["promtail"]
+LOGGING_LEVEL = config.logging.level
+PROMTAIL_CONFIGURATION: config_models.K8sPromtailConfig = config.k8s.promtail
 
 
 class LogEntry(t.TypedDict):
@@ -46,12 +47,12 @@ def push_logs_to_loki(entries: list[LogEntry], labels):
     # Send the log data to Loki
     try:
         response = requests.post(
-            PROMTAIL_CONFIGURATION["lokiUrl"] + "/push",
+            PROMTAIL_CONFIGURATION.loki_url + "/push",
             data=log_data,
             headers={"Content-Type": "application/json"},
             auth=auth.HTTPBasicAuth(
-                PROMTAIL_CONFIGURATION["lokiUsername"],
-                PROMTAIL_CONFIGURATION["lokiPassword"],
+                PROMTAIL_CONFIGURATION.loki_username,
+                PROMTAIL_CONFIGURATION.loki_password,
             ),
             timeout=10,
         )
@@ -78,12 +79,12 @@ def fetch_logs_from_loki(
     # Send the query request to Loki
     try:
         response = requests.get(
-            PROMTAIL_CONFIGURATION["lokiUrl"] + "/query_range",
+            PROMTAIL_CONFIGURATION.loki_url + "/query_range",
             params=params,
             headers={"Content-Type": "application/json"},
             auth=auth.HTTPBasicAuth(
-                PROMTAIL_CONFIGURATION["lokiUsername"],
-                PROMTAIL_CONFIGURATION["lokiPassword"],
+                PROMTAIL_CONFIGURATION.loki_username,
+                PROMTAIL_CONFIGURATION.loki_password,
             ),
             timeout=5,
         )

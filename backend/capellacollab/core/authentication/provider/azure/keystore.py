@@ -12,11 +12,15 @@ import requests
 from jose import jwt
 
 from capellacollab.config import config
+from capellacollab.config import models as config_models
 
 from .. import models as provider_models
 
 log = logging.getLogger(__name__)
-cfg = config["authentication"]["azure"]
+assert isinstance(
+    config.authentication, config_models.AzureAuthenticationConfig
+)
+cfg = config.authentication.azure
 
 
 # Copied and adapted from https://github.com/marpaia/jwks/blob/master/jwks/jwks.py:
@@ -47,9 +51,7 @@ class _KeyStore:
 
     def refresh_keys(self) -> None:
         try:
-            resp = requests.get(
-                self.jwks_uri, timeout=config["requests"]["timeout"]
-            )
+            resp = requests.get(self.jwks_uri, timeout=config.requests.timeout)
         except Exception:
             log.error("Could not retrieve JWKS data from %s", self.jwks_uri)
             return
@@ -90,7 +92,7 @@ class _KeyStore:
 
 
 def get_jwks_uri_for_azure_ad(
-    authorization_endpoint=cfg["authorizationEndpoint"],
+    authorization_endpoint=cfg.authorization_endpoint,
 ):
     discoveryEndpoint = (
         f"{authorization_endpoint}/v2.0/.well-known/openid-configuration"
@@ -98,7 +100,7 @@ def get_jwks_uri_for_azure_ad(
 
     openid_config = requests.get(
         discoveryEndpoint,
-        timeout=config["requests"]["timeout"],
+        timeout=config.requests.timeout,
     ).json()
     return openid_config["jwks_uri"]
 

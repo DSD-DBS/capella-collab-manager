@@ -11,17 +11,22 @@ from fastapi import status
 from requests_oauthlib import OAuth2Session
 
 from capellacollab.config import config
+from capellacollab.config import models as config_models
 
-cfg = config["authentication"]["oauth"]
+assert isinstance(
+    config.authentication, config_models.OAuthAuthenticationConfig
+)
+cfg = config.authentication.oauth
 
 logger = logging.getLogger(__name__)
 
 
 auth_args = {}
-if cfg["scopes"]:
-    auth_args["scope"] = cfg["scopes"]
+if cfg.scopes:
+    auth_args["scope"] = cfg.scopes
+
 auth_session = OAuth2Session(
-    cfg["client"]["id"], redirect_uri=cfg["redirectURI"], **auth_args
+    cfg.client.id, redirect_uri=cfg.redirect_uri, **auth_args
 )
 
 
@@ -38,8 +43,8 @@ def get_token(code: str) -> dict[str, t.Any]:
     return auth_session.fetch_token(
         read_well_known()["token_endpoint"],
         code=code,
-        client_id=cfg["client"]["id"],
-        client_secret=cfg["client"]["secret"],
+        client_id=cfg.client.id,
+        client_secret=cfg.client.secret,
     )
 
 
@@ -48,8 +53,8 @@ def refresh_token(_refresh_token: str) -> dict[str, t.Any]:
         return auth_session.refresh_token(
             read_well_known()["token_endpoint"],
             refresh_token=_refresh_token,
-            client_id=cfg["client"]["id"],
-            client_secret=cfg["client"]["secret"],
+            client_id=cfg.client.id,
+            client_secret=cfg.client.secret,
         )
     except Exception as e:
         logger.debug("Could not refresh token because of exception %s", str(e))
@@ -63,10 +68,10 @@ def refresh_token(_refresh_token: str) -> dict[str, t.Any]:
 
 
 def read_well_known() -> dict[str, t.Any]:
-    if cfg["endpoints"]["wellKnown"]:
+    if cfg.endpoints.well_known:
         r = requests.get(
-            cfg["endpoints"]["wellKnown"],
-            timeout=config["requests"]["timeout"],
+            cfg.endpoints.well_known,
+            timeout=config.requests.timeout,
         )
         r.raise_for_status()
 
@@ -75,11 +80,11 @@ def read_well_known() -> dict[str, t.Any]:
         authorization_endpoint = resp["authorization_endpoint"]
         token_endpoint = resp["token_endpoint"]
 
-    if cfg["endpoints"]["authorization"]:
-        authorization_endpoint = cfg["endpoints"]["authorization"]
+    if cfg.endpoints.authorization:
+        authorization_endpoint = cfg.endpoints.authorization
 
-    if cfg["endpoints"]["tokenIssuance"]:
-        token_endpoint = cfg["endpoints"]["tokenIssuance"]
+    if cfg.endpoints.token_issuance:
+        token_endpoint = cfg.endpoints.token_issuance
 
     return {
         "authorization_endpoint": authorization_endpoint,

@@ -17,7 +17,7 @@ reason: str = "TestReason"
 
 def test_create_admin_user_by_system(db):
     user: users_models.DatabaseUser = users_crud.get_user_by_name(
-        db, config.config["initial"]["admin"]
+        db, config.config.initial.admin
     )
 
     events: list[events_models.DatabaseUserHistoryEvent] = (

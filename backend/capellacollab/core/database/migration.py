@@ -84,10 +84,10 @@ def migrate_db(engine, database_url: str):
 
 
 def initialize_admin_user(db: orm.Session):
-    LOGGER.info("Initialized adminuser %s", config["initial"]["admin"])
+    LOGGER.info("Initialized adminuser %s", config.initial.admin)
     admin_user = users_crud.create_user(
         db=db,
-        username=config["initial"]["admin"],
+        username=config.initial.admin,
         role=users_models.Role.ADMIN,
     )
     events_crud.create_user_creation_event(db, admin_user)
@@ -328,7 +328,7 @@ def create_jupyter_tool(
 
 def create_tools(db: orm.Session):
     if core.DEVELOPMENT_MODE:
-        registry = config["docker"]["registry"]
+        registry = config.docker.registry
     else:
         registry = "ghcr.io/dsd-dbs/capella-dockerimages"
 

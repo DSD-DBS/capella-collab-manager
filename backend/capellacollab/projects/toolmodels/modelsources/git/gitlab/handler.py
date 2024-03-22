@@ -27,7 +27,7 @@ class GitlabHandler(handler.GitHandler):
             async with session.get(
                 f"{self.git_instance.api_url}/projects/{project_name_encoded}",
                 headers={"PRIVATE-TOKEN": self.git_model.password},
-                timeout=config["requests"]["timeout"],
+                timeout=config.requests.timeout,
             ) as response:
                 if response.status == 403:
                     raise exceptions.GitlabAccessDeniedError
@@ -60,7 +60,7 @@ class GitlabHandler(handler.GitHandler):
         response = requests.get(
             f"{self.git_instance.api_url}/projects/{project_id}/repository/commits?ref_name={revision or self.git_model.revision}&path={file_path}",
             headers={"PRIVATE-TOKEN": self.git_model.password},
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
         )
         response.raise_for_status()
         if len(response.json()) == 0:
@@ -77,7 +77,7 @@ class GitlabHandler(handler.GitHandler):
             async with session.get(
                 f"{self.git_instance.api_url}/projects/{project_id}/pipelines?ref={parse.quote(self.git_model.revision, safe='')}&per_page=20",
                 headers={"PRIVATE-TOKEN": self.git_model.password},
-                timeout=config["requests"]["timeout"],
+                timeout=config.requests.timeout,
             ) as response:
                 response.raise_for_status()
 
@@ -94,7 +94,7 @@ class GitlabHandler(handler.GitHandler):
             async with session.get(
                 f"{self.git_instance.api_url}/projects/{project_id}/pipelines/{pipeline_id}/jobs",
                 headers={"PRIVATE-TOKEN": self.git_model.password},
-                timeout=config["requests"]["timeout"],
+                timeout=config.requests.timeout,
             ) as response:
                 response.raise_for_status()
 
@@ -142,7 +142,7 @@ class GitlabHandler(handler.GitHandler):
         response = requests.get(
             f"{self.git_instance.api_url}/projects/{project_id}/jobs/{job_id}/artifacts/{trusted_path_to_artifact}",
             headers={"PRIVATE-TOKEN": self.git_model.password},
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
         )
         response.raise_for_status()
         return response
@@ -157,7 +157,7 @@ class GitlabHandler(handler.GitHandler):
         response = requests.get(
             f"{self.git_instance.api_url}/projects/{project_id}/repository/files/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(branch, safe='')}",
             headers={"PRIVATE-TOKEN": self.git_model.password},
-            timeout=config["requests"]["timeout"],
+            timeout=config.requests.timeout,
         )
 
         if response.status_code == 404:

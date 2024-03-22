@@ -3,7 +3,6 @@
 
 import logging
 import pathlib
-import typing as t
 
 from sqlalchemy import orm
 
@@ -18,13 +17,6 @@ from capellacollab.users import models as users_models
 from . import interface
 
 log = logging.getLogger(__name__)
-
-
-class GeneralConfigEnvironment(t.TypedDict):
-    scheme: str
-    host: str
-    port: str
-    wildcardHost: t.NotRequired[bool | None]
 
 
 class JupyterIntegration(interface.HookRegistration):

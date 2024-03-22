@@ -145,10 +145,6 @@ backend:
 
       audience: default
 
-      publicKey: |
-        -----BEGIN PUBLIC KEY-----
-        -----END PUBLIC KEY-----
-
       scopes:
         - openid
 
@@ -170,8 +166,6 @@ backend:
       client:
         id: tbd
         secret: tbd
-
-      redirectURI: tbd
 
   # Namespace in which the Session Deployments / Pods should be spawned.
   # IMPORTANT: The namespace has to exist already

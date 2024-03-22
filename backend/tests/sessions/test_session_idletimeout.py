@@ -5,15 +5,18 @@ import pytest
 import requests
 
 import capellacollab.sessions.idletimeout
+from capellacollab.config import models as config_models
 from capellacollab.sessions.idletimeout import terminate_idle_session
 
 
 @pytest.fixture(autouse=True)
 def mock_config(monkeypatch):
+    mocked_config = config_models.AppConfig(
+        prometheus=config_models.PrometheusConfig(url=""),
+        requests=config_models.RequestsConfig(timeout=60),
+    )
     monkeypatch.setattr(
-        capellacollab.sessions.idletimeout,
-        "config",
-        {"prometheus": {"url": ""}, "requests": {"timeout": 60}},
+        capellacollab.sessions.idletimeout, "config", mocked_config
     )
 
 

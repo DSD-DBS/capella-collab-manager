@@ -12,6 +12,7 @@ from sqlalchemy import orm
 
 import capellacollab.users.crud as users_crud
 from capellacollab.config import config
+from capellacollab.config import models as config_models
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.authentication import jwt_bearer
@@ -22,15 +23,20 @@ from capellacollab.core.authentication.schemas import (
 from capellacollab.users.models import Role
 
 router = fastapi.APIRouter()
-cfg = config["authentication"]["azure"]
+
+assert isinstance(
+    config.authentication, config_models.AzureAuthenticationConfig
+)
+
+cfg = config.authentication.azure
 
 
 @lru_cache
 def ad_session():
     return ConfidentialClientApplication(
-        cfg["client"]["id"],
-        client_credential=cfg["client"]["secret"],
-        authority=cfg["authorizationEndpoint"],
+        cfg.client.id,
+        client_credential=cfg.client.secret,
+        authority=cfg.authorization_endpoint,
     )
 
 

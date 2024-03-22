@@ -1,8 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import typing as t
-
 import fastapi
 import pydantic
 from sqlalchemy import orm
@@ -11,7 +9,9 @@ import capellacollab
 from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.settings.configuration import core as config_core
-from capellacollab.settings.configuration import models as config_models
+from capellacollab.settings.configuration import (
+    models as settings_config_models,
+)
 
 
 class Metadata(pydantic.BaseModel):
@@ -31,8 +31,6 @@ class Metadata(pydantic.BaseModel):
 
 router = fastapi.APIRouter()
 
-general_cfg: dict[str, t.Any] = config["general"]
-
 
 @router.get(
     "/metadata",
@@ -40,14 +38,14 @@ general_cfg: dict[str, t.Any] = config["general"]
 )
 def get_metadata(db: orm.Session = fastapi.Depends(database.get_db)):
     cfg = config_core.get_config(db, "global")
-    assert isinstance(cfg, config_models.GlobalConfiguration)
+    assert isinstance(cfg, settings_config_models.GlobalConfiguration)
 
     return Metadata.model_validate(
         cfg.metadata.model_dump()
         | {
             "version": capellacollab.__version__,
-            "host": general_cfg.get("host"),
-            "port": str(general_cfg.get("port")),
-            "protocol": general_cfg.get("scheme"),
+            "host": config.general.host,
+            "port": str(config.general.port),
+            "protocol": config.general.scheme,
         }
     )
