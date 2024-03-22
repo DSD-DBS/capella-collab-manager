@@ -14,6 +14,14 @@ class Volume(metaclass=abc.ABCMeta):
 
 
 @dataclasses.dataclass
+class SecretReferenceVolume(Volume):
+    """Mount an existing secret to the container."""
+
+    secret_name: str
+    optional: bool
+
+
+@dataclasses.dataclass
 class PersistentVolume(Volume):
     """An persistent volume that is mounted into the container."""
 
