@@ -21,11 +21,11 @@ LOGGING_LEVEL = config.config.logging.level
 
 class CustomFormatter(logging.Formatter):
     _colors = {
-        logging.DEBUG: "\x1b[37;40m",  # white
-        logging.INFO: "\x1b[34;40m",  # blue
-        logging.WARNING: "\x1b[93;40m",  # yellow
-        logging.ERROR: "\x1b[31;40m",  # red
-        logging.CRITICAL: "\x1b[31;40m",  # red
+        logging.DEBUG: "\x1b[1;34m",  # Blue
+        logging.INFO: "\x1b[1;37m",  # White
+        logging.WARNING: "\x1b[1;93m",  # Yellow
+        logging.ERROR: "\x1b[1;31m",  # Red
+        logging.CRITICAL: "\x1b[1;35m",  # Magenta
         "reset": "\x1b[0m",
     }
 
