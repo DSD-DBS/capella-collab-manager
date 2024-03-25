@@ -28,9 +28,18 @@
     ![Description Editor](./description-editor.png){:style="width:400px"}
 
     This is a common and known bug in Capella itself. We have reported it to the Capella contributors,
-    but there is no fix available yet. You can track the status on GitHub: <https://github.com/eclipse-capella/capella/issues/2316>
+    but the bug originates in the Eclipse/Nebula framework. The bug was fixed in Eclipse version
+    4.24. Capella 6.0.0 and 6.1.0 are based on Eclipse 4.20, so the bug is still present in these versions.
+    Capella 7.0.0 is based on Eclipse 4.27 and the description editor issues are fixed.
 
     If you are experiencing this problem, please try one of the following workarounds:
+
+    - Use the "Semantic" or "Expert" view in Capella to modify the description.
+      To do so, open the properties tab of the element you want to edit and click on the "Semantic" or "Expert" tab.
+      In this editor, rich text is not supported! You have to enter valid HTML. The content is not validated
+      and may later impact other components of the toolchain if invalid.
+
+        ![Export/Semantic view](./description-editor-expert-view.png)
 
     - Open the description editor by double-clicking the model element you want to edit, and open the description editor from the overlay:
       ![Element overlay](./description-editor-overlay.png)
@@ -39,6 +48,7 @@
     - Reopen Capella in the current session from the task bar at the top of the session window. Expand `File` and close Capella. It will reopen automatically.
 
         ![Exit Capella](./exit-capella.png)
+
     - End your session and request a new session in the Capella Collaboration Manager.
 
 
