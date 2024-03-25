@@ -82,7 +82,7 @@ def test_create_t4c_instance_already_existing_name(
         "A T4C Instance with a similar name already exists."
         in detail["reason"]
     )
-    assert "name already used" in detail["technical"]
+    assert "name already used" in detail["title"]
 
 
 @pytest.mark.usefixtures("t4c_instance")
@@ -245,7 +245,7 @@ def test_patch_t4c_instance_already_existing_name(
         "A T4C Instance with a similar name already exists."
         in detail["reason"]
     )
-    assert "name already used" in detail["technical"]
+    assert "name already used" in detail["title"]
 
 
 def test_injectables_raise_when_archived_instance(

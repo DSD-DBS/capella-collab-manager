@@ -1,30 +1,16 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import fastapi
-from fastapi import exception_handlers, status
+from fastapi import status
+
+from capellacollab.core import exceptions as core_exceptions
 
 
-class TooManyOutStandingRequests(Exception):
-    pass
-
-
-async def too_many_outstanding_requests_handler(
-    request: fastapi.Request, _: TooManyOutStandingRequests
-) -> fastapi.Response:
-    return await exception_handlers.http_exception_handler(
-        request,
-        fastapi.HTTPException(
+class TooManyOutStandingRequests(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail={
-                "err_code": "LOKI_TOO_MANY_OUTSTANDING_REQUESTS",
-                "reason": "Too many outstanding requests. Please try again later.",
-            },
-        ),
-    )
-
-
-def register_exceptions(app: fastapi.FastAPI):
-    app.add_exception_handler(
-        TooManyOutStandingRequests, too_many_outstanding_requests_handler  # type: ignore[arg-type]
-    )
+            title="Too many outstanding requests",
+            reason="Too many outstanding requests. Please try again later.",
+            err_code="LOKI_TOO_MANY_OUTSTANDING_REQUESTS",
+        )
