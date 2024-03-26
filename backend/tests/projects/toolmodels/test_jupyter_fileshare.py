@@ -10,7 +10,6 @@ from capellacollab.core.database import migration as database_migration
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.toolmodels import crud as toolmodels_crud
 from capellacollab.projects.toolmodels import models as toolmodels_models
-from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
 
 
@@ -19,39 +18,15 @@ class MockOperator:
     _deleted_volumes = 0
 
     def create_persistent_volume(
-        self, name: str, size: str, labels: dict[str, str] = None
+        self,
+        name: str,
+        size: str,
+        labels: dict[str, str] = None,
     ):
         self._created_volumes += 1
 
     def delete_persistent_volume(self, name: str):
         self._deleted_volumes += 1
-
-
-@pytest.fixture(name="jupyter_tool")
-def fixture_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
-    return database_migration.create_jupyter_tool(
-        db, "localhost:invalid-registry"
-    )
-
-
-@pytest.fixture(name="jupyter_model")
-def fixture_jupyter_model(
-    db: orm.Session,
-    project: projects_models.DatabaseProject,
-    jupyter_tool: tools_models.DatabaseTool,
-) -> toolmodels_models.CapellaModel:
-    jupyter_model = toolmodels_models.PostCapellaModel(
-        name="Jupyter test",
-        description="",
-        tool_id=jupyter_tool.id,
-    )
-    return toolmodels_crud.create_model(
-        db,
-        project,
-        jupyter_model,
-        tool=jupyter_tool,
-        configuration={"workspace": "test"},
-    )
 
 
 @pytest.fixture(name="mockoperator")

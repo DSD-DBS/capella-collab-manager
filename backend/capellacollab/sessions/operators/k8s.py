@@ -622,6 +622,18 @@ class KubernetesOperator:
         )
         return self.v1_core.create_namespaced_service(namespace, service)
 
+    def persistent_volume_exists(self, name: str) -> bool:
+        try:
+            self.v1_core.read_namespaced_persistent_volume_claim(
+                name=name, namespace=namespace
+            )
+        except exceptions.ApiException as e:
+            if e.status == 404:
+                return False
+            raise
+
+        return True
+
     def create_persistent_volume(
         self, name: str, size: str, labels: dict[str, str] | None = None
     ):

@@ -41,20 +41,20 @@ def fixture_guacamole_configuration(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(
         guacamole.GuacamoleIntegration,
         "_baseURI",
-        "http://guacamole-mock",
+        "https://guacamole-mock",
     )
 
     monkeypatch.setattr(
         guacamole.GuacamoleIntegration,
         "_prefix",
-        "http://guacamole-mock/api/session/data/postgresql",
+        "https://guacamole-mock/api/session/data/postgresql",
     )
 
 
 @pytest.fixture(name="guacamole_create_token", params=[200])
 def fixture_guacamole_create_token(request: pytest.FixtureRequest):
     responses.post(
-        "http://guacamole-mock/api/tokens",
+        "https://guacamole-mock/api/tokens",
         status=request.param,
         json={
             "authToken": "token",
@@ -67,7 +67,7 @@ def fixture_guacamole_delete_user(request: pytest.FixtureRequest):
     responses.add(
         responses.DELETE,
         re.compile(
-            r"http://guacamole-mock/api/session/data/postgresql/users/\w*\?token=token"
+            r"https://guacamole-mock/api/session/data/postgresql/users/\w*\?token=token"
         ),
         status=request.param,
     )
@@ -93,7 +93,7 @@ def fixture_guacamole_apis():
 
     # Create Guacamole user
     responses.post(
-        "http://guacamole-mock/api/session/data/postgresql/users?token=token",
+        "https://guacamole-mock/api/session/data/postgresql/users?token=token",
         status=200,
         match=[match_user_creation_body],
         json={},
@@ -101,7 +101,7 @@ def fixture_guacamole_apis():
 
     # Create Guacamole connection
     responses.post(
-        "http://guacamole-mock/api/session/data/postgresql/connections?token=token",
+        "https://guacamole-mock/api/session/data/postgresql/connections?token=token",
         status=200,
         json={"identifier": "connection-id"},
     )
@@ -110,14 +110,14 @@ def fixture_guacamole_apis():
     responses.add(
         responses.PATCH,
         re.compile(
-            r"http://guacamole-mock/api/session/data/postgresql/users/\w*/permissions\?token=token"
+            r"https://guacamole-mock/api/session/data/postgresql/users/\w*/permissions\?token=token"
         ),
         status=200,
     )
 
     # Delete connection
     responses.delete(
-        "http://guacamole-mock/api/session/data/postgresql/connections/connection-id?token=token",
+        "https://guacamole-mock/api/session/data/postgresql/connections/connection-id?token=token",
         status=200,
     )
 
@@ -162,7 +162,7 @@ def test_fail_if_guacamole_unreachable(
     """If Guacamole is unreachable, the session hook will abort the session creation"""
 
     responses.post(
-        "http://guacamole-mock/api/tokens",
+        "https://guacamole-mock/api/tokens",
         status=404,
         json={
             "authToken": "token",

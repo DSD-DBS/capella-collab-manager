@@ -12,7 +12,7 @@ from capellacollab.cli.ws import backup, ls, restore, volumes
 
 
 @pytest.fixture(autouse=True)
-def mock_kube_config(monkeypatch):
+def mock_kube_config(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr("kubernetes.config.load_kube_config", lambda: None)
 
 

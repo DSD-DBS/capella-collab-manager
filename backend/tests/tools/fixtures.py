@@ -85,3 +85,10 @@ def fixture_capella_tool_version(
     return tools_crud.get_version_by_tool_id_version_name(
         db, tools_crud.get_tool_by_name(db, "Capella").id, request.param
     )
+
+
+@pytest.fixture(name="jupyter_tool")
+def fixture_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
+    return database_migration.create_jupyter_tool(
+        db, "localhost:invalid-registry"
+    )
