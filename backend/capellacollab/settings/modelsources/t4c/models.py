@@ -42,10 +42,10 @@ class GetSessionUsageResponse(core_pydantic.BaseModel):
 
 
 class Protocol(str, enum.Enum):
-    tcp = "tcp"
-    ssl = "ssl"
-    ws = "ws"
-    wss = "wss"
+    TCP = "tcp"
+    SSL = "ssl"
+    WS = "ws"
+    WSS = "wss"
 
 
 class DatabaseT4CInstance(database.Base):
@@ -86,7 +86,7 @@ class DatabaseT4CInstance(database.Base):
         sa.CheckConstraint("cdo_port >= 0 AND cdo_port <= 65535"),
         default=12036,
     )
-    protocol: orm.Mapped[Protocol] = orm.mapped_column(default=Protocol.tcp)
+    protocol: orm.Mapped[Protocol] = orm.mapped_column(default=Protocol.TCP)
 
     is_archived: orm.Mapped[bool] = orm.mapped_column(default=False)
 
