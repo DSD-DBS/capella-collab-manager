@@ -16,6 +16,8 @@ spec:
   selector:
     matchLabels:
       id: {{ .Release.Name }}-deployment-grafana-server
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
