@@ -4,63 +4,65 @@
  -->
 
 <div class="flex justify-center">
-  <div
-    class="collab-card w-[350px] md:min-w-[420px]"
-    *ngIf="projectService.project$ | async"
-  >
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <div class="m-0 flex w-auto items-center px-0">
-        <mat-form-field class="w-full" appearance="fill">
-          <mat-label>Model name</mat-label>
-          <input matInput formControlName="name" />
-          <mat-error *ngIf="form.controls.name.errors?.required">
-            Please provide a model name.
-          </mat-error>
-          <mat-error *ngIf="form.controls.name.errors?.uniqueSlug">
-            A project with a name similar to “{{
-              form.controls.name.errors!.uniqueSlug.value
-            }}” already exists.
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="m-0 flex w-auto items-center px-0">
-        <mat-form-field class="w-full" appearance="fill">
-          <mat-label>Model description</mat-label>
-          <textarea rows="3" matInput formControlName="description"> </textarea>
-        </mat-form-field>
-      </div>
-      <div class="m-0 flex w-auto items-center px-0">
-        <mat-form-field class="w-full" appearance="fill">
-          <mat-label>Model tool</mat-label>
-          <mat-select matInput formControlName="toolID">
-            <mat-option
-              *ngFor="let tool of toolService.tools"
-              value="{{ tool.id }}"
-            >
-              {{ tool.name }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="form.controls.toolID.errors?.required">
-            Please provide a tool
-          </mat-error>
-          <mat-error *ngIf="form.controls.toolID.errors?.noValidTool">
-            Please select a valid tool.
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="flex justify-end">
-        <button
-          mat-raised-button
-          color="primary"
-          type="submit"
-          [disabled]="!form.valid"
-        >
-          Create model
-          <mat-icon iconPositionEnd class="mat-icon-position right"
-            >navigate_next</mat-icon
+  @if (projectService.project$ | async) {
+    <div class="collab-card w-[350px] md:min-w-[420px]">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="m-0 flex w-auto items-center px-0">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>Model name</mat-label>
+            <input matInput formControlName="name" />
+
+            <mat-error *ngIf="form.controls.name.errors?.required">
+              Please provide a model name.
+            </mat-error>
+            <mat-error *ngIf="form.controls.name.errors?.uniqueSlug">
+              A project with a name similar to “{{
+                form.controls.name.errors!.uniqueSlug.value
+              }}” already exists.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="m-0 flex w-auto items-center px-0">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>Model description</mat-label>
+            <textarea rows="3" matInput formControlName="description">
+            </textarea>
+          </mat-form-field>
+        </div>
+        <div class="m-0 flex w-auto items-center px-0">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>Model tool</mat-label>
+            <mat-select matInput formControlName="toolID">
+              <mat-option
+                *ngFor="let tool of toolService.tools"
+                value="{{ tool.id }}"
+              >
+                {{ tool.name }}
+              </mat-option>
+            </mat-select>
+
+            <mat-error *ngIf="form.controls.toolID.errors?.required">
+              Please provide a tool
+            </mat-error>
+            <mat-error *ngIf="form.controls.toolID.errors?.noValidTool">
+              Please select a valid tool.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="flex justify-end">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="!form.valid"
           >
-        </button>
-      </div>
-    </form>
-  </div>
+            Create model
+            <mat-icon iconPositionEnd class="mat-icon-position right"
+              >navigate_next</mat-icon
+            >
+          </button>
+        </div>
+      </form>
+    </div>
+  }
 </div>

@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div *ngIf="(projectService.project$ | async) && (modelService.model$ | async)">
+@if ((projectService.project$ | async) && (modelService.model$ | async)) {
   <div class="flex-center">
     <div class="field-separator"></div>
     <button mat-raised-button (click)="modelInitSelection.emit('create-empty')">
@@ -13,4 +13,4 @@
       </div>
     </button>
   </div>
-</div>
+}

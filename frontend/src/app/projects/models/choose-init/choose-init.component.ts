@@ -10,7 +10,6 @@ import { ProjectService } from '../../service/project.service';
 @Component({
   selector: 'app-choose-init',
   templateUrl: './choose-init.component.html',
-  styleUrls: ['./choose-init.component.css'],
 })
 export class ChooseInitComponent {
   @Output() modelInitSelection = new EventEmitter<string>();

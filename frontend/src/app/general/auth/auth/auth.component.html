@@ -10,19 +10,26 @@
     This service enables co-working on Capella MBSE projects. <br />
     To continue to the service you need an invite from an existing user. <br />
   </div>
-  <div *ngIf="params.has('error')" id="oauth-error" class="collab-card">
-    <p>
-      The OAuth2 server raised the following error:<br />
-      <b>{{ params.get("error") }}</b>
-    </p>
-    <p *ngIf="params.has('error_description')">
-      {{ params.get("error_description") }}
-    </p>
-    <p *ngIf="params.has('error_uri')">
-      More informations:
-      <a href="{{ params.get('error_uri') }}">{{ params.get("error_uri") }}</a>
-    </p>
-  </div>
+
+  @if (params.has("error"); as error) {
+    <div id="oauth-error" class="collab-card">
+      <p>
+        The OAuth2 server raised the following error:<br />
+        <b>{{ error }}</b>
+      </p>
+
+      @if (params.has("error_description"); as error_description) {
+        <p>{{ error_description }}</p>
+      }
+
+      @if (params.has("error_uri"); as error_uri) {
+        <p>
+          More informations:
+          <a href="{{ error_uri }}">{{ error_uri }}</a>
+        </p>
+      }
+    </div>
+  }
   <div id="oauth-login">
     <button mat-flat-button color="primary" (click)="webSSO()">
       Login with
