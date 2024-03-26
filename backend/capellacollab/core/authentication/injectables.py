@@ -150,36 +150,16 @@ class ProjectRoleVerification:
         username: str = fastapi.Depends(get_username),
         db: orm.Session = fastapi.Depends(database.get_db),
     ) -> bool:
-        if not (user := users_crud.get_user_by_name(db, username)):
-            if self.verify:
-                raise fastapi.HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail={"reason": f"User {username} was not found"},
-                )
+        if not (user := self._get_user_and_check(username, db)):
             return False
 
         if user.role == users_models.Role.ADMIN:
             return True
 
-        if not (
-            project := projects_crud.get_project_by_slug(db, project_slug)
-        ):
-            if self.verify:
-                raise fastapi.HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail={
-                        "reason": f"The project {project_slug} was not found"
-                    },
-                )
+        if not (project := self._get_project_and_check(project_slug, db)):
             return False
 
-        if (
-            project.visibility == projects_models.Visibility.INTERNAL
-            and self.required_role
-            == projects_users_models.ProjectUserRole.USER
-            and self.required_permission
-            in (None, projects_users_models.ProjectUserPermission.READ)
-        ):
+        if self._is_internal_project_accessible(project):
             return True
 
         project_user = projects_users_crud.get_project_user_association(
@@ -197,20 +177,62 @@ class ProjectRoleVerification:
                 )
             return False
 
-        if self.required_permission:
-            if (
-                project_user.permission
-                == projects_users_models.ProjectUserPermission.READ
-                and self.required_permission
-                == projects_users_models.ProjectUserPermission.WRITE
-            ):
-                if self.verify:
-                    raise fastapi.HTTPException(
-                        status_code=403,
-                        detail={
-                            "reason": f"You need to have '{self.required_permission.value}'-access in the project!",
-                        },
-                    )
-                return False
+        if not self._has_user_required_project_permissions(project_user):
+            return False
 
+        return True
+
+    def _get_user_and_check(
+        self, username: str, db: orm.Session
+    ) -> users_models.DatabaseUser | None:
+        user = users_crud.get_user_by_name(db, username)
+        if not user and self.verify:
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={"reason": f"User {username} was not found"},
+            )
+        return user
+
+    def _get_project_and_check(
+        self, project_slug: str, db: orm.Session
+    ) -> projects_models.DatabaseProject | None:
+        project = projects_crud.get_project_by_slug(db, project_slug)
+        if not project and self.verify:
+            raise fastapi.HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail={"reason": f"The project {project_slug} was not found"},
+            )
+        return project
+
+    def _is_internal_project_accessible(
+        self, project: projects_models.DatabaseProject
+    ) -> bool:
+        return (
+            project.visibility == projects_models.Visibility.INTERNAL
+            and self.required_role
+            == projects_users_models.ProjectUserRole.USER
+            and self.required_permission
+            in (None, projects_users_models.ProjectUserPermission.READ)
+        )
+
+    def _has_user_required_project_permissions(
+        self, project_user: projects_users_models.ProjectUserAssociation
+    ) -> bool:
+        if not self.required_permission:
+            return True
+
+        if (
+            project_user.permission
+            == projects_users_models.ProjectUserPermission.READ
+            and self.required_permission
+            == projects_users_models.ProjectUserPermission.WRITE
+        ):
+            if self.verify:
+                raise fastapi.HTTPException(
+                    status_code=403,
+                    detail={
+                        "reason": f"You need to have '{self.required_permission.value}'-access in the project!",
+                    },
+                )
+            return False
         return True
