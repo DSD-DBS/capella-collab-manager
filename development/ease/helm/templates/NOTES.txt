@@ -1,7 +1,0 @@
-█▀▄░█▀▄░░░█▀█░█▀▀░▀█▀░▀▀█░░░█▀█░█▀▀
-█░█░█▀▄░░░█░█░█▀▀░░█░░▄▀░░░░█▀█░█░█
-▀▀░░▀▀░░░░▀░▀░▀▀▀░░▀░░▀▀▀░░░▀░▀░▀▀▀
-
-Thanks for using our tools!
-You can get the endpoint to the debug container by executing the following command:
-$ kubectl get -n {{ .Release.Namespace }} -o jsonpath="{.subsets[0].addresses[0].ip}" endpoints {{ .Release.Name }}-ease
