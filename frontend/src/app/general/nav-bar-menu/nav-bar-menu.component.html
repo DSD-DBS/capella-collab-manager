@@ -4,9 +4,9 @@
  -->
 
 <mat-list>
-  <div *ngFor="let item of navBarService.navBarItems">
-    <ng-container *ngIf="userService.validateUserRole(item.requiredRole)">
-      <ng-container *ngIf="item.href; else router">
+  @for (item of navBarService.navBarItems; track item.name) {
+    @if (userService.validateUserRole(item.requiredRole)) {
+      @if (item.href) {
         <a
           class="items-center"
           mat-list-item
@@ -15,10 +15,13 @@
           [attr.target]="item.target"
         >
           {{ item.name }}
-          <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+          @if (item.icon) {
+            <mat-icon class="ml-1.5 align-bottom">
+              {{ item.icon }}
+            </mat-icon>
+          }
         </a>
-      </ng-container>
-      <ng-template #router>
+      } @else {
         <a
           mat-list-item
           (click)="navBarService.toggle()"
@@ -26,18 +29,21 @@
         >
           {{ item.name }}
         </a>
-      </ng-template>
-    </ng-container>
-    <mat-divider></mat-divider>
-  </div>
+      }
+    }
+  }
+
   <mat-divider></mat-divider>
   <a
     mat-list-item
     (click)="navBarService.toggle()"
     href="https://github.com/DSD-DBS/capella-collab-manager/issues"
     target="_blank"
-    >Open issue on Github <mat-icon>open_in_new</mat-icon></a
   >
+    Open issue on Github
+    <mat-icon class="ml-1.5 align-bottom">open_in_new</mat-icon>
+  </a>
+
   <mat-divider></mat-divider>
   <a
     mat-list-item
@@ -46,34 +52,34 @@
   >
     Profile
   </a>
+
   <mat-divider></mat-divider>
-  <a
-    mat-list-item
-    (click)="navBarService.toggle()"
-    *ngIf="userService.user?.role === 'administrator'"
-    routerLink="settings"
-    >Settings</a
-  >
-  <mat-divider></mat-divider>
-  <a
-    mat-list-item
-    (click)="navBarService.toggle()"
-    *ngIf="userService.user?.role === 'administrator'"
-    routerLink="events"
-    >Events</a
-  >
-  <mat-divider></mat-divider>
+  @if (userService.user?.role === "administrator") {
+    <a mat-list-item (click)="navBarService.toggle()" routerLink="settings">
+      Settings
+    </a>
+
+    <mat-divider></mat-divider>
+    <a mat-list-item (click)="navBarService.toggle()" routerLink="events">
+      Events
+    </a>
+
+    <mat-divider></mat-divider>
+  }
+
   <a mat-list-item (click)="navBarService.toggle()" routerLink="tokens">
     Tokens
   </a>
-  <mat-divider></mat-divider>
-  <a
-    mat-list-item
-    (click)="navBarService.toggle()"
-    routerLink="logout/redirect"
-    [queryParams]="{ reason: 'logout' }"
-    *ngIf="authService.isLoggedIn()"
-  >
-    Log out <mat-icon class="ml-2.5">logout</mat-icon>
-  </a>
+
+  @if (authService.isLoggedIn()) {
+    <mat-divider></mat-divider>
+    <a
+      mat-list-item
+      (click)="navBarService.toggle()"
+      routerLink="logout/redirect"
+      [queryParams]="{ reason: 'logout' }"
+    >
+      Log out <mat-icon class="ml-2.5 align-bottom">logout</mat-icon>
+    </a>
+  }
 </mat-list>

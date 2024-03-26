@@ -9,7 +9,6 @@ import { ToastService } from 'src/app/helpers/toast/toast.service';
 @Component({
   selector: 'app-display-value',
   templateUrl: './display-value.component.html',
-  styleUrls: ['./display-value.component.css'],
 })
 export class DisplayValueComponent {
   constructor(private toastService: ToastService) {}

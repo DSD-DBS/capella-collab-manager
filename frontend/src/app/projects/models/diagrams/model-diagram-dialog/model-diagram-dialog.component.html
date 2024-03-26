@@ -27,97 +27,83 @@
     />
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
-  <span *ngIf="filteredDiagrams()"
-    >{{ filteredDiagrams()?.length }} diagram(s) found:
-  </span>
-  <div class="flex flex-wrap gap-5">
-    <div
-      class="collab-card !flex grow basis-[calc(30%-20px)] flex-col justify-between"
-      #diagram
-      [id]="diagram.uuid"
-      [attr.success]="diagram.success"
-      *ngFor="let diagram of filteredDiagrams()"
-    >
-      <img
-        (click)="openModelDiagramPreviewDialog(diagram)"
-        matTooltip="Open preview"
-        *ngIf="diagram.success && diagrams[diagram.uuid]?.content"
-        class="mb-2 h-[200px] w-full !touch-auto hover:cursor-pointer"
-        [src]="diagrams[diagram.uuid].content"
-      />
-      <ngx-skeleton-loader
-        class="mb-2 w-full"
-        *ngIf="
-          (!diagrams[diagram.uuid] && diagram.success) ||
-          diagrams[diagram.uuid]?.loading
-        "
-        [theme]="{
-          'border-radius': '5px',
-          margin: 0,
-          padding: 0,
-          height: '200px',
-          width: '100%',
-          border: '1px solid white'
-        }"
-      ></ngx-skeleton-loader>
-      <div *ngIf="!diagram.success" class="diagram-error">
-        <mat-icon class="scale-[2] text-red-900">error</mat-icon> <br />
-        Diagram export has failed. <br />Please contact your diagram cache
-        administrator.
-      </div>
-      <div
-        *ngIf="
-          diagram.success &&
-          diagrams[diagram.uuid] &&
-          diagrams[diagram.uuid].content === null
-        "
-        class="diagram-error"
-      >
-        <mat-icon>error</mat-icon> <br />
-        Error loading the diagram from the server. <br />Please try again later.
-        <br />
-        If the problem persists, please contact your diagram cache
-        administrator.
-      </div>
-      <div class="mb-2 flex flex-nowrap justify-between">
-        <div class="overflow-y-hidden">
-          <div class="text-lg">{{ diagram.name }}</div>
-          <div class="text-gray-700">UUID: {{ diagram.uuid }}</div>
-        </div>
-      </div>
-      <button
-        class="mx-0 my-[5px] w-full"
-        (click)="downloadDiagram(diagram.uuid)"
-        mat-raised-button
-        [disabled]="!diagram.success"
-      >
-        <mat-icon>cloud_download</mat-icon> Download
-      </button>
-    </div>
-  </div>
-  <div class="flex flex-wrap" *ngIf="filteredDiagrams() === undefined">
-    <ngx-skeleton-loader
-      *ngFor="let _ of loaderArray"
-      class="m-2 grow basis-[calc(30%-20px)]"
-      [theme]="{
-        'border-radius': '5px',
-        height: '332px',
-        'min-width': '208px',
-        border: '1px solid white'
-      }"
-    ></ngx-skeleton-loader>
-  </div>
-  <div *ngIf="this.diagramMetadata?.diagrams?.length === 0">
+
+  @if (this.diagramMetadata?.diagrams?.length === 0) {
     Your model doesn't seem to contain diagrams.
-  </div>
-  <div
-    *ngIf="
-      this.diagramMetadata?.diagrams?.length !== 0 &&
-      filteredDiagrams()?.length === 0
-    "
-  >
+  } @else if (getFilteredDiagrams() === undefined) {
+    <div class="flex flex-wrap">
+      @for (_ of loaderArray; track $index) {
+        <ngx-skeleton-loader
+          class="m-2 grow basis-[calc(30%-20px)]"
+          [theme]="{
+            'border-radius': '5px',
+            height: '332px',
+            'min-width': '208px',
+            border: '1px solid white'
+          }"
+        ></ngx-skeleton-loader>
+      }
+    </div>
+  } @else if (getFilteredDiagrams()!.length === 0) {
     No diagrams for the given filter found. Please remove your search query.
-  </div>
+  } @else {
+    <span> {{ getFilteredDiagrams()!.length }} diagram(s) found: </span>
+    <div class="flex flex-wrap gap-5">
+      @for (diagram of getFilteredDiagrams(); track diagram.uuid) {
+        <div
+          class="collab-card !flex grow basis-[calc(30%-20px)] flex-col justify-between"
+          #diagram
+          [id]="diagram.uuid"
+          [attr.success]="diagram.success"
+        >
+          @if (diagram.success) {
+            @if (!diagrams[diagram.uuid] || diagrams.loading) {
+              <ngx-skeleton-loader
+                class="mb-2 w-full"
+                [theme]="{
+                  'border-radius': '5px',
+                  margin: 0,
+                  padding: 0,
+                  height: '200px',
+                  width: '100%',
+                  border: '1px solid white'
+                }"
+              ></ngx-skeleton-loader>
+            } @else if (diagrams[diagram.uuid].content) {
+              <img
+                (click)="openModelDiagramPreviewDialog(diagram)"
+                matTooltip="Open preview"
+                class="mb-2 h-[200px] w-full !touch-auto hover:cursor-pointer"
+                [src]="diagrams[diagram.uuid].content"
+              />
+            }
+          } @else {
+            <div class="diagram-error">
+              <mat-icon class="scale-[2] text-red-900">error</mat-icon> <br />
+              Diagram export has failed. <br />
+              Please contact your diagram cache administrator.
+            </div>
+          }
+
+          <div class="mb-2 flex flex-nowrap justify-between">
+            <div class="overflow-y-hidden">
+              <div class="text-lg">{{ diagram.name }}</div>
+              <div class="text-gray-700">UUID: {{ diagram.uuid }}</div>
+            </div>
+          </div>
+          <button
+            class="mx-0 my-[5px] w-full"
+            (click)="downloadDiagram(diagram.uuid)"
+            mat-raised-button
+            [disabled]="!diagram.success"
+          >
+            <mat-icon>cloud_download</mat-icon> Download
+          </button>
+        </div>
+      }
+    </div>
+  }
+
   <div class="sticky bottom-0 w-full bg-white md:hidden">
     <mat-divider class="my-2"></mat-divider>
     <button class="w-full" mat-button mat-dialog-close>Close</button>

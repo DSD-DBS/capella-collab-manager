@@ -16,7 +16,6 @@ import { ProjectService } from 'src/app/projects/service/project.service';
 @Component({
   selector: 'app-view-logs-dialog',
   templateUrl: './view-logs-dialog.component.html',
-  styleUrls: ['./view-logs-dialog.component.css'],
 })
 export class ViewLogsDialogComponent {
   constructor(

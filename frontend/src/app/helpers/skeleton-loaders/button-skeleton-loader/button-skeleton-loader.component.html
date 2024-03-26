@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<ng-container *ngIf="loading">
+@if (loading) {
   <ngx-skeleton-loader
     appearance="circle"
     [theme]="{
@@ -13,4 +13,4 @@
       border: '1px solid white'
     }"
   ></ngx-skeleton-loader>
-</ng-container>
+}
