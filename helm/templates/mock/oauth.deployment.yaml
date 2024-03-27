@@ -30,7 +30,7 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-oauth-mock
-          image: {{ .Values.docker.images.mocks.oauth }}
+          image: {{ .Values.docker.registry.github }}/navikt/mock-oauth2-server:0.5.8
           ports:
             - name: http
               containerPort: 8080

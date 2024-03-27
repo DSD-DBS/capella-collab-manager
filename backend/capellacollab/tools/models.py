@@ -196,6 +196,17 @@ class SessionMonitoring(pydantic.BaseModel):
     )
 
 
+class ToolModelProvisioning(pydantic.BaseModel):
+    directory: str = pydantic.Field(
+        default="/models",
+        description=(
+            "Directory, where models are provisioned. "
+            "The directory is mounted into the session container."
+        ),
+        examples=["/models", "/provisioned"],
+    )
+
+
 class ToolSessionConfiguration(pydantic.BaseModel):
     resources: Resources = pydantic.Field(default=Resources())
     environment: dict[str, str] = pydantic.Field(
@@ -214,6 +225,10 @@ class ToolSessionConfiguration(pydantic.BaseModel):
         default=ToolSessionConnection()
     )
     monitoring: SessionMonitoring = pydantic.Field(default=SessionMonitoring())
+    provisioning: ToolModelProvisioning = pydantic.Field(
+        default=ToolModelProvisioning(),
+        description="Configuration regarding read-only sessions & automatic session provisioning.",
+    )
 
 
 class DatabaseTool(database.Base):
@@ -240,23 +255,6 @@ class DatabaseTool(database.Base):
     )
     natures: orm.Mapped[list[DatabaseNature]] = orm.relationship(
         default_factory=list, back_populates="tool"
-    )
-
-
-class ReadOnlySessionToolConfiguration(pydantic.BaseModel):
-    image: str | None = pydantic.Field(
-        default="docker.io/hello-world:latest",
-        pattern=DOCKER_IMAGE_PATTERN,
-        examples=[
-            "docker.io/hello-world:latest",
-            "ghcr.io/dsd-dbs/capella-dockerimages/capella/readonly:{version}-main",
-        ],
-        description=(
-            "Docker image, which is used for read-only sessions. "
-            "If set to None, read-only session support will be disabled for this tool version. "
-            "You can use '{version}' in the image, which will be replaced with the version name of the tool. "
-            "Always use tags to prevent breaking updates. "
-        ),
     )
 
 
@@ -297,9 +295,6 @@ class ToolBackupConfiguration(pydantic.BaseModel):
 class SessionToolConfiguration(pydantic.BaseModel):
     persistent: PersistentSessionToolConfiguration = pydantic.Field(
         default=PersistentSessionToolConfiguration()
-    )
-    read_only: ReadOnlySessionToolConfiguration = pydantic.Field(
-        default=ReadOnlySessionToolConfiguration()
     )
 
 

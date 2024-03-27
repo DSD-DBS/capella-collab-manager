@@ -19,24 +19,19 @@ def get_last_seen(sid: str) -> str:
     if core.DEVELOPMENT_MODE:
         return "Disabled in development mode"
 
-    url = config.prometheus.url
-    url += "/".join(("api", "v1", "query?query=idletime_minutes"))
+    url = f"{config.prometheus.url}/api/v1/query?query=idletime_minutes"
     try:
         response = requests.get(
             url,
             timeout=config.requests.timeout,
         )
         response.raise_for_status()
+
         for session in response.json()["data"]["result"]:
             if sid == session["metric"]["app"]:
                 return _get_last_seen(float(session["value"][1]))
-        log.exception("No session was found.")
-    except requests.JSONDecodeError as error:
-        log.exception("Prometheus service not available: %s", error.args[0])
-    except requests.ConnectionError as error:
-        log.exception("ConnectionError: %s", error.args[0])
-    except KeyError:
-        log.exception("Something is wrong with prometheus idletime metric.")
+
+        log.error("No session was found.")
     except Exception:
         log.exception("Exception during fetching of last seen.")
     return "UNKNOWN"
@@ -57,7 +52,10 @@ def determine_session_state(session_id: str) -> str:
 
     if state in ("Started", "BackOff"):
         try:
-            logs = operators.get_operator().get_session_logs(session_id)
+            logs = operators.get_operator().get_session_logs(
+                session_id, container="session-preparation"
+            )
+            logs += operators.get_operator().get_session_logs(session_id)
             res = re.search(r"(?s:.*)^---(.*?)---$", logs, re.MULTILINE)
             if res:
                 return res.group(1)

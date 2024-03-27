@@ -18,12 +18,7 @@
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
 
-    <div
-      [class]="
-        'simple-scroll' // eslint-disable-line tailwindcss/no-custom-classname,
-        'max-h-[40vh] overflow-auto'
-      "
-    >
+    <div [class]="'max-h-[40vh] overflow-auto'">
       <div mat-subheader>Administrators</div>
 
       @for (user of getUsersByRole("administrator"); track user.id) {

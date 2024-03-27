@@ -69,8 +69,10 @@ def test_start_session(monkeypatch: pytest.MonkeyPatch):
         tool=tool,
         version=tools_models.DatabaseVersion(name="testversion", tool=tool),
         environment={},
+        init_environment={},
         ports={"rdp": 3389},
         volumes=[],
+        init_volumes=[],
     )
 
     assert deployment_counter == 1

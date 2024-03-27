@@ -103,7 +103,8 @@ Then, choose one of the three options and run the corresponding command:
 1. Fetch Capella images from Github (without initial TeamForCapella support)
 
    ```zsh
-   make build helm-deploy open rollout
+   export CAPELLACOLLAB_SESSIONS_REGISTRY=ghcr.io/dsd-dbs/capella-dockerimages
+   DEVELOPMENT_MODE=1 make build helm-deploy open rollout
    ```
 
 2. Build Capella images locally (without initial TeamForCapella support) \

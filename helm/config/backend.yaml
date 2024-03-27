@@ -4,6 +4,9 @@
 docker:
   registry: "{{ .Values.docker.registry.internal }}"
   externalRegistry: "{{ .Values.docker.registry.external }}"
+  sessionsRegistry: "{{ .Values.docker.registry.sessions }}"
+
+  tag: "{{ .Values.docker.tag }}"
 
 k8s:
   namespace: {{ .Values.backend.k8sSessionNamespace }}

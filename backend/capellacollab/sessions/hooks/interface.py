@@ -28,11 +28,18 @@ class ConfigurationHookResult(t.TypedDict):
         List of volumes to be mounted into the session.
     warnings : list[core_models.Message]
         List of warnings to be displayed to the user.
+    init_volumes : list[operators_models.Volume]
+        List of volumes to be mounted into the session preparation container.
+    init_environment : dict[str, str]
+        Dictionary of environment variables to be injected into the
+        session preparation container.
     """
 
     environment: t.NotRequired[t.Mapping]
     volumes: t.NotRequired[list[operators_models.Volume]]
     warnings: t.NotRequired[list[core_models.Message]]
+    init_volumes: t.NotRequired[list[operators_models.Volume]]
+    init_environment: t.NotRequired[t.Mapping]
 
 
 class PostSessionCreationHookResult(t.TypedDict):
@@ -103,6 +110,7 @@ class HookRegistration(metaclass=abc.ABCMeta):
         session_type: sessions_models.SessionType,
         connection_method: tools_models.ToolSessionConnectionMethod,
         provisioning: list[sessions_models.SessionProvisioningRequest],
+        session_id: str,
         **kwargs,
     ) -> ConfigurationHookResult:
         """Hook to determine session configuration
@@ -127,6 +135,8 @@ class HookRegistration(metaclass=abc.ABCMeta):
             Requested connection method for the session
         provisioning : list[sessions_models.SessionProvisioningRequest]
             List of workspace provisioning requests
+        session_id: str
+            ID of the session to be created
         Returns
         -------
         result : ConfigurationHookResult

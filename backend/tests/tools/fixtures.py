@@ -89,6 +89,4 @@ def fixture_capella_tool_version(
 
 @pytest.fixture(name="jupyter_tool")
 def fixture_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
-    return database_migration.create_jupyter_tool(
-        db, "localhost:invalid-registry"
-    )
+    return database_migration.create_jupyter_tool(db)

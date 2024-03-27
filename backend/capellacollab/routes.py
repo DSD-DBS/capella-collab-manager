@@ -8,10 +8,10 @@ import logging
 import fastapi
 
 from capellacollab.core import authentication
-from capellacollab.core import metadata as core_metadata
 from capellacollab.core.authentication import responses as auth_responses
 from capellacollab.events import routes as events_router
 from capellacollab.health import routes as health_routes
+from capellacollab.metadata import routes as core_metadata
 from capellacollab.notices import routes as notices_routes
 from capellacollab.projects import routes as projects_routes
 from capellacollab.sessions import routes as sessions_routes

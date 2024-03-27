@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import json
+import pathlib
 import typing as t
 
 from sqlalchemy import orm
@@ -53,30 +53,21 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
         )
         cls._verify_model_permissions(db, user, resolved_entries)
 
-        return interface.ConfigurationHookResult(
-            environment={
-                "GIT_REPOS_JSON": json.dumps(
-                    cls._get_git_repos_json(resolved_entries)
-                )
-            }
-        )
-
-    @classmethod
-    def _provisioning_request_to_git_model_json(
-        cls,
-        db: orm.Session,
-        user: users_models.DatabaseUser,
-        version: tools_models.DatabaseVersion,
-        entries: list[sessions_models.SessionProvisioningRequest],
-    ) -> dict[str, str]:
-        resolved_entries = cls._resolve_provisioning_request(db, entries)
-        cls._verify_matching_tool_version_and_model(version, resolved_entries)
-        cls._verify_model_permissions(db, user, resolved_entries)
-        return {
-            "GIT_REPOS_JSON": json.dumps(
-                cls._get_git_repos_json(resolved_entries)
+        init_environment = {
+            "CAPELLACOLLAB_PROVISIONING": cls._get_git_repos_json(
+                resolved_entries, include_credentials=True
             )
         }
+
+        environment = {
+            "CAPELLACOLLAB_SESSION_PROVISIONING": cls._get_git_repos_json(
+                resolved_entries, include_credentials=False
+            )
+        }
+
+        return interface.ConfigurationHookResult(
+            init_environment=init_environment, environment=environment
+        )
 
     @classmethod
     def _resolve_provisioning_request(
@@ -136,6 +127,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
     def _get_git_repos_json(
         cls,
         resolved_entries: list[ResolvedSessionProvisioning],
+        include_credentials: bool = False,
     ):
         """Get the git repos as a JSON-serializable list"""
         return [
@@ -143,6 +135,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
                 entry["git_model"],
                 entry["entry"].revision,
                 entry["entry"].deep_clone,
+                include_credentials,
             )
             for entry in resolved_entries
         ]
@@ -153,8 +146,10 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
         git_model: git_models.DatabaseGitModel,
         revision: str,
         deep_clone: bool,
+        include_credentials: bool,
     ) -> dict[str, str | int]:
         """Convert a DatabaseGitModel to a JSON-serializable dictionary."""
+        toolmodel = git_model.model
 
         git_dict: dict[str, str | int] = {
             "url": git_model.path,
@@ -164,8 +159,15 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
             "nature": (
                 git_model.model.nature.name if git_model.model.nature else ""
             ),
+            "path": str(
+                pathlib.PurePosixPath(
+                    toolmodel.tool.config.provisioning.directory
+                )
+                / toolmodel.project.slug
+                / toolmodel.slug
+            ),
         }
-        if git_model.username:
+        if include_credentials and git_model.username:
             git_dict["username"] = git_model.username
             git_dict["password"] = git_model.password
         return git_dict

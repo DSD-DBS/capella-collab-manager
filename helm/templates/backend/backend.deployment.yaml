@@ -44,7 +44,7 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-backend
-          image: {{ .Values.docker.registry.internal }}{{ .Values.docker.images.backend }}
+          image: {{ .Values.docker.registry.internal }}/backend:{{ .Values.docker.tag }}
           ports:
             - name: http
               containerPort: 8000

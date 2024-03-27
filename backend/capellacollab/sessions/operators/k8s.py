@@ -94,8 +94,10 @@ class KubernetesOperator:
         tool: tools_models.DatabaseTool,
         version: tools_models.DatabaseVersion,
         environment: dict[str, str],
+        init_environment: dict[str, str],
         ports: dict[str, int],
         volumes: list[models.Volume],
+        init_volumes: list[models.Volume],
         prometheus_path="/metrics",
         prometheus_port=9118,
     ) -> Session:
@@ -116,8 +118,10 @@ class KubernetesOperator:
             image=image,
             name=session_id,
             environment=environment,
+            init_environment=init_environment,
             ports=ports,
             volumes=volumes,
+            init_volumes=init_volumes,
             tool_resources=tool.config.resources,
         )
 
@@ -213,12 +217,23 @@ class KubernetesOperator:
 
         return "spec.containers{promtail}" != event.involved_object.field_path
 
-    def get_session_logs(self, _id: str) -> str:
-        return self.v1_core.read_namespaced_pod_log(
-            name=self._get_pod_name(_id),
-            container=_id,
-            namespace=namespace,
-        )
+    def get_session_logs(
+        self,
+        _id: str,
+        container: (
+            t.Literal["session"] | t.Literal["session-preparation"]
+        ) = "session",
+    ) -> str:
+        try:
+            return self.v1_core.read_namespaced_pod_log(
+                name=self._get_pod_name(_id),
+                container=container,
+                namespace=namespace,
+            )
+        except exceptions.ApiException as err:
+            if err.status == 400:
+                return ""
+            raise
 
     def get_job_logs(self, name: str) -> str | None:
         pod_name = self.get_pod_name_from_job_name(name)
@@ -427,13 +442,20 @@ class KubernetesOperator:
         image: str,
         name: str,
         environment: dict[str, str],
+        init_environment: dict[str, str],
         ports: dict[str, int],
         volumes: list[models.Volume],
+        init_volumes: list[models.Volume],
         tool_resources: tools_models.Resources,
     ) -> client.V1Deployment:
         k8s_volumes, k8s_volume_mounts = self._map_volumes_to_k8s_volumes(
             volumes
         )
+
+        _, init_k8s_volume_mounts = self._map_volumes_to_k8s_volumes(
+            init_volumes
+        )
+
         promtail_volume_mounts: list[client.V1VolumeMount] = []
 
         if loki_enabled:
@@ -470,16 +492,13 @@ class KubernetesOperator:
         containers: list[client.V1Container] = []
         containers.append(
             client.V1Container(
-                name=name,
+                name="session",
                 image=image,
                 ports=[
                     client.V1ContainerPort(container_port=port, protocol="TCP")
                     for port in ports.values()
                 ],
-                env=[
-                    client.V1EnvVar(name=key, value=str(value))
-                    for key, value in environment.items()
-                ],
+                env=self._transform_env_to_k8s_env(environment),
                 resources=resources,
                 volume_mounts=k8s_volume_mounts,
                 image_pull_policy=image_pull_policy,
@@ -524,6 +543,20 @@ class KubernetesOperator:
                         automount_service_account_token=False,
                         security_context=pod_security_context,
                         containers=containers,
+                        init_containers=[
+                            client.V1Container(
+                                name="session-preparation",
+                                image=config.docker.registry
+                                + "/session-preparation:"
+                                + config.docker.tag,
+                                env=self._transform_env_to_k8s_env(
+                                    init_environment
+                                ),
+                                resources=resources,
+                                volume_mounts=init_k8s_volume_mounts,
+                                image_pull_policy=image_pull_policy,
+                            )
+                        ],
                         volumes=k8s_volumes,
                         restart_policy="Always",
                     ),
@@ -699,10 +732,7 @@ class KubernetesOperator:
                 name=name,
                 image=image,
                 args=args,
-                env=[
-                    client.V1EnvVar(name=key, value=str(value))
-                    for key, value in environment.items()
-                ],
+                env=self._transform_env_to_k8s_env(environment),
                 resources=resources,
                 image_pull_policy=image_pull_policy,
             )
@@ -720,6 +750,15 @@ class KubernetesOperator:
             backoff_limit=0,
             active_deadline_seconds=timeout,
         )
+
+    @classmethod
+    def _transform_env_to_k8s_env(
+        cls, environment: t.Mapping[str, str | None]
+    ) -> list[client.V1EnvVar]:
+        return [
+            client.V1EnvVar(name=key, value=str(value))
+            for key, value in environment.items()
+        ]
 
     def _create_promtail_configmap(
         self,
@@ -933,7 +972,7 @@ class KubernetesOperator:
             stream = kubernetes.stream.stream(
                 self.v1_core.connect_get_namespaced_pod_exec,
                 pod_name,
-                container=_id,
+                container="session",
                 namespace=namespace,
                 command=exec_command,
                 stderr=True,
@@ -971,7 +1010,7 @@ class KubernetesOperator:
             stream = kubernetes.stream.stream(
                 self.v1_core.connect_get_namespaced_pod_exec,
                 pod_name,
-                container=_id,
+                container="session",
                 namespace=cfg.namespace,
                 command=exec_command,
                 stderr=True,

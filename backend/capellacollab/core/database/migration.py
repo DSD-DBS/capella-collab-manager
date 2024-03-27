@@ -126,7 +126,10 @@ def get_eclipse_session_configuration() -> (
                 requests="1.6Gi", limits="6Gi"
             ),
         ),
-        environment={"RMT_PASSWORD": "{CAPELLACOLLAB_SESSION_TOKEN}"},
+        environment={
+            "RMT_PASSWORD": "{CAPELLACOLLAB_SESSION_TOKEN}",
+            "ECLIPSE_PROJECTS_TO_LOAD": "{CAPELLACOLLAB_SESSION_PROVISIONING}",
+        },
         connection=tools_models.ToolSessionConnection(
             methods=[
                 tools_models.GuacamoleConnectionMethod(
@@ -162,12 +165,15 @@ def get_eclipse_session_configuration() -> (
                 ),
             ]
         ),
+        provisioning=tools_models.ToolModelProvisioning(
+            directory="/models",
+        ),
     )
 
 
-def create_capella_tool(
-    db: orm.Session, registry: str
-) -> tools_models.DatabaseTool:
+def create_capella_tool(db: orm.Session) -> tools_models.DatabaseTool:
+    registry = config.docker.sessions_registry
+
     capella = tools_models.CreateTool(
         name="Capella",
         integrations=tools_models.ToolIntegrations(
@@ -178,7 +184,9 @@ def create_capella_tool(
     capella_database = tools_crud.create_tool(db, capella)
 
     for capella_version_name in ("5.0.0", "5.2.0", "6.0.0", "6.1.0"):
-        if core.DEVELOPMENT_MODE:
+        # pylint: disable=unsupported-membership-test
+        # https://github.com/pylint-dev/pylint/issues/3045
+        if "localhost" in registry:
             docker_tag = f"{capella_version_name}-latest"
         else:
             docker_tag = f"{capella_version_name}-selected-dropins-main"
@@ -191,9 +199,6 @@ def create_capella_tool(
                 sessions=tools_models.SessionToolConfiguration(
                     persistent=tools_models.PersistentSessionToolConfiguration(
                         image=(f"{registry}/capella/remote:{docker_tag}"),
-                    ),
-                    read_only=tools_models.ReadOnlySessionToolConfiguration(
-                        image=f"{registry}/capella/readonly:{docker_tag}"
                     ),
                 ),
                 backups=tools_models.ToolBackupConfiguration(
@@ -213,9 +218,7 @@ def create_capella_tool(
     return capella_database
 
 
-def create_papyrus_tool(
-    db: orm.Session, registry: str
-) -> tools_models.DatabaseTool:
+def create_papyrus_tool(db: orm.Session) -> tools_models.DatabaseTool:
     papyrus = tools_models.CreateTool(
         name="Papyrus",
         integrations=tools_models.ToolIntegrations(
@@ -234,11 +237,8 @@ def create_papyrus_tool(
                 sessions=tools_models.SessionToolConfiguration(
                     persistent=tools_models.PersistentSessionToolConfiguration(
                         image=(
-                            f"{registry}/capella/remote:{papyrus_version_name}-latest"
+                            f"{config.docker.sessions_registry}/capella/remote:{papyrus_version_name}-latest"
                         ),
-                    ),
-                    read_only=tools_models.ReadOnlySessionToolConfiguration(
-                        image=None
                     ),
                 ),
                 backups=tools_models.ToolBackupConfiguration(image=None),
@@ -258,9 +258,7 @@ def create_papyrus_tool(
     return papyrus_database
 
 
-def create_jupyter_tool(
-    db: orm.Session, registry: str
-) -> tools_models.DatabaseTool:
+def create_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
     jupyter = tools_models.CreateTool(
         name="Jupyter",
         integrations=tools_models.ToolIntegrations(jupyter=True),
@@ -296,6 +294,9 @@ def create_jupyter_tool(
                     path="/prometheus"
                 )
             ),
+            provisioning=tools_models.ToolModelProvisioning(
+                directory="/models",
+            ),
         ),
     )
     jupyter_database = tools_crud.create_tool(db, jupyter)
@@ -310,10 +311,9 @@ def create_jupyter_tool(
                 is_deprecated=False,
                 sessions=tools_models.SessionToolConfiguration(
                     persistent=tools_models.PersistentSessionToolConfiguration(
-                        image=(f"{registry}/jupyter-notebook:python-3.11"),
-                    ),
-                    read_only=tools_models.ReadOnlySessionToolConfiguration(
-                        image=None
+                        image=(
+                            f"{config.docker.sessions_registry}/jupyter-notebook:python-3.11"
+                        ),
                     ),
                 ),
                 backups=tools_models.ToolBackupConfiguration(image=None),
@@ -327,16 +327,13 @@ def create_jupyter_tool(
 
 
 def create_tools(db: orm.Session):
-    if core.DEVELOPMENT_MODE:
-        registry = config.docker.registry
-    else:
-        registry = "ghcr.io/dsd-dbs/capella-dockerimages"
+    create_capella_tool(db)
 
-    create_capella_tool(db, registry)
-
-    if core.DEVELOPMENT_MODE:
-        create_papyrus_tool(db, registry)
-        create_jupyter_tool(db, registry)
+    # pylint: disable=unsupported-membership-test
+    # https://github.com/pylint-dev/pylint/issues/3045
+    if "localhost" in config.docker.sessions_registry:
+        create_papyrus_tool(db)
+        create_jupyter_tool(db)
 
     LOGGER.info("Initialized tools")
 

@@ -2,12 +2,16 @@
 # SPDX-License-Identifier: Apache-2.0
 
 CLUSTER_NAME = collab-cluster
-LOCAL_REGISTRY_NAME = localhost
-CLUSTER_REGISTRY_NAME = myregistry.localhost
-REGISTRY_PORT = 12345
+
 RELEASE = dev
 NAMESPACE = collab-manager
 SESSION_NAMESPACE = collab-sessions
+
+K3D_REGISTRY_PORT = 12345
+K3D_REGISTRY_NAME = myregistry.localhost
+
+DOCKER_REGISTRY ?= k3d-$(K3D_REGISTRY_NAME):$(K3D_REGISTRY_PORT)
+CAPELLACOLLAB_SESSIONS_REGISTRY ?= $(DOCKER_REGISTRY)
 
 # List of Capella versions, e.g.: `5.0.0 5.2.0 6.0.0`
 CAPELLA_VERSIONS ?= 6.0.0
@@ -18,7 +22,7 @@ DEVELOPMENT_MODE ?= 0
 
 TIMEOUT ?= 10m
 
-CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 DOCKER_REGISTRY=$(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)
+CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 DOCKER_REGISTRY=$(DOCKER_REGISTRY)
 
 # Adds support for msys
 export MSYS_NO_PATHCONV := 1
@@ -30,27 +34,32 @@ export DOCKER_BUILDKIT=1
 SHELL = /bin/bash
 .SHELLFLAGS = -euo pipefail -c
 
-build: backend frontend docs guacamole jupyter
+build: backend frontend docs guacamole jupyter session-preparation
 
 backend: IMAGE=capella/collab/backend
 backend:
 	python backend/generate_git_archival.py;
-	docker build -t $(IMAGE) -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE) backend
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE)
+	docker build -t $(IMAGE) -t $(DOCKER_REGISTRY)/$(IMAGE) backend
+	docker push $(DOCKER_REGISTRY)/$(IMAGE)
 
 frontend: IMAGE=capella/collab/frontend
 frontend:
 	python frontend/fetch-version.py
-	docker build -t $(IMAGE) -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE) frontend
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE)
+	docker build -t $(IMAGE) -t $(DOCKER_REGISTRY)/$(IMAGE) frontend
+	docker push $(DOCKER_REGISTRY)/$(IMAGE)
 
 guacamole: IMAGE=capella/collab/guacamole
 guacamole:
-	docker build -t $(IMAGE) -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE) guacamole
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE)
+	docker build -t $(IMAGE) -t $(DOCKER_REGISTRY)/$(IMAGE) images/guacamole
+	docker push $(DOCKER_REGISTRY)/$(IMAGE)
+
+session-preparation: IMAGE=capella/collab/session-preparation
+session-preparation:
+	docker build -t $(IMAGE) -t $(DOCKER_REGISTRY)/$(IMAGE) images/session-preparation
+	docker push $(DOCKER_REGISTRY)/$(IMAGE)
 
 capella:
-	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(CAPELLA_VERSIONS)" capella/remote capella/readonly
+	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(CAPELLA_VERSIONS)" capella/remote
 
 t4c-client:
 	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(T4C_CLIENT_VERSIONS)" t4c/client/remote
@@ -59,8 +68,8 @@ jupyter:
 	$(CAPELLA_DOCKERIMAGES) jupyter-notebook
 
 docs:
-	docker build -t capella/collab/docs -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs docs
-	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/docs
+	docker build -t capella/collab/docs -t $(DOCKER_REGISTRY)/capella/collab/docs docs
+	docker push $(DOCKER_REGISTRY)/capella/collab/docs
 
 deploy: build capella helm-deploy rollout open
 
@@ -79,8 +88,9 @@ helm-deploy:
 		--namespace $(NAMESPACE) \
 		--values helm/values.yaml \
 		$$(test -f secrets.yaml && echo "--values secrets.yaml") \
-		--set docker.registry.internal=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
-		--set docker.images.guacamole.guacamole=k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT)/capella/collab/guacamole \
+		--set docker.registry.internal=$(DOCKER_REGISTRY)/capella/collab \
+		--set docker.registry.sessions=$(CAPELLACOLLAB_SESSIONS_REGISTRY) \
+		--set docker.tag=latest \
 		--set mocks.oauth=True \
 		--set development=$(DEVELOPMENT_MODE) \
 		--set cluster.ingressClassName=traefik \
@@ -123,11 +133,11 @@ undeploy:
 
 registry:
 	type k3d || { echo "K3D is not installed, install k3d and run 'make create-cluster' again"; exit 1; }
-	k3d registry list $(CLUSTER_REGISTRY_NAME) 2>&- || k3d registry create $(CLUSTER_REGISTRY_NAME) --port $(REGISTRY_PORT)
+	k3d registry list $(K3D_REGISTRY_NAME) 2>&- || k3d registry create $(K3D_REGISTRY_NAME) --port $(K3D_REGISTRY_PORT)
 
 create-cluster: registry
 	k3d cluster list $(CLUSTER_NAME) 2>&- || k3d cluster create $(CLUSTER_NAME) \
-		--registry-use k3d-$(CLUSTER_REGISTRY_NAME):$(REGISTRY_PORT) \
+		--registry-use k3d-$(K3D_REGISTRY_NAME):$(K3D_REGISTRY_PORT) \
 		-p "8080:80@loadbalancer" \
 		-p "443:443@loadbalancer" \
 		-p "30000-30005:30000-30005@server:0"
@@ -138,7 +148,7 @@ delete-cluster:
 	k3d cluster list $(CLUSTER_NAME) 2>&- && k3d cluster delete $(CLUSTER_NAME)
 
 delete-registry:
-	k3d registry list $(CLUSTER_REGISTRY_NAME) 2>&- && k3d registry delete $(CLUSTER_REGISTRY_NAME)
+	k3d registry list $(K3D_REGISTRY_NAME) 2>&- && k3d registry delete $(K3D_REGISTRY_NAME)
 
 wait:
 	@echo "-----------------------------------------------------------"

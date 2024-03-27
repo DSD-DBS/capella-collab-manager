@@ -39,7 +39,7 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-frontend
-          image: {{ .Values.docker.registry.internal }}{{ .Values.docker.images.frontend }}
+          image: {{ .Values.docker.registry.internal }}/frontend:{{ .Values.docker.tag }}
           ports:
             - name: http
               containerPort: 8080

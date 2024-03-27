@@ -22,10 +22,22 @@ class BaseConfig(pydantic.BaseModel):
 
 class DockerConfig(BaseConfig):
     registry: str = pydantic.Field(
+        default="k3d-myregistry.localhost:12345/capella/collab",
+        description=(
+            "The registry from which to pull the Collaboration Manager images, "
+            "i.e. the session-preparation image."
+        ),
+        examples=[
+            "ghcr.io/dsd-dbs/capella-collab-manager",
+            "k3d-myregistry.localhost:12345/capella/collab",
+        ],
+    )
+    sessions_registry: str = pydantic.Field(
         default="k3d-myregistry.localhost:12345",
         description=(
             "The default registry from which to pull Docker images for session containers. "
-            "The is only used during initial tool creation, you can change the registry for each tool individually."
+            "It is only used during initial tool creation. "
+            "After the initial creation, you can change the registry for each tool individually in the UI."
         ),
         examples=["ghcr.io/dsd-dbs/capella-dockerimages"],
     )
@@ -36,6 +48,15 @@ class DockerConfig(BaseConfig):
             "used to enabe Loki monitoring."
         ),
         examples=["docker.io"],
+    )
+
+    tag: str = pydantic.Field(
+        default="latest",
+        description=(
+            "Docker tag to use for the Collaboration Manager images, "
+            "i.e. the session-preparation image."
+        ),
+        examples=["main", "v3.1.0", "branch-name"],
     )
 
 

@@ -41,7 +41,7 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-guacamole-guacamole
-          image: {{ .Values.docker.images.guacamole.guacamole }}
+          image: {{ .Values.docker.registry.internal }}/guacamole:{{ .Values.docker.tag }}
           env:
             - name: GUACD_HOSTNAME
               value: {{ .Release.Name }}-guacamole-guacd
