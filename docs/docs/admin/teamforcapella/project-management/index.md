@@ -8,17 +8,17 @@
 This page describes how to manage T4C projects in T4C repositories. It does not
 cover the management of T4C repositories. For the management of T4C
 repositories, refer to the
-[TeamForCapella repository management](../repository-management/repository-management.md)
+[TeamForCapella repository management](../repository-management/index.md)
 guide.
 
 ## Create a new TeamForCapella Project
 
 1. Make sure that you have a T4C repository available. If not, refer to the
-   [TeamForCapella repository management](../repository-management/repository-management.md)
+   [TeamForCapella repository management](../repository-management/index.md)
    guide.
 1. Create an empty Capella project in your workspace. Then, export it to the
    T4C repository. For more information, refer to the
-   [TeamForCapella project export](../../../user/tools/capella/teamforcapella/export/export-to-t4c.md)
+   [TeamForCapella project export](../../../user/tools/capella/teamforcapella/export/index.md)
    guide.
 
 ## Delete a TeamForCapella Project
@@ -38,7 +38,7 @@ guide.
     1. Global administrators can navigate to `Profile` > `Settings` >
         `Model sources` > `TeamForCapella` > Select the instance > `Host`.
     1. Project managers can use the TeamForCapella connection flow described in
-        the [Connect to a TeamForCapella repository](../../../user/tools/capella/teamforcapella/export/export-to-t4c.md)
+        the [Connect to a TeamForCapella repository](../../../user/tools/capella/teamforcapella/export/index.md)
         guide. In the `Connect to Shared Project` dialog, select the repository,
         expand "Connection information" and copy the "Repository host".
         ![Find out T4C server host](./find-out-repository-host.png)

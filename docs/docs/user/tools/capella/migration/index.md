@@ -13,7 +13,7 @@
 <!-- prettier-ignore -->
 !!! info
     If you want to update a Capella model saved in TeamForCapella, please follow the TeamForCapella specific instructions instead:
-    [Update a TeamForCapella based Capella model](../../../../admin/teamforcapella/migration/update.md).
+    [Update a TeamForCapella based Capella model](../../../../admin/teamforcapella/migration.md).
     An administrator is required to update the Capella version in TeamForCapella.
 
 1. Open a new persistent session with the old Capella version.

@@ -53,7 +53,7 @@
 ??? question "The TeamForCapella password doesn't work"
 
     Since we have released version 2, users have to use sessions passwords. More
-    information can be found [here](../tools/capella/teamforcapella/connect/connect-to-t4c.md).
+    information can be found [here](../tools/capella/teamforcapella/connect/index.md).
     If you have been added to a project recently while having a running session,
     please recreate your session to get a valid session password for the models
     of the required project.
