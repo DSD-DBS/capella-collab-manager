@@ -38,7 +38,7 @@ export class ToolVersionComponent implements AfterViewInit {
 
     if (this._tool !== undefined) {
       this.toolService
-        .getVersionsForTool(this._tool.id)
+        .getVersionsForTool(this._tool.id, false)
         .subscribe((versions: ToolVersion[]) => {
           this.toolVersions = versions;
         });

@@ -26,7 +26,7 @@ export class ToolsSettingsComponent {
       for (const tool of this.toolService.tools!.map((tool) => tool.id)) {
         combineLatest([
           this.toolService.getNaturesForTool(tool),
-          this.toolService.getVersionsForTool(tool),
+          this.toolService.getVersionsForTool(tool, false),
         ]).subscribe({
           next: (result: [ToolNature[], ToolVersion[]]) => {
             this.tools[tool] = {
