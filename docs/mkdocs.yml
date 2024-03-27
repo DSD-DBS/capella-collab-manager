@@ -23,9 +23,9 @@ nav:
   - User documentation:
       - Introduction: user/index.md
       - Projects:
-          - Get Access to a Project: user/projects/access.md
-          - Add a User to a Project: user/projects/add-user.md
-          - Request a New Project: user/projects/create.md
+          - Get Access to a Project: user/projects/access/index.md
+          - Add a User to a Project: user/projects/add-user/index.md
+          - Request a New Project: user/projects/create/index.md
           - Roles: user/projects/roles.md
           - Models:
               - Create a Model: user/projects/models/create.md
@@ -40,25 +40,25 @@ nav:
               - Model Complexity Badge: user/projects/models/complexity_badge.md
       - Sessions:
           - Session Types:
-              - Overview: user/sessions/types.md
+              - Overview: user/sessions/types/index.md
               - Persistent: user/sessions/types/persistent.md
               - Read-Only: user/sessions/types/read-only.md
           - Request Session: user/sessions/request.md
           - (Re-)Connect to Session: user/sessions/reconnect.md
           - Terminate Session: user/sessions/terminate.md
-          - Taking Screenshots: user/sessions/screenshot/screenshots.md
-          - Files Browser: user/sessions/files/files.md
+          - Taking Screenshots: user/sessions/screenshots/index.md
+          - Files Browser: user/sessions/files/index.md
           - Troubleshooting: user/sessions/troubleshooting.md
       - Capella:
           - Introduction: user/tools/capella/introduction.md
-          - Update a Capella Model to a Newer Version: user/tools/capella/migration/update.md
+          - Update a Capella Model to a Newer Version: user/tools/capella/migration/index.md
           - Co-working Methods: user/tools/capella/t4c-git-compare.md
           - TeamForCapella:
-              - Connect to a TeamForCapella Repository: user/tools/capella/teamforcapella/connect/connect-to-t4c.md
-              - Import a Model from TeamForCapella: user/tools/capella/teamforcapella/import/import-from-t4c.md
-              - Export a Model to TeamForCapella: user/tools/capella/teamforcapella/export/export-to-t4c.md
+              - Connect to a TeamForCapella Repository: user/tools/capella/teamforcapella/connect/index.md
+              - Import a Model from TeamForCapella: user/tools/capella/teamforcapella/import/index.md
+              - Export a Model to TeamForCapella: user/tools/capella/teamforcapella/export/index.md
           - Git:
-              - Working with Git: user/tools/capella/git/working-with-git.md
+              - Working with Git: user/tools/capella/git/index.md
           - Troubleshooting: user/tools/capella/troubleshooting/index.md
       - Jupyter:
           - Collaboration: user/sessions/jupyter/collaboration.md
@@ -71,16 +71,16 @@ nav:
       - Introduction: admin/index.md
       - Installation: admin/installation.md
       - Uninstallation: admin/uninstallation.md
-      - Getting started: admin/getting_started/getting_started.md
+      - Getting started: admin/getting_started/index.md
       - Integrations:
           - Git: admin/settings/model-sources/git.md
           - TeamForCapella:
               - Manage T4C Instances: admin/settings/model-sources/t4c.md
-              - Full Setup & Integration of a TeamForCapella Project: admin/teamforcapella/full-setup/full-setup.md
-              - TeamForCapella Repository Management: admin/teamforcapella/repository-management/repository-management.md
-              - TeamForCapella Project Management: admin/teamforcapella/project-management/project-management.md
-              - Link a TeamForCapella Repository: admin/teamforcapella/project-integration/project-integration.md
-              - Update a TeamForCapella-based Model: admin/teamforcapella/migration/update.md
+              - Full Setup & Integration of a TeamForCapella Project: admin/teamforcapella/full-setup.md
+              - TeamForCapella Repository Management: admin/teamforcapella/repository-management/index.md
+              - TeamForCapella Project Management: admin/teamforcapella/project-management/index.md
+              - Link a TeamForCapella Repository: admin/teamforcapella/project-integration/index.md
+              - Update a TeamForCapella-based Model: admin/teamforcapella/migration.md
           - pure::variants: admin/settings/tools/pure_variants.md
       - Tools:
           - General: admin/settings/tools/index.md
@@ -118,14 +118,27 @@ plugins:
   - search
   - redirects:
       redirect_maps:
-        'user/sessions/flows/t4c.md': 'user/tools/capella/teamforcapella/connect/connect-to-t4c.md' # The flows section was removed
-        'user/sessions/flows/git.md': 'user/tools/capella/git/working-with-git.md' # The flows section was removed
+        'user/sessions/flows/t4c.md': 'user/tools/capella/teamforcapella/connect/index.md' # The flows section was removed
+        'user/sessions/flows/git.md': 'user/tools/capella/git/index.md' # The flows section was removed
         'user/tokens.md': 'api/index.md' # Authentication information was moved to API documentation
-        'user/tools/capella/update.md': 'user/tools/capella/migration/update.md' # A new subdirectory was added
-        'user/tools/capella/teamforcapella/repository-management.md': 'admin/teamforcapella/repository-management/repository-management.md' # Moved to admin documentation
-        'user/tools/capella/teamforcapella/project-management/project-management.md': 'admin/teamforcapella/project-management/project-management.md' # Moved to admin documentation
-        'user/tools/capella/teamforcapella/update.md': 'admin/teamforcapella/migration/update.md' # Moved to admin documentation
-        'user/tools/capella/working-with-git.md': 'user/tools/capella/git/working-with-git.md' # A new subdirectory was added
+        'user/tools/capella/update.md': 'user/tools/capella/migration/index.md' # A new subdirectory was added
+        'user/tools/capella/teamforcapella/repository-management.md': 'admin/teamforcapella/repository-management/index.md' # Moved to admin documentation
+        'user/tools/capella/teamforcapella/project-management/project-management.md': 'admin/teamforcapella/project-management/index.md' # Moved to admin documentation
+        'user/tools/capella/teamforcapella/update.md': 'admin/teamforcapella/migration.md' # Moved to admin documentation
+        'user/tools/capella/working-with-git.md': 'user/tools/capella/git/index.md' # A new subdirectory was added
+        'admin/getting_started/getting_started.md': 'admin/getting_started/index.md'
+        'admin/teamforcapella/full-setup/full-setup.md': 'admin/teamforcapella/full-setup.md'
+        'admin/teamforcapella/migration/update.md': 'admin/teamforcapella/migration.md'
+        'admin/teamforcapella/repository-management/repository-management.md': 'admin/teamforcapella/repository-management/index.md'
+        'admin/teamforcapella/project-management/project-management.md': 'admin/teamforcapella/project-management/index.md'
+        'admin/teamforcapella/project-integration/project-integration.md': 'admin/teamforcapella/project-integration/index.md'
+        'user/sessions/files/files.md': 'user/sessions/files/index.md'
+        'user/sessions/screenshot/screenshots.md': 'user/sessions/screenshots/index.md'
+        'user/tools/capella/git/working-with-git.md': 'user/tools/capella/git/index.md'
+        'user/tools/capella/migration/update.md': user/tools/capella/migration/index.md
+        'user/tools/capella/teamforcapella/connect/connect-to-t4c.md': 'user/tools/capella/teamforcapella/connect/index.md'
+        'user/tools/capella/teamforcapella/import/import-from-t4c.md': 'user/tools/capella/teamforcapella/import/index.md'
+        'user/tools/capella/teamforcapella/export/export-to-t4c.md': 'user/tools/capella/teamforcapella/export/index.md'
 
 markdown_extensions:
   - meta

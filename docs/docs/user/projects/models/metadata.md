@@ -7,8 +7,8 @@
 
 <!-- prettier-ignore -->
 !!! warning
-    Make sure to read the documentation about updating a [TeamForCapella model](../../../admin/teamforcapella/migration/update.md)
-    or about updating a [Capella model](../../tools/capella/migration/update.md) first!
+    Make sure to read the documentation about updating a [TeamForCapella model](../../../admin/teamforcapella/migration.md)
+    or about updating a [Capella model](../../tools/capella/migration/index.md) first!
 
 1. Navigate to `Projects` and select the project.
 1. In the model overview and select the :material-cog: icon on model you'd like

@@ -9,7 +9,7 @@
 !!! Info
     Connecting to a T4C model in that way will open a connection and automatically
     write changes back to the T4C model. If you do not want to write changes back you can follow
-    [the import T4C model](../import/import-from-t4c.md)
+    [the import T4C model](../import/index.md)
     tutorial
 
 To access a TeamForCapella based model you first need read/write access from a
