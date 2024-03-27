@@ -41,18 +41,21 @@ def list_t4c_repositories(
 
     try:
         server_repositories = interface.list_repositories(instance)
-    except requests.RequestException as e:
+    except requests.RequestException:
         for repo in repositories:
             repo.status = models.T4CRepositoryStatus.INSTANCE_UNREACHABLE
-        log.error("TeamForCapella server not reachable", exc_info=True)
+        log.error(
+            "TeamForCapella server not reachable.",
+            exc_info=True,
+        )
 
         return T4CRepositoriesResponseModel(
             payload=repositories,
             warnings=[
                 core_models.Message(
-                    title="TeamForCapella server not reachable.",
+                    err_code="T4C_SERVER_UNREACHABLE",
+                    title="TeamForCapella server not reachable",
                     reason="We will only show a representation of our database.",
-                    technical=f"TeamForCapella not reachable with exception {e}",
                 )
             ],
         )
@@ -123,23 +126,21 @@ def delete_t4c_repository(
         response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
 
         if isinstance(e, fastapi.HTTPException):
-            reason: tuple[str, ...] = (
-                "The TeamForCapella returned an error when deleting the repository.",
-                "We deleted it the repository our database. When the connection is successful, we'll synchronize the repositories again.",
+            reason: str = (
+                "The TeamForCapella returned an error when deleting the repository. "
+                "We deleted it the repository our database. When the connection is successful, we'll synchronize the repositories again."
             )
-            technical = f"TeamForCapella returned status code {e.status_code}"
         else:
             reason = (
-                "The TeamForCapella server is not reachable.",
-                "We deleted the repository from our database.",
-                "During the next connection attempt, we'll synchronize the repository again.",
+                "The TeamForCapella server is not reachable. "
+                "We deleted the repository from our database. "
+                "During the next connection attempt, we'll synchronize the repository again."
             )
-            technical = f"TeamForCapella not reachable with exception {e}"
 
         return create_single_warning_response_model(
+            err_code="T4C_REPOSITORY_DELETION_FAILED",
             title="Repository deletion failed partially.",
             reason=reason,
-            technical=technical,
         )
 
     response.status_code = status.HTTP_204_NO_CONTENT
@@ -249,15 +250,15 @@ def sync_db_with_server_repositories(
 
 
 def create_single_warning_response_model(
-    title: str, reason: str | tuple[str, ...], technical: str
+    err_code: str, title: str, reason: str
 ) -> core_models.ResponseModel:
     return core_models.ResponseModel(
         errors=[],
         warnings=[
             core_models.Message(
+                err_code=err_code,
                 title=title,
                 reason=reason,
-                technical=technical,
             )
         ],
     )

@@ -98,11 +98,13 @@ class T4CIntegration(interface.HookRegistration):
             except requests.RequestException:
                 warnings.append(
                     core_models.Message(
+                        err_code="T4C_USER_CREATION_FAILED",
+                        title="Could not create user in TeamForCapella repository",
                         reason=(
-                            f"The creation of your user in the repository '{repository.name}' of the the instance '{repository.instance.name}' failed.",
-                            "Most likely this is due to a downtime of the corresponding TeamForCapella server.",
-                            "If you don't need access to the repository you can still use the session.",
-                        )
+                            f"The creation of your user in the repository '{repository.name}' of the the instance '{repository.instance.name}' failed. "
+                            "Most likely this is due to a downtime of the corresponding TeamForCapella server. "
+                            "If you don't need access to the repository you can still use the session."
+                        ),
                     )
                 )
                 log.warning(
