@@ -13,7 +13,8 @@ If you have questions, ideas or want to report a bug, feel free to
 go ahead and
 [open a pull request](https://github.com/DSD-DBS/capella-collab-manager/pulls)
 to contribute code. In order to reduce the burden on our maintainers, please
-make sure that your code follows our style guidelines.
+make sure that your code respects the
+[acceptance criteria for pull requests](./pull_requests.md).
 
 !!! info
 
