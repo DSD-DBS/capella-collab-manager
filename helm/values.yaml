@@ -25,6 +25,7 @@ docker:
   registry:
     internal: localhost
     external: &externalRegistry docker.io
+    github: ghcr.io
 
   images:
     # Docker Image for the Frontend
@@ -103,7 +104,7 @@ database:
       # Configure the password of the external database
       password:
 
-  # Database Configuration for the T4C Manager
+  # Database Configuration for the Capella Collaboration Manager
   backend:
     # Define whether the database should also be deployed
     # in the cluster or whether it already exists externally.

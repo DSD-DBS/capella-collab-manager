@@ -46,7 +46,7 @@ frontend:
 
 guacamole: IMAGE=capella/collab/guacamole
 guacamole:
-	docker build -t $(IMAGE) -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE) guacamole
+	docker build -t $(IMAGE) -t $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE) images/guacamole
 	docker push $(LOCAL_REGISTRY_NAME):$(REGISTRY_PORT)/$(IMAGE)
 
 capella:
