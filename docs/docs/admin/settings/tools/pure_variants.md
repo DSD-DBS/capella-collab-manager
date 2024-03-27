@@ -62,5 +62,5 @@
 
 You have to get access to a project with at least one `pure::variants`
 whitelisted model. More information:
-[Get access to a project](../../../user/projects/access.md). If you need a new
-`pure::variants` whitelisted model, please ask your administrator.
+[Get access to a project](../../../user/projects/access/index.md). If you need
+a new `pure::variants` whitelisted model, please ask your administrator.

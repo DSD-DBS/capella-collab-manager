@@ -102,14 +102,14 @@ You may also [learn more about the roles model here](projects/roles.md).
 ## Next Steps
 
 If you like to start a new project and work on it via Collab Manager - please
-follow this guide: [project onboarding guideline](projects/create.md) to
+follow this guide: [project onboarding guideline](projects/create/index.md) to
 prepare your project. If you want to use the TeamForCapella workflow, please
 contact your administrator. Linking models to TeamForCapella repositories can
 only be done by administrators.
 
 To work with the application, you need access to a project. If you don't have
 it yet or can't find the project you need see
-[how do I get access to a project](projects/access.md).
+[how do I get access to a project](projects/access/index.md).
 
 At this point you may want to continue to one of the detailed getting-started
 sections:
@@ -117,7 +117,7 @@ sections:
 - [General introduction to Capella and first steps](tools/capella/introduction.md)
 - [Getting started with a Read-only Session](sessions/types/read-only.md)
 - [Getting started with a TeamForCapella-based Project](sessions/types/persistent.md)
-- [Getting started with a Git-based Project](tools/capella/git/working-with-git.md)
+- [Getting started with a Git-based Project](tools/capella/git/index.md)
 
 ## Missing Information / Need Support
 

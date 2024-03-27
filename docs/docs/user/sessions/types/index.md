@@ -19,7 +19,7 @@ the T4C connection dialog.
 ???+ tip
     Starting the first time, your personal workspace will be empty.
     Please close the `Welcome`-dialog first:
-    ![Close Welcome dialog](close_welcome_dialog.png)
+    ![Close Welcome dialog](screenshots/close_welcome_dialog.png)
 
 <!-- prettier-ignore -->
 !!! info
