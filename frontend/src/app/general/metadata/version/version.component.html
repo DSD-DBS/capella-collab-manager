@@ -3,23 +3,26 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper">
+<div class="m-2.5 cursor-pointer text-gray-500">
   <a
     href="/docs/release-notes/"
     target="_blank"
     (click)="metadataService.clickedOnVersionNotes()"
+    class="text-inherit"
   >
-    <div
-      class="text-error"
-      *ngIf="metadataService.changedVersion && metadataService.version"
-    >
-      New version. What's new? (<span *ngIf="metadataService.oldVersion"
-        >{{ metadataService.oldVersion }}
-        <mat-icon class="mat-icon-position top left"
-          >arrow_right_alt</mat-icon
-        ></span
-      >{{ metadataService.version.git.tag }})
-    </div>
+    @if (metadataService.changedVersion && metadataService.version) {
+      <div class="text-error">
+        New version. What's new? (
+        <span *ngIf="metadataService.oldVersion">
+          {{ metadataService.oldVersion }}
+          <mat-icon class="mat-icon-position top left"
+            >arrow_right_alt</mat-icon
+          >
+        </span>
+        {{ metadataService.version.git.tag }})
+      </div>
+    }
+
     Environment:
     {{ (metadataService.backendMetadata | async)?.environment || "-" }} <br />
     Frontend version: {{ metadataService.version?.git?.version }} <br />

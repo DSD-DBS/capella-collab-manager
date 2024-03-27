@@ -17,7 +17,6 @@ import { ProjectService, ProjectVisibility } from '../service/project.service';
 @Component({
   selector: 'app-create-project',
   templateUrl: './create-project.component.html',
-  styleUrls: ['./create-project.component.css'],
 })
 export class CreateProjectComponent implements OnInit, OnDestroy {
   @ViewChild('model_creator') model_creator!: CreateModelComponent;
