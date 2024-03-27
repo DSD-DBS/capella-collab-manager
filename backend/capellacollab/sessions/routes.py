@@ -106,6 +106,7 @@ def request_session(
             session_type=body.session_type,
             connection_method=connection_method,
             provisioning=body.provisioning,
+            session_id=session_id,
         )
         environment |= hook_result.get("environment", {})
         volumes += hook_result.get("volumes", [])

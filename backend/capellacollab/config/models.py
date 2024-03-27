@@ -37,6 +37,14 @@ class DockerConfig(BaseConfig):
         ),
         examples=["docker.io"],
     )
+    external_github_registry: str = pydantic.Field(
+        default="ghcr.io",
+        description=(
+            "The external registry from which to pull Docker images from the GitHub registry, "
+            "used to fetch the session-preparation image."
+        ),
+        examples=["ghcr.io"],
+    )
 
 
 class K8sPodSecurityContext(BaseConfig):
