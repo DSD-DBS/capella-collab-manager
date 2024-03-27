@@ -52,3 +52,29 @@ def test_list_t4c_repositories(
     assert transformed_response["test3"] == "INITIAL"
     assert transformed_response["test4"] == "ONLINE"
     assert transformed_response["test5"] == "NOT_FOUND"
+
+
+@responses.activate
+@pytest.mark.usefixtures("admin")
+def test_list_t4c_repositories_instance_unreachable_exception(
+    client: testclient.TestClient,
+    db: orm.Session,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
+):
+    responses.get(
+        "http://localhost:8080/api/v1.0/repositories",
+        status=500,
+    )
+
+    t4c_repositories_crud.create_t4c_repository(db, "test4", t4c_instance)
+    response = client.get(
+        f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}/repositories",
+    )
+
+    assert response.status_code == 200
+    assert len(response.json()["payload"]) == 1
+
+    transformed_response = {
+        repo["name"]: repo["status"] for repo in response.json()["payload"]
+    }
+    assert transformed_response["test4"] == "INSTANCE_UNREACHABLE"

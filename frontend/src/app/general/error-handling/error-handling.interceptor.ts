@@ -17,6 +17,7 @@ import { Injectable } from '@angular/core';
 import { getReasonPhrase } from 'http-status-codes';
 import { Observable, tap, map, from, catchError } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { Message } from 'src/app/openapi';
 
 // Skips the automated error handling.
 // When this option is set, the error messages from the backend are not auto-printed as toast message
@@ -50,13 +51,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
             const body = event.body;
             if (body?.errors) {
               for (const error of body.errors) {
-                if (error.reason && Array.isArray(error.reason)) {
-                  error.reason = error.reason.join(' ');
-                }
-                this.toastService.showError(
-                  error.title || '',
-                  error.reason || '',
-                );
+                this.toastService.showError(error.title, error.reason);
               }
             }
             const warnings = body?.warnings;
@@ -90,10 +85,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
               }
             } else if (detail.reason) {
               // User defined error
-              this.toastService.showError(
-                'An error occurred!',
-                ErrorHandlingInterceptor.getErrorReason(detail),
-              );
+              this.toastService.showError('An error occurred!', detail.reason);
             }
           } else if (err.status === 0) {
             this.toastService.showError(
@@ -124,14 +116,6 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
         return event;
       }),
     );
-  }
-
-  static getErrorReason(detail: ErrorDetail): string {
-    if (Array.isArray(detail.reason)) {
-      return detail.reason.join(' ');
-    }
-
-    return detail.reason || '';
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -172,12 +156,9 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
     throw err;
   }
 
-  private displayWarningInToaster(warnings: ErrorDetail[]): void {
+  private displayWarningInToaster(warnings: Message[]): void {
     for (const warning of warnings) {
-      if (warning.reason && Array.isArray(warning.reason)) {
-        warning.reason = warning.reason.join(' ');
-      }
-      this.toastService.showWarning(warning.title || '', warning.reason || '');
+      this.toastService.showWarning(warning.title, warning.reason);
     }
   }
 
@@ -187,16 +168,9 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
   }
 }
 
-export type ErrorDetail = {
-  err_code?: string;
-  title?: string;
-  reason?: string | string[];
-  technical?: string;
-};
-
 export type PayloadWrapper = {
-  warnings: ErrorDetail[];
-  errors: ErrorDetail[];
+  warnings: Message[];
+  errors: Message[];
   payload: unknown;
 };
 

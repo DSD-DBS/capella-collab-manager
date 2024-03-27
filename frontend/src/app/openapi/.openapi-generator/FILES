@@ -114,7 +114,6 @@ model/pure-variants-licenses-input.ts
 model/pure-variants-licenses-output.ts
 model/rdp-ports-input.ts
 model/rdp-ports-output.ts
-model/reason.ts
 model/refresh-token-request.ts
 model/resources-input.ts
 model/resources-output.ts

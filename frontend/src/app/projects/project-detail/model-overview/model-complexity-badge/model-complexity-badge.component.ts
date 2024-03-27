@@ -10,7 +10,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map, switchMap } from 'rxjs';
-import { ErrorHandlingInterceptor } from 'src/app/general/error-handling/error-handling.interceptor';
 import { ModelComplexityBadgeService } from 'src/app/projects/project-detail/model-overview/model-complexity-badge/service/model-complexity-badge.service';
 import { ProjectService } from 'src/app/projects/service/project.service';
 import { environment } from 'src/environments/environment';
@@ -71,9 +70,7 @@ export class ModelComplexityBadgeComponent implements OnChanges {
         },
         error: (err) => {
           this.loadingComplexityBadge = false;
-          this.errorMessage = ErrorHandlingInterceptor.getErrorReason(
-            err.error?.detail,
-          );
+          this.errorMessage = err.error?.detail.reason;
           this.errorCode = err.error?.detail?.err_code;
         },
       });

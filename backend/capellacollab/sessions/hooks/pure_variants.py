@@ -44,10 +44,11 @@ class PureVariantsIntegration(interface.HookRegistration):
             warnings = [
                 core_models.Message(
                     err_code="PV_MODEL_NOT_FOUND",
+                    title="No pure::variants model found",
                     reason=(
-                        "You are trying to create a persistent session with a pure::variants integration.",
-                        "We were not able to find a model with a pure::variants integration.",
-                        "Your session will not be connected to the pure::variants license server.",
+                        "You are trying to create a persistent session with a pure::variants integration. "
+                        "We were not able to find a model with a pure::variants integration. "
+                        "Your session will not be connected to the pure::variants license server."
                     ),
                 )
             ]
@@ -61,10 +62,11 @@ class PureVariantsIntegration(interface.HookRegistration):
             warnings = [
                 core_models.Message(
                     err_code="PV_LICENSE_SERVER_NOT_CONFIGURED",
+                    title="No pure::variants license server URL configured",
                     reason=(
-                        "You are trying to create a persistent session with a pure::variants integration.",
-                        "We were not able to find a valid license server URL in our database.",
-                        "Your session will not be connected to the pure::variants license server.",
+                        "You are trying to create a persistent session with a pure::variants integration. "
+                        "We were not able to find a valid license server URL in our database. "
+                        "Your session will not be connected to the pure::variants license server."
                     ),
                 )
             ]
