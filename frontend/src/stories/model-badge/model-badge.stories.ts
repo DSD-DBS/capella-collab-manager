@@ -13,7 +13,9 @@ const modelBadge =
 const meta: Meta<ModelBadgeComponent> = {
   title: 'Model Components/ModelBadge',
   component: ModelBadgeComponent,
-  argTypes: {},
+  parameters: {
+    chromatic: { viewports: [500] },
+  },
 };
 
 export default meta;
