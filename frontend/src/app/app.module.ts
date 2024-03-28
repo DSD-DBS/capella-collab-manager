@@ -54,6 +54,7 @@ import {
 } from 'src/app/projects/models/diagrams/model-diagram-dialog/model-diagram-code-block/model-diagram-code-block.component';
 import { CreateToolComponent } from 'src/app/settings/core/tools-settings/create-tool/create-tool.component';
 import { BasicAuthTokenComponent } from 'src/app/users/basic-auth-token/basic-auth-token.component';
+import { ModelBadgeComponent } from '../stories/model-badge/model-badge.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { EventsComponent } from './events/events.component';
@@ -297,8 +298,8 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
     MatTooltipModule,
     NgxSkeletonLoaderModule.forRoot(),
     MatTreeModule,
+    ModelBadgeComponent,
     OverlayModule,
-    ReactiveFormsModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-left',
       timeOut: 10000,
@@ -309,6 +310,7 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
       resetTimeoutOnDuplicate: true,
       includeTitleDuplicates: true,
     }),
+    ReactiveFormsModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

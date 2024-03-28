@@ -106,10 +106,13 @@
         <div class="m-2.5 select-text">
           {{ model.description || "This model has no description." }}
         </div>
-        <app-model-complexity-badge
-          *ngIf="model.tool.name === 'Capella'"
-          [modelSlug]="model.slug"
-        ></app-model-complexity-badge>
+        <div class="flex justify-center">
+          <app-model-complexity-badge
+            class="w-[95%]"
+            *ngIf="model.tool.name === 'Capella'"
+            [modelSlug]="model.slug"
+          ></app-model-complexity-badge>
+        </div>
         <div class="m-2.5">
           <a
             mat-mini-fab
