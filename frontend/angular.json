@@ -22,37 +22,25 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "customWebpackConfig": {
-              "path": "./webpack.config.ts",
-              "mergeRules": {
-                "externals": "replace"
-              }
-            },
             "outputPath": "dist/capellacollab",
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "browser": "src/main.ts",
+            "polyfills": ["src/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets",
-              {
-                "glob": "codicon.ttf",
-                "input": "./node_modules/monaco-editor/min/vs/base/browser/ui/codicons/codicon/",
-                "output": "/"
-              }
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
-              "node_modules/monaco-editor/min/vs/editor/editor.main.css",
-              "src/custom-theme.scss",
+              "@angular/material/prebuilt-themes/indigo-pink.css",
+              "monaco-editor/min/vs/editor/editor.main.css",
               "src/styles.css",
-              "node_modules/ngx-toastr/toastr.css",
-              "node_modules/highlight.js/styles/atom-one-dark.css"
+              "node_modules/ngx-toastr/toastr.css"
             ],
+            "loader": {
+              ".ttf": "file"
+            },
             "optimization": {
-              "fonts": false
+              "fonts": true
             }
           },
           "configurations": {
@@ -72,9 +60,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true,
@@ -84,27 +70,12 @@
                   "with": "src/environments/environment.dev.ts"
                 }
               ]
-            },
-            "local": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "5mb",
-                  "maximumError": "10mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
-                }
-              ],
-              "outputHashing": "all"
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-builders/custom-webpack:dev-server",
+          "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "capellacollab:build:production"
@@ -131,19 +102,6 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets",
-              {
-                "glob": "codicon.ttf",
-                "input": "./node_modules/monaco-editor/min/vs/base/browser/ui/codicons/codicon/",
-                "output": "/"
-              }
-            ],
-            "styles": [
-              "node_modules/monaco-editor/min/vs/editor/editor.main.css",
-              "src/styles.css"
-            ],
             "fileReplacements": [
               {
                 "replace": "src/environments/environment.ts",

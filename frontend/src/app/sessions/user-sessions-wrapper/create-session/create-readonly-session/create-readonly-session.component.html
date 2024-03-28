@@ -5,8 +5,8 @@
 <div class="wrapper">
   <h2 id="title" class="text-xl font-medium">Read-only Sessions</h2>
   <div id="readonly-card" class="collab-card m-[10px] p-[16px]">
-    <div>
-      <p class="mb-3 text-sm">
+    <div class="flex flex-col justify-between gap-2">
+      <p class="text-sm">
         Start a read-only session. Select the tool and the version. We'll show
         all matching models.
       </p>
@@ -74,12 +74,12 @@
           </button>
         </fieldset>
       </form>
-      <p>
-        <small class="text-[11.2px]"
-          >Alternatively, open a
-          <a routerLink="/sessions">persistent workspace session</a>.</small
-        >
-      </p>
+      <small class="text-xs"
+        >Alternatively, open a
+        <a class="text-blue-900" routerLink="/sessions"
+          >persistent workspace session</a
+        >.</small
+      >
     </div>
   </div>
 </div>
