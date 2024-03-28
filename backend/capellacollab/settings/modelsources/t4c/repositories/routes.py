@@ -23,9 +23,9 @@ from . import crud, injectables, interface, models
 router = fastapi.APIRouter()
 log = logging.getLogger(__name__)
 
-T4CRepositoriesResponseModel: t.TypeAlias = (  # pylint: disable=invalid-name
-    core_models.PayloadResponseModel[list[models.T4CRepository]]
-)
+T4CRepositoriesResponseModel: t.TypeAlias = core_models.PayloadResponseModel[
+    list[models.T4CRepository]
+]
 
 
 @router.get("", response_model=T4CRepositoriesResponseModel)
