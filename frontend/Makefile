@@ -14,3 +14,6 @@ test:
 	else \
 		echo "No binary for Chrome browser on your platform. Please, set "CHROME_BIN" env variable."; \
 	fi
+
+storybook:
+	ng run capellacollab:storybook
