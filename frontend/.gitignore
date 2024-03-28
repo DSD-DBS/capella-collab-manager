@@ -58,3 +58,6 @@ Thumbs.db
 /test-results/
 /playwright-report/
 /playwright/.cache/
+
+*storybook.log
+documentation.json
