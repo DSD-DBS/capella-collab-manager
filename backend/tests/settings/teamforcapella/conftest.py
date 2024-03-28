@@ -24,7 +24,7 @@ def fixture_t4c_instance(
         rest_api="http://localhost:8080/api/v1.0",
         username="user",
         password="pass",
-        protocol=t4c_models.Protocol.TCP,
+        protocol=t4c_models.Protocol.tcp,
         version=test_tool_version,
     )
 

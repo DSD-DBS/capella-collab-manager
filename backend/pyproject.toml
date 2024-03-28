@@ -159,6 +159,7 @@ disable = [
   "cyclic-import",
   "global-statement",
   "import-outside-toplevel",
+  "invalid-name",
   "missing-class-docstring",
   "missing-function-docstring",
   "missing-module-docstring",

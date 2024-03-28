@@ -46,7 +46,7 @@ loki_enabled: bool = cfg.promtail.loki_enabled
 
 image_pull_policy: str = cfg.cluster.image_pull_policy
 
-pod_security_context = None  # pylint: disable=invalid-name
+pod_security_context = None
 if _pod_security_context := cfg.cluster.pod_security_context:
     pod_security_context = client.V1PodSecurityContext(
         **_pod_security_context.__dict__

@@ -352,7 +352,7 @@ def create_t4c_instance_and_repositories(db):
     default_instance = settings_t4c_models.DatabaseT4CInstance(
         name="default",
         license="placeholder",
-        protocol=settings_t4c_models.Protocol.TCP,
+        protocol=settings_t4c_models.Protocol.tcp,
         host="localhost",
         port=2036,
         cdo_port=12036,
