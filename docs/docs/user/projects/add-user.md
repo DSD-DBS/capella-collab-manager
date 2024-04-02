@@ -29,7 +29,7 @@
 1. Select your project in the project overview.
 1. On the right side you should now see user management options:
     ![User management](add-user/manage-users.png)
-1. Select the user you want do modify:
+1. Select the user you want do modify: <br>
     ![User modification](add-user/modify-user.png)
 
    You can select from the following options:
