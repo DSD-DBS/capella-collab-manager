@@ -58,6 +58,7 @@ nav:
               - Connect to a TeamForCapella Repository: user/tools/capella/teamforcapella/connect/index.md
               - Import a Model from TeamForCapella: user/tools/capella/teamforcapella/import/index.md
               - Export a Model to TeamForCapella: user/tools/capella/teamforcapella/export/index.md
+              - TeamForCapella commits and commit messages: user/tools/capella/teamforcapella/commit-messages/index.md
           - Git:
               - Working with Git: user/tools/capella/git/index.md
           - Troubleshooting: user/tools/capella/troubleshooting/index.md
