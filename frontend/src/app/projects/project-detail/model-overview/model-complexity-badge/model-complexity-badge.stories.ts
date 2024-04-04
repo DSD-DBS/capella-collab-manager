@@ -13,6 +13,9 @@ const modelBadge =
 const meta: Meta<ModelComplexityBadgeComponent> = {
   title: 'Model Components/ModelBadge',
   component: ModelComplexityBadgeComponent,
+  parameters: {
+    chromatic: { viewports: [500] },
+  },
 };
 
 export default meta;
