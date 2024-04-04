@@ -6,7 +6,7 @@
 .model-complexity-error {
   border-radius: 5px;
   border: solid lightgray;
-  width: 95%;
+  width: 100%;
   aspect-ratio: 475/106.336;
   text-align: center;
   display: flex;
@@ -33,11 +33,6 @@
   text-align: center;
   aspect-ratio: 475/106.336;
 }
-
-.model-complexity-badge {
-  width: 95%;
-}
-
 .flex-center {
   display: flex;
   flex-direction: column;

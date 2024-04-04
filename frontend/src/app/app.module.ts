@@ -208,7 +208,6 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
     MatCheckboxLoaderComponent,
     MatIconComponent,
     MatListSkeletonLoaderComponent,
-    ModelComplexityBadgeComponent,
     ModelDescriptionComponent,
     ModelDetailComponent,
     ModelDiagramCodeBlockComponent,
@@ -295,8 +294,9 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
-    NgxSkeletonLoaderModule.forRoot(),
     MatTreeModule,
+    NgxSkeletonLoaderModule.forRoot(),
+    ModelComplexityBadgeComponent,
     OverlayModule,
     ReactiveFormsModule,
     ToastrModule.forRoot({

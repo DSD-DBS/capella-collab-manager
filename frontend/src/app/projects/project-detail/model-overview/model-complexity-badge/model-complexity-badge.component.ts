@@ -3,16 +3,26 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map, switchMap } from 'rxjs';
 import { ErrorHandlingInterceptor } from 'src/app/general/error-handling/error-handling.interceptor';
 import { ModelComplexityBadgeService } from 'src/app/projects/project-detail/model-overview/model-complexity-badge/service/model-complexity-badge.service';
 import { ProjectService } from 'src/app/projects/service/project.service';
 import { environment } from 'src/environments/environment';
-
 @Component({
   selector: 'app-model-complexity-badge',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatIconModule,
+    NgxSkeletonLoaderModule,
+    MatSlideToggleModule,
+  ],
   templateUrl: './model-complexity-badge.component.html',
   styleUrls: ['./model-complexity-badge.component.css'],
 })
