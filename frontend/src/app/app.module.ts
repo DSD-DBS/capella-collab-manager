@@ -224,7 +224,6 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
     PipelineWrapperComponent,
     ProjectAuditLogComponent,
     ProjectDetailsComponent,
-    ProjectMetadataComponent,
     ProjectOverviewComponent,
     ProjectUserSettingsComponent,
     ProjectWrapperComponent,
@@ -298,6 +297,7 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
     NgxSkeletonLoaderModule.forRoot(),
     ModelComplexityBadgeComponent,
     OverlayModule,
+    ProjectMetadataComponent,
     ReactiveFormsModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-left',

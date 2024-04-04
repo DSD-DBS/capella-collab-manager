@@ -49,7 +49,7 @@ import { T4CSettingsWrapperComponent } from './settings/modelsources/t4c-setting
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: '',
     canActivate: [authGuard],

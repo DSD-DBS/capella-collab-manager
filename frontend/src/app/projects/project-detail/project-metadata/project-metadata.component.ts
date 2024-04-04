@@ -4,9 +4,13 @@
  */
 
 import { Component, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
@@ -21,6 +25,13 @@ import {
 @UntilDestroy()
 @Component({
   selector: 'app-project-metadata',
+  standalone: true,
+  imports: [
+    MatIconModule,
+    NgxSkeletonLoaderModule,
+    MatButtonModule,
+    MatTooltipModule,
+  ],
   templateUrl: './project-metadata.component.html',
   styleUrls: ['./project-metadata.component.css'],
 })
