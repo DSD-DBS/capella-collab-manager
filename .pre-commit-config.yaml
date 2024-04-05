@@ -75,7 +75,7 @@ repos:
         types_or: [ts, css, html, markdown]
         additional_dependencies:
           - 'prettier@^3.0.3'
-          - 'prettier-plugin-tailwindcss@^0.5.12'
+          - 'prettier-plugin-tailwindcss@^0.5.13'
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.5.5
     hooks:
@@ -143,8 +143,8 @@ repos:
           - '@angular-eslint/template-parser@17.3.0'
           - 'eslint-config-prettier@^9.1.0'
           - 'eslint-plugin-import@^2.29.1'
-          - '@typescript-eslint/eslint-plugin@^7.3.1'
-          - '@typescript-eslint/parser@^7.3.1'
+          - '@typescript-eslint/eslint-plugin@^7.5.0'
+          - '@typescript-eslint/parser@^7.5.0'
           - 'eslint-plugin-unused-imports@^3.1.0'
           - 'eslint-plugin-deprecation@^2.0.0'
           - 'eslint-plugin-tailwindcss@^3.15.1'
