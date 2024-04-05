@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs';
@@ -31,9 +31,9 @@ import {
     NgxSkeletonLoaderModule,
     MatButtonModule,
     MatTooltipModule,
+    RouterLink,
   ],
   templateUrl: './project-metadata.component.html',
-  styleUrls: ['./project-metadata.component.css'],
 })
 export class ProjectMetadataComponent implements OnInit {
   project?: Project;

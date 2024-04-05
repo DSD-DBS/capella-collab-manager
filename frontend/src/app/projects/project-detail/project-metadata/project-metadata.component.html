@@ -4,72 +4,83 @@
  -->
 
 <div class="flex h-full flex-col">
-  <h2 id="title" class="text-xl font-medium">Project Information</h2>
+  <h2 class="text-xl font-medium">Project Information</h2>
   <div
-    class="collab-card [p-12px] m-[10px] !flex grow flex-col justify-between"
+    class="collab-card [p-12px] m-[10px] flex min-h-[200px] grow flex-col justify-between gap-2"
   >
-    <div class="flex flex-col">
-      @if (project !== undefined) {
-        <div class="break-all">
-          <h2 id="title" class="text-xl font-medium">
-            {{ project!.name }}
-          </h2>
-        </div>
-      } @else {
-        <ngx-skeleton-loader
-          [theme]="{
-            'border-radius': '5px',
-            height: '24px',
-            width: '50%',
-            border: '1px solid white'
-          }"
-        ></ngx-skeleton-loader>
-      }
-      @if (project !== undefined) {
-        <div class="grow text-sm" id="description">
+    @if (project !== undefined) {
+      <div class="flex flex-col gap-2">
+        <h2 class="break-all text-xl font-medium">
+          {{ project!.name }}
+        </h2>
+        <div class="grow text-sm">
           {{ project!.description || "No description available." }}
         </div>
-      } @else {
-        <ngx-skeleton-loader
-          [theme]="{
-            'border-radius': '5px',
-            height: '100px',
-            width: '80%',
-            border: '1px solid white'
-          }"
-        ></ngx-skeleton-loader>
-      }
-    </div>
-    @if (projectUserService.verifyRole("manager")) {
-      <div class="flex flex-wrap items-center gap-2">
-        <span
-          matTooltip="The project can't be deleted since it has linked models"
-          [matTooltipDisabled]="canDelete"
-        >
-          <button
-            [disabled]="!canDelete"
-            (click)="deleteProject()"
-            mat-flat-button
-            color="warn"
-          >
-            <mat-icon class="mat-icon-position left">delete_forever</mat-icon
-            >Delete project
-          </button>
-        </span>
-        <a mat-raised-button (click)="toggleArchive()">
-          <mat-icon class="mat-icon-position left">archive</mat-icon>
-          {{ project?.is_archived ? "Unarchive" : "Archive" }}
-        </a>
-        <a
-          [disabled]="project === undefined"
-          mat-raised-button
-          routerLink="metadata"
-          id="modify"
-        >
-          <mat-icon class="mat-icon-position left">settings</mat-icon> Modify
-          project
-        </a>
+        @if (project.is_archived) {
+          <div class="flex items-center gap-2 text-sm text-warning">
+            <div>
+              <mat-icon>warning</mat-icon>
+            </div>
+            <div>
+              <span class="font-bold">This project is archived.</span>
+              <span>
+                TeamForCapella repositories of this project will no longer be
+                available in persistent sessions and will no longer be
+                synchronized to Git repositories. In addition, it's no possible
+                to create new models in this project.
+              </span>
+            </div>
+          </div>
+        }
       </div>
+      @if (projectUserService.verifyRole("manager")) {
+        <div class="flex flex-wrap items-center gap-2">
+          <span
+            matTooltip="The project can't be deleted since it has linked models"
+            [matTooltipDisabled]="canDelete"
+          >
+            <button
+              [disabled]="!canDelete"
+              (click)="deleteProject()"
+              mat-flat-button
+              color="warn"
+            >
+              <mat-icon class="mat-icon-position left">delete_forever</mat-icon>
+              Delete project
+            </button>
+          </span>
+          <a mat-raised-button (click)="toggleArchive()">
+            <mat-icon class="mat-icon-position left">archive</mat-icon>
+            {{ project.is_archived ? "Unarchive" : "Archive" }}
+          </a>
+          <a
+            [disabled]="project === undefined"
+            mat-raised-button
+            routerLink="metadata"
+            id="modify"
+          >
+            <mat-icon class="mat-icon-position left">settings</mat-icon>
+            Modify project
+          </a>
+        </div>
+      }
+    } @else {
+      <ngx-skeleton-loader
+        [theme]="{
+          'border-radius': '5px',
+          height: '24px',
+          width: '50%',
+          border: '1px solid white'
+        }"
+      ></ngx-skeleton-loader>
+      <ngx-skeleton-loader
+        [theme]="{
+          'border-radius': '5px',
+          height: '100px',
+          width: '80%',
+          border: '1px solid white'
+        }"
+      ></ngx-skeleton-loader>
     }
   </div>
 </div>

@@ -35,7 +35,8 @@ type Story = StoryObj<ProjectMetadataComponent>;
 
 const project: Project = {
   name: 'test',
-  description: 'test',
+  description:
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
   type: 'general',
   visibility: 'internal',
   is_archived: false,
@@ -96,7 +97,24 @@ export const ProjectAdmin: Story = {
   ],
 };
 
-export const Archived: Story = {
+export const NormalUserArchived: Story = {
+  args: {
+    project: { ...project, is_archived: true },
+    canDelete: true,
+  },
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: ProjectUserService,
+          useFactory: () => new MockProjectUserService('user'),
+        },
+      ],
+    }),
+  ],
+};
+
+export const ProjectAdminArchived: Story = {
   args: {
     project: { ...project, is_archived: true },
     canDelete: true,
