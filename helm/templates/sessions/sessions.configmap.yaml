@@ -39,8 +39,9 @@ data:
 
             location ~ ^/session/([a-z]+)/(.*)$ {
               set $ccm_session_id $1;
+              set $query $2;
               auth_request /auth;
-              proxy_pass http://$ccm_session_id.{{ .Values.backend.k8sSessionNamespace }}.svc.cluster.local:80/session/$ccm_session_id/$2$is_args$args;
+              proxy_pass http://$ccm_session_id.{{ .Values.backend.k8sSessionNamespace }}.svc.cluster.local:80/session/$ccm_session_id/$query$is_args$args;
             }
 
             location ~ ^/session/([a-z]+) {
