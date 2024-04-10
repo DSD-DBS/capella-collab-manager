@@ -21,14 +21,14 @@
 
 ### Set License Server URL and Upload `license.lic`
 
-1. Navigate to `Profile` > `Settings`
+1. Navigate to `Menu` > `Settings`
 1. Select `pure::variants` in the `Integrations` section.
 1. Modify the floating license server URL and confirm with `Update`.
 1. Upload the `license.lic` license file.
 
 ### Add the `pure::variants` Tool to your Instance
 
-1. Navigate to `Profile` > `Settings`
+1. Navigate to `Menu` > `Settings`
 1. Select `Tools` in the `Core functionality` section.
 1. Click `Add a tool`
 1. Enter any tool name, e.g., `Capella + pure::variants`

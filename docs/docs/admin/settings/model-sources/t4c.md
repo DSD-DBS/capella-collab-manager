@@ -7,7 +7,7 @@
 
 ## Define a T4C Instance
 
-1.  Please navigate to `Profile` > `Settings`
+1.  Please navigate to `Menu` > `Settings`
 1.  Select `T4C` bewlow `Model sources`
 1.  You can see all existing instances (if any). To add a new instance, click
     on the "Add an instance" card. You have to enter the following information:
@@ -27,7 +27,7 @@
 
 ## Archive a T4C Instance
 
-1.  Please navigate to `Profile` > `Settings`
+1.  Please navigate to `Menu` > `Settings`
 1.  Select `T4C` bewlow `Model sources`
 1.  Click on the instance that you want to archive
 1.  Click on the `Archive` button. When everything worked you should see a
