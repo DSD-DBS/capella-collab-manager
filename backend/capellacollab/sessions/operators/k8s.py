@@ -521,6 +521,7 @@ class KubernetesOperator:
                         labels={"app": name, "workload": "session"}
                     ),
                     spec=client.V1PodSpec(
+                        automount_service_account_token=False,
                         security_context=pod_security_context,
                         containers=containers,
                         volumes=k8s_volumes,
