@@ -4,7 +4,7 @@
 */}
 
 import * as ProjectMetadata from "./project-metadata.stories.ts";
-import {Meta, Title, Story, Canvas} from "@storybook/blocks";
+import {Meta, Title, Story, Canvas, Unstyled} from "@storybook/blocks";
 
 <Meta of={ProjectMetadata} />
 
@@ -36,17 +36,19 @@ If there are linked models in the project, the delete button is disabled:
 ## Small devices
 On small devices, it looks like this:
 
-<div style={{display: "flex", "flex-wrap": "wrap"}}>
-    <div style={{width: "250px"}}>
-        <Story of={ProjectMetadata.Loading}/>
+<Unstyled>
+    <div style={{display: "flex", "flex-wrap": "wrap"}}>
+        <div style={{width: "250px"}}>
+            <Story of={ProjectMetadata.Loading}/>
+        </div>
+        <div style={{width: "250px"}}>
+            <Story of={ProjectMetadata.NormalUser}/>
+        </div>
+        <div style={{width: "250px"}}>
+            <Story of={ProjectMetadata.ProjectAdmin}/>
+        </div>
+        <div style={{width: "250px"}}>
+            <Story of={ProjectMetadata.ProjectAdminArchived}/>
+        </div>
     </div>
-    <div style={{width: "250px"}}>
-        <Story of={ProjectMetadata.NormalUser}/>
-    </div>
-    <div style={{width: "250px"}}>
-        <Story of={ProjectMetadata.ProjectAdmin}/>
-    </div>
-    <div style={{width: "250px"}}>
-        <Story of={ProjectMetadata.ProjectAdminArchived}/>
-    </div>
-</div>
+</Unstyled>

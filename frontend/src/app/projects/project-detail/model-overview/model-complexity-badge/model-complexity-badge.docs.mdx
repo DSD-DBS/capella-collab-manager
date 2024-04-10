@@ -4,7 +4,7 @@
 */}
 
 import * as ModelBadge from "./model-complexity-badge.stories.ts";
-import {Meta, Title, Story, Canvas} from "@storybook/blocks";
+import {Meta, Title, Story, Canvas, Unstyled} from "@storybook/blocks";
 
 <Meta of={ModelBadge} />
 
@@ -14,28 +14,36 @@ The model badge is currently used as part of the model card.
 It shows the complexity of the Capella model.
 
 When the component is embedded, it will start with the loading screen:
-<div style={{width: "500px"}}>
-    <Story of={ModelBadge.Loading}/>
-</div>
+<Unstyled>
+    <div style={{width: "500px"}}>
+        <Story of={ModelBadge.Loading}/>
+    </div>
+</Unstyled>
 
 When the loading completes, it will switch to one of the specific cases.
 
 The model badge was loaded successfully:
-<div style={{width: "500px"}}>
-    <Story of={ModelBadge.Successful} />
-</div>
+<Unstyled>
+    <div style={{width: "500px"}}>
+        <Story of={ModelBadge.Successful} />
+    </div>
+</Unstyled>
 
 The model badge is not set up. In this case, there is an link to the documentation:
-<div style={{width: "500px"}}>
-    <Story of={ModelBadge.NoJobConfigured} />
-</div>
+<Unstyled>
+    <div style={{width: "500px"}}>
+        <Story of={ModelBadge.NoJobConfigured} />
+    </div>
+</Unstyled>
 
 The third case is that there is an error, which comes from the backend. \
 We directly display the backend error in the model badge card. \
 A full list of possible error messages is available in the Backend API documentation.
 
-<div style={{width: "500px"}}>
-    <Story of={ModelBadge.GitInstanceEndpointUndefined} />
-    <br />
-    <Story of={ModelBadge.PipelineJobNotFound} />
-</div>
+<Unstyled>
+    <div style={{width: "500px"}}>
+        <Story of={ModelBadge.GitInstanceEndpointUndefined} />
+        <br />
+        <Story of={ModelBadge.PipelineJobNotFound} />
+    </div>
+</Unstyled>
