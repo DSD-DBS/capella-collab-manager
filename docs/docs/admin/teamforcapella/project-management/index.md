@@ -31,11 +31,11 @@ guide.
    Then close the dialog.
 1. Open the Capella search and search for `CDO Sessions (CDO)` and open it.
 1. Add a new CDO connection:
-   ![Add a new CDO connection](./add-new-cdo-session.png).
+   ![Add a new CDO connection](./add-new-cdo-session.png)
 1. Enter the connection string for the TeamForCapella server. There two ways to
    find the correct one. Make sure that the host is prefixed with `tcp://`.
 
-    1. Global administrators can navigate to `Profile` > `Settings` >
+    1. Global administrators can navigate to `Menu` > `Settings` >
         `Model sources` > `TeamForCapella` > Select the instance > `Host`.
     1. Project managers can use the TeamForCapella connection flow described in
         the [Connect to a TeamForCapella repository](../../../user/tools/capella/teamforcapella/export/index.md)
@@ -50,4 +50,4 @@ guide.
 1. Expand the transaction, select the project to delete, right click, and select "Delete...":
     ![Delete a T4C project](./delete-t4c-project.png)
 1. Confirm the deletion with "Ok" and wait until the transaction is finished.
-   The can take a few minutes.
+   This can take a few minutes.
