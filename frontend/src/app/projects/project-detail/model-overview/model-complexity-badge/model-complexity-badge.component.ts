@@ -80,10 +80,9 @@ export class ModelComplexityBadgeComponent implements OnChanges {
   }
 
   openModelComplexityBadgeDocs() {
-    let docsURL = '/docs';
-    if ('docsURL' in environment) {
-      docsURL = environment.docs_url as string;
-    }
-    window.open(docsURL + '/user/projects/models/complexity_badge/', '_blank');
+    window.open(
+      environment.docs_url + '/user/projects/models/complexity_badge/',
+      '_blank',
+    );
   }
 }
