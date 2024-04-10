@@ -3,43 +3,16 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flex-center">
-  <div
-    (click)="openModelComplexityBadgeDocs()"
-    class="model-complexity-error model-complexity-create"
-    *ngIf="errorCode === 'FILE_NOT_FOUND'"
-  >
-    <mat-icon class="model-complexity-error-icon">open_in_new</mat-icon>
-    <span class="model-complexity-error-text"
-      ><b>Model complexity badge not found.</b><br />Click here to learn how to
-      set up the model complexity badge <br />
-      for your model.</span
-    >
-  </div>
-  <div
-    class="model-complexity-error"
-    *ngIf="
-      !loadingComplexityBadge &&
-      !complexityBadge &&
-      errorCode !== 'FILE_NOT_FOUND'
-    "
-  >
-    <mat-icon class="model-complexity-error-icon">error</mat-icon>
-    <span class="model-complexity-error-text"
-      ><b>Error loading the complexity badge.</b> <br />{{
-        errorMessage ||
-          "Please ask your project lead or administrator for help."
-      }}</span
-    >
-  </div>
-  <div class="flex justify-center" *ngIf="complexityBadge">
-    <img class="model-complexity-badge" [src]="complexityBadge" />
-  </div>
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
 
-  <div class="model-complexity-badge-loader" *ngIf="loadingComplexityBadge">
+@if (loadingComplexityBadge) {
+  <div class="model-complexity-badge-loader">
     <ngx-skeleton-loader
       [theme]="{
-        width: '95%',
+        width: '100%',
         height: '100%',
         'border-radius': '5px',
         border: '1px solid white',
@@ -47,4 +20,38 @@
       }"
     ></ngx-skeleton-loader>
   </div>
-</div>
+} @else {
+  @if (errorCode === undefined) {
+    <div class="flex justify-center" *ngIf="complexityBadge">
+      <img class="w-full" [src]="complexityBadge" />
+    </div>
+  } @else if (errorCode === "FILE_NOT_FOUND") {
+    <div
+      (click)="openModelComplexityBadgeDocs()"
+      class="model-complexity-error model-complexity-create"
+    >
+      <mat-icon class="model-complexity-error-icon">open_in_new</mat-icon>
+      <span class="model-complexity-error-text"
+        ><b>Model complexity badge not found.</b><br />Click here to learn how
+        to set up the model complexity badge for your model.</span
+      >
+    </div>
+  } @else {
+    <div
+      class="model-complexity-error"
+      *ngIf="
+        !loadingComplexityBadge &&
+        !complexityBadge &&
+        errorCode !== 'FILE_NOT_FOUND'
+      "
+    >
+      <mat-icon class="model-complexity-error-icon">error</mat-icon>
+      <span class="model-complexity-error-text"
+        ><b>Error loading the complexity badge.</b> <br />{{
+          errorMessage ||
+            "Please ask your project lead or administrator for help."
+        }}</span
+      >
+    </div>
+  }
+}
