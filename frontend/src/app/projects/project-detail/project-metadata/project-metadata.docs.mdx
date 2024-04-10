@@ -12,17 +12,41 @@ import {Meta, Title, Story, Canvas} from "@storybook/blocks";
 
 The Project metadata let's users know about the project name, description and status.
 
-When it's loaded, the metadata view looks like:
+## Larger devices
+
+While loading the project, it looks the same for all users:
 <Story of={ProjectMetadata.Loading}/>
 
-For example, this is the view for a normal user in the project:
+A "normal" project user can see the title and description:
 <Story of={ProjectMetadata.NormalUser}/>
 
 Project leads have the option to modify some settings:
 <Story of={ProjectMetadata.ProjectAdmin} />
 
-This is how an archived projects looks like:
-<Story of={ProjectMetadata.Archived} />
+This is how an archived projects looks like for normal users:
+<Story of={ProjectMetadata.NormalUserArchived} />
+
+This is how an archived projects looks like for project admins:
+<Story of={ProjectMetadata.ProjectAdminArchived} />
 
 If there are linked models in the project, the delete button is disabled:
 <Story of={ProjectMetadata.CantDelete} />
+
+
+## Small devices
+On small devices, it looks like this:
+
+<div style={{display: "flex", "flex-wrap": "wrap"}}>
+    <div style={{width: "250px"}}>
+        <Story of={ProjectMetadata.Loading}/>
+    </div>
+    <div style={{width: "250px"}}>
+        <Story of={ProjectMetadata.NormalUser}/>
+    </div>
+    <div style={{width: "250px"}}>
+        <Story of={ProjectMetadata.ProjectAdmin}/>
+    </div>
+    <div style={{width: "250px"}}>
+        <Story of={ProjectMetadata.ProjectAdminArchived}/>
+    </div>
+</div>

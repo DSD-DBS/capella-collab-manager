@@ -1,0 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* Overwrite font from Storybook in documentation */
+:where(div:not(.sb-anchor, .sb-unstyled, .sb-unstyled div)) {
+  font-family: unset !important;
+  -webkit-font-smoothing: unset !important;
+}

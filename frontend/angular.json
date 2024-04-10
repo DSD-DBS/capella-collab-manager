@@ -124,7 +124,14 @@
             "browserTarget": "capellacollab:build",
             "compodoc": true,
             "compodocArgs": ["-e", "json", "-d", "."],
-            "port": 6006
+            "port": 6006,
+            "styles": [
+              ".storybook/styles.css",
+              "@angular/material/prebuilt-themes/indigo-pink.css",
+              "monaco-editor/min/vs/editor/editor.main.css",
+              "src/styles.css",
+              "node_modules/ngx-toastr/toastr.css"
+            ]
           }
         },
         "build-storybook": {
@@ -134,7 +141,14 @@
             "browserTarget": "capellacollab:build",
             "compodoc": true,
             "compodocArgs": ["-e", "json", "-d", "."],
-            "outputDir": "storybook-static"
+            "outputDir": "storybook-static",
+            "styles": [
+              ".storybook/styles.css",
+              "@angular/material/prebuilt-themes/indigo-pink.css",
+              "monaco-editor/min/vs/editor/editor.main.css",
+              "src/styles.css",
+              "node_modules/ngx-toastr/toastr.css"
+            ]
           }
         }
       }
