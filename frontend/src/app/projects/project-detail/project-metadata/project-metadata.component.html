@@ -9,12 +9,13 @@
     class="collab-card [p-12px] m-[10px] !flex grow flex-col justify-between"
   >
     <div class="flex flex-col">
-      <div class="break-all" *ngIf="projectService.project$ | async">
-        <h2 id="title" class="text-xl font-medium">
-          {{ (projectService.project$ | async)!.name }}
-        </h2>
-      </div>
-      <div *ngIf="(projectService.project$ | async) === undefined">
+      @if (project !== undefined) {
+        <div class="break-all">
+          <h2 id="title" class="text-xl font-medium">
+            {{ project!.name }}
+          </h2>
+        </div>
+      } @else {
         <ngx-skeleton-loader
           [theme]="{
             'border-radius': '5px',
@@ -23,18 +24,12 @@
             border: '1px solid white'
           }"
         ></ngx-skeleton-loader>
-      </div>
-      <div
-        *ngIf="(projectService.project$ | async) !== undefined"
-        class="grow text-sm"
-        id="description"
-      >
-        {{
-          (projectService.project$ | async)!.description ||
-            "No description available."
-        }}
-      </div>
-      <div *ngIf="(projectService.project$ | async) === undefined">
+      }
+      @if (project !== undefined) {
+        <div class="grow text-sm" id="description">
+          {{ project!.description || "No description available." }}
+        </div>
+      } @else {
         <ngx-skeleton-loader
           [theme]="{
             'border-radius': '5px',
@@ -43,39 +38,38 @@
             border: '1px solid white'
           }"
         ></ngx-skeleton-loader>
-      </div>
+      }
     </div>
-    <div
-      class="flex flex-wrap items-center gap-2"
-      *ngIf="projectUserService.verifyRole('manager')"
-    >
-      <span
-        matTooltip="The project can't be deleted since it has linked models"
-        [matTooltipDisabled]="canDelete"
-      >
-        <button
-          [disabled]="!canDelete"
-          (click)="deleteProject()"
-          mat-flat-button
-          color="warn"
+    @if (projectUserService.verifyRole("manager")) {
+      <div class="flex flex-wrap items-center gap-2">
+        <span
+          matTooltip="The project can't be deleted since it has linked models"
+          [matTooltipDisabled]="canDelete"
         >
-          <mat-icon class="mat-icon-position left">delete_forever</mat-icon
-          >Delete project
-        </button>
-      </span>
-      <a mat-raised-button (click)="toggleArchive()">
-        <mat-icon class="mat-icon-position left">archive</mat-icon>
-        {{ project?.is_archived ? "Unarchive" : "Archive" }}
-      </a>
-      <a
-        [disabled]="(projectService.project$ | async) === undefined"
-        mat-raised-button
-        routerLink="metadata"
-        id="modify"
-      >
-        <mat-icon class="mat-icon-position left">settings</mat-icon> Modify
-        project
-      </a>
-    </div>
+          <button
+            [disabled]="!canDelete"
+            (click)="deleteProject()"
+            mat-flat-button
+            color="warn"
+          >
+            <mat-icon class="mat-icon-position left">delete_forever</mat-icon
+            >Delete project
+          </button>
+        </span>
+        <a mat-raised-button (click)="toggleArchive()">
+          <mat-icon class="mat-icon-position left">archive</mat-icon>
+          {{ project?.is_archived ? "Unarchive" : "Archive" }}
+        </a>
+        <a
+          [disabled]="project === undefined"
+          mat-raised-button
+          routerLink="metadata"
+          id="modify"
+        >
+          <mat-icon class="mat-icon-position left">settings</mat-icon> Modify
+          project
+        </a>
+      </div>
+    }
   </div>
 </div>
