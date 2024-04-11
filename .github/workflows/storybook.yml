@@ -24,12 +24,13 @@ jobs:
           body-includes: Storybook
       - name: Create or update Storybook comment on PR
         uses: peter-evans/create-or-update-comment@v4
+        id: cc
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             <hr>
-            A storybook preview is currently being built for commit ${{ github.sha }}.
+            A Storybook preview is currently being built for commit ${{ github.sha }}.
             As soon as it becomes available, this comment will be updated.
           edit-mode: append
       - name: Install dependencies
@@ -44,7 +45,7 @@ jobs:
       - name: Create or update Storybook comment on PR
         uses: peter-evans/create-or-update-comment@v4
         with:
-          comment-id: ${{ steps.fc.outputs.comment-id }}
+          comment-id: ${{ steps.cc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             A Storybook preview is available for commit ${{ github.sha }}.
