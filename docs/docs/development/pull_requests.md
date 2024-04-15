@@ -12,7 +12,7 @@ met, please mark the PR as a draft.
 - All Github Action pipelines have to be green. If in individual cases the
   pipeline cannot be fixed independently or the pipeline failure is unrelated
   to the PR, then this should be justified in a comment in the pull request.
-- The adapted code was sensibly covered with tests. CodeCov will indicate the
+- The adapted code was sensibly covered with tests. Codecov will indicate the
   test coverage with a comment.
 - New features must be documented in the user documentation. If changes are
   made to existing functionality, the existing documentation must be adapted.
