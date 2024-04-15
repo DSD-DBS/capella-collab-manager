@@ -36,13 +36,7 @@
 
         <mat-form-field appearance="fill" class="w-full">
           <mat-label>Version</mat-label>
-          <mat-select
-            formControlName="versionId"
-            [disabled]="
-              toolSelectionForm.controls.toolId.value === null ||
-              toolSelectionForm.controls.toolId.value < 0
-            "
-          >
+          <mat-select formControlName="versionId">
             <mat-option
               *ngFor="let version of this.versions"
               [value]="version.id"

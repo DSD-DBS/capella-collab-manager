@@ -34,7 +34,10 @@ export class CreatePersistentSessionComponent implements OnInit {
 
   public toolSelectionForm = new FormGroup({
     toolId: new FormControl(null, Validators.required),
-    versionId: new FormControl<number | null>(null, Validators.required),
+    versionId: new FormControl<number | null>(
+      { value: null, disabled: true },
+      Validators.required,
+    ),
     connectionMethodId: new FormControl<string | undefined>(
       undefined,
       Validators.required,
@@ -89,6 +92,7 @@ export class CreatePersistentSessionComponent implements OnInit {
     this.toolSelectionForm.controls.connectionMethodId.setValue(
       this.selectedTool?.config.connection.methods[0].id,
     );
+    this.toolSelectionForm.controls.versionId.enable();
   }
 
   getSelectedConnectionMethod(): ConnectionMethod | undefined {
