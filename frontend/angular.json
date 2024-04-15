@@ -70,6 +70,28 @@
                   "with": "src/environments/environment.dev.ts"
                 }
               ]
+            },
+            "storybook": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "5mb",
+                  "maximumError": "10mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.storybook.ts"
+                }
+              ]
+
             }
           },
           "defaultConfiguration": "production"
@@ -121,7 +143,7 @@
           "builder": "@storybook/angular:start-storybook",
           "options": {
             "configDir": ".storybook",
-            "browserTarget": "capellacollab:build",
+            "browserTarget": "capellacollab:build:development",
             "compodoc": true,
             "compodocArgs": ["-e", "json", "-d", "."],
             "port": 6006,
@@ -138,7 +160,7 @@
           "builder": "@storybook/angular:build-storybook",
           "options": {
             "configDir": ".storybook",
-            "browserTarget": "capellacollab:build",
+            "browserTarget": "capellacollab:build:storybook",
             "compodoc": true,
             "compodocArgs": ["-e", "json", "-d", "."],
             "outputDir": "storybook-static",

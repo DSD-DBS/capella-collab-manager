@@ -161,7 +161,7 @@ provision-guacamole:
 
 
 dev:
-	$(MAKE) -j4 dev-frontend dev-backend dev-oauth-mock dev-docs
+	$(MAKE) -j5 dev-frontend dev-backend dev-oauth-mock dev-docs dev-storybook
 
 dev-frontend:
 	$(MAKE) -C frontend dev
@@ -174,6 +174,9 @@ dev-oauth-mock:
 
 dev-docs:
 	$(MAKE) -C docs serve
+
+dev-storybook:
+	$(MAKE) -C frontend storybook
 
 backend-logs:
 	kubectl logs -f -n $(NAMESPACE) -l id=$(RELEASE)-deployment-backend
