@@ -25,6 +25,9 @@ import { ConnectionMethod } from 'src/app/settings/core/tools-settings/tool.serv
   styleUrls: ['./create-readonly-session-dialog.component.css'],
 })
 export class CreateReadonlySessionDialogComponent implements OnInit {
+  maxNumberOfModels?: number;
+  connectionMethods: ConnectionMethod[] = [];
+
   constructor(
     public sessionService: SessionService,
     @Inject(MAT_DIALOG_DATA)
@@ -60,6 +63,15 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
         continue;
       }
 
+      if (this.modelOptions.length === 0) {
+        this.connectionMethods = model.tool.config.connection.methods;
+        this.maxNumberOfModels =
+          model.tool.config.provisioning.max_number_of_models;
+        this.form.controls.connectionMethodId.setValue(
+          this.connectionMethods[0].id,
+        );
+      }
+
       this.modelOptions.push({
         model: model,
         primaryGitModel: primaryGitModel,
@@ -67,12 +79,6 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
         include: false,
         deepClone: false,
       });
-    }
-
-    if (this.modelOptions.length) {
-      this.form.controls.connectionMethodId.setValue(
-        this.modelOptions[0].model.tool.config.connection.methods[0].id,
-      );
     }
   }
 
@@ -119,8 +125,16 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
       });
   }
 
+  maxNumberOfModelsExceeded(): boolean {
+    return (
+      this.maxNumberOfModels !== null &&
+      this.maxNumberOfModels !== undefined &&
+      this.selectedModelOptions().length > this.maxNumberOfModels
+    );
+  }
+
   getSelectedConnectionMethod(): ConnectionMethod {
-    return this.modelOptions[0].model.tool.config.connection.methods.find(
+    return this.connectionMethods.find(
       (method) => method.id === this.form.controls.connectionMethodId.value,
     )!;
   }

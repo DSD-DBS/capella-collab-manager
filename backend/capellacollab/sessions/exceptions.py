@@ -72,3 +72,15 @@ class InvalidConnectionMethodIdentifierError(core_exceptions.BaseError):
             ),
             err_code="CONNECTION_METHOD_UNKNOWN",
         )
+
+
+class TooManyModelsRequestedToProvisionError(core_exceptions.BaseError):
+    def __init__(self, max_number_of_models: int):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="Too many models requested",
+            reason=(
+                f"The selected tool only supports up to {max_number_of_models} provisioned model(s) per session."
+            ),
+            err_code="TOO_MANY_MODELS_REQUESTED",
+        )

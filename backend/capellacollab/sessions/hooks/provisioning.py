@@ -42,11 +42,18 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
     def configuration_hook(  # type: ignore
         cls,
         db: orm.Session,
+        tool: tools_models.DatabaseTool,
         tool_version: tools_models.DatabaseVersion,
         user: users_models.DatabaseUser,
         provisioning: list[sessions_models.SessionProvisioningRequest],
         **kwargs,
     ) -> interface.ConfigurationHookResult:
+        max_number_of_models = tool.config.provisioning.max_number_of_models
+        if max_number_of_models and len(provisioning) > max_number_of_models:
+            raise sessions_exceptions.TooManyModelsRequestedToProvisionError(
+                max_number_of_models
+            )
+
         resolved_entries = cls._resolve_provisioning_request(db, provisioning)
         cls._verify_matching_tool_version_and_model(
             tool_version, resolved_entries

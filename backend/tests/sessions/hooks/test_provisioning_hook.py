@@ -23,6 +23,7 @@ from capellacollab.users import models as users_models
 def test_git_models_are_resolved_correctly(
     db: orm.Session,
     user: users_models.DatabaseUser,
+    capella_tool: tools_models.DatabaseTool,
     capella_tool_version: tools_models.DatabaseVersion,
     project: projects_models.DatabaseProject,
     capella_model: toolmodels_models.DatabaseToolModel,
@@ -32,6 +33,7 @@ def test_git_models_are_resolved_correctly(
 
     response = hooks_provisioning.ProvisionWorkspaceHook().configuration_hook(
         db=db,
+        tool=capella_tool,
         tool_version=capella_tool_version,
         user=user,
         provisioning=[
@@ -70,6 +72,7 @@ def test_git_models_are_resolved_correctly(
 def test_provisioning_fails_missing_permission(
     db: orm.Session,
     user: users_models.DatabaseUser,
+    capella_tool: tools_models.DatabaseTool,
     capella_tool_version: tools_models.DatabaseVersion,
     project: projects_models.DatabaseProject,
     capella_model: toolmodels_models.DatabaseToolModel,
@@ -79,6 +82,7 @@ def test_provisioning_fails_missing_permission(
     with pytest.raises(fastapi.HTTPException):
         hooks_provisioning.ProvisionWorkspaceHook().configuration_hook(
             db=db,
+            tool=capella_tool,
             tool_version=capella_tool_version,
             user=user,
             provisioning=[
@@ -93,9 +97,45 @@ def test_provisioning_fails_missing_permission(
         )
 
 
+@pytest.mark.usefixtures("project_user")
+def test_provisioning_fails_too_many_models_requested(
+    db: orm.Session,
+    user: users_models.DatabaseUser,
+    capella_tool: tools_models.DatabaseTool,
+    capella_tool_version: tools_models.DatabaseVersion,
+    project: projects_models.DatabaseProject,
+    capella_model: toolmodels_models.DatabaseToolModel,
+    git_model: git_models.DatabaseGitModel,
+):
+    capella_tool.config.provisioning.max_number_of_models = 1
+
+    session_provisioning_request = sessions_models.SessionProvisioningRequest(
+        project_slug=project.slug,
+        model_slug=capella_model.slug,
+        git_model_id=git_model.id,
+        revision="main",
+        deep_clone=False,
+    )
+
+    with pytest.raises(
+        sessions_exceptions.TooManyModelsRequestedToProvisionError
+    ):
+        hooks_provisioning.ProvisionWorkspaceHook().configuration_hook(
+            db=db,
+            tool=capella_tool,
+            tool_version=capella_tool_version,
+            user=user,
+            provisioning=[
+                session_provisioning_request,
+                session_provisioning_request,
+            ],
+        )
+
+
 def test_tool_model_mismatch(
     db: orm.Session,
     user: users_models.DatabaseUser,
+    capella_tool: tools_models.DatabaseTool,
     tool_version: tools_models.DatabaseVersion,
     project: projects_models.DatabaseProject,
     capella_model: toolmodels_models.DatabaseToolModel,
@@ -105,6 +145,7 @@ def test_tool_model_mismatch(
     with pytest.raises(sessions_exceptions.ToolAndModelMismatchError):
         hooks_provisioning.ProvisionWorkspaceHook().configuration_hook(
             db=db,
+            tool=capella_tool,
             tool_version=tool_version,
             user=user,
             provisioning=[

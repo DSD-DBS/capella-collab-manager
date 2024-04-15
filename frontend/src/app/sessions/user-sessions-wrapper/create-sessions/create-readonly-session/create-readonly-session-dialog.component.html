@@ -7,10 +7,7 @@
   <form [formGroup]="form" (ngSubmit)="requestSession()">
     <h2>Open read-only Session</h2>
 
-    @if (
-      modelOptions.length &&
-      modelOptions[0].model.tool.config.connection.methods.length > 1
-    ) {
+    @if (modelOptions.length && connectionMethods.length > 1) {
       <div class="mb-2">
         <p class="text-sm">
           Select the connection method for your read-only session:
@@ -20,20 +17,22 @@
           formControlName="connectionMethodId"
         >
           @for (
-            connectionMethod of modelOptions[0].model.tool.config.connection
-              .methods;
+            connectionMethod of connectionMethods;
             track connectionMethod.id
           ) {
-            <mat-radio-button [value]="connectionMethod.id">{{
-              connectionMethod.name
-            }}</mat-radio-button>
+            <mat-radio-button [value]="connectionMethod.id">
+              {{ connectionMethod.name }}
+            </mat-radio-button>
           }
         </mat-radio-group>
       </div>
 
-      @if (this.getSelectedConnectionMethod().description) {
+      @if (
+        getSelectedConnectionMethod().description;
+        as selectedConnectionMethodDescription
+      ) {
         <div class="mb-2 border p-2 text-sm shadow">
-          {{ getSelectedConnectionMethod().description }}
+          {{ selectedConnectionMethodDescription }}
         </div>
       }
     }
@@ -41,26 +40,38 @@
     <p class="text-sm">
       Select the models and revisions you want to load in a readonly session:
     </p>
-    @if (modelOptions.length > 0) {
-      @for (options of modelOptions; track options) {
-        <create-readonly-model-options
-          [projectSlug]="data.projectSlug"
-          [modelOptions]="options"
-        >
-        </create-readonly-model-options>
-        <hr class="m-2" />
-      }
-    } @else {
+    @for (options of modelOptions; track options) {
+      <create-readonly-model-options
+        [projectSlug]="data.projectSlug"
+        [modelOptions]="options"
+      >
+      </create-readonly-model-options>
+      <hr class="m-2" />
+    } @empty {
       <div class="my-1 border p-2 text-sm shadow">
         No models have read-only session support. Please contact your
         administrator or project lead.
       </div>
     }
+
+    @if (maxNumberOfModelsExceeded()) {
+      <div class="my-1 border p-2 text-sm shadow">
+        <p class="text-error">
+          The selected tool only supports up to
+          {{ maxNumberOfModels }} provisioned model(s) at a time.
+        </p>
+      </div>
+    }
+
     <div class="flex justify-between">
       <button mat-flat-button mat-dialog-close type="button">Cancel</button>
       <button
         mat-flat-button
-        [disabled]="this.selectedModelOptions().length === 0 || loading"
+        [disabled]="
+          selectedModelOptions().length === 0 ||
+          maxNumberOfModelsExceeded() ||
+          loading
+        "
         color="primary"
         type="submit"
       >
