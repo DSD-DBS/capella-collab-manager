@@ -33,6 +33,8 @@ met, please mark the PR as a draft.
 - Make sure that all raised exceptions use our
   [custom exception classes](./backend/exception.md), which can be resolved by
   the frontend.
+- For each changed or added component in the frontend, a storybook story must
+  be created. You can find more information [here](./frontend/storybook.md).
 
 Once all acceptance criteria are met, you can mark the PR as ready for review
 and a maintainer will review it.
