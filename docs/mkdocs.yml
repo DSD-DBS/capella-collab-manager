@@ -110,6 +110,7 @@ nav:
           - Routes: development/frontend/routes.md
           - Testing: development/frontend/testing.md
           - Customization: development/frontend/customize.md
+          - Storybook: development/frontend/storybook.md
       - Kubernetes:
           - Measure Resource Usage: development/k8s/resources.md
       - Documentation: development/docs.md
@@ -154,6 +155,7 @@ markdown_extensions:
   - pymdownx.snippets
   - attr_list
   - footnotes
+  - md_in_html
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
