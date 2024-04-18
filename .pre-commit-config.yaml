@@ -125,9 +125,19 @@ repos:
         args:
           - --detect-license-in-X-top-lines=15
           - --license-filepath
-          - LICENSES/.license_header_apache.txtcomemnt
+          - LICENSES/.license_header_apache.txt
           - --comment-style
           - '..|  |'
+      - id: insert-license
+        name: Insert license headers (mdx comments)
+        files: '\.mdx$'
+        exclude: '(?:^|/)\..+'
+        args:
+          - --detect-license-in-X-top-lines=15
+          - --license-filepath
+          - LICENSES/.license_header_apache.txt
+          - --comment-style
+          - '{/*|   |*/}'
   - repo: https://github.com/fsfe/reuse-tool
     rev: v3.0.1
     hooks:
