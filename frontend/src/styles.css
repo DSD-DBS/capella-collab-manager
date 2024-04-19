@@ -47,6 +47,7 @@ table {
   --warning-color: darkorange;
   --success-color: darkgreen;
   --hover-color: lightcyan;
+  --banner-color: #010035;
   --field-padding: 0.75em;
   --section-card-width: 32em;
 }

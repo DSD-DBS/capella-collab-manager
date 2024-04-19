@@ -13,6 +13,7 @@ module.exports = {
         error: "var(--error-color)",
         warning: "var(--warning-color)",
         success: "var(--success-color)",
+        banner: "var(--banner-color)",
         hover: "var(--hover-color)",
         archived: "#D1D5DB",
         url: "#2563eb",
