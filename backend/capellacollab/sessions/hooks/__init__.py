@@ -12,6 +12,7 @@ from . import (
     provisioning,
     pure_variants,
     read_only_workspace,
+    session_preparation,
     t4c,
 )
 
@@ -27,6 +28,7 @@ REGISTER_HOOKS_AUTO_USE: dict[str, interface.HookRegistration] = {
     "http": http.HTTPIntegration(),
     "read_only_hook": read_only_workspace.ReadOnlyWorkspaceHook(),
     "provisioning": provisioning.ProvisionWorkspaceHook(),
+    "session_preparation": session_preparation.GitRepositoryCloningHook(),
 }
 
 

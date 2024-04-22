@@ -45,19 +45,26 @@ def test_git_models_are_resolved_correctly(
         ],
     )
 
-    assert response["environment"]["GIT_REPOS_JSON"] == json.dumps(
-        [
-            {
-                "url": "https://example.com/test/project",
-                "revision": "test",
-                "depth": 1,
-                "entrypoint": "test/test.aird",
-                "nature": "",
-                "username": "user",
-                "password": "password",
-            }
-        ]
-    )
+    expected_response_dict = {
+        "url": "https://example.com/test/project",
+        "revision": "test",
+        "depth": 1,
+        "entrypoint": "test/test.aird",
+        "nature": "",
+        "path": f"/models/{capella_model.project.slug}/{capella_model.slug}",
+    }
+
+    assert response["init_environment"]["CAPELLACOLLAB_PROVISIONING"] == [
+        expected_response_dict
+        | {
+            "username": "user",
+            "password": "password",
+        }
+    ]
+
+    assert response["environment"]["CAPELLACOLLAB_SESSION_PROVISIONING"] == [
+        expected_response_dict
+    ]
 
 
 def test_provisioning_fails_missing_permission(

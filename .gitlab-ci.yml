@@ -1,6 +1,13 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+variables:
+  DEPLOYMENT_GITLAB_BRANCH:
+    value: 'main'
+    description:
+      'Branch of the deployment Gitlab project. Ignored if deployed to
+      production.'
+
 staging:
   rules:
     # For commits on the main branch, build for the staging environment
@@ -13,6 +20,7 @@ staging:
   trigger:
     project: '$DEPLOYMENT_GITLAB_REPOSITORY'
     strategy: depend
+    branch: '$DEPLOYMENT_GITLAB_BRANCH'
 
 production:
   rules:

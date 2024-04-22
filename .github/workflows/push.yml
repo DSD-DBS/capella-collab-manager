@@ -24,7 +24,10 @@ jobs:
             context: ./frontend
           - name: guacamole
             image: ghcr.io/dsd-dbs/capella-collab-manager/guacamole
-            context: ./guacamole
+            context: ./images/guacamole
+          - name: session-preparation
+            image: ghcr.io/dsd-dbs/capella-collab-manager/session-preparation
+            context: ./images/session-preparation
           - name: docs
             image: ghcr.io/dsd-dbs/capella-collab-manager/docs
             context: ./docs
@@ -98,14 +101,8 @@ jobs:
           helm dependency update ./helm
       - name: Install chart
         run: |
-          export TAG=${{ steps.tag.outputs.branch }}
-
           helm install test \
-          --set docker.registry.internal="ghcr.io/dsd-dbs/capella-collab-manager" \
-          --set docker.images.frontend="/frontend:$TAG" \
-          --set docker.images.backend="/backend:$TAG" \
-          --set docker.images.guacamole.guacamole="ghcr.io/dsd-dbs/capella-collab-manager/guacamole:$TAG" \
-          --set docker.images.docs="/docs:$TAG" \
+          --set docker.tag="${{ steps.tag.outputs.branch }}" \
           --set loki.enabled=False \
           --set cluster.pvc.storageClassName="standard" \
           --set cluster.imagePullSecret="github" \

@@ -90,13 +90,43 @@ variables can be used by the tool:
         <td>`janedoe`</td>
         <td>The username of the user who has requested the session.</td>
     </tr>
-        <tr>
+    <tr>
         <td>`CAPELLACOLLAB_SESSION_CONTAINER_PORT`</td>
         <td>`8080`</td>
         <td>
             The port that the application has to serve on.
             <hr style="margin-bottom:4px">
             :octicons-info-16: HTTP port if connection method is `http` and RDP port if the connection method is `guacamole`.
+        </td>
+    </tr>
+    <tr>
+        <td>`CAPELLACOLLAB_SESSION_PROVISIONING`</td>
+        <td>
+          <div style="width: 300px">
+            ```json
+            [
+                {
+                    "url": "https://github.com/DSD-DBS/coffee-machine",
+                    "revision": "main",
+                    "depth": 1,
+                    "entrypoint": "coffee-machine-demo.aird",
+                    "nature": "model",
+                    "path": "/models/coffee-machine/coffee-machine"
+                }
+            ]
+            ```
+          </div>
+        </td>
+        <td>
+            A list of dictionaries containing information about the models that were provisioned by the Collaboration Manager in the JSON format.
+
+            Each list item contains the following attributes: <br>
+            - `url`: The URL of the Git repository. <br>
+            - `revision`: The revision of the Git repository. <br>
+            - `depth`: The depth that was used while cloning the Git repository. <br>
+            - `entrypoint`: The entrypoint of the Git repository. <br>
+            - `nature`: The nature of the model in the Collaboration Manager. <br>
+            - `path`: The path to the model in the session. <br>
         </td>
     </tr>
     <tr>
@@ -213,8 +243,8 @@ environment:
 
 In this example, we map the `MY_TOOL_USERNAME` variable to the
 `MY_TOOL_USERNAME_WITH_PREFIX` environment variable and add the `test_` prefix.
-This is a powerful feature because you can use f-string formatting with all
-pre-defined environment variables, but also define static variables.
+You can use f-string formatting with all pre-defined environment variables, but
+also define static variables.
 
 ### Connection methods
 

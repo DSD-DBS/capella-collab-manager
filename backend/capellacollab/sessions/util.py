@@ -1,9 +1,11 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import json
 import logging
 import random
 import string
+import typing as t
 
 from sqlalchemy import orm
 
@@ -126,14 +128,45 @@ def resolve_environment_variables(
     return resolved, warnings
 
 
+def stringify_environment_variables(
+    logger: logging.LoggerAdapter,
+    environment: dict[str, t.Any],
+) -> list[core_models.Message]:
+    """Try to stringify non-string environment variables in the JSON format"""
+    warnings = []
+
+    for key, value in environment.copy().items():
+        try:
+            if not isinstance(value, str):
+                environment[key] = json.dumps(value)
+        except Exception:
+            logger.warning(
+                "Couldn't stringify environment variable '%s'",
+                key,
+                exc_info=True,
+            )
+            del environment[key]
+            warnings += [
+                core_models.Message(
+                    title="Couldn't stringify environment variable.",
+                    err_code="ENVIRONMENT_DUMPING_FAILED",
+                    reason=(
+                        f"Failed to resolve environment variable '{key}'. "
+                        "This might be due to a incorrect configuration. "
+                        "Please contact your administrator. "
+                        "The variable is ignored and an attempt is still made to start the session. "
+                    ),
+                )
+            ]
+
+    return warnings
+
+
 def get_docker_image(
     version: tools_models.DatabaseVersion, workspace_type: models.SessionType
 ) -> str:
     """Get the Docker image for a given tool version and workspace type"""
-    if workspace_type == models.SessionType.READONLY:
-        template = version.config.sessions.read_only.image
-    else:
-        template = version.config.sessions.persistent.image
+    template = version.config.sessions.persistent.image
 
     if not template:
         raise exceptions.UnsupportedSessionTypeError(

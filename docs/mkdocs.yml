@@ -95,6 +95,7 @@ nav:
               - Image builder: admin/ci-templates/gitlab/image-builder.md
               - Kubernetes deployment: admin/ci-templates/gitlab/k8s-deploy.md
       - Command line tool: admin/cli.md
+      - Troubleshooting: admin/troubleshooting.md
   - Developer Documentation:
       - Introduction: development/index.md
       - Backend:

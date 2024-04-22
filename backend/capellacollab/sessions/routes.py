@@ -94,6 +94,8 @@ def request_session(
     )
     volumes: list[operators_models.Volume] = []
     warnings: list[core_models.Message] = []
+    init_volumes: list[operators_models.Volume] = []
+    init_environment: dict[str, str] = {}
 
     for hook in hooks.get_activated_integration_hooks(tool):
         hook_result = hook.configuration_hook(
@@ -106,9 +108,12 @@ def request_session(
             session_type=body.session_type,
             connection_method=connection_method,
             provisioning=body.provisioning,
+            session_id=session_id,
         )
         environment |= hook_result.get("environment", {})
+        init_environment |= hook_result.get("init_environment", {})
         volumes += hook_result.get("volumes", [])
+        init_volumes += hook_result.get("init_volumes", [])
         warnings += hook_result.get("warnings", [])
 
     local_env, local_warnings = util.resolve_environment_variables(
@@ -118,6 +123,9 @@ def request_session(
     )
     warnings += local_warnings
     environment |= local_env
+
+    warnings += util.stringify_environment_variables(logger, environment)
+    warnings += util.stringify_environment_variables(logger, init_environment)
 
     docker_image = util.get_docker_image(version, body.session_type)
 
@@ -129,8 +137,10 @@ def request_session(
         tool=tool,
         version=version,
         environment=environment,
+        init_environment=init_environment,
         ports=connection_method.ports.model_dump(),
         volumes=volumes,
+        init_volumes=init_volumes,
         prometheus_path=tool.config.monitoring.prometheus.path,
         prometheus_port=connection_method.ports.metrics,
     )

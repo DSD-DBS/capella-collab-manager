@@ -35,7 +35,7 @@ def fixture_session(
     return sessions_crud.create_session(db, session)
 
 
-@pytest.fixture(name="mock_session_injection", autouse=True)
+@pytest.fixture(name="mock_session_injection")
 def fixture_mock_session_injection(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(
         sessions_injection, "get_last_seen", lambda _: "UNKNOWN"

@@ -5,12 +5,11 @@ variables:
   GRAFANA_HELM_CHART: https://grafana.github.io/helm-charts/
   PRIVATE_GPG_PATH: /secrets/private.gpg
   TARGET:
-    value: "staging"
-    description: "Specify the target (staging/production)"
+    value: 'staging'
+    description: 'Specify the target (staging/production)'
   REVISION:
-    value: "main"
-    description: "Revision of the Github repository (capella-collab-manager)"
-
+    value: 'main'
+    description: 'Revision of the Github repository (capella-collab-manager)'
 
 .decrypt: &decrypt
   - apt-get install -y jq
@@ -38,46 +37,47 @@ variables:
     EOF
 
 .prepare: &prepare
-    - *decrypt
-    - git clone https://github.com/DSD-DBS/capella-collab-manager
-    - cd capella-collab-manager
-    - git checkout ${REVISION}
-    - sed -i "s#https://grafana.github.io/helm-charts/#${GRAFANA_HELM_CHART}#g" ./helm/Chart.yaml
+  - *decrypt
+  - git clone https://github.com/DSD-DBS/capella-collab-manager
+  - cd capella-collab-manager
+  - git checkout ${REVISION}
+  # prettier-ignore
+  - sed -i "s#https://grafana.github.io/helm-charts/#${GRAFANA_HELM_CHART}#g" ./helm/Chart.yaml
 
 .kubernetes: &kubernetes
-    - NAMESPACE=$(cat ../plain.k8s.json | jq -r ".namespace")
-    - kubectl config set-cluster cluster --server=$(cat ../plain.k8s.json | jq -r ".server")
-    - >
-      kubectl config set-context context \
-        --namespace=${NAMESPACE} \
-        --user=$(cat ../plain.k8s.json | jq -r ".username") \
-        --cluster=cluster
-    - >
-      kubectl config set-credentials \
-        $(cat ../plain.k8s.json | jq -r ".username") \
-        --token=$(cat ../plain.k8s.json | jq -r ".token")
-    - kubectl config use-context context
+  - NAMESPACE=$(cat ../plain.k8s.json | jq -r ".namespace")
+  # prettier-ignore
+  - kubectl config set-cluster cluster --server=$(cat ../plain.k8s.json | jq -r ".server")
+  - >
+    kubectl config set-context context \
+      --namespace=${NAMESPACE} \
+      --user=$(cat ../plain.k8s.json | jq -r ".username") \
+      --cluster=cluster
+  - >
+    kubectl config set-credentials \
+      $(cat ../plain.k8s.json | jq -r ".username") \
+      --token=$(cat ../plain.k8s.json | jq -r ".token")
+  - kubectl config use-context context
 
 .helm-deploy: &helm-deploy
-    - RELEASE=$(cat ../plain.k8s.json | jq -r ".release")
-    - DOCKER_TAG=$(echo $REVISION | sed 's/[^a-zA-Z0-9.]/-/g')
-    - helm repo add grafana-helm-remote ${GRAFANA_HELM_CHART}
-    - >
-      helm upgrade ${RELEASE} \
-        --dependency-update \
-        --namespace ${NAMESPACE} \
-        --set docker.images.frontend=/capella/collab/frontend:${DOCKER_TAG} \
-        --set docker.images.backend=/capella/collab/backend:${DOCKER_TAG} \
-        --set docker.images.docs=/capella/collab/docs:${DOCKER_TAG} \
-        -f ../${TARGET}/general.values.yaml \
-        -f ../plain.values.yaml helm
-    - kubectl rollout restart deployment ${RELEASE}-backend
-    - kubectl rollout restart deployment ${RELEASE}-frontend
-    - kubectl rollout restart deployment ${RELEASE}-docs
+  - RELEASE=$(cat ../plain.k8s.json | jq -r ".release")
+  # prettier-ignore
+  - DOCKER_TAG=$(echo $REVISION | sed 's/[^a-zA-Z0-9.]/-/g')-$CI_COMMIT_REF_SLUG
+  - helm repo add grafana-helm-remote ${GRAFANA_HELM_CHART}
+  - >
+    helm upgrade ${RELEASE} \
+      --dependency-update \
+      --namespace ${NAMESPACE} \
+      --set docker.tag=${DOCKER_TAG} \
+      -f ../${TARGET}/general.values.yaml \
+      -f ../plain.values.yaml helm
+  - kubectl rollout restart deployment ${RELEASE}-backend
+  - kubectl rollout restart deployment ${RELEASE}-frontend
+  - kubectl rollout restart deployment ${RELEASE}-docs
 
-    - kubectl rollout status --timeout=5m deployment ${RELEASE}-backend
-    - kubectl rollout status --timeout=5m deployment ${RELEASE}-frontend
-    - kubectl rollout status --timeout=5m deployment ${RELEASE}-docs
+  - kubectl rollout status --timeout=5m deployment ${RELEASE}-backend
+  - kubectl rollout status --timeout=5m deployment ${RELEASE}-frontend
+  - kubectl rollout status --timeout=5m deployment ${RELEASE}-docs
 
 deploy:
   stage: deploy

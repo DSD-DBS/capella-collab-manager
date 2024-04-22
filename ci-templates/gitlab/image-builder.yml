@@ -15,6 +15,9 @@ variables:
   GUACAMOLE:
     value: '1'
     description: 'Build the guacamole image?'
+  SESSION_PREPARATION:
+    value: '1'
+    description: 'Build the session-preparation image?'
   REVISION:
     value: 'main'
     description: 'Revision of Github repository'
@@ -24,10 +27,14 @@ variables:
   BACKEND_IMAGE_NAME: 'capella/collab/backend'
   DOCS_IMAGE_NAME: 'capella/collab/docs'
   GUACAMOLE_IMAGE_NAME: 'capella/collab/guacamole'
+  SESSION_PREPARATION_IMAGE_NAME: 'capella/collab/session-preparation'
   DOCKER_BUILD_ARGS: '--no-cache'
   DOCKER_BUILDKIT: '1'
   BASE_IMAGE: 'debian:bookworm'
   KUBECTL_APT_REMOTE: 'https://apt.kubernetes.io/'
+
+  DEBIAN_SLIM_BASE_IMAGE: 'debian:bookworm-slim'
+  ALPINE_BASE_IMAGE: 'alpine:latest'
 
 default:
   image: $DOCKER_REGISTRY/base
@@ -66,7 +73,8 @@ default:
 
 .prepare: &prepare
   - *decrypt
-  - DOCKER_TAG=$(echo ${REVISION} | sed 's/[^a-zA-Z0-9.]/-/g')
+  # prettier-ignore
+  - DOCKER_TAG=$(echo ${REVISION} | sed 's/[^a-zA-Z0-9.]/-/g')-$CI_COMMIT_REF_SLUG
   - *github
 
 frontend:
@@ -139,7 +147,22 @@ guacamole:
         -t ${IMAGE}:${DOCKER_TAG} \
         --build-arg BASE_IMAGE=guacamole/guacamole \
         --build-arg DEBIAN_SLIM_BASE_IMAGE=$DEBIAN_SLIM_BASE_IMAGE \
-        guacamole
+        images/guacamole
     - *push
-  variables:
-    DEBIAN_SLIM_BASE_IMAGE: 'debian:bookworm-slim'
+
+session-preparation:
+  stage: build
+  rules:
+    - if: '$SESSION_PREPARATION == "1"'
+      when: always
+  script:
+    - *prepare
+    - IMAGE=${DOCKER_REGISTRY}/${SESSION_PREPARATION_IMAGE_NAME:?}
+    - *docker
+    - >
+      docker build \
+        ${DOCKER_BUILD_ARGS} \
+        -t ${IMAGE}:${DOCKER_TAG} \
+        --build-arg ALPINE_BASE_IMAGE=$ALPINE_BASE_IMAGE \
+        images/session-preparation
+    - *push

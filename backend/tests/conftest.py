@@ -4,6 +4,7 @@
 
 from capellacollab.core import database  # isort: split
 
+import logging
 import os
 import pathlib
 import typing as t
@@ -91,3 +92,8 @@ def fixture_db(
 @pytest.fixture()
 def client() -> testclient.TestClient:
     return testclient.TestClient(app, headers={"Authorization": "bearer"})
+
+
+@pytest.fixture(name="logger")
+def fixture_logger() -> logging.LoggerAdapter:
+    return logging.LoggerAdapter(logging.getLogger())

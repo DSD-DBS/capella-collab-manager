@@ -21,28 +21,23 @@ replicaCount:
   routing: 1
 
 docker:
-  # Registry for Docker Images, will be used as prefix for Docker Images
   registry:
-    internal: localhost
+    # DockerHub Registry
     external: &externalRegistry docker.io
 
-  images:
-    # Docker Image for the Frontend
-    frontend: /capella/collab/frontend
+    # GitHub Container Registry
+    github: ghcr.io
 
-    # Docker Image for the Backend
-    backend: /capella/collab/backend
+    # Capella Collaboration Manager Docker Registry
+    internal: ghcr.io/dsd-dbs/capella-collab-manager
 
-    # Docker Image serving the documentation
-    docs: /capella/collab/docs
+    # Default registry for session containers
+    # Only used for the initial deployment
+    # Can be customized in the UI after initial deployment
+    sessions: ghcr.io/dsd-dbs/capella-dockerimages
 
-    guacamole:
-      # The registry needs to specified here!
-      guacamole: docker.io/guacamole/guacamole:1.5.2
-      guacd: docker.io/guacamole/guacd:1.5.2
-
-    mocks:
-      oauth: ghcr.io/navikt/mock-oauth2-server:0.5.8
+  # Docker tag for the internal images (e.g. main)
+  tag: main
 
 general:
   # Base URL on which the service listens
@@ -103,7 +98,7 @@ database:
       # Configure the password of the external database
       password:
 
-  # Database Configuration for the T4C Manager
+  # Database Configuration for the Capella Collaboration Manager
   backend:
     # Define whether the database should also be deployed
     # in the cluster or whether it already exists externally.
@@ -182,9 +177,7 @@ guacamole:
 ########################################
 
 # Activate the development mode.
-# NEVER use this in production, it will make your application unsafe.
-# The development mode changes the following options:
-# - Initialize Papyrus and use local images per default (instead of the public Github images)
+# The deployment resources are reduced in the the development mode.
 development: false
 
 # Specify if you'd like to use the oauth mock
