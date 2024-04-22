@@ -25,7 +25,7 @@
             (selectionChange)="toolSelectionChange($event.value)"
           >
             <mat-option
-              *ngFor="let tool of toolService.tools"
+              *ngFor="let tool of toolsWithWorkspaceEnabled | async"
               [value]="tool.id"
             >
               {{ tool.name }}

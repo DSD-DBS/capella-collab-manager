@@ -74,6 +74,21 @@ class InvalidConnectionMethodIdentifierError(core_exceptions.BaseError):
         )
 
 
+class WorkspaceMountingNotAllowed(core_exceptions.BaseError):
+    def __init__(
+        self,
+        tool: tools_models.DatabaseTool,
+    ):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="Tool doesn't support workspace mounting",
+            reason=(
+                f"The tool '{tool.name}' doesn't support workspace mounting."
+            ),
+            err_code="WORKSPACE_MOUNTING_NOT_ALLOWED",
+        )
+
+
 class TooManyModelsRequestedToProvisionError(core_exceptions.BaseError):
     def __init__(self, max_number_of_models: int):
         super().__init__(

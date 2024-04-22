@@ -217,6 +217,16 @@ class ToolModelProvisioning(pydantic.BaseModel):
     )
 
 
+class PersistentWorkspaceSessionConfiguration(pydantic.BaseModel):
+    mounting_enabled: bool = pydantic.Field(
+        default=True,
+        description=(
+            "Enables workspace mounting to persistent workspace sessions of this tool. "
+            "If disabled, persistent workspace sessions can no longer be requested."
+        ),
+    )
+
+
 class ToolSessionConfiguration(pydantic.BaseModel):
     resources: Resources = pydantic.Field(default=Resources())
     environment: dict[str, str] = pydantic.Field(
@@ -238,6 +248,12 @@ class ToolSessionConfiguration(pydantic.BaseModel):
     provisioning: ToolModelProvisioning = pydantic.Field(
         default=ToolModelProvisioning(),
         description="Configuration regarding read-only sessions & automatic session provisioning.",
+    )
+    persistent_workspaces: PersistentWorkspaceSessionConfiguration = (
+        pydantic.Field(
+            default=PersistentWorkspaceSessionConfiguration(),
+            description="Configuration for persistent workspaces.",
+        )
     )
 
 

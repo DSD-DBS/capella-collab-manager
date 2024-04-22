@@ -24,9 +24,14 @@ export type ToolSessionConnectionConfiguration = {
   methods: ConnectionMethod[];
 };
 
+export type WorkspaceConfiguration = {
+  mounting_enabled: boolean;
+};
+
 export type ToolSessionConfiguration = {
   connection: ToolSessionConnectionConfiguration;
   provisioning: ToolSessionProvisioningConfiguration;
+  persistent_workspaces: WorkspaceConfiguration;
 };
 
 export type CreateTool = {
@@ -92,6 +97,9 @@ export class ToolService {
   _tools = new BehaviorSubject<Tool[] | undefined>(undefined);
   get tools(): Tool[] | undefined {
     return this._tools.getValue();
+  }
+  get tools$(): Observable<Tool[] | undefined> {
+    return this._tools.asObservable();
   }
 
   init(): void {

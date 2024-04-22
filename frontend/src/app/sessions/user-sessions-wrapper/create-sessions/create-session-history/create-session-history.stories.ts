@@ -23,7 +23,13 @@ const tool: Tool = {
   id: 1,
   name: 'Tool 1',
   integrations: { t4c: true, pure_variants: true, jupyter: false },
-  config: { connection: { methods: [] }, provisioning: {} },
+  config: {
+    connection: { methods: [] },
+    provisioning: {},
+    persistent_workspaces: {
+      mounting_enabled: true,
+    },
+  },
 };
 
 const version: ToolVersion = {

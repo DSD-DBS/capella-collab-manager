@@ -6,6 +6,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable, map } from 'rxjs';
 import {
   Session,
   SessionService,
@@ -115,5 +116,15 @@ export class CreatePersistentSessionComponent implements OnInit {
           );
         }
       });
+  }
+
+  get toolsWithWorkspaceEnabled(): Observable<Tool[] | undefined> {
+    return this.toolService.tools$.pipe(
+      map((tools) =>
+        tools?.filter(
+          (tool) => tool.config.persistent_workspaces.mounting_enabled,
+        ),
+      ),
+    );
   }
 }
