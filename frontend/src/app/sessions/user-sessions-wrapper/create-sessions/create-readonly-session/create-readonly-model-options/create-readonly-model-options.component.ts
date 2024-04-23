@@ -3,8 +3,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgFor, NgIf } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { Validators, FormBuilder } from '@angular/forms';
+import {
+  Validators,
+  FormBuilder,
+  ReactiveFormsModule,
+  FormsModule,
+} from '@angular/forms';
+import {
+  MatAutocomplete,
+  MatAutocompleteTrigger,
+  MatOptgroup,
+  MatOption,
+} from '@angular/material/autocomplete';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { filter } from 'rxjs';
 import { Model } from 'src/app/projects/models/service/model.service';
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
@@ -26,6 +42,23 @@ export type ModelOptions = {
   selector: 'create-readonly-model-options',
   templateUrl: './create-readonly-model-options.component.html',
   styleUrls: ['./create-readonly-model-options.component.css'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatCheckbox,
+    NgIf,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatAutocompleteTrigger,
+    MatError,
+    MatAutocomplete,
+    MatOptgroup,
+    NgFor,
+    MatOption,
+    MatSlideToggle,
+  ],
 })
 export class CreateReadonlyModelOptionsComponent implements OnInit {
   @Input() projectSlug!: string;

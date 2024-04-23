@@ -127,8 +127,6 @@ import { FileBrowserDialogComponent } from './sessions/user-sessions-wrapper/act
 import { FileExistsDialogComponent } from './sessions/user-sessions-wrapper/active-sessions/file-browser-dialog/file-exists-dialog/file-exists-dialog.component';
 import { CreateReadonlySessionComponent } from './sessions/user-sessions-wrapper/create-session/create-readonly-session/create-readonly-session.component';
 import { CreatePersistentSessionComponent } from './sessions/user-sessions-wrapper/create-sessions/create-persistent-session/create-persistent-session.component';
-import { CreateReadonlyModelOptionsComponent } from './sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-model-options/create-readonly-model-options.component';
-import { CreateReadonlySessionDialogComponent } from './sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-session-dialog.component';
 import { UserSessionsWrapperComponent } from './sessions/user-sessions-wrapper/user-sessions-wrapper.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { ConfigurationSettingsComponent } from './settings/core/configuration-settings/configuration-settings.component';
@@ -174,9 +172,7 @@ import { UsersProfileComponent } from './users/users-profile/users-profile.compo
     CreateModelComponent,
     CreatePersistentSessionComponent,
     CreateProjectComponent,
-    CreateReadonlyModelOptionsComponent,
     CreateReadonlySessionComponent,
-    CreateReadonlySessionDialogComponent,
     CreateT4cModelNewRepositoryComponent,
     CreateToolComponent,
     DeleteGitSettingsDialogComponent,

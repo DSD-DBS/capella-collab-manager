@@ -205,6 +205,14 @@ class ToolModelProvisioning(pydantic.BaseModel):
         ),
         examples=["/models", "/provisioned"],
     )
+    max_number_of_models: int | None = pydantic.Field(
+        default=None,
+        description=(
+            "Maximum number of models that can be provisioned. "
+            "If set to None, there is no limit."
+        ),
+        examples=[None, 1],
+    )
 
 
 class ToolSessionConfiguration(pydantic.BaseModel):

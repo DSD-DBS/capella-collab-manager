@@ -15,12 +15,17 @@ export type ConnectionMethod = {
   type: 'http' | 'guacamole';
 };
 
+export type ToolSessionProvisioningConfiguration = {
+  max_number_of_models?: number;
+};
+
 export type ToolSessionConnectionConfiguration = {
   methods: ConnectionMethod[];
 };
 
 export type ToolSessionConfiguration = {
   connection: ToolSessionConnectionConfiguration;
+  provisioning: ToolSessionProvisioningConfiguration;
 };
 
 export type CreateTool = {

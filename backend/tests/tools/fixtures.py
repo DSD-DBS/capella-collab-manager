@@ -77,14 +77,26 @@ def fixture_tool_nature(
     return nature
 
 
+@pytest.fixture(name="capella_tool", params=["6.0.0"])
+def fixture_capella_tool(db: orm.Session) -> tools_models.DatabaseTool:
+    capella_tool = tools_crud.get_tool_by_name(db, "Capella")
+    assert capella_tool
+
+    return capella_tool
+
+
 @pytest.fixture(name="capella_tool_version", params=["6.0.0"])
 def fixture_capella_tool_version(
     db: orm.Session,
+    capella_tool: tools_models.DatabaseTool,
     request: pytest.FixtureRequest,
 ) -> tools_models.DatabaseVersion:
-    return tools_crud.get_version_by_tool_id_version_name(
-        db, tools_crud.get_tool_by_name(db, "Capella").id, request.param
+    capella_tool_version = tools_crud.get_version_by_tool_id_version_name(
+        db, capella_tool.id, request.param
     )
+    assert capella_tool_version
+
+    return capella_tool_version
 
 
 @pytest.fixture(name="jupyter_tool")

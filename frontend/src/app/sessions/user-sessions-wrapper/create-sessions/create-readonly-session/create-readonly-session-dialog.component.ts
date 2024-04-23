@@ -5,8 +5,17 @@
 
 import { DialogRef } from '@angular/cdk/dialog';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
+
+import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
@@ -15,7 +24,10 @@ import {
   Model,
 } from 'src/app/projects/models/service/model.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
-import { ModelOptions } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-model-options/create-readonly-model-options.component';
+import {
+  CreateReadonlyModelOptionsComponent,
+  ModelOptions,
+} from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-model-options/create-readonly-model-options.component';
 import { ConnectionMethod } from 'src/app/settings/core/tools-settings/tool.service';
 
 @UntilDestroy()
@@ -23,8 +35,21 @@ import { ConnectionMethod } from 'src/app/settings/core/tools-settings/tool.serv
   selector: 'create-readonly-session-dialog',
   templateUrl: './create-readonly-session-dialog.component.html',
   styleUrls: ['./create-readonly-session-dialog.component.css'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatRadioGroup,
+    MatRadioButton,
+    CreateReadonlyModelOptionsComponent,
+    MatButton,
+    MatDialogClose,
+  ],
 })
 export class CreateReadonlySessionDialogComponent implements OnInit {
+  maxNumberOfModels?: number;
+  connectionMethods: ConnectionMethod[] = [];
+
   constructor(
     public sessionService: SessionService,
     @Inject(MAT_DIALOG_DATA)
@@ -60,6 +85,15 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
         continue;
       }
 
+      if (this.modelOptions.length === 0) {
+        this.connectionMethods = model.tool.config.connection.methods;
+        this.maxNumberOfModels =
+          model.tool.config.provisioning.max_number_of_models;
+        this.form.controls.connectionMethodId.setValue(
+          this.connectionMethods[0].id,
+        );
+      }
+
       this.modelOptions.push({
         model: model,
         primaryGitModel: primaryGitModel,
@@ -67,12 +101,6 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
         include: false,
         deepClone: false,
       });
-    }
-
-    if (this.modelOptions.length) {
-      this.form.controls.connectionMethodId.setValue(
-        this.modelOptions[0].model.tool.config.connection.methods[0].id,
-      );
     }
   }
 
@@ -119,8 +147,16 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
       });
   }
 
+  maxNumberOfModelsExceeded(): boolean {
+    return (
+      this.maxNumberOfModels !== null &&
+      this.maxNumberOfModels !== undefined &&
+      this.selectedModelOptions().length > this.maxNumberOfModels
+    );
+  }
+
   getSelectedConnectionMethod(): ConnectionMethod {
-    return this.modelOptions[0].model.tool.config.connection.methods.find(
+    return this.connectionMethods.find(
       (method) => method.id === this.form.controls.connectionMethodId.value,
     )!;
   }

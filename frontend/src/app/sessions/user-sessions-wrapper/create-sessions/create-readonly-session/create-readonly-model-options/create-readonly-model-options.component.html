@@ -9,44 +9,48 @@
       modelOptions.model.name
     }}</mat-checkbox>
   </h2>
-  <fieldset *ngIf="form.controls.include.value">
-    <mat-form-field appearance="fill">
-      <mat-label>Branch, tag or revision</mat-label>
-      <input
-        (ngModelChange)="filterRevisionsByPrefix($event)"
-        matInput
-        formControlName="revision"
-        [matAutocomplete]="auto"
-      />
-      <mat-error *ngIf="form.controls.revision.errors?.required">
-        A revision is required
-      </mat-error>
-      <mat-error
-        *ngIf="
-          form.controls.revision.errors?.revisionNotFoundError &&
-          form.controls.revision.value
-        "
-      >
-        {{ form.controls.revision.errors?.revisionNotFoundError }}
-      </mat-error>
-    </mat-form-field>
-    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-      <mat-optgroup label="branch">
-        <mat-option
-          *ngFor="let branch of filteredRevisions?.branches"
-          [value]="branch"
+  @if (form.controls.include.value) {
+    <fieldset>
+      <mat-form-field appearance="fill">
+        <mat-label>Branch, tag or revision</mat-label>
+        <input
+          (ngModelChange)="filterRevisionsByPrefix($event)"
+          matInput
+          formControlName="revision"
+          [matAutocomplete]="auto"
+        />
+        <mat-error *ngIf="form.controls.revision.errors?.required">
+          A revision is required
+        </mat-error>
+        <mat-error
+          *ngIf="
+            form.controls.revision.errors?.revisionNotFoundError &&
+            form.controls.revision.value
+          "
         >
-          {{ branch }}
-        </mat-option>
-      </mat-optgroup>
-      <mat-optgroup label="tag">
-        <mat-option *ngFor="let tag of filteredRevisions?.tags" [value]="tag">
-          {{ tag }}
-        </mat-option>
-      </mat-optgroup>
-    </mat-autocomplete>
-  </fieldset>
-  <fieldset *ngIf="form.controls.include.value">
-    <mat-slide-toggle formControlName="deepClone">Deep clone</mat-slide-toggle>
-  </fieldset>
+          {{ form.controls.revision.errors?.revisionNotFoundError }}
+        </mat-error>
+      </mat-form-field>
+      <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+        <mat-optgroup label="branch">
+          <mat-option
+            *ngFor="let branch of filteredRevisions?.branches"
+            [value]="branch"
+          >
+            {{ branch }}
+          </mat-option>
+        </mat-optgroup>
+        <mat-optgroup label="tag">
+          <mat-option *ngFor="let tag of filteredRevisions?.tags" [value]="tag">
+            {{ tag }}
+          </mat-option>
+        </mat-optgroup>
+      </mat-autocomplete>
+    </fieldset>
+    <fieldset>
+      <mat-slide-toggle formControlName="deepClone">
+        Deep clone
+      </mat-slide-toggle>
+    </fieldset>
+  }
 </div>

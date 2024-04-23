@@ -1,0 +1,32 @@
+{/*
+    SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+    SPDX-License-Identifier: Apache-2.0
+*/}
+
+import * as CreateReadonlySessionDialog from "./create-readonly-session-dialog.stories.ts";
+import {Meta, Title, Story, Canvas, Unstyled} from "@storybook/blocks";
+
+<Meta of={CreateReadonlySessionDialog} />
+
+<Title />
+
+The Create read-only session dialog lets users select the models they
+want to load into their read-only session.
+
+## Large devices
+
+If a model is selected and there is either no limit on the number of
+models that can be provisioned or the limit has not been reached, the
+"Start Session" button can be used to request the read-only session.
+<Story of={CreateReadonlySessionDialog.ModelSelectedAndStartSessionPossible}/>
+
+If there are no models to display, the "Start Session" button is disabled
+and a banner is displayed that there are no models with read-only support.
+
+<Story of={CreateReadonlySessionDialog.NoModelsToShow}/>
+
+If the tool only supports a limited number of models that can be deployed
+in a single session, and this limit is exceeded, the Start Session button will be
+disabled and a banner will appear indicating the maximum number of sessions possible.
+
+<Story of={CreateReadonlySessionDialog.MaxNumberOfModelsExceeded}/>
