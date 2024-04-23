@@ -13,7 +13,7 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, map, Observable, take } from 'rxjs';
+import { combineLatest, filter, map, Observable, take, tap } from 'rxjs';
 import {
   Model,
   ModelService,
@@ -24,6 +24,7 @@ import {
   Tool,
   ToolService,
   ToolVersion,
+  ToolVersionWithTool,
 } from 'src/app/settings/core/tools-settings/tool.service';
 import { CreateReadonlySessionDialogComponent } from '../../create-sessions/create-readonly-session/create-readonly-session-dialog.component';
 
@@ -35,9 +36,10 @@ import { CreateReadonlySessionDialogComponent } from '../../create-sessions/crea
 })
 export class CreateReadonlySessionComponent implements OnInit {
   projectSlug?: string;
-  models?: Model[];
+  models?: ModelWithCompatibility[];
 
-  toolVersions?: ToolVersion[];
+  relevantToolVersions?: ToolVersion[];
+  allToolVersions?: ToolVersionWithTool[];
 
   public toolSelectionForm = this.fb.group(
     {
@@ -60,24 +62,73 @@ export class CreateReadonlySessionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.modelService.models$
-      .pipe(untilDestroyed(this), filter(Boolean))
-      .subscribe((models) => (this.models = models));
-
     this.projectService.project$
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((project) => (this.projectSlug = project.slug));
 
+    this.loadToolsAndModels().subscribe(([models, allVersions]) => {
+      this.resolveVersionCompatibility(models, allVersions);
+    });
+
     this.userSessionService.loadSessions();
-    this.toolService.getTools().subscribe();
+  }
+
+  loadToolsAndModels(): Observable<[Model[], ToolVersionWithTool[]]> {
+    return combineLatest([
+      this.modelService.models$.pipe(untilDestroyed(this), filter(Boolean)),
+      this.toolService.getVersionsForTools(),
+    ]).pipe(
+      tap(([_, versions]) => {
+        this.allToolVersions = versions;
+      }),
+    );
+  }
+
+  resolveVersionCompatibility(
+    models: Model[],
+    allVersions: ToolVersionWithTool[],
+  ): void {
+    this.models = [];
+
+    for (const model of models) {
+      if (!model.version) {
+        continue;
+      }
+      const extendedModel = model as ModelWithCompatibility;
+      extendedModel.compatibleVersions = [
+        this.findVersionByID(model.version!.id, allVersions)!,
+      ];
+
+      for (const version of allVersions!) {
+        if (version.config.compatible_versions.includes(model.version!.id)) {
+          extendedModel.compatibleVersions.push(version);
+        }
+      }
+
+      this.models?.push(extendedModel);
+    }
+  }
+
+  findVersionByID(id: number, allVersions: ToolVersionWithTool[]) {
+    return allVersions.find((v) => v.id === id);
   }
 
   get tools(): Tool[] | undefined {
-    if (this.models === undefined || this.toolService.tools === undefined) {
+    if (this.models === undefined) {
       return undefined;
     }
-    const toolIds = this.models.map((m) => m.tool.id);
-    return this.toolService.tools.filter((t) => toolIds?.includes(t.id));
+    return this.removesToolDuplicates(
+      this.models
+        ?.map((m) => m.compatibleVersions.map((version) => version.tool))
+        .flat(),
+    );
+  }
+
+  removesToolDuplicates(tools: Tool[]): Tool[] {
+    return tools.filter(
+      (value, index, self) =>
+        index === self.findIndex((tool) => tool.id === value.id),
+    );
   }
 
   requestReadonlySession(): void {
@@ -85,8 +136,11 @@ export class CreateReadonlySessionComponent implements OnInit {
       const dialogRef = this.dialog.open(CreateReadonlySessionDialogComponent, {
         data: {
           projectSlug: this.projectSlug,
-          models: this.models,
-          modelVersionId: this.toolSelectionForm.value.version!.id,
+          models: this.models?.filter((model) =>
+            this.isCompatibleWithSelectedVersion(model),
+          ),
+          toolVersion: this.toolSelectionForm.value.version,
+          tool: this.toolSelectionForm.value.tool,
         },
       });
 
@@ -96,19 +150,36 @@ export class CreateReadonlySessionComponent implements OnInit {
     }
   }
 
+  isCompatibleWithSelectedVersion(model: ModelWithCompatibility): boolean {
+    return (
+      model.compatibleVersions.findIndex(
+        (version) => this.toolSelectionForm.value.version!.id === version.id,
+      ) !== -1
+    );
+  }
+
   onToolChange(tool: Tool): void {
     this.toolSelectionForm.controls.version.enable();
     this.toolSelectionForm.controls.version.patchValue(null);
-    this.toolVersions = undefined;
 
-    this.toolService
-      .getVersionsForTool(tool.id, false)
-      .subscribe((toolVersions) => {
-        const toolVersionIds = this.models?.map((m) => m.version?.id);
-        this.toolVersions = toolVersions.filter((v) =>
-          toolVersionIds?.includes(v.id),
-        );
-      });
+    this.relevantToolVersions = this.removeVersionDuplicates(
+      this.models
+        ?.map((m) => m.compatibleVersions)
+        .flat()
+        .filter((v) => v.tool.id === tool.id),
+    );
+  }
+
+  removeVersionDuplicates(
+    versions: ToolVersionWithTool[] | undefined,
+  ): ToolVersionWithTool[] | undefined {
+    if (versions === undefined) {
+      return undefined;
+    }
+    return versions.filter(
+      (value, index, self) =>
+        index === self.findIndex((version) => version.id === value.id),
+    );
   }
 
   asyncReadonlyValidator(): AsyncValidatorFn {
@@ -134,3 +205,7 @@ export class CreateReadonlySessionComponent implements OnInit {
     };
   }
 }
+
+type ModelWithCompatibility = {
+  compatibleVersions: ToolVersionWithTool[];
+} & Model;

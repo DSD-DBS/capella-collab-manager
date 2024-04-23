@@ -29,6 +29,10 @@ import {
   GitService,
   existingRevisionValidator,
 } from 'src/app/services/git/git.service';
+import {
+  Tool,
+  ToolVersion,
+} from 'src/app/settings/core/tools-settings/tool.service';
 
 export type ModelOptions = {
   model: Model;
@@ -63,6 +67,8 @@ export type ModelOptions = {
 export class CreateReadonlyModelOptionsComponent implements OnInit {
   @Input() projectSlug!: string;
   @Input() modelOptions!: ModelOptions;
+  @Input() tool!: Tool;
+  @Input() toolVersion!: ToolVersion;
 
   constructor(
     private gitService: GitService,

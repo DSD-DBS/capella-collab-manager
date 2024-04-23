@@ -14,8 +14,10 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
+
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
@@ -28,7 +30,11 @@ import {
   CreateReadonlyModelOptionsComponent,
   ModelOptions,
 } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-model-options/create-readonly-model-options.component';
-import { ConnectionMethod } from 'src/app/settings/core/tools-settings/tool.service';
+import {
+  ConnectionMethod,
+  Tool,
+  ToolVersion,
+} from 'src/app/settings/core/tools-settings/tool.service';
 
 @UntilDestroy()
 @Component({
@@ -44,6 +50,7 @@ import { ConnectionMethod } from 'src/app/settings/core/tools-settings/tool.serv
     CreateReadonlyModelOptionsComponent,
     MatButton,
     MatDialogClose,
+    MatIconModule,
   ],
 })
 export class CreateReadonlySessionDialogComponent implements OnInit {
@@ -56,7 +63,8 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
     public data: {
       projectSlug: string;
       models: Model[];
-      modelVersionId: number;
+      tool: Tool;
+      toolVersion: ToolVersion;
     },
     private router: Router,
     private toastService: ToastService,
@@ -75,23 +83,17 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
   modelOptions: ModelOptions[] = [];
 
   ngOnInit(): void {
-    const filteredModels = this.data.models.filter(
-      (model) => model.version?.id === this.data.modelVersionId,
+    this.connectionMethods = this.data.tool.config.connection.methods;
+    this.maxNumberOfModels =
+      this.data.tool.config.provisioning.max_number_of_models;
+    this.form.controls.connectionMethodId.setValue(
+      this.connectionMethods[0].id,
     );
 
-    for (const model of filteredModels) {
+    for (const model of this.data.models) {
       const primaryGitModel = getPrimaryGitModel(model);
       if (!primaryGitModel) {
         continue;
-      }
-
-      if (this.modelOptions.length === 0) {
-        this.connectionMethods = model.tool.config.connection.methods;
-        this.maxNumberOfModels =
-          model.tool.config.provisioning.max_number_of_models;
-        this.form.controls.connectionMethodId.setValue(
-          this.connectionMethods[0].id,
-        );
       }
 
       this.modelOptions.push({
@@ -122,8 +124,8 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
 
     this.sessionService
       .createSession(
-        this.modelOptions[0].model.tool.id,
-        this.modelOptions[0].model.version!.id,
+        this.data.tool.id,
+        this.data.toolVersion.id,
         this.form.controls.connectionMethodId.value!,
         'readonly',
         included.map((m) => {

@@ -5,13 +5,22 @@
 
 <div [formGroup]="form">
   <h2>
-    <mat-checkbox color="primary" formControlName="include">{{
-      modelOptions.model.name
-    }}</mat-checkbox>
+    <mat-checkbox color="primary" formControlName="include">
+      {{ modelOptions.model.name }}
+      @if (modelOptions.model.version!.id !== toolVersion.id) {
+        <div class="!text-xs italic text-gray-600">
+          This model is listed because {{ tool.name }} ({{ toolVersion.name }})
+          is compatible with
+          {{ modelOptions.model.tool.name }}
+          ({{ modelOptions.model.version!.name }})
+        </div>
+      }
+    </mat-checkbox>
   </h2>
+
   @if (form.controls.include.value) {
-    <fieldset>
-      <mat-form-field appearance="fill">
+    <fieldset class="my-2 !ml-10 flex-col items-start justify-stretch">
+      <mat-form-field appearance="fill" class="w-full">
         <mat-label>Branch, tag or revision</mat-label>
         <input
           (ngModelChange)="filterRevisionsByPrefix($event)"
@@ -46,10 +55,8 @@
           </mat-option>
         </mat-optgroup>
       </mat-autocomplete>
-    </fieldset>
-    <fieldset>
       <mat-slide-toggle formControlName="deepClone">
-        Deep clone
+        <span class="ml-1">Deep clone</span>
       </mat-slide-toggle>
     </fieldset>
   }

@@ -53,6 +53,7 @@ export type CreateToolVersion = {
 export type ToolVersionConfig = {
   is_recommended: boolean;
   is_deprecated: boolean;
+  compatible_versions: number[];
 };
 
 export type ToolVersion = {
@@ -145,6 +146,10 @@ export class ToolService {
         context: new HttpContext().set(SKIP_ERROR_HANDLING, skipErrorHandling),
       },
     );
+  }
+
+  getVersionsForTools(): Observable<ToolVersionWithTool[]> {
+    return this.http.get<ToolVersionWithTool[]>(`${this.baseURL}/*/versions`);
   }
 
   getDefaultVersion(): Observable<ToolVersion> {

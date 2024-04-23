@@ -33,6 +33,17 @@ def get_tool_by_name(
     ).scalar_one_or_none()
 
 
+def get_compatible_versions_for_tool_versions(
+    db: orm.Session,
+    tool_version: tools_models.DatabaseVersion,
+) -> list[tools_models.DatabaseVersion]:
+    return [
+        res_tool_version
+        for res_tool_version in get_versions(db)
+        if res_tool_version.id in tool_version.config.compatible_versions
+    ]
+
+
 def create_tool(
     db: orm.Session, tool: models.CreateTool
 ) -> models.DatabaseTool:
@@ -249,3 +260,15 @@ def get_backup_image_for_tool_version(db: orm.Session, version_id: int) -> str:
         )
 
     return backup_image_template.format(version=version.name)
+
+
+def remove_tool_version_from_compatible_versions_config(
+    db: orm.Session,
+    tool_version_to_update: models.DatabaseVersion,
+    tool_version_to_remove: models.DatabaseVersion,
+):
+    tool_version_to_update.config.compatible_versions.remove(
+        tool_version_to_remove.id
+    )
+    orm.attributes.flag_modified(tool_version_to_update, "config")
+    db.commit()

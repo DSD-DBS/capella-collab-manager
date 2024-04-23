@@ -7,8 +7,10 @@ from __future__ import annotations
 import typing as t
 import uuid
 
+import lxml.etree
 import pydantic
 import sqlalchemy as sa
+from lxml.html import builder
 from sqlalchemy import orm
 
 from capellacollab.core import database
@@ -328,6 +330,51 @@ class ToolVersionConfiguration(pydantic.BaseModel):
     backups: ToolBackupConfiguration = pydantic.Field(
         default=ToolBackupConfiguration(),
         description="Configuration for the backup pipelines.",
+    )
+
+    compatible_versions: list[int] = pydantic.Field(
+        default=[],
+        description=lxml.etree.tostring(
+            builder.HTML(
+                builder.DIV(
+                    "A list of tool version ids which are compatible with this tool. "
+                    "You can provide version ids of the same tool or other tools. "
+                    "When registering a tool version as compatible, the following behaviour will change: ",
+                    builder.UL(
+                        builder.LI(
+                            "Models of compatible tool versions are available when requesting a provisioned session. "
+                            "Let's illustrate this with an example: We have two tool versions A and B. "
+                            "We add the tool version id of tool A to the compatible_versions list of tool B. "
+                            "Now we can request a provisioned session of tool version B using a model of tool version A."
+                        ),
+                        builder.LI(
+                            "TeamForCapella repositories will be loaded for all compatible tools. "
+                        ),
+                    ),
+                    "Some examples of what this option can be used for: ",
+                    builder.UL(
+                        builder.LI(
+                            "Define minor versions of a tool as compatible, e.g. Capella 7.0.0 and 7.0.1. "
+                            "A provisioned Capella 7.0.1 can also load Capella 7.0.0 models."
+                        ),
+                        builder.LI(
+                            "Define py-capellambse based tools as compatible with multiple versions of Capella. "
+                            "py-capellambse can load multiple versions of Capella models. "
+                        ),
+                        builder.LI(
+                            "Define individual versions of Capella + pure::variants as compatible with corresponding Capella versions. "
+                            "In this case, TeamForCapella repositories will also be injected into Capella + pure::variants sessions. "
+                        ),
+                        builder.LI(
+                            "Restrict a tool extensions to specific versions of another tool. "
+                            "A tool extension might not be compatible with all versions of the tool it extends. "
+                        ),
+                    ),
+                )
+            ),
+            encoding=str,
+        ),
+        examples=[[1, 2], []],
     )
 
 

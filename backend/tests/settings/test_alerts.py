@@ -13,12 +13,6 @@ from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
 
-@pytest.fixture(autouse=True)
-def cleanup_notices(db: orm.Session):
-    for notice in notices_crud.get_notices(db):
-        notices_crud.delete_notice(db, notice)
-
-
 def test_get_alerts(client: TestClient, db: orm.Session, executor_name: str):
     users_crud.create_user(db, executor_name, users_models.Role.USER)
     notices_crud.create_notice(

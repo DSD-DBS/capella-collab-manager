@@ -5,7 +5,7 @@
 
 <div class="dialog">
   <form [formGroup]="form" (ngSubmit)="requestSession()">
-    <h2>Open read-only Session</h2>
+    <h2>Open Read-Only Session</h2>
 
     @if (modelOptions.length && connectionMethods.length > 1) {
       <div class="mb-2">
@@ -44,6 +44,8 @@
       <create-readonly-model-options
         [projectSlug]="data.projectSlug"
         [modelOptions]="options"
+        [tool]="data.tool"
+        [toolVersion]="data.toolVersion"
       >
       </create-readonly-model-options>
       <hr class="m-2" />
@@ -55,11 +57,14 @@
     }
 
     @if (maxNumberOfModelsExceeded()) {
-      <div class="my-1 border p-2 text-sm shadow">
-        <p class="text-error">
-          The selected tool only supports up to
-          {{ maxNumberOfModels }} provisioned model(s) at a time.
-        </p>
+      <div class="my-1 rounded border bg-error p-2 text-sm shadow">
+        <div class="flex items-center gap-2 text-white">
+          <mat-icon>warning</mat-icon>
+          <span>
+            The selected tool only supports up to
+            {{ maxNumberOfModels }} provisioned model(s) at a time.
+          </span>
+        </div>
       </div>
     }
 

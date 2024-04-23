@@ -2,10 +2,10 @@
  ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
-<div class="wrapper">
+<div class="wrapper flex flex-col">
   <h2 id="title" class="text-xl font-medium">Read-only Sessions</h2>
-  <div id="readonly-card" class="collab-card m-[10px] p-[16px]">
-    <div class="flex flex-col justify-between gap-2">
+  <div id="readonly-card" class="collab-card m-[10px] grow p-[16px]">
+    <div class="flex h-full flex-col justify-between gap-2">
       <p class="text-sm">
         Start a read-only session. Select the tool and the version. We'll show
         all matching models.
@@ -51,7 +51,7 @@
               <mat-label>Version</mat-label>
               <mat-select formControlName="version">
                 <mat-option
-                  *ngFor="let version of this.toolVersions"
+                  *ngFor="let version of this.relevantToolVersions"
                   [value]="version"
                 >
                   {{ version.name }}

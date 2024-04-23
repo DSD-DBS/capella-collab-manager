@@ -15,6 +15,7 @@ from capellacollab.projects.toolmodels.modelsources.git import (
 from capellacollab.sessions import exceptions as sessions_exceptions
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.hooks import provisioning as hooks_provisioning
+from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 
@@ -135,7 +136,7 @@ def test_provisioning_fails_too_many_models_requested(
 def test_tool_model_mismatch(
     db: orm.Session,
     user: users_models.DatabaseUser,
-    capella_tool: tools_models.DatabaseTool,
+    tool: tools_models.DatabaseTool,
     tool_version: tools_models.DatabaseVersion,
     project: projects_models.DatabaseProject,
     capella_model: toolmodels_models.DatabaseToolModel,
@@ -145,7 +146,7 @@ def test_tool_model_mismatch(
     with pytest.raises(sessions_exceptions.ToolAndModelMismatchError):
         hooks_provisioning.ProvisionWorkspaceHook().configuration_hook(
             db=db,
-            tool=capella_tool,
+            tool=tool,
             tool_version=tool_version,
             user=user,
             provisioning=[
@@ -158,3 +159,37 @@ def test_tool_model_mismatch(
                 )
             ],
         )
+
+
+def test_provision_session_with_compatible_tool_versions(
+    db: orm.Session,
+    admin: users_models.DatabaseUser,
+    tool_version: tools_models.DatabaseVersion,
+    tool: tools_models.DatabaseTool,
+    capella_tool_version: tools_models.DatabaseVersion,
+    project: projects_models.DatabaseProject,
+    capella_model: toolmodels_models.DatabaseToolModel,
+    git_model: git_models.DatabaseGitModel,
+):
+    """Make sure that provisioning is successful when the tool is compatible with the tool of the model"""
+
+    tool_version.config.compatible_versions = [capella_tool_version.id]
+    orm.attributes.flag_modified(tool_version, "config")
+    db.commit()
+
+    response = hooks_provisioning.ProvisionWorkspaceHook().configuration_hook(
+        db=db,
+        tool=tool,
+        tool_version=tool_version,
+        user=admin,
+        provisioning=[
+            sessions_models.SessionProvisioningRequest(
+                project_slug=project.slug,
+                model_slug=capella_model.slug,
+                git_model_id=git_model.id,
+                revision="main",
+                deep_clone=False,
+            )
+        ],
+    )
+    assert response["environment"]["CAPELLACOLLAB_SESSION_PROVISIONING"]
