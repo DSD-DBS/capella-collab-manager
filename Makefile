@@ -30,6 +30,8 @@ export MSYS_NO_PATHCONV := 1
 # Use Docker Buildkit on Linux
 export DOCKER_BUILDKIT=1
 
+include .env
+
 .ONESHELL:
 SHELL = /bin/bash
 .SHELLFLAGS = -euo pipefail -c
