@@ -30,6 +30,7 @@ export MSYS_NO_PATHCONV := 1
 # Use Docker Buildkit on Linux
 export DOCKER_BUILDKIT=1
 
+CREATE_ENV_FILE:=$(shell touch .env)
 include .env
 
 .ONESHELL:
