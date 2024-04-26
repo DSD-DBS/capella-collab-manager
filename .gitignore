@@ -16,3 +16,4 @@ certs/*
 .vscode
 /helm/charts/*
 /logs/*
+.env
