@@ -97,15 +97,23 @@ def raise_if_conflicting_sessions(
 
 def resolve_environment_variables(
     logger: logging.LoggerAdapter,
-    environment: dict[str, str],
-    rules: dict[str, str],
+    environment: dict[str, t.Any],
+    rules: t.Mapping[str, str | tools_models.ToolSessionEnvironment],
+    stage: tools_models.ToolSessionEnvironmentStage = tools_models.ToolSessionEnvironmentStage.AFTER,
 ) -> tuple[dict[str, str], list[core_models.Message]]:
     resolved = {}
     warnings = []
 
     for key, value in rules.items():
+        if isinstance(value, tools_models.ToolSessionEnvironment):
+            env_value = value.value
+            if value.stage != stage:
+                continue
+        else:
+            env_value = value
+
         try:
-            resolved[key] = value.format(**environment)
+            resolved[key] = env_value.format(**environment)
         except Exception:
             logger.warning(
                 "Failed to resolve environment variable '%s'",
