@@ -1,7 +1,7 @@
 /*
- * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
- * SPDX-License-Identifier: Apache-2.0
- */
+* SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+* SPDX-License-Identifier: Apache-2.0
+*/
 
 .error {
   background-color: var(--error-color);
@@ -17,21 +17,4 @@
 
 .primary {
   background-color: var(--primary-color);
-}
-
-.sessionContent {
-  margin-bottom: 5px;
-}
-
-.state {
-  color: white;
-  border-radius: 10px;
-}
-
-h2 {
-  margin-bottom: 2px;
-}
-
-#creationTime {
-  margin-top: 5px;
 }

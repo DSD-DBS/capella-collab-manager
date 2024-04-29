@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { NgIf, NgFor, NgClass, AsyncPipe } from '@angular/common';
+import { NgClass, AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCardContent } from '@angular/material/card';
@@ -30,12 +30,10 @@ import { FileBrowserDialogComponent } from './file-browser-dialog/file-browser-d
   styleUrls: ['./active-sessions.component.css'],
   standalone: true,
   imports: [
-    NgIf,
     NgxSkeletonLoaderModule,
     MatAnchor,
     RouterLink,
     MatIcon,
-    NgFor,
     NgClass,
     MatCardContent,
     MatProgressBar,
@@ -46,8 +44,6 @@ import { FileBrowserDialogComponent } from './file-browser-dialog/file-browser-d
 export class ActiveSessionsComponent {
   isReadonlySession = isReadonlySession;
   isPersistentSession = isPersistentSession;
-
-  sessions?: Session[] = undefined;
 
   constructor(
     public sessionService: SessionService,
