@@ -934,7 +934,7 @@ class KubernetesOperator:
                     "--stdin",
                     pod_name,
                     "--container",
-                    _id,
+                    "session",
                     "--",
                     "python",
                     "-",
