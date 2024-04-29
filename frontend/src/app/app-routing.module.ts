@@ -5,6 +5,7 @@
 
 import { NgModule } from '@angular/core';
 import { Data, RouterModule, Routes } from '@angular/router';
+import { PageNotFoundComponent } from 'src/app/general/404/404.component';
 import { authGuard } from 'src/app/general/auth/auth-guard/auth-guard.service';
 import { JobRunOverviewComponent } from 'src/app/projects/models/backup-settings/job-run-overview/job-run-overview.component';
 import { PipelineRunWrapperComponent } from 'src/app/projects/models/backup-settings/pipeline-runs/wrapper/pipeline-run-wrapper/pipeline-run-wrapper.component';
@@ -480,6 +481,7 @@ export const routes: Routes = [
     path: 'logout',
     component: LogoutComponent,
   },
+  { path: '**', pathMatch: 'full', component: PageNotFoundComponent },
 ];
 
 @NgModule({
