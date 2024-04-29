@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { SKIP_ERROR_HANDLING } from 'src/app/general/error-handling/error-handling.interceptor';
 import { environment } from 'src/environments/environment';
 
 export type ConnectionMethod = {
@@ -124,8 +125,26 @@ export class ToolService {
     return this.http.delete<void>(`${this.baseURL}/${tool_id}`);
   }
 
-  getVersionsForTool(toolId: number): Observable<ToolVersion[]> {
-    return this.http.get<ToolVersion[]>(`${this.baseURL}/${toolId}/versions`);
+  getVersionsForTool(
+    toolId: number,
+    skipErrorHandling: boolean,
+  ): Observable<ToolVersion[]> {
+    return this.http.get<ToolVersion[]>(`${this.baseURL}/${toolId}/versions`, {
+      context: new HttpContext().set(SKIP_ERROR_HANDLING, skipErrorHandling),
+    });
+  }
+
+  getVersionForTool(
+    toolId: number,
+    versionId: number,
+    skipErrorHandling: boolean,
+  ): Observable<ToolVersion> {
+    return this.http.get<ToolVersion>(
+      `${this.baseURL}/${toolId}/versions/${versionId}`,
+      {
+        context: new HttpContext().set(SKIP_ERROR_HANDLING, skipErrorHandling),
+      },
+    );
   }
 
   getDefaultVersion(): Observable<ToolVersion> {
@@ -208,5 +227,19 @@ export class ToolService {
       `${this.baseURL}/${toolId}/integrations`,
       toolIntegrations,
     );
+  }
+
+  getConnectionIdForTool(
+    tool: Tool,
+    connectionMethodId: string,
+  ): ConnectionMethod | undefined {
+    return tool?.config.connection.methods.find(
+      (cm) => cm.id === connectionMethodId,
+    );
+  }
+
+  getCachedToolById(toolId: number): Tool | undefined {
+    if (this._tools.value === undefined) return undefined;
+    return this._tools.value.find((t) => t.id === toolId);
   }
 }

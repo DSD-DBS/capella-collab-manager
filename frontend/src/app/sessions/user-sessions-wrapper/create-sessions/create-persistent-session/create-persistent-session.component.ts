@@ -33,7 +33,7 @@ export class CreatePersistentSessionComponent implements OnInit {
   requestInProgress = false;
 
   public toolSelectionForm = new FormGroup({
-    toolId: new FormControl(null, Validators.required),
+    toolId: new FormControl<number | null>(null, Validators.required),
     versionId: new FormControl<number | null>(
       { value: null, disabled: true },
       Validators.required,
@@ -106,7 +106,7 @@ export class CreatePersistentSessionComponent implements OnInit {
   getVersionsForTool(toolId: number): void {
     this.versions = [];
     this.toolService
-      .getVersionsForTool(toolId)
+      .getVersionsForTool(toolId, false)
       .subscribe((res: ToolVersion[]) => {
         this.versions = res;
         if (res.length) {

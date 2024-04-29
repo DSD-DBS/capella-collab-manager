@@ -70,7 +70,7 @@ export class InitModelComponent implements OnInit {
         map((model: Model) => model.tool),
         switchMap((tool: Tool) =>
           combineLatest([
-            this.toolService.getVersionsForTool(tool.id),
+            this.toolService.getVersionsForTool(tool.id, false),
             this.toolService.getNaturesForTool(tool.id),
           ]),
         ),

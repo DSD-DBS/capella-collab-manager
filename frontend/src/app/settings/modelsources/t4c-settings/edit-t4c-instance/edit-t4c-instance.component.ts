@@ -105,7 +105,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
       });
 
     this.toolService
-      .getVersionsForTool(1)
+      .getVersionsForTool(1, false)
       .pipe(filter(Boolean))
       .subscribe((capellaVersions) => (this.capellaVersions = capellaVersions));
   }

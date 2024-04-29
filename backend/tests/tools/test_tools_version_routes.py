@@ -33,6 +33,36 @@ def test_create_tool_version(
 
 
 @pytest.mark.usefixtures("admin")
+def test_get_tools_version(
+    client: testclient.TestClient,
+    tool: tools_models.DatabaseTool,
+    tool_version: tools_models.DatabaseVersion,
+):
+    """Test get a tool version"""
+    response = client.get(
+        f"/api/v1/tools/{tool.id}/versions/{tool_version.id}",
+    )
+
+    assert response.is_success
+    assert "id" in response.json()
+
+
+@pytest.mark.usefixtures("admin", "tool_version")
+def test_get_tools_versions(
+    client: testclient.TestClient,
+    tool: tools_models.DatabaseTool,
+):
+    """Test get all tool versions"""
+    response = client.get(
+        f"/api/v1/tools/{tool.id}/versions",
+    )
+
+    assert response.is_success
+    assert len(response.json()) == 1
+    assert "id" in response.json()[0]
+
+
+@pytest.mark.usefixtures("admin")
 def test_update_tools_version(
     client: testclient.TestClient,
     tool: tools_models.DatabaseTool,

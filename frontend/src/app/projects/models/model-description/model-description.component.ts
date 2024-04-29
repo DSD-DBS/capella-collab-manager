@@ -75,7 +75,7 @@ export class ModelDescriptionComponent implements OnInit {
         switchMap((model) => {
           return combineLatest([
             this.toolService.getNaturesForTool(model.tool.id),
-            this.toolService.getVersionsForTool(model.tool.id),
+            this.toolService.getVersionsForTool(model.tool.id, false),
           ]);
         }),
       )

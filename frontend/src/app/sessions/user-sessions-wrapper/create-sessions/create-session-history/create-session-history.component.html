@@ -1,0 +1,54 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+<div
+  class="mt-3 max-h-0 overflow-hidden transition-all duration-700"
+  [ngClass]="{
+    'max-h-[600px]':
+      sessionsLoaded === sessionsToBeLoaded && sessionsToBeLoaded > 0
+  }"
+>
+  <div class="flex flex-col gap-2">
+    @if (sortedResolvedHistory.length !== 0) {
+      <div class="text-sm">
+        Or quick-request one of the last requested sessions:
+      </div>
+    }
+    @for (session of sortedResolvedHistory; track $index) {
+      <button
+        class="flex w-full flex-row items-center justify-between gap-5 rounded border bg-slate-100 p-2"
+        (click)="requestSession(session)"
+      >
+        <div class="w-full flex-col items-center">
+          <div class="flex w-full flex-row items-center justify-between gap-2">
+            <div class="basis-1/4">
+              <span class="font-bold">Tool</span>
+              <div>{{ session.tool.name }}</div>
+            </div>
+            <div class="basis-1/4">
+              <span class="font-bold">Version</span>
+              <div>{{ session.version.name }}</div>
+            </div>
+            <div class="basis-1/2">
+              <span class="font-bold">Connection Method</span>
+              <div>{{ session.connectionMethod.name }}</div>
+            </div>
+          </div>
+
+          <div class="text-sm italic">
+            Last time requested on
+            {{ session.lastTimeRequested | date: "EE, dd MMM y HH:mm:ss" }}
+          </div>
+        </div>
+        <div class="flex justify-center">
+          @if (session.loading) {
+            <mat-spinner [diameter]="24"></mat-spinner>
+          } @else {
+            <mat-icon>start</mat-icon>
+          }
+        </div>
+      </button>
+    }
+  </div>
+</div>
