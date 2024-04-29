@@ -58,6 +58,9 @@ const tool: Tool = {
       ],
     },
     provisioning: { max_number_of_models: 1 },
+    persistent_workspaces: {
+      mounting_enabled: true,
+    },
   },
 };
 
