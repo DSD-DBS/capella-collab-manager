@@ -12,7 +12,7 @@ import {
 import { CreateSessionHistoryComponent } from './create-session-history.component';
 
 const meta: Meta<CreateSessionHistoryComponent> = {
-  title: 'Session Component / Session History',
+  title: 'Session Components / Session History',
   component: CreateSessionHistoryComponent,
 };
 

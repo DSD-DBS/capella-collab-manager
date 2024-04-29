@@ -18,7 +18,7 @@ import { CreateReadonlySessionDialogComponent } from './create-readonly-session-
 class MockSessionService implements Partial<SessionService> {}
 
 const meta: Meta<CreateReadonlySessionDialogComponent> = {
-  title: 'Session Component / Create Readonly Session Dialog',
+  title: 'Session Components / Create Readonly Session Dialog',
   component: CreateReadonlySessionDialogComponent,
 };
 
