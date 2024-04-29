@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -17,8 +18,26 @@ import {
   AbstractControl,
   AsyncValidatorFn,
   FormBuilder,
+  FormsModule,
+  ReactiveFormsModule,
 } from '@angular/forms';
+import {
+  MatAutocompleteTrigger,
+  MatAutocomplete,
+} from '@angular/material/autocomplete';
+import { MatButton } from '@angular/material/button';
+import { MatOption, MatOptgroup } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
+import {
+  MatFormField,
+  MatLabel,
+  MatError,
+  MatHint,
+} from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatSelect } from '@angular/material/select';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map, Observable, of } from 'rxjs';
@@ -54,6 +73,27 @@ import {
   selector: 'app-manage-git-model',
   templateUrl: './manage-git-model.component.html',
   styleUrls: ['./manage-git-model.component.css'],
+  standalone: true,
+  imports: [
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    NgFor,
+    MatOption,
+    MatError,
+    MatInput,
+    MatIcon,
+    MatHint,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatOptgroup,
+    MatSlideToggle,
+    MatButton,
+    AsyncPipe,
+  ],
 })
 export class ManageGitModelComponent implements OnInit, OnDestroy {
   @Input() asStepper?: boolean;

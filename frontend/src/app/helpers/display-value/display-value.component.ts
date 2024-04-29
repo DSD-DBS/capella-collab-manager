@@ -3,13 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
+import { NgClass, NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 
 @Component({
   selector: 'app-display-value',
   templateUrl: './display-value.component.html',
   styleUrls: ['./display-value.component.css'],
+  standalone: true,
+  imports: [NgClass, NgIf, MatTooltip, MatIcon, CdkCopyToClipboard],
 })
 export class DisplayValueComponent {
   constructor(private toastService: ToastService) {}

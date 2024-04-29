@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
@@ -11,12 +12,15 @@ import { PipelineRunService } from 'src/app/projects/models/backup-settings/pipe
 import { PipelineService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import { ProjectService } from 'src/app/projects/service/project.service';
+import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-loaders/text-line-skeleton-loader/text-line-skeleton-loader.component';
 
 @UntilDestroy()
 @Component({
   selector: 'app-view-logs-dialog',
   templateUrl: './view-logs-dialog.component.html',
   styleUrls: ['./view-logs-dialog.component.css'],
+  standalone: true,
+  imports: [NgIf, NgFor, TextLineSkeletonLoaderComponent, AsyncPipe],
 })
 export class ViewLogsDialogComponent {
   constructor(

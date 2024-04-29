@@ -2,18 +2,57 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import {
+  MatDatepickerInput,
+  MatDatepickerToggle,
+  MatDatepicker,
+} from '@angular/material/datepicker';
+import {
+  MatFormField,
+  MatLabel,
+  MatHint,
+  MatSuffix,
+} from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   TokenService,
   Token,
 } from 'src/app/users/basic-auth-service/basic-auth-token.service';
+import { DisplayValueComponent } from '../../helpers/display-value/display-value.component';
 
 @Component({
   selector: 'app-token-settings',
   templateUrl: './basic-auth-token.component.html',
   styleUrls: ['./basic-auth-token.component.css'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatHint,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatSuffix,
+    MatDatepicker,
+    MatButton,
+    DisplayValueComponent,
+    MatIcon,
+    AsyncPipe,
+    DatePipe,
+  ],
 })
 export class BasicAuthTokenComponent implements OnInit {
   password?: string;

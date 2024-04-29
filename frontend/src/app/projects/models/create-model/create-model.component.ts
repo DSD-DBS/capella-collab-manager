@@ -4,6 +4,7 @@
  */
 
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { NgClass, NgSwitch, NgSwitchCase } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -12,17 +13,38 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { MatStepper } from '@angular/material/stepper';
+import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import { ProjectService } from '../../service/project.service';
+import { CreateModelBaseComponent } from '../create-model-base/create-model-base.component';
+import { InitModelComponent } from '../init-model/init-model.component';
+import { ChooseSourceComponent } from '../model-source/choose-source.component';
+import { ManageGitModelComponent } from '../model-source/git/manage-git-model/manage-git-model.component';
+import { CreateT4cModelNewRepositoryComponent } from '../model-source/t4c/create-t4c-model-new-repository/create-t4c-model-new-repository.component';
+import { ManageT4CModelComponent } from '../model-source/t4c/manage-t4c-model/manage-t4c-model.component';
 
 @UntilDestroy()
 @Component({
   selector: 'app-create-model',
   templateUrl: './create-model.component.html',
   styleUrls: ['./create-model.component.css'],
+  standalone: true,
+  imports: [
+    MatStepper,
+    NgClass,
+    MatStep,
+    MatStepLabel,
+    CreateModelBaseComponent,
+    ChooseSourceComponent,
+    NgSwitch,
+    NgSwitchCase,
+    ManageGitModelComponent,
+    ManageT4CModelComponent,
+    CreateT4cModelNewRepositoryComponent,
+    InitModelComponent,
+  ],
 })
 export class CreateModelComponent implements OnInit {
   @ViewChild('stepper') stepper!: MatStepper;

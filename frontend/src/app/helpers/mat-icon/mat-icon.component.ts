@@ -3,12 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgClass } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-mat-icon',
   templateUrl: './mat-icon.component.html',
   styleUrls: ['./mat-icon.component.css'],
+  standalone: true,
+  imports: [MatIcon, NgClass],
 })
 export class MatIconComponent implements OnInit {
   @Input() position: MatIconPosition = null;

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgFor, NgIf, AsyncPipe, DatePipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -15,11 +16,14 @@ import {
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ProjectAuditLogService } from 'src/app/projects/project-detail/project-users/project-audit-log/service/project-audit-log.service';
+import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-loaders/text-line-skeleton-loader/text-line-skeleton-loader.component';
 
 @Component({
   selector: 'app-project-audit-log',
   templateUrl: './project-audit-log.component.html',
   styleUrls: ['./project-audit-log.component.css'],
+  standalone: true,
+  imports: [NgFor, NgIf, TextLineSkeletonLoaderComponent, AsyncPipe, DatePipe],
 })
 @UntilDestroy()
 export class ProjectAuditLogComponent implements OnInit, AfterViewInit {

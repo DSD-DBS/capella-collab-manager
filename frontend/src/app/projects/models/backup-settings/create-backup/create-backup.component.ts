@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import {
   AbstractControl,
@@ -10,11 +11,18 @@ import {
   FormGroup,
   ValidationErrors,
   ValidatorFn,
+  FormsModule,
+  ReactiveFormsModule,
 } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
 import {
   MatDialogRef as MatDialogRef,
   MAT_DIALOG_DATA,
+  MatDialogClose,
 } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatSelectionList, MatListOption } from '@angular/material/list';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import {
@@ -29,6 +37,20 @@ import { GitModelService } from 'src/app/projects/project-detail/model-overview/
   selector: 'app-create-backup',
   templateUrl: './create-backup.component.html',
   styleUrls: ['./create-backup.component.css'],
+  standalone: true,
+  imports: [
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSelectionList,
+    NgFor,
+    MatListOption,
+    MatIcon,
+    MatCheckbox,
+    MatButton,
+    MatDialogClose,
+    AsyncPipe,
+  ],
 })
 export class CreateBackupComponent implements OnInit {
   t4cAndGitModelExists = false;

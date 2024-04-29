@@ -11,9 +11,13 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { MatTabGroup } from '@angular/material/tabs';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTabGroup, MatTab, MatTabLabel } from '@angular/material/tabs';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { ApiDocumentationComponent } from '../../../../../general/api-documentation/api-documentation.component';
+import { EditorComponent as EditorComponent_1 } from '../../../../../helpers/editor/editor.component';
 import {
   CreateToolVersion,
   Tool,
@@ -25,6 +29,16 @@ import {
   selector: 'app-tool-version',
   templateUrl: './tool-version.component.html',
   styleUrls: ['./tool-version.component.css'],
+  standalone: true,
+  imports: [
+    ApiDocumentationComponent,
+    MatTabGroup,
+    MatTab,
+    MatTabLabel,
+    MatIcon,
+    EditorComponent_1,
+    MatButton,
+  ],
 })
 export class ToolVersionComponent implements AfterViewInit {
   _tool?: Tool = undefined;

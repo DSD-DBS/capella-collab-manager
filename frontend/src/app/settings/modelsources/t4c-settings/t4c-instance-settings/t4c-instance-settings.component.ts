@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgFor, NgIf, AsyncPipe } from '@angular/common';
 import {
   Component,
   OnDestroy,
@@ -11,9 +12,25 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import {
+  MatFormField,
+  MatLabel,
+  MatSuffix,
+  MatError,
+} from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
 import { MatSelectionList } from '@angular/material/list';
+import { MatTooltip } from '@angular/material/tooltip';
 import { T4CInstance } from 'src/app/services/settings/t4c-instance.service';
 import {
   CreateT4CRepository,
@@ -27,6 +44,23 @@ import { T4CRepoDeletionDialogComponent } from './t4c-repo-deletion-dialog/t4c-r
   selector: 'app-t4c-instance-settings',
   templateUrl: './t4c-instance-settings.component.html',
   styleUrls: ['./t4c-instance-settings.component.css'],
+  standalone: true,
+  imports: [
+    MatButton,
+    MatIcon,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatSuffix,
+    NgFor,
+    NgIf,
+    MatIconButton,
+    MatTooltip,
+    ReactiveFormsModule,
+    MatError,
+    AsyncPipe,
+  ],
 })
 export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
   @Input() instance?: T4CInstance;

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
@@ -11,6 +12,8 @@ import { MetadataService } from 'src/app/general/metadata/metadata.service';
   selector: 'app-footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css'],
+  standalone: true,
+  imports: [AsyncPipe],
 })
 export class FooterComponent {
   constructor(

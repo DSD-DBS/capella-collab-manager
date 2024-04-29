@@ -3,13 +3,25 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatIconAnchor, MatButton, MatAnchor } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatRipple } from '@angular/material/core';
 import {
   MatDialog,
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
@@ -29,6 +41,22 @@ import {
   selector: 'app-trigger-pipeline',
   templateUrl: './trigger-pipeline.component.html',
   styleUrls: ['./trigger-pipeline.component.css'],
+  standalone: true,
+  imports: [
+    NgIf,
+    MatIconAnchor,
+    MatIcon,
+    NgFor,
+    MatRipple,
+    FormsModule,
+    ReactiveFormsModule,
+    MatCheckbox,
+    MatButton,
+    MatAnchor,
+    MatSlideToggle,
+    MatTooltip,
+    AsyncPipe,
+  ],
 })
 export class TriggerPipelineComponent implements OnInit {
   selectedPipeline?: Pipeline = undefined;

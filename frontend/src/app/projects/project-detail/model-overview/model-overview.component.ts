@@ -3,9 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import {
+  MatAnchor,
+  MatButton,
+  MatMiniFabAnchor,
+  MatMiniFabButton,
+} from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { first, filter } from 'rxjs';
 import { ModelDiagramDialogComponent } from 'src/app/projects/models/diagrams/model-diagram-dialog/model-diagram-dialog.component';
 import {
@@ -20,12 +31,28 @@ import { UserService } from 'src/app/services/user/user.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { Project, ProjectService } from '../../service/project.service';
+import { ModelComplexityBadgeComponent } from './model-complexity-badge/model-complexity-badge.component';
 
 @UntilDestroy()
 @Component({
   selector: 'app-model-overview',
   templateUrl: './model-overview.component.html',
   styleUrls: ['./model-overview.component.css'],
+  standalone: true,
+  imports: [
+    MatAnchor,
+    RouterLink,
+    MatTooltip,
+    MatIcon,
+    MatButton,
+    NgIf,
+    NgFor,
+    NgxSkeletonLoaderModule,
+    ModelComplexityBadgeComponent,
+    MatMiniFabAnchor,
+    MatMiniFabButton,
+    AsyncPipe,
+  ],
 })
 export class ModelOverviewComponent implements OnInit {
   project?: Project;

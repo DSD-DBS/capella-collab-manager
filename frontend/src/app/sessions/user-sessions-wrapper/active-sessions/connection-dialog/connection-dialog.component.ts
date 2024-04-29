@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf } from '@angular/common';
 import { Component, Inject } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { UserService } from 'src/app/services/user/user.service';
@@ -13,11 +15,14 @@ import {
   SessionService,
   isPersistentSession,
 } from 'src/app/sessions/service/session.service';
+import { DisplayValueComponent } from '../../../../helpers/display-value/display-value.component';
 
 @Component({
   selector: 'app-connection-dialog',
   templateUrl: './connection-dialog.component.html',
   styleUrls: ['./connection-dialog.component.css'],
+  standalone: true,
+  imports: [NgIf, DisplayValueComponent, MatButton],
 })
 export class ConnectionDialogComponent {
   isPersistentSessionAlias = isPersistentSession;

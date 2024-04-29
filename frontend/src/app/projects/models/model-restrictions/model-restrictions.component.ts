@@ -3,8 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgTemplateOutlet, AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
@@ -17,6 +24,7 @@ import {
   Model,
   ModelService,
 } from 'src/app/projects/models/service/model.service';
+import { MatCheckboxLoaderComponent } from '../../../helpers/skeleton-loaders/mat-checkbox-loader/mat-checkbox-loader.component';
 import { ProjectService } from '../../service/project.service';
 
 @UntilDestroy()
@@ -24,6 +32,16 @@ import { ProjectService } from '../../service/project.service';
   selector: 'app-model-restrictions',
   templateUrl: './model-restrictions.component.html',
   styleUrls: ['./model-restrictions.component.css'],
+  standalone: true,
+  imports: [
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    MatCheckboxLoaderComponent,
+    NgTemplateOutlet,
+    MatCheckbox,
+    AsyncPipe,
+  ],
 })
 export class ModelRestrictionsComponent implements OnInit {
   loading = false;

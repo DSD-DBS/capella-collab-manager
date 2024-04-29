@@ -4,7 +4,7 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
@@ -16,6 +16,8 @@ import { ProjectService } from '../service/project.service';
   selector: 'app-project-wrapper',
   templateUrl: './project-wrapper.component.html',
   styleUrls: ['./project-wrapper.component.css'],
+  standalone: true,
+  imports: [RouterOutlet],
 })
 export class ProjectWrapperComponent implements OnInit, OnDestroy {
   constructor(

@@ -10,7 +10,9 @@ import {
   Inject,
   ViewChild,
 } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
+import { MatDivider } from '@angular/material/divider';
 import Panzoom from '@panzoom/panzoom';
 import { DiagramMetadata } from 'src/app/projects/models/diagrams/service/model-diagram.service';
 
@@ -18,6 +20,8 @@ import { DiagramMetadata } from 'src/app/projects/models/diagrams/service/model-
   selector: 'app-model-diagram-preview-dialog',
   templateUrl: './model-diagram-preview-dialog.component.html',
   styleUrls: ['./model-diagram-preview-dialog.component.css'],
+  standalone: true,
+  imports: [MatDivider, MatButton, MatDialogClose],
 })
 export class ModelDiagramPreviewDialogComponent implements AfterViewInit {
   @ViewChild('diagram')

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, Input } from '@angular/core';
 import {
@@ -15,6 +16,8 @@ import {
   selector: 'app-licences',
   templateUrl: './licences.component.html',
   styleUrls: ['./licences.component.css'],
+  standalone: true,
+  imports: [NgIf],
 })
 export class LicencesComponent implements OnInit {
   @Input() instance!: T4CInstance;

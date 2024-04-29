@@ -11,6 +11,7 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   selector: 'app-logout-redirect',
   templateUrl: './logout-redirect.component.html',
   styleUrls: ['./logout-redirect.component.css'],
+  standalone: true,
 })
 export class LogoutRedirectComponent implements OnInit {
   constructor(

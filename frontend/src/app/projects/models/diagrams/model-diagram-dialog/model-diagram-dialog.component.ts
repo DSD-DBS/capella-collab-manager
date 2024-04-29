@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor, DatePipe } from '@angular/common';
 import {
   Component,
   Inject,
@@ -10,12 +11,25 @@ import {
   ElementRef,
   QueryList,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
 import {
   MatDialog,
   MAT_DIALOG_DATA,
   MatDialogRef,
+  MatDialogClose,
 } from '@angular/material/dialog';
+import { MatDivider } from '@angular/material/divider';
+import {
+  MatFormField,
+  MatLabel,
+  MatSuffix,
+} from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
 import { saveAs } from 'file-saver';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   MatDialogPreviewData,
   ModelDiagramPreviewDialogComponent,
@@ -27,11 +41,30 @@ import {
 } from 'src/app/projects/models/diagrams/service/model-diagram.service';
 import { Model } from 'src/app/projects/models/service/model.service';
 import { Project } from 'src/app/projects/service/project.service';
+import { ModelDiagramCodeBlockComponent } from './model-diagram-code-block/model-diagram-code-block.component';
 
 @Component({
   selector: 'app-model-diagram-dialog',
   templateUrl: './model-diagram-dialog.component.html',
   styleUrls: ['./model-diagram-dialog.component.css'],
+  standalone: true,
+  imports: [
+    ModelDiagramCodeBlockComponent,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatIcon,
+    MatSuffix,
+    NgIf,
+    NgFor,
+    MatTooltip,
+    NgxSkeletonLoaderModule,
+    MatButton,
+    MatDivider,
+    MatDialogClose,
+    DatePipe,
+  ],
 })
 export class ModelDiagramDialogComponent {
   diagramMetadata?: DiagramCacheMetadata;

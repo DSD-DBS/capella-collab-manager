@@ -3,14 +3,29 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatStepper } from '@angular/material/stepper';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatButton, MatAnchor } from '@angular/material/button';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
+import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
+import { RouterLink } from '@angular/router';
 import {
   CreateModelComponent,
   CreateModelStep,
 } from 'src/app/projects/models/create-model/create-model.component';
 import { ToastService } from '../../helpers/toast/toast.service';
+import { CreateModelComponent as CreateModelComponent_1 } from '../models/create-model/create-model.component';
+import { ProjectUserSettingsComponent } from '../project-detail/project-users/project-user-settings.component';
 import { ProjectUserService } from '../project-detail/project-users/service/project-user.service';
 import { ProjectService, ProjectVisibility } from '../service/project.service';
 
@@ -18,6 +33,29 @@ import { ProjectService, ProjectVisibility } from '../service/project.service';
   selector: 'app-create-project',
   templateUrl: './create-project.component.html',
   styleUrls: ['./create-project.component.css'],
+  standalone: true,
+  imports: [
+    MatStepper,
+    MatStep,
+    MatStepLabel,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    NgIf,
+    MatError,
+    MatRadioGroup,
+    NgFor,
+    MatRadioButton,
+    MatButton,
+    MatIcon,
+    ProjectUserSettingsComponent,
+    MatAnchor,
+    CreateModelComponent_1,
+    RouterLink,
+    AsyncPipe,
+  ],
 })
 export class CreateProjectComponent implements OnInit, OnDestroy {
   @ViewChild('model_creator') model_creator!: CreateModelComponent;

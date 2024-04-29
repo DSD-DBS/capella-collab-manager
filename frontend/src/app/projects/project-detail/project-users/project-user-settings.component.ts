@@ -3,10 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { MatDivider } from '@angular/material/divider';
+import {
+  MatFormField,
+  MatLabel,
+  MatSuffix,
+} from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
+import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, take } from 'rxjs';
 import {
   InputDialogComponent,
@@ -27,6 +40,24 @@ import { Project, ProjectService } from '../../service/project.service';
 @Component({
   selector: 'app-project-user-settings',
   templateUrl: './project-user-settings.component.html',
+  standalone: true,
+  imports: [
+    NgIf,
+    MatButton,
+    MatIcon,
+    MatDivider,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatSuffix,
+    NgFor,
+    RouterLink,
+    MatIconButton,
+    MatTooltip,
+    NgxSkeletonLoaderModule,
+    AsyncPipe,
+  ],
 })
 export class ProjectUserSettingsComponent implements OnInit {
   public project?: Project;

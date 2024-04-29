@@ -4,6 +4,13 @@
  */
 
 import {
+  NgFor,
+  NgIf,
+  AsyncPipe,
+  DatePipe,
+  KeyValuePipe,
+} from '@angular/common';
+import {
   AfterViewInit,
   Component,
   ElementRef,
@@ -18,11 +25,21 @@ import { PipelineRunService } from 'src/app/projects/models/backup-settings/pipe
 import { PipelineService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import { ProjectService } from 'src/app/projects/service/project.service';
+import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-loaders/text-line-skeleton-loader/text-line-skeleton-loader.component';
 
 @Component({
   selector: 'app-job-run-overview',
   templateUrl: './job-run-overview.component.html',
   styleUrls: ['./job-run-overview.component.css'],
+  standalone: true,
+  imports: [
+    NgFor,
+    NgIf,
+    TextLineSkeletonLoaderComponent,
+    AsyncPipe,
+    DatePipe,
+    KeyValuePipe,
+  ],
 })
 @UntilDestroy()
 export class JobRunOverviewComponent implements OnInit, AfterViewInit {

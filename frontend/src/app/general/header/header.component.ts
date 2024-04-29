@@ -3,15 +3,34 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
+import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { RouterLink } from '@angular/router';
 import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { UserService } from '../../services/user/user.service';
+import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
+  standalone: true,
+  imports: [
+    MatIconButton,
+    MatIcon,
+    MatAnchor,
+    NgIf,
+    RouterLink,
+    MatMenu,
+    MatMenuItem,
+    MatButton,
+    MatMenuTrigger,
+    BreadcrumbsComponent,
+  ],
 })
 export class HeaderComponent {
   constructor(

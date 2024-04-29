@@ -3,14 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PageLayoutService } from 'src/app/page-layout/page-layout.service';
+import { AuthComponent } from '../../auth/auth.component';
 
 @Component({
   selector: 'app-logout',
   templateUrl: './logout.component.html',
   styleUrls: ['./logout.component.css'],
+  standalone: true,
+  imports: [NgIf, AuthComponent],
 })
 export class LogoutComponent implements OnInit {
   reason = '';

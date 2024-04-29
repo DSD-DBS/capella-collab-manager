@@ -5,19 +5,34 @@
 
 import { Component, ViewChild } from '@angular/core';
 
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, map, mergeMap, tap } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { ApiDocumentationComponent } from '../../../../general/api-documentation/api-documentation.component';
+import { EditorComponent as EditorComponent_1 } from '../../../../helpers/editor/editor.component';
 import { Tool, ToolService } from '../tool.service';
 import { ToolDeletionDialogComponent } from './tool-deletion-dialog/tool-deletion-dialog.component';
+import { ToolNatureComponent } from './tool-nature/tool-nature.component';
+import { ToolVersionComponent } from './tool-version/tool-version.component';
 
 @Component({
   selector: 'app-tool-details',
   templateUrl: './tool-details.component.html',
   styleUrls: ['./tool-details.component.css'],
+  standalone: true,
+  imports: [
+    ApiDocumentationComponent,
+    EditorComponent_1,
+    MatButton,
+    MatIcon,
+    ToolVersionComponent,
+    ToolNatureComponent,
+  ],
 })
 export class ToolDetailsComponent {
   @ViewChild(EditorComponent) editor: EditorComponent | undefined;
