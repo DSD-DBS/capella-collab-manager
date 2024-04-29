@@ -120,12 +120,22 @@ def request_session(
         logger,
         environment,
         tool.config.environment | connection_method.environment,
+        stage=tools_models.ToolSessionEnvironmentStage.BEFORE,
     )
     warnings += local_warnings
     environment |= local_env
 
     warnings += util.stringify_environment_variables(logger, environment)
     warnings += util.stringify_environment_variables(logger, init_environment)
+
+    local_env, local_warnings = util.resolve_environment_variables(
+        logger,
+        environment,
+        tool.config.environment | connection_method.environment,
+        stage=tools_models.ToolSessionEnvironmentStage.AFTER,
+    )
+    warnings += local_warnings
+    environment |= local_env
 
     docker_image = util.get_docker_image(version, body.session_type)
 

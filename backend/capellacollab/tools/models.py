@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import enum
 import typing as t
 import uuid
 
@@ -42,13 +43,43 @@ def uuid_factory() -> str:
     return str(uuid.uuid4())
 
 
+class ToolSessionEnvironmentStage(str, enum.Enum):
+    BEFORE = "before"
+    AFTER = "after"
+
+
+class ToolSessionEnvironment(pydantic.BaseModel):
+    stage: ToolSessionEnvironmentStage = pydantic.Field(
+        default=ToolSessionEnvironmentStage.AFTER,
+        description=(
+            "Stage of the environment variable injection. "
+            "'before' runs before the environment variable is stringified, allowing extended filtering and manipulation. "
+            "For example, you can access the path of the first provisioned model with '{CAPELLACOLLAB_SESSION_PROVISIONING[0][path]}'. "
+            "If you provide a dict, it will use Pythons default dict serialization and will not JSON serialization! "
+            "'after' runs after the environment variable is JSON serialized, allowing to access a dict in the JSON format. "
+        ),
+    )
+    value: str = pydantic.Field(
+        default={"RMT_PASSWORD": "{CAPELLACOLLAB_SESSION_TOKEN}"},
+        description=(
+            "Environment variables, which are mounted into session containers. "
+            "You can use f-strings to reference other environment variables in the value. "
+        ),
+        examples=[
+            {
+                "MY_TOOL_USERNAME_WITH_PREFIX": "test_{CAPELLACOLLAB_SESSION_REQUESTER_USERNAME}",
+            }
+        ],
+    )
+
+
 class ToolSessionConnectionMethod(pydantic.BaseModel):
     id: str = pydantic.Field(default_factory=uuid_factory)
     type: str
     name: str = pydantic.Field(default="default")
     description: str = pydantic.Field(default="")
     ports: SessionPorts
-    environment: dict[str, str] = pydantic.Field(
+    environment: dict[str, str | ToolSessionEnvironment] = pydantic.Field(
         default={},
         description=(
             "Connection method specific environment variables. "
@@ -219,7 +250,7 @@ class ToolModelProvisioning(pydantic.BaseModel):
 
 class ToolSessionConfiguration(pydantic.BaseModel):
     resources: Resources = pydantic.Field(default=Resources())
-    environment: dict[str, str] = pydantic.Field(
+    environment: dict[str, str | ToolSessionEnvironment] = pydantic.Field(
         default={"RMT_PASSWORD": "{CAPELLACOLLAB_SESSION_TOKEN}"},
         description=(
             "Environment variables, which are mounted into session containers. "

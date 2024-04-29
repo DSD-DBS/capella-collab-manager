@@ -116,6 +116,7 @@ def fixture_patch_irrelevant_request_session_calls(
 def test_environment_behaviour(
     monkeypatch: pytest.MonkeyPatch,
     operator: MockOperator,
+    logger: logging.LoggerAdapter,
 ):
     """Test the behaviour of environment variables
 
@@ -150,7 +151,7 @@ def test_environment_behaviour(
         users_models.DatabaseUser(name="test", role=users_models.Role.USER),
         None,
         operator,
-        logging.getLogger("test"),  #
+        logger,
     )
 
     env = operator.environment
@@ -176,3 +177,45 @@ def test_environment_behaviour(
         response.warnings[0].err_code
         == "ENVIRONMENT_VARIABLE_RESOLUTION_FAILED"
     )
+
+
+def test_environment_resolution_before_stage(logger: logging.LoggerAdapter):
+
+    environment = {"TEST": [{"test": "test2"}]}
+    rules = {
+        "TEST2": tools_models.ToolSessionEnvironment(
+            stage=tools_models.ToolSessionEnvironmentStage.BEFORE,
+            value="{TEST[0][test]}",
+        )
+    }
+
+    resolved, warnings = sessions_util.resolve_environment_variables(
+        logger,
+        environment,
+        rules,
+        stage=tools_models.ToolSessionEnvironmentStage.BEFORE,
+    )
+
+    assert not warnings
+    assert resolved["TEST2"] == "test2"
+
+
+def test_environment_resolution_wrong_stage(logger: logging.LoggerAdapter):
+
+    environment = {"TEST": [{"test": "test2"}]}
+    rules = {
+        "TEST2": tools_models.ToolSessionEnvironment(
+            stage=tools_models.ToolSessionEnvironmentStage.BEFORE,
+            value="{TEST[0][test]}",
+        )
+    }
+
+    resolved, warnings = sessions_util.resolve_environment_variables(
+        logger,
+        environment,
+        rules,
+        stage=tools_models.ToolSessionEnvironmentStage.AFTER,
+    )
+
+    assert not warnings
+    assert "TEST2" not in resolved
