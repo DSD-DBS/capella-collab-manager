@@ -12,6 +12,7 @@ import { applicationConfig } from '@storybook/angular';
 import { ToastrModule } from 'ngx-toastr';
 import { RouterModule } from '@angular/router';
 import { CookieModule } from 'ngx-cookie';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 setCompodocJson(docJson);
 
@@ -42,6 +43,7 @@ const preview: Preview = {
           CookieModule.withOptions(),
           RouterModule.forRoot([]),
         ),
+        importProvidersFrom(BrowserAnimationsModule),
       ],
     }),
   ],

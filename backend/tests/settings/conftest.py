@@ -16,10 +16,3 @@ def fixture_test_tool_version(db: orm.Session) -> tools_models.DatabaseVersion:
     return tools_crud.create_version(
         db, tool, tools_models.CreateToolVersion(name="test")
     )
-
-
-@pytest.fixture(name="admin_user")
-def fixture_admin_user(
-    db: orm.Session, executor_name: str
-) -> users_models.DatabaseUser:
-    return users_crud.create_user(db, executor_name, users_models.Role.ADMIN)

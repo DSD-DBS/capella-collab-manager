@@ -35,7 +35,11 @@ const primaryGitModel: GetGitModel = {
 const version: ToolVersion = {
   id: 1,
   name: 'fakeVersion',
-  config: { is_recommended: true, is_deprecated: false },
+  config: {
+    is_recommended: true,
+    is_deprecated: false,
+    compatible_versions: [],
+  },
 };
 
 const tool: Tool = {
@@ -55,6 +59,13 @@ const tool: Tool = {
     },
     provisioning: { max_number_of_models: 1 },
   },
+};
+
+const data = {
+  tool: tool,
+  toolVersion: version,
+  models: [],
+  projectSlug: '',
 };
 
 function createModelWithId(id: number): Model {
@@ -87,6 +98,7 @@ export const ModelSelectedAndStartSessionPossible: Story = {
         deepClone: false,
       },
     ],
+    data: data,
   },
   decorators: [
     moduleMetadata({
@@ -137,6 +149,39 @@ export const MaxNumberOfModelsExceeded: Story = {
         deepClone: false,
       },
     ],
+    data: data,
+  },
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: SessionService,
+          useFactory: () => new MockSessionService(),
+        },
+        { provide: MAT_DIALOG_DATA, useValue: {} },
+        { provide: DialogRef, useValue: {} },
+      ],
+    }),
+  ],
+};
+
+export const ShowNoteForCompatibleSession: Story = {
+  args: {
+    modelOptions: [
+      {
+        model: createModelWithId(1),
+        primaryGitModel: primaryGitModel,
+        revision: primaryGitModel.revision,
+        include: true,
+        deepClone: false,
+      },
+    ],
+    data: {
+      tool: { ...tool, id: 2, name: 'compatibleTool' },
+      toolVersion: { ...version, id: 2, name: 'compatibleVersion' },
+      models: [],
+      projectSlug: '',
+    },
   },
   decorators: [
     moduleMetadata({

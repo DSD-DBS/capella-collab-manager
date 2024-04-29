@@ -13,7 +13,7 @@ from capellacollab.core import exceptions as core_exceptions
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.users import models as users_models
 
-from . import crud, injectables, models
+from . import crud, exceptions, injectables, models
 
 router = fastapi.APIRouter(
     dependencies=[
@@ -104,7 +104,16 @@ def delete_tool(
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
     raise_when_tool_dependency_exist(db, tool)
+    for version in tool.versions:
+        remove_references_from_other_tool_versions(db, version)
     crud.delete_tool(db, tool)
+
+
+@router.get("/*/versions", response_model=list[models.ToolVersionWithTool])
+def get_versions_for_all_tools(
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> abc.Sequence[models.DatabaseVersion]:
+    return crud.get_versions(db)
 
 
 @router.get("/{tool_id}/versions", response_model=list[models.ToolVersionBase])
@@ -140,6 +149,7 @@ def create_tool_version(
         raise core_exceptions.ResourceAlreadyExistsError(
             "tool version", "name"
         )
+    validate_compatible_tool_versions_exist(db, body)
     return crud.create_version(db, tool, body)
 
 
@@ -181,7 +191,16 @@ def update_tool_version(
         raise core_exceptions.ResourceAlreadyExistsError(
             "tool version", "name"
         )
+    validate_version_doesnt_reference_itself(version.id, body)
+    validate_compatible_tool_versions_exist(db, body)
     return crud.update_version(db, version, body)
+
+
+def validate_version_doesnt_reference_itself(
+    id: int, tool_version: models.CreateToolVersion
+):
+    if id in tool_version.config.compatible_versions:
+        raise exceptions.ReferencedOwnToolVersionError(tool_version_id=id)
 
 
 @router.delete(
@@ -202,6 +221,7 @@ def delete_tool_version(
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
     raise_when_tool_version_dependency_exist(db, version)
+    remove_references_from_other_tool_versions(db, version)
     crud.delete_tool_version(db, version)
 
 
@@ -293,6 +313,7 @@ def delete_tool_nature(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
+
     raise_when_tool_nature_dependency_exist(db, nature)
     crud.delete_nature(db, nature)
 
@@ -322,6 +343,21 @@ def raise_when_tool_dependency_exist(
             entity_type="tool",
             dependencies=dependencies,
         )
+
+
+def remove_references_from_other_tool_versions(
+    db: orm.Session, version_to_remove: models.DatabaseVersion
+) -> None:
+    """Remove the config.compatible_versions references from other tool versions"""
+
+    for version_to_update in crud.get_versions(db):
+        if (
+            version_to_remove.id
+            in version_to_update.config.compatible_versions
+        ):
+            crud.remove_tool_version_from_compatible_versions_config(
+                db, version_to_update, version_to_remove
+            )
 
 
 def raise_when_tool_version_dependency_exist(
@@ -387,3 +423,12 @@ def raise_when_tool_nature_dependency_exist(
             entity_type="nature",
             dependencies=dependencies,
         )
+
+
+def validate_compatible_tool_versions_exist(
+    db: orm.Session, body: models.CreateToolVersion
+):
+    """Validate that all compatible versions exist in the database"""
+    for version_id in body.config.compatible_versions:
+        if not crud.get_version_by_id(db, version_id):
+            raise exceptions.ReferencedToolVersionNotFoundError(version_id)

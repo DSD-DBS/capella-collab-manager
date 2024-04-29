@@ -16,6 +16,19 @@ from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 
 
+@pytest.fixture(name="executor_name")
+def fixture_executor_name(monkeypatch: pytest.MonkeyPatch) -> str:
+    name = str(uuid.uuid1())
+
+    # pylint: disable=unused-argument
+    async def bearer_passthrough(self, request: fastapi.Request):
+        return name
+
+    monkeypatch.setattr(JWTBearer, "__call__", bearer_passthrough)
+
+    return name
+
+
 @pytest.fixture(name="unique_username")
 def fixture_unique_username() -> str:
     return str(uuid.uuid1())
@@ -51,16 +64,3 @@ def fixture_admin(
     )
     yield admin
     del app.dependency_overrides[users_injectables.get_own_user]
-
-
-@pytest.fixture(name="executor_name")
-def fixture_executor_name(monkeypatch: pytest.MonkeyPatch) -> str:
-    name = str(uuid.uuid1())
-
-    # pylint: disable=unused-argument
-    async def bearer_passthrough(self, request: fastapi.Request):
-        return name
-
-    monkeypatch.setattr(JWTBearer, "__call__", bearer_passthrough)
-
-    return name

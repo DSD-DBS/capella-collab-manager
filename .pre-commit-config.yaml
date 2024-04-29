@@ -58,6 +58,7 @@ repos:
           - sqlalchemy
           - capellambse==0.5.36
           - typer
+          - types-lxml
   - repo: local
     hooks:
       - id: pylint

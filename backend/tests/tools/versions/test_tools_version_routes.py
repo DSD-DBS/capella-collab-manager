@@ -89,6 +89,33 @@ def test_update_tools_version(
     assert response.is_success
 
 
+@pytest.mark.usefixtures("user")
+def test_get_tool_versions(
+    client: testclient.TestClient,
+    tool: tools_models.DatabaseTool,
+    tool_version: tools_models.DatabaseVersion,
+):
+    response = client.get(
+        f"/api/v1/tools/{tool.id}/versions",
+    )
+
+    assert response.is_success
+    assert response.json()[-1]["id"] == tool_version.id
+
+
+@pytest.mark.usefixtures("user")
+def test_get_all_tool_versions(
+    client: testclient.TestClient,
+    tool_version: tools_models.DatabaseVersion,
+):
+    response = client.get(
+        "/api/v1/tools/*/versions",
+    )
+
+    assert response.is_success
+    assert response.json()[-1]["id"] == tool_version.id
+
+
 @pytest.mark.usefixtures("admin")
 def test_delete_tool_version(
     client: testclient.TestClient,

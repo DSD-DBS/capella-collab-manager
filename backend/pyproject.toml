@@ -43,6 +43,7 @@ dependencies = [
   "aiohttp",
   "argon2-cffi",
   "typer",
+  "lxml",
 ]
 
 [project.urls]
@@ -64,6 +65,7 @@ dev = [
   "sqlalchemy[mypy]",
   "pytest-cov",
   "aioresponses",
+  "types-lxml",
 ]
 
 [project.entry-points."capellacollab.authentication.providers"]
@@ -223,6 +225,7 @@ extension-pkg-whitelist = "pydantic" # https://github.com/pydantic/pydantic/issu
 [tool.pylint.master]
 init-import = "yes"
 load-plugins = "pylint.extensions.bad_builtin"
+extension-pkg-allow-list = ["lxml.etree"]
 
 [tool.pylint.similarities]
 min-similarity-lines = 6

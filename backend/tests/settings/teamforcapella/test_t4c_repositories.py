@@ -13,7 +13,7 @@ from capellacollab.settings.modelsources.t4c.repositories import (
 
 
 @responses.activate
-@pytest.mark.usefixtures("admin_user")
+@pytest.mark.usefixtures("admin")
 def test_list_t4c_repositories(
     client: testclient.TestClient,
     db: orm.Session,

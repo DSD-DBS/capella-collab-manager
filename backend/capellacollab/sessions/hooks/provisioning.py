@@ -22,6 +22,7 @@ from capellacollab.projects.toolmodels.modelsources.git import (
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import exceptions as sessions_exceptions
 from capellacollab.sessions import models as sessions_models
+from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 
@@ -56,7 +57,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
 
         resolved_entries = cls._resolve_provisioning_request(db, provisioning)
         cls._verify_matching_tool_version_and_model(
-            tool_version, resolved_entries
+            db, tool_version, resolved_entries
         )
         cls._verify_model_permissions(db, user, resolved_entries)
 
@@ -106,11 +107,17 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
     @classmethod
     def _verify_matching_tool_version_and_model(
         cls,
+        db: orm.Session,
         version: tools_models.DatabaseVersion,
         resolved_entries: list[ResolvedSessionProvisioning],
     ):
+        allowed_versions = [
+            version
+        ] + tools_crud.get_compatible_versions_for_tool_versions(
+            db, tool_version=version
+        )
         for entry in resolved_entries:
-            if entry["model"].version != version:
+            if entry["model"].version not in allowed_versions:
                 raise sessions_exceptions.ToolAndModelMismatchError(
                     version=version, model=entry["model"]
                 )

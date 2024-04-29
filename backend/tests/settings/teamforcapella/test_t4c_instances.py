@@ -19,7 +19,7 @@ from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
 
-@pytest.mark.usefixtures("admin_user")
+@pytest.mark.usefixtures("admin")
 def test_create_t4c_instance(
     client: testclient.TestClient,
     db: orm.Session,
@@ -51,7 +51,7 @@ def test_create_t4c_instance(
     assert t4c_instance.name == "Test integration"
 
 
-@pytest.mark.usefixtures("admin_user")
+@pytest.mark.usefixtures("admin")
 def test_create_t4c_instance_already_existing_name(
     client: testclient.TestClient,
     t4c_instance: t4c_models.DatabaseT4CInstance,
@@ -204,7 +204,7 @@ def test_unarchive_t4c_instance(
     assert not updated_t4c_instance.is_archived
 
 
-@pytest.mark.usefixtures("admin_user")
+@pytest.mark.usefixtures("admin")
 def test_patch_t4c_instance_already_existing_name(
     client: testclient.TestClient,
     t4c_instance: t4c_models.DatabaseT4CInstance,

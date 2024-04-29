@@ -122,29 +122,7 @@ def fixture_mockoperator() -> t.Generator[MockOperator, None, None]:
     del __main__.app.dependency_overrides[operators.get_operator]
 
 
-@pytest.fixture(autouse=True, name="tool_version")
-def fixture_tool_version(
-    monkeypatch: pytest.MonkeyPatch, tool: tools_models.DatabaseTool
-) -> tools_models.DatabaseVersion:
-    version = tools_models.DatabaseVersion(
-        name="test", tool=tool, config=tools_models.ToolVersionConfiguration()
-    )
-
-    # pylint: disable=unused-argument
-    def get_existing_tool_version(
-        *args, **kwargs
-    ) -> tools_models.DatabaseVersion:
-        return version
-
-    monkeypatch.setattr(
-        tools_injectables,
-        "get_existing_tool_version",
-        get_existing_tool_version,
-    )
-    return version
-
-
-@pytest.mark.usefixtures("mock_session_injection")
+@pytest.mark.usefixtures("mock_session_injection", "tool_version")
 def test_hook_calls_during_session_request(
     monkeypatch: pytest.MonkeyPatch,
     db: orm.Session,

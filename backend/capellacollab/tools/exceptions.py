@@ -27,3 +27,29 @@ class ToolImageNotFoundError(core_exceptions.BaseError):
             reason=f"The tool with id {tool_id} doesn't have a {image_name} image.",
             err_code="TOOL_IMAGE_NOT_FOUND",
         )
+
+
+class ReferencedOwnToolVersionError(core_exceptions.BaseError):
+    def __init__(self, tool_version_id: int):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="Can't use own tool version as compatible version",
+            reason=(
+                f"You've tried to register the tool version with id {tool_version_id} as a compatible version of itself. "
+                "This is not allowed."
+            ),
+            err_code="COMPATIBLE_TOOL_VERSION_CANT_REFERENCE_OWN_TOOL_VERSION",
+        )
+
+
+class ReferencedToolVersionNotFoundError(core_exceptions.BaseError):
+    def __init__(self, tool_version_id: int):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="Can't use the specified tool version as compatible version",
+            reason=(
+                f"You've tried to register the tool version with id {tool_version_id} as a compatible version. "
+                f"A tool version with id {tool_version_id} doesn't exist."
+            ),
+            err_code="COMPATIBLE_TOOL_VERSION_NOT_FOUND",
+        )
