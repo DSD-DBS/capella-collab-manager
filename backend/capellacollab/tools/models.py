@@ -259,10 +259,14 @@ class DatabaseTool(database.Base):
     )
 
     versions: orm.Mapped[list[DatabaseVersion]] = orm.relationship(
-        default_factory=list, back_populates="tool"
+        default_factory=list,
+        back_populates="tool",
+        cascade="all, delete-orphan",
     )
     natures: orm.Mapped[list[DatabaseNature]] = orm.relationship(
-        default_factory=list, back_populates="tool"
+        default_factory=list,
+        back_populates="tool",
+        cascade="all, delete-orphan",
     )
 
 
@@ -335,7 +339,7 @@ class DatabaseVersion(database.Base):
 
     name: orm.Mapped[str]
 
-    tool_id: orm.Mapped[int | None] = orm.mapped_column(
+    tool_id: orm.Mapped[int] = orm.mapped_column(
         sa.ForeignKey("tools.id"),
         init=False,
     )
@@ -356,7 +360,7 @@ class DatabaseNature(database.Base):
     id: orm.Mapped[int] = orm.mapped_column(init=False, primary_key=True)
     name: orm.Mapped[str]
 
-    tool_id: orm.Mapped[int | None] = orm.mapped_column(
+    tool_id: orm.Mapped[int] = orm.mapped_column(
         sa.ForeignKey("tools.id"), init=False
     )
     tool: orm.Mapped[DatabaseTool] = orm.relationship(back_populates="natures")
