@@ -17,7 +17,7 @@ def test_persistent_workspace_mounting_not_allowed(
 ):
     tool.config.persistent_workspaces.mounting_enabled = False
 
-    with pytest.raises(sessions_exceptions.WorkspaceMountingNotAllowed):
+    with pytest.raises(sessions_exceptions.WorkspaceMountingNotAllowedError):
         persistent_workspace.PersistentWorkspaceHook().configuration_hook(
             operator=operators.KubernetesOperator(),
             user=user,

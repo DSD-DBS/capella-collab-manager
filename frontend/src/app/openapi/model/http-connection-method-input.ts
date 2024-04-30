@@ -10,6 +10,7 @@
  */
 
 import { Environment } from './environment';
+import { ToolSessionSharingConfigurationInput } from './tool-session-sharing-configuration-input';
 import { HTTPPortsInput } from './http-ports-input';
 
 
@@ -23,6 +24,7 @@ export interface HTTPConnectionMethodInput {
      * Connection method specific environment variables. Check the global environment field for more information. 
      */
     environment?: object;
+    sharing?: ToolSessionSharingConfigurationInput;
     redirect_url?: string;
     /**
      * Cookies, which are required to connect to the session. 

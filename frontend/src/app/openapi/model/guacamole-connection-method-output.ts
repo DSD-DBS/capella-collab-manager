@@ -9,6 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { ToolSessionSharingConfigurationOutput } from './tool-session-sharing-configuration-output';
 import { RDPPortsOutput } from './rdp-ports-output';
 import { Environment1 } from './environment1';
 
@@ -23,6 +24,7 @@ export interface GuacamoleConnectionMethodOutput {
      * Connection method specific environment variables. Check the global environment field for more information. 
      */
     environment: object;
+    sharing: ToolSessionSharingConfigurationOutput;
 }
 export namespace GuacamoleConnectionMethodOutput {
     export type TypeEnum = 'guacamole';

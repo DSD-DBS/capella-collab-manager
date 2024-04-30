@@ -5,7 +5,7 @@
 
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { UserWrapperService } from 'src/app/services/user/user.service';
-import { MockUserService } from 'src/storybook/user';
+import { mockUser, MockUserService } from 'src/storybook/user';
 import { HeaderComponent } from './header.component';
 
 const meta: Meta<HeaderComponent> = {
@@ -23,7 +23,7 @@ export const NormalUser: Story = {
       providers: [
         {
           provide: UserWrapperService,
-          useFactory: () => new MockUserService('user'),
+          useFactory: () => new MockUserService(mockUser),
         },
       ],
     }),
@@ -40,7 +40,8 @@ export const Administrator: Story = {
       providers: [
         {
           provide: UserWrapperService,
-          useFactory: () => new MockUserService('administrator'),
+          useFactory: () =>
+            new MockUserService({ ...mockUser, role: 'administrator' }),
         },
       ],
     }),

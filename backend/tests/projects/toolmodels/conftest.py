@@ -10,16 +10,10 @@ import responses
 from aioresponses import aioresponses
 from sqlalchemy import orm
 
-import capellacollab.projects.toolmodels.models as toolmodels_models
-import capellacollab.projects.toolmodels.modelsources.t4c.crud as models_t4c_crud
-import capellacollab.projects.toolmodels.modelsources.t4c.models as models_t4c_models
 import capellacollab.settings.modelsources.git.crud as git_crud
 import capellacollab.settings.modelsources.git.models as git_models
-import capellacollab.settings.modelsources.t4c.crud as settings_t4c_crud
 import capellacollab.settings.modelsources.t4c.models as t4c_models
-import capellacollab.settings.modelsources.t4c.repositories.crud as settings_t4c_repositories_crud
 import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repositories_interface
-import capellacollab.settings.modelsources.t4c.repositories.models as settings_t4c_repositories_models
 from capellacollab.core import credentials
 
 
@@ -229,27 +223,6 @@ def fixture_mock_git_get_commit_information_api(
                     ],
                     match=[responses.matchers.query_param_matcher(params)],
                 )
-
-
-@pytest.fixture(name="t4c_repository")
-def fixture_t4c_repository(
-    db: orm.Session,
-) -> settings_t4c_repositories_models.DatabaseT4CRepository:
-    t4c_instance = settings_t4c_crud.get_t4c_instances(db)[0]
-    return settings_t4c_repositories_crud.create_t4c_repository(
-        db=db, repo_name="test", instance=t4c_instance
-    )
-
-
-@pytest.fixture(name="t4c_model")
-def fixture_t4c_model(
-    db: orm.Session,
-    capella_model: toolmodels_models.DatabaseToolModel,
-    t4c_repository: settings_t4c_repositories_models.DatabaseT4CRepository,
-) -> models_t4c_models.DatabaseT4CModel:
-    return models_t4c_crud.create_t4c_model(
-        db, capella_model, t4c_repository, "default"
-    )
 
 
 @pytest.fixture(name="mock_add_user_to_t4c_repository")

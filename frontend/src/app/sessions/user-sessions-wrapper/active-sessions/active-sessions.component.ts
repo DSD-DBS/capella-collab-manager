@@ -14,7 +14,9 @@ import { RouterLink } from '@angular/router';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Session } from 'src/app/openapi';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
+import { UserWrapperService } from 'src/app/services/user/user.service';
 import { ConnectionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/connection-dialog/connection-dialog.component';
+import { SessionSharingDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/session-sharing-dialog/session-sharing-dialog.component';
 import { DeleteSessionDialogComponent } from '../../delete-session-dialog/delete-session-dialog.component';
 import {
   SessionService,
@@ -49,6 +51,7 @@ export class ActiveSessionsComponent {
     public sessionService: SessionService,
     public beautifyService: BeautifyService,
     public userSessionService: UserSessionService,
+    private userWrapperService: UserWrapperService,
     private dialog: MatDialog,
   ) {}
 
@@ -68,7 +71,17 @@ export class ActiveSessionsComponent {
     });
   }
 
+  openShareDialog(session: Session): void {
+    this.dialog.open(SessionSharingDialogComponent, {
+      data: session,
+    });
+  }
+
   uploadFileDialog(session: Session): void {
     this.dialog.open(FileBrowserDialogComponent, { data: session });
+  }
+
+  isSessionShared(session: Session): boolean {
+    return session.owner.id != this.userWrapperService.user?.id;
   }
 }

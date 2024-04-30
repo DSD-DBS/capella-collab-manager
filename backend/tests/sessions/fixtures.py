@@ -18,7 +18,7 @@ from capellacollab.users import models as users_models
 @pytest.fixture(name="session")
 def fixture_session(
     db: orm.Session,
-    user: users_models.DatabaseUser,
+    basic_user: users_models.DatabaseUser,
     tool: tools_models.DatabaseTool,
     tool_version: tools_models.DatabaseVersion,
 ) -> sessions_models.DatabaseSession:
@@ -27,7 +27,7 @@ def fixture_session(
         created_at=datetime.datetime.now(),
         type=sessions_models.SessionType.PERSISTENT,
         environment={"CAPELLACOLLAB_SESSION_TOKEN": "thisisarandomtoken"},
-        owner=user,
+        owner=basic_user,
         tool=tool,
         version=tool_version,
         connection_method_id=tool.config.connection.methods[0].id,

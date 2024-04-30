@@ -36,3 +36,14 @@ in an unknown state that looks like this:
 The only difference between a persistent session and a read-only session is the title.
 Since we only covered persistent sessions above, this is a read-only session:
 <Story of={ActiveSessions.ReadonlySessionSuccessStateStory}/>
+
+## Session sharing
+
+When the tool supports session sharing, the session owner can see a share button:
+<Story of={ActiveSessions.SessionSharingEnabled}/>
+
+When the session is shared, the names of users who have access to the session are displayed:
+<Story of={ActiveSessions.SessionSharedWithUser}/>
+
+For the user who has access to the shared session, the session looks like this:
+<Story of={ActiveSessions.SharedSession}/>

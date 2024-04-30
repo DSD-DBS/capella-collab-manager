@@ -47,7 +47,7 @@
         </b>
         <div>
           <h3
-            class="rounded-lg text-center !text-white"
+            class="rounded text-center !text-white"
             [ngClass]="sessionService.beautifyState(session.state).css"
           >
             {{ sessionService.beautifyState(session.state).text }}
@@ -56,36 +56,83 @@
             The session was created
             {{ beautifyService.beatifyDate(session.created_at) }}
           </p>
-          <span>
+          <div>
             Tool: {{ session.version.tool.name }} ({{ session.version.name }})
             <br />
             Connection Method: {{ session.connection_method?.name }}
-          </span>
+          </div>
+          @if (session.shared_with.length > 0 && !isSessionShared(session)) {
+            <div>
+              Shared with:
+              @for (
+                sharedSession of session.shared_with;
+                track sharedSession.user.id
+              ) {
+                <a
+                  class="text-primary"
+                  [routerLink]="['/user/' + sharedSession.user.id]"
+                >
+                  {{ sharedSession.user.name }}
+                </a>
+                @if (!$last) {
+                  +
+                }
+              }
+            </div>
+          }
+          @if (isSessionShared(session)) {
+            <div class="my-1 flex items-center gap-2 rounded border p-1 shadow">
+              <mat-icon>share</mat-icon>
+              <div>
+                This session is shared with you and was created by <br />
+                <a
+                  class="text-primary"
+                  [routerLink]="['/user/' + session.owner.id]"
+                  >{{ session.owner.name }}
+                </a>
+              </div>
+            </div>
+          }
         </div>
-        <div class="flex justify-between">
-          <button
-            mat-button
-            color="primary"
-            (click)="openDeletionDialog([session])"
-          >
-            Terminate
-          </button>
+        <div class="flex flex-wrap justify-between">
+          @if (!isSessionShared(session)) {
+            <button
+              mat-button
+              color="warn"
+              (click)="openDeletionDialog([session])"
+            >
+              Terminate <mat-icon>close</mat-icon>
+            </button>
+          }
+
           <button
             mat-button
             color="primary"
             (click)="openConnectDialog(session)"
             [disabled]="!sessionService.beautifyState(session.state).success"
           >
-            Connect
+            Connect <mat-icon>open_in_browser</mat-icon>
           </button>
-          <button
-            mat-button
-            color="primary"
-            (click)="uploadFileDialog(session)"
-            [disabled]="!sessionService.beautifyState(session.state).success"
-          >
-            File browser
-          </button>
+          @if (!isSessionShared(session)) {
+            <button
+              mat-button
+              color="primary"
+              (click)="openShareDialog(session)"
+              [disabled]="!session.connection_method?.sharing?.enabled"
+            >
+              Share <mat-icon> screen_share</mat-icon>
+            </button>
+          }
+          @if (!isSessionShared(session)) {
+            <button
+              mat-button
+              color="primary"
+              (click)="uploadFileDialog(session)"
+              [disabled]="!sessionService.beautifyState(session.state).success"
+            >
+              File browser <mat-icon> insert_drive_file</mat-icon>
+            </button>
+          }
         </div>
       </div>
     }

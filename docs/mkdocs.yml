@@ -46,6 +46,7 @@ nav:
               - Read-Only: user/sessions/types/read-only.md
           - Request Session: user/sessions/request.md
           - (Re-)Connect to Session: user/sessions/reconnect.md
+          - Session sharing: user/sessions/sharing.md
           - Terminate Session: user/sessions/terminate.md
           - Taking Screenshots: user/sessions/screenshots/index.md
           - Files Browser: user/sessions/files/index.md

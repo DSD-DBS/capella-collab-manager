@@ -22,6 +22,7 @@ export function createPersistentSessionWithState(state: string): Session {
     connection_method: mockHttpConnectionMethod,
     warnings: [],
     connection_method_id: 'default',
+    shared_with: [],
   };
 }
 
@@ -45,4 +46,5 @@ export const mockSuccessReadonlySession: Readonly<ReadonlySession> = {
   connection_method: mockHttpConnectionMethod,
   warnings: [],
   connection_method_id: 'default',
+  shared_with: [],
 };

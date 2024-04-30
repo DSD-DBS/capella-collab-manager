@@ -10,6 +10,7 @@
  */
 
 import { Environment } from './environment';
+import { ToolSessionSharingConfigurationInput } from './tool-session-sharing-configuration-input';
 import { RDPPortsInput } from './rdp-ports-input';
 
 
@@ -23,6 +24,7 @@ export interface GuacamoleConnectionMethodInput {
      * Connection method specific environment variables. Check the global environment field for more information. 
      */
     environment?: object;
+    sharing?: ToolSessionSharingConfigurationInput;
 }
 export namespace GuacamoleConnectionMethodInput {
     export type TypeEnum = 'guacamole';

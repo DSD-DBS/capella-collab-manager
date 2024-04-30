@@ -18,6 +18,9 @@ export const mockHttpConnectionMethod: Readonly<HTTPConnectionMethodOutput> = {
   environment: {},
   redirect_url: 'https://example.com',
   cookies: {},
+  sharing: {
+    enabled: false,
+  },
 };
 
 export const mockToolVersion: Readonly<ToolVersion> = {

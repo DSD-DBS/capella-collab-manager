@@ -39,7 +39,6 @@ class T4CIntegration(interface.HookRegistration):
         db: orm.Session,
         user: users_models.DatabaseUser,
         tool_version: tools_models.DatabaseVersion,
-        username: str,
         session_type: sessions_models.SessionType,
         **kwargs,
     ) -> interface.ConfigurationHookResult:
@@ -49,11 +48,8 @@ class T4CIntegration(interface.HookRegistration):
 
         warnings: list[core_models.Message] = []
 
-        # When using a different tool with TeamForCapella support (e.g., Capella + pure::variants),
-        # the version ID doesn't match the version from the T4C integration.
-        # We have to find the matching Capella version by name.
         t4c_repositories = repo_crud.get_user_t4c_repositories(
-            db, tool_version.name, user
+            db, tool_version, user
         )
 
         t4c_json = json.dumps(
@@ -93,7 +89,7 @@ class T4CIntegration(interface.HookRegistration):
                     password=environment["T4C_PASSWORD"],
                     is_admin=auth_injectables.RoleVerification(
                         required_role=users_models.Role.ADMIN, verify=False
-                    )(username, db),
+                    )(user.name, db),
                 )
             except requests.RequestException:
                 warnings.append(
@@ -130,9 +126,14 @@ class T4CIntegration(interface.HookRegistration):
     def session_connection_hook(  # type: ignore[override]
         self,
         db_session: sessions_models.DatabaseSession,
+        user: users_models.DatabaseUser,
         **kwargs,
     ) -> interface.SessionConnectionHookResult:
         if db_session.type != sessions_models.SessionType.PERSISTENT:
+            return interface.SessionConnectionHookResult()
+
+        if db_session.owner != user:
+            # The session is shared, don't provide the T4C token.
             return interface.SessionConnectionHookResult()
 
         return interface.SessionConnectionHookResult(
@@ -145,7 +146,7 @@ class T4CIntegration(interface.HookRegistration):
         session: sessions_models.DatabaseSession,
     ):
         for repository in repo_crud.get_user_t4c_repositories(
-            db, session.version.name, session.owner
+            db, session.version, session.owner
         ):
             try:
                 repo_interface.remove_user_from_repository(

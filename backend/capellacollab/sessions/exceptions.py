@@ -30,6 +30,16 @@ class SessionNotOwnedError(core_exceptions.BaseError):
         )
 
 
+class SessionAlreadySharedError(core_exceptions.BaseError):
+    def __init__(self, username: str):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            title="Session already shared with user",
+            reason=(f"The session is already shared with user '{username}'. "),
+            err_code="SESSION_ALREADY_SHARED",
+        )
+
+
 class SessionForbiddenError(core_exceptions.BaseError):
     def __init__(self):
         super().__init__(
@@ -56,6 +66,18 @@ class UnsupportedSessionTypeError(core_exceptions.BaseError):
                 f"The tool {tool_name} doesn't support the session type '{session_type.value}'."
             ),
             err_code="SESSION_TYPE_UNSUPPORTED",
+        )
+
+
+class SessionSharingNotSupportedError(core_exceptions.BaseError):
+    def __init__(self, tool_name: str, connection_method_name: str):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="Session sharing not supported",
+            reason=(
+                f"The connection method '{connection_method_name}' of tool '{tool_name}' doesn't support session sharing.'."
+            ),
+            err_code="SESSION_SHARING_UNSUPPORTED",
         )
 
 
@@ -109,7 +131,7 @@ class InvalidConnectionMethodIdentifierError(core_exceptions.BaseError):
         )
 
 
-class WorkspaceMountingNotAllowed(core_exceptions.BaseError):
+class WorkspaceMountingNotAllowedError(core_exceptions.BaseError):
     def __init__(
         self,
         tool_name: str,

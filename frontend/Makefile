@@ -19,12 +19,12 @@ storybook:
 	ng run capellacollab:storybook
 
 openapi:
-	rm -rf src/app/openapi && mkdir -p src/app/openapi
 	python postprocess_openapi_schema.py
+	mkdir -p /tmp/openapi
 	docker run --rm \
   		-v /tmp/openapi.json:/tmp/openapi.json \
 		-v $$(pwd)/openapi_templates:/tmp/openapi_templates \
-		-v $$(pwd)/src/app/openapi:/tmp/output \
+		-v /tmp/openapi:/tmp/output \
 		-u $$(id -u $${USER}):$$(id -g $${USER}) \
 		openapitools/openapi-generator-cli:v7.5.0 generate \
 			-i /tmp/openapi.json \
@@ -33,5 +33,6 @@ openapi:
 			--additional-properties=fileNaming=kebab-case,legacyDiscriminatorBehavior=false \
 			-g typescript-angular \
 			-o /tmp/output
-	cp ../LICENSES/.license_header_cc0.txt src/app/openapi/.openapi-generator/FILES.license
-	cp ../LICENSES/.license_header_cc0.txt src/app/openapi/.openapi-generator/VERSION.license
+	cp ../LICENSES/.license_header_cc0.txt /tmp/openapi/.openapi-generator/FILES.license
+	cp ../LICENSES/.license_header_cc0.txt /tmp/openapi/.openapi-generator/VERSION.license
+	rsync -avh --delete /tmp/openapi/ $$(pwd)/src/app/openapi

@@ -14,6 +14,7 @@ import { SessionType } from './session-type';
 import { Message } from './message';
 import { ToolVersionWithTool } from './tool-version-with-tool';
 import { ToolSessionConnectionMethod } from './tool-session-connection-method';
+import { SessionSharing } from './session-sharing';
 
 
 export interface Session { 
@@ -27,6 +28,7 @@ export interface Session {
     last_seen: string;
     connection_method_id: string;
     connection_method: ToolSessionConnectionMethod | null;
+    shared_with: Array<SessionSharing>;
 }
 export namespace Session {
 }

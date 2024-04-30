@@ -1,0 +1,28 @@
+{/*
+    SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+    SPDX-License-Identifier: Apache-2.0
+*/}
+
+import * as ConnectionDialogComponent from './connection-dialog.stories.ts'
+import { Meta, Title, Story, Canvas, Unstyled } from '@storybook/blocks'
+
+<Meta of={ConnectionDialogComponent} />
+
+<Title />
+
+When the TeamForCapella integration is disabled,
+the corresponding section is not displayed:
+
+<Story of={ConnectionDialogComponent.WithoutTeamForCapella} />
+
+When the TeamForCapella integration is enabled and a token is generated, it is displayed:
+
+<Story of={ConnectionDialogComponent.SharedSession} />
+
+When the session is shared, the token is not exposed:
+
+<Story of={ConnectionDialogComponent.WithSessionToken} />
+
+In other cases where no token is generated, another message is displayed:
+
+<Story of={ConnectionDialogComponent.WithoutSessionToken} />

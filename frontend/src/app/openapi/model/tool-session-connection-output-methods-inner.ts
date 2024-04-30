@@ -9,6 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { ToolSessionSharingConfigurationOutput } from './tool-session-sharing-configuration-output';
 import { HTTPConnectionMethodOutput } from './http-connection-method-output';
 import { GuacamoleConnectionMethodOutput } from './guacamole-connection-method-output';
 import { HTTPPortsOutput } from './http-ports-output';
@@ -25,6 +26,7 @@ export interface ToolSessionConnectionOutputMethodsInner {
      * Connection method specific environment variables. Check the global environment field for more information. 
      */
     environment: { [key: string]: Environment1; };
+    sharing: ToolSessionSharingConfigurationOutput;
     redirect_url: string;
     /**
      * Cookies, which are required to connect to the session. 

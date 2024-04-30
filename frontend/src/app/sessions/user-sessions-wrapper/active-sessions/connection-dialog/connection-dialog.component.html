@@ -3,34 +3,35 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div
-  *ngIf="
-    isPersistentSessionAlias(session) &&
-    session.version?.tool?.integrations?.t4c
-  "
->
+<h1 class="mx-4 mt-4 text-lg font-bold">Connect to Session</h1>
+@if (
+  isPersistentSessionAlias(session) && session.version.tool.integrations.t4c
+) {
   <div class="m-m-card">
     <div class="mb-1 text-base font-bold">TeamForCapella session token</div>
-    If you'd like to connect to TeamForCapella while working with Capella,
-    <br />
-    please copy your session token and enter it when prompted in your Capella
-    session.
-    <br />
-    You can always return to this dialog by clicking on "Connect" in the "Active
-    sessions" overview. <br />
-    <div *ngIf="connectionInfo?.t4c_token">
+    @if (connectionInfo?.t4c_token) {
+      If you'd like to connect to TeamForCapella while working with Capella,
+      <br />
+      please copy your session token and enter it when prompted in your Capella
+      session.
+      <br />
+      You can always return to this dialog by clicking on "Connect" in the
+      "Active sessions" overview. <br />
       <app-display-value
         [value]="connectionInfo?.t4c_token"
         [blurValue]="true"
         valueName="TeamForCapella token"
       ></app-display-value>
-    </div>
-    <div *ngIf="!connectionInfo?.t4c_token">
-      No session token was generated for your session.
-    </div>
+    } @else {
+      @if (userService.user?.id && userService.user?.id !== session.owner.id) {
+        You can't access the TeamForCapella token of a shared session.
+      } @else {
+        No session token was generated for your session.
+      }
+    }
   </div>
   <hr />
-</div>
+}
 
 <div class="m-m-card">
   <div class="mb-1 text-base font-bold">Connect to the session</div>

@@ -15,7 +15,7 @@ import { UserWrapperService } from 'src/app/services/user/user.service';
 import { dialogWrapper } from 'src/storybook/decorators';
 import { mockPrimaryGitModel } from 'src/storybook/git';
 import { mockTeamForCapellaRepository } from 'src/storybook/t4c';
-import { MockUserService } from 'src/storybook/user';
+import { MockUserService, mockUser } from 'src/storybook/user';
 
 const meta: Meta<TriggerPipelineComponent> = {
   title: 'Pipeline Components / Trigger Pipeline',
@@ -129,7 +129,8 @@ export const ForcePipelineDeletion: Story = {
         },
         {
           provide: UserWrapperService,
-          useFactory: () => new MockUserService('administrator'),
+          useFactory: () =>
+            new MockUserService({ ...mockUser, role: 'administrator' }),
         },
       ],
     }),

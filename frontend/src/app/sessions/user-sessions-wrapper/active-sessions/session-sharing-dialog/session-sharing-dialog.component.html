@@ -1,0 +1,115 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="m-m-card max-h-[95vh]">
+  <h1 class="text-lg font-bold">
+    Share your {{ session.version.tool.name }} session with others
+  </h1>
+  <ul class="my-2 ml-6 list-outside list-disc text-base leading-relaxed">
+    <li>
+      Others will get <b>full access to your session</b> and can act on your
+      behalf. Make sure to <b>trust the entered users</b> and to monitor the
+      session at any time.
+    </li>
+    <li>
+      The session will be shared until it is terminated.
+      <b>To revoke session access for a user, terminate your session.</b>
+    </li>
+    <li>
+      Once shared, the session will appear in the user's active sessions list.
+      The invited users can connect to the session as known from own sessions.
+    </li>
+    <li>
+      The invited users can't terminate the session or share the session to
+      other users.
+    </li>
+  </ul>
+
+  <form [formGroup]="form" (submit)="submit()">
+    <div class="mt-1">
+      <div class="mb-3">
+        Enter the usernames you want to share the session with:
+      </div>
+      <mat-form-field
+        subscriptSizing="dynamic"
+        appearance="outline"
+        class="w-full"
+      >
+        <mat-label>Usernames</mat-label>
+        <mat-chip-grid #chipGrid formControlName="username" tabIndex="-1">
+          @for (user of users; track user.username) {
+            <mat-chip-row
+              [ngClass]="{
+                '!bg-green-300': user.state === 'success',
+                '!bg-red-300': user.state === 'error',
+              }"
+              [removable]="user.state !== 'success'"
+              (removed)="removeUser(user.username)"
+              [disableRipple]="true"
+              [matTooltip]="user.tooltip"
+            >
+              <mat-icon matChipAvatar>
+                @switch (user.state) {
+                  @case ("success") {
+                    check
+                  }
+                  @case ("pending") {
+                    hourglass_empty
+                  }
+                  @case ("error") {
+                    error
+                  }
+                }
+              </mat-icon>
+              {{ user.username }}
+              @if (user.state !== "success") {
+                <button matChipRemove aria-label="Remove user">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              }
+            </mat-chip-row>
+          }
+          <input
+            placeholder="New username..."
+            class="!h-[40px]"
+            [matChipInputFor]="chipGrid"
+            [matChipInputAddOnBlur]="true"
+            (matChipInputTokenEnd)="addUser($event)"
+          />
+        </mat-chip-grid>
+      </mat-form-field>
+      <div class="mx-1 my-2 text-sm italic text-gray-500">
+        For privacy reasons, we're not able to offer auto-completion for
+        usernames. Make sure to enter the correct username (case-sensitive).
+        <br />
+        To determine the username of another user, ask the user to navigate to
+        "Menu" > "Profile".
+      </div>
+    </div>
+
+    <div class="flex flex-wrap justify-between gap-2 pb-2">
+      <div>
+        <mat-checkbox formControlName="confirmation" color="primary">
+          <span
+            [ngClass]="{
+              'text-warn': !form.controls.confirmation.value,
+            }"
+          >
+            I've read the above warnings and take full responsibility for my
+            session.
+          </span>
+        </mat-checkbox>
+      </div>
+      <button
+        type="submit"
+        color="primary"
+        mat-stroked-button
+        [disabled]="!this.form.valid || loading"
+      >
+        Submit <mat-icon>send</mat-icon>
+      </button>
+    </div>
+  </form>
+</div>

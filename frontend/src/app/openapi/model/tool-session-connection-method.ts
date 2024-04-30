@@ -10,6 +10,7 @@
  */
 
 import { SessionPorts } from './session-ports';
+import { ToolSessionSharingConfigurationOutput } from './tool-session-sharing-configuration-output';
 import { Environment1 } from './environment1';
 
 
@@ -23,5 +24,6 @@ export interface ToolSessionConnectionMethod {
      * Connection method specific environment variables. Check the global environment field for more information. 
      */
     environment: object;
+    sharing: ToolSessionSharingConfigurationOutput;
 }
 

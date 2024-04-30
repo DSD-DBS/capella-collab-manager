@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { BehaviorSubject } from 'rxjs';
 import { User } from 'src/app/openapi';
 import {
   UserRole,
@@ -18,14 +19,17 @@ export const mockUser: Readonly<User> = {
 };
 
 export class MockUserService implements Partial<UserWrapperService> {
-  role: UserRole;
+  _user = new BehaviorSubject<User | undefined>(undefined);
+  user$ = this._user.asObservable();
+  user: User | undefined = mockUser;
 
-  constructor(role: UserRole) {
-    this.role = role;
+  constructor(user: User) {
+    this._user.next(user);
+    this.user = user;
   }
 
   validateUserRole(requiredRole: UserRole): boolean {
     const roles = ['user', 'administrator'];
-    return roles.indexOf(requiredRole) <= roles.indexOf(this.role);
+    return roles.indexOf(requiredRole) <= roles.indexOf(this.user!.role);
   }
 }

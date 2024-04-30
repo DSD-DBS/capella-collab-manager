@@ -160,10 +160,13 @@ def get_eclipse_session_configuration() -> (
                             else "{CAPELLACOLLAB_ORIGIN_BASE_URL}"
                         ),
                     },
-                    redirect_url="{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}{CAPELLACOLLAB_SESSIONS_BASE_PATH}/?floating_menu=0&path={CAPELLACOLLAB_SESSIONS_BASE_PATH}/",
+                    redirect_url="{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}{CAPELLACOLLAB_SESSIONS_BASE_PATH}/?floating_menu=0&sharing=1&path={CAPELLACOLLAB_SESSIONS_BASE_PATH}/",
                     cookies={
                         "token": "{CAPELLACOLLAB_SESSION_TOKEN}",
                     },
+                    sharing=tools_models.ToolSessionSharingConfiguration(
+                        enabled=True
+                    ),
                 ),
             ]
         ),
@@ -287,6 +290,9 @@ def create_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
                         description="The only available connection method for Jupyter.",
                         ports=tools_models.HTTPPorts(http=8888, metrics=9118),
                         redirect_url="{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}{CAPELLACOLLAB_SESSIONS_BASE_PATH}/lab?token={CAPELLACOLLAB_SESSION_TOKEN}",
+                        sharing=tools_models.ToolSessionSharingConfiguration(
+                            enabled=True
+                        ),
                     ),
                 ]
             ),
