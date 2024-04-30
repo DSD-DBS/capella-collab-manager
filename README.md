@@ -96,6 +96,8 @@ cd capella-collab-manager
 
 # Create a Local k3d Cluster
 make create-cluster
+# Set up helm
+make setup-helm
 ```
 
 Then, choose one of the three options and run the corresponding command:

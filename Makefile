@@ -81,6 +81,10 @@ deploy-t4c: build t4c-client helm-deploy rollout open
 
 deploy-without-build: helm-deploy rollout open
 
+setup-helm:
+	helm repo add grafana https://grafana.github.io/helm-charts
+	helm dependency build helm
+
 helm-deploy:
 	@k3d cluster list $(CLUSTER_NAME) >/dev/null || $(MAKE) create-cluster
 	@kubectl create namespace $(SESSION_NAMESPACE) 2> /dev/null || true
