@@ -56,7 +56,7 @@ repos:
           - fastapi
           - pydantic
           - sqlalchemy
-          - capellambse==0.5.36
+          - capellambse
           - typer
           - types-lxml
   - repo: local
