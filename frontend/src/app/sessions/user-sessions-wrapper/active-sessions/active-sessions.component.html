@@ -1,110 +1,103 @@
 <!--
- ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
- ~ SPDX-License-Identifier: Apache-2.0
- -->
+~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+~ SPDX-License-Identifier: Apache-2.0
+-->
 
-<div class="flex-center">
-  <h1 class="text-2xl">Active Sessions</h1>
-</div>
+<h1 class="text-2xl">Active Sessions</h1>
 
-<ngx-skeleton-loader
-  *ngIf="(userSessionService.sessions$ | async) === undefined"
-  appearance="circle"
-  [theme]="{
-    'border-radius': '5px',
-    height: '240px',
-    width: '432px',
-    border: '1px solid white'
-  }"
-></ngx-skeleton-loader>
-
-<div
-  *ngIf="(userSessionService.sessions$ | async)?.length === 0"
-  class="mat-card collab-card w-full"
->
-  <h2 class="mb-3 text-xl font-medium">No active sessions</h2>
-  <div class="text-sm">
-    There are no active sessions for your user in our system. <br />
-  </div>
-</div>
-
-<div
-  class="flex flex-col gap-2"
-  *ngIf="(userSessionService.sessions$ | async)?.length"
->
-  <a
-    class="w-full max-w-[85vw]"
-    matInput
-    mat-stroked-button
-    color="primary"
-    type="submit"
-    routerLink="/session"
-  >
-    <span> Open internal session viewer </span>
-    <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
-  </a>
-
-  <div
-    *ngFor="let session of userSessionService.sessions$ | async"
-    class="collab-card"
-  >
-    <div>
-      <b>
-        <h2 *ngIf="isPersistentSession(session)">
-          Persistent workspace session
-        </h2>
-        <h2 *ngIf="isReadonlySession(session)">Read-only session</h2>
-      </b>
+@if ((userSessionService.sessions$ | async) === undefined) {
+  <ngx-skeleton-loader
+    appearance="circle"
+    [theme]="{
+      'border-radius': '5px',
+      height: '240px',
+      width: '432px',
+      border: '1px solid white'
+    }"
+  ></ngx-skeleton-loader>
+} @else if ((userSessionService.sessions$ | async)?.length === 0) {
+  <div class="mat-card collab-card w-full">
+    <h2 class="mb-3 text-xl font-medium">No active sessions</h2>
+    <div class="text-sm">
+      There are no active sessions for your user in our system. <br />
     </div>
-    <div class="sessionContent">
-      <h3
-        class="state text-center"
-        [ngClass]="sessionService.beautifyState(session.state).css"
-      >
-        {{ sessionService.beautifyState(session.state).text }}
-      </h3>
-      <p id="creationTime">
-        The session was created
-        {{ beautifyService.beatifyDate(session.created_at) }}
-      </p>
-      <span>
-        Tool: {{ session.version!.tool.name }} ({{ session.version!.name }})
-        <br />
-        Connection Method: {{ session.connection_method?.name }}
-      </span>
+  </div>
+} @else if ((userSessionService.sessions$ | async)?.length !== 0) {
+  <div class="flex flex-col gap-2">
+    <a
+      class="w-full max-w-[85vw]"
+      matInput
+      mat-stroked-button
+      color="primary"
+      type="submit"
+      routerLink="/session"
+    >
+      <span> Open internal session viewer </span>
+      <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
+    </a>
 
-      <div *ngIf="session.download_in_progress" class="mat-card collab-card">
-        <mat-card-content>
-          <p>Your download is being prepared…</p>
-          <p>Depending on the model size, this can take a few minutes.</p>
-          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-        </mat-card-content>
+    @for (session of userSessionService.sessions$ | async; track session.id) {
+      <div class="collab-card">
+        <b>
+          @if (isPersistentSession(session)) {
+            <h2>Persistent workspace session</h2>
+          } @else if (isReadonlySession(session)) {
+            <h2>Read-only session</h2>
+          }
+        </b>
+        <div>
+          <h3
+            class="rounded-lg text-center !text-white"
+            [ngClass]="sessionService.beautifyState(session.state).css"
+          >
+            {{ sessionService.beautifyState(session.state).text }}
+          </h3>
+          <p class="mt-1.5">
+            The session was created
+            {{ beautifyService.beatifyDate(session.created_at) }}
+          </p>
+          <span>
+            Tool: {{ session.version!.tool.name }} ({{ session.version!.name }})
+            <br />
+            Connection Method: {{ session.connection_method?.name }}
+          </span>
+
+          @if (session.download_in_progress) {
+            <div class="mat-card collab-card">
+              <mat-card-content>
+                <p>Your download is being prepared…</p>
+                <p>Depending on the model size, this can take a few minutes.</p>
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              </mat-card-content>
+            </div>
+          }
+        </div>
+        <div class="flex justify-between">
+          <button
+            mat-button
+            color="primary"
+            (click)="openDeletionDialog([session])"
+          >
+            Terminate
+          </button>
+          <button
+            mat-button
+            color="primary"
+            (click)="openConnectDialog(session)"
+            [disabled]="!sessionService.beautifyState(session.state).success"
+          >
+            Connect
+          </button>
+          <button
+            mat-button
+            color="primary"
+            (click)="uploadFileDialog(session)"
+            [disabled]="!sessionService.beautifyState(session.state).success"
+          >
+            File browser
+          </button>
+        </div>
       </div>
-    </div>
-    <div class="flex justify-between">
-      <button
-        mat-button
-        color="primary"
-        (click)="openDeletionDialog([session])"
-      >
-        Terminate
-      </button>
-      <button
-        mat-button
-        color="primary"
-        (click)="openConnectDialog(session)"
-        [disabled]="!sessionService.beautifyState(session.state).success"
-      >
-        Connect
-      </button>
-      <button
-        mat-button
-        color="primary"
-        (click)="uploadFileDialog(session)"
-        [disabled]="!sessionService.beautifyState(session.state).success"
-      >
-        File browser
-      </button>
-    </div>
+    }
   </div>
-</div>
+}
