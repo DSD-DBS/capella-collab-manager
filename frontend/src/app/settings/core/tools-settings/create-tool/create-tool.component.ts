@@ -4,14 +4,19 @@
  */
 
 import { Component, ViewChild } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ToolService } from 'src/app/settings/core/tools-settings/tool.service';
+import { EditorComponent as EditorComponent_1 } from '../../../../helpers/editor/editor.component';
 
 @Component({
   selector: 'app-create-tool',
   templateUrl: './create-tool.component.html',
+  standalone: true,
+  imports: [EditorComponent_1, MatButton, MatIcon],
 })
 export class CreateToolComponent {
   @ViewChild(EditorComponent) editor: EditorComponent | undefined;

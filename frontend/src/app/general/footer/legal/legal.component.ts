@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
 
@@ -10,6 +11,8 @@ import { MetadataService } from 'src/app/general/metadata/metadata.service';
   selector: 'app-legal',
   templateUrl: './legal.component.html',
   styleUrls: ['./legal.component.css'],
+  standalone: true,
+  imports: [AsyncPipe],
 })
 export class LegalComponent {
   constructor(public metadataService: MetadataService) {}

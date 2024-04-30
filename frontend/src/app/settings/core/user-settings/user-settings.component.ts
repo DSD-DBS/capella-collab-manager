@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
@@ -11,8 +12,22 @@ import {
   ValidationErrors,
   ValidatorFn,
   Validators,
+  FormsModule,
+  ReactiveFormsModule,
 } from '@angular/forms';
+import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import {
+  MatFormField,
+  MatLabel,
+  MatSuffix,
+  MatError,
+} from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatListSubheaderCssMatStyler } from '@angular/material/list';
+import { MatTooltip } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import {
   InputDialogComponent,
@@ -29,6 +44,23 @@ import {
 @Component({
   selector: 'app-user-settings',
   templateUrl: './user-settings.component.html',
+  standalone: true,
+  imports: [
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatIcon,
+    MatSuffix,
+    MatListSubheaderCssMatStyler,
+    RouterLink,
+    MatIconButton,
+    MatTooltip,
+    NgIf,
+    ReactiveFormsModule,
+    MatError,
+    MatButton,
+  ],
 })
 export class UserSettingsComponent implements OnInit {
   users: User[] = [];

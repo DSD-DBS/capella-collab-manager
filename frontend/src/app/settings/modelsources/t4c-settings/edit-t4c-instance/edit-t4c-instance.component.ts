@@ -3,8 +3,26 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
+import {
+  MatFormField,
+  MatLabel,
+  MatError,
+  MatHint,
+} from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map } from 'rxjs';
@@ -20,12 +38,33 @@ import {
   ToolService,
   ToolVersion,
 } from 'src/app/settings/core/tools-settings/tool.service';
+import { LicencesComponent } from '../licences/licences.component';
+import { T4CInstanceSettingsComponent } from '../t4c-instance-settings/t4c-instance-settings.component';
 
 @UntilDestroy()
 @Component({
   selector: 'app-edit-t4c-instance',
   templateUrl: './edit-t4c-instance.component.html',
   styleUrls: ['./edit-t4c-instance.component.css'],
+  standalone: true,
+  imports: [
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    MatSelect,
+    NgFor,
+    MatOption,
+    MatHint,
+    MatButton,
+    MatIcon,
+    LicencesComponent,
+    T4CInstanceSettingsComponent,
+    AsyncPipe,
+  ],
 })
 export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   editing = false;

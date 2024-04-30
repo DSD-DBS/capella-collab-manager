@@ -3,8 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgFor, NgIf, AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
+import { MatSelect } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, map } from 'rxjs';
 import {
@@ -18,12 +31,31 @@ import {
   ToolService,
   ToolVersion,
 } from 'src/app/settings/core/tools-settings/tool.service';
+import { CreateSessionHistoryComponent } from '../create-session-history/create-session-history.component';
 
 @UntilDestroy()
 @Component({
   selector: 'app-create-persistent-session',
   templateUrl: './create-persistent-session.component.html',
   styleUrls: ['./create-persistent-session.component.css'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    NgFor,
+    MatOption,
+    MatError,
+    NgIf,
+    MatRadioGroup,
+    MatRadioButton,
+    MatButton,
+    MatIcon,
+    CreateSessionHistoryComponent,
+    AsyncPipe,
+  ],
 })
 export class CreatePersistentSessionComponent implements OnInit {
   persistentSession?: Session;

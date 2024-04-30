@@ -3,8 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
+import { MatRipple } from '@angular/material/core';
+import { MatIcon } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 import { combineLatest } from 'rxjs';
+import { MatIconComponent } from '../../../helpers/mat-icon/mat-icon.component';
 import {
   ToolExtended,
   ToolService,
@@ -16,6 +21,8 @@ import {
   selector: 'app-dockerimage-settings',
   templateUrl: './tools-settings.component.html',
   styleUrls: ['./tools-settings.component.css'],
+  standalone: true,
+  imports: [RouterLink, MatRipple, MatIconComponent, NgFor, NgIf, MatIcon],
 })
 export class ToolsSettingsComponent {
   tools: { [id: string]: ToolExtended } = {};

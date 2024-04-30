@@ -3,8 +3,25 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor } from '@angular/common';
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import {
+  MatFormField,
+  MatLabel,
+  MatError,
+  MatHint,
+} from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs';
@@ -22,6 +39,22 @@ import {
   selector: 'app-edit-project-metadata',
   templateUrl: './edit-project-metadata.component.html',
   styleUrls: ['./edit-project-metadata.component.css'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    NgIf,
+    MatError,
+    MatHint,
+    MatRadioGroup,
+    NgFor,
+    MatRadioButton,
+    MatTooltip,
+    MatButton,
+  ],
 })
 export class EditProjectMetadataComponent implements OnInit, OnChanges {
   canDelete = false;

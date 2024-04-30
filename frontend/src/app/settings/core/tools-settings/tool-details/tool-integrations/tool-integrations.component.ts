@@ -3,18 +3,35 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgTemplateOutlet } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatCheckbox } from '@angular/material/checkbox';
 import {
   Tool,
   ToolIntegrations,
   ToolService,
 } from 'src/app/settings/core/tools-settings/tool.service';
+import { MatCheckboxLoaderComponent } from '../../../../../helpers/skeleton-loaders/mat-checkbox-loader/mat-checkbox-loader.component';
 
 @Component({
   selector: 'app-tool-integrations',
   templateUrl: './tool-integrations.component.html',
   styleUrls: ['./tool-integrations.component.css'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    MatCheckboxLoaderComponent,
+    NgTemplateOutlet,
+    MatCheckbox,
+  ],
 })
 export class ToolIntegrationsComponent implements OnInit {
   constructor(private toolService: ToolService) {}

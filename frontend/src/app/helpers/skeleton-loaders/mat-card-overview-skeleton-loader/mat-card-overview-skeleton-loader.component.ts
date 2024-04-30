@@ -3,12 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor } from '@angular/common';
 import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
   selector: 'app-mat-card-overview-skeleton-loader',
   templateUrl: './mat-card-overview-skeleton-loader.component.html',
   styleUrls: ['./mat-card-overview-skeleton-loader.component.css'],
+  standalone: true,
+  imports: [NgIf, NgFor, NgxSkeletonLoaderModule],
 })
 export class MatCardOverviewSkeletonLoaderComponent implements OnInit {
   @Input() loading = true;

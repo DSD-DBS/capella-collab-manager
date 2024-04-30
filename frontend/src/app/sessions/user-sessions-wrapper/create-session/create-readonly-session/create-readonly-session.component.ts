@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
@@ -10,9 +11,18 @@ import {
   FormBuilder,
   ValidationErrors,
   Validators,
+  FormsModule,
+  ReactiveFormsModule,
 } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatSelect } from '@angular/material/select';
+import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { combineLatest, filter, map, Observable, take, tap } from 'rxjs';
 import {
   Model,
@@ -33,6 +43,21 @@ import { CreateReadonlySessionDialogComponent } from '../../create-sessions/crea
   selector: 'app-create-readonly-session',
   templateUrl: './create-readonly-session.component.html',
   styleUrls: ['./create-readonly-session.component.css'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    NgFor,
+    NgxSkeletonLoaderModule,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatButton,
+    MatIcon,
+    RouterLink,
+  ],
 })
 export class CreateReadonlySessionComponent implements OnInit {
   projectSlug?: string;

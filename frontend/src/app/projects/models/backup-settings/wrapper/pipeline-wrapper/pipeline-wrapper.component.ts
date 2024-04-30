@@ -4,7 +4,7 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, map, switchMap, tap } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
@@ -16,6 +16,8 @@ import { ProjectService } from 'src/app/projects/service/project.service';
   selector: 'app-pipeline-wrapper',
   templateUrl: './pipeline-wrapper.component.html',
   styleUrls: ['./pipeline-wrapper.component.css'],
+  standalone: true,
+  imports: [RouterOutlet],
 })
 @UntilDestroy()
 export class PipelineWrapperComponent implements OnInit, OnDestroy {

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgFor } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { NoticeService } from '../../services/notice/notice.service';
 
@@ -11,6 +12,8 @@ import { NoticeService } from '../../services/notice/notice.service';
   templateUrl: './notice.component.html',
   styleUrls: ['./notice.component.css'],
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [NgFor],
 })
 export class NoticeComponent {
   constructor(public noticeService: NoticeService) {}

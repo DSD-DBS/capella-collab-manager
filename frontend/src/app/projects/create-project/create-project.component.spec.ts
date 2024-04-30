@@ -38,6 +38,8 @@ import {
   ProjectVisibilityDescriptions,
 } from '../service/project.service';
 import { CreateProjectComponent } from './create-project.component';
+import { HttpClientModule } from '@angular/common/http';
+import { CookieModule } from 'ngx-cookie';
 
 const mockProjects: Project[] = [
   {
@@ -141,7 +143,6 @@ describe('CreateProjectComponent', () => {
         { provide: ProjectUserService, useValue: fakeProjectUserService },
         { provide: Location, useClass: SpyLocation },
       ],
-      declarations: [CreateProjectComponent],
       imports: [
         RouterTestingModule,
         MatFormFieldModule,
@@ -151,6 +152,9 @@ describe('CreateProjectComponent', () => {
         MatRadioModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
+        CreateProjectComponent,
+        HttpClientModule,
+        CookieModule.withOptions(),
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();

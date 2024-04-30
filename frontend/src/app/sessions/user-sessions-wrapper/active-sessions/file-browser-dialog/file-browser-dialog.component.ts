@@ -4,14 +4,28 @@
  */
 
 import { NestedTreeControl } from '@angular/cdk/tree';
+import { NgIf, NgClass } from '@angular/common';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
   MatDialogRef,
 } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import {
+  MatTree,
+  MatTreeNodeDef,
+  MatTreeNode,
+  MatTreeNodeToggle,
+  MatTreeNodePadding,
+  MatNestedTreeNode,
+  MatTreeNodeOutlet,
+} from '@angular/material/tree';
 import { saveAs } from 'file-saver';
 import { BehaviorSubject } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
@@ -26,6 +40,25 @@ import { FileExistsDialogComponent } from './file-exists-dialog/file-exists-dial
   selector: 'app-file-browser-dialog',
   templateUrl: 'file-browser-dialog.component.html',
   styleUrls: ['file-browser-dialog.component.css'],
+  standalone: true,
+  imports: [
+    NgIf,
+    MatProgressBar,
+    MatButton,
+    MatIcon,
+    MatCheckbox,
+    FormsModule,
+    ReactiveFormsModule,
+    MatTree,
+    MatTreeNodeDef,
+    MatTreeNode,
+    MatTreeNodeToggle,
+    MatTreeNodePadding,
+    NgClass,
+    MatIconButton,
+    MatNestedTreeNode,
+    MatTreeNodeOutlet,
+  ],
 })
 export class FileBrowserDialogComponent implements OnInit {
   files: Array<[File, string]> = [];

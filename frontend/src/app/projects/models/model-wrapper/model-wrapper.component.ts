@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
@@ -17,6 +18,8 @@ import { ProjectService } from '../../service/project.service';
   selector: 'app-model-wrapper',
   templateUrl: './model-wrapper.component.html',
   styleUrls: ['./model-wrapper.component.css'],
+  standalone: true,
+  imports: [NgIf, RouterOutlet, AsyncPipe],
 })
 export class ModelWrapperComponent implements OnInit, OnDestroy {
   constructor(

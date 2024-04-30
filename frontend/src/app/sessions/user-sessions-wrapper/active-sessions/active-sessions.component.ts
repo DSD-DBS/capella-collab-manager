@@ -3,8 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor, NgClass, AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
+import { MatAnchor, MatButton } from '@angular/material/button';
+import { MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { RouterLink } from '@angular/router';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
 import { ConnectionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/connection-dialog/connection-dialog.component';
 import { DeleteSessionDialogComponent } from '../../delete-session-dialog/delete-session-dialog.component';
@@ -21,6 +28,20 @@ import { FileBrowserDialogComponent } from './file-browser-dialog/file-browser-d
   selector: 'app-active-sessions',
   templateUrl: './active-sessions.component.html',
   styleUrls: ['./active-sessions.component.css'],
+  standalone: true,
+  imports: [
+    NgIf,
+    NgxSkeletonLoaderModule,
+    MatAnchor,
+    RouterLink,
+    MatIcon,
+    NgFor,
+    NgClass,
+    MatCardContent,
+    MatProgressBar,
+    MatButton,
+    AsyncPipe,
+  ],
 })
 export class ActiveSessionsComponent {
   isReadonlySession = isReadonlySession;

@@ -13,7 +13,7 @@ describe('MatCheckboxLoaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MatCheckboxLoaderComponent],
+      imports: [MatCheckboxLoaderComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MatCheckboxLoaderComponent);

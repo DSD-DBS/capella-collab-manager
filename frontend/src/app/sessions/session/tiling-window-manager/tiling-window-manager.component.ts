@@ -3,14 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgFor, NgIf, NgClass } from '@angular/common';
 import { Component, HostListener, OnInit } from '@angular/core';
+import { MatIcon } from '@angular/material/icon';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs';
+import { SessionIFrameComponent } from '../session-iframe/session-iframe.component';
 import { SessionViewerService, ViewerSession } from '../session-viewer.service';
 
 @Component({
   selector: 'app-tiling-window-manager',
   templateUrl: './tiling-window-manager.component.html',
+  standalone: true,
+  imports: [NgFor, NgIf, MatIcon, SessionIFrameComponent, NgClass],
 })
 @UntilDestroy()
 export class TilingWindowManagerComponent implements OnInit {

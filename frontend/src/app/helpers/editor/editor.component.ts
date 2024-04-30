@@ -23,6 +23,7 @@ import { stringify, parse, YAMLParseError } from 'yaml';
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
+  standalone: true,
 })
 export class EditorComponent implements AfterViewInit {
   @Input()

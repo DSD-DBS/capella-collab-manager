@@ -4,12 +4,15 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { T4CInstanceService } from 'src/app/services/settings/t4c-instance.service';
 
 @Component({
   selector: 'app-t4c-settings-wrapper',
   templateUrl: './t4c-settings-wrapper.component.html',
   styleUrls: ['./t4c-settings-wrapper.component.css'],
+  standalone: true,
+  imports: [RouterOutlet],
 })
 export class T4CSettingsWrapperComponent implements OnInit, OnDestroy {
   constructor(public t4cInstanceService: T4CInstanceService) {}

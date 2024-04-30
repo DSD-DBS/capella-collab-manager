@@ -3,9 +3,27 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import {
+  MatIconAnchor,
+  MatIconButton,
+  MatButton,
+} from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatSelect } from '@angular/material/select';
+import { RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { absoluteUrlValidator } from 'src/app/helpers/validators/url-validator';
 import { DeleteGitSettingsDialogComponent } from 'src/app/settings/modelsources/git-settings/delete-git-settings-dialog/delete-git-settings-dialog.component';
@@ -20,6 +38,25 @@ import {
   selector: 'app-git-settings',
   templateUrl: './git-settings.component.html',
   styleUrls: ['./git-settings.component.css'],
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    MatIconAnchor,
+    RouterLink,
+    MatIcon,
+    MatIconButton,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatInput,
+    MatError,
+    MatButton,
+    AsyncPipe,
+  ],
 })
 export class GitSettingsComponent implements OnInit {
   constructor(

@@ -4,12 +4,15 @@
  */
 
 import { Component, Inject } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-file-exists-dialog',
   templateUrl: './file-exists-dialog.component.html',
   styleUrls: ['./file-exists-dialog.component.css'],
+  standalone: true,
+  imports: [MatButton],
 })
 export class FileExistsDialogComponent {
   constructor(

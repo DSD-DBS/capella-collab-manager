@@ -3,8 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, switchMap } from 'rxjs';
@@ -12,6 +25,7 @@ import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ProjectService } from 'src/app/projects/service/project.service';
 import { T4CInstanceService } from 'src/app/services/settings/t4c-instance.service';
 import { T4CRepoService } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
+import { FormFieldSkeletonLoaderComponent } from '../../../../../helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
 import { ModelService } from '../../../service/model.service';
 import { T4CModelService } from '../service/t4c-model.service';
 
@@ -20,6 +34,23 @@ import { T4CModelService } from '../service/t4c-model.service';
   selector: 'app-create-t4c-model-new-repository',
   templateUrl: './create-t4c-model-new-repository.component.html',
   styleUrls: ['./create-t4c-model-new-repository.component.css'],
+  standalone: true,
+  imports: [
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    FormFieldSkeletonLoaderComponent,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    NgFor,
+    MatOption,
+    MatInput,
+    MatError,
+    MatButton,
+    MatIcon,
+    AsyncPipe,
+  ],
 })
 export class CreateT4cModelNewRepositoryComponent implements OnInit {
   @Input() asStepper?: boolean;

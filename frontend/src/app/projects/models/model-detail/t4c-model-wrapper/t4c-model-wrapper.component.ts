@@ -4,7 +4,7 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
@@ -17,6 +17,8 @@ import { ProjectService } from 'src/app/projects/service/project.service';
   selector: 'app-t4c-model-wrapper',
   templateUrl: './t4c-model-wrapper.component.html',
   styleUrls: ['./t4c-model-wrapper.component.css'],
+  standalone: true,
+  imports: [RouterOutlet],
 })
 export class T4CModelWrapperComponent implements OnInit, OnDestroy {
   constructor(

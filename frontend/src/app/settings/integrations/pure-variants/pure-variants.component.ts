@@ -3,19 +3,41 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 import { filter, finalize, switchMap, tap } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   PureVariantsConfiguration,
   PureVariantsService,
 } from 'src/app/settings/integrations/pure-variants/service/pure-variants.service';
+import { FormFieldSkeletonLoaderComponent } from '../../../helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
 
 @Component({
   selector: 'app-pure-variants',
   templateUrl: './pure-variants.component.html',
   styleUrls: ['./pure-variants.component.css'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    FormFieldSkeletonLoaderComponent,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatButton,
+  ],
 })
 export class PureVariantsComponent implements OnInit {
   configuration?: PureVariantsConfiguration = undefined;

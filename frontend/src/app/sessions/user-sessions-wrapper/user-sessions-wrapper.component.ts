@@ -13,6 +13,7 @@ import { UserSessionService } from '../service/user-session.service';
   selector: 'app-user-sessions-wrapper',
   templateUrl: './user-sessions-wrapper.component.html',
   styleUrls: ['./user-sessions-wrapper.component.css'],
+  standalone: true,
 })
 export class UserSessionsWrapperComponent implements OnInit {
   constructor(private userSessionService: UserSessionService) {}

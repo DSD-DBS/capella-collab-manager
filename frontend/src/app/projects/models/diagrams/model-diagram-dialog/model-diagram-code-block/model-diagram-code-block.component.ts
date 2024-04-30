@@ -3,13 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import {
   AfterViewInit,
   Component,
   Input,
   Pipe,
   PipeTransform,
+  forwardRef,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import {
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+} from '@angular/material/expansion';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import hljs from 'highlight.js';
 import {
   BackendMetadata,
@@ -30,6 +40,17 @@ import { TokenService } from 'src/app/users/basic-auth-service/basic-auth-token.
     '::ng-deep .mat-expansion-indicator::after { border-color: black; }',
   ],
   templateUrl: './model-diagram-code-block.component.html',
+  standalone: true,
+  imports: [
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatIcon,
+    MatButton,
+    MatTooltip,
+    CdkCopyToClipboard,
+    forwardRef(() => HighlightPipeTransform),
+  ],
 })
 export class ModelDiagramCodeBlockComponent implements AfterViewInit {
   passwordValue?: string;
@@ -116,6 +137,7 @@ model = capellambse.MelodyModel(
 
 @Pipe({
   name: 'hightlight',
+  standalone: true,
 })
 export class HighlightPipeTransform implements PipeTransform {
   transform(value: string, language: string): string {

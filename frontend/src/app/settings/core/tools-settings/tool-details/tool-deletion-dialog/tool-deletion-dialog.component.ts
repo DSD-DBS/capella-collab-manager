@@ -4,6 +4,7 @@
  */
 
 import { Component, Inject } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Tool, ToolService } from '../../tool.service';
 
@@ -11,6 +12,8 @@ import { Tool, ToolService } from '../../tool.service';
   selector: 'app-tool-deletion-dialog',
   templateUrl: './tool-deletion-dialog.component.html',
   styleUrls: ['./tool-deletion-dialog.component.css'],
+  standalone: true,
+  imports: [MatButton],
 })
 export class ToolDeletionDialogComponent {
   constructor(

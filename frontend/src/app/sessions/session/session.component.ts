@@ -3,8 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NgIf, NgFor, NgClass, AsyncPipe, DatePipe } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButton, MatFabButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatIcon } from '@angular/material/icon';
+import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, take } from 'rxjs';
 import { FullscreenService } from 'src/app/sessions/service/fullscreen.service';
 import {
@@ -12,12 +20,33 @@ import {
   SessionService,
 } from 'src/app/sessions/service/session.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
+import { FloatingWindowManagerComponent } from './floating-window-manager/floating-window-manager.component';
 import { SessionViewerService } from './session-viewer.service';
+import { TilingWindowManagerComponent } from './tiling-window-manager/tiling-window-manager.component';
 
 @Component({
   selector: 'app-session',
   templateUrl: './session.component.html',
   styleUrls: ['./session.component.css'],
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    NgxSkeletonLoaderModule,
+    MatCheckbox,
+    MatTooltip,
+    FormsModule,
+    MatRadioGroup,
+    MatRadioButton,
+    MatButton,
+    MatIcon,
+    NgClass,
+    FloatingWindowManagerComponent,
+    TilingWindowManagerComponent,
+    MatFabButton,
+    AsyncPipe,
+    DatePipe,
+  ],
 })
 @UntilDestroy()
 export class SessionComponent implements OnInit, OnDestroy {
