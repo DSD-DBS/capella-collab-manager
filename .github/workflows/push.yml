@@ -12,6 +12,7 @@ on:
 jobs:
   push-images:
     runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
     name: Build and push ${{ matrix.name }} image
     strategy:
       matrix:
@@ -69,6 +70,7 @@ jobs:
           push: true
   install-chart:
     runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
     needs: [push-images]
     name: Install chart in kind cluster
     steps:

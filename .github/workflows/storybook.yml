@@ -11,6 +11,7 @@ on:
 jobs:
   chromatic:
     runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
     concurrency:
       group: chromatic-${{ github.event_name }}-${{ github.event.pull_request.number }}
       cancel-in-progress: true
