@@ -56,7 +56,9 @@ module.exports = {
             caughtErrorsIgnorePattern: "^_",
           },
         ],
-        "unused-imports/no-unused-imports": "error",
+        // Reenable when the following bug is fixed:
+        // https://github.com/sweepline/eslint-plugin-unused-imports/issues/77
+        // "unused-imports/no-unused-imports": "error",
         "no-console": ["error", { allow: ["error"] }],
         "deprecation/deprecation": "error",
         "@angular-eslint/use-lifecycle-interface": "error",
