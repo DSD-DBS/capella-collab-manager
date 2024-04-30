@@ -54,7 +54,7 @@ export const ResolvedSessionHistory: Story = {
       {
         tool: tool,
         version: version,
-        lastTimeRequested: new Date(),
+        lastTimeRequested: new Date('2024-04-01'),
         loading: true,
         connectionMethod: connectionMethod,
       },
