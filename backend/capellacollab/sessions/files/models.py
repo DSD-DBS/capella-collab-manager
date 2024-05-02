@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import enum
 
-import pydantic
+from capellacollab.core import pydantic as core_pydantic
 
 
 class FileType(enum.Enum):
@@ -13,9 +13,7 @@ class FileType(enum.Enum):
     DIRECTORY = "directory"
 
 
-class FileTree(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class FileTree(core_pydantic.BaseModel):
     path: str
     name: str
     type: FileType

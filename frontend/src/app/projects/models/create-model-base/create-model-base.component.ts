@@ -27,7 +27,7 @@ import {
   ModelService,
   NewModel,
 } from 'src/app/projects/models/service/model.service';
-import { ToolService } from 'src/app/settings/core/tools-settings/tool.service';
+import { ToolWrapperService } from 'src/app/settings/core/tools-settings/tool.service';
 import { ProjectService } from '../../service/project.service';
 
 @UntilDestroy()
@@ -73,12 +73,12 @@ export class CreateModelBaseComponent implements OnInit {
   constructor(
     private modelService: ModelService,
     public projectService: ProjectService,
-    public toolService: ToolService,
+    public toolWrapperService: ToolWrapperService,
     private toastService: ToastService,
   ) {}
 
   ngOnInit(): void {
-    this.toolService.getTools().subscribe();
+    this.toolWrapperService.getTools().subscribe();
     this.modelService.clearModel();
 
     this.projectService.project$
@@ -98,7 +98,7 @@ export class CreateModelBaseComponent implements OnInit {
           next: (model) => {
             this.toastService.showSuccess(
               'Model created',
-              `The model with name ${model!.name} has been created`,
+              `The model with name ${model.name} has been created`,
             );
             this.create.emit();
           },
@@ -108,7 +108,7 @@ export class CreateModelBaseComponent implements OnInit {
 
   validToolValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const tools = this.toolService.tools;
+      const tools = this.toolWrapperService.tools;
       const value = control.value;
       if (!value || (tools && tools.find((tool) => tool.id == value))) {
         return null;

@@ -20,16 +20,12 @@ import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { MatSelect } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, map } from 'rxjs';
-import {
-  Session,
-  SessionService,
-} from 'src/app/sessions/service/session.service';
+import { Session, Tool, ToolVersion } from 'src/app/openapi';
+import { SessionService } from 'src/app/sessions/service/session.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
 import {
   ConnectionMethod,
-  Tool,
-  ToolService,
-  ToolVersion,
+  ToolWrapperService,
 } from 'src/app/settings/core/tools-settings/tool.service';
 import { CreateSessionHistoryComponent } from '../create-session-history/create-session-history.component';
 
@@ -78,13 +74,13 @@ export class CreatePersistentSessionComponent implements OnInit {
   });
 
   constructor(
-    public toolService: ToolService,
+    private toolWrapperService: ToolWrapperService,
     private sessionService: SessionService,
     private userSessionService: UserSessionService,
   ) {}
 
   ngOnInit(): void {
-    this.toolService.getTools().subscribe();
+    this.toolWrapperService.getTools().subscribe();
 
     this.userSessionService.persistentSessions$
       .pipe(untilDestroyed(this))
@@ -119,7 +115,7 @@ export class CreatePersistentSessionComponent implements OnInit {
 
   toolSelectionChange(toolId: number) {
     this.getVersionsForTool(toolId);
-    this.selectedTool = this.toolService.tools?.find(
+    this.selectedTool = this.toolWrapperService.tools?.find(
       (tool) => tool.id == toolId,
     );
     this.toolSelectionForm.controls.connectionMethodId.setValue(
@@ -138,7 +134,7 @@ export class CreatePersistentSessionComponent implements OnInit {
 
   getVersionsForTool(toolId: number): void {
     this.versions = [];
-    this.toolService
+    this.toolWrapperService
       .getVersionsForTool(toolId, false)
       .subscribe((res: ToolVersion[]) => {
         this.versions = res;
@@ -151,7 +147,7 @@ export class CreatePersistentSessionComponent implements OnInit {
   }
 
   get toolsWithWorkspaceEnabled(): Observable<Tool[] | undefined> {
-    return this.toolService.tools$.pipe(
+    return this.toolWrapperService.tools$.pipe(
       map((tools) =>
         tools?.filter(
           (tool) => tool.config.persistent_workspaces.mounting_enabled,

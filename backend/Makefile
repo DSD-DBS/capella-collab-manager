@@ -48,6 +48,9 @@ install:
 	python generate_git_archival.py
 	$(VENV)/bin/pip install -e ".[dev]"
 
+openapi:
+	$(VENV)/bin/python -m capellacollab.cli openapi generate /tmp/openapi.json
+
 dev: database app
 
 cleanup:

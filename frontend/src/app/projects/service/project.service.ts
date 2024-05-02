@@ -12,6 +12,7 @@ import {
 } from '@angular/forms';
 import { BehaviorSubject, map, Observable, take, tap } from 'rxjs';
 import slugify from 'slugify';
+import { Project, ProjectUserRole, ProjectsService } from 'src/app/openapi';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -20,7 +21,10 @@ import { environment } from 'src/environments/environment';
 export class ProjectService {
   BACKEND_URL_PREFIX = environment.backend_url + '/projects';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private projectsService: ProjectsService,
+  ) {}
 
   private _project = new BehaviorSubject<Project | undefined>(undefined);
   private _projects = new BehaviorSubject<Project[] | undefined>(undefined);
@@ -28,20 +32,16 @@ export class ProjectService {
   public readonly project$ = this._project.asObservable();
   public readonly projects$ = this._projects.asObservable();
 
-  loadProjects(): void {
-    this.http.get<Project[]>(this.BACKEND_URL_PREFIX).subscribe({
-      next: (projects) => this._projects.next(projects),
-      error: () => this._projects.next(undefined),
-    });
-  }
-
-  loadProjectsForRole(role: string): void {
-    this.http
-      .get<Project[]>(`${this.BACKEND_URL_PREFIX}/?minimum_role=${role}`)
-      .subscribe({
-        next: (projects) => this._projects.next(projects),
-        error: () => this._projects.next(undefined),
-      });
+  loadProjects(minimumRole?: ProjectUserRole): void {
+    this.projectsService
+      .getProjects(minimumRole)
+      .pipe(
+        tap({
+          next: (projects) => this._projects.next(projects),
+          error: () => this._projects.next(undefined),
+        }),
+      )
+      .subscribe();
   }
 
   loadProjectBySlug(slug: string): void {
@@ -150,11 +150,6 @@ export type PatchProject = Partial<PostProject> & {
 export type ProjectVisibility = 'internal' | 'private';
 
 export type ProjectType = 'general' | 'training';
-
-export type Project = Required<PatchProject> & {
-  slug: string;
-  users: UserMetadata;
-};
 
 export const ProjectVisibilityDescriptions = {
   internal: 'Internal (viewable by all logged in users)',

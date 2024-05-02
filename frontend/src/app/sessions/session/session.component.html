@@ -41,7 +41,7 @@
       [(ngModel)]="session.checked"
       *ngFor="let session of cachedSessions"
     >
-      {{ session.version?.tool?.name }} {{ session.version?.name }},
+      {{ session.version.tool.name }} {{ session.version.name }},
       {{ session.type }}, created at
       {{ session.created_at | date: "EE, dd MMM y HH:mm:ss" }}
     </mat-checkbox>

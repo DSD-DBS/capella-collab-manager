@@ -4,7 +4,6 @@
  */
 
 import {
-  AfterViewInit,
   Component,
   Input,
   QueryList,
@@ -16,14 +15,10 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTabGroup, MatTab, MatTabLabel } from '@angular/material/tabs';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { Tool, ToolVersion, ToolsService } from 'src/app/openapi';
 import { ApiDocumentationComponent } from '../../../../../general/api-documentation/api-documentation.component';
 import { EditorComponent as EditorComponent_1 } from '../../../../../helpers/editor/editor.component';
-import {
-  CreateToolVersion,
-  Tool,
-  ToolService,
-  ToolVersion,
-} from '../../tool.service';
+import { CreateToolVersion, ToolWrapperService } from '../../tool.service';
 
 @Component({
   selector: 'app-tool-version',
@@ -40,7 +35,7 @@ import {
     MatButton,
   ],
 })
-export class ToolVersionComponent implements AfterViewInit {
+export class ToolVersionComponent {
   _tool?: Tool = undefined;
 
   @Input()
@@ -51,6 +46,11 @@ export class ToolVersionComponent implements AfterViewInit {
     this.toolVersions = undefined;
 
     if (this._tool !== undefined) {
+      this.toolsService
+        .getDefaultToolVersion(this._tool!.id)
+        .subscribe((version) => {
+          this.getEditorForContext('new')!.value = version;
+        });
       this.toolService
         .getVersionsForTool(this._tool.id, false)
         .subscribe((versions: ToolVersion[]) => {
@@ -66,15 +66,10 @@ export class ToolVersionComponent implements AfterViewInit {
   toolVersions: ToolVersion[] | undefined = undefined;
 
   constructor(
-    private toolService: ToolService,
+    private toolService: ToolWrapperService,
     private toastService: ToastService,
+    private toolsService: ToolsService,
   ) {}
-
-  ngAfterViewInit(): void {
-    this.toolService.getDefaultVersion().subscribe((version) => {
-      this.getEditorForContext('new')!.value = version;
-    });
-  }
 
   getEditorForContext(context: string) {
     return this.editorRefs?.find((editor) => editor.context === context);

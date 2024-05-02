@@ -5,8 +5,8 @@
 
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import { Tool } from 'src/app/openapi';
 import { SessionService } from 'src/app/sessions/service/session.service';
-import { Tool } from 'src/app/settings/core/tools-settings/tool.service';
 import { dialogWrapper } from 'src/storybook/decorators';
 import { mockPrimaryGitModel } from 'src/storybook/git';
 import { createModelWithId } from 'src/storybook/model';

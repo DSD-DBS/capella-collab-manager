@@ -4,10 +4,10 @@
 
 import enum
 
-import pydantic
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 
 
 class GitType(enum.Enum):
@@ -17,9 +17,7 @@ class GitType(enum.Enum):
     AZUREDEVOPS = "AzureDevOps"
 
 
-class PostGitInstance(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class PostGitInstance(core_pydantic.BaseModel):
     type: GitType
     name: str
     url: str
@@ -43,17 +41,21 @@ class DatabaseGitInstance(database.Base):
     type: orm.Mapped[GitType]
 
 
-class GetRevisionsResponseModel(pydantic.BaseModel):
+class GetRevisionsResponseModel(core_pydantic.BaseModel):
     branches: list[str]
     tags: list[str]
     default: str | None = None
 
 
-class GitCredentials(pydantic.BaseModel):
+class GitCredentials(core_pydantic.BaseModel):
     username: str
     password: str
 
 
-class GetRevisionModel(pydantic.BaseModel):
+class GetRevisionModel(core_pydantic.BaseModel):
     url: str
     credentials: GitCredentials
+
+
+class PathValidation(core_pydantic.BaseModel):
+    url: str

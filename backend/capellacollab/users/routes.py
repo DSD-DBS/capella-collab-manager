@@ -185,7 +185,7 @@ def delete_user(
         )
     ],
 )
-def get_user_history(
+def get_user_events(
     user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_existing_user
     ),

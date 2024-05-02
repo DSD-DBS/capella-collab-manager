@@ -4,6 +4,7 @@
  */
 
 import {
+  HttpContext,
   HttpContextToken,
   HttpErrorResponse,
   HttpEvent,
@@ -20,6 +21,12 @@ import { ToastService } from 'src/app/helpers/toast/toast.service';
 // Skips the automated error handling.
 // When this option is set, the error messages from the backend are not auto-printed as toast message
 export const SKIP_ERROR_HANDLING = new HttpContextToken<boolean>(() => false);
+
+// Pass this context to HTTP requests if you want to skip error handling.
+export const SKIP_ERROR_HANDLING_CONTEXT = new HttpContext().set(
+  SKIP_ERROR_HANDLING,
+  true,
+);
 
 @Injectable({
   providedIn: 'root',

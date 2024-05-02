@@ -57,20 +57,10 @@
             {{ beautifyService.beatifyDate(session.created_at) }}
           </p>
           <span>
-            Tool: {{ session.version!.tool.name }} ({{ session.version!.name }})
+            Tool: {{ session.version.tool.name }} ({{ session.version.name }})
             <br />
             Connection Method: {{ session.connection_method?.name }}
           </span>
-
-          @if (session.download_in_progress) {
-            <div class="mat-card collab-card">
-              <mat-card-content>
-                <p>Your download is being prepared…</p>
-                <p>Depending on the model size, this can take a few minutes.</p>
-                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-              </mat-card-content>
-            </div>
-          }
         </div>
         <div class="flex justify-between">
           <button

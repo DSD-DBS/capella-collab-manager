@@ -28,16 +28,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { ToolVersion } from 'src/app/openapi';
 import {
   NewT4CInstance,
   PatchT4CInstance,
   Protocol,
   T4CInstanceService,
 } from 'src/app/services/settings/t4c-instance.service';
-import {
-  ToolService,
-  ToolVersion,
-} from 'src/app/settings/core/tools-settings/tool.service';
+import { ToolWrapperService } from 'src/app/settings/core/tools-settings/tool.service';
 import { LicencesComponent } from '../licences/licences.component';
 import { T4CInstanceSettingsComponent } from '../t4c-instance-settings/t4c-instance-settings.component';
 
@@ -113,7 +111,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private toastService: ToastService,
-    private toolService: ToolService,
+    private toolService: ToolWrapperService,
     private breadcrumbsService: BreadcrumbsService,
   ) {}
 

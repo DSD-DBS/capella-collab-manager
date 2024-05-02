@@ -29,7 +29,7 @@ import {
   PipelineRun,
   PipelineRunService,
 } from 'src/app/projects/models/backup-settings/pipeline-runs/service/pipeline-run.service';
-import { UserService } from 'src/app/services/user/user.service';
+import { UserWrapperService } from 'src/app/services/user/user.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { CreateBackupComponent } from '../create-backup/create-backup.component';
 import { PipelineService, Pipeline } from '../service/pipeline.service';
@@ -75,7 +75,7 @@ export class TriggerPipelineComponent implements OnInit {
     public pipelineService: PipelineService,
     private pipelineRunService: PipelineRunService,
     public sessionService: SessionService,
-    public userService: UserService,
+    public userService: UserWrapperService,
     private router: Router,
   ) {}
 

@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import pydantic
+from capellacollab.core import pydantic as core_pydantic
 
 
-class JSONWebKey(pydantic.BaseModel):
+class JSONWebKey(core_pydantic.BaseModel):
     # alg: str
     kty: str
     use: str
@@ -16,7 +16,7 @@ class JSONWebKey(pydantic.BaseModel):
     x5c: list[str] | None = None
 
 
-class JSONWebKeySet(pydantic.BaseModel):
+class JSONWebKeySet(core_pydantic.BaseModel):
     keys: list[JSONWebKey]
 
 

@@ -9,7 +9,7 @@ import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { ToolService } from 'src/app/settings/core/tools-settings/tool.service';
+import { CreateToolInput, ToolsService } from 'src/app/openapi';
 import { EditorComponent as EditorComponent_1 } from '../../../../helpers/editor/editor.component';
 
 @Component({
@@ -22,20 +22,18 @@ export class CreateToolComponent {
   @ViewChild(EditorComponent) editor: EditorComponent | undefined;
 
   constructor(
-    private toolService: ToolService,
+    private toolsService: ToolsService,
     private toastService: ToastService,
     private router: Router,
     private route: ActivatedRoute,
   ) {
-    this.toolService.getDefaultTool().subscribe((tool) => {
+    this.toolsService.getDefaultTool().subscribe((tool) => {
       this.editor!.value = tool;
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  submitValue(value: any): void {
-    delete value.id;
-    this.toolService.createTool(value).subscribe((tool) => {
+  submitValue(value: CreateToolInput): void {
+    this.toolsService.createTool(value).subscribe((tool) => {
       this.toastService.showSuccess(
         'Tool created',
         `The tool with the name '${tool.name}' has been created successfully.`,

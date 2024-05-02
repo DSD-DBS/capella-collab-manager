@@ -7,7 +7,8 @@ import { Component, Inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
-import { Session, SessionService } from '../service/session.service';
+import { Session } from 'src/app/openapi';
+import { SessionService } from '../service/session.service';
 
 @Component({
   templateUrl: './delete-session-dialog.component.html',

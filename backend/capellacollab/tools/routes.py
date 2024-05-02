@@ -26,7 +26,7 @@ router = fastapi.APIRouter(
 )
 
 
-@router.get("", response_model=list[models.ToolBase])
+@router.get("", response_model=list[models.Tool])
 def get_tools(
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> abc.Sequence[models.DatabaseTool]:
@@ -38,7 +38,7 @@ def get_default_tool() -> models.CreateTool:
     return models.CreateTool()
 
 
-@router.get("/{tool_id}", response_model=models.ToolBase)
+@router.get("/{tool_id}", response_model=models.Tool)
 def get_tool_by_id(
     tool=fastapi.Depends(injectables.get_existing_tool),
 ) -> models.DatabaseTool:
@@ -47,7 +47,7 @@ def get_tool_by_id(
 
 @router.post(
     "",
-    response_model=models.ToolBase,
+    response_model=models.Tool,
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(
@@ -71,7 +71,7 @@ def create_tool(
 
 @router.put(
     "/{tool_id}",
-    response_model=models.ToolBase,
+    response_model=models.Tool,
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(
@@ -116,7 +116,7 @@ def get_versions_for_all_tools(
     return crud.get_versions(db)
 
 
-@router.get("/{tool_id}/versions", response_model=list[models.ToolVersionBase])
+@router.get("/{tool_id}/versions", response_model=list[models.ToolVersion])
 def get_tool_versions(
     tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -124,14 +124,14 @@ def get_tool_versions(
     return crud.get_versions_for_tool_id(db, tool.id)
 
 
-@router.get("/{tool_id}/versions/default")
-def get_default_tool_version() -> models.CreateToolVersion:
+@router.get("/{_tool_id}/versions/default")
+def get_default_tool_version(_tool_id: int) -> models.CreateToolVersion:
     return models.CreateToolVersion()
 
 
 @router.post(
     "/{tool_id}/versions",
-    response_model=models.ToolVersionBase,
+    response_model=models.ToolVersion,
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(
@@ -155,7 +155,7 @@ def create_tool_version(
 
 @router.get(
     "/{tool_id}/versions/{version_id}",
-    response_model=models.ToolVersionBase,
+    response_model=models.ToolVersion,
 )
 def get_tool_version(
     version: models.DatabaseVersion = fastapi.Depends(
@@ -167,7 +167,7 @@ def get_tool_version(
 
 @router.put(
     "/{tool_id}/versions/{version_id}",
-    response_model=models.ToolVersionBase,
+    response_model=models.ToolVersion,
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(
@@ -225,7 +225,7 @@ def delete_tool_version(
     crud.delete_tool_version(db, version)
 
 
-@router.get("/{tool_id}/natures", response_model=list[models.ToolNatureBase])
+@router.get("/{tool_id}/natures", response_model=list[models.ToolNature])
 def get_tool_natures(
     tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -233,14 +233,14 @@ def get_tool_natures(
     return crud.get_natures_by_tool_id(db, tool.id)
 
 
-@router.get("/{tool_id}/natures/default")
-def get_default_tool_nature() -> models.CreateToolNature:
+@router.get("/{_tool_id}/natures/default")
+def get_default_tool_nature(_tool_id: int) -> models.CreateToolNature:
     return models.CreateToolNature()
 
 
 @router.post(
     "/{tool_id}/natures",
-    response_model=models.ToolNatureBase,
+    response_model=models.ToolNature,
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(
@@ -261,7 +261,7 @@ def create_tool_nature(
 
 @router.get(
     "/{tool_id}/natures/{nature_id}",
-    response_model=models.ToolNatureBase,
+    response_model=models.ToolNature,
 )
 def get_tool_nature(
     nature: models.DatabaseNature = fastapi.Depends(
@@ -273,7 +273,7 @@ def get_tool_nature(
 
 @router.put(
     "/{tool_id}/natures/{nature_id}",
-    response_model=models.ToolNatureBase,
+    response_model=models.ToolNature,
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(

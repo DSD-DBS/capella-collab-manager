@@ -17,7 +17,7 @@ from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 
-from . import crud, injectables, models, util
+from . import crud, models, util
 
 router = fastapi.APIRouter()
 
@@ -71,7 +71,7 @@ def get_project_user_association_or_raise(
 
 
 @router.get("/current", response_model=models.ProjectUser)
-def get_current_user(
+def get_current_project_user(
     user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
     ),
@@ -178,7 +178,7 @@ def add_user_to_project(
 def update_project_user(
     patch_project_user: models.PatchProjectUser,
     user: users_models.DatabaseUser = fastapi.Depends(
-        injectables.get_existing_user
+        users_injectables.get_existing_user
     ),
     project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
@@ -247,7 +247,7 @@ def remove_user_from_project(
         projects_injectables.get_existing_project
     ),
     user: users_models.DatabaseUser = fastapi.Depends(
-        injectables.get_existing_user
+        users_injectables.get_existing_user
     ),
     own_user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user

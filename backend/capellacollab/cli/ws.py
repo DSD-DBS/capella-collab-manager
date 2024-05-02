@@ -16,7 +16,7 @@ import typer
 import websocket
 from kubernetes import client, config, stream
 
-app = typer.Typer()
+app = typer.Typer(help="List, backup and restore persistent workspaces.")
 
 MOUNT_PATH = "/workspace"
 
@@ -94,7 +94,7 @@ def restore(
     namespace: t.Annotated[str, NamespaceOption],
     access_mode: str = "ReadWriteMany",
     storage_class_name: str = "persistent-sessions-csi",
-    user_id: str | None = None,
+    user_id: t.Union[str, None] = None,
 ):
     """Restore a backup to a Kubernetes Persistent Volume.
 

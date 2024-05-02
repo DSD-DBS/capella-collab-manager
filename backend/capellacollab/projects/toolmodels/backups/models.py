@@ -3,11 +3,11 @@
 
 import typing as t
 
-import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
 )
@@ -27,18 +27,14 @@ if t.TYPE_CHECKING:
     from .runs import models as runs_models
 
 
-class CreateBackup(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class CreateBackup(core_pydantic.BaseModel):
     git_model_id: int
     t4c_model_id: int
     include_commit_history: bool
     run_nightly: bool
 
 
-class Backup(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class Backup(core_pydantic.BaseModel):
     id: int
     k8s_cronjob_id: str | None = None
 

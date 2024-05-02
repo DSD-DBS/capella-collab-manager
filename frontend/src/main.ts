@@ -14,6 +14,7 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { CookieModule } from 'ngx-cookie';
 import { ToastrModule } from 'ngx-toastr';
+import { BASE_PATH } from 'src/app/openapi';
 import { AppRoutingModule } from './app/app-routing.module';
 import { AppComponent } from './app/app.component';
 import { AuthInterceptor } from './app/general/auth/http-interceptor/auth.interceptor';
@@ -49,5 +50,9 @@ bootstrapApplication(AppComponent, {
     },
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
+    {
+      provide: BASE_PATH,
+      useValue: environment.backend_url.replace('/api/v1', ''), // The /api/v1 prefix is automatically added by the openapi generator
+    },
   ],
 }).catch((err) => console.error(err));

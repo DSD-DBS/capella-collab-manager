@@ -26,6 +26,7 @@ import {
   InputDialogResult,
 } from 'src/app/helpers/input-dialog/input-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { Project, User } from 'src/app/openapi';
 import { AddUserToProjectDialogComponent } from 'src/app/projects/project-detail/project-users/add-user-to-project/add-user-to-project.component';
 import { ProjectAuditLogComponent } from 'src/app/projects/project-detail/project-users/project-audit-log/project-audit-log.component';
 import {
@@ -33,8 +34,8 @@ import {
   ProjectUserPermission,
   ProjectUserService,
 } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import { User, UserService } from 'src/app/services/user/user.service';
-import { Project, ProjectService } from '../../service/project.service';
+import { UserWrapperService } from 'src/app/services/user/user.service';
+import { ProjectService } from '../../service/project.service';
 
 @UntilDestroy()
 @Component({
@@ -66,7 +67,7 @@ export class ProjectUserSettingsComponent implements OnInit {
 
   constructor(
     public projectUserService: ProjectUserService,
-    public userService: UserService,
+    public userService: UserWrapperService,
     private toastService: ToastService,
     private projectService: ProjectService,
     private dialog: MatDialog,

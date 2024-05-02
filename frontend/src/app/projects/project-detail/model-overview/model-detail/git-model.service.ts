@@ -96,18 +96,6 @@ export class GitModelService {
     );
   }
 
-  validatePath(
-    projectSlug: string,
-    modelSlug: string,
-    path: string,
-  ): Observable<boolean> {
-    return this.http.post<boolean>(
-      this.BACKEND_URL_PREFIX +
-        `/projects/${projectSlug}/models/${modelSlug}/modelsources/git/validate/path`,
-      path,
-    );
-  }
-
   reset() {
     this._gitModels.next(undefined);
     this._gitModel.next(undefined);

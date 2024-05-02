@@ -19,16 +19,12 @@ import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, map, switchMap, tap } from 'rxjs';
+import { SKIP_ERROR_HANDLING_CONTEXT } from 'src/app/general/error-handling/error-handling.interceptor';
+import { Tool, ToolNature, ToolVersion, ToolsService } from 'src/app/openapi';
 import {
   Model,
   ModelService,
 } from 'src/app/projects/models/service/model.service';
-import {
-  Tool,
-  ToolService,
-  ToolNature,
-  ToolVersion,
-} from 'src/app/settings/core/tools-settings/tool.service';
 import { GitModelService } from '../../project-detail/model-overview/model-detail/git-model.service';
 import { ProjectService } from '../../service/project.service';
 
@@ -68,7 +64,7 @@ export class InitModelComponent implements OnInit {
     public projectService: ProjectService,
     public modelService: ModelService,
     public gitModelService: GitModelService,
-    public toolService: ToolService,
+    private toolsService: ToolsService,
   ) {}
 
   public form = new FormGroup({
@@ -96,8 +92,12 @@ export class InitModelComponent implements OnInit {
         map((model: Model) => model.tool),
         switchMap((tool: Tool) =>
           combineLatest([
-            this.toolService.getVersionsForTool(tool.id, false),
-            this.toolService.getNaturesForTool(tool.id),
+            this.toolsService.getToolVersions(tool.id, undefined, undefined, {
+              context: SKIP_ERROR_HANDLING_CONTEXT,
+            }),
+            this.toolsService.getToolNatures(tool.id, undefined, undefined, {
+              context: SKIP_ERROR_HANDLING_CONTEXT,
+            }),
           ]),
         ),
       )

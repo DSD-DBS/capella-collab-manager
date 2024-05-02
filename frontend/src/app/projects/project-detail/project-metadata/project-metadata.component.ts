@@ -14,13 +14,10 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { Project } from 'src/app/openapi';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import {
-  PatchProject,
-  Project,
-  ProjectService,
-} from '../../service/project.service';
+import { PatchProject, ProjectService } from '../../service/project.service';
 
 @UntilDestroy()
 @Component({

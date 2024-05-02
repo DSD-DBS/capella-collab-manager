@@ -3,10 +3,11 @@
 
 import typer
 
-import capellacollab.cli.ws
+from . import openapi, ws
 
 app = typer.Typer()
-app.add_typer(capellacollab.cli.ws.app, name="ws")
+app.add_typer(ws.app, name="ws")
+app.add_typer(openapi.app, name="openapi")
 
 if __name__ == "__main__":
     app()

@@ -6,8 +6,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Project } from 'src/app/projects/service/project.service';
-import { User } from 'src/app/services/user/user.service';
+import { HistoryEvent } from 'src/app/openapi';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -25,10 +24,7 @@ export class EventsService {
       .subscribe((events) => this._historyEvents.next(events));
   }
 
-  customSortingDataAccessor(
-    data: HistoryEvent,
-    sortHeaderId: string,
-  ): string | number {
+  customSortingDataAccessor(data: HistoryEvent, sortHeaderId: string): string {
     switch (sortHeaderId) {
       case 'eventType':
         return data.event_type;
@@ -41,30 +37,9 @@ export class EventsService {
       case 'projectName':
         return data.project ? data.project.name : '';
       case 'reason':
-        return data.reason;
+        return data.reason || '';
       default:
         return '';
     }
   }
 }
-
-export type HistoryEvent = {
-  id: number;
-  execution_time: string;
-  event_type: EventType;
-  user: User;
-  executor?: User;
-  project?: Project;
-  reason: string;
-};
-
-export type EventType =
-  | 'CreatedUser'
-  | 'AddedToProject'
-  | 'RemovedFromProject'
-  | 'AssignedProjectRoleUser'
-  | 'AssignedProjectRoleManager'
-  | 'AssignedProjectPermission'
-  | 'AssignedProjectPermissionReadWrite'
-  | 'AssignedRoleAdmin'
-  | 'AssignedRoleUser';

@@ -26,8 +26,9 @@ import {
   MatRowDef,
   MatRow,
 } from '@angular/material/table';
+import { Session } from 'src/app/openapi';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
-import { Session, SessionService } from '../service/session.service';
+import { SessionService } from '../service/session.service';
 
 @Component({
   selector: 'app-session-overview',

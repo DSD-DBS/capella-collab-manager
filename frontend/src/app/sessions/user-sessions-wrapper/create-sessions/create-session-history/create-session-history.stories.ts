@@ -27,7 +27,11 @@ export const ResolvedSessionHistory: Story = {
         version: mockToolVersion,
         lastTimeRequested: new Date('2024-04-01'),
         loading: true,
-        connectionMethod: mockHttpConnectionMethod,
+        connectionMethod: {
+          ...mockHttpConnectionMethod,
+          type: 'http',
+          environment: {},
+        },
       },
       {
         tool: { ...mockTool, name: 'Example tool' },
@@ -37,6 +41,8 @@ export const ResolvedSessionHistory: Story = {
         connectionMethod: {
           ...mockHttpConnectionMethod,
           name: 'Example connection method',
+          type: 'http',
+          environment: {},
         },
       },
     ],

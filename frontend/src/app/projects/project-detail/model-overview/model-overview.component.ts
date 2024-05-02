@@ -18,6 +18,7 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { first, filter } from 'rxjs';
+import { Project } from 'src/app/openapi';
 import { ModelDiagramDialogComponent } from 'src/app/projects/models/diagrams/model-diagram-dialog/model-diagram-dialog.component';
 import {
   getPrimaryGitModel,
@@ -27,10 +28,10 @@ import {
 import { MoveModelComponent } from 'src/app/projects/project-detail/model-overview/move-model/move-model.component';
 import { ReorderModelsDialogComponent } from 'src/app/projects/project-detail/model-overview/reorder-models-dialog/reorder-models-dialog.component';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import { UserService } from 'src/app/services/user/user.service';
+import { UserWrapperService } from 'src/app/services/user/user.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
-import { Project, ProjectService } from '../../service/project.service';
+import { ProjectService } from '../../service/project.service';
 import { ModelComplexityBadgeComponent } from './model-complexity-badge/model-complexity-badge.component';
 
 @UntilDestroy()
@@ -62,7 +63,7 @@ export class ModelOverviewComponent implements OnInit {
     public modelService: ModelService,
     public sessionService: SessionService,
     public projectUserService: ProjectUserService,
-    public userService: UserService,
+    public userService: UserWrapperService,
     public projectService: ProjectService,
     private dialog: MatDialog,
   ) {}

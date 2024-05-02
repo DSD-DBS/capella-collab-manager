@@ -31,6 +31,7 @@ import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { saveAs } from 'file-saver';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { Project } from 'src/app/openapi';
 import {
   MatDialogPreviewData,
   ModelDiagramPreviewDialogComponent,
@@ -41,7 +42,6 @@ import {
   ModelDiagramService,
 } from 'src/app/projects/models/diagrams/service/model-diagram.service';
 import { Model } from 'src/app/projects/models/service/model.service';
-import { Project } from 'src/app/projects/service/project.service';
 import { ModelDiagramCodeBlockComponent } from './model-diagram-code-block/model-diagram-code-block.component';
 
 @Component({

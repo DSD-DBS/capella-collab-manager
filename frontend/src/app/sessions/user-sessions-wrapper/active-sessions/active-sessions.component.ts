@@ -12,11 +12,11 @@ import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { RouterLink } from '@angular/router';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { Session } from 'src/app/openapi';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
 import { ConnectionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/connection-dialog/connection-dialog.component';
 import { DeleteSessionDialogComponent } from '../../delete-session-dialog/delete-session-dialog.component';
 import {
-  Session,
   SessionService,
   isPersistentSession,
   isReadonlySession,

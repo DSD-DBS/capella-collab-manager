@@ -10,9 +10,9 @@
   ></div>
   <iframe
     [title]="
-      (session.version?.tool?.name ?? 'Unknown tool') +
+      session.version.tool.name +
       ', version' +
-      (session.version?.name ?? 'unknown version') +
+      session.version.name +
       ', ' +
       session.type
     "

@@ -9,6 +9,7 @@ import requests
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 
 log = logging.getLogger(__name__)
 
@@ -35,9 +36,7 @@ class DatabasePureVariantsLicenses(database.Base):
     license_key_filename: orm.Mapped[str | None]
 
 
-class PureVariantsLicenses(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class PureVariantsLicenses(core_pydantic.BaseModel):
     license_server_url: str | None = None
     license_key_filename: str | None = None
 

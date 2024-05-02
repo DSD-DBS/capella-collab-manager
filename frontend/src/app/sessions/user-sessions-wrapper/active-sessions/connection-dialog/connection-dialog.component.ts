@@ -8,9 +8,9 @@ import { Component, Inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { UserService } from 'src/app/services/user/user.service';
+import { Session } from 'src/app/openapi';
+import { UserWrapperService } from 'src/app/services/user/user.service';
 import {
-  Session,
   SessionConnectionInformation,
   SessionService,
   isPersistentSession,
@@ -30,7 +30,7 @@ export class ConnectionDialogComponent {
   connectionInfo?: SessionConnectionInformation = undefined;
 
   constructor(
-    public userService: UserService,
+    public userService: UserWrapperService,
     private sessionService: SessionService,
     @Inject(MAT_DIALOG_DATA) public session: Session,
     public dialogRef: MatDialogRef<ConnectionDialogComponent>,
@@ -56,7 +56,7 @@ export class ConnectionDialogComponent {
       this.connectionInfo!,
     );
     if (this.connectionInfo.redirect_url) {
-      window.open(this.connectionInfo!.redirect_url);
+      window.open(this.connectionInfo.redirect_url);
     } else {
       this.toastService.showError(
         "Couldn't connect to session.",

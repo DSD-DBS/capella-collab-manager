@@ -72,18 +72,16 @@ class Session(core_pydantic.BaseModel):
 
     version: tools_models.ToolVersionWithTool
 
-    _validate_created_at = pydantic.field_serializer("created_at")(
-        core_pydantic.datetime_serializer
-    )
-
-
-class GetSessionsResponse(Session):
     state: str = pydantic.Field(default="UNKNOWN")
     warnings: list[core_models.Message] = pydantic.Field(default=[])
     last_seen: str = pydantic.Field(default="UNKNOWN")
 
     connection_method_id: str
     connection_method: tools_models.ToolSessionConnectionMethod | None = None
+
+    _validate_created_at = pydantic.field_serializer("created_at")(
+        core_pydantic.datetime_serializer
+    )
 
     @pydantic.model_validator(mode="after")
     def resolve_connection_method(self) -> t.Any:

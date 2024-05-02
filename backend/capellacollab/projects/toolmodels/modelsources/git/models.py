@@ -10,12 +10,13 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.toolmodels.models import DatabaseToolModel
 
 
-class PostGitModel(pydantic.BaseModel):
+class PostGitModel(core_pydantic.BaseModel):
     path: str
     entrypoint: str
     revision: str
@@ -28,8 +29,6 @@ class PatchGitModel(PostGitModel):
 
 
 class GitModel(PostGitModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
     id: int
     name: str
     primary: bool

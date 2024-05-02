@@ -5,11 +5,11 @@
 import enum
 import typing as t
 
-import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 from capellacollab.users import models as users_models
 
 if t.TYPE_CHECKING:
@@ -28,22 +28,20 @@ class ProjectUserPermission(enum.Enum):
     WRITE = "write"
 
 
-class ProjectUser(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class ProjectUser(core_pydantic.BaseModel):
     role: ProjectUserRole
     permission: ProjectUserPermission
     user: users_models.User
 
 
-class PostProjectUser(pydantic.BaseModel):
+class PostProjectUser(core_pydantic.BaseModel):
     role: ProjectUserRole
     permission: ProjectUserPermission
     username: str
     reason: str
 
 
-class PatchProjectUser(pydantic.BaseModel):
+class PatchProjectUser(core_pydantic.BaseModel):
     role: ProjectUserRole | None = None
     permission: ProjectUserPermission | None = None
     reason: str

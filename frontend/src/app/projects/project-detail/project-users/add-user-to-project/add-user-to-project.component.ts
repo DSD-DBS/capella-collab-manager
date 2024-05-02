@@ -25,11 +25,11 @@ import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { Observable, map, take } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { Project } from 'src/app/openapi';
 import {
   ProjectUserService,
   SimpleProjectUserRole,
 } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import { Project } from 'src/app/projects/service/project.service';
 
 @Component({
   selector: 'app-add-user-to-project',

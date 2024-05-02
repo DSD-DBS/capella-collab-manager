@@ -9,13 +9,9 @@ import { MatRipple } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { combineLatest } from 'rxjs';
+import { ToolNature, ToolVersion } from 'src/app/openapi';
 import { MatIconComponent } from '../../../helpers/mat-icon/mat-icon.component';
-import {
-  ToolExtended,
-  ToolService,
-  ToolNature,
-  ToolVersion,
-} from './tool.service';
+import { ToolExtended, ToolWrapperService } from './tool.service';
 
 @Component({
   selector: 'app-dockerimage-settings',
@@ -27,7 +23,7 @@ import {
 export class ToolsSettingsComponent {
   tools: { [id: string]: ToolExtended } = {};
 
-  constructor(public toolService: ToolService) {
+  constructor(public toolService: ToolWrapperService) {
     this.tools = {};
     this.toolService.getTools().subscribe(() => {
       for (const tool of this.toolService.tools!.map((tool) => tool.id)) {

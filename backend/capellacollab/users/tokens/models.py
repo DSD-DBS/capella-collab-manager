@@ -3,19 +3,17 @@
 import datetime
 import typing as t
 
-import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 
 if t.TYPE_CHECKING:
     from capellacollab.users.models import DatabaseUser
 
 
-class UserToken(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class UserToken(core_pydantic.BaseModel):
     id: int
     user_id: int
     hash: str
@@ -28,7 +26,7 @@ class UserTokenWithPassword(UserToken):
     password: str
 
 
-class PostToken(pydantic.BaseModel):
+class PostToken(core_pydantic.BaseModel):
     expiration_date: datetime.date
     description: str
     source: str

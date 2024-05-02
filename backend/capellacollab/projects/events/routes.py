@@ -29,7 +29,7 @@ router = fastapi.APIRouter(
     "",
     response_model=fastapi_pagination.Page[events_models.HistoryEvent],
 )
-def get_events(
+def get_project_events(
     db: orm.Session = fastapi.Depends(database.get_db),
     project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
