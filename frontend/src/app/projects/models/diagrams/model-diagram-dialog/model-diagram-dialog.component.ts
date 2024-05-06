@@ -10,6 +10,7 @@ import {
   ViewChildren,
   ElementRef,
   QueryList,
+  OnInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -66,7 +67,7 @@ import { ModelDiagramCodeBlockComponent } from './model-diagram-code-block/model
     DatePipe,
   ],
 })
-export class ModelDiagramDialogComponent {
+export class ModelDiagramDialogComponent implements OnInit {
   diagramMetadata?: DiagramCacheMetadata;
   diagrams: Diagrams = {};
 
@@ -77,10 +78,11 @@ export class ModelDiagramDialogComponent {
 
   search = '';
 
-  filteredDiagrams(): DiagramMetadata[] | undefined {
+  get filteredDiagrams(): DiagramMetadata[] | undefined {
     if (!this.diagramMetadata) {
       return undefined;
     }
+
     return this.diagramMetadata.diagrams.filter(
       (diagram: DiagramMetadata) =>
         diagram.name.toLowerCase().includes(this.search.toLowerCase()) ||
@@ -94,7 +96,9 @@ export class ModelDiagramDialogComponent {
     private dialogRef: MatDialogRef<ModelDiagramDialogComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: { model: Model; project: Project },
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     this.modelDiagramService
       .getDiagramMetadata(this.data.project.slug, this.data.model.slug)
       .subscribe({
@@ -192,7 +196,7 @@ export class ModelDiagramDialogComponent {
   }
 }
 
-interface Diagrams {
+export interface Diagrams {
   [uuid: string]: Diagram;
 }
 
