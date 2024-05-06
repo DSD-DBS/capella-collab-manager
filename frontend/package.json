@@ -62,7 +62,7 @@
     "@storybook/addon-docs": "^8.0.9",
     "@storybook/addon-essentials": "^8.0.9",
     "@storybook/addon-interactions": "^8.0.9",
-    "@storybook/addon-links": "^8.0.9",
+    "@storybook/addon-links": "^8.0.10",
     "@storybook/angular": "^8.0.9",
     "@storybook/blocks": "^8.0.9",
     "@storybook/test": "^8.0.9",
