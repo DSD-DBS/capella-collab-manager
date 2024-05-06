@@ -60,7 +60,7 @@
     "@compodoc/compodoc": "^1.1.24",
     "@playwright/test": "^1.43.1",
     "@storybook/addon-docs": "^8.0.9",
-    "@storybook/addon-essentials": "^8.0.9",
+    "@storybook/addon-essentials": "^8.0.10",
     "@storybook/addon-interactions": "^8.0.9",
     "@storybook/addon-links": "^8.0.9",
     "@storybook/angular": "^8.0.9",
