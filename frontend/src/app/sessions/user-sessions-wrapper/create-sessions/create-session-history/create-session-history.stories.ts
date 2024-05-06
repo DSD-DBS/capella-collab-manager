@@ -5,10 +5,10 @@
 
 import { Meta, StoryObj } from '@storybook/angular';
 import {
-  ConnectionMethod,
-  Tool,
-  ToolVersion,
-} from 'src/app/settings/core/tools-settings/tool.service';
+  mockHttpConnectionMethod,
+  mockTool,
+  mockToolVersion,
+} from 'src/storybook/tool';
 import { CreateSessionHistoryComponent } from './create-session-history.component';
 
 const meta: Meta<CreateSessionHistoryComponent> = {
@@ -19,52 +19,23 @@ const meta: Meta<CreateSessionHistoryComponent> = {
 export default meta;
 type Story = StoryObj<CreateSessionHistoryComponent>;
 
-const tool: Tool = {
-  id: 1,
-  name: 'Tool 1',
-  integrations: { t4c: true, pure_variants: true, jupyter: false },
-  config: {
-    connection: { methods: [] },
-    provisioning: {},
-    persistent_workspaces: {
-      mounting_enabled: true,
-    },
-  },
-};
-
-const version: ToolVersion = {
-  id: 1,
-  name: 'Version 1',
-  config: {
-    is_recommended: false,
-    is_deprecated: false,
-    compatible_versions: [],
-  },
-};
-
-const connectionMethod: ConnectionMethod = {
-  id: '1',
-  name: 'Method 1',
-  type: 'http',
-};
-
 export const ResolvedSessionHistory: Story = {
   args: {
     resolvedHistory: [
       {
-        tool: tool,
-        version: version,
+        tool: mockTool,
+        version: mockToolVersion,
         lastTimeRequested: new Date('2024-04-01'),
         loading: true,
-        connectionMethod: connectionMethod,
+        connectionMethod: mockHttpConnectionMethod,
       },
       {
-        tool: { ...tool, name: 'Example tool' },
-        version: { ...version, name: 'Example version' },
+        tool: { ...mockTool, name: 'Example tool' },
+        version: { ...mockToolVersion, name: 'Example version' },
         lastTimeRequested: new Date('2024-01-01'),
         loading: false,
         connectionMethod: {
-          ...connectionMethod,
+          ...mockHttpConnectionMethod,
           name: 'Example connection method',
         },
       },
