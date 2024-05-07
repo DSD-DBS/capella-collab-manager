@@ -27,8 +27,8 @@
     />
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
-  <span *ngIf="filteredDiagrams()"
-    >{{ filteredDiagrams()?.length }} diagram(s) found:
+  <span *ngIf="filteredDiagrams"
+    >{{ filteredDiagrams.length }} diagram(s) found:
   </span>
   <div class="flex flex-wrap gap-5">
     <div
@@ -36,7 +36,7 @@
       #diagram
       [id]="diagram.uuid"
       [attr.success]="diagram.success"
-      *ngFor="let diagram of filteredDiagrams()"
+      *ngFor="let diagram of filteredDiagrams"
     >
       <img
         (click)="openModelDiagramPreviewDialog(diagram)"
@@ -95,7 +95,7 @@
       </button>
     </div>
   </div>
-  <div class="flex flex-wrap" *ngIf="filteredDiagrams() === undefined">
+  <div class="flex flex-wrap" *ngIf="filteredDiagrams === undefined">
     <ngx-skeleton-loader
       *ngFor="let _ of loaderArray"
       class="m-2 grow basis-[calc(30%-20px)]"
@@ -113,7 +113,7 @@
   <div
     *ngIf="
       this.diagramMetadata?.diagrams?.length !== 0 &&
-      filteredDiagrams()?.length === 0
+      filteredDiagrams?.length === 0
     "
   >
     No diagrams for the given filter found. Please remove your search query.

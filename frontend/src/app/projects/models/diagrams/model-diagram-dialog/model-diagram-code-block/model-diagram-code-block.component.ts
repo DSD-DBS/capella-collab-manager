@@ -8,6 +8,7 @@ import {
   AfterViewInit,
   Component,
   Input,
+  OnInit,
   Pipe,
   PipeTransform,
   forwardRef,
@@ -52,7 +53,7 @@ import { TokenService } from 'src/app/users/basic-auth-service/basic-auth-token.
     forwardRef(() => HighlightPipeTransform),
   ],
 })
-export class ModelDiagramCodeBlockComponent implements AfterViewInit {
+export class ModelDiagramCodeBlockComponent implements OnInit, AfterViewInit {
   passwordValue?: string;
 
   metadata?: BackendMetadata;
@@ -62,7 +63,9 @@ export class ModelDiagramCodeBlockComponent implements AfterViewInit {
     private userService: UserService,
     private tokenService: TokenService,
     private toastService: ToastService,
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     this.metadataService.backendMetadata.subscribe((metadata) => {
       this.metadata = metadata;
     });

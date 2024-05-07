@@ -9,7 +9,7 @@ import {
   ProjectUserRole,
   ProjectUserService,
 } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import { Project } from 'src/app/projects/service/project.service';
+import { mockProject } from 'src/storybook/project';
 import { ProjectMetadataComponent } from './project-metadata.component';
 
 class MockProjectUserService implements Partial<ProjectUserService> {
@@ -33,21 +33,6 @@ const meta: Meta<ProjectMetadataComponent> = {
 export default meta;
 type Story = StoryObj<ProjectMetadataComponent>;
 
-const project: Project = {
-  name: 'test',
-  description:
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  type: 'general',
-  visibility: 'internal',
-  is_archived: false,
-  slug: 'test',
-  users: {
-    leads: 1,
-    contributors: 1,
-    subscribers: 1,
-  },
-};
-
 export const Loading: Story = {
   args: {
     project: undefined,
@@ -66,7 +51,7 @@ export const Loading: Story = {
 
 export const NormalUser: Story = {
   args: {
-    project: project,
+    project: mockProject,
   },
   decorators: [
     moduleMetadata({
@@ -82,7 +67,7 @@ export const NormalUser: Story = {
 
 export const ProjectAdmin: Story = {
   args: {
-    project: project,
+    project: mockProject,
     canDelete: true,
   },
   decorators: [
@@ -99,7 +84,7 @@ export const ProjectAdmin: Story = {
 
 export const NormalUserArchived: Story = {
   args: {
-    project: { ...project, is_archived: true },
+    project: { ...mockProject, is_archived: true },
     canDelete: true,
   },
   decorators: [
@@ -116,7 +101,7 @@ export const NormalUserArchived: Story = {
 
 export const ProjectAdminArchived: Story = {
   args: {
-    project: { ...project, is_archived: true },
+    project: { ...mockProject, is_archived: true },
     canDelete: true,
   },
   decorators: [
@@ -133,7 +118,7 @@ export const ProjectAdminArchived: Story = {
 
 export const CantDelete: Story = {
   args: {
-    project: project,
+    project: mockProject,
     canDelete: false,
   },
   decorators: [
