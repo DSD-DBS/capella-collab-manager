@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import {
   Component,
   Inject,
@@ -57,8 +57,6 @@ import { ModelDiagramCodeBlockComponent } from './model-diagram-code-block/model
     FormsModule,
     MatIcon,
     MatSuffix,
-    NgIf,
-    NgFor,
     MatTooltip,
     NgxSkeletonLoaderModule,
     MatButton,
