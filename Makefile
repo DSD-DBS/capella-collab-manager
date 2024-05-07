@@ -84,6 +84,7 @@ deploy-without-build: helm-deploy rollout open
 helm-deploy:
 	@k3d cluster list $(CLUSTER_NAME) >/dev/null || $(MAKE) create-cluster
 	@kubectl create namespace $(SESSION_NAMESPACE) 2> /dev/null || true
+	@[[ ! $$(helm dependency list ./helm | grep missing) ]] || helm dependency update ./helm;
 	@echo "Start helm upgrade..."
 	@helm upgrade --install \
 		--kube-context k3d-$(CLUSTER_NAME) \
