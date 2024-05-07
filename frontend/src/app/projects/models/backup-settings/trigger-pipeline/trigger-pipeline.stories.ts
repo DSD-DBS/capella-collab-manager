@@ -88,7 +88,16 @@ export const PipelineOverview: Story = {
       providers: [
         {
           provide: PipelineService,
-          useFactory: () => new MockPipelineService([pipeline, pipeline]),
+          useFactory: () =>
+            new MockPipelineService([
+              pipeline,
+              {
+                ...pipeline,
+                id: 2,
+                run_nightly: true,
+                include_commit_history: true,
+              },
+            ]),
         },
       ],
     }),

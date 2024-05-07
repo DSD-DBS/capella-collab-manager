@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import {
   FormControl,
@@ -23,6 +23,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   PipelineRun,
@@ -40,13 +41,10 @@ import {
 @Component({
   selector: 'app-trigger-pipeline',
   templateUrl: './trigger-pipeline.component.html',
-  styleUrls: ['./trigger-pipeline.component.css'],
   standalone: true,
   imports: [
-    NgIf,
     MatIconAnchor,
     MatIcon,
-    NgFor,
     MatRipple,
     FormsModule,
     ReactiveFormsModule,
@@ -56,6 +54,7 @@ import {
     MatSlideToggle,
     MatTooltip,
     AsyncPipe,
+    NgxSkeletonLoaderModule,
   ],
 })
 export class TriggerPipelineComponent implements OnInit {
