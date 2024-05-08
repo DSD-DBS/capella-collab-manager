@@ -3,7 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { User } from 'src/app/services/user/user.service';
+import {
+  User,
+  UserRole,
+  UserService,
+} from 'src/app/services/user/user.service';
 
 export const mockUser: Readonly<User> = {
   id: 1,
@@ -12,3 +16,16 @@ export const mockUser: Readonly<User> = {
   created: '2024-04-29T14:00:00Z',
   last_login: '2024-04-29T14:59:00Z',
 };
+
+export class MockUserService implements Partial<UserService> {
+  role: UserRole;
+
+  constructor(role: UserRole) {
+    this.role = role;
+  }
+
+  validateUserRole(requiredRole: UserRole): boolean {
+    const roles = ['user', 'administrator'];
+    return roles.indexOf(requiredRole) <= roles.indexOf(this.role);
+  }
+}

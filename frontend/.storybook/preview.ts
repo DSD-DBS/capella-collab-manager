@@ -13,6 +13,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { RouterModule } from '@angular/router';
 import { CookieModule } from 'ngx-cookie';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDialogRef } from '@angular/material/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 
 setCompodocJson(docJson);
 
@@ -44,6 +46,8 @@ const preview: Preview = {
           RouterModule.forRoot([]),
         ),
         importProvidersFrom(BrowserAnimationsModule),
+        { provide: MatDialogRef, useValue: {} },
+        { provide: DialogRef, useValue: {} },
       ],
     }),
   ],

@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { DialogRef } from '@angular/cdk/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { Tool } from 'src/app/settings/core/tools-settings/tool.service';
+import { dialogWrapper } from 'src/storybook/decorators';
 import { mockPrimaryGitModel } from 'src/storybook/git';
 import { createModelWithId } from 'src/storybook/model';
 import { mockTool, mockToolVersion } from 'src/storybook/tool';
@@ -18,6 +18,12 @@ class MockSessionService implements Partial<SessionService> {}
 const meta: Meta<CreateReadonlySessionDialogComponent> = {
   title: 'Session Components / Create Readonly Session Dialog',
   component: CreateReadonlySessionDialogComponent,
+  decorators: [
+    moduleMetadata({
+      providers: [{ provide: MAT_DIALOG_DATA, useValue: {} }],
+    }),
+    dialogWrapper,
+  ],
 };
 
 const tool: Tool = { ...mockTool };
@@ -53,8 +59,6 @@ export const ModelSelectedAndStartSessionPossible: Story = {
           provide: SessionService,
           useFactory: () => new MockSessionService(),
         },
-        { provide: MAT_DIALOG_DATA, useValue: {} },
-        { provide: DialogRef, useValue: {} },
       ],
     }),
   ],
@@ -69,8 +73,6 @@ export const NoModelsToShow: Story = {
           provide: SessionService,
           useFactory: () => new MockSessionService(),
         },
-        { provide: MAT_DIALOG_DATA, useValue: {} },
-        { provide: DialogRef, useValue: {} },
       ],
     }),
   ],
@@ -104,8 +106,6 @@ export const MaxNumberOfModelsExceeded: Story = {
           provide: SessionService,
           useFactory: () => new MockSessionService(),
         },
-        { provide: MAT_DIALOG_DATA, useValue: {} },
-        { provide: DialogRef, useValue: {} },
       ],
     }),
   ],
@@ -136,8 +136,6 @@ export const ShowNoteForCompatibleSession: Story = {
           provide: SessionService,
           useFactory: () => new MockSessionService(),
         },
-        { provide: MAT_DIALOG_DATA, useValue: {} },
-        { provide: DialogRef, useValue: {} },
       ],
     }),
   ],

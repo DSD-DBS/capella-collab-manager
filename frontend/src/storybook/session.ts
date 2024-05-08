@@ -10,6 +10,8 @@ import {
 import { mockHttpConnectionMethod, mockToolVersionWithTool } from './tool';
 import { mockUser } from './user';
 
+export const startedSession = createPersistentSessionWithState('Started');
+
 export function createPersistentSessionWithState(state: string): Session {
   return {
     id: '1',
