@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
+import { dialogWrapper } from 'src/storybook/decorators';
 import { base64ModelDiagram } from 'src/storybook/diagram';
 import { mockModel } from 'src/storybook/model';
 import { mockProject } from 'src/storybook/project';
@@ -24,9 +25,9 @@ const meta: Meta<ModelDiagramDialogComponent> = {
           provide: MAT_DIALOG_DATA,
           useValue: { model: mockModel, project: mockProject },
         },
-        { provide: MatDialogRef, useValue: {} },
       ],
     }),
+    dialogWrapper,
   ],
 };
 
