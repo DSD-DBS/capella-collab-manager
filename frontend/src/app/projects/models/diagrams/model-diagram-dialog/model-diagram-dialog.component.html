@@ -70,12 +70,13 @@
                 }"
               ></ngx-skeleton-loader>
             } @else if (diagrams[diagram.uuid].content) {
-              <img
-                (click)="openModelDiagramPreviewDialog(diagram)"
-                matTooltip="Open preview"
-                class="mb-2 h-[200px] w-full !touch-auto hover:cursor-pointer"
-                [src]="diagrams[diagram.uuid].content"
-              />
+              <button (click)="openModelDiagramPreviewDialog(diagram)">
+                <img
+                  matTooltip="Open preview"
+                  class="mb-2 h-[200px] w-full !touch-auto hover:cursor-pointer"
+                  [src]="diagrams[diagram.uuid].content"
+                />
+              </button>
             }
           } @else {
             <div class="diagram-error">

@@ -16,8 +16,8 @@
       >
       </mat-progress-bar>
     </div>
-    <button mat-button>
-      <mat-icon (click)="reset()" *ngIf="uploadProgress">Cancel </mat-icon>
+    <button class="flex items-center" mat-button (click)="reset()">
+      <mat-icon *ngIf="uploadProgress">cancel </mat-icon>
     </button>
   </div>
 

@@ -5,67 +5,89 @@
 
 <div class="dialog">
   <div>
-    <div *ngIf="!selectedPipeline" class="flex justify-between gap-5">
-      <span
-        >Please select the pipeline you'd like to execute or to see the logs:
-      </span>
-      <a mat-icon-button (click)="createPipeline()"
-        ><mat-icon>add_circle</mat-icon></a
-      >
-    </div>
-    <div class="pipelines">
-      <div *ngFor="let pipeline of this.pipelineService.pipelines$ | async">
-        <div
-          matRipple
-          *ngIf="!selectedPipeline || selectedPipeline.id === pipeline.id"
-          (click)="selectPipeline(pipeline)"
-          class="pipeline-card collab-card"
+    @if (!selectedPipeline) {
+      <div class="flex justify-between gap-5">
+        <span
+          >Please select the pipeline you'd like to execute or to see the logs:
+        </span>
+        <a mat-icon-button (click)="createPipeline()"
+          ><mat-icon>add_circle</mat-icon></a
         >
-          <span class="text-center"><b>Backup</b> (ID: {{ pipeline.id }})</span>
-          <br />
-          <span *ngIf="pipeline.run_nightly"
-            >Runs nightly at 3am
-            <span *ngIf="pipeline.include_commit_history"
-              >with commit history</span
-            ><span *ngIf="!pipeline.include_commit_history"
-              >without commit history</span
-            >
-            or with manual trigger
-          </span>
-          <span *ngIf="!pipeline.run_nightly"
-            >Runs only with manual trigger</span
-          >
-          <hr />
-          <div class="flex flex-wrap justify-between gap-y-1">
-            <span style="flex-basis: 45%"
-              ><b>TeamForCapella</b> <br />
-              Instance <i>{{ pipeline.t4c_model.instance_name }}</i
-              >, <br />Repository <i>{{ pipeline.t4c_model.repository_name }}</i
-              >, <br />Project:
-              <i>{{ pipeline.t4c_model.project_name }}</i> </span
-            ><span style="flex-basis: 10%"
-              ><mat-icon class="mat-icon-position top">arrow_forward</mat-icon>
-            </span>
-            <span style="flex-basis: 45%">
-              <b>Git</b> <br />
-              URL: <i>{{ pipeline.git_model.path }}</i
-              >, <br />revision: <i>{{ pipeline.git_model.revision }}</i
-              >, <br />entrypoint:
-              <i>{{ pipeline.git_model.entrypoint }}</i>
-            </span>
-          </div>
-        </div>
       </div>
-    </div>
-    <div
-      class="my-2"
-      *ngIf="(this.pipelineService.pipelines$ | async)?.length === 0"
-    >
-      No pipelines found. Please create a new pipeline.
-    </div>
+    }
+    @if ((this.pipelineService.pipelines$ | async) === undefined) {
+      <ngx-skeleton-loader
+        appearance="circle"
+        [theme]="{
+          'border-radius': '5px',
+          height: '250px',
+          width: '600px',
+          'max-width': '100%',
+          border: '1px solid white',
+          margin: '0'
+        }"
+      ></ngx-skeleton-loader>
+    } @else {
+      <div class="flex max-h-[80vh] flex-col gap-2">
+        @for (
+          pipeline of this.pipelineService.pipelines$ | async;
+          track pipeline.id
+        ) {
+          @if (!selectedPipeline || selectedPipeline.id === pipeline.id) {
+            <button
+              matRipple
+              (click)="selectPipeline(pipeline)"
+              class="collab-card text-left hover:cursor-pointer hover:bg-hover"
+            >
+              <span><b>Backup</b> (ID: {{ pipeline.id }})</span>
+              <br />
+              <span>
+                @if (pipeline.run_nightly) {
+                  Runs nightly at 3am
+                  @if (pipeline.include_commit_history) {
+                    with
+                  } @else {
+                    without
+                  }
+                  commit history or on manual trigger.
+                } @else {
+                  Runs on manual trigger.
+                }
+              </span>
+              <hr />
+              <div class="flex flex-wrap items-center justify-between gap-y-1">
+                <span style="flex-basis: 45%"
+                  ><b>TeamForCapella</b> <br />
+                  Instance <i>{{ pipeline.t4c_model.instance_name }}</i
+                  >, <br />Repository
+                  <i>{{ pipeline.t4c_model.repository_name }}</i
+                  >, <br />Project:
+                  <i>{{ pipeline.t4c_model.project_name }}</i> </span
+                ><span style="flex-basis: 10%"
+                  ><mat-icon class="mat-icon-position top"
+                    >arrow_forward</mat-icon
+                  >
+                </span>
+                <span style="flex-basis: 45%">
+                  <b>Git</b> <br />
+                  URL: <i>{{ pipeline.git_model.path }}</i
+                  >, <br />revision: <i>{{ pipeline.git_model.revision }}</i
+                  >, <br />entrypoint:
+                  <i>{{ pipeline.git_model.entrypoint }}</i>
+                </span>
+              </div>
+            </button>
+          }
+        } @empty {
+          <div class="my-2">
+            No pipelines found. Please create a new pipeline.
+          </div>
+        }
+      </div>
+    }
 
-    <div>
-      <form *ngIf="selectedPipeline" [formGroup]="configurationForm">
+    @if (selectedPipeline) {
+      <form [formGroup]="configurationForm">
         <hr />
         <h3>Run the pipeline</h3>
 
@@ -86,9 +108,6 @@
           </button>
         </div>
       </form>
-    </div>
-
-    <div *ngIf="selectedPipeline">
       <hr />
       <h3>Additional actions</h3>
       <div class="flex flex-row flex-wrap items-center gap-2">
@@ -106,15 +125,16 @@
         >
           View runs
         </a>
-        <mat-slide-toggle
-          *ngIf="userService.validateUserRole('administrator')"
-          [(ngModel)]="force"
-          aria-label="Force deletion of pipeline"
-          matTooltip="Delete pipeline even if T4C instance not reachable"
-        >
-          Force deletion
-        </mat-slide-toggle>
+        @if (userService.validateUserRole("administrator")) {
+          <mat-slide-toggle
+            [(ngModel)]="force"
+            aria-label="Force deletion of pipeline"
+            matTooltip="Delete pipeline even if T4C instance not reachable"
+          >
+            Force deletion
+          </mat-slide-toggle>
+        }
       </div>
-    </div>
+    }
   </div>
 </div>
