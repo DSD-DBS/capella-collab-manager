@@ -29,7 +29,7 @@
             "browser": "src/main.ts",
             "polyfills": ["src/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": ["src/favicon.ico", "src/assets", "src/fonts"],
             "styles": [
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "monaco-editor/min/vs/editor/editor.main.css",
@@ -91,7 +91,6 @@
                   "with": "src/environments/environment.storybook.ts"
                 }
               ]
-
             }
           },
           "defaultConfiguration": "production"
