@@ -40,7 +40,7 @@
     "npm-check-updates": "^16.14.20",
     "path-is-absolute": "^2.0.0",
     "rxjs": "~7.8.1",
-    "semver": "^7.6.0",
+    "semver": "^7.6.2",
     "slugify": "^1.6.6",
     "tslib": "^2.6.2",
     "uuid": "^9.0.1",
