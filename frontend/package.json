@@ -68,7 +68,7 @@
     "@storybook/test": "^8.0.10",
     "@types/file-saver": "^2.0.7",
     "@types/jasmine": "~5.1.4",
-    "@types/node": "^20.12.10",
+    "@types/node": "^20.12.11",
     "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
     "@typescript-eslint/parser": "^7.8.0",
