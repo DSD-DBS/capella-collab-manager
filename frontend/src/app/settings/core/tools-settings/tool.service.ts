@@ -7,14 +7,17 @@ import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { SKIP_ERROR_HANDLING } from 'src/app/general/error-handling/error-handling.interceptor';
+import {
+  Tool,
+  ToolNature,
+  ToolSessionConnectionOutputMethodsInner,
+  ToolVersion,
+  ToolsService,
+} from 'src/app/openapi';
 import { environment } from 'src/environments/environment';
 
-export type ConnectionMethod = {
-  id: string;
-  name: string;
-  description?: string;
-  type: 'http' | 'guacamole';
-};
+// The generator has a pretty long name, so we're going to shorten it.
+export type ConnectionMethod = ToolSessionConnectionOutputMethodsInner;
 
 export type ToolSessionProvisioningConfiguration = {
   max_number_of_models?: number;
@@ -40,10 +43,6 @@ export type CreateTool = {
   config: ToolSessionConfiguration;
 };
 
-export type Tool = {
-  id: number;
-} & CreateTool;
-
 export type ToolIntegrations = {
   t4c: boolean | null;
   pure_variants: boolean | null;
@@ -61,19 +60,11 @@ export type ToolVersionConfig = {
   compatible_versions: number[];
 };
 
-export type ToolVersion = {
-  id: number;
-} & CreateToolVersion;
-
 export type ToolVersionWithTool = ToolVersion & { tool: Tool };
 
 export type CreateToolNature = {
   name: string;
 };
-
-export type ToolNature = {
-  id: number;
-} & CreateToolNature;
 
 export type ToolExtended = {
   natures: ToolNature[];
@@ -89,8 +80,11 @@ export type ToolDockerimages = {
 @Injectable({
   providedIn: 'root',
 })
-export class ToolService {
-  constructor(private http: HttpClient) {}
+export class ToolWrapperService {
+  constructor(
+    private http: HttpClient,
+    private toolsService: ToolsService,
+  ) {}
 
   baseURL = environment.backend_url + '/tools';
 
@@ -107,31 +101,11 @@ export class ToolService {
   }
 
   getTools(): Observable<Tool[]> {
-    return this.http.get<Tool[]>(this.baseURL).pipe(
+    return this.toolsService.getTools().pipe(
       tap((tools: Tool[]) => {
         this._tools.next(tools);
       }),
     );
-  }
-
-  getToolByID(id: string): Observable<Tool> {
-    return this.http.get<Tool>(`${this.baseURL}/${id}`);
-  }
-
-  getDefaultTool(): Observable<CreateTool> {
-    return this.http.get<CreateTool>(`${this.baseURL}/default`);
-  }
-
-  createTool(tool: CreateTool): Observable<Tool> {
-    return this.http.post<Tool>(this.baseURL, tool);
-  }
-
-  updateTool(toolId: number, value: Tool): Observable<Tool> {
-    return this.http.put<Tool>(`${this.baseURL}/${toolId}`, value);
-  }
-
-  deleteTool(tool_id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseURL}/${tool_id}`);
   }
 
   getVersionsForTool(
@@ -158,10 +132,6 @@ export class ToolService {
 
   getVersionsForTools(): Observable<ToolVersionWithTool[]> {
     return this.http.get<ToolVersionWithTool[]>(`${this.baseURL}/*/versions`);
-  }
-
-  getDefaultVersion(): Observable<ToolVersion> {
-    return this.http.get<ToolVersion>(`${this.baseURL}/-/versions/default`);
   }
 
   createVersionForTool(
@@ -198,55 +168,11 @@ export class ToolService {
     return this.http.get<ToolVersion[]>(`${this.baseURL}/${toolId}/natures`);
   }
 
-  getDefaultNature(): Observable<ToolVersion> {
-    return this.http.get<ToolVersion>(`${this.baseURL}/-/natures/default`);
-  }
-
-  createNatureForTool(
-    toolId: number,
-    toolNature: CreateToolNature,
-  ): Observable<ToolNature> {
-    return this.http.post<ToolNature>(
-      `${this.baseURL}/${toolId}/natures`,
-      toolNature,
-    );
-  }
-
-  updateToolNature(
-    toolId: number,
-    natureID: number,
-    updatedToolNature: CreateToolNature,
-  ) {
-    return this.http.put<ToolVersion>(
-      `${this.baseURL}/${toolId}/natures/${natureID}`,
-      updatedToolNature,
-    );
-  }
-
-  deleteNatureForTool(
-    toolId: number,
-    toolNature: ToolNature,
-  ): Observable<void> {
-    return this.http.delete<void>(
-      `${this.baseURL}/${toolId}/natures/${toolNature.id}`,
-    );
-  }
-
-  patchToolIntegrations(
-    toolId: number,
-    toolIntegrations: ToolIntegrations,
-  ): Observable<ToolIntegrations> {
-    return this.http.put<ToolIntegrations>(
-      `${this.baseURL}/${toolId}/integrations`,
-      toolIntegrations,
-    );
-  }
-
   getConnectionIdForTool(
     tool: Tool,
     connectionMethodId: string,
   ): ConnectionMethod | undefined {
-    return tool?.config.connection.methods.find(
+    return tool?.config?.connection?.methods?.find(
       (cm) => cm.id === connectionMethodId,
     );
   }

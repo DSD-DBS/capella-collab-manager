@@ -6,8 +6,8 @@
 import { Injectable } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { BehaviorSubject, map } from 'rxjs';
+import { Session } from 'src/app/openapi';
 import {
-  Session,
   SessionConnectionInformation,
   SessionService,
 } from 'src/app/sessions/service/session.service';

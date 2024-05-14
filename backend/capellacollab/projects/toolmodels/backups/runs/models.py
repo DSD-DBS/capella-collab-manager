@@ -60,9 +60,7 @@ class DatabasePipelineRun(Base):
     )
 
 
-class PipelineRun(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class PipelineRun(core_pydantic.BaseModel):
     id: int
     reference_id: str | None = None
     triggerer: users_models.User
@@ -75,5 +73,5 @@ class PipelineRun(pydantic.BaseModel):
     )
 
 
-class BackupPipelineRun(pydantic.BaseModel):
+class BackupPipelineRun(core_pydantic.BaseModel):
     include_commit_history: bool | None = None

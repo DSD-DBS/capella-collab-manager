@@ -14,8 +14,8 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
+import { User } from 'src/app/openapi';
 import { ProjectService } from 'src/app/projects/service/project.service';
-import { User } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

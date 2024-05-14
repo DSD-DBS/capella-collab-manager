@@ -32,7 +32,6 @@ import { ToastService } from '../../helpers/toast/toast.service';
 import { ProjectUserService } from '../project-detail/project-users/service/project-user.service';
 import {
   PatchProject,
-  Project,
   ProjectService,
   ProjectVisibility,
   ProjectVisibilityDescriptions,
@@ -40,6 +39,7 @@ import {
 import { CreateProjectComponent } from './create-project.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CookieModule } from 'ngx-cookie';
+import { Project } from 'src/app/openapi';
 
 const mockProjects: Project[] = [
   {

@@ -10,6 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 from capellacollab.settings.modelsources.t4c.repositories import (
     models as repositories_models,
 )
@@ -47,15 +48,13 @@ class DatabaseT4CModel(database.Base):
     )
 
 
-class SubmitT4CModel(pydantic.BaseModel):
+class SubmitT4CModel(core_pydantic.BaseModel):
     name: str
     t4c_instance_id: int
     t4c_repository_id: int
 
 
-class SimpleT4CModel(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class SimpleT4CModel(core_pydantic.BaseModel):
     project_name: str
     repository_name: str
     instance_name: str
@@ -72,15 +71,11 @@ class SimpleT4CModel(pydantic.BaseModel):
         return data
 
 
-class T4CModel(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class T4CModel(core_pydantic.BaseModel):
     id: int
     name: str
     repository: repositories_models.T4CRepository
 
 
 class T4CRepositoryWithModels(repositories_models.T4CRepository):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
     models: list[T4CModel]

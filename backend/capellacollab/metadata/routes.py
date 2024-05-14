@@ -2,21 +2,19 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import fastapi
-import pydantic
 from sqlalchemy import orm
 
 import capellacollab
 from capellacollab.config import config
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 from capellacollab.settings.configuration import core as config_core
 from capellacollab.settings.configuration import (
     models as settings_config_models,
 )
 
 
-class Metadata(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class Metadata(core_pydantic.BaseModel):
     version: str
     privacy_policy_url: str | None
     imprint_url: str | None

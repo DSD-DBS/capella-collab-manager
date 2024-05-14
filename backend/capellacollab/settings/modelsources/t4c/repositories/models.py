@@ -11,6 +11,7 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 from capellacollab.settings.modelsources.t4c import models as t4c_models
 
 if t.TYPE_CHECKING:
@@ -49,7 +50,7 @@ class DatabaseT4CRepository(database.Base):
     )
 
 
-class CreateT4CRepository(pydantic.BaseModel):
+class CreateT4CRepository(core_pydantic.BaseModel):
     name: str = pydantic.Field(
         pattern=r"^[-a-zA-Z0-9_]+$", examples=["testrepo"]
     )
@@ -64,14 +65,10 @@ class T4CRepositoryStatus(str, enum.Enum):
 
 
 class T4CRepository(CreateT4CRepository):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
     id: int
     instance: t4c_models.T4CInstance
     status: T4CRepositoryStatus | None = None
 
 
 class T4CInstanceWithRepositories(t4c_models.T4CInstance):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
     repositories: list[T4CRepository]

@@ -11,7 +11,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
 import { AuthService } from '../../services/auth/auth.service';
-import { UserService } from '../../services/user/user.service';
+import { UserWrapperService } from '../../services/user/user.service';
 import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
 
 @Component({
@@ -35,7 +35,7 @@ import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
 export class HeaderComponent {
   constructor(
     public authService: AuthService,
-    public userService: UserService,
+    public userService: UserWrapperService,
     public navBarService: NavBarService,
   ) {}
 }

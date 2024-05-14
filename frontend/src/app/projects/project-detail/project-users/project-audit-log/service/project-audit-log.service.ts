@@ -6,7 +6,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
-import { HistoryEvent } from 'src/app/events/service/events.service';
+import { HistoryEvent } from 'src/app/openapi';
 import { ProjectService } from 'src/app/projects/service/project.service';
 import { Page, PageWrapper } from 'src/app/schemes';
 import { environment } from 'src/environments/environment';

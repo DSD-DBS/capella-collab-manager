@@ -25,9 +25,7 @@ class Role(enum.Enum):
     ADMIN = "administrator"
 
 
-class BaseUser(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class BaseUser(core_pydantic.BaseModel):
     id: int
     name: str
     role: Role
@@ -46,12 +44,12 @@ class User(BaseUser):
     )
 
 
-class PatchUserRoleRequest(pydantic.BaseModel):
+class PatchUserRoleRequest(core_pydantic.BaseModel):
     role: Role
     reason: str
 
 
-class PostUser(pydantic.BaseModel):
+class PostUser(core_pydantic.BaseModel):
     name: str
     role: Role
     reason: str

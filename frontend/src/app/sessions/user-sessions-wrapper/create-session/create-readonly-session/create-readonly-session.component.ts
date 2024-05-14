@@ -24,6 +24,7 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { combineLatest, filter, map, Observable, take, tap } from 'rxjs';
+import { Tool, ToolVersion } from 'src/app/openapi';
 import {
   Model,
   ModelService,
@@ -31,9 +32,7 @@ import {
 import { ProjectService } from 'src/app/projects/service/project.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
 import {
-  Tool,
-  ToolService,
-  ToolVersion,
+  ToolWrapperService,
   ToolVersionWithTool,
 } from 'src/app/settings/core/tools-settings/tool.service';
 import { CreateReadonlySessionDialogComponent } from '../../create-sessions/create-readonly-session/create-readonly-session-dialog.component';
@@ -78,7 +77,7 @@ export class CreateReadonlySessionComponent implements OnInit {
   );
 
   constructor(
-    public toolService: ToolService,
+    private toolWrapperService: ToolWrapperService,
     private userSessionService: UserSessionService,
     private projectService: ProjectService,
     private modelService: ModelService,
@@ -101,7 +100,7 @@ export class CreateReadonlySessionComponent implements OnInit {
   loadToolsAndModels(): Observable<[Model[], ToolVersionWithTool[]]> {
     return combineLatest([
       this.modelService.models$.pipe(untilDestroyed(this), filter(Boolean)),
-      this.toolService.getVersionsForTools(),
+      this.toolWrapperService.getVersionsForTools(),
     ]).pipe(
       tap(([_, versions]) => {
         this.allToolVersions = versions;
@@ -121,11 +120,11 @@ export class CreateReadonlySessionComponent implements OnInit {
       }
       const extendedModel = model as ModelWithCompatibility;
       extendedModel.compatibleVersions = [
-        this.findVersionByID(model.version!.id, allVersions)!,
+        this.findVersionByID(model.version.id, allVersions)!,
       ];
 
       for (const version of allVersions!) {
-        if (version.config.compatible_versions.includes(model.version!.id)) {
+        if (version.config.compatible_versions.includes(model.version.id)) {
           extendedModel.compatibleVersions.push(version);
         }
       }

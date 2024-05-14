@@ -11,7 +11,7 @@ from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.settings.modelsources.git import core as git_core
 from capellacollab.users import models as users_models
 
-from . import crud, injectables, models
+from . import crud, injectables, models, util
 
 router = fastapi.APIRouter()
 
@@ -112,3 +112,15 @@ async def get_revisions(
     password = body.credentials.password
 
     return await git_core.get_remote_refs(url, username, password)
+
+
+@router.post("/validate/path", response_model=bool)
+def validate_path(
+    body: models.PathValidation,
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> bool:
+    try:
+        util.verify_path_prefix(db, body.url)
+        return True
+    except Exception:
+        return False

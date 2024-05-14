@@ -5,11 +5,12 @@
 
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { Observable, of } from 'rxjs';
+import { Session } from 'src/app/openapi';
+
 import {
   createPersistentSessionWithState,
   mockSuccessReadonlySession,
 } from 'src/storybook/session';
-import { Session } from '../../service/session.service';
 import { UserSessionService } from '../../service/user-session.service';
 import { ActiveSessionsComponent } from './active-sessions.component';
 

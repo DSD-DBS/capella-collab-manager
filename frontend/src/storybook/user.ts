@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { User } from 'src/app/openapi';
 import {
-  User,
   UserRole,
-  UserService,
+  UserWrapperService,
 } from 'src/app/services/user/user.service';
 
 export const mockUser: Readonly<User> = {
@@ -17,7 +17,7 @@ export const mockUser: Readonly<User> = {
   last_login: '2024-04-29T14:59:00Z',
 };
 
-export class MockUserService implements Partial<UserService> {
+export class MockUserService implements Partial<UserWrapperService> {
   role: UserRole;
 
   constructor(role: UserRole) {

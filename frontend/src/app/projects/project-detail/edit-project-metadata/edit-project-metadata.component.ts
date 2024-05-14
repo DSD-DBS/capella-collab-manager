@@ -27,12 +27,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs';
 import slugify from 'slugify';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { Project } from 'src/app/openapi';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import {
-  PatchProject,
-  Project,
-  ProjectService,
-} from '../../service/project.service';
+import { PatchProject, ProjectService } from '../../service/project.service';
 
 @UntilDestroy()
 @Component({

@@ -11,7 +11,7 @@ import {
   PipelineService,
 } from 'src/app/projects/models/backup-settings/service/pipeline.service';
 import { TriggerPipelineComponent } from 'src/app/projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';
-import { UserService } from 'src/app/services/user/user.service';
+import { UserWrapperService } from 'src/app/services/user/user.service';
 import { dialogWrapper } from 'src/storybook/decorators';
 import { mockPrimaryGitModel } from 'src/storybook/git';
 import { mockTeamForCapellaRepository } from 'src/storybook/t4c';
@@ -128,7 +128,7 @@ export const ForcePipelineDeletion: Story = {
           useFactory: () => new MockPipelineService([pipeline]),
         },
         {
-          provide: UserService,
+          provide: UserWrapperService,
           useFactory: () => new MockUserService('administrator'),
         },
       ],

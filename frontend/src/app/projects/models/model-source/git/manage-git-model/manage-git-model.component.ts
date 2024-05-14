@@ -50,6 +50,7 @@ import {
   hasAbsoluteUrlPrefix,
   hasRelativePathPrefix,
 } from 'src/app/helpers/validators/url-validator';
+import { SettingsModelsourcesGitService } from 'src/app/openapi';
 import { ModelService } from 'src/app/projects/models/service/model.service';
 import {
   CreateGitModel,
@@ -120,6 +121,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     public projectService: ProjectService,
     public modelService: ModelService,
     private gitInstancesService: GitInstancesService,
+    private settingsModelsourcesGitService: SettingsModelsourcesGitService,
     private gitService: GitService,
     private gitModelService: GitModelService,
     private toastService: ToastService,
@@ -457,8 +459,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
 
       if (!this.resultUrl) return of({ required: 'Resulting URL is required' });
 
-      return this.gitModelService
-        .validatePath(this.projectSlug!, this.modelSlug!, this.resultUrl)
+      return this.settingsModelsourcesGitService
+        .validatePath({ url: this.resultUrl })
         .pipe(
           map((prefixExists: boolean) => {
             if (prefixExists) {

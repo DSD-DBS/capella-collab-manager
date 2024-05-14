@@ -11,6 +11,7 @@ from sqlalchemy import orm
 
 # Import required for sqlalchemy
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 from capellacollab.projects.users import models as project_users_models
 
 if t.TYPE_CHECKING:
@@ -18,7 +19,7 @@ if t.TYPE_CHECKING:
     from capellacollab.projects.users.models import ProjectUserAssociation
 
 
-class UserMetadata(pydantic.BaseModel):
+class UserMetadata(core_pydantic.BaseModel):
     leads: int
     contributors: int
     subscribers: int
@@ -34,9 +35,7 @@ class ProjectType(enum.Enum):
     TRAINING = "training"
 
 
-class Project(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class Project(core_pydantic.BaseModel):
     name: str
     slug: str
     description: str | None = None
@@ -87,7 +86,7 @@ class Project(pydantic.BaseModel):
         return data
 
 
-class PatchProject(pydantic.BaseModel):
+class PatchProject(core_pydantic.BaseModel):
     name: str | None = None
     description: str | None = None
     visibility: Visibility | None = None
@@ -95,7 +94,7 @@ class PatchProject(pydantic.BaseModel):
     is_archived: bool | None = None
 
 
-class PostProjectRequest(pydantic.BaseModel):
+class PostProjectRequest(core_pydantic.BaseModel):
     name: str
     description: str | None = None
     visibility: Visibility = Visibility.PRIVATE

@@ -8,6 +8,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Subscription, filter, take } from 'rxjs';
+import { Tool, ToolVersion } from 'src/app/openapi';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import {
   SessionHistoryService,
@@ -15,9 +16,7 @@ import {
 } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-session-history/session-history.service';
 import {
   ConnectionMethod,
-  Tool,
-  ToolService,
-  ToolVersion,
+  ToolWrapperService,
 } from 'src/app/settings/core/tools-settings/tool.service';
 
 @Component({
@@ -41,7 +40,7 @@ export class CreateSessionHistoryComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    private toolService: ToolService,
+    private toolService: ToolWrapperService,
     private sessionHistoryService: SessionHistoryService,
     private sessionService: SessionService,
   ) {}
@@ -117,7 +116,7 @@ export class CreateSessionHistoryComponent implements OnInit, OnDestroy {
       .createSession(
         session.tool.id,
         session.version.id,
-        session.connectionMethod.id,
+        session.connectionMethod.id!,
         'persistent',
         [],
       )

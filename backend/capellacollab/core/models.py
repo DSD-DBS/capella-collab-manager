@@ -3,19 +3,19 @@
 
 import typing as t
 
-import pydantic
+from capellacollab.core import pydantic as core_pydantic
 
 T = t.TypeVar("T")
 
 
-class Message(pydantic.BaseModel):
+class Message(core_pydantic.BaseModel):
     err_code: str | None = None
     title: str | None = None
     reason: str | tuple | None = None
     technical: str | None = None
 
 
-class ResponseModel(pydantic.BaseModel):
+class ResponseModel(core_pydantic.BaseModel):
     warnings: list[Message] | None = None
     errors: list[Message] | None = None
 

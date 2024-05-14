@@ -9,13 +9,13 @@ import pydantic
 from capellacollab.core import pydantic as core_pydantic
 
 
-class DiagramMetadata(pydantic.BaseModel):
+class DiagramMetadata(core_pydantic.BaseModel):
     name: str
     uuid: str
     success: bool
 
 
-class DiagramCacheMetadata(pydantic.BaseModel):
+class DiagramCacheMetadata(core_pydantic.BaseModel):
     diagrams: list[DiagramMetadata]
     last_updated: datetime.datetime
 

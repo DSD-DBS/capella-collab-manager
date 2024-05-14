@@ -4,7 +4,6 @@
  */
 
 import {
-  AfterViewInit,
   Component,
   Input,
   QueryList,
@@ -17,14 +16,10 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTabGroup, MatTab, MatTabLabel } from '@angular/material/tabs';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { Tool, ToolNature, ToolsService } from 'src/app/openapi';
 import { ApiDocumentationComponent } from '../../../../../general/api-documentation/api-documentation.component';
 import { EditorComponent as EditorComponent_1 } from '../../../../../helpers/editor/editor.component';
-import {
-  Tool,
-  ToolService,
-  ToolNature,
-  CreateToolNature,
-} from '../../tool.service';
+import { ToolWrapperService, CreateToolNature } from '../../tool.service';
 
 @Component({
   selector: 'app-tool-nature',
@@ -41,7 +36,7 @@ import {
     MatButton,
   ],
 })
-export class ToolNatureComponent implements AfterViewInit {
+export class ToolNatureComponent {
   _tool?: Tool = undefined;
 
   @Input()
@@ -52,6 +47,11 @@ export class ToolNatureComponent implements AfterViewInit {
     this.toolNatures = undefined;
 
     if (this._tool !== undefined) {
+      this.toolsService
+        .getDefaultToolNature(this._tool!.id)
+        .subscribe((nature) => {
+          this.getEditorForContext('new')!.value = nature;
+        });
       this.toolService
         .getNaturesForTool(this._tool.id)
         .subscribe((natures: ToolNature[]) => {
@@ -67,15 +67,10 @@ export class ToolNatureComponent implements AfterViewInit {
   toolNatures: ToolNature[] | undefined = undefined;
 
   constructor(
-    private toolService: ToolService,
+    private toolService: ToolWrapperService,
     private toastService: ToastService,
+    private toolsService: ToolsService,
   ) {}
-
-  ngAfterViewInit(): void {
-    this.toolService.getDefaultNature().subscribe((nature) => {
-      this.getEditorForContext('new')!.value = nature;
-    });
-  }
 
   getEditorForContext(context: string) {
     return this.editorRefs?.find((editor) => editor.context === context);
@@ -91,7 +86,7 @@ export class ToolNatureComponent implements AfterViewInit {
 
   submittedValue(toolNature: ToolNature, value: ToolNature) {
     const { id, ...valueWithoutID } = value; // eslint-disable-line @typescript-eslint/no-unused-vars
-    this.toolService
+    this.toolsService
       .updateToolNature(this._tool!.id, toolNature.id, valueWithoutID)
       .subscribe((toolNature: ToolNature) => {
         this.toastService.showSuccess(
@@ -108,8 +103,8 @@ export class ToolNatureComponent implements AfterViewInit {
   }
 
   submittedNewToolNature(value: CreateToolNature) {
-    this.toolService
-      .createNatureForTool(this._tool!.id, value)
+    this.toolsService
+      .createToolNature(this._tool!.id, value)
       .subscribe((toolNature: ToolNature) => {
         this.toastService.showSuccess(
           'Tool nature created',
@@ -128,8 +123,8 @@ export class ToolNatureComponent implements AfterViewInit {
   }
 
   removeToolNature(toolNature: ToolNature): void {
-    this.toolService
-      .deleteNatureForTool(this._tool!.id, toolNature)
+    this.toolsService
+      .deleteToolNature(this._tool!.id, toolNature.id)
       .subscribe(() => {
         this.toolNatures = this.toolNatures!.filter(
           (nature) => nature.id !== toolNature.id,

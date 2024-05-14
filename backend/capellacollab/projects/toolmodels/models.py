@@ -7,11 +7,11 @@ from __future__ import annotations
 import enum
 import typing as t
 
-import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 
 # Importing the modules here does not work as it produces a pydantic error for the CapellaModel
 from capellacollab.projects.toolmodels.modelsources.git.models import GitModel
@@ -42,13 +42,13 @@ class EditingMode(enum.Enum):
     GIT = "git"
 
 
-class PostCapellaModel(pydantic.BaseModel):
+class PostCapellaModel(core_pydantic.BaseModel):
     name: str
     description: str | None = None
     tool_id: int
 
 
-class PatchCapellaModel(pydantic.BaseModel):
+class PatchCapellaModel(core_pydantic.BaseModel):
     name: str | None = None
     description: str | None = None
     version_id: int | None = None
@@ -57,7 +57,7 @@ class PatchCapellaModel(pydantic.BaseModel):
     display_order: int | None = None
 
 
-class ToolDetails(pydantic.BaseModel):
+class ToolDetails(core_pydantic.BaseModel):
     version_id: int
     nature_id: int
 
@@ -122,17 +122,15 @@ class DatabaseToolModel(database.Base):
     )
 
 
-class CapellaModel(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class CapellaModel(core_pydantic.BaseModel):
     id: int
     slug: str
     name: str
     description: str
     display_order: int | None
-    tool: tools_models.ToolBase
-    version: tools_models.ToolVersionBase | None = None
-    nature: tools_models.ToolNatureBase | None = None
+    tool: tools_models.Tool
+    version: tools_models.ToolVersion | None = None
+    nature: tools_models.ToolNature | None = None
     git_models: list[GitModel] | None = None
     t4c_models: list[T4CModel] | None = None
 

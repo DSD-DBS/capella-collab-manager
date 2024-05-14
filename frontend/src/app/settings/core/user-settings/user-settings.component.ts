@@ -34,11 +34,11 @@ import {
   InputDialogResult,
 } from 'src/app/helpers/input-dialog/input-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { Role, User, UsersService } from 'src/app/openapi';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import {
-  User,
   UserRole,
-  UserService,
+  UserWrapperService,
 } from 'src/app/services/user/user.service';
 
 @Component({
@@ -75,10 +75,11 @@ export class UserSettingsComponent implements OnInit {
   });
 
   constructor(
-    public userService: UserService,
+    public userService: UserWrapperService,
     public projectUserService: ProjectUserService,
     private toastService: ToastService,
     private dialog: MatDialog,
+    private usersService: UsersService,
   ) {}
 
   ngOnInit(): void {
@@ -114,15 +115,17 @@ export class UserSettingsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: InputDialogResult) => {
       if (result.success && result.text) {
-        this.userService.createUser(username, 'user', result.text).subscribe({
-          next: () => {
-            this.toastService.showSuccess(
-              'User created',
-              `The user ${username} has been created.`,
-            );
-            this.getUsers();
-          },
-        });
+        this.usersService
+          .createUser({ name: username, role: Role.User, reason: result.text })
+          .subscribe({
+            next: () => {
+              this.toastService.showSuccess(
+                'User created',
+                `The user ${username} has been created.`,
+              );
+              this.getUsers();
+            },
+          });
       }
     });
   }
@@ -137,8 +140,11 @@ export class UserSettingsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: InputDialogResult) => {
       if (result.success && result.text) {
-        this.userService
-          .updateRoleOfUser(user, 'administrator', result.text)
+        this.usersService
+          .updateRoleOfUser(user.id, {
+            role: Role.Administrator,
+            reason: result.text,
+          })
           .subscribe({
             next: () => {
               this.toastService.showSuccess(
@@ -162,15 +168,17 @@ export class UserSettingsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: InputDialogResult) => {
       if (result.success && result.text) {
-        this.userService.updateRoleOfUser(user, 'user', result.text).subscribe({
-          next: () => {
-            this.toastService.showSuccess(
-              'Role of user updated',
-              user.name + ' has now the role user',
-            );
-            this.getUsers();
-          },
-        });
+        this.usersService
+          .updateRoleOfUser(user.id, { role: Role.User, reason: result.text })
+          .subscribe({
+            next: () => {
+              this.toastService.showSuccess(
+                'Role of user updated',
+                user.name + ' has now the role user',
+              );
+              this.getUsers();
+            },
+          });
       }
     });
   }
@@ -185,7 +193,7 @@ export class UserSettingsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: boolean) => {
       if (result) {
-        this.userService.deleteUser(user).subscribe({
+        this.usersService.deleteUser(user.id).subscribe({
           next: () => {
             this.toastService.showSuccess(
               'User deleted',
@@ -199,7 +207,7 @@ export class UserSettingsComponent implements OnInit {
   }
 
   getUsers() {
-    this.userService.getUsers().subscribe((users: User[]) => {
+    this.usersService.getUsers().subscribe((users: User[]) => {
       this.users = users;
     });
   }

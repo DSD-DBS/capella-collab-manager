@@ -48,7 +48,7 @@ users_router = fastapi.APIRouter(
 )
 
 
-@router.post("", response_model=models.GetSessionsResponse)
+@router.post("", response_model=models.Session)
 def request_session(
     body: models.PostSessionRequest,
     user: users_models.DatabaseUser = fastapi.Depends(
@@ -188,7 +188,7 @@ def request_session(
 
     crud.update_session_config(db, db_session, hook_config)
 
-    response = models.GetSessionsResponse.model_validate(db_session)
+    response = models.Session.model_validate(db_session)
     response.warnings += warnings
 
     return response
@@ -196,7 +196,7 @@ def request_session(
 
 @router.get(
     "",
-    response_model=list[models.GetSessionsResponse],
+    response_model=list[models.Session],
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(
@@ -312,7 +312,7 @@ router.include_router(router=files_routes.router, prefix="/{session_id}/files")
 
 @users_router.get(
     "/{user_id}/sessions",
-    response_model=list[models.GetSessionsResponse],
+    response_model=list[models.Session],
 )
 def get_sessions_for_user(
     user: users_models.DatabaseUser = fastapi.Depends(
@@ -335,6 +335,5 @@ def get_sessions_for_user(
         )
 
     return [
-        models.GetSessionsResponse.model_validate(session)
-        for session in user.sessions
+        models.Session.model_validate(session) for session in user.sessions
     ]

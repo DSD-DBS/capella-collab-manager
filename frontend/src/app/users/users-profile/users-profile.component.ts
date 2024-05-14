@@ -30,10 +30,9 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { BehaviorSubject, filter, map } from 'rxjs';
-import { HistoryEvent } from 'src/app/events/service/events.service';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
-import { Project } from 'src/app/projects/service/project.service';
-import { User, UserService } from 'src/app/services/user/user.service';
+import { HistoryEvent, Project, User, UsersService } from 'src/app/openapi';
+import { UserWrapperService } from 'src/app/services/user/user.service';
 
 @UntilDestroy()
 @Component({
@@ -81,7 +80,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy, AfterViewInit {
   public readonly commonProjects$ = this.commonProjects.asObservable();
 
   constructor(
-    public userService: UserService,
+    public userService: UserWrapperService,
+    private usersService: UsersService,
     private route: ActivatedRoute,
     private breadcrumbsService: BreadcrumbsService,
   ) {}
@@ -93,18 +93,18 @@ export class UsersProfileComponent implements OnInit, OnDestroy, AfterViewInit {
         map((params) => params['userId']),
       )
       .subscribe((userId: number) => {
-        this.userService.getUserById(userId).subscribe((user) => {
+        this.usersService.getUser(userId).subscribe((user) => {
           this.user = user;
           this.breadcrumbsService.updatePlaceholder({ user: user });
           if (userId !== this.userService.user?.id) {
-            this.userService.loadCommonProjects(userId).subscribe({
+            this.usersService.getCommonProjects(userId).subscribe({
               next: (projects) => this.commonProjects.next(projects),
               error: () => this.commonProjects.next(undefined),
             });
           }
 
           if (this.userService.user?.role === 'administrator') {
-            this.userService.getUserEvents(userId).subscribe({
+            this.usersService.getUserEvents(userId).subscribe({
               next: (userEvents) => {
                 this.userEvents = userEvents;
                 this.historyEventDataSource.data = userEvents;

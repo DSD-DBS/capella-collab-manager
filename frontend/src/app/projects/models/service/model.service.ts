@@ -12,14 +12,10 @@ import {
 } from '@angular/forms';
 import { BehaviorSubject, forkJoin, map, Observable, take, tap } from 'rxjs';
 import slugify from 'slugify';
+import { Tool, ToolNature, ToolVersion } from 'src/app/openapi';
 import { ModelRestrictions } from 'src/app/projects/models/model-restrictions/service/model-restrictions.service';
 import { T4CModel } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import {
-  Tool,
-  ToolNature,
-  ToolVersion,
-} from 'src/app/settings/core/tools-settings/tool.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

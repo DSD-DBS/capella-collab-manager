@@ -9,7 +9,7 @@ import fastapi
 import fastapi_pagination
 import starlette_prometheus
 import uvicorn
-from fastapi import exception_handlers, middleware, responses
+from fastapi import exception_handlers, middleware, responses, routing
 from fastapi.middleware import cors
 
 import capellacollab.projects.toolmodels.backups.runs.interface as pipeline_runs_interface
@@ -132,6 +132,19 @@ async def healthcheck():
 
 app.add_route("/metrics", starlette_prometheus.metrics)
 app.include_router(router, prefix="/api/v1")
+
+
+def use_route_names_as_operation_ids() -> None:
+    """
+    Simplify operation IDs so that generated API clients have simpler function
+    names.
+    """
+    for route in app.routes:
+        if isinstance(route, routing.APIRoute):
+            route.operation_id = route.name
+
+
+use_route_names_as_operation_ids()
 
 
 async def exception_handler(

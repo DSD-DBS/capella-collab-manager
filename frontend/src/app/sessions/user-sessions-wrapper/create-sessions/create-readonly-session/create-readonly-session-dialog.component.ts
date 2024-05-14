@@ -21,6 +21,7 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { Tool, ToolVersion } from 'src/app/openapi';
 import {
   getPrimaryGitModel,
   Model,
@@ -30,11 +31,7 @@ import {
   CreateReadonlyModelOptionsComponent,
   ModelOptions,
 } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-model-options/create-readonly-model-options.component';
-import {
-  ConnectionMethod,
-  Tool,
-  ToolVersion,
-} from 'src/app/settings/core/tools-settings/tool.service';
+import { ConnectionMethod } from 'src/app/settings/core/tools-settings/tool.service';
 
 @UntilDestroy()
 @Component({
@@ -85,7 +82,7 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
   ngOnInit(): void {
     this.connectionMethods = this.data.tool.config.connection.methods;
     this.maxNumberOfModels =
-      this.data.tool.config.provisioning.max_number_of_models;
+      this.data.tool.config.provisioning.max_number_of_models!;
     this.form.controls.connectionMethodId.setValue(
       this.connectionMethods[0].id,
     );

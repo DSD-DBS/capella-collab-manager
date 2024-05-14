@@ -20,7 +20,8 @@ import {
   MatRowDef,
   MatRow,
 } from '@angular/material/table';
-import { EventsService, HistoryEvent } from './service/events.service';
+import { HistoryEvent } from 'src/app/openapi';
+import { EventsService } from './service/events.service';
 
 @Component({
   selector: 'app-events',

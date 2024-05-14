@@ -14,11 +14,9 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, take } from 'rxjs';
+import { Session } from 'src/app/openapi';
 import { FullscreenService } from 'src/app/sessions/service/fullscreen.service';
-import {
-  Session,
-  SessionService,
-} from 'src/app/sessions/service/session.service';
+import { SessionService } from 'src/app/sessions/service/session.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
 import { FloatingWindowManagerComponent } from './floating-window-manager/floating-window-manager.component';
 import { SessionViewerService } from './session-viewer.service';

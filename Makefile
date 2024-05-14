@@ -205,4 +205,8 @@ dashboard:
 	echo "Please use the following token: $$(kubectl -n default create token dashboard-admin)"
 	kubectl proxy
 
+openapi:
+	$(MAKE) -C backend openapi
+	$(MAKE) -C frontend openapi
+
 .PHONY: *

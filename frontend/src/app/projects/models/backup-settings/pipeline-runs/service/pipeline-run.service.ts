@@ -8,9 +8,9 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
+import { User } from 'src/app/openapi';
 import { PipelineService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
 import { Page, PageWrapper } from 'src/app/schemes';
-import { User } from 'src/app/services/user/user.service';
 
 @Injectable({
   providedIn: 'root',

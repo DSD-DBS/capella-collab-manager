@@ -8,28 +8,15 @@ import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie';
 import { Observable, tap } from 'rxjs';
 import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
-import { Project } from 'src/app/projects/service/project.service';
-import { User } from 'src/app/services/user/user.service';
-import { SessionHistoryService } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-session-history/session-history.service';
 import {
-  ConnectionMethod,
-  ToolVersionWithTool,
-} from 'src/app/settings/core/tools-settings/tool.service';
+  Session,
+  Project,
+  SessionProvisioningRequest,
+  SessionsService,
+} from 'src/app/openapi';
+import { SessionHistoryService } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-session-history/session-history.service';
 import { environment } from 'src/environments/environment';
 
-export interface Session {
-  created_at: string;
-  id: string;
-  last_seen: string;
-  type: 'persistent' | 'readonly';
-  project: Project | undefined;
-  version: ToolVersionWithTool | undefined;
-  state: string;
-  owner: User;
-
-  download_in_progress: boolean;
-  connection_method: ConnectionMethod | undefined;
-}
 export interface LocalStorage {
   [id: string]: string;
 }
@@ -60,13 +47,6 @@ export interface PathNode {
   children: PathNode[] | null;
 }
 
-export type ReadonlyModel = {
-  model_slug: string;
-  git_model_id: number;
-  revision: string;
-  deep_clone: boolean;
-};
-
 export type SessionConnectionInformation = {
   local_storage: LocalStorage;
   cookies: Cookies;
@@ -83,6 +63,7 @@ export class SessionService {
     private localStorageService: LocalStorageService,
     private cookieService: CookieService,
     private sessionHistoryService: SessionHistoryService,
+    private sessionsService: SessionsService,
   ) {}
   BACKEND_URL_PREFIX = environment.backend_url + '/sessions';
 
@@ -95,10 +76,10 @@ export class SessionService {
     versionId: number,
     connectionMethodId: string,
     session_type: 'persistent' | 'readonly',
-    models: ReadonlyModel[],
+    models: SessionProvisioningRequest[],
   ): Observable<Session> {
-    return this.http
-      .post<Session>(`${this.BACKEND_URL_PREFIX}`, {
+    return this.sessionsService
+      .requestSession({
         tool_id: toolId,
         version_id: versionId,
         connection_method_id: connectionMethodId,

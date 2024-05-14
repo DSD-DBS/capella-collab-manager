@@ -15,12 +15,13 @@ from lxml.html import builder
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 from capellacollab.core.database import decorator
 
 DOCKER_IMAGE_PATTERN = r"^[a-zA-Z0-9][a-zA-Z0-9_\-/.:${}]*$"
 
 
-class SessionPorts(pydantic.BaseModel):
+class SessionPorts(core_pydantic.BaseModel):
     metrics: int = pydantic.Field(
         default=9118,
         description="Port of the metrics endpoint in the container.",
@@ -48,7 +49,7 @@ class ToolSessionEnvironmentStage(str, enum.Enum):
     AFTER = "after"
 
 
-class ToolSessionEnvironment(pydantic.BaseModel):
+class ToolSessionEnvironment(core_pydantic.BaseModel):
     stage: ToolSessionEnvironmentStage = pydantic.Field(
         default=ToolSessionEnvironmentStage.AFTER,
         description=(
@@ -73,7 +74,7 @@ class ToolSessionEnvironment(pydantic.BaseModel):
     )
 
 
-class ToolSessionConnectionMethod(pydantic.BaseModel):
+class ToolSessionConnectionMethod(core_pydantic.BaseModel):
     id: str = pydantic.Field(default_factory=uuid_factory)
     type: str
     name: str = pydantic.Field(default="default")
@@ -105,7 +106,7 @@ class HTTPConnectionMethod(ToolSessionConnectionMethod):
     )
 
 
-class ToolSessionConnection(pydantic.BaseModel):
+class ToolSessionConnection(core_pydantic.BaseModel):
     methods: list[GuacamoleConnectionMethod | HTTPConnectionMethod] = (
         pydantic.Field(
             default=[GuacamoleConnectionMethod(), HTTPConnectionMethod()],
@@ -127,9 +128,7 @@ class ToolSessionConnection(pydantic.BaseModel):
         return value
 
 
-class ToolIntegrations(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True, extra="forbid")
-
+class ToolIntegrations(core_pydantic.BaseModelStrict):
     t4c: bool = pydantic.Field(
         default=False,
         description=(
@@ -160,7 +159,7 @@ RESOURCES_DOCS = (
 )
 
 
-class CPUResources(pydantic.BaseModel):
+class CPUResources(core_pydantic.BaseModel):
     requests: float = pydantic.Field(
         default=0.4,
         description=(
@@ -184,7 +183,7 @@ class CPUResources(pydantic.BaseModel):
     )
 
 
-class MemoryResources(pydantic.BaseModel):
+class MemoryResources(core_pydantic.BaseModel):
     requests: str = pydantic.Field(
         default="1.6Gi",
         description=(
@@ -205,9 +204,7 @@ class MemoryResources(pydantic.BaseModel):
     )
 
 
-class Resources(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True, extra="forbid")
-
+class Resources(core_pydantic.BaseModelStrict):
     cpu: CPUResources = pydantic.Field(
         default=CPUResources(),
         description="Configuration about the number of CPU cores that sessions can use.",
@@ -218,18 +215,18 @@ class Resources(pydantic.BaseModel):
     )
 
 
-class PrometheusConfiguration(pydantic.BaseModel):
+class PrometheusConfiguration(core_pydantic.BaseModel):
     path: str = pydantic.Field(default="/prometheus")
 
 
-class SessionMonitoring(pydantic.BaseModel):
+class SessionMonitoring(core_pydantic.BaseModel):
     prometheus: PrometheusConfiguration = pydantic.Field(
         default=PrometheusConfiguration(),
         description="Configuration for monitoring and garbage collection.",
     )
 
 
-class ToolModelProvisioning(pydantic.BaseModel):
+class ToolModelProvisioning(core_pydantic.BaseModel):
     directory: str = pydantic.Field(
         default="/models",
         description=(
@@ -248,7 +245,7 @@ class ToolModelProvisioning(pydantic.BaseModel):
     )
 
 
-class PersistentWorkspaceSessionConfiguration(pydantic.BaseModel):
+class PersistentWorkspaceSessionConfiguration(core_pydantic.BaseModel):
     mounting_enabled: bool = pydantic.Field(
         default=True,
         description=(
@@ -258,7 +255,7 @@ class PersistentWorkspaceSessionConfiguration(pydantic.BaseModel):
     )
 
 
-class ToolSessionConfiguration(pydantic.BaseModel):
+class ToolSessionConfiguration(core_pydantic.BaseModel):
     resources: Resources = pydantic.Field(default=Resources())
     environment: dict[str, str | ToolSessionEnvironment] = pydantic.Field(
         default={"RMT_PASSWORD": "{CAPELLACOLLAB_SESSION_TOKEN}"},
@@ -319,7 +316,7 @@ class DatabaseTool(database.Base):
     )
 
 
-class PersistentSessionToolConfiguration(pydantic.BaseModel):
+class PersistentSessionToolConfiguration(core_pydantic.BaseModel):
     image: str | None = pydantic.Field(
         default="docker.io/hello-world:latest",
         pattern=DOCKER_IMAGE_PATTERN,
@@ -336,7 +333,7 @@ class PersistentSessionToolConfiguration(pydantic.BaseModel):
     )
 
 
-class ToolBackupConfiguration(pydantic.BaseModel):
+class ToolBackupConfiguration(core_pydantic.BaseModel):
     image: str | None = pydantic.Field(
         default="docker.io/hello-world:latest",
         pattern=DOCKER_IMAGE_PATTERN,
@@ -353,13 +350,13 @@ class ToolBackupConfiguration(pydantic.BaseModel):
     )
 
 
-class SessionToolConfiguration(pydantic.BaseModel):
+class SessionToolConfiguration(core_pydantic.BaseModel):
     persistent: PersistentSessionToolConfiguration = pydantic.Field(
         default=PersistentSessionToolConfiguration()
     )
 
 
-class ToolVersionConfiguration(pydantic.BaseModel):
+class ToolVersionConfiguration(core_pydantic.BaseModel):
     is_recommended: bool = pydantic.Field(
         default=False,
         description="Version will be displayed as recommended.",
@@ -460,9 +457,7 @@ class DatabaseNature(database.Base):
     tool: orm.Mapped[DatabaseTool] = orm.relationship(back_populates="natures")
 
 
-class CreateTool(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True, extra="forbid")
-
+class CreateTool(core_pydantic.BaseModelStrict):
     name: str = pydantic.Field(default="", min_length=2, max_length=30)
     integrations: ToolIntegrations = pydantic.Field(default=ToolIntegrations())
     config: ToolSessionConfiguration = pydantic.Field(
@@ -470,17 +465,15 @@ class CreateTool(pydantic.BaseModel):
     )
 
 
-class ToolBase(CreateTool, decorator.PydanticDatabaseModel):
+class Tool(CreateTool, decorator.PydanticDatabaseModel):
     pass
 
 
-class ToolConfiguration(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True, extra="forbid")
-
+class ToolConfiguration(core_pydantic.BaseModelStrict):
     name: str
 
-    versions: list[ToolVersionBase]
-    natures: list[ToolNatureBase]
+    versions: list[ToolVersion]
+    natures: list[ToolNature]
 
     integrations: ToolIntegrations
 
@@ -488,15 +481,11 @@ class ToolConfiguration(pydantic.BaseModel):
     backups: None
 
 
-class CreateToolNature(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True, extra="forbid")
-
+class CreateToolNature(core_pydantic.BaseModelStrict):
     name: str = pydantic.Field(default="", min_length=2, max_length=30)
 
 
-class CreateToolVersion(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True, extra="forbid")
-
+class CreateToolVersion(core_pydantic.BaseModelStrict):
     name: str = pydantic.Field(default="", min_length=2, max_length=30)
 
     config: ToolVersionConfiguration = pydantic.Field(
@@ -504,16 +493,16 @@ class CreateToolVersion(pydantic.BaseModel):
     )
 
 
-class ToolVersionBase(CreateToolVersion, decorator.PydanticDatabaseModel):
-    pass
+class ToolVersion(CreateToolVersion, decorator.PydanticDatabaseModel):
+    id: int = pydantic.Field(
+        description="Unique identifier of the resource.", ge=1
+    )
 
 
-class ToolVersionWithTool(ToolVersionBase):
-    tool: ToolBase
+class ToolVersionWithTool(ToolVersion):
+    tool: Tool
 
 
-class ToolNatureBase(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class ToolNature(core_pydantic.BaseModel):
     id: int
     name: str

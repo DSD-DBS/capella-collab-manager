@@ -17,3 +17,21 @@ test:
 
 storybook:
 	ng run capellacollab:storybook
+
+openapi:
+	rm -rf src/app/openapi && mkdir -p src/app/openapi
+	python postprocess_openapi_schema.py
+	docker run --rm \
+  		-v /tmp/openapi.json:/tmp/openapi.json \
+		-v $$(pwd)/openapi_templates:/tmp/openapi_templates \
+		-v $$(pwd)/src/app/openapi:/tmp/output \
+		-u $$(id -u $${USER}):$$(id -g $${USER}) \
+		openapitools/openapi-generator-cli:v7.5.0 generate \
+			-i /tmp/openapi.json \
+			-t /tmp/openapi_templates \
+			--global-property models,apis,supportingFiles="index.ts:api.ts:models.ts:variables.ts:configuration.ts:api.module.ts:param.ts:encoder.ts" \
+			--additional-properties=fileNaming=kebab-case,legacyDiscriminatorBehavior=false \
+			-g typescript-angular \
+			-o /tmp/output
+	cp ../LICENSES/.license_header_cc0.txt src/app/openapi/.openapi-generator/FILES.license
+	cp ../LICENSES/.license_header_cc0.txt src/app/openapi/.openapi-generator/VERSION.license

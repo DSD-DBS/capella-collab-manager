@@ -58,8 +58,8 @@ export class PipelineWrapperComponent implements OnInit, OnDestroy {
         untilDestroyed(this),
         switchMap(([project, model, pipelineID]) =>
           this.pipelineService.loadPipeline(
-            project!.slug,
-            model!.slug,
+            project.slug,
+            model.slug,
             pipelineID,
           ),
         ),

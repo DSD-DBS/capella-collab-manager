@@ -92,7 +92,7 @@ def get_pipeline_run(
     "/{pipeline_run_id}/events",
     response_model=str,
 )
-def get_events(
+def get_pipeline_run_events(
     pipeline_run: models.DatabasePipelineRun = fastapi.Depends(
         injectables.get_existing_pipeline_run
     ),

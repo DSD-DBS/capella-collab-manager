@@ -6,6 +6,7 @@ import typing as t
 
 import pydantic
 
+from capellacollab.core import pydantic as core_pydantic
 from capellacollab.projects.toolmodels.backups.runs import (
     models as pipeline_run_models,
 )
@@ -14,13 +15,13 @@ from capellacollab.projects.toolmodels.modelsources.git import (
 )
 
 
-class StatusResponse(pydantic.BaseModel):
+class StatusResponse(core_pydantic.BaseModel):
     guacamole: bool
     database: bool
     operator: bool
 
 
-class ToolmodelStatus(pydantic.BaseModel):
+class ToolmodelStatus(core_pydantic.BaseModel):
     project_slug: str
     toolmodel_slug: str = pydantic.Field(alias="model_slug")
 
@@ -33,7 +34,7 @@ class ToolmodelStatus(pydantic.BaseModel):
     diagram_cache_status: git_models.ModelArtifactStatus
 
 
-class ProjectStatus(pydantic.BaseModel):
+class ProjectStatus(core_pydantic.BaseModel):
     project_slug: str
     warnings: list[str]
 

@@ -5,19 +5,17 @@ from __future__ import annotations
 
 import typing as t
 
-import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.toolmodels.models import DatabaseToolModel
 
 
-class ToolModelRestrictions(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class ToolModelRestrictions(core_pydantic.BaseModel):
     # If true, access to the specific resource is granted for a model.
     # If false, the access is not allowed.
 

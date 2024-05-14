@@ -135,7 +135,7 @@ def test_environment_behaviour(
     response = GetSessionsReponseMock()
 
     monkeypatch.setattr(
-        sessions_models.GetSessionsResponse,
+        sessions_models.Session,
         "model_validate",
         lambda *args: response,
     )

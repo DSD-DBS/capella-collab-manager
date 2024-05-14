@@ -28,9 +28,7 @@ class EventType(enum.Enum):
     ASSIGNED_ROLE_USER = "AssignedRoleUser"
 
 
-class BaseHistoryEvent(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class BaseHistoryEvent(core_pydantic.BaseModel):
     user: users_models.User
     executor: users_models.User | None = None
     project: projects_models.Project | None = None

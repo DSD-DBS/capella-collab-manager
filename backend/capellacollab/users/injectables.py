@@ -1,8 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import typing as t
-
 import fastapi
 from sqlalchemy import orm
 
@@ -23,13 +21,9 @@ def get_own_user(
 
 
 def get_existing_user(
-    user_id: int | t.Literal["current"],
+    user_id: int,
     db=fastapi.Depends(database.get_db),
-    username: str = fastapi.Depends(auth_injectables.get_username),
 ) -> models.DatabaseUser:
-    if user_id == "current":
-        return get_own_user(db, username)
-
     if user := crud.get_user_by_id(db, user_id):
         return user
 

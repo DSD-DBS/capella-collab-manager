@@ -2,10 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
-import urllib.parse
 
 import fastapi
-import requests
 from fastapi import status
 from sqlalchemy import orm
 
@@ -18,50 +16,13 @@ from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.backups import crud as backups_crud
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.settings.modelsources.git import core as git_core
-from capellacollab.settings.modelsources.git import crud as git_crud
 from capellacollab.settings.modelsources.git import models as git_models
+from capellacollab.settings.modelsources.git import util as git_util
 
 from . import crud, injectables, models
 
 router = fastapi.APIRouter()
 log = logging.getLogger(__name__)
-
-
-def verify_path_prefix(db: orm.Session, path: str):
-    if not (git_instances := git_crud.get_git_instances(db)):
-        return
-
-    unquoted_path = urllib.parse.unquote(path)
-    if resolved_path := requests.Request("GET", unquoted_path).prepare().url:
-        for git_instance in git_instances:
-            unquoted_git_url = urllib.parse.unquote(git_instance.url)
-            resolved_git_url = (
-                requests.Request("GET", unquoted_git_url).prepare().url
-            )
-
-            if resolved_git_url and resolved_path.startswith(resolved_git_url):
-                return
-
-    raise fastapi.HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail={
-            "err_code": "NO_GIT_INSTANCE_WITH_PREFIX_FOUND",
-            "reason": "We couldn't find a matching Git instance. Make sure that your system administrator allows the given URL.",
-            "technical": f"There is no Git instance, which has a prefix of the path '{path}' as URL.",
-        },
-    )
-
-
-@router.post("/validate/path", response_model=bool)
-def validate_path(
-    url: str = fastapi.Body(),
-    db: orm.Session = fastapi.Depends(database.get_db),
-) -> bool:
-    try:
-        verify_path_prefix(db, url)
-        return True
-    except Exception:
-        return False
 
 
 @router.get("", response_model=list[models.GitModel])
@@ -156,7 +117,7 @@ def create_git_model(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseGitModel:
-    verify_path_prefix(db, post_git_model.path)
+    git_util.verify_path_prefix(db, post_git_model.path)
 
     new_git_model = crud.add_git_model_to_capellamodel(
         db, capella_model, post_git_model
@@ -182,7 +143,7 @@ def update_git_model_by_id(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseGitModel:
-    verify_path_prefix(db, patch_git_model.path)
+    git_util.verify_path_prefix(db, patch_git_model.path)
     return crud.update_git_model(db, db_git_model, patch_git_model)
 
 

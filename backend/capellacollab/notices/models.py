@@ -3,10 +3,10 @@
 
 import enum
 
-import pydantic
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 
 
 class NoticeLevel(enum.Enum):
@@ -19,9 +19,7 @@ class NoticeLevel(enum.Enum):
     ALERT = "alert"
 
 
-class CreateNoticeRequest(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
-
+class CreateNoticeRequest(core_pydantic.BaseModel):
     level: NoticeLevel
     title: str
     message: str

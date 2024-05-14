@@ -13,9 +13,10 @@ import { filter, map, mergeMap, tap } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { CreateToolInput, Tool, ToolsService } from 'src/app/openapi';
 import { ApiDocumentationComponent } from '../../../../general/api-documentation/api-documentation.component';
 import { EditorComponent as EditorComponent_1 } from '../../../../helpers/editor/editor.component';
-import { Tool, ToolService } from '../tool.service';
+import { ToolWrapperService } from '../tool.service';
 import { ToolDeletionDialogComponent } from './tool-deletion-dialog/tool-deletion-dialog.component';
 import { ToolNatureComponent } from './tool-nature/tool-nature.component';
 import { ToolVersionComponent } from './tool-version/tool-version.component';
@@ -41,7 +42,8 @@ export class ToolDetailsComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private toolService: ToolService,
+    private toolService: ToolWrapperService,
+    private toolsService: ToolsService,
     private toastService: ToastService,
     private breadcrumbsService: BreadcrumbsService,
     private router: Router,
@@ -53,7 +55,7 @@ export class ToolDetailsComponent {
       .pipe(
         map((params) => params.toolID),
         filter((toolID) => toolID !== undefined),
-        mergeMap((toolID) => this.toolService.getToolByID(toolID)),
+        mergeMap((toolID) => this.toolsService.getToolById(toolID)),
       )
       .subscribe({
         next: (tool) => {
@@ -64,10 +66,8 @@ export class ToolDetailsComponent {
       });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  submitValue(value: any): void {
-    delete value.id;
-    this.toolService
+  submitValue(value: CreateToolInput): void {
+    this.toolsService
       .updateTool(this.selectedTool!.id, value)
       .pipe(
         tap((tool) => {

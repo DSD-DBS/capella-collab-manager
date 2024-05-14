@@ -22,6 +22,7 @@ import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { filter } from 'rxjs';
+import { Tool, ToolVersion } from 'src/app/openapi';
 import { Model } from 'src/app/projects/models/service/model.service';
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import {
@@ -29,10 +30,6 @@ import {
   GitService,
   existingRevisionValidator,
 } from 'src/app/services/git/git.service';
-import {
-  Tool,
-  ToolVersion,
-} from 'src/app/settings/core/tools-settings/tool.service';
 
 export type ModelOptions = {
   model: Model;

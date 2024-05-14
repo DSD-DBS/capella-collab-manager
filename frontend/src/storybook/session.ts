@@ -3,10 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {
-  ReadonlySession,
-  Session,
-} from 'src/app/sessions/service/session.service';
+import { Session } from 'src/app/openapi';
+import { ReadonlySession } from 'src/app/sessions/service/session.service';
 import { mockHttpConnectionMethod, mockToolVersionWithTool } from './tool';
 import { mockUser } from './user';
 
@@ -18,12 +16,12 @@ export function createPersistentSessionWithState(state: string): Session {
     created_at: '2024-04-29T15:00:00Z',
     last_seen: '2024-04-29T15:30:00Z',
     type: 'persistent',
-    project: undefined,
     version: mockToolVersionWithTool,
     state: state,
     owner: mockUser,
-    download_in_progress: false,
     connection_method: mockHttpConnectionMethod,
+    warnings: [],
+    connection_method_id: 'default',
   };
 }
 
@@ -44,6 +42,7 @@ export const mockSuccessReadonlySession: Readonly<ReadonlySession> = {
   version: mockToolVersionWithTool,
   state: 'Started',
   owner: mockUser,
-  download_in_progress: false,
   connection_method: mockHttpConnectionMethod,
+  warnings: [],
+  connection_method_id: 'default',
 };

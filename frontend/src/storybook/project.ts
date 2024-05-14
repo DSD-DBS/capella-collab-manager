@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Project } from 'src/app/projects/service/project.service';
+import { Project } from 'src/app/openapi';
 
 export const mockProject: Readonly<Project> = {
   name: 'mockProject',

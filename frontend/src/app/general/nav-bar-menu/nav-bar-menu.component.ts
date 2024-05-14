@@ -11,7 +11,7 @@ import { MatList, MatListItem } from '@angular/material/list';
 import { RouterLink } from '@angular/router';
 import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
-import { UserService } from 'src/app/services/user/user.service';
+import { UserWrapperService } from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'app-nav-bar-menu',
@@ -24,6 +24,6 @@ export class NavBarMenuComponent {
   constructor(
     public authService: AuthService,
     public navBarService: NavBarService,
-    public userService: UserService,
+    public userService: UserWrapperService,
   ) {}
 }

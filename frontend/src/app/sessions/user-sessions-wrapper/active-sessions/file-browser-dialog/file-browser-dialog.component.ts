@@ -29,11 +29,12 @@ import {
 import { saveAs } from 'file-saver';
 import { BehaviorSubject } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { Session } from 'src/app/openapi';
 import {
   LoadFilesService,
   UploadResponse,
 } from 'src/app/services/load-files/load-files.service';
-import { PathNode, Session } from 'src/app/sessions/service/session.service';
+import { PathNode } from 'src/app/sessions/service/session.service';
 import { FileExistsDialogComponent } from './file-exists-dialog/file-exists-dialog.component';
 
 @Component({
@@ -73,7 +74,7 @@ export class FileBrowserDialogComponent implements OnInit {
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<FileBrowserDialogComponent>,
     private toastService: ToastService,
-    @Inject(MAT_DIALOG_DATA) public session: Session,
+    @Inject(MAT_DIALOG_DATA) public session: SessionWithDownloadInformation,
   ) {}
 
   showHiddenFiles = new FormControl(false);
@@ -296,3 +297,7 @@ export class FileBrowserDialogComponent implements OnInit {
     this.uploadProgress = null;
   }
 }
+
+type SessionWithDownloadInformation = Session & {
+  download_in_progress?: boolean;
+};

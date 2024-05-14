@@ -27,12 +27,12 @@ import {
   MetadataService,
 } from 'src/app/general/metadata/metadata.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { Project } from 'src/app/openapi';
 import {
   Model,
   getPrimaryGitModel,
 } from 'src/app/projects/models/service/model.service';
-import { Project } from 'src/app/projects/service/project.service';
-import { UserService } from 'src/app/services/user/user.service';
+import { UserWrapperService } from 'src/app/services/user/user.service';
 import { TokenService } from 'src/app/users/basic-auth-service/basic-auth-token.service';
 
 @Component({
@@ -60,7 +60,7 @@ export class ModelDiagramCodeBlockComponent implements OnInit, AfterViewInit {
 
   constructor(
     private metadataService: MetadataService,
-    private userService: UserService,
+    private userService: UserWrapperService,
     private tokenService: TokenService,
     private toastService: ToastService,
   ) {}

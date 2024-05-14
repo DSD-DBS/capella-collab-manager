@@ -15,4 +15,26 @@ def datetime_serializer(
 
 
 class BaseModel(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(from_attributes=True)
+    """General pydantic base model.
+
+    All pydantic models should inherit from this class.
+    """
+
+    model_config = pydantic.ConfigDict(
+        from_attributes=True,
+        json_schema_serialization_defaults_required=True,
+    )
+
+
+class BaseModelStrict(pydantic.BaseModel):
+    """Used for configuration models, which require a strict validation.
+
+    Examples are models which are used in the YAML editor of the frontend.
+    Here, the user should receive an error message if an unintended field is added.
+    """
+
+    model_config = pydantic.ConfigDict(
+        from_attributes=True,
+        extra="forbid",
+        json_schema_serialization_defaults_required=True,
+    )

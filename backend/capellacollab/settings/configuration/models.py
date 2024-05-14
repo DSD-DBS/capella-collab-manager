@@ -8,6 +8,7 @@ import pydantic
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core import pydantic as core_pydantic
 
 
 class DatabaseConfiguration(database.Base):
@@ -21,9 +22,7 @@ class DatabaseConfiguration(database.Base):
     configuration: orm.Mapped[dict[str, t.Any]]
 
 
-class MetadataConfiguration(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(extra="forbid")
-
+class MetadataConfiguration(core_pydantic.BaseModelStrict):
     privacy_policy_url: str = pydantic.Field(
         default="https://example.com/privacy"
     )
@@ -38,13 +37,11 @@ class MetadataConfiguration(pydantic.BaseModel):
     environment: str = pydantic.Field(default="-", description="general")
 
 
-class ConfigurationBase(pydantic.BaseModel, abc.ABC):
+class ConfigurationBase(core_pydantic.BaseModelStrict, abc.ABC):
     """
     Base class for configuration models. Can be used to define new configurations
     in the future.
     """
-
-    model_config = pydantic.ConfigDict(extra="forbid")
 
     _name: t.ClassVar[str]
 

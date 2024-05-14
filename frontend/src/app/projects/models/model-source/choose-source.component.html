@@ -27,7 +27,7 @@
 
       <div
         *ngIf="
-          (modelService.model$ | async)!.tool?.integrations?.t4c &&
+          (modelService.model$ | async)!.tool.integrations.t4c &&
           userService.user?.role === 'administrator'
         "
       >
