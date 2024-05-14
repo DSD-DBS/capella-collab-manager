@@ -48,14 +48,12 @@ class GitInstanceAPIEndpointNotFoundError(core_exceptions.BaseError):
 
 
 class GitPipelineJobNotFoundError(core_exceptions.BaseError):
-    job_name: str
-
-    def __init__(self, job_name: str):
+    def __init__(self, job_name: str, revision: str):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
             title="Job not found",
             reason=(
-                f"There was no job with the name '{job_name}' in the last 20 runs of the pipeline. "
+                f"There was no job with the name '{job_name}' in the last 20 runs of the pipelines with revision '{revision}'. "
                 "Please contact your administrator."
             ),
             err_code="PIPELINE_JOB_NOT_FOUND",

@@ -53,7 +53,7 @@ export const PipelineJobNotFound: Story = {
   args: {
     errorCode: 'PIPELINE_JOB_NOT_FOUND',
     errorMessage:
-      "There was no job with the name 'generate-model-badge' in the last 20 runs of the pipeline Please contact your administrator.",
+      "There was no job with the name 'generate-model-badge' in the last 20 runs of the pipelines with revision 'main'. Please contact your administrator.",
     loadingComplexityBadge: false,
   },
 };

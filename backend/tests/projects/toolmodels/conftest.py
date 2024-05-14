@@ -68,11 +68,22 @@ def fixture_job_name(request: pytest.FixtureRequest):
     return request.param
 
 
+@pytest.fixture(name="pipeline_ids")
+def fixture_pipeline_ids(
+    request: pytest.FixtureRequest,
+) -> list[str]:
+    if hasattr(request, "param"):
+        return request.param
+    return ["12345", "12346"]
+
+
 @pytest.fixture(name="mock_git_rest_api_for_artifacts")
 def fixture_mock_git_rest_api_for_artifacts(
-    job_status: str, git_type: git_models.GitType, job_name: str
+    job_status: str,
+    git_type: git_models.GitType,
+    job_name: str,
+    pipeline_ids: list[str],
 ):
-    pipeline_ids = ["12345", "12346"]
     match git_type:
         case git_models.GitType.GITLAB:
             with aioresponses() as mocked:
@@ -126,11 +137,14 @@ def fixture_mock_git_rest_api_for_artifacts(
                     ],
                 },
             )
-            responses.get(
-                f"https://example.com/api/v4/repos/test/project/actions/runs/{pipeline_ids[0]}/artifacts",
-                status=200,
-                json={"artifacts": [{"id": artifact_id, "expired": "false"}]},
-            )
+            if pipeline_ids:
+                responses.get(
+                    f"https://example.com/api/v4/repos/test/project/actions/runs/{pipeline_ids[0]}/artifacts",
+                    status=200,
+                    json={
+                        "artifacts": [{"id": artifact_id, "expired": "false"}]
+                    },
+                )
             yield responses
 
 
