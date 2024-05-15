@@ -7,13 +7,13 @@ import logging
 import tarfile
 
 import fastapi
-from fastapi import responses, status
+from fastapi import responses
 
 from capellacollab.sessions import injectables as sessions_injectables
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions import operators
 
-from . import models
+from . import exceptions, models
 
 router = fastapi.APIRouter()
 log = logging.getLogger(__name__)
@@ -32,12 +32,7 @@ def list_files(
         )
     except Exception:
         log.exception("Loading of files for session %s failed", session.id)
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail={
-                "reason": "Loading the files of the session failed. Is the session running?"
-            },
-        )
+        raise exceptions.SessionFileLoadingFailedError()
 
 
 @router.post("")
@@ -54,12 +49,7 @@ def upload_files(
     ) as tar:
         size = sum(len(file.file.read()) for file in files)
         if size > 31457280:
-            raise fastapi.HTTPException(
-                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-                detail={
-                    "reason": "The summed file size must not exceed 30MB."
-                },
-            )
+            raise exceptions.FileSizeExceededError()
 
         for file in files:
             file.file.seek(0)

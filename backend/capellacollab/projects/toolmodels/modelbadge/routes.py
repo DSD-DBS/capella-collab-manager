@@ -8,13 +8,14 @@ import logging
 import aiohttp.web
 import fastapi
 import requests
-from fastapi import status
 
 import capellacollab.projects.toolmodels.modelsources.git.injectables as git_injectables
 from capellacollab.core import logging as log
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects.toolmodels.modelsources.git.handler import handler
 from capellacollab.projects.users import models as projects_users_models
+
+from . import exceptions
 
 router = fastapi.APIRouter(
     dependencies=[
@@ -45,12 +46,4 @@ async def get_model_complexity_badge(
         )
     except (aiohttp.web.HTTPException, requests.exceptions.HTTPError):
         logger.info("Failed fetching model complexity badge", exc_info=True)
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail={
-                "reason": (
-                    "The model complexity badge integration is not configured properly.",
-                    "Please contact your administrator.",
-                ),
-            },
-        )
+        raise exceptions.ModelBadgeNotConfiguredProperlyError()

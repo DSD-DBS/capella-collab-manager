@@ -3,7 +3,6 @@
 
 import fastapi
 import pydantic
-from fastapi import status
 from sqlalchemy import orm
 
 from capellacollab.core import database
@@ -17,7 +16,7 @@ from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 
-from . import crud, models, util
+from . import crud, exceptions, models, util
 
 router = fastapi.APIRouter()
 
@@ -28,10 +27,7 @@ def check_user_not_admin(user: users_models.DatabaseUser) -> bool:
     We have to prevent that they get roles in projects.
     """
     if user.role == users_models.Role.ADMIN:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail={"reason": "You are not allowed to edit this user."},
-        )
+        raise exceptions.AdminNotAllowedAsProjectUserError()
     return True
 
 
@@ -39,12 +35,7 @@ def check_user_not_in_project(
     project: projects_models.DatabaseProject, user: users_models.DatabaseUser
 ):
     if user in project.users:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "reason": "The user already exists in this project.",
-            },
-        )
+        raise exceptions.ProjectUserAlreadyExistsError(user.name, project.slug)
 
 
 def get_project_user_association_or_raise(
@@ -62,11 +53,8 @@ def get_project_user_association_or_raise(
             user=users_models.User.model_validate(user),
         )
 
-    raise fastapi.HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail={
-            "reason": f"User {user.name} does not exist in project {project.slug}"
-        },
+    raise exceptions.ProjectUserNotFoundError(
+        username=user.name, project_slug=project.slug
     )
 
 
@@ -210,12 +198,7 @@ def update_project_user(
         project_user = get_project_user_association_or_raise(db, project, user)
 
         if project_user.role == models.ProjectUserRole.MANAGER:
-            raise fastapi.HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail={
-                    "reason": "You are not allowed to set the permission of project leads!"
-                },
-            )
+            raise exceptions.PermissionForProjectLeadsNotAllowedError()
         crud.change_permission_of_user_in_project(
             db, project, user, permission
         )

@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import fastapi
-from fastapi import status
 from sqlalchemy import orm
 
 from capellacollab.core import database
@@ -11,7 +10,7 @@ from capellacollab.projects.toolmodels import (
 )
 from capellacollab.projects.toolmodels import models as toolmodels_models
 
-from . import crud, models
+from . import crud, exceptions, models
 
 
 def get_existing_pipeline(
@@ -21,12 +20,9 @@ def get_existing_pipeline(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseBackup:
-    if backup := crud.get_pipeline_by_id(db, pipeline_id):
-        return backup
+    pipeline = crud.get_pipeline_by_id(db, pipeline_id)
 
-    raise fastapi.HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail={
-            "reason": f"The pipeline with the ID {pipeline_id} of the model with the name '{model.name}' was not found.",
-        },
-    )
+    if pipeline and pipeline.model == model:
+        return pipeline
+
+    raise exceptions.PipelineNotFoundError(pipeline_id)

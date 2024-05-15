@@ -5,11 +5,13 @@ import datetime
 import logging
 
 import fastapi
-from fastapi import security, status
+from fastapi import security
 
 from capellacollab.core import database
 from capellacollab.users import crud as user_crud
 from capellacollab.users.tokens import crud as token_crud
+
+from . import exceptions
 
 logger = logging.getLogger(__name__)
 
@@ -23,11 +25,7 @@ class HTTPBasicAuth(security.HTTPBasic):
         )
         if not credentials:
             if self.auto_error:
-                raise fastapi.HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Not authenticated",
-                    headers={"WWW-Authenticate": "Bearer, Basic"},
-                )
+                raise exceptions.UnauthenticatedError()
             return None
         with database.SessionLocal() as session:
             user = user_crud.get_user_by_name(session, credentials.username)
@@ -41,27 +39,13 @@ class HTTPBasicAuth(security.HTTPBasic):
             if not db_token:
                 logger.info("Token invalid for user %s", credentials.username)
                 if self.auto_error:
-                    raise fastapi.HTTPException(
-                        status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail={
-                            "err_code": "BASIC_TOKEN_INVALID",
-                            "reason": "The used token is not valid.",
-                        },
-                        headers={"WWW-Authenticate": "Bearer, Basic"},
-                    )
+                    raise exceptions.InvalidPersonalAccessTokenError()
                 return None
 
             if db_token.expiration_date < datetime.date.today():
                 logger.info("Token expired for user %s", credentials.username)
                 if self.auto_error:
-                    raise fastapi.HTTPException(
-                        status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail={
-                            "err_code": "token_exp",
-                            "reason": "The Signature of the token is expired. Please request a new access token.",
-                        },
-                        headers={"WWW-Authenticate": "Bearer, Basic"},
-                    )
+                    raise exceptions.TokenSignatureExpired()
                 return None
         return self.get_username(credentials)
 

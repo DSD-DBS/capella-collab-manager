@@ -6,7 +6,6 @@ import logging
 
 import fastapi
 import slugify
-from fastapi import status
 from sqlalchemy import orm
 
 from capellacollab.core import database
@@ -25,7 +24,7 @@ from capellacollab.projects.users import routes as projects_users_routes
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 
-from . import crud, models
+from . import crud, exceptions, models
 
 router = fastapi.APIRouter(
     dependencies=[
@@ -99,13 +98,7 @@ def update_project(
         new_slug = slugify.slugify(patch_project.name)
 
         if project.slug != new_slug and crud.get_project_by_slug(db, new_slug):
-            raise fastapi.HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail={
-                    "reason": "A project with a similar name already exists.",
-                    "technical": "Slug already used",
-                },
-            )
+            raise exceptions.ProjectAlreadyExistsError(project.slug)
     if patch_project.is_archived:
         _delete_all_pipelines_for_project(db, project, username)
     return crud.update_project(db, project, patch_project)
@@ -139,14 +132,9 @@ def create_project(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseProject:
-    if crud.get_project_by_slug(db, slugify.slugify(post_project.name)):
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "reason": "A project with a similar name already exists.",
-                "technical": "Slug already used",
-            },
-        )
+    slug = slugify.slugify(post_project.name)
+    if crud.get_project_by_slug(db, slug):
+        raise exceptions.ProjectAlreadyExistsError(slug)
 
     project = crud.create_project(
         db,
@@ -186,10 +174,7 @@ def delete_project(
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
     if project.models:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={"reason": "The project still has models assigned to it"},
-        )
+        raise exceptions.AssignedModelsPreventDeletionError(project)
     projects_users_crud.delete_users_from_project(db, project)
     events_crud.delete_all_events_projects_associated_with(db, project.id)
 

@@ -4,10 +4,9 @@
 from collections import abc
 
 import fastapi
-from fastapi import status
 from sqlalchemy import exc, orm
 
-from capellacollab.core import database
+from capellacollab.core import database, responses
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects.toolmodels import (
     injectables as toolmodels_injectables,
@@ -23,7 +22,7 @@ from capellacollab.settings.modelsources.t4c.repositories import (
 )
 from capellacollab.users import models as users_models
 
-from . import crud, injectables, models
+from . import crud, exceptions, injectables, models
 
 router = fastapi.APIRouter(
     dependencies=[
@@ -33,6 +32,9 @@ router = fastapi.APIRouter(
             )
         )
     ],
+    responses=responses.api_exceptions(
+        minimum_project_role=projects_users_models.ProjectUserRole.MANAGER
+    ),
 )
 
 
@@ -52,6 +54,12 @@ def list_t4c_models(
 @router.get(
     "/{t4c_model_id}",
     response_model=models.T4CModel,
+    responses=responses.api_exceptions(
+        [
+            exceptions.T4CIntegrationNotFoundError(-1),
+            exceptions.T4CIntegrationDoesntBelongToModel(-1, "test"),
+        ],
+    ),
 )
 def get_t4c_model(
     t4c_model: models.DatabaseT4CModel = fastapi.Depends(
@@ -89,11 +97,8 @@ def create_t4c_model(
     )
     try:
         return crud.create_t4c_model(db, model, repository, body.name)
-    except exc.IntegrityError as e:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={"reason": "The model has been added already."},
-        ) from e
+    except exc.IntegrityError:
+        raise exceptions.T4CIntegrationAlreadyExists()
 
 
 @router.patch(
@@ -106,6 +111,12 @@ def create_t4c_model(
             )
         )
     ],
+    responses=responses.api_exceptions(
+        [
+            exceptions.T4CIntegrationNotFoundError(-1),
+            exceptions.T4CIntegrationDoesntBelongToModel(-1, "test"),
+        ],
+    ),
 )
 def edit_t4c_model(
     body: models.SubmitT4CModel,
@@ -127,6 +138,12 @@ def edit_t4c_model(
             )
         )
     ],
+    responses=responses.api_exceptions(
+        [
+            exceptions.T4CIntegrationNotFoundError(-1),
+            exceptions.T4CIntegrationDoesntBelongToModel(-1, "test"),
+        ],
+    ),
 )
 def delete_t4c_model(
     t4c_model: models.DatabaseT4CModel = fastapi.Depends(
@@ -135,12 +152,6 @@ def delete_t4c_model(
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
     if backups_crud.get_pipelines_for_t4c_model(db, t4c_model):
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "err_code": "T4C_MODEL_USED_FOR_BACKUP",
-                "reason": "The t4c model can't be deleted: it's used for backup jobs",
-            },
-        )
+        raise exceptions.T4CIntegrationUsedInPipelines()
 
     crud.delete_t4c_model(db, t4c_model)

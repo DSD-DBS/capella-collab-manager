@@ -25,3 +25,14 @@ class PipelineOperationFailedT4CServerUnreachable(core_exceptions.BaseError):
             ),
             err_code="PIPELINE_OPERATION_FAILED_T4C_SERVER_UNREACHABLE",
         )
+
+
+class PipelineNotFoundError(core_exceptions.BaseError):
+    def __init__(self, pipeline_id: int):
+        self.pipeline_id = pipeline_id
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            title="Pipeline not found",
+            reason=f"The pipeline with the ID {pipeline_id} was not found.",
+            err_code="PIPELINE_NOT_FOUND",
+        )

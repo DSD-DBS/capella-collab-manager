@@ -6,7 +6,8 @@ import logging
 import typing as t
 
 import fastapi
-from fastapi import security, status
+from fastapi import security
+from jose import exceptions as jwt_exceptions
 from jose import jwt
 
 import capellacollab.users.crud as users_crud
@@ -14,7 +15,7 @@ from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.events import crud as events_crud
 
-from . import get_authentication_entrypoint
+from . import exceptions, get_authentication_entrypoint
 
 log = logging.getLogger(__name__)
 ep = get_authentication_entrypoint()
@@ -34,21 +35,13 @@ class JWTBearer(security.HTTPBearer):
 
         if not credentials or credentials.scheme != "Bearer":
             if self.auto_error:
-                raise fastapi.HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Not authenticated",
-                    headers={"WWW-Authenticate": "Bearer, Basic"},
-                )
+                raise exceptions.UnauthenticatedError()
             return None
         if token_decoded := self.validate_token(credentials.credentials):
             self.initialize_user(token_decoded)
             return self.get_username(token_decoded)
         if self.auto_error:
-            raise fastapi.HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Not authenticated",
-                headers={"WWW-Authenticate": "Bearer, Basic"},
-            )
+            raise exceptions.UnauthenticatedError()
         return None
 
     def get_username(self, token_decoded: dict[str, str]) -> str:
@@ -66,33 +59,20 @@ class JWTBearer(security.HTTPBearer):
         try:
             jwt_cfg = ep_main.get_jwk_cfg(token)
         except Exception:
+            log.exception(
+                "Couldn't determine JWK configuration", exc_info=True
+            )
             if self.auto_error:
-                raise fastapi.HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail={
-                        "err_code": "JWT_TOKEN_INVALID",
-                        "reason": "The used token is not valid.",
-                    },
-                ) from None
+                raise exceptions.JWTInvalidToken()
             return None
         try:
             return jwt.decode(token, **jwt_cfg)
-        except jwt.ExpiredSignatureError:
+        except jwt_exceptions.ExpiredSignatureError:
             if self.auto_error:
-                raise fastapi.HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail={
-                        "err_code": "token_exp",
-                        "reason": "The Signature of the token is expired. Please request a new access token.",
-                    },
-                ) from None
+                raise exceptions.TokenSignatureExpired()
             return None
-        except (jwt.JWTError, jwt.JWTClaimsError):
+        except (jwt_exceptions.JWTError, jwt_exceptions.JWTClaimsError):
+            log.exception("JWT validation failed", exc_info=True)
             if self.auto_error:
-                raise fastapi.HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail={
-                        "technical": "The validation of your access token failed. Please contact your administrator.",
-                    },
-                ) from None
+                raise exceptions.JWTValidationFailed()
             return None

@@ -8,6 +8,43 @@ from fastapi import status
 from capellacollab.core import exceptions as core_exceptions
 
 
+class GitRepositoryNotFoundError(core_exceptions.BaseError):
+    def __init__(self, git_model_id: int, tool_model_slug: str):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            title="Git repository not found",
+            reason=(
+                f"No Git repository with the ID '{git_model_id}' found for the model with slug {tool_model_slug}."
+            ),
+            err_code="GIT_REPOSITORY_NOT_FOUND",
+        )
+
+
+class NoGitRepositoryAssignedToModelError(core_exceptions.BaseError):
+    def __init__(self, tool_model_slug: str):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            title="No Git repository assigned to model",
+            reason=(
+                f"No Git repository is assigned to the model with slug '{tool_model_slug}'."
+            ),
+            err_code="NO_GIT_REPOSITORY_ASSIGNED_TO_MODEL",
+        )
+
+
+class GitRepositoryUsedInPipelines(core_exceptions.BaseError):
+    def __init__(self, git_model_id: int):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="Git repository used in pipelines",
+            reason=(
+                f"Git repository with the ID '{git_model_id}' is currently used in pipelines. "
+                "Please remove the pipeline first."
+            ),
+            err_code="GIT_REPOSITORY_USED_IN_PIPELINES",
+        )
+
+
 class AccessDeniedError(core_exceptions.BaseError, metaclass=abc.ABCMeta):
     pass
 

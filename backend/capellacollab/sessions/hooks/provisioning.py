@@ -119,7 +119,9 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
         for entry in resolved_entries:
             if entry["model"].version not in allowed_versions:
                 raise sessions_exceptions.ToolAndModelMismatchError(
-                    version=version, model=entry["model"]
+                    tool_name=version.tool.name,
+                    version_name=version.name,
+                    model_name=entry["model"].name,
                 )
 
     @classmethod

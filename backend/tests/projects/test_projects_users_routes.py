@@ -112,11 +112,10 @@ def test_http_exception_when_updating_permission_of_manager(
     )
 
     assert response.status_code == 403
-    assert response.json() == {
-        "detail": {
-            "reason": "You are not allowed to set the permission of project leads!"
-        }
-    }
+    assert (
+        response.json()["detail"]["err_code"]
+        == "PERMISSION_FOR_PROJECT_LEADS_NOT_ALLOWED"
+    )
 
 
 def test_current_user_rights_for_internal_project(

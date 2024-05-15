@@ -4,7 +4,6 @@
 from collections import abc
 
 import fastapi
-from fastapi import status
 from sqlalchemy import orm
 
 from capellacollab.core import database
@@ -19,7 +18,7 @@ from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 from capellacollab.users.tokens import routes as tokens_routes
 
-from . import crud, injectables, models
+from . import crud, exceptions, injectables, models
 
 router = fastapi.APIRouter(
     dependencies=[
@@ -56,13 +55,7 @@ def get_user(
     ):
         return user
     else:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail={
-                "err_code": "NO_PROJECTS_IN_COMMON",
-                "reason": "You need at least one project in common to access the user profile of another user.",
-            },
-        )
+        raise exceptions.NoProjectsInCommonError(user.id)
 
 
 @router.get(

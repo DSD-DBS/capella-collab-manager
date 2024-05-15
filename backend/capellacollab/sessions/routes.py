@@ -13,15 +13,18 @@ from sqlalchemy import orm
 from capellacollab.core import database
 from capellacollab.core import logging as log
 from capellacollab.core import models as core_models
+from capellacollab.core import responses
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.sessions import hooks
 from capellacollab.sessions.files import routes as files_routes
+from capellacollab.tools import exceptions as tools_exceptions
 from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
+from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 
-from . import crud, injectables, models, operators, util
+from . import crud, exceptions, injectables, models, operators, util
 from .operators import k8s
 from .operators import models as operators_models
 
@@ -32,7 +35,8 @@ router = fastapi.APIRouter(
                 required_role=users_models.Role.USER
             )
         )
-    ]
+    ],
+    responses=responses.api_exceptions(minimum_role=users_models.Role.USER),
 )
 
 router_without_authentication = fastapi.APIRouter()
@@ -44,11 +48,37 @@ users_router = fastapi.APIRouter(
                 required_role=users_models.Role.USER
             )
         )
-    ]
+    ],
 )
 
 
-@router.post("", response_model=models.Session)
+@router.post(
+    "",
+    response_model=models.Session,
+    responses=responses.api_exceptions(
+        [
+            exceptions.UnsupportedSessionTypeError(
+                tool_name="test", session_type=models.SessionType.PERSISTENT
+            ),
+            exceptions.ConflictingSessionError(
+                tool_name="test", version_name="test"
+            ),
+            exceptions.ToolAndModelMismatchError(
+                tool_name="test", version_name="test", model_name="test"
+            ),
+            exceptions.InvalidConnectionMethodIdentifierError(
+                tool_name="test", connection_method_id="default"
+            ),
+            exceptions.WorkspaceMountingNotAllowed(tool_name="test"),
+            exceptions.TooManyModelsRequestedToProvisionError(
+                max_number_of_models=1
+            ),
+            exceptions.ProvisioningUnsupportedError(),
+            tools_exceptions.ToolNotFoundError(tool_id=1),
+            tools_exceptions.ToolVersionNotFoundError(version_id=1),
+        ],
+    ),
+)
 def request_session(
     body: models.PostSessionRequest,
     user: users_models.DatabaseUser = fastapi.Depends(
@@ -68,12 +98,7 @@ def request_session(
         body.session_type == models.SessionType.PERSISTENT
         and body.provisioning
     ):
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={
-                "reason": "Provisioning is not supported for persistent sessions.",
-            },
-        )
+        raise exceptions.ProvisioningUnsupportedError()
 
     tool = tools_injectables.get_existing_tool(body.tool_id, db)
     version = tools_injectables.get_existing_tool_version(
@@ -230,6 +255,15 @@ def get_all_sessions(
     response_model=core_models.PayloadResponseModel[
         models.SessionConnectionInformation
     ],
+    responses=responses.api_exceptions(
+        [
+            exceptions.InvalidConnectionMethodIdentifierError(
+                tool_name="test", connection_method_id="default"
+            ),
+            exceptions.SessionNotFoundError(session_id="test"),
+            exceptions.SessionNotOwnedError(session_id="test"),
+        ],
+    ),
 )
 def get_session_connection_information(
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -242,12 +276,7 @@ def get_session_connection_information(
     logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
 ):
     if session.owner != user:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail={
-                "reason": "The owner of the session does not match with your username."
-            },
-        )
+        raise exceptions.SessionNotOwnedError(session.id)
 
     connection_method = util.get_connection_method(
         session.tool, session.connection_method_id
@@ -310,7 +339,16 @@ def validate_session_token(
     return fastapi.Response(status_code=status.HTTP_403_FORBIDDEN)
 
 
-@router.delete("/{session_id}", status_code=204)
+@router.delete(
+    "/{session_id}",
+    status_code=204,
+    responses=responses.api_exceptions(
+        [
+            exceptions.SessionNotFoundError(session_id="test"),
+            exceptions.SessionNotOwnedError(session_id="test"),
+        ]
+    ),
+)
 def end_session(
     db: orm.Session = fastapi.Depends(database.get_db),
     session: models.DatabaseSession = fastapi.Depends(
@@ -327,6 +365,14 @@ router.include_router(router=files_routes.router, prefix="/{session_id}/files")
 @users_router.get(
     "/{user_id}/sessions",
     response_model=list[models.Session],
+    responses=responses.api_exceptions(
+        [
+            users_exceptions.UserNotFoundError(user_id=1),
+            exceptions.SessionNotOwnedError(session_id="test"),
+            exceptions.SessionForbiddenError(),
+        ],
+        minimum_role=users_models.Role.USER,
+    ),
 )
 def get_sessions_for_user(
     user: users_models.DatabaseUser = fastapi.Depends(
@@ -340,13 +386,7 @@ def get_sessions_for_user(
         user != current_user
         and not current_user.role != users_models.Role.ADMIN
     ):
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail={
-                "reason": "You can only see your own sessions.",
-                "technical": "If you are a project lead or administrator, please use the /sessions endpoint",
-            },
-        )
+        raise exceptions.SessionForbiddenError()
 
     return [
         models.Session.model_validate(session) for session in user.sessions

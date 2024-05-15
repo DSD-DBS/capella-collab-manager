@@ -325,7 +325,7 @@ def raise_when_tool_dependency_exist(
 
     Raises
     ------
-    HTTPException
+    core_exceptions.ExistingDependenciesError
         If there is a tool dependency left
     """
 
@@ -367,7 +367,7 @@ def raise_when_tool_version_dependency_exist(
 
     Raises
     ------
-    HTTPException
+    core_exceptions.ExistingDependenciesError
         If there is a tool version dependency left
     """
 
@@ -404,7 +404,7 @@ def raise_when_tool_nature_dependency_exist(
 
     Raises
     ------
-    HTTPException
+    core_exceptions.ExistingDependenciesError
         If there is a tool nature dependency left
     """
 
