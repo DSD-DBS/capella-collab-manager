@@ -68,6 +68,9 @@ def refresh_token(_refresh_token: str) -> dict[str, t.Any]:
 
 
 def read_well_known() -> dict[str, t.Any]:
+    authorization_endpoint = None
+    token_endpoint = None
+
     if cfg.endpoints.well_known:
         r = requests.get(
             cfg.endpoints.well_known,

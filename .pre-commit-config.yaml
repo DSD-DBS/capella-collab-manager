@@ -6,7 +6,7 @@ default_stages: [commit, merge-commit]
 minimum_pre_commit_version: 3.2.0
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       - id: check-added-large-files
       - id: check-builtin-literals
@@ -29,7 +29,7 @@ repos:
       - id: trailing-whitespace
         exclude: '^frontend/src/app/openapi'
   - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 24.2.0
+    rev: 24.4.2
     hooks:
       - id: black
         files: '^backend/'
@@ -47,7 +47,7 @@ repos:
         entry: bash -c "cd backend && isort ."
         types: [python]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.9.0
+    rev: v1.10.0
     hooks:
       - id: mypy
         types_or: [python, spec]
@@ -143,11 +143,11 @@ repos:
           - --comment-style
           - '{/*|   |*/}'
   - repo: https://github.com/fsfe/reuse-tool
-    rev: v3.0.1
+    rev: v3.0.2
     hooks:
       - id: reuse
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.0.0-beta.2
+    rev: v9.2.0
     hooks:
       - id: eslint
         additional_dependencies:
@@ -169,14 +169,14 @@ repos:
         exclude: '.+\.spec(-helper)?\.ts$|^frontend/src/app/openapi'
         types_or: ['html', 'ts']
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
-    rev: v9.13.0
+    rev: v9.16.0
     hooks:
       - id: commitlint
         stages: [commit-msg]
         additional_dependencies:
           - '@commitlint/config-conventional'
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.1
+    rev: v3.15.2
     hooks:
       - id: pyupgrade
         args: ['--py311-plus']

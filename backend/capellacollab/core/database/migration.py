@@ -184,8 +184,6 @@ def create_capella_tool(db: orm.Session) -> tools_models.DatabaseTool:
     capella_database = tools_crud.create_tool(db, capella)
 
     for capella_version_name in ("5.0.0", "5.2.0", "6.0.0", "6.1.0"):
-        # pylint: disable=unsupported-membership-test
-        # https://github.com/pylint-dev/pylint/issues/3045
         if "localhost" in registry:
             docker_tag = f"{capella_version_name}-latest"
         else:
@@ -329,8 +327,6 @@ def create_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
 def create_tools(db: orm.Session):
     create_capella_tool(db)
 
-    # pylint: disable=unsupported-membership-test
-    # https://github.com/pylint-dev/pylint/issues/3045
     if "localhost" in config.docker.sessions_registry:
         create_papyrus_tool(db)
         create_jupyter_tool(db)
