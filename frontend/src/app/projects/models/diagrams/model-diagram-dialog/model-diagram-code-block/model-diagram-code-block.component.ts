@@ -22,12 +22,9 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import hljs from 'highlight.js';
-import {
-  BackendMetadata,
-  MetadataService,
-} from 'src/app/general/metadata/metadata.service';
+import { MetadataService } from 'src/app/general/metadata/metadata.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Project } from 'src/app/openapi';
+import { Metadata, Project } from 'src/app/openapi';
 import {
   Model,
   getPrimaryGitModel,
@@ -56,7 +53,7 @@ import { TokenService } from 'src/app/users/basic-auth-service/basic-auth-token.
 export class ModelDiagramCodeBlockComponent implements OnInit, AfterViewInit {
   passwordValue?: string;
 
-  metadata?: BackendMetadata;
+  metadata?: Metadata;
 
   constructor(
     private metadataService: MetadataService,

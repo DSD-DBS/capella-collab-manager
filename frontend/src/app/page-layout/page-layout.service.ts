@@ -12,19 +12,16 @@ export class PageLayoutService {
   showHeader = true;
   showFooter = true;
   showNotice = true;
-  showLegal = true;
 
   disableAll() {
     this.showHeader = false;
     this.showFooter = false;
     this.showNotice = false;
-    this.showLegal = false;
   }
 
   enableAll() {
     this.showHeader = true;
     this.showFooter = true;
     this.showNotice = true;
-    this.showLegal = true;
   }
 }

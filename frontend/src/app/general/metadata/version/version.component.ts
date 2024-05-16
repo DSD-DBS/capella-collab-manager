@@ -12,7 +12,6 @@ import { MetadataService } from '../metadata.service';
 @Component({
   selector: 'app-version',
   templateUrl: './version.component.html',
-  styleUrls: ['./version.component.css'],
   standalone: true,
   imports: [NgIf, MatIcon, AsyncPipe],
 })

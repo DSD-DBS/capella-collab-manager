@@ -1,0 +1,23 @@
+{/*
+    SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+    SPDX-License-Identifier: Apache-2.0
+*/}
+
+import * as Component from './footer.stories.ts'
+import { Meta, Title, Story, Canvas, Unstyled } from '@storybook/blocks'
+
+<Meta of={Component} />
+
+<Title />
+
+This is how the footer components looks like on desktop devices:
+
+<Unstyled>
+  <div style={{ width: '1920px', scale: '0.7', 'transform-origin': 'left' }}>
+    <Story of={Component.General} />
+  </div>
+</Unstyled>
+
+On mobile devices, the part in the middle is not centered:
+
+<iframe width="430px" height="250px" src="/iframe.html?id=general-components-footer--general"></iframe>

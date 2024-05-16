@@ -8,38 +8,35 @@
     <app-nav-bar-menu></app-nav-bar-menu>
   </mat-drawer>
   <mat-drawer-content class="overall-wrapper">
-    <div
-      class="navBar"
-      *ngIf="(fullscreenService.isFullscreen$ | async) === false"
-    >
-      <app-header *ngIf="pageLayoutService.showHeader"></app-header>
-    </div>
+    @if (
+      (fullscreenService.isFullscreen$ | async) === false &&
+      pageLayoutService.showHeader
+    ) {
+      <app-header class="h-[50px] xl:h-[100px]"></app-header>
+    }
+
     <div
       [ngClass]="{
-        wrapper: (fullscreenService.isFullscreen$ | async) === false
+        'wrapper mx-3 my-2 md:mx-5':
+          (fullscreenService.isFullscreen$ | async) === false
       }"
     >
-      <app-notice
-        *ngIf="
-          (fullscreenService.isFullscreen$ | async) === false &&
-          pageLayoutService.showNotice
-        "
-      ></app-notice>
+      @if (
+        (fullscreenService.isFullscreen$ | async) === false &&
+        pageLayoutService.showNotice
+      ) {
+        <app-notice></app-notice>
+      }
+
       <router-outlet class="h-full"></router-outlet>
     </div>
-    <div
-      class="footer"
-      *ngIf="(fullscreenService.isFullscreen$ | async) === false"
-    >
-      <app-version id="left"></app-version>
-      <div id="middle">
-        <app-footer
-          *ngIf="pageLayoutService.showFooter"
-          class="footer"
-        ></app-footer>
-        <app-legal *ngIf="pageLayoutService.showLegal"></app-legal>
-      </div>
-      <div id="placeholder"></div>
-    </div>
+    @if (
+      (fullscreenService.isFullscreen$ | async) === false &&
+      pageLayoutService.showFooter
+    ) {
+      <app-footer
+        class="mb-2 flex min-h-[115px] flex-col justify-around"
+      ></app-footer>
+    }
   </mat-drawer-content>
 </mat-drawer-container>

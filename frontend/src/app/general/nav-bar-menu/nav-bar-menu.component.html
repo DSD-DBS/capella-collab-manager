@@ -34,14 +34,6 @@
   <a
     mat-list-item
     (click)="navBarService.toggle()"
-    href="https://github.com/DSD-DBS/capella-collab-manager/issues"
-    target="_blank"
-    >Open issue on Github <mat-icon>open_in_new</mat-icon></a
-  >
-  <mat-divider></mat-divider>
-  <a
-    mat-list-item
-    (click)="navBarService.toggle()"
     [routerLink]="['user', userService.user?.id]"
   >
     Profile

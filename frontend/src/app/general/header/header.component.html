@@ -3,31 +3,29 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="bg-zinc-100">
-  <div class="flex min-h-[65px] items-center justify-between">
-    <div class="xl:hidden">
-      <button
-        mat-icon-button
-        color="primary"
-        (click)="navBarService.toggle()"
-        aria-label="Toggle navigation menu"
-      >
-        <mat-icon>menu</mat-icon>
-      </button>
-    </div>
+<div class="flex items-center gap-2 xl:hidden">
+  <button
+    mat-icon-button
+    color="primary"
+    (click)="navBarService.toggle()"
+    aria-label="Toggle navigation menu"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+  <app-breadcrumbs class="mt-1"></app-breadcrumbs>
+</div>
 
-    <div class="primaryText ml-5 select-none text-2xl">
+<div class="hidden xl:block">
+  <div class="flex min-h-[65px] items-center justify-between gap-2">
+    <div class="ml-5 basis-1/3 select-none text-2xl text-primary">
       Capella Collaboration Manager
     </div>
-
-    <div class="xl:hidden"></div>
-
-    <div class="hidden gap-2 xl:flex">
+    <div class="flex basis-1/3 gap-2">
       @for (item of navBarService.navBarItems; track item.name) {
         @if (userService.validateUserRole(item.requiredRole)) {
           @if (item.href) {
             <a
-              mat-raised-button
+              mat-flat-button
               color="primary"
               [attr.href]="item.href"
               [attr.target]="item.target"
@@ -40,7 +38,7 @@
             </a>
           } @else {
             <a
-              mat-raised-button
+              mat-flat-button
               color="primary"
               [routerLink]="item.routerLink"
               class=""
@@ -51,15 +49,7 @@
         }
       }
     </div>
-    <div class="!mr-5 hidden items-center gap-2 xl:flex">
-      <a
-        mat-raised-button
-        color="primary"
-        href="https://github.com/DSD-DBS/capella-collab-manager/issues"
-        target="_blank"
-        >Open Issue on Github <mat-icon iconPositionEnd>open_in_new</mat-icon>
-      </a>
-
+    <div class="!mr-5 hidden basis-1/3 items-center justify-end gap-2 xl:flex">
       <mat-menu #profileMenu="matMenu" class="flex items-center">
         <a
           class="px-[15px] text-left"
@@ -99,17 +89,12 @@
         </a>
       </mat-menu>
 
-      <button
-        color="primary"
-        mat-raised-button
-        [matMenuTriggerFor]="profileMenu"
-      >
+      <button color="primary" mat-flat-button [matMenuTriggerFor]="profileMenu">
         Menu <mat-icon iconPositionEnd>menu</mat-icon>
       </button>
     </div>
   </div>
-
-  <div class="primaryText ml-5 select-none pb-2 text-base">
+  <div class="ml-5 pb-2">
     <app-breadcrumbs></app-breadcrumbs>
   </div>
 </div>

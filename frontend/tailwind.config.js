@@ -28,7 +28,6 @@ module.exports = {
         // 2*3.9px is the margin of the wrapper
         // 2*10px is the margin of the mat-card
         "max-card": "calc(100vw - 2*3.9px - 2*10px)",
-        "dummy-button": "100px",
       },
     },
   },

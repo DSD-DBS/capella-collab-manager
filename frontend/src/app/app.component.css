@@ -15,28 +15,9 @@
   overflow: unset;
 }
 
-.footer {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-#left,
-#placeholder {
-  flex-basis: 350px;
-}
-
 .wrapper {
-  /* Subtract margin, navbar and footer */
-  min-height: calc(100vh - 2vh - 65px - 110px);
-  margin: 1vh 1vw;
-}
-
-.navBar {
-  min-height: 65px;
+  /* Subtract margin, navbar and footer (+margin) */
+  min-height: calc(100vh - 16px - 100px - 115px - 8px);
 }
 
 router-outlet {

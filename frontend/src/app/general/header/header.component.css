@@ -1,8 +1,0 @@
-/*
- * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
- * SPDX-License-Identifier: Apache-2.0
- */
-
-::ng-deep.mat-menu-panel {
-  overflow: hidden !important;
-}

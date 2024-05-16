@@ -9,7 +9,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { compare } from 'semver';
 import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
-import { environment } from 'src/environments/environment';
+import {
+  Metadata,
+  MetadataService as OpenAPIMetadataService,
+} from 'src/app/openapi';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +22,7 @@ export class MetadataService {
     private httpClient: HttpClient,
     private localStorageService: LocalStorageService,
     public dialog: MatDialog,
+    private metadataService: OpenAPIMetadataService,
   ) {
     this.loadVersion();
     this.loadBackendMetadata().subscribe();
@@ -28,7 +32,7 @@ export class MetadataService {
   public oldVersion: string | undefined;
   public changedVersion = false;
 
-  private _backendMetadata = new BehaviorSubject<BackendMetadata | undefined>(
+  private _backendMetadata = new BehaviorSubject<Metadata | undefined>(
     undefined,
   );
   readonly backendMetadata = this._backendMetadata.asObservable();
@@ -44,14 +48,10 @@ export class MetadataService {
     }
   }
 
-  loadBackendMetadata(): Observable<BackendMetadata> {
-    return this.httpClient
-      .get<BackendMetadata>(environment.backend_url + '/metadata')
-      .pipe(
-        tap((metadata: BackendMetadata) =>
-          this._backendMetadata.next(metadata),
-        ),
-      );
+  loadBackendMetadata(): Observable<Metadata> {
+    return this.metadataService
+      .getMetadata()
+      .pipe(tap((metadata: Metadata) => this._backendMetadata.next(metadata)));
   }
 
   determinateChangedVersion() {
@@ -99,17 +99,4 @@ export interface GitVersion {
 
 export interface Version {
   git: GitVersion;
-}
-
-export interface BackendMetadata {
-  version: string;
-  privacy_policy_url: string;
-  imprint_url: string;
-  provider: string;
-  authentication_provider: string;
-  environment: string;
-
-  host: string;
-  port: string;
-  protocol: string;
 }
