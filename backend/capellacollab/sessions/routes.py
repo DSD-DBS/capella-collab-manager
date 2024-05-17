@@ -139,11 +139,24 @@ def request_session(
 
     docker_image = util.get_docker_image(version, body.session_type)
 
+    annotations: dict[str, str] = {
+        "capellacollab/owner-name": user.name,
+        "capellacollab/owner-id": str(user.id),
+        "capellacollab/tool-name": tool.name,
+        "capellacollab/tool-id": str(tool.id),
+        "capellacollab/tool-version-name": version.name,
+        "capellacollab/tool-version-id": str(version.id),
+        "capellacollab/session-type": body.session_type.value,
+        "capellacollab/session-id": session_id,
+        "capellacollab/connection-method-id": connection_method.id,
+        "capellacollab/connection-method-name": connection_method.name,
+    }
+
     session = operator.start_session(
         session_id=session_id,
         image=docker_image,
         username=user.name,
-        session_type=models.SessionType.PERSISTENT,
+        session_type=body.session_type,
         tool=tool,
         version=version,
         environment=environment,
@@ -151,6 +164,7 @@ def request_session(
         ports=connection_method.ports.model_dump(),
         volumes=volumes,
         init_volumes=init_volumes,
+        annotations=annotations,
         prometheus_path=tool.config.monitoring.prometheus.path,
         prometheus_port=connection_method.ports.metrics,
     )

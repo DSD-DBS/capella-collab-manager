@@ -133,6 +133,7 @@ def get_eclipse_session_configuration() -> (
         connection=tools_models.ToolSessionConnection(
             methods=[
                 tools_models.GuacamoleConnectionMethod(
+                    id="guacamole",
                     name="Classic (Guacamole)",
                     description=(
                         "Old connection method using Guacamole. "
@@ -143,6 +144,7 @@ def get_eclipse_session_configuration() -> (
                     environment={"CONNECTION_METHOD": "xrdp"},
                 ),
                 tools_models.HTTPConnectionMethod(
+                    id="xpra",
                     name="Experimental (Xpra)",
                     description=(
                         "Experimental connection method using Xpra. "
@@ -280,6 +282,7 @@ def create_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
             connection=tools_models.ToolSessionConnection(
                 methods=[
                     tools_models.HTTPConnectionMethod(
+                        id="jupyter-direct",
                         name="Direct Jupyter connection (Browser)",
                         description="The only available connection method for Jupyter.",
                         ports=tools_models.HTTPPorts(http=8888, metrics=9118),

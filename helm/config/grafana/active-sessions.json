@@ -80,8 +80,8 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "editorMode": "builder",
-          "expr": "sum(count by(instance) (idletime_minutes))",
+          "editorMode": "code",
+          "expr": "sum(count(up{connection_method_name=~\"$connection_method\", tool_version_name=~\"$tool_version\", tool_name=~\"$tool\", session_type=~\"$session_type\", job=\"sessions\"})) OR on() vector(0)",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -147,7 +147,38 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sessions with scraping errors"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Number of sessions"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 7,
@@ -161,7 +192,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -175,11 +206,25 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "editorMode": "builder",
-          "expr": "sum(count by(instance) (idletime_minutes))",
-          "legendFormat": "__auto",
+          "editorMode": "code",
+          "expr": "sum(count(up{connection_method_name=~\"$connection_method\", tool_version_name=~\"$tool_version\", session_type=~\"$session_type\", tool_name=~\"$tool\", job=\"sessions\"})) OR on() vector(0)",
+          "hide": false,
+          "legendFormat": "Number of sessions",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "(count(up{connection_method_name=~\"$connection_method\", tool_version_name=~\"$tool_version\", tool_name=~\"$tool\", session_type=~\"$session_type\", job=\"sessions\"}) == 0) OR vector(0)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Sessions with scraping errors",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "Active Sessions (instances)",
@@ -272,8 +317,8 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "builder",
-          "expr": "idletime_minutes",
-          "legendFormat": "{{app}}",
+          "expr": "idletime_minutes{tool_name=~\"$tool\", tool_version_name=~\"$tool_version\", connection_method_name=~\"$connection_method\", session_type=~\"$session_type\"}",
+          "legendFormat": "{{session_id}} ({{tool_name}} {{tool_version_name}} with {{connection_method_name}})",
           "range": true,
           "refId": "A"
         }
@@ -287,7 +332,90 @@
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "7",
+          "value": "7"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PBFA97CFB590B2093"
+        },
+        "definition": "up{job=\"sessions\"}",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Tool and Version",
+        "multi": true,
+        "name": "tool_version_id",
+        "options": [],
+        "query": {
+          "query": "up{job=\"sessions\"}",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "/tool_version_name_full=\"(?<text>[^\"]+)|tool_version_id=\"(?<value>[^\"]+)/g",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": [""],
+          "value": [""]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PBFA97CFB590B2093"
+        },
+        "definition": "up{job=\"sessions\", tool_version_id~=\"$tool_version_id\"}",
+        "description": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Connection Method",
+        "multi": true,
+        "name": "connection_method_id",
+        "options": [],
+        "query": {
+          "query": "up{job=\"sessions\", tool_version_id~=\"$tool_version_id\"}",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/connection_method_name=\"(?<text>[^\"]+)|connection_method_id=\"(?<value>[^\"]+)/g",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": [""],
+          "value": [""]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PBFA97CFB590B2093"
+        },
+        "definition": "label_values(up{job=\"sessions\", connection_method_id~=},session_type)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Session Type",
+        "multi": true,
+        "name": "session_type",
+        "options": [],
+        "query": {
+          "query": "label_values(up{job=\"sessions\", connection_method_id~=},session_type)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
   },
   "time": {
     "from": "now-6h",
@@ -297,6 +425,6 @@
   "timezone": "",
   "title": "Active sessions",
   "uid": "0kK_I7T4k",
-  "version": 1,
+  "version": 4,
   "weekStart": ""
 }
