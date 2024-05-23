@@ -6,14 +6,15 @@
 import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
+import { VersionComponent } from 'src/app/general/metadata/version/version.component';
 
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
-  styleUrls: ['./footer.component.css'],
   standalone: true,
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, VersionComponent, MatIconModule],
 })
 export class FooterComponent {
   constructor(

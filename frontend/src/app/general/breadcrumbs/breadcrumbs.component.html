@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<ul class="break-all">
+<ul class="select-none break-all text-base text-primary">
   /
   <li *ngFor="let breadcrumb of breadcrumbService.breadcrumbs | async">
     <a class="rounded-lg p-1 hover:bg-zinc-300" [routerLink]="breadcrumb.url">{{

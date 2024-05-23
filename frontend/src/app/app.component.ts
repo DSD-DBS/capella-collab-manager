@@ -15,9 +15,7 @@ import { RouterOutlet } from '@angular/router';
 import slugify from 'slugify';
 import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
 import { FooterComponent } from './general/footer/footer.component';
-import { LegalComponent } from './general/footer/legal/legal.component';
 import { HeaderComponent } from './general/header/header.component';
-import { VersionComponent } from './general/metadata/version/version.component';
 import { NavBarMenuComponent } from './general/nav-bar-menu/nav-bar-menu.component';
 import { NoticeComponent } from './general/notice/notice.component';
 import { PageLayoutService } from './page-layout/page-layout.service';
@@ -38,9 +36,7 @@ import { FullscreenService } from './sessions/service/fullscreen.service';
     NgClass,
     NoticeComponent,
     RouterOutlet,
-    VersionComponent,
     FooterComponent,
-    LegalComponent,
     AsyncPipe,
   ],
 })

@@ -92,6 +92,7 @@ body {
 
 html {
   overflow-y: scroll;
+  @apply bg-[#fafafa];
 }
 
 body {
@@ -173,10 +174,6 @@ table {
 button.primary {
   background-color: var(--primary-color);
   color: white;
-}
-
-.primaryText {
-  color: var(--primary-color);
 }
 
 button.success {
