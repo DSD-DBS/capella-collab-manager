@@ -10,6 +10,10 @@
 
 ## Add User to Project
 
+!!! info
+
+    To add a user to a project, the user has to log in to the platform at least once.
+
 1.  Select your project in the project overview.
 2.  On the right side you should now see user management options:
     ![Add user](./add-user-empty.png)

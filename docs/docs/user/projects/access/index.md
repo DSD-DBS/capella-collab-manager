@@ -10,6 +10,9 @@ The project lead can add you as user to the project. After you've been added,
 you should have direct access. If you don't see the project yet, just reload
 the page with `F5`.
 
+Before a project lead can add you to a project, you have to log in once. The
+first login automatically registers your user in the database.
+
 Your project manager can find more information here:
 [Add a user to a project](../add-user/index.md)
 
