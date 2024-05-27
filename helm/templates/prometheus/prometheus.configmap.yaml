@@ -40,11 +40,11 @@ data:
         metrics_path: /prometheus/metrics
         static_configs:
           - targets: ["localhost:9090"]
-      - job_name: "kubernetes-services"
+      - job_name: "sessions"
         kubernetes_sd_configs:
           - role: service
             namespaces:
-              own_namespace: true
+              own_namespace: false
               names:
                 - {{ .Values.backend.k8sSessionNamespace }}
         relabel_configs:
@@ -65,15 +65,64 @@ data:
             regex: ([^:]+)(?::\d+)?;(\d+)
             replacement: $1:$2
             target_label: __address__
+
+          # Convert annotation `capellacollab/tool-name` to label `tool-name`
+          - source_labels: [__meta_kubernetes_service_annotation_capellacollab_tool_name]
+            target_label: tool_name
+
+          # Convert annotation `capellacollab/tool-id` to label `tool-id`
+          - source_labels: [__meta_kubernetes_service_annotation_capellacollab_tool_id]
+            target_label: tool_id
+
+          # Convert annotation `capellacollab/tool-version-name` to label `tool-version-name`
+          - source_labels: [__meta_kubernetes_service_annotation_capellacollab_tool_version_name]
+            target_label: tool_version_name
+
+          # Convert annotation `capellacollab/tool-version-id` to label `tool-version-id`
+          - source_labels: [__meta_kubernetes_service_annotation_capellacollab_tool_version_id]
+            target_label: tool_version_id
+
+          # Convert annotation `capellacollab/session-type` to label `session-type`
+          - source_labels: [__meta_kubernetes_service_annotation_capellacollab_session_type]
+            target_label: session_type
+
+          # Convert annotation `capellacollab/session-id` to label `session-id`
+          - source_labels: [__meta_kubernetes_service_annotation_capellacollab_session_id]
+            target_label: session_id
+
+          # Convert annotation `capellacollab/connection-method-id` to label `connection-method-id`
+          - source_labels: [__meta_kubernetes_service_annotation_capellacollab_connection_method_id]
+            target_label: connection_method_id
+
+          # Convert annotation `capellacollab/connection-method-name` to label `connection-method-name`
+          - source_labels: [__meta_kubernetes_service_annotation_capellacollab_connection_method_name]
+            target_label: connection_method_name
+
+          # Convert annotation `capellacollab/tool-name` and `capellacollab/tool-version-name` to label `tool_version_name_full`
+          - source_labels: [__meta_kubernetes_service_annotation_capellacollab_tool_name, __meta_kubernetes_service_annotation_capellacollab_tool_version_name]
+            separator: " "
+            target_label: tool_version_name_full
+      - job_name: "management-portal"
+        kubernetes_sd_configs:
+          - role: service
+            namespaces:
+              own_namespace: true
+        relabel_configs:
+          # Scrape pods with annotation prometheus.io/scrape = "true"
+          - source_labels:
+              [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          # Scrape pods on path specified by prometheus.io/path
+          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          # Scrape pods on port specified by prometheus.io/port
+          - source_labels:
+              [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
           # Transfer app label from kubernetes (name of the deployment)
-          - source_labels: [__meta_kubernetes_service_label_app]
-            action: replace
-            target_label: app
-          # Set label kubernetes_namespace
-          - source_labels: [__meta_kubernetes_namespace]
-            action: replace
-            target_label: kubernetes_namespace
-          # Set label kubernetes_pod_name
-          - source_labels: [__meta_kubernetes_service_name]
-            action: replace
-            target_label: kubernetes_service_name

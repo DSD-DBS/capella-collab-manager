@@ -71,11 +71,6 @@ def fixture_patch_irrelevant_request_session_calls(
     tool: tools_models.DatabaseTool,
 ):
     monkeypatch.setattr(
-        tools_injectables,
-        "get_existing_tool_version",
-        lambda *args, **kwargs: None,
-    )
-    monkeypatch.setattr(
         sessions_util,
         "get_connection_method",
         lambda *args, **kwargs: tool.config.connection.methods[0],
@@ -112,7 +107,9 @@ def fixture_patch_irrelevant_request_session_calls(
     )
 
 
-@pytest.mark.usefixtures("patch_irrelevant_request_session_calls")
+@pytest.mark.usefixtures(
+    "patch_irrelevant_request_session_calls", "tool_version"
+)
 def test_environment_behaviour(
     monkeypatch: pytest.MonkeyPatch,
     operator: MockOperator,

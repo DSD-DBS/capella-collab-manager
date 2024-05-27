@@ -98,6 +98,7 @@ class KubernetesOperator:
         ports: dict[str, int],
         volumes: list[models.Volume],
         init_volumes: list[models.Volume],
+        annotations: dict[str, str],
         prometheus_path="/metrics",
         prometheus_port=9118,
     ) -> Session:
@@ -123,6 +124,7 @@ class KubernetesOperator:
             volumes=volumes,
             init_volumes=init_volumes,
             tool_resources=tool.config.resources,
+            annotations=annotations,
         )
 
         self._create_disruption_budget(
@@ -136,6 +138,7 @@ class KubernetesOperator:
             ports=ports,
             prometheus_path=prometheus_path,
             prometheus_port=prometheus_port,
+            annotations=annotations,
         )
 
         log.info(
@@ -447,6 +450,7 @@ class KubernetesOperator:
         volumes: list[models.Volume],
         init_volumes: list[models.Volume],
         tool_resources: tools_models.Resources,
+        annotations: dict[str, str],
     ) -> client.V1Deployment:
         k8s_volumes, k8s_volume_mounts = self._map_volumes_to_k8s_volumes(
             volumes
@@ -530,14 +534,15 @@ class KubernetesOperator:
         deployment: client.V1Deployment = client.V1Deployment(
             kind="Deployment",
             api_version="apps/v1",
-            metadata=client.V1ObjectMeta(name=name),
+            metadata=client.V1ObjectMeta(name=name, annotations=annotations),
             spec=client.V1DeploymentSpec(
                 replicas=1,
                 strategy=client.V1DeploymentStrategy(type="Recreate"),
                 selector=client.V1LabelSelector(match_labels={"app": name}),
                 template=client.V1PodTemplateSpec(
                     metadata=client.V1ObjectMeta(
-                        labels={"app": name, "workload": "session"}
+                        labels={"app": name, "workload": "session"},
+                        annotations=annotations,
                     ),
                     spec=client.V1PodSpec(
                         automount_service_account_token=False,
@@ -627,6 +632,7 @@ class KubernetesOperator:
         ports: dict[str, int],
         prometheus_path: str,
         prometheus_port: int,
+        annotations: dict[str, str],
     ) -> client.V1Service:
         service: client.V1Service = client.V1Service(
             kind="Service",
@@ -638,6 +644,7 @@ class KubernetesOperator:
                     "prometheus.io/scrape": "true",
                     "prometheus.io/path": prometheus_path,
                     "prometheus.io/port": f"{prometheus_port}",
+                    **annotations,
                 },
             ),
             spec=client.V1ServiceSpec(

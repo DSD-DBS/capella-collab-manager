@@ -13,7 +13,7 @@ import { filter, map, mergeMap, tap } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { CreateToolInput, Tool, ToolsService } from 'src/app/openapi';
+import { Tool, ToolsService } from 'src/app/openapi';
 import { ApiDocumentationComponent } from '../../../../general/api-documentation/api-documentation.component';
 import { EditorComponent as EditorComponent_1 } from '../../../../helpers/editor/editor.component';
 import { ToolWrapperService } from '../tool.service';
@@ -66,9 +66,10 @@ export class ToolDetailsComponent {
       });
   }
 
-  submitValue(value: CreateToolInput): void {
+  submitValue(value: Tool): void {
+    const { id, ...valueWithoutID } = value; // eslint-disable-line @typescript-eslint/no-unused-vars
     this.toolsService
-      .updateTool(this.selectedTool!.id, value)
+      .updateTool(this.selectedTool!.id, valueWithoutID)
       .pipe(
         tap((tool) => {
           this.toastService.showSuccess(
