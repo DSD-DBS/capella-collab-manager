@@ -49,7 +49,7 @@ install:
 	$(VENV)/bin/pip install -e ".[dev]"
 
 openapi:
-	$(VENV)/bin/python -m capellacollab.cli openapi generate /tmp/openapi.json
+	CAPELLACOLLAB_SKIP_OPENAPI_ERROR_RESPONSES=1 $(VENV)/bin/python -m capellacollab.cli openapi generate /tmp/openapi.json
 
 dev: database app
 

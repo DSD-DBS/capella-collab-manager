@@ -6,14 +6,42 @@ from fastapi import status
 from capellacollab.core import exceptions as core_exceptions
 
 
+class ToolNotFoundError(core_exceptions.BaseError):
+    def __init__(self, tool_id: int):
+        self.tool_id = tool_id
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            title="Tool not found",
+            reason=f"The tool with the ID {tool_id} was not found.",
+            err_code="TOOL_NOT_FOUND",
+        )
+
+
 class ToolVersionNotFoundError(core_exceptions.BaseError):
-    def __init__(self, version_id: int):
-        self.version_id = version_id
+    def __init__(self, version_id: int, tool_id: int | None = None):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
             title="Tool version not found",
-            reason=f"The tool version with id {version_id} was not found.",
+            reason=(
+                f"The version with tool_id {tool_id} and version_id {version_id} was not found."
+                if tool_id
+                else f"The tool version with id {version_id} was not found."
+            ),
             err_code="TOOL_VERSION_NOT_FOUND",
+        )
+
+
+class ToolNatureNotFoundError(core_exceptions.BaseError):
+    def __init__(self, nature_id: int, tool_id: int | None = None):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            title="Tool nature not found",
+            reason=(
+                f"The nature with tool_id {tool_id} and nature_id {nature_id} was not found."
+                if tool_id
+                else f"The tool nature with id {nature_id} was not found."
+            ),
+            err_code="TOOL_NATURE_NOT_FOUND",
         )
 
 

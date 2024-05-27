@@ -84,7 +84,9 @@ def test_rename_toolmodel_where_name_already_exists(
         )
 
         assert response.status_code == 409
-        assert "A model with a similar name already exists" in response.text
+        assert (
+            response.json()["detail"]["err_code"] == "TOOLMODEL_ALREADY_EXISTS"
+        )
         mock_get_model_by_slugs.assert_called_once()
 
 

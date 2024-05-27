@@ -9,7 +9,7 @@ import fastapi
 import fastapi_pagination
 import starlette_prometheus
 import uvicorn
-from fastapi import exception_handlers, middleware, responses, routing
+from fastapi import middleware, responses, routing
 from fastapi.middleware import cors
 
 import capellacollab.projects.toolmodels.backups.runs.interface as pipeline_runs_interface
@@ -18,7 +18,6 @@ import capellacollab.settings.modelsources.t4c.metrics as t4c_metrics
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.config import config
-from capellacollab.core import exceptions as core_exceptions
 from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
 from capellacollab.routes import router
@@ -145,30 +144,6 @@ def use_route_names_as_operation_ids() -> None:
 
 
 use_route_names_as_operation_ids()
-
-
-async def exception_handler(
-    request: fastapi.Request, exc: core_exceptions.BaseError
-) -> fastapi.Response:
-    return await exception_handlers.http_exception_handler(
-        request,
-        fastapi.HTTPException(
-            status_code=exc.status_code,
-            detail={
-                "title": exc.title,
-                "reason": exc.reason,
-                "err_code": exc.err_code,
-            },
-        ),
-    )
-
-
-def register_exceptions():
-    for exc in core_exceptions.BaseError.__subclasses__():
-        app.add_exception_handler(exc, exception_handler)  # type: ignore[arg-type]
-
-
-register_exceptions()
 
 if __name__ == "__main__":
     if os.getenv("FASTAPI_AUTO_RELOAD", "").lower() in ("1", "true", "t"):

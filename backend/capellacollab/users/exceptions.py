@@ -7,7 +7,6 @@ from capellacollab.core import exceptions as core_exceptions
 
 
 class UserNotFoundError(core_exceptions.BaseError):
-
     def __init__(
         self, username: str | None = None, user_id: int | None = None
     ):
@@ -16,4 +15,16 @@ class UserNotFoundError(core_exceptions.BaseError):
             title="User not found",
             reason=f"The user '{username or user_id}' doesn't exist.",
             err_code="USER_NOT_FOUND",
+        )
+
+
+class NoProjectsInCommonError(core_exceptions.BaseError):
+    def __init__(self, user_id: int):
+        super().__init__(
+            status_code=status.HTTP_403_FORBIDDEN,
+            title="No projects in common",
+            reason=(
+                f"The user with id {user_id} doesn't have any projects in common with you."
+            ),
+            err_code="NO_PROJECTS_IN_COMMON",
         )

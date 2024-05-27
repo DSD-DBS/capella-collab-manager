@@ -61,11 +61,10 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
           }
         },
         error: (err) => {
-          if (err.error.detail?.err_code == 'token_exp') {
-            return;
-          }
-
-          if (this.isErrorHandlingSkipped(request)) {
+          if (
+            this.isErrorHandlingSkipped(request) ||
+            err.error.detail?.err_code == 'TOKEN_SIGNATURE_EXPIRED'
+          ) {
             return;
           }
 
@@ -85,7 +84,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
               }
             } else if (detail.reason) {
               // User defined error
-              this.toastService.showError('An error occurred!', detail.reason);
+              this.toastService.showError(detail.title, detail.reason);
             }
           } else if (err.status === 0) {
             this.toastService.showError(

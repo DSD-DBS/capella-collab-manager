@@ -3,12 +3,12 @@
 
 import urllib.parse
 
-import fastapi
 import requests
-from fastapi import status
 from sqlalchemy import orm
 
 from capellacollab.settings.modelsources.git import crud as git_crud
+
+from . import exceptions
 
 
 def verify_path_prefix(db: orm.Session, path: str):
@@ -26,11 +26,4 @@ def verify_path_prefix(db: orm.Session, path: str):
             if resolved_git_url and resolved_path.startswith(resolved_git_url):
                 return
 
-    raise fastapi.HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail={
-            "err_code": "NO_GIT_INSTANCE_WITH_PREFIX_FOUND",
-            "reason": "We couldn't find a matching Git instance. Make sure that your system administrator allows the given URL.",
-            "technical": f"There is no Git instance, which has a prefix of the path '{path}' as URL.",
-        },
-    )
+    raise exceptions.InstancePrefixUnmatchedError()

@@ -9,7 +9,6 @@ from urllib import parse
 
 import fastapi
 import requests
-from fastapi import status
 
 import capellacollab.projects.toolmodels.modelsources.git.injectables as git_injectables
 from capellacollab.core import logging as log
@@ -19,6 +18,8 @@ from capellacollab.projects.toolmodels.modelsources.git.handler import (
     handler as git_handler,
 )
 from capellacollab.projects.users import models as projects_users_models
+
+from . import exceptions
 
 router = fastapi.APIRouter(
     dependencies=[
@@ -49,15 +50,7 @@ async def get_diagram_metadata(
         )
     except requests.exceptions.HTTPError:
         logger.info("Failed fetching diagram metadata", exc_info=True)
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail={
-                "reason": (
-                    "The diagram cache is not configured properly.",
-                    "Please contact your diagram cache administrator.",
-                ),
-            },
-        )
+        raise exceptions.DiagramCacheNotConfiguredProperlyError()
 
     return models.DiagramCacheMetadata(
         diagrams=[
@@ -80,10 +73,7 @@ async def get_diagram(
 ):
     fileextension = pathlib.PurePosixPath(diagram_uuid_or_filename).suffix
     if fileextension and fileextension.lower() != ".svg":
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"reason": f"File extension {fileextension} not supported"},
-        )
+        raise exceptions.FileExtensionNotSupportedError(fileextension)
 
     diagram_uuid = pathlib.PurePosixPath(diagram_uuid_or_filename).stem
     try:
@@ -94,15 +84,7 @@ async def get_diagram(
         )
     except requests.exceptions.HTTPError:
         logger.info("Failed fetching diagram", exc_info=True)
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail={
-                "reason": (
-                    "The diagram cache is not configured properly.",
-                    "Please contact your diagram cache administrator.",
-                ),
-            },
-        )
+        raise exceptions.DiagramCacheNotConfiguredProperlyError()
 
     return fastapi.responses.Response(
         content=diagram,

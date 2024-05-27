@@ -325,5 +325,7 @@ def test_get_t4c_license_usage_no_status(
         f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}/licenses",
     )
 
-    assert response.status_code == 404
-    assert response.json()["detail"]["err_code"] == "NO_STATUS"
+    assert response.status_code == 422
+    assert (
+        response.json()["detail"]["err_code"] == "T4C_LICENSE_SERVER_NO_STATUS"
+    )

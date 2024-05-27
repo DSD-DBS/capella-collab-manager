@@ -6,7 +6,7 @@ from collections import abc
 import fastapi
 from sqlalchemy import orm
 
-from capellacollab.core import database
+from capellacollab.core import database, responses
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.users import models as users_models
 
@@ -33,6 +33,7 @@ router = fastapi.APIRouter(
             )
         )
     ],
+    responses=responses.api_exceptions(minimum_role=users_models.Role.ADMIN),
 )
 def get_events(
     db: orm.Session = fastapi.Depends(database.get_db),

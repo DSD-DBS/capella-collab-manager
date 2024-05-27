@@ -44,7 +44,7 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler,
   ) {
     if (err.status === 401) {
-      if (err.error.detail.err_code == 'token_exp') {
+      if (err.error.detail.err_code == 'TOKEN_SIGNATURE_EXPIRED') {
         return this.refreshToken().pipe(
           switchMap(() => {
             const req = this.injectAccessToken(request);

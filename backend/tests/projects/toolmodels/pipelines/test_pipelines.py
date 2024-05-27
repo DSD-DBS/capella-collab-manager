@@ -88,7 +88,7 @@ def test_create_pipeline_of_capellamodel_git_model_does_not_exist(
     )
 
     assert response.status_code == 404
-    assert {"err_code": "GIT_MODEL_NOT_EXISTING"}.items() <= response.json()[
+    assert {"err_code": "GIT_REPOSITORY_NOT_FOUND"}.items() <= response.json()[
         "detail"
     ].items()
 

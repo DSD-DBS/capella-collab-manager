@@ -56,4 +56,4 @@ def test_move_toolmodel_non_project_member(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}",
         json={"project_slug": second_project.slug},
     )
-    assert response.status_code == 401
+    assert response.status_code == 403

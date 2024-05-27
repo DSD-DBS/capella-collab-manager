@@ -18,7 +18,7 @@ from capellacollab.settings.modelsources.t4c import (
     models as settings_t4c_models,
 )
 
-from . import crud, injectables, interface, models
+from . import crud, exceptions, injectables, interface, models
 
 router = fastapi.APIRouter()
 log = logging.getLogger(__name__)
@@ -79,11 +79,8 @@ def create_t4c_repository(
     ),
 ) -> models.T4CRepository:
     if crud.exist_repo_for_name_and_instance(db, body.name, instance):
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "reason": f"Repository {body.name} of instance {instance.name} already exists.",
-            },
+        raise exceptions.T4CRepositoryAlreadyExistsError(
+            body.name, instance.name
         )
 
     repo = models.T4CRepository.model_validate(
@@ -121,11 +118,11 @@ def delete_t4c_repository(
     crud.delete_4c_repository(db, repository)
     try:
         interface.delete_repository(instance, repository.name)
-    except (fastapi.HTTPException, requests.RequestException) as e:
+    except requests.RequestException as e:
         log.error("Repository deletion failed partially", exc_info=True)
         response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
 
-        if isinstance(e, fastapi.HTTPException):
+        if isinstance(e, requests.HTTPError):
             reason: str = (
                 "The TeamForCapella returned an error when deleting the repository. "
                 "We deleted it the repository our database. When the connection is successful, we'll synchronize the repositories again."

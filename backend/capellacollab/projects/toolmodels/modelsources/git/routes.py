@@ -4,7 +4,6 @@
 import logging
 
 import fastapi
-from fastapi import status
 from sqlalchemy import orm
 
 from capellacollab.core import database
@@ -19,7 +18,7 @@ from capellacollab.settings.modelsources.git import core as git_core
 from capellacollab.settings.modelsources.git import models as git_models
 from capellacollab.settings.modelsources.git import util as git_util
 
-from . import crud, injectables, models
+from . import crud, exceptions, injectables, models
 
 router = fastapi.APIRouter()
 log = logging.getLogger(__name__)
@@ -165,12 +164,6 @@ def delete_git_model_by_id(
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
     if backups_crud.get_pipelines_for_git_model(db, db_git_model):
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "err_code": "git_model_used_for_backup",
-                "reason": "The git model can't be deleted: it's used for backup jobs",
-            },
-        )
+        raise exceptions.GitRepositoryUsedInPipelines(db_git_model.id)
 
     crud.delete_git_model(db, db_git_model)

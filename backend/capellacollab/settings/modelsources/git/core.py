@@ -8,10 +8,7 @@ import os
 import pathlib
 import subprocess
 
-import fastapi
-from fastapi import status
-
-from . import models
+from . import exceptions, models
 
 log = logging.getLogger(__name__)
 
@@ -36,13 +33,7 @@ async def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
             }
         )
         if e.returncode == 128:
-            raise fastapi.HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail={
-                    "err_code": "no_git_model_credentials",
-                    "reason": "There was an error accessing the model. Please ask your project lead for more information. In most cases, the credentials need to be updated.",
-                },
-            )
+            raise exceptions.GitRepositoryAccessError()
         else:
             raise e
     stdout, _ = await proc.communicate()

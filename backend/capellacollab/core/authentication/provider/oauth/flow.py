@@ -5,13 +5,12 @@
 import logging
 import typing as t
 
-import fastapi
 import requests
-from fastapi import status
 from requests_oauthlib import OAuth2Session
 
 from capellacollab.config import config
 from capellacollab.config import models as config_models
+from capellacollab.core.authentication import exceptions as auth_exceptions
 
 assert isinstance(
     config.authentication, config_models.OAuthAuthenticationConfig
@@ -58,13 +57,7 @@ def refresh_token(_refresh_token: str) -> dict[str, t.Any]:
         )
     except Exception as e:
         logger.debug("Could not refresh token because of exception %s", str(e))
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={
-                "err_code": "REQUEST_TOKEN_EXPIRED",
-                "reason": "The Signature of the refresh token is expired. Please request a new access token.",
-            },
-        )
+        raise auth_exceptions.TokenSignatureExpired()
 
 
 def read_well_known() -> dict[str, t.Any]:

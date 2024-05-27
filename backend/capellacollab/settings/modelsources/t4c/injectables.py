@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import fastapi
-from fastapi import status
 from sqlalchemy import orm
 
 from capellacollab.core import database
@@ -16,12 +15,7 @@ def get_existing_instance(
     if t4c_instance := crud.get_t4c_instance_by_id(db, t4c_instance_id):
         return t4c_instance
 
-    raise fastapi.HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail={
-            "reason": f"The t4c instance with the id {t4c_instance_id} does not exist.",
-        },
-    )
+    raise exceptions.T4CInstanceNotFoundError(t4c_instance_id)
 
 
 def get_existing_unarchived_instance(

@@ -92,7 +92,7 @@ def raise_if_conflicting_sessions(
         version.id,
         workspace_type,
     ) in existing_tool_version_workspace_combinations:
-        raise exceptions.ConflictingSessionError(tool, version)
+        raise exceptions.ConflictingSessionError(tool.name, version.name)
 
 
 def resolve_environment_variables(
@@ -178,7 +178,7 @@ def get_docker_image(
 
     if not template:
         raise exceptions.UnsupportedSessionTypeError(
-            version.tool, workspace_type
+            version.tool.name, workspace_type
         )
     return template.format(version=version.name)
 
@@ -194,5 +194,5 @@ def get_connection_method(
         )
     except StopIteration:
         raise exceptions.InvalidConnectionMethodIdentifierError(
-            tool, connection_method_id
+            tool.name, connection_method_id
         )

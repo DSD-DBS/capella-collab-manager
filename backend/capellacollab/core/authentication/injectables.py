@@ -7,7 +7,6 @@ import dataclasses
 import logging
 
 import fastapi
-from fastapi import status
 from fastapi.openapi import models as openapi_models
 from fastapi.security import base as security_base
 from fastapi.security import utils as security_utils
@@ -16,11 +15,15 @@ from sqlalchemy import orm
 from capellacollab.core import database
 from capellacollab.core.authentication import basic_auth, jwt_bearer
 from capellacollab.projects import crud as projects_crud
+from capellacollab.projects import exceptions as projects_exceptions
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.users import crud as users_crud
+from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import models as users_models
+
+from . import exceptions
 
 logger = logging.getLogger(__name__)
 
@@ -76,17 +79,16 @@ async def get_username(
     authorization = request.headers.get("Authorization")
     scheme, _ = security_utils.get_authorization_scheme_param(authorization)
     username = None
+
     match scheme.lower():
         case "basic":
             username = await basic_auth.HTTPBasicAuth()(request)
         case "bearer":
             username = await jwt_bearer.JWTBearer()(request)
+        case "":
+            raise exceptions.UnauthenticatedError()
         case _:
-            raise fastapi.HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token is none and username cannot be derived",
-                headers={"WWW-Authenticate": "Bearer, Basic"},
-            )
+            raise exceptions.UnknownScheme(scheme)
 
     assert username
     return username
@@ -104,10 +106,7 @@ class RoleVerification:
     ) -> bool:
         if not (user := users_crud.get_user_by_name(db, username)):
             if self.verify:
-                raise fastapi.HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail={"reason": f"User {username} was not found"},
-                )
+                raise users_exceptions.UserNotFoundError(username)
             return False
 
         if (
@@ -115,11 +114,8 @@ class RoleVerification:
             and self.required_role == users_models.Role.ADMIN
         ):
             if self.verify:
-                raise fastapi.HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail={
-                        "reason": "You need to be administrator for this transaction.",
-                    },
+                raise exceptions.RequiredRoleNotMetError(
+                    users_models.Role.ADMIN
                 )
             return False
         return True
@@ -169,11 +165,8 @@ class ProjectRoleVerification:
             project_user.role
         ) < self.roles.index(self.required_role):
             if self.verify:
-                raise fastapi.HTTPException(
-                    status_code=403,
-                    detail={
-                        "reason": f"The role '{self.required_role.value}' in the project '{project_slug}' is required.",
-                    },
+                raise exceptions.RequiredProjectRoleNotMetError(
+                    self.required_role, project_slug
                 )
             return False
 
@@ -187,10 +180,7 @@ class ProjectRoleVerification:
     ) -> users_models.DatabaseUser | None:
         user = users_crud.get_user_by_name(db, username)
         if not user and self.verify:
-            raise fastapi.HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail={"reason": f"User {username} was not found"},
-            )
+            raise users_exceptions.UserNotFoundError(username)
         return user
 
     def _get_project_and_check(
@@ -198,10 +188,7 @@ class ProjectRoleVerification:
     ) -> projects_models.DatabaseProject | None:
         project = projects_crud.get_project_by_slug(db, project_slug)
         if not project and self.verify:
-            raise fastapi.HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail={"reason": f"The project {project_slug} was not found"},
-            )
+            raise projects_exceptions.ProjectNotFoundError(project_slug)
         return project
 
     def _is_internal_project_accessible(
@@ -228,11 +215,8 @@ class ProjectRoleVerification:
             == projects_users_models.ProjectUserPermission.WRITE
         ):
             if self.verify:
-                raise fastapi.HTTPException(
-                    status_code=403,
-                    detail={
-                        "reason": f"You need to have '{self.required_permission.value}'-access in the project!",
-                    },
+                raise exceptions.RequiredProjectPermissionNotMetError(
+                    self.required_permission, project_user.project.slug
                 )
             return False
         return True

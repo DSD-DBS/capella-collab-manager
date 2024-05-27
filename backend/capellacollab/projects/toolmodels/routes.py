@@ -5,7 +5,6 @@ import uuid
 
 import fastapi
 import slugify
-from fastapi import status
 from sqlalchemy import exc, orm
 
 from capellacollab.core import database
@@ -14,14 +13,11 @@ from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import models as projects_users_models
-from capellacollab.tools import crud as tools_crud
-from capellacollab.tools import exceptions as tools_exceptions
 from capellacollab.tools import injectables as tools_injectables
-from capellacollab.tools import models as tools_models
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 
-from . import crud, injectables, models, workspace
+from . import crud, exceptions, injectables, models, workspace
 from .backups import routes as backups_routes
 from .diagrams import routes as diagrams_routes
 from .modelbadge import routes as complexity_badge_routes
@@ -94,12 +90,8 @@ def create_new_tool_model(
             db, project, new_model, tool, configuration=configuration
         )
     except exc.IntegrityError:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "reason": f"A model with the name {new_model.name} already exists.",
-                "technical": f"The slug '{slugify.slugify(new_model.name)}' is already used",
-            },
+        raise exceptions.ToolModelAlreadyExistsError(
+            project.slug, slugify.slugify(new_model.name)
         )
 
     if tool.integrations.jupyter:
@@ -141,40 +133,25 @@ def patch_tool_model(
         if model.slug != new_slug and crud.get_model_by_slugs(
             db, project.slug, new_slug
         ):
-            raise fastapi.HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail={
-                    "reason": "A model with a similar name already exists.",
-                    "technical": "Slug already used",
-                },
+            raise exceptions.ToolModelAlreadyExistsError(
+                project.slug, new_slug
             )
 
-    if body.version_id:
-        if not (version := tools_crud.get_version_by_id(db, body.version_id)):
-            raise tools_exceptions.ToolVersionNotFoundError(body.version_id)
-    else:
-        version = model.version
-
-    if version and body.version_id and version.tool != model.tool:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "reason": f"The tool '{version.tool.name}' derived from the version '{version.name}' does not match the tool '{model.tool.name}' of the model '{model.name}'."
-            },
+    version = (
+        tools_injectables.get_existing_tool_version(
+            model.tool_id, body.version_id, db
         )
+        if body.version_id
+        else model.version
+    )
 
     nature = (
-        get_nature_by_id_or_raise(db, body.nature_id)
+        tools_injectables.get_existing_tool_nature(
+            model.tool_id, body.nature_id, db
+        )
         if body.nature_id
         else model.nature
     )
-    if nature and body.nature_id and nature.tool != model.tool:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "reason": f"The tool '{nature.tool.name}' derived from the nature '{nature.name}' does not match the tool '{model.tool.name}' of the model '{model.name}'."
-            },
-        )
 
     if body.project_slug:
         new_project = determine_new_project_to_move_model(
@@ -241,40 +218,15 @@ def delete_tool_model(
     crud.delete_model(db, model)
 
 
-def get_nature_by_id_or_raise(
-    db: orm.Session, nature_id: int
-) -> tools_models.DatabaseNature:
-    if nature := tools_crud.get_nature_by_id(db, nature_id):
-        return nature
-
-    raise fastapi.HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail={"reason": f"The nature with id {nature_id} was not found."},
-    )
-
-
 def determine_new_project_to_move_model(
     project_slug: str, db: orm.Session, user: users_models.DatabaseUser
 ) -> projects_models.DatabaseProject:
     new_project = projects_injectables.get_existing_project(project_slug, db)
-    success = user.role == users_models.Role.ADMIN
-    for association in user.projects:
-        if association.project_id == new_project.id:
-            if (
-                not association.role
-                == projects_users_models.ProjectUserRole.MANAGER
-            ):
-                break
-            else:
-                success = True
 
-    if not success:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={
-                "reason": f"Requesting user does not have permission to move toolmodel to {new_project.slug}"
-            },
-        )
+    auth_injectables.ProjectRoleVerification(
+        required_role=projects_users_models.ProjectUserRole.MANAGER
+    )(project_slug, user.name, db)
+
     return new_project
 
 
@@ -283,12 +235,7 @@ def raise_if_model_exists_in_project(
     project: projects_models.DatabaseProject,
 ):
     if model.slug in [model.slug for model in project.models]:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={
-                "reason": f"Model with name {model.name} already exists in project {project.slug}"
-            },
-        )
+        raise exceptions.ToolModelAlreadyExistsError(project.slug, model.slug)
 
 
 router.include_router(

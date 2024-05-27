@@ -2,14 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import fastapi
-from fastapi import status
 from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
 
-from . import crud, models
+from . import crud, exceptions, models
 
 
 def get_existing_capella_model(
@@ -21,11 +20,5 @@ def get_existing_capella_model(
 ) -> models.DatabaseToolModel:
     model = crud.get_model_by_slugs(db, project.slug, model_slug)
     if not model:
-        raise fastapi.HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "reason": f"The model with the slug '{model_slug}' of the project '{project.name}' was not found.",
-                "technical": f"No model with slug '{model_slug}' found in the project with slug '{project.slug}'.",
-            },
-        )
+        raise exceptions.ToolModelNotFound(project.slug, model_slug)
     return model
