@@ -65,6 +65,7 @@ class JupyterIntegration(interface.HookRegistration):
                 warnings.append(
                     core_models.Message(
                         err_code="JUPYTER_FILE_SHARE_VOLUME_NOT_FOUND",
+                        title="Jupyter file-share volume not found",
                         reason=(
                             f"The Jupyter file-share volume for the model '{model.name}' in the project '{model.project.name}' couldn't be located. "
                             "Please contact your system administrator or recreate the model (this will erase all data in the file-share)."

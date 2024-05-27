@@ -9,13 +9,20 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { Reason } from './reason';
 
 
 export interface Message { 
-    err_code: string | null;
-    title: string | null;
-    reason: Reason | null;
-    technical: string | null;
+    /**
+     * The error code of the message, used for testing, not displayed in the frontend.
+     */
+    err_code: string;
+    /**
+     * The title of the message, displayed in the frontend
+     */
+    title: string;
+    /**
+     * The reason for the message and any possible resolutions/next steps, displayed in the frontend
+     */
+    reason: string;
 }
 

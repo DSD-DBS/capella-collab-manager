@@ -36,7 +36,7 @@ class HTTPIntegration(interface.HookRegistration):
                 warnings=[
                     core_models.Message(
                         err_code="REDIRECT_URL_DERIVATION_FAILED",
-                        title="Couldn't derive the redirect URL.",
+                        title="Couldn't derive the redirect URL",
                         reason="Please check the backend logs for more information.",
                     )
                 ]

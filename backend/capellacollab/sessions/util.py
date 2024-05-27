@@ -122,8 +122,8 @@ def resolve_environment_variables(
             )
             warnings += [
                 core_models.Message(
-                    title="Couldn't resolve environment variable.",
                     err_code="ENVIRONMENT_VARIABLE_RESOLUTION_FAILED",
+                    title="Couldn't resolve environment variable",
                     reason=(
                         f"Failed to resolve environment variable '{key}'. "
                         "This might be due to a incorrect configuration. "
