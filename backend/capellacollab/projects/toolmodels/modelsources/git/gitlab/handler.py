@@ -52,7 +52,9 @@ class GitlabHandler(handler.GitHandler):
             ):
                 return job
 
-        raise git_exceptions.GitPipelineJobNotFoundError(job_name=job_name)
+        raise git_exceptions.GitPipelineJobNotFoundError(
+            job_name=job_name, revision=self.git_model.revision
+        )
 
     def get_last_updated_for_file_path(
         self, project_id: str, file_path: str, revision: str | None

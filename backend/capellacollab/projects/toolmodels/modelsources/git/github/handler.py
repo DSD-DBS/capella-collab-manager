@@ -168,7 +168,9 @@ class GithubHandler(handler.GitHandler):
     def __get_latest_successful_job(self, jobs: list, job_name: str) -> dict:
         matched_jobs = [job for job in jobs if job["name"] == job_name]
         if not matched_jobs:
-            raise git_exceptions.GitPipelineJobNotFoundError(job_name=job_name)
+            raise git_exceptions.GitPipelineJobNotFoundError(
+                job_name=job_name, revision=self.git_model.revision
+            )
         matched_jobs.sort(key=lambda job: job["created_at"], reverse=True)
         if matched_jobs[0]["conclusion"] == "success":
             return matched_jobs[0]

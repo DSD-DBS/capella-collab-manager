@@ -279,6 +279,55 @@ def test_get_diagrams_fails_without_api_endpoint(
 
 @responses.activate
 @pytest.mark.parametrize(
+    "git_type,git_response_status,pipeline_ids,git_query_params",
+    [
+        (
+            git_models.GitType.GITLAB,
+            404,
+            [],
+            [
+                {
+                    "path": "diagram_cache/index.json",
+                    "ref_name": "diagram-cache/main",
+                }
+            ],
+        ),
+        (
+            git_models.GitType.GITHUB,
+            404,
+            [],
+            [
+                {
+                    "path": "diagram_cache/index.json",
+                    "sha": "diagram-cache/main",
+                }
+            ],
+        ),
+    ],
+)
+@pytest.mark.usefixtures(
+    "project_user",
+    "git_instance",
+    "git_model",
+    "mock_git_rest_api_for_artifacts",
+    "mock_git_diagram_cache_from_repo_api",
+    "mock_git_get_commit_information_api",
+)
+def test_get_diagram_cache_without_defined_job(
+    project: project_models.DatabaseProject,
+    capella_model: toolmodels_models.CapellaModel,
+    client: testclient.TestClient,
+):
+    response = client.get(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams",
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"]["err_code"] == "PIPELINE_JOB_NOT_FOUND"
+
+
+@responses.activate
+@pytest.mark.parametrize(
     "git_type,git_response_status,job_status,git_query_params",
     [
         (
@@ -313,7 +362,7 @@ def test_get_diagrams_fails_without_api_endpoint(
     "mock_git_diagram_cache_from_repo_api",
     "mock_git_get_commit_information_api",
 )
-def test_get_diagrams_no_diagram_cache_job_found(
+def test_get_diagrams_failed_diagram_cache_job_found(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.CapellaModel,
     client: testclient.TestClient,
