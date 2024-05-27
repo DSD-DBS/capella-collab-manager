@@ -18,7 +18,7 @@ import {
   MatButton,
 } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
@@ -61,7 +61,6 @@ import {
 export class GitSettingsComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
-    public dialogRef: MatDialogRef<DeleteGitSettingsDialogComponent>,
     public gitInstancesService: GitInstancesService,
   ) {}
 
