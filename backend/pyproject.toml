@@ -224,7 +224,7 @@ extension-pkg-whitelist = "pydantic" # https://github.com/pydantic/pydantic/issu
 
 [tool.pylint.master]
 init-import = "yes"
-load-plugins = "pylint.extensions.bad_builtin"
+load-plugins = ["pylint.extensions.bad_builtin", "pylint.extensions.mccabe"]
 extension-pkg-allow-list = ["lxml.etree"]
 
 [tool.pylint.similarities]
