@@ -29,7 +29,7 @@ def terminate_idle_session():
         log.error("Could not collect idle sessions from Prometheus")
         return
     for metric in response.json()["data"]["result"]:
-        if session_id := metric.get("metric", {}).get("app"):
+        if session_id := metric.get("metric", {}).get("session_id"):
             log.info("Terminating idle session %s", session_id)
             with database.SessionLocal() as db:
                 if session := crud.get_session_by_id(db, session_id):

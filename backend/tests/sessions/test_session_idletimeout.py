@@ -53,7 +53,9 @@ def test_idle_sessions(monkeypatch):
     monkeypatch.setattr(
         requests,
         "get",
-        lambda *args, **kwargs: MockResponse({"metric": {"app": session_id}}),
+        lambda *args, **kwargs: MockResponse(
+            {"metric": {"session_id": session_id}}
+        ),
     )
     monkeypatch.setattr(
         capellacollab.sessions.operators,
