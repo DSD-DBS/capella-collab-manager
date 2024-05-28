@@ -28,7 +28,7 @@ def get_last_seen(sid: str) -> str:
         response.raise_for_status()
 
         for session in response.json()["data"]["result"]:
-            if sid == session["metric"]["app"]:
+            if sid == session["metric"]["session_id"]:
                 return _get_last_seen(float(session["value"][1]))
 
         log.error("No session was found.")
