@@ -41,7 +41,11 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-guacamole-guacamole
+          {{ if .Values.docker.images.guacamole.guacamole }}
+          image: {{ .Values.docker.images.guacamole.guacamole }}
+          {{ else }}
           image: {{ .Values.docker.registry.internal }}/guacamole:{{ .Values.docker.tag }}
+          {{ end }}
           env:
             - name: GUACD_HOSTNAME
               value: {{ .Release.Name }}-guacamole-guacd
@@ -109,7 +113,11 @@ spec:
           {{ end }}
         {{ if .Values.loki.enabled }}
         - name: promtail
+          {{ if .Values.docker.images.promtail }}
+          image: {{ .Values.docker.images.promtail }}
+          {{ else }}
           image: {{ .Values.docker.registry.external -}}/grafana/promtail
+          {{ end }}
           args:
             - "--config.file=/etc/promtail/promtail.yaml"
             - "-log-config-reverse-order"

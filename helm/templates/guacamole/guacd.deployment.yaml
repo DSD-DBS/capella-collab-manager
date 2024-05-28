@@ -39,7 +39,11 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-guacamole-guacd
+          {{ if .Values.docker.images.guacamole.guacd }}
+          image: {{ .Values.docker.images.guacamole.guacd }}
+          {{ else }}
           image: {{ .Values.docker.registry.external }}/guacamole/guacd:1.5.2
+          {{ end }}
           command: ["/bin/sh", "-c", "mkdir -p /home/guacd/logs; /opt/guacamole/sbin/guacd -b 0.0.0.0 -L $GUACD_LOG_LEVEL -f > >(tee -a /home/guacd/logs/stdout.log) 2> >(tee -a /home/guacd/logs/stderr.log >&2)"]
           ports:
             - name: guacd
@@ -81,7 +85,11 @@ spec:
           {{ end }}
         {{ if .Values.loki.enabled }}
         - name: promtail
+          {{ if .Values.docker.images.promtail }}
+          image: {{ .Values.docker.images.promtail }}
+          {{ else }}
           image: {{ .Values.docker.registry.external -}}/grafana/promtail
+          {{ end }}
           args:
             - "--config.file=/etc/promtail/promtail.yaml"
             - "-log-config-reverse-order"

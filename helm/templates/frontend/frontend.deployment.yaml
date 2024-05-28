@@ -39,7 +39,11 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-frontend
+          {{ if .Values.docker.images.frontend }}
+          image: {{ .Values.docker.images.frontend }}
+          {{ else }}
           image: {{ .Values.docker.registry.internal }}/frontend:{{ .Values.docker.tag }}
+          {{ end }}
           ports:
             - name: http
               containerPort: 8080
@@ -74,7 +78,11 @@ spec:
           {{ end }}
         {{ if .Values.loki.enabled }}
         - name: promtail
+          {{ if .Values.docker.images.promtail }}
+          image: {{ .Values.docker.images.promtail }}
+          {{ else }}
           image: {{ .Values.docker.registry.external -}}/grafana/promtail
+          {{ end }}
           args:
             - "--config.file=/etc/promtail/promtail.yaml"
             - "-log-config-reverse-order"

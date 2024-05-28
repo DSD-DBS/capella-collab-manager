@@ -29,7 +29,11 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-prometheus-nginx
+          {{ if .Values.docker.images.nginxUnprivileged }}
+          image: {{ .Values.docker.images.nginxUnprivileged }}
+          {{ else }}
           image: {{ .Values.docker.registry.external }}/nginxinc/nginx-unprivileged
+          {{ end }}
           ports:
             - name: promui
               containerPort: 9118

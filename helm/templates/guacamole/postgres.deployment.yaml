@@ -35,7 +35,11 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-guacamole-postgres
+          {{ if .Values.docker.images.postgres }}
+          image: {{ .Values.docker.images.postgres }}
+          {{ else }}
           image: {{ .Values.docker.registry.external }}/postgres:14.1
+          {{ end }}
           env:
             - name: PGDATA
               value: /var/lib/postgresql/data/data
