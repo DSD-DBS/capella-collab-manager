@@ -35,69 +35,6 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 4,
-        "x": 0,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": ["lastNotNull"],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "10.0.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "sum(count(up{connection_method_name=~\"$connection_method\", tool_version_name=~\"$tool_version\", tool_name=~\"$tool\", session_type=~\"$session_type\", job=\"sessions\"})) OR on() vector(0)",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Active Sessions (instances)",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
             "mode": "palette-classic"
           },
           "custom": {
@@ -182,8 +119,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 10,
-        "x": 4,
+        "w": 8,
+        "x": 0,
         "y": 0
       },
       "id": 3,
@@ -207,7 +144,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(count(up{connection_method_name=~\"$connection_method\", tool_version_name=~\"$tool_version\", session_type=~\"$session_type\", tool_name=~\"$tool\", job=\"sessions\"})) OR on() vector(0)",
+          "expr": "sum(count(up{tool_version_id=~\"$tool_version_id\",connection_method_id=~\"$connection_method_id\", session_type=~\"$session_type\", job=\"sessions\"})) OR on() vector(0)",
           "hide": false,
           "legendFormat": "Number of sessions",
           "range": true,
@@ -219,7 +156,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "(count(up{connection_method_name=~\"$connection_method\", tool_version_name=~\"$tool_version\", tool_name=~\"$tool\", session_type=~\"$session_type\", job=\"sessions\"}) == 0) OR vector(0)",
+          "expr": "(count(up{tool_version_id=~\"$tool_version_id\",connection_method_id=~\"$connection_method_id\", session_type=~\"$session_type\", job=\"sessions\"} == 0)) OR vector(0)",
           "hide": false,
           "instant": false,
           "legendFormat": "Sessions with scraping errors",
@@ -227,8 +164,196 @@
           "refId": "B"
         }
       ],
-      "title": "Active Sessions (instances)",
+      "title": "Active sessions",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 75,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "stepBefore",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 0,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": ["Value"],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 9,
+        "x": 8,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "count by (tool_id, tool_name) (up{tool_version_id=~\"$tool_version_id\",connection_method_id=~\"$connection_method_id\", session_type=~\"$session_type\", job=\"sessions\"})",
+          "instant": false,
+          "legendFormat": "{{tool_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Active sessions per tool",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 0,
+        "y": 7
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(count(up{tool_version_id=~\"$tool_version_id\",connection_method_id=~\"$connection_method_id\", session_type=~\"$session_type\", job=\"sessions\"})) OR on() vector(0)",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Active sessions",
+      "type": "stat"
     },
     {
       "datasource": {
@@ -257,6 +382,9 @@
               "viz": false
             },
             "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
@@ -292,9 +420,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 6,
         "w": 14,
-        "x": 0,
+        "x": 3,
         "y": 7
       },
       "id": 5,
@@ -316,8 +444,8 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "editorMode": "builder",
-          "expr": "idletime_minutes{tool_name=~\"$tool\", tool_version_name=~\"$tool_version\", connection_method_name=~\"$connection_method\", session_type=~\"$session_type\"}",
+          "editorMode": "code",
+          "expr": "idletime_minutes{tool_version_id=~\"$tool_version_id\",connection_method_id=~\"$connection_method_id\", session_type=~\"$session_type\"}",
           "legendFormat": "{{session_id}} ({{tool_name}} {{tool_version_name}} with {{connection_method_name}})",
           "range": true,
           "refId": "A"
@@ -335,9 +463,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "7",
-          "value": "7"
+          "selected": true
         },
         "datasource": {
           "type": "prometheus",
@@ -357,20 +483,18 @@
         "refresh": 2,
         "regex": "/tool_version_name_full=\"(?<text>[^\"]+)|tool_version_id=\"(?<value>[^\"]+)/g",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "type": "query"
       },
       {
         "current": {
-          "selected": false,
-          "text": [""],
-          "value": [""]
+          "selected": true
         },
         "datasource": {
           "type": "prometheus",
           "uid": "PBFA97CFB590B2093"
         },
-        "definition": "up{job=\"sessions\", tool_version_id~=\"$tool_version_id\"}",
+        "definition": "up{job=\"sessions\", tool_version_id=~\"$tool_version_id\"}",
         "description": "",
         "hide": 0,
         "includeAll": false,
@@ -379,26 +503,24 @@
         "name": "connection_method_id",
         "options": [],
         "query": {
-          "query": "up{job=\"sessions\", tool_version_id~=\"$tool_version_id\"}",
+          "query": "up{job=\"sessions\", tool_version_id=~\"$tool_version_id\"}",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "/connection_method_name=\"(?<text>[^\"]+)|connection_method_id=\"(?<value>[^\"]+)/g",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "type": "query"
       },
       {
         "current": {
-          "selected": false,
-          "text": [""],
-          "value": [""]
+          "selected": true
         },
         "datasource": {
           "type": "prometheus",
           "uid": "PBFA97CFB590B2093"
         },
-        "definition": "label_values(up{job=\"sessions\", connection_method_id~=},session_type)",
+        "definition": "label_values(up{job=\"sessions\", tool_version_id=~\"$tool_version_id\"},session_type)",
         "hide": 0,
         "includeAll": false,
         "label": "Session Type",
@@ -406,13 +528,13 @@
         "name": "session_type",
         "options": [],
         "query": {
-          "query": "label_values(up{job=\"sessions\", connection_method_id~=},session_type)",
+          "query": "label_values(up{job=\"sessions\", tool_version_id=~\"$tool_version_id\"},session_type)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "type": "query"
       }
     ]

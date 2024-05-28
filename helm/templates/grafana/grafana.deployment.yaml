@@ -11,6 +11,7 @@ metadata:
     id: {{ .Release.Name }}-deployment-grafana-server
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/grafana" "/grafana.configmap.yaml") . | sha256sum }}
+    checksum/dashboards: {{ include (print $.Template.BasePath "/grafana" "/grafana-dashboards.configmap.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount.grafana | default 1 }}
   selector:
@@ -24,6 +25,7 @@ spec:
         id: {{ .Release.Name }}-deployment-grafana-server
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/grafana" "/grafana.configmap.yaml") . | sha256sum }}
+        checksum/dashboards: {{ include (print $.Template.BasePath "/grafana" "/grafana-dashboards.configmap.yaml") . | sha256sum }}
     spec:
       serviceAccountName: {{ .Release.Name }}-grafana
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
