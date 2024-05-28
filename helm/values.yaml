@@ -39,6 +39,26 @@ docker:
   # Docker tag for the internal images (e.g. main)
   tag: main
 
+  # Optional section to overwrite images.
+  # The images have to be in the format <registry>/<image>:<tag>
+  # If not set, the images are derived from registry, image name and tag.
+  images:
+    guacamole:
+      # To avoid Guacamole restarts on every deployment, the Guacamole image can be set to a specific version.
+      guacamole: null
+      guacd: null
+
+    frontend: null
+    backend: null
+    docs: null
+
+    promtail: null
+    postgres: null
+    grafana: null
+    nginxUnprivileged: null
+    mockOauth2Server: null
+    prometheus: null
+
 general:
   # Base URL on which the service listens
   host: localhost

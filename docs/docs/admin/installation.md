@@ -175,6 +175,12 @@ chmod 600 values.yaml
 
 Adjust all values according to your needs.
 
+!!! info
+
+    You can overwrite individual images by setting the `docker.images.*` values.
+    This is useful to set Guacamole to a fixed version to avoid restarts during updates,
+    which would lead to session interruptions.
+
 ## Step 7: Install the Application in the Cluster
 
 Run the following commands in the root directory of the repository:

@@ -21,7 +21,11 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-docs
+          {{ if .Values.docker.images.docs }}
+          image: {{ .Values.docker.images.docs }}
+          {{ else }}
           image: {{ .Values.docker.registry.internal }}/docs:{{ .Values.docker.tag }}
+          {{ end }}
           ports:
             - name: http
               containerPort: 8080
