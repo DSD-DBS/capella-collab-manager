@@ -563,7 +563,7 @@ class KubernetesOperator:
                             )
                         ],
                         volumes=k8s_volumes,
-                        restart_policy="Always",
+                        restart_policy="Never",
                     ),
                 ),
             ),
