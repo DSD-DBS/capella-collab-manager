@@ -28,7 +28,7 @@ ARG KUBECTL_APT_REMOTE=https://pkgs.k8s.io/core:/stable:/v1.29/deb/
 # Install kubectl if not available in base image
 # kubectl is needed for the list files endpoint
 RUN mkdir -p /etc/apt/keyrings && \
-    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg && \
+    curl --proto "=https" -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg && \
     echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] $KUBECTL_APT_REMOTE /" | tee /etc/apt/sources.list.d/kubernetes.list && \
     apt-get update && apt-get install -y kubectl && rm -rf /var/lib/apt/lists/*
 
