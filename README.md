@@ -108,9 +108,10 @@ Then, choose one of the three options and run the corresponding command:
    ```
 
 2. Build Capella images locally (without initial TeamForCapella support) \
-   To reduce the build time, the default configutation only builds images for Capella
-   6.0.0. If you want to build more images for different versions, set the environment
-   variable `CAPELLA_VERSIONS` with a space-separated list of semantic Capella versions.
+   To reduce the build time, the default configutation only builds images for
+   Capella 6.0.0. If you want to build more images for different versions, set
+   the environment variable `CAPELLA_VERSIONS` with a space-separated list of
+   semantic Capella versions.
 
    ```
    export CAPELLA_VERSIONS="6.0.0 6.1.0"
