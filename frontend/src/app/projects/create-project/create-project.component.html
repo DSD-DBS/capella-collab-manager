@@ -151,7 +151,7 @@
               mat-button
               [routerLink]="[
                 '/project',
-                (projectService.project$ | async)?.slug
+                (projectService.project$ | async)?.slug,
               ]"
               [color]="getColorByModelCreationStep()"
               data-testId="a-skipModelAndFinishProjectCreation"
