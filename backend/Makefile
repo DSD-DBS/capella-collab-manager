@@ -46,6 +46,10 @@ coverage:
 
 install:
 	python generate_git_archival.py
+	if [ ! -d "$(VENV)" ]; \
+		then printf "\033[0;31mThe directory $$(readlink -f $(VENV)) doesn't exist. A venv will be created now.\n\033[0m" && \
+		python -m venv $(VENV);
+	fi
 	$(VENV)/bin/pip install -e ".[dev]"
 
 openapi:
