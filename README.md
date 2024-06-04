@@ -84,9 +84,7 @@ To deploy the application you need:
 
 If you'd like to run it locally, these tools are additionally required:
 
-- [k3d](https://k3d.io/) - a lightweight k8s cluster simulator
-- On some systems: `nss-myhostname` to access the local container registry (on
-  Ubuntu you can get it via `sudo apt install libnss-myhostname`)
+- [k3d](https://k3d.io/) - a lightweight k8s cluster
 
 When you have all that installed you can do the following:
 
@@ -94,20 +92,38 @@ When you have all that installed you can do the following:
 git clone --recurse-submodules https://github.com/DSD-DBS/capella-collab-manager.git
 cd capella-collab-manager
 
-# Create a Local k3d Cluster
-make create-cluster
+# Create a local k3d cluster and test the registry reachability
+make create-cluster reach-registry
 ```
 
-Then, choose one of the three options and run the corresponding command:
+Then, choose one of the four options and run the corresponding command. The
+options can be changed at any time later:
 
-1. Fetch Capella images from Github (without initial TeamForCapella support)
+<!-- prettier-ignore -->
+> [!NOTE]
+> Currently, we only provide amd64 images. If you want to run the
+> application on arm64, you need to build the images yourself (option 3 or 4).
+
+1. Fetch management portal and session images from Github (without
+   TeamForCapella support). This option is recommended for the first
+   deployment.
+
+   ```zsh
+   export DOCKER_REGISTRY=ghcr.io/dsd-dbs/capella-collab-manager
+   export CAPELLACOLLAB_SESSIONS_REGISTRY=ghcr.io/dsd-dbs/capella-dockerimages
+   DEVELOPMENT_MODE=1 make helm-deploy open
+   ```
+
+1. Build management portal images and fetch session images from Github (without
+   initial TeamForCapella support)
 
    ```zsh
    export CAPELLACOLLAB_SESSIONS_REGISTRY=ghcr.io/dsd-dbs/capella-dockerimages
    DEVELOPMENT_MODE=1 make build helm-deploy open rollout
    ```
 
-2. Build Capella images locally (without initial TeamForCapella support) \
+1. Build management portal and session images locally (without initial
+   TeamForCapella support) \
    To reduce the build time, the default configutation only builds images for
    Capella 6.0.0. If you want to build more images for different versions, set
    the environment variable `CAPELLA_VERSIONS` with a space-separated list of
@@ -115,6 +131,7 @@ Then, choose one of the three options and run the corresponding command:
 
    ```
    export CAPELLA_VERSIONS="6.0.0 6.1.0"
+   export BUILD_ARCHITECTURE=amd64 # or arm64
    ```
 
    Then, run the following command:
@@ -123,7 +140,7 @@ Then, choose one of the three options and run the corresponding command:
    DEVELOPMENT_MODE=1 make deploy
    ```
 
-3. Build Capella and TeamForCapella images locally (with initial TeamForCapella
+1. Build Capella and TeamForCapella images locally (with initial TeamForCapella
    support)
 
    Read and execute the preparation in the Capella Docker images documentation:

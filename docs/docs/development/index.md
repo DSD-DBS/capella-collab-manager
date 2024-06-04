@@ -43,7 +43,7 @@ The backend uses various configuration settings. You can find them in the
 `backend/config` directory. A `config.yaml` with default values will be
 generated the first time you run the application.
 
-_Hint_: If you already have the k8d cluster running and if you have the
+_Hint_: If you already have the k3d cluster running and if you have the
 application deployed, then no configuration values need to be adjusted.
 
 ### Getting Started
