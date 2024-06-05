@@ -16,7 +16,7 @@ test:
 	fi
 
 storybook:
-	ng run capellacollab:storybook
+	ng run capellacollab:storybook --quiet
 
 openapi:
 	rm -rf src/app/openapi && mkdir -p src/app/openapi
