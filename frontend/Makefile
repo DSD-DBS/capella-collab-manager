@@ -4,7 +4,7 @@
 export NG_FORCE_TTY=false
 
 dev:
-	ng serve --open
+	ng serve --host 0.0.0.0 --open
 
 test:
 	if [ $(shell which chromium) ]; \
