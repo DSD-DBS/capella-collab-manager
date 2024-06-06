@@ -327,7 +327,7 @@ which we provide as part of our
       t4c: true # (2)
       pure_variants: false # (3)
       jupyter: false
-    sessions:
+    config:
       resources:
         cpu:
           requests: 0.4
@@ -337,26 +337,27 @@ which we provide as part of our
           limits: 6Gi
       environment:
         RMT_PASSWORD: "{CAPELLACOLLAB_SESSION_TOKEN}"
+        ECLIPSE_PROJECTS_TO_LOAD: "{CAPELLACOLLAB_SESSION_PROVISIONING}"
       connection:
         methods:
-          - identifier: guacamole
+          - id: guacamole
             type: guacamole
-            name: Classic
-            description: "Old connection method using Guacamole. If
+            name: Classic (Guacamole)
+            description: Old connection method using Guacamole. If
               it has worked fine previously, keep using it.
               In case of issues, try the Xpra connection
-              method."
+              method.
             ports:
               metrics: 9118
               rdp: 3389
             environment:
               CONNECTION_METHOD: xrdp
-          - identifier: xpra
+          - id: xpra
             type: http
-            name: Xpra (experimental)
-            description: "Experimental connection method using
-              Xpra. It's intended for those users who have
-              issues with the Guacamole connection method."
+            name: Experimental (Xpra)
+            description: Experimental connection method using Xpra.
+              It's intended for those users who have issues
+              with the Guacamole connection method.
             ports:
               metrics: 9118
               http: 10000
@@ -370,6 +371,11 @@ which we provide as part of our
       monitoring:
         prometheus:
           path: /prometheus
+      provisioning:
+        directory: /models
+        max_number_of_models: null
+      persistent_workspaces:
+        mounting_enabled: true
     ```
 
     1. Use a clear and short name for the tool, e.g. `Capella`, `Papyrus` or `Eclipse`.
@@ -386,7 +392,7 @@ which we provide as part of our
       t4c: false
       pure_variants: false
       jupyter: true
-    sessions:
+    config:
       resources:
         cpu:
           requests: 1
@@ -399,12 +405,14 @@ which we provide as part of our
         JUPYTER_TOKEN: "{CAPELLACOLLAB_SESSION_TOKEN}"
         CSP_ORIGIN_HOST: "{CAPELLACOLLAB_ORIGIN_BASE_URL}"
         JUPYTER_BASE_URL: "{CAPELLACOLLAB_SESSIONS_BASE_PATH}"
+        JUPYTER_ADDITIONAL_DEPENDENCIES: ""
       connection:
         methods:
-          - identifier: jupyter
+          - id: jupyter
             type: http
             name: Direct Jupyter connection (Browser)
-            description: "The only available connection method for Jupyter."
+            description: The only available connection method for
+              Jupyter.
             ports:
               metrics: 9118
               http: 8888
@@ -414,4 +422,9 @@ which we provide as part of our
       monitoring:
         prometheus:
           path: /prometheus
+      provisioning:
+        directory: /models
+        max_number_of_models: null
+      persistent_workspaces:
+        mounting_enabled: true
     ```
