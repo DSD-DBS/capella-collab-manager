@@ -108,6 +108,24 @@
               }
             ]
           }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": 0
+                  }
+                },
+                "fieldName": "max(used_t4c_licenses)"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
         }
       ],
       "type": "stat"
@@ -121,7 +139,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-RdYlGr"
+            "mode": "continuous-GrYlRd"
           },
           "mappings": [],
           "min": 0,
@@ -178,7 +196,7 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "editorMode": "builder",
+          "editorMode": "code",
           "expr": "max(total_t4c_licenses)",
           "hide": false,
           "instant": false,
@@ -198,6 +216,24 @@
                 "handlerKey": "max"
               }
             ]
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": 0
+                  }
+                },
+                "fieldName": "max(used_t4c_licenses)"
+              }
+            ],
+            "match": "any",
+            "type": "include"
           }
         }
       ],
@@ -289,6 +325,24 @@
               }
             ]
           }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": 0
+                  }
+                },
+                "fieldName": "max(used_t4c_licenses)"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
         }
       ],
       "type": "stat"
@@ -377,6 +431,24 @@
                 "handlerKey": "max"
               }
             ]
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": 0
+                  }
+                },
+                "fieldName": "max(total_t4c_licenses)"
+              }
+            ],
+            "match": "any",
+            "type": "include"
           }
         }
       ],
@@ -517,6 +589,33 @@
                 "handlerKey": "max"
               }
             ]
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": 0
+                  }
+                },
+                "fieldName": "Total licenses"
+              },
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": 0
+                  }
+                },
+                "fieldName": "Used licenses"
+              }
+            ],
+            "match": "any",
+            "type": "include"
           }
         }
       ],
