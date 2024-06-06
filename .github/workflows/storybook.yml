@@ -4,15 +4,22 @@ name: 'Storybook'
 
 on:
   pull_request:
-    branches: ["**"]
+    branches: ['**']
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/storybook.yml'
   push:
-    branches: ["main"]
+    branches: ['main']
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/storybook.yml'
 
 jobs:
   chromatic:
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'
     concurrency:
+      # prettier-ignore
       group: chromatic-${{ github.event_name }}-${{ github.event.pull_request.number }}
       cancel-in-progress: true
     steps:
