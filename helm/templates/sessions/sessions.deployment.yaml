@@ -10,7 +10,7 @@ metadata:
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/sessions/sessions.configmap.yaml") . | sha256sum }}
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       id: {{ .Release.Name }}-deployment-session-nginx
@@ -63,6 +63,9 @@ spec:
             - name: {{ .Release.Name }}-session-nginx
               mountPath: /usr/share/nginx/html/502.html
               subPath: 502.html
+            - name: {{ .Release.Name }}-session-nginx
+              mountPath: /usr/share/nginx/html/401.html
+              subPath: 401.html
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}

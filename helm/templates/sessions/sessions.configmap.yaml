@@ -27,6 +27,7 @@ data:
 
             root /usr/share/nginx/html;
             error_page 502 /502.html;
+            error_page 401 /401.html;
 
             resolver {{ .Values.cluster.dns.service }}.{{ .Values.cluster.dns.namespace }}.svc.cluster.local;
 
@@ -79,6 +80,30 @@ data:
         </div>
         <div>
           If this error is persistent, please contact your system administrator.
+        </div>
+      </body>
+    </html>
+  401.html: |-
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+          }
+        </style>
+      </head>
+      <body>
+        <h2>Not authenticated against session - 401 Authorization Required</h2>
+
+        <div>
+          The error can occur for various reasons:
+          <ul>
+            <li>The session has been terminated in the Capella Collaboration Manager.</li>
+            <li>You've tried to connect to a session directly. You have to connect via the Capella Collaboration Manager.</li>
+        </div>
+        <div>
+          If you think this error shouldn't appear, please contact your system administrator.
         </div>
       </body>
     </html>
