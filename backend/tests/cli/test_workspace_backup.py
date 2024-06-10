@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import datetime
 import tarfile
 
 import kubernetes.client
@@ -44,7 +45,16 @@ def test_workspace_volumes(monkeypatch, capsys):
         lambda self, namespace, watch: kubernetes.client.V1PersistentVolumeClaimList(
             items=[
                 kubernetes.client.V1PersistentVolumeClaim(
-                    metadata=kubernetes.client.V1ObjectMeta(name="my-volume")
+                    metadata=kubernetes.client.V1ObjectMeta(
+                        name="my-volume",
+                        creation_timestamp=datetime.datetime.now(datetime.UTC),
+                    ),
+                    spec=kubernetes.client.V1PersistentVolumeClaimSpec(
+                        access_modes=["ReadWriteOnce"],
+                        resources=kubernetes.client.V1ResourceRequirements(
+                            requests={"storage": "1Gi"}
+                        ),
+                    ),
                 )
             ]
         ),

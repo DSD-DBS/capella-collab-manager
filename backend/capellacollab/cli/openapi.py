@@ -8,8 +8,6 @@ import pathlib
 
 import typer
 
-from capellacollab import __main__
-
 app = typer.Typer(help="Generate OpenAPI schema for the API.")
 
 
@@ -18,5 +16,8 @@ def generate(
     output_file: pathlib.Path,
 ):
     """Generate openapi.json and write it to output_file."""
+
+    from capellacollab import __main__
+
     with output_file.open("w") as f:
         json.dump(__main__.app.openapi(), f)
