@@ -55,7 +55,6 @@ export const SharedSession: Story = {
   args: {
     connectionInfo: {
       local_storage: {},
-      cookies: {},
       t4c_token: '',
       redirect_url: 'https://example.com',
     },
@@ -83,7 +82,6 @@ export const WithSessionToken: Story = {
   args: {
     connectionInfo: {
       local_storage: {},
-      cookies: {},
       t4c_token: 'sessiontoken',
       redirect_url: 'https://example.com',
     },
@@ -94,7 +92,6 @@ export const WithoutSessionToken: Story = {
   args: {
     connectionInfo: {
       local_storage: {},
-      cookies: {},
       t4c_token: '',
       redirect_url: 'https://example.com',
     },

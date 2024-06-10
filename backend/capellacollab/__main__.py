@@ -15,6 +15,7 @@ from fastapi.middleware import cors
 import capellacollab.projects.toolmodels.backups.runs.interface as pipeline_runs_interface
 import capellacollab.sessions.metrics as sessions_metrics
 import capellacollab.settings.modelsources.t4c.metrics as t4c_metrics
+from capellacollab import core
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.config import config
@@ -40,6 +41,13 @@ logging.basicConfig(
     handlers=[stream_handler, timed_rotating_file_handler],
 )
 
+ALLOW_ORIGINS = (
+    [f"{config.general.scheme}//{config.general.host}:{config.general.port}"]
+    + ["http://localhost:4200"]
+    if core.DEVELOPMENT_MODE
+    else []
+)
+
 
 async def startup():
     migration.migrate_db(engine, config.database.url)
@@ -49,7 +57,6 @@ async def startup():
     operators.get_operator()
 
     logging.getLogger("uvicorn.access").disabled = True
-    logging.getLogger("requests_oauthlib.oauth2_session").setLevel("INFO")
     logging.getLogger("kubernetes.client.rest").setLevel("INFO")
 
 
@@ -71,7 +78,7 @@ app = fastapi.FastAPI(
     middleware=[
         middleware.Middleware(
             cors.CORSMiddleware,
-            allow_origins=["*"],
+            allow_origins=ALLOW_ORIGINS,
             allow_credentials=True,
             allow_methods=["POST", "GET", "OPTIONS", "DELETE", "PUT", "PATCH"],
             allow_headers=["*"],
@@ -110,7 +117,7 @@ async def handle_exceptions(request: fastapi.Request, exc: Exception):
     """
     cors_middleware = cors.CORSMiddleware(
         app=app,
-        allow_origins=["*"],
+        allow_origins=ALLOW_ORIGINS,
         allow_credentials=True,
         allow_methods=["POST", "GET", "OPTIONS", "DELETE", "PUT", "PATCH"],
         allow_headers=["*"],

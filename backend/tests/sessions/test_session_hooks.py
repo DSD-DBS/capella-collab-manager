@@ -5,6 +5,7 @@ import datetime
 import logging
 import typing as t
 
+import fastapi
 import pytest
 from sqlalchemy import orm
 
@@ -53,6 +54,7 @@ class TestSessionHook(hooks_interface.HookRegistration):
         session_type: sessions_models.SessionType,
         connection_method: tools_models.ToolSessionConnectionMethod,
         provisioning: list[sessions_models.SessionProvisioningRequest],
+        session_id: str,
         **kwargs,
     ) -> hooks_interface.ConfigurationHookResult:
         self.configuration_hook_counter += 1
@@ -171,7 +173,11 @@ def test_hook_call_during_session_connection(
     """Test that the session hook is called when connecting to a session"""
 
     sessions_routes.get_session_connection_information(
-        db, session, session.owner, logging.getLogger("test")
+        fastapi.Response(),
+        db,
+        session,
+        session.owner,
+        logging.getLogger("test"),
     )
 
 

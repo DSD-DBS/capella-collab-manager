@@ -14,6 +14,7 @@ import { AuthService } from '../auth/auth.service';
 export class UserWrapperService {
   _user = new BehaviorSubject<User | undefined>(undefined);
   user$ = this._user.asObservable();
+
   get user(): User | undefined {
     return this._user.value;
   }

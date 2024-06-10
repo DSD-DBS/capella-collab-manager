@@ -125,14 +125,6 @@ class SessionConnectionInformation(core_pydantic.BaseModel):
         default={},
     )
 
-    cookies: dict[str, str] = pydantic.Field(
-        description=(
-            "Cookies, which are required to connect to the session. "
-            "The provided key/value pairs should be set by the frontend."
-        ),
-        default={},
-    )
-
     t4c_token: str | None = pydantic.Field(
         default=None, description="TeamForCapella session token"
     )

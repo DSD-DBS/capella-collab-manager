@@ -5,6 +5,12 @@
 from capellacollab.core import pydantic as core_pydantic
 
 
+class TokenRequest(core_pydantic.BaseModel):
+    code: str
+    nonce: str
+    code_verifier: str
+
+
 class JSONWebKey(core_pydantic.BaseModel):
     # alg: str
     kty: str

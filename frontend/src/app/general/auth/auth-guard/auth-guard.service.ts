@@ -21,8 +21,7 @@ export const authGuard: CanActivateFn = (
     return true;
   } else {
     // Needs window.location, since Router.url isn't updated yet
-    authService.cacheCurrentPath(window.location.pathname);
-    authService.webSSO();
+    authService.login(window.location.pathname);
     return false;
   }
 };

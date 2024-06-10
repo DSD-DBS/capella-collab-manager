@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
@@ -18,7 +17,7 @@ import { UserWrapperService } from 'src/app/services/user/user.service';
   templateUrl: './nav-bar-menu.component.html',
   styleUrls: ['./nav-bar-menu.component.css'],
   standalone: true,
-  imports: [MatList, NgFor, NgIf, MatListItem, MatIcon, RouterLink, MatDivider],
+  imports: [MatList, MatListItem, MatIcon, RouterLink, MatDivider],
 })
 export class NavBarMenuComponent {
   constructor(

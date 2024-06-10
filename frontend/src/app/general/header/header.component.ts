@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -22,7 +21,6 @@ import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
     MatIconButton,
     MatIcon,
     MatAnchor,
-    NgIf,
     RouterLink,
     MatMenu,
     MatMenuItem,

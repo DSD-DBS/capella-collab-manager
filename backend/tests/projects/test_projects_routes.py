@@ -18,12 +18,6 @@ from capellacollab.__main__ import app
 from capellacollab.projects import injectables as projects_injectables
 
 
-def test_get_projects_not_authenticated(client: testclient.TestClient):
-    response = client.get("/api/v1/projects")
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Not authenticated"}
-
-
 def test_get_internal_default_project_as_user(
     client: testclient.TestClient, db: orm.Session, executor_name: str
 ):

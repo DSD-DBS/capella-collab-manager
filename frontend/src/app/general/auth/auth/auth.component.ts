@@ -22,7 +22,7 @@ export class AuthComponent implements OnInit {
   @Input()
   set autoLogin(value: boolean) {
     if (value) {
-      this.authService.webSSO();
+      this.authService.login('/');
     }
   }
 
@@ -30,7 +30,7 @@ export class AuthComponent implements OnInit {
 
   constructor(
     public metadataService: MetadataService,
-    private authService: AuthService,
+    public authService: AuthService,
     private pageLayoutService: PageLayoutService,
     private route: ActivatedRoute,
   ) {
@@ -41,9 +41,5 @@ export class AuthComponent implements OnInit {
     this.route.queryParamMap.subscribe((res) => {
       this.params = res;
     });
-  }
-
-  webSSO() {
-    this.authService.webSSO();
   }
 }

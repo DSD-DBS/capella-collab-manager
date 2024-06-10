@@ -12,7 +12,6 @@ import { enableProdMode, importProvidersFrom } from '@angular/core';
 import { MatNativeDateModule } from '@angular/material/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { CookieModule } from 'ngx-cookie';
 import { ToastrModule } from 'ngx-toastr';
 import { BASE_PATH } from 'src/app/openapi';
 import { AppRoutingModule } from './app/app-routing.module';
@@ -30,7 +29,6 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(
       AppRoutingModule,
       MatNativeDateModule,
-      CookieModule.withOptions(),
       ToastrModule.forRoot({
         positionClass: 'toast-bottom-left',
         timeOut: 10000,

@@ -32,9 +32,9 @@
               class=""
             >
               {{ item.name }}
-              <mat-icon iconPositionEnd *ngIf="item.icon">{{
-                item.icon
-              }}</mat-icon>
+              @if (item.icon) {
+                <mat-icon iconPositionEnd>{{ item.icon }}</mat-icon>
+              }
             </a>
           } @else {
             <a
@@ -58,35 +58,30 @@
         >
           Profile <mat-icon>account_circle</mat-icon>
         </a>
-        <a
-          *ngIf="userService.user?.role === 'administrator'"
-          class="px-[15px] text-left"
-          mat-menu-item
-          routerLink="settings"
-        >
-          Settings <mat-icon>settings</mat-icon>
-        </a>
-        <a
-          *ngIf="userService.user?.role === 'administrator'"
-          class="px-[15px] text-left"
-          mat-menu-item
-          routerLink="events"
-        >
-          Events <mat-icon>event_note</mat-icon>
-        </a>
+
+        @if (userService.user?.role === "administrator") {
+          <a class="px-[15px] text-left" mat-menu-item routerLink="settings">
+            Settings <mat-icon>settings</mat-icon>
+          </a>
+          <a class="px-[15px] text-left" mat-menu-item routerLink="events">
+            Events <mat-icon>event_note</mat-icon>
+          </a>
+        }
 
         <a class="px-[15px] text-left" mat-menu-item routerLink="tokens">
           Tokens <mat-icon>key</mat-icon>
         </a>
-        <a
-          class="px-[15px] text-left"
-          mat-menu-item
-          routerLink="logout/redirect"
-          [queryParams]="{ reason: 'logout' }"
-          *ngIf="authService.isLoggedIn()"
-        >
-          Log out <mat-icon>logout</mat-icon>
-        </a>
+
+        @if (authService.isLoggedIn()) {
+          <a
+            class="px-[15px] text-left"
+            mat-menu-item
+            routerLink="logout/redirect"
+            [queryParams]="{ reason: 'logout' }"
+          >
+            Log out <mat-icon>logout</mat-icon>
+          </a>
+        }
       </mat-menu>
 
       <button color="primary" mat-flat-button [matMenuTriggerFor]="profileMenu">
