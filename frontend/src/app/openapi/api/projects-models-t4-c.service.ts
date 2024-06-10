@@ -126,12 +126,6 @@ export class ProjectsModelsT4CService {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
         }
 
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
-        }
-
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
@@ -221,12 +215,6 @@ export class ProjectsModelsT4CService {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
         }
 
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
-        }
-
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
@@ -308,12 +296,6 @@ export class ProjectsModelsT4CService {
         localVarCredential = this.configuration.lookupCredential('PersonalAccessToken');
         if (localVarCredential) {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
-        }
-
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
         }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
@@ -405,12 +387,6 @@ export class ProjectsModelsT4CService {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
         }
 
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
-        }
-
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
@@ -484,12 +460,6 @@ export class ProjectsModelsT4CService {
         localVarCredential = this.configuration.lookupCredential('PersonalAccessToken');
         if (localVarCredential) {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
-        }
-
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
         }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;

@@ -107,12 +107,14 @@ export class Configuration {
             };
         }
 
-        // init default JWTBearer credential
-        if (!this.credentials['JWTBearer']) {
-            this.credentials['JWTBearer'] = () => {
-                return typeof this.accessToken === 'function'
-                    ? this.accessToken()
-                    : this.accessToken;
+        // init default JWTAPIKeyCookie credential
+        if (!this.credentials['JWTAPIKeyCookie']) {
+            this.credentials['JWTAPIKeyCookie'] = () => {
+                if (this.apiKeys === null || this.apiKeys === undefined) {
+                    return undefined;
+                } else {
+                    return this.apiKeys['JWTAPIKeyCookie'] || this.apiKeys['id_token'];
+                }
             };
         }
     }
