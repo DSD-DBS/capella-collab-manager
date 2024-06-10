@@ -28,13 +28,12 @@ dependencies = [
   "cachetools",
   "fastapi>=0.101.0",
   "kubernetes",
-  "msal",
   "psycopg2-binary>2.9.7",
   "pydantic>=2.0.0",
   "python-dateutil",
   "python-jose",
   "python-multipart",
-  "requests_oauthlib",
+  "oauthlib",
   "sqlalchemy>=2.0.0",
   "uvicorn[standard]",
   "python-slugify[unidecode]",
@@ -66,11 +65,8 @@ dev = [
   "pytest-cov",
   "aioresponses",
   "types-lxml",
+  "PyJWT",
 ]
-
-[project.entry-points."capellacollab.authentication.providers"]
-oauth = "capellacollab.core.authentication.provider.oauth"
-azure = "capellacollab.core.authentication.provider.azure"
 
 [tool.black]
 line-length = 79
@@ -120,8 +116,7 @@ module = [
   "jose.*",
   "slugify.*",
   "cachetools.*",
-  "requests_oauthlib.*",
-  "msal.*",
+  "oauthlib.*",
   "yaml.*",
   "fastapi_pagination.*",
   "aiohttp.*",

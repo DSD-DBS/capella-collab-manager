@@ -24,7 +24,11 @@
     </p>
   </div>
   <div id="oauth-login">
-    <button mat-flat-button color="primary" (click)="webSSO()">
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="this.authService.login('/')"
+    >
       Login with
       {{ (metadataService.backendMetadata | async)?.authentication_provider }}
     </button>

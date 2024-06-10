@@ -49,7 +49,6 @@ async def startup():
     operators.get_operator()
 
     logging.getLogger("uvicorn.access").disabled = True
-    logging.getLogger("requests_oauthlib.oauth2_session").setLevel("INFO")
     logging.getLogger("kubernetes.client.rest").setLevel("INFO")
 
 

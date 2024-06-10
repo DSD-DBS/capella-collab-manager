@@ -41,8 +41,8 @@ def test_create_alert_not_authenticated(client: TestClient):
         json={"title": "test", "message": "test", "level": "success"},
     )
 
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Not authenticated"}
+    assert response.status_code == 401
+    assert response.json()["detail"]["err_code"] == "JWT_TOKEN_INVALID"
 
 
 def test_create_alert2(
