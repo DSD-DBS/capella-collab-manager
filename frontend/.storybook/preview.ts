@@ -11,7 +11,6 @@ import { importProvidersFrom } from '@angular/core';
 import { applicationConfig } from '@storybook/angular';
 import { ToastrModule } from 'ngx-toastr';
 import { RouterModule } from '@angular/router';
-import { CookieModule } from 'ngx-cookie';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DialogRef } from '@angular/cdk/dialog';
@@ -42,7 +41,6 @@ const preview: Preview = {
             resetTimeoutOnDuplicate: true,
             includeTitleDuplicates: true,
           }),
-          CookieModule.withOptions(),
           RouterModule.forRoot([]),
         ),
         importProvidersFrom(BrowserAnimationsModule),

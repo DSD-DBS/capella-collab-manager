@@ -8,9 +8,8 @@ import fastapi
 import pytest
 from sqlalchemy import orm
 
-import capellacollab.users.models as users_models
 from capellacollab.__main__ import app
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.authentication.api_key_cookie import JWTAPIKeyCookie
 from capellacollab.users import crud as users_crud
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
@@ -23,10 +22,10 @@ def fixture_executor_name(monkeypatch: pytest.MonkeyPatch) -> str:
     name = str(uuid.uuid1())
 
     # pylint: disable=unused-argument
-    async def bearer_passthrough(self, request: fastapi.Request):
+    async def cookie_passthrough(self, request: fastapi.Request):
         return name
 
-    monkeypatch.setattr(JWTBearer, "__call__", bearer_passthrough)
+    monkeypatch.setattr(JWTAPIKeyCookie, "__call__", cookie_passthrough)
 
     return name
 

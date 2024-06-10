@@ -12,6 +12,7 @@ import typing as t
 import pytest
 import sqlalchemy
 import sqlalchemy.exc
+from core import conftest as core_conftest
 from fastapi import testclient
 from sqlalchemy import engine, orm
 from testcontainers import postgres
@@ -90,8 +91,13 @@ def fixture_db(
 
 
 @pytest.fixture()
-def client() -> testclient.TestClient:
-    return testclient.TestClient(app, headers={"Authorization": "bearer"})
+def client(monkeypatch: pytest.MonkeyPatch) -> testclient.TestClient:
+    monkeypatch.setattr(
+        "capellacollab.core.authentication.api_key_cookie.JWTConfigBorg",
+        core_conftest.MockJWTConfigBorg,
+    )
+
+    return testclient.TestClient(app, cookies={"id_token": "any"})
 
 
 @pytest.fixture(name="logger")

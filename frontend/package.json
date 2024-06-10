@@ -33,7 +33,6 @@
     "highlight.js": "^11.10.0",
     "http-status-codes": "^2.3.0",
     "monaco-editor": "^0.50.0",
-    "ngx-cookie": "^6.0.1",
     "ngx-skeleton-loader": "^9.0.0",
     "ngx-toastr": "^19.0.0",
     "npm": "^10.8.2",

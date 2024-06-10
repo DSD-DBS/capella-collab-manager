@@ -37,9 +37,7 @@ def test_get_user_tokens(client: testclient.TestClient):
 
 @responses.activate
 def test_use_basic_token(
-    client: testclient.TestClient,
-    unauthenticated_user: users_models.User,
-    monkeypatch: pytest.MonkeyPatch,
+    unauthenticated_user: users_models.User, monkeypatch: pytest.MonkeyPatch
 ):
     async def basic_passthrough(self, request: fastapi.Request):
         return unauthenticated_user.name
@@ -47,7 +45,8 @@ def test_use_basic_token(
     monkeypatch.setattr(HTTPBasicAuth, "__call__", basic_passthrough)
     token_string = f"{unauthenticated_user.name}:myTestPassword"
     token = base64.b64encode(token_string.encode("ascii"))
-    basic_response = client.post(
+    basic_client = testclient.TestClient(app)
+    basic_response = basic_client.post(
         "/api/v1/users/current/tokens",
         headers={"Authorization": f"basic {token.decode('ascii')}"},
         json=POST_TOKEN,

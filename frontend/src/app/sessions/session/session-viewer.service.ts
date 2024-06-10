@@ -45,6 +45,14 @@ export class SessionViewerService {
       return;
     }
 
+    if (!connectionInfo.redirect_url) {
+      this.toastService.showError(
+        'Session connection information is not available yet.',
+        'Try again later.',
+      );
+      return;
+    }
+
     this.sessionService.setConnectionInformation(session, connectionInfo);
     viewerSession.focused = false;
     viewerSession.safeResourceURL =

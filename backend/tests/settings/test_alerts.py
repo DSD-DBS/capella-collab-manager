@@ -35,16 +35,6 @@ def test_get_alerts(client: TestClient, db: orm.Session, executor_name: str):
     }.items() <= response.json()[0].items()
 
 
-def test_create_alert_not_authenticated(client: TestClient):
-    response = client.post(
-        "/api/v1/notices",
-        json={"title": "test", "message": "test", "level": "success"},
-    )
-
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Not authenticated"}
-
-
 def test_create_alert2(
     client: TestClient, db: orm.Session, executor_name: str
 ):

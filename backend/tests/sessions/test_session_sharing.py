@@ -3,13 +3,11 @@
 
 import datetime
 
-import fastapi
 import pytest
 from fastapi import testclient
 from sqlalchemy import orm
 
 from capellacollab.__main__ import app
-from capellacollab.core.authentication import jwt_bearer
 from capellacollab.sessions import crud as sessions_crud
 from capellacollab.sessions import models as sessions_models
 from capellacollab.tools import models as tools_models

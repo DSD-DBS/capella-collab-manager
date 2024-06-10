@@ -17,16 +17,15 @@ logger = logging.getLogger(__name__)
 
 
 class HTTPBasicAuth(security.HTTPBasic):
-    async def __call__(  # type: ignore
-        self, request: fastapi.Request
-    ) -> str | None:
+    def __init__(self):
+        super().__init__(auto_error=True)
+
+    async def __call__(self, request: fastapi.Request) -> str:  # type: ignore
         credentials: security.HTTPBasicCredentials | None = (
             await super().__call__(request)
         )
         if not credentials:
-            if self.auto_error:
-                raise exceptions.UnauthenticatedError()
-            return None
+            raise exceptions.UnauthenticatedError()
         with database.SessionLocal() as session:
             user = user_crud.get_user_by_name(session, credentials.username)
             db_token = (
@@ -38,15 +37,11 @@ class HTTPBasicAuth(security.HTTPBasic):
             )
             if not db_token:
                 logger.info("Token invalid for user %s", credentials.username)
-                if self.auto_error:
-                    raise exceptions.InvalidPersonalAccessTokenError()
-                return None
+                raise exceptions.InvalidPersonalAccessTokenError()
 
             if db_token.expiration_date < datetime.date.today():
                 logger.info("Token expired for user %s", credentials.username)
-                if self.auto_error:
-                    raise exceptions.PersonalAccessTokenExpired()
-                return None
+                raise exceptions.PersonalAccessTokenExpired()
         return self.get_username(credentials)
 
     def get_username(self, credentials: security.HTTPBasicCredentials) -> str:

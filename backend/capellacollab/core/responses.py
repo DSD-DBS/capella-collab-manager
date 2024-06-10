@@ -1,13 +1,14 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
+import datetime
 import os
 import typing as t
 
 import fastapi
 import pydantic
 
+from capellacollab.config import config
 from capellacollab.core import pydantic as core_pydantic
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.users import models as users_models
@@ -109,6 +110,38 @@ def _translate_exceptions_to_openapi_schema(excs: list[exceptions.BaseError]):
         }
         for status_code, excs in grouped_by_status_code.items()
     }
+
+
+def set_secure_cookie(
+    response: fastapi.Response,
+    key: str,
+    value: str,
+    path: str,
+    expires: datetime.datetime | None = None,
+) -> None:
+    response.set_cookie(
+        key=key,
+        value=value,
+        expires=expires,
+        path=path,
+        samesite="strict",
+        httponly=True,
+        secure=config.general.scheme == "https",
+        domain=config.general.host,
+    )
+
+
+def delete_secure_cookie(
+    response: fastapi.Response, key: str, path: str
+) -> None:
+    response.delete_cookie(
+        key=key,
+        path=path,
+        samesite="strict",
+        httponly=True,
+        secure=config.general.scheme == "https",
+        domain=config.general.host,
+    )
 
 
 class SVGResponse(fastapi.responses.Response):
