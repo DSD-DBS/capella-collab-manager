@@ -78,7 +78,7 @@
     "eslint-plugin-deprecation": "^3.0.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-storybook": "^0.8.0",
-    "eslint-plugin-tailwindcss": "^3.17.0",
+    "eslint-plugin-tailwindcss": "^3.17.3",
     "eslint-plugin-unused-imports": "^3.2.0",
     "jasmine-core": "~5.1.2",
     "karma": "~6.4.3",
