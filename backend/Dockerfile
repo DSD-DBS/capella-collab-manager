@@ -46,7 +46,7 @@ ENV VIRTUAL_ENV=/opt/.venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 WORKDIR /tmp/backend
-RUN pip install .
+RUN pip install . && chmod +x $VIRTUAL_ENV/lib/python3.11/site-packages/capellacollab/settings/modelsources/git/askpass.py
 
 RUN mkdir -p /var/log/backend && \
     chmod -R 777 /var/log/backend
