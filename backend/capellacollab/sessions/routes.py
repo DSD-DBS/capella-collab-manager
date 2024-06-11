@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import datetime
 import hmac
 import logging
 import typing as t
@@ -20,6 +21,7 @@ from capellacollab.sessions.files import routes as files_routes
 from capellacollab.tools import exceptions as tools_exceptions
 from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
+from capellacollab.users import crud as users_crud
 from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
@@ -35,8 +37,7 @@ router = fastapi.APIRouter(
                 required_role=users_models.Role.USER
             )
         )
-    ],
-    responses=responses.api_exceptions(minimum_role=users_models.Role.USER),
+    ]
 )
 
 router_without_authentication = fastapi.APIRouter()
@@ -48,7 +49,7 @@ users_router = fastapi.APIRouter(
                 required_role=users_models.Role.USER
             )
         )
-    ],
+    ]
 )
 
 
@@ -69,7 +70,7 @@ users_router = fastapi.APIRouter(
             exceptions.InvalidConnectionMethodIdentifierError(
                 tool_name="test", connection_method_id="default"
             ),
-            exceptions.WorkspaceMountingNotAllowed(tool_name="test"),
+            exceptions.WorkspaceMountingNotAllowedError(tool_name="test"),
             exceptions.TooManyModelsRequestedToProvisionError(
                 max_number_of_models=1
             ),
@@ -251,6 +252,76 @@ def get_all_sessions(
 
 
 @router.get(
+    "/{session_id}",
+    response_model=models.Session,
+    responses=responses.api_exceptions(
+        [
+            exceptions.SessionNotFoundError(session_id="test"),
+            exceptions.SessionNotOwnedError(session_id="test"),
+        ]
+    ),
+)
+def get_session(
+    session: models.DatabaseSession = fastapi.Depends(
+        injectables.get_existing_session
+    ),
+):
+    return session
+
+
+@router.post(
+    "/{session_id}/shares",
+    response_model=models.SessionSharing,
+    responses=responses.api_exceptions(
+        [
+            exceptions.InvalidConnectionMethodIdentifierError(
+                tool_name="test", connection_method_id="default"
+            ),
+            exceptions.SessionNotFoundError(session_id="test"),
+            exceptions.SessionNotOwnedError(session_id="test"),
+            exceptions.SessionAlreadySharedError(username="test"),
+            exceptions.SessionSharingNotSupportedError(
+                tool_name="test", connection_method_name="test"
+            ),
+            users_exceptions.UserNotFoundError(username="test"),
+        ],
+    ),
+)
+def share_session(
+    body: models.ShareSessionRequest,
+    session: models.DatabaseSession = fastapi.Depends(
+        injectables.get_existing_session
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
+):
+    user_to_share_with = users_crud.get_user_by_name(db, body.username)
+    if not user_to_share_with:
+        raise users_exceptions.UserNotFoundError(username=body.username)
+    if (
+        session.owner == user_to_share_with
+        or util.is_session_shared_with_user(session, user_to_share_with)
+    ):
+        raise exceptions.SessionAlreadySharedError(user_to_share_with.name)
+
+    connection_method = util.get_connection_method(
+        tool=session.tool, connection_method_id=session.connection_method_id
+    )
+    if not connection_method.sharing.enabled:
+        raise exceptions.SessionSharingNotSupportedError(
+            tool_name=session.tool.name,
+            connection_method_name=connection_method.name,
+        )
+
+    session_share = models.DatabaseSharedSession(
+        created_at=datetime.datetime.now(datetime.UTC),
+        session=session,
+        user=user_to_share_with,
+    )
+
+    return crud.create_shared_session(db, session_share)
+
+
+@router.get(
     "/{session_id}/connection",
     response_model=core_models.PayloadResponseModel[
         models.SessionConnectionInformation
@@ -268,16 +339,13 @@ def get_all_sessions(
 def get_session_connection_information(
     db: orm.Session = fastapi.Depends(database.get_db),
     session: models.DatabaseSession = fastapi.Depends(
-        injectables.get_existing_session
+        injectables.get_existing_session_including_shared
     ),
     user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
     ),
     logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
 ):
-    if session.owner != user:
-        raise exceptions.SessionNotOwnedError(session.id)
-
     connection_method = util.get_connection_method(
         session.tool, session.connection_method_id
     )
@@ -381,6 +449,7 @@ def get_sessions_for_user(
     current_user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
     ),
+    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     if (
         user != current_user
@@ -388,6 +457,6 @@ def get_sessions_for_user(
     ):
         raise exceptions.SessionForbiddenError()
 
-    return [
-        models.Session.model_validate(session) for session in user.sessions
-    ]
+    return user.sessions + list(
+        crud.get_shared_sessions_for_user(db, current_user)
+    )

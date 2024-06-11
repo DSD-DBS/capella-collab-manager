@@ -34,11 +34,11 @@ def fixture_project_user(
     project: projects_models.DatabaseProject,
     user: users_models.DatabaseUser,
 ) -> users_models.DatabaseUser:
-    projects_users_crud.add_user_to_project(
+    project_user = projects_users_crud.add_user_to_project(
         db,
         project=project,
         user=user,
         role=projects_users_models.ProjectUserRole.USER,
         permission=projects_users_models.ProjectUserPermission.WRITE,
     )
-    return user
+    return project_user

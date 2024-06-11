@@ -34,19 +34,24 @@ def fixture_unique_username() -> str:
     return str(uuid.uuid1())
 
 
+@pytest.fixture(name="basic_user")
+def fixture_basic_user(
+    db: orm.Session, executor_name: str
+) -> users_models.DatabaseUser:
+    return users_crud.create_user(db, executor_name, users_models.Role.USER)
+
+
 @pytest.fixture(name="user")
 def fixture_user(
-    db: orm.Session, executor_name: str
+    basic_user: users_models.DatabaseUser,
 ) -> t.Generator[users_models.DatabaseUser, None, None]:
-    user = users_crud.create_user(db, executor_name, users_models.Role.USER)
-
     def get_mock_own_user():
-        return user
+        return basic_user
 
     app.dependency_overrides[users_injectables.get_own_user] = (
         get_mock_own_user
     )
-    yield user
+    yield basic_user
     del app.dependency_overrides[users_injectables.get_own_user]
 
 

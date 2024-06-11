@@ -346,6 +346,11 @@ Angular Material Card Styles
   @apply !tracking-normal;
 }
 
+.mdc-evolution-chip--with-avatar.mdc-evolution-chip--with-primary-graphic
+  .mdc-evolution-chip__graphic {
+  padding-right: 0px !important;
+}
+
 /*
 Option cards
 */

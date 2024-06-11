@@ -23,7 +23,7 @@ from capellacollab.users import models as users_models
 def test_create_t4c_instance(
     client: testclient.TestClient,
     db: orm.Session,
-    test_tool_version: tools_models.DatabaseVersion,
+    tool_version: tools_models.DatabaseVersion,
 ):
     response = client.post(
         "/api/v1/settings/modelsources/t4c",
@@ -37,7 +37,7 @@ def test_create_t4c_instance(
             "username": "admin",
             "protocol": "tcp",
             "name": "Test integration",
-            "version_id": test_tool_version.id,
+            "version_id": tool_version.id,
             "password": "secret-password",
         },
     )
@@ -55,7 +55,7 @@ def test_create_t4c_instance(
 def test_create_t4c_instance_already_existing_name(
     client: testclient.TestClient,
     t4c_instance: t4c_models.DatabaseT4CInstance,
-    test_tool_version: tools_models.DatabaseVersion,
+    tool_version: tools_models.DatabaseVersion,
 ):
     response = client.post(
         "/api/v1/settings/modelsources/t4c",
@@ -69,7 +69,7 @@ def test_create_t4c_instance_already_existing_name(
             "rest_api": "http://localhost:8080",
             "username": "admin",
             "protocol": "tcp",
-            "version_id": test_tool_version.id,
+            "version_id": tool_version.id,
             "password": "secret-password",
         },
     )
@@ -208,7 +208,7 @@ def test_unarchive_t4c_instance(
 def test_patch_t4c_instance_already_existing_name(
     client: testclient.TestClient,
     t4c_instance: t4c_models.DatabaseT4CInstance,
-    test_tool_version: tools_models.DatabaseVersion,
+    tool_version: tools_models.DatabaseVersion,
 ):
     instance_name_1 = t4c_instance.name
     instance_name_2 = instance_name_1 + "-2"
@@ -225,7 +225,7 @@ def test_patch_t4c_instance_already_existing_name(
             "rest_api": "http://localhost:8080",
             "username": "admin",
             "protocol": "tcp",
-            "version_id": test_tool_version.id,
+            "version_id": tool_version.id,
             "password": "secret-password",
         },
     )

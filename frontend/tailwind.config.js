@@ -17,6 +17,7 @@ module.exports = {
         hover: "var(--hover-color)",
         archived: "#D1D5DB",
         url: "#2563eb",
+        warn: "#f44336",
       },
       spacing: {
         button: "0.5rem",

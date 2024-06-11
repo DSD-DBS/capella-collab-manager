@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { NgIf } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -22,7 +21,7 @@ import { DisplayValueComponent } from '../../../../helpers/display-value/display
   templateUrl: './connection-dialog.component.html',
   styleUrls: ['./connection-dialog.component.css'],
   standalone: true,
-  imports: [NgIf, DisplayValueComponent, MatButton],
+  imports: [DisplayValueComponent, MatButton],
 })
 export class ConnectionDialogComponent {
   isPersistentSessionAlias = isPersistentSession;

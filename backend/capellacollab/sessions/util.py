@@ -196,3 +196,9 @@ def get_connection_method(
         raise exceptions.InvalidConnectionMethodIdentifierError(
             tool.name, connection_method_id
         )
+
+
+def is_session_shared_with_user(
+    session: models.DatabaseSession, user: users_models.DatabaseUser
+) -> bool:
+    return user in [shared.user for shared in session.shared_with]

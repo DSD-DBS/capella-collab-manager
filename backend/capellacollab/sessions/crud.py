@@ -7,11 +7,21 @@ from collections import abc
 import sqlalchemy as sa
 from sqlalchemy import orm
 
+from capellacollab.users import models as users_models
+
 from . import models
 
 
 def get_sessions(db: orm.Session) -> abc.Sequence[models.DatabaseSession]:
     return db.execute(sa.select(models.DatabaseSession)).scalars().all()
+
+
+def create_shared_session(
+    db: orm.Session, shared_session: models.DatabaseSharedSession
+) -> models.DatabaseSharedSession:
+    db.add(shared_session)
+    db.commit()
+    return shared_session
 
 
 def get_sessions_for_user(
@@ -22,6 +32,20 @@ def get_sessions_for_user(
             sa.select(models.DatabaseSession).where(
                 models.DatabaseSession.owner_name == username
             )
+        )
+        .scalars()
+        .all()
+    )
+
+
+def get_shared_sessions_for_user(
+    db: orm.Session, user: users_models.DatabaseUser
+) -> abc.Sequence[models.DatabaseSession]:
+    return (
+        db.execute(
+            sa.select(models.DatabaseSession)
+            .join(models.DatabaseSharedSession)
+            .where(models.DatabaseSharedSession.user == user)
         )
         .scalars()
         .all()

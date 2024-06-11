@@ -12,6 +12,7 @@
 import { GuacamoleConnectionMethodInput } from './guacamole-connection-method-input';
 import { Environment } from './environment';
 import { HTTPConnectionMethodInput } from './http-connection-method-input';
+import { ToolSessionSharingConfigurationInput } from './tool-session-sharing-configuration-input';
 import { HTTPPortsInput } from './http-ports-input';
 
 
@@ -25,6 +26,7 @@ export interface ToolSessionConnectionInputMethodsInner {
      * Connection method specific environment variables. Check the global environment field for more information. 
      */
     environment?: { [key: string]: Environment; };
+    sharing?: ToolSessionSharingConfigurationInput;
     redirect_url?: string;
     /**
      * Cookies, which are required to connect to the session. 

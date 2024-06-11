@@ -3,14 +3,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
+import {
+  Meta,
+  StoryObj,
+  componentWrapperDecorator,
+  moduleMetadata,
+} from '@storybook/angular';
 import { Observable, of } from 'rxjs';
 import { Session } from 'src/app/openapi';
 
+import { UserWrapperService } from 'src/app/services/user/user.service';
 import {
   createPersistentSessionWithState,
   mockSuccessReadonlySession,
 } from 'src/storybook/session';
+import { mockHttpConnectionMethod } from 'src/storybook/tool';
+import { MockUserService, mockUser } from 'src/storybook/user';
 import { UserSessionService } from '../../service/user-session.service';
 import { ActiveSessionsComponent } from './active-sessions.component';
 
@@ -29,6 +37,19 @@ class MockUserSessionService implements Partial<UserSessionService> {
 const meta: Meta<ActiveSessionsComponent> = {
   title: 'Session Components / Active Sessions',
   component: ActiveSessionsComponent,
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UserWrapperService,
+          useFactory: () => new MockUserService(mockUser),
+        },
+      ],
+    }),
+    componentWrapperDecorator(
+      (story) => `<div class="w-[360px] sm:w-[450px]">${story}</div>`,
+    ),
+  ],
 };
 
 export default meta;
@@ -139,6 +160,87 @@ export const ReadonlySessionSuccessStateStory: Story = {
           provide: UserSessionService,
           useFactory: () =>
             new MockUserSessionService(mockSuccessReadonlySession),
+        },
+      ],
+    }),
+  ],
+};
+
+export const SessionSharingEnabled: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UserSessionService,
+          useFactory: () =>
+            new MockUserSessionService({
+              ...createPersistentSessionWithState('Started'),
+              connection_method: {
+                ...mockHttpConnectionMethod,
+                sharing: { enabled: true },
+              },
+            }),
+        },
+      ],
+    }),
+  ],
+};
+
+export const SessionSharedWithUser: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UserSessionService,
+          useFactory: () =>
+            new MockUserSessionService({
+              ...createPersistentSessionWithState('Started'),
+              connection_method: {
+                ...mockHttpConnectionMethod,
+                sharing: { enabled: true },
+              },
+              shared_with: [
+                {
+                  user: {
+                    id: 1,
+                    name: 'user_1',
+                    role: 'administrator',
+                  },
+                  created_at: '2024-04-29T15:00:00Z',
+                },
+                {
+                  user: {
+                    id: 2,
+                    name: 'user_2',
+                    role: 'user',
+                  },
+                  created_at: '2024-04-29T15:00:00Z',
+                },
+              ],
+            }),
+        },
+      ],
+    }),
+  ],
+};
+
+export const SharedSession: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UserSessionService,
+          useFactory: () =>
+            new MockUserSessionService({
+              ...createPersistentSessionWithState('Started'),
+            }),
+        },
+        {
+          provide: UserWrapperService,
+          useFactory: () => new MockUserService({ ...mockUser, id: 2 }),
         },
       ],
     }),

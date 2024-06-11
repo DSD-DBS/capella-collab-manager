@@ -54,7 +54,9 @@ class PersistentWorkspaceHook(interface.HookRegistration):
         self, tool: tools_models.DatabaseTool
     ):
         if not tool.config.persistent_workspaces.mounting_enabled:
-            raise sessions_exceptions.WorkspaceMountingNotAllowed(tool.name)
+            raise sessions_exceptions.WorkspaceMountingNotAllowedError(
+                tool.name
+            )
 
     def _get_volume_name(self, username: str) -> str:
         return "persistent-session-" + self._normalize_username(username)

@@ -64,6 +64,11 @@ class PostSessionRequest(core_pydantic.BaseModel):
     provisioning: list[SessionProvisioningRequest] = pydantic.Field(default=[])
 
 
+class SessionSharing(core_pydantic.BaseModel):
+    user: users_models.BaseUser
+    created_at: datetime.datetime
+
+
 class Session(core_pydantic.BaseModel):
     id: str
     type: SessionType
@@ -78,6 +83,8 @@ class Session(core_pydantic.BaseModel):
 
     connection_method_id: str
     connection_method: tools_models.ToolSessionConnectionMethod | None = None
+
+    shared_with: list[SessionSharing] = pydantic.Field(default=[])
 
     _validate_created_at = pydantic.field_serializer("created_at")(
         core_pydantic.datetime_serializer
@@ -101,6 +108,10 @@ class Session(core_pydantic.BaseModel):
         self.state = injection.determine_session_state(self.id)
 
         return self
+
+
+class ShareSessionRequest(core_pydantic.BaseModel):
+    username: str
 
 
 class SessionConnectionInformation(core_pydantic.BaseModel):
@@ -161,3 +172,36 @@ class DatabaseSession(database.Base):
     config: orm.Mapped[dict[str, str]] = orm.mapped_column(
         nullable=False, default_factory=dict
     )
+
+    shared_with: orm.Mapped[list[DatabaseSharedSession]] = orm.relationship(
+        "DatabaseSharedSession",
+        back_populates="session",
+        init=False,
+        cascade="all, delete-orphan",
+    )
+
+
+class DatabaseSharedSession(database.Base):
+    __tablename__ = "shared_sessions"
+
+    id: orm.Mapped[int] = orm.mapped_column(
+        sa.Integer,
+        init=False,
+        primary_key=True,
+        index=True,
+        unique=True,
+        autoincrement=True,
+    )
+    created_at: orm.Mapped[datetime.datetime]
+
+    session_id: orm.Mapped[str] = orm.mapped_column(
+        sa.ForeignKey("sessions.id"), primary_key=True, init=False
+    )
+    session: orm.Mapped[DatabaseSession] = orm.relationship(
+        back_populates="shared_with"
+    )
+
+    user_id: orm.Mapped[str] = orm.mapped_column(
+        sa.ForeignKey("users.id"), primary_key=True, init=False
+    )
+    user: orm.Mapped[DatabaseUser] = orm.relationship()

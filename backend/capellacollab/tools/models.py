@@ -74,6 +74,16 @@ class ToolSessionEnvironment(core_pydantic.BaseModel):
     )
 
 
+class ToolSessionSharingConfiguration(core_pydantic.BaseModel):
+    enabled: bool = pydantic.Field(
+        default=False,
+        description=(
+            "Allow sharing of a session container with other users. "
+            "The tool / connection method has to support multiple connections to the same container. "
+        ),
+    )
+
+
 class ToolSessionConnectionMethod(core_pydantic.BaseModel):
     id: str = pydantic.Field(default_factory=uuid_factory)
     type: str
@@ -86,6 +96,9 @@ class ToolSessionConnectionMethod(core_pydantic.BaseModel):
             "Connection method specific environment variables. "
             "Check the global environment field for more information. "
         ),
+    )
+    sharing: ToolSessionSharingConfiguration = pydantic.Field(
+        default=ToolSessionSharingConfiguration()
     )
 
 

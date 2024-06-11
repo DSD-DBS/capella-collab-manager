@@ -20,40 +20,15 @@ def fixture_tool(
         config=database_migration.get_eclipse_session_configuration(),
     )
 
-    tool = tools_crud.create_tool(db, tool)
+    database_tool = tools_crud.create_tool(db, tool)
 
     def mock_get_existing_tool(*args, **kwargs) -> tools_models.DatabaseTool:
-        return tool
+        return database_tool
 
     monkeypatch.setattr(
         tools_injectables, "get_existing_tool", mock_get_existing_tool
     )
-    return tool
-
-
-@pytest.fixture(name="tool_version")
-def fixture_tool_version(
-    db: orm.Session,
-    monkeypatch: pytest.MonkeyPatch,
-    tool: tools_models.DatabaseTool,
-) -> tools_models.DatabaseVersion:
-    tool_version = tools_models.CreateToolVersion(
-        name="test", config=tools_models.ToolVersionConfiguration()
-    )
-
-    version = tools_crud.create_version(db, tool, tool_version)
-
-    def get_existing_tool_version(
-        *args, **kwargs
-    ) -> tools_models.DatabaseVersion:
-        return version
-
-    monkeypatch.setattr(
-        tools_injectables,
-        "get_existing_tool_version",
-        get_existing_tool_version,
-    )
-    return version
+    return database_tool
 
 
 @pytest.fixture(name="tool_nature")

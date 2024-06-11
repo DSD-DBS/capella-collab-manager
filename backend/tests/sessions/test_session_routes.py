@@ -248,6 +248,16 @@ def test_get_all_sessions(
     assert len(response.json()) == 1
 
 
+@pytest.mark.usefixtures("user")
+def test_get_session_by_id(
+    client: testclient.TestClient,
+    session: sessions_models.DatabaseSession,
+):
+    response = client.get(f"/api/v1/sessions/{session.id}")
+    assert response.is_success
+    assert response.json()["id"] == session.id
+
+
 def test_own_sessions(
     db: orm.Session,
     client: testclient.TestClient,

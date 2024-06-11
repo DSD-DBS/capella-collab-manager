@@ -15,6 +15,7 @@ from capellacollab.projects.users import models as projects_users_models
 from capellacollab.settings.modelsources.t4c import (
     models as settings_t4c_models,
 )
+from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 
@@ -47,11 +48,19 @@ def exist_repo_for_name_and_instance(
 
 
 def get_user_t4c_repositories(
-    db: orm.Session, version_name: str, user: users_models.DatabaseUser
+    db: orm.Session,
+    tool_version: tools_models.DatabaseVersion,
+    user: users_models.DatabaseUser,
 ) -> abc.Sequence[models.DatabaseT4CRepository]:
+    tool_versions = [
+        tool_version
+    ] + tools_crud.get_compatible_versions_for_tool_versions(
+        db, tool_version=tool_version
+    )
+
     if user.role == users_models.Role.ADMIN:
-        return _get_admin_t4c_repositories(db, version_name)
-    return _get_user_write_t4c_repositories(db, version_name, user)
+        return _get_admin_t4c_repositories(db, tool_versions)
+    return _get_user_write_t4c_repositories(db, tool_versions, user)
 
 
 def create_t4c_repository(
@@ -76,14 +85,18 @@ def delete_4c_repository(
 
 
 def _get_user_write_t4c_repositories(
-    db: orm.Session, version_name: str, user: users_models.DatabaseUser
+    db: orm.Session,
+    tool_versions: list[tools_models.DatabaseVersion],
+    user: users_models.DatabaseUser,
 ) -> abc.Sequence[models.DatabaseT4CRepository]:
     stmt = (
         sa.select(models.DatabaseT4CRepository)
         .join(models.DatabaseT4CRepository.models)
         .join(t4c_models.DatabaseT4CModel.model)
         .join(toolmodels_models.DatabaseToolModel.version)
-        .where(tools_models.DatabaseVersion.name == version_name)
+        .where(
+            tools_models.DatabaseVersion.id.in_([v.id for v in tool_versions])
+        )
         .join(toolmodels_models.DatabaseToolModel.project)
         .where(projects_models.DatabaseProject.is_archived.is_(False))
         .join(projects_models.DatabaseProject.users)
@@ -98,14 +111,16 @@ def _get_user_write_t4c_repositories(
 
 
 def _get_admin_t4c_repositories(
-    db: orm.Session, version_name: str
+    db: orm.Session, tool_versions: list[tools_models.DatabaseVersion]
 ) -> abc.Sequence[models.DatabaseT4CRepository]:
     stmt = (
         sa.select(models.DatabaseT4CRepository)
         .join(models.DatabaseT4CRepository.models)
         .join(t4c_models.DatabaseT4CModel.model)
         .join(toolmodels_models.DatabaseToolModel.version)
-        .where(tools_models.DatabaseVersion.name == version_name)
+        .where(
+            tools_models.DatabaseVersion.id.in_([v.id for v in tool_versions])
+        )
         .join(toolmodels_models.DatabaseToolModel.project)
         .where(projects_models.DatabaseProject.is_archived.is_(False))
     )
