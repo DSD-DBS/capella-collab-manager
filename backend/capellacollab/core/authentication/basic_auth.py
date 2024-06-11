@@ -45,7 +45,7 @@ class HTTPBasicAuth(security.HTTPBasic):
             if db_token.expiration_date < datetime.date.today():
                 logger.info("Token expired for user %s", credentials.username)
                 if self.auto_error:
-                    raise exceptions.TokenSignatureExpired()
+                    raise exceptions.PersonalAccessTokenExpired()
                 return None
         return self.get_username(credentials)
 
