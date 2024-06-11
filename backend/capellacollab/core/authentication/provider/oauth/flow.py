@@ -57,7 +57,7 @@ def refresh_token(_refresh_token: str) -> dict[str, t.Any]:
         )
     except Exception as e:
         logger.debug("Could not refresh token because of exception %s", str(e))
-        raise auth_exceptions.TokenSignatureExpired()
+        raise auth_exceptions.RefreshTokenSignatureExpired()
 
 
 def read_well_known() -> dict[str, t.Any]:

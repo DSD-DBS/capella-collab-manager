@@ -59,9 +59,11 @@ def api_exceptions(
         excs += [
             authentication_exceptions.JWTInvalidToken(),
             authentication_exceptions.TokenSignatureExpired(),
+            authentication_exceptions.RefreshTokenSignatureExpired(),
             authentication_exceptions.JWTValidationFailed(),
             authentication_exceptions.UnauthenticatedError(),
             authentication_exceptions.InvalidPersonalAccessTokenError(),
+            authentication_exceptions.PersonalAccessTokenExpired(),
             authentication_exceptions.UnknownScheme("unknown"),
         ]
 

@@ -65,8 +65,19 @@ class TokenSignatureExpired(core_exceptions.BaseError):
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
             title="Token signature expired",
-            reason="The Signature of the token is expired. Please request a new access token.",
+            reason="The Signature of the token is expired. Please refresh the token or request a new access token.",
             err_code="TOKEN_SIGNATURE_EXPIRED",
+            headers={"WWW-Authenticate": "Bearer, Basic"},
+        )
+
+
+class RefreshTokenSignatureExpired(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            title="Refresh token signature expired",
+            reason="The Signature of the refresh token is expired. Please request a new access token.",
+            err_code="REFRESH_TOKEN_EXPIRED",
             headers={"WWW-Authenticate": "Bearer, Basic"},
         )
 
@@ -109,5 +120,19 @@ class InvalidPersonalAccessTokenError(core_exceptions.BaseError):
             title="Personal access token not valid.",
             reason="The used token is not valid.",
             err_code="BASIC_TOKEN_INVALID",
+            headers={"WWW-Authenticate": "Bearer, Basic"},
+        )
+
+
+class PersonalAccessTokenExpired(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            title="PAT expired",
+            reason=(
+                "The personal access token is expired."
+                "Please request a new access token."
+            ),
+            err_code="PAT_EXPIRED",
             headers={"WWW-Authenticate": "Bearer, Basic"},
         )
