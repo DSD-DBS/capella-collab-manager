@@ -6,6 +6,9 @@
 from __future__ import annotations
 
 import contextlib
+import datetime
+import enum
+import logging
 import pathlib
 import select
 import sys
@@ -14,25 +17,54 @@ import typing as t
 
 import typer
 import websocket
-from kubernetes import client, config, stream
+from rich import console, pretty, table
 
-app = typer.Typer(help="List, backup and restore persistent workspaces.")
+app = typer.Typer(
+    help=(
+        "List, backup and restore persistent workspaces. \n\n"
+        "Before invoking the command, make sure that you have valid kubeconfig that points to the correct context."
+    )
+)
 
 MOUNT_PATH = "/workspace"
+PERSISTENT_SESSION_PREFIX = "persistent-session-"
+
+LOGGER = logging.getLogger(__name__)
 
 
-@app.callback()
 def init_kube():
+    from kubernetes import config
+
+    LOGGER.info("Loading kubectl configuration...")
     config.load_kube_config()
+    LOGGER.info("Successfully loaded kubectl configuration.")
 
 
 def get_current_namespace():
+    from kubernetes import config
+
     try:
         _, active_context = config.list_kube_config_contexts()
-        return active_context["context"]["namespace"]
+        namespace = active_context["context"]["namespace"]
+        LOGGER.info("Using namespace %s", namespace)
+        return namespace
     except KeyError:
         return "default"
 
+
+class LogLevel(str, enum.Enum):
+    DEBUG = "DEBUG"
+    INFO = "INFO"
+    WARNING = "WARNING"
+    ERROR = "ERROR"
+    CRITICAL = "CRITICAL"
+
+
+LogLevelOption = typer.Option(
+    "--log-level",
+    "-l",
+    help="Set the log level",
+)
 
 NamespaceOption = typer.Option(
     "--namespace",
@@ -41,16 +73,80 @@ NamespaceOption = typer.Option(
     default_factory=get_current_namespace,
 )
 
+QuietOption = typer.Option("--quiet", "-q", help="Only display PVC names.")
+
 
 @app.command()
-def volumes(namespace: t.Annotated[str, NamespaceOption]):
-    """List all Persistent Volume Claims in a kubernetes namespace."""
+def volumes(
+    namespace: t.Annotated[str, NamespaceOption],
+    log_level: t.Annotated[LogLevel, LogLevelOption] = LogLevel.INFO,
+    quiet: t.Annotated[bool, QuietOption] = False,
+):
+    """List all volumes in a kubernetes namespace."""
+    from kubernetes import client
+
+    init_kube()
     core_api = client.CoreV1Api()
 
-    for item in core_api.list_namespaced_persistent_volume_claim(
-        namespace=namespace, watch=False
-    ).items:
-        print(item.metadata.name)
+    logging.getLogger("kubernetes").setLevel(log_level.value)
+
+    LOGGER.info("Listing all volumes in namespace %s", namespace)
+    pvcs: list[client.V1PersistentVolumeClaim] = (
+        core_api.list_namespaced_persistent_volume_claim(
+            namespace=namespace, watch=False
+        ).items
+    )
+
+    if quiet:
+        for item in pvcs:
+            print(item.metadata.name)
+        return
+
+    tbl = table.Table(
+        table.Column("Name of the PVC", no_wrap=True),
+        "Type",
+        "Annotations",
+        "Capacity",
+        "Storage class",
+        "Access Modes",
+        "Age",
+    )
+
+    for item in pvcs:
+        pvc_name: str = item.metadata.name
+        annotations = {}
+        volume_type = "Other"
+        capacity = item.spec.resources.requests.get("storage", "-")
+        storage_class = item.spec.storage_class_name
+        access_modes = ", ".join(item.spec.access_modes)
+        age: datetime.datetime = item.metadata.creation_timestamp
+
+        if pvc_name.startswith(PERSISTENT_SESSION_PREFIX):
+            annotations = {
+                "capellacollab/username": pvc_name.removeprefix(
+                    PERSISTENT_SESSION_PREFIX
+                ),
+            }
+            volume_type = "Persistent user workspace"
+        elif pvc_name.startswith("shared-workspace-"):
+            annotations = {
+                "capellacollab/project_slug": item.metadata.labels.get(
+                    "capellacollab/project_slug"
+                ),
+            }
+            volume_type = "Project-level file-share"
+
+        tbl.add_row(
+            pvc_name,
+            volume_type,
+            pretty.Pretty(annotations),
+            capacity,
+            storage_class,
+            access_modes,
+            str(datetime.datetime.now(datetime.UTC) - age),
+        )
+
+    console.Console().print(tbl)
 
 
 @app.command()
@@ -60,10 +156,11 @@ def ls(
     path: str = MOUNT_PATH,
 ):
     """List all files on a path in a Kubernetes Persistent Volume."""
-    v1 = client.CoreV1Api()
 
-    with pod_for_volume(volume_name, namespace, MOUNT_PATH, v1) as pod_name:
-        for data in stream_tar_from_pod(pod_name, namespace, ["ls", path], v1):
+    init_kube()
+
+    with pod_for_volume(volume_name, namespace) as pod_name:
+        for data in stream_tar_from_pod(pod_name, namespace, ["ls", path]):
             sys.stdout.write(data.decode("utf-8", "replace"))
 
 
@@ -74,15 +171,16 @@ def backup(
     out: pathlib.Path = pathlib.Path.cwd(),
 ):
     """Create a backup of all content in a Kubernetes Persistent Volume."""
-    v1 = client.CoreV1Api()
+    init_kube()
+
     targz = out / f"{volume_name}.tar.gz"
 
-    with pod_for_volume(volume_name, namespace, MOUNT_PATH, v1) as pod_name:
+    with pod_for_volume(volume_name, namespace) as pod_name:
         print(f"Downloading workspace volume to '{targz}'")
 
         with targz.open("wb") as outfile:
             for data in stream_tar_from_pod(
-                pod_name, namespace, ["tar", "zcf", "-", MOUNT_PATH], v1
+                pod_name, namespace, ["tar", "zcf", "-", MOUNT_PATH]
             ):
                 outfile.write(data)
 
@@ -105,24 +203,22 @@ def restore(
     Optionally a `user-id` can be provided. All files then be owned
     by this user id.
     """
-    v1 = client.CoreV1Api()
+
+    init_kube()
 
     create_persistent_volume(
-        volume_name, namespace, access_mode, storage_class_name, v1
+        volume_name, namespace, access_mode, storage_class_name
     )
 
-    with pod_for_volume(
-        volume_name, namespace, MOUNT_PATH, v1, read_only=False
-    ) as pod_name:
+    with pod_for_volume(volume_name, namespace, read_only=False) as pod_name:
         print(f"Restoring workspace volume to '{volume_name}'")
 
         with tarfile.open("rb") as infile:
-            stream_tar_to_pod(pod_name, namespace, infile, v1)
+            stream_tar_to_pod(pod_name, namespace, infile)
 
         adjust_directory_permissions(
             pod_name,
             namespace,
-            v1,
             user_id,
         )
 
@@ -131,25 +227,29 @@ def restore(
 def pod_for_volume(
     volume_name: str,
     namespace: str,
-    mount_path: str,
-    v1: client.CoreV1Api,
     read_only=True,
 ):
-    name = volume_name
+    from kubernetes import client
+
+    core_v1_api = client.CoreV1Api()
 
     containers = [
         client.V1Container(
-            name=name,
+            name=volume_name,
             image="alpine:latest",
             command=["sleep", "infinity"],
             volume_mounts=[
                 client.V1VolumeMount(
                     name="vol",
-                    mount_path=mount_path,
+                    mount_path=MOUNT_PATH,
                     read_only=read_only,
                 )
             ],
             image_pull_policy="Always",
+            resources=client.V1ResourceRequirements(
+                limits={"cpu": "100m", "memory": "128Mi"},
+                requests={"cpu": "100m", "memory": "128Mi"},
+            ),
         )
     ]
 
@@ -165,7 +265,7 @@ def pod_for_volume(
     pod = client.V1Pod(
         kind="Pod",
         api_version="v1",
-        metadata=client.V1ObjectMeta(name=name),
+        metadata=client.V1ObjectMeta(name=volume_name),
         spec=client.V1PodSpec(
             containers=containers,
             volumes=volumes_,
@@ -173,28 +273,38 @@ def pod_for_volume(
         ),
     )
 
-    v1.create_namespaced_pod(namespace, pod)
+    core_v1_api.create_namespaced_pod(namespace, pod)
 
     timeout = 300  # seconds
-    while not is_pod_ready(name, namespace, v1) and timeout > 0:
+    while not is_pod_ready(volume_name, namespace) and timeout > 0:
         print("Waiting for pod to come online...")
         time.sleep(2)
         timeout -= 2
 
-    yield name
+    yield volume_name
 
-    v1.delete_namespaced_pod(name, namespace)
+    core_v1_api.delete_namespaced_pod(volume_name, namespace)
 
 
 def create_persistent_volume(
-    name: str, namespace: str, access_mode: str, storage_class_name: str, v1
+    name: str,
+    namespace: str,
+    access_mode: str,
+    storage_class_name: str,
 ):
     """Rebuild a PVC, according to the config defined in
     `capellacollab/sessions/hooks/persistent_workspace.py`.
     """
 
-    prefix = "persistent-session-"
-    username = name[len(prefix) :] if name.startswith(prefix) else name
+    from kubernetes import client
+
+    core_v1_api = client.CoreV1Api()
+
+    username = (
+        name[len(PERSISTENT_SESSION_PREFIX) :]
+        if name.startswith(PERSISTENT_SESSION_PREFIX)
+        else name
+    )
 
     pvc = client.V1PersistentVolumeClaim(
         kind="PersistentVolumeClaim",
@@ -215,7 +325,7 @@ def create_persistent_volume(
     )
 
     try:
-        v1.create_namespaced_persistent_volume_claim(namespace, pvc)
+        core_v1_api.create_namespaced_persistent_volume_claim(namespace, pvc)
     except client.exceptions.ApiException as e:
         # Persistent volume already exists
         if e.status == 409:
@@ -227,12 +337,13 @@ def create_persistent_volume(
 def adjust_directory_permissions(
     pod_name: str,
     namespace: str,
-    v1: client.CoreV1Api,
     user_id: str | None,
     directory: str = MOUNT_PATH,
 ):
+    from kubernetes import client, stream
+
     resp = stream.stream(
-        v1.connect_get_namespaced_pod_exec,
+        client.CoreV1Api().connect_get_namespaced_pod_exec,
         pod_name,
         namespace,
         command=[
@@ -257,9 +368,13 @@ def adjust_directory_permissions(
             print(f"STDERR: {resp.read_stderr()}")
 
 
-def is_pod_ready(pod_name, namespace, v1):
+def is_pod_ready(pod_name, namespace):
+    from kubernetes import client
+
     try:
-        pod_status = v1.read_namespaced_pod_status(pod_name, namespace)
+        pod_status = client.CoreV1Api().read_namespaced_pod_status(
+            pod_name, namespace
+        )
         return pod_status.status.phase == "Running"
     except client.exceptions.ApiException as e:
         print(
@@ -268,9 +383,11 @@ def is_pod_ready(pod_name, namespace, v1):
         return False
 
 
-def stream_tar_from_pod(pod_name, namespace, command, v1):
+def stream_tar_from_pod(pod_name, namespace, command):
+    from kubernetes import client, stream
+
     exec_stream = stream.stream(
-        v1.connect_get_namespaced_pod_exec,
+        client.CoreV1Api().connect_get_namespaced_pod_exec,
         pod_name,
         namespace,
         command=command,
@@ -295,9 +412,11 @@ def stream_tar_from_pod(pod_name, namespace, command, v1):
         exec_stream.close()
 
 
-def stream_tar_to_pod(pod_name, namespace, infile, v1):
+def stream_tar_to_pod(pod_name, namespace, infile):
+    from kubernetes import client, stream
+
     exec_stream = stream.stream(
-        v1.connect_get_namespaced_pod_exec,
+        client.CoreV1Api().connect_get_namespaced_pod_exec,
         pod_name,
         namespace,
         command=["tar", "zxf", "-", "-C", "/"],
@@ -328,6 +447,8 @@ class WSFileManager:
         self.ws_client = ws_client
 
     def read_bytes(self, timeout=0) -> tuple[bytes | None, bytes | None, bool]:
+        from kubernetes import stream
+
         stdout_bytes = None
         stderr_bytes = None
 
