@@ -156,7 +156,7 @@ It can take a long time to run, but shouldn't take more than 5 minutes. Please
 wait until all services are in the "Running" state.
 
 If all goes well, you should find Capella Collaboration Manager running on
-<http://localhost:8080/>.
+<https://localhost:443/>.
 
 If you want to see the individual services in the web-based Kubernetes
 dashboard, you can run the following command:

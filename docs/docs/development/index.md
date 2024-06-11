@@ -24,17 +24,22 @@ make sure that your code respects the
 ## Setup of a Local Development Environment
 
 In addition to the
-[local k8s deployment](https://github.com/DSD-DBS/capella-collab-manager#running-locally-with-k3d),
-we have local development environment. This environment includes automatic
-reloading of the frontend and backend.
+[local k3d deployment](https://github.com/DSD-DBS/capella-collab-manager#running-locally-with-k3d),
+we have a local development environment. This environment includes automatic
+reloading of the frontend and backend, providing direct feedback instead of
+long build iterations.
+
+In any case, start with the
+[local k3d deployment](https://github.com/DSD-DBS/capella-collab-manager#running-locally-with-k3d).
+The k3d cluster is required for the development environment.
 
 ### Requirements
 
-- `Python` >= 3.11
-- `Docker`
-- `GNU Make`
-- `Node.js 18` >= v20.8.0
-- `npm` package manager
+- [`Python`](https://www.python.org/) >= 3.12
+- [`Docker`](https://www.docker.com/)
+- [`GNU Make`](https://www.gnu.org/software/make/)
+- [`Node.js`](https://nodejs.org/en) >= v20.8.0
+- [`npm`](https://www.npmjs.com/) package manager
 - [`Angular CLI`](https://angular.io/cli#installing-angular-cli)
 
 ### Backend Configuration
@@ -43,8 +48,9 @@ The backend uses various configuration settings. You can find them in the
 `backend/config` directory. A `config.yaml` with default values will be
 generated the first time you run the application.
 
-_Hint_: If you already have the k3d cluster running and if you have the
-application deployed, then no configuration values need to be adjusted.
+_Hint_: If you already have the
+[local k3d deployment](https://github.com/DSD-DBS/capella-collab-manager#running-locally-with-k3d)
+running, then no configuration values need to be adjusted.
 
 ### Getting Started
 
@@ -68,7 +74,8 @@ If everything went well, the frontend and backend should be running now:
 - [Frontend](http://localhost:4200)
 - [Backend healthcheck](http://localhost:8000/healthcheck)
 - [Backend API documentation](http://localhost:8000/docs)
-- [Capella Collaboration Manager Documentation](http://localhost:8081)
+- [Documentation](http://localhost:8081)
+- [Storybook](http://localhost:6006)
 
 ## General Notes
 
