@@ -117,6 +117,7 @@ nav:
           - Measure Resource Usage: development/k8s/resources.md
       - Documentation: development/docs.md
       - Pull Request Acceptance Criteria: development/pull_requests.md
+      - Troubleshooting: development/troubleshooting.md
 
 repo_url: https://github.com/DSD-DBS/capella-collab-manager
 edit_uri: edit/master/docs/docs

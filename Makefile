@@ -10,8 +10,10 @@ SESSION_NAMESPACE = collab-sessions
 K3D_REGISTRY_PORT = 12345
 K3D_REGISTRY_NAME = myregistry.localhost
 
-DOCKER_REGISTRY ?= k3d-$(K3D_REGISTRY_NAME):$(K3D_REGISTRY_PORT)
-CAPELLACOLLAB_SESSIONS_REGISTRY ?= $(DOCKER_REGISTRY)
+DOCKER_REGISTRY ?= k3d-$(K3D_REGISTRY_NAME):$(K3D_REGISTRY_PORT)/capella/collab
+CAPELLACOLLAB_SESSIONS_REGISTRY ?= k3d-$(K3D_REGISTRY_NAME):$(K3D_REGISTRY_PORT)
+
+DOCKER_TAG ?= $$(git describe --tags --abbrev=0)
 
 # List of Capella versions, e.g.: `5.0.0 5.2.0 6.0.0`
 CAPELLA_VERSIONS ?= 6.0.0
@@ -37,29 +39,29 @@ include .env
 SHELL = /bin/bash
 .SHELLFLAGS = -euo pipefail -c
 
-build: backend frontend docs guacamole jupyter session-preparation
+build: backend frontend docs guacamole session-preparation
 
-backend: IMAGE=capella/collab/backend
 backend:
 	python backend/generate_git_archival.py;
-	docker build -t $(IMAGE) -t $(DOCKER_REGISTRY)/$(IMAGE) backend
-	docker push $(DOCKER_REGISTRY)/$(IMAGE)
+	docker build -t $@ -t $(DOCKER_REGISTRY)/$@ -t $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG) backend
+	docker push -a $(DOCKER_REGISTRY)/$@
 
-frontend: IMAGE=capella/collab/frontend
 frontend:
 	python frontend/fetch-version.py
-	docker build -t $(IMAGE) -t $(DOCKER_REGISTRY)/$(IMAGE) frontend
-	docker push $(DOCKER_REGISTRY)/$(IMAGE)
+	docker build -t $@ -t $(DOCKER_REGISTRY)/$@ -t $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG) frontend
+	docker push -a $(DOCKER_REGISTRY)/$@
 
-guacamole: IMAGE=capella/collab/guacamole
 guacamole:
-	docker build -t $(IMAGE) -t $(DOCKER_REGISTRY)/$(IMAGE) images/guacamole
-	docker push $(DOCKER_REGISTRY)/$(IMAGE)
+	docker build -t $@ -t $(DOCKER_REGISTRY)/$@ -t $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG) images/guacamole
+	docker push -a $(DOCKER_REGISTRY)/$@
 
-session-preparation: IMAGE=capella/collab/session-preparation
 session-preparation:
-	docker build -t $(IMAGE) -t $(DOCKER_REGISTRY)/$(IMAGE) images/session-preparation
-	docker push $(DOCKER_REGISTRY)/$(IMAGE)
+	docker build -t $@ -t $(DOCKER_REGISTRY)/$@ -t $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG) images/session-preparation
+	docker push -a $(DOCKER_REGISTRY)/$@
+
+docs:
+	docker build -t $@ -t $(DOCKER_REGISTRY)/$@ -t $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG) docs
+	docker push -a $(DOCKER_REGISTRY)/$@
 
 capella:
 	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(CAPELLA_VERSIONS)" capella/remote
@@ -70,14 +72,10 @@ t4c-client:
 jupyter:
 	$(CAPELLA_DOCKERIMAGES) jupyter-notebook
 
-docs:
-	docker build -t capella/collab/docs -t $(DOCKER_REGISTRY)/capella/collab/docs docs
-	docker push $(DOCKER_REGISTRY)/capella/collab/docs
-
-deploy: build capella helm-deploy rollout open
+deploy: build jupyter capella helm-deploy rollout open
 
 # Deploy with full T4C client support:
-deploy-t4c: build t4c-client helm-deploy rollout open
+deploy-t4c: build jupyter t4c-client helm-deploy rollout open
 
 deploy-without-build: helm-deploy rollout open
 
@@ -92,9 +90,9 @@ helm-deploy:
 		--namespace $(NAMESPACE) \
 		--values helm/values.yaml \
 		$$(test -f secrets.yaml && echo "--values secrets.yaml") \
-		--set docker.registry.internal=$(DOCKER_REGISTRY)/capella/collab \
+		--set docker.registry.internal=$(DOCKER_REGISTRY) \
 		--set docker.registry.sessions=$(CAPELLACOLLAB_SESSIONS_REGISTRY) \
-		--set docker.tag=latest \
+		--set docker.tag=$(DOCKER_TAG) \
 		--set mocks.oauth=True \
 		--set development=$(DEVELOPMENT_MODE) \
 		--set cluster.ingressClassName=traefik \
@@ -173,6 +171,14 @@ provision-guacamole:
 	kubectl exec -i --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) deployment/$(RELEASE)-guacamole-postgres -- psql -U guacamole guacamole
 	@echo "Guacamole database initialized sucessfully.";
 
+reach-registry:
+	@r=0;
+	curl http://k3d-myregistry.localhost:12345/v2/ || r=$$?
+	if [ $$r -ne 0 ]; then
+		echo "The registry is not reachable. Possible solutions are described in our documentation: "
+		echo "https://dsd-dbs.github.io/capella-collab-manager/development/troubleshooting/"
+		exit 1
+	fi
 
 dev:
 	$(MAKE) -j5 dev-frontend dev-backend dev-oauth-mock dev-docs dev-storybook
