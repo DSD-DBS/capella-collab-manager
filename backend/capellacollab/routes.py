@@ -2,13 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import importlib
 import logging
 
 import fastapi
 
-from capellacollab.core import authentication
 from capellacollab.core import responses as auth_responses
+from capellacollab.core.authentication import routes as authentication_routes
 from capellacollab.events import routes as events_router
 from capellacollab.health import routes as health_routes
 from capellacollab.metadata import routes as core_metadata
@@ -77,11 +76,4 @@ router.include_router(
     prefix="/settings",
 )
 
-# Load authentication routes
-ep = authentication.get_authentication_entrypoint()
-
-router.include_router(
-    importlib.import_module(".routes", ep.module).router,
-    prefix="/authentication",
-    tags=[ep.name],
-)
+router.include_router(authentication_routes.router, prefix="/authentication")

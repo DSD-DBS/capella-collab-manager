@@ -13,6 +13,5 @@
 
 export interface TokenRequest { 
     code: string;
-    state: string;
 }
 

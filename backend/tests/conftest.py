@@ -91,7 +91,7 @@ def fixture_db(
 
 @pytest.fixture()
 def client() -> testclient.TestClient:
-    return testclient.TestClient(app, headers={"Authorization": "bearer"})
+    return testclient.TestClient(app, cookies={"id_token": "any.any"})
 
 
 @pytest.fixture(name="logger")

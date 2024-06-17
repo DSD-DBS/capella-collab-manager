@@ -20,8 +20,9 @@ from capellacollab.projects import injectables as projects_injectables
 
 def test_get_projects_not_authenticated(client: testclient.TestClient):
     response = client.get("/api/v1/projects")
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Not authenticated"}
+    assert response.status_code == 401
+
+    assert response.json()["detail"]["err_code"] == "JWT_TOKEN_INVALID"
 
 
 def test_get_internal_default_project_as_user(

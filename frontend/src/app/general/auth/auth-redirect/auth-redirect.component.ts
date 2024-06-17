@@ -5,6 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { UserWrapperService } from 'src/app/services/user/user.service';
 
@@ -16,6 +17,7 @@ import { UserWrapperService } from 'src/app/services/user/user.service';
 export class AuthRedirectComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
+    private toastService: ToastService,
     private authService: AuthService,
     private userService: UserWrapperService,
     private router: Router,
@@ -36,14 +38,26 @@ export class AuthRedirectComponent implements OnInit {
         this.router.navigateByUrl(redirect_url);
         return;
       }
-      this.authService
-        .getAccessToken(params.code, params.state)
-        .subscribe((res) => {
-          this.authService.logIn(res.access_token, res.refresh_token);
-          this.userService.updateOwnUser();
 
-          this.router.navigateByUrl(this.authService.getCurrentPath());
+      const redirectTo = sessionStorage.getItem(params.state);
+
+      if (redirectTo === null) {
+        this.toastService.showError(
+          'State mismatch error',
+          'The state returned by the authentication server does not match the local state. If you initiated the login yourself, please retry, and if the error persists or you did not initiate the login, please contact your system administrator.',
+        );
+        this.router.navigateByUrl('/auth');
+      } else {
+        sessionStorage.removeItem(params.state);
+
+        this.authService.getAccessToken(params.code).subscribe({
+          next: () => {
+            this.userService.updateOwnUser();
+            this.router.navigateByUrl(redirectTo);
+          },
+          error: () => this.router.navigateByUrl('/auth'),
         });
+      }
     });
   }
 }
