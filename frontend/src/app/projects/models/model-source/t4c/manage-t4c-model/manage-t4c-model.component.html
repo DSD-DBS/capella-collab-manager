@@ -3,109 +3,110 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div
-  *ngIf="(projectService.project$ | async) && (modelService.model$ | async)"
-  class="wrapper flex justify-center"
->
-  <div class="collab-card w-[350px] sm:min-w-[420px]">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <fieldset>
-        <app-form-field-skeleton-loader
-          *ngIf="(t4cInstanceService.t4cInstances$ | async) === undefined"
-        >
-        </app-form-field-skeleton-loader>
+@if ((projectService.project$ | async) && (modelService.model$ | async)) {
+  <div class="wrapper flex justify-center">
+    <div class="collab-card w-[350px] sm:min-w-[420px]">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <fieldset>
+          @if ((t4cInstanceService.t4cInstances$ | async) === undefined) {
+            <app-form-field-skeleton-loader> </app-form-field-skeleton-loader>
+          } @else {
+            <mat-form-field appearance="fill">
+              <mat-label>Instance</mat-label>
+              <mat-select formControlName="t4cInstanceId">
+                @for (
+                  instance of t4cInstanceService.t4cInstances$ | async;
+                  track instance.id
+                ) {
+                  <mat-option
+                    [value]="instance.id"
+                    [disabled]="instance.is_archived"
+                    [matTooltip]="
+                      instance.is_archived ? 'This instance is archived' : ''
+                    "
+                  >
+                    {{ instance.name }}
+                  </mat-option>
+                }
+              </mat-select>
+              @if (form.controls.t4cInstanceId.errors) {
+                <mat-error> Please select an instance. </mat-error>
+              }
+            </mat-form-field>
+          }
+        </fieldset>
+        <fieldset>
+          @if ((t4cInstanceService.t4cInstances$ | async) === undefined) {
+            <app-form-field-skeleton-loader></app-form-field-skeleton-loader>
+          } @else {
+            <mat-form-field appearance="fill">
+              <mat-label>Repository</mat-label>
+              <mat-select formControlName="t4cRepositoryId">
+                @for (
+                  repository of t4cRepositoryService.repositories$ | async;
+                  track repository.id
+                ) {
+                  <mat-option [value]="repository.id">
+                    {{ repository.name }}
+                  </mat-option>
+                }
+              </mat-select>
+              @if (form.controls.t4cRepositoryId.errors) {
+                <mat-error> Please select a repository. </mat-error>
+              }
+            </mat-form-field>
+          }
+        </fieldset>
+        <fieldset>
+          @if (loading) {
+            <app-form-field-skeleton-loader> </app-form-field-skeleton-loader>
+          } @else {
+            <mat-form-field appearance="fill">
+              <mat-label>T4C project name</mat-label>
+              <input matInput formControlName="name" [matAutocomplete]="auto" />
+              @if (form.controls.name.errors?.alreadyUsed) {
+                <mat-error>
+                  This project does already exist in your model!
+                </mat-error>
+              }
+            </mat-form-field>
+          }
 
-        <mat-form-field
-          *ngIf="(t4cInstanceService.t4cInstances$ | async) !== undefined"
-          appearance="fill"
-        >
-          <mat-label>Instance</mat-label>
-          <mat-select formControlName="t4cInstanceId">
-            <mat-option
-              *ngFor="let instance of t4cInstanceService.t4cInstances$ | async"
-              [value]="instance.id"
-              [disabled]="instance.is_archived"
-              [matTooltip]="
-                instance.is_archived ? 'This instance is archived' : ''
-              "
-            >
-              {{ instance.name }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="form.controls.t4cInstanceId.errors">
-            Please select an instance.
-          </mat-error>
-        </mat-form-field>
-      </fieldset>
-      <fieldset>
-        <app-form-field-skeleton-loader
-          *ngIf="(t4cInstanceService.t4cInstances$ | async) === undefined"
-        >
-        </app-form-field-skeleton-loader>
-        <mat-form-field
-          *ngIf="(t4cInstanceService.t4cInstances$ | async) !== undefined"
-          appearance="fill"
-        >
-          <mat-label>Repository</mat-label>
-          <mat-select formControlName="t4cRepositoryId">
-            <mat-option
-              *ngFor="
-                let repository of t4cRepositoryService.repositories$ | async
-              "
-              [value]="repository.id"
-            >
-              {{ repository.name }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="form.controls.t4cRepositoryId.errors">
-            Please select a repository.
-          </mat-error>
-        </mat-form-field>
-      </fieldset>
-      <fieldset>
-        <app-form-field-skeleton-loader *ngIf="loading">
-        </app-form-field-skeleton-loader>
-        <mat-form-field *ngIf="!loading" appearance="fill">
-          <mat-label>T4C project name</mat-label>
-          <input matInput formControlName="name" [matAutocomplete]="auto" />
-          <mat-error *ngIf="form.controls.name.errors?.alreadyUsed">
-            This project does already exist in your model!
-          </mat-error>
-        </mat-form-field>
-        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-          <mat-option
-            *ngIf="selectedRepository"
-            [value]="selectedRepository.name"
-          >
-            {{ selectedRepository.name }}
-          </mat-option>
-        </mat-autocomplete>
-      </fieldset>
+          <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+            @if (selectedRepository) {
+              <mat-option [value]="selectedRepository.name">
+                {{ selectedRepository.name }}
+              </mat-option>
+            }
+          </mat-autocomplete>
+        </fieldset>
 
-      <div class="flex justify-end">
-        <button
-          *ngIf="t4cModel !== undefined"
-          (click)="unlinkT4CModel()"
-          mat-flat-button
-          color="warn"
-          type="button"
-        >
-          Unlink
-        </button>
-        <app-button-skeleton-loader
-          *ngIf="loading"
-        ></app-button-skeleton-loader>
-        <button
-          mat-flat-button
-          [disabled]="!form.valid"
-          *ngIf="!loading"
-          type="submit"
-          color="primary"
-        >
-          Save reference
-          <mat-icon class="mat-icon-position right">navigate_next</mat-icon>
-        </button>
-      </div>
-    </form>
+        <div class="flex justify-end">
+          @if (t4cModel !== undefined) {
+            <button
+              (click)="unlinkT4CModel()"
+              mat-flat-button
+              color="warn"
+              type="button"
+            >
+              Unlink
+            </button>
+          }
+          @if (loading) {
+            <app-button-skeleton-loader></app-button-skeleton-loader>
+          } @else {
+            <button
+              mat-flat-button
+              [disabled]="!form.valid"
+              type="submit"
+              color="primary"
+            >
+              Save reference
+              <mat-icon class="mat-icon-position right">navigate_next</mat-icon>
+            </button>
+          }
+        </div>
+      </form>
+    </div>
   </div>
-</div>
+}

@@ -31,15 +31,13 @@ import {
 import { ToastService } from '../../helpers/toast/toast.service';
 import { ProjectUserService } from '../project-detail/project-users/service/project-user.service';
 import {
-  PatchProject,
-  ProjectService,
-  ProjectVisibility,
+  ProjectWrapperService,
   ProjectVisibilityDescriptions,
 } from '../service/project.service';
 import { CreateProjectComponent } from './create-project.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CookieModule } from 'ngx-cookie';
-import { Project } from 'src/app/openapi';
+import { PatchProject, Project, Visibility } from 'src/app/openapi';
 
 const mockProjects: Project[] = [
   {
@@ -127,18 +125,18 @@ describe('CreateProjectComponent', () => {
         );
       };
     },
-    getProjectVisibilityDescription(visibility: ProjectVisibility): string {
+    getProjectVisibilityDescription(visibility: Visibility): string {
       return ProjectVisibilityDescriptions[visibility];
     },
-    getAvailableVisibilities(): ProjectVisibility[] {
-      return Object.keys(ProjectVisibilityDescriptions) as ProjectVisibility[];
+    getAvailableVisibilities(): Visibility[] {
+      return Object.keys(ProjectVisibilityDescriptions) as Visibility[];
     },
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       providers: [
-        { provide: ProjectService, useValue: fakeProjectService },
+        { provide: ProjectWrapperService, useValue: fakeProjectService },
         { provide: ToastService, useValue: fakeToastService },
         { provide: ProjectUserService, useValue: fakeProjectUserService },
         { provide: Location, useClass: SpyLocation },
@@ -194,7 +192,6 @@ describe('CreateProjectComponent', () => {
       name: testProjectName,
       description: '',
       visibility: 'private',
-      type: 'general',
     });
     expect(fakeToastService.showSuccess).toHaveBeenCalledTimes(1);
   });
@@ -213,7 +210,6 @@ describe('CreateProjectComponent', () => {
       name: testProjectName,
       description: testProjectDescription,
       visibility: 'private',
-      type: 'general',
     });
     expect(fakeToastService.showSuccess).toHaveBeenCalledTimes(1);
   });

@@ -15,7 +15,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { getReasonPhrase } from 'http-status-codes';
-import { Observable, tap, map, from, catchError } from 'rxjs';
+import { Observable, tap, from, catchError } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { Message } from 'src/app/openapi';
 
@@ -104,16 +104,6 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
           }
         },
       }),
-      // If the body has a payload attribute, map to the attribute
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      map((event: HttpEvent<any>) => {
-        if (event.type == HttpEventType.Response) {
-          if (event.body?.payload) {
-            event = event.clone({ body: event.body.payload });
-          }
-        }
-        return event;
-      }),
     );
   }
 
@@ -166,12 +156,6 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
     return request.context.get(SKIP_ERROR_HANDLING);
   }
 }
-
-export type PayloadWrapper = {
-  warnings: Message[];
-  errors: Message[];
-  payload: unknown;
-};
 
 interface FileReaderEventTarget extends EventTarget {
   result: string;

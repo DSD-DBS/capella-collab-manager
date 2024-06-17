@@ -18,7 +18,7 @@ from capellacollab.users import models as users_models
 def test_move_toolmodel(
     project: projects_models.DatabaseProject,
     project_manager: users_models.DatabaseUser,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
     db: orm.Session,
 ):
@@ -46,7 +46,7 @@ def test_move_toolmodel(
 @pytest.mark.usefixtures("project_manager")
 def test_move_toolmodel_non_project_member(
     project: projects_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
     db: orm.Session,
 ):

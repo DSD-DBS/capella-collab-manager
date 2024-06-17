@@ -19,6 +19,7 @@ import { MatInput } from '@angular/material/input';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
 import { RouterLink } from '@angular/router';
+import { Visibility } from 'src/app/openapi';
 import {
   CreateModelComponent,
   CreateModelStep,
@@ -27,7 +28,7 @@ import { ToastService } from '../../helpers/toast/toast.service';
 import { CreateModelComponent as CreateModelComponent_1 } from '../models/create-model/create-model.component';
 import { ProjectUserSettingsComponent } from '../project-detail/project-users/project-user-settings.component';
 import { ProjectUserService } from '../project-detail/project-users/service/project-user.service';
-import { ProjectService, ProjectVisibility } from '../service/project.service';
+import { ProjectWrapperService } from '../service/project.service';
 
 @Component({
   selector: 'app-create-project',
@@ -63,7 +64,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   public modelCreationStep: CreateModelStep = 'create-model';
 
   constructor(
-    public projectService: ProjectService,
+    public projectService: ProjectWrapperService,
     public projectUserService: ProjectUserService,
     private toastService: ToastService,
   ) {}
@@ -91,8 +92,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
         .createProject({
           name: this.form.value.name!,
           description: this.form.value.description!,
-          visibility: this.form.value.visibility! as ProjectVisibility,
-          type: 'general',
+          visibility: this.form.value.visibility! as Visibility,
         })
         .subscribe((project) => {
           this.toastService.showSuccess(

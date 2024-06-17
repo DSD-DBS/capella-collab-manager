@@ -62,7 +62,7 @@ def test_creation_of_jupyter_fileshare(
 def test_deletion_of_jupyter_fileshare(
     client: testclient.TestClient,
     project: projects_models.DatabaseProject,
-    jupyter_model: toolmodels_models.CapellaModel,
+    jupyter_model: toolmodels_models.ToolModel,
     mockoperator: MockOperator,
 ):
     response = client.delete(

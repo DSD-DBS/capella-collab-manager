@@ -43,7 +43,7 @@ def fixture_pure_variants_model(
     return toolmodels_crud.create_model(
         db,
         project,
-        post_model=toolmodels_models.PostCapellaModel(
+        post_model=toolmodels_models.PostToolModel(
             name="test", tool_id=pure_variants_tool.id
         ),
         tool=pure_variants_tool,

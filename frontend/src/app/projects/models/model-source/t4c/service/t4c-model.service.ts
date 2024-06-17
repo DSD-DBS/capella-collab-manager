@@ -11,7 +11,7 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { BehaviorSubject, Observable, map, take, tap } from 'rxjs';
-import { T4CRepository } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
+import { T4CRepository } from 'src/app/openapi';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

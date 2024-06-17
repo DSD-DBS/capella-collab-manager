@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { BehaviorSubject } from 'rxjs';
 import { Project } from 'src/app/openapi';
+import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 
 export const mockProject: Readonly<Project> = {
   name: 'mockProject',
@@ -19,3 +21,18 @@ export const mockProject: Readonly<Project> = {
     subscribers: 1,
   },
 };
+
+export class MockProjectWrapperService
+  implements Partial<ProjectWrapperService>
+{
+  private _project = new BehaviorSubject<Project | undefined>(undefined);
+  private _projects = new BehaviorSubject<Project[] | undefined>(undefined);
+
+  public readonly project$ = this._project.asObservable();
+  public readonly projects$ = this._projects.asObservable();
+
+  constructor(project: Project, projects: Project[]) {
+    this._project.next(project);
+    this._projects.next(projects);
+  }
+}

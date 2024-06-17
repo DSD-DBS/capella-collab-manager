@@ -31,17 +31,17 @@ import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { saveAs } from 'file-saver';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { Project } from 'src/app/openapi';
+import {
+  DiagramCacheMetadata,
+  DiagramMetadata,
+  Project,
+  ProjectsModelsDiagramsService,
+  ToolModel,
+} from 'src/app/openapi';
 import {
   MatDialogPreviewData,
   ModelDiagramPreviewDialogComponent,
 } from 'src/app/projects/models/diagrams/model-diagram-preview-dialog/model-diagram-preview-dialog.component';
-import {
-  DiagramCacheMetadata,
-  DiagramMetadata,
-  ModelDiagramService,
-} from 'src/app/projects/models/diagrams/service/model-diagram.service';
-import { Model } from 'src/app/projects/models/service/model.service';
 import { ModelDiagramCodeBlockComponent } from './model-diagram-code-block/model-diagram-code-block.component';
 
 @Component({
@@ -89,15 +89,15 @@ export class ModelDiagramDialogComponent implements OnInit {
   }
 
   constructor(
-    private modelDiagramService: ModelDiagramService,
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<ModelDiagramDialogComponent>,
+    private projectsModelsDiagramsService: ProjectsModelsDiagramsService,
     @Inject(MAT_DIALOG_DATA)
-    public data: { model: Model; project: Project },
+    public data: { model: ToolModel; project: Project },
   ) {}
 
   ngOnInit(): void {
-    this.modelDiagramService
+    this.projectsModelsDiagramsService
       .getDiagramMetadata(this.data.project.slug, this.data.model.slug)
       .subscribe({
         next: (diagramMetadata) => {
@@ -139,8 +139,8 @@ export class ModelDiagramDialogComponent implements OnInit {
   lazyLoadDiagram(uuid: string) {
     if (!this.diagrams[uuid]) {
       this.diagrams[uuid] = { loading: true, content: undefined };
-      this.modelDiagramService
-        .getDiagram(this.data.project.slug, this.data.model.slug, uuid)
+      this.projectsModelsDiagramsService
+        .getDiagram(uuid, this.data.project.slug, this.data.model.slug)
         .subscribe({
           next: (response: Blob) => {
             const reader = new FileReader();
@@ -186,8 +186,8 @@ export class ModelDiagramDialogComponent implements OnInit {
   }
 
   downloadDiagram(uuid: string) {
-    this.modelDiagramService
-      .getDiagram(this.data.project.slug, this.data.model.slug, uuid)
+    this.projectsModelsDiagramsService
+      .getDiagram(uuid, this.data.project.slug, this.data.model.slug)
       .subscribe((response: Blob) => {
         saveAs(response, `${uuid}.svg`);
       });

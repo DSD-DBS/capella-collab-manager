@@ -28,13 +28,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { ToolVersion } from 'src/app/openapi';
 import {
-  NewT4CInstance,
+  CreateT4CInstance,
   PatchT4CInstance,
   Protocol,
-  T4CInstanceService,
-} from 'src/app/services/settings/t4c-instance.service';
+  ToolVersion,
+} from 'src/app/openapi';
+import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
 import { ToolWrapperService } from 'src/app/settings/core/tools-settings/tool.service';
 import { LicencesComponent } from '../licences/licences.component';
 import { T4CInstanceSettingsComponent } from '../t4c-instance-settings/t4c-instance-settings.component';
@@ -107,7 +107,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   });
 
   constructor(
-    public t4cInstanceService: T4CInstanceService,
+    public t4cInstanceService: T4CInstanceWrapperService,
     private route: ActivatedRoute,
     private router: Router,
     private toastService: ToastService,
@@ -131,8 +131,11 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
 
     this.t4cInstanceService.t4cInstance$
       .pipe(untilDestroyed(this), filter(Boolean))
-      .subscribe((t4cInstance) => {
-        t4cInstance.password = '***********';
+      .subscribe((initialT4CInstance) => {
+        const t4cInstance = {
+          ...initialT4CInstance,
+          password: '***********',
+        };
         this.isArchived = t4cInstance.is_archived;
         this.form.patchValue(t4cInstance);
         this.form.controls.name.setAsyncValidators(
@@ -169,7 +172,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   create(): void {
     if (this.form.valid) {
       this.t4cInstanceService
-        .createInstance(this.form.value as NewT4CInstance)
+        .createInstance(this.form.value as CreateT4CInstance)
         .subscribe((instance) => {
           this.toastService.showSuccess(
             'Instance created',

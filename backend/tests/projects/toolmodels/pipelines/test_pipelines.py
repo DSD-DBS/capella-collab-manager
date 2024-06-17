@@ -54,7 +54,7 @@ def fixture_mockoperator(monkeypatch: pytest.MonkeyPatch):
 @pytest.mark.usefixtures("project_manager", "mockoperator", "pipeline")
 def test_get_all_pipelines_of_capellamodel(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
     run_nightly: bool,
     include_commit_history: bool,
@@ -73,7 +73,7 @@ def test_get_all_pipelines_of_capellamodel(
 )
 def test_create_pipeline_of_capellamodel_git_model_does_not_exist(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     t4c_model: models_t4c_models.T4CModel,
     client: testclient.TestClient,
 ):
@@ -99,7 +99,7 @@ def test_create_pipeline_of_capellamodel_git_model_does_not_exist(
 def test_create_pipeline(
     db: orm.Session,
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     t4c_model: models_t4c_models.T4CModel,
     git_model: git_models.GitModel,
     client: testclient.TestClient,
@@ -129,7 +129,7 @@ def test_create_pipeline(
 )
 def test_pipeline_creation_fails_if_t4c_server_not_available(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     t4c_model: models_t4c_models.T4CModel,
     git_model: git_models.GitModel,
     client: testclient.TestClient,
@@ -174,7 +174,7 @@ def test_pipeline_creation_fails_if_t4c_server_not_available(
 def test_delete_pipeline(
     db: orm.Session,
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     pipeline: pipelines_models.DatabaseBackup,
     client: testclient.TestClient,
     monkeypatch: pytest.MonkeyPatch,

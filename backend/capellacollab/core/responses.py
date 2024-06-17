@@ -5,6 +5,7 @@
 import os
 import typing as t
 
+import fastapi
 import pydantic
 
 from capellacollab.core import pydantic as core_pydantic
@@ -104,7 +105,43 @@ def _translate_exceptions_to_openapi_schema(excs: list[exceptions.BaseError]):
                     ...,
                 ),
                 __base__=pydantic.RootModel,
-            )
+            ),
         }
         for status_code, excs in grouped_by_status_code.items()
+    }
+
+
+class SVGResponse(fastapi.responses.Response):
+    """Custom error class for SVG responses.
+
+    To use the class as response class, pass the following parameters
+    to the fastapi route definition.
+
+    ```python
+    response_class=fastapi.responses.Response
+    responses=responses.SVGResponse.responses
+    ```
+
+    Don't use SVGResponse as response_class as this will also change the
+    media type for all error responses, see:
+    https://github.com/tiangolo/fastapi/discussions/6799
+
+    To return an SVG response in the route, use:
+
+    ```python
+    return responses.SVGResponse(
+        content=b"<svg>...</svg>",
+    )
+    ```
+    """
+
+    media_type = "image/svg+xml"
+    responses: dict[int | str, dict[str, t.Any]] | None = {
+        200: {
+            "content": {
+                "image/svg+xml": {
+                    "schema": {"type": "string", "format": "binary"}
+                }
+            }
+        }
     }

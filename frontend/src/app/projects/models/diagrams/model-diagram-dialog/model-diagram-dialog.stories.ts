@@ -5,11 +5,11 @@
 
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
+import { DiagramCacheMetadata } from 'src/app/openapi';
 import { dialogWrapper } from 'src/storybook/decorators';
 import { base64ModelDiagram } from 'src/storybook/diagram';
 import { mockModel } from 'src/storybook/model';
 import { mockProject } from 'src/storybook/project';
-import { DiagramCacheMetadata } from '../service/model-diagram.service';
 import {
   Diagrams,
   ModelDiagramDialogComponent,

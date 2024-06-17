@@ -10,8 +10,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
-import { ModelService } from 'src/app/projects/models/service/model.service';
-import { ProjectService } from '../../service/project.service';
+import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
+import { ProjectWrapperService } from '../../service/project.service';
 
 @UntilDestroy()
 @Component({
@@ -24,8 +24,8 @@ import { ProjectService } from '../../service/project.service';
 export class ModelWrapperComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
-    public modelService: ModelService,
-    private projectService: ProjectService,
+    public modelService: ModelWrapperService,
+    private projectService: ProjectWrapperService,
     private t4cModelService: T4CModelService,
     private breadcrumbService: BreadcrumbsService,
   ) {}

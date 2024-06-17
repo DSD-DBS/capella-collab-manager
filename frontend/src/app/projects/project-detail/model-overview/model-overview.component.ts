@@ -18,12 +18,11 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { first, filter } from 'rxjs';
-import { Project } from 'src/app/openapi';
+import { Project, ToolModel } from 'src/app/openapi';
 import { ModelDiagramDialogComponent } from 'src/app/projects/models/diagrams/model-diagram-dialog/model-diagram-dialog.component';
 import {
   getPrimaryGitModel,
-  Model,
-  ModelService,
+  ModelWrapperService,
 } from 'src/app/projects/models/service/model.service';
 import { MoveModelComponent } from 'src/app/projects/project-detail/model-overview/move-model/move-model.component';
 import { ReorderModelsDialogComponent } from 'src/app/projects/project-detail/model-overview/reorder-models-dialog/reorder-models-dialog.component';
@@ -31,7 +30,7 @@ import { ProjectUserService } from 'src/app/projects/project-detail/project-user
 import { UserWrapperService } from 'src/app/services/user/user.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
-import { ProjectService } from '../../service/project.service';
+import { ProjectWrapperService } from '../../service/project.service';
 import { ModelComplexityBadgeComponent } from './model-complexity-badge/model-complexity-badge.component';
 
 @UntilDestroy()
@@ -57,14 +56,14 @@ import { ModelComplexityBadgeComponent } from './model-complexity-badge/model-co
 })
 export class ModelOverviewComponent implements OnInit {
   project?: Project;
-  models?: Model[];
+  models?: ToolModel[];
 
   constructor(
-    public modelService: ModelService,
+    public modelService: ModelWrapperService,
     public sessionService: SessionService,
     public projectUserService: ProjectUserService,
     public userService: UserWrapperService,
-    public projectService: ProjectService,
+    public projectService: ProjectWrapperService,
     private dialog: MatDialog,
   ) {}
 
@@ -85,16 +84,16 @@ export class ModelOverviewComponent implements OnInit {
       });
   }
 
-  getPrimaryWorkingMode(model: Model): string {
-    if (model.t4c_models.length) {
+  getPrimaryWorkingMode(model: ToolModel): string {
+    if (model.t4c_models?.length) {
       return 'T4C';
-    } else if (model.git_models.length) {
+    } else if (model.git_models?.length) {
       return 'Git';
     }
     return 'Unset';
   }
 
-  openPipelineDialog(model: Model): void {
+  openPipelineDialog(model: ToolModel): void {
     this.projectService.project$.pipe(first()).subscribe((project) => {
       this.dialog.open(TriggerPipelineComponent, {
         data: { projectSlug: project!.slug, modelSlug: model.slug },
@@ -102,7 +101,7 @@ export class ModelOverviewComponent implements OnInit {
     });
   }
 
-  openDiagramsDialog(model: Model): void {
+  openDiagramsDialog(model: ToolModel): void {
     this.dialog.open(ModelDiagramDialogComponent, {
       maxWidth: '100vw',
       panelClass: [
@@ -117,12 +116,12 @@ export class ModelOverviewComponent implements OnInit {
     });
   }
 
-  getPrimaryGitModelURL(model: Model): string {
+  getPrimaryGitModelURL(model: ToolModel): string {
     const primaryModel = getPrimaryGitModel(model);
     return primaryModel ? primaryModel.path : '';
   }
 
-  openMoveToProjectDialog(model: Model): void {
+  openMoveToProjectDialog(model: ToolModel): void {
     this.dialog.open(MoveModelComponent, {
       maxWidth: '100vw',
       maxHeight: '200vw',
@@ -130,7 +129,7 @@ export class ModelOverviewComponent implements OnInit {
     });
   }
 
-  openReorderModelsDialog(models: Model[]): void {
+  openReorderModelsDialog(models: ToolModel[]): void {
     if (this.project) {
       this.dialog.open(ReorderModelsDialogComponent, {
         data: { projectSlug: this.project.slug, models: models },

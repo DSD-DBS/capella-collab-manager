@@ -36,7 +36,7 @@ router = fastapi.APIRouter(
 
 
 @router.get(
-    "", response_model=list[models.CapellaModel], tags=["Projects - Models"]
+    "", response_model=list[models.ToolModel], tags=["Projects - Models"]
 )
 def get_models(
     project: projects_models.DatabaseProject = fastapi.Depends(
@@ -48,7 +48,7 @@ def get_models(
 
 @router.get(
     "/{model_slug}",
-    response_model=models.CapellaModel,
+    response_model=models.ToolModel,
     tags=["Projects - Models"],
 )
 def get_model_by_slug(
@@ -61,7 +61,7 @@ def get_model_by_slug(
 
 @router.post(
     "",
-    response_model=models.CapellaModel,
+    response_model=models.ToolModel,
     dependencies=[
         fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
@@ -72,7 +72,7 @@ def get_model_by_slug(
     tags=["Projects - Models"],
 )
 def create_new_tool_model(
-    new_model: models.PostCapellaModel,
+    new_model: models.PostToolModel,
     project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),
@@ -104,7 +104,7 @@ def create_new_tool_model(
 
 @router.patch(
     "/{model_slug}",
-    response_model=models.CapellaModel,
+    response_model=models.ToolModel,
     dependencies=[
         fastapi.Depends(
             auth_injectables.ProjectRoleVerification(
@@ -115,7 +115,7 @@ def create_new_tool_model(
     tags=["Projects - Models"],
 )
 def patch_tool_model(
-    body: models.PatchCapellaModel,
+    body: models.PatchToolModel,
     project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),

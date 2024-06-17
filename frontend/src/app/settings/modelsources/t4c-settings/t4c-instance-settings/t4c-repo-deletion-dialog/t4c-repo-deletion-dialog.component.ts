@@ -20,8 +20,8 @@ import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { finalize } from 'rxjs';
 import {
-  T4CRepoService,
-  T4CRepository,
+  ExtendedT4CRepository,
+  T4CRepositoryWrapperService,
 } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 
 @Component({
@@ -47,9 +47,9 @@ export class T4CRepoDeletionDialogComponent {
   ]);
 
   constructor(
-    private repoService: T4CRepoService,
+    private repoService: T4CRepositoryWrapperService,
     public dialogRef: MatDialogRef<T4CRepoDeletionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public repo: T4CRepository,
+    @Inject(MAT_DIALOG_DATA) public repo: ExtendedT4CRepository,
   ) {}
 
   removeRepository(): void {

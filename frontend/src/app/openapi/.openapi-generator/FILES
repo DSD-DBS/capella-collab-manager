@@ -28,7 +28,6 @@ index.ts
 model/backup-pipeline-run.ts
 model/backup.ts
 model/base-user.ts
-model/capella-model.ts
 model/cpu-resources-input.ts
 model/cpu-resources-output.ts
 model/create-backup.ts
@@ -78,11 +77,11 @@ model/notice-level.ts
 model/notice-response.ts
 model/page-history-event.ts
 model/page-pipeline-run.ts
-model/patch-capella-model.ts
 model/patch-git-model.ts
 model/patch-project-user.ts
 model/patch-project.ts
 model/patch-t4-c-instance.ts
+model/patch-tool-model.ts
 model/patch-user-role-request.ts
 model/path-validation.ts
 model/payload-response-model-list-t4-c-repository.ts
@@ -93,13 +92,13 @@ model/persistent-workspace-session-configuration-input.ts
 model/persistent-workspace-session-configuration-output.ts
 model/pipeline-run-status.ts
 model/pipeline-run.ts
-model/post-capella-model.ts
 model/post-git-instance.ts
 model/post-git-model.ts
 model/post-project-request.ts
 model/post-project-user.ts
 model/post-session-request.ts
 model/post-token.ts
+model/post-tool-model.ts
 model/post-user.ts
 model/project-status.ts
 model/project-type.ts
@@ -145,6 +144,7 @@ model/tool-integrations-output.ts
 model/tool-model-provisioning-input.ts
 model/tool-model-provisioning-output.ts
 model/tool-model-restrictions.ts
+model/tool-model.ts
 model/tool-nature.ts
 model/tool-session-configuration-input.ts
 model/tool-session-configuration-output.ts

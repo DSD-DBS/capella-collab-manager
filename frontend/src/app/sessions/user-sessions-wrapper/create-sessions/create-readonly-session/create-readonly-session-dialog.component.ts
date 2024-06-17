@@ -21,11 +21,8 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Tool, ToolVersion } from 'src/app/openapi';
-import {
-  getPrimaryGitModel,
-  Model,
-} from 'src/app/projects/models/service/model.service';
+import { Tool, ToolModel, ToolVersion } from 'src/app/openapi';
+import { getPrimaryGitModel } from 'src/app/projects/models/service/model.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import {
   CreateReadonlyModelOptionsComponent,
@@ -59,7 +56,7 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: {
       projectSlug: string;
-      models: Model[];
+      models: ToolModel[];
       tool: Tool;
       toolVersion: ToolVersion;
     },

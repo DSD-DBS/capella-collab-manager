@@ -42,13 +42,13 @@ class EditingMode(enum.Enum):
     GIT = "git"
 
 
-class PostCapellaModel(core_pydantic.BaseModel):
+class PostToolModel(core_pydantic.BaseModel):
     name: str
     description: str | None = None
     tool_id: int
 
 
-class PatchCapellaModel(core_pydantic.BaseModel):
+class PatchToolModel(core_pydantic.BaseModel):
     name: str | None = None
     description: str | None = None
     version_id: int | None = None
@@ -122,7 +122,7 @@ class DatabaseToolModel(database.Base):
     )
 
 
-class CapellaModel(core_pydantic.BaseModel):
+class ToolModel(core_pydantic.BaseModel):
     id: int
     slug: str
     name: str

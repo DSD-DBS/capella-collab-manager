@@ -51,14 +51,14 @@ import {
   hasRelativePathPrefix,
 } from 'src/app/helpers/validators/url-validator';
 import { SettingsModelsourcesGitService } from 'src/app/openapi';
-import { ModelService } from 'src/app/projects/models/service/model.service';
+import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import {
   CreateGitModel,
   GetGitModel,
   GitModelService,
   PatchGitModel,
 } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { ProjectService } from 'src/app/projects/service/project.service';
+import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import {
   Credentials,
   GitService,
@@ -118,8 +118,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   public editing = false;
 
   constructor(
-    public projectService: ProjectService,
-    public modelService: ModelService,
+    public projectService: ProjectWrapperService,
+    public modelService: ModelWrapperService,
     private gitInstancesService: GitInstancesService,
     private settingsModelsourcesGitService: SettingsModelsourcesGitService,
     private gitService: GitService,

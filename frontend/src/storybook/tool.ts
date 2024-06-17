@@ -3,7 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { HTTPConnectionMethodOutput, Tool, ToolVersion } from 'src/app/openapi';
+import {
+  HTTPConnectionMethodOutput,
+  Tool,
+  ToolNature,
+  ToolVersion,
+} from 'src/app/openapi';
 import { ToolVersionWithTool } from 'src/app/settings/core/tools-settings/tool.service';
 
 export const mockHttpConnectionMethod: Readonly<HTTPConnectionMethodOutput> = {
@@ -39,6 +44,11 @@ export const mockToolVersion: Readonly<ToolVersion> = {
       image: 'fakeImage',
     },
   },
+};
+
+export const mockToolNature: Readonly<ToolNature> = {
+  id: 1,
+  name: 'fakeNature',
 };
 
 export const mockTool: Readonly<Tool> = {

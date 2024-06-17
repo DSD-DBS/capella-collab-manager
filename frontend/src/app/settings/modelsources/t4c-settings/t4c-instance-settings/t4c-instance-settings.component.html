@@ -77,15 +77,6 @@
         <div class="my-auto flex flex-row">
           <button
             mat-icon-button
-            color="warn"
-            (click)="deleteRepository(repository)"
-            matTooltip="Delete repository"
-          >
-            <mat-icon>delete</mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
             *ngIf="repository.status === 'OFFLINE'"
             (click)="startRepository(repository)"
             matTooltip="Start repository"
@@ -111,6 +102,15 @@
             matTooltip="Recreate repository on instance"
           >
             <mat-icon>sync</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="deleteRepository(repository)"
+            matTooltip="Delete repository"
+          >
+            <mat-icon>delete</mat-icon>
           </button>
         </div>
       </div>

@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   AbstractControl,
@@ -11,50 +10,19 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { BehaviorSubject, Observable, map, take, tap } from 'rxjs';
-import { environment } from 'src/environments/environment';
-
-export type Protocol = 'tcp' | 'ssl' | 'ws' | 'wss';
-
-export type BaseT4CInstance = {
-  version_id: number;
-  license: string;
-  host: string;
-  port: number;
-  cdo_port: number;
-  http_port?: number;
-  usage_api: string;
-  rest_api: string;
-  username: string;
-  password: string;
-  protocol: Protocol;
-  is_archived: boolean;
-};
-
-export type PatchT4CInstance = Partial<BaseT4CInstance>;
-
-export type NewT4CInstance = BaseT4CInstance & {
-  name: string;
-};
-
-export type T4CInstance = NewT4CInstance & {
-  id: number;
-  version: {
-    id: number;
-    name: string;
-  };
-};
+import {
+  CreateT4CInstance,
+  GetSessionUsageResponse,
+  PatchT4CInstance,
+  SettingsModelsourcesT4CService,
+  T4CInstance,
+} from 'src/app/openapi';
 
 @Injectable({
   providedIn: 'root',
 })
-export class T4CInstanceService {
-  constructor(private http: HttpClient) {}
-
-  baseUrl = `${environment.backend_url}/settings/modelsources/t4c`;
-
-  urlFactory(instanceId: number): string {
-    return `${this.baseUrl}/${instanceId}`;
-  }
+export class T4CInstanceWrapperService {
+  constructor(private t4cInstanceService: SettingsModelsourcesT4CService) {}
 
   private _t4cInstances = new BehaviorSubject<T4CInstance[] | undefined>(
     undefined,
@@ -73,21 +41,21 @@ export class T4CInstanceService {
   );
 
   loadInstances(): void {
-    this.http.get<T4CInstance[]>(this.baseUrl).subscribe({
+    this.t4cInstanceService.getT4cInstances().subscribe({
       next: (instances) => this._t4cInstances.next(instances),
       error: () => this._t4cInstances.next(undefined),
     });
   }
 
   loadInstance(instanceId: number): void {
-    this.http.get<T4CInstance>(this.urlFactory(instanceId)).subscribe({
+    this.t4cInstanceService.getT4cInstance(instanceId).subscribe({
       next: (instance) => this._t4cInstance.next(instance),
       error: () => this._t4cInstance.next(undefined),
     });
   }
 
-  createInstance(instance: NewT4CInstance): Observable<T4CInstance> {
-    return this.http.post<T4CInstance>(this.baseUrl, instance).pipe(
+  createInstance(instance: CreateT4CInstance): Observable<T4CInstance> {
+    return this.t4cInstanceService.createT4cInstance(instance).pipe(
       tap((instance) => {
         this._t4cInstance.next(instance);
         this.loadInstances();
@@ -99,14 +67,12 @@ export class T4CInstanceService {
     instanceId: number,
     instance: PatchT4CInstance,
   ): Observable<T4CInstance> {
-    return this.http
-      .patch<T4CInstance>(this.urlFactory(instanceId), instance)
-      .pipe(
-        tap((instance) => {
-          this._t4cInstance.next(instance);
-          this.loadInstances();
-        }),
-      );
+    return this.t4cInstanceService.editT4cInstance(instanceId, instance).pipe(
+      tap((instance) => {
+        this._t4cInstance.next(instance);
+        this.loadInstances();
+      }),
+    );
   }
 
   resetT4CInstance(): void {
@@ -118,10 +84,8 @@ export class T4CInstanceService {
     this._t4cInstances.next(undefined);
   }
 
-  getLicenses(instanceId: number): Observable<SessionUsage> {
-    return this.http.get<SessionUsage>(
-      `${this.urlFactory(instanceId)}/licenses`,
-    );
+  getLicenses(instanceId: number): Observable<GetSessionUsageResponse> {
+    return this.t4cInstanceService.fetchT4cLicenses(instanceId);
   }
 
   asyncNameValidator(ignoreInstance?: T4CInstance): AsyncValidatorFn {
@@ -143,8 +107,3 @@ export class T4CInstanceService {
     };
   }
 }
-
-export type SessionUsage = {
-  free: number;
-  total: number;
-};

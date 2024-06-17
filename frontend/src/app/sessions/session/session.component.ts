@@ -14,7 +14,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, take } from 'rxjs';
-import { Session } from 'src/app/openapi';
+import { Session, SessionsService } from 'src/app/openapi';
 import { FullscreenService } from 'src/app/sessions/service/fullscreen.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
@@ -55,6 +55,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   constructor(
     public userSessionService: UserSessionService,
     public sessionService: SessionService,
+    private sessionsService: SessionsService,
     public sessionViewerService: SessionViewerService,
     public fullscreenService: FullscreenService,
   ) {
@@ -101,10 +102,13 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   selectSessions() {
     this.checkedSessions?.forEach((session) => {
-      this.sessionService
+      this.sessionsService
         .getSessionConnectionInformation(session.id)
         .subscribe((connectionInfo) => {
-          this.sessionViewerService.pushSession(session, connectionInfo);
+          this.sessionViewerService.pushSession(
+            session,
+            connectionInfo.payload,
+          );
         });
     });
   }

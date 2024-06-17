@@ -12,6 +12,7 @@ import requests
 
 import capellacollab.projects.toolmodels.modelsources.git.injectables as git_injectables
 from capellacollab.core import logging as log
+from capellacollab.core import responses
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects.toolmodels.diagrams import models
 from capellacollab.projects.toolmodels.modelsources.git.handler import (
@@ -62,7 +63,9 @@ async def get_diagram_metadata(
 
 
 @router.get(
-    "/{diagram_uuid_or_filename}", response_class=fastapi.responses.Response
+    "/{diagram_uuid_or_filename}",
+    response_class=fastapi.responses.Response,
+    responses=responses.SVGResponse.responses,
 )
 async def get_diagram(
     diagram_uuid_or_filename: str,
@@ -86,7 +89,6 @@ async def get_diagram(
         logger.info("Failed fetching diagram", exc_info=True)
         raise exceptions.DiagramCacheNotConfiguredProperlyError()
 
-    return fastapi.responses.Response(
+    return responses.SVGResponse(
         content=diagram,
-        media_type="image/svg+xml",
     )

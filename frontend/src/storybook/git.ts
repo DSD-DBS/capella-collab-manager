@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
+import { GitModel } from 'src/app/openapi';
 
-export const mockPrimaryGitModel: Readonly<GetGitModel> = {
+export const mockPrimaryGitModel: Readonly<GitModel> = {
   id: 1,
+  name: 'fakeGitModelName',
   primary: true,
   path: 'fakePath',
   revision: 'fakeRevision',
