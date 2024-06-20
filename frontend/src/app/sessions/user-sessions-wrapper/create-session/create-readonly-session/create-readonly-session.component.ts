@@ -24,12 +24,9 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { combineLatest, filter, map, Observable, take, tap } from 'rxjs';
-import { Tool, ToolVersion } from 'src/app/openapi';
-import {
-  Model,
-  ModelService,
-} from 'src/app/projects/models/service/model.service';
-import { ProjectService } from 'src/app/projects/service/project.service';
+import { Tool, ToolModel, ToolVersion } from 'src/app/openapi';
+import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
+import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
 import {
   ToolWrapperService,
@@ -79,8 +76,8 @@ export class CreateReadonlySessionComponent implements OnInit {
   constructor(
     private toolWrapperService: ToolWrapperService,
     private userSessionService: UserSessionService,
-    private projectService: ProjectService,
-    private modelService: ModelService,
+    private projectService: ProjectWrapperService,
+    private modelService: ModelWrapperService,
     private dialog: MatDialog,
     private fb: FormBuilder,
   ) {}
@@ -97,7 +94,7 @@ export class CreateReadonlySessionComponent implements OnInit {
     this.userSessionService.loadSessions();
   }
 
-  loadToolsAndModels(): Observable<[Model[], ToolVersionWithTool[]]> {
+  loadToolsAndModels(): Observable<[ToolModel[], ToolVersionWithTool[]]> {
     return combineLatest([
       this.modelService.models$.pipe(untilDestroyed(this), filter(Boolean)),
       this.toolWrapperService.getVersionsForTools(),
@@ -109,7 +106,7 @@ export class CreateReadonlySessionComponent implements OnInit {
   }
 
   resolveVersionCompatibility(
-    models: Model[],
+    models: ToolModel[],
     allVersions: ToolVersionWithTool[],
   ): void {
     this.models = [];
@@ -232,4 +229,4 @@ export class CreateReadonlySessionComponent implements OnInit {
 
 type ModelWithCompatibility = {
   compatibleVersions: ToolVersionWithTool[];
-} & Model;
+} & ToolModel;

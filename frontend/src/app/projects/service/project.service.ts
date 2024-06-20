@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   AbstractControl,
@@ -12,19 +11,21 @@ import {
 } from '@angular/forms';
 import { BehaviorSubject, map, Observable, take, tap } from 'rxjs';
 import slugify from 'slugify';
-import { Project, ProjectUserRole, ProjectsService } from 'src/app/openapi';
-import { environment } from 'src/environments/environment';
+import {
+  PatchProject,
+  PostProjectRequest,
+  Project,
+  ProjectType,
+  ProjectUserRole,
+  ProjectsService,
+  Visibility,
+} from 'src/app/openapi';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ProjectService {
-  BACKEND_URL_PREFIX = environment.backend_url + '/projects';
-
-  constructor(
-    private http: HttpClient,
-    private projectsService: ProjectsService,
-  ) {}
+export class ProjectWrapperService {
+  constructor(private projectsService: ProjectsService) {}
 
   private _project = new BehaviorSubject<Project | undefined>(undefined);
   private _projects = new BehaviorSubject<Project[] | undefined>(undefined);
@@ -45,14 +46,14 @@ export class ProjectService {
   }
 
   loadProjectBySlug(slug: string): void {
-    this.http.get<Project>(`${this.BACKEND_URL_PREFIX}/${slug}`).subscribe({
+    this.projectsService.getProjectBySlug(slug).subscribe({
       next: (project) => this._project.next(project),
       error: () => this._project.next(undefined),
     });
   }
 
-  createProject(project: PostProject): Observable<Project> {
-    return this.http.post<Project>(this.BACKEND_URL_PREFIX, project).pipe(
+  createProject(project: PostProjectRequest): Observable<Project> {
+    return this.projectsService.createProject(project).pipe(
       tap({
         next: (project) => {
           this.loadProjects();
@@ -67,28 +68,24 @@ export class ProjectService {
     project_slug: string,
     project: PatchProject,
   ): Observable<Project> {
-    return this.http
-      .patch<Project>(`${this.BACKEND_URL_PREFIX}/${project_slug}`, project)
-      .pipe(
-        tap({
-          next: (project) => {
-            this.loadProjects();
-            this._project.next(project);
-          },
-          error: () => this._project.next(undefined),
-        }),
-      );
+    return this.projectsService.updateProject(project_slug, project).pipe(
+      tap({
+        next: (project) => {
+          this.loadProjects();
+          this._project.next(project);
+        },
+        error: () => this._project.next(undefined),
+      }),
+    );
   }
 
   deleteProject(projectSlug: string): Observable<void> {
-    return this.http
-      .delete<void>(`${this.BACKEND_URL_PREFIX}/${projectSlug}`)
-      .pipe(
-        tap(() => {
-          this.loadProjects();
-          this._project.next(undefined);
-        }),
-      );
+    return this.deleteProject(projectSlug).pipe(
+      tap(() => {
+        this.loadProjects();
+        this._project.next(undefined);
+      }),
+    );
   }
 
   clearProject(): void {
@@ -113,12 +110,12 @@ export class ProjectService {
     };
   }
 
-  getProjectVisibilityDescription(visibility: ProjectVisibility): string {
+  getProjectVisibilityDescription(visibility: Visibility): string {
     return ProjectVisibilityDescriptions[visibility];
   }
 
-  getAvailableVisibilities(): ProjectVisibility[] {
-    return Object.keys(ProjectVisibilityDescriptions) as ProjectVisibility[];
+  getAvailableVisibilities(): Visibility[] {
+    return Object.keys(ProjectVisibilityDescriptions) as Visibility[];
   }
 
   getProjectTypeDescription(type: ProjectType): string {
@@ -129,27 +126,6 @@ export class ProjectService {
     return Object.keys(ProjectTypeDescriptions) as ProjectType[];
   }
 }
-
-export type UserMetadata = {
-  leads: number;
-  contributors: number;
-  subscribers: number;
-};
-
-export type PostProject = {
-  name: string;
-  description: string;
-  visibility: ProjectVisibility;
-  type: ProjectType;
-};
-
-export type PatchProject = Partial<PostProject> & {
-  is_archived?: boolean;
-};
-
-export type ProjectVisibility = 'internal' | 'private';
-
-export type ProjectType = 'general' | 'training';
 
 export const ProjectVisibilityDescriptions = {
   internal: 'Internal (viewable by all logged in users)',

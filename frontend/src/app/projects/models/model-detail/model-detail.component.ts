@@ -10,12 +10,12 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter } from 'rxjs';
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
-import { ModelService } from 'src/app/projects/models/service/model.service';
+import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { UserWrapperService } from 'src/app/services/user/user.service';
 import { MatIconComponent } from '../../../helpers/mat-icon/mat-icon.component';
 import { MatCardOverviewSkeletonLoaderComponent } from '../../../helpers/skeleton-loaders/mat-card-overview-skeleton-loader/mat-card-overview-skeleton-loader.component';
-import { ProjectService } from '../../service/project.service';
+import { ProjectWrapperService } from '../../service/project.service';
 
 @UntilDestroy()
 @Component({
@@ -35,8 +35,8 @@ import { ProjectService } from '../../service/project.service';
 })
 export class ModelDetailComponent implements OnInit, OnDestroy {
   constructor(
-    public projectService: ProjectService,
-    public modelService: ModelService,
+    public projectService: ProjectWrapperService,
+    public modelService: ModelWrapperService,
     public gitModelService: GitModelService,
     public t4cModelService: T4CModelService,
     public userService: UserWrapperService,

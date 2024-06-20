@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   AbstractControl,
@@ -12,58 +11,53 @@ import {
 } from '@angular/forms';
 import { BehaviorSubject, forkJoin, map, Observable, take, tap } from 'rxjs';
 import slugify from 'slugify';
-import { Tool, ToolNature, ToolVersion } from 'src/app/openapi';
-import { ModelRestrictions } from 'src/app/projects/models/model-restrictions/service/model-restrictions.service';
-import { T4CModel } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
+import {
+  PatchToolModel,
+  PostToolModel,
+  ProjectsModelsService,
+  ToolModel,
+} from 'src/app/openapi';
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ModelService {
-  base_url = environment.backend_url + '/projects';
+export class ModelWrapperService {
+  constructor(private modelsService: ProjectsModelsService) {}
 
-  constructor(private http: HttpClient) {}
-
-  private _model = new BehaviorSubject<Model | undefined>(undefined);
-  private _models = new BehaviorSubject<Model[] | undefined>(undefined);
+  private _model = new BehaviorSubject<ToolModel | undefined>(undefined);
+  private _models = new BehaviorSubject<ToolModel[] | undefined>(undefined);
 
   public readonly model$ = this._model.asObservable();
   public readonly models$ = this._models.asObservable();
 
-  backendURLFactory(projectSlug: string, modelSlug: string) {
-    return `${this.base_url}/${projectSlug}/models/${modelSlug}`;
-  }
-
   loadModels(projectSlug: string): void {
-    this.http.get<Model[]>(`${this.base_url}/${projectSlug}/models`).subscribe({
+    this.modelsService.getModels(projectSlug).subscribe({
       next: (models) => this._models.next(models),
       error: () => this._models.next(undefined),
     });
   }
 
   loadModelbySlug(modelSlug: string, projectSlug: string): void {
-    this.http
-      .get<Model>(`${this.base_url}/${projectSlug}/models/${modelSlug}`)
-      .subscribe({
-        next: (model) => this._model.next(model),
-        error: () => this._model.next(undefined),
-      });
+    this.modelsService.getModelBySlug(projectSlug, modelSlug).subscribe({
+      next: (model) => this._model.next(model),
+      error: () => this._model.next(undefined),
+    });
   }
 
-  createModel(projectSlug: string, model: NewModel): Observable<Model> {
-    return this.http
-      .post<Model>(`${this.base_url}/${projectSlug}/models`, model)
-      .pipe(
-        tap({
-          next: (model) => {
-            this.loadModels(projectSlug);
-            this._model.next(model);
-          },
-          error: () => this._model.next(undefined),
-        }),
-      );
+  createModel(
+    projectSlug: string,
+    model: PostToolModel,
+  ): Observable<ToolModel> {
+    return this.modelsService.createNewToolModel(projectSlug, model).pipe(
+      tap({
+        next: (model) => {
+          this.loadModels(projectSlug);
+          this._model.next(model);
+        },
+        error: () => this._model.next(undefined),
+      }),
+    );
   }
 
   setToolDetailsForModel(
@@ -71,9 +65,9 @@ export class ModelService {
     modelSlug: string,
     version_id: number,
     nature_id: number,
-  ): Observable<Model> {
-    return this.http
-      .patch<Model>(`${this.base_url}/${projectSlug}/models/${modelSlug}`, {
+  ): Observable<ToolModel> {
+    return this.modelsService
+      .patchToolModel(projectSlug, modelSlug, {
         version_id,
         nature_id,
       })
@@ -91,19 +85,16 @@ export class ModelService {
   private applyModelPatch(
     projectSlug: string,
     modelSlug: string,
-    patchData: PatchModel,
-  ): Observable<Model> {
-    return this.http.patch<Model>(
-      `${this.base_url}/${projectSlug}/models/${modelSlug}`,
-      patchData,
-    );
+    patchData: PatchToolModel,
+  ): Observable<ToolModel> {
+    return this.modelsService.patchToolModel(projectSlug, modelSlug, patchData);
   }
 
   updateModel(
     projectSlug: string,
     modelSlug: string,
-    patchModel: PatchModel,
-  ): Observable<Model> {
+    patchModel: PatchToolModel,
+  ): Observable<ToolModel> {
     return this.applyModelPatch(projectSlug, modelSlug, patchModel).pipe(
       tap({
         next: (model) => {
@@ -116,15 +107,15 @@ export class ModelService {
 
   updateModels(
     projectSlug: string,
-    modelUpdates: { modelSlug: string; patchModel: PatchModel }[],
-  ): Observable<Model[]> {
+    modelUpdates: { modelSlug: string; patchModel: PatchToolModel }[],
+  ): Observable<ToolModel[]> {
     const updateObservables = modelUpdates.map(({ modelSlug, patchModel }) =>
       this.applyModelPatch(projectSlug, modelSlug, patchModel),
     );
 
     return forkJoin(updateObservables).pipe(
       tap({
-        next: (models: Model[]) => {
+        next: (models: ToolModel[]) => {
           this.loadModels(projectSlug);
           this._model.next(models[models.length - 1]);
         },
@@ -133,14 +124,12 @@ export class ModelService {
   }
 
   deleteModel(projectSlug: string, modelSlug: string): Observable<void> {
-    return this.http
-      .delete<void>(`${this.base_url}/${projectSlug}/models/${modelSlug}`)
-      .pipe(
-        tap(() => {
-          this.loadModels(projectSlug);
-          this._model.next(undefined);
-        }),
-      );
+    return this.modelsService.deleteToolModel(projectSlug, modelSlug).pipe(
+      tap(() => {
+        this.loadModels(projectSlug);
+        this._model.next(undefined);
+      }),
+    );
   }
 
   clearModel(): void {
@@ -151,7 +140,7 @@ export class ModelService {
     this._models.next(undefined);
   }
 
-  asyncSlugValidator(ignoreModel?: Model): AsyncValidatorFn {
+  asyncSlugValidator(ignoreModel?: ToolModel): AsyncValidatorFn {
     const ignoreSlug = !!ignoreModel ? ignoreModel.slug : -1;
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       const modelSlug = slugify(control.value, { lower: true });
@@ -167,55 +156,8 @@ export class ModelService {
       );
     };
   }
-
-  moveModelToProject(
-    projectSlug: string,
-    modelSlug: string,
-    project_slug: string,
-  ): Observable<Model> {
-    return this.http
-      .patch<Model>(`${this.backendURLFactory(projectSlug, modelSlug)}/move`, {
-        project_slug,
-      })
-      .pipe(
-        tap(() => {
-          this.loadModels(projectSlug);
-          this._model.next(undefined);
-        }),
-      );
-  }
 }
 
-export type NewModel = {
-  name: string;
-  description: string;
-  tool_id: number;
-};
-
-export type Model = {
-  id: number;
-  project_slug: string;
-  slug: string;
-  name: string;
-  description: string;
-  tool: Tool;
-  version?: ToolVersion;
-  nature?: ToolNature;
-  t4c_models: T4CModel[];
-  git_models: GetGitModel[];
-  restrictions: ModelRestrictions;
-  display_order: number;
-};
-
-export type PatchModel = {
-  name?: string;
-  description?: string;
-  nature_id?: number;
-  version_id?: number;
-  project_slug?: string;
-  display_order?: number;
-};
-
-export function getPrimaryGitModel(model: Model): GetGitModel | undefined {
-  return model.git_models.find((gitModel) => gitModel.primary);
+export function getPrimaryGitModel(model: ToolModel): GetGitModel | undefined {
+  return model.git_models?.find((gitModel) => gitModel.primary);
 }

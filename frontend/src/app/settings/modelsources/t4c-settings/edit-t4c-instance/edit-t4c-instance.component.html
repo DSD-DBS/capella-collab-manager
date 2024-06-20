@@ -9,9 +9,13 @@
       <h2 *ngIf="!existing" class="text-xl font-medium">
         Add a Team4Capella instance
       </h2>
-      <form [formGroup]="form" (ngSubmit)="submit()">
-        <fieldset class="flex flex-wrap gap-2">
-          <mat-form-field appearance="fill">
+      <form
+        [formGroup]="form"
+        (ngSubmit)="submit()"
+        class="flex flex-col flex-wrap gap-2"
+      >
+        <fieldset class="flex flex-wrap items-start gap-2">
+          <mat-form-field subscriptSizing="dynamic" appearance="fill">
             <mat-label>Name</mat-label>
             <input matInput formControlName="name" />
             <mat-error *ngIf="form.controls.name.errors?.required">
@@ -21,7 +25,7 @@
               >An instance with the same name already exists.
             </mat-error>
           </mat-form-field>
-          <mat-form-field appearance="fill">
+          <mat-form-field subscriptSizing="dynamic" appearance="fill">
             <mat-label>Capella version</mat-label>
             <mat-select formControlName="version_id">
               <mat-option
@@ -31,30 +35,34 @@
                 {{ version.name }}
               </mat-option>
             </mat-select>
-            <mat-hint
-              *ngIf="
-                (t4cInstanceService.t4cInstance$ | async) !== undefined &&
-                (t4cInstanceService.t4cInstance$ | async)!.version.id !==
-                  form.value.version_id
-              "
-              >Models are not auto-migrated on version change.</mat-hint
-            >
-            <mat-error *ngIf="form.controls.version_id.errors?.required">
-              The version is required.
-            </mat-error>
+            @if (
+              (t4cInstanceService.t4cInstance$ | async) !== undefined &&
+              (t4cInstanceService.t4cInstance$ | async)!.version.id !==
+                form.value.version_id
+            ) {
+              <mat-hint class="max-w-[180px]"
+                >Models are not auto-migrated on version change.</mat-hint
+              >
+            } @else if (form.controls.version_id.errors?.required) {
+              <mat-error> The version is required. </mat-error>
+            }
           </mat-form-field>
         </fieldset>
         <fieldset>
-          <mat-form-field appearance="fill">
+          <mat-form-field subscriptSizing="dynamic" appearance="fill">
             <mat-label>License configuration</mat-label>
             <input matInput formControlName="license" />
-            <mat-error *ngIf="form.controls.license.errors?.required">
-              The license configuration is required.
-            </mat-error>
+            @if (form.controls.license.errors?.required) {
+              <mat-error> The license configuration is required. </mat-error>
+            }
           </mat-form-field>
         </fieldset>
-        <fieldset class="flex flex-wrap gap-2">
-          <mat-form-field id="protocol" appearance="fill">
+        <fieldset class="flex flex-wrap items-start gap-2">
+          <mat-form-field
+            subscriptSizing="dynamic"
+            id="protocol"
+            appearance="fill"
+          >
             <mat-label>Protocol</mat-label>
             <mat-select formControlName="protocol">
               <mat-option
@@ -64,14 +72,18 @@
               >
             </mat-select>
           </mat-form-field>
-          <mat-form-field id="host" appearance="fill">
+          <mat-form-field subscriptSizing="dynamic" id="host" appearance="fill">
             <mat-label>Host</mat-label>
             <input matInput formControlName="host" />
           </mat-form-field>
         </fieldset>
 
-        <fieldset class="flex flex-wrap gap-2">
-          <mat-form-field appearance="fill" class="w-[124px]">
+        <fieldset class="flex flex-wrap items-start gap-2">
+          <mat-form-field
+            subscriptSizing="dynamic"
+            appearance="fill"
+            class="w-[124px]"
+          >
             <mat-label>Port</mat-label>
             <input matInput inputmode="numeric" formControlName="port" />
             <mat-error
@@ -89,7 +101,11 @@
             </mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="fill" class="w-[124px]">
+          <mat-form-field
+            subscriptSizing="dynamic"
+            appearance="fill"
+            class="w-[124px]"
+          >
             <mat-label>CDO port</mat-label>
             <input matInput inputmode="numeric" formControlName="cdo_port" />
             <mat-error
@@ -108,7 +124,11 @@
             </mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="fill" class="w-[124px]">
+          <mat-form-field
+            subscriptSizing="dynamic"
+            appearance="fill"
+            class="w-[124px]"
+          >
             <mat-label>HTTP port</mat-label>
             <input matInput inputmode="numeric" formControlName="http_port" />
             <mat-error
@@ -124,8 +144,8 @@
             </mat-error>
           </mat-form-field>
         </fieldset>
-        <fieldset class="flex flex-wrap gap-2">
-          <mat-form-field appearance="fill">
+        <fieldset class="flex flex-wrap items-start gap-2">
+          <mat-form-field subscriptSizing="dynamic" appearance="fill">
             <mat-label>License server API</mat-label>
             <input matInput formControlName="usage_api" />
             <mat-error *ngIf="form.controls.usage_api.errors?.pattern">
@@ -135,7 +155,7 @@
               The license server API is required.
             </mat-error>
           </mat-form-field>
-          <mat-form-field appearance="fill">
+          <mat-form-field subscriptSizing="dynamic" appearance="fill">
             <mat-label>Experimental REST API</mat-label>
             <input matInput formControlName="rest_api" />
             <mat-error *ngIf="form.controls.rest_api.errors?.pattern">
@@ -146,15 +166,15 @@
             </mat-error>
           </mat-form-field>
         </fieldset>
-        <fieldset class="flex flex-wrap gap-2">
-          <mat-form-field appearance="fill">
+        <fieldset class="flex flex-wrap items-start gap-2">
+          <mat-form-field subscriptSizing="dynamic" appearance="fill">
             <mat-label>Username</mat-label>
             <input matInput autocomplete="off" formControlName="username" />
             <mat-error *ngIf="form.controls.username.errors?.required">
               The username is required.
             </mat-error>
           </mat-form-field>
-          <mat-form-field appearance="fill">
+          <mat-form-field subscriptSizing="dynamic" appearance="fill">
             <mat-label>Password</mat-label>
             <input
               matInput

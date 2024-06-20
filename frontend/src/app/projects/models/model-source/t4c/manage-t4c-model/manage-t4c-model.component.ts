@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -41,12 +41,12 @@ import {
   T4CModel,
   T4CModelService,
 } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
-import { ModelService } from 'src/app/projects/models/service/model.service';
-import { ProjectService } from 'src/app/projects/service/project.service';
-import { T4CInstanceService } from 'src/app/services/settings/t4c-instance.service';
+import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
+import { ProjectWrapperService } from 'src/app/projects/service/project.service';
+import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
 import {
-  T4CRepoService,
-  T4CRepository,
+  ExtendedT4CRepository,
+  T4CRepositoryWrapperService,
 } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 import { ButtonSkeletonLoaderComponent } from '../../../../../helpers/skeleton-loaders/button-skeleton-loader/button-skeleton-loader.component';
 import { FormFieldSkeletonLoaderComponent } from '../../../../../helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
@@ -58,14 +58,12 @@ import { FormFieldSkeletonLoaderComponent } from '../../../../../helpers/skeleto
   styleUrls: ['./manage-t4c-model.component.css'],
   standalone: true,
   imports: [
-    NgIf,
     FormsModule,
     ReactiveFormsModule,
     FormFieldSkeletonLoaderComponent,
     MatFormField,
     MatLabel,
     MatSelect,
-    NgFor,
     MatOption,
     MatTooltip,
     MatError,
@@ -87,17 +85,17 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
 
   loading = false;
 
-  t4cRepositories?: T4CRepository[];
+  t4cRepositories?: ExtendedT4CRepository[];
 
-  selectedRepository?: T4CRepository;
+  selectedRepository?: ExtendedT4CRepository;
 
   t4cModel?: T4CModel;
 
   constructor(
-    public projectService: ProjectService,
-    public modelService: ModelService,
-    public t4cInstanceService: T4CInstanceService,
-    public t4cRepositoryService: T4CRepoService,
+    public projectService: ProjectWrapperService,
+    public modelService: ModelWrapperService,
+    public t4cInstanceService: T4CInstanceWrapperService,
+    public t4cRepositoryService: T4CRepositoryWrapperService,
     public t4cModelService: T4CModelService,
     private router: Router,
     private route: ActivatedRoute,

@@ -15,10 +15,8 @@ import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import {
-  Model,
-  ModelService,
-} from 'src/app/projects/models/service/model.service';
+import { ToolModel } from 'src/app/openapi';
+import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 
 @Component({
   selector: 'app-reorder-models',
@@ -32,18 +30,18 @@ import {
 })
 export class ReorderModelsDialogComponent {
   constructor(
-    public modelService: ModelService,
+    public modelService: ModelWrapperService,
     private dialogRef: MatDialogRef<ReorderModelsDialogComponent>,
     private toastService: ToastService,
     @Inject(MAT_DIALOG_DATA)
-    public data: { projectSlug: string; models: Model[] },
+    public data: { projectSlug: string; models: ToolModel[] },
   ) {
     this.models = [...data.models];
   }
 
-  models: Model[];
+  models: ToolModel[];
 
-  drop(event: CdkDragDrop<Model[]>): void {
+  drop(event: CdkDragDrop<ToolModel[]>): void {
     moveItemInArray(this.models, event.previousIndex, event.currentIndex);
   }
 

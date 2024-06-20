@@ -24,9 +24,9 @@ import { combineLatest, filter, switchMap, tap } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ToolNature, ToolVersion } from 'src/app/openapi';
-import { ModelService } from 'src/app/projects/models/service/model.service';
+import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { ToolWrapperService } from 'src/app/settings/core/tools-settings/tool.service';
-import { ProjectService } from '../../service/project.service';
+import { ProjectWrapperService } from '../../service/project.service';
 
 @UntilDestroy()
 @Component({
@@ -66,8 +66,8 @@ export class ModelDescriptionComponent implements OnInit {
   private modelSlug?: string = undefined;
 
   constructor(
-    public modelService: ModelService,
-    public projectService: ProjectService,
+    public modelService: ModelWrapperService,
+    public projectService: ProjectWrapperService,
     private toolWrapperService: ToolWrapperService,
     public toastService: ToastService,
     private router: Router,
@@ -83,7 +83,7 @@ export class ModelDescriptionComponent implements OnInit {
         tap((model) => {
           this.modelSlug = model.slug;
           this.canDelete = !(
-            model.git_models.length || model.t4c_models.length
+            model.git_models?.length || model.t4c_models?.length
           );
 
           this.form.controls.name.setAsyncValidators(

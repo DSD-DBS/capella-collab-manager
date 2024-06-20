@@ -7,10 +7,13 @@ import { Component, Inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Session } from 'src/app/openapi';
+import {
+  Session,
+  SessionConnectionInformation,
+  SessionsService,
+} from 'src/app/openapi';
 import { UserWrapperService } from 'src/app/services/user/user.service';
 import {
-  SessionConnectionInformation,
   SessionService,
   isPersistentSession,
 } from 'src/app/sessions/service/session.service';
@@ -31,14 +34,15 @@ export class ConnectionDialogComponent {
   constructor(
     public userService: UserWrapperService,
     private sessionService: SessionService,
+    private sessionsService: SessionsService,
     @Inject(MAT_DIALOG_DATA) public session: Session,
     public dialogRef: MatDialogRef<ConnectionDialogComponent>,
     private toastService: ToastService,
   ) {
-    this.sessionService
+    this.sessionsService
       .getSessionConnectionInformation(this.session.id)
       .subscribe((connectionInfo) => {
-        this.connectionInfo = connectionInfo;
+        this.connectionInfo = connectionInfo.payload;
       });
   }
 

@@ -11,12 +11,9 @@
 
 
 
-export interface PatchCapellaModel { 
-    name?: string | null;
+export interface PostToolModel { 
+    name: string;
     description?: string | null;
-    version_id?: number | null;
-    nature_id?: number | null;
-    project_slug?: string | null;
-    display_order?: number | null;
+    tool_id: number;
 }
 

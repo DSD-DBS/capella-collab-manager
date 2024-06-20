@@ -29,7 +29,7 @@ router = fastapi.APIRouter(
 
 
 @router.get("", response_model=list[models.T4CInstance])
-def list_t4c_settings(
+def get_t4c_instances(
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> abc.Sequence[models.DatabaseT4CInstance]:
     return crud.get_t4c_instances(db)

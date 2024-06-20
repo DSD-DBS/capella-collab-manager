@@ -13,6 +13,7 @@ import {
   Project,
   SessionProvisioningRequest,
   SessionsService,
+  SessionConnectionInformation,
 } from 'src/app/openapi';
 import { SessionHistoryService } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-session-history/session-history.service';
 import { environment } from 'src/environments/environment';
@@ -46,13 +47,6 @@ export interface PathNode {
   isNew: boolean;
   children: PathNode[] | null;
 }
-
-export type SessionConnectionInformation = {
-  local_storage: LocalStorage;
-  cookies: Cookies;
-  t4c_token: string;
-  redirect_url: string;
-};
 
 @Injectable({
   providedIn: 'root',
@@ -98,14 +92,6 @@ export class SessionService {
           }
         }),
       );
-  }
-
-  getSessionConnectionInformation(
-    sessionId: string,
-  ): Observable<SessionConnectionInformation> {
-    return this.http.get<SessionConnectionInformation>(
-      `${this.BACKEND_URL_PREFIX}/${sessionId}/connection`,
-    );
   }
 
   deleteSession(id: string): Observable<null> {

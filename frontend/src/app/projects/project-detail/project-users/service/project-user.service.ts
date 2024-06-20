@@ -15,7 +15,7 @@ import {
   tap,
 } from 'rxjs';
 import { User } from 'src/app/openapi';
-import { ProjectService } from 'src/app/projects/service/project.service';
+import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -24,7 +24,7 @@ import { environment } from 'src/environments/environment';
 export class ProjectUserService {
   constructor(
     private http: HttpClient,
-    private projectService: ProjectService,
+    private projectService: ProjectWrapperService,
   ) {
     this.resetProjectUserOnProjectReset();
     this.resetProjectUsersOnProjectReset();

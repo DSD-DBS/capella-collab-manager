@@ -14,7 +14,7 @@ import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import Panzoom from '@panzoom/panzoom';
-import { DiagramMetadata } from 'src/app/projects/models/diagrams/service/model-diagram.service';
+import { DiagramMetadata } from 'src/app/openapi';
 
 @Component({
   selector: 'app-model-diagram-preview-dialog',

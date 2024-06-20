@@ -16,8 +16,8 @@ import {
 import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ModelService } from 'src/app/projects/models/service/model.service';
-import { ProjectService } from '../../service/project.service';
+import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
+import { ProjectWrapperService } from '../../service/project.service';
 import { CreateModelBaseComponent } from '../create-model-base/create-model-base.component';
 import { InitModelComponent } from '../init-model/init-model.component';
 import { ChooseSourceComponent } from '../model-source/choose-source.component';
@@ -60,8 +60,8 @@ export class CreateModelComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private projectService: ProjectService,
-    private modelService: ModelService,
+    private projectService: ProjectWrapperService,
+    private modelService: ModelWrapperService,
   ) {}
 
   ngOnInit(): void {

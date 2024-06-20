@@ -11,7 +11,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map, switchMap } from 'rxjs';
 import { ModelComplexityBadgeService } from 'src/app/projects/project-detail/model-overview/model-complexity-badge/service/model-complexity-badge.service';
-import { ProjectService } from 'src/app/projects/service/project.service';
+import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-model-complexity-badge',
@@ -37,7 +37,7 @@ export class ModelComplexityBadgeComponent implements OnChanges {
 
   constructor(
     private modelComplexityBadgeService: ModelComplexityBadgeService,
-    private projectService: ProjectService,
+    private projectService: ProjectWrapperService,
   ) {}
 
   ngOnChanges(_: SimpleChanges) {

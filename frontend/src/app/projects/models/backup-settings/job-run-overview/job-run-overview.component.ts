@@ -23,8 +23,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter } from 'rxjs';
 import { PipelineRunService } from 'src/app/projects/models/backup-settings/pipeline-runs/service/pipeline-run.service';
 import { PipelineService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
-import { ModelService } from 'src/app/projects/models/service/model.service';
-import { ProjectService } from 'src/app/projects/service/project.service';
+import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
+import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-loaders/text-line-skeleton-loader/text-line-skeleton-loader.component';
 
 @Component({
@@ -53,8 +53,8 @@ export class JobRunOverviewComponent implements OnInit, AfterViewInit {
     public pipelineRunService: PipelineRunService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private projectService: ProjectService,
-    private modelService: ModelService,
+    private projectService: ProjectWrapperService,
+    private modelService: ModelWrapperService,
     private pipelineService: PipelineService,
   ) {}
 

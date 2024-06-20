@@ -6,11 +6,9 @@
 import { Injectable } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { BehaviorSubject, map } from 'rxjs';
-import { Session } from 'src/app/openapi';
-import {
-  SessionConnectionInformation,
-  SessionService,
-} from 'src/app/sessions/service/session.service';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { Session, SessionConnectionInformation } from 'src/app/openapi';
+import { SessionService } from 'src/app/sessions/service/session.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +17,7 @@ export class SessionViewerService {
   constructor(
     private sessionService: SessionService,
     private domSanitizer: DomSanitizer,
+    private toastService: ToastService,
   ) {}
 
   private _sessions = new BehaviorSubject<ViewerSession[] | undefined>(
@@ -37,6 +36,14 @@ export class SessionViewerService {
     connectionInfo: SessionConnectionInformation,
   ): void {
     const viewerSession = session as ViewerSession;
+
+    if (!connectionInfo.redirect_url) {
+      this.toastService.showError(
+        'Session connection information is not available yet.',
+        'Try again later.',
+      );
+      return;
+    }
 
     this.sessionService.setConnectionInformation(session, connectionInfo);
     viewerSession.focused = false;

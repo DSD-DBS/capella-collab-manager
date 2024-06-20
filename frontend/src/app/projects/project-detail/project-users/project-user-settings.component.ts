@@ -35,7 +35,7 @@ import {
   ProjectUserService,
 } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { UserWrapperService } from 'src/app/services/user/user.service';
-import { ProjectService } from '../../service/project.service';
+import { ProjectWrapperService } from '../../service/project.service';
 
 @UntilDestroy()
 @Component({
@@ -69,7 +69,7 @@ export class ProjectUserSettingsComponent implements OnInit {
     public projectUserService: ProjectUserService,
     public userService: UserWrapperService,
     private toastService: ToastService,
-    private projectService: ProjectService,
+    private projectService: ProjectWrapperService,
     private dialog: MatDialog,
     private router: Router,
   ) {}

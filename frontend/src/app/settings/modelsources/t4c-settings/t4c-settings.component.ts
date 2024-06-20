@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
 import { MatRipple } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import { T4CInstanceService } from 'src/app/services/settings/t4c-instance.service';
+import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
 import { MatIconComponent } from '../../../helpers/mat-icon/mat-icon.component';
 
 @Component({
@@ -28,5 +28,5 @@ import { MatIconComponent } from '../../../helpers/mat-icon/mat-icon.component';
   ],
 })
 export class T4CSettingsComponent {
-  constructor(public t4cInstanceService: T4CInstanceService) {}
+  constructor(public t4cInstanceService: T4CInstanceWrapperService) {}
 }

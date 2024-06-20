@@ -20,13 +20,16 @@ import { MatSelect } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, map, switchMap, tap } from 'rxjs';
 import { SKIP_ERROR_HANDLING_CONTEXT } from 'src/app/general/error-handling/error-handling.interceptor';
-import { Tool, ToolNature, ToolVersion, ToolsService } from 'src/app/openapi';
 import {
-  Model,
-  ModelService,
-} from 'src/app/projects/models/service/model.service';
+  Tool,
+  ToolModel,
+  ToolNature,
+  ToolVersion,
+  ToolsService,
+} from 'src/app/openapi';
+import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { GitModelService } from '../../project-detail/model-overview/model-detail/git-model.service';
-import { ProjectService } from '../../service/project.service';
+import { ProjectWrapperService } from '../../service/project.service';
 
 @UntilDestroy()
 @Component({
@@ -61,8 +64,8 @@ export class InitModelComponent implements OnInit {
   private modelSlug?: string = undefined;
 
   constructor(
-    public projectService: ProjectService,
-    public modelService: ModelService,
+    public projectService: ProjectWrapperService,
+    public modelService: ModelWrapperService,
     public gitModelService: GitModelService,
     private toolsService: ToolsService,
   ) {}
@@ -89,7 +92,7 @@ export class InitModelComponent implements OnInit {
             this.form.controls.nature.patchValue(model.nature.id);
           }
         }),
-        map((model: Model) => model.tool),
+        map((model: ToolModel) => model.tool),
         switchMap((tool: Tool) =>
           combineLatest([
             this.toolsService.getToolVersions(tool.id, undefined, undefined, {

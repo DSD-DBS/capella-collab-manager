@@ -17,7 +17,7 @@ import { Tool } from './tool';
 import { ToolNature } from './tool-nature';
 
 
-export interface CapellaModel { 
+export interface ToolModel { 
     id: number;
     slug: string;
     name: string;

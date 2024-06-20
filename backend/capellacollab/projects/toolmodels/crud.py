@@ -78,7 +78,7 @@ def get_model_by_slugs(
 def create_model(
     db: orm.Session,
     project: projects_model.DatabaseProject,
-    post_model: models.PostCapellaModel,
+    post_model: models.PostToolModel,
     tool: tools_models.DatabaseTool,
     version: tools_models.DatabaseVersion | None = None,
     nature: tools_models.DatabaseNature | None = None,

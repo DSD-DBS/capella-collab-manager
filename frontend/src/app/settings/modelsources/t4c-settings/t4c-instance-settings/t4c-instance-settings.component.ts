@@ -31,12 +31,10 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatSelectionList } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
-import { T4CInstance } from 'src/app/services/settings/t4c-instance.service';
+import { CreateT4CRepository, T4CInstance } from 'src/app/openapi';
 import {
-  CreateT4CRepository,
-  T4CRepoService,
-  T4CRepository,
-  T4CServerRepository,
+  ExtendedT4CRepository,
+  T4CRepositoryWrapperService,
 } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 import { T4CRepoDeletionDialogComponent } from './t4c-repo-deletion-dialog/t4c-repo-deletion-dialog.component';
 
@@ -68,7 +66,7 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
   search = '';
 
   constructor(
-    public t4cRepoService: T4CRepoService,
+    public t4cRepoService: T4CRepositoryWrapperService,
     private dialog: MatDialog,
   ) {}
 
@@ -92,8 +90,8 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
   });
 
   getFilteredRepositories(
-    repositories: T4CServerRepository[] | undefined | null,
-  ): T4CServerRepository[] | undefined {
+    repositories: ExtendedT4CRepository[] | undefined | null,
+  ): ExtendedT4CRepository[] | undefined {
     if (repositories === undefined || repositories === null) {
       return undefined;
     }
@@ -114,25 +112,25 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
     }
   }
 
-  deleteRepository(repository: T4CRepository): void {
+  deleteRepository(repository: ExtendedT4CRepository): void {
     this.dialog.open(T4CRepoDeletionDialogComponent, {
       data: repository,
     });
   }
 
-  startRepository(repository: T4CServerRepository): void {
+  startRepository(repository: ExtendedT4CRepository): void {
     this.t4cRepoService
       .startRepository(repository.instance.id, repository.id)
       .subscribe();
   }
 
-  stopRepository(repository: T4CServerRepository): void {
+  stopRepository(repository: ExtendedT4CRepository): void {
     this.t4cRepoService
       .stopRepository(repository.instance.id, repository.id)
       .subscribe();
   }
 
-  recreateRepository(repository: T4CServerRepository): void {
+  recreateRepository(repository: ExtendedT4CRepository): void {
     this.t4cRepoService
       .recreateRepository(repository.instance.id, repository.id)
       .subscribe();

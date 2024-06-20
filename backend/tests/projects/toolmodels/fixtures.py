@@ -23,7 +23,7 @@ def fixture_capella_model(
     project: projects_models.DatabaseProject,
     capella_tool_version: tools_models.DatabaseVersion,
 ) -> toolmodels_models.DatabaseToolModel:
-    model = toolmodels_models.PostCapellaModel(
+    model = toolmodels_models.PostToolModel(
         name="test", description="test", tool_id=capella_tool_version.tool.id
     )
     return toolmodels_crud.create_model(
@@ -37,7 +37,7 @@ def fixture_jupyter_model(
     project: projects_models.DatabaseProject,
     jupyter_tool: tools_models.DatabaseTool,
 ) -> toolmodels_models.DatabaseToolModel:
-    jupyter_model = toolmodels_models.PostCapellaModel(
+    jupyter_model = toolmodels_models.PostToolModel(
         name="Jupyter test",
         description="",
         tool_id=jupyter_tool.id,

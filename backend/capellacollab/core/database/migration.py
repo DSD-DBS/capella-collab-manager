@@ -396,7 +396,7 @@ def create_default_models(db: orm.Session):
         capella_model = toolmodels_crud.create_model(
             db=db,
             project=default_project,
-            post_model=toolmodels_models.PostCapellaModel(
+            post_model=toolmodels_models.PostToolModel(
                 name=f"Melody Model Test {version}",
                 description="",
                 tool_id=capella_tool.id,
@@ -434,7 +434,7 @@ def create_coffee_machine_model(db: orm.Session):
     capella_model = toolmodels_crud.create_model(
         db=db,
         project=coffee_machine_project,
-        post_model=toolmodels_models.PostCapellaModel(
+        post_model=toolmodels_models.PostToolModel(
             name="Coffee Machine",
             description="An open source model of a coffee machine",
             tool_id=capella_tool.id,

@@ -8,9 +8,9 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
-import { ModelService } from 'src/app/projects/models/service/model.service';
+import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { UserWrapperService } from 'src/app/services/user/user.service';
-import { ProjectService } from '../../service/project.service';
+import { ProjectWrapperService } from '../../service/project.service';
 
 @Component({
   selector: 'app-choose-source',
@@ -23,8 +23,8 @@ export class ChooseSourceComponent {
   @Output() modelSourceSelection = new EventEmitter<string>();
 
   constructor(
-    public projectService: ProjectService,
-    public modelService: ModelService,
+    public projectService: ProjectWrapperService,
+    public modelService: ModelWrapperService,
     public userService: UserWrapperService,
   ) {}
 }

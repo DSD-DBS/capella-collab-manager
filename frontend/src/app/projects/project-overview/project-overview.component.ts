@@ -10,7 +10,7 @@ import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { MatIconComponent } from '../../helpers/mat-icon/mat-icon.component';
 import { MatCardOverviewSkeletonLoaderComponent } from '../../helpers/skeleton-loaders/mat-card-overview-skeleton-loader/mat-card-overview-skeleton-loader.component';
-import { ProjectService, UserMetadata } from '../service/project.service';
+import { ProjectWrapperService } from '../service/project.service';
 
 @Component({
   selector: 'app-project-overview',
@@ -30,13 +30,9 @@ import { ProjectService, UserMetadata } from '../service/project.service';
   ],
 })
 export class ProjectOverviewComponent implements OnInit {
-  constructor(public projectService: ProjectService) {}
+  constructor(public projectService: ProjectWrapperService) {}
 
   ngOnInit() {
     this.projectService.loadProjects();
-  }
-
-  sumUsers(user: UserMetadata): number {
-    return user.contributors + user.leads + user.subscribers;
   }
 }

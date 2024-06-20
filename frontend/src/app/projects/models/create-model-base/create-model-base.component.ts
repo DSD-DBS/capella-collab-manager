@@ -23,12 +23,9 @@ import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import {
-  ModelService,
-  NewModel,
-} from 'src/app/projects/models/service/model.service';
+import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { ToolWrapperService } from 'src/app/settings/core/tools-settings/tool.service';
-import { ProjectService } from '../../service/project.service';
+import { ProjectWrapperService } from '../../service/project.service';
 
 @UntilDestroy()
 @Component({
@@ -71,8 +68,8 @@ export class CreateModelBaseComponent implements OnInit {
   });
 
   constructor(
-    private modelService: ModelService,
-    public projectService: ProjectService,
+    private modelService: ModelWrapperService,
+    public projectService: ProjectWrapperService,
     public toolWrapperService: ToolWrapperService,
     private toastService: ToastService,
   ) {}
@@ -90,10 +87,10 @@ export class CreateModelBaseComponent implements OnInit {
     if (this.form.valid && this.projectSlug) {
       this.modelService
         .createModel(this.projectSlug, {
-          name: this.form.value.name,
+          name: this.form.value.name!,
           description: this.form.value.description,
-          tool_id: this.form.value.toolID,
-        } as NewModel)
+          tool_id: this.form.value.toolID!,
+        })
         .subscribe({
           next: (model) => {
             this.toastService.showSuccess(

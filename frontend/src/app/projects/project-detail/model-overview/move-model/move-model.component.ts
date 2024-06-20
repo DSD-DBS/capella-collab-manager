@@ -22,12 +22,9 @@ import { MatInput } from '@angular/material/input';
 import { Observable, map } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Project } from 'src/app/openapi';
-import {
-  Model,
-  ModelService,
-} from 'src/app/projects/models/service/model.service';
-import { ProjectService } from 'src/app/projects/service/project.service';
+import { Project, ToolModel } from 'src/app/openapi';
+import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
+import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 
 @Component({
   selector: 'app-move-model',
@@ -52,13 +49,13 @@ export class MoveModelComponent {
   search = '';
   filteredProjects$: Observable<Project[] | undefined>;
   constructor(
-    private modelService: ModelService,
+    private modelService: ModelWrapperService,
     private dialogRef: MatDialogRef<MoveModelComponent>,
     private toastService: ToastService,
-    public projectService: ProjectService,
+    public projectService: ProjectWrapperService,
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA)
-    public data: { projectSlug: string; model: Model },
+    public data: { projectSlug: string; model: ToolModel },
   ) {
     this.projectService.loadProjects('manager');
     this.filteredProjects$ = projectService.projects$.pipe(

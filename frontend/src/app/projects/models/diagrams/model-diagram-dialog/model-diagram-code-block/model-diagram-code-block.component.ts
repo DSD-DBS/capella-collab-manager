@@ -24,11 +24,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import hljs from 'highlight.js';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Metadata, Project } from 'src/app/openapi';
-import {
-  Model,
-  getPrimaryGitModel,
-} from 'src/app/projects/models/service/model.service';
+import { Metadata, Project, ToolModel } from 'src/app/openapi';
+import { getPrimaryGitModel } from 'src/app/projects/models/service/model.service';
 import { UserWrapperService } from 'src/app/services/user/user.service';
 import { TokenService } from 'src/app/users/basic-auth-service/basic-auth-token.service';
 
@@ -69,7 +66,7 @@ export class ModelDiagramCodeBlockComponent implements OnInit, AfterViewInit {
   }
 
   @Input({ required: true })
-  model!: Model;
+  model!: ToolModel;
 
   @Input({ required: true })
   project!: Project;

@@ -120,7 +120,7 @@ def fixture_mock_get_model_badge_from_artifacts_api(
 @pytest.mark.usefixtures("project_user", "git_type", "git_model")
 def test_model_has_no_git_instance(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
 ):
     response = client.get(
@@ -138,7 +138,7 @@ def test_model_has_no_git_instance(
 @pytest.mark.usefixtures("project_user", "git_instance", "git_model")
 def test_get_model_badge_fails_with_unsupported_git_instance(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
 ):
     response = client.get(
@@ -160,7 +160,7 @@ def test_get_model_badge_fails_with_unsupported_git_instance(
 )
 def test_get_model_badge_fails_without_api_endpoint(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
 ):
     response = client.get(
@@ -197,7 +197,7 @@ def test_get_model_badge_fails_without_api_endpoint(
 )
 def test_get_model_badge(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
 ):
     response = client.get(
@@ -235,7 +235,7 @@ def test_get_model_badge(
 )
 def test_get_model_badge_from_artifacts(
     project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.CapellaModel,
+    capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
 ):
     response = client.get(

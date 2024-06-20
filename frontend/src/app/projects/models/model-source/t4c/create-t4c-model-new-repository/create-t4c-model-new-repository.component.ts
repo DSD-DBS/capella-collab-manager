@@ -22,11 +22,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, switchMap } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { ProjectService } from 'src/app/projects/service/project.service';
-import { T4CInstanceService } from 'src/app/services/settings/t4c-instance.service';
-import { T4CRepoService } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
+import { ProjectWrapperService } from 'src/app/projects/service/project.service';
+import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
+import { T4CRepositoryWrapperService } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 import { FormFieldSkeletonLoaderComponent } from '../../../../../helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
-import { ModelService } from '../../../service/model.service';
+import { ModelWrapperService } from '../../../service/model.service';
 import { T4CModelService } from '../service/t4c-model.service';
 
 @UntilDestroy()
@@ -60,11 +60,11 @@ export class CreateT4cModelNewRepositoryComponent implements OnInit {
   private modelSlug?: string;
 
   constructor(
-    public projectService: ProjectService,
-    public modelService: ModelService,
+    public projectService: ProjectWrapperService,
+    public modelService: ModelWrapperService,
     public t4cModelService: T4CModelService,
-    public t4cInstanceService: T4CInstanceService,
-    private t4cRepoService: T4CRepoService,
+    public t4cInstanceService: T4CInstanceWrapperService,
+    private t4cRepoService: T4CRepositoryWrapperService,
     private router: Router,
     private route: ActivatedRoute,
     private toastService: ToastService,

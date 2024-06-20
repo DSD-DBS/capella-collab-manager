@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   AbstractControl,
@@ -12,45 +11,36 @@ import {
 } from '@angular/forms';
 import { BehaviorSubject, Observable, map, take, tap } from 'rxjs';
 import {
+  CreateT4CRepository,
+  ResponseModel,
+  SettingsModelsourcesT4CService,
   T4CInstance,
-  T4CInstanceService,
-} from 'src/app/services/settings/t4c-instance.service';
+  T4CRepository,
+  T4CRepositoryStatus,
+} from 'src/app/openapi';
 
 @Injectable({
   providedIn: 'root',
 })
-export class T4CRepoService {
-  constructor(
-    private http: HttpClient,
-    private t4cInstanceService: T4CInstanceService,
-  ) {}
+export class T4CRepositoryWrapperService {
+  constructor(private t4cInstanceService: SettingsModelsourcesT4CService) {}
 
   private _repositories = new BehaviorSubject<
-    T4CServerRepository[] | undefined
+    ExtendedT4CRepository[] | undefined
   >(undefined);
 
   public readonly repositories$ = this._repositories.asObservable();
 
-  urlFactory(instanceId: number, repositoryId: number): string {
-    return `${this.t4cInstanceService.urlFactory(
-      instanceId,
-    )}/repositories/${repositoryId}`;
-  }
-
   loadRepositories(instanceId: number): void {
-    this.http
-      .get<
-        T4CServerRepository[]
-      >(`${this.t4cInstanceService.urlFactory(instanceId)}/repositories`)
-      .subscribe({
-        next: (repositories) => this._repositories.next(repositories),
-        error: () => this._repositories.next(undefined),
-      });
+    this.t4cInstanceService.listT4cRepositories(instanceId).subscribe({
+      next: (repositories) => this._repositories.next(repositories.payload),
+      error: () => this._repositories.next(undefined),
+    });
   }
 
   refreshRepositories(instanceId: number): void {
     const updateRepositories = this._repositories.value?.map((repository) => {
-      return { ...repository, status: 'LOADING' } as T4CServerRepository;
+      return { ...repository, status: 'LOADING' } as ExtendedT4CRepository;
     });
     this._repositories.next(updateRepositories);
     this.loadRepositories(instanceId);
@@ -60,25 +50,22 @@ export class T4CRepoService {
     instanceId: number,
     repository: CreateT4CRepository,
   ): Observable<T4CRepository> {
-    return this.http
-      .post<T4CRepository>(
-        `${this.t4cInstanceService.urlFactory(instanceId)}/repositories`,
-        repository,
-      )
+    return this.t4cInstanceService
+      .createT4cRepository(instanceId, repository)
       .pipe(tap(() => this.loadRepositories(instanceId)));
   }
 
   startRepository(instanceId: number, repositoryId: number): Observable<null> {
     this.publishRepositoriesWithChangedStatus(repositoryId, 'LOADING');
-    return this.http
-      .post<null>(`${this.urlFactory(instanceId, repositoryId)}/start`, {})
+    return this.t4cInstanceService
+      .startT4cRepository(instanceId, repositoryId)
       .pipe(tap(() => this.loadRepositories(instanceId)));
   }
 
   stopRepository(instanceId: number, repositoryId: number): Observable<null> {
     this.publishRepositoriesWithChangedStatus(repositoryId, 'LOADING');
-    return this.http
-      .post<null>(`${this.urlFactory(instanceId, repositoryId)}/stop`, {})
+    return this.t4cInstanceService
+      .stopT4cRepository(instanceId, repositoryId)
       .pipe(tap(() => this.loadRepositories(instanceId)));
   }
 
@@ -87,14 +74,17 @@ export class T4CRepoService {
     repositoryId: number,
   ): Observable<null> {
     this.publishRepositoriesWithChangedStatus(repositoryId, 'LOADING');
-    return this.http
-      .post<null>(`${this.urlFactory(instanceId, repositoryId)}/recreate`, {})
+    return this.t4cInstanceService
+      .recreateT4cRepository(instanceId, repositoryId)
       .pipe(tap(() => this.loadRepositories(instanceId)));
   }
 
-  deleteRepository(instanceId: number, repositoryId: number): Observable<null> {
-    return this.http
-      .delete<null>(`${this.urlFactory(instanceId, repositoryId)}`)
+  deleteRepository(
+    instanceId: number,
+    repositoryId: number,
+  ): Observable<ResponseModel> {
+    return this.t4cInstanceService
+      .deleteT4cRepository(instanceId, repositoryId)
       .pipe(tap(() => this.loadRepositories(instanceId)));
   }
 
@@ -124,7 +114,7 @@ export class T4CRepoService {
 
     const updatedRepositories = currentRepositories?.map((repository) => {
       if (repository.id === repositoryId) {
-        return { ...repository, status: status } as T4CServerRepository;
+        return { ...repository, status: status } as ExtendedT4CRepository;
       }
       return repository;
     });
@@ -132,21 +122,11 @@ export class T4CRepoService {
   }
 }
 
-export type CreateT4CRepository = {
-  name: string;
-};
+type ExtendedT4CRepositoryStatus = T4CRepositoryStatus | 'LOADING';
 
-export type T4CRepository = CreateT4CRepository & {
+export interface ExtendedT4CRepository {
+  name: string;
   id: number;
   instance: T4CInstance;
-};
-
-export type T4CServerRepository = T4CRepository & {
-  status:
-    | 'ONLINE'
-    | 'OFFLINE'
-    | 'INITIAL'
-    | 'INSTANCE_UNREACHABLE'
-    | 'NOT_FOUND'
-    | 'LOADING';
-};
+  status: ExtendedT4CRepositoryStatus | null;
+}

@@ -6,11 +6,8 @@
 import { NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, Input } from '@angular/core';
-import {
-  SessionUsage,
-  T4CInstance,
-  T4CInstanceService,
-} from 'src/app/services/settings/t4c-instance.service';
+import { GetSessionUsageResponse, T4CInstance } from 'src/app/openapi';
+import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
 
 @Component({
   selector: 'app-licences',
@@ -24,7 +21,7 @@ export class LicencesComponent implements OnInit {
 
   public errorMessage?: string;
 
-  constructor(private t4cInstanceService: T4CInstanceService) {}
+  constructor(private t4cInstanceService: T4CInstanceWrapperService) {}
 
   ngOnInit(): void {
     this.t4cInstanceService.getLicenses(this.instance.id).subscribe({
@@ -39,5 +36,5 @@ export class LicencesComponent implements OnInit {
     });
   }
 
-  sessionUsage?: SessionUsage;
+  sessionUsage?: GetSessionUsageResponse;
 }

@@ -23,8 +23,6 @@ import { Backup } from '../model/backup';
 // @ts-ignore
 import { BackupPipelineRun } from '../model/backup-pipeline-run';
 // @ts-ignore
-import { CapellaModel } from '../model/capella-model';
-// @ts-ignore
 import { CreateBackup } from '../model/create-backup';
 // @ts-ignore
 import { DiagramCacheMetadata } from '../model/diagram-cache-metadata';
@@ -37,19 +35,21 @@ import { HTTPValidationError } from '../model/http-validation-error';
 // @ts-ignore
 import { PagePipelineRun } from '../model/page-pipeline-run';
 // @ts-ignore
-import { PatchCapellaModel } from '../model/patch-capella-model';
-// @ts-ignore
 import { PatchGitModel } from '../model/patch-git-model';
+// @ts-ignore
+import { PatchToolModel } from '../model/patch-tool-model';
 // @ts-ignore
 import { PipelineRun } from '../model/pipeline-run';
 // @ts-ignore
-import { PostCapellaModel } from '../model/post-capella-model';
-// @ts-ignore
 import { PostGitModel } from '../model/post-git-model';
+// @ts-ignore
+import { PostToolModel } from '../model/post-tool-model';
 // @ts-ignore
 import { SubmitT4CModel } from '../model/submit-t4-c-model';
 // @ts-ignore
 import { T4CModel } from '../model/t4-c-model';
+// @ts-ignore
+import { ToolModel } from '../model/tool-model';
 // @ts-ignore
 import { ToolModelRestrictions } from '../model/tool-model-restrictions';
 
@@ -316,19 +316,19 @@ export class ProjectsModelsService {
     /**
      * Create New Tool Model
      * @param projectSlug 
-     * @param postCapellaModel 
+     * @param postToolModel 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public createNewToolModel(projectSlug: string, postCapellaModel: PostCapellaModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CapellaModel>;
-    public createNewToolModel(projectSlug: string, postCapellaModel: PostCapellaModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CapellaModel>>;
-    public createNewToolModel(projectSlug: string, postCapellaModel: PostCapellaModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CapellaModel>>;
-    public createNewToolModel(projectSlug: string, postCapellaModel: PostCapellaModel, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public createNewToolModel(projectSlug: string, postToolModel: PostToolModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ToolModel>;
+    public createNewToolModel(projectSlug: string, postToolModel: PostToolModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ToolModel>>;
+    public createNewToolModel(projectSlug: string, postToolModel: PostToolModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ToolModel>>;
+    public createNewToolModel(projectSlug: string, postToolModel: PostToolModel, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling createNewToolModel.');
         }
-        if (postCapellaModel === null || postCapellaModel === undefined) {
-            throw new Error('Required parameter postCapellaModel was null or undefined when calling createNewToolModel.');
+        if (postToolModel === null || postToolModel === undefined) {
+            throw new Error('Required parameter postToolModel was null or undefined when calling createNewToolModel.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -390,10 +390,10 @@ export class ProjectsModelsService {
         }
 
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models`;
-        return this.httpClient.request<CapellaModel>('post', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ToolModel>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: postCapellaModel,
+                body: postToolModel,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
@@ -407,19 +407,19 @@ export class ProjectsModelsService {
     /**
      * Create New Tool Model
      * @param projectSlug 
-     * @param postCapellaModel 
+     * @param postToolModel 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public createNewToolModel_1(projectSlug: string, postCapellaModel: PostCapellaModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CapellaModel>;
-    public createNewToolModel_1(projectSlug: string, postCapellaModel: PostCapellaModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CapellaModel>>;
-    public createNewToolModel_1(projectSlug: string, postCapellaModel: PostCapellaModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CapellaModel>>;
-    public createNewToolModel_1(projectSlug: string, postCapellaModel: PostCapellaModel, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public createNewToolModel_1(projectSlug: string, postToolModel: PostToolModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ToolModel>;
+    public createNewToolModel_1(projectSlug: string, postToolModel: PostToolModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ToolModel>>;
+    public createNewToolModel_1(projectSlug: string, postToolModel: PostToolModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ToolModel>>;
+    public createNewToolModel_1(projectSlug: string, postToolModel: PostToolModel, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling createNewToolModel_1.');
         }
-        if (postCapellaModel === null || postCapellaModel === undefined) {
-            throw new Error('Required parameter postCapellaModel was null or undefined when calling createNewToolModel_1.');
+        if (postToolModel === null || postToolModel === undefined) {
+            throw new Error('Required parameter postToolModel was null or undefined when calling createNewToolModel_1.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -481,10 +481,10 @@ export class ProjectsModelsService {
         }
 
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models`;
-        return this.httpClient.request<CapellaModel>('post', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ToolModel>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: postCapellaModel,
+                body: postToolModel,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
@@ -1221,10 +1221,10 @@ export class ProjectsModelsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Blob>;
+    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Blob>>;
+    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Blob>>;
+    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (diagramUuidOrFilename === null || diagramUuidOrFilename === undefined) {
             throw new Error('Required parameter diagramUuidOrFilename was null or undefined when calling getDiagram.');
         }
@@ -1254,6 +1254,7 @@ export class ProjectsModelsService {
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
             const httpHeaderAccepts: string[] = [
+                'image/svg+xml',
                 'application/json'
             ];
             localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
@@ -1273,22 +1274,11 @@ export class ProjectsModelsService {
         }
 
 
-        let responseType_: 'text' | 'json' | 'blob' = 'json';
-        if (localVarHttpHeaderAcceptSelected) {
-            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
-                responseType_ = 'text';
-            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
-                responseType_ = 'json';
-            } else {
-                responseType_ = 'blob';
-            }
-        }
-
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models/${this.configuration.encodeParam({name: "modelSlug", value: modelSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/diagrams/${this.configuration.encodeParam({name: "diagramUuidOrFilename", value: diagramUuidOrFilename, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
-        return this.httpClient.request<any>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                responseType: <any>responseType_,
+                responseType: "blob",
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
                 observe: observe,
@@ -1641,9 +1631,9 @@ export class ProjectsModelsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getModelBySlug(projectSlug: string, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CapellaModel>;
-    public getModelBySlug(projectSlug: string, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CapellaModel>>;
-    public getModelBySlug(projectSlug: string, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CapellaModel>>;
+    public getModelBySlug(projectSlug: string, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ToolModel>;
+    public getModelBySlug(projectSlug: string, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ToolModel>>;
+    public getModelBySlug(projectSlug: string, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ToolModel>>;
     public getModelBySlug(projectSlug: string, modelSlug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling getModelBySlug.');
@@ -1702,7 +1692,7 @@ export class ProjectsModelsService {
         }
 
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models/${this.configuration.encodeParam({name: "modelSlug", value: modelSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
-        return this.httpClient.request<CapellaModel>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ToolModel>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -1722,9 +1712,9 @@ export class ProjectsModelsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getModelBySlug_3(projectSlug: string, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CapellaModel>;
-    public getModelBySlug_3(projectSlug: string, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CapellaModel>>;
-    public getModelBySlug_3(projectSlug: string, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CapellaModel>>;
+    public getModelBySlug_3(projectSlug: string, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ToolModel>;
+    public getModelBySlug_3(projectSlug: string, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ToolModel>>;
+    public getModelBySlug_3(projectSlug: string, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ToolModel>>;
     public getModelBySlug_3(projectSlug: string, modelSlug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling getModelBySlug_3.');
@@ -1783,7 +1773,7 @@ export class ProjectsModelsService {
         }
 
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models/${this.configuration.encodeParam({name: "modelSlug", value: modelSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
-        return this.httpClient.request<CapellaModel>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ToolModel>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -1803,10 +1793,10 @@ export class ProjectsModelsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getModelComplexityBadge(projectSlug: string, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public getModelComplexityBadge(projectSlug: string, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public getModelComplexityBadge(projectSlug: string, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public getModelComplexityBadge(projectSlug: string, modelSlug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getModelComplexityBadge(projectSlug: string, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Blob>;
+    public getModelComplexityBadge(projectSlug: string, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Blob>>;
+    public getModelComplexityBadge(projectSlug: string, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Blob>>;
+    public getModelComplexityBadge(projectSlug: string, modelSlug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling getModelComplexityBadge.');
         }
@@ -1833,6 +1823,7 @@ export class ProjectsModelsService {
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
             const httpHeaderAccepts: string[] = [
+                'image/svg+xml',
                 'application/json'
             ];
             localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
@@ -1852,22 +1843,11 @@ export class ProjectsModelsService {
         }
 
 
-        let responseType_: 'text' | 'json' | 'blob' = 'json';
-        if (localVarHttpHeaderAcceptSelected) {
-            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
-                responseType_ = 'text';
-            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
-                responseType_ = 'json';
-            } else {
-                responseType_ = 'blob';
-            }
-        }
-
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models/${this.configuration.encodeParam({name: "modelSlug", value: modelSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/badges/complexity`;
-        return this.httpClient.request<any>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                responseType: <any>responseType_,
+                responseType: "blob",
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
                 observe: observe,
@@ -1883,9 +1863,9 @@ export class ProjectsModelsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getModels(projectSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<CapellaModel>>;
-    public getModels(projectSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<CapellaModel>>>;
-    public getModels(projectSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<CapellaModel>>>;
+    public getModels(projectSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ToolModel>>;
+    public getModels(projectSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ToolModel>>>;
+    public getModels(projectSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ToolModel>>>;
     public getModels(projectSlug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling getModels.');
@@ -1941,7 +1921,7 @@ export class ProjectsModelsService {
         }
 
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models`;
-        return this.httpClient.request<Array<CapellaModel>>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<Array<ToolModel>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -1960,9 +1940,9 @@ export class ProjectsModelsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getModels_4(projectSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<CapellaModel>>;
-    public getModels_4(projectSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<CapellaModel>>>;
-    public getModels_4(projectSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<CapellaModel>>>;
+    public getModels_4(projectSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ToolModel>>;
+    public getModels_4(projectSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ToolModel>>>;
+    public getModels_4(projectSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ToolModel>>>;
     public getModels_4(projectSlug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling getModels_4.');
@@ -2018,7 +1998,7 @@ export class ProjectsModelsService {
         }
 
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models`;
-        return this.httpClient.request<Array<CapellaModel>>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<Array<ToolModel>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -2904,22 +2884,22 @@ export class ProjectsModelsService {
      * Patch Tool Model
      * @param projectSlug 
      * @param modelSlug 
-     * @param patchCapellaModel 
+     * @param patchToolModel 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public patchToolModel(projectSlug: string, modelSlug: string, patchCapellaModel: PatchCapellaModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CapellaModel>;
-    public patchToolModel(projectSlug: string, modelSlug: string, patchCapellaModel: PatchCapellaModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CapellaModel>>;
-    public patchToolModel(projectSlug: string, modelSlug: string, patchCapellaModel: PatchCapellaModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CapellaModel>>;
-    public patchToolModel(projectSlug: string, modelSlug: string, patchCapellaModel: PatchCapellaModel, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public patchToolModel(projectSlug: string, modelSlug: string, patchToolModel: PatchToolModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ToolModel>;
+    public patchToolModel(projectSlug: string, modelSlug: string, patchToolModel: PatchToolModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ToolModel>>;
+    public patchToolModel(projectSlug: string, modelSlug: string, patchToolModel: PatchToolModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ToolModel>>;
+    public patchToolModel(projectSlug: string, modelSlug: string, patchToolModel: PatchToolModel, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling patchToolModel.');
         }
         if (modelSlug === null || modelSlug === undefined) {
             throw new Error('Required parameter modelSlug was null or undefined when calling patchToolModel.');
         }
-        if (patchCapellaModel === null || patchCapellaModel === undefined) {
-            throw new Error('Required parameter patchCapellaModel was null or undefined when calling patchToolModel.');
+        if (patchToolModel === null || patchToolModel === undefined) {
+            throw new Error('Required parameter patchToolModel was null or undefined when calling patchToolModel.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -2981,10 +2961,10 @@ export class ProjectsModelsService {
         }
 
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models/${this.configuration.encodeParam({name: "modelSlug", value: modelSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
-        return this.httpClient.request<CapellaModel>('patch', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ToolModel>('patch', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchCapellaModel,
+                body: patchToolModel,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
@@ -2999,22 +2979,22 @@ export class ProjectsModelsService {
      * Patch Tool Model
      * @param projectSlug 
      * @param modelSlug 
-     * @param patchCapellaModel 
+     * @param patchToolModel 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public patchToolModel_5(projectSlug: string, modelSlug: string, patchCapellaModel: PatchCapellaModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CapellaModel>;
-    public patchToolModel_5(projectSlug: string, modelSlug: string, patchCapellaModel: PatchCapellaModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CapellaModel>>;
-    public patchToolModel_5(projectSlug: string, modelSlug: string, patchCapellaModel: PatchCapellaModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CapellaModel>>;
-    public patchToolModel_5(projectSlug: string, modelSlug: string, patchCapellaModel: PatchCapellaModel, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public patchToolModel_5(projectSlug: string, modelSlug: string, patchToolModel: PatchToolModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ToolModel>;
+    public patchToolModel_5(projectSlug: string, modelSlug: string, patchToolModel: PatchToolModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ToolModel>>;
+    public patchToolModel_5(projectSlug: string, modelSlug: string, patchToolModel: PatchToolModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ToolModel>>;
+    public patchToolModel_5(projectSlug: string, modelSlug: string, patchToolModel: PatchToolModel, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling patchToolModel_5.');
         }
         if (modelSlug === null || modelSlug === undefined) {
             throw new Error('Required parameter modelSlug was null or undefined when calling patchToolModel_5.');
         }
-        if (patchCapellaModel === null || patchCapellaModel === undefined) {
-            throw new Error('Required parameter patchCapellaModel was null or undefined when calling patchToolModel_5.');
+        if (patchToolModel === null || patchToolModel === undefined) {
+            throw new Error('Required parameter patchToolModel was null or undefined when calling patchToolModel_5.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -3076,10 +3056,10 @@ export class ProjectsModelsService {
         }
 
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models/${this.configuration.encodeParam({name: "modelSlug", value: modelSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
-        return this.httpClient.request<CapellaModel>('patch', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ToolModel>('patch', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchCapellaModel,
+                body: patchToolModel,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

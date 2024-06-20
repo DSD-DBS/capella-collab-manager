@@ -13,7 +13,7 @@ import {
 import { GitSettingsComponent } from './git-settings.component';
 
 const meta: Meta<GitSettingsComponent> = {
-  title: 'Settings Components / Modelsources / Git Instances',
+  title: 'Settings Components / Modelsources / Git / Instances',
   component: GitSettingsComponent,
 };
 
