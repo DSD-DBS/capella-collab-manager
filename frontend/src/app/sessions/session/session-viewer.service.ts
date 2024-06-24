@@ -53,7 +53,7 @@ export class SessionViewerService {
       return;
     }
 
-    this.sessionService.setConnectionInformation(session, connectionInfo);
+    this.sessionService.setConnectionInformation(connectionInfo);
     viewerSession.focused = false;
     viewerSession.safeResourceURL =
       this.domSanitizer.bypassSecurityTrustResourceUrl(
