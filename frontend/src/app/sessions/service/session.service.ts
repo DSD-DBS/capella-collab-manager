@@ -107,9 +107,16 @@ export class SessionService {
     return this.http.delete<null>(`${this.BACKEND_URL_PREFIX}/${id}`);
   }
 
-  setLocalStorage(connectionInfo: SessionConnectionInformation): void {
-    for (const key in connectionInfo.local_storage) {
-      localStorage.setItem(key, connectionInfo.local_storage[key]);
+  setConnectionInformation(
+    session: Session,
+    connectionInformation: SessionConnectionInformation,
+  ): void {
+    this.setLocalStorage(connectionInformation);
+  }
+
+  setLocalStorage(connectionInformation: SessionConnectionInformation): void {
+    for (const key in connectionInformation.local_storage) {
+      localStorage.setItem(key, connectionInformation.local_storage[key]);
     }
   }
 

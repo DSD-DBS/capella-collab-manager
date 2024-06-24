@@ -6,7 +6,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -16,10 +15,7 @@ export class AuthService {
   SESSION_STORAGE_NONCE_KEY = 'nonce';
   SESSION_STORAGE_CODE_VERIFIER_KEY = 'coderVerifier';
 
-  constructor(
-    private http: HttpClient,
-    private localStorageService: LocalStorageService,
-  ) {}
+  constructor(private http: HttpClient) {}
 
   getRedirectURL(): Observable<GetRedirectURLResponse> {
     return this.http.get<GetRedirectURLResponse>(
@@ -67,8 +63,8 @@ export class AuthService {
   }
 
   logOut() {
-    this.localStorageService.setValue('GUAC_AUTH', '');
-    this.localStorageService.setValue('loggedIn', 'false');
+    localStorage.setItem('GUAC_AUTH', '');
+    localStorage.setItem('loggedIn', 'false');
     return this.http
       .delete(environment.backend_url + '/authentication/tokens')
       .subscribe();

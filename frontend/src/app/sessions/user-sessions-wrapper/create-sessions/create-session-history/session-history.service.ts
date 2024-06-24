@@ -5,7 +5,6 @@
 
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +13,7 @@ export class SessionHistoryService {
   LOCAL_STORAGE_SESSION_HISTORY_KEY = 'sessionRequestHistory';
   MAX_SESSIONS_IN_HISTORY = 3;
 
-  constructor(private localStorageService: LocalStorageService) {}
+  constructor() {}
 
   sessionHistory = new BehaviorSubject<SessionRequestHistory[] | undefined>(
     undefined,
@@ -22,12 +21,17 @@ export class SessionHistoryService {
 
   getSessionRequestHistory(): SessionRequestHistory[] {
     let localStorageHistory: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+
+    const currentSessionHistory = localStorage.getItem(
+      this.LOCAL_STORAGE_SESSION_HISTORY_KEY,
+    );
+
+    if (currentSessionHistory === null) {
+      return [];
+    }
+
     try {
-      localStorageHistory = JSON.parse(
-        this.localStorageService.getValue(
-          this.LOCAL_STORAGE_SESSION_HISTORY_KEY,
-        ),
-      );
+      localStorageHistory = JSON.parse(currentSessionHistory);
     } catch (e) {
       console.error(e);
       return [];
@@ -82,7 +86,7 @@ export class SessionHistoryService {
     }
 
     this.sessionHistory.next(currentHistory);
-    this.localStorageService.setValue(
+    localStorage.setItem(
       this.LOCAL_STORAGE_SESSION_HISTORY_KEY,
       JSON.stringify(currentHistory),
     );
