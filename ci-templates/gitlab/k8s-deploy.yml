@@ -64,13 +64,20 @@ variables:
   # prettier-ignore
   - DOCKER_TAG=$(echo $REVISION | sed 's/[^a-zA-Z0-9.]/-/g')-$CI_COMMIT_REF_SLUG
   - helm repo add grafana-helm-remote ${GRAFANA_HELM_CHART}
+  - helm dependency update ./helm
+  - HELM_PACKAGE_DIR=$(mktemp -d)
+  - >
+    helm package \
+      --app-version="$DOCKER_TAG" \
+      --version="$(git describe --tags)" \
+      -d "$HELM_PACKAGE_DIR" \
+      helm
   - >
     helm upgrade ${RELEASE} \
-      --dependency-update \
       --namespace ${NAMESPACE} \
       --set docker.tag=${DOCKER_TAG} \
       -f ../${TARGET}/general.values.yaml \
-      -f ../plain.values.yaml helm
+      -f ../plain.values.yaml "$HELM_PACKAGE_DIR"/collab-manager-*.tgz
   - kubectl rollout restart deployment ${RELEASE}-backend
   - kubectl rollout restart deployment ${RELEASE}-frontend
   - kubectl rollout restart deployment ${RELEASE}-docs

@@ -84,6 +84,8 @@ helm-deploy:
 	@kubectl create namespace $(SESSION_NAMESPACE) 2> /dev/null || true
 	@[[ ! $$(helm dependency list ./helm | grep missing) ]] || helm dependency update ./helm;
 	@echo "Start helm upgrade..."
+	HELM_PACKAGE_DIR=$$(mktemp -d)
+	helm package --app-version=$$(git rev-parse --abbrev-ref HEAD) --version=$$(git describe --tags) -d "$$HELM_PACKAGE_DIR" helm
 	@helm upgrade --install \
 		--kube-context k3d-$(CLUSTER_NAME) \
 		--create-namespace \
@@ -98,7 +100,8 @@ helm-deploy:
 		--set cluster.ingressClassName=traefik \
 		--set cluster.ingressNamespace=kube-system \
 		--set backend.k8sSessionNamespace="$(SESSION_NAMESPACE)" \
-		$(RELEASE) ./helm
+		$(RELEASE) $$HELM_PACKAGE_DIR/collab-manager-*.tgz
+	rm -rf "$$HELM_PACKAGE_DIR"
 	$(MAKE) provision-guacamole wait
 
 open:
