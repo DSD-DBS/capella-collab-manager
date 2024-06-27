@@ -161,12 +161,17 @@ wait:
 	@kill %%
 
 provision-guacamole:
-	@echo "Waiting for guacamole container, before we can initialize the database..."
+	echo "Waiting for guacamole container, before we can initialize the database..."
 	@kubectl get --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) --watch pods &
-	@sleep 2
+	sleep 2
 	@kubectl wait --for=condition=Ready pods --timeout=$(TIMEOUT) --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-guacamole
 	@kubectl wait --for=condition=Ready pods --timeout=$(TIMEOUT) --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) -l id=$(RELEASE)-deployment-guacamole-postgres
 	@kill %%
+	TABLE_EXISTS=$$(kubectl exec --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) --container $(RELEASE)-guacamole-postgres deployment/$(RELEASE)-guacamole-postgres -- psql -U guacamole -tAc "SELECT EXISTS(SELECT 1 FROM information_schema .tables WHERE table_name='guacamole_user');")
+	if [[ $$TABLE_EXISTS == "t" ]]; then
+		echo "Guacamole database already initialized. Skipping initialization.";
+		exit 0;
+	fi
 	@kubectl exec --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) --container $(RELEASE)-guacamole-guacamole deployment/$(RELEASE)-guacamole-guacamole -- /opt/guacamole/bin/initdb.sh --postgresql | \
 	kubectl exec -i --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) deployment/$(RELEASE)-guacamole-postgres -- psql -U guacamole guacamole
 	@echo "Guacamole database initialized sucessfully.";
