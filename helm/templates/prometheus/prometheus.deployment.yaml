@@ -36,6 +36,7 @@ spec:
           {{ end }}
           args:
             - "--storage.tsdb.retention.time=1y"
+            - "--storage.tsdb.retention.size=14GB"
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus/"
             - "--web.external-url=http://{{ .Release.Name }}-prometheus-server/prometheus/"
