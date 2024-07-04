@@ -15,5 +15,5 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 15Gi
   storageClassName: {{ .Values.cluster.pvc.storageClassName }}
