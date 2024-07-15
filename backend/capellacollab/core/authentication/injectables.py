@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import dataclasses
+import functools
 import logging
 
 import fastapi
@@ -23,9 +24,30 @@ from capellacollab.users import crud as users_crud
 from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import models as users_models
 
-from . import exceptions
+from . import exceptions, oidc_provider
 
 logger = logging.getLogger(__name__)
+
+
+@functools.lru_cache
+def get_cached_oidc_provider_config() -> (
+    oidc_provider.AbstractOIDCProviderConfig
+):
+    return oidc_provider.WellKnownOIDCProviderConfig()
+
+
+async def get_oidc_provider_config() -> (
+    oidc_provider.AbstractOIDCProviderConfig
+):
+    return get_cached_oidc_provider_config()
+
+
+async def get_oidc_provider(
+    oidc_provider_config: oidc_provider.AbstractOIDCProviderConfig = fastapi.Depends(
+        get_oidc_provider_config
+    ),
+) -> oidc_provider.AbstractOIDCProvider:
+    return oidc_provider.OIDCProvider(oidc_provider_config)
 
 
 class OpenAPIFakeBase(security_base.SecurityBase):
@@ -61,10 +83,15 @@ class OpenAPIPersonalAccessToken(OpenAPIFakeBase):
 
 async def get_username(
     request: fastapi.Request,
+    provider_config: oidc_provider.AbstractOIDCProviderConfig = fastapi.Depends(
+        get_oidc_provider_config
+    ),
     _unused1=fastapi.Depends(OpenAPIPersonalAccessToken()),
 ) -> str:
     if request.cookies.get("id_token"):
-        username = await api_key_cookie.JWTAPIKeyCookie()(request)
+        username = await api_key_cookie.JWTAPIKeyCookie(provider_config)(
+            request
+        )
         return username
 
     authorization = request.headers.get("Authorization")
