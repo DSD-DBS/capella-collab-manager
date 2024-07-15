@@ -11,7 +11,7 @@ from jwt import exceptions as jwt_exceptions
 
 from capellacollab.config import config
 
-from . import exceptions, flow
+from . import exceptions, oidc_provider
 
 log = logging.getLogger(__name__)
 
@@ -19,24 +19,25 @@ log = logging.getLogger(__name__)
 class JWTConfigBorg:
     _shared_state: dict[str, str] = {}
 
-    def __init__(self) -> None:
+    def __init__(
+        self, provider_config: oidc_provider.AbstractOIDCProviderConfig
+    ):
         self.__dict__ = self._shared_state
+        self.provider_config = provider_config
 
-        if not hasattr(self, "_jwks_client"):
+        if not hasattr(self, "jwks_client"):
             self.jwks_client = jwt.PyJWKClient(
-                uri=flow.get_auth_endpoints()["jwks_uri"]
-            )
-
-        if not hasattr(self, "_supported_signing_algorithms"):
-            self.supported_signing_algorithms = (
-                flow.get_supported_signing_algorithms()
+                uri=self.provider_config.get_jwks_uri()
             )
 
 
 class JWTAPIKeyCookie(security.APIKeyCookie):
-    def __init__(self):
+    def __init__(
+        self, provider_config: oidc_provider.AbstractOIDCProviderConfig
+    ):
         super().__init__(name="id_token", auto_error=True)
-        self.jwt_config = JWTConfigBorg()
+        self.provider_config = provider_config
+        self.jwt_config = JWTConfigBorg(provider_config)
 
     async def __call__(self, request: fastapi.Request) -> str:
         token: str | None = await super().__call__(request)
@@ -59,9 +60,9 @@ class JWTAPIKeyCookie(security.APIKeyCookie):
             return jwt.decode(
                 jwt=token,
                 key=signing_key.key,
-                algorithms=self.jwt_config.supported_signing_algorithms,
-                audience=config.authentication.client.id,
-                issuer=config.authentication.issuer,
+                algorithms=self.provider_config.get_supported_signing_algorithms(),
+                audience=self.provider_config.get_client_id(),
+                issuer=self.provider_config.get_issuer(),
                 options={
                     "verify_exp": True,
                     "verify_iat": True,
