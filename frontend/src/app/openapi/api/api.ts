@@ -53,4 +53,6 @@ export * from './users-sessions.service';
 import { UsersSessionsService } from './users-sessions.service';
 export * from './users-token.service';
 import { UsersTokenService } from './users-token.service';
-export const APIS = [DefaultService, EventsService, HealthService, MetadataService, NoticesService, OauthService, ProjectsService, ProjectsEventsService, ProjectsModelsService, ProjectsModelsBackupsService, ProjectsModelsDiagramsService, ProjectsModelsGitService, ProjectsModelsModelComplexityBadgeService, ProjectsModelsRestrictionsService, ProjectsModelsT4CService, SessionsService, SettingsModelsourcesGitService, SettingsModelsourcesT4CService, ToolsService, UsersService, UsersSessionsService, UsersTokenService];
+export * from './users-workspaces.service';
+import { UsersWorkspacesService } from './users-workspaces.service';
+export const APIS = [DefaultService, EventsService, HealthService, MetadataService, NoticesService, OauthService, ProjectsService, ProjectsEventsService, ProjectsModelsService, ProjectsModelsBackupsService, ProjectsModelsDiagramsService, ProjectsModelsGitService, ProjectsModelsModelComplexityBadgeService, ProjectsModelsRestrictionsService, ProjectsModelsT4CService, SessionsService, SettingsModelsourcesGitService, SettingsModelsourcesT4CService, ToolsService, UsersService, UsersSessionsService, UsersTokenService, UsersWorkspacesService];

@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import datetime
+import json
+import pathlib
 import tarfile
 
 import kubernetes.client
@@ -18,7 +20,7 @@ def mock_kube_config(monkeypatch: pytest.MonkeyPatch):
 
 
 @pytest.fixture(autouse=True)
-def mock_core_v1_api(monkeypatch):
+def mock_core_v1_api(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(
         "kubernetes.client.CoreV1Api.create_namespaced_pod",
         lambda self, ns, pod: pod,
@@ -35,37 +37,59 @@ def mock_core_v1_api(monkeypatch):
     )
     monkeypatch.setattr(
         "kubernetes.client.CoreV1Api.create_namespaced_persistent_volume_claim",
-        lambda self, ns, vpc: None,
+        lambda self, ns, pvc: None,
     )
 
 
-def test_workspace_volumes(monkeypatch, capsys):
+def test_workspace_volumes(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture
+):
+    def pvc_factory(
+        name: str, labels: dict[str, str] | None = None
+    ) -> kubernetes.client.V1PersistentVolumeClaim:
+        return kubernetes.client.V1PersistentVolumeClaim(
+            metadata=kubernetes.client.V1ObjectMeta(
+                name=name,
+                labels=labels,
+                creation_timestamp=datetime.datetime.now(datetime.UTC),
+            ),
+            spec=kubernetes.client.V1PersistentVolumeClaimSpec(
+                access_modes=["ReadWriteOnce"],
+                resources=kubernetes.client.V1ResourceRequirements(
+                    requests={"storage": "1Gi"}
+                ),
+            ),
+        )
+
+    pvcs = [
+        pvc_factory("workspace-test2"),
+        pvc_factory("persistent-session-test"),  # Legacy PVC names
+        pvc_factory("shared-workspace-project-test"),
+        pvc_factory(
+            "shared-workspace-2342352342",
+            labels={"capellacollab/project_slug": "project-test"},
+        ),
+        pvc_factory("my-volume"),
+    ]
+
     monkeypatch.setattr(
         "kubernetes.client.CoreV1Api.list_namespaced_persistent_volume_claim",
         lambda self, namespace, watch: kubernetes.client.V1PersistentVolumeClaimList(
-            items=[
-                kubernetes.client.V1PersistentVolumeClaim(
-                    metadata=kubernetes.client.V1ObjectMeta(
-                        name="my-volume",
-                        creation_timestamp=datetime.datetime.now(datetime.UTC),
-                    ),
-                    spec=kubernetes.client.V1PersistentVolumeClaimSpec(
-                        access_modes=["ReadWriteOnce"],
-                        resources=kubernetes.client.V1ResourceRequirements(
-                            requests={"storage": "1Gi"}
-                        ),
-                    ),
-                )
-            ]
+            items=pvcs
         ),
     )
 
     volumes(namespace="default")
 
-    assert "my-volume" in capsys.readouterr().out
+    stdout = capsys.readouterr().out
+    for pvc in pvcs:
+        assert pvc.metadata.name in stdout
 
 
-def test_ls_workspace(monkeypatch, tmp_path, capsys):
+def test_ls_workspace(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture,
+):
     mock_stream = MockWSClient([b"\01hello"])
     monkeypatch.setattr(
         "kubernetes.stream.stream", lambda *a, **ka: mock_stream
@@ -77,19 +101,68 @@ def test_ls_workspace(monkeypatch, tmp_path, capsys):
     assert "hello" in capsys.readouterr().out
 
 
-def test_backup_workspace(monkeypatch, tmp_path):
+def test_backup_workspace(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path
+):
     mock_stream = MockWSClient([b"\01hello"])
     monkeypatch.setattr(
         "kubernetes.stream.stream", lambda *a, **ka: mock_stream
     )
     monkeypatch.setattr("select.select", lambda *a: (1, None, None))
 
-    backup("my-volume-name", "my-namespace", tmp_path)
+    monkeypatch.setattr(
+        kubernetes.client.CoreV1Api,
+        "read_namespaced_persistent_volume_claim",
+        lambda self, name, namespace: kubernetes.client.V1PersistentVolumeClaim(
+            spec=kubernetes.client.V1PersistentVolumeClaimSpec(
+                resources=kubernetes.client.V1ResourceRequirements(
+                    requests={"storage": "1Gi"},
+                ),
+            ),
+            metadata=kubernetes.client.V1ObjectMeta(
+                annotations={
+                    "capellacollab/username": "test",
+                    "capellacollab/user-id": str(10),
+                    "capellacollab/volume": "personal-workspace",
+                },
+            ),
+        ),
+    )
 
+    backup("my-volume-name", "my-namespace", tmp_path)
     assert (tmp_path / "my-volume-name.tar.gz").exists()
 
+    sidecar_path = tmp_path / "my-volume-name.json"
+    assert sidecar_path.exists()
 
-def test_restore_workspace(monkeypatch, tmp_path, capsys):
+    sidecar = json.loads(sidecar_path.read_text())
+
+    assert sidecar.get("size") == "1Gi"
+    assert sidecar.get("annotations").get("capellacollab/username") == "test"
+
+
+def test_restore_workspace_without_sidecar(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path
+):
+    pvc_created = False
+
+    def mock_create_namespaced_persistent_volume_claim(
+        self, namespace: str, pvc: kubernetes.client.V1PersistentVolumeClaim
+    ):
+        assert namespace == "default"
+        assert pvc.metadata.name == "my-volume-name"
+        assert pvc.spec.resources.requests["storage"] == "20Gi"
+        assert not pvc.metadata.annotations
+
+        nonlocal pvc_created
+        pvc_created = True
+
+    monkeypatch.setattr(
+        kubernetes.client.CoreV1Api,
+        "create_namespaced_persistent_volume_claim",
+        mock_create_namespaced_persistent_volume_claim,
+    )
+
     mock_stream = MockWSClient([])
     monkeypatch.setattr(
         "kubernetes.stream.stream", lambda *a, **ka: mock_stream
@@ -102,6 +175,49 @@ def test_restore_workspace(monkeypatch, tmp_path, capsys):
     restore("my-volume-name", tar_path, "default")
 
     assert mock_stream.written_data
+    assert pvc_created
+
+
+def test_restore_workspace_with_sidecar(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path
+):
+    pvc_created = False
+
+    sidecar_path = tmp_path / "backup.json"
+    sidecar_path.write_text(
+        json.dumps({"size": "1Gi", "annotations": {"foo": "bar"}})
+    )
+
+    def mock_create_namespaced_persistent_volume_claim(
+        self, namespace: str, pvc: kubernetes.client.V1PersistentVolumeClaim
+    ):
+        assert namespace == "default"
+        assert pvc.metadata.name == "my-volume-name"
+        assert pvc.spec.resources.requests["storage"] == "1Gi"
+        assert pvc.metadata.annotations["foo"] == "bar"
+
+        nonlocal pvc_created
+        pvc_created = True
+
+    monkeypatch.setattr(
+        kubernetes.client.CoreV1Api,
+        "create_namespaced_persistent_volume_claim",
+        mock_create_namespaced_persistent_volume_claim,
+    )
+
+    mock_stream = MockWSClient([])
+    monkeypatch.setattr(
+        "kubernetes.stream.stream", lambda *a, **ka: mock_stream
+    )
+
+    tar_path = tmp_path / "backup.tar.gz"
+    with tarfile.open(tar_path, "w:gz") as tar:
+        tar.add("tests")
+
+    restore("my-volume-name", tar_path, "default", sidecar_path)
+
+    assert mock_stream.written_data
+    assert pvc_created
 
 
 class MockWSClient:

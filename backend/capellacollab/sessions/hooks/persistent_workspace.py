@@ -3,6 +3,9 @@
 
 import pathlib
 import typing as t
+import uuid
+
+from sqlalchemy import orm
 
 from capellacollab.sessions import exceptions as sessions_exceptions
 from capellacollab.sessions import models as sessions_models
@@ -10,6 +13,8 @@ from capellacollab.sessions import operators
 from capellacollab.sessions.operators import models as operators_models
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
+from capellacollab.users.workspaces import crud as users_workspaces_crud
+from capellacollab.users.workspaces import models as users_workspaces_models
 
 from . import interface
 
@@ -26,6 +31,7 @@ class PersistentWorkspaceHook(interface.HookRegistration):
 
     def configuration_hook(  # type: ignore
         self,
+        db: orm.Session,
         operator: operators.KubernetesOperator,
         user: users_models.DatabaseUser,
         session_type: sessions_models.SessionType,
@@ -38,7 +44,7 @@ class PersistentWorkspaceHook(interface.HookRegistration):
 
         self._check_that_persistent_workspace_is_allowed(tool)
 
-        volume_name = self._create_persistent_workspace(operator, user.name)
+        volume_name = self._create_persistent_workspace(db, operator, user)
         volume = operators_models.PersistentVolume(
             name="workspace",
             read_only=False,
@@ -58,21 +64,36 @@ class PersistentWorkspaceHook(interface.HookRegistration):
                 tool.name
             )
 
-    def _get_volume_name(self, username: str) -> str:
-        return "persistent-session-" + self._normalize_username(username)
-
-    def _normalize_username(self, username: str) -> str:
-        return username.replace("@", "-at-").replace(".", "-dot-").lower()
-
     def _create_persistent_workspace(
-        self, operator: operators.KubernetesOperator, username: str
+        self,
+        db: orm.Session,
+        operator: operators.KubernetesOperator,
+        user: users_models.DatabaseUser,
     ) -> str:
-        persistent_workspace_name = self._get_volume_name(username)
+        workspaces = users_workspaces_crud.get_workspaces_for_user(db, user)
+        persistent_workspace_name = "workspace-" + str(uuid.uuid4())
+        size = "20Gi"
+
+        if len(workspaces) > 0:
+            persistent_workspace_name = workspaces[0].pvc_name
+        else:
+            users_workspaces_crud.create_workspace(
+                db,
+                workspace=users_workspaces_models.DatabaseWorkspace(
+                    pvc_name=persistent_workspace_name,
+                    size=size,
+                    user=user,
+                ),
+            )
+
         operator.create_persistent_volume(
             persistent_workspace_name,
-            "20Gi",
-            labels={
-                "capellacollab/username": self._normalize_username(username),
+            size,
+            annotations={
+                "capellacollab/username": user.name,
+                "capellacollab/user-id": str(user.id),
+                "capellacollab/volume": "personal-workspace",
             },
         )
+
         return persistent_workspace_name

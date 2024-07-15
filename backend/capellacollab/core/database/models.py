@@ -22,3 +22,4 @@ import capellacollab.settings.modelsources.t4c.models
 import capellacollab.tools.models
 import capellacollab.users.models
 import capellacollab.users.tokens.models
+import capellacollab.users.workspaces.models

@@ -187,7 +187,12 @@ export class UserSettingsComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: {
         title: 'Delete User',
-        text: `Do you really want to delete the user ${user.name}?`,
+        text:
+          `Do you really want to delete the user ${user.name}?<br>` +
+          '- The user will be removed from all projects<br>' +
+          '- All events related to the user will be deleted<br>' +
+          '- All workspaces of the user will be deleted (including all data)<br>' +
+          '<b>The action is irrevocable.</b>',
       },
     });
 

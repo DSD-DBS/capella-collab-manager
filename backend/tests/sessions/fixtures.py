@@ -23,11 +23,31 @@ def fixture_session(
     tool_version: tools_models.DatabaseVersion,
 ) -> sessions_models.DatabaseSession:
     session = sessions_models.DatabaseSession(
-        str(uuid.uuid1()),
+        id=str(uuid.uuid1()),
         created_at=datetime.datetime.now(),
         type=sessions_models.SessionType.PERSISTENT,
         environment={"CAPELLACOLLAB_SESSION_TOKEN": "thisisarandomtoken"},
         owner=basic_user,
+        tool=tool,
+        version=tool_version,
+        connection_method_id=tool.config.connection.methods[0].id,
+    )
+    return sessions_crud.create_session(db, session)
+
+
+@pytest.fixture(name="test_session")
+def fixture_test_session(
+    db: orm.Session,
+    test_user: users_models.DatabaseUser,
+    tool: tools_models.DatabaseTool,
+    tool_version: tools_models.DatabaseVersion,
+) -> sessions_models.DatabaseSession:
+    session = sessions_models.DatabaseSession(
+        id=str(uuid.uuid1()),
+        created_at=datetime.datetime.now(),
+        type=sessions_models.SessionType.PERSISTENT,
+        environment={"CAPELLACOLLAB_SESSION_TOKEN": "thisisarandomtoken"},
+        owner=test_user,
         tool=tool,
         version=tool_version,
         connection_method_id=tool.config.connection.methods[0].id,

@@ -21,6 +21,7 @@ api/settings-modelsources-t4-c.service.ts
 api/tools.service.ts
 api/users-sessions.service.ts
 api/users-token.service.ts
+api/users-workspaces.service.ts
 api/users.service.ts
 configuration.ts
 encoder.ts
@@ -171,5 +172,6 @@ model/user.ts
 model/validation-error-loc-inner.ts
 model/validation-error.ts
 model/visibility.ts
+model/workspace.ts
 param.ts
 variables.ts

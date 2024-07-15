@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { NgIf } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -21,7 +20,7 @@ export interface ConfirmationDialogData {
   selector: 'app-confirmation-dialog',
   templateUrl: './confirmation-dialog.component.html',
   standalone: true,
-  imports: [FormsModule, NgIf, MatFormField, MatInput, MatButton],
+  imports: [FormsModule, MatFormField, MatInput, MatButton],
 })
 export class ConfirmationDialogComponent implements OnInit {
   inputText: string = '';
