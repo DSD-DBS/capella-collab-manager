@@ -6,8 +6,8 @@ name: collab-manager
 description: Capella Collaboration Manager
 home: https://github.com/DSD-DBS/capella-collab-manager
 type: application
-version: 0.0.0 # The version is not used. The version is managed via Git tags.
-appVersion: "1.0.0"
+version: 0.0.0 # The version is automatically updated by the release process.
+appVersion: 0.0.0 # The appVersion is automatically updated by the release process.
 dependencies:
   - name: loki
     alias: loki
