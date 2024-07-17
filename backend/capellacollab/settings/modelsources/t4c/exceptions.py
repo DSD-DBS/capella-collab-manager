@@ -69,7 +69,10 @@ class LicenseServerNoStatusError(core_exceptions.BaseError):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             title="License server has no status",
-            reason="No status is available. This can happen during and after license server restarts.",
+            reason=(
+                "No status is available. This can happen during and after license server restarts. "
+                "The license information will be available when a client claims a license."
+            ),
             err_code="T4C_LICENSE_SERVER_NO_STATUS",
         )
 
