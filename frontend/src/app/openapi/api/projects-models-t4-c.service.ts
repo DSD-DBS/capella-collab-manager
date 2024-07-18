@@ -46,8 +46,9 @@ export class ProjectsModelsT4CService {
             this.configuration = configuration;
         }
         if (typeof this.configuration.basePath !== 'string') {
-            if (Array.isArray(basePath) && basePath.length > 0) {
-                basePath = basePath[0];
+            const firstBasePath = Array.isArray(basePath) ? basePath[0] : undefined;
+            if (firstBasePath != undefined) {
+                basePath = firstBasePath;
             }
 
             if (typeof basePath !== 'string') {

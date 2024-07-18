@@ -23,7 +23,7 @@ export interface HTTPConnectionMethodOutput {
     /**
      * Connection method specific environment variables. Check the global environment field for more information. 
      */
-    environment: object;
+    environment: { [key: string]: Environment1; };
     sharing: ToolSessionSharingConfigurationOutput;
     redirect_url: string;
     /**

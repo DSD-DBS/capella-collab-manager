@@ -22,7 +22,7 @@ export interface ToolSessionConfigurationInput {
     /**
      * Environment variables, which are mounted into session containers. You can use f-strings to reference other environment variables in the value. 
      */
-    environment?: object;
+    environment?: { [key: string]: Environment; };
     connection?: ToolSessionConnectionInput;
     monitoring?: SessionMonitoringInput;
     /**

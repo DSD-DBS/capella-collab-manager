@@ -23,7 +23,7 @@ export interface GuacamoleConnectionMethodInput {
     /**
      * Connection method specific environment variables. Check the global environment field for more information. 
      */
-    environment?: object;
+    environment?: { [key: string]: Environment; };
     sharing?: ToolSessionSharingConfigurationInput;
 }
 export namespace GuacamoleConnectionMethodInput {
