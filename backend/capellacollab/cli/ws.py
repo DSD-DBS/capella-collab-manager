@@ -188,7 +188,16 @@ def backup(
 @app.command()
 def restore(
     volume_name: str,
-    tarfile: t.Annotated[pathlib.Path, typer.Argument(exists=True)],
+    tarfile: t.Annotated[
+        pathlib.Path,
+        typer.Argument(
+            exists=True,
+            help=(
+                "gzip compressed file with one top level "
+                "directory named 'workspace'"
+            ),
+        ),
+    ],
     namespace: t.Annotated[str, NamespaceOption],
     access_mode: str = "ReadWriteMany",
     storage_class_name: str = "persistent-sessions-csi",
