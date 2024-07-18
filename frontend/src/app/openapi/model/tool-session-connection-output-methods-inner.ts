@@ -31,7 +31,7 @@ export interface ToolSessionConnectionOutputMethodsInner {
     /**
      * Cookies, which are required to connect to the session. 
      */
-    cookies: { [key: string]: any; };
+    cookies: { [key: string]: string; };
 }
 export namespace ToolSessionConnectionOutputMethodsInner {
     export type TypeEnum = 'guacamole' | 'http';

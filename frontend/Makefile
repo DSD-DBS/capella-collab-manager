@@ -26,7 +26,7 @@ openapi:
 		-v $$(pwd)/openapi_templates:/tmp/openapi_templates \
 		-v /tmp/openapi:/tmp/output \
 		-u $$(id -u $${USER}):$$(id -g $${USER}) \
-		openapitools/openapi-generator-cli:v7.5.0 generate \
+		openapitools/openapi-generator-cli:v7.7.0 generate \
 			-i /tmp/openapi.json \
 			-t /tmp/openapi_templates \
 			--global-property models,apis,supportingFiles="index.ts:api.ts:models.ts:variables.ts:configuration.ts:api.module.ts:param.ts:encoder.ts" \
