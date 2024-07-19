@@ -33,10 +33,13 @@ class DeployedSessionsCollector:
         )
         operator = operators.get_operator()
         pods = operator.get_pods(label_selector=None)
-        statuses = sorted(
-            (pod.metadata.labels.get("workload", ""), pod.status.phase.lower())
-            for pod in pods
-        )
+        statuses = []
+        for pod in pods:
+            labels = pod.metadata.labels
+            if labels is None or "workload" not in labels:
+                continue
+
+            statuses.append((labels["workload"], pod.status.phase.lower()))
         for labels, g in itertools.groupby(statuses):
             metric.add_metric(labels, len(list(g)))
         yield metric
