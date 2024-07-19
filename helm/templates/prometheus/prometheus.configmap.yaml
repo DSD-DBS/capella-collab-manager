@@ -36,6 +36,11 @@ data:
         metrics_path: /prometheus/metrics
         static_configs:
           - targets: ["localhost:9090"]
+      - job_name: kube-state-metrics
+        metrics_path: /metrics
+        static_configs:
+        - targets:
+          - {{ .Release.Name }}-kube-state-metrics.{{ .Release.Namespace }}.svc.cluster.local:8080
       - job_name: "sessions"
         kubernetes_sd_configs:
           - role: service
@@ -104,21 +109,17 @@ data:
             namespaces:
               own_namespace: true
         relabel_configs:
-          # Scrape pods with annotation prometheus.io/scrape = "true"
           - source_labels:
               [__meta_kubernetes_service_annotation_prometheus_io_scrape]
             action: keep
             regex: true
-          # Scrape pods on path specified by prometheus.io/path
           - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
             action: replace
             target_label: __metrics_path__
             regex: (.+)
-          # Scrape pods on port specified by prometheus.io/port
           - source_labels:
               [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
             action: replace
             regex: ([^:]+)(?::\d+)?;(\d+)
             replacement: $1:$2
             target_label: __address__
-          # Transfer app label from kubernetes (name of the deployment)

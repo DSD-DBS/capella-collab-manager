@@ -8,9 +8,16 @@ home: https://github.com/DSD-DBS/capella-collab-manager
 type: application
 version: 0.0.0 # The version is automatically updated by the release process.
 appVersion: 0.0.0 # The appVersion is automatically updated by the release process.
+maintainers:
+  - name: Systems Engineering Toolchain team of Digitale Schiene Deutschland
+    email: set@deutschebahn.com
 dependencies:
   - name: loki
     alias: loki
     condition: loki.enabled
     version: 5.30.0
     repository: https://grafana.github.io/helm-charts/
+  - name: kube-state-metrics
+    version: 5.21.0
+    condition: kube-state-metrics.enabled
+    repository: https://prometheus-community.github.io/helm-charts

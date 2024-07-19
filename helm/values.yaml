@@ -184,13 +184,21 @@ backend:
 
   # Namespace in which the Session Deployments / Pods should be spawned.
   # IMPORTANT: The namespace has to exist already
-  k8sSessionNamespace: collab-sessions
+  k8sSessionNamespace: &sessionNamespace collab-sessions
   storageClassName: local-path
   storageAccessMode: ReadWriteOnce
 
 guacamole:
   username: guacadmin
   password: guacadmin
+
+alerting:
+  email:
+    enabled: false
+    host: smtp.example.com:587
+    user: username
+    password: password
+    sender: capella@example.com
 
 ########################################
 ### KUBERNETES RELATED CONFIGURATION ###
@@ -355,3 +363,36 @@ loki:
     makeServiceAccountJob: *minioJob
     makeBucketJob: *minioJob
     customCommandJob: *minioJob
+
+# https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-state-metrics/values.yaml
+kube-state-metrics:
+  enabled: true
+  prometheusScrape: false
+  rbac:
+    useClusterRole: false
+  securityContext: *podSecurityContext
+  containerSecurityContext:
+    runAsNonRoot: true
+  collectors:
+    - configmaps
+    - cronjobs
+    - deployments
+    - ingresses
+    - jobs
+    - networkpolicies
+    - persistentvolumeclaims
+    - poddisruptionbudgets
+    - pods
+    - secrets
+    - services
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 10m
+      memory: 40Mi
+  namespaces: *sessionNamespace
+  extraArgs:
+    - '--metric-annotations-allowlist=pods=[*]'
+    - '--metric-labels-allowlist=pods=[workload]'

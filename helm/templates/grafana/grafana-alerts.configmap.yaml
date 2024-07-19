@@ -5,10 +5,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-grafana-dashboards
+  name: {{ .Release.Name }}-grafana-alerting
   namespace: {{ .Release.Namespace }}
   labels:
-    id: {{ .Release.Name }}-configmap-grafana-dashboards
+    id: {{ .Release.Name }}-configmap-grafana-alerting
 data:
-{{ (.Files.Glob "config/grafana/dashboards/*.json").AsConfig | indent 2 }}
+{{ (.Files.Glob "config/grafana/alerting/*.yaml").AsConfig | indent 2 }}
 {{ end }}

@@ -24,7 +24,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "prometheus_ccm"
       },
       "description": "",
       "fieldConfig": {
@@ -74,7 +74,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus_ccm"
           },
           "editorMode": "builder",
           "expr": "max(used_t4c_licenses)",
@@ -85,7 +85,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus_ccm"
           },
           "editorMode": "builder",
           "expr": "max(total_t4c_licenses)",
@@ -133,7 +133,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "prometheus_ccm"
       },
       "description": "",
       "fieldConfig": {
@@ -183,7 +183,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus_ccm"
           },
           "editorMode": "builder",
           "expr": "max(used_t4c_licenses)",
@@ -194,7 +194,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus_ccm"
           },
           "editorMode": "code",
           "expr": "max(total_t4c_licenses)",
@@ -242,7 +242,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "prometheus_ccm"
       },
       "fieldConfig": {
         "defaults": {
@@ -291,7 +291,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus_ccm"
           },
           "editorMode": "builder",
           "expr": "max(used_t4c_licenses)",
@@ -302,7 +302,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus_ccm"
           },
           "editorMode": "builder",
           "expr": "max(total_t4c_licenses)",
@@ -350,7 +350,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "prometheus_ccm"
       },
       "description": "",
       "fieldConfig": {
@@ -398,7 +398,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus_ccm"
           },
           "editorMode": "builder",
           "expr": "max(total_t4c_licenses)",
@@ -409,7 +409,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus_ccm"
           },
           "editorMode": "builder",
           "expr": "max(total_t4c_licenses)",
@@ -457,7 +457,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "prometheus_ccm"
       },
       "description": "Number of licenses which are in use.",
       "fieldConfig": {
@@ -537,7 +537,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus_ccm"
           },
           "editorMode": "builder",
           "expr": "max(used_t4c_licenses)",
@@ -551,7 +551,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus_ccm"
           },
           "editorMode": "builder",
           "exemplar": false,
@@ -567,7 +567,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus_ccm"
           },
           "editorMode": "builder",
           "expr": "max(total_t4c_licenses)",

@@ -7,3 +7,5 @@
 .venv
 initdb.sql
 p_options.yaml
+config/certs/*
+!config/certs/.gitkeep
