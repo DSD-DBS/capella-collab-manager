@@ -28,3 +28,13 @@ class NoProjectsInCommonError(core_exceptions.BaseError):
             ),
             err_code="NO_PROJECTS_IN_COMMON",
         )
+
+
+class RoleUpdateRequiresReasonError(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_403_FORBIDDEN,
+            title="No reason provided",
+            reason=("You must provide a reason for updating the users roles."),
+            err_code="ROLE_UPDATE_REQUIRES_REASON",
+        )

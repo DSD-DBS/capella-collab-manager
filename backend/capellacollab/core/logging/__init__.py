@@ -15,7 +15,6 @@ from starlette.middleware import base
 
 from capellacollab import config
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.core.authentication import oidc_provider
 
 LOGGING_LEVEL = config.config.logging.level
 
@@ -75,18 +74,17 @@ class AttachTraceIdMiddleware(base.BaseHTTPMiddleware):
 
 
 class AttachUserNameMiddleware(base.BaseHTTPMiddleware):
-    def __init__(self, app):
-        super().__init__(app)
-        self.wellknown_oidc_provider_config = (
-            oidc_provider.WellKnownOIDCProviderConfig()
-        )
-
     async def dispatch(
-        self, request: fastapi.Request, call_next: base.RequestResponseEndpoint
+        self,
+        request: fastapi.Request,
+        call_next: base.RequestResponseEndpoint,
     ):
         try:
+            oidc_provider_config = (
+                await auth_injectables.get_oidc_provider_config()
+            )
             username = await auth_injectables.get_username(
-                request, self.wellknown_oidc_provider_config
+                request, oidc_provider_config
             )
         except fastapi.HTTPException:
             username = "anonymous"

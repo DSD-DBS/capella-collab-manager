@@ -89,7 +89,9 @@ def create_user(
     own_user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
-    created_user = crud.create_user(db, post_user.name)
+    created_user = crud.create_user(
+        db, post_user.name, post_user.idp_identifier, post_user.email
+    )
     events_crud.create_user_creation_event(
         db=db, user=created_user, executor=own_user, reason=post_user.reason
     )
@@ -120,7 +122,7 @@ def get_common_projects(
 
 
 @router.patch(
-    "/{user_id}/roles",
+    "/{user_id}",
     response_model=models.User,
     dependencies=[
         fastapi.Depends(
@@ -128,25 +130,19 @@ def get_common_projects(
         )
     ],
 )
-def update_role_of_user(
-    patch_user: models.PatchUserRoleRequest,
+def update_user(
+    patch_user: models.PatchUser,
     user: models.DatabaseUser = fastapi.Depends(injectables.get_existing_user),
     own_user: models.DatabaseUser = fastapi.Depends(get_current_user),
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.DatabaseUser:
-    if (role := patch_user.role) == models.Role.ADMIN:
-        projects_users_crud.delete_projects_for_user(db, user.id)
+):
+    if patch_user.role and patch_user.role != user.role:
+        reason = patch_user.reason
+        if not reason:
+            raise exceptions.RoleUpdateRequiresReasonError()
+        user = update_user_role(db, user, own_user, patch_user.role, reason)
 
-    updated_user = crud.update_role_of_user(db, user, role)
-
-    event_type = (
-        events_models.EventType.ASSIGNED_ROLE_ADMIN
-        if role == models.Role.ADMIN
-        else events_models.EventType.ASSIGNED_ROLE_USER
-    )
-    events_crud.create_role_change_event(
-        db, user, event_type, own_user, patch_user.reason
-    )
+    updated_user = crud.update_user(db, user, patch_user)
 
     return updated_user
 
@@ -196,6 +192,30 @@ def get_projects_for_user(
         return [association.project for association in user.projects]
     else:
         return list(projects_crud.get_projects(db))
+
+
+def update_user_role(
+    db: orm.Session,
+    user: models.DatabaseUser,
+    executor: models.DatabaseUser,
+    role: models.Role,
+    reason: str,
+):
+    if role == models.Role.ADMIN:
+        projects_users_crud.delete_projects_for_user(db, user.id)
+
+    updated_user = crud.update_role_of_user(db, user, role)
+
+    event_type = (
+        events_models.EventType.ASSIGNED_ROLE_ADMIN
+        if role == models.Role.ADMIN
+        else events_models.EventType.ASSIGNED_ROLE_USER
+    )
+    events_crud.create_role_change_event(
+        db, user, event_type, executor, reason
+    )
+
+    return updated_user
 
 
 router.include_router(session_routes.users_router, tags=["Users - Sessions"])

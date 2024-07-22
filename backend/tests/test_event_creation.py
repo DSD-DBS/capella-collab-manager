@@ -111,7 +111,7 @@ def test_create_assign_user_role_event(
     user = users_crud.create_user(db, unique_username, initial_role)
 
     response = client.patch(
-        f"/api/v1/users/{user.id}/roles",
+        f"/api/v1/users/{user.id}",
         json={"role": target_role.value, "reason": reason},
     )
 

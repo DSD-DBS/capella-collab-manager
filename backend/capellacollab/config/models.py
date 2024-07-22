@@ -226,7 +226,7 @@ class AuthOauthClientConfig(BaseConfig):
         default="default", description="The authentication provider client ID."
     )
     secret: str = pydantic.Field(
-        default=None, description="The authentication provider client secret."
+        default="", description="The authentication provider client secret."
     )
 
 
@@ -247,24 +247,18 @@ class AuthOauthEndpointsConfig(BaseConfig):
     )
 
 
-class JWTConfig(BaseConfig):
-    username_claim: str = pydantic.Field(
-        default="sub",
-        description="Specifies the key in the JWT payload where the username is stored.",
-        examples=["sub", "aud", "preferred_username"],
-    )
+class ClaimMappingConfig(BaseConfig):
+    identifier: str = pydantic.Field(default="sub")
+    username: str = pydantic.Field(default="sub")
+    email: str | None = pydantic.Field(default="email")
 
 
-class GeneralAuthenticationConfig(BaseConfig):
-    jwt: JWTConfig = JWTConfig()
-
-
-class AuthenticationConfig(GeneralAuthenticationConfig):
+class AuthenticationConfig(BaseConfig):
     endpoints: AuthOauthEndpointsConfig = AuthOauthEndpointsConfig()
     audience: str = pydantic.Field(default="default")
-    issuer: str = pydantic.Field(default="http://localhost:8083/default")
+    mapping: ClaimMappingConfig = ClaimMappingConfig()
     scopes: list[str] = pydantic.Field(
-        default=["openid", "offline_access"],
+        default=["openid", "profile", "offline_access"],
         description="List of scopes that application neeeds to access the required attributes.",
     )
     client: AuthOauthClientConfig = AuthOauthClientConfig()

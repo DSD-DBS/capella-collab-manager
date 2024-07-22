@@ -65,17 +65,17 @@
             </div>
           </a>
           <div class="ml-1 mr-0 flex items-center">
-            <button
-              class="mx-0 px-0"
-              mat-icon-button
-              color="warn"
-              *ngIf="['user'].includes(user.role)"
-              (click)="deleteUser(user)"
-              matTooltip="Permamently delete user"
-            >
-              <mat-icon color="warn">delete</mat-icon>
-            </button>
-
+            @if (["user"].includes(user.role)) {
+              <button
+                class="mx-0 px-0"
+                mat-icon-button
+                color="warn"
+                (click)="deleteUser(user)"
+                matTooltip="Permamently delete user"
+              >
+                <mat-icon color="warn">delete</mat-icon>
+              </button>
+            }
             <button
               class="mx-0 px-0"
               mat-icon-button
@@ -99,12 +99,22 @@
       <mat-form-field class="mt-3 w-full">
         <mat-label>Username</mat-label>
         <input matInput formControlName="username" />
-        <mat-error *ngIf="username.getError('required')"
-          >Please enter a username!</mat-error
-        >
-        <mat-error *ngIf="username.getError('userAlreadyExists')"
-          >The username does already exist!</mat-error
-        >
+        @if (username.errors?.required) {
+          <mat-error> Please enter an username! </mat-error>
+        }
+        @if (username.errors?.userAlreadyExists) {
+          <mat-error> The username already exists! </mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="w-full">
+        <mat-label>Identity Provider Identifier</mat-label>
+        <input matInput formControlName="idpIdentifier" />
+        @if (idpIdentifier.errors?.required) {
+          <mat-error> Please enter an IdP identifier! </mat-error>
+        }
+        @if (idpIdentifier.errors?.userAlreadyExists) {
+          <mat-error> The IdP identifier already exists! </mat-error>
+        }
       </mat-form-field>
       <br />
       <button

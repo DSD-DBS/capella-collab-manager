@@ -42,13 +42,14 @@ extensions:
     password: "{{ .Values.guacamole.password }}"
 
 authentication:
-  jwt:
-    usernameClaim: "{{ .Values.backend.authentication.jwt.usernameClaim }}"
   endpoints:
     authorization: "{{ .Values.backend.authentication.endpoints.authorization }}"
     wellKnown: "{{ .Values.backend.authentication.endpoints.wellKnown }}"
   audience: "{{ .Values.backend.authentication.audience }}"
-  issuer: "{{ .Values.backend.authentication.issuer }}"
+  mapping:
+    identifier: "{{ .Values.backend.authentication.claimMapping.idpIdentifier }}"
+    username: "{{ .Values.backend.authentication.claimMapping.username }}"
+    email: "{{ .Values.backend.authentication.claimMapping.email }}"
   scopes:
   {{ .Values.backend.authentication.scopes | toYaml | nindent 4 }}
   client:
