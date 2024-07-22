@@ -54,9 +54,10 @@ async def api_get_token(
         token_request.code, token_request.code_verifier
     )
 
-    user = validate_id_token(
-        db, tokens["id_token"], provider_config, token_request.nonce
+    validated_id_token = validate_id_token(
+        tokens["id_token"], provider_config, None
     )
+    user = create_or_update_user(db, validated_id_token)
 
     update_token_cookies(
         response, tokens["id_token"], tokens.get("refresh_token", None), user
@@ -80,7 +81,11 @@ async def api_refresh_token(
 
     tokens = provider.refresh_token(refresh_token)
 
-    user = validate_id_token(db, tokens["id_token"], provider_config, None)
+    validated_id_token = validate_id_token(
+        tokens["id_token"], provider_config, None
+    )
+    user = create_or_update_user(db, validated_id_token)
+
     update_token_cookies(
         response, tokens["id_token"], tokens.get("refresh_token", None), user
     )
@@ -110,11 +115,10 @@ async def validate_token(
 
 
 def validate_id_token(
-    db: orm.Session,
     id_token: str,
     provider_config: oidc_provider.AbstractOIDCProviderConfig,
     nonce: str | None,
-) -> users_models.DatabaseUser:
+) -> dict[str, str]:
     validated_id_token = api_key_cookie.JWTAPIKeyCookie(
         provider_config
     ).validate_token(id_token)
@@ -125,13 +129,21 @@ def validate_id_token(
     if provider_config.get_client_id() not in validated_id_token["aud"]:
         raise exceptions.UnauthenticatedError()
 
-    username = api_key_cookie.JWTAPIKeyCookie(provider_config).get_username(
+    return validated_id_token
+
+
+def create_or_update_user(
+    db: orm.Session, validated_id_token: dict[str, str]
+) -> users_models.DatabaseUser:
+    username = api_key_cookie.JWTAPIKeyCookie.get_username(validated_id_token)
+    idp_identifier = api_key_cookie.JWTAPIKeyCookie.get_idp_identifier(
         validated_id_token
     )
+    email = api_key_cookie.JWTAPIKeyCookie.get_email(validated_id_token)
 
-    user = users_crud.get_user_by_name(db, username)
+    user = users_crud.get_user_by_idp_identifier(db, idp_identifier)
     if not user:
-        user = users_crud.create_user(db, username)
+        user = users_crud.create_user(db, username, idp_identifier, email)
         events_crud.create_user_creation_event(db, user)
 
     users_crud.update_last_login(db, user)

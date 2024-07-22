@@ -15,6 +15,8 @@ from . import exceptions, oidc_provider
 
 log = logging.getLogger(__name__)
 
+auth_config = config.authentication
+
 
 class JWTConfigBorg:
     _shared_state: dict[str, str] = {}
@@ -48,9 +50,6 @@ class JWTAPIKeyCookie(security.APIKeyCookie):
         token_decoded = self.validate_token(token)
         return self.get_username(token_decoded)
 
-    def get_username(self, token_decoded: dict[str, str]) -> str:
-        return token_decoded[config.authentication.jwt.username_claim].strip()
-
     def validate_token(self, token: str) -> dict[str, t.Any]:
         try:
             signing_key = self.jwt_config.jwks_client.get_signing_key_from_jwt(
@@ -74,3 +73,17 @@ class JWTAPIKeyCookie(security.APIKeyCookie):
         except jwt_exceptions.PyJWTError:
             log.exception("JWT validation failed", exc_info=True)
             raise exceptions.JWTValidationFailed()
+
+    @classmethod
+    def get_username(cls, token_decoded: dict[str, str]) -> str:
+        return token_decoded[auth_config.mapping.username].strip()
+
+    @classmethod
+    def get_idp_identifier(cls, token_decoded: dict[str, str]) -> str:
+        return token_decoded[auth_config.mapping.identifier].strip()
+
+    @classmethod
+    def get_email(cls, token_decoded: dict[str, str]) -> str | None:
+        if auth_config.mapping.email:
+            return token_decoded.get(auth_config.mapping.email, None)
+        return None

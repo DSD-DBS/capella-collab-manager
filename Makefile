@@ -96,6 +96,7 @@ helm-deploy:
 		--set docker.registry.sessions=$(CAPELLACOLLAB_SESSIONS_REGISTRY) \
 		--set docker.tag=$(DOCKER_TAG) \
 		--set mocks.oauth=True \
+		--set authentication.claimMapping.username=sub \
 		--set development=$(DEVELOPMENT_MODE) \
 		--set cluster.ingressClassName=traefik \
 		--set cluster.ingressNamespace=kube-system \

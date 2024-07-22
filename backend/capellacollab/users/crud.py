@@ -28,6 +28,16 @@ def get_user_by_id(
     ).scalar_one_or_none()
 
 
+def get_user_by_idp_identifier(
+    db: orm.Session, idp_identifier: str
+) -> models.DatabaseUser | None:
+    return db.execute(
+        sa.select(models.DatabaseUser).where(
+            models.DatabaseUser.idp_identifier == idp_identifier
+        )
+    ).scalar_one_or_none()
+
+
 def get_users(db: orm.Session) -> abc.Sequence[models.DatabaseUser]:
     return db.execute(sa.select(models.DatabaseUser)).scalars().all()
 
@@ -45,10 +55,16 @@ def get_admin_users(db: orm.Session) -> abc.Sequence[models.DatabaseUser]:
 
 
 def create_user(
-    db: orm.Session, username: str, role: models.Role = models.Role.USER
+    db: orm.Session,
+    username: str,
+    idp_identifier: str,
+    email: str | None = None,
+    role: models.Role = models.Role.USER,
 ) -> models.DatabaseUser:
     user = models.DatabaseUser(
         name=username,
+        idp_identifier=idp_identifier,
+        email=email,
         role=role,
         created=datetime.datetime.now(datetime.UTC),
         projects=[],

@@ -142,9 +142,6 @@ database:
 
 backend:
   authentication:
-    jwt:
-      usernameClaim: sub # azure: preferred_username
-
     endpoints:
       wellKnown: http://dev-oauth-mock:8080/default/.well-known/openid-configuration
       # Override endpoint that authorizes the User
@@ -154,11 +151,17 @@ backend:
       authorization: https://localhost/default/authorize
 
     audience: default
-    issuer: http://dev-oauth-mock:8080/default
+
+    claimMapping:
+      idpIdentifier: sub
+      username: preferred_username
+      email: email
 
     scopes:
       - openid
+      - profile
       - offline_access
+
     client:
       id: tbd
       secret: tbd

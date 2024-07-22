@@ -62,8 +62,17 @@ class DatabaseUser(database.Base):
         init=False, primary_key=True, index=True
     )
 
+    idp_identifier: orm.Mapped[str] = orm.mapped_column(
+        unique=True, index=True
+    )
     name: orm.Mapped[str] = orm.mapped_column(unique=True, index=True)
+
     role: orm.Mapped[Role]
+
+    email: orm.Mapped[str | None] = orm.mapped_column(
+        default=None, unique=True, index=True
+    )
+
     created: orm.Mapped[datetime.datetime | None] = orm.mapped_column(
         default=datetime.datetime.now(datetime.UTC)
     )

@@ -9,7 +9,7 @@ start:
 		-v $$(pwd)/conf.json:/opt/conf.json \
 		-p 8083:8080 \
 		-e JSON_CONFIG_PATH=/opt/conf.json \
-		ghcr.io/navikt/mock-oauth2-server:0.5.8
+		ghcr.io/navikt/mock-oauth2-server:2.1.8
 
 stop:
 	docker stop oauth-mock && \
