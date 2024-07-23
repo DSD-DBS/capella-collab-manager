@@ -12,6 +12,8 @@ metadata:
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/grafana" "/grafana.configmap.yaml") . | sha256sum }}
     checksum/dashboards: {{ include (print $.Template.BasePath "/grafana" "/grafana-dashboards.configmap.yaml") . | sha256sum }}
+    checksum/certs: {{ include (print $.Template.BasePath "/grafana" "/grafana-certs.configmap.yaml") . | sha256sum }}
+    checksum/alerts: {{ include (print $.Template.BasePath "/grafana" "/grafana-alerts.configmap.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount.grafana | default 1 }}
   selector:
@@ -26,6 +28,8 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/grafana" "/grafana.configmap.yaml") . | sha256sum }}
         checksum/dashboards: {{ include (print $.Template.BasePath "/grafana" "/grafana-dashboards.configmap.yaml") . | sha256sum }}
+        checksum/certs: {{ include (print $.Template.BasePath "/grafana" "/grafana-certs.configmap.yaml") . | sha256sum }}
+        checksum/alerts: {{ include (print $.Template.BasePath "/grafana" "/grafana-alerts.configmap.yaml") . | sha256sum }}
     spec:
       serviceAccountName: {{ .Release.Name }}-grafana
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
@@ -34,7 +38,7 @@ spec:
           {{ if .Values.docker.images.grafana }}
           image: {{ .Values.docker.images.grafana }}
           {{ else }}
-          image: {{ .Values.docker.registry.external }}/grafana/grafana:10.0.1
+          image: {{ .Values.docker.registry.external }}/grafana/grafana:11.1.0
           {{ end }}
           ports:
             - containerPort: 3000
@@ -64,8 +68,15 @@ spec:
               mountPath: /etc/grafana/provisioning/datasources
             - name: dashboards-config
               mountPath: /etc/grafana/provisioning/dashboards
+            - name: alerting
+              mountPath: /etc/grafana/provisioning/alerting
             - name: dashboards
               mountPath: /etc/dashboards
+            {{- range $key, $value := .Files.Glob "config/certs/*" }}
+            - name: certs
+              mountPath: /etc/ssl/certs/{{ $key | base }}
+              subPath: {{ $key | base }}
+            {{- end }}
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}
           {{ end }}
@@ -91,6 +102,12 @@ spec:
         - name: dashboards
           configMap:
             name: {{ .Release.Name }}-grafana-dashboards
+        - name: alerting
+          configMap:
+            name: {{ .Release.Name }}-grafana-alerting
+        - name: certs
+          configMap:
+            name: {{ .Release.Name }}-grafana-certs
         - name: storage
           persistentVolumeClaim:
             claimName: {{ .Release.Name -}}-grafana

@@ -2,5 +2,8 @@ dependencies:
 - name: loki
   repository: https://grafana.github.io/helm-charts/
   version: 5.30.0
-digest: sha256:afdc744b3c8e3b9f5c6caf9858de7b6c70e5f97c178c9728828d5fcd713dc20d
-generated: "2023-10-16T13:58:40.468168+02:00"
+- name: kube-state-metrics
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 5.21.0
+digest: sha256:78da5915214a0d59b1d90c8e269f98b904028ecf7e167600c817717568cc85fd
+generated: "2024-07-19T11:32:45.833191+02:00"

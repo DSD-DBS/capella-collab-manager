@@ -76,6 +76,10 @@ nav:
       - Installation: admin/installation.md
       - Uninstallation: admin/uninstallation.md
       - Getting started: admin/getting_started/index.md
+      - Monitoring:
+          - Alerting: admin/monitoring/alerting.md
+          - Dashboards: admin/monitoring/dashboards.md
+          - Pipelines & Model Modifiers: admin/monitoring/frontend.md
       - Integrations:
           - Git: admin/settings/model-sources/git.md
           - TeamForCapella:
@@ -90,7 +94,6 @@ nav:
           - General: admin/settings/tools/index.md
           - Configuration: admin/tools/configuration.md
       - Alerts: admin/alerts/create.md
-      - Monitoring: admin/settings/monitoring.md
       - CI templates:
           - Gitlab CI/CD:
               - Image builder: admin/ci-templates/gitlab/image-builder.md
@@ -147,6 +150,7 @@ plugins:
         'user/tools/capella/teamforcapella/connect/connect-to-t4c.md': 'user/tools/capella/teamforcapella/connect/index.md'
         'user/tools/capella/teamforcapella/import/import-from-t4c.md': 'user/tools/capella/teamforcapella/import/index.md'
         'user/tools/capella/teamforcapella/export/export-to-t4c.md': 'user/tools/capella/teamforcapella/export/index.md'
+        'admin/settings/monitoring.md': 'admin/monitoring/frontend.md'
 
 markdown_extensions:
   - meta

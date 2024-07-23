@@ -35,7 +35,7 @@ located in a module:
 python -m capellacollab.cli --help
 ```
 
-This gives you the help information. The CLI tool currently has one subcommand:
+This gives you the help information. The CLI tool currently has a subcommand:
 `ws`, short for workspace.
 
 ```

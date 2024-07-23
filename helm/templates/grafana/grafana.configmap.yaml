@@ -34,10 +34,22 @@ data:
     header_name = X-WEBAUTH-USER
     header_property = username
     auto_sign_up = false
+
+    {{ if .Values.alerting.email.enabled }}
+    [smtp]
+    enabled = true
+    host = {{ .Values.alerting.email.host }}
+    user = {{ .Values.alerting.email.user }}
+    password = {{ .Values.alerting.email.password }}
+    from_address = {{ .Values.alerting.email.sender }}
+    from_name: Capella Collaboration Manager
+    {{ end }}
+
   datasources.yaml: |
     apiVersion: 1
     datasources:
-      - name: Loki
+      {{ if .Values.loki.enabled }}
+      - name: Loki (Capella Collaboration Manager)
         type: loki
         access: proxy
         orgId: 1
@@ -47,12 +59,14 @@ data:
         secureJsonData:
           basicAuthPassword: {{ .Values.definitions.loki.password }}
         version: 1
-        editable: true
-      - name: Prometheus
+        editable: false
+      {{ end }}
+      - name: Prometheus (Capella Collaboration Manager)
         type: prometheus
         url: http://{{ .Release.Name }}-prometheus-server.{{ .Release.Namespace }}.svc.cluster.local:9118/prometheus
+        uid: prometheus_ccm
         version: 1
-        editable: true
+        editable: false
   dashboards.yaml: |
     apiVersion: 1
 

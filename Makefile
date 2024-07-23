@@ -82,7 +82,7 @@ deploy-without-build: helm-deploy rollout open
 helm-deploy:
 	@k3d cluster list $(CLUSTER_NAME) >/dev/null || $(MAKE) create-cluster
 	@kubectl create namespace $(SESSION_NAMESPACE) 2> /dev/null || true
-	@[[ ! $$(helm dependency list ./helm | grep missing) ]] || helm dependency update ./helm;
+	@[[ ! $$(helm dependency list ./helm | sed '1d' | sed '/^$$/d' | grep -wv ok) ]] || helm dependency update ./helm;
 	@echo "Start helm upgrade..."
 	HELM_PACKAGE_DIR=$$(mktemp -d)
 	helm package --app-version=$$(git rev-parse --abbrev-ref HEAD) --version=$$(git describe --tags) -d "$$HELM_PACKAGE_DIR" helm

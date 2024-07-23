@@ -3,6 +3,7 @@
 
 variables:
   GRAFANA_HELM_CHART: https://grafana.github.io/helm-charts/
+  PROMETHEUS_HELM_CHARTS: https://prometheus-community.github.io/helm-charts
   PRIVATE_GPG_PATH: /secrets/private.gpg
   TARGET:
     value: 'staging'
@@ -43,6 +44,9 @@ variables:
   - git checkout ${REVISION}
   # prettier-ignore
   - sed -i "s#https://grafana.github.io/helm-charts/#${GRAFANA_HELM_CHART}#g" ./helm/Chart.yaml
+  - sed -i
+    "s#https://prometheus-community.github.io/helm-charts#${PROMETHEUS_HELM_CHARTS}#g"
+    ./helm/Chart.yaml
 
 .kubernetes: &kubernetes
   - NAMESPACE=$(cat ../plain.k8s.json | jq -r ".namespace")
@@ -61,9 +65,9 @@ variables:
 
 .helm-deploy: &helm-deploy
   - RELEASE=$(cat ../plain.k8s.json | jq -r ".release")
+  - cp -r ../config/* helm/config
   # prettier-ignore
   - DOCKER_TAG=$(echo $REVISION | sed 's/[^a-zA-Z0-9.]/-/g')-$CI_COMMIT_REF_SLUG
-  - helm repo add grafana-helm-remote ${GRAFANA_HELM_CHART}
   - helm dependency update ./helm
   - HELM_PACKAGE_DIR=$(mktemp -d)
   - >
@@ -78,6 +82,7 @@ variables:
       --set docker.tag=${DOCKER_TAG} \
       -f ../${TARGET}/general.values.yaml \
       -f ../plain.values.yaml "$HELM_PACKAGE_DIR"/collab-manager-*.tgz
+
   - kubectl rollout restart deployment ${RELEASE}-backend
   - kubectl rollout restart deployment ${RELEASE}-frontend
   - kubectl rollout restart deployment ${RELEASE}-docs
