@@ -5,7 +5,7 @@
 
 # Alerts in unexpected situations
 
-If something doesn't work as expected, it's important that the system
+If something doesn't work as expected, it's important that system
 administrators will receive a notification.
 
 We use the Grafana Alertmanager to send alerts for some pre-defined error
@@ -21,10 +21,16 @@ configure additional contact points depending on your needs.
 A list of available contact points is available in the
 [official Grafana documentation](https://grafana.com/docs/grafana/latest/alerting/configure-notifications/manage-contact-points/).
 The list includes chat services like Microsoft Teams but also email and webhook
-notifications.
+notifications. In addition, we recommend to disable "Resolved" emails for the
+configured contact points. The reason is that some alerts like failed jobs
+can't be resolved which can lead to unclear messages.
 
 !!! info "Configure SMTP server for email alerting"
 
     For email alerting, you need to configure an SMTP server in the
-    `values.yaml` in the Helm chart. Have a look at the `alerting.email`
+    `values.yaml` of the Helm chart. Have a look at the `alerting.email`
     configuration.
+
+By default, alerts are grouped. If you want to disable grouping, edit the
+default notification policy and set `...` as label for `Group by`:
+![Notification policies](./notification_policy.png)
