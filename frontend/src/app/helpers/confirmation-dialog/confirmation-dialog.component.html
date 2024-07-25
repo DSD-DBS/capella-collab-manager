@@ -6,23 +6,25 @@
 <div class="dialog">
   <form (submit)="onSubmit()">
     <h2 class="mb-5 text-xl font-medium">{{ data.title }}</h2>
-    <p>{{ data.text }}</p>
-    <p *ngIf="data.requiredInput">
-      Please type in <span class="font-bold">{{ data.requiredInput }}</span> to
-      confirm the action:
-    </p>
-    <mat-form-field
-      class="w-full"
-      appearance="outline"
-      *ngIf="data.requiredInput"
-    >
-      <input
-        matInput
-        [(ngModel)]="inputText"
-        name="inputText"
-        placeholder="Type here..."
-      />
-    </mat-form-field>
+    <div [innerHTML]="data.text"></div>
+    @if (data.requiredInput) {
+      <p>
+        Please type in
+        <span class="font-bold">{{ data.requiredInput }}</span> to confirm the
+        action:
+      </p>
+      <mat-form-field class="w-full" appearance="outline">
+        <input
+          matInput
+          [(ngModel)]="inputText"
+          name="inputText"
+          placeholder="Type here..."
+        />
+      </mat-form-field>
+    } @else {
+      <div class="mb-5"></div>
+    }
+
     <div class="mt-2 flex justify-between">
       <button
         mat-flat-button

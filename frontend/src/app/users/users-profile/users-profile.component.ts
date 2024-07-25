@@ -3,81 +3,34 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { NgIf, NgFor, AsyncPipe, DatePipe } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { MatDivider } from '@angular/material/divider';
-import { MatPaginator } from '@angular/material/paginator';
-import {
-  MatTableDataSource,
-  MatTable,
-  MatColumnDef,
-  MatHeaderCellDef,
-  MatHeaderCell,
-  MatCellDef,
-  MatCell,
-  MatHeaderRowDef,
-  MatHeaderRow,
-  MatRowDef,
-  MatRow,
-} from '@angular/material/table';
+import { DatePipe } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { BehaviorSubject, filter, map } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
-import { HistoryEvent, Project, User, UsersService } from 'src/app/openapi';
+import { User, UsersService } from 'src/app/openapi';
 import { UserWrapperService } from 'src/app/services/user/user.service';
+import { CommonProjectsComponent } from './common-projects/common-projects.component';
+import { UserInformationComponent } from './user-information/user-information.component';
+import { UserWorkspacesComponent } from './user-workspaces/user-workspaces.component';
 
 @UntilDestroy()
 @Component({
   selector: 'app-users-profile',
   templateUrl: './users-profile.component.html',
-  styleUrls: ['./users-profile.component.css'],
   standalone: true,
   imports: [
-    NgIf,
-    MatTable,
-    MatColumnDef,
-    MatHeaderCellDef,
-    MatHeaderCell,
-    MatCellDef,
-    MatCell,
-    MatHeaderRowDef,
-    MatHeaderRow,
-    MatRowDef,
-    MatRow,
-    NgxSkeletonLoaderModule,
-    MatPaginator,
-    MatDivider,
-    NgFor,
     RouterLink,
-    AsyncPipe,
     DatePipe,
+    CommonProjectsComponent,
+    UserInformationComponent,
+    UserWorkspacesComponent,
   ],
 })
-export class UsersProfileComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
-  displayedColumns: string[] = [
-    'eventType',
-    'executorName',
-    'executionTime',
-    'projectName',
-    'reason',
-  ];
-
+export class UsersProfileComponent implements OnInit, OnDestroy {
   user: User | undefined;
-  commonProjects = new BehaviorSubject<Project[] | undefined>(undefined);
-  userEvents?: HistoryEvent[];
-
-  historyEventDataSource = new MatTableDataSource<HistoryEvent>([]);
-
-  public readonly commonProjects$ = this.commonProjects.asObservable();
 
   constructor(
     public userService: UserWrapperService,
@@ -96,28 +49,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy, AfterViewInit {
         this.usersService.getUser(userId).subscribe((user) => {
           this.user = user;
           this.breadcrumbsService.updatePlaceholder({ user: user });
-          if (userId !== this.userService.user?.id) {
-            this.usersService.getCommonProjects(userId).subscribe({
-              next: (projects) => this.commonProjects.next(projects),
-              error: () => this.commonProjects.next(undefined),
-            });
-          }
-
-          if (this.userService.user?.role === 'administrator') {
-            this.usersService.getUserEvents(userId).subscribe({
-              next: (userEvents) => {
-                this.userEvents = userEvents;
-                this.historyEventDataSource.data = userEvents;
-                this.historyEventDataSource.paginator = this.paginator;
-              },
-            });
-          }
         });
       });
-  }
-
-  ngAfterViewInit(): void {
-    this.historyEventDataSource.paginator = this.paginator;
   }
 
   ngOnDestroy(): void {

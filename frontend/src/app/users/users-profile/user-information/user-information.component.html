@@ -1,0 +1,79 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+@if (userService.user?.role === "administrator") {
+  <div class="collab-card overflow-x-auto">
+    <h2 class="text-xl font-medium">User information</h2>
+    <div class="my-1">
+      <mat-divider></mat-divider>
+    </div>
+    @if (user?.last_login) {
+      <div>
+        Last login:
+        {{ user?.last_login | date: "EE, dd MMM y HH:mm:ss" }}
+      </div>
+    }
+    @if (userEvents) {
+      <div>
+        <table mat-table [dataSource]="historyEventDataSource">
+          <ng-container matColumnDef="eventType">
+            <th mat-header-cell *matHeaderCellDef>Event Type</th>
+            <td mat-cell *matCellDef="let event">{{ event.event_type }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="executorName">
+            <th mat-header-cell *matHeaderCellDef>Executor Name</th>
+            <td mat-cell *matCellDef="let event">
+              {{ event.executor?.name || "System" }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="executionTime">
+            <th mat-header-cell *matHeaderCellDef>Execution Time</th>
+            <td mat-cell *matCellDef="let event">
+              {{ event.execution_time | date: "EE, dd MMM y HH:mm:ss" }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="projectName">
+            <th mat-header-cell *matHeaderCellDef>Project Slug</th>
+            <td mat-cell *matCellDef="let event">
+              {{ event.project?.name || "" }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="reason">
+            <th mat-header-cell *matHeaderCellDef>Reason</th>
+            <td mat-cell *matCellDef="let event">{{ event.reason }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    } @else {
+      <ngx-skeleton-loader
+        appearance="circle"
+        [theme]="{
+          'border-radius': '5px',
+          height: '200px',
+          width: '100%',
+          margin: 0,
+          'margin-top': '5px',
+          border: '1px solid white',
+        }"
+      ></ngx-skeleton-loader>
+    }
+
+    <div [hidden]="!userEvents">
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 20]"
+        showFirstLastButtons
+        aria-label="Select page of events"
+      >
+      </mat-paginator>
+    </div>
+  </div>
+}

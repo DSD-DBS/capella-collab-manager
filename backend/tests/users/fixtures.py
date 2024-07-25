@@ -14,6 +14,8 @@ from capellacollab.core.authentication.jwt_bearer import JWTBearer
 from capellacollab.users import crud as users_crud
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
+from capellacollab.users.workspaces import crud as users_workspaces_crud
+from capellacollab.users.workspaces import models as users_workspaces_models
 
 
 @pytest.fixture(name="executor_name")
@@ -69,3 +71,20 @@ def fixture_admin(
     )
     yield admin
     del app.dependency_overrides[users_injectables.get_own_user]
+
+
+@pytest.fixture(name="test_user")
+def fixture_test_user(db: orm.Session) -> users_models.DatabaseUser:
+    return users_crud.create_user(db, "testuser", users_models.Role.USER)
+
+
+@pytest.fixture(name="user_workspace")
+def fixture_user_workspace(
+    db: orm.Session, test_user: users_models.DatabaseUser
+) -> users_workspaces_models.DatabaseWorkspace:
+    return users_workspaces_crud.create_workspace(
+        db,
+        users_workspaces_models.DatabaseWorkspace(
+            "mock-workspace", "20Gi", test_user
+        ),
+    )

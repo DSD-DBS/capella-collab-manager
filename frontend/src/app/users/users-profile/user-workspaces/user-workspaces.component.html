@@ -1,0 +1,48 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+@if (user && userService.user?.role === "administrator") {
+  <div class="collab-card">
+    <div>
+      <h2 class="text-xl font-medium">User workspaces</h2>
+      <div class="my-1">
+        <mat-divider></mat-divider>
+      </div>
+
+      @if (workspaces === undefined) {
+        Loading...
+      } @else if (workspaces.length === 0) {
+        The user doesn't have any workspaces. A workspace is auto-created when
+        the user requests a persistent workspace session.
+      } @else {
+        @for (workspace of workspaces; track workspace.id) {
+          <div
+            class="mat-card collab-card flex flex-wrap items-center justify-between gap-2"
+          >
+            <div>
+              <h2 class="mb-3 text-lg font-medium">
+                Workspace {{ workspace.id }}
+              </h2>
+              <div class="text-sm">
+                The workspace is limited to a size of
+                {{ workspace.size }} and the persistent volume claim has the
+                name "{{ workspace.pvc_name }}".
+              </div>
+            </div>
+            <div>
+              <button
+                (click)="deleteWorkspace(workspace)"
+                mat-stroked-button
+                color="warn"
+              >
+                <mat-icon>delete</mat-icon>Delete workspace
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+}

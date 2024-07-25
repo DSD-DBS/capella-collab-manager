@@ -154,3 +154,4 @@ export * from './user-token-with-password';
 export * from './validation-error';
 export * from './validation-error-loc-inner';
 export * from './visibility';
+export * from './workspace';

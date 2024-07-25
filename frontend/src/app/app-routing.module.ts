@@ -457,9 +457,20 @@ export const routes: Routes = [
         component: EventsComponent,
       },
       {
-        path: 'user/:userId',
-        data: { breadcrumb: (data: Data) => data?.user?.name || 'User' },
-        component: UsersProfileComponent,
+        path: 'user',
+        data: { breadcrumb: 'User' },
+        children: [
+          {
+            path: '',
+            data: { breadcrumb: undefined },
+            component: UserSettingsComponent,
+          },
+          {
+            path: ':userId',
+            data: { breadcrumb: (data: Data) => data?.user?.name || 'User' },
+            component: UsersProfileComponent,
+          },
+        ],
       },
       {
         path: 'tokens',

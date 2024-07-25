@@ -17,6 +17,8 @@ from capellacollab.sessions import routes as session_routes
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 from capellacollab.users.tokens import routes as tokens_routes
+from capellacollab.users.workspaces import routes as workspaces_routes
+from capellacollab.users.workspaces import util as workspaces_util
 
 from . import crud, exceptions, injectables, models
 
@@ -164,6 +166,7 @@ def delete_user(
 ):
     projects_users_crud.delete_projects_for_user(db, user.id)
     events_crud.delete_all_events_user_involved_in(db, user.id)
+    workspaces_util.delete_all_workspaces_of_user(db, user)
     crud.delete_user(db, user)
 
 
@@ -196,6 +199,11 @@ def get_projects_for_user(
 
 
 router.include_router(session_routes.users_router, tags=["Users - Sessions"])
+router.include_router(
+    workspaces_routes.router,
+    prefix="/{user_id}/workspaces",
+    tags=["Users - Workspaces"],
+)
 router.include_router(
     tokens_routes.router, prefix="/current/tokens", tags=["Users - Token"]
 )

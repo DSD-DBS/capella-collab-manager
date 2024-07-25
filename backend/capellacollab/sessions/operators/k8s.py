@@ -676,12 +676,18 @@ class KubernetesOperator:
         return True
 
     def create_persistent_volume(
-        self, name: str, size: str, labels: dict[str, str] | None = None
+        self,
+        name: str,
+        size: str,
+        labels: dict[str, str] | None = None,
+        annotations: dict[str, str] | None = None,
     ):
         pvc: client.V1PersistentVolumeClaim = client.V1PersistentVolumeClaim(
             kind="PersistentVolumeClaim",
             api_version="v1",
-            metadata=client.V1ObjectMeta(name=name, labels=labels),
+            metadata=client.V1ObjectMeta(
+                name=name, labels=labels, annotations=annotations
+            ),
             spec=client.V1PersistentVolumeClaimSpec(
                 access_modes=[cfg.storage_access_mode],
                 storage_class_name=cfg.storage_class_name,

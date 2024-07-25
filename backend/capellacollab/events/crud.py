@@ -111,6 +111,16 @@ def get_events(
     )
 
 
+def get_event_by_id(
+    db: orm.Session, event_id: int
+) -> models.DatabaseUserHistoryEvent | None:
+    return db.execute(
+        sa.select(models.DatabaseUserHistoryEvent).where(
+            models.DatabaseUserHistoryEvent.id == event_id
+        )
+    ).scalar_one_or_none()
+
+
 def delete_all_events_user_involved_in(db: orm.Session, user_id: int):
     db.execute(
         sa.delete(models.DatabaseUserHistoryEvent).where(
