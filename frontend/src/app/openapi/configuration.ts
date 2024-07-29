@@ -106,15 +106,6 @@ export class Configuration {
                     : undefined;
             };
         }
-
-        // init default JWTBearer credential
-        if (!this.credentials['JWTBearer']) {
-            this.credentials['JWTBearer'] = () => {
-                return typeof this.accessToken === 'function'
-                    ? this.accessToken()
-                    : this.accessToken;
-            };
-        }
     }
 
     /**

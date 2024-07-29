@@ -19,10 +19,6 @@ export interface SessionConnectionInformation {
      * Configuration for the local storage of the frontend. The provided key/value pairs should be set by the frontend.
      */
     local_storage: { [key: string]: string; };
-    /**
-     * Cookies, which are required to connect to the session. The provided key/value pairs should be set by the frontend.
-     */
-    cookies: { [key: string]: string; };
     t4c_token: string | null;
     redirect_url: string | null;
 }

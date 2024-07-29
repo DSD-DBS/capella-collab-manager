@@ -96,7 +96,6 @@ export * from './pure-variants-licenses-input';
 export * from './pure-variants-licenses-output';
 export * from './rdp-ports-input';
 export * from './rdp-ports-output';
-export * from './refresh-token-request';
 export * from './resources-input';
 export * from './resources-output';
 export * from './response-model';
